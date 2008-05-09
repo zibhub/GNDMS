@@ -15,6 +15,15 @@
         <soap:fault name="UnknownORFType" use="literal"/>
       </wsdl:fault>
     </wsdl:operation>
+    <wsdl:operation name="updateMappings">
+      <soap:operation soapAction="http://gndms.zib.de/WHORFX/UpdateMappingsRequest"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="getServiceSecurityMetadata">
       <soap:operation soapAction="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest"/>
       <wsdl:input>

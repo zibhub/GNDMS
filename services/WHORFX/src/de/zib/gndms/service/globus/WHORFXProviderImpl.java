@@ -32,4 +32,10 @@ public class WHORFXProviderImpl{
     return boxedResult;
   }
 
+    public de.zib.gndms.stubs.UpdateMappingsResponse updateMappings(de.zib.gndms.stubs.UpdateMappingsRequest params) throws RemoteException {
+    de.zib.gndms.stubs.UpdateMappingsResponse boxedResult = new de.zib.gndms.stubs.UpdateMappingsResponse();
+    impl.updateMappings();
+    return boxedResult;
+  }
+
 }

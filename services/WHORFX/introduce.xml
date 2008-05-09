@@ -86,6 +86,11 @@
       <ns4:Exception description="" name="UnknownORFType" qname="ns7:UnknownORFType" xmlns:ns7="http://gndms.zib.de/WHORFX/types"/>
      </ns4:Exceptions>
     </ns4:Method>
+    <ns4:Method description="Reread ORF Mappings from file." isImported="false" isProvided="false" name="updateMappings" xsi:type="ns4:MethodType">
+     <ns4:Inputs/>
+     <ns4:Output qName="void" description="" isArray="false"/>
+     <ns4:Exceptions/>
+    </ns4:Method>
    </ns4:Methods>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Main xsi:type="ns3:Main"/>

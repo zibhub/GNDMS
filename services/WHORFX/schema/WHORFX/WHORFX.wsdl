@@ -28,6 +28,16 @@
           </sequence>
         </complexType>
       </element>
+      <element name="UpdateMappingsRequest">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="UpdateMappingsResponse">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
       <element name="WHORFXResourceProperties">
         <complexType>
           <sequence />
@@ -42,6 +52,12 @@
   <message name="LookupORFResponse">
     <part name="parameters" element="tns:LookupORFResponse" />
   </message>
+  <message name="UpdateMappingsRequest">
+    <part name="parameters" element="tns:UpdateMappingsRequest" />
+  </message>
+  <message name="UpdateMappingsResponse">
+    <part name="parameters" element="tns:UpdateMappingsResponse" />
+  </message>
   <message name="UnknownORFTypeFaultMessage">
     <part name="fault" element="ns0:UnknownORFType" />
   </message>
@@ -55,6 +71,10 @@
       <input message="tns:LookupORFRequest" wsa:Action="http://gndms.zib.de/WHORFX/LookupORFRequest" />
       <output message="tns:LookupORFResponse" wsa:Action="http://gndms.zib.de/WHORFX/LookupORFResponse" />
       <fault name="UnknownORFType" message="tns:UnknownORFTypeFaultMessage" wsa:Action="http://gndms.zib.de/WHORFX/UnknownORFTypeFaultMessage" />
+    </operation>
+    <operation name="updateMappings">
+      <input message="tns:UpdateMappingsRequest" wsa:Action="http://gndms.zib.de/WHORFX/UpdateMappingsRequest" />
+      <output message="tns:UpdateMappingsResponse" wsa:Action="http://gndms.zib.de/WHORFX/UpdateMappingsResponse" />
     </operation>
     <operation name="getServiceSecurityMetadata">
       <input message="wns0:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />

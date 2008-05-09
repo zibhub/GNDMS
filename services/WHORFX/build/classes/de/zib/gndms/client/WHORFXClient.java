@@ -86,4 +86,12 @@ public class WHORFXClient extends WHORFXClientBase implements WHORFXI {
     }
   }
 
+  public void updateMappings() throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"updateMappings");
+    de.zib.gndms.stubs.UpdateMappingsRequest params = new de.zib.gndms.stubs.UpdateMappingsRequest();
+    de.zib.gndms.stubs.UpdateMappingsResponse boxedResult = portType.updateMappings(params);
+    }
+  }
+
 }
