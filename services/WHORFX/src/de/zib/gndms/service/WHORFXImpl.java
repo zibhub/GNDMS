@@ -127,9 +127,7 @@ public final class WHORFXImpl extends WHORFXImplBase {
 	}
 
 	private static File getOrfMappingFile(WHORFXConfiguration config) throws Exception {
-		String pathToProperties =
-			  config.getEtcDirectoryPath() + File.separatorChar + config.getOrfMappingFile();
-		return new File(pathToProperties);
+		return new File(config.getOrfMappingFile());
 	}
 
 	private static long getMinimumUpdateInterval() throws Exception {
