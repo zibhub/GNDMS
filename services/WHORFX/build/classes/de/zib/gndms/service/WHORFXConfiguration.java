@@ -47,6 +47,8 @@ public class WHORFXConfiguration implements ServiceConfiguration {
 	
 	private String orfMappingFile;
 	
+	private String minimumUpdateInterval;
+	
 	
 	public String getEtcDirectoryPath() {
 		return ContainerConfig.getBaseDirectory() + File.separator + etcDirectoryPath;
@@ -64,6 +66,16 @@ public class WHORFXConfiguration implements ServiceConfiguration {
 	
 	public void setOrfMappingFile(String orfMappingFile) {
 		this.orfMappingFile = orfMappingFile;
+	}
+
+	
+	public String getMinimumUpdateInterval() {
+		return minimumUpdateInterval;
+	}
+	
+	
+	public void setMinimumUpdateInterval(String minimumUpdateInterval) {
+		this.minimumUpdateInterval = minimumUpdateInterval;
 	}
 
 	

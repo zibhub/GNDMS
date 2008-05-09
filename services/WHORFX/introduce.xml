@@ -102,5 +102,6 @@
  <ns8:Extensions xsi:type="ns8:ExtensionsType" xmlns:ns8="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
  <ns9:ServiceProperties xmlns:ns9="gme://gov.nih.nci.cagrid.introduce/1/Property">
   <ns9:Property description="Properties file containing type mappings. For each key ending in &quot;.orfType&quot; its value is mapped onto the value of the property stored unter this keys names appended with &quot;.port&quot;" isFromETC="true" key="orfMappingFile" value="orfMapping.properties"/>
+  <ns9:Property description="Minimum interval between actual executions of updateMapping(). Requests received in-between simply do nothing." isFromETC="false" key="minimumUpdateInterval" value="10000"/>
  </ns9:ServiceProperties>
 </ns1:ServiceDescription>

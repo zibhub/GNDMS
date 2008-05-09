@@ -33,6 +33,10 @@
           <name>orfMappingFile</name>
           <value>ETC-PATH/@orfMappingFile@</value>
         </parameter>
+        <parameter>
+          <name>minimumUpdateInterval</name>
+          <value>@minimumUpdateInterval@</value>
+        </parameter>
       </resourceParams>
     </resource>
     <resource name="home" type="de.zib.gndms.service.globus.resource.WHORFXResourceHome">
