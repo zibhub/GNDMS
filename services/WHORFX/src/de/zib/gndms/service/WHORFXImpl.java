@@ -97,14 +97,19 @@ public final class WHORFXImpl extends WHORFXImplBase {
 		mapping.clear();
 		logger.info("Updating orfMapping");
 		for (Object key : props.keySet()) {
-			String keyName = key.toString();
-			if (keyName.endsWith(".orfType")) {
-				URI orfType = new URI(props.get(keyName).toString());
-				String orfKey = keyName + ".orfPort";
-				URI orfPort = new URI(orfKey);
-				logger.debug('\'' + orfType.toString()  + "' => '"
-					              + orfPort.toString() + '\'');
-				mapping.put(orfType, orfPort);
+			try {
+				String keyName = key.toString();
+				if (keyName.endsWith(".orfType")) {
+					URI orfType = new URI(props.get(keyName).toString());
+					String orfKey = (String) props.get(keyName + ".orfPort");
+					URI orfPort = new URI(orfKey);
+					logger.debug('\'' + orfType.toString()  + "' => '"
+									  + orfPort.toString() + '\'');
+					mapping.put(orfType, orfPort);
+				}
+			}
+			catch (RuntimeException re) {
+				logger.debug(re);
 			}
 		}
 		lastUpdate.set(System.currentTimeMillis());
