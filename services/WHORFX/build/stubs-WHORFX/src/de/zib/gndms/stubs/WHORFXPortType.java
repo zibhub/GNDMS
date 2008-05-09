@@ -1,0 +1,13 @@
+/**
+ * WHORFXPortType.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.2RC2 Nov 14, 2006 (10:23:53 EST) WSDL2Java emitter.
+ */
+
+package de.zib.gndms.stubs;
+
+public interface WHORFXPortType extends java.rmi.Remote {
+    public de.zib.gndms.stubs.LookupORFResponse lookupORF(de.zib.gndms.stubs.LookupORFRequest parameters) throws java.rmi.RemoteException, de.zib.gndms.stubs.types.UnknownORFType;
+    public gov.nih.nci.cagrid.introduce.security.stubs.GetServiceSecurityMetadataResponse getServiceSecurityMetadata(gov.nih.nci.cagrid.introduce.security.stubs.GetServiceSecurityMetadataRequest parameters) throws java.rmi.RemoteException;
+}

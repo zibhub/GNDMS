@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="WHORFX" targetNamespace="http://gndms.zib.de/WHORFX/service" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:binding="http://gndms.zib.de/WHORFX/bindings" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:import namespace="http://gndms.zib.de/WHORFX/bindings" location="WHORFX_bindings.wsdl"/>
+  <wsdl:service name="WHORFXService">
+    <wsdl:port name="WHORFXPortTypePort" binding="binding:WHORFXPortTypeSOAPBinding">
+      <soap:address location="http://localhost:8080/wsrf/services/"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
