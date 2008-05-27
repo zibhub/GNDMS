@@ -191,6 +191,32 @@ public abstract class SubspaceResourceBase extends ReflectionResource implements
         store();
 	}
 	
+	
+	
+	public de.zib.gndms.dspace.stubs.types.DSpaceReference getDSpaceReference(){
+		return ((SubspaceResourceProperties) getResourceBean()).getDSpaceReference();
+	}
+	
+	public void setDSpaceReference(de.zib.gndms.dspace.stubs.types.DSpaceReference dSpaceReference ) throws ResourceException {
+        ResourceProperty prop = getResourcePropertySet().get(SubspaceConstants.DSPACEREFERENCE);
+		prop.set(0, dSpaceReference);
+        //call the first store to persist the resource
+        store();
+	}
+	
+	
+	
+	public javax.xml.namespace.QName getSubspaceId(){
+		return ((SubspaceResourceProperties) getResourceBean()).getSubspaceId();
+	}
+	
+	public void setSubspaceId(javax.xml.namespace.QName subspaceId ) throws ResourceException {
+        ResourceProperty prop = getResourcePropertySet().get(SubspaceConstants.SUBSPACEID);
+		prop.set(0, subspaceId);
+        //call the first store to persist the resource
+        store();
+	}
+	
 
 
 	

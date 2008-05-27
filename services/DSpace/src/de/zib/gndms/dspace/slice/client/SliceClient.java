@@ -76,31 +76,6 @@ public class SliceClient extends SliceClientBase implements SliceI {
 		}
 	}
 
-  public de.zib.gndms.dspace.slice.stubs.types.SliceReference transformSlice(types.SliceKindT sliceKind) throws RemoteException, de.zib.gndms.dspace.slice.stubs.types.UnsupportedOrInvalidSliceKind, de.zib.gndms.dspace.slice.stubs.types.OutOfSpace {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"transformSlice");
-    de.zib.gndms.dspace.slice.stubs.TransformSliceRequest params = new de.zib.gndms.dspace.slice.stubs.TransformSliceRequest();
-    de.zib.gndms.dspace.slice.stubs.TransformSliceRequestSliceKind sliceKindContainer = new de.zib.gndms.dspace.slice.stubs.TransformSliceRequestSliceKind();
-    sliceKindContainer.setSliceKind(sliceKind);
-    params.setSliceKind(sliceKindContainer);
-    de.zib.gndms.dspace.slice.stubs.TransformSliceResponse boxedResult = portType.transformSlice(params);
-    return boxedResult.getSliceReference();
-    }
-  }
-
-  public de.zib.gndms.dspace.slice.stubs.types.SliceReference transformSliceTo(java.lang.String subspaceId,types.SliceKindT sliceKind) throws RemoteException, de.zib.gndms.dspace.slice.stubs.types.UnsupportedOrInvalidSliceKind, de.zib.gndms.dspace.slice.stubs.types.OutOfSpace, de.zib.gndms.dspace.slice.stubs.types.UnknownSubspace {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"transformSliceTo");
-    de.zib.gndms.dspace.slice.stubs.TransformSliceToRequest params = new de.zib.gndms.dspace.slice.stubs.TransformSliceToRequest();
-    params.setSubspaceId(subspaceId);
-    de.zib.gndms.dspace.slice.stubs.TransformSliceToRequestSliceKind sliceKindContainer = new de.zib.gndms.dspace.slice.stubs.TransformSliceToRequestSliceKind();
-    sliceKindContainer.setSliceKind(sliceKind);
-    params.setSliceKind(sliceKindContainer);
-    de.zib.gndms.dspace.slice.stubs.TransformSliceToResponse boxedResult = portType.transformSliceTo(params);
-    return boxedResult.getSliceReference();
-    }
-  }
-
   public org.oasis.wsrf.lifetime.DestroyResponse destroy(org.oasis.wsrf.lifetime.Destroy params) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"destroy");
@@ -140,6 +115,33 @@ public class SliceClient extends SliceClientBase implements SliceI {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"queryResourceProperties");
     return portType.queryResourceProperties(params);
+    }
+  }
+
+  public de.zib.gndms.dspace.slice.stubs.types.SliceReference transformSlice(javax.xml.namespace.QName sliceKind) throws RemoteException, de.zib.gndms.dspace.slice.stubs.types.UnsupportedOrInvalidSliceKind, de.zib.gndms.dspace.slice.stubs.types.OutOfSpace {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"transformSlice");
+    de.zib.gndms.dspace.slice.stubs.TransformSliceRequest params = new de.zib.gndms.dspace.slice.stubs.TransformSliceRequest();
+    de.zib.gndms.dspace.slice.stubs.TransformSliceRequestSliceKind sliceKindContainer = new de.zib.gndms.dspace.slice.stubs.TransformSliceRequestSliceKind();
+    sliceKindContainer.setSliceKind(sliceKind);
+    params.setSliceKind(sliceKindContainer);
+    de.zib.gndms.dspace.slice.stubs.TransformSliceResponse boxedResult = portType.transformSlice(params);
+    return boxedResult.getSliceReference();
+    }
+  }
+
+  public de.zib.gndms.dspace.slice.stubs.types.SliceReference transformSliceTo(javax.xml.namespace.QName subspaceId,javax.xml.namespace.QName sliceKind) throws RemoteException, de.zib.gndms.dspace.slice.stubs.types.UnsupportedOrInvalidSliceKind, de.zib.gndms.dspace.slice.stubs.types.OutOfSpace, de.zib.gndms.dspace.slice.stubs.types.UnknownSubspace {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"transformSliceTo");
+    de.zib.gndms.dspace.slice.stubs.TransformSliceToRequest params = new de.zib.gndms.dspace.slice.stubs.TransformSliceToRequest();
+    de.zib.gndms.dspace.slice.stubs.TransformSliceToRequestSubspaceId subspaceIdContainer = new de.zib.gndms.dspace.slice.stubs.TransformSliceToRequestSubspaceId();
+    subspaceIdContainer.setSubspaceId(subspaceId);
+    params.setSubspaceId(subspaceIdContainer);
+    de.zib.gndms.dspace.slice.stubs.TransformSliceToRequestSliceKind sliceKindContainer = new de.zib.gndms.dspace.slice.stubs.TransformSliceToRequestSliceKind();
+    sliceKindContainer.setSliceKind(sliceKind);
+    params.setSliceKind(sliceKindContainer);
+    de.zib.gndms.dspace.slice.stubs.TransformSliceToResponse boxedResult = portType.transformSliceTo(params);
+    return boxedResult.getSliceReference();
     }
   }
 

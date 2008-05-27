@@ -44,7 +44,13 @@
       <element name="TransformSliceToRequest">
         <complexType>
           <sequence>
-            <element name="subspaceId" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <element name="subspaceId">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:SubspaceId" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
             <element name="sliceKind">
               <complexType>
                 <sequence>
@@ -69,7 +75,7 @@
             <element ref="ns3:TerminationTime" />
             <element ref="ns0:TotalStorageSize" />
             <element ref="ns0:SliceKind" />
-            <element ref="ns0:SliceId" />
+            <element ref="ns0:SliceLocation" />
             <element ref="ns2:SubspaceReference" />
           </sequence>
         </complexType>

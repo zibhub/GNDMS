@@ -78,11 +78,6 @@ public class SubspaceAuthorization implements PDP {
 		
 	}
 					
-	public static void authorizeGetSliceById() throws RemoteException {
-		
-		
-	}
-					
 	public static void authorizeListCreatableSliceKinds() throws RemoteException {
 		
 		
@@ -138,14 +133,6 @@ public class SubspaceAuthorization implements PDP {
 		} else if(operation.getLocalPart().equals("createSlice")){
 			try{
 				authorizeCreateSlice();
-				return true;
-			} catch (Exception e){
-				e.printStackTrace();
-				return false;
-			}
-		} else if(operation.getLocalPart().equals("getSliceById")){
-			try{
-				authorizeGetSliceById();
 				return true;
 			} catch (Exception e){
 				e.printStackTrace();

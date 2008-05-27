@@ -21,10 +21,7 @@
 <element name="AvailableStorageSize" type="impl:StorageSizeT" />
 
 <simpleType name="SliceKindT">
-    <restriction base="string">
-      <enumeration value="rw-ex" />
-      <enumeration value="ro-sh" />
-    </restriction>
+	<restriction base="QName" />
 </simpleType>
 
 <element name="SliceKind" type="impl:SliceKindT" />
@@ -35,4 +32,12 @@
 
 <element name="SliceId" type="impl:SliceIdT" />
 
+<simpleType name="SubspaceIdT">
+	<restriction base="QName" />
+</simpleType>
+
+<element name="SubspaceId" type="impl:SubspaceIdT" />
+
+<element name="SliceLocation" type="anyURI" />
+	
 </schema>

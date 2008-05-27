@@ -32,15 +32,9 @@ public class SubspaceProviderImpl{
     return boxedResult;
   }
 
-    public de.zib.gndms.dspace.subpace.stubs.GetSliceByIdResponse getSliceById(de.zib.gndms.dspace.subpace.stubs.GetSliceByIdRequest params) throws RemoteException, de.zib.gndms.dspace.subpace.stubs.types.UnknownSliceId {
-    de.zib.gndms.dspace.subpace.stubs.GetSliceByIdResponse boxedResult = new de.zib.gndms.dspace.subpace.stubs.GetSliceByIdResponse();
-    boxedResult.setSliceReference(impl.getSliceById(params.getSliceId().getSliceId()));
-    return boxedResult;
-  }
-
     public de.zib.gndms.dspace.subpace.stubs.ListCreatableSliceKindsResponse listCreatableSliceKinds(de.zib.gndms.dspace.subpace.stubs.ListCreatableSliceKindsRequest params) throws RemoteException {
     de.zib.gndms.dspace.subpace.stubs.ListCreatableSliceKindsResponse boxedResult = new de.zib.gndms.dspace.subpace.stubs.ListCreatableSliceKindsResponse();
-    impl.listCreatableSliceKinds();
+    boxedResult.setSliceKind(impl.listCreatableSliceKinds());
     return boxedResult;
   }
 

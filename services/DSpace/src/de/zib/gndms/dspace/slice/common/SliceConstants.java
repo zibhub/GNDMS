@@ -13,7 +13,7 @@ public interface SliceConstants {
 	public static final QName TERMINATIONTIME = new QName("http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd", "TerminationTime");
 	public static final QName TOTALSTORAGESIZE = new QName("http://gndms.zib.de/common/types", "TotalStorageSize");
 	public static final QName SLICEKIND = new QName("http://gndms.zib.de/common/types", "SliceKind");
-	public static final QName SLICEID = new QName("http://gndms.zib.de/common/types", "SliceId");
+	public static final QName SLICELOCATION = new QName("http://gndms.zib.de/common/types", "SliceLocation");
 	public static final QName SUBSPACEREFERENCE = new QName("http://dspace.gndms.zib.de/DSpace/Subspace/types", "SubspaceReference");
 	
 }

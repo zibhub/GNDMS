@@ -19,14 +19,20 @@
       <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" schemaLocation="./xsd/cagrid/types/security/security.xsd" />
       <import namespace="http://dspace.gndms.zib.de/DSpace/Slice/types" schemaLocation="./SliceTypes.xsd" />
       <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd" schemaLocation="../wsrf/lifetime/WS-ResourceLifetime.xsd" />
-      <element name="GetSubspaceByNameRequest">
+      <element name="GetSubspaceByIdRequest">
         <complexType>
           <sequence>
-            <element name="subspaceName" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <element name="subspaceId">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:SubspaceId" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
           </sequence>
         </complexType>
       </element>
-      <element name="GetSubspaceByNameResponse">
+      <element name="GetSubspaceByIdResponse">
         <complexType>
           <sequence>
             <element ref="ns2:SubspaceReference" minOccurs="1" maxOccurs="1" />
@@ -35,13 +41,27 @@
       </element>
       <element name="ListPublicSubspacesRequest">
         <complexType>
-          <sequence />
+          <sequence>
+            <element name="schemaURI" type="xs:anyURI" minOccurs="1" maxOccurs="1" />
+          </sequence>
         </complexType>
       </element>
       <element name="ListPublicSubspacesResponse">
         <complexType>
           <sequence>
             <element ref="ns2:SubspaceReference" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="ListSupportedSchemasRequest">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="ListSupportedSchemasResponse">
+        <complexType>
+          <sequence>
+            <element name="response" type="xs:anyURI" minOccurs="1" maxOccurs="unbounded" />
           </sequence>
         </complexType>
       </element>
@@ -53,17 +73,23 @@
     </schema>
   </types>
   <!--  place service messages here -->
-  <message name="GetSubspaceByNameRequest">
-    <part name="parameters" element="tns:GetSubspaceByNameRequest" />
+  <message name="GetSubspaceByIdRequest">
+    <part name="parameters" element="tns:GetSubspaceByIdRequest" />
   </message>
-  <message name="GetSubspaceByNameResponse">
-    <part name="parameters" element="tns:GetSubspaceByNameResponse" />
+  <message name="GetSubspaceByIdResponse">
+    <part name="parameters" element="tns:GetSubspaceByIdResponse" />
   </message>
   <message name="ListPublicSubspacesRequest">
     <part name="parameters" element="tns:ListPublicSubspacesRequest" />
   </message>
   <message name="ListPublicSubspacesResponse">
     <part name="parameters" element="tns:ListPublicSubspacesResponse" />
+  </message>
+  <message name="ListSupportedSchemasRequest">
+    <part name="parameters" element="tns:ListSupportedSchemasRequest" />
+  </message>
+  <message name="ListSupportedSchemasResponse">
+    <part name="parameters" element="tns:ListSupportedSchemasResponse" />
   </message>
   <message name="UnknownSubspaceFaultMessage">
     <part name="fault" element="ns5:UnknownSubspace" />
@@ -74,14 +100,18 @@
                       
   ============================================================-->
   <portType name="DSpacePortType" wsrp:ResourceProperties="tns:DSpaceResourceProperties">
-    <operation name="GetSubspaceByName">
-      <input message="tns:GetSubspaceByNameRequest" wsa:Action="http://dspace.gndms.zib.de/DSpace/GetSubspaceByNameRequest" />
-      <output message="tns:GetSubspaceByNameResponse" wsa:Action="http://dspace.gndms.zib.de/DSpace/GetSubspaceByNameResponse" />
+    <operation name="GetSubspaceById">
+      <input message="tns:GetSubspaceByIdRequest" wsa:Action="http://dspace.gndms.zib.de/DSpace/GetSubspaceByIdRequest" />
+      <output message="tns:GetSubspaceByIdResponse" wsa:Action="http://dspace.gndms.zib.de/DSpace/GetSubspaceByIdResponse" />
       <fault name="UnknownSubspace" message="tns:UnknownSubspaceFaultMessage" wsa:Action="http://dspace.gndms.zib.de/DSpace/UnknownSubspaceFaultMessage" />
     </operation>
     <operation name="ListPublicSubspaces">
       <input message="tns:ListPublicSubspacesRequest" wsa:Action="http://dspace.gndms.zib.de/DSpace/ListPublicSubspacesRequest" />
       <output message="tns:ListPublicSubspacesResponse" wsa:Action="http://dspace.gndms.zib.de/DSpace/ListPublicSubspacesResponse" />
+    </operation>
+    <operation name="ListSupportedSchemas">
+      <input message="tns:ListSupportedSchemasRequest" wsa:Action="http://dspace.gndms.zib.de/DSpace/ListSupportedSchemasRequest" />
+      <output message="tns:ListSupportedSchemasResponse" wsa:Action="http://dspace.gndms.zib.de/DSpace/ListSupportedSchemasResponse" />
     </operation>
     <wsdl:operation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="GetMultipleResourceProperties">
       <wsdl:input name="GetMultipleResourcePropertiesRequest" message="wsrpw:GetMultipleResourcePropertiesRequest" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetMultipleResourceProperties" />

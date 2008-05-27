@@ -12,6 +12,14 @@ import java.rmi.RemoteException;
  */
 public interface SubspaceI {
 
+  public org.oasis.wsn.SubscribeResponse subscribe(org.oasis.wsn.Subscribe params) throws RemoteException ;
+
+  public org.oasis.wsrf.properties.GetMultipleResourcePropertiesResponse getMultipleResourceProperties(org.oasis.wsrf.properties.GetMultipleResourceProperties_Element params) throws RemoteException ;
+
+  public org.oasis.wsrf.properties.GetResourcePropertyResponse getResourceProperty(javax.xml.namespace.QName params) throws RemoteException ;
+
+  public org.oasis.wsrf.properties.QueryResourcePropertiesResponse queryResourceProperties(org.oasis.wsrf.properties.QueryResourceProperties_Element params) throws RemoteException ;
+
   /**
    * Creates a new slice with the given kind in this subspace
    *
@@ -23,30 +31,13 @@ public interface SubspaceI {
    * @throws OutOfSpace
    *	
    */
-  public de.zib.gndms.dspace.slice.stubs.types.SliceReference createSlice(types.SliceKindT sliceKind,types.StorageSizeT sliceSize,java.util.Calendar terminationTime) throws RemoteException, de.zib.gndms.dspace.subpace.stubs.types.UnsupportedOrInvalidSliceKind, de.zib.gndms.dspace.subpace.stubs.types.OutOfSpace ;
-
-  /**
-   * Returns an EPR to a slice in this subspace given its id
-   *
-   * @param sliceId
-   * @throws UnknownSliceId
-   *	
-   */
-  public de.zib.gndms.dspace.slice.stubs.types.SliceReference getSliceById(java.lang.String sliceId) throws RemoteException, de.zib.gndms.dspace.subpace.stubs.types.UnknownSliceId ;
+  public de.zib.gndms.dspace.slice.stubs.types.SliceReference createSlice(javax.xml.namespace.QName sliceKind,types.StorageSizeT sliceSize,java.util.Calendar terminationTime) throws RemoteException, de.zib.gndms.dspace.subpace.stubs.types.UnsupportedOrInvalidSliceKind, de.zib.gndms.dspace.subpace.stubs.types.OutOfSpace ;
 
   /**
    * Returns a (possibly incompletet) list of all slice kinds supported by this subspaces CreateSlice() method
    *
    */
-  public void listCreatableSliceKinds() throws RemoteException ;
-
-  public org.oasis.wsn.SubscribeResponse subscribe(org.oasis.wsn.Subscribe params) throws RemoteException ;
-
-  public org.oasis.wsrf.properties.GetMultipleResourcePropertiesResponse getMultipleResourceProperties(org.oasis.wsrf.properties.GetMultipleResourceProperties_Element params) throws RemoteException ;
-
-  public org.oasis.wsrf.properties.GetResourcePropertyResponse getResourceProperty(javax.xml.namespace.QName params) throws RemoteException ;
-
-  public org.oasis.wsrf.properties.QueryResourcePropertiesResponse queryResourceProperties(org.oasis.wsrf.properties.QueryResourceProperties_Element params) throws RemoteException ;
+  public javax.xml.namespace.QName[] listCreatableSliceKinds() throws RemoteException ;
 
 }
 
