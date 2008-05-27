@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<wsdl:definitions name="Subspace" targetNamespace="http://dspace.gndms.zib.de/DSpace/Subspace/service" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:binding="http://dspace.gndms.zib.de/DSpace/Subspace/bindings" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
-  <wsdl:import namespace="http://dspace.gndms.zib.de/DSpace/Subspace/bindings" location="Subspace_bindings.wsdl"/>
-  <wsdl:service name="SubspaceService">
-    <wsdl:port name="SubspacePortTypePort" binding="binding:SubspacePortTypeSOAPBinding">
-      <soap:address location="http://localhost:8080/wsrf/services/"/>
-    </wsdl:port>
-  </wsdl:service>
-</wsdl:definitions>
