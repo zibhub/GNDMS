@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="DSpace" targetNamespace="http://dspace.gndms.zib.de/DSpace/service" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:binding="http://dspace.gndms.zib.de/DSpace/bindings" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:import namespace="http://dspace.gndms.zib.de/DSpace/bindings" location="DSpace_bindings.wsdl"/>
+  <wsdl:service name="DSpaceService">
+    <wsdl:port name="DSpacePortTypePort" binding="binding:DSpacePortTypeSOAPBinding">
+      <soap:address location="http://localhost:8080/wsrf/services/"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
