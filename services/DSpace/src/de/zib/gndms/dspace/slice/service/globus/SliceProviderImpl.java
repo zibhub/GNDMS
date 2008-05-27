@@ -34,7 +34,7 @@ public class SliceProviderImpl{
 
     public de.zib.gndms.dspace.slice.stubs.TransformSliceToResponse transformSliceTo(de.zib.gndms.dspace.slice.stubs.TransformSliceToRequest params) throws RemoteException, de.zib.gndms.dspace.slice.stubs.types.UnsupportedOrInvalidSliceKind, de.zib.gndms.dspace.slice.stubs.types.OutOfSpace, de.zib.gndms.dspace.slice.stubs.types.UnknownSubspace {
     de.zib.gndms.dspace.slice.stubs.TransformSliceToResponse boxedResult = new de.zib.gndms.dspace.slice.stubs.TransformSliceToResponse();
-    boxedResult.setSliceReference(impl.transformSliceTo(params.getSubspaceId(),params.getSliceKind().getSliceKind()));
+    boxedResult.setSliceReference(impl.transformSliceTo(params.getSubspaceId().getSubspaceId(),params.getSliceKind().getSliceKind()));
     return boxedResult;
   }
 

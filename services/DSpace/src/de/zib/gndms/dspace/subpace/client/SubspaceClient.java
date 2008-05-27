@@ -76,44 +76,6 @@ public class SubspaceClient extends SubspaceClientBase implements SubspaceI {
 		}
 	}
 
-  public de.zib.gndms.dspace.slice.stubs.types.SliceReference createSlice(types.SliceKindT sliceKind,types.StorageSizeT sliceSize,java.util.Calendar terminationTime) throws RemoteException, de.zib.gndms.dspace.subpace.stubs.types.UnsupportedOrInvalidSliceKind, de.zib.gndms.dspace.subpace.stubs.types.OutOfSpace {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"createSlice");
-    de.zib.gndms.dspace.subpace.stubs.CreateSliceRequest params = new de.zib.gndms.dspace.subpace.stubs.CreateSliceRequest();
-    de.zib.gndms.dspace.subpace.stubs.CreateSliceRequestSliceKind sliceKindContainer = new de.zib.gndms.dspace.subpace.stubs.CreateSliceRequestSliceKind();
-    sliceKindContainer.setSliceKind(sliceKind);
-    params.setSliceKind(sliceKindContainer);
-    de.zib.gndms.dspace.subpace.stubs.CreateSliceRequestSliceSize sliceSizeContainer = new de.zib.gndms.dspace.subpace.stubs.CreateSliceRequestSliceSize();
-    sliceSizeContainer.setTotalStorageSize(sliceSize);
-    params.setSliceSize(sliceSizeContainer);
-    de.zib.gndms.dspace.subpace.stubs.CreateSliceRequestTerminationTime terminationTimeContainer = new de.zib.gndms.dspace.subpace.stubs.CreateSliceRequestTerminationTime();
-    terminationTimeContainer.setTerminationTime(terminationTime);
-    params.setTerminationTime(terminationTimeContainer);
-    de.zib.gndms.dspace.subpace.stubs.CreateSliceResponse boxedResult = portType.createSlice(params);
-    return boxedResult.getSliceReference();
-    }
-  }
-
-  public de.zib.gndms.dspace.slice.stubs.types.SliceReference getSliceById(java.lang.String sliceId) throws RemoteException, de.zib.gndms.dspace.subpace.stubs.types.UnknownSliceId {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"getSliceById");
-    de.zib.gndms.dspace.subpace.stubs.GetSliceByIdRequest params = new de.zib.gndms.dspace.subpace.stubs.GetSliceByIdRequest();
-    de.zib.gndms.dspace.subpace.stubs.GetSliceByIdRequestSliceId sliceIdContainer = new de.zib.gndms.dspace.subpace.stubs.GetSliceByIdRequestSliceId();
-    sliceIdContainer.setSliceId(sliceId);
-    params.setSliceId(sliceIdContainer);
-    de.zib.gndms.dspace.subpace.stubs.GetSliceByIdResponse boxedResult = portType.getSliceById(params);
-    return boxedResult.getSliceReference();
-    }
-  }
-
-  public void listCreatableSliceKinds() throws RemoteException {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"listCreatableSliceKinds");
-    de.zib.gndms.dspace.subpace.stubs.ListCreatableSliceKindsRequest params = new de.zib.gndms.dspace.subpace.stubs.ListCreatableSliceKindsRequest();
-    de.zib.gndms.dspace.subpace.stubs.ListCreatableSliceKindsResponse boxedResult = portType.listCreatableSliceKinds(params);
-    }
-  }
-
   public org.oasis.wsn.SubscribeResponse subscribe(org.oasis.wsn.Subscribe params) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"subscribe");
@@ -139,6 +101,33 @@ public class SubspaceClient extends SubspaceClientBase implements SubspaceI {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"queryResourceProperties");
     return portType.queryResourceProperties(params);
+    }
+  }
+
+  public de.zib.gndms.dspace.slice.stubs.types.SliceReference createSlice(javax.xml.namespace.QName sliceKind,types.StorageSizeT sliceSize,java.util.Calendar terminationTime) throws RemoteException, de.zib.gndms.dspace.subpace.stubs.types.UnsupportedOrInvalidSliceKind, de.zib.gndms.dspace.subpace.stubs.types.OutOfSpace {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"createSlice");
+    de.zib.gndms.dspace.subpace.stubs.CreateSliceRequest params = new de.zib.gndms.dspace.subpace.stubs.CreateSliceRequest();
+    de.zib.gndms.dspace.subpace.stubs.CreateSliceRequestSliceKind sliceKindContainer = new de.zib.gndms.dspace.subpace.stubs.CreateSliceRequestSliceKind();
+    sliceKindContainer.setSliceKind(sliceKind);
+    params.setSliceKind(sliceKindContainer);
+    de.zib.gndms.dspace.subpace.stubs.CreateSliceRequestSliceSize sliceSizeContainer = new de.zib.gndms.dspace.subpace.stubs.CreateSliceRequestSliceSize();
+    sliceSizeContainer.setTotalStorageSize(sliceSize);
+    params.setSliceSize(sliceSizeContainer);
+    de.zib.gndms.dspace.subpace.stubs.CreateSliceRequestTerminationTime terminationTimeContainer = new de.zib.gndms.dspace.subpace.stubs.CreateSliceRequestTerminationTime();
+    terminationTimeContainer.setTerminationTime(terminationTime);
+    params.setTerminationTime(terminationTimeContainer);
+    de.zib.gndms.dspace.subpace.stubs.CreateSliceResponse boxedResult = portType.createSlice(params);
+    return boxedResult.getSliceReference();
+    }
+  }
+
+  public javax.xml.namespace.QName[] listCreatableSliceKinds() throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"listCreatableSliceKinds");
+    de.zib.gndms.dspace.subpace.stubs.ListCreatableSliceKindsRequest params = new de.zib.gndms.dspace.subpace.stubs.ListCreatableSliceKindsRequest();
+    de.zib.gndms.dspace.subpace.stubs.ListCreatableSliceKindsResponse boxedResult = portType.listCreatableSliceKinds(params);
+    return boxedResult.getSliceKind();
     }
   }
 

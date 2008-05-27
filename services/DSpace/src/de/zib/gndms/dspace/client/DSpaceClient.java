@@ -76,25 +76,6 @@ public class DSpaceClient extends DSpaceClientBase implements DSpaceI {
 		}
 	}
 
-  public de.zib.gndms.dspace.subpace.stubs.types.SubspaceReference getSubspaceByName(java.lang.String subspaceName) throws RemoteException, de.zib.gndms.dspace.stubs.types.UnknownSubspace {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"getSubspaceByName");
-    de.zib.gndms.dspace.stubs.GetSubspaceByNameRequest params = new de.zib.gndms.dspace.stubs.GetSubspaceByNameRequest();
-    params.setSubspaceName(subspaceName);
-    de.zib.gndms.dspace.stubs.GetSubspaceByNameResponse boxedResult = portType.getSubspaceByName(params);
-    return boxedResult.getSubspaceReference();
-    }
-  }
-
-  public de.zib.gndms.dspace.subpace.stubs.types.SubspaceReference[] listPublicSubspaces() throws RemoteException {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"listPublicSubspaces");
-    de.zib.gndms.dspace.stubs.ListPublicSubspacesRequest params = new de.zib.gndms.dspace.stubs.ListPublicSubspacesRequest();
-    de.zib.gndms.dspace.stubs.ListPublicSubspacesResponse boxedResult = portType.listPublicSubspaces(params);
-    return boxedResult.getSubspaceReference();
-    }
-  }
-
   public org.oasis.wsrf.properties.GetMultipleResourcePropertiesResponse getMultipleResourceProperties(org.oasis.wsrf.properties.GetMultipleResourceProperties_Element params) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getMultipleResourceProperties");
@@ -113,6 +94,37 @@ public class DSpaceClient extends DSpaceClientBase implements DSpaceI {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"queryResourceProperties");
     return portType.queryResourceProperties(params);
+    }
+  }
+
+  public de.zib.gndms.dspace.subpace.stubs.types.SubspaceReference getSubspaceById(javax.xml.namespace.QName subspaceId) throws RemoteException, de.zib.gndms.dspace.stubs.types.UnknownSubspace {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getSubspaceById");
+    de.zib.gndms.dspace.stubs.GetSubspaceByIdRequest params = new de.zib.gndms.dspace.stubs.GetSubspaceByIdRequest();
+    de.zib.gndms.dspace.stubs.GetSubspaceByIdRequestSubspaceId subspaceIdContainer = new de.zib.gndms.dspace.stubs.GetSubspaceByIdRequestSubspaceId();
+    subspaceIdContainer.setSubspaceId(subspaceId);
+    params.setSubspaceId(subspaceIdContainer);
+    de.zib.gndms.dspace.stubs.GetSubspaceByIdResponse boxedResult = portType.getSubspaceById(params);
+    return boxedResult.getSubspaceReference();
+    }
+  }
+
+  public de.zib.gndms.dspace.subpace.stubs.types.SubspaceReference[] listPublicSubspaces(org.apache.axis.types.URI schemaURI) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"listPublicSubspaces");
+    de.zib.gndms.dspace.stubs.ListPublicSubspacesRequest params = new de.zib.gndms.dspace.stubs.ListPublicSubspacesRequest();
+    params.setSchemaURI(schemaURI);
+    de.zib.gndms.dspace.stubs.ListPublicSubspacesResponse boxedResult = portType.listPublicSubspaces(params);
+    return boxedResult.getSubspaceReference();
+    }
+  }
+
+  public org.apache.axis.types.URI[] listSupportedSchemas() throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"listSupportedSchemas");
+    de.zib.gndms.dspace.stubs.ListSupportedSchemasRequest params = new de.zib.gndms.dspace.stubs.ListSupportedSchemasRequest();
+    de.zib.gndms.dspace.stubs.ListSupportedSchemasResponse boxedResult = portType.listSupportedSchemas(params);
+    return boxedResult.getResponse();
     }
   }
 

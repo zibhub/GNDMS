@@ -26,15 +26,21 @@ public class DSpaceProviderImpl{
 	}
 	
 
-    public de.zib.gndms.dspace.stubs.GetSubspaceByNameResponse getSubspaceByName(de.zib.gndms.dspace.stubs.GetSubspaceByNameRequest params) throws RemoteException, de.zib.gndms.dspace.stubs.types.UnknownSubspace {
-    de.zib.gndms.dspace.stubs.GetSubspaceByNameResponse boxedResult = new de.zib.gndms.dspace.stubs.GetSubspaceByNameResponse();
-    boxedResult.setSubspaceReference(impl.getSubspaceByName(params.getSubspaceName()));
+    public de.zib.gndms.dspace.stubs.GetSubspaceByIdResponse getSubspaceById(de.zib.gndms.dspace.stubs.GetSubspaceByIdRequest params) throws RemoteException, de.zib.gndms.dspace.stubs.types.UnknownSubspace {
+    de.zib.gndms.dspace.stubs.GetSubspaceByIdResponse boxedResult = new de.zib.gndms.dspace.stubs.GetSubspaceByIdResponse();
+    boxedResult.setSubspaceReference(impl.getSubspaceById(params.getSubspaceId().getSubspaceId()));
     return boxedResult;
   }
 
     public de.zib.gndms.dspace.stubs.ListPublicSubspacesResponse listPublicSubspaces(de.zib.gndms.dspace.stubs.ListPublicSubspacesRequest params) throws RemoteException {
     de.zib.gndms.dspace.stubs.ListPublicSubspacesResponse boxedResult = new de.zib.gndms.dspace.stubs.ListPublicSubspacesResponse();
-    boxedResult.setSubspaceReference(impl.listPublicSubspaces());
+    boxedResult.setSubspaceReference(impl.listPublicSubspaces(params.getSchemaURI()));
+    return boxedResult;
+  }
+
+    public de.zib.gndms.dspace.stubs.ListSupportedSchemasResponse listSupportedSchemas(de.zib.gndms.dspace.stubs.ListSupportedSchemasRequest params) throws RemoteException {
+    de.zib.gndms.dspace.stubs.ListSupportedSchemasResponse boxedResult = new de.zib.gndms.dspace.stubs.ListSupportedSchemasResponse();
+    boxedResult.setResponse(impl.listSupportedSchemas());
     return boxedResult;
   }
 

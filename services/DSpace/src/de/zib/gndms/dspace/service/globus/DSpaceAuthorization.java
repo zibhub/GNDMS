@@ -68,12 +68,17 @@ public class DSpaceAuthorization implements PDP {
 		
 	}
 					
-	public static void authorizeGetSubspaceByName() throws RemoteException {
+	public static void authorizeGetSubspaceById() throws RemoteException {
 		
 		
 	}
 					
 	public static void authorizeListPublicSubspaces() throws RemoteException {
+		
+		
+	}
+					
+	public static void authorizeListSupportedSchemas() throws RemoteException {
 		
 		
 	}
@@ -117,9 +122,9 @@ public class DSpaceAuthorization implements PDP {
 				e.printStackTrace();
 				return false;
 			}
-		} else if(operation.getLocalPart().equals("getSubspaceByName")){
+		} else if(operation.getLocalPart().equals("getSubspaceById")){
 			try{
-				authorizeGetSubspaceByName();
+				authorizeGetSubspaceById();
 				return true;
 			} catch (Exception e){
 				e.printStackTrace();
@@ -128,6 +133,14 @@ public class DSpaceAuthorization implements PDP {
 		} else if(operation.getLocalPart().equals("listPublicSubspaces")){
 			try{
 				authorizeListPublicSubspaces();
+				return true;
+			} catch (Exception e){
+				e.printStackTrace();
+				return false;
+			}
+		} else if(operation.getLocalPart().equals("listSupportedSchemas")){
+			try{
+				authorizeListSupportedSchemas();
 				return true;
 			} catch (Exception e){
 				e.printStackTrace();

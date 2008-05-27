@@ -1,8 +1,8 @@
 #Introduce Properties
-#Tue May 27 17:33:02 CEST 2008
+#Tue May 27 19:42:13 CEST 2008
 introduce.skeleton.services.list=DSpace,Subspace,Slice
 introduce.skeleton.extensions=
-introduce.skeleton.timestamp=1211822413049
+introduce.skeleton.timestamp=1211908840193
 introduce.skeleton.service.name=DSpace
 introduce.skeleton.resource.options=main,singleton,identifiable,persistent,resourcePropertyManagement,secure
 introduce.skeleton.destination.dir=/Users/stepn/Source/GNDMS-Templates/services/DSpace

@@ -207,11 +207,11 @@ public abstract class SliceResourceBase extends ReflectionResource implements Re
 	
 	
 	
-	public types.SliceKindT getSliceKind(){
+	public javax.xml.namespace.QName getSliceKind(){
 		return ((SliceResourceProperties) getResourceBean()).getSliceKind();
 	}
 	
-	public void setSliceKind(types.SliceKindT sliceKind ) throws ResourceException {
+	public void setSliceKind(javax.xml.namespace.QName sliceKind ) throws ResourceException {
         ResourceProperty prop = getResourcePropertySet().get(SliceConstants.SLICEKIND);
 		prop.set(0, sliceKind);
         //call the first store to persist the resource
@@ -220,13 +220,13 @@ public abstract class SliceResourceBase extends ReflectionResource implements Re
 	
 	
 	
-	public java.lang.String getSliceId(){
-		return ((SliceResourceProperties) getResourceBean()).getSliceId();
+	public org.apache.axis.types.URI getSliceLocation(){
+		return ((SliceResourceProperties) getResourceBean()).getSliceLocation();
 	}
 	
-	public void setSliceId(java.lang.String sliceId ) throws ResourceException {
-        ResourceProperty prop = getResourcePropertySet().get(SliceConstants.SLICEID);
-		prop.set(0, sliceId);
+	public void setSliceLocation(org.apache.axis.types.URI sliceLocation ) throws ResourceException {
+        ResourceProperty prop = getResourcePropertySet().get(SliceConstants.SLICELOCATION);
+		prop.set(0, sliceLocation);
         //call the first store to persist the resource
         store();
 	}
