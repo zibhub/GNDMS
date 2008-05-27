@@ -1,0 +1,11 @@
+#Introduce Properties
+#Tue May 27 17:33:02 CEST 2008
+introduce.skeleton.services.list=DSpace,Subspace,Slice
+introduce.skeleton.extensions=
+introduce.skeleton.timestamp=1211822413049
+introduce.skeleton.service.name=DSpace
+introduce.skeleton.resource.options=main,singleton,identifiable,persistent,resourcePropertyManagement,secure
+introduce.skeleton.destination.dir=/Users/stepn/Source/GNDMS-Templates/services/DSpace
+introduce.skeleton.namespace.domain=http\://dspace.gndms.zib.de/DSpace
+introduce.ns.excludes=\ -x gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security
+introduce.soap.binding.excludes=\ 

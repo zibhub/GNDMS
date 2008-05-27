@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<schema targetNamespace="http://gndms.zib.de/common/types"
+        xmlns:impl="http://gndms.zib.de/common/types"
+        elementFormDefault="qualified" version="1.0" xmlns="http://www.w3.org/2001/XMLSchema"
+        xml:lang="EN">
+
+<simpleType name="UUIDT">
+	<restriction base="string">
+	    <pattern value="[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}"/>
+	</restriction>
+</simpleType>
+
+<complexType name="StorageSizeT">
+	<sequence>
+		<element name="StorageSizeValue" type="positiveInteger" />
+		<element name="StorageSizeUnit" type="string" />
+	</sequence>
+</complexType>
+
+<element name="TotalStorageSize" type="impl:StorageSizeT" />
+<element name="AvailableStorageSize" type="impl:StorageSizeT" />
+
+<simpleType name="SliceKindT">
+    <restriction base="string">
+      <enumeration value="rw-ex" />
+      <enumeration value="ro-sh" />
+    </restriction>
+</simpleType>
+
+<element name="SliceKind" type="impl:SliceKindT" />
+
+<simpleType name="SliceIdT">
+	<restriction base="impl:UUIDT" />
+</simpleType>
+
+<element name="SliceId" type="impl:SliceIdT" />
+
+</schema>

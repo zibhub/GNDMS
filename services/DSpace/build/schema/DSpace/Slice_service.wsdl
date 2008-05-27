@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="Slice" targetNamespace="http://dspace.gndms.zib.de/DSpace/Slice/service" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:binding="http://dspace.gndms.zib.de/DSpace/Slice/bindings" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:import namespace="http://dspace.gndms.zib.de/DSpace/Slice/bindings" location="Slice_bindings.wsdl"/>
+  <wsdl:service name="SliceService">
+    <wsdl:port name="SlicePortTypePort" binding="binding:SlicePortTypeSOAPBinding">
+      <soap:address location="http://localhost:8080/wsrf/services/"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
