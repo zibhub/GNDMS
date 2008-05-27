@@ -19,6 +19,8 @@
     <classpathentry kind="lib" path="lib/globus_wsrf_servicegroup_stubs.jar" />
     <classpathentry kind="lib" path="lib/jdom-1.0.jar" />
     <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Globus405" />
+    <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Globus407" />
+    <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/gt4-current" />
     <classpathentry kind="output" path="bin" />
 </classpath>
 
