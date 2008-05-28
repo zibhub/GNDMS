@@ -1,12 +1,12 @@
-package de.zib.gndms.dspace.slice.service.globus.resource;
+package de.zib.gndms.dspace.subspace.service.globus.resource;
 
 import gov.nih.nci.cagrid.common.Utils;
 
 import gov.nih.nci.cagrid.advertisement.AdvertisementClient;
 import gov.nih.nci.cagrid.advertisement.exceptions.UnregistrationException;
 
-import de.zib.gndms.dspace.slice.common.SliceConstants;
-import de.zib.gndms.dspace.slice.stubs.SliceResourceProperties;
+import de.zib.gndms.dspace.subspace.common.SubspaceConstants;
+import de.zib.gndms.dspace.subspace.stubs.SubspaceResourceProperties;
 import de.zib.gndms.dspace.service.DSpaceConfiguration;
 import java.io.File;
 import java.io.FileInputStream;
@@ -88,16 +88,15 @@ import org.oasis.wsrf.lifetime.TerminationNotification;
  * @created by Introduce Toolkit version 1.2
  * 
  */
-public abstract class SliceResourceBase extends ReflectionResource implements Resource
+public abstract class SubspaceResourceBase extends ReflectionResource implements Resource
                                                   ,PersistenceCallback
                                                   ,TopicListAccessor
                                                   ,SecureResource
-                                                  ,RemoveCallback
                                                   {
 
-	static final Log logger = LogFactory.getLog(SliceResourceBase.class);
+	static final Log logger = LogFactory.getLog(SubspaceResourceBase.class);
 
-	private SliceResourceConfiguration configuration;
+	private SubspaceResourceConfiguration configuration;
 	private ResourceSecurityDescriptor desc;
 	private ResourceKey key;
 
@@ -112,9 +111,9 @@ public abstract class SliceResourceBase extends ReflectionResource implements Re
     private TopicList topicList;
     private boolean beingLoaded = false;
     
-    public SliceResourceBase() {
+    public SubspaceResourceBase() {
         try {
-            resourcePropertyPersistenceHelper = new gov.nih.nci.cagrid.introduce.servicetools.XmlPersistenceHelper(SliceResourceProperties.class,DSpaceConfiguration.getConfiguration());
+            resourcePropertyPersistenceHelper = new gov.nih.nci.cagrid.introduce.servicetools.XmlPersistenceHelper(SubspaceResourceProperties.class,DSpaceConfiguration.getConfiguration());
             resourcePersistenceHelper = new FilePersistenceHelper(this.getClass(),DSpaceConfiguration.getConfiguration(),".resource");
         } catch (Exception ex) {
             logger.warn("Unable to initialize resource properties persistence helper", ex);
@@ -163,43 +162,30 @@ public abstract class SliceResourceBase extends ReflectionResource implements Re
 	
 	
 	
-	/**
-	 * 
-	 * @see org.globus.wsrf.ResourceLifetime#setTerminationTime(java.util.Calendar)
-	 */
-	public void setTerminationTime(Calendar time) {	
-		Topic terminationTopic = ((Topic)getResourcePropertySet().get(SliceConstants.TERMINATIONTIME));
-        if (terminationTopic != null) {
-            TerminationNotification terminationNotification =
-                new TerminationNotification();
-            terminationNotification.setTerminationTime(time);
-            try {
-                terminationTopic.notify(terminationNotification);
-            } catch(Exception e) {
-                logger.error("Unable to send terminationTime notification", e);
-            }
-        }	
-        
-		super.setTerminationTime(time);
-        //call the first store to persist the resource
-        try {
-            store();
-        } catch (ResourceException e) {
-            throw new RuntimeException(e);
-        }
-	}
-
 
 
 	    //Getters/Setters for ResourceProperties
 	
 	
+	public types.StorageSizeT getAvailableStorageSize(){
+		return ((SubspaceResourceProperties) getResourceBean()).getAvailableStorageSize();
+	}
+	
+	public void setAvailableStorageSize(types.StorageSizeT availableStorageSize ) throws ResourceException {
+        ResourceProperty prop = getResourcePropertySet().get(SubspaceConstants.AVAILABLESTORAGESIZE);
+		prop.set(0, availableStorageSize);
+        //call the first store to persist the resource
+        store();
+	}
+	
+	
+	
 	public types.StorageSizeT getTotalStorageSize(){
-		return ((SliceResourceProperties) getResourceBean()).getTotalStorageSize();
+		return ((SubspaceResourceProperties) getResourceBean()).getTotalStorageSize();
 	}
 	
 	public void setTotalStorageSize(types.StorageSizeT totalStorageSize ) throws ResourceException {
-        ResourceProperty prop = getResourcePropertySet().get(SliceConstants.TOTALSTORAGESIZE);
+        ResourceProperty prop = getResourcePropertySet().get(SubspaceConstants.TOTALSTORAGESIZE);
 		prop.set(0, totalStorageSize);
         //call the first store to persist the resource
         store();
@@ -207,39 +193,26 @@ public abstract class SliceResourceBase extends ReflectionResource implements Re
 	
 	
 	
-	public javax.xml.namespace.QName getSliceKind(){
-		return ((SliceResourceProperties) getResourceBean()).getSliceKind();
+	public de.zib.gndms.dspace.stubs.types.DSpaceReference getDSpaceReference(){
+		return ((SubspaceResourceProperties) getResourceBean()).getDSpaceReference();
 	}
 	
-	public void setSliceKind(javax.xml.namespace.QName sliceKind ) throws ResourceException {
-        ResourceProperty prop = getResourcePropertySet().get(SliceConstants.SLICEKIND);
-		prop.set(0, sliceKind);
+	public void setDSpaceReference(de.zib.gndms.dspace.stubs.types.DSpaceReference dSpaceReference ) throws ResourceException {
+        ResourceProperty prop = getResourcePropertySet().get(SubspaceConstants.DSPACEREFERENCE);
+		prop.set(0, dSpaceReference);
         //call the first store to persist the resource
         store();
 	}
 	
 	
 	
-	public org.apache.axis.types.URI getSliceLocation(){
-		return ((SliceResourceProperties) getResourceBean()).getSliceLocation();
+	public javax.xml.namespace.QName getSubspaceSpecifier(){
+		return ((SubspaceResourceProperties) getResourceBean()).getSubspaceSpecifier();
 	}
 	
-	public void setSliceLocation(org.apache.axis.types.URI sliceLocation ) throws ResourceException {
-        ResourceProperty prop = getResourcePropertySet().get(SliceConstants.SLICELOCATION);
-		prop.set(0, sliceLocation);
-        //call the first store to persist the resource
-        store();
-	}
-	
-	
-	
-	public de.zib.gndms.dspace.subspace.stubs.types.SubspaceReference getSubspaceReference(){
-		return ((SliceResourceProperties) getResourceBean()).getSubspaceReference();
-	}
-	
-	public void setSubspaceReference(de.zib.gndms.dspace.subspace.stubs.types.SubspaceReference subspaceReference ) throws ResourceException {
-        ResourceProperty prop = getResourcePropertySet().get(SliceConstants.SUBSPACEREFERENCE);
-		prop.set(0, subspaceReference);
+	public void setSubspaceSpecifier(javax.xml.namespace.QName subspaceSpecifier ) throws ResourceException {
+        ResourceProperty prop = getResourcePropertySet().get(SubspaceConstants.SUBSPACESPECIFIER);
+		prop.set(0, subspaceSpecifier);
         //call the first store to persist the resource
         store();
 	}
@@ -264,7 +237,7 @@ public abstract class SliceResourceBase extends ReflectionResource implements Re
 	}  
 
 	
-	public SliceResourceConfiguration getConfiguration() {
+	public SubspaceResourceConfiguration getConfiguration() {
 		if (this.configuration != null) {
 			return this.configuration;
 		}
@@ -272,13 +245,13 @@ public abstract class SliceResourceBase extends ReflectionResource implements Re
 
 		String servicePath = ctx.getTargetService();
 		servicePath = servicePath.substring(0,servicePath.lastIndexOf("/"));
-		servicePath+="/Slice";
+		servicePath+="/Subspace";
 
 		String jndiName = Constants.JNDI_SERVICES_BASE_NAME + servicePath + "/configuration";
 		logger.debug("Will read configuration from jndi name: " + jndiName);
 		try {
 			Context initialContext = new InitialContext();
-			this.configuration = (SliceResourceConfiguration) initialContext.lookup(jndiName);
+			this.configuration = (SubspaceResourceConfiguration) initialContext.lookup(jndiName);
 		} catch (Exception e) {
 			logger.error("when performing JNDI lookup for " + jndiName + ": " + e, e);
 		}
@@ -321,7 +294,7 @@ public abstract class SliceResourceBase extends ReflectionResource implements Re
             try {
                String transportURL = (String) ctx.getProperty(org.apache.axis.MessageContext.TRANS_URL);
 	           transportURL = transportURL.substring(0,transportURL.lastIndexOf('/') +1 );
-	           transportURL += "Slice";
+	           transportURL += "Subspace";
 			   epr = AddressingUtils.createEndpointReference(transportURL, getResourceKey());
             } catch (Exception e) {
                 logger.error("Could not form EPR: " + e, e);
@@ -463,16 +436,13 @@ public abstract class SliceResourceBase extends ReflectionResource implements Re
         return this.topicList;
     }
 
-    public void remove() throws ResourceException {     
-		resourcePropertyPersistenceHelper.remove(this);
-    }
 
 
     public void load(ResourceKey resourceKey) throws ResourceException, NoSuchResourceException, InvalidResourceKeyException {
 	  beingLoaded = true;
        //first we will recover the resource properties and initialize the resource
-	   SliceResourceProperties props = (SliceResourceProperties)resourcePropertyPersistenceHelper.load(SliceResourceProperties.class, resourceKey.getValue());
-       this.initialize(props, SliceConstants.RESOURCE_PROPERTY_SET, resourceKey.getValue());
+	   SubspaceResourceProperties props = (SubspaceResourceProperties)resourcePropertyPersistenceHelper.load(SubspaceResourceProperties.class, resourceKey.getValue());
+       this.initialize(props, SubspaceConstants.RESOURCE_PROPERTY_SET, resourceKey.getValue());
        
         //next we will recover the resource itself
         File file = resourcePersistenceHelper.getKeyAsFile(this.getClass(), resourceKey.getValue());

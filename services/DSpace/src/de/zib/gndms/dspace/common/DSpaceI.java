@@ -25,14 +25,14 @@ public interface DSpaceI {
    * @throws UnknownSubspace
    *	
    */
-  public de.zib.gndms.dspace.subpace.stubs.types.SubspaceReference getSubspace(javax.xml.namespace.QName subspaceSpecifier) throws RemoteException, de.zib.gndms.dspace.stubs.types.UnknownSubspace ;
+  public de.zib.gndms.dspace.subspace.stubs.types.SubspaceReference getSubspace(javax.xml.namespace.QName subspaceSpecifier) throws RemoteException, de.zib.gndms.dspace.stubs.types.UnknownSubspace ;
 
   /**
    * Returns list of all publically anounced subspaces for the given schema
    *
    * @param schemaURI
    */
-  public de.zib.gndms.dspace.subpace.stubs.types.SubspaceReference[] listPublicSubspaces(org.apache.axis.types.URI schemaURI) throws RemoteException ;
+  public de.zib.gndms.dspace.subspace.stubs.types.SubspaceReference[] listPublicSubspaces(org.apache.axis.types.URI schemaURI) throws RemoteException ;
 
   /**
    * Returns list of supported schemas

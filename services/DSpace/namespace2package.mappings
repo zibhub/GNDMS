@@ -5,9 +5,9 @@ http\://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01
 http\://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl=org.oasis.wsrf.properties
 http\://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl=org.oasis.wsrf.properties
 http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
-http\://dspace.gndms.zib.de/DSpace/Subspace=de.zib.gndms.dspace.subpace.stubs
-http\://dspace.gndms.zib.de/DSpace/Subspace/bindings=de.zib.gndms.dspace.subpace.stubs.bindings
-http\://dspace.gndms.zib.de/DSpace/Subspace/service=de.zib.gndms.dspace.subpace.stubs.service
+http\://dspace.gndms.zib.de/DSpace/Subspace=de.zib.gndms.dspace.subspace.stubs
+http\://dspace.gndms.zib.de/DSpace/Subspace/bindings=de.zib.gndms.dspace.subspace.stubs.bindings
+http\://dspace.gndms.zib.de/DSpace/Subspace/service=de.zib.gndms.dspace.subspace.stubs.service
 http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
 http\://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl=org.oasis.wsn
 http\://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl=org.oasis.wsrf.properties
@@ -26,6 +26,6 @@ http\://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01
 
 http\://dspace.gndms.zib.de/DSpace/types=de.zib.gndms.dspace.stubs.types
 http\://gndms.zib.de/common/types=types
-http\://dspace.gndms.zib.de/DSpace/Subspace/types=de.zib.gndms.dspace.subpace.stubs.types
+http\://dspace.gndms.zib.de/DSpace/Subspace/types=de.zib.gndms.dspace.subspace.stubs.types
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security=gov.nih.nci.cagrid.metadata.security
 http\://dspace.gndms.zib.de/DSpace/Slice/types=de.zib.gndms.dspace.slice.stubs.types

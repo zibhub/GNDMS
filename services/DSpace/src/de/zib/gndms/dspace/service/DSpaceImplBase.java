@@ -45,9 +45,9 @@ public abstract class DSpaceImplBase {
 	
 	
 	
-	public de.zib.gndms.dspace.subpace.service.globus.resource.SubspaceResourceHome getSubspaceResourceHome() throws Exception {
+	public de.zib.gndms.dspace.subspace.service.globus.resource.SubspaceResourceHome getSubspaceResourceHome() throws Exception {
 		ResourceHome resource = getResourceHome("subspaceHome");
-		return (de.zib.gndms.dspace.subpace.service.globus.resource.SubspaceResourceHome)resource;
+		return (de.zib.gndms.dspace.subspace.service.globus.resource.SubspaceResourceHome)resource;
 	}
 	
 	public de.zib.gndms.dspace.slice.service.globus.resource.SliceResourceHome getSliceResourceHome() throws Exception {

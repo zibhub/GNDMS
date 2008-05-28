@@ -1,6 +1,6 @@
-package de.zib.gndms.dspace.slice.service;
+package de.zib.gndms.dspace.subspace.service;
 
-import de.zib.gndms.dspace.slice.service.globus.resource.SliceResource;
+import de.zib.gndms.dspace.subspace.service.globus.resource.SubspaceResource;
 import  de.zib.gndms.dspace.service.DSpaceConfiguration;
 
 import java.rmi.RemoteException;
@@ -26,9 +26,9 @@ import org.globus.wsrf.ResourcePropertySet;
  * @created by Introduce Toolkit version 1.2
  * 
  */
-public abstract class SliceImplBase {
+public abstract class SubspaceImplBase {
 	
-	public SliceImplBase() throws RemoteException {
+	public SubspaceImplBase() throws RemoteException {
 	
 	}
 	
@@ -37,9 +37,9 @@ public abstract class SliceImplBase {
 	}
 	
 	
-	public de.zib.gndms.dspace.slice.service.globus.resource.SliceResourceHome getResourceHome() throws Exception {
+	public de.zib.gndms.dspace.subspace.service.globus.resource.SubspaceResourceHome getResourceHome() throws Exception {
 		ResourceHome resource = getResourceHome("home");
-		return (de.zib.gndms.dspace.slice.service.globus.resource.SliceResourceHome)resource;
+		return (de.zib.gndms.dspace.subspace.service.globus.resource.SubspaceResourceHome)resource;
 	}
 
 	
@@ -50,9 +50,9 @@ public abstract class SliceImplBase {
 		return (de.zib.gndms.dspace.service.globus.resource.DSpaceResourceHome)resource;
 	}
 	
-	public de.zib.gndms.dspace.subspace.service.globus.resource.SubspaceResourceHome getSubspaceResourceHome() throws Exception {
-		ResourceHome resource = getResourceHome("subspaceHome");
-		return (de.zib.gndms.dspace.subspace.service.globus.resource.SubspaceResourceHome)resource;
+	public de.zib.gndms.dspace.slice.service.globus.resource.SliceResourceHome getSliceResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("sliceHome");
+		return (de.zib.gndms.dspace.slice.service.globus.resource.SliceResourceHome)resource;
 	}
 	
 	

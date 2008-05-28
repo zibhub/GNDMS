@@ -13,11 +13,15 @@
   <Content xsi:type="agg:AggregatorContent" xmlns:agg="http://mds.globus.org/aggregator/types">
     <agg:AggregatorConfig xsi:type="agg:AggregatorConfig">
       <agg:GetMultipleResourcePropertiesPollType
+			xmlns:ns3="http://dspace.gndms.zib.de/DSpace/types"
 			xmlns:xs="http://www.w3.org/2001/XMLSchema"
-			xmlns:ns0="http://lofis.gndms.zib.de/LOFIS/types"
-			xmlns:ns2="http://lofis.gndms.zib.de/LOFIS/LofiSet/types"
-			xmlns:ns1="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"
-			xmlns:ns3="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd">
+			xmlns:ns5="http://lofis.gndms.zib.de/LOFIS/types"
+			xmlns:ns0="http://gndms.zib.de/common/types"
+			xmlns:ns7="http://lofis.gndms.zib.de/LOFIS/LofiSet/types"
+			xmlns:ns6="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"
+			xmlns:ns1="http://dspace.gndms.zib.de/DSpace/Subspace/types"
+			xmlns:ns2="http://dspace.gndms.zib.de/DSpace/Slice/types"
+			xmlns:ns4="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd">
         <!-- Specifies that the index should refresh information
             every 300000 milliseconds (once every 5 minutes) -->
         <agg:PollIntervalMillis>INDEX_REFRESH</agg:PollIntervalMillis>

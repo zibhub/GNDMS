@@ -16,6 +16,10 @@ http\://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01
 http\://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl=org.oasis.wsrf.properties
 http\://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl=org.oasis.wsrf.properties
 
+http\://dspace.gndms.zib.de/DSpace/types=types
 http\://lofis.gndms.zib.de/LOFIS/types=de.zib.gndms.lofis.stubs.types
+http\://gndms.zib.de/common/types=types
 http\://lofis.gndms.zib.de/LOFIS/LofiSet/types=de.zib.gndms.lofis.lofiset.stubs.types
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security=gov.nih.nci.cagrid.metadata.security
+http\://dspace.gndms.zib.de/DSpace/Subspace/types=types
+http\://dspace.gndms.zib.de/DSpace/Slice/types=types
