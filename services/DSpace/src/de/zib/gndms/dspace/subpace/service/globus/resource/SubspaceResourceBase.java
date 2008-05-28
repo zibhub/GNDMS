@@ -206,13 +206,13 @@ public abstract class SubspaceResourceBase extends ReflectionResource implements
 	
 	
 	
-	public javax.xml.namespace.QName getSubspaceId(){
-		return ((SubspaceResourceProperties) getResourceBean()).getSubspaceId();
+	public javax.xml.namespace.QName getSubspaceSpecifier(){
+		return ((SubspaceResourceProperties) getResourceBean()).getSubspaceSpecifier();
 	}
 	
-	public void setSubspaceId(javax.xml.namespace.QName subspaceId ) throws ResourceException {
-        ResourceProperty prop = getResourcePropertySet().get(SubspaceConstants.SUBSPACEID);
-		prop.set(0, subspaceId);
+	public void setSubspaceSpecifier(javax.xml.namespace.QName subspaceSpecifier ) throws ResourceException {
+        ResourceProperty prop = getResourcePropertySet().get(SubspaceConstants.SUBSPACESPECIFIER);
+		prop.set(0, subspaceSpecifier);
         //call the first store to persist the resource
         store();
 	}

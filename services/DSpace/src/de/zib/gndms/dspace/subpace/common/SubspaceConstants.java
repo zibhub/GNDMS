@@ -12,6 +12,6 @@ public interface SubspaceConstants {
 	public static final QName AVAILABLESTORAGESIZE = new QName("http://gndms.zib.de/common/types", "AvailableStorageSize");
 	public static final QName TOTALSTORAGESIZE = new QName("http://gndms.zib.de/common/types", "TotalStorageSize");
 	public static final QName DSPACEREFERENCE = new QName("http://dspace.gndms.zib.de/DSpace/types", "DSpaceReference");
-	public static final QName SUBSPACEID = new QName("http://gndms.zib.de/common/types", "SubspaceId");
+	public static final QName SUBSPACESPECIFIER = new QName("http://gndms.zib.de/common/types", "SubspaceSpecifier");
 	
 }

@@ -26,9 +26,9 @@ public class DSpaceProviderImpl{
 	}
 	
 
-    public de.zib.gndms.dspace.stubs.GetSubspaceByIdResponse getSubspaceById(de.zib.gndms.dspace.stubs.GetSubspaceByIdRequest params) throws RemoteException, de.zib.gndms.dspace.stubs.types.UnknownSubspace {
-    de.zib.gndms.dspace.stubs.GetSubspaceByIdResponse boxedResult = new de.zib.gndms.dspace.stubs.GetSubspaceByIdResponse();
-    boxedResult.setSubspaceReference(impl.getSubspaceById(params.getSubspaceId().getSubspaceId()));
+    public de.zib.gndms.dspace.stubs.GetSubspaceResponse getSubspace(de.zib.gndms.dspace.stubs.GetSubspaceRequest params) throws RemoteException, de.zib.gndms.dspace.stubs.types.UnknownSubspace {
+    de.zib.gndms.dspace.stubs.GetSubspaceResponse boxedResult = new de.zib.gndms.dspace.stubs.GetSubspaceResponse();
+    boxedResult.setSubspaceReference(impl.getSubspace(params.getSubspaceSpecifier().getSubspaceSpecifier()));
     return boxedResult;
   }
 

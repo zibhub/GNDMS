@@ -68,7 +68,7 @@ public class DSpaceAuthorization implements PDP {
 		
 	}
 					
-	public static void authorizeGetSubspaceById() throws RemoteException {
+	public static void authorizeGetSubspace() throws RemoteException {
 		
 		
 	}
@@ -122,9 +122,9 @@ public class DSpaceAuthorization implements PDP {
 				e.printStackTrace();
 				return false;
 			}
-		} else if(operation.getLocalPart().equals("getSubspaceById")){
+		} else if(operation.getLocalPart().equals("getSubspace")){
 			try{
-				authorizeGetSubspaceById();
+				authorizeGetSubspace();
 				return true;
 			} catch (Exception e){
 				e.printStackTrace();

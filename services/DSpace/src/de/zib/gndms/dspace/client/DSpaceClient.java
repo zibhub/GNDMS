@@ -97,14 +97,14 @@ public class DSpaceClient extends DSpaceClientBase implements DSpaceI {
     }
   }
 
-  public de.zib.gndms.dspace.subpace.stubs.types.SubspaceReference getSubspaceById(javax.xml.namespace.QName subspaceId) throws RemoteException, de.zib.gndms.dspace.stubs.types.UnknownSubspace {
+  public de.zib.gndms.dspace.subpace.stubs.types.SubspaceReference getSubspace(javax.xml.namespace.QName subspaceSpecifier) throws RemoteException, de.zib.gndms.dspace.stubs.types.UnknownSubspace {
     synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"getSubspaceById");
-    de.zib.gndms.dspace.stubs.GetSubspaceByIdRequest params = new de.zib.gndms.dspace.stubs.GetSubspaceByIdRequest();
-    de.zib.gndms.dspace.stubs.GetSubspaceByIdRequestSubspaceId subspaceIdContainer = new de.zib.gndms.dspace.stubs.GetSubspaceByIdRequestSubspaceId();
-    subspaceIdContainer.setSubspaceId(subspaceId);
-    params.setSubspaceId(subspaceIdContainer);
-    de.zib.gndms.dspace.stubs.GetSubspaceByIdResponse boxedResult = portType.getSubspaceById(params);
+      configureStubSecurity((Stub)portType,"getSubspace");
+    de.zib.gndms.dspace.stubs.GetSubspaceRequest params = new de.zib.gndms.dspace.stubs.GetSubspaceRequest();
+    de.zib.gndms.dspace.stubs.GetSubspaceRequestSubspaceSpecifier subspaceSpecifierContainer = new de.zib.gndms.dspace.stubs.GetSubspaceRequestSubspaceSpecifier();
+    subspaceSpecifierContainer.setSubspaceSpecifier(subspaceSpecifier);
+    params.setSubspaceSpecifier(subspaceSpecifierContainer);
+    de.zib.gndms.dspace.stubs.GetSubspaceResponse boxedResult = portType.getSubspace(params);
     return boxedResult.getSubspaceReference();
     }
   }

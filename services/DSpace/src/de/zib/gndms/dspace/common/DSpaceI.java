@@ -19,13 +19,13 @@ public interface DSpaceI {
   public org.oasis.wsrf.properties.QueryResourcePropertiesResponse queryResourceProperties(org.oasis.wsrf.properties.QueryResourceProperties_Element params) throws RemoteException ;
 
   /**
-   * Returns the subspace with the given id
+   * Returns the subspace for the given specifier
    *
-   * @param subspaceId
+   * @param subspaceSpecifier
    * @throws UnknownSubspace
    *	
    */
-  public de.zib.gndms.dspace.subpace.stubs.types.SubspaceReference getSubspaceById(javax.xml.namespace.QName subspaceId) throws RemoteException, de.zib.gndms.dspace.stubs.types.UnknownSubspace ;
+  public de.zib.gndms.dspace.subpace.stubs.types.SubspaceReference getSubspace(javax.xml.namespace.QName subspaceSpecifier) throws RemoteException, de.zib.gndms.dspace.stubs.types.UnknownSubspace ;
 
   /**
    * Returns list of all publically anounced subspaces for the given schema
