@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<wsdl:definitions name="LofiSet" targetNamespace="http://lofis.gndms.zib.de/LOFIS/LofiSet/service" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:binding="http://lofis.gndms.zib.de/LOFIS/LofiSet/bindings" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
-  <wsdl:import namespace="http://lofis.gndms.zib.de/LOFIS/LofiSet/bindings" location="LofiSet_bindings.wsdl"/>
-  <wsdl:service name="LofiSetService">
-    <wsdl:port name="LofiSetPortTypePort" binding="binding:LofiSetPortTypeSOAPBinding">
-      <soap:address location="http://localhost:8080/wsrf/services/"/>
-    </wsdl:port>
-  </wsdl:service>
-</wsdl:definitions>
