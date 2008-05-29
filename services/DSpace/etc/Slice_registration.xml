@@ -13,18 +13,13 @@
   <Content xsi:type="agg:AggregatorContent" xmlns:agg="http://mds.globus.org/aggregator/types">
     <agg:AggregatorConfig xsi:type="agg:AggregatorConfig">
       <agg:GetMultipleResourcePropertiesPollType
-			xmlns:ns10="http://dspace.gndms.zib.de/DSpace/types"
-			xmlns:ns0="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.xsd"
-			xmlns:ns3="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd"
+			xmlns:ns5="http://dspace.gndms.zib.de/DSpace/types"
 			xmlns:xs="http://www.w3.org/2001/XMLSchema"
-			xmlns:ns6="http://gndms.zib.de/common/types"
-			xmlns:ns8="http://dspace.gndms.zib.de/DSpace/Subspace/types"
-			xmlns:ns7="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"
-			xmlns:ns2="http://schemas.xmlsoap.org/ws/2004/03/addressing"
-			xmlns:ns9="http://dspace.gndms.zib.de/DSpace/Slice/types"
-			xmlns:ns5="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd"
-			xmlns:ns4="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"
-			xmlns:ns1="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.xsd">
+			xmlns:ns1="http://gndms.zib.de/common/types"
+			xmlns:ns3="http://dspace.gndms.zib.de/DSpace/Subspace/types"
+			xmlns:ns2="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"
+			xmlns:ns4="http://dspace.gndms.zib.de/DSpace/Slice/types"
+			xmlns:ns0="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd">
         <!-- Specifies that the index should refresh information
             every 300000 milliseconds (once every 5 minutes) -->
         <agg:PollIntervalMillis>INDEX_REFRESH</agg:PollIntervalMillis>

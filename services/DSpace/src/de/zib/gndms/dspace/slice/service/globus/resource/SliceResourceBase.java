@@ -233,11 +233,11 @@ public abstract class SliceResourceBase extends ReflectionResource implements Re
 	
 	
 	
-	public de.zib.gndms.dspace.subpace.stubs.types.SubspaceReference getSubspaceReference(){
+	public de.zib.gndms.dspace.subspace.stubs.types.SubspaceReference getSubspaceReference(){
 		return ((SliceResourceProperties) getResourceBean()).getSubspaceReference();
 	}
 	
-	public void setSubspaceReference(de.zib.gndms.dspace.subpace.stubs.types.SubspaceReference subspaceReference ) throws ResourceException {
+	public void setSubspaceReference(de.zib.gndms.dspace.subspace.stubs.types.SubspaceReference subspaceReference ) throws ResourceException {
         ResourceProperty prop = getResourcePropertySet().get(SliceConstants.SUBSPACEREFERENCE);
 		prop.set(0, subspaceReference);
         //call the first store to persist the resource

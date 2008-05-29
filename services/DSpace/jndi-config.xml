@@ -1,5 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jndiConfig xmlns="http://wsrf.globus.org/jndi/config">
+  <service name="SERVICE-INSTANCE-PREFIX/Subspace">
+    <resource name="configuration" type="de.zib.gndms.dspace.subspace.service.globus.resource.SubspaceResourceConfiguration">
+      <resourceParams>
+        <parameter>
+          <name>factory</name>
+          <value>org.globus.wsrf.jndi.BeanFactory</value>
+        </parameter>
+        <parameter>
+          <name>performRegistration</name>
+          <!-- Set this to false to skip ServiceGroup registration -->
+          <value>PERFORM_REGISTRATION</value>
+        </parameter>
+        <parameter>
+          <name>registrationTemplateFile</name>
+          <!-- Set this to the relative path (from the container root, e.g GLOBUS_LOCATION for globus container) of the registration parameters template file (ignored if performRegistration is false) -->
+          <value>ETC-PATH/Subspace_registration.xml</value>
+        </parameter>
+      </resourceParams>
+    </resource>
+    <resource name="home" type="de.zib.gndms.dspace.subspace.service.globus.resource.SubspaceResourceHome">
+      <resourceParams>
+        <parameter>
+          <name>factory</name>
+          <value>org.globus.wsrf.jndi.BeanFactory</value>
+        </parameter>
+        <parameter>
+          <name>resourceClass</name>
+          <value>de.zib.gndms.dspace.subspace.service.globus.resource.SubspaceResource</value>
+        </parameter>
+        <parameter>
+          <name>resourceKeyName</name>
+          <value>{http://dspace.gndms.zib.de/DSpace/Subspace}SubspaceResultsKey</value>
+        </parameter>
+        <parameter>
+          <name>resourceKeyType</name>
+          <value>java.lang.String</value>
+        </parameter>
+      </resourceParams>
+    </resource>
+    <resourceLink name="serviceconfiguration" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DSpace/serviceconfiguration" />
+    <resourceLink name="dSpaceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DSpace/home" />
+    <resourceLink name="sliceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Slice/home" />
+  </service>
   <service name="SERVICE-INSTANCE-PREFIX/Slice">
     <resource name="configuration" type="de.zib.gndms.dspace.slice.service.globus.resource.SliceResourceConfiguration">
       <resourceParams>
@@ -42,9 +85,10 @@
     <resourceLink name="serviceconfiguration" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DSpace/serviceconfiguration" />
     <resourceLink name="dSpaceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DSpace/home" />
     <resourceLink name="subspaceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Subspace/home" />
+    <resourceLink name="subspaceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Subspace/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/Subspace">
-    <resource name="configuration" type="de.zib.gndms.dspace.subpace.service.globus.resource.SubspaceResourceConfiguration">
+    <resource name="configuration" type="de.zib.gndms.dspace.subspace.service.globus.resource.SubspaceResourceConfiguration">
       <resourceParams>
         <parameter>
           <name>factory</name>
@@ -62,7 +106,7 @@
         </parameter>
       </resourceParams>
     </resource>
-    <resource name="home" type="de.zib.gndms.dspace.subpace.service.globus.resource.SubspaceResourceHome">
+    <resource name="home" type="de.zib.gndms.dspace.subspace.service.globus.resource.SubspaceResourceHome">
       <resourceParams>
         <parameter>
           <name>factory</name>
@@ -70,7 +114,7 @@
         </parameter>
         <parameter>
           <name>resourceClass</name>
-          <value>de.zib.gndms.dspace.subpace.service.globus.resource.SubspaceResource</value>
+          <value>de.zib.gndms.dspace.subspace.service.globus.resource.SubspaceResource</value>
         </parameter>
         <parameter>
           <name>resourceKeyName</name>
@@ -86,6 +130,7 @@
     <resourceLink name="dSpaceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DSpace/home" />
     <resourceLink name="sliceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Slice/home" />
     <resourceLink name="sliceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Slice/home" />
+    <resourceLink name="subspaceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Subspace/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/DSpace">
     <resource name="configuration" type="de.zib.gndms.dspace.service.globus.resource.DSpaceResourceConfiguration">
@@ -128,6 +173,7 @@
     </resource>
     <resourceLink name="subspaceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Subspace/home" />
     <resourceLink name="sliceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Slice/home" />
+    <resourceLink name="subspaceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Subspace/home" />
   </service>
 </jndiConfig>
 

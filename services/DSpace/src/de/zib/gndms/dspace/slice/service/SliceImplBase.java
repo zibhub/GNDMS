@@ -50,9 +50,9 @@ public abstract class SliceImplBase {
 		return (de.zib.gndms.dspace.service.globus.resource.DSpaceResourceHome)resource;
 	}
 	
-	public de.zib.gndms.dspace.subpace.service.globus.resource.SubspaceResourceHome getSubspaceResourceHome() throws Exception {
+	public de.zib.gndms.dspace.subspace.service.globus.resource.SubspaceResourceHome getSubspaceResourceHome() throws Exception {
 		ResourceHome resource = getResourceHome("subspaceHome");
-		return (de.zib.gndms.dspace.subpace.service.globus.resource.SubspaceResourceHome)resource;
+		return (de.zib.gndms.dspace.subspace.service.globus.resource.SubspaceResourceHome)resource;
 	}
 	
 	

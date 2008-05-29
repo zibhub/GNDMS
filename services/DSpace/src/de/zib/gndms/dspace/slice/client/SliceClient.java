@@ -118,7 +118,7 @@ public class SliceClient extends SliceClientBase implements SliceI {
     }
   }
 
-  public de.zib.gndms.dspace.slice.stubs.types.SliceReference transformSlice(javax.xml.namespace.QName sliceKind) throws RemoteException, de.zib.gndms.dspace.slice.stubs.types.UnsupportedOrInvalidSliceKind, de.zib.gndms.dspace.slice.stubs.types.OutOfSpace {
+  public de.zib.gndms.dspace.slice.stubs.types.SliceReference transformSlice(javax.xml.namespace.QName sliceKind) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"transformSlice");
     de.zib.gndms.dspace.slice.stubs.TransformSliceRequest params = new de.zib.gndms.dspace.slice.stubs.TransformSliceRequest();
@@ -130,7 +130,7 @@ public class SliceClient extends SliceClientBase implements SliceI {
     }
   }
 
-  public de.zib.gndms.dspace.slice.stubs.types.SliceReference transformSliceTo(javax.xml.namespace.QName subspaceSpecifier,javax.xml.namespace.QName sliceKind) throws RemoteException, de.zib.gndms.dspace.slice.stubs.types.UnsupportedOrInvalidSliceKind, de.zib.gndms.dspace.slice.stubs.types.OutOfSpace, de.zib.gndms.dspace.slice.stubs.types.UnknownSubspace {
+  public de.zib.gndms.dspace.slice.stubs.types.SliceReference transformSliceTo(javax.xml.namespace.QName subspaceSpecifier,javax.xml.namespace.QName sliceKind) throws RemoteException, de.zib.gndms.dspace.stubs.types.UnknownSubspace, de.zib.gndms.dspace.subspace.stubs.types.OutOfSpace {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"transformSliceTo");
     de.zib.gndms.dspace.slice.stubs.TransformSliceToRequest params = new de.zib.gndms.dspace.slice.stubs.TransformSliceToRequest();

@@ -1,5 +1,34 @@
 <ns1:ServiceDescription introduceVersion="1.2" xmlns:ns1="gme://gov.nih.nci.cagrid/1/Introduce">
  <ns2:Namespaces xsi:type="ns2:NamespacesType" xmlns:ns2="gme://gov.nih.nci.cagrid.introduce/1/Namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ns2:Namespace location="./gndms-common.xsd" namespace="http://gndms.zib.de/common/types" packageName="types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="AvailableStorageSize" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="File" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="FileMap" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="Lofi" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="LofiMap" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="LofiSet" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="SliceKind" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="SliceLocation" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="SubspaceSpecifier" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="TotalStorageSize" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./SubspaceTypes.xsd" namespace="http://dspace.gndms.zib.de/DSpace/Subspace/types" packageName="types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="OutOfSpace" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="SubspaceReference" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="UnknownOrInvalidSliceKind" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./SliceTypes.xsd" namespace="http://dspace.gndms.zib.de/DSpace/Slice/types" packageName="types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="SliceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./DSpaceTypes.xsd" namespace="http://dspace.gndms.zib.de/DSpace/types" packageName="types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="DSpaceReference" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="UnknownSubspace" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="../wsrf/lifetime/WS-ResourceLifetime.xsd" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd" packageName="" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="CurrentTime" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="TerminationNotification" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="TerminationTime" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
   <ns2:Namespace namespace="http://www.w3.org/2001/XMLSchema" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="anySimpleType" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="anyType" xsi:type="ns2:SchemaElementType"/>
@@ -63,11 +92,6 @@
   </ns2:Namespace>
   <ns2:Namespace location="./LofiSetTypes.xsd" namespace="http://lofis.gndms.zib.de/LOFIS/LofiSet/types" packageName="de.zib.gndms.lofis.lofiset.stubs.types" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="LofiSetReference" xsi:type="ns2:SchemaElementType"/>
-  </ns2:Namespace>
-  <ns2:Namespace location="../wsrf/lifetime/WS-ResourceLifetime.xsd" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd" packageName="org.oasis.wsrf.lifetime" xsi:type="ns2:NamespaceType">
-   <ns2:SchemaElement type="CurrentTime" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="TerminationNotification" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="TerminationTime" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
  </ns2:Namespaces>
  <ns3:Services xsi:type="ns3:ServicesType" xmlns:ns3="gme://gov.nih.nci.cagrid.introduce/1/Services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">

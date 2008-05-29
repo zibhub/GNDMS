@@ -97,7 +97,7 @@ public class DSpaceClient extends DSpaceClientBase implements DSpaceI {
     }
   }
 
-  public de.zib.gndms.dspace.subpace.stubs.types.SubspaceReference getSubspace(javax.xml.namespace.QName subspaceSpecifier) throws RemoteException, de.zib.gndms.dspace.stubs.types.UnknownSubspace {
+  public de.zib.gndms.dspace.subspace.stubs.types.SubspaceReference getSubspace(javax.xml.namespace.QName subspaceSpecifier) throws RemoteException, de.zib.gndms.dspace.stubs.types.UnknownSubspace {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getSubspace");
     de.zib.gndms.dspace.stubs.GetSubspaceRequest params = new de.zib.gndms.dspace.stubs.GetSubspaceRequest();
@@ -109,7 +109,7 @@ public class DSpaceClient extends DSpaceClientBase implements DSpaceI {
     }
   }
 
-  public de.zib.gndms.dspace.subpace.stubs.types.SubspaceReference[] listPublicSubspaces(org.apache.axis.types.URI schemaURI) throws RemoteException {
+  public de.zib.gndms.dspace.subspace.stubs.types.SubspaceReference[] listPublicSubspaces(org.apache.axis.types.URI schemaURI) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"listPublicSubspaces");
     de.zib.gndms.dspace.stubs.ListPublicSubspacesRequest params = new de.zib.gndms.dspace.stubs.ListPublicSubspacesRequest();
