@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://lofis.gndms.zib.de/LOFIS/LofiSet" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wns3="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:wns2="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:ns3="http://dspace.gndms.zib.de/DSpace/types" xmlns:ns5="http://lofis.gndms.zib.de/LOFIS/types" xmlns:ns0="http://gndms.zib.de/common/types" xmlns:ns7="http://lofis.gndms.zib.de/LOFIS/LofiSet/types" xmlns:ns6="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns1="http://dspace.gndms.zib.de/DSpace/Subspace/types" xmlns:ns2="http://dspace.gndms.zib.de/DSpace/Slice/types" xmlns:ns4="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd" name="LofiSet" targetNamespace="http://lofis.gndms.zib.de/LOFIS/LofiSet">
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://lofis.gndms.zib.de/LOFIS/LofiSet" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wns3="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:wns2="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:ns5="http://dspace.gndms.zib.de/DSpace/types" xmlns:ns7="http://lofis.gndms.zib.de/LOFIS/types" xmlns:ns2="http://gndms.zib.de/common/types" xmlns:ns9="http://lofis.gndms.zib.de/LOFIS/LofiSet/types" xmlns:ns8="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns4="http://dspace.gndms.zib.de/DSpace/Subspace/types" xmlns:ns3="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:ns0="http://dspace.gndms.zib.de/DSpace/Slice/types" xmlns:ns6="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd" xmlns:ns1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" name="LofiSet" targetNamespace="http://lofis.gndms.zib.de/LOFIS/LofiSet">
   <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" location="../wsrf/properties/WS-ResourceProperties.wsdl" />
   <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" location="../wsrf/faults/WS-BaseFaults.wsdl" />
   <import namespace="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" location="../wsrf/notification/WS-BaseN.wsdl" />
@@ -21,25 +21,82 @@
       <import namespace="http://lofis.gndms.zib.de/LOFIS/LofiSet/types" schemaLocation="./LofiSetTypes.xsd" />
       <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" schemaLocation="./xsd/cagrid/types/security/security.xsd" />
       <import namespace="http://dspace.gndms.zib.de/DSpace/Subspace/types" schemaLocation="./SubspaceTypes.xsd" />
-      <import namespace="http://dspace.gndms.zib.de/DSpace/Slice/types" schemaLocation="./SliceTypes.xsd" />
+      <import namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" schemaLocation="./../ws/addressing/WS-Addressing.xsd" />
+      <import namespace="http://dspace.gndms.zib.de/DSpace/Slice/types" schemaLocation="./../DSpace/SliceTypes.xsd" />
       <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd" schemaLocation="../wsrf/lifetime/WS-ResourceLifetime.xsd" />
+      <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="./../wsrf/faults/WS-BaseFaults.xsd" />
+      <element name="GetAvailableReplicaSlicesRequest">
+        <complexType>
+          <sequence>
+            <element name="completeSlicesOnly" type="xs:boolean" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetAvailableReplicaSlicesResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns2:ReplicaSlice" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetSubLofiSetRequest">
+        <complexType>
+          <sequence>
+            <element name="lofiMap">
+              <complexType>
+                <sequence>
+                  <element ref="ns2:LofiMap" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetSubLofiSetResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns9:LofiSetReference" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
       <element name="LofiSetResourceProperties">
         <complexType>
           <sequence>
-            <element ref="ns4:CurrentTime" />
-            <element ref="ns4:TerminationTime" />
+            <element ref="ns6:CurrentTime" />
+            <element ref="ns6:TerminationTime" />
+            <element ref="ns2:LofiSeq" />
           </sequence>
         </complexType>
       </element>
     </schema>
   </types>
   <!--  place service messages here -->
+  <message name="GetAvailableReplicaSlicesRequest">
+    <part name="parameters" element="tns:GetAvailableReplicaSlicesRequest" />
+  </message>
+  <message name="GetAvailableReplicaSlicesResponse">
+    <part name="parameters" element="tns:GetAvailableReplicaSlicesResponse" />
+  </message>
+  <message name="GetSubLofiSetRequest">
+    <part name="parameters" element="tns:GetSubLofiSetRequest" />
+  </message>
+  <message name="GetSubLofiSetResponse">
+    <part name="parameters" element="tns:GetSubLofiSetResponse" />
+  </message>
   <!--============================================================
 
                        P O R T T Y P E
                       
   ============================================================-->
   <portType name="LofiSetPortType" wsrp:ResourceProperties="tns:LofiSetResourceProperties">
+    <operation name="GetAvailableReplicaSlices">
+      <input message="tns:GetAvailableReplicaSlicesRequest" wsa:Action="http://lofis.gndms.zib.de/LOFIS/LofiSet/GetAvailableReplicaSlicesRequest" />
+      <output message="tns:GetAvailableReplicaSlicesResponse" wsa:Action="http://lofis.gndms.zib.de/LOFIS/LofiSet/GetAvailableReplicaSlicesResponse" />
+    </operation>
+    <operation name="GetSubLofiSet">
+      <input message="tns:GetSubLofiSetRequest" wsa:Action="http://lofis.gndms.zib.de/LOFIS/LofiSet/GetSubLofiSetRequest" />
+      <output message="tns:GetSubLofiSetResponse" wsa:Action="http://lofis.gndms.zib.de/LOFIS/LofiSet/GetSubLofiSetResponse" />
+    </operation>
     <operation name="getServiceSecurityMetadata">
       <input message="wns0:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />
       <output message="wns0:GetServiceSecurityMetadataResponse" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataResponse" />

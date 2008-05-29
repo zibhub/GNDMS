@@ -118,4 +118,27 @@ public class LofiSetClient extends LofiSetClientBase implements LofiSetI {
     }
   }
 
+  public types.ReplicaSliceT[] getAvailableReplicaSlices(boolean completeSlicesOnly) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getAvailableReplicaSlices");
+    de.zib.gndms.lofis.lofiset.stubs.GetAvailableReplicaSlicesRequest params = new de.zib.gndms.lofis.lofiset.stubs.GetAvailableReplicaSlicesRequest();
+    params.setCompleteSlicesOnly(completeSlicesOnly);
+    de.zib.gndms.lofis.lofiset.stubs.GetAvailableReplicaSlicesResponse boxedResult = portType.getAvailableReplicaSlices(params);
+    return boxedResult.getReplicaSlice();
+    }
+  }
+
+  public de.zib.gndms.lofis.lofiset.client.LofiSetClient getSubLofiSet(types.ConflictResolvingFileMappingSeqT lofiMap) throws RemoteException, org.apache.axis.types.URI.MalformedURIException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getSubLofiSet");
+    de.zib.gndms.lofis.lofiset.stubs.GetSubLofiSetRequest params = new de.zib.gndms.lofis.lofiset.stubs.GetSubLofiSetRequest();
+    de.zib.gndms.lofis.lofiset.stubs.GetSubLofiSetRequestLofiMap lofiMapContainer = new de.zib.gndms.lofis.lofiset.stubs.GetSubLofiSetRequestLofiMap();
+    lofiMapContainer.setLofiMap(lofiMap);
+    params.setLofiMap(lofiMapContainer);
+    de.zib.gndms.lofis.lofiset.stubs.GetSubLofiSetResponse boxedResult = portType.getSubLofiSet(params);
+    EndpointReferenceType ref = boxedResult.getLofiSetReference().getEndpointReference();
+    return new de.zib.gndms.lofis.lofiset.client.LofiSetClient(ref);
+    }
+  }
+
 }

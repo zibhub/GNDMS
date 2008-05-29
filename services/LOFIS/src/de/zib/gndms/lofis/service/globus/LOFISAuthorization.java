@@ -67,6 +67,16 @@ public class LOFISAuthorization implements PDP {
 		
 		
 	}
+					
+	public static void authorizeRegisterSlice() throws RemoteException {
+		
+		
+	}
+					
+	public static void authorizeMergeLofiSets() throws RemoteException {
+		
+		
+	}
 	
 	
 	public boolean isPermitted(Subject peerSubject, MessageContext context, QName operation)
@@ -102,6 +112,22 @@ public class LOFISAuthorization implements PDP {
 		} else if(operation.getLocalPart().equals("getServiceSecurityMetadata")){
 			try{
 				authorizeGetServiceSecurityMetadata();
+				return true;
+			} catch (Exception e){
+				e.printStackTrace();
+				return false;
+			}
+		} else if(operation.getLocalPart().equals("registerSlice")){
+			try{
+				authorizeRegisterSlice();
+				return true;
+			} catch (Exception e){
+				e.printStackTrace();
+				return false;
+			}
+		} else if(operation.getLocalPart().equals("mergeLofiSets")){
+			try{
+				authorizeMergeLofiSets();
 				return true;
 			} catch (Exception e){
 				e.printStackTrace();

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://lofis.gndms.zib.de/LOFIS" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns1="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:ns3="http://dspace.gndms.zib.de/DSpace/types" xmlns:ns5="http://lofis.gndms.zib.de/LOFIS/types" xmlns:ns0="http://gndms.zib.de/common/types" xmlns:ns7="http://lofis.gndms.zib.de/LOFIS/LofiSet/types" xmlns:ns6="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns1="http://dspace.gndms.zib.de/DSpace/Subspace/types" xmlns:ns2="http://dspace.gndms.zib.de/DSpace/Slice/types" xmlns:ns4="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd" name="LOFIS" targetNamespace="http://lofis.gndms.zib.de/LOFIS">
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://lofis.gndms.zib.de/LOFIS" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns1="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:ns5="http://dspace.gndms.zib.de/DSpace/types" xmlns:ns7="http://lofis.gndms.zib.de/LOFIS/types" xmlns:ns2="http://gndms.zib.de/common/types" xmlns:ns9="http://lofis.gndms.zib.de/LOFIS/LofiSet/types" xmlns:ns8="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns4="http://dspace.gndms.zib.de/DSpace/Subspace/types" xmlns:ns3="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:ns0="http://dspace.gndms.zib.de/DSpace/Slice/types" xmlns:ns6="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd" xmlns:ns1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" name="LOFIS" targetNamespace="http://lofis.gndms.zib.de/LOFIS">
   <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" location="../wsrf/properties/WS-ResourceProperties.wsdl" />
   <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" location="../wsrf/faults/WS-BaseFaults.wsdl" />
   <import namespace="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" location="../wsrf/notification/WS-BaseN.wsdl" />
@@ -19,8 +19,58 @@
       <import namespace="http://lofis.gndms.zib.de/LOFIS/LofiSet/types" schemaLocation="./LofiSetTypes.xsd" />
       <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" schemaLocation="./xsd/cagrid/types/security/security.xsd" />
       <import namespace="http://dspace.gndms.zib.de/DSpace/Subspace/types" schemaLocation="./SubspaceTypes.xsd" />
-      <import namespace="http://dspace.gndms.zib.de/DSpace/Slice/types" schemaLocation="./SliceTypes.xsd" />
+      <import namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" schemaLocation="./../ws/addressing/WS-Addressing.xsd" />
+      <import namespace="http://dspace.gndms.zib.de/DSpace/Slice/types" schemaLocation="./../DSpace/SliceTypes.xsd" />
       <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd" schemaLocation="../wsrf/lifetime/WS-ResourceLifetime.xsd" />
+      <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="./../wsrf/faults/WS-BaseFaults.xsd" />
+      <element name="RegisterSliceRequest">
+        <complexType>
+          <sequence>
+            <element name="lofiMap">
+              <complexType>
+                <sequence>
+                  <element ref="ns2:LofiMap" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="sliceReference">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:SliceReference" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="registerEverything" type="xs:boolean" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="RegisterSliceResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns9:LofiSetReference" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="MergeLofiSetsRequest">
+        <complexType>
+          <sequence>
+            <element name="lofiSetReference">
+              <complexType>
+                <sequence>
+                  <element ref="ns9:LofiSetReference" minOccurs="1" maxOccurs="unbounded" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="MergeLofiSetsResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns9:LofiSetReference" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
       <element name="LOFISResourceProperties">
         <complexType>
           <sequence />
@@ -29,12 +79,52 @@
     </schema>
   </types>
   <!--  place service messages here -->
+  <message name="RegisterSliceRequest">
+    <part name="parameters" element="tns:RegisterSliceRequest" />
+  </message>
+  <message name="RegisterSliceResponse">
+    <part name="parameters" element="tns:RegisterSliceResponse" />
+  </message>
+  <message name="MergeLofiSetsRequest">
+    <part name="parameters" element="tns:MergeLofiSetsRequest" />
+  </message>
+  <message name="MergeLofiSetsResponse">
+    <part name="parameters" element="tns:MergeLofiSetsResponse" />
+  </message>
+  <message name="ConflictingDestinationsInMapFaultMessage">
+    <part name="fault" element="ns7:ConflictingDestinationsInMap" />
+  </message>
+  <message name="MissingSourceFilesFaultMessage">
+    <part name="fault" element="ns7:MissingSourceFiles" />
+  </message>
+  <message name="ConflictResolutionFailedFaultMessage">
+    <part name="fault" element="ns7:ConflictResolutionFailed" />
+  </message>
+  <message name="UnsupportedOrInvalidSliceFaultMessage">
+    <part name="fault" element="ns7:UnsupportedOrInvalidSlice" />
+  </message>
+  <message name="ConflictingLofiSetsInMergeFaultMessage">
+    <part name="fault" element="ns7:ConflictingLofiSetsInMerge" />
+  </message>
   <!--============================================================
 
                        P O R T T Y P E
                       
   ============================================================-->
   <portType name="LOFISPortType" wsrp:ResourceProperties="tns:LOFISResourceProperties">
+    <operation name="RegisterSlice">
+      <input message="tns:RegisterSliceRequest" wsa:Action="http://lofis.gndms.zib.de/LOFIS/RegisterSliceRequest" />
+      <output message="tns:RegisterSliceResponse" wsa:Action="http://lofis.gndms.zib.de/LOFIS/RegisterSliceResponse" />
+      <fault name="ConflictingDestinationsInMap" message="tns:ConflictingDestinationsInMapFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/ConflictingDestinationsInMapFaultMessage" />
+      <fault name="MissingSourceFiles" message="tns:MissingSourceFilesFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/MissingSourceFilesFaultMessage" />
+      <fault name="ConflictResolutionFailed" message="tns:ConflictResolutionFailedFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/ConflictResolutionFailedFaultMessage" />
+      <fault name="UnsupportedOrInvalidSlice" message="tns:UnsupportedOrInvalidSliceFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/UnsupportedOrInvalidSliceFaultMessage" />
+    </operation>
+    <operation name="MergeLofiSets">
+      <input message="tns:MergeLofiSetsRequest" wsa:Action="http://lofis.gndms.zib.de/LOFIS/MergeLofiSetsRequest" />
+      <output message="tns:MergeLofiSetsResponse" wsa:Action="http://lofis.gndms.zib.de/LOFIS/MergeLofiSetsResponse" />
+      <fault name="ConflictingLofiSetsInMerge" message="tns:ConflictingLofiSetsInMergeFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/ConflictingLofiSetsInMergeFaultMessage" />
+    </operation>
     <wsdl:operation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="GetMultipleResourceProperties">
       <wsdl:input name="GetMultipleResourcePropertiesRequest" message="wsrpw:GetMultipleResourcePropertiesRequest" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetMultipleResourceProperties" />
       <wsdl:output name="GetMultipleResourcePropertiesResponse" message="wsrpw:GetMultipleResourcePropertiesResponse" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetMultipleResourcePropertiesResponse" />

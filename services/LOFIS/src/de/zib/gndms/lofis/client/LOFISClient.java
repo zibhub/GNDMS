@@ -97,4 +97,33 @@ public class LOFISClient extends LOFISClientBase implements LOFISI {
     }
   }
 
+  public de.zib.gndms.lofis.lofiset.stubs.types.LofiSetReference registerSlice(types.ConflictResolvingFileMappingSeqT lofiMap,types.SliceReference sliceReference,boolean registerEverything) throws RemoteException, de.zib.gndms.lofis.stubs.types.ConflictingDestinationsInMap, de.zib.gndms.lofis.stubs.types.MissingSourceFiles, de.zib.gndms.lofis.stubs.types.ConflictResolutionFailed, de.zib.gndms.lofis.stubs.types.UnsupportedOrInvalidSlice {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"registerSlice");
+    de.zib.gndms.lofis.stubs.RegisterSliceRequest params = new de.zib.gndms.lofis.stubs.RegisterSliceRequest();
+    de.zib.gndms.lofis.stubs.RegisterSliceRequestLofiMap lofiMapContainer = new de.zib.gndms.lofis.stubs.RegisterSliceRequestLofiMap();
+    lofiMapContainer.setLofiMap(lofiMap);
+    params.setLofiMap(lofiMapContainer);
+    de.zib.gndms.lofis.stubs.RegisterSliceRequestSliceReference sliceReferenceContainer = new de.zib.gndms.lofis.stubs.RegisterSliceRequestSliceReference();
+    sliceReferenceContainer.setSliceReference(sliceReference);
+    params.setSliceReference(sliceReferenceContainer);
+    params.setRegisterEverything(registerEverything);
+    de.zib.gndms.lofis.stubs.RegisterSliceResponse boxedResult = portType.registerSlice(params);
+    return boxedResult.getLofiSetReference();
+    }
+  }
+
+  public de.zib.gndms.lofis.lofiset.client.LofiSetClient mergeLofiSets(de.zib.gndms.lofis.lofiset.stubs.types.LofiSetReference[] lofiSetReference) throws RemoteException, org.apache.axis.types.URI.MalformedURIException, de.zib.gndms.lofis.stubs.types.ConflictingLofiSetsInMerge {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"mergeLofiSets");
+    de.zib.gndms.lofis.stubs.MergeLofiSetsRequest params = new de.zib.gndms.lofis.stubs.MergeLofiSetsRequest();
+    de.zib.gndms.lofis.stubs.MergeLofiSetsRequestLofiSetReference lofiSetReferenceContainer = new de.zib.gndms.lofis.stubs.MergeLofiSetsRequestLofiSetReference();
+    lofiSetReferenceContainer.setLofiSetReference(lofiSetReference);
+    params.setLofiSetReference(lofiSetReferenceContainer);
+    de.zib.gndms.lofis.stubs.MergeLofiSetsResponse boxedResult = portType.mergeLofiSets(params);
+    EndpointReferenceType ref = boxedResult.getLofiSetReference().getEndpointReference();
+    return new de.zib.gndms.lofis.lofiset.client.LofiSetClient(ref);
+    }
+  }
+
 }
