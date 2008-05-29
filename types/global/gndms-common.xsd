@@ -1,0 +1,132 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<schema targetNamespace="http://gndms.zib.de/common/types"
+        xmlns:impl="http://gndms.zib.de/common/types"
+	    xmlns:slice="http://dspace.gndms.zib.de/DSpace/Slice/types"
+        elementFormDefault="qualified" version="1.0" xmlns="http://www.w3.org/2001/XMLSchema"
+        xml:lang="EN">
+	
+<import namespace="http://dspace.gndms.zib.de/DSpace/Slice/types"
+        schemaLocation="../DSpace/SliceTypes.xsd" />
+
+<simpleType name="UUIDT">
+	<restriction base="string">
+	    <pattern value="[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}"/>
+	</restriction>
+</simpleType>
+
+<complexType name="StorageSizeT">
+	<sequence>
+		<element name="StorageSizeValue" type="positiveInteger" />
+		<element name="StorageSizeUnit" type="string" />
+	</sequence>
+</complexType>
+
+<element name="TotalStorageSize" type="impl:StorageSizeT" />
+<element name="AvailableStorageSize" type="impl:StorageSizeT" />
+
+
+<element name="SubspaceSpecifier" type="QName" />
+
+<element name="SliceKind" type="QName" />
+
+<element name="SliceLocation" type="anyURI" />
+
+<simpleType name="FilenameT">
+	<!--
+		This excludes ., .., and all pathnames containing one of <,>,',",:,;,&,/,\,|,#,$,`
+
+		 This is defensive programming to prevent the worst when somebody forgets to
+		 properly escape filenames in staging scripts
+	-->
+	<restriction base="normalizedString">
+		<pattern value="([^.'&lt;&gt;$#&quot;:;&amp;/\\\|`][^'&lt;&gt;$#&quot;:;&amp;/\\\|`]*|
+\.[^.'&lt;&gt;$#&quot;:;&amp;/\\\|`][^'&lt;&gt;$#&quot;:;&amp;/\\\|`]*|
+[^.'&lt;&gt;$#&quot;:;&amp;/\\\|`]+)" />
+	</restriction>
+</simpleType>
+
+<element name="File" type="impl:FilenameT" />
+
+<complexType name="FileT">
+	<sequence>
+		<element ref="impl:File" minOccurs="1" maxOccurs="1"/>
+	</sequence>
+</complexType>
+
+<complexType name="FileSeqT">
+	<sequence>
+		<element ref="impl:File" minOccurs="0" maxOccurs="unbounded"/>
+	</sequence>
+</complexType>
+
+<simpleType name="FileMapConflictResolutionStrategyT">
+	<restriction base="string">
+		<enumeration value="destinationWins" />
+		<enumeration value="sourceWins" />
+		<enumeration value="error" />
+	</restriction>
+</simpleType>
+
+<attribute name="conflictResolutionStrategy"
+           type="impl:FileMapConflictResolutionStrategyT" default="error"/>
+
+<complexType name="FileMapEntryT">
+	<sequence>
+		<element name="Destination" minOccurs="1" maxOccurs="1">
+			<complexType>
+				<choice>
+					<element ref="impl:File" />
+					<element name="Skip">
+						<complexType />
+					</element>
+				</choice>
+			</complexType>
+		</element>
+		<element name="Source" type="impl:FileT" minOccurs="1" maxOccurs="1"/>
+	</sequence>
+</complexType>
+
+<complexType name="FileMappingSeqT">
+	<sequence>
+		<element name="MapFile" minOccurs="0" maxOccurs="unbounded">
+			<complexType>
+				<complexContent>
+					<extension base="impl:FileMapEntryT">
+						<attribute name="required" type="boolean" default="true" />
+					</extension>
+			</complexContent>
+			</complexType>
+		</element>
+	</sequence>
+</complexType>
+
+<complexType name="ConflictResolvingFileMappingSeqT">
+	<complexContent>
+		<extension base="impl:FileMappingSeqT">
+			<attribute ref="impl:conflictResolutionStrategy" />
+		</extension>
+	</complexContent>
+</complexType>
+
+<complexType name="ReplicaSliceT">
+	<sequence>
+		<element name="LofiMap" minOccurs="1" maxOccurs="1">
+			<complexType>
+			<complexContent>
+				<extension base="impl:FileMappingSeqT">
+					<attribute name="completeReplica" type="boolean" />
+				</extension>
+			</complexContent>
+			</complexType>
+		</element>
+		<element ref="slice:SliceReference" minOccurs="1" maxOccurs="1"/>
+	</sequence>
+</complexType>
+
+<element name="Lofi" type="impl:FileT" />
+<element name="LofiSeq" type="impl:FileSeqT" />
+<element name="LofiMap" type="impl:ConflictResolvingFileMappingSeqT" />
+
+<element name="ReplicaSlice" type="impl:ReplicaSliceT" />
+
+</schema>
