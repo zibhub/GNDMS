@@ -2,3 +2,12 @@ syntax:glob
 
 services/*/build/**
 .DS_Store
+*.ipr
+*.iws
+*.eml
+*.iml
+*.gar
+
+syntax:regexp
+^types/[A-Z].+
+

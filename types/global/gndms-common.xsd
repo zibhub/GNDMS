@@ -26,9 +26,7 @@
 
 
 <element name="SubspaceSpecifier" type="QName" />
-
 <element name="SliceKind" type="QName" />
-
 <element name="SliceLocation" type="anyURI" />
 
 <simpleType name="FilenameT">
