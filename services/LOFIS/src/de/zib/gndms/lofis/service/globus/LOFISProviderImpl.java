@@ -34,7 +34,7 @@ public class LOFISProviderImpl{
 
     public de.zib.gndms.lofis.stubs.MergeLofiSetsResponse mergeLofiSets(de.zib.gndms.lofis.stubs.MergeLofiSetsRequest params) throws RemoteException, de.zib.gndms.lofis.stubs.types.ConflictingLofiSetsInMerge {
     de.zib.gndms.lofis.stubs.MergeLofiSetsResponse boxedResult = new de.zib.gndms.lofis.stubs.MergeLofiSetsResponse();
-    boxedResult.setLofiSetReference(impl.mergeLofiSets(params.getLofiSetReference().getLofiSetReference()));
+    boxedResult.setLofiSetReference(impl.mergeLofiSets(params.getLofiSetRefs().getLofiSetReference()));
     return boxedResult;
   }
 

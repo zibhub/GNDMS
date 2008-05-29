@@ -20,7 +20,7 @@ public class LOFISImpl extends LOFISImplBase {
     throw new RemoteException("Not yet implemented");
   }
 
-  public de.zib.gndms.lofis.lofiset.stubs.types.LofiSetReference mergeLofiSets(de.zib.gndms.lofis.lofiset.stubs.types.LofiSetReference[] lofiSetReference) throws RemoteException, de.zib.gndms.lofis.stubs.types.ConflictingLofiSetsInMerge {
+  public de.zib.gndms.lofis.lofiset.stubs.types.LofiSetReference mergeLofiSets(de.zib.gndms.lofis.lofiset.stubs.types.LofiSetReference[] lofiSetRefs) throws RemoteException, de.zib.gndms.lofis.stubs.types.ConflictingLofiSetsInMerge {
 		org.apache.axis.message.addressing.EndpointReferenceType epr = new org.apache.axis.message.addressing.EndpointReferenceType();
 		de.zib.gndms.lofis.lofiset.service.globus.resource.LofiSetResourceHome home = null;
 		org.globus.wsrf.ResourceKey resourceKey = null;

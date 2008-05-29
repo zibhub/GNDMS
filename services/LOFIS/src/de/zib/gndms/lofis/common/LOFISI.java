@@ -41,11 +41,11 @@ public interface LOFISI {
   /**
    * Merge multiple lofi sets into one LofiSet
    *
-   * @param lofiSetReference
+   * @param lofiSetRefs
    * @throws ConflictingLofiSetsInMerge
    *	
    */
-  public de.zib.gndms.lofis.lofiset.client.LofiSetClient mergeLofiSets(de.zib.gndms.lofis.lofiset.stubs.types.LofiSetReference[] lofiSetReference) throws RemoteException, org.apache.axis.types.URI.MalformedURIException, de.zib.gndms.lofis.stubs.types.ConflictingLofiSetsInMerge ;
+  public de.zib.gndms.lofis.lofiset.client.LofiSetClient mergeLofiSets(de.zib.gndms.lofis.lofiset.stubs.types.LofiSetReference[] lofiSetRefs) throws RemoteException, org.apache.axis.types.URI.MalformedURIException, de.zib.gndms.lofis.stubs.types.ConflictingLofiSetsInMerge ;
 
 }
 

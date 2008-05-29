@@ -83,6 +83,12 @@
   <message name="GetSubLofiSetResponse">
     <part name="parameters" element="tns:GetSubLofiSetResponse" />
   </message>
+  <message name="MissingSourceFilesFaultMessage">
+    <part name="fault" element="ns7:MissingSourceFiles" />
+  </message>
+  <message name="ConflictingDestinationsInMapFaultMessage">
+    <part name="fault" element="ns7:ConflictingDestinationsInMap" />
+  </message>
   <!--============================================================
 
                        P O R T T Y P E
@@ -96,6 +102,8 @@
     <operation name="GetSubLofiSet">
       <input message="tns:GetSubLofiSetRequest" wsa:Action="http://lofis.gndms.zib.de/LOFIS/LofiSet/GetSubLofiSetRequest" />
       <output message="tns:GetSubLofiSetResponse" wsa:Action="http://lofis.gndms.zib.de/LOFIS/LofiSet/GetSubLofiSetResponse" />
+      <fault name="MissingSourceFiles" message="tns:MissingSourceFilesFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/LofiSet/MissingSourceFilesFaultMessage" />
+      <fault name="ConflictingDestinationsInMap" message="tns:ConflictingDestinationsInMapFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/LofiSet/ConflictingDestinationsInMapFaultMessage" />
     </operation>
     <operation name="getServiceSecurityMetadata">
       <input message="wns0:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />
