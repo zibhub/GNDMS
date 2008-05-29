@@ -26,4 +26,16 @@ public class LOFISProviderImpl{
 	}
 	
 
+    public de.zib.gndms.lofis.stubs.RegisterSliceResponse registerSlice(de.zib.gndms.lofis.stubs.RegisterSliceRequest params) throws RemoteException, de.zib.gndms.lofis.stubs.types.ConflictingDestinationsInMap, de.zib.gndms.lofis.stubs.types.MissingSourceFiles, de.zib.gndms.lofis.stubs.types.ConflictResolutionFailed, de.zib.gndms.lofis.stubs.types.UnsupportedOrInvalidSlice {
+    de.zib.gndms.lofis.stubs.RegisterSliceResponse boxedResult = new de.zib.gndms.lofis.stubs.RegisterSliceResponse();
+    boxedResult.setLofiSetReference(impl.registerSlice(params.getLofiMap().getLofiMap(),params.getSliceReference().getSliceReference(),params.isRegisterEverything()));
+    return boxedResult;
+  }
+
+    public de.zib.gndms.lofis.stubs.MergeLofiSetsResponse mergeLofiSets(de.zib.gndms.lofis.stubs.MergeLofiSetsRequest params) throws RemoteException, de.zib.gndms.lofis.stubs.types.ConflictingLofiSetsInMerge {
+    de.zib.gndms.lofis.stubs.MergeLofiSetsResponse boxedResult = new de.zib.gndms.lofis.stubs.MergeLofiSetsResponse();
+    boxedResult.setLofiSetReference(impl.mergeLofiSets(params.getLofiSetReference().getLofiSetReference()));
+    return boxedResult;
+  }
+
 }

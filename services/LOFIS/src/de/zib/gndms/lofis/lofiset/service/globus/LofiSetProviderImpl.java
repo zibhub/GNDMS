@@ -26,4 +26,16 @@ public class LofiSetProviderImpl{
 	}
 	
 
+    public de.zib.gndms.lofis.lofiset.stubs.GetAvailableReplicaSlicesResponse getAvailableReplicaSlices(de.zib.gndms.lofis.lofiset.stubs.GetAvailableReplicaSlicesRequest params) throws RemoteException {
+    de.zib.gndms.lofis.lofiset.stubs.GetAvailableReplicaSlicesResponse boxedResult = new de.zib.gndms.lofis.lofiset.stubs.GetAvailableReplicaSlicesResponse();
+    boxedResult.setReplicaSlice(impl.getAvailableReplicaSlices(params.isCompleteSlicesOnly()));
+    return boxedResult;
+  }
+
+    public de.zib.gndms.lofis.lofiset.stubs.GetSubLofiSetResponse getSubLofiSet(de.zib.gndms.lofis.lofiset.stubs.GetSubLofiSetRequest params) throws RemoteException {
+    de.zib.gndms.lofis.lofiset.stubs.GetSubLofiSetResponse boxedResult = new de.zib.gndms.lofis.lofiset.stubs.GetSubLofiSetResponse();
+    boxedResult.setLofiSetReference(impl.getSubLofiSet(params.getLofiMap().getLofiMap()));
+    return boxedResult;
+  }
+
 }

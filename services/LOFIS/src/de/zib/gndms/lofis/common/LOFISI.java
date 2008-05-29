@@ -18,5 +18,34 @@ public interface LOFISI {
 
   public org.oasis.wsrf.properties.QueryResourcePropertiesResponse queryResourceProperties(org.oasis.wsrf.properties.QueryResourceProperties_Element params) throws RemoteException ;
 
+  /**
+   * Create LofiSet from slice containing all files
+   *
+   * @param lofiMap
+   *	Map from lofi names to slice file names
+   * @param sliceReference
+   *	Slice to be registered
+   * @param registerEverything
+   *	Look for files in the slice that are not in lofiMap
+   * @throws ConflictingDestinationsInMap
+   *	
+   * @throws MissingSourceFiles
+   *	
+   * @throws ConflictResolutionFailed
+   *	
+   * @throws UnsupportedOrInvalidSlice
+   *	
+   */
+  public de.zib.gndms.lofis.lofiset.stubs.types.LofiSetReference registerSlice(types.ConflictResolvingFileMappingSeqT lofiMap,types.SliceReference sliceReference,boolean registerEverything) throws RemoteException, de.zib.gndms.lofis.stubs.types.ConflictingDestinationsInMap, de.zib.gndms.lofis.stubs.types.MissingSourceFiles, de.zib.gndms.lofis.stubs.types.ConflictResolutionFailed, de.zib.gndms.lofis.stubs.types.UnsupportedOrInvalidSlice ;
+
+  /**
+   * Merge multiple lofi sets into one LofiSet
+   *
+   * @param lofiSetReference
+   * @throws ConflictingLofiSetsInMerge
+   *	
+   */
+  public de.zib.gndms.lofis.lofiset.client.LofiSetClient mergeLofiSets(de.zib.gndms.lofis.lofiset.stubs.types.LofiSetReference[] lofiSetReference) throws RemoteException, org.apache.axis.types.URI.MalformedURIException, de.zib.gndms.lofis.stubs.types.ConflictingLofiSetsInMerge ;
+
 }
 

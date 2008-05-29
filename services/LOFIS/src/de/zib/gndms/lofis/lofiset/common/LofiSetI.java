@@ -24,5 +24,19 @@ public interface LofiSetI {
 
   public org.oasis.wsrf.properties.QueryResourcePropertiesResponse queryResourceProperties(org.oasis.wsrf.properties.QueryResourceProperties_Element params) throws RemoteException ;
 
+  /**
+   * Returns slices and mappings for all replica slices that contain replicas of all lofis in this LofiSet
+   *
+   * @param completeSlicesOnly
+   */
+  public types.ReplicaSliceT[] getAvailableReplicaSlices(boolean completeSlicesOnly) throws RemoteException ;
+
+  /**
+   * Create new LofiSet containing a mapped subset of this lofi's content.
+   *
+   * @param lofiMap
+   */
+  public de.zib.gndms.lofis.lofiset.client.LofiSetClient getSubLofiSet(types.ConflictResolvingFileMappingSeqT lofiMap) throws RemoteException, org.apache.axis.types.URI.MalformedURIException ;
+
 }
 

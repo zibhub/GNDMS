@@ -192,6 +192,19 @@ public abstract class LofiSetResourceBase extends ReflectionResource implements 
 
 
 	    //Getters/Setters for ResourceProperties
+	
+	
+	public types.FileSeqT getLofiSeq(){
+		return ((LofiSetResourceProperties) getResourceBean()).getLofiSeq();
+	}
+	
+	public void setLofiSeq(types.FileSeqT lofiSeq ) throws ResourceException {
+        ResourceProperty prop = getResourcePropertySet().get(LofiSetConstants.LOFISEQ);
+		prop.set(0, lofiSeq);
+        //call the first store to persist the resource
+        store();
+	}
+	
 
 
 	

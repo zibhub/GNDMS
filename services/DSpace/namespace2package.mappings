@@ -29,3 +29,4 @@ http\://gndms.zib.de/common/types=types
 http\://dspace.gndms.zib.de/DSpace/Subspace/types=de.zib.gndms.dspace.subspace.stubs.types
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security=gov.nih.nci.cagrid.metadata.security
 http\://dspace.gndms.zib.de/DSpace/Slice/types=de.zib.gndms.dspace.slice.stubs.types
+

@@ -82,6 +82,16 @@ public class LofiSetAuthorization implements PDP {
 		
 		
 	}
+					
+	public static void authorizeGetAvailableReplicaSlices() throws RemoteException {
+		
+		
+	}
+					
+	public static void authorizeGetSubLofiSet() throws RemoteException {
+		
+		
+	}
 	
 	
 	public boolean isPermitted(Subject peerSubject, MessageContext context, QName operation)
@@ -141,6 +151,22 @@ public class LofiSetAuthorization implements PDP {
 		} else if(operation.getLocalPart().equals("queryResourceProperties")){
 			try{
 				authorizeQueryResourceProperties();
+				return true;
+			} catch (Exception e){
+				e.printStackTrace();
+				return false;
+			}
+		} else if(operation.getLocalPart().equals("getAvailableReplicaSlices")){
+			try{
+				authorizeGetAvailableReplicaSlices();
+				return true;
+			} catch (Exception e){
+				e.printStackTrace();
+				return false;
+			}
+		} else if(operation.getLocalPart().equals("getSubLofiSet")){
+			try{
+				authorizeGetSubLofiSet();
 				return true;
 			} catch (Exception e){
 				e.printStackTrace();
