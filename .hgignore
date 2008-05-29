@@ -1,0 +1,4 @@
+syntax:glob
+
+services/*/build/**
+.DS_Store

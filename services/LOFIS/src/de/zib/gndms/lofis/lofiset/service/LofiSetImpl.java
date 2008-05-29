@@ -20,7 +20,7 @@ public class LofiSetImpl extends LofiSetImplBase {
     throw new RemoteException("Not yet implemented");
   }
 
-  public de.zib.gndms.lofis.lofiset.stubs.types.LofiSetReference getSubLofiSet(types.ConflictResolvingFileMappingSeqT lofiMap) throws RemoteException {
+  public de.zib.gndms.lofis.lofiset.stubs.types.LofiSetReference getSubLofiSet(types.ConflictResolvingFileMappingSeqT lofiMap) throws RemoteException, de.zib.gndms.lofis.stubs.types.MissingSourceFiles, de.zib.gndms.lofis.stubs.types.ConflictingDestinationsInMap {
 
 		try {
             de.zib.gndms.lofis.lofiset.service.globus.resource.LofiSetResourceHome home = getResourceHome(); 

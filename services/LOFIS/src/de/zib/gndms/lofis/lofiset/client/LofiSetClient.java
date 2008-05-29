@@ -128,7 +128,7 @@ public class LofiSetClient extends LofiSetClientBase implements LofiSetI {
     }
   }
 
-  public de.zib.gndms.lofis.lofiset.client.LofiSetClient getSubLofiSet(types.ConflictResolvingFileMappingSeqT lofiMap) throws RemoteException, org.apache.axis.types.URI.MalformedURIException {
+  public de.zib.gndms.lofis.lofiset.client.LofiSetClient getSubLofiSet(types.ConflictResolvingFileMappingSeqT lofiMap) throws RemoteException, org.apache.axis.types.URI.MalformedURIException, de.zib.gndms.lofis.stubs.types.MissingSourceFiles, de.zib.gndms.lofis.stubs.types.ConflictingDestinationsInMap {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getSubLofiSet");
     de.zib.gndms.lofis.lofiset.stubs.GetSubLofiSetRequest params = new de.zib.gndms.lofis.lofiset.stubs.GetSubLofiSetRequest();

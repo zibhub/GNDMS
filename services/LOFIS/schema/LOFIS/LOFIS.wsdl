@@ -54,7 +54,7 @@
       <element name="MergeLofiSetsRequest">
         <complexType>
           <sequence>
-            <element name="lofiSetReference">
+            <element name="lofiSetRefs">
               <complexType>
                 <sequence>
                   <element ref="ns9:LofiSetReference" minOccurs="1" maxOccurs="unbounded" />
