@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
     <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/1.5" />
-    <classpathentry kind="src" path="build/stubs-DSpace/src" />
+    <classpathentry kind="src" path="build/stubs-WHORFX/src" />
     <classpathentry kind="src" path="src" />
     <classpathentry kind="src" path="test/src" />
     <classpathentry kind="lib" path="lib/caGrid-advertisement-1.2.jar" />
