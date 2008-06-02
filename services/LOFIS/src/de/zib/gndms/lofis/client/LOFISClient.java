@@ -76,6 +76,21 @@ public class LOFISClient extends LOFISClientBase implements LOFISI {
 		}
 	}
 
+  public de.zib.gndms.lofis.lofiset.stubs.types.LofiSetReference createLofiSet(types.ReplicaSlicesT[] replicaSlices,types.SliceReference[] sliceReference) throws RemoteException, de.zib.gndms.lofis.stubs.types.ConflictingDestinationsInMap, de.zib.gndms.lofis.stubs.types.MissingSourceFiles, de.zib.gndms.lofis.stubs.types.ConflictResolutionFailed, de.zib.gndms.lofis.stubs.types.UnsupportedOrInvalidSlice {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"createLofiSet");
+    de.zib.gndms.lofis.stubs.CreateLofiSetRequest params = new de.zib.gndms.lofis.stubs.CreateLofiSetRequest();
+    de.zib.gndms.lofis.stubs.CreateLofiSetRequestReplicaSlices replicaSlicesContainer = new de.zib.gndms.lofis.stubs.CreateLofiSetRequestReplicaSlices();
+    replicaSlicesContainer.setReplicaSlices(replicaSlices);
+    params.setReplicaSlices(replicaSlicesContainer);
+    de.zib.gndms.lofis.stubs.CreateLofiSetRequestSliceReference sliceReferenceContainer = new de.zib.gndms.lofis.stubs.CreateLofiSetRequestSliceReference();
+    sliceReferenceContainer.setSliceReference(sliceReference);
+    params.setSliceReference(sliceReferenceContainer);
+    de.zib.gndms.lofis.stubs.CreateLofiSetResponse boxedResult = portType.createLofiSet(params);
+    return boxedResult.getLofiSetReference();
+    }
+  }
+
   public org.oasis.wsrf.properties.GetMultipleResourcePropertiesResponse getMultipleResourceProperties(org.oasis.wsrf.properties.GetMultipleResourceProperties_Element params) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getMultipleResourceProperties");
@@ -94,22 +109,6 @@ public class LOFISClient extends LOFISClientBase implements LOFISI {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"queryResourceProperties");
     return portType.queryResourceProperties(params);
-    }
-  }
-
-  public de.zib.gndms.lofis.lofiset.stubs.types.LofiSetReference registerSlice(types.ConflictResolvingFileMappingSeqT lofiMap,types.SliceReference sliceReference,boolean registerEverything) throws RemoteException, de.zib.gndms.lofis.stubs.types.ConflictingDestinationsInMap, de.zib.gndms.lofis.stubs.types.MissingSourceFiles, de.zib.gndms.lofis.stubs.types.ConflictResolutionFailed, de.zib.gndms.lofis.stubs.types.UnsupportedOrInvalidSlice {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"registerSlice");
-    de.zib.gndms.lofis.stubs.RegisterSliceRequest params = new de.zib.gndms.lofis.stubs.RegisterSliceRequest();
-    de.zib.gndms.lofis.stubs.RegisterSliceRequestLofiMap lofiMapContainer = new de.zib.gndms.lofis.stubs.RegisterSliceRequestLofiMap();
-    lofiMapContainer.setLofiMap(lofiMap);
-    params.setLofiMap(lofiMapContainer);
-    de.zib.gndms.lofis.stubs.RegisterSliceRequestSliceReference sliceReferenceContainer = new de.zib.gndms.lofis.stubs.RegisterSliceRequestSliceReference();
-    sliceReferenceContainer.setSliceReference(sliceReference);
-    params.setSliceReference(sliceReferenceContainer);
-    params.setRegisterEverything(registerEverything);
-    de.zib.gndms.lofis.stubs.RegisterSliceResponse boxedResult = portType.registerSlice(params);
-    return boxedResult.getLofiSetReference();
     }
   }
 

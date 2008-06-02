@@ -76,6 +76,51 @@ public class LofiSetClient extends LofiSetClientBase implements LofiSetI {
 		}
 	}
 
+  public void grantReplicaSlices(types.SliceReference[] sliceReference) throws RemoteException, de.zib.gndms.lofis.stubs.types.UnsupportedOrInvalidSlice {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"grantReplicaSlices");
+    de.zib.gndms.lofis.lofiset.stubs.GrantReplicaSlicesRequest params = new de.zib.gndms.lofis.lofiset.stubs.GrantReplicaSlicesRequest();
+    de.zib.gndms.lofis.lofiset.stubs.GrantReplicaSlicesRequestSliceReference sliceReferenceContainer = new de.zib.gndms.lofis.lofiset.stubs.GrantReplicaSlicesRequestSliceReference();
+    sliceReferenceContainer.setSliceReference(sliceReference);
+    params.setSliceReference(sliceReferenceContainer);
+    de.zib.gndms.lofis.lofiset.stubs.GrantReplicaSlicesResponse boxedResult = portType.grantReplicaSlices(params);
+    }
+  }
+
+  public void registerReplicaSlices(types.ReplicaSlicesT[] replicaSlices) throws RemoteException, de.zib.gndms.lofis.stubs.types.ConflictResolutionFailed, de.zib.gndms.lofis.stubs.types.ConflictingDestinationsInMap, de.zib.gndms.lofis.stubs.types.MissingSourceFiles, de.zib.gndms.lofis.stubs.types.UnsupportedOrInvalidSlice {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"registerReplicaSlices");
+    de.zib.gndms.lofis.lofiset.stubs.RegisterReplicaSlicesRequest params = new de.zib.gndms.lofis.lofiset.stubs.RegisterReplicaSlicesRequest();
+    de.zib.gndms.lofis.lofiset.stubs.RegisterReplicaSlicesRequestReplicaSlices replicaSlicesContainer = new de.zib.gndms.lofis.lofiset.stubs.RegisterReplicaSlicesRequestReplicaSlices();
+    replicaSlicesContainer.setReplicaSlices(replicaSlices);
+    params.setReplicaSlices(replicaSlicesContainer);
+    de.zib.gndms.lofis.lofiset.stubs.RegisterReplicaSlicesResponse boxedResult = portType.registerReplicaSlices(params);
+    }
+  }
+
+  public void reclaimReplicaSlices(types.SliceReference[] sliceReference) throws RemoteException, de.zib.gndms.lofis.stubs.types.UnsupportedOrInvalidSlice, de.zib.gndms.lofis.lofiset.stubs.types.UnavailableSlice {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"reclaimReplicaSlices");
+    de.zib.gndms.lofis.lofiset.stubs.ReclaimReplicaSlicesRequest params = new de.zib.gndms.lofis.lofiset.stubs.ReclaimReplicaSlicesRequest();
+    de.zib.gndms.lofis.lofiset.stubs.ReclaimReplicaSlicesRequestSliceReference sliceReferenceContainer = new de.zib.gndms.lofis.lofiset.stubs.ReclaimReplicaSlicesRequestSliceReference();
+    sliceReferenceContainer.setSliceReference(sliceReference);
+    params.setSliceReference(sliceReferenceContainer);
+    de.zib.gndms.lofis.lofiset.stubs.ReclaimReplicaSlicesResponse boxedResult = portType.reclaimReplicaSlices(params);
+    }
+  }
+
+  public types.ReplicaSlicesT[] getReplicaSlices(types.ReplicaSliceFilterT[] replicaSliceFilter) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getReplicaSlices");
+    de.zib.gndms.lofis.lofiset.stubs.GetReplicaSlicesRequest params = new de.zib.gndms.lofis.lofiset.stubs.GetReplicaSlicesRequest();
+    de.zib.gndms.lofis.lofiset.stubs.GetReplicaSlicesRequestReplicaSliceFilter replicaSliceFilterContainer = new de.zib.gndms.lofis.lofiset.stubs.GetReplicaSlicesRequestReplicaSliceFilter();
+    replicaSliceFilterContainer.setReplicaSliceFilter(replicaSliceFilter);
+    params.setReplicaSliceFilter(replicaSliceFilterContainer);
+    de.zib.gndms.lofis.lofiset.stubs.GetReplicaSlicesResponse boxedResult = portType.getReplicaSlices(params);
+    return boxedResult.getReplicaSlices();
+    }
+  }
+
   public org.oasis.wsrf.lifetime.DestroyResponse destroy(org.oasis.wsrf.lifetime.Destroy params) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"destroy");
@@ -118,17 +163,7 @@ public class LofiSetClient extends LofiSetClientBase implements LofiSetI {
     }
   }
 
-  public types.ReplicaSliceT[] getAvailableReplicaSlices(boolean completeSlicesOnly) throws RemoteException {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"getAvailableReplicaSlices");
-    de.zib.gndms.lofis.lofiset.stubs.GetAvailableReplicaSlicesRequest params = new de.zib.gndms.lofis.lofiset.stubs.GetAvailableReplicaSlicesRequest();
-    params.setCompleteSlicesOnly(completeSlicesOnly);
-    de.zib.gndms.lofis.lofiset.stubs.GetAvailableReplicaSlicesResponse boxedResult = portType.getAvailableReplicaSlices(params);
-    return boxedResult.getReplicaSlice();
-    }
-  }
-
-  public de.zib.gndms.lofis.lofiset.client.LofiSetClient getSubLofiSet(types.ConflictResolvingFileMappingSeqT lofiMap) throws RemoteException, org.apache.axis.types.URI.MalformedURIException, de.zib.gndms.lofis.stubs.types.MissingSourceFiles, de.zib.gndms.lofis.stubs.types.ConflictingDestinationsInMap {
+  public de.zib.gndms.lofis.lofiset.client.LofiSetClient getSubLofiSet(types.FileMappingSeqT lofiMap) throws RemoteException, org.apache.axis.types.URI.MalformedURIException, de.zib.gndms.lofis.stubs.types.MissingSourceFiles, de.zib.gndms.lofis.stubs.types.ConflictingDestinationsInMap {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getSubLofiSet");
     de.zib.gndms.lofis.lofiset.stubs.GetSubLofiSetRequest params = new de.zib.gndms.lofis.lofiset.stubs.GetSubLofiSetRequest();

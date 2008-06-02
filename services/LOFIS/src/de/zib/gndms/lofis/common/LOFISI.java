@@ -12,21 +12,11 @@ import java.rmi.RemoteException;
  */
 public interface LOFISI {
 
-  public org.oasis.wsrf.properties.GetMultipleResourcePropertiesResponse getMultipleResourceProperties(org.oasis.wsrf.properties.GetMultipleResourceProperties_Element params) throws RemoteException ;
-
-  public org.oasis.wsrf.properties.GetResourcePropertyResponse getResourceProperty(javax.xml.namespace.QName params) throws RemoteException ;
-
-  public org.oasis.wsrf.properties.QueryResourcePropertiesResponse queryResourceProperties(org.oasis.wsrf.properties.QueryResourceProperties_Element params) throws RemoteException ;
-
   /**
-   * Create LofiSet from slice containing all files
+   * Create LofiSet from slices containing all the files and optional storage slice references
    *
-   * @param lofiMap
-   *	Map from lofi names to slice file names
+   * @param replicaSlices
    * @param sliceReference
-   *	Slice to be registered
-   * @param registerEverything
-   *	Look for files in the slice that are not in lofiMap
    * @throws ConflictingDestinationsInMap
    *	
    * @throws MissingSourceFiles
@@ -36,7 +26,13 @@ public interface LOFISI {
    * @throws UnsupportedOrInvalidSlice
    *	
    */
-  public de.zib.gndms.lofis.lofiset.stubs.types.LofiSetReference registerSlice(types.ConflictResolvingFileMappingSeqT lofiMap,types.SliceReference sliceReference,boolean registerEverything) throws RemoteException, de.zib.gndms.lofis.stubs.types.ConflictingDestinationsInMap, de.zib.gndms.lofis.stubs.types.MissingSourceFiles, de.zib.gndms.lofis.stubs.types.ConflictResolutionFailed, de.zib.gndms.lofis.stubs.types.UnsupportedOrInvalidSlice ;
+  public de.zib.gndms.lofis.lofiset.stubs.types.LofiSetReference createLofiSet(types.ReplicaSlicesT[] replicaSlices,types.SliceReference[] sliceReference) throws RemoteException, de.zib.gndms.lofis.stubs.types.ConflictingDestinationsInMap, de.zib.gndms.lofis.stubs.types.MissingSourceFiles, de.zib.gndms.lofis.stubs.types.ConflictResolutionFailed, de.zib.gndms.lofis.stubs.types.UnsupportedOrInvalidSlice ;
+
+  public org.oasis.wsrf.properties.GetMultipleResourcePropertiesResponse getMultipleResourceProperties(org.oasis.wsrf.properties.GetMultipleResourceProperties_Element params) throws RemoteException ;
+
+  public org.oasis.wsrf.properties.GetResourcePropertyResponse getResourceProperty(javax.xml.namespace.QName params) throws RemoteException ;
+
+  public org.oasis.wsrf.properties.QueryResourcePropertiesResponse queryResourceProperties(org.oasis.wsrf.properties.QueryResourceProperties_Element params) throws RemoteException ;
 
   /**
    * Merge multiple lofi sets into one LofiSet

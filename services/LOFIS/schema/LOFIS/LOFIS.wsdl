@@ -23,28 +23,27 @@
       <import namespace="http://dspace.gndms.zib.de/DSpace/Slice/types" schemaLocation="./../DSpace/SliceTypes.xsd" />
       <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd" schemaLocation="../wsrf/lifetime/WS-ResourceLifetime.xsd" />
       <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="./../wsrf/faults/WS-BaseFaults.xsd" />
-      <element name="RegisterSliceRequest">
+      <element name="CreateLofiSetRequest">
         <complexType>
           <sequence>
-            <element name="lofiMap">
+            <element name="replicaSlices">
               <complexType>
                 <sequence>
-                  <element ref="ns2:LofiMap" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:ReplicaSlices" minOccurs="1" maxOccurs="unbounded" />
                 </sequence>
               </complexType>
             </element>
             <element name="sliceReference">
               <complexType>
                 <sequence>
-                  <element ref="ns0:SliceReference" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:SliceReference" minOccurs="1" maxOccurs="unbounded" />
                 </sequence>
               </complexType>
             </element>
-            <element name="registerEverything" type="xs:boolean" minOccurs="1" maxOccurs="1" />
           </sequence>
         </complexType>
       </element>
-      <element name="RegisterSliceResponse">
+      <element name="CreateLofiSetResponse">
         <complexType>
           <sequence>
             <element ref="ns9:LofiSetReference" minOccurs="1" maxOccurs="1" />
@@ -79,11 +78,11 @@
     </schema>
   </types>
   <!--  place service messages here -->
-  <message name="RegisterSliceRequest">
-    <part name="parameters" element="tns:RegisterSliceRequest" />
+  <message name="CreateLofiSetRequest">
+    <part name="parameters" element="tns:CreateLofiSetRequest" />
   </message>
-  <message name="RegisterSliceResponse">
-    <part name="parameters" element="tns:RegisterSliceResponse" />
+  <message name="CreateLofiSetResponse">
+    <part name="parameters" element="tns:CreateLofiSetResponse" />
   </message>
   <message name="MergeLofiSetsRequest">
     <part name="parameters" element="tns:MergeLofiSetsRequest" />
@@ -112,9 +111,9 @@
                       
   ============================================================-->
   <portType name="LOFISPortType" wsrp:ResourceProperties="tns:LOFISResourceProperties">
-    <operation name="RegisterSlice">
-      <input message="tns:RegisterSliceRequest" wsa:Action="http://lofis.gndms.zib.de/LOFIS/RegisterSliceRequest" />
-      <output message="tns:RegisterSliceResponse" wsa:Action="http://lofis.gndms.zib.de/LOFIS/RegisterSliceResponse" />
+    <operation name="CreateLofiSet">
+      <input message="tns:CreateLofiSetRequest" wsa:Action="http://lofis.gndms.zib.de/LOFIS/CreateLofiSetRequest" />
+      <output message="tns:CreateLofiSetResponse" wsa:Action="http://lofis.gndms.zib.de/LOFIS/CreateLofiSetResponse" />
       <fault name="ConflictingDestinationsInMap" message="tns:ConflictingDestinationsInMapFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/ConflictingDestinationsInMapFaultMessage" />
       <fault name="MissingSourceFiles" message="tns:MissingSourceFilesFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/MissingSourceFilesFaultMessage" />
       <fault name="ConflictResolutionFailed" message="tns:ConflictResolutionFailedFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/ConflictResolutionFailedFaultMessage" />

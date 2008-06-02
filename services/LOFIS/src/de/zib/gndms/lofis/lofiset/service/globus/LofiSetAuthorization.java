@@ -83,12 +83,27 @@ public class LofiSetAuthorization implements PDP {
 		
 	}
 					
-	public static void authorizeGetAvailableReplicaSlices() throws RemoteException {
+	public static void authorizeGrantReplicaSlices() throws RemoteException {
 		
 		
 	}
 					
 	public static void authorizeGetSubLofiSet() throws RemoteException {
+		
+		
+	}
+					
+	public static void authorizeRegisterReplicaSlices() throws RemoteException {
+		
+		
+	}
+					
+	public static void authorizeReclaimReplicaSlices() throws RemoteException {
+		
+		
+	}
+					
+	public static void authorizeGetReplicaSlices() throws RemoteException {
 		
 		
 	}
@@ -156,9 +171,9 @@ public class LofiSetAuthorization implements PDP {
 				e.printStackTrace();
 				return false;
 			}
-		} else if(operation.getLocalPart().equals("getAvailableReplicaSlices")){
+		} else if(operation.getLocalPart().equals("grantReplicaSlices")){
 			try{
-				authorizeGetAvailableReplicaSlices();
+				authorizeGrantReplicaSlices();
 				return true;
 			} catch (Exception e){
 				e.printStackTrace();
@@ -167,6 +182,30 @@ public class LofiSetAuthorization implements PDP {
 		} else if(operation.getLocalPart().equals("getSubLofiSet")){
 			try{
 				authorizeGetSubLofiSet();
+				return true;
+			} catch (Exception e){
+				e.printStackTrace();
+				return false;
+			}
+		} else if(operation.getLocalPart().equals("registerReplicaSlices")){
+			try{
+				authorizeRegisterReplicaSlices();
+				return true;
+			} catch (Exception e){
+				e.printStackTrace();
+				return false;
+			}
+		} else if(operation.getLocalPart().equals("reclaimReplicaSlices")){
+			try{
+				authorizeReclaimReplicaSlices();
+				return true;
+			} catch (Exception e){
+				e.printStackTrace();
+				return false;
+			}
+		} else if(operation.getLocalPart().equals("getReplicaSlices")){
+			try{
+				authorizeGetReplicaSlices();
 				return true;
 			} catch (Exception e){
 				e.printStackTrace();

@@ -12,7 +12,8 @@
    <ns2:SchemaElement type="Lofi" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="LofiMap" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="LofiSeq" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="ReplicaSlice" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ReplicaSliceFilter" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ReplicaSlices" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="SliceKind" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="SliceLocation" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="SubspaceSpecifier" xsi:type="ns2:SchemaElementType"/>
@@ -111,6 +112,7 @@
   </ns2:Namespace>
   <ns2:Namespace location="./LofiSetTypes.xsd" namespace="http://lofis.gndms.zib.de/LOFIS/LofiSet/types" packageName="de.zib.gndms.lofis.lofiset.stubs.types" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="LofiSetReference" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="UnavailableSlice" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
  </ns2:Namespaces>
  <ns3:Services xsi:type="ns3:ServicesType" xmlns:ns3="gme://gov.nih.nci.cagrid.introduce/1/Services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -142,11 +144,10 @@
      <ns4:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
      <ns4:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
     </ns4:Method>
-    <ns4:Method description="Create LofiSet from slice containing all files" isImported="false" isProvided="false" name="RegisterSlice" xsi:type="ns4:MethodType">
+    <ns4:Method description="Create LofiSet from slices containing all the files and optional storage slice references" isImported="false" isProvided="false" name="CreateLofiSet" xsi:type="ns4:MethodType">
      <ns4:Inputs>
-      <ns4:Input qName="ns10:LofiMap" description="Map from lofi names to slice file names" isArray="false" name="lofiMap" xmlns:ns10="http://gndms.zib.de/common/types"/>
-      <ns4:Input qName="ns11:SliceReference" description="Slice to be registered" isArray="false" name="sliceReference" xmlns:ns11="http://dspace.gndms.zib.de/DSpace/Slice/types"/>
-      <ns4:Input qName="xsd:boolean" description="Look for files in the slice that are not in lofiMap" isArray="false" name="registerEverything" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+      <ns4:Input qName="ns10:ReplicaSlices" description="" isArray="true" name="replicaSlices" xmlns:ns10="http://gndms.zib.de/common/types"/>
+      <ns4:Input qName="ns11:SliceReference" description="" isArray="true" name="sliceReference" xmlns:ns11="http://dspace.gndms.zib.de/DSpace/Slice/types"/>
      </ns4:Inputs>
      <ns4:Output qName="ns12:LofiSetReference" description="" isArray="false" xmlns:ns12="http://lofis.gndms.zib.de/LOFIS/LofiSet/types"/>
      <ns4:Exceptions>
@@ -218,29 +219,60 @@
      <ns20:ImportInformation fromIntroduce="false" inputMessage="ns28:QueryResourcePropertiesRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" outputMessage="ns28:QueryResourcePropertiesResponse" packageName="org.oasis.wsrf.properties" portTypeName="QueryResourceProperties" wsdlFile="../wsrf/properties/WS-ResourceProperties.wsdl" xmlns:ns28="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"/>
      <ns20:ProviderInformation providerClass="QueryRPProvider"/>
     </ns20:Method>
-    <ns20:Method description="Returns slices and mappings for all replica slices that contain replicas of all lofis in this LofiSet" isImported="false" isProvided="false" name="GetAvailableReplicaSlices" xsi:type="ns20:MethodType">
+    <ns20:Method description="Provides (empty) slices for the storage of replicas to this LofiSet" isImported="false" isProvided="false" name="GrantReplicaSlices" xsi:type="ns20:MethodType">
      <ns20:Inputs>
-      <ns20:Input qName="xsd:boolean" description="" isArray="false" name="completeSlicesOnly" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+      <ns20:Input qName="ns29:SliceReference" description="" isArray="true" name="sliceReference" xmlns:ns29="http://dspace.gndms.zib.de/DSpace/Slice/types"/>
      </ns20:Inputs>
-     <ns20:Output qName="ns29:ReplicaSlice" description="" isArray="true" xmlns:ns29="http://gndms.zib.de/common/types"/>
-     <ns20:Exceptions/>
+     <ns20:Output qName="void" description="" isArray="false"/>
+     <ns20:Exceptions>
+      <ns20:Exception description="" name="UnsupportedOrInvalidSlice" qname="ns30:UnsupportedOrInvalidSlice" xmlns:ns30="http://lofis.gndms.zib.de/LOFIS/types"/>
+     </ns20:Exceptions>
     </ns20:Method>
     <ns20:Method description="Create new LofiSet containing a mapped subset of this lofi's content." isImported="false" isProvided="false" name="GetSubLofiSet" xsi:type="ns20:MethodType">
      <ns20:Inputs>
-      <ns20:Input qName="ns30:LofiMap" description="" isArray="false" name="lofiMap" xmlns:ns30="http://gndms.zib.de/common/types"/>
+      <ns20:Input qName="ns31:LofiMap" description="" isArray="false" name="lofiMap" xmlns:ns31="http://gndms.zib.de/common/types"/>
      </ns20:Inputs>
-     <ns20:Output qName="ns31:LofiSetReference" clientHandleClass="de.zib.gndms.lofis.lofiset.client.LofiSetClient" description="" isArray="false" isClientHandle="true" isCreatingResourceForClientHandle="true" resourceClientIntroduceServiceName="LofiSet" xmlns:ns31="http://lofis.gndms.zib.de/LOFIS/LofiSet/types"/>
+     <ns20:Output qName="ns32:LofiSetReference" clientHandleClass="de.zib.gndms.lofis.lofiset.client.LofiSetClient" description="" isArray="false" isClientHandle="true" isCreatingResourceForClientHandle="true" resourceClientIntroduceServiceName="LofiSet" xmlns:ns32="http://lofis.gndms.zib.de/LOFIS/LofiSet/types"/>
      <ns20:Exceptions>
-      <ns20:Exception description="" name="MissingSourceFiles" qname="ns32:MissingSourceFiles" xmlns:ns32="http://lofis.gndms.zib.de/LOFIS/types"/>
-      <ns20:Exception description="" name="ConflictingDestinationsInMap" qname="ns33:ConflictingDestinationsInMap" xmlns:ns33="http://lofis.gndms.zib.de/LOFIS/types"/>
+      <ns20:Exception description="" name="MissingSourceFiles" qname="ns33:MissingSourceFiles" xmlns:ns33="http://lofis.gndms.zib.de/LOFIS/types"/>
+      <ns20:Exception description="" name="ConflictingDestinationsInMap" qname="ns34:ConflictingDestinationsInMap" xmlns:ns34="http://lofis.gndms.zib.de/LOFIS/types"/>
      </ns20:Exceptions>
     </ns20:Method>
+    <ns20:Method description="Add Slices to LofiSet" isImported="false" isProvided="false" name="RegisterReplicaSlices" xsi:type="ns20:MethodType">
+     <ns20:Inputs>
+      <ns20:Input qName="ns35:ReplicaSlices" description="" isArray="true" name="replicaSlices" xmlns:ns35="http://gndms.zib.de/common/types"/>
+     </ns20:Inputs>
+     <ns20:Output qName="void" description="" isArray="false"/>
+     <ns20:Exceptions>
+      <ns20:Exception description="" name="ConflictResolutionFailed" qname="ns36:ConflictResolutionFailed" xmlns:ns36="http://lofis.gndms.zib.de/LOFIS/types"/>
+      <ns20:Exception description="" name="ConflictingDestinationsInMap" qname="ns37:ConflictingDestinationsInMap" xmlns:ns37="http://lofis.gndms.zib.de/LOFIS/types"/>
+      <ns20:Exception description="" name="MissingSourceFiles" qname="ns38:MissingSourceFiles" xmlns:ns38="http://lofis.gndms.zib.de/LOFIS/types"/>
+      <ns20:Exception description="" name="UnsupportedOrInvalidSlice" qname="ns39:UnsupportedOrInvalidSlice" xmlns:ns39="http://lofis.gndms.zib.de/LOFIS/types"/>
+     </ns20:Exceptions>
+    </ns20:Method>
+    <ns20:Method description="Remove slices from this LofiSet" isImported="false" isProvided="false" name="ReclaimReplicaSlices" xsi:type="ns20:MethodType">
+     <ns20:Inputs>
+      <ns20:Input qName="ns40:SliceReference" description="" isArray="true" name="sliceReference" xmlns:ns40="http://dspace.gndms.zib.de/DSpace/Slice/types"/>
+     </ns20:Inputs>
+     <ns20:Output qName="void" description="" isArray="false"/>
+     <ns20:Exceptions>
+      <ns20:Exception description="" name="UnsupportedOrInvalidSlice" qname="ns41:UnsupportedOrInvalidSlice" xmlns:ns41="http://lofis.gndms.zib.de/LOFIS/types"/>
+      <ns20:Exception description="" name="UnavailableSlice" qname="ns42:UnavailableSlice" xmlns:ns42="http://lofis.gndms.zib.de/LOFIS/LofiSet/types"/>
+     </ns20:Exceptions>
+    </ns20:Method>
+    <ns20:Method description="Return replica slices matching any of the provided filters (first wins)" isImported="false" isProvided="false" name="GetReplicaSlices" xsi:type="ns20:MethodType">
+     <ns20:Inputs>
+      <ns20:Input qName="ns43:ReplicaSliceFilter" description="" isArray="true" name="replicaSliceFilter" xmlns:ns43="http://gndms.zib.de/common/types"/>
+     </ns20:Inputs>
+     <ns20:Output qName="ns44:ReplicaSlices" description="" isArray="true" xmlns:ns44="http://gndms.zib.de/common/types"/>
+     <ns20:Exceptions/>
+    </ns20:Method>
    </ns20:Methods>
-   <ns34:ResourcePropertiesList xsi:type="ns34:ResourcePropertiesListType" xmlns:ns34="gme://gov.nih.nci.cagrid.introduce/1/Resources">
-    <ns34:ResourceProperty qName="ns35:CurrentTime" description="" populateFromFile="false" register="false" xsi:type="ns34:ResourcePropertyType" xmlns:ns35="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"/>
-    <ns34:ResourceProperty qName="ns36:TerminationTime" description="" populateFromFile="false" register="false" xsi:type="ns34:ResourcePropertyType" xmlns:ns36="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"/>
-    <ns34:ResourceProperty qName="ns37:LofiSeq" description="" fileLocation="LofiSet_lofiSeq.xml" populateFromFile="false" register="false" xsi:type="ns34:ResourcePropertyType" xmlns:ns37="http://gndms.zib.de/common/types"/>
-   </ns34:ResourcePropertiesList>
+   <ns45:ResourcePropertiesList xsi:type="ns45:ResourcePropertiesListType" xmlns:ns45="gme://gov.nih.nci.cagrid.introduce/1/Resources">
+    <ns45:ResourceProperty qName="ns46:CurrentTime" description="" populateFromFile="false" register="false" xsi:type="ns45:ResourcePropertyType" xmlns:ns46="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"/>
+    <ns45:ResourceProperty qName="ns47:TerminationTime" description="" populateFromFile="false" register="false" xsi:type="ns45:ResourcePropertyType" xmlns:ns47="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"/>
+    <ns45:ResourceProperty qName="ns48:LofiSeq" description="" fileLocation="LofiSet_lofiSeq.xml" populateFromFile="false" register="false" xsi:type="ns45:ResourcePropertyType" xmlns:ns48="http://gndms.zib.de/common/types"/>
+   </ns45:ResourcePropertiesList>
    <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Lifetime xsi:type="ns3:Lifetime"/>
@@ -252,5 +284,5 @@
    </ns3:ResourceFrameworkOptions>
   </ns3:Service>
  </ns3:Services>
- <ns38:Extensions xsi:type="ns38:ExtensionsType" xmlns:ns38="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+ <ns49:Extensions xsi:type="ns49:ExtensionsType" xmlns:ns49="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
 </ns1:ServiceDescription>

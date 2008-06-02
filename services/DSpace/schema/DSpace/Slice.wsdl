@@ -99,6 +99,9 @@
   <message name="UnknownOrInvalidSliceKindFaultMessage">
     <part name="fault" element="ns5:UnknownOrInvalidSliceKind" />
   </message>
+  <message name="UnsupportedTransformationFaultMessage">
+    <part name="fault" element="ns2:UnsupportedTransformation" />
+  </message>
   <message name="UnknownSubspaceFaultMessage">
     <part name="fault" element="ns6:UnknownSubspace" />
   </message>
@@ -115,6 +118,7 @@
       <input message="tns:TransformSliceRequest" wsa:Action="http://dspace.gndms.zib.de/DSpace/Slice/TransformSliceRequest" />
       <output message="tns:TransformSliceResponse" wsa:Action="http://dspace.gndms.zib.de/DSpace/Slice/TransformSliceResponse" />
       <fault name="UnknownOrInvalidSliceKind" message="tns:UnknownOrInvalidSliceKindFaultMessage" wsa:Action="http://dspace.gndms.zib.de/DSpace/Slice/UnknownOrInvalidSliceKindFaultMessage" />
+      <fault name="UnsupportedTransformation" message="tns:UnsupportedTransformationFaultMessage" wsa:Action="http://dspace.gndms.zib.de/DSpace/Slice/UnsupportedTransformationFaultMessage" />
     </operation>
     <operation name="TransformSliceTo">
       <input message="tns:TransformSliceToRequest" wsa:Action="http://dspace.gndms.zib.de/DSpace/Slice/TransformSliceToRequest" />
@@ -122,6 +126,7 @@
       <fault name="UnknownSubspace" message="tns:UnknownSubspaceFaultMessage" wsa:Action="http://dspace.gndms.zib.de/DSpace/Slice/UnknownSubspaceFaultMessage" />
       <fault name="OutOfSpace" message="tns:OutOfSpaceFaultMessage" wsa:Action="http://dspace.gndms.zib.de/DSpace/Slice/OutOfSpaceFaultMessage" />
       <fault name="UnknownOrInvalidSliceKind" message="tns:UnknownOrInvalidSliceKindFaultMessage" wsa:Action="http://dspace.gndms.zib.de/DSpace/Slice/UnknownOrInvalidSliceKindFaultMessage" />
+      <fault name="UnsupportedTransformation" message="tns:UnsupportedTransformationFaultMessage" wsa:Action="http://dspace.gndms.zib.de/DSpace/Slice/UnsupportedTransformationFaultMessage" />
     </operation>
     <operation name="getServiceSecurityMetadata">
       <input message="wns0:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />

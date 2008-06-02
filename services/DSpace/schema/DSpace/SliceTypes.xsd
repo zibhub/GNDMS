@@ -9,5 +9,11 @@
       </sequence>
     </complexType>
   </element>
+  <element name="UnsupportedTransformation" type="tns:UnsupportedTransformation" />
+  <complexType name="UnsupportedTransformation">
+    <complexContent>
+      <extension base="wsrbf:BaseFaultType" />
+    </complexContent>
+  </complexType>
 </schema>
 
