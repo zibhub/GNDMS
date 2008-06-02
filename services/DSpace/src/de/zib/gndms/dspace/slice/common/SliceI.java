@@ -30,8 +30,10 @@ public interface SliceI {
    * @param sliceKind
    * @throws UnknownOrInvalidSliceKind
    *	
+   * @throws UnsupportedTransformation
+   *	
    */
-  public de.zib.gndms.dspace.slice.stubs.types.SliceReference transformSlice(javax.xml.namespace.QName sliceKind) throws RemoteException, de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind ;
+  public de.zib.gndms.dspace.slice.stubs.types.SliceReference transformSlice(javax.xml.namespace.QName sliceKind) throws RemoteException, de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind, de.zib.gndms.dspace.slice.stubs.types.UnsupportedTransformation ;
 
   /**
    * Destroys this slice resource and retuns a new slice based on this slice resource that is in the specified subspace and has the specified new slice kind
@@ -44,8 +46,10 @@ public interface SliceI {
    *	
    * @throws UnknownOrInvalidSliceKind
    *	
+   * @throws UnsupportedTransformation
+   *	
    */
-  public de.zib.gndms.dspace.slice.stubs.types.SliceReference transformSliceTo(javax.xml.namespace.QName subspaceSpecifier,javax.xml.namespace.QName sliceKind) throws RemoteException, de.zib.gndms.dspace.stubs.types.UnknownSubspace, de.zib.gndms.dspace.subspace.stubs.types.OutOfSpace, de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind ;
+  public de.zib.gndms.dspace.slice.stubs.types.SliceReference transformSliceTo(javax.xml.namespace.QName subspaceSpecifier,javax.xml.namespace.QName sliceKind) throws RemoteException, de.zib.gndms.dspace.stubs.types.UnknownSubspace, de.zib.gndms.dspace.subspace.stubs.types.OutOfSpace, de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind, de.zib.gndms.dspace.slice.stubs.types.UnsupportedTransformation ;
 
 }
 

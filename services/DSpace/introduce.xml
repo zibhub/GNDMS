@@ -24,6 +24,7 @@
   </ns2:Namespace>
   <ns2:Namespace location="./SliceTypes.xsd" namespace="http://dspace.gndms.zib.de/DSpace/Slice/types" packageName="de.zib.gndms.dspace.slice.stubs.types" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="SliceReference" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="UnsupportedTransformation" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
   <ns2:Namespace location="../wsrf/lifetime/WS-ResourceLifetime.xsd" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="CurrentTime" xsi:type="ns2:SchemaElementType"/>
@@ -274,29 +275,31 @@
      <ns33:Output qName="ns43:SliceReference" description="" isArray="false" xmlns:ns43="http://dspace.gndms.zib.de/DSpace/Slice/types"/>
      <ns33:Exceptions>
       <ns33:Exception description="" name="UnknownOrInvalidSliceKind" qname="ns44:UnknownOrInvalidSliceKind" xmlns:ns44="http://dspace.gndms.zib.de/DSpace/Subspace/types"/>
+      <ns33:Exception description="" name="UnsupportedTransformation" qname="ns45:UnsupportedTransformation" xmlns:ns45="http://dspace.gndms.zib.de/DSpace/Slice/types"/>
      </ns33:Exceptions>
     </ns33:Method>
     <ns33:Method description="Destroys this slice resource and retuns a new slice based on this slice resource that is in the specified subspace and has the specified new slice kind" isImported="false" isProvided="false" name="TransformSliceTo" xsi:type="ns33:MethodType">
      <ns33:Inputs>
-      <ns33:Input qName="ns45:SubspaceSpecifier" description="" isArray="false" name="subspaceSpecifier" xmlns:ns45="http://gndms.zib.de/common/types"/>
-      <ns33:Input qName="ns46:SliceKind" description="" isArray="false" name="sliceKind" xmlns:ns46="http://gndms.zib.de/common/types"/>
+      <ns33:Input qName="ns46:SubspaceSpecifier" description="" isArray="false" name="subspaceSpecifier" xmlns:ns46="http://gndms.zib.de/common/types"/>
+      <ns33:Input qName="ns47:SliceKind" description="" isArray="false" name="sliceKind" xmlns:ns47="http://gndms.zib.de/common/types"/>
      </ns33:Inputs>
-     <ns33:Output qName="ns47:SliceReference" description="" isArray="false" xmlns:ns47="http://dspace.gndms.zib.de/DSpace/Slice/types"/>
+     <ns33:Output qName="ns48:SliceReference" description="" isArray="false" xmlns:ns48="http://dspace.gndms.zib.de/DSpace/Slice/types"/>
      <ns33:Exceptions>
-      <ns33:Exception description="" name="UnknownSubspace" qname="ns48:UnknownSubspace" xmlns:ns48="http://dspace.gndms.zib.de/DSpace/types"/>
-      <ns33:Exception description="" name="OutOfSpace" qname="ns49:OutOfSpace" xmlns:ns49="http://dspace.gndms.zib.de/DSpace/Subspace/types"/>
-      <ns33:Exception description="" name="UnknownOrInvalidSliceKind" qname="ns50:UnknownOrInvalidSliceKind" xmlns:ns50="http://dspace.gndms.zib.de/DSpace/Subspace/types"/>
+      <ns33:Exception description="" name="UnknownSubspace" qname="ns49:UnknownSubspace" xmlns:ns49="http://dspace.gndms.zib.de/DSpace/types"/>
+      <ns33:Exception description="" name="OutOfSpace" qname="ns50:OutOfSpace" xmlns:ns50="http://dspace.gndms.zib.de/DSpace/Subspace/types"/>
+      <ns33:Exception description="" name="UnknownOrInvalidSliceKind" qname="ns51:UnknownOrInvalidSliceKind" xmlns:ns51="http://dspace.gndms.zib.de/DSpace/Subspace/types"/>
+      <ns33:Exception description="" name="UnsupportedTransformation" qname="ns52:UnsupportedTransformation" xmlns:ns52="http://dspace.gndms.zib.de/DSpace/Slice/types"/>
      </ns33:Exceptions>
     </ns33:Method>
    </ns33:Methods>
-   <ns51:ResourcePropertiesList xsi:type="ns51:ResourcePropertiesListType" xmlns:ns51="gme://gov.nih.nci.cagrid.introduce/1/Resources">
-    <ns51:ResourceProperty qName="ns52:CurrentTime" description="" populateFromFile="false" register="false" xsi:type="ns51:ResourcePropertyType" xmlns:ns52="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"/>
-    <ns51:ResourceProperty qName="ns53:TerminationTime" description="" populateFromFile="false" register="false" xsi:type="ns51:ResourcePropertyType" xmlns:ns53="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"/>
-    <ns51:ResourceProperty qName="ns54:TotalStorageSize" description="" fileLocation="Slice_totalStorageSize.xml" populateFromFile="false" register="false" xsi:type="ns51:ResourcePropertyType" xmlns:ns54="http://gndms.zib.de/common/types"/>
-    <ns51:ResourceProperty qName="ns55:SliceKind" description="" fileLocation="Slice_sliceKind.xml" populateFromFile="false" register="false" xsi:type="ns51:ResourcePropertyType" xmlns:ns55="http://gndms.zib.de/common/types"/>
-    <ns51:ResourceProperty qName="ns56:SliceLocation" description="" fileLocation="Slice_sliceLocation.xml" populateFromFile="false" register="false" xsi:type="ns51:ResourcePropertyType" xmlns:ns56="http://gndms.zib.de/common/types"/>
-    <ns51:ResourceProperty qName="ns57:SubspaceReference" description="" fileLocation="Slice_subspaceReference.xml" populateFromFile="false" register="false" xsi:type="ns51:ResourcePropertyType" xmlns:ns57="http://dspace.gndms.zib.de/DSpace/Subspace/types"/>
-   </ns51:ResourcePropertiesList>
+   <ns53:ResourcePropertiesList xsi:type="ns53:ResourcePropertiesListType" xmlns:ns53="gme://gov.nih.nci.cagrid.introduce/1/Resources">
+    <ns53:ResourceProperty qName="ns54:CurrentTime" description="" populateFromFile="false" register="false" xsi:type="ns53:ResourcePropertyType" xmlns:ns54="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"/>
+    <ns53:ResourceProperty qName="ns55:TerminationTime" description="" populateFromFile="false" register="false" xsi:type="ns53:ResourcePropertyType" xmlns:ns55="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"/>
+    <ns53:ResourceProperty qName="ns56:TotalStorageSize" description="" fileLocation="Slice_totalStorageSize.xml" populateFromFile="false" register="false" xsi:type="ns53:ResourcePropertyType" xmlns:ns56="http://gndms.zib.de/common/types"/>
+    <ns53:ResourceProperty qName="ns57:SliceKind" description="" fileLocation="Slice_sliceKind.xml" populateFromFile="false" register="false" xsi:type="ns53:ResourcePropertyType" xmlns:ns57="http://gndms.zib.de/common/types"/>
+    <ns53:ResourceProperty qName="ns58:SliceLocation" description="" fileLocation="Slice_sliceLocation.xml" populateFromFile="false" register="false" xsi:type="ns53:ResourcePropertyType" xmlns:ns58="http://gndms.zib.de/common/types"/>
+    <ns53:ResourceProperty qName="ns59:SubspaceReference" description="" fileLocation="Slice_subspaceReference.xml" populateFromFile="false" register="false" xsi:type="ns53:ResourcePropertyType" xmlns:ns59="http://dspace.gndms.zib.de/DSpace/Subspace/types"/>
+   </ns53:ResourcePropertiesList>
    <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Lifetime xsi:type="ns3:Lifetime"/>
@@ -308,5 +311,5 @@
    </ns3:ResourceFrameworkOptions>
   </ns3:Service>
  </ns3:Services>
- <ns58:Extensions xsi:type="ns58:ExtensionsType" xmlns:ns58="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+ <ns60:Extensions xsi:type="ns60:ExtensionsType" xmlns:ns60="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
 </ns1:ServiceDescription>

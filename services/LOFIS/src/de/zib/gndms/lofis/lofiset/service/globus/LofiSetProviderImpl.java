@@ -26,9 +26,27 @@ public class LofiSetProviderImpl{
 	}
 	
 
-    public de.zib.gndms.lofis.lofiset.stubs.GetAvailableReplicaSlicesResponse getAvailableReplicaSlices(de.zib.gndms.lofis.lofiset.stubs.GetAvailableReplicaSlicesRequest params) throws RemoteException {
-    de.zib.gndms.lofis.lofiset.stubs.GetAvailableReplicaSlicesResponse boxedResult = new de.zib.gndms.lofis.lofiset.stubs.GetAvailableReplicaSlicesResponse();
-    boxedResult.setReplicaSlice(impl.getAvailableReplicaSlices(params.isCompleteSlicesOnly()));
+    public de.zib.gndms.lofis.lofiset.stubs.GrantReplicaSlicesResponse grantReplicaSlices(de.zib.gndms.lofis.lofiset.stubs.GrantReplicaSlicesRequest params) throws RemoteException, de.zib.gndms.lofis.stubs.types.UnsupportedOrInvalidSlice {
+    de.zib.gndms.lofis.lofiset.stubs.GrantReplicaSlicesResponse boxedResult = new de.zib.gndms.lofis.lofiset.stubs.GrantReplicaSlicesResponse();
+    impl.grantReplicaSlices(params.getSliceReference().getSliceReference());
+    return boxedResult;
+  }
+
+    public de.zib.gndms.lofis.lofiset.stubs.RegisterReplicaSlicesResponse registerReplicaSlices(de.zib.gndms.lofis.lofiset.stubs.RegisterReplicaSlicesRequest params) throws RemoteException, de.zib.gndms.lofis.stubs.types.ConflictResolutionFailed, de.zib.gndms.lofis.stubs.types.ConflictingDestinationsInMap, de.zib.gndms.lofis.stubs.types.MissingSourceFiles, de.zib.gndms.lofis.stubs.types.UnsupportedOrInvalidSlice {
+    de.zib.gndms.lofis.lofiset.stubs.RegisterReplicaSlicesResponse boxedResult = new de.zib.gndms.lofis.lofiset.stubs.RegisterReplicaSlicesResponse();
+    impl.registerReplicaSlices(params.getReplicaSlices().getReplicaSlices());
+    return boxedResult;
+  }
+
+    public de.zib.gndms.lofis.lofiset.stubs.ReclaimReplicaSlicesResponse reclaimReplicaSlices(de.zib.gndms.lofis.lofiset.stubs.ReclaimReplicaSlicesRequest params) throws RemoteException, de.zib.gndms.lofis.stubs.types.UnsupportedOrInvalidSlice, de.zib.gndms.lofis.lofiset.stubs.types.UnavailableSlice {
+    de.zib.gndms.lofis.lofiset.stubs.ReclaimReplicaSlicesResponse boxedResult = new de.zib.gndms.lofis.lofiset.stubs.ReclaimReplicaSlicesResponse();
+    impl.reclaimReplicaSlices(params.getSliceReference().getSliceReference());
+    return boxedResult;
+  }
+
+    public de.zib.gndms.lofis.lofiset.stubs.GetReplicaSlicesResponse getReplicaSlices(de.zib.gndms.lofis.lofiset.stubs.GetReplicaSlicesRequest params) throws RemoteException {
+    de.zib.gndms.lofis.lofiset.stubs.GetReplicaSlicesResponse boxedResult = new de.zib.gndms.lofis.lofiset.stubs.GetReplicaSlicesResponse();
+    boxedResult.setReplicaSlices(impl.getReplicaSlices(params.getReplicaSliceFilter().getReplicaSliceFilter()));
     return boxedResult;
   }
 

@@ -26,9 +26,9 @@ public class LOFISProviderImpl{
 	}
 	
 
-    public de.zib.gndms.lofis.stubs.RegisterSliceResponse registerSlice(de.zib.gndms.lofis.stubs.RegisterSliceRequest params) throws RemoteException, de.zib.gndms.lofis.stubs.types.ConflictingDestinationsInMap, de.zib.gndms.lofis.stubs.types.MissingSourceFiles, de.zib.gndms.lofis.stubs.types.ConflictResolutionFailed, de.zib.gndms.lofis.stubs.types.UnsupportedOrInvalidSlice {
-    de.zib.gndms.lofis.stubs.RegisterSliceResponse boxedResult = new de.zib.gndms.lofis.stubs.RegisterSliceResponse();
-    boxedResult.setLofiSetReference(impl.registerSlice(params.getLofiMap().getLofiMap(),params.getSliceReference().getSliceReference(),params.isRegisterEverything()));
+    public de.zib.gndms.lofis.stubs.CreateLofiSetResponse createLofiSet(de.zib.gndms.lofis.stubs.CreateLofiSetRequest params) throws RemoteException, de.zib.gndms.lofis.stubs.types.ConflictingDestinationsInMap, de.zib.gndms.lofis.stubs.types.MissingSourceFiles, de.zib.gndms.lofis.stubs.types.ConflictResolutionFailed, de.zib.gndms.lofis.stubs.types.UnsupportedOrInvalidSlice {
+    de.zib.gndms.lofis.stubs.CreateLofiSetResponse boxedResult = new de.zib.gndms.lofis.stubs.CreateLofiSetResponse();
+    boxedResult.setLofiSetReference(impl.createLofiSet(params.getReplicaSlices().getReplicaSlices(),params.getSliceReference().getSliceReference()));
     return boxedResult;
   }
 

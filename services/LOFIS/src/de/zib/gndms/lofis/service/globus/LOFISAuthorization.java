@@ -68,7 +68,7 @@ public class LOFISAuthorization implements PDP {
 		
 	}
 					
-	public static void authorizeRegisterSlice() throws RemoteException {
+	public static void authorizeCreateLofiSet() throws RemoteException {
 		
 		
 	}
@@ -117,9 +117,9 @@ public class LOFISAuthorization implements PDP {
 				e.printStackTrace();
 				return false;
 			}
-		} else if(operation.getLocalPart().equals("registerSlice")){
+		} else if(operation.getLocalPart().equals("createLofiSet")){
 			try{
-				authorizeRegisterSlice();
+				authorizeCreateLofiSet();
 				return true;
 			} catch (Exception e){
 				e.printStackTrace();
