@@ -1,5 +1,6 @@
 #!/bin/bash
-TARGET="$PWD/types/"
+TARGET="$PWD/types"
 for SERVICE in services/* ; do
-  ( cd "$SERVICE/schema" && cp -fR `basename "$SERVICE"` $TARGET )
+  rsync -a "$SERVICE/build/schema/" "$TARGET/"
+  rsync -a "$SERVICE/schema/" "$TARGET/"
 done

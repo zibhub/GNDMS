@@ -98,33 +98,36 @@
 	</sequence>
 </complexType>
 
-<complexType name="ConflictResolvingFileMappingSeqT">
-	<complexContent>
-		<extension base="impl:FileMappingSeqT">
-			<attribute ref="impl:conflictResolutionStrategy" />
-		</extension>
-	</complexContent>
-</complexType>
-
-<complexType name="ReplicaSliceT">
+<complexType name="ReplicaSlicesT">
 	<sequence>
 		<element name="LofiMap" minOccurs="1" maxOccurs="1">
 			<complexType>
 			<complexContent>
 				<extension base="impl:FileMappingSeqT">
-					<attribute name="completeReplica" type="boolean" />
+					<attribute name="fillMapFromSlices" type="boolean" default="false" />
+					<attribute ref="impl:conflictResolutionStrategy" />
+					<attribute name="completeSlices" type="boolean" default="false" />
 				</extension>
 			</complexContent>
 			</complexType>
 		</element>
-		<element ref="slice:SliceReference" minOccurs="1" maxOccurs="1"/>
+		<element ref="slice:SliceReference" minOccurs="1" maxOccurs="unbounded"/>
 	</sequence>
 </complexType>
 
 <element name="Lofi" type="impl:FileT" />
 <element name="LofiSeq" type="impl:FileSeqT" />
-<element name="LofiMap" type="impl:ConflictResolvingFileMappingSeqT" />
+<element name="LofiMap" type="impl:FileMappingSeqT" />
 
-<element name="ReplicaSlice" type="impl:ReplicaSliceT" />
+<element name="ReplicaSlices" type="impl:ReplicaSlicesT" />
+
+<complexType name="ReplicaSliceFilterT">
+	<sequence>
+		<element name="CompleteSlicesOnly" type="boolean" minOccurs="1" maxOccurs="1" />
+		<element name="ResultLimit" minOccurs="0" maxOccurs="1" type="positiveInteger" />
+	</sequence>
+</complexType>
+
+<element name="ReplicaSliceFilter" type="impl:ReplicaSliceFilterT" />
 
 </schema>
