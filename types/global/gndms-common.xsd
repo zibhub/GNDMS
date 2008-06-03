@@ -2,11 +2,15 @@
 <schema targetNamespace="http://gndms.zib.de/common/types"
         xmlns:impl="http://gndms.zib.de/common/types"
 	    xmlns:slice="http://dspace.gndms.zib.de/DSpace/Slice/types"
+	    xmlns:wsbf="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd"
         elementFormDefault="qualified" version="1.0" xmlns="http://www.w3.org/2001/XMLSchema"
         xml:lang="EN">
 	
 <import namespace="http://dspace.gndms.zib.de/DSpace/Slice/types"
         schemaLocation="../DSpace/SliceTypes.xsd" />
+
+<import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd"
+		schemaLocation="../wsrf/faults/WS-BaseFaults.xsd" />
 
 <simpleType name="UUIDT">
 	<restriction base="string">
@@ -58,7 +62,7 @@
 </complexType>
 
 <simpleType name="FileMapConflictResolutionStrategyT">
-	<restriction base="string">
+	<restriction base="normalizedString">
 		<enumeration value="destinationWins" />
 		<enumeration value="sourceWins" />
 		<enumeration value="error" />
@@ -130,4 +134,53 @@
 
 <element name="ReplicaSliceFilter" type="impl:ReplicaSliceFilterT" />
 
+<complexType name="OfferExecutionContractT">
+	<sequence>
+		<element name="IfDecisionBefore" type="dateTime" minOccurs="0" maxOccurs="1"/>
+		<element name="ExecutionLikelyUntil" type="dateTime" minOccurs="0" maxOccurs="1"/>
+	</sequence>
+</complexType>
+
+<element name="OfferExecutionContract" type="impl:OfferExecutionContractT" />
+
+<simpleType name="TaskStatusT">
+	<restriction base="normalizedString">
+		<enumeration value="unknown" />
+		<enumeration value="created" />
+		<enumeration value="initialized" />
+		<enumeration value="inprogress" />
+		<enumeration value="failed" />
+		<enumeration value="finished" />
+	</restriction>
+</simpleType>
+
+<element name="TaskExecutionState">
+	<complexType>
+		<sequence>
+			<element name="Status" type="impl:TaskStatusT" minOccurs="1" maxOccurs="1" default="unknown" />
+			<element name="Progress" type="positiveInteger" minOccurs="1" maxOccurs="1" default="1" />
+			<element name="MaxProgress" type="positiveInteger" minOccurs="1" maxOccurs="1" default="100"/>
+			<element name="Description" type="normalizedString" minOccurs="1" maxOccurs="1" default=""/>
+			<element name="ContractBroken" type="boolean" minOccurs="1" maxOccurs="1" default="false" />
+		</sequence>
+	</complexType>
+</element>
+
+<element name="TaskExecutionFailure">
+	<complexType>
+		<choice>
+			<element ref="wsbf:BaseFault" />
+			<element name="ImplementationFault">
+				<complexType>
+					<sequence>
+						<element name="Message" type="string" minOccurs="1" maxOccurs="1" />
+						<element name="FaultClass" type="string" minOccurs="1" maxOccurs="1" />
+						<element name="FaultTrace" type="string" minOccurs="0" maxOccurs="1" />						
+					</sequence>
+				</complexType>
+			</element>
+			<element name="AllIsFine" />
+		</choice>
+	</complexType>
+</element>
 </schema>
