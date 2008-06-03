@@ -12,6 +12,18 @@ import java.rmi.RemoteException;
  */
 public interface LofiSetI {
 
+  public org.oasis.wsrf.lifetime.DestroyResponse destroy(org.oasis.wsrf.lifetime.Destroy params) throws RemoteException ;
+
+  public org.oasis.wsrf.lifetime.SetTerminationTimeResponse setTerminationTime(org.oasis.wsrf.lifetime.SetTerminationTime params) throws RemoteException ;
+
+  public org.oasis.wsn.SubscribeResponse subscribe(org.oasis.wsn.Subscribe params) throws RemoteException ;
+
+  public org.oasis.wsrf.properties.GetMultipleResourcePropertiesResponse getMultipleResourceProperties(org.oasis.wsrf.properties.GetMultipleResourceProperties_Element params) throws RemoteException ;
+
+  public org.oasis.wsrf.properties.GetResourcePropertyResponse getResourceProperty(javax.xml.namespace.QName params) throws RemoteException ;
+
+  public org.oasis.wsrf.properties.QueryResourcePropertiesResponse queryResourceProperties(org.oasis.wsrf.properties.QueryResourceProperties_Element params) throws RemoteException ;
+
   /**
    * Provides (empty) slices for the storage of replicas to this LofiSet
    *
@@ -20,6 +32,17 @@ public interface LofiSetI {
    *	
    */
   public void grantReplicaSlices(types.SliceReference[] sliceReference) throws RemoteException, de.zib.gndms.lofis.stubs.types.UnsupportedOrInvalidSlice ;
+
+  /**
+   * Create new LofiSet containing a mapped subset of this lofi's content.
+   *
+   * @param lofiMap
+   * @throws MissingSourceFiles
+   *	
+   * @throws ConflictingDestinationsInMap
+   *	
+   */
+  public de.zib.gndms.lofis.lofiset.client.LofiSetClient getSubLofiSet(types.FileMappingSeqT lofiMap) throws RemoteException, org.apache.axis.types.URI.MalformedURIException, de.zib.gndms.lofis.stubs.types.MissingSourceFiles, de.zib.gndms.lofis.stubs.types.ConflictingDestinationsInMap ;
 
   /**
    * Add Slices to LofiSet
@@ -53,29 +76,6 @@ public interface LofiSetI {
    * @param replicaSliceFilter
    */
   public types.ReplicaSlicesT[] getReplicaSlices(types.ReplicaSliceFilterT[] replicaSliceFilter) throws RemoteException ;
-
-  public org.oasis.wsrf.lifetime.DestroyResponse destroy(org.oasis.wsrf.lifetime.Destroy params) throws RemoteException ;
-
-  public org.oasis.wsrf.lifetime.SetTerminationTimeResponse setTerminationTime(org.oasis.wsrf.lifetime.SetTerminationTime params) throws RemoteException ;
-
-  public org.oasis.wsn.SubscribeResponse subscribe(org.oasis.wsn.Subscribe params) throws RemoteException ;
-
-  public org.oasis.wsrf.properties.GetMultipleResourcePropertiesResponse getMultipleResourceProperties(org.oasis.wsrf.properties.GetMultipleResourceProperties_Element params) throws RemoteException ;
-
-  public org.oasis.wsrf.properties.GetResourcePropertyResponse getResourceProperty(javax.xml.namespace.QName params) throws RemoteException ;
-
-  public org.oasis.wsrf.properties.QueryResourcePropertiesResponse queryResourceProperties(org.oasis.wsrf.properties.QueryResourceProperties_Element params) throws RemoteException ;
-
-  /**
-   * Create new LofiSet containing a mapped subset of this lofi's content.
-   *
-   * @param lofiMap
-   * @throws MissingSourceFiles
-   *	
-   * @throws ConflictingDestinationsInMap
-   *	
-   */
-  public de.zib.gndms.lofis.lofiset.client.LofiSetClient getSubLofiSet(types.FileMappingSeqT lofiMap) throws RemoteException, org.apache.axis.types.URI.MalformedURIException, de.zib.gndms.lofis.stubs.types.MissingSourceFiles, de.zib.gndms.lofis.stubs.types.ConflictingDestinationsInMap ;
 
 }
 
