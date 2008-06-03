@@ -9,5 +9,5 @@ services/*/build/**
 *.gar
 
 syntax:regexp
-^types/[A-Z].+
+^types/[A-Za-z].+
 
