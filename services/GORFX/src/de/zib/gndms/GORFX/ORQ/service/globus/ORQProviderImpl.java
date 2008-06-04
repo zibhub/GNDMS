@@ -26,9 +26,15 @@ public class ORQProviderImpl{
 	}
 	
 
-    public de.zib.gndms.GORFX.ORQ.stubs.GetOfferAndDestroyRequestResponse getOfferAndDestroyRequest(de.zib.gndms.GORFX.ORQ.stubs.GetOfferAndDestroyRequestRequest params) throws RemoteException, de.zib.gndms.GORFX.ORQ.stubs.types.UnfullfillableRequest {
+    public de.zib.gndms.GORFX.ORQ.stubs.GetOfferAndDestroyRequestResponse getOfferAndDestroyRequest(de.zib.gndms.GORFX.ORQ.stubs.GetOfferAndDestroyRequestRequest params) throws RemoteException, de.zib.gndms.GORFX.ORQ.stubs.types.UnfullfillableRequest, de.zib.gndms.GORFX.ORQ.stubs.types.PermissionDenied {
     de.zib.gndms.GORFX.ORQ.stubs.GetOfferAndDestroyRequestResponse boxedResult = new de.zib.gndms.GORFX.ORQ.stubs.GetOfferAndDestroyRequestResponse();
-    boxedResult.setOfferReference(impl.getOfferAndDestroyRequest(params.getOfferExecutionContract().getOfferExecutionContract()));
+    boxedResult.setEndpointReference(impl.getOfferAndDestroyRequest(params.getOfferExecutionContract().getOfferExecutionContract()));
+    return boxedResult;
+  }
+
+    public de.zib.gndms.GORFX.ORQ.stubs.GetPermissionAndDestroyRequestResponse getPermissionAndDestroyRequest(de.zib.gndms.GORFX.ORQ.stubs.GetPermissionAndDestroyRequestRequest params) throws RemoteException, de.zib.gndms.GORFX.ORQ.stubs.types.UnfullfillableRequest, de.zib.gndms.GORFX.ORQ.stubs.types.PermissionDenied {
+    de.zib.gndms.GORFX.ORQ.stubs.GetPermissionAndDestroyRequestResponse boxedResult = new de.zib.gndms.GORFX.ORQ.stubs.GetPermissionAndDestroyRequestResponse();
+    boxedResult.setOfferExecutionContract(impl.getPermissionAndDestroyRequest(params.getOfferExecutionContract().getOfferExecutionContract()));
     return boxedResult;
   }
 

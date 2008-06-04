@@ -33,7 +33,7 @@
       <element name="AcceptResponse">
         <complexType>
           <sequence>
-            <element ref="ns9:TaskReference" minOccurs="1" maxOccurs="1" />
+            <element ref="ns1:EndpointReference" minOccurs="1" maxOccurs="1" />
           </sequence>
         </complexType>
       </element>

@@ -136,8 +136,10 @@
 
 <complexType name="OfferExecutionContractT">
 	<sequence>
+		<element name="IfDecisionAfter" type="dateTime" minOccurs="0" maxOccurs="1"/>
 		<element name="IfDecisionBefore" type="dateTime" minOccurs="0" maxOccurs="1"/>
 		<element name="ExecutionLikelyUntil" type="dateTime" minOccurs="0" maxOccurs="1"/>
+		<element name="ResultValidUntil" type="dateTime" minOccurs="0" maxOccurs="1"/>
 	</sequence>
 </complexType>
 

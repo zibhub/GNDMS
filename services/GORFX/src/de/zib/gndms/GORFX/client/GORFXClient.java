@@ -97,13 +97,13 @@ public class GORFXClient extends GORFXClientBase implements GORFXI {
     }
   }
 
-  public de.zib.gndms.GORFX.ORQ.stubs.types.ORQReference createOfferRequest(org.apache.axis.types.URI offerTypeUri) throws RemoteException, de.zib.gndms.GORFX.stubs.types.UnsupportedOfferType {
+  public org.apache.axis.message.addressing.EndpointReferenceType createOfferRequest(org.apache.axis.types.URI offerTypeUri) throws RemoteException, de.zib.gndms.GORFX.stubs.types.UnsupportedOfferType {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"createOfferRequest");
     de.zib.gndms.GORFX.stubs.CreateOfferRequestRequest params = new de.zib.gndms.GORFX.stubs.CreateOfferRequestRequest();
     params.setOfferTypeUri(offerTypeUri);
     de.zib.gndms.GORFX.stubs.CreateOfferRequestResponse boxedResult = portType.createOfferRequest(params);
-    return boxedResult.getORQReference();
+    return boxedResult.getEndpointReference();
     }
   }
 

@@ -33,7 +33,7 @@
       <element name="CreateOfferRequestResponse">
         <complexType>
           <sequence>
-            <element ref="ns6:ORQReference" minOccurs="1" maxOccurs="1" />
+            <element ref="ns1:EndpointReference" minOccurs="1" maxOccurs="1" />
           </sequence>
         </complexType>
       </element>

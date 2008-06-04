@@ -25,7 +25,7 @@ public interface GORFXI {
    * @throws UnsupportedOfferType
    *	
    */
-  public de.zib.gndms.GORFX.ORQ.stubs.types.ORQReference createOfferRequest(org.apache.axis.types.URI offerTypeUri) throws RemoteException, de.zib.gndms.GORFX.stubs.types.UnsupportedOfferType ;
+  public org.apache.axis.message.addressing.EndpointReferenceType createOfferRequest(org.apache.axis.types.URI offerTypeUri) throws RemoteException, de.zib.gndms.GORFX.stubs.types.UnsupportedOfferType ;
 
   /**
    * Returns list of supported OfferType URIs

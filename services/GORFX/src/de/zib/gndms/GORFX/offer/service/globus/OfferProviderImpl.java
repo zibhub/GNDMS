@@ -28,7 +28,7 @@ public class OfferProviderImpl{
 
     public de.zib.gndms.GORFX.offer.stubs.AcceptResponse accept(de.zib.gndms.GORFX.offer.stubs.AcceptRequest params) throws RemoteException {
     de.zib.gndms.GORFX.offer.stubs.AcceptResponse boxedResult = new de.zib.gndms.GORFX.offer.stubs.AcceptResponse();
-    boxedResult.setTaskReference(impl.accept());
+    boxedResult.setEndpointReference(impl.accept());
     return boxedResult;
   }
 

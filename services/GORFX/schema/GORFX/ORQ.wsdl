@@ -41,7 +41,27 @@
       <element name="GetOfferAndDestroyRequestResponse">
         <complexType>
           <sequence>
-            <element ref="ns8:OfferReference" minOccurs="1" maxOccurs="1" />
+            <element ref="ns1:EndpointReference" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPermissionAndDestroyRequestRequest">
+        <complexType>
+          <sequence>
+            <element name="offerExecutionContract">
+              <complexType>
+                <sequence>
+                  <element ref="ns3:OfferExecutionContract" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPermissionAndDestroyRequestResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns3:OfferExecutionContract" minOccurs="1" maxOccurs="1" />
           </sequence>
         </complexType>
       </element>
@@ -62,8 +82,17 @@
   <message name="GetOfferAndDestroyRequestResponse">
     <part name="parameters" element="tns:GetOfferAndDestroyRequestResponse" />
   </message>
+  <message name="GetPermissionAndDestroyRequestRequest">
+    <part name="parameters" element="tns:GetPermissionAndDestroyRequestRequest" />
+  </message>
+  <message name="GetPermissionAndDestroyRequestResponse">
+    <part name="parameters" element="tns:GetPermissionAndDestroyRequestResponse" />
+  </message>
   <message name="UnfullfillableRequestFaultMessage">
     <part name="fault" element="ns6:UnfullfillableRequest" />
+  </message>
+  <message name="PermissionDeniedFaultMessage">
+    <part name="fault" element="ns6:PermissionDenied" />
   </message>
   <!--============================================================
 
@@ -75,6 +104,13 @@
       <input message="tns:GetOfferAndDestroyRequestRequest" wsa:Action="http://GORFX.gndms.zib.de/GORFX/ORQ/GetOfferAndDestroyRequestRequest" />
       <output message="tns:GetOfferAndDestroyRequestResponse" wsa:Action="http://GORFX.gndms.zib.de/GORFX/ORQ/GetOfferAndDestroyRequestResponse" />
       <fault name="UnfullfillableRequest" message="tns:UnfullfillableRequestFaultMessage" wsa:Action="http://GORFX.gndms.zib.de/GORFX/ORQ/UnfullfillableRequestFaultMessage" />
+      <fault name="PermissionDenied" message="tns:PermissionDeniedFaultMessage" wsa:Action="http://GORFX.gndms.zib.de/GORFX/ORQ/PermissionDeniedFaultMessage" />
+    </operation>
+    <operation name="GetPermissionAndDestroyRequest">
+      <input message="tns:GetPermissionAndDestroyRequestRequest" wsa:Action="http://GORFX.gndms.zib.de/GORFX/ORQ/GetPermissionAndDestroyRequestRequest" />
+      <output message="tns:GetPermissionAndDestroyRequestResponse" wsa:Action="http://GORFX.gndms.zib.de/GORFX/ORQ/GetPermissionAndDestroyRequestResponse" />
+      <fault name="UnfullfillableRequest" message="tns:UnfullfillableRequestFaultMessage" wsa:Action="http://GORFX.gndms.zib.de/GORFX/ORQ/UnfullfillableRequestFaultMessage" />
+      <fault name="PermissionDenied" message="tns:PermissionDeniedFaultMessage" wsa:Action="http://GORFX.gndms.zib.de/GORFX/ORQ/PermissionDeniedFaultMessage" />
     </operation>
     <operation name="getServiceSecurityMetadata">
       <input message="wns0:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />

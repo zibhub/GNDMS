@@ -118,12 +118,12 @@ public class OfferClient extends OfferClientBase implements OfferI {
     }
   }
 
-  public de.zib.gndms.GORFX.context.stubs.types.TaskReference accept() throws RemoteException {
+  public org.apache.axis.message.addressing.EndpointReferenceType accept() throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"accept");
     de.zib.gndms.GORFX.offer.stubs.AcceptRequest params = new de.zib.gndms.GORFX.offer.stubs.AcceptRequest();
     de.zib.gndms.GORFX.offer.stubs.AcceptResponse boxedResult = portType.accept(params);
-    return boxedResult.getTaskReference();
+    return boxedResult.getEndpointReference();
     }
   }
 

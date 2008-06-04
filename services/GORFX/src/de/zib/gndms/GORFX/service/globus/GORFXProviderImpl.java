@@ -28,7 +28,7 @@ public class GORFXProviderImpl{
 
     public de.zib.gndms.GORFX.stubs.CreateOfferRequestResponse createOfferRequest(de.zib.gndms.GORFX.stubs.CreateOfferRequestRequest params) throws RemoteException, de.zib.gndms.GORFX.stubs.types.UnsupportedOfferType {
     de.zib.gndms.GORFX.stubs.CreateOfferRequestResponse boxedResult = new de.zib.gndms.GORFX.stubs.CreateOfferRequestResponse();
-    boxedResult.setORQReference(impl.createOfferRequest(params.getOfferTypeUri()));
+    boxedResult.setEndpointReference(impl.createOfferRequest(params.getOfferTypeUri()));
     return boxedResult;
   }
 

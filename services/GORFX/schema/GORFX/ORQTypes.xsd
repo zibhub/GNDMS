@@ -15,5 +15,11 @@
       <extension base="wsrbf:BaseFaultType" />
     </complexContent>
   </complexType>
+  <element name="PermissionDenied" type="tns:PermissionDenied" />
+  <complexType name="PermissionDenied">
+    <complexContent>
+      <extension base="wsrbf:BaseFaultType" />
+    </complexContent>
+  </complexType>
 </schema>
 

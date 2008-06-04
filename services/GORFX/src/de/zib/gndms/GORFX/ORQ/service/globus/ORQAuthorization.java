@@ -87,6 +87,11 @@ public class ORQAuthorization implements PDP {
 		
 		
 	}
+					
+	public static void authorizeGetPermissionAndDestroyRequest() throws RemoteException {
+		
+		
+	}
 	
 	
 	public boolean isPermitted(Subject peerSubject, MessageContext context, QName operation)
@@ -154,6 +159,14 @@ public class ORQAuthorization implements PDP {
 		} else if(operation.getLocalPart().equals("getOfferAndDestroyRequest")){
 			try{
 				authorizeGetOfferAndDestroyRequest();
+				return true;
+			} catch (Exception e){
+				e.printStackTrace();
+				return false;
+			}
+		} else if(operation.getLocalPart().equals("getPermissionAndDestroyRequest")){
+			try{
+				authorizeGetPermissionAndDestroyRequest();
 				return true;
 			} catch (Exception e){
 				e.printStackTrace();

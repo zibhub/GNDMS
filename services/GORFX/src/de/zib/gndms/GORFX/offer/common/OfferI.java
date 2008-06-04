@@ -28,7 +28,7 @@ public interface OfferI {
    * Accept the offer and start its execution
    *
    */
-  public de.zib.gndms.GORFX.context.stubs.types.TaskReference accept() throws RemoteException ;
+  public org.apache.axis.message.addressing.EndpointReferenceType accept() throws RemoteException ;
 
 }
 
