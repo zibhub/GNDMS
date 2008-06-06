@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://dspace.gndms.zib.de/DSpace/Slice" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wns3="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:wns2="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:ns7="http://dspace.gndms.zib.de/DSpace/types" xmlns:ns1="http://gndms.zib.de/common/types" xmlns:ns6="http://dspace.gndms.zib.de/DSpace/Subspace/types" xmlns:ns5="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns2="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:ns3="http://dspace.gndms.zib.de/DSpace/Slice/types" xmlns:ns4="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd" xmlns:ns0="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" name="Slice" targetNamespace="http://dspace.gndms.zib.de/DSpace/Slice">
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://dspace.gndms.zib.de/DSpace/Slice" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wns3="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:wns2="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:ns7="http://dspace.gndms.zib.de/DSpace/types" xmlns:ns0="http://gndms.zib.de/common/types" xmlns:ns6="http://dspace.gndms.zib.de/DSpace/Subspace/types" xmlns:ns5="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns1="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:ns3="http://dspace.gndms.zib.de/DSpace/Slice/types" xmlns:ns4="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" xmlns:ns2="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd" name="Slice" targetNamespace="http://dspace.gndms.zib.de/DSpace/Slice">
   <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" location="../wsrf/properties/WS-ResourceProperties.wsdl" />
   <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" location="../wsrf/faults/WS-BaseFaults.wsdl" />
   <import namespace="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" location="../wsrf/notification/WS-BaseN.wsdl" />
@@ -21,42 +21,15 @@
       <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" schemaLocation="./xsd/cagrid/types/security/security.xsd" />
       <import namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" schemaLocation="./../ws/addressing/WS-Addressing.xsd" />
       <import namespace="http://dspace.gndms.zib.de/DSpace/Slice/types" schemaLocation="./SliceTypes.xsd" />
-      <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd" schemaLocation="../wsrf/lifetime/WS-ResourceLifetime.xsd" />
-      <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="../wsrf/faults/WS-BaseFaults.xsd" />
-      <element name="TransformSliceRequest">
-        <complexType>
-          <sequence>
-            <element name="sliceKind">
-              <complexType>
-                <sequence>
-                  <element ref="ns1:SliceKind" minOccurs="1" maxOccurs="1" />
-                </sequence>
-              </complexType>
-            </element>
-          </sequence>
-        </complexType>
-      </element>
-      <element name="TransformSliceResponse">
-        <complexType>
-          <sequence>
-            <element ref="ns3:SliceReference" minOccurs="1" maxOccurs="1" />
-          </sequence>
-        </complexType>
-      </element>
+      <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="./../wsrf/faults/WS-BaseFaults.xsd" />
+      <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd" schemaLocation="./../wsrf/lifetime/WS-ResourceLifetime.xsd" />
       <element name="TransformSliceToRequest">
         <complexType>
           <sequence>
-            <element name="subspaceSpecifier">
+            <element name="sliceTransformSpecifier">
               <complexType>
                 <sequence>
-                  <element ref="ns1:SubspaceSpecifier" minOccurs="1" maxOccurs="1" />
-                </sequence>
-              </complexType>
-            </element>
-            <element name="sliceKind">
-              <complexType>
-                <sequence>
-                  <element ref="ns1:SliceKind" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:SliceTransformSpecifier" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -73,11 +46,11 @@
       <element name="SliceResourceProperties">
         <complexType>
           <sequence>
-            <element ref="ns4:CurrentTime" />
-            <element ref="ns4:TerminationTime" />
-            <element ref="ns1:TotalStorageSize" />
-            <element ref="ns1:SliceKind" />
-            <element ref="ns1:SliceLocation" />
+            <element ref="ns2:CurrentTime" />
+            <element ref="ns2:TerminationTime" />
+            <element ref="ns0:TotalStorageSize" />
+            <element ref="ns0:SliceKind" />
+            <element ref="ns0:SliceLocation" />
             <element ref="ns6:SubspaceReference" />
           </sequence>
         </complexType>
@@ -85,23 +58,11 @@
     </schema>
   </types>
   <!--  place service messages here -->
-  <message name="TransformSliceRequest">
-    <part name="parameters" element="tns:TransformSliceRequest" />
-  </message>
-  <message name="TransformSliceResponse">
-    <part name="parameters" element="tns:TransformSliceResponse" />
-  </message>
   <message name="TransformSliceToRequest">
     <part name="parameters" element="tns:TransformSliceToRequest" />
   </message>
   <message name="TransformSliceToResponse">
     <part name="parameters" element="tns:TransformSliceToResponse" />
-  </message>
-  <message name="UnknownOrInvalidSliceKindFaultMessage">
-    <part name="fault" element="ns6:UnknownOrInvalidSliceKind" />
-  </message>
-  <message name="UnsupportedTransformationFaultMessage">
-    <part name="fault" element="ns3:UnsupportedTransformation" />
   </message>
   <message name="UnknownSubspaceFaultMessage">
     <part name="fault" element="ns7:UnknownSubspace" />
@@ -109,25 +70,25 @@
   <message name="OutOfSpaceFaultMessage">
     <part name="fault" element="ns6:OutOfSpace" />
   </message>
+  <message name="UnknownOrInvalidSliceKindFaultMessage">
+    <part name="fault" element="ns6:UnknownOrInvalidSliceKind" />
+  </message>
+  <message name="InternalFailureFaultMessage">
+    <part name="fault" element="ns7:InternalFailure" />
+  </message>
   <!--============================================================
 
                        P O R T T Y P E
                       
   ============================================================-->
   <portType name="SlicePortType" wsrp:ResourceProperties="tns:SliceResourceProperties">
-    <operation name="TransformSlice">
-      <input message="tns:TransformSliceRequest" wsa:Action="http://dspace.gndms.zib.de/DSpace/Slice/TransformSliceRequest" />
-      <output message="tns:TransformSliceResponse" wsa:Action="http://dspace.gndms.zib.de/DSpace/Slice/TransformSliceResponse" />
-      <fault name="UnknownOrInvalidSliceKind" message="tns:UnknownOrInvalidSliceKindFaultMessage" wsa:Action="http://dspace.gndms.zib.de/DSpace/Slice/UnknownOrInvalidSliceKindFaultMessage" />
-      <fault name="UnsupportedTransformation" message="tns:UnsupportedTransformationFaultMessage" wsa:Action="http://dspace.gndms.zib.de/DSpace/Slice/UnsupportedTransformationFaultMessage" />
-    </operation>
     <operation name="TransformSliceTo">
       <input message="tns:TransformSliceToRequest" wsa:Action="http://dspace.gndms.zib.de/DSpace/Slice/TransformSliceToRequest" />
       <output message="tns:TransformSliceToResponse" wsa:Action="http://dspace.gndms.zib.de/DSpace/Slice/TransformSliceToResponse" />
       <fault name="UnknownSubspace" message="tns:UnknownSubspaceFaultMessage" wsa:Action="http://dspace.gndms.zib.de/DSpace/Slice/UnknownSubspaceFaultMessage" />
       <fault name="OutOfSpace" message="tns:OutOfSpaceFaultMessage" wsa:Action="http://dspace.gndms.zib.de/DSpace/Slice/OutOfSpaceFaultMessage" />
       <fault name="UnknownOrInvalidSliceKind" message="tns:UnknownOrInvalidSliceKindFaultMessage" wsa:Action="http://dspace.gndms.zib.de/DSpace/Slice/UnknownOrInvalidSliceKindFaultMessage" />
-      <fault name="UnsupportedTransformation" message="tns:UnsupportedTransformationFaultMessage" wsa:Action="http://dspace.gndms.zib.de/DSpace/Slice/UnsupportedTransformationFaultMessage" />
+      <fault name="InternalFailure" message="tns:InternalFailureFaultMessage" wsa:Action="http://dspace.gndms.zib.de/DSpace/Slice/InternalFailureFaultMessage" />
     </operation>
     <operation name="getServiceSecurityMetadata">
       <input message="wns0:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />

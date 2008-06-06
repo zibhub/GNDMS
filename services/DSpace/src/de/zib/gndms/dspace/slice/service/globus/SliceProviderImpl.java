@@ -26,15 +26,9 @@ public class SliceProviderImpl{
 	}
 	
 
-    public de.zib.gndms.dspace.slice.stubs.TransformSliceResponse transformSlice(de.zib.gndms.dspace.slice.stubs.TransformSliceRequest params) throws RemoteException, de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind, de.zib.gndms.dspace.slice.stubs.types.UnsupportedTransformation {
-    de.zib.gndms.dspace.slice.stubs.TransformSliceResponse boxedResult = new de.zib.gndms.dspace.slice.stubs.TransformSliceResponse();
-    boxedResult.setSliceReference(impl.transformSlice(params.getSliceKind().getSliceKind()));
-    return boxedResult;
-  }
-
-    public de.zib.gndms.dspace.slice.stubs.TransformSliceToResponse transformSliceTo(de.zib.gndms.dspace.slice.stubs.TransformSliceToRequest params) throws RemoteException, de.zib.gndms.dspace.stubs.types.UnknownSubspace, de.zib.gndms.dspace.subspace.stubs.types.OutOfSpace, de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind, de.zib.gndms.dspace.slice.stubs.types.UnsupportedTransformation {
+    public de.zib.gndms.dspace.slice.stubs.TransformSliceToResponse transformSliceTo(de.zib.gndms.dspace.slice.stubs.TransformSliceToRequest params) throws RemoteException, de.zib.gndms.dspace.stubs.types.UnknownSubspace, de.zib.gndms.dspace.subspace.stubs.types.OutOfSpace, de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind, de.zib.gndms.dspace.stubs.types.InternalFailure {
     de.zib.gndms.dspace.slice.stubs.TransformSliceToResponse boxedResult = new de.zib.gndms.dspace.slice.stubs.TransformSliceToResponse();
-    boxedResult.setSliceReference(impl.transformSliceTo(params.getSubspaceSpecifier().getSubspaceSpecifier(),params.getSliceKind().getSliceKind()));
+    boxedResult.setSliceReference(impl.transformSliceTo(params.getSliceTransformSpecifier().getSliceTransformSpecifier()));
     return boxedResult;
   }
 

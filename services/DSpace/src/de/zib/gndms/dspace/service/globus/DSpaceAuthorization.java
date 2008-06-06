@@ -82,6 +82,11 @@ public class DSpaceAuthorization implements PDP {
 		
 		
 	}
+					
+	public static void authorizeCreateSliceInSubspace() throws RemoteException {
+		
+		
+	}
 	
 	
 	public boolean isPermitted(Subject peerSubject, MessageContext context, QName operation)
@@ -141,6 +146,14 @@ public class DSpaceAuthorization implements PDP {
 		} else if(operation.getLocalPart().equals("listSupportedSchemas")){
 			try{
 				authorizeListSupportedSchemas();
+				return true;
+			} catch (Exception e){
+				e.printStackTrace();
+				return false;
+			}
+		} else if(operation.getLocalPart().equals("createSliceInSubspace")){
+			try{
+				authorizeCreateSliceInSubspace();
 				return true;
 			} catch (Exception e){
 				e.printStackTrace();

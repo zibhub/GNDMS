@@ -104,19 +104,13 @@ public class SubspaceClient extends SubspaceClientBase implements SubspaceI {
     }
   }
 
-  public de.zib.gndms.dspace.slice.stubs.types.SliceReference createSlice(javax.xml.namespace.QName sliceKind,types.StorageSizeT sliceSize,java.util.Calendar terminationTime) throws RemoteException, de.zib.gndms.dspace.subspace.stubs.types.OutOfSpace, de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind {
+  public de.zib.gndms.dspace.slice.stubs.types.SliceReference createSlice(types.SliceCreationSpecifier sliceCreationSpecifier) throws RemoteException, de.zib.gndms.dspace.subspace.stubs.types.OutOfSpace, de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind, de.zib.gndms.dspace.stubs.types.InternalFailure {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"createSlice");
     de.zib.gndms.dspace.subspace.stubs.CreateSliceRequest params = new de.zib.gndms.dspace.subspace.stubs.CreateSliceRequest();
-    de.zib.gndms.dspace.subspace.stubs.CreateSliceRequestSliceKind sliceKindContainer = new de.zib.gndms.dspace.subspace.stubs.CreateSliceRequestSliceKind();
-    sliceKindContainer.setSliceKind(sliceKind);
-    params.setSliceKind(sliceKindContainer);
-    de.zib.gndms.dspace.subspace.stubs.CreateSliceRequestSliceSize sliceSizeContainer = new de.zib.gndms.dspace.subspace.stubs.CreateSliceRequestSliceSize();
-    sliceSizeContainer.setTotalStorageSize(sliceSize);
-    params.setSliceSize(sliceSizeContainer);
-    de.zib.gndms.dspace.subspace.stubs.CreateSliceRequestTerminationTime terminationTimeContainer = new de.zib.gndms.dspace.subspace.stubs.CreateSliceRequestTerminationTime();
-    terminationTimeContainer.setTerminationTime(terminationTime);
-    params.setTerminationTime(terminationTimeContainer);
+    de.zib.gndms.dspace.subspace.stubs.CreateSliceRequestSliceCreationSpecifier sliceCreationSpecifierContainer = new de.zib.gndms.dspace.subspace.stubs.CreateSliceRequestSliceCreationSpecifier();
+    sliceCreationSpecifierContainer.setSliceCreationSpecifier(sliceCreationSpecifier);
+    params.setSliceCreationSpecifier(sliceCreationSpecifierContainer);
     de.zib.gndms.dspace.subspace.stubs.CreateSliceResponse boxedResult = portType.createSlice(params);
     return boxedResult.getSliceReference();
     }

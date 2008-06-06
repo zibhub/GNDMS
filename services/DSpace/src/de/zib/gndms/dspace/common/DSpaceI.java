@@ -40,5 +40,21 @@ public interface DSpaceI {
    */
   public org.apache.axis.types.URI[] listSupportedSchemas() throws RemoteException ;
 
+  /**
+   * Create slice in subspace. Shortcut to avoid unneccesary extra communication roundtrip
+   *
+   * @param subspaceSpecifier
+   * @param sliceCreationSpecifier
+   * @throws OutOfSpace
+   *	
+   * @throws UnknownOrInvalidSliceKind
+   *	
+   * @throws UnknownSubspace
+   *	
+   * @throws InternalFailure
+   *	
+   */
+  public de.zib.gndms.dspace.slice.client.SliceClient createSliceInSubspace(javax.xml.namespace.QName subspaceSpecifier,types.SliceCreationSpecifier sliceCreationSpecifier) throws RemoteException, org.apache.axis.types.URI.MalformedURIException, de.zib.gndms.dspace.subspace.stubs.types.OutOfSpace, de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind, de.zib.gndms.dspace.stubs.types.UnknownSubspace, de.zib.gndms.dspace.stubs.types.InternalFailure ;
+
 }
 

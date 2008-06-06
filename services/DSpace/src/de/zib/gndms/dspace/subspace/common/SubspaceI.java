@@ -23,15 +23,15 @@ public interface SubspaceI {
   /**
    * Creates a new slice with the given kind in this subspace
    *
-   * @param sliceKind
-   * @param sliceSize
-   * @param terminationTime
+   * @param sliceCreationSpecifier
    * @throws OutOfSpace
    *	
    * @throws UnknownOrInvalidSliceKind
    *	
+   * @throws InternalFailure
+   *	
    */
-  public de.zib.gndms.dspace.slice.stubs.types.SliceReference createSlice(javax.xml.namespace.QName sliceKind,types.StorageSizeT sliceSize,java.util.Calendar terminationTime) throws RemoteException, de.zib.gndms.dspace.subspace.stubs.types.OutOfSpace, de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind ;
+  public de.zib.gndms.dspace.slice.stubs.types.SliceReference createSlice(types.SliceCreationSpecifier sliceCreationSpecifier) throws RemoteException, de.zib.gndms.dspace.subspace.stubs.types.OutOfSpace, de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind, de.zib.gndms.dspace.stubs.types.InternalFailure ;
 
   /**
    * Returns a (possibly incompletet) list of all slice kinds supported by this subspaces CreateSlice() method

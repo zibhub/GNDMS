@@ -15,20 +15,20 @@
       <agg:GetMultipleResourcePropertiesPollType
 			xmlns:ns7="http://dspace.gndms.zib.de/DSpace/types"
 			xmlns:xs="http://www.w3.org/2001/XMLSchema"
-			xmlns:ns1="http://gndms.zib.de/common/types"
+			xmlns:ns0="http://gndms.zib.de/common/types"
 			xmlns:ns6="http://dspace.gndms.zib.de/DSpace/Subspace/types"
 			xmlns:ns5="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"
-			xmlns:ns2="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+			xmlns:ns1="http://schemas.xmlsoap.org/ws/2004/03/addressing"
 			xmlns:ns3="http://dspace.gndms.zib.de/DSpace/Slice/types"
-			xmlns:ns4="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"
-			xmlns:ns0="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd">
+			xmlns:ns4="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd"
+			xmlns:ns2="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd">
         <!-- Specifies that the index should refresh information
             every 300000 milliseconds (once every 5 minutes) -->
         <agg:PollIntervalMillis>INDEX_REFRESH</agg:PollIntervalMillis>
         <!-- specifies all Resource Properties that should be retrieved from the service -->
-		<agg:ResourcePropertyNames>ns1:AvailableStorageSize</agg:ResourcePropertyNames>
+		<agg:ResourcePropertyNames>ns0:AvailableStorageSize</agg:ResourcePropertyNames>
 	
-		<agg:ResourcePropertyNames>ns1:TotalStorageSize</agg:ResourcePropertyNames>
+		<agg:ResourcePropertyNames>ns0:TotalStorageSize</agg:ResourcePropertyNames>
 	
       </agg:GetMultipleResourcePropertiesPollType>
     </agg:AggregatorConfig>

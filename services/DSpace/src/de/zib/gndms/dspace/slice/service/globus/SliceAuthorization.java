@@ -83,11 +83,6 @@ public class SliceAuthorization implements PDP {
 		
 	}
 					
-	public static void authorizeTransformSlice() throws RemoteException {
-		
-		
-	}
-					
 	public static void authorizeTransformSliceTo() throws RemoteException {
 		
 		
@@ -151,14 +146,6 @@ public class SliceAuthorization implements PDP {
 		} else if(operation.getLocalPart().equals("queryResourceProperties")){
 			try{
 				authorizeQueryResourceProperties();
-				return true;
-			} catch (Exception e){
-				e.printStackTrace();
-				return false;
-			}
-		} else if(operation.getLocalPart().equals("transformSlice")){
-			try{
-				authorizeTransformSlice();
 				return true;
 			} catch (Exception e){
 				e.printStackTrace();
