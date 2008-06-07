@@ -205,6 +205,19 @@ public abstract class OfferResourceBase extends ReflectionResource implements Re
         store();
 	}
 	
+	
+	
+	public types.DynamicOfferDataSeqT getOfferRequestArguments(){
+		return ((OfferResourceProperties) getResourceBean()).getOfferRequestArguments();
+	}
+	
+	public void setOfferRequestArguments(types.DynamicOfferDataSeqT offerRequestArguments ) throws ResourceException {
+        ResourceProperty prop = getResourcePropertySet().get(OfferConstants.OFFERREQUESTARGUMENTS);
+		prop.set(0, offerRequestArguments);
+        //call the first store to persist the resource
+        store();
+	}
+	
 
 
 	

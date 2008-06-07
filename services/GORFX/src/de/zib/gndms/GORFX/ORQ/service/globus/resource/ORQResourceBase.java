@@ -173,6 +173,17 @@ public abstract class ORQResourceBase extends ReflectionResource implements Reso
 
 
 	    //Getters/Setters for ResourceProperties
+	
+	
+	public types.DynamicOfferDataSeqT getOfferRequestArguments(){
+		return ((ORQResourceProperties) getResourceBean()).getOfferRequestArguments();
+	}
+	
+	public void setOfferRequestArguments(types.DynamicOfferDataSeqT offerRequestArguments ) throws ResourceException {
+        ResourceProperty prop = getResourcePropertySet().get(ORQConstants.OFFERREQUESTARGUMENTS);
+		prop.set(0, offerRequestArguments);
+	}
+	
 
 
 	

@@ -15,14 +15,14 @@
       <agg:GetMultipleResourcePropertiesPollType
 			xmlns:ns8="http://GORFX.gndms.zib.de/GORFX/Offer/types"
 			xmlns:ns9="http://GORFX.gndms.zib.de/GORFX/Context/types"
-			xmlns:ns6="http://GORFX.gndms.zib.de/GORFX/ORQ/types"
+			xmlns:ns7="http://GORFX.gndms.zib.de/GORFX/ORQ/types"
 			xmlns:xs="http://www.w3.org/2001/XMLSchema"
-			xmlns:ns3="http://gndms.zib.de/common/types"
-			xmlns:ns5="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"
-			xmlns:ns1="http://schemas.xmlsoap.org/ws/2004/03/addressing"
-			xmlns:ns2="http://dspace.gndms.zib.de/DSpace/Slice/types"
-			xmlns:ns7="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"
-			xmlns:ns4="http://GORFX.gndms.zib.de/GORFX/types"
+			xmlns:ns4="http://gndms.zib.de/common/types"
+			xmlns:ns6="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"
+			xmlns:ns2="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+			xmlns:ns3="http://dspace.gndms.zib.de/DSpace/Slice/types"
+			xmlns:ns5="http://GORFX.gndms.zib.de/GORFX/types"
+			xmlns:ns1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"
 			xmlns:ns0="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd">
         <!-- Specifies that the index should refresh information
             every 300000 milliseconds (once every 5 minutes) -->

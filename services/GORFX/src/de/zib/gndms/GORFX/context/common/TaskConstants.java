@@ -13,5 +13,6 @@ public interface TaskConstants {
 	public static final QName TERMINATIONTIME = new QName("http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd", "TerminationTime");
 	public static final QName TASKEXECUTIONSTATE = new QName("http://gndms.zib.de/common/types", "TaskExecutionState");
 	public static final QName TASKEXECUTIONFAILURE = new QName("http://gndms.zib.de/common/types", "TaskExecutionFailure");
+	public static final QName TASKEXECUTIONRESULTS = new QName("http://gndms.zib.de/common/types", "TaskExecutionResults");
 	
 }

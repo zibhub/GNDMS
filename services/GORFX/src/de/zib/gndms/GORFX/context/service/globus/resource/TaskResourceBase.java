@@ -218,6 +218,19 @@ public abstract class TaskResourceBase extends ReflectionResource implements Res
         store();
 	}
 	
+	
+	
+	public types.DynamicOfferDataSeqT getTaskExecutionResults(){
+		return ((TaskResourceProperties) getResourceBean()).getTaskExecutionResults();
+	}
+	
+	public void setTaskExecutionResults(types.DynamicOfferDataSeqT taskExecutionResults ) throws ResourceException {
+        ResourceProperty prop = getResourcePropertySet().get(TaskConstants.TASKEXECUTIONRESULTS);
+		prop.set(0, taskExecutionResults);
+        //call the first store to persist the resource
+        store();
+	}
+	
 
 
 	
