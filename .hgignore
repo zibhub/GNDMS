@@ -1,6 +1,7 @@
 syntax:glob
 
 services/*/build/**
+services/*/lib/gndms-*.jar
 .DS_Store
 *.ipr
 *.iws
