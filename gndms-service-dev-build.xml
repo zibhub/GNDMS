@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<project name="Shared Developer Modified Build File for GNDMS services" basedir=".">
+	<property name="gndms.infra.home" value="infra" />
+	<property name="jar.prefix" value="c3grid" />
+	<property name="target.grid" value="c3grid" />
+	<property name="service.deployment.prefix" value="c3grid" />
+</project>
+
