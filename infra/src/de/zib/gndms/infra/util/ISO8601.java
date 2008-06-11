@@ -15,8 +15,8 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * Notes:
  * Supports years with more than four digits, negative years (instead of AD/BC era code),
  * second fractions are converted to milliseconds and properly rounded (SimpleDateFormat is severly
- * broken in how it prints them), RFC822 timezone specifiers with middle ':', and Z for
- * UTC
+ * broken in how it prints them), RFC822 timezone specifiers with middle ':', and 'Z' for
+ * UTC/GMT
  *
  * @author Roberto Henschenl <henschel@zib.de>
  * @author Stefan Plantikow <plantikow@zib.de>
@@ -26,6 +26,11 @@ import java.util.concurrent.CopyOnWriteArraySet;
 public final class ISO8601 {
 	private ISO8601() {}
 
+	/**
+	 * ISO8601Subformat is used to specify how much precision is to be given
+	 * when printing a GregorianCalendar as an ISO8601-formatted string using
+	 * ISO08601format.toISO8601Date
+	 */
 	@SuppressWarnings({"EnumeratedClassNamingConvention"})
 	public enum ISO8601Subformat {
 		YEAR,
@@ -35,29 +40,34 @@ public final class ISO8601 {
 		DATE_HMS(true),
 		DATE_HMSMS(true);
 
-		public final boolean hasTimeZone;
+		public final boolean hasTimeZoneSpecifier;
 
-		ISO8601Subformat(boolean formatHasTimeZone) {
-			hasTimeZone = formatHasTimeZone;
+		ISO8601Subformat(boolean formatHasTimeZoneSpecifier) {
+			hasTimeZoneSpecifier = formatHasTimeZoneSpecifier;
 		}
 
 		ISO8601Subformat() { this(false); }
 	}
 
+	// Map from subformat to "as-close-as-possible" SimpleDateFormat
 	private static final Map<ISO8601Subformat,SimpleDateFormat> ISO08601format;
+
+	// Silly set of all the ways to write GMT+0 (without the leading GMT)
 	private static final Set<String> zeroZoneStrings;
 
-	static {
+	// UTC
+	private static final TimeZone zeroZone=TimeZone.getTimeZone("UTC");
 
+	static {
 		//initializes several format-types according to
 		// W3C XML-Schema profile for ISO8601
 		ISO08601format=new EnumMap<ISO8601Subformat, SimpleDateFormat>(ISO8601Subformat.class);
-		ISO08601format.put(ISO8601Subformat.YEAR, new SimpleDateFormat("yyyy",Locale.ENGLISH));
-		ISO08601format.put(ISO8601Subformat.YEAR_MONTH, new SimpleDateFormat("yyyy-MM",Locale.ENGLISH));
-		ISO08601format.put(ISO8601Subformat.YEAR_MONTH_DAY, new SimpleDateFormat("yyyy-MM-dd",Locale.ENGLISH));
-		ISO08601format.put(ISO8601Subformat.DATE_HM, new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ",Locale.ENGLISH));
-		ISO08601format.put(ISO8601Subformat.DATE_HMS, new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ",Locale.ENGLISH));
-		ISO08601format.put(ISO8601Subformat.DATE_HMSMS, new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.Z",Locale.ENGLISH));
+		ISO08601format.put(ISO8601Subformat.YEAR, new SimpleDateFormat("yyyy", Locale.ENGLISH));
+		ISO08601format.put(ISO8601Subformat.YEAR_MONTH, new SimpleDateFormat("yyyy-MM", Locale.ENGLISH));
+		ISO08601format.put(ISO8601Subformat.YEAR_MONTH_DAY, new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH));
+		ISO08601format.put(ISO8601Subformat.DATE_HM, new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.ENGLISH));
+		ISO08601format.put(ISO8601Subformat.DATE_HMS, new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.ENGLISH));
+		ISO08601format.put(ISO8601Subformat.DATE_HMSMS, new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.Z", Locale.ENGLISH));
 
 		// helps detect weird GMT+00:00 specifiers 
 		zeroZoneStrings = new CopyOnWriteArraySet<String>();
@@ -69,59 +79,27 @@ public final class ISO8601 {
 		zeroZoneStrings.add("+00:00");
 	}
 
-	private static final TimeZone zeroZone=TimeZone.getTimeZone("UTC");
-	
-	
-	//Splits a time-String into an Array 
-	//so that a time like '12:14:04.12' will result in [12,14,4,12] 
-	@SuppressWarnings({"NumericCastThatLosesPrecision", "MagicNumber"})
-	private static int[] getTimeEntries(String str) throws ParseException {
-		int milSec = 0;
-		String[] values = str.split(":");
-		switch (values.length) {
-			case 0:
-			case 1:
-			case 2:
-				break;
-			case 3:
-				if (values[2].contains(".")) {
-					int dotPos = values[2].indexOf('.');
-					if (dotPos + 1 >= values[2].length())
-						throw new ParseException("Missing milliseconds", dotPos);
-					final String milSecStr = values[2].substring(dotPos);
-					double milSecApprox = Math.round(Double.valueOf(milSecStr) * 1000.0D);
-					milSec = (int) Math.floor(milSecApprox);
-					if (milSec < 0)
-						throw new ParseException("Negative milliseconds", dotPos);
-					values[2] = values[2].substring(0, dotPos);
-				}
-				break;
-			default:
-				throw new ParseException("Time string contains more component than expeced", 0);
-		}
-		int[] time = new int[4];
-		for (int i = 0; i < values.length; i++) {
-			time[i] = Integer.valueOf(values[i]);
-		}
-		time[3] = milSec;
-
-		return time;
-	}
-	
-	//sets all values of the calendar to zero ,
-	//	parses a given String in ISO08601-format, and applies it to the calendar.
-	public static void parseISO8601Date(GregorianCalendar cal,
+	/**
+	 * 	Sets all values of the calendar to zero,
+	 *	parses a given String in ISO8601-format, and applies it to the calendar.
+	 *
+	 *  When an exception is thrown, the state of the calendar is undefined.
+	 *
+	 */
+	public static void parseISO8601DateStr(GregorianCalendar cal,
 			String isoDateStr) throws java.text.ParseException {
 		cal.clear();
-		parseISO8601DateNoInit(cal, isoDateStr.trim());
+		parseISO8601DateStrNoInit(cal, isoDateStr.trim());
 	}
-	
-	// Parses a given String in ISO08601-format and applies it to a given calendar.
-	// Pay attention that the calendar will not have been reset before the string is applied.
-	// So it will take the current date and time as it's values and will overwrite only the
-	// values which are contained in the string.
+
+	/**
+	 * Parses a given String in ISO08601-format and applies it to a given calendar.
+	 * Pay attention that the calendar will not have been reset before the string is applied.
+	 * So it will take the current date and time as it's values and will overwrite only the
+	 * values which are contained in the string.
+ 	 */
 	@SuppressWarnings({"AssignmentToMethodParameter"})
-	public static void parseISO8601DateNoInit(GregorianCalendar cal,
+	private static void parseISO8601DateStrNoInit(GregorianCalendar cal,
 			String isoDateStr) throws ParseException {
 
 		try {
@@ -141,6 +119,47 @@ public final class ISO8601 {
 		} catch (NumberFormatException e) {
 			throw new ParseException(e.getMessage(), 0);
 		}
+	}
+
+	/**
+	 * Renders cal as an ISO8601-formatted string.
+	 *
+	 * @param subformat specifies the precision of the string representation
+	 * @param cal the dateTime to print
+	 * @return an ISO8601 representation of cal as described by m
+	 */
+	public static String formatAsISO8601DateStr(ISO8601Subformat subformat, Calendar cal) {
+		return formatAsISO8601DateStr(subformat, false, cal);
+	}
+
+	/**
+	 * Renders cal as an ISO8601-formatted string.
+	 *
+	 * @param subformat specifies the precision of the string representation
+	 * @param normalizeTZ if true, shift cal to UTC (Z timezone in ISO8601)
+	 * @param cal the dateTime to print
+	 * @return an ISO8601 representation of cal as described by m
+	 */
+	public static String formatAsISO8601DateStr(
+		  ISO8601Subformat subformat, boolean normalizeTZ, Calendar cal) {
+
+		// We cant avoid cloning here since we might have to change teh dateFormats timezone
+		// TODO: Cache to avoid cloning?
+		SimpleDateFormat dateFormat= (SimpleDateFormat) ISO08601format.get(subformat).clone();
+		dateFormat.setTimeZone(normalizeTZ ? zeroZone : cal.getTimeZone());
+		final String formattedString = dateFormat.format(cal.getTimeInMillis());
+		final String resultString =
+			  subformat.hasTimeZoneSpecifier ? fixTimeZone(formattedString) : formattedString;
+
+		if (ISO8601Subformat.DATE_HMSMS.equals(subformat)) {
+			final int dotIndex = resultString.indexOf('.');
+			return prefixWithEra(cal,
+				  resultString.substring(0, dotIndex) + '.' +
+				  prefixWithZeros(cal.get(Calendar.MILLISECOND)) +
+				  resultString.substring(dotIndex + 1));
+		}
+		else
+			return prefixWithEra(cal, resultString);
 	}
 
 	private static void parseSplitIsoAndTimeStr(
@@ -185,10 +204,51 @@ public final class ISO8601 {
 		setTimeValue(cal, timeEntries);
 	}
 
+
+
+	//Splits a time-String into an Array
+	//so that a time like '12:14:04.12' will result in [12,14,4,12]
+	@SuppressWarnings({"NumericCastThatLosesPrecision", "MagicNumber"})
+	private static int[] getTimeEntries(String str) throws ParseException {
+		int milSec = 0;
+		String[] values = str.split(":");
+		switch (values.length) {
+			case 0:
+			case 1:
+			case 2:
+				break;
+			case 3:
+				if (values[2].contains(".")) {
+					int dotPos = values[2].indexOf('.');
+					if (dotPos + 1 >= values[2].length())
+						throw new ParseException("Missing milliseconds", dotPos);
+					final String milSecStr = values[2].substring(dotPos);
+					double milSecApprox = Math.round(Double.valueOf(milSecStr) * 1000.0D);
+					milSec = (int) Math.floor(milSecApprox);
+					if (milSec < 0)
+						throw new ParseException("Negative milliseconds", dotPos);
+					values[2] = values[2].substring(0, dotPos);
+				}
+				break;
+			default:
+				throw new ParseException("Time string contains more components than expeced", 0);
+		}
+		int[] time = new int[4];
+		for (int i = 0; i < values.length; i++) {
+			time[i] = Integer.valueOf(values[i]);
+		}
+		time[3] = milSec;
+
+		return time;
+	}
+
 	private static void setTimezone(Calendar cal, String zoneString) throws ParseException {
 		if (!"".equals(zoneString)) {
 			final String gmtZoneString = "GMT" + zoneString;
 			final TimeZone zone = TimeZone.getTimeZone(gmtZoneString);
+			// Since this is targeted at Java 1.5, this is the only way
+			// to find out wether getTimezone() did return a match 
+			// (it returns GMT if fed with an unknown zone identifier)
 			if ("GMT".equals(zone.getID()) && !zeroZoneStrings.contains(zoneString))
 				throw new ParseException("Unknown time zone", 0);
 			cal.setTimeZone(zone);
@@ -217,35 +277,6 @@ public final class ISO8601 {
 			cal.set(Calendar.SECOND, timeEntries[2]);
 			cal.set(Calendar.MILLISECOND, timeEntries[3]);
 		}
-	}
-
-	public static String toISO8601Date(ISO8601Subformat m, Calendar cal) {
-		return toISO8601Date(m, false, cal);
-	}
-
-	public static String toISO8601Date(
-		  ISO8601Subformat subformat, boolean normalizeTZ, Calendar cal) {
-
-		SimpleDateFormat dateFormat= (SimpleDateFormat) ISO08601format.get(subformat).clone();
-		dateFormat.setTimeZone(normalizeTZ ? zeroZone : cal.getTimeZone());
-		final String formattedString = dateFormat.format(cal.getTimeInMillis());
-		final String resultString;
-		if (subformat.hasTimeZone) {
-			resultString = fixTimeZone(formattedString);
-		}
-		else
-			resultString = formattedString;
-
-		if (ISO8601Subformat.DATE_HMSMS.equals(subformat)) {
-			final int dotIndex = resultString.indexOf('.');
-			final String fixedString =
-				  resultString.substring(0, dotIndex) + '.' +
-				  prefixWithZeros(cal.get(Calendar.MILLISECOND)) +
-				  resultString.substring(dotIndex + 1);
-			return prefixWithEra(cal, fixedString);
-		}
-		else
-			return prefixWithEra(cal, resultString);
 	}
 
 	private static String fixTimeZone(final String inStr) {
@@ -287,21 +318,21 @@ public final class ISO8601 {
 		String test="-200003-11-01T14:20:14.99999-06:00";
 		GregorianCalendar cal= new GregorianCalendar();
 		try{
-			parseISO8601Date(cal, test);
+			parseISO8601DateStr(cal, test);
 		} catch (ParseException e){
 			e.printStackTrace();
 		}
-		System.out.println(toISO8601Date(ISO8601Subformat.DATE_HMSMS, false, cal));
-		final String result = toISO8601Date(ISO8601Subformat.DATE_HMSMS, true, cal);
+		System.out.println(formatAsISO8601DateStr(ISO8601Subformat.DATE_HMSMS, false, cal));
+		final String result = formatAsISO8601DateStr(ISO8601Subformat.DATE_HMSMS, true, cal);
 		System.out.println(result);
 
 		try {
-			parseISO8601Date(cal, result);
+			parseISO8601DateStr(cal, result);
 		}
 		catch (ParseException e) {
 			e.printStackTrace();
 		}
-		System.out.println(toISO8601Date(ISO8601Subformat.DATE_HMS, false, cal));
-		System.out.println(toISO8601Date(ISO8601Subformat.DATE_HMSMS, true, cal));
+		System.out.println(formatAsISO8601DateStr(ISO8601Subformat.DATE_HMS, false, cal));
+		System.out.println(formatAsISO8601DateStr(ISO8601Subformat.DATE_HMSMS, true, cal));
 	}
 }
