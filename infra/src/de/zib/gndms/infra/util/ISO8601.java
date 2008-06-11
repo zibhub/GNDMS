@@ -86,10 +86,25 @@ public final class ISO8601 {
 	 *  When an exception is thrown, the state of the calendar is undefined.
 	 *
 	 */
-	public static void parseISO8601DateStr(GregorianCalendar cal,
-			String isoDateStr) throws java.text.ParseException {
+	public static void parseISO8601DateStr(GregorianCalendar cal, String isoDateStr)
+		  throws java.text.ParseException {
 		cal.clear();
 		parseISO8601DateStrNoInit(cal, isoDateStr.trim());
+	}
+
+	/**
+	 * Construct new calendar set according to isoDateStr
+	 *
+	 * @param date
+	 * @param isoDateStr
+	 * @return GregorianCalendar set to isoDateStr
+	 * @throws ParseException
+	 */
+	public static GregorianCalendar parseISO8601DateStr(String isoDateStr)
+		  throws java.text.ParseException {
+		GregorianCalendar cal = new GregorianCalendar();
+		parseISO8601DateStrNoInit(cal, isoDateStr);
+		return cal;
 	}
 
 	/**
@@ -122,6 +137,55 @@ public final class ISO8601 {
 	}
 
 	/**
+	 * Set calendar to time contained in date
+	 *
+	 * @param calendar
+	 * @param date
+	 */
+	public static void setCalendarFromDate(Calendar calendar, Date date) {
+		calendar.setTimeInMillis(date.getTime());
+	}
+
+	/**
+	 * Construct calendar for date
+	 *
+	 * @param date
+	 * @return GregorianCalendar set to date
+	 */
+	public static GregorianCalendar calendarForDate(Date date) {
+		GregorianCalendar calendar = new GregorianCalendar();
+		setCalendarFromDate(calendar, date);
+		return calendar;
+	}
+
+	/**
+	 * Construct Date from Calendar
+	 *
+	 * @param date
+	 * @param calendar
+	 * @throw IllegalArgumentException if calendar is set before the beginning of the epoch
+	 */
+	public static void setDateFromCalendar(Date date, Calendar calendar) {
+		final long millis = calendar.getTimeInMillis();
+		if (millis < 0)
+			throw new IllegalArgumentException
+				  ("Time before begin of epoch not convertible to Date");
+		date.setTime(millis);
+	}
+
+	/**
+	 *
+	 * @param calendar
+	 * @throw IllegalArgumentException if calendar is set before the beginning of the epoch
+	 * @return date for calendar
+	 */
+	public static Date dateForCalendar(Calendar calendar) {
+		Date date = new Date();
+		setDateFromCalendar(date, calendar);
+		return date;
+	}
+
+	/**
 	 * Renders cal as an ISO8601-formatted string.
 	 *
 	 * @param subformat specifies the precision of the string representation
@@ -130,6 +194,56 @@ public final class ISO8601 {
 	 */
 	public static String formatAsISO8601DateStr(ISO8601Subformat subformat, Calendar cal) {
 		return formatAsISO8601DateStr(subformat, false, cal);
+	}
+
+	/**
+	 *
+	 * @param cal
+	 * @return formatAsISO8601DateStr(ISO8601Subformat.DATE_HMSMS, false, cal)
+	 */
+	public static String formatAsISO8601DateStr(Calendar cal) {
+		return formatAsISO8601DateStr(ISO8601Subformat.DATE_HMSMS, false, cal);
+	}
+
+	/**
+	 *
+	 * @param normalizeTZ
+	 * @param date
+	 * @return formatAsISO8601DateStr(ISO8601Subformat.DATE_HMSMS, normalizeTZ, calendarForDate(date))
+	 */
+	public static String formatAsISO8601DateStr(boolean normalizeTZ, Date date) {
+		return formatAsISO8601DateStr(ISO8601Subformat.DATE_HMSMS, normalizeTZ,
+			  calendarForDate(date));
+	}
+
+	/**
+	 * Renders cal as an ISO8601-formatted string.
+	 *
+	 * @param subformat specifies the precision of the string representation
+	 * @param date the dateTime to print
+	 * @return an ISO8601 representation of cal as described by m
+	 */
+	public static String formatAsISO8601DateStr(ISO8601Subformat subformat, Date date) {
+		return formatAsISO8601DateStr(subformat, false, calendarForDate(date));
+	}
+
+	/**
+	 *
+	 * @param date
+	 * @return formatAsISO8601DateStr(ISO8601Subformat.DATE_HMSMS, false, calendarForDate(date))
+	 */
+	public static String formatAsISO8601DateStr(Date date) {
+		return formatAsISO8601DateStr(ISO8601Subformat.DATE_HMSMS, false, calendarForDate(date));
+	}
+
+	/**
+	 *
+	 * @param normalizeTZ
+	 * @param cal
+	 * @return formatAsISO8601DateStr(ISO8601Subformat.DATE_HMSMS, normalizeTZ, cal)
+	 */
+	public static String formatAsISO8601DateStr(boolean normalizeTZ, Calendar cal) {
+		return formatAsISO8601DateStr(ISO8601Subformat.DATE_HMSMS, normalizeTZ, cal);
 	}
 
 	/**
