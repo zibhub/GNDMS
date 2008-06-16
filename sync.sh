@@ -9,6 +9,6 @@ for SERVICE in services/* ; do
     ln -sf "../../../$jar" "$SERVICE/lib" 
   done
   for jar in extra/tools-lib/* ; do
-    ln -sf "../$../../jar" "$SERVICE/tools/lib" 
+    ln -sf "../../../../$jar" "$SERVICE/tools/lib" 
   done
 done
