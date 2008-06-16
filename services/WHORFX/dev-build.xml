@@ -12,6 +12,7 @@
 	<!-- ============================================================== -->
 
 	<import file="../../gndms-service-dev-build.xml" />
+	<property name="jar.prefix" value="c3grid-whorfx" />
 
 	<!-- ============================================================== -->
 	<!-- Create any extended Classpaths here                            -->
