@@ -3,6 +3,7 @@ package de.zib.gndms.service;
 import de.zib.gndms.stubs.types.UnknownORFType;
 import org.apache.axis.types.URI;
 import org.apache.log4j.Logger;
+import types.ContextT;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,9 +11,9 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.concurrent.atomic.AtomicLong;
 
 /** 
  * I am a service for looking up orf port endpoint URIs based on a type URIs.
@@ -39,7 +40,7 @@ public final class WHORFXImpl extends WHORFXImplBase {
 		}
 	}
 
-	public org.apache.axis.types.URI lookupORF(org.apache.axis.types.URI orfType)
+	public org.apache.axis.types.URI lookupORF(org.apache.axis.types.URI orfType, ContextT context)
 		  throws RemoteException, de.zib.gndms.stubs.types.UnknownORFType {
 		try {
 			lock.readLock().lock();
