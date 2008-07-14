@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
     <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER" />
-    <classpathentry kind="src" path="build/stubs-GORFX/src" />
     <classpathentry kind="src" path="src" />
     <classpathentry kind="src" path="test/src" />
     <classpathentry kind="lib" path="lib/caGrid-advertisement-1.2.jar" />
@@ -23,6 +22,8 @@
     <classpathentry kind="src" path="/DSpace" combineaccessrules="false" />
     <classpathentry kind="src" path="/LOFIS" combineaccessrules="false" />
     <classpathentry kind="src" path="/WHORFX" combineaccessrules="false" />
+    <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/gorfx-stubs" />
+    <classpathentry kind="src" path="/GORFX-model" combineaccessrules="false" />
     <classpathentry kind="output" path="bin" />
 </classpath>
 

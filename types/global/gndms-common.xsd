@@ -28,9 +28,25 @@
 	</restriction>
 </simpleType>
 
+<complexType name="ContextT">
+	<sequence>
+		<element name="entry">
+			<complexType>
+				<simpleContent>
+					<extension base="xsd:normalizedString">
+						<attribute name="key" type="xsd:token" />
+					</extension>
+				</simpleContent>
+			</complexType>
+		</element>
+	</sequence>
+</complexType>
+
+<element name="Context" type="impl:ContextT" />
 
 
 
+	
 <!-- *** Storage amount types *** -->
 
 <complexType name="StorageSizeT">

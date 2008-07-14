@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jndiConfig xmlns="http://wsrf.globus.org/jndi/config">
+  <global>
+	<resource name="gndms-dbsetup"
+                  type="de.zib.gndms.infra.db.DbSetupFacade">
+	<resourceParams>
+          <parameter>
+            <name>factory</name>
+            <value>org.globus.wsrf.jndi.BeanFactory</value>
+          </parameter>
+	</resourceParams>
+	</resource>
+  </global>
   <service name="SERVICE-INSTANCE-PREFIX/Subspace">
     <resource name="configuration" type="de.zib.gndms.dspace.subspace.service.globus.resource.SubspaceResourceConfiguration">
       <resourceParams>
