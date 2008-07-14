@@ -14,6 +14,8 @@ services/*/tmp/**
 *.gar
 extra/lib/gndms-infra.jar
 infra/out/**
+model/out/**
+model/lib/**
 
 syntax:regexp
 ^types/[A-Za-z].+
