@@ -75,6 +75,8 @@ DETAILED BUILD INSTRUCTIONS
   services' model project and comile to service/ServiceName/build and service/ServiceName/build/test 
   respectively.
 
+  Watch out for import order; per service stubs and model jars should go before service sources in IntelliJ.
+
   This should be enought to compile and develop in the IDE; for deployment you still need to 
   execute "ant createDeploymentGar"  
                                                
