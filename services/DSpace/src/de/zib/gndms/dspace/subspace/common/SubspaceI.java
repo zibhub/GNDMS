@@ -24,6 +24,7 @@ public interface SubspaceI {
    * Creates a new slice with the given kind in this subspace
    *
    * @param sliceCreationSpecifier
+   * @param context
    * @throws OutOfSpace
    *	
    * @throws UnknownOrInvalidSliceKind
@@ -31,7 +32,7 @@ public interface SubspaceI {
    * @throws InternalFailure
    *	
    */
-  public de.zib.gndms.dspace.slice.stubs.types.SliceReference createSlice(types.SliceCreationSpecifier sliceCreationSpecifier) throws RemoteException, de.zib.gndms.dspace.subspace.stubs.types.OutOfSpace, de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind, de.zib.gndms.dspace.stubs.types.InternalFailure ;
+  public de.zib.gndms.dspace.slice.stubs.types.SliceReference createSlice(types.SliceCreationSpecifier sliceCreationSpecifier,types.ContextT context) throws RemoteException, de.zib.gndms.dspace.subspace.stubs.types.OutOfSpace, de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind, de.zib.gndms.dspace.stubs.types.InternalFailure ;
 
   /**
    * Returns a (possibly incompletet) list of all slice kinds supported by this subspaces CreateSlice() method

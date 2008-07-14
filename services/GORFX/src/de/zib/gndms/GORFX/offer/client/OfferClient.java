@@ -118,7 +118,7 @@ public class OfferClient extends OfferClientBase implements OfferI {
     }
   }
 
-  public org.apache.axis.message.addressing.EndpointReferenceType accept() throws RemoteException {
+  public org.apache.axis.message.addressing.EndpointReferenceType accept() throws RemoteException, de.zib.gndms.GORFX.ORQ.stubs.types.PermissionDenied {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"accept");
     de.zib.gndms.GORFX.offer.stubs.AcceptRequest params = new de.zib.gndms.GORFX.offer.stubs.AcceptRequest();

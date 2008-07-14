@@ -2,11 +2,13 @@
  <ns2:Namespaces xsi:type="ns2:NamespacesType" xmlns:ns2="gme://gov.nih.nci.cagrid.introduce/1/Namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <ns2:Namespace location="./gndms-common.xsd" namespace="http://gndms.zib.de/common/types" packageName="types" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="AvailableStorageSize" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="Context" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="File" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="Lofi" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="LofiMap" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="LofiSeq" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="OfferExecutionContract" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="OfferRequestArguments" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="ReplicaSliceFilter" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="ReplicaSlices" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="SliceCreationSpecifier" xsi:type="ns2:SchemaElementType"/>
@@ -16,6 +18,7 @@
    <ns2:SchemaElement type="SliceTypeSpecifier" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="SubspaceSpecifier" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="TaskExecutionFailure" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="TaskExecutionResults" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="TaskExecutionState" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="TotalStorageSize" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
@@ -164,13 +167,14 @@
      <ns4:Inputs>
       <ns4:Input qName="ns14:SubspaceSpecifier" description="" isArray="false" name="subspaceSpecifier" xmlns:ns14="http://gndms.zib.de/common/types"/>
       <ns4:Input qName="ns15:SliceCreationSpecifier" description="" isArray="false" name="sliceCreationSpecifier" xmlns:ns15="http://gndms.zib.de/common/types"/>
+      <ns4:Input qName="ns16:Context" description="" isArray="false" name="context" xmlns:ns16="http://gndms.zib.de/common/types"/>
      </ns4:Inputs>
-     <ns4:Output qName="ns16:SliceReference" clientHandleClass="de.zib.gndms.dspace.slice.client.SliceClient" description="" isArray="false" isClientHandle="true" isCreatingResourceForClientHandle="true" resourceClientIntroduceServiceName="Slice" xmlns:ns16="http://dspace.gndms.zib.de/DSpace/Slice/types"/>
+     <ns4:Output qName="ns17:SliceReference" clientHandleClass="de.zib.gndms.dspace.slice.client.SliceClient" description="" isArray="false" isClientHandle="true" isCreatingResourceForClientHandle="true" resourceClientIntroduceServiceName="Slice" xmlns:ns17="http://dspace.gndms.zib.de/DSpace/Slice/types"/>
      <ns4:Exceptions>
-      <ns4:Exception description="" name="OutOfSpace" qname="ns17:OutOfSpace" xmlns:ns17="http://dspace.gndms.zib.de/DSpace/Subspace/types"/>
-      <ns4:Exception description="" name="UnknownOrInvalidSliceKind" qname="ns18:UnknownOrInvalidSliceKind" xmlns:ns18="http://dspace.gndms.zib.de/DSpace/Subspace/types"/>
-      <ns4:Exception description="" name="UnknownSubspace" qname="ns19:UnknownSubspace" xmlns:ns19="http://dspace.gndms.zib.de/DSpace/types"/>
-      <ns4:Exception description="" name="InternalFailure" qname="ns20:InternalFailure" xmlns:ns20="http://dspace.gndms.zib.de/DSpace/types"/>
+      <ns4:Exception description="" name="OutOfSpace" qname="ns18:OutOfSpace" xmlns:ns18="http://dspace.gndms.zib.de/DSpace/Subspace/types"/>
+      <ns4:Exception description="" name="UnknownOrInvalidSliceKind" qname="ns19:UnknownOrInvalidSliceKind" xmlns:ns19="http://dspace.gndms.zib.de/DSpace/Subspace/types"/>
+      <ns4:Exception description="" name="UnknownSubspace" qname="ns20:UnknownSubspace" xmlns:ns20="http://dspace.gndms.zib.de/DSpace/types"/>
+      <ns4:Exception description="" name="InternalFailure" qname="ns21:InternalFailure" xmlns:ns21="http://dspace.gndms.zib.de/DSpace/types"/>
      </ns4:Exceptions>
     </ns4:Method>
    </ns4:Methods>
@@ -184,61 +188,62 @@
    </ns3:ResourceFrameworkOptions>
   </ns3:Service>
   <ns3:Service name="Subspace" namespace="http://dspace.gndms.zib.de/DSpace/Subspace" packageName="de.zib.gndms.dspace.subspace" xsi:type="ns3:ServiceType">
-   <ns21:Methods xsi:type="ns21:MethodsType" xmlns:ns21="gme://gov.nih.nci.cagrid.introduce/1/Methods">
-    <ns21:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns21:MethodType">
-     <ns21:Output qName="ns22:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns22="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
-     <ns23:MethodSecurity xsi:type="ns23:MethodSecurity" xmlns:ns23="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns23:SecuritySetting xsi:type="ns23:SecuritySetting">None</ns23:SecuritySetting>
-      <ns23:MethodAuthorization xsi:type="ns23:MethodAuthorization">
-       <ns23:NoAuthorization xsi:type="ns23:NoAuthorization"/>
-      </ns23:MethodAuthorization>
-     </ns23:MethodSecurity>
-     <ns21:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
-     <ns21:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
-    </ns21:Method>
-    <ns21:Method isImported="true" isProvided="true" name="Subscribe" xsi:type="ns21:MethodType">
-     <ns21:Output qName="void" isArray="false"/>
-     <ns21:ImportInformation fromIntroduce="false" inputMessage="ns24:SubscribeRequest" namespace="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" outputMessage="ns24:SubscribeResponse" packageName="org.oasis.wsn" portTypeName="NotificationProducer" wsdlFile="../wsrf/notification/WS-BaseN.wsdl" xmlns:ns24="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl"/>
-     <ns21:ProviderInformation providerClass="SubscribeProvider"/>
-    </ns21:Method>
-    <ns21:Method isImported="true" isProvided="true" name="GetMultipleResourceProperties" xsi:type="ns21:MethodType">
-     <ns21:Output qName="void" isArray="false"/>
-     <ns21:ImportInformation fromIntroduce="false" inputMessage="ns25:GetMultipleResourcePropertiesRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" outputMessage="ns25:GetMultipleResourcePropertiesResponse" packageName="org.oasis.wsrf.properties" portTypeName="GetMultipleResourceProperties" wsdlFile="../wsrf/properties/WS-ResourceProperties.wsdl" xmlns:ns25="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"/>
-     <ns21:ProviderInformation providerClass="GetMRPProvider"/>
-    </ns21:Method>
-    <ns21:Method isImported="true" isProvided="true" name="GetResourceProperty" xsi:type="ns21:MethodType">
-     <ns21:Output qName="void" isArray="false"/>
-     <ns21:ImportInformation fromIntroduce="false" inputMessage="ns26:GetResourcePropertyRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" outputMessage="ns26:GetResourcePropertyResponse" packageName="org.oasis.wsrf.properties" portTypeName="GetResourceProperty" wsdlFile="../wsrf/properties/WS-ResourceProperties.wsdl" xmlns:ns26="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"/>
-     <ns21:ProviderInformation providerClass="GetRPProvider"/>
-    </ns21:Method>
-    <ns21:Method isImported="true" isProvided="true" name="QueryResourceProperties" xsi:type="ns21:MethodType">
-     <ns21:Output qName="void" isArray="false"/>
-     <ns21:ImportInformation fromIntroduce="false" inputMessage="ns27:QueryResourcePropertiesRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" outputMessage="ns27:QueryResourcePropertiesResponse" packageName="org.oasis.wsrf.properties" portTypeName="QueryResourceProperties" wsdlFile="../wsrf/properties/WS-ResourceProperties.wsdl" xmlns:ns27="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"/>
-     <ns21:ProviderInformation providerClass="QueryRPProvider"/>
-    </ns21:Method>
-    <ns21:Method description="Creates a new slice with the given kind in this subspace" isImported="false" isProvided="false" name="CreateSlice" xsi:type="ns21:MethodType">
-     <ns21:Inputs>
-      <ns21:Input qName="ns28:SliceCreationSpecifier" description="" isArray="false" name="sliceCreationSpecifier" xmlns:ns28="http://gndms.zib.de/common/types"/>
-     </ns21:Inputs>
-     <ns21:Output qName="ns29:SliceReference" description="" isArray="false" xmlns:ns29="http://dspace.gndms.zib.de/DSpace/Slice/types"/>
-     <ns21:Exceptions>
-      <ns21:Exception description="" name="OutOfSpace" qname="ns30:OutOfSpace" xmlns:ns30="http://dspace.gndms.zib.de/DSpace/Subspace/types"/>
-      <ns21:Exception description="" name="UnknownOrInvalidSliceKind" qname="ns31:UnknownOrInvalidSliceKind" xmlns:ns31="http://dspace.gndms.zib.de/DSpace/Subspace/types"/>
-      <ns21:Exception description="" name="InternalFailure" qname="ns32:InternalFailure" xmlns:ns32="http://dspace.gndms.zib.de/DSpace/types"/>
-     </ns21:Exceptions>
-    </ns21:Method>
-    <ns21:Method description="Returns a (possibly incompletet) list of all slice kinds supported by this subspaces CreateSlice() method" isImported="false" isProvided="false" name="ListCreatableSliceKinds" xsi:type="ns21:MethodType">
-     <ns21:Inputs/>
-     <ns21:Output qName="ns33:SliceKind" description="" isArray="true" xmlns:ns33="http://gndms.zib.de/common/types"/>
-     <ns21:Exceptions/>
-    </ns21:Method>
-   </ns21:Methods>
-   <ns34:ResourcePropertiesList xsi:type="ns34:ResourcePropertiesListType" xmlns:ns34="gme://gov.nih.nci.cagrid.introduce/1/Resources">
-    <ns34:ResourceProperty qName="ns35:AvailableStorageSize" description="" fileLocation="Subspace_availableStorageSize.xml" populateFromFile="false" register="true" xsi:type="ns34:ResourcePropertyType" xmlns:ns35="http://gndms.zib.de/common/types"/>
-    <ns34:ResourceProperty qName="ns36:TotalStorageSize" description="" fileLocation="Subspace_totalStorageSize.xml" populateFromFile="false" register="true" xsi:type="ns34:ResourcePropertyType" xmlns:ns36="http://gndms.zib.de/common/types"/>
-    <ns34:ResourceProperty qName="ns37:DSpaceReference" description="" fileLocation="Subspace_dSpaceReference.xml" populateFromFile="false" register="false" xsi:type="ns34:ResourcePropertyType" xmlns:ns37="http://dspace.gndms.zib.de/DSpace/types"/>
-    <ns34:ResourceProperty qName="ns38:SubspaceSpecifier" description="" fileLocation="Subspace_subspaceSpecifier.xml" populateFromFile="false" register="false" xsi:type="ns34:ResourcePropertyType" xmlns:ns38="http://gndms.zib.de/common/types"/>
-   </ns34:ResourcePropertiesList>
+   <ns22:Methods xsi:type="ns22:MethodsType" xmlns:ns22="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns22:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns22:MethodType">
+     <ns22:Output qName="ns23:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns23="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns24:MethodSecurity xsi:type="ns24:MethodSecurity" xmlns:ns24="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns24:SecuritySetting xsi:type="ns24:SecuritySetting">None</ns24:SecuritySetting>
+      <ns24:MethodAuthorization xsi:type="ns24:MethodAuthorization">
+       <ns24:NoAuthorization xsi:type="ns24:NoAuthorization"/>
+      </ns24:MethodAuthorization>
+     </ns24:MethodSecurity>
+     <ns22:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns22:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns22:Method>
+    <ns22:Method isImported="true" isProvided="true" name="Subscribe" xsi:type="ns22:MethodType">
+     <ns22:Output qName="void" isArray="false"/>
+     <ns22:ImportInformation fromIntroduce="false" inputMessage="ns25:SubscribeRequest" namespace="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" outputMessage="ns25:SubscribeResponse" packageName="org.oasis.wsn" portTypeName="NotificationProducer" wsdlFile="../wsrf/notification/WS-BaseN.wsdl" xmlns:ns25="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl"/>
+     <ns22:ProviderInformation providerClass="SubscribeProvider"/>
+    </ns22:Method>
+    <ns22:Method isImported="true" isProvided="true" name="GetMultipleResourceProperties" xsi:type="ns22:MethodType">
+     <ns22:Output qName="void" isArray="false"/>
+     <ns22:ImportInformation fromIntroduce="false" inputMessage="ns26:GetMultipleResourcePropertiesRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" outputMessage="ns26:GetMultipleResourcePropertiesResponse" packageName="org.oasis.wsrf.properties" portTypeName="GetMultipleResourceProperties" wsdlFile="../wsrf/properties/WS-ResourceProperties.wsdl" xmlns:ns26="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"/>
+     <ns22:ProviderInformation providerClass="GetMRPProvider"/>
+    </ns22:Method>
+    <ns22:Method isImported="true" isProvided="true" name="GetResourceProperty" xsi:type="ns22:MethodType">
+     <ns22:Output qName="void" isArray="false"/>
+     <ns22:ImportInformation fromIntroduce="false" inputMessage="ns27:GetResourcePropertyRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" outputMessage="ns27:GetResourcePropertyResponse" packageName="org.oasis.wsrf.properties" portTypeName="GetResourceProperty" wsdlFile="../wsrf/properties/WS-ResourceProperties.wsdl" xmlns:ns27="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"/>
+     <ns22:ProviderInformation providerClass="GetRPProvider"/>
+    </ns22:Method>
+    <ns22:Method isImported="true" isProvided="true" name="QueryResourceProperties" xsi:type="ns22:MethodType">
+     <ns22:Output qName="void" isArray="false"/>
+     <ns22:ImportInformation fromIntroduce="false" inputMessage="ns28:QueryResourcePropertiesRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" outputMessage="ns28:QueryResourcePropertiesResponse" packageName="org.oasis.wsrf.properties" portTypeName="QueryResourceProperties" wsdlFile="../wsrf/properties/WS-ResourceProperties.wsdl" xmlns:ns28="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"/>
+     <ns22:ProviderInformation providerClass="QueryRPProvider"/>
+    </ns22:Method>
+    <ns22:Method description="Creates a new slice with the given kind in this subspace" isImported="false" isProvided="false" name="CreateSlice" xsi:type="ns22:MethodType">
+     <ns22:Inputs>
+      <ns22:Input qName="ns29:SliceCreationSpecifier" description="" isArray="false" name="sliceCreationSpecifier" xmlns:ns29="http://gndms.zib.de/common/types"/>
+      <ns22:Input qName="ns30:Context" description="" isArray="false" name="context" xmlns:ns30="http://gndms.zib.de/common/types"/>
+     </ns22:Inputs>
+     <ns22:Output qName="ns31:SliceReference" description="" isArray="false" xmlns:ns31="http://dspace.gndms.zib.de/DSpace/Slice/types"/>
+     <ns22:Exceptions>
+      <ns22:Exception description="" name="OutOfSpace" qname="ns32:OutOfSpace" xmlns:ns32="http://dspace.gndms.zib.de/DSpace/Subspace/types"/>
+      <ns22:Exception description="" name="UnknownOrInvalidSliceKind" qname="ns33:UnknownOrInvalidSliceKind" xmlns:ns33="http://dspace.gndms.zib.de/DSpace/Subspace/types"/>
+      <ns22:Exception description="" name="InternalFailure" qname="ns34:InternalFailure" xmlns:ns34="http://dspace.gndms.zib.de/DSpace/types"/>
+     </ns22:Exceptions>
+    </ns22:Method>
+    <ns22:Method description="Returns a (possibly incompletet) list of all slice kinds supported by this subspaces CreateSlice() method" isImported="false" isProvided="false" name="ListCreatableSliceKinds" xsi:type="ns22:MethodType">
+     <ns22:Inputs/>
+     <ns22:Output qName="ns35:SliceKind" description="" isArray="true" xmlns:ns35="http://gndms.zib.de/common/types"/>
+     <ns22:Exceptions/>
+    </ns22:Method>
+   </ns22:Methods>
+   <ns36:ResourcePropertiesList xsi:type="ns36:ResourcePropertiesListType" xmlns:ns36="gme://gov.nih.nci.cagrid.introduce/1/Resources">
+    <ns36:ResourceProperty qName="ns37:AvailableStorageSize" description="" fileLocation="Subspace_availableStorageSize.xml" populateFromFile="false" register="true" xsi:type="ns36:ResourcePropertyType" xmlns:ns37="http://gndms.zib.de/common/types"/>
+    <ns36:ResourceProperty qName="ns38:TotalStorageSize" description="" fileLocation="Subspace_totalStorageSize.xml" populateFromFile="false" register="true" xsi:type="ns36:ResourcePropertyType" xmlns:ns38="http://gndms.zib.de/common/types"/>
+    <ns36:ResourceProperty qName="ns39:DSpaceReference" description="" fileLocation="Subspace_dSpaceReference.xml" populateFromFile="false" register="false" xsi:type="ns36:ResourcePropertyType" xmlns:ns39="http://dspace.gndms.zib.de/DSpace/types"/>
+    <ns36:ResourceProperty qName="ns40:SubspaceSpecifier" description="" fileLocation="Subspace_subspaceSpecifier.xml" populateFromFile="false" register="false" xsi:type="ns36:ResourcePropertyType" xmlns:ns40="http://gndms.zib.de/common/types"/>
+   </ns36:ResourcePropertiesList>
    <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Identifiable xsi:type="ns3:Identifiable"/>
@@ -249,69 +254,70 @@
    </ns3:ResourceFrameworkOptions>
   </ns3:Service>
   <ns3:Service name="Slice" namespace="http://dspace.gndms.zib.de/DSpace/Slice" packageName="de.zib.gndms.dspace.slice" xsi:type="ns3:ServiceType">
-   <ns39:Methods xsi:type="ns39:MethodsType" xmlns:ns39="gme://gov.nih.nci.cagrid.introduce/1/Methods">
-    <ns39:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns39:MethodType">
-     <ns39:Output qName="ns40:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns40="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
-     <ns41:MethodSecurity xsi:type="ns41:MethodSecurity" xmlns:ns41="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns41:SecuritySetting xsi:type="ns41:SecuritySetting">None</ns41:SecuritySetting>
-      <ns41:MethodAuthorization xsi:type="ns41:MethodAuthorization">
-       <ns41:NoAuthorization xsi:type="ns41:NoAuthorization"/>
-      </ns41:MethodAuthorization>
-     </ns41:MethodSecurity>
-     <ns39:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
-     <ns39:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
-    </ns39:Method>
-    <ns39:Method isImported="true" isProvided="true" name="Destroy" xsi:type="ns39:MethodType">
-     <ns39:Output qName="void" isArray="false"/>
-     <ns39:ImportInformation fromIntroduce="false" inputMessage="ns42:DestroyRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" outputMessage="ns42:DestroyResponse" packageName="org.oasis.wsrf.lifetime" portTypeName="ImmediateResourceTermination" wsdlFile="../wsrf/lifetime/WS-ResourceLifetime.wsdl" xmlns:ns42="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl"/>
-     <ns39:ProviderInformation providerClass="DestroyProvider"/>
-    </ns39:Method>
-    <ns39:Method isImported="true" isProvided="true" name="SetTerminationTime" xsi:type="ns39:MethodType">
-     <ns39:Output qName="void" isArray="false"/>
-     <ns39:ImportInformation fromIntroduce="false" inputMessage="ns43:SetTerminationTimeRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" outputMessage="ns43:SetTerminationTimeResponse" packageName="org.oasis.wsrf.lifetime" portTypeName="ScheduledResourceTermination" wsdlFile="../wsrf/lifetime/WS-ResourceLifetime.wsdl" xmlns:ns43="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl"/>
-     <ns39:ProviderInformation providerClass="SetTerminationTimeProvider"/>
-    </ns39:Method>
-    <ns39:Method isImported="true" isProvided="true" name="Subscribe" xsi:type="ns39:MethodType">
-     <ns39:Output qName="void" isArray="false"/>
-     <ns39:ImportInformation fromIntroduce="false" inputMessage="ns44:SubscribeRequest" namespace="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" outputMessage="ns44:SubscribeResponse" packageName="org.oasis.wsn" portTypeName="NotificationProducer" wsdlFile="../wsrf/notification/WS-BaseN.wsdl" xmlns:ns44="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl"/>
-     <ns39:ProviderInformation providerClass="SubscribeProvider"/>
-    </ns39:Method>
-    <ns39:Method isImported="true" isProvided="true" name="GetMultipleResourceProperties" xsi:type="ns39:MethodType">
-     <ns39:Output qName="void" isArray="false"/>
-     <ns39:ImportInformation fromIntroduce="false" inputMessage="ns45:GetMultipleResourcePropertiesRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" outputMessage="ns45:GetMultipleResourcePropertiesResponse" packageName="org.oasis.wsrf.properties" portTypeName="GetMultipleResourceProperties" wsdlFile="../wsrf/properties/WS-ResourceProperties.wsdl" xmlns:ns45="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"/>
-     <ns39:ProviderInformation providerClass="GetMRPProvider"/>
-    </ns39:Method>
-    <ns39:Method isImported="true" isProvided="true" name="GetResourceProperty" xsi:type="ns39:MethodType">
-     <ns39:Output qName="void" isArray="false"/>
-     <ns39:ImportInformation fromIntroduce="false" inputMessage="ns46:GetResourcePropertyRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" outputMessage="ns46:GetResourcePropertyResponse" packageName="org.oasis.wsrf.properties" portTypeName="GetResourceProperty" wsdlFile="../wsrf/properties/WS-ResourceProperties.wsdl" xmlns:ns46="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"/>
-     <ns39:ProviderInformation providerClass="GetRPProvider"/>
-    </ns39:Method>
-    <ns39:Method isImported="true" isProvided="true" name="QueryResourceProperties" xsi:type="ns39:MethodType">
-     <ns39:Output qName="void" isArray="false"/>
-     <ns39:ImportInformation fromIntroduce="false" inputMessage="ns47:QueryResourcePropertiesRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" outputMessage="ns47:QueryResourcePropertiesResponse" packageName="org.oasis.wsrf.properties" portTypeName="QueryResourceProperties" wsdlFile="../wsrf/properties/WS-ResourceProperties.wsdl" xmlns:ns47="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"/>
-     <ns39:ProviderInformation providerClass="QueryRPProvider"/>
-    </ns39:Method>
-    <ns39:Method description="Destroys this slice resource and retuns a new slice based on this slice resource that is in the specified subspace and has the specified new slice kind" isImported="false" isProvided="false" name="TransformSliceTo" xsi:type="ns39:MethodType">
-     <ns39:Inputs>
-      <ns39:Input qName="ns48:SliceTransformSpecifier" description="" isArray="false" name="sliceTransformSpecifier" xmlns:ns48="http://gndms.zib.de/common/types"/>
-     </ns39:Inputs>
-     <ns39:Output qName="ns49:SliceReference" description="" isArray="false" xmlns:ns49="http://dspace.gndms.zib.de/DSpace/Slice/types"/>
-     <ns39:Exceptions>
-      <ns39:Exception description="" name="UnknownSubspace" qname="ns50:UnknownSubspace" xmlns:ns50="http://dspace.gndms.zib.de/DSpace/types"/>
-      <ns39:Exception description="" name="OutOfSpace" qname="ns51:OutOfSpace" xmlns:ns51="http://dspace.gndms.zib.de/DSpace/Subspace/types"/>
-      <ns39:Exception description="" name="UnknownOrInvalidSliceKind" qname="ns52:UnknownOrInvalidSliceKind" xmlns:ns52="http://dspace.gndms.zib.de/DSpace/Subspace/types"/>
-      <ns39:Exception description="" name="InternalFailure" qname="ns53:InternalFailure" xmlns:ns53="http://dspace.gndms.zib.de/DSpace/types"/>
-     </ns39:Exceptions>
-    </ns39:Method>
-   </ns39:Methods>
-   <ns54:ResourcePropertiesList xsi:type="ns54:ResourcePropertiesListType" xmlns:ns54="gme://gov.nih.nci.cagrid.introduce/1/Resources">
-    <ns54:ResourceProperty qName="ns55:CurrentTime" description="" populateFromFile="false" register="false" xsi:type="ns54:ResourcePropertyType" xmlns:ns55="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"/>
-    <ns54:ResourceProperty qName="ns56:TerminationTime" description="" populateFromFile="false" register="false" xsi:type="ns54:ResourcePropertyType" xmlns:ns56="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"/>
-    <ns54:ResourceProperty qName="ns57:TotalStorageSize" description="" fileLocation="Slice_totalStorageSize.xml" populateFromFile="false" register="false" xsi:type="ns54:ResourcePropertyType" xmlns:ns57="http://gndms.zib.de/common/types"/>
-    <ns54:ResourceProperty qName="ns58:SliceKind" description="" fileLocation="Slice_sliceKind.xml" populateFromFile="false" register="false" xsi:type="ns54:ResourcePropertyType" xmlns:ns58="http://gndms.zib.de/common/types"/>
-    <ns54:ResourceProperty qName="ns59:SliceLocation" description="" fileLocation="Slice_sliceLocation.xml" populateFromFile="false" register="false" xsi:type="ns54:ResourcePropertyType" xmlns:ns59="http://gndms.zib.de/common/types"/>
-    <ns54:ResourceProperty qName="ns60:SubspaceReference" description="" fileLocation="Slice_subspaceReference.xml" populateFromFile="false" register="false" xsi:type="ns54:ResourcePropertyType" xmlns:ns60="http://dspace.gndms.zib.de/DSpace/Subspace/types"/>
-   </ns54:ResourcePropertiesList>
+   <ns41:Methods xsi:type="ns41:MethodsType" xmlns:ns41="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns41:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns41:MethodType">
+     <ns41:Output qName="ns42:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns42="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns43:MethodSecurity xsi:type="ns43:MethodSecurity" xmlns:ns43="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns43:SecuritySetting xsi:type="ns43:SecuritySetting">None</ns43:SecuritySetting>
+      <ns43:MethodAuthorization xsi:type="ns43:MethodAuthorization">
+       <ns43:NoAuthorization xsi:type="ns43:NoAuthorization"/>
+      </ns43:MethodAuthorization>
+     </ns43:MethodSecurity>
+     <ns41:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns41:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns41:Method>
+    <ns41:Method isImported="true" isProvided="true" name="Destroy" xsi:type="ns41:MethodType">
+     <ns41:Output qName="void" isArray="false"/>
+     <ns41:ImportInformation fromIntroduce="false" inputMessage="ns44:DestroyRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" outputMessage="ns44:DestroyResponse" packageName="org.oasis.wsrf.lifetime" portTypeName="ImmediateResourceTermination" wsdlFile="../wsrf/lifetime/WS-ResourceLifetime.wsdl" xmlns:ns44="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl"/>
+     <ns41:ProviderInformation providerClass="DestroyProvider"/>
+    </ns41:Method>
+    <ns41:Method isImported="true" isProvided="true" name="SetTerminationTime" xsi:type="ns41:MethodType">
+     <ns41:Output qName="void" isArray="false"/>
+     <ns41:ImportInformation fromIntroduce="false" inputMessage="ns45:SetTerminationTimeRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" outputMessage="ns45:SetTerminationTimeResponse" packageName="org.oasis.wsrf.lifetime" portTypeName="ScheduledResourceTermination" wsdlFile="../wsrf/lifetime/WS-ResourceLifetime.wsdl" xmlns:ns45="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl"/>
+     <ns41:ProviderInformation providerClass="SetTerminationTimeProvider"/>
+    </ns41:Method>
+    <ns41:Method isImported="true" isProvided="true" name="Subscribe" xsi:type="ns41:MethodType">
+     <ns41:Output qName="void" isArray="false"/>
+     <ns41:ImportInformation fromIntroduce="false" inputMessage="ns46:SubscribeRequest" namespace="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" outputMessage="ns46:SubscribeResponse" packageName="org.oasis.wsn" portTypeName="NotificationProducer" wsdlFile="../wsrf/notification/WS-BaseN.wsdl" xmlns:ns46="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl"/>
+     <ns41:ProviderInformation providerClass="SubscribeProvider"/>
+    </ns41:Method>
+    <ns41:Method isImported="true" isProvided="true" name="GetMultipleResourceProperties" xsi:type="ns41:MethodType">
+     <ns41:Output qName="void" isArray="false"/>
+     <ns41:ImportInformation fromIntroduce="false" inputMessage="ns47:GetMultipleResourcePropertiesRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" outputMessage="ns47:GetMultipleResourcePropertiesResponse" packageName="org.oasis.wsrf.properties" portTypeName="GetMultipleResourceProperties" wsdlFile="../wsrf/properties/WS-ResourceProperties.wsdl" xmlns:ns47="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"/>
+     <ns41:ProviderInformation providerClass="GetMRPProvider"/>
+    </ns41:Method>
+    <ns41:Method isImported="true" isProvided="true" name="GetResourceProperty" xsi:type="ns41:MethodType">
+     <ns41:Output qName="void" isArray="false"/>
+     <ns41:ImportInformation fromIntroduce="false" inputMessage="ns48:GetResourcePropertyRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" outputMessage="ns48:GetResourcePropertyResponse" packageName="org.oasis.wsrf.properties" portTypeName="GetResourceProperty" wsdlFile="../wsrf/properties/WS-ResourceProperties.wsdl" xmlns:ns48="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"/>
+     <ns41:ProviderInformation providerClass="GetRPProvider"/>
+    </ns41:Method>
+    <ns41:Method isImported="true" isProvided="true" name="QueryResourceProperties" xsi:type="ns41:MethodType">
+     <ns41:Output qName="void" isArray="false"/>
+     <ns41:ImportInformation fromIntroduce="false" inputMessage="ns49:QueryResourcePropertiesRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" outputMessage="ns49:QueryResourcePropertiesResponse" packageName="org.oasis.wsrf.properties" portTypeName="QueryResourceProperties" wsdlFile="../wsrf/properties/WS-ResourceProperties.wsdl" xmlns:ns49="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"/>
+     <ns41:ProviderInformation providerClass="QueryRPProvider"/>
+    </ns41:Method>
+    <ns41:Method description="Destroys this slice resource and retuns a new slice based on this slice resource that is in the specified subspace and has the specified new slice kind" isImported="false" isProvided="false" name="TransformSliceTo" xsi:type="ns41:MethodType">
+     <ns41:Inputs>
+      <ns41:Input qName="ns50:SliceTransformSpecifier" description="" isArray="false" name="sliceTransformSpecifier" xmlns:ns50="http://gndms.zib.de/common/types"/>
+      <ns41:Input qName="ns51:Context" description="" isArray="false" name="context" xmlns:ns51="http://gndms.zib.de/common/types"/>
+     </ns41:Inputs>
+     <ns41:Output qName="ns52:SliceReference" description="" isArray="false" xmlns:ns52="http://dspace.gndms.zib.de/DSpace/Slice/types"/>
+     <ns41:Exceptions>
+      <ns41:Exception description="" name="UnknownSubspace" qname="ns53:UnknownSubspace" xmlns:ns53="http://dspace.gndms.zib.de/DSpace/types"/>
+      <ns41:Exception description="" name="OutOfSpace" qname="ns54:OutOfSpace" xmlns:ns54="http://dspace.gndms.zib.de/DSpace/Subspace/types"/>
+      <ns41:Exception description="" name="UnknownOrInvalidSliceKind" qname="ns55:UnknownOrInvalidSliceKind" xmlns:ns55="http://dspace.gndms.zib.de/DSpace/Subspace/types"/>
+      <ns41:Exception description="" name="InternalFailure" qname="ns56:InternalFailure" xmlns:ns56="http://dspace.gndms.zib.de/DSpace/types"/>
+     </ns41:Exceptions>
+    </ns41:Method>
+   </ns41:Methods>
+   <ns57:ResourcePropertiesList xsi:type="ns57:ResourcePropertiesListType" xmlns:ns57="gme://gov.nih.nci.cagrid.introduce/1/Resources">
+    <ns57:ResourceProperty qName="ns58:CurrentTime" description="" populateFromFile="false" register="false" xsi:type="ns57:ResourcePropertyType" xmlns:ns58="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"/>
+    <ns57:ResourceProperty qName="ns59:TerminationTime" description="" populateFromFile="false" register="false" xsi:type="ns57:ResourcePropertyType" xmlns:ns59="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"/>
+    <ns57:ResourceProperty qName="ns60:TotalStorageSize" description="" fileLocation="Slice_totalStorageSize.xml" populateFromFile="false" register="false" xsi:type="ns57:ResourcePropertyType" xmlns:ns60="http://gndms.zib.de/common/types"/>
+    <ns57:ResourceProperty qName="ns61:SliceKind" description="" fileLocation="Slice_sliceKind.xml" populateFromFile="false" register="false" xsi:type="ns57:ResourcePropertyType" xmlns:ns61="http://gndms.zib.de/common/types"/>
+    <ns57:ResourceProperty qName="ns62:SliceLocation" description="" fileLocation="Slice_sliceLocation.xml" populateFromFile="false" register="false" xsi:type="ns57:ResourcePropertyType" xmlns:ns62="http://gndms.zib.de/common/types"/>
+    <ns57:ResourceProperty qName="ns63:SubspaceReference" description="" fileLocation="Slice_subspaceReference.xml" populateFromFile="false" register="false" xsi:type="ns57:ResourcePropertyType" xmlns:ns63="http://dspace.gndms.zib.de/DSpace/Subspace/types"/>
+   </ns57:ResourcePropertiesList>
    <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Lifetime xsi:type="ns3:Lifetime"/>
@@ -323,5 +329,5 @@
    </ns3:ResourceFrameworkOptions>
   </ns3:Service>
  </ns3:Services>
- <ns61:Extensions xsi:type="ns61:ExtensionsType" xmlns:ns61="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+ <ns64:Extensions xsi:type="ns64:ExtensionsType" xmlns:ns64="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
 </ns1:ServiceDescription>

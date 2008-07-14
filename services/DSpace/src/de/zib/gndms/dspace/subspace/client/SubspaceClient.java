@@ -104,13 +104,16 @@ public class SubspaceClient extends SubspaceClientBase implements SubspaceI {
     }
   }
 
-  public de.zib.gndms.dspace.slice.stubs.types.SliceReference createSlice(types.SliceCreationSpecifier sliceCreationSpecifier) throws RemoteException, de.zib.gndms.dspace.subspace.stubs.types.OutOfSpace, de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind, de.zib.gndms.dspace.stubs.types.InternalFailure {
+  public de.zib.gndms.dspace.slice.stubs.types.SliceReference createSlice(types.SliceCreationSpecifier sliceCreationSpecifier,types.ContextT context) throws RemoteException, de.zib.gndms.dspace.subspace.stubs.types.OutOfSpace, de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind, de.zib.gndms.dspace.stubs.types.InternalFailure {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"createSlice");
     de.zib.gndms.dspace.subspace.stubs.CreateSliceRequest params = new de.zib.gndms.dspace.subspace.stubs.CreateSliceRequest();
     de.zib.gndms.dspace.subspace.stubs.CreateSliceRequestSliceCreationSpecifier sliceCreationSpecifierContainer = new de.zib.gndms.dspace.subspace.stubs.CreateSliceRequestSliceCreationSpecifier();
     sliceCreationSpecifierContainer.setSliceCreationSpecifier(sliceCreationSpecifier);
     params.setSliceCreationSpecifier(sliceCreationSpecifierContainer);
+    de.zib.gndms.dspace.subspace.stubs.CreateSliceRequestContext contextContainer = new de.zib.gndms.dspace.subspace.stubs.CreateSliceRequestContext();
+    contextContainer.setContext(context);
+    params.setContext(contextContainer);
     de.zib.gndms.dspace.subspace.stubs.CreateSliceResponse boxedResult = portType.createSlice(params);
     return boxedResult.getSliceReference();
     }

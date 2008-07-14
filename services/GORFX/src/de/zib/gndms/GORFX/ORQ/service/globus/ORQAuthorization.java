@@ -88,7 +88,7 @@ public class ORQAuthorization implements PDP {
 		
 	}
 					
-	public static void authorizeGetPermissionAndDestroyRequest() throws RemoteException {
+	public static void authorizePermitEstimateAndDestroyRequest() throws RemoteException {
 		
 		
 	}
@@ -164,9 +164,9 @@ public class ORQAuthorization implements PDP {
 				e.printStackTrace();
 				return false;
 			}
-		} else if(operation.getLocalPart().equals("getPermissionAndDestroyRequest")){
+		} else if(operation.getLocalPart().equals("permitEstimateAndDestroyRequest")){
 			try{
-				authorizeGetPermissionAndDestroyRequest();
+				authorizePermitEstimateAndDestroyRequest();
 				return true;
 			} catch (Exception e){
 				e.printStackTrace();

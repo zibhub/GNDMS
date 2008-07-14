@@ -1,11 +1,11 @@
 #Introduce Properties
-#Fri May 09 17:36:12 CEST 2008
+#Mon Jul 14 11:31:44 CEST 2008
 introduce.skeleton.services.list=WHORFX
 introduce.skeleton.extensions=
-introduce.skeleton.timestamp=1210343339410
+introduce.skeleton.timestamp=1210347382544
 introduce.skeleton.service.name=WHORFX
 introduce.skeleton.resource.options=main,singleton,identifiable
 introduce.skeleton.destination.dir=/Users/stepn/Source/GNDMS-Templates/services/WHORFX
 introduce.skeleton.namespace.domain=http\://gndms.zib.de/WHORFX
-introduce.soap.binding.excludes=\ 
 introduce.ns.excludes=\ -x gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security
+introduce.soap.binding.excludes=\ 

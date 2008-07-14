@@ -31,7 +31,7 @@ public class DSpaceImpl extends DSpaceImplBase {
     throw new RemoteException("Not yet implemented");
   }
 
-  public de.zib.gndms.dspace.slice.stubs.types.SliceReference createSliceInSubspace(javax.xml.namespace.QName subspaceSpecifier,types.SliceCreationSpecifier sliceCreationSpecifier) throws RemoteException, de.zib.gndms.dspace.subspace.stubs.types.OutOfSpace, de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind, de.zib.gndms.dspace.stubs.types.UnknownSubspace, de.zib.gndms.dspace.stubs.types.InternalFailure {
+  public de.zib.gndms.dspace.slice.stubs.types.SliceReference createSliceInSubspace(javax.xml.namespace.QName subspaceSpecifier,types.SliceCreationSpecifier sliceCreationSpecifier,types.ContextT context) throws RemoteException, de.zib.gndms.dspace.subspace.stubs.types.OutOfSpace, de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind, de.zib.gndms.dspace.stubs.types.UnknownSubspace, de.zib.gndms.dspace.stubs.types.InternalFailure {
 		org.apache.axis.message.addressing.EndpointReferenceType epr = new org.apache.axis.message.addressing.EndpointReferenceType();
 		de.zib.gndms.dspace.slice.service.globus.resource.SliceResourceHome home = null;
 		org.globus.wsrf.ResourceKey resourceKey = null;

@@ -1,5 +1,49 @@
 <ns1:ServiceDescription introduceVersion="1.2" xmlns:ns1="gme://gov.nih.nci.cagrid/1/Introduce">
  <ns2:Namespaces xsi:type="ns2:NamespacesType" xmlns:ns2="gme://gov.nih.nci.cagrid.introduce/1/Namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ns2:Namespace location="../wsrf/faults/WS-BaseFaults.xsd" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="BaseFault" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="../wsrf/lifetime/WS-ResourceLifetime.xsd" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="CurrentTime" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="TerminationNotification" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="TerminationTime" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./../ws/addressing/WS-Addressing.xsd" namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" packageName="addressing" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="Action" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="EndpointReference" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="FaultTo" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="From" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="MessageID" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="RelatesTo" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ReplyAfter" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ReplyTo" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="To" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./gndms-common.xsd" namespace="http://gndms.zib.de/common/types" packageName="types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="AvailableStorageSize" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="Context" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="File" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="Lofi" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="LofiMap" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="LofiSeq" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="OfferExecutionContract" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="OfferRequestArguments" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ReplicaSliceFilter" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ReplicaSlices" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="SliceCreationSpecifier" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="SliceKind" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="SliceLocation" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="SliceTransformSpecifier" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="SliceTypeSpecifier" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="SubspaceSpecifier" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="TaskExecutionFailure" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="TaskExecutionResults" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="TaskExecutionState" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="TotalStorageSize" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./../DSpace/SliceTypes.xsd" namespace="http://dspace.gndms.zib.de/DSpace/Slice/types" packageName="types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="SliceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
   <ns2:Namespace namespace="http://www.w3.org/2001/XMLSchema" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="anySimpleType" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="anyType" xsi:type="ns2:SchemaElementType"/>
@@ -80,10 +124,11 @@
     <ns4:Method description="Lookop ORF by Type" isImported="false" isProvided="false" name="lookupORF" xsi:type="ns4:MethodType">
      <ns4:Inputs>
       <ns4:Input qName="xsd:anyURI" description="" isArray="false" name="orfType" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+      <ns4:Input qName="ns7:Context" description="" isArray="false" name="context" xmlns:ns7="http://gndms.zib.de/common/types"/>
      </ns4:Inputs>
      <ns4:Output qName="xsd:anyURI" description="" isArray="false" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
      <ns4:Exceptions>
-      <ns4:Exception description="" name="UnknownORFType" qname="ns7:UnknownORFType" xmlns:ns7="http://gndms.zib.de/WHORFX/types"/>
+      <ns4:Exception description="" name="UnknownORFType" qname="ns8:UnknownORFType" xmlns:ns8="http://gndms.zib.de/WHORFX/types"/>
      </ns4:Exceptions>
     </ns4:Method>
     <ns4:Method description="Reread ORF Mappings from file." isImported="false" isProvided="false" name="updateMappings" xsi:type="ns4:MethodType">
@@ -99,9 +144,9 @@
    </ns3:ResourceFrameworkOptions>
   </ns3:Service>
  </ns3:Services>
- <ns8:Extensions xsi:type="ns8:ExtensionsType" xmlns:ns8="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
- <ns9:ServiceProperties xmlns:ns9="gme://gov.nih.nci.cagrid.introduce/1/Property">
-  <ns9:Property description="Properties file containing type mappings. For each key ending in &quot;.orfType&quot; its value is mapped onto the value of the property stored unter this keys names appended with &quot;.port&quot;" isFromETC="true" key="orfMappingFile" value="orfMapping.properties"/>
-  <ns9:Property description="Minimum interval between actual executions of updateMapping(). Requests received in-between simply do nothing." isFromETC="false" key="minimumUpdateInterval" value="10000"/>
- </ns9:ServiceProperties>
+ <ns9:Extensions xsi:type="ns9:ExtensionsType" xmlns:ns9="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+ <ns10:ServiceProperties xmlns:ns10="gme://gov.nih.nci.cagrid.introduce/1/Property">
+  <ns10:Property description="Properties file containing type mappings. For each key ending in &quot;.orfType&quot; its value is mapped onto the value of the property stored unter this keys names appended with &quot;.port&quot;" isFromETC="true" key="orfMappingFile" value="orfMapping.properties"/>
+  <ns10:Property description="Minimum interval between actual executions of updateMapping(). Requests received in-between simply do nothing." isFromETC="false" key="minimumUpdateInterval" value="10000"/>
+ </ns10:ServiceProperties>
 </ns1:ServiceDescription>

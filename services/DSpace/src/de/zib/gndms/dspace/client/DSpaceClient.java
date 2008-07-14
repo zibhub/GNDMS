@@ -128,7 +128,7 @@ public class DSpaceClient extends DSpaceClientBase implements DSpaceI {
     }
   }
 
-  public de.zib.gndms.dspace.slice.client.SliceClient createSliceInSubspace(javax.xml.namespace.QName subspaceSpecifier,types.SliceCreationSpecifier sliceCreationSpecifier) throws RemoteException, org.apache.axis.types.URI.MalformedURIException, de.zib.gndms.dspace.subspace.stubs.types.OutOfSpace, de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind, de.zib.gndms.dspace.stubs.types.UnknownSubspace, de.zib.gndms.dspace.stubs.types.InternalFailure {
+  public de.zib.gndms.dspace.slice.client.SliceClient createSliceInSubspace(javax.xml.namespace.QName subspaceSpecifier,types.SliceCreationSpecifier sliceCreationSpecifier,types.ContextT context) throws RemoteException, org.apache.axis.types.URI.MalformedURIException, de.zib.gndms.dspace.subspace.stubs.types.OutOfSpace, de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind, de.zib.gndms.dspace.stubs.types.UnknownSubspace, de.zib.gndms.dspace.stubs.types.InternalFailure {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"createSliceInSubspace");
     de.zib.gndms.dspace.stubs.CreateSliceInSubspaceRequest params = new de.zib.gndms.dspace.stubs.CreateSliceInSubspaceRequest();
@@ -138,6 +138,9 @@ public class DSpaceClient extends DSpaceClientBase implements DSpaceI {
     de.zib.gndms.dspace.stubs.CreateSliceInSubspaceRequestSliceCreationSpecifier sliceCreationSpecifierContainer = new de.zib.gndms.dspace.stubs.CreateSliceInSubspaceRequestSliceCreationSpecifier();
     sliceCreationSpecifierContainer.setSliceCreationSpecifier(sliceCreationSpecifier);
     params.setSliceCreationSpecifier(sliceCreationSpecifierContainer);
+    de.zib.gndms.dspace.stubs.CreateSliceInSubspaceRequestContext contextContainer = new de.zib.gndms.dspace.stubs.CreateSliceInSubspaceRequestContext();
+    contextContainer.setContext(context);
+    params.setContext(contextContainer);
     de.zib.gndms.dspace.stubs.CreateSliceInSubspaceResponse boxedResult = portType.createSliceInSubspace(params);
     EndpointReferenceType ref = boxedResult.getSliceReference().getEndpointReference();
     return new de.zib.gndms.dspace.slice.client.SliceClient(ref);

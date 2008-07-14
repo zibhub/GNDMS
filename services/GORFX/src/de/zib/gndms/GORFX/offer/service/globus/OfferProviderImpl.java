@@ -26,7 +26,7 @@ public class OfferProviderImpl{
 	}
 	
 
-    public de.zib.gndms.GORFX.offer.stubs.AcceptResponse accept(de.zib.gndms.GORFX.offer.stubs.AcceptRequest params) throws RemoteException {
+    public de.zib.gndms.GORFX.offer.stubs.AcceptResponse accept(de.zib.gndms.GORFX.offer.stubs.AcceptRequest params) throws RemoteException, de.zib.gndms.GORFX.ORQ.stubs.types.PermissionDenied {
     de.zib.gndms.GORFX.offer.stubs.AcceptResponse boxedResult = new de.zib.gndms.GORFX.offer.stubs.AcceptResponse();
     boxedResult.setEndpointReference(impl.accept());
     return boxedResult;

@@ -16,10 +16,11 @@ public interface WHORFXI {
    * Lookop ORF by Type
    *
    * @param orfType
+   * @param context
    * @throws UnknownORFType
    *	
    */
-  public org.apache.axis.types.URI lookupORF(org.apache.axis.types.URI orfType) throws RemoteException, de.zib.gndms.stubs.types.UnknownORFType ;
+  public org.apache.axis.types.URI lookupORF(org.apache.axis.types.URI orfType,types.ContextT context) throws RemoteException, de.zib.gndms.stubs.types.UnknownORFType ;
 
   /**
    * Reread ORF Mappings from file.

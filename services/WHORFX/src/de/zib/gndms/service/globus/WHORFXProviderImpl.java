@@ -28,7 +28,7 @@ public class WHORFXProviderImpl{
 
     public de.zib.gndms.stubs.LookupORFResponse lookupORF(de.zib.gndms.stubs.LookupORFRequest params) throws RemoteException, de.zib.gndms.stubs.types.UnknownORFType {
     de.zib.gndms.stubs.LookupORFResponse boxedResult = new de.zib.gndms.stubs.LookupORFResponse();
-    boxedResult.setResponse(impl.lookupORF(params.getOrfType()));
+    boxedResult.setResponse(impl.lookupORF(params.getOrfType(),params.getContext().getContext()));
     return boxedResult;
   }
 

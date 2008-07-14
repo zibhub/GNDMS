@@ -1,8 +1,8 @@
 #Introduce Properties
-#Fri Jun 06 20:14:32 CEST 2008
+#Mon Jul 14 14:30:07 CEST 2008
 introduce.skeleton.services.list=GORFX,ORQ,Offer,Task
 introduce.skeleton.extensions=
-introduce.skeleton.timestamp=1212775819016
+introduce.skeleton.timestamp=1216036559707
 introduce.skeleton.service.name=GORFX
 introduce.skeleton.resource.options=main,singleton,identifiable,resourcePropertyManagement,secure
 introduce.skeleton.destination.dir=/Users/stepn/Source/GNDMS-Templates/services/GORFX

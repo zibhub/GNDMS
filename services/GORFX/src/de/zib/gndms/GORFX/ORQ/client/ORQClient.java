@@ -118,26 +118,32 @@ public class ORQClient extends ORQClientBase implements ORQI {
     }
   }
 
-  public org.apache.axis.message.addressing.EndpointReferenceType getOfferAndDestroyRequest(types.OfferExecutionContractT offerExecutionContract) throws RemoteException, de.zib.gndms.GORFX.ORQ.stubs.types.UnfullfillableRequest, de.zib.gndms.GORFX.ORQ.stubs.types.PermissionDenied {
+  public org.apache.axis.message.addressing.EndpointReferenceType getOfferAndDestroyRequest(types.OfferExecutionContractT offerExecutionContract,types.ContextT context) throws RemoteException, de.zib.gndms.GORFX.ORQ.stubs.types.UnfullfillableRequest, de.zib.gndms.GORFX.ORQ.stubs.types.PermissionDenied {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getOfferAndDestroyRequest");
     de.zib.gndms.GORFX.ORQ.stubs.GetOfferAndDestroyRequestRequest params = new de.zib.gndms.GORFX.ORQ.stubs.GetOfferAndDestroyRequestRequest();
     de.zib.gndms.GORFX.ORQ.stubs.GetOfferAndDestroyRequestRequestOfferExecutionContract offerExecutionContractContainer = new de.zib.gndms.GORFX.ORQ.stubs.GetOfferAndDestroyRequestRequestOfferExecutionContract();
     offerExecutionContractContainer.setOfferExecutionContract(offerExecutionContract);
     params.setOfferExecutionContract(offerExecutionContractContainer);
+    de.zib.gndms.GORFX.ORQ.stubs.GetOfferAndDestroyRequestRequestContext contextContainer = new de.zib.gndms.GORFX.ORQ.stubs.GetOfferAndDestroyRequestRequestContext();
+    contextContainer.setContext(context);
+    params.setContext(contextContainer);
     de.zib.gndms.GORFX.ORQ.stubs.GetOfferAndDestroyRequestResponse boxedResult = portType.getOfferAndDestroyRequest(params);
     return boxedResult.getEndpointReference();
     }
   }
 
-  public types.OfferExecutionContractT getPermissionAndDestroyRequest(types.OfferExecutionContractT offerExecutionContract) throws RemoteException, de.zib.gndms.GORFX.ORQ.stubs.types.UnfullfillableRequest, de.zib.gndms.GORFX.ORQ.stubs.types.PermissionDenied {
+  public types.OfferExecutionContractT permitEstimateAndDestroyRequest(types.OfferExecutionContractT offerExecutionContract,types.ContextT context) throws RemoteException, de.zib.gndms.GORFX.ORQ.stubs.types.UnfullfillableRequest, de.zib.gndms.GORFX.ORQ.stubs.types.PermissionDenied {
     synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"getPermissionAndDestroyRequest");
-    de.zib.gndms.GORFX.ORQ.stubs.GetPermissionAndDestroyRequestRequest params = new de.zib.gndms.GORFX.ORQ.stubs.GetPermissionAndDestroyRequestRequest();
-    de.zib.gndms.GORFX.ORQ.stubs.GetPermissionAndDestroyRequestRequestOfferExecutionContract offerExecutionContractContainer = new de.zib.gndms.GORFX.ORQ.stubs.GetPermissionAndDestroyRequestRequestOfferExecutionContract();
+      configureStubSecurity((Stub)portType,"permitEstimateAndDestroyRequest");
+    de.zib.gndms.GORFX.ORQ.stubs.PermitEstimateAndDestroyRequestRequest params = new de.zib.gndms.GORFX.ORQ.stubs.PermitEstimateAndDestroyRequestRequest();
+    de.zib.gndms.GORFX.ORQ.stubs.PermitEstimateAndDestroyRequestRequestOfferExecutionContract offerExecutionContractContainer = new de.zib.gndms.GORFX.ORQ.stubs.PermitEstimateAndDestroyRequestRequestOfferExecutionContract();
     offerExecutionContractContainer.setOfferExecutionContract(offerExecutionContract);
     params.setOfferExecutionContract(offerExecutionContractContainer);
-    de.zib.gndms.GORFX.ORQ.stubs.GetPermissionAndDestroyRequestResponse boxedResult = portType.getPermissionAndDestroyRequest(params);
+    de.zib.gndms.GORFX.ORQ.stubs.PermitEstimateAndDestroyRequestRequestContext contextContainer = new de.zib.gndms.GORFX.ORQ.stubs.PermitEstimateAndDestroyRequestRequestContext();
+    contextContainer.setContext(context);
+    params.setContext(contextContainer);
+    de.zib.gndms.GORFX.ORQ.stubs.PermitEstimateAndDestroyRequestResponse boxedResult = portType.permitEstimateAndDestroyRequest(params);
     return boxedResult.getOfferExecutionContract();
     }
   }

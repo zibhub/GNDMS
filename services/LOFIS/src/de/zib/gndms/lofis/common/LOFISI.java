@@ -23,6 +23,7 @@ public interface LOFISI {
    *
    * @param replicaSlices
    * @param sliceReference
+   * @param context
    * @throws ConflictingDestinationsInMap
    *	
    * @throws MissingSourceFiles
@@ -32,16 +33,17 @@ public interface LOFISI {
    * @throws UnsupportedOrInvalidSlice
    *	
    */
-  public de.zib.gndms.lofis.lofiset.stubs.types.LofiSetReference createLofiSet(types.ReplicaSlicesT[] replicaSlices,types.SliceReference[] sliceReference) throws RemoteException, de.zib.gndms.lofis.stubs.types.ConflictingDestinationsInMap, de.zib.gndms.lofis.stubs.types.MissingSourceFiles, de.zib.gndms.lofis.stubs.types.ConflictResolutionFailed, de.zib.gndms.lofis.stubs.types.UnsupportedOrInvalidSlice ;
+  public de.zib.gndms.lofis.lofiset.stubs.types.LofiSetReference createLofiSet(types.ReplicaSlicesT[] replicaSlices,types.SliceReference[] sliceReference,types.ContextT context) throws RemoteException, de.zib.gndms.lofis.stubs.types.ConflictingDestinationsInMap, de.zib.gndms.lofis.stubs.types.MissingSourceFiles, de.zib.gndms.lofis.stubs.types.ConflictResolutionFailed, de.zib.gndms.lofis.stubs.types.UnsupportedOrInvalidSlice ;
 
   /**
    * Merge multiple lofi sets into one LofiSet
    *
    * @param lofiSetRefs
+   * @param context
    * @throws ConflictingLofiSetsInMerge
    *	
    */
-  public de.zib.gndms.lofis.lofiset.client.LofiSetClient mergeLofiSets(de.zib.gndms.lofis.lofiset.stubs.types.LofiSetReference[] lofiSetRefs) throws RemoteException, org.apache.axis.types.URI.MalformedURIException, de.zib.gndms.lofis.stubs.types.ConflictingLofiSetsInMerge ;
+  public de.zib.gndms.lofis.lofiset.client.LofiSetClient mergeLofiSets(de.zib.gndms.lofis.lofiset.stubs.types.LofiSetReference[] lofiSetRefs,types.ContextT context) throws RemoteException, org.apache.axis.types.URI.MalformedURIException, de.zib.gndms.lofis.stubs.types.ConflictingLofiSetsInMerge ;
 
 }
 

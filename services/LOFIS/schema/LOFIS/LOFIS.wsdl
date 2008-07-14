@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://lofis.gndms.zib.de/LOFIS" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns1="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:ns5="http://dspace.gndms.zib.de/DSpace/types" xmlns:ns7="http://lofis.gndms.zib.de/LOFIS/types" xmlns:ns3="http://gndms.zib.de/common/types" xmlns:ns9="http://lofis.gndms.zib.de/LOFIS/LofiSet/types" xmlns:ns8="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns4="http://dspace.gndms.zib.de/DSpace/Subspace/types" xmlns:ns0="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:ns1="http://dspace.gndms.zib.de/DSpace/Slice/types" xmlns:ns6="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd" xmlns:ns2="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" name="LOFIS" targetNamespace="http://lofis.gndms.zib.de/LOFIS">
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://lofis.gndms.zib.de/LOFIS" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns1="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:ns6="http://dspace.gndms.zib.de/DSpace/types" xmlns:ns7="http://lofis.gndms.zib.de/LOFIS/types" xmlns:ns3="http://gndms.zib.de/common/types" xmlns:ns9="http://lofis.gndms.zib.de/LOFIS/LofiSet/types" xmlns:ns8="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns5="http://dspace.gndms.zib.de/DSpace/Subspace/types" xmlns:ns4="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:ns0="http://dspace.gndms.zib.de/DSpace/Slice/types" xmlns:ns2="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" xmlns:ns1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd" name="LOFIS" targetNamespace="http://lofis.gndms.zib.de/LOFIS">
   <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" location="../wsrf/properties/WS-ResourceProperties.wsdl" />
   <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" location="../wsrf/faults/WS-BaseFaults.wsdl" />
   <import namespace="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" location="../wsrf/notification/WS-BaseN.wsdl" />
@@ -19,10 +19,10 @@
       <import namespace="http://lofis.gndms.zib.de/LOFIS/LofiSet/types" schemaLocation="./LofiSetTypes.xsd" />
       <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" schemaLocation="./xsd/cagrid/types/security/security.xsd" />
       <import namespace="http://dspace.gndms.zib.de/DSpace/Subspace/types" schemaLocation="./SubspaceTypes.xsd" />
-      <import namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" schemaLocation="../ws/addressing/WS-Addressing.xsd" />
+      <import namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" schemaLocation="./../ws/addressing/WS-Addressing.xsd" />
       <import namespace="http://dspace.gndms.zib.de/DSpace/Slice/types" schemaLocation="./../DSpace/SliceTypes.xsd" />
-      <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd" schemaLocation="../wsrf/lifetime/WS-ResourceLifetime.xsd" />
       <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="./../wsrf/faults/WS-BaseFaults.xsd" />
+      <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd" schemaLocation="./../wsrf/lifetime/WS-ResourceLifetime.xsd" />
       <element name="CreateLofiSetRequest">
         <complexType>
           <sequence>
@@ -36,7 +36,14 @@
             <element name="sliceReference">
               <complexType>
                 <sequence>
-                  <element ref="ns1:SliceReference" minOccurs="1" maxOccurs="unbounded" />
+                  <element ref="ns0:SliceReference" minOccurs="1" maxOccurs="unbounded" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="context">
+              <complexType>
+                <sequence>
+                  <element ref="ns3:Context" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -57,6 +64,13 @@
               <complexType>
                 <sequence>
                   <element ref="ns9:LofiSetReference" minOccurs="1" maxOccurs="unbounded" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="context">
+              <complexType>
+                <sequence>
+                  <element ref="ns3:Context" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>

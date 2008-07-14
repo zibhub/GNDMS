@@ -4,6 +4,7 @@
 	    xmlns:slice="http://dspace.gndms.zib.de/DSpace/Slice/types"
 	    xmlns:wsbf="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd"
 	    xmlns:wst="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"
+	    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
         elementFormDefault="qualified" version="1.0" xmlns="http://www.w3.org/2001/XMLSchema"
         xml:lang="EN">
 	
@@ -27,9 +28,25 @@
 	</restriction>
 </simpleType>
 
+<complexType name="ContextT">
+	<sequence>
+		<element name="entry">
+			<complexType>
+				<simpleContent>
+					<extension base="xsd:normalizedString">
+						<attribute name="key" type="xsd:token" />
+					</extension>
+				</simpleContent>
+			</complexType>
+		</element>
+	</sequence>
+</complexType>
+
+<element name="Context" type="impl:ContextT" />
 
 
 
+	
 <!-- *** Storage amount types *** -->
 
 <complexType name="StorageSizeT">
@@ -211,13 +228,13 @@
 	</sequence>
 </complexType>
 
+<element name="OfferExecutionContract" type="impl:OfferExecutionContractT" />
+
 
 
 
 <!-- *** Task types *** -->
 	
-<element name="OfferExecutionContract" type="impl:OfferExecutionContractT" />
-
 <simpleType name="TaskStatusT">
 	<restriction base="normalizedString">
 		<enumeration value="unknown" />
@@ -259,4 +276,46 @@
 		</choice>
 	</complexType>
 </element>
+
+
+
+
+<!-- *** OfferRequestArguments and TaskExecutionResults *** -->
+
+<complexType name="DynamicOfferDataSeqT">
+	<sequence>
+		<xsd:any minOccurs="0" maxOccurs="unbounded"/>
+	</sequence>
+	<attribute name="offerType" type="xsd:anyURI" />
+</complexType>
+
+<element name="OfferRequestArguments" type="impl:DynamicOfferDataSeqT" />
+
+<element name="TaskExecutionResults" type="impl:DynamicOfferDataSeqT" />
+
+<!-- Instantiation example -->
+<!-- complexType name="SampleArgumentsT">
+	<complexContent>
+		<restriction base="impl:DynamicOfferDataSeqT">
+			<sequence>
+				<element name="foo" type="string" />
+			</sequence>
+			<attribute name="offerType" type="xsd:anyURI" fixed="http://foo" />
+		</restriction>
+	</complexContent>
+</complexType>
+
+<complexType name="MoreSampleArgumentsT">
+	<complexContent>
+		<restriction base="impl:DynamicOfferDataSeqT">
+			<sequence>
+				<element name="foo" type="string" />
+				<element name="bar" type="string" />
+			</sequence>
+			<attribute name="offerType" type="xsd:anyURI" fixed="http://foo" />
+		</restriction>
+	</complexContent>
+</complexType -->
+
+
 </schema>

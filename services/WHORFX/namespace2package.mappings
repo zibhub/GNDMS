@@ -4,4 +4,7 @@ http\://gndms.zib.de/WHORFX/service=de.zib.gndms.stubs.service
 http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
 
 http\://gndms.zib.de/WHORFX/types=de.zib.gndms.stubs.types
+http\://gndms.zib.de/common/types=types
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security=gov.nih.nci.cagrid.metadata.security
+http\://dspace.gndms.zib.de/DSpace/Slice/types=types
+

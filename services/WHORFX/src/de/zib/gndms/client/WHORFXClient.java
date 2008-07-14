@@ -76,11 +76,14 @@ public class WHORFXClient extends WHORFXClientBase implements WHORFXI {
 		}
 	}
 
-  public org.apache.axis.types.URI lookupORF(org.apache.axis.types.URI orfType) throws RemoteException, de.zib.gndms.stubs.types.UnknownORFType {
+  public org.apache.axis.types.URI lookupORF(org.apache.axis.types.URI orfType,types.ContextT context) throws RemoteException, de.zib.gndms.stubs.types.UnknownORFType {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"lookupORF");
     de.zib.gndms.stubs.LookupORFRequest params = new de.zib.gndms.stubs.LookupORFRequest();
     params.setOrfType(orfType);
+    de.zib.gndms.stubs.LookupORFRequestContext contextContainer = new de.zib.gndms.stubs.LookupORFRequestContext();
+    contextContainer.setContext(context);
+    params.setContext(contextContainer);
     de.zib.gndms.stubs.LookupORFResponse boxedResult = portType.lookupORF(params);
     return boxedResult.getResponse();
     }

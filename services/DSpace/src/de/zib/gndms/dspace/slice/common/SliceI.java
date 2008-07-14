@@ -28,6 +28,7 @@ public interface SliceI {
    * Destroys this slice resource and retuns a new slice based on this slice resource that is in the specified subspace and has the specified new slice kind
    *
    * @param sliceTransformSpecifier
+   * @param context
    * @throws UnknownSubspace
    *	
    * @throws OutOfSpace
@@ -37,7 +38,7 @@ public interface SliceI {
    * @throws InternalFailure
    *	
    */
-  public de.zib.gndms.dspace.slice.stubs.types.SliceReference transformSliceTo(types.SliceTransformSpecifierT sliceTransformSpecifier) throws RemoteException, de.zib.gndms.dspace.stubs.types.UnknownSubspace, de.zib.gndms.dspace.subspace.stubs.types.OutOfSpace, de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind, de.zib.gndms.dspace.stubs.types.InternalFailure ;
+  public de.zib.gndms.dspace.slice.stubs.types.SliceReference transformSliceTo(types.SliceTransformSpecifierT sliceTransformSpecifier,types.ContextT context) throws RemoteException, de.zib.gndms.dspace.stubs.types.UnknownSubspace, de.zib.gndms.dspace.subspace.stubs.types.OutOfSpace, de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind, de.zib.gndms.dspace.stubs.types.InternalFailure ;
 
 }
 

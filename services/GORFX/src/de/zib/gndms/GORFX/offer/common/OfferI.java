@@ -27,8 +27,10 @@ public interface OfferI {
   /**
    * Accept the offer and start its execution
    *
+   * @throws PermissionDenied
+   *	
    */
-  public org.apache.axis.message.addressing.EndpointReferenceType accept() throws RemoteException ;
+  public org.apache.axis.message.addressing.EndpointReferenceType accept() throws RemoteException, de.zib.gndms.GORFX.ORQ.stubs.types.PermissionDenied ;
 
 }
 
