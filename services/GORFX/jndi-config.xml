@@ -87,7 +87,6 @@
     <resourceLink name="gORFXHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/GORFX/home" />
     <resourceLink name="oRQHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/ORQ/home" />
     <resourceLink name="taskHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Task/home" />
-    <resourceLink name="taskHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Task/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/ORQ">
     <resource name="configuration" type="de.zib.gndms.GORFX.ORQ.service.globus.resource.ORQResourceConfiguration">
@@ -130,8 +129,6 @@
     </resource>
     <resourceLink name="serviceconfiguration" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/GORFX/serviceconfiguration" />
     <resourceLink name="gORFXHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/GORFX/home" />
-    <resourceLink name="offerHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Offer/home" />
-    <resourceLink name="taskHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Task/home" />
     <resourceLink name="offerHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Offer/home" />
     <resourceLink name="taskHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Task/home" />
   </service>

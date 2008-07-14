@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+    <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/1.5" />
+    <classpathentry kind="src" path="build/stubs-WHORFX/src" />
+    <classpathentry kind="src" path="src" />
+    <classpathentry kind="src" path="test/src" />
+    <classpathentry kind="lib" path="lib/caGrid-advertisement-1.2.jar" />
+    <classpathentry kind="lib" path="lib/caGrid-core-1.2.jar" />
+    <classpathentry kind="lib" path="lib/caGrid-Introduce-serviceTools-1.2.jar" />
+    <classpathentry kind="lib" path="lib/caGrid-metadata-security-1.2.jar" />
+    <classpathentry kind="lib" path="lib/caGrid-ServiceSecurityProvider-client-1.2.jar" />
+    <classpathentry kind="lib" path="lib/caGrid-ServiceSecurityProvider-common-1.2.jar" />
+    <classpathentry kind="lib" path="lib/caGrid-ServiceSecurityProvider-service-1.2.jar" />
+    <classpathentry kind="lib" path="lib/caGrid-ServiceSecurityProvider-stubs-1.2.jar" />
+    <classpathentry kind="lib" path="lib/castor-0.9.9.jar" />
+    <classpathentry kind="lib" path="lib/globus_wsrf_mds_aggregator.jar" />
+    <classpathentry kind="lib" path="lib/globus_wsrf_mds_aggregator_stubs.jar" />
+    <classpathentry kind="lib" path="lib/globus_wsrf_servicegroup.jar" />
+    <classpathentry kind="lib" path="lib/globus_wsrf_servicegroup_stubs.jar" />
+    <classpathentry kind="lib" path="lib/jdom-1.0.jar" />
+    <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/gt4-current" />
+    <classpathentry kind="src" path="/infra" combineaccessrules="false" />
+    <classpathentry kind="output" path="bin" />
+</classpath>
+
