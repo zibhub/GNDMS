@@ -1,13 +1,12 @@
 package de.zib.gndms.dspace.service;
 
 import gov.nih.nci.cagrid.introduce.servicetools.ServiceConfiguration;
-
-import org.globus.wsrf.config.ContainerConfig;
-import java.io.File;
-import javax.naming.InitialContext;
-
 import org.apache.axis.MessageContext;
 import org.globus.wsrf.Constants;
+import org.globus.wsrf.config.ContainerConfig;
+
+import javax.naming.InitialContext;
+import java.io.File;
 
 
 /** 
@@ -43,8 +42,14 @@ public class DSpaceConfiguration implements ServiceConfiguration {
 	}
 	
 	private String etcDirectoryPath;
-	
-	
+
+
+	private String gridJNDIEnv;
+
+	private String gridName;
+
+	private String gridPath;
+
 	
 	public String getEtcDirectoryPath() {
 		return ContainerConfig.getBaseDirectory() + File.separator + etcDirectoryPath;
@@ -54,5 +59,34 @@ public class DSpaceConfiguration implements ServiceConfiguration {
 		this.etcDirectoryPath = etcDirectoryPath;
 	}
 
-	
+	public String getGridJNDIEnv() {
+		return gridJNDIEnv;
+	}
+
+
+	public void setGridJNDIEnv(String gridJNDIEnv) {
+		this.gridJNDIEnv = gridJNDIEnv;
+	}
+
+
+	public String getGridName() {
+		return gridName;
+	}
+
+
+	public void setGridName(String gridName) {
+		this.gridName = gridName;
+	}
+
+
+	public String getGridPath() {
+		return ContainerConfig.getBaseDirectory() + File.separator + gridPath;
+	}
+
+
+	public void setGridPath(String gridPath) {
+		this.gridPath = gridPath;
+	}
+
+
 }
