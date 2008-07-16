@@ -89,7 +89,6 @@ import org.oasis.wsrf.lifetime.TerminationNotification;
  * 
  */
 public abstract class DSpaceResourceBase extends ReflectionResource implements Resource
-                                                  ,PersistenceCallback
                                                   ,SecureResource
                                                   {
 
@@ -102,19 +101,9 @@ public abstract class DSpaceResourceBase extends ReflectionResource implements R
     private AdvertisementClient registrationClient;
     
     private URL baseURL;
-    //used to persist the resource properties
-    private PersistenceHelper resourcePropertyPersistenceHelper = null;
-    //used to persist notifications
-    private FilePersistenceHelper resourcePersistenceHelper = null;
     private boolean beingLoaded = false;
     
     public DSpaceResourceBase() {
-        try {
-            resourcePropertyPersistenceHelper = new gov.nih.nci.cagrid.introduce.servicetools.XmlPersistenceHelper(DSpaceResourceProperties.class,DSpaceConfiguration.getConfiguration());
-            resourcePersistenceHelper = new FilePersistenceHelper(this.getClass(),DSpaceConfiguration.getConfiguration(),".resource");
-        } catch (Exception ex) {
-            logger.warn("Unable to initialize resource properties persistence helper", ex);
-        }
     }
 
 
@@ -133,8 +122,6 @@ public abstract class DSpaceResourceBase extends ReflectionResource implements R
 		// register the service to the index service
 		refreshRegistration(true);
 		
-        //call the first store to persist the resource
-        store();
 	}
 	
 	
@@ -351,97 +338,6 @@ public abstract class DSpaceResourceBase extends ReflectionResource implements R
 
 
 
-
-    public void load(ResourceKey resourceKey) throws ResourceException, NoSuchResourceException, InvalidResourceKeyException {
-	  beingLoaded = true;
-        // because this is a singleton we can't use the key to load the resource
-        // because the key is null, we will use the ID
-        // this assumes the resource home will set the id before calling load()
-        Object id = null;
-        try {
-            List list = resourcePropertyPersistenceHelper.list();
-            if(list!=null && list.size()>0){
-                id = list.get(0);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (id == null) {
-            beingLoaded = false;
-            throw new InvalidResourceKeyException("No persited resource available to load for singleton");
-        }
-        
-        //first we will recover the resource properties and initialize the resource
-       DSpaceResourceProperties props = (DSpaceResourceProperties)resourcePropertyPersistenceHelper.load(DSpaceResourceProperties.class, id);
-       this.initialize(props, DSpaceConstants.RESOURCE_PROPERTY_SET, id);
-       
-               //next we will recover the resource itself
-        File file = resourcePersistenceHelper.getKeyAsFile(this.getClass(), id);
-        if (!file.exists()) {
-            beingLoaded = false;
-            throw new NoSuchResourceException();
-        }
-        FileInputStream fis = null;
-        int value = 0;
-        try {
-            fis = new FileInputStream(file);
-            ObjectInputStream ois = new ObjectInputStream(fis);
-        } catch (Exception e) {
-            beingLoaded = false;
-            throw new ResourceException("Failed to load resource", e);
-        } finally {
-            if (fis != null) {
-                try { fis.close(); } catch (Exception ee) {}
-            }
-        } 
-       
-       beingLoaded = false;
-    }
-
-
-    public void store() throws ResourceException {
-      if(!beingLoaded){
-        try {
-            //removing all because we only want one copy of this resource persisted
-            //because this is a singleton
-            resourcePropertyPersistenceHelper.removeAll();
-            resourcePersistenceHelper.removeAll();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        //store the resource properties
-        resourcePropertyPersistenceHelper.store(this);
-        
-        FileOutputStream fos = null;
-        File tmpFile = null;
-
-        try {
-            tmpFile = File.createTempFile(
-                this.getClass().getName(), ".tmp",
-                resourcePersistenceHelper.getStorageDirectory());
-            fos = new FileOutputStream(tmpFile);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-        } catch (Exception e) {
-            if (tmpFile != null) {
-                tmpFile.delete();
-            }
-            throw new ResourceException("Failed to store resource", e);
-        } finally {
-            if (fos != null) {
-                try { fos.close();} catch (Exception ee) {}
-            }
-        }
-
-        File file = resourcePersistenceHelper.getKeyAsFile(this.getClass(), getID());
-        if (file.exists()) {
-            file.delete();
-        }
-        if (!tmpFile.renameTo(file)) {
-            tmpFile.delete();
-            throw new ResourceException("Failed to store resource");
-        }
-        }
-    }
 	
 	
 }

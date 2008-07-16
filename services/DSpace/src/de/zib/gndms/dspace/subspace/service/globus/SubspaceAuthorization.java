@@ -53,11 +53,6 @@ public class SubspaceAuthorization implements PDP {
 		
 	}
 					
-	public static void authorizeSubscribe() throws RemoteException {
-		
-		
-	}
-					
 	public static void authorizeGetMultipleResourceProperties() throws RemoteException {
 		
 		
@@ -93,14 +88,6 @@ public class SubspaceAuthorization implements PDP {
 		if(operation.getLocalPart().equals("getServiceSecurityMetadata")){
 			try{
 				authorizeGetServiceSecurityMetadata();
-				return true;
-			} catch (Exception e){
-				e.printStackTrace();
-				return false;
-			}
-		} else if(operation.getLocalPart().equals("subscribe")){
-			try{
-				authorizeSubscribe();
 				return true;
 			} catch (Exception e){
 				e.printStackTrace();

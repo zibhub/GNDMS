@@ -41,7 +41,7 @@ import gov.nih.nci.cagrid.introduce.security.client.ServiceSecurityClient;
  * 
  * @created by Introduce Toolkit version 1.2
  */
-public abstract class SubspaceClientBase extends ServiceSecurityClient implements NotifyCallback {	
+public abstract class SubspaceClientBase extends ServiceSecurityClient {	
 	protected SubspacePortType portType;
 	protected Object portTypeMutex;
     protected NotificationConsumerManager consumer = null;
@@ -84,43 +84,5 @@ public abstract class SubspaceClientBase extends ServiceSecurityClient implement
 	}
 	
     
-    public void unSubscribe(EndpointReferenceType subscriptionEPR) throws Exception {
-        WSResourceLifetimeServiceAddressingLocator locator = new WSResourceLifetimeServiceAddressingLocator();
-        ImmediateResourceTermination port = locator.getImmediateResourceTerminationPort(subscriptionEPR);
-        port.destroy(new org.oasis.wsrf.lifetime.Destroy());
-    }
-
-
-    public org.oasis.wsn.SubscribeResponse subscribe(QName qname) throws RemoteException, ContainerException, MalformedURIException {
-        synchronized (portTypeMutex) {
-            configureStubSecurity((Stub) portType, "subscribe");
-
-            if (consumer == null) {
-                // Create client side notification consumer
-                consumer = org.globus.wsrf.NotificationConsumerManager.getInstance();
-                consumer.startListening();
-                consumerEPR = consumer.createNotificationConsumer(this);
-            }
-
-            org.oasis.wsn.Subscribe params = new org.oasis.wsn.Subscribe();
-            params.setUseNotify(Boolean.TRUE);
-            params.setConsumerReference(consumerEPR);
-            org.oasis.wsn.TopicExpressionType topicExpression = new org.oasis.wsn.TopicExpressionType();
-            topicExpression.setDialect(org.globus.wsrf.WSNConstants.SIMPLE_TOPIC_DIALECT);
-            topicExpression.setValue(qname);
-            params.setTopicExpression(topicExpression);
-            return portType.subscribe(params);
-       }
-    }
-
-
-    public void deliver(List topicPath, EndpointReferenceType producer, Object message) {
-        org.oasis.wsrf.properties.ResourcePropertyValueChangeNotificationType changeMessage = ((org.globus.wsrf.core.notification.ResourcePropertyValueChangeNotificationElementType) message)
-            .getResourcePropertyValueChangeNotification();
-
-        if (changeMessage != null) {
-            System.out.println("Got notification");
-        }
-    }
 
 }
