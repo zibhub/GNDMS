@@ -1,5 +1,7 @@
 package de.zib.gndms.dspace.service;
 
+import org.apache.log4j.Logger;
+
 import java.rmi.RemoteException;
 
 /** 
@@ -10,9 +12,15 @@ import java.rmi.RemoteException;
  */
 public class DSpaceImpl extends DSpaceImplBase {
 
-	
+	private static final Logger logger;
+
+	static {
+		logger = Logger.getLogger(DSpaceImpl.class);
+	}
+
 	public DSpaceImpl() throws RemoteException {
 		super();
+		logger.fatal("impl called;");
 	}
 	
 

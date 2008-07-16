@@ -1,4 +1,22 @@
 syntax:glob
 
 services/*/build/**
+services/*/lib/*.jar
+services/*/lib/CONTENTS
+services/*/tools/lib/*.jar
+services/*/tools/lib/CONTENTS
+services/*/tmp/**
 .DS_Store
+*.ipr
+*.iws
+*.eml
+*.iml
+*.gar
+extra/lib/gndms-infra.jar
+infra/out/**
+model/out/**
+model/lib/**
+
+syntax:regexp
+^types/[A-Za-z].+
+
