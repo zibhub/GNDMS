@@ -19,7 +19,7 @@
         </parameter>
       </resourceParams>
     </resource>
-    <resource name="home" type="de.zib.gndms.lofis.lofiset.service.globus.resource.LofiSetResourceHome">
+    <resource name="home" type="de.zib.gndms.lofis.lofiset.service.globus.resource.ExtLofiSetResourceHome">
       <resourceParams>
         <parameter>
           <name>factory</name>
@@ -85,7 +85,7 @@
         </parameter>
       </resourceParams>
     </resource>
-    <resource name="home" type="de.zib.gndms.lofis.service.globus.resource.LOFISResourceHome">
+    <resource name="home" type="de.zib.gndms.lofis.service.globus.resource.ExtLOFISResourceHome">
       <resourceParams>
         <parameter>
           <name>factory</name>
