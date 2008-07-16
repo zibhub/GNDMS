@@ -319,7 +319,6 @@
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Lifetime xsi:type="ns3:Lifetime"/>
     <ns3:Identifiable xsi:type="ns3:Identifiable"/>
-    <ns3:Persistent xsi:type="ns3:Persistent"/>
     <ns3:Notification xsi:type="ns3:Notification"/>
     <ns3:Secure xsi:type="ns3:Secure"/>
     <ns3:ResourcePropertyManagement xsi:type="ns3:ResourcePropertyManagement"/>
@@ -380,7 +379,6 @@
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Lifetime xsi:type="ns3:Lifetime"/>
     <ns3:Identifiable xsi:type="ns3:Identifiable"/>
-    <ns3:Persistent xsi:type="ns3:Persistent"/>
     <ns3:Notification xsi:type="ns3:Notification"/>
     <ns3:Secure xsi:type="ns3:Secure"/>
     <ns3:ResourcePropertyManagement xsi:type="ns3:ResourcePropertyManagement"/>
@@ -388,4 +386,9 @@
   </ns3:Service>
  </ns3:Services>
  <ns66:Extensions xsi:type="ns66:ExtensionsType" xmlns:ns66="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+ <ns67:ServiceProperties xmlns:ns67="gme://gov.nih.nci.cagrid.introduce/1/Property">
+  <ns67:Property description="" isFromETC="false" key="gridJNDIEnv" value="TARGET_GRID_env"/>
+  <ns67:Property description="Name of this grid" isFromETC="false" key="gridName" value="TARGET_GRID"/>
+  <ns67:Property description="Path to shared directory for this grid" isFromETC="true" key="gridPath" value="../TARGET_GRID_shared/"/>
+ </ns67:ServiceProperties>
 </ns1:ServiceDescription>

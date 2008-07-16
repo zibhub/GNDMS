@@ -89,7 +89,6 @@ import org.oasis.wsrf.lifetime.TerminationNotification;
  * 
  */
 public abstract class OfferResourceBase extends ReflectionResource implements Resource
-                                                  ,PersistenceCallback
                                                   ,TopicListAccessor
                                                   ,SecureResource
                                                   ,RemoveCallback
@@ -105,20 +104,10 @@ public abstract class OfferResourceBase extends ReflectionResource implements Re
     private AdvertisementClient registrationClient;
     
     private URL baseURL;
-    //used to persist the resource properties
-    private PersistenceHelper resourcePropertyPersistenceHelper = null;
-    //used to persist notifications
-    private FilePersistenceHelper resourcePersistenceHelper = null;
     private TopicList topicList;
     private boolean beingLoaded = false;
     
     public OfferResourceBase() {
-        try {
-            resourcePropertyPersistenceHelper = new gov.nih.nci.cagrid.introduce.servicetools.XmlPersistenceHelper(OfferResourceProperties.class,GORFXConfiguration.getConfiguration());
-            resourcePersistenceHelper = new FilePersistenceHelper(this.getClass(),GORFXConfiguration.getConfiguration(),".resource");
-        } catch (Exception ex) {
-            logger.warn("Unable to initialize resource properties persistence helper", ex);
-        }
     }
 
 
@@ -157,8 +146,6 @@ public abstract class OfferResourceBase extends ReflectionResource implements Re
 		// register the service to the index service
 		refreshRegistration(true);
 		
-        //call the first store to persist the resource
-        store();
 	}
 	
 	
@@ -181,12 +168,6 @@ public abstract class OfferResourceBase extends ReflectionResource implements Re
         }	
         
 		super.setTerminationTime(time);
-        //call the first store to persist the resource
-        try {
-            store();
-        } catch (ResourceException e) {
-            throw new RuntimeException(e);
-        }
 	}
 
 
@@ -201,8 +182,6 @@ public abstract class OfferResourceBase extends ReflectionResource implements Re
 	public void setOfferExecutionContract(types.OfferExecutionContractT offerExecutionContract ) throws ResourceException {
         ResourceProperty prop = getResourcePropertySet().get(OfferConstants.OFFEREXECUTIONCONTRACT);
 		prop.set(0, offerExecutionContract);
-        //call the first store to persist the resource
-        store();
 	}
 	
 	
@@ -214,8 +193,6 @@ public abstract class OfferResourceBase extends ReflectionResource implements Re
 	public void setOfferRequestArguments(types.DynamicOfferDataSeqT offerRequestArguments ) throws ResourceException {
         ResourceProperty prop = getResourcePropertySet().get(OfferConstants.OFFERREQUESTARGUMENTS);
 		prop.set(0, offerRequestArguments);
-        //call the first store to persist the resource
-        store();
 	}
 	
 
@@ -437,80 +414,9 @@ public abstract class OfferResourceBase extends ReflectionResource implements Re
         return this.topicList;
     }
 
-    public void remove() throws ResourceException {     
-		resourcePropertyPersistenceHelper.remove(this);
+    public void remove() throws ResourceException {
     }
 
-
-    public void load(ResourceKey resourceKey) throws ResourceException, NoSuchResourceException, InvalidResourceKeyException {
-	  beingLoaded = true;
-       //first we will recover the resource properties and initialize the resource
-	   OfferResourceProperties props = (OfferResourceProperties)resourcePropertyPersistenceHelper.load(OfferResourceProperties.class, resourceKey.getValue());
-       this.initialize(props, OfferConstants.RESOURCE_PROPERTY_SET, resourceKey.getValue());
-       
-        //next we will recover the resource itself
-        File file = resourcePersistenceHelper.getKeyAsFile(this.getClass(), resourceKey.getValue());
-        if (!file.exists()) {
-            beingLoaded = false;
-            throw new NoSuchResourceException();
-        }
-        FileInputStream fis = null;
-        int value = 0;
-        try {
-            fis = new FileInputStream(file);
-            ObjectInputStream ois = new ObjectInputStream(fis);
-            SubscriptionPersistenceUtils.loadSubscriptionListeners(
-                this.getTopicList(), ois);
-        } catch (Exception e) {
-            beingLoaded = false;
-            throw new ResourceException("Failed to load resource", e);
-        } finally {
-            if (fis != null) {
-                try { fis.close(); } catch (Exception ee) {}
-            }
-        } 
-       
-       beingLoaded = false;
-    }
-
-
-    public void store() throws ResourceException {
-      if(!beingLoaded){
-        //store the resource properties
-        resourcePropertyPersistenceHelper.store(this);
-        
-        FileOutputStream fos = null;
-        File tmpFile = null;
-
-        try {
-            tmpFile = File.createTempFile(
-                this.getClass().getName(), ".tmp",
-                resourcePersistenceHelper.getStorageDirectory());
-            fos = new FileOutputStream(tmpFile);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            SubscriptionPersistenceUtils.storeSubscriptionListeners(
-                this.getTopicList(), oos);
-        } catch (Exception e) {
-            if (tmpFile != null) {
-                tmpFile.delete();
-            }
-            throw new ResourceException("Failed to store resource", e);
-        } finally {
-            if (fos != null) {
-                try { fos.close();} catch (Exception ee) {}
-            }
-        }
-
-        File file = resourcePersistenceHelper.getKeyAsFile(this.getClass(), getID());
-        if (file.exists()) {
-            file.delete();
-        }
-        if (!tmpFile.renameTo(file)) {
-            tmpFile.delete();
-            throw new ResourceException("Failed to store resource");
-        }
-        }
-    }
 	
 	
 }

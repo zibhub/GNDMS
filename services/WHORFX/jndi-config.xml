@@ -37,6 +37,14 @@
           <name>minimumUpdateInterval</name>
           <value>@minimumUpdateInterval@</value>
         </parameter>
+        <parameter>
+          <name>gridJNDIEnv</name>
+          <value>@gridJNDIEnv@</value>
+        </parameter>
+        <parameter>
+          <name>gridName</name>
+          <value>@gridName@</value>
+        </parameter>
       </resourceParams>
     </resource>
     <resource name="home" type="de.zib.gndms.service.globus.resource.WHORFXResourceHome">

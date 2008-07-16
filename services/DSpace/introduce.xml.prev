@@ -322,8 +322,8 @@
  </ns3:Services>
  <ns63:Extensions xsi:type="ns63:ExtensionsType" xmlns:ns63="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
  <ns64:ServiceProperties xmlns:ns64="gme://gov.nih.nci.cagrid.introduce/1/Property">
-  <ns64:Property description="Name of this grid" isFromETC="false" key="gridName" value="${target.grid}"/>
-  <ns64:Property description="Path to shared directory for this grid" isFromETC="true" key="gridPath" value="../${target.grid}_shared/"/>
-  <ns64:Property description="" isFromETC="false" key="gridJNDIEnv" value="${target-grid}_env"/>
+  <ns64:Property description="Name of this grid" isFromETC="false" key="gridName" value="TARGET_GRID"/>
+  <ns64:Property description="Path to shared directory for this grid" isFromETC="true" key="gridPath" value="../TARGET_GRID_shared/"/>
+  <ns64:Property description="" isFromETC="false" key="gridJNDIEnv" value="TARGET_GRID_env"/>
  </ns64:ServiceProperties>
 </ns1:ServiceDescription>

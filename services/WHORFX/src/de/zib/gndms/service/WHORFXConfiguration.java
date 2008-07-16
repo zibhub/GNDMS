@@ -49,6 +49,10 @@ public class WHORFXConfiguration implements ServiceConfiguration {
 	
 	private String minimumUpdateInterval;
 	
+	private String gridJNDIEnv;
+	
+	private String gridName;
+	
 	
 	public String getEtcDirectoryPath() {
 		return ContainerConfig.getBaseDirectory() + File.separator + etcDirectoryPath;
@@ -76,6 +80,26 @@ public class WHORFXConfiguration implements ServiceConfiguration {
 	
 	public void setMinimumUpdateInterval(String minimumUpdateInterval) {
 		this.minimumUpdateInterval = minimumUpdateInterval;
+	}
+
+	
+	public String getGridJNDIEnv() {
+		return gridJNDIEnv;
+	}
+	
+	
+	public void setGridJNDIEnv(String gridJNDIEnv) {
+		this.gridJNDIEnv = gridJNDIEnv;
+	}
+
+	
+	public String getGridName() {
+		return gridName;
+	}
+	
+	
+	public void setGridName(String gridName) {
+		this.gridName = gridName;
 	}
 
 	

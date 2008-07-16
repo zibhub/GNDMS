@@ -45,6 +45,12 @@ public class GORFXConfiguration implements ServiceConfiguration {
 	private String etcDirectoryPath;
 	
 	
+	private String gridJNDIEnv;
+	
+	private String gridName;
+	
+	private String gridPath;
+	
 	
 	public String getEtcDirectoryPath() {
 		return ContainerConfig.getBaseDirectory() + File.separator + etcDirectoryPath;
@@ -52,6 +58,36 @@ public class GORFXConfiguration implements ServiceConfiguration {
 	
 	public void setEtcDirectoryPath(String etcDirectoryPath) {
 		this.etcDirectoryPath = etcDirectoryPath;
+	}
+
+	
+	public String getGridJNDIEnv() {
+		return gridJNDIEnv;
+	}
+	
+	
+	public void setGridJNDIEnv(String gridJNDIEnv) {
+		this.gridJNDIEnv = gridJNDIEnv;
+	}
+
+	
+	public String getGridName() {
+		return gridName;
+	}
+	
+	
+	public void setGridName(String gridName) {
+		this.gridName = gridName;
+	}
+
+	
+	public String getGridPath() {
+		return ContainerConfig.getBaseDirectory() + File.separator + gridPath;
+	}
+	
+	
+	public void setGridPath(String gridPath) {
+		this.gridPath = gridPath;
 	}
 
 	
