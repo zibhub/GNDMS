@@ -16,9 +16,24 @@ import javax.naming.NamingException;
  *          User: stepn Date: 15.07.2008 Time: 14:22:20
  */
 @SuppressWarnings({"OverloadedMethodsWithSameNumberOfParameters"})
-public final class GNDMSConfig {
+public abstract class GNDMSConfig {
 
 	private GNDMSConfig() {}
+
+	@NotNull
+	public abstract String getGridJNDIEnvName();
+
+	@NotNull
+	public abstract String getGridName();
+
+	@NotNull
+	public abstract String getGridPath();
+
+	@NotNull
+	public Context getGridContext(@NotNull String partitionName) throws NamingException {
+		return findSharedContext(GNDMSConstants.getRootContext(),
+			  new String[] { getGridJNDIEnvName(), getGridName(), partitionName });
+	}
 
 	@NotNull
 	public static Context findSharedContext(@NotNull Context startContext, @NotNull Name name)

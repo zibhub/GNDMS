@@ -21,13 +21,5 @@ public class DSpaceResource extends DSpaceResourceBase {
 	public void initialize(
 		  Object resourceBean, QName resourceElementQName, Object id) throws ResourceException {
 		super.initialize(resourceBean, resourceElementQName, id);    // Overridden method
-		try {
-			Context context = GNDMSConfig.findSharedContext(GNDMSConstants.getRootContext(), "c3grid");
-			DbSetupFacade facade = DbSetupFacade.lookupInstance(context, "db");
-			logger.fatal("Found facade" +  facade);
-		}
-		catch (NamingException e) {
-			throw new RuntimeException(e);
-		}
 	}
 }

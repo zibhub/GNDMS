@@ -51,6 +51,8 @@ public class WHORFXConfiguration implements ServiceConfiguration {
 	private String gridJNDIEnv;
 	
 	private String gridName;
+
+	private String gridPath;
 	
 	
 	public String getEtcDirectoryPath() {
@@ -99,6 +101,15 @@ public class WHORFXConfiguration implements ServiceConfiguration {
 	
 	public void setGridName(String gridName) {
 		this.gridName = gridName;
+	}
+
+	public String getGridPath() {
+		return ContainerConfig.getBaseDirectory() + File.separator + gridPath;
+	}
+
+
+	public void setGridPath(String gridPath) {
+		this.gridPath = gridPath;
 	}
 
 	
