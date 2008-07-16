@@ -19,7 +19,7 @@
         </parameter>
       </resourceParams>
     </resource>
-    <resource name="home" type="de.zib.gndms.GORFX.context.service.globus.resource.TaskResourceHome">
+    <resource name="home" type="de.zib.gndms.GORFX.context.service.globus.resource.ExtTaskResourceHome">
       <resourceParams>
         <parameter>
           <name>factory</name>
@@ -63,7 +63,7 @@
         </parameter>
       </resourceParams>
     </resource>
-    <resource name="home" type="de.zib.gndms.GORFX.offer.service.globus.resource.OfferResourceHome">
+    <resource name="home" type="de.zib.gndms.GORFX.offer.service.globus.resource.ExtOfferResourceHome">
       <resourceParams>
         <parameter>
           <name>factory</name>
@@ -107,7 +107,7 @@
         </parameter>
       </resourceParams>
     </resource>
-    <resource name="home" type="de.zib.gndms.GORFX.ORQ.service.globus.resource.ORQResourceHome">
+    <resource name="home" type="de.zib.gndms.GORFX.ORQ.service.globus.resource.ExtORQResourceHome">
       <resourceParams>
         <parameter>
           <name>factory</name>
@@ -163,7 +163,7 @@
         </parameter>
       </resourceParams>
     </resource>
-    <resource name="home" type="de.zib.gndms.GORFX.service.globus.resource.GORFXResourceHome">
+    <resource name="home" type="de.zib.gndms.GORFX.service.globus.resource.ExtGORFXResourceHome">
       <resourceParams>
         <parameter>
           <name>factory</name>

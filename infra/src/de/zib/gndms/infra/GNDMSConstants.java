@@ -1,4 +1,4 @@
-package de.zib.gndms;
+package de.zib.gndms.infra;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -13,7 +13,10 @@ import javax.naming.NamingException;
  *          User: stepn Date: 17.06.2008 Time: 23:00:27
  */
 public final class GNDMSConstants {
+	@SuppressWarnings({"HardcodedFileSeparator"})
 	public static final String JNDI_BASE_NAME="java:comp/env/";
+
+	private GNDMSConstants() {}
 
 	public static Context getRootContext() throws NamingException {
 		InitialContext ctx = null;

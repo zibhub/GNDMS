@@ -39,7 +39,7 @@
         </parameter>
       </resourceParams>
     </resource>
-    <resource name="home" type="de.zib.gndms.service.globus.resource.WHORFXResourceHome">
+    <resource name="home" type="de.zib.gndms.service.globus.resource.ExtWHORFXResourceHome">
       <resourceParams>
         <parameter>
           <name>factory</name>
