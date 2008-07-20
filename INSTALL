@@ -35,6 +35,14 @@ PREREQUISITES
 - Set DERBY_HOME to it
 - Add $DERBY_HOME/bin to your PATH
 - Have it in your environment
+
+- Install groovy
+- Set GROOVY_HOME 
+- For covenience, have it in your environment, you might also want to add $GROOVY_HOME/bin to your PATH
+
+- Install curl
+- Add the directory called "bin" below the directory of this INSTALL file to your PATH
+
              
 
 DEPENDENCIES
@@ -93,5 +101,5 @@ Things to check when something goes wrong:
 1) Do you need to regen the stubs? Delete service/*build/ and go from scratch
 2) Stale symlinks
 3) Reexecute sync.sh  
-4) If you cant deploy (i.e. globus-start-container balks with one of those 40+-lines stacktraces) it's likely that you either miss some jars or that introduce created an invalid jndi-config.xml  Which can happen but is easy enough to fix: Just make sure there are neither duplicate service nor resourceHome entries.  Grid computing -- it's a weird world!
-5) This has been written for UNIX systems; on windows your mileage may vary. Example: You will definitely have to manually edit all service.properties files to use proper file separators.
+4) If you cant deploy (i.e. globus-start-container balks with one of those 40+-lines stacktraces) it's likely that you either miss some jars or that introduce created an invalid jndi-config.xml  Which can happen but is easy enough to fix: Just make sure there are neither duplicate service nor resourceHome entries.  
+5) This has been written for UNIX systems; on windows your mileage may vary. Example: You will definitely have to manually edit all service.properties files to use windows-style file separators.
