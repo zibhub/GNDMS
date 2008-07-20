@@ -27,6 +27,7 @@ public final class ExtORQResourceHome extends ORQResourceHome {
 	@Override
 	public synchronized void initialize() throws Exception {
 		super.initialize();    // Overridden method
-		logger.info("Overriding extension class initialized.");
+		logger.info("Extension class initializing");
 	}
+
 }

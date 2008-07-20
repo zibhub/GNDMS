@@ -1,5 +1,7 @@
 package de.zib.gndms.infra;
 
+import org.jetbrains.annotations.NonNls;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -13,8 +15,15 @@ import javax.naming.NamingException;
  *          User: stepn Date: 17.06.2008 Time: 23:00:27
  */
 public final class GNDMSConstants {
+	@NonNls
 	@SuppressWarnings({"HardcodedFileSeparator"})
 	public static final String JNDI_BASE_NAME="java:comp/env/";
+
+	@NonNls
+	public static final String JNDI_DB_CONTEXT_NAME = "db";
+
+	@NonNls
+	public static final String JNDI_DB_FACADE_INSTANCE_NAME = "facadeInstance";
 
 	private GNDMSConstants() {}
 

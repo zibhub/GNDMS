@@ -18,21 +18,24 @@ import javax.naming.NamingException;
 @SuppressWarnings({"OverloadedMethodsWithSameNumberOfParameters"})
 public abstract class GNDMSConfig {
 
-	private GNDMSConfig() {}
+	@NotNull
+	public abstract String getGridJNDIEnvName() throws Exception;
 
 	@NotNull
-	public abstract String getGridJNDIEnvName();
+	public abstract String getGridName() throws Exception;
 
 	@NotNull
-	public abstract String getGridName();
-
-	@NotNull
-	public abstract String getGridPath();
+	public abstract String getGridPath() throws Exception;
 
 	@NotNull
 	public Context getGridContext(@NotNull String partitionName) throws NamingException {
-		return findSharedContext(GNDMSConstants.getRootContext(),
-			  new String[] { getGridJNDIEnvName(), getGridName(), partitionName });
+		try {
+			return findSharedContext(GNDMSConstants.getRootContext(),
+				  new String[] { getGridJNDIEnvName(), getGridName(), partitionName });
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@NotNull

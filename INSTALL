@@ -44,26 +44,32 @@ When describing dependencies, I assume the following "project libraries"
 
 - openjpa: extra/tools/lib/geronimo* serp* openjpa*
 - gt4-current: everything in $GLOBUS_LOCATION/lib
-- db-derby: extra/tools-lib/derby*
-- apache-commons: extra/tools/lib/commons*
-- servicename-stubs: service/ServiceName/build/stubs-ServiceName/classes
+- db-derby: extra/tools-lib/derby*.jar
+- apache-commons: extra/tools/lib/commons*.jar
+- jetty: extra/tools/lib/jetty*.jar
+- servlet-api: extra/tools/lib/servlet-api*.jar
+- cos: extra/tools/lib/cos-*.jar
+- groovy: extra/tools/lib/groovy*.jar
+
+- "servicename"-stubs: service/"ServiceName"/build/stubs-"ServiceName"/classes
                                           
+- annotations: extra/tools/lib/annotations.jar
+  Everything has a dependency to this one.
 
 DETAILED BUILD INSTRUCTIONS
 ---------------------------
 
-- Hop to each service directory and execute "ant compileStubs".  This must be redone each time the used schema is changed.                                  
-
 - Compile infra to extra/lib/gndms-infra.jar
+  Dependencies: groovy, cos, jetty, servlet-api, openjpa, db-derby, apache-commons, gt4-current, annotations
 
 - Compile model/src/DSpace-model to model/lib/gndms-dspace-model.jar 
-  Dependencies: db-derby, apache-commons, openjpa, dspace-stubs
+  Dependencies: db-derby, apache-commons, openjpa, dspace-stubs, annotations
 
 - Compile model/src/LOFIS-model to model/lib/gndms-lofis-model.jar 
-  Dependencies: db-derby, apache-commons, openjpa, dspace-stubs
+  Dependencies: db-derby, apache-commons, openjpa, dspace-stubs, annotations
 
 - Compile model/src/GORFX-model *and* LOFIS-model to model/lib/gndms-gorfx-model.jar 
-  Dependencies: db-derby, apache-commons, openjpa, dspace-stubs
+  Dependencies: db-derby, apache-commons, openjpa, dspace-stubs, annotations
 
 - Execute sync.sh in the projects' top level directory.  This will create all necessary symlinks in the services' lib directories.  Without doing this, you're going to miss required jar files.
 
@@ -88,3 +94,4 @@ Things to check when something goes wrong:
 2) Stale symlinks
 3) Reexecute sync.sh  
 4) If you cant deploy (i.e. globus-start-container balks with one of those 40+-lines stacktraces) it's likely that you either miss some jars or that introduce created an invalid jndi-config.xml  Which can happen but is easy enough to fix: Just make sure there are neither duplicate service nor resourceHome entries.  Grid computing -- it's a weird world!
+5) This has been written for UNIX systems; on windows your mileage may vary. Example: You will definitely have to manually edit all service.properties files to use proper file separators.

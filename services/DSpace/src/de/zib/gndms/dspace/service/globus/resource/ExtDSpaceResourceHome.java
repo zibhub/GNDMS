@@ -31,39 +31,44 @@ public final class ExtDSpaceResourceHome  extends DSpaceResourceHome {
 	@SuppressWarnings({"FieldNameHidesFieldInSuperclass"})
 	private final Log logger = LogFactory.getLog(ExtDSpaceResourceHome.class);
 
-	public final GNDMSConfig config = new GNDMSConfig() {
+	private final GNDMSConfig sharedConfig = new GNDMSConfig() {
+		@Override
+		@NotNull
+		public String getGridJNDIEnvName() throws Exception {
+				return DSpaceConfiguration.getConfiguration().getGridJNDIEnv();
+		}
 
 		@Override
 		@NotNull
-		public String getGridJNDIEnvName() {
-				return DSpaceConfiguration.getConfiguration().
-			}
+		public String getGridName() throws Exception {
+				return DSpaceConfiguration.getConfiguration().getGridName();
+		}
 
 		@Override
 		@NotNull
-		public String getGridName() {
-				return null;
-			}
-
-		@Override
-		@NotNull
-		public String getGridPath() {
-				return null;
-			}
+		public String getGridPath() throws Exception {
+				return DSpaceConfiguration.getConfiguration().getGridPath();
+		}
 	};
+
+	private DbSetupFacade facade;
 
 	@Override
 	public synchronized void initialize() throws Exception {
 		super.initialize();    // Overridden method
+		logger.info("Extension class initializing");
 		try {
-			Context context = GNDMSConfig.findSharedContext(GNDMSConstants.getRootContext(), "c3grid");
-			DbSetupFacade facade = DbSetupFacade.lookupInstance(context, "db");
-			logger.fatal("Found facade" +  facade);
+			Context context = sharedConfig.getGridContext(GNDMSConstants.JNDI_DB_CONTEXT_NAME);
+			facade = DbSetupFacade.lookupInstance(context, GNDMSConstants.JNDI_DB_FACADE_INSTANCE_NAME, sharedConfig);
+			logger.debug("Retrieved facade object " +  facade);
 		}
 		catch (NamingException e) {
+			logger.error("Initialization failed");
 			throw new RuntimeException(e);
 		}
+	}
 
-		logger.info("Overriding extension class initialized.");
+	public GNDMSConfig getSharedConfig() {
+		return sharedConfig;
 	}
 }

@@ -1,5 +1,6 @@
 package de.zib.gndms.infra.db;
 
+import de.zib.gndms.infra.GNDMSConfig;
 import org.apache.log4j.Logger;
 import org.globus.wsrf.jndi.Initializable;
 import org.jetbrains.annotations.NotNull;
@@ -8,30 +9,145 @@ import javax.naming.Context;
 import javax.naming.Name;
 import javax.naming.NameAlreadyBoundException;
 import javax.naming.NamingException;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
+import java.io.File;
+import java.io.IOException;
+import java.util.Properties;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * ThingAMagic.
+ * This sets up the configuration and database storage area shared between
+ * GNDMS services.
  *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
  *
  *          User: stepn Date: 17.06.2008 Time: 23:09:00
  */
-@SuppressWarnings({"OverloadedMethodsWithSameNumberOfParameters"})
+@SuppressWarnings({"OverloadedMethodsWithSameNumberOfParameters", "NestedAssignment"})
 public final class DbSetupFacade implements Initializable {
 	private static final Lock factoryLock = new ReentrantLock();
 
 	private static final Logger logger = Logger.getLogger(DbSetupFacade.class);
 
-	private DbSetupFacade()  {
+	@NotNull
+	private final GNDMSConfig sharedConfig;
+
+	@NotNull
+	private EntityManagerFactory emf;
+
+	@NotNull
+	private File dbDir;
+
+	@NotNull
+	private File logDir;
+
+	@NotNull
+	private File dbLogFile;
+
+	@NotNull
+	private File sharedDir;
+
+//	@Nullable
+//	private GroovyShellService shellService;
+
+	private DbSetupFacade(@NotNull GNDMSConfig anySharedConfig)  {
+		sharedConfig = anySharedConfig;
 		// initialization intentionally deferred to initialize
 	}
 
 	public void initialize() throws RuntimeException {
-		System.out.println("YAY!");
-		logger.warn("DbSetupFacade initialized");
+		try {
+			// TODO: Think about how to correct directory permission from java-land
+			sharedDir = new File(sharedConfig.getGridPath()).getCanonicalFile();
+			final String gridName = sharedConfig.getGridName();
+
+			logger.info("Initializing for grid: '" + gridName
+				  + "' (shared dir: '" + sharedDir.getPath() + "')");
+
+			createDirectories();
+			tryTxExecution(emf = createEMF(gridName));
+			//GroovyDbMonitorServlet.setupGroovyShellService(gridName, sharedDir);
+		}
+		catch (Exception e) {
+			logger.error("Initialization failed");
+			throw new RuntimeException(e);
+		}
+	}
+
+	private void createDirectories() throws IOException {
+		doCheckOrCreateDir(sharedDir);
+
+		logDir = new File(sharedDir, "log");
+		doCheckOrCreateDir(logDir);
+
+		prepareDbStorage(sharedDir);
+	}
+
+	private void prepareDbStorage(File sharedDir) throws IOException {
+		dbDir = new File(sharedDir, "db");
+		doCheckOrCreateDir(dbDir);
+
+		System.setProperty("derby.system.home", dbDir.getCanonicalPath());
+
+		dbLogFile = new File(logDir, "derby.log");
+		if (!dbLogFile.exists())
+			dbLogFile.createNewFile();
+		System.setProperty("derby.stream.error.file",
+				  dbLogFile.getCanonicalPath());
+	}
+
+	private static void tryTxExecution(EntityManagerFactory emf) {
+		EntityManager em = null;
+		try {
+			em = emf.createEntityManager();
+			EntityTransaction tx = null;
+			tx = em.getTransaction();
+			tx.begin();
+			tx.commit();
+		}
+		finally {
+			if (em != null)
+				em.close();
+		}
+	}
+
+	public static EntityManagerFactory createEMF(String gridName) {
+		Properties map = new Properties();
+		map.put("openjpa.Id", gridName);
+		map.put("openjpa.ConnectionDriverName", "org.apache.derby.jdbc.EmbeddedDriver");
+		map.put("openjpa.ConnectionURL", "jdbc:derby:" + gridName);
+
+		Properties driverProps = new Properties();
+		driverProps.setProperty("create", "true");
+
+		map.put("openjpa.ConnectionProperties", driverProps.toString());
+		map.put("openjpa.jdbc.DBDictionary", "derby(JoinSyntax=sql92)");
+		map.put("openjpa.slice.ConnectionRetainMode", "on-demand");
+		map.put("openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true)");
+		map.put("openjpa.jdbc.TransactionIsolation", "serializable");
+
+		logger.info("Opening JPA Store: " + map.toString());
+
+		return Persistence.createEntityManagerFactory(null, map);
+	}
+
+	private static void doCheckOrCreateDir(File mainDir) {
+		if (!mainDir.exists()) {
+			logger.info("Creating " + mainDir.getPath());
+			mainDir.mkdir();
+		}
+		if (!mainDir.isDirectory() || !mainDir.canRead())
+			throw new IllegalStateException(mainDir + " is not accessible");
+	}
+
+	@NotNull
+	public EntityManagerFactory getEmf() {
+		return emf;
 	}
 
 	/**
@@ -49,10 +165,12 @@ public final class DbSetupFacade implements Initializable {
 	 * @throws NamingException
 	 */
 	@NotNull
-	public static DbSetupFacade lookupInstance(@NotNull Context sharedContext, @NotNull Name facadeName)
+	public static DbSetupFacade lookupInstance(@NotNull Context sharedContext,
+	                                        @NotNull Name facadeName,
+	                                        @NotNull GNDMSConfig anySharedConfig)
 		  throws NamingException {
 		try {
-			final Factory theFactory = new Factory();
+			final Factory theFactory = new Factory(anySharedConfig);
 			sharedContext.bind(facadeName, theFactory);
 			return theFactory.getInstance();
 		}
@@ -62,10 +180,12 @@ public final class DbSetupFacade implements Initializable {
 	}
 
 	@NotNull
-	public static DbSetupFacade lookupInstance(@NotNull Context sharedContext, @NotNull String facadeName)
+	public static DbSetupFacade lookupInstance(
+		  @NotNull Context sharedContext, @NotNull String facadeName,
+		  @NotNull GNDMSConfig anySharedConfig)
 		  throws NamingException {
 		try {
-			final Factory theFactory = new Factory();
+			final Factory theFactory = new Factory(anySharedConfig);
 			sharedContext.bind(facadeName, theFactory);
 			return theFactory.getInstance();
 		}
@@ -74,9 +194,34 @@ public final class DbSetupFacade implements Initializable {
 		}
 	}
 
+	@NotNull
+	public GNDMSConfig getSharedDir() {
+		return sharedConfig;
+	}
+
+	@NotNull
+	public File getDbDir() {
+		return dbDir;
+	}
+
+	@NotNull
+	public File getLogDir() {
+		return logDir;
+	}
+
+	@NotNull
+	public File getDbLogFile() {
+		return dbLogFile;
+	}
+
 	private static final class Factory {
 		private DbSetupFacade instance;
 		private RuntimeException exception;
+		private GNDMSConfig sharedConfig;
+
+		Factory(GNDMSConfig anySharedConfig) {
+			sharedConfig = anySharedConfig;
+		}
 
 		private DbSetupFacade getInstance() {
 			factoryLock.lock();
@@ -85,11 +230,16 @@ public final class DbSetupFacade implements Initializable {
 					throw exception;
 				if (instance == null) {
 					try {
-						instance = new DbSetupFacade();
-						instance.initialize();
+						DbSetupFacade newInstance = new DbSetupFacade(sharedConfig);
+						newInstance.initialize();
+						instance = newInstance;
 					}
 					catch (RuntimeException e) {
 						exception = e;
+					}
+					finally {
+						// not required after this point
+						sharedConfig = null;
 					}
 				}
 				return instance;

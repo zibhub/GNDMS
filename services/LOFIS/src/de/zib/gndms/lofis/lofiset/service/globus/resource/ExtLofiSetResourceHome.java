@@ -27,6 +27,6 @@ public final class ExtLofiSetResourceHome extends LofiSetResourceHome {
 	@Override
 	public synchronized void initialize() throws Exception {
 		super.initialize();    // Overridden method
-		logger.info("Overriding extension class initialized.");
+		logger.info("Extension class initializing");
 	}
 }
