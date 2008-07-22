@@ -61,7 +61,7 @@ public final class GroovyMoniServlet extends HttpServlet {
 			}
 
 			HttpSession session= getSessionForDoGet(request);
-
+			
 			PrintWriter outWriter = null;
 			GroovyMoniSession mSession = null;
 			try {
@@ -126,9 +126,7 @@ public final class GroovyMoniServlet extends HttpServlet {
 			if (token.length() == 0)
 				throw ServletRuntimeException.notAcceptable("Zero-length token");
 
-			HttpSession session = servletRequest.getSession(false);
-			if (session == null)
-				throw ServletRuntimeException.preCondFailed("No session found");
+			HttpSession session = getSessionForDoPost(servletRequest);
 
 			final Principal principal = servletRequest.getUserPrincipal();
 			final GroovyMoniSession mSession =
@@ -142,6 +140,13 @@ public final class GroovyMoniServlet extends HttpServlet {
 		catch (ServletRuntimeException e) {
 			e.throwToClient(servletResponse);
 		}
+	}
+
+	private HttpSession getSessionForDoPost(HttpServletRequest servletRequest) {
+		HttpSession session = servletRequest.getSession(false);
+		if (session == null)
+			throw ServletRuntimeException.preCondFailed("No session found");
+		return session;
 	}
 
 	@Override

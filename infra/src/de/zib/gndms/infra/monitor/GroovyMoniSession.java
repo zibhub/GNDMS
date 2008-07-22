@@ -1,11 +1,15 @@
 package de.zib.gndms.infra.monitor;
 
 import com.oreilly.servlet.Base64Decoder;
+import com.oreilly.servlet.multipart.FilePart;
 import com.oreilly.servlet.multipart.MultipartParser;
 import com.oreilly.servlet.multipart.ParamPart;
 import com.oreilly.servlet.multipart.Part;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
+import groovy.lang.Script;
+import org.apache.tools.ant.filters.StringInputStream;
+import org.codehaus.groovy.control.CompilerConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,8 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.util.Set;
 
@@ -27,6 +31,8 @@ import java.util.Set;
  *          User: stepn Date: 19.07.2008 Time: 13:08:00
  */
 public class GroovyMoniSession {
+	private static final int INITSTREAM_CAPACITY = 1024;
+
 	public enum RunMode {
 		REPL(true, true), BATCH(false, true), SCRIPT(false, false), EVAL_SCRIPT(true, false),
 		CLOSE(false, false);
@@ -84,7 +90,7 @@ public class GroovyMoniSession {
 		runMode = theMode;
 	}
 
-	public synchronized PrintWriter init() {
+	public synchronized PrintWriter init() throws IOException {
 		shell = createShell();
 		notifyAll();
 		return outWriter;
@@ -106,14 +112,68 @@ public class GroovyMoniSession {
 		return shell != null;
 	}
 
-	private GroovyShell createShell() {
+	@NotNull
+	private GroovyShell createShell() throws IOException {
+		CompilerConfiguration config = new CompilerConfiguration();
+		config.setOutput(outWriter);
+
+		Binding binding = createBinding();
+
+		GroovyShell theShell = new GroovyShell(binding, config);
+		theShell.initializeBinding();
+
+		runInitStream(theShell);
+
+		return theShell;
+	}
+
+	private void runInitStream(@NotNull GroovyShell theShell) throws IOException {
+		InputStream theInitStream = null;
+		try {
+			theInitStream = getInitStream();
+			runStream(theShell, theInitStream, false);
+		}
+		finally {
+			if (theInitStream != null)
+				theInitStream.close();
+		}
+	}
+
+	@NotNull
+	private Binding createBinding() {
 		BindingFactory bindingFactory = console.getBindingFactory();
 		Binding binding = bindingFactory == null ?
 			  new Binding() : bindingFactory.createBinding(console, principal);
+		binding.setVariable("out", outWriter);
+		binding.setVariable("err", outWriter);
 		binding.setProperty("out", outWriter);
-		GroovyShell theShell = new GroovyShell(binding);
-		theShell.initializeBinding();
-		return theShell;
+		binding.setProperty("err", outWriter);
+		return binding;
+	}
+
+	private Object runStream(
+		  @NotNull GroovyShell theShell, @NotNull InputStream inStream, boolean evaled) {
+		final Script script = theShell.parse(inStream);
+
+		script.setProperty("out", outWriter);
+		script.setProperty("err", outWriter);
+
+		outWriter.flush();
+		final Object result = script.run();
+		if (evaled)
+			script.println(result);
+		outWriter.flush();
+		return result;
+	}
+
+	@NotNull
+	@SuppressWarnings({"HardcodedLineSeparator"})
+	private static InputStream getInitStream() {
+		StringBuilder builder = new StringBuilder(INITSTREAM_CAPACITY);
+		builder.append("ExpandoMetaClass.enableGlobally()\n");
+		builder.append("Object.metaClass.out=out\n");
+		builder.append("Object.metaClass.err=out\n");
+		return new StringInputStream(builder.toString());
 	}
 
 	synchronized void waitLoop() {
@@ -128,12 +188,12 @@ public class GroovyMoniSession {
 		while (isRemainingOpen());
 	}
 
-	synchronized boolean isRemainingOpen() {
+	private synchronized boolean isRemainingOpen() {
 		return !RunMode.CLOSE.equals(runMode) && (runMode.isLooping() || !isPostDone());
 	}
 
-	@SuppressWarnings({"NakedNotify"})
-	synchronized void evalParts(HttpServletRequest servletRequest, boolean b64) throws IOException {
+	synchronized void evalParts(@NotNull HttpServletRequest servletRequest, boolean b64)
+		  throws IOException {
 		try {
 			if (isRemainingOpen()) {
 				MultipartParser mParser =  new MultipartParser(servletRequest, console.getMaxScriptSize());
@@ -152,38 +212,64 @@ public class GroovyMoniSession {
 		}
 	}
 
-	private void handlePart(boolean b64, Part part) throws UnsupportedEncodingException {
+	private synchronized void handlePart(boolean b64, @NotNull Part part) throws IOException {
 		if (part.isFile()) {
-			// TODO: Change this
-			// currently unsupported..
+			InputStream in = ((FilePart)part).getInputStream();
+			handleStream(b64, in);
 		}
 		else if (part.isParam())
 		{
 			String val = ((ParamPart)part).getStringValue();
-			handleString(b64, val);
+			StringInputStream valStream = null;
+			try {
+				valStream = new StringInputStream(val);
+				handleStream(b64, valStream);
+			}
+			finally {
+				if (valStream != null)
+					valStream.close();
+			}
 		}
 	}
 
-	private synchronized void handleString(boolean b64, String val) {
+	private synchronized void handleStream(boolean b64, @NotNull InputStream val) throws IOException {
 		final GroovyShell theShell = getShell();
-		if (theShell == null)
-			throw new RuntimeException("Cant evaluate without shell");
-		Object result = theShell.evaluate(b64 ? Base64Decoder.decode(val) : val);
-		if (runMode.isEvaled())
-			println(result);
+		synchronized (theShell) {
+			if (theShell == null)
+				throw new RuntimeException("Cant evaluate without shell");
+			InputStream decodedStream = null;
+			try {
+				decodedStream = getDecodedValStream(b64, val);
+				runStream(theShell, decodedStream, runMode.isEvaled());
+			}
+			finally {
+				if (decodedStream != null) {
+					decodedStream.close();
+					if (val != decodedStream)
+						val.close();
+				}
+			}
+		}
 	}
 
-	private void println(@Nullable Object obj) {
-		outWriter.println(obj == null ? "null" : obj);
+	@NotNull
+	private static InputStream getDecodedValStream(boolean b64, @NotNull InputStream val) throws IOException {
+		InputStream val1;
+		if (b64) {
+			val1 = new Base64Decoder(val);
+		}
+		else
+			val1 = val;
+		return val1;
 	}
 
-	public void verifyPrincipal(@NotNull Principal thePrincipal) {
+	public synchronized void verifyPrincipal(@NotNull Principal thePrincipal) {
 		if (! principal.equals(thePrincipal))
 			throw new SecurityException("Principal mismatch");
 	}
 
 	public synchronized void removeMoniSession(
-		  Set<GroovyMoniSession> sessions, @NotNull HttpSession session) {
+		 @NotNull Set<GroovyMoniSession> sessions, @NotNull HttpSession session) {
 		synchronized (session) {
 			sessions.remove(this);
 			runMode = RunMode.CLOSE;

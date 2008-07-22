@@ -41,6 +41,7 @@ PREREQUISITES
 - For covenience, have it in your environment, you might also want to add $GROOVY_HOME/bin to your PATH
 
 - Install curl
+- Install openssl
 - Add the directory called "bin" below the directory of this INSTALL file to your PATH
 
              

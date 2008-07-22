@@ -24,4 +24,7 @@ if [ ! -z "$REST" ] ; then
 	REST="&$REST"
 fi
 
-curl -b "$COOKIES" -F "script=@-" -u "$USER""$PASS" http://"$HOST":"$PORT"/?"token=$TOKEN""$REST"
+TMPFILE=`mktemp -t gndmsh_send.XXXXX`
+cat - > "$TMPFILE"
+cat "$TMPFILE" | openssl base64 | curl -b "$COOKIES" -F "script=@-" -u "$USER""$PASS" http://"$HOST":"$PORT"/?"token=$TOKEN"\&b64=1"$REST"
+rm -f $TMPFILE

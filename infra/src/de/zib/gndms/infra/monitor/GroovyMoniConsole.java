@@ -18,9 +18,11 @@ import org.mortbay.jetty.security.SecurityHandler;
 import org.mortbay.jetty.servlet.*;
 import org.mortbay.thread.BoundedThreadPool;
 
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Enumeration;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -71,7 +73,6 @@ public class GroovyMoniConsole implements Runnable {
 		props.put("monitor.minConnections", "5");
 		props.put("monitor.roleName", "moniadmin");
 		props.put("monitor.defaultMode", "SCRIPT");
-		props.put("monitor.maxIdleTime", "5000");
 
 		DEFAULT_PROPERTIES = props;
 	}
@@ -103,8 +104,6 @@ public class GroovyMoniConsole implements Runnable {
 	private GroovyMoniSession.RunMode defaultMode;
 
 	private long refreshCycle;
-
-	private int maxIdleTime;
 
 	private int maxScriptSize;
 
@@ -332,13 +331,26 @@ public class GroovyMoniConsole implements Runnable {
 		Connector connector = new SelectChannelConnector();
 		connector.setHost(host);
 		connector.setPort(port);
-		connector.setMaxIdleTime(maxIdleTime);
 		return connector;
 	}
 
 	private SessionHandler createSessionHandler() {
 		SessionManager sesM = new HashSessionManager();
-		SessionIdManager sidM = new HashSessionIdManager();
+		SessionIdManager sidM = new HashSessionIdManager() {
+			@SuppressWarnings({"RawUseOfParameterizedType"})
+			@Override
+			public void removeSession(HttpSession httpSession) {
+				final Enumeration attrNames = httpSession.getAttributeNames();
+				while (attrNames.hasMoreElements()) {
+					String name = (String) attrNames.nextElement();
+					Object value = httpSession.getAttribute(name);
+					if (value instanceof GroovyMoniSession) {
+						// ((GroovyMoniSession)value).removeMoniSession();
+					}
+				}
+				super.removeSession(httpSession);
+			}
+		};
 		sesM.setIdManager(sidM);
 
 		SessionHandler sesH = new SessionHandler();
@@ -450,7 +462,6 @@ public class GroovyMoniConsole implements Runnable {
 			// 1 sec min hopefully is a sensible lower bound
 			refreshCycle = parseLong(props, "monitor.refreshCycle");
 			maxScriptSize = parseInt(props, "monitor.maxScriptSize");
-			maxIdleTime = parseInt(props, "monitor.maxIdleTime");
 		}
 		catch (NumberFormatException n) {
 			enabled = false;

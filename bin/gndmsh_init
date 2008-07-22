@@ -12,4 +12,4 @@ fi
 COOKIES=$HOME/.gndmsh-cookies
 
 
-echo curl -c "$COOKIES" -u "$USER""$PASS" http://"$HOST":"$PORT"/?
+curl -c "$COOKIES" -u "$USER""$PASS" http://"$HOST":"$PORT"/?
