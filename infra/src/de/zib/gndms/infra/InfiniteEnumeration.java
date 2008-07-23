@@ -8,7 +8,7 @@ import java.util.Enumeration;
 /**
  * Represents an infinite stream of objects.
  *
- * Subclass instances are not guaranteed to be thread-safe.
+ * Subclass are not guaranteed to be thread-safe.
  *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
@@ -31,7 +31,7 @@ public abstract class InfiniteEnumeration<T> implements Enumeration<T> {
 	 * or the last element returned by nextElement(), otherwise.
 	 */
 	@NotNull
-	public final T nextElement() {
+	public final synchronized T nextElement() {
 		final T nextElement = tryNextElement();
 		if (nextElement == null) {
 			if (current == null)
@@ -47,7 +47,7 @@ public abstract class InfiniteEnumeration<T> implements Enumeration<T> {
 	 *
 	 * @return nextElement() if that is not equal() to the current one, null otherwise.
 	 */
-	public final T nextElementIfDifferent() {
+	public final synchronized T nextElementIfDifferent() {
 		final T oldCurrent = current;
 		final T nextElement = nextElement();
 		if (nextElement().equals(oldCurrent))
@@ -57,7 +57,7 @@ public abstract class InfiniteEnumeration<T> implements Enumeration<T> {
 	}
 
 	@NotNull
-	public final T currentElement() {
+	public final synchronized T currentElement() {
 		if (current == null)
 			throw new IllegalStateException(
 				  "currentElement() called before first call to nextElement()");

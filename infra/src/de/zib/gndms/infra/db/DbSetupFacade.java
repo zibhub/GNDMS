@@ -60,7 +60,7 @@ public final class DbSetupFacade implements Initializable {
 	private File monitorConfig;
 
 	@NotNull
-	private GroovyMoniServer moni;
+	private GroovyMoniServer gromi;
 
 //	@Nullable
 //	private GroovyShellService shellService;
@@ -72,7 +72,8 @@ public final class DbSetupFacade implements Initializable {
 
 	public void initialize() throws RuntimeException {
 		try {
-			// TODO: Think about how to correct directory permission from java-land
+			// Q: Think about how to correct UNIX directory/file permissions from java-land
+			// A: External script during deployment
 			sharedDir = new File(sharedConfig.getGridPath()).getCanonicalFile();
 			final String gridName = sharedConfig.getGridName();
 
@@ -93,7 +94,7 @@ public final class DbSetupFacade implements Initializable {
 
 
 	private void setupShellService(String gridName) throws Exception {
-		moni = new GroovyMoniServer(gridName,  monitorConfig,
+		gromi = new GroovyMoniServer(gridName,  monitorConfig,
 			  new GroovyBindingFactory() {
 
 			@NotNull
@@ -103,8 +104,7 @@ public final class DbSetupFacade implements Initializable {
 				return new Binding();
 			}
 		});
-		moni.startServer();
-		moni.startConfigRefreshThread(true);
+		gromi.startConfigRefreshThread(true);
 	}
 
 	private void createDirectories() throws IOException {
@@ -247,7 +247,7 @@ public final class DbSetupFacade implements Initializable {
 
 	@NotNull
 	public GroovyMoniServer getMonitor() {
-		return moni;
+		return gromi;
 	}
 
 	private static final class Factory {

@@ -48,7 +48,7 @@ Whether you want to build the project yourself or just want to deploy the servic
                                                                                  
 - Set C3GRID_SOURCE to the source directory and have it in your environment
 - Set C3GRID_SHARED to $GLOBUS_LOCATION/etc/c3grid_shared and have it in your environment
-- Set GOMI_CONFIG to $C3GRID_SHARED/monitor.properties and have it in your environment
+- Set GNDMS_MONI_CONFIG to $C3GRID_SHARED/monitor.properties and have it in your environment
 
 - Add the directory called "bin" below the directory of this INSTALL file to your PATH
   (This means you should *not* delete the downloaded sources after installation)
@@ -172,26 +172,26 @@ Next, we need to enable the monitoring/configuration shell.
 MONITORING AND CONFIGURATION SHELL
 ----------------------------------
 
-If you set up your environment as described in "PREREQUISITES" you may now use the GOMI monitoring and configuration shell. GOMI is a little servlet that allows the execution of groovy script code inside the running globus container in order to initialize and configure the database or peek inside the current system. 
+If you set up your environment as described in "PREREQUISITES" you may now use the GNDMS monitoring and configuration shell. GNDMS is a little servlet that allows the execution of groovy script code inside the running globus container in order to initialize and configure the database or peek inside the current system. 
 
 On most sites it is only accessed once to initialize the database during installation.
 
-GOMI is disabled by default and protected by a randomly generated default password. If enabled, it opens a socket on localhost for incoming connections.  Please consider that connections are *unencrypted* before configuring it to be accessible from the network.  Again, be aware that you can truely execute arbitrary groovy code with globus user permissions through this channel and therefore be cautious whenever using it.  You might also want to enable it only when needed.
+GNDMS is disabled by default and protected by a randomly generated default password. If enabled, it opens a socket on localhost for incoming connections.  Please consider that connections are *unencrypted* before configuring it to be accessible from the network.  Again, be aware that you can truely execute arbitrary groovy code with globus user permissions through this channel and therefore be cautious whenever using it.  You might also want to enable it only when needed.
       
-To enable, edit $GNDMSH_CONFIG and set monitor.enabled to "true". Then either restart the container or wait "monitor.configRefreshCycle" ms (defaults to 30 seconds).  After this period the container will load your new configuration and start the gomi servlet.
+To enable, edit $GNDMS_MONI_CONFIG and set monitor.enabled to "true". Then either restart the container or wait "monitor.configRefreshCycle" ms (defaults to 30 seconds).  After this period the container will load your new configuration and start the monitoring servlet.
                                                                             
-To test your gomi connection execute
+To test your monitor connection execute
 
-"gomi init" to create a new session (Default session timeout is ca. 20 mins).
-"gomi open repl foo" to create a new monitor named "foo" that accepts multiple commands. "repl" here is the run mode of the monitor. See below for a list of possible values.
+"moni init" to create a new session (Default session timeout is ca. 20 mins).
+"moni open repl foo" to create a new monitor named "foo" that accepts multiple commands. "repl" here is the run mode of the monitor. See below for a list of possible values.
 
 Next, please open a second shell and execute:
 
-"gomi send foo $C3GRID_SOURCE/scrips/hello.groovy"
+"moni send foo $C3GRID_SOURCE/scrips/hello.groovy"
 
 If you see "Hello, World!" followed by "null" in the first shell you have succesfully enbaled the monitoring console.
 
-To close the connection named "foo", execute "gomi close foo".  To destroy your session and close all named connections, execute "gomi destroy".  To force the monitor to reread the confuration, execute "gomi refresh".  To force a restart even if the configuration has not been altered, execute "gomi restart".
+To close the connection named "foo", execute "moni close foo".  To destroy your session and close all named connections, execute "moni destroy".  To force the monitor to reread the confuration, execute "moni refresh".  To force a restart even if the configuration has not been altered, execute "moni restart".
                                                                                                         
 Now, please continue with the subsection titled "CONFIGURATION".
 
@@ -201,7 +201,7 @@ WHEN THINGS DONT WORK
 
 1) If you dont get a connection, read your container log to make sure that the servlet has been started.
 2) Make sure you have set up your environment as described in "PRERQUISITES".
-3) If you execute gomi and nothing happens you might have forgotten an argument. Currently, gomi is just a bunch of helper bash scripts that call curl and lack proper argument checking. If you do not provide gomi send with a script file name, it will read from stdin.
+3) If you execute moni and nothing happens you might have forgotten an argument. Currently, moni is just a bunch of helper bash scripts that call curl and lack proper argument checking. If you do not provide moni send with a script file name, it will read from stdin.
   
 
 GNDMSH RUN MODES
@@ -212,7 +212,7 @@ REPL: Accept many send commands, always print result objects.
 BATCH: Accept many send commands, but do not print result objects.
 EVAL_SCRIPT: Accept one send command, print result object.
 
-Specifying the mode in "gomi open <mode> <name" is case-insensitive.
+Specifying the mode in "moni open <mode> <name" is case-insensitive.
 
     
 CONFIGURATION NOTES

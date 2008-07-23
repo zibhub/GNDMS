@@ -19,10 +19,9 @@ TOKEN="$1"
 
 shift
 
-REST="$*"
 
 if [ "$1" = "-" ]; then
-	SCRIPTFILE=`mktemp -t gomi_stream.XXXXX`
+	SCRIPTFILE=`mktemp -t moni_streamcache.XXXXX`
 	cat - > "$SCRIPTFILE"
 	KILL="1"
 	shift
@@ -36,6 +35,9 @@ else
 		shift
 	fi
 fi
-cat "$SCRIPTFILE" | "$BASEDIR"/gomi_stream "$FILE" "$TOKEN" "$REST"
+
+REST="$*"
+
+cat "$SCRIPTFILE" | "$BASEDIR"/moni_stream "$FILE" "$TOKEN" "$REST"
 
 [ -z "$KILL" ] || rm -f "$SCRIPTFILE"

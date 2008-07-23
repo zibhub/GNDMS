@@ -21,7 +21,7 @@ shift
 REST="$*"
 
 if [ ! -z "$REST" ] ; then
-	REST=`echo -n "$REST" | openssl base64 | sed -e 's/+/%2B/; s/\//%2F/g; s/=/%3D/g'`
+	REST=`echo "$REST" | tr -cd '[:print:]' | openssl base64 | sed -e 's/+/%2B/; s/\//%2F/g; s/=/%3D/g'`
 	REST="&args=$REST"
 fi
 

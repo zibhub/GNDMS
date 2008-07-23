@@ -7,7 +7,7 @@ export GROOVY_HOME=""
 export C3GRID_SOURCE=""
 
 export C3GRID_SHARED="$GLOBUS_LOCATION/etc/c3grid_shared"
-export GOMI_CONFIG="$C3GRID_SHARED/monitor.properties"
+export GNDMS_MONI_CONFIG="$C3GRID_SHARED/monitor.properties"
 
 export PATH="$PATH:$ANT_HOME/bin:$DERBY_HOME/bin:$GROOVY_HOME/bin:$C3GRID_SOURCE/bin"
 

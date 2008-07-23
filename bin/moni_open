@@ -14,15 +14,31 @@ fi
 
 shift
 
-MODE="$1"
+BASENAME=`basename $0`
 
-if [ ! -z "MODE" ] ; then
-	MODE="m=$MODE"
+
+if [ $BASENAME = "moni_repl" ]; then
+	MODE="repl"
+elif [ $BASENAME = "moni_script" ]; then
+	MODE="script"
+elif [ $BASENAME = "moni_escript" ]; then
+	MODE="escript"
+elif [ $BASENAME = "moni_eval_script" ]; then
+	MODE="eval_script"
+elif [ $BASENAME = "moni_batch" ]; then
+	MODE="batch"
+else
+	MODE="$1"
+	shift
 fi
 
-shift
+MODE="m=$MODE"
 
 TOKEN="$1"
+
+if [ -z "$TOKEN" ]; then
+	echo "No token given" >&2
+fi
 
 shift
 

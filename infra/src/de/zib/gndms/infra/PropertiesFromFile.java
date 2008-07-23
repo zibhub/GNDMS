@@ -51,7 +51,7 @@ public class PropertiesFromFile extends InfiniteEnumeration<Map<Object, Object>>
 
 
 	@Override
-	Map<Object, Object> tryNextElement() {
+	synchronized Map<Object, Object> tryNextElement() {
 		try {
 			return tryLoadProperties();
 		}
@@ -63,7 +63,7 @@ public class PropertiesFromFile extends InfiniteEnumeration<Map<Object, Object>>
 
 	@Override
 	@NotNull
-	Map<Object, Object> createInitialDefaultElement() {
+	synchronized Map<Object, Object> createInitialDefaultElement() {
 		try {
 			return tryLoadProperties();
 		}
@@ -74,7 +74,7 @@ public class PropertiesFromFile extends InfiniteEnumeration<Map<Object, Object>>
 	}
 
 	@NotNull
-	Map<Object, Object> tryLoadProperties() throws IOException {
+	private Map<Object, Object> tryLoadProperties() throws IOException {
 		Properties props;
 		FileInputStream in = null;
 		logger.debug("Loading " + desciptiveName);
@@ -105,7 +105,7 @@ public class PropertiesFromFile extends InfiniteEnumeration<Map<Object, Object>>
 		return Collections.unmodifiableMap(defaults);
 	}
 
-	private void tryWriteDefaults() throws IOException {
+	private  void tryWriteDefaults() throws IOException {
 		logger.info("Creating default " + desciptiveName);
 		FileOutputStream out = null;
 		try {
