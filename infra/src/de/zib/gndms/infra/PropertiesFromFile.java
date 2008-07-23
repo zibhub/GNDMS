@@ -12,6 +12,10 @@ import java.util.Properties;
 /**
  * Provides a stream of config/properties objects as Map<Object,Object>'s
  *
+ * tryNextElement() will only get you a new element if either there was no config file in the
+ * first place (than a default one is written to disk) or if it has changed since the last time
+ * it was read.
+ *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
  *

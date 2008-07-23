@@ -1,0 +1,28 @@
+#!/bin/sh
+
+FILE="$1"
+
+HOST=`cat $FILE | grep ^monitor.host | cut -d= -f2-`
+PORT=`cat $FILE | grep ^monitor.port | cut -d= -f2-`
+USER=`cat $FILE | grep ^monitor.user | cut -d= -f2-`
+PASS=`cat $FILE | grep ^monitor.password | cut -d= -f2-`
+COOKIES=$HOME/.gndmsh-cookies
+
+if [ ! -z "$PASS" ] ; then
+	PASS=":$PASS"
+fi
+
+shift
+
+TOKEN="$1"
+
+shift
+
+REST="$*"
+
+if [ ! -z "$REST" ] ; then
+	REST=`echo -n "$REST" | openssl base64 | sed -e 's/+/%2B/; s/\//%2F/g; s/=/%3D/g'`
+	REST="&args=$REST"
+fi
+
+cat - | openssl base64 | curl -b "$COOKIES" -F "script=@-" -u "$USER""$PASS" http://"$HOST":"$PORT"/?"token=$TOKEN"\&b64=1"$REST"

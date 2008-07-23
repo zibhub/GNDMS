@@ -1,51 +1,79 @@
-
-Alright we don't have a proper global build script yet. This means you have to do lots of things by hand, meaning this guide is not for the faint of heart. Before we get started, here is a short description of the project layout / development model.
-                 
+               
 
 
-                                           
+
+========                                           
 OVERVIEW
 ========
 
-GNDMS consists of a set of globus web services initially created using introduce toolkit.  While introduce is a great tool for rapid prototyping, it sucks at reverse engineeering. Therefore all service skeletions are developed using introduce in a separate project (GNDMS-Templates, not included here) and changes get propagated to GNDMS locally using mercurial.  The result of this is then amended with an actual implementation in this project.  All this happens mainly in services/.
+GNDMS consists of a set of globus web services initially created using introduce toolkit.  While introduce is a great tool for rapid prototyping, it sucks at reverse engineeering. Therefore all service skeletions are developed using introduce in a separate project (GNDMS-Templates, not included here) and changes get propagated to GNDMS locally using a dsitributed version control system (currently mercurial, maybe git in the future).  The result of this is then amended with an actual implementation in this project.  All this happens mainly in services/.
 
 Now things get a bit more complicated. Some of the services have to access the same databases for persistence (i.e. GORFX and LOFIS) and therefore share JPA code. In order to still keep the service implementations independent of each other this code is kept in model/. Subsets of it are then compiled against each services' respective stubs to a jar for each service in model/lib.
 
 On top of that there is commonly shared code in infra/src which gets compiled to extra/lib/gndms-infra.jar. External dependencies introduced by model and infra are kept in extra/tools-lib.
 
-In order to stick all this together (i.e. integrate the code in model and infra with the build model of introduce) a shell script "sync.sh" is used which symlinks all jars to the right places and aggregates all existing schema files into types/ (The last point is useful for service development with introduce).
+In order to stick all this together (i.e. integrate the code in model and infra with the build model of introduce) a shell script "sync.sh" is used which symlinks all jars to the right places and aggregates all existing schema files into types/ (This is useful for service development with introduce and not relevant unless you want to change the webservice interface).
 
 
 
-                  
-BUILD INSTRUCTIONS
-==================
-
-The following description has a slight slant on IntelliJ but you should be able to repeat it with any java tool chain.
-        
-
+  
+=============                
 PREREQUISITES
--------------
+=============
+
+Whether you want to build the project yourself or just want to deploy the service you need to satisfy the following prerequisites (an example shell configuration (bash) for this is in etc/example.profile):
+
+- Install a current version of J2SEE Version 5 and its accompanying JDK
+
+- Install ant
+- Set $ANT_HOME and have it in your environment
+- Add $ANT_HOME/bin to your path
 
 - Get Globus 4.0.7
 - Setup working host and user certificates (You can build without; but then again where would this get you?)
-- Have it in your environment
+- Set $GLOBUS_LOCATION and have it in your environment
+- Load $GLOBUS_LOCATION/etc/globus-user-env.sh and $GLOBUS_LOCATION/etc/globus-devel-env.sh into your environment
 
-- Get apache-derby-bin-10.4.X
-- Set DERBY_HOME to it
+- Install apache-derby-bin-10.4.X
+- Set $DERBY_HOME and have it in your environment
 - Add $DERBY_HOME/bin to your PATH
-- Have it in your environment
-
-- Install groovy
-- Set GROOVY_HOME 
-- For covenience, have it in your environment, you might also want to add $GROOVY_HOME/bin to your PATH
-
-- Install curl
-- Install openssl
-- Add the directory called "bin" below the directory of this INSTALL file to your PATH
-
              
+- Install groovy >=1.6
+- Set $GROOVY_HOME and have it in your environment
+- For convenience, have it in your environment, you might also want to add $GROOVY_HOME/bin to your PATH
 
+- Install openssl                                 
+- Install curl
+- Both should be available in your $PATH
+                                                                                 
+- Set C3GRID_SOURCE to the source directory and have it in your environment
+- Set C3GRID_SHARED to $GLOBUS_LOCATION/etc/c3grid_shared and have it in your environment
+- Set GOMI_CONFIG to $C3GRID_SHARED/monitor.properties and have it in your environment
+
+- Add the directory called "bin" below the directory of this INSTALL file to your PATH
+  (This means you should *not* delete the downloaded sources after installation)
+
+  Alternatively, copy all scripts from bin to some directory accessible from your PATH.
+
+  In any case, whenever you update GNDMS, please make sure that you also apropriately point your PATH 
+  to the new version's bin-scripts.
+                
+                                                                       
+
+
+==================
+BUILD INSTRUCTIONS
+==================
+                                
+If you dont want to build but instead just want to deploy, please skip to the section titled "DEPLOYMENT INSTRUCTION".
+
+We don't have a proper global build script yet. This means you have to do lots of things by hand, meaning this guide is not for the faint of heart. Before you start please read the section titled "OVERVIEW" and make sure you have succesfully completed all prerequisites.
+                 
+
+The following description has a slight slant on IntelliJ but you should be able to repeat it with any java tool chain.
+        
+      
+------------
 DEPENDENCIES
 ------------
                                                                                   
@@ -64,7 +92,9 @@ When describing dependencies, I assume the following "project libraries"
                                           
 - annotations: extra/tools/lib/annotations.jar
   Everything has a dependency to this one.
+                     
 
+---------------------------
 DETAILED BUILD INSTRUCTIONS
 ---------------------------
 
@@ -78,29 +108,130 @@ DETAILED BUILD INSTRUCTIONS
   Dependencies: db-derby, apache-commons, openjpa, dspace-stubs, annotations
 
 - Compile model/src/GORFX-model *and* LOFIS-model to model/lib/gndms-gorfx-model.jar 
-  Dependencies: db-derby, apache-commons, openjpa, dspace-stubs, annotations
+  Dependencies: db-derby, apache-commons, openjpa, dspace-stubs, lofis-stubs, annotations
 
 - Execute sync.sh in the projects' top level directory.  This will create all necessary symlinks in the services' lib directories.  Without doing this, you're going to miss required jar files.
 
 - Build the services in services/* using ant createDeploymentGar and deploy to your liking. 
-  You might want to read the upcoming section on configuration before doing so, though.
+  You might want to read the upcoming section on configuration and deployment before doing so, though.
 
 - Additionally, for IDE based development, you may wish to set up projects per service. These should
   depend on all non-symlinks in service/ServiceName/lib, gt4-current, infra, servicename-stubs and the 
   services' model project and comile to service/ServiceName/build and service/ServiceName/build/test 
   respectively.
 
-  Watch out for import order; per service stubs and model jars as well as gndms-infra.jar
-  should go before service sources in IntelliJ.
+  Watch out for import/dependenc order; per service stubs and model jars as well as gndms-infra.jar
+  should always go before service sources.
 
-  This should be enought to compile and develop in the IDE; for deployment you still need to 
+  This should be enought to compile and develop with your IDE; for deployment you still need to 
   execute "ant createDeploymentGar"  
                                                
 
-Things to check when something goes wrong: 
+THINGS TO CHECK WHEN YOUR BUILD FAILS
+-------------------------------------
 
 1) Do you need to regen the stubs? Delete service/*build/ and go from scratch
 2) Stale symlinks
 3) Reexecute sync.sh  
 4) If you cant deploy (i.e. globus-start-container balks with one of those 40+-lines stacktraces) it's likely that you either miss some jars or that introduce created an invalid jndi-config.xml  Which can happen but is easy enough to fix: Just make sure there are neither duplicate service nor resourceHome entries.  
-5) This has been written for UNIX systems; on windows your mileage may vary. Example: You will definitely have to manually edit all service.properties files to use windows-style file separators.
+5) This has been written for UNIX systems; on windows your mileage may vary. Example: You will definitely have to manually edit all service.properties files to use windows-style file separators.   
+
+Other common reasons for a failed container starts are invalid credentials (hostkey/hostcert.pem) or outdated CRLs.  In the latter case, the script contained in contrib/fetch-crl may help you. Execute "fetch-crl -o <grid-cert-dir>" with apropriate permissions (Depends on wget).
+
+
+
+==========
+DEPLOYMENT
+==========
+             
+
+--------------------
+CONTAINER DEPLOYMENT
+--------------------
+
+This is a general description.  Further down are additional configuration instructions for each possible role of a GNDMS site (data provider, publishing storage site, main GNDMS site.
+                       
+First, please make sure you have fullfilled all prerequisites as described in the section titled "PRERQUISITES".
+
+In order to deploy, simply execute as globus user
+
+globus-deply-gar <garfile>
+                                                                                  
+If you want to setup a data provider site, you need to deploy DSpace and GORFX.
+If you want to setup a pure storage/publishing site, you need to deploy DSpace only.
+If you want to setup your own GNDMS, you need to deploy WHORFX, GORFX, and DSpace.
+
+Next, please restart your container.
+
+IMPORTANT: After your container has started, please execute "fixPermissions.sh <globus-group> <globus-user>". This step is very important! If you skip it, you may suffer from potential security breaches.
+                                                          
+Next, we need to enable the monitoring/configuration shell.
+                                                
+
+----------------------------------
+MONITORING AND CONFIGURATION SHELL
+----------------------------------
+
+If you set up your environment as described in "PREREQUISITES" you may now use the GOMI monitoring and configuration shell. GOMI is a little servlet that allows the execution of groovy script code inside the running globus container in order to initialize and configure the database or peek inside the current system. 
+
+On most sites it is only accessed once to initialize the database during installation.
+
+GOMI is disabled by default and protected by a randomly generated default password. If enabled, it opens a socket on localhost for incoming connections.  Please consider that connections are *unencrypted* before configuring it to be accessible from the network.  Again, be aware that you can truely execute arbitrary groovy code with globus user permissions through this channel and therefore be cautious whenever using it.  You might also want to enable it only when needed.
+      
+To enable, edit $GNDMSH_CONFIG and set monitor.enabled to "true". Then either restart the container or wait "monitor.configRefreshCycle" ms (defaults to 30 seconds).  After this period the container will load your new configuration and start the gomi servlet.
+                                                                            
+To test your gomi connection execute
+
+"gomi init" to create a new session (Default session timeout is ca. 20 mins).
+"gomi open repl foo" to create a new monitor named "foo" that accepts multiple commands. "repl" here is the run mode of the monitor. See below for a list of possible values.
+
+Next, please open a second shell and execute:
+
+"gomi send foo $C3GRID_SOURCE/scrips/hello.groovy"
+
+If you see "Hello, World!" followed by "null" in the first shell you have succesfully enbaled the monitoring console.
+
+To close the connection named "foo", execute "gomi close foo".  To destroy your session and close all named connections, execute "gomi destroy".  To force the monitor to reread the confuration, execute "gomi refresh".  To force a restart even if the configuration has not been altered, execute "gomi restart".
+                                                                                                        
+Now, please continue with the subsection titled "CONFIGURATION".
+
+             
+WHEN THINGS DONT WORK
+---------------------
+
+1) If you dont get a connection, read your container log to make sure that the servlet has been started.
+2) Make sure you have set up your environment as described in "PRERQUISITES".
+3) If you execute gomi and nothing happens you might have forgotten an argument. Currently, gomi is just a bunch of helper bash scripts that call curl and lack proper argument checking. If you do not provide gomi send with a script file name, it will read from stdin.
+  
+
+GNDMSH RUN MODES
+----------------
+
+SCRIPT (DEFAULT): Accept one send command, do not print result object.
+REPL: Accept many send commands, always print result objects.
+BATCH: Accept many send commands, but do not print result objects.
+EVAL_SCRIPT: Accept one send command, print result object.
+
+Specifying the mode in "gomi open <mode> <name" is case-insensitive.
+
+    
+CONFIGURATION NOTES
+-------------------
+
+monitor.minConnections should always be >= 2
+
+
+REMARKS FOR SCRIPT DEVELOPERS
+-----------------------------
+
+Inside your own groovy classes, you should always print to "out" or "err" which contain the current monitor's output stream.  Plain println only works correctly in the script or its top-level functions.
+
+"out" and "err" properties are added automatically to "Object.metaClass" when instantiating a monitor. To enable them, "ExpandoMetaClass.enableGlobally()" is called first.  
+
+             
+-------------
+CONFIGURATION
+-------------
+                                 
+Yet to be written. There will be groovy scripts for this in scripts/.
+

@@ -1,6 +1,9 @@
 package de.zib.gndms.infra.db;
 
 import de.zib.gndms.infra.GNDMSConfig;
+import de.zib.gndms.infra.monitor.GroovyBindingFactory;
+import de.zib.gndms.infra.monitor.GroovyMoniServer;
+import groovy.lang.Binding;
 import org.apache.log4j.Logger;
 import org.globus.wsrf.jndi.Initializable;
 import org.jetbrains.annotations.NotNull;
@@ -15,6 +18,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import java.io.File;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.Properties;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -32,7 +36,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public final class DbSetupFacade implements Initializable {
 	private static final Lock factoryLock = new ReentrantLock();
 
-	private static final Logger logger = Logger.getLogger(DbSetupFacade.class);
+	private final Logger logger = Logger.getLogger(DbSetupFacade.class);
 
 	@NotNull
 	private final GNDMSConfig sharedConfig;
@@ -52,6 +56,12 @@ public final class DbSetupFacade implements Initializable {
 	@NotNull
 	private File sharedDir;
 
+	@NotNull
+	private File monitorConfig;
+
+	@NotNull
+	private GroovyMoniServer moni;
+
 //	@Nullable
 //	private GroovyShellService shellService;
 
@@ -70,13 +80,31 @@ public final class DbSetupFacade implements Initializable {
 				  + "' (shared dir: '" + sharedDir.getPath() + "')");
 
 			createDirectories();
-			tryTxExecution(emf = createEMF(gridName));
-			//GroovyDbMonitorServlet.setupGroovyShellService(gridName, sharedDir);
+			emf = createEMF(gridName);
+			tryTxExecution();
+
+			setupShellService(gridName);
 		}
 		catch (Exception e) {
 			logger.error("Initialization failed");
 			throw new RuntimeException(e);
 		}
+	}
+
+
+	private void setupShellService(String gridName) throws Exception {
+		moni = new GroovyMoniServer(gridName,  monitorConfig,
+			  new GroovyBindingFactory() {
+
+			@NotNull
+			public Binding createBinding(
+				  @NotNull GroovyMoniServer moniServer, @NotNull Principal principal,
+				  String args) {
+				return new Binding();
+			}
+		});
+		moni.startServer();
+		moni.startConfigRefreshThread(true);
 	}
 
 	private void createDirectories() throws IOException {
@@ -85,10 +113,12 @@ public final class DbSetupFacade implements Initializable {
 		logDir = new File(sharedDir, "log");
 		doCheckOrCreateDir(logDir);
 
-		prepareDbStorage(sharedDir);
+		prepareDbStorage();
+
+		monitorConfig = new File(sharedDir, "monitor.properties");
 	}
 
-	private void prepareDbStorage(File sharedDir) throws IOException {
+	private void prepareDbStorage() throws IOException {
 		dbDir = new File(sharedDir, "db");
 		doCheckOrCreateDir(dbDir);
 
@@ -101,11 +131,11 @@ public final class DbSetupFacade implements Initializable {
 				  dbLogFile.getCanonicalPath());
 	}
 
-	private static void tryTxExecution(EntityManagerFactory emf) {
+	private void tryTxExecution() {
 		EntityManager em = null;
 		try {
 			em = emf.createEntityManager();
-			EntityTransaction tx = null;
+			EntityTransaction tx;
 			tx = em.getTransaction();
 			tx.begin();
 			tx.commit();
@@ -116,7 +146,7 @@ public final class DbSetupFacade implements Initializable {
 		}
 	}
 
-	public static EntityManagerFactory createEMF(String gridName) {
+	public EntityManagerFactory createEMF(String gridName) {
 		Properties map = new Properties();
 		map.put("openjpa.Id", gridName);
 		map.put("openjpa.ConnectionDriverName", "org.apache.derby.jdbc.EmbeddedDriver");
@@ -136,7 +166,7 @@ public final class DbSetupFacade implements Initializable {
 		return Persistence.createEntityManagerFactory(null, map);
 	}
 
-	private static void doCheckOrCreateDir(File mainDir) {
+	private void doCheckOrCreateDir(File mainDir) {
 		if (!mainDir.exists()) {
 			logger.info("Creating " + mainDir.getPath());
 			mainDir.mkdir();
@@ -179,6 +209,7 @@ public final class DbSetupFacade implements Initializable {
 		}
 	}
 
+	@SuppressWarnings({"StaticMethodOnlyUsedInOneClass"})
 	@NotNull
 	public static DbSetupFacade lookupInstance(
 		  @NotNull Context sharedContext, @NotNull String facadeName,
@@ -212,6 +243,11 @@ public final class DbSetupFacade implements Initializable {
 	@NotNull
 	public File getDbLogFile() {
 		return dbLogFile;
+	}
+
+	@NotNull
+	public GroovyMoniServer getMonitor() {
+		return moni;
 	}
 
 	private static final class Factory {
