@@ -11,6 +11,7 @@ import javax.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.Principal;
+import java.util.Enumeration;
 
 /**
  * This servlet is run from GroovyMonitorServer to provide access to GroovyMonitors via
@@ -201,6 +202,9 @@ public class GroovyMoniServlet extends HttpServlet {
 			final HttpSession session = getSessionOrFail(requestWrapper);
 			if (session != null)
 				synchronized (session) {
+					final Enumeration<String> attrs = (Enumeration<String>)session.getAttributeNames();
+					while (attrs.hasMoreElements())
+						session.removeAttribute(attrs.nextElement());
 					session.invalidate();
 				}
 			return true;
@@ -245,7 +249,13 @@ public class GroovyMoniServlet extends HttpServlet {
 		finally {
 			if (monitor != null) {
 				synchronized (session) {
-					session.removeAttribute(monitor.getToken());
+					try {
+						session.removeAttribute(monitor.getToken());
+					}
+					catch (IllegalStateException e) {
+						// intentionally nothing; denotes that the session has been invalidated
+						// by another thread
+					}
 				}
 			}
 		}

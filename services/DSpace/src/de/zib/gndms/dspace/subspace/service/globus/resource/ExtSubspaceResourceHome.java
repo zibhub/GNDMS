@@ -1,7 +1,13 @@
 package de.zib.gndms.dspace.subspace.service.globus.resource;
 
+import de.zib.gndms.dspace.service.globus.resource.ExtDSpaceResourceHome;
+import de.zib.gndms.infra.db.DefaultSystemHolder;
+import de.zib.gndms.infra.db.SystemHolder;
+import de.zib.gndms.infra.db.GNDMSystem;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.globus.wsrf.Resource;
+import org.globus.wsrf.ResourceException;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -24,9 +30,26 @@ public final class ExtSubspaceResourceHome extends SubspaceResourceHome {
 	@SuppressWarnings({"FieldNameHidesFieldInSuperclass"})
 	private final Log logger = LogFactory.getLog(ExtSubspaceResourceHome.class);
 
+	private SystemHolder holder = new DefaultSystemHolder();
+
 	@Override
-	public synchronized void initialize() throws Exception {
+	public void initialize() throws Exception {
 		super.initialize();    // Overridden method
 		logger.info("Extension class initializing");
+		holder.setSystem(ExtDSpaceResourceHome.getGridConfig().retrieveSystemReference());
+	}
+
+	@Override
+	protected Resource createNewInstance() throws ResourceException {
+		final Resource instance = super.createNewInstance();
+		((SystemHolder)instance).setSystem(holder.getSystem());
+		return instance;    // Overridden method
+	}
+
+	@NotNull
+	public GNDMSystem getSystem() throws IllegalStateException {return holder.getSystem();}
+
+	public void setSystem(@NotNull GNDMSystem system) throws IllegalStateException {
+		holder.setSystem(system);
 	}
 }

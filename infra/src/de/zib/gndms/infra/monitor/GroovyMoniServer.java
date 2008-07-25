@@ -169,7 +169,7 @@ public class GroovyMoniServer implements Runnable {
 	 */
 	public GroovyMoniServer(@NotNull String theUnitName,
 	                       @NotNull InfiniteEnumeration<? extends Map<Object,Object>> theConfig,
-	                       @Nullable GroovyBindingFactory theBindingFactory) {
+	                       @NotNull GroovyBindingFactory theBindingFactory) {
 
 		unitName = theUnitName;
 		bindingFactory = theBindingFactory;
@@ -187,7 +187,7 @@ public class GroovyMoniServer implements Runnable {
 	 * @throws Exception
 	 */
 	public GroovyMoniServer(@NotNull String theUnitName, @NotNull File theConfigFile,
-	                           @Nullable GroovyBindingFactory theBindingFactory) throws Exception
+	                           @NotNull GroovyBindingFactory theBindingFactory) throws Exception
 	{
 		this(theUnitName,
 			 new PropertiesFromFile(theConfigFile, theUnitName + " monitor config",
@@ -212,7 +212,7 @@ public class GroovyMoniServer implements Runnable {
 				  + File.separatorChar
 				  + "monitor.properties");
 		}
-		theMoniServer = new GroovyMoniServer("plain", configFile, null);
+		theMoniServer = new GroovyMoniServer("plain", configFile, new EmptyBindingFactory());
 		theMoniServer.startConfigRefreshThread(false);
 	}
 
@@ -487,25 +487,6 @@ public class GroovyMoniServer implements Runnable {
 		SessionManager sesM = new HashSessionManager();
 		SessionIdManager sidM = new HashSessionIdManager();
 
-/*		{
-			@SuppressWarnings({"RawUseOfParameterizedType"})
-			@Override
-			public void removeSession(HttpSession httpSession) {
-				synchronized (httpSession) {
-					final Enumeration attrNames = httpSession.getAttributeNames();
-					while (attrNames.hasMoreElements()) {
-						String name = (String) attrNames.nextElement();
-						Object value = httpSession.getAttribute(name);
-						if (value instanceof GroovyMonitor) {
-							((GroovyMonitor)value).destroyMonitor(null);
-						}
-					}
-					super.removeSession(httpSession);
-				}
-			}
-		};
-		*/
-		
 		sesM.setMaxInactiveInterval(sessionTimeout);
 		sesM.setIdManager(sidM);
 
@@ -564,8 +545,10 @@ public class GroovyMoniServer implements Runnable {
 		return ret == null ? "" : ret;
 	}
 
-	@Nullable
+	@NotNull
 	public GroovyBindingFactory getBindingFactory() {
+		if (bindingFactory == null)
+			throw new IllegalStateException();
 		return bindingFactory;
 	}
 
@@ -582,6 +565,13 @@ public class GroovyMoniServer implements Runnable {
 		return server != null;
 	}
 
+	public int getMinConnections() {
+		return minConnections;
+	}
+
+	public int getMaxConnections() {
+		return maxConnections;
+	}
 
 	public synchronized long getConfigRefreshCycle() {
 		return configRefreshCycle;

@@ -7,7 +7,7 @@ import java.security.Principal;
 
 /**
  * Instances create a fresh groovy binding (i.e. to be used for a groovy shell instance
- * inside a GroovyMonitor)
+ * inside a GroovyMonitor) and destroy it when done.
  *
  * Ï@see GroovyMonitor
  *
@@ -29,4 +29,12 @@ public interface GroovyBindingFactory {
 	Binding createBinding(
 		  @NotNull GroovyMoniServer moniServer,
 		  @NotNull Principal principal, String args);
+
+	/**
+	 * Called when the binding is no longer needed.
+	 *
+	 * @param moniServer
+	 * @param bindings
+	 */
+	void destroyBinding(@NotNull GroovyMoniServer moniServer, @NotNull Binding binding);
 }

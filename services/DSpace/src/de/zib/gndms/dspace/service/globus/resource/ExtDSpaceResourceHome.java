@@ -1,14 +1,14 @@
 package de.zib.gndms.dspace.service.globus.resource;
 
 import de.zib.gndms.dspace.service.DSpaceConfiguration;
-import de.zib.gndms.infra.GNDMSConfig;
-import de.zib.gndms.infra.GNDMSConstants;
-import de.zib.gndms.infra.db.DbSetupFacade;
+import de.zib.gndms.infra.GridConfig;
+import de.zib.gndms.infra.db.DefaultSystemHolder;
+import de.zib.gndms.infra.db.GNDMSystem;
+import de.zib.gndms.infra.db.SystemHolder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
 
-import javax.naming.Context;
 import javax.naming.NamingException;
 
 /**
@@ -24,14 +24,15 @@ import javax.naming.NamingException;
  *
  *          User: stepn Date: 16.07.2008 Time: 12:35:27
  */
-public final class ExtDSpaceResourceHome  extends DSpaceResourceHome {
+public final class ExtDSpaceResourceHome  extends DSpaceResourceHome implements SystemHolder {
 
 	// logger can be an instance field since resource home classes are instantiated at most once
 	@NotNull
 	@SuppressWarnings({"FieldNameHidesFieldInSuperclass"})
 	private final Log logger = LogFactory.getLog(ExtDSpaceResourceHome.class);
 
-	private final GNDMSConfig sharedConfig = new GNDMSConfig() {
+	@SuppressWarnings({"StaticVariableOfConcreteClass"})
+	private static final GridConfig SHARED_CONFIG = new GridConfig() {
 		@Override
 		@NotNull
 		public String getGridJNDIEnvName() throws Exception {
@@ -49,18 +50,21 @@ public final class ExtDSpaceResourceHome  extends DSpaceResourceHome {
 		public String getGridPath() throws Exception {
 				return DSpaceConfiguration.getConfiguration().getGridPath();
 		}
+
 	};
 
-	private DbSetupFacade facade;
+	public static GridConfig getGridConfig() {
+		return SHARED_CONFIG;
+	}
+
+	private SystemHolder holder = new DefaultSystemHolder();
 
 	@Override
-	public synchronized void initialize() throws Exception {
+	public void initialize() throws Exception {
 		super.initialize();    // Overridden method
 		logger.info("Extension class initializing");
 		try {
-			Context context = sharedConfig.getGridContext(GNDMSConstants.JNDI_DB_CONTEXT_NAME);
-			facade = DbSetupFacade.lookupInstance(context, GNDMSConstants.JNDI_DB_FACADE_INSTANCE_NAME, sharedConfig);
-			logger.debug("Retrieved facade object " +  facade);
+			holder.setSystem(getGridConfig().retrieveSystemReference());
 		}
 		catch (NamingException e) {
 			logger.error("Initialization failed");
@@ -68,7 +72,10 @@ public final class ExtDSpaceResourceHome  extends DSpaceResourceHome {
 		}
 	}
 
-	public GNDMSConfig getSharedConfig() {
-		return sharedConfig;
+	@NotNull
+	public GNDMSystem getSystem() throws IllegalStateException {return holder.getSystem();}
+
+	public void setSystem(@NotNull GNDMSystem system) throws IllegalStateException {
+		holder.setSystem(system);
 	}
 }

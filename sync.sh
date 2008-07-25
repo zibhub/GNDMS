@@ -17,7 +17,15 @@ for SERVICE in services/* ; do
     echo ln -sf "../../../../$jar" "$SERVICE/lib" 
     ln -sf "../../../$jar" "$SERVICE/lib" 
   done
+  echo ln -sf "../../../model/lib/gndms-shared-model.jar" "$SERVICE/lib/"
+  ln -sf "../../../model/lib/gndms-shared-model.jar" "$SERVICE/lib/"
+  for jar in "$GROOVY_HOME"/embeddable/groovy-all*jar ; do
+  	echo ln -sf "$jar" "$SERVICE/lib/"
+	ln -sf "$jar" "$SERVICE/lib/"
+  done
 done
-( cd services/DSpace && ln -sf "../../../model/lib/gndms-dspace-model.jar" lib/ )
-( cd services/LOFIS && ln -sf "../../../model/lib/gndms-lofis-model.jar" lib/ )
-( cd services/GORFX && ln -sf "../../../model/lib/gndms-gorfx-model.jar" lib/ )
+( cd bin && ln -sf moni_open moni_repl )
+( cd bin && ln -sf moni_open moni_script )
+( cd bin && ln -sf moni_open moni_batch )
+( cd bin && ln -sf moni_open moni_escript )
+( cd bin && ln -sf moni_open moni_eval_script )

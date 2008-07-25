@@ -186,9 +186,9 @@ final class GroovyMonitor implements HttpSessionBindingListener, HttpSessionActi
 	 */
 	@NotNull
 	private synchronized Binding createBinding(@NotNull String args) {
+		@NotNull
 		GroovyBindingFactory bindingFactory = getMoniServer().getBindingFactory();
-		Binding binding = bindingFactory == null ?
-			  new Binding() : bindingFactory.createBinding(getMoniServer(), getPrincipal(), args);
+		Binding binding = bindingFactory.createBinding(getMoniServer(), getPrincipal(), args);
 		binding.setVariable("out", outWriter);
 		binding.setVariable("err", outWriter);
 		binding.setProperty("out", outWriter);
@@ -387,7 +387,8 @@ final class GroovyMonitor implements HttpSessionBindingListener, HttpSessionActi
 	public synchronized void valueUnbound(HttpSessionBindingEvent event) {
 		if (event.getSession() == session) {
 			session = null;
-			moniServer = null;
+			final GroovyMoniServer theSerer = getMoniServer();
+			theSerer.getBindingFactory().destroyBinding(theSerer, getShell().getContext());
 			runMode = RunMode.CLOSE;
 			notifyAll();
 		}
@@ -424,8 +425,10 @@ final class GroovyMonitor implements HttpSessionBindingListener, HttpSessionActi
 		return principal;
 	}
 
-	@Nullable
+	@NotNull
 	synchronized GroovyShell getShell() {
+		if (shell == null)
+			throw new IllegalStateException("null shell encountered where not allowed");
 		return shell;
 	}
 
