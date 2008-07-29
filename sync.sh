@@ -13,15 +13,11 @@ for SERVICE in services/* ; do
     echo ln -sf "../../../$jar" "$SERVICE/lib" 
     ln -sf "../../../$jar" "$SERVICE/lib" 
   done
+  echo ln -sf "$GROOVY_HOME"/embeddable/groovy-all*jar "extra/tools-lib/gndms-groovy.jar"
+  ln -sf "$GROOVY_HOME"/embeddable/groovy-all*jar "extra/tools-lib/gndms-groovy.jar"
   for jar in extra/tools-lib/* ; do
     echo ln -sf "../../../../$jar" "$SERVICE/lib" 
     ln -sf "../../../$jar" "$SERVICE/lib" 
-  done
-  echo ln -sf "../../../model/lib/gndms-shared-model.jar" "$SERVICE/lib/"
-  ln -sf "../../../model/lib/gndms-shared-model.jar" "$SERVICE/lib/"
-  for jar in "$GROOVY_HOME"/embeddable/groovy-all*jar ; do
-  	echo ln -sf "$jar" "$SERVICE/lib/"
-	ln -sf "$jar" "$SERVICE/lib/"
   done
 done
 ( cd bin && ln -sf moni_open moni_repl )

@@ -1,5 +1,6 @@
 package de.zib.gndms.infra;
 
+import de.zib.gndms.infra.db.GNDMSystem;
 import org.jetbrains.annotations.NotNull;
 
 import javax.naming.Context;
@@ -16,7 +17,7 @@ import javax.naming.NamingException;
  *          User: stepn Date: 15.07.2008 Time: 14:22:20
  */
 @SuppressWarnings({"OverloadedMethodsWithSameNumberOfParameters"})
-public abstract class GNDMSConfig {
+public abstract class GridConfig {
 
 	@NotNull
 	public abstract String getGridJNDIEnvName() throws Exception;
@@ -30,7 +31,8 @@ public abstract class GNDMSConfig {
 	@NotNull
 	public Context getGridContext(@NotNull String partitionName) throws NamingException {
 		try {
-			return findSharedContext(GNDMSConstants.getRootContext(),
+			return findSharedContext(
+				  Constants.getRootContext(),
 				  new String[] { getGridJNDIEnvName(), getGridName(), partitionName });
 		}
 		catch (Exception e) {
@@ -82,5 +84,10 @@ public abstract class GNDMSConfig {
 		for (String name : names)
 			context = findSharedContext(context, name);
 		return context;
+	}
+
+	public GNDMSystem retrieveSystemReference() throws NamingException {
+		Context context = getGridContext(Constants.JNDI_DB_CONTEXT_NAME);
+		return GNDMSystem.lookupSystem(context, Constants.JNDI_DB_FACADE_INSTANCE_NAME,  this);
 	}
 }

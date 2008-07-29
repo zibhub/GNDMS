@@ -168,12 +168,14 @@ final class GroovyMonitor implements HttpSessionBindingListener, HttpSessionActi
 		CompilerConfiguration config = new CompilerConfiguration();
 		config.setOutput(outWriter);
 
-		Binding binding = createBinding(args);
+		final GroovyBindingFactory bindingFactory = getMoniServer().getBindingFactory();
+		Binding binding = createBinding(args, bindingFactory);
 
 		GroovyShell theShell = new GroovyShell(binding, config);
 		theShell.initializeBinding();
 
 		runInitStream(theShell);
+		bindingFactory.initShell(theShell, binding);
 
 		return theShell;
 	}
@@ -183,11 +185,11 @@ final class GroovyMonitor implements HttpSessionBindingListener, HttpSessionActi
 	 *
 	 * @return new binding
 	 * @param args
+	 * @param bindingFactory
 	 */
 	@NotNull
-	private synchronized Binding createBinding(@NotNull String args) {
-		@NotNull
-		GroovyBindingFactory bindingFactory = getMoniServer().getBindingFactory();
+	private synchronized Binding createBinding(
+		  @NotNull String args, @NotNull GroovyBindingFactory bindingFactory) {
 		Binding binding = bindingFactory.createBinding(getMoniServer(), getPrincipal(), args);
 		binding.setVariable("out", outWriter);
 		binding.setVariable("err", outWriter);

@@ -2,9 +2,9 @@ syntax:glob
 
 services/*/build/**
 services/*/lib/*.jar
-services/*/lib/CONTENTS
+services/*/lib/CONTENTS*
 services/*/tools/lib/*.jar
-services/*/tools/lib/CONTENTS
+services/*/tools/lib/CONTENTS*
 services/*/tmp/**
 .DS_Store
 *.ipr
@@ -13,9 +13,10 @@ services/*/tmp/**
 *.iml
 *.gar
 extra/lib/gndms-infra.jar
-infra/out/**
-model/out/**
-model/lib/**
+extra/lib/gndms-shared-model.jar
+extra/tools-lib/gndms-groovy.jar
+infra/gndms-infra/**
+model/gndms-shared-model/**
 
 syntax:regexp
 ^types/[A-Za-z].+

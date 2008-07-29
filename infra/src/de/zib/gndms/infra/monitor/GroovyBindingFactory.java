@@ -1,6 +1,7 @@
 package de.zib.gndms.infra.monitor;
 
 import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
 import org.jetbrains.annotations.NotNull;
 
 import java.security.Principal;
@@ -29,6 +30,11 @@ public interface GroovyBindingFactory {
 	Binding createBinding(
 		  @NotNull GroovyMoniServer moniServer,
 		  @NotNull Principal principal, String args);
+
+	/**
+	 * Optionally called after createBinding to setup an associated groovy shell.
+	 */
+	void initShell(@NotNull GroovyShell shell, @NotNull Binding binding);
 
 	/**
 	 * Called when the binding is no longer needed.
