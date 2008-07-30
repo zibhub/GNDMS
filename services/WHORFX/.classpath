@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
     <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/1.5" />
-    <classpathentry kind="src" path="/infra" combineaccessrules="false" />
+    <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/annotations" />
     <classpathentry kind="src" path="/gndms-shared-model" combineaccessrules="false" />
+    <classpathentry kind="src" path="/infra" combineaccessrules="false" />
     <classpathentry kind="src" path="build/stubs-WHORFX/src" />
     <classpathentry kind="src" path="src" />
     <classpathentry kind="src" path="test/src" />

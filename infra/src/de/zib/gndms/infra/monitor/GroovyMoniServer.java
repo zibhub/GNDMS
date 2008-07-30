@@ -2,6 +2,8 @@ package de.zib.gndms.infra.monitor;
 
 import de.zib.gndms.infra.InfiniteEnumeration;
 import de.zib.gndms.infra.PropertiesFromFile;
+import de.zib.gndms.infra.util.LDPHolder;
+import de.zib.gndms.infra.util.LoggingDecisionPoint;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +24,7 @@ import org.mortbay.thread.BoundedThreadPool;
 import java.io.File;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -53,8 +56,11 @@ import java.util.concurrent.locks.ReentrantLock;
  *
  *          User: stepn Date: 17.07.2008 Time: 14:33:37
  */
-@SuppressWarnings({"AccessToStaticFieldLockedOnInstance", "FieldCanBeLocal"})
-public class GroovyMoniServer implements Runnable {
+@SuppressWarnings({"AccessToStaticFieldLockedOnInstance"})
+public class GroovyMoniServer implements Runnable, LoggingDecisionPoint {
+	// 1 sec min hopefully is a sensible lower bound
+	private static final int MIN_REFRESH_CYCLE = 1000;
+
 	@NotNull
 	private static final Logger logger;
 
@@ -95,6 +101,7 @@ public class GroovyMoniServer implements Runnable {
 		props.put("monitor.defaultMode", "SCRIPT");
 		// session timeout after ca. twenty minutes
 		props.put("monitor.sessionTimeout", "1337000");
+		props.put("monitor.logged", "config,start,stop,reconfig,newdefaults,!load");
 
 		DEFAULT_PROPERTIES = props;
 	}
@@ -145,6 +152,9 @@ public class GroovyMoniServer implements Runnable {
 	private int maxConnections;
 
 
+	@Nullable
+	private Set<String> logged;
+
 	@NotNull
 	private String roleName;
 
@@ -158,7 +168,7 @@ public class GroovyMoniServer implements Runnable {
 
 	// avoids double restarts if restart is triggered from servlet and thread at the same time
 	private boolean skipThreadBasedRefresh;
-
+	
 	/**
 	 * Creates a facade class for running a monitor server based on
 	 * groovy and jetty.
@@ -171,6 +181,8 @@ public class GroovyMoniServer implements Runnable {
 	                       @NotNull InfiniteEnumeration<? extends Map<Object,Object>> theConfig,
 	                       @NotNull GroovyBindingFactory theBindingFactory) {
 
+		if (theConfig instanceof LDPHolder)
+			((LDPHolder)theConfig).setLDP(this);
 		unitName = theUnitName;
 		bindingFactory = theBindingFactory;
 		configStream = theConfig;
@@ -192,7 +204,9 @@ public class GroovyMoniServer implements Runnable {
 		this(theUnitName,
 			 new PropertiesFromFile(theConfigFile, theUnitName + " monitor config",
 			    DEFAULT_PROPERTIES, DEFAULT_COMMENT, logger), theBindingFactory);
-		logger.info(theUnitName + " GroovyMoniServer config is " + theConfigFile.getCanonicalPath());
+		if (shouldLog("config"))
+			logger.info(theUnitName + " GroovyMoniServer config is "
+				  + theConfigFile.getCanonicalPath());
 	}
 
 	/**
@@ -348,8 +362,9 @@ public class GroovyMoniServer implements Runnable {
 			    "BooleanMethodNameMustStartWithQuestion"})
 	public synchronized boolean startServer() throws Exception {
 		if (enabled && server == null) {
-			logger.info("Starting monitor server for '" +
-				  unitName + "' on " + host + ':' + port);
+			if (shouldLog("start"))
+				logger.info("Starting monitor server for '" +
+					  unitName + "' on " + host + ':' + port);
 			try {
 					Server aServer = createServerObject();
 
@@ -392,7 +407,8 @@ public class GroovyMoniServer implements Runnable {
 		try {
 			final Server aServer = server;
 			if (aServer != null) {
-				logger.info("Stopping monitor server for '" + unitName + '\'');
+				if (shouldLog("stop"))
+					logger.info("Stopping monitor server for '" + unitName + '\'');
 				aServer.stop();
 			}
 		}
@@ -407,7 +423,7 @@ public class GroovyMoniServer implements Runnable {
 	 */
 	@SuppressWarnings({"MagicNumber"})
 	private synchronized void setupState(@NotNull Map<Object, Object> props) {
-		logger.info("Reconfiguration of " + unitName + " monitor using: " + props.toString());
+		logProps(props);
 		host = getProperty(props, "monitor.host").trim();
 		user = getProperty(props, "monitor.user").trim();
 		defaultMode = GroovyMonitor.RunMode.valueOf(
@@ -415,9 +431,23 @@ public class GroovyMoniServer implements Runnable {
 		password = getProperty(props, "monitor.password").trim();
 		setupNumbers(props);
 		roleName = getProperty(props, "monitor.roleName").trim();
-
 		enabled = "true".equals(getProperty(props, "monitor.enabled").trim());
-		enabled &= isSaneSetup();
+		final String loggedStr = getProperty(props, "monitor.logged").trim();
+		enabled &= isSaneSetup(LoggingDecisionPoint.Parser.parseTokenSet(loggedStr));
+	}
+
+	/**
+	 * Log props but avoid logging the password
+	 * 
+	 * @param props
+	 */
+	private void logProps(Map<Object, Object> props) {
+		Object pw = props.get("monitor.password");
+		props.remove("monitor.password");
+		if (shouldLog("reconfig"))
+			logger.debug("Reconfiguration of " + unitName + " monitor using: " + props.toString());
+		if (pw != null)
+			props.put("monitor.password", pw);
 	}
 
 	private void setupNumbers(Map<Object, Object> props) {
@@ -425,8 +455,9 @@ public class GroovyMoniServer implements Runnable {
 			port = parseInt(props, "monitor.port");
 			minConnections = Math.max(2, parseInt(props, "monitor.minConnections"));
 			maxConnections = Math.max(minConnections, parseInt(props, "monitor.maxConnections"));
-			// 1 sec min hopefully is a sensible lower bound
 			configRefreshCycle = parseLong(props, "monitor.configRefreshCycle");
+			if (configRefreshCycle < MIN_REFRESH_CYCLE)
+				configRefreshCycle = MIN_REFRESH_CYCLE;
 			maxScriptSizeInBytes = parseInt(props, "monitor.maxScriptSizeInBytes");
 			sessionTimeout  = parseInt(props, "monitor.sessionTimeout");
 		}
@@ -438,8 +469,12 @@ public class GroovyMoniServer implements Runnable {
 	}
 
 	@SuppressWarnings({"MagicNumber"})
-	private boolean isSaneSetup() {
-		if (port < 0 || port > 65535) {
+	private boolean isSaneSetup(Set<String> strings) {
+		if (strings == null) {
+			logger.warn("Could not parse monitor.logged (format: [[!]token] [,[!]token]*); "
+				  + " monitor disabled");
+		}
+		else if (port < 0 || port > 65535) {
 			logger.warn("Invalid port number; monitor disabled");
 		}
 		else if (host.length() == 0) {
@@ -451,7 +486,10 @@ public class GroovyMoniServer implements Runnable {
 		else if (password.length() == 0) {
 			logger.warn("Invalid (empty) password; monitor disabled");
 		}
-		else return true;
+		else {
+			logged = strings;
+			return true;
+		}
 		return false;
 	}
 
@@ -504,7 +542,7 @@ public class GroovyMoniServer implements Runnable {
 		return srvH;
 	}
 
-	private Server createServerObject() {
+	private synchronized Server createServerObject() {
 		Server aServer = new Server();
 		BoundedThreadPool pool = new BoundedThreadPool();
 		aServer.setThreadPool(pool);
@@ -565,11 +603,11 @@ public class GroovyMoniServer implements Runnable {
 		return server != null;
 	}
 
-	public int getMinConnections() {
+	public synchronized int getMinConnections() {
 		return minConnections;
 	}
 
-	public int getMaxConnections() {
+	public synchronized int getMaxConnections() {
 		return maxConnections;
 	}
 
@@ -588,5 +626,9 @@ public class GroovyMoniServer implements Runnable {
 	@NotNull
 	synchronized GroovyMonitor.RunMode getDefaultMode() {
 		return defaultMode;
+	}
+
+	public synchronized boolean shouldLog(@NotNull String token) {
+		return logged == null || logged.contains(token);
 	}
 }

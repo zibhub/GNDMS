@@ -3,20 +3,21 @@ package de.zib.gndms.infra.db;
 import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.monitor.GroovyBindingFactory;
 import de.zib.gndms.infra.monitor.GroovyMoniServer;
-import de.zib.gndms.model.common.EPRT;
+import de.zib.gndms.model.common.VEPRef;
+import de.zib.gndms.model.dspace.DSpaceVEPRef;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.apache.axis.components.uuid.UUIDGen;
 import org.apache.axis.components.uuid.UUIDGenFactory;
 import org.apache.axis.message.MessageElement;
-import org.apache.axis.message.addressing.Address;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.message.addressing.ReferencePropertiesType;
+import org.apache.axis.types.URI;
 import org.apache.log4j.Logger;
 import org.globus.wsrf.ResourceKey;
-import org.globus.wsrf.encoding.SerializationException;
 import org.globus.wsrf.impl.SimpleResourceKey;
 import org.globus.wsrf.jndi.Initializable;
+import org.globus.wsrf.utils.AddressingUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.naming.Context;
@@ -30,7 +31,10 @@ import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -185,19 +189,13 @@ public final class GNDMSystem implements Initializable, SystemHolder {
 	@SuppressWarnings({"HardcodedFileSeparator"})
 	public EntityManagerFactory createEMF(String gridName) throws Exception {
 
-		Properties driverProps = new Properties();
-		driverProps.loadFromXML(EPRT.class.getClassLoader().getResourceAsStream("META-INF/driver-props.xml"));
-
 		Properties map = new Properties();
-		// map.loadFromXML(de.zib.gndms.model.common.EPRT.class.getClassLoader().getResourceAsStream("META-INF/jpa-config.xml"));
 
 		map.put("openjpa.Id", gridName);
-		map.put("openjpa.ConnectionURL", "jdbc:derby:" + gridName);
-		map.put("openjpa.ConnectionProperties", driverProps.toString());
-
+		map.put("openjpa.ConnectionURL", "jdbc:derby:" + gridName+";create=true");
 		logger.info("Opening JPA Store: " + map.toString());
 
-		return Persistence.createEntityManagerFactory(sharedConfig.getGridName(), map);
+		return Persistence.createEntityManagerFactory(gridName, map);
 	}
 
 	public static void main(String[] args) {
@@ -292,7 +290,8 @@ public final class GNDMSystem implements Initializable, SystemHolder {
 	}
 
 	public synchronized void addInstance(@NotNull String name, @NotNull Object obj) {
-		if ("out".equals(name) || "err".equals(name) || "args".equals(name) || "em".equals(name))
+		if ("out".equals(name) || "err".equals(name) || "args".equals(name) || "em".equals(name)
+			|| "emg".equals(name))
 			throw new IllegalArgumentException("Reserved instance name");
 
 		if (instances.containsKey(name))
@@ -300,7 +299,7 @@ public final class GNDMSystem implements Initializable, SystemHolder {
 		else
 			instances.put(name, obj);
 
-		logger.info(getSystemName() + " registered: '" + name + '\'');
+		logger.debug(getSystemName() + " addInstance: '" + name + '\'');
 	}
 	
 	@NotNull
@@ -389,45 +388,41 @@ public final class GNDMSystem implements Initializable, SystemHolder {
 	}
 
 	@NotNull
-	public EndpointReferenceType serviceEPRType(@NotNull Address defAddr, @NotNull EPRT dSpaceRef) {
-		EndpointReferenceType eprt = new EndpointReferenceType();
-		if (dSpaceRef.getSite() == null) {
-			eprt.setAddress(defAddr);
-		}
-		else
+	public EndpointReferenceType serviceEPRType(@NotNull URI defAddr, @NotNull VEPRef dSpaceRef)
+		  throws URI.MalformedURIException {
+		if (dSpaceRef.getGridSite() != null)
 			throw new IllegalArgumentException("Non-local EPRTs currently unsupported");
 
 		try {
-			ReferencePropertiesType props = new ReferencePropertiesType();
-			props.add(((ResourceKey)(dSpaceRef.getRk())).toSOAPElement());
-			eprt.setProperties(props);
-			return eprt;
+			return AddressingUtils.createEndpointReference(
+				  defAddr.toString(), (ResourceKey) null);
 		}
-		catch (SerializationException e) {
+		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	@NotNull
 	public EndpointReferenceType serviceEPRType(@NotNull String instPrefix,
-	                                           @NotNull EPRT dSpaceRef) {
+	                                           @NotNull VEPRef dSpaceRef)
+		  throws URI.MalformedURIException {
 		return serviceEPRType(lookupServiceInfo(instPrefix).getServiceAddress(), dSpaceRef);
 	}
 
 	@NotNull
-	public EPRT modelEPRT(@NotNull QName keyTypeName, @NotNull EndpointReferenceType epr) {
+	public VEPRef modelEPRT(@NotNull QName keyTypeName, @NotNull EndpointReferenceType epr) {
 		@NotNull ReferencePropertiesType props = epr.getProperties();
 		@NotNull MessageElement msgElem = props.get(keyTypeName);
 		SimpleResourceKey key = new SimpleResourceKey(keyTypeName, msgElem.getObjectValue());
 
-		EPRT eprt = new EPRT();
-		eprt.setSite("");
-		eprt.setRk(key);
-		return eprt;
+		VEPRef theVEPREF = new DSpaceVEPRef();
+		// theVEPREF.setSite("");
+		// theVEPREF.setRk(key);
+		return theVEPREF;
 	}
 
 	@NotNull
-	public EPRT modelEPRT(@NotNull String instPrefix, @NotNull EndpointReferenceType epr) {
+	public VEPRef modelEPRT(@NotNull String instPrefix, @NotNull EndpointReferenceType epr) {
 		return modelEPRT(lookupServiceInfo(instPrefix).getResourceKeyTypeName(), epr);
 	}
 

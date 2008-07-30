@@ -1,10 +1,15 @@
 package de.zib.gndms.infra;
 
+import de.zib.gndms.infra.util.LDPHolder;
+import de.zib.gndms.infra.util.LoggingDecisionPoint;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
@@ -21,7 +26,8 @@ import java.util.Properties;
  *
  *          User: stepn Date: 17.07.2008 Time: 23:05:39
  */
-public class PropertiesFromFile extends InfiniteEnumeration<Map<Object, Object>> {
+public class PropertiesFromFile extends InfiniteEnumeration<Map<Object, Object>>
+implements LoggingDecisionPoint, LDPHolder {
 	@NotNull
 	private final File configFile;
 
@@ -37,6 +43,9 @@ public class PropertiesFromFile extends InfiniteEnumeration<Map<Object, Object>>
 	@NotNull
 	private final Properties defaults;
 	private Logger logger;
+
+	@Nullable
+	private LoggingDecisionPoint ldp;
 
 	public PropertiesFromFile(@NotNull File theConfigFile, @NotNull String aDescriptiveName,
 	                          @NotNull Properties theDefaults, @NotNull String aDefaultComment,
@@ -77,7 +86,8 @@ public class PropertiesFromFile extends InfiniteEnumeration<Map<Object, Object>>
 	private Map<Object, Object> tryLoadProperties() throws IOException {
 		Properties props;
 		FileInputStream in = null;
-		logger.debug("Loading " + desciptiveName);
+		if (shouldLog("load"))
+			logger.debug("Loading " + desciptiveName);
 		try {
 			if (!configFile.exists())
 				return createDefaultElement();
@@ -106,7 +116,8 @@ public class PropertiesFromFile extends InfiniteEnumeration<Map<Object, Object>>
 	}
 
 	private  void tryWriteDefaults() throws IOException {
-		logger.info("Creating default " + desciptiveName);
+		if (shouldLog("newdefaults"))
+			logger.info("Creating default " + desciptiveName);
 		FileOutputStream out = null;
 		try {
 			out = new FileOutputStream(configFile);
@@ -125,5 +136,18 @@ public class PropertiesFromFile extends InfiniteEnumeration<Map<Object, Object>>
 					// skip this one
 				}
 		}
+	}
+
+	@Nullable
+	public synchronized LoggingDecisionPoint getLDP() {
+		return ldp;
+	}
+
+	public synchronized void setLDP(@Nullable LoggingDecisionPoint newLDP) {
+		ldp = newLDP;
+	}
+
+	public synchronized boolean shouldLog(@NotNull String token) {
+		return ldp == null || ldp.shouldLog(token);
 	}
 }

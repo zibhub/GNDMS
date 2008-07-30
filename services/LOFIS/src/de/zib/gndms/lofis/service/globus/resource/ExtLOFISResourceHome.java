@@ -1,6 +1,5 @@
 package de.zib.gndms.lofis.service.globus.resource;
 
-import de.zib.gndms.dspace.service.globus.resource.DSpaceResourceHome;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +22,7 @@ public final class ExtLOFISResourceHome extends LOFISResourceHome {
 	// logger can be an instance field since resource home classes are instantiated at most once
 	@NotNull
 	@SuppressWarnings({"FieldNameHidesFieldInSuperclass"})
-	private final Log logger = LogFactory.getLog(DSpaceResourceHome.class);
+	private final Log logger = LogFactory.getLog(LOFISResourceHome.class);
 
 	@Override
 	public synchronized void initialize() throws Exception {

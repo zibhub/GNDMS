@@ -6,7 +6,6 @@ import de.zib.gndms.infra.db.GNDMSystem;
 import de.zib.gndms.infra.db.SystemHolder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.globus.wsrf.PersistentResource;
 import org.globus.wsrf.Resource;
 import org.globus.wsrf.ResourceException;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +43,7 @@ public final class ExtSubspaceResourceHome extends SubspaceResourceHome {
 	protected Resource createNewInstance() throws ResourceException {
 		final Resource instance = super.createNewInstance();
 		((SystemHolder)instance).setSystem(holder.getSystem());
-		((PersistentResource)instance).store();
+		// ((PersistentResource)instance).store();
 		return instance;
 	}
 

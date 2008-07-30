@@ -15,14 +15,14 @@ import types.StorageSizeT;
  */
 public class DSpaceTools {
 	public static StorageSizeT buildSizeT(StorageSize size) {
-		return new StorageSizeT(size.getUnit(), new PositiveInteger(Integer.toString(size.getAmount())));
+		return new StorageSizeT(size.getUnit(), new PositiveInteger(Long.toString(size.getAmount())));
 	}
 
 	@NotNull
 	public static StorageSize buildSize(StorageSizeT sizeT) {
 		StorageSize value = new StorageSize();
 		value.setUnit(sizeT.getStorageSizeUnit());
-		value.setAmount(Integer.parseInt(sizeT.getStorageSizeValue().toString()));
+		value.setAmount(Long.parseLong(sizeT.getStorageSizeValue().toString()));
 		return value;
 	}
 }

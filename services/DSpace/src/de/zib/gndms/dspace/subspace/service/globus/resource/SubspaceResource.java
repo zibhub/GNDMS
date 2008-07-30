@@ -8,12 +8,14 @@ import static de.zib.gndms.infra.db.GNDMSystem.currentEMG;
 import de.zib.gndms.infra.db.ModelHandler;
 import de.zib.gndms.infra.db.SystemHolder;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
-import de.zib.gndms.model.common.EPRT;
+import de.zib.gndms.model.common.VEPRef;
+import de.zib.gndms.model.dspace.DSpaceVEPRef;
 import de.zib.gndms.model.dspace.Subspace;
+import org.apache.axis.message.addressing.EndpointReferenceType;
+import org.apache.axis.types.URI;
 import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.ResourceKey;
 import org.jetbrains.annotations.NotNull;
-import org.apache.axis.message.addressing.EndpointReferenceType;
 import types.StorageSizeT;
 
 import javax.xml.namespace.QName;
@@ -33,6 +35,13 @@ public class SubspaceResource extends SubspaceResourceBase
 	private SystemHolder sysH = new DefaultSystemHolder();
 
 	private ModelHandler<Subspace> mH = new ModelHandler<Subspace>(Subspace.class);
+
+	@Override
+	public void initialize(
+		  Object resourceBean, QName resourceElementQName, Object id) throws ResourceException {
+		super.initialize(resourceBean, resourceElementQName, id);    // Overridden method
+		
+	}
 
 	@Override  @NotNull
 	public StorageSizeT getAvailableStorageSize() {
@@ -124,6 +133,7 @@ public class SubspaceResource extends SubspaceResourceBase
 		catch (ResourceException r) { reload(); }
 	}
 
+	@SuppressWarnings({"ThrowableInstanceNeverThrown"})
 	@Override @NotNull
 	public DSpaceReference getDSpaceReference() {
 		final Subspace model;
@@ -136,6 +146,7 @@ public class SubspaceResource extends SubspaceResourceBase
 			return valueT;
 		}
 		catch (ResourceException e) { logUnhandledAndThrow(e); }
+		catch (URI.MalformedURIException e) { logUnhandledAndThrow(new ResourceException(e)); }
 		throw new RuntimeException("unreachable");
 	}
 
@@ -147,8 +158,8 @@ public class SubspaceResource extends SubspaceResourceBase
 			boolean flag = currentEMG(this).begin();
 			try {
 				Subspace model = mH.loadModel(currentEMG(this), this);
-				EPRT eprt = getSystem().modelEPRT("dspace", valueT.getEndpointReference());
-				model.setDSpaceRef(eprt);
+				VEPRef theVEPREF = getSystem().modelEPRT("dspace", valueT.getEndpointReference());
+				model.setDSpaceRef((DSpaceVEPRef)theVEPREF);
 				mH.storeModel(currentEMG(this), model);
 			}
 			catch (RuntimeException e) { currentEMG(this).rollback(flag, e); }

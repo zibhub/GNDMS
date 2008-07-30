@@ -9,34 +9,50 @@
 package de.zib.gndms.model.dspace
 
 import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.Version
 import javax.persistence.Table
 import javax.persistence.Column
-import org.jetbrains.annotations.NotNull
-import de.zib.gndms.model.common.EPRT
 import javax.persistence.Embedded
+import javax.persistence.ManyToOne
+import javax.persistence.JoinColumns
+import javax.persistence.JoinColumn
+import javax.persistence.AttributeOverrides
+import javax.persistence.AttributeOverride
+import javax.persistence.UniqueConstraint
+import javax.persistence.Id
+import de.zib.gndms.model.ModelEntity
+import javax.persistence.Version
 
-@Entity(name="subspace") @Table(name="subspace")
-class Subspace {
-	@Id @Column(name="uuid", nullable=false, length=36, columnDefinition="CHAR") @NotNull
-	String uuid;
+@Entity(name="subspaces")
+@Table(name="subspaces") @UniqueConstraint(columnNames=["spec"])
+class Subspace extends ModelEntity {
+	@Id @Column(name="id", nullable=false, length=36, columnDefinition="CHAR", updatable=false)
+	String id
 
-	@Embedded @Column(name="total", nullable=false) @NotNull
-	StorageSize totalSize;
+	@Column(name="tod", nullable=false)
+	Calendar terminationTime
 
-	@Embedded @Column(name="avail", nullable=false) @NotNull
-	StorageSize availableSize;
+	@Embedded
+	@AttributeOverrides([
+	      @AttributeOverride(name="unit", column=@Column(name="totalUnit")),
+		  @AttributeOverride(name="amount", column=@Column(name="totalAmount"))
+	])
+	StorageSize totalSize
 
-	@Column(name="tod", nullable=false) @NotNull
-	Calendar terminationTime;
+	@Embedded
+	@AttributeOverrides([
+	      @AttributeOverride(name="unit", column=@Column(name="availUnit")),
+		  @AttributeOverride(name="amount", column=@Column(name="availAmount"))
+	])
+	StorageSize availableSize
 
-	@Column(name="spec", nullable=false, columnDefinition="VARCHAR") @NotNull
-	String subspaceSpecifier;
+	@Column(name="spec", nullable=false, columnDefinition="VARCHAR", updatable=false)
+	String subspaceSpecifier
 
-	@Embedded @Column(name="dspace", nullable=false) @NotNull
-	EPRT dSpaceRef;
+	@ManyToOne(optional=false)
+	@JoinColumns([@JoinColumn(name="site", referencedColumnName="site", nullable=true, updatable=false),
+	              @JoinColumn(name="dspaceId", referencedColumnName="rkValue", nullable=false, updatable=false)])
+	DSpaceVEPRef dSpaceRef
 
 	@Version
-	int version;
+	int version
 }

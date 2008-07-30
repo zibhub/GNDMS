@@ -12,7 +12,7 @@ http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
 		    <property name="openjpa.slice.ConnectionRetainMode" value="on-demand" />
 		    <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)" />
 		    <property name="openjpa.jdbc.TransactionIsolation" value="serializable" />
-		    <property name="openjpa.MetaDataFactory" value="jpa(Types=de.zib.gndms.model.dspace.Subspace;de.zib.gndms.model.dspace.StorageSize;de.zib.gndms.model.common.EPRT)" />
+		    <property name="openjpa.MetaDataFactory" value="jpa(Types=de.zib.gndms.model.dspace.Subspace;de.zib.gndms.model.dspace.StorageSize;de.zib.gndms.model.common.VEPRef;de.zib.gndms.model.common.SimpleRKVEPRef;de.zib.gndms.model.common.GridSite;de.zib.gndms.model.dspace.DSpaceVEPRef)" />
 	    </properties>
 	</persistence-unit>
 </persistence>

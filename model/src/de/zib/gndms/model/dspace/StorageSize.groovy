@@ -10,13 +10,13 @@ package de.zib.gndms.model.dspace
 
 import javax.persistence.Embeddable
 import javax.persistence.Column
-import org.jetbrains.annotations.NotNull
+import de.zib.gndms.model.ModelObject
 
 @Embeddable
-class StorageSize {
-	@Column(nullable=false) @NotNull
+class StorageSize extends ModelObject {
+	@Column(name="unit", nullable=false, columnDefinition="VARCHAR")
 	String unit;
 
-	@Column(nullable=false)
-	int amount;
+	@Column(name="amount", nullable=false)
+	long amount;
 }

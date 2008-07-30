@@ -2,11 +2,15 @@ package de.zib.gndms.dspace.service.globus.resource;
 
 import de.zib.gndms.dspace.service.DSpaceConfiguration;
 import de.zib.gndms.infra.GridConfig;
-import de.zib.gndms.infra.db.*;
-import org.apache.axis.message.addressing.Address;
+import de.zib.gndms.infra.db.DefaultSystemHolder;
+import de.zib.gndms.infra.db.GNDMSystem;
+import de.zib.gndms.infra.db.ServiceInfo;
+import de.zib.gndms.infra.db.SystemHolder;
+import org.apache.axis.message.addressing.AttributedURI;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.globus.wsrf.ResourceContext;
+import org.globus.wsrf.utils.AddressingUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.naming.NamingException;
@@ -62,12 +66,16 @@ public final class ExtDSpaceResourceHome  extends DSpaceResourceHome
 	@NotNull
 	private SystemHolder holder = new DefaultSystemHolder();
 
-	private Address serviceAddress;
+	private AttributedURI serviceAddress;
 
 	@Override
 	public void initialize() throws Exception {
 		super.initialize();    // Overridden method
-		logger.info("Extension class initializing");
+
+		final ResourceContext context = ResourceContext.getResourceContext();
+		serviceAddress = AddressingUtils.createEndpointReference(context, null).getAddress();
+
+		logger.debug("Extension class initializing");
 		try {
 			holder.setSystem(getGridConfig().retrieveSystemReference());
 		}
@@ -76,7 +84,6 @@ public final class ExtDSpaceResourceHome  extends DSpaceResourceHome
 			throw new RuntimeException(e);
 		}
 
-		serviceAddress = new Address(ResourceContext.getResourceContext().getServiceURL().toString());
 	}
 
 	@NotNull
@@ -87,7 +94,7 @@ public final class ExtDSpaceResourceHome  extends DSpaceResourceHome
 	}
 
 	@NotNull
-	public final Address getServiceAddress() {
+	public final AttributedURI getServiceAddress() {
 		return serviceAddress;
 	}
 

@@ -143,7 +143,7 @@ public class EntityManagerGuard {
 	}
 
 	/**
-	 * Rollbacks the EM's Tx if wasNewTx is true
+	 * *Signals* rollbacks of the EM's Tx if wasNewTx is true
 	 *
 	 * @param wasNewTx flag indicating whether this was the stack frame that called begin()
 	 * @throws NestedRollbackException if wasNewTx is false

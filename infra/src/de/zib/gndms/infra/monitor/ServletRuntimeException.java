@@ -56,13 +56,12 @@ public class ServletRuntimeException extends RuntimeException {
 
 	/**
 	 * Calls response.sendError with parameters filled in from this instance, flushes
-	 * the response output stream, and then, optionally rethrows this instance.
+	 * the response output stream, and then, optionally rethrows this instance based on the value of
+	 * isThrownOnServerSide().
 	 *
 	 * @param response
-	 * @param rethrow if true, the exception will be rethrown
 	 * @throws IOException
-	 */
-	public void sendToClient(@NotNull final HttpServletResponse response, boolean rethrow)
+	 */	public void sendToClient(@NotNull final HttpServletResponse response)
 		  throws IOException {
 		String msg = getMessage();
 		if (msg == null)
@@ -71,19 +70,8 @@ public class ServletRuntimeException extends RuntimeException {
 			response.sendError(errorCode, msg);
 		response.getOutputStream().flush();
 		response.flushBuffer();
-		if (rethrow)
+		if (thrownOnServerSide)
 			throw this;
 	}
 
-	/**
-	 * Calls response.sendError with parameters filled in from this instance, flushes
-	 * the response output stream, and then, optionally rethrows this instance based on the value of
-	 * isThrownOnServerSide().
-	 *
-	 * @param response
-	 * @throws IOException
-	 */
-	public void sendToClient(@NotNull HttpServletResponse response) throws IOException {
-		sendToClient(response, thrownOnServerSide);
-	}
 }
