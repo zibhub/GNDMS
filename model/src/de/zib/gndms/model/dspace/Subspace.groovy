@@ -19,7 +19,8 @@ import de.zib.gndms.model.common.TimedGridResource
 
 @Entity(name="Subspaces")
 @Table(name="subspaces") @UniqueConstraint(columnNames=["specifier"])
-class Subspace extends TimedGridResource {	
+class Subspace extends TimedGridResource {
+	@MappedQuery
 	@Embedded
 	@AttributeOverrides([
 	      @AttributeOverride(name="unit", column=@Column(name="totalUnit", nullable=false)),

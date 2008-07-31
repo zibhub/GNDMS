@@ -2,11 +2,11 @@
 <classpath>
     <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER" />
     <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/annotations" />
-    <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/apache-commons" />
-    <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openjpa" />
     <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/GROOVY" />
     <classpathentry kind="src" path="src" />
     <classpathentry kind="src" path="test-src" />
+    <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/apache-commons" />
+    <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openjpa" />
     <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/gt4-current" />
     <classpathentry kind="output" path="bin" />
 </classpath>
