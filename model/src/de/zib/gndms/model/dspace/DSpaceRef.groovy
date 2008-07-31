@@ -7,6 +7,8 @@ import de.zib.gndms.model.common.SimpleRKVEPRefId
 import javax.xml.namespace.QName
 import javax.persistence.Transient
 import javax.persistence.Embeddable
+import javax.persistence.Table
+import javax.persistence.DiscriminatorValue
 
 /**
  * VEPRef to a DSpace instance
@@ -16,10 +18,10 @@ import javax.persistence.Embeddable
  *
  * User: stepn Date: 30.07.2008 Time: 15:01:58
  */
-@Entity(name="dspaceRefs") @IdClass(DSpaceVEPRefId.class)
+@Entity(name="DSpaceRefs") @IdClass(DSpaceVEPRefId.class)
 class DSpaceVEPRef extends SimpleRKVEPRef {
 	private static RESOURCE_KEY_NAME =
-		new QName("http://dspace.gndms.zib.de/DSpace/Subspace", "SubspaceKey");
+		new QName("http://dspace.gndms.zib.de/DSpace", "DSpaceKey");
 
 	@Transient
 	def public QName getResourceKeyName() {
@@ -28,7 +30,7 @@ class DSpaceVEPRef extends SimpleRKVEPRef {
 
 	@Transient
 	def public String getParentResourceName() {
-		return "DSpace";
+		return "";
 	}
 }
 

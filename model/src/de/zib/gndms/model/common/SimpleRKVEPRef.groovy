@@ -21,7 +21,7 @@ import de.zib.gndms.model.ModelObject
  *
  * User: stepn Date: 30.07.2008 Time: 15:03:31
  */
-@Entity(name="simpleRKRefs") @IdClass(SimpleRKVEPRefId.class)
+@Entity(name="SimpleRKRefs") @IdClass(SimpleRKVEPRefId.class)
 @UniqueConstraint(columnNames = ["rkValue"])
 abstract class SimpleRKVEPRef extends VEPRef {
 	private String resourceKeyValue;

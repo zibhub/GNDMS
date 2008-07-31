@@ -18,19 +18,11 @@ import javax.persistence.JoinColumn
 import javax.persistence.AttributeOverrides
 import javax.persistence.AttributeOverride
 import javax.persistence.UniqueConstraint
-import javax.persistence.Id
-import de.zib.gndms.model.ModelEntity
-import javax.persistence.Version
+import de.zib.gndms.model.common.TimedGridResource
 
-@Entity(name="subspaces")
-@Table(name="subspaces") @UniqueConstraint(columnNames=["spec"])
-class Subspace extends ModelEntity {
-	@Id @Column(name="id", nullable=false, length=36, columnDefinition="CHAR", updatable=false)
-	String id
-
-	@Column(name="tod", nullable=false)
-	Calendar terminationTime
-
+@Entity(name="Subspaces")
+@Table(name="subspaces") @UniqueConstraint(columnNames=["specifier"])
+class Subspace extends TimedGridResource {	
 	@Embedded
 	@AttributeOverrides([
 	      @AttributeOverride(name="unit", column=@Column(name="totalUnit")),
@@ -45,14 +37,14 @@ class Subspace extends ModelEntity {
 	])
 	StorageSize availableSize
 
-	@Column(name="spec", nullable=false, columnDefinition="VARCHAR", updatable=false)
+	@Column(name="specifier", nullable=false, columnDefinition="VARCHAR", updatable=false)
 	String subspaceSpecifier
 
+	@Column(name="isPublic")
+	boolean publicSubspace
+
 	@ManyToOne(optional=false)
-	@JoinColumns([@JoinColumn(name="site", referencedColumnName="site", nullable=true, updatable=false),
+	@JoinColumns([@JoinColumn(name="siteId", referencedColumnName="siteId", nullable=true, updatable=false),
 	              @JoinColumn(name="dspaceId", referencedColumnName="rkValue", nullable=false, updatable=false)])
 	DSpaceVEPRef dSpaceRef
-
-	@Version
-	int version
 }

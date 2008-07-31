@@ -15,7 +15,7 @@ import javax.persistence.MappedSuperclass
  *
  * User: stepn Date: 30.07.2008 Time: 17:03:24
  */
-public abstract class ModelObject {
+abstract class ModelObject {
 
 	def public static int hashCode0(Object obj) {
 		return obj == null ? 0 : obj.hashCode();
@@ -26,7 +26,7 @@ public abstract class ModelObject {
 /**
  * Shared superclass of all model entities.
  */
-public abstract class ModelEntity extends ModelObject {
+abstract class ModelEntity extends ModelObject {
 }
 
 /**
@@ -35,7 +35,7 @@ public abstract class ModelEntity extends ModelObject {
  * Defines a sensible default equals method based on identity, null, and instanceof-testing
  * and deferrs all other checks to equalFields.
  */
-public abstract class ModelEntityId {
+abstract class ModelEntityId {
 	def public abstract boolean equalFields(@NotNull Object obj)
 
 	@Override
