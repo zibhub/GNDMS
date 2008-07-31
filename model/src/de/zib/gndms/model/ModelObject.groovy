@@ -2,10 +2,6 @@ package de.zib.gndms.model
 
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.annotations.NotNull
-import javax.persistence.Embeddable
-import javax.persistence.Transient
-import javax.persistence.Version
-import javax.persistence.MappedSuperclass
 
 /**
  * Shared superclass of all model objects.

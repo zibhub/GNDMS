@@ -9,7 +9,7 @@ import de.zib.gndms.infra.db.ModelHandler;
 import de.zib.gndms.infra.db.SystemHolder;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.model.common.VEPRef;
-import de.zib.gndms.model.dspace.DSpaceVEPRef;
+import de.zib.gndms.model.dspace.DSpaceRef;
 import de.zib.gndms.model.dspace.Subspace;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI;
@@ -159,7 +159,7 @@ public class SubspaceResource extends SubspaceResourceBase
 			try {
 				Subspace model = mH.loadModel(currentEMG(this), this);
 				VEPRef theVEPREF = getSystem().modelEPRT("dspace", valueT.getEndpointReference());
-				model.setDSpaceRef((DSpaceVEPRef)theVEPREF);
+				model.setDSpaceRef((DSpaceRef)theVEPREF);
 				mH.storeModel(currentEMG(this), model);
 			}
 			catch (RuntimeException e) { currentEMG(this).rollback(flag, e); }

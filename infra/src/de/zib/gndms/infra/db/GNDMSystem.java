@@ -4,7 +4,7 @@ import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.monitor.GroovyBindingFactory;
 import de.zib.gndms.infra.monitor.GroovyMoniServer;
 import de.zib.gndms.model.common.VEPRef;
-import de.zib.gndms.model.dspace.DSpaceVEPRef;
+import de.zib.gndms.model.dspace.DSpaceRef;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.apache.axis.components.uuid.UUIDGen;
@@ -390,7 +390,7 @@ public final class GNDMSystem implements Initializable, SystemHolder {
 	@NotNull
 	public EndpointReferenceType serviceEPRType(@NotNull URI defAddr, @NotNull VEPRef dSpaceRef)
 		  throws URI.MalformedURIException {
-		if (dSpaceRef.getGridSite() != null)
+		if (dSpaceRef.getGridSiteId() != null)
 			throw new IllegalArgumentException("Non-local EPRTs currently unsupported");
 
 		try {
@@ -415,7 +415,7 @@ public final class GNDMSystem implements Initializable, SystemHolder {
 		@NotNull MessageElement msgElem = props.get(keyTypeName);
 		SimpleResourceKey key = new SimpleResourceKey(keyTypeName, msgElem.getObjectValue());
 
-		VEPRef theVEPREF = new DSpaceVEPRef();
+		VEPRef theVEPREF = new DSpaceRef();
 		// theVEPREF.setSite("");
 		// theVEPREF.setRk(key);
 		return theVEPREF;

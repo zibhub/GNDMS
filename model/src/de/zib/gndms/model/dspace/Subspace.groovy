@@ -12,9 +12,6 @@ import javax.persistence.Entity
 import javax.persistence.Table
 import javax.persistence.Column
 import javax.persistence.Embedded
-import javax.persistence.ManyToOne
-import javax.persistence.JoinColumns
-import javax.persistence.JoinColumn
 import javax.persistence.AttributeOverrides
 import javax.persistence.AttributeOverride
 import javax.persistence.UniqueConstraint
@@ -25,15 +22,15 @@ import de.zib.gndms.model.common.TimedGridResource
 class Subspace extends TimedGridResource {	
 	@Embedded
 	@AttributeOverrides([
-	      @AttributeOverride(name="unit", column=@Column(name="totalUnit")),
-		  @AttributeOverride(name="amount", column=@Column(name="totalAmount"))
+	      @AttributeOverride(name="unit", column=@Column(name="totalUnit", nullable=false)),
+		  @AttributeOverride(name="amount", column=@Column(name="totalAmount", nullable=false))
 	])
 	StorageSize totalSize
 
 	@Embedded
 	@AttributeOverrides([
-	      @AttributeOverride(name="unit", column=@Column(name="availUnit")),
-		  @AttributeOverride(name="amount", column=@Column(name="availAmount"))
+	      @AttributeOverride(name="unit", column=@Column(name="availUnit", nullable=false)),
+		  @AttributeOverride(name="amount", column=@Column(name="availAmount", nullable=false))
 	])
 	StorageSize availableSize
 
@@ -43,8 +40,9 @@ class Subspace extends TimedGridResource {
 	@Column(name="isPublic")
 	boolean publicSubspace
 
-	@ManyToOne(optional=false)
-	@JoinColumns([@JoinColumn(name="siteId", referencedColumnName="siteId", nullable=true, updatable=false),
-	              @JoinColumn(name="dspaceId", referencedColumnName="rkValue", nullable=false, updatable=false)])
-	DSpaceVEPRef dSpaceRef
+	@Embedded
+	@AttributeOverrides([
+		@AttributeOverride(name="gridSiteId", column=@Column(name="dspaceSite", nullable=true, updatable=false)),
+	    @AttributeOverride(name="resourceKeyValue", column=@Column(name="dspaceUUID", nullable=false, updatable=false))])
+	DSpaceRef dSpaceRef
 }
