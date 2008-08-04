@@ -7,7 +7,7 @@ import javax.persistence.Embeddable
 
 /**
  * VEPRefs for grid resources that use a SimpleResourceKey with a UUID string value
- * (i.e. introduce-generated services)
+ * (i.e. resource instances from introduce-generated services)
  * 
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$ 

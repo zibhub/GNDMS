@@ -7,18 +7,18 @@ import javax.persistence.Embeddable
 import javax.persistence.Column
 
 /**
- * VEPRef to a DSpace instance
- * 
+ * VEPRef to a Subspace instance
+ *
  * @author Stefan Plantikow<plantikow@zib.de>
- * @version $Id$ 
+ * @version $Id$
  *
  * User: stepn Date: 30.07.2008 Time: 15:01:58
  */
 @Embeddable
-class DSpaceRef extends SimpleRKRef {
-	private static final QName RESOURCE_KEY_NAME =
-		new QName("http://dspace.gndms.zib.de/DSpace", "DSpaceKey")
-	private static final List<String> RESOURCE_NAMES = ["DSpace"].asImmutable()
+class SubspaceRef extends SimpleRKRef {
+	private static RESOURCE_KEY_NAME =
+		new QName("http://dspace.gndms.zib.de/DSpace/Subspace", "SubspaceKey")
+	private static final List<String> RESOURCE_NAMES = ["DSpace", "Subspace"].asImmutable()
 
 	private String gridSiteId;
 	private String resourceKeyValue;

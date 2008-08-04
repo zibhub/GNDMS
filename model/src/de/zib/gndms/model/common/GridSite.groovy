@@ -14,12 +14,12 @@ import javax.persistence.Column
  *
  * User: stepn Date: 30.07.2008 Time: 12:53:02
  */
-@Entity(name="Sites")
-@Table(name="sites") @UniqueConstraint(columnNames = ["transportURL"])
+@Entity(name="GridSites")
+@Table(name="grid_sites", schema="common")
 class GridSite extends GridEntity {
-	@Id @Column(name="siteId", nullable=false, updatable=false, columnDefinition="VARCHAR")
+	@Id @Column(name="site_id", nullable=false, updatable=false, columnDefinition="VARCHAR", length=64)
 	String siteId;
 
-	@Column(name="transortURL", nullable=false, columnDefinition="VARCHAR")
+	@Column(name="transort_url", nullable=false, columnDefinition="VARCHAR")
 	String transportURL;
 }

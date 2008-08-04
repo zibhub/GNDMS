@@ -8,10 +8,17 @@ http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
 	    <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
 	    <mapping-file>META-INF/orm.xml</mapping-file>
 	    
+	    <class>de.zib.gndms.model.common.ImmutableScopedName</class>
 	    <class>de.zib.gndms.model.common.GridEntity</class>
 	    <class>de.zib.gndms.model.common.GridResource</class>
 	    <class>de.zib.gndms.model.common.TimedGridResource</class>
+	    <class>de.zib.gndms.model.common.GridSite</class>
+	    <class>de.zib.gndms.model.common.VEPRef</class>
+	    <class>de.zib.gndms.model.common.SimpleRKRef</class>
 	    <class>de.zib.gndms.model.dspace.DSpaceRef</class>
+	    <class>de.zib.gndms.model.dspace.DSpace</class>
+	    <class>de.zib.gndms.model.dspace.SliceKind</class>
+	    <class>de.zib.gndms.model.dspace.MetaSubspace</class>
 	    <class>de.zib.gndms.model.dspace.Subspace</class>
 	    <class>de.zib.gndms.model.dspace.SubspaceRef</class>
 	    <class>de.zib.gndms.model.dspace.StorageSize</class>

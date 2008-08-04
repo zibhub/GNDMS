@@ -103,12 +103,13 @@ public class SubspaceResource extends SubspaceResourceBase
 		catch (ResourceException r) { reload(); }
 	}
 
+	/*
 	@Override @NotNull
 	public QName getSubspaceSpecifier() {
 		final Subspace model;
 		try {
 			model = mH.loadModel(getSystem().currentEMG(), this);
-			QName valueT = QName.valueOf(model.getSubspaceSpecifier());
+			QName valueT = QName.valueOf(model.getMetaSubspace().getSpecifier());
 			super.setSubspaceSpecifier(valueT);
 			return valueT;
 		}
@@ -124,7 +125,8 @@ public class SubspaceResource extends SubspaceResourceBase
 			boolean flag = currentEMG(this).begin();
 			try {
 				Subspace model = mH.loadModel(currentEMG(this), this);
-				model.setSubspaceSpecifier(valueT.toString());
+				// TODO: This is wrong! Very!
+				model.getMetaSubspace().setSpecifier(valueT.toString());
 				mH.storeModel(currentEMG(this), model);
 			}
 			catch (RuntimeException e) { currentEMG(this).rollback(flag, e); }
@@ -132,7 +134,7 @@ public class SubspaceResource extends SubspaceResourceBase
 		}
 		catch (ResourceException r) { reload(); }
 	}
-
+ */
 	@SuppressWarnings({"ThrowableInstanceNeverThrown"})
 	@Override @NotNull
 	public DSpaceReference getDSpaceReference() {
@@ -217,7 +219,7 @@ public class SubspaceResource extends SubspaceResourceBase
 		super.setAvailableStorageSize(DSpaceTools.buildSizeT(model.getAvailableSize()));
 		super.setTotalStorageSize(DSpaceTools.buildSizeT(model.getTotalSize()));
 		super.setTerminationTime(model.getTerminationTime());
-		super.setSubspaceSpecifier(QName.valueOf(model.getSubspaceSpecifier()));
+		// super.setSubspaceSpecifier(QName.valueOf(model.getMetaSubspace().getSpecifier()));
 	}
 
 
@@ -228,7 +230,8 @@ public class SubspaceResource extends SubspaceResourceBase
 		model.setAvailableSize(DSpaceTools.buildSize(super.getAvailableStorageSize()));
 		model.setTotalSize(DSpaceTools.buildSize(super.getTotalStorageSize()));
 		model.setTerminationTime(super.getTerminationTime());
-		model.setSubspaceSpecifier(super.getSubspaceSpecifier().toString());
+		// TODO This is wrong! Very!
+		// model.getMetaSubspace().setSpecifier(super.getSubspaceSpecifier().toString());
 		mH.storeModel(currentEMG(this), model);
 	}
 

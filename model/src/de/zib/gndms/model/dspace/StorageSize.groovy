@@ -15,11 +15,11 @@ import org.jetbrains.annotations.NotNull
 
 @Embeddable
 class StorageSize extends ModelObject {
-	@Column(name="unit", nullable=false, columnDefinition="VARCHAR")
-	String unit;
-
 	@Column(name="amount", nullable=false)
 	long amount;
+
+	@Column(name="unit", nullable=false, columnDefinition="VARCHAR", length=16)
+	String unit;
 
 	public long getAmountInBytes() {
 		long baseAmount = getAmount()
@@ -46,8 +46,9 @@ class StorageSize extends ModelObject {
 	}
 
 	@NotNull String normalizeUnit(@NotNull String unit) {
+		len = unit.length()
 		if (len >= 5 && unit.toLowerCase().endsWith("bytes"))
-			unit.substring(0, unit.length() - 4)
+			unit.substring(0, len - 4)
 		else
 			unit
 	}

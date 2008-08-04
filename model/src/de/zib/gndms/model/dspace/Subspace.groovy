@@ -14,36 +14,45 @@ import javax.persistence.Column
 import javax.persistence.Embedded
 import javax.persistence.AttributeOverrides
 import javax.persistence.AttributeOverride
-import javax.persistence.UniqueConstraint
 import de.zib.gndms.model.common.TimedGridResource
+import javax.persistence.FetchType
+import javax.persistence.OneToOne
+import javax.persistence.CascadeType
+import javax.persistence.PrimaryKeyJoinColumns
+import javax.persistence.PrimaryKeyJoinColumn
+import javax.persistence.EntityListeners
+import de.zib.gndms.model.util.LifecycleEventDispatcher
 
-@Entity(name="Subspaces")
-@Table(name="subspaces") @UniqueConstraint(columnNames=["specifier"])
+/**
+ *
+ * Instances represent concrete subspaces in the local DSpace
+ *
+ */
+@Entity(name="Subspaces") @EntityListeners([LifecycleEventDispatcher.class])
+@Table(name="subspaces", schema="dspace")
 class Subspace extends TimedGridResource {
-	@MappedQuery
 	@Embedded
 	@AttributeOverrides([
-	      @AttributeOverride(name="unit", column=@Column(name="totalUnit", nullable=false)),
-		  @AttributeOverride(name="amount", column=@Column(name="totalAmount", nullable=false))
-	])
-	StorageSize totalSize
-
-	@Embedded
-	@AttributeOverrides([
-	      @AttributeOverride(name="unit", column=@Column(name="availUnit", nullable=false)),
-		  @AttributeOverride(name="amount", column=@Column(name="availAmount", nullable=false))
+	      @AttributeOverride(name="unit", column=@Column(name="avail_unit", nullable=false)),
+		  @AttributeOverride(name="amount", column=@Column(name="avail_amount", nullable=false))
 	])
 	StorageSize availableSize
 
-	@Column(name="specifier", nullable=false, columnDefinition="VARCHAR", updatable=false)
-	String subspaceSpecifier
+	@Embedded
+	@AttributeOverrides([
+	      @AttributeOverride(name="unit", column=@Column(name="total_unit", nullable=false)),
+		  @AttributeOverride(name="amount", column=@Column(name="total_amount", nullable=false))
+	])
+	StorageSize totalSize
 
-	@Column(name="isPublic")
-	boolean publicSubspace
+	@OneToOne(targetEntity=MetaSubspace.class, optional=false, fetch=FetchType.LAZY, cascade=[CascadeType.REFRESH])
+	@PrimaryKeyJoinColumns([@PrimaryKeyJoinColumn(name="schema_uri"),
+	                        @PrimaryKeyJoinColumn(name="specifier")])
+	MetaSubspace metaSubspace
 
 	@Embedded
 	@AttributeOverrides([
-		@AttributeOverride(name="gridSiteId", column=@Column(name="dspaceSite", nullable=true, updatable=false)),
-	    @AttributeOverride(name="resourceKeyValue", column=@Column(name="dspaceUUID", nullable=false, updatable=false))])
+		@AttributeOverride(name="gridSiteId", column=@Column(name="dspace_site", nullable=true, updatable=false)),
+	    @AttributeOverride(name="resourceKeyValue", column=@Column(name="dspace_uuid", nullable=false, updatable=false))])
 	DSpaceRef dSpaceRef
 }

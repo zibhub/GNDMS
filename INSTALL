@@ -119,9 +119,9 @@ DETAILED BUILD INSTRUCTIONS
 
 - The most tricky piece goes first:
 
-  1) Compile shared-model to model/gndms-shared-model/production
+  1) Compile the shared-model sources from model/src to model/gndms-shared-model/production
      Dependencies: annotations, GROOVY, SOURCE, commons, openjpa, gt4
-     Make sure META-INF gets copied from src!
+     Make sure META-INF gets copied from model/src to model/gndms-shared-model/production!
 
   2) Run the openjpa enhancer
 

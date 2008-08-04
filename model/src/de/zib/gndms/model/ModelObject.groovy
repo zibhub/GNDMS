@@ -31,8 +31,8 @@ abstract class ModelEntity extends ModelObject {
  * Defines a sensible default equals method based on identity, null, and instanceof-testing
  * and deferrs all other checks to equalFields.
  */
-abstract class ModelEntityId {
-	def public abstract boolean equalFields(@NotNull Object obj)
+abstract class ModelId extends ModelObject {
+	def protected abstract boolean equalFields(@NotNull Object obj)
 
 	@Override
 	def public boolean equals(@Nullable Object obj) {

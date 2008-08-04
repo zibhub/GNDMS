@@ -5,6 +5,7 @@ import de.zib.gndms.infra.monitor.GroovyBindingFactory;
 import de.zib.gndms.infra.monitor.GroovyMoniServer;
 import de.zib.gndms.model.common.VEPRef;
 import de.zib.gndms.model.dspace.DSpaceRef;
+import de.zib.gndms.model.util.InstanceResolver;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.apache.axis.components.uuid.UUIDGen;
@@ -48,7 +49,7 @@ import java.util.concurrent.locks.ReentrantLock;
  *          User: stepn Date: 17.06.2008 Time: 23:09:00
  */
 @SuppressWarnings({"OverloadedMethodsWithSameNumberOfParameters", "NestedAssignment"})
-public final class GNDMSystem implements Initializable, SystemHolder {
+public final class GNDMSystem implements Initializable, SystemHolder, InstanceResolver<Object> {
 	private static final Lock factoryLock = new ReentrantLock();
 
 	private final UUIDGen uuidGen = UUIDGenFactory.getUUIDGen();
@@ -87,6 +88,7 @@ public final class GNDMSystem implements Initializable, SystemHolder {
 	private final ThreadLocal<EntityManagerGuard> emgs = new ThreadLocal<EntityManagerGuard>();
 
 	private static final int INITIAL_CAPACITY = 32;
+	private static final int INSTANCE_RETRIEVAL_INTERVAL = 250;
 
 	/**
 	 * Retrieves a GNDMSSystem using context.lookup(name).
@@ -303,7 +305,8 @@ public final class GNDMSystem implements Initializable, SystemHolder {
 	}
 	
 	@NotNull
-	public synchronized <T> T getInstance(@NotNull String name, @NotNull Class<? extends T> clazz) {
+	public synchronized <T> T getInstance(@NotNull Class<? extends T> clazz, @NotNull String name)
+	{
 		final Object obj = instances.get(name);
 		if (obj == null)
 			throw new
@@ -312,7 +315,7 @@ public final class GNDMSystem implements Initializable, SystemHolder {
 	}
 
 	public synchronized ServiceInfo lookupServiceInfo(@NotNull String instancePrefix) {
-		return getInstance(instancePrefix+"Home", ServiceInfo.class);
+		return getInstance(ServiceInfo.class, instancePrefix+"Home");
 	}
 
 
@@ -424,6 +427,24 @@ public final class GNDMSystem implements Initializable, SystemHolder {
 	@NotNull
 	public VEPRef modelEPRT(@NotNull String instPrefix, @NotNull EndpointReferenceType epr) {
 		return modelEPRT(lookupServiceInfo(instPrefix).getResourceKeyTypeName(), epr);
+	}
+
+	@NotNull
+	public <T> T retrieveInstance(@NotNull Class<T> clazz, @NotNull String name) {
+		T instance = null;
+		try { instance = getInstance(clazz, name); }
+		catch (IllegalStateException e) { instance = null; }
+		while (instance != null) {
+			try {
+				Thread.sleep(INSTANCE_RETRIEVAL_INTERVAL);
+			}
+			catch (InterruptedException e) {
+				// inteded
+			}
+			try { instance = getInstance(clazz, name); }
+			catch (IllegalStateException e) { instance = null; }
+		}
+		return instance;
 	}
 
 	private static final class SysFactory {

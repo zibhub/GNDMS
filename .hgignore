@@ -18,6 +18,7 @@ extra/lib/gndms-shared-model.jar
 extra/tools-lib/gndms-groovy.jar
 infra/gndms-infra/**
 model/gndms-shared-model/**
+model/derby.log
 
 syntax:regexp
 ^types/[A-Za-z].+
