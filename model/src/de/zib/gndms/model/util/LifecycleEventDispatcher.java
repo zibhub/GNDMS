@@ -1,6 +1,5 @@
 package de.zib.gndms.model.util;
 
-import de.zib.gndms.model.common.GridEntity;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.PostPersist;
@@ -80,10 +79,11 @@ public final class LifecycleEventDispatcher {
 
 	@PostPersist
 	public static void jpaPostPersist(@NotNull Object persisted) {
-		if (persisted instanceof GridEntity)
-			lookupDispatcher(((GridEntity)persisted).getGridName()).gridPostPersist(persisted);
-		else
-			throw new IllegalArgumentException("Dont know how to handle persisted instance");
+		// TODO
+		// if (persisted instanceof GridEntity)
+		//	lookupDispatcher(((GridEntity)persisted).getGridName()).gridPostPersist(persisted);
+		// else
+		//	throw new IllegalArgumentException("Dont know how to handle persisted instance");
 	}
 
 

@@ -27,7 +27,7 @@
 		<fileset dir="gndms-shared-model/production">
 			<include name="de/zib/gndms/model/**/*" />
 			<exclude name="de/zib/gndms/model/*" />
-			<exclude name="de/zib/gndms/model/util/*" />
+			<exclude name="de/zib/gndms/model/util/*" />			
 			<exclude name="de/zib/gndms/model/*/types/*" />
 		</fileset>
 		
@@ -51,7 +51,7 @@
 		<fileset dir="gndms-shared-model/production">
 			<include name="de/zib/gndms/model/**/*" />
 			<exclude name="de/zib/gndms/model/*" />
-			<exclude name="de/zib/gndms/model/util/*" />			
+			<exclude name="de/zib/gndms/model/util/*" />
 			<exclude name="de/zib/gndms/model/*/types/*" />
 		</fileset>
 	</mappingtool>
