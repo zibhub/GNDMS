@@ -10,15 +10,23 @@ package de.zib.gndms.model.dspace
 
 import de.zib.gndms.model.common.TimedGridResource
 import de.zib.gndms.model.util.LifecycleEventDispatcher
-<<<<<<< local
-import javax.persistence.*
-=======
 import javax.persistence.OneToMany
 import org.apache.axis.components.uuid.UUIDGen
 import org.apache.axis.components.uuid.UUIDGenFactory
 import java.nio.channels.FileChannel
 import de.zib.gndms.model.dspace.types.SliceKindMode
->>>>>>> other
+import javax.persistence.Entity
+import javax.persistence.Table
+import javax.persistence.Embedded
+import javax.persistence.AttributeOverrides
+import javax.persistence.AttributeOverride
+import javax.persistence.OneToOne
+import javax.persistence.PrimaryKeyJoinColumns
+import javax.persistence.FetchType
+import javax.persistence.CascadeType
+import javax.persistence.PrimaryKeyJoinColumn
+import javax.persistence.EntityListeners
+import javax.persistence.Column
 
 /**
  *

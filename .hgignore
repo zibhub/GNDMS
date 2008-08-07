@@ -19,6 +19,8 @@ extra/tools-lib/gndms-groovy.jar
 infra/gndms-infra/**
 model/gndms-shared-model/**
 model/derby.log
+.classpath
+.project
 
 syntax:regexp
 ^types/[A-Za-z].+
