@@ -10,6 +10,8 @@ import javax.persistence.ManyToOne
 import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.persistence.CascadeType
+import javax.persistence.JoinColumn
+import javax.persistence.Table
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -18,31 +20,33 @@ import javax.persistence.CascadeType
  * User: mjorra, Date: 06.08.2008, Time: 16:26:37
  */
 @Entity(name="Slices")
+@Table(name="slice", schema="dspace")
 public class Slice extends GridResource{
 
     @Id @Column( name="uid", nullable=false, updatable=false, columnDefinition="CHAR", length=36 )
-    private String UId
+    private String uid
 
     @Embedded
-    private SliceKind Kind
+    private SliceKind kind
 
 	@ManyToOne( targetEntity=Subspace.class, fetch=FetchType.LAZY, cascade=[CascadeType.REFRESH,CascadeType.PERSIST] )
+	@JoinColumn( name="subspace_id", nullable=false, referencedColumnName="id", updatable=false )
     // TODO Add join key constrain
-    private Subspace Owner
+    private Subspace owner
 
 
     protected Slice( ) { }
 
-    public Slice( String uid, SliceKind knd, Subspace own ) {
-        UID = uid
-        Kind = knd
-        Owner = own
+    public Slice( String uidParam, SliceKind kndParam, Subspace ownParam ) {
+        uid = uidParam
+        kind = kndParam
+        owner = ownParam
     }
 
 
     def public String[] getFileListing( ) {
         
-        File f = new File ( Owner.getPathForSlice( this ) )
+        File f = new File ( owner.getPathForSlice( this ) )
         f.list( )
     }
 
@@ -58,6 +62,6 @@ public class Slice extends GridResource{
 
         // TODO Later this should return a directory name mapped to
         // the UId
-        UId
+        uid
     }
 }

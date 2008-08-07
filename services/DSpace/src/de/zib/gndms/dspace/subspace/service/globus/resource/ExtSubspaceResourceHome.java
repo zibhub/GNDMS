@@ -34,6 +34,7 @@ public final class ExtSubspaceResourceHome extends SubspaceResourceHome implemen
 	@SuppressWarnings({"FieldNameHidesFieldInSuperclass"})
 	private final Log logger = LogFactory.getLog(ExtSubspaceResourceHome.class);
 
+	@SuppressWarnings({ "FieldAccessedSynchronizedAndUnsynchronized" })
 	private SystemHolder holder;
 
 	private boolean initialized;

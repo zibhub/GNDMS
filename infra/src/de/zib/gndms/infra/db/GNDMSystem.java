@@ -226,7 +226,7 @@ public final class GNDMSystem implements Initializable, SystemHolder, InstanceRe
 		sys.initialize();
 		sys.tryTxExecution();
 		ModelHandler<DSpace> mH = new ModelHandler<DSpace>(DSpace.class, sys);
-		mH.getSingleModel("findDSpaceInstance", new ModelCreator<DSpace>() {
+		mH.getSingleModel("findDSpaceInstances", new ModelCreator<DSpace>() {
 			@NotNull
 			public DSpace createInitialModel(@NotNull String id, @NotNull String system) {
 				DSpace model = new DSpace();

@@ -61,7 +61,7 @@ class Subspace extends TimedGridResource {
 	    @AttributeOverride(name="resourceKeyValue", column=@Column(name="dspace_uuid", nullable=false, updatable=false))])
 	DSpaceRef dSpaceRef
 
-    @OneToMany( targetEntity=Slice.class, mappedBy="uid", fetch=FetchType.LAZY, cascade=[CascadeType.REFRESH,CascadeType.PERSIST, CascadeType.REMOVE ] )
+    @OneToMany( targetEntity=Slice.class, mappedBy="owner", fetch=FetchType.LAZY, cascade=[CascadeType.REFRESH,CascadeType.PERSIST, CascadeType.REMOVE ] )
     // TODO add primary key join constraint if needed 
     Set<Slice> slices
 
