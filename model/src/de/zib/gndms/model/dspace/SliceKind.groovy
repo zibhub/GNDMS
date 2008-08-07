@@ -13,7 +13,7 @@ import javax.persistence.DiscriminatorColumn
 import javax.persistence.ManyToMany
 import javax.persistence.FetchType
 import javax.persistence.CascadeType
-import de.zib.gndms.model.dspace.types.SliceKindMode
+//import de.zib.gndms.model.dspace.types.SliceKindMode
 import javax.persistence.DiscriminatorValue
 
 /**
@@ -35,7 +35,7 @@ class SliceKind extends ModelEntity {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name="mode", nullable=false, updatable=false, columnDefinition="CHAR", length=8)
-	SliceKindMode mode
+	de.zib.gndms.model.dspace.types.SliceKindMode mode
 
 	@ManyToMany(fetch=FetchType.LAZY, mappedBy="creatableSliceKinds", cascade=[CascadeType.REFRESH, CascadeType.MERGE])
 	Set<MetaSubspace> metaSubspaces
