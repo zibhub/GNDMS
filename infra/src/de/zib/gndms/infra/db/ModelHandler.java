@@ -1,6 +1,7 @@
 package de.zib.gndms.infra.db;
 
 import org.globus.wsrf.InvalidResourceKeyException;
+import org.globus.wsrf.NoSuchResourceException;
 import org.globus.wsrf.PersistentResource;
 import org.globus.wsrf.ResourceException;
 import org.jetbrains.annotations.NotNull;
@@ -52,7 +53,7 @@ public class ModelHandler<M> {
 			if (creator == null)
 				throw emg.rollback(new InvalidResourceKeyException());
 			else 
-				return storeModel(creator.createInitialModel(sys.nextUUID(), sys.getGridName()));
+				return persistModel(creator.createInitialModel(sys.nextUUID(), sys.getGridName()));
 		}
 		catch (NonUniqueResultException e)
 			{ throw emg.rollback(new ResourceException(e)); }
@@ -84,7 +85,7 @@ public class ModelHandler<M> {
 		  throws ResourceException {
 		M model = tryLoadModel(r);
 		if (model == null)
-			throw new ResourceException("Could not load model from database");
+			throw new NoSuchResourceException("Could not load model from database");
 		return model;
 	}
 
@@ -93,7 +94,7 @@ public class ModelHandler<M> {
 		  throws ResourceException {
 		M model = tryLoadModelById(id);
 		if (model == null)
-			throw new ResourceException("Could not load model from database");
+			throw new NoSuchResourceException("Could not load model from database");
 		return model;
 	}
 
@@ -122,11 +123,23 @@ public class ModelHandler<M> {
 	}
 
 	@NotNull
-	public M storeModel(@NotNull M model) {
+	public M persistModel(@NotNull M model) {
 		final EntityManagerGuard emg = holder.currentEMG();
 		boolean flag = emg.begin();
 		try {
 			emg.getEM().persist(model);
+		}
+		catch (RuntimeException e) { throw emg.rollback(e); }
+		finally { emg.commitAndClose(flag);	}
+		return model;
+	}
+
+	@NotNull
+	public M mergeModel(@NotNull M model) {
+		final EntityManagerGuard emg = holder.currentEMG();
+		boolean flag = emg.begin();
+		try {
+			emg.getEM().merge(model);
 		}
 		catch (RuntimeException e) { throw emg.rollback(e); }
 		finally { emg.commitAndClose(flag);	}

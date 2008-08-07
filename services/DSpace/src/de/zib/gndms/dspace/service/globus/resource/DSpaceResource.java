@@ -13,8 +13,8 @@ import org.globus.wsrf.InvalidResourceKeyException;
 import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.ResourceKey;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NonNls;
 
-import javax.xml.namespace.QName;
 
 /**
  * The implementation of this DSpaceResource type.
@@ -23,7 +23,8 @@ import javax.xml.namespace.QName;
  * 
  */
 public class DSpaceResource extends DSpaceResourceBase
-	  implements ReloadablePersistentResource<DSpace>, ModelCreator<DSpace> {
+	  implements ReloadablePersistentResource<DSpace, ExtDSpaceResourceHome>, ModelCreator<DSpace> {
+	@NotNull @NonNls public static final String QUERY_INSTANCES = "findDSpaceInstances";
 
 	@SuppressWarnings({"FieldNameHidesFieldInSuperclass"})
 	private static final Log logger = LogFactory.getLog(DSpaceResource.class);
@@ -32,27 +33,6 @@ public class DSpaceResource extends DSpaceResourceBase
 	private ExtDSpaceResourceHome resourceHome;
 	private ModelHandler<DSpace> mH;
 
-	protected DSpaceResource() {
-		super();
-		throw new UnsupportedOperationException();
-	}
-	
-	protected DSpaceResource(@NotNull ExtDSpaceResourceHome home) throws ResourceException {
-		super();
-		setResourceHome(home);
-		DSpace model = mH.getSingleModel("findDSpaceInstances", this);
-		logger.debug("DSpace Singleton found with id: " + model.getId());
-		initialize(new DSpaceResourceProperties(), DSpaceConstants.RESOURCE_PROPERTY_SET, model);
-	}
-
-
-	@Override
-	public void initialize(
-		  Object resourceBean, QName resourceElementQName, Object modelObject) throws ResourceException {
-		DSpace model = (DSpace) modelObject;
-		super.initialize(resourceBean, resourceElementQName, model.getId());
-		loadFromModel(model);
-	}
 
 	@NotNull
 	public DSpace createInitialModel(@NotNull String id, @NotNull String gridName) {
@@ -63,17 +43,33 @@ public class DSpaceResource extends DSpaceResourceBase
 	}
 
 
-	public void load(ResourceKey resourceKey)
-		  throws ResourceException, InvalidResourceKeyException {
-		loadById((String) resourceKey.getValue());
+	public void load(final ResourceKey resourceKeyParam) throws ResourceException {
+		// only called once during find
+		final DSpace model;
+		final String id;
+
+		if (resourceKeyParam == null) {
+			model = mH.getSingleModel(QUERY_INSTANCES, this);
+			id = model.getId();
+			logger.debug("DSpace Singleton found with id: " + id);
+		}
+		else if (getResourceHome().getKeyTypeName().equals(resourceKeyParam.getName())) {
+			id = (String) resourceKeyParam.getValue();
+			model = loadModelById(id);
+		}
+		else
+			throw new InvalidResourceKeyException("Invalid resourceKey name");
+
+		initialize(new DSpaceResourceProperties(), DSpaceConstants.RESOURCE_PROPERTY_SET, id);
+		loadFromModel(model);
 	}
 
-	public void loadById(@NotNull String id) throws ResourceException {
-		loadFromModel(loadModel(id));
+	public void loadViaModelId(@NotNull String id) throws ResourceException {
+		loadFromModel(loadModelById(id));
 	}
 
 	@NotNull
-	public DSpace loadModel(@NotNull String id) throws ResourceException {
+	public DSpace loadModelById(@NotNull String id) throws ResourceException {
 		return mH.loadModelById(id);
 	}
 
@@ -93,18 +89,29 @@ public class DSpaceResource extends DSpaceResourceBase
 		// Done elsewhere
 	}
 	@NotNull
-	protected final ExtDSpaceResourceHome getResourceHome() {
+	public final ExtDSpaceResourceHome getResourceHome() {
+		if (resourceHome == null)
+			throw new IllegalStateException("No resourceHome set");
 		return resourceHome;
 	}
 
-	protected final void setResourceHome(@NotNull ExtDSpaceResourceHome newResourceHome) {
-		resourceHome = newResourceHome;
-		mH = new ModelHandler<DSpace>(DSpace.class, resourceHome);
+	public final void setResourceHome(@NotNull ExtDSpaceResourceHome resourceHomeParam)
+	{
+		if (resourceHome == null) {
+			mH = new ModelHandler<DSpace>(DSpace.class, resourceHomeParam);
+			resourceHome = resourceHomeParam;
+		}
+		else
+			throw new IllegalStateException("resourceHome already set");
 	}
 
 	@NotNull
 	private GNDMSystem getSystem() throws ResourceException {
-		return resourceHome.getSystem();
+		return getResourceHome().getSystem();
 	}
 
+	@Override
+	public String getID() {
+		return (String) super.getID();    // Overridden method
+	}	
 }

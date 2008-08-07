@@ -119,8 +119,12 @@ public final class ExtDSpaceResourceHome  extends DSpaceResourceHome
 
 	@Override
 	public Resource createSingleton() {
-		try
-			{ return new DSpaceResource(this);}
+		try	{
+			final DSpaceResource resource = new DSpaceResource();
+			resource.setResourceHome(this);
+			resource.load(null);
+			return resource;
+		}
 		catch (ResourceException e) {
 			logger.error(e);
 			return null;

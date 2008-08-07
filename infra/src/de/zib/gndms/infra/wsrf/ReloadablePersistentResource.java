@@ -7,12 +7,12 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Additional methods required by GNDMS PersistentResources
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
  *
  *          User: stepn Date: 28.07.2008 Time: 11:07:52
  */
-public interface ReloadablePersistentResource<M> extends PersistentResource {
+public interface ReloadablePersistentResource<M, H> extends PersistentResource {
 	/**
 	 * Fetch model from database by id without touching the resource object state
 	 *
@@ -21,7 +21,7 @@ public interface ReloadablePersistentResource<M> extends PersistentResource {
 	 * @throws ResourceException
 	 */
 	@NotNull
-	M loadModel(@NotNull String id) throws ResourceException;
+	M loadModelById(@NotNull String id) throws ResourceException;
 
 	/**
 	 * Reset this resource's state from the model with id id
@@ -29,7 +29,7 @@ public interface ReloadablePersistentResource<M> extends PersistentResource {
 	 * @param id
 	 * @throws ResourceException esp. if id != getID()
 	 */
-	void loadById(@NotNull String id) throws ResourceException;
+	void loadViaModelId(@NotNull String id) throws ResourceException;
 
 	/**
 	 * Reset this resource's state from the model
@@ -38,4 +38,19 @@ public interface ReloadablePersistentResource<M> extends PersistentResource {
 	 * @throws ResourceException esp. if getID() != model.getId()
 	 */
 	void loadFromModel(@NotNull M model) throws ResourceException;
+
+
+	/**
+	 *
+	 * @return the resource home
+	 */
+	@NotNull H getResourceHome();
+
+
+	/**
+	 * The resourceHome setter.  Must be called exactly once before initialize.
+	 *
+	 * @param resourceHomeParam resource home to be set
+	 */
+	void setResourceHome(@NotNull H resourceHomeParam);
 }

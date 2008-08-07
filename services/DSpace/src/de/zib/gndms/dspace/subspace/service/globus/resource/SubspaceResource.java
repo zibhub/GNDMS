@@ -1,5 +1,20 @@
 package de.zib.gndms.dspace.subspace.service.globus.resource;
 
+import de.zib.gndms.dspace.common.DSpaceTools;
+import de.zib.gndms.dspace.stubs.types.DSpaceReference;
+import de.zib.gndms.dspace.subspace.common.SubspaceConstants;
+import de.zib.gndms.dspace.subspace.stubs.SubspaceResourceProperties;
+import de.zib.gndms.infra.db.GNDMSystem;
+import de.zib.gndms.infra.db.ModelHandler;
+import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
+import de.zib.gndms.model.dspace.Subspace;
+import org.globus.wsrf.InvalidResourceKeyException;
+import org.globus.wsrf.ResourceException;
+import org.globus.wsrf.ResourceKey;
+import org.jetbrains.annotations.NotNull;
+import types.StorageSizeT;
+
+
 /**
  * The implementation of this SubspaceResource type.
  * 
@@ -7,231 +22,122 @@ package de.zib.gndms.dspace.subspace.service.globus.resource;
  * 
  */
 @SuppressWarnings({"FeatureEnvy"})
-public class SubspaceResource extends SubspaceResourceBase { /*
-	  implements SystemHolder {
+public class SubspaceResource extends SubspaceResourceBase
+	  implements ReloadablePersistentResource<Subspace, ExtSubspaceResourceHome> {
 
-	private SystemHolder sysH = new DefaultSystemHolder();
+	private ModelHandler<Subspace> mH;
+	private ExtSubspaceResourceHome resourceHome;
 
-	private ModelHandler<Subspace> mH = new ModelHandler<Subspace>(Subspace.class);
 
-	@Override
-	public void initialize(
-		  Object resourceBean, QName resourceElementQName, Object id) throws ResourceException {
-		super.initialize(resourceBean, resourceElementQName, id);    // Overridden method
-		
-	}
-
-	@Override  @NotNull
-	public StorageSizeT getAvailableStorageSize() {
-		final Subspace model;
-		try {
-			model = mH.loadModel(getSystem().currentEMG(), this);
-			StorageSizeT valueT = DSpaceTools.buildSizeT(model.getAvailableSize());
-			super.setAvailableStorageSize(valueT);
-			return valueT;
-		}
-		catch (ResourceException e) { logUnhandledAndThrow(e); }
-		throw new RuntimeException("unreachable");
-	}
+	// Overridden setters modify the model and by virtue of a database trigger set the
+	// resource properties
 
 	@Override
-	public void setAvailableStorageSize(@NotNull StorageSizeT valueT)
+	public void setDSpaceReference(final DSpaceReference dSpaceReference) throws ResourceException {
+		throw new UnsupportedOperationException("Cannot overwrite this read-only property");
+	}
+
+
+	@Override
+	public void setAvailableStorageSize(final StorageSizeT availableStorageSize)
 		  throws ResourceException {
-		try {
-			super.setAvailableStorageSize(valueT);
-			boolean flag = currentEMG(this).begin();
-			try {
-				Subspace model = mH.loadModel(currentEMG(this), this);
-				model.setAvailableSize(DSpaceTools.buildSize(valueT));
-				mH.storeModel(currentEMG(this), model);
-			}
-			catch (RuntimeException e) { currentEMG(this).rollback(flag, e); }
-			finally { currentEMG(this).commitAndClose(flag); }
-		}
-		catch (ResourceException r) { reload(); }
-	}
-
-	@Override @NotNull
-	public StorageSizeT getTotalStorageSize() {
-		final Subspace model;
-		try {
-			model = mH.loadModel(getSystem().currentEMG(), this);
-			StorageSizeT valueT = DSpaceTools.buildSizeT(model.getTotalSize());
-			super.setTotalStorageSize(valueT);
-			return valueT;
-		}
-		catch (ResourceException e) { logUnhandledAndThrow(e); }
-		throw new RuntimeException("unreachable");
-	}
-
-	@Override
-	public void setTotalStorageSize(@NotNull StorageSizeT valueT)
-		  throws ResourceException {
-		try {
-			super.setTotalStorageSize(valueT);
-			boolean flag = currentEMG(this).begin();
-			try {
-				Subspace model = mH.loadModel(currentEMG(this), this);
-				model.setTotalSize(DSpaceTools.buildSize(valueT));
-				mH.storeModel(currentEMG(this), model);
-			}
-			catch (RuntimeException e) { currentEMG(this).rollback(flag, e); }
-			finally { currentEMG(this).commitAndClose(flag); }
-		}
-		catch (ResourceException r) { reload(); }
-	}
-
-	/*
-	@Override @NotNull
-	public QName getSubspaceSpecifier() {
-		final Subspace model;
-		try {
-			model = mH.loadModel(getSystem().currentEMG(), this);
-			QName valueT = QName.valueOf(model.getMetaSubspace().getSpecifier());
-			super.setSubspaceSpecifier(valueT);
-			return valueT;
-		}
-		catch (ResourceException e) { logUnhandledAndThrow(e); }
-		throw new RuntimeException("unreachable");
-	}
-
-	@Override
-	public void setSubspaceSpecifier(@NotNull QName valueT)
-		  throws ResourceException {
-		try {
-			super.setSubspaceSpecifier(valueT);
-			boolean flag = currentEMG(this).begin();
-			try {
-				Subspace model = mH.loadModel(currentEMG(this), this);
-				// TODO: This is wrong! Very!
-				model.getMetaSubspace().setSpecifier(valueT.toString());
-				mH.storeModel(currentEMG(this), model);
-			}
-			catch (RuntimeException e) { currentEMG(this).rollback(flag, e); }
-			finally { currentEMG(this).commitAndClose(flag); }
-		}
-		catch (ResourceException r) { reload(); }
-	}
- */
-	/*
-	@SuppressWarnings({"ThrowableInstanceNeverThrown"})
-	@Override @NotNull
-	public DSpaceReference getDSpaceReference() {
-		final Subspace model;
-		try {
-			model = mH.loadModel(getSystem().currentEMG(), this);
-			final EndpointReferenceType eprType =
-				  getSystem().serviceEPRType("dspace", model.getDSpaceRef());
-			DSpaceReference valueT = new DSpaceReference(eprType);
-			super.setDSpaceReference(valueT);
-			return valueT;
-		}
-		catch (ResourceException e) { logUnhandledAndThrow(e); }
-		catch (URI.MalformedURIException e) { logUnhandledAndThrow(new ResourceException(e)); }
-		throw new RuntimeException("unreachable");
-	}
-
-	@Override
-	public void setDSpaceReference(@NotNull DSpaceReference valueT)
-		  throws ResourceException {
-		try {
-			super.setDSpaceReference(valueT);
-			boolean flag = currentEMG(this).begin();
-			try {
-				Subspace model = mH.loadModel(currentEMG(this), this);
-				VEPRef theVEPREF = getSystem().modelEPRT("dspace", valueT.getEndpointReference());
-				model.setDSpaceRef((DSpaceRef)theVEPREF);
-				mH.storeModel(currentEMG(this), model);
-			}
-			catch (RuntimeException e) { currentEMG(this).rollback(flag, e); }
-			finally { currentEMG(this).commitAndClose(flag); }
-		}
-		catch (ResourceException r) { reload(); }
-	}
-
-	@Override @NotNull
-	public Calendar getTerminationTime() {
-		final Subspace model;
-		try {
-			model = mH.loadModel(getSystem().currentEMG(), this);
-			Calendar valueT = model.getTerminationTime();
-			super.setTerminationTime(valueT);
-			return valueT;
-		}
-		catch (ResourceException e) { logUnhandledAndThrow(e); }
-		throw new RuntimeException("unreachable");
-	}
-
-	@Override
-	public void setTerminationTime(@NotNull Calendar valueT) {
-		try {
-			super.setTerminationTime(valueT);
-			boolean flag = currentEMG(this).begin();
-			try {
-				Subspace model = mH.loadModel(currentEMG(this), this);
-				model.setTerminationTime(valueT);
-				mH.storeModel(currentEMG(this), model);
-			}
-			catch (RuntimeException e) { currentEMG(this).rollback(flag, e); }
-			finally { currentEMG(this).commitAndClose(flag); }
-		}
-		catch (ResourceException r) { safeReload(); }
-	}
-
-	private void safeReload()  {
-		try {
-			load(getResourceKey());
-		}
-		catch (ResourceException e) {
-			logUnhandled(e);
-		}
-	}
-
-	public void reload() throws ResourceException {
-		load(getResourceKey());
-	}
-
-	public final void load(ResourceKey resourceKey) throws ResourceException {
-		final Subspace model = mH.loadModel(currentEMG(this), this);
-
-		// Recreate *all* resource properties
-		super.setAvailableStorageSize(DSpaceTools.buildSizeT(model.getAvailableSize()));
-		super.setTotalStorageSize(DSpaceTools.buildSizeT(model.getTotalSize()));
-		super.setTerminationTime(model.getTerminationTime());
-		// super.setSubspaceSpecifier(QName.valueOf(model.getMetaSubspace().getSpecifier()));
-	}
-
-
-	public final void store() throws ResourceException {
-		final Subspace model = new Subspace();
-
-		// build initial model; only called during instance creation
+		Subspace model = loadModelById(getID());
 		model.setAvailableSize(DSpaceTools.buildSize(super.getAvailableStorageSize()));
-		model.setTotalSize(DSpaceTools.buildSize(super.getTotalStorageSize()));
-		model.setTerminationTime(super.getTerminationTime());
-		// TODO This is wrong! Very!
-		// model.getMetaSubspace().setSpecifier(super.getSubspaceSpecifier().toString());
-		mH.storeModel(currentEMG(this), model);
+		mH.mergeModel(model);
 	}
 
-	public final void remove() throws ResourceException {
-		mH.removeModel(currentEMG(this), this);
+
+	@Override
+	public void setTotalStorageSize(final StorageSizeT totalStorageSize) throws ResourceException {
+		Subspace model = loadModelById(getID());
+		model.setTotalSize(DSpaceTools.buildSize(super.getTotalStorageSize()));
+		mH.mergeModel(model);
+	}
+
+
+
+	@NotNull
+	public Subspace loadModelById(@NotNull final String id) throws ResourceException {
+		return mH.loadModelById(id);
+	}
+
+
+	public void loadViaModelId(@NotNull final String id) throws ResourceException {
+		loadFromModel(loadModelById(id));
+	}
+
+
+	public synchronized void loadFromModel(@NotNull final Subspace model) throws ResourceException {
+		if (model.getId().equals(getID())) {
+			// set resource properties from model
+			super.setAvailableStorageSize(DSpaceTools.buildSizeT(model.getAvailableSize()));
+			super.setTotalStorageSize(DSpaceTools.buildSizeT(model.getTotalSize()));
+
+			try {
+				super.setDSpaceReference(DSpaceTools.dSpaceRefsAsReference(model.getDSpaceRef(), getSystem()));
+			}
+			catch (Exception e)
+				{ logger.error(e); }
+			super.setTerminationTime(model.getTerminationTime());
+		}
+		else
+			throw new ResourceException("Model id mismatch");
+	}
+
+
+	public void load(@NotNull final ResourceKey resourceKeyParam)
+		  throws ResourceException {
+		// only called once, during find!
+		@NotNull final String id = (String)resourceKeyParam.getValue();
+		Subspace model = loadModelById(id);
+		if (getResourceHome().getKeyTypeName().equals(resourceKeyParam.getName())) {
+			setResourceKey(resourceKeyParam);
+			initialize(new SubspaceResourceProperties(),
+			           SubspaceConstants.RESOURCE_PROPERTY_SET, id);
+			loadFromModel(model);
+		}
+		else
+			throw new InvalidResourceKeyException("Invalid resourceKey name");
+	}
+
+
+	public void store() throws ResourceException {
+		// done elsewhere
+	}
+
+
+	public void remove() throws ResourceException {
+		throw new UnsupportedOperationException(
+			  "Currently only possible when offline, via the database");
+	}
+
+
+	@NotNull
+	public final ExtSubspaceResourceHome getResourceHome() {
+		if (resourceHome == null)
+			throw new IllegalStateException("No resourceHome set");
+		return resourceHome;
+	}
+
+
+	public final void setResourceHome(
+		  @NotNull final ExtSubspaceResourceHome resourceHomeParam) {
+		if (resourceHome == null) {
+			mH = new ModelHandler<Subspace>(Subspace.class, resourceHomeParam);
+			resourceHome = resourceHomeParam;
+		}
+		else
+			throw new IllegalStateException("resourceHome already set");
 	}
 
 	@NotNull
-	public GNDMSystem getSystem() throws IllegalStateException {return sysH.getSystem();}
-
-	public void setSystem(@NotNull GNDMSystem system) throws IllegalStateException {
-		sysH.setSystem(system);
+	private GNDMSystem getSystem() throws ResourceException {
+		return getResourceHome().getSystem();
 	}
 
-	private void logUnhandledAndThrow(ResourceException e) {
-		logUnhandled(e);
-		throw new RuntimeException(e);
-	}
 
-	@SuppressWarnings({"MethodMayBeStatic"})
-	private void logUnhandled(ResourceException e) {
-		logger.error("Unhandled exception.  Resource state might have been corrupted. ", e);
-	} */
+	@Override @NotNull
+	public String getID() {
+		return (String) super.getID();    // Overridden method
+	}
 }
