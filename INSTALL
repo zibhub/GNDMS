@@ -102,7 +102,8 @@ If you ever want to delete all stubs, simply remove services/*/build/*
 SETUP DEPENDENCIES
 ------------------
                                                                                   
-When describing dependencies, I assume the following "project libraries"
+When describing the dependencies of a compilation unit, I assume the following 
+"project libraries"
 
 - openjpa: extra/tools/lib/geronimo* serp* openjpa*
 - gt4-current: everything in $GLOBUS_LOCATION/lib *but* none of the GNDMS 
@@ -112,8 +113,9 @@ When describing dependencies, I assume the following "project libraries"
 - jetty: extra/tools/lib/jetty*.jar
 - servlet-api: extra/tools/lib/servlet-api*.jar
 - cos: extra/tools/lib/cos-*.jar
-- groovy: extra/tools/lib/groovy*.jar
+- GROOVY: extra/tools/lib/groovy*.jar
   If you use IntelliJ, use the global library GROOVY instead.
+- SOURCES: The sources of the compilation unit
 
 - "servicename"-stubs: service/"ServiceName"/build/stubs-"ServiceName"/classes
                                           
@@ -130,7 +132,7 @@ DETAILED BUILD INSTRUCTIONS
   1) Compile the shared-model 
      Sources: model/src (resp. model/test-src)
      Output:  model/gndms-shared-model/production (resp. test)
-     Dependencies: annotations, GROOVY, SOURCE, commons, openjpa, gt4
+     Dependencies: annotations, SOURCE, commons, openjpa, gt4, GROOVY
      
      Make sure META-INF gets copied 
      from model/src to model/gndms-shared-model/production!
@@ -148,13 +150,10 @@ DETAILED BUILD INSTRUCTIONS
      In model/, run ant -f build-openjpa.xml enhance
      
 
-  4) jar model/gndms-shared-model/production to 
-     extra/lib/gndms-shared-model.jar
-     
+    This enhances the jpa classes and creates extra/lib/gndms-model.jar 
 
-  (In IntelliJ: Just configure Build/Build Jars... as described, add
-  build-openjpa.xml to the Ant-Build (right side) and configure the target
-  enhance to be run post compilation)
+  (In IntelliJ: add build-openjpa.xml to the Ant-Build (right side) and
+  configure the target enhance to be run post compilation)
 
   If you ever get weird errors during compilation or ant enhance, delete
   production/* and rebuild the whole project)
@@ -162,10 +161,12 @@ DETAILED BUILD INSTRUCTIONS
 - Compile the infra 
   Sources: infra/src
   Output: extra/lib/gndms-infra.jar
-  Dependencies: annotations, shared-model, SOURCES, apache-commons, 
-                servlet-api, cos, jetty,
-                db-derby,  openjpa, gt4-current
+  Dependencies: annotations, gt4-current, SOURCES, 
+                servlet-api, cos, openjpa, jetty,
+                db-derby,  shared-model, GROOVY
   Re-export: openjpa, groovy                
+
+  (In IntelliJ: Use Build/Build Jars.. to build the jar on Make Project)
 
 - Execute sync.sh in the projects' top level directory. This will create all
   necessary symlinks in the services' lib directories. Without doing this,
@@ -178,17 +179,18 @@ DETAILED BUILD INSTRUCTIONS
   and deployment first before doing so.)
 
 - Additionally, for IDE based development, you may wish to set up projects per
-  service. These should depend on all non-symlinks in service/ServiceName/lib,
-  gt4-current, infra, servicename-stubs and the shared-model project and
-  comile to service/ServiceName/out/production and
-  service/ServiceName/out/test/respectively.
+  service. These should depend on
 
-  Watch out for import/dependency order; annotations, per service stubs and
-  the shared-model as well as gndms-infra.jar should always go before service
-  sources.
+  annotations, servicename-stubs, shared-model, infra, SOURCES, all non-
+  symlinks in service/ServiceName/lib,
+  
+  compile to out/production (resp. out/test), and exclude the services' out, 
+  build, and lib directories from the project sources to reduce the size of 
+  the project index.
 
   This should be enought to compile and develop with your IDE; for deployment
   you still need to execute "ant createDeploymentGar" and "globus-deploy-gar"
+
 
 THINGS TO DO WHEN YOUR BUILD FAILS
 ----------------------------------
