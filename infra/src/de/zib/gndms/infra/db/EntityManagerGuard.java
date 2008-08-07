@@ -21,7 +21,7 @@ import java.util.Queue;
  * try {
  *      // 1) JPA database accesing commands
  *      // 2) Opt. Thunk registration
- *      emg.onCommitDo(new Runnable() {Ê
+ *      emg.onCommitDo(new Runnable() {
  *          public void run() {
  *              // code modifying state that is not under tx control *after* succesful commit
  *          }
