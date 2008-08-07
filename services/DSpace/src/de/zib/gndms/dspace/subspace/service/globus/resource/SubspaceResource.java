@@ -74,7 +74,9 @@ public class SubspaceResource extends SubspaceResourceBase
 			super.setTotalStorageSize(DSpaceTools.buildSizeT(model.getTotalSize()));
 
 			try {
-				super.setDSpaceReference(DSpaceTools.dSpaceRefsAsReference(model.getDSpaceRef(), getSystem()));
+				final DSpaceReference dSpaceReference =
+					  DSpaceTools.dSpaceRefsAsReference(model.getDSpaceRef(), getSystem());
+				super.setDSpaceReference(dSpaceReference);
 			}
 			catch (Exception e)
 				{ logger.error(e); }
