@@ -8,6 +8,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
+import javax.persistence.Query;
+
 
 /**
  * ThingAMagic.
@@ -37,11 +39,15 @@ public class ModelHandler<M> {
 	public M getSingleModel(@NotNull String queryName, ModelCreator<M> creator)
 		  throws ResourceException {
 		final GNDMSystem sys = holder.getSystem();
+		final String gridName = sys.getGridName();
 		final EntityManagerGuard emg = sys.currentEMG();
 
 		final boolean flag = emg.begin();
-		try
-			{ return (M) emg.getEM().createNamedQuery(queryName).getSingleResult();	}
+		try {
+			final Query query = emg.getEM().createNamedQuery(queryName);
+			query.setParameter("gridName", gridName);
+			return (M) query.getSingleResult();
+		}
 		catch (NoResultException e) {
 			if (creator == null)
 				throw emg.rollback(new InvalidResourceKeyException());

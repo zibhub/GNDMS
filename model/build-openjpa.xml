@@ -17,6 +17,8 @@
 
 <target name="enhance" description="Calls the openjpa enhancer ant task on all classed in gndms-shared-model/production">
 
+	<delete failonerror="false" file="../extra/lib/gndms-shared-model.jar" />
+
 	<openjpac directory="gndms-shared-model/production">
 		<config propertiesFile="src/META-INF/persistence.xml" />
 
@@ -33,6 +35,11 @@
 		</fileset>
 		
 	</openjpac>
+
+	<jar file="../extra/lib/gndms-shared-model.jar" basedir="gndms-shared-model/production">
+		<include name="**/*" />
+	</jar>
+
 </target>
 
 <target name="map" description="Calls the OpenJPA mapping tool to build the current schema">

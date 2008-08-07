@@ -12,7 +12,7 @@ abstract class GridEntity extends ModelEntity {
 	@Version
 	int version
 
-	@Column(name="grid", nullable=false, length=16, columnDefinition="CHAR", updatable=false)
+	@Column(name="gridName", nullable=false, length=16, columnDefinition="CHAR", updatable=false)
 	String gridName
 }
 

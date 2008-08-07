@@ -40,8 +40,8 @@ public class DSpaceResource extends DSpaceResourceBase
 	protected DSpaceResource(@NotNull ExtDSpaceResourceHome home) throws ResourceException {
 		super();
 		setResourceHome(home);
-		DSpace model = mH.getSingleModel("findDSpaceInstance", this);
-		logger.debug("Singleton found with id: " + model.getId());
+		DSpace model = mH.getSingleModel("findDSpaceInstances", this);
+		logger.debug("DSpace Singleton found with id: " + model.getId());
 		initialize(new DSpaceResourceProperties(), DSpaceConstants.RESOURCE_PROPERTY_SET, model);
 	}
 
@@ -49,7 +49,6 @@ public class DSpaceResource extends DSpaceResourceBase
 	@Override
 	public void initialize(
 		  Object resourceBean, QName resourceElementQName, Object modelObject) throws ResourceException {
-		logger.info("resource init");
 		DSpace model = (DSpace) modelObject;
 		super.initialize(resourceBean, resourceElementQName, model.getId());
 		loadFromModel(model);
@@ -79,7 +78,7 @@ public class DSpaceResource extends DSpaceResourceBase
 	}
 
 	public void loadFromModel(@NotNull DSpace model) throws ResourceException {
-		if (model.getId() == getID()) {
+		if (model.getId().equals(getID())) {
 			// currently nothing
 		}
 		else

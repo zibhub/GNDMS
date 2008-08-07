@@ -14,10 +14,11 @@ import org.jetbrains.annotations.NotNull
  * User: stepn Date: 01.08.2008 Time: 16:02:46
  */
 @NamedQueries([
-@NamedQuery(name="findDSpaceInstance", query="SELECT instance FROM DSpace instance"),
-@NamedQuery(name="listPublicSubspaces", query="SELECT subspace FROM Subspaces subspace WHERE subspace.isPublicSubspace() == true")
+@NamedQuery(name="findDSpaceInstances", query="SELECT instance FROM DSpaces instance WHERE instance.gridName = :gridName"),
+@NamedQuery(name="listPublicSubspaces", query="SELECT subspace FROM Subspaces subspace WHERE subspace.isPublicSubspace = true")
 ])
-@Entity(name="DSpace") @EntityListeners([LifecycleEventDispatcher.class]) 
+@Entity(name="DSpaces") @EntityListeners([LifecycleEventDispatcher.class])
+@UniqueConstraint(columnNames = ["gridName"])
 @Table(name="dspace", schema="dspace")
 class DSpace extends GridResource {
 
