@@ -34,8 +34,8 @@ public final class ExtSubspaceResourceHome extends SubspaceResourceHome {
 
 	@Override
 	public synchronized void initialize() throws Exception {
+		logger.info("Subspace home extension initializing");
 		super.initialize();    // Overridden method
-		logger.info("Extension class initializing");
 		holder.setSystem(ExtDSpaceResourceHome.getGridConfig().retrieveSystemReference());
 	}
 

@@ -1,9 +1,8 @@
 package de.zib.gndms.model.common
 
-import org.jetbrains.annotations.NotNull
-import javax.xml.namespace.QName
 import javax.persistence.Embeddable
-
+import javax.xml.namespace.QName
+import org.jetbrains.annotations.NotNull
 
 /**
  * VEPRefs for grid resources that use a SimpleResourceKey with a UUID string value

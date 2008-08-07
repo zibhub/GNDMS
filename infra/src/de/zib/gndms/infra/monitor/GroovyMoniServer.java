@@ -442,12 +442,16 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint {
 	 * @param props
 	 */
 	private void logProps(Map<Object, Object> props) {
-		Object pw = props.get("monitor.password");
-		props.remove("monitor.password");
-		if (shouldLog("reconfig"))
-			logger.debug("Reconfiguration of " + unitName + " monitor using: " + props.toString());
-		if (pw != null)
-			props.put("monitor.password", pw);
+		if (shouldLog("reconfig")) {
+			// Admittedly crazy way of doing thing but props may be read-only therefore we cant
+			// remove and reput
+			Properties maskedProps = new Properties();
+			for (Object key : props.keySet()) {
+				if (! "monitor.password".equals(key))
+					maskedProps.put(key, props.get(key));
+			}
+			logger.debug("Reconfiguration of " + unitName + " monitor using: " + maskedProps.toString());
+		}
 	}
 
 	private void setupNumbers(Map<Object, Object> props) {

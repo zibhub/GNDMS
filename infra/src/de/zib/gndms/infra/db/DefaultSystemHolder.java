@@ -27,4 +27,9 @@ public final class DefaultSystemHolder implements SystemHolder {
 		else
 			throw new IllegalStateException("System already set");
 	}
+
+	@NotNull
+	public EntityManagerGuard currentEMG() {
+		return getSystem().currentEMG();
+	}
 }

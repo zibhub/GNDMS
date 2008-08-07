@@ -1,8 +1,8 @@
-package de.zib.gndms.model.common;
+package de.zib.gndms.model.common
 
-import javax.persistence.Embeddable
 import de.zib.gndms.model.ModelObject
-import org.jetbrains.annotations.NotNull
+import javax.persistence.Embeddable
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Abstract superclass of "virtual" endpoint references.

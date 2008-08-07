@@ -16,6 +16,7 @@
 </taskdef>
 
 <target name="enhance" description="Calls the openjpa enhancer ant task on all classed in gndms-shared-model/production">
+
 	<openjpac directory="gndms-shared-model/production">
 		<config propertiesFile="src/META-INF/persistence.xml" />
 

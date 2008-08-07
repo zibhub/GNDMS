@@ -1,20 +1,13 @@
 package de.zib.gndms.model.common
 
-import javax.persistence.Id
-import javax.persistence.Column
 import de.zib.gndms.model.ModelEntity
-import javax.persistence.MappedSuperclass
-import javax.persistence.Version
-import javax.persistence.Temporal
-import javax.persistence.TemporalType
-import javax.persistence.UniqueConstraint
-
+import javax.persistence.*
 
 /**
  * Superclass of grid entities with a version field
  *
  **/
-@MappedSuperclass @UniqueConstraint(columnNames = ["grid"])
+@MappedSuperclass
 abstract class GridEntity extends ModelEntity {
 	@Version
 	int version

@@ -1,13 +1,9 @@
 package de.zib.gndms.model.dspace
 
 import de.zib.gndms.model.common.GridResource
-import javax.persistence.Entity
-import org.jetbrains.annotations.NotNull
-import javax.persistence.NamedQueries
-import javax.persistence.NamedQuery
-import javax.persistence.Table
-import javax.persistence.EntityListeners
 import de.zib.gndms.model.util.LifecycleEventDispatcher
+import javax.persistence.*
+import org.jetbrains.annotations.NotNull
 
 /**
  * Instances represent an installations' DSpace singleton resource on the database model side
@@ -18,7 +14,7 @@ import de.zib.gndms.model.util.LifecycleEventDispatcher
  * User: stepn Date: 01.08.2008 Time: 16:02:46
  */
 @NamedQueries([
-@NamedQuery(name="findDSpaceInstance", query="SELECT instance FROM DSpace instance LIMIT 1"),
+@NamedQuery(name="findDSpaceInstance", query="SELECT instance FROM DSpace instance"),
 @NamedQuery(name="listPublicSubspaces", query="SELECT subspace FROM Subspaces subspace WHERE subspace.isPublicSubspace() == true")
 ])
 @Entity(name="DSpace") @EntityListeners([LifecycleEventDispatcher.class]) 

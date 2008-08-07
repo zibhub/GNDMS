@@ -1,10 +1,9 @@
 package de.zib.gndms.model.common
 
-import javax.persistence.Entity
-import javax.persistence.Table
-import javax.persistence.UniqueConstraint
-import javax.persistence.Id
 import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.Id
+import javax.persistence.Table
 
 /**
  * A grid site maps from a unique id to a transportURL of the relevant container.

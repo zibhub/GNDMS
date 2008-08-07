@@ -2,14 +2,14 @@ package de.zib.gndms.dspace.service.globus.resource;
 
 import de.zib.gndms.dspace.service.DSpaceConfiguration;
 import de.zib.gndms.infra.GridConfig;
-import de.zib.gndms.infra.db.DefaultSystemHolder;
+import de.zib.gndms.infra.db.EntityManagerGuard;
 import de.zib.gndms.infra.db.GNDMSystem;
 import de.zib.gndms.infra.db.ServiceInfo;
 import de.zib.gndms.infra.db.SystemHolder;
 import org.apache.axis.message.addressing.AttributedURI;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.globus.wsrf.ResourceContext;
+import org.globus.wsrf.*;
 import org.globus.wsrf.utils.AddressingUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,29 +33,23 @@ public final class ExtDSpaceResourceHome  extends DSpaceResourceHome
 	  implements SystemHolder, ServiceInfo {
 
 	// logger can be an instance field since resource home classes are instantiated at most once
-	@NotNull
-	@SuppressWarnings({"FieldNameHidesFieldInSuperclass"})
+	@NotNull @SuppressWarnings({"FieldNameHidesFieldInSuperclass"})
 	private final Log logger = LogFactory.getLog(ExtDSpaceResourceHome.class);
 
+	// grid config for gndmsystem initialization
 	@SuppressWarnings({"StaticVariableOfConcreteClass"})
 	private static final GridConfig SHARED_CONFIG = new GridConfig() {
-		@Override
-		@NotNull
-		public String getGridJNDIEnvName() throws Exception {
-				return DSpaceConfiguration.getConfiguration().getGridJNDIEnv();
-		}
+		@Override @NotNull
+		public String getGridJNDIEnvName() throws Exception
+			{ return DSpaceConfiguration.getConfiguration().getGridJNDIEnv(); }
 
-		@Override
-		@NotNull
-		public String getGridName() throws Exception {
-				return DSpaceConfiguration.getConfiguration().getGridName();
-		}
+		@Override @NotNull
+		public String getGridName() throws Exception
+			{ return DSpaceConfiguration.getConfiguration().getGridName(); }
 
-		@Override
-		@NotNull
-		public String getGridPath() throws Exception {
-				return DSpaceConfiguration.getConfiguration().getGridPath();
-		}
+		@Override @NotNull
+		public String getGridPath() throws Exception
+			{ return DSpaceConfiguration.getConfiguration().getGridPath(); }
 
 	};
 
@@ -63,38 +57,95 @@ public final class ExtDSpaceResourceHome  extends DSpaceResourceHome
 		return SHARED_CONFIG;
 	}
 
-	@NotNull
-	private SystemHolder holder = new DefaultSystemHolder();
 
+
+	private boolean initialized;
+
+	// System: Set during initialization
+	@SuppressWarnings({"FieldAccessedSynchronizedAndUnsynchronized"})
+	@NotNull
+	private GNDMSystem system;
+
+	// Serbice Address: set during initialization
+	@SuppressWarnings({"FieldAccessedSynchronizedAndUnsynchronized"})
 	private AttributedURI serviceAddress;
 
 	@Override
-	public void initialize() throws Exception {
-		super.initialize();    // Overridden method
+	public synchronized void initialize() throws Exception {
+		if (! initialized) {
+			logger.info("DSpace home extension initializing");
+			try {
+				system = getGridConfig().retrieveSystemReference();
+				final ResourceContext context = ResourceContext.getResourceContext();
+				serviceAddress = AddressingUtils.createEndpointReference(context, null).getAddress();
+				initialized = true;
 
-		final ResourceContext context = ResourceContext.getResourceContext();
-		serviceAddress = AddressingUtils.createEndpointReference(context, null).getAddress();
-
-		logger.debug("Extension class initializing");
-		try {
-			holder.setSystem(getGridConfig().retrieveSystemReference());
+				try {
+					super.initialize();    // Overridden method
+				}
+				catch (RuntimeException e) {
+					initialized = false;
+					logger.error(e);
+					throw e;
+				}
+			}
+			catch (NamingException e) {
+				logger.error("Initialization failed");
+				throw new RuntimeException(e);
+			}
 		}
-		catch (NamingException e) {
-			logger.error("Initialization failed");
+	}
+
+	private void ensureInitialized() {
+		try
+			{ initialize();	}
+		catch (Exception e) {
+			logger.error("Unexpected initialization error", e);
 			throw new RuntimeException(e);
 		}
+	}
 
+	@Override
+	public Resource find(ResourceKey key) throws ResourceException {
+		PersistentResource resource = (PersistentResource) super.find(null);
+		if (key == null)
+			return resource;
+		else
+			if (resource.getID().equals(key.getValue()))
+				return resource;
+			else
+				throw new InvalidResourceKeyException("Invalid singleton key");
+	}
+
+	@Override
+	public Resource createSingleton() {
+		try
+			{ return new DSpaceResource(this);}
+		catch (ResourceException e) {
+			logger.error(e);
+			return null;
+		}
 	}
 
 	@NotNull
-	public GNDMSystem getSystem() throws IllegalStateException {return holder.getSystem();}
+	public GNDMSystem getSystem() throws IllegalStateException {
+		ensureInitialized();
+		return system;
+	}
 
-	public void setSystem(@NotNull GNDMSystem system) throws IllegalStateException {
-		holder.setSystem(system);
+	public void setSystem(@NotNull GNDMSystem newSystem) throws UnsupportedOperationException {
+		throw new UnsupportedOperationException("Cant overwrite system");
 	}
 
 	@NotNull
-	public final AttributedURI getServiceAddress() {
+	public EntityManagerGuard currentEMG() {
+		ensureInitialized();
+		return GNDMSystem.currentEMG(system);
+	}
+
+	@NotNull
+	public AttributedURI getServiceAddress() {
+		ensureInitialized();
 		return serviceAddress;
 	}
 
@@ -102,4 +153,5 @@ public final class ExtDSpaceResourceHome  extends DSpaceResourceHome
 	public final QName getResourceKeyTypeName() {
 		return getKeyTypeName();
 	}
+
 }

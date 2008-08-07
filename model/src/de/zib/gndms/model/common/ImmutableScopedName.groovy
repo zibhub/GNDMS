@@ -1,9 +1,8 @@
 package de.zib.gndms.model.common
 
-import javax.persistence.Embeddable
-import javax.persistence.Column
-import de.zib.gndms.model.ModelEntity
 import de.zib.gndms.model.ModelId
+import javax.persistence.Column
+import javax.persistence.Embeddable
 import javax.xml.namespace.QName
 
 /**

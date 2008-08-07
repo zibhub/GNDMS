@@ -1,10 +1,10 @@
 package de.zib.gndms.model.dspace
 
 import de.zib.gndms.model.common.SimpleRKRef
-import javax.xml.namespace.QName
-import javax.persistence.Transient
-import javax.persistence.Embeddable
 import javax.persistence.Column
+import javax.persistence.Embeddable
+import javax.persistence.Transient
+import javax.xml.namespace.QName
 
 /**
  * VEPRef to a Subspace instance

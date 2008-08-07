@@ -1,36 +1,14 @@
 package de.zib.gndms.dspace.subspace.service.globus.resource;
 
-import de.zib.gndms.dspace.common.DSpaceTools;
-import de.zib.gndms.dspace.stubs.types.DSpaceReference;
-import de.zib.gndms.infra.db.DefaultSystemHolder;
-import de.zib.gndms.infra.db.GNDMSystem;
-import de.zib.gndms.infra.db.ModelHandler;
-import de.zib.gndms.infra.db.SystemHolder;
-import static de.zib.gndms.infra.db.GNDMSystem.currentEMG;
-import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
-import de.zib.gndms.model.common.VEPRef;
-import de.zib.gndms.model.dspace.DSpaceRef;
-import de.zib.gndms.model.dspace.Subspace;
-import org.apache.axis.message.addressing.EndpointReferenceType;
-import org.apache.axis.types.URI;
-import org.globus.wsrf.ResourceException;
-import org.globus.wsrf.ResourceKey;
-import org.jetbrains.annotations.NotNull;
-import types.StorageSizeT;
-
-import javax.xml.namespace.QName;
-import java.util.Calendar;
-
-
-/** 
+/**
  * The implementation of this SubspaceResource type.
  * 
  * @created by Introduce Toolkit version 1.2
  * 
  */
 @SuppressWarnings({"FeatureEnvy"})
-public class SubspaceResource extends SubspaceResourceBase
-	  implements ReloadablePersistentResource, SystemHolder {
+public class SubspaceResource extends SubspaceResourceBase { /*
+	  implements SystemHolder {
 
 	private SystemHolder sysH = new DefaultSystemHolder();
 
@@ -135,6 +113,7 @@ public class SubspaceResource extends SubspaceResourceBase
 		catch (ResourceException r) { reload(); }
 	}
  */
+	/*
 	@SuppressWarnings({"ThrowableInstanceNeverThrown"})
 	@Override @NotNull
 	public DSpaceReference getDSpaceReference() {
@@ -254,5 +233,5 @@ public class SubspaceResource extends SubspaceResourceBase
 	@SuppressWarnings({"MethodMayBeStatic"})
 	private void logUnhandled(ResourceException e) {
 		logger.error("Unhandled exception.  Resource state might have been corrupted. ", e);
-	}
+	} */
 }

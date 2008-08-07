@@ -1,13 +1,13 @@
 package de.zib.gndms.model
 
-import org.jetbrains.annotations.Nullable
 import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 
 /**
  * Shared superclass of all model objects.
  * 
  * @author Stefan Plantikow<plantikow@zib.de>
- * @version $Id$ 
+ * @version $Id$
  *
  * User: stepn Date: 30.07.2008 Time: 17:03:24
  */

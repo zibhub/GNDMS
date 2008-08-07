@@ -17,4 +17,6 @@ public interface SystemHolder {
 
 	void setSystem(@NotNull GNDMSystem system) throws IllegalStateException;
 
+	@NotNull
+	EntityManagerGuard currentEMG();
 }

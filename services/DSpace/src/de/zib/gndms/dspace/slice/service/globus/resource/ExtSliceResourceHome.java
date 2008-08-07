@@ -26,7 +26,7 @@ public final class ExtSliceResourceHome extends SliceResourceHome {
 
 	@Override
 	public synchronized void initialize() throws Exception {
+		logger.info("Slice home extension initializing");
 		super.initialize();    // Overridden method
-		logger.info("Extension class initializing");
 	}
 }

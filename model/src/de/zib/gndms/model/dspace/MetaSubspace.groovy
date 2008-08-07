@@ -1,23 +1,8 @@
 package de.zib.gndms.model.dspace
 
 import de.zib.gndms.model.common.GridEntity
-import javax.persistence.Entity
-import javax.persistence.Table
-import javax.persistence.Column
-import javax.persistence.EmbeddedId
 import de.zib.gndms.model.common.ImmutableScopedName
-import javax.persistence.AttributeOverrides
-import javax.persistence.AttributeOverride
-import javax.persistence.OneToOne
-import javax.persistence.PrimaryKeyJoinColumn
-import javax.persistence.UniqueConstraint
-import javax.persistence.JoinColumn
-import javax.persistence.ManyToMany
-import javax.persistence.JoinTable
-import javax.persistence.FetchType
-import javax.persistence.CascadeType
-
-
+import javax.persistence.*
 
 /**
  * Instances reprent the logical role of a subspace in a GNDMS instance

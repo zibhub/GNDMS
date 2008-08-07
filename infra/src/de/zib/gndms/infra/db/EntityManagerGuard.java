@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.persistence.EntityManager;
-import javax.persistence.FlushModeType;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Queue;
@@ -29,10 +28,12 @@ import java.util.Queue;
  * }
  * // The catch is necessary to avoid commits in the presence of exceptions!
  * // Notice that you must never call rollback() in finally!
- * catch (RuntimeException re) { emg.rollback(wasNewTx, re); }
+ * catch (PossibleException re) { throw emg.rollback(re); }
+ * // if you use emg.rollback() *maybe* catch NestedRollbackExceptions from below
+ * catch (NestedRollbackException nre) { emg.passOn(flag, nre) }
  * finally {
  *      // thunks will be executed at the end of this call *if* this stackframe created
- *      // the active transaction (wasNewTx is true)
+ *      // the active transaction (wasNewTx is true) and not rollback occured
  *      // Notice that you must always call commit() in finally!
  *      emg.commitAndClose(wasNewTx);
  * }
@@ -77,7 +78,7 @@ public class EntityManagerGuard {
 	 */
 	public EntityManagerGuard(@NotNull EntityManager theEM) {
 		em = theEM;
-		em.setFlushMode(FlushModeType.COMMIT);
+		// em.setFlushMode(FlushModeType.COMMIT);
 		assertEMisOpen();
 	}
 
@@ -137,10 +138,13 @@ public class EntityManagerGuard {
 		getThunks().add(thunk);
 	}
 
-	public final void rollback(final boolean wasNewTx, @NotNull RuntimeException e) {
-		rollingBack = true;
-		throw e;
+	@SuppressWarnings({"ExceptionClassNameDoesntEndWithException"}) @NotNull
+	public final <E extends Exception> E rollback(@NotNull E e)  {
+		markForRollback();
+		return e;
 	}
+
+	public void markForRollback() {rollingBack = true;}
 
 	/**
 	 * *Signals* rollbacks of the EM's Tx if wasNewTx is true
@@ -148,12 +152,18 @@ public class EntityManagerGuard {
 	 * @param wasNewTx flag indicating whether this was the stack frame that called begin()
 	 * @throws NestedRollbackException if wasNewTx is false
 	 */
+	@NotNull
 	@SuppressWarnings({"ThrowableInstanceNeverThrown"})
-	public final void rollback(final boolean wasNexTx) {
-		rollback(wasNexTx, new NestedRollbackException());
+	public final NestedRollbackException rollback() {
+		return rollback(new NestedRollbackException());
 	}
 
 
+	@SuppressWarnings({"ExceptionClassNameDoesntEndWithException"})
+	public static <E extends Exception> void passOn(boolean flag, @NotNull E exception) throws E {
+		if (!flag)
+			throw exception;
+	}
 	/**
 	 * Commits the EM's Tx if wasNewTx is true and executes all outstanding thunks;
 	 * otherwise does nothing.
@@ -175,7 +185,8 @@ public class EntityManagerGuard {
 				couldCommitActiveTx(wasNewTx);
 		}
 		finally {
-			close();
+			if (wasNewTx)
+				close();
 		}
 	}
 

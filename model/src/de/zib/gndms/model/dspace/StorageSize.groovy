@@ -8,9 +8,9 @@
  */
 package de.zib.gndms.model.dspace
 
-import javax.persistence.Embeddable
-import javax.persistence.Column
 import de.zib.gndms.model.ModelObject
+import javax.persistence.Column
+import javax.persistence.Embeddable
 import org.jetbrains.annotations.NotNull
 
 @Embeddable

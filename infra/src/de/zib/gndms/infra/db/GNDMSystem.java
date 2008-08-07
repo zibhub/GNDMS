@@ -4,6 +4,7 @@ import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.monitor.GroovyBindingFactory;
 import de.zib.gndms.infra.monitor.GroovyMoniServer;
 import de.zib.gndms.model.common.VEPRef;
+import de.zib.gndms.model.dspace.DSpace;
 import de.zib.gndms.model.dspace.DSpaceRef;
 import de.zib.gndms.model.util.InstanceResolver;
 import groovy.lang.Binding;
@@ -14,11 +15,12 @@ import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.message.addressing.ReferencePropertiesType;
 import org.apache.axis.types.URI;
-import org.apache.log4j.Logger;
-import org.globus.wsrf.ResourceKey;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.globus.wsrf.impl.SimpleResourceKey;
 import org.globus.wsrf.jndi.Initializable;
 import org.globus.wsrf.utils.AddressingUtils;
+import org.globus.wsrf.ResourceException;
 import org.jetbrains.annotations.NotNull;
 
 import javax.naming.Context;
@@ -36,8 +38,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * This sets up the configuration and database storage area shared between
@@ -50,11 +50,12 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 @SuppressWarnings({"OverloadedMethodsWithSameNumberOfParameters", "NestedAssignment"})
 public final class GNDMSystem implements Initializable, SystemHolder, InstanceResolver<Object> {
-	private static final Lock factoryLock = new ReentrantLock();
-
 	private final UUIDGen uuidGen = UUIDGenFactory.getUUIDGen();
 
-	private final Logger logger = Logger.getLogger(GNDMSystem.class);
+	private final Log logger = createLogger();
+
+	@NotNull
+	private static Log createLogger() {return LogFactory.getLog(GNDMSystem.class);}
 
 
 	@NotNull
@@ -110,7 +111,7 @@ public final class GNDMSystem implements Initializable, SystemHolder, InstanceRe
 	                                        @NotNull GridConfig anySharedConfig)
 		  throws NamingException {
 		try {
-			final SysFactory theFactory = new SysFactory(anySharedConfig);
+			final SysFactory theFactory = new SysFactory(createLogger(), anySharedConfig);
 			sharedContext.bind(facadeName, theFactory);
 			return theFactory.getInstance();
 		}
@@ -126,7 +127,7 @@ public final class GNDMSystem implements Initializable, SystemHolder, InstanceRe
 		  @NotNull GridConfig anySharedConfig)
 		  throws NamingException {
 		try {
-			final SysFactory theFactory = new SysFactory(anySharedConfig);
+			final SysFactory theFactory = new SysFactory(createLogger(), anySharedConfig);
 			sharedContext.bind(facadeName, theFactory);
 			return theFactory.getInstance();
 		}
@@ -153,7 +154,7 @@ public final class GNDMSystem implements Initializable, SystemHolder, InstanceRe
 				  + "' (shared dir: '" + sharedDir.getPath() + "')");
 
 			createDirectories();
-			emf = createEMF(gridName);
+			emf = createEMF();
 			tryTxExecution();
 
 			setupShellService(gridName);
@@ -188,10 +189,10 @@ public final class GNDMSystem implements Initializable, SystemHolder, InstanceRe
 				  dbLogFile.getCanonicalPath());
 	}
 
-	@SuppressWarnings({"HardcodedFileSeparator"})
-	public EntityManagerFactory createEMF(String gridName) throws Exception {
-
-		Properties map = new Properties();
+	@NotNull
+	public EntityManagerFactory createEMF() throws Exception {
+		final String gridName = sharedConfig.getGridName();
+		final Properties map = new Properties();
 
 		map.put("openjpa.Id", gridName);
 		map.put("openjpa.ConnectionURL", "jdbc:derby:" + gridName+";create=true");
@@ -200,26 +201,40 @@ public final class GNDMSystem implements Initializable, SystemHolder, InstanceRe
 		return Persistence.createEntityManagerFactory(gridName, map);
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ResourceException {
 		GNDMSystem sys = new GNDMSystem(new GridConfig() {
+			@Override
 			@NotNull
 			public String getGridJNDIEnvName() throws Exception {
-						return null;
-					}
+				// safe to do here
+				return "";
+			}
 
+			@Override
 			@NotNull
 			public String getGridName() throws Exception {
-						return "c3grid";
+				return "c3grid";
+			}
 
-					}
-
+			@Override
 			@NotNull
 			public String getGridPath() throws Exception {
-						return "/opt/gt-current/etc/c3grid_shared/";
-					}
+				return System.getenv("GLOBUS_LOCATION") +  File.separator + "etc"
+					  + File.separator + getGridName() + "_shared" + File.separator;
+			}
 		});
 		sys.initialize();
 		sys.tryTxExecution();
+		ModelHandler<DSpace> mH = new ModelHandler<DSpace>(DSpace.class, sys);
+		mH.getSingleModel("findDSpaceInstance", new ModelCreator<DSpace>() {
+			@NotNull
+			public DSpace createInitialModel(@NotNull String id, @NotNull String system) {
+				DSpace model = new DSpace();
+				model.setId(id);
+				model.setGridName(system);
+				return model;
+			}
+		});
 
 	}
 
@@ -271,6 +286,7 @@ public final class GNDMSystem implements Initializable, SystemHolder, InstanceRe
 		return currentEMG().getEM();
 	}
 
+	@NotNull
 	private EntityManagerGuard setupNewThreadEMG() {
 		installUEH();
 		final EntityManagerGuard emg = new EntityManagerGuard(createNewEntityManager());
@@ -391,14 +407,14 @@ public final class GNDMSystem implements Initializable, SystemHolder, InstanceRe
 	}
 
 	@NotNull
-	public EndpointReferenceType serviceEPRType(@NotNull URI defAddr, @NotNull VEPRef dSpaceRef)
+	public static EndpointReferenceType serviceEPRType(@NotNull URI defAddr, @NotNull VEPRef dSpaceRef)
 		  throws URI.MalformedURIException {
 		if (dSpaceRef.getGridSiteId() != null)
 			throw new IllegalArgumentException("Non-local EPRTs currently unsupported");
 
 		try {
 			return AddressingUtils.createEndpointReference(
-				  defAddr.toString(), (ResourceKey) null);
+				  defAddr.toString(), null);
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
@@ -413,15 +429,14 @@ public final class GNDMSystem implements Initializable, SystemHolder, InstanceRe
 	}
 
 	@NotNull
-	public VEPRef modelEPRT(@NotNull QName keyTypeName, @NotNull EndpointReferenceType epr) {
+	public static VEPRef modelEPRT(@NotNull QName keyTypeName, @NotNull EndpointReferenceType epr) {
 		@NotNull ReferencePropertiesType props = epr.getProperties();
 		@NotNull MessageElement msgElem = props.get(keyTypeName);
 		SimpleResourceKey key = new SimpleResourceKey(keyTypeName, msgElem.getObjectValue());
 
-		VEPRef theVEPREF = new DSpaceRef();
 		// theVEPREF.setSite("");
 		// theVEPREF.setRk(key);
-		return theVEPREF;
+		return new DSpaceRef();
 	}
 
 	@NotNull
@@ -431,7 +446,7 @@ public final class GNDMSystem implements Initializable, SystemHolder, InstanceRe
 
 	@NotNull
 	public <T> T retrieveInstance(@NotNull Class<T> clazz, @NotNull String name) {
-		T instance = null;
+		T instance;
 		try { instance = getInstance(clazz, name); }
 		catch (IllegalStateException e) { instance = null; }
 		while (instance != null) {
@@ -447,39 +462,48 @@ public final class GNDMSystem implements Initializable, SystemHolder, InstanceRe
 		return instance;
 	}
 
+	public String getGridName() {
+		try {
+			return sharedConfig.getGridName();
+		}
+		catch (Exception e) {
+			// Dont know what to do here
+			throw new RuntimeException(e);
+		}
+	}
+
 	private static final class SysFactory {
+		private final Log logger;
+
 		private GNDMSystem instance;
-		private RuntimeException exception;
+		private RuntimeException cachedException;
 		private GridConfig sharedConfig;
 
-		SysFactory(GridConfig anySharedConfig) {
+		SysFactory(@NotNull Log theLogger, @NotNull GridConfig anySharedConfig) {
+			logger = theLogger;
 			sharedConfig = anySharedConfig;
 		}
 
-		private GNDMSystem getInstance() {
-			factoryLock.lock();
-			try {
-				if (exception != null)
-					throw exception;
-				if (instance == null) {
-					try {
-						GNDMSystem newInstance = new GNDMSystem(sharedConfig);
-						newInstance.initialize();
-						instance = newInstance;
-					}
-					catch (RuntimeException e) {
-						exception = e;
-					}
-					finally {
-						// not required after this point
-						sharedConfig = null;
-					}
+		private synchronized GNDMSystem getInstance() {
+			if (cachedException != null)
+				throw cachedException;
+			if (instance == null) {
+				try {
+					GNDMSystem newInstance = new GNDMSystem(sharedConfig);
+					newInstance.initialize();
+					try { logger.info(sharedConfig.getGridName() + " initialized"); }
+					catch (Exception e) { logger.warn(e); }
+					instance = newInstance;
 				}
-				return instance;
+				catch (RuntimeException e) {
+					cachedException = e;
+				}
+				finally {
+					// not required after this point
+					sharedConfig = null;
+				}
 			}
-			finally {
-				factoryLock.unlock();
-			}
+			return instance;
 		}
 	}
 

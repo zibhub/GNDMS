@@ -1,5 +1,6 @@
 package de.zib.gndms.model.util;
 
+import de.zib.gndms.model.common.GridEntity;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.PostPersist;
@@ -13,7 +14,7 @@ import java.util.Map;
  * Typical usage: Before starting the database, call createDispatcher(gridName) and
  * register handlers-per-class.  Using entites must subclass GridEntity.
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
  *
  *          User: stepn Date: 04.08.2008 Time: 12:07:02
@@ -79,11 +80,10 @@ public final class LifecycleEventDispatcher {
 
 	@PostPersist
 	public static void jpaPostPersist(@NotNull Object persisted) {
-		// TODO
-		// if (persisted instanceof GridEntity)
-		//	lookupDispatcher(((GridEntity)persisted).getGridName()).gridPostPersist(persisted);
-		// else
-		//	throw new IllegalArgumentException("Dont know how to handle persisted instance");
+		if (persisted instanceof GridEntity)
+			lookupDispatcher(((GridEntity)persisted).getGridName()).gridPostPersist(persisted);
+		else
+			throw new IllegalArgumentException("Dont know how to handle persisted instance");
 	}
 
 

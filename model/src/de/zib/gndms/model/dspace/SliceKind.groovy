@@ -1,20 +1,8 @@
 package de.zib.gndms.model.dspace
 
-import javax.persistence.Entity
 import de.zib.gndms.model.ModelEntity
-import javax.persistence.Id
-import javax.persistence.Column
-import javax.persistence.Enumerated
-import javax.persistence.EnumType
-import javax.persistence.Inheritance
-import javax.persistence.Table
-import javax.persistence.DiscriminatorType
-import javax.persistence.DiscriminatorColumn
-import javax.persistence.ManyToMany
-import javax.persistence.FetchType
-import javax.persistence.CascadeType
 import de.zib.gndms.model.dspace.types.SliceKindMode
-import javax.persistence.DiscriminatorValue
+import javax.persistence.*
 
 /**
  * SliceKinds are identified by a kindURI

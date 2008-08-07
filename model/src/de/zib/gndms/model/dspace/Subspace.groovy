@@ -8,20 +8,9 @@
  */
 package de.zib.gndms.model.dspace
 
-import javax.persistence.Entity
-import javax.persistence.Table
-import javax.persistence.Column
-import javax.persistence.Embedded
-import javax.persistence.AttributeOverrides
-import javax.persistence.AttributeOverride
 import de.zib.gndms.model.common.TimedGridResource
-import javax.persistence.FetchType
-import javax.persistence.OneToOne
-import javax.persistence.CascadeType
-import javax.persistence.PrimaryKeyJoinColumns
-import javax.persistence.PrimaryKeyJoinColumn
-import javax.persistence.EntityListeners
 import de.zib.gndms.model.util.LifecycleEventDispatcher
+import javax.persistence.*
 
 /**
  *
