@@ -1,8 +1,8 @@
 package de.zib.gndms.infra.db
 /**
- * ThingAMagic.
+ * EMTools
  * 
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$ 
  *
  * User: stepn Date: 07.08.2008 Time: 18:09:27
@@ -13,14 +13,11 @@ import javax.persistence.EntityManager
 import javax.persistence.EntityManagerFactory
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource
 import de.zib.gndms.infra.service.GNDMServiceHome;
-import de.zib.gndms.infra.model.ModelHandler;
+import javax.persistence.EntityTransaction;
 
 
 /**
  * Helper class for dealing with EntityManagers.
- *
- * Adds all txXXXX-methdos to EntityManager.metaClass and apropriate txRun-Methods to
- * (EntityManagerFactory, EMFactoryProvider, ReloadablePersistentResource).metaClass
  *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
@@ -30,10 +27,17 @@ import de.zib.gndms.infra.model.ModelHandler;
 public final class EMTools {
 	private static final boolean initialized;
 
-	// For unknown reasons, this cannot be done inside static {} 
-	def synchronized static void initialize() {
+	/**
+	 *
+	 * Adds all txXXXX-methdos to EntityManager.metaClass and apropriate txRun-Methods to
+     * (EntityManagerFactory, EMFactoryProvider, ReloadablePersistentResource).metaClass
+	 *
+	 * For unknown reasons, this cannot be done inside static {}
+ 	 */
+	def synchronized static boolean initialize() {
 		if (initialized)
-			return;
+			return true;
+
 		initialized = true;
 
 		ExpandoMetaClass.enableGlobally();
@@ -53,39 +57,43 @@ public final class EMTools {
 			  { Closure block -> return EMTools.txRun((EntityManager)delegate, block) }
 
 		EntityManagerFactory.metaClass.txRun <<
-			  { Closure block -> return EMTools.txRun((EntityManagerFactory)delegate, block) }
+			  { EntityManager em, Closure block ->
+				  return EMTools.txRun((EntityManagerFactory)delegate, em, block) }
 
 		EMFactoryProvider.metaClass.txRun =
-			  { Closure block -> return EMTools.txRun((EMFactoryProvider)delegate, block) }
+			  { EntityManager em, Closure block ->
+				  return EMTools.txRun((EMFactoryProvider)delegate, em, block) }
 
 		ReloadablePersistentResource.metaClass.txRun =
-			  { Closure block ->
+			  { EntityManager em, Closure block ->
 				  // home implements EMFactoryProvider
 				  GNDMServiceHome home = ((ReloadablePersistentResource) delegate).getResourceHome()
-				  return EMTools.txRun(home, block)
+				  return EMTools.txRun(home, em, block)
 			  }
+
+		return true;
 	}
 
 
 	def private EMTools() { throw new UnsupportedOperationException("Don't"); }
 
 
-	def public static void txBegin(@NotNull final EntityManager em) {
+	def public static void txBegin(final @NotNull EntityManager em) {
 		em.getTransaction().begin()
 	}
 
 
-	def public static void txRollback(@NotNull final EntityManager em) {
+	def public static void txRollback(final @NotNull EntityManager em) {
 		em.getTransaction().rollback()
 	}
 
 
-	def public static void txCommit(@NotNull final EntityManager em) {
+	def public static void txCommit(final @NotNull EntityManager em) {
 		em.getTransaction().commit()
 	}
 
 
-	def public static boolean txIsActive(@NotNull final EntityManager em) {
+	def public static boolean txIsActive(final @NotNull EntityManager em) {
 		em.getTransaction().isActive()
 	}
 
@@ -98,56 +106,62 @@ public final class EMTools {
 	 * If a new EntityManager was created by txRun, it is finally closed before returning
 	 * the result of block.
 	 *
+	 * @param EntityManager em the entity manager to be used
+	 * @param closeEM wether em should be closed finally
+	 * @param block the Closure to be executed
 	 */
-	def public static <T> T txRun(final EntityManager em, @NotNull final Closure block) {
-		if (em) {
-			try {
-				txBegin(em)
-				Object result = block(em)
-				txCommit(em)
-				return (T) result
+	def public static <T> T txRun(final @NotNull EntityManager em, boolean closeEM,
+	                              final @NotNull Closure block) {
+		final EntityTransaction tx = em.getTransaction();
+		final boolean isNewTx = ! tx.isActive();
+
+		try {
+			final Object result;
+			if (isNewTx) {
+				tx.begin();
+				result = block(em)
+				tx.commit()
 			}
-			catch (TxSafeRuntimeException re) {
-				throw re.getCause()
-			}
-			catch (RuntimeException re) {
-				if (txIsActive(em))
-					txRollback(em)
-				throw re
-			}
-			finally {
-				if (em.isOpen())
-					em.close()
-			}
+			else
+				result = block(em)
+			return (T) result
 		}
+		catch (TxSafeRuntimeException re) {
+			throw re.getCause()
+		}
+		catch (RuntimeException re) {
+			if (tx.isActive())
+				tx.rollback()
+			throw re
+		}
+		finally {
+			if (closeEM && em.isOpen())
+				em.close()
+		}
+	}
+
+
+	/**
+	 * Either uses em or that is null obtains a new entity manager and calls
+	 *
+	 * @see #txRun(EntityManager, boolean, Closure)
+	 */
+	def public static <T> T txRun(final @NotNull EntityManagerFactory emf, final EntityManager em,
+	                              final @NotNull Closure block) {
+		if (em == null)
+			return txRun(emf.createEntityManager(), true, block)
 		else
-			try {
-				block(em)
-			}
-			catch (TxSafeRuntimeException re) {
-				throw re.getCause()
-			}
+			return txRun(em, false, block)
 	}
 
 
 	/**
-	 * Obtains an EntityManager if possible and calls:
+	 * Either uses em or that is null obtains a new entity manager and calls
 	 *
-	 * @see #txRun(EntityManager, Closure)
+	 * @see #txRun(EntityManager, boolean, Closure)
 	 */
-	def public static <T> T txRun(final EntityManagerFactory emf, @NotNull final Closure block) {
-		EntityManager em = emf == null ? null : emf.createEntityManager()
-		return txRun(em, block)
-	}
-
-
-	/**
-	 * Obtains an EntityManager if possible and calls:
-	 *
-	 * @see #txRun(EntityManager, Closure)
-	 */
-	def public static <T> T txRun(final EMFactoryProvider emfh, @NotNull final Closure block) {
-		EntityManagerFactory factory = emfh == null ? null : emfh.getEntityManagerFactory()
-		return txRun(factory, block)
+	def public static <T> T txRun(final @NotNull EMFactoryProvider emfh, final EntityManager em,
+	                              final @NotNull Closure block) {
+		return txRun(emfh.getEntityManagerFactory(), em, block)
 	}
 }

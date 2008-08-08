@@ -10,9 +10,12 @@ import java.util.Map;
 
 
 /**
- * EntityManagerFactory that cannot be closed nor allows a modification of the parameter map.
+ * Delegating EntityManagerFactory that cannot be closed nor allows a modification of
+ * the parameter map.
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * Used by GNDMSystem to protect its EntityManagerFactory.
+ * 
+ * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
  *
  *          User: stepn Date: 08.08.2008 Time: 11:21:21
@@ -24,14 +27,14 @@ public final class RestrictedEMFactory implements EntityManagerFactory {
 
 
 	@SuppressWarnings({ "unchecked" })
-	public RestrictedEMFactory(@NotNull final EntityManagerFactory factoryParam,
+	public RestrictedEMFactory(final @NotNull EntityManagerFactory factoryParam,
 	                                      final Map mapParam) {
 		factory = factoryParam;
 		paramMap = mapParam == null ? null : unmodifiableMap(mapParam);
 	}
 
 
-	public RestrictedEMFactory(@NotNull final EntityManagerFactory factoryParam) {
+	public RestrictedEMFactory(final @NotNull EntityManagerFactory factoryParam) {
 		this(factoryParam, null);
 	}
 

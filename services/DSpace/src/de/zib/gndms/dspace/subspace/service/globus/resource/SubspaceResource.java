@@ -43,7 +43,7 @@ public class SubspaceResource extends SubspaceResourceBase
 		  throws ResourceException {
 		Subspace model = loadModelById(getID());
 		model.setAvailableSize(DSpaceTools.buildSize(super.getAvailableStorageSize()));
-		mH.mergeModel(model);
+		mH.mergeModel(null, model);
 	}
 
 
@@ -51,23 +51,23 @@ public class SubspaceResource extends SubspaceResourceBase
 	public void setTotalStorageSize(final StorageSizeT totalStorageSize) throws ResourceException {
 		Subspace model = loadModelById(getID());
 		model.setTotalSize(DSpaceTools.buildSize(super.getTotalStorageSize()));
-		mH.mergeModel(model);
+		mH.mergeModel(null, model);
 	}
 
 
 
 	@NotNull
-	public Subspace loadModelById(@NotNull final String id) throws ResourceException {
-		return mH.loadModelById(id);
+	public Subspace loadModelById(final @NotNull String id) throws ResourceException {
+		return mH.loadModelById(null, id);
 	}
 
 
-	public void loadViaModelId(@NotNull final String id) throws ResourceException {
+	public void loadViaModelId(final @NotNull String id) throws ResourceException {
 		loadFromModel(loadModelById(id));
 	}
 
 
-	public synchronized void loadFromModel(@NotNull final Subspace model) throws ResourceException {
+	public synchronized void loadFromModel(final @NotNull Subspace model) throws ResourceException {
 		if (model.getId().equals(getID())) {
 			// set resource properties from model
 			super.setAvailableStorageSize(DSpaceTools.buildSizeT(model.getAvailableSize()));
@@ -87,10 +87,10 @@ public class SubspaceResource extends SubspaceResourceBase
 	}
 
 
-	public void load(@NotNull final ResourceKey resourceKeyParam)
+	public void load(final @NotNull ResourceKey resourceKeyParam)
 		  throws ResourceException {
 		// only called once, during find!
-		@NotNull final String id = (String)resourceKeyParam.getValue();
+		final @NotNull String id = (String)resourceKeyParam.getValue();
 		Subspace model = loadModelById(id);
 		if (getResourceHome().getKeyTypeName().equals(resourceKeyParam.getName())) {
 			setResourceKey(resourceKeyParam);
@@ -123,7 +123,7 @@ public class SubspaceResource extends SubspaceResourceBase
 
 
 	public final void setResourceHome(
-		  @NotNull final ExtSubspaceResourceHome resourceHomeParam) {
+		  final @NotNull ExtSubspaceResourceHome resourceHomeParam) {
 		if (resourceHome == null) {
 			mH = new ModelHandler<Subspace, ExtSubspaceResourceHome, SubspaceResource>
 				  (Subspace.class, resourceHomeParam);

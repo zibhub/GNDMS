@@ -17,7 +17,7 @@ public class TxSafeRuntimeException extends RuntimeException {
 	private static final long serialVersionUID = 5446757105425846044L;
 
 
-	public TxSafeRuntimeException(@NotNull final Throwable cause) {
+	public TxSafeRuntimeException(final @NotNull Throwable cause) {
 		super(cause);
 	}
 }

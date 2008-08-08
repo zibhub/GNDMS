@@ -47,7 +47,7 @@ public final class GNDMServiceHomeMockup implements GNDMServiceHome {
 	}
 
 
-	public void setSystem(@NotNull final GNDMSystem system) throws IllegalStateException {
+	public void setSystem(final @NotNull GNDMSystem system) throws IllegalStateException {
 		throw new IllegalStateException("Cant't overwrite system");
 	}
 }

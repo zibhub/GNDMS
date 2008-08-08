@@ -4,15 +4,10 @@ import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.db.EMFactoryProvider;
 import de.zib.gndms.infra.db.EMTools;
 import de.zib.gndms.infra.db.RestrictedEMFactory;
-import de.zib.gndms.infra.model.ModelCreator;
-import de.zib.gndms.infra.model.ModelHandler;
 import de.zib.gndms.infra.monitor.GroovyBindingFactory;
 import de.zib.gndms.infra.monitor.GroovyMoniServer;
-import de.zib.gndms.infra.service.GNDMServiceHome;
-import de.zib.gndms.infra.service.GNDMServiceHomeMockup;
 import de.zib.gndms.infra.service.ServiceInfo;
 import de.zib.gndms.model.common.VEPRef;
-import de.zib.gndms.model.dspace.DSpace;
 import de.zib.gndms.model.dspace.DSpaceRef;
 import de.zib.gndms.model.util.InstanceResolver;
 import groovy.lang.Binding;
@@ -25,7 +20,6 @@ import org.apache.axis.message.addressing.ReferencePropertiesType;
 import org.apache.axis.types.URI;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.impl.SimpleResourceKey;
 import org.globus.wsrf.jndi.Initializable;
 import org.globus.wsrf.utils.AddressingUtils;
@@ -163,7 +157,6 @@ public final class GNDMSystem
 			EMTools.initialize();
 			tryTxExecution();
 
-			setupShellService(gridName);
 		}
 		catch (Exception e) {
 			logger.error("Initialization failed", e);
@@ -207,46 +200,6 @@ public final class GNDMSystem
 		return new RestrictedEMFactory(createEntityManagerFactory(gridName, map));
 	}
 
-	public static void main(String[] args) throws ResourceException {
-		GNDMSystem sys = new GNDMSystem(new GridConfig() {
-			@Override
-			@NotNull
-			public String getGridJNDIEnvName() throws Exception {
-				// safe to do here
-				return "";
-			}
-
-			@Override
-			@NotNull
-			public String getGridName() throws Exception {
-				return "c3grid";
-			}
-
-			@Override
-			@NotNull
-			public String getGridPath() throws Exception {
-				return System.getenv("GLOBUS_LOCATION") +  File.separator + "etc"
-					  + File.separator + getGridName() + "_shared" + File.separator;
-			}
-		});
-		sys.initialize();
-		sys.tryTxExecution();
-		final GNDMServiceHome home = new GNDMServiceHomeMockup(sys);
-		ModelHandler mH = new ModelHandler(DSpace.class, home);
-		DSpace model = (DSpace) mH.getSingleModel("findDSpaceInstances", new ModelCreator<DSpace>() {
-			@NotNull
-			public DSpace createInitialModel(@NotNull String id, @NotNull String system) {
-				DSpace model = new DSpace();
-				model.setId(id);
-				model.setGridName(system);
-				return model;
-			}
-		});
-		model.getId();
-		System.out.println("foo");
-	}
-
-	@SuppressWarnings({"EmptyTryBlock"})
 	private void tryTxExecution() {
 		final EntityManager em = emf.createEntityManager();
 		try {
@@ -259,8 +212,10 @@ public final class GNDMSystem
 			{ em.close(); }
 	}
 
-	private void setupShellService(String gridName) throws Exception {
-		groovyMonitor = new GroovyMoniServer(gridName,  monitorConfig, new GNDMSBindingFactory());
+	@SuppressWarnings({ "MethodOnlyUsedFromInnerClass" })
+	private void setupShellService() throws Exception {
+		groovyMonitor = new GroovyMoniServer(getGridName(),
+		                                     monitorConfig, new GNDMSBindingFactory());
 		groovyMonitor.startConfigRefreshThread(true);
 	}
 
@@ -443,8 +398,14 @@ public final class GNDMSystem
 				try {
 					GNDMSystem newInstance = new GNDMSystem(sharedConfig);
 					newInstance.initialize();
+					try {
+						newInstance.setupShellService();
+					}
+					catch (Exception e) {
+						throw new RuntimeException(e);
+					}
 					try { logger.info(sharedConfig.getGridName() + " initialized"); }
-					catch (Exception e) { logger.warn(e); }
+					catch (Exception e) { logger.error(e); }
 					instance = newInstance;
 				}
 				catch (RuntimeException e) {
@@ -462,8 +423,8 @@ public final class GNDMSystem
 	private final class GNDMSBindingFactory implements GroovyBindingFactory {
 		@NotNull
 		public Binding createBinding(
-			  @NotNull final GroovyMoniServer moniServer,
-		      @NotNull final Principal principal, @NotNull final String args) {
+			  final @NotNull GroovyMoniServer moniServer,
+		      final @NotNull Principal principal, final @NotNull String args) {
 			final Binding binding = new Binding();
 			for (Map.Entry<String, Object> entry : instances.entrySet())
 				binding.setProperty(entry.getKey(), entry.getValue());
@@ -485,8 +446,8 @@ public final class GNDMSystem
 		}
 
 
-		public void destroyBinding(@NotNull final GroovyMoniServer moniServer,
-		                           @NotNull final Binding binding) {
+		public void destroyBinding(final @NotNull GroovyMoniServer moniServer,
+		                           final @NotNull Binding binding) {
 			// intended
 		}
 	}

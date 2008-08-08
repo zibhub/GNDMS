@@ -61,7 +61,7 @@ public class ServletRuntimeException extends RuntimeException {
 	 *
 	 * @param response
 	 * @throws IOException
-	 */	public void sendToClient(@NotNull final HttpServletResponse response)
+	 */	public void sendToClient(final @NotNull HttpServletResponse response)
 		  throws IOException {
 		String msg = getMessage();
 		if (msg == null)

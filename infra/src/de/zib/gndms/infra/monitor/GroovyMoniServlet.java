@@ -148,7 +148,7 @@ public class GroovyMoniServlet extends HttpServlet {
 				throw notAcceptable("Zero-length token");
 
 			@NotNull HttpSession session = getSessionOrFail(servletRequest);
-			@NotNull final GroovyMonitor monitor =
+			final @NotNull GroovyMonitor monitor =
 				  lookupMonitorOrFail(servletRequest.getUserPrincipal(), session, token);
 
 			monitor.evalParts(servletRequest, 

@@ -49,7 +49,7 @@ public class DSpaceResource extends DSpaceResourceBase
 		final String id;
 
 		if (resourceKeyParam == null) {
-			model = mH.getSingleModel(QUERY_INSTANCES, this);
+			model = mH.getSingleModel(null, QUERY_INSTANCES, this);
 			id = model.getId();
 			logger.debug("DSpace Singleton found with id: " + id);
 		}
@@ -70,7 +70,7 @@ public class DSpaceResource extends DSpaceResourceBase
 
 	@NotNull
 	public DSpace loadModelById(@NotNull String id) throws ResourceException {
-		return mH.loadModelById(id);
+		return mH.loadModelById(null, id);
 	}
 
 	public void loadFromModel(@NotNull DSpace model) throws ResourceException {
