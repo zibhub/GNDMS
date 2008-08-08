@@ -4,8 +4,8 @@ import de.zib.gndms.dspace.common.DSpaceTools;
 import de.zib.gndms.dspace.stubs.types.DSpaceReference;
 import de.zib.gndms.dspace.subspace.common.SubspaceConstants;
 import de.zib.gndms.dspace.subspace.stubs.SubspaceResourceProperties;
-import de.zib.gndms.infra.db.GNDMSystem;
-import de.zib.gndms.infra.db.ModelHandler;
+import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.infra.model.ModelHandler;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.model.dspace.Subspace;
 import org.globus.wsrf.InvalidResourceKeyException;
@@ -25,7 +25,7 @@ import types.StorageSizeT;
 public class SubspaceResource extends SubspaceResourceBase
 	  implements ReloadablePersistentResource<Subspace, ExtSubspaceResourceHome> {
 
-	private ModelHandler<Subspace> mH;
+	private ModelHandler<Subspace, ExtSubspaceResourceHome, SubspaceResource> mH;
 	private ExtSubspaceResourceHome resourceHome;
 
 
@@ -125,7 +125,8 @@ public class SubspaceResource extends SubspaceResourceBase
 	public final void setResourceHome(
 		  @NotNull final ExtSubspaceResourceHome resourceHomeParam) {
 		if (resourceHome == null) {
-			mH = new ModelHandler<Subspace>(Subspace.class, resourceHomeParam);
+			mH = new ModelHandler<Subspace, ExtSubspaceResourceHome, SubspaceResource>
+				  (Subspace.class, resourceHomeParam);
 			resourceHome = resourceHomeParam;
 		}
 		else

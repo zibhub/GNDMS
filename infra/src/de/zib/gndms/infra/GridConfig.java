@@ -1,6 +1,6 @@
 package de.zib.gndms.infra;
 
-import de.zib.gndms.infra.db.GNDMSystem;
+import de.zib.gndms.infra.system.GNDMSystem;
 import org.jetbrains.annotations.NotNull;
 
 import javax.naming.Context;

@@ -1,8 +1,16 @@
-package de.zib.gndms.infra.db;
+package de.zib.gndms.infra.system;
 
 import de.zib.gndms.infra.GridConfig;
+import de.zib.gndms.infra.db.EMFactoryProvider;
+import de.zib.gndms.infra.db.EMTools;
+import de.zib.gndms.infra.db.RestrictedEMFactory;
+import de.zib.gndms.infra.model.ModelCreator;
+import de.zib.gndms.infra.model.ModelHandler;
 import de.zib.gndms.infra.monitor.GroovyBindingFactory;
 import de.zib.gndms.infra.monitor.GroovyMoniServer;
+import de.zib.gndms.infra.service.GNDMServiceHome;
+import de.zib.gndms.infra.service.GNDMServiceHomeMockup;
+import de.zib.gndms.infra.service.ServiceInfo;
 import de.zib.gndms.model.common.VEPRef;
 import de.zib.gndms.model.dspace.DSpace;
 import de.zib.gndms.model.dspace.DSpaceRef;
@@ -17,10 +25,10 @@ import org.apache.axis.message.addressing.ReferencePropertiesType;
 import org.apache.axis.types.URI;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.impl.SimpleResourceKey;
 import org.globus.wsrf.jndi.Initializable;
 import org.globus.wsrf.utils.AddressingUtils;
-import org.globus.wsrf.ResourceException;
 import org.jetbrains.annotations.NotNull;
 
 import javax.naming.Context;
@@ -29,12 +37,11 @@ import javax.naming.NameAlreadyBoundException;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import static javax.persistence.Persistence.createEntityManagerFactory;
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -49,7 +56,8 @@ import java.util.Properties;
  *          User: stepn Date: 17.06.2008 Time: 23:09:00
  */
 @SuppressWarnings({"OverloadedMethodsWithSameNumberOfParameters", "NestedAssignment"})
-public final class GNDMSystem implements Initializable, SystemHolder, InstanceResolver<Object> {
+public final class GNDMSystem
+	  implements Initializable, SystemHolder, InstanceResolver<Object>, EMFactoryProvider {
 	private final UUIDGen uuidGen = UUIDGenFactory.getUUIDGen();
 
 	private final Log logger = createLogger();
@@ -84,9 +92,6 @@ public final class GNDMSystem implements Initializable, SystemHolder, InstanceRe
 
 	@NotNull
 	private GroovyMoniServer groovyMonitor;
-
-	@NotNull
-	private final ThreadLocal<EntityManagerGuard> emgs = new ThreadLocal<EntityManagerGuard>();
 
 	private static final int INITIAL_CAPACITY = 32;
 	private static final int INSTANCE_RETRIEVAL_INTERVAL = 250;
@@ -139,7 +144,7 @@ public final class GNDMSystem implements Initializable, SystemHolder, InstanceRe
 	private GNDMSystem(@NotNull GridConfig anySharedConfig)  {
 		sharedConfig = anySharedConfig;
 		instances = new HashMap<String, Object>(INITIAL_CAPACITY);
-		addInstance("gndms", this);
+		addInstance("sys", this);
 		// initialization intentionally deferred to initialize
 	}
 
@@ -155,6 +160,7 @@ public final class GNDMSystem implements Initializable, SystemHolder, InstanceRe
 
 			createDirectories();
 			emf = createEMF();
+			EMTools.initialize();
 			tryTxExecution();
 
 			setupShellService(gridName);
@@ -198,7 +204,7 @@ public final class GNDMSystem implements Initializable, SystemHolder, InstanceRe
 		map.put("openjpa.ConnectionURL", "jdbc:derby:" + gridName+";create=true");
 		logger.info("Opening JPA Store: " + map.toString());
 
-		return Persistence.createEntityManagerFactory(gridName, map);
+		return new RestrictedEMFactory(createEntityManagerFactory(gridName, map));
 	}
 
 	public static void main(String[] args) throws ResourceException {
@@ -225,8 +231,9 @@ public final class GNDMSystem implements Initializable, SystemHolder, InstanceRe
 		});
 		sys.initialize();
 		sys.tryTxExecution();
-		ModelHandler<DSpace> mH = new ModelHandler<DSpace>(DSpace.class, sys);
-		mH.getSingleModel("findDSpaceInstances", new ModelCreator<DSpace>() {
+		final GNDMServiceHome home = new GNDMServiceHomeMockup(sys);
+		ModelHandler mH = new ModelHandler(DSpace.class, home);
+		DSpace model = (DSpace) mH.getSingleModel("findDSpaceInstances", new ModelCreator<DSpace>() {
 			@NotNull
 			public DSpace createInitialModel(@NotNull String id, @NotNull String system) {
 				DSpace model = new DSpace();
@@ -235,72 +242,22 @@ public final class GNDMSystem implements Initializable, SystemHolder, InstanceRe
 				return model;
 			}
 		});
-
+		model.getId();
+		System.out.println("foo");
 	}
 
 	@SuppressWarnings({"EmptyTryBlock"})
 	private void tryTxExecution() {
-		EntityManagerGuard emg;
-		emg = currentEMG();
-		boolean flag = emg.begin();
+		final EntityManager em = emf.createEntityManager();
 		try {
-			// intended
+			em.getTransaction().begin();
+			em.getTransaction().commit();
 		}
-		finally {
-			emg.commitAndClose(flag);
-		}
+		catch (RuntimeException re)
+			{ em.getTransaction().rollback(); }
+		finally
+			{ em.close(); }
 	}
-
-	private EntityManager createNewEntityManager() {
-		final EntityManager em;
-		em = emf.createEntityManager();
-		return em;
-	}
-
-	/**
-	 * Either retrieves the current or creates a new entity manager guard for a newly opened
-	 * entity manager and ensures a proper uncaught exception handler is set up that
-	 * dissociates the current guard from its thread in the case an uncaught exception is
-	 * thrown by this thread.
-	 *
-	 * @see de.zib.gndms.infra.db.EntityManagerGuard
-	 *
-	 * @return the entity manager guard associated with this thread
-	 */
-	@NotNull
-	public EntityManagerGuard currentEMG() {
-		final EntityManagerGuard oldEMG = emgs.get();
-		if (oldEMG != null) {
-			if (oldEMG.getEM().isOpen())
-				return oldEMG;
-			else {
-				logger.error("Closed EMG encountered where not allowed and fixed");
-				emgs.remove();
-			}
-		}
-		return setupNewThreadEMG();
-	}
-
-	@NotNull
-	public final EntityManager currentEM() {
-		return currentEMG().getEM();
-	}
-
-	@NotNull
-	private EntityManagerGuard setupNewThreadEMG() {
-		installUEH();
-		final EntityManagerGuard emg = new EntityManagerGuard(createNewEntityManager());
-		emg.setEMThreadLocal(emgs);
-		return emg;
-	}
-
-	private void installUEH() {
-		final Thread thread = Thread.currentThread();
-		Thread.UncaughtExceptionHandler ueh = thread.getUncaughtExceptionHandler();
-		if (ueh == null || !(ueh instanceof SystemUEH))
-			thread.setUncaughtExceptionHandler(new SystemUEH(ueh));
-	}
-
 
 	private void setupShellService(String gridName) throws Exception {
 		groovyMonitor = new GroovyMoniServer(gridName,  monitorConfig, new GNDMSBindingFactory());
@@ -375,11 +332,6 @@ public final class GNDMSystem implements Initializable, SystemHolder, InstanceRe
 	}
 
 	@NotNull
-	public EntityManagerFactory getEMF() {
-		return emf;
-	}
-
-	@NotNull
 	public GroovyMoniServer getMonitor() {
 		return groovyMonitor;
 	}
@@ -392,13 +344,6 @@ public final class GNDMSystem implements Initializable, SystemHolder, InstanceRe
 
 	public void setSystem(@NotNull GNDMSystem system) throws IllegalStateException {
 		throw new IllegalStateException("Cant set this system");
-	}
-	public static EntityManager currentEM(@NotNull SystemHolder holder) {
-			return holder.getSystem().currentEM();
-	}
-
-	public static EntityManagerGuard currentEMG(@NotNull SystemHolder holder) {
-			return holder.getSystem().currentEMG();
 	}
 
 	@NotNull
@@ -472,6 +417,13 @@ public final class GNDMSystem implements Initializable, SystemHolder, InstanceRe
 		}
 	}
 
+
+	@NotNull
+	public EntityManagerFactory getEntityManagerFactory() {
+		return emf;
+	}
+
+
 	private static final class SysFactory {
 		private final Log logger;
 
@@ -508,32 +460,13 @@ public final class GNDMSystem implements Initializable, SystemHolder, InstanceRe
 	}
 
 	private final class GNDMSBindingFactory implements GroovyBindingFactory {
-		private static final int BINDING_MAP_INITIAL_CAPACITY = 32;
-
-		private final class BindingState {
-			private final EntityManagerGuard emg = new EntityManagerGuard(createNewEntityManager());
-
-			public void destroy() {
-				if (emg != null)
-					if (! emg.getEM().isOpen())
-						emg.close();
-			}
-		}
-
-		private final Map<Binding, BindingState> stateMap =
-			  Collections.synchronizedMap(new HashMap<Binding, BindingState>(
-				    BINDING_MAP_INITIAL_CAPACITY));
-
 		@NotNull
-			public Binding createBinding(
-			  @NotNull GroovyMoniServer moniServer, @NotNull Principal principal,
-			  String args) {
+		public Binding createBinding(
+			  @NotNull final GroovyMoniServer moniServer,
+		      @NotNull final Principal principal, @NotNull final String args) {
 			final Binding binding = new Binding();
 			for (Map.Entry<String, Object> entry : instances.entrySet())
 				binding.setProperty(entry.getKey(), entry.getValue());
-			BindingState state = new BindingState();
-			binding.setProperty("emg", state.emg);
-			stateMap.put(binding, state);
 			return binding;
 		}
 
@@ -548,45 +481,13 @@ public final class GNDMSystem implements Initializable, SystemHolder, InstanceRe
 				builder.append(key);
 				builder.append(';');
 			}
-			builder.append("Object.metaClass.emg=emg;");
 			shell.evaluate(builder.toString());
 		}
 
-		public void destroyBinding(@NotNull GroovyMoniServer moniServer,
-		                           @NotNull Binding binding) {
-			BindingState state = stateMap.remove(binding);
-			if (state != null)
-			   state.destroy();
-		 }
-	}
 
-	/**
-	 * Ensures proper removal of the currentEMG() in the presence of uncaught exceptions
-	 */
-	private final class SystemUEH implements Thread.UncaughtExceptionHandler {
-		private final Thread.UncaughtExceptionHandler ueh;
-
-		SystemUEH(final Thread.UncaughtExceptionHandler theOldUEH) {
-			ueh = theOldUEH;
-		}
-
-		public void uncaughtException(Thread t, Throwable e) {
-			emgs.remove();
-			if (ueh == null)
-				t.setUncaughtExceptionHandler(null);
-			else {
-				// This is a bit fragile and may break if the defaultUEH is exchanged
-				// Cant be done much better; this appears to be one of java's dark corners...
-				if (ueh instanceof ThreadGroup)
-					t.setUncaughtExceptionHandler(null);
-				else {
-					if (ueh == Thread.getDefaultUncaughtExceptionHandler())
-						t.setUncaughtExceptionHandler(null);
-					else
-						t.setUncaughtExceptionHandler(ueh);
-				}
-			}
-			t.getUncaughtExceptionHandler().uncaughtException(t, e);
+		public void destroyBinding(@NotNull final GroovyMoniServer moniServer,
+		                           @NotNull final Binding binding) {
+			// intended
 		}
 	}
 

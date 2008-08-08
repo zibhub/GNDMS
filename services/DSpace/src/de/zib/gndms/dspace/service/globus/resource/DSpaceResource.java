@@ -2,9 +2,9 @@ package de.zib.gndms.dspace.service.globus.resource;
 
 import de.zib.gndms.dspace.common.DSpaceConstants;
 import de.zib.gndms.dspace.stubs.DSpaceResourceProperties;
-import de.zib.gndms.infra.db.GNDMSystem;
-import de.zib.gndms.infra.db.ModelCreator;
-import de.zib.gndms.infra.db.ModelHandler;
+import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.infra.model.ModelCreator;
+import de.zib.gndms.infra.model.ModelHandler;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.model.dspace.DSpace;
 import org.apache.commons.logging.Log;
@@ -31,7 +31,7 @@ public class DSpaceResource extends DSpaceResourceBase
 
 	// Set during initialize or construction
 	private ExtDSpaceResourceHome resourceHome;
-	private ModelHandler<DSpace> mH;
+	private ModelHandler<DSpace, ExtDSpaceResourceHome, DSpaceResource> mH;
 
 
 	@NotNull
@@ -98,7 +98,8 @@ public class DSpaceResource extends DSpaceResourceBase
 	public final void setResourceHome(@NotNull ExtDSpaceResourceHome resourceHomeParam)
 	{
 		if (resourceHome == null) {
-			mH = new ModelHandler<DSpace>(DSpace.class, resourceHomeParam);
+			mH = new ModelHandler<DSpace, ExtDSpaceResourceHome, DSpaceResource>
+				  (DSpace.class, resourceHomeParam);
 			resourceHome = resourceHomeParam;
 		}
 		else

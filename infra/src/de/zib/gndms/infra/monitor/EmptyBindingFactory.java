@@ -17,7 +17,7 @@ import java.security.Principal;
 public final class EmptyBindingFactory implements GroovyBindingFactory {
 	@NotNull
 	public Binding createBinding(
-		  @NotNull GroovyMoniServer groovyMoniServer, @NotNull Principal principal, String s) {
+		  @NotNull GroovyMoniServer groovyMoniServer, @NotNull Principal principal, @NotNull String s) {
 		return new Binding();
 	}
 

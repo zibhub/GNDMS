@@ -31,7 +31,7 @@ public class Slice extends GridResource{
 
 	@ManyToOne( targetEntity=Subspace.class, fetch=FetchType.LAZY, cascade=[CascadeType.REFRESH,CascadeType.PERSIST] )
 	@JoinColumn( name="subspace_id", nullable=false, referencedColumnName="id", updatable=false )
-    // TODO Add join key constrain
+
     private Subspace owner
 
 

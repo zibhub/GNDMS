@@ -29,7 +29,7 @@ public interface GroovyBindingFactory {
 	@NotNull
 	Binding createBinding(
 		  @NotNull GroovyMoniServer moniServer,
-		  @NotNull Principal principal, String args);
+		  @NotNull Principal principal, @NotNull String args);
 
 	/**
 	 * Optionally called after createBinding to setup an associated groovy shell.

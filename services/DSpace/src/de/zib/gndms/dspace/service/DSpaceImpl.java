@@ -1,7 +1,7 @@
 package de.zib.gndms.dspace.service;
 
 import de.zib.gndms.dspace.service.globus.resource.ExtDSpaceResourceHome;
-import de.zib.gndms.infra.db.GNDMSystem;
+import de.zib.gndms.infra.system.GNDMSystem;
 import org.apache.log4j.Logger;
 
 import java.rmi.RemoteException;

@@ -4,7 +4,7 @@ import de.zib.gndms.model.dspace.StorageSize;
 import de.zib.gndms.model.dspace.DSpaceRef;
 import de.zib.gndms.dspace.stubs.types.DSpaceReference;
 import de.zib.gndms.dspace.service.globus.resource.ExtDSpaceResourceHome;
-import de.zib.gndms.infra.db.GNDMSystem;
+import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.GNDMSTools;
 import org.apache.axis.types.PositiveInteger;
 import org.jetbrains.annotations.NotNull;

@@ -1,17 +1,20 @@
 package de.zib.gndms.dspace.subspace.service.globus.resource;
 
 import de.zib.gndms.dspace.service.globus.resource.ExtDSpaceResourceHome;
-import de.zib.gndms.infra.db.EntityManagerGuard;
-import de.zib.gndms.infra.db.GNDMSystem;
-import de.zib.gndms.infra.db.SystemHolder;
+import de.zib.gndms.infra.service.GNDMServiceHome;
+import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
+import de.zib.gndms.infra.GNDMSTools;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.axis.message.addressing.AttributedURI;
 import org.globus.wsrf.Resource;
 import org.globus.wsrf.ResourceException;
 import org.jetbrains.annotations.NotNull;
 
 import javax.naming.NamingException;
+import javax.persistence.EntityManagerFactory;
+import javax.xml.namespace.QName;
 
 
 /**
@@ -27,24 +30,32 @@ import javax.naming.NamingException;
  *
  *          User: stepn Date: 16.07.2008 Time: 12:35:27
  */
-public final class ExtSubspaceResourceHome extends SubspaceResourceHome implements SystemHolder {
+public final class ExtSubspaceResourceHome extends SubspaceResourceHome
+	  implements GNDMServiceHome {
 
 	// logger can be an instance field since resource home classes are instantiated at most once
 	@NotNull 
 	@SuppressWarnings({"FieldNameHidesFieldInSuperclass"})
 	private final Log logger = LogFactory.getLog(ExtSubspaceResourceHome.class);
 
-	@SuppressWarnings({ "FieldAccessedSynchronizedAndUnsynchronized" })
-	private SystemHolder holder;
-
 	private boolean initialized;
+
+	// System: Set during initialization
+	@SuppressWarnings({"FieldAccessedSynchronizedAndUnsynchronized"})
+	@NotNull
+	private GNDMSystem system;
+
+	// Serbice Address: set during initialization
+	@SuppressWarnings({"FieldAccessedSynchronizedAndUnsynchronized"})
+	private AttributedURI serviceAddress;
 
 	@Override
 	public synchronized void initialize() throws Exception {
 		if (!initialized) {
 			try {
 				logger.info("Subspace home extension initializing");
-				holder = ExtDSpaceResourceHome.getGridConfig().retrieveSystemReference();
+				system = ExtDSpaceResourceHome.getGridConfig().retrieveSystemReference();
+				serviceAddress = GNDMSTools.getServiceAddressFromContext();
 				initialized = true;
 
 				try {
@@ -63,7 +74,16 @@ public final class ExtSubspaceResourceHome extends SubspaceResourceHome implemen
 		}
 	}
 
-	@SuppressWarnings({ "unchecked" })
+	private void ensureInitialized() {
+		try
+			{ initialize();	}
+		catch (Exception e) {
+			logger.error("Unexpected initialization error", e);
+			throw new RuntimeException(e);
+		}
+	}
+
+	@SuppressWarnings({ "unchecked", "RawUseOfParameterizedType" })
 	@Override
 	protected Resource createNewInstance() throws ResourceException {
 		final Resource instance = super.createNewInstance();
@@ -72,17 +92,29 @@ public final class ExtSubspaceResourceHome extends SubspaceResourceHome implemen
 	}
 
 	@NotNull
-	public GNDMSystem getSystem() throws IllegalStateException {
-		return holder.getSystem();
+	public AttributedURI getServiceAddress() {
+		ensureInitialized();
+		return serviceAddress;
 	}
 
-	public void setSystem(@NotNull GNDMSystem system) throws IllegalStateException {
-		holder.setSystem(system);
+	@NotNull
+	public final QName getResourceKeyTypeName() {
+		return getKeyTypeName();
+	}
+
+	@NotNull
+	public GNDMSystem getSystem() throws IllegalStateException {
+		ensureInitialized();
+		return system;
+	}
+
+	public void setSystem(@NotNull GNDMSystem systemParam) throws IllegalStateException {
+		throw new UnsupportedOperationException("Cant overwrite system");
 	}
 
 
 	@NotNull
-	public EntityManagerGuard currentEMG() {
-		return holder.currentEMG();
+	public EntityManagerFactory getEntityManagerFactory() {
+		return getSystem().getEntityManagerFactory();
 	}
 }

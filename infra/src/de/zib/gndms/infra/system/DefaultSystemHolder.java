@@ -1,18 +1,23 @@
-package de.zib.gndms.infra.db;
+package de.zib.gndms.infra.system;
 
+import de.zib.gndms.infra.db.EMFactoryProvider;
 import org.jetbrains.annotations.NotNull;
 
+import javax.persistence.EntityManagerFactory;
+
+
 /**
- * ThingAMagic.
+ * Default implementation of a system holder
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @see SystemHolder
+ *
+ * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
  *
  *          User: stepn Date: 25.07.2008 Time: 13:07:12
  */
-public final class DefaultSystemHolder implements SystemHolder {
+public final class DefaultSystemHolder implements SystemHolder, EMFactoryProvider {
 	private GNDMSystem system;
-
 
 	@NotNull
 	public synchronized GNDMSystem getSystem() throws IllegalStateException {
@@ -29,7 +34,7 @@ public final class DefaultSystemHolder implements SystemHolder {
 	}
 
 	@NotNull
-	public EntityManagerGuard currentEMG() {
-		return getSystem().currentEMG();
+	public EntityManagerFactory getEntityManagerFactory() {
+		return getSystem().getEntityManagerFactory();
 	}
 }

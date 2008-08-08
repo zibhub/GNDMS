@@ -1,8 +1,10 @@
 package de.zib.gndms.infra.wsrf;
 
+import de.zib.gndms.infra.service.GNDMServiceHome;
 import org.globus.wsrf.PersistentResource;
 import org.globus.wsrf.ResourceException;
 import org.jetbrains.annotations.NotNull;
+
 
 /**
  * Additional methods required by GNDMS PersistentResources
@@ -12,7 +14,8 @@ import org.jetbrains.annotations.NotNull;
  *
  *          User: stepn Date: 28.07.2008 Time: 11:07:52
  */
-public interface ReloadablePersistentResource<M, H> extends PersistentResource {
+public interface ReloadablePersistentResource<M, H extends GNDMServiceHome>
+	  extends PersistentResource {
 	/**
 	 * Fetch model from database by id without touching the resource object state
 	 *

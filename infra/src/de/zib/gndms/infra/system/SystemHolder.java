@@ -1,9 +1,10 @@
-package de.zib.gndms.infra.db;
+package de.zib.gndms.infra.system;
 
 import org.jetbrains.annotations.NotNull;
 
+
 /**
- * A simple box that holds a GNDMSystem instance.
+ * A simple box that holds a GNDMSystem instance
  *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
@@ -16,7 +17,4 @@ public interface SystemHolder {
 	GNDMSystem getSystem() throws IllegalStateException;
 
 	void setSystem(@NotNull GNDMSystem system) throws IllegalStateException;
-
-	@NotNull
-	EntityManagerGuard currentEMG();
 }
