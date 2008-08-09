@@ -81,7 +81,7 @@ public final class LifecycleEventDispatcher {
 	@PostPersist
 	public static void jpaPostPersist(@NotNull Object persisted) {
 		if (persisted instanceof GridEntity)
-			lookupDispatcher(((GridEntity)persisted).getGridName()).gridPostPersist(persisted);
+			lookupDispatcher(((GridEntity)persisted).getSystemId()).gridPostPersist(persisted);
 		else
 			throw new IllegalArgumentException("Dont know how to handle persisted instance");
 	}

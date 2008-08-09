@@ -2,9 +2,8 @@ package de.zib.gndms.dspace.service.globus.resource;
 
 import de.zib.gndms.dspace.common.DSpaceConstants;
 import de.zib.gndms.dspace.stubs.DSpaceResourceProperties;
+import de.zib.gndms.infra.model.SingletonGridResourceModelHandler;
 import de.zib.gndms.infra.system.GNDMSystem;
-import de.zib.gndms.infra.model.ModelCreator;
-import de.zib.gndms.infra.model.ModelHandler;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.model.dspace.DSpace;
 import org.apache.commons.logging.Log;
@@ -12,8 +11,8 @@ import org.apache.commons.logging.LogFactory;
 import org.globus.wsrf.InvalidResourceKeyException;
 import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.ResourceKey;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 
 /**
@@ -23,7 +22,7 @@ import org.jetbrains.annotations.NonNls;
  * 
  */
 public class DSpaceResource extends DSpaceResourceBase
-	  implements ReloadablePersistentResource<DSpace, ExtDSpaceResourceHome>, ModelCreator<DSpace> {
+	  implements ReloadablePersistentResource<DSpace, ExtDSpaceResourceHome> {
 	@NotNull @NonNls public static final String QUERY_INSTANCES = "findDSpaceInstances";
 
 	@SuppressWarnings({"FieldNameHidesFieldInSuperclass"})
@@ -31,16 +30,7 @@ public class DSpaceResource extends DSpaceResourceBase
 
 	// Set during initialize or construction
 	private ExtDSpaceResourceHome resourceHome;
-	private ModelHandler<DSpace, ExtDSpaceResourceHome, DSpaceResource> mH;
-
-
-	@NotNull
-	public DSpace createInitialModel(@NotNull String id, @NotNull String gridName) {
-		final DSpace model = new DSpace();
-		model.setId(id);
-		model.setGridName(gridName);
-		return model;
-	}
+	private SingletonGridResourceModelHandler<DSpace, ExtDSpaceResourceHome, DSpaceResource> mH;
 
 
 	public void load(final ResourceKey resourceKeyParam) throws ResourceException {
@@ -49,7 +39,7 @@ public class DSpaceResource extends DSpaceResourceBase
 		final String id;
 
 		if (resourceKeyParam == null) {
-			model = mH.getSingleModel(null, QUERY_INSTANCES, this);
+			model = mH.getSingleModel(null, QUERY_INSTANCES, null);
 			id = model.getId();
 			logger.debug("DSpace Singleton found with id: " + id);
 		}
@@ -70,7 +60,7 @@ public class DSpaceResource extends DSpaceResourceBase
 
 	@NotNull
 	public DSpace loadModelById(@NotNull String id) throws ResourceException {
-		return mH.loadModelById(null, id);
+		return (DSpace) mH.loadModelById(null, id);
 	}
 
 	public void loadFromModel(@NotNull DSpace model) throws ResourceException {
@@ -98,7 +88,7 @@ public class DSpaceResource extends DSpaceResourceBase
 	public final void setResourceHome(@NotNull ExtDSpaceResourceHome resourceHomeParam)
 	{
 		if (resourceHome == null) {
-			mH = new ModelHandler<DSpace, ExtDSpaceResourceHome, DSpaceResource>
+			mH = new SingletonGridResourceModelHandler<DSpace, ExtDSpaceResourceHome, DSpaceResource>
 				  (DSpace.class, resourceHomeParam);
 			resourceHome = resourceHomeParam;
 		}
@@ -114,5 +104,10 @@ public class DSpaceResource extends DSpaceResourceBase
 	@Override
 	public String getID() {
 		return (String) super.getID();    // Overridden method
-	}	
+	}
+
+
+	public void initializeModel(final @NotNull DSpace model) {
+		// intended
+	}
 }

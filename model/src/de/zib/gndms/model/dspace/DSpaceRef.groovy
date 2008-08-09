@@ -5,6 +5,10 @@ import javax.persistence.Column
 import javax.persistence.Embeddable
 import javax.persistence.Transient
 import javax.xml.namespace.QName
+import de.zib.gndms.model.common.GridSiteId
+import javax.persistence.ManyToOne
+import de.zib.gndms.model.common.GridSite
+import javax.persistence.Embedded
 
 /**
  * VEPRef to a DSpace instance
@@ -20,18 +24,17 @@ class DSpaceRef extends SimpleRKRef {
 		new QName("http://dspace.gndms.zib.de/DSpace", "DSpaceKey")
 	private static final List<String> RESOURCE_NAMES = ["DSpace"].asImmutable()
 
-	private String gridSiteId;
+	private GridSiteId gridSiteId;
 	private String resourceKeyValue;
 
 	@Transient
 	def public QName getResourceKeyName() { RESOURCE_KEY_NAME }
-
 	@Transient
 	def public List<String> getResourceNames() { RESOURCE_NAMES }
 
-	@Column(name="site_id", nullable=true, updatable=false)
-	def public String getGridSiteId() { gridSiteId }
-	def public void setGridSiteId(final String newSiteId) { gridSiteId = newSiteId }
+	@Embedded
+	def public GridSiteId getGridSiteId() { gridSiteId }
+	def public void setGridSiteId(final GridSiteId newSiteId) { gridSiteId = newSiteId }
 
 	@Column(name="key_val", nullable=false, updatable=false, columnDefinition="CHAR", length=36)
 	def public String getResourceKeyValue() { resourceKeyValue }

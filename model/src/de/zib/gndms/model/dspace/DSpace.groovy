@@ -4,6 +4,7 @@ import de.zib.gndms.model.common.GridResource
 import de.zib.gndms.model.util.LifecycleEventDispatcher
 import javax.persistence.*
 import org.jetbrains.annotations.NotNull
+import de.zib.gndms.model.common.SingletonGridResource
 
 /**
  * Instances represent an installations' DSpace singleton resource on the database model side
@@ -18,9 +19,8 @@ import org.jetbrains.annotations.NotNull
 @NamedQuery(name="listPublicSubspaces", query="SELECT subspace FROM Subspaces subspace WHERE subspace.isPublicSubspace = true")
 ])
 @Entity(name="DSpaces") @EntityListeners([LifecycleEventDispatcher.class])
-@UniqueConstraint(columnNames = ["gridName"])
 @Table(name="dspace", schema="dspace")
-class DSpace extends GridResource {
+class DSpace extends SingletonGridResource {
 
 	def public @NotNull DSpaceRef createRef() {
 		DSpaceRef ref = new DSpaceRef()

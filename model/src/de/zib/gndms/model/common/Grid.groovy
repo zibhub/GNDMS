@@ -12,8 +12,8 @@ abstract class GridEntity extends ModelEntity {
 	@Version
 	int version
 
-	@Column(name="gridName", nullable=false, length=16, columnDefinition="CHAR", updatable=false)
-	String gridName
+	@Column(name="sys_id", nullable=false, length=16, columnDefinition="CHAR", updatable=false)
+	String systemId
 }
 
 /**
@@ -26,6 +26,17 @@ abstract class GridResource extends GridEntity {
 	@Id @Column(name="id", nullable=false, length=36, columnDefinition="CHAR", updatable=false)
 	String id
 }
+
+
+/**
+ * GridResource + terminationTime
+ **/
+@MappedSuperclass
+abstract class SingletonGridResource extends GridResource {
+	@Column(name="grid", nullable=false, length=16, columnDefinition="CHAR", updatable=false)
+	String gridName
+}
+
 
 /**
  * GridResource + terminationTime

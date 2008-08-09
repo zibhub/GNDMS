@@ -20,8 +20,9 @@ import org.jetbrains.annotations.NotNull;
  */
 @Embeddable
 abstract class VEPRef extends ModelObject {
-	def abstract public String getGridSiteId() { gridSiteId }
-	def abstract public void setGridSiteId(final String newSiteId) { gridSiteId = newSiteId }
+
+	def abstract public GridSiteId getGridSiteId()
+	def abstract public void setGridSiteId(final GridSiteId newSiteId)
 
 	@NotNull
 	def abstract public List<String> getResourceNames();

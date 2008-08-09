@@ -63,7 +63,7 @@ public final class EMTools {
 		EMFactoryProvider.metaClass.txRun =
 			  { EntityManager em, Closure block ->
 				  return EMTools.txRun((EMFactoryProvider)delegate, em, block) }
-
+		
 		ReloadablePersistentResource.metaClass.txRun =
 			  { EntityManager em, Closure block ->
 				  // home implements EMFactoryProvider
