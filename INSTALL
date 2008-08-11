@@ -105,15 +105,16 @@ SETUP DEPENDENCIES
 When describing the dependencies of a compilation unit, I assume the following 
 "project libraries"
 
-- openjpa: extra/tools/lib/geronimo* serp* openjpa*
+- openjpa: extra/tools-lib/geronimo* serp* openjpa*
 - gt4-current: everything in $GLOBUS_LOCATION/lib *but* none of the GNDMS 
   jars and also none of the other dependecy jars!
 - db-derby: extra/tools-lib/derby*.jar
-- apache-commons: extra/tools/lib/commons*.jar
-- jetty: extra/tools/lib/jetty*.jar
-- servlet-api: extra/tools/lib/servlet-api*.jar
-- cos: extra/tools/lib/cos-*.jar
-- GROOVY: extra/tools/lib/groovy*.jar
+- apache-commons: extra/tools-lib/commons*.jar
+- jetty: extra/tools-lib/jetty*.jar
+- junit-45: extra/tools-lib/junit*.jar
+- servlet-api: extra/tools-lib/servlet-api*.jar
+- cos: extra/tools-lib/cos-*.jar
+- GROOVY: extra/tools-lib/groovy*.jar
   If you use IntelliJ, use the global library GROOVY instead.
 - SOURCES: The sources of the compilation unit
 
@@ -161,7 +162,7 @@ DETAILED BUILD INSTRUCTIONS
 - Compile the infra 
   Sources: infra/src
   Output: extra/lib/gndms-infra.jar
-  Dependencies: annotations, gt4-current, SOURCES, 
+  Dependencies: annotations, junit-45, gt4-current, SOURCES, 
                 servlet-api, cos, openjpa, jetty,
                 db-derby,  shared-model, GROOVY
   Re-export: openjpa, groovy                
