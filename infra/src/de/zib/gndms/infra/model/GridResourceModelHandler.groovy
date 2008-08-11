@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
  *
  *          User: stepn Date: 09.08.2008 Time: 12:21:32
  */
-class GridResourceModelHandler<M extends GridResource, H extends GNDMServiceHome, R extends ReloadablePersistentResource<M, H>> extends GridEntityModelHandler<M, H, R> {
+class GridResourceModelHandler<M extends GridResource, H extends GNDMServiceHome, R extends ReloadablePersistentResource<M, H>> extends AbstractGridResourceModelHandler<M, H, R> {
 
 	def GridResourceModelHandler(final Class<M> theClazz, final H homeParam) {
 		super(theClazz, homeParam);    // Overridden method
