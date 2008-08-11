@@ -10,7 +10,7 @@ import java.security.Principal;
  * Instances create a fresh groovy binding (i.e. to be used for a groovy shell instance
  * inside a GroovyMonitor) and destroy it when done.
  *
- * Ï@see GroovyMonitor
+ * @see GroovyMonitor
  *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$

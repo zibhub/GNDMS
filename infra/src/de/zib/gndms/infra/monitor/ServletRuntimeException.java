@@ -13,7 +13,7 @@ import java.io.IOException;
  * 
  * Typical usage is try
  * <pre>
- *      { ... }Êcatch (ServletRuntimeException e) {Êe.sendToClient(response) }
+ *      { ... } catch (ServletRuntimeException e) {e.sendToClient(response) }
  * </pre>
  *
  * @author Stefan Plantikow <plantikow@zib.de>
