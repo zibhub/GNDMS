@@ -2,6 +2,7 @@ syntax:glob
 
 services/*/build/**
 services/*/out/**
+services/*/production/**
 services/*/lib/*.jar
 services/*/lib/CONTENTS*
 services/*/tools/lib/*.jar
