@@ -23,8 +23,8 @@ import javax.persistence.Table
 @Table(name="slice", schema="dspace")
 public class Slice extends GridResource{
 
-    @Id @Column( name="uid", nullable=false, updatable=false, columnDefinition="CHAR", length=36 )
-    private String uid
+    @Id @Column( name="directory_id", nullable=false, updatable=false, columnDefinition="CHAR", length=36 )
+    private String directoryId
 
     @Embedded
     private SliceKind kind
@@ -37,8 +37,8 @@ public class Slice extends GridResource{
 
     protected Slice( ) { }
 
-    public Slice( String uidParam, SliceKind kndParam, Subspace ownParam ) {
-        uid = uidParam
+    public Slice( String didParam, SliceKind kndParam, Subspace ownParam ) {
+        directoryId = didParam
         kind = kndParam
         owner = ownParam
     }
@@ -62,6 +62,6 @@ public class Slice extends GridResource{
 
         // TODO Later this should return a directory name mapped to
         // the UId
-        uid
+        directoryId
     }
 }

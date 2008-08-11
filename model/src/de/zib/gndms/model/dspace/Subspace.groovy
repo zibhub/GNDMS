@@ -27,6 +27,7 @@ import javax.persistence.CascadeType
 import javax.persistence.PrimaryKeyJoinColumn
 import javax.persistence.EntityListeners
 import javax.persistence.Column
+import javax.persistence.Transient
 
 /**
  *
@@ -62,11 +63,14 @@ class Subspace extends TimedGridResource {
 	DSpaceRef dSpaceRef
 
     @OneToMany( targetEntity=Slice.class, mappedBy="owner", fetch=FetchType.LAZY, cascade=[CascadeType.REFRESH,CascadeType.PERSIST, CascadeType.REMOVE ] )
-    // TODO add primary key join constraint if needed 
     Set<Slice> slices
 
     String path
 
+    @Transient
+    private static final UUIDGen UUIDGEN = UUIDGenFactory.getUUIDGen();
+    @Transient
+    private static final DirectoryAux directoryAux = new LinuxDirectoryAux( )
 
     /**
      * Sets the path of the Subspace to pth.
@@ -79,10 +83,10 @@ class Subspace extends TimedGridResource {
         File f = new File( pth )
 
         try {
-            // this also creats the dir for the namespace if it
+            // this also creats the dir for the subspace if it
             // doesn't exist yet.
             f.mkdirs( )
-            Runtime.getRuntime().exec( "chmod 300 " +f.getAbsolutePath( ) )
+            directoryAux.setSubspacePermissions( f.getAbsolutePath( ) )
         } catch (SecurityException e) {
             return false
         }
@@ -108,10 +112,9 @@ class Subspace extends TimedGridResource {
         String lp = path +  File.separator + knd.getMode( ).toString( ) + File.separator
         File f
         String did
-        UUIDGen uuidgen = UUIDGenFactory.getUUIDGen()
-        
+
         while ( f != null && f.exists() ) {
-            did = uuidgen.nextUUID()
+            did = UUIDGEN.nextUUID()
             f = new File( lp + did )
         }
 
@@ -119,19 +122,17 @@ class Subspace extends TimedGridResource {
             // this also creats the dir for the namespace if it
             // doesn't exist yet.
             f.mkdirs( )
-        } catch (SecurityException e) {
+        } catch ( SecurityException e ) {
             return null
         }
 
         // fix permissions
-        String m="400" // default read only
         if( knd.getMode( ).equals( SliceKindMode.RW ) )
-            m="600"
+            directoryAux.setDirectoryReadWrite( f.getAbsolutePath( ) )
+        else
+            directoryAux.setDirectoryReadOnly( f.getAbsolutePath( ) )
 
-        Runtime.getRuntime().exec( "chmod " +m+ " " +f.getAbsolutePath( ) )
-
-
-        Slice sl = new Slice( did, knd )
+        Slice sl = new Slice( did, knd, this )
         slices.add( sl )
 
         return  sl
@@ -150,7 +151,7 @@ class Subspace extends TimedGridResource {
      *
      * @note The subspace can only destroy its own slices.
      */
-    def public boolean DestroySlice( Slice sl ) {
+    def public boolean destroySlice( Slice sl ) {
 
         if(! slices.contains( sl ) )
             return false 
@@ -174,49 +175,49 @@ class Subspace extends TimedGridResource {
      * @param tgt The target subspace must be unequal to this.
      *
      * @return true if the conversion was successful.
-     * @note Maybe this should be done in a separate thread
+     * @note  The kind (knd) might be the same as of the source slice (sl) so
+     * this can also be used to copy a slice with the same kind.
      */
     def public boolean convertSlice( Slice sl, SliceKind knd, Subspace tgt ) {
 
-        if ( this == tgt )
-            return false
-
         if(! getMetaSubspace( ).getCreatableSliceKinds( ).contains( knd ) )
-            return false 
+            return false
 
         if(! slices.contains( sl ) )
             return false
 
-        String uid = sl.getUId( )
-        String pth = tgt.path + File.separator + knd.getMode( ).toString( ) + File.separator + sl.getAssociatedPath( )
-        String cpth = getPathForSlice( sl )
-
-        // create dir for new slice
-        File f = new File ( pth + File.separator + uid )
-        if( f.exists( ) )
+        // create an new slice of the given kind
+        Slice nsl = tgt.createSlice( knd )
+        if ( Slice == null )
             return false
-        else {
-            try {
-                f.mkdirs( )
-            } catch (SecurityException e) {
-                return false
-            }
-        }
+
 
         // copy contents of old slice to the new one
+        String src_pth = getPathForSlice( sl )
+        String tgt_pth = tgt.getPathForSlice( nsl )
+
         String[] ls = sl.getFileListing( )
+
+
+        // make slice path writable to copy content
+        if ( knd.getMode( ).equals( SliceKindMode.RO ) )
+            directoryAux.setDirectoryReadWrite( tgt_pth )
+
 
         boolean suc = true
         for( i in 0..<ls.length ) {
-            suc = suc && copyFile( cpth + File.separator + ls[i], pth + File.separator + ls[i] )
+            suc = suc && copyFile( src_pth + File.separator + ls[i], tgt_pth + File.separator + ls[i] )
         }
 
-        if( ! suc )
-            return false
+        // restore slice path settings
+        if ( knd.getMode( ).equals( SliceKindMode.RO ) )
+            directoryAux.setDirectoryReadOnly( tgt_pth )
 
-        // add the new slice to the target subspace
-        Slice nsl = new Slice( uid, knd, tgt )
-        tgt.slices.add( nsl )
+        // sth went wrong destroy created slice
+        if( ! suc ) {
+            tgt.destroySlice( nsl )
+            return false
+        }
 
         return true
     }

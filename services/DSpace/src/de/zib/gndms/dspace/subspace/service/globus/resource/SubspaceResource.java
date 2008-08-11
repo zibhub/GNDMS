@@ -25,7 +25,7 @@ import types.StorageSizeT;
 public class SubspaceResource extends SubspaceResourceBase
 	  implements ReloadablePersistentResource<Subspace, ExtSubspaceResourceHome> {
 
-	private ModelHandler<Subspace> mH;
+    private ModelHandler<Subspace> mH;
 	private ExtSubspaceResourceHome resourceHome;
 
 
