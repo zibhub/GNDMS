@@ -82,6 +82,9 @@ public final class GNDMSystem
 	private EntityManagerFactory emf;
 
 	@NotNull
+	private EntityManagerFactory restrictedEmf;
+
+	@NotNull
 	private File monitorConfig;
 
 	@NotNull
@@ -154,14 +157,21 @@ public final class GNDMSystem
 
 			createDirectories();
 			emf = createEMF();
+			restrictedEmf = new RestrictedEMFactory(emf);
 			EMTools.initialize();
 			tryTxExecution();
-
 		}
 		catch (Exception e) {
 			logger.error("Initialization failed", e);
 			throw new RuntimeException(e);
 		}
+	}
+
+
+	@SuppressWarnings({ "MethodOnlyUsedFromInnerClass" })
+	private void shutdown() throws Exception {
+		emf.close();
+		groovyMonitor.stopServer();
 	}
 
 	private void createDirectories() throws IOException {
@@ -197,7 +207,7 @@ public final class GNDMSystem
 		map.put("openjpa.ConnectionURL", "jdbc:derby:" + gridName+";create=true");
 		logger.info("Opening JPA Store: " + map.toString());
 
-		return new RestrictedEMFactory(createEntityManagerFactory(gridName, map));
+		return createEntityManagerFactory(gridName, map);
 	}
 
 	private void tryTxExecution() {
@@ -375,23 +385,23 @@ public final class GNDMSystem
 
 	@NotNull
 	public EntityManagerFactory getEntityManagerFactory() {
-		return emf;
+		return restrictedEmf;
 	}
 
 
-	private static final class SysFactory {
+	public static final class SysFactory {
 		private final Log logger;
 
 		private GNDMSystem instance;
 		private RuntimeException cachedException;
 		private GridConfig sharedConfig;
 
-		SysFactory(@NotNull Log theLogger, @NotNull GridConfig anySharedConfig) {
+		public SysFactory(@NotNull Log theLogger, @NotNull GridConfig anySharedConfig) {
 			logger = theLogger;
 			sharedConfig = anySharedConfig;
 		}
 
-		private synchronized GNDMSystem getInstance() {
+		public synchronized GNDMSystem getInstance() {
 			if (cachedException != null)
 				throw cachedException;
 			if (instance == null) {
@@ -418,6 +428,29 @@ public final class GNDMSystem
 			}
 			return instance;
 		}
+
+
+		@SuppressWarnings({ "MethodOnlyUsedFromInnerClass" })
+		private synchronized void shutdown() throws Exception {
+			if (instance == null)
+				return;
+			else
+				getInstance().shutdown();
+		}
+
+		public @NotNull Runnable createShutdownAction() {
+			return new Runnable() {
+				public void run() {
+					try {
+						shutdown();
+					}
+					catch (Exception e) {
+						throw new RuntimeException(e);
+					}
+				}
+			};
+		}
+
 	}
 
 	private final class GNDMSBindingFactory implements GroovyBindingFactory {
