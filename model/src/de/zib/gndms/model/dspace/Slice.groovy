@@ -12,6 +12,7 @@ import javax.persistence.FetchType
 import javax.persistence.CascadeType
 import javax.persistence.JoinColumn
 import javax.persistence.Table
+import de.zib.gndms.model.common.TimedGridResource
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -21,7 +22,7 @@ import javax.persistence.Table
  */
 @Entity(name="Slices")
 @Table(name="slice", schema="dspace")
-public class Slice extends GridResource{
+public class Slice extends TimedGridResource {
 
     @Id @Column( name="directory_id", nullable=false, updatable=false, columnDefinition="CHAR", length=36 )
     private String directoryId
