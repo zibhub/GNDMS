@@ -57,9 +57,11 @@ public abstract class AbstractModelAction<M extends GridEntity, R> extends Abstr
 
 
 	public final CompositeAction<Void, Object> getPostponedActions() {
-		if (postponedActions == null)
-			postponedActions =
-				  nextParentOfType(AbstractModelAction.class, getParent()).getPostponedActions();
+		if (postponedActions == null) {
+			final AbstractModelAction modelAction =
+				  nextParentOfType(AbstractModelAction.class, getParent());
+			postponedActions = modelAction == null ? null : modelAction.getPostponedActions();
+		}
 		return postponedActions;
 	}
 
