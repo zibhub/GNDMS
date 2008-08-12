@@ -95,12 +95,12 @@ class Subspace extends TimedGridResource {
 
     /**
     * @brief creats a new Slice in this subspace.
-    * 
-    * It also creates a directory which is associated with 
+    *
+    * It also creates a directory which is associated with
     * the created slice.
     *
     * @param knd The kind of the new slice
-    * 
+    *
     * @returns The new slice, or null if sth went wrong.
     */
     def public Slice createSlice( ModelUUIDGen uuidGen, SliceKind knd ) {
