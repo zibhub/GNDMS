@@ -21,27 +21,26 @@ class ImmutableScopedName extends ModelId {
 	@Column(name="local", columnDefinition="VARCHAR", nullable=false, updatable=false)
 	String localName
 
-	def public ImmutableScopedName() {}
+	def ImmutableScopedName() {}
 
-	def public ImmutableScopedName(String theScope, String theName) {
+	def ImmutableScopedName(String theScope, String theName) {
 		this()
 		nameScope = theScope
 		localName = theName
 	}
 
-	def public ImmutableScopedName(QName qname) { this(qname.namespaceURI, qname.localPart) }
+	def ImmutableScopedName(QName qname) { this(qname.namespaceURI, qname.localPart) }
 
-	def protected boolean equalFields(Object obj) {
+	protected boolean equalFields(Object obj) {
 		ImmutableScopedName other = (ImmutableScopedName) obj
 		return nameScope == other.nameScope && localName == other.localName
 	}
 
 	@Override
-	def public int hashCode() {
+	int hashCode() {
 		return hashCode0(nameScope) ^ hashCode0(localName)
 	}
 
-	def public QName toQName() {
-		new QName(nameScope, localName)
-	}
+	QName toQName()
+		{ return new QName(nameScope, localName) }
 }

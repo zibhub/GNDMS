@@ -37,14 +37,14 @@ public class Slice extends GridResource{
 
     protected Slice( ) { }
 
-    public Slice( String didParam, SliceKind kndParam, Subspace ownParam ) {
+    def Slice( String didParam, SliceKind kndParam, Subspace ownParam ) {
         directoryId = didParam
         kind = kndParam
         owner = ownParam
     }
 
 
-    def public String[] getFileListing( ) {
+    String[] getFileListing( ) {
         
         File f = new File ( owner.getPathForSlice( this ) )
         f.list( )

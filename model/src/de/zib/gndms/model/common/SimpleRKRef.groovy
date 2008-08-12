@@ -16,9 +16,9 @@ import org.jetbrains.annotations.NotNull
 @Embeddable
 abstract class SimpleRKRef extends VEPRef {
 	@NotNull
-	def abstract public QName getResourceKeyName()
+	abstract QName getResourceKeyName()
 
-	def abstract public String getResourceKeyValue()
-	def abstract public void setResourceKeyValue(final String newValue)
+	abstract String getResourceKeyValue()
+	abstract void setResourceKeyValue(final String newValue)
 }
 

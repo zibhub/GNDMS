@@ -160,8 +160,8 @@ public final class EMTools {
 	 *
 	 * @see #txRun(EntityManager, boolean, Closure)
 	 */
-	def public static <T> T txRun(final @NotNull EMFactoryProvider emfh, final EntityManager em,
+	def public static <T> T txRun(final @NotNull EMFactoryProvider emfp, final EntityManager em,
 	                              final @NotNull Closure block) {
-		return txRun(emfh.getEntityManagerFactory(), em, block)
+		return txRun(emfp.getEntityManagerFactory(), em, block)
 	}
 }

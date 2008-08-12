@@ -28,15 +28,15 @@ class DSpaceRef extends SimpleRKRef {
 	private String resourceKeyValue;
 
 	@Transient
-	def public QName getResourceKeyName() { RESOURCE_KEY_NAME }
+	QName getResourceKeyName() { RESOURCE_KEY_NAME }
 	@Transient
-	def public List<String> getResourceNames() { RESOURCE_NAMES }
+	List<String> getResourceNames() { RESOURCE_NAMES }
 
 	@Embedded
-	def public GridSiteId getGridSiteId() { gridSiteId }
-	def public void setGridSiteId(final GridSiteId newSiteId) { gridSiteId = newSiteId }
+	GridSiteId getGridSiteId() { gridSiteId }
+	void setGridSiteId(final GridSiteId newSiteId) { gridSiteId = newSiteId }
 
 	@Column(name="key_val", nullable=false, updatable=false, columnDefinition="CHAR", length=36)
-	def public String getResourceKeyValue() { resourceKeyValue }
-	def public void setResourceKeyValue(final String newValue) { resourceKeyValue = newValue }
+	String getResourceKeyValue() { resourceKeyValue }
+	void setResourceKeyValue(final String newValue) { resourceKeyValue = newValue }
 }

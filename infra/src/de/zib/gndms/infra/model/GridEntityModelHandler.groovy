@@ -34,15 +34,18 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
 	private final @NotNull Class<M> clazz;
 	private final @NotNull GNDMServiceHome home;
 
-	def GridEntityModelHandler(final @NotNull Class<M> theClazz, final @NotNull H homeParam) {
+	GridEntityModelHandler(final @NotNull Class<M> theClazz, final @NotNull H homeParam) {
 		clazz = theClazz;
 		home = (GNDMServiceHome) homeParam;
 	}
 
 
-	def protected @NotNull M createNewEntity() {
-		return clazz.newInstance()
+	final public @NotNull M createNewGridEntity() {
+		return createNewEntity()
 	}
+
+	protected def @NotNull createNewEntity()
+		{ clazz.newInstance() }
 
 
 	/**
@@ -50,7 +53,7 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
 	 * @param resource a resource
 	 * @return model for resource if included in database, null otherwise
 	 */
-	def @Nullable M tryLoadModel(final EntityManager emParam, final @NotNull R resource) {
+	final @Nullable M tryLoadModel(final EntityManager emParam, final @NotNull R resource) {
 		(M) txRun(emParam,
 			  { EntityManager em ->
 				  tryLoadModelById(em, (String) ((ResourceIdentifier)resource).getID())
@@ -63,7 +66,7 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
 	 * @param id a resource id
 	 * @return model with id id if included in database, null otherwise
 	 */
-	def @Nullable M tryLoadModelById(final EntityManager emParam, final @NotNull String id)
+	final @Nullable M tryLoadModelById(final EntityManager emParam, final @NotNull String id)
 		{ (M) txRun(emParam, { EntityManager em ->	em.find(clazz, id) }) }
 
 
@@ -73,7 +76,7 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
 	 * @return model for resource
 	 * @throws NoSuchResourceException if no model exists
 	 */
-	def @NotNull M loadModel(final EntityManager emParam, final @NotNull R resource)
+	final @NotNull M loadModel(final EntityManager emParam, final @NotNull R resource)
 		  throws ResourceException {
 		(M) txRun(emParam,
 			  { EntityManager em ->
@@ -91,7 +94,7 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
 	 * @return model for resource id
 	 * @throws NoSuchResourceException if no model exists
 	 */
-	def @NotNull M loadModelById(final EntityManager emParam, final @NotNull String id)
+	final @NotNull M loadModelById(final EntityManager emParam, final @NotNull String id)
 		  throws ResourceException {
 		(M) txRun(emParam,
 			  { EntityManager em ->
@@ -103,7 +106,7 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
 	}
 
 
-	def void refreshModel(final EntityManager emParam, final @NotNull M model)
+	final def refreshModel(final EntityManager emParam, final @NotNull M model)
 		{ (M) txRun(emParam) { EntityManager em -> em.refresh(model) } }
 
 
@@ -114,7 +117,7 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
 	 * @param resource
 	 * @throws NoSuchResourceException if no model exists
 	 */
-	def void removeModel(final EntityManager emParam, final @NotNull R resource)
+	final def removeModel(final EntityManager emParam, final @NotNull R resource)
 		{ (M) txRun(emParam) { EntityManager em -> em.remove(loadModel(em, resource)) } }
 
 
@@ -124,7 +127,7 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
 	 * @param emParam the EntityManager to be used or null for an EM from this handler's system
 	 * @param model
 	 */
-	def @NotNull M persistModel(final EntityManager emParam, final @NotNull M model)
+	final @NotNull M persistModel(final EntityManager emParam, final @NotNull M model)
 		{ (M) txRun(emParam,
 			  { EntityManager em ->
 				((GridEntity)model).setSystemId(getGridName())
@@ -140,7 +143,7 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
 	 * @param emParam the EntityManager to be used or null for an EM from this handler's system
 	 * @param model
 	 */
-	def @NotNull M mergeModel(final EntityManager emParam, final @NotNull M model)
+	final @NotNull M mergeModel(final EntityManager emParam, final @NotNull M model)
 	{ (M) txRun(emParam,
 		  { EntityManager em ->
 			((GridEntity)model).setSystemId(getGridName())
@@ -150,19 +153,19 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
 	}
 
 
-	def @NotNull String getGridName()
+	final @NotNull String getGridName()
 		{ home.getSystem().getGridName() }
 
 
-	def @NotNull String nextUUID()
+	final @NotNull String nextUUID()
 		{ home.getSystem().nextUUID() }
 
 
-	def @NotNull EntityManagerFactory getEntityManagerFactory()
+	final @NotNull EntityManagerFactory getEntityManagerFactory()
 		{ home.getEntityManagerFactory() }
 
 
-	def @NotNull Class<M> getModelClazz()
+	final @NotNull Class<M> getModelClazz()
 		{ clazz }
 }
 
@@ -178,15 +181,15 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
  */
 class GridResourceModelHandler<M extends GridResource, H extends GNDMServiceHome, R extends ReloadablePersistentResource<M, H>> extends GridEntityModelHandler<M, H, R> {
 
-	def GridResourceModelHandler(final Class<M> theClazz, final H homeParam) {
+	GridResourceModelHandler(final Class<M> theClazz, final H homeParam) {
 		super(theClazz, homeParam);    // Overridden method
 	}
 
 	@Override
-	def protected @NotNull M createNewEntity() {
-		final @NotNull M model = (M) super.createNewEntity();    // Overridden method
+	protected def @NotNull createNewEntity() {
+		final @NotNull Object model = super.createNewEntity();    // Overridden method
 		((GridResource)model).setId(nextUUID());
-		return model;
+		return (M) model;
 	}
 
 }
@@ -199,14 +202,14 @@ class GridResourceModelHandler<M extends GridResource, H extends GNDMServiceHome
  *
  *          User: stepn Date: 09.08.2008 Time: 12:29:43
  */
-class SingletonGridResourceModelHandler<M extends SingletonGridResource, H extends GNDMServiceHome, R extends ReloadablePersistentResource<M, H>> extends GridResourceModelHandler<M, H, R> {
+final class SingletonGridResourceModelHandler<M extends SingletonGridResource, H extends GNDMServiceHome, R extends ReloadablePersistentResource<M, H>> extends GridResourceModelHandler<M, H, R> {
 
-	def public SingletonGridResourceModelHandler(final Class<M> theClazz, final H homeParam) {
+	SingletonGridResourceModelHandler(final Class<M> theClazz, final H homeParam) {
 		super(theClazz, homeParam);
 	}
 
-	def @NotNull M getSingleModel(final EntityManager emParam,
-	                              final @NotNull String queryName, final ModelInitializer<M> creator)
+	@NotNull M getSingleModel(final EntityManager emParam,
+	                          final @NotNull String queryName, final ModelInitializer<M> creator)
 		  throws ResourceException {
 		(M) txRun(emParam) { EntityManager em ->
 			try {
@@ -215,7 +218,7 @@ class SingletonGridResourceModelHandler<M extends SingletonGridResource, H exten
 				return (M) query.getSingleResult()
 			}
 			catch (NoResultException e) {
-				final @NotNull M model = createNewEntity()
+				final @NotNull M model = (M) createNewGridEntity()
 				if (creator != null)
 					creator.initializeModel(model)
 				return persistModel(em, (GridEntity)model)
@@ -225,11 +228,11 @@ class SingletonGridResourceModelHandler<M extends SingletonGridResource, H exten
 		}
 	}
 
-	@NotNull
+
 	@Override
-	def protected M createNewEntity() {
-		final M model = (M) super.createNewEntity();
-		((SingletonGridResource)model).setGridName(getGridName());
-		return model;    // Overridden method
+	protected def @NotNull createNewEntity() {
+		final Object model = super.createNewEntity()
+		((SingletonGridResource)model).setGridName(getGridName())
+		return (M) model
 	}
 }

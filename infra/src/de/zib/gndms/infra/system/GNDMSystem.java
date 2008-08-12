@@ -24,6 +24,7 @@ import org.globus.wsrf.impl.SimpleResourceKey;
 import org.globus.wsrf.jndi.Initializable;
 import org.globus.wsrf.utils.AddressingUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.naming.Context;
 import javax.naming.Name;
@@ -57,7 +58,8 @@ public final class GNDMSystem
 	private final Log logger = createLogger();
 
 	@NotNull
-	private static Log createLogger() {return LogFactory.getLog(GNDMSystem.class);}
+	private static Log createLogger()
+		{ return LogFactory.getLog(GNDMSystem.class); }
 
 
 	@NotNull
@@ -84,10 +86,7 @@ public final class GNDMSystem
 	@NotNull
 	private EntityManagerFactory restrictedEmf;
 
-	@NotNull
-	private File monitorConfig;
-
-	@NotNull
+	@Nullable
 	private GroovyMoniServer groovyMonitor;
 
 	private static final int INITIAL_CAPACITY = 32;
@@ -169,9 +168,11 @@ public final class GNDMSystem
 
 
 	@SuppressWarnings({ "MethodOnlyUsedFromInnerClass" })
-	private void shutdown() throws Exception {
+	private synchronized void shutdown() throws Exception {
 		emf.close();
-		groovyMonitor.stopServer();
+		final GroovyMoniServer moniServer = getMonitor();
+		if (moniServer != null)
+			moniServer.stopServer();
 	}
 
 	private void createDirectories() throws IOException {
@@ -181,8 +182,6 @@ public final class GNDMSystem
 		doCheckOrCreateDir(logDir);
 
 		prepareDbStorage();
-
-		monitorConfig = new File(sharedDir, "monitor.properties");
 	}
 
 	private void prepareDbStorage() throws IOException {
@@ -224,6 +223,7 @@ public final class GNDMSystem
 
 	@SuppressWarnings({ "MethodOnlyUsedFromInnerClass" })
 	private void setupShellService() throws Exception {
+		File monitorConfig = new File(getSharedDir() + File.pathSeparator + "monitor.properties");
 		groovyMonitor = new GroovyMoniServer(getGridName(),
 		                                     monitorConfig, new GNDMSBindingFactory());
 		groovyMonitor.startConfigRefreshThread(true);
@@ -296,8 +296,8 @@ public final class GNDMSystem
 		return dbLogFile;
 	}
 
-	@NotNull
-	public GroovyMoniServer getMonitor() {
+	@Nullable
+	public synchronized GroovyMoniServer getMonitor() {
 		return groovyMonitor;
 	}
 

@@ -22,7 +22,7 @@ import de.zib.gndms.model.common.SingletonGridResource
 @Table(name="dspace", schema="dspace")
 class DSpace extends SingletonGridResource {
 
-	def public @NotNull DSpaceRef createRef() {
+	@NotNull DSpaceRef createRef() {
 		DSpaceRef ref = new DSpaceRef()
 		ref.setGridSiteId(null)
 		ref.setResourceKeyValue(getId())

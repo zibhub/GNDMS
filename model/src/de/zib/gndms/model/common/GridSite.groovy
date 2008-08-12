@@ -40,7 +40,7 @@ class GridSiteId extends ModelId {
 	}
 
 
-	public int hashCode() {
+	int hashCode() {
 		return hashCode0(gridName) ^ hashCode0(siteId)
 	}
 }

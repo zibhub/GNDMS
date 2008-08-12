@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable
  */
 abstract class ModelObject {
 
-	def public static int hashCode0(Object obj) {
+	static int hashCode0(Object obj) {
 		return obj == null ? 0 : obj.hashCode();
 	}
 
@@ -32,10 +32,10 @@ abstract class ModelEntity extends ModelObject {
  * and deferrs all other checks to equalFields.
  */
 abstract class ModelId extends ModelObject {
-	def protected abstract boolean equalFields(@NotNull Object obj)
+	abstract protected boolean equalFields(@NotNull Object obj)
 
 	@Override
-	def public boolean equals(@Nullable Object obj) {
+	 boolean equals(@Nullable Object obj) {
 		if (obj == null) return false;
 		if (obj.is(this)) return true;
 		if (! this.class.isInstance(obj))

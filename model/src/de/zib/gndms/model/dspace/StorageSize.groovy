@@ -21,7 +21,7 @@ class StorageSize extends ModelObject {
 	@Column(name="unit", nullable=false, columnDefinition="VARCHAR", length=16)
 	String unit;
 
-	public long getAmountInBytes() {
+	long getAmountInBytes() {
 		long baseAmount = getAmount()
 		String nUnit = normalizeUnit(getUnit().trim())
 		switch (nUnit) {
