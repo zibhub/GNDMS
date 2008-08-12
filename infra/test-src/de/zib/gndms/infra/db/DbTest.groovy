@@ -52,7 +52,7 @@ class DbTest {
 
 	def synchronized void runDatabase()  throws ResourceException {
 		SysFactory factory = new SysFactory(logger, mockupConfig);
-		sys = factory.getInstance();
+		sys = factory.getInstance(false);
 		sysDestructor = factory.createShutdownAction()
 		home = new GNDMServiceHomeMockup(sys);
 	}

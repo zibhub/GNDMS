@@ -402,6 +402,10 @@ public final class GNDMSystem
 		}
 
 		public synchronized GNDMSystem getInstance() {
+			return getInstance(true);
+		}
+		
+		public synchronized GNDMSystem getInstance(boolean setupShellService) {
 			if (cachedException != null)
 				throw cachedException;
 			if (instance == null) {
@@ -409,7 +413,8 @@ public final class GNDMSystem
 					GNDMSystem newInstance = new GNDMSystem(sharedConfig);
 					newInstance.initialize();
 					try {
-						newInstance.setupShellService();
+						if (setupShellService)
+							newInstance.setupShellService();
 					}
 					catch (Exception e) {
 						throw new RuntimeException(e);
