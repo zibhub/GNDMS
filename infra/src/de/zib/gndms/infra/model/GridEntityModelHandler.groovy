@@ -13,6 +13,11 @@ import de.zib.gndms.infra.service.GNDMServiceHome
 import de.zib.gndms.infra.db.EMFactoryProvider
 import de.zib.gndms.model.common.GridEntity
 import de.zib.gndms.infra.db.EMTools
+import de.zib.gndms.model.common.GridResource
+import de.zib.gndms.model.common.SingletonGridResource
+import javax.persistence.Query
+import javax.persistence.NoResultException
+import javax.persistence.NonUniqueResultException
 
 /**
  * Helper class for managing persistent models of GNDMS resources 
@@ -22,7 +27,7 @@ import de.zib.gndms.infra.db.EMTools
  *
  *          User: stepn Date: 27.07.2008 Time: 19:41:17
  */
-public class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R extends ReloadablePersistentResource<M, H>> implements EMFactoryProvider {
+class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R extends ReloadablePersistentResource<M, H>> implements EMFactoryProvider {
 
 	// private Log logger = LogFactory.getLog(ModelHandler.class);
 
@@ -159,4 +164,72 @@ public class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceH
 
 	def @NotNull Class<M> getModelClazz()
 		{ clazz }
+}
+
+
+/**
+ * Specializing ModelHandler for GridResources
+ *
+ * @see GridResource
+ * @author Stefan Plantikow <plantikow@zib.de>
+ * @version $Id$
+ *
+ *          User: stepn Date: 09.08.2008 Time: 12:21:32
+ */
+class GridResourceModelHandler<M extends GridResource, H extends GNDMServiceHome, R extends ReloadablePersistentResource<M, H>> extends GridEntityModelHandler<M, H, R> {
+
+	def GridResourceModelHandler(final Class<M> theClazz, final H homeParam) {
+		super(theClazz, homeParam);    // Overridden method
+	}
+
+	@Override
+	def protected @NotNull M createNewEntity() {
+		final @NotNull M model = (M) super.createNewEntity();    // Overridden method
+		((GridResource)model).setId(nextUUID());
+		return model;
+	}
+
+}
+
+/**
+ * ModelHandler specializing for SingletonGridResources
+ *
+ * @author Stefan Plantikow <plantikow@zib.de>
+ * @version $Id$
+ *
+ *          User: stepn Date: 09.08.2008 Time: 12:29:43
+ */
+class SingletonGridResourceModelHandler<M extends SingletonGridResource, H extends GNDMServiceHome, R extends ReloadablePersistentResource<M, H>> extends GridResourceModelHandler<M, H, R> {
+
+	def public SingletonGridResourceModelHandler(final Class<M> theClazz, final H homeParam) {
+		super(theClazz, homeParam);
+	}
+
+	def @NotNull M getSingleModel(final EntityManager emParam,
+	                              final @NotNull String queryName, final ModelInitializer<M> creator)
+		  throws ResourceException {
+		(M) txRun(emParam) { EntityManager em ->
+			try {
+				final Query query = em.createNamedQuery(queryName)
+				query.setParameter("gridName", getGridName())
+				return (M) query.getSingleResult()
+			}
+			catch (NoResultException e) {
+				final @NotNull M model = createNewEntity()
+				if (creator != null)
+					creator.initializeModel(model)
+				return persistModel(em, (GridEntity)model)
+			}
+			catch (NonUniqueResultException e)
+				{ throw new ResourceException(e); }
+		}
+	}
+
+	@NotNull
+	@Override
+	def protected M createNewEntity() {
+		final M model = (M) super.createNewEntity();
+		((SingletonGridResource)model).setGridName(getGridName());
+		return model;    // Overridden method
+	}
 }

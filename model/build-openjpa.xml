@@ -15,6 +15,14 @@
 	</classpath>
 </taskdef>
 
+<fileset id="model_classes" dir="gndms-shared-model/production">
+	<include name="de/zib/gndms/model/**/*" />
+	<exclude name="de/zib/gndms/model/*" />
+	<exclude name="de/zib/gndms/model/util/*" />
+	<exclude name="de/zib/gndms/model/*/types/*" />
+	<exclude name="de/zib/gndms/model/dspace/aux/*" />
+</fileset>
+
 <target name="enhance" description="Calls the openjpa enhancer ant task on all classed in gndms-shared-model/production">
 
 	<delete failonerror="false" file="../extra/lib/gndms-shared-model.jar" />
@@ -27,13 +35,8 @@
 			<fileset refid="tooljars" />
 		</classpath>
 
-		<fileset dir="gndms-shared-model/production">
-			<include name="de/zib/gndms/model/**/*" />
-			<exclude name="de/zib/gndms/model/*" />
-			<exclude name="de/zib/gndms/model/util/*" />			
-			<exclude name="de/zib/gndms/model/*/types/*" />
-		</fileset>
-		
+		<fileset refid="model_classes" />
+
 	</openjpac>
 
 	<jar file="../extra/lib/gndms-shared-model.jar" basedir="gndms-shared-model/production">
@@ -56,12 +59,8 @@
 			<fileset refid="tooljars" />
 		</classpath>
 
-		<fileset dir="gndms-shared-model/production">
-			<include name="de/zib/gndms/model/**/*" />
-			<exclude name="de/zib/gndms/model/*" />
-			<exclude name="de/zib/gndms/model/util/*" />
-			<exclude name="de/zib/gndms/model/*/types/*" />
-		</fileset>
+		<fileset refid="model_classes" />
+		
 	</mappingtool>
 </target>
 </project>

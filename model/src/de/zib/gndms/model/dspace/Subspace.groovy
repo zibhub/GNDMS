@@ -11,8 +11,6 @@ package de.zib.gndms.model.dspace
 import de.zib.gndms.model.common.TimedGridResource
 import de.zib.gndms.model.util.LifecycleEventDispatcher
 import javax.persistence.OneToMany
-import org.apache.axis.components.uuid.UUIDGen
-import org.apache.axis.components.uuid.UUIDGenFactory
 import java.nio.channels.FileChannel
 import de.zib.gndms.model.dspace.types.SliceKindMode
 import javax.persistence.Entity
@@ -28,6 +26,9 @@ import javax.persistence.PrimaryKeyJoinColumn
 import javax.persistence.EntityListeners
 import javax.persistence.Column
 import javax.persistence.Transient
+import de.zib.gndms.model.dspace.aux.DirectoryAux
+import de.zib.gndms.model.dspace.aux.LinuxDirectoryAux
+import de.zib.gndms.model.common.ModelUUIDGen
 
 /**
  *
@@ -68,8 +69,6 @@ class Subspace extends TimedGridResource {
     String path
 
     @Transient
-    private static final UUIDGen UUIDGEN = UUIDGenFactory.getUUIDGen();
-    @Transient
     private static final DirectoryAux directoryAux = new LinuxDirectoryAux( )
 
     /**
@@ -104,7 +103,7 @@ class Subspace extends TimedGridResource {
     * 
     * @returns The new slice, or null if sth went wrong.
     */
-    def public Slice createSlice( SliceKind knd ) {
+    def public Slice createSlice( ModelUUIDGen uuidGen, SliceKind knd ) {
 
         if( ! getMetaSubspace( ).getCreatableSliceKinds( ).contains( knd ) )
             return null 
@@ -114,7 +113,7 @@ class Subspace extends TimedGridResource {
         String did
 
         while ( f != null && f.exists() ) {
-            did = UUIDGEN.nextUUID()
+            did = uuidGen.nextUUID()
             f = new File( lp + did )
         }
 
