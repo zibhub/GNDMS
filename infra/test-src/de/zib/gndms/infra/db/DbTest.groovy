@@ -15,6 +15,9 @@ import static org.junit.Assert.*
 import static org.junit.Assume.*
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.junit.runner.RunWith
+import org.junit.runners.Suite
+import org.junit.runners.Suite.SuiteClasses
 
 /**
  * ThingAMagic.
@@ -25,7 +28,10 @@ import org.apache.commons.logging.LogFactory
  * User: stepn Date: 08.08.2008 Time: 17:41:48
  */
 
-class DbTest {
+@RunWith(Suite.class) @SuiteClasses([SingletonTest.class])
+class DbTestSuite {} 
+
+abstract class DbTest {
 	private static GridConfigMockup mockupConfig
 	private static String gridName = "c3grid";
 	private static boolean setupEnvironment
@@ -37,7 +43,7 @@ class DbTest {
 
 
 	@BeforeClass
-	def static void setupEnvironment() {
+	static void setupEnvironment() {
 		mockupConfig = new GridConfigMockup(gridName)
 		File path = new File(mockupConfig.getGridPath())
 		if (! (path.exists() && path.isDirectory()))
@@ -46,11 +52,11 @@ class DbTest {
 			setupEnvironment = true
 	}
 
-	private def assertEnvironmentSetup() {
+	protected void assertEnvironmentSetup() {
 		assertTrue("Invalid environment setup", setupEnvironment)
 	}
 
-	def synchronized void runDatabase()  throws ResourceException {
+	protected synchronized void runDatabase()  throws ResourceException {
 		SysFactory factory = new SysFactory(logger, mockupConfig);
 		sys = factory.getInstance(false);
 		sysDestructor = factory.createShutdownAction()
@@ -58,7 +64,7 @@ class DbTest {
 	}
 
 
-	def synchronized void shutdownDatabase() {
+	protected synchronized void shutdownDatabase() {
 		try {
 			sysDestructor.run()
 		}
@@ -69,25 +75,15 @@ class DbTest {
 		}
 	}
 
-	def DSpace getSingletonInstance() {
-		SingletonGridResourceModelHandler mH =
-			new SingletonGridResourceModelHandler(DSpace.class, home);
-		DSpace model = (DSpace) mH.getSingleModel(null, "findDSpaceInstances",
-		                                          new DefaultModelInitializer<DSpace>())
-		return model
+	protected synchronized void eraseDatabase() {
+		File path = new File(new File(mockupConfig.getGridPath(), "db"), mockupConfig.getGridName())
+		if (path.exists())
+			rmDirRecursively(path)
 	}
 
-
-	@Test
-	def void assertHasDSpaceSingleton() {
-		assertEnvironmentSetup()
-		try {
-			runDatabase()
-			DSpace instance = getSingletonInstance()
-			assertNotNull(instance)
-		}
-		finally { shutdownDatabase() }
+	private static void rmDirRecursively(File fileParam) {
+		fileParam.eachFile { File it -> it.delete() }
+		fileParam.eachDir { File it -> rmDirRecursively(it) }
+		fileParam.delete()
 	}
-
-
 }

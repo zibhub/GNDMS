@@ -7,6 +7,7 @@ import de.zib.gndms.infra.db.RestrictedEMFactory;
 import de.zib.gndms.infra.monitor.GroovyBindingFactory;
 import de.zib.gndms.infra.monitor.GroovyMoniServer;
 import de.zib.gndms.infra.service.ServiceInfo;
+import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.model.common.VEPRef;
 import de.zib.gndms.model.dspace.DSpaceRef;
 import de.zib.gndms.model.util.InstanceResolver;
@@ -52,7 +53,8 @@ import java.util.Properties;
  */
 @SuppressWarnings({"OverloadedMethodsWithSameNumberOfParameters", "NestedAssignment"})
 public final class GNDMSystem
-	  implements Initializable, SystemHolder, InstanceResolver<Object>, EMFactoryProvider {
+	  implements Initializable, SystemHolder, InstanceResolver<Object>,
+	  EMFactoryProvider, ModelUUIDGen {
 	private final UUIDGen uuidGen = UUIDGenFactory.getUUIDGen();
 
 	private final Log logger = createLogger();

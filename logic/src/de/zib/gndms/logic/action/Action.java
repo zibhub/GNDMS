@@ -1,4 +1,5 @@
-import javax.persistence.EntityManager;
+package de.zib.gndms.logic.action;
+
 import java.util.concurrent.Callable;
 
 /**
@@ -10,14 +11,14 @@ import java.util.concurrent.Callable;
  * User: mjorra, Date: 12.08.2008, Time: 15:25:36
  */
 
+@SuppressWarnings({ "InterfaceNamingConvention" })
 public interface Action<R> extends Callable<R> {
 
-    public void initialize( );
+    void initialize( );
 
-    public R call( ) throws RuntimeException, NoEntityManagerException;
+    R call( ) throws RuntimeException;
 
-    public void cleanUp( );
+    void cleanUp( );
 
-    public void setEntityManeger( EntityManager em );
-
+	Action<?> getParent();
 }

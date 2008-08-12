@@ -15,11 +15,13 @@ services/*/tmp/**
 *.iml
 *.gar
 extra/lib/gndms-infra.jar
+extra/lib/gndms-logic.jar
 extra/lib/gndms-shared-model.jar
 extra/tools-lib/gndms-groovy.jar
 infra/gndms-infra/**
 model/gndms-shared-model/**
 model/derby.log
+logic/gndms-logic/**
 .classpath
 .project
 
