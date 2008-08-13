@@ -12,12 +12,15 @@ import org.globus.wsrf.ResourceIdentifier
 import de.zib.gndms.infra.service.GNDMServiceHome
 import de.zib.gndms.infra.db.EMFactoryProvider
 import de.zib.gndms.model.common.GridEntity
-import de.zib.gndms.infra.db.EMTools
 import de.zib.gndms.model.common.GridResource
 import de.zib.gndms.model.common.SingletonGridResource
 import javax.persistence.Query
 import javax.persistence.NoResultException
 import javax.persistence.NonUniqueResultException
+import de.zib.gndms.logic.model.EntityUpdateListener
+import de.zib.gndms.logic.model.BatchUpdateAction
+import de.zib.gndms.logic.model.DefaultBatchUpdateAction
+import de.zib.gndms.logic.model.ModelAction
 
 /**
  * Helper class for managing persistent models of GNDMS resources 
@@ -34,6 +37,7 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
 	private final @NotNull Class<M> clazz;
 	private final @NotNull GNDMServiceHome home;
 
+
 	GridEntityModelHandler(final @NotNull Class<M> theClazz, final @NotNull H homeParam) {
 		clazz = theClazz;
 		home = (GNDMServiceHome) homeParam;
@@ -47,6 +51,157 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
 	protected def @NotNull createNewEntity()
 		{ clazz.newInstance() }
 
+
+	/**
+	 *  Calls the given model action after setting the corresponding parameters.
+	 *
+	 * There are several additional calls that just fix some of these parameters with sensible
+	 * defaults: callResourceAction uses a resources' id to retrieve the model within the same
+	 * transaction as the model action.  callNewResourceAction and callNewModelAction calls
+	 * create a new EntityManager via this ModelHandlers' EntityManagerFactory. If no container
+	 * for postponed actions is provided, a new DefaultBatchUpdateAction() is used.  If no
+	 * EntityUpdateListener is provided, the one associated with this ModelHandler is used
+	 * and set on postponedActions.
+	 * 
+	 */
+	public <R> R callModelAction(
+		final EntityManager emParam,
+		final @NotNull BatchUpdateAction<?> postponedActions,
+		final @NotNull EntityUpdateListener listener,
+		final @NotNull ModelAction<M> theAction,
+	    final @NotNull M theModel) {
+		return (R) txRun(emParam, { EntityManager em ->
+			 if (listener != null)
+				 postponedActions.setListener(listener)
+			theAction.setPostponedActions(postponedActions)
+			theAction.setModel(theModel)
+			return theAction.call()
+	    })
+	}
+
+	/**
+	 *  @see #callModelAction(EntityManager, BatchUpdateAction<?>, EntityUpdateListener, de.zib.gndms.logic.model.ModelAction, M)
+	 */
+	public final <R> R callModelAction(
+		final EntityManager emParam,
+		final @NotNull EntityUpdateListener listener,
+		final @NotNull ModelAction<M> theAction,
+	    final @NotNull M theModel) {
+		return callModelAction(emParam, new DefaultBatchUpdateAction(), listener, theAction,
+		                       theModel)
+	}
+
+	/**
+	 *  @see #callModelAction(EntityManager, BatchUpdateAction<?>, EntityUpdateListener, de.zib.gndms.logic.model.ModelAction, M)
+	 */
+	public final <R> R callModelAction(
+		final EntityManager emParam,
+		final @NotNull ModelAction<M> theAction,
+	    final @NotNull M theModel) {
+		return (R) callModelAction(emParam, getEntityUpdateListener(), theAction, theModel)
+	}
+
+	/**
+	 *  @see #callModelAction(EntityManager, BatchUpdateAction<?>, EntityUpdateListener, de.zib.gndms.logic.model.ModelAction, M)
+	 */
+	public final <R> R callNewModelAction(
+		final @NotNull EntityUpdateListener listener,
+		final @NotNull ModelAction<M> theAction,
+	    final @NotNull M theModel) {
+		return callModelAction(null, listener, theAction, theModel)
+	}
+
+	/**
+	 *  @see #callModelAction(EntityManager, BatchUpdateAction<?>, EntityUpdateListener, de.zib.gndms.logic.model.ModelAction, M)
+	 */
+	public final <R> R callNewModelAction(
+		final @NotNull ModelAction<M> theAction,
+	    final @NotNull M theModel) {
+		return callModelAction(null, theAction, theModel)
+	}
+
+	/**
+	 *  @see #callModelAction(EntityManager, BatchUpdateAction<?>, EntityUpdateListener, de.zib.gndms.logic.model.ModelAction, M)
+	 */
+	public final <R> R callNewModelAction(
+		final @NotNull BatchUpdateAction<?> postponedActions,
+		final @NotNull EntityUpdateListener listener,
+		final @NotNull ModelAction<M> theAction,
+	    final @NotNull M theModel) {
+		return callModelAction(null, postponedActions, listener, theAction, theModel)
+	}
+
+	/**
+	 *  @see #callModelAction(EntityManager, BatchUpdateAction<?>, EntityUpdateListener, de.zib.gndms.logic.model.ModelAction, M)
+	 */
+	public final <R> R callResourceAction(
+			final EntityManager emParam,
+			final @NotNull BatchUpdateAction<?> postponedActions,
+			final @NotNull EntityUpdateListener listener,
+			final @NotNull ModelAction<M> theAction,
+	        final @NotNull R resource) {
+		return (R) txRun(emParam, { EntityManager em ->
+			return callResourceAction(emParam, postponedActions, listener, theAction,
+			                  loadModel(em, resource))
+		})
+	}
+
+	/**
+	 *  @see #callModelAction(EntityManager, BatchUpdateAction<?>, EntityUpdateListener, de.zib.gndms.logic.model.ModelAction, M)
+	 */
+	public final <R> R callResourceAction(
+		final EntityManager emParam,
+		final EntityUpdateListener listener,
+		final @NotNull ModelAction<M> theAction,
+		final @NotNull R resource) {
+		return callResourceAction(emParam, new DefaultBatchUpdateAction(), listener,
+		                          theAction, resource)
+	}
+
+	/**
+	 *  @see #callModelAction(EntityManager, BatchUpdateAction<?>, EntityUpdateListener, de.zib.gndms.logic.model.ModelAction, M)
+	 */
+	public final <R> R callResourceAction(
+		final EntityManager emParam,
+		final @NotNull ModelAction<M> theAction,
+		final @NotNull R resource) {
+		return (R) callResourceAction(emParam, getEntityUpdateListener(), theAction, resource)
+	}
+
+	/**
+	 *  @see #callModelAction(EntityManager, BatchUpdateAction<?>, EntityUpdateListener, de.zib.gndms.logic.model.ModelAction, M)
+	 */
+	public final <R> R callNewResourceAction(
+		final @NotNull EntityUpdateListener listener,
+		final @NotNull ModelAction<M> theAction,
+	    final @NotNull R resource) {
+		return callResourceAction(null, listener, theAction, resource)
+	}
+
+	/**
+	 *  @see #callModelAction(EntityManager, BatchUpdateAction<?>, EntityUpdateListener, de.zib.gndms.logic.model.ModelAction, M)
+	 */
+	public final <R> R callNewResourceAction(
+		final @NotNull ModelAction<M> theAction,
+	    final @NotNull R resource) {
+		return callResourceAction(null, theAction, resource)
+	}
+
+	/**
+	 *  @see #callModelAction(EntityManager, BatchUpdateAction<?>, EntityUpdateListener, de.zib.gndms.logic.model.ModelAction, M)
+	 */
+	public final <R> R callNewResourceAction(
+		final @NotNull BatchUpdateAction<?> postponedActions,
+		final @NotNull EntityUpdateListener listener,
+		final @NotNull ModelAction<M> theAction,
+	    final @NotNull R resource) {
+		return callResourceAction(null, postponedActions, listener, theAction, resource)
+	}
+
+
+	public @NotNull EntityUpdateListener getEntityUpdateListener() {
+		return null;
+	}
 
 	/**
 	 * @param emParam the EntityManager to be used or null for an EM from this handler's system

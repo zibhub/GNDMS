@@ -56,4 +56,11 @@ public interface ReloadablePersistentResource<M, H extends GNDMServiceHome>
 	 * @param resourceHomeParam resource home to be set
 	 */
 	void setResourceHome(@NotNull H resourceHomeParam);
+
+
+	/**
+	 *
+	 * @return Subclasses return their uuid string as ID
+	 */
+	String getID();
 }
