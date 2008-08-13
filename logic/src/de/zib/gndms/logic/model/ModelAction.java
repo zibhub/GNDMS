@@ -1,6 +1,11 @@
 package de.zib.gndms.logic.action;
 
+import de.zib.gndms.logic.model.BatchUpdateAction;
 import de.zib.gndms.model.common.GridEntity;
+import org.jetbrains.annotations.NotNull;
+
+import javax.persistence.EntityManager;
+
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -10,7 +15,17 @@ import de.zib.gndms.model.common.GridEntity;
  */
 public interface ModelAction<M extends GridEntity, R> extends de.zib.gndms.logic.action.Action<R> {
 
-    void setModel( M mdl );
+	M getModel( );
 
-    M getModel( );
+    void setModel( final @NotNull M mdl );
+
+
+	EntityManager getEntityManager();
+
+	void setEntityManager(final @NotNull EntityManager entityManagerParam);
+
+
+	BatchUpdateAction<?> getPostponedActions();
+
+	void setPostponedActions(final @NotNull BatchUpdateAction<?> postponedActionsParam);
 }

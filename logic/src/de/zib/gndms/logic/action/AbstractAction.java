@@ -20,11 +20,16 @@ public abstract class AbstractAction<R> implements Action<R> {
 
 
     public R call ( ) throws RuntimeException {
-
-        initialize( );
-        try{
+        try {
+	        initialize( );
+        }
+        catch (RuntimeException re) {
+	        throw new ActionInitializationException(re);
+        }
+        try {
             return execute( );
-        } finally{
+        }
+        finally {
             cleanUp( );
         }
     }
@@ -33,33 +38,33 @@ public abstract class AbstractAction<R> implements Action<R> {
 	public abstract R execute();
 
 
-	public Action<?> getParent() {
+	public final Action<?> getParent() {
 		return parent;
 	}
 
 
-	public void setParent(final Action<?> parentParam) {
+	public final void setParent(final Action<?> parentParam) {
 		if (parent != null)
-			throw new IllegalStateException("Cant overwrite parent");
+			throw new IllegalStateException("Cannot overwrite parent");
 
 		parent = parentParam;
 	}
 
-	public @Nullable <V> V nextParentOfType(final @NotNull Class<V> interfaceClass) {
+	public final @Nullable <V> V nextParentOfType(final @NotNull Class<V> interfaceClass) {
 		return nextParentOfType(interfaceClass, getParent());
 	}
 
 	public static @Nullable <V> V nextParentOfType(final @NotNull Class<V> interfaceClass,
-	                                               final Action<?> parentParam) {
-		Action<?> parent = parentParam;
+	                                               final Action<?> startParent) {
+		Action<?> currentParent = startParent;
 		while (true) {
-			if (parent == null)
+			if (currentParent == null)
 				return null;
 			else {
-				if (interfaceClass.isInstance(parent))
-					return interfaceClass.cast(parent);
+				if (interfaceClass.isInstance(currentParent))
+					return interfaceClass.cast(currentParent);
 				else {
-					parent = parent.getParent();
+					currentParent = currentParent.getParent();
 				}
 			}
 		}

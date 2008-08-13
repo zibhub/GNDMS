@@ -1,7 +1,6 @@
 package de.zib.gndms.logic.model;
 
 import de.zib.gndms.logic.action.AbstractAction;
-import de.zib.gndms.logic.action.CompositeAction;
 import de.zib.gndms.logic.action.ModelAction;
 import de.zib.gndms.model.common.GridEntity;
 import org.jetbrains.annotations.NotNull;
@@ -22,21 +21,23 @@ public abstract class AbstractModelAction<M extends GridEntity, R> extends Abstr
 
 	private EntityManager entityManager;
 
-	private CompositeAction<Void, Object> postponedActions;
+	private BatchUpdateAction<?> postponedActions;
 
 	public M getModel() {
 	    return model;
 	}
 
-	public void setModel(M mdl) {
+	public void setModel(final @NotNull M mdl) {
 	    model = mdl;
 	}
 
 
 	@Override
 	public void initialize() {
-		if( entityManager == null )
+		if( getEntityManager() == null )
 		    throw new NoEntityManagerException( );
+		if (getModel() == null)
+			throw new IllegalStateException("No model set");
 	}
 
 
@@ -45,29 +46,37 @@ public abstract class AbstractModelAction<M extends GridEntity, R> extends Abstr
 		return execute(getEntityManager());
 	}
 
-    public abstract R execute( @NotNull EntityManager em );
+    public abstract R execute( final @NotNull EntityManager em );
 
     public EntityManager getEntityManager() {
-        return entityManager;
+        if (entityManager == null) {
+	        final ModelAction<?, ?> modelAction = nextParentOfType(ModelAction.class);
+	        if (modelAction != null)
+	            entityManager = modelAction.getEntityManager();
+        }
+
+	    return entityManager;
     }
 
-    public void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
+    public void setEntityManager(final @NotNull EntityManager entityManagerParam) {
+	    if (entityManager != null)
+	        throw new IllegalStateException("Cant overwrite entityManager");
+	    entityManager = entityManagerParam;
     }
 
 
-	public final CompositeAction<Void, Object> getPostponedActions() {
+	public final BatchUpdateAction<?> getPostponedActions() {
 		if (postponedActions == null) {
-			final AbstractModelAction modelAction =
-				  nextParentOfType(AbstractModelAction.class, getParent());
+			final ModelAction<?,?> modelAction = nextParentOfType(ModelAction.class);
 			postponedActions = modelAction == null ? null : modelAction.getPostponedActions();
 		}
+
 		return postponedActions;
 	}
 
 
 	public final void setPostponedActions(
-		  final CompositeAction<Void, Object> postponedActionsParam) {
+		  @NotNull final BatchUpdateAction<?> postponedActionsParam) {
 		if (getPostponedActions() != null)
 			throw new IllegalStateException("Cant overwrite postponedActions");
 

@@ -1,26 +1,21 @@
 package de.zib.gndms.logic.model;
 
-import de.zib.gndms.logic.action.DefaultCompositeAction;
+import de.zib.gndms.logic.action.CompositeAction;
+import org.jetbrains.annotations.NotNull;
 
 
 /**
  * ThingAMagic.
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
  *
- *          User: stepn Date: 12.08.2008 Time: 18:54:38
+ *          User: stepn Date: 13.08.2008 Time: 10:35:07
  */
-public class BatchUpdateAction extends DefaultCompositeAction<Void, Void> {
-	private EntityUpdateListener listener;
+public interface BatchUpdateAction<R> extends CompositeAction<R, Object> {
 
-	
-	public EntityUpdateListener getListener() {
-		return listener;
-	}
+	EntityUpdateListener getListener();
 
+	void setListener(final @NotNull EntityUpdateListener listenerParam);
 
-	public void setListener(final EntityUpdateListener listenerParam) {
-		listener = listenerParam;
-	}
 }

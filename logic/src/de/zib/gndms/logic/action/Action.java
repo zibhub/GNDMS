@@ -16,7 +16,7 @@ public interface Action<R> extends Callable<R> {
 
     void initialize( );
 
-    R call( ) throws RuntimeException;
+    R call( ) throws ActionInitializationException, RuntimeException;
 
     void cleanUp( );
 
