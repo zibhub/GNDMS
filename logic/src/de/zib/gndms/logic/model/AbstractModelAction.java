@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model;
 
 import de.zib.gndms.logic.action.AbstractAction;
-import de.zib.gndms.logic.action.ModelAction;
+import de.zib.gndms.logic.model.ModelAction;
 import de.zib.gndms.model.common.GridEntity;
 import org.jetbrains.annotations.NotNull;
 
