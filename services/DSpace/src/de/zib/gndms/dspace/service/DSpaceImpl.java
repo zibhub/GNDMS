@@ -1,6 +1,7 @@
 package de.zib.gndms.dspace.service;
 
 import de.zib.gndms.dspace.service.globus.resource.ExtDSpaceResourceHome;
+import de.zib.gndms.dspace.subspace.service.globus.resource.ExtSubspaceResourceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
 import org.apache.log4j.Logger;
 
@@ -27,11 +28,10 @@ public class DSpaceImpl extends DSpaceImplBase {
 		try {
 			final ExtDSpaceResourceHome home = getResourceHome();
 			system = home.getSystem();
-			system.addInstance("dspaceImpl", this);
-			system.addInstance("dspaceResource", home.find(null));
-			system.addInstance("dspaceHome", home);
-			system.addInstance("subspaceHome", getSubspaceResourceHome());
-			system.addInstance("sliceHome", getSliceResourceHome());
+			system.addHome(home);
+            system.addHome(getSubspaceResourceHome());
+            // TODO
+            // system.addHome(getSliceResourceHome());
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
@@ -101,5 +101,10 @@ public class DSpaceImpl extends DSpaceImplBase {
 		return ref;
   }
 
+
+    @Override
+    public ExtSubspaceResourceHome getSubspaceResourceHome() throws Exception {
+        return (ExtSubspaceResourceHome) super.getSubspaceResourceHome();    // Overridden method
+    }
 }
 

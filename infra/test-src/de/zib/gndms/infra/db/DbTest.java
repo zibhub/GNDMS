@@ -8,7 +8,8 @@ import de.zib.gndms.infra.system.GridConfigMockup;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.globus.wsrf.ResourceException;
-import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Optional;
+import org.testng.annotations.Parameters;
 
 import java.io.File;
 
@@ -24,7 +25,7 @@ import java.io.File;
 
 public abstract class DbTest {
 	private GridConfigMockup mockupConfig;
-	private String gridName = "c3grid";
+	private String gridName;
 	private boolean setupEnvironment;
 	private Log logger = LogFactory.getLog(DbTest.class);
 
@@ -32,7 +33,12 @@ public abstract class DbTest {
 	private Runnable sysDestructor;
 	protected GNDMServiceHome home;
 
-    @BeforeSuite
+    @Parameters({"gridName"})
+    public DbTest(@Optional("c3grid") String gridName) {
+        this.gridName = gridName;
+        setupEnvironment();
+    }
+
 	public void setupEnvironment() {
         mockupConfig = new GridConfigMockup(gridName);
         File path = null;

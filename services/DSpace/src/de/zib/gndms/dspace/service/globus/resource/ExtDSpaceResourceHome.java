@@ -1,10 +1,12 @@
 package de.zib.gndms.dspace.service.globus.resource;
 
 import de.zib.gndms.dspace.service.DSpaceConfiguration;
-import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.GNDMSTools;
+import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.model.dspace.DSpace;
+import de.zib.gndms.model.common.GridResource;
 import org.apache.axis.message.addressing.AttributedURI;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,8 +14,8 @@ import org.globus.wsrf.*;
 import org.jetbrains.annotations.NotNull;
 
 import javax.naming.NamingException;
-import javax.xml.namespace.QName;
 import javax.persistence.EntityManagerFactory;
+import javax.xml.namespace.QName;
 
 
 /**
@@ -30,7 +32,7 @@ import javax.persistence.EntityManagerFactory;
  *          User: stepn Date: 16.07.2008 Time: 12:35:27
  */
 public final class ExtDSpaceResourceHome  extends DSpaceResourceHome
-	  implements GNDMServiceHome {
+	  implements GNDMServiceHome<DSpace> {
 
 	// logger can be an instance field since resource home classes are instantiated at most once
 	@NotNull @SuppressWarnings({"FieldNameHidesFieldInSuperclass"})
@@ -158,4 +160,20 @@ public final class ExtDSpaceResourceHome  extends DSpaceResourceHome
 		return getKeyTypeName();
 	}
 
+
+    public void refresh(final @NotNull GridResource resource) {
+        // TODO implement
+    }
+
+
+    @NotNull
+    public String getNickName() {
+        return "dspace";
+    }
+
+
+    @NotNull
+    public Class<DSpace> getModelClass() {
+        return DSpace.class;
+    }
 }

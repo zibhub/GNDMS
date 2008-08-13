@@ -1,11 +1,13 @@
 package de.zib.gndms.infra.service;
 
 import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.model.dspace.DSpace;
+import de.zib.gndms.model.common.GridResource;
 import org.apache.axis.types.URI;
 import org.jetbrains.annotations.NotNull;
 
-import javax.xml.namespace.QName;
 import javax.persistence.EntityManagerFactory;
+import javax.xml.namespace.QName;
 
 
 /**
@@ -16,7 +18,7 @@ import javax.persistence.EntityManagerFactory;
  *
  *          User: stepn Date: 08.08.2008 Time: 13:30:08
  */
-public final class GNDMServiceHomeMockup implements GNDMServiceHome {
+public final class GNDMServiceHomeMockup implements GNDMServiceHome<DSpace> {
 	private final GNDMSystem sys;
 
 
@@ -50,4 +52,20 @@ public final class GNDMServiceHomeMockup implements GNDMServiceHome {
 	public void setSystem(final @NotNull GNDMSystem system) throws IllegalStateException {
 		throw new IllegalStateException("Cant't overwrite system");
 	}
+
+
+    public void refresh(final @NotNull GridResource resource) {
+    }
+
+
+    @NotNull
+    public String getNickName() {
+        return "dspaceMockup";
+    }
+
+
+    @NotNull
+    public Class<DSpace> getModelClass() {
+        return DSpace.class;
+    }
 }

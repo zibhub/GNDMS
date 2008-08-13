@@ -39,7 +39,7 @@ public class DSpaceResource extends DSpaceResourceBase
 		final String id;
 
 		if (resourceKeyParam == null) {
-			model = mH.getSingleModel(null, QUERY_INSTANCES, null);
+			model = (DSpace) mH.getSingleModel(null, QUERY_INSTANCES, null);
 			id = model.getId();
 			logger.debug("DSpace Singleton found with id: " + id);
 		}

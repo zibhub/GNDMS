@@ -6,6 +6,8 @@ import de.zib.gndms.infra.model.SingletonGridResourceModelHandler;
 import de.zib.gndms.model.dspace.DSpace;
 import org.globus.wsrf.ResourceException;
 import static org.testng.Assert.assertNotNull;
+import org.testng.annotations.Optional;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 
@@ -26,7 +28,14 @@ public class SingletonTest extends DbTest {
 		return model;
 	}
 
-	@Test
+
+    @Parameters({"gridName"})
+    public SingletonTest(@Optional("c3grid") final String gridName) {
+        super(gridName);
+    }
+
+
+    @Test
 	void assertHasDSpaceSingleton() throws ResourceException {
 		String id1 = runForSingleton(true);
 		String id2 = runForSingleton(false);

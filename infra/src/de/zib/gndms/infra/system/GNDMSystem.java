@@ -5,7 +5,9 @@ import de.zib.gndms.infra.db.EMFactoryProvider;
 import de.zib.gndms.infra.db.RestrictedEMFactory;
 import de.zib.gndms.infra.monitor.GroovyBindingFactory;
 import de.zib.gndms.infra.monitor.GroovyMoniServer;
+import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.service.ServiceInfo;
+import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.model.common.VEPRef;
 import de.zib.gndms.model.dspace.DSpaceRef;
@@ -21,8 +23,10 @@ import org.apache.axis.types.URI;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.globus.wsrf.impl.SimpleResourceKey;
+import org.globus.wsrf.impl.SingletonResourceHome;
 import org.globus.wsrf.jndi.Initializable;
 import org.globus.wsrf.utils.AddressingUtils;
+import org.globus.wsrf.ResourceException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,6 +69,7 @@ public final class GNDMSystem
 
 	@NotNull
 	private final Map<String, Object> instances;
+    private final Map<Class<? extends GridResource>, GNDMServiceHome<?>> homes;
 
 	@NotNull
 	private final GridConfig sharedConfig;
@@ -141,6 +146,7 @@ public final class GNDMSystem
 	private GNDMSystem(@NotNull GridConfig anySharedConfig)  {
 		sharedConfig = anySharedConfig;
 		instances = new HashMap<String, Object>(INITIAL_CAPACITY);
+        homes = new HashMap<Class<? extends GridResource>, GNDMServiceHome<?>>(INITIAL_CAPACITY);
 		addInstance("sys", this);
 		// initialization intentionally deferred to initialize
 	}
@@ -229,7 +235,51 @@ public final class GNDMSystem
 		groovyMonitor.startConfigRefreshThread(true);
 	}
 
+    public synchronized void addHome(final @NotNull GNDMServiceHome<?> home)
+            throws ResourceException {
+        addHome(home.getModelClass(), home);
+    }
+
+    private synchronized <K extends GridResource> void addHome(final @NotNull Class<K> modelClazz,
+                                                               final @NotNull GNDMServiceHome<?> home)
+            throws ResourceException {
+        if (homes.containsKey(modelClazz))
+            throw new IllegalStateException("Name clash in home registration");
+        else {
+            final String homeName = home.getNickName() + "Home";
+            addInstance(homeName, home);
+            try {
+                if (home instanceof SingletonResourceHome) {
+                    Object instance = ((SingletonResourceHome)home).find(null);
+                    addInstance(home.getNickName() + "Resource", instance);
+                }
+            }
+            catch (RuntimeException e) {
+                instances.remove(homeName);
+                throw e;
+            }
+            catch (ResourceException e) {
+                instances.remove(homeName);
+                throw e;                
+            }
+            homes.put(modelClazz, home);
+        }
+
+        logger.debug(getSystemName() + " addHome: '" + modelClazz.getName() + '\'');
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    public synchronized <M extends GridResource> GNDMServiceHome<M> getHome(Class<M> modelClazz) {
+        final GNDMServiceHome<M> home = (GNDMServiceHome<M>) homes.get(modelClazz);
+        if (home == null)
+            throw new IllegalStateException("Unknown home");
+        return home;
+    }
+
 	public synchronized void addInstance(@NotNull String name, @NotNull Object obj) {
+        if (name.endsWith("Home") || name.endsWith("Resource"))
+            throw new IllegalArgumentException("Reserved instance name");
+
 		if ("out".equals(name) || "err".equals(name) || "args".equals(name) || "em".equals(name)
 			|| "emg".equals(name))
 			throw new IllegalArgumentException("Reserved instance name");
