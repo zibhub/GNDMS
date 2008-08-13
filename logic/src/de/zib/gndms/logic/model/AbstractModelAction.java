@@ -10,6 +10,10 @@ import javax.persistence.EntityManager;
 
 
 /**
+ * An abstract action on a given persisten model.
+ * 
+ * The first template parameter is the model for this action, the second is the return type.
+ *
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
  * 
