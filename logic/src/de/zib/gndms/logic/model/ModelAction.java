@@ -1,6 +1,5 @@
 package de.zib.gndms.logic.model;
 
-import de.zib.gndms.logic.model.BatchUpdateAction;
 import de.zib.gndms.logic.action.Action;
 import de.zib.gndms.model.common.GridEntity;
 import org.jetbrains.annotations.NotNull;

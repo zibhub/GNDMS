@@ -2,7 +2,6 @@ package de.zib.gndms.infra.system;
 
 import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.db.EMFactoryProvider;
-import de.zib.gndms.infra.db.EMTools;
 import de.zib.gndms.infra.db.RestrictedEMFactory;
 import de.zib.gndms.infra.monitor.GroovyBindingFactory;
 import de.zib.gndms.infra.monitor.GroovyMoniServer;
@@ -159,7 +158,6 @@ public final class GNDMSystem
 			createDirectories();
 			emf = createEMF();
 			restrictedEmf = new RestrictedEMFactory(emf);
-			EMTools.initialize();
 			tryTxExecution();
 		}
 		catch (Exception e) {
@@ -427,6 +425,7 @@ public final class GNDMSystem
 				}
 				catch (RuntimeException e) {
 					cachedException = e;
+                    throw cachedException;
 				}
 				finally {
 					// not required after this point

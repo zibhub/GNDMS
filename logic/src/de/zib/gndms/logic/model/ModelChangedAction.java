@@ -30,7 +30,8 @@ public class ModelChangedAction extends AbstractAction<Void> {
 	@Override
 	public void initialize() {
 		super.initialize();    // Overridden method
-		final DefaultBatchUpdateAction batchUpdateAction = nextParentOfType(DefaultBatchUpdateAction.class);
+		final DefaultBatchUpdateAction batchUpdateAction =
+                nextParentOfType(DefaultBatchUpdateAction.class);
 		if (batchUpdateAction == null)
 			throw new IllegalStateException("No containing BatchUpdateAction found");
 		

@@ -24,7 +24,9 @@ model/derby.log
 logic/gndms-logic/**
 .classpath
 .project
+test-output/**
 
 syntax:regexp
 ^types/[A-Za-z].+
+
 
