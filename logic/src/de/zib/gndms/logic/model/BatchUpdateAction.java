@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
  *
  *          User: stepn Date: 13.08.2008 Time: 10:35:07
  */
-public interface BatchUpdateAction<R> extends CompositeAction<R, Object> {
+public interface BatchUpdateAction<R> extends CompositeAction<R, Void> {
 
 	EntityUpdateListener getListener();
 

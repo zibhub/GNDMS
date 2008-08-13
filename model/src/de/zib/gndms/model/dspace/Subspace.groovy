@@ -26,9 +26,10 @@ import javax.persistence.PrimaryKeyJoinColumn
 import javax.persistence.EntityListeners
 import javax.persistence.Column
 import javax.persistence.Transient
-import de.zib.gndms.model.dspace.aux.DirectoryAux
-import de.zib.gndms.model.dspace.aux.LinuxDirectoryAux
+import de.zib.gndms.logic.model.aux.aux.DirectoryAux
+import de.zib.gndms.logic.model.aux.aux.LinuxDirectoryAux
 import de.zib.gndms.model.common.ModelUUIDGen
+import org.jetbrains.annotations.NotNull
 
 /**
  *
@@ -68,8 +69,6 @@ class Subspace extends TimedGridResource {
 
     String path
 
-    @Transient
-    private static final DirectoryAux directoryAux = new LinuxDirectoryAux( )
 
     /**
      * Sets the path of the Subspace to pth.
@@ -94,11 +93,12 @@ class Subspace extends TimedGridResource {
     }
 
 
-    public void addSlice( ) {
+    public void addSlice( @NotNull Slice sl ) {
 
         if( slices == null )
-            slices =
+            throw IllegalStateException( "No slices set provided" )
 
+        slices.add( sl )
     }
 
 

@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
  *
  *          User: stepn Date: 12.08.2008 Time: 18:54:38
  */
-public class DefaultBatchUpdateAction extends DefaultCompositeAction<Void, Object>
+public class DefaultBatchUpdateAction extends DefaultCompositeAction<Void, Void>
 	implements BatchUpdateAction<Void> {
 
 	private EntityUpdateListener listener;
