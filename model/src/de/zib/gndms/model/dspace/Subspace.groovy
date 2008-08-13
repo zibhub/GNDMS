@@ -26,8 +26,6 @@ import javax.persistence.PrimaryKeyJoinColumn
 import javax.persistence.EntityListeners
 import javax.persistence.Column
 import javax.persistence.Transient
-import de.zib.gndms.logic.model.aux.aux.DirectoryAux
-import de.zib.gndms.logic.model.aux.aux.LinuxDirectoryAux
 import de.zib.gndms.model.common.ModelUUIDGen
 import org.jetbrains.annotations.NotNull
 
