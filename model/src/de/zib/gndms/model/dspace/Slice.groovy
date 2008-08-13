@@ -28,17 +28,17 @@ public class Slice extends TimedGridResource {
     private String directoryId
 
     @Embedded
-    private SliceKind kind
+    SliceKind kind
 
 	@ManyToOne( targetEntity=Subspace.class, fetch=FetchType.LAZY, cascade=[CascadeType.REFRESH,CascadeType.PERSIST] )
 	@JoinColumn( name="subspace_id", nullable=false, referencedColumnName="id", updatable=false )
 
-    private Subspace owner
+    Subspace owner
 
 
     protected Slice( ) { }
 
-    def Slice( String didParam, SliceKind kndParam, Subspace ownParam ) {
+     Slice( String didParam, SliceKind kndParam, Subspace ownParam ) {
         directoryId = didParam
         kind = kndParam
         owner = ownParam
@@ -59,7 +59,7 @@ public class Slice extends TimedGridResource {
     *
     * To obtain the absolute path use Subspace.getPathForSlice .
     */ 
-    def public String getAssociatedPath( ) {
+    public String getAssociatedPath( ) {
 
         // TODO Later this should return a directory name mapped to
         // the UId

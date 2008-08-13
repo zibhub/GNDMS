@@ -5,6 +5,7 @@ import de.zib.gndms.infra.GNDMSTools;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
+import de.zib.gndms.infra.GNDMSTools;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.dspace.Subspace;
 import org.apache.axis.message.addressing.AttributedURI;
@@ -12,6 +13,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.globus.wsrf.Resource;
 import org.globus.wsrf.ResourceException;
+import org.globus.wsrf.ResourceKey;
 import org.jetbrains.annotations.NotNull;
 
 import javax.naming.NamingException;
@@ -93,7 +95,19 @@ public final class ExtSubspaceResourceHome extends SubspaceResourceHome
 		return instance;
 	}
 
-	@NotNull
+
+    @Override
+    public void refresh( GridResource model ) throws ResourceException {
+        // todo retrieve resource key
+        ResourceKey rk = null;
+
+        ReloadablePersistentResource<Subspace, ExtSubspaceResourceHome> rps =
+                ( ReloadablePersistentResource<Subspace, ExtSubspaceResourceHome> ) find( rk );
+
+        rps.loadFromModel( ( Subspace) model );
+    }
+
+    @NotNull
 	public AttributedURI getServiceAddress() {
 		ensureInitialized();
 		return serviceAddress;

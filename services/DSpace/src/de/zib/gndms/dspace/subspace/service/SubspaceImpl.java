@@ -3,16 +3,20 @@ package de.zib.gndms.dspace.subspace.service;
 import de.zib.gndms.dspace.common.DSpaceTools;
 import de.zib.gndms.dspace.slice.service.globus.resource.SliceResource;
 import de.zib.gndms.dspace.slice.service.globus.resource.SliceResourceHome;
+import de.zib.gndms.dspace.slice.service.globus.resource.ExtSliceResourceHome;
 import de.zib.gndms.dspace.slice.stubs.types.SliceReference;
 import de.zib.gndms.dspace.stubs.types.InternalFailure;
 import de.zib.gndms.dspace.subspace.service.globus.resource.SubspaceResource;
+import de.zib.gndms.dspace.subspace.service.globus.resource.ExtSubspaceResourceHome;
 import de.zib.gndms.dspace.subspace.stubs.types.OutOfSpace;
 import de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind;
 import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.infra.model.GridResourceModelHandler;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.StorageSize;
 import de.zib.gndms.model.dspace.Subspace;
+import de.zib.gndms.logic.model.CreateSliceAction;
 import org.globus.wsrf.NoSuchResourceException;
 import org.globus.wsrf.ResourceContext;
 import org.globus.wsrf.ResourceContextException;
@@ -32,8 +36,8 @@ import java.util.Calendar;
  */
 public class SubspaceImpl extends SubspaceImplBase {
 
-	
-	public SubspaceImpl() throws RemoteException {
+
+    public SubspaceImpl() throws RemoteException {
 		super();
 	}
 
@@ -54,18 +58,20 @@ public class SubspaceImpl extends SubspaceImplBase {
             SliceResource sr = srh.getResource( rk );
 
             GNDMSystem system = subref.getResourceHome( ).getSystem( );
-            // todo maybe let gndmsys implement ModelUUIdgen ??
-            //      or use different class
 	        // todo slicekind param
-            Slice sl = sp.createSlice( (ModelUUIDGen) system, null );
-            // todo where to get system id form?
-            sl.setSystemId( "blah" );
-            sl.setId( sr.getID( ).toString( ) );
+            CreateSliceAction csa =
+                    new CreateSliceAction( (String) sr.getID(),
+                            sliceCreationSpecifier.getTerminationTime(),
+                            system,
+                            /*sliceCreationSpecifier.getSliceKind()*/ null );
 
-            Calendar cal = sliceCreationSpecifier.getTerminationTime();
-            if( cal != null )
-                sl.setTerminationTime( cal );
+            GridResourceModelHandler mh = new GridResourceModelHandler<Subspace, ExtSubspaceResourceHome, SubspaceResource>
+                    (Subspace.class, (ExtSubspaceResourceHome) subref.getResourceHome( ) );
 
+            mh.callNewModelAction( system, csa, sp );
+
+            // todo handle storagesize
+            /*
             StorageSizeT sst = sliceCreationSpecifier.getTotalStorageSize( );
             if( sst != null ) {
                 StorageSize ssize = DSpaceTools.buildSize(sst);
@@ -73,8 +79,7 @@ public class SubspaceImpl extends SubspaceImplBase {
                     throw new OutOfSpace( );
                 // todo update avail storage size
             }
-            // todo fix
-	        // sr.setModel( sl );
+            */
 
             sref = srh.getResourceReference( rk );
         } catch ( OutOfSpace e ) {

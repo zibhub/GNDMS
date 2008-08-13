@@ -10,8 +10,10 @@ import de.zib.gndms.infra.service.ServiceInfo;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.model.common.VEPRef;
+import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.dspace.DSpaceRef;
 import de.zib.gndms.model.util.InstanceResolver;
+import de.zib.gndms.logic.model.EntityUpdateListener;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.apache.axis.components.uuid.UUIDGen;
@@ -57,7 +59,7 @@ import java.util.Properties;
 @SuppressWarnings({"OverloadedMethodsWithSameNumberOfParameters", "NestedAssignment"})
 public final class GNDMSystem
 	  implements Initializable, SystemHolder, InstanceResolver<Object>,
-	  EMFactoryProvider, ModelUUIDGen {
+	  EMFactoryProvider, ModelUUIDGen, EntityUpdateListener {
 	private final UUIDGen uuidGen = UUIDGenFactory.getUUIDGen();
 
 	private final Log logger = createLogger();
@@ -71,7 +73,9 @@ public final class GNDMSystem
 	private final Map<String, Object> instances;
     private final Map<Class<? extends GridResource>, GNDMServiceHome<?>> homes;
 
-	@NotNull
+    private Map<String, String> resourceHomeForModel;
+
+    @NotNull
 	private final GridConfig sharedConfig;
 
 	@NotNull
@@ -439,7 +443,19 @@ public final class GNDMSystem
 	}
 
 
-	public static final class SysFactory {
+    public void onModelChange( GridResource model ) {
+
+        GNDMServiceHome rhm = getHomeOf( model );
+        rhm.refresh( model );
+    }
+
+
+    public void addModelResourceHomeMapping( String mod, String rh ) {
+
+    }
+
+
+    public static final class SysFactory {
 		private final Log logger;
 
 		private GNDMSystem instance;
