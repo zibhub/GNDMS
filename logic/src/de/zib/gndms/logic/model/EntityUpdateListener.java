@@ -13,6 +13,5 @@ import org.jetbrains.annotations.NotNull;
  *          User: stepn Date: 12.08.2008 Time: 18:33:47
  */
 public interface EntityUpdateListener {
-	<M extends GridResource> void onModelChange(final @NotNull Class<M> modelClazz,
-	                                            final @NotNull String uuid);
+	void onModelChange( GridResource model );
 }
