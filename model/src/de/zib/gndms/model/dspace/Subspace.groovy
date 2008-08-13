@@ -26,9 +26,10 @@ import javax.persistence.PrimaryKeyJoinColumn
 import javax.persistence.EntityListeners
 import javax.persistence.Column
 import javax.persistence.Transient
-import de.zib.gndms.model.dspace.aux.DirectoryAux
-import de.zib.gndms.model.dspace.aux.LinuxDirectoryAux
+import de.zib.gndms.logic.model.aux.aux.DirectoryAux
+import de.zib.gndms.logic.model.aux.aux.LinuxDirectoryAux
 import de.zib.gndms.model.common.ModelUUIDGen
+import org.jetbrains.annotations.NotNull
 
 /**
  *
@@ -68,8 +69,6 @@ class Subspace extends TimedGridResource {
 
     String path
 
-    @Transient
-    private static final DirectoryAux directoryAux = new LinuxDirectoryAux( )
 
     /**
      * Sets the path of the Subspace to pth.
@@ -78,7 +77,7 @@ class Subspace extends TimedGridResource {
      *
      * @note The read permission will be removed form pth.
      */
-    def public boolean setPath( String pth ) {
+    public boolean setPath( String pth ) {
         File f = new File( pth )
 
         try {
@@ -93,6 +92,17 @@ class Subspace extends TimedGridResource {
         return true
     }
 
+
+    public void addSlice( @NotNull Slice sl ) {
+
+        if( slices == null )
+            throw IllegalStateException( "No slices set provided" )
+
+        slices.add( sl )
+    }
+
+
+
     /**
     * @brief creats a new Slice in this subspace.
     *
@@ -103,7 +113,7 @@ class Subspace extends TimedGridResource {
     *
     * @returns The new slice, or null if sth went wrong.
     */
-    def public Slice createSlice( ModelUUIDGen uuidGen, SliceKind knd ) {
+    public Slice createSlice( ModelUUIDGen uuidGen, SliceKind knd ) {
 
         if( ! getMetaSubspace( ).getCreatableSliceKinds( ).contains( knd ) )
             return null 
@@ -150,7 +160,7 @@ class Subspace extends TimedGridResource {
      *
      * @note The subspace can only destroy its own slices.
      */
-    def public boolean destroySlice( Slice sl ) {
+    public boolean destroySlice( Slice sl ) {
 
         if(! slices.contains( sl ) )
             return false 
@@ -177,7 +187,7 @@ class Subspace extends TimedGridResource {
      * @note  The kind (knd) might be the same as of the source slice (sl) so
      * this can also be used to copy a slice with the same kind.
      */
-    def public boolean convertSlice( Slice sl, SliceKind knd, Subspace tgt ) {
+    public boolean convertSlice( Slice sl, SliceKind knd, Subspace tgt ) {
 
         if(! getMetaSubspace( ).getCreatableSliceKinds( ).contains( knd ) )
             return false
@@ -226,12 +236,12 @@ class Subspace extends TimedGridResource {
     /** 
      * @brief Delivers the absolute path to a slice sl.
      */
-    def public String getPathForSlice( Slice sl )  {
+    public String getPathForSlice( Slice sl )  {
         path + sl.getKind( ).getMode().toString( ) + sl.getAssociatedPath( ) 
     }
 
 
-    def public static boolean copyFile( String src, String tgt )  {
+    public static boolean copyFile( String src, String tgt )  {
 
         File sf = new File( src )
         File tf = new File( tgt )
@@ -260,7 +270,7 @@ class Subspace extends TimedGridResource {
      * @param pth The complete Path to the directory.
      * @return The success of the operation.
      */
-    def private static boolean deleteDirectory( String pth ) {
+    private static boolean deleteDirectory( String pth ) {
 
         File f = new File( pth )
 
