@@ -5,6 +5,7 @@ import de.zib.gndms.model.dspace.DSpace;
 import de.zib.gndms.model.common.GridResource;
 import org.apache.axis.types.URI;
 import org.jetbrains.annotations.NotNull;
+import org.globus.wsrf.ResourceKey;
 
 import javax.persistence.EntityManagerFactory;
 import javax.xml.namespace.QName;
@@ -67,5 +68,11 @@ public final class GNDMServiceHomeMockup implements GNDMServiceHome<DSpace> {
     @NotNull
     public Class<DSpace> getModelClass() {
         return DSpace.class;
+    }
+
+
+    @NotNull
+    public ResourceKey getKeyForId(final GridResource model) {
+        throw new UnsupportedOperationException("Mockup");
     }
 }

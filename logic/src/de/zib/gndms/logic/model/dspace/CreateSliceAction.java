@@ -1,20 +1,18 @@
 package de.zib.gndms.logic.model.dspace;
 
-import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.model.dspace.Slice;
-import de.zib.gndms.model.dspace.SliceKind;
-import de.zib.gndms.model.dspace.types.SliceKindMode;
-import de.zib.gndms.model.common.ModelUUIDGen;
+import de.zib.gndms.logic.model.BatchUpdateAction;
+import de.zib.gndms.logic.model.CreateTimedGridResourceAction;
+import de.zib.gndms.logic.model.ModelChangedAction;
 import de.zib.gndms.logic.model.aux.DirectoryAux;
 import de.zib.gndms.logic.model.aux.LinuxDirectoryAux;
-import de.zib.gndms.logic.model.CreateTimedGridResourceAction;
-import de.zib.gndms.logic.model.BatchUpdateAction;
-import de.zib.gndms.logic.model.ModelChangedAction;
-
-import javax.persistence.EntityManager;
-
+import de.zib.gndms.model.common.ModelUUIDGen;
+import de.zib.gndms.model.dspace.Slice;
+import de.zib.gndms.model.dspace.SliceKind;
+import de.zib.gndms.model.dspace.Subspace;
+import de.zib.gndms.model.dspace.types.SliceKindMode;
 import org.jetbrains.annotations.NotNull;
 
+import javax.persistence.EntityManager;
 import java.io.File;
 import java.util.Calendar;
 

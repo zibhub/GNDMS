@@ -3,6 +3,9 @@ package de.zib.gndms.logic.action;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.LinkedList;
+import java.util.List;
+
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -19,7 +22,7 @@ public abstract class AbstractAction<R> implements Action<R> {
     public void cleanUp() { }
 
 
-    public R call ( ) throws RuntimeException {
+    public final R call ( ) throws RuntimeException {
         try {
 	        initialize( );
         }
@@ -54,6 +57,12 @@ public abstract class AbstractAction<R> implements Action<R> {
 		return nextParentOfType(interfaceClass, getParent());
 	}
 
+    @NotNull
+    public final <V extends Action<?>> List<V> getParentChain(
+            final @NotNull Class<V> interfaceClass) {
+        return getParentChain(interfaceClass, getParent());
+    }
+
 	public static @Nullable <V> V nextParentOfType(final @NotNull Class<V> interfaceClass,
 	                                               final Action<?> startParent) {
 		Action<?> currentParent = startParent;
@@ -69,4 +78,16 @@ public abstract class AbstractAction<R> implements Action<R> {
 			}
 		}
 	}
+
+    public static <V extends Action<?>> List<V> getParentChain(
+            final @NotNull Class<V> interfaceClass,
+            final Action<?> startParent) {
+        LinkedList<V> result = new LinkedList<V>();
+        V currentParent = nextParentOfType(interfaceClass, startParent);
+        while(currentParent != null) {
+            result.addFirst(interfaceClass.cast(currentParent));
+            currentParent = nextParentOfType(interfaceClass, currentParent.getParent());
+        }
+        return result;
+    }
 }
