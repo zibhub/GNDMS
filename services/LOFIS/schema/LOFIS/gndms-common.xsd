@@ -63,7 +63,7 @@
 
 
 
-<!-- *** DSpace related types for addressign subspaces and kinds *** -->
+<!-- *** dspace related types for addressign subspaces and kinds *** -->
 
 <element name="SubspaceSpecifier" type="QName" />
 <element name="SliceKind" type="QName" />

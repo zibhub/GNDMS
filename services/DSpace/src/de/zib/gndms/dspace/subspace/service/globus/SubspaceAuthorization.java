@@ -29,7 +29,7 @@ import org.w3c.dom.Node;
  */
 public class SubspaceAuthorization implements PDP {
 
-	public static final String SERVICE_NAMESPACE = "http://dspace.gndms.zib.de/DSpace/Subspace";
+	public static final String SERVICE_NAMESPACE = "http://dspace.gndms.zib.de/dspace/Subspace";
 	
 	
 	public SubspaceAuthorization() {

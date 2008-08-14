@@ -41,7 +41,7 @@ public class DSpaceTools {
 	public static DSpaceReference dSpaceRefsAsReference(final DSpaceRef vep, GNDMSystem sysParam)
 		throws Exception {
 		if (vep.getGridSiteId() != null)
-			throw new IllegalStateException("Remote DSpace reference");
+			throw new IllegalStateException("Remote dspace reference");
 
 		final ResourceKey key = GNDMSTools.SRKVepRefAsKey(vep);
 		final ExtDSpaceResourceHome dspaceHome =

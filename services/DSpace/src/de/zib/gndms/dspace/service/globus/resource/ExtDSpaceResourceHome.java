@@ -77,7 +77,7 @@ public final class ExtDSpaceResourceHome  extends DSpaceResourceHome
 	@Override
 	public synchronized void initialize() throws Exception {
 		if (! initialized) {
-			logger.info("DSpace home extension initializing");
+			logger.info("dspace home extension initializing");
 			try {
 				system = getGridConfig().retrieveSystemReference();
 				serviceAddress = GNDMSTools.getServiceAddressFromContext();

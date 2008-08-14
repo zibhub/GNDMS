@@ -11,7 +11,7 @@ import de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.model.GridResourceModelHandler;
 import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.logic.model.DSpace.CreateSliceAction;
+import de.zib.gndms.logic.model.dspace.CreateSliceAction;
 import org.globus.wsrf.NoSuchResourceException;
 import org.globus.wsrf.ResourceContext;
 import org.globus.wsrf.ResourceContextException;

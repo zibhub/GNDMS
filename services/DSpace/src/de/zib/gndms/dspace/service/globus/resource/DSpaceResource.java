@@ -41,7 +41,7 @@ public class DSpaceResource extends DSpaceResourceBase
 		if (resourceKeyParam == null) {
 			model = (DSpace) mH.getSingleModel(null, QUERY_INSTANCES, null);
 			id = model.getId();
-			logger.debug("DSpace Singleton found with id: " + id);
+			logger.debug("dspace Singleton found with id: " + id);
 		}
 		else if (getResourceHome().getKeyTypeName().equals(resourceKeyParam.getName())) {
 			id = (String) resourceKeyParam.getValue();
