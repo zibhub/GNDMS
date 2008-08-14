@@ -1,9 +1,7 @@
 package de.zib.gndms.dspace.subspace.service;
 
-import de.zib.gndms.dspace.common.DSpaceTools;
 import de.zib.gndms.dspace.slice.service.globus.resource.SliceResource;
 import de.zib.gndms.dspace.slice.service.globus.resource.SliceResourceHome;
-import de.zib.gndms.dspace.slice.service.globus.resource.ExtSliceResourceHome;
 import de.zib.gndms.dspace.slice.stubs.types.SliceReference;
 import de.zib.gndms.dspace.stubs.types.InternalFailure;
 import de.zib.gndms.dspace.subspace.service.globus.resource.SubspaceResource;
@@ -12,21 +10,16 @@ import de.zib.gndms.dspace.subspace.stubs.types.OutOfSpace;
 import de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.model.GridResourceModelHandler;
-import de.zib.gndms.model.common.ModelUUIDGen;
-import de.zib.gndms.model.dspace.Slice;
-import de.zib.gndms.model.dspace.StorageSize;
 import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.logic.model.CreateSliceAction;
+import de.zib.gndms.logic.model.DSpace.CreateSliceAction;
 import org.globus.wsrf.NoSuchResourceException;
 import org.globus.wsrf.ResourceContext;
 import org.globus.wsrf.ResourceContextException;
 import org.globus.wsrf.ResourceKey;
 import types.ContextT;
 import types.SliceCreationSpecifier;
-import types.StorageSizeT;
 
 import java.rmi.RemoteException;
-import java.util.Calendar;
 
 /** 
  * TODO:I am the service side implementation class.  IMPLEMENT AND DOCUMENT ME
