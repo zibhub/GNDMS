@@ -35,7 +35,7 @@ public class SingletonTest extends DbTest {
     }
 
 
-    @Test
+    @Test(groups={"db"})
 	void assertHasDSpaceSingleton() throws ResourceException {
 		String id1 = runForSingleton(true);
 		String id2 = runForSingleton(false);
