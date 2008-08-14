@@ -1,6 +1,7 @@
 package de.zib.gndms.dspace.service.globus.resource;
 
 import de.zib.gndms.dspace.service.DSpaceConfiguration;
+import de.zib.gndms.dspace.common.DSpaceConstants;
 import de.zib.gndms.infra.GNDMSTools;
 import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.service.GNDMServiceHome;
@@ -11,6 +12,7 @@ import org.apache.axis.message.addressing.AttributedURI;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.globus.wsrf.*;
+import org.globus.wsrf.impl.SimpleResourceKey;
 import org.jetbrains.annotations.NotNull;
 
 import javax.naming.NamingException;
@@ -175,5 +177,10 @@ public final class ExtDSpaceResourceHome  extends DSpaceResourceHome
     @NotNull
     public Class<DSpace> getModelClass() {
         return DSpace.class;
+    }
+
+    @NotNull
+    public ResourceKey getKeyForId( GridResource model ) {
+        return new SimpleResourceKey( DSpaceConstants.RESOURCE_KEY, model.getId( ) );
     }
 }

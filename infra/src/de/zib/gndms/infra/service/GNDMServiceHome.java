@@ -4,6 +4,8 @@ import de.zib.gndms.infra.db.EMFactoryProvider;
 import de.zib.gndms.infra.system.SystemHolder;
 import de.zib.gndms.model.common.GridResource;
 import org.jetbrains.annotations.NotNull;
+import org.globus.wsrf.ResourceKey;
+import org.globus.wsrf.ResourceException;
 
 
 /**
@@ -17,9 +19,12 @@ import org.jetbrains.annotations.NotNull;
 public interface GNDMServiceHome<M extends GridResource>
         extends ServiceInfo, EMFactoryProvider, SystemHolder {
 
-    void refresh(final @NotNull GridResource resource);
+    void refresh(final @NotNull GridResource resource) throws ResourceException;
 
     @NotNull String getNickName();
 
     @NotNull Class<M> getModelClass();
+
+    @NotNull ResourceKey getKeyForId( GridResource model );
+
 }

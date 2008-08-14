@@ -13,17 +13,15 @@ import de.zib.gndms.model.common.GridResource;
  *          User: stepn Date: 12.08.2008 Time: 18:36:18
  */
 public class ModelChangedAction extends AbstractAction<Void> {
-	private Class<? extends GridResource> modelClazz;
-	private String uuid;
+    
+    private GridResource model;
 
 	private EntityUpdateListener listener;
 
 
-	public ModelChangedAction(final Class<? extends GridResource> modelClazzParam,
-	                          final String uuidParam) {
-		super();
-		modelClazz = modelClazzParam;
-		uuid = uuidParam;
+	public ModelChangedAction( final GridResource modelParam ) {
+        super();
+        model = modelParam;
 	}
 
 
@@ -43,28 +41,18 @@ public class ModelChangedAction extends AbstractAction<Void> {
 
 	@Override
 	public Void execute() {
-		listener.onModelChange(modelClazz, uuid);
+		listener.onModelChange( model );
 		return null;
 	}
 
 
-	public Class<? extends GridResource> getModelClazz() {
-		return modelClazz;
+	public final GridResource getModel() {
+		return model;
 	}
 
 
-	public void setModelClazz(final Class<? extends GridResource> modelClazzParam) {
-		modelClazz = modelClazzParam;
-	}
-
-
-	public String getUuid() {
-		return uuid;
-	}
-
-
-	public void setUuid(final String uuidParam) {
-		uuid = uuidParam;
+	public void setModelClazz(final GridResource modelParam) {
+		model = modelParam;
 	}
 
 

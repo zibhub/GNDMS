@@ -73,7 +73,6 @@ public final class GNDMSystem
 	private final Map<String, Object> instances;
     private final Map<Class<? extends GridResource>, GNDMServiceHome<?>> homes;
 
-    private Map<String, String> resourceHomeForModel;
 
     @NotNull
 	private final GridConfig sharedConfig;
@@ -445,13 +444,12 @@ public final class GNDMSystem
 
     public void onModelChange( GridResource model ) {
 
-        GNDMServiceHome rhm = getHomeOf( model );
-        rhm.refresh( model );
-    }
-
-
-    public void addModelResourceHomeMapping( String mod, String rh ) {
-
+        try {
+            getHome( model.getClass() ).refresh( model );
+        } catch ( ResourceException e ) {
+            // todo make something usefull
+            e.printStackTrace();
+        }
     }
 
 

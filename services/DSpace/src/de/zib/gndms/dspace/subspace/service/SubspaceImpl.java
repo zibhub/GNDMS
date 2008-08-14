@@ -70,6 +70,8 @@ public class SubspaceImpl extends SubspaceImplBase {
 
             mh.callNewModelAction( system, csa, sp );
 
+            csa.getPostponedActions().call( );
+
             // todo handle storagesize
             /*
             StorageSizeT sst = sliceCreationSpecifier.getTotalStorageSize( );

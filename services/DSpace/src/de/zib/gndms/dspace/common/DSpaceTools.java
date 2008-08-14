@@ -2,13 +2,18 @@ package de.zib.gndms.dspace.common;
 
 import de.zib.gndms.model.dspace.StorageSize;
 import de.zib.gndms.model.dspace.DSpaceRef;
+import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.dspace.stubs.types.DSpaceReference;
 import de.zib.gndms.dspace.service.globus.resource.ExtDSpaceResourceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.GNDMSTools;
+import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
+import de.zib.gndms.infra.service.GNDMServiceHome;
 import org.apache.axis.types.PositiveInteger;
 import org.jetbrains.annotations.NotNull;
 import org.globus.wsrf.ResourceKey;
+import org.globus.wsrf.ResourceException;
+import org.globus.wsrf.impl.ResourceHomeImpl;
 import types.StorageSizeT;
 
 /**
@@ -44,4 +49,16 @@ public class DSpaceTools {
 		final String serviceURI = dspaceHome.getServiceAddress().toString();
 		return new DSpaceReference(org.globus.wsrf.utils.AddressingUtils.createEndpointReference(serviceURI, key));
 	}
+
+
+    public static <M extends GridResource, H extends ResourceHomeImpl & GNDMServiceHome>
+         void refreshModelReference( M model, H home ) throws ResourceException {
+
+        ResourceKey key = home.getKeyForId( model );
+        ReloadablePersistentResource<M, H> rps =
+                ( ReloadablePersistentResource<M, H> ) home.find( key );
+
+        rps.loadFromModel( (M) model );
+
+    }
 }

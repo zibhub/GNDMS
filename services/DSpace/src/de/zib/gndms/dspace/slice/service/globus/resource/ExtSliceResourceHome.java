@@ -4,8 +4,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.axis.types.URI;
 import org.jetbrains.annotations.NotNull;
+import org.globus.wsrf.ResourceException;
+import org.globus.wsrf.ResourceKey;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.model.common.GridResource;
 
 import javax.xml.namespace.QName;
 import javax.persistence.EntityManagerFactory;
@@ -57,5 +60,24 @@ public final class ExtSliceResourceHome extends SliceResourceHome
 
     public void setSystem( @NotNull GNDMSystem system ) throws IllegalStateException {
 //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void refresh( @NotNull GridResource resource ) throws ResourceException {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @NotNull
+    public String getNickName() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @NotNull
+    public Class getModelClass() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @NotNull
+    public ResourceKey getKeyForId( GridResource model ) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

@@ -1,6 +1,8 @@
 package de.zib.gndms.dspace.subspace.service.globus.resource;
 
 import de.zib.gndms.dspace.service.globus.resource.ExtDSpaceResourceHome;
+import de.zib.gndms.dspace.subspace.common.SubspaceConstants;
+import de.zib.gndms.dspace.common.DSpaceTools;
 import de.zib.gndms.infra.GNDMSTools;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
@@ -14,6 +16,7 @@ import org.apache.commons.logging.LogFactory;
 import org.globus.wsrf.Resource;
 import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.ResourceKey;
+import org.globus.wsrf.impl.SimpleResourceKey;
 import org.jetbrains.annotations.NotNull;
 
 import javax.naming.NamingException;
@@ -38,7 +41,7 @@ public final class ExtSubspaceResourceHome extends SubspaceResourceHome
 	  implements GNDMServiceHome<Subspace> {
 
 	// logger can be an instance field since resource home classes are instantiated at most once
-	@NotNull 
+	@NotNull
 	@SuppressWarnings({"FieldNameHidesFieldInSuperclass"})
 	private final Log logger = LogFactory.getLog(ExtSubspaceResourceHome.class);
 
@@ -96,17 +99,6 @@ public final class ExtSubspaceResourceHome extends SubspaceResourceHome
 	}
 
 
-    @Override
-    public void refresh( GridResource model ) throws ResourceException {
-        // todo retrieve resource key
-        ResourceKey rk = null;
-
-        ReloadablePersistentResource<Subspace, ExtSubspaceResourceHome> rps =
-                ( ReloadablePersistentResource<Subspace, ExtSubspaceResourceHome> ) find( rk );
-
-        rps.loadFromModel( ( Subspace) model );
-    }
-
     @NotNull
 	public AttributedURI getServiceAddress() {
 		ensureInitialized();
@@ -134,10 +126,9 @@ public final class ExtSubspaceResourceHome extends SubspaceResourceHome
 		return getSystem().getEntityManagerFactory();
 	}
 
-
-    public void refresh(final @NotNull GridResource resource) {
+    public void refresh(final @NotNull GridResource resource) throws ResourceException {
+        DSpaceTools.refreshModelReference( resource, this );
     }
-
 
     @NotNull
     public String getNickName() {
@@ -148,5 +139,10 @@ public final class ExtSubspaceResourceHome extends SubspaceResourceHome
     @NotNull
     public Class<Subspace> getModelClass() {
         return Subspace.class;
+    }
+
+    @NotNull
+    public ResourceKey getKeyForId( GridResource model ) {
+        return new SimpleResourceKey( SubspaceConstants.RESOURCE_KEY, model.getId( ) );
     }
 }
