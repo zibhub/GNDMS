@@ -70,8 +70,6 @@ public final class GNDMServiceHomeMockup implements GNDMServiceHome<DSpace> {
         return DSpace.class;
     }
 
-
-    @NotNull
     public ResourceKey getKeyForId(final GridResource model) {
         throw new UnsupportedOperationException("Mockup");
     }
