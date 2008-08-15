@@ -19,13 +19,12 @@ public final class EchoOptionsAction extends ConfigAction<String> {
     @Override
     public void initialize() {
         setWriteResult(true);
-        setClosingWriterOnCleanUp(true);
         super.initialize();    // Overridden method
     }
 
 
     @Override
     public String execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer) {
-        return allOptionsToString();
+        return allOptionsToString(true);
     }
 }

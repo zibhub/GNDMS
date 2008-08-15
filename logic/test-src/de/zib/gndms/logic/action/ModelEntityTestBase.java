@@ -1,10 +1,13 @@
 package de.zib.gndms.logic.action;
 
-import javax.persistence.EntityManagerFactory;
+import org.testng.annotations.Optional;
+import org.testng.annotations.Parameters;
+
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import static javax.persistence.Persistence.createEntityManagerFactory;
 import java.io.File;
 import java.util.Properties;
-import static javax.persistence.Persistence.createEntityManagerFactory;
 
 /**
  * A base class class for model tests.
@@ -23,7 +26,8 @@ public class ModelEntityTestBase {
     private EntityManagerFactory emf;
     private EntityManager entityManager;
     private String dbPath;
-    private String schemaName = new String( "c3grid" );
+    private String dbName = "c3grid";
+
 
     public ModelEntityTestBase( ) {
 
@@ -34,10 +38,10 @@ public class ModelEntityTestBase {
         this.dbPath = dbp;
     }
 
-
-    public ModelEntityTestBase( String dbp, String sn ) {
-        this.dbPath = dbp;
-        this.schemaName = sn;
+    @Parameters({ "dbPath", "dbName" })
+    public ModelEntityTestBase( String dbPath, @Optional("c3grid") String Name ) {
+        this.dbPath = dbPath;
+        this.dbName = Name;
     }
 
 
@@ -61,7 +65,7 @@ public class ModelEntityTestBase {
     public EntityManager getEntityManager() {
 
         if( entityManager == null ) {
-            createEntityManager( );
+            setupSharedEntityManager( );
         }
 
         return entityManager;
@@ -83,13 +87,13 @@ public class ModelEntityTestBase {
     }
 
 
-    public String getSchemaName() {
-        return schemaName;
+    public String getDbName() {
+        return dbName;
     }
 
 
-    public void setSchemaName( String sn ) {
-        this.schemaName = schemaName;
+    public void setDbName( String sn ) {
+        this.dbName = dbName;
     }
     
 
@@ -98,7 +102,7 @@ public class ModelEntityTestBase {
         if( dbPath == null )
             throw new IllegalStateException( "No data base address provided." );
 
-        if( schemaName == null )
+        if( dbName == null )
             throw new IllegalStateException( "No data base schema name provided." );
 
         if( emf != null )
@@ -119,16 +123,16 @@ public class ModelEntityTestBase {
 
         final Properties map = new Properties();
 
-        map.put( "openjpa.Id", schemaName );
-        map.put( "openjpa.ConnectionURL", "jdbc:derby:" +schemaName+ ";create=true");
+        map.put( "openjpa.Id", dbName);
+        map.put( "openjpa.ConnectionURL", "jdbc:derby:" + dbName + ";create=true");
 
-        emf = createEntityManagerFactory( schemaName, map);
+        emf = createEntityManagerFactory(dbName, map);
         System.out.println( System.getProperty( "derby.system.home" ) );
         assert emf != null;
     }
 
 
-    public void createEntityManager( ) {
+    public void setupSharedEntityManager( ) {
 
         if( entityManager != null )
             throw new IllegalStateException( "Entity manager already created." );

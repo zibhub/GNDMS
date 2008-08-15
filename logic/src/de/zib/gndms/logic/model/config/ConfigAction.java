@@ -36,7 +36,8 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R> implements
     @Override
     public final R execute(final @NotNull EntityManager em) {
         final R retVal = execute(em, getPrintWriter());
-        printWriter.write(retVal.toString());
+        if (isWriteResult() && hasPrintWriter())
+            printWriter.write(retVal == null ? "(null)" : retVal.toString());
         return retVal;
     }
 
@@ -44,9 +45,12 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R> implements
 
     @Override
     public void cleanUp() {
-        printWriter.flush();
-        if (closingWriterOnCleanUp)
-            printWriter.close();
+        final PrintWriter parentWriter = getParentPrintWriter();
+        if (parentWriter != printWriter && printWriter != null) {
+            printWriter.flush();
+            if (closingWriterOnCleanUp)
+                printWriter.close();
+        }
         super.cleanUp();    // Overridden method
     }
 
@@ -65,13 +69,18 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R> implements
 
 
     public final void setLocalOptions(final Map<String, String> cfgParams) {
-        cmdParams = Collections.unmodifiableMap(cmdParams);
+        cmdParams = Collections.unmodifiableMap(cfgParams);
     }
 
 
     @NotNull
+    public final String localOptionsToString(boolean withNewlines) {
+        return CommandAction.ParameterTools.asString(getLocalOptions(), withNewlines);
+    }
+
+    @NotNull
     public final String localOptionsToString() {
-        return CommandAction.ParameterTools.asString(getLocalOptions());
+        return localOptionsToString(false);
     }
 
     public final void parseLocalOptions(final @NotNull String cfgParams)
@@ -136,24 +145,36 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R> implements
             if (options != null)
                 allOptions.putAll(options);
         }
+        allOptions.putAll(getLocalOptions());
         return allOptions;
     }
 
 
     @NotNull
-    public final String allOptionsToString() {
-        return CommandAction.ParameterTools.asString(getLocalOptions());
+    public final String allOptionsToString(boolean withNewLines) {
+        return CommandAction.ParameterTools.asString(getAllOptions(), withNewLines);
     }
 
+    @NotNull
+    public final String allOptionsToString() {
+        return allOptionsToString(false);
+    }
 
+    
     public PrintWriter getPrintWriter() {
         if (printWriter == null) {
             final CommandAction<?> commandAction = nextParentOfType(CommandAction.class);
             if (commandAction != null)
-                return commandAction.getPrintWriter();
+                printWriter = commandAction.getPrintWriter();
         }
         return printWriter;
     }
+
+    private PrintWriter getParentPrintWriter() {
+        final CommandAction<?> commandAction = nextParentOfType(CommandAction.class);
+        return commandAction == null ? null : commandAction.getPrintWriter();
+    }
+
 
     public boolean hasPrintWriter() {
         return getPrintWriter() != null;

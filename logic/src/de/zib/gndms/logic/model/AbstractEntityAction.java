@@ -17,14 +17,12 @@ import javax.persistence.EntityTransaction;
  */
 public abstract class AbstractEntityAction<R> extends AbstractAction<R> implements EntityAction<R> {
     private EntityManager entityManager;
-    private boolean requiringEntityManager = true;
-
     private BatchUpdateAction<?> postponedActions;
 
 
     @Override
     public void initialize() {
-        if( requiringEntityManager && getEntityManager() == null )
+        if( getEntityManager() == null )
             throw new NoEntityManagerException( );
     }
 
@@ -45,9 +43,6 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
             catch (RuntimeException re) {
                     if (tx.isActive()) tx.rollback();
                     throw re;
-            }
-            finally {
-                    if (em.isOpen()) em.close();
             }
     }
 
@@ -85,13 +80,4 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
         postponedActions = postponedActionsParam;
     }
 
-
-    public boolean isRequiringEntityManager() {
-        return requiringEntityManager;
-    }
-
-
-    public void setRequiringEntityManager(final boolean requiringEntityManagerParam) {
-        requiringEntityManager = requiringEntityManagerParam;
-    }
 }

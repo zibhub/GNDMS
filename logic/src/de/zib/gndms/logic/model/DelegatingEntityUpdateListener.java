@@ -9,7 +9,7 @@ import java.util.WeakHashMap;
 
 
 /**
- * TDelegating EntityUpdateListener.  Used to avoid leaking of GNDMSystem.
+ * Delegating EntityUpdateListener.  Used to avoid leaking of GNDMSystem.
  *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
@@ -21,6 +21,11 @@ public final class DelegatingEntityUpdateListener implements EntityUpdateListene
     Map<EntityUpdateListener, WeakReference<DelegatingEntityUpdateListener>> map =
         new WeakHashMap<EntityUpdateListener, WeakReference<DelegatingEntityUpdateListener>>(8);
 
+
+    /**
+     * @return A DelegatingEntityUpdateListener that delegetas all #onModelChange calls to
+     * its delegate.
+     */
     public static DelegatingEntityUpdateListener getInstance(
             final @NotNull EntityUpdateListener listener)
     {
@@ -40,7 +45,13 @@ public final class DelegatingEntityUpdateListener implements EntityUpdateListene
 
     private EntityUpdateListener delegate;
 
-    private DelegatingEntityUpdateListener(final EntityUpdateListener delegateParam) {
+
+    /**
+     * @see #getInstance(EntityUpdateListener)
+     *
+     * @param delegateParam
+     */
+    public DelegatingEntityUpdateListener(final EntityUpdateListener delegateParam) {
         delegate = delegateParam;
     }
 

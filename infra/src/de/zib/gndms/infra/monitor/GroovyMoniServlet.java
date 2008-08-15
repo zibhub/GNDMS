@@ -194,7 +194,7 @@ public class GroovyMoniServlet extends HttpServlet {
 				intlError(e);
 			}
 		}
-        if ("run".equals(mode)) {
+        if ("call".equals(mode)) {
             String args = parseArgs(requestWrapper);
             String className = parseAction(requestWrapper);
             PrintWriter writer = responseParam.getWriter();

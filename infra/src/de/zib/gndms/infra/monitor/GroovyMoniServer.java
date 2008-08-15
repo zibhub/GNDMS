@@ -171,7 +171,7 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint {
 	private boolean skipThreadBasedRefresh;
 
     // for supporting action runnning
-    private ActionRunner actionRunner;
+    private ActionCaller actionCaller;
 
 
     /**
@@ -185,14 +185,14 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint {
 	public GroovyMoniServer(final @NotNull String theUnitName,
 	                        final @NotNull InfiniteEnumeration<? extends Map<Object,Object>> theCfg,
 	                        final @NotNull GroovyBindingFactory theBindingFactory,
-                            final @NotNull ActionRunner runner) {
+                            final @NotNull ActionCaller callerParam) {
 
 		if (theCfg instanceof LDPHolder)
 			((LDPHolder)theCfg).setLDP(this);
 		unitName = theUnitName;
 		bindingFactory = theBindingFactory;
 		configStream = theCfg;
-        actionRunner = runner;
+        actionCaller = callerParam;
 		setupState(configStream.nextElement());
 	}
 
@@ -203,17 +203,17 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint {
 	 * @param theUnitName descriptive name for this server (used in logs)
 	 * @param theConfigFile used to load server configuration
 	 * @param theBindingFactory for creating groovy biding objects per console instance/connection
-	 * @param runner
+	 * @param callerParam
      * @throws Exception
 	 */
 	public GroovyMoniServer(
             final @NotNull String theUnitName, final @NotNull File theConfigFile,
-            final @NotNull GroovyBindingFactory theBindingFactory, final ActionRunner runner)
+            final @NotNull GroovyBindingFactory theBindingFactory, final ActionCaller callerParam)
             throws Exception
 	{
 		this(theUnitName,
 			 new PropertiesFromFile(theConfigFile, theUnitName + " monitor config",
-			    DEFAULT_PROPERTIES, DEFAULT_COMMENT, logger), theBindingFactory, runner);
+			    DEFAULT_PROPERTIES, DEFAULT_COMMENT, logger), theBindingFactory, callerParam);
 		if (shouldLog("config"))
 			logger.info(theUnitName + " GroovyMoniServer config is "
 				  + theConfigFile.getCanonicalPath());
@@ -237,12 +237,14 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint {
 				  + "monitor.properties");
 		}
 		theMoniServer = new GroovyMoniServer("plain", configFile, new EmptyBindingFactory(),
-                                             new ActionRunner() {
-                                                 public Object runAction(
+                                             new ActionCaller() {
+                                                 public Object callAction(
                                                          final @NotNull String className,
                                                          final @NotNull String opts,
                                                          final @NotNull PrintWriter writer) {
                                                      // intended
+                                                     writer.println(className);
+                                                     writer.println(opts);
                                                      return null;
                                                  }
                                              });
@@ -660,6 +662,6 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint {
             final @NotNull String classNameParam,
             final @NotNull String argsParam,
             final @NotNull PrintWriter writerParam) {
-        actionRunner.runAction(classNameParam, argsParam, writerParam);
+        actionCaller.callAction(classNameParam, argsParam, writerParam);
     }
 }

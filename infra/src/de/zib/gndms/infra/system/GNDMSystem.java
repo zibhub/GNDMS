@@ -1,7 +1,7 @@
 package de.zib.gndms.infra.system;
 
 import de.zib.gndms.infra.GridConfig;
-import de.zib.gndms.infra.monitor.ActionRunner;
+import de.zib.gndms.infra.monitor.ActionCaller;
 import de.zib.gndms.infra.monitor.GroovyBindingFactory;
 import de.zib.gndms.infra.monitor.GroovyMoniServer;
 import de.zib.gndms.infra.service.GNDMServiceHome;
@@ -61,7 +61,7 @@ import java.util.Properties;
 @SuppressWarnings({"OverloadedMethodsWithSameNumberOfParameters", "NestedAssignment"})
 public final class GNDMSystem
 	  implements Initializable, SystemHolder, InstanceResolver<Object>,
-	  EMFactoryProvider, ModelUUIDGen, EntityUpdateListener, ActionRunner {
+	  EMFactoryProvider, ModelUUIDGen, EntityUpdateListener, ActionCaller {
 	private final UUIDGen uuidGen = UUIDGenFactory.getUUIDGen();
 
 	private final Log logger = createLogger();
@@ -473,7 +473,7 @@ public final class GNDMSystem
     }
 
     @SuppressWarnings({ "FeatureEnvy" })
-    public Object runAction(
+    public Object callAction(
             final @NotNull String className, final @NotNull String opts,
             final @NotNull PrintWriter writer) {
         try {
