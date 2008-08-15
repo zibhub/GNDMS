@@ -1,19 +1,21 @@
 package de.zib.gndms.logic.model.dspace;
 
-import de.zib.gndms.logic.model.config.ConfigAction;
 import de.zib.gndms.logic.action.MandatoryOptionMissingException;
+import de.zib.gndms.logic.model.config.ConfigAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.dspace.MetaSubspace;
-import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.dspace.StorageSize;
+import de.zib.gndms.model.dspace.Subspace;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
 import java.io.PrintWriter;
+import java.util.Calendar;
+import java.text.ParseException;
 
 
 /**
- * ThingAMagic.
+ * Creates a new subspace
  *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
@@ -23,9 +25,10 @@ import java.io.PrintWriter;
 public class CreateSubspaceAction extends ConfigAction<Void> {
     private String scope;
     private String name;
-    private Boolean visibleToPublic;
-    private StorageSize availableSize;
+    private String path;
+    private Boolean visible;
     private StorageSize size;
+    private Calendar tod;
 
 
     @Override
@@ -36,18 +39,22 @@ public class CreateSubspaceAction extends ConfigAction<Void> {
                 setScope(getOption("scope", "http://www.c3grid.de/G2/"));
             if (name == null)
                 setName(getOption("name"));
-            if (visibleToPublic == null)
+            if (visible == null)
                 setIsVisibleToPublic(isBooleanOptionSet("visible", true));
-            if (availableSize == null) {
-                availableSize = new StorageSize();
-                availableSize.setAmount(0);
-            }
             if (size == null) {
                 size = new StorageSize();
                 size.setAmount(getIntOption("size"));
             }
+            if (path == null) {
+                setPath(getOption("path"));
+            }
+            if (tod == null)
+                setTod(getISO8601Option("tod", Calendar.getInstance()));
         }
         catch (MandatoryOptionMissingException e) {
+            throw new IllegalStateException(e);
+        }
+        catch (ParseException e) {
             throw new IllegalStateException(e);
         }
 
@@ -61,20 +68,25 @@ public class CreateSubspaceAction extends ConfigAction<Void> {
     public Void execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer) {
         final ImmutableScopedName pk = new ImmutableScopedName(getScope(), getName());
         MetaSubspace meta= em.find(MetaSubspace.class, pk);
-
-        if (meta != null)
+        if (meta == null) {
+            meta = new MetaSubspace();
+            meta.setScopedName(pk);
+            meta.setVisibleToPublic(isVisibleToPublic());
+            em.persist(meta);
+        }
+        else if (meta.getInstance() != null)
             throw new IllegalArgumentException("Subspace already existing!");
-        meta = new MetaSubspace();
-
-        meta.setScopedName(pk);
-        meta.setVisibleToPublic(isVisibleToPublic());
 
         Subspace subspace = new Subspace();
         subspace.setMetaSubspace(meta);
-        subspace.setAvailableSize(getAvailableSize());
+        final StorageSize avail = new StorageSize();
+        avail.setAmount(getSize().getAmount());
+        avail.setUnit(getSize().getUnit());
+        subspace.setAvailableSize(avail);
         subspace.setTotalSize(getSize());
-
-        em.persist(meta);
+        subspace.setPath(getPath());
+        subspace.setTerminationTime(getTod());
+        meta.setInstance(subspace);
         em.persist(subspace);
 
         return null;
@@ -94,14 +106,8 @@ public class CreateSubspaceAction extends ConfigAction<Void> {
 
     @SuppressWarnings({ "NonBooleanMethodNameMayNotStartWithQuestion" })
     public Boolean isVisibleToPublic() {
-        return visibleToPublic;
+        return visible;
     }
-
-
-    public StorageSize getAvailableSize() {
-        return availableSize;
-    }
-
 
     public StorageSize getSize() {
         return size;
@@ -119,16 +125,31 @@ public class CreateSubspaceAction extends ConfigAction<Void> {
 
 
     public void setIsVisibleToPublic(final Boolean visibleToPublicParam) {
-        visibleToPublic = visibleToPublicParam;
-    }
-
-
-    public void setAvailableSize(final StorageSize availableSizeParam) {
-        availableSize = availableSizeParam;
+        visible = visibleToPublicParam;
     }
 
 
     public void setSize(final StorageSize sizeParam) {
         size = sizeParam;
+    }
+
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(final String pathParam) {
+        path = pathParam;
+    }
+
+    @SuppressWarnings({ "ReturnOfDateField" })
+    public Calendar getTod() {
+        return tod;
+    }
+
+
+    @SuppressWarnings({ "AssignmentToDateFieldFromParameter" })
+    public void setTod(final Calendar todParam) {
+        tod = todParam;
     }
 }

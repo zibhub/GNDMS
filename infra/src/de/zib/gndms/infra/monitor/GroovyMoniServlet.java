@@ -108,7 +108,7 @@ public class GroovyMoniServlet extends HttpServlet {
 			// authorization
 			verifyUserRole(request);
 
-			if (contAftOperatingSrvIfRequested(reqWrapper, response))
+			if (contAftOperatingSrvIfRequested(reqWrapper, response)) {
                 if (didDestroySessionOnRequest(reqWrapper))
                     response.setStatus(HttpServletResponse.SC_OK);
                 else {
@@ -119,6 +119,7 @@ public class GroovyMoniServlet extends HttpServlet {
                     else
                         establishNewMonitor(response, reqWrapper, token, getSessionOrFail(request));
                 }
+            }
 		}
 		catch (ServletRuntimeException e) {
 			e.sendToClient(response);
@@ -195,16 +196,30 @@ public class GroovyMoniServlet extends HttpServlet {
 			}
 		}
         if ("call".equals(mode)) {
-            String args = parseArgs(requestWrapper);
-            String className = parseAction(requestWrapper);
-            PrintWriter writer = responseParam.getWriter();
-            moniServer.runAction(className, args, writer);
+            doCallAction(requestWrapper, responseParam);
             return false;
         }
         return true;
 	}
 
-	/**
+
+    private void doCallAction(
+            final HttpServletRequestWrapper requestWrapper, final HttpServletResponse responseParam)
+            throws IOException {
+        String args = parseArgs(requestWrapper);
+        String className = parseAction(requestWrapper).trim();
+        PrintWriter writer = responseParam.getWriter();
+        try {
+            moniServer.runAction(className, args, writer);
+            responseParam.setStatus(HttpServletResponse.SC_OK);
+        }
+        catch (Exception e) {
+            throw new ServletRuntimeException(HttpServletResponse.SC_BAD_REQUEST, e, true);
+        }
+    }
+
+
+    /**
 	 * Tries to destroy the current session and reclaim associated resources
 	 *
 	 * @param requestWrapper

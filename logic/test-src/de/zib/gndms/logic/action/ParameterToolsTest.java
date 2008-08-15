@@ -201,4 +201,10 @@ public class ParameterToolsTest {
         paraMap.clear();
         parseParameters(paraMap, "foo:bar; foo:");
     }
+    @Test(groups = {"util"},
+          expectedExceptions = { ParameterParseException.class})
+    public void negativeProblem() throws ParameterParseException {
+        paraMap.clear();
+        parseParameters(paraMap, "scope:'http://www.c3grid.de/G2';name:Staging;size:10;path:/tmp");
+    }
 }

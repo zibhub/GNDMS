@@ -243,7 +243,8 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint {
                                                          final @NotNull String opts,
                                                          final @NotNull PrintWriter writer) {
                                                      // intended
-                                                     writer.println(className);
+                                                     writer.print(className);
+                                                     writer.print(' ');
                                                      writer.println(opts);
                                                      return null;
                                                  }
@@ -661,7 +662,7 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint {
     public void runAction(
             final @NotNull String classNameParam,
             final @NotNull String argsParam,
-            final @NotNull PrintWriter writerParam) {
+            final @NotNull PrintWriter writerParam) throws Exception {
         actionCaller.callAction(classNameParam, argsParam, writerParam);
     }
 }

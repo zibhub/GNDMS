@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 
 
 /**
- * TDecoupling interface between GNDMSystem and GroovMoniServer
+ * Decoupling interface between GNDMSystem and GroovMoniServer
  *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
@@ -15,5 +15,5 @@ import java.io.PrintWriter;
  */
 public interface ActionCaller {
     Object callAction(final @NotNull String className, final @NotNull String opts,
-                      final @NotNull PrintWriter writer);
+                      final @NotNull PrintWriter writer) throws Exception;
 }

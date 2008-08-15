@@ -1,13 +1,14 @@
 package de.zib.gndms.dspace.service.globus.resource;
 
-import de.zib.gndms.dspace.service.DSpaceConfiguration;
 import de.zib.gndms.dspace.common.DSpaceConstants;
+import de.zib.gndms.dspace.service.DSpaceConfiguration;
 import de.zib.gndms.infra.GNDMSTools;
 import de.zib.gndms.infra.GridConfig;
-import de.zib.gndms.infra.service.GNDMServiceHome;
+import de.zib.gndms.infra.service.GNDMSingletonServiceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
-import de.zib.gndms.model.dspace.DSpace;
+import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.model.common.GridResource;
+import de.zib.gndms.model.dspace.DSpace;
 import org.apache.axis.message.addressing.AttributedURI;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,7 +35,7 @@ import javax.xml.namespace.QName;
  *          User: stepn Date: 16.07.2008 Time: 12:35:27
  */
 public final class ExtDSpaceResourceHome  extends DSpaceResourceHome
-	  implements GNDMServiceHome<DSpace> {
+	  implements GNDMSingletonServiceHome<DSpace> {
 
 	// logger can be an instance field since resource home classes are instantiated at most once
 	@NotNull @SuppressWarnings({"FieldNameHidesFieldInSuperclass"})
@@ -122,7 +123,8 @@ public final class ExtDSpaceResourceHome  extends DSpaceResourceHome
 				throw new InvalidResourceKeyException("Invalid singleton key");
 	}
 
-	@Override
+
+    @Override
 	public Resource createSingleton() {
 		try	{
 			final DSpaceResource resource = new DSpaceResource();
@@ -182,5 +184,10 @@ public final class ExtDSpaceResourceHome  extends DSpaceResourceHome
     @NotNull
     public ResourceKey getKeyForId( GridResource model ) {
         return new SimpleResourceKey( DSpaceConstants.RESOURCE_KEY, model.getId( ) );
+    }
+
+
+    public String getSingletonID() throws ResourceException {
+        return ((ReloadablePersistentResource)find(null)).getID();
     }
 }

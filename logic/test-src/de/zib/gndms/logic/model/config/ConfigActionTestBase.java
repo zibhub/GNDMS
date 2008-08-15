@@ -1,10 +1,10 @@
 package de.zib.gndms.logic.model.config;
 
-import de.zib.gndms.logic.action.ModelEntityTestBase;
-import de.zib.gndms.logic.action.CommandAction;
 import de.zib.gndms.logic.action.ActionTestTools;
-import org.testng.annotations.Optional;
+import de.zib.gndms.logic.action.CommandAction;
+import de.zib.gndms.logic.action.ModelEntityTestBase;
 import org.jetbrains.annotations.NotNull;
+import org.testng.annotations.Optional;
 
 import javax.persistence.EntityManager;
 import java.io.PrintWriter;
@@ -18,7 +18,7 @@ import java.io.PrintWriter;
  *
  *          User: stepn Date: 15.08.2008 Time: 14:38:39
  */
-public class ConfigActionTestBase extends ModelEntityTestBase {
+public abstract class ConfigActionTestBase extends ModelEntityTestBase {
 
     public ConfigActionTestBase(final String dbPath, @Optional("c3grid") final String Name) {
         super(dbPath, Name);
@@ -37,6 +37,4 @@ public class ConfigActionTestBase extends ModelEntityTestBase {
     protected final @NotNull EntityManager createEntityManager() {
         return getEntityManagerFactory().createEntityManager();
     }
-
-
 }

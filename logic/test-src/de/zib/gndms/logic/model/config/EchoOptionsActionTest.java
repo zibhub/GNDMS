@@ -2,9 +2,7 @@ package de.zib.gndms.logic.model.config;
 
 import de.zib.gndms.logic.action.CommandAction;
 import static org.testng.Assert.assertEquals;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -27,7 +25,17 @@ public class EchoOptionsActionTest extends ConfigActionTestBase {
         super(dbPath, Name);
     }
 
-    @Test(groups = {"util", "action"})
+    @BeforeClass(groups={"db", "action", "config"})
+    public void init() {
+        removeDbPath();
+    }
+
+    @AfterClass(groups={"db", "action", "config"})
+    public void shutdownDb() {
+        tryCloseEMF();
+    }
+
+    @Test(groups = {"util", "action", "config"})
     public void runPlainAction() throws CommandAction.ParameterTools.ParameterParseException {
         EchoOptionsAction action = new EchoOptionsAction();
         try {

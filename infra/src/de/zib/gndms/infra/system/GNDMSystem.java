@@ -5,9 +5,11 @@ import de.zib.gndms.infra.monitor.ActionCaller;
 import de.zib.gndms.infra.monitor.GroovyBindingFactory;
 import de.zib.gndms.infra.monitor.GroovyMoniServer;
 import de.zib.gndms.infra.service.GNDMServiceHome;
+import de.zib.gndms.infra.service.GNDMSingletonServiceHome;
 import de.zib.gndms.infra.service.ServiceInfo;
 import de.zib.gndms.infra.sys.EMFactoryProvider;
 import de.zib.gndms.infra.sys.RestrictedEMFactory;
+import de.zib.gndms.logic.action.CommandAction;
 import de.zib.gndms.logic.model.EntityUpdateListener;
 import de.zib.gndms.logic.model.config.ConfigAction;
 import de.zib.gndms.model.common.GridResource;
@@ -26,8 +28,8 @@ import org.apache.axis.types.URI;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.globus.wsrf.ResourceException;
+import org.globus.wsrf.ResourceHome;
 import org.globus.wsrf.impl.SimpleResourceKey;
-import org.globus.wsrf.impl.SingletonResourceHome;
 import org.globus.wsrf.jndi.Initializable;
 import org.globus.wsrf.utils.AddressingUtils;
 import org.jetbrains.annotations.NotNull;
@@ -196,7 +198,7 @@ public final class GNDMSystem
 	}
 
 	private void prepareDbStorage() throws IOException {
-		dbDir = new File(sharedDir, "sys");
+		dbDir = new File(sharedDir, "db");
 		doCheckOrCreateDir(dbDir);
 
 		System.setProperty("derby.system.home", dbDir.getCanonicalPath());
@@ -234,7 +236,7 @@ public final class GNDMSystem
 
 	@SuppressWarnings({ "MethodOnlyUsedFromInnerClass" })
 	private void setupShellService() throws Exception {
-		File monitorConfig = new File(getSharedDir() + File.pathSeparator + "monitor.properties");
+		File monitorConfig = new File(sharedDir, "monitor.properties");
 		groovyMonitor = new GroovyMoniServer(getGridName(),
 		                                     monitorConfig, new GNDMSBindingFactory(), this);
 		groovyMonitor.startConfigRefreshThread(true);
@@ -245,6 +247,7 @@ public final class GNDMSystem
         addHome(home.getModelClass(), home);
     }
 
+    @SuppressWarnings({ "HardcodedFileSeparator" })
     private synchronized <K extends GridResource> void addHome(final @NotNull Class<K> modelClazz,
                                                                final @NotNull GNDMServiceHome<?> home)
             throws ResourceException {
@@ -252,11 +255,12 @@ public final class GNDMSystem
             throw new IllegalStateException("Name clash in home registration");
         else {
             final String homeName = home.getNickName() + "Home";
-            addInstance(homeName, home);
+            addInstance_(homeName, home);
             try {
-                if (home instanceof SingletonResourceHome) {
-                    Object instance = ((SingletonResourceHome)home).find(null);
-                    addInstance(home.getNickName() + "Resource", instance);
+                if (GNDMSingletonServiceHome.class.isInstance(home)) {
+                    Object instance = ((ResourceHome)home).find(null);
+                    addInstance_(home.getNickName() + "Resource", instance);
+                    logger.debug(getSystemName() + " addResource: '" + modelClazz.getName() + '/' + ((GNDMSingletonServiceHome)home).getSingletonID() + '\'');
                 }
             }
             catch (RuntimeException e) {
@@ -285,19 +289,25 @@ public final class GNDMSystem
         if (name.endsWith("Home") || name.endsWith("Resource"))
             throw new IllegalArgumentException("Reserved instance name");
 
-		if ("out".equals(name) || "err".equals(name) || "args".equals(name) || "em".equals(name)
-			|| "emg".equals(name))
-			throw new IllegalArgumentException("Reserved instance name");
-
-		if (instances.containsKey(name))
-			throw new IllegalStateException("Name clash in instance registration");
-		else
-			instances.put(name, obj);
+        addInstance_(name, obj);
 
 		logger.debug(getSystemName() + " addInstance: '" + name + '\'');
 	}
-	
-	@NotNull
+
+
+    private void addInstance_(final String name, final Object obj) {
+        if ("out".equals(name) || "err".equals(name) || "args".equals(name) || "em".equals(name)
+            || "emg".equals(name))
+            throw new IllegalArgumentException("Reserved instance name");
+
+        if (instances.containsKey(name))
+            throw new IllegalStateException("Name clash in instance registration");
+        else
+            instances.put(name, obj);
+    }
+
+
+    @NotNull
 	public synchronized <T> T getInstance(@NotNull Class<? extends T> clazz, @NotNull String name)
 	{
 		final Object obj = instances.get(name);
@@ -332,7 +342,7 @@ public final class GNDMSystem
 	}
 
 	@NotNull
-	public GridConfig getSharedDir() {
+	public GridConfig getSharedConfig() {
 		return sharedConfig;
 	}
 
@@ -458,15 +468,18 @@ public final class GNDMSystem
     @SuppressWarnings({ "RawUseOfParameterizedType", "unchecked" })
     public static ConfigAction<?> createConfigAction(final @NotNull String name,
                                                      final @NotNull String params)
-            throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+            throws ClassNotFoundException, IllegalAccessException, InstantiationException,
+            CommandAction.ParameterTools.ParameterParseException {
         final Class<ConfigAction> clazz;
         if (name.length() > 0 && name.charAt(0) == '.')
-            clazz = (Class<ConfigAction>) Class.forName("de.zib.gndms.logic.model." + name +
+            clazz = (Class<ConfigAction>) Class.forName("de.zib.gndms.logic.model" + name +
                     "Action");
         else
             clazz = (Class<ConfigAction>) Class.forName(name);
         if (ConfigAction.class.isAssignableFrom(clazz)) {
-            return clazz.newInstance();
+            final ConfigAction configAction = clazz.newInstance();
+            configAction.parseLocalOptions(params);
+            return configAction;
         }
         else
             throw new IllegalArgumentException("Not a ConfigAction");
@@ -475,21 +488,21 @@ public final class GNDMSystem
     @SuppressWarnings({ "FeatureEnvy" })
     public Object callAction(
             final @NotNull String className, final @NotNull String opts,
-            final @NotNull PrintWriter writer) {
+            final @NotNull PrintWriter writer) throws Exception {
+        ConfigAction<?> action = createConfigAction(className, opts.trim());
+        action.setEntityManager(getEntityManagerFactory().createEntityManager());
+        action.setPrintWriter(writer);
+        action.setClosingWriterOnCleanUp(false);
+        action.setWriteResult(true);
+        logger.info("Running " + className + ' ' + opts);
         try {
-            ConfigAction<?> action = createConfigAction(className, opts);
-            action.setEntityManager(getEntityManagerFactory().createEntityManager());
-            action.setPrintWriter(writer);
-            action.setClosingWriterOnCleanUp(true);
-            action.setWriteResult(true);
             return action.call();
         }
-        catch (RuntimeException e) {
+        catch (Exception e) {
+            logger.warn("Failure during " + className + ' ' + opts, e);
             throw e;
         }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+
     }
 
 

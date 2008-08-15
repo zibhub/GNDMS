@@ -2,17 +2,7 @@ package de.zib.gndms.dspace.service.globus.resource;
 
 import gov.nih.nci.cagrid.advertisement.AdvertisementClient;
 import gov.nih.nci.cagrid.advertisement.exceptions.UnregistrationException;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.xml.namespace.QName;
-
 import gov.nih.nci.cagrid.introduce.servicetools.ReflectionResource;
-
 import org.apache.axis.MessageContext;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.addressing.EndpointReferenceType;
@@ -22,11 +12,7 @@ import org.globus.mds.aggregator.types.AggregatorConfig;
 import org.globus.mds.aggregator.types.AggregatorContent;
 import org.globus.mds.aggregator.types.GetMultipleResourcePropertiesPollType;
 import org.globus.mds.servicegroup.client.ServiceGroupRegistrationParameters;
-import org.globus.wsrf.Constants;
-import org.globus.wsrf.Resource;
-import org.globus.wsrf.ResourceException;
-import org.globus.wsrf.ResourceContext;
-import org.globus.wsrf.ResourceContextException;
+import org.globus.wsrf.*;
 import org.globus.wsrf.config.ContainerConfig;
 import org.globus.wsrf.container.ServiceHost;
 import org.globus.wsrf.encoding.DeserializationException;
@@ -35,6 +21,13 @@ import org.globus.wsrf.impl.security.descriptor.ResourceSecurityDescriptor;
 import org.globus.wsrf.impl.servicegroup.client.ServiceGroupRegistrationClient;
 import org.globus.wsrf.security.SecureResource;
 import org.globus.wsrf.utils.AddressingUtils;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.xml.namespace.QName;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
 
 /** 
@@ -117,7 +110,7 @@ public abstract class DSpaceResourceBase extends ReflectionResource implements R
 
 		String servicePath = ctx.getTargetService();
 		servicePath = servicePath.substring(0,servicePath.lastIndexOf("/"));
-		servicePath+="/dspace";
+		servicePath+="/DSpace";
 
 		String jndiName = Constants.JNDI_SERVICES_BASE_NAME + servicePath + "/configuration";
 		logger.debug("Will read configuration from jndi name: " + jndiName);

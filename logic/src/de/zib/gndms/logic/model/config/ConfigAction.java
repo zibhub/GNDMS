@@ -3,11 +3,13 @@ package de.zib.gndms.logic.model.config;
 import de.zib.gndms.logic.action.CommandAction;
 import de.zib.gndms.logic.action.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.AbstractEntityAction;
+import de.zib.gndms.logic.util.ISO8601;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
 import java.io.PrintWriter;
 import java.util.*;
+import java.text.ParseException;
 
 
 /**
@@ -27,13 +29,6 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R> implements
     private boolean closingWriterOnCleanUp;
 
     @Override
-    public void initialize() {
-        super.initialize();    // Overridden method
-        requireParameter("printWriter", getPrintWriter());
-    }
-
-
-    @Override
     public final R execute(final @NotNull EntityManager em) {
         final R retVal = execute(em, getPrintWriter());
         if (isWriteResult() && hasPrintWriter())
@@ -45,11 +40,11 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R> implements
 
     @Override
     public void cleanUp() {
-        final PrintWriter parentWriter = getParentPrintWriter();
-        if (parentWriter != printWriter && printWriter != null) {
-            printWriter.flush();
-            if (closingWriterOnCleanUp)
-                printWriter.close();
+        if (printWriter != null) {
+            if (closingWriterOnCleanUp) {
+                printWriter.flush();
+                printWriter.close();                
+            }
         }
         super.cleanUp();    // Overridden method
     }
@@ -162,11 +157,8 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R> implements
 
     
     public PrintWriter getPrintWriter() {
-        if (printWriter == null) {
-            final CommandAction<?> commandAction = nextParentOfType(CommandAction.class);
-            if (commandAction != null)
-                printWriter = commandAction.getPrintWriter();
-        }
+        if (printWriter == null)
+            return getParentPrintWriter();
         return printWriter;
     }
 
@@ -247,5 +239,18 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R> implements
     {
         final String option = getOption(name);
         return Enum.valueOf(clazz, option);
+    }
+
+    @SuppressWarnings({ "InstanceMethodNamingConvention" })
+    public Calendar getISO8601Option(String name, @NotNull Calendar def) throws ParseException {
+        final String option = getNonMandatoryOption(name);
+        return option == null ? def : ISO8601.parseISO8601DateStr(option);
+    }
+
+    @SuppressWarnings({ "InstanceMethodNamingConvention" })
+    public @NotNull Calendar getISO8601Option(String name)
+            throws MandatoryOptionMissingException, ParseException {
+        final String option = getOption(name);
+        return ISO8601.parseISO8601DateStr(option);
     }
 }

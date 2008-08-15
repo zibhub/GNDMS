@@ -15,6 +15,7 @@ fi
 shift
 
 BASENAME=`basename $0`
+PREP=`dirname $0`/moni_prep
 
 
 if [ $BASENAME = "moni_repl" ]; then
@@ -45,7 +46,7 @@ shift
 REST="$*"
 
 if [ ! -z "$REST" ] ; then
-	REST=`echo -n "$REST" | openssl base64 | sed -e 's/+/%2B/; s/\//%2F/g; s/=/%3D/g'`
+	REST=`echo "$REST" | $PREP`
 	REST="&args=$REST"
 fi
 

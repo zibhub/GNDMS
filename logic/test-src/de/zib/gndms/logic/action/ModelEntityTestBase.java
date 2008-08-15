@@ -2,6 +2,7 @@ package de.zib.gndms.logic.action;
 
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
+import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -21,9 +22,10 @@ import java.util.Properties;
  *
  * User: mjorra, Date: 15.08.2008, Time: 12:38:08
  */
-public class ModelEntityTestBase {
+public abstract class ModelEntityTestBase {
 
     private EntityManagerFactory emf;
+    
     private EntityManager entityManager;
     private String dbPath;
     private String dbName = "c3grid";
@@ -44,6 +46,10 @@ public class ModelEntityTestBase {
         this.dbName = Name;
     }
 
+
+    public void removeDbPath() {
+        erasePath(new File(dbPath));
+    }
 
     public void tryCloseEMF( ) {
 
@@ -144,4 +150,21 @@ public class ModelEntityTestBase {
 
         assert entityManager != null;
     }
+
+
+    public static void erasePath(final @NotNull File path) {
+        if (path.exists() && path.isDirectory())
+			rmDirRecursively(path);
+    }
+
+
+    public static void rmDirRecursively(File fileParam) {
+        for (File file : fileParam.listFiles()) {
+            if (file.isDirectory())
+                rmDirRecursively(file);
+            else
+                file.delete();
+        }
+        fileParam.delete();
+	}
 }

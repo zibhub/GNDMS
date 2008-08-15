@@ -77,8 +77,8 @@ public interface CommandAction<R> extends Action<R> {
 
             for (int i = 0; i < chars.length; i++) {
                 char cur = chars[i];
-                if (!Character.isDefined(cur) || Character.isISOControl(cur))
-                    throw new ParameterParseException("Invalid character", i);
+                if (!Character.isDefined(cur))
+                    throw new ParameterParseException("Invalid character in ", params, i);
                 switch (mode) {
                     case KEY_WHITE:
                         if (Character.isWhitespace(cur))
@@ -166,7 +166,8 @@ public interface CommandAction<R> extends Action<R> {
                 return;
             else
                 throw new ParameterParseException
-                        ("Incomplete entry encountered before end of string");
+                        ("Incomplete entry encountered before end of string",
+                         params, params.length());
         }
 
 

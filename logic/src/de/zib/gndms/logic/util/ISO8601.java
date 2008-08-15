@@ -1,4 +1,4 @@
-package de.zib.gndms.infra.util;
+package de.zib.gndms.logic.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

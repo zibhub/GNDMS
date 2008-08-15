@@ -14,6 +14,8 @@ fi
 
 shift
 
+PREP=`dirname $0`/moni_prep
+
 TOKEN="$1"
 
 shift
@@ -21,7 +23,7 @@ shift
 REST="$*"
 
 if [ ! -z "$REST" ] ; then
-	REST=`echo "$REST" | tr -cd '[:print:]' | openssl base64 | sed -e 's/+/%2B/; s/\//%2F/g; s/=/%3D/g'`
+	REST=`echo "$REST" | $PREP`
 	REST="&args=$REST"
 fi
 

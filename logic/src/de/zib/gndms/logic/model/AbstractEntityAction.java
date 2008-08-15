@@ -41,8 +41,9 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
                 return result;
             }
             catch (RuntimeException re) {
-                    if (tx.isActive()) tx.rollback();
-                    throw re;
+                if (tx.isActive())
+                    tx.rollback();
+                throw re;
             }
     }
 
@@ -52,7 +53,7 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
         if (entityManager == null) {
             final EntityAction<?> entityAction = nextParentOfType(EntityAction.class);
             if (entityAction != null)
-                entityManager = entityAction.getEntityManager();
+                return entityAction.getEntityManager();
         }
 
         return entityManager;
@@ -67,7 +68,8 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
     public final BatchUpdateAction<?> getPostponedActions() {
         if (postponedActions == null) {
             final EntityAction<?> entityAction = nextParentOfType(EntityAction.class);
-            postponedActions = entityAction == null ? null : entityAction.getPostponedActions();
+            if (entityAction != null)
+                return entityAction.getPostponedActions();
         }
 
         return postponedActions;

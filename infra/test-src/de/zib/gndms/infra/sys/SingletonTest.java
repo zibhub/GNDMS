@@ -19,7 +19,7 @@ import org.testng.annotations.Test;
  *
  * User: stepn Date: 12.08.2008 Time: 16:06:58
  */
-public class SingletonTest extends SysTest {
+public class SingletonTest extends SysTestBase {
 	public DSpace getSingletonInstance() throws ResourceException {
 		SingletonGridResourceModelHandler mH =
 			new SingletonGridResourceModelHandler(DSpace.class, home);
