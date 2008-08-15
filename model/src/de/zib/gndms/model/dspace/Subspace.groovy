@@ -70,23 +70,21 @@ class Subspace extends TimedGridResource {
     /**
      * Sets the path of the Subspace to pth.
      *
-     * If pth doesn't exist it will be created.
+     * If pth must exists and be a valid directory with read/write access.
      *
      * @note The read permission will be removed form pth.
      */
     public boolean setPath( String pth ) {
+
         File f = new File( pth )
 
-        try {
-            // this also creats the dir for the subspace if it
-            // doesn't exist yet.
-            f.mkdirs( )
-            directoryAux.setSubspacePermissions( f.getAbsolutePath( ) )
-        } catch (SecurityException e) {
-            return false
-        }
+        if( ! ( f.exists( ) && f.isDirectory( ) ) )
+            throw new IllegalStateException( pth+" does not exists or isn't a directory" )
 
-        return true
+        if( ! f.canWrite( ) )
+            throw new IllegalStateException( pth+" is not writable" )
+
+        path = pth;
     }
 
 

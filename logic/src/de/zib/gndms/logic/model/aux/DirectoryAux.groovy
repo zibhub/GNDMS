@@ -85,7 +85,7 @@ abstract class DirectoryAux {
      * @param pth The complete Path to the directory.
      * @return The success of the operation.
      */
-    private static boolean deleteDirectory( String pth ) {
+    public static boolean deleteDirectory( String pth ) {
 
         File f = new File( pth )
 
@@ -106,6 +106,23 @@ abstract class DirectoryAux {
         }
 
         return false
+    }
+
+
+    public boolean createSubspaceDirectory( String pth ) {
+        
+        File f = new File( pth )
+
+        try {
+            // this also creats the dir for the subspace if it
+            // doesn't exist yet.
+            f.mkdirs( )
+            setSubspacePermissions( f.getAbsolutePath( ) )
+        } catch (SecurityException e) {
+            return false
+        }
+
+        return true
     }
 }
 

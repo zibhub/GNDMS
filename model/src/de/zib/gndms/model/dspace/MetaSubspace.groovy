@@ -34,7 +34,8 @@ class MetaSubspace extends GridEntity {
 		                   @UniqueConstraint(columnNames = ["slice_kind_uri"])],
 		joinColumns=[@JoinColumn(name="meta_subspace_schema_uri", referencedColumnName="schema_uri", columnDefinition="VARCHAR", nullable=false),
 		             @JoinColumn(name="meta_subspace_specifier", referencedColumnName="specifier", columnDefinition="VARCHAR", nullable=false)],
-		inverseJoinColumns=[@JoinColumn(name="slice_kind_uri", referencedColumnName="uri", columnDefinition="VARCHAR", nullable=false),
-		                    @JoinColumn(name="slice_kind_class", referencedColumnName="class", columnDefinition="VARCHAR", nullable=false)])
+        inverseJoinColumns=[@JoinColumn(name="slice_kind_uri", referencedColumnName="uri", columnDefinition="VARCHAR", nullable=false)])
+		//inverseJoinColumns=[@JoinColumn(name="slice_kind_uri", referencedColumnName="uri", columnDefinition="VARCHAR", nullable=false),
+		//                    @JoinColumn(name="slice_kind_class", referencedColumnName="class", columnDefinition="VARCHAR", nullable=false)])
 	Set<SliceKind> creatableSliceKinds
 }
