@@ -53,6 +53,12 @@
 			  connectionDriverName="org.apache.derby.jdbc.EmbeddedDriver"
 			  connectionURL="jdbc:derby:/opt/gt-current/etc/c3grid_shared/db/c3grid"
 			  propertiesFile="src/META-INF/persistence.xml"  />
+                 <!--
+		<config
+			  connectionDriverName="org.apache.derby.jdbc.EmbeddedDriver"
+              connectionURL="jdbc:derby:/home/mjorra/tmp/C3GridTests/db/ModelActionTests"
+			  propertiesFile="src/META-INF/persistence.xml"  />
+          -->
 
 		<classpath>
 			<pathelement location="gndms-shared-model/production" />

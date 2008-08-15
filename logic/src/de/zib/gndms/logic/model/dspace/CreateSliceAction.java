@@ -79,7 +79,7 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
         File f = null;
         String did = new String( );
 
-        while ( f != null && f.exists() ) {
+        while ( !( f != null && !f.exists() ) ) {
             did = uuidgen.nextUUID();
             f = new File( lp + did );
         }
