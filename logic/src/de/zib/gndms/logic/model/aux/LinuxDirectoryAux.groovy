@@ -27,6 +27,6 @@ class LinuxDirectoryAux extends DirectoryAux {
     private static boolean setMode( String md, String pth ) {
 
         Process p = Runtime.getRuntime().exec( "chmod " +md+ " " + pth )
-            return p.exitStatus( ) == 0
+            return p.waitFor( ) == 0
     }
 }
