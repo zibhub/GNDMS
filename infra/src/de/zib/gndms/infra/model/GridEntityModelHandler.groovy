@@ -9,8 +9,8 @@ import javax.persistence.Query
 import javax.persistence.NoResultException
 import javax.persistence.NonUniqueResultException
 import de.zib.gndms.infra.service.GNDMServiceHome
-import de.zib.gndms.infra.db.EMFactoryProvider
-import de.zib.gndms.infra.db.EMTools
+import de.zib.gndms.infra.sys.EMFactoryProvider
+import de.zib.gndms.infra.sys.EMTools
 import de.zib.gndms.model.common.GridEntity
 import de.zib.gndms.model.common.GridResource
 import de.zib.gndms.model.common.SingletonGridResource
@@ -21,6 +21,7 @@ import de.zib.gndms.logic.model.ModelAction
 import org.globus.wsrf.NoSuchResourceException
 import org.globus.wsrf.ResourceException
 import org.globus.wsrf.ResourceIdentifier
+import de.zib.gndms.logic.model.DelegatingEntityUpdateListener;
 
 /**
  * Helper class for managing persistent models of GNDMS resources 
@@ -36,7 +37,6 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
 
 	private final @NotNull Class<M> clazz;
 	private final @NotNull GNDMServiceHome home;
-
 
 	GridEntityModelHandler(final @NotNull Class<M> theClazz, final @NotNull H homeParam) {
 		clazz = theClazz;
@@ -200,7 +200,7 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
 
 
 	public @NotNull EntityUpdateListener getEntityUpdateListener() {
-		return null;
+		return DelegatingEntityUpdateListener.getInstance(sys);
 	}
 
     protected <R> R txRun(final EntityManager emParam, final @NotNull Closure block) {

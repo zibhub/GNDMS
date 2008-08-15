@@ -22,6 +22,7 @@ import org.mortbay.jetty.servlet.*;
 import org.mortbay.thread.BoundedThreadPool;
 
 import java.io.File;
+import java.io.PrintWriter;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -168,24 +169,30 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint {
 
 	// avoids double restarts if restart is triggered from servlet and thread at the same time
 	private boolean skipThreadBasedRefresh;
-	
-	/**
+
+    // for supporting action runnning
+    private ActionRunner actionRunner;
+
+
+    /**
 	 * Creates a facade class for running a monitor server based on
 	 * groovy and jetty.
 	 *
 	 * @param theUnitName descriptive name for this server (used in logs)
-	 * @param theConfig continuous stream of properties for this server
+	 * @param theCfg continuous stream of properties for this server
 	 * @param theBindingFactory for creating groovy biding objects per console instance/connection
 	 */
-	public GroovyMoniServer(@NotNull String theUnitName,
-	                       @NotNull InfiniteEnumeration<? extends Map<Object,Object>> theConfig,
-	                       @NotNull GroovyBindingFactory theBindingFactory) {
+	public GroovyMoniServer(final @NotNull String theUnitName,
+	                        final @NotNull InfiniteEnumeration<? extends Map<Object,Object>> theCfg,
+	                        final @NotNull GroovyBindingFactory theBindingFactory,
+                            final @NotNull ActionRunner runner) {
 
-		if (theConfig instanceof LDPHolder)
-			((LDPHolder)theConfig).setLDP(this);
+		if (theCfg instanceof LDPHolder)
+			((LDPHolder)theCfg).setLDP(this);
 		unitName = theUnitName;
 		bindingFactory = theBindingFactory;
-		configStream = theConfig;
+		configStream = theCfg;
+        actionRunner = runner;
 		setupState(configStream.nextElement());
 	}
 
@@ -196,14 +203,17 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint {
 	 * @param theUnitName descriptive name for this server (used in logs)
 	 * @param theConfigFile used to load server configuration
 	 * @param theBindingFactory for creating groovy biding objects per console instance/connection
-	 * @throws Exception
+	 * @param runner
+     * @throws Exception
 	 */
-	public GroovyMoniServer(@NotNull String theUnitName, @NotNull File theConfigFile,
-	                           @NotNull GroovyBindingFactory theBindingFactory) throws Exception
+	public GroovyMoniServer(
+            final @NotNull String theUnitName, final @NotNull File theConfigFile,
+            final @NotNull GroovyBindingFactory theBindingFactory, final ActionRunner runner)
+            throws Exception
 	{
 		this(theUnitName,
 			 new PropertiesFromFile(theConfigFile, theUnitName + " monitor config",
-			    DEFAULT_PROPERTIES, DEFAULT_COMMENT, logger), theBindingFactory);
+			    DEFAULT_PROPERTIES, DEFAULT_COMMENT, logger), theBindingFactory, runner);
 		if (shouldLog("config"))
 			logger.info(theUnitName + " GroovyMoniServer config is "
 				  + theConfigFile.getCanonicalPath());
@@ -226,7 +236,16 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint {
 				  + File.separatorChar
 				  + "monitor.properties");
 		}
-		theMoniServer = new GroovyMoniServer("plain", configFile, new EmptyBindingFactory());
+		theMoniServer = new GroovyMoniServer("plain", configFile, new EmptyBindingFactory(),
+                                             new ActionRunner() {
+                                                 public Object runAction(
+                                                         final @NotNull String className,
+                                                         final @NotNull String opts,
+                                                         final @NotNull PrintWriter writer) {
+                                                     // intended
+                                                     return null;
+                                                 }
+                                             });
 		theMoniServer.startConfigRefreshThread(false);
 	}
 
@@ -635,4 +654,12 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint {
 	public synchronized boolean shouldLog(@NotNull String token) {
 		return logged == null || logged.contains(token);
 	}
+
+
+    public void runAction(
+            final @NotNull String classNameParam,
+            final @NotNull String argsParam,
+            final @NotNull PrintWriter writerParam) {
+        actionRunner.runAction(classNameParam, argsParam, writerParam);
+    }
 }

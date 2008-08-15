@@ -1,13 +1,15 @@
 package de.zib.gndms.infra.system;
 
 import de.zib.gndms.infra.GridConfig;
-import de.zib.gndms.infra.db.EMFactoryProvider;
-import de.zib.gndms.infra.db.RestrictedEMFactory;
+import de.zib.gndms.infra.monitor.ActionRunner;
 import de.zib.gndms.infra.monitor.GroovyBindingFactory;
 import de.zib.gndms.infra.monitor.GroovyMoniServer;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.service.ServiceInfo;
+import de.zib.gndms.infra.sys.EMFactoryProvider;
+import de.zib.gndms.infra.sys.RestrictedEMFactory;
 import de.zib.gndms.logic.model.EntityUpdateListener;
+import de.zib.gndms.logic.model.config.ConfigAction;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.model.common.VEPRef;
@@ -41,6 +43,7 @@ import static javax.persistence.Persistence.createEntityManagerFactory;
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
@@ -58,7 +61,7 @@ import java.util.Properties;
 @SuppressWarnings({"OverloadedMethodsWithSameNumberOfParameters", "NestedAssignment"})
 public final class GNDMSystem
 	  implements Initializable, SystemHolder, InstanceResolver<Object>,
-	  EMFactoryProvider, ModelUUIDGen, EntityUpdateListener {
+	  EMFactoryProvider, ModelUUIDGen, EntityUpdateListener, ActionRunner {
 	private final UUIDGen uuidGen = UUIDGenFactory.getUUIDGen();
 
 	private final Log logger = createLogger();
@@ -193,7 +196,7 @@ public final class GNDMSystem
 	}
 
 	private void prepareDbStorage() throws IOException {
-		dbDir = new File(sharedDir, "db");
+		dbDir = new File(sharedDir, "sys");
 		doCheckOrCreateDir(dbDir);
 
 		System.setProperty("derby.system.home", dbDir.getCanonicalPath());
@@ -233,7 +236,7 @@ public final class GNDMSystem
 	private void setupShellService() throws Exception {
 		File monitorConfig = new File(getSharedDir() + File.pathSeparator + "monitor.properties");
 		groovyMonitor = new GroovyMoniServer(getGridName(),
-		                                     monitorConfig, new GNDMSBindingFactory());
+		                                     monitorConfig, new GNDMSBindingFactory(), this);
 		groovyMonitor.startConfigRefreshThread(true);
 	}
 
@@ -452,6 +455,44 @@ public final class GNDMSystem
     }
 
 
+    @SuppressWarnings({ "RawUseOfParameterizedType", "unchecked" })
+    public static ConfigAction<?> createConfigAction(final @NotNull String name,
+                                                     final @NotNull String params)
+            throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+        final Class<ConfigAction> clazz;
+        if (name.length() > 0 && name.charAt(0) == '.')
+            clazz = (Class<ConfigAction>) Class.forName("de.zib.gndms.logic.model." + name +
+                    "Action");
+        else
+            clazz = (Class<ConfigAction>) Class.forName(name);
+        if (ConfigAction.class.isAssignableFrom(clazz)) {
+            return clazz.newInstance();
+        }
+        else
+            throw new IllegalArgumentException("Not a ConfigAction");
+    }
+
+    @SuppressWarnings({ "FeatureEnvy" })
+    public Object runAction(
+            final @NotNull String className, final @NotNull String opts,
+            final @NotNull PrintWriter writer) {
+        try {
+            ConfigAction<?> action = createConfigAction(className, opts);
+            action.setEntityManager(getEntityManagerFactory().createEntityManager());
+            action.setPrintWriter(writer);
+            action.setClosingWriterOnCleanUp(true);
+            action.setWriteResult(true);
+            return action.call();
+        }
+        catch (RuntimeException e) {
+            throw e;
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
     public static final class SysFactory {
 		private final Log logger;
 
@@ -552,6 +593,7 @@ public final class GNDMSystem
 		                           final @NotNull Binding binding) {
 			// intended
 		}
+
 	}
 
 }

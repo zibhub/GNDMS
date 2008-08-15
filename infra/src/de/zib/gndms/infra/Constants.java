@@ -20,7 +20,7 @@ public final class Constants {
 	public static final String JNDI_BASE_NAME="java:comp/env/";
 
 	@NonNls
-	public static final String JNDI_DB_CONTEXT_NAME = "db";
+	public static final String JNDI_DB_CONTEXT_NAME = "sys";
 
 	@NonNls
 	public static final String JNDI_DB_FACADE_INSTANCE_NAME = "facadeInstance";

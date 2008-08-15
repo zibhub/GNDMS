@@ -1,6 +1,6 @@
 package de.zib.gndms.infra.service;
 
-import de.zib.gndms.infra.db.EMFactoryProvider;
+import de.zib.gndms.infra.sys.EMFactoryProvider;
 import de.zib.gndms.infra.system.SystemHolder;
 import de.zib.gndms.model.common.GridResource;
 import org.jetbrains.annotations.NotNull;

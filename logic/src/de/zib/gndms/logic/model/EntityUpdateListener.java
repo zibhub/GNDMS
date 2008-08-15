@@ -1,7 +1,6 @@
 package de.zib.gndms.logic.model;
 
 import de.zib.gndms.model.common.GridResource;
-import org.jetbrains.annotations.NotNull;
 
 
 /**

@@ -1,10 +1,9 @@
 package de.zib.gndms.logic.model;
 
 import de.zib.gndms.model.common.GridResource;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Calendar;
-
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -22,18 +21,16 @@ public abstract class CreateTimedGridResourceAction<M extends GridResource, R>
     }
 
     
-    protected CreateTimedGridResourceAction( @NotNull String id, @NotNull Calendar terminationTime ) {
+    protected CreateTimedGridResourceAction( @NotNull String id,
+                                             @NotNull Calendar terminationTimeParam ) {
         super( id );
-        this.terminationTime = terminationTime;
+        terminationTime = terminationTimeParam;
     }
 
     
     @Override
     public void initialize( ) {
-
-        if( terminationTime == null )
-            throw new IllegalStateException( "No termination time provided" );
-
+        requireParameter("terminationTime", getTerminationTime());
         super.initialize( );
     }
     
@@ -43,7 +40,7 @@ public abstract class CreateTimedGridResourceAction<M extends GridResource, R>
     }
 
 
-    public void setTerminationTime( Calendar terminationTime ) {
-        this.terminationTime = terminationTime;
+    public void setTerminationTime( Calendar terminationTimeParam ) {
+        terminationTime = terminationTimeParam;
     }
 }

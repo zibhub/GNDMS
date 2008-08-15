@@ -34,8 +34,7 @@ public class ModelChangedAction extends AbstractAction<Void> {
 			throw new IllegalStateException("No containing BatchUpdateAction found");
 		
 		setListener(batchUpdateAction.getListener());
-		if (listener == null)
-			throw new IllegalStateException("No listener set");
+        requireParameter("listener", getListener());
 	}
 
 

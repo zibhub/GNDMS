@@ -90,4 +90,15 @@ public abstract class AbstractAction<R> implements Action<R> {
         }
         return result;
     }
+
+
+    public static void requireParameter(final @NotNull String parameterName, final Object object) {
+        if (object == null)
+            throw new IllegalStateException("Parameter '\'" + parameterName + "' not set");
+    }
+
+    public static void doNotOverwrite(final @NotNull String parameterName, final Object object) {
+        if (object != null)
+            throw new IllegalStateException("Overwriting the set parameter '\'" + parameterName + "' is not allowed");
+    }
 }

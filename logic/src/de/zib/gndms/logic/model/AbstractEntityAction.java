@@ -17,12 +17,14 @@ import javax.persistence.EntityTransaction;
  */
 public abstract class AbstractEntityAction<R> extends AbstractAction<R> implements EntityAction<R> {
     private EntityManager entityManager;
+    private boolean requiringEntityManager = true;
 
     private BatchUpdateAction<?> postponedActions;
 
+
     @Override
     public void initialize() {
-        if( getEntityManager() == null )
+        if( requiringEntityManager && getEntityManager() == null )
             throw new NoEntityManagerException( );
     }
 
@@ -62,8 +64,7 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
     }
 
     public void setEntityManager(final @NotNull EntityManager entityManagerParam) {
-        if (entityManager != null)
-            throw new IllegalStateException("Cant overwrite entityManager");
+        doNotOverwrite("entityManager", entityManager);
         entityManager = entityManagerParam;
     }
 
@@ -80,10 +81,17 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
 
     public final void setPostponedActions(
           @NotNull final BatchUpdateAction<?> postponedActionsParam) {
-        if (getPostponedActions() != null)
-            throw new IllegalStateException("Cant overwrite postponedActions");
-
+        doNotOverwrite("postponedActions", postponedActions);
         postponedActions = postponedActionsParam;
     }
 
+
+    public boolean isRequiringEntityManager() {
+        return requiringEntityManager;
+    }
+
+
+    public void setRequiringEntityManager(final boolean requiringEntityManagerParam) {
+        requiringEntityManager = requiringEntityManagerParam;
+    }
 }

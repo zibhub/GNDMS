@@ -51,7 +51,8 @@ import java.util.Enumeration;
  *
  *          User: stepn Date: 18.07.2008 Time: 02:20:30
  */
-@SuppressWarnings({"ThrowableInstanceNeverThrown"})
+@SuppressWarnings(
+        { "ThrowableInstanceNeverThrown", "SynchronizationOnLocalVariableOrMethodParameter" })
 public class GroovyMoniServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 4561717404398330474L;
@@ -101,23 +102,23 @@ public class GroovyMoniServlet extends HttpServlet {
 		  throws IOException
 	{
 		@NotNull
-		final HttpServletRequestWrapper requestWrapper = new HttpServletRequestWrapper(request);
+		final HttpServletRequestWrapper reqWrapper = new HttpServletRequestWrapper(request);
 
 		try {
 			// authorization
 			verifyUserRole(request);
 
-			operateServerIfRequested(requestWrapper);
-			if (didDestroySessionOnRequest(requestWrapper))
-				response.setStatus(HttpServletResponse.SC_OK);
-			else {
-				final String token = parseToken(requestWrapper);
-				if (token.length() == 0)
-					// create new session of token is empty and none is existing
-					createNewSession(request, response);
-				else
-					establishNewMonitor(response, requestWrapper, token, getSessionOrFail(request));
-			}
+			if (contAftOperatingSrvIfRequested(reqWrapper, response))
+                if (didDestroySessionOnRequest(reqWrapper))
+                    response.setStatus(HttpServletResponse.SC_OK);
+                else {
+                    final String token = parseToken(reqWrapper);
+                    if (token.length() == 0)
+                        // create new session of token is empty and none is existing
+                        createNewSession(request, response);
+                    else
+                        establishNewMonitor(response, reqWrapper, token, getSessionOrFail(request));
+                }
 		}
 		catch (ServletRuntimeException e) {
 			e.sendToClient(response);
@@ -165,10 +166,14 @@ public class GroovyMoniServlet extends HttpServlet {
 			throw unauthorized("User not in required role");
 	}
 
-	private synchronized void operateServerIfRequested(
-		  @NotNull HttpServletRequestWrapper requestWrapper) {
+	@SuppressWarnings({ "BooleanMethodNameMustStartWithQuestion" })
+    private synchronized boolean contAftOperatingSrvIfRequested(
+            @NotNull HttpServletRequestWrapper requestWrapper,
+            final HttpServletResponse responseParam) throws IOException {
+        final String mode = requestWrapper.getParameter("m");
+
 		// refresh == reload config and restart server if config has changed
-		if ("refresh".equalsIgnoreCase(requestWrapper.getParameter("m"))) {
+		if ("refresh".equalsIgnoreCase(mode)) {
 			try {
 				moniServer.refresh();
 				throw new ServletRuntimeException(HttpServletResponse.SC_RESET_CONTENT,
@@ -179,7 +184,7 @@ public class GroovyMoniServlet extends HttpServlet {
 			}
 		}
 		// restart server
-		if ("restart".equalsIgnoreCase(requestWrapper.getParameter("m"))) {
+		if ("restart".equalsIgnoreCase(mode)) {
 			try {
 				moniServer.restart();
 				throw new ServletRuntimeException(HttpServletResponse.SC_RESET_CONTENT,
@@ -189,6 +194,14 @@ public class GroovyMoniServlet extends HttpServlet {
 				intlError(e);
 			}
 		}
+        if ("run".equals(mode)) {
+            String args = parseArgs(requestWrapper);
+            String className = parseAction(requestWrapper);
+            PrintWriter writer = responseParam.getWriter();
+            moniServer.runAction(className, args, writer);
+            return false;
+        }
+        return true;
 	}
 
 	/**
@@ -197,16 +210,19 @@ public class GroovyMoniServlet extends HttpServlet {
 	 * @param requestWrapper
 	 * @return true, if the session was destroyed. false, if there was none.
 	 */
-	private static boolean didDestroySessionOnRequest(@NotNull HttpServletRequest requestWrapper) {
+	@SuppressWarnings({ "unchecked" })
+    private static boolean didDestroySessionOnRequest(@NotNull HttpServletRequest requestWrapper) {
 		if ("destroy".equalsIgnoreCase(requestWrapper.getParameter("m"))) {
 			final HttpSession session = getSessionOrFail(requestWrapper);
-			if (session != null)
-				synchronized (session) {
-					final Enumeration<String> attrs = (Enumeration<String>)session.getAttributeNames();
-					while (attrs.hasMoreElements())
-						session.removeAttribute(attrs.nextElement());
-					session.invalidate();
-				}
+			if (session != null) {
+                synchronized (session) {
+                    final Enumeration<String> attrs =
+                            (Enumeration<String>) session.getAttributeNames();
+                    while (attrs.hasMoreElements())
+                        session.removeAttribute(attrs.nextElement());
+                    session.invalidate();
+                }
+            }
 			return true;
 		}
 		else
@@ -260,6 +276,11 @@ public class GroovyMoniServlet extends HttpServlet {
 			}
 		}
 	}
+
+    private static String parseAction(HttpServletRequestWrapper requestWrapper) {
+        final String monitorArgs = requestWrapper.getParameter("action");
+        return monitorArgs == null ? "" : Base64Decoder.decode(monitorArgs);
+    }
 
 	private static String parseArgs(HttpServletRequestWrapper requestWrapper) {
 		final String monitorArgs = requestWrapper.getParameter("args");

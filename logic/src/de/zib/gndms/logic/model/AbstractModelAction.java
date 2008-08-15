@@ -31,7 +31,6 @@ public abstract class AbstractModelAction<M extends GridEntity, R> extends Abstr
     @Override
     public void initialize() {
         super.initialize();    // Overridden method
-        if (getModel() == null)
-            throw new IllegalStateException("No model set");        
+        requireParameter("model", getModel());
     }
 }

@@ -1,6 +1,7 @@
 package de.zib.gndms.logic.action;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.PrintWriter;
 import java.util.Map;
@@ -27,7 +28,9 @@ public interface CommandAction<R> extends Action<R> {
             throws ParameterTools.ParameterParseException;
 
     @NotNull String getOption(final @NotNull String name, final @NotNull String def);
-    String getOption(final @NotNull String name);
+    @NotNull String getOption(final @NotNull String name)
+        throws MandatoryOptionMissingException;
+    @Nullable String getNonMandatoryOption(final @NotNull String name);
 
     @NotNull Set<String> getAllOptionNames();
     @NotNull Map<String, String> getAllOptions();
@@ -189,15 +192,17 @@ public interface CommandAction<R> extends Action<R> {
         }
 
 
+        @SuppressWarnings({ "HardcodedLineSeparator" })
         public static void append(final @NotNull StringBuilder builder,
-                                  final @NotNull Map<String, String> map) {
+                                  final @NotNull Map<String, String> map, final boolean addNewlines)
+        {
             boolean first = true;
 
             for (Map.Entry<String,String> entry : map.entrySet()) {
                 if (first)
                     first = false;
                 else
-                    builder.append("; ");
+                    { builder.append(';'); builder.append(addNewlines ? '\n' : ' '); }
                 String key = entry.getKey();
                 String val = entry.getValue();
                 for (char c : key.toCharArray()) {
@@ -208,20 +213,32 @@ public interface CommandAction<R> extends Action<R> {
                 }
                 builder.append(key);
                 builder.append(": '");
-                builder.append(val.replaceAll("'","\'"));
+                final String escaped = val.replaceAll("'", "\'");
+                builder.append(escaped);
                 builder.append('\'');
             }
         }
 
-        @SuppressWarnings({ "StaticMethodOnlyUsedInOneClass" })
-        public static @NotNull String asString(final @NotNull Map<String, String> map) {
+
+        public static void append(final @NotNull StringBuilder builder,
+                                  final @NotNull Map<String, String> map) {
+            append(builder, map, false);
+        }
+
+
+        public static @NotNull String asString(final @NotNull Map<String, String> map,
+            final boolean addNewlines) {
             StringBuilder resultBuilder =
                     new StringBuilder(map.size() *
                             (EXPECTED_MAX_KEY_LENGTH + EXPECTED_MAX_VAL_LENGTH));
-            append(resultBuilder, map);
+            append(resultBuilder, map, addNewlines);
             return resultBuilder.toString();
         }
 
+
+        public static @NotNull String asString(final @NotNull Map<String, String> map) {
+            return asString(map, false);
+        }
 
         private static void makeEntry(
                 final @NotNull Map<String, String> targetMap,

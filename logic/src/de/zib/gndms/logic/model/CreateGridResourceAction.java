@@ -3,8 +3,6 @@ package de.zib.gndms.logic.model;
 import de.zib.gndms.model.common.GridResource;
 import org.jetbrains.annotations.NotNull;
 
-import javax.persistence.EntityManager;
-
 /**
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
@@ -16,23 +14,21 @@ public abstract class CreateGridResourceAction<M extends GridResource, R> extend
     private String id;
 
 
-    protected CreateGridResourceAction( ) {
-        
+    public CreateGridResourceAction( ) {
+        super();
+
     }
 
 
-    protected CreateGridResourceAction( @NotNull String id ) {
-
-        this.id = id;
+    public CreateGridResourceAction( @NotNull String idParam ) {
+        super();
+        id = idParam;
     }
 
 
     @Override
     public void initialize( ) {
-
-        if( id == null )
-            throw new IllegalStateException( "No resource id provided" );;
-
+        requireParameter("id", getId());
         super.initialize();
     }
 
@@ -42,7 +38,7 @@ public abstract class CreateGridResourceAction<M extends GridResource, R> extend
     }
 
 
-    public void setId( @NotNull String id ) {
-        this.id = id;
+    public void setId( @NotNull String idParam ) {
+        id = idParam;
     }
 }
