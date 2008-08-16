@@ -1,6 +1,7 @@
 package de.zib.gndms.logic.model;
 
 import de.zib.gndms.logic.action.Action;
+import de.zib.gndms.model.common.ModelUUIDGen;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -14,7 +15,7 @@ import javax.persistence.EntityManager;
  *
  *          User: stepn Date: 14.08.2008 Time: 14:44:57
  */
-public interface EntityAction<R> extends Action<R> {
+public interface EntityAction<R> extends Action<R>, ModelUUIDGen {
     EntityManager getEntityManager();
 
     void setEntityManager(final @NotNull EntityManager entityManagerParam);

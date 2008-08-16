@@ -10,6 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.security.Principal;
 import java.util.Enumeration;
 
@@ -208,14 +209,19 @@ public class GroovyMoniServlet extends HttpServlet {
             throws IOException {
         String args = parseArgs(requestWrapper);
         String className = parseAction(requestWrapper).trim();
-        PrintWriter writer = responseParam.getWriter();
+        StringWriter swriter = new StringWriter();
+        PrintWriter pwriter = new PrintWriter(swriter);
         try {
-            moniServer.runAction(className, args, writer);
+            moniServer.runAction(className, args, pwriter);
+            pwriter.flush();
+            PrintWriter rwriter = responseParam.getWriter();
             responseParam.setStatus(HttpServletResponse.SC_OK);
+            rwriter.write(swriter.toString());
         }
         catch (Exception e) {
             throw new ServletRuntimeException(HttpServletResponse.SC_BAD_REQUEST, e, true);
         }
+        finally { pwriter.close(); }
     }
 
 

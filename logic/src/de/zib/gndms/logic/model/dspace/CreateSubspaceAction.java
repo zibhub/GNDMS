@@ -78,6 +78,7 @@ public class CreateSubspaceAction extends ConfigAction<Void> {
             throw new IllegalArgumentException("Subspace already existing!");
 
         Subspace subspace = new Subspace();
+        subspace.setId(nextUUID());
         subspace.setMetaSubspace(meta);
         final StorageSize avail = new StorageSize();
         avail.setAmount(getSize().getAmount());

@@ -4,6 +4,9 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 
 /**
  * Used in servlet code; encapsulates message and integer status code for
@@ -63,11 +66,14 @@ public class ServletRuntimeException extends RuntimeException {
 	 * @throws IOException
 	 */	public void sendToClient(final @NotNull HttpServletResponse response)
 		  throws IOException {
-		String msg = getMessage();
-		if (msg == null)
-			response.sendError(errorCode);
-		else
-			response.sendError(errorCode, msg);
+        StringWriter swriter = new StringWriter();
+        PrintWriter pwriter = new PrintWriter(swriter);
+        try {
+            pwriter.println(getMessage());
+            printStackTrace(pwriter);
+        }
+        finally { pwriter.close(); }
+		response.sendError(errorCode, swriter.toString());
 		response.getOutputStream().flush();
 		response.flushBuffer();
 		if (thrownOnServerSide)

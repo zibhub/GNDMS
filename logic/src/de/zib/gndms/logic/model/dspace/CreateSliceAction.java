@@ -26,7 +26,6 @@ import java.util.Calendar;
  */
 public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, Slice> {
 
-    private ModelUUIDGen uuidgen;   // the uuid generator
     private SliceKind sliceKind;     // kind of the slice to create
     private DirectoryAux directoryAux;
 
@@ -36,19 +35,19 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
     }
 
 
-    public CreateSliceAction( String uuid, Calendar ttm, ModelUUIDGen uuidgen, SliceKind kind ) {
+    public CreateSliceAction( String uuid, Calendar ttm, ModelUUIDGen gen, SliceKind kind ) {
 
         super( uuid, ttm );
-        this.uuidgen = uuidgen;
+        setUUIDGen(gen);
         this.sliceKind = kind;
         this.directoryAux = new LinuxDirectoryAux( );
     }
 
 
-    public CreateSliceAction( String uuid, Calendar ttm, ModelUUIDGen uuidgen, SliceKind kind, DirectoryAux da ) {
+    public CreateSliceAction( String uuid, Calendar ttm, ModelUUIDGen gen, SliceKind kind, DirectoryAux da ) {
         
         super( uuid, ttm );
-        this.uuidgen = uuidgen;
+        setUUIDGen(gen);
         this.sliceKind = kind;
         this.directoryAux = da;
     }
@@ -56,9 +55,6 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
 
     @Override
     public void initialize() {
-
-        if( uuidgen == null )
-            throw new IllegalThreadStateException( "No UUId generator provided" );
 
         if( sliceKind == null )
             throw new IllegalThreadStateException( "No slice kind provided" );
@@ -80,7 +76,7 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
         String did = new String( );
 
         while ( !( f != null && !f.exists() ) ) {
-            did = uuidgen.nextUUID();
+            did = nextUUID();
             f = new File( lp + did );
         }
 
@@ -114,18 +110,6 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
         ((BatchUpdateAction<Object>)getPostponedActions( )).addAction( new ModelChangedAction( sp ) );
         
         return  sl;
-    }
-
-
-    public ModelUUIDGen getUUIdGen( ) {
-
-        return uuidgen;
-    }
-
-    
-    public void setUUIdGen( ModelUUIDGen ug ) {
-
-        uuidgen = ug;
     }
 
 

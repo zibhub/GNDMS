@@ -1,6 +1,7 @@
 package de.zib.gndms.logic.model;
 
 import de.zib.gndms.logic.action.AbstractAction;
+import de.zib.gndms.model.common.ModelUUIDGen;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -18,12 +19,17 @@ import javax.persistence.EntityTransaction;
 public abstract class AbstractEntityAction<R> extends AbstractAction<R> implements EntityAction<R> {
     private EntityManager entityManager;
     private BatchUpdateAction<?> postponedActions;
+    @SuppressWarnings({ "InstanceVariableNamingConvention" })
+    private ModelUUIDGen UUIDGen;   // the uuid generator
 
 
     @Override
     public void initialize() {
         if( getEntityManager() == null )
             throw new NoEntityManagerException( );
+        
+        if( getUUIDGen() == null )
+            throw new IllegalThreadStateException( "No UUId generator provided" );
     }
 
 
@@ -82,4 +88,17 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
         postponedActions = postponedActionsParam;
     }
 
+
+    public ModelUUIDGen getUUIDGen() {
+        return UUIDGen;
+    }
+
+
+    public void setUUIDGen(final ModelUUIDGen UUIDGenParam) {
+        UUIDGen = UUIDGenParam;
+    }
+
+    public final @NotNull String nextUUID() {
+        return getUUIDGen().nextUUID();
+    }
 }

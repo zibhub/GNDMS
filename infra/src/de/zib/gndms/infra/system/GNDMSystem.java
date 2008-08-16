@@ -64,11 +64,15 @@ import java.util.Properties;
 public final class GNDMSystem
 	  implements Initializable, SystemHolder, InstanceResolver<Object>,
 	  EMFactoryProvider, ModelUUIDGen, EntityUpdateListener, ActionCaller {
+    private static final int INITIAL_CAPACITY = 32;
+    private static final int INSTANCE_RETRIEVAL_INTERVAL = 250;
+
 	private final UUIDGen uuidGen = UUIDGenFactory.getUUIDGen();
+
 
 	private final Log logger = createLogger();
 
-	@NotNull
+    @NotNull
 	private static Log createLogger()
 		{ return LogFactory.getLog(GNDMSystem.class); }
 
@@ -102,8 +106,12 @@ public final class GNDMSystem
 	@Nullable
 	private GroovyMoniServer groovyMonitor;
 
-	private static final int INITIAL_CAPACITY = 32;
-	private static final int INSTANCE_RETRIEVAL_INTERVAL = 250;
+    private final @NotNull ModelUUIDGen actionUUIDGen = new ModelUUIDGen() {
+            @NotNull
+            public String nextUUID() {
+                return uuidGen.nextUUID();
+            }
+        };
 
 	/**
 	 * Retrieves a GNDMSSystem using context.lookup(name).
@@ -162,12 +170,7 @@ public final class GNDMSystem
 		try {
 			// Q: Think about how to correct UNIX directory/file permissions from java-land
 			// A: External script during deployment
-			sharedDir = new File(sharedConfig.getGridPath()).getCanonicalFile();
-			final String gridName = sharedConfig.getGridName();
-
-			logger.info("Initializing for grid: '" + gridName
-				  + "' (shared dir: '" + sharedDir.getPath() + "')");
-
+            initSharedDir();
 			createDirectories();
 			emf = createEMF();
 			restrictedEmf = new RestrictedEMFactory(emf);
@@ -180,7 +183,17 @@ public final class GNDMSystem
 	}
 
 
-	@SuppressWarnings({ "MethodOnlyUsedFromInnerClass" })
+    private synchronized void initSharedDir() throws Exception {
+        sharedDir = new File(sharedConfig.getGridPath()).getCanonicalFile();
+        final String gridName = sharedConfig.getGridName();
+
+        logger.info("Initializing for grid: '" + gridName
+              + "' (shared dir: '" + sharedDir.getPath() + "')");
+
+    }
+
+
+    @SuppressWarnings({ "MethodOnlyUsedFromInnerClass" })
 	private synchronized void shutdown() throws Exception {
 		emf.close();
 		final GroovyMoniServer moniServer = getMonitor();
@@ -189,16 +202,19 @@ public final class GNDMSystem
 	}
 
 	private void createDirectories() throws IOException {
-		doCheckOrCreateDir(sharedDir);
+        File curSharedDir = getSharedDir();
 
-		logDir = new File(sharedDir, "log");
+		doCheckOrCreateDir(curSharedDir);
+
+		logDir = new File(curSharedDir, "log");
 		doCheckOrCreateDir(logDir);
 
 		prepareDbStorage();
 	}
 
 	private void prepareDbStorage() throws IOException {
-		dbDir = new File(sharedDir, "db");
+        File curSharedDir = getSharedDir();
+		dbDir = new File(curSharedDir, "db");
 		doCheckOrCreateDir(dbDir);
 
 		System.setProperty("derby.system.home", dbDir.getCanonicalPath());
@@ -235,7 +251,7 @@ public final class GNDMSystem
 	}
 
 	@SuppressWarnings({ "MethodOnlyUsedFromInnerClass" })
-	private void setupShellService() throws Exception {
+	private synchronized void setupShellService() throws Exception {
 		File monitorConfig = new File(sharedDir, "monitor.properties");
 		groovyMonitor = new GroovyMoniServer(getGridName(),
 		                                     monitorConfig, new GNDMSBindingFactory(), this);
@@ -247,7 +263,7 @@ public final class GNDMSystem
         addHome(home.getModelClass(), home);
     }
 
-    @SuppressWarnings({ "HardcodedFileSeparator" })
+    @SuppressWarnings({ "HardcodedFileSeparator", "RawUseOfParameterizedType" })
     private synchronized <K extends GridResource> void addHome(final @NotNull Class<K> modelClazz,
                                                                final @NotNull GNDMServiceHome<?> home)
             throws ResourceException {
@@ -257,7 +273,7 @@ public final class GNDMSystem
             final String homeName = home.getNickName() + "Home";
             addInstance_(homeName, home);
             try {
-                if (GNDMSingletonServiceHome.class.isInstance(home)) {
+                if (home instanceof GNDMSingletonServiceHome) {
                     Object instance = ((ResourceHome)home).find(null);
                     addInstance_(home.getNickName() + "Resource", instance);
                     logger.debug(getSystemName() + " addResource: '" + modelClazz.getName() + '/' + ((GNDMSingletonServiceHome)home).getSingletonID() + '\'');
@@ -494,6 +510,8 @@ public final class GNDMSystem
         action.setPrintWriter(writer);
         action.setClosingWriterOnCleanUp(false);
         action.setWriteResult(true);
+        action.setUUIDGen(actionUUIDGen);
+
         logger.info("Running " + className + ' ' + opts);
         try {
             return action.call();
@@ -503,6 +521,12 @@ public final class GNDMSystem
             throw e;
         }
 
+    }
+
+
+    @NotNull
+    public synchronized File getSharedDir() {
+        return sharedDir;
     }
 
 
