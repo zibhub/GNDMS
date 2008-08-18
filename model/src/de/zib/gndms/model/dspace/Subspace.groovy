@@ -127,7 +127,7 @@ class Subspace extends TimedGridResource {
      * @brief Delivers the absolute path to a slice sl.
      */
     public String getPathForSlice( Slice sl )  {
-        path + sl.getKind( ).getMode().toString( ) + sl.getAssociatedPath( ) 
+        path + File.separator + sl.getKind( ).getMode().toString( ) + File.separator + sl.getAssociatedPath( ) 
     }
 
 
