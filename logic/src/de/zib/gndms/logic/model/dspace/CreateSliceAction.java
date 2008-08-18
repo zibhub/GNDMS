@@ -104,7 +104,7 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
         sp.addSlice( sl );
 
         // todo maybe persist slice first
-        // em.persist( sl );
+//        em.persist( sl );
 
         em.merge( sp );
 

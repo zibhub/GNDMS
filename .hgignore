@@ -8,6 +8,8 @@ services/*/lib/CONTENTS*
 services/*/tools/lib/*.jar
 services/*/tools/lib/CONTENTS*
 services/*/tmp/**
+services/*/.metadata/**
+services/.metadata/**
 .DS_Store
 *.ipr
 *.iws
@@ -22,6 +24,11 @@ infra/gndms-infra/**
 model/gndms-shared-model/**
 model/derby.log
 logic/gndms-logic/**
+logic/out/**
+logic/test/**
+logic/production/**
+infra/production/**
+infra/test/**
 .classpath
 .project
 test-output/**
