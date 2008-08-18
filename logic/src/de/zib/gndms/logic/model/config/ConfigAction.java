@@ -97,6 +97,21 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R> implements
         }
     }
 
+
+    public @NotNull String getOption(final @NotNull String name)
+            throws MandatoryOptionMissingException {
+        String retVal = getNonMandatoryOption(name);
+        if (retVal == null)
+            throw new MandatoryOptionMissingException("Missing option '" + name + '\'');
+        return retVal;
+    }
+
+
+    public final boolean hasOption(final @NotNull String name)
+    {
+        return getNonMandatoryOption(name) == null;
+    }
+    
     public String getNonMandatoryOption(final @NotNull String name) {
         String val = getLocalOption(name);
         if (val == null) {
@@ -114,15 +129,6 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R> implements
         else
             return val;
     }
-
-    public @NotNull String getOption(final @NotNull String name)
-            throws MandatoryOptionMissingException {
-        String retVal = getNonMandatoryOption(name);
-        if (retVal == null)
-            throw new MandatoryOptionMissingException("Missing option '" + name + '\'');
-        return retVal;
-    }
-
 
     @NotNull
     public Set<String> getAllOptionNames() {
@@ -234,11 +240,23 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R> implements
         return option == null ? def : Enum.valueOf(clazz, option);
     }
 
+    public <E extends Enum<E>> E getLCEnumOption(Class<E> clazz, String name, @NotNull E def) {
+        final String option = getNonMandatoryOption(name);
+        return option == null ? def : Enum.valueOf(clazz, option.toUpperCase());
+    }
+
     public <E extends Enum<E>> E getEnumOption(Class<E> clazz, String name)
      throws MandatoryOptionMissingException 
     {
         final String option = getOption(name);
         return Enum.valueOf(clazz, option);
+    }
+
+    public <E extends Enum<E>> E getLCEnumOption(Class<E> clazz, String name)
+         throws MandatoryOptionMissingException
+    {
+        final String option = getOption(name);
+        return Enum.valueOf(clazz, option.toUpperCase());
     }
 
     @SuppressWarnings({ "InstanceMethodNamingConvention" })

@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model.dspace;
 
 import de.zib.gndms.logic.action.MandatoryOptionMissingException;
-import de.zib.gndms.logic.model.config.ConfigAction;
+import de.zib.gndms.logic.model.config.SetupAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.StorageSize;
@@ -10,8 +10,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
 import java.io.PrintWriter;
-import java.util.Calendar;
 import java.text.ParseException;
+import java.util.Calendar;
 
 
 /**
@@ -22,7 +22,7 @@ import java.text.ParseException;
  *
  *          User: stepn Date: 14.08.2008 Time: 17:37:51
  */
-public class CreateSubspaceAction extends ConfigAction<Void> {
+public class SetupSubspaceAction extends SetupAction<Void> {
     private String scope;
     private String name;
     private String path;
@@ -35,20 +35,20 @@ public class CreateSubspaceAction extends ConfigAction<Void> {
     public void initialize() {
         super.initialize();    // Overridden method
         try {
-            if (scope == null)
-                setScope(getOption("scope", "http://www.c3grid.de/G2/"));
-            if (name == null)
+            if (scope == null && (isCreating() || hasOption("scope")))
+                setScope(getOption("scope"));
+            if (name == null && (isCreating() || hasOption("name")))
                 setName(getOption("name"));
-            if (visible == null)
+            if (visible == null && (isCreating() || hasOption("visible")))
                 setIsVisibleToPublic(isBooleanOptionSet("visible", true));
-            if (size == null) {
+            if (size == null && (isCreating() || hasOption("size"))) {
                 size = new StorageSize();
                 size.setAmount(getIntOption("size"));
             }
-            if (path == null) {
+            if (path == null && (isCreating() || hasOption("path"))) {
                 setPath(getOption("path"));
             }
-            if (tod == null)
+            if (tod == null && (isCreating() || hasOption("tod")))
                 setTod(getISO8601Option("tod", Calendar.getInstance()));
         }
         catch (MandatoryOptionMissingException e) {
@@ -58,8 +58,8 @@ public class CreateSubspaceAction extends ConfigAction<Void> {
             throw new IllegalStateException(e);
         }
 
+        requireParameter("scope", name);
         requireParameter("name", name);
-        requireParameter("size", size);
     }
 
 
@@ -67,32 +67,62 @@ public class CreateSubspaceAction extends ConfigAction<Void> {
     @Override
     public Void execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer) {
         final ImmutableScopedName pk = new ImmutableScopedName(getScope(), getName());
-        MetaSubspace meta= em.find(MetaSubspace.class, pk);
-        if (meta == null) {
-            meta = new MetaSubspace();
-            meta.setScopedName(pk);
-            meta.setVisibleToPublic(isVisibleToPublic());
-            em.persist(meta);
+
+        MetaSubspace meta = prepareMeta(em, pk);
+        Subspace subspace = prepareSubspace(meta);
+
+        
+        if (size != null)
+            subspace.setTotalSize(getSize());
+        
+        if (path != null)
+            subspace.setPath(getPath());
+        
+        if (tod != null)
+            subspace.setTerminationTime(getTod());
+
+        if (isCreating()) {
+            em.persist(subspace);
+            em.persist(meta);            
         }
-        else if (meta.getInstance() != null)
-            throw new IllegalArgumentException("Subspace already existing!");
-
-        Subspace subspace = new Subspace();
-        subspace.setId(nextUUID());
-        subspace.setMetaSubspace(meta);
-        final StorageSize avail = new StorageSize();
-        avail.setAmount(getSize().getAmount());
-        avail.setUnit(getSize().getUnit());
-        subspace.setAvailableSize(avail);
-        subspace.setTotalSize(getSize());
-        subspace.setPath(getPath());
-        subspace.setTerminationTime(getTod());
-        meta.setInstance(subspace);
-        em.persist(subspace);
-
+        
         return null;
     }
 
+
+    private MetaSubspace prepareMeta(final EntityManager em, final ImmutableScopedName pkParam) {
+        MetaSubspace meta= em.find(MetaSubspace.class, pkParam);
+        if (meta == null) {
+            if (isUpdating())
+                throw new IllegalStateException("No matching metasubspace found for update");
+            meta = new MetaSubspace();
+            meta.setScopedName(pkParam);
+        }
+        if (isVisibleToPublic() != null)
+            meta.setVisibleToPublic(isVisibleToPublic());
+        return meta;
+    }
+
+
+    @SuppressWarnings({ "FeatureEnvy" })
+    private Subspace prepareSubspace(final MetaSubspace metaParam) {
+        Subspace subspace;
+        if (isCreating()) {
+            if (metaParam.getInstance() != null)
+                throw new IllegalStateException("Cant overwrite metasubspace's subspace");
+            subspace = new Subspace();
+            subspace.setId(nextUUID());
+            subspace.setMetaSubspace(metaParam);
+            metaParam.setInstance(subspace);
+
+            final StorageSize avail = new StorageSize();
+            avail.setAmount(getSize().getAmount());
+            avail.setUnit(getSize().getUnit());
+        }
+        else
+            subspace = metaParam.getInstance();
+        return subspace;
+    }
 
 
     public String getScope() {

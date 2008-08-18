@@ -1,6 +1,7 @@
 package de.zib.gndms.logic.action;
 
 import de.zib.gndms.logic.model.config.ConfigAction;
+import de.zib.gndms.logic.util.SimpleModelUUIDGen;
 
 import java.io.PrintWriter;
 
@@ -22,5 +23,6 @@ public final class ActionTestTools {
         cfgA.setClosingWriterOnCleanUp(false);
         cfgA.setWriteResult(true);
         cfgA.setPrintWriter(pwriter);
+        cfgA.setUUIDGen(SimpleModelUUIDGen.getInstance());
     }
 }

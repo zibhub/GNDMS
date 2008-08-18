@@ -16,11 +16,12 @@ import java.io.PrintWriter;
  *          User: stepn Date: 15.08.2008 Time: 16:11:02
  */
 @SuppressWarnings({ "IOResourceOpenedButNotSafelyClosed", "UseOfSystemOutOrSystemErr" })
-public class CreateSubspaceActionTest extends ConfigActionTestBase {
+public class SetupSubspaceActionTest extends ConfigActionTestBase {
     @Parameters({"dbPath", "dbName"})
-    public CreateSubspaceActionTest(final String dbPath, @Optional("c3grid") final String Name) {
+    public SetupSubspaceActionTest(final String dbPath, @Optional("c3grid") final String Name) {
         super(dbPath, Name);
     }
+
 
     @BeforeClass(groups={"db", "action", "config"})
     public void init() {
@@ -34,7 +35,7 @@ public class CreateSubspaceActionTest extends ConfigActionTestBase {
 
     @Test(groups={"db", "action", "config"})
     public void testExecute() throws CommandAction.ParameterTools.ParameterParseException {
-        CreateSubspaceAction action = new CreateSubspaceAction();
+        SetupSubspaceAction action = new SetupSubspaceAction();
         try {
             prepareConfigAction(action, new PrintWriter(System.out), "scope:http://www.c3grid.de/G2; name:Staging; size:10; path:/tmp");
             action.call();

@@ -10,7 +10,7 @@ import javax.persistence.EntityManager;
 /**
  * ThingAMagic.
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
  *
  *          User: stepn Date: 14.08.2008 Time: 14:44:57
