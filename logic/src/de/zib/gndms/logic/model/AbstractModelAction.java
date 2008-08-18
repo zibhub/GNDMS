@@ -33,4 +33,5 @@ public abstract class AbstractModelAction<M extends GridEntity, R> extends Abstr
         super.initialize();    // Overridden method
         requireParameter("model", getModel());
     }
+
 }

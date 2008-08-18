@@ -2,6 +2,8 @@ package de.zib.gndms.logic.model;
 
 import de.zib.gndms.logic.action.AbstractAction;
 import de.zib.gndms.model.common.ModelUUIDGen;
+import de.zib.gndms.model.common.GridEntity;
+import de.zib.gndms.model.common.GridResource;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -100,5 +102,9 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
 
     public final @NotNull String nextUUID() {
         return getUUIDGen().nextUUID();
+    }
+
+    public void addChangedModel( GridResource model  ) {
+        (( BatchUpdateAction<Object> )getPostponedActions( )).addAction( new ModelChangedAction( model ) );
     }
 }
