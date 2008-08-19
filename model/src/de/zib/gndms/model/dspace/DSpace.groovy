@@ -20,7 +20,7 @@ import de.zib.gndms.model.common.SingletonGridResource
 @NamedQuery(name="listAllSubspaces", query="SELECT instance FROM Subspaces instance WHERE instance.systemId = :systemId"),
 @NamedQuery(name="listAllSlices", query="SELECT instance FROM Slices instance WHERE instance.systemId = :systemId")
 ])
-@Entity(name="DSpaces") @EntityListeners([LifecycleEventDispatcher.class])
+@Entity(name="DSpaces")
 @Table(name="dspace", schema="dspace")
 class DSpace extends SingletonGridResource {
 
