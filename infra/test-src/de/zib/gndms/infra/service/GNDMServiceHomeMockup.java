@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import org.globus.wsrf.ResourceKey;
 
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
+import javax.persistence.EntityManager;
 import javax.xml.namespace.QName;
 
 
@@ -53,6 +55,11 @@ public final class GNDMServiceHomeMockup implements GNDMServiceHome<DSpace> {
 	public void setSystem(final @NotNull GNDMSystem system) throws IllegalStateException {
 		throw new IllegalStateException("Cant't overwrite system");
 	}
+
+
+    public Query getListAllQuery(final @NotNull EntityManager em) {
+        throw new UnsupportedOperationException();
+    }
 
 
     public void refresh(final @NotNull GridResource resource) {

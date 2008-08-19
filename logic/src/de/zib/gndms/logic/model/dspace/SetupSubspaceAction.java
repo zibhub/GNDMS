@@ -23,7 +23,7 @@ import java.io.PrintWriter;
  *
  *          User: stepn Date: 14.08.2008 Time: 17:37:51
  */
-@ConfigActionHelp(shortHelp = "Setup a subspace", longHelp = "Used to prepare the database schema for a certain GNDMS function by creating, updating, and deleting subspaces")
+@ConfigActionHelp(shortHelp = "Setup a subspace", longHelp = "Used to prepare the database schema for GNDMS by creating, updating, and deleting subspaces")
 public class SetupSubspaceAction extends SetupAction<Void> {
     @ConfigOption(descr="The scope of the subspace (Part of PK)")
     private String scope;

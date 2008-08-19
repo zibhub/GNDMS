@@ -3,9 +3,12 @@ package de.zib.gndms.infra.service;
 import de.zib.gndms.infra.sys.EMFactoryProvider;
 import de.zib.gndms.infra.system.SystemHolder;
 import de.zib.gndms.model.common.GridResource;
-import org.jetbrains.annotations.NotNull;
-import org.globus.wsrf.ResourceKey;
 import org.globus.wsrf.ResourceException;
+import org.globus.wsrf.ResourceKey;
+import org.jetbrains.annotations.NotNull;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 
 /**
@@ -18,6 +21,8 @@ import org.globus.wsrf.ResourceException;
  */
 public interface GNDMServiceHome<M extends GridResource>
         extends ServiceInfo, EMFactoryProvider, SystemHolder {
+
+    Query getListAllQuery(final @NotNull EntityManager em);
 
     void refresh(final @NotNull GridResource resource) throws ResourceException;
 

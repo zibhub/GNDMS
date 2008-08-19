@@ -18,6 +18,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
+import javax.persistence.EntityManager;
 import javax.xml.namespace.QName;
 
 
@@ -163,6 +165,11 @@ public final class ExtDSpaceResourceHome  extends DSpaceResourceHome
 	public final QName getResourceKeyTypeName() {
 		return getKeyTypeName();
 	}
+
+
+    public Query getListAllQuery(final @NotNull EntityManager em) {
+        throw new UnsupportedOperationException();
+    }
 
 
     public void refresh(final @NotNull GridResource resource) {
