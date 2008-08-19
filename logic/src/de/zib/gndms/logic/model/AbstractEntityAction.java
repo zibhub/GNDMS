@@ -27,7 +27,8 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
 
     @Override
     public void initialize() {
-        if( getEntityManager() == null )
+
+        if( getEntityManager() == null )     
             throw new NoEntityManagerException( );
         
         if( getUUIDGen() == null )
