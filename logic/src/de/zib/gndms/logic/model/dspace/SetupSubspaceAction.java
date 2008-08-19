@@ -1,7 +1,10 @@
 package de.zib.gndms.logic.model.dspace;
 
 import de.zib.gndms.logic.action.MandatoryOptionMissingException;
+import de.zib.gndms.logic.model.config.ConfigActionHelp;
+import de.zib.gndms.logic.model.config.ConfigOption;
 import de.zib.gndms.logic.model.config.SetupAction;
+import de.zib.gndms.logic.model.ModelChangedAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.StorageSize;
@@ -10,8 +13,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
 import java.io.PrintWriter;
-import java.text.ParseException;
-import java.util.Calendar;
 
 
 /**
@@ -22,13 +23,22 @@ import java.util.Calendar;
  *
  *          User: stepn Date: 14.08.2008 Time: 17:37:51
  */
+@ConfigActionHelp(shortHelp = "Setup a subspace", longHelp = "Used to prepare the database schema for a certain GNDMS function by creating, updating, and deleting subspaces")
 public class SetupSubspaceAction extends SetupAction<Void> {
+    @ConfigOption(descr="The scope of the subspace (Part of PK)")
     private String scope;
+
+    @ConfigOption(descr="The name of the subspace in the scope (Part of PK)")
     private String name;
+
+    @ConfigOption(descr="Local filesystem root path for all slices stored in this subspace")
     private String path;
+
+    @ConfigOption(descr="If set, this subspace is included in the public service listing")
     private Boolean visible;
+
+    @ConfigOption(descr="Maximum storage size available in this subspace")
     private StorageSize size;
-    private Calendar tod;
 
 
     @Override
@@ -48,13 +58,8 @@ public class SetupSubspaceAction extends SetupAction<Void> {
             if (path == null && (isCreating() || hasOption("path"))) {
                 setPath(getOption("path"));
             }
-            if (tod == null && (isCreating() || hasOption("tod")))
-                setTod(getISO8601Option("tod", Calendar.getInstance()));
         }
         catch (MandatoryOptionMissingException e) {
-            throw new IllegalStateException(e);
-        }
-        catch (ParseException e) {
             throw new IllegalStateException(e);
         }
 
@@ -63,7 +68,7 @@ public class SetupSubspaceAction extends SetupAction<Void> {
     }
 
 
-    @SuppressWarnings({ "FeatureEnvy" })
+    @SuppressWarnings({ "FeatureEnvy", "MethodWithMoreThanThreeNegations" })
     @Override
     public Void execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer) {
         final ImmutableScopedName pk = new ImmutableScopedName(getScope(), getName());
@@ -71,35 +76,45 @@ public class SetupSubspaceAction extends SetupAction<Void> {
         MetaSubspace meta = prepareMeta(em, pk);
         Subspace subspace = prepareSubspace(meta);
 
-        
-        if (size != null)
-            subspace.setTotalSize(getSize());
-        
-        if (path != null)
-            subspace.setPath(getPath());
-        
-        if (tod != null)
-            subspace.setTerminationTime(getTod());
+       switch (getMode()) {
+           case CREATE:
+           case UPDATE:
+               if (isVisibleToPublic() != null)
+                   meta.setVisibleToPublic(isVisibleToPublic());
 
-        if (isCreating()) {
-            em.persist(subspace);
-            em.persist(meta);            
-        }
+               if (size != null)
+                   subspace.setTotalSize(getSize());
+
+               if (path != null)
+                   subspace.setPath(getPath());
+
+               if (! em.contains(subspace))
+                    em.persist(subspace);
+
+               if (! em.contains(meta))
+                    em.persist(meta);
+               break;
+           case DELETE:
+               em.remove(meta);
+               em.remove(subspace);
+               break;
+       }
+
+        // Register resources that require refreshing
+       getPostponedActions().addAction(new ModelChangedAction(subspace));
         
-        return null;
+       return null;
     }
 
 
     private MetaSubspace prepareMeta(final EntityManager em, final ImmutableScopedName pkParam) {
         MetaSubspace meta= em.find(MetaSubspace.class, pkParam);
         if (meta == null) {
-            if (isUpdating())
+            if (! isCreating())
                 throw new IllegalStateException("No matching metasubspace found for update");
             meta = new MetaSubspace();
             meta.setScopedName(pkParam);
         }
-        if (isVisibleToPublic() != null)
-            meta.setVisibleToPublic(isVisibleToPublic());
         return meta;
     }
 
@@ -173,14 +188,4 @@ public class SetupSubspaceAction extends SetupAction<Void> {
         path = pathParam;
     }
 
-    @SuppressWarnings({ "ReturnOfDateField" })
-    public Calendar getTod() {
-        return tod;
-    }
-
-
-    @SuppressWarnings({ "AssignmentToDateFieldFromParameter" })
-    public void setTod(final Calendar todParam) {
-        tod = todParam;
-    }
 }

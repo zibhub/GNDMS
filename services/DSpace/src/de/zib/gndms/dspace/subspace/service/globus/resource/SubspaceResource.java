@@ -81,7 +81,7 @@ public class SubspaceResource extends SubspaceResourceBase
 			}
 			catch (Exception e)
 				{ logger.error(e); }
-			super.setTerminationTime(model.getTerminationTime());
+			// super.setTerminationTime(model.getTerminationTime());
 		}
 		else
 			throw new ResourceException("Model id mismatch");

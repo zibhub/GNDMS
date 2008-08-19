@@ -25,69 +25,70 @@ public class ParameterToolsTest {
     @Test(groups = {"util"})
     public void toStrTest() {
         paraMap.clear();
-        assertEquals(asString(paraMap), "");
+        assertEquals(asString(paraMap, null), "");
 
         paraMap.put("test1", "val1");
-        assertEquals(asString(paraMap), "test1: 'val1'");
+        assertEquals(asString(paraMap, null), "test1: 'val1'");
 
         paraMap.put("test2", "val2");
-        final String strVal = asString(paraMap);
+        final String strVal = asString(paraMap, null);
         Assert.assertTrue(
                 "test1: 'val1'; test2: 'val2'".equals(strVal)
                           || "test2: 'val2'; test1: 'val1'".equals(strVal));
     }
 
+
     @Test(groups = {"util"})
     public void positiveParseTest() throws ParameterParseException {
         paraMap.clear();
 
-        parseParameters(paraMap, "");
+        parseParameters(paraMap, "", null);
 
         paraMap.clear();
-        parseParameters(paraMap, "foo: bar");
+        parseParameters(paraMap, "foo: bar", null);
         assertEquals(paraMap.get("foo"), "bar");
 
         paraMap.clear();
-        parseParameters(paraMap, " foo:bar");
+        parseParameters(paraMap, " foo:bar", null);
         assertEquals(paraMap.get("foo"), "bar");
 
         paraMap.clear();
-        parseParameters(paraMap, "foo: bar;");
+        parseParameters(paraMap, "foo: bar;", null);
         assertEquals(paraMap.get("foo"), "bar");
 
         paraMap.clear();
-        parseParameters(paraMap, "  foo: bar  ");
+        parseParameters(paraMap, "  foo: bar  ", null);
         assertEquals(paraMap.get("foo"), "bar");
 
         paraMap.clear();
-        parseParameters(paraMap, "foo: bar ;");
+        parseParameters(paraMap, "foo: bar ;", null);
         assertEquals(paraMap.get("foo"), "bar");
 
         paraMap.clear();
-        parseParameters(paraMap, "  foo: bar ; ");
+        parseParameters(paraMap, "  foo: bar ; ", null);
         assertEquals(paraMap.get("foo"), "bar");
 
         paraMap.clear();
-        parseParameters(paraMap, "  foo: 'bar'");
+        parseParameters(paraMap, "  foo: 'bar'", null);
         assertEquals(paraMap.get("foo"), "bar");
 
         paraMap.clear();
-        parseParameters(paraMap, "blorp: blurp;  foo: bar ; ");
-        assertEquals(paraMap.get("foo"), "bar");
-        assertEquals(paraMap.get("blorp"), "blurp");
-
-        paraMap.clear();
-        parseParameters(paraMap, "blorp: blurp;  foo: bar");
+        parseParameters(paraMap, "blorp: blurp;  foo: bar ; ", null);
         assertEquals(paraMap.get("foo"), "bar");
         assertEquals(paraMap.get("blorp"), "blurp");
 
         paraMap.clear();
-        parseParameters(paraMap, "blorp:'blurp ' ;  foo: bar");
+        parseParameters(paraMap, "blorp: blurp;  foo: bar", null);
+        assertEquals(paraMap.get("foo"), "bar");
+        assertEquals(paraMap.get("blorp"), "blurp");
+
+        paraMap.clear();
+        parseParameters(paraMap, "blorp:'blurp ' ;  foo: bar", null);
         assertEquals(paraMap.get("foo"), "bar");
         assertEquals(paraMap.get("blorp"), "blurp ");
 
         paraMap.clear();
-        parseParameters(paraMap, "blorp:blurp;  foo:' bar';");
+        parseParameters(paraMap, "blorp:blurp;  foo:' bar';", null);
         assertEquals(paraMap.get("foo"), " bar");
         assertEquals(paraMap.get("blorp"), "blurp");
     }
@@ -97,101 +98,126 @@ public class ParameterToolsTest {
     @Test(groups = {"util"})
     public void positiveParseEscapeTest() throws ParameterParseException {
         paraMap.clear();
-        parseParameters(paraMap, "");
+        parseParameters(paraMap, "", null);
         assert paraMap.isEmpty();
 
         paraMap.clear();
-        parseParameters(paraMap, "foo: ''");
+        parseParameters(paraMap, "foo: ''", null);
         assertEquals(paraMap.get("foo"), "");
 
         paraMap.clear();
-        parseParameters(paraMap, "foo= ':'");
+        parseParameters(paraMap, "foo= ':'", null);
         assertEquals(paraMap.get("foo"), ":");
 
         paraMap.clear();
-        parseParameters(paraMap, "foo:");
+        parseParameters(paraMap, "foo:", null);
         assertEquals(paraMap.get("foo"), "");
 
         paraMap.clear();
-        parseParameters(paraMap, "foo: b\\ar");
+        parseParameters(paraMap, "foo: 'bar'", null);
         assertEquals(paraMap.get("foo"), "bar");
 
         paraMap.clear();
-        parseParameters(paraMap, "foo: b\\ar\\;;");
+        parseParameters(paraMap, "foo: \"bar\"", null);
+        assertEquals(paraMap.get("foo"), "bar");
+
+        paraMap.clear();
+        parseParameters(paraMap, "foo: b\\ar", null);
+        assertEquals(paraMap.get("foo"), "bar");
+
+        paraMap.clear();
+        parseParameters(paraMap, "foo: b\\ar\\;;", null);
         assertEquals(paraMap.get("foo"), "bar;");
 
         paraMap.clear();
-        parseParameters(paraMap, "foo:'b\\ar';");
+        parseParameters(paraMap, "foo:'b\\ar';", null);
         assertEquals(paraMap.get("foo"), "bar");
 
         paraMap.clear();
-        parseParameters(paraMap, "foo:'b\\;r';");
+        parseParameters(paraMap, "foo:'b\\;r';", null);
         assertEquals(paraMap.get("foo"), "b;r");
 
         paraMap.clear();
-        parseParameters(paraMap, "foo:'b\\;r\\'';");
+        parseParameters(paraMap, "foo:'b\\;r\\'';", null);
         assertEquals(paraMap.get("foo"), "b;r'");
 
 
         paraMap.clear();
-        parseParameters(paraMap, "foo:'bar\\\\';");
+        parseParameters(paraMap, "foo:'bar\\\\';", null);
         assertEquals(paraMap.get("foo"), "bar\\");
+
+        paraMap.clear();
+        parseParameters(paraMap, "foo; bar: baz;", null);
+        assertEquals(paraMap.get("foo"), "true");
+
+        paraMap.clear();
+        parseParameters(paraMap, "!foo; bar: baz;", null);
+        assertEquals(paraMap.get("foo"), "false");
+
+        paraMap.clear();
+        parseParameters(paraMap, "foo", null);
+        assertEquals(paraMap.get("foo"), "true");
+
+        paraMap.clear();
+        parseParameters(paraMap, "!foo", null);
+        assertEquals(paraMap.get("foo"), "false", null);
+
+        paraMap.clear();
+        parseParameters(paraMap, "-foo", null);
+        assertEquals(paraMap.get("foo"), "false", null);
+
+        paraMap.clear();
+        parseParameters(paraMap, "+foo", null);
+        assertEquals(paraMap.get("foo"), "true", null);
     }
 
     @Test(groups = {"util"},
           expectedExceptions = { ParameterParseException.class})
     public void negativeWsInKeyTest1() throws ParameterParseException {
         paraMap.clear();
-        parseParameters(paraMap, "foo : ");
+        parseParameters(paraMap, "foo : ", null);
     }
 
     @Test(groups = {"util"},
           expectedExceptions = { ParameterParseException.class})
     public void negativeWsInKeyTest2() throws ParameterParseException {
         paraMap.clear();
-        parseParameters(paraMap, "fo o:");
+        parseParameters(paraMap, "fo o:", null);
     }
 
     @Test(groups = {"util"},
           expectedExceptions = { ParameterParseException.class})
     public void negativeUncompleteTest1() throws ParameterParseException {
         paraMap.clear();
-        parseParameters(paraMap, "foo: 'bar");
-    }
-
-    @Test(groups = {"util"},
-          expectedExceptions = { ParameterParseException.class})
-    public void negativeUncompleteTest2() throws ParameterParseException {
-        paraMap.clear();
-        parseParameters(paraMap, "foo: bar; baz");
+        parseParameters(paraMap, "foo: 'bar", null);
     }
 
     @Test(groups = {"util"},
           expectedExceptions = { ParameterParseException.class})
     public void negativeEmptyKeyTest1() throws ParameterParseException {
         paraMap.clear();
-        parseParameters(paraMap, ":");
+        parseParameters(paraMap, ":", null);
     }
 
     @Test(groups = {"util"},
           expectedExceptions = { ParameterParseException.class})
     public void negativeEmptyKeyTest2() throws ParameterParseException {
         paraMap.clear();
-        parseParameters(paraMap, ":''");
+        parseParameters(paraMap, ":''", null);
     }
 
     @Test(groups = {"util"},
           expectedExceptions = { ParameterParseException.class})
     public void negativeUnfinishedEscapeTest1() throws ParameterParseException {
         paraMap.clear();
-        parseParameters(paraMap, ":'\\");
+        parseParameters(paraMap, ":'\\", null);
     }
 
     @Test(groups = {"util"},
           expectedExceptions = { ParameterParseException.class})
     public void negativeUnfinishedEscapeTest2() throws ParameterParseException {
         paraMap.clear();
-        parseParameters(paraMap, ": \\");
+        parseParameters(paraMap, ": \\", null);
     }
 
 
@@ -199,12 +225,6 @@ public class ParameterToolsTest {
           expectedExceptions = { ParameterParseException.class})
     public void negativeDuplicateKey() throws ParameterParseException {
         paraMap.clear();
-        parseParameters(paraMap, "foo:bar; foo:");
-    }
-    @Test(groups = {"util"},
-          expectedExceptions = { ParameterParseException.class})
-    public void negativeProblem() throws ParameterParseException {
-        paraMap.clear();
-        parseParameters(paraMap, "scope:'http://www.c3grid.de/G2';name:Staging;size:10;path:/tmp");
+        parseParameters(paraMap, "foo:bar; foo:", null);
     }
 }

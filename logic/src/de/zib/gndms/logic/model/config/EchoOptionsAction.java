@@ -14,6 +14,7 @@ import java.io.PrintWriter;
  *
  *          User: stepn Date: 15.08.2008 Time: 11:06:40
  */
+@ConfigActionHelp(shortHelp="Echoes back all parameters as provided", longHelp="Echoes back all parameters as provided without interpreting them using the newline-separated, quoted option format.")
 public final class EchoOptionsAction extends ConfigAction<String> {
 
     @Override

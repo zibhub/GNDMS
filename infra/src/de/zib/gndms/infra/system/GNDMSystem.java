@@ -10,6 +10,7 @@ import de.zib.gndms.infra.service.ServiceInfo;
 import de.zib.gndms.infra.sys.EMFactoryProvider;
 import de.zib.gndms.infra.sys.RestrictedEMFactory;
 import de.zib.gndms.logic.action.CommandAction;
+import de.zib.gndms.logic.action.SkipActionInitializationException;
 import de.zib.gndms.logic.model.EntityUpdateListener;
 import de.zib.gndms.logic.model.config.ConfigAction;
 import de.zib.gndms.model.common.GridResource;
@@ -515,6 +516,10 @@ public final class GNDMSystem
         logger.info("Running " + className + ' ' + opts);
         try {
             return action.call();
+        }
+        catch (SkipActionInitializationException sa) {
+            // Intentionally not logged
+            throw sa;
         }
         catch (Exception e) {
             logger.warn("Failure during " + className + ' ' + opts, e);

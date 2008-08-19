@@ -58,7 +58,7 @@ import java.util.concurrent.locks.ReentrantLock;
  *          User: stepn Date: 17.07.2008 Time: 14:33:37
  */
 @SuppressWarnings({"AccessToStaticFieldLockedOnInstance"})
-public class GroovyMoniServer implements Runnable, LoggingDecisionPoint {
+public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionCaller {
 	// 1 sec min hopefully is a sensible lower bound
 	private static final int MIN_REFRESH_CYCLE = 1000;
 
@@ -659,10 +659,10 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint {
 	}
 
 
-    public void runAction(
+    public Object callAction(
             final @NotNull String classNameParam,
             final @NotNull String argsParam,
             final @NotNull PrintWriter writerParam) throws Exception {
-        actionCaller.callAction(classNameParam, argsParam, writerParam);
+        return actionCaller.callAction(classNameParam, argsParam, writerParam);
     }
 }

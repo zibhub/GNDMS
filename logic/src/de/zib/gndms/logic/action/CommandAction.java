@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.PrintWriter;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 
 /**
@@ -27,13 +28,14 @@ public interface CommandAction<R> extends Action<R> {
     void parseLocalOptions(final @NotNull String options)
             throws ParameterTools.ParameterParseException;
 
+    @NotNull Map<String, String> getAllOptions();
+
+    @Nullable String getNonMandatoryOption(final @NotNull String name);
     @NotNull String getOption(final @NotNull String name, final @NotNull String def);
     @NotNull String getOption(final @NotNull String name)
         throws MandatoryOptionMissingException;
-    @Nullable String getNonMandatoryOption(final @NotNull String name);
 
     @NotNull Set<String> getAllOptionNames();
-    @NotNull Map<String, String> getAllOptions();
     @NotNull String allOptionsToString();
 
     PrintWriter getPrintWriter();
@@ -47,13 +49,20 @@ public interface CommandAction<R> extends Action<R> {
      *
      * <pre>
      * (params) = (entry [';' (entry)]* [';']
-     * (entry) = (ws-char)* (printable-non-ws-char)+{':'|'='} (value)
+     * (entry) = (ws-char)* (printable-non-ws-char)+[{':'|'='} (value)]
      * (value) = (ignored-ws-char)* {(trimmed-value) | (exact-value)} (ignored-ws-char)*
      * (trimmed-value) = (pintable-chars-taken-as-value)*
      * (exact-value) = '\'' (pintable-chars-taken-as-value)* '\''
+     *               | '"' (pintable-chars-taken-as-value)* '"'
      * </pre>
      *
-     * Escpaing is supported in (pintable-chars-taken-as-value) via backspace.
+     * If a key is not provided with a value, it is set to the string "true" unless
+     * the key name starts with "!" in which case the key (without the "!") is set to "false".
+     * Alternatively, a leading "-" may be used to dennote false and "+" to denote true. As a
+     * consequence of this shortcut for boolean values, no real key name may start with "+", "-",
+     * or "!".
+     * 
+     * Escaping is supported in (printable-chars-taken-as-value) via backspace.
      */
     final class ParameterTools {
         public static final int EXPECTED_MAX_KEY_LENGTH = 32;
@@ -67,13 +76,15 @@ public interface CommandAction<R> extends Action<R> {
 
         @SuppressWarnings({ "HardcodedFileSeparator" })
         public static void parseParameters(final @NotNull Map<String, String> targetMap,
-                                           final @NotNull String params)
+                                           final @NotNull String params,
+                                           final Pattern keyPattern)
                 throws ParameterParseException {
             String currentKey = "";
             StringBuilder builder = new StringBuilder(Math.max(EXPECTED_MAX_KEY_LENGTH,
                                                                EXPECTED_MAX_VAL_LENGTH));
             ParseMode mode = ParseMode.KEY_WHITE;
             char[] chars = params.toCharArray();
+            char currentQuote = '\'';
 
             for (int i = 0; i < chars.length; i++) {
                 char cur = chars[i];
@@ -91,8 +102,12 @@ public interface CommandAction<R> extends Action<R> {
                         switch (cur) {
                             case '=':
                             case ':':
-                                currentKey = makeKey(builder, i);
+                                currentKey = makeKey(builder, keyPattern, i);
                                 mode = ParseMode.VALUE_BEGIN;
+                                break;
+                            case ';':
+                                makeBoolEntry(targetMap, builder, keyPattern, i);
+                                mode = ParseMode.KEY_WHITE;
                                 break;
                             default:
                                 if (Character.isWhitespace(cur))
@@ -104,6 +119,11 @@ public interface CommandAction<R> extends Action<R> {
                     case VALUE_BEGIN:
                         switch (cur) {
                             case '\'':
+                                currentQuote = '\'';
+                                mode = ParseMode.EXACT_VALUE;
+                                break;
+                            case '"':
+                                currentQuote = '"';
                                 mode = ParseMode.EXACT_VALUE;
                                 break;
                             default:
@@ -130,8 +150,17 @@ public interface CommandAction<R> extends Action<R> {
                         break;
                     case EXACT_VALUE:
                         switch (cur) {
+                            case '"':
+                                if (currentQuote == '"')
+                                    mode = ParseMode.EXACT_VALUE_DONE;
+                                else
+                                    builder.append(cur);
+                                break;
                             case '\'':
-                                mode = ParseMode.EXACT_VALUE_DONE;
+                                if (currentQuote == '\'')
+                                    mode = ParseMode.EXACT_VALUE_DONE;
+                                else
+                                    builder.append(cur);
                                 break;
                             case '\\':
                                 cur = escape(builder, chars, i);
@@ -161,13 +190,54 @@ public interface CommandAction<R> extends Action<R> {
                     || mode == ParseMode.VALUE_BEGIN || mode == ParseMode.EXACT_VALUE_DONE) {
                     makeEntry(targetMap, currentKey, builder, chars.length, true);
                     return;
-            }            
+            }
+            if (mode == ParseMode.KEY) {
+                if (builder.length() == 0)
+                    return;
+                makeBoolEntry(targetMap, builder, keyPattern, params.length());
+                return;
+            }
             if (mode == ParseMode.KEY_WHITE)
                 return;
             else
                 throw new ParameterParseException
                         ("Incomplete entry encountered before end of string",
                          params, params.length());
+        }
+
+
+        private static void makeBoolEntry(
+                final Map<String, String> targetMap, final StringBuilder builderParam,
+                final Pattern keyPattern, final int index)
+                throws ParameterParseException {
+            String boolKey = builderParam.toString();
+            builderParam.delete(0, builderParam.length());
+
+            if (boolKey.length() == 0)
+                throw new ParameterParseException("Key name of size zero", index);
+
+            switch (boolKey.charAt(0)) {
+                case '!':
+                case '-':
+                    putBoolKey(targetMap, keyPattern, boolKey.substring(1), "false", index);
+                    break;
+                case '+':
+                    putBoolKey(targetMap, keyPattern, boolKey.substring(1), "true", index);
+                    break;
+                default:
+                    putBoolKey(targetMap, keyPattern, boolKey, "true", index);
+            }
+        }
+
+
+        private static void putBoolKey(
+                final Map<String, String> targetMap, final Pattern keyPattern,
+                final String boolKeyParam, final String val, final int index)
+                throws ParameterParseException {
+            if (keyPattern == null || keyPattern.matcher(boolKeyParam).matches())
+                targetMap.put(boolKeyParam, val);
+            else
+                throw new ParameterParseException("Invalid key  name", index);
         }
 
 
@@ -182,63 +252,78 @@ public interface CommandAction<R> extends Action<R> {
         }
 
 
-        private static String makeKey(final StringBuilder builderParam, final int iParam)
+        private static String makeKey(final StringBuilder builderParam,
+                                      final Pattern keyPattern, final int index)
                 throws ParameterParseException {
             final String currentKey;
             currentKey = builderParam.toString();
             if (currentKey.length() == 0)
-                throw new ParameterParseException("Key name of size zero", iParam);
+                throw new ParameterParseException("Key name of size zero", index);
             builderParam.delete(0, builderParam.length());
+            final char firstChar = currentKey.charAt(0);
+            if (firstChar == '!' || firstChar == '+' || firstChar == '-' ||
+                    keyPattern != null && ! keyPattern.matcher(currentKey).matches())
+                    throw new ParameterParseException("Invalid key name", index);
+
+
             return currentKey;
         }
 
 
         @SuppressWarnings({ "HardcodedLineSeparator" })
         public static void append(final @NotNull StringBuilder builder,
-                                  final @NotNull Map<String, String> map, final boolean addNewlines)
+                                  final @NotNull Map<String, String> map,
+                                  final Pattern keyPattern,
+                                  final boolean addNewlines)
         {
             boolean first = true;
 
             for (Map.Entry<String,String> entry : map.entrySet()) {
-                if (first)
-                    first = false;
-                else
-                    { builder.append(';'); builder.append(addNewlines ? '\n' : ' '); }
                 String key = entry.getKey();
-                String val = entry.getValue();
-                for (char c : key.toCharArray()) {
-                    if (Character.isWhitespace(c))
-                        throw new IllegalArgumentException("Whitespace in key name");
-                    if (c == ':' || c == '\'' || c == ';' || c == '=')
-                        throw new IllegalArgumentException("Reserved char in key name");
+                if (keyPattern == null || keyPattern.matcher(key).matches()) {
+                    if (first)
+                        first = false;
+                    else
+                        { builder.append(';'); builder.append(addNewlines ? '\n' : ' '); }
+                    String val = entry.getValue();
+                    for (char c : key.toCharArray()) {
+                        if (Character.isWhitespace(c))
+                            throw new IllegalArgumentException("Whitespace in key name");
+                        if (c == ':' || c == '\'' || c == ';' || c == '=')
+                            throw new IllegalArgumentException("Reserved char in key name");
+                    }
+                    builder.append(key);
+                    builder.append(": '");
+                    final String escaped = val.replaceAll("'", "\'");
+                    builder.append(escaped);
+                    builder.append('\'');
                 }
-                builder.append(key);
-                builder.append(": '");
-                final String escaped = val.replaceAll("'", "\'");
-                builder.append(escaped);
-                builder.append('\'');
             }
         }
 
 
-        public static void append(final @NotNull StringBuilder builder,
-                                  final @NotNull Map<String, String> map) {
-            append(builder, map, false);
+        public static void append(
+                final @NotNull StringBuilder builder,
+                final @NotNull Map<String, String> map,
+                final Pattern keyPattern) {
+            append(builder, map, keyPattern, false);
         }
 
 
         public static @NotNull String asString(final @NotNull Map<String, String> map,
-            final boolean addNewlines) {
+            final Pattern keyPattern, final boolean addNewlines) {
             StringBuilder resultBuilder =
                     new StringBuilder(map.size() *
                             (EXPECTED_MAX_KEY_LENGTH + EXPECTED_MAX_VAL_LENGTH));
-            append(resultBuilder, map, addNewlines);
+            append(resultBuilder, map, keyPattern, addNewlines);
             return resultBuilder.toString();
         }
 
 
-        public static @NotNull String asString(final @NotNull Map<String, String> map) {
-            return asString(map, false);
+        @SuppressWarnings({ "StaticMethodOnlyUsedInOneClass" })
+        public static @NotNull String asString(
+                final @NotNull Map<String, String> map, final Pattern keyPattern) {
+            return asString(map, keyPattern, false);
         }
 
         private static void makeEntry(

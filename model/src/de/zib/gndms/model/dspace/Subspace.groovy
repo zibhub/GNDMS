@@ -27,6 +27,7 @@ import javax.persistence.Column
 import javax.persistence.Transient
 import de.zib.gndms.model.common.ModelUUIDGen
 import org.jetbrains.annotations.NotNull
+import de.zib.gndms.model.common.GridResource
 
 /**
  *
@@ -35,7 +36,7 @@ import org.jetbrains.annotations.NotNull
  */
 @Entity(name="Subspaces") @EntityListeners([LifecycleEventDispatcher.class])
 @Table(name="subspaces", schema="dspace")
-class Subspace extends TimedGridResource {
+class Subspace extends GridResource {
 	@Embedded
 	@AttributeOverrides([
 	      @AttributeOverride(name="unit", column=@Column(name="avail_unit", nullable=false)),

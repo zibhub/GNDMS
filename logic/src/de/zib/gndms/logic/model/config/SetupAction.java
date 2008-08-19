@@ -13,8 +13,9 @@ import de.zib.gndms.logic.action.MandatoryOptionMissingException;
  *          User: stepn Date: 18.08.2008 Time: 10:56:41
  */
 public abstract class SetupAction<R> extends ConfigAction<R> {
-    public enum SetupMode { CREATE, UPDATE }
+    public enum SetupMode { CREATE, UPDATE, DELETE }
 
+    @ConfigOption(descr = "Action mode; one of create, update, or delete")
     SetupMode mode;
 
 
@@ -23,7 +24,7 @@ public abstract class SetupAction<R> extends ConfigAction<R> {
         super.initialize();    // Overridden method
         if (mode == null && hasOption("mode"))
             try {
-                setMode(getLCEnumOption(SetupMode.class, "mode"));
+                setMode(getEnumOption(SetupMode.class, "mode", true));
             }
             catch (MandatoryOptionMissingException e) {
                 throw new IllegalStateException("Invalid mode option specified", e);
@@ -32,7 +33,6 @@ public abstract class SetupAction<R> extends ConfigAction<R> {
             throw new IllegalStateException("No mode specified");
 
     }
-
 
     @SuppressWarnings({ "NonBooleanMethodNameMayNotStartWithQuestion" })
     public SetupMode getMode() {
@@ -55,4 +55,9 @@ public abstract class SetupAction<R> extends ConfigAction<R> {
     public final boolean isUpdating() {
         return SetupMode.UPDATE.equals(getMode());
     }
+
+    public final boolean isDeleting() {
+        return SetupMode.DELETE.equals(getMode());
+    }
+
 }

@@ -1,6 +1,7 @@
 package de.zib.gndms.infra.monitor;
 
 import com.oreilly.servlet.Base64Decoder;
+import de.zib.gndms.logic.action.SkipActionInitializationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,6 +14,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.security.Principal;
 import java.util.Enumeration;
+
 
 /**
  * This servlet is run from GroovyMonitorServer to provide access to GroovyMonitors via
@@ -212,7 +214,12 @@ public class GroovyMoniServlet extends HttpServlet {
         StringWriter swriter = new StringWriter();
         PrintWriter pwriter = new PrintWriter(swriter);
         try {
-            moniServer.runAction(className, args, pwriter);
+            try {
+                moniServer.callAction(className, args, pwriter);
+            }
+            catch (SkipActionInitializationException e) {
+                // intentionally nothing
+            }
             pwriter.flush();
             PrintWriter rwriter = responseParam.getWriter();
             responseParam.setStatus(HttpServletResponse.SC_OK);

@@ -26,6 +26,9 @@ public abstract class AbstractAction<R> implements Action<R> {
         try {
 	        initialize( );
         }
+        catch (ActionInitializationException ae) {
+            throw ae;
+        }
         catch (RuntimeException re) {
 	        throw new ActionInitializationException(re);
         }

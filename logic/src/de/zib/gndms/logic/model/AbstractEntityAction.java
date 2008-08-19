@@ -90,6 +90,10 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
 
 
     public ModelUUIDGen getUUIDGen() {
+        if (UUIDGen == null) {
+            AbstractEntityAction<?> action = nextParentOfType(AbstractEntityAction.class);
+            return action == null ? null : action.getUUIDGen();
+        }
         return UUIDGen;
     }
 
@@ -99,6 +103,14 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
     }
 
     public final @NotNull String nextUUID() {
-        return getUUIDGen().nextUUID();
+        final ModelUUIDGen uuidGen = getUUIDGen();
+        if (uuidGen == null) {
+            final ModelUUIDGen uuidGen2 = nextParentOfType(ModelUUIDGen.class);
+            if (uuidGen2 == null)
+                throw new IllegalStateException("Cant find ModelUUIDGen");
+            return uuidGen2.nextUUID();
+        }
+        else
+            return uuidGen.nextUUID();
     }
 }
