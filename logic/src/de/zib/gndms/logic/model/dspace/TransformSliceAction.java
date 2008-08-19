@@ -21,6 +21,8 @@ import java.util.Calendar;
  * @version: $Id$
  *
  * User: mjorra, Date: 13.08.2008, Time: 13:20:25
+ *
+ * todo In this version the out-dated slices remains in the db and its directory on disk, maybe change this later
  */
 public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
 
