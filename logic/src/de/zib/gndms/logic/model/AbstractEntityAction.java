@@ -31,8 +31,8 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
         if( getEntityManager() == null )     
             throw new NoEntityManagerException( );
         
-        if( getUUIDGen() == null )
-            throw new IllegalThreadStateException( "No UUId generator provided" );
+      //  if( getUUIDGen() == null )
+      //      throw new IllegalThreadStateException( "No UUId generator provided" );
     }
 
 

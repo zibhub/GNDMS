@@ -96,7 +96,7 @@ public class CreateSliceActionTest extends ModelEntityTestBase {
         sp.setMetaSubspace( msp );
         GregorianCalendar cal = new GregorianCalendar( );
         cal.add( Calendar.DAY_OF_YEAR, 20 );
-        sp.setTerminationTime( cal );
+//        sp.setTerminationTime( cal );
 
         validator.setSubspace( sp );
 
