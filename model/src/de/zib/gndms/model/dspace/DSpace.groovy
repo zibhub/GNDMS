@@ -1,7 +1,5 @@
 package de.zib.gndms.model.dspace
 
-import de.zib.gndms.model.common.GridResource
-import de.zib.gndms.model.util.LifecycleEventDispatcher
 import javax.persistence.*
 import org.jetbrains.annotations.NotNull
 import de.zib.gndms.model.common.SingletonGridResource
@@ -15,10 +13,10 @@ import de.zib.gndms.model.common.SingletonGridResource
  * User: stepn Date: 01.08.2008 Time: 16:02:46
  */
 @NamedQueries([
-@NamedQuery(name="findDSpaceInstances", query="SELECT instance FROM DSpaces instance WHERE instance.systemId = :systemId"),
+@NamedQuery(name="findDSpaceInstances", query="SELECT instance FROM DSpaces instance WHERE instance.systemId = :systemId AND gridName = :gridName"),
 @NamedQuery(name="listPublicSubspaces", query="SELECT subspace FROM Subspaces subspace WHERE subspace.isPublicSubspace = true AND WHERE instance.systemId = :systemId"),
-@NamedQuery(name="listAllSubspaces", query="SELECT instance FROM Subspaces instance WHERE instance.systemId = :systemId"),
-@NamedQuery(name="listAllSlices", query="SELECT instance FROM Slices instance WHERE instance.systemId = :systemId")
+@NamedQuery(name="listAllSubspaceIds", query="SELECT instance.id FROM Subspaces instance WHERE instance.systemId = :systemId"),
+@NamedQuery(name="listAllSliceIds", query="SELECT instance.id FROM Slices instance WHERE instance.systemId = :systemId")
 ])
 @Entity(name="DSpaces")
 @Table(name="dspace", schema="dspace")

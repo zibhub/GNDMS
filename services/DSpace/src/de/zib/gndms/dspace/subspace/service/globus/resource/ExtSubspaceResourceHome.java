@@ -68,6 +68,7 @@ public final class ExtSubspaceResourceHome extends SubspaceResourceHome
 
 				try {
 					super.initialize();    // Overridden method
+                    system.refreshAllResources(getEntityManagerFactory(), getModelClass());
 				}
 				catch (RuntimeException e) {
 					initialized = false;
@@ -137,6 +138,12 @@ public final class ExtSubspaceResourceHome extends SubspaceResourceHome
         DSpaceTools.refreshModelReference( resource, this );
     }
 
+
+    public void initialRestoreById(final @NotNull String id) throws ResourceException {
+        find(getKeyForId(id));
+    }
+
+
     @NotNull
     public String getNickName() {
         return "subspace";
@@ -149,7 +156,12 @@ public final class ExtSubspaceResourceHome extends SubspaceResourceHome
     }
 
     @NotNull
-    public ResourceKey getKeyForId( GridResource model ) {
-        return new SimpleResourceKey( SubspaceConstants.RESOURCE_KEY, model.getId( ) );
+    public ResourceKey getKeyForResource( GridResource model ) {
+        return getKeyForId( model == null ?  null : model.getId() );
+    }
+
+    @NotNull
+    public ResourceKey getKeyForId( String id ) {
+        return new SimpleResourceKey( SubspaceConstants.RESOURCE_KEY, id );
     }
 }

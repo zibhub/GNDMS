@@ -189,7 +189,7 @@ public final class ExtDSpaceResourceHome  extends DSpaceResourceHome
     }
 
     @NotNull
-    public ResourceKey getKeyForId( GridResource model ) {
+    public ResourceKey getKeyForResource( GridResource model ) {
         return new SimpleResourceKey( DSpaceConstants.RESOURCE_KEY, model.getId( ) );
     }
 

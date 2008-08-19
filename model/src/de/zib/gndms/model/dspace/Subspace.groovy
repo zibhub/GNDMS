@@ -9,7 +9,6 @@
 package de.zib.gndms.model.dspace
 
 import de.zib.gndms.model.common.TimedGridResource
-import de.zib.gndms.model.util.LifecycleEventDispatcher
 import javax.persistence.OneToMany
 import de.zib.gndms.model.dspace.types.SliceKindMode
 import javax.persistence.Entity
@@ -34,7 +33,7 @@ import de.zib.gndms.model.common.GridResource
  * Instances represent concrete subspaces in the local DSpace
  *
  */
-@Entity(name="Subspaces") @EntityListeners([LifecycleEventDispatcher.class])
+@Entity(name="Subspaces")
 @Table(name="subspaces", schema="dspace")
 class Subspace extends GridResource {
 	@Embedded

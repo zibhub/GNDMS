@@ -54,7 +54,7 @@ public class DSpaceTools {
     public static <M extends GridResource, H extends ResourceHomeImpl & GNDMServiceHome>
          void refreshModelReference( M model, H home ) throws ResourceException {
 
-        ResourceKey key = home.getKeyForId( model );
+        ResourceKey key = home.getKeyForResource( model );
         ReloadablePersistentResource<M, H> rps =
                 ( ReloadablePersistentResource<M, H> ) home.find( key );
 

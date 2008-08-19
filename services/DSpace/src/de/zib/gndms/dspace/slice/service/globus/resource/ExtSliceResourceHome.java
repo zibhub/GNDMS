@@ -85,7 +85,7 @@ public final class ExtSliceResourceHome extends SliceResourceHome
     }
 
     @NotNull
-    public ResourceKey getKeyForId( GridResource model ) {
+    public ResourceKey getKeyForResource( GridResource model ) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

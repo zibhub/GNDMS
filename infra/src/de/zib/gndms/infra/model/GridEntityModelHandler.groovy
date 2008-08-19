@@ -378,7 +378,7 @@ final class SingletonGridResourceModelHandler<M extends SingletonGridResource, H
 		return (M) txRun(emParam, { EntityManager em ->
 			try {
 				final Query query = em.createNamedQuery(queryName)
-				query.setParameter("gridName", getGridName())
+				query.setParameter("systemId", getGridName())
 				return (M) query.getSingleResult()
 			}
 			catch (NoResultException e) {

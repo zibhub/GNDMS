@@ -26,10 +26,14 @@ public interface GNDMServiceHome<M extends GridResource>
 
     void refresh(final @NotNull GridResource resource) throws ResourceException;
 
+    void initialRestoreById(final @NotNull String id) throws ResourceException;
+
     @NotNull String getNickName();
 
     @NotNull Class<M> getModelClass();
 
-    @NotNull ResourceKey getKeyForId( GridResource model );
+    @NotNull ResourceKey getKeyForResource( GridResource model );
+    
+    @NotNull ResourceKey getKeyForId( String id );
 
 }

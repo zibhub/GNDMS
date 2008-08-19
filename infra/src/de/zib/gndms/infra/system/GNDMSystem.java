@@ -17,7 +17,6 @@ import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.model.common.VEPRef;
 import de.zib.gndms.model.dspace.DSpaceRef;
-import de.zib.gndms.model.util.InstanceResolver;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.apache.axis.components.uuid.UUIDGen;
@@ -43,6 +42,7 @@ import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import static javax.persistence.Persistence.createEntityManagerFactory;
+import javax.persistence.Query;
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.IOException;
@@ -51,6 +51,8 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.List;
+
 
 /**
  * This sets up the configuration and database storage area shared between
@@ -63,7 +65,7 @@ import java.util.Properties;
  */
 @SuppressWarnings({"OverloadedMethodsWithSameNumberOfParameters", "NestedAssignment"})
 public final class GNDMSystem
-	  implements Initializable, SystemHolder, InstanceResolver<Object>,
+	  implements Initializable, SystemHolder,
 	  EMFactoryProvider, ModelUUIDGen, EntityUpdateListener, ActionCaller {
     private static final int INITIAL_CAPACITY = 32;
     private static final int INSTANCE_RETRIEVAL_INTERVAL = 250;
@@ -472,12 +474,10 @@ public final class GNDMSystem
 
 
     public void onModelChange( GridResource model ) {
-
         try {
             getHome( model.getClass() ).refresh( model );
         } catch ( ResourceException e ) {
-            // todo make something usefull
-            e.printStackTrace();
+            logger.warn(e);
         }
     }
 
@@ -638,4 +638,67 @@ public final class GNDMSystem
 
 	}
 
+    @SuppressWarnings({ "unchecked" })
+    public @NotNull <M extends GridResource> List<String> listAllResources(
+            final @NotNull EntityManager em, final @NotNull Class<M> clazz) {
+        GNDMServiceHome<M> home = getHome(clazz);
+        Query query = home.getListAllQuery(em);
+        query.setParameter("systemId", getGridName());
+        query.setParameter("gridName", getGridName());
+        return query.getResultList();
+    }
+
+    public final @NotNull  <M extends GridResource> List<String> listAllResources(
+            final @NotNull EntityManagerFactory emg, final @NotNull Class<M> clazz) {
+        final EntityManager manager = emf.createEntityManager();
+        List<String> retList = null;
+        try {
+            try {
+                manager.getTransaction().begin();
+                retList = listAllResources(manager, clazz);
+                manager.getTransaction().commit();
+            }
+            finally {
+                if (manager.getTransaction().isActive())
+                    manager.getTransaction().rollback();
+            }
+        }
+        finally {
+            if (manager.isOpen())
+                manager.close();
+        }
+        return retList;
+    }
+
+
+    public final <M extends GridResource> void refreshAllResources(
+            final @NotNull EntityManagerFactory emg, final @NotNull Class<M> clazz) {
+        final EntityManager manager = emf.createEntityManager();
+        GNDMServiceHome<M> home = getHome(clazz);
+        List<String> retList = null;
+
+        try {
+            try {
+                manager.getTransaction().begin();
+                retList = listAllResources(manager, clazz);
+                for (String id : retList) {
+                    try {
+                        home.initialRestoreById(id);
+                    }
+                    catch (ResourceException e) {
+                        logger.warn(e);
+                    }
+                }
+                manager.getTransaction().commit();
+            }
+            finally {
+                if (manager.getTransaction().isActive())
+                    manager.getTransaction().rollback();
+            }
+        }
+        finally {
+            if (manager.isOpen())
+                manager.close();
+        }
+    }
 }
