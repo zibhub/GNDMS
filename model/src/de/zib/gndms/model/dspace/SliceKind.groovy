@@ -15,6 +15,8 @@ import javax.persistence.CascadeType
 //import de.zib.gndms.model.dspace.types.SliceKindMode
 import javax.persistence.DiscriminatorValue
 import javax.persistence.Entity
+import javax.persistence.Embeddable
+import de.zib.gndms.model.common.GridEntity
 
 /**
  * SliceKinds are identified by a kindURI
@@ -29,14 +31,15 @@ import javax.persistence.Entity
 @DiscriminatorColumn(name="class", discriminatorType=DiscriminatorType.STRING, length=8)
 @DiscriminatorValue("PLAIN")
 @Table(name="slice_kinds", schema="dspace")
-class SliceKind extends ModelEntity {
+class SliceKind extends GridEntity {
 	@Id @Column(name="uri", nullable=false, updatable=false, columnDefinition="VARCHAR")
-	String URI
+    String URI
 
-	@Enumerated(EnumType.STRING)
-	@Column(name="mode", nullable=false, updatable=false, columnDefinition="CHAR", length=8)
+    @Enumerated(EnumType.STRING)
+    @Column(name="mode", nullable=false, updatable=false, columnDefinition="VARCHAR", length=8)
 	de.zib.gndms.model.dspace.types.SliceKindMode mode
 
 	@ManyToMany(fetch=FetchType.LAZY, mappedBy="creatableSliceKinds", cascade=[CascadeType.REFRESH, CascadeType.MERGE])
 	Set<MetaSubspace> metaSubspaces
+
 }

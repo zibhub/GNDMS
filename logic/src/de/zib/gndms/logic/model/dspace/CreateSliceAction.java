@@ -100,14 +100,17 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
         sp.addSlice( sl );
 
         // todo maybe persist slice first
-        // em.persist( sl );
+//        em.persist( sl );
 
-        em.merge( sp );
+//        em.merge( sp );
 
-        (( BatchUpdateAction<Object> )getPostponedActions( )).addAction( new ModelChangedAction( sl ) );
+
+        addChangedModel( sl );
+//        (( BatchUpdateAction<Object> )getPostponedActions( )).addAction( new ModelChangedAction( sl ) );
 
         // maybe this isn't of interesst
-        ((BatchUpdateAction<Object>)getPostponedActions( )).addAction( new ModelChangedAction( sp ) );
+        addChangedModel( sp );
+  //      ((BatchUpdateAction<Object>)getPostponedActions( )).addAction( new ModelChangedAction( sp ) );
         
         return  sl;
     }
