@@ -66,6 +66,8 @@
 		<replace file="tmp/jndi-config.xml" value="${service.deployment.prefix}" token="SERVICE-INSTANCE-PREFIX" />
 		<replace file="tmp/jndi-config.xml" value="etc/${service.deployment.dir.name}" token="ETC-PATH" />
 		<replace file="tmp/jndi-config.xml" value="${perform.index.service.registration}" token="PERFORM_REGISTRATION" />
+		<replace file="tmp/jndi-config.xml" value="${target.grid}" token="TARGET_GRID" />
+
 		<mkdir dir="tmp/etc" />
 		<copy overwrite="true" toDir="tmp/etc">
 			<fileset dir="etc">

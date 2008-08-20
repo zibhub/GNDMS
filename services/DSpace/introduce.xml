@@ -23,7 +23,7 @@
    <ns2:SchemaElement type="TotalStorageSize" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
   <ns2:Namespace location="./../ws/addressing/WS-Addressing.xsd" namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" packageName="addressing" xsi:type="ns2:NamespaceType">
-   <ns2:SchemaElement type="Action" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="de.zib.gndms.logic.action.action.Action" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="EndpointReference" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="FaultTo" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="From" xsi:type="ns2:SchemaElementType"/>
@@ -114,7 +114,7 @@
   </ns2:Namespace>
  </ns2:Namespaces>
  <ns3:Services xsi:type="ns3:ServicesType" xmlns:ns3="gme://gov.nih.nci.cagrid.introduce/1/Services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <ns3:Service name="DSpace" namespace="http://dspace.gndms.zib.de/DSpace" packageName="de.zib.gndms.dspace" xsi:type="ns3:ServiceType">
+  <ns3:Service name="dspace" namespace="http://dspace.gndms.zib.de/DSpace" packageName="de.zib.gndms.dspace" xsi:type="ns3:ServiceType">
    <ns4:Methods xsi:type="ns4:MethodsType" xmlns:ns4="gme://gov.nih.nci.cagrid.introduce/1/Methods">
     <ns4:Method isImported="true" isProvided="true" name="GetMultipleResourceProperties" xsi:type="ns4:MethodType">
      <ns4:Output qName="void" isArray="false"/>

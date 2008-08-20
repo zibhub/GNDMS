@@ -19,7 +19,7 @@
         </parameter>
       </resourceParams>
     </resource>
-    <resource name="home" type="de.zib.gndms.GORFX.context.service.globus.resource.TaskResourceHome">
+    <resource name="home" type="de.zib.gndms.GORFX.context.service.globus.resource.ExtTaskResourceHome">
       <resourceParams>
         <parameter>
           <name>factory</name>
@@ -63,7 +63,7 @@
         </parameter>
       </resourceParams>
     </resource>
-    <resource name="home" type="de.zib.gndms.GORFX.offer.service.globus.resource.OfferResourceHome">
+    <resource name="home" type="de.zib.gndms.GORFX.offer.service.globus.resource.ExtOfferResourceHome">
       <resourceParams>
         <parameter>
           <name>factory</name>
@@ -87,7 +87,6 @@
     <resourceLink name="gORFXHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/GORFX/home" />
     <resourceLink name="oRQHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/ORQ/home" />
     <resourceLink name="taskHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Task/home" />
-    <resourceLink name="taskHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Task/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/ORQ">
     <resource name="configuration" type="de.zib.gndms.GORFX.ORQ.service.globus.resource.ORQResourceConfiguration">
@@ -108,7 +107,7 @@
         </parameter>
       </resourceParams>
     </resource>
-    <resource name="home" type="de.zib.gndms.GORFX.ORQ.service.globus.resource.ORQResourceHome">
+    <resource name="home" type="de.zib.gndms.GORFX.ORQ.service.globus.resource.ExtORQResourceHome">
       <resourceParams>
         <parameter>
           <name>factory</name>
@@ -130,8 +129,6 @@
     </resource>
     <resourceLink name="serviceconfiguration" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/GORFX/serviceconfiguration" />
     <resourceLink name="gORFXHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/GORFX/home" />
-    <resourceLink name="offerHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Offer/home" />
-    <resourceLink name="taskHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Task/home" />
     <resourceLink name="offerHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Offer/home" />
     <resourceLink name="taskHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Task/home" />
   </service>
@@ -178,7 +175,7 @@
         </parameter>
       </resourceParams>
     </resource>
-    <resource name="home" type="de.zib.gndms.GORFX.service.globus.resource.GORFXResourceHome">
+    <resource name="home" type="de.zib.gndms.GORFX.service.globus.resource.ExtGORFXResourceHome">
       <resourceParams>
         <parameter>
           <name>factory</name>

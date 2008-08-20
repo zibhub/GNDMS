@@ -81,29 +81,29 @@
   ============================================================-->
   <portType name="GORFXPortType" wsrp:ResourceProperties="tns:GORFXResourceProperties">
     <operation name="CreateOfferRequest">
-      <input message="tns:CreateOfferRequestRequest" wsa:Action="http://GORFX.gndms.zib.de/GORFX/CreateOfferRequestRequest" />
-      <output message="tns:CreateOfferRequestResponse" wsa:Action="http://GORFX.gndms.zib.de/GORFX/CreateOfferRequestResponse" />
-      <fault name="UnsupportedOfferType" message="tns:UnsupportedOfferTypeFaultMessage" wsa:Action="http://GORFX.gndms.zib.de/GORFX/UnsupportedOfferTypeFaultMessage" />
+      <input message="tns:CreateOfferRequestRequest" wsa:de.zib.gndms.action.Action="http://GORFX.gndms.zib.de/GORFX/CreateOfferRequestRequest" />
+      <output message="tns:CreateOfferRequestResponse" wsa:de.zib.gndms.action.Action="http://GORFX.gndms.zib.de/GORFX/CreateOfferRequestResponse" />
+      <fault name="UnsupportedOfferType" message="tns:UnsupportedOfferTypeFaultMessage" wsa:de.zib.gndms.action.Action="http://GORFX.gndms.zib.de/GORFX/UnsupportedOfferTypeFaultMessage" />
     </operation>
     <operation name="GetSupportedOfferTypes">
-      <input message="tns:GetSupportedOfferTypesRequest" wsa:Action="http://GORFX.gndms.zib.de/GORFX/GetSupportedOfferTypesRequest" />
-      <output message="tns:GetSupportedOfferTypesResponse" wsa:Action="http://GORFX.gndms.zib.de/GORFX/GetSupportedOfferTypesResponse" />
+      <input message="tns:GetSupportedOfferTypesRequest" wsa:de.zib.gndms.action.Action="http://GORFX.gndms.zib.de/GORFX/GetSupportedOfferTypesRequest" />
+      <output message="tns:GetSupportedOfferTypesResponse" wsa:de.zib.gndms.action.Action="http://GORFX.gndms.zib.de/GORFX/GetSupportedOfferTypesResponse" />
     </operation>
     <wsdl:operation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="GetMultipleResourceProperties">
-      <wsdl:input name="GetMultipleResourcePropertiesRequest" message="wsrpw:GetMultipleResourcePropertiesRequest" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetMultipleResourceProperties" />
-      <wsdl:output name="GetMultipleResourcePropertiesResponse" message="wsrpw:GetMultipleResourcePropertiesResponse" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetMultipleResourcePropertiesResponse" />
+      <wsdl:input name="GetMultipleResourcePropertiesRequest" message="wsrpw:GetMultipleResourcePropertiesRequest" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetMultipleResourceProperties" />
+      <wsdl:output name="GetMultipleResourcePropertiesResponse" message="wsrpw:GetMultipleResourcePropertiesResponse" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetMultipleResourcePropertiesResponse" />
       <wsdl:fault name="ResourceUnknownFault" message="wsrpw:ResourceUnknownFault" />
       <wsdl:fault name="InvalidResourcePropertyQNameFault" message="wsrpw:InvalidResourcePropertyQNameFault" />
     </wsdl:operation>
     <wsdl:operation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="GetResourceProperty">
-      <wsdl:input name="GetResourcePropertyRequest" message="wsrpw:GetResourcePropertyRequest" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetResourceProperty" />
-      <wsdl:output name="GetResourcePropertyResponse" message="wsrpw:GetResourcePropertyResponse" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetResourcePropertyResponse" />
+      <wsdl:input name="GetResourcePropertyRequest" message="wsrpw:GetResourcePropertyRequest" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetResourceProperty" />
+      <wsdl:output name="GetResourcePropertyResponse" message="wsrpw:GetResourcePropertyResponse" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetResourcePropertyResponse" />
       <wsdl:fault name="ResourceUnknownFault" message="wsrpw:ResourceUnknownFault" />
       <wsdl:fault name="InvalidResourcePropertyQNameFault" message="wsrpw:InvalidResourcePropertyQNameFault" />
     </wsdl:operation>
     <wsdl:operation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="QueryResourceProperties">
-      <wsdl:input name="QueryResourcePropertiesRequest" message="wsrpw:QueryResourcePropertiesRequest" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/QueryResourceProperties" />
-      <wsdl:output name="QueryResourcePropertiesResponse" message="wsrpw:QueryResourcePropertiesResponse" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/QueryResourcePropertiesResponse" />
+      <wsdl:input name="QueryResourcePropertiesRequest" message="wsrpw:QueryResourcePropertiesRequest" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/QueryResourceProperties" />
+      <wsdl:output name="QueryResourcePropertiesResponse" message="wsrpw:QueryResourcePropertiesResponse" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/QueryResourcePropertiesResponse" />
       <wsdl:fault name="ResourceUnknownFault" message="wsrpw:ResourceUnknownFault" />
       <wsdl:fault name="InvalidResourcePropertyQNameFault" message="wsrpw:InvalidResourcePropertyQNameFault" />
       <wsdl:fault name="UnknownQueryExpressionDialectFault" message="wsrpw:UnknownQueryExpressionDialectFault" />
@@ -111,8 +111,8 @@
       <wsdl:fault name="QueryEvaluationErrorFault" message="wsrpw:QueryEvaluationErrorFault" />
     </wsdl:operation>
     <operation name="getServiceSecurityMetadata">
-      <input message="wns1:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />
-      <output message="wns1:GetServiceSecurityMetadataResponse" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataResponse" />
+      <input message="wns1:GetServiceSecurityMetadataRequest" wsa:de.zib.gndms.action.Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />
+      <output message="wns1:GetServiceSecurityMetadataResponse" wsa:de.zib.gndms.action.Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataResponse" />
     </operation>
   </portType>
 </definitions>

@@ -152,41 +152,41 @@
   ============================================================-->
   <portType name="DSpacePortType" wsrp:ResourceProperties="tns:DSpaceResourceProperties">
     <operation name="GetSubspace">
-      <input message="tns:GetSubspaceRequest" wsa:Action="http://dspace.gndms.zib.de/DSpace/GetSubspaceRequest" />
-      <output message="tns:GetSubspaceResponse" wsa:Action="http://dspace.gndms.zib.de/DSpace/GetSubspaceResponse" />
-      <fault name="UnknownSubspace" message="tns:UnknownSubspaceFaultMessage" wsa:Action="http://dspace.gndms.zib.de/DSpace/UnknownSubspaceFaultMessage" />
+      <input message="tns:GetSubspaceRequest" wsa:de.zib.gndms.action.Action="http://dspace.gndms.zib.de/DSpace/GetSubspaceRequest" />
+      <output message="tns:GetSubspaceResponse" wsa:de.zib.gndms.action.Action="http://dspace.gndms.zib.de/DSpace/GetSubspaceResponse" />
+      <fault name="UnknownSubspace" message="tns:UnknownSubspaceFaultMessage" wsa:de.zib.gndms.action.Action="http://dspace.gndms.zib.de/DSpace/UnknownSubspaceFaultMessage" />
     </operation>
     <operation name="ListPublicSubspaces">
-      <input message="tns:ListPublicSubspacesRequest" wsa:Action="http://dspace.gndms.zib.de/DSpace/ListPublicSubspacesRequest" />
-      <output message="tns:ListPublicSubspacesResponse" wsa:Action="http://dspace.gndms.zib.de/DSpace/ListPublicSubspacesResponse" />
+      <input message="tns:ListPublicSubspacesRequest" wsa:de.zib.gndms.action.Action="http://dspace.gndms.zib.de/DSpace/ListPublicSubspacesRequest" />
+      <output message="tns:ListPublicSubspacesResponse" wsa:de.zib.gndms.action.Action="http://dspace.gndms.zib.de/DSpace/ListPublicSubspacesResponse" />
     </operation>
     <operation name="ListSupportedSchemas">
-      <input message="tns:ListSupportedSchemasRequest" wsa:Action="http://dspace.gndms.zib.de/DSpace/ListSupportedSchemasRequest" />
-      <output message="tns:ListSupportedSchemasResponse" wsa:Action="http://dspace.gndms.zib.de/DSpace/ListSupportedSchemasResponse" />
+      <input message="tns:ListSupportedSchemasRequest" wsa:de.zib.gndms.action.Action="http://dspace.gndms.zib.de/DSpace/ListSupportedSchemasRequest" />
+      <output message="tns:ListSupportedSchemasResponse" wsa:de.zib.gndms.action.Action="http://dspace.gndms.zib.de/DSpace/ListSupportedSchemasResponse" />
     </operation>
     <operation name="CreateSliceInSubspace">
-      <input message="tns:CreateSliceInSubspaceRequest" wsa:Action="http://dspace.gndms.zib.de/DSpace/CreateSliceInSubspaceRequest" />
-      <output message="tns:CreateSliceInSubspaceResponse" wsa:Action="http://dspace.gndms.zib.de/DSpace/CreateSliceInSubspaceResponse" />
-      <fault name="OutOfSpace" message="tns:OutOfSpaceFaultMessage" wsa:Action="http://dspace.gndms.zib.de/DSpace/OutOfSpaceFaultMessage" />
-      <fault name="UnknownOrInvalidSliceKind" message="tns:UnknownOrInvalidSliceKindFaultMessage" wsa:Action="http://dspace.gndms.zib.de/DSpace/UnknownOrInvalidSliceKindFaultMessage" />
-      <fault name="UnknownSubspace" message="tns:UnknownSubspaceFaultMessage" wsa:Action="http://dspace.gndms.zib.de/DSpace/UnknownSubspaceFaultMessage" />
-      <fault name="InternalFailure" message="tns:InternalFailureFaultMessage" wsa:Action="http://dspace.gndms.zib.de/DSpace/InternalFailureFaultMessage" />
+      <input message="tns:CreateSliceInSubspaceRequest" wsa:de.zib.gndms.action.Action="http://dspace.gndms.zib.de/DSpace/CreateSliceInSubspaceRequest" />
+      <output message="tns:CreateSliceInSubspaceResponse" wsa:de.zib.gndms.action.Action="http://dspace.gndms.zib.de/DSpace/CreateSliceInSubspaceResponse" />
+      <fault name="OutOfSpace" message="tns:OutOfSpaceFaultMessage" wsa:de.zib.gndms.action.Action="http://dspace.gndms.zib.de/DSpace/OutOfSpaceFaultMessage" />
+      <fault name="UnknownOrInvalidSliceKind" message="tns:UnknownOrInvalidSliceKindFaultMessage" wsa:de.zib.gndms.action.Action="http://dspace.gndms.zib.de/DSpace/UnknownOrInvalidSliceKindFaultMessage" />
+      <fault name="UnknownSubspace" message="tns:UnknownSubspaceFaultMessage" wsa:de.zib.gndms.action.Action="http://dspace.gndms.zib.de/DSpace/UnknownSubspaceFaultMessage" />
+      <fault name="InternalFailure" message="tns:InternalFailureFaultMessage" wsa:de.zib.gndms.action.Action="http://dspace.gndms.zib.de/DSpace/InternalFailureFaultMessage" />
     </operation>
     <wsdl:operation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="GetMultipleResourceProperties">
-      <wsdl:input name="GetMultipleResourcePropertiesRequest" message="wsrpw:GetMultipleResourcePropertiesRequest" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetMultipleResourceProperties" />
-      <wsdl:output name="GetMultipleResourcePropertiesResponse" message="wsrpw:GetMultipleResourcePropertiesResponse" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetMultipleResourcePropertiesResponse" />
+      <wsdl:input name="GetMultipleResourcePropertiesRequest" message="wsrpw:GetMultipleResourcePropertiesRequest" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetMultipleResourceProperties" />
+      <wsdl:output name="GetMultipleResourcePropertiesResponse" message="wsrpw:GetMultipleResourcePropertiesResponse" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetMultipleResourcePropertiesResponse" />
       <wsdl:fault name="ResourceUnknownFault" message="wsrpw:ResourceUnknownFault" />
       <wsdl:fault name="InvalidResourcePropertyQNameFault" message="wsrpw:InvalidResourcePropertyQNameFault" />
     </wsdl:operation>
     <wsdl:operation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="GetResourceProperty">
-      <wsdl:input name="GetResourcePropertyRequest" message="wsrpw:GetResourcePropertyRequest" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetResourceProperty" />
-      <wsdl:output name="GetResourcePropertyResponse" message="wsrpw:GetResourcePropertyResponse" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetResourcePropertyResponse" />
+      <wsdl:input name="GetResourcePropertyRequest" message="wsrpw:GetResourcePropertyRequest" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetResourceProperty" />
+      <wsdl:output name="GetResourcePropertyResponse" message="wsrpw:GetResourcePropertyResponse" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetResourcePropertyResponse" />
       <wsdl:fault name="ResourceUnknownFault" message="wsrpw:ResourceUnknownFault" />
       <wsdl:fault name="InvalidResourcePropertyQNameFault" message="wsrpw:InvalidResourcePropertyQNameFault" />
     </wsdl:operation>
     <wsdl:operation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="QueryResourceProperties">
-      <wsdl:input name="QueryResourcePropertiesRequest" message="wsrpw:QueryResourcePropertiesRequest" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/QueryResourceProperties" />
-      <wsdl:output name="QueryResourcePropertiesResponse" message="wsrpw:QueryResourcePropertiesResponse" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/QueryResourcePropertiesResponse" />
+      <wsdl:input name="QueryResourcePropertiesRequest" message="wsrpw:QueryResourcePropertiesRequest" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/QueryResourceProperties" />
+      <wsdl:output name="QueryResourcePropertiesResponse" message="wsrpw:QueryResourcePropertiesResponse" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/QueryResourcePropertiesResponse" />
       <wsdl:fault name="ResourceUnknownFault" message="wsrpw:ResourceUnknownFault" />
       <wsdl:fault name="InvalidResourcePropertyQNameFault" message="wsrpw:InvalidResourcePropertyQNameFault" />
       <wsdl:fault name="UnknownQueryExpressionDialectFault" message="wsrpw:UnknownQueryExpressionDialectFault" />
@@ -194,8 +194,8 @@
       <wsdl:fault name="QueryEvaluationErrorFault" message="wsrpw:QueryEvaluationErrorFault" />
     </wsdl:operation>
     <operation name="getServiceSecurityMetadata">
-      <input message="wns1:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />
-      <output message="wns1:GetServiceSecurityMetadataResponse" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataResponse" />
+      <input message="wns1:GetServiceSecurityMetadataRequest" wsa:de.zib.gndms.action.Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />
+      <output message="wns1:GetServiceSecurityMetadataResponse" wsa:de.zib.gndms.action.Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataResponse" />
     </operation>
   </portType>
 </definitions>
