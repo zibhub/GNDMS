@@ -121,6 +121,6 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
     }
 
     public void addChangedModel( GridResource model  ) {
-        (( BatchUpdateAction<Object> )getPostponedActions( )).addAction( new ModelChangedAction( model ) );
+        (( BatchUpdateAction<GridResource,Object> )getPostponedActions( )).addAction( new ModelChangedAction( model ) );
     }
 }

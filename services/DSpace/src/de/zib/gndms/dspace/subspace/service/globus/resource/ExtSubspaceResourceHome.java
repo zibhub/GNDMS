@@ -163,6 +163,6 @@ public final class ExtSubspaceResourceHome extends SubspaceResourceHome
 
     @NotNull
     public SubspaceReference getReferenceForSubspace( Subspace model ) throws Exception {
-        return getResourceReference( getKeyForId( model ) );
+        return getResourceReference( getKeyForId( model.getId( ) ) );
     }
 }

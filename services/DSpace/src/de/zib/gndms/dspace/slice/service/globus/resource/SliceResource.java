@@ -10,6 +10,7 @@ import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.infra.model.GridEntityModelHandler;
 import de.zib.gndms.infra.model.GridResourceModelHandler;
+import de.zib.gndms.dspace.common.DSpaceTools;
 
 import java.rmi.RemoteException;
 
@@ -48,7 +49,7 @@ public class SliceResource extends SliceResourceBase
         }
 
         super.setTerminationTime( model.getTerminationTime() );
-        super.setTotalStorageSize( DSpaceTools.buildSizeT( model. )));
+        super.setTotalStorageSize( DSpaceTools.buildSizeT( model.getTotalStorageSize( ) ) );
     }
 
     @NotNull
