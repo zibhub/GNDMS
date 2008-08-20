@@ -14,7 +14,6 @@ http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
 	    <class>de.zib.gndms.model.common.SingletonGridResource</class>
 	    <class>de.zib.gndms.model.common.TimedGridResource</class>
 	    <class>de.zib.gndms.model.common.GridSite</class>
-	    <class>de.zib.gndms.model.common.GridSiteId</class>
 	    <class>de.zib.gndms.model.common.VEPRef</class>
 	    <class>de.zib.gndms.model.common.SimpleRKRef</class>
 	    <class>de.zib.gndms.model.dspace.DSpaceRef</class>

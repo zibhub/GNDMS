@@ -13,10 +13,10 @@ import de.zib.gndms.model.common.SingletonGridResource
  * User: stepn Date: 01.08.2008 Time: 16:02:46
  */
 @NamedQueries([
-@NamedQuery(name="findDSpaceInstances", query="SELECT instance FROM DSpaces instance WHERE instance.systemId = :systemId AND instance.gridName = :gridName"),
-@NamedQuery(name="listPublicSubspaces", query="SELECT subspace FROM Subspaces subspace WHERE subspace.isPublicSubspace = true AND WHERE instance.systemId = :systemId"),
-@NamedQuery(name="listAllSubspaceIds", query="SELECT instance.id FROM Subspaces instance WHERE instance.systemId = :systemId"),
-@NamedQuery(name="listAllSliceIds", query="SELECT instance.id FROM Slices instance WHERE instance.systemId = :systemId")
+@NamedQuery(name="findDSpaceInstances", query="SELECT instance FROM DSpaces instance"),
+@NamedQuery(name="listPublicSubspaces", query="SELECT subspace FROM Subspaces subspace WHERE subspace.isPublicSubspace = true"),
+@NamedQuery(name="listAllSubspaceIds", query="SELECT instance.id FROM Subspaces instance"),
+@NamedQuery(name="listAllSliceIds", query="SELECT instance.id FROM Slices instance")
 ])
 @Entity(name="DSpaces")
 @Table(name="dspace", schema="dspace")

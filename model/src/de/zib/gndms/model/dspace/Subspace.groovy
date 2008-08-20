@@ -58,7 +58,9 @@ class Subspace extends GridResource {
 	@Embedded
 	@AttributeOverrides([
 		@AttributeOverride(name="gridSiteId", column=@Column(name="dspace_site", nullable=true, updatable=false)),
-	    @AttributeOverride(name="resourceKeyValue", column=@Column(name="dspace_uuid", nullable=false, updatable=false))])
+        @AttributeOverride(name="resourceKeyValue", column=@Column(name="dspace_uuid", nullable=false, updatable=false)),
+
+    ])
 	DSpaceRef dSpaceRef
 
     @OneToMany( targetEntity=Slice.class, mappedBy="owner", fetch=FetchType.LAZY, cascade=[CascadeType.REFRESH,CascadeType.PERSIST, CascadeType.REMOVE ] )

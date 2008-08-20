@@ -225,6 +225,9 @@ public final class GNDMSystem
 		doCheckOrCreateDir(dbDir);
 
 		System.setProperty("derby.system.home", dbDir.getCanonicalPath());
+        System.setProperty("derby.infolog.append", "true");
+        System.setProperty("derby.language.logStatementText", "true");
+        System.setProperty("derby.stream.error.logSeverityLevel", "20000");
 
 		dbLogFile = new File(logDir, "derby.log");
 		if (!dbLogFile.exists())
@@ -557,14 +560,7 @@ public final class GNDMSystem
     public @NotNull <M extends GridResource> List<String> listAllResources(
             final @NotNull GNDMServiceHome<M> home, final @NotNull EntityManager em) {
         Query query = home.getListAllQuery(em);
-        query.setParameter("systemId", getSystemId());
-        //query.setParameter("gridName", getGridName());
         return query.getResultList();
-    }
-
-
-    public String getSystemId() {
-        return getGridName();
     }
 
 

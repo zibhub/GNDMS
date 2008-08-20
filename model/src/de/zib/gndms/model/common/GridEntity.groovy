@@ -12,8 +12,8 @@ abstract class GridEntity extends ModelEntity {
 	@Version
 	int version
 
-	@Column(name="sys_id", nullable=false, length=16, columnDefinition="CHAR", updatable=false)
-	String systemId
+	// @Column(name="sys_id", nullable=false, length=16, columnDefinition="CHAR", updatable=false)
+	// String systemId
 }
 
 

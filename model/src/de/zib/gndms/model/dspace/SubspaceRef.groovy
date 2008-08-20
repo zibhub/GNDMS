@@ -5,7 +5,6 @@ import javax.persistence.Column
 import javax.persistence.Embeddable
 import javax.persistence.Transient
 import javax.xml.namespace.QName
-import de.zib.gndms.model.common.GridSiteId
 import javax.persistence.Embedded
 
 /**
@@ -22,17 +21,18 @@ class SubspaceRef extends SimpleRKRef {
 		new QName("http://dspace.gndms.zib.de/DSpace/Subspace", "SubspaceKey")
 	private static final List<String> RESOURCE_NAMES = ["DSpace", "Subspace"].asImmutable()
 
-	private GridSiteId gridSiteId;
+	private String gridSiteId;
 	private String resourceKeyValue;
 
 	@Transient
 	QName getResourceKeyName() { RESOURCE_KEY_NAME }
+    
 	@Transient
 	List<String> getResourceNames() { RESOURCE_NAMES }
 
-	@Embedded
-	GridSiteId getGridSiteId() { gridSiteId }
-	void setGridSiteId(final GridSiteId newSiteId) { gridSiteId = newSiteId }
+    @Column(name="key_site", nullable=false, updatable=false, columnDefinition="CHAR", length=64)
+	String getGridSiteId() { gridSiteId }
+	void setGridSiteId(final String newSiteId) { gridSiteId = newSiteId }
 
 	@Column(name="key_val", nullable=false, updatable=false, columnDefinition="CHAR", length=36)
 	String getResourceKeyValue() { resourceKeyValue }

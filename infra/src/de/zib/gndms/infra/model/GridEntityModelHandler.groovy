@@ -304,7 +304,6 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
 	final @NotNull M persistModel(final EntityManager emParam, final @NotNull M model)
 		{ return (M) txRun(emParam,
 			  { EntityManager em ->
-				((GridEntity)model).setSystemId(getGridName())
 				em.persist(model)
 				return model
 			  })
@@ -320,7 +319,6 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
 	final @NotNull M mergeModel(final EntityManager emParam, final @NotNull M model)
 	{ return (M) txRun(emParam,
 		  { EntityManager em ->
-			((GridEntity)model).setSystemId(getGridName())
 			em.merge(model)
 			return model
 		  })
@@ -329,9 +327,6 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
 
 	final @NotNull String getGridName()
 		{ return home.getSystem().getGridName() }
-
-    final @NotNull String getSystemId()
-        { return home.getSystem().getSystemId() }
 
 	final @NotNull String nextUUID()
 		{ return home.getSystem().nextUUID() }
@@ -386,8 +381,6 @@ final class SingletonGridResourceModelHandler<M extends SingletonGridResource, H
 		return (M) txRun(emParam, { EntityManager em ->
 			try {
 				final Query query = em.createNamedQuery(queryName)
-				query.setParameter("systemId", getSystemId())
-                query.setParameter("gridName", getGridName())
 				return (M) query.getSingleResult()
 			}
 			catch (NoResultException e) {
@@ -405,7 +398,6 @@ final class SingletonGridResourceModelHandler<M extends SingletonGridResource, H
 	@Override
 	protected def @NotNull createNewEntity() {
 		final Object model = super.createNewEntity()
-		((SingletonGridResource)model).setGridName(getGridName())
 		return (M) model
 	}
 }
