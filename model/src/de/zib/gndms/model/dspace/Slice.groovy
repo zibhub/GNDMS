@@ -32,12 +32,18 @@ public class Slice extends TimedGridResource {
 
     @ManyToOne( targetEntity=SliceKind.class, fetch=FetchType.LAZY, cascade=[CascadeType.REFRESH] )
     @JoinColumn( name="kind_uri", nullable=false, referencedColumnName="uri", updatable=false )
-    SliceKind kind
+    private SliceKind kind
 
-	@ManyToOne( targetEntity=Subspace.class, fetch=FetchType.LAZY, cascade=[CascadeType.REFRESH,CascadeType.PERSIST] )
+    @ManyToOne( targetEntity=Subspace.class, fetch=FetchType.LAZY, cascade=[CascadeType.REFRESH,CascadeType.PERSIST] )
 	@JoinColumn( name="subspace_id", nullable=false, referencedColumnName="id", updatable=false )
-    Subspace owner
+    private Subspace owner
 
+    @Embedded
+    @AttributeOverrides([
+        @AttributeOverride( name="unit", column=@Column(name="storage_unit") ),
+        @AttributeOverride( name="amount", column=@Column(name="storage_amount") ) 
+    ])
+    private StorageSize totalStorageSize
 
     protected Slice( ) { }
 

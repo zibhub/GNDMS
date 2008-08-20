@@ -30,13 +30,14 @@ public class DSpaceImpl extends DSpaceImplBase {
 	private static final Logger logger;
 	private final GNDMSystem system;
 
+    // todo: maybe encapsulate complete queries in actions
     // query strings:
     private static final String getSubspaceQuery =
-            "SELECT x FROM Subspaces x WHERE x.metaSubspace = :uriParam";
+            "SELECT x FROM Subspaces x WHERE x.metaSubspace = :uriParam AND x.systemId = :sysParam";
     private static final String listPublicSubspacesQuery =
-            "SELECT x FROM Subspaces x WHERE x.metaSubspace.scopeName = :uriParam";
+            "SELECT x FROM Subspaces x WHERE x.systemId = :sysParam AND x.metaSubspace.scopeName = :uriParam";
     private static final String listSupportedSchemasQuery =
-            "SELECT DISTINCT x.scopedName.scopeName FROM MetaSubspaces x";
+            "SELECT DISTINCT x.scopedName.scopeName FROM MetaSubspaces x WHERE x.systemId = :sysParam ";
 
     static {
 		logger = Logger.getLogger(DSpaceImpl.class);
@@ -68,6 +69,7 @@ public class DSpaceImpl extends DSpaceImplBase {
         EntityManager em = system.getEntityManagerFactory().createEntityManager(  );
         Query q = em.createQuery( listPublicSubspacesQuery );
         q.setParameter( "uriParam",  schemaURI.toString() );
+        q.setParameter( "sysParam",  system.getSystemName( ) );
         List<Subspace> rl = (List<Subspace>) q.getResultList( );
 
         ArrayList<SubspaceReference> al = new ArrayList<SubspaceReference>( rl.size( ) );
@@ -86,6 +88,7 @@ public class DSpaceImpl extends DSpaceImplBase {
 
         EntityManager em = system.getEntityManagerFactory().createEntityManager(  );
         Query q = em.createQuery( listSupportedSchemasQuery );
+        q.setParameter( "sysParam",  system.getSystemName( ) );
         List<String> rl = (List<String>) q.getResultList( );
 
         ArrayList<URI> al = new ArrayList<URI>( rl.size( ) );
@@ -106,6 +109,7 @@ public class DSpaceImpl extends DSpaceImplBase {
       EntityManager em = system.getEntityManagerFactory().createEntityManager(  );
       Query q = em.createQuery( getSubspaceQuery );
       q.setParameter( "uriParam",  new ImmutableScopedName( subspaceSpecifier ) );
+      q.setParameter( "sysParam",  system.getSystemName( ) );
       Subspace sp = ( Subspace) q.getSingleResult( );
       if( sp == null )
         throw new UnknownSubspace( );

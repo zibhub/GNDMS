@@ -58,7 +58,9 @@ class Subspace extends GridResource {
 
 	@Embedded
 	@AttributeOverrides([
-		@AttributeOverride(name="gridSiteId", column=@Column(name="dspace_site", nullable=true, updatable=false)),
+		//@AttributeOverride(name="gridSiteId", column=@Column(name="dspace_site", nullable=true, updatable=false)),
+        @AttributeOverride(name="gridName", column=@Column(name="dspace_site", nullable=true, updatable=false)),
+        @AttributeOverride(name="siteId", column=@Column(name="dspace_id", nullable=true, updatable=false)),
 	    @AttributeOverride(name="resourceKeyValue", column=@Column(name="dspace_uuid", nullable=false, updatable=false))])
 	DSpaceRef dSpaceRef
 
