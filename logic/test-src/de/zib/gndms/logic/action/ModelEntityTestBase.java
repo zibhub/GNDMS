@@ -130,7 +130,8 @@ public abstract class ModelEntityTestBase {
         final Properties map = new Properties();
 
         map.put( "openjpa.Id", dbName);
-        map.put( "openjpa.ConnectionURL", "jdbc:derby:" + dbName + ";create=true");
+        //map.put( "openjpa.ConnectionURL", "jdbc:derby:" + dbName + ";create=true");
+        map.put( "openjpa.ConnectionURL", "jdbc:derby:" + dbName );
 
         emf = createEntityManagerFactory(dbName, map);
         System.out.println( System.getProperty( "derby.system.home" ) );
