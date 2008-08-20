@@ -3,8 +3,6 @@ package de.zib.gndms.logic.model;
 import de.zib.gndms.logic.action.AbstractAction;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
-import de.zib.gndms.model.common.GridEntity;
-import de.zib.gndms.model.common.GridResource;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;

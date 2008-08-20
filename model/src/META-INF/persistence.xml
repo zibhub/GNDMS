@@ -34,8 +34,6 @@ http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
 		    <property name="openjpa.slice.ConnectionRetainMode" value="on-demand" />
 		    <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(PrimaryKeys=true,Indexes=true,ForeignKeys=true)" />
 		    <property name="openjpa.jdbc.TransactionIsolation" value="serializable" />
-	    </properties>
-
-
+        </properties>
 	</persistence-unit>
 </persistence>

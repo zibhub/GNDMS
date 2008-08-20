@@ -59,7 +59,7 @@ public abstract class SysTestBase {
 	}
 
 	protected void runDatabase()  throws ResourceException {
-		SysFactory factory = new SysFactory(logger, mockupConfig);
+		SysFactory factory = new SysFactory(logger, mockupConfig, true);
 		sys = factory.getInstance(false);
 		sysDestructor = factory.createShutdownAction();
 		home = new GNDMServiceHomeMockup(sys);

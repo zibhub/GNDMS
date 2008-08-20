@@ -90,6 +90,7 @@ public class SetupSubspaceAction extends SetupAction<Void> {
                if (subspace.getDSpaceRef() == null) {
                    DSpaceRef ref = new DSpaceRef();
 
+                   // HACK: There should be a better way than this...
                    DSpace dspace =
                            (DSpace) em.createNamedQuery("findDSpaceInstances").getSingleResult();
 
@@ -143,6 +144,7 @@ public class SetupSubspaceAction extends SetupAction<Void> {
             final StorageSize avail = new StorageSize();
             avail.setAmount(getSize().getAmount());
             avail.setUnit(getSize().getUnit());
+            subspace.setAvailableSize(avail);
         }
         else
             subspace = metaParam.getInstance();

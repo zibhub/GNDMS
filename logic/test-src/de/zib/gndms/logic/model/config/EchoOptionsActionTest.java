@@ -45,6 +45,9 @@ public class EchoOptionsActionTest extends ConfigActionTestBase {
 
             assertEquals(strWriter.toString(), "foo: 'bar';\nflorp: 'flurp'");
         }
+        catch (RuntimeException e) {
+            throw e;
+        }
         finally { action.getEntityManager().close(); }
     }
 

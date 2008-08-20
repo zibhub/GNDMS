@@ -16,6 +16,7 @@ import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
 import de.zib.gndms.logic.model.DelegatingEntityUpdateListener;
 import de.zib.gndms.logic.model.EntityUpdateListener;
 import de.zib.gndms.logic.model.config.ConfigAction;
+import de.zib.gndms.logic.util.LogicTools;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.model.common.VEPRef;
@@ -76,7 +77,6 @@ public final class GNDMSystem
 
 	private final UUIDGen uuidGen = UUIDGenFactory.getUUIDGen();
 
-
 	private final Log logger = createLogger();
 
     @NotNull
@@ -91,6 +91,7 @@ public final class GNDMSystem
 
     @NotNull
 	private final GridConfig sharedConfig;
+    private final boolean debugMode;
 
 	@NotNull
 	private File sharedDir;
@@ -136,11 +137,13 @@ public final class GNDMSystem
 	 */
 	@NotNull
 	public static GNDMSystem lookupSystem(@NotNull Context sharedContext,
-	                                        @NotNull Name facadeName,
-	                                        @NotNull GridConfig anySharedConfig)
+	                                      @NotNull Name facadeName,
+	                                      @NotNull GridConfig anySharedConfig,
+                                          boolean debugModeParam)
 		  throws NamingException {
 		try {
-			final SysFactory theFactory = new SysFactory(createLogger(), anySharedConfig);
+			final SysFactory theFactory =
+                    new SysFactory(createLogger(), anySharedConfig, debugModeParam);
 			sharedContext.bind(facadeName, theFactory);
 			return theFactory.getInstance();
 		}
@@ -153,10 +156,12 @@ public final class GNDMSystem
 	@NotNull
 	public static GNDMSystem lookupSystem(
 		  @NotNull Context sharedContext, @NotNull String facadeName,
-		  @NotNull GridConfig anySharedConfig)
+		  @NotNull GridConfig anySharedConfig,
+          boolean debugMode)
 		  throws NamingException {
 		try {
-			final SysFactory theFactory = new SysFactory(createLogger(), anySharedConfig);
+			final SysFactory theFactory =
+                    new SysFactory(createLogger(), anySharedConfig, debugMode);
 			sharedContext.bind(facadeName, theFactory);
 			return theFactory.getInstance();
 		}
@@ -165,8 +170,9 @@ public final class GNDMSystem
 		}
 	}
 
-	private GNDMSystem(@NotNull GridConfig anySharedConfig)  {
+	private GNDMSystem(@NotNull GridConfig anySharedConfig, boolean debugModeParam)  {
 		sharedConfig = anySharedConfig;
+        debugMode = debugModeParam;
 		instances = new HashMap<String, Object>(INITIAL_CAPACITY);
         homes = new HashMap<Class<? extends GridResource>, GNDMServiceHome<?>>(INITIAL_CAPACITY);
 		addInstance("sys", this);
@@ -225,9 +231,10 @@ public final class GNDMSystem
 		doCheckOrCreateDir(dbDir);
 
 		System.setProperty("derby.system.home", dbDir.getCanonicalPath());
-        System.setProperty("derby.infolog.append", "true");
-        System.setProperty("derby.language.logStatementText", "true");
-        System.setProperty("derby.stream.error.logSeverityLevel", "20000");
+
+        if (isDebugging()) {
+            LogicTools.setDerbyToDebugMode();
+        }
 
 		dbLogFile = new File(logDir, "derby.log");
 		if (!dbLogFile.exists())
@@ -236,13 +243,21 @@ public final class GNDMSystem
 				  dbLogFile.getCanonicalPath());
 	}
 
-	@NotNull
+
+    @NotNull
 	public EntityManagerFactory createEMF() throws Exception {
 		final String gridName = sharedConfig.getGridName();
 		final Properties map = new Properties();
 
 		map.put("openjpa.Id", gridName);
 		map.put("openjpa.ConnectionURL", "jdbc:derby:" + gridName+";create=true");
+
+        if (isDebugging()) {
+            File jpaLogFile = new File(getLogDir(), "jpa.log");
+            if (! jpaLogFile.exists())
+                jpaLogFile.createNewFile();
+            map.put("openjpa.Log", "File=" + jpaLogFile + ", DefaultLevel=INFO, Runtime=TRACE, Tool=INFO");
+        }
 		logger.info("Opening JPA Store: " + map.toString());
 
 		return createEntityManagerFactory(gridName, map);
@@ -616,16 +631,25 @@ public final class GNDMSystem
     }
 
 
+    public boolean isDebugging() {
+        return debugMode;
+    }
+
+
     public static final class SysFactory {
 		private final Log logger;
 
 		private GNDMSystem instance;
 		private RuntimeException cachedException;
 		private GridConfig sharedConfig;
+        private boolean debugMode;
 
-		public SysFactory(@NotNull Log theLogger, @NotNull GridConfig anySharedConfig) {
+		public SysFactory(
+                @NotNull Log theLogger, @NotNull GridConfig anySharedConfig,
+                final boolean debugModeParam) {
 			logger = theLogger;
 			sharedConfig = anySharedConfig;
+            debugMode = debugModeParam;
 		}
 
 		public synchronized GNDMSystem getInstance() {
@@ -637,7 +661,7 @@ public final class GNDMSystem
 				throw cachedException;
 			if (instance == null) {
 				try {
-					GNDMSystem newInstance = new GNDMSystem(sharedConfig);
+					GNDMSystem newInstance = new GNDMSystem(sharedConfig, debugMode);
 					newInstance.initialize();
 					try {
 						if (setupShellService)
