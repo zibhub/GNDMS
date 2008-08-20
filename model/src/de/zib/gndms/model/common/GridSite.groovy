@@ -20,7 +20,7 @@ import javax.persistence.Id
 @Table(name="grid_sites", schema="common")
 class GridSite extends GridEntity {
 	@Id
-    @Column(name="site_id", nullable=false, updatable=false, columnDefinition="CHAR", length=64)
+    @Column(name="site_id", nullable=true, updatable=false, columnDefinition="CHAR", length=64)
 	String siteId;
 
 	@Column(name="transort_url", nullable=false, columnDefinition="VARCHAR")

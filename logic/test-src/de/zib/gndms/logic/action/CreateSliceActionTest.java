@@ -1,31 +1,26 @@
 package de.zib.gndms.logic.action;
 
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.AfterTest;
+import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
+import de.zib.gndms.logic.model.LookupAction;
+import de.zib.gndms.logic.model.aux.LinuxDirectoryAux;
+import de.zib.gndms.logic.model.dspace.CreateSliceAction;
+import de.zib.gndms.logic.util.SimpleModelUUIDGen;
+import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.common.ModelUUIDGen;
-import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.Slice;
+import de.zib.gndms.model.dspace.SliceKind;
+import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.dspace.types.SliceKindMode;
-import de.zib.gndms.model.common.ImmutableScopedName;
-import de.zib.gndms.logic.model.dspace.CreateSliceAction;
-import de.zib.gndms.logic.model.aux.LinuxDirectoryAux;
-import de.zib.gndms.logic.model.BatchUpdateAction;
-import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
-import de.zib.gndms.logic.model.ModelChangedAction;
-import de.zib.gndms.logic.model.LookupAction;
-import de.zib.gndms.tests.logic.model.dspace.UUIdProvider;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
-import static javax.persistence.Persistence.createEntityManagerFactory;
-import javax.persistence.EntityTransaction;
-
+import java.io.File;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TreeSet;
-import java.util.Calendar;
 import java.util.Vector;
-import java.io.File;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -47,7 +42,7 @@ public class CreateSliceActionTest extends ModelEntityTestBase {
         setDbPath( MY_PATH + File.separator + "db" );
 
         // clean up mess form last time
-        ModelUUIDGen ug = new UUIdProvider( );
+        ModelUUIDGen ug = SimpleModelUUIDGen.getInstance();
 
         LookupAction<SliceKind, String> la = new LookupAction( SliceKind.class, sliceKindTestKey );
         la.setEntityManager( getEntityManager() );

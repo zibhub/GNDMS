@@ -29,7 +29,7 @@ class DSpaceRef extends SimpleRKRef {
 	@Transient
 	List<String> getResourceNames() { RESOURCE_NAMES }
 
-    @Column(name="key_site", nullable=false, updatable=false, columnDefinition="CHAR", length=64)
+    @Column(name="key_site", nullable=true, updatable=false, columnDefinition="CHAR", length=64)
 	String getGridSiteId() { gridSiteId }
 	void setGridSiteId(final String newSiteId) { gridSiteId = newSiteId }
 

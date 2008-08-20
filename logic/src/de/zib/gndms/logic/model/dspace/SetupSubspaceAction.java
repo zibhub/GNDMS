@@ -1,14 +1,12 @@
 package de.zib.gndms.logic.model.dspace;
 
 import de.zib.gndms.logic.action.MandatoryOptionMissingException;
+import de.zib.gndms.logic.model.ModelChangedAction;
 import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigOption;
 import de.zib.gndms.logic.model.config.SetupAction;
-import de.zib.gndms.logic.model.ModelChangedAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
-import de.zib.gndms.model.dspace.MetaSubspace;
-import de.zib.gndms.model.dspace.StorageSize;
-import de.zib.gndms.model.dspace.Subspace;
+import de.zib.gndms.model.dspace.*;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -54,6 +52,7 @@ public class SetupSubspaceAction extends SetupAction<Void> {
             if (size == null && (isCreating() || hasOption("size"))) {
                 size = new StorageSize();
                 size.setAmount(getIntOption("size"));
+                size.setUnit("bytes");
             }
             if (path == null && (isCreating() || hasOption("path"))) {
                 setPath(getOption("path"));
@@ -87,6 +86,17 @@ public class SetupSubspaceAction extends SetupAction<Void> {
 
                if (path != null)
                    subspace.setPath(getPath());
+
+               if (subspace.getDSpaceRef() == null) {
+                   DSpaceRef ref = new DSpaceRef();
+
+                   DSpace dspace =
+                           (DSpace) em.createNamedQuery("findDSpaceInstances").getSingleResult();
+
+                   ref.setGridSiteId(null);
+                   ref.setResourceKeyValue(dspace.getId());
+                   subspace.setDSpaceRef(ref);
+               }
 
                if (! em.contains(subspace))
                     em.persist(subspace);

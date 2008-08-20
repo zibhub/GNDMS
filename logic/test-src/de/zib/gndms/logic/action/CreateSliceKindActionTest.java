@@ -1,19 +1,19 @@
 package de.zib.gndms.logic.action;
 
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.AfterTest;
+import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
+import de.zib.gndms.logic.model.LookupAction;
+import de.zib.gndms.logic.model.dspace.CreateSliceKindAction;
+import de.zib.gndms.logic.util.SimpleModelUUIDGen;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.types.SliceKindMode;
-import de.zib.gndms.tests.logic.model.dspace.UUIdProvider;
-import de.zib.gndms.logic.model.LookupAction;
-import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
-import de.zib.gndms.logic.model.dspace.CreateSliceKindAction;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 import javax.persistence.EntityManager;
-import java.util.Vector;
 import java.io.File;
+import java.util.Vector;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -25,7 +25,7 @@ public class CreateSliceKindActionTest extends ModelEntityTestBase {
 
     private final String URI = "yatsk";
     private final static String MY_PATH = "/home/mjorra/tmp/C3GridTests";
-    private static final ModelUUIDGen uuidgen = new UUIdProvider( );
+    private static final ModelUUIDGen uuidgen = SimpleModelUUIDGen.getInstance();
 
     @BeforeTest
     public void BeforeTest( ) {
