@@ -1,5 +1,7 @@
 package de.zib.gndms.model.dspace.types
 
+import javax.persistence.Embeddable
+
 /**
  * Slicekind modes
  * 

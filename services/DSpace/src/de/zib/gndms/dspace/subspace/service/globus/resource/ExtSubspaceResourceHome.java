@@ -3,6 +3,7 @@ package de.zib.gndms.dspace.subspace.service.globus.resource;
 import de.zib.gndms.dspace.common.DSpaceTools;
 import de.zib.gndms.dspace.service.globus.resource.ExtDSpaceResourceHome;
 import de.zib.gndms.dspace.subspace.common.SubspaceConstants;
+import de.zib.gndms.dspace.subspace.stubs.types.SubspaceReference;
 import de.zib.gndms.infra.GNDMSTools;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
@@ -158,5 +159,10 @@ public final class ExtSubspaceResourceHome extends SubspaceResourceHome
     @NotNull
     public ResourceKey getKeyForId( String id ) {
         return new SimpleResourceKey( SubspaceConstants.RESOURCE_KEY, id );
+    }
+
+    @NotNull
+    public SubspaceReference getReferenceForSubspace( Subspace model ) throws Exception {
+        return getResourceReference( getKeyForId( model ) );
     }
 }
