@@ -4,6 +4,7 @@ import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.dspace.Slice;
+import de.zib.gndms.model.dspace.StorageSize;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
 import static org.testng.AssertJUnit.*;
 
@@ -29,6 +30,7 @@ public class SliceCreationValidator {
     Calendar terminationTime;
     Subspace subspace;
     SliceKind Kind;
+    StorageSize storageSize;
     CreateSliceAction Action;
 
     public SliceCreationValidator( ) {
@@ -40,7 +42,7 @@ public class SliceCreationValidator {
      */
     CreateSliceAction createCreateSliceAction( ) {
 
-        Action = new CreateSliceAction( gId, terminationTime, uuidgen, Kind );
+        Action = new CreateSliceAction( gId, terminationTime, uuidgen, Kind, storageSize );
         Action.setModel( subspace );
         return Action;
     }

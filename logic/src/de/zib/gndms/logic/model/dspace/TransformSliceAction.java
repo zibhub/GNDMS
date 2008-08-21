@@ -3,6 +3,7 @@ package de.zib.gndms.logic.model.dspace;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
+import de.zib.gndms.model.dspace.StorageSize;
 import de.zib.gndms.model.dspace.types.SliceKindMode;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.logic.model.aux.DirectoryAux;
@@ -22,7 +23,9 @@ import java.util.Calendar;
  *
  * User: mjorra, Date: 13.08.2008, Time: 13:20:25
  *
- * todo In this version the out-dated slices remains in the db and its directory on disk, maybe change this later
+ * In this version the out-dated slices remains in the db and its directory on disk, the caller must take care of
+ * removing it e.g. with Subspace.destroySlice( );
+ *
  * todo make uses of UUIdGen from AbstractEntityAction
  */
 public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
@@ -31,16 +34,16 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
     private CreateSliceAction createSliceAction;
 
     
-    public TransformSliceAction( String uuid, Calendar ttm, SliceKind kind, Subspace tgt, ModelUUIDGen uuidgen ) {
+    public TransformSliceAction( String uuid, Calendar ttm, SliceKind kind, Subspace tgt, StorageSize ssize, ModelUUIDGen uuidgen ) {
 
-        createSliceAction = new CreateSliceAction( uuid, ttm, uuidgen, kind );
+        createSliceAction = new CreateSliceAction( uuid, ttm, uuidgen, kind, ssize );
         createSliceAction.setModel( tgt );
     }
 
 
-    public TransformSliceAction( String uuid, Calendar ttm, SliceKind kind, Subspace tgt, ModelUUIDGen uuidgen, DirectoryAux da ) {
+    public TransformSliceAction( String uuid, Calendar ttm, SliceKind kind, Subspace tgt, StorageSize ssize, ModelUUIDGen uuidgen, DirectoryAux da ) {
 
-        createSliceAction = new CreateSliceAction( uuid, ttm, uuidgen, kind, da );
+        createSliceAction = new CreateSliceAction( uuid, ttm, uuidgen, kind, ssize, da );
         createSliceAction.setModel( tgt );
     }
 
