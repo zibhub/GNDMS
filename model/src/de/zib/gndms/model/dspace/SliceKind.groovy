@@ -42,4 +42,12 @@ class SliceKind extends GridEntity {
 	@ManyToMany(fetch=FetchType.LAZY, mappedBy="creatableSliceKinds", cascade=[CascadeType.REFRESH, CascadeType.MERGE])
 	Set<MetaSubspace> metaSubspaces
 
+/* void setURI( String uriParam ){
+        this.uri = uriParam
+    }
+
+    void getURI( ){
+        this.uri
+    }
+    */
 }

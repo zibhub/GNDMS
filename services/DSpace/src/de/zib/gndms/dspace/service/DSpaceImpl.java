@@ -33,11 +33,11 @@ public class DSpaceImpl extends DSpaceImplBase {
     // todo: maybe encapsulate complete queries in actions
     // query strings:
     private static final String getSubspaceQuery =
-            "SELECT x FROM Subspaces x WHERE x.metaSubspace = :uriParam AND x.systemId = :sysParam";
+            "SELECT x FROM Subspaces x WHERE x.metaSubspace = :uriParam";
     private static final String listPublicSubspacesQuery =
-            "SELECT x FROM Subspaces x WHERE x.systemId = :sysParam AND x.metaSubspace.scopeName = :uriParam";
+            "SELECT x FROM Subspaces x WHERE x.systemId = :sysParam";
     private static final String listSupportedSchemasQuery =
-            "SELECT DISTINCT x.scopedName.scopeName FROM MetaSubspaces x WHERE x.systemId = :sysParam ";
+            "SELECT DISTINCT x.scopedName.scopeName FROM MetaSubspaces x";
 
     static {
 		logger = Logger.getLogger(DSpaceImpl.class);
