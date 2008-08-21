@@ -158,7 +158,7 @@ public final class ExtSubspaceResourceHome extends SubspaceResourceHome
 
     @NotNull
     public ResourceKey getKeyForId( String id ) {
-        return new SimpleResourceKey( SubspaceConstants.RESOURCE_KEY, id );
+        return new SimpleResourceKey( getKeyTypeName(), id );
     }
 
     @NotNull

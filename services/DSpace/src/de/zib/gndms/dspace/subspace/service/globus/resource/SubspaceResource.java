@@ -93,6 +93,7 @@ public class SubspaceResource extends SubspaceResourceBase
 		  throws ResourceException {
 		// only called once, during find!
 		final @NotNull String id = (String)resourceKeyParam.getValue();
+
 		Subspace model = loadModelById(id);
 		if (getResourceHome().getKeyTypeName().equals(resourceKeyParam.getName())) {
 			setResourceKey(resourceKeyParam);

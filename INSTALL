@@ -75,6 +75,16 @@ configuration (bash) can be found in etc/example.profile):
   In any case, whenever you update GNDMS, please make sure that you also
   apropriately point your PATH to the new version's bin-scripts.
 
+- Developers might want to add
+
+  export DERBY_OPTS="'-Dij.database=jdbc:derby:$C3GRID_SHARED/db/c3grid'"
+
+  for peeking inside the derby database using the ij tool. 
+  (Caution! Never ever do this while globus is running! Do not even try, like
+   in do and not.)
+
+
+
 
 ==================
 BUILD INSTRUCTIONS

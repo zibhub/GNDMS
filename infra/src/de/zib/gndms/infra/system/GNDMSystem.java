@@ -610,7 +610,8 @@ public final class GNDMSystem
                 manager.getTransaction().begin();
                 for (String id : listAllResources(home, manager)) {
                     try {
-                        logger.debug("Restoring " + home.getNickName() + ':' + id);
+                        if (isDebugging())
+                            logger.debug("Restoring " + home.getNickName() + ':' + id);
                         home.find(home.getKeyForId(id));
                     }
                     catch (ResourceException e) {
