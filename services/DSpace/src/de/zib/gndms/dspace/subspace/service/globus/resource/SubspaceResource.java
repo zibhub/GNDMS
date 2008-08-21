@@ -110,10 +110,10 @@ public class SubspaceResource extends SubspaceResourceBase
             final SubspaceResourceProperties bean = new SubspaceResourceProperties();
             loadFromModel(bean, model);
             initialize(bean, SubspaceConstants.RESOURCE_PROPERTY_SET, id);
-            // setTerminationTime(model.);
 		}
 		else
 			throw new InvalidResourceKeyException("Invalid resourceKey name");
+        
 	}
 
 
