@@ -124,6 +124,34 @@ class Subspace extends GridResource {
         return false
     }
 
+    /**
+     * Little helper which delets a direcotry and its contents.
+     *
+     * @param pth The complete Path to the directory.
+     * @return The success of the operation.
+     */
+    public static boolean deleteDirectory( String pth ) {
+
+        File f = new File( pth )
+
+        if( ! ( f.exists( ) && f.isDirectory( ) ) )
+            return false
+
+        try{
+            String[] fl = f.list( )
+            for( i in 0..<fl.length )  {
+                File cf = new File( fl[i] )
+                cf.delete( )
+            }
+
+            return f.delete( )
+
+        } catch (SecurityException e) {
+            return false
+        }
+
+        return false
+    }
 
     /** 
      * @brief Delivers the absolute path to a slice sl.

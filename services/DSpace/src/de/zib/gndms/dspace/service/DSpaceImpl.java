@@ -5,9 +5,14 @@ import de.zib.gndms.dspace.subspace.service.globus.resource.ExtSubspaceResourceH
 import de.zib.gndms.dspace.subspace.service.globus.resource.SubspaceResource;
 import de.zib.gndms.dspace.subspace.stubs.types.SubspaceReference;
 import de.zib.gndms.dspace.stubs.types.UnknownSubspace;
+import de.zib.gndms.dspace.common.DSpaceTools;
 import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.infra.model.GridResourceModelHandler;
 import de.zib.gndms.model.dspace.Subspace;
+import de.zib.gndms.model.dspace.MetaSubspace;
+import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.common.ImmutableScopedName;
+import de.zib.gndms.logic.model.dspace.CreateSliceAction;
 import org.apache.log4j.Logger;
 import org.apache.axis.types.URI;
 import org.globus.wsrf.ResourceKey;
@@ -143,14 +148,38 @@ public class DSpaceImpl extends DSpaceImplBase {
 			//  to be set on the resource so that it can function appropriatly  for instance
 			//  if you want the resouce to only have the query string then there is where you would
 			//  give it the query string.
-			
-			
-			// sample of setting creator only security.  This will only allow the caller that created
+            EntityManager em = system.getEntityManagerFactory().createEntityManager( );
+            MetaSubspace ms = em.find( MetaSubspace.class, new ImmutableScopedName( subspaceSpecifier ) );
+            if( ms == null )
+                    throw new UnknownSubspace(  );
+            Subspace sp = ms.getInstance();
+            if( sp == null )
+                throw new UnknownSubspace(  );
+
+            // todo slicekind param somthing like
+            // EntityManager em = ...
+            // SliceKind sk = em.find( SliceKind.class, sliceCreatoinSpecifier.getSliceKind( ) );
+            CreateSliceAction csa =
+                    new CreateSliceAction( (String) thisResource.getID(),
+                            sliceCreationSpecifier.getTerminationTime(),
+                            system,
+                            /*sliceCreationSpecifier.getSliceKind()*/ null,
+                            DSpaceTools.buildSize( sliceCreationSpecifier.getTotalStorageSize() )
+                    );
+
+            GridResourceModelHandler mh = new GridResourceModelHandler<Subspace, ExtSubspaceResourceHome, SubspaceResource>
+                    (Subspace.class, (ExtSubspaceResourceHome) system.getHome( Subspace.class ));
+
+            Slice ns = (Slice) mh.callNewModelAction( system, csa, sp );
+
+            csa.getPostponedActions().call( );
+
+            thisResource.loadFromModel( ns );
+
+            // sample of setting creator only security.  This will only allow the caller that created
 			// this resource to be able to use it.
 			//thisResource.setSecurityDescriptor(gov.nih.nci.cagrid.introduce.servicetools.security.SecurityUtils.createCreatorOnlyResourceSecurityDescriptor());
 			
-			
-
 			String transportURL = (String) ctx.getProperty(org.apache.axis.MessageContext.TRANS_URL);
 			transportURL = transportURL.substring(0,transportURL.lastIndexOf('/') +1 );
 			transportURL += "Slice";
@@ -161,8 +190,6 @@ public class DSpaceImpl extends DSpaceImplBase {
 
 		//return the typed EPR
 		de.zib.gndms.dspace.slice.stubs.types.SliceReference ref = new de.zib.gndms.dspace.slice.stubs.types.SliceReference();
-		ref.setEndpointReference(epr);
-
 		return ref;
   }
 

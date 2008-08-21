@@ -12,6 +12,8 @@ import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.model.GridResourceModelHandler;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.dspace.SliceKind;
+import de.zib.gndms.model.dspace.Slice;
+import de.zib.gndms.model.dspace.StorageSize;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
 import org.globus.wsrf.NoSuchResourceException;
 import org.globus.wsrf.ResourceContext;
@@ -47,7 +49,6 @@ public class SubspaceImpl extends SubspaceImplBase {
     public SliceReference createSlice( SliceCreationSpecifier sliceCreationSpecifier, ContextT context ) throws RemoteException, OutOfSpace, UnknownOrInvalidSliceKind, InternalFailure {
 
         SubspaceResource subref = getResource();
-
         Subspace sp = subref.loadModelById( subref.getID() );
 
         if( sp == null )
@@ -55,29 +56,12 @@ public class SubspaceImpl extends SubspaceImplBase {
 
 
         SliceReference sref;
+        SliceResourceHome srh = null;
+        ResourceKey rk = null;
         try {
-            SliceResourceHome srh = getSliceResourceHome( );
-            ResourceKey rk = srh.createResource( );
-            SliceResource sr = srh.getResource( rk );
-
-            GNDMSystem system = subref.getResourceHome( ).getSystem( );
-	        // todo slicekind param somthing like
-            // EntityManager em = ...
-            // SliceKind sk = em.find( SliceKind.class, sliceCreatoinSpecifier.getSliceKind( ) );
-            CreateSliceAction csa =
-                    new CreateSliceAction( (String) sr.getID(),
-                            sliceCreationSpecifier.getTerminationTime(),
-                            system,
-                            /*sliceCreationSpecifier.getSliceKind()*/ null );
-
-            GridResourceModelHandler mh = new GridResourceModelHandler<Subspace, ExtSubspaceResourceHome, SubspaceResource>
-                    (Subspace.class, (ExtSubspaceResourceHome) subref.getResourceHome( ) );
-
-            mh.callNewModelAction( system, csa, sp );
-
-            csa.getPostponedActions().call( );
-
+            StorageSize ssize = null;
             // todo handle storagesize
+            // will be done in create slice 
             /*
             StorageSizeT sst = sliceCreationSpecifier.getTotalStorageSize( );
             if( sst != null ) {
@@ -88,10 +72,38 @@ public class SubspaceImpl extends SubspaceImplBase {
             }
             */
 
+            srh = getSliceResourceHome( );
+            rk = srh.createResource( );
+            SliceResource sr = srh.getResource( rk );
+
+            GNDMSystem system = subref.getResourceHome( ).getSystem( );
+
+            // todo slicekind param somthing like
+            // EntityManager em = ...
+            // SliceKind sk = em.find( SliceKind.class, sliceCreatoinSpecifier.getSliceKind( ) );
+            CreateSliceAction csa =
+                    new CreateSliceAction( (String) sr.getID(),
+                            sliceCreationSpecifier.getTerminationTime(),
+                            system,
+                            /*sliceCreationSpecifier.getSliceKind()*/ null,
+                            ssize
+                    );
+
+            GridResourceModelHandler mh = new GridResourceModelHandler<Subspace, ExtSubspaceResourceHome, SubspaceResource>
+                    (Subspace.class, (ExtSubspaceResourceHome) subref.getResourceHome( ) );
+
+            Slice ns = (Slice) mh.callNewModelAction( system, csa, sp );
+
+            csa.getPostponedActions().call( );
+
+
+            sr.loadFromModel( ns );
             sref = srh.getResourceReference( rk );
         } catch ( OutOfSpace e ) {
             throw e;
         } catch ( Exception e ) {
+            if( srh != null && rk != null )
+                srh.remove( rk );
             throw new RemoteException( e.toString() );
         }
 
