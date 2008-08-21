@@ -26,10 +26,6 @@
             every 300000 milliseconds (once every 5 minutes) -->
         <agg:PollIntervalMillis>INDEX_REFRESH</agg:PollIntervalMillis>
         <!-- specifies all Resource Properties that should be retrieved from the service -->
-		<agg:ResourcePropertyNames>ns0:AvailableStorageSize</agg:ResourcePropertyNames>
-	
-		<agg:ResourcePropertyNames>ns0:TotalStorageSize</agg:ResourcePropertyNames>
-	
       </agg:GetMultipleResourcePropertiesPollType>
     </agg:AggregatorConfig>
     <agg:AggregatorData/>
