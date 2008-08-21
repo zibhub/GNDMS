@@ -1,12 +1,9 @@
 package de.zib.gndms.dspace.subspace.service.globus.resource;
 
-import de.zib.gndms.dspace.service.DSpaceConfiguration;
 import de.zib.gndms.dspace.subspace.common.SubspaceConstants;
 import de.zib.gndms.dspace.subspace.stubs.SubspaceResourceProperties;
 import gov.nih.nci.cagrid.advertisement.AdvertisementClient;
 import gov.nih.nci.cagrid.advertisement.exceptions.UnregistrationException;
-import gov.nih.nci.cagrid.introduce.servicetools.FilePersistenceHelper;
-import gov.nih.nci.cagrid.introduce.servicetools.PersistenceHelper;
 import gov.nih.nci.cagrid.introduce.servicetools.ReflectionResource;
 import org.apache.axis.MessageContext;
 import org.apache.axis.message.MessageElement;
@@ -30,7 +27,8 @@ import org.globus.wsrf.utils.AddressingUtils;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.xml.namespace.QName;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 
 
@@ -46,7 +44,6 @@ import java.net.URL;
  * 
  */
 public abstract class SubspaceResourceBase extends ReflectionResource implements Resource
-                                                  ,PersistenceCallback
                                                   ,SecureResource
                                                   {
 
@@ -60,19 +57,9 @@ public abstract class SubspaceResourceBase extends ReflectionResource implements
     private AdvertisementClient registrationClient;
     
     private URL baseURL;
-    //used to persist the resource properties
-    private PersistenceHelper resourcePropertyPersistenceHelper = null;
-    //used to persist notifications
-    private FilePersistenceHelper resourcePersistenceHelper = null;
     private boolean beingLoaded = false;
     
     public SubspaceResourceBase() {
-        try {
-            resourcePropertyPersistenceHelper = new gov.nih.nci.cagrid.introduce.servicetools.XmlPersistenceHelper(SubspaceResourceProperties.class,DSpaceConfiguration.getConfiguration());
-            resourcePersistenceHelper = new FilePersistenceHelper(this.getClass(),DSpaceConfiguration.getConfiguration(),".resource");
-        } catch (Exception ex) {
-            logger.warn("Unable to initialize resource properties persistence helper", ex);
-        }
     }
 
 
@@ -91,8 +78,6 @@ public abstract class SubspaceResourceBase extends ReflectionResource implements
 		// register the service to the index service
 		refreshRegistration(true);
 		
-        //call the first store to persist the resource
-        store();
 	}
 	
 	
@@ -109,8 +94,6 @@ public abstract class SubspaceResourceBase extends ReflectionResource implements
 	public void setAvailableStorageSize(types.StorageSizeT availableStorageSize ) throws ResourceException {
         ResourceProperty prop = getResourcePropertySet().get(SubspaceConstants.AVAILABLESTORAGESIZE);
 		prop.set(0, availableStorageSize);
-        //call the first store to persist the resource
-        store();
 	}
 	
 	
@@ -122,8 +105,6 @@ public abstract class SubspaceResourceBase extends ReflectionResource implements
 	public void setTotalStorageSize(types.StorageSizeT totalStorageSize ) throws ResourceException {
         ResourceProperty prop = getResourcePropertySet().get(SubspaceConstants.TOTALSTORAGESIZE);
 		prop.set(0, totalStorageSize);
-        //call the first store to persist the resource
-        store();
 	}
 	
 	
@@ -135,8 +116,6 @@ public abstract class SubspaceResourceBase extends ReflectionResource implements
 	public void setDSpaceReference(de.zib.gndms.dspace.stubs.types.DSpaceReference dSpaceReference ) throws ResourceException {
         ResourceProperty prop = getResourcePropertySet().get(SubspaceConstants.DSPACEREFERENCE);
 		prop.set(0, dSpaceReference);
-        //call the first store to persist the resource
-        store();
 	}
 	
 	
@@ -148,8 +127,6 @@ public abstract class SubspaceResourceBase extends ReflectionResource implements
 	public void setSubspaceSpecifier(javax.xml.namespace.QName subspaceSpecifier ) throws ResourceException {
         ResourceProperty prop = getResourcePropertySet().get(SubspaceConstants.SUBSPACESPECIFIER);
 		prop.set(0, subspaceSpecifier);
-        //call the first store to persist the resource
-        store();
 	}
 	
 
@@ -369,72 +346,6 @@ public abstract class SubspaceResourceBase extends ReflectionResource implements
 
 
 
-
-    public void load(ResourceKey resourceKey) throws ResourceException, NoSuchResourceException, InvalidResourceKeyException {
-	  beingLoaded = true;
-       //first we will recover the resource properties and initialize the resource
-	   SubspaceResourceProperties props = (SubspaceResourceProperties)resourcePropertyPersistenceHelper.load(SubspaceResourceProperties.class, resourceKey.getValue());
-       this.initialize(props, SubspaceConstants.RESOURCE_PROPERTY_SET, resourceKey.getValue());
-       
-        //next we will recover the resource itself
-        File file = resourcePersistenceHelper.getKeyAsFile(this.getClass(), resourceKey.getValue());
-        if (!file.exists()) {
-            beingLoaded = false;
-            throw new NoSuchResourceException();
-        }
-        FileInputStream fis = null;
-        int value = 0;
-        try {
-            fis = new FileInputStream(file);
-            ObjectInputStream ois = new ObjectInputStream(fis);
-        } catch (Exception e) {
-            beingLoaded = false;
-            throw new ResourceException("Failed to load resource", e);
-        } finally {
-            if (fis != null) {
-                try { fis.close(); } catch (Exception ee) {}
-            }
-        } 
-       
-       beingLoaded = false;
-    }
-
-
-    public void store() throws ResourceException {
-      if(!beingLoaded){
-        //store the resource properties
-        resourcePropertyPersistenceHelper.store(this);
-        
-        FileOutputStream fos = null;
-        File tmpFile = null;
-
-        try {
-            tmpFile = File.createTempFile(
-                this.getClass().getName(), ".tmp",
-                resourcePersistenceHelper.getStorageDirectory());
-            fos = new FileOutputStream(tmpFile);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-        } catch (Exception e) {
-            if (tmpFile != null) {
-                tmpFile.delete();
-            }
-            throw new ResourceException("Failed to store resource", e);
-        } finally {
-            if (fos != null) {
-                try { fos.close();} catch (Exception ee) {}
-            }
-        }
-
-        File file = resourcePersistenceHelper.getKeyAsFile(this.getClass(), getID());
-        if (file.exists()) {
-            file.delete();
-        }
-        if (!tmpFile.renameTo(file)) {
-            tmpFile.delete();
-            throw new ResourceException("Failed to store resource");
-        }
-        }
-    }
 	
 	
 }

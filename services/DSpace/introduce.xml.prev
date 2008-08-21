@@ -233,15 +233,14 @@
     </ns22:Method>
    </ns22:Methods>
    <ns35:ResourcePropertiesList xsi:type="ns35:ResourcePropertiesListType" xmlns:ns35="gme://gov.nih.nci.cagrid.introduce/1/Resources">
-    <ns35:ResourceProperty qName="ns36:AvailableStorageSize" description="" fileLocation="Subspace_availableStorageSize.xml" populateFromFile="false" register="true" xsi:type="ns35:ResourcePropertyType" xmlns:ns36="http://gndms.zib.de/common/types"/>
-    <ns35:ResourceProperty qName="ns37:TotalStorageSize" description="" fileLocation="Subspace_totalStorageSize.xml" populateFromFile="false" register="true" xsi:type="ns35:ResourcePropertyType" xmlns:ns37="http://gndms.zib.de/common/types"/>
+    <ns35:ResourceProperty qName="ns36:AvailableStorageSize" description="" fileLocation="Subspace_availableStorageSize.xml" populateFromFile="false" register="false" xsi:type="ns35:ResourcePropertyType" xmlns:ns36="http://gndms.zib.de/common/types"/>
+    <ns35:ResourceProperty qName="ns37:TotalStorageSize" description="" fileLocation="Subspace_totalStorageSize.xml" populateFromFile="false" register="false" xsi:type="ns35:ResourcePropertyType" xmlns:ns37="http://gndms.zib.de/common/types"/>
     <ns35:ResourceProperty qName="ns38:DSpaceReference" description="" fileLocation="Subspace_dSpaceReference.xml" populateFromFile="false" register="false" xsi:type="ns35:ResourcePropertyType" xmlns:ns38="http://dspace.gndms.zib.de/DSpace/types"/>
     <ns35:ResourceProperty qName="ns39:SubspaceSpecifier" description="" fileLocation="Subspace_subspaceSpecifier.xml" populateFromFile="false" register="false" xsi:type="ns35:ResourcePropertyType" xmlns:ns39="http://gndms.zib.de/common/types"/>
    </ns35:ResourcePropertiesList>
    <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Identifiable xsi:type="ns3:Identifiable"/>
-    <ns3:Persistent xsi:type="ns3:Persistent"/>
     <ns3:Secure xsi:type="ns3:Secure"/>
     <ns3:ResourcePropertyManagement xsi:type="ns3:ResourcePropertyManagement"/>
    </ns3:ResourceFrameworkOptions>

@@ -111,9 +111,9 @@ public class SliceResource extends SliceResourceBase
             String id = ( String ) resourceKey.getValue();
             Slice sl = loadModelById(id);
             setResourceKey( resourceKey );
+            loadFromModel(sl);
             initialize(new SliceResourceProperties(),
                     SliceConstants.RESOURCE_PROPERTY_SET, id);
-            loadFromModel(sl);
         }
         else
             throw new InvalidResourceKeyException("Invalid resourceKey name");

@@ -68,27 +68,37 @@ public class SubspaceResource extends SubspaceResourceBase
 	}
 
 
-	public synchronized void loadFromModel(final @NotNull Subspace model) throws ResourceException {
-		if (model.getId().equals(getID())) {
-			// set resource properties from model
-			super.setAvailableStorageSize(DSpaceTools.buildSizeT(model.getAvailableSize()));
-			super.setTotalStorageSize(DSpaceTools.buildSizeT(model.getTotalSize()));
+    public synchronized void loadFromModel(final @NotNull Subspace model) throws ResourceException {
+        loadFromModel((SubspaceResourceProperties) getResourceBean(), model);
+    }
 
-			try {
-				final DSpaceReference dSpaceReference =
-					  DSpaceTools.dSpaceRefsAsReference(model.getDSpaceRef(), getSystem());
-				super.setDSpaceReference(dSpaceReference);
-			}
-			catch (Exception e)
-				{ logger.error(e); }
-			// super.setTerminationTime(model.getTerminationTime());
-		}
-		else
-			throw new ResourceException("Model id mismatch");
+	public synchronized void loadFromModel(
+            final @NotNull SubspaceResourceProperties bean, final @NotNull Subspace model) 
+            throws ResourceException {
+        // set resource properties from model
+        bean.setAvailableStorageSize(DSpaceTools.buildSizeT(model.getAvailableSize()));
+        bean.setTotalStorageSize(DSpaceTools.buildSizeT(model.getTotalSize()));
+
+        try {
+            final DSpaceReference dSpaceReference =
+                  DSpaceTools.dSpaceRefsAsReference(model.getDSpaceRef(), getSystem());
+            bean.setDSpaceReference(dSpaceReference);
+        }
+        catch (Exception e)	{
+            logger.error(e);
+            e.printStackTrace(System.err);
+        }
+        // bean.setTerminationTime(model.getTerminationTime());
 	}
 
 
-	@Override
+    @Override
+    public void refreshRegistration(final boolean forceRefresh) {
+        // super.refreshRegistration(forceRefresh);    // Overridden method
+        /* we dont' use this feature */
+    }
+
+
     public void load(final @NotNull ResourceKey resourceKeyParam)
 		  throws ResourceException {
 		// only called once, during find!
@@ -97,16 +107,16 @@ public class SubspaceResource extends SubspaceResourceBase
 		Subspace model = loadModelById(id);
 		if (getResourceHome().getKeyTypeName().equals(resourceKeyParam.getName())) {
 			setResourceKey(resourceKeyParam);
-			initialize(new SubspaceResourceProperties(),
-			           SubspaceConstants.RESOURCE_PROPERTY_SET, id);
-			loadFromModel(model);
+            final SubspaceResourceProperties bean = new SubspaceResourceProperties();
+            loadFromModel(bean, model);
+            initialize(bean, SubspaceConstants.RESOURCE_PROPERTY_SET, id);
+            // setTerminationTime(model.);
 		}
 		else
 			throw new InvalidResourceKeyException("Invalid resourceKey name");
 	}
 
 
-	@Override
     public void store() throws ResourceException {
 		// done elsewhere
 	}
