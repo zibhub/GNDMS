@@ -27,7 +27,7 @@ import javax.persistence.OneToMany
 @Table(name="slices", schema="dspace")
 public class Slice extends TimedGridResource {
 
-    @Id @Column( name="directory_id", nullable=false, updatable=false, columnDefinition="CHAR", length=36 )
+    @Column( name="directory_id", nullable=false, updatable=false, columnDefinition="CHAR", length=36 )
     private String directoryId
 
     @ManyToOne( targetEntity=SliceKind.class, fetch=FetchType.LAZY, cascade=[CascadeType.REFRESH] )
