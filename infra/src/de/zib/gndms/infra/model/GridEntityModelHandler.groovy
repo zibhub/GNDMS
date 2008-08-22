@@ -9,8 +9,8 @@ import javax.persistence.Query
 import javax.persistence.NoResultException
 import javax.persistence.NonUniqueResultException
 import de.zib.gndms.infra.service.GNDMServiceHome
-import de.zib.gndms.infra.sys.EMFactoryProvider
-import de.zib.gndms.infra.sys.EMTools
+import de.zib.gndms.infra.system.EMFactoryProvider
+import de.zib.gndms.infra.system.EMTools
 import de.zib.gndms.model.common.GridEntity
 import de.zib.gndms.model.common.GridResource
 import de.zib.gndms.model.common.SingletonGridResource
@@ -23,7 +23,9 @@ import org.globus.wsrf.ResourceException
 import org.globus.wsrf.ResourceIdentifier
 import de.zib.gndms.logic.model.DelegatingEntityUpdateListener;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.LogFactory
+import de.zib.gndms.infra.system.EMFactoryProvider
+import de.zib.gndms.infra.system.EMTools
 
 /**
  * Helper class for managing persistent models of GNDMS resources 

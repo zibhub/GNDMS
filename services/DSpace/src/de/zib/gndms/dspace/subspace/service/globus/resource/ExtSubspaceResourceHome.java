@@ -166,6 +166,24 @@ public final class ExtSubspaceResourceHome extends SubspaceResourceHome
         return getResourceReference( getKeyForId( model.getId( ) ) );
     }
 
-    
-    
+
+    @Override
+    public Resource find(final ResourceKey resourceKeyParam) throws ResourceException {
+        logger.info("find: " +  resourceKeyParam == null ? "null" : resourceKeyParam.getName() + "/" + (resourceKeyParam.getValue() == null ? "null" : resourceKeyParam.getValue()));
+        return super.find(resourceKeyParam);    // Overridden method
+    }
+
+
+    @Override
+    public void remove(final ResourceKey resourceKeyParam) throws ResourceException {
+        logger.info("remove: " +  resourceKeyParam == null ? "null" : resourceKeyParam.getName() + "/" + (resourceKeyParam.getValue() == null ? "null" : resourceKeyParam.getValue()));
+        super.remove(resourceKeyParam);    // Overridden method
+    }
+
+
+    @Override
+    protected void add(final ResourceKey resourceKeyParam, final Resource resourceParam) {
+        logger.info("add: " +  resourceKeyParam == null ? "null" : resourceKeyParam.getName() + "/" + (resourceKeyParam.getValue() == null ? "null" : resourceKeyParam.getValue()));
+        super.add(resourceKeyParam, resourceParam);    // Overridden method
+    }
 }

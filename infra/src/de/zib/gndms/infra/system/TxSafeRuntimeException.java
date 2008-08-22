@@ -1,4 +1,4 @@
-package de.zib.gndms.infra.sys;
+package de.zib.gndms.infra.system;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Wrapper for RuntimeExceptions that should not cause a transaction rollback when caught.
  *
- * @see de.zib.gndms.infra.sys.EMTools
+ * @see EMTools
  * 
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$

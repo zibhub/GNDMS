@@ -1,14 +1,12 @@
 package de.zib.gndms.infra.system;
 
 import de.zib.gndms.infra.GridConfig;
+import de.zib.gndms.infra.action.SystemAction;
 import de.zib.gndms.infra.monitor.ActionCaller;
 import de.zib.gndms.infra.monitor.GroovyBindingFactory;
 import de.zib.gndms.infra.monitor.GroovyMoniServer;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.service.GNDMSingletonServiceHome;
-import de.zib.gndms.infra.service.ServiceInfo;
-import de.zib.gndms.infra.sys.EMFactoryProvider;
-import de.zib.gndms.infra.sys.RestrictedEMFactory;
 import de.zib.gndms.logic.action.Action;
 import de.zib.gndms.logic.action.CommandAction;
 import de.zib.gndms.logic.action.SkipActionInitializationException;
@@ -359,8 +357,8 @@ public final class GNDMSystem
 		return clazz.cast(obj);
 	}
 
-	public synchronized ServiceInfo lookupServiceInfo(@NotNull String instancePrefix) {
-		return getInstance(ServiceInfo.class, instancePrefix+"Home");
+	public synchronized GNDMServiceHome<?> lookupServiceHome(@NotNull String instancePrefix) {
+		return getInstance(GNDMServiceHome.class, instancePrefix+"Home");
 	}
 
 
@@ -442,7 +440,7 @@ public final class GNDMSystem
 	public EndpointReferenceType serviceEPRType(@NotNull String instPrefix,
 	                                           @NotNull VEPRef dSpaceRef)
 		  throws URI.MalformedURIException {
-		return serviceEPRType(lookupServiceInfo(instPrefix).getServiceAddress(), dSpaceRef);
+		return serviceEPRType(lookupServiceHome(instPrefix).getServiceAddress(), dSpaceRef);
 	}
 
 	@NotNull
@@ -458,7 +456,7 @@ public final class GNDMSystem
 
 	@NotNull
 	public VEPRef modelEPRT(@NotNull String instPrefix, @NotNull EndpointReferenceType epr) {
-		return modelEPRT(lookupServiceInfo(instPrefix).getResourceKeyTypeName(), epr);
+		return modelEPRT(lookupServiceHome(instPrefix).getKeyTypeName(), epr);
 	}
 
 	@NotNull
@@ -518,12 +516,7 @@ public final class GNDMSystem
                                                      final @NotNull String params)
             throws ClassNotFoundException, IllegalAccessException, InstantiationException,
             CommandAction.ParameterTools.ParameterParseException {
-        final Class<ConfigAction> clazz;
-        if (name.length() > 0 && name.charAt(0) == '.')
-            clazz = (Class<ConfigAction>) Class.forName("de.zib.gndms.logic.model" + name +
-                    "Action");
-        else
-            clazz = (Class<ConfigAction>) Class.forName(name);
+        final Class<? extends ConfigAction<Object>> clazz = findActionClass(name);
         if (ConfigAction.class.isAssignableFrom(clazz)) {
             final ConfigAction configAction = clazz.newInstance();
             configAction.parseLocalOptions(params);
@@ -532,6 +525,27 @@ public final class GNDMSystem
         else
             throw new IllegalArgumentException("Not a ConfigAction");
     }
+
+
+    @SuppressWarnings({ "unchecked" })
+    private static <R, V extends ConfigAction<R>> Class<V> findActionClass(
+            final @NotNull String name) throws ClassNotFoundException
+    {
+        if (name.length() > 0) {
+            try {
+                if (name.startsWith(".sys"))
+                    return (Class<V>) Class.forName(
+                            "de.zib.gndms.infra.action" + name.substring(4) + "Action");
+            }
+            catch (ClassNotFoundException e) {
+                // continue trying
+            }
+            if (name.charAt(0) == '.')
+                return (Class<V>) Class.forName("de.zib.gndms.logic.model" + name + "Action");
+        }
+        return (Class<V>) Class.forName(name);
+    }
+
 
     @SuppressWarnings({ "FeatureEnvy" })
     public Object callAction(
@@ -543,9 +557,11 @@ public final class GNDMSystem
         action.setClosingWriterOnCleanUp(false);
         action.setWriteResult(true);
         action.setUUIDGen(actionUUIDGen);
-        action.setPostponedActions(new DefaultBatchUpdateAction());
+        action.setPostponedActions(new DefaultBatchUpdateAction<GridResource>());
         action.getPostponedActions().setListener(DelegatingEntityUpdateListener.getInstance(this));
-
+        if (action instanceof SystemAction)
+            ((SystemAction<?>)action).setSystem(this);
+        
         logger.info("Running " + className + ' ' + opts);
         try {
             Object retVal = action.call();

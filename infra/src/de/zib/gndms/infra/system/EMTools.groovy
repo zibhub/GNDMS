@@ -1,9 +1,9 @@
-package de.zib.gndms.infra.sys
+package de.zib.gndms.infra.system
 
 import org.jetbrains.annotations.NotNull
 import javax.persistence.EntityManager
 import javax.persistence.EntityTransaction
-import de.zib.gndms.infra.sys.TxSafeRuntimeException
+import de.zib.gndms.infra.system.TxSafeRuntimeException
 
 /**
  * THelper code for executing jpa transactions in groovy

@@ -31,7 +31,7 @@
         </parameter>
         <parameter>
           <name>resourceKeyName</name>
-          <value>{http://GORFX.gndms.zib.de/GORFX/Context}TaskResultsKey</value>
+          <value>{http://GORFX.gndms.zib.de/GORFX/Context}TaskKey</value>
         </parameter>
         <parameter>
           <name>resourceKeyType</name>
@@ -75,7 +75,7 @@
         </parameter>
         <parameter>
           <name>resourceKeyName</name>
-          <value>{http://GORFX.gndms.zib.de/GORFX/Offer}OfferResultsKey</value>
+          <value>{http://GORFX.gndms.zib.de/GORFX/Offer}OfferKey</value>
         </parameter>
         <parameter>
           <name>resourceKeyType</name>
@@ -119,7 +119,7 @@
         </parameter>
         <parameter>
           <name>resourceKeyName</name>
-          <value>{http://GORFX.gndms.zib.de/GORFX/ORQ}ORQResultsKey</value>
+          <value>{http://GORFX.gndms.zib.de/GORFX/ORQ}ORQKey</value>
         </parameter>
         <parameter>
           <name>resourceKeyType</name>

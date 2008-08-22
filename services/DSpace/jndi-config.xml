@@ -31,7 +31,7 @@
         </parameter>
         <parameter>
           <name>resourceKeyName</name>
-          <value>{http://dspace.gndms.zib.de/DSpace/Subspace}SubspaceResultsKey</value>
+          <value>{http://dspace.gndms.zib.de/DSpace/Subspace}SubspaceKey</value>
         </parameter>
         <parameter>
           <name>resourceKeyType</name>
@@ -74,7 +74,7 @@
         </parameter>
         <parameter>
           <name>resourceKeyName</name>
-          <value>{http://dspace.gndms.zib.de/DSpace/Slice}SliceResultsKey</value>
+          <value>{http://dspace.gndms.zib.de/DSpace/Slice}SliceKey</value>
         </parameter>
         <parameter>
           <name>resourceKeyType</name>

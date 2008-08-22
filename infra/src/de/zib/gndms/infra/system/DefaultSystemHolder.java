@@ -1,6 +1,6 @@
 package de.zib.gndms.infra.system;
 
-import de.zib.gndms.infra.sys.EMFactoryProvider;
+import de.zib.gndms.infra.system.EMFactoryProvider;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManagerFactory;

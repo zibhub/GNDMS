@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 
 
 /**
- * Decoupling interface between GNDMSystem and GroovMoniServer
+ * Decoupling interface between GNDMSystem and GroovyMMoniServer
  *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$

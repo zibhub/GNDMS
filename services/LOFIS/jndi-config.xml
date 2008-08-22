@@ -31,7 +31,7 @@
         </parameter>
         <parameter>
           <name>resourceKeyName</name>
-          <value>{http://lofis.gndms.zib.de/LOFIS/LofiSet}LofiSetResultsKey</value>
+          <value>{http://lofis.gndms.zib.de/LOFIS/LofiSet}LofiSetKey</value>
         </parameter>
         <parameter>
           <name>resourceKeyType</name>

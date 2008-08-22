@@ -162,12 +162,6 @@ public final class ExtDSpaceResourceHome  extends DSpaceResourceHome
 		return serviceAddress;
 	}
 
-	@NotNull
-	public final QName getResourceKeyTypeName() {
-		return getKeyTypeName();
-	}
-
-
     public Query getListAllQuery(final @NotNull EntityManager em) {
         throw new UnsupportedOperationException();
     }
@@ -195,8 +189,20 @@ public final class ExtDSpaceResourceHome  extends DSpaceResourceHome
     }
 
 
+    @Override
+    public QName getKeyTypeName() {
+        return DSpaceConstants.RESOURCE_KEY;
+    }
+
+
+    @Override
+    public Class getKeyTypeClass() {
+        return String.class;
+    }
+
+
     public ResourceKey getKeyForId(final String id) {
-        return id == null ? null : new SimpleResourceKey( DSpaceConstants.RESOURCE_KEY, id );
+        return id == null ? null : new SimpleResourceKey( getKeyTypeName(), id );
     }
 
 
