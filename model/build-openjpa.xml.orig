@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<project name="Runs the OpenJPA enhancer" basedir=".">
+
+<fileset id="model_classes" dir="gndms-shared-model/production">
+    <include name="de/zib/gndms/model/**/*" />
+    <exclude name="de/zib/gndms/model/*" />
+    <exclude name="de/zib/gndms/model/util/*" />
+    <exclude name="de/zib/gndms/model/*/types/*" />
+</fileset>
+
+
+<path id="module.enhancer.classpath">
+    <pathelement location="../extra/tools-lib/gndms-groovy.jar" />
+    <pathelement location="../extra/tools-lib/annotations.jar" />
+    <pathelement location="gndms-shared-model/production" />
+    
+    <pathelement location="../extra/tools-lib/persistence-api-1.0.jar" />
+    <pathelement location="../extra/tools-lib/jdo2-api-2.2-SNAPSHOT.jar" />
+
+    <pathelement location="../extra/tools-lib/datanucleus-core-1.0.0.m4.jar" />
+    <pathelement location="../extra/build-lib/datanucleus-enhancer-1.0.0.m4.jar" />
+    <pathelement location="../extra/tools-lib/datanucleus-java5-1.0.0.m4.jar" />
+    <pathelement location="../extra/tools-lib/datanucleus-rdbms-1.0.0.m4.jar" />
+    <pathelement location="../extra/build-lib/asm-all-3.1.jar" />
+</path>
+    
+<taskdef name="jpoxenhancer"
+    classpathref="module.enhancer.classpath"
+    classname="org.datanucleus.enhancer.tools.EnhancerTask" />
+
+<target name="enhance" description="Calls the jpox enhancer ant task on all classed in gndms-shared-model/production">
+
+	<delete failonerror="false" file="../extra/lib/gndms-shared-model.jar" />
+
+	<jpoxenhancer
+                  classpathref="module.enhancer.classpath"
+                  failonerror="true"
+                  verbose="false"
+                  persistenceunit="c3grid"
+                  filesuffixes="class"
+                  enhancername="ASM"
+                  api="JPA"
+                  dir="gndms-shared-model/production"
+                  destination="gndms-shared-model/production">
+
+        <fileset refid="model_classes" />
+    </jpoxenhancer>
+        
+	<jar file="../extra/lib/gndms-shared-model.jar" basedir="gndms-shared-model/production">
+		<include name="**/*" />
+	</jar>
+
+</target>
+
+</project>

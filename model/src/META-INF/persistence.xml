@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
+http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
+    version="1.0">
+    <persistence-unit name="c3grid">
+	    <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
+	    <mapping-file>META-INF/orm.xml</mapping-file>
+
+	    <class>de.zib.gndms.model.common.ImmutableScopedName</class>
+	    <class>de.zib.gndms.model.common.GridEntity</class>
+	    <class>de.zib.gndms.model.common.GridResource</class>
+	    <class>de.zib.gndms.model.common.SingletonGridResource</class>
+	    <class>de.zib.gndms.model.common.TimedGridResource</class>
+	    <class>de.zib.gndms.model.common.GridSite</class>
+	    <class>de.zib.gndms.model.common.VEPRef</class>
+	    <class>de.zib.gndms.model.common.SimpleRKRef</class>
+	    <class>de.zib.gndms.model.dspace.DSpaceRef</class>
+	    <class>de.zib.gndms.model.dspace.DSpace</class>
+	    <class>de.zib.gndms.model.dspace.SliceKind</class>
+	    <class>de.zib.gndms.model.dspace.Slice</class>
+	    <class>de.zib.gndms.model.dspace.MetaSubspace</class>
+	    <class>de.zib.gndms.model.dspace.Subspace</class>
+	    <class>de.zib.gndms.model.dspace.SubspaceRef</class>
+	    <class>de.zib.gndms.model.dspace.StorageSize</class>
+
+	    <exclude-unlisted-classes>true</exclude-unlisted-classes>
+
+	    <properties>
+		    <property name="openjpa.Id" value="c3grid" />
+		    <property name="openjpa.ConnectionDriverName" value="org.apache.derby.jdbc.EmbeddedDriver" />
+		    <property name="openjpa.jdbc.DBDictionary" value="derby(JoinSyntax=sql92)" />
+		    <property name="openjpa.slice.ConnectionRetainMode" value="on-demand" />
+		    <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(PrimaryKeys=true,Indexes=true,ForeignKeys=true)" />
+		    <property name="openjpa.jdbc.TransactionIsolation" value="serializable" />
+        </properties>
+	</persistence-unit>
+</persistence>
