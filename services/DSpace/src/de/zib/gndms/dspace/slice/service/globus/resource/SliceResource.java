@@ -32,7 +32,7 @@ public class SliceResource extends SliceResourceBase
 
 
     private ExtSliceResourceHome resourceHome;
-    private GridEntityModelHandler<Slice, ExtSliceResourceHome, SliceResource> mH;
+    private GridResourceModelHandler<Slice, ExtSliceResourceHome, SliceResource> mH;
 
     // override generated setter method to pass changes on the resource directly to the model
     public void setTotalStorageSize(types.StorageSizeT totalStorageSize ) throws ResourceException {
@@ -56,7 +56,7 @@ public class SliceResource extends SliceResourceBase
 
     @NotNull
     public Slice loadModelById( @NotNull String id ) throws ResourceException {
-        return mH.loadModelById( null, id );
+        return (Slice) mH.loadModelById( null, id );
     }
 
     public void loadViaModelId( @NotNull String id ) throws ResourceException {

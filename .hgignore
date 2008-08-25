@@ -34,8 +34,10 @@ infra/test/**
 .project
 test-output/**
 ./changes
+doc/*
 
 syntax:regexp
 ^types/[A-Za-z].+
 .*.swp
+.*.orig
 
