@@ -1,0 +1,232 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<schema targetNamespace="http://gndms.zib.de/c3grid/types"
+	    xmlns:gndms="http://gndms.zib.de/common/types"
+        xmlns:impl="http://gndms.zib.de/c3grid/types"
+	    xmlns:slice="http://dspace.gndms.zib.de/DSpace/Slice/types"
+	    xmlns:lofis="http://lofis.gndms.zib.de/LOFIS/LofiSet/types"
+	    xmlns:wsbf="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd"
+	    xmlns:wst="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"
+	    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified" version="1.0" xmlns="http://www.w3.org/2001/XMLSchema"
+        xml:lang="EN">
+
+<import namespace="http://dspace.gndms.zib.de/DSpace/Slice/types"
+        schemaLocation="../DSpace/SliceTypes.xsd" />
+
+<import namespace="http://lofis.gndms.zib.de/LOFIS/LofiSet/types"
+        schemaLocation="../LOFIS/LofiSetTypes.xsd" />
+
+<import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd"
+		schemaLocation="../wsrf/faults/WS-BaseFaults.xsd" />
+
+<import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"
+		schemaLocation="../wsrf/lifetime/WS-ResourceLifetime.xsd" />
+
+<import namespace="http://gndms.zib.de/common/types"
+		schemaLocation="gndms-common.xsd" />
+
+ <complexType name="ObjectListT">
+    <sequence>
+      <element maxOccurs="unbounded" minOccurs="0" name="Item" type="xsd:string" />
+    </sequence>
+ </complexType>
+
+<complexType name="NameValEntryT">
+    <sequence>
+      <element name="PName" type="xsd:string" />
+      <element name="PVal" type="xsd:string" />
+    </sequence>
+  </complexType>
+
+ <complexType name="ConstraintListT">
+    <!-- List of (name,value) pairs used to select data subset - triggers preprocessing and filtering operations
+      item denotes generic non cf constraints
+      to do: use of apache map type - see "building Web Services with Java" Book, second edition page 282 ??
+    -->
+    <sequence>
+      <element maxOccurs="unbounded" minOccurs="0" name="Item" type="impl:NameValEntryT" />
+    </sequence>
+  </complexType>
+
+  <complexType name="CFListT">
+    <sequence>
+      <element maxOccurs="unbounded" minOccurs="0" name="CFItem" type="xsd:string" />
+    </sequence>
+  </complexType>
+
+  <complexType name="BaseDataFileT">
+    <sequence>
+      <element name="Pinned" type="xsd:boolean" />
+      <element name="File" type="xsd:anyURI" />
+    </sequence>
+  </complexType>
+
+  <complexType name="SpaceConstraintT">
+    <sequence>
+      <element name="Longitude" maxOccurs="1" minOccurs="0" type="impl:MinMaxT">
+      </element>
+      <element name="Latitude" maxOccurs="1" minOccurs="0" type="impl:MinMaxT">
+      </element>
+      <element name="Altitude" maxOccurs="1" minOccurs="0" type="impl:LevelRangeT">
+      </element>
+      <!-- Units, hier - oder als (AltUnit, hpa) constraint !? -->
+    </sequence>
+  </complexType>
+
+  <complexType name="MinMaxT">
+    <sequence>
+      <element name="Min" type="xsd:double"></element>
+      <element name="Max" type="xsd:double"></element>
+    </sequence>
+  </complexType>
+
+  <simpleType name="AltitudeUnitT">
+    <restriction base="xsd:string">
+      <enumeration value="hPa" />
+      <enumeration value="m" />
+	  <enumeration value="level" />
+    </restriction>
+  </simpleType>
+
+ <complexType name="AltitudeT">
+	<choice>
+		<element name="Numeric">
+			<complexType>
+				<sequence>
+					<element name="Value" type="double"></element>
+					<element name="Unit" type="impl:AltitudeUnitT"></element>
+				</sequence>
+			</complexType>
+		</element>
+		<element name="NamedLevel" type="string" />
+	</choice>
+ </complexType>
+	
+  <complexType name="LevelRangeT">
+    <sequence>
+      <element name="Min" type="impl:AltitudeT" />
+      <element name="Max" type="impl:AltitudeT" />
+      <element name="VerticalCRS" type="string" minOccurs="0" maxOccurs="1"></element>
+    </sequence>
+  </complexType>
+
+  <complexType name="TimeConstraintT">
+    <sequence>
+	  <!-- actually an xsd:date but due to axis bugs with dates < 1900 AD we use string and
+	       specify it to be a proper ISO date string -->
+      <element maxOccurs="1" minOccurs="0" name="MinTime" type="string" />
+      <element maxOccurs="1" minOccurs="0" name="MaxTime" type="string" />
+    </sequence>
+  </complexType>
+
+<complexType name="DataSelectionT">
+	<sequence>
+		<!-- Ids etc. zur Kennzeichnung der Zieldatensätze, z.B. (doi, doinr),(oid, 19:90194), (ceraid, ....) (mapid, ...)  usw.
+		  i.A. vom Portal aus Metadaten des Infodienstes gefüllt   -->
+		<element name="ObjectList" type="impl:ObjectListT"/>
+
+		<element name="SpaceConstr" type="impl:SpaceConstraintT" minOccurs="1" maxOccurs="1"/>
+
+		<element name="TimeConstr" type="impl:TimeConstraintT" minOccurs="0" maxOccurs="1" />
+
+		<!-- gewünschte cf variablen , von Portalnutzer ausgewählt  -->
+		<element name="CFList" type="impl:CFListT" />
+
+		<!-- zusätzliche Restrictionen, Prozessing optionen etc. z.B. <...>  -->
+		<element name="ConstraintList" type="impl:ConstraintListT" />
+
+		<element name="DataFormat" type="string" minOccurs="1" maxOccurs="1"/>
+		<element name="MetaDataFormat" type="string" minOccurs="1" maxOccurs="1"/>
+	</sequence>
+</complexType>
+
+<complexType name="FileNameAndFormatT">
+	<sequence>
+		<element name="Name" type="gndms:FilenameT" minOccurs="1" maxOccurs="1"/>
+		<element name="Format" type="xsd:normalizedString" minOccurs="1" maxOccurs="1"/>
+	</sequence>
+</complexType>
+
+<element name="DataDescriptor" type="impl:FileNameAndFormatT" />
+
+<element name="MetadataDescriptor" type="impl:FileNameAndFormatT" />
+
+<complexType name="StageInORQT">
+  <complexContent>
+	  <restriction base="gndms:DynamicOfferDataSeqT">
+		  <sequence>
+			<element name="StagedData" type="impl:DataSelectionT" minOccurs="1" maxOccurs="1" />
+			<element ref="impl:DataDescriptor" minOccurs="1" maxOccurs="1"  />
+			<element ref="impl:MetadataDescriptor" minOccurs="1" maxOccurs="1"  />
+		  </sequence>
+		  <attribute name="offerType" type="xsd:anyURI" fixed="http://www.c3grid.de/ORQTypes/StageIn" />
+	  </restriction>
+  </complexContent>
+</complexType>
+
+<complexType name="StageInResultT">
+	<complexContent>
+		<restriction base="gndms:DynamicOfferDataSeqT">
+			<sequence>
+				<element ref="slice:SliceReference" minOccurs="1" maxOccurs="1"/>
+			</sequence>
+			<attribute name="offerType" type="xsd:anyURI" fixed="http://www.c3grid.de/ORQTypes/StageIn" />
+		</restriction>
+	</complexContent>
+</complexType>
+
+<complexType name="PinORQT">
+  <complexContent>
+	  <restriction base="gndms:DynamicOfferDataSeqT">
+		  <sequence>
+			  <!-- Logical files that are to be pinned -->
+			  <element ref="lofis:LofiSetReference"  minOccurs="1" maxOccurs="1"/>
+			  <element ref="gndms:LofiMap" minOccurs="0" maxOccurs="1" />
+
+			  <!-- Initial pinning target slice -->
+			  <element ref="slice:SliceReference" minOccurs="1" maxOccurs="1"/>
+		  </sequence>
+		  <attribute name="offerType" type="xsd:anyURI" fixed="http://www.c3grid.de/ORQTypes/Pin" />
+	  </restriction>
+  </complexContent>
+</complexType>
+
+<complexType name="PinResultT">
+	<complexContent>
+		<restriction base="gndms:DynamicOfferDataSeqT">
+			<sequence>
+				<!-- Pinned slice, may difffer from initial pinning target slice -->
+				<element ref="slice:SliceReference" minOccurs="1" maxOccurs="1"/>
+			</sequence>
+			<attribute name="offerType" type="xsd:anyURI" fixed="http://www.c3grid.de/ORQTypes/Pin" />
+		</restriction>
+	</complexContent>
+</complexType>
+
+<complexType name="RePublishORQT">
+  <complexContent>
+	  <restriction base="gndms:DynamicOfferDataSeqT">
+		  <sequence>
+			  <!-- Logical files that are to be pinned -->
+			  <element ref="lofis:LofiSetReference"  minOccurs="1" maxOccurs="1"/>
+			  <element ref="gndms:LofiMap" minOccurs="0" maxOccurs="1" />
+		  </sequence>
+		  <attribute name="offerType" type="xsd:anyURI" fixed="http://www.c3grid.de/ORQTypes/RePublish" />
+	  </restriction>
+  </complexContent>
+</complexType>
+
+<complexType name="RePublishResultT">
+	<complexContent>
+		<restriction base="gndms:DynamicOfferDataSeqT">
+			<sequence>
+				<!-- Arbitrary slice containing copies of the selected logical files.
+				     The slice is *not* used as a replica of the LofiSet -->
+				<element ref="slice:SliceReference" minOccurs="1" maxOccurs="1"/>
+			</sequence>
+			<attribute name="offerType" type="xsd:anyURI" fixed="http://www.c3grid.de/ORQTypes/RePublish" />
+		</restriction>
+	</complexContent>
+</complexType>
+
+</schema>
