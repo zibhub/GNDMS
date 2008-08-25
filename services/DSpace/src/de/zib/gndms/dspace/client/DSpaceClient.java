@@ -71,8 +71,8 @@ public class DSpaceClient extends DSpaceClientBase implements DSpaceI {
         SubspaceReference sr = getSubspace( name );
         return new SubspaceClient( sr.getEndpointReference() );
     }
-    
 
+    
     public static void usage(){
 		System.out.println(DSpaceClient.class.getName() + " -url <service url>");
 	}

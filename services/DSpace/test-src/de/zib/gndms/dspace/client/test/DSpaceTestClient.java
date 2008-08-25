@@ -1,7 +1,6 @@
 package de.zib.gndms.dspace.client.test;
 
 import de.zib.gndms.dspace.client.DSpaceClient;
-import de.zib.gndms.dspace.client.DSpaceClientHelpers;
 import de.zib.gndms.dspace.subspace.client.SubspaceClient;
 import de.zib.gndms.dspace.slice.client.SliceClient;
 import de.zib.gndms.model.dspace.StorageSize;
@@ -49,7 +48,7 @@ public class DSpaceTestClient {
             }
 
             DSpaceClient client = new DSpaceClient( url );
-            SubspaceClient subclient = DSpaceClientHelpers.findSubspace( sn, ln );
+            SubspaceClient subclient = client.findSubspace( sn, ln );
             // todo insert useful uri
             String skuri = null;
             GregorianCalendar tt = new GregorianCalendar( );
@@ -57,7 +56,7 @@ public class DSpaceTestClient {
             StorageSize ssize = new StorageSize( );
             ssize.setAmount( 20 );
             ssize.setUnit( "TB" );
-            SliceClient sc = DSpaceClientHelpers.createSliceInSubspace( subclient, skuri, tt, ssize );
+            SliceClient sc = subclient.createSlice( skuri, tt, ssize );
             System.out.println( "Check set values" );
             System.out.println( "slicekind: "+ skuri.equals( sc.getSliceKind() ) );
             System.out.println( "terminationtim: " + tt.equals( sc.getTerminationTime() ) );

@@ -25,6 +25,8 @@ import de.zib.gndms.dspace.slice.stubs.service.SliceServiceAddressingLocator;
 import de.zib.gndms.dspace.slice.common.SliceI;
 import de.zib.gndms.dspace.slice.common.SliceConstants;
 import de.zib.gndms.dspace.common.DSpaceTools;
+import de.zib.gndms.dspace.subspace.client.SubspaceClient;
+import de.zib.gndms.dspace.subspace.stubs.types.SubspaceReference;
 import de.zib.gndms.logic.util.ISO8601;
 import de.zib.gndms.model.dspace.StorageSize;
 import gov.nih.nci.cagrid.introduce.security.client.ServiceSecurityClient;
@@ -162,4 +164,9 @@ public class SliceClient extends SliceClientBase implements SliceI {
         return DSpaceTools.buildSize( (StorageSizeT) ObjectDeserializer.toObject( resp.get_any()[0], StorageSizeT.class) );
     }
 
+    public SubspaceClient getSubspace( ) throws RemoteException, DeserializationException, MalformedURIException {
+        GetResourcePropertyResponse resp = getResourceProperty( SliceConstants.SUBSPACEREFERENCE );
+        SubspaceReference srf = (SubspaceReference) ObjectDeserializer.toObject( resp.get_any()[0], SubspaceReference.class );
+        return new SubspaceClient( srf.getEndpointReference() );
+    }
 }
