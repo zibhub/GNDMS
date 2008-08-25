@@ -1,12 +1,13 @@
 package de.zib.gndms.service;
 
 import gov.nih.nci.cagrid.introduce.servicetools.ServiceConfiguration;
+
+import org.globus.wsrf.config.ContainerConfig;
+import java.io.File;
+import javax.naming.InitialContext;
+
 import org.apache.axis.MessageContext;
 import org.globus.wsrf.Constants;
-import org.globus.wsrf.config.ContainerConfig;
-
-import javax.naming.InitialContext;
-import java.io.File;
 
 
 /** 
@@ -51,8 +52,6 @@ public class WHORFXConfiguration implements ServiceConfiguration {
 	private String gridJNDIEnv;
 	
 	private String gridName;
-
-	private String gridPath;
 	
 	
 	public String getEtcDirectoryPath() {
@@ -101,15 +100,6 @@ public class WHORFXConfiguration implements ServiceConfiguration {
 	
 	public void setGridName(String gridName) {
 		this.gridName = gridName;
-	}
-
-	public String getGridPath() {
-		return ContainerConfig.getBaseDirectory() + File.separator + gridPath;
-	}
-
-
-	public void setGridPath(String gridPath) {
-		this.gridPath = gridPath;
 	}
 
 	
