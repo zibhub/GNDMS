@@ -4,8 +4,8 @@
    <ns2:SchemaElement type="BaseFault" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
   <ns2:Namespace location="./gndms-c3grid.xsd" namespace="http://gndms.zib.de/c3grid/types" packageName="types" xsi:type="ns2:NamespaceType">
-   <ns2:SchemaElement type="DataDescriptor" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="MetadataDescriptor" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="DataFile" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="MetadataFile" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
   <ns2:Namespace location="./../wsrf/lifetime/WS-ResourceLifetime.xsd" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd" packageName="org.oasis.wsrf.lifetime" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="CurrentTime" xsi:type="ns2:SchemaElementType"/>
@@ -36,6 +36,7 @@
    <ns2:SchemaElement type="LofiSeq" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="OfferExecutionContract" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="OfferRequestArguments" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ReplicaSlice" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="ReplicaSliceFilter" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="ReplicaSlices" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="SliceCreationSpecifier" xsi:type="ns2:SchemaElementType"/>
@@ -51,6 +52,11 @@
   </ns2:Namespace>
   <ns2:Namespace location="./../DSpace/SliceTypes.xsd" namespace="http://dspace.gndms.zib.de/DSpace/Slice/types" packageName="types" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="SliceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./../DSpace/DSpaceTypes.xsd" namespace="http://dspace.gndms.zib.de/DSpace/types" packageName="types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="DSpaceReference" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="InternalFailure" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="UnknownSubspace" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
   <ns2:Namespace namespace="http://www.w3.org/2001/XMLSchema" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="anySimpleType" xsi:type="ns2:SchemaElementType"/>
