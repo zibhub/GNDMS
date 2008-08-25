@@ -112,7 +112,7 @@ public class SubspaceClient extends SubspaceClientBase implements SubspaceI {
     }
   }
 
-  public javax.xml.namespace.QName[] listCreatableSliceKinds() throws RemoteException {
+  public org.apache.axis.types.URI[] listCreatableSliceKinds() throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"listCreatableSliceKinds");
     de.zib.gndms.dspace.subspace.stubs.ListCreatableSliceKindsRequest params = new de.zib.gndms.dspace.subspace.stubs.ListCreatableSliceKindsRequest();

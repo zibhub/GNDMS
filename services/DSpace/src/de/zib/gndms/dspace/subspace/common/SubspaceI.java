@@ -36,7 +36,7 @@ public interface SubspaceI {
    * Returns a (possibly incompletet) list of all slice kinds supported by this subspaces CreateSlice() method
    *
    */
-  public javax.xml.namespace.QName[] listCreatableSliceKinds() throws RemoteException ;
+  public org.apache.axis.types.URI[] listCreatableSliceKinds() throws RemoteException ;
 
 }
 

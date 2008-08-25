@@ -9,6 +9,7 @@
    <ns2:SchemaElement type="LofiSeq" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="OfferExecutionContract" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="OfferRequestArguments" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ReplicaSlice" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="ReplicaSliceFilter" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="ReplicaSlices" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="SliceCreationSpecifier" xsi:type="ns2:SchemaElementType"/>
