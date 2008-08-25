@@ -1,11 +1,11 @@
 #Introduce Properties
-#Wed Jul 16 17:43:49 CEST 2008
+#Mon Aug 25 15:02:54 CEST 2008
 introduce.skeleton.services.list=LOFIS,LofiSet
 introduce.skeleton.extensions=
-introduce.skeleton.timestamp=1216222953353
+introduce.skeleton.timestamp=1216223045043
 introduce.skeleton.service.name=LOFIS
 introduce.skeleton.resource.options=main,singleton,identifiable,persistent,resourcePropertyManagement,secure
 introduce.skeleton.destination.dir=/Users/stepn/Source/GNDMS-Templates/services/LOFIS
 introduce.skeleton.namespace.domain=http\://lofis.gndms.zib.de/LOFIS
-introduce.soap.binding.excludes=\ 
 introduce.ns.excludes=\ -x gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security
+introduce.soap.binding.excludes=\ 

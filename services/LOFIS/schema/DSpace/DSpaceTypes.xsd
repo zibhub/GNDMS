@@ -15,5 +15,11 @@
       <extension base="wsrbf:BaseFaultType" />
     </complexContent>
   </complexType>
+  <element name="InternalFailure" type="tns:InternalFailure" />
+  <complexType name="InternalFailure">
+    <complexContent>
+      <extension base="wsrbf:BaseFaultType" />
+    </complexContent>
+  </complexType>
 </schema>
 
