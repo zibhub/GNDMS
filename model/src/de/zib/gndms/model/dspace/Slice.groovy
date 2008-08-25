@@ -47,7 +47,17 @@ public class Slice extends TimedGridResource {
 
     protected Slice( ) { }
 
-     Slice( String didParam, SliceKind kndParam, Subspace ownParam ) {
+    Slice( String idParam, Calendar ttParam, String didParam, SliceKind kndParam, Subspace ownParam ) {
+        super( )
+        setId( idParam )
+        setTerminationTime ( ttParam )
+        directoryId = didParam
+        kind = kndParam
+        owner = ownParam
+    }
+
+    Slice( String didParam, SliceKind kndParam, Subspace ownParam ) {
+        super( )
         directoryId = didParam
         kind = kndParam
         owner = ownParam

@@ -32,7 +32,7 @@ public class SliceImpl extends SliceImplBase {
 
 
     private static final String querySupportedSliceKind =
-            "SELECT sk FROM MetaSubspaces x INNER JOIN x.creatableSliceKinds sk WHERE sk.uri = :uriParam AND" +
+            "SELECT sk FROM MetaSubspaces x INNER JOIN x.creatableSliceKinds sk WHERE sk.URI = :uriParam AND" +
             " x.scopedName.nameScope = (SELECT y.metaSubspace.scopedName.nameScope FROM Subspaces y WHERE y.id = :idParam)" +
             " AND x.scopedName.localName = (SELECT y.metaSubspace.scopedName.localName FROM Subspaces y WHERE y.id = :idParam)";
 
@@ -139,7 +139,7 @@ public class SliceImpl extends SliceImplBase {
         Query q = em.createQuery( querySupportedSliceKind );
         q.setParameter( "uriParam", uriParam );
         q.setParameter( "idParam", idParam );
-        if( sk == null || q.getSingleResult( ) == null ) {
+        if( sk == null || q.getResultList().size() == 0 ) {
             throw new UnknownOrInvalidSliceKind( );
         }
 
