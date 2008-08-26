@@ -126,7 +126,7 @@
 <complexType name="DataDescriptorT">
 	<sequence>
 		<!-- Ids etc. zur Kennzeichnung der Zieldatensätze, z.B. (doi, doinr),(oid, 19:90194), (ceraid, ....) (mapid, ...)  usw.
-		  i.A. vom Portal aus Metadaten des Infodienstes gefüllt   -->
+		  i.A. vom Portal aus Metadaten des Infodienstes gefüllt  -->
 		<element name="ObjectList" type="impl:ObjectListT"/>
 
 		<element name="SpaceConstr" type="impl:SpaceConstraintT" minOccurs="1" maxOccurs="1"/>

@@ -6,7 +6,7 @@ import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.ResourceKey;
 import org.jetbrains.annotations.NotNull;
 import org.apache.axis.types.URI;
-import org.apache.axis.types.PositiveInteger;
+import org.apache.axis.types.UnsignedLong;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
@@ -36,7 +36,7 @@ public class SliceResource extends SliceResourceBase
     private GridResourceModelHandler<Slice, ExtSliceResourceHome, SliceResource> mH;
 
     // override generated setter method to pass changes on the resource directly to the model
-    public void setTotalStorageSize( PositiveInteger totalStorageSize ) throws ResourceException {
+    public void setTotalStorageSize( UnsignedLong totalStorageSize ) throws ResourceException {
         Slice sl = loadModelById( getID( ) );
         sl.setTotalStorageSize( totalStorageSize.longValue( ) );
         mH.mergeModel( null, sl );
@@ -76,7 +76,7 @@ public class SliceResource extends SliceResourceBase
         }
 
         super.setTerminationTime( model.getTerminationTime() );
-        super.setTotalStorageSize( DSpaceTools.positiveIntegerFromLong( model.getTotalStorageSize( ) ) );
+        super.setTotalStorageSize( DSpaceTools.unsignedLongFromLong( model.getTotalStorageSize( ) ) );
 
         GNDMSystem sys = resourceHome.getSystem( );
         ExtSubspaceResourceHome srh = (ExtSubspaceResourceHome) sys.getHome( Subspace.class );

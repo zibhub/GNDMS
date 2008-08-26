@@ -13,7 +13,7 @@ import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
 import org.apache.axis.types.URI;
-import org.apache.axis.types.PositiveInteger;
+import org.apache.axis.types.UnsignedLong;
 
 import org.oasis.wsrf.properties.GetResourcePropertyResponse;
 
@@ -70,7 +70,7 @@ public class SubspaceClient extends SubspaceClientBase implements SubspaceI {
         SliceCreationSpecifier scs = new SliceCreationSpecifier( );
         //scs.setSliceKind( sliceKindURI );
         scs.setTerminationTime( terminationTime );
-        scs.setTotalStorageSize( DSpaceTools.positiveIntegerFromLong( totalStorageSize ) );
+        scs.setTotalStorageSize( DSpaceTools.unsignedLongFromLong( totalStorageSize ) );
 
         return createSlice ( scs );
     }
@@ -98,7 +98,7 @@ public class SubspaceClient extends SubspaceClientBase implements SubspaceI {
     
     private long getStorageSizeX( QName sizeKind ) throws RemoteException, DeserializationException {
         GetResourcePropertyResponse resp = getResourceProperty( sizeKind );
-        return ( ( PositiveInteger ) ObjectDeserializer.toObject( resp.get_any()[0], PositiveInteger.class) ).longValue( );
+        return ( ( UnsignedLong ) ObjectDeserializer.toObject( resp.get_any()[0], UnsignedLong.class) ).longValue( );
     }
 
 

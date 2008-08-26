@@ -8,7 +8,7 @@ import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.dspace.DSpaceRef;
-import org.apache.axis.types.PositiveInteger;
+import org.apache.axis.types.UnsignedLong;
 import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.ResourceHome;
 import org.globus.wsrf.ResourceKey;
@@ -23,27 +23,14 @@ import org.jetbrains.annotations.NotNull;
  *          User: stepn Date: 27.07.2008 Time: 19:18:59
  */
 public class DSpaceTools {
-    /*
-    public static StorageSizeT buildSizeT(StorageSize size) {
-		return new StorageSizeT(size.getUnit(), new PositiveInteger(Long.toString(size.getAmount())));
-	}
 
-	@NotNull
-	public static StorageSize buildSize(StorageSizeT sizeT) {
-		StorageSize value = new StorageSize();
-		value.setUnit(sizeT.getStorageSizeUnit());
-		value.setAmount(Long.parseLong(sizeT.getStorageSizeValue().toString()));
-		return value;
-	}
-	*/
-
-    public static PositiveInteger positiveIntegerFromLong( long val ) {
-        return new PositiveInteger( String.valueOf( val ) );
+    public static UnsignedLong unsignedLongFromLong( long val ) {
+        return new UnsignedLong( val );
     }
 
 
-    public static long longFromPositiveInteger( PositiveInteger val ) {
-        return val.longValue();
+    public static long longFromUnsignedInteger( UnsignedLong val ) {
+        return val.longValue( );
     }
 
 
