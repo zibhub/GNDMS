@@ -126,33 +126,33 @@
   ============================================================-->
   <portType name="LOFISPortType" wsrp:ResourceProperties="tns:LOFISResourceProperties">
     <operation name="CreateLofiSet">
-      <input message="tns:CreateLofiSetRequest" wsa:Action="http://lofis.gndms.zib.de/LOFIS/CreateLofiSetRequest" />
-      <output message="tns:CreateLofiSetResponse" wsa:Action="http://lofis.gndms.zib.de/LOFIS/CreateLofiSetResponse" />
-      <fault name="ConflictingDestinationsInMap" message="tns:ConflictingDestinationsInMapFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/ConflictingDestinationsInMapFaultMessage" />
-      <fault name="MissingSourceFiles" message="tns:MissingSourceFilesFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/MissingSourceFilesFaultMessage" />
-      <fault name="ConflictResolutionFailed" message="tns:ConflictResolutionFailedFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/ConflictResolutionFailedFaultMessage" />
-      <fault name="UnsupportedOrInvalidSlice" message="tns:UnsupportedOrInvalidSliceFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/UnsupportedOrInvalidSliceFaultMessage" />
+      <input message="tns:CreateLofiSetRequest" wsa:de.zib.gndms.action.Action="http://lofis.gndms.zib.de/LOFIS/CreateLofiSetRequest" />
+      <output message="tns:CreateLofiSetResponse" wsa:de.zib.gndms.action.Action="http://lofis.gndms.zib.de/LOFIS/CreateLofiSetResponse" />
+      <fault name="ConflictingDestinationsInMap" message="tns:ConflictingDestinationsInMapFaultMessage" wsa:de.zib.gndms.action.Action="http://lofis.gndms.zib.de/LOFIS/ConflictingDestinationsInMapFaultMessage" />
+      <fault name="MissingSourceFiles" message="tns:MissingSourceFilesFaultMessage" wsa:de.zib.gndms.action.Action="http://lofis.gndms.zib.de/LOFIS/MissingSourceFilesFaultMessage" />
+      <fault name="ConflictResolutionFailed" message="tns:ConflictResolutionFailedFaultMessage" wsa:de.zib.gndms.action.Action="http://lofis.gndms.zib.de/LOFIS/ConflictResolutionFailedFaultMessage" />
+      <fault name="UnsupportedOrInvalidSlice" message="tns:UnsupportedOrInvalidSliceFaultMessage" wsa:de.zib.gndms.action.Action="http://lofis.gndms.zib.de/LOFIS/UnsupportedOrInvalidSliceFaultMessage" />
     </operation>
     <operation name="MergeLofiSets">
-      <input message="tns:MergeLofiSetsRequest" wsa:Action="http://lofis.gndms.zib.de/LOFIS/MergeLofiSetsRequest" />
-      <output message="tns:MergeLofiSetsResponse" wsa:Action="http://lofis.gndms.zib.de/LOFIS/MergeLofiSetsResponse" />
-      <fault name="ConflictingLofiSetsInMerge" message="tns:ConflictingLofiSetsInMergeFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/ConflictingLofiSetsInMergeFaultMessage" />
+      <input message="tns:MergeLofiSetsRequest" wsa:de.zib.gndms.action.Action="http://lofis.gndms.zib.de/LOFIS/MergeLofiSetsRequest" />
+      <output message="tns:MergeLofiSetsResponse" wsa:de.zib.gndms.action.Action="http://lofis.gndms.zib.de/LOFIS/MergeLofiSetsResponse" />
+      <fault name="ConflictingLofiSetsInMerge" message="tns:ConflictingLofiSetsInMergeFaultMessage" wsa:de.zib.gndms.action.Action="http://lofis.gndms.zib.de/LOFIS/ConflictingLofiSetsInMergeFaultMessage" />
     </operation>
     <wsdl:operation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="GetMultipleResourceProperties">
-      <wsdl:input name="GetMultipleResourcePropertiesRequest" message="wsrpw:GetMultipleResourcePropertiesRequest" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetMultipleResourceProperties" />
-      <wsdl:output name="GetMultipleResourcePropertiesResponse" message="wsrpw:GetMultipleResourcePropertiesResponse" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetMultipleResourcePropertiesResponse" />
+      <wsdl:input name="GetMultipleResourcePropertiesRequest" message="wsrpw:GetMultipleResourcePropertiesRequest" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetMultipleResourceProperties" />
+      <wsdl:output name="GetMultipleResourcePropertiesResponse" message="wsrpw:GetMultipleResourcePropertiesResponse" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetMultipleResourcePropertiesResponse" />
       <wsdl:fault name="ResourceUnknownFault" message="wsrpw:ResourceUnknownFault" />
       <wsdl:fault name="InvalidResourcePropertyQNameFault" message="wsrpw:InvalidResourcePropertyQNameFault" />
     </wsdl:operation>
     <wsdl:operation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="GetResourceProperty">
-      <wsdl:input name="GetResourcePropertyRequest" message="wsrpw:GetResourcePropertyRequest" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetResourceProperty" />
-      <wsdl:output name="GetResourcePropertyResponse" message="wsrpw:GetResourcePropertyResponse" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetResourcePropertyResponse" />
+      <wsdl:input name="GetResourcePropertyRequest" message="wsrpw:GetResourcePropertyRequest" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetResourceProperty" />
+      <wsdl:output name="GetResourcePropertyResponse" message="wsrpw:GetResourcePropertyResponse" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetResourcePropertyResponse" />
       <wsdl:fault name="ResourceUnknownFault" message="wsrpw:ResourceUnknownFault" />
       <wsdl:fault name="InvalidResourcePropertyQNameFault" message="wsrpw:InvalidResourcePropertyQNameFault" />
     </wsdl:operation>
     <wsdl:operation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="QueryResourceProperties">
-      <wsdl:input name="QueryResourcePropertiesRequest" message="wsrpw:QueryResourcePropertiesRequest" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/QueryResourceProperties" />
-      <wsdl:output name="QueryResourcePropertiesResponse" message="wsrpw:QueryResourcePropertiesResponse" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/QueryResourcePropertiesResponse" />
+      <wsdl:input name="QueryResourcePropertiesRequest" message="wsrpw:QueryResourcePropertiesRequest" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/QueryResourceProperties" />
+      <wsdl:output name="QueryResourcePropertiesResponse" message="wsrpw:QueryResourcePropertiesResponse" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/QueryResourcePropertiesResponse" />
       <wsdl:fault name="ResourceUnknownFault" message="wsrpw:ResourceUnknownFault" />
       <wsdl:fault name="InvalidResourcePropertyQNameFault" message="wsrpw:InvalidResourcePropertyQNameFault" />
       <wsdl:fault name="UnknownQueryExpressionDialectFault" message="wsrpw:UnknownQueryExpressionDialectFault" />
@@ -160,8 +160,8 @@
       <wsdl:fault name="QueryEvaluationErrorFault" message="wsrpw:QueryEvaluationErrorFault" />
     </wsdl:operation>
     <operation name="getServiceSecurityMetadata">
-      <input message="wns1:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />
-      <output message="wns1:GetServiceSecurityMetadataResponse" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataResponse" />
+      <input message="wns1:GetServiceSecurityMetadataRequest" wsa:de.zib.gndms.action.Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />
+      <output message="wns1:GetServiceSecurityMetadataResponse" wsa:de.zib.gndms.action.Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataResponse" />
     </operation>
   </portType>
 </definitions>

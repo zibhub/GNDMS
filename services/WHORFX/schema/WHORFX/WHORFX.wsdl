@@ -81,17 +81,17 @@
   ============================================================-->
   <portType name="WHORFXPortType" wsrp:ResourceProperties="tns:WHORFXResourceProperties">
     <operation name="lookupORF">
-      <input message="tns:LookupORFRequest" wsa:Action="http://gndms.zib.de/WHORFX/LookupORFRequest" />
-      <output message="tns:LookupORFResponse" wsa:Action="http://gndms.zib.de/WHORFX/LookupORFResponse" />
-      <fault name="UnknownORFType" message="tns:UnknownORFTypeFaultMessage" wsa:Action="http://gndms.zib.de/WHORFX/UnknownORFTypeFaultMessage" />
+      <input message="tns:LookupORFRequest" wsa:de.zib.gndms.action.Action="http://gndms.zib.de/WHORFX/LookupORFRequest" />
+      <output message="tns:LookupORFResponse" wsa:de.zib.gndms.action.Action="http://gndms.zib.de/WHORFX/LookupORFResponse" />
+      <fault name="UnknownORFType" message="tns:UnknownORFTypeFaultMessage" wsa:de.zib.gndms.action.Action="http://gndms.zib.de/WHORFX/UnknownORFTypeFaultMessage" />
     </operation>
     <operation name="updateMappings">
-      <input message="tns:UpdateMappingsRequest" wsa:Action="http://gndms.zib.de/WHORFX/UpdateMappingsRequest" />
-      <output message="tns:UpdateMappingsResponse" wsa:Action="http://gndms.zib.de/WHORFX/UpdateMappingsResponse" />
+      <input message="tns:UpdateMappingsRequest" wsa:de.zib.gndms.action.Action="http://gndms.zib.de/WHORFX/UpdateMappingsRequest" />
+      <output message="tns:UpdateMappingsResponse" wsa:de.zib.gndms.action.Action="http://gndms.zib.de/WHORFX/UpdateMappingsResponse" />
     </operation>
     <operation name="getServiceSecurityMetadata">
-      <input message="wns0:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />
-      <output message="wns0:GetServiceSecurityMetadataResponse" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataResponse" />
+      <input message="wns0:GetServiceSecurityMetadataRequest" wsa:de.zib.gndms.action.Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />
+      <output message="wns0:GetServiceSecurityMetadataResponse" wsa:de.zib.gndms.action.Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataResponse" />
     </operation>
   </portType>
 </definitions>

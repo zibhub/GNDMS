@@ -11,8 +11,8 @@
 	<!-- Place any other properties you will need here                  -->
 	<!-- ============================================================== -->
 
-
-
+	<import file="../../gndms-service-dev-build.xml" />
+	<property name="jar.prefix" value="c3grid-gorfx" />
 
 	<!-- ============================================================== -->
 	<!-- Create any extended Classpaths here                            -->
