@@ -175,11 +175,11 @@ public abstract class SliceResourceBase extends ReflectionResource implements Re
 	    //Getters/Setters for ResourceProperties
 	
 	
-	public org.apache.axis.types.PositiveInteger getTotalStorageSize(){
+	public org.apache.axis.types.UnsignedLong getTotalStorageSize(){
 		return ((SliceResourceProperties) getResourceBean()).getTotalStorageSize();
 	}
 	
-	public void setTotalStorageSize(org.apache.axis.types.PositiveInteger totalStorageSize ) throws ResourceException {
+	public void setTotalStorageSize(org.apache.axis.types.UnsignedLong totalStorageSize ) throws ResourceException {
         ResourceProperty prop = getResourcePropertySet().get(SliceConstants.TOTALSTORAGESIZE);
 		prop.set(0, totalStorageSize);
 	}

@@ -132,22 +132,22 @@ public abstract class SubspaceResourceBase extends ReflectionResource implements
 	    //Getters/Setters for ResourceProperties
 	
 	
-	public org.apache.axis.types.PositiveInteger getAvailableStorageSize(){
+	public org.apache.axis.types.UnsignedLong getAvailableStorageSize(){
 		return ((SubspaceResourceProperties) getResourceBean()).getAvailableStorageSize();
 	}
 	
-	public void setAvailableStorageSize(org.apache.axis.types.PositiveInteger availableStorageSize ) throws ResourceException {
+	public void setAvailableStorageSize(org.apache.axis.types.UnsignedLong availableStorageSize ) throws ResourceException {
         ResourceProperty prop = getResourcePropertySet().get(SubspaceConstants.AVAILABLESTORAGESIZE);
 		prop.set(0, availableStorageSize);
 	}
 	
 	
 	
-	public org.apache.axis.types.PositiveInteger getTotalStorageSize(){
+	public org.apache.axis.types.UnsignedLong getTotalStorageSize(){
 		return ((SubspaceResourceProperties) getResourceBean()).getTotalStorageSize();
 	}
 	
-	public void setTotalStorageSize(org.apache.axis.types.PositiveInteger totalStorageSize ) throws ResourceException {
+	public void setTotalStorageSize(org.apache.axis.types.UnsignedLong totalStorageSize ) throws ResourceException {
         ResourceProperty prop = getResourcePropertySet().get(SubspaceConstants.TOTALSTORAGESIZE);
 		prop.set(0, totalStorageSize);
 	}
