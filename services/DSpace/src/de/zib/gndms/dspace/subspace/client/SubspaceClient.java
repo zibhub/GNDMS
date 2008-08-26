@@ -70,7 +70,7 @@ public class SubspaceClient extends SubspaceClientBase implements SubspaceI {
         SliceCreationSpecifier scs = new SliceCreationSpecifier( );
         //scs.setSliceKind( sliceKindURI );
         scs.setTerminationTime( terminationTime );
-        scs.setTotalStorageSize( (PositiveInteger) PositiveInteger.valueOf( totalStorageSize ) );
+        scs.setTotalStorageSize( DSpaceTools.positiveIntegerFromLong( totalStorageSize ) );
 
         return createSlice ( scs );
     }

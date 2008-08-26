@@ -76,7 +76,7 @@ public class SliceResource extends SliceResourceBase
         }
 
         super.setTerminationTime( model.getTerminationTime() );
-        super.setTotalStorageSize( (PositiveInteger) PositiveInteger.valueOf( model.getTotalStorageSize( ) ) );
+        super.setTotalStorageSize( DSpaceTools.positiveIntegerFromLong( model.getTotalStorageSize( ) ) );
 
         GNDMSystem sys = resourceHome.getSystem( );
         ExtSubspaceResourceHome srh = (ExtSubspaceResourceHome) sys.getHome( Subspace.class );

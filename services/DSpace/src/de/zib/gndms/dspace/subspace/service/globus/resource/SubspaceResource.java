@@ -76,8 +76,8 @@ public class SubspaceResource extends SubspaceResourceBase
             final @NotNull SubspaceResourceProperties bean, final @NotNull Subspace model) 
             throws ResourceException {
         // set resource properties from model
-        bean.setAvailableStorageSize( (PositiveInteger) PositiveInteger.valueOf( model.getAvailableSize() ) );
-        bean.setTotalStorageSize( (PositiveInteger) PositiveInteger.valueOf( model.getTotalSize() ) );
+        bean.setAvailableStorageSize( DSpaceTools.positiveIntegerFromLong( model.getAvailableSize() ) );
+        bean.setTotalStorageSize( DSpaceTools.positiveIntegerFromLong( model.getTotalSize() ) );
 
         try {
             final DSpaceReference dSpaceReference =
