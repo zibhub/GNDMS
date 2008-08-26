@@ -37,8 +37,17 @@ public class DSpaceTools {
 	}
 	*/
 
+    public static PositiveInteger positiveIntegerFromLong( long val ) {
+        return new PositiveInteger( String.valueOf( val ) );
+    }
 
-	public static DSpaceReference dSpaceRefsAsReference(final DSpaceRef vep, GNDMSystem sysParam)
+
+    public static long longFromPositiveInteger( PositiveInteger val ) {
+        return val.longValue();
+    }
+
+
+    public static DSpaceReference dSpaceRefsAsReference(final DSpaceRef vep, GNDMSystem sysParam)
 		throws Exception {
 		if (vep.getGridSiteId() != null)
 			throw new IllegalStateException("Remote dspace reference");
