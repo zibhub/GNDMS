@@ -1,6 +1,9 @@
 package de.zib.gndms.infra.system;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Sets;
 import de.zib.gndms.infra.GridConfig;
+import de.zib.gndms.infra.action.GetHomeInfoAction;
 import de.zib.gndms.infra.action.SystemAction;
 import de.zib.gndms.infra.monitor.ActionCaller;
 import de.zib.gndms.infra.monitor.GroovyBindingFactory;
@@ -14,6 +17,9 @@ import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
 import de.zib.gndms.logic.model.DelegatingEntityUpdateListener;
 import de.zib.gndms.logic.model.EntityUpdateListener;
 import de.zib.gndms.logic.model.config.ConfigAction;
+import de.zib.gndms.logic.model.config.EchoOptionsAction;
+import de.zib.gndms.logic.model.config.HelpOverviewAction;
+import de.zib.gndms.logic.model.dspace.SetupSubspaceAction;
 import de.zib.gndms.logic.util.LogicTools;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
@@ -49,10 +55,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 
 /**
@@ -70,12 +73,34 @@ import java.util.Properties;
 public final class GNDMSystem
 	  implements Initializable, SystemHolder,
 	  EMFactoryProvider, ModelUUIDGen, EntityUpdateListener<GridResource>, ActionCaller {
+
     private static final int INITIAL_CAPACITY = 32;
     private static final int INSTANCE_RETRIEVAL_INTERVAL = 250;
+
+    private static final Set<Class<? extends ConfigAction<?>>> CONFIG_ACTIONS =
+            Sets.newConcurrentHashSet();
+
+    private static final Function<String, String> CLASS_TO_ACTION_NAME_MAPPER =
+        new Function<String, String>() {
+            public String apply(@com.google.common.base.Nullable final String s) {
+                if (s.startsWith("de.zib.gndms.infra.action") && s.endsWith("Action"))
+                    return ".sys" + s.substring("de.zib.gndms.infra.action".length(), s.length()-6);
+                if (s.startsWith("de.zib.gndms.logic.model") && s.endsWith("Action"))
+                    return s.substring("de.zib.gndms.logic.model".length(), s.length()-6);
+                return s;
+            }
+        };
+
+    static {
+        CONFIG_ACTIONS.add(SetupSubspaceAction.class);
+        CONFIG_ACTIONS.add(EchoOptionsAction.class);
+        CONFIG_ACTIONS.add(GetHomeInfoAction.class);
+    }
 
 	private final UUIDGen uuidGen = UUIDGenFactory.getUUIDGen();
 
 	private final Log logger = createLogger();
+
 
     @NotNull
 	private static Log createLogger()
@@ -155,11 +180,11 @@ public final class GNDMSystem
 	public static GNDMSystem lookupSystem(
 		  @NotNull Context sharedContext, @NotNull String facadeName,
 		  @NotNull GridConfig anySharedConfig,
-          boolean debugMode)
+          boolean debugModeParam)
 		  throws NamingException {
 		try {
 			final SysFactory theFactory =
-                    new SysFactory(createLogger(), anySharedConfig, debugMode);
+                    new SysFactory(createLogger(), anySharedConfig, debugModeParam);
 			sharedContext.bind(facadeName, theFactory);
 			return theFactory.getInstance();
 		}
@@ -254,7 +279,8 @@ public final class GNDMSystem
             File jpaLogFile = new File(getLogDir(), "jpa.log");
             if (! jpaLogFile.exists())
                 jpaLogFile.createNewFile();
-            map.put("openjpa.Log", "File=" + jpaLogFile + ", DefaultLevel=INFO, Runtime=TRACE, Tool=INFO");
+            map.put("openjpa.Log", "File=" + jpaLogFile +
+                    ", DefaultLevel=INFO, Runtime=TRACE, Tool=INFO");
         }
 		logger.info("Opening JPA Store: " + map.toString());
 
@@ -287,8 +313,8 @@ public final class GNDMSystem
     }
 
     @SuppressWarnings({ "HardcodedFileSeparator", "RawUseOfParameterizedType" })
-    private synchronized <K extends GridResource> void addHome(final @NotNull Class<K> modelClazz,
-                                                               final @NotNull GNDMServiceHome<?> home)
+    private synchronized <K extends GridResource> void addHome(
+            final @NotNull Class<K> modelClazz, final @NotNull GNDMServiceHome<?> home)
             throws ResourceException {
         if (homes.containsKey(modelClazz))
             throw new IllegalStateException("Name clash in home registration");
@@ -300,7 +326,9 @@ public final class GNDMSystem
                     Object instance = home.find(null);
                     final String resourceName = home.getNickName() + "Resource";
                     addInstance_(resourceName, instance);
-                    logger.debug(getSystemName() + " addSingletonResource: '" + resourceName + "' = '" + modelClazz.getName() + '/' + ((GNDMSingletonServiceHome)home).getSingletonID() + '\'');
+                    logger.debug(getSystemName() + " addSingletonResource: '"
+                            + resourceName + "' = '" + modelClazz.getName() + '/'
+                            + ((GNDMSingletonServiceHome)home).getSingletonID() + '\'');
                 }
             }
             catch (RuntimeException e) {
@@ -516,7 +544,7 @@ public final class GNDMSystem
                                                      final @NotNull String params)
             throws ClassNotFoundException, IllegalAccessException, InstantiationException,
             CommandAction.ParameterTools.ParameterParseException {
-        final Class<? extends ConfigAction<Object>> clazz = findActionClass(name);
+        final Class<? extends ConfigAction<?>> clazz = findActionClass(name);
         if (ConfigAction.class.isAssignableFrom(clazz)) {
             final ConfigAction configAction = clazz.newInstance();
             configAction.parseLocalOptions(params);
@@ -527,23 +555,38 @@ public final class GNDMSystem
     }
 
 
-    @SuppressWarnings({ "unchecked" })
-    private static <R, V extends ConfigAction<R>> Class<V> findActionClass(
+    private static Class<? extends ConfigAction<?>> findActionClass(
             final @NotNull String name) throws ClassNotFoundException
     {
         if (name.length() > 0) {
+            final String nameToLower = name.toLowerCase();
+            if ("help".equals(nameToLower) || "-help".equals(nameToLower)
+                    || "--help".equals(nameToLower)) {
+                return toConfigActionClass(HelpOverviewAction.class);
+            }
             try {
                 if (name.startsWith(".sys"))
-                    return (Class<V>) Class.forName(
-                            "de.zib.gndms.infra.action" + name.substring(4) + "Action");
+                    return toConfigActionClass(Class.forName(
+                            "de.zib.gndms.infra.action" + name.substring(4) + "Action"));
             }
             catch (ClassNotFoundException e) {
                 // continue trying
             }
             if (name.charAt(0) == '.')
-                return (Class<V>) Class.forName("de.zib.gndms.logic.model" + name + "Action");
+                return toConfigActionClass(
+                        Class.forName("de.zib.gndms.logic.model" + name + "Action"));
         }
-        return (Class<V>) Class.forName(name);
+        return toConfigActionClass(Class.forName(name));
+    }
+
+
+    @SuppressWarnings({ "unchecked" })
+    private static  Class<? extends ConfigAction<?>> toConfigActionClass(
+            final Class<?> helpOverviewActionClassParam) {
+         if (ConfigAction.class.isAssignableFrom(helpOverviewActionClassParam))
+                return (Class<? extends ConfigAction<?>>) helpOverviewActionClassParam;
+        else
+             throw new IllegalArgumentException("Given class is not a ConfigAction");
     }
 
 
@@ -561,7 +604,11 @@ public final class GNDMSystem
         action.getPostponedActions().setListener(DelegatingEntityUpdateListener.getInstance(this));
         if (action instanceof SystemAction)
             ((SystemAction<?>)action).setSystem(this);
-        
+        if (action instanceof HelpOverviewAction) {
+            ((HelpOverviewAction)action).setConfigActions(CONFIG_ACTIONS);
+            ((HelpOverviewAction)action).setNameMapper(CLASS_TO_ACTION_NAME_MAPPER);
+        }
+
         logger.info("Running " + className + ' ' + opts);
         try {
             Object retVal = action.call();
@@ -587,7 +634,7 @@ public final class GNDMSystem
     }
 
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({ "unchecked", "MethodMayBeStatic" })
     public @NotNull <M extends GridResource> List<String> listAllResources(
             final @NotNull GNDMServiceHome<M> home, final @NotNull EntityManager em) {
         Query query = home.getListAllQuery(em);

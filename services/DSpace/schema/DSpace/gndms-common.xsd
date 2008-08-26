@@ -50,7 +50,7 @@
 <!-- *** Storage amount types *** -->
 
 <simpleType name="StorageSizeT">
-    <restriction base="positiveInteger">
+    <restriction base="xsd:unsignedLong">
     </restriction>
 </simpleType>
 
