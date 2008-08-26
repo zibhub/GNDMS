@@ -11,6 +11,7 @@ import de.zib.gndms.infra.model.GridResourceModelHandler;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.Slice;
+import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
 import org.apache.log4j.Logger;
@@ -158,21 +159,19 @@ public class DSpaceImpl extends DSpaceImplBase {
             if( sp == null )
                 throw new UnknownSubspace(  );
 
-            // todo slicekind param somthing like
-            // EntityManager em = ...
-            // SliceKind sk = em.find( SliceKind.class, sliceCreatoinSpecifier.getSliceKind( ) );
+            SliceKind sk = em.find( SliceKind.class, sliceCreationSpecifier.getSliceKind( ).toString( ) );
             CreateSliceAction csa =
                     new CreateSliceAction( (String) thisResource.getID(),
                             sliceCreationSpecifier.getTerminationTime(),
                             system,
-                            /*sliceCreationSpecifier.getSliceKind()*/ null,
-                            DSpaceTools.buildSize( sliceCreationSpecifier.getTotalStorageSize() )
+                            sk,
+                            sliceCreationSpecifier.getTotalStorageSize().longValue()
                     );
 
             GridResourceModelHandler mh = new GridResourceModelHandler<Subspace, ExtSubspaceResourceHome, SubspaceResource>
                     (Subspace.class, (ExtSubspaceResourceHome) system.getHome( Subspace.class ));
 
-            Slice ns = (Slice) mh.callNewModelAction( system, csa, sp );
+            Slice ns = (Slice) mh.callModelAction( em, system, csa, sp );
 
             csa.getPostponedActions().call( );
 

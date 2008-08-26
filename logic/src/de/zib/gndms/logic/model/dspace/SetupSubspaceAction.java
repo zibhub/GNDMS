@@ -36,7 +36,7 @@ public class SetupSubspaceAction extends SetupAction<Void> {
     private Boolean visible;
 
     @ConfigOption(descr="Maximum storage size available in this subspace")
-    private StorageSize size;
+    private Long size;
 
 
     @Override
@@ -50,9 +50,7 @@ public class SetupSubspaceAction extends SetupAction<Void> {
             if (visible == null && (isCreating() || hasOption("visible")))
                 setIsVisibleToPublic(isBooleanOptionSet("visible", true));
             if (size == null && (isCreating() || hasOption("size"))) {
-                size = new StorageSize();
-                size.setAmount(getIntOption("size"));
-                size.setUnit("bytes");
+                size = new Long( getIntOption("size") );
             }
             if (path == null && (isCreating() || hasOption("path"))) {
                 setPath(getOption("path"));
@@ -141,9 +139,11 @@ public class SetupSubspaceAction extends SetupAction<Void> {
             subspace.setMetaSubspace(metaParam);
             metaParam.setInstance(subspace);
 
-            final StorageSize avail = new StorageSize();
-            avail.setAmount(getSize().getAmount());
-            avail.setUnit(getSize().getUnit());
+            //final StorageSize avail = new StorageSize();
+            //avail.setAmount(getSize().getAmount());
+            //avail.setUnit(getSize().getUnit());
+            //subspace.setAvailableSize(avail);
+            final long avail = getSize( );
             subspace.setAvailableSize(avail);
         }
         else
@@ -167,8 +167,8 @@ public class SetupSubspaceAction extends SetupAction<Void> {
         return visible;
     }
 
-    public StorageSize getSize() {
-        return size;
+    public long getSize() {
+        return size.longValue();
     }
 
 
@@ -187,8 +187,8 @@ public class SetupSubspaceAction extends SetupAction<Void> {
     }
 
 
-    public void setSize(final StorageSize sizeParam) {
-        size = sizeParam;
+    public void setSize(final long sizeParam) {
+        size = new Long( sizeParam );
     }
 
 

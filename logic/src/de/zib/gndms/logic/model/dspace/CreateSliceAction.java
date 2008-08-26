@@ -8,7 +8,6 @@ import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.model.dspace.StorageSize;
 import de.zib.gndms.model.dspace.types.SliceKindMode;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +26,7 @@ import java.util.Calendar;
 public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, Slice> {
 
     private SliceKind sliceKind;     // kind of the slice to create
-    private StorageSize storageSize;
+    private long storageSize;
     private DirectoryAux directoryAux;
 
     
@@ -36,7 +35,7 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
     }
 
 
-    public CreateSliceAction( String uuid, Calendar ttm, ModelUUIDGen gen, SliceKind kind, StorageSize ssize ) {
+    public CreateSliceAction( String uuid, Calendar ttm, ModelUUIDGen gen, SliceKind kind, long ssize ) {
 
         super( uuid, ttm );
         setUUIDGen(gen);
@@ -47,7 +46,7 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
     }
 
 
-    public CreateSliceAction( String uuid, Calendar ttm, ModelUUIDGen gen, SliceKind kind, StorageSize ssize, DirectoryAux da ) {
+    public CreateSliceAction( String uuid, Calendar ttm, ModelUUIDGen gen, SliceKind kind, long ssize, DirectoryAux da ) {
         
         super( uuid, ttm );
         setUUIDGen(gen);

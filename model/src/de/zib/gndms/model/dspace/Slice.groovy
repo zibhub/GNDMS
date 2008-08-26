@@ -38,22 +38,19 @@ public class Slice extends TimedGridResource {
 	@JoinColumn( name="subspace_id", nullable=false, referencedColumnName="id", updatable=false )
     Subspace owner
 
-    @Embedded
-    @AttributeOverrides([
-        @AttributeOverride( name="unit", column=@Column(name="storage_unit") ),
-        @AttributeOverride( name="amount", column=@Column(name="storage_amount") ) 
-    ])
-    StorageSize totalStorageSize
+    @Column(name="total_size", nullable=false, updatable=false)
+    long totalStorageSize
 
     protected Slice( ) { }
 
-    Slice( String idParam, Calendar ttParam, String didParam, SliceKind kndParam, Subspace ownParam ) {
+    Slice( String idParam, Calendar ttParam, String didParam, SliceKind kndParam, Subspace ownParam, long tssParam ) {
         super( )
         setId( idParam )
         setTerminationTime ( ttParam )
         directoryId = didParam
         kind = kndParam
         owner = ownParam
+        totalStorageSize = tssParam
     }
 
     Slice( String didParam, SliceKind kndParam, Subspace ownParam ) {
@@ -81,8 +78,6 @@ public class Slice extends TimedGridResource {
     */ 
     public String getAssociatedPath( ) {
 
-        // TODO Later this should return a directory name mapped to
-        // the UId
         directoryId
     }
 }

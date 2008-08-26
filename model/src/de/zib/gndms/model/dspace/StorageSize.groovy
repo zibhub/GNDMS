@@ -18,7 +18,8 @@ class StorageSize extends ModelObject {
 	@Column(name="amount", nullable=false)
 	long amount;
 
-	@Column(name="unit", nullable=false, columnDefinition="VARCHAR", length=16)
+    /*
+    @Column(name="unit", nullable=false, columnDefinition="VARCHAR", length=16)
 	String unit;
 
 	long getAmountInBytes() {
@@ -52,4 +53,5 @@ class StorageSize extends ModelObject {
 		else
 			unit
 	}
+	*/
 }

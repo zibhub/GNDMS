@@ -3,7 +3,6 @@ package de.zib.gndms.dspace.client.test;
 import de.zib.gndms.dspace.client.DSpaceClient;
 import de.zib.gndms.dspace.subspace.client.SubspaceClient;
 import de.zib.gndms.dspace.slice.client.SliceClient;
-import de.zib.gndms.model.dspace.StorageSize;
 
 import java.util.GregorianCalendar;
 import java.util.Calendar;
@@ -53,14 +52,12 @@ public class DSpaceTestClient {
             String skuri = null;
             GregorianCalendar tt = new GregorianCalendar( );
             tt.add( Calendar.YEAR, 20 );
-            StorageSize ssize = new StorageSize( );
-            ssize.setAmount( 20 );
-            ssize.setUnit( "TB" );
+            long ssize = (long) (20 * 1024 * Math.pow( 10, 12  ));
             SliceClient sc = subclient.createSlice( skuri, tt, ssize );
             System.out.println( "Check set values" );
             System.out.println( "slicekind: "+ skuri.equals( sc.getSliceKind() ) );
             System.out.println( "terminationtim: " + tt.equals( sc.getTerminationTime() ) );
-            System.out.println( "storage size:" + ssize.equals( sc.getTotalStorageSize() ) );
+            System.out.println( "storage size:" +( ssize == sc.getTotalStorageSize() ) );
         } catch ( ArrayIndexOutOfBoundsException e ) {
             usage();
             System.exit(1);
