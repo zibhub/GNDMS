@@ -23,7 +23,6 @@ http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
 	    <class>de.zib.gndms.model.dspace.MetaSubspace</class>
 	    <class>de.zib.gndms.model.dspace.Subspace</class>
 	    <class>de.zib.gndms.model.dspace.SubspaceRef</class>
-	    <class>de.zib.gndms.model.dspace.StorageSize</class>
 
 	    <exclude-unlisted-classes>true</exclude-unlisted-classes>
 
