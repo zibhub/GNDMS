@@ -13,7 +13,6 @@ import de.zib.gndms.infra.model.GridResourceModelHandler;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Slice;
-import de.zib.gndms.model.dspace.StorageSize;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
 import org.globus.wsrf.NoSuchResourceException;
 import org.globus.wsrf.ResourceContext;
@@ -59,18 +58,7 @@ public class SubspaceImpl extends SubspaceImplBase {
         SliceResourceHome srh = null;
         ResourceKey rk = null;
         try {
-            StorageSize ssize = null;
-            // todo handle storagesize
-            // will be done in create slice 
-            /*
-            StorageSizeT sst = sliceCreationSpecifier.getTotalStorageSize( );
-            if( sst != null ) {
-                StorageSize ssize = DSpaceTools.buildSize(sst);
-                if( sp.getAvailableSize().getAmountInBytes() < ssize.getAmountInBytes() )
-                    throw new OutOfSpace( );
-                // todo update avail storage size
-            }
-            */
+            Long ssize = null;
 
             srh = getSliceResourceHome( );
             rk = srh.createResource( );
@@ -78,15 +66,14 @@ public class SubspaceImpl extends SubspaceImplBase {
 
             GNDMSystem system = subref.getResourceHome( ).getSystem( );
 
-            // todo slicekind param somthing like
-            // EntityManager em = ...
-            // SliceKind sk = em.find( SliceKind.class, sliceCreatoinSpecifier.getSliceKind( ) );
+            EntityManager em = system.getEntityManagerFactory().createEntityManager(  );
+            SliceKind sk = em.find( SliceKind.class, sliceCreationSpecifier.getSliceKind( ).toString( ) );
             CreateSliceAction csa =
                     new CreateSliceAction( (String) sr.getID(),
                             sliceCreationSpecifier.getTerminationTime(),
                             system,
-                            /*sliceCreationSpecifier.getSliceKind()*/ null,
-                            ssize
+                            sk,
+                            ssize.longValue( )
                     );
 
             GridResourceModelHandler mh = new GridResourceModelHandler<Subspace, ExtSubspaceResourceHome, SubspaceResource>
@@ -95,7 +82,6 @@ public class SubspaceImpl extends SubspaceImplBase {
             Slice ns = (Slice) mh.callNewModelAction( system, csa, sp );
 
             csa.getPostponedActions().call( );
-
 
             sr.loadFromModel( ns );
             sref = srh.getResourceReference( rk );

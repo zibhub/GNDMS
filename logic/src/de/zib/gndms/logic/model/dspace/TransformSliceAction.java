@@ -3,7 +3,6 @@ package de.zib.gndms.logic.model.dspace;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.model.dspace.StorageSize;
 import de.zib.gndms.model.dspace.types.SliceKindMode;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.logic.model.aux.DirectoryAux;
@@ -34,14 +33,14 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
     private CreateSliceAction createSliceAction;
 
     
-    public TransformSliceAction( String uuid, Calendar ttm, SliceKind kind, Subspace tgt, StorageSize ssize, ModelUUIDGen uuidgen ) {
+    public TransformSliceAction( String uuid, Calendar ttm, SliceKind kind, Subspace tgt, long ssize, ModelUUIDGen uuidgen ) {
 
         createSliceAction = new CreateSliceAction( uuid, ttm, uuidgen, kind, ssize );
         createSliceAction.setModel( tgt );
     }
 
 
-    public TransformSliceAction( String uuid, Calendar ttm, SliceKind kind, Subspace tgt, StorageSize ssize, ModelUUIDGen uuidgen, DirectoryAux da ) {
+    public TransformSliceAction( String uuid, Calendar ttm, SliceKind kind, Subspace tgt, long ssize, ModelUUIDGen uuidgen, DirectoryAux da ) {
 
         createSliceAction = new CreateSliceAction( uuid, ttm, uuidgen, kind, ssize, da );
         createSliceAction.setModel( tgt );

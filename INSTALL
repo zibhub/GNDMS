@@ -337,9 +337,16 @@ execution of predefined actions, while the second runs arbitrary groovy code.
 EXECUTING ACTIONS
 -----------------
 
-To test the monitoring and configurations shell, execute:
+To test the monitoring and configurations shell and retrieve a list of all
+available actions, execute:
 
-<Yet to be written>
+moni call help
+
+
+To call an action, execute:
+
+moni call <Name of action> <Action Parameters or help>
+
 
 Now, please continue with the subsection titled "CONFIGURATION".
 

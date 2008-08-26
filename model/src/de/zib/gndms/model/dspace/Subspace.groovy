@@ -36,19 +36,12 @@ import de.zib.gndms.model.common.GridResource
 @Entity(name="Subspaces")
 @Table(name="subspaces", schema="dspace")
 class Subspace extends GridResource {
-	@Embedded
-	@AttributeOverrides([
-	      @AttributeOverride(name="unit", column=@Column(name="avail_unit", nullable=false)),
-		  @AttributeOverride(name="amount", column=@Column(name="avail_amount", nullable=false))
-	])
-	StorageSize availableSize
 
-	@Embedded
-	@AttributeOverrides([
-	      @AttributeOverride(name="unit", column=@Column(name="total_unit", nullable=false)),
-		  @AttributeOverride(name="amount", column=@Column(name="total_amount", nullable=false))
-	])
-	StorageSize totalSize
+    @Column(name="avail_size", nullable=false, updatable=false)
+    long availableSize
+
+    @Column(name="total_size", nullable=false, updatable=false)
+	long totalSize
 
 	@OneToOne(targetEntity=MetaSubspace.class, optional=false, fetch=FetchType.LAZY, cascade=[CascadeType.REFRESH])
 	@PrimaryKeyJoinColumns([@PrimaryKeyJoinColumn(name="schema_uri"),

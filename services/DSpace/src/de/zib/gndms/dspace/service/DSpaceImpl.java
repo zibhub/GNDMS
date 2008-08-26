@@ -11,6 +11,7 @@ import de.zib.gndms.infra.model.GridResourceModelHandler;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.Slice;
+import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
 import org.apache.log4j.Logger;
@@ -24,16 +25,16 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.ArrayList;
 
-/** 
+/**
  * TODO:I am the service side implementation class.  IMPLEMENT AND DOCUMENT ME
- * 
+ *
  * @created by Introduce Toolkit version 1.2
- * 
+ *
  */
 public class DSpaceImpl extends DSpaceImplBase {
 
-	private static final Logger logger;
-	private final GNDMSystem system;
+    private static final Logger logger;
+    private final GNDMSystem system;
 
     // todo: maybe encapsulate complete queries in actions
     // query strings:
@@ -45,29 +46,29 @@ public class DSpaceImpl extends DSpaceImplBase {
             "SELECT DISTINCT x.scopedName.scopeName FROM MetaSubspaces x";
 
     static {
-		logger = Logger.getLogger(DSpaceImpl.class);
-	}
+        logger = Logger.getLogger(DSpaceImpl.class);
+    }
 
-	@SuppressWarnings({"FeatureEnvy"})
-	public DSpaceImpl() throws RemoteException {
-		super();
-		try {
-			final ExtDSpaceResourceHome home = getResourceHome();
-			system = home.getSystem();
-			system.addHome(home);
+    @SuppressWarnings({"FeatureEnvy"})
+    public DSpaceImpl() throws RemoteException {
+        super();
+        try {
+            final ExtDSpaceResourceHome home = getResourceHome();
+            system = home.getSystem();
+            system.addHome(home);
             system.addHome(getSubspaceResourceHome());
             // TODO
             // system.addHome(getSliceResourceHome());
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	@Override
-	public ExtDSpaceResourceHome getResourceHome() throws Exception {
-		return (ExtDSpaceResourceHome) super.getResourceHome();    // Overridden method
-	}
+    @Override
+    public ExtDSpaceResourceHome getResourceHome() throws Exception {
+        return (ExtDSpaceResourceHome) super.getResourceHome();    // Overridden method
+    }
 
     public SubspaceReference[] listPublicSubspaces(org.apache.axis.types.URI schemaURI) throws RemoteException {
 
@@ -108,24 +109,26 @@ public class DSpaceImpl extends DSpaceImplBase {
         return al.toArray( new URI[0] );
     }
 
-    
-  public SubspaceReference getSubspace( QName subspaceSpecifier) throws RemoteException, UnknownSubspace {
 
-      EntityManager em = system.getEntityManagerFactory().createEntityManager(  );
-      Query q = em.createQuery( getSubspaceQuery );
-      q.setParameter( "uriParam",  new ImmutableScopedName( subspaceSpecifier ) );
-      q.setParameter( "sysParam",  system.getSystemName( ) );
-      Subspace sp = ( Subspace) q.getSingleResult( );
-      if( sp == null )
-        throw new UnknownSubspace( );
+    public SubspaceReference getSubspace( QName subspaceSpecifier) throws RemoteException, UnknownSubspace {
 
-      try {
-          ExtSubspaceResourceHome srh  = (ExtSubspaceResourceHome) getSubspaceResourceHome();
-          return srh.getReferenceForSubspace( sp );
-      } catch ( Exception e ) {
-          throw new RemoteException( "Following exception occured while creating SubspaceReferenc: " + e.getMessage() );
-      }
-  }
+        EntityManager em = system.getEntityManagerFactory().createEntityManager(  );
+        Query q = em.createQuery( getSubspaceQuery );
+        q.setParameter( "uriParam",  new ImmutableScopedName( subspaceSpecifier ) );
+        q.setParameter( "sysParam",  system.getSystemName( ) );
+        Subspace sp = ( Subspace) q.getSingleResult( );
+        if( sp == null )
+            throw new UnknownSubspace( );
+
+        try {
+            ExtSubspaceResourceHome srh  = (ExtSubspaceResourceHome) getSubspaceResourceHome();
+            return srh.getReferenceForSubspace( sp );
+        } catch ( Exception e ) {
+            throw new RemoteException( "Following exception occured while creating SubspaceReferenc: " + e.getMessage() );
+        }
+    }
+
+
 
 
     public de.zib.gndms.dspace.slice.stubs.types.SliceReference createSliceInSubspace( QName subspaceSpecifier,types.SliceCreationSpecifier sliceCreationSpecifier,types.ContextT context) throws RemoteException, de.zib.gndms.dspace.subspace.stubs.types.OutOfSpace, de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind, UnknownSubspace, de.zib.gndms.dspace.stubs.types.InternalFailure {
@@ -156,21 +159,19 @@ public class DSpaceImpl extends DSpaceImplBase {
             if( sp == null )
                 throw new UnknownSubspace(  );
 
-            // todo slicekind param somthing like
-            // EntityManager em = ...
-            // SliceKind sk = em.find( SliceKind.class, sliceCreatoinSpecifier.getSliceKind( ) );
+            SliceKind sk = em.find( SliceKind.class, sliceCreationSpecifier.getSliceKind( ).toString( ) );
             CreateSliceAction csa =
                     new CreateSliceAction( (String) thisResource.getID(),
                             sliceCreationSpecifier.getTerminationTime(),
                             system,
-                            /*sliceCreationSpecifier.getSliceKind()*/ null,
-                            DSpaceTools.buildSize( sliceCreationSpecifier.getTotalStorageSize() )
+                            sk,
+                            sliceCreationSpecifier.getTotalStorageSize().longValue()
                     );
 
             GridResourceModelHandler mh = new GridResourceModelHandler<Subspace, ExtSubspaceResourceHome, SubspaceResource>
                     (Subspace.class, (ExtSubspaceResourceHome) system.getHome( Subspace.class ));
 
-            Slice ns = (Slice) mh.callNewModelAction( system, csa, sp );
+            Slice ns = (Slice) mh.callModelAction( em, system, csa, sp );
 
             csa.getPostponedActions().call( );
 

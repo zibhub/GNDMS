@@ -13,7 +13,7 @@ import org.globus.wsrf.InvalidResourceKeyException;
 import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.ResourceKey;
 import org.jetbrains.annotations.NotNull;
-import types.StorageSizeT;
+import org.apache.axis.types.PositiveInteger;
 
 
 /**
@@ -40,18 +40,18 @@ public class SubspaceResource extends SubspaceResourceBase
 
 
 	@Override
-	public void setAvailableStorageSize(final StorageSizeT availableStorageSize)
+	public void setAvailableStorageSize(final PositiveInteger availableStorageSize)
 		  throws ResourceException {
 		Subspace model = loadModelById(getID());
-		model.setAvailableSize(DSpaceTools.buildSize(super.getAvailableStorageSize()));
+		model.setAvailableSize( super.getAvailableStorageSize().longValue( ) );
 		mH.mergeModel(null, model);
 	}
 
 
 	@Override
-	public void setTotalStorageSize(final StorageSizeT totalStorageSize) throws ResourceException {
+	public void setTotalStorageSize(final PositiveInteger totalStorageSize) throws ResourceException {
 		Subspace model = loadModelById(getID());
-		model.setTotalSize(DSpaceTools.buildSize(super.getTotalStorageSize()));
+		model.setTotalSize( super.getTotalStorageSize().longValue() );
 		mH.mergeModel(null, model);
 	}
 
@@ -76,8 +76,8 @@ public class SubspaceResource extends SubspaceResourceBase
             final @NotNull SubspaceResourceProperties bean, final @NotNull Subspace model) 
             throws ResourceException {
         // set resource properties from model
-        bean.setAvailableStorageSize(DSpaceTools.buildSizeT(model.getAvailableSize()));
-        bean.setTotalStorageSize(DSpaceTools.buildSizeT(model.getTotalSize()));
+        bean.setAvailableStorageSize( (PositiveInteger) PositiveInteger.valueOf( model.getAvailableSize() ) );
+        bean.setTotalStorageSize( (PositiveInteger) PositiveInteger.valueOf( model.getTotalSize() ) );
 
         try {
             final DSpaceReference dSpaceReference =

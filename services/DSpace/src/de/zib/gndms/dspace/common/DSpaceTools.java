@@ -8,13 +8,11 @@ import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.dspace.DSpaceRef;
-import de.zib.gndms.model.dspace.StorageSize;
 import org.apache.axis.types.PositiveInteger;
 import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.ResourceHome;
 import org.globus.wsrf.ResourceKey;
 import org.jetbrains.annotations.NotNull;
-import types.StorageSizeT;
 
 /**
  * ThingAMagic.
@@ -25,7 +23,8 @@ import types.StorageSizeT;
  *          User: stepn Date: 27.07.2008 Time: 19:18:59
  */
 public class DSpaceTools {
-	public static StorageSizeT buildSizeT(StorageSize size) {
+    /*
+    public static StorageSizeT buildSizeT(StorageSize size) {
 		return new StorageSizeT(size.getUnit(), new PositiveInteger(Long.toString(size.getAmount())));
 	}
 
@@ -36,6 +35,7 @@ public class DSpaceTools {
 		value.setAmount(Long.parseLong(sizeT.getStorageSizeValue().toString()));
 		return value;
 	}
+	*/
 
 
 	public static DSpaceReference dSpaceRefsAsReference(final DSpaceRef vep, GNDMSystem sysParam)
