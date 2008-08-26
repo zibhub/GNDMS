@@ -75,7 +75,7 @@ Copyright 2003,2004 BEA Systems Inc. and IBM Corporation and Microsoft Corporati
   <xs:element name="MessageID" type="wsa:AttributedURI"/>
   <xs:element name="RelatesTo" type="wsa:Relationship"/>
   <xs:element name="To" type="wsa:AttributedURI"/>
-  <xs:element name="Action" type="wsa:AttributedURI"/>
+  <xs:element name="de.zib.gndms.logic.action.action.Action" type="wsa:AttributedURI"/>
   <xs:element name="From" type="wsa:EndpointReferenceType"/>
   <xs:element name="ReplyTo" type="wsa:EndpointReferenceType"/>
   <xs:element name="FaultTo" type="wsa:EndpointReferenceType"/>
@@ -109,7 +109,7 @@ Copyright 2003,2004 BEA Systems Inc. and IBM Corporation and Microsoft Corporati
       <xs:enumeration value="wsa:EndpointUnavailable"/>
     </xs:restriction>
   </xs:simpleType>
-  <xs:attribute name="Action" type="xs:anyURI"/>
+  <xs:attribute name="de.zib.gndms.logic.action.action.Action" type="xs:anyURI"/>
   <!-- Common declarations and definitions -->
   <xs:complexType name="AttributedQName">
     <xs:simpleContent>

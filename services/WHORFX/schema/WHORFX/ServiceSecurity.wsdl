@@ -80,16 +80,16 @@
         wsrp:ResourceProperties="tns:ServiceSecurityResourceProperties">
         <operation name="getServiceSecurityMetadata">
             <input message="tns:GetServiceSecurityMetadataRequest"
-                wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest"/>
+                wsa:de.zib.gndms.action.Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest"/>
             <output message="tns:GetServiceSecurityMetadataResponse"
-                wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataResponse"
+                wsa:de.zib.gndms.action.Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataResponse"
             />
         </operation>
         <operation name="GetResourceProperty">
             <input name="GetResourcePropertyRequest" message="wsrpw:GetResourcePropertyRequest"
-                wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetResourceProperty"/>
+                wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetResourceProperty"/>
             <output name="GetResourcePropertyResponse" message="wsrpw:GetResourcePropertyResponse"
-                wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetResourcePropertyResponse"/>
+                wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetResourcePropertyResponse"/>
             <fault name="InvalidResourcePropertyQNameFault"
                 message="wsrpw:InvalidResourcePropertyQNameFault"/>
             <fault name="ResourceUnknownFault" message="wsrpw:ResourceUnknownFault"/>
@@ -97,10 +97,10 @@
         <operation name="GetMultipleResourceProperties">
             <input name="GetMultipleResourcePropertiesRequest"
                 message="wsrpw:GetMultipleResourcePropertiesRequest"
-                wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetMultipleResourceProperties"/>
+                wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetMultipleResourceProperties"/>
             <output name="GetMultipleResourcePropertiesResponse"
                 message="wsrpw:GetMultipleResourcePropertiesResponse"
-                wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetMultipleResourceProperties"/>
+                wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetMultipleResourceProperties"/>
             <fault name="InvalidResourcePropertyQNameFault"
                 message="wsrpw:InvalidResourcePropertyQNameFault"/>
             <fault name="ResourceUnknownFault" message="wsrpw:ResourceUnknownFault"/>
@@ -108,10 +108,10 @@
         <operation name="QueryResourceProperties">
             <input name="QueryResourcePropertiesRequest"
                 message="wsrpw:QueryResourcePropertiesRequest"
-                wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/QueryResourceProperties"/>
+                wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/QueryResourceProperties"/>
             <output name="QueryResourcePropertiesResponse"
                 message="wsrpw:QueryResourcePropertiesResponse"
-                wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/QueryResourcePropertiesResponse"/>
+                wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/QueryResourcePropertiesResponse"/>
             <fault name="ResourceUnknownFault" message="wsrpw:ResourceUnknownFault"/>
             <fault name="InvalidResourcePropertyQNameFault"
                 message="wsrpw:InvalidResourcePropertyQNameFault"/>
