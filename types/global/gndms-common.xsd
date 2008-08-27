@@ -111,7 +111,7 @@
 <simpleType name="GridSiteT">
     <restriction base="normalizedString">
         <maxLength value="64" />
-        <pattern value="([-a-zA-Z0-9_]+.)*[-a-zA-Z0-9_]+" />
+        <pattern value="([\-a-zA-Z0-9_]+\.)*[\-a-zA-Z0-9_]+" />
     </restriction>
 </simpleType>
 
@@ -126,7 +126,7 @@
 		 properly escape filenames in staging scripts
 	-->
 	<restriction base="normalizedString">
-		<pattern value="[a-zA-Z0-9][-a-zA-Z0-9_]*(.[-a-zA-Z0-9_]+)*" />
+		<pattern value="[a-zA-Z0-9][\-a-zA-Z0-9_]*(\.[\-a-zA-Z0-9_]+)*" />
 	</restriction>
 </simpleType>
 
