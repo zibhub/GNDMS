@@ -178,10 +178,10 @@
 
 <element name="ReplicaSlice" type="impl:ReplicaSliceT" />
 
-   <complexType name="ReplicaSlicesT">
-	<sequence>
+<complexType name="ReplicaSlicesT">
+    <sequence>
         <element ref="impl:ReplicaSlice" minOccurs="0" maxOccurs="unbounded"/>
-	</sequence>
+    </sequence>
 </complexType>
 
 <element name="ReplicaSlices" type="impl:ReplicaSlicesT" />
