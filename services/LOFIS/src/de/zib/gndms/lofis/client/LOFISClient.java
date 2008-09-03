@@ -97,16 +97,16 @@ public class LOFISClient extends LOFISClientBase implements LOFISI {
     }
   }
 
-  public de.zib.gndms.lofis.lofiset.stubs.types.LofiSetReference createLofiSet(types.ReplicaSlicesT[] replicaSlices,types.SliceReference[] sliceReference,types.ContextT context) throws RemoteException, de.zib.gndms.lofis.stubs.types.ConflictingDestinationsInMap, de.zib.gndms.lofis.stubs.types.MissingSourceFiles, de.zib.gndms.lofis.stubs.types.ConflictResolutionFailed, de.zib.gndms.lofis.stubs.types.UnsupportedOrInvalidSlice {
+  public de.zib.gndms.lofis.lofiset.stubs.types.LofiSetReference createLofiSet(types.ReplicaSlicesT existingReplicaSlices,types.SliceReference[] storageSlices,types.ContextT context) throws RemoteException, de.zib.gndms.lofis.stubs.types.MissingSourceFiles, de.zib.gndms.lofis.stubs.types.UnsupportedOrInvalidSlice {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"createLofiSet");
     de.zib.gndms.lofis.stubs.CreateLofiSetRequest params = new de.zib.gndms.lofis.stubs.CreateLofiSetRequest();
-    de.zib.gndms.lofis.stubs.CreateLofiSetRequestReplicaSlices replicaSlicesContainer = new de.zib.gndms.lofis.stubs.CreateLofiSetRequestReplicaSlices();
-    replicaSlicesContainer.setReplicaSlices(replicaSlices);
-    params.setReplicaSlices(replicaSlicesContainer);
-    de.zib.gndms.lofis.stubs.CreateLofiSetRequestSliceReference sliceReferenceContainer = new de.zib.gndms.lofis.stubs.CreateLofiSetRequestSliceReference();
-    sliceReferenceContainer.setSliceReference(sliceReference);
-    params.setSliceReference(sliceReferenceContainer);
+    de.zib.gndms.lofis.stubs.CreateLofiSetRequestExistingReplicaSlices existingReplicaSlicesContainer = new de.zib.gndms.lofis.stubs.CreateLofiSetRequestExistingReplicaSlices();
+    existingReplicaSlicesContainer.setReplicaSlices(existingReplicaSlices);
+    params.setExistingReplicaSlices(existingReplicaSlicesContainer);
+    de.zib.gndms.lofis.stubs.CreateLofiSetRequestStorageSlices storageSlicesContainer = new de.zib.gndms.lofis.stubs.CreateLofiSetRequestStorageSlices();
+    storageSlicesContainer.setSliceReference(storageSlices);
+    params.setStorageSlices(storageSlicesContainer);
     de.zib.gndms.lofis.stubs.CreateLofiSetRequestContext contextContainer = new de.zib.gndms.lofis.stubs.CreateLofiSetRequestContext();
     contextContainer.setContext(context);
     params.setContext(contextContainer);
@@ -126,6 +126,70 @@ public class LOFISClient extends LOFISClientBase implements LOFISI {
     contextContainer.setContext(context);
     params.setContext(contextContainer);
     de.zib.gndms.lofis.stubs.MergeLofiSetsResponse boxedResult = portType.mergeLofiSets(params);
+    EndpointReferenceType ref = boxedResult.getLofiSetReference().getEndpointReference();
+    return new de.zib.gndms.lofis.lofiset.client.LofiSetClient(ref);
+    }
+  }
+
+  public java.lang.Object callMaintenanceAction(java.lang.String action,types.ContextT options) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"callMaintenanceAction");
+    de.zib.gndms.lofis.stubs.CallMaintenanceActionRequest params = new de.zib.gndms.lofis.stubs.CallMaintenanceActionRequest();
+    params.setAction(action);
+    de.zib.gndms.lofis.stubs.CallMaintenanceActionRequestOptions optionsContainer = new de.zib.gndms.lofis.stubs.CallMaintenanceActionRequestOptions();
+    optionsContainer.setContext(options);
+    params.setOptions(optionsContainer);
+    de.zib.gndms.lofis.stubs.CallMaintenanceActionResponse boxedResult = portType.callMaintenanceAction(params);
+    return boxedResult.getResponse();
+    }
+  }
+
+  public de.zib.gndms.lofis.lofiset.client.LofiSetClient createOrRetrieveLofiSet(java.lang.Object cacheKey,types.ReplicaSlicesT existingReplicaSlices,types.SliceReference[] storageSlices,types.ContextT context) throws RemoteException, org.apache.axis.types.URI.MalformedURIException, de.zib.gndms.lofis.stubs.types.UnknownOrInvalidCacheKey, de.zib.gndms.lofis.stubs.types.MissingSourceFiles, de.zib.gndms.lofis.stubs.types.UnsupportedOrInvalidSlice {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"createOrRetrieveLofiSet");
+    de.zib.gndms.lofis.stubs.CreateOrRetrieveLofiSetRequest params = new de.zib.gndms.lofis.stubs.CreateOrRetrieveLofiSetRequest();
+    params.setCacheKey(cacheKey);
+    de.zib.gndms.lofis.stubs.CreateOrRetrieveLofiSetRequestExistingReplicaSlices existingReplicaSlicesContainer = new de.zib.gndms.lofis.stubs.CreateOrRetrieveLofiSetRequestExistingReplicaSlices();
+    existingReplicaSlicesContainer.setReplicaSlices(existingReplicaSlices);
+    params.setExistingReplicaSlices(existingReplicaSlicesContainer);
+    de.zib.gndms.lofis.stubs.CreateOrRetrieveLofiSetRequestStorageSlices storageSlicesContainer = new de.zib.gndms.lofis.stubs.CreateOrRetrieveLofiSetRequestStorageSlices();
+    storageSlicesContainer.setSliceReference(storageSlices);
+    params.setStorageSlices(storageSlicesContainer);
+    de.zib.gndms.lofis.stubs.CreateOrRetrieveLofiSetRequestContext contextContainer = new de.zib.gndms.lofis.stubs.CreateOrRetrieveLofiSetRequestContext();
+    contextContainer.setContext(context);
+    params.setContext(contextContainer);
+    de.zib.gndms.lofis.stubs.CreateOrRetrieveLofiSetResponse boxedResult = portType.createOrRetrieveLofiSet(params);
+    EndpointReferenceType ref = boxedResult.getLofiSetReference().getEndpointReference();
+    return new de.zib.gndms.lofis.lofiset.client.LofiSetClient(ref);
+    }
+  }
+
+  public de.zib.gndms.lofis.lofiset.client.LofiSetClient retrieveLofiSet(java.lang.Object cacheKey,types.ContextT context) throws RemoteException, org.apache.axis.types.URI.MalformedURIException, de.zib.gndms.lofis.stubs.types.UnknownOrInvalidCacheKey {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"retrieveLofiSet");
+    de.zib.gndms.lofis.stubs.RetrieveLofiSetRequest params = new de.zib.gndms.lofis.stubs.RetrieveLofiSetRequest();
+    params.setCacheKey(cacheKey);
+    de.zib.gndms.lofis.stubs.RetrieveLofiSetRequestContext contextContainer = new de.zib.gndms.lofis.stubs.RetrieveLofiSetRequestContext();
+    contextContainer.setContext(context);
+    params.setContext(contextContainer);
+    de.zib.gndms.lofis.stubs.RetrieveLofiSetResponse boxedResult = portType.retrieveLofiSet(params);
+    EndpointReferenceType ref = boxedResult.getLofiSetReference().getEndpointReference();
+    return new de.zib.gndms.lofis.lofiset.client.LofiSetClient(ref);
+    }
+  }
+
+  public de.zib.gndms.lofis.lofiset.client.LofiSetClient mergeLofiSetsAndCacheNew(java.lang.Object cacheKey,de.zib.gndms.lofis.lofiset.stubs.types.LofiSetReference[] lofiSetRefs,types.ContextT context) throws RemoteException, org.apache.axis.types.URI.MalformedURIException, de.zib.gndms.lofis.stubs.types.UnknownOrInvalidCacheKey, de.zib.gndms.lofis.stubs.types.ConflictingLofiSetsInMerge {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"mergeLofiSetsAndCacheNew");
+    de.zib.gndms.lofis.stubs.MergeLofiSetsAndCacheNewRequest params = new de.zib.gndms.lofis.stubs.MergeLofiSetsAndCacheNewRequest();
+    params.setCacheKey(cacheKey);
+    de.zib.gndms.lofis.stubs.MergeLofiSetsAndCacheNewRequestLofiSetRefs lofiSetRefsContainer = new de.zib.gndms.lofis.stubs.MergeLofiSetsAndCacheNewRequestLofiSetRefs();
+    lofiSetRefsContainer.setLofiSetReference(lofiSetRefs);
+    params.setLofiSetRefs(lofiSetRefsContainer);
+    de.zib.gndms.lofis.stubs.MergeLofiSetsAndCacheNewRequestContext contextContainer = new de.zib.gndms.lofis.stubs.MergeLofiSetsAndCacheNewRequestContext();
+    contextContainer.setContext(context);
+    params.setContext(contextContainer);
+    de.zib.gndms.lofis.stubs.MergeLofiSetsAndCacheNewResponse boxedResult = portType.mergeLofiSetsAndCacheNew(params);
     EndpointReferenceType ref = boxedResult.getLofiSetReference().getEndpointReference();
     return new de.zib.gndms.lofis.lofiset.client.LofiSetClient(ref);
     }

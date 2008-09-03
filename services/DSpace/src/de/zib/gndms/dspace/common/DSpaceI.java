@@ -12,6 +12,14 @@ import java.rmi.RemoteException;
  */
 public interface DSpaceI {
 
+  /**
+   * Run maintenance actions
+   *
+   * @param action
+   * @param options
+   */
+  public java.lang.Object callMaintenanceAction(java.lang.String action,types.ContextT options) throws RemoteException ;
+
   public org.oasis.wsrf.properties.GetMultipleResourcePropertiesResponse getMultipleResourceProperties(org.oasis.wsrf.properties.GetMultipleResourceProperties_Element params) throws RemoteException ;
 
   public org.oasis.wsrf.properties.GetResourcePropertyResponse getResourceProperty(javax.xml.namespace.QName params) throws RemoteException ;

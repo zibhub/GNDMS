@@ -83,7 +83,7 @@ public class LofiSetAuthorization implements PDP {
 		
 	}
 					
-	public static void authorizeGrantReplicaSlices() throws RemoteException {
+	public static void authorizeGrantStorageSlices() throws RemoteException {
 		
 		
 	}
@@ -94,11 +94,6 @@ public class LofiSetAuthorization implements PDP {
 	}
 					
 	public static void authorizeRegisterReplicaSlices() throws RemoteException {
-		
-		
-	}
-					
-	public static void authorizeReclaimReplicaSlices() throws RemoteException {
 		
 		
 	}
@@ -171,9 +166,9 @@ public class LofiSetAuthorization implements PDP {
 				e.printStackTrace();
 				return false;
 			}
-		} else if(operation.getLocalPart().equals("grantReplicaSlices")){
+		} else if(operation.getLocalPart().equals("grantStorageSlices")){
 			try{
-				authorizeGrantReplicaSlices();
+				authorizeGrantStorageSlices();
 				return true;
 			} catch (Exception e){
 				e.printStackTrace();
@@ -190,14 +185,6 @@ public class LofiSetAuthorization implements PDP {
 		} else if(operation.getLocalPart().equals("registerReplicaSlices")){
 			try{
 				authorizeRegisterReplicaSlices();
-				return true;
-			} catch (Exception e){
-				e.printStackTrace();
-				return false;
-			}
-		} else if(operation.getLocalPart().equals("reclaimReplicaSlices")){
-			try{
-				authorizeReclaimReplicaSlices();
 				return true;
 			} catch (Exception e){
 				e.printStackTrace();

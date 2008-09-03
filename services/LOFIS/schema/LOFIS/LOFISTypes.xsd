@@ -39,5 +39,11 @@
       <extension base="wsrbf:BaseFaultType" />
     </complexContent>
   </complexType>
+  <element name="UnknownOrInvalidCacheKey" type="tns:UnknownOrInvalidCacheKey" />
+  <complexType name="UnknownOrInvalidCacheKey">
+    <complexContent>
+      <extension base="wsrbf:BaseFaultType" />
+    </complexContent>
+  </complexType>
 </schema>
 

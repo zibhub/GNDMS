@@ -13,6 +13,14 @@ import java.rmi.RemoteException;
 public interface WHORFXI {
 
   /**
+   * Run maintenance actions
+   *
+   * @param action
+   * @param options
+   */
+  public java.lang.Object callMaintenanceAction(java.lang.String action,types.ContextT options) throws RemoteException ;
+
+  /**
    * Lookop ORF by Type
    *
    * @param orfType
