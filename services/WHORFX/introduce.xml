@@ -15,6 +15,7 @@
    <ns2:SchemaElement type="AvailableStorageSize" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="Context" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="File" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="Files" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="Lofi" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="LofiMap" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="LofiSeq" xsi:type="ns2:SchemaElementType"/>
@@ -142,6 +143,14 @@
      <ns4:Output qName="void" description="" isArray="false"/>
      <ns4:Exceptions/>
     </ns4:Method>
+    <ns4:Method description="Run maintenance actions" isImported="false" isProvided="false" name="callMaintenanceAction" xsi:type="ns4:MethodType">
+     <ns4:Inputs>
+      <ns4:Input qName="xsd:string" description="" isArray="false" name="action" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+      <ns4:Input qName="ns9:Context" description="" isArray="false" name="options" xmlns:ns9="http://gndms.zib.de/common/types"/>
+     </ns4:Inputs>
+     <ns4:Output qName="xsd:anyType" description="" isArray="false" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+     <ns4:Exceptions/>
+    </ns4:Method>
    </ns4:Methods>
    <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
@@ -151,11 +160,11 @@
    </ns3:ResourceFrameworkOptions>
   </ns3:Service>
  </ns3:Services>
- <ns9:Extensions xsi:type="ns9:ExtensionsType" xmlns:ns9="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
- <ns10:ServiceProperties xmlns:ns10="gme://gov.nih.nci.cagrid.introduce/1/Property">
-  <ns10:Property description="Properties file containing type mappings. For each key ending in &quot;.orfType&quot; its value is mapped onto the value of the property stored unter this keys names appended with &quot;.port&quot;" isFromETC="true" key="orfMappingFile" value="orfMapping.properties"/>
-  <ns10:Property description="Minimum interval between actual executions of updateMapping(). Requests received in-between simply do nothing." isFromETC="false" key="minimumUpdateInterval" value="10000"/>
-  <ns10:Property description="" isFromETC="false" key="gridJNDIEnv" value="TARGET_GRID_env"/>
-  <ns10:Property description="Name of this grid" isFromETC="false" key="gridName" value="TARGET_GRID"/>
- </ns10:ServiceProperties>
+ <ns10:Extensions xsi:type="ns10:ExtensionsType" xmlns:ns10="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+ <ns11:ServiceProperties xmlns:ns11="gme://gov.nih.nci.cagrid.introduce/1/Property">
+  <ns11:Property description="Properties file containing type mappings. For each key ending in &quot;.orfType&quot; its value is mapped onto the value of the property stored unter this keys names appended with &quot;.port&quot;" isFromETC="true" key="orfMappingFile" value="orfMapping.properties"/>
+  <ns11:Property description="Minimum interval between actual executions of updateMapping(). Requests received in-between simply do nothing." isFromETC="false" key="minimumUpdateInterval" value="10000"/>
+  <ns11:Property description="" isFromETC="false" key="gridJNDIEnv" value="TARGET_GRID_env"/>
+  <ns11:Property description="Name of this grid" isFromETC="false" key="gridName" value="TARGET_GRID"/>
+ </ns11:ServiceProperties>
 </ns1:ServiceDescription>

@@ -164,18 +164,6 @@
           <name>etcDirectoryPath</name>
           <value>ETC-PATH</value>
         </parameter>
-        <parameter>
-          <name>gridJNDIEnv</name>
-          <value>@gridJNDIEnv@</value>
-        </parameter>
-        <parameter>
-          <name>gridName</name>
-          <value>@gridName@</value>
-        </parameter>
-        <parameter>
-          <name>gridPath</name>
-          <value>ETC-PATH/@gridPath@</value>
-        </parameter>
       </resourceParams>
     </resource>
     <resource name="home" type="de.zib.gndms.GORFX.service.globus.resource.GORFXResourceHome">

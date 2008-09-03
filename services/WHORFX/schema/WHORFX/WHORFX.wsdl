@@ -51,6 +51,27 @@
           <sequence />
         </complexType>
       </element>
+      <element name="CallMaintenanceActionRequest">
+        <complexType>
+          <sequence>
+            <element name="action" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <element name="options">
+              <complexType>
+                <sequence>
+                  <element ref="ns1:Context" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CallMaintenanceActionResponse">
+        <complexType>
+          <sequence>
+            <element name="response" type="xs:anyType" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
       <element name="WHORFXResourceProperties">
         <complexType>
           <sequence />
@@ -71,6 +92,12 @@
   <message name="UpdateMappingsResponse">
     <part name="parameters" element="tns:UpdateMappingsResponse" />
   </message>
+  <message name="CallMaintenanceActionRequest">
+    <part name="parameters" element="tns:CallMaintenanceActionRequest" />
+  </message>
+  <message name="CallMaintenanceActionResponse">
+    <part name="parameters" element="tns:CallMaintenanceActionResponse" />
+  </message>
   <message name="UnknownORFTypeFaultMessage">
     <part name="fault" element="ns6:UnknownORFType" />
   </message>
@@ -88,6 +115,10 @@
     <operation name="updateMappings">
       <input message="tns:UpdateMappingsRequest" wsa:Action="http://gndms.zib.de/WHORFX/UpdateMappingsRequest" />
       <output message="tns:UpdateMappingsResponse" wsa:Action="http://gndms.zib.de/WHORFX/UpdateMappingsResponse" />
+    </operation>
+    <operation name="callMaintenanceAction">
+      <input message="tns:CallMaintenanceActionRequest" wsa:Action="http://gndms.zib.de/WHORFX/CallMaintenanceActionRequest" />
+      <output message="tns:CallMaintenanceActionResponse" wsa:Action="http://gndms.zib.de/WHORFX/CallMaintenanceActionResponse" />
     </operation>
     <operation name="getServiceSecurityMetadata">
       <input message="wns0:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />

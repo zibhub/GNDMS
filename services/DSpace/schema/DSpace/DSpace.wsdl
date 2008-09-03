@@ -101,6 +101,27 @@
           </sequence>
         </complexType>
       </element>
+      <element name="CallMaintenanceActionRequest">
+        <complexType>
+          <sequence>
+            <element name="action" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <element name="options">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Context" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CallMaintenanceActionResponse">
+        <complexType>
+          <sequence>
+            <element name="response" type="xs:anyType" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
       <element name="DSpaceResourceProperties">
         <complexType>
           <sequence />
@@ -132,6 +153,12 @@
   </message>
   <message name="CreateSliceInSubspaceResponse">
     <part name="parameters" element="tns:CreateSliceInSubspaceResponse" />
+  </message>
+  <message name="CallMaintenanceActionRequest">
+    <part name="parameters" element="tns:CallMaintenanceActionRequest" />
+  </message>
+  <message name="CallMaintenanceActionResponse">
+    <part name="parameters" element="tns:CallMaintenanceActionResponse" />
   </message>
   <message name="UnknownSubspaceFaultMessage">
     <part name="fault" element="ns7:UnknownSubspace" />
@@ -171,6 +198,10 @@
       <fault name="UnknownOrInvalidSliceKind" message="tns:UnknownOrInvalidSliceKindFaultMessage" wsa:Action="http://dspace.gndms.zib.de/DSpace/UnknownOrInvalidSliceKindFaultMessage" />
       <fault name="UnknownSubspace" message="tns:UnknownSubspaceFaultMessage" wsa:Action="http://dspace.gndms.zib.de/DSpace/UnknownSubspaceFaultMessage" />
       <fault name="InternalFailure" message="tns:InternalFailureFaultMessage" wsa:Action="http://dspace.gndms.zib.de/DSpace/InternalFailureFaultMessage" />
+    </operation>
+    <operation name="callMaintenanceAction">
+      <input message="tns:CallMaintenanceActionRequest" wsa:Action="http://dspace.gndms.zib.de/DSpace/CallMaintenanceActionRequest" />
+      <output message="tns:CallMaintenanceActionResponse" wsa:Action="http://dspace.gndms.zib.de/DSpace/CallMaintenanceActionResponse" />
     </operation>
     <wsdl:operation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="GetMultipleResourceProperties">
       <wsdl:input name="GetMultipleResourcePropertiesRequest" message="wsrpw:GetMultipleResourcePropertiesRequest" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetMultipleResourceProperties" />

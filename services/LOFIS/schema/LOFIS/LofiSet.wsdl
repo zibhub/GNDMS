@@ -25,10 +25,10 @@
       <import namespace="http://dspace.gndms.zib.de/DSpace/Slice/types" schemaLocation="./../DSpace/SliceTypes.xsd" />
       <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="./../wsrf/faults/WS-BaseFaults.xsd" />
       <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd" schemaLocation="./../wsrf/lifetime/WS-ResourceLifetime.xsd" />
-      <element name="GrantReplicaSlicesRequest">
+      <element name="GrantStorageSlicesRequest">
         <complexType>
           <sequence>
-            <element name="sliceReference">
+            <element name="slices">
               <complexType>
                 <sequence>
                   <element ref="ns0:SliceReference" minOccurs="1" maxOccurs="unbounded" />
@@ -38,7 +38,7 @@
           </sequence>
         </complexType>
       </element>
-      <element name="GrantReplicaSlicesResponse">
+      <element name="GrantStorageSlicesResponse">
         <complexType>
           <sequence />
         </complexType>
@@ -66,10 +66,10 @@
       <element name="RegisterReplicaSlicesRequest">
         <complexType>
           <sequence>
-            <element name="replicaSlices">
+            <element name="existingReplicaSlices">
               <complexType>
                 <sequence>
-                  <element ref="ns3:ReplicaSlices" minOccurs="1" maxOccurs="unbounded" />
+                  <element ref="ns3:ReplicaSlices" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -77,24 +77,6 @@
         </complexType>
       </element>
       <element name="RegisterReplicaSlicesResponse">
-        <complexType>
-          <sequence />
-        </complexType>
-      </element>
-      <element name="ReclaimReplicaSlicesRequest">
-        <complexType>
-          <sequence>
-            <element name="sliceReference">
-              <complexType>
-                <sequence>
-                  <element ref="ns0:SliceReference" minOccurs="1" maxOccurs="unbounded" />
-                </sequence>
-              </complexType>
-            </element>
-          </sequence>
-        </complexType>
-      </element>
-      <element name="ReclaimReplicaSlicesResponse">
         <complexType>
           <sequence />
         </complexType>
@@ -131,11 +113,11 @@
     </schema>
   </types>
   <!--  place service messages here -->
-  <message name="GrantReplicaSlicesRequest">
-    <part name="parameters" element="tns:GrantReplicaSlicesRequest" />
+  <message name="GrantStorageSlicesRequest">
+    <part name="parameters" element="tns:GrantStorageSlicesRequest" />
   </message>
-  <message name="GrantReplicaSlicesResponse">
-    <part name="parameters" element="tns:GrantReplicaSlicesResponse" />
+  <message name="GrantStorageSlicesResponse">
+    <part name="parameters" element="tns:GrantStorageSlicesResponse" />
   </message>
   <message name="GetSubLofiSetRequest">
     <part name="parameters" element="tns:GetSubLofiSetRequest" />
@@ -149,12 +131,6 @@
   <message name="RegisterReplicaSlicesResponse">
     <part name="parameters" element="tns:RegisterReplicaSlicesResponse" />
   </message>
-  <message name="ReclaimReplicaSlicesRequest">
-    <part name="parameters" element="tns:ReclaimReplicaSlicesRequest" />
-  </message>
-  <message name="ReclaimReplicaSlicesResponse">
-    <part name="parameters" element="tns:ReclaimReplicaSlicesResponse" />
-  </message>
   <message name="GetReplicaSlicesRequest">
     <part name="parameters" element="tns:GetReplicaSlicesRequest" />
   </message>
@@ -167,45 +143,27 @@
   <message name="MissingSourceFilesFaultMessage">
     <part name="fault" element="ns7:MissingSourceFiles" />
   </message>
-  <message name="ConflictingDestinationsInMapFaultMessage">
-    <part name="fault" element="ns7:ConflictingDestinationsInMap" />
-  </message>
-  <message name="ConflictResolutionFailedFaultMessage">
-    <part name="fault" element="ns7:ConflictResolutionFailed" />
-  </message>
-  <message name="UnavailableSliceFaultMessage">
-    <part name="fault" element="ns9:UnavailableSlice" />
-  </message>
   <!--============================================================
 
                        P O R T T Y P E
                       
   ============================================================-->
   <portType name="LofiSetPortType" wsrp:ResourceProperties="tns:LofiSetResourceProperties">
-    <operation name="GrantReplicaSlices">
-      <input message="tns:GrantReplicaSlicesRequest" wsa:Action="http://lofis.gndms.zib.de/LOFIS/LofiSet/GrantReplicaSlicesRequest" />
-      <output message="tns:GrantReplicaSlicesResponse" wsa:Action="http://lofis.gndms.zib.de/LOFIS/LofiSet/GrantReplicaSlicesResponse" />
+    <operation name="GrantStorageSlices">
+      <input message="tns:GrantStorageSlicesRequest" wsa:Action="http://lofis.gndms.zib.de/LOFIS/LofiSet/GrantStorageSlicesRequest" />
+      <output message="tns:GrantStorageSlicesResponse" wsa:Action="http://lofis.gndms.zib.de/LOFIS/LofiSet/GrantStorageSlicesResponse" />
       <fault name="UnsupportedOrInvalidSlice" message="tns:UnsupportedOrInvalidSliceFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/LofiSet/UnsupportedOrInvalidSliceFaultMessage" />
     </operation>
     <operation name="GetSubLofiSet">
       <input message="tns:GetSubLofiSetRequest" wsa:Action="http://lofis.gndms.zib.de/LOFIS/LofiSet/GetSubLofiSetRequest" />
       <output message="tns:GetSubLofiSetResponse" wsa:Action="http://lofis.gndms.zib.de/LOFIS/LofiSet/GetSubLofiSetResponse" />
       <fault name="MissingSourceFiles" message="tns:MissingSourceFilesFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/LofiSet/MissingSourceFilesFaultMessage" />
-      <fault name="ConflictingDestinationsInMap" message="tns:ConflictingDestinationsInMapFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/LofiSet/ConflictingDestinationsInMapFaultMessage" />
     </operation>
     <operation name="RegisterReplicaSlices">
       <input message="tns:RegisterReplicaSlicesRequest" wsa:Action="http://lofis.gndms.zib.de/LOFIS/LofiSet/RegisterReplicaSlicesRequest" />
       <output message="tns:RegisterReplicaSlicesResponse" wsa:Action="http://lofis.gndms.zib.de/LOFIS/LofiSet/RegisterReplicaSlicesResponse" />
-      <fault name="ConflictResolutionFailed" message="tns:ConflictResolutionFailedFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/LofiSet/ConflictResolutionFailedFaultMessage" />
-      <fault name="ConflictingDestinationsInMap" message="tns:ConflictingDestinationsInMapFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/LofiSet/ConflictingDestinationsInMapFaultMessage" />
       <fault name="MissingSourceFiles" message="tns:MissingSourceFilesFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/LofiSet/MissingSourceFilesFaultMessage" />
       <fault name="UnsupportedOrInvalidSlice" message="tns:UnsupportedOrInvalidSliceFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/LofiSet/UnsupportedOrInvalidSliceFaultMessage" />
-    </operation>
-    <operation name="ReclaimReplicaSlices">
-      <input message="tns:ReclaimReplicaSlicesRequest" wsa:Action="http://lofis.gndms.zib.de/LOFIS/LofiSet/ReclaimReplicaSlicesRequest" />
-      <output message="tns:ReclaimReplicaSlicesResponse" wsa:Action="http://lofis.gndms.zib.de/LOFIS/LofiSet/ReclaimReplicaSlicesResponse" />
-      <fault name="UnsupportedOrInvalidSlice" message="tns:UnsupportedOrInvalidSliceFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/LofiSet/UnsupportedOrInvalidSliceFaultMessage" />
-      <fault name="UnavailableSlice" message="tns:UnavailableSliceFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/LofiSet/UnavailableSliceFaultMessage" />
     </operation>
     <operation name="GetReplicaSlices">
       <input message="tns:GetReplicaSlicesRequest" wsa:Action="http://lofis.gndms.zib.de/LOFIS/LofiSet/GetReplicaSlicesRequest" />

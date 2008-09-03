@@ -26,15 +26,39 @@ public class LOFISProviderImpl{
 	}
 	
 
-    public de.zib.gndms.lofis.stubs.CreateLofiSetResponse createLofiSet(de.zib.gndms.lofis.stubs.CreateLofiSetRequest params) throws RemoteException, de.zib.gndms.lofis.stubs.types.ConflictingDestinationsInMap, de.zib.gndms.lofis.stubs.types.MissingSourceFiles, de.zib.gndms.lofis.stubs.types.ConflictResolutionFailed, de.zib.gndms.lofis.stubs.types.UnsupportedOrInvalidSlice {
+    public de.zib.gndms.lofis.stubs.CreateLofiSetResponse createLofiSet(de.zib.gndms.lofis.stubs.CreateLofiSetRequest params) throws RemoteException, de.zib.gndms.lofis.stubs.types.MissingSourceFiles, de.zib.gndms.lofis.stubs.types.UnsupportedOrInvalidSlice {
     de.zib.gndms.lofis.stubs.CreateLofiSetResponse boxedResult = new de.zib.gndms.lofis.stubs.CreateLofiSetResponse();
-    boxedResult.setLofiSetReference(impl.createLofiSet(params.getReplicaSlices().getReplicaSlices(),params.getSliceReference().getSliceReference(),params.getContext().getContext()));
+    boxedResult.setLofiSetReference(impl.createLofiSet(params.getExistingReplicaSlices().getReplicaSlices(),params.getStorageSlices().getSliceReference(),params.getContext().getContext()));
     return boxedResult;
   }
 
     public de.zib.gndms.lofis.stubs.MergeLofiSetsResponse mergeLofiSets(de.zib.gndms.lofis.stubs.MergeLofiSetsRequest params) throws RemoteException, de.zib.gndms.lofis.stubs.types.ConflictingLofiSetsInMerge {
     de.zib.gndms.lofis.stubs.MergeLofiSetsResponse boxedResult = new de.zib.gndms.lofis.stubs.MergeLofiSetsResponse();
     boxedResult.setLofiSetReference(impl.mergeLofiSets(params.getLofiSetRefs().getLofiSetReference(),params.getContext().getContext()));
+    return boxedResult;
+  }
+
+    public de.zib.gndms.lofis.stubs.CallMaintenanceActionResponse callMaintenanceAction(de.zib.gndms.lofis.stubs.CallMaintenanceActionRequest params) throws RemoteException {
+    de.zib.gndms.lofis.stubs.CallMaintenanceActionResponse boxedResult = new de.zib.gndms.lofis.stubs.CallMaintenanceActionResponse();
+    boxedResult.setResponse(impl.callMaintenanceAction(params.getAction(),params.getOptions().getContext()));
+    return boxedResult;
+  }
+
+    public de.zib.gndms.lofis.stubs.CreateOrRetrieveLofiSetResponse createOrRetrieveLofiSet(de.zib.gndms.lofis.stubs.CreateOrRetrieveLofiSetRequest params) throws RemoteException, de.zib.gndms.lofis.stubs.types.UnknownOrInvalidCacheKey, de.zib.gndms.lofis.stubs.types.MissingSourceFiles, de.zib.gndms.lofis.stubs.types.UnsupportedOrInvalidSlice {
+    de.zib.gndms.lofis.stubs.CreateOrRetrieveLofiSetResponse boxedResult = new de.zib.gndms.lofis.stubs.CreateOrRetrieveLofiSetResponse();
+    boxedResult.setLofiSetReference(impl.createOrRetrieveLofiSet(params.getCacheKey(),params.getExistingReplicaSlices().getReplicaSlices(),params.getStorageSlices().getSliceReference(),params.getContext().getContext()));
+    return boxedResult;
+  }
+
+    public de.zib.gndms.lofis.stubs.RetrieveLofiSetResponse retrieveLofiSet(de.zib.gndms.lofis.stubs.RetrieveLofiSetRequest params) throws RemoteException, de.zib.gndms.lofis.stubs.types.UnknownOrInvalidCacheKey {
+    de.zib.gndms.lofis.stubs.RetrieveLofiSetResponse boxedResult = new de.zib.gndms.lofis.stubs.RetrieveLofiSetResponse();
+    boxedResult.setLofiSetReference(impl.retrieveLofiSet(params.getCacheKey(),params.getContext().getContext()));
+    return boxedResult;
+  }
+
+    public de.zib.gndms.lofis.stubs.MergeLofiSetsAndCacheNewResponse mergeLofiSetsAndCacheNew(de.zib.gndms.lofis.stubs.MergeLofiSetsAndCacheNewRequest params) throws RemoteException, de.zib.gndms.lofis.stubs.types.UnknownOrInvalidCacheKey, de.zib.gndms.lofis.stubs.types.ConflictingLofiSetsInMerge {
+    de.zib.gndms.lofis.stubs.MergeLofiSetsAndCacheNewResponse boxedResult = new de.zib.gndms.lofis.stubs.MergeLofiSetsAndCacheNewResponse();
+    boxedResult.setLofiSetReference(impl.mergeLofiSetsAndCacheNew(params.getCacheKey(),params.getLofiSetRefs().getLofiSetReference(),params.getContext().getContext()));
     return boxedResult;
   }
 

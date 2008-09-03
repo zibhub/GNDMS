@@ -3,16 +3,7 @@
   <ns2:Namespace location="./../wsrf/faults/WS-BaseFaults.xsd" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="BaseFault" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
-  <ns2:Namespace location="./gndms-c3grid.xsd" namespace="http://gndms.zib.de/c3grid/types" packageName="types" xsi:type="ns2:NamespaceType">
-   <ns2:SchemaElement type="DataFile" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="MetadataFile" xsi:type="ns2:SchemaElementType"/>
-  </ns2:Namespace>
-  <ns2:Namespace location="./../wsrf/lifetime/WS-ResourceLifetime.xsd" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd" packageName="org.oasis.wsrf.lifetime" xsi:type="ns2:NamespaceType">
-   <ns2:SchemaElement type="CurrentTime" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="TerminationNotification" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="TerminationTime" xsi:type="ns2:SchemaElementType"/>
-  </ns2:Namespace>
-  <ns2:Namespace location="./../LOFIS/LofiSetTypes.xsd" namespace="http://lofis.gndms.zib.de/LOFIS/LofiSet/types" packageName="types" xsi:type="ns2:NamespaceType">
+  <ns2:Namespace location="./LofiSetTypes.xsd" namespace="http://lofis.gndms.zib.de/LOFIS/LofiSet/types" packageName="types" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="LofiSetReference" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="UnavailableSlice" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
@@ -27,10 +18,28 @@
    <ns2:SchemaElement type="ReplyTo" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="To" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
+  <ns2:Namespace location="./SliceTypes.xsd" namespace="http://dspace.gndms.zib.de/DSpace/Slice/types" packageName="types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="SliceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./DSpaceTypes.xsd" namespace="http://dspace.gndms.zib.de/DSpace/types" packageName="types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="DSpaceReference" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="InternalFailure" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="UnknownSubspace" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./gndms-c3grid.xsd" namespace="http://gndms.zib.de/c3grid/types" packageName="types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="DataFile" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="MetadataFile" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./../wsrf/lifetime/WS-ResourceLifetime.xsd" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd" packageName="org.oasis.wsrf.lifetime" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="CurrentTime" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="TerminationNotification" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="TerminationTime" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
   <ns2:Namespace location="./gndms-common.xsd" namespace="http://gndms.zib.de/common/types" packageName="types" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="AvailableStorageSize" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="Context" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="File" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="Files" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="Lofi" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="LofiMap" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="LofiSeq" xsi:type="ns2:SchemaElementType"/>
@@ -49,14 +58,6 @@
    <ns2:SchemaElement type="TaskExecutionResults" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="TaskExecutionState" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="TotalStorageSize" xsi:type="ns2:SchemaElementType"/>
-  </ns2:Namespace>
-  <ns2:Namespace location="./../DSpace/SliceTypes.xsd" namespace="http://dspace.gndms.zib.de/DSpace/Slice/types" packageName="types" xsi:type="ns2:NamespaceType">
-   <ns2:SchemaElement type="SliceReference" xsi:type="ns2:SchemaElementType"/>
-  </ns2:Namespace>
-  <ns2:Namespace location="./../DSpace/DSpaceTypes.xsd" namespace="http://dspace.gndms.zib.de/DSpace/types" packageName="types" xsi:type="ns2:NamespaceType">
-   <ns2:SchemaElement type="DSpaceReference" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="InternalFailure" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="UnknownSubspace" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
   <ns2:Namespace namespace="http://www.w3.org/2001/XMLSchema" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="anySimpleType" xsi:type="ns2:SchemaElementType"/>
@@ -163,11 +164,11 @@
     </ns4:Method>
     <ns4:Method description="Create an empty offer request for the specified type" isImported="false" isProvided="false" name="CreateOfferRequest" xsi:type="ns4:MethodType">
      <ns4:Inputs>
-      <ns4:Input qName="xsd:anyURI" description="" isArray="false" name="offerTypeUri" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+      <ns4:Input qName="ns10:OfferRequestArguments" description="" isArray="false" name="offerRequestArguments" xmlns:ns10="http://gndms.zib.de/common/types"/>
      </ns4:Inputs>
-     <ns4:Output qName="ns10:EndpointReference" description="" isArray="false" xmlns:ns10="http://schemas.xmlsoap.org/ws/2004/03/addressing"/>
+     <ns4:Output qName="ns11:EndpointReference" description="" isArray="false" xmlns:ns11="http://schemas.xmlsoap.org/ws/2004/03/addressing"/>
      <ns4:Exceptions>
-      <ns4:Exception description="" name="UnsupportedOfferType" qname="ns11:UnsupportedOfferType" xmlns:ns11="http://GORFX.gndms.zib.de/GORFX/types"/>
+      <ns4:Exception description="" name="UnsupportedOfferType" qname="ns12:UnsupportedOfferType" xmlns:ns12="http://GORFX.gndms.zib.de/GORFX/types"/>
      </ns4:Exceptions>
     </ns4:Method>
     <ns4:Method description="Returns list of supported OfferType URIs" isImported="false" isProvided="false" name="GetSupportedOfferTypes" xsi:type="ns4:MethodType">
@@ -175,7 +176,16 @@
      <ns4:Output qName="xsd:anyURI" description="" isArray="true" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
      <ns4:Exceptions/>
     </ns4:Method>
+    <ns4:Method description="Run maintenance actions" isImported="false" isProvided="false" name="callMaintenanceAction" xsi:type="ns4:MethodType">
+     <ns4:Inputs>
+      <ns4:Input qName="xsd:string" description="" isArray="false" name="action" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+      <ns4:Input qName="ns13:Context" description="" isArray="false" name="options" xmlns:ns13="http://gndms.zib.de/common/types"/>
+     </ns4:Inputs>
+     <ns4:Output qName="xsd:anyType" description="" isArray="false" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+     <ns4:Exceptions/>
+    </ns4:Method>
    </ns4:Methods>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Main xsi:type="ns3:Main"/>
     <ns3:Singleton xsi:type="ns3:Singleton"/>
@@ -185,136 +195,125 @@
    </ns3:ResourceFrameworkOptions>
   </ns3:Service>
   <ns3:Service name="ORQ" namespace="http://GORFX.gndms.zib.de/GORFX/ORQ" packageName="de.zib.gndms.GORFX.ORQ" xsi:type="ns3:ServiceType">
-   <ns12:Methods xsi:type="ns12:MethodsType" xmlns:ns12="gme://gov.nih.nci.cagrid.introduce/1/Methods">
-    <ns12:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns12:MethodType">
-     <ns12:Output qName="ns13:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns13="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
-     <ns14:MethodSecurity xsi:type="ns14:MethodSecurity" xmlns:ns14="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns14:SecuritySetting xsi:type="ns14:SecuritySetting">None</ns14:SecuritySetting>
-      <ns14:MethodAuthorization xsi:type="ns14:MethodAuthorization">
-       <ns14:NoAuthorization xsi:type="ns14:NoAuthorization"/>
-      </ns14:MethodAuthorization>
-     </ns14:MethodSecurity>
-     <ns12:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
-     <ns12:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
-    </ns12:Method>
-    <ns12:Method isImported="true" isProvided="true" name="Destroy" xsi:type="ns12:MethodType">
-     <ns12:Output qName="void" isArray="false"/>
-     <ns12:ImportInformation fromIntroduce="false" inputMessage="ns15:DestroyRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" outputMessage="ns15:DestroyResponse" packageName="org.oasis.wsrf.lifetime" portTypeName="ImmediateResourceTermination" wsdlFile="../wsrf/lifetime/WS-ResourceLifetime.wsdl" xmlns:ns15="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl"/>
-     <ns12:ProviderInformation providerClass="DestroyProvider"/>
-    </ns12:Method>
-    <ns12:Method isImported="true" isProvided="true" name="SetTerminationTime" xsi:type="ns12:MethodType">
-     <ns12:Output qName="void" isArray="false"/>
-     <ns12:ImportInformation fromIntroduce="false" inputMessage="ns16:SetTerminationTimeRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" outputMessage="ns16:SetTerminationTimeResponse" packageName="org.oasis.wsrf.lifetime" portTypeName="ScheduledResourceTermination" wsdlFile="../wsrf/lifetime/WS-ResourceLifetime.wsdl" xmlns:ns16="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl"/>
-     <ns12:ProviderInformation providerClass="SetTerminationTimeProvider"/>
-    </ns12:Method>
-    <ns12:Method isImported="true" isProvided="true" name="Subscribe" xsi:type="ns12:MethodType">
-     <ns12:Output qName="void" isArray="false"/>
-     <ns12:ImportInformation fromIntroduce="false" inputMessage="ns17:SubscribeRequest" namespace="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" outputMessage="ns17:SubscribeResponse" packageName="org.oasis.wsn" portTypeName="NotificationProducer" wsdlFile="../wsrf/notification/WS-BaseN.wsdl" xmlns:ns17="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl"/>
-     <ns12:ProviderInformation providerClass="SubscribeProvider"/>
-    </ns12:Method>
-    <ns12:Method isImported="true" isProvided="true" name="GetMultipleResourceProperties" xsi:type="ns12:MethodType">
-     <ns12:Output qName="void" isArray="false"/>
-     <ns12:ImportInformation fromIntroduce="false" inputMessage="ns18:GetMultipleResourcePropertiesRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" outputMessage="ns18:GetMultipleResourcePropertiesResponse" packageName="org.oasis.wsrf.properties" portTypeName="GetMultipleResourceProperties" wsdlFile="../wsrf/properties/WS-ResourceProperties.wsdl" xmlns:ns18="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"/>
-     <ns12:ProviderInformation providerClass="GetMRPProvider"/>
-    </ns12:Method>
-    <ns12:Method isImported="true" isProvided="true" name="GetResourceProperty" xsi:type="ns12:MethodType">
-     <ns12:Output qName="void" isArray="false"/>
-     <ns12:ImportInformation fromIntroduce="false" inputMessage="ns19:GetResourcePropertyRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" outputMessage="ns19:GetResourcePropertyResponse" packageName="org.oasis.wsrf.properties" portTypeName="GetResourceProperty" wsdlFile="../wsrf/properties/WS-ResourceProperties.wsdl" xmlns:ns19="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"/>
-     <ns12:ProviderInformation providerClass="GetRPProvider"/>
-    </ns12:Method>
-    <ns12:Method isImported="true" isProvided="true" name="QueryResourceProperties" xsi:type="ns12:MethodType">
-     <ns12:Output qName="void" isArray="false"/>
-     <ns12:ImportInformation fromIntroduce="false" inputMessage="ns20:QueryResourcePropertiesRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" outputMessage="ns20:QueryResourcePropertiesResponse" packageName="org.oasis.wsrf.properties" portTypeName="QueryResourceProperties" wsdlFile="../wsrf/properties/WS-ResourceProperties.wsdl" xmlns:ns20="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"/>
-     <ns12:ProviderInformation providerClass="QueryRPProvider"/>
-    </ns12:Method>
-    <ns12:Method description="Create an offer for this ORQ under the assumption that the decision to accept the offer will be before latestDecisionAt" isImported="false" isProvided="false" name="GetOfferAndDestroyRequest" xsi:type="ns12:MethodType">
-     <ns12:Inputs>
-      <ns12:Input qName="ns21:OfferExecutionContract" description="" isArray="false" name="offerExecutionContract" xmlns:ns21="http://gndms.zib.de/common/types"/>
-      <ns12:Input qName="ns22:Context" description="" isArray="false" name="context" xmlns:ns22="http://gndms.zib.de/common/types"/>
-     </ns12:Inputs>
-     <ns12:Output qName="ns23:EndpointReference" description="" isArray="false" xmlns:ns23="http://schemas.xmlsoap.org/ws/2004/03/addressing"/>
-     <ns12:Exceptions>
-      <ns12:Exception description="" name="UnfullfillableRequest" qname="ns24:UnfullfillableRequest" xmlns:ns24="http://GORFX.gndms.zib.de/GORFX/ORQ/types"/>
-      <ns12:Exception description="" name="PermissionDenied" qname="ns25:PermissionDenied" xmlns:ns25="http://GORFX.gndms.zib.de/GORFX/ORQ/types"/>
-     </ns12:Exceptions>
-    </ns12:Method>
-    <ns12:Method description="Fake OfferRequest can be used for checking if the caller is allowed to use cached results generated by a previous offer or as an estimate for scheduling" isImported="false" isProvided="false" name="PermitEstimateAndDestroyRequest" xsi:type="ns12:MethodType">
-     <ns12:Inputs>
-      <ns12:Input qName="ns26:OfferExecutionContract" description="" isArray="false" name="offerExecutionContract" xmlns:ns26="http://gndms.zib.de/common/types"/>
-      <ns12:Input qName="ns27:Context" description="" isArray="false" name="context" xmlns:ns27="http://gndms.zib.de/common/types"/>
-     </ns12:Inputs>
-     <ns12:Output qName="ns28:OfferExecutionContract" description="" isArray="false" xmlns:ns28="http://gndms.zib.de/common/types"/>
-     <ns12:Exceptions>
-      <ns12:Exception description="" name="UnfullfillableRequest" qname="ns29:UnfullfillableRequest" xmlns:ns29="http://GORFX.gndms.zib.de/GORFX/ORQ/types"/>
-      <ns12:Exception description="" name="PermissionDenied" qname="ns30:PermissionDenied" xmlns:ns30="http://GORFX.gndms.zib.de/GORFX/ORQ/types"/>
-     </ns12:Exceptions>
-    </ns12:Method>
-   </ns12:Methods>
-   <ns31:ResourcePropertiesList xsi:type="ns31:ResourcePropertiesListType" xmlns:ns31="gme://gov.nih.nci.cagrid.introduce/1/Resources">
-    <ns31:ResourceProperty qName="ns32:CurrentTime" description="" populateFromFile="false" register="false" xsi:type="ns31:ResourcePropertyType" xmlns:ns32="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"/>
-    <ns31:ResourceProperty qName="ns33:TerminationTime" description="" populateFromFile="false" register="false" xsi:type="ns31:ResourcePropertyType" xmlns:ns33="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"/>
-    <ns31:ResourceProperty qName="ns34:OfferRequestArguments" description="" fileLocation="ORQ_offerRequestArguments.xml" populateFromFile="false" register="false" xsi:type="ns31:ResourcePropertyType" xmlns:ns34="http://gndms.zib.de/common/types"/>
-   </ns31:ResourcePropertiesList>
+   <ns14:Methods xsi:type="ns14:MethodsType" xmlns:ns14="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns14:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns14:MethodType">
+     <ns14:Output qName="ns15:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns15="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns16:MethodSecurity xsi:type="ns16:MethodSecurity" xmlns:ns16="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns16:SecuritySetting xsi:type="ns16:SecuritySetting">None</ns16:SecuritySetting>
+      <ns16:MethodAuthorization xsi:type="ns16:MethodAuthorization">
+       <ns16:NoAuthorization xsi:type="ns16:NoAuthorization"/>
+      </ns16:MethodAuthorization>
+     </ns16:MethodSecurity>
+     <ns14:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns14:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns14:Method>
+    <ns14:Method isImported="true" isProvided="true" name="Destroy" xsi:type="ns14:MethodType">
+     <ns14:Output qName="void" isArray="false"/>
+     <ns14:ImportInformation fromIntroduce="false" inputMessage="ns17:DestroyRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" outputMessage="ns17:DestroyResponse" packageName="org.oasis.wsrf.lifetime" portTypeName="ImmediateResourceTermination" wsdlFile="../wsrf/lifetime/WS-ResourceLifetime.wsdl" xmlns:ns17="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl"/>
+     <ns14:ProviderInformation providerClass="DestroyProvider"/>
+    </ns14:Method>
+    <ns14:Method isImported="true" isProvided="true" name="SetTerminationTime" xsi:type="ns14:MethodType">
+     <ns14:Output qName="void" isArray="false"/>
+     <ns14:ImportInformation fromIntroduce="false" inputMessage="ns18:SetTerminationTimeRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" outputMessage="ns18:SetTerminationTimeResponse" packageName="org.oasis.wsrf.lifetime" portTypeName="ScheduledResourceTermination" wsdlFile="../wsrf/lifetime/WS-ResourceLifetime.wsdl" xmlns:ns18="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl"/>
+     <ns14:ProviderInformation providerClass="SetTerminationTimeProvider"/>
+    </ns14:Method>
+    <ns14:Method isImported="true" isProvided="true" name="GetMultipleResourceProperties" xsi:type="ns14:MethodType">
+     <ns14:Output qName="void" isArray="false"/>
+     <ns14:ImportInformation fromIntroduce="false" inputMessage="ns19:GetMultipleResourcePropertiesRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" outputMessage="ns19:GetMultipleResourcePropertiesResponse" packageName="org.oasis.wsrf.properties" portTypeName="GetMultipleResourceProperties" wsdlFile="../wsrf/properties/WS-ResourceProperties.wsdl" xmlns:ns19="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"/>
+     <ns14:ProviderInformation providerClass="GetMRPProvider"/>
+    </ns14:Method>
+    <ns14:Method isImported="true" isProvided="true" name="GetResourceProperty" xsi:type="ns14:MethodType">
+     <ns14:Output qName="void" isArray="false"/>
+     <ns14:ImportInformation fromIntroduce="false" inputMessage="ns20:GetResourcePropertyRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" outputMessage="ns20:GetResourcePropertyResponse" packageName="org.oasis.wsrf.properties" portTypeName="GetResourceProperty" wsdlFile="../wsrf/properties/WS-ResourceProperties.wsdl" xmlns:ns20="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"/>
+     <ns14:ProviderInformation providerClass="GetRPProvider"/>
+    </ns14:Method>
+    <ns14:Method isImported="true" isProvided="true" name="QueryResourceProperties" xsi:type="ns14:MethodType">
+     <ns14:Output qName="void" isArray="false"/>
+     <ns14:ImportInformation fromIntroduce="false" inputMessage="ns21:QueryResourcePropertiesRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" outputMessage="ns21:QueryResourcePropertiesResponse" packageName="org.oasis.wsrf.properties" portTypeName="QueryResourceProperties" wsdlFile="../wsrf/properties/WS-ResourceProperties.wsdl" xmlns:ns21="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"/>
+     <ns14:ProviderInformation providerClass="QueryRPProvider"/>
+    </ns14:Method>
+    <ns14:Method description="Create an offer for this ORQ under the assumption that the decision to accept the offer will be before latestDecisionAt" isImported="false" isProvided="false" name="GetOfferAndDestroyRequest" xsi:type="ns14:MethodType">
+     <ns14:Inputs>
+      <ns14:Input qName="ns22:OfferExecutionContract" description="" isArray="false" name="offerExecutionContract" xmlns:ns22="http://gndms.zib.de/common/types"/>
+      <ns14:Input qName="ns23:Context" description="" isArray="false" name="context" xmlns:ns23="http://gndms.zib.de/common/types"/>
+     </ns14:Inputs>
+     <ns14:Output qName="ns24:EndpointReference" description="" isArray="false" xmlns:ns24="http://schemas.xmlsoap.org/ws/2004/03/addressing"/>
+     <ns14:Exceptions>
+      <ns14:Exception description="" name="UnfullfillableRequest" qname="ns25:UnfullfillableRequest" xmlns:ns25="http://GORFX.gndms.zib.de/GORFX/ORQ/types"/>
+      <ns14:Exception description="" name="PermissionDenied" qname="ns26:PermissionDenied" xmlns:ns26="http://GORFX.gndms.zib.de/GORFX/ORQ/types"/>
+     </ns14:Exceptions>
+    </ns14:Method>
+    <ns14:Method description="Fake OfferRequest can be used for checking if the caller is allowed to use cached results generated by a previous offer or as an estimate for scheduling" isImported="false" isProvided="false" name="PermitEstimateAndDestroyRequest" xsi:type="ns14:MethodType">
+     <ns14:Inputs>
+      <ns14:Input qName="ns27:OfferExecutionContract" description="" isArray="false" name="offerExecutionContract" xmlns:ns27="http://gndms.zib.de/common/types"/>
+      <ns14:Input qName="ns28:Context" description="" isArray="false" name="context" xmlns:ns28="http://gndms.zib.de/common/types"/>
+     </ns14:Inputs>
+     <ns14:Output qName="ns29:OfferExecutionContract" description="" isArray="false" xmlns:ns29="http://gndms.zib.de/common/types"/>
+     <ns14:Exceptions>
+      <ns14:Exception description="" name="UnfullfillableRequest" qname="ns30:UnfullfillableRequest" xmlns:ns30="http://GORFX.gndms.zib.de/GORFX/ORQ/types"/>
+      <ns14:Exception description="" name="PermissionDenied" qname="ns31:PermissionDenied" xmlns:ns31="http://GORFX.gndms.zib.de/GORFX/ORQ/types"/>
+     </ns14:Exceptions>
+    </ns14:Method>
+   </ns14:Methods>
+   <ns32:ResourcePropertiesList xsi:type="ns32:ResourcePropertiesListType" xmlns:ns32="gme://gov.nih.nci.cagrid.introduce/1/Resources">
+    <ns32:ResourceProperty qName="ns33:CurrentTime" description="" populateFromFile="false" register="false" xsi:type="ns32:ResourcePropertyType" xmlns:ns33="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"/>
+    <ns32:ResourceProperty qName="ns34:TerminationTime" description="" populateFromFile="false" register="false" xsi:type="ns32:ResourcePropertyType" xmlns:ns34="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"/>
+    <ns32:ResourceProperty qName="ns35:OfferRequestArguments" description="" fileLocation="ORQ_offerRequestArguments.xml" populateFromFile="false" register="false" xsi:type="ns32:ResourcePropertyType" xmlns:ns35="http://gndms.zib.de/common/types"/>
+   </ns32:ResourcePropertiesList>
    <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Lifetime xsi:type="ns3:Lifetime"/>
     <ns3:Identifiable xsi:type="ns3:Identifiable"/>
-    <ns3:Notification xsi:type="ns3:Notification"/>
     <ns3:Secure xsi:type="ns3:Secure"/>
     <ns3:ResourcePropertyManagement xsi:type="ns3:ResourcePropertyManagement"/>
    </ns3:ResourceFrameworkOptions>
   </ns3:Service>
   <ns3:Service name="Offer" namespace="http://GORFX.gndms.zib.de/GORFX/Offer" packageName="de.zib.gndms.GORFX.offer" xsi:type="ns3:ServiceType">
-   <ns35:Methods xsi:type="ns35:MethodsType" xmlns:ns35="gme://gov.nih.nci.cagrid.introduce/1/Methods">
-    <ns35:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns35:MethodType">
-     <ns35:Output qName="ns36:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns36="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
-     <ns37:MethodSecurity xsi:type="ns37:MethodSecurity" xmlns:ns37="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns37:SecuritySetting xsi:type="ns37:SecuritySetting">None</ns37:SecuritySetting>
-      <ns37:MethodAuthorization xsi:type="ns37:MethodAuthorization">
-       <ns37:NoAuthorization xsi:type="ns37:NoAuthorization"/>
-      </ns37:MethodAuthorization>
-     </ns37:MethodSecurity>
-     <ns35:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
-     <ns35:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
-    </ns35:Method>
-    <ns35:Method isImported="true" isProvided="true" name="Destroy" xsi:type="ns35:MethodType">
-     <ns35:Output qName="void" isArray="false"/>
-     <ns35:ImportInformation fromIntroduce="false" inputMessage="ns38:DestroyRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" outputMessage="ns38:DestroyResponse" packageName="org.oasis.wsrf.lifetime" portTypeName="ImmediateResourceTermination" wsdlFile="../wsrf/lifetime/WS-ResourceLifetime.wsdl" xmlns:ns38="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl"/>
-     <ns35:ProviderInformation providerClass="DestroyProvider"/>
-    </ns35:Method>
-    <ns35:Method isImported="true" isProvided="true" name="SetTerminationTime" xsi:type="ns35:MethodType">
-     <ns35:Output qName="void" isArray="false"/>
-     <ns35:ImportInformation fromIntroduce="false" inputMessage="ns39:SetTerminationTimeRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" outputMessage="ns39:SetTerminationTimeResponse" packageName="org.oasis.wsrf.lifetime" portTypeName="ScheduledResourceTermination" wsdlFile="../wsrf/lifetime/WS-ResourceLifetime.wsdl" xmlns:ns39="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl"/>
-     <ns35:ProviderInformation providerClass="SetTerminationTimeProvider"/>
-    </ns35:Method>
-    <ns35:Method isImported="true" isProvided="true" name="Subscribe" xsi:type="ns35:MethodType">
-     <ns35:Output qName="void" isArray="false"/>
-     <ns35:ImportInformation fromIntroduce="false" inputMessage="ns40:SubscribeRequest" namespace="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" outputMessage="ns40:SubscribeResponse" packageName="org.oasis.wsn" portTypeName="NotificationProducer" wsdlFile="../wsrf/notification/WS-BaseN.wsdl" xmlns:ns40="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl"/>
-     <ns35:ProviderInformation providerClass="SubscribeProvider"/>
-    </ns35:Method>
-    <ns35:Method isImported="true" isProvided="true" name="GetMultipleResourceProperties" xsi:type="ns35:MethodType">
-     <ns35:Output qName="void" isArray="false"/>
-     <ns35:ImportInformation fromIntroduce="false" inputMessage="ns41:GetMultipleResourcePropertiesRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" outputMessage="ns41:GetMultipleResourcePropertiesResponse" packageName="org.oasis.wsrf.properties" portTypeName="GetMultipleResourceProperties" wsdlFile="../wsrf/properties/WS-ResourceProperties.wsdl" xmlns:ns41="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"/>
-     <ns35:ProviderInformation providerClass="GetMRPProvider"/>
-    </ns35:Method>
-    <ns35:Method isImported="true" isProvided="true" name="GetResourceProperty" xsi:type="ns35:MethodType">
-     <ns35:Output qName="void" isArray="false"/>
-     <ns35:ImportInformation fromIntroduce="false" inputMessage="ns42:GetResourcePropertyRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" outputMessage="ns42:GetResourcePropertyResponse" packageName="org.oasis.wsrf.properties" portTypeName="GetResourceProperty" wsdlFile="../wsrf/properties/WS-ResourceProperties.wsdl" xmlns:ns42="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"/>
-     <ns35:ProviderInformation providerClass="GetRPProvider"/>
-    </ns35:Method>
-    <ns35:Method isImported="true" isProvided="true" name="QueryResourceProperties" xsi:type="ns35:MethodType">
-     <ns35:Output qName="void" isArray="false"/>
-     <ns35:ImportInformation fromIntroduce="false" inputMessage="ns43:QueryResourcePropertiesRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" outputMessage="ns43:QueryResourcePropertiesResponse" packageName="org.oasis.wsrf.properties" portTypeName="QueryResourceProperties" wsdlFile="../wsrf/properties/WS-ResourceProperties.wsdl" xmlns:ns43="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"/>
-     <ns35:ProviderInformation providerClass="QueryRPProvider"/>
-    </ns35:Method>
-    <ns35:Method description="Accept the offer and start its execution" isImported="false" isProvided="false" name="Accept" xsi:type="ns35:MethodType">
-     <ns35:Inputs/>
-     <ns35:Output qName="ns44:EndpointReference" description="" isArray="false" xmlns:ns44="http://schemas.xmlsoap.org/ws/2004/03/addressing"/>
-     <ns35:Exceptions>
-      <ns35:Exception description="" name="PermissionDenied" qname="ns45:PermissionDenied" xmlns:ns45="http://GORFX.gndms.zib.de/GORFX/ORQ/types"/>
-     </ns35:Exceptions>
-    </ns35:Method>
-   </ns35:Methods>
+   <ns36:Methods xsi:type="ns36:MethodsType" xmlns:ns36="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns36:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns36:MethodType">
+     <ns36:Output qName="ns37:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns37="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns38:MethodSecurity xsi:type="ns38:MethodSecurity" xmlns:ns38="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns38:SecuritySetting xsi:type="ns38:SecuritySetting">None</ns38:SecuritySetting>
+      <ns38:MethodAuthorization xsi:type="ns38:MethodAuthorization">
+       <ns38:NoAuthorization xsi:type="ns38:NoAuthorization"/>
+      </ns38:MethodAuthorization>
+     </ns38:MethodSecurity>
+     <ns36:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns36:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns36:Method>
+    <ns36:Method isImported="true" isProvided="true" name="Destroy" xsi:type="ns36:MethodType">
+     <ns36:Output qName="void" isArray="false"/>
+     <ns36:ImportInformation fromIntroduce="false" inputMessage="ns39:DestroyRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" outputMessage="ns39:DestroyResponse" packageName="org.oasis.wsrf.lifetime" portTypeName="ImmediateResourceTermination" wsdlFile="../wsrf/lifetime/WS-ResourceLifetime.wsdl" xmlns:ns39="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl"/>
+     <ns36:ProviderInformation providerClass="DestroyProvider"/>
+    </ns36:Method>
+    <ns36:Method isImported="true" isProvided="true" name="SetTerminationTime" xsi:type="ns36:MethodType">
+     <ns36:Output qName="void" isArray="false"/>
+     <ns36:ImportInformation fromIntroduce="false" inputMessage="ns40:SetTerminationTimeRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" outputMessage="ns40:SetTerminationTimeResponse" packageName="org.oasis.wsrf.lifetime" portTypeName="ScheduledResourceTermination" wsdlFile="../wsrf/lifetime/WS-ResourceLifetime.wsdl" xmlns:ns40="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl"/>
+     <ns36:ProviderInformation providerClass="SetTerminationTimeProvider"/>
+    </ns36:Method>
+    <ns36:Method isImported="true" isProvided="true" name="GetMultipleResourceProperties" xsi:type="ns36:MethodType">
+     <ns36:Output qName="void" isArray="false"/>
+     <ns36:ImportInformation fromIntroduce="false" inputMessage="ns41:GetMultipleResourcePropertiesRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" outputMessage="ns41:GetMultipleResourcePropertiesResponse" packageName="org.oasis.wsrf.properties" portTypeName="GetMultipleResourceProperties" wsdlFile="../wsrf/properties/WS-ResourceProperties.wsdl" xmlns:ns41="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"/>
+     <ns36:ProviderInformation providerClass="GetMRPProvider"/>
+    </ns36:Method>
+    <ns36:Method isImported="true" isProvided="true" name="GetResourceProperty" xsi:type="ns36:MethodType">
+     <ns36:Output qName="void" isArray="false"/>
+     <ns36:ImportInformation fromIntroduce="false" inputMessage="ns42:GetResourcePropertyRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" outputMessage="ns42:GetResourcePropertyResponse" packageName="org.oasis.wsrf.properties" portTypeName="GetResourceProperty" wsdlFile="../wsrf/properties/WS-ResourceProperties.wsdl" xmlns:ns42="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"/>
+     <ns36:ProviderInformation providerClass="GetRPProvider"/>
+    </ns36:Method>
+    <ns36:Method isImported="true" isProvided="true" name="QueryResourceProperties" xsi:type="ns36:MethodType">
+     <ns36:Output qName="void" isArray="false"/>
+     <ns36:ImportInformation fromIntroduce="false" inputMessage="ns43:QueryResourcePropertiesRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" outputMessage="ns43:QueryResourcePropertiesResponse" packageName="org.oasis.wsrf.properties" portTypeName="QueryResourceProperties" wsdlFile="../wsrf/properties/WS-ResourceProperties.wsdl" xmlns:ns43="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"/>
+     <ns36:ProviderInformation providerClass="QueryRPProvider"/>
+    </ns36:Method>
+    <ns36:Method description="Accept the offer and start its execution" isImported="false" isProvided="false" name="Accept" xsi:type="ns36:MethodType">
+     <ns36:Inputs/>
+     <ns36:Output qName="ns44:EndpointReference" description="" isArray="false" xmlns:ns44="http://schemas.xmlsoap.org/ws/2004/03/addressing"/>
+     <ns36:Exceptions>
+      <ns36:Exception description="" name="PermissionDenied" qname="ns45:PermissionDenied" xmlns:ns45="http://GORFX.gndms.zib.de/GORFX/ORQ/types"/>
+     </ns36:Exceptions>
+    </ns36:Method>
+   </ns36:Methods>
    <ns46:ResourcePropertiesList xsi:type="ns46:ResourcePropertiesListType" xmlns:ns46="gme://gov.nih.nci.cagrid.introduce/1/Resources">
     <ns46:ResourceProperty qName="ns47:CurrentTime" description="" populateFromFile="false" register="false" xsi:type="ns46:ResourcePropertyType" xmlns:ns47="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"/>
     <ns46:ResourceProperty qName="ns48:TerminationTime" description="" populateFromFile="false" register="false" xsi:type="ns46:ResourcePropertyType" xmlns:ns48="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"/>
@@ -325,7 +324,6 @@
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Lifetime xsi:type="ns3:Lifetime"/>
     <ns3:Identifiable xsi:type="ns3:Identifiable"/>
-    <ns3:Notification xsi:type="ns3:Notification"/>
     <ns3:Secure xsi:type="ns3:Secure"/>
     <ns3:ResourcePropertyManagement xsi:type="ns3:ResourcePropertyManagement"/>
    </ns3:ResourceFrameworkOptions>
@@ -392,9 +390,4 @@
   </ns3:Service>
  </ns3:Services>
  <ns66:Extensions xsi:type="ns66:ExtensionsType" xmlns:ns66="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
- <ns67:ServiceProperties xmlns:ns67="gme://gov.nih.nci.cagrid.introduce/1/Property">
-  <ns67:Property description="" isFromETC="false" key="gridJNDIEnv" value="TARGET_GRID_env"/>
-  <ns67:Property description="Name of this grid" isFromETC="false" key="gridName" value="TARGET_GRID"/>
-  <ns67:Property description="Path to shared directory for this grid" isFromETC="true" key="gridPath" value="../TARGET_GRID_shared/"/>
- </ns67:ServiceProperties>
 </ns1:ServiceDescription>

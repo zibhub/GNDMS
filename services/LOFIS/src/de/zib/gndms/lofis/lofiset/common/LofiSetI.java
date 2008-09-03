@@ -27,11 +27,11 @@ public interface LofiSetI {
   /**
    * Provides (empty) slices for the storage of replicas to this LofiSet
    *
-   * @param sliceReference
+   * @param slices
    * @throws UnsupportedOrInvalidSlice
    *	
    */
-  public void grantReplicaSlices(types.SliceReference[] sliceReference) throws RemoteException, de.zib.gndms.lofis.stubs.types.UnsupportedOrInvalidSlice ;
+  public void grantStorageSlices(types.SliceReference[] slices) throws RemoteException, de.zib.gndms.lofis.stubs.types.UnsupportedOrInvalidSlice ;
 
   /**
    * Create new LofiSet containing a mapped subset of this lofi's content.
@@ -39,39 +39,22 @@ public interface LofiSetI {
    * @param lofiMap
    * @throws MissingSourceFiles
    *	
-   * @throws ConflictingDestinationsInMap
-   *	
    */
-  public de.zib.gndms.lofis.lofiset.client.LofiSetClient getSubLofiSet(types.FileMappingSeqT lofiMap) throws RemoteException, org.apache.axis.types.URI.MalformedURIException, de.zib.gndms.lofis.stubs.types.MissingSourceFiles, de.zib.gndms.lofis.stubs.types.ConflictingDestinationsInMap ;
+  public de.zib.gndms.lofis.lofiset.client.LofiSetClient getSubLofiSet(types.FileMappingSeqT lofiMap) throws RemoteException, org.apache.axis.types.URI.MalformedURIException, de.zib.gndms.lofis.stubs.types.MissingSourceFiles ;
 
   /**
    * Add Slices to LofiSet
    *
-   * @param replicaSlices
-   * @throws ConflictResolutionFailed
-   *	
-   * @throws ConflictingDestinationsInMap
-   *	
+   * @param existingReplicaSlices
    * @throws MissingSourceFiles
    *	
    * @throws UnsupportedOrInvalidSlice
    *	
    */
-  public void registerReplicaSlices(types.ReplicaSlicesT[] replicaSlices) throws RemoteException, de.zib.gndms.lofis.stubs.types.ConflictResolutionFailed, de.zib.gndms.lofis.stubs.types.ConflictingDestinationsInMap, de.zib.gndms.lofis.stubs.types.MissingSourceFiles, de.zib.gndms.lofis.stubs.types.UnsupportedOrInvalidSlice ;
+  public void registerReplicaSlices(types.ReplicaSlicesT existingReplicaSlices) throws RemoteException, de.zib.gndms.lofis.stubs.types.MissingSourceFiles, de.zib.gndms.lofis.stubs.types.UnsupportedOrInvalidSlice ;
 
   /**
-   * Remove slices from this LofiSet
-   *
-   * @param sliceReference
-   * @throws UnsupportedOrInvalidSlice
-   *	
-   * @throws UnavailableSlice
-   *	
-   */
-  public void reclaimReplicaSlices(types.SliceReference[] sliceReference) throws RemoteException, de.zib.gndms.lofis.stubs.types.UnsupportedOrInvalidSlice, de.zib.gndms.lofis.lofiset.stubs.types.UnavailableSlice ;
-
-  /**
-   * Return replica slices matching any of the provided filters (first wins)
+   * Return replica slices matching all of the provided filters
    *
    * @param replicaSliceFilter
    */

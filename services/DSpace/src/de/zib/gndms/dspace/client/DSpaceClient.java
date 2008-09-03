@@ -76,6 +76,19 @@ public class DSpaceClient extends DSpaceClientBase implements DSpaceI {
 		}
 	}
 
+  public java.lang.Object callMaintenanceAction(java.lang.String action,types.ContextT options) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"callMaintenanceAction");
+    de.zib.gndms.dspace.stubs.CallMaintenanceActionRequest params = new de.zib.gndms.dspace.stubs.CallMaintenanceActionRequest();
+    params.setAction(action);
+    de.zib.gndms.dspace.stubs.CallMaintenanceActionRequestOptions optionsContainer = new de.zib.gndms.dspace.stubs.CallMaintenanceActionRequestOptions();
+    optionsContainer.setContext(options);
+    params.setOptions(optionsContainer);
+    de.zib.gndms.dspace.stubs.CallMaintenanceActionResponse boxedResult = portType.callMaintenanceAction(params);
+    return boxedResult.getResponse();
+    }
+  }
+
   public org.oasis.wsrf.properties.GetMultipleResourcePropertiesResponse getMultipleResourceProperties(org.oasis.wsrf.properties.GetMultipleResourceProperties_Element params) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getMultipleResourceProperties");

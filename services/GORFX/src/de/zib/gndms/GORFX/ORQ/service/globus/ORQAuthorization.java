@@ -63,11 +63,6 @@ public class ORQAuthorization implements PDP {
 		
 	}
 					
-	public static void authorizeSubscribe() throws RemoteException {
-		
-		
-	}
-					
 	public static void authorizeGetMultipleResourceProperties() throws RemoteException {
 		
 		
@@ -119,14 +114,6 @@ public class ORQAuthorization implements PDP {
 		} else if(operation.getLocalPart().equals("setTerminationTime")){
 			try{
 				authorizeSetTerminationTime();
-				return true;
-			} catch (Exception e){
-				e.printStackTrace();
-				return false;
-			}
-		} else if(operation.getLocalPart().equals("subscribe")){
-			try{
-				authorizeSubscribe();
 				return true;
 			} catch (Exception e){
 				e.printStackTrace();

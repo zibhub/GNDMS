@@ -26,14 +26,14 @@
       <element name="CreateLofiSetRequest">
         <complexType>
           <sequence>
-            <element name="replicaSlices">
+            <element name="existingReplicaSlices">
               <complexType>
                 <sequence>
-                  <element ref="ns3:ReplicaSlices" minOccurs="1" maxOccurs="unbounded" />
+                  <element ref="ns3:ReplicaSlices" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
-            <element name="sliceReference">
+            <element name="storageSlices">
               <complexType>
                 <sequence>
                   <element ref="ns0:SliceReference" minOccurs="1" maxOccurs="unbounded" />
@@ -84,6 +84,111 @@
           </sequence>
         </complexType>
       </element>
+      <element name="CallMaintenanceActionRequest">
+        <complexType>
+          <sequence>
+            <element name="action" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <element name="options">
+              <complexType>
+                <sequence>
+                  <element ref="ns3:Context" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CallMaintenanceActionResponse">
+        <complexType>
+          <sequence>
+            <element name="response" type="xs:anyType" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateOrRetrieveLofiSetRequest">
+        <complexType>
+          <sequence>
+            <element name="cacheKey" type="xs:anyType" minOccurs="1" maxOccurs="1" />
+            <element name="existingReplicaSlices">
+              <complexType>
+                <sequence>
+                  <element ref="ns3:ReplicaSlices" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="storageSlices">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:SliceReference" minOccurs="1" maxOccurs="unbounded" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="context">
+              <complexType>
+                <sequence>
+                  <element ref="ns3:Context" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateOrRetrieveLofiSetResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns9:LofiSetReference" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="RetrieveLofiSetRequest">
+        <complexType>
+          <sequence>
+            <element name="cacheKey" type="xs:anyType" minOccurs="1" maxOccurs="1" />
+            <element name="context">
+              <complexType>
+                <sequence>
+                  <element ref="ns3:Context" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="RetrieveLofiSetResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns9:LofiSetReference" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="MergeLofiSetsAndCacheNewRequest">
+        <complexType>
+          <sequence>
+            <element name="cacheKey" type="xs:anyType" minOccurs="1" maxOccurs="1" />
+            <element name="lofiSetRefs">
+              <complexType>
+                <sequence>
+                  <element ref="ns9:LofiSetReference" minOccurs="1" maxOccurs="unbounded" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="context">
+              <complexType>
+                <sequence>
+                  <element ref="ns3:Context" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="MergeLofiSetsAndCacheNewResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns9:LofiSetReference" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
       <element name="LOFISResourceProperties">
         <complexType>
           <sequence />
@@ -104,20 +209,41 @@
   <message name="MergeLofiSetsResponse">
     <part name="parameters" element="tns:MergeLofiSetsResponse" />
   </message>
-  <message name="ConflictingDestinationsInMapFaultMessage">
-    <part name="fault" element="ns7:ConflictingDestinationsInMap" />
+  <message name="CallMaintenanceActionRequest">
+    <part name="parameters" element="tns:CallMaintenanceActionRequest" />
+  </message>
+  <message name="CallMaintenanceActionResponse">
+    <part name="parameters" element="tns:CallMaintenanceActionResponse" />
+  </message>
+  <message name="CreateOrRetrieveLofiSetRequest">
+    <part name="parameters" element="tns:CreateOrRetrieveLofiSetRequest" />
+  </message>
+  <message name="CreateOrRetrieveLofiSetResponse">
+    <part name="parameters" element="tns:CreateOrRetrieveLofiSetResponse" />
+  </message>
+  <message name="RetrieveLofiSetRequest">
+    <part name="parameters" element="tns:RetrieveLofiSetRequest" />
+  </message>
+  <message name="RetrieveLofiSetResponse">
+    <part name="parameters" element="tns:RetrieveLofiSetResponse" />
+  </message>
+  <message name="MergeLofiSetsAndCacheNewRequest">
+    <part name="parameters" element="tns:MergeLofiSetsAndCacheNewRequest" />
+  </message>
+  <message name="MergeLofiSetsAndCacheNewResponse">
+    <part name="parameters" element="tns:MergeLofiSetsAndCacheNewResponse" />
   </message>
   <message name="MissingSourceFilesFaultMessage">
     <part name="fault" element="ns7:MissingSourceFiles" />
-  </message>
-  <message name="ConflictResolutionFailedFaultMessage">
-    <part name="fault" element="ns7:ConflictResolutionFailed" />
   </message>
   <message name="UnsupportedOrInvalidSliceFaultMessage">
     <part name="fault" element="ns7:UnsupportedOrInvalidSlice" />
   </message>
   <message name="ConflictingLofiSetsInMergeFaultMessage">
     <part name="fault" element="ns7:ConflictingLofiSetsInMerge" />
+  </message>
+  <message name="UnknownOrInvalidCacheKeyFaultMessage">
+    <part name="fault" element="ns7:UnknownOrInvalidCacheKey" />
   </message>
   <!--============================================================
 
@@ -128,14 +254,34 @@
     <operation name="CreateLofiSet">
       <input message="tns:CreateLofiSetRequest" wsa:Action="http://lofis.gndms.zib.de/LOFIS/CreateLofiSetRequest" />
       <output message="tns:CreateLofiSetResponse" wsa:Action="http://lofis.gndms.zib.de/LOFIS/CreateLofiSetResponse" />
-      <fault name="ConflictingDestinationsInMap" message="tns:ConflictingDestinationsInMapFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/ConflictingDestinationsInMapFaultMessage" />
       <fault name="MissingSourceFiles" message="tns:MissingSourceFilesFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/MissingSourceFilesFaultMessage" />
-      <fault name="ConflictResolutionFailed" message="tns:ConflictResolutionFailedFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/ConflictResolutionFailedFaultMessage" />
       <fault name="UnsupportedOrInvalidSlice" message="tns:UnsupportedOrInvalidSliceFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/UnsupportedOrInvalidSliceFaultMessage" />
     </operation>
     <operation name="MergeLofiSets">
       <input message="tns:MergeLofiSetsRequest" wsa:Action="http://lofis.gndms.zib.de/LOFIS/MergeLofiSetsRequest" />
       <output message="tns:MergeLofiSetsResponse" wsa:Action="http://lofis.gndms.zib.de/LOFIS/MergeLofiSetsResponse" />
+      <fault name="ConflictingLofiSetsInMerge" message="tns:ConflictingLofiSetsInMergeFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/ConflictingLofiSetsInMergeFaultMessage" />
+    </operation>
+    <operation name="callMaintenanceAction">
+      <input message="tns:CallMaintenanceActionRequest" wsa:Action="http://lofis.gndms.zib.de/LOFIS/CallMaintenanceActionRequest" />
+      <output message="tns:CallMaintenanceActionResponse" wsa:Action="http://lofis.gndms.zib.de/LOFIS/CallMaintenanceActionResponse" />
+    </operation>
+    <operation name="CreateOrRetrieveLofiSet">
+      <input message="tns:CreateOrRetrieveLofiSetRequest" wsa:Action="http://lofis.gndms.zib.de/LOFIS/CreateOrRetrieveLofiSetRequest" />
+      <output message="tns:CreateOrRetrieveLofiSetResponse" wsa:Action="http://lofis.gndms.zib.de/LOFIS/CreateOrRetrieveLofiSetResponse" />
+      <fault name="UnknownOrInvalidCacheKey" message="tns:UnknownOrInvalidCacheKeyFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/UnknownOrInvalidCacheKeyFaultMessage" />
+      <fault name="MissingSourceFiles" message="tns:MissingSourceFilesFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/MissingSourceFilesFaultMessage" />
+      <fault name="UnsupportedOrInvalidSlice" message="tns:UnsupportedOrInvalidSliceFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/UnsupportedOrInvalidSliceFaultMessage" />
+    </operation>
+    <operation name="RetrieveLofiSet">
+      <input message="tns:RetrieveLofiSetRequest" wsa:Action="http://lofis.gndms.zib.de/LOFIS/RetrieveLofiSetRequest" />
+      <output message="tns:RetrieveLofiSetResponse" wsa:Action="http://lofis.gndms.zib.de/LOFIS/RetrieveLofiSetResponse" />
+      <fault name="UnknownOrInvalidCacheKey" message="tns:UnknownOrInvalidCacheKeyFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/UnknownOrInvalidCacheKeyFaultMessage" />
+    </operation>
+    <operation name="MergeLofiSetsAndCacheNew">
+      <input message="tns:MergeLofiSetsAndCacheNewRequest" wsa:Action="http://lofis.gndms.zib.de/LOFIS/MergeLofiSetsAndCacheNewRequest" />
+      <output message="tns:MergeLofiSetsAndCacheNewResponse" wsa:Action="http://lofis.gndms.zib.de/LOFIS/MergeLofiSetsAndCacheNewResponse" />
+      <fault name="UnknownOrInvalidCacheKey" message="tns:UnknownOrInvalidCacheKeyFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/UnknownOrInvalidCacheKeyFaultMessage" />
       <fault name="ConflictingLofiSetsInMerge" message="tns:ConflictingLofiSetsInMergeFaultMessage" wsa:Action="http://lofis.gndms.zib.de/LOFIS/ConflictingLofiSetsInMergeFaultMessage" />
     </operation>
     <wsdl:operation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="GetMultipleResourceProperties">
