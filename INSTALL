@@ -257,6 +257,9 @@ THINGS TO DO WHEN YOUR BUILD FAILS
    Example: You will definitely have to manually edit all service.properties
    files to use windows-style file separators.
 
+7) If you get an error about a missing "test/src" directory simply
+   mkdir -p test/src in the respective services' directory
+
 Other common reasons for a failed container starts are invalid credentials
 (hostkey/hostcert.pem) or outdated CRLs. In the latter case, the script
 contained in contrib/fetch-crl may help you. Execute "fetch-crl -o
