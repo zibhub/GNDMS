@@ -1,21 +1,21 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <schema targetNamespace="http://gndms.zib.de/common/types"
         xmlns:impl="http://gndms.zib.de/common/types"
-        xmlns:slice="http://dspace.gndms.zib.de/DSpace/Slice/types"
-        xmlns:wsbf="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd"
-        xmlns:wst="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"
-        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	    xmlns:slice="http://dspace.gndms.zib.de/DSpace/Slice/types"
+	    xmlns:wsbf="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd"
+	    xmlns:wst="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"
+	    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
         elementFormDefault="qualified" version="1.0" xmlns="http://www.w3.org/2001/XMLSchema"
         xml:lang="EN">
-    
+	
 <import namespace="http://dspace.gndms.zib.de/DSpace/Slice/types"
         schemaLocation="../DSpace/SliceTypes.xsd" />
 
 <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd"
-        schemaLocation="../wsrf/faults/WS-BaseFaults.xsd" />
+		schemaLocation="../wsrf/faults/WS-BaseFaults.xsd" />
 
 <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"
-        schemaLocation="../wsrf/lifetime/WS-ResourceLifetime.xsd" />
+		schemaLocation="../wsrf/lifetime/WS-ResourceLifetime.xsd" />
 
 
 
@@ -23,36 +23,39 @@
 
 <!-- Currently unused UUID type -->
 <simpleType name="UUIDT">
-    <restriction base="string">
-        <pattern value="[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}"/>
-    </restriction>
+	<restriction base="string">
+	    <pattern value="[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}"/>
+	</restriction>
 </simpleType>
 
 <complexType name="ContextT">
-    <sequence>
-        <element name="entry">
-            <complexType>
-                <simpleContent>
-                    <extension base="xsd:normalizedString">
-                        <attribute name="key" type="xsd:token" />
-                    </extension>
-                </simpleContent>
-            </complexType>
-        </element>
-    </sequence>
+	<sequence>
+		<element name="entry">
+			<complexType>
+				<simpleContent>
+					<extension base="xsd:normalizedString">
+						<attribute name="key" type="xsd:token" />
+					</extension>
+				</simpleContent>
+			</complexType>
+		</element>
+	</sequence>
 </complexType>
 
 <element name="Context" type="impl:ContextT" />
 
 
 
-    
+	
 <!-- *** Storage amount types *** -->
 
-<simpleType name="StorageSizeT">
-    <restriction base="xsd:unsignedLong">
-    </restriction>
-</simpleType>
+<complexType name="StorageSizeT">
+	<sequence>
+		<element name="StorageSizeValue" type="positiveInteger" />
+		<!-- SI Prefixes -->
+		<element name="StorageSizeUnit" type="string" default="B" />
+	</sequence>
+</complexType>
 
 <element name="TotalStorageSize" type="impl:StorageSizeT" />
 <element name="AvailableStorageSize" type="impl:StorageSizeT" />
@@ -63,149 +66,166 @@
 <!-- *** DSpace related types for addressign subspaces and kinds *** -->
 
 <element name="SubspaceSpecifier" type="QName" />
+<element name="SliceKind" type="QName" />
 
-<element name="SliceKind" type="anyURI" />
-
-<complexType name="SliceReferenceT">
-    <sequence>
-        <element ref="slice:SliceReference" minOccurs="1" maxOccurs="1" />
-    </sequence>
-</complexType>
-    
-<!-- Actual URL for Slice access, e.g. GSIFTP -->   
+<!-- Actual URL for Slice access, e.g. GSIFTP -->	
 <element name="SliceLocation" type="anyURI" />
 
 <!-- Used to describe the requirements to a newly constructed slice -->
 <complexType name="SliceTypeSpecifierT">
-    <sequence>
-        <element ref="impl:SubspaceSpecifier" minOccurs="1" maxOccurs="1" />
-        <element ref="impl:SliceKind" maxOccurs="1" minOccurs="1" />
-    </sequence>
+	<sequence>
+		<element ref="impl:SubspaceSpecifier" minOccurs="1" maxOccurs="1" />
+		<element ref="impl:SliceKind" maxOccurs="1" minOccurs="1" />
+	</sequence>
 </complexType>
 
 <element name="SliceTypeSpecifier" type="impl:SliceTypeSpecifierT"  />
 
 <element name="SliceCreationSpecifier">
-    <complexType>
-        <sequence>
-            <element ref="impl:SliceKind" maxOccurs="1" minOccurs="1" />
-            <element ref="impl:TotalStorageSize" minOccurs="0" maxOccurs="1" />
-            <element ref="wst:TerminationTime" minOccurs="0" maxOccurs="1" />
-        </sequence>
-    </complexType>
+	<complexType>
+		<sequence>
+			<element ref="impl:SliceKind" maxOccurs="1" minOccurs="1" />
+			<element ref="impl:TotalStorageSize" minOccurs="0" maxOccurs="1" />
+			<element ref="wst:TerminationTime" minOccurs="0" maxOccurs="1" />
+		</sequence>
+	</complexType>
 </element>
 
 <!-- Used to describe how an argument or newly created slice should be transformed after
-     processing it is finished -->
+	 processing it is finished -->
 <complexType name="SliceTransformSpecifierT">
-    <choice>
-        <element ref="impl:SubspaceSpecifier" maxOccurs="1" />
-        <element ref="impl:SliceKind" maxOccurs="1" />
-        <element ref="impl:SliceTypeSpecifier" maxOccurs="1" />     
-    </choice>
+	<choice>
+		<element ref="impl:SubspaceSpecifier" maxOccurs="1" />
+		<element ref="impl:SliceKind" maxOccurs="1" />
+		<element ref="impl:SliceTypeSpecifier" maxOccurs="1" />		
+	</choice>
 </complexType>
 
 <element name="SliceTransformSpecifier" type="impl:SliceTransformSpecifierT"/>
 
 
-<simpleType name="GridSiteT">
-    <restriction base="normalizedString">
-        <maxLength value="64" />
-        <pattern value="([\-a-zA-Z0-9_]+\.)*[\-a-zA-Z0-9_]+" />
-    </restriction>
-</simpleType>
 
 <!-- *** Filename related types *** -->
 
 <simpleType name="FilenameT">
-    <!--
-         This excludes ., .., and all pathnames containing one of <,>,',",:,;,&,/,\,|,#,$,`
+	<!--
+		 This excludes ., .., and all pathnames containing one of <,>,',",:,;,&,/,\,|,#,$,`
          as well as \a, \n, \0, \t and the like.
 
-         This is defensive programming to prevent the worst when somebody forgets to
-         properly escape filenames in staging scripts
-    -->
-    <restriction base="normalizedString">
-        <pattern value="[a-zA-Z0-9][\-a-zA-Z0-9_]*(\.[\-a-zA-Z0-9_]+)*" />
-    </restriction>
+		 This is defensive programming to prevent the worst when somebody forgets to
+		 properly escape filenames in staging scripts
+	-->
+	<restriction base="normalizedString">
+		<pattern value="([^.'&lt;&gt;$#&quot;:;&amp;/\\\|`][^'&lt;&gt;$#&quot;:;&amp;/\\\|`]*|
+\.[^.'&lt;&gt;$#&quot;:;&amp;/\\\|`][^'&lt;&gt;$#&quot;:;&amp;/\\\|`]*|
+[^.'&lt;&gt;$#&quot;:;&amp;/\\\|`]+)" />
+	</restriction>
 </simpleType>
 
 <element name="File" type="impl:FilenameT" />
 
 <complexType name="FileT">
-    <sequence>
-        <element ref="impl:File" minOccurs="1" maxOccurs="1"/>
-    </sequence>
+	<sequence>
+		<element ref="impl:File" minOccurs="1" maxOccurs="1"/>
+	</sequence>
 </complexType>
 
 <complexType name="FileSeqT">
-    <sequence>
-        <element ref="impl:File" minOccurs="0" maxOccurs="unbounded"/>
-    </sequence>
+	<sequence>
+		<element ref="impl:File" minOccurs="0" maxOccurs="unbounded"/>
+	</sequence>
 </complexType>
 
+<simpleType name="FileMapConflictResolutionStrategyT">
+	<restriction base="normalizedString">
+		<enumeration value="destinationWins" />
+		<enumeration value="sourceWins" />
+		<enumeration value="error" />
+	</restriction>
+</simpleType>
+
+<attribute name="conflictResolutionStrategy"
+           type="impl:FileMapConflictResolutionStrategyT" default="error"/>
+
 <complexType name="FileMapEntryT">
-    <sequence>
-        <element name="SourceFile" type="impl:FileT" minOccurs="1" maxOccurs="1"/>
-        <element name="DestinationFile" type="impl:FileT" minOccurs="0" maxOccurs="1" />
-    </sequence>
+	<sequence>
+		<element name="Destination" minOccurs="1" maxOccurs="1">
+			<complexType>
+				<choice>
+					<element ref="impl:File" />
+					<element name="Skip">
+						<complexType />
+					</element>
+				</choice>
+			</complexType>
+		</element>
+		<element name="Source" type="impl:FileT" minOccurs="1" maxOccurs="1"/>
+	</sequence>
 </complexType>
 
 <complexType name="FileMappingSeqT">
-    <sequence>
-        <element name="MapFile" type="impl:FileMapEntryT" minOccurs="0" maxOccurs="unbounded" />
-    </sequence>
+	<sequence>
+		<element name="MapFile" minOccurs="0" maxOccurs="unbounded">
+			<complexType>
+				<complexContent>
+					<extension base="impl:FileMapEntryT">
+						<attribute name="required" type="boolean" default="true" />
+					</extension>
+			</complexContent>
+			</complexType>
+		</element>
+	</sequence>
 </complexType>
 
 <element name="Lofi" type="impl:FileT" />
-
 <element name="LofiSeq" type="impl:FileSeqT" />
-
 <element name="LofiMap" type="impl:FileMappingSeqT" />
+
 
 
 
 <!-- *** Replica slice types *** -->
 
-<complexType name="ReplicaSliceT">
-    <sequence>
-        <element ref="impl:LofiMap" minOccurs="0" maxOccurs="1" />
-        <element ref="slice:SliceReference" minOccurs="1" maxOccurs="1"/>
-    </sequence>
-</complexType>
-
-<element name="ReplicaSlice" type="impl:ReplicaSliceT" />
-
-   <complexType name="ReplicaSlicesT">
-    <sequence>
-        <element ref="impl:ReplicaSlice" minOccurs="0" maxOccurs="unbounded"/>
-    </sequence>
+<complexType name="ReplicaSlicesT">
+	<sequence>
+		<element name="LofiMap" minOccurs="1" maxOccurs="1">
+			<complexType>
+			<complexContent>
+				<extension base="impl:FileMappingSeqT">
+					<attribute name="fillMapFromSlices" type="boolean" default="false" />
+					<attribute ref="impl:conflictResolutionStrategy" />
+					<attribute name="completeSlices" type="boolean" default="false" />
+				</extension>
+			</complexContent>
+			</complexType>
+		</element>
+		<element ref="slice:SliceReference" minOccurs="1" maxOccurs="unbounded"/>
+	</sequence>
 </complexType>
 
 <element name="ReplicaSlices" type="impl:ReplicaSlicesT" />
 
 <complexType name="ReplicaSliceFilterT">
-    <sequence>
-        <element ref="impl:LofiSeq" minOccurs="0" maxOccurs="1"/>
-        <element name="CompleteSlicesOnly" type="boolean" minOccurs="1" maxOccurs="1" />
-        <element name="ResultLimit" minOccurs="0" maxOccurs="1" type="positiveInteger" />
-    </sequence>
+	<sequence>
+		<element name="CompleteSlicesOnly" type="boolean" minOccurs="1" maxOccurs="1" />
+		<element name="ResultLimit" minOccurs="0" maxOccurs="1" type="positiveInteger" />
+	</sequence>
 </complexType>
 
 <element name="ReplicaSliceFilter" type="impl:ReplicaSliceFilterT" />
 
 
 
+
 <!-- *** OfferExecutionContract *** -->
 
 <complexType name="OfferExecutionContractT">
-    <sequence>
-        <!-- If missing, means "forever" -->
-        <element name="IfDecisionBefore" type="dateTime" minOccurs="0" maxOccurs="1"/>
-        <!-- If missing, means "unknown" -->
-        <element name="ExecutionLikelyUntil" type="dateTime" minOccurs="0" maxOccurs="1"/>
-        <element name="ResultValidUntil" type="dateTime" minOccurs="1" maxOccurs="1"/>
-    </sequence>
+	<sequence>
+		<element name="IfDecisionAfter" type="dateTime" minOccurs="0" maxOccurs="1"/>
+		<element name="IfDecisionBefore" type="dateTime" minOccurs="0" maxOccurs="1"/>
+		<element name="ExecutionLikelyUntil" type="dateTime" minOccurs="0" maxOccurs="1"/>
+		<element name="ResultValidUntil" type="dateTime" minOccurs="0" maxOccurs="1"/>
+	</sequence>
 </complexType>
 
 <element name="OfferExecutionContract" type="impl:OfferExecutionContractT" />
@@ -214,50 +234,47 @@
 
 
 <!-- *** Task types *** -->
-
+	
 <simpleType name="TaskStatusT">
-    <!-- created -> initialized -> inprogress -> finished -->
-    <!-- in between above state transitions, the unkown state may be entered -->
-    <!-- additionally, all states have a transition to failed, except for finished -->
-    <restriction base="normalizedString">
-        <enumeration value="unknown" />
-        <enumeration value="created" />
-        <enumeration value="initialized" />
-        <enumeration value="inprogress" />
-        <enumeration value="failed" />
-        <enumeration value="finished" />
-    </restriction>
+	<restriction base="normalizedString">
+		<enumeration value="unknown" />
+		<enumeration value="created" />
+		<enumeration value="initialized" />
+		<enumeration value="inprogress" />
+		<enumeration value="failed" />
+		<enumeration value="finished" />
+	</restriction>
 </simpleType>
 
 <element name="TaskExecutionState">
-    <complexType>
-        <sequence>
-            <element name="Status" type="impl:TaskStatusT" minOccurs="1" maxOccurs="1" default="unknown" />
-            <element name="Progress" type="positiveInteger" minOccurs="1" maxOccurs="1" default="1" />
-            <element name="MaxProgress" type="positiveInteger" minOccurs="1" maxOccurs="1" default="100"/>
-            <element name="Description" type="normalizedString" minOccurs="1" maxOccurs="1" default=""/>
-            <element name="ContractBroken" type="boolean" minOccurs="1" maxOccurs="1" default="false" />
-        </sequence>
-    </complexType>
+	<complexType>
+		<sequence>
+			<element name="Status" type="impl:TaskStatusT" minOccurs="1" maxOccurs="1" default="unknown" />
+			<element name="Progress" type="positiveInteger" minOccurs="1" maxOccurs="1" default="1" />
+			<element name="MaxProgress" type="positiveInteger" minOccurs="1" maxOccurs="1" default="100"/>
+			<element name="Description" type="normalizedString" minOccurs="1" maxOccurs="1" default=""/>
+			<element name="ContractBroken" type="boolean" minOccurs="1" maxOccurs="1" default="false" />
+		</sequence>
+	</complexType>
 </element>
 
 <element name="TaskExecutionFailure">
-    <complexType>
-        <choice>
-            <element ref="wsbf:BaseFault" />
-            <element name="ImplementationFault">
-                <complexType>
-                    <sequence>
-                        <element name="Message" type="string" minOccurs="1" maxOccurs="1" />
-                        <element name="FaultClass" type="string" minOccurs="1" maxOccurs="1" />
-                        <element name="FaultTrace" type="string" minOccurs="0" maxOccurs="1" />
-                        <element name="FaultLocation" type="string" minOccurs="0" maxOccurs="1" />
-                    </sequence>
-                </complexType>
-            </element>
-            <element name="AllIsFine" />
-        </choice>
-    </complexType>
+	<complexType>
+		<choice>
+			<element ref="wsbf:BaseFault" />
+			<element name="ImplementationFault">
+				<complexType>
+					<sequence>
+						<element name="Message" type="string" minOccurs="1" maxOccurs="1" />
+						<element name="FaultClass" type="string" minOccurs="1" maxOccurs="1" />
+						<element name="FaultTrace" type="string" minOccurs="0" maxOccurs="1" />						
+						<element name="FaultLocation" type="string" minOccurs="0" maxOccurs="1" />						
+					</sequence>
+				</complexType>
+			</element>
+			<element name="AllIsFine" />
+		</choice>
+	</complexType>
 </element>
 
 
@@ -266,10 +283,10 @@
 <!-- *** OfferRequestArguments and TaskExecutionResults *** -->
 
 <complexType name="DynamicOfferDataSeqT">
-    <sequence>
-        <xsd:any minOccurs="0" maxOccurs="unbounded"/>
-    </sequence>
-    <attribute name="offerType" type="xsd:anyURI" />
+	<sequence>
+		<xsd:any minOccurs="0" maxOccurs="unbounded"/>
+	</sequence>
+	<attribute name="offerType" type="xsd:anyURI" />
 </complexType>
 
 <element name="OfferRequestArguments" type="impl:DynamicOfferDataSeqT" />
@@ -278,26 +295,27 @@
 
 <!-- Instantiation example -->
 <!-- complexType name="SampleArgumentsT">
-    <complexContent>
-        <restriction base="impl:DynamicOfferDataSeqT">
-            <sequence>
-                <element name="foo" type="string" />
-            </sequence>
-            <attribute name="offerType" type="xsd:anyURI" fixed="http://foo" />
-        </restriction>
-    </complexContent>
+	<complexContent>
+		<restriction base="impl:DynamicOfferDataSeqT">
+			<sequence>
+				<element name="foo" type="string" />
+			</sequence>
+			<attribute name="offerType" type="xsd:anyURI" fixed="http://foo" />
+		</restriction>
+	</complexContent>
 </complexType>
 
 <complexType name="MoreSampleArgumentsT">
-    <complexContent>
-        <restriction base="impl:DynamicOfferDataSeqT">
-            <sequence>
-                <element name="foo" type="string" />
-                <element name="bar" type="string" />
-            </sequence>
-            <attribute name="offerType" type="xsd:anyURI" fixed="http://foo" />
-        </restriction>
-    </complexContent>
+	<complexContent>
+		<restriction base="impl:DynamicOfferDataSeqT">
+			<sequence>
+				<element name="foo" type="string" />
+				<element name="bar" type="string" />
+			</sequence>
+			<attribute name="offerType" type="xsd:anyURI" fixed="http://foo" />
+		</restriction>
+	</complexContent>
 </complexType -->
+
 
 </schema>
