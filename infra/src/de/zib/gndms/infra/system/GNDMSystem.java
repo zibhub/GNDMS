@@ -1,32 +1,15 @@
 package de.zib.gndms.infra.system;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Sets;
 import de.zib.gndms.infra.GridConfig;
-import de.zib.gndms.infra.action.GetHomeInfoAction;
-import de.zib.gndms.infra.action.SystemAction;
 import de.zib.gndms.infra.monitor.ActionCaller;
-import de.zib.gndms.infra.monitor.GroovyBindingFactory;
 import de.zib.gndms.infra.monitor.GroovyMoniServer;
 import de.zib.gndms.infra.service.GNDMServiceHome;
-import de.zib.gndms.infra.service.GNDMSingletonServiceHome;
-import de.zib.gndms.logic.action.Action;
-import de.zib.gndms.logic.action.CommandAction;
-import de.zib.gndms.logic.action.SkipActionInitializationException;
-import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
-import de.zib.gndms.logic.model.DelegatingEntityUpdateListener;
 import de.zib.gndms.logic.model.EntityUpdateListener;
-import de.zib.gndms.logic.model.config.ConfigAction;
-import de.zib.gndms.logic.model.config.EchoOptionsAction;
-import de.zib.gndms.logic.model.config.HelpOverviewAction;
-import de.zib.gndms.logic.model.dspace.SetupSubspaceAction;
 import de.zib.gndms.logic.util.LogicTools;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.model.common.VEPRef;
 import de.zib.gndms.model.dspace.DSpaceRef;
-import groovy.lang.Binding;
-import groovy.lang.GroovyShell;
 import org.apache.axis.components.uuid.UUIDGen;
 import org.apache.axis.components.uuid.UUIDGenFactory;
 import org.apache.axis.message.MessageElement;
@@ -53,8 +36,6 @@ import javax.persistence.Query;
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.security.Principal;
 import java.util.*;
 
 
@@ -71,78 +52,26 @@ import java.util.*;
         "OverloadedMethodsWithSameNumberOfParameters", "NestedAssignment",
         "ClassWithTooManyMethods" })
 public final class GNDMSystem
-	  implements Initializable, SystemHolder,
-	  EMFactoryProvider, ModelUUIDGen, EntityUpdateListener<GridResource>, ActionCaller {
+	  implements Initializable, SystemHolder, EMFactoryProvider, ModelUUIDGen,
+        EntityUpdateListener<GridResource> {
 
-    private static final int INITIAL_CAPACITY = 32;
-    private static final int INSTANCE_RETRIEVAL_INTERVAL = 250;
+    private static @NotNull Log createLogger() { return LogFactory.getLog(GNDMSystem.class); }
 
-    private static final Set<Class<? extends ConfigAction<?>>> CONFIG_ACTIONS =
-            Sets.newConcurrentHashSet();
-
-    private static final Function<String, String> CLASS_TO_ACTION_NAME_MAPPER =
-        new Function<String, String>() {
-            public String apply(@com.google.common.base.Nullable final String s) {
-                if (s.startsWith("de.zib.gndms.infra.action") && s.endsWith("Action"))
-                    return ".sys" + s.substring("de.zib.gndms.infra.action".length(), s.length()-6);
-                if (s.startsWith("de.zib.gndms.logic.model") && s.endsWith("Action"))
-                    return s.substring("de.zib.gndms.logic.model".length(), s.length()-6);
-                return s;
-            }
-        };
-
-    static {
-        CONFIG_ACTIONS.add(SetupSubspaceAction.class);
-        CONFIG_ACTIONS.add(EchoOptionsAction.class);
-        CONFIG_ACTIONS.add(GetHomeInfoAction.class);
-    }
-
-	private final UUIDGen uuidGen = UUIDGenFactory.getUUIDGen();
-
-	private final Log logger = createLogger();
-
-
-    @NotNull
-	private static Log createLogger()
-		{ return LogFactory.getLog(GNDMSystem.class); }
-
-
-	@NotNull
-	private final Map<String, Object> instances;
-    private final Map<Class<? extends GridResource>, GNDMServiceHome<?>> homes;
-
-
-    @NotNull
-	private final GridConfig sharedConfig;
     private final boolean debugMode;
 
-	@NotNull
-	private File sharedDir;
+    private @NotNull final UUIDGen uuidGen = UUIDGenFactory.getUUIDGen();
+	private @NotNull final Log logger = createLogger();
+    private @NotNull final InstanceDirectory instanceDir;
+    private @NotNull final ConfigActionCaller actionCaller;
+	private @NotNull final GridConfig sharedConfig;
+	private @NotNull File sharedDir;
+    private @NotNull File dbDir;
+    private @NotNull File logDir;
+	private @NotNull File dbLogFile;
+	private @NotNull EntityManagerFactory emf;
+	private @NotNull EntityManagerFactory restrictedEmf;
+	private @NotNull GroovyMoniServer groovyMonitor;
 
-	@NotNull
-	private File logDir;
-
-	@NotNull
-	private File dbDir;
-
-	@NotNull
-	private File dbLogFile;
-
-	@NotNull
-	private EntityManagerFactory emf;
-
-	@NotNull
-	private EntityManagerFactory restrictedEmf;
-
-	@Nullable
-	private GroovyMoniServer groovyMonitor;
-
-    private final @NotNull ModelUUIDGen actionUUIDGen = new ModelUUIDGen() {
-            @NotNull
-            public String nextUUID() {
-                return uuidGen.nextUUID();
-            }
-        };
 
 	/**
 	 * Retrieves a GNDMSSystem using context.lookup(name).
@@ -193,12 +122,16 @@ public final class GNDMSystem
 		}
 	}
 
-	private GNDMSystem(@NotNull GridConfig anySharedConfig, boolean debugModeParam)  {
+	@SuppressWarnings({ "ThisEscapedInObjectConstruction" })
+    private GNDMSystem(@NotNull GridConfig anySharedConfig, boolean debugModeParam)  {
 		sharedConfig = anySharedConfig;
         debugMode = debugModeParam;
-		instances = new HashMap<String, Object>(INITIAL_CAPACITY);
-        homes = new HashMap<Class<? extends GridResource>, GNDMServiceHome<?>>(INITIAL_CAPACITY);
-		addInstance("sys", this);
+        instanceDir = new InstanceDirectory(getSystemName());
+        instanceDir.addInstance("sys", this);
+        // Bad style, usually would be an inner class but
+        // removed it from this source file to reduce source file size
+        actionCaller = new ConfigActionCaller(this);
+
 		// initialization intentionally deferred to initialize
 	}
 
@@ -229,14 +162,6 @@ public final class GNDMSystem
     }
 
 
-    @SuppressWarnings({ "MethodOnlyUsedFromInnerClass" })
-	private synchronized void shutdown() throws Exception {
-		emf.close();
-		final GroovyMoniServer moniServer = getMonitor();
-		if (moniServer != null)
-			moniServer.stopServer();
-	}
-
 	private void createDirectories() throws IOException {
         File curSharedDir = getSharedDir();
 
@@ -247,6 +172,7 @@ public final class GNDMSystem
 
 		prepareDbStorage();
 	}
+
 
 	private void prepareDbStorage() throws IOException {
         File curSharedDir = getSharedDir();
@@ -302,92 +228,13 @@ public final class GNDMSystem
 	@SuppressWarnings({ "MethodOnlyUsedFromInnerClass" })
 	private synchronized void setupShellService() throws Exception {
 		File monitorConfig = new File(sharedDir, "monitor.properties");
-		groovyMonitor = new GroovyMoniServer(getGridName(),
-		                                     monitorConfig, new GNDMSBindingFactory(), this);
+		groovyMonitor = new GroovyMoniServer(getGridName(), monitorConfig,
+                                             getInstanceDir().createBindingFactory(),
+                                             getActionCaller());
 		groovyMonitor.startConfigRefreshThread(true);
 	}
 
-    public synchronized void addHome(final @NotNull GNDMServiceHome<?> home)
-            throws ResourceException {
-        addHome(home.getModelClass(), home);
-    }
 
-    @SuppressWarnings({ "HardcodedFileSeparator", "RawUseOfParameterizedType" })
-    private synchronized <K extends GridResource> void addHome(
-            final @NotNull Class<K> modelClazz, final @NotNull GNDMServiceHome<?> home)
-            throws ResourceException {
-        if (homes.containsKey(modelClazz))
-            throw new IllegalStateException("Name clash in home registration");
-        else {
-            final String homeName = home.getNickName() + "Home";
-            addInstance_(homeName, home);
-            try {
-                if (home instanceof GNDMSingletonServiceHome) {
-                    Object instance = home.find(null);
-                    final String resourceName = home.getNickName() + "Resource";
-                    addInstance_(resourceName, instance);
-                    logger.debug(getSystemName() + " addSingletonResource: '"
-                            + resourceName + "' = '" + modelClazz.getName() + '/'
-                            + ((GNDMSingletonServiceHome)home).getSingletonID() + '\'');
-                }
-            }
-            catch (RuntimeException e) {
-                instances.remove(homeName);
-                throw e;
-            }
-            catch (ResourceException e) {
-                instances.remove(homeName);
-                throw e;                
-            }
-            homes.put(modelClazz, home);
-        }
-
-        logger.debug(getSystemName() + " addHome: '" + modelClazz.getName() + '\'');
-    }
-
-    @SuppressWarnings({ "unchecked" })
-    public synchronized <M extends GridResource> GNDMServiceHome<M> getHome(Class<M> modelClazz) {
-        final GNDMServiceHome<M> home = (GNDMServiceHome<M>) homes.get(modelClazz);
-        if (home == null)
-            throw new IllegalStateException("Unknown home");
-        return home;
-    }
-
-	public synchronized void addInstance(@NotNull String name, @NotNull Object obj) {
-        if (name.endsWith("Home") || name.endsWith("Resource"))
-            throw new IllegalArgumentException("Reserved instance name");
-
-        addInstance_(name, obj);
-
-		logger.debug(getSystemName() + " addInstance: '" + name + '\'');
-	}
-
-
-    private void addInstance_(final String name, final Object obj) {
-        if ("out".equals(name) || "err".equals(name) || "args".equals(name) || "em".equals(name)
-            || "emg".equals(name))
-            throw new IllegalArgumentException("Reserved instance name");
-
-        if (instances.containsKey(name))
-            throw new IllegalStateException("Name clash in instance registration");
-        else
-            instances.put(name, obj);
-    }
-
-
-    @NotNull
-	public synchronized <T> T getInstance(@NotNull Class<? extends T> clazz, @NotNull String name)
-	{
-		final Object obj = instances.get(name);
-		if (obj == null)
-			throw new
-				  IllegalStateException("Null instance retrieved or invalid or unregistered name");
-		return clazz.cast(obj);
-	}
-
-	public synchronized GNDMServiceHome<?> lookupServiceHome(@NotNull String instancePrefix) {
-		return getInstance(GNDMServiceHome.class, instancePrefix+"Home");
-	}
 
 
 	private void doCheckOrCreateDir(File mainDir) {
@@ -399,44 +246,78 @@ public final class GNDMSystem
 			throw new IllegalStateException(mainDir + " is not accessible");
 	}
 
-	@NotNull
-	public String getSystemName() {
-		try {
-			return '\'' + sharedConfig.getGridName() + "' system";
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+
+    @SuppressWarnings({ "MethodOnlyUsedFromInnerClass" })
+	private synchronized void shutdown() throws Exception {
+		emf.close();
+		final GroovyMoniServer moniServer = getMonitor();
+		if (moniServer != null)
+			moniServer.stopServer();
 	}
 
-	@NotNull
-	public GridConfig getSharedConfig() {
+
+
+
+    public boolean isDebugging() {
+        return debugMode;
+    }
+
+
+    public synchronized @NotNull File getSharedDir() {
+        return sharedDir;
+    }
+
+	public @NotNull String getSystemName() {
+		try { return '\'' + sharedConfig.getGridName() + "' system"; }
+		catch (Exception e) { throw new RuntimeException(e); }
+	}
+
+    public @NotNull String getGridName() {
+        try { return sharedConfig.getGridName(); }
+        catch (Exception e) { throw new RuntimeException(e); }
+    }
+
+
+    public @NotNull EntityManagerFactory getEntityManagerFactory() {
+        return restrictedEmf;
+    }
+
+
+    public @NotNull InstanceDirectory getInstanceDir() {
+        return instanceDir;
+    }
+
+    public @NotNull ActionCaller getActionCaller() {
+        return actionCaller;
+    }
+
+
+	public @NotNull GridConfig getSharedConfig() {
 		return sharedConfig;
 	}
 
-	@NotNull
-	public File getLogDir() {
+
+	public @NotNull File getLogDir() {
 		return logDir;
 	}
 
-	@NotNull
-	public File getDbDir() {
+
+	public @NotNull File getDbDir() {
 		return dbDir;
 	}
 
-	@NotNull
-	public File getDbLogFile() {
+
+	public @NotNull File getDbLogFile() {
 		return dbLogFile;
 	}
 
-	@Nullable
-	public synchronized GroovyMoniServer getMonitor() {
+
+	public synchronized @Nullable GroovyMoniServer getMonitor() {
 		return groovyMonitor;
 	}
 
 	@SuppressWarnings({"ReturnOfThis"})
-	@NotNull
-	public GNDMSystem getSystem() {
+	public @NotNull GNDMSystem getSystem() {
 		return this;
 	}
 
@@ -444,13 +325,12 @@ public final class GNDMSystem
 		throw new IllegalStateException("Cant set this system");
 	}
 
-	@NotNull
-	public String nextUUID() {
+	public @NotNull String nextUUID() {
 		return uuidGen.nextUUID();
 	}
 
-	@NotNull
-	public static EndpointReferenceType serviceEPRType(@NotNull URI defAddr, @NotNull VEPRef dSpaceRef)
+
+	public static @NotNull EndpointReferenceType serviceEPRType(@NotNull URI defAddr, @NotNull VEPRef dSpaceRef)
 		  throws URI.MalformedURIException {
 		if (dSpaceRef.getGridSiteId() != null)
 			throw new IllegalArgumentException("Non-local EPRTs currently unsupported");
@@ -464,15 +344,17 @@ public final class GNDMSystem
 		}
 	}
 
-	@NotNull
-	public EndpointReferenceType serviceEPRType(@NotNull String instPrefix,
+
+	public @NotNull EndpointReferenceType serviceEPRType(@NotNull String instPrefix,
 	                                           @NotNull VEPRef dSpaceRef)
 		  throws URI.MalformedURIException {
-		return serviceEPRType(lookupServiceHome(instPrefix).getServiceAddress(), dSpaceRef);
+		return serviceEPRType(
+                getInstanceDir().lookupServiceHome(instPrefix).getServiceAddress(), dSpaceRef);
 	}
 
-	@NotNull
-	public static VEPRef modelEPRT(@NotNull QName keyTypeName, @NotNull EndpointReferenceType epr) {
+
+	public static @NotNull VEPRef modelEPRT(@NotNull QName keyTypeName,
+                                            @NotNull EndpointReferenceType epr) {
 		@NotNull ReferencePropertiesType props = epr.getProperties();
 		@NotNull MessageElement msgElem = props.get(keyTypeName);
 		SimpleResourceKey key = new SimpleResourceKey(keyTypeName, msgElem.getObjectValue());
@@ -482,43 +364,10 @@ public final class GNDMSystem
 		return new DSpaceRef();
 	}
 
-	@NotNull
-	public VEPRef modelEPRT(@NotNull String instPrefix, @NotNull EndpointReferenceType epr) {
-		return modelEPRT(lookupServiceHome(instPrefix).getKeyTypeName(), epr);
-	}
 
-	@NotNull
-	public <T> T retrieveInstance(@NotNull Class<T> clazz, @NotNull String name) {
-		T instance;
-		try { instance = getInstance(clazz, name); }
-		catch (IllegalStateException e) { instance = null; }
-		while (instance != null) {
-			try {
-				Thread.sleep(INSTANCE_RETRIEVAL_INTERVAL);
-			}
-			catch (InterruptedException e) {
-				// inteded
-			}
-			try { instance = getInstance(clazz, name); }
-			catch (IllegalStateException e) { instance = null; }
-		}
-		return instance;
-	}
-
-	public String getGridName() {
-		try {
-			return sharedConfig.getGridName();
-		}
-		catch (Exception e) {
-			// Dont know what to do here
-			throw new RuntimeException(e);
-		}
-	}
-
-
-	@NotNull
-	public EntityManagerFactory getEntityManagerFactory() {
-		return restrictedEmf;
+	public @NotNull VEPRef modelEPRT(@NotNull String instPrefix,
+                                     @NotNull EndpointReferenceType epr) {
+		return modelEPRT(getInstanceDir().lookupServiceHome(instPrefix).getKeyTypeName(), epr);
 	}
 
 
@@ -534,104 +383,10 @@ public final class GNDMSystem
     @SuppressWarnings({ "unchecked" })
     private <M extends GridResource> void onModelChange_(final M model) throws ResourceException {
         final Class<M> modelClazz = (Class<M>) model.getClass();
-        GNDMServiceHome<M> home = getHome(modelClazz);
+        GNDMServiceHome<M> home = getInstanceDir().getHome(modelClazz);
         home.refresh(model);
     }
 
-
-    @SuppressWarnings({ "RawUseOfParameterizedType", "unchecked" })
-    public static ConfigAction<?> instantiateConfigAction(final @NotNull String name,
-                                                     final @NotNull String params)
-            throws ClassNotFoundException, IllegalAccessException, InstantiationException,
-            CommandAction.ParameterTools.ParameterParseException {
-        final Class<? extends ConfigAction<?>> clazz = findActionClass(name);
-        if (ConfigAction.class.isAssignableFrom(clazz)) {
-            final ConfigAction configAction = clazz.newInstance();
-            configAction.parseLocalOptions(params);
-            return configAction;
-        }
-        else
-            throw new IllegalArgumentException("Not a ConfigAction");
-    }
-
-
-    private static Class<? extends ConfigAction<?>> findActionClass(
-            final @NotNull String name) throws ClassNotFoundException
-    {
-        if (name.length() > 0) {
-            final String nameToLower = name.toLowerCase();
-            if ("help".equals(nameToLower) || "-help".equals(nameToLower)
-                    || "--help".equals(nameToLower)) {
-                return toConfigActionClass(HelpOverviewAction.class);
-            }
-            try {
-                if (name.startsWith(".sys"))
-                    return toConfigActionClass(Class.forName(
-                            "de.zib.gndms.infra.action" + name.substring(4) + "Action"));
-            }
-            catch (ClassNotFoundException e) {
-                // continue trying
-            }
-            if (name.charAt(0) == '.')
-                return toConfigActionClass(
-                        Class.forName("de.zib.gndms.logic.model" + name + "Action"));
-        }
-        return toConfigActionClass(Class.forName(name));
-    }
-
-
-    @SuppressWarnings({ "unchecked" })
-    private static  Class<? extends ConfigAction<?>> toConfigActionClass(
-            final Class<?> helpOverviewActionClassParam) {
-         if (ConfigAction.class.isAssignableFrom(helpOverviewActionClassParam))
-                return (Class<? extends ConfigAction<?>>) helpOverviewActionClassParam;
-        else
-             throw new IllegalArgumentException("Given class is not a ConfigAction");
-    }
-
-
-    @SuppressWarnings({ "FeatureEnvy" })
-    public Object callAction(
-            final @NotNull String className, final @NotNull String opts,
-            final @NotNull PrintWriter writer) throws Exception {
-        ConfigAction<?> action = instantiateConfigAction(className, opts.trim());
-        action.setEntityManager(getEntityManagerFactory().createEntityManager());
-        action.setPrintWriter(writer);
-        action.setClosingWriterOnCleanUp(false);
-        action.setWriteResult(true);
-        action.setUUIDGen(actionUUIDGen);
-        action.setPostponedActions(new DefaultBatchUpdateAction<GridResource>());
-        action.getPostponedActions().setListener(DelegatingEntityUpdateListener.getInstance(this));
-        if (action instanceof SystemAction)
-            ((SystemAction<?>)action).setSystem(this);
-        if (action instanceof HelpOverviewAction) {
-            ((HelpOverviewAction)action).setConfigActions(CONFIG_ACTIONS);
-            ((HelpOverviewAction)action).setNameMapper(CLASS_TO_ACTION_NAME_MAPPER);
-        }
-
-        logger.info("Running " + className + ' ' + opts);
-        try {
-            Object retVal = action.call();
-            Action<?> postAction = action.getPostponedActions();
-            postAction.call();
-            return retVal;
-        }
-        catch (SkipActionInitializationException sa) {
-            // Intentionally not logged
-            throw sa;
-        }
-        catch (Exception e) {
-            logger.warn("Failure during " + className + ' ' + opts, e);
-            throw e;
-        }
-
-    }
-
-
-    @NotNull
-    public synchronized File getSharedDir() {
-        return sharedDir;
-    }
 
 
     @SuppressWarnings({ "unchecked", "MethodMayBeStatic" })
@@ -649,7 +404,7 @@ public final class GNDMSystem
         try {
             try {
                 manager.getTransaction().begin();
-                retList = listAllResources(getHome(clazz), manager);
+                retList = listAllResources(getInstanceDir().getHome(clazz), manager);
                 manager.getTransaction().commit();
             }
             finally {
@@ -695,8 +450,9 @@ public final class GNDMSystem
     }
 
 
-    public boolean isDebugging() {
-        return debugMode;
+    @SuppressWarnings({ "ReturnOfThis" })
+    public EntityUpdateListener<GridResource> getEntityUpdateListener() {
+        return this;
     }
 
 
@@ -769,39 +525,6 @@ public final class GNDMSystem
 					}
 				}
 			};
-		}
-
-	}
-
-	private final class GNDMSBindingFactory implements GroovyBindingFactory {
-		@NotNull
-		public Binding createBinding(
-			  final @NotNull GroovyMoniServer moniServer,
-		      final @NotNull Principal principal, final @NotNull String args) {
-			final Binding binding = new Binding();
-			for (Map.Entry<String, Object> entry : instances.entrySet())
-				binding.setProperty(entry.getKey(), entry.getValue());
-			return binding;
-		}
-
-		@SuppressWarnings({"StringBufferWithoutInitialCapacity"})
-		public void initShell(@NotNull GroovyShell shell, @NotNull Binding binding) {
-			StringBuilder builder = new StringBuilder();
-			for (Map.Entry<String, Object> entry : instances.entrySet()) {
-				final String key = entry.getKey();
-				builder.append("Object.metaClass.");
-				builder.append(key);
-				builder.append('=');
-				builder.append(key);
-				builder.append(';');
-			}
-			shell.evaluate(builder.toString());
-		}
-
-
-		public void destroyBinding(final @NotNull GroovyMoniServer moniServer,
-		                           final @NotNull Binding binding) {
-			// intended
 		}
 
 	}

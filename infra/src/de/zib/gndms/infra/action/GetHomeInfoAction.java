@@ -53,7 +53,8 @@ public class GetHomeInfoAction extends SystemAction<String> {
     @Override
     public @NotNull String execute(final @NotNull EntityManager em, 
                                    final @NotNull PrintWriter writer) {
-        final @NotNull GNDMServiceHome<?> instance = getSystem().lookupServiceHome(home);
+        final @NotNull GNDMServiceHome<?> instance =
+                getSystem().getInstanceDir().lookupServiceHome(home);
 
         StringBuilder buffer = new StringBuilder(CAPACITY);
         buffer.append("home: '");

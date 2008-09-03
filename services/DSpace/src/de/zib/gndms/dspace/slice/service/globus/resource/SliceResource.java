@@ -79,7 +79,7 @@ public class SliceResource extends SliceResourceBase
         super.setTotalStorageSize( DSpaceTools.unsignedLongFromLong( model.getTotalStorageSize( ) ) );
 
         GNDMSystem sys = resourceHome.getSystem( );
-        ExtSubspaceResourceHome srh = (ExtSubspaceResourceHome) sys.getHome( Subspace.class );
+        ExtSubspaceResourceHome srh = (ExtSubspaceResourceHome) sys.getInstanceDir().getHome( Subspace.class );
         SubspaceReference subref;
         try {
             subref = srh.getReferenceForSubspace( model.getOwner( ) );

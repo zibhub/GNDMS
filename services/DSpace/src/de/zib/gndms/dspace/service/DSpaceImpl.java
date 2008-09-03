@@ -5,8 +5,8 @@ import de.zib.gndms.dspace.subspace.service.globus.resource.ExtSubspaceResourceH
 import de.zib.gndms.dspace.subspace.service.globus.resource.SubspaceResource;
 import de.zib.gndms.dspace.subspace.stubs.types.SubspaceReference;
 import de.zib.gndms.dspace.stubs.types.UnknownSubspace;
-import de.zib.gndms.dspace.common.DSpaceTools;
 import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.infra.system.InstanceDirectory;
 import de.zib.gndms.infra.model.GridResourceModelHandler;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.dspace.MetaSubspace;
@@ -14,9 +14,9 @@ import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
+import de.zib.gndms.logic.model.ModelAction;
 import org.apache.log4j.Logger;
 import org.apache.axis.types.URI;
-import org.globus.wsrf.ResourceKey;
 
 import javax.xml.namespace.QName;
 import javax.persistence.EntityManager;
@@ -41,7 +41,7 @@ public class DSpaceImpl extends DSpaceImplBase {
     private static final String getSubspaceQuery =
             "SELECT x FROM Subspaces x WHERE x.metaSubspace = :uriParam";
     private static final String listPublicSubspacesQuery =
-            "SELECT x FROM Subspaces x WHERE x.systemId = :sysParam";
+            "SELECT x FROM Subspaces x WHERE ";
     private static final String listSupportedSchemasQuery =
             "SELECT DISTINCT x.scopedName.scopeName FROM MetaSubspaces x";
 
@@ -55,8 +55,9 @@ public class DSpaceImpl extends DSpaceImplBase {
         try {
             final ExtDSpaceResourceHome home = getResourceHome();
             system = home.getSystem();
-            system.addHome(home);
-            system.addHome(getSubspaceResourceHome());
+            InstanceDirectory instanceDir = system.getInstanceDir();
+            instanceDir.addHome(home);
+            instanceDir.addHome(getSubspaceResourceHome());
             // TODO
             // system.addHome(getSliceResourceHome());
         }
@@ -74,8 +75,7 @@ public class DSpaceImpl extends DSpaceImplBase {
 
         EntityManager em = system.getEntityManagerFactory().createEntityManager(  );
         Query q = em.createQuery( listPublicSubspacesQuery );
-        q.setParameter( "uriParam",  schemaURI.toString() );
-        q.setParameter( "sysParam",  system.getSystemName( ) );
+        // q.setParameter( "sysParam",  system.getSystemName( ) );
         List<Subspace> rl = (List<Subspace>) q.getResultList( );
 
         ArrayList<SubspaceReference> al = new ArrayList<SubspaceReference>( rl.size( ) );
@@ -94,7 +94,7 @@ public class DSpaceImpl extends DSpaceImplBase {
 
         EntityManager em = system.getEntityManagerFactory().createEntityManager(  );
         Query q = em.createQuery( listSupportedSchemasQuery );
-        q.setParameter( "sysParam",  system.getSystemName( ) );
+        // q.setParameter( "sysParam",  system.getSystemName( ) );
         List<String> rl = (List<String>) q.getResultList( );
 
         ArrayList<URI> al = new ArrayList<URI>( rl.size( ) );
@@ -115,7 +115,6 @@ public class DSpaceImpl extends DSpaceImplBase {
         EntityManager em = system.getEntityManagerFactory().createEntityManager(  );
         Query q = em.createQuery( getSubspaceQuery );
         q.setParameter( "uriParam",  new ImmutableScopedName( subspaceSpecifier ) );
-        q.setParameter( "sysParam",  system.getSystemName( ) );
         Subspace sp = ( Subspace) q.getSingleResult( );
         if( sp == null )
             throw new UnknownSubspace( );
@@ -168,10 +167,11 @@ public class DSpaceImpl extends DSpaceImplBase {
                             sliceCreationSpecifier.getTotalStorageSize().longValue()
                     );
 
-            GridResourceModelHandler mh = new GridResourceModelHandler<Subspace, ExtSubspaceResourceHome, SubspaceResource>
-                    (Subspace.class, (ExtSubspaceResourceHome) system.getHome( Subspace.class ));
+            GridResourceModelHandler<Subspace, ExtSubspaceResourceHome, SubspaceResource> mh = new GridResourceModelHandler<Subspace, ExtSubspaceResourceHome, SubspaceResource>
+                    (Subspace.class, (ExtSubspaceResourceHome) system.getInstanceDir().getHome( Subspace.class ));
 
-            Slice ns = (Slice) mh.callModelAction( em, system, csa, sp );
+            ModelAction<Subspace, Slice> ma = csa;
+            Slice ns = (Slice) mh.callModelAction( (EntityManager) em, system.getEntityUpdateListener(), ma, sp);
 
             csa.getPostponedActions().call( );
 

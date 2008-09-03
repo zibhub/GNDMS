@@ -12,7 +12,6 @@ import org.apache.axis.types.UnsignedLong;
 import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.ResourceHome;
 import org.globus.wsrf.ResourceKey;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * ThingAMagic.
@@ -41,7 +40,7 @@ public class DSpaceTools {
 
 		final ResourceKey key = GNDMSTools.SRKVepRefAsKey(vep);
 		final ExtDSpaceResourceHome dspaceHome =
-			  sysParam.getInstance(ExtDSpaceResourceHome.class, "dspaceHome");
+			  sysParam.getInstanceDir().getInstance(ExtDSpaceResourceHome.class, "dspaceHome");
 		final String serviceURI = dspaceHome.getServiceAddress().toString();
 		return new DSpaceReference(org.globus.wsrf.utils.AddressingUtils.createEndpointReference(serviceURI, key));
 	}
