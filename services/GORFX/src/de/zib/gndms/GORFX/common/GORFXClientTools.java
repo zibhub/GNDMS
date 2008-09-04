@@ -5,11 +5,13 @@ import org.apache.axis.types.NormalizedString;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.description.TypeDesc;
 import org.apache.axis.description.FieldDesc;
+import org.apache.axis.description.ElementDesc;
 import types.*;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -20,7 +22,19 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class GORFXClientTools {
 
-    static ConcurrentHashMap<String, URI> UriTable = new ConcurrentHashMap<String, URI>( );
+    private static ConcurrentHashMap<String, URI> UriTable = new ConcurrentHashMap<String, URI>( );
+    private static final HashMap<QName, Class> TypeMap = new HashMap<QName, Class>( );
+
+    static {
+        TypeMap.put( new QName( "http://www.w3.org/2001/XMLSchema", "anyURI" ), URI.class );
+        TypeMap.put( new QName( "http://proptest.zib.de/some/types", "DataDescriptorT" ), DataDescriptorT.class );
+        TypeMap.put( new QName( "http://www.w3.org/2001/XMLSchema", "normalizedString" ), NormalizedString.class );
+        TypeMap.put( new QName("http://gndms.zib.de/common/types", "FileMappingSeqT"), FileMappingSeqT.class );
+        TypeMap.put( new QName("http://gndms.zib.de/common/types", "SliceReferenceT"), SliceReferenceT.class );
+        TypeMap.put( new QName("http://lofis.gndms.zib.de/LOFIS/LofiSet/types", ">LofiSetReference"), LofiSetReference.class );
+        TypeMap.put( new QName("http://gndms.zib.de/c3grid/types", ">PinORQT>Target"), PinORQTTarget.class );
+        TypeMap.put( new QName("http://dspace.gndms.zib.de/DSpace/Slice/types", ">SliceReference"), SliceReference.class );
+    }
 
     // helpers for provider stage in
     
@@ -30,31 +44,17 @@ public class GORFXClientTools {
     }
 
 
-    public static ProviderStageInORQT createEmptyProviderStageInORQT ( ) throws SOAPException {
+    public static ProviderStageInORQT createEmptyProviderStageInORQTv2 ( ) throws SOAPException, IllegalAccessException, InstantiationException {
 
-        TypeDesc td = ProviderStageInORQT.getTypeDesc();
         ProviderStageInORQT orq = new ProviderStageInORQT();
         orq.setOfferType( getPoviderStageInURI() );
 
-        ArrayList<MessageElement> mes = new ArrayList( 3 );
-
-        FieldDesc[] fds = td.getFields();
-
-        if( fds == null )
-            throw new IllegalStateException( "no fields descrption" );
-
-        // setup entry for stored data
-        mes.add( createElementForField( td.getFieldByName( "stagedData" ), new DataDescriptorT( ) ) );
-        // setup data file entry
-        mes.add( createElementForField( td.getFieldByName( "dataFile" ), new NormalizedString( ) ) );
-        // setup meta data file entry
-        mes.add( createElementForField( td.getFieldByName( "metadataFile" ), new NormalizedString( ) ) );
-
-        orq.set_any( mes.toArray( new MessageElement[0] ) );
+        orq.set_any( getMessageElementsForFieldDescs( ProviderStageInORQT.getTypeDesc().getFields() ) );
 
         return orq;
     }
 
+    
     // helpers for slice stage in
 
     public static URI getSliceStageInURI ( ) {
@@ -63,29 +63,12 @@ public class GORFXClientTools {
     }
 
 
-    public static SliceStageInORQT createEmptySliceStageInORQT ( ) throws SOAPException {
+    public static SliceStageInORQT createEmptySliceStageInORQT ( ) throws SOAPException, IllegalAccessException, InstantiationException {
 
-        TypeDesc td = SliceStageInORQT.getTypeDesc();
         SliceStageInORQT orq = new SliceStageInORQT();
         orq.setOfferType( getPoviderStageInURI() );
 
-        ArrayList<MessageElement> mes = new ArrayList( 4 );
-
-        FieldDesc[] fds = td.getFields();
-
-        if( fds == null )
-            throw new IllegalStateException( "no fields descrption" );
-
-        // setup grid site entry
-        mes.add( createElementForField( td.getFieldByName( "gridSite" ), new NormalizedString( ) ) );
-        // setup entry for stage data
-        mes.add( createElementForField( td.getFieldByName( "stageData" ), new DataDescriptorT( ) ) );
-        // setup data file entry
-        mes.add( createElementForField( td.getFieldByName( "dataFile" ), new NormalizedString( ) ) );
-        // setup meta data file entry
-        mes.add( createElementForField( td.getFieldByName( "metadataFile" ), new NormalizedString( ) ) );
-
-        orq.set_any( mes.toArray( new MessageElement[0] ) );
+        orq.set_any( getMessageElementsForFieldDescs( SliceStageInORQT.getTypeDesc().getFields() ) );
 
         return orq;
     }
@@ -95,32 +78,33 @@ public class GORFXClientTools {
 
         return getURI( GORFXConstantURIs.INTER_SLICE_TRANSFER_URI );
     }
+    
 
-    public static InterSliceTransferORQT createEmptyInterSliceTransferORQT( ) throws SOAPException {
+    public static InterSliceTransferORQT createEmptyInterSliceTransferORQT( ) throws SOAPException, IllegalAccessException, InstantiationException {
 
         InterSliceTransferORQT orq = new InterSliceTransferORQT();
-        orq.setOfferType( getInterSliceTransferURI() );
+        orq.setOfferType( getPoviderStageInURI() );
 
-        ArrayList<MessageElement> mes = new ArrayList( 3 );
-
-        TypeDesc td = InterSliceTransferORQT.getTypeDesc();
-        mes.add( createElementForField( td.getFieldByName( "sourceSlices" ), new NormalizedString( ) ) );
-        mes.add( createElementForField( td.getFieldByName( "destinationSlice" ), new DataDescriptorT( ) ) );
-        mes.add( createElementForField( td.getFieldByName( "files" ), new NormalizedString( ) ) );
-
-        orq.set_any( mes.toArray( new MessageElement[0] ) );
+        orq.set_any( getMessageElementsForFieldDescs( InterSliceTransferORQT.getTypeDesc().getFields() ) );
 
         return orq;
     }
 
+    
     public static URI getRePublishSliceURI( ) throws SOAPException {
 
         return getURI( GORFXConstantURIs.RE_PUBLISH_SLICE_URI );
     }
 
 
-    public static RePublishSliceORQT createEmptyRePublishSliceORQT( ) throws SOAPException {
+    public static RePublishSliceORQT createEmptyRePublishSliceORQT( ) throws SOAPException, IllegalAccessException, InstantiationException {
 
+        RePublishSliceORQT orq = new RePublishSliceORQT();
+        orq.setOfferType( getPoviderStageInURI() );
+
+        orq.set_any( getMessageElementsForFieldDescs( RePublishSliceORQT.getTypeDesc().getFields() ) );
+
+        return orq;
     }
 
 
@@ -130,8 +114,14 @@ public class GORFXClientTools {
     }
     
 
-    public static FileTransferORQT createEmptyFileTransferORQT( ) throws SOAPException {
+    public static FileTransferORQT createEmptyFileTransferORQT( ) throws SOAPException, IllegalAccessException, InstantiationException {
 
+        FileTransferORQT orq = new FileTransferORQT();
+        orq.setOfferType( getPoviderStageInURI() );
+
+        orq.set_any( getMessageElementsForFieldDescs( FileTransferORQT.getTypeDesc().getFields() ) );
+
+        return orq;
     }
 
 
@@ -141,8 +131,14 @@ public class GORFXClientTools {
     }
 
 
-    public static LofiSetStageInORQT createEmptyLofisSetStageInORQT ( ) throws SOAPException {
+    public static LofiSetStageInORQT createEmptyLofisSetStageInORQT ( ) throws SOAPException, IllegalAccessException, InstantiationException {
 
+        LofiSetStageInORQT orq = new LofiSetStageInORQT();
+        orq.setOfferType( getPoviderStageInURI() );
+
+        orq.set_any( getMessageElementsForFieldDescs( LofiSetStageInORQT.getTypeDesc().getFields() ) );
+
+        return orq;
     }
 
 
@@ -151,8 +147,15 @@ public class GORFXClientTools {
         return getURI( GORFXConstantURIs.PIN_URI );
     }
 
-    public static PinORQT createEmptyPinORQT ( ) throws SOAPException {
 
+    public static PinORQT createEmptyPinORQT ( ) throws SOAPException, IllegalAccessException, InstantiationException {
+
+        PinORQT orq = new PinORQT();
+        orq.setOfferType( getPoviderStageInURI() );
+
+        orq.set_any( getMessageElementsForFieldDescs( PinORQT.getTypeDesc().getFields() ) );
+
+        return orq;
     }
 
 
@@ -161,15 +164,49 @@ public class GORFXClientTools {
         return getURI( GORFXConstantURIs.RE_PUBLISH_LOFI_SET_URI );
     }
 
-    public static RePublishLofiSetORQT createEmptyRePublishLofiSetORQT( ) throws SOAPException {
 
+    public static RePublishLofiSetORQT createEmptyRePublishLofiSetORQT( ) throws SOAPException, IllegalAccessException, InstantiationException {
+
+        RePublishLofiSetORQT orq = new RePublishLofiSetORQT();
+        orq.setOfferType( getPoviderStageInURI() );
+
+        orq.set_any( getMessageElementsForFieldDescs( RePublishLofiSetORQT.getTypeDesc().getFields() ) );
+
+        return orq;
     }
-    
 
-    public static MessageElement createElementForField( FieldDesc fd, Object val ) throws SOAPException {
+
+    public static MessageElement[] getMessageElementsForFieldDescs( FieldDesc[] fds ) throws SOAPException, InstantiationException, IllegalAccessException {
+
+        // prune offerType
+        ArrayList<MessageElement> mes = new ArrayList( fds.length - 1 );
+        for( FieldDesc fd: fds ) {
+
+            if( fd instanceof ElementDesc ) {
+                ElementDesc ed = (ElementDesc) fd;
+
+                for( int i=0; i < ed.getMinOccurs(); ++i )
+                    mes.add( getMessageElementForFieldDesc( ed ) );
+            }
+        }
+
+        return mes.toArray( new MessageElement[0] );
+    }
+
+
+    public static MessageElement getMessageElementForFieldDesc( FieldDesc fd ) throws SOAPException, IllegalAccessException, InstantiationException {
 
         if( fd == null )
             throw new IllegalStateException( "null field desc received" );
+
+        return createElementForField( fd, TypeMap.get( fd.getXmlType() ).newInstance() );
+    }
+
+
+    public static MessageElement createElementForField( FieldDesc fd, Object val ) throws SOAPException {
+
+        if( val == null )
+            throw new IllegalStateException( "no value received" );
 
         MessageElement me =  new MessageElement( fd.getXmlName( ) );
         me.setType( fd.getXmlType( ) );
