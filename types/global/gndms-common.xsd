@@ -1,21 +1,21 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <schema targetNamespace="http://gndms.zib.de/common/types"
         xmlns:impl="http://gndms.zib.de/common/types"
-        xmlns:slice="http://dspace.gndms.zib.de/DSpace/Slice/types"
-        xmlns:wsbf="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd"
-        xmlns:wst="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"
-        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	    xmlns:slice="http://dspace.gndms.zib.de/DSpace/Slice/types"
+	    xmlns:wsbf="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd"
+	    xmlns:wst="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"
+	    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
         elementFormDefault="qualified" version="1.0" xmlns="http://www.w3.org/2001/XMLSchema"
         xml:lang="EN">
-    
+	
 <import namespace="http://dspace.gndms.zib.de/DSpace/Slice/types"
         schemaLocation="../DSpace/SliceTypes.xsd" />
 
 <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd"
-        schemaLocation="../wsrf/faults/WS-BaseFaults.xsd" />
+		schemaLocation="../wsrf/faults/WS-BaseFaults.xsd" />
 
 <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd"
-        schemaLocation="../wsrf/lifetime/WS-ResourceLifetime.xsd" />
+		schemaLocation="../wsrf/lifetime/WS-ResourceLifetime.xsd" />
 
 
 
@@ -23,30 +23,30 @@
 
 <!-- Currently unused UUID type -->
 <simpleType name="UUIDT">
-    <restriction base="string">
-        <pattern value="[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}"/>
-    </restriction>
+	<restriction base="string">
+	    <pattern value="[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}"/>
+	</restriction>
 </simpleType>
 
 <complexType name="ContextT">
-    <sequence>
-        <element name="entry">
-            <complexType>
-                <simpleContent>
-                    <extension base="xsd:normalizedString">
-                        <attribute name="key" type="xsd:token" />
-                    </extension>
-                </simpleContent>
-            </complexType>
-        </element>
-    </sequence>
+	<sequence>
+		<element name="entry">
+			<complexType>
+				<simpleContent>
+					<extension base="xsd:normalizedString">
+						<attribute name="key" type="xsd:token" />
+					</extension>
+				</simpleContent>
+			</complexType>
+		</element>
+	</sequence>
 </complexType>
 
 <element name="Context" type="impl:ContextT" />
 
 
 
-    
+	
 <!-- *** Storage amount types *** -->
 
 <simpleType name="StorageSizeT">
@@ -60,7 +60,7 @@
 
 
 
-<!-- *** DSpace related types for addressign subspaces and kinds *** -->
+<!-- *** dspace related types for addressign subspaces and kinds *** -->
 
 <element name="SubspaceSpecifier" type="QName" />
 
@@ -72,37 +72,37 @@
     </sequence>
 </complexType>
     
-<!-- Actual URL for Slice access, e.g. GSIFTP -->   
+<!-- Actual URL for Slice access, e.g. GSIFTP -->	
 <element name="SliceLocation" type="anyURI" />
 
 <!-- Used to describe the requirements to a newly constructed slice -->
 <complexType name="SliceTypeSpecifierT">
-    <sequence>
-        <element ref="impl:SubspaceSpecifier" minOccurs="1" maxOccurs="1" />
-        <element ref="impl:SliceKind" maxOccurs="1" minOccurs="1" />
-    </sequence>
+	<sequence>
+		<element ref="impl:SubspaceSpecifier" minOccurs="1" maxOccurs="1" />
+		<element ref="impl:SliceKind" maxOccurs="1" minOccurs="1" />
+	</sequence>
 </complexType>
 
 <element name="SliceTypeSpecifier" type="impl:SliceTypeSpecifierT"  />
 
 <element name="SliceCreationSpecifier">
-    <complexType>
-        <sequence>
-            <element ref="impl:SliceKind" maxOccurs="1" minOccurs="1" />
-            <element ref="impl:TotalStorageSize" minOccurs="0" maxOccurs="1" />
-            <element ref="wst:TerminationTime" minOccurs="0" maxOccurs="1" />
-        </sequence>
-    </complexType>
+	<complexType>
+		<sequence>
+			<element ref="impl:SliceKind" maxOccurs="1" minOccurs="1" />
+			<element ref="impl:TotalStorageSize" minOccurs="0" maxOccurs="1" />
+			<element ref="wst:TerminationTime" minOccurs="0" maxOccurs="1" />
+		</sequence>
+	</complexType>
 </element>
 
 <!-- Used to describe how an argument or newly created slice should be transformed after
-     processing it is finished -->
+	 processing it is finished -->
 <complexType name="SliceTransformSpecifierT">
-    <choice>
-        <element ref="impl:SubspaceSpecifier" maxOccurs="1" />
-        <element ref="impl:SliceKind" maxOccurs="1" />
-        <element ref="impl:SliceTypeSpecifier" maxOccurs="1" />     
-    </choice>
+	<choice>
+		<element ref="impl:SubspaceSpecifier" maxOccurs="1" />
+		<element ref="impl:SliceKind" maxOccurs="1" />
+		<element ref="impl:SliceTypeSpecifier" maxOccurs="1" />		
+	</choice>
 </complexType>
 
 <element name="SliceTransformSpecifier" type="impl:SliceTransformSpecifierT"/>
@@ -111,39 +111,18 @@
 <simpleType name="GridSiteT">
     <restriction base="normalizedString">
         <maxLength value="64" />
-<<<<<<< /home/bzcjorra/projects/c3grid/impl_work/types/global/gndms-common.xsd.orig.
-        <pattern value="([\-a-zA-Z0-9_]+\.)*[\-a-zA-Z0-9_]+" />
-||||||| /tmp/gndms-common.xsd~base.g1lkIN
-        <pattern value="([-a-zA-Z0-9_]+.)*[-a-zA-Z0-9_]+" />
-=======
         <minLength value="1" />
         <pattern value="[a-zA-Z0-9][\-a-zA-Z0-9_]*(.[\-a-zA-Z0-9_]+)*" />
->>>>>>> /tmp/gndms-common.xsd~other.U5bS_d
     </restriction>
 </simpleType>
 
 <!-- *** Filename related types *** -->
 
 <simpleType name="FilenameT">
-    <!--
-         This excludes ., .., and all pathnames containing one of <,>,',",:,;,&,/,\,|,#,$,`
+	<!--
+		 This excludes ., .., and all pathnames containing one of <,>,',",:,;,&,/,\,|,#,$,`
          as well as \a, \n, \0, \t and the like.
 
-<<<<<<< /home/bzcjorra/projects/c3grid/impl_work/types/global/gndms-common.xsd.orig.
-         This is defensive programming to prevent the worst when somebody forgets to
-         properly escape filenames in staging scripts
-    -->
-    <restriction base="normalizedString">
-        <pattern value="[a-zA-Z0-9][\-a-zA-Z0-9_]*(\.[\-a-zA-Z0-9_]+)*" />
-    </restriction>
-||||||| /tmp/gndms-common.xsd~base.g1lkIN
-		 This is defensive programming to prevent the worst when somebody forgets to
-		 properly escape filenames in staging scripts
-	-->
-	<restriction base="normalizedString">
-		<pattern value="[a-zA-Z0-9][-a-zA-Z0-9_]*(.[-a-zA-Z0-9_]+)*" />
-	</restriction>
-=======
 		 This is defensive programming to prevent the worst when somebody forgets to
 		 properly escape filenames in staging scripts
 	-->
@@ -153,33 +132,12 @@
         <minLength value="1" />
 		<pattern value="[a-zA-Z0-9][\-a-zA-Z0-9_]*(.[\-a-zA-Z0-9_]+)*" />
 	</restriction>
->>>>>>> /tmp/gndms-common.xsd~other.U5bS_d
 </simpleType>
 
-<<<<<<< /home/bzcjorra/projects/c3grid/impl_work/types/global/gndms-common.xsd.orig.
-<element name="File" type="impl:FilenameT" />
-
-<complexType name="FileT">
-    <sequence>
-        <element ref="impl:File" minOccurs="1" maxOccurs="1"/>
-    </sequence>
-</complexType>
-
-||||||| /tmp/gndms-common.xsd~base.g1lkIN
-<element name="File" type="impl:FilenameT" />
-
-<complexType name="FileT">
-	<sequence>
-		<element ref="impl:File" minOccurs="1" maxOccurs="1"/>
-	</sequence>
-</complexType>
-
-=======
->>>>>>> /tmp/gndms-common.xsd~other.U5bS_d
 <complexType name="FileSeqT">
-    <sequence>
-        <element ref="impl:File" minOccurs="0" maxOccurs="unbounded"/>
-    </sequence>
+	<sequence>
+		<element ref="impl:File" minOccurs="0" maxOccurs="unbounded"/>
+	</sequence>
 </complexType>
 
 <element name="File" type="impl:FilenameT" />
@@ -220,32 +178,20 @@
 
 <element name="ReplicaSlice" type="impl:ReplicaSliceT" />
 
-<<<<<<< /home/bzcjorra/projects/c3grid/impl_work/types/global/gndms-common.xsd.orig.
-   <complexType name="ReplicaSlicesT">
-    <sequence>
-||||||| /tmp/gndms-common.xsd~base.g1lkIN
    <complexType name="ReplicaSlicesT">
 	<sequence>
-=======
-<complexType name="ReplicaSlicesT">
-    <sequence>
->>>>>>> /tmp/gndms-common.xsd~other.U5bS_d
         <element ref="impl:ReplicaSlice" minOccurs="0" maxOccurs="unbounded"/>
-<<<<<<< /tmp/gndms-common.xsd~base.g1lkIN
 	</sequence>
-=======
-    </sequence>
->>>>>>> /tmp/gndms-common.xsd~other.U5bS_d
 </complexType>
 
 <element name="ReplicaSlices" type="impl:ReplicaSlicesT" />
 
 <complexType name="ReplicaSliceFilterT">
-    <sequence>
+	<sequence>
         <element ref="impl:LofiSeq" minOccurs="0" maxOccurs="1"/>
-        <element name="CompleteSlicesOnly" type="boolean" minOccurs="1" maxOccurs="1" />
-        <element name="ResultLimit" minOccurs="0" maxOccurs="1" type="positiveInteger" />
-    </sequence>
+		<element name="CompleteSlicesOnly" type="boolean" minOccurs="1" maxOccurs="1" />
+		<element name="ResultLimit" minOccurs="0" maxOccurs="1" type="positiveInteger" />
+	</sequence>
 </complexType>
 
 <element name="ReplicaSliceFilter" type="impl:ReplicaSliceFilterT" />
