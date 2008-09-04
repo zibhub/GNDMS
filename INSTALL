@@ -133,10 +133,10 @@ When describing the dependencies of a compilation unit, I assume the following
 - testng: extra/tools-lib/testng*.jar
 - servlet-api: extra/tools-lib/servlet-api*.jar
 - cos: extra/tools-lib/cos-*.jar
-- collections: google-collections*.jar
+- collections: extras/tools-lib/google-collect*.jar
 - GROOVY: extra/tools-lib/groovy*.jar
   If you use IntelliJ, use the global library GROOVY instead.
-- annotations: extra/tools/lib/annotations.jar
+- annotations: extra/tools-lib/annotations.jar
   Nearly everything has a dependency to this one.
                      
 
@@ -182,8 +182,8 @@ DETAILED BUILD INSTRUCTIONS
 
 
 - Compile gndms-logic.jar
-  Sources: logic/gndms-logic/src (resp. test)
-  Output: logic/production (resp. test) classes
+  Sources: logic/src (resp. test)
+  Output: logic/gndms-logic/production (resp. test) classes
   Dependencies: J2EE, GROOVY, annotations, SOURCE, gndms-shared-model,
                 testng, commons, derby
 
