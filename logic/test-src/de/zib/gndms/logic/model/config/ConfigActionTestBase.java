@@ -28,7 +28,7 @@ public abstract class ConfigActionTestBase extends ModelEntityTestBase {
             final @NotNull ConfigAction<?> actionParam, final PrintWriter pwriterParam,
             final String options)
             throws CommandAction.ParameterTools.ParameterParseException {
-        actionParam.setEntityManager(createEntityManager());
+        actionParam.setOwnEntityManager(createEntityManager());
         ActionTestTools.setupConfigAction(actionParam, pwriterParam);
         actionParam.parseLocalOptions(options);
     }

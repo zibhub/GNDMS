@@ -19,11 +19,11 @@ import javax.persistence.EntityManager;
 public interface EntityAction<R> extends Action<R>, ModelUUIDGen {
     EntityManager getEntityManager();
 
-    void setEntityManager(final @NotNull EntityManager entityManagerParam);
+    void setOwnEntityManager(final @NotNull EntityManager entityManagerParam);
 
 
     BatchUpdateAction<GridResource, ?> getPostponedActions();
 
-    void setPostponedActions(final @NotNull BatchUpdateAction<GridResource, ?> postponedActionsParam);
-    
+    void setOwnPostponedActions(final @NotNull BatchUpdateAction<GridResource, ?> postponedActionsParam);
+
 }

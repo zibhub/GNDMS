@@ -68,16 +68,16 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
 	 * and set on postponedActions.
 	 * 
 	 */
-	public <R> R callModelAction(
+	public <B> B callModelAction(
 		final EntityManager emParam,
-		final @NotNull BatchUpdateAction<?> postponedActions,
+		final @NotNull BatchUpdateAction<GridResource, ?> postponedActions,
 		final @NotNull EntityUpdateListener<GridResource> listener,
-		final @NotNull de.zib.gndms.logic.model.ModelAction<M, R> theAction,
+		final @NotNull de.zib.gndms.logic.model.ModelAction<M, B> theAction,
 	    final @NotNull M theModel) {
-		return (R) txRun(emParam, { EntityManager em ->
+		return (B) txRun(emParam, { EntityManager em ->
 			 if (listener != null)
 				 postponedActions.setListener(listener)
-			theAction.setPostponedActions(postponedActions)
+			theAction.setOwnPostponedActions(postponedActions)
 			theAction.setModel(theModel)
 			return theAction.call()
 	    } ) 
@@ -86,21 +86,21 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
 	/**
 	 *  @see #callModelAction(EntityManager, de.zib.gndms.logic.model.BatchUpdateAction, de.zib.gndms.logic.model.EntityUpdateListener, de.zib.gndms.logic.model.ModelAction, M)
 	 */
-	public final <R> R callModelAction(
+	public final <B> B callModelAction(
 		final EntityManager emParam,
 		final @NotNull EntityUpdateListener<GridResource> listener,
-		final @NotNull ModelAction<M, R> theAction,
+		final @NotNull ModelAction<M, B> theAction,
 	    final @NotNull M theModel) {
-		return callModelAction(emParam, new DefaultBatchUpdateAction(), listener, theAction,
+		return callModelAction(emParam, new DefaultBatchUpdateAction<GridResource>(), listener, theAction,
 		                       theModel)
 	}
 
     /**
      *  @see #callModelAction(EntityManager, de.zib.gndms.logic.model.BatchUpdateAction, de.zib.gndms.logic.model.EntityUpdateListener, de.zib.gndms.logic.model.ModelAction, M)
      */
-	public final <R> R callModelAction(
+	public final <B> B callModelAction(
 		final EntityManager emParam,
-		final @NotNull ModelAction<M, R> theAction,
+		final @NotNull ModelAction<M, B> theAction,
 	    final @NotNull M theModel) {
 		return (R) callModelAction(emParam, getEntityUpdateListener(), theAction, theModel)
 	}
@@ -108,9 +108,9 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
     /**
      *  @see #callModelAction(EntityManager, de.zib.gndms.logic.model.BatchUpdateAction, de.zib.gndms.logic.model.EntityUpdateListener, de.zib.gndms.logic.model.ModelAction, M)
      */
-	public final <R> R callNewModelAction(
+	public final <B> B callNewModelAction(
 		final @NotNull EntityUpdateListener<GridResource> listener,
-		final @NotNull ModelAction<M, R> theAction,
+		final @NotNull ModelAction<M, B> theAction,
 	    final @NotNull M theModel) {
 		return callModelAction(null, listener, theAction, theModel)
 	}
@@ -118,8 +118,8 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
     /**
      *  @see #callModelAction(EntityManager, de.zib.gndms.logic.model.BatchUpdateAction, de.zib.gndms.logic.model.EntityUpdateListener, de.zib.gndms.logic.model.ModelAction, M)
      */
-	public final <R> R callNewModelAction(
-		final @NotNull ModelAction<M, R> theAction,
+	public final <B> B callNewModelAction(
+		final @NotNull ModelAction<M, B> theAction,
 	    final @NotNull M theModel) {
 		return callModelAction(null, theAction, theModel)
 	}
@@ -127,10 +127,10 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
     /**
      *  @see #callModelAction(EntityManager, de.zib.gndms.logic.model.BatchUpdateAction, de.zib.gndms.logic.model.EntityUpdateListener, de.zib.gndms.logic.model.ModelAction, M)
      */
-	public final <R> R callNewModelAction(
-		final @NotNull BatchUpdateAction<?> postponedActions,
+	public final <B> B callNewModelAction(
+		final @NotNull BatchUpdateAction<GridResource, ?> postponedActions,
 		final @NotNull EntityUpdateListener<GridResource> listener,
-		final @NotNull ModelAction<M, R> theAction,
+		final @NotNull ModelAction<M, B> theAction,
 	    final @NotNull M theModel) {
 		return callModelAction(null, postponedActions, listener, theAction, theModel)
 	}
@@ -138,11 +138,11 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
     /**
      *  @see #callModelAction(EntityManager, de.zib.gndms.logic.model.BatchUpdateAction, de.zib.gndms.logic.model.EntityUpdateListener, de.zib.gndms.logic.model.ModelAction, M)
      */
-	public final <R> R callResourceAction(
+	public final <B> B callResourceAction(
 			final EntityManager emParam,
-			final @NotNull BatchUpdateAction<?> postponedActions,
+			final @NotNull BatchUpdateAction<GridResource, ?> postponedActions,
 			final @NotNull EntityUpdateListener<GridResource> listener,
-			final @NotNull ModelAction<M, R> theAction,
+			final @NotNull ModelAction<M, B> theAction,
 	        final @NotNull R resource) {
 		return (R) txRun(emParam, { EntityManager em ->
 			return callResourceAction(emParam, postponedActions, listener, theAction,
@@ -153,10 +153,10 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
     /**
      *  @see #callModelAction(EntityManager, de.zib.gndms.logic.model.BatchUpdateAction, de.zib.gndms.logic.model.EntityUpdateListener, de.zib.gndms.logic.model.ModelAction, M)
      */
-	public final <R> R callResourceAction(
+	public final <B> B callResourceAction(
 		final EntityManager emParam,
 		final EntityUpdateListener listener,
-		final @NotNull ModelAction<M, R> theAction,
+		final @NotNull ModelAction<M, B> theAction,
 		final @NotNull R resource) {
 		return callResourceAction(emParam, new DefaultBatchUpdateAction(), listener,
 		                          theAction, resource)
@@ -165,9 +165,9 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
     /**
      *  @see #callModelAction(EntityManager, de.zib.gndms.logic.model.BatchUpdateAction, de.zib.gndms.logic.model.EntityUpdateListener, de.zib.gndms.logic.model.ModelAction, M)
      */
-	public final <R> R callResourceAction(
+	public final <B> B callResourceAction(
 		final EntityManager emParam,
-		final @NotNull ModelAction<M, R> theAction,
+		final @NotNull ModelAction<M, B> theAction,
 		final @NotNull R resource) {
 		return (R) callResourceAction(emParam, getEntityUpdateListener(), theAction, resource)
 	}
@@ -175,9 +175,9 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
     /**
      *  @see #callModelAction(EntityManager, de.zib.gndms.logic.model.BatchUpdateAction, de.zib.gndms.logic.model.EntityUpdateListener, de.zib.gndms.logic.model.ModelAction, M)
      */
-	public final <R> R callNewResourceAction(
+	public final <B> B callNewResourceAction(
 		final @NotNull EntityUpdateListener listener,
-		final @NotNull ModelAction<M, R> theAction,
+		final @NotNull ModelAction<M, B> theAction,
 	    final @NotNull R resource) {
 		return callResourceAction(null, listener, theAction, resource)
 	}
@@ -185,8 +185,8 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
     /**
      *  @see #callModelAction(EntityManager, de.zib.gndms.logic.model.BatchUpdateAction, de.zib.gndms.logic.model.EntityUpdateListener, de.zib.gndms.logic.model.ModelAction, M)
      */
-	public final <R> R callNewResourceAction(
-		final @NotNull ModelAction<M, R> theAction,
+	public final <B> B callNewResourceAction(
+		final @NotNull ModelAction<M, B> theAction,
 	    final @NotNull R resource) {
 		return callResourceAction(null, theAction, resource)
 	}
@@ -194,10 +194,10 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
     /**
      *  @see #callModelAction(EntityManager, de.zib.gndms.logic.model.BatchUpdateAction, de.zib.gndms.logic.model.EntityUpdateListener, de.zib.gndms.logic.model.ModelAction, M)
      */
-	public final <R> R callNewResourceAction(
+	public final <B> B callNewResourceAction(
 		final @NotNull BatchUpdateAction<?> postponedActions,
 		final @NotNull EntityUpdateListener listener,
-		final @NotNull ModelAction<M, R> theAction,
+		final @NotNull ModelAction<M, B> theAction,
 	    final @NotNull R resource) {
 		return callResourceAction(null, postponedActions, listener, theAction, resource)
 	}
@@ -207,7 +207,7 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
 		return DelegatingEntityUpdateListener.getInstance(sys);
 	}
 
-    protected <R> R txRun(final EntityManager emParam, final @NotNull Closure block) {
+    protected <B> B txRun(final EntityManager emParam, final @NotNull Closure block) {
         if (emParam == null)
             return EMTools.txRun(getEntityManagerFactory().createEntityManager(), true, block)
         else

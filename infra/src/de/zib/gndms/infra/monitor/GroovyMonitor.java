@@ -8,15 +8,12 @@ import com.oreilly.servlet.multipart.Part;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
-import org.apache.tools.ant.filters.StringInputStream;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.servlet.http.*;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.security.Principal;
 
 /**
@@ -221,10 +218,15 @@ final class GroovyMonitor implements HttpSessionBindingListener, HttpSessionActi
 	@NotNull
 	@SuppressWarnings({"HardcodedLineSeparator"})
 	private static InputStream getInitStream() {
-		return new StringInputStream(INIT_SCRIPT);
-	}
+        try {
+            return new ByteArrayInputStream(INIT_SCRIPT.getBytes("utf8"));
+        }
+        catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	/**
+     /**
 	 * Explicitely sets "out" and "err" properties to outWriter before running the script
 	 * read from inStream.
 	 *
@@ -236,19 +238,35 @@ final class GroovyMonitor implements HttpSessionBindingListener, HttpSessionActi
 	 */
 	private Object runStream(
 		  @NotNull GroovyShell theShell, String args, @NotNull InputStream inStream,
-		  boolean printEvaled) {
-		final Script script = theShell.parse(inStream);
+		  boolean printEvaled) throws IOException
+     {
+         final InputStreamReader streamReader = new InputStreamReader(inStream, "utf8");
+         final StringBuilder builder = new StringBuilder(INIT_SCRIPT.length());
+         final BufferedReader bufReader= new BufferedReader(streamReader);
+         try {
+             String line = bufReader.readLine();
+             while (line != null) {
+                 builder.append(line);
+                 builder.append('\n');
+                 line = bufReader.readLine();
+             }
+         }
+         finally {
+                bufReader.close();
+         }
 
-		script.setProperty("out", outWriter);
-		script.setProperty("err", outWriter);
-		script.setProperty("args", args);
+		 final Script script = theShell.parse(builder.toString());
 
-		outWriter.flush();
-		final Object result = script.run();
-		if (printEvaled)
-			script.println(result);
-		outWriter.flush();
-		return result;
+		 script.setProperty("out", outWriter);
+		 script.setProperty("err", outWriter);
+		 script.setProperty("args", args);
+
+		 outWriter.flush();
+		 final Object result = script.run();
+		 if (printEvaled)
+		 	script.println(result);
+		 outWriter.flush();
+		 return result;
 	}
 
 	/**
@@ -325,44 +343,40 @@ final class GroovyMonitor implements HttpSessionBindingListener, HttpSessionActi
 		}
 		else if (part.isParam())
 		{
-			String val = ((ParamPart)part).getStringValue();
-			StringInputStream valStream = null;
+			final String val = ((ParamPart)part).getStringValue();
+            final InputStream valStream = new ByteArrayInputStream(val.getBytes("utf8"));
 			try {
-				valStream = new StringInputStream(val);
 				handleStream(b64, args, valStream);
 			}
 			finally {
-				if (valStream != null)
-					valStream.close();
+    			valStream.close();
 			}
 		}
 	}
 
-	private synchronized void handleStream(
-		  boolean b64, @NotNull String args, @NotNull InputStream val) throws IOException {
-		final GroovyShell theShell = getShell();
+	@SuppressWarnings({ "SynchronizationOnLocalVariableOrMethodParameter" })
+    private synchronized void handleStream(
+		  boolean b64, final @NotNull String args, final @NotNull InputStream val)
+            throws IOException
+    {
+		final @NotNull GroovyShell theShell = getShell();
 		synchronized (theShell) {
-			if (theShell == null)
-				throw new RuntimeException("Cant evaluate without shell");
-			InputStream decodedStream = null;
+			final InputStream decodedStream = getDecodedValStream(b64, val);
 			try {
-				decodedStream = getDecodedValStream(b64, val);
 				runStream(theShell, args, decodedStream, runMode.isEvaled());
 			}
 			finally {
-				if (decodedStream != null) {
-					decodedStream.close();
-					if (val != decodedStream)
-						val.close();
-				}
+                decodedStream.close();
+                if (val != decodedStream)
+                    val.close();
 			}
 		}
 	}
 
-	@NotNull
-	private static InputStream getDecodedValStream(boolean b64, @NotNull InputStream val)
+	private static @NotNull InputStream getDecodedValStream(boolean b64,
+                                                            final @NotNull InputStream val)
 		  throws IOException {
-		InputStream val1;
+		final @NotNull InputStream val1;
 		if (b64) {
 			val1 = new Base64Decoder(val);
 		}

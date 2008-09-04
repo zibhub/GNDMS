@@ -34,7 +34,7 @@ public class CreateSliceKindActionTest extends ModelEntityTestBase {
         // clean up mess form last time
 
         LookupAction<SliceKind, String> la = new LookupAction( SliceKind.class, URI );
-        la.setEntityManager( getEntityManager() );
+        la.setOwnEntityManager( getEntityManager() );
         la.setUUIDGen( uuidgen );
         getEntityManager().getTransaction().begin( );
         SliceKind sk = la.call();
@@ -57,8 +57,8 @@ public class CreateSliceKindActionTest extends ModelEntityTestBase {
         val.setURI( URI );
         val.setMode( SliceKindMode.RO );
         CreateSliceKindAction action =  val.createCreateSliceAction();
-        action.setEntityManager( em );
-        action.setPostponedActions( boa );
+        action.setOwnEntityManager( em );
+        action.setOwnPostponedActions( boa );
         action.setUUIDGen( uuidgen );
         SliceKind sl = action.call();
         val.validate(  sl  );

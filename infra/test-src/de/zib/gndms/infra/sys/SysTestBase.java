@@ -88,8 +88,8 @@ public abstract class SysTestBase {
 
 
     public void setupEntityAction(EntityAction<?> etA) {
-        etA.setEntityManager(sys.getEntityManagerFactory().createEntityManager());
-        etA.setPostponedActions(new DefaultBatchUpdateAction());
+        etA.setOwnEntityManager(sys.getEntityManagerFactory().createEntityManager());
+        etA.setOwnPostponedActions(new DefaultBatchUpdateAction());
     }
 
 }

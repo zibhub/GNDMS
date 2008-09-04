@@ -45,7 +45,7 @@ public class CreateSliceActionTest extends ModelEntityTestBase {
         ModelUUIDGen ug = SimpleModelUUIDGen.getInstance();
 
         LookupAction<SliceKind, String> la = new LookupAction( SliceKind.class, sliceKindTestKey );
-        la.setEntityManager( getEntityManager() );
+        la.setOwnEntityManager( getEntityManager() );
         la.setUUIDGen( ug );
         getEntityManager().getTransaction().begin( );
         SliceKind sk = la.call();
@@ -114,9 +114,9 @@ public class CreateSliceActionTest extends ModelEntityTestBase {
         DefaultBatchUpdateAction boa = new DefaultBatchUpdateAction( );
         boa.setActions( new Vector<Action<Void>>() );
         Action = validator.createCreateSliceAction(  );
-        Action.setPostponedActions( boa );
+        Action.setOwnPostponedActions( boa );
         //getEntityManager( ).getTransaction().begin( );
-        Action.setEntityManager( getEntityManager( ) );
+        Action.setOwnEntityManager( getEntityManager( ) );
         Slice sl = Action.call();
         assert sl != null;
         // getEntityManager( ).getTransaction().commit( );

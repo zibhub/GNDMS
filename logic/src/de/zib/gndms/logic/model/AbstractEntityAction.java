@@ -19,9 +19,10 @@ import javax.persistence.EntityTransaction;
  */
 public abstract class AbstractEntityAction<R> extends AbstractAction<R> implements EntityAction<R> {
     private EntityManager entityManager;
-    private BatchUpdateAction<GridResource, Object> postponedActions;
+    private BatchUpdateAction<GridResource, ?> postponedActions;
     @SuppressWarnings({ "InstanceVariableNamingConvention" })
     private ModelUUIDGen UUIDGen;   // the uuid generator
+    private boolean runningOwnPostponedActions = true;
 
 
     @Override
@@ -69,7 +70,7 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
         return entityManager;
     }
 
-    public void setEntityManager(final @NotNull EntityManager entityManagerParam) {
+    public void setOwnEntityManager(final @NotNull EntityManager entityManagerParam) {
         doNotOverwrite("entityManager", entityManager);
         entityManager = entityManagerParam;
     }
@@ -86,10 +87,10 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
     }
 
 
-    public final void setPostponedActions(
+    public final void setOwnPostponedActions(
           @NotNull final BatchUpdateAction<GridResource, ?> postponedActionsParam) {
         doNotOverwrite("postponedActions", postponedActions);
-        postponedActions = (BatchUpdateAction<GridResource, Object>) postponedActionsParam;
+        postponedActions = postponedActionsParam;
     }
 
 
@@ -119,6 +120,29 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
     }
 
     public void addChangedModel( GridResource model  ) {
-        (( BatchUpdateAction<GridResource,Object> )getPostponedActions( )).addAction( new ModelChangedAction( model ) );
+        getPostponedActions( ).addAction( new ModelChangedAction( model ) );
+    }
+
+
+    public boolean hasOwnPostponedActions() {
+        return postponedActions != null;
+    }
+
+    public boolean isRunningOwnPostponedActions() {
+        return runningOwnPostponedActions;
+    }
+
+
+    public void setRunningOwnPostponedActions(final boolean runningOwnPostponedActionsParam) {
+        runningOwnPostponedActions = runningOwnPostponedActionsParam;
+    }
+
+
+    @Override
+    public void cleanUp() {
+        final BatchUpdateAction<GridResource, ?> batched = getPostponedActions();
+        if (hasOwnPostponedActions() && isRunningOwnPostponedActions())
+            postponedActions.call();
+        super.cleanUp();    // Overridden method
     }
 }

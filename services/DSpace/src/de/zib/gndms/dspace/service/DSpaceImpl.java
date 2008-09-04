@@ -171,7 +171,7 @@ public class DSpaceImpl extends DSpaceImplBase {
                     (Subspace.class, (ExtSubspaceResourceHome) system.getInstanceDir().getHome( Subspace.class ));
 
             ModelAction<Subspace, Slice> ma = csa;
-            Slice ns = (Slice) mh.callModelAction( (EntityManager) em, system.getEntityUpdateListener(), ma, sp);
+            Slice ns = (Slice) mh.callModelAction( em, system.getEntityUpdateListener(), ma, sp);
 
             csa.getPostponedActions().call( );
 

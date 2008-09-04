@@ -4,6 +4,8 @@ import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.monitor.ActionCaller;
 import de.zib.gndms.infra.monitor.GroovyMoniServer;
 import de.zib.gndms.infra.service.GNDMServiceHome;
+import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
+import de.zib.gndms.logic.model.EntityAction;
 import de.zib.gndms.logic.model.EntityUpdateListener;
 import de.zib.gndms.logic.util.LogicTools;
 import de.zib.gndms.model.common.GridResource;
@@ -36,7 +38,11 @@ import javax.persistence.Query;
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 
 /**
@@ -72,6 +78,7 @@ public final class GNDMSystem
 	private @NotNull EntityManagerFactory restrictedEmf;
 	private @NotNull GroovyMoniServer groovyMonitor;
 
+    private ExecutorService executorService;
 
 	/**
 	 * Retrieves a GNDMSSystem using context.lookup(name).
@@ -193,8 +200,7 @@ public final class GNDMSystem
 	}
 
 
-    @NotNull
-	public EntityManagerFactory createEMF() throws Exception {
+	public @NotNull EntityManagerFactory createEMF() throws Exception {
 		final String gridName = sharedConfig.getGridName();
 		final Properties map = new Properties();
 
@@ -213,6 +219,7 @@ public final class GNDMSystem
 		return createEntityManagerFactory(gridName, map);
 	}
 
+
 	private void tryTxExecution() {
 		final EntityManager em = emf.createEntityManager();
 		try {
@@ -224,6 +231,7 @@ public final class GNDMSystem
 		finally
 			{ em.close(); }
 	}
+
 
 	@SuppressWarnings({ "MethodOnlyUsedFromInnerClass" })
 	private synchronized void setupShellService() throws Exception {
@@ -256,6 +264,42 @@ public final class GNDMSystem
 	}
 
 
+    public synchronized @NotNull ExecutorService getExecutorService() {
+        if (executorService == null)
+            executorService = createExecutorService();
+        return executorService;
+    }
+
+    public final @NotNull <R> Future<R> submitAction(final @NotNull EntityAction<R> action) {
+        final @NotNull EntityManager em = getEntityManagerFactory().createEntityManager();
+        try {
+            return submitAction(em, action);
+        }
+        finally {
+            if (em.isOpen())
+                em.close();
+        }
+    }
+
+    @SuppressWarnings({ "FeatureEnvy" })
+    public @NotNull <R> Future<R> submitAction(final @NotNull EntityManager em,
+                                               final @NotNull EntityAction<R> action) {
+        action.setOwnEntityManager(em);
+        if (action instanceof SystemHolder)
+            ((SystemHolder)action).setSystem(this);
+        if (action.getPostponedActions() == null)
+            action.setOwnPostponedActions(new DefaultBatchUpdateAction<GridResource>());
+        if (action.getPostponedActions().getListener() == null)
+            action.getPostponedActions().setListener(getEntityUpdateListener());
+        action.initialize();
+        return getExecutorService().submit(action);
+    }
+
+
+    @SuppressWarnings({ "MethodMayBeStatic" })
+    private @NotNull ExecutorService createExecutorService() {
+        return Executors.newCachedThreadPool();
+    }
 
 
     public boolean isDebugging() {
