@@ -35,6 +35,9 @@ infra/test/**
 test-output/**
 ./changes
 doc/*
+**/.svn/**
+.svn/**
+
 
 syntax:regexp
 ^types/[A-Za-z].+

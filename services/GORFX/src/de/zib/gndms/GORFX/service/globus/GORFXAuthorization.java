@@ -77,6 +77,11 @@ public class GORFXAuthorization implements PDP {
 		
 		
 	}
+					
+	public static void authorizeCallMaintenanceAction() throws RemoteException {
+		
+		
+	}
 	
 	
 	public boolean isPermitted(Subject peerSubject, MessageContext context, QName operation)
@@ -128,6 +133,14 @@ public class GORFXAuthorization implements PDP {
 		} else if(operation.getLocalPart().equals("getSupportedOfferTypes")){
 			try{
 				authorizeGetSupportedOfferTypes();
+				return true;
+			} catch (Exception e){
+				e.printStackTrace();
+				return false;
+			}
+		} else if(operation.getLocalPart().equals("callMaintenanceAction")){
+			try{
+				authorizeCallMaintenanceAction();
 				return true;
 			} catch (Exception e){
 				e.printStackTrace();

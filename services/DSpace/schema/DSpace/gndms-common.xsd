@@ -64,7 +64,7 @@
 
 <element name="SubspaceSpecifier" type="QName" />
 
-<element name="SliceKind" type="anyURI" />
+<element name="SliceKind" type="anyURI"/>
 
 <complexType name="SliceReferenceT">
     <sequence>
@@ -111,7 +111,8 @@
 <simpleType name="GridSiteT">
     <restriction base="normalizedString">
         <maxLength value="64" />
-        <pattern value="([-a-zA-Z0-9_]+.)*[-a-zA-Z0-9_]+" />
+        <minLength value="1" />
+        <pattern value="[a-zA-Z0-9][\-a-zA-Z0-9_]*(.[\-a-zA-Z0-9_]+)*" />
     </restriction>
 </simpleType>
 
@@ -126,17 +127,12 @@
 		 properly escape filenames in staging scripts
 	-->
 	<restriction base="normalizedString">
-		<pattern value="[a-zA-Z0-9][-a-zA-Z0-9_]*(.[-a-zA-Z0-9_]+)*" />
+        <!-- 64 k ought to be enough for anyone -->
+        <maxLength value="255" />
+        <minLength value="1" />
+		<pattern value="[a-zA-Z0-9][\-a-zA-Z0-9_]*(.[\-a-zA-Z0-9_]+)*" />
 	</restriction>
 </simpleType>
-
-<element name="File" type="impl:FilenameT" />
-
-<complexType name="FileT">
-	<sequence>
-		<element ref="impl:File" minOccurs="1" maxOccurs="1"/>
-	</sequence>
-</complexType>
 
 <complexType name="FileSeqT">
 	<sequence>
@@ -144,10 +140,15 @@
 	</sequence>
 </complexType>
 
+<element name="File" type="impl:FilenameT" />
+
+<element name="Files" type="impl:FileMappingSeqT" />
+
+
 <complexType name="FileMapEntryT">
     <sequence>
-        <element name="SourceFile" type="impl:FileT" minOccurs="1" maxOccurs="1"/>
-        <element name="DestinationFile" type="impl:FileT" minOccurs="0" maxOccurs="1" />
+        <element name="SourceFile" type="impl:FilenameT" minOccurs="1" maxOccurs="1"/>
+        <element name="DestinationFile" type="impl:FilenameT" minOccurs="0" maxOccurs="1" />
     </sequence>
 </complexType>
 
@@ -157,7 +158,8 @@
     </sequence>
 </complexType>
 
-<element name="Lofi" type="impl:FileT" />
+    
+<element name="Lofi" type="impl:FilenameT" />
 
 <element name="LofiSeq" type="impl:FileSeqT" />
 
@@ -202,8 +204,18 @@
     <sequence>
         <!-- If missing, means "forever" -->
         <element name="IfDecisionBefore" type="dateTime" minOccurs="0" maxOccurs="1"/>
+
         <!-- If missing, means "unknown" -->
         <element name="ExecutionLikelyUntil" type="dateTime" minOccurs="0" maxOccurs="1"/>
+
+        <!--
+              If the decision is made earlier, the execution will commence
+              with *high* probability before DecisionPoint+(ExecutionLikelyUntil-IfDecisionBefore)
+
+              If missing, means "unknown".
+          -->
+        <element name="constantExecutionTime" type="boolean" default="false" />
+
         <element name="ResultValidUntil" type="dateTime" minOccurs="1" maxOccurs="1"/>
     </sequence>
 </complexType>

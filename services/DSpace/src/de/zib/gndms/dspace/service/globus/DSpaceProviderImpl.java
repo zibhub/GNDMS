@@ -26,6 +26,12 @@ public class DSpaceProviderImpl{
 	}
 	
 
+    public de.zib.gndms.dspace.stubs.CallMaintenanceActionResponse callMaintenanceAction(de.zib.gndms.dspace.stubs.CallMaintenanceActionRequest params) throws RemoteException {
+    de.zib.gndms.dspace.stubs.CallMaintenanceActionResponse boxedResult = new de.zib.gndms.dspace.stubs.CallMaintenanceActionResponse();
+    boxedResult.setResponse(impl.callMaintenanceAction(params.getAction(),params.getOptions().getContext()));
+    return boxedResult;
+  }
+
     public de.zib.gndms.dspace.stubs.GetSubspaceResponse getSubspace(de.zib.gndms.dspace.stubs.GetSubspaceRequest params) throws RemoteException, de.zib.gndms.dspace.stubs.types.UnknownSubspace {
     de.zib.gndms.dspace.stubs.GetSubspaceResponse boxedResult = new de.zib.gndms.dspace.stubs.GetSubspaceResponse();
     boxedResult.setSubspaceReference(impl.getSubspace(params.getSubspaceSpecifier().getSubspaceSpecifier()));

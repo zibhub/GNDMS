@@ -89,7 +89,6 @@ import org.oasis.wsrf.lifetime.TerminationNotification;
  * 
  */
 public abstract class ORQResourceBase extends ReflectionResource implements Resource
-                                                  ,TopicListAccessor
                                                   ,SecureResource
                                                   ,RemoveCallback
                                                   {
@@ -104,7 +103,6 @@ public abstract class ORQResourceBase extends ReflectionResource implements Reso
     private AdvertisementClient registrationClient;
     
     private URL baseURL;
-    private TopicList topicList;
     private boolean beingLoaded = false;
     
     public ORQResourceBase() {
@@ -121,26 +119,6 @@ public abstract class ORQResourceBase extends ReflectionResource implements Reso
         // Call the super initialize on the ReflectionResource                  
 	    super.initialize(resourceBean,resourceElementQName,id);
 		this.desc = null;
-		this.topicList = new SimpleTopicList(this);
-
-        // create the topics for each resource property
-        Iterator it = getResourcePropertySet().iterator();
-        List newTopicProps = new ArrayList();
-        while(it.hasNext()){
-            ResourceProperty prop = (ResourceProperty)it.next();
-            prop.getMetaData().getName();
-            prop = new ResourcePropertyTopic(prop);
-            this.topicList.addTopic((Topic)prop);
-            newTopicProps.add(prop);
-        }
-        // replace the non topic properties with the topic properties
-        Iterator newTopicIt = newTopicProps.iterator();
-        while(newTopicIt.hasNext()){
-            ResourceProperty prop = (ResourceProperty)newTopicIt.next();
-            getResourcePropertySet().remove(prop.getMetaData().getName());
-            getResourcePropertySet().add(prop);
-        }
-        
 
 
 		// register the service to the index service
@@ -155,17 +133,6 @@ public abstract class ORQResourceBase extends ReflectionResource implements Reso
 	 * @see org.globus.wsrf.ResourceLifetime#setTerminationTime(java.util.Calendar)
 	 */
 	public void setTerminationTime(Calendar time) {	
-		Topic terminationTopic = ((Topic)getResourcePropertySet().get(ORQConstants.TERMINATIONTIME));
-        if (terminationTopic != null) {
-            TerminationNotification terminationNotification =
-                new TerminationNotification();
-            terminationNotification.setTerminationTime(time);
-            try {
-                terminationTopic.notify(terminationNotification);
-            } catch(Exception e) {
-                logger.error("Unable to send terminationTime notification", e);
-            }
-        }	
         
 		super.setTerminationTime(time);
 	}
@@ -399,9 +366,6 @@ public abstract class ORQResourceBase extends ReflectionResource implements Reso
 	}
 	
 
-    public TopicList getTopicList() {
-        return this.topicList;
-    }
 
     public void remove() throws ResourceException {
     }

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://GORFX.gndms.zib.de/GORFX/Offer" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wns3="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:wns2="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:ns7="http://dspace.gndms.zib.de/DSpace/types" xmlns:ns10="http://GORFX.gndms.zib.de/GORFX/ORQ/types" xmlns:ns9="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns8="http://GORFX.gndms.zib.de/GORFX/types" xmlns:ns11="http://GORFX.gndms.zib.de/GORFX/Offer/types" xmlns:ns12="http://GORFX.gndms.zib.de/GORFX/Context/types" xmlns:ns1="http://gndms.zib.de/c3grid/types" xmlns:ns5="http://gndms.zib.de/common/types" xmlns:ns3="http://lofis.gndms.zib.de/LOFIS/LofiSet/types" xmlns:ns4="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:ns6="http://dspace.gndms.zib.de/DSpace/Slice/types" xmlns:ns0="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" xmlns:ns2="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd" name="Offer" targetNamespace="http://GORFX.gndms.zib.de/GORFX/Offer">
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://GORFX.gndms.zib.de/GORFX/Offer" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wns2="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:ns4="http://dspace.gndms.zib.de/DSpace/types" xmlns:ns10="http://GORFX.gndms.zib.de/GORFX/ORQ/types" xmlns:ns9="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns8="http://GORFX.gndms.zib.de/GORFX/types" xmlns:ns11="http://GORFX.gndms.zib.de/GORFX/Offer/types" xmlns:ns12="http://GORFX.gndms.zib.de/GORFX/Context/types" xmlns:ns5="http://gndms.zib.de/c3grid/types" xmlns:ns7="http://gndms.zib.de/common/types" xmlns:ns1="http://lofis.gndms.zib.de/LOFIS/LofiSet/types" xmlns:ns2="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:ns3="http://dspace.gndms.zib.de/DSpace/Slice/types" xmlns:ns0="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" xmlns:ns6="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd" name="Offer" targetNamespace="http://GORFX.gndms.zib.de/GORFX/Offer">
   <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" location="../wsrf/properties/WS-ResourceProperties.wsdl" />
   <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" location="../wsrf/faults/WS-BaseFaults.wsdl" />
   <import namespace="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" location="../wsrf/notification/WS-BaseN.wsdl" />
   <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" location="./../wsrf/lifetime/WS-ResourceLifetime.wsdl" />
   <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" location="./../wsrf/properties/WS-ResourceProperties.wsdl" />
   <import namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" location="./ServiceSecurity.wsdl" />
-  <import namespace="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" location="./../wsrf/notification/WS-BaseN.wsdl" />
   <!--============================================================
 
                       T Y P E S
@@ -15,7 +14,7 @@
   <types>
     <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsrbf="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" targetNamespace="http://GORFX.gndms.zib.de/GORFX/Offer" elementFormDefault="qualified" attributeFormDefault="unqualified">
       <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="../wsrf/faults/WS-BaseFaults.xsd" />
-      <import namespace="http://dspace.gndms.zib.de/DSpace/types" schemaLocation="./../DSpace/DSpaceTypes.xsd" />
+      <import namespace="http://dspace.gndms.zib.de/DSpace/types" schemaLocation="./DSpaceTypes.xsd" />
       <import namespace="http://GORFX.gndms.zib.de/GORFX/ORQ/types" schemaLocation="./ORQTypes.xsd" />
       <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" schemaLocation="./xsd/cagrid/types/security/security.xsd" />
       <import namespace="http://GORFX.gndms.zib.de/GORFX/types" schemaLocation="./GORFXTypes.xsd" />
@@ -23,9 +22,9 @@
       <import namespace="http://GORFX.gndms.zib.de/GORFX/Context/types" schemaLocation="./TaskTypes.xsd" />
       <import namespace="http://gndms.zib.de/c3grid/types" schemaLocation="./gndms-c3grid.xsd" />
       <import namespace="http://gndms.zib.de/common/types" schemaLocation="./gndms-common.xsd" />
-      <import namespace="http://lofis.gndms.zib.de/LOFIS/LofiSet/types" schemaLocation="./../LOFIS/LofiSetTypes.xsd" />
+      <import namespace="http://lofis.gndms.zib.de/LOFIS/LofiSet/types" schemaLocation="./LofiSetTypes.xsd" />
       <import namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" schemaLocation="./../ws/addressing/WS-Addressing.xsd" />
-      <import namespace="http://dspace.gndms.zib.de/DSpace/Slice/types" schemaLocation="./../DSpace/SliceTypes.xsd" />
+      <import namespace="http://dspace.gndms.zib.de/DSpace/Slice/types" schemaLocation="./SliceTypes.xsd" />
       <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="./../wsrf/faults/WS-BaseFaults.xsd" />
       <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd" schemaLocation="./../wsrf/lifetime/WS-ResourceLifetime.xsd" />
       <element name="AcceptRequest">
@@ -36,17 +35,17 @@
       <element name="AcceptResponse">
         <complexType>
           <sequence>
-            <element ref="ns4:EndpointReference" minOccurs="1" maxOccurs="1" />
+            <element ref="ns2:EndpointReference" minOccurs="1" maxOccurs="1" />
           </sequence>
         </complexType>
       </element>
       <element name="OfferResourceProperties">
         <complexType>
           <sequence>
-            <element ref="ns2:CurrentTime" />
-            <element ref="ns2:TerminationTime" />
-            <element ref="ns5:OfferExecutionContract" />
-            <element ref="ns5:OfferRequestArguments" />
+            <element ref="ns6:CurrentTime" />
+            <element ref="ns6:TerminationTime" />
+            <element ref="ns7:OfferExecutionContract" />
+            <element ref="ns7:OfferRequestArguments" />
           </sequence>
         </complexType>
       </element>
@@ -69,51 +68,42 @@
   ============================================================-->
   <portType name="OfferPortType" wsrp:ResourceProperties="tns:OfferResourceProperties">
     <operation name="Accept">
-      <input message="tns:AcceptRequest" wsa:de.zib.gndms.action.Action="http://GORFX.gndms.zib.de/GORFX/Offer/AcceptRequest" />
-      <output message="tns:AcceptResponse" wsa:de.zib.gndms.action.Action="http://GORFX.gndms.zib.de/GORFX/Offer/AcceptResponse" />
-      <fault name="PermissionDenied" message="tns:PermissionDeniedFaultMessage" wsa:de.zib.gndms.action.Action="http://GORFX.gndms.zib.de/GORFX/Offer/PermissionDeniedFaultMessage" />
+      <input message="tns:AcceptRequest" wsa:Action="http://GORFX.gndms.zib.de/GORFX/Offer/AcceptRequest" />
+      <output message="tns:AcceptResponse" wsa:Action="http://GORFX.gndms.zib.de/GORFX/Offer/AcceptResponse" />
+      <fault name="PermissionDenied" message="tns:PermissionDeniedFaultMessage" wsa:Action="http://GORFX.gndms.zib.de/GORFX/Offer/PermissionDeniedFaultMessage" />
     </operation>
     <operation name="getServiceSecurityMetadata">
-      <input message="wns0:GetServiceSecurityMetadataRequest" wsa:de.zib.gndms.action.Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />
-      <output message="wns0:GetServiceSecurityMetadataResponse" wsa:de.zib.gndms.action.Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataResponse" />
+      <input message="wns0:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />
+      <output message="wns0:GetServiceSecurityMetadataResponse" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataResponse" />
     </operation>
     <wsdl:operation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="Destroy">
-      <wsdl:input message="wsrlw:DestroyRequest" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime/Destroy" />
-      <wsdl:output message="wsrlw:DestroyResponse" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime/DestroyResponse" />
+      <wsdl:input message="wsrlw:DestroyRequest" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime/Destroy" />
+      <wsdl:output message="wsrlw:DestroyResponse" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime/DestroyResponse" />
       <wsdl:fault message="wsrlw:ResourceNotDestroyedFault" name="ResourceNotDestroyedFault" />
       <wsdl:fault message="wsrlw:ResourceUnknownFault" name="ResourceUnknownFault" />
     </wsdl:operation>
     <wsdl:operation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="SetTerminationTime">
-      <wsdl:input message="wsrlw:SetTerminationTimeRequest" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime/SetTerminationTime" />
-      <wsdl:output message="wsrlw:SetTerminationTimeResponse" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime/SetTerminationTimeResponse" />
+      <wsdl:input message="wsrlw:SetTerminationTimeRequest" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime/SetTerminationTime" />
+      <wsdl:output message="wsrlw:SetTerminationTimeResponse" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime/SetTerminationTimeResponse" />
       <wsdl:fault message="wsrlw:UnableToSetTerminationTimeFault" name="UnableToSetTerminationTimeFault" />
       <wsdl:fault message="wsrlw:ResourceUnknownFault" name="ResourceUnknownFault" />
       <wsdl:fault message="wsrlw:TerminationTimeChangeRejectedFault" name="TerminationTimeChangeRejectedFault" />
     </wsdl:operation>
-    <wsdl:operation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="Subscribe">
-      <wsdl:input message="wsntw:SubscribeRequest" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification/Subscribe" />
-      <wsdl:output message="wsntw:SubscribeResponse" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification/SubscribeResponse" />
-      <wsdl:fault name="ResourceUnknownFault" message="wsntw:ResourceUnknownFault" />
-      <wsdl:fault name="SubscribeCreationFailedFault" message="wsntw:SubscribeCreationFailedFault" />
-      <wsdl:fault name="TopicPathDialectUnknownFault" message="wsntw:TopicPathDialectUnknownFault" />
-      <wsdl:fault name="InvalidTopicExpressionFault" message="wsntw:InvalidTopicExpressionFault" />
-      <wsdl:fault name="TopicNotSupportedFault" message="wsntw:TopicNotSupportedFault" />
-    </wsdl:operation>
     <wsdl:operation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="GetMultipleResourceProperties">
-      <wsdl:input name="GetMultipleResourcePropertiesRequest" message="wsrpw:GetMultipleResourcePropertiesRequest" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetMultipleResourceProperties" />
-      <wsdl:output name="GetMultipleResourcePropertiesResponse" message="wsrpw:GetMultipleResourcePropertiesResponse" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetMultipleResourcePropertiesResponse" />
+      <wsdl:input name="GetMultipleResourcePropertiesRequest" message="wsrpw:GetMultipleResourcePropertiesRequest" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetMultipleResourceProperties" />
+      <wsdl:output name="GetMultipleResourcePropertiesResponse" message="wsrpw:GetMultipleResourcePropertiesResponse" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetMultipleResourcePropertiesResponse" />
       <wsdl:fault name="ResourceUnknownFault" message="wsrpw:ResourceUnknownFault" />
       <wsdl:fault name="InvalidResourcePropertyQNameFault" message="wsrpw:InvalidResourcePropertyQNameFault" />
     </wsdl:operation>
     <wsdl:operation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="GetResourceProperty">
-      <wsdl:input name="GetResourcePropertyRequest" message="wsrpw:GetResourcePropertyRequest" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetResourceProperty" />
-      <wsdl:output name="GetResourcePropertyResponse" message="wsrpw:GetResourcePropertyResponse" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetResourcePropertyResponse" />
+      <wsdl:input name="GetResourcePropertyRequest" message="wsrpw:GetResourcePropertyRequest" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetResourceProperty" />
+      <wsdl:output name="GetResourcePropertyResponse" message="wsrpw:GetResourcePropertyResponse" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetResourcePropertyResponse" />
       <wsdl:fault name="ResourceUnknownFault" message="wsrpw:ResourceUnknownFault" />
       <wsdl:fault name="InvalidResourcePropertyQNameFault" message="wsrpw:InvalidResourcePropertyQNameFault" />
     </wsdl:operation>
     <wsdl:operation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="QueryResourceProperties">
-      <wsdl:input name="QueryResourcePropertiesRequest" message="wsrpw:QueryResourcePropertiesRequest" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/QueryResourceProperties" />
-      <wsdl:output name="QueryResourcePropertiesResponse" message="wsrpw:QueryResourcePropertiesResponse" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/QueryResourcePropertiesResponse" />
+      <wsdl:input name="QueryResourcePropertiesRequest" message="wsrpw:QueryResourcePropertiesRequest" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/QueryResourceProperties" />
+      <wsdl:output name="QueryResourcePropertiesResponse" message="wsrpw:QueryResourcePropertiesResponse" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/QueryResourcePropertiesResponse" />
       <wsdl:fault name="ResourceUnknownFault" message="wsrpw:ResourceUnknownFault" />
       <wsdl:fault name="InvalidResourcePropertyQNameFault" message="wsrpw:InvalidResourcePropertyQNameFault" />
       <wsdl:fault name="UnknownQueryExpressionDialectFault" message="wsrpw:UnknownQueryExpressionDialectFault" />

@@ -77,6 +77,26 @@ public class LOFISAuthorization implements PDP {
 		
 		
 	}
+					
+	public static void authorizeCallMaintenanceAction() throws RemoteException {
+		
+		
+	}
+					
+	public static void authorizeCreateOrRetrieveLofiSet() throws RemoteException {
+		
+		
+	}
+					
+	public static void authorizeRetrieveLofiSet() throws RemoteException {
+		
+		
+	}
+					
+	public static void authorizeMergeLofiSetsAndCacheNew() throws RemoteException {
+		
+		
+	}
 	
 	
 	public boolean isPermitted(Subject peerSubject, MessageContext context, QName operation)
@@ -128,6 +148,38 @@ public class LOFISAuthorization implements PDP {
 		} else if(operation.getLocalPart().equals("mergeLofiSets")){
 			try{
 				authorizeMergeLofiSets();
+				return true;
+			} catch (Exception e){
+				e.printStackTrace();
+				return false;
+			}
+		} else if(operation.getLocalPart().equals("callMaintenanceAction")){
+			try{
+				authorizeCallMaintenanceAction();
+				return true;
+			} catch (Exception e){
+				e.printStackTrace();
+				return false;
+			}
+		} else if(operation.getLocalPart().equals("createOrRetrieveLofiSet")){
+			try{
+				authorizeCreateOrRetrieveLofiSet();
+				return true;
+			} catch (Exception e){
+				e.printStackTrace();
+				return false;
+			}
+		} else if(operation.getLocalPart().equals("retrieveLofiSet")){
+			try{
+				authorizeRetrieveLofiSet();
+				return true;
+			} catch (Exception e){
+				e.printStackTrace();
+				return false;
+			}
+		} else if(operation.getLocalPart().equals("mergeLofiSetsAndCacheNew")){
+			try{
+				authorizeMergeLofiSetsAndCacheNew();
 				return true;
 			} catch (Exception e){
 				e.printStackTrace();
