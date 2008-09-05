@@ -1,4 +1,4 @@
-package de.zib.gndms.GORFX.common;
+package de.zib.gndms.model.gorfx;
 
 /**
  * Created by IntelliJ IDEA.
