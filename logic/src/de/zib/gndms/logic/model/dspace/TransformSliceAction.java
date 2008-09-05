@@ -5,7 +5,7 @@ import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.dspace.types.SliceKindMode;
 import de.zib.gndms.model.common.ModelUUIDGen;
-import de.zib.gndms.logic.model.aux.DirectoryAux;
+import de.zib.gndms.logic.model.util.DirectoryAux;
 import de.zib.gndms.logic.model.AbstractModelAction;
 import org.jetbrains.annotations.NotNull;
 
