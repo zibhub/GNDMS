@@ -41,6 +41,7 @@ doc/*
 
 syntax:regexp
 ^types/[A-Za-z].+
-.*.swp
-.*.orig
+.*\.swp
+.*\.orig
+.*~
 
