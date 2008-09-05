@@ -3,7 +3,6 @@ package de.zib.gndms.GORFX.common;
 import org.apache.axis.types.URI;
 import org.apache.axis.types.NormalizedString;
 import org.apache.axis.message.MessageElement;
-import org.apache.axis.description.TypeDesc;
 import org.apache.axis.description.FieldDesc;
 import org.apache.axis.description.ElementDesc;
 import types.*;
@@ -13,6 +12,8 @@ import javax.xml.soap.SOAPException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
+
+import de.zib.gndms.model.gorfx.GORFXConstantURIs;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>

@@ -1,9 +1,8 @@
 package de.zib.gndms.GORFX.ORQ.service.globus.resource;
 
-import org.globus.wsrf.InvalidResourceKeyException;
-import org.globus.wsrf.NoSuchResourceException;
 import org.globus.wsrf.ResourceException;
-import org.globus.wsrf.ResourceKey;
+import de.zib.gndms.model.gorfx.AbstractORQCalculator;
+import de.zib.gndms.GORFX.common.GORFXTools;
 
 
 /** 
@@ -14,4 +13,30 @@ import org.globus.wsrf.ResourceKey;
  */
 public class ORQResource extends ORQResourceBase {
 
+    ExtORQResourceHome home;
+    AbstractORQCalculator ORQCalculator;
+
+
+    public void setOfferRequestArguments(types.DynamicOfferDataSeqT offerRequestArguments ) throws ResourceException {
+
+        ORQCalculator = home.getSystem( ).createORQCalculator( offerRequestArguments.getOfferType( ).toString() );
+        ORQCalculator.setORQArguments( GORFXTools.convertFromORQT( offerRequestArguments ) );
+
+        super.setOfferRequestArguments( offerRequestArguments );
+    }
+
+
+    public AbstractORQCalculator getORQWorker() {
+        return ORQCalculator;
+    }
+
+
+    public ExtORQResourceHome getHome() {
+        return home;
+    }
+
+
+    public void setHome( ExtORQResourceHome home ) {
+        this.home = home;
+    }
 }
