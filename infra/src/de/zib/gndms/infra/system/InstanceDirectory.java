@@ -31,6 +31,7 @@ public class InstanceDirectory {
     private static final int INSTANCE_RETRIEVAL_INTERVAL = 250;
 
     private final @NotNull String systemName;
+
     private final @NotNull Map<String, Object> instances;
     private final @NotNull Map<Class<? extends GridResource>, GNDMServiceHome<?>> homes;
 
@@ -108,7 +109,7 @@ public class InstanceDirectory {
     }
 
     public synchronized void addInstance(@NotNull String name, @NotNull Object obj) {
-        if (name.endsWith("Home") || name.endsWith("Resource"))
+        if (name.endsWith("Home") || name.endsWith("Resource") || name.endsWith("ORQC"))
             throw new IllegalArgumentException("Reserved instance name");
 
         addInstance_(name, obj);
