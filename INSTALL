@@ -146,7 +146,16 @@ DETAILED BUILD INSTRUCTIONS
 
 - The most tricky piece goes first:
 
-  1) Compile gndms-shared-model.jar
+  1) Execute:
+
+     ln -sf "$GROOVY_HOME"/embeddable/groovy-all-<some-version>.jar \
+            "extra/tools-lib/gndms-groovy.jar"
+             
+     This will be done later again when you run sync.sh but is needed now to 
+     complete the next substep.
+
+
+  2) Compile gndms-shared-model.jar
 
      Sources: model/src (resp. model/test-src)
      Output:  model/gndms-shared-model/production (resp. test)
@@ -158,13 +167,6 @@ DETAILED BUILD INSTRUCTIONS
      Make sure META-INF gets copied 
      from model/src to model/gndms-shared-model/production!
    
-  2) Execute:
-
-     ln -sf "$GROOVY_HOME"/embeddable/groovy-all-<some-version>.jar \
-            "extra/tools-lib/gndms-groovy.jar"
-             
-     This will be done later again when you run sync.sh but is needed now to 
-     complete the next substep.
 
   3) Run the openjpa enhancer
 

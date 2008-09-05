@@ -52,66 +52,72 @@ public class SliceImpl extends SliceImplBase {
             throw new RemoteException( "Can't obtain slice resource home." );
         }
 
-        GNDMSystem system = esr.getSystem( );
-        EntityManager em = system.getEntityManagerFactory().createEntityManager(  );
+        EntityManager em = null;
+        try{
+            GNDMSystem system = esr.getSystem( );
+            em = system.getEntityManagerFactory().createEntityManager(  );
 
-        Slice osl = em.find( Slice.class, sr.getID( ) );
+            Slice osl = em.find( Slice.class, sr.getID( ) );
 
-        Subspace sp = null;
-        SliceKind sk = null;
-        // check which attribute shall be transformed.
-        if( sliceTransformSpecifier.getSubspaceSpecifier() != null ) {
-            sp = findSubspace( new ImmutableScopedName( sliceTransformSpecifier.getSubspaceSpecifier() ), em );
-            sk = osl.getKind( );
-        } else if( sliceTransformSpecifier.getSliceKind( ) != null ) {
-            // todo uncomment after xsd type change
-            // String uri = sliceTransformSpecifier.getSliceKind( );
-            String uri = null;
-            sp = osl.getOwner( );
-            sk = findSliceKind( uri, sp.getId( ), em );
-        } else { // must be both
-            sp = findSubspace(
-                    new ImmutableScopedName (
-                            sliceTransformSpecifier.getSliceTypeSpecifier().getSubspaceSpecifier() ),
-                    em );
-            // todo uncomment after xsd type change
-            // String uri = sliceTransformSpecifier.getSliceTypeSpecifier().getSliceKind( );
-            String uri = null;
-            sk = findSliceKind( uri, sp.getId( ), em );
-        }
-
-
-        ResourceKey rk = null;
-        try {
-            rk = esr.createResource( );
-        } catch ( Exception e ) {
-            throw new InternalFailure( );
-        }
-        SliceResource nsr = esr.getResource( rk );
-        
-        TransformSliceAction tsa =
-                new TransformSliceAction( nsr.getID(), osl.getTerminationTime( ), sk, sp, osl.getTotalStorageSize(), system );
+            Subspace sp = null;
+            SliceKind sk = null;
+            // check which attribute shall be transformed.
+            if( sliceTransformSpecifier.getSubspaceSpecifier() != null ) {
+                sp = findSubspace( new ImmutableScopedName( sliceTransformSpecifier.getSubspaceSpecifier() ), em );
+                sk = osl.getKind( );
+            } else if( sliceTransformSpecifier.getSliceKind( ) != null ) {
+                // todo uncomment after xsd type change
+                // String uri = sliceTransformSpecifier.getSliceKind( );
+                String uri = null;
+                sp = osl.getOwner( );
+                sk = findSliceKind( uri, sp.getId( ), em );
+            } else { // must be both
+                sp = findSubspace(
+                        new ImmutableScopedName (
+                                sliceTransformSpecifier.getSliceTypeSpecifier().getSubspaceSpecifier() ),
+                        em );
+                // todo uncomment after xsd type change
+                // String uri = sliceTransformSpecifier.getSliceTypeSpecifier().getSliceKind( );
+                String uri = null;
+                sk = findSliceKind( uri, sp.getId( ), em );
+            }
 
 
-        GridResourceModelHandler mh =
-                new GridResourceModelHandler<Slice, ExtSliceResourceHome, SliceResource> (Slice.class, esr );
+            ResourceKey rk = null;
+            try {
+                rk = esr.createResource( );
+            } catch ( Exception e ) {
+                throw new InternalFailure( );
+            }
+            SliceResource nsr = esr.getResource( rk );
 
-        Slice nsl = (Slice) mh.callModelAction( em, system, tsa, osl );
-        tsa.getPostponedActions().call( );
-        if( nsl == null ) {
-            esr.remove( rk );
-            throw new InternalFailure( );
-        }
-
-        nsr.loadFromModel( nsl );
+            TransformSliceAction tsa =
+                    new TransformSliceAction( nsr.getID(), osl.getTerminationTime( ), sk, sp, osl.getTotalStorageSize(), system );
 
 
-        try {
-            osl.getOwner( ).destroySlice( osl );
-            esr.remove( sr.getResourceKey() );
-            return esr.getResourceReference( rk );
-        } catch ( Exception e ) {
-            throw new RemoteException( e.getMessage() );
+            GridResourceModelHandler mh =
+                    new GridResourceModelHandler<Slice, ExtSliceResourceHome, SliceResource> (Slice.class, esr );
+
+            Slice nsl = (Slice) mh.callModelAction( em, system, tsa, osl );
+            tsa.getPostponedActions().call( );
+            if( nsl == null ) {
+                esr.remove( rk );
+                throw new InternalFailure( );
+            }
+
+            nsr.loadFromModel( nsl );
+
+
+            try {
+                osl.getOwner( ).destroySlice( osl );
+                esr.remove( sr.getResourceKey() );
+                return esr.getResourceReference( rk );
+            } catch ( Exception e ) {
+                throw new RemoteException( e.getMessage() );
+            }
+        } finally {
+            if( em != null )
+                em.close( );
         }
     }
 
