@@ -19,6 +19,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 27.08.2008, Time: 13:50:52
+ *
+ * If one introduces new ORQT types or changes an element type of an ORQT to an type which isn't listed in the
+ * TypeMap. an new entry must be added to that map, consisting of the QName of that type an a matching class.
  */
 public class GORFXClientTools {
 
@@ -29,11 +32,11 @@ public class GORFXClientTools {
         TypeMap.put( new QName( "http://www.w3.org/2001/XMLSchema", "anyURI" ), URI.class );
         TypeMap.put( new QName( "http://proptest.zib.de/some/types", "DataDescriptorT" ), DataDescriptorT.class );
         TypeMap.put( new QName( "http://www.w3.org/2001/XMLSchema", "normalizedString" ), NormalizedString.class );
-        TypeMap.put( new QName("http://gndms.zib.de/common/types", "FileMappingSeqT"), FileMappingSeqT.class );
-        TypeMap.put( new QName("http://gndms.zib.de/common/types", "SliceReferenceT"), SliceReferenceT.class );
-        TypeMap.put( new QName("http://lofis.gndms.zib.de/LOFIS/LofiSet/types", ">LofiSetReference"), LofiSetReference.class );
-        TypeMap.put( new QName("http://gndms.zib.de/c3grid/types", ">PinORQT>Target"), PinORQTTarget.class );
-        TypeMap.put( new QName("http://dspace.gndms.zib.de/DSpace/Slice/types", ">SliceReference"), SliceReference.class );
+        TypeMap.put( new QName( "http://gndms.zib.de/common/types", "FileMappingSeqT"), FileMappingSeqT.class );
+        TypeMap.put( new QName( "http://gndms.zib.de/common/types", "SliceReferenceT"), SliceReferenceT.class );
+        TypeMap.put( new QName( "http://lofis.gndms.zib.de/LOFIS/LofiSet/types", ">LofiSetReference"), LofiSetReference.class );
+        TypeMap.put( new QName( "http://gndms.zib.de/c3grid/types", ">PinORQT>Target"), PinORQTTarget.class );
+        TypeMap.put( new QName( "http://dspace.gndms.zib.de/DSpace/Slice/types", ">SliceReference"), SliceReference.class );
     }
 
     // helpers for provider stage in
