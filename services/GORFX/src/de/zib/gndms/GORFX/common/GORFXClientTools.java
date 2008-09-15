@@ -13,7 +13,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-import de.zib.gndms.model.gorfx.GORFXConstantURIs;
+import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
+
 
 /**
  * @author: Maik Jorra <jorra@zib.de>

@@ -21,8 +21,9 @@ public interface LoggingDecisionPoint {
 	final class Parser {
 		private Parser() {}
 
-		@Nullable
-		public static Set<String> parseTokenSet(@NotNull String s) {
+
+		@SuppressWarnings({ "StaticMethodOnlyUsedInOneClass" })
+        public static @Nullable Set<String> parseTokenSet(@NotNull String s) {
 			try {
 				final StringTokenizer tokenizer = new StringTokenizer(s, ",");
 				Set<String> set = new HashSet<String>(tokenizer.countTokens());

@@ -1,6 +1,6 @@
 package de.zib.gndms.GORFX.common;
 
-import de.zib.gndms.model.gorfx.ProviderStageInORQ;
+import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
 import types.ProviderStageInORQT;
 import types.DynamicOfferDataSeqT;
 
@@ -12,12 +12,14 @@ import types.DynamicOfferDataSeqT;
  */
 public class GORFXTools {
 
-    public static ProviderStageInORQ convertFromORQT( DynamicOfferDataSeqT orq ) throws {
+    public static ProviderStageInORQ convertFromORQT( DynamicOfferDataSeqT orq ) {
+        return null;
 
     }
 
 
     public static ProviderStageInORQ convertFromORQT( ProviderStageInORQT orq ) {
         // todo implement me
+        return null;
     }
 }
