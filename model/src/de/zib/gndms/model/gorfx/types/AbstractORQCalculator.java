@@ -9,14 +9,14 @@ import de.zib.gndms.model.gorfx.Contract;
  * <p/>
  * User: bzcjorra Date: Sep 5, 2008 1:43:46 PM
  */
-abstract public class AbstractORQCalculator<M extends AbstractORQ> {
+public abstract class AbstractORQCalculator<M extends AbstractORQ> {
 
     private Contract perferredOfferExection;
     private Class<M> orqModelClass;
     private M orqArguments;
 
     // here the computation of the required offer should be performed
-    abstract public Contract createOffer( );
+    public abstract Contract createOffer( );
 
 
     public Contract getPerferredOfferExection() {
@@ -24,8 +24,8 @@ abstract public class AbstractORQCalculator<M extends AbstractORQ> {
     }
 
 
-    public void setPerferredOfferExection( Contract perferredOfferExection ) {
-        this.perferredOfferExection = perferredOfferExection;
+    public void setPerferredOfferExection( Contract preferredOfferContract ) {
+        this.perferredOfferExection = preferredOfferContract;
     }
 
 
