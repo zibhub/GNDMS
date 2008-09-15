@@ -48,7 +48,7 @@ public class GORFXClientTools {
     }
 
 
-    public static ProviderStageInORQT createEmptyProviderStageInORQTv2 ( ) throws SOAPException, IllegalAccessException, InstantiationException {
+    public static ProviderStageInORQT createEmptyProviderStageInORQT ( ) throws SOAPException, IllegalAccessException, InstantiationException {
 
         ProviderStageInORQT orq = new ProviderStageInORQT();
         orq.setOfferType( getPoviderStageInURI() );

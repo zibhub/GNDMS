@@ -18,7 +18,7 @@ public class ProviderStageInORQCalculator extends AbstractORQCalculator<Provider
     }
 
 
-    public OfferExecutionContractModel createOffer() {
+    public Contract createOffer() {
         // todo: implement me
         return null;
     }

@@ -19,7 +19,7 @@ public class ORQResource extends ORQResourceBase {
 
     public void setOfferRequestArguments(types.DynamicOfferDataSeqT offerRequestArguments ) throws ResourceException {
 
-        ORQCalculator = home.getSystem( ).createORQCalculator( offerRequestArguments.getOfferType( ).toString() );
+        ORQCalculator = home.getSystem( ).getInstanceDir().createORQInstance( offerRequestArguments.getOfferType( ).toString() );
         ORQCalculator.setORQArguments( GORFXTools.convertFromORQT( offerRequestArguments ) );
 
         super.setOfferRequestArguments( offerRequestArguments );
