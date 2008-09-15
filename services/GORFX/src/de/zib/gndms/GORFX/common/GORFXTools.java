@@ -1,8 +1,9 @@
 package de.zib.gndms.GORFX.common;
 
-import de.zib.gndms.model.gorfx.*;
+import de.zib.gndms.model.gorfx.ProviderStageInORQ;
+import de.zib.gndms.model.gorfx.GORFXConstantURIs;
+import types.ProviderStageInORQT;
 import de.zib.gndms.model.gorfx.types.SpaceConstraintType;
-import types.*;
 import types.DynamicOfferDataSeqT;
 
 import javax.xml.soap.SOAPException;
@@ -23,6 +24,7 @@ public class GORFXTools {
             return convertProviderStageInORQFromORQT( (ProviderStageInORQT) orq );
         else
             throw new IllegalArgumentException( );
+
     }
 
 
