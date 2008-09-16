@@ -1,4 +1,8 @@
+<<<<<<< local
 package de.zib.gndms.model.gorfx;
+=======
+package de.zib.gndms.model.gorfx.types;
+>>>>>>> other
 
 /**
  * Created by IntelliJ IDEA.

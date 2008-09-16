@@ -1,7 +1,7 @@
 package de.zib.gndms.GORFX.common;
 
-import de.zib.gndms.model.gorfx.ProviderStageInORQ;
-import de.zib.gndms.model.gorfx.GORFXConstantURIs;
+import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
+import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
 import types.ProviderStageInORQT;
 import de.zib.gndms.model.gorfx.types.SpaceConstraintType;
 import types.DynamicOfferDataSeqT;

@@ -1,8 +1,9 @@
 package de.zib.gndms.GORFX.ORQ.service.globus.resource;
 
 import org.globus.wsrf.ResourceException;
-import de.zib.gndms.model.gorfx.AbstractORQCalculator;
+import de.zib.gndms.model.gorfx.types.AbstractORQCalculator;
 import de.zib.gndms.GORFX.common.GORFXTools;
+import de.zib.gndms.infra.system.GNDMSystem;
 
 
 /** 
@@ -19,7 +20,19 @@ public class ORQResource extends ORQResourceBase {
 
     public void setOfferRequestArguments(types.DynamicOfferDataSeqT offerRequestArguments ) throws ResourceException {
 
-        ORQCalculator = home.getSystem( ).getInstanceDir().createORQInstance( offerRequestArguments.getOfferType( ).toString() );
+        final GNDMSystem sys = home.getSystem();
+        try {
+            ORQCalculator = sys.getInstanceDir().getORQCalculator( sys.getEntityManagerFactory(), offerRequestArguments.getOfferType( ).toString());
+        }
+        catch (ClassNotFoundException e) {
+            throw new ResourceException(e);
+        }
+        catch (IllegalAccessException e) {
+            throw new ResourceException(e);
+        }
+        catch (InstantiationException e) {
+            throw new ResourceException(e);
+        }
         ORQCalculator.setORQArguments( GORFXTools.convertFromORQT( offerRequestArguments ) );
 
         super.setOfferRequestArguments( offerRequestArguments );

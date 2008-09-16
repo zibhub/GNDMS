@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx;
+package de.zib.gndms.model.gorfx.types;
 
 /**
  * An base class for model classes representing ORQ's.

@@ -16,10 +16,10 @@ import javax.xml.namespace.QName
 @Embeddable
 class ImmutableScopedName extends ModelId {
 	@Column(name="scope", columnDefinition="VARCHAR", nullable=true, updatable=false)
-	String nameScope
+	private String nameScope
 
 	@Column(name="local", columnDefinition="VARCHAR", nullable=false, updatable=false)
-	String localName
+	private String localName
 
 	ImmutableScopedName() {}
 
@@ -43,4 +43,8 @@ class ImmutableScopedName extends ModelId {
 
 	QName toQName()
 		{ return new QName(nameScope, localName) }
+
+    public String getNameScope() { return nameScope }
+
+    public String getLocalName() { return localName }
 }

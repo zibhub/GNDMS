@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.model.aux
+package de.zib.gndms.logic.model.util
 
 /**
  * Implementation of the directory helpers for a linux system.

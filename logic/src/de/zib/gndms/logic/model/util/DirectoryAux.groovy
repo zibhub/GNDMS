@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.model.aux
+package de.zib.gndms.logic.model.util
 
 import java.nio.channels.FileChannel
 

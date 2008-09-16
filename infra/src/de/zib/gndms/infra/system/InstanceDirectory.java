@@ -4,7 +4,13 @@ import de.zib.gndms.infra.monitor.GroovyBindingFactory;
 import de.zib.gndms.infra.monitor.GroovyMoniServer;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.service.GNDMSingletonServiceHome;
+import de.zib.gndms.infra.util.Factory;
+import de.zib.gndms.infra.util.InstanceFactory;
+import de.zib.gndms.infra.util.SingletonFactory;
 import de.zib.gndms.model.common.GridResource;
+import de.zib.gndms.model.gorfx.types.AbstractORQ;
+import de.zib.gndms.model.gorfx.types.AbstractORQCalculator;
+import de.zib.gndms.model.gorfx.OfferType;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.apache.commons.logging.Log;
@@ -12,6 +18,8 @@ import org.apache.commons.logging.LogFactory;
 import org.globus.wsrf.ResourceException;
 import org.jetbrains.annotations.NotNull;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +43,9 @@ public class InstanceDirectory {
     private final @NotNull Map<String, Object> instances;
     private final @NotNull Map<Class<? extends GridResource>, GNDMServiceHome<?>> homes;
 
+    @SuppressWarnings({ "RawUseOfParameterizedType" })
+    private final @NotNull Map<String, Factory<? extends AbstractORQCalculator>>
+            orqCalcMap = new HashMap<String, Factory<? extends AbstractORQCalculator>>(8);
 
     InstanceDirectory(final @NotNull String sysNameParam) {
         instances = new HashMap<String, Object>(INITIAL_CAPACITY);
@@ -46,6 +57,43 @@ public class InstanceDirectory {
     public synchronized void addHome(final @NotNull GNDMServiceHome<?> home)
             throws ResourceException {
         addHome(home.getModelClass(), home);
+    }
+
+
+    @SuppressWarnings({ "RawUseOfParameterizedType", "unchecked" })
+    public <O extends AbstractORQCalculator<? extends AbstractORQ>> O getORQCalculator(
+            final @NotNull EntityManagerFactory emf,
+            final @NotNull String offerTypeKey)
+            throws ClassNotFoundException, IllegalAccessException, InstantiationException
+    {
+        EntityManager em = emf.createEntityManager();
+        try {
+            OfferType type = em.find(OfferType.class, offerTypeKey);
+            Class<O> clazz = (Class<O>) Class.forName(type.getCalculatorClass());
+            if (! AbstractORQCalculator.class.isAssignableFrom(clazz))
+                throw new IllegalArgumentException("Incompatible class type detected");
+
+            synchronized (orqCalcMap) {
+                Factory<O> instance = (Factory<O>) orqCalcMap.get(offerTypeKey);
+                if (instance == null) {
+                    instance = createORQCalculatorFactory(type, clazz);
+                    orqCalcMap.put(offerTypeKey, instance);
+                }
+                return clazz.cast(instance.getInstance());
+            }
+        }
+        finally {
+            if (! em.isOpen())
+                em.close();
+        }
+    }
+
+
+    @SuppressWarnings({ "MethodMayBeStatic" })
+    private <O extends AbstractORQCalculator<? extends AbstractORQ>> Factory<O> createORQCalculatorFactory(
+            final OfferType typeParam, final Class<O> clazzParam) {
+        return typeParam.isSingletonCalculator() ?
+                   new SingletonFactory<O>(clazzParam) : new InstanceFactory<O>(clazzParam);
     }
 
 
@@ -150,7 +198,8 @@ public class InstanceDirectory {
     }
 
 
-    public String getSystemName() {
+
+    public @NotNull String getSystemName() {
         return systemName;
     }
 
