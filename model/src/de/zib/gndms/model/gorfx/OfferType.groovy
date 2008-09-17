@@ -10,7 +10,7 @@ import javax.persistence.Id
 import javax.persistence.Table
 import javax.persistence.OneToMany
 import javax.persistence.FetchType
-import javax.persistence.CascadeType
+import static javax.persistence.CascadeType.ALL
 
 /**
  * ThingAMagic.
@@ -47,6 +47,6 @@ class OfferType {
     @Column(name="single", nullable=false, updatable=false)
     boolean singletonCalculator = false
 
-    @OneToMany(cascade=CascadeType.ALL, mappedBy="type", fetch=FetchType.LAZY)
+    @OneToMany(cascade=ALL, mappedBy="type", fetch=FetchType.LAZY)
     Set<Task> tasks
 }

@@ -1,11 +1,5 @@
-<<<<<<< local
-package de.zib.gndms.model.gorfx;
-
-import java.util.Map;
-import java.util.HashMap;
-=======
 package de.zib.gndms.model.gorfx.types;
->>>>>>> other
+import java.util.HashMap;
 
 /**
  * This should become the model class representing a xsd gndms:DataDescriptor
@@ -17,7 +11,6 @@ package de.zib.gndms.model.gorfx.types;
  * todo implement me, pretty please!!
  */
 public class DataDescriptor {
-<<<<<<< local
 
     String[] objectList;
     SpaceConstraint spaceConstraint;
@@ -96,6 +89,5 @@ public class DataDescriptor {
     public void setMetaDataFormat( String metaDataFormat ) {
         this.metaDataFormat = metaDataFormat;
     }
-=======
->>>>>>> other
+
 }

@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx;
+package de.zib.gndms.model.gorfx.types;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
@@ -10,9 +10,9 @@ import org.joda.time.format.ISODateTimeFormat;
  * <p/>
  * User: bzcjorra Date: Sep 15, 2008 4:11:00 PM
  */
-public class TimeConstraint implements DataConstraint {
-
-    private DateTime minTime;
+public class TimeConstraint implements DataConstraint {  
+	
+	private DateTime minTime;
     private DateTime maxTime;
     private DateTimeFormatter ISOFormatter;
 

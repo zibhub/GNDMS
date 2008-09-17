@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx;
+package de.zib.gndms.model.gorfx.types;
 
 /**
  * @author Maik Jorra <jorra@zib.de>

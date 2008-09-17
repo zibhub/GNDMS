@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx;
+package de.zib.gndms.model.gorfx.types;
 
 import de.zib.gndms.model.gorfx.types.SpaceConstraintType;
 

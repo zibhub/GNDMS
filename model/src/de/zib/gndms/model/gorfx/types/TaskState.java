@@ -2,6 +2,8 @@ package de.zib.gndms.model.gorfx.types;
 
 import org.jetbrains.annotations.NotNull;
 
+//import org.jetbrains.annotations.NotNull;
+
 
 public enum TaskState {
     CREATED(false),
@@ -16,7 +18,7 @@ public enum TaskState {
     final boolean unknownState;
 
 
-    @SuppressWarnings({ "OverlyComplexMethod" })
+   // @SuppressWarnings({ "OverlyComplexMethod" })
     public TaskState transit(final @NotNull TaskState to) {
         switch(this) {
             case CREATED:
