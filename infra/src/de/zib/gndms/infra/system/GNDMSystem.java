@@ -264,7 +264,7 @@ public final class GNDMSystem
 	}
 
 
-    public synchronized @NotNull ExecutorService getExecutorService() {
+    private synchronized @NotNull ExecutorService getExecutorService() {
         if (executorService == null)
             executorService = createExecutorService();
         return executorService;

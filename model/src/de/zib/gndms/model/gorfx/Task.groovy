@@ -74,5 +74,7 @@ class Contract {
 
     @Temporal(value = TemporalType.TIMESTAMP)
     Calendar resultValidity
+    
+    transient boolean deadlineIsOffset = false
 }
 
