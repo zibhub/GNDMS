@@ -5,6 +5,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
 /**
+ * A time constrain is a selection criteria for data stagin.
  * @author Maik Jorra <jorra@zib.de>
  * @verson \$id$
  * <p/>
@@ -18,6 +19,10 @@ public class TimeConstraint implements DataConstraint {
 
     public TimeConstraint( ) {
         ISOFormatter = ISODateTimeFormat.dateTime( );
+    }
+
+    public boolean hasMinTime() {
+        return minTime != null;
     }
 
     public DateTime getMinTime() {
@@ -37,6 +42,11 @@ public class TimeConstraint implements DataConstraint {
     
     public void setMinTime( DateTime minTime ) {
         this.minTime = minTime;
+    }
+
+
+    public boolean hasMaxTime() {
+        return maxTime != null;
     }
 
 

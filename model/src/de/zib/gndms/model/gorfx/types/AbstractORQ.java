@@ -8,9 +8,18 @@ package de.zib.gndms.model.gorfx.types;
  * <p/>
  * User: bzcjorra Date: Sep 5, 2008 3:38:17 PM
  */
-public class AbstractORQ {
+public abstract class AbstractORQ {
 
     private String offerType;
+
+
+    protected AbstractORQ() {
+    }
+
+
+    protected AbstractORQ( String offerType ) {
+        this.offerType = offerType;
+    }
 
 
     public String getOfferType() {

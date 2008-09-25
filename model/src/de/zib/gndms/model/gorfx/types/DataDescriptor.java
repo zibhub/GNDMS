@@ -2,23 +2,28 @@ package de.zib.gndms.model.gorfx.types;
 import java.util.HashMap;
 
 /**
- * This should become the model class representing a xsd gndms:DataDescriptor
+ * This is the model class representing a xsd gndms:DataDescriptor.
+ * It is intended to store common data for staging requests.
+ *
  * @author Maik Jorra <jorra@zib.de>
  * @verson \$id$
  * <p/>
  * User: bzcjorra Date: Sep 5, 2008 3:57:32 PM
- *
- * todo implement me, pretty please!!
  */
 public class DataDescriptor {
 
-    String[] objectList;
-    SpaceConstraint spaceConstraint;
-    TimeConstraint timeConstraint;
-    String[] CFList;
-    HashMap<String,String> constraintList;
-    String dataFormat;
-    String metaDataFormat;
+    // todo maybe use a real object list here
+    private String[] objectList;
+    private SpaceConstraint spaceConstraint;
+    private TimeConstraint timeConstraint;
+    private String[] CFList;
+    private HashMap<String,String> constraintList;
+    private String dataFormat;
+    private String metaDataFormat;
+
+
+    public DataDescriptor() {
+    }
 
 
     public String[] getObjectList() {

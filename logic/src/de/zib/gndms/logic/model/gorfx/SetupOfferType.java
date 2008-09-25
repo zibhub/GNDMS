@@ -1,6 +1,7 @@
 package de.zib.gndms.logic.model.gorfx;
 
 import de.zib.gndms.model.gorfx.types.AbstractORQCalculator;
+import de.zib.gndms.model.gorfx.OfferType;
 
 import java.io.PrintWriter;
 

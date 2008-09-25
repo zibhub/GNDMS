@@ -43,7 +43,7 @@ public class GORFXClientTools {
 
     // helpers for provider stage in
     
-    public static URI getPoviderStageInURI( ) {
+    public static URI getProviderStageInURI( ) {
 
         return getURI( GORFXConstantURIs.PROVIDER_STAGE_IN_URI );
     }
@@ -52,7 +52,7 @@ public class GORFXClientTools {
     public static ProviderStageInORQT createEmptyProviderStageInORQT ( ) throws SOAPException, IllegalAccessException, InstantiationException {
 
         ProviderStageInORQT orq = new ProviderStageInORQT();
-        orq.setOfferType( getPoviderStageInURI() );
+        orq.setOfferType( getProviderStageInURI() );
 
         orq.set_any( getMessageElementsForFieldDescs( ProviderStageInORQT.getTypeDesc().getFields() ) );
 
@@ -71,7 +71,7 @@ public class GORFXClientTools {
     public static SliceStageInORQT createEmptySliceStageInORQT ( ) throws SOAPException, IllegalAccessException, InstantiationException {
 
         SliceStageInORQT orq = new SliceStageInORQT();
-        orq.setOfferType( getPoviderStageInURI() );
+        orq.setOfferType( getProviderStageInURI() );
 
         orq.set_any( getMessageElementsForFieldDescs( SliceStageInORQT.getTypeDesc().getFields() ) );
 
@@ -88,7 +88,7 @@ public class GORFXClientTools {
     public static InterSliceTransferORQT createEmptyInterSliceTransferORQT( ) throws SOAPException, IllegalAccessException, InstantiationException {
 
         InterSliceTransferORQT orq = new InterSliceTransferORQT();
-        orq.setOfferType( getPoviderStageInURI() );
+        orq.setOfferType( getProviderStageInURI() );
 
         orq.set_any( getMessageElementsForFieldDescs( InterSliceTransferORQT.getTypeDesc().getFields() ) );
 
@@ -105,7 +105,7 @@ public class GORFXClientTools {
     public static RePublishSliceORQT createEmptyRePublishSliceORQT( ) throws SOAPException, IllegalAccessException, InstantiationException {
 
         RePublishSliceORQT orq = new RePublishSliceORQT();
-        orq.setOfferType( getPoviderStageInURI() );
+        orq.setOfferType( getProviderStageInURI() );
 
         orq.set_any( getMessageElementsForFieldDescs( RePublishSliceORQT.getTypeDesc().getFields() ) );
 
@@ -122,7 +122,7 @@ public class GORFXClientTools {
     public static FileTransferORQT createEmptyFileTransferORQT( ) throws SOAPException, IllegalAccessException, InstantiationException {
 
         FileTransferORQT orq = new FileTransferORQT();
-        orq.setOfferType( getPoviderStageInURI() );
+        orq.setOfferType( getProviderStageInURI() );
 
         orq.set_any( getMessageElementsForFieldDescs( FileTransferORQT.getTypeDesc().getFields() ) );
 
@@ -139,7 +139,7 @@ public class GORFXClientTools {
     public static LofiSetStageInORQT createEmptyLofisSetStageInORQT ( ) throws SOAPException, IllegalAccessException, InstantiationException {
 
         LofiSetStageInORQT orq = new LofiSetStageInORQT();
-        orq.setOfferType( getPoviderStageInURI() );
+        orq.setOfferType( getProviderStageInURI() );
 
         orq.set_any( getMessageElementsForFieldDescs( LofiSetStageInORQT.getTypeDesc().getFields() ) );
 
@@ -156,7 +156,7 @@ public class GORFXClientTools {
     public static PinORQT createEmptyPinORQT ( ) throws SOAPException, IllegalAccessException, InstantiationException {
 
         PinORQT orq = new PinORQT();
-        orq.setOfferType( getPoviderStageInURI() );
+        orq.setOfferType( getProviderStageInURI() );
 
         orq.set_any( getMessageElementsForFieldDescs( PinORQT.getTypeDesc().getFields() ) );
 
@@ -173,7 +173,7 @@ public class GORFXClientTools {
     public static RePublishLofiSetORQT createEmptyRePublishLofiSetORQT( ) throws SOAPException, IllegalAccessException, InstantiationException {
 
         RePublishLofiSetORQT orq = new RePublishLofiSetORQT();
-        orq.setOfferType( getPoviderStageInURI() );
+        orq.setOfferType( getProviderStageInURI() );
 
         orq.set_any( getMessageElementsForFieldDescs( RePublishLofiSetORQT.getTypeDesc().getFields() ) );
 

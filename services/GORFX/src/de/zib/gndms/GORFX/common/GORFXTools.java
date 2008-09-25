@@ -1,13 +1,8 @@
 package de.zib.gndms.GORFX.common;
 
-import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
-import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
-import types.ProviderStageInORQT;
-import de.zib.gndms.model.gorfx.types.SpaceConstraintType;
-import types.DynamicOfferDataSeqT;
+import de.zib.gndms.model.gorfx.types.*;
+import types.*;
 
-import javax.xml.soap.SOAPException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -28,9 +23,10 @@ public class GORFXTools {
     }
 
 
+    // todo implement this using builder form model.gorfx
     public static ProviderStageInORQ convertProviderStageInORQFromORQT( ProviderStageInORQT orqt ) throws Exception, InstantiationException, IllegalAccessException {
 
-        if(! orqt.getOfferType().equals( GORFXClientTools.getPoviderStageInURI() ) )
+        if(! orqt.getOfferType().equals( GORFXClientTools.getProviderStageInURI() ) )
             throw new IllegalArgumentException( );
 
         ProviderStageInORQ orq = new ProviderStageInORQ();
@@ -44,6 +40,7 @@ public class GORFXTools {
     }
 
 
+    // todo implement this using builder form model.gorfx
     public static DataDescriptor convertDataDescriptorT( DataDescriptorT ddt ) {
 
         /*
@@ -62,13 +59,11 @@ public class GORFXTools {
         SpaceConstraint sc = new SpaceConstraint();
         SpaceConstraintT sct = ddt.getSpaceConstr();
         if( sct.getLatitude() != null  ) {
-            sc.setKind( SpaceConstraintType.LATITUDE );
-            sc.setMaxValue( sct.getLatitude().getMax() );
-            sc.setMinValue( sct.getLatitude().getMin() );
-        } else if( sct.getLatitude() != null  ) {
-            sc.setKind( SpaceConstraintType.LONGITUDE );
-            sc.setMaxValue( sct.getLongitude().getMax() );
-            sc.setMinValue( sct.getLongitude().getMin() );
+            sc.setLatitude( convertMinMaxT( sct.getLatitude() ) );
+        }
+        
+        if( sct.getLatitude() != null  ) {
+            sc.setLongitude( convertMinMaxT( sct.getLatitude() ) );
         } // todo handle altitude as soon as known
 
         dd.setSpaceConstraint( sc );
@@ -84,7 +79,7 @@ public class GORFXTools {
 
         NameValEntryT[] nvl = ddt.getConstraintList().getItem();
 
-        HashMap<String, String> hm = new HashMap<String, String>;
+        HashMap<String, String> hm = new HashMap<String, String>( );
         for( NameValEntryT nve : nvl ) {
             hm.put( nve.getPName(), nve.getPVal() );
         }
@@ -95,6 +90,15 @@ public class GORFXTools {
         dd.setMetaDataFormat( ddt.getMetaDataFormat() );
 
         return dd;
+    }
+
+
+    public static MinMaxT convertMinMaxPair( MinMaxPair mmp ) {
+        return new MinMaxT( mmp.getMinValue(), mmp.getMinValue() );
+    }
+
+    public static MinMaxPair convertMinMaxT( MinMaxT mmp ) {
+        return new MinMaxPair( mmp.getMin(), mmp.getMax() );
     }
 
 
