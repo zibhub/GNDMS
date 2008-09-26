@@ -10,7 +10,7 @@ import java.util.Properties;
  * <p/>
  * User: mjorra, Date: 18.09.2008, Time: 15:21:09
  */
-public class ProviderStageInORQPropertyReader extends AbstractPropertyReader<ProviderStageInORQ> {
+public class ProviderStageInORQPropertyReader extends ORQPropertyReader<ProviderStageInORQ> {
 
     public ProviderStageInORQPropertyReader( ) {
         super( ProviderStageInORQ.class );
@@ -24,6 +24,8 @@ public class ProviderStageInORQPropertyReader extends AbstractPropertyReader<Pro
 
     public void read() {
 
+        super.read();
+        
         DataDescriptorPropertyReader dr = new DataDescriptorPropertyReader( getProperties() );
         dr.begin( );
         dr.read( );

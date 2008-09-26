@@ -74,5 +74,6 @@ class Contract {
 
     @Temporal(value = TemporalType.TIMESTAMP)
     Calendar resultValidity
+    
 }
 

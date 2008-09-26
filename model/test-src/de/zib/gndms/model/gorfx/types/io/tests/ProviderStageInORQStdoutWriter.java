@@ -11,7 +11,7 @@ import de.zib.gndms.model.gorfx.types.DataDescriptor;
  * <p/>
  * User: mjorra, Date: 18.09.2008, Time: 17:36:36
  */
-public class ProviderStageInORQStdoutWriter implements ProviderStageInORQWriter {
+public class ProviderStageInORQStdoutWriter extends ORQStdoutWriter implements ProviderStageInORQWriter {
 
 
     public void writeDataFileName( String dfn ) {

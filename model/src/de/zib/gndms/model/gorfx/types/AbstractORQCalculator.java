@@ -49,4 +49,16 @@ abstract public class AbstractORQCalculator<M extends AbstractORQ> {
 
         this.orqModelClass = orqModelClass;
     }
+
+
+    public void setJustEstimate( boolean est ) {
+
+        orqArguments.setJustEstimate( true );
+    }
+
+    
+    public boolean getJustEstimate( ) {
+
+        return orqArguments.getJustEstimate( );
+    }
 }

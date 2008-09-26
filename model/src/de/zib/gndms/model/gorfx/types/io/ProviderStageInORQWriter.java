@@ -9,7 +9,7 @@ import de.zib.gndms.model.gorfx.types.DataDescriptor;
  * <p/>
  * User: mjorra, Date: 18.09.2008, Time: 10:06:00
  */
-public interface ProviderStageInORQWriter extends GORFXWriterBase {
+public interface ProviderStageInORQWriter extends ORQWriter {
 
     public void writeDataFileName( String dfn );
     public void writeMetaDataFileName( String mfn );
