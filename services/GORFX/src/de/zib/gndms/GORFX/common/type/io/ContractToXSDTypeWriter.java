@@ -1,12 +1,11 @@
 package de.zib.gndms.GORFX.common.type.io;
 
-import de.zib.gndms.model.gorfx.types.io.ContractWriter;
-import de.zib.gndms.model.gorfx.types.io.ContractConverter;
 import de.zib.gndms.model.gorfx.Contract;
+import de.zib.gndms.model.gorfx.types.io.ContractConverter;
+import de.zib.gndms.model.gorfx.types.io.ContractWriter;
+import types.OfferExecutionContractT;
 
 import java.util.Calendar;
-
-import types.OfferExecutionContractT;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>

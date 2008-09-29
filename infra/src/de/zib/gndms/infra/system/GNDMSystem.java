@@ -293,7 +293,7 @@ public final class GNDMSystem
         if (action.getPostponedActions().getListener() == null)
             action.getPostponedActions().setListener(getEntityUpdateListener());
         if (action instanceof TaskAction)
-            ((TaskAction<?, R>) action).setService(getExecutorService());
+            ((TaskAction<?>) action).setService(getExecutorService());
         action.initialize();
         return getExecutorService().submit(action);
     }

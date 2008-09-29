@@ -1,13 +1,10 @@
 package de.zib.gndms.GORFX.offer.service.globus.resource;
 
-import org.globus.wsrf.InvalidResourceKeyException;
-import org.globus.wsrf.NoSuchResourceException;
-import org.globus.wsrf.ResourceException;
-import org.globus.wsrf.ResourceKey;
-import de.zib.gndms.model.gorfx.Contract;
 import de.zib.gndms.logic.model.TaskAction;
-import types.OfferExecutionContractT;
+import de.zib.gndms.model.gorfx.Contract;
+import org.globus.wsrf.ResourceException;
 import types.DynamicOfferDataSeqT;
+import types.OfferExecutionContractT;
 
 
 /** 
