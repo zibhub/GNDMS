@@ -1,9 +1,14 @@
 package de.zib.gndms.GORFX.common;
 
 import de.zib.gndms.model.gorfx.types.*;
+import de.zib.gndms.model.gorfx.Task;
+import de.zib.gndms.model.common.ImmutableScopedName;
 import types.*;
 
 import java.util.HashMap;
+
+import org.apache.axis.types.NormalizedString;
+import org.apache.axis.types.URI;
 
 /**
  * @author Maik Jorra <jorra@zib.de>
@@ -93,13 +98,69 @@ public class GORFXTools {
     }
 
 
+    /**
+     * Extracts a task state form a given Task object.
+     */
+    public static TaskExecutionState getStateOfTask( Task tsk ) {
+
+        TaskExecutionState stat = new TaskExecutionState( );
+        stat.setDescription( new NormalizedString( tsk.getDescription() ) );
+        stat.setContractBroken( tsk.getBroken() );
+        stat.setStatus( getXSDTForTaskState( tsk.getState() ) );
+        // todo resolve issue
+        // tsk.progess float vs stat.progress BigInt
+        // stat.setProgress( tsk.getProgress() );
+        // tsk has no max progress
+        //stat.setMaxProgress(  );
+
+        return stat;
+    }
+
+
+    /**
+     * Delivers a TaskStatusT object for a given ...model.gorfx.TaskState
+     */
+    public static TaskStatusT getXSDTForTaskState( TaskState ts ) {
+
+        switch ( ts ) {
+            case CREATED:
+                return TaskStatusT.created;
+            case INITIALIZED:
+                return TaskStatusT.initialized;
+            case IN_PROGRESS:
+                return TaskStatusT.inprogress;
+            case FINISHED:
+                return TaskStatusT.finished;
+            case FAILED:
+                return TaskStatusT.failed;
+            case CREATED_UNKNOWN:
+            case INITIALIZED_UNKNOWN:
+            case IN_PROGRESS_UNKNOWN:
+                return TaskStatusT.unknown;
+            default:
+                throw new IllegalArgumentException( "Unknwon task state received: " + ts );
+        }
+    }
+    
+
     public static MinMaxT convertMinMaxPair( MinMaxPair mmp ) {
         return new MinMaxT( mmp.getMinValue(), mmp.getMinValue() );
     }
 
+    
     public static MinMaxPair convertMinMaxT( MinMaxT mmp ) {
         return new MinMaxPair( mmp.getMin(), mmp.getMax() );
     }
 
 
+    public static URI scopedNameToURI( ImmutableScopedName sn ) {
+
+        try {
+            return new URI( sn.getNameScope(), sn.getLocalName() );
+        } catch ( URI.MalformedURIException e ) {
+            e.printStackTrace();
+        }
+        
+        return null;
+    }
 }
