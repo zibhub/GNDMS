@@ -1,0 +1,129 @@
+package de.zib.gndms.model.gorfx.types.io;
+
+import org.jetbrains.annotations.NotNull;
+import org.joda.time.DateTime;
+import org.joda.time.format.ISODateTimeFormat;
+
+import java.util.*;
+
+import de.zib.gndms.model.gorfx.types.MinMaxPair;
+
+/**
+ * Auxiliary methods for conversion into a property.
+ * 
+ * @author: Maik Jorra <jorra@zib.de>
+ * @version: $Id$
+ * <p/>
+ * User: mjorra, Date: 17.09.2008, Time: 15:39:59
+ */
+public class PropertyReadWriteAux {
+
+    public static void writeList( @NotNull Properties prop, @NotNull String key, char sep, @NotNull Iterable it  ) {
+
+        StringBuffer out = new StringBuffer( );
+        for( Object o : it )
+            out.append( o.toString( ) ).append( sep );
+
+        out.deleteCharAt( out.length() - 1 );
+
+        prop.setProperty( key, out.toString( ) );
+    }
+
+
+    public static String[] readList( @NotNull Properties prop, @ NotNull String key, char sep ) {
+
+        String s = prop.getProperty ( key );
+        if( s != null )
+            return s.split( ""+sep );
+
+        return null;
+    }
+
+    
+    public static void writeListMultiLine( @NotNull Properties prop, @NotNull String key, @NotNull Iterable it  ) {
+
+        int i = 0;
+		key = key + '.';
+		for ( Object item : it )
+			prop.setProperty( key + i++, item.toString() );
+		prop.setProperty( key + "Count", Integer.toString( i ) );
+    }
+
+
+    public static String[] readListMultiLine( @NotNull Properties prop, @NotNull String key ) {
+
+        String s = prop.getProperty( key +".Count" );
+        if( s == null )
+            return null;
+
+        int l = Integer.parseInt( s );
+        ArrayList<String> al = new ArrayList( l );
+        key = key + '.';
+        for ( int i=0 ; i < l; ++i )
+            al.add( prop.getProperty(  key + i ) );
+
+        return al.toArray( new String[0] );
+    }
+
+
+    public static <T,U> void writeMap( @NotNull Properties prop, @NotNull String key, @NotNull Map<T, U> om ) {
+
+        Set<T> os = om.keySet();
+        String dkey = key + '.';
+        for( T o: os )
+            prop.setProperty( dkey + o.toString( ), om.get( o ).toString( ) );
+        writeList( prop, key, ' ', os );
+    }
+
+
+    public static HashMap<String, String> readMap( @NotNull Properties prop, @NotNull String key ) {
+
+        String[] keys = readList( prop, key, ' ' );
+        if( key == null )
+            return null;
+
+        HashMap<String, String> hm = new HashMap<String, String>( );
+        key = key + ".";
+        for( String k : keys ) {
+            String s = prop.getProperty( key + k );
+            if( s == null )
+                throw new IllegalStateException( "Missing property entry for " + key + k );
+            hm.put( k, s );
+        }
+
+        return hm;
+    }
+
+
+    public static MinMaxPair readMinMaxPair( @NotNull Properties prop, @NotNull String minkey, @NotNull String maxkey  ) {
+
+        return new MinMaxPair(
+                readMandatoryDouble( prop, minkey ),
+                readMandatoryDouble( prop, maxkey )
+            );
+    }
+
+
+    public static double readMandatoryDouble( @NotNull Properties prop, @NotNull String key ) {
+
+        String s = prop.getProperty( key );
+        if( s == null )
+            throw new IllegalStateException( "Missing property entry for " + key );
+
+        return Double.parseDouble( s );
+    }
+
+
+    public static void writeISODateTime( @NotNull Properties prop, @NotNull String key, @NotNull DateTime tm ) {
+        prop.setProperty( key, ISODateTimeFormat.dateTime( ).print( tm ) );
+    }
+
+
+    public static DateTime readISODateTime( @NotNull Properties prop, @NotNull String key ) {
+        String s = prop.getProperty( key );
+        if( s == null )
+            return null;
+
+        return new DateTime( s );
+    }
+}

@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne
 import javax.persistence.JoinColumn
 import javax.persistence.Enumerated
 import javax.persistence.EnumType
+import org.jetbrains.annotations.NotNull
 
 
 /**
@@ -62,6 +63,21 @@ class Task extends TimedGridResource {
      **/
     @Column(name="data", nullable=true, updatable=true)
     @Basic Serializable data
+
+    def void fail(final @NotNull Exception e) {
+        state = TaskState.FAILED
+        setFaultString(exParam.getMessage())
+        setBroken(true)
+        setData(exParam)
+        setProgress(0.0f)
+    }
+
+    def void finish(final Serializable result) {
+        state = TaskState.FINISHED
+        setFaultString("")
+        setData(result)
+        setProgress(1.0f)
+    }
 }
 
 @Embeddable

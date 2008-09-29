@@ -1,4 +1,7 @@
-package de.zib.gndms.model.gorfx;
+package de.zib.gndms.model.gorfx.types;
+
+import de.zib.gndms.model.gorfx.types.DataDescriptor;
+import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
 
 /**
  * Model class for a provider stage in orq.

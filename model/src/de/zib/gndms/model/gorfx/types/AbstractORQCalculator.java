@@ -1,4 +1,7 @@
-package de.zib.gndms.model.gorfx;
+package de.zib.gndms.model.gorfx.types;
+
+import de.zib.gndms.model.gorfx.Contract;
+
 
 /**
  * @author Maik Jorra <jorra@zib.de>
@@ -8,21 +11,21 @@ package de.zib.gndms.model.gorfx;
  */
 abstract public class AbstractORQCalculator<M extends AbstractORQ> {
 
-    private OfferExecutionContractModel perferredOfferExection;
+    private Contract perferredOfferExecution;
     private Class<M> orqModelClass;
     private M orqArguments;
 
     // here the computation of the required offer should be performed
-    abstract public OfferExecutionContractModel createOffer( );
+    public abstract Contract createOffer( );
 
 
-    public OfferExecutionContractModel getPerferredOfferExection() {
-        return perferredOfferExection;
+    public Contract getPerferredOfferExecution() {
+        return perferredOfferExecution;
     }
 
 
-    public void setPerferredOfferExection( OfferExecutionContractModel perferredOfferExection ) {
-        this.perferredOfferExection = perferredOfferExection;
+    public void setPerferredOfferExecution( Contract preferredOfferContract ) {
+        this.perferredOfferExecution = preferredOfferContract;
     }
 
 

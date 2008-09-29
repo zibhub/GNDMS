@@ -7,6 +7,7 @@ import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
 import de.zib.gndms.logic.model.EntityAction;
 import de.zib.gndms.logic.model.EntityUpdateListener;
+import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.util.LogicTools;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
@@ -291,6 +292,8 @@ public final class GNDMSystem
             action.setOwnPostponedActions(new DefaultBatchUpdateAction<GridResource>());
         if (action.getPostponedActions().getListener() == null)
             action.getPostponedActions().setListener(getEntityUpdateListener());
+        if (action instanceof TaskAction)
+            ((TaskAction<?, R>) action).setService(getExecutorService());
         action.initialize();
         return getExecutorService().submit(action);
     }

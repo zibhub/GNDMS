@@ -8,8 +8,8 @@ import de.zib.gndms.infra.util.Factory;
 import de.zib.gndms.infra.util.InstanceFactory;
 import de.zib.gndms.infra.util.SingletonFactory;
 import de.zib.gndms.model.common.GridResource;
-import de.zib.gndms.model.gorfx.AbstractORQ;
-import de.zib.gndms.model.gorfx.AbstractORQCalculator;
+import de.zib.gndms.model.gorfx.types.AbstractORQ;
+import de.zib.gndms.model.gorfx.types.AbstractORQCalculator;
 import de.zib.gndms.model.gorfx.OfferType;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
@@ -19,6 +19,7 @@ import org.globus.wsrf.ResourceException;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,28 +60,37 @@ public class InstanceDirectory {
     }
 
 
-    @SuppressWarnings({ "RawUseOfParameterizedType" })
+    @SuppressWarnings({ "RawUseOfParameterizedType", "unchecked" })
     public <O extends AbstractORQCalculator<? extends AbstractORQ>> O getORQCalculator(
-            final @NotNull EntityManager em,
-            final Class<O> superClazz, final @NotNull String offerTypeKey)
+            final @NotNull EntityManagerFactory emf,
+            final @NotNull String offerTypeKey)
             throws ClassNotFoundException, IllegalAccessException, InstantiationException
     {
-        OfferType type = em.find(OfferType.class, offerTypeKey);
-        Class<? extends O> clazz = Class.forName(type.getCalculatorClass()).asSubclass(superClazz);
+        EntityManager em = emf.createEntityManager();
+        try {
+            OfferType type = em.find(OfferType.class, offerTypeKey);
+            Class<O> clazz = (Class<O>) Class.forName(type.getCalculatorClass());
+            if (! AbstractORQCalculator.class.isAssignableFrom(clazz))
+                throw new IllegalArgumentException("Incompatible class type detected");
 
-        synchronized (orqCalcMap) {
-            Factory<? extends AbstractORQCalculator> instance = orqCalcMap.get(offerTypeKey);
-            if (instance == null) {
-                instance = createORQCalculatorFactory(type, clazz);
-                orqCalcMap.put(offerTypeKey, instance);
+            synchronized (orqCalcMap) {
+                Factory<O> instance = (Factory<O>) orqCalcMap.get(offerTypeKey);
+                if (instance == null) {
+                    instance = createORQCalculatorFactory(type, clazz);
+                    orqCalcMap.put(offerTypeKey, instance);
+                }
+                return clazz.cast(instance.getInstance());
             }
-            return clazz.cast(instance.getInstance());
+        }
+        finally {
+            if (! em.isOpen())
+                em.close();
         }
     }
 
 
     @SuppressWarnings({ "MethodMayBeStatic" })
-    private <O extends AbstractORQCalculator<?>> Factory<O> createORQCalculatorFactory(
+    private <O extends AbstractORQCalculator<? extends AbstractORQ>> Factory<O> createORQCalculatorFactory(
             final OfferType typeParam, final Class<O> clazzParam) {
         return typeParam.isSingletonCalculator() ?
                    new SingletonFactory<O>(clazzParam) : new InstanceFactory<O>(clazzParam);
