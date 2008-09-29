@@ -117,15 +117,9 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
     }
 
 
-    @SuppressWarnings({ "ThrowableInstanceNeverThrown" })
+    @SuppressWarnings({ "ThrowableInstanceNeverThrown", "ObjectAllocationInLoop" })
     @Override
     public Serializable execute(final @NotNull EntityManager em) {
-        return transititionLoop();
-    }
-
-
-    @SuppressWarnings({ "ThrowableInstanceNeverThrown", "ObjectAllocationInLoop" })
-    private Serializable transititionLoop() {
         boolean first = true;
         for (TransitException curEx = null; curEx != null;) {
             try {
@@ -161,7 +155,7 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
         final EntityManager em = getEntityManager();
         try {
             final @NotNull M model = getModel();
-            final TaskState goalState = newState == null ? model.getState() : newState;
+            final @NotNull TaskState goalState = newState == null ? model.getState() : newState;
             em.getTransaction().begin();
             model.setState(goalState);
             em.merge(model);

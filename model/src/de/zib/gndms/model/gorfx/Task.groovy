@@ -30,7 +30,8 @@ import org.jetbrains.annotations.NotNull
 @Entity(name="Tasks")
 @Table(name="tasks", schema="gorfx")
 class Task extends TimedGridResource {
-    @ManyToOne @JoinColumn(name="key", nullable=false, updatable=false, columnDefinition="LONG VARCHAR")
+    /* Nullable for testing purposes */
+    @ManyToOne @JoinColumn(name="key", nullable=true, updatable=false, columnDefinition="LONG VARCHAR")
     OfferType type
     
     @Column(name="descr", nullable=false, updatable=false, columnDefinition="LONG VARCHAR")

@@ -92,4 +92,18 @@ public abstract class SysTestBase {
         etA.setOwnPostponedActions(new DefaultBatchUpdateAction());
     }
 
+
+    public GridConfigMockup getMockupConfig() {
+        return mockupConfig;
+    }
+
+
+    public GNDMSystem getSys() {
+        return sys;
+    }
+
+
+    public GNDMServiceHome getHome() {
+        return home;
+    }
 }
