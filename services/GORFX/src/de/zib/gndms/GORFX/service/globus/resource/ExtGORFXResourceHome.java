@@ -23,8 +23,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class ExtGORFXResourceHome extends GORFXResourceHome {
 
-    // private GNDMSystem system;
-    
     // logger can be an instance field since resource home classes are instantiated at most once
 	@NotNull
 	@SuppressWarnings({"FieldNameHidesFieldInSuperclass"})
