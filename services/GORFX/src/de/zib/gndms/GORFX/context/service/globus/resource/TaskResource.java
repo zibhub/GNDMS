@@ -1,22 +1,15 @@
 package de.zib.gndms.GORFX.context.service.globus.resource;
 
-import org.globus.wsrf.InvalidResourceKeyException;
-import org.globus.wsrf.NoSuchResourceException;
-import org.globus.wsrf.ResourceException;
-import org.globus.wsrf.ResourceKey;
-import org.apache.axis.types.URI;
-import de.zib.gndms.logic.model.TaskAction;
-import de.zib.gndms.GORFX.common.GORFXTools;
 import de.zib.gndms.GORFX.common.GORFXClientTools;
+import de.zib.gndms.GORFX.common.GORFXTools;
+import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.TaskState;
-import de.zib.gndms.model.common.ImmutableScopedName;
-import types.TaskExecutionState;
-import types.TaskExecutionFailure;
+import org.apache.axis.types.URI;
 import types.DynamicOfferDataSeqT;
 import types.ProviderStageInResultT;
-
-import java.rmi.RemoteException;
+import types.TaskExecutionFailure;
+import types.TaskExecutionState;
 
 
 /**
@@ -26,7 +19,7 @@ import java.rmi.RemoteException;
  */
 public class TaskResource extends TaskResourceBase {
 
-    private TaskAction<? extends Task, ?> taskAction;
+    private TaskAction<? extends Task> taskAction;
 
 
     public TaskExecutionState getTaskExecutionState() {

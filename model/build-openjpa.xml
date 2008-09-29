@@ -19,7 +19,7 @@
 	<include name="de/zib/gndms/model/**/*" />
 	<exclude name="de/zib/gndms/model/*" />
 	<exclude name="de/zib/gndms/model/util/*" />
-	<exclude name="de/zib/gndms/model/*/types/*" />
+	<exclude name="de/zib/gndms/model/*/types/**" />
 </fileset>
 
 <target name="enhance" description="Calls the openjpa enhancer ant task on all classed in gndms-shared-model/production">
