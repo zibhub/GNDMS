@@ -19,7 +19,7 @@
         </parameter>
       </resourceParams>
     </resource>
-    <resource name="home" type="de.zib.gndms.GORFX.context.service.globus.resource.TaskResourceHome">
+    <resource name="home" type="de.zib.gndms.GORFX.context.service.globus.resource.ExtTaskResourceHome">
       <resourceParams>
         <parameter>
           <name>factory</name>
@@ -31,7 +31,7 @@
         </parameter>
         <parameter>
           <name>resourceKeyName</name>
-          <value>{http://GORFX.gndms.zib.de/GORFX/Context}TaskResultsKey</value>
+          <value>{http://GORFX.gndms.zib.de/GORFX/Context}TaskKey</value>
         </parameter>
         <parameter>
           <name>resourceKeyType</name>
@@ -63,7 +63,7 @@
         </parameter>
       </resourceParams>
     </resource>
-    <resource name="home" type="de.zib.gndms.GORFX.offer.service.globus.resource.OfferResourceHome">
+    <resource name="home" type="de.zib.gndms.GORFX.offer.service.globus.resource.ExtOfferResourceHome">
       <resourceParams>
         <parameter>
           <name>factory</name>
@@ -75,7 +75,7 @@
         </parameter>
         <parameter>
           <name>resourceKeyName</name>
-          <value>{http://GORFX.gndms.zib.de/GORFX/Offer}OfferResultsKey</value>
+          <value>{http://GORFX.gndms.zib.de/GORFX/Offer}OfferKey</value>
         </parameter>
         <parameter>
           <name>resourceKeyType</name>
@@ -86,7 +86,6 @@
     <resourceLink name="serviceconfiguration" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/GORFX/serviceconfiguration" />
     <resourceLink name="gORFXHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/GORFX/home" />
     <resourceLink name="oRQHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/ORQ/home" />
-    <resourceLink name="taskHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Task/home" />
     <resourceLink name="taskHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Task/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/ORQ">
@@ -108,7 +107,7 @@
         </parameter>
       </resourceParams>
     </resource>
-    <resource name="home" type="de.zib.gndms.GORFX.ORQ.service.globus.resource.ORQResourceHome">
+    <resource name="home" type="de.zib.gndms.GORFX.ORQ.service.globus.resource.ExtORQResourceHome">
       <resourceParams>
         <parameter>
           <name>factory</name>
@@ -120,7 +119,7 @@
         </parameter>
         <parameter>
           <name>resourceKeyName</name>
-          <value>{http://GORFX.gndms.zib.de/GORFX/ORQ}ORQResultsKey</value>
+          <value>{http://GORFX.gndms.zib.de/GORFX/ORQ}ORQKey</value>
         </parameter>
         <parameter>
           <name>resourceKeyType</name>
@@ -130,8 +129,6 @@
     </resource>
     <resourceLink name="serviceconfiguration" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/GORFX/serviceconfiguration" />
     <resourceLink name="gORFXHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/GORFX/home" />
-    <resourceLink name="offerHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Offer/home" />
-    <resourceLink name="taskHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Task/home" />
     <resourceLink name="offerHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Offer/home" />
     <resourceLink name="taskHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Task/home" />
   </service>
@@ -164,21 +161,9 @@
           <name>etcDirectoryPath</name>
           <value>ETC-PATH</value>
         </parameter>
-        <parameter>
-          <name>gridJNDIEnv</name>
-          <value>@gridJNDIEnv@</value>
-        </parameter>
-        <parameter>
-          <name>gridName</name>
-          <value>@gridName@</value>
-        </parameter>
-        <parameter>
-          <name>gridPath</name>
-          <value>ETC-PATH/@gridPath@</value>
-        </parameter>
       </resourceParams>
     </resource>
-    <resource name="home" type="de.zib.gndms.GORFX.service.globus.resource.GORFXResourceHome">
+    <resource name="home" type="de.zib.gndms.GORFX.service.globus.resource.ExtGORFXResourceHome">
       <resourceParams>
         <parameter>
           <name>factory</name>
