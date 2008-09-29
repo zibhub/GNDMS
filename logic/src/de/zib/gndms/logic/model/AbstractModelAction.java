@@ -30,8 +30,16 @@ public abstract class AbstractModelAction<M extends GridEntity, R> extends Abstr
 
     @Override
     public void initialize() {
-        super.initialize();    // Overridden method
-        requireParameter("model", getModel());
+        preInitialize();
+        postInitialize();
     }
 
+
+    protected void preInitialize() {
+         super.initialize();    // Overridden method
+     }
+
+    protected void postInitialize() {
+        requireParameter("model", getModel());
+    }
 }

@@ -27,6 +27,7 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
         protected final TaskState newState;
 
         protected TransitException(final @NotNull TaskState newStateParam) {
+            super();
             newState = newStateParam;
         }
 
@@ -56,8 +57,18 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
         }
     }
 
+    protected static class StopException extends TransitException {
+        private static final long serialVersionUID = 7783981039310846994L;
+
+
+        protected StopException(final @NotNull TaskState newStateParam) {
+            super(newStateParam);
+        }
+    }
+
     public TaskAction(final @NotNull UUID pk) {
-        EntityManager em = getEntityManager();
+        super();
+        final EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
             final M model = em.find(getTaskClass(), pk);
@@ -65,29 +76,29 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
             setModel(model);
         }
         finally {
-            if (em.getTransaction().isActive())
+            if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
+            }
         }
     }
 
     public TaskAction() {
-        EntityManager em = getEntityManager();
-        try {
-            em.getTransaction().begin();
-            final M model = createInitialTask();
-            em.persist(model);
-            em.getTransaction().commit();
-            setModel(model);
-        }
-        finally {
-            if (em.getTransaction().isActive())
-                em.getTransaction().rollback();
-        }
+        super();
     }
 
-    protected abstract M createInitialTask();
 
-    protected abstract Class<M> getTaskClass();
+    @Override
+    public void preInitialize() {
+        if (getModel() == null)
+            setModel(createInitialTask());
+    }
+
+    
+    protected abstract @NotNull M createInitialTask();
+
+
+    protected abstract @NotNull Class<M> getTaskClass();
+
 
     public ExecutorService getService() {
         if (service == null) {
@@ -106,55 +117,56 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
     }
 
 
+    @SuppressWarnings({ "ThrowableInstanceNeverThrown" })
     @Override
     public Serializable execute(final @NotNull EntityManager em) {
-        final M model = getModel();
-        final TaskState state = model.getState();
-        try {
-            switch (state) {
-                case FAILED:
-                case FINISHED:
-                    return model.getData();
-                default:
-                    transit(state, model);
-            }
-        }
-        catch (TransitException e) {
-            return transititionLoop(e);
-        }
-        throw new IllegalStateException("Invalid transition");
+        return transititionLoop();
     }
 
 
     @SuppressWarnings({ "ThrowableInstanceNeverThrown", "ObjectAllocationInLoop" })
-    private Serializable transititionLoop(final TransitException transitEx) {
-        for (TransitException curEx = transitEx; true;) {
-            if (curEx instanceof FinishedException) {
-                return ((FinishedException)curEx).result;
-            }
-            if (curEx instanceof FailedException) {
-                return curEx.getCause();
-            }
+    private Serializable transititionLoop() {
+        boolean first = true;
+        for (TransitException curEx = null; curEx != null;) {
             try {
-                transit(curEx.newState);
-                fail(new IllegalStateException("No proper TransitException thrown"));
+                try {
+                    if (first) {
+                        transit(null);
+                        first = false;
+                    }
+                    else
+                        transit(curEx.newState);
+                    // if we come here, transit has failed
+                    throw new IllegalStateException("No proper TransitException thrown");
+                }
+                catch (final StopException newEx) {
+                    curEx = null;
+                }
+                catch (final TransitException newEx) {
+                    curEx = newEx;
+                }
+                catch (RuntimeException e) {
+                    fail(e);
+                }
             }
-            catch (final TransitException newEx) {
+            catch (TransitException newEx) {
                 curEx = newEx;
             }
         }
+        return getModel().getData();
     }
 
 
-    private void transit(final @NotNull TaskState newState) {
+    private void transit(final TaskState newState) {
         final EntityManager em = getEntityManager();
         try {
-            em.getTransaction().begin();
             final @NotNull M model = getModel();
-            model.setState(newState);
+            final TaskState goalState = newState == null ? model.getState() : newState;
+            em.getTransaction().begin();
+            model.setState(goalState);
             em.merge(model);
             em.getTransaction().commit();
-            transit(newState, model);
+            transit(goalState, model);
         }
         finally {
             if (em.getTransaction().isActive())
@@ -165,21 +177,17 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
 
     @SuppressWarnings({ "ThrowableInstanceNeverThrown" })
     private void transit(final @NotNull TaskState newState, final @NotNull M model) {
-        switch (newState) {
+        switch (model.getState().transit(newState)) {
             case CREATED: onCreated(model); break;
             case CREATED_UNKNOWN: onUnknown(model); break;
             case INITIALIZED: onInitialized(model); break;
             case INITIALIZED_UNKNOWN: onUnknown(model); break;
             case IN_PROGRESS: onInProgress(model); break;
             case IN_PROGRESS_UNKNOWN: onUnknown(model); break;
-            case FAILED:
-                onFailed(model, new RuntimeException("Unspecified failure"));
-                break;
-            case FINISHED:
-                onFinished(model, null);
-                break;
+            case FAILED: onFailed(model); throw new StopException(TaskState.FAILED);
+            case FINISHED: onFinished(model); throw new StopException(TaskState.FINISHED);
             default:
-                throw new AssertionError("Invalid or unsupported task state");
+                throw new IllegalStateException("Invalid or unsupported task state");
         }
     }
 
@@ -189,35 +197,43 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
 
 
     protected void onCreated(final M model) {
-        model.setProgress(0.0f);
-        throw new TransitException(TaskState.INITIALIZED);
+        transitToState(TaskState.INITIALIZED);
 
     }
 
     protected void onInitialized(final M model) {
-        throw new TransitException(TaskState.IN_PROGRESS);
+        transitToState(TaskState.IN_PROGRESS);
     }
 
     protected abstract void onInProgress(final M model);
 
-    protected void onFailed(final M model, final @NotNull RuntimeException ex) {
-        model.fail(ex);
+
+    protected void onFailed(final M model) {
+        stop(model);
     }
 
 
-    protected void onFinished(final M model, final Serializable result) {
-        model.finish(result);
+    protected void onFinished(final M model) {
+        stop(model);
     }
 
-    protected static void fail(final @NotNull RuntimeException e) {
-        throw new FailedException(e);
-    }
-
-    protected static void finish(final Serializable result) {
-        throw new FinishedException(result);
-    }
 
     protected static void transitToState(final @NotNull TaskState newState) {
         throw new TransitException(newState);
     }
+
+
+    protected void fail(final @NotNull RuntimeException e) {
+        getModel().fail(e);
+        throw new FailedException(e);
+    }
+
+
+    protected void finish(final Serializable result) {
+        getModel().finish(result);
+        throw new FinishedException(result);
+    }
+
+    
+    private void stop(final M model) {throw new StopException(model.getState());}
 }

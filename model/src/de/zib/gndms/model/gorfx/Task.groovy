@@ -53,7 +53,10 @@ class Task extends TimedGridResource {
     TaskState state = TaskState.CREATED
 
     @Column(name="progress", nullable=false, updatable=true)
-    float progress = 0.0f
+    int progress = 0
+
+    @Column(name="max_progress", nullable=false, updatable=false)
+    int max_progress = 100
 
     @Column(name="fault", nullable=true, updatable=true, columnDefinition="LONG VARCHAR")
     @Basic String faultString
@@ -66,17 +69,16 @@ class Task extends TimedGridResource {
 
     def void fail(final @NotNull Exception e) {
         state = TaskState.FAILED
-        setFaultString(exParam.getMessage())
-        setBroken(true)
-        setData(exParam)
-        setProgress(0.0f)
+        setFaultString(e.getMessage())
+        setData(e)
+        setProgress(0)
     }
 
     def void finish(final Serializable result) {
         state = TaskState.FINISHED
         setFaultString("")
         setData(result)
-        setProgress(1.0f)
+        setProgress(max_progress)
     }
 }
 
