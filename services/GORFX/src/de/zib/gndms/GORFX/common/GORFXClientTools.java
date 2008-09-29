@@ -96,7 +96,7 @@ public class GORFXClientTools {
     }
 
     
-    public static URI getRePublishSliceURI( ) throws SOAPException {
+    public static URI getRePublishSliceURI( ) {
 
         return getURI( GORFXConstantURIs.RE_PUBLISH_SLICE_URI );
     }
@@ -113,7 +113,7 @@ public class GORFXClientTools {
     }
 
 
-    public static URI getFileTransferURI( ) throws SOAPException {
+    public static URI getFileTransferURI( ) {
 
         return getURI( GORFXConstantURIs.FILE_TRANSFER_URI );
     }
@@ -130,7 +130,7 @@ public class GORFXClientTools {
     }
 
 
-    public static URI getLofisSetStageInURI ( ) throws SOAPException {
+    public static URI getLofisSetStageInURI ( ) {
 
         return getURI( GORFXConstantURIs.LOFI_SET_STAGE_IN_URI );
     }
@@ -147,7 +147,7 @@ public class GORFXClientTools {
     }
 
 
-    public static URI getPinURI ( ) throws SOAPException {
+    public static URI getPinURI ( ) {
 
         return getURI( GORFXConstantURIs.PIN_URI );
     }
@@ -164,7 +164,7 @@ public class GORFXClientTools {
     }
 
 
-    public static URI getRePublishLofiSetURI( ) throws SOAPException {
+    public static URI getRePublishLofiSetURI( ) {
 
         return getURI( GORFXConstantURIs.RE_PUBLISH_LOFI_SET_URI );
     }

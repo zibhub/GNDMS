@@ -26,12 +26,6 @@ public class GORFXProviderImpl{
 	}
 	
 
-    public de.zib.gndms.GORFX.stubs.CallMaintenanceActionResponse callMaintenanceAction(de.zib.gndms.GORFX.stubs.CallMaintenanceActionRequest params) throws RemoteException {
-    de.zib.gndms.GORFX.stubs.CallMaintenanceActionResponse boxedResult = new de.zib.gndms.GORFX.stubs.CallMaintenanceActionResponse();
-    boxedResult.setResponse(impl.callMaintenanceAction(params.getAction(),params.getOptions().getContext()));
-    return boxedResult;
-  }
-
     public de.zib.gndms.GORFX.stubs.CreateOfferRequestResponse createOfferRequest(de.zib.gndms.GORFX.stubs.CreateOfferRequestRequest params) throws RemoteException, de.zib.gndms.GORFX.stubs.types.UnsupportedOfferType {
     de.zib.gndms.GORFX.stubs.CreateOfferRequestResponse boxedResult = new de.zib.gndms.GORFX.stubs.CreateOfferRequestResponse();
     boxedResult.setEndpointReference(impl.createOfferRequest(params.getOfferRequestArguments().getOfferRequestArguments()));
@@ -41,6 +35,12 @@ public class GORFXProviderImpl{
     public de.zib.gndms.GORFX.stubs.GetSupportedOfferTypesResponse getSupportedOfferTypes(de.zib.gndms.GORFX.stubs.GetSupportedOfferTypesRequest params) throws RemoteException {
     de.zib.gndms.GORFX.stubs.GetSupportedOfferTypesResponse boxedResult = new de.zib.gndms.GORFX.stubs.GetSupportedOfferTypesResponse();
     boxedResult.setResponse(impl.getSupportedOfferTypes());
+    return boxedResult;
+  }
+
+    public de.zib.gndms.GORFX.stubs.CallMaintenanceActionResponse callMaintenanceAction(de.zib.gndms.GORFX.stubs.CallMaintenanceActionRequest params) throws RemoteException {
+    de.zib.gndms.GORFX.stubs.CallMaintenanceActionResponse boxedResult = new de.zib.gndms.GORFX.stubs.CallMaintenanceActionResponse();
+    boxedResult.setResponse(impl.callMaintenanceAction(params.getAction(),params.getOptions().getContext()));
     return boxedResult;
   }
 

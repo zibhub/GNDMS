@@ -390,4 +390,9 @@
   </ns3:Service>
  </ns3:Services>
  <ns66:Extensions xsi:type="ns66:ExtensionsType" xmlns:ns66="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+ <ns67:ServiceProperties xmlns:ns67="gme://gov.nih.nci.cagrid.introduce/1/Property">
+  <ns67:Property description="" isFromETC="false" key="gridJNDIEnv" value="TARGET _GRID_env"/>
+  <ns67:Property description="Name of the grid" isFromETC="false" key="gridName" value="TARGET _GRID"/>
+  <ns67:Property description="Path to shared directory for this grid" isFromETC="true" key="gridPath" value="../TARGET _GRID_shared/"/>
+ </ns67:ServiceProperties>
 </ns1:ServiceDescription>

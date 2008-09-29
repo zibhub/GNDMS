@@ -76,19 +76,6 @@ public class GORFXClient extends GORFXClientBase implements GORFXI {
 		}
 	}
 
-  public java.lang.Object callMaintenanceAction(java.lang.String action,types.ContextT options) throws RemoteException {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"callMaintenanceAction");
-    de.zib.gndms.GORFX.stubs.CallMaintenanceActionRequest params = new de.zib.gndms.GORFX.stubs.CallMaintenanceActionRequest();
-    params.setAction(action);
-    de.zib.gndms.GORFX.stubs.CallMaintenanceActionRequestOptions optionsContainer = new de.zib.gndms.GORFX.stubs.CallMaintenanceActionRequestOptions();
-    optionsContainer.setContext(options);
-    params.setOptions(optionsContainer);
-    de.zib.gndms.GORFX.stubs.CallMaintenanceActionResponse boxedResult = portType.callMaintenanceAction(params);
-    return boxedResult.getResponse();
-    }
-  }
-
   public org.oasis.wsrf.properties.GetMultipleResourcePropertiesResponse getMultipleResourceProperties(org.oasis.wsrf.properties.GetMultipleResourceProperties_Element params) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getMultipleResourceProperties");
@@ -127,6 +114,19 @@ public class GORFXClient extends GORFXClientBase implements GORFXI {
       configureStubSecurity((Stub)portType,"getSupportedOfferTypes");
     de.zib.gndms.GORFX.stubs.GetSupportedOfferTypesRequest params = new de.zib.gndms.GORFX.stubs.GetSupportedOfferTypesRequest();
     de.zib.gndms.GORFX.stubs.GetSupportedOfferTypesResponse boxedResult = portType.getSupportedOfferTypes(params);
+    return boxedResult.getResponse();
+    }
+  }
+
+  public java.lang.Object callMaintenanceAction(java.lang.String action,types.ContextT options) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"callMaintenanceAction");
+    de.zib.gndms.GORFX.stubs.CallMaintenanceActionRequest params = new de.zib.gndms.GORFX.stubs.CallMaintenanceActionRequest();
+    params.setAction(action);
+    de.zib.gndms.GORFX.stubs.CallMaintenanceActionRequestOptions optionsContainer = new de.zib.gndms.GORFX.stubs.CallMaintenanceActionRequestOptions();
+    optionsContainer.setContext(options);
+    params.setOptions(optionsContainer);
+    de.zib.gndms.GORFX.stubs.CallMaintenanceActionResponse boxedResult = portType.callMaintenanceAction(params);
     return boxedResult.getResponse();
     }
   }

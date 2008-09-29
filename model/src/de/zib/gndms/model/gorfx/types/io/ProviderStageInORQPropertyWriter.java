@@ -10,7 +10,7 @@ import java.util.Properties;
  * <p/>
  * User: mjorra, Date: 18.09.2008, Time: 10:08:18
  */
-public class ProviderStageInORQPropertyWriter extends AbstractPropertyIO implements ProviderStageInORQWriter {
+public class ProviderStageInORQPropertyWriter extends ORQPropertyWriter implements ProviderStageInORQWriter {
 
     public ProviderStageInORQPropertyWriter() {
     }

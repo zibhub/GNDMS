@@ -3,17 +3,26 @@ package de.zib.gndms.dspace.slice.service.globus.resource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.axis.types.URI;
+import org.apache.axis.message.addressing.AttributedURI;
 import org.jetbrains.annotations.NotNull;
 import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.ResourceKey;
+import org.globus.wsrf.Resource;
+import org.globus.wsrf.impl.SimpleResourceKey;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.infra.GNDMSTools;
+import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.model.common.GridResource;
+import de.zib.gndms.model.dspace.Slice;
+import de.zib.gndms.dspace.service.globus.resource.ExtDSpaceResourceHome;
+import de.zib.gndms.dspace.common.DSpaceTools;
 
 import javax.xml.namespace.QName;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityManager;
+import javax.naming.NamingException;
 
 
 /**
@@ -37,32 +46,85 @@ public final class ExtSliceResourceHome extends SliceResourceHome
 	@SuppressWarnings({"FieldNameHidesFieldInSuperclass"})
 	private final Log logger = LogFactory.getLog(ExtSliceResourceHome.class);
 
-	@Override
+    // System: Set during initialization
+	@SuppressWarnings({"FieldAccessedSynchronizedAndUnsynchronized"})
+	@NotNull
+	private GNDMSystem system;
+
+	// Serbice Address: set during initialization
+	@SuppressWarnings({"FieldAccessedSynchronizedAndUnsynchronized"})
+	private AttributedURI serviceAddress;
+
+    private boolean initialized;
+
+    @Override
 	public synchronized void initialize() throws Exception {
 		logger.info("Slice home extension initializing");
-		super.initialize();    // Overridden method
+        
+        if (!initialized) {
+            try {
+                logger.info("Subspace home extension initializing");
+                system = ExtDSpaceResourceHome.getGridConfig().retrieveSystemReference();
+                serviceAddress = GNDMSTools.getServiceAddressFromContext();
+                initialized = true;
+
+                try {
+                    super.initialize();    // Overridden method
+                    system.refreshAllResources(this);
+                }
+                catch (RuntimeException e) {
+                    initialized = false;
+                    logger.error(e);
+                    throw e;
+                }
+            }
+            catch ( NamingException e) {
+                logger.error("Initialization failed");
+                throw new RuntimeException(e);
+            }
+        }
 	}
 
+    private void ensureInitialized() {
+        try
+        { initialize();	}
+        catch (Exception e) {
+            logger.error("Unexpected initialization error", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    @SuppressWarnings({ "unchecked", "RawUseOfParameterizedType" })
+    @Override
+    protected Resource createNewInstance() throws ResourceException {
+        final Resource instance = super.createNewInstance();
+        (( ReloadablePersistentResource )instance).setResourceHome(this);
+        return instance;
+    }
+
     public URI getServiceAddress() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        ensureInitialized();
+		return serviceAddress;
     }
 
     public QName getResourceKeyTypeName() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return getKeyTypeName();
     }
 
     @NotNull
     public EntityManagerFactory getEntityManagerFactory() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return getSystem().getEntityManagerFactory();
     }
 
     @NotNull
     public GNDMSystem getSystem() throws IllegalStateException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        ensureInitialized();
+        return system;
     }
 
     public void setSystem( @NotNull GNDMSystem system ) throws IllegalStateException {
-//To change body of implemented methods use File | Settings | File Templates.
+        throw new UnsupportedOperationException("Cant overwrite system");
     }
 
     public Query getListAllQuery(final @NotNull EntityManager em) {
@@ -71,29 +133,27 @@ public final class ExtSliceResourceHome extends SliceResourceHome
 
 
     public void refresh( @NotNull GridResource resource ) throws ResourceException {
-        //To change body of implemented methods use File | Settings | File Templates.
+        DSpaceTools.refreshModelResource( resource, this );
     }
 
     @NotNull
     public String getNickName() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return "Slice";
     }
 
     @NotNull
-    public Class getModelClass() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public Class<Slice> getModelClass() {
+        return Slice.class;
     }
 
     @NotNull
     public ResourceKey getKeyForResourceModel( GridResource model ) {
-        // todo implement
-        throw new UnsupportedOperationException();
+        return getKeyForId( model == null ?  null : model.getId() );
     }
 
 
     @NotNull
     public ResourceKey getKeyForId(final String id) {
-        // todo implement
-        throw new UnsupportedOperationException();
+        return new SimpleResourceKey( getKeyTypeName(), id );
     }
 }

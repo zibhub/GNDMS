@@ -5,6 +5,7 @@ import org.globus.wsrf.NoSuchResourceException;
 import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.ResourceKey;
 import de.zib.gndms.model.gorfx.Contract;
+import de.zib.gndms.logic.model.TaskAction;
 import types.OfferExecutionContractT;
 import types.DynamicOfferDataSeqT;
 
@@ -40,5 +41,17 @@ public class OfferResource extends OfferResourceBase {
 
     public void setHome( ExtOfferResourceHome home ) {
         this.home = home;
+    }
+
+
+    public TaskAction accept() {
+
+        // todo: task instantiation therefor
+        //  identify task action to use
+        //  add relevent data orq data and contract to the task
+        //  use system to trigger task execution
+        //  return task
+
+        return null;
     }
 }

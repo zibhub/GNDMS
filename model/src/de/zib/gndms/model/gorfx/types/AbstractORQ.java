@@ -11,6 +11,7 @@ package de.zib.gndms.model.gorfx.types;
 public abstract class AbstractORQ {
 
     private String offerType;
+    private boolean justEstimate = false;
 
 
     protected AbstractORQ() {
@@ -29,5 +30,15 @@ public abstract class AbstractORQ {
 
     protected void setOfferType( String URI ) {
         this.offerType = URI;
+    }
+
+
+    public void setJustEstimate( boolean b ) {
+        justEstimate = b;
+    }
+
+
+    public boolean getJustEstimate() {
+        return justEstimate;
     }
 }

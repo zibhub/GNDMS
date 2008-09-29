@@ -26,6 +26,29 @@
    <ns2:SchemaElement type="InternalFailure" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="UnknownSubspace" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
+  <ns2:Namespace location="./LofiSetTypes.xsd" namespace="http://lofis.gndms.zib.de/LOFIS/LofiSet/types" packageName="types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="LofiSetReference" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="UnavailableSlice" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./../ws/addressing/WS-Addressing.xsd" namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" packageName="addressing" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="Action" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="EndpointReference" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="FaultTo" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="From" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="MessageID" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="RelatesTo" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ReplyAfter" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ReplyTo" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="To" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./SliceTypes.xsd" namespace="http://dspace.gndms.zib.de/DSpace/Slice/types" packageName="types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="SliceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./DSpaceTypes.xsd" namespace="http://dspace.gndms.zib.de/DSpace/types" packageName="types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="DSpaceReference" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="InternalFailure" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="UnknownSubspace" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
   <ns2:Namespace location="./gndms-c3grid.xsd" namespace="http://gndms.zib.de/c3grid/types" packageName="types" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="DataFile" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="MetadataFile" xsi:type="ns2:SchemaElementType"/>
@@ -390,4 +413,9 @@
   </ns3:Service>
  </ns3:Services>
  <ns66:Extensions xsi:type="ns66:ExtensionsType" xmlns:ns66="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+ <ns67:ServiceProperties xmlns:ns67="gme://gov.nih.nci.cagrid.introduce/1/Property">
+  <ns67:Property description="" isFromETC="false" key="gridJNDIEnv" value="TARGET _GRID_env"/>
+  <ns67:Property description="Name of the grid" isFromETC="false" key="gridName" value="TARGET _GRID"/>
+  <ns67:Property description="Path to shared directory for this grid" isFromETC="true" key="gridPath" value="../TARGET _GRID_shared/"/>
+ </ns67:ServiceProperties>
 </ns1:ServiceDescription>
