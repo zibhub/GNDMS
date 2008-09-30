@@ -46,7 +46,7 @@ public class OfferResource extends OfferResourceBase {
         // todo: task instantiation therefor
         //  identify task action to use
         //  add relevent data orq data and contract to the task
-        //  use system to trigger task execution
+        //  use system to trigger task execution NOP done by TaskResource
         //  return task
 
         return null;

@@ -92,7 +92,7 @@ public class SliceResource extends SliceResourceBase
     @NotNull
     public ExtSliceResourceHome getResourceHome() {
         if( resourceHome == null )
-            throw new IllegalStateException( "now slice resource home set" );
+            throw new IllegalStateException( "No slice resource home set" );
         return resourceHome;
     }
 
@@ -103,7 +103,7 @@ public class SliceResource extends SliceResourceBase
 			resourceHome = resourceHomeParam;
 		}
 		else
-			throw new IllegalStateException("resourceHome already set");
+			throw new IllegalStateException("Slice resource home already set");
     }
 
     public void load( ResourceKey resourceKey ) throws ResourceException, NoSuchResourceException, InvalidResourceKeyException {
@@ -112,9 +112,9 @@ public class SliceResource extends SliceResourceBase
             String id = ( String ) resourceKey.getValue();
             Slice sl = loadModelById(id);
             setResourceKey( resourceKey );
-            loadFromModel(sl);
             initialize(new SliceResourceProperties(),
                     SliceConstants.RESOURCE_PROPERTY_SET, id);
+            loadFromModel(sl);
         }
         else
             throw new InvalidResourceKeyException("Invalid resourceKey name");
@@ -125,7 +125,7 @@ public class SliceResource extends SliceResourceBase
     }
 
     public String getID( ) {
-        return (String) getID( );
+        return (String) super.getID( );
     }
 
 }

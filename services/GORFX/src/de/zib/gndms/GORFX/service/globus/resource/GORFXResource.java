@@ -20,6 +20,7 @@ import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
  */
 public class GORFXResource extends GORFXResourceBase {
 
+    private ExtGORFXResourceHome home;
     private URI[] supportedOfferTypes = null;
 
     public URI[] getSupportedOfferTypes() {
@@ -37,5 +38,15 @@ public class GORFXResource extends GORFXResourceBase {
         }
 
         return supportedOfferTypes;
+    }
+
+
+    public ExtGORFXResourceHome getHome() {
+        return home;
+    }
+
+
+    public void setHome( ExtGORFXResourceHome extGORFXResourceHome ) {
+        home = extGORFXResourceHome;
     }
 }
