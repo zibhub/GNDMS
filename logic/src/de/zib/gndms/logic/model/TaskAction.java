@@ -5,9 +5,8 @@ import de.zib.gndms.model.gorfx.types.TaskState;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
-import java.util.UUID;
-import java.util.concurrent.ExecutorService;
 import java.io.Serializable;
+
 
 /**
  * ThingAMagic.
@@ -18,8 +17,16 @@ import java.io.Serializable;
  *          User: stepn Date: 15.09.2008 Time: 11:26:48
  */
 @SuppressWarnings({ "AbstractMethodCallInConstructor" })
-public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, Serializable> {
-    private ExecutorService service;
+public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, M> {
+    private TaskExecutionService service;
+
+    protected static final class ShutdownTaskActionException extends RuntimeException {
+        private static final long serialVersionUID = 2772466358157719820L;
+
+        ShutdownTaskActionException(final Exception eParam) {
+            super(eParam);
+        }
+    }
 
     protected static class TransitException extends RuntimeException {
         private static final long serialVersionUID = 1101501745642141770L;
@@ -66,9 +73,9 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
         }
     }
 
-    public TaskAction(final @NotNull UUID pk) {
+    public TaskAction(final @NotNull EntityManager em, final @NotNull Object pk) {
         super();
-        final EntityManager em = getEntityManager();
+        setOwnEntityManager(em);
         try {
             em.getTransaction().begin();
             final M model = em.find(getTaskClass(), pk);
@@ -81,7 +88,7 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
             }
         }
     }
-
+    
     public TaskAction() {
         super();
     }
@@ -89,6 +96,7 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
 
     @Override
     public void preInitialize() {
+        super.preInitialize();
         if (getModel() == null)
             setModel(createInitialTask());
     }
@@ -100,7 +108,7 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
     protected abstract @NotNull Class<M> getTaskClass();
 
 
-    public ExecutorService getService() {
+    public TaskExecutionService getService() {
         if (service == null) {
             final TaskAction<?> taskAction = nextParentOfType(TaskAction.class);
             return taskAction == null ? null : taskAction.getService();
@@ -109,7 +117,7 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
     }
 
 
-    public void setService(final @NotNull ExecutorService serviceParam) {
+    public void setService(final @NotNull TaskExecutionService serviceParam) {
         if (service == null)
             service = serviceParam;
         else
@@ -117,37 +125,62 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
     }
 
 
+    @Override
+    protected final boolean isExecutingInsideTransaction() {
+        return false;
+    }
+
+
     @SuppressWarnings({ "ThrowableInstanceNeverThrown", "ObjectAllocationInLoop" })
     @Override
-    public Serializable execute(final @NotNull EntityManager em) {
+    public M execute(final @NotNull EntityManager em) {
         boolean first = true;
-        for (TransitException curEx = null; curEx != null;) {
+        for (TransitException curEx = null; curEx != null || first;) {
             try {
                 try {
                     if (first) {
-                        transit(null);
-                        first = false;
+                        try {
+                            transit(null);
+                        }
+                        finally {
+                            first = false;                            
+                        }
                     }
                     else
                         transit(curEx.newState);
                     // if we come here, transit has failed
                     throw new IllegalStateException("No proper TransitException thrown");
                 }
+                /* On stop: finish loop and return model to caller */
                 catch (final StopException newEx) {
                     curEx = null;
                 }
+                /* On transit: switch to next state according to newEx */
                 catch (final TransitException newEx) {
                     curEx = newEx;
                 }
+                /* On shutdown: Do not set the task to failed, simply throw e */
+                catch (final ShutdownTaskActionException e) {
+                    throw e;
+                }
+                /* On runtime ex: Set task to failed */
                 catch (RuntimeException e) {
-                    fail(e);
+                    /* Cant go to FAILED after FINISHED, i.e. onFinish must never fail */
+                    if (TaskState.FINISHED.equals(getModel().getState()))
+                        throw e;
+                    else
+                        fail(e);
                 }
             }
+            /* If fail was called due to a RuntimeException in above try block, use resulting
+               exception for the next state transition.  Ensures that the failed state of the
+               task will be persisted.
+             */
             catch (TransitException newEx) {
                 curEx = newEx;
             }
         }
-        return getModel().getData();
+        return getModel();
     }
 
 
@@ -158,7 +191,8 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
             final @NotNull TaskState goalState = newState == null ? model.getState() : newState;
             em.getTransaction().begin();
             model.setState(goalState);
-            em.merge(model);
+            if (! em.contains(model))
+                em.persist(model);
             em.getTransaction().commit();
             transit(goalState, model);
         }
@@ -178,8 +212,14 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
             case INITIALIZED_UNKNOWN: onUnknown(model); break;
             case IN_PROGRESS: onInProgress(model); break;
             case IN_PROGRESS_UNKNOWN: onUnknown(model); break;
-            case FAILED: onFailed(model); throw new StopException(TaskState.FAILED);
-            case FINISHED: onFinished(model); throw new StopException(TaskState.FINISHED);
+            case FAILED:
+                    onFailed(model);
+                    /* safety catch-all */
+                    throw new StopException(TaskState.FAILED);
+            case FINISHED:
+                    onFinished(model);
+                    /* safety catch-all */
+                    throw new StopException(TaskState.FINISHED);
             default:
                 throw new IllegalStateException("Invalid or unsupported task state");
         }
@@ -199,15 +239,15 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
         transitToState(TaskState.IN_PROGRESS);
     }
 
-    protected abstract void onInProgress(final M model);
+    protected abstract void onInProgress(final @NotNull M model);
 
 
-    protected void onFailed(final M model) {
+    protected void onFailed(final @NotNull M model) {
         stop(model);
     }
 
 
-    protected void onFinished(final M model) {
+    protected void onFinished(final @NotNull M model) {
         stop(model);
     }
 
@@ -228,6 +268,20 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
         throw new FinishedException(result);
     }
 
+
+    protected void stop(final @NotNull M model) {
+        throw new StopException(model.getState());
+    }
+
     
-    private void stop(final M model) {throw new StopException(model.getState());}
+    protected final InterruptedException wrapInterrupt(InterruptedException e) {
+        if (getService().isTerminating())
+            throw new ShutdownTaskActionException(e);
+        return e;
+    }
+
+    @SuppressWarnings({ "ThrowableResultOfMethodCallIgnored" })
+    protected final void wrapInterrupt_(InterruptedException e) {
+        wrapInterrupt(e);
+    }
 }

@@ -49,7 +49,7 @@ public class TaskResource extends TaskResourceBase {
     public DynamicOfferDataSeqT getTaskExecutionResults() {
 
         DynamicOfferDataSeqT res;
-        URI uri = GORFXTools.scopedNameToURI( taskAction.getModel().getType().getOfferResultType( ) );
+        URI uri = GORFXTools.scopedNameToURI( taskAction.getModel().getOfferType().getOfferResultType( ) );
         TaskState stat = taskAction.getModel().getState();
         if( uri.equals( GORFXClientTools.getProviderStageInURI() ) ) {
             if( stat.equals( TaskState.FINISHED ) )

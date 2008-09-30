@@ -162,7 +162,7 @@ public class DSpaceImpl extends DSpaceImplBase {
             CreateSliceAction csa =
                     new CreateSliceAction( (String) thisResource.getID(),
                             sliceCreationSpecifier.getTerminationTime(),
-                            system,
+                            system.getModelUUIDGen(),
                             sk,
                             sliceCreationSpecifier.getTotalStorageSize().longValue()
                     );

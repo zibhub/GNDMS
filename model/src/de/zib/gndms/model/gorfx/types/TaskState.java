@@ -18,7 +18,7 @@ public enum TaskState {
     final boolean unknownState;
 
 
-   // @SuppressWarnings({ "OverlyComplexMethod" })
+    @SuppressWarnings({ "OverlyLongMethod", "OverlyComplexMethod" })
     public TaskState transit(final @NotNull TaskState to) {
         switch(this) {
             case CREATED:
@@ -37,11 +37,19 @@ public enum TaskState {
                 if (IN_PROGRESS_UNKNOWN.equals(to)) return to;
 
                 if (FINISHED.equals(to)) return to;
-                if (FAILED.equals(to)) return to;
 
-            default:
-                throw new IllegalStateException("Invalid TaskState transition");
+           case FAILED:
+                if (FAILED.equals(to)) return to;
+                break;
+
+            case FINISHED:
+                if (FINISHED.equals(to)) return to;
+                break;
+
+           default:
+                // intentionally
         }
+       throw new IllegalStateException("Invalid TaskState transition");
     }
 
     

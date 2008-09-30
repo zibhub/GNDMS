@@ -19,6 +19,8 @@ import javax.persistence.EntityManager;
 public interface EntityAction<R> extends Action<R>, ModelUUIDGen {
     EntityManager getEntityManager();
 
+    EntityManager getOwnEntityManager();
+
     void setOwnEntityManager(final @NotNull EntityManager entityManagerParam);
 
 

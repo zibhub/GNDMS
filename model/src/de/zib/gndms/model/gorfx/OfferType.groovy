@@ -24,7 +24,7 @@ import static javax.persistence.CascadeType.ALL
 @Table(name="offer_types", schema="gorfx")
 class OfferType {
     @Id
-    @Column(name="key", nullable=false, updatable=false, columnDefinition="LONG VARCHAR")
+    @Column(name="offerTypeKey", nullable=false, updatable=false, columnDefinition="VARCHAR")
     String offerTypeKey
 
     @Embedded
@@ -47,6 +47,6 @@ class OfferType {
     @Column(name="single", nullable=false, updatable=false)
     boolean singletonCalculator = false
 
-    @OneToMany(cascade=ALL, mappedBy="type", fetch=FetchType.LAZY)
+    @OneToMany(cascade=ALL, mappedBy="offerType", fetch=FetchType.LAZY)
     Set<Task> tasks
 }

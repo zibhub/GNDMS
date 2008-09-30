@@ -31,10 +31,10 @@ import org.jetbrains.annotations.NotNull
 @Table(name="tasks", schema="gorfx")
 class Task extends TimedGridResource {
     /* Nullable for testing purposes */
-    @ManyToOne @JoinColumn(name="key", nullable=true, updatable=false, columnDefinition="LONG VARCHAR")
-    OfferType type
+    @ManyToOne @JoinColumn(name="offerTypeKey", nullable=true, updatable=false, columnDefinition="VARCHAR")
+    OfferType offerType
     
-    @Column(name="descr", nullable=false, updatable=false, columnDefinition="LONG VARCHAR")
+    @Column(name="descr", nullable=false, updatable=false, columnDefinition="VARCHAR")
     String description
 
     /* always this.tod >= this.validity */
@@ -59,7 +59,7 @@ class Task extends TimedGridResource {
     @Column(name="max_progress", nullable=false, updatable=false)
     int max_progress = 100
 
-    @Column(name="fault", nullable=true, updatable=true, columnDefinition="LONG VARCHAR")
+    @Column(name="fault", nullable=true, updatable=true, columnDefinition="VARCHAR")
     @Basic String faultString
 
     /**

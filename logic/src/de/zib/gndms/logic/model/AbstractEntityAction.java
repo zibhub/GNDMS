@@ -23,7 +23,7 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
     @SuppressWarnings({ "InstanceVariableNamingConvention" })
     private ModelUUIDGen UUIDGen;   // the uuid generator
     private boolean runningOwnPostponedActions = true;
-
+    private boolean closingEntityManagerOnCleanup = true;
 
     @Override
     public void initialize() {
@@ -41,13 +41,27 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
     @Override
     public final R execute( ) {
         final EntityManager em = getEntityManager();
-        final EntityTransaction tx = em.getTransaction();
+        if (isExecutingInsideTransaction()) {
+            return executeInsideTransaction(em);
+        }
+        else
+         return execute(em);
+    }
+
+    @SuppressWarnings({ "MethodMayBeStatic" })
+    protected boolean isExecutingInsideTransaction() {
+        return true;
+    }
+
+
+    private R executeInsideTransaction(final EntityManager emParam) {
+        final EntityTransaction tx = emParam.getTransaction();
         if (tx.isActive())
-            return execute(em);
+            return execute(emParam);
         else
             try {
                 tx.begin();
-                R result = execute(em);
+                R result = execute(emParam);
                 tx.commit();
                 return result;
             }
@@ -69,6 +83,12 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
 
         return entityManager;
     }
+
+    
+    public EntityManager getOwnEntityManager() {
+        return entityManager;
+    }
+
 
     public void setOwnEntityManager(final @NotNull EntityManager entityManagerParam) {
         doNotOverwrite("entityManager", entityManager);
@@ -143,6 +163,19 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
         final BatchUpdateAction<GridResource, ?> batched = getPostponedActions();
         if (hasOwnPostponedActions() && isRunningOwnPostponedActions())
             postponedActions.call();
+        if (isClosingEntityManagerOnCleanup() && getEntityManager() != null)
+            if (getEntityManager().isOpen())
+                getEntityManager().close();
         super.cleanUp();    // Overridden method
+    }
+
+
+    public boolean isClosingEntityManagerOnCleanup() {
+        return closingEntityManagerOnCleanup;
+    }
+
+
+    public void setClosingEntityManagerOnCleanup(final boolean closingEntityManagerOnCleanupParam) {
+        closingEntityManagerOnCleanup = closingEntityManagerOnCleanupParam;
     }
 }

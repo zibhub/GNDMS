@@ -71,7 +71,7 @@ public class SubspaceImpl extends SubspaceImplBase {
             CreateSliceAction csa =
                     new CreateSliceAction( (String) sr.getID(),
                             sliceCreationSpecifier.getTerminationTime(),
-                            system,
+                            system.getModelUUIDGen(),
                             sk,
                             ssize.longValue( )
                     );

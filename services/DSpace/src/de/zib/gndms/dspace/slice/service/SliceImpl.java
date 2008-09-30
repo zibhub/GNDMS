@@ -92,7 +92,7 @@ public class SliceImpl extends SliceImplBase {
             SliceResource nsr = esr.getResource( rk );
 
             TransformSliceAction tsa =
-                    new TransformSliceAction( nsr.getID(), osl.getTerminationTime( ), sk, sp, osl.getTotalStorageSize(), system );
+                    new TransformSliceAction( nsr.getID(), osl.getTerminationTime( ), sk, sp, osl.getTotalStorageSize(), system.getModelUUIDGen() );
 
 
             GridResourceModelHandler mh =

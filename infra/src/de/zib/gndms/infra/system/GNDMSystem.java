@@ -4,10 +4,7 @@ import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.monitor.ActionCaller;
 import de.zib.gndms.infra.monitor.GroovyMoniServer;
 import de.zib.gndms.infra.service.GNDMServiceHome;
-import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
-import de.zib.gndms.logic.model.EntityAction;
-import de.zib.gndms.logic.model.EntityUpdateListener;
-import de.zib.gndms.logic.model.TaskAction;
+import de.zib.gndms.logic.model.*;
 import de.zib.gndms.logic.util.LogicTools;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
@@ -41,9 +38,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
+import static java.lang.Thread.sleep;
 
 
 /**
@@ -59,14 +55,18 @@ import java.util.concurrent.Future;
         "OverloadedMethodsWithSameNumberOfParameters", "NestedAssignment",
         "ClassWithTooManyMethods" })
 public final class GNDMSystem
-	  implements Initializable, SystemHolder, EMFactoryProvider, ModelUUIDGen,
+	  implements Initializable, SystemHolder, EMFactoryProvider, 
         EntityUpdateListener<GridResource> {
+    private static final long EXECUTOR_SHUTDOWN_TIME = 5000L;
+    private boolean shutdown;
+
 
     private static @NotNull Log createLogger() { return LogFactory.getLog(GNDMSystem.class); }
 
     private final boolean debugMode;
 
     private @NotNull final UUIDGen uuidGen = UUIDGenFactory.getUUIDGen();
+    private @NotNull final ModelUUIDGen uuidGenDelegate;
 	private @NotNull final Log logger = createLogger();
     private @NotNull final InstanceDirectory instanceDir;
     private @NotNull final ConfigActionCaller actionCaller;
@@ -79,7 +79,7 @@ public final class GNDMSystem
 	private @NotNull EntityManagerFactory restrictedEmf;
 	private @NotNull GroovyMoniServer groovyMonitor;
 
-    private ExecutorService executorService;
+    private TaskExecutionService executionService;
 
 	/**
 	 * Retrieves a GNDMSSystem using context.lookup(name).
@@ -139,7 +139,11 @@ public final class GNDMSystem
         // Bad style, usually would be an inner class but
         // removed it from this source file to reduce source file size
         actionCaller = new ConfigActionCaller(this);
-
+        uuidGenDelegate = new ModelUUIDGen() {
+            public @NotNull String nextUUID() {
+                return GNDMSystem.this.nextUUID();
+            }
+        };
 		// initialization intentionally deferred to initialize
 	}
 
@@ -182,7 +186,8 @@ public final class GNDMSystem
 	}
 
 
-	private void prepareDbStorage() throws IOException {
+	@SuppressWarnings({ "ResultOfMethodCallIgnored" })
+    private void prepareDbStorage() throws IOException {
         File curSharedDir = getSharedDir();
 		dbDir = new File(curSharedDir, "db");
 		doCheckOrCreateDir(dbDir);
@@ -201,7 +206,8 @@ public final class GNDMSystem
 	}
 
 
-	public @NotNull EntityManagerFactory createEMF() throws Exception {
+	@SuppressWarnings({ "ResultOfMethodCallIgnored" })
+    public @NotNull EntityManagerFactory createEMF() throws Exception {
 		final String gridName = sharedConfig.getGridName();
 		final Properties map = new Properties();
 
@@ -246,7 +252,8 @@ public final class GNDMSystem
 
 
 
-	private void doCheckOrCreateDir(File mainDir) {
+	@SuppressWarnings({ "ResultOfMethodCallIgnored" })
+    private void doCheckOrCreateDir(File mainDir) {
 		if (!mainDir.exists()) {
 			logger.info("Creating " + mainDir.getPath());
 			mainDir.mkdir();
@@ -256,52 +263,27 @@ public final class GNDMSystem
 	}
 
 
-    @SuppressWarnings({ "MethodOnlyUsedFromInnerClass" })
+    @SuppressWarnings({
+            "MethodOnlyUsedFromInnerClass", "SleepWhileHoldingLock",
+            "CallToNativeMethodWhileLocked" })
 	private synchronized void shutdown() throws Exception {
-		emf.close();
-		final GroovyMoniServer moniServer = getMonitor();
-		if (moniServer != null)
-			moniServer.stopServer();
+        if (! shutdown) {
+            shutdown = true;
+            if (executionService != null) {
+                executionService.shutdown();
+            }
+            final GroovyMoniServer moniServer = getMonitor();
+            if (moniServer != null)
+                moniServer.stopServer();
+            emf.close();
+        }
 	}
 
 
-    private synchronized @NotNull ExecutorService getExecutorService() {
-        if (executorService == null)
-            executorService = createExecutorService();
-        return executorService;
-    }
-
-    public final @NotNull <R> Future<R> submitAction(final @NotNull EntityAction<R> action) {
-        final @NotNull EntityManager em = getEntityManagerFactory().createEntityManager();
-        try {
-            return submitAction(em, action);
-        }
-        finally {
-            if (em.isOpen())
-                em.close();
-        }
-    }
-
-    @SuppressWarnings({ "FeatureEnvy" })
-    public @NotNull <R> Future<R> submitAction(final @NotNull EntityManager em,
-                                               final @NotNull EntityAction<R> action) {
-        action.setOwnEntityManager(em);
-        if (action instanceof SystemHolder)
-            ((SystemHolder)action).setSystem(this);
-        if (action.getPostponedActions() == null)
-            action.setOwnPostponedActions(new DefaultBatchUpdateAction<GridResource>());
-        if (action.getPostponedActions().getListener() == null)
-            action.getPostponedActions().setListener(getEntityUpdateListener());
-        if (action instanceof TaskAction)
-            ((TaskAction<?>) action).setService(getExecutorService());
-        action.initialize();
-        return getExecutorService().submit(action);
-    }
-
-
-    @SuppressWarnings({ "MethodMayBeStatic" })
-    private @NotNull ExecutorService createExecutorService() {
-        return Executors.newCachedThreadPool();
+    private synchronized @NotNull TaskExecutionService getExecutionService() {
+        if (executionService == null)
+            executionService = new SysTaskExecutionService();
+        return executionService;
     }
 
 
@@ -502,6 +484,104 @@ public final class GNDMSystem
         return this;
     }
 
+
+    public @NotNull ModelUUIDGen getModelUUIDGen() {
+        return uuidGenDelegate;
+    }
+
+
+    public @NotNull <R> Future<R> submitAction(final @NotNull EntityAction<R> action) {
+        return getExecutionService().submitAction(action);
+    }
+
+    
+    public @NotNull <R> Future<R> submitAction(final @NotNull EntityManager em,
+                                               final @NotNull EntityAction<R> action) {
+        return getExecutionService().submitAction(em, action);
+    }
+
+
+
+
+    public final class SysTaskExecutionService implements TaskExecutionService, ThreadFactory {
+        private final ThreadPoolExecutor executorService;
+        private volatile boolean terminating;
+
+
+        public SysTaskExecutionService() {
+            super();
+            executorService = (ThreadPoolExecutor) Executors.newCachedThreadPool();
+            executorService.prestartCoreThread();
+        }
+
+        public ExecutorService getExecutorService() {
+            return executorService;
+        }
+
+        public boolean isTerminating() {
+            return terminating;
+        }
+
+
+        @SuppressWarnings({ "BusyWait" })
+        public void shutdown() {
+            terminating = true;
+            getExecutorService().shutdownNow();
+            /* truely sleep for EXECUTOR_SHUTDOWN_TIME */
+            long now = System.currentTimeMillis();
+            long stop = now + EXECUTOR_SHUTDOWN_TIME;
+            do {
+                try {
+                    sleep(stop - now);
+                }
+                catch (InterruptedException e) {
+                    // intentionally
+                }
+                now = System.currentTimeMillis();
+            }
+            while (stop - now > 0L);
+
+        }
+
+
+        public final @NotNull <R> Future<R> submitAction(final @NotNull EntityAction<R> action) {
+            final EntityManager ownEm = action.getOwnEntityManager();
+            if (ownEm != null)
+                return submit_(action);
+            else {
+                final @NotNull EntityManager em = getEntityManagerFactory().createEntityManager();
+                return submitAction(em, action);
+            }
+        }
+
+        @SuppressWarnings({ "FeatureEnvy" })
+        public @NotNull <R> Future<R> submitAction(final @NotNull EntityManager em,
+                                                   final @NotNull EntityAction<R> action) {
+            action.setOwnEntityManager(em);
+            return submit_(action);
+        }
+
+
+        @SuppressWarnings({ "FeatureEnvy" })
+        private <R> Future<R> submit_(final EntityAction<R> action) {
+            if (action instanceof SystemHolder)
+                ((SystemHolder)action).setSystem(GNDMSystem.this);
+            if (action.getPostponedActions() == null)
+                action.setOwnPostponedActions(new DefaultBatchUpdateAction<GridResource>());
+            if (action.getPostponedActions().getListener() == null)
+                action.getPostponedActions().setListener(getEntityUpdateListener());
+            if (action instanceof AbstractEntityAction)
+                ((AbstractEntityAction<?>)action).setUUIDGen(uuidGenDelegate);
+            if (action instanceof TaskAction)
+                ((TaskAction<?>) action).setService(this);
+            return getExecutorService().submit(action);
+        }
+
+
+        public Thread newThread(final Runnable r) {
+            return Executors.defaultThreadFactory().newThread(r);
+        }
+    }
 
     public static final class SysFactory {
 		private final Log logger;
