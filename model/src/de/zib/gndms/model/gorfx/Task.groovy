@@ -17,6 +17,7 @@ import javax.persistence.JoinColumn
 import javax.persistence.Enumerated
 import javax.persistence.EnumType
 import org.jetbrains.annotations.NotNull
+import javax.persistence.NamedQuery
 
 
 /**
@@ -29,6 +30,8 @@ import org.jetbrains.annotations.NotNull
  */
 @Entity(name="Tasks")
 @Table(name="tasks", schema="gorfx")
+@NamedQuery(name="listAllTaskIds", query="SELECT instance.id FROM Tasks instance")
+
 class Task extends TimedGridResource {
     @ManyToOne @JoinColumn(name="key", nullable=false, updatable=false, columnDefinition="LONG VARCHAR")
     OfferType type

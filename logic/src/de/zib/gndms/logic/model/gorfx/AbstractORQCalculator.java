@@ -1,6 +1,11 @@
-package de.zib.gndms.model.gorfx.types;
+package de.zib.gndms.logic.model.gorfx;
 
 import de.zib.gndms.model.gorfx.Contract;
+import de.zib.gndms.model.gorfx.types.AbstractORQ;
+import de.zib.gndms.infra.network.GridFTPClientFactory;
+import org.globus.ftp.exception.ServerException;
+
+import java.io.IOException;
 
 
 /**
@@ -14,9 +19,11 @@ abstract public class AbstractORQCalculator<M extends AbstractORQ> {
     private Contract perferredOfferExecution;
     private Class<M> orqModelClass;
     private M orqArguments;
+    private GridFTPClientFactory gridFTPClientFactory;
+    
 
     // here the computation of the required offer should be performed
-    public abstract Contract createOffer( );
+    public abstract Contract createOffer( ) throws Exception;
 
 
     public Contract getPerferredOfferExecution() {
@@ -60,5 +67,15 @@ abstract public class AbstractORQCalculator<M extends AbstractORQ> {
     public boolean getJustEstimate( ) {
 
         return orqArguments.getJustEstimate( );
+    }
+
+
+    public GridFTPClientFactory getGridFTPClientFactory() {
+        return gridFTPClientFactory;
+    }
+
+
+    public void setGridFTPClientFactory( GridFTPClientFactory gridFTPClientFactory ) {
+        this.gridFTPClientFactory = gridFTPClientFactory;
     }
 }
