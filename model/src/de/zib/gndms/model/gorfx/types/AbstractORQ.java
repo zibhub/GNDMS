@@ -1,5 +1,7 @@
 package de.zib.gndms.model.gorfx.types;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.Serializable;
 
 
@@ -44,4 +46,7 @@ public abstract class AbstractORQ implements Serializable {
     public boolean isJustEstimate() {
         return justEstimate;
     }
+
+
+    public abstract @NotNull String getDescription();
 }

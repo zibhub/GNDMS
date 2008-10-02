@@ -19,9 +19,8 @@ import java.io.Serializable;
 @SuppressWarnings({ "AbstractMethodCallInConstructor" })
 public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, M> {
     private TaskExecutionService service;
-    private String creationKey;
 
-    protected static final class ShutdownTaskActionException extends RuntimeException {
+    private static final class ShutdownTaskActionException extends RuntimeException {
         private static final long serialVersionUID = 2772466358157719820L;
 
         ShutdownTaskActionException(final Exception eParam) {
@@ -44,6 +43,8 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
             super(cause);
             newState = newStateParam;
         }
+
+        public boolean isDemandingAbort() { return false; }
     }
 
     protected static class FailedException extends TransitException {
@@ -52,6 +53,9 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
         protected FailedException(final @NotNull RuntimeException cause) {
             super(TaskState.FAILED, cause);
         }
+
+        @Override
+        public boolean isDemandingAbort() { return true; }
     }
 
     protected static class FinishedException extends TransitException {
@@ -65,29 +69,34 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
         }
     }
 
-    protected static class StopException extends TransitException {
+    private static class StopException extends TransitException {
         private static final long serialVersionUID = 7783981039310846994L;
 
 
         protected StopException(final @NotNull TaskState newStateParam) {
             super(newStateParam);
         }
-    }
 
-    public TaskAction() {
-        super();
+        @Override
+        public boolean isDemandingAbort() { return true; }
     }
-
 
     public TaskAction(final @NotNull EntityManager em, final @NotNull M model) {
         super();
-        if (em.contains(model)) {
+        final boolean created = model.getState().equals(TaskState.CREATED);
+        final boolean contained = em.contains(model);
+
+        if (created)
+        {
+            if (! contained)
+                model.setNewTask(true);
             setOwnEntityManager(em);
             setModel(model);
-            model.setNewTask(false);
         }
-        else
-            throw new IllegalArgumentException("EntityManager does not contain provided model");
+        else {
+            if (! contained)
+                throw new IllegalArgumentException("EntityManager does not contain provided model");
+        }
     }
 
     
@@ -97,6 +106,8 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
         try {
             em.getTransaction().begin();
             final M model = em.find(getTaskClass(), pk);
+            if (model == null)
+                throw new IllegalArgumentException("Model not found for pk: " + pk);
             model.setNewTask(false);
             em.getTransaction().commit();
             setModel(model);
@@ -117,16 +128,6 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
             throw new IllegalStateException("Illegal attempt to overwrite TaskAction model");
     }
 
-
-    @Override
-    public void preInitialize() {
-        super.preInitialize();
-        if (getModel() == null)
-            setModel(createInitialTask());
-    }
-
-    
-    protected abstract @NotNull M createInitialTask();
 
 
     protected abstract @NotNull Class<M> getTaskClass();
@@ -334,14 +335,4 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
         wrapInterrupt(e);
     }
 
-    public String getCreationKey() {
-        if (creationKey == null)
-            creationKey = nextUUID();
-        return creationKey;
-    }
-
-
-    public void setCreationKey(final @NotNull String creationKeyParam) {
-        creationKey = creationKeyParam;
-    }
 }

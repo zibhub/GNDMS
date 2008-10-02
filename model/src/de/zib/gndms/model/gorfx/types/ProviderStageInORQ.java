@@ -1,7 +1,7 @@
 package de.zib.gndms.model.gorfx.types;
 
-import de.zib.gndms.model.gorfx.types.DataDescriptor;
-import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
+import org.jetbrains.annotations.NotNull;
+
 
 /**
  * Model class for a provider stage in orq.
@@ -20,6 +20,12 @@ public class ProviderStageInORQ extends AbstractORQ {
     public ProviderStageInORQ( ) {
         super( );
         super.setOfferType( GORFXConstantURIs.PROVIDER_STAGE_IN_URI );
+    }
+
+
+    @Override
+    public @NotNull String getDescription() {
+        return "Providerstaging";
     }
 
 

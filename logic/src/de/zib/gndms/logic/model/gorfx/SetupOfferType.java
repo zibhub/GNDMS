@@ -1,19 +1,16 @@
 package de.zib.gndms.logic.model.gorfx;
 
-import de.zib.gndms.model.gorfx.types.AbstractORQCalculator;
-import de.zib.gndms.model.gorfx.OfferType;
-
-import java.io.PrintWriter;
-
-import javax.persistence.EntityManager;
-
-import org.jetbrains.annotations.NotNull;
-
 import de.zib.gndms.logic.action.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigOption;
 import de.zib.gndms.logic.model.config.SetupAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
+import de.zib.gndms.model.gorfx.OfferType;
+import de.zib.gndms.model.gorfx.types.AbstractORQCalculator;
+import org.jetbrains.annotations.NotNull;
+
+import javax.persistence.EntityManager;
+import java.io.PrintWriter;
 /**
  * ThingAMagic.
  *
