@@ -41,8 +41,6 @@ public class ContractConverter extends GORFXConverterBase<ContractWriter, Contra
         if( dat != null )
             getWriter().writeResultValidUntil( dat );
 
-        // todo add bool value for ExecutionLikelyUntil
-        // getWriter().writeConstantExecutionTime( getModel()... );
-
+        getWriter().writeConstantExecutionTime( getModel().isDeadlineIsOffset() );
     }
 }

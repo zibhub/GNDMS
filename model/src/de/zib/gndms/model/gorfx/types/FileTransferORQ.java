@@ -1,6 +1,7 @@
 package de.zib.gndms.model.gorfx.types;
 
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -12,7 +13,7 @@ public class FileTransferORQ extends AbstractORQ {
 
     private String sourceURI;
     private String targetURI;
-    private Map<String,String> FileMap;
+    private TreeMap<String,String> FileMap;
 
     public FileTransferORQ( ) {
         super( );
@@ -40,12 +41,12 @@ public class FileTransferORQ extends AbstractORQ {
     }
 
 
-    public Map<String, String> getFileMap() {
+    public TreeMap<String, String> getFileMap() {
         return FileMap;
     }
 
 
-    public void setFileMap( Map<String, String> fileMap ) {
+    public void setFileMap( TreeMap<String, String> fileMap ) {
         FileMap = fileMap;
     }
 }

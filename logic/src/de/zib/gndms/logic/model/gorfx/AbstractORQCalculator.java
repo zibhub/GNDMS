@@ -3,9 +3,7 @@ package de.zib.gndms.logic.model.gorfx;
 import de.zib.gndms.model.gorfx.Contract;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.infra.network.GridFTPClientFactory;
-import org.globus.ftp.exception.ServerException;
-
-import java.io.IOException;
+import de.zib.gndms.infra.network.NetworkAuxiliariesProvider;
 
 
 /**
@@ -19,7 +17,7 @@ abstract public class AbstractORQCalculator<M extends AbstractORQ> {
     private Contract perferredOfferExecution;
     private Class<M> orqModelClass;
     private M orqArguments;
-    private GridFTPClientFactory gridFTPClientFactory;
+    private NetworkAuxiliariesProvider networkAuxiliariesProvider;
     
 
     // here the computation of the required offer should be performed
@@ -70,12 +68,12 @@ abstract public class AbstractORQCalculator<M extends AbstractORQ> {
     }
 
 
-    public GridFTPClientFactory getGridFTPClientFactory() {
-        return gridFTPClientFactory;
+    public NetworkAuxiliariesProvider getNetworkAuxiliariesProvider() {
+        return networkAuxiliariesProvider;
     }
 
 
-    public void setGridFTPClientFactory( GridFTPClientFactory gridFTPClientFactory ) {
-        this.gridFTPClientFactory = gridFTPClientFactory;
+    public void setNetworkAuxiliariesProvider( NetworkAuxiliariesProvider networkAuxiliariesProvider ) {
+        this.networkAuxiliariesProvider = networkAuxiliariesProvider;
     }
 }

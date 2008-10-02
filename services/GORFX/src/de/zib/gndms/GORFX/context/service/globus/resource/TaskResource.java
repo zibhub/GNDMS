@@ -20,6 +20,7 @@ import types.ProviderStageInResultT;
 import types.TaskExecutionFailure;
 import types.TaskExecutionState;
 
+import javax.persistence.EntityManager;
 import java.util.concurrent.Future;
 
 
@@ -124,8 +125,9 @@ public class TaskResource extends TaskResourceBase
         if( taskAction != null )
             throw new ResourceException( "task action already loaded" );
 
-        Task tsk = (Task) mH.loadModelById( null, id );
-        TaskAction tak = TaskActionFactory.getActionForTask( tsk );
+        EntityManager em = home.getEntityManagerFactory().createEntityManager(  );
+        Task tsk = (Task) mH.loadModelById( em, id );
+        taskAction = new TaskAction( em, tsk );
         executeTask( );
         return tsk;
     }

@@ -34,7 +34,11 @@ public enum SfrProperty {
 	STAGING_TIME("c3grid.StageFileResponse.StagingTime","1234"),
 	REQUIRED_SIZE("c3grid.StageFileResponse.RequiredSize","5678"),
     // G2 additions
-    META_FILE_FORMAT("c3grid.StageFileRequest.TargetMetaFileFormat");
+    META_FILE_FORMAT("c3grid.StageFileRequest.TargetMetaFileFormat"),
+    // file transfer orq
+    FILE_TRANSFER_SOURCE_URI("c3grid.FileTransferRequest.SourceURI"),
+    FILE_TRANSFER_DESTINATION_URI("c3grid.FileTransferRequest.DestinationURI"),
+    FILE_TRANSFER_FILE_MAPPING("c3grid.FileTransferRequest.FileMapping");
 
     public final String key;
 	public final String doc;

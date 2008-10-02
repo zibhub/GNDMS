@@ -23,4 +23,9 @@ public abstract class ORQPropertyWriter extends AbstractPropertyIO implements OR
 
         getProperties( ).setProperty( SfrProperty.JUST_ASK.key, Boolean.toString( je ) );
     }
+
+
+    public void read() {
+        
+    }
 }

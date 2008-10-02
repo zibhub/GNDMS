@@ -27,7 +27,7 @@ public class ORQResource extends ORQResourceBase {
         try {
             ORQCalculator = sys.getInstanceDir().getORQCalculator( sys.getEntityManagerFactory(), offerRequestArguments.getOfferType( ).toString());
             ORQCalculator.setORQArguments( GORFXTools.convertFromORQT( offerRequestArguments ) );
-            ORQCalculator.setGridFTPClientFactory( home.getSystem().getGridFTPClientFactory() );
+            ORQCalculator.setNetworkAuxiliariesProvider( home.getSystem().getNetworkAuxiliariesProvider() );
         }
         catch (ClassNotFoundException e) {
             throw new ResourceException(e);
@@ -45,7 +45,7 @@ public class ORQResource extends ORQResourceBase {
     }
 
 
-    public Contract estimatedExecutionContract( OfferExecutionContractT pref ) {
+    public Contract estimatedExecutionContract( OfferExecutionContractT pref ) throws Exception {
 
         ORQCalculator.setJustEstimate( true );
         ORQCalculator.setPerferredOfferExecution( ContractXSDReader.readContract( pref ) );
@@ -69,7 +69,7 @@ public class ORQResource extends ORQResourceBase {
     }
 
 
-   public Contract getOfferEcecutionContract( OfferExecutionContractT pref ) {
+   public Contract getOfferEcecutionContract( OfferExecutionContractT pref ) throws Exception {
 
        ORQCalculator.setJustEstimate( false );
        ORQCalculator.setPerferredOfferExecution( ContractXSDReader.readContract( pref ) );

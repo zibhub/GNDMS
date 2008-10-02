@@ -88,15 +88,23 @@ class Task extends TimedGridResource {
 
 @Embeddable
 class Contract {
+
+    // the comments denote the mapping to the
+    // XSD OfferExecutionContract type
+
+    // can be mapped to IfDesisionBefore
     @Temporal(value = TemporalType.TIMESTAMP)
     Calendar accepted
 
+    // can be mapped to ExecutionLiklyUntil
     @Temporal(value = TemporalType.TIMESTAMP)
     Calendar deadline
 
+    // can be mapped to ResultValidUntil
     @Temporal(value = TemporalType.TIMESTAMP)
     Calendar resultValidity
-    
+
+    // can be mapped to constantExecutionTime
     transient boolean deadlineIsOffset = false
 }
 
