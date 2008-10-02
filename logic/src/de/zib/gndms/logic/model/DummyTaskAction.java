@@ -21,7 +21,7 @@ public class DummyTaskAction extends TaskAction<Task> {
     private double successRate = 1.0d;
     private long sleepInProgress;
 
-    public DummyTaskAction(final @NotNull EntityManager em, final @NotNull Object pk) {
+    public DummyTaskAction(final @NotNull EntityManager em, final @NotNull String pk) {
         super(em, pk);
     }
 

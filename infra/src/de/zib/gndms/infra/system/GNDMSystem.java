@@ -572,8 +572,10 @@ public final class GNDMSystem
                 action.getPostponedActions().setListener(getEntityUpdateListener());
             if (action instanceof AbstractEntityAction)
                 ((AbstractEntityAction<?>)action).setUUIDGen(uuidGenDelegate);
-            if (action instanceof TaskAction)
-                ((TaskAction<?>) action).setService(this);
+            if (action instanceof TaskAction) {
+                final TaskAction<?> taskAction = (TaskAction<?>) action;
+                taskAction.setService(this);
+            }
             return getExecutorService().submit(action);
         }
 

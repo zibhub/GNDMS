@@ -62,7 +62,7 @@ class Task extends TimedGridResource {
      * Set to false by the TaskAction(em, pk) constructor after loading the task from the db.
      *
      * TaskActions may use this flag to differentiate between "normal" and "recovery" situations
-     * and may set it to false after succesful recovery.
+     * and automatically set it to true on every persisted state transition.
      * 
      **/
     transient boolean newTask = true
@@ -86,15 +86,24 @@ class Task extends TimedGridResource {
     @Basic Serializable data
 
 
+
+   def transit(final TaskState newState) {
+        final @NotNull TaskState goalState = newState == null ? getState() : newState;
+        setState(getState().transit(goalState))
+        setNewTask(true);
+    }
+
+
+
     def void fail(final @NotNull Exception e) {
-        state = TaskState.FAILED        
+        setState(getState().transit(TaskState.FAILED))
         setFaultString(e.getMessage())
         setData(e)
         setProgress(0)
     }
 
     def void finish(final Serializable result) {
-        state = TaskState.FINISHED
+        setState(getState().transit(TaskState.FINISHED))
         setFaultString("")
         setData(result)
         setProgress(max_progress)

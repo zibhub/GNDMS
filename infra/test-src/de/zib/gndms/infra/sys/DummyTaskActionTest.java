@@ -41,7 +41,7 @@ public class DummyTaskActionTest extends SysTestBase {
         shutdownDatabase();
     }
 
-    // @Test(groups = { "db", "sys", "action", "task"})
+    @Test(groups = { "db", "sys", "action", "task"})
     public void runFailedDummyAction()
             throws ExecutionException, InterruptedException, ResourceException {
         eraseDatabase();
@@ -54,8 +54,8 @@ public class DummyTaskActionTest extends SysTestBase {
     }
 
 
-    // @Test(groups = { "db", "sys", "action", "task"})
-    @SuppressWarnings({ "FeatureEnvy" })
+    @Test(groups = { "db", "sys", "action", "task"})
+    @SuppressWarnings({ "FeatureEnvy", "MagicNumber" })
     public void runTwoDummyActions()
             throws ExecutionException, InterruptedException, ResourceException {
         eraseDatabase();
@@ -73,7 +73,7 @@ public class DummyTaskActionTest extends SysTestBase {
         shutdownDatabase();
     }
 
-    // @Test(groups = { "db", "sys", "action", "task"})
+    @Test(groups = { "db", "sys", "action", "task"})
     public void runInterruptedDummyAction()
             throws ExecutionException, InterruptedException, ResourceException {
         eraseDatabase();
@@ -100,7 +100,7 @@ public class DummyTaskActionTest extends SysTestBase {
         return action;
     }
 
-    private void postInterruption(final @NotNull Object pk)
+    private void postInterruption(final @NotNull String pk)
             throws ResourceException, InterruptedException, ExecutionException {
         runDatabase();
         final EntityManager newEM = getSys().getEntityManagerFactory().createEntityManager();

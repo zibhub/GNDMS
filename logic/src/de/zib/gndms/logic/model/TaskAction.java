@@ -79,7 +79,19 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
     }
 
 
-    public TaskAction(final @NotNull EntityManager em, final @NotNull Object pk) {
+    public TaskAction(final @NotNull EntityManager em, final @NotNull M model) {
+        super();
+        if (em.contains(model)) {
+            setOwnEntityManager(em);
+            setModel(model);
+            model.setNewTask(false);
+        }
+        else
+            throw new IllegalArgumentException("EntityManager does not contain provided model");
+    }
+
+    
+    public TaskAction(final @NotNull EntityManager em, final @NotNull String pk) {
         super();
         setOwnEntityManager(em);
         try {
@@ -220,17 +232,16 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
         final EntityManager em = getEntityManager();
         try {
             final @NotNull M model = getModel();
-            final @NotNull TaskState goalState = newState == null ? model.getState() : newState;
             em.getTransaction().begin();
-            model.setState(goalState);
+            model.transit(newState);
             if (! em.contains(model))
                 em.persist(model);
             em.getTransaction().commit();
-            transit(goalState, model);
+            transit(model.getState(), model);
         }
-        catch (RuntimeException e) {
-            throw e;
-        }
+        // catch (RuntimeException e) {
+        //    throw e;
+        // }
         finally {
             if (em.getTransaction().isActive())
                 em.getTransaction().rollback();
