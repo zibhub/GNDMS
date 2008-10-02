@@ -29,7 +29,7 @@ import javax.xml.namespace.QName;
  * Toolkit. In GNDMS this is mainly necessary to provide RDBMS/JPA-based resource persistence.
  * In order to use the extended resource home they have to be configured in jndi-config.xml.
  * If this has been done properly, you should see an info-level log message during the start up
- * of the web service container that notifies succesfull initialization of the extended resource
+ * of the web service container that notifies successful initialization of the extended resource
  * home.
  *
  * @author Stefan Plantikow <plantikow@zib.de>
@@ -74,7 +74,7 @@ public final class ExtDSpaceResourceHome  extends DSpaceResourceHome
 	@NotNull
 	private GNDMSystem system;
 
-	// Serbice Address: set during initialization
+	// Service Address: set during initialization
 	@SuppressWarnings({"FieldAccessedSynchronizedAndUnsynchronized"})
 	private AttributedURI serviceAddress;
 

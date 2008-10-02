@@ -1,7 +1,7 @@
 package de.zib.gndms.GORFX.ORQ.service.globus.resource;
 
 import org.globus.wsrf.ResourceException;
-import de.zib.gndms.model.gorfx.types.AbstractORQCalculator;
+import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
 import de.zib.gndms.model.gorfx.Contract;
 import de.zib.gndms.GORFX.common.GORFXTools;
 import de.zib.gndms.GORFX.common.type.io.ContractXSDReader;
@@ -27,6 +27,7 @@ public class ORQResource extends ORQResourceBase {
         try {
             ORQCalculator = sys.getInstanceDir().getORQCalculator( sys.getEntityManagerFactory(), offerRequestArguments.getOfferType( ).toString());
             ORQCalculator.setORQArguments( GORFXTools.convertFromORQT( offerRequestArguments ) );
+            ORQCalculator.setNetworkAuxiliariesProvider( home.getSystem().getNetworkAuxiliariesProvider() );
         }
         catch (ClassNotFoundException e) {
             throw new ResourceException(e);
@@ -44,11 +45,11 @@ public class ORQResource extends ORQResourceBase {
     }
 
 
-    public Contract estimatedExecutionContract( OfferExecutionContractT pref ) {
+    public Contract estimatedExecutionContract( OfferExecutionContractT pref ) throws Exception {
 
         ORQCalculator.setJustEstimate( true );
         ORQCalculator.setPerferredOfferExecution( ContractXSDReader.readContract( pref ) );
-        
+
         return ORQCalculator.createOffer();
     }
 
@@ -68,7 +69,7 @@ public class ORQResource extends ORQResourceBase {
     }
 
 
-   public Contract getOfferEcecutionContract( OfferExecutionContractT pref ) {
+   public Contract getOfferEcecutionContract( OfferExecutionContractT pref ) throws Exception {
 
        ORQCalculator.setJustEstimate( false );
        ORQCalculator.setPerferredOfferExecution( ContractXSDReader.readContract( pref ) );

@@ -1,6 +1,9 @@
-package de.zib.gndms.model.gorfx.types;
+package de.zib.gndms.logic.model.gorfx;
 
 import de.zib.gndms.model.gorfx.Contract;
+import de.zib.gndms.model.gorfx.types.AbstractORQ;
+import de.zib.gndms.infra.network.GridFTPClientFactory;
+import de.zib.gndms.infra.network.NetworkAuxiliariesProvider;
 
 
 /**
@@ -14,9 +17,11 @@ abstract public class AbstractORQCalculator<M extends AbstractORQ> {
     private Contract perferredOfferExecution;
     private Class<M> orqModelClass;
     private M orqArguments;
+    private NetworkAuxiliariesProvider networkAuxiliariesProvider;
+    
 
     // here the computation of the required offer should be performed
-    public abstract Contract createOffer( );
+    public abstract Contract createOffer( ) throws Exception;
 
 
     public Contract getPerferredOfferExecution() {
@@ -60,5 +65,15 @@ abstract public class AbstractORQCalculator<M extends AbstractORQ> {
     public boolean getJustEstimate( ) {
 
         return orqArguments.isJustEstimate( );
+    }
+
+
+    public NetworkAuxiliariesProvider getNetworkAuxiliariesProvider() {
+        return networkAuxiliariesProvider;
+    }
+
+
+    public void setNetworkAuxiliariesProvider( NetworkAuxiliariesProvider networkAuxiliariesProvider ) {
+        this.networkAuxiliariesProvider = networkAuxiliariesProvider;
     }
 }

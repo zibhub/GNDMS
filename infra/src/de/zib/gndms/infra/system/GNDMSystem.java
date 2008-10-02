@@ -1,6 +1,9 @@
 package de.zib.gndms.infra.system;
 
 import de.zib.gndms.infra.GridConfig;
+import de.zib.gndms.infra.network.GridFTPClientFactory;
+import de.zib.gndms.infra.network.SimpleGridFTPClientFactory;
+import de.zib.gndms.infra.network.NetworkAuxiliariesProvider;
 import de.zib.gndms.infra.monitor.ActionCaller;
 import de.zib.gndms.infra.monitor.GroovyMoniServer;
 import de.zib.gndms.infra.service.GNDMServiceHome;
@@ -81,7 +84,9 @@ public final class GNDMSystem
 
     private TaskExecutionService executionService;
 
-	/**
+    private NetworkAuxiliariesProvider networkAuxiliariesProvider;
+
+    /**
 	 * Retrieves a GNDMSSystem using context.lookup(name).
 	 *
 	 * A lightweight factory facade is either atomically retrieved from context or bound under name
@@ -657,4 +662,13 @@ public final class GNDMSystem
 		}
 
 	}
+
+
+    public NetworkAuxiliariesProvider getNetworkAuxiliariesProvider( ) {
+
+        if( networkAuxiliariesProvider == null )
+            networkAuxiliariesProvider = new NetworkAuxiliariesProvider( );
+
+        return networkAuxiliariesProvider;
+    }
 }

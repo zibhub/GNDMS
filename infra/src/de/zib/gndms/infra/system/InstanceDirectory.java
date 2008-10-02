@@ -9,7 +9,7 @@ import de.zib.gndms.infra.util.InstanceFactory;
 import de.zib.gndms.infra.util.SingletonFactory;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
-import de.zib.gndms.model.gorfx.types.AbstractORQCalculator;
+import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
 import de.zib.gndms.model.gorfx.OfferType;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
