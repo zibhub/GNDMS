@@ -1,6 +1,5 @@
 package de.zib.gndms.model.gorfx.types.io;
 
-import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
 
 /**
@@ -25,6 +24,6 @@ public abstract class ORQConverter<W extends ORQWriter, M extends AbstractORQ> e
             throw new IllegalStateException( );
 
         getWriter().begin();
-        getWriter().writeJustEstimate( getModel().getJustEstimate() );
+        getWriter().writeJustEstimate( getModel().isJustEstimate() );
     }
 }

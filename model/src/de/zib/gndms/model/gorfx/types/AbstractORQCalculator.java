@@ -59,6 +59,6 @@ abstract public class AbstractORQCalculator<M extends AbstractORQ> {
     
     public boolean getJustEstimate( ) {
 
-        return orqArguments.getJustEstimate( );
+        return orqArguments.isJustEstimate( );
     }
 }

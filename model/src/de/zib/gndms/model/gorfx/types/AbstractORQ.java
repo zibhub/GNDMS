@@ -1,5 +1,8 @@
 package de.zib.gndms.model.gorfx.types;
 
+import java.io.Serializable;
+
+
 /**
  * An base class for model classes representing ORQ's.
  *
@@ -8,10 +11,10 @@ package de.zib.gndms.model.gorfx.types;
  * <p/>
  * User: bzcjorra Date: Sep 5, 2008 3:38:17 PM
  */
-public abstract class AbstractORQ {
+public abstract class AbstractORQ implements Serializable {
 
     private String offerType;
-    private boolean justEstimate = false;
+    private transient boolean justEstimate = false;
 
 
     protected AbstractORQ() {
@@ -38,7 +41,7 @@ public abstract class AbstractORQ {
     }
 
 
-    public boolean getJustEstimate() {
+    public boolean isJustEstimate() {
         return justEstimate;
     }
 }

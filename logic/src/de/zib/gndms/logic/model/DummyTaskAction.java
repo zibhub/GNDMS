@@ -16,9 +16,10 @@ import javax.persistence.EntityManager;
  *
  *          User: stepn Date: 29.09.2008 Time: 17:06:35
  */
+@SuppressWarnings({ "FeatureEnvy" })
 public class DummyTaskAction extends TaskAction<Task> {
     private double successRate = 1.0d;
-    private long sleepInProgress = 0;
+    private long sleepInProgress;
 
     public DummyTaskAction(final @NotNull EntityManager em, final @NotNull Object pk) {
         super(em, pk);
@@ -33,7 +34,7 @@ public class DummyTaskAction extends TaskAction<Task> {
     @Override
     protected @NotNull Task createInitialTask() {
         final Task task = new Task();
-        task.setId(nextUUID());
+        task.setId(getCreationKey());
         Contract contract = new Contract();
         DateTime dt = new DateTime().toDateTimeISO();
         contract.setAccepted(dt.toGregorianCalendar());
@@ -42,6 +43,7 @@ public class DummyTaskAction extends TaskAction<Task> {
         task.setDescription("Dummy");
         task.setTerminationTime(contract.getResultValidity());
         task.setOfferType(null);
+        task.setOrq("null");
         task.setContract(contract);
         return task;
     }
@@ -56,11 +58,8 @@ public class DummyTaskAction extends TaskAction<Task> {
     @SuppressWarnings({ "ThrowableInstanceNeverThrown" })
     @Override
     protected void onInProgress(final @NotNull Task model) {
-        long helper = 0;
         try {
-            /* to get a clean breakpoint */
-            helper++;
-            Thread.sleep(sleepInProgress + (helper - 1L));
+            Thread.sleep(sleepInProgress);
         }
         catch (InterruptedException e) {
             // onward!
@@ -93,8 +92,8 @@ public class DummyTaskAction extends TaskAction<Task> {
 
 
     public void setSleepInProgress(final long sleepInProgressParam) {
-        if (sleepInProgressParam < 0)
-            throw new IllegalArgumentException("sleepInProgress must be >= 0");
+        if (sleepInProgressParam < 0L)
+            throw new IllegalArgumentException("sleepInProgress must be >= 0L");
         sleepInProgress = sleepInProgressParam;
     }
 }

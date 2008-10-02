@@ -41,7 +41,7 @@ public class DummyTaskActionTest extends SysTestBase {
         shutdownDatabase();
     }
 
-    @Test(groups = { "db", "sys", "action", "task"})
+    // @Test(groups = { "db", "sys", "action", "task"})
     public void runFailedDummyAction()
             throws ExecutionException, InterruptedException, ResourceException {
         eraseDatabase();
@@ -54,7 +54,7 @@ public class DummyTaskActionTest extends SysTestBase {
     }
 
 
-    @Test(groups = { "db", "sys", "action", "task"})
+    // @Test(groups = { "db", "sys", "action", "task"})
     @SuppressWarnings({ "FeatureEnvy" })
     public void runTwoDummyActions()
             throws ExecutionException, InterruptedException, ResourceException {
@@ -73,7 +73,7 @@ public class DummyTaskActionTest extends SysTestBase {
         shutdownDatabase();
     }
 
-    @Test(groups = { "db", "sys", "action", "task"})
+    // @Test(groups = { "db", "sys", "action", "task"})
     public void runInterruptedDummyAction()
             throws ExecutionException, InterruptedException, ResourceException {
         eraseDatabase();

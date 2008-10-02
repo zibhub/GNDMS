@@ -19,6 +19,7 @@ import java.io.Serializable;
 @SuppressWarnings({ "AbstractMethodCallInConstructor" })
 public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, M> {
     private TaskExecutionService service;
+    private String creationKey;
 
     protected static final class ShutdownTaskActionException extends RuntimeException {
         private static final long serialVersionUID = 2772466358157719820L;
@@ -73,12 +74,18 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
         }
     }
 
+    public TaskAction() {
+        super();
+    }
+
+
     public TaskAction(final @NotNull EntityManager em, final @NotNull Object pk) {
         super();
         setOwnEntityManager(em);
         try {
             em.getTransaction().begin();
             final M model = em.find(getTaskClass(), pk);
+            model.setNewTask(false);
             em.getTransaction().commit();
             setModel(model);
         }
@@ -88,9 +95,14 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
             }
         }
     }
-    
-    public TaskAction() {
-        super();
+
+
+    @Override
+    public void setModel(final @NotNull M mdl) {
+        if (getModel() == null)
+            super.setModel(mdl);    // Overridden method
+        else
+            throw new IllegalStateException("Illegal attempt to overwrite TaskAction model");
     }
 
 
@@ -135,7 +147,8 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
     @Override
     public M execute(final @NotNull EntityManager em) {
         boolean first = true;
-        for (TransitException curEx = null; curEx != null || first;) {
+        TransitException curEx = null;
+        do {
             try {
                 try {
                     if (first) {
@@ -153,6 +166,7 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
                 }
                 /* On stop: finish loop and return model to caller */
                 catch (final StopException newEx) {
+                    markAsDone();
                     curEx = null;
                 }
                 /* On transit: switch to next state according to newEx */
@@ -179,10 +193,28 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
             catch (TransitException newEx) {
                 curEx = newEx;
             }
-        }
+        } while (curEx != null);
         return getModel();
     }
 
+
+    private void markAsDone() {
+        final @NotNull M model = getModel();
+        if (! model.isDone()) {
+            final EntityManager em = getEntityManager();
+            try {
+                em.getTransaction().begin();
+                model.setDone(true);
+                if (! em.contains(model))
+                    em.persist(model);
+                em.getTransaction().commit();
+            }
+            finally {
+                if (em.getTransaction().isActive())
+                    em.getTransaction().rollback();
+            }
+        }
+    }
 
     private void transit(final TaskState newState) {
         final EntityManager em = getEntityManager();
@@ -195,6 +227,9 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
                 em.persist(model);
             em.getTransaction().commit();
             transit(goalState, model);
+        }
+        catch (RuntimeException e) {
+            throw e;
         }
         finally {
             if (em.getTransaction().isActive())
@@ -213,10 +248,13 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
             case IN_PROGRESS: onInProgress(model); break;
             case IN_PROGRESS_UNKNOWN: onUnknown(model); break;
             case FAILED:
-                    onFailed(model);
+                    if (! model.isDone())
+                        onFailed(model);
                     /* safety catch-all */
                     throw new StopException(TaskState.FAILED);
             case FINISHED:
+                    if (! model.isDone())
+                        onFailed(model);
                     onFinished(model);
                     /* safety catch-all */
                     throw new StopException(TaskState.FINISHED);
@@ -283,5 +321,16 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
     @SuppressWarnings({ "ThrowableResultOfMethodCallIgnored" })
     protected final void wrapInterrupt_(InterruptedException e) {
         wrapInterrupt(e);
+    }
+
+    public String getCreationKey() {
+        if (creationKey == null)
+            creationKey = nextUUID();
+        return creationKey;
+    }
+
+
+    public void setCreationKey(final @NotNull String creationKeyParam) {
+        creationKey = creationKeyParam;
     }
 }

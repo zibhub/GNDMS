@@ -53,23 +53,41 @@ class Task extends TimedGridResource {
     @Column(name="state", nullable=false, updatable=true)
     TaskState state = TaskState.CREATED
 
+    @Column(name = "done", nullable=false, updatable=true)
+    boolean done = false
+
+    /**
+     * If true, this task has been reloaded from the db, e.g. after a system crash and recovery.
+     *
+     * Set to false by the TaskAction(em, pk) constructor after loading the task from the db.
+     *
+     * TaskActions may use this flag to differentiate between "normal" and "recovery" situations
+     * and may set it to false after succesful recovery.
+     * 
+     **/
+    transient boolean newTask = true
+    
     @Column(name="progress", nullable=false, updatable=true)
     int progress = 0
 
     @Column(name="max_progress", nullable=false, updatable=false)
     int max_progress = 100
 
+    @Column(name="orq", nullable=false, updatable=false)
+    @Basic Serializable orq
+
+
     @Column(name="fault", nullable=true, updatable=true, columnDefinition="VARCHAR")
     @Basic String faultString
-
     /**
      * Payload depending on state, either task results or a detailed task failure or task arguments 
      **/
     @Column(name="data", nullable=true, updatable=true)
     @Basic Serializable data
 
+
     def void fail(final @NotNull Exception e) {
-        state = TaskState.FAILED
+        state = TaskState.FAILED        
         setFaultString(e.getMessage())
         setData(e)
         setProgress(0)
