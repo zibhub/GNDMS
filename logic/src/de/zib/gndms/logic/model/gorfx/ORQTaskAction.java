@@ -1,7 +1,6 @@
 package de.zib.gndms.logic.model.gorfx;
 
 import de.zib.gndms.logic.model.TaskAction;
-import de.zib.gndms.model.gorfx.Contract;
 import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
@@ -19,11 +18,6 @@ import javax.persistence.EntityManager;
  *          User: stepn Date: 02.10.2008 Time: 13:00:56
  */
 public abstract class ORQTaskAction<K extends AbstractORQ> extends TaskAction<Task> {
-
-    public ORQTaskAction() {
-        super();
-    }
-
 
     public ORQTaskAction(final @NotNull EntityManager em, final @NotNull Task model) {
         super(em, model);
@@ -60,22 +54,6 @@ public abstract class ORQTaskAction<K extends AbstractORQ> extends TaskAction<Ta
             throw e; // accept state transition decision from super
         }
     }
-
-
-    @Override
-    protected @NotNull Task createInitialTask() {
-        Task task = new Task();
-        task.setId(getCreationKey());
-        final K orq = getOrq();
-        Contract contract = createInitialContract(orq);
-        task.setDescription(orq.getDescription());
-        task.setOfferType(null);
-        task.setTerminationTime(contract.getResultValidity());
-        return task;
-    }
-
-
-    protected abstract @NotNull Contract createInitialContract(final @NotNull K orq);
 
 
     protected abstract @NotNull Class<K> getOrqClass();

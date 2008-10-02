@@ -1,9 +1,7 @@
 package de.zib.gndms.logic.model;
 
-import de.zib.gndms.model.gorfx.Contract;
 import de.zib.gndms.model.gorfx.Task;
 import org.jetbrains.annotations.NotNull;
-import org.joda.time.DateTime;
 
 import javax.persistence.EntityManager;
 
@@ -21,32 +19,16 @@ public class DummyTaskAction extends TaskAction<Task> {
     private double successRate = 1.0d;
     private long sleepInProgress;
 
+
+    public DummyTaskAction(final @NotNull EntityManager em, final @NotNull Task model) {
+        super(em, model);
+    }
+
+
     public DummyTaskAction(final @NotNull EntityManager em, final @NotNull String pk) {
         super(em, pk);
     }
 
-
-    public DummyTaskAction() {
-        super();
-    }
-
-
-    @Override
-    protected @NotNull Task createInitialTask() {
-        final Task task = new Task();
-        task.setId(getCreationKey());
-        Contract contract = new Contract();
-        DateTime dt = new DateTime().toDateTimeISO();
-        contract.setAccepted(dt.toGregorianCalendar());
-        contract.setDeadline(dt.plusYears(2).toGregorianCalendar());
-        contract.setResultValidity(dt.plusYears(2).toGregorianCalendar());
-        task.setDescription("Dummy");
-        task.setTerminationTime(contract.getResultValidity());
-        task.setOfferType(null);
-        task.setOrq("null");
-        task.setContract(contract);
-        return task;
-    }
 
 
     @Override
