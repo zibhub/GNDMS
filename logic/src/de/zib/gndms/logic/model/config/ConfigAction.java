@@ -2,17 +2,16 @@ package de.zib.gndms.logic.model.config;
 
 import de.zib.gndms.logic.action.CommandAction;
 import de.zib.gndms.logic.action.MandatoryOptionMissingException;
-import de.zib.gndms.logic.model.AbstractEntityAction;
 import de.zib.gndms.logic.action.SkipActionInitializationException;
-import de.zib.gndms.logic.util.ISO8601;
+import de.zib.gndms.logic.model.AbstractEntityAction;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
-import java.text.ParseException;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.text.ParseException;
 
 
 /**
@@ -26,7 +25,8 @@ import java.util.regex.Pattern;
  *          User: stepn Date: 14.08.2008 Time: 14:53:21
  */
 @SuppressWarnings({ "StaticMethodOnlyUsedInOneClass" })
-public abstract class ConfigAction<R> extends AbstractEntityAction<R> implements CommandAction<R> {
+public abstract class ConfigAction<R> extends AbstractEntityAction<R>
+        implements CommandAction<R> {
 
     public static final Pattern OPTION_NAME_PATTERN = Pattern.compile("[a-z][a-zA-Z0-9-_]*");
 
@@ -34,6 +34,9 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R> implements
     private PrintWriter printWriter;
     private boolean writeResult;
     private boolean closingWriterOnCleanUp;
+
+    @SuppressWarnings({ "ThisEscapedInObjectConstruction" })
+    private final ConfigProvider config = new DelegatingConfig(this);
 
 
     @Override
@@ -61,7 +64,7 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R> implements
     public final R execute(final @NotNull EntityManager em) {
         final R retVal = execute(em, getPrintWriter());
         if (isWriteResult() && hasPrintWriter())
-            printWriter.write(retVal == null ? "(null)" : retVal.toString());
+            getPrintWriter().write(retVal == null ? "(null)" : retVal.toString());
         return retVal;
     }
 
@@ -132,6 +135,7 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R> implements
     }
 
 
+    @SuppressWarnings({ "ReturnOfCollectionOrArrayField" })
     public final Map<String, String> getLocalOptions() {
         return cmdParams;
     }
@@ -280,65 +284,74 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R> implements
     }
 
 
-    // A few helpers...
 
-    public int getIntOption(String name, int def) {
-        final String option = getNonMandatoryOption(name);
-        return option == null ? def : Integer.parseInt(option);
+    
+    public int getIntOption(final String name) throws MandatoryOptionMissingException {
+        return config.getIntOption(name);
     }
 
-    public int getIntOption(String name) throws MandatoryOptionMissingException {
-        final String option = getOption(name);
-        return Integer.parseInt(option);
+
+    public int getIntOption(final String name, final int def) {
+        return config.getIntOption(name, def);
     }
 
-    public long getLongOption(String name, long def) {
-        final String option = getNonMandatoryOption(name);
-        return option == null ? def : Integer.parseInt(option);
+
+
+
+    public long getLongOption(final String name) throws MandatoryOptionMissingException {
+        return config.getLongOption(name);
     }
 
-    public long getLongOption(String name) throws MandatoryOptionMissingException  {
-        final String option = getOption(name);
-        return Integer.parseInt(option);
+
+    public long getLongOption(final String name, final long def) {
+        return config.getLongOption(name, def);
     }
 
-    public boolean isBooleanOptionSet(String name, boolean def) {
-        final String option = getNonMandatoryOption(name);
-        return option == null ? def : "true".equals(option.trim().toLowerCase());
+
+
+
+    public boolean isBooleanOptionSet(final String name) throws MandatoryOptionMissingException {
+        return config.isBooleanOptionSet(name);
     }
 
-    public boolean isBooleanOptionSet(String name) throws MandatoryOptionMissingException  {
-        final String option = getOption(name);
-        return "true".equals(option.trim().toLowerCase());
+
+    public boolean isBooleanOptionSet(final String name, final boolean def) {
+        return config.isBooleanOptionSet(name, def);
     }
 
-    public <E extends Enum<E>> E getEnumOption(final @NotNull Class<E> clazz,
-                                               final @NotNull String name, boolean toUpper,
-                                               final @NotNull E def) {
-        final String option = getNonMandatoryOption(name);
-        return option == null ? def : Enum.valueOf(clazz, toUpper ? option.toUpperCase() : option);
+
+
+
+    public @NotNull <E extends Enum<E>> E getEnumOption(@NotNull final Class<E> clazz,
+                                                        @NotNull final String name,
+                                                        final boolean toUpper)
+            throws MandatoryOptionMissingException {
+        return config.getEnumOption(clazz, name, toUpper);
     }
 
-    public <E extends Enum<E>> E getEnumOption(final @NotNull Class<E> clazz,
-                                               final @NotNull String name, boolean toUpper)
-     throws MandatoryOptionMissingException 
-    {
-        final String option = getOption(name);
-        return Enum.valueOf(clazz, toUpper ? option.toUpperCase() : option);
-    }
+
+    @NotNull
+    public <E extends Enum<E>> E getEnumOption(
+            @NotNull final Class<E> clazz, @NotNull final String name, final boolean toUpper,
+            @NotNull final E def) {return config.getEnumOption(clazz, name, toUpper, def);}
+
+
+
 
     @SuppressWarnings({ "InstanceMethodNamingConvention" })
-    public Calendar getISO8601Option(String name, @NotNull Calendar def) throws ParseException {
-        final String option = getNonMandatoryOption(name);
-        return option == null ? def : ISO8601.parseISO8601DateStr(option);
-    }
-
-    @SuppressWarnings({ "InstanceMethodNamingConvention" })
-    public @NotNull Calendar getISO8601Option(String name)
+    public @NotNull Calendar getISO8601Option(final String name)
             throws MandatoryOptionMissingException, ParseException {
-        final String option = getOption(name);
-        return ISO8601.parseISO8601DateStr(option);
+        return config.getISO8601Option(name);
     }
+
+
+    @SuppressWarnings({ "InstanceMethodNamingConvention" })
+    public @NotNull Calendar getISO8601Option(final String name, @NotNull final Calendar def)
+            throws ParseException {
+        return config.getISO8601Option(name, def);
+    }
+
+
 
 
     public static class ConfigTools {

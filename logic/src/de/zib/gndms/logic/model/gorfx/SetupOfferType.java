@@ -10,7 +10,15 @@ import de.zib.gndms.model.gorfx.types.AbstractORQCalculator;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
+
 /**
  * ThingAMagic.
  *
@@ -42,6 +50,11 @@ public class SetupOfferType extends SetupAction<Void> {
     @ConfigOption(descr="Determines wether the calculator instance is shared between difffernet ORQs")
     private Boolean singleton;
 
+    @ConfigOption(descr = "File from which the initial config should be read")
+    private String configFile;
+
+    private Properties configProps;
+
 
     @SuppressWarnings({ "unchecked" })
     @Override
@@ -66,8 +79,19 @@ public class SetupOfferType extends SetupAction<Void> {
             if (singleton == null && hasOption("singleton"))
                 setSingleton(isBooleanOptionSet("singleton"));
 
+            if (configProps == null & hasOption("configFile"))
+                try {
+                    loadConfigFromFile();
+                }
+                catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
             switch (getMode()) {
                 case CREATE:
+                    if (configProps == null)
+                        configProps = new Properties();
+
                     requireParameter("argScope", argScope);
                     requireParameter("argName", argName);
                     requireParameter("resScope", resScope);
@@ -132,6 +156,7 @@ public class SetupOfferType extends SetupAction<Void> {
             type.setOfferResultType(new ImmutableScopedName(resScope, type.getOfferResultType().getLocalName()));
         if (resName != null)
             type.setOfferResultType(new ImmutableScopedName(type.getOfferResultType().getNameScope(), resName));
+        pushConfigProps(type);        
     }
 
 
@@ -142,7 +167,33 @@ public class SetupOfferType extends SetupAction<Void> {
         type.setCalculatorClass(clazz.getName());
         type.setOfferArgumentType(new ImmutableScopedName(argScope, argName));
         type.setOfferResultType(new ImmutableScopedName(resScope, resName));
+        pushConfigProps(type);
         em.persist(type);
+    }
+
+
+    private void loadConfigFromFile() throws IOException {
+        FileInputStream in = new FileInputStream(new File(configFile));
+        try {
+            configProps = new Properties();
+            configProps.load(in);
+        }
+        catch (IOException e) {
+            configProps = null;
+            throw new RuntimeException(e);
+        }
+        finally {
+            in.close();
+        }
+    }
+
+
+    private void pushConfigProps(final OfferType typeParam) {
+        if (configProps != null) {
+            Map<String, String> map = new HashMap<String, String>(configProps.size());
+            configProps.putAll(map);
+            typeParam.setConfigMap(map);
+        }
     }
 
 

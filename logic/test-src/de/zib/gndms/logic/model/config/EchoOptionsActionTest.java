@@ -38,34 +38,24 @@ public class EchoOptionsActionTest extends ConfigActionTestBase {
     @Test(groups = {"util", "action", "config"})
     public void runPlainAction() throws CommandAction.ParameterTools.ParameterParseException {
         EchoOptionsAction action = new EchoOptionsAction();
-        try {
-            final StringWriter strWriter = new StringWriter();
-            prepareConfigAction(action, new PrintWriter(strWriter), "foo:bar; florp:flurp");
-            action.call();
-
-            assertEquals(strWriter.toString(), "foo: 'bar';\nflorp: 'flurp'");
-        }
-        catch (RuntimeException e) {
-            throw e;
-        }
-        finally { action.getEntityManager().close(); }
+        final StringWriter strWriter = new StringWriter();
+        prepareConfigAction(action, new PrintWriter(strWriter), "foo:bar; florp:flurp");
+        action.call();
+        assertEquals(strWriter.toString(), "foo: 'bar';\nflorp: 'flurp'");
     }
 
 
     @Test(groups = {"util", "action"})
     public void runInheritanceAction() throws CommandAction.ParameterTools.ParameterParseException {
         EchoOptionsAction parentAction = new EchoOptionsAction();
-        try {
-            final StringWriter strWriter = new StringWriter();
-            prepareConfigAction(parentAction, new PrintWriter(strWriter), "foo:bar");
+        final StringWriter strWriter = new StringWriter();
+        prepareConfigAction(parentAction, new PrintWriter(strWriter), "foo:bar");
 
-            EchoOptionsAction childAction = new EchoOptionsAction();
-            childAction.setParent(parentAction);
-            childAction.parseLocalOptions("florp:flurp");
-            childAction.call();
+        EchoOptionsAction childAction = new EchoOptionsAction();
+        childAction.setParent(parentAction);
+        childAction.parseLocalOptions("florp:flurp");
+        childAction.call();
 
-            assertEquals(strWriter.toString(), "foo: 'bar';\nflorp: 'flurp'");
-        }
-        finally { parentAction.getEntityManager().close(); }
+        assertEquals(strWriter.toString(), "foo: 'bar';\nflorp: 'flurp'");
     }
 }

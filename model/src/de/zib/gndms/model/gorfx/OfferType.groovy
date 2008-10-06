@@ -49,4 +49,7 @@ class OfferType {
 
     @OneToMany(cascade=ALL, mappedBy="offerType", fetch=FetchType.LAZY)
     Set<Task> tasks
+
+    @Column(name="config", nullable=false, updatable=true)
+    Map<String, String> configMap
 }

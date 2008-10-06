@@ -9,7 +9,7 @@ import de.zib.gndms.model.gorfx.Contract;
  * <p/>
  * User: bzcjorra Date: Sep 5, 2008 1:43:46 PM
  */
-abstract public class AbstractORQCalculator<M extends AbstractORQ> {
+public abstract class AbstractORQCalculator<M extends AbstractORQ> {
 
     private Contract perferredOfferExecution;
     private Class<M> orqModelClass;
@@ -25,7 +25,7 @@ abstract public class AbstractORQCalculator<M extends AbstractORQ> {
 
 
     public void setPerferredOfferExecution( Contract preferredOfferContract ) {
-        this.perferredOfferExecution = preferredOfferContract;
+        perferredOfferExecution = preferredOfferContract;
     }
 
 
@@ -35,7 +35,7 @@ abstract public class AbstractORQCalculator<M extends AbstractORQ> {
 
 
     public void setORQArguments( M args ) {
-        this.orqArguments = args;
+        orqArguments = args;
     }
 
 
@@ -45,9 +45,9 @@ abstract public class AbstractORQCalculator<M extends AbstractORQ> {
     }
 
     
-    protected void setORQModelClass( Class<M> orqModelClass ) {
+    protected void setORQModelClass( Class<M> orqModelClassParam ) {
 
-        this.orqModelClass = orqModelClass;
+        orqModelClass = orqModelClassParam;
     }
 
 
@@ -57,7 +57,7 @@ abstract public class AbstractORQCalculator<M extends AbstractORQ> {
     }
 
     
-    public boolean getJustEstimate( ) {
+    public boolean isJustEstimate( ) {
 
         return orqArguments.isJustEstimate( );
     }
