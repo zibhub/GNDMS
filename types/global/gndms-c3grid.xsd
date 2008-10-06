@@ -65,63 +65,31 @@
     </sequence>
   </complexType>
 
-  <complexType name="SpaceConstraintT">
+<complexType name="SpaceConstraintT">
     <sequence>
-      <element name="Longitude" maxOccurs="1" minOccurs="0" type="impl:MinMaxT">
-      </element>
-      <element name="Latitude" maxOccurs="1" minOccurs="0" type="impl:MinMaxT">
-      </element>
-      <element name="Altitude" maxOccurs="1" minOccurs="0" type="impl:LevelRangeT">
-      </element>
-      <!-- Units, hier - oder als (AltUnit, hpa) constraint !? -->
+          <element name="Latitude" minOccurs="0" maxOccurs="1" type="impl:MinMaxT" />
+          <element name="Longitude" minOccurs="0" maxOccurs="1" type="impl:MinMaxT" />
+          <element name="AreaCRS" minOccurs="0" maxOccurs="1" type="xsd:string"/>
+          <element name="Altitude" minOccurs="0" maxOccurs="1" type="impl:MinMaxT" />
+          <element name="VerticalCRS" minOccurs="0" maxOccurs="1" type="xsd:string"/>
     </sequence>
-  </complexType>
+ </complexType>
 
-  <complexType name="MinMaxT">
+ <complexType name="MinMaxT">
     <sequence>
       <element name="Min" type="xsd:double" />
       <element name="Max" type="xsd:double" />
     </sequence>
   </complexType>
 
-  <simpleType name="AltitudeUnitT">
-    <restriction base="xsd:string">
-      <enumeration value="hPa" />
-      <enumeration value="m" />
-	  <enumeration value="level" />
-    </restriction>
-  </simpleType>
-
- <complexType name="AltitudeT">
-	<choice>
-		<element name="Numeric">
-			<complexType>
-				<sequence>
-					<element name="Value" type="double" />
-					<element name="Unit" type="impl:AltitudeUnitT" />
-				</sequence>
-			</complexType>
-		</element>
-		<element name="NamedLevel" type="string" />
-	</choice>
- </complexType>
-	
-  <complexType name="LevelRangeT">
+<complexType name="TimeConstraintT">
     <sequence>
-      <element name="Min" type="impl:AltitudeT" />
-      <element name="Max" type="impl:AltitudeT" />
-      <element name="VerticalCRS" type="string" minOccurs="0" maxOccurs="1" />
-    </sequence>
-  </complexType>
-
-  <complexType name="TimeConstraintT">
-    <sequence>
-	  <!-- actually an xsd:date but due to axis bugs with dates < 1900 AD we use string and
-	       specify it to be a proper ISO date string -->
+      <!-- actually an xsd:date but due to axis bugs with dates < 1900 AD we use string and
+           specify it to be a proper ISO date string -->
       <element maxOccurs="1" minOccurs="0" name="MinTime" type="string" />
       <element maxOccurs="1" minOccurs="0" name="MaxTime" type="string" />
     </sequence>
-  </complexType>
+</complexType>
 
 <complexType name="DataDescriptorT">
 	<sequence>
@@ -129,19 +97,28 @@
 		  i.A. vom Portal aus Metadaten des Infodienstes gefüllt  -->
 		<element name="ObjectList" type="impl:ObjectListT"/>
 
-		<element name="SpaceConstr" type="impl:SpaceConstraintT" minOccurs="1" maxOccurs="1"/>
+        <!-- JustDownload if missing -->
+        <element name="Constraints" minOccurs="0" maxOccurs="1">
+            <complexType>
+                <sequence>
+                    <element name="SpaceConstr" type="impl:SpaceConstraintT" minOccurs="1" maxOccurs="1"/>
 
-		<element name="TimeConstr" type="impl:TimeConstraintT" minOccurs="0" maxOccurs="1" />
+                    <element name="TimeConstr" type="impl:TimeConstraintT" minOccurs="0" maxOccurs="1" />
 
-		<!-- gewünschte cf variablen , von Portalnutzer ausgewählt  -->
-		<element name="CFList" type="impl:CFListT" />
+                    <!-- gewünschte cf variablen , von Portalnutzer ausgewählt  -->
+                    <element name="CFList" type="impl:CFListT" />
 
-		<!-- zusätzliche Restrictionen, Prozessing optionen etc. z.B. <...>  -->
-		<element name="ConstraintList" type="impl:ConstraintListT" />
+                    <!-- zusätzliche Restrictionen, Prozessing optionen etc. z.B. <...>  -->
+                    <element name="ConstraintList" type="impl:ConstraintListT" />
+                </sequence>
+            </complexType>
+        </element>
 
 		<element name="DataFormat" type="string" minOccurs="1" maxOccurs="1"/>
-        
+        <element name="DataArchiveFormat" type="string" minOccurs="0" maxOccurs="1" default="tar" />
+
 		<element name="MetaDataFormat" type="string" minOccurs="1" maxOccurs="1"/>
+        <element name="MetaDataArchiveFormat" type="string" minOccurs="0" maxOccurs="1" default="tar" />
 	</sequence>
 </complexType>
 

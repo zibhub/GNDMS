@@ -5,12 +5,10 @@ import de.zib.gndms.infra.monitor.GroovyMoniServer;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.service.GNDMSingletonServiceHome;
 import de.zib.gndms.infra.util.Factory;
-import de.zib.gndms.infra.util.InstanceFactory;
-import de.zib.gndms.infra.util.SingletonFactory;
 import de.zib.gndms.model.common.GridResource;
+import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.model.gorfx.types.AbstractORQCalculator;
-import de.zib.gndms.model.gorfx.OfferType;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.apache.commons.logging.Log;
@@ -20,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import java.lang.reflect.InvocationTargetException;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +35,7 @@ import java.util.Map;
 public class InstanceDirectory {
     private @NotNull final Log logger = LogFactory.getLog(InstanceDirectory.class);
     private static final int INITIAL_CAPACITY = 32;
-    private static final int INSTANCE_RETRIEVAL_INTERVAL = 250;
+    private static final long INSTANCE_RETRIEVAL_INTERVAL = 250L;
 
     private final @NotNull String systemName;
 
@@ -60,12 +59,13 @@ public class InstanceDirectory {
     }
 
 
-    @SuppressWarnings({ "RawUseOfParameterizedType", "unchecked" })
+    @SuppressWarnings(
+            { "RawUseOfParameterizedType", "unchecked", "MethodWithTooExceptionsDeclared" })
     public <O extends AbstractORQCalculator<? extends AbstractORQ>> O getORQCalculator(
             final @NotNull EntityManagerFactory emf,
             final @NotNull String offerTypeKey)
-            throws ClassNotFoundException, IllegalAccessException, InstantiationException
-    {
+            throws ClassNotFoundException, IllegalAccessException, InstantiationException,
+            NoSuchMethodException, InvocationTargetException {
         EntityManager em = emf.createEntityManager();
         try {
             OfferType type = em.find(OfferType.class, offerTypeKey);
@@ -89,11 +89,16 @@ public class InstanceDirectory {
     }
 
 
-    @SuppressWarnings({ "MethodMayBeStatic" })
-    private <O extends AbstractORQCalculator<? extends AbstractORQ>> Factory<O> createORQCalculatorFactory(
-            final OfferType typeParam, final Class<O> clazzParam) {
-        return typeParam.isSingletonCalculator() ?
-                   new SingletonFactory<O>(clazzParam) : new InstanceFactory<O>(clazzParam);
+    @SuppressWarnings({ "MethodMayBeStatic", "unchecked", "MethodWithTooExceptionsDeclared" })
+    private <O extends AbstractORQCalculator<? extends AbstractORQ>> Factory<O>
+    createORQCalculatorFactory(
+            final OfferType typeParam, final Class<O> clazzParam)
+            throws ClassNotFoundException, IllegalAccessException, InstantiationException,
+            NoSuchMethodException, InvocationTargetException {
+        final Class<Factory<O>> clazz =
+                (Class<Factory<O>>)
+                        Factory.class.asSubclass(Class.forName(typeParam.getFactoryClass()));
+        return clazz.getConstructor(GNDMSystem.class, OfferType.class).newInstance(this, typeParam);
     }
 
 

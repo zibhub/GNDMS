@@ -44,8 +44,8 @@ class OfferType {
     @Column(name="class", nullable=false, updatable=false, columnDefinition="VARCHAR")
     String calculatorClass
 
-    @Column(name="single", nullable=false, updatable=false)
-    boolean singletonCalculator = false
+    @Column(name="factoryClass", nullable=false, updatable=false)
+    String factoryClass
 
     @OneToMany(cascade=ALL, mappedBy="offerType", fetch=FetchType.LAZY)
     Set<Task> tasks
