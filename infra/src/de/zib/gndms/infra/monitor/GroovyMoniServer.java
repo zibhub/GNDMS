@@ -60,7 +60,7 @@ import java.util.concurrent.locks.ReentrantLock;
 @SuppressWarnings({"AccessToStaticFieldLockedOnInstance"})
 public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionCaller {
 	// 1 sec min hopefully is a sensible lower bound
-	private static final int MIN_REFRESH_CYCLE = 1000;
+	private static final long MIN_REFRESH_CYCLE = 1000L;
 
 	@NotNull
 	private static final Logger logger;
@@ -86,7 +86,7 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 	   +"(all connections are *unencrpyted*)";
 
 		Properties props = new Properties();
-		props.put("monitor.enabled", "true");
+		props.put("monitor.enabled", "false");
 		props.put("monitor.host", "localhost");
 		props.put("monitor.port", "23232");
 		props.put("monitor.user", "admin");
@@ -453,7 +453,8 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 		password = getProperty(props, "monitor.password").trim();
 		setupNumbers(props);
 		roleName = getProperty(props, "monitor.roleName").trim();
-		enabled = "true".equals(getProperty(props, "monitor.enabled").trim());
+		enabled = "true".equalsIgnoreCase("GNDMS_MONITOR_ENABLED")
+        || "true".equals(getProperty(props, "monitor.enabled").trim());
 		final String loggedStr = getProperty(props, "monitor.logged").trim();
 		enabled &= isSaneSetup(LoggingDecisionPoint.Parser.parseTokenSet(loggedStr));
 	}
