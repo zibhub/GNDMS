@@ -20,7 +20,7 @@ import javax.persistence.EntityManager;
  */
 public class PersistentMarkerListener implements MarkerListener {
 
-    private FTPTransferState transferStat;
+    private FTPTransferState transferState;
     private static Log logger = LogFactory.getLog( PersistentMarkerListener.class );
     private ByteRangeList byteRanges;
     private EntityManager entityManager;
@@ -36,10 +36,10 @@ public class PersistentMarkerListener implements MarkerListener {
         if( marker instanceof GridFTPRestartMarker )
             gridFTPRestartMarkerArrived( ( GridFTPRestartMarker) marker );
         else if( marker instanceof PerfMarker )  {
-            logger.debug( "Transfer " + transferStat.getTransferId() + ": PerfMarker arrived at " +
+            logger.debug( "Transfer " + transferState.getTransferId() + ": PerfMarker arrived at " +
                 ( (PerfMarker) marker).getTimeStamp() );
         } else
-            logger.error( "Transfer " + transferStat.getTransferId() + ": Unsupported marker received." );
+            logger.error( "Transfer " + transferState.getTransferId() + ": Unsupported marker received." );
     }
 
 
@@ -48,9 +48,9 @@ public class PersistentMarkerListener implements MarkerListener {
         byteRanges.merge( marker.toVector() );
         String args = byteRanges.toFtpCmdArgument();
         try{
-            logger.debug( "Transfer " + transferStat.getTransferId() + " markers: " + args );;
+            logger.debug( "Transfer " + transferState.getTransferId() + " markers: " + args );;
             entityManager.getTransaction().begin();
-            transferStat.setFtpArgs( args );
+            transferState.setFtpArgs( args );
             entityManager.getTransaction().commit();
         } finally {
             if( entityManager.getTransaction().isActive() )
@@ -59,8 +59,8 @@ public class PersistentMarkerListener implements MarkerListener {
     }
 
     
-    public FTPTransferState getTransferStat() {
-        return transferStat;
+    public FTPTransferState getTransferState() {
+        return transferState;
     }
 
 
@@ -70,14 +70,14 @@ public class PersistentMarkerListener implements MarkerListener {
      * If the object isn't persisted yet, this method persist it.
      * For this reason the state object needs it transferId to be set.
      */
-    public void setTransferStat( FTPTransferState transferStat ) {
+    public void setTransferState( FTPTransferState transferState ) {
 
-        this.transferStat = transferStat;
+        this.transferState = transferState;
 
         try {
             entityManager.getTransaction().begin();
-            if (! entityManager.contains( transferStat ) )
-                entityManager.persist( transferStat );
+            if (! entityManager.contains( transferState ) )
+                entityManager.persist( transferState );
             entityManager.getTransaction().commit();
         }
         finally {
@@ -86,9 +86,14 @@ public class PersistentMarkerListener implements MarkerListener {
         }
     }
 
+
+    public boolean hasCurrentFile( )  {
+        return getCurrentFile() != null;
+    }
+    
     
     public String getCurrentFile() {
-        return transferStat.getCurrentFile();
+        return transferState.getCurrentFile();
     }
 
 
@@ -102,8 +107,8 @@ public class PersistentMarkerListener implements MarkerListener {
 
         try {
             entityManager.getTransaction().begin();
-            transferStat.setCurrentFile( currentFile );
-            transferStat.setFtpArgs( new String( ) );
+            transferState.setCurrentFile( currentFile );
+            transferState.setFtpArgs( new String( ) );
             entityManager.getTransaction().commit();
         }
         finally {

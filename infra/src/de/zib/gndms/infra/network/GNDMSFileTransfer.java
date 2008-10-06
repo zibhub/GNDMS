@@ -1,18 +1,14 @@
 package de.zib.gndms.infra.network;
 
-import org.globus.ftp.GridFTPClient;
-import org.globus.ftp.Session;
-import org.globus.ftp.MarkerListener;
-import org.globus.ftp.GridFTPSession;
+import org.globus.ftp.*;
 import org.globus.ftp.exception.ServerException;
 import org.globus.ftp.exception.ClientException;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Set;
-import java.util.SortedSet;
+import java.util.*;
 import java.io.IOException;
+
+import de.zib.gndms.model.gorfx.FTPTransferState;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -63,7 +59,7 @@ public class GNDMSFileTransfer {
     public long estimateTransferSize( ) throws IOException, ServerException {
 
         if( sourceClient == null )
-            throw new IllegalStateException( "no source client provieded" );
+            throw new IllegalStateException( "no source client provided" );
 
         Set<String> src = files.keySet();
         long size = 0;
@@ -71,9 +67,12 @@ public class GNDMSFileTransfer {
         sourceClient.setType( Session.TYPE_ASCII );
         sourceClient.setMode( Session.MODE_BLOCK );
 
-        for( String s : src )
+        sourceClient.changeDir( sourcePath );
+
+        for( String s : src ) {
             // todo evaluate usage of msld command
-            size += sourceClient.getSize( sourcePath + "/" + s );
+            size += sourceClient.getSize( s );
+        }
 
         return size;
     }
@@ -88,6 +87,9 @@ public class GNDMSFileTransfer {
 
     /**
      * Performs the prepared transfer using a persistent marker listener.
+     *
+     * If the listener has a state, i.e. a currentFile and a range, then the transfer will uses this state to continue
+     * the transfer.
      */
     public void performPersistentTransfer( @NotNull PersistentMarkerListener plist ) throws ServerException, IOException, ClientException {
 
@@ -95,15 +97,29 @@ public class GNDMSFileTransfer {
             throw new IllegalStateException( );
 
         setupClient ( sourceClient );
+        sourceClient.changeDir( sourcePath );
         setupClient ( destinationClient );
+        destinationClient.changeDir( destinationPath );
 
         sourceClient.setActive( destinationClient.setPassive() );
 
-        Set<String> keys = files.keySet();
+        // todo beautify the code below
+        boolean resume = plist.hasCurrentFile();
+        String  rfn = plist.getCurrentFile();
+        
+        TreeSet<String> keys = (TreeSet<String>) files.keySet();
         for( String fn : keys ) {
-            plist.setCurrentFile( fn );
-            String dfn = files.get( fn );
-            sourceClient.extendedTransfer( sourcePath + "/" + fn, destinationClient, destinationPath + "/" + ( dfn == null ? fn : dfn ), plist );
+
+            if( resume == true && fn.equals( rfn ) ) {
+                resume = false;
+                resumeSource( plist.getTransferState() );
+            }
+
+            if( resume == false ) {
+                plist.setCurrentFile( fn );
+                String dfn = files.get( fn );
+                sourceClient.extendedTransfer( fn, destinationClient, ( dfn == null ? fn : dfn ), plist );
+            }
         }
     }
 
@@ -168,4 +184,17 @@ public class GNDMSFileTransfer {
     public void setDestinationPath( String destinationPath ) {
         this.destinationPath = destinationPath;
     }
+
+
+    /**
+     * This loads the ftp byte range args from a FTPTransferState object into a GridFTPClient.
+     *
+     */
+   private void resumeSource( FTPTransferState stat ) throws ServerException, IOException {
+        
+        ByteRangeList brl = new ByteRangeList();
+        GridFTPRestartMarker rm = new GridFTPRestartMarker( stat.getFtpArgs( ) );
+        brl.merge( rm.toVector() );
+        sourceClient.setRestartMarker( brl );
+   }
 }

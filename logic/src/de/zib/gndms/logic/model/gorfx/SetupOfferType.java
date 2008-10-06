@@ -6,7 +6,6 @@ import de.zib.gndms.logic.model.config.ConfigOption;
 import de.zib.gndms.logic.model.config.SetupAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.gorfx.OfferType;
-import de.zib.gndms.model.gorfx.types.AbstractORQCalculator;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
