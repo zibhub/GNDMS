@@ -65,7 +65,6 @@ public class GNDMSFileTransfer {
         long size = 0;
 
         sourceClient.setType( Session.TYPE_ASCII );
-        sourceClient.setMode( Session.MODE_BLOCK );
 
         sourceClient.changeDir( sourcePath );
 
@@ -107,7 +106,7 @@ public class GNDMSFileTransfer {
         boolean resume = plist.hasCurrentFile();
         String  rfn = plist.getCurrentFile();
         
-        TreeSet<String> keys = (TreeSet<String>) files.keySet();
+        Set<String> keys = files.keySet();
         for( String fn : keys ) {
 
             if( resume == true && fn.equals( rfn ) ) {
@@ -193,7 +192,7 @@ public class GNDMSFileTransfer {
    private void resumeSource( FTPTransferState stat ) throws ServerException, IOException {
         
         ByteRangeList brl = new ByteRangeList();
-        GridFTPRestartMarker rm = new GridFTPRestartMarker( stat.getFtpArgs( ) );
+        GridFTPRestartMarker rm = new GridFTPRestartMarker( stat.getFtpArgsString( ) );
         brl.merge( rm.toVector() );
         sourceClient.setRestartMarker( brl );
    }

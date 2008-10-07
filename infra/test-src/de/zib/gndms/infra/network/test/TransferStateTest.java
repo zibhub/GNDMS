@@ -1,14 +1,12 @@
 package de.zib.gndms.infra.network.test;
-import org.testng.annotations.Parameters;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 import org.testng.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.exception.ServerException;
 import org.globus.ftp.exception.ClientException;
 import org.apache.axis.types.URI;
+import org.apache.log4j.PropertyConfigurator;
 import org.joda.time.DateTime;
 import de.zib.gndms.logic.action.ModelEntityTestBase;
 import de.zib.gndms.model.gorfx.FTPTransferState;
@@ -41,6 +39,7 @@ public class TransferStateTest extends ModelEntityTestBase {
 
     private String sourceURI;
     private String destinationURI;
+    private String logFileConfig;
     private TreeMap<String,String> fileMap;
     private HashMap<String, Long> fileSizes;
     private final String TRANSFER_KEY = "transfer-test-a000-a000-fakekey00001";
@@ -49,16 +48,21 @@ public class TransferStateTest extends ModelEntityTestBase {
     private long expectedTransferSize = 0;
 
 
-    @Parameters( {"srcURI", "destURI", "dbPath", "dbName" } )
-    public TransferStateTest( @NotNull String srcURI, @NotNull String destURI, @NotNull String dbPath, @NotNull String dbName ) {
+    @Parameters( {"srcURI", "destURI", "logFileCfg", "dbPath", "dbName" } )
+    public TransferStateTest( @NotNull String srcURI, @NotNull String destURI, @NotNull String logFileCfg,
+                              @NotNull String dbPath, @Optional( "c3grid" ) String dbName )
+    {
         super( dbPath, dbName );
         sourceURI = srcURI;
         destinationURI = destURI;
+        logFileConfig = logFileCfg;
     }
 
 
     @BeforeClass( groups={ "net" } )
     public void beforeClass ( ) {
+
+        PropertyConfigurator.configure( logFileConfig );
 
         fileMap = new TreeMap<String, String>( );
         fileMap.put( "a_1KB_file", null );
@@ -74,13 +78,8 @@ public class TransferStateTest extends ModelEntityTestBase {
             expectedTransferSize += fileSizes.get( s );
         }
 
-        try{
-            eM = getEntityManager();
-            transferState = (FTPTransferState) eM.find( FTPTransferState.class, TRANSFER_KEY );
-        } finally {
-            if( eM != null )
-                eM.close();
-        }
+        eM = getEntityManager();
+        transferState = (FTPTransferState) eM.find( FTPTransferState.class, TRANSFER_KEY );
     }
 
 

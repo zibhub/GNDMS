@@ -15,6 +15,8 @@ import java.io.IOException;
 public class SimpleGridFTPClientFactory extends AbstractGridFTPClientFactory {
 
     public GridFTPClient createClient( String host, int port ) throws ServerException, IOException {
-        return new GridFTPClient( host, port );
+        GridFTPClient clnt = new GridFTPClient( host, port );
+        clnt.authenticate( null );
+        return clnt;
     }
 }
