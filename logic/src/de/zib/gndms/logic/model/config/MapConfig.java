@@ -24,8 +24,7 @@ public class MapConfig extends AbstractConfig {
     }
 
 
-    public @NotNull
-    String getNonMandatoryOption(final String nameParam) {
+    public String getNonMandatoryOption(final String nameParam) {
         return map.get(nameParam);
     }
 

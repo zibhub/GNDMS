@@ -46,7 +46,7 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
             printWriter.println();
             printWriter.println(getShortHelp());
             printWriter.println();
-            printWriter.println("Options (unsorted): ");
+            printWriter.println("Options: ");
             ConfigTools.printOptionHelp(printWriter, getParamMap());
             printWriter.println();
             printWriter.println(getLongHelp());
@@ -406,6 +406,12 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
 
         protected static void printOptionHelp(final @NotNull PrintWriter writer,
                                               final Map<String, ConfigOption> mapParam) {
+            Object[] entries = mapParam.entrySet().toArray();
+            Arrays.sort(entries, new Comparator<Object>() {
+                public int compare(final Object o1, final Object o2) {
+                    return
+                }
+            });
             for (Map.Entry<String, ConfigOption> entry : mapParam.entrySet()) {
                 writer.print(" * ");
                 final String key = entry.getKey();
