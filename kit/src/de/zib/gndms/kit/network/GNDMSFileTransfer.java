@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import de.zib.gndms.model.gorfx.FTPTransferState;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -108,7 +109,7 @@ public class GNDMSFileTransfer {
         boolean resume = plist.hasCurrentFile();
         String  rfn = plist.getCurrentFile();
         
-        TreeSet<String> keys = (TreeSet<String>) files.keySet();
+        Set<String> keys = files.keySet();
         for( String fn : keys ) {
 
             if( resume == true && fn.equals( rfn ) ) {
@@ -194,7 +195,7 @@ public class GNDMSFileTransfer {
    private void resumeSource( FTPTransferState stat ) throws ServerException, IOException {
         
         ByteRangeList brl = new ByteRangeList();
-        GridFTPRestartMarker rm = new GridFTPRestartMarker( stat.getFtpArgs( ) );
+        GridFTPRestartMarker rm = new GridFTPRestartMarker( stat.getFtpArgsString( ) );
         brl.merge( rm.toVector() );
         sourceClient.setRestartMarker( brl );
    }

@@ -1,9 +1,9 @@
 package de.zib.gndms.kit.network;
 
 import de.zib.gndms.model.gorfx.FTPTransferState;
+import org.globus.ftp.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.globus.ftp.*;
 
 import javax.persistence.EntityManager;
 
@@ -12,6 +12,9 @@ import javax.persistence.EntityManager;
  *
  * It keeps track of the restart marks and stores them into a
  * data base.
+ *
+ * Note even after a successful transfer the data base entry isn't deleted
+ * you have to do this manually using derby's ij tool.
  * 
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
@@ -33,9 +36,9 @@ public class PersistentMarkerListener implements MarkerListener {
 
     public void markerArrived( Marker marker ) {
 
-        if( marker instanceof GridFTPRestartMarker)
+        if( marker instanceof GridFTPRestartMarker )
             gridFTPRestartMarkerArrived( ( GridFTPRestartMarker) marker );
-        else if( marker instanceof PerfMarker)  {
+        else if( marker instanceof PerfMarker )  {
             logger.debug( "Transfer " + transferState.getTransferId() + ": PerfMarker arrived at " +
                 ( (PerfMarker) marker).getTimeStamp() );
         } else
@@ -48,7 +51,7 @@ public class PersistentMarkerListener implements MarkerListener {
         byteRanges.merge( marker.toVector() );
         String args = byteRanges.toFtpCmdArgument();
         try{
-            logger.debug( "Transfer " + transferState.getTransferId() + " markers: " + args );;
+            logger.debug( "Transfer " + transferState.getTransferId() + " markers: " + args );
             entityManager.getTransaction().begin();
             transferState.setFtpArgs( args );
             entityManager.getTransaction().commit();
@@ -73,12 +76,18 @@ public class PersistentMarkerListener implements MarkerListener {
     public void setTransferState( FTPTransferState transferState ) {
 
         this.transferState = transferState;
+        byteRanges = new ByteRangeList();
 
         try {
             entityManager.getTransaction().begin();
             if (! entityManager.contains( transferState ) )
                 entityManager.persist( transferState );
             entityManager.getTransaction().commit();
+
+            if( transferState.getFtpArgs() != null ) {
+                GridFTPRestartMarker rm = new GridFTPRestartMarker( transferState.getFtpArgsString() );
+                byteRanges.merge( rm.toVector() );
+            }
         }
         finally {
             if ( entityManager.getTransaction().isActive() )
@@ -108,7 +117,7 @@ public class PersistentMarkerListener implements MarkerListener {
         try {
             entityManager.getTransaction().begin();
             transferState.setCurrentFile( currentFile );
-            transferState.setFtpArgs( new String( ) );
+            transferState.setFtpArgs( "0-0" );
             entityManager.getTransaction().commit();
         }
         finally {
