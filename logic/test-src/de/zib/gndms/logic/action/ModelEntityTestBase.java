@@ -71,7 +71,7 @@ public abstract class ModelEntityTestBase {
     public EntityManager getEntityManager() {
 
         if( entityManager == null ) {
-            setupSharedEntityManager( );
+            setupSharedEntityManager();
         }
 
         return entityManager;

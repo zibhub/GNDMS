@@ -22,7 +22,7 @@ import java.util.Map;
 public class ParameterToolsTest {
     Map<String, String> paraMap = new HashMap<String, String>(8);
 
-    @Test(groups = {"util"})
+    @Test(groups = {"factory"})
     public void toStrTest() {
         paraMap.clear();
         assertEquals(asString(paraMap, null), "");
@@ -38,7 +38,7 @@ public class ParameterToolsTest {
     }
 
 
-    @Test(groups = {"util"})
+    @Test(groups = {"factory"})
     public void positiveParseTest() throws ParameterParseException {
         paraMap.clear();
 
@@ -95,7 +95,7 @@ public class ParameterToolsTest {
 
 
     @SuppressWarnings({ "HardcodedFileSeparator" })
-    @Test(groups = {"util"})
+    @Test(groups = {"factory"})
     public void positiveParseEscapeTest() throws ParameterParseException {
         paraMap.clear();
         parseParameters(paraMap, "", null);
@@ -171,49 +171,49 @@ public class ParameterToolsTest {
         assertEquals(paraMap.get("foo"), "true", null);
     }
 
-    @Test(groups = {"util"},
+    @Test(groups = {"factory"},
           expectedExceptions = { ParameterParseException.class})
     public void negativeWsInKeyTest1() throws ParameterParseException {
         paraMap.clear();
         parseParameters(paraMap, "foo : ", null);
     }
 
-    @Test(groups = {"util"},
+    @Test(groups = {"factory"},
           expectedExceptions = { ParameterParseException.class})
     public void negativeWsInKeyTest2() throws ParameterParseException {
         paraMap.clear();
         parseParameters(paraMap, "fo o:", null);
     }
 
-    @Test(groups = {"util"},
+    @Test(groups = {"factory"},
           expectedExceptions = { ParameterParseException.class})
     public void negativeUncompleteTest1() throws ParameterParseException {
         paraMap.clear();
         parseParameters(paraMap, "foo: 'bar", null);
     }
 
-    @Test(groups = {"util"},
+    @Test(groups = {"factory"},
           expectedExceptions = { ParameterParseException.class})
     public void negativeEmptyKeyTest1() throws ParameterParseException {
         paraMap.clear();
         parseParameters(paraMap, ":", null);
     }
 
-    @Test(groups = {"util"},
+    @Test(groups = {"factory"},
           expectedExceptions = { ParameterParseException.class})
     public void negativeEmptyKeyTest2() throws ParameterParseException {
         paraMap.clear();
         parseParameters(paraMap, ":''", null);
     }
 
-    @Test(groups = {"util"},
+    @Test(groups = {"factory"},
           expectedExceptions = { ParameterParseException.class})
     public void negativeUnfinishedEscapeTest1() throws ParameterParseException {
         paraMap.clear();
         parseParameters(paraMap, ":'\\", null);
     }
 
-    @Test(groups = {"util"},
+    @Test(groups = {"factory"},
           expectedExceptions = { ParameterParseException.class})
     public void negativeUnfinishedEscapeTest2() throws ParameterParseException {
         paraMap.clear();
@@ -221,7 +221,7 @@ public class ParameterToolsTest {
     }
 
 
-    @Test(groups = {"util"},
+    @Test(groups = {"factory"},
           expectedExceptions = { ParameterParseException.class})
     public void negativeDuplicateKey() throws ParameterParseException {
         paraMap.clear();

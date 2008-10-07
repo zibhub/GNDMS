@@ -17,6 +17,7 @@ import javax.persistence.JoinColumn
 import javax.persistence.Enumerated
 import javax.persistence.EnumType
 import org.jetbrains.annotations.NotNull
+import javax.persistence.NamedQuery
 
 
 /**
@@ -29,6 +30,8 @@ import org.jetbrains.annotations.NotNull
  */
 @Entity(name="Tasks")
 @Table(name="tasks", schema="gorfx")
+@NamedQuery(name="listAllTaskIds", query="SELECT instance.id FROM Tasks instance")
+
 class Task extends TimedGridResource {
     /* Nullable for testing purposes */
     @ManyToOne @JoinColumn(name="offerTypeKey", nullable=true, updatable=false, columnDefinition="VARCHAR")
@@ -112,15 +115,23 @@ class Task extends TimedGridResource {
 
 @Embeddable
 class Contract {
+
+    // the comments denote the mapping to the
+    // XSD OfferExecutionContract type
+
+    // can be mapped to IfDesisionBefore
     @Temporal(value = TemporalType.TIMESTAMP)
     Calendar accepted
 
+    // can be mapped to ExecutionLiklyUntil
     @Temporal(value = TemporalType.TIMESTAMP)
     Calendar deadline
 
+    // can be mapped to ResultValidUntil
     @Temporal(value = TemporalType.TIMESTAMP)
     Calendar resultValidity
-    
+
+    // can be mapped to constantExecutionTime
     transient boolean deadlineIsOffset = false
 }
 

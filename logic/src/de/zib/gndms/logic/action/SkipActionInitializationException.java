@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.action;
 
 /**
- * Used to skip actio initialization and executing; i.e. when printing a help screen.
+ * Used to skip action initialization and executing; i.e. when printing a help screen.
  *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$

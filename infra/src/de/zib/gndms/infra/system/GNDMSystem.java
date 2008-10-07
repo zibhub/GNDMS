@@ -1,8 +1,9 @@
 package de.zib.gndms.infra.system;
 
 import de.zib.gndms.infra.GridConfig;
-import de.zib.gndms.infra.monitor.ActionCaller;
-import de.zib.gndms.infra.monitor.GroovyMoniServer;
+import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
+import de.zib.gndms.kit.monitor.ActionCaller;
+import de.zib.gndms.kit.monitor.GroovyMoniServer;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.logic.model.*;
 import de.zib.gndms.logic.util.LogicTools;
@@ -81,7 +82,9 @@ public final class GNDMSystem
 
     private TaskExecutionService executionService;
 
-	/**
+    private NetworkAuxiliariesProvider netAux;
+
+    /**
 	 * Retrieves a GNDMSSystem using context.lookup(name).
 	 *
 	 * A lightweight factory facade is either atomically retrieved from context or bound under name
@@ -501,8 +504,6 @@ public final class GNDMSystem
     }
 
 
-
-
     public final class SysTaskExecutionService implements TaskExecutionService, ThreadFactory {
         private final ThreadPoolExecutor executorService;
         private volatile boolean terminating;
@@ -657,4 +658,13 @@ public final class GNDMSystem
 		}
 
 	}
+
+
+    public NetworkAuxiliariesProvider getNetAux( ) {
+
+        if( netAux == null )
+            netAux = new NetworkAuxiliariesProvider( );
+
+        return netAux;
+    }
 }

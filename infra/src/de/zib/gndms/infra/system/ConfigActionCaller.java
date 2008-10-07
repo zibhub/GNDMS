@@ -4,7 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Sets;
 import de.zib.gndms.infra.action.GetHomeInfoAction;
 import de.zib.gndms.infra.action.SystemAction;
-import de.zib.gndms.infra.monitor.ActionCaller;
+import de.zib.gndms.kit.monitor.ActionCaller;
 import de.zib.gndms.logic.action.Action;
 import de.zib.gndms.logic.action.CommandAction;
 import de.zib.gndms.logic.action.SkipActionInitializationException;
@@ -148,8 +148,8 @@ public final class ConfigActionCaller implements ActionCaller {
             return retVal;
         }
         catch (SkipActionInitializationException sa) {
-            // Intentionally not logged
-            throw sa;
+            // Intentionally ignored
+            return null;
         }
         catch (Exception e) {
             logger.warn("Failure during " + className + ' ' + opts, e);

@@ -35,7 +35,7 @@ public class EchoOptionsActionTest extends ConfigActionTestBase {
         tryCloseEMF();
     }
 
-    @Test(groups = {"util", "action", "config"})
+    @Test(groups = {"factory", "action", "config"})
     public void runPlainAction() throws CommandAction.ParameterTools.ParameterParseException {
         EchoOptionsAction action = new EchoOptionsAction();
         final StringWriter strWriter = new StringWriter();
@@ -45,7 +45,7 @@ public class EchoOptionsActionTest extends ConfigActionTestBase {
     }
 
 
-    @Test(groups = {"util", "action"})
+    @Test(groups = {"factory", "action"})
     public void runInheritanceAction() throws CommandAction.ParameterTools.ParameterParseException {
         EchoOptionsAction parentAction = new EchoOptionsAction();
         final StringWriter strWriter = new StringWriter();

@@ -1,14 +1,14 @@
 package de.zib.gndms.infra.system;
 
-import de.zib.gndms.infra.monitor.GroovyBindingFactory;
-import de.zib.gndms.infra.monitor.GroovyMoniServer;
+import de.zib.gndms.kit.monitor.GroovyBindingFactory;
+import de.zib.gndms.kit.monitor.GroovyMoniServer;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.service.GNDMSingletonServiceHome;
-import de.zib.gndms.infra.util.Factory;
+import de.zib.gndms.kit.factory.Factory;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
-import de.zib.gndms.model.gorfx.types.AbstractORQCalculator;
+import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.apache.commons.logging.Log;
@@ -61,7 +61,8 @@ public class InstanceDirectory {
 
     @SuppressWarnings(
             { "RawUseOfParameterizedType", "unchecked", "MethodWithTooExceptionsDeclared" })
-    public <O extends AbstractORQCalculator<? extends AbstractORQ>> O getORQCalculator(
+    public <M extends AbstractORQ, O extends AbstractORQCalculator<M, O>> O getORQCalculator(
+            final @NotNull GNDMSystem sys,
             final @NotNull EntityManagerFactory emf,
             final @NotNull String offerTypeKey)
             throws ClassNotFoundException, IllegalAccessException, InstantiationException,
@@ -69,14 +70,14 @@ public class InstanceDirectory {
         EntityManager em = emf.createEntityManager();
         try {
             OfferType type = em.find(OfferType.class, offerTypeKey);
-            Class<O> clazz = (Class<O>) Class.forName(type.getCalculatorClass());
+            Class<O> clazz = (Class<O>) Class.forName(type.getCalculatorClassName());
             if (! AbstractORQCalculator.class.isAssignableFrom(clazz))
                 throw new IllegalArgumentException("Incompatible class type detected");
 
             synchronized (orqCalcMap) {
-                Factory<O> instance = (Factory<O>) orqCalcMap.get(offerTypeKey);
+                Factory<O> instance = (Factory<O>) ((Factory) orqCalcMap.get(offerTypeKey));
                 if (instance == null) {
-                    instance = createORQCalculatorFactory(type, clazz);
+                    instance = createORQCalculatorFactory(sys, type, clazz);
                     orqCalcMap.put(offerTypeKey, instance);
                 }
                 return clazz.cast(instance.getInstance());
@@ -90,15 +91,19 @@ public class InstanceDirectory {
 
 
     @SuppressWarnings({ "MethodMayBeStatic", "unchecked", "MethodWithTooExceptionsDeclared" })
-    private <O extends AbstractORQCalculator<? extends AbstractORQ>> Factory<O>
+    private <M extends AbstractORQ, O extends AbstractORQCalculator<M, O>> Factory<O>
     createORQCalculatorFactory(
-            final OfferType typeParam, final Class<O> clazzParam)
+            final GNDMSystem sys, final OfferType typeParam, final Class<O> clazzParam)
             throws ClassNotFoundException, IllegalAccessException, InstantiationException,
             NoSuchMethodException, InvocationTargetException {
         final Class<Factory<O>> clazz =
                 (Class<Factory<O>>)
-                        Factory.class.asSubclass(Class.forName(typeParam.getFactoryClass()));
-        return clazz.getConstructor(GNDMSystem.class, OfferType.class).newInstance(this, typeParam);
+                        Factory.class.asSubclass(Class.forName(typeParam.getFactoryClassName()));
+        final Factory<O> oFactory = clazz.getConstructor(OfferType.class).newInstance(typeParam);
+        if (oFactory instanceof SystemHolder)
+            ((SystemHolder)oFactory).setSystem(sys);
+        oFactory.setup();
+        return oFactory;
     }
 
 

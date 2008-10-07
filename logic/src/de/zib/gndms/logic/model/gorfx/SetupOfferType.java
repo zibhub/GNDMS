@@ -6,7 +6,6 @@ import de.zib.gndms.logic.model.config.ConfigOption;
 import de.zib.gndms.logic.model.config.SetupAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.gorfx.OfferType;
-import de.zib.gndms.model.gorfx.types.AbstractORQCalculator;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -45,10 +44,10 @@ public class SetupOfferType extends SetupAction<Void> {
     private String resName;
 
     @ConfigOption(altName = "class", descr="FQN of AbstractORQCalculator class that implements this OfferType")
-    private Class<? extends AbstractORQCalculator<?>> clazz;
+    private Class<? extends AbstractORQCalculator<?, ?>> clazz;
 
-    @ConfigOption(descr="Determines wether the calculator instance is shared between difffernet ORQs")
-    private Boolean singleton;
+    @ConfigOption(descr="The ORQCalculator Factory Class")
+    private Class<?> factoryClass;
 
     @ConfigOption(descr = "File from which the initial config should be read")
     private String configFile;
@@ -73,11 +72,11 @@ public class SetupOfferType extends SetupAction<Void> {
                 setResName(getOption("resName"));
             if (clazz == null && hasOption("class"))
                 setClazz(
-                        (Class<? extends AbstractORQCalculator<?>>)
+                        (Class<? extends AbstractORQCalculator<?, ?>>)
                                 Class.forName(getOption("class"))
                                         .asSubclass(AbstractORQCalculator.class));
-            if (singleton == null && hasOption("singleton"))
-                setSingleton(isBooleanOptionSet("singleton"));
+            if (factoryClass == null && hasOption("factoryClass"))
+                setFactoryClass(Class.forName(getOption("factoryClass")));
 
             if (configProps == null & hasOption("configFile"))
                 try {
@@ -96,7 +95,7 @@ public class SetupOfferType extends SetupAction<Void> {
                     requireParameter("argName", argName);
                     requireParameter("resScope", resScope);
                     requireParameter("resName", resName);
-                    requireParameter("singleton", singleton);
+                    requireParameter("factoryClass", factoryClass);
                     requireParameter("class", clazz);
 
                 default:
@@ -144,10 +143,10 @@ public class SetupOfferType extends SetupAction<Void> {
     @SuppressWarnings({ "MethodWithMoreThanThreeNegations", "FeatureEnvy" })
     private void executeUpdate(final EntityManager em) {
         final OfferType type = em.find(OfferType.class, getKey());
-        if (singleton != null)
-            type.setSingletonCalculator(singleton);
+        if (factoryClass != null)
+            type.setFactoryClassName(factoryClass.getCanonicalName());
         if (clazz != null)
-            type.setCalculatorClass(clazz.getName());
+            type.setCalculatorClassName(clazz.getName());
         if (argScope != null)
             type.setOfferArgumentType(new ImmutableScopedName(argScope, type.getOfferArgumentType().getLocalName()));
         if (argName != null)
@@ -163,8 +162,8 @@ public class SetupOfferType extends SetupAction<Void> {
     @SuppressWarnings({ "FeatureEnvy" })
     private void executeCreate(final EntityManager em) {
         final OfferType type = new OfferType();
-        type.setSingletonCalculator(singleton);
-        type.setCalculatorClass(clazz.getName());
+        type.setFactoryClassName(getFactoryClass().getCanonicalName());
+        type.setCalculatorClassName(clazz.getName());
         type.setOfferArgumentType(new ImmutableScopedName(argScope, argName));
         type.setOfferResultType(new ImmutableScopedName(resScope, resName));
         pushConfigProps(type);
@@ -247,22 +246,22 @@ public class SetupOfferType extends SetupAction<Void> {
     }
 
 
-    public Class<? extends AbstractORQCalculator<?>> getClazz() {
+    public Class<? extends AbstractORQCalculator<?, ?>> getClazz() {
         return clazz;
     }
 
 
-    public void setClazz(final Class<? extends AbstractORQCalculator<?>> clazzParam) {
+    public void setClazz(final Class<? extends AbstractORQCalculator<?, ?>> clazzParam) {
         clazz = clazzParam;
     }
 
 
-    public Boolean getSingleton() {
-        return singleton;
+    public Class<?> getFactoryClass() {
+        return factoryClass;
     }
 
 
-    public void setSingleton(final Boolean singletonParam) {
-        singleton = singletonParam;
+    public void setFactoryClass(final Class<?> factoryClassParam) {
+        factoryClass = factoryClassParam;
     }
 }
