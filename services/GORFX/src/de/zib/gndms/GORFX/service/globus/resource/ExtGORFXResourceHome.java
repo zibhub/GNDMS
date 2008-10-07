@@ -1,15 +1,14 @@
 package de.zib.gndms.GORFX.service.globus.resource;
 
 import de.zib.gndms.GORFX.service.GORFXConfiguration;
-import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.GNDMSTools;
+import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.system.GNDMSystem;
 import org.apache.axis.message.addressing.AttributedURI;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jetbrains.annotations.NotNull;
 import org.globus.wsrf.Resource;
-import org.globus.wsrf.ResourceException;
+import org.jetbrains.annotations.NotNull;
 
 import javax.naming.NamingException;
 
@@ -69,28 +68,27 @@ public final class ExtGORFXResourceHome extends GORFXResourceHome {
 
     @Override
 	public synchronized void initialize() throws Exception {
-		super.initialize();
         if (! initialized) {
-			logger.info("GORFX home extension initializing");
-			try {
-				system = getGridConfig().retrieveSystemReference();
+			logger.info("Extended GORFX home initializing");
+			try { try {
+                final GridConfig gridConfig = ExtGORFXResourceHome.getGridConfig();
+                logger.debug("Config: " + gridConfig.asString());
+                system = gridConfig.retrieveSystemReference();
 				serviceAddress = GNDMSTools.getServiceAddressFromContext();
 
 				initialized = true;
 
-				try {
-					super.initialize();    // Overridden method
-				}
-				catch (RuntimeException e) {
-					initialized = false;
-					logger.error(e);
-					throw e;
-				}
+				super.initialize();    // Overridden method
 			}
 			catch ( NamingException e) {
-				logger.error("Initialization failed");
 				throw new RuntimeException(e);
-			}
+			} }
+            catch (RuntimeException e) {
+                initialized = false;
+                logger.error("Initialization failed", e);
+                e.printStackTrace(System.err);
+                throw e;
+            }
 		}
     }
 

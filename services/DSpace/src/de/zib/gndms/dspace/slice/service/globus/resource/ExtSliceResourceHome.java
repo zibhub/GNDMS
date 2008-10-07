@@ -12,6 +12,7 @@ import org.globus.wsrf.impl.SimpleResourceKey;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.GNDMSTools;
+import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.dspace.Slice;
@@ -59,30 +60,28 @@ public final class ExtSliceResourceHome extends SliceResourceHome
 
     @Override
 	public synchronized void initialize() throws Exception {
-		logger.info("Slice home extension initializing");
-        
-        if (!initialized) {
-            try {
-                logger.info("Subspace home extension initializing");
-                system = ExtDSpaceResourceHome.getGridConfig().retrieveSystemReference();
-                serviceAddress = GNDMSTools.getServiceAddressFromContext();
-                initialized = true;
+        if (! initialized) {
+			logger.info("Extended Slice home initializing");
+			try { try {
+                final GridConfig gridConfig = ExtDSpaceResourceHome.getGridConfig();
+                logger.debug("Config: " + gridConfig.asString());
+                system = gridConfig.retrieveSystemReference();
+				serviceAddress = GNDMSTools.getServiceAddressFromContext();
 
-                try {
-                    super.initialize();    // Overridden method
-                    system.refreshAllResources(this);
-                }
-                catch (RuntimeException e) {
-                    initialized = false;
-                    logger.error(e);
-                    throw e;
-                }
+				initialized = true;
+
+				super.initialize();    // Overridden method
+			}
+			catch ( NamingException e) {
+				throw new RuntimeException(e);
+			} }
+            catch (RuntimeException e) {
+                initialized = false;
+                logger.error("Initialization failed", e);
+                e.printStackTrace(System.err);
+                throw e;
             }
-            catch ( NamingException e) {
-                logger.error("Initialization failed");
-                throw new RuntimeException(e);
-            }
-        }
+		}
 	}
 
     private void ensureInitialized() {

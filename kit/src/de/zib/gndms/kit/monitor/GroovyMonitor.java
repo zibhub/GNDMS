@@ -85,7 +85,7 @@ final class GroovyMonitor implements HttpSessionBindingListener, HttpSessionActi
 	/**
 	 *  Timeout used in out-stream flushing wait-loop
 	 */
-	private static final int WAIT_LOOP_DELAY = 2300;
+	private static final long WAIT_LOOP_DELAY = 2300L;
 
 	/**
 	 * The console object that runs the servlet engine that hosts the servlet that uses this

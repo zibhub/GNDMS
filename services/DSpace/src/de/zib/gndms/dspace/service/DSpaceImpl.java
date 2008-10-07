@@ -57,7 +57,7 @@ public class DSpaceImpl extends DSpaceImplBase {
             system = home.getSystem();
             InstanceDirectory instanceDir = system.getInstanceDir();
             instanceDir.addHome(home);
-            instanceDir.addHome(getSubspaceResourceHome());
+            instanceDir.addHome(getSubspaceResourceHome());            
             // TODO
             // system.addHome(getSliceResourceHome());
         }

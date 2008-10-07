@@ -8,6 +8,7 @@ import org.globus.wsrf.Resource;
 import org.globus.wsrf.ResourceException;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.GNDMSTools;
+import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.GORFX.service.globus.resource.ExtGORFXResourceHome;
 
 import javax.naming.NamingException;
@@ -42,20 +43,28 @@ public final class ExtORQResourceHome extends ORQResourceHome {
 
 	@Override
 	public synchronized void initialize() throws Exception {
+        if (! initialized) {
+			logger.info("Extended ORQ home initializing");
+			try { try {
+                final GridConfig gridConfig = ExtGORFXResourceHome.getGridConfig();
+                logger.debug("Config: " + gridConfig.asString());
+                system = gridConfig.retrieveSystemReference();
+				serviceAddress = GNDMSTools.getServiceAddressFromContext();
 
-        if (!initialized) {
-            try {
-                super.initialize();    // Overridden method
-                logger.info("Extended ORQ home initializing");
-                system = ExtGORFXResourceHome.getGridConfig().retrieveSystemReference();
-                serviceAddress = GNDMSTools.getServiceAddressFromContext();
-                initialized = true;
+				initialized = true;
+
+				super.initialize();    // Overridden method
+			}
+			catch ( NamingException e) {
+				throw new RuntimeException(e);
+			} }
+            catch (RuntimeException e) {
+                initialized = false;
+                logger.error("Initialization failed", e);
+                e.printStackTrace(System.err);
+                throw e;
             }
-            catch ( NamingException e) {
-                logger.error("Initialization failed");
-                throw new RuntimeException(e);
-            }
-        }
+		}
     }
 
 

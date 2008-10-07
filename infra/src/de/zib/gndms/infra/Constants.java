@@ -1,6 +1,7 @@
 package de.zib.gndms.infra;
 
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -28,7 +29,7 @@ public final class Constants {
 	private Constants() {}
 
 	@SuppressWarnings({"StaticMethodOnlyUsedInOneClass"})
-	public static Context getRootContext() throws NamingException {
+	public static @NotNull Context getRootContext() throws NamingException {
 		InitialContext ctx = null;
 		try {
 			ctx = new InitialContext();

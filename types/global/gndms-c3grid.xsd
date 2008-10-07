@@ -31,7 +31,7 @@
 
  <complexType name="ObjectListT">
     <sequence>
-      <element maxOccurs="unbounded" minOccurs="0" name="Item" type="xsd:string" />
+      <element minOccurs="1" maxOccurs="unbounded" name="Item" type="xsd:string" />
     </sequence>
  </complexType>
 
@@ -48,13 +48,13 @@
       to do: use of apache map type - see "building Web Services with Java" Book, second edition page 282 ??
     -->
     <sequence>
-      <element maxOccurs="unbounded" minOccurs="0" name="Item" type="impl:NameValEntryT" />
+      <element name="Item"  type="impl:NameValEntryT" minOccurs="0" maxOccurs="unbounded"/>
     </sequence>
   </complexType>
 
   <complexType name="CFListT">
     <sequence>
-      <element maxOccurs="unbounded" minOccurs="0" name="CFItem" type="xsd:string" />
+      <element name="CFItem" type="xsd:string" minOccurs="0" maxOccurs="unbounded" />
     </sequence>
   </complexType>
 

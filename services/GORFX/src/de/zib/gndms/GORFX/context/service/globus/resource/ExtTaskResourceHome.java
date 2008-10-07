@@ -11,6 +11,7 @@ import org.globus.wsrf.impl.SimpleResourceKey;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.GNDMSTools;
+import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.GORFX.service.globus.resource.ExtGORFXResourceHome;
@@ -50,28 +51,27 @@ public final class ExtTaskResourceHome extends TaskResourceHome implements GNDMS
 
     @Override
 	public synchronized void initialize() throws Exception {
-
-        if (!initialized) {
-			try {
-                super.initialize();
-				logger.info("Task home extension initializing");
-				system = ExtGORFXResourceHome.getGridConfig().retrieveSystemReference();
+        if (! initialized) {
+			logger.info("Extended Task home initializing");
+			try { try {
+                final GridConfig gridConfig = ExtGORFXResourceHome.getGridConfig();
+                logger.debug("Config: " + gridConfig.asString());
+                system = gridConfig.retrieveSystemReference();
 				serviceAddress = GNDMSTools.getServiceAddressFromContext();
+
 				initialized = true;
 
-				try {
-                    system.refreshAllResources(this);
-				}
-				catch (RuntimeException e) {
-					initialized = false;
-					logger.error(e);
-					throw e;
-				}
+				super.initialize();    // Overridden method
 			}
 			catch ( NamingException e) {
-				logger.error("Initialization failed");
 				throw new RuntimeException(e);
-			}
+			} }
+            catch (RuntimeException e) {
+                initialized = false;
+                logger.error("Initialization failed", e);
+                e.printStackTrace(System.err);
+                throw e;
+            }
 		}
 	}
 

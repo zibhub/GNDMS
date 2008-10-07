@@ -5,7 +5,9 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.Set;
+import java.util.Comparator;
 
 
 /**
@@ -55,7 +57,16 @@ public class HelpOverviewAction extends ConfigAction<String> {
     public String execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer) {
         writer.println("# Available actions:");
         writer.println();
-        for (Class<? extends ConfigAction<?>> action : configActions) {
+        // Sort by class name
+        final Object[] caArray = configActions.toArray();
+        Arrays.sort(caArray, new Comparator<Object>() {
+            public int compare(final Object o1, final Object o2) {
+                return ((Class)o1).getCanonicalName().compareTo(((Class)o2).getCanonicalName());
+            }
+        });
+        // Iterate over result
+        for (Object obj : caArray) {
+            Class<? extends ConfigAction<?>> action = (Class<? extends ConfigAction<?>>) obj;
             final String name = action.getCanonicalName();
             writer.print(nameMapper == null ? name : nameMapper.apply(name));
             ConfigActionHelp help = action.getAnnotation(ConfigActionHelp.class);

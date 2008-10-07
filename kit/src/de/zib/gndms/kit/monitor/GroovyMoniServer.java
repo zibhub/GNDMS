@@ -94,8 +94,8 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 		props.put("monitor.password", UUID.randomUUID().toString());
 		props.put("monitor.configRefreshCycle", "30000");
 		props.put("monitor.maxScriptSizeInBytes", "65535");
-		props.put("monitor.maxConnections", "6");
-		props.put("monitor.minConnections", "3");
+		props.put("monitor.maxConnections", "8");
+		props.put("monitor.minConnections", "4");
 
 		// for authorization in GroovyMonitorServlet
 		props.put("monitor.roleName", "moniadmin");
@@ -453,8 +453,9 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 		password = getProperty(props, "monitor.password").trim();
 		setupNumbers(props);
 		roleName = getProperty(props, "monitor.roleName").trim();
-		enabled = "true".equalsIgnoreCase("GNDMS_MONITOR_ENABLED")
-        || "true".equals(getProperty(props, "monitor.enabled").trim());
+        final String envVar = System.getenv("GNDMS_MONITOR_ENABLED");
+        enabled = envVar != null && envVar.trim().length() > 0;
+        enabled |= "true".equals(getProperty(props, "monitor.enabled").trim());
 		final String loggedStr = getProperty(props, "monitor.logged").trim();
 		enabled &= isSaneSetup(LoggingDecisionPoint.Parser.parseTokenSet(loggedStr));
 	}

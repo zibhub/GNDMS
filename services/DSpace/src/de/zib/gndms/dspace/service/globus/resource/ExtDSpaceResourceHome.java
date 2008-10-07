@@ -80,29 +80,30 @@ public final class ExtDSpaceResourceHome  extends DSpaceResourceHome
 
 	@Override
 	public synchronized void initialize() throws Exception {
-		if (! initialized) {
-			logger.info("dspace home extension initializing");
-			try {
-				system = getGridConfig().retrieveSystemReference();
+        if (! initialized) {
+			logger.info("Extended DSpace home initializing");
+			try { try {
+                final GridConfig gridConfig = ExtDSpaceResourceHome.getGridConfig();
+                logger.debug("Config: " + gridConfig.asString());
+                system = gridConfig.retrieveSystemReference();
 				serviceAddress = GNDMSTools.getServiceAddressFromContext();
 
 				initialized = true;
 
-				try {
-					super.initialize();    // Overridden method
-				}
-				catch (RuntimeException e) {
-					initialized = false;
-					logger.error(e);
-					throw e;
-				}
+				super.initialize();    // Overridden method
 			}
-			catch (NamingException e) {
-				logger.error("Initialization failed");
+			catch ( NamingException e) {
 				throw new RuntimeException(e);
-			}
+			} }
+            catch (RuntimeException e) {
+                initialized = false;
+                logger.error("Initialization failed", e);
+                e.printStackTrace(System.err);
+                throw e;
+            }
 		}
-	}
+    }
+
 
 
 	private void ensureInitialized() {

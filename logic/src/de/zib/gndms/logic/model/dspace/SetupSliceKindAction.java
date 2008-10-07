@@ -1,21 +1,17 @@
 package de.zib.gndms.logic.model.dspace;
 
-import de.zib.gndms.model.dspace.types.SliceKindMode;
-import de.zib.gndms.model.dspace.MetaSubspace;
-import de.zib.gndms.model.dspace.SliceKind;
-import de.zib.gndms.logic.model.AbstractModelAction;
-import de.zib.gndms.logic.model.config.SetupAction;
+import de.zib.gndms.logic.action.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigOption;
-import de.zib.gndms.logic.action.MandatoryOptionMissingException;
-
-import java.util.Set;
-import java.io.PrintWriter;
-import java.text.ParseException;
-
+import de.zib.gndms.logic.model.config.SetupAction;
+import de.zib.gndms.model.dspace.MetaSubspace;
+import de.zib.gndms.model.dspace.SliceKind;
+import de.zib.gndms.model.dspace.types.SliceKindMode;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
+import java.io.PrintWriter;
+import java.util.Set;
 
 /**
  * Action to create a new slice kind object from scratch.

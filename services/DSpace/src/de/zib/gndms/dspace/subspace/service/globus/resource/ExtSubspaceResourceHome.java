@@ -2,9 +2,9 @@ package de.zib.gndms.dspace.subspace.service.globus.resource;
 
 import de.zib.gndms.dspace.common.DSpaceTools;
 import de.zib.gndms.dspace.service.globus.resource.ExtDSpaceResourceHome;
-import de.zib.gndms.dspace.subspace.common.SubspaceConstants;
 import de.zib.gndms.dspace.subspace.stubs.types.SubspaceReference;
 import de.zib.gndms.infra.GNDMSTools;
+import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
@@ -60,27 +60,27 @@ public final class ExtSubspaceResourceHome extends SubspaceResourceHome
 
 	@Override
 	public synchronized void initialize() throws Exception {
-		if (!initialized) {
-			try {
-				logger.info("Subspace home extension initializing");
-				system = ExtDSpaceResourceHome.getGridConfig().retrieveSystemReference();
+        if (! initialized) {
+			logger.info("Extended Subspace home initializing");
+			try { try {
+                final GridConfig gridConfig = ExtDSpaceResourceHome.getGridConfig();
+                logger.debug("Config: " + gridConfig.asString());
+                system = gridConfig.retrieveSystemReference();
 				serviceAddress = GNDMSTools.getServiceAddressFromContext();
+
 				initialized = true;
 
-				try {
-					super.initialize();    // Overridden method
-                    system.refreshAllResources(this);
-				}
-				catch (RuntimeException e) {
-					initialized = false;
-					logger.error(e);
-					throw e;
-				}
+				super.initialize();    // Overridden method
 			}
-			catch (NamingException e) {
-				logger.error("Initialization failed");
+			catch ( NamingException e) {
 				throw new RuntimeException(e);
-			}
+			} }
+            catch (RuntimeException e) {
+                initialized = false;
+                logger.error("Initialization failed", e);
+                e.printStackTrace(System.err);
+                throw e;
+            }
 		}
 	}
 

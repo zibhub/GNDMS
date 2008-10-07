@@ -60,7 +60,9 @@ public class InstanceDirectory {
 
 
     @SuppressWarnings(
-            { "RawUseOfParameterizedType", "unchecked", "MethodWithTooExceptionsDeclared" })
+            {
+                    "RawUseOfParameterizedType", "unchecked", "MethodWithTooExceptionsDeclared",
+                    "RedundantCast" })
     public <M extends AbstractORQ, O extends AbstractORQCalculator<M, O>> O getORQCalculator(
             final @NotNull GNDMSystem sys,
             final @NotNull EntityManagerFactory emf,
@@ -75,7 +77,7 @@ public class InstanceDirectory {
                 throw new IllegalArgumentException("Incompatible class type detected");
 
             synchronized (orqCalcMap) {
-                Factory<O> instance = (Factory<O>) ((Factory) orqCalcMap.get(offerTypeKey));
+                Factory<O> instance = (Factory<O>) (Factory) orqCalcMap.get(offerTypeKey);
                 if (instance == null) {
                     instance = createORQCalculatorFactory(sys, type, clazz);
                     orqCalcMap.put(offerTypeKey, instance);
