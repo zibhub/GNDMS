@@ -5,10 +5,9 @@ import de.zib.gndms.dspace.service.globus.resource.ExtDSpaceResourceHome;
 import de.zib.gndms.dspace.subspace.stubs.types.SubspaceReference;
 import de.zib.gndms.infra.GNDMSTools;
 import de.zib.gndms.infra.GridConfig;
-import de.zib.gndms.infra.service.GNDMServiceHome;
+import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
-import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.dspace.Subspace;
 import org.apache.axis.message.addressing.AttributedURI;
 import org.apache.commons.logging.Log;
@@ -40,7 +39,7 @@ import javax.xml.namespace.QName;
  *          User: stepn Date: 16.07.2008 Time: 12:35:27
  */
 public final class ExtSubspaceResourceHome extends SubspaceResourceHome
-	  implements GNDMServiceHome<Subspace> {
+	  implements GNDMPersistentServiceHome<Subspace> {
 
 	// logger can be an instance field since resource home classes are instantiated at most once
 	@NotNull
@@ -130,6 +129,7 @@ public final class ExtSubspaceResourceHome extends SubspaceResourceHome
 	}
 
 
+    @NotNull
     public Query getListAllQuery(final @NotNull EntityManager em) {
         return em.createNamedQuery("listAllSubspaceIds");
     }
@@ -151,13 +151,12 @@ public final class ExtSubspaceResourceHome extends SubspaceResourceHome
         return Subspace.class;
     }
 
-    @NotNull
-    public ResourceKey getKeyForResourceModel( GridResource model ) {
-        return getKeyForId( model == null ?  null : model.getId() );
+    public ResourceKey getKeyForResourceModel( @NotNull Subspace model ) {
+        return getKeyForId(model.getId());
     }
 
     @NotNull
-    public ResourceKey getKeyForId( String id ) {
+    public ResourceKey getKeyForId( @NotNull String id ) {
         return new SimpleResourceKey( getKeyTypeName(), id );
     }
 

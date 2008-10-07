@@ -3,7 +3,7 @@ package de.zib.gndms.dspace.common;
 import de.zib.gndms.dspace.service.globus.resource.ExtDSpaceResourceHome;
 import de.zib.gndms.dspace.stubs.types.DSpaceReference;
 import de.zib.gndms.infra.GNDMSTools;
-import de.zib.gndms.infra.service.GNDMServiceHome;
+import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.model.common.GridResource;
@@ -47,7 +47,7 @@ public class DSpaceTools {
 
 
     @SuppressWarnings({ "unchecked" })
-    public static <M extends GridResource, H extends GNDMServiceHome<M> & ResourceHome>
+    public static <M extends GridResource, H extends GNDMPersistentServiceHome<M> & ResourceHome>
          void refreshModelResource( M model, H home ) throws ResourceException {
 
         ResourceKey key = home.getKeyForResourceModel( model );

@@ -1,10 +1,10 @@
 package de.zib.gndms.infra.system;
 
 import de.zib.gndms.infra.GridConfig;
-import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
+import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
 import de.zib.gndms.kit.monitor.ActionCaller;
 import de.zib.gndms.kit.monitor.GroovyMoniServer;
-import de.zib.gndms.infra.service.GNDMServiceHome;
+import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
 import de.zib.gndms.logic.model.*;
 import de.zib.gndms.logic.util.LogicTools;
 import de.zib.gndms.model.common.GridResource;
@@ -37,10 +37,10 @@ import javax.persistence.Query;
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.IOException;
+import static java.lang.Thread.sleep;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.*;
-import static java.lang.Thread.sleep;
 
 
 /**
@@ -415,7 +415,7 @@ public final class GNDMSystem
     @SuppressWarnings({ "unchecked" })
     private <M extends GridResource> void onModelChange_(final M model) throws ResourceException {
         final Class<M> modelClazz = (Class<M>) model.getClass();
-        GNDMServiceHome<M> home = getInstanceDir().getHome(modelClazz);
+        GNDMPersistentServiceHome<M> home = getInstanceDir().getHome(modelClazz);
         home.refresh(model);
     }
 
@@ -423,7 +423,7 @@ public final class GNDMSystem
 
     @SuppressWarnings({ "unchecked", "MethodMayBeStatic" })
     public @NotNull <M extends GridResource> List<String> listAllResources(
-            final @NotNull GNDMServiceHome<M> home, final @NotNull EntityManager em) {
+            final @NotNull GNDMPersistentServiceHome<M> home, final @NotNull EntityManager em) {
         Query query = home.getListAllQuery(em);
         return query.getResultList();
     }
@@ -453,7 +453,7 @@ public final class GNDMSystem
 
 
     public final <M extends GridResource> void refreshAllResources(
-            final @NotNull GNDMServiceHome<M> home) {
+            final @NotNull GNDMPersistentServiceHome<M> home) {
         final EntityManager manager = home.getEntityManagerFactory().createEntityManager();
         try {
             try {
@@ -616,7 +616,10 @@ public final class GNDMSystem
 					try {
 						if (setupShellService)
 							newInstance.setupShellService();
+                        logger.debug("GNDMS_DEBUG "
+                                + (sharedConfig.isDebugMode() ? "true" : "false"));
 					}
+
 					catch (Exception e) {
 						throw new RuntimeException(e);
 					}

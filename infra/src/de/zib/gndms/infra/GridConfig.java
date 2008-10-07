@@ -92,10 +92,16 @@ public abstract class GridConfig {
 
 	public GNDMSystem retrieveSystemReference() throws NamingException {
 		Context context = getGridContext(Constants.JNDI_DB_CONTEXT_NAME);
-        boolean debugMode = System.getenv("GNDMS_DEBUG") != null;
-        logger.info("GNDMS_DEBUG " + (debugMode ? "true" : "false"));
+        boolean debugMode = isDebugMode();
 		return GNDMSystem.lookupSystem(context, Constants.JNDI_DB_FACADE_INSTANCE_NAME,  this, debugMode);
 	}
+
+
+    @SuppressWarnings({ "MethodMayBeStatic" })
+    public boolean isDebugMode() {
+        return System.getenv("GNDMS_DEBUG") != null;
+    }
+
 
     public String asString() {
         try {

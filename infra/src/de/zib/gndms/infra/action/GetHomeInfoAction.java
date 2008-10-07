@@ -2,6 +2,7 @@ package de.zib.gndms.infra.action;
 
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.service.GNDMSingletonServiceHome;
+import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
 import de.zib.gndms.logic.action.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigOption;
@@ -53,7 +54,7 @@ public class GetHomeInfoAction extends SystemAction<String> {
     @Override
     public @NotNull String execute(final @NotNull EntityManager em, 
                                    final @NotNull PrintWriter writer) {
-        final @NotNull GNDMServiceHome<?> instance =
+        final @NotNull GNDMServiceHome instance =
                 getSystem().getInstanceDir().lookupServiceHome(home);
 
         StringBuilder buffer = new StringBuilder(CAPACITY);
@@ -62,9 +63,9 @@ public class GetHomeInfoAction extends SystemAction<String> {
         buffer.append(nick);
         buffer.append("'; ");
 
-        if (instance instanceof GNDMSingletonServiceHome<?>){
+        if (instance instanceof GNDMSingletonServiceHome){
             try {
-                String singleId = ((GNDMSingletonServiceHome<?>)instance).getSingletonID();
+                String singleId = ((GNDMSingletonServiceHome)instance).getSingletonID();
                 buffer.append("singletonId: '");
                 buffer.append(singleId == null ? "(null)" : singleId);
                 buffer.append("'; ");
@@ -75,17 +76,20 @@ public class GetHomeInfoAction extends SystemAction<String> {
         }
         buffer.append("serviceAddress: '");
         final URI addr = instance.getServiceAddress();
-        buffer.append(addr == null ? "(null)" : addr.toString());
+        buffer.append(addr.toString());
         buffer.append("'; ");
 
         buffer.append("homeClass: '");
         buffer.append(instance.getClass().getName());
         buffer.append("'; ");
 
-        buffer.append("modelClass: '");
-        final Class<? extends GridResource> modelClass = instance.getModelClass();
-        buffer.append(modelClass.getName());
-        buffer.append("'; ");
+        if (instance instanceof GNDMPersistentServiceHome) {
+            buffer.append("modelClass: '");
+            final Class<? extends GridResource> modelClass =
+                    ((GNDMPersistentServiceHome<?>) instance).getModelClass();
+            buffer.append(modelClass.getName());
+            buffer.append("'; ");
+        }
 
         buffer.append("keyTypeClass: '");
         final Class<?> keyClass = instance.getKeyTypeClass();

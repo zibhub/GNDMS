@@ -22,7 +22,7 @@ import javax.xml.namespace.QName;
  *
  *          User: stepn Date: 08.08.2008 Time: 13:30:08
  */
-public final class GNDMServiceHomeMockup implements GNDMServiceHome<DSpace> {
+public final class GNDMServiceHomeMockup implements GNDMServiceHome {
 	private final GNDMSystem sys;
 
 
@@ -31,7 +31,8 @@ public final class GNDMServiceHomeMockup implements GNDMServiceHome<DSpace> {
 	}
 
 
-	public URI getServiceAddress() {
+	@NotNull
+    public URI getServiceAddress() {
 		throw new UnsupportedOperationException();
 	}
 
@@ -85,7 +86,7 @@ public final class GNDMServiceHomeMockup implements GNDMServiceHome<DSpace> {
 
 
     @NotNull
-    public ResourceKey getKeyForId(final String id) {
+    public ResourceKey getKeyForId(@NotNull final String id) {
         throw new UnsupportedOperationException("Mockup");
     }
 

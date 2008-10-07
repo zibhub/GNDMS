@@ -1,14 +1,15 @@
 package de.zib.gndms.infra.system;
 
-import de.zib.gndms.kit.monitor.GroovyBindingFactory;
-import de.zib.gndms.kit.monitor.GroovyMoniServer;
+import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.service.GNDMSingletonServiceHome;
 import de.zib.gndms.kit.factory.Factory;
+import de.zib.gndms.kit.monitor.GroovyBindingFactory;
+import de.zib.gndms.kit.monitor.GroovyMoniServer;
+import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
-import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.apache.commons.logging.Log;
@@ -40,7 +41,7 @@ public class InstanceDirectory {
     private final @NotNull String systemName;
 
     private final @NotNull Map<String, Object> instances;
-    private final @NotNull Map<Class<? extends GridResource>, GNDMServiceHome<?>> homes;
+    private final @NotNull Map<Class<? extends GridResource>, GNDMPersistentServiceHome<?>> homes;
 
     @SuppressWarnings({ "RawUseOfParameterizedType" })
     private final @NotNull Map<String, Factory<? extends AbstractORQCalculator>>
@@ -48,14 +49,17 @@ public class InstanceDirectory {
 
     InstanceDirectory(final @NotNull String sysNameParam) {
         instances = new HashMap<String, Object>(INITIAL_CAPACITY);
-        homes = new HashMap<Class<? extends GridResource>, GNDMServiceHome<?>>(INITIAL_CAPACITY);
+        homes = new HashMap<Class<? extends GridResource>, GNDMPersistentServiceHome<?>>(INITIAL_CAPACITY);
         systemName = sysNameParam;
     }
 
 
-    public synchronized void addHome(final @NotNull GNDMServiceHome<?> home)
+    public synchronized void addHome(final @NotNull GNDMServiceHome home)
             throws ResourceException {
-        addHome(home.getModelClass(), home);
+        if (home instanceof GNDMPersistentServiceHome<?>)
+            addHome(((GNDMPersistentServiceHome<?>) home).getModelClass(), home);
+        else
+            addHome(null, home);
     }
 
 
@@ -129,7 +133,7 @@ public class InstanceDirectory {
 
     @SuppressWarnings({ "HardcodedFileSeparator", "RawUseOfParameterizedType" })
     private synchronized <K extends GridResource> void addHome(
-            final @NotNull Class<K> modelClazz, final @NotNull GNDMServiceHome<?> home)
+            final Class<K> modelClazz, final @NotNull GNDMServiceHome home)
             throws ResourceException {
         if (homes.containsKey(modelClazz))
             throw new IllegalStateException("Name clash in home registration");
@@ -142,7 +146,7 @@ public class InstanceDirectory {
                     final String resourceName = home.getNickName() + "Resource";
                     addInstance_(resourceName, instance);
                     logger.debug(getSystemName() + " addSingletonResource: '"
-                            + resourceName + "' = '" + modelClazz.getName() + '/'
+                            + resourceName + "' = '" + (modelClazz == null ? "(no model class)" : modelClazz.getName()) + '/'
                             + ((GNDMSingletonServiceHome)home).getSingletonID() + '\'');
                 }
             }
@@ -154,15 +158,18 @@ public class InstanceDirectory {
                 instances.remove(homeName);
                 throw e;
             }
-            homes.put(modelClazz, home);
+            if (modelClazz != null)
+                homes.put(modelClazz, (GNDMPersistentServiceHome<?>) home);
         }
 
-        logger.debug(getSystemName() + " addHome: '" + modelClazz.getName() + '\'');
+        logger.debug(getSystemName() + " addHome: '" + home + '\'');
     }
 
     @SuppressWarnings({ "unchecked" })
-    public synchronized <M extends GridResource> GNDMServiceHome<M> getHome(Class<M> modelClazz) {
-        final GNDMServiceHome<M> home = (GNDMServiceHome<M>) homes.get(modelClazz);
+    public synchronized <M extends GridResource> GNDMPersistentServiceHome<M>
+    getHome(Class<M> modelClazz) {
+        final GNDMPersistentServiceHome<M> home =
+                (GNDMPersistentServiceHome<M>) homes.get(modelClazz);
         if (home == null)
             throw new IllegalStateException("Unknown home");
         return home;
@@ -174,7 +181,6 @@ public class InstanceDirectory {
 
         addInstance_(name, obj);
 
-        logger.debug(getSystemName() + " addInstance: '" + name + '\'');
     }
 
 
@@ -184,9 +190,11 @@ public class InstanceDirectory {
             throw new IllegalArgumentException("Reserved instance name");
 
         if (instances.containsKey(name))
-            throw new IllegalStateException("Name clash in instance registration");
+            throw new IllegalStateException("Name clash in instance registration: " + name);
         else
             instances.put(name, obj);
+
+        logger.debug(getSystemName() + " addInstance: '" + name + '\'');        
     }
 
 
@@ -200,7 +208,7 @@ public class InstanceDirectory {
         return clazz.cast(obj);
     }
 
-    public synchronized GNDMServiceHome<?> lookupServiceHome(@NotNull String instancePrefix) {
+    public synchronized GNDMServiceHome lookupServiceHome(@NotNull String instancePrefix) {
         return getInstance(GNDMServiceHome.class, instancePrefix+"Home");
     }
 

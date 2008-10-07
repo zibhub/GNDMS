@@ -5,10 +5,10 @@ import de.zib.gndms.dspace.common.DSpaceTools;
 import de.zib.gndms.dspace.service.DSpaceConfiguration;
 import de.zib.gndms.infra.GNDMSTools;
 import de.zib.gndms.infra.GridConfig;
+import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
 import de.zib.gndms.infra.service.GNDMSingletonServiceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
-import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.dspace.DSpace;
 import org.apache.axis.message.addressing.AttributedURI;
 import org.apache.commons.logging.Log;
@@ -38,7 +38,7 @@ import javax.xml.namespace.QName;
  *          User: stepn Date: 16.07.2008 Time: 12:35:27
  */
 public final class ExtDSpaceResourceHome  extends DSpaceResourceHome
-	  implements GNDMSingletonServiceHome<DSpace> {
+	  implements GNDMSingletonServiceHome, GNDMPersistentServiceHome<DSpace> {
 
 	// logger can be an instance field since resource home classes are instantiated at most once
 	@NotNull @SuppressWarnings({"FieldNameHidesFieldInSuperclass"})
@@ -142,51 +142,14 @@ public final class ExtDSpaceResourceHome  extends DSpaceResourceHome
 		}
 	}
 
-	@NotNull
-	public GNDMSystem getSystem() throws IllegalStateException {
-		ensureInitialized();
-		return system;
-	}
-
-	public void setSystem(@NotNull GNDMSystem newSystem) throws UnsupportedOperationException {
-		throw new UnsupportedOperationException("Cant overwrite system");
-	}
-
-	@NotNull
-	public EntityManagerFactory getEntityManagerFactory() {
-		return getSystem().getEntityManagerFactory();
-	}
-
-	@NotNull
-	public AttributedURI getServiceAddress() {
-		ensureInitialized();
-		return serviceAddress;
-	}
-
-    public Query getListAllQuery(final @NotNull EntityManager em) {
-        throw new UnsupportedOperationException();
-    }
-
-
-    public void refresh(final @NotNull DSpace resourceModel) throws ResourceException {
-        DSpaceTools.refreshModelResource(resourceModel, this);
-    }
-
-    
-    @NotNull
-    public String getNickName() {
-        return "dspace";
-    }
-
-
     @NotNull
     public Class<DSpace> getModelClass() {
         return DSpace.class;
     }
 
-    @NotNull
-    public ResourceKey getKeyForResourceModel( GridResource model ) {
-        return getKeyForId( model == null ? null : model.getId( ) );
+
+    public ResourceKey getKeyForResourceModel( @NotNull DSpace model ) {
+        return getKeyForId( model.getId( ) );
     }
 
 
@@ -202,8 +165,49 @@ public final class ExtDSpaceResourceHome  extends DSpaceResourceHome
     }
 
 
-    public ResourceKey getKeyForId(final String id) {
+    @NotNull
+    public Query getListAllQuery(final @NotNull EntityManager em) {
+        throw new UnsupportedOperationException();
+    }
+
+
+    public void refresh(final @NotNull DSpace resourceModel) throws ResourceException {
+        DSpaceTools.refreshModelResource(resourceModel, this);
+    }
+
+
+    @NotNull
+    public GNDMSystem getSystem() throws IllegalStateException {
+        ensureInitialized();
+        return system;
+    }
+
+
+    public void setSystem(@NotNull GNDMSystem newSystem) throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("Cant overwrite system");
+    }
+
+
+    @NotNull
+    public String getNickName() {
+        return "dspace";
+    }
+
+    public ResourceKey getKeyForId(@NotNull final String id) {
         return id == null ? null : new SimpleResourceKey( getKeyTypeName(), id );
+    }
+
+
+    @NotNull
+    public EntityManagerFactory getEntityManagerFactory() {
+        return getSystem().getEntityManagerFactory();
+    }
+
+
+    @NotNull
+    public AttributedURI getServiceAddress() {
+        ensureInitialized();
+        return serviceAddress;
     }
 
 

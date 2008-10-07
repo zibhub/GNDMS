@@ -1,29 +1,31 @@
 package de.zib.gndms.dspace.service;
 
 import de.zib.gndms.dspace.service.globus.resource.ExtDSpaceResourceHome;
+import de.zib.gndms.dspace.slice.service.globus.resource.ExtSliceResourceHome;
+import de.zib.gndms.dspace.stubs.types.UnknownSubspace;
 import de.zib.gndms.dspace.subspace.service.globus.resource.ExtSubspaceResourceHome;
 import de.zib.gndms.dspace.subspace.service.globus.resource.SubspaceResource;
 import de.zib.gndms.dspace.subspace.stubs.types.SubspaceReference;
-import de.zib.gndms.dspace.stubs.types.UnknownSubspace;
+import de.zib.gndms.infra.model.GridResourceModelHandler;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.system.InstanceDirectory;
-import de.zib.gndms.infra.model.GridResourceModelHandler;
-import de.zib.gndms.model.dspace.Subspace;
+import de.zib.gndms.logic.model.ModelAction;
+import de.zib.gndms.logic.model.dspace.CreateSliceAction;
+import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
-import de.zib.gndms.model.common.ImmutableScopedName;
-import de.zib.gndms.logic.model.dspace.CreateSliceAction;
-import de.zib.gndms.logic.model.ModelAction;
-import org.apache.log4j.Logger;
+import de.zib.gndms.model.dspace.Subspace;
 import org.apache.axis.types.URI;
+import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
-import javax.xml.namespace.QName;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.xml.namespace.QName;
 import java.rmi.RemoteException;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * TODO:I am the service side implementation class.  IMPLEMENT AND DOCUMENT ME
@@ -53,15 +55,15 @@ public class DSpaceImpl extends DSpaceImplBase {
     public DSpaceImpl() throws RemoteException {
         super();
         try {
-            final ExtDSpaceResourceHome home = getResourceHome();
+            final @NotNull ExtDSpaceResourceHome home = getResourceHome();
             system = home.getSystem();
             InstanceDirectory instanceDir = system.getInstanceDir();
             instanceDir.addHome(home);
             instanceDir.addHome(getSubspaceResourceHome());            
-            // TODO
-            // system.addHome(getSliceResourceHome());
+            instanceDir.addHome(getSliceResourceHome());
         }
         catch (Exception e) {
+            e.printStackTrace(System.err);
             throw new RuntimeException(e);
         }
     }
@@ -202,6 +204,12 @@ public class DSpaceImpl extends DSpaceImplBase {
     @Override
     public ExtSubspaceResourceHome getSubspaceResourceHome() throws Exception {
         return (ExtSubspaceResourceHome) super.getSubspaceResourceHome();    // Overridden method
+    }
+
+
+    @Override
+    public ExtSliceResourceHome getSliceResourceHome() throws Exception {
+        return (ExtSliceResourceHome) super.getSliceResourceHome();    // Overridden method
     }
 }
 

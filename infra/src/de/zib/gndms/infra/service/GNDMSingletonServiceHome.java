@@ -1,6 +1,5 @@
 package de.zib.gndms.infra.service;
 
-import de.zib.gndms.model.common.GridResource;
 import org.globus.wsrf.ResourceException;
 
 
@@ -13,6 +12,6 @@ import org.globus.wsrf.ResourceException;
  *          User: stepn Date: 15.08.2008 Time: 18:29:01
  */
 @SuppressWarnings({ "MarkerInterface" })
-public interface GNDMSingletonServiceHome<H extends GridResource> extends GNDMServiceHome<H> {
+public interface GNDMSingletonServiceHome extends GNDMServiceHome {
     String getSingletonID() throws ResourceException;
 }

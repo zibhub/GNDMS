@@ -1,15 +1,9 @@
 package de.zib.gndms.GORFX.service.globus.resource;
 
-import org.globus.wsrf.InvalidResourceKeyException;
-import org.globus.wsrf.NoSuchResourceException;
-import org.globus.wsrf.ResourceException;
-import org.globus.wsrf.ResourceKey;
+import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
 import org.apache.axis.types.URI;
 
 import java.util.ArrayList;
-
-import de.zib.gndms.GORFX.common.GORFXClientTools;
-import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
 
 
 /** 

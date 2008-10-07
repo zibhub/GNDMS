@@ -1,29 +1,28 @@
 package de.zib.gndms.dspace.slice.service.globus.resource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.axis.types.URI;
-import org.apache.axis.message.addressing.AttributedURI;
-import org.jetbrains.annotations.NotNull;
-import org.globus.wsrf.ResourceException;
-import org.globus.wsrf.ResourceKey;
-import org.globus.wsrf.Resource;
-import org.globus.wsrf.impl.SimpleResourceKey;
-import de.zib.gndms.infra.service.GNDMServiceHome;
-import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.dspace.common.DSpaceTools;
+import de.zib.gndms.dspace.service.globus.resource.ExtDSpaceResourceHome;
 import de.zib.gndms.infra.GNDMSTools;
 import de.zib.gndms.infra.GridConfig;
+import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
+import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
-import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.dspace.Slice;
-import de.zib.gndms.dspace.service.globus.resource.ExtDSpaceResourceHome;
-import de.zib.gndms.dspace.common.DSpaceTools;
+import org.apache.axis.message.addressing.AttributedURI;
+import org.apache.axis.types.URI;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.globus.wsrf.Resource;
+import org.globus.wsrf.ResourceException;
+import org.globus.wsrf.ResourceKey;
+import org.globus.wsrf.impl.SimpleResourceKey;
+import org.jetbrains.annotations.NotNull;
 
-import javax.xml.namespace.QName;
+import javax.naming.NamingException;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
-import javax.persistence.EntityManager;
-import javax.naming.NamingException;
+import javax.xml.namespace.QName;
 
 
 /**
@@ -40,7 +39,7 @@ import javax.naming.NamingException;
  *          User: stepn Date: 16.07.2008 Time: 12:35:27
  */
 public final class ExtSliceResourceHome extends SliceResourceHome
-    implements GNDMServiceHome {
+    implements GNDMPersistentServiceHome<Slice> {
 
 	// logger can be an instance field since resource home classes are instantiated at most once
 	@NotNull
@@ -102,6 +101,7 @@ public final class ExtSliceResourceHome extends SliceResourceHome
         return instance;
     }
 
+    @NotNull
     public URI getServiceAddress() {
         ensureInitialized();
 		return serviceAddress;
@@ -122,22 +122,23 @@ public final class ExtSliceResourceHome extends SliceResourceHome
         return system;
     }
 
-    public void setSystem( @NotNull GNDMSystem system ) throws IllegalStateException {
+    public void setSystem( @NotNull GNDMSystem systemParam ) throws IllegalStateException {
         throw new UnsupportedOperationException("Cant overwrite system");
     }
 
+    @NotNull
     public Query getListAllQuery(final @NotNull EntityManager em) {
         return em.createNamedQuery("listAllSliceIds");
     }
 
 
-    public void refresh( @NotNull GridResource resource ) throws ResourceException {
+    public void refresh( @NotNull Slice resource ) throws ResourceException {
         DSpaceTools.refreshModelResource( resource, this );
     }
 
     @NotNull
     public String getNickName() {
-        return "Slice";
+        return "slice";
     }
 
     @NotNull
@@ -145,14 +146,13 @@ public final class ExtSliceResourceHome extends SliceResourceHome
         return Slice.class;
     }
 
-    @NotNull
-    public ResourceKey getKeyForResourceModel( GridResource model ) {
-        return getKeyForId( model == null ?  null : model.getId() );
+    public ResourceKey getKeyForResourceModel( @NotNull Slice model ) {
+        return getKeyForId(model.getId());
     }
 
 
     @NotNull
-    public ResourceKey getKeyForId(final String id) {
+    public ResourceKey getKeyForId(@NotNull final String id) {
         return new SimpleResourceKey( getKeyTypeName(), id );
     }
 }
