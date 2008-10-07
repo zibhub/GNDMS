@@ -407,11 +407,11 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
         protected static void printOptionHelp(final @NotNull PrintWriter writer,
                                               final Map<String, ConfigOption> mapParam) {
             Object[] entries = mapParam.entrySet().toArray();
-            Arrays.sort(entries, new Comparator<Object>() {
-                public int compare(final Object o1, final Object o2) {
-                    return
-                }
-            });
+      //      Arrays.sort(entries, new Comparator<Object>() {
+      //          public int compare(final Object o1, final Object o2) {
+      //              return
+      //          }
+      //      });
             for (Map.Entry<String, ConfigOption> entry : mapParam.entrySet()) {
                 writer.print(" * ");
                 final String key = entry.getKey();
