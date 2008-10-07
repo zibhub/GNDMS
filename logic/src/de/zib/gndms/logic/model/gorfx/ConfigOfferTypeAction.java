@@ -23,7 +23,7 @@ import java.util.Properties;
  *          User: stepn Date: 06.10.2008 Time: 11:50:03
  */
 @ConfigActionHelp(shortHelp="Configure already setup OfferTypes", longHelp="Configure already setup OfferTypes of this GNDMS installation or print their current configuration")
-public class ConfigOfferType extends ConfigAction<String> {
+public class ConfigOfferTypeAction extends ConfigAction<String> {
     public enum OutFormat { PROPS, OPTS }
 
     public enum UpdateMode { UPDATE, OVERWRITE, DELKEYS }

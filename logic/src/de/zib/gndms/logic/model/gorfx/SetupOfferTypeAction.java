@@ -27,7 +27,7 @@ import java.util.Properties;
  *          User: stepn Date: 15.09.2008 Time: 17:06:54
  */
 @ConfigActionHelp(shortHelp="Sets up supported OfferTypes", longHelp="Create, Update and Delete all OfferTypes supported by this GNDMS installation")
-public class SetupOfferType extends SetupAction<Void> {
+public class SetupOfferTypeAction extends SetupAction<Void> {
     @ConfigOption(descr="Unique URI identifying this offerType; must match entries in given arg and result xsd types")
     private String key;
 
