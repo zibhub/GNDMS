@@ -55,7 +55,7 @@ public class SetupSliceKindAction extends SetupAction<Void> {
     }
 
 
-    public void inititalize( ) {
+    public void initialize( ) {
 
         try{
             if( URI == null && (isCreating() || hasOption("uri") ))
