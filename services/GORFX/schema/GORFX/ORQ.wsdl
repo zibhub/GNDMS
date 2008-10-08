@@ -33,14 +33,14 @@
             <element name="offerExecutionContract">
               <complexType>
                 <sequence>
-                  <element ref="ns7:OfferExecutionContract" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns5:OfferExecutionContract" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="context">
               <complexType>
                 <sequence>
-                  <element ref="ns7:Context" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns5:Context" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -50,7 +50,7 @@
       <element name="GetOfferAndDestroyRequestResponse">
         <complexType>
           <sequence>
-            <element ref="ns2:EndpointReference" minOccurs="1" maxOccurs="1" />
+            <element ref="ns4:EndpointReference" minOccurs="1" maxOccurs="1" />
           </sequence>
         </complexType>
       </element>
@@ -60,14 +60,14 @@
             <element name="offerExecutionContract">
               <complexType>
                 <sequence>
-                  <element ref="ns7:OfferExecutionContract" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns5:OfferExecutionContract" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="context">
               <complexType>
                 <sequence>
-                  <element ref="ns7:Context" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns5:Context" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -77,16 +77,16 @@
       <element name="PermitEstimateAndDestroyRequestResponse">
         <complexType>
           <sequence>
-            <element ref="ns7:OfferExecutionContract" minOccurs="1" maxOccurs="1" />
+            <element ref="ns5:OfferExecutionContract" minOccurs="1" maxOccurs="1" />
           </sequence>
         </complexType>
       </element>
       <element name="ORQResourceProperties">
         <complexType>
           <sequence>
-            <element ref="ns6:CurrentTime" />
-            <element ref="ns6:TerminationTime" />
-            <element ref="ns7:OfferRequestArguments" />
+            <element ref="ns2:CurrentTime" />
+            <element ref="ns2:TerminationTime" />
+            <element ref="ns5:OfferRequestArguments" />
           </sequence>
         </complexType>
       </element>
