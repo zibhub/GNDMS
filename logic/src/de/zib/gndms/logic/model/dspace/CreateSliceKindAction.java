@@ -1,15 +1,13 @@
 package de.zib.gndms.logic.model.dspace;
 
-import de.zib.gndms.model.dspace.types.SliceKindMode;
+import de.zib.gndms.logic.model.AbstractModelAction;
 import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.SliceKind;
-import de.zib.gndms.logic.model.AbstractModelAction;
-
-import java.util.Set;
-
+import de.zib.gndms.model.dspace.types.SliceKindMode;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
+import java.util.Set;
 
 /**
  * Action to create a new slice kind object from scratch.

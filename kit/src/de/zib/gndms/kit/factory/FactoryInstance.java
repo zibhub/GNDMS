@@ -11,7 +11,10 @@ import org.jetbrains.annotations.NotNull;
  *
  *          User: stepn Date: 07.10.2008 Time: 10:58:31
  */
-public interface FactoryInstance<T extends FactoryInstance<T>> {
-    Factory<T> getFactory();
-    void setFactory(final @NotNull Factory<T> factoryParam);
+public interface FactoryInstance<K, T extends FactoryInstance<K, T>> {
+    Factory<K, T> getFactory();
+    void setFactory(final @NotNull Factory<K, T> factoryParam);
+
+    K getKey();
+    void setKey(final @NotNull K keyParam);
 }

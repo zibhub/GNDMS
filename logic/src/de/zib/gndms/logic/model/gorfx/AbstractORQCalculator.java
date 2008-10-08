@@ -4,7 +4,9 @@ import de.zib.gndms.kit.factory.Factory;
 import de.zib.gndms.kit.factory.FactoryInstance;
 import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
 import de.zib.gndms.model.gorfx.Contract;
+import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
+import org.jetbrains.annotations.NotNull;
 
 
 /**
@@ -14,13 +16,16 @@ import de.zib.gndms.model.gorfx.types.AbstractORQ;
  * User: bzcjorra Date: Sep 5, 2008 1:43:46 PM
  */
 public abstract class AbstractORQCalculator<M extends AbstractORQ, C extends AbstractORQCalculator<M, C>>
-    implements FactoryInstance<C> {
+    implements FactoryInstance<OfferType, AbstractORQCalculator<?, ?>> {
 
     private Contract perferredOfferExecution;
     private Class<M> orqModelClass;
     private M orqArguments;
     private NetworkAuxiliariesProvider netAux;
-    private Factory<C> factory;
+
+    private Factory<OfferType, AbstractORQCalculator<?,?>> factory;
+    private OfferType offerType;
+
 
     // here the computation of the required offer should be performed
     public abstract Contract createOffer( ) throws Exception;
@@ -80,12 +85,23 @@ public abstract class AbstractORQCalculator<M extends AbstractORQ, C extends Abs
     }
 
 
-    public Factory<C> getFactory() {
+    public Factory<OfferType, AbstractORQCalculator<?, ?>> getFactory() {
         return factory;
     }
 
 
-    public void setFactory(final Factory<C> factoryParam) {
+    public void setFactory(
+            final @NotNull Factory<OfferType, AbstractORQCalculator<?, ?>> factoryParam) {
         factory = factoryParam;
+    }
+
+
+    public OfferType getKey() {
+        return offerType;
+    }
+
+
+    public void setKey(final @NotNull OfferType keyParam) {
+        offerType = keyParam;
     }
 }

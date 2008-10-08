@@ -3,13 +3,13 @@ package de.zib.gndms.infra.system;
 import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.service.GNDMSingletonServiceHome;
-import de.zib.gndms.kit.factory.Factory;
+import de.zib.gndms.kit.factory.IndustrialPark;
 import de.zib.gndms.kit.monitor.GroovyBindingFactory;
 import de.zib.gndms.kit.monitor.GroovyMoniServer;
 import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
+import de.zib.gndms.logic.model.gorfx.ORQCalculatorMetaFactory;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.gorfx.OfferType;
-import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.apache.commons.logging.Log;
@@ -43,14 +43,22 @@ public class InstanceDirectory {
     private final @NotNull Map<String, Object> instances;
     private final @NotNull Map<Class<? extends GridResource>, GNDMPersistentServiceHome<?>> homes;
 
+
     @SuppressWarnings({ "RawUseOfParameterizedType" })
-    private final @NotNull Map<String, Factory<? extends AbstractORQCalculator>>
-            orqCalcMap = new HashMap<String, Factory<? extends AbstractORQCalculator>>(8);
+    private final @NotNull IndustrialPark<OfferType, String, AbstractORQCalculator<?, ?>> orqPark;
 
     InstanceDirectory(final @NotNull String sysNameParam) {
         instances = new HashMap<String, Object>(INITIAL_CAPACITY);
         homes = new HashMap<Class<? extends GridResource>, GNDMPersistentServiceHome<?>>(INITIAL_CAPACITY);
         systemName = sysNameParam;
+
+        orqPark = new IndustrialPark<OfferType, String, AbstractORQCalculator<?, ?>>() {
+            @Override
+            public String mapKey(final OfferType keyParam) {
+                return keyParam.getOfferTypeKey();
+            }
+        };
+        orqPark.setFactory(new ORQCalculatorMetaFactory());
     }
 
 
@@ -67,7 +75,7 @@ public class InstanceDirectory {
             {
                     "RawUseOfParameterizedType", "unchecked", "MethodWithTooExceptionsDeclared",
                     "RedundantCast" })
-    public <M extends AbstractORQ, O extends AbstractORQCalculator<M, O>> O getORQCalculator(
+    public AbstractORQCalculator<?,?> getORQCalculator(
             final @NotNull GNDMSystem sys,
             final @NotNull EntityManagerFactory emf,
             final @NotNull String offerTypeKey)
@@ -76,18 +84,7 @@ public class InstanceDirectory {
         EntityManager em = emf.createEntityManager();
         try {
             OfferType type = em.find(OfferType.class, offerTypeKey);
-            Class<O> clazz = (Class<O>) Class.forName(type.getCalculatorClassName());
-            if (! AbstractORQCalculator.class.isAssignableFrom(clazz))
-                throw new IllegalArgumentException("Incompatible class type detected");
-
-            synchronized (orqCalcMap) {
-                Factory<O> instance = (Factory<O>) (Factory) orqCalcMap.get(offerTypeKey);
-                if (instance == null) {
-                    instance = createORQCalculatorFactory(sys, type, clazz);
-                    orqCalcMap.put(offerTypeKey, instance);
-                }
-                return clazz.cast(instance.getInstance());
-            }
+            return orqPark.getInstance(type);
         }
         finally {
             if (! em.isOpen())
@@ -95,22 +92,6 @@ public class InstanceDirectory {
         }
     }
 
-
-    @SuppressWarnings({ "MethodMayBeStatic", "unchecked", "MethodWithTooExceptionsDeclared" })
-    private <M extends AbstractORQ, O extends AbstractORQCalculator<M, O>> Factory<O>
-    createORQCalculatorFactory(
-            final GNDMSystem sys, final OfferType typeParam, final Class<O> clazzParam)
-            throws ClassNotFoundException, IllegalAccessException, InstantiationException,
-            NoSuchMethodException, InvocationTargetException {
-        final Class<Factory<O>> clazz =
-                (Class<Factory<O>>)
-                        Factory.class.asSubclass(Class.forName(typeParam.getFactoryClassName()));
-        final Factory<O> oFactory = clazz.getConstructor(OfferType.class).newInstance(typeParam);
-        if (oFactory instanceof SystemHolder)
-            ((SystemHolder)oFactory).setSystem(sys);
-        oFactory.setup();
-        return oFactory;
-    }
 
 
     public @NotNull  <T> T retrieveInstance(@NotNull Class<T> clazz, @NotNull String name) {

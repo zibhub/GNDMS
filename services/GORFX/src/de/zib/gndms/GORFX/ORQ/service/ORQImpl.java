@@ -5,10 +5,9 @@ import de.zib.gndms.GORFX.ORQ.service.globus.resource.ORQResource;
 import de.zib.gndms.GORFX.common.type.io.ContractToXSDTypeWriter;
 import de.zib.gndms.GORFX.offer.service.globus.resource.ExtOfferResourceHome;
 import de.zib.gndms.GORFX.offer.service.globus.resource.OfferResource;
+import org.globus.wsrf.ResourceKey;
 
 import java.rmi.RemoteException;
-
-import org.globus.wsrf.ResourceKey;
 
 /** 
  * TODO:I am the service side implementation class.  IMPLEMENT AND DOCUMENT ME
@@ -36,6 +35,7 @@ public class ORQImpl extends ORQImplBase {
             ores.setOfferExecutionContract(
                 ContractToXSDTypeWriter.fromContract(
                     orq.getOfferEcecutionContract( offerExecutionContract ) ) );
+            ores.setOrqCalc(orq.getORQCalculator());
 
             home.remove( orq.getResourceKey() );
             

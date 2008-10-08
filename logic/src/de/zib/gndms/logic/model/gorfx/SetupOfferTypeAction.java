@@ -49,7 +49,7 @@ public class SetupOfferTypeAction extends SetupAction<Void> {
     @ConfigOption(descr="The ORQCalculator Factory Class")
     private Class<?> factoryClass;
 
-    @ConfigOption(descr = "File from which the initial config should be read")
+    @ConfigOption(descr = "File from which the initial config should be read; UPDATE will overwrite!")
     private String configFile;
 
     private Properties configProps;
@@ -86,11 +86,11 @@ public class SetupOfferTypeAction extends SetupAction<Void> {
                     throw new RuntimeException(e);
                 }
 
+            if (configProps == null)
+                configProps = new Properties();
+
             switch (getMode()) {
                 case CREATE:
-                    if (configProps == null)
-                        configProps = new Properties();
-
                     requireParameter("argScope", argScope);
                     requireParameter("argName", argName);
                     requireParameter("resScope", resScope);
@@ -142,9 +142,9 @@ public class SetupOfferTypeAction extends SetupAction<Void> {
 
     @SuppressWarnings({ "MethodWithMoreThanThreeNegations", "FeatureEnvy" })
     private void executeUpdate(final EntityManager em) {
-        final OfferType type = em.find(OfferType.class, getKey());
+        final @NotNull OfferType type = em.find(OfferType.class, getKey());
         if (factoryClass != null)
-            type.setFactoryClassName(factoryClass.getCanonicalName());
+            type.setCalculatorFactoryClassName(factoryClass.getCanonicalName());
         if (clazz != null)
             type.setCalculatorClassName(clazz.getName());
         if (argScope != null)
@@ -162,7 +162,8 @@ public class SetupOfferTypeAction extends SetupAction<Void> {
     @SuppressWarnings({ "FeatureEnvy" })
     private void executeCreate(final EntityManager em) {
         final OfferType type = new OfferType();
-        type.setFactoryClassName(getFactoryClass().getCanonicalName());
+        type.setOfferTypeKey(getKey());
+        type.setCalculatorFactoryClassName(getFactoryClass().getCanonicalName());
         type.setCalculatorClassName(clazz.getName());
         type.setOfferArgumentType(new ImmutableScopedName(argScope, argName));
         type.setOfferResultType(new ImmutableScopedName(resScope, resName));
@@ -188,11 +189,9 @@ public class SetupOfferTypeAction extends SetupAction<Void> {
 
 
     private void pushConfigProps(final OfferType typeParam) {
-        if (configProps != null) {
-            Map<String, String> map = new HashMap<String, String>(configProps.size());
-            configProps.putAll(map);
-            typeParam.setConfigMap(map);
-        }
+        Map<String, String> map = new HashMap<String, String>(configProps.size());
+        configProps.putAll(map);
+        typeParam.setConfigMap(map);
     }
 
 

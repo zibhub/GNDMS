@@ -1,6 +1,7 @@
 package de.zib.gndms.GORFX.ORQ.service.globus.resource;
 
 import org.globus.wsrf.ResourceException;
+import org.apache.axis.types.URI;
 import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
 import de.zib.gndms.model.gorfx.Contract;
 import de.zib.gndms.GORFX.common.GORFXTools;
@@ -25,7 +26,8 @@ public class ORQResource extends ORQResourceBase {
 
         final GNDMSystem sys = home.getSystem();
         try {
-            ORQCalculator = sys.getInstanceDir().getORQCalculator( sys, sys.getEntityManagerFactory(), offerRequestArguments.getOfferType( ).toString());
+            final URI offerTypeUri = offerRequestArguments.getOfferType();
+            ORQCalculator = sys.getInstanceDir().getORQCalculator( sys, sys.getEntityManagerFactory(), offerTypeUri.toString());
             ORQCalculator.setORQArguments( GORFXTools.convertFromORQT( offerRequestArguments ) );
             ORQCalculator.setNetAux( home.getSystem().getNetAux() );
         }
