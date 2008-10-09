@@ -1,7 +1,6 @@
 package de.zib.gndms.model.gorfx.types.io;
 
 import de.zib.gndms.model.gorfx.types.MinMaxPair;
-import de.zib.gndms.model.gorfx.types.LevelRange;
 
 import java.util.Properties;
 
@@ -25,42 +24,33 @@ public class SpaceConstraintPropertyWriter extends AbstractPropertyIO implements
 
 
     public void writeLatitude( MinMaxPair lat ) {
-        writeLatitudeToProperty( getProperties(), lat );
+        getProperties( ).setProperty( SfrProperty.LAT_MIN.key, Double.toString( lat.getMinValue( ) ) );
+        getProperties( ).setProperty( SfrProperty.LAT_MAX.key, Double.toString( lat.getMaxValue( ) ) );
     }
 
 
     public void writeLongitude( MinMaxPair lon ) {
-        writeLongitudeToProperty( getProperties(), lon );
-    }
-
-
-    public LevelRangeWriter getLevelRangeWriter() {
-        return new LevelRangePropertyWriter( getProperties( ) );
-    }
-
-
-    public static void writeLatitudeToProperty( Properties prop, MinMaxPair lat ) {
-        prop.setProperty( SfrProperty.LAT_MIN.key, Double.toString( lat.getMinValue( ) ) );
-        prop.setProperty( SfrProperty.LAT_MAX.key, Double.toString( lat.getMaxValue( ) ) );
-    }
-
-
-    public static void writeLongitudeToProperty( Properties prop, MinMaxPair lon ) {
-        prop.setProperty( SfrProperty.LON_MIN.key, Double.toString( lon.getMinValue( ) ) );
-        prop.setProperty( SfrProperty.LON_MAX.key, Double.toString( lon.getMaxValue( ) ) );
+        getProperties( ).setProperty( SfrProperty.LON_MIN.key, Double.toString( lon.getMinValue( ) ) );
+        getProperties( ).setProperty( SfrProperty.LON_MAX.key, Double.toString( lon.getMaxValue( ) ) );
     }
     
 
+    public void writeAltitude( MinMaxPair alt ) {
+        getProperties( ).setProperty( SfrProperty.ALT_MIN.key, Double.toString( alt.getMinValue( ) ) );
+        getProperties( ).setProperty( SfrProperty.ALT_MAX.key, Double.toString( alt.getMaxValue( ) ) );
+    }
+
+
+    public void writeAreaCRS( String acrs ) {
+        getProperties().setProperty( SfrProperty.AREA_CRS.key, acrs );
+    }
+
+
+    public void writeVerticalCRS( String vcrs ) {
+        getProperties().setProperty( SfrProperty.ALT_VCRS.key, vcrs );
+    }
+
+
     public void done() {
-    }
-
-
-    public void beginWritingLevelRangeWriter() {
-        // not required here
-    }
-
-
-    public void doneWritingLevelRangeWriter() {
-        // not required here
     }
 }

@@ -10,10 +10,10 @@ import java.util.HashMap;
  */
 public class DataConstraints {
 
-    private SpaceConstraint spaceConstraint;
-    private TimeConstraint timeConstraint;
-    private String[] CFList;
-    private HashMap<String,String> constraintList;
+    private SpaceConstraint spaceConstraint; // required
+    private TimeConstraint timeConstraint; // not required
+    private String[] CFList; // required
+    private HashMap<String,String> constraintList; // required 
 
     
     public SpaceConstraint getSpaceConstraint() {
@@ -26,6 +26,11 @@ public class DataConstraints {
     }
 
 
+    public boolean hasTimeConstraint() {
+        return timeConstraint != null;
+    }
+
+
     public TimeConstraint getTimeConstraint() {
         return timeConstraint;
     }
@@ -34,6 +39,7 @@ public class DataConstraints {
     public void setTimeConstraint( TimeConstraint timeConstraint ) {
         this.timeConstraint = timeConstraint;
     }
+
 
 
     public String[] getCFList() {

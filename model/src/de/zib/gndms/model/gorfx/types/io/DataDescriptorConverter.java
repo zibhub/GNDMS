@@ -38,26 +38,26 @@ public class DataDescriptorConverter extends GORFXConverterBase<DataDescriptorWr
         getWriter().begin();
         getWriter().writeObjectList( NotNullStringArray( getModel().getObjectList() ) );
 
-        SpaceConstraint sc = getModel().getSpaceConstraint();
-        if( sc == null )
-            sc = new SpaceConstraint();
-        SpaceConstraintWriter scw = getWriter().getSpaceConstraintWriter();
-        SpaceConstraintConverter scc = new SpaceConstraintConverter( scw, sc );
-        scc.convert();
         
+        if( getModel().hasConstraints() ) {
+            getWriter().beginWritingDataConstraints( );
+            DataConstraintsWriter dcw = getWriter( ).getDataConstraintsWriter( );
+            DataConstraintsConverter dcc = new DataConstraintsConverter( dcw, getModel().getConstrains() );
+            dcc.convert();
+            getWriter().doneWritingDataConstraints( );
+        } else
+            getWriter().writeJustDownload( );
 
-        if( getModel().getTimeConstraint() != null )
-            getWriter().writeTimeConstraint( getModel().getTimeConstraint() );
-
-        getWriter().writeCFList( NotNullStringArray( getModel().getCFList() ) );
-
-        HashMap<String,String> hm = getModel().getConstraintList();
-        if( hm == null )
-            hm = new HashMap<String,String>( );
-        getWriter().writeConstraintList( hm );
 
         getWriter().writeDataFormat( NotNullString( getModel().getDataFormat() ) );
+
+        if( getModel().hasDataArchiveFormat() )
+            getWriter().writeDataArchiveFormat( getModel().getDataArchiveFormat() );
+
         getWriter().writeMetaDataFormat( NotNullString( getModel().getMetaDataFormat() ) );
+
+        if( getModel().hasMetaDataArchiveFormat() )
+            getWriter().writeMetaDataArchiveFormat( getModel().getMetaDataArchiveFormat() );
 
         getWriter().done();
     }

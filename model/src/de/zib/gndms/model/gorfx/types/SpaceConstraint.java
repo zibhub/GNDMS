@@ -9,25 +9,27 @@ package de.zib.gndms.model.gorfx.types;
  * User: bzcjorra Date: Sep 15, 2008 4:10:44 PM
  *
  */
-public class SpaceConstraint implements DataConstraint {
+public class SpaceConstraint {
 
-    private MinMaxPair latitude;
-    private MinMaxPair longitude;
-    private LevelRange Altitude;
-
-
-    public boolean hasLongitude( ) {
-        return longitude != null;
-    }
-
-
-    public boolean hasLatitude( ) {
-        return latitude != null;
-    }
+    private MinMaxPair latitude; // required
+    private MinMaxPair longitude; // required
+    private String areaCRS; // optional
+    private MinMaxPair altitude; // optional
+    private String verticalCRS; // optional
 
 
     public boolean hasAltitude( ) {
-        return Altitude != null;
+        return altitude != null;
+    }
+
+
+    public boolean hasAreaCRS( ) {
+        return areaCRS != null && areaCRS.length() != 0;
+    }
+
+
+    public boolean hasVerticalCRS( ) {
+        return verticalCRS != null && verticalCRS.length() != 0;
     }
 
 
@@ -51,12 +53,32 @@ public class SpaceConstraint implements DataConstraint {
     }
 
 
-    public LevelRange getAltitude() {
-        return Altitude;
+    public MinMaxPair getAltitude() {
+        return altitude;
     }
 
 
-    public void setAltitude( LevelRange altitude ) {
-        Altitude = altitude;
+    public void setAltitude( MinMaxPair altitude ) {
+        this.altitude = altitude;
+    }
+
+
+    public String getAreaCRS() {
+        return areaCRS;
+    }
+
+
+    public void setAreaCRS( String areaCRS ) {
+        this.areaCRS = areaCRS;
+    }
+
+
+    public String getVerticalCRS() {
+        return verticalCRS;
+    }
+
+
+    public void setVerticalCRS( String verticalCRS ) {
+        this.verticalCRS = verticalCRS;
     }
 }

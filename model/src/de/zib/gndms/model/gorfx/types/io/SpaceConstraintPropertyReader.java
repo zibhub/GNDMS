@@ -25,23 +25,42 @@ public class SpaceConstraintPropertyReader extends AbstractPropertyReader<SpaceC
     public void read() {
 
         getProduct().setLatitude(
-                PropertyReadWriteAux.readMinMaxPair(
-                    getProperties(),
-                    SfrProperty.LAT_MIN.key,
-                    SfrProperty.LAT_MAX.key
-                )
-            );
+            PropertyReadWriteAux.readMinMaxPair(
+                getProperties(),
+                SfrProperty.LAT_MIN.key,
+                SfrProperty.LAT_MAX.key
+            )
+        );
 
         getProduct().setLongitude(
+            PropertyReadWriteAux.readMinMaxPair(
+                getProperties(),
+                SfrProperty.LON_MIN.key,
+                SfrProperty.LON_MAX.key
+            )
+        );
+
+
+        if( getProperties().contains( SfrProperty.ALT_MIN.key )  ) {
+
+            getProduct( ).setAltitude(
                 PropertyReadWriteAux.readMinMaxPair(
                     getProperties(),
-                    SfrProperty.LON_MIN.key,
-                    SfrProperty.LON_MAX.key
+                    SfrProperty.ALT_MIN.key,
+                    SfrProperty.ALT_MAX.key
                 )
             );
-        
-        getProduct( ).setAltitude(
-            LevelRangePropertyReader.readLevelRange( getProperties() ) );
+        }
+
+
+        getProduct().setAreaCRS(
+            getProperties().getProperty( SfrProperty.AREA_CRS.key )
+        );
+
+
+        getProduct().setVerticalCRS(
+            getProperties().getProperty( SfrProperty.ALT_VCRS.key )
+        );
     }
 
 

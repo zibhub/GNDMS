@@ -22,7 +22,7 @@ public class DataDescriptor {
     private String[] objectList; // required
     private DataConstraints constrains; // not required 
     private String dataFormat; // required
-    private String dataArchiveFormat; // not requrried
+    private String dataArchiveFormat; // not required
     private String metaDataFormat; // required
     private String metaDataArchiveFormat; // not required
 

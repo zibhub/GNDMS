@@ -35,6 +35,11 @@ public enum SfrProperty {
 	REQUIRED_SIZE("c3grid.StageFileResponse.RequiredSize","5678"),
     // G2 additions
     META_FILE_FORMAT("c3grid.StageFileRequest.TargetMetaFileFormat"),
+    META_FILE_ARCHIVE_FORMAT("c3grid.StageFileRequest.TargetMetaFileArchiveFormat"),
+    FILE_ARCHIVE_FORMAT("c3grid.StageFileRequest.TargetFileArchiveFormat"),
+    JUST_DOWNLOAD("c3grid.StageFileRequest.JustDownload" ),
+    AREA_CRS("c3grid.StageFileRequest.SpaceConstr.AreaCRS"),
+
     // file transfer orq
     FILE_TRANSFER_SOURCE_URI("c3grid.FileTransferRequest.SourceURI"),
     FILE_TRANSFER_DESTINATION_URI("c3grid.FileTransferRequest.DestinationURI"),

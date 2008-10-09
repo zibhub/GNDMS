@@ -1,7 +1,6 @@
 package de.zib.gndms.model.gorfx.types.io;
 
 import de.zib.gndms.model.gorfx.types.MinMaxPair;
-import de.zib.gndms.model.gorfx.types.LevelRange;
 
 /**
  * Builder interface for a space constraint.
@@ -16,13 +15,12 @@ import de.zib.gndms.model.gorfx.types.LevelRange;
  */
 public interface SpaceConstraintWriter extends GORFXWriterBase {
 
-    public abstract void writeLatitude( MinMaxPair lat );
-    public abstract void writeLongitude( MinMaxPair lon );
+    public void writeLatitude( MinMaxPair lat );
+    public void writeLongitude( MinMaxPair lon );
 
-    // Methods for the altitude
-    // this methods are analogous to the SpaceConstraintWriter methods
-    // of DattaDescriptorConverter. Look their for details. 
-    public LevelRangeWriter getLevelRangeWriter();
-    public void beginWritingLevelRangeWriter();
-    public void doneWritingLevelRangeWriter();
+    public void writeAltitude( MinMaxPair alt );
+
+    public void writeVerticalCRS( String verticalCRS );
+
+    public void writeAreaCRS( String areaCRS );
 }

@@ -69,7 +69,7 @@ public class ORQResource extends ORQResourceBase {
     }
 
 
-   public Contract getOfferEcecutionContract( OfferExecutionContractT pref ) throws Exception {
+   public Contract getOfferExecutionContract( OfferExecutionContractT pref ) throws Exception {
 
        ORQCalculator.setJustEstimate( false );
        ORQCalculator.setPerferredOfferExecution( ContractXSDReader.readContract( pref ) );

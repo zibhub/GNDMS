@@ -35,7 +35,7 @@ public class ORQImpl extends ORQImplBase {
             ores.setOfferRequestArguments( orq.getOfferRequestArguments() );
             ores.setOfferExecutionContract(
                 ContractToXSDTypeWriter.fromContract(
-                    orq.getOfferEcecutionContract( offerExecutionContract ) ) );
+                    orq.getOfferExecutionContract( offerExecutionContract ) ) );
 
             home.remove( orq.getResourceKey() );
             

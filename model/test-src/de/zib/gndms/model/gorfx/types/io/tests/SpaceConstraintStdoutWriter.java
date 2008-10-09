@@ -1,7 +1,6 @@
 package de.zib.gndms.model.gorfx.types.io.tests;
 
 import de.zib.gndms.model.gorfx.types.io.SpaceConstraintWriter;
-import de.zib.gndms.model.gorfx.types.io.LevelRangeWriter;
 import de.zib.gndms.model.gorfx.types.MinMaxPair;
 
 /**
@@ -24,18 +23,20 @@ public class SpaceConstraintStdoutWriter implements SpaceConstraintWriter {
         showMinMax( lon, "    " );
     }
 
-    public LevelRangeWriter getLevelRangeWriter() {
-        return new LevelRangeStdoutWriter( );
-    }
 
-
-    public void beginWritingLevelRangeWriter() {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-
-    public void doneWritingLevelRangeWriter() {
+    public void writeAltitude( MinMaxPair alt ) {
         System.out.println( "  Altitude:" );
+        showMinMax( alt, "    " );
+    }
+
+
+    public void writeAreaCRS( String crs ) {
+        System.out.println( "AreaCRS:" + crs );
+    }
+
+
+    public void writeVerticalCRS( String crs ) {
+        System.out.println( "VerticalCRS:" + crs );
     }
 
 

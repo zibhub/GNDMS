@@ -11,7 +11,7 @@ import org.joda.time.format.ISODateTimeFormat;
  * <p/>
  * User: bzcjorra Date: Sep 15, 2008 4:11:00 PM
  */
-public class TimeConstraint implements DataConstraint {  
+public class TimeConstraint {  
 	
 	private DateTime minTime;
     private DateTime maxTime;
