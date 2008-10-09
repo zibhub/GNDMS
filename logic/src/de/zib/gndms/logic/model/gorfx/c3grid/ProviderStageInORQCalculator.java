@@ -1,7 +1,9 @@
-package de.zib.gndms.logic.model.gorfx;
+package de.zib.gndms.logic.model.gorfx.c3grid;
 
+import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
 import de.zib.gndms.model.gorfx.Contract;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
+
 
 /**
  * Example class of provider state in calculator.
@@ -13,8 +15,6 @@ import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
  *
  */
 public class ProviderStageInORQCalculator extends AbstractORQCalculator<ProviderStageInORQ, ProviderStageInORQCalculator> {
-
-
     public ProviderStageInORQCalculator() {
         super( );
         super.setORQModelClass( ProviderStageInORQ.class );
@@ -23,7 +23,6 @@ public class ProviderStageInORQCalculator extends AbstractORQCalculator<Provider
 
     @Override
     public Contract createOffer() throws Exception {
-        // todo: implement me
-        return null;
+        return getPerferredOfferExecution();
     }
 }

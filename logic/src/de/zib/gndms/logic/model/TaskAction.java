@@ -17,7 +17,8 @@ import java.io.Serializable;
  *          User: stepn Date: 15.09.2008 Time: 11:26:48
  */
 @SuppressWarnings({ "AbstractMethodCallInConstructor" })
-public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, M> {
+public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, M>
+{
     private TaskExecutionService service;
 
     private static final class ShutdownTaskActionException extends RuntimeException {
@@ -81,8 +82,18 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
         public boolean isDemandingAbort() { return true; }
     }
 
+    public TaskAction() {
+        super();
+    }
+
+    
     public TaskAction(final @NotNull EntityManager em, final @NotNull M model) {
         super();
+        initFromModel(em, model);
+    }
+
+
+    private void initFromModel(final EntityManager em, final M model) {
         final boolean created = model.getState().equals(TaskState.CREATED);
         final boolean contained = em.contains(model);
 
@@ -99,9 +110,14 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
         }
     }
 
-    
+
     public TaskAction(final @NotNull EntityManager em, final @NotNull String pk) {
         super();
+        initFromPk(em, pk);
+    }
+
+
+    private void initFromPk(final EntityManager em, final String pk) {
         setOwnEntityManager(em);
         try {
             em.getTransaction().begin();

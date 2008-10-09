@@ -22,7 +22,7 @@ import java.util.Properties;
  *
  *          User: stepn Date: 06.10.2008 Time: 11:50:03
  */
-@ConfigActionHelp(shortHelp="Configure already setup OfferTypes", longHelp="Configure already setup OfferTypes of this GNDMS installation or print their current configuration")
+@ConfigActionHelp(shortHelp="Configure already setup OfferTypes", longHelp="Configure already-setup OfferTypes of this GNDMS installation or print their current configuration")
 public class ConfigOfferTypeAction extends ConfigAction<String> {
     public enum OutFormat { PROPS, OPTS }
 
@@ -55,8 +55,8 @@ public class ConfigOfferTypeAction extends ConfigAction<String> {
 
     @Override
     public String execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer) {
-        final OfferType offerType = em.find(OfferType.class, getKey());
-        final Map<String, String> configMap;
+        final @NotNull OfferType offerType = em.find(OfferType.class, getKey());
+        final @NotNull Map<String, String> configMap;
 
         boolean update = false;
         switch (cfgUpdateMode) {

@@ -28,7 +28,7 @@ import java.text.ParseException;
 public abstract class ConfigAction<R> extends AbstractEntityAction<R>
         implements CommandAction<R> {
 
-    public static final Pattern OPTION_NAME_PATTERN = Pattern.compile("[a-z][a-zA-Z0-9-_]*");
+    public static final Pattern OPTION_NAME_PATTERN = Pattern.compile("[a-zA-Z][a-zA-Z0-9-_]*");
 
     private Map<String, String> cmdParams;
     private PrintWriter printWriter;
@@ -407,12 +407,15 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
         protected static void printOptionHelp(final @NotNull PrintWriter writer,
                                               final Map<String, ConfigOption> mapParam) {
             Object[] entries = mapParam.entrySet().toArray();
-      //      Arrays.sort(entries, new Comparator<Object>() {
-      //          public int compare(final Object o1, final Object o2) {
-      //              return
-      //          }
-      //      });
-            for (Map.Entry<String, ConfigOption> entry : mapParam.entrySet()) {
+            Arrays.sort(entries, new Comparator<Object>() {
+                @SuppressWarnings({ "unchecked" })
+                public int compare(final Object o1, final Object o2) {
+                    return ((Map.Entry<String, ConfigOption>)o1).getKey().compareTo(((Map.Entry<String, ConfigOption>)o2).getKey());
+                }
+            });
+            for (Object obj : entries) {
+                Map.Entry<String, ConfigOption> entry = (Map.Entry<String, ConfigOption>) obj;
+
                 writer.print(" * ");
                 final String key = entry.getKey();
                 writer.print(key);

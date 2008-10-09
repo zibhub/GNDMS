@@ -20,6 +20,11 @@ public class DummyTaskAction extends TaskAction<Task> {
     private long sleepInProgress;
 
 
+    public DummyTaskAction() {
+        super();
+    }
+
+
     public DummyTaskAction(final @NotNull EntityManager em, final @NotNull Task model) {
         super(em, model);
     }

@@ -31,9 +31,11 @@ import java.util.Set;
 public class SetupSliceKindAction extends SetupAction<Void> {
 
     @ConfigOption(descr="The URI of the slice kind (the PK for the db record)")
-    private String  URI; // must be unique
+    private String uri; // must be unique
+
     @ConfigOption(descr="The write mode of the slice kind (its a required attribute)")
     private SliceKindMode sliceKindMode; // must not be null
+
     private Set<MetaSubspace> metaSubspaces; // can be null
     
     private SliceKind sliceKind;
@@ -43,23 +45,24 @@ public class SetupSliceKindAction extends SetupAction<Void> {
     }
 
     public SetupSliceKindAction( @NotNull String URI, @NotNull SliceKindMode sliceKindMode ) {
-        this.URI = URI;
+        this.uri = URI;
         this.sliceKindMode = sliceKindMode;
         this.metaSubspaces = null;
     }
 
     public SetupSliceKindAction( @NotNull String URI, @NotNull SliceKindMode sliceKindMode, Set<MetaSubspace> metaSubspaces ) {
-        this.URI = URI;
+        this.uri = URI;
         this.sliceKindMode = sliceKindMode;
         this.metaSubspaces = metaSubspaces;
     }
 
 
+    @Override
     public void initialize( ) {
 
         try{
-            if( URI == null && (isCreating() || hasOption("uri") ))
-                setURI(getOption("uri"));
+            if( uri == null && (isCreating() || hasOption("uri") ))
+                setUri(getOption("uri"));
             if( sliceKindMode == null && (isCreating() || hasOption("sliceKindMode")))
                 setSliceKindMode( Enum.valueOf( SliceKindMode.class , getOption("sliceKindMode")) );
         } catch ( MandatoryOptionMissingException e) {
@@ -71,7 +74,7 @@ public class SetupSliceKindAction extends SetupAction<Void> {
 
         super.initialize();
 
-        requireParameter( "URI", URI );
+        requireParameter( "uri", uri);
         requireParameter( "sliceKindMode", sliceKindMode );
     }
 
@@ -81,32 +84,34 @@ public class SetupSliceKindAction extends SetupAction<Void> {
         SliceKind r;
         if( isCreating() ) {
             r = new SliceKind( );
-            r.setURI( getURI( ) );
+            r.setURI( getUri( ) );
+            r.setMode( getSliceKindMode() ); 
             em.persist( r );
         } else {
-            r = em.find( SliceKind.class, getURI( ) );
+            r = em.find( SliceKind.class, getUri( ) );
             if ( r == null ) {
-                writer.println( "No slice kind with given found (uri: " + URI +")" );
+                writer.println( "No slice kind with given found (uri: " + uri +")" );
                 return null;
             }
             if( r.getMode( ).equals( getSliceKindMode( ) ) ) {
                 writer.println( "Given sliceKindMode is equal to the slice kinds current sliceKindMode. Nothing changed." );
                 return null;
             }
+
+            r.setMode( getSliceKindMode( ) );
         }
 
-        r.setMode( getSliceKindMode( ) );
-        
+
         return null;
     }
 
 
-    public String getURI() {
-        return URI;
+    public String getUri() {
+        return uri;
     }
 
-    public void setURI( String URI ) {
-        this.URI = URI;
+    public void setUri( String URI ) {
+        this.uri = URI;
     }
 
     public SliceKindMode getSliceKindMode() {

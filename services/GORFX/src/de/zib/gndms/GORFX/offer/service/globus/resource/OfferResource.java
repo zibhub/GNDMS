@@ -1,6 +1,7 @@
 package de.zib.gndms.GORFX.offer.service.globus.resource;
 
 import de.zib.gndms.logic.model.TaskAction;
+import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
 import de.zib.gndms.model.gorfx.Contract;
 import org.globus.wsrf.ResourceException;
 import types.DynamicOfferDataSeqT;
@@ -19,6 +20,8 @@ public class OfferResource extends OfferResourceBase {
     
     // maybe use custom model here
     private Contract contract;
+
+    private AbstractORQCalculator<?,?> orqCalc;
 
 
     public void setOfferExecutionContract( OfferExecutionContractT offerExecutionContract ) throws ResourceException {
@@ -41,7 +44,17 @@ public class OfferResource extends OfferResourceBase {
     }
 
 
-    public TaskAction accept() {
+    public AbstractORQCalculator<?, ?> getOrqCalc() {
+        return orqCalc;
+    }
+
+
+    public void setOrqCalc(final AbstractORQCalculator<?, ?> orqCalcParam) {
+        orqCalc = orqCalcParam;
+    }
+
+
+    public TaskAction<?> accept() {
 
         // todo: task instantiation therefor
         //  identify task action to use
@@ -49,7 +62,7 @@ public class OfferResource extends OfferResourceBase {
         //  use system to trigger task execution NOP done by TaskResource
         // todo: set contract for action
         //  return task
-
         return null;
+        
     }
 }

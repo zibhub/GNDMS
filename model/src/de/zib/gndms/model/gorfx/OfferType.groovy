@@ -11,6 +11,10 @@ import javax.persistence.Table
 import javax.persistence.OneToMany
 import javax.persistence.FetchType
 import static javax.persistence.CascadeType.ALL
+import javax.persistence.Basic
+import javax.persistence.Lob
+import javax.persistence.Transient
+
 
 /**
  * ThingAMagic.
@@ -24,7 +28,7 @@ import static javax.persistence.CascadeType.ALL
 @Table(name="offer_types", schema="gorfx")
 class OfferType {
     @Id
-    @Column(name="offerTypeKey", nullable=false, updatable=false, columnDefinition="VARCHAR")
+    @Column(name="offer_type_key", nullable=false, updatable=false, columnDefinition="VARCHAR")
     String offerTypeKey
 
     @Embedded
@@ -41,15 +45,23 @@ class OfferType {
     ])
     ImmutableScopedName offerArgumentType
 
-    @Column(name="className", nullable=false, updatable=false, columnDefinition="VARCHAR")
-    String calculatorClassName
+    @Column(name="calc_factory_class_name", nullable=false, updatable=true)
+    String calculatorFactoryClassName
 
-    @Column(name="factoryClassName", nullable=false, updatable=false)
-    String factoryClassName
+    @Column(name="task_action_factory_class_name", nullable=false, updatable=true, columnDefinition="VARCHAR")
+    String taskActionFactoryClassName
 
     @OneToMany(cascade=ALL, mappedBy="offerType", fetch=FetchType.LAZY)
     Set<Task> tasks
 
-    @Column(name="config", nullable=false, updatable=true)
-    Map<String, String> configMap
-}
+    @Column(name="config_map_data", nullable=false, updatable=true)
+    Serializable configMapData
+
+    Map<String, String> getConfigMap() {
+        return (Map<String, String>) getConfigMapData()
+    }
+
+    void setConfigMap(Map<String, String> newMap) {
+        setConfigMapData((Serializable) newMap)
+    }
+ }

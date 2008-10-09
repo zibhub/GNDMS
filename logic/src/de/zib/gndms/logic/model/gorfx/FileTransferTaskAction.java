@@ -2,7 +2,6 @@ package de.zib.gndms.logic.model.gorfx;
 
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.FileTransferORQ;
-import de.zib.gndms.logic.model.TaskAction;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -16,7 +15,13 @@ import javax.persistence.EntityManager;
 public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
 
     // note set new task to false when restoring a task form data base
-    
+
+
+    public FileTransferTaskAction() {
+        super();
+    }
+
+
     public FileTransferTaskAction( final @NotNull EntityManager em, final @NotNull Task model ) {
         super( em, model );
     }
@@ -27,12 +32,14 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
     }
 
 
+    @Override
     @NotNull
     protected Class<FileTransferORQ> getOrqClass() {
         return FileTransferORQ.class;
     }
 
 
+    @Override
     protected void onInProgress( @NotNull Task model ) {
         
     }

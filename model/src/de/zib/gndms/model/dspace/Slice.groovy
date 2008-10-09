@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn
 import javax.persistence.Table
 import de.zib.gndms.model.common.TimedGridResource
 import javax.persistence.OneToMany
+import javax.persistence.MappedSuperclass
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -25,6 +26,7 @@ import javax.persistence.OneToMany
  */
 @Entity(name="Slices")
 @Table(name="slices", schema="dspace")
+@MappedSuperclass
 public class Slice extends TimedGridResource {
 
     @Column( name="directory_id", nullable=false, updatable=false, columnDefinition="CHAR", length=36 )
