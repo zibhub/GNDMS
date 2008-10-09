@@ -182,6 +182,9 @@ DETAILED BUILD INSTRUCTIONS
   If you ever get weird errors during compilation or ant enhance, delete
   production/* and rebuild the whole project)
 
+- Compile gndms-kit.jar
+  Sources: kit/src
+  Output: kit/gndms-kit/production (resp. test) classes
 
 - Compile gndms-logic.jar
   Sources: logic/src (resp. test)
