@@ -128,19 +128,30 @@ public class ProviderStageInORQIOTest {
         dcon.convert( );
 
         try {
-            prop.store( System.out, "just downloanding?" );
+            prop2.store( System.out, "just downloading?" );
         } catch ( IOException e ) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         
-        if( prop2.contains( SfrProperty.JUST_DOWNLOAD.key ) == true )
-            System.out.println( ">>>>>>>>>>> JUST_DOWNLOAD containt");
+        if( prop2.containsKey( SfrProperty.JUST_DOWNLOAD.key ) )
+            System.out.println( ">>>>>>>>>>> JUST_DOWNLOAD contained");
         else
             throw new IllegalStateException( "JUST_DOWNLOAD missing" );
-        
 
         DataDescriptorPropertyReader ddpr = new DataDescriptorPropertyReader( prop2 );
         ddpr.performReading();
+        DataDescriptor ddt3 = ddpr.getProduct();
+
+        Properties prop3 = new Properties( );
+        ddw = new DataDescriptorPropertyWriter( prop3 );
+        dcon.setWriter( ddw );
+        dcon.setModel( ddt3 );
+        dcon.convert( );
+
+        if( prop2.equals( prop3 ) )
+            System.out.println( "Prop write read write: OKAY" );
+        else
+            System.out.println( "Prop write read write: ERROR (different results)"  );
 
     }
 

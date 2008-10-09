@@ -28,7 +28,7 @@ public class DataDescriptorPropertyReader extends AbstractPropertyReader<DataDes
 
     /**
      * Reads a provided property file.
-     * PRECONDITION  begin( ) must be called.
+     * PRECONDITION  begin( ) must have been called.
      */
     @Override
     public void read( ) {
@@ -36,7 +36,7 @@ public class DataDescriptorPropertyReader extends AbstractPropertyReader<DataDes
         getProduct( ).setObjectList(
             PropertyReadWriteAux.readListMultiLine( getProperties(), SfrProperty.OBJECT_ITEMS.key ) );
 
-        if(! getProperties().contains( SfrProperty.JUST_DOWNLOAD.key ) )
+        if(! getProperties().containsKey( SfrProperty.JUST_DOWNLOAD.key ) )
             getProduct().setConstrains( DataConstraintsPropertyReader.readDataConstraints( getProperties() ) );
 
         getProduct( ).setDataFormat( getProperties().getProperty( SfrProperty.FILE_FORMAT.key ) );
