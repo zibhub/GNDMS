@@ -9,17 +9,22 @@ import java.util.HashMap;
  * @verson \$id$
  * <p/>
  * User: bzcjorra Date: Sep 5, 2008 3:57:32 PM
+ *
+ * NOTE: for every not mandatory attribute of this class a has<AttributeName> method
+ *       is provided to check if the attribute is set or not.
+ * NOTE: If the constrains attribute is missing this should be interpreted as just download.
+ *       If *ArchivFormat is provided it means, do create an archive with the requested data in the
+ *          given format.
  */
 public class DataDescriptor {
 
     // todo maybe use a real object list here
-    private String[] objectList;
-    private SpaceConstraint spaceConstraint;
-    private TimeConstraint timeConstraint;
-    private String[] CFList;
-    private HashMap<String,String> constraintList;
-    private String dataFormat;
-    private String metaDataFormat;
+    private String[] objectList; // required
+    private DataConstraints constrains; // not required 
+    private String dataFormat; // required
+    private String dataArchiveFormat; // not required
+    private String metaDataFormat; // required
+    private String metaDataArchiveFormat; // not required
 
 
     public DataDescriptor() {
@@ -36,43 +41,18 @@ public class DataDescriptor {
     }
 
 
-    public SpaceConstraint getSpaceConstraint() {
-        return spaceConstraint;
+    public DataConstraints getConstrains() {
+        return constrains;
     }
 
 
-    public void setSpaceConstraint( SpaceConstraint spaceConstraint ) {
-        this.spaceConstraint = spaceConstraint;
+    public void setConstrains( DataConstraints constrains ) {
+        this.constrains = constrains;
     }
 
 
-    public TimeConstraint getTimeConstraint() {
-        return timeConstraint;
-    }
-
-
-    public void setTimeConstraint( TimeConstraint timeConstraint ) {
-        this.timeConstraint = timeConstraint;
-    }
-
-
-    public String[] getCFList() {
-        return CFList;
-    }
-
-
-    public void setCFList( String[] CFList ) {
-        this.CFList = CFList;
-    }
-
-
-    public HashMap<String, String> getConstraintList() {
-        return constraintList;
-    }
-
-
-    public void setConstraintList( HashMap<String, String> constraintList ) {
-        this.constraintList = constraintList;
+    public boolean hasConstraints( ) {
+        return constrains != null;
     }
 
 
@@ -86,6 +66,21 @@ public class DataDescriptor {
     }
 
 
+    public String getDataArchiveFormat() {
+        return dataArchiveFormat;
+    }
+
+
+    public void setDataArchiveFormat( String dataArchiveFormat ) {
+        this.dataArchiveFormat = dataArchiveFormat;
+    }
+
+
+    public boolean hasDataArchiveFormat() {
+        return dataArchiveFormat != null;
+    }
+
+
     public String getMetaDataFormat() {
         return metaDataFormat;
     }
@@ -95,4 +90,18 @@ public class DataDescriptor {
         this.metaDataFormat = metaDataFormat;
     }
 
+
+    public String getMetaDataArchiveFormat() {
+        return metaDataArchiveFormat;
+    }
+
+
+    public void setMetaDataArchiveFormat( String metaDataArchiveFormat ) {
+        this.metaDataArchiveFormat = metaDataArchiveFormat;
+    }
+
+
+    public boolean hasMetaDataArchiveFormat() {
+        return metaDataArchiveFormat != null;
+    }
 }

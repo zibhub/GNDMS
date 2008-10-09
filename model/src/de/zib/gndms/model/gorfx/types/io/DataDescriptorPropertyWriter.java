@@ -34,30 +34,14 @@ public class DataDescriptorPropertyWriter extends AbstractPropertyIO implements 
     }
 
 
-    public void writeTimeConstraint( @NotNull TimeConstraint timeConstraint ) {
-
-        if( timeConstraint.hasMinTime( ) )
-            TimeConstraintPropertyWriter.writeMinTimeToProperties( getProperties(), timeConstraint.getMinTime( ) );
-
-        if( timeConstraint.hasMaxTime( ) )
-            TimeConstraintPropertyWriter.writeMaxTimeToProperties( getProperties(), timeConstraint.getMaxTime( ) );
-    }
-
-
-    public void writeCFList( @NotNull String[] cflist ) {
-        List<String> cfl = Arrays.asList( cflist );
-        PropertyReadWriteAux.writeListMultiLine( getProperties(), SfrProperty.CFLIST_ITEMS.key, cfl );
-        PropertyReadWriteAux.writeList( getProperties(), SfrProperty.CFLIST_OLD.key, ' ', cfl );
-    }
-
-
-    public void writeConstraintList( @NotNull HashMap<String, String> constraintList ) {
-        PropertyReadWriteAux.writeMap( getProperties(), SfrProperty.CONSTRAINT_LIST.key, constraintList );
-    }
-
 
     public void writeDataFormat( @NotNull String dataFormat ) {
         getProperties().setProperty( SfrProperty.FILE_FORMAT.key, dataFormat );
+    }
+
+
+    public void writeDataArchiveFormat( String dataArchiveFormat ) {
+        getProperties().setProperty( SfrProperty.FILE_ARCHIVE_FORMAT.key, dataArchiveFormat );
     }
 
 
@@ -66,22 +50,32 @@ public class DataDescriptorPropertyWriter extends AbstractPropertyIO implements 
     }
 
 
-    public SpaceConstraintWriter getSpaceConstraintWriter() {
-        return new SpaceConstraintPropertyWriter( getProperties( ) );
+    public void writeMetaDataArchiveFormat( String metaDataArchiveFormat ) {
+        getProperties().setProperty( SfrProperty.META_FILE_ARCHIVE_FORMAT.key, metaDataArchiveFormat );
     }
 
 
-    public void beginWritingSpaceConstraint() {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void writeJustDownload() {
+        getProperties().setProperty( SfrProperty.JUST_DOWNLOAD.key, "true" );
     }
 
 
-    public void doneWritingSpaceConstraint() {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public DataConstraintsWriter getDataConstraintsWriter() {
+        return new DataConstraintsPropertyWriter( getProperties() );
+    }
+
+    
+    public void beginWritingDataConstraints() {
+        // Not required here
+    }
+
+
+    public void doneWritingDataConstraints() {
+        // Not required here
     }
 
 
     public void done() {
-        // not required here
+        // Not required here
     }
 }

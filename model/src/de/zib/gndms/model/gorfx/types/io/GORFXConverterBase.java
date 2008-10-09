@@ -21,7 +21,17 @@ public abstract class GORFXConverterBase<W,M> {
         this.model = model;
     }
 
+
+    /**
+     * Performs the writing by calling the getters of the model and
+     * the corresponding write* methods of the writer.
+     *
+     * Note: implementations of this method are required to ensure that
+     * model and writer are provided and to call the open and done method of
+     * the writer.
+     */
     public abstract void convert( );
+
 
     public W getWriter() {
         return writer;

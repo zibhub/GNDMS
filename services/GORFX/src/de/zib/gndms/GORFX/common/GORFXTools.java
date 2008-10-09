@@ -1,14 +1,13 @@
 package de.zib.gndms.GORFX.common;
 
-import de.zib.gndms.model.gorfx.types.*;
-import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.common.ImmutableScopedName;
+import de.zib.gndms.model.gorfx.Task;
+import de.zib.gndms.model.gorfx.types.*;
+import org.apache.axis.types.NormalizedString;
+import org.apache.axis.types.URI;
 import types.*;
 
 import java.util.HashMap;
-
-import org.apache.axis.types.NormalizedString;
-import org.apache.axis.types.URI;
 
 /**
  * @author Maik Jorra <jorra@zib.de>
@@ -48,53 +47,62 @@ public class GORFXTools {
     // todo implement this using builder form model.gorfx
     public static DataDescriptor convertDataDescriptorT( DataDescriptorT ddt ) {
 
-        /*
-        types.ObjectListT getObjectList()
-        types.SpaceConstraintT getSpaceConstr()
-        types.TimeConstraintT getTimeConstr()
-        types.CFListT getCFList()
-        types.ConstraintListT getConstraintList()
-        java.lang.String getDataFormat()
-        java.lang.String getMetaDataFormat()
-        */
-
         DataDescriptor dd = new DataDescriptor( );
         dd.setObjectList( ddt.getObjectList().getItem() );
-        
+
+        if( ddt.getConstraints() != null )
+            dd.setConstrains( convertDataDescriptorTConstraints( ddt.getConstraints() ) );
+
+        dd.setDataFormat( ddt.getDataFormat() );
+        dd.setDataArchiveFormat( ddt.getDataArchiveFormat() );
+        dd.setMetaDataFormat( ddt.getMetaDataFormat() );
+        dd.setMetaDataArchiveFormat( ddt.getMetaDataArchiveFormat() );
+
+        return dd;
+    }
+    
+
+    public static DataConstraints convertDataDescriptorTConstraints( DataDescriptorTConstraints cons ) {
+
+        DataConstraints dc = new DataConstraints();
+
         SpaceConstraint sc = new SpaceConstraint();
-        SpaceConstraintT sct = ddt.getSpaceConstr();
-        if( sct.getLatitude() != null  ) {
-            sc.setLatitude( convertMinMaxT( sct.getLatitude() ) );
-        }
-        
-        if( sct.getLatitude() != null  ) {
-            sc.setLongitude( convertMinMaxT( sct.getLatitude() ) );
-        } // todo handle altitude as soon as known
 
-        dd.setSpaceConstraint( sc );
+        SpaceConstraintT sct = cons.getSpaceConstr();
+        sc.setLatitude( convertMinMaxT( sct.getLatitude() ) );
+        sc.setLongitude( convertMinMaxT( sct.getLongitude() ) );
+        if( sct.getAltitude() != null )
+            sc.setAltitude( convertMinMaxT( sct.getLongitude() ) );
 
-        if( ddt.getTimeConstr() != null ) {
+        String s = sct.getVerticalCRS();
+        if( s != null )
+            sc.setVerticalCRS( s );
+
+        s = sct.getAreaCRS();
+        if( s != null )
+            sc.setAreaCRS( s );
+
+        dc.setSpaceConstraint( sc );
+
+        if( cons.getTimeConstr() != null ) {
             TimeConstraint tc = new TimeConstraint();
-            tc.setMinTime( ddt.getTimeConstr().getMinTime() );
-            tc.setMaxTime( ddt.getTimeConstr().getMaxTime() );
-            dd.setTimeConstraint( tc );
+            tc.setMinTime( cons.getTimeConstr().getMinTime() );
+            tc.setMaxTime( cons.getTimeConstr().getMaxTime() );
+            dc.setTimeConstraint( tc );
         }
 
-        dd.setCFList( ddt.getCFList().getCFItem( ) );
+        dc.setCFList( cons.getCFList().getCFItem( ) );
 
-        NameValEntryT[] nvl = ddt.getConstraintList().getItem();
+        NameValEntryT[] nvl = cons.getConstraintList().getItem();
 
         HashMap<String, String> hm = new HashMap<String, String>( );
         for( NameValEntryT nve : nvl ) {
             hm.put( nve.getPName(), nve.getPVal() );
         }
 
-        dd.setConstraintList( hm );
+        dc.setConstraintList( hm );
 
-        dd.setDataFormat( ddt.getDataFormat() );
-        dd.setMetaDataFormat( ddt.getMetaDataFormat() );
-
-        return dd;
+        return dc;
     }
 
 

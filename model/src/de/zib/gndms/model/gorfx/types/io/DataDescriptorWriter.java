@@ -20,21 +20,24 @@ import java.util.HashMap;
 public interface DataDescriptorWriter extends GORFXWriterBase {
 
     public void writeObjectList( String[] objectList );
-    //no writeSpaceConstraint see below 
-    public void writeTimeConstraint ( TimeConstraint timeConstraint );
-    public void writeCFList( String[] CFList );
-    public void writeConstraintList( HashMap<String,String> constraintList );
     public void writeDataFormat( String dataFormat );
+    public void writeDataArchiveFormat( String dataArchiveFormat );
     public void writeMetaDataFormat( String metaDataFormat );
+    public void writeMetaDataArchiveFormat( String metaDataArchiveFormat );
 
-    // Used by the converter to write a space constraint
-    public SpaceConstraintWriter getSpaceConstraintWriter( );
+    // Used by the converter to write a data constraint
+    public DataConstraintsWriter getDataConstraintsWriter();
 
-    // The following methods are called by the DataDescriptorConverter immediatly before and
-    // after the write of the space constraint is triggered.
+    
+    // The following methods are called by the DataDescriptorConverter immediately before and
+    // after the write of the data constraint is triggered.
     //
-    // Uses the following methods to perform context switches on your write
-    // if required
-    public void beginWritingSpaceConstraint( );
-    public void doneWritingSpaceConstraint( );
+    // Uses the following methods to perform context switches on your writer
+    // if required it.
+    public void beginWritingDataConstraints();
+    public void doneWritingDataConstraints();
+
+
+    // This method is called when the DataDescriptor doesn't have constraints.
+    public void writeJustDownload();
 }

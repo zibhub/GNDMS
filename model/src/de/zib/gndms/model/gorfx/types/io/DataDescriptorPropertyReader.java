@@ -28,29 +28,21 @@ public class DataDescriptorPropertyReader extends AbstractPropertyReader<DataDes
 
     /**
      * Reads a provided property file.
-     * PRECONDITION  begin( ) must be called.
+     * PRECONDITION  begin( ) must have been called.
      */
     @Override
     public void read( ) {
 
         getProduct( ).setObjectList(
             PropertyReadWriteAux.readListMultiLine( getProperties(), SfrProperty.OBJECT_ITEMS.key ) );
-        
-        getProduct( ).setSpaceConstraint( SpaceConstraintPropertyReader.readSpaceConstraint( getProperties() ) );
 
-        getProduct( ).setTimeConstraint( TimeConstraintPropertyReader.readTimeConstraint( getProperties() ) );
-
-        // read cfl 
-        String [] cfl =  PropertyReadWriteAux.readListMultiLine( getProperties(), SfrProperty.CFLIST_ITEMS.key );
-        if( cfl == null )
-            cfl = PropertyReadWriteAux.readList( getProperties(), SfrProperty.CFLIST_OLD.key, ' ' );
-        getProduct( ).setCFList( cfl );
-
-        getProduct( ).setConstraintList(
-            PropertyReadWriteAux.readMap( getProperties(), SfrProperty.CONSTRAINT_LIST.key ) );
+        if(! getProperties().containsKey( SfrProperty.JUST_DOWNLOAD.key ) )
+            getProduct().setConstrains( DataConstraintsPropertyReader.readDataConstraints( getProperties() ) );
 
         getProduct( ).setDataFormat( getProperties().getProperty( SfrProperty.FILE_FORMAT.key ) );
+        getProduct( ).setDataArchiveFormat( getProperties().getProperty( SfrProperty.FILE_ARCHIVE_FORMAT.key ) );
         getProduct( ).setMetaDataFormat( getProperties().getProperty( SfrProperty.META_FILE_FORMAT.key ) );
+        getProduct( ).setMetaDataArchiveFormat( getProperties().getProperty( SfrProperty.META_FILE_ARCHIVE_FORMAT.key ) );
     }
 
 

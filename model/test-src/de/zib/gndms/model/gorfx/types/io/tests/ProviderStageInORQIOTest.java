@@ -1,9 +1,7 @@
 package de.zib.gndms.model.gorfx.types.io.tests;
 
 import de.zib.gndms.model.gorfx.types.*;
-import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyWriter;
-import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQConverter;
-import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyReader;
+import de.zib.gndms.model.gorfx.types.io.*;
 
 import java.util.HashMap;
 import java.util.Properties;
@@ -25,6 +23,7 @@ public class ProviderStageInORQIOTest {
     public static void main( String[] args ) {
 
         DataDescriptor ddt = new DataDescriptor();
+        DataConstraints dc = new DataConstraints();
         String[] ol = { "hello", "world" };
         String[] cfl = { "foo", "bar", "foobar", "blubber", };
         HashMap<String,String> cl = new HashMap<String,String>( );
@@ -35,8 +34,9 @@ public class ProviderStageInORQIOTest {
         SpaceConstraint sc = new SpaceConstraint();
         sc.setLatitude( new MinMaxPair( -1.3, 5.7 ) );
         sc.setLongitude( new MinMaxPair( 2.7, 42.0 ) );
-        sc.setAltitude( new LevelRange( new NumericAltitude( new Double( -20000 ), AltitudeUnit.METER ),
-            new NamedAltitude( "Mt. Eribus" ), "Some vericalcrs"  ) );
+        sc.setAltitude(  new MinMaxPair( 1500., 3000.  ) );
+        sc.setVerticalCRS( "some vertical crs" );
+        sc.setAreaCRS( "the area crs" );
 
         DateTime tm = new DateTime( );
         TimeConstraint tc = new TimeConstraint();
@@ -44,15 +44,21 @@ public class ProviderStageInORQIOTest {
         tc.setMaxTime( tm.plusDays( 6 ) );
 
         String dff = "plain";
+        String dfaf = "zip";
         String mff = "ini";
+        String mfaf = "tar";
 
+        dc.setCFList( cfl );
+        dc.setSpaceConstraint( sc );
+        dc.setTimeConstraint( tc );
+        dc.setConstraintList( cl );
+        
         ddt.setObjectList( ol );
-        ddt.setCFList( cfl );
-        ddt.setSpaceConstraint( sc );
-        ddt.setTimeConstraint( tc );
-        ddt.setConstraintList( cl );
+        ddt.setConstrains( dc );
         ddt.setDataFormat( dff );
+        ddt.setDataArchiveFormat( dfaf );
         ddt.setMetaDataFormat( mff );
+        ddt.setMetaDataArchiveFormat( mfaf );
 
         ProviderStageInORQ orq = new ProviderStageInORQ();
         orq.setDataDescriptor( ddt );
@@ -98,6 +104,55 @@ public class ProviderStageInORQIOTest {
         } catch ( IOException e ) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
+
+
+
+        // example for just download
+        DataDescriptor ddt2 = new DataDescriptor();
+        String[] objs = { "no", "download" };
+
+        dff = "plain";
+        dfaf = "zip";
+        mff = "ini";
+        mfaf = "tar";
+
+        ddt2.setObjectList( objs );
+        ddt2.setDataFormat( dff );
+        ddt2.setDataArchiveFormat( dfaf );
+        ddt2.setMetaDataFormat( mff );
+        ddt2.setMetaDataArchiveFormat( mfaf );
+
+        Properties prop2 = new Properties( );
+        DataDescriptorPropertyWriter ddw = new DataDescriptorPropertyWriter( prop2 );
+        DataDescriptorConverter dcon = new DataDescriptorConverter( ddw, ddt2 );
+        dcon.convert( );
+
+        try {
+            prop2.store( System.out, "just downloading?" );
+        } catch ( IOException e ) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        
+        if( prop2.containsKey( SfrProperty.JUST_DOWNLOAD.key ) )
+            System.out.println( ">>>>>>>>>>> JUST_DOWNLOAD contained");
+        else
+            throw new IllegalStateException( "JUST_DOWNLOAD missing" );
+
+        DataDescriptorPropertyReader ddpr = new DataDescriptorPropertyReader( prop2 );
+        ddpr.performReading();
+        DataDescriptor ddt3 = ddpr.getProduct();
+
+        Properties prop3 = new Properties( );
+        ddw = new DataDescriptorPropertyWriter( prop3 );
+        dcon.setWriter( ddw );
+        dcon.setModel( ddt3 );
+        dcon.convert( );
+
+        if( prop2.equals( prop3 ) )
+            System.out.println( "Prop write read write: OKAY" );
+        else
+            System.out.println( "Prop write read write: ERROR (different results)"  );
+
     }
 
     public static void showORQ( ProviderStageInORQ orq ) {

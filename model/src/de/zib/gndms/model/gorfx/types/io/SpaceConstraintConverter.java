@@ -26,17 +26,19 @@ public class SpaceConstraintConverter extends GORFXConverterBase<SpaceConstraint
             throw new IllegalStateException( );
 
         getWriter().begin();
-        if( getModel().hasLatitude() )
-            getWriter().writeLatitude( getModel().getLatitude() );
+        getWriter().writeLatitude( getModel().getLatitude() );
 
-        if( getModel().hasLongitude() )
-            getWriter().writeLongitude( getModel().getLongitude() );
+        getWriter().writeLongitude( getModel().getLongitude() );
 
-        if( getModel().hasAltitude() ) {
-            LevelRangeWriter lrw = getWriter().getLevelRangeWriter( );
-            LevelRangeConverter conv = new LevelRangeConverter(  lrw, getModel().getAltitude() );
-            conv.convert( );
-        }
+        if( getModel().hasAreaCRS() )
+            getWriter().writeAreaCRS( getModel().getAreaCRS() );
+
+        if( getModel().hasAltitude() )
+            getWriter().writeAltitude( getModel().getAltitude() );
+
+        if( getModel().hasVerticalCRS() )
+            getWriter().writeVerticalCRS( getModel().getVerticalCRS() );
+            
         getWriter().done();
     }
 }
