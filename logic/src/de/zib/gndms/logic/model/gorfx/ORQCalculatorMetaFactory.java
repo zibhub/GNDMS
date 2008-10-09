@@ -16,4 +16,5 @@ public class ORQCalculatorMetaFactory extends OfferTypeMetaFactory<AbstractORQCa
     public String getFactoryClassName(final OfferType key) {
         return key.getCalculatorFactoryClassName();
     }
+
 }

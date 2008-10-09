@@ -17,6 +17,13 @@ import javax.persistence.EntityManager;
  *          User: stepn Date: 02.10.2008 Time: 15:04:39
  */
 public class ProviderStageInAction extends ORQTaskAction<ProviderStageInORQ> {
+
+
+    public ProviderStageInAction() {
+        super();
+    }
+
+
     public ProviderStageInAction(final @NotNull EntityManager em, final @NotNull Task model) {
         super(em, model);
     }
@@ -27,6 +34,7 @@ public class ProviderStageInAction extends ORQTaskAction<ProviderStageInORQ> {
     }
 
 
+    @Override
     protected void onInProgress(final @NotNull Task model) {
     }
 

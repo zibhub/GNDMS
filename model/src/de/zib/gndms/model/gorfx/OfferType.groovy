@@ -45,11 +45,11 @@ class OfferType {
     ])
     ImmutableScopedName offerArgumentType
 
-    @Column(name="class_name", nullable=false, updatable=false, columnDefinition="VARCHAR")
-    String calculatorClassName
-
-    @Column(name="factory_class_name", nullable=false, updatable=false)
+    @Column(name="calc_factory_class_name", nullable=false, updatable=true)
     String calculatorFactoryClassName
+
+    @Column(name="task_action_factory_class_name", nullable=false, updatable=true, columnDefinition="VARCHAR")
+    String taskActionFactoryClassName
 
     @OneToMany(cascade=ALL, mappedBy="offerType", fetch=FetchType.LAZY)
     Set<Task> tasks

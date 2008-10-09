@@ -16,6 +16,20 @@ public abstract class AbstractRecursiveFactory<K, T extends FactoryInstance<K, T
     K key;
 
 
+    @NotNull
+    public T getInstance(@NotNull final K keyParam)
+            throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+        final @NotNull T newInstance = newInstance(keyParam);
+        newInstance.setKey(keyParam);
+        newInstance.setFactory(this);
+        return newInstance;
+    }
+
+
+    public abstract T newInstance(final K keyParam) throws IllegalAccessException,
+            InstantiationException, ClassNotFoundException;
+
+
     public Factory<K, RecursiveFactory<K, T>> getFactory() {
         return factory;
     }
@@ -34,4 +48,9 @@ public abstract class AbstractRecursiveFactory<K, T extends FactoryInstance<K, T
     public void setKey(@NotNull final K keyParam) {
         key = keyParam;
     }
+
+    @SuppressWarnings({ "NoopMethodInAbstractClass" })
+    public void setup() {
+    }
+
 }

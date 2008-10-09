@@ -3,11 +3,17 @@ package de.zib.gndms.infra.system;
 import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.service.GNDMSingletonServiceHome;
+import de.zib.gndms.kit.factory.Factory;
+import de.zib.gndms.kit.factory.FactoryInstance;
 import de.zib.gndms.kit.factory.IndustrialPark;
+import de.zib.gndms.kit.factory.RecursiveFactory;
 import de.zib.gndms.kit.monitor.GroovyBindingFactory;
 import de.zib.gndms.kit.monitor.GroovyMoniServer;
+import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
 import de.zib.gndms.logic.model.gorfx.ORQCalculatorMetaFactory;
+import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
+import de.zib.gndms.logic.model.gorfx.ORQTaskActionMetaFactory;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.gorfx.OfferType;
 import groovy.lang.Binding;
@@ -47,18 +53,17 @@ public class InstanceDirectory {
     @SuppressWarnings({ "RawUseOfParameterizedType" })
     private final @NotNull IndustrialPark<OfferType, String, AbstractORQCalculator<?, ?>> orqPark;
 
+    @SuppressWarnings({ "RawUseOfParameterizedType" })
+    private final @NotNull IndustrialPark<OfferType, String, ORQTaskAction<?>> taskActionPark;
+
+
     InstanceDirectory(final @NotNull String sysNameParam) {
         instances = new HashMap<String, Object>(INITIAL_CAPACITY);
         homes = new HashMap<Class<? extends GridResource>, GNDMPersistentServiceHome<?>>(INITIAL_CAPACITY);
         systemName = sysNameParam;
 
-        orqPark = new IndustrialPark<OfferType, String, AbstractORQCalculator<?, ?>>() {
-            @Override
-            public String mapKey(final OfferType keyParam) {
-                return keyParam.getOfferTypeKey();
-            }
-        };
-        orqPark.setFactory(new ORQCalculatorMetaFactory());
+        orqPark = new OfferTypeIndustrialPark<AbstractORQCalculator<?,?>>(new ORQCalculatorMetaFactory());
+        taskActionPark = new OfferTypeIndustrialPark<ORQTaskAction<?>>(new ORQTaskActionMetaFactory());
     }
 
 
@@ -93,6 +98,26 @@ public class InstanceDirectory {
     }
 
 
+    @SuppressWarnings(
+            {
+                    "RawUseOfParameterizedType", "unchecked", "MethodWithTooExceptionsDeclared",
+                    "RedundantCast" })
+    public TaskAction<?> getTaskAction(
+            final @NotNull GNDMSystem sys,
+            final @NotNull EntityManagerFactory emf,
+            final @NotNull String offerTypeKey)
+            throws ClassNotFoundException, IllegalAccessException, InstantiationException,
+            NoSuchMethodException, InvocationTargetException {
+        EntityManager em = emf.createEntityManager();
+        try {
+            OfferType type = em.find(OfferType.class, offerTypeKey);
+            return taskActionPark.getInstance(type);
+        }
+        finally {
+            if (! em.isOpen())
+                em.close();
+        }
+    }
 
     public @NotNull  <T> T retrieveInstance(@NotNull Class<T> clazz, @NotNull String name) {
         T instance;
@@ -237,5 +262,21 @@ public class InstanceDirectory {
             // intended
         }
 
+    }
+
+    private static class OfferTypeIndustrialPark<T extends FactoryInstance<OfferType, T>>
+            extends IndustrialPark<OfferType, String, T> {
+
+        private OfferTypeIndustrialPark(
+                final @NotNull
+                Factory<OfferType, RecursiveFactory<OfferType, T>> factoryParam) {
+            super(factoryParam);
+        }
+
+
+        @Override
+            public String mapKey(final OfferType keyParam) {
+            return keyParam.getOfferTypeKey();
+        }
     }
 }

@@ -24,10 +24,10 @@ moni call .dspace.AssignSliceKind "metaScope:http://www.c3grid.de/G2/Subspace/; 
 
 # Setup file transfer offer type
 
-moni call .gorfx.SetupOfferType "key: 'http://www.c3grid.de/ORQTypes/FileTransfer'; argScope: 'http://gndms.zib.de/c3grid/types'; argName: FileTransferORQT; resScope: 'http://gndms.zib.de/c3grid/types'; resName: FileTransferResultT; class: de.zib.gndms.logic.model.gorfx.FileTransferORQCalculator; factoryClass: de.zib.gndms.kit.factory.InstanceFactory; mode:"$MODE 
+moni call .gorfx.SetupOfferType "key: 'http://www.c3grid.de/ORQTypes/FileTransfer'; argScope: 'http://gndms.zib.de/c3grid/types'; argName: FileTransferORQT; resScope: 'http://gndms.zib.de/c3grid/types'; resName: FileTransferResultT; calcFactoryClass: de.zib.gndms.logic.model.gorfx.FileTransferORQFactory; taskActionFactoryClass: de.zib.gndms.logic.model.gorfx.FileTransferActionFactory; mode:"$MODE 
 
 
 # Setup and configure staging offer type
 
-moni call .gorfx.SetupOfferType "key: 'http://www.c3grid.de/ORQTypes/ProviderStageIn'; argScope: 'http://gndms.zib.de/c3grid/types'; argName: ProviderStageInORQT; resScope: 'http://gndms.zib.de/c3grid/types'; resName: ProviderStageInResultT; class: de.zib.gndms.logic.model.gorfx.c3grid.ProviderStageInORQCalculator; factoryClass: de.zib.gndms.logic.model.gorfx.c3grid.ProviderStageInFactory; mode:"$MODE
+moni call .gorfx.SetupOfferType "key: 'http://www.c3grid.de/ORQTypes/ProviderStageIn'; argScope: 'http://gndms.zib.de/c3grid/types'; argName: ProviderStageInORQT; resScope: 'http://gndms.zib.de/c3grid/types'; resName: ProviderStageInResultT; calcFactoryClass: de.zib.gndms.logic.model.gorfx.c3grid.ProviderStageInORQFactory; taskActionFactoryClass: de.zib.gndms.logic.model.gorfx.c3grid.ProviderStageInActionFactory; mode:"$MODE
 
