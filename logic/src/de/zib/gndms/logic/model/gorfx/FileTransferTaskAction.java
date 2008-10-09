@@ -1,6 +1,7 @@
 package de.zib.gndms.logic.model.gorfx;
 
 import de.zib.gndms.model.gorfx.Task;
+import de.zib.gndms.model.gorfx.FTPTransferState;
 import de.zib.gndms.model.gorfx.types.FileTransferORQ;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,6 +16,7 @@ import javax.persistence.EntityManager;
 public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
 
     // note set new task to false when restoring a task form data base
+    private FTPTransferState transferState;
 
 
     public FileTransferTaskAction() {
@@ -41,6 +43,6 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
 
     @Override
     protected void onInProgress( @NotNull Task model ) {
-        
+        transferState = (FTPTransferState) getEntityManager().find( FTPTransferState.class, getModel( ).getId() ); 
     }
 }

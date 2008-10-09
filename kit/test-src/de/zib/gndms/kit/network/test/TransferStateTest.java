@@ -1,8 +1,5 @@
 package de.zib.gndms.kit.network.test;
-import org.testng.annotations.Parameters;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 import org.testng.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.globus.ftp.GridFTPClient;
