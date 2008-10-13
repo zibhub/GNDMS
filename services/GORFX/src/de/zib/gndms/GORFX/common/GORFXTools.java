@@ -1,14 +1,13 @@
 package de.zib.gndms.GORFX.common;
 
-import de.zib.gndms.model.gorfx.types.*;
-import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.common.ImmutableScopedName;
+import de.zib.gndms.model.gorfx.Task;
+import de.zib.gndms.model.gorfx.types.*;
+import org.apache.axis.types.NormalizedString;
+import org.apache.axis.types.URI;
 import types.*;
 
 import java.util.HashMap;
-
-import org.apache.axis.types.NormalizedString;
-import org.apache.axis.types.URI;
 
 /**
  * @author Maik Jorra <jorra@zib.de>
