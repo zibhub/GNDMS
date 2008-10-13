@@ -179,6 +179,17 @@ public class GORFXClientTools {
         return orq;
     }
 
+    
+    public static FileTransferResultT createFileTransferResultT() throws SOAPException, IllegalAccessException, InstantiationException {
+
+        FileTransferResultT ftr = new FileTransferResultT();
+        ftr.setOfferType( getFileTransferURI() );
+
+        ftr.set_any( getMessageElementsForFieldDescs( FileTransferResultT.getTypeDesc().getFields() ) );
+
+        return ftr;
+    }
+
 
     public static MessageElement[] getMessageElementsForFieldDescs( FieldDesc[] fds ) throws SOAPException, InstantiationException, IllegalAccessException {
 
@@ -249,5 +260,4 @@ public class GORFXClientTools {
         } else
             System.out.println( "no elements received" );
     }
-
 }
