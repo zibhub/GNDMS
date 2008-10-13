@@ -1,6 +1,7 @@
 package de.zib.gndms.logic.model.config;
 
 import de.zib.gndms.logic.action.MandatoryOptionMissingException;
+import de.zib.gndms.model.common.ImmutableScopedName;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 
@@ -37,37 +38,37 @@ public abstract class AbstractConfig implements ConfigProvider {
     }
 
 
-    public int getIntOption(String name, int def) {
+    public int getIntOption(@NotNull String name, int def) {
         final String option = getNonMandatoryOption(name);
         return option == null ? def : Integer.parseInt(option);
     }
 
 
-    public int getIntOption(String name) throws MandatoryOptionMissingException {
+    public int getIntOption(@NotNull String name) throws MandatoryOptionMissingException {
         final String option = getOption(name);
         return Integer.parseInt(option);
     }
 
 
-    public long getLongOption(String name, long def) {
+    public long getLongOption(@NotNull String name, long def) {
         final String option = getNonMandatoryOption(name);
         return option == null ? def : Long.parseLong(option);
     }
 
 
-    public long getLongOption(String name) throws MandatoryOptionMissingException  {
+    public long getLongOption(@NotNull String name) throws MandatoryOptionMissingException  {
         final String option = getOption(name);
         return Long.parseLong(option);
     }
 
 
-    public boolean isBooleanOptionSet(String name, boolean def) {
+    public boolean isBooleanOptionSet(@NotNull String name, boolean def) {
         final String option = getNonMandatoryOption(name);
         return option == null ? def : "true".equals(option.trim().toLowerCase());
     }
 
 
-    public boolean isBooleanOptionSet(String name) throws MandatoryOptionMissingException  {
+    public boolean isBooleanOptionSet(@NotNull String name) throws MandatoryOptionMissingException  {
         final String option = getOption(name);
         return "true".equals(option.trim().toLowerCase());
     }
@@ -108,4 +109,17 @@ public abstract class AbstractConfig implements ConfigProvider {
     }
 
 
+    @NotNull
+    public ImmutableScopedName getISNOption(@NotNull final String name)
+            throws MandatoryOptionMissingException {
+        return new ImmutableScopedName(getOption(name));
+    }
+
+
+    @NotNull
+    public ImmutableScopedName getISNOption(
+            @NotNull final String name, @NotNull final ImmutableScopedName def) {
+        final String option = getNonMandatoryOption(name);
+        return option == null ? def : new ImmutableScopedName(name);
+    }
 }

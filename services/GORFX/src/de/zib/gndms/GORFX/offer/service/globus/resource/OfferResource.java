@@ -24,11 +24,13 @@ public class OfferResource extends OfferResourceBase {
     private AbstractORQCalculator<?,?> orqCalc;
 
 
+    @Override
     public void setOfferExecutionContract( OfferExecutionContractT offerExecutionContract ) throws ResourceException {
         super.setOfferExecutionContract( offerExecutionContract );    //To change body of overridden methods use File | Settings | File Templates.
     }
 
 
+    @Override
     public void setOfferRequestArguments( DynamicOfferDataSeqT offerRequestArguments ) throws ResourceException {
         super.setOfferRequestArguments( offerRequestArguments );    //To change body of overridden methods use File | Settings | File Templates.
     }

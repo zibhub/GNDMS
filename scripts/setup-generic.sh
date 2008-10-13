@@ -4,4 +4,4 @@
 
 MODE=$1
 
-moni call .dspace.SetupSliceKind "uri:'http://www.c3grid.de/G2/SliceKind/DMS'; sliceKindMode:RO; mode: "$MODE
+moni call .dspace.SetupSliceKind "sliceKind:'http://www.c3grid.de/G2/SliceKind/DMS'; sliceKindMode:RO; mode: "$MODE

@@ -43,7 +43,7 @@ public abstract class ORQTaskAction<K extends AbstractORQ> extends TaskAction<Ta
 
     @SuppressWarnings({ "ThrowableInstanceNeverThrown" })
     @Override
-    protected final void onCreated(final Task model) {
+    protected void onCreated(final Task model) {
         try {
             super.onCreated(model);    // Overridden method
         }

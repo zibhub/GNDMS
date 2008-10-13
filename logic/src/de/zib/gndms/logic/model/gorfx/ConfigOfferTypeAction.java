@@ -29,33 +29,33 @@ public class ConfigOfferTypeAction extends ConfigAction<String> {
     public enum UpdateMode { UPDATE, OVERWRITE, DELKEYS }
 
     @ConfigOption(descr="Unique URI identifying this offerType")
-    private String key;
+    private String offerType;
 
-    @ConfigOption(descr="How to update the config; one of UPDATE(default), OVERWRITE, or DELKEYS")
+    @ConfigOption(descr="How to update the config; one of UPDATE (default), OVERWRITE, or DELKEYS")
     private UpdateMode cfgUpdateMode;
 
-    @ConfigOption(descr="Output format; one of PROPS or OPTS(default)")
+    @ConfigOption(descr="Output format; one of PROPS or OPTS (default)")
     private OutFormat cfgOutFormat;
 
     @Override
     public void initialize() {
         super.initialize();    // Overridden method
         try {
-            if (key == null)
-                setKey(getOption("key"));
+            if (offerType == null)
+                setOfferType(getOption("offerType"));
             cfgOutFormat = getEnumOption(OutFormat.class, "cfgOutFormat", true, OutFormat.PROPS);
             cfgUpdateMode =
                     getEnumOption(UpdateMode.class, "cfgUpdateMode", true, UpdateMode.UPDATE);
         }
         catch (MandatoryOptionMissingException e) {
-            throw new IllegalArgumentException(key);
+            throw new IllegalArgumentException(offerType);
         }
     }
 
 
     @Override
     public String execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer) {
-        final @NotNull OfferType offerType = em.find(OfferType.class, getKey());
+        final @NotNull OfferType offerType = em.find(OfferType.class, getOfferType());
         final @NotNull Map<String, String> configMap;
 
         boolean update = false;
@@ -76,9 +76,9 @@ public class ConfigOfferTypeAction extends ConfigAction<String> {
         }
 
         if (update)
-            for (String opt : getAllOptionNames())
+            for (String name : getAllOptionNames())
                 try {
-                    if (isValidConfigOptionName(opt)) configMap.put(opt, getOption(opt));
+                    if (isValidConfigOptionName(name)) configMap.put(name, getOption(name));
                 }
                 catch (MandatoryOptionMissingException e) {
                     // shdouldnt happen
@@ -90,8 +90,8 @@ public class ConfigOfferTypeAction extends ConfigAction<String> {
 
 
     @SuppressWarnings({ "MethodMayBeStatic" })
-    private boolean isValidConfigOptionName(final String opt) {
-        return ! opt.startsWith("cfg") && ! "key".equals("opt");
+    private boolean isValidConfigOptionName(final String name) {
+        return ! name.startsWith("cfg") && ! "offerType".equals(name);
     }
 
 
@@ -108,12 +108,12 @@ public class ConfigOfferTypeAction extends ConfigAction<String> {
     }
 
 
-    public String getKey() {
-        return key;
+    public String getOfferType() {
+        return offerType;
     }
 
 
-    public void setKey(final String keyParam) {
-        key = keyParam;
+    public void setOfferType(final String offerTypeParam) {
+        offerType = offerTypeParam;
     }
 }

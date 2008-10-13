@@ -15,19 +15,20 @@ env GNDMS_SCRIPT=1 `dirname $0`/setup-generic.sh $MODE
 
 # Setup subspace and slicekinds
 
-moni call .dspace.SetupSliceKind "uri:'http://www.c3grid.de/G2/SliceKind/Staging'; sliceKindMode:RW; mode: $MODE"
+moni call .dspace.SetupSliceKind "sliceKind:'http://www.c3grid.de/G2/SliceKind/Staging'; sliceKindMode:RW; mode: $MODE"
 
-moni call .dspace.SetupSubspace 'scope:http://www.c3grid.de/G2/Subspace/; name:ProviderStaging; path:/tmp; visible:true; size:1000000000; mode:'$MODE
-moni call .dspace.AssignSliceKind "metaScope:http://www.c3grid.de/G2/Subspace/; metaName:ProviderStaging; sliceKindUri: http://www.c3grid.de/G2/SliceKind/Staging; mode:"$ADDMODE
-moni call .dspace.AssignSliceKind "metaScope:http://www.c3grid.de/G2/Subspace/; metaName:ProviderStaging; sliceKindUri: http://www.c3grid.de/G2/SliceKind/DMS; mode:"$ADDMODE
+moni call .dspace.SetupSubspace   'subspace:"{http://www.c3grid.de/G2/Subspace}ProviderStaging"; path:/tmp; visible:true; size:1000000000; mode:'$MODE
+moni call .dspace.AssignSliceKind "subspace:'{http://www.c3grid.de/G2/Subspace}ProviderStaging'; sliceKind: http://www.c3grid.de/G2/SliceKind/Staging; mode:"$ADDMODE
+moni call .dspace.AssignSliceKind "subspace:'{http://www.c3grid.de/G2/Subspace}ProviderStaging'; sliceKind: http://www.c3grid.de/G2/SliceKind/DMS; mode:"$ADDMODE
 
 
 # Setup file transfer offer type
 
-moni call .gorfx.SetupOfferType "key: 'http://www.c3grid.de/ORQTypes/FileTransfer'; argScope: 'http://gndms.zib.de/c3grid/types'; argName: FileTransferORQT; resScope: 'http://gndms.zib.de/c3grid/types'; resName: FileTransferResultT; calcFactoryClass: de.zib.gndms.logic.model.gorfx.FileTransferORQFactory; taskActionFactoryClass: de.zib.gndms.logic.model.gorfx.FileTransferActionFactory; mode:"$MODE 
+moni call .gorfx.SetupOfferType "offerType: 'http://www.c3grid.de/ORQTypes/FileTransfer'; orqType: '{http://gndms.zib.de/c3grid/types}FileTransferORQT'; resType: '{http://gndms.zib.de/c3grid/types}FileTransferResultT'; calcFactory: de.zib.gndms.logic.model.gorfx.FileTransferORQFactory; taskActionFactory: de.zib.gndms.logic.model.gorfx.FileTransferActionFactory; mode:"$MODE 
 
 
 # Setup and configure staging offer type
 
-moni call .gorfx.SetupOfferType "key: 'http://www.c3grid.de/ORQTypes/ProviderStageIn'; argScope: 'http://gndms.zib.de/c3grid/types'; argName: ProviderStageInORQT; resScope: 'http://gndms.zib.de/c3grid/types'; resName: ProviderStageInResultT; calcFactoryClass: de.zib.gndms.logic.model.gorfx.c3grid.ProviderStageInORQFactory; taskActionFactoryClass: de.zib.gndms.logic.model.gorfx.c3grid.ProviderStageInActionFactory; mode:"$MODE
+moni call .gorfx.SetupOfferType "offerType: 'http://www.c3grid.de/ORQTypes/ProviderStageIn'; orqType: '{http://gndms.zib.de/c3grid/types}ProviderStageInORQT'; resType: '{http://gndms.zib.de/c3grid/types}ProviderStageInResultT'; calcFactory: de.zib.gndms.logic.model.gorfx.c3grid.ProviderStageInORQFactory; taskActionFactory: de.zib.gndms.logic.model.gorfx.c3grid.ProviderStageInActionFactory; mode:"$MODE
 
+moni call .gorfx.ConfigOfferType "offerType: 'http://www.c3grid.de/ORQTypes/ProviderStageIn'; subspace: 'http://www.c3grid.de/G2/Subspace/}ProviderStaging'; sliceKind: 'http://www.c3grid.de/G2/SliceKind/Staging'"

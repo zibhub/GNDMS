@@ -28,14 +28,11 @@ public class AssignSliceKindAction extends ConfigAction<Void> {
     @SuppressWarnings({ "EnumeratedClassNamingConvention" })
     enum Mode { ADD, REMOVE }
 
-    @ConfigOption(descr="Scope of the MetaSubspace")
-    String metaScope;
-
-    @ConfigOption(descr="Name of the MetaSubspace")
-    String metaName;
+    @ConfigOption(descr="Subspace QNname")
+    ImmutableScopedName subspace;
 
     @ConfigOption(descr="URI of the SliceKind")
-    String sliceKindUri;
+    String sliceKind;
 
     @ConfigOption(descr="One of ADD (DEFAULT) or REMOVE")
     Mode mode;
@@ -44,9 +41,8 @@ public class AssignSliceKindAction extends ConfigAction<Void> {
     public void initialize() {
         super.initialize();
         try {
-            metaScope = getOption("metaScope");
-            metaName = getOption("metaName");
-            sliceKindUri = getOption("sliceKindUri");
+            subspace = getISNOption("subspace");
+            sliceKind = getOption("sliceKind");
             mode = getEnumOption(Mode.class, "mode", true, Mode.ADD);
         }
         catch (MandatoryOptionMissingException e) {
@@ -57,9 +53,8 @@ public class AssignSliceKindAction extends ConfigAction<Void> {
 
     @Override
     public Void execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer) {
-        final ImmutableScopedName name = new ImmutableScopedName(metaScope, metaName);
-        final @NotNull MetaSubspace space = em.find(MetaSubspace.class, name);
-        final @NotNull SliceKind sk = em.find(SliceKind.class, sliceKindUri);
+        final @NotNull MetaSubspace space = em.find(MetaSubspace.class, subspace);
+        final @NotNull SliceKind sk = em.find(SliceKind.class, sliceKind);
         final @NotNull Set<SliceKind> sliceKindSet = space.getCreatableSliceKinds();
 
         switch (mode) {
