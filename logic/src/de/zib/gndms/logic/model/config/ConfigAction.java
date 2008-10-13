@@ -4,6 +4,7 @@ import de.zib.gndms.logic.action.CommandAction;
 import de.zib.gndms.logic.action.MandatoryOptionMissingException;
 import de.zib.gndms.logic.action.SkipActionInitializationException;
 import de.zib.gndms.logic.model.AbstractEntityAction;
+import de.zib.gndms.model.common.ImmutableScopedName;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -286,36 +287,36 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
 
 
     
-    public int getIntOption(final String name) throws MandatoryOptionMissingException {
+    public int getIntOption(@NotNull final String name) throws MandatoryOptionMissingException {
         return config.getIntOption(name);
     }
 
 
-    public int getIntOption(final String name, final int def) {
+    public int getIntOption(@NotNull final String name, final int def) {
         return config.getIntOption(name, def);
     }
 
 
 
 
-    public long getLongOption(final String name) throws MandatoryOptionMissingException {
+    public long getLongOption(@NotNull final String name) throws MandatoryOptionMissingException {
         return config.getLongOption(name);
     }
 
 
-    public long getLongOption(final String name, final long def) {
+    public long getLongOption(@NotNull final String name, final long def) {
         return config.getLongOption(name, def);
     }
 
 
 
 
-    public boolean isBooleanOptionSet(final String name) throws MandatoryOptionMissingException {
+    public boolean isBooleanOptionSet(@NotNull final String name) throws MandatoryOptionMissingException {
         return config.isBooleanOptionSet(name);
     }
 
 
-    public boolean isBooleanOptionSet(final String name, final boolean def) {
+    public boolean isBooleanOptionSet(@NotNull final String name, final boolean def) {
         return config.isBooleanOptionSet(name, def);
     }
 
@@ -352,6 +353,13 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
     }
 
 
+    public @NotNull ImmutableScopedName getISNOption(@NotNull final String name, @NotNull final ImmutableScopedName def) {
+        return config.getISNOption(name, def);
+    }
+
+
+    public @NotNull ImmutableScopedName getISNOption(@NotNull final String name)
+            throws MandatoryOptionMissingException {return config.getISNOption(name);}
 
 
     public static class ConfigTools {
