@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.action;
+package de.zib.gndms.model.test;
 
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
