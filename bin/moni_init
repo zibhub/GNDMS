@@ -1,0 +1,19 @@
+#!/bin/sh
+
+FILE="$1"
+
+HOST=`cat $FILE | grep ^monitor.host | cut -d= -f2-`
+PORT=`cat $FILE | grep ^monitor.port | cut -d= -f2-`
+USER=`cat $FILE | grep ^monitor.user | cut -d= -f2-`
+PASS=`cat $FILE | grep ^monitor.password | cut -d= -f2-`
+if [ ! -z "$PASS" ] ; then
+	PASS=":$PASS"
+fi
+COOKIES=$HOME/.gndmsh-cookies
+
+
+if [ -f "$COOKIES" ];then
+	echo "$COOKIES found. Skipped reinitialization. Call destroy first or remove manually."  >&2        exit 1
+else
+	curl -c "$COOKIES" -u "$USER""$PASS" http://"$HOST":"$PORT"/?
+fi

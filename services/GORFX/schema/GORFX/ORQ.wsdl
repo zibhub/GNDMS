@@ -14,7 +14,7 @@
   <types>
     <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsrbf="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" targetNamespace="http://GORFX.gndms.zib.de/GORFX/ORQ" elementFormDefault="qualified" attributeFormDefault="unqualified">
       <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="../wsrf/faults/WS-BaseFaults.xsd" />
-      <import namespace="http://dspace.gndms.zib.de/DSpace/types" schemaLocation="./../DSpace/DSpaceTypes.xsd" />
+      <import namespace="http://dspace.gndms.zib.de/DSpace/types" schemaLocation="./DSpaceTypes.xsd" />
       <import namespace="http://GORFX.gndms.zib.de/GORFX/ORQ/types" schemaLocation="./ORQTypes.xsd" />
       <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" schemaLocation="./xsd/cagrid/types/security/security.xsd" />
       <import namespace="http://GORFX.gndms.zib.de/GORFX/types" schemaLocation="./GORFXTypes.xsd" />
@@ -22,9 +22,9 @@
       <import namespace="http://GORFX.gndms.zib.de/GORFX/Context/types" schemaLocation="./TaskTypes.xsd" />
       <import namespace="http://gndms.zib.de/c3grid/types" schemaLocation="./gndms-c3grid.xsd" />
       <import namespace="http://gndms.zib.de/common/types" schemaLocation="./gndms-common.xsd" />
-      <import namespace="http://lofis.gndms.zib.de/LOFIS/LofiSet/types" schemaLocation="./../LOFIS/LofiSetTypes.xsd" />
+      <import namespace="http://lofis.gndms.zib.de/LOFIS/LofiSet/types" schemaLocation="./LofiSetTypes.xsd" />
       <import namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" schemaLocation="./../ws/addressing/WS-Addressing.xsd" />
-      <import namespace="http://dspace.gndms.zib.de/DSpace/Slice/types" schemaLocation="./../DSpace/SliceTypes.xsd" />
+      <import namespace="http://dspace.gndms.zib.de/DSpace/Slice/types" schemaLocation="./SliceTypes.xsd" />
       <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="./../wsrf/faults/WS-BaseFaults.xsd" />
       <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.xsd" schemaLocation="./../wsrf/lifetime/WS-ResourceLifetime.xsd" />
       <element name="GetOfferAndDestroyRequestRequest">
