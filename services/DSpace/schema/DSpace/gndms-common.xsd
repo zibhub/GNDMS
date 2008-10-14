@@ -30,7 +30,7 @@
 
 <complexType name="ContextT">
 	<sequence>
-		<element name="entry">
+		<element name="entry" minOccurs="0" maxOccurs="unbounded">
 			<complexType>
 				<simpleContent>
 					<extension base="xsd:normalizedString">
@@ -60,7 +60,7 @@
 
 
 
-<!-- *** DSpace related types for addressign subspaces and kinds *** -->
+<!-- *** dspace related types for addressign subspaces and kinds *** -->
 
 <element name="SubspaceSpecifier" type="QName" />
 
