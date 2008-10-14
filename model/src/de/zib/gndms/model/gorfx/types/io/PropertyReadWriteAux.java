@@ -69,8 +69,10 @@ public class PropertyReadWriteAux {
 
         Set<T> os = om.keySet();
         String dkey = key + '.';
-        for( T o: os )
-            prop.setProperty( dkey + o.toString( ), om.get( o ).toString( ) );
+        for( T o: os ) {
+            if( om.get( o ) != null )
+                prop.setProperty( dkey + o.toString( ), om.get( o ).toString( ) );
+        }
         writeList( prop, key, ' ', os );
     }
 
@@ -85,8 +87,9 @@ public class PropertyReadWriteAux {
         key = key + ".";
         for( String k : keys ) {
             String s = prop.getProperty( key + k );
-            if( s == null )
-                throw new IllegalStateException( "Missing property entry for " + key + k );
+       //     if( s == null )
+       //         throw new IllegalStateException( "Missing property entry for " + key + k );
+       // for some situations its desired that s can be null
             hm.put( k, s );
         }
 

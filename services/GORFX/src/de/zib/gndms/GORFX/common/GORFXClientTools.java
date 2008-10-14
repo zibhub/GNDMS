@@ -180,6 +180,28 @@ public class GORFXClientTools {
     }
 
 
+    public static ProviderStageInResultT createProviderStageInResultT() throws SOAPException, IllegalAccessException, InstantiationException {
+
+        ProviderStageInResultT psr = new ProviderStageInResultT( );
+        psr.setOfferType( getProviderStageInURI() );
+
+        psr.set_any( getMessageElementsForFieldDescs( ProviderStageInResultT.getTypeDesc().getFields() ) );
+
+        return psr;
+    }
+
+
+    public static FileTransferResultT createFileTransferResultT() throws SOAPException, IllegalAccessException, InstantiationException {
+
+        FileTransferResultT ftr = new FileTransferResultT();
+        ftr.setOfferType( getFileTransferURI() );
+
+        ftr.set_any( getMessageElementsForFieldDescs( FileTransferResultT.getTypeDesc().getFields() ) );
+
+        return ftr;
+    }
+
+
     public static MessageElement[] getMessageElementsForFieldDescs( FieldDesc[] fds ) throws SOAPException, InstantiationException, IllegalAccessException {
 
         // prune offerType
@@ -249,5 +271,4 @@ public class GORFXClientTools {
         } else
             System.out.println( "no elements received" );
     }
-
 }

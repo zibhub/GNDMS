@@ -14,6 +14,7 @@ import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQConverter;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyWriter;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQWriter;
+import de.zib.gndms.model.gorfx.types.ProviderStageInResult;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -185,8 +186,7 @@ public class ProviderStageInAction extends ORQTaskAction<ProviderStageInORQ> {
             try {
                 final int exitCode = procParam.waitFor();
                 if (exitCode == 0)
-                    finish(new ProviderStageInResult(getKey().getOfferTypeKey(),
-                                                     sliceParam.getId()));
+                    finish(new ProviderStageInResult(sliceParam.getId()));
                 else
                     fail(new IllegalStateException("Non-zero exitcode "
                             + Integer.toString(exitCode)));

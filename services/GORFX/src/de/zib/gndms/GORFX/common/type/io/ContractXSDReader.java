@@ -17,8 +17,7 @@ public class ContractXSDReader {
         con.setAccepted( src.getIfDecisionBefore() );
         con.setDeadline( src.getExecutionLikelyUntil() );
         con.setResultValidity( src.getResultValidUntil() );
-        // todo whats with this?
-        // src.isConstantExecutionTime();
+        con.setDeadlineIsOffset( src.isConstantExecutionTime() );
 
         return con;
     }

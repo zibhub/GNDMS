@@ -13,33 +13,31 @@ import java.util.Calendar;
  * <p/>
  * User: mjorra, Date: 25.09.2008, Time: 13:31:25
  */
-public class ContractToXSDTypeWriter implements ContractWriter {
-
-    private OfferExecutionContractT product;
+public class ContractXSDTypeWriter extends AbstractXSDTypeWriter<OfferExecutionContractT> implements ContractWriter {
 
 
     public void writeIfDecisionBefore( Calendar dat ) {
-        product.setIfDecisionBefore( dat );
+        getProduct( ).setIfDecisionBefore( dat );
     }
 
 
     public void writeExecutionLikelyUntil( Calendar dat ) {
-        product.setExecutionLikelyUntil( dat );
+        getProduct( ).setExecutionLikelyUntil( dat );
     }
 
 
     public void writeConstantExecutionTime( boolean et ) {
-        product.setConstantExecutionTime( et );
+        getProduct( ).setConstantExecutionTime( et );
     }
 
 
     public void writeResultValidUntil( Calendar dat ) {
-        product.setResultValidUntil( dat );
+        getProduct( ).setResultValidUntil( dat );
     }
 
 
     public void begin() {
-        product = new OfferExecutionContractT( );
+        setProduct( new OfferExecutionContractT( ) );
     }
 
 
@@ -48,14 +46,9 @@ public class ContractToXSDTypeWriter implements ContractWriter {
     }
 
 
-    public OfferExecutionContractT getProduct( ) {
-        return product;
-    }
-
-
     public static OfferExecutionContractT fromContract( Contract con ) {
 
-        ContractToXSDTypeWriter writ = new ContractToXSDTypeWriter();
+        ContractXSDTypeWriter writ = new ContractXSDTypeWriter();
         ContractConverter conv = new ContractConverter( writ, con );
         conv.convert( );
         return writ.getProduct( );

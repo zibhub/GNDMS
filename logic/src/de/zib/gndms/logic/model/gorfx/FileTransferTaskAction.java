@@ -8,12 +8,9 @@ import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
 import de.zib.gndms.kit.network.GNDMSFileTransfer;
 import org.jetbrains.annotations.NotNull;
 import org.globus.ftp.GridFTPClient;
-import org.globus.ftp.exception.ServerException;
-import org.globus.ftp.exception.ClientException;
 import org.apache.axis.types.URI;
 
 import javax.persistence.EntityManager;
-import java.io.IOException;
 import java.util.TreeMap;
 import java.util.ArrayList;
 
@@ -59,7 +56,7 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
 
         try {
             EntityManager em = getEntityManager();
-            transferState = (FTPTransferState) em.find( FTPTransferState.class, getModel( ).getId() );
+            transferState = em.find( FTPTransferState.class, getModel( ).getId() );
 
             TreeMap<String,String> files =  getOrq().getFileMap();
             if( transferState == null )
@@ -72,9 +69,10 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
                 }
             }
 
-            PersistentMarkerListener pml = new PersistentMarkerListener( );
+            TaskPersistentMarkerListener pml = new TaskPersistentMarkerListener( );
             pml.setEntityManager( em );
             pml.setTransferState( transferState );
+            pml.setTask( getModel() );
 
             URI suri = new URI ( getOrq().getSourceURI() );
             URI duri = new URI ( getOrq().getTargetURI() );
@@ -123,7 +121,6 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
 
         transferState = new FTPTransferState();
         transferState.setTransferId( getModel().getId());
-        getEntityManager().persist( transferState );
     }
 
     

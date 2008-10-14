@@ -26,12 +26,6 @@ public class DSpaceProviderImpl{
 	}
 	
 
-    public de.zib.gndms.dspace.stubs.CallMaintenanceActionResponse callMaintenanceAction(de.zib.gndms.dspace.stubs.CallMaintenanceActionRequest params) throws RemoteException {
-    de.zib.gndms.dspace.stubs.CallMaintenanceActionResponse boxedResult = new de.zib.gndms.dspace.stubs.CallMaintenanceActionResponse();
-    boxedResult.setResponse(impl.callMaintenanceAction(params.getAction(),params.getOptions().getContext()));
-    return boxedResult;
-  }
-
     public de.zib.gndms.dspace.stubs.GetSubspaceResponse getSubspace(de.zib.gndms.dspace.stubs.GetSubspaceRequest params) throws RemoteException, de.zib.gndms.dspace.stubs.types.UnknownSubspace {
     de.zib.gndms.dspace.stubs.GetSubspaceResponse boxedResult = new de.zib.gndms.dspace.stubs.GetSubspaceResponse();
     boxedResult.setSubspaceReference(impl.getSubspace(params.getSubspaceSpecifier().getSubspaceSpecifier()));
@@ -53,6 +47,12 @@ public class DSpaceProviderImpl{
     public de.zib.gndms.dspace.stubs.CreateSliceInSubspaceResponse createSliceInSubspace(de.zib.gndms.dspace.stubs.CreateSliceInSubspaceRequest params) throws RemoteException, de.zib.gndms.dspace.subspace.stubs.types.OutOfSpace, de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind, de.zib.gndms.dspace.stubs.types.UnknownSubspace, de.zib.gndms.dspace.stubs.types.InternalFailure {
     de.zib.gndms.dspace.stubs.CreateSliceInSubspaceResponse boxedResult = new de.zib.gndms.dspace.stubs.CreateSliceInSubspaceResponse();
     boxedResult.setSliceReference(impl.createSliceInSubspace(params.getSubspaceSpecifier().getSubspaceSpecifier(),params.getSliceCreationSpecifier().getSliceCreationSpecifier(),params.getContext().getContext()));
+    return boxedResult;
+  }
+
+    public de.zib.gndms.dspace.stubs.CallMaintenanceActionResponse callMaintenanceAction(de.zib.gndms.dspace.stubs.CallMaintenanceActionRequest params) throws RemoteException {
+    de.zib.gndms.dspace.stubs.CallMaintenanceActionResponse boxedResult = new de.zib.gndms.dspace.stubs.CallMaintenanceActionResponse();
+    boxedResult.setResponse(impl.callMaintenanceAction(params.getAction(),params.getOptions().getContext()));
     return boxedResult;
   }
 
