@@ -1,11 +1,11 @@
 #Introduce Properties
-#Tue Oct 07 14:22:52 CEST 2008
+#Tue Oct 14 11:24:34 CEST 2008
 introduce.skeleton.services.list=GORFX,ORQ,Offer,Task
 introduce.skeleton.extensions=
-introduce.skeleton.timestamp=1222691159078
+introduce.skeleton.timestamp=1223976203532
 introduce.skeleton.service.name=GORFX
 introduce.skeleton.resource.options=main,singleton,identifiable,resourcePropertyManagement,secure
-introduce.skeleton.destination.dir=/Users/stepn/Source/GNDMS-Templates/services/GORFX
+introduce.skeleton.destination.dir=/home/mjorra/projects/C3Grid/templates/templates_work/services/GORFX
 introduce.skeleton.namespace.domain=http\://GORFX.gndms.zib.de/GORFX
 introduce.soap.binding.excludes=\ 
 introduce.ns.excludes=\ -x gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security
