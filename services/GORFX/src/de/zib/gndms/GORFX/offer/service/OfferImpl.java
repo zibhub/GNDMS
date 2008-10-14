@@ -35,15 +35,7 @@ public class OfferImpl extends OfferImplBase {
             EntityManager em = thome.getEntityManagerFactory().createEntityManager();
 
             // Persist task object
-            em.getTransaction().begin();
-            try {
-                em.persist(task);
-                em.getTransaction().commit();
-            }
-            finally {
-                if (em.getTransaction().isActive())
-                    em.getTransaction().rollback();
-            }
+            persistTask(task, em);
 
             // Create resource and build epr
             EndpointReferenceType epr;
@@ -55,17 +47,8 @@ public class OfferImpl extends OfferImplBase {
             }
             catch (RuntimeException e) {
                 try {
-                    // on failure, try to del the task from the db
-                    em.getTransaction().begin();
-                    try {
-                        if (em.contains(task))
-                            em.remove(task);
-                        em.getTransaction().commit();
-                    }
-                    finally {
-                        if (em.getTransaction().isActive())
-                            em.getTransaction().rollback();
-                    }
+                    removeTask(task, em);
+
                 }
                 finally {
                     // but keep causing exception if even that fails
@@ -76,6 +59,33 @@ public class OfferImpl extends OfferImplBase {
             throw new RemoteException( e.getMessage() );
         }
 
+    }
+
+
+    private void removeTask(final Task taskParam, final EntityManager emParam) {// on failure, try to del the task from the db
+        emParam.getTransaction().begin();
+        try {
+            if (emParam.contains(taskParam))
+                emParam.remove(taskParam);
+            emParam.getTransaction().commit();
+        }
+        finally {
+            if (emParam.getTransaction().isActive())
+                emParam.getTransaction().rollback();
+        }
+    }
+
+
+    private void persistTask(final Task taskParam, final EntityManager emParam) {
+        emParam.getTransaction().begin();
+        try {
+            emParam.persist(taskParam);
+            emParam.getTransaction().commit();
+        }
+        finally {
+            if (emParam.getTransaction().isActive())
+                emParam.getTransaction().rollback();
+        }
     }
 
 }

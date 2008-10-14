@@ -17,7 +17,7 @@ import java.io.Serializable;
  *          User: stepn Date: 15.09.2008 Time: 11:26:48
  */
 @SuppressWarnings({ "AbstractMethodCallInConstructor" })
-public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, M>
+public abstract class TaskAction extends AbstractModelAction<Task, Task>
 {
     private TaskExecutionService service;
 
@@ -87,25 +87,19 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
     }
 
     
-    public TaskAction(final @NotNull EntityManager em, final @NotNull M model) {
+    public TaskAction(final @NotNull EntityManager em, final @NotNull Task model) {
         super();
         initFromModel(em, model);
     }
 
 
-    private void initFromModel(final EntityManager em, final M model) {
-        final boolean created = model.getState().equals(TaskState.CREATED);
+    public void initFromModel(final EntityManager em, final Task model) {
         final boolean contained = em.contains(model);
 
-        if (created)
-        {
-            setOwnEntityManager(em);
-            setModel(model);
-        }
-        else {
-            if (! contained)
-                throw new IllegalArgumentException("EntityManager does not contain provided model");
-        }
+        if (! contained)
+            throw new IllegalArgumentException("EntityManager does not contain provided model");
+        setOwnEntityManager(em);
+        setModel(model);
     }
 
 
@@ -115,11 +109,11 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
     }
 
 
-    private void initFromPk(final EntityManager em, final String pk) {
+    public void initFromPk(final EntityManager em, final String pk) {
         setOwnEntityManager(em);
         try {
             em.getTransaction().begin();
-            final M model = em.find(getTaskClass(), pk);
+            final Task model = em.find(getTaskClass(), pk);
             if (model == null)
                 throw new IllegalArgumentException("Model not found for pk: " + pk);
             em.getTransaction().commit();
@@ -134,7 +128,7 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
 
 
     @Override
-    public void setModel(final @NotNull M mdl) {
+    public void setModel(final @NotNull Task mdl) {
         if (getModel() == null)
             super.setModel(mdl);    // Overridden method
         else
@@ -143,12 +137,12 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
 
 
 
-    protected abstract @NotNull Class<M> getTaskClass();
+    protected abstract @NotNull Class<Task> getTaskClass();
 
 
     public TaskExecutionService getService() {
         if (service == null) {
-            final TaskAction<?> taskAction = nextParentOfType(TaskAction.class);
+            final TaskAction taskAction = nextParentOfType(TaskAction.class);
             return taskAction == null ? null : taskAction.getService();
         }
         return service;
@@ -171,7 +165,7 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
 
     @SuppressWarnings({ "ThrowableInstanceNeverThrown", "ObjectAllocationInLoop" })
     @Override
-    public M execute(final @NotNull EntityManager em) {
+    public Task execute(final @NotNull EntityManager em) {
         boolean first = true;
         TransitException curEx = null;
         do {
@@ -225,7 +219,7 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
 
 
     private void markAsDone() {
-        final @NotNull M model = getModel();
+        final @NotNull Task model = getModel();
         if (! model.isDone()) {
             final EntityManager em = getEntityManager();
             try {
@@ -245,7 +239,7 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
     private void transit(final TaskState newState) {
         final EntityManager em = getEntityManager();
         try {
-            final @NotNull M model = getModel();
+            final @NotNull Task model = getModel();
             em.getTransaction().begin();
             model.transit(newState);
             if (! em.contains(model))
@@ -264,7 +258,7 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
 
 
     @SuppressWarnings({ "ThrowableInstanceNeverThrown" })
-    private void transit(final @NotNull TaskState newState, final @NotNull M model) {
+    private void transit(final @NotNull TaskState newState, final @NotNull Task model) {
         switch (model.getState().transit(newState)) {
             case CREATED: onCreated(model); break;
             case CREATED_UNKNOWN: onUnknown(model); break;
@@ -288,29 +282,29 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
         }
     }
 
-    protected TaskState onUnknown(final M model) {
+    protected TaskState onUnknown(final Task model) {
         throw new UnsupportedOperationException();
     }
 
 
-    protected void onCreated(final M model) {
+    protected void onCreated(final Task model) {
         transitToState(TaskState.INITIALIZED);
 
     }
 
-    protected void onInitialized(final M model) {
+    protected void onInitialized(final Task model) {
         transitToState(TaskState.IN_PROGRESS);
     }
 
-    protected abstract void onInProgress(final @NotNull M model);
+    protected abstract void onInProgress(final @NotNull Task model);
 
 
-    protected void onFailed(final @NotNull M model) {
+    protected void onFailed(final @NotNull Task model) {
         stop(model);
     }
 
 
-    protected void onFinished(final @NotNull M model) {
+    protected void onFinished(final @NotNull Task model) {
         stop(model);
     }
 
@@ -332,7 +326,7 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
     }
 
 
-    protected void stop(final @NotNull M model) {
+    protected void stop(final @NotNull Task model) {
         throw new StopException(model.getState());
     }
 

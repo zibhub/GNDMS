@@ -15,7 +15,7 @@ import javax.persistence.EntityManager;
  *          User: stepn Date: 29.09.2008 Time: 17:06:35
  */
 @SuppressWarnings({ "FeatureEnvy" })
-public class DummyTaskAction extends TaskAction<Task> {
+public class DummyTaskAction extends TaskAction {
     private double successRate = 1.0d;
     private long sleepInProgress;
 

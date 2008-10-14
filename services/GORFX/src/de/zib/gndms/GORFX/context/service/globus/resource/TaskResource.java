@@ -34,7 +34,7 @@ public class TaskResource extends TaskResourceBase
 
 
     private ExtTaskResourceHome home;
-    private TaskAction<? extends Task> taskAction;
+    private TaskAction taskAction;
     private GridResourceModelHandler<Task, ExtTaskResourceHome, TaskResource> mH;
     private Future<?> future;
 
@@ -48,6 +48,8 @@ public class TaskResource extends TaskResourceBase
         Task tsk = taskAction.getModel( );
         if(! tsk.getState().equals( TaskState.FINISHED ) || ! tsk.getState().equals( TaskState.FAILED ) )
             future = home.getSystem( ).submitAction( taskAction );
+        else
+            taskAction.getEntityManager().close();
     }
 
 
@@ -108,11 +110,6 @@ public class TaskResource extends TaskResourceBase
     }
 
 
-    public void setTaskAction( TaskAction taskAction ) {
-        this.taskAction = taskAction;
-    }
-
-
     /**
      * Loads a task state form the data base and executes the task, useing executeTask.
      *
@@ -127,7 +124,21 @@ public class TaskResource extends TaskResourceBase
 
         EntityManager em = home.getEntityManagerFactory().createEntityManager(  );
         Task tsk = (Task) mH.loadModelById( em, id );
-        // todo taskAction = new TaskAction( em, tsk );
+        try {
+            taskAction =  getResourceHome().getSystem().getInstanceDir().getTaskAction(em, tsk.getOfferType().getOfferTypeKey());
+            taskAction.initFromModel(em, tsk);
+            taskAction.setClosingEntityManagerOnCleanup(true);
+            
+        }
+        catch (IllegalAccessException e) {
+            throw new ResourceException(e);
+        }
+        catch (InstantiationException e) {
+            throw new ResourceException(e);
+        }
+        catch (ClassNotFoundException e) {
+            throw new ResourceException(e);
+        }
         executeTask( );
         return tsk;
     }

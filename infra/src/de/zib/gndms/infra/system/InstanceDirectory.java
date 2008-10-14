@@ -101,23 +101,30 @@ public class InstanceDirectory {
     @SuppressWarnings(
             {
                     "RawUseOfParameterizedType", "unchecked", "MethodWithTooExceptionsDeclared",
-                    "RedundantCast" })
-    public TaskAction<?> getTaskAction(
-            final @NotNull GNDMSystem sys,
+                    "RedundantCast", "OverloadedMethodsWithSameNumberOfParameters" })
+    public TaskAction getTaskAction(
             final @NotNull EntityManagerFactory emf,
             final @NotNull String offerTypeKey)
             throws ClassNotFoundException, IllegalAccessException, InstantiationException,
             NoSuchMethodException, InvocationTargetException {
         EntityManager em = emf.createEntityManager();
         try {
-            OfferType type = em.find(OfferType.class, offerTypeKey);
-            return taskActionPark.getInstance(type);
+            return getTaskAction(em, offerTypeKey);
         }
         finally {
             if (! em.isOpen())
                 em.close();
         }
     }
+
+
+    @SuppressWarnings({ "OverloadedMethodsWithSameNumberOfParameters" })
+    public TaskAction getTaskAction(final @NotNull EntityManager em, final @NotNull String offerTypeKey)
+            throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+        OfferType type = em.find(OfferType.class, offerTypeKey);
+        return taskActionPark.getInstance(type);
+    }
+
 
     public @NotNull  <T> T retrieveInstance(@NotNull Class<T> clazz, @NotNull String name) {
         T instance;
