@@ -32,7 +32,7 @@ import org.w3c.dom.Node;
  */
 public class SliceAuthorization implements PDP {
 
-	public static final String SERVICE_NAMESPACE = "http://dspace.gndms.zib.de/DSpace/Slice";
+	public static final String SERVICE_NAMESPACE = "http://dspace.gndms.zib.de/dspace/Slice";
 	
 	
 	public SliceAuthorization() {

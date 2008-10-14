@@ -1,0 +1,16 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="GNDMS" verbose="1" >
+
+  <test name="DbTest">
+    <packages>
+      <package name="de.zib.gndms.infra.sys" />
+   </packages>
+ </test>
+    
+ <test name="UtilsTest">
+     <classes>
+         <class name="de.zib.gndms.logic.action.ParameterToolsTest" />
+     </classes>
+ </test>
+</suite>

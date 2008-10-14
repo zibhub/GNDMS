@@ -1,0 +1,22 @@
+#!/bin/sh
+
+FILE="$1"
+
+HOST=`cat $FILE | grep ^monitor.host | cut -d= -f2-`
+PORT=`cat $FILE | grep ^monitor.port | cut -d= -f2-`
+USER=`cat $FILE | grep ^monitor.user | cut -d= -f2-`
+PASS=`cat $FILE | grep ^monitor.password | cut -d= -f2-`
+COOKIES=$HOME/.gndmsh-cookies
+
+if [ ! -z "$PASS" ] ; then
+	PASS=":$PASS"
+fi
+
+shift
+
+if [ ! -z "$REST" ] ; then
+	REST="&$REST"
+fi
+
+curl -b "$COOKIES" -u "$USER""$PASS" http://"$HOST":"$PORT"/?"m=restart""$REST"
+rm -f "$COOKIES"

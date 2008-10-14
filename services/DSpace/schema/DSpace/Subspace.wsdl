@@ -101,35 +101,35 @@
   ============================================================-->
   <portType name="SubspacePortType" wsrp:ResourceProperties="tns:SubspaceResourceProperties">
     <operation name="CreateSlice">
-      <input message="tns:CreateSliceRequest" wsa:Action="http://dspace.gndms.zib.de/DSpace/Subspace/CreateSliceRequest" />
-      <output message="tns:CreateSliceResponse" wsa:Action="http://dspace.gndms.zib.de/DSpace/Subspace/CreateSliceResponse" />
-      <fault name="OutOfSpace" message="tns:OutOfSpaceFaultMessage" wsa:Action="http://dspace.gndms.zib.de/DSpace/Subspace/OutOfSpaceFaultMessage" />
-      <fault name="UnknownOrInvalidSliceKind" message="tns:UnknownOrInvalidSliceKindFaultMessage" wsa:Action="http://dspace.gndms.zib.de/DSpace/Subspace/UnknownOrInvalidSliceKindFaultMessage" />
-      <fault name="InternalFailure" message="tns:InternalFailureFaultMessage" wsa:Action="http://dspace.gndms.zib.de/DSpace/Subspace/InternalFailureFaultMessage" />
+      <input message="tns:CreateSliceRequest" wsa:de.zib.gndms.action.Action="http://dspace.gndms.zib.de/DSpace/Subspace/CreateSliceRequest" />
+      <output message="tns:CreateSliceResponse" wsa:de.zib.gndms.action.Action="http://dspace.gndms.zib.de/DSpace/Subspace/CreateSliceResponse" />
+      <fault name="OutOfSpace" message="tns:OutOfSpaceFaultMessage" wsa:de.zib.gndms.action.Action="http://dspace.gndms.zib.de/DSpace/Subspace/OutOfSpaceFaultMessage" />
+      <fault name="UnknownOrInvalidSliceKind" message="tns:UnknownOrInvalidSliceKindFaultMessage" wsa:de.zib.gndms.action.Action="http://dspace.gndms.zib.de/DSpace/Subspace/UnknownOrInvalidSliceKindFaultMessage" />
+      <fault name="InternalFailure" message="tns:InternalFailureFaultMessage" wsa:de.zib.gndms.action.Action="http://dspace.gndms.zib.de/DSpace/Subspace/InternalFailureFaultMessage" />
     </operation>
     <operation name="ListCreatableSliceKinds">
-      <input message="tns:ListCreatableSliceKindsRequest" wsa:Action="http://dspace.gndms.zib.de/DSpace/Subspace/ListCreatableSliceKindsRequest" />
-      <output message="tns:ListCreatableSliceKindsResponse" wsa:Action="http://dspace.gndms.zib.de/DSpace/Subspace/ListCreatableSliceKindsResponse" />
+      <input message="tns:ListCreatableSliceKindsRequest" wsa:de.zib.gndms.action.Action="http://dspace.gndms.zib.de/DSpace/Subspace/ListCreatableSliceKindsRequest" />
+      <output message="tns:ListCreatableSliceKindsResponse" wsa:de.zib.gndms.action.Action="http://dspace.gndms.zib.de/DSpace/Subspace/ListCreatableSliceKindsResponse" />
     </operation>
     <operation name="getServiceSecurityMetadata">
-      <input message="wns0:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />
-      <output message="wns0:GetServiceSecurityMetadataResponse" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataResponse" />
+      <input message="wns0:GetServiceSecurityMetadataRequest" wsa:de.zib.gndms.action.Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />
+      <output message="wns0:GetServiceSecurityMetadataResponse" wsa:de.zib.gndms.action.Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataResponse" />
     </operation>
     <wsdl:operation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="GetMultipleResourceProperties">
-      <wsdl:input name="GetMultipleResourcePropertiesRequest" message="wsrpw:GetMultipleResourcePropertiesRequest" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetMultipleResourceProperties" />
-      <wsdl:output name="GetMultipleResourcePropertiesResponse" message="wsrpw:GetMultipleResourcePropertiesResponse" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetMultipleResourcePropertiesResponse" />
+      <wsdl:input name="GetMultipleResourcePropertiesRequest" message="wsrpw:GetMultipleResourcePropertiesRequest" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetMultipleResourceProperties" />
+      <wsdl:output name="GetMultipleResourcePropertiesResponse" message="wsrpw:GetMultipleResourcePropertiesResponse" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetMultipleResourcePropertiesResponse" />
       <wsdl:fault name="ResourceUnknownFault" message="wsrpw:ResourceUnknownFault" />
       <wsdl:fault name="InvalidResourcePropertyQNameFault" message="wsrpw:InvalidResourcePropertyQNameFault" />
     </wsdl:operation>
     <wsdl:operation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="GetResourceProperty">
-      <wsdl:input name="GetResourcePropertyRequest" message="wsrpw:GetResourcePropertyRequest" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetResourceProperty" />
-      <wsdl:output name="GetResourcePropertyResponse" message="wsrpw:GetResourcePropertyResponse" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetResourcePropertyResponse" />
+      <wsdl:input name="GetResourcePropertyRequest" message="wsrpw:GetResourcePropertyRequest" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetResourceProperty" />
+      <wsdl:output name="GetResourcePropertyResponse" message="wsrpw:GetResourcePropertyResponse" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/GetResourcePropertyResponse" />
       <wsdl:fault name="ResourceUnknownFault" message="wsrpw:ResourceUnknownFault" />
       <wsdl:fault name="InvalidResourcePropertyQNameFault" message="wsrpw:InvalidResourcePropertyQNameFault" />
     </wsdl:operation>
     <wsdl:operation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="QueryResourceProperties">
-      <wsdl:input name="QueryResourcePropertiesRequest" message="wsrpw:QueryResourcePropertiesRequest" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/QueryResourceProperties" />
-      <wsdl:output name="QueryResourcePropertiesResponse" message="wsrpw:QueryResourcePropertiesResponse" wsa:Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/QueryResourcePropertiesResponse" />
+      <wsdl:input name="QueryResourcePropertiesRequest" message="wsrpw:QueryResourcePropertiesRequest" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/QueryResourceProperties" />
+      <wsdl:output name="QueryResourcePropertiesResponse" message="wsrpw:QueryResourcePropertiesResponse" wsa:de.zib.gndms.action.Action="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties/QueryResourcePropertiesResponse" />
       <wsdl:fault name="ResourceUnknownFault" message="wsrpw:ResourceUnknownFault" />
       <wsdl:fault name="InvalidResourcePropertyQNameFault" message="wsrpw:InvalidResourcePropertyQNameFault" />
       <wsdl:fault name="UnknownQueryExpressionDialectFault" message="wsrpw:UnknownQueryExpressionDialectFault" />
