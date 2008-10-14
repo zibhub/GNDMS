@@ -2,6 +2,7 @@ package de.zib.gndms.dspace.client;
 
 import java.io.InputStream;
 import java.rmi.RemoteException;
+import java.net.URI;
 
 import javax.xml.namespace.QName;
 
@@ -19,6 +20,9 @@ import org.globus.gsi.GlobusCredential;
 import de.zib.gndms.dspace.stubs.DSpacePortType;
 import de.zib.gndms.dspace.stubs.service.DSpaceServiceAddressingLocator;
 import de.zib.gndms.dspace.common.DSpaceI;
+import de.zib.gndms.dspace.subspace.client.SubspaceClient;
+import de.zib.gndms.dspace.subspace.stubs.types.SubspaceReference;
+import de.zib.gndms.model.common.ImmutableScopedName;
 import gov.nih.nci.cagrid.introduce.security.client.ServiceSecurityClient;
 
 /**
@@ -50,7 +54,26 @@ public class DSpaceClient extends DSpaceClientBase implements DSpaceI {
 	   	super(epr,proxy);
 	}
 
-	public static void usage(){
+    public SubspaceClient findSubspace( String scopeName, String localName ) throws RemoteException, MalformedURIException {
+
+        return findSubspace( new ImmutableScopedName( scopeName, localName ) );
+    }
+
+
+    public SubspaceClient findSubspace( ImmutableScopedName name ) throws RemoteException, MalformedURIException {
+
+        return findSubspace( name.toQName() );
+    }
+
+
+    public SubspaceClient findSubspace( QName name ) throws RemoteException, MalformedURIException {
+
+        SubspaceReference sr = getSubspace( name );
+        return new SubspaceClient( sr.getEndpointReference() );
+    }
+
+    
+    public static void usage(){
 		System.out.println(DSpaceClient.class.getName() + " -url <service url>");
 	}
 	
@@ -59,10 +82,10 @@ public class DSpaceClient extends DSpaceClientBase implements DSpaceI {
 		try{
 		if(!(args.length < 2)){
 			if(args[0].equals("-url")){
-			  DSpaceClient client = new DSpaceClient(args[1]);
-			  // place client calls here if you want to use this main as a
-			  // test....
-			} else {
+                DSpaceClient client = new DSpaceClient(args[1]);
+                
+
+            } else {
 				usage();
 				System.exit(1);
 			}
@@ -75,6 +98,19 @@ public class DSpaceClient extends DSpaceClientBase implements DSpaceI {
 			System.exit(1);
 		}
 	}
+
+  public java.lang.Object callMaintenanceAction(java.lang.String action,types.ContextT options) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"callMaintenanceAction");
+    de.zib.gndms.dspace.stubs.CallMaintenanceActionRequest params = new de.zib.gndms.dspace.stubs.CallMaintenanceActionRequest();
+    params.setAction(action);
+    de.zib.gndms.dspace.stubs.CallMaintenanceActionRequestOptions optionsContainer = new de.zib.gndms.dspace.stubs.CallMaintenanceActionRequestOptions();
+    optionsContainer.setContext(options);
+    params.setOptions(optionsContainer);
+    de.zib.gndms.dspace.stubs.CallMaintenanceActionResponse boxedResult = portType.callMaintenanceAction(params);
+    return boxedResult.getResponse();
+    }
+  }
 
   public org.oasis.wsrf.properties.GetMultipleResourcePropertiesResponse getMultipleResourceProperties(org.oasis.wsrf.properties.GetMultipleResourceProperties_Element params) throws RemoteException {
     synchronized(portTypeMutex){

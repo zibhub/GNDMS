@@ -1,21 +1,11 @@
 package de.zib.gndms.dspace.service;
 
-import de.zib.gndms.dspace.service.globus.resource.DSpaceResource;
-import  de.zib.gndms.dspace.service.DSpaceConfiguration;
-
-import java.rmi.RemoteException;
-
-import javax.naming.InitialContext;
-import javax.xml.namespace.QName;
-
 import org.apache.axis.MessageContext;
 import org.globus.wsrf.Constants;
-import org.globus.wsrf.ResourceContext;
-import org.globus.wsrf.ResourceContextException;
-import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.ResourceHome;
-import org.globus.wsrf.ResourceProperty;
-import org.globus.wsrf.ResourcePropertySet;
+
+import javax.naming.InitialContext;
+import java.rmi.RemoteException;
 
 
 /** 
