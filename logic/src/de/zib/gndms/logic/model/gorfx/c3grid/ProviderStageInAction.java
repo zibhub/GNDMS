@@ -11,6 +11,7 @@ import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
+import de.zib.gndms.model.gorfx.types.ProviderStageInResult;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 
@@ -67,7 +68,7 @@ public class ProviderStageInAction extends ORQTaskAction<ProviderStageInORQ> {
                 try {
                     final int exitCode = proc.waitFor();
                     if (exitCode == 0)
-                        finish(new ProviderStageInResult(getKey().getOfferTypeKey(), slice.getId()));
+                        finish(new ProviderStageInResult( slice.getId() ) );
                     else
                         fail(new IllegalStateException("Non-zero exitcode " + Integer.toString(exitCode)));
                 }

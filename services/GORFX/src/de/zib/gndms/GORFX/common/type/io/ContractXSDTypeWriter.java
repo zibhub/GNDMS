@@ -48,7 +48,7 @@ public class ContractXSDTypeWriter extends AbstractXSDTypeWriter<OfferExecutionC
 
     public static OfferExecutionContractT fromContract( Contract con ) {
 
-        ContractToXSDTypeWriter writ = new ContractToXSDTypeWriter();
+        ContractXSDTypeWriter writ = new ContractXSDTypeWriter();
         ContractConverter conv = new ContractConverter( writ, con );
         conv.convert( );
         return writ.getProduct( );

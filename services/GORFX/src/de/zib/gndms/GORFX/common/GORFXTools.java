@@ -3,6 +3,8 @@ package de.zib.gndms.GORFX.common;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.*;
+import de.zib.gndms.GORFX.common.type.io.ContextXSDReader;
+import de.zib.gndms.GORFX.common.type.io.FileTransferORQXSDReader;
 import org.apache.axis.types.NormalizedString;
 import org.apache.axis.types.URI;
 import types.*;
@@ -17,16 +19,22 @@ import java.util.HashMap;
  */
 public class GORFXTools {
 
-    public static AbstractORQ convertFromORQT( DynamicOfferDataSeqT orq ) throws Exception {
+    public static AbstractORQ convertFromORQT( DynamicOfferDataSeqT orq, ContextT ctx ) throws Exception {
 
-        if( orq.getOfferType().toString().equals( GORFXConstantURIs.PROVIDER_STAGE_IN_URI ) )
-            return convertProviderStageInORQFromORQT( (ProviderStageInORQT) orq );
+        AbstractORQ aorq = null;
+        if( orq.getOfferType().toString().equals( GORFXConstantURIs.PROVIDER_STAGE_IN_URI ) ) {
+            aorq = convertProviderStageInORQFromORQT( (ProviderStageInORQT) orq );
+            aorq.setContext( ContextXSDReader.readContext( ctx ) );
+        } else if( orq.getOfferType().toString().equals( GORFXConstantURIs.FILE_TRANSFER_URI ) )
+            aorq = FileTransferORQXSDReader.read( ( FileTransferORQT) orq, ctx );
         else
             throw new IllegalArgumentException( );
 
+
+        return aorq;
     }
 
-
+    
     // todo implement this using builder form model.gorfx
     public static ProviderStageInORQ convertProviderStageInORQFromORQT( ProviderStageInORQT orqt ) throws Exception, InstantiationException, IllegalAccessException {
 

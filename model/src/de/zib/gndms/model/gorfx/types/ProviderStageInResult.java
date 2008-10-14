@@ -14,9 +14,13 @@ public class ProviderStageInResult extends AbstractTaskResult {
 
 
     public ProviderStageInResult() {
-        super( GORFXConstantURIs.PROVIDER_STAGE_IN_URI ),
+        super( GORFXConstantURIs.PROVIDER_STAGE_IN_URI );
     }
 
+    public ProviderStageInResult( String sk ) {
+        super( GORFXConstantURIs.PROVIDER_STAGE_IN_URI );
+        sliceKey = sk;
+    }
 
     public String getSliceKey() {
         return sliceKey;

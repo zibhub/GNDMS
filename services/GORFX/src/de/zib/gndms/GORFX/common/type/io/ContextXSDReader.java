@@ -15,8 +15,7 @@ public class ContextXSDReader {
 
     public static HashMap<String,String> readContext( ContextT ctx ) {
 
-        // todo: replace with getEntries call
-        ContextTEntry[] entries = new ContextTEntry[12];
+        ContextTEntry[] entries = ctx.getEntry();
         HashMap<String,String> cm = new HashMap<String,String> ( entries.length );
 
         for( int i=0; i < entries.length; ++i  ) {
