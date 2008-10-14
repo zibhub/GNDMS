@@ -1,4 +1,4 @@
-package de.zib.gndms.infra.system;
+package de.zib.gndms.infra.service;
 
 import de.zib.gndms.infra.GridConfig;
 import org.jetbrains.annotations.NotNull;
