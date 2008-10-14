@@ -19,7 +19,7 @@ import javax.persistence.EntityManager;
  *
  *          User: stepn Date: 02.10.2008 Time: 13:00:56
  */
-public abstract class ORQTaskAction<K extends AbstractORQ> extends TaskAction<Task>
+public abstract class ORQTaskAction<K extends AbstractORQ> extends TaskAction
     implements FactoryInstance<OfferType, ORQTaskAction<?>>
 {
     private Factory<OfferType, ORQTaskAction<?>> factory;
