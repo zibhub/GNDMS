@@ -3,6 +3,7 @@ package de.zib.gndms.model.gorfx.types;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 
 /**
@@ -16,8 +17,10 @@ import java.io.Serializable;
 public abstract class AbstractORQ implements Serializable {
 
     private String offerType;
+    private HashMap<String,String> context;
     private transient boolean justEstimate = false;
 
+    private static final long serialVersionUID = 5782532835559987893L;
 
     protected AbstractORQ() {
     }
@@ -49,4 +52,19 @@ public abstract class AbstractORQ implements Serializable {
 
 
     public abstract @NotNull String getDescription();
+
+
+    public HashMap<String, String> getContext() {
+        return context;
+    }
+
+
+    public void setContext( HashMap<String, String> context ) {
+        this.context = context;
+    }
+
+
+    public boolean hasContext() {
+        return context != null;
+    }
 }

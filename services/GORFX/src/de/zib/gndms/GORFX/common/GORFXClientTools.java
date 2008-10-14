@@ -179,7 +179,18 @@ public class GORFXClientTools {
         return orq;
     }
 
-    
+
+    public static ProviderStageInResultT createProviderStageInResultT() throws SOAPException, IllegalAccessException, InstantiationException {
+
+        ProviderStageInResultT psr = new ProviderStageInResultT( );
+        psr.setOfferType( getProviderStageInURI() );
+
+        psr.set_any( getMessageElementsForFieldDescs( ProviderStageInResultT.getTypeDesc().getFields() ) );
+
+        return psr;
+    }
+
+
     public static FileTransferResultT createFileTransferResultT() throws SOAPException, IllegalAccessException, InstantiationException {
 
         FileTransferResultT ftr = new FileTransferResultT();

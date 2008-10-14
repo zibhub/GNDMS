@@ -43,7 +43,10 @@ public enum SfrProperty {
     // file transfer orq
     FILE_TRANSFER_SOURCE_URI("c3grid.FileTransferRequest.SourceURI"),
     FILE_TRANSFER_DESTINATION_URI("c3grid.FileTransferRequest.DestinationURI"),
-    FILE_TRANSFER_FILE_MAPPING("c3grid.FileTransferRequest.FileMapping");
+    FILE_TRANSFER_FILE_MAPPING("c3grid.FileTransferRequest.FileMapping"),
+    
+    // common data for muliple requests
+    CONTEXT( "c3grid.CommonRequest.Context" );
 
     public final String key;
 	public final String doc;

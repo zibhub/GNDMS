@@ -1,6 +1,9 @@
 package de.zib.gndms.model.gorfx.types.io;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Properties;
+import java.util.HashMap;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -27,5 +30,10 @@ public abstract class ORQPropertyWriter extends AbstractPropertyIO implements OR
 
     public void read() {
         
+    }
+
+
+    public void writeContext( @NotNull HashMap<String, String> ctx ) {
+        PropertyReadWriteAux.writeMap( getProperties(), SfrProperty.CONTEXT.key,  ctx );
     }
 }

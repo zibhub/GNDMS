@@ -8,9 +8,22 @@ package de.zib.gndms.model.gorfx.types;
  */
 public class ProviderStageInResult extends AbstractTaskResult {
 
-    
+    private static final long serialVersionUID = -3003504928510518008L;
+
+    private String sliceKey;
+
+
     public ProviderStageInResult() {
         super( GORFXConstantURIs.PROVIDER_STAGE_IN_URI ),
     }
 
+
+    public String getSliceKey() {
+        return sliceKey;
+    }
+
+
+    public void setSliceKey( String sk ) {
+        this.sliceKey = sk;
+    }
 }
