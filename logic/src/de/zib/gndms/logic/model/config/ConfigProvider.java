@@ -3,9 +3,9 @@ package de.zib.gndms.logic.model.config;
 import de.zib.gndms.logic.action.MandatoryOptionMissingException;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import org.jetbrains.annotations.NotNull;
+import org.joda.time.DateTime;
 
 import java.text.ParseException;
-import java.util.Calendar;
 
 
 /**
@@ -47,9 +47,10 @@ public interface ConfigProvider extends OptionProvider {
 
     
     @SuppressWarnings({ "InstanceMethodNamingConvention" })
-    @NotNull Calendar getISO8601Option(@NotNull String name, @NotNull Calendar def) throws ParseException;
+    @NotNull
+    DateTime getISO8601Option(@NotNull String name, @NotNull DateTime def) throws ParseException;
 
     @SuppressWarnings({ "InstanceMethodNamingConvention" })
-    @NotNull Calendar getISO8601Option(@NotNull String name)
+    @NotNull DateTime getISO8601Option(@NotNull String name)
             throws MandatoryOptionMissingException, ParseException;
 }

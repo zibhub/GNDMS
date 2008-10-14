@@ -6,6 +6,7 @@ import de.zib.gndms.logic.action.SkipActionInitializationException;
 import de.zib.gndms.logic.model.AbstractEntityAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import org.jetbrains.annotations.NotNull;
+import org.joda.time.DateTime;
 
 import javax.persistence.EntityManager;
 import java.io.PrintWriter;
@@ -340,14 +341,16 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
 
 
     @SuppressWarnings({ "InstanceMethodNamingConvention" })
-    public @NotNull Calendar getISO8601Option(final String name)
+    public @NotNull
+    DateTime getISO8601Option(@NotNull final String name)
             throws MandatoryOptionMissingException, ParseException {
         return config.getISO8601Option(name);
     }
 
 
     @SuppressWarnings({ "InstanceMethodNamingConvention" })
-    public @NotNull Calendar getISO8601Option(final String name, @NotNull final Calendar def)
+    public @NotNull
+    DateTime getISO8601Option(@NotNull final String name, @NotNull final DateTime def)
             throws ParseException {
         return config.getISO8601Option(name, def);
     }

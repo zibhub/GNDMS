@@ -4,9 +4,10 @@ import de.zib.gndms.logic.action.MandatoryOptionMissingException;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
+import org.joda.time.format.ISODateTimeFormat;
+import org.joda.time.format.ISOPeriodFormat;
 
 import java.text.ParseException;
-import java.util.Calendar;
 
 
 /**
@@ -95,17 +96,26 @@ public abstract class AbstractConfig implements ConfigProvider {
 
     @NotNull
     @SuppressWarnings({ "InstanceMethodNamingConvention" })
-    public Calendar getISO8601Option(String name, @NotNull Calendar def) throws ParseException {
-        final String option = getNonMandatoryOption(name);
-        return option == null ? def : new DateTime(option).toDateTimeISO().toGregorianCalendar();
+    public DateTime getISO8601Option(@NotNull String name, @NotNull DateTime def) throws ParseException {
+        final String option = getNonMandatoryOption(name).trim();
+        return option == null ? def : parseISO8601(option).toDateTimeISO();
     }
 
 
     @SuppressWarnings({ "InstanceMethodNamingConvention" })
-    public @NotNull Calendar getISO8601Option(String name)
+    public @NotNull DateTime getISO8601Option(@NotNull String name)
             throws MandatoryOptionMissingException, ParseException {
-        final String option = getOption(name);
-        return new DateTime(option).toDateTimeISO().toGregorianCalendar();
+        final String option = getOption(name).trim();
+        return parseISO8601(option).toDateTimeISO();
+    }
+
+
+    public static @NotNull DateTime parseISO8601(final @NotNull String optionParam) {
+        if (optionParam.length() == 0)
+            throw new IllegalArgumentException("Empty ISO 8601 timestamp");
+        return optionParam.charAt(0) == 'P' ?
+                new DateTime(0L).plus(ISOPeriodFormat.standard().parsePeriod(optionParam))
+                : ISODateTimeFormat.dateTimeParser().parseDateTime(optionParam);
     }
 
 

@@ -14,6 +14,7 @@ import java.io.Serializable;
  * User: bzcjorra Date: Sep 5, 2008 3:38:17 PM
  */
 public abstract class AbstractORQ implements Serializable {
+    private static final long serialVersionUID = 5782532835559987893L;
 
     private String offerType;
     private transient boolean justEstimate = false;
