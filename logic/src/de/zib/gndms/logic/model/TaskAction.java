@@ -99,8 +99,6 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
 
         if (created)
         {
-            if (! contained)
-                model.setNewTask(true);
             setOwnEntityManager(em);
             setModel(model);
         }
@@ -124,7 +122,6 @@ public abstract class TaskAction<M extends Task> extends AbstractModelAction<M, 
             final M model = em.find(getTaskClass(), pk);
             if (model == null)
                 throw new IllegalArgumentException("Model not found for pk: " + pk);
-            model.setNewTask(false);
             em.getTransaction().commit();
             setModel(model);
         }

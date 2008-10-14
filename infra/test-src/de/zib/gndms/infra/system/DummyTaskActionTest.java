@@ -43,7 +43,6 @@ public class DummyTaskActionTest extends SysTestBase {
         task.setOfferType(null);
         task.setOrq("null");
         task.setContract(contract);
-        task.setNewTask(true);
         return task;
     }
 

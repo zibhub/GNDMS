@@ -1,9 +1,11 @@
 package de.zib.gndms.GORFX.offer.service.globus.resource;
 
-import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
 import de.zib.gndms.model.gorfx.Contract;
+import de.zib.gndms.model.gorfx.Task;
+import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import org.globus.wsrf.ResourceException;
+import org.jetbrains.annotations.NotNull;
 import types.DynamicOfferDataSeqT;
 import types.OfferExecutionContractT;
 
@@ -56,15 +58,16 @@ public class OfferResource extends OfferResourceBase {
     }
 
 
-    public TaskAction<?> accept() {
-
-        // todo: task instantiation therefor
-        //  identify task action to use
-        //  add relevant data orq data and contract to the task
-        //  use system to trigger task execution NOP done by TaskResource
-        // todo: set contract for action
-        //  return task
-        return null;
-        
+    @SuppressWarnings({ "FeatureEnvy" })
+    public @NotNull Task accept() {
+        Task task = new Task();
+        task.setContract(contract);
+        AbstractORQ orq = getOrqCalc().getORQArguments();
+        task.setOrq(orq);
+        task.setDescription(orq.getDescription());
+        task.setOfferType(getOrqCalc().getKey());
+        task.setTerminationTime(contract.getCurrentTerminationTime());
+        task.setId(getHome().getSystem().nextUUID());
+        return task;
     }
 }

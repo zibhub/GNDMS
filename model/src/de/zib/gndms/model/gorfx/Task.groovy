@@ -19,6 +19,8 @@ import javax.persistence.EnumType
 import org.jetbrains.annotations.NotNull
 import javax.persistence.NamedQuery
 import javax.persistence.MappedSuperclass
+import org.joda.time.DateTime
+import org.joda.time.Duration
 
 
 /**
@@ -59,17 +61,6 @@ class Task extends TimedGridResource {
 
     @Column(name = "done", nullable=false, updatable=true)
     boolean done = false
-
-    /**
-     * If true, this task has been reloaded from the db, e.g. after a system crash and recovery.
-     *
-     * Set to false by the TaskAction(em, pk) constructor after loading the task from the db.
-     *
-     * TaskActions may use this flag to differentiate between "normal" and "recovery" situations
-     * and automatically set it to true on every persisted state transition.
-     * 
-     **/
-    transient boolean newTask = true
     
     @Column(name="progress", nullable=false, updatable=true)
     int progress = 0
@@ -94,7 +85,6 @@ class Task extends TimedGridResource {
    def transit(final TaskState newState) {
         final @NotNull TaskState goalState = newState == null ? getState() : newState;
         setState(getState().transit(goalState))
-        setNewTask(true);
     }
 
 
@@ -116,7 +106,6 @@ class Task extends TimedGridResource {
 
 @Embeddable
 class Contract {
-
     // the comments denote the mapping to the
     // XSD OfferExecutionContract type
 
@@ -134,5 +123,17 @@ class Contract {
 
     // can be mapped to constantExecutionTime
     transient boolean deadlineIsOffset = false
+
+    Calendar getCurrentDeadline() {
+        return  ((deadlineIsOffset) ?
+            new DateTime(deadline).plus(new Duration(new DateTime(0L), new DateTime(deadline))).toGregorianCalendar() : deadline)
+    }
+
+    public Calendar getCurrentTerminationTime() {
+        Calendar deadline = getCurrentDeadline();
+        return (deadline.compareTo(resultValidity) <= 0) ? resultValidity : deadline;
+
+    }
+
 }
 

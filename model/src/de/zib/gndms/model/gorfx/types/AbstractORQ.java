@@ -15,12 +15,11 @@ import java.util.HashMap;
  * User: bzcjorra Date: Sep 5, 2008 3:38:17 PM
  */
 public abstract class AbstractORQ implements Serializable {
+    private static final long serialVersionUID = 5782532835559987893L;
 
     private String offerType;
     private HashMap<String,String> context;
     private transient boolean justEstimate = false;
-
-    private static final long serialVersionUID = 5782532835559987893L;
 
     protected AbstractORQ() {
     }
