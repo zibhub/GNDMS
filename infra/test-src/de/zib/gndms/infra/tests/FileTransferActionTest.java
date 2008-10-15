@@ -6,15 +6,21 @@ import de.zib.gndms.kit.network.test.TransferTestThreeFiles;
 import de.zib.gndms.model.gorfx.FTPTransferState;
 import de.zib.gndms.model.gorfx.Contract;
 import de.zib.gndms.model.gorfx.Task;
+import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.model.gorfx.types.FileTransferORQ;
+import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.logic.model.gorfx.FileTransferORQCalculator;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
-import org.testng.annotations.BeforeClass;
+import de.zib.gndms.logic.model.gorfx.FileTransferTaskAction;
+import org.testng.annotations.*;
 import org.apache.log4j.PropertyConfigurator;
 import org.globus.ftp.exception.ServerException;
+import org.globus.wsrf.ResourceException;
 
+import javax.persistence.EntityManager;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.concurrent.Future;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -35,7 +41,7 @@ public class FileTransferActionTest extends SysTestBase {
         logFileConfig = logFileCfg;
     }
 
-    @BeforeClass( groups={ "net" } )
+    @BeforeClass( groups={ "net", "db", "sys", "action", "task" } )
     public void beforeClass ( ) throws ServerException, IOException {
 
         PropertyConfigurator.configure( logFileConfig );
@@ -53,14 +59,35 @@ public class FileTransferActionTest extends SysTestBase {
 
         Contract con = calc.createOffer();
 
+        // creating offertype
+        // todo ask stefan
+
         // create task
+        task = new Task( );
+        task.setId( getSys().nextUUID() );
         task.setDescription("Dummy");
         task.setTerminationTime( con.getResultValidity());
-        task.setOfferType( orq.getOfferType() );
-        task.setOrq("null");
+        task.setOfferType( null );
+        task.setOrq( orq );
         task.setContract( con );
-        
+        Calendar tt = con.getDeadline();
+        tt.add( Calendar.YEAR, 10 );
+        task.setTerminationTime( tt );
     }
 
 
+    @Test(groups = { "net", "db", "sys", "action", "task"})
+    public void testIt( ) throws ResourceException, ExecutionException, InterruptedException {
+
+        runDatabase();
+        final EntityManager em = getSys().getEntityManagerFactory().createEntityManager();
+        FileTransferTaskAction action = new FileTransferTaskAction( em, task );
+        final Future<Task> serializableFuture = getSys().submitAction(action);
+        assert serializableFuture.get().getState().equals( TaskState.FINISHED );
+    }
+
+    @AfterClass(groups = { "net", "db", "sys", "action", "task"})
+    public void afterClass( ) {
+        shutdownDatabase();
+    }
 }
