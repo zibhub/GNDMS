@@ -20,7 +20,7 @@ import javax.persistence.MappedSuperclass
 @Entity(name="GridSites")
 @Table(name="grid_sites", schema="common")
 @MappedSuperclass
-class GridSite extends GridEntity {
+class TaskGridSite extends GridEntity {
 	@Id
     @Column(name="site_id", nullable=true, updatable=false, columnDefinition="CHAR", length=64)
 	String siteId;
