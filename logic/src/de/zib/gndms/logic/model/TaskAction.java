@@ -247,9 +247,9 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
             em.getTransaction().commit();
             transit(model.getState(), model);
         }
-        // catch (RuntimeException e) {
-        //    throw e;
-        // }
+        catch (RuntimeException e) {
+           throw e;
+        }
         finally {
             if (em.getTransaction().isActive())
                 em.getTransaction().rollback();
@@ -342,4 +342,8 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
         wrapInterrupt(e);
     }
 
+
+    public static boolean isTransitException( Exception e ) {
+        return e instanceof TransitException;
+    }
 }
