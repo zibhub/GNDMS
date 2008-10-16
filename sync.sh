@@ -1,21 +1,19 @@
-#!/bin/bash
+#!/bin/sh
 TARGET="$PWD/types"
 for SERVICE in services/* ; do
+  echo rsync -aurl "$SERVICE/build/schema/" "$TARGET/"
   rsync -aurl "$SERVICE/build/schema/" "$TARGET/"
+  echo rsync -aurl "$SERVICE/schema/" "$TARGET/"
   rsync -aurl "$SERVICE/schema/" "$TARGET/"
 done
 for SERVICE in services/* ; do
-  for gar in "$SERVICE"/*.gar ; do
-    echo ln -sf "$gar" .
-    ln -sf "$gar" .
-  done
+  echo mkdir -p $SERVICE/test/lib
+  mkdir -p $SERVICE/test/lib
+  echo find $SERVICE -type f -name '*.gar' -exec ln -sf {} $PWD \;
+  find $SERVICE -type f -name '*.gar' -exec ln -sf {} $PWD \;
   for jar in extra/lib/* ; do
     echo ln -sf "../../../$jar" "$SERVICE/lib" 
     ln -sf "../../../$jar" "$SERVICE/lib" 
-    # ln -sf "$GLOBUS_LOCATION/lib/globus_wsrf_servicegroup.jar" "$SERVICE/lib"
-    # ln -sf "$GLOBUS_LOCATION/lib/globus_wsrf_servicegroup_stubs.jar" "$SERVICE/lib"
-    # ln -sf "$GLOBUS_LOCATION/lib/globus_wsrf_mds_aggregator.jar" "$SERVICE/lib"
-    # ln -sf "$GLOBUS_LOCATION/lib/globus_wsrf_mds_aggregator_stubs.jar" "$SERVICE/lib"
   done
   echo ln -sf "$GROOVY_HOME"/embeddable/groovy-all*jar "extra/tools-lib/gndms-groovy.jar"
   ln -sf "$GROOVY_HOME"/embeddable/groovy-all*jar "extra/tools-lib/gndms-groovy.jar"

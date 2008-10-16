@@ -1,25 +1,25 @@
 package de.zib.gndms.GORFX.tests.io;
 
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Parameters;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Test;
+import de.zib.gndms.GORFX.common.GORFXTools;
+import de.zib.gndms.GORFX.common.type.io.ProviderStageInORQXSDTypeWriter;
+import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
+import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQConverter;
+import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyReader;
+import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyWriter;
+import de.zib.gndms.model.gorfx.types.io.tests.ProviderStageInORQIOTest;
 import static org.testng.Assert.assertEquals;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Optional;
+import org.testng.annotations.Parameters;
+import org.testng.annotations.Test;
+import types.ProviderStageInORQT;
 
-import java.util.Properties;
-import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
-import de.zib.gndms.model.gorfx.types.io.tests.ProviderStageInORQIOTest;
-import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyReader;
-import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQConverter;
-import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyWriter;
-import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
-import de.zib.gndms.GORFX.common.type.io.ProviderStageInORQXSDTypeWriter;
-import de.zib.gndms.GORFX.common.GORFXTools;
-import types.ProviderStageInORQT;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
