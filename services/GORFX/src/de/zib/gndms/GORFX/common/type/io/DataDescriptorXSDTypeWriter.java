@@ -13,7 +13,7 @@ import types.ObjectListT;
  */
 public class DataDescriptorXSDTypeWriter extends AbstractXSDTypeWriter<DataDescriptorT> implements DataDescriptorWriter {
 
-    private DataConstraintsWriter constraintWriter;
+    private DataConstraintsXSDTypeWriter constraintWriter;
 
     public void writeObjectList( String[] objectList ) {
         getProduct().setObjectList( new ObjectListT( objectList ) );
@@ -54,12 +54,14 @@ public class DataDescriptorXSDTypeWriter extends AbstractXSDTypeWriter<DataDescr
 
     public void doneWritingDataConstraints() {
         if( constraintWriter == null )
-            throw new IllegalStateException( "no constraint writer pressent" ); }
+            throw new IllegalStateException( "no constraint writer pressent" );
+
+        getProduct( ).setConstraints( constraintWriter.getProduct( ) );
     }
 
 
     public void writeJustDownload() {
-        //To change body of implemented methods use File | Settings | File Templates.
+        // not required in this context
     }
 
 
