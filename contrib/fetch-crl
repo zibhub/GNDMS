@@ -51,9 +51,9 @@
 #
 openssl=/usr/bin/openssl
 lynx=/opt/local/bin/lynx
-wget=/opt/local/bin/wget
+wget=$(which wget)
 basename=/usr/bin/basename
-getopt=/opt/local/bin/getopt
+getopt=$(which getopt)
 awk=/usr/bin/awk
 cat=/bin/cat
 cp=/bin/cp
@@ -66,7 +66,7 @@ id=/usr/bin/id
 ls=/bin/ls
 date=/bin/date
 sed=/usr/bin/sed
-grep=/usr/bin/grep
+grep=$(which grep)
 mktemp=/usr/bin/mktemp
 stat=/usr/bin/stat
 

@@ -97,14 +97,18 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
 
             transfer.performPersistentTransfer( pml );
 
+            em.getTransaction().begin();
             em.remove( transferState );
+            em.getTransaction().commit();
 
             finish( fc + " files transfered."  );
 
+        } catch ( TransitException e ) {
+            throw e;
         } catch ( Exception e ) {
-            failWith( e );
+                failWith( e );
         } finally {
-            getEntityManager().close();
+     //       getEntityManager().close();
             try {
                 if( src != null )
                     src.close();

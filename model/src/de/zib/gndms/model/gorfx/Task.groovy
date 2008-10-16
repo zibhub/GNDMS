@@ -120,6 +120,7 @@ class Contract {
     Calendar deadline
 
     // can be mapped to ResultValidUntil
+    // this must be at least equal to the deadline
     @Temporal(value = TemporalType.TIMESTAMP)
     Calendar resultValidity
 
@@ -137,5 +138,10 @@ class Contract {
 
     }
 
+    public void setDeadLine( Calendar dl ) {
+        deadline = dl;
+        if( resultValidity == null )
+            resultValidity = dl;
+    }
 }
 

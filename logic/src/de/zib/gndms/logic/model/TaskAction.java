@@ -255,6 +255,7 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
         }
     }
 
+    @SuppressWarnings({ "CaughtExceptionImmediatelyRethrown" })
     private void transit(final TaskState newState) {
         final EntityManager em = getEntityManager();
         try {
@@ -363,4 +364,8 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
         wrapInterrupt(e);
     }
 
+
+    public static boolean isTransitException( Exception e ) {
+        return e instanceof TransitException;
+    }
 }
