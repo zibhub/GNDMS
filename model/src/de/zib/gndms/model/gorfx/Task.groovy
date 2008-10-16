@@ -84,7 +84,9 @@ class Task extends TimedGridResource {
 
    def transit(final TaskState newState) {
         final @NotNull TaskState goalState = newState == null ? getState() : newState;
-        setState(getState().transit(goalState))
+        final @NotNull TaskState transitState = getState().transit(goalState)
+       assert transitState != null
+       setState(transitState)
     }
 
 
