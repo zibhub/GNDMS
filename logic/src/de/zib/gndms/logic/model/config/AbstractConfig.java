@@ -8,6 +8,8 @@ import org.joda.time.format.ISODateTimeFormat;
 import org.joda.time.format.ISOPeriodFormat;
 
 import java.text.ParseException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -19,6 +21,8 @@ import java.text.ParseException;
  *          User: stepn Date: 06.10.2008 Time: 10:49:31
  */
 public abstract class AbstractConfig implements ConfigProvider {
+    private static final Pattern SHELL_ENV_PAT = Pattern.compile("%\\{([a-zA-Z_][a-zA-Z0-9_]*)\\}");
+
 
     public @NotNull String getOption(final String nameParam)
             throws MandatoryOptionMissingException {
@@ -37,6 +41,32 @@ public abstract class AbstractConfig implements ConfigProvider {
             return def;
         }
     }
+
+
+    public String getNonMandatoryOption(final String nameParam) {
+        final String optionValue = getConcreteNonMandatoryOption(nameParam);
+        if (optionValue == null)
+            return optionValue;
+        else {
+            StringBuffer result = new StringBuffer(optionValue.length() << 2);
+            Matcher matcher = SHELL_ENV_PAT.matcher(optionValue);
+            while (matcher.find()) {
+                final String varName = matcher.group(1);
+                matcher.appendReplacement(result, replaceVar(nameParam, varName));
+            }
+            matcher.appendTail(result);
+            return result.toString();
+        }
+    }
+
+
+    @SuppressWarnings({ "MethodMayBeStatic" })
+    protected String replaceVar(final String optionName, final String varName) {
+        return System.getenv(optionName);
+    }
+
+
+    public abstract String getConcreteNonMandatoryOption(final String nameParam);
 
 
     public int getIntOption(@NotNull String name, int def) {
