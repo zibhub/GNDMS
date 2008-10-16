@@ -49,12 +49,12 @@ public class DataDescriptorXSDTypeWriter extends AbstractXSDTypeWriter<DataDescr
 
     public void beginWritingDataConstraints() {
         if( constraintWriter == null )
-            throw new IllegalStateException( "no constraint writer pressent" ); }
+            throw new IllegalStateException( "no constraint writer present" ); }
 
 
     public void doneWritingDataConstraints() {
         if( constraintWriter == null )
-            throw new IllegalStateException( "no constraint writer pressent" );
+            throw new IllegalStateException( "no constraint writer present" );
 
         getProduct( ).setConstraints( constraintWriter.getProduct( ) );
     }

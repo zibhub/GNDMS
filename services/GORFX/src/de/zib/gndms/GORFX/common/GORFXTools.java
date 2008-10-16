@@ -77,10 +77,17 @@ public class GORFXTools {
         SpaceConstraint sc = new SpaceConstraint();
 
         SpaceConstraintT sct = cons.getSpaceConstr();
-        sc.setLatitude( convertMinMaxT( sct.getLatitude() ) );
-        sc.setLongitude( convertMinMaxT( sct.getLongitude() ) );
-        if( sct.getAltitude() != null )
-            sc.setAltitude( convertMinMaxT( sct.getLongitude() ) );
+        MinMaxT v = sct.getLatitude();
+        if( v != null )
+            sc.setLatitude( convertMinMaxT( v ) );
+
+        v = sct.getLongitude();
+        if( v != null )
+            sc.setLongitude( convertMinMaxT( v ) );
+
+        v = sct.getAltitude();
+        if( v != null )
+            sc.setAltitude( convertMinMaxT( v ) );
 
         String s = sct.getVerticalCRS();
         if( s != null )

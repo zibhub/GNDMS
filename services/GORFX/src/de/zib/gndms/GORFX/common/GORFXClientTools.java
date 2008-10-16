@@ -31,7 +31,7 @@ public class GORFXClientTools {
 
     static {
         TypeMap.put( new QName( "http://www.w3.org/2001/XMLSchema", "anyURI" ), URI.class );
-        TypeMap.put( new QName( "http://proptest.zib.de/some/types", "DataDescriptorT" ), DataDescriptorT.class );
+        TypeMap.put( new QName( "http://gndms.zib.de/c3grid/types", "DataDescriptorT" ), DataDescriptorT.class );
         TypeMap.put( new QName( "http://www.w3.org/2001/XMLSchema", "normalizedString" ), NormalizedString.class );
         TypeMap.put( new QName( "http://gndms.zib.de/common/types", "FileMappingSeqT"), FileMappingSeqT.class );
         TypeMap.put( new QName( "http://gndms.zib.de/common/types", "SliceReferenceT"), SliceReferenceT.class );

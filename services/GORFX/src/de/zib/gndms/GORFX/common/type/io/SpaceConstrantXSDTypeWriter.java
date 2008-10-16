@@ -1,6 +1,7 @@
 package de.zib.gndms.GORFX.common.type.io;
 
 import types.SpaceConstraintT;
+import types.MinMaxT;
 import de.zib.gndms.model.gorfx.types.io.SpaceConstraintWriter;
 import de.zib.gndms.model.gorfx.types.MinMaxPair;
 
@@ -13,36 +14,45 @@ import de.zib.gndms.model.gorfx.types.MinMaxPair;
 public class SpaceConstrantXSDTypeWriter extends AbstractXSDTypeWriter<SpaceConstraintT> implements SpaceConstraintWriter {
 
     public void writeLatitude( MinMaxPair lat ) {
-        // Not required here
+        getProduct().setLatitude( createMinMaxT( lat ) );
     }
 
 
     public void writeLongitude( MinMaxPair lon ) {
-        // Not required here
+        getProduct().setLongitude( createMinMaxT( lon ) );
     }
 
 
     public void writeAltitude( MinMaxPair alt ) {
-        // Not required here
+        getProduct().setAltitude( createMinMaxT( alt ) );
     }
 
 
     public void writeVerticalCRS( String verticalCRS ) {
-        // Not required here
+        getProduct( ).setVerticalCRS( verticalCRS );
     }
 
 
     public void writeAreaCRS( String areaCRS ) {
-        // Not required here
+        getProduct( ).setAreaCRS( areaCRS );
     }
 
 
     public void begin() {
-        // Not required here
+        setProduct( new SpaceConstraintT( ) );
     }
 
 
     public void done() {
         // Not required here
+    }
+    
+
+    public static MinMaxT createMinMaxT( MinMaxPair mmp ) {
+        MinMaxT mmt = new MinMaxT( );
+        mmt.setMin( mmp.getMinValue() );
+        mmt.setMax( mmp.getMaxValue() );
+        
+        return mmt;
     }
 }

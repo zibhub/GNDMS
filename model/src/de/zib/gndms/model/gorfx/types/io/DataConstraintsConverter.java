@@ -33,8 +33,10 @@ public class DataConstraintsConverter extends GORFXConverterBase<DataConstraints
         if( sc == null )
             sc = new SpaceConstraint();
         SpaceConstraintWriter scw = getWriter().getSpaceConstraintWriter();
+        getWriter( ).beginWritingSpaceConstraint();
         SpaceConstraintConverter scc = new SpaceConstraintConverter( scw, sc );
         scc.convert();
+        getWriter( ).doneWritingSpaceConstraint();
 
 
         if( getModel().hasTimeConstraint() )
