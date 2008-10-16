@@ -34,7 +34,7 @@ public class FileTransferORQXSDReader {
 
             if( mes.length == 3 ) {
                 torq.setFileMap(
-                     FromXSDReaderAux.read( (FileMappingSeqT) mes[2].getObjectValue( FileMappingSeqT.class ) )
+                     FromXSDReadWriteAux.read( (FileMappingSeqT) mes[2].getObjectValue( FileMappingSeqT.class ) )
                 );
             }
 
