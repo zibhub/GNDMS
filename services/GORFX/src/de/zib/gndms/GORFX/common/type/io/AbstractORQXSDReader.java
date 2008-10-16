@@ -14,7 +14,8 @@ public class AbstractORQXSDReader {
     public static <M extends AbstractORQ> M read( Class<M> clazz, ContextT ctx ) throws IllegalAccessException, InstantiationException {
 
         M orq = clazz.newInstance();
-        orq.setContext( ContextXSDReader.readContext( ctx ) );
+        if( ctx != null )
+            orq.setContext( ContextXSDReader.readContext( ctx ) );
 
         return orq;
     }

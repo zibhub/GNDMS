@@ -23,8 +23,12 @@ public class FromXSDReadWriteAux {
         FileMapEntryT[] fsm = fs.getMapFile();
         TreeMap<String, String> out = new TreeMap<String, String>( );
 
-        for( int i=0; i < fsm.length; ++i )
-            out.put( fsm[i].getSourceFile().toString(), fsm[i].getDestinationFile().toString() );
+        for( int i=0; i < fsm.length; ++i ) {
+            if( fsm[i].getDestinationFile() != null)
+                out.put( fsm[i].getSourceFile().toString(), fsm[i].getDestinationFile().toString() );
+            else
+                out.put( fsm[i].getSourceFile().toString(), null );
+        }
 
         return out;
     }
@@ -45,7 +49,8 @@ public class FromXSDReadWriteAux {
 
         FileMapEntryT  e = new FileMapEntryT( );
         e.setSourceFile( new NormalizedString( s ) );
-        e.setDestinationFile( new NormalizedString( d ) );
+        if( d != null )
+            e.setDestinationFile( new NormalizedString( d ) );
 
         return e;
     }

@@ -9,6 +9,9 @@ import java.util.TreeMap;
 import java.util.Properties;
 import java.util.HashMap;
 import java.io.IOException;
+import java.io.FileNotFoundException;
+import java.io.OutputStream;
+import java.io.FileOutputStream;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -45,6 +48,17 @@ public class FileTransferORQIOTest {
         conv.setWriter( propw );
         conv.convert( );
         showProps( prop );
+
+        String fn = "FileTransf_io_test_props.properties";
+        try {
+            OutputStream os = new FileOutputStream( fn );
+            prop.store( os, "some test props for file transfer io" );
+            os.close();
+        } catch ( FileNotFoundException e ) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch ( IOException e ) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
 
         FileTransferORQPropertyReader propr = new FileTransferORQPropertyReader( prop );
         propr.performReading();
