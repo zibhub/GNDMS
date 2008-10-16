@@ -24,7 +24,8 @@ public class FileTransferResultXSDTypeWriter extends AbstractXSDTypeWriter<FileT
 
     public void writeFiles( String[] files ) {
 
-        FieldDesc fd = FileTransferResultT.getTypeDesc().getFieldByName( "file" );
+        FieldDesc fd = FileTransferResultT.getTypeDesc().getFieldByName( "File" );
+
         ArrayList<MessageElement> al = new ArrayList<MessageElement>( Arrays.asList( getProduct().get_any() ) );
         for( int i=0; i < files.length; ++i ) {
             try {
