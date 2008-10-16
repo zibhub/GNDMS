@@ -26,6 +26,7 @@ extra/tools-lib/gndms-groovy.jar
 infra/gndms-infra/**
 model/gndms-shared-model/**
 kit/gndms-kit/**
+typecon/gndms-typecon/**
 tmp/**
 model/derby.log
 logic/gndms-logic/**
