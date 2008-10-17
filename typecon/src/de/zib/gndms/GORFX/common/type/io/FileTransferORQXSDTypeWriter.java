@@ -53,7 +53,7 @@ public class FileTransferORQXSDTypeWriter extends AbstractXSDTypeWriter<FileTran
 
         try {
             al.add(
-                GORFXClientTools.createElementForField( fd, FromXSDReadWriteAux.write( fm ) ) );
+                GORFXClientTools.createElementForField( fd, XSDReadWriteAux.write( fm ) ) );
         } catch ( SOAPException e ) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }

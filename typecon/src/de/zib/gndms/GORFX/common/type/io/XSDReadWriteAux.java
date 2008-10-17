@@ -15,7 +15,7 @@ import org.apache.axis.types.NormalizedString;
  * <p/>
  * User: mjorra, Date: 14.10.2008, Time: 13:35:04
  */
-public class FromXSDReadWriteAux {
+public class XSDReadWriteAux {
 
 
     public static TreeMap<String, String> read( FileMappingSeqT fs ) {

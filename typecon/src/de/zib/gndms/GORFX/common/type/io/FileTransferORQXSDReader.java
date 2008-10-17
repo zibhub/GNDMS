@@ -1,13 +1,10 @@
 package de.zib.gndms.GORFX.common.type.io;
 
-import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.model.gorfx.types.FileTransferORQ;
 import types.ContextT;
 import types.FileTransferORQT;
 import types.FileMappingSeqT;
 import org.apache.axis.message.MessageElement;
-
-import java.util.TreeMap;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -34,7 +31,7 @@ public class FileTransferORQXSDReader {
 
             if( mes.length == 3 ) {
                 torq.setFileMap(
-                     FromXSDReadWriteAux.read( (FileMappingSeqT) mes[2].getObjectValue( FileMappingSeqT.class ) )
+                     XSDReadWriteAux.read( (FileMappingSeqT) mes[2].getObjectValue( FileMappingSeqT.class ) )
                 );
             }
 
