@@ -97,22 +97,28 @@ public class GORFXClient extends GORFXClientBase implements GORFXI {
     }
   }
 
-  public org.apache.axis.message.addressing.EndpointReferenceType createOfferRequest(types.DynamicOfferDataSeqT offerRequestArguments) throws RemoteException, de.zib.gndms.GORFX.stubs.types.UnsupportedOfferType {
+  public org.apache.axis.message.addressing.EndpointReferenceType createOfferRequest(types.DynamicOfferDataSeqT offerRequestArguments,types.ContextT context) throws RemoteException, de.zib.gndms.GORFX.stubs.types.UnsupportedOfferType {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"createOfferRequest");
     de.zib.gndms.GORFX.stubs.CreateOfferRequestRequest params = new de.zib.gndms.GORFX.stubs.CreateOfferRequestRequest();
     de.zib.gndms.GORFX.stubs.CreateOfferRequestRequestOfferRequestArguments offerRequestArgumentsContainer = new de.zib.gndms.GORFX.stubs.CreateOfferRequestRequestOfferRequestArguments();
     offerRequestArgumentsContainer.setOfferRequestArguments(offerRequestArguments);
     params.setOfferRequestArguments(offerRequestArgumentsContainer);
+    de.zib.gndms.GORFX.stubs.CreateOfferRequestRequestContext contextContainer = new de.zib.gndms.GORFX.stubs.CreateOfferRequestRequestContext();
+    contextContainer.setContext(context);
+    params.setContext(contextContainer);
     de.zib.gndms.GORFX.stubs.CreateOfferRequestResponse boxedResult = portType.createOfferRequest(params);
     return boxedResult.getEndpointReference();
     }
   }
 
-  public org.apache.axis.types.URI[] getSupportedOfferTypes() throws RemoteException {
+  public org.apache.axis.types.URI[] getSupportedOfferTypes(types.ContextT context) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getSupportedOfferTypes");
     de.zib.gndms.GORFX.stubs.GetSupportedOfferTypesRequest params = new de.zib.gndms.GORFX.stubs.GetSupportedOfferTypesRequest();
+    de.zib.gndms.GORFX.stubs.GetSupportedOfferTypesRequestContext contextContainer = new de.zib.gndms.GORFX.stubs.GetSupportedOfferTypesRequestContext();
+    contextContainer.setContext(context);
+    params.setContext(contextContainer);
     de.zib.gndms.GORFX.stubs.GetSupportedOfferTypesResponse boxedResult = portType.getSupportedOfferTypes(params);
     return boxedResult.getResponse();
     }

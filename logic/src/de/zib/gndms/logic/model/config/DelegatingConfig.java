@@ -27,7 +27,14 @@ public class DelegatingConfig extends AbstractConfig {
     }
 
 
+    @Override
     public String getNonMandatoryOption(final String nameParam) {
+        return provider.getNonMandatoryOption(nameParam);    // Overridden method
+    }
+
+
+    @Override
+    public String getConcreteNonMandatoryOption(final String nameParam) {
         return provider.getNonMandatoryOption(nameParam);
     }
 

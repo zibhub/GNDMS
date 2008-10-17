@@ -22,16 +22,18 @@ public interface GORFXI {
    * Create an empty offer request for the specified type
    *
    * @param offerRequestArguments
+   * @param context
    * @throws UnsupportedOfferType
    *	
    */
-  public org.apache.axis.message.addressing.EndpointReferenceType createOfferRequest(types.DynamicOfferDataSeqT offerRequestArguments) throws RemoteException, de.zib.gndms.GORFX.stubs.types.UnsupportedOfferType ;
+  public org.apache.axis.message.addressing.EndpointReferenceType createOfferRequest(types.DynamicOfferDataSeqT offerRequestArguments,types.ContextT context) throws RemoteException, de.zib.gndms.GORFX.stubs.types.UnsupportedOfferType ;
 
   /**
    * Returns list of supported OfferType URIs
    *
+   * @param context
    */
-  public org.apache.axis.types.URI[] getSupportedOfferTypes() throws RemoteException ;
+  public org.apache.axis.types.URI[] getSupportedOfferTypes(types.ContextT context) throws RemoteException ;
 
   /**
    * Run maintenance actions

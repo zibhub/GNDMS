@@ -25,5 +25,7 @@ public abstract class ORQConverter<W extends ORQWriter, M extends AbstractORQ> e
 
         getWriter().begin();
         getWriter().writeJustEstimate( getModel().isJustEstimate() );
+        if( getModel( ).hasContext( ) ) 
+            getWriter().writeContext( getModel().getContext( ) );
     }
 }

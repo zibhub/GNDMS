@@ -1,12 +1,14 @@
 package de.zib.gndms.GORFX.ORQ.service.globus.resource;
 
 import org.globus.wsrf.ResourceException;
+import org.apache.axis.types.URI;
 import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
 import de.zib.gndms.model.gorfx.Contract;
-import de.zib.gndms.GORFX.common.GORFXTools;
-import de.zib.gndms.GORFX.common.type.io.ContractXSDReader;
+import de.zib.gndms.typecon.common.GORFXTools;
+import de.zib.gndms.typecon.common.type.ContractXSDReader;
 import de.zib.gndms.infra.system.GNDMSystem;
 import types.OfferExecutionContractT;
+import types.ContextT;
 
 
 /** 
@@ -21,12 +23,13 @@ public class ORQResource extends ORQResourceBase {
     AbstractORQCalculator ORQCalculator;
 
 
-    public void setOfferRequestArguments(types.DynamicOfferDataSeqT offerRequestArguments ) throws ResourceException {
+    public void setOfferRequestArguments(types.DynamicOfferDataSeqT offerRequestArguments, ContextT ctx ) throws ResourceException {
 
         final GNDMSystem sys = home.getSystem();
         try {
-            ORQCalculator = sys.getInstanceDir().getORQCalculator( sys, sys.getEntityManagerFactory(), offerRequestArguments.getOfferType( ).toString());
-            ORQCalculator.setORQArguments( GORFXTools.convertFromORQT( offerRequestArguments ) );
+            final URI offerTypeUri = offerRequestArguments.getOfferType();
+            ORQCalculator = sys.getInstanceDir().getORQCalculator( sys, sys.getEntityManagerFactory(), offerTypeUri.toString());
+            ORQCalculator.setORQArguments( GORFXTools.convertFromORQT( offerRequestArguments, ctx ) );
             ORQCalculator.setNetAux( home.getSystem().getNetAux() );
         }
         catch (ClassNotFoundException e) {

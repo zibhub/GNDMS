@@ -67,7 +67,6 @@ public class GNDMSFileTransfer {
         long size = 0;
 
         sourceClient.setType( Session.TYPE_ASCII );
-        sourceClient.setMode( Session.MODE_BLOCK );
 
         sourceClient.changeDir( sourcePath );
 
@@ -82,6 +81,8 @@ public class GNDMSFileTransfer {
 
     /**
      * Performs the prepared transfer.
+     *
+     * NOTE:  not implemented yet.
      */
     public void performTransfer( MarkerListener list ) {
 

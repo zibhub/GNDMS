@@ -13,6 +13,7 @@ import de.zib.gndms.logic.model.DelegatingEntityUpdateListener;
 import de.zib.gndms.logic.model.config.ConfigAction;
 import de.zib.gndms.logic.model.config.EchoOptionsAction;
 import de.zib.gndms.logic.model.config.HelpOverviewAction;
+import de.zib.gndms.logic.model.dspace.AssignSliceKindAction;
 import de.zib.gndms.logic.model.dspace.SetupSliceKindAction;
 import de.zib.gndms.logic.model.dspace.SetupSubspaceAction;
 import de.zib.gndms.logic.model.gorfx.ConfigOfferTypeAction;
@@ -63,7 +64,7 @@ public final class ConfigActionCaller implements ActionCaller {
     private GNDMSystem system;
 
 
-    ConfigActionCaller(final @NotNull GNDMSystem systemParam) {
+    public ConfigActionCaller(final @NotNull GNDMSystem systemParam) {
         system = systemParam;
         configActions.add(SetupSubspaceAction.class);
         configActions.add(EchoOptionsAction.class);
@@ -71,6 +72,7 @@ public final class ConfigActionCaller implements ActionCaller {
         configActions.add(SetupOfferTypeAction.class);
         configActions.add(ConfigOfferTypeAction.class);
         configActions.add(SetupSliceKindAction.class);
+        configActions.add(AssignSliceKindAction.class);
     }
 
 

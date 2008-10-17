@@ -23,11 +23,8 @@ import java.io.PrintWriter;
  */
 @ConfigActionHelp(shortHelp = "Setup a subspace", longHelp = "Used to prepare the database schema for GNDMS by creating, updating, and deleting subspaces")
 public class SetupSubspaceAction extends SetupAction<Void> {
-    @ConfigOption(descr="The scope of the subspace (Part of PK)")
-    private String scope;
-
-    @ConfigOption(descr="The name of the subspace in the scope (Part of PK)")
-    private String name;
+    @ConfigOption(descr="The key of the subspace (QName)")
+    private ImmutableScopedName subspace;
 
     @ConfigOption(descr="Local filesystem root path for all slices stored in this subspace")
     private String path;
@@ -43,10 +40,8 @@ public class SetupSubspaceAction extends SetupAction<Void> {
     public void initialize() {
         super.initialize();    // Overridden method
         try {
-            if (scope == null && (isCreating() || hasOption("scope")))
-                setScope(getOption("scope"));
-            if (name == null && (isCreating() || hasOption("name")))
-                setName(getOption("name"));
+            if (subspace == null && (isCreating() || hasOption("subspace")))
+                setSubspace(getISNOption("subspace"));
             if (visible == null && (isCreating() || hasOption("visible")))
                 setIsVisibleToPublic(isBooleanOptionSet("visible", true));
             if (size == null && (isCreating() || hasOption("size"))) {
@@ -60,17 +55,14 @@ public class SetupSubspaceAction extends SetupAction<Void> {
             throw new IllegalStateException(e);
         }
 
-        requireParameter("scope", name);
-        requireParameter("name", name);
+        requireParameter("subspace", subspace);
     }
 
 
     @SuppressWarnings({ "FeatureEnvy", "MethodWithMoreThanThreeNegations" })
     @Override
     public Void execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer) {
-        final ImmutableScopedName pk = new ImmutableScopedName(getScope(), getName());
-
-        MetaSubspace meta = prepareMeta(em, pk);
+        MetaSubspace meta = prepareMeta(em, subspace);
         Subspace subspace = prepareSubspace(meta);
 
        switch (getMode()) {
@@ -152,13 +144,13 @@ public class SetupSubspaceAction extends SetupAction<Void> {
     }
 
 
-    public String getScope() {
-        return scope;
+    public ImmutableScopedName getSubspace() {
+        return subspace;
     }
 
 
-    public String getName() {
-        return name;
+    public void setSubspace(final ImmutableScopedName subspaceParam) {
+        subspace = subspaceParam;
     }
 
 
@@ -168,17 +160,7 @@ public class SetupSubspaceAction extends SetupAction<Void> {
     }
 
     public long getSize() {
-        return size.longValue();
-    }
-
-
-    public void setScope(final String scopeParam) {
-        scope = scopeParam;
-    }
-
-
-    public void setName(final String nameParam) {
-        name = nameParam;
+        return size;
     }
 
 
@@ -188,7 +170,7 @@ public class SetupSubspaceAction extends SetupAction<Void> {
 
 
     public void setSize(final long sizeParam) {
-        size = new Long( sizeParam );
+        size = sizeParam;
     }
 
 

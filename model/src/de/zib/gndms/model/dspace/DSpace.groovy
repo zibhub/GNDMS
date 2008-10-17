@@ -20,6 +20,7 @@ import de.zib.gndms.model.common.SingletonGridResource
 ])
 @Entity(name="DSpaces")
 @Table(name="dspace", schema="dspace")
+@MappedSuperclass
 class DSpace extends SingletonGridResource {
 
 	@NotNull DSpaceRef createRef() {

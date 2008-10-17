@@ -32,12 +32,12 @@ public class FileTransferORQPropertyReader extends ORQPropertyReader<FileTransfe
         getProduct().setTargetURI( getProperties().getProperty(
             SfrProperty.FILE_TRANSFER_DESTINATION_URI.key ) );
 
-        getProduct().setFileMap(
-            new TreeMap<String, String> (
-                PropertyReadWriteAux.readMap( getProperties(), SfrProperty.FILE_TRANSFER_FILE_MAPPING.key )
-            )
-        );
-
+        if( getProperties().containsKey( SfrProperty.FILE_TRANSFER_FILE_MAPPING.key ) )
+            getProduct().setFileMap(
+                new TreeMap<String, String> (
+                    PropertyReadWriteAux.readMap( getProperties(), SfrProperty.FILE_TRANSFER_FILE_MAPPING.key )
+                )
+            );
     }
     
 

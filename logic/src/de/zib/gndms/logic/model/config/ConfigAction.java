@@ -4,7 +4,9 @@ import de.zib.gndms.logic.action.CommandAction;
 import de.zib.gndms.logic.action.MandatoryOptionMissingException;
 import de.zib.gndms.logic.action.SkipActionInitializationException;
 import de.zib.gndms.logic.model.AbstractEntityAction;
+import de.zib.gndms.model.common.ImmutableScopedName;
 import org.jetbrains.annotations.NotNull;
+import org.joda.time.DateTime;
 
 import javax.persistence.EntityManager;
 import java.io.PrintWriter;
@@ -28,7 +30,7 @@ import java.text.ParseException;
 public abstract class ConfigAction<R> extends AbstractEntityAction<R>
         implements CommandAction<R> {
 
-    public static final Pattern OPTION_NAME_PATTERN = Pattern.compile("[a-z][a-zA-Z0-9-_]*");
+    public static final Pattern OPTION_NAME_PATTERN = Pattern.compile("[a-zA-Z][a-zA-Z0-9-_]*");
 
     private Map<String, String> cmdParams;
     private PrintWriter printWriter;
@@ -286,36 +288,36 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
 
 
     
-    public int getIntOption(final String name) throws MandatoryOptionMissingException {
+    public int getIntOption(@NotNull final String name) throws MandatoryOptionMissingException {
         return config.getIntOption(name);
     }
 
 
-    public int getIntOption(final String name, final int def) {
+    public int getIntOption(@NotNull final String name, final int def) {
         return config.getIntOption(name, def);
     }
 
 
 
 
-    public long getLongOption(final String name) throws MandatoryOptionMissingException {
+    public long getLongOption(@NotNull final String name) throws MandatoryOptionMissingException {
         return config.getLongOption(name);
     }
 
 
-    public long getLongOption(final String name, final long def) {
+    public long getLongOption(@NotNull final String name, final long def) {
         return config.getLongOption(name, def);
     }
 
 
 
 
-    public boolean isBooleanOptionSet(final String name) throws MandatoryOptionMissingException {
+    public boolean isBooleanOptionSet(@NotNull final String name) throws MandatoryOptionMissingException {
         return config.isBooleanOptionSet(name);
     }
 
 
-    public boolean isBooleanOptionSet(final String name, final boolean def) {
+    public boolean isBooleanOptionSet(@NotNull final String name, final boolean def) {
         return config.isBooleanOptionSet(name, def);
     }
 
@@ -339,19 +341,28 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
 
 
     @SuppressWarnings({ "InstanceMethodNamingConvention" })
-    public @NotNull Calendar getISO8601Option(final String name)
+    public @NotNull
+    DateTime getISO8601Option(@NotNull final String name)
             throws MandatoryOptionMissingException, ParseException {
         return config.getISO8601Option(name);
     }
 
 
     @SuppressWarnings({ "InstanceMethodNamingConvention" })
-    public @NotNull Calendar getISO8601Option(final String name, @NotNull final Calendar def)
+    public @NotNull
+    DateTime getISO8601Option(@NotNull final String name, @NotNull final DateTime def)
             throws ParseException {
         return config.getISO8601Option(name, def);
     }
 
 
+    public @NotNull ImmutableScopedName getISNOption(@NotNull final String name, @NotNull final ImmutableScopedName def) {
+        return config.getISNOption(name, def);
+    }
+
+
+    public @NotNull ImmutableScopedName getISNOption(@NotNull final String name)
+            throws MandatoryOptionMissingException {return config.getISNOption(name);}
 
 
     public static class ConfigTools {
@@ -407,12 +418,15 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
         protected static void printOptionHelp(final @NotNull PrintWriter writer,
                                               final Map<String, ConfigOption> mapParam) {
             Object[] entries = mapParam.entrySet().toArray();
-      //      Arrays.sort(entries, new Comparator<Object>() {
-      //          public int compare(final Object o1, final Object o2) {
-      //              return
-      //          }
-      //      });
-            for (Map.Entry<String, ConfigOption> entry : mapParam.entrySet()) {
+            Arrays.sort(entries, new Comparator<Object>() {
+                @SuppressWarnings({ "unchecked" })
+                public int compare(final Object o1, final Object o2) {
+                    return ((Map.Entry<String, ConfigOption>)o1).getKey().compareTo(((Map.Entry<String, ConfigOption>)o2).getKey());
+                }
+            });
+            for (Object obj : entries) {
+                Map.Entry<String, ConfigOption> entry = (Map.Entry<String, ConfigOption>) obj;
+
                 writer.print(" * ");
                 final String key = entry.getKey();
                 writer.print(key);

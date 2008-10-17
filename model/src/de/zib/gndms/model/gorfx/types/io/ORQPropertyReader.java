@@ -26,5 +26,9 @@ public abstract class ORQPropertyReader<M extends AbstractORQ> extends AbstractP
         String s = getProperties( ).getProperty( SfrProperty.JUST_ASK.key );
         if( s != null  )
             getProduct().setJustEstimate( Boolean.parseBoolean( s ));
+
+        if( getProperties().containsKey( SfrProperty.CONTEXT.key ) )
+            getProduct().setContext(
+                PropertyReadWriteAux.readMap( getProperties(), SfrProperty.CONTEXT.key ) );
     }
 }
