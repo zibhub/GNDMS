@@ -4,6 +4,7 @@ import de.zib.gndms.model.ModelId
 import javax.persistence.Column
 import javax.persistence.Embeddable
 import javax.xml.namespace.QName
+import org.jetbrains.annotations.NotNull
 
 /**
  * Model-class for a QName
@@ -15,6 +16,7 @@ import javax.xml.namespace.QName
  */
 @Embeddable
 class ImmutableScopedName extends ModelId {
+    public _Dummy_ ( final String optionParam ) { super ( ) ; }
 	@Column(name="scope", columnDefinition="VARCHAR", nullable=true, updatable=false)
 	private String nameScope
 
@@ -23,13 +25,17 @@ class ImmutableScopedName extends ModelId {
 
 	ImmutableScopedName() {}
 
-	ImmutableScopedName(String theScope, String theName) {
+    ImmutableScopedName(@NotNull String fullNameStr) {        
+        super(QName.valueOf(fullNameStr))
+    }
+
+	ImmutableScopedName(@NotNull String theScope, @NotNull String theName) {
 		this()
 		nameScope = theScope
 		localName = theName
 	}
 
-	ImmutableScopedName(QName qname) { this(qname.namespaceURI, qname.localPart) }
+	ImmutableScopedName(@NotNull QName qname) { this(qname.namespaceURI, qname.localPart) }
 
 	protected boolean equalFields(Object obj) {
 		ImmutableScopedName other = (ImmutableScopedName) obj

@@ -7,6 +7,7 @@ import de.zib.gndms.logic.util.SimpleModelUUIDGen;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.types.SliceKindMode;
+import de.zib.gndms.model.test.ModelEntityTestBase;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;

@@ -7,6 +7,7 @@ import javax.persistence.Embeddable
 import javax.persistence.EmbeddedId
 import de.zib.gndms.model.ModelId
 import javax.persistence.Id
+import javax.persistence.MappedSuperclass
 
 /**
  * A grid site maps from a unique id to a transportURL of the relevant container.
@@ -18,6 +19,7 @@ import javax.persistence.Id
  */
 @Entity(name="GridSites")
 @Table(name="grid_sites", schema="common")
+@MappedSuperclass
 class GridSite extends GridEntity {
 	@Id
     @Column(name="site_id", nullable=true, updatable=false, columnDefinition="CHAR", length=64)

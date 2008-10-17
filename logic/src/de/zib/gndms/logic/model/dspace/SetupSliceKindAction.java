@@ -31,37 +31,40 @@ import java.util.Set;
 public class SetupSliceKindAction extends SetupAction<Void> {
 
     @ConfigOption(descr="The URI of the slice kind (the PK for the db record)")
-    private String  URI; // must be unique
+    private String sliceKind; // must be unique
+
     @ConfigOption(descr="The write mode of the slice kind (its a required attribute)")
-    private SliceKindMode sliceKindMode; // must not be null
+    private SliceKindMode theSliceKindMode; // must not be null
+
     private Set<MetaSubspace> metaSubspaces; // can be null
     
-    private SliceKind sliceKind;
+    private SliceKind theSliceKind;
 
 
     public SetupSliceKindAction( ) {
     }
 
     public SetupSliceKindAction( @NotNull String URI, @NotNull SliceKindMode sliceKindMode ) {
-        this.URI = URI;
-        this.sliceKindMode = sliceKindMode;
+        this.sliceKind = URI;
+        this.theSliceKindMode = sliceKindMode;
         this.metaSubspaces = null;
     }
 
     public SetupSliceKindAction( @NotNull String URI, @NotNull SliceKindMode sliceKindMode, Set<MetaSubspace> metaSubspaces ) {
-        this.URI = URI;
-        this.sliceKindMode = sliceKindMode;
+        this.sliceKind = URI;
+        this.theSliceKindMode = sliceKindMode;
         this.metaSubspaces = metaSubspaces;
     }
 
 
+    @Override
     public void initialize( ) {
 
         try{
-            if( URI == null && (isCreating() || hasOption("uri") ))
-                setURI(getOption("uri"));
-            if( sliceKindMode == null && (isCreating() || hasOption("sliceKindMode")))
-                setSliceKindMode( Enum.valueOf( SliceKindMode.class , getOption("sliceKindMode")) );
+            if( sliceKind == null && (isCreating() || hasOption("sliceKind") ))
+                setSliceKind(getOption("sliceKind"));
+            if( theSliceKindMode == null && (isCreating() || hasOption("sliceKindMode")))
+                setTheSliceKindMode( Enum.valueOf( SliceKindMode.class , getOption("sliceKindMode")) );
         } catch ( MandatoryOptionMissingException e) {
             throw new IllegalStateException(e);
         }
@@ -71,8 +74,8 @@ public class SetupSliceKindAction extends SetupAction<Void> {
 
         super.initialize();
 
-        requireParameter( "URI", URI );
-        requireParameter( "sliceKindMode", sliceKindMode );
+        requireParameter( "sliceKind", sliceKind);
+        requireParameter( "sliceKindMode", theSliceKindMode);
     }
 
 
@@ -81,40 +84,42 @@ public class SetupSliceKindAction extends SetupAction<Void> {
         SliceKind r;
         if( isCreating() ) {
             r = new SliceKind( );
-            r.setURI( getURI( ) );
+            r.setURI( getSliceKind( ) );
+            r.setMode( getTheSliceKindMode() );
             em.persist( r );
         } else {
-            r = em.find( SliceKind.class, getURI( ) );
+            r = em.find( SliceKind.class, getSliceKind( ) );
             if ( r == null ) {
-                writer.println( "No slice kind with given found (uri: " + URI +")" );
+                writer.println( "No slice kind with given found (uri: " + sliceKind +")" );
                 return null;
             }
-            if( r.getMode( ).equals( getSliceKindMode( ) ) ) {
+            if( r.getMode( ).equals( getTheSliceKindMode( ) ) ) {
                 writer.println( "Given sliceKindMode is equal to the slice kinds current sliceKindMode. Nothing changed." );
                 return null;
             }
+
+            r.setMode( getTheSliceKindMode( ) );
         }
 
-        r.setMode( getSliceKindMode( ) );
-        
+
         return null;
     }
 
 
-    public String getURI() {
-        return URI;
+    public String getSliceKind() {
+        return sliceKind;
     }
 
-    public void setURI( String URI ) {
-        this.URI = URI;
+    public void setSliceKind( String URI ) {
+        this.sliceKind = URI;
     }
 
-    public SliceKindMode getSliceKindMode() {
-        return sliceKindMode;
+    public SliceKindMode getTheSliceKindMode() {
+        return theSliceKindMode;
     }
 
-    public void setSliceKindMode( SliceKindMode sliceKindMode ) {
-        this.sliceKindMode = sliceKindMode;
+    public void setTheSliceKindMode( SliceKindMode sliceKindMode ) {
+        this.theSliceKindMode = sliceKindMode;
     }
 
     public Set<MetaSubspace> getMetaSubspaces() {

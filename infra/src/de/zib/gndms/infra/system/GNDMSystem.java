@@ -574,7 +574,7 @@ public final class GNDMSystem
             if (action instanceof AbstractEntityAction)
                 ((AbstractEntityAction<?>)action).setUUIDGen(uuidGenDelegate);
             if (action instanceof TaskAction) {
-                final TaskAction<?> taskAction = (TaskAction<?>) action;
+                final TaskAction taskAction = (TaskAction) action;
                 taskAction.setService(this);
             }
             return getExecutorService().submit(action);

@@ -17,6 +17,7 @@ import javax.persistence.DiscriminatorValue
 import javax.persistence.Entity
 import javax.persistence.Embeddable
 import de.zib.gndms.model.common.GridEntity
+import javax.persistence.MappedSuperclass
 
 /**
  * SliceKinds are identified by a kindURI
@@ -27,10 +28,11 @@ import de.zib.gndms.model.common.GridEntity
  * User: stepn Date: 01.08.2008 Time: 16:17:45
  */
 @Entity(name="SliceKinds")
-@Inheritance
-@DiscriminatorColumn(name="class", discriminatorType=DiscriminatorType.STRING, length=8)
-@DiscriminatorValue("PLAIN")
+// @Inheritance
+// @DiscriminatorColumn(name="class", discriminatorType=DiscriminatorType.STRING, length=8)
+// @DiscriminatorValue("PLAIN")
 @Table(name="slice_kinds", schema="dspace")
+@MappedSuperclass
 class SliceKind extends GridEntity {
 	@Id @Column(name="uri", nullable=false, updatable=false, columnDefinition="VARCHAR")
     String URI

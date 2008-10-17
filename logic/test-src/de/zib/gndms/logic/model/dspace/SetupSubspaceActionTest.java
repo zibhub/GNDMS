@@ -41,21 +41,21 @@ public class SetupSubspaceActionTest extends ConfigActionTestBase {
 
         action = new SetupSubspaceAction();
         try {
-            prepareConfigAction(action, new PrintWriter(System.out), "mode:create; scope:http://www.c3grid.de/G2; name:Staging; size:10; path:/tmp");
+            prepareConfigAction(action, new PrintWriter(System.out), "mode:create; subspace:'{http://www.c3grid.de/G2}Staging'; size:10; path:/tmp");
             action.call();
         }
         finally { action.getEntityManager().close(); }
 
         action = new SetupSubspaceAction();
         try {
-            prepareConfigAction(action, new PrintWriter(System.out), "mode:update; scope:http://www.c3grid.de/G2; name:Staging; size:20; path:/tmp");
+            prepareConfigAction(action, new PrintWriter(System.out), "mode:update; subspace:'{http://www.c3grid.de/G2}Staging'; size:20; path:/tmp");
             action.call();
         }
         finally { action.getEntityManager().close(); }
 
         action = new SetupSubspaceAction();
         try {
-            prepareConfigAction(action, new PrintWriter(System.out), "mode:delete; scope:http://www.c3grid.de/G2; name:Staging; size:20; path:/tmp");
+            prepareConfigAction(action, new PrintWriter(System.out), "mode:delete; subspace:'{http://www.c3grid.de/G2}Staging'; size:20; path:/tmp");
             action.call();
         }
         finally { action.getEntityManager().close(); }

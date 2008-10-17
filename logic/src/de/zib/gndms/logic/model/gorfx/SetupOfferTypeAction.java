@@ -1,5 +1,6 @@
 package de.zib.gndms.logic.model.gorfx;
 
+import de.zib.gndms.kit.factory.Factory;
 import de.zib.gndms.logic.action.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigOption;
@@ -29,75 +30,46 @@ import java.util.Properties;
 @ConfigActionHelp(shortHelp="Sets up supported OfferTypes", longHelp="Create, Update and Delete all OfferTypes supported by this GNDMS installation")
 public class SetupOfferTypeAction extends SetupAction<Void> {
     @ConfigOption(descr="Unique URI identifying this offerType; must match entries in given arg and result xsd types")
-    private String key;
+    private String offerType;
 
-    @ConfigOption(descr="Scope part of qname of xsd type for arguments of ORQs of this OfferType")
-    private String argScope;
+    @ConfigOption(descr="QName of xsd type for ORQs of this OfferType")
+    private ImmutableScopedName orqType;
 
-    @ConfigOption(descr="Local part of qname of xsd type for arguments of ORQs of this OfferType")
-    private String argName;
+    @ConfigOption(descr="QName of xsd type for results of this OfferType")
+    private ImmutableScopedName resType;
 
-    @ConfigOption(descr="Scope part of qname of xsd type for results of ORQs of this OfferType")
-    private String resScope;
+    //@ConfigOption(altName = "class", descr="FQN of AbstractORQCalculator class for this OfferType")
+    //private Class<? extends AbstractORQCalculator<?, ?>> calcClass;
 
-    @ConfigOption(descr="Local part of xsd type for results of ORQs of this OfferType")
-    private String resName;
+    @ConfigOption(descr="FQN of AbstractORQCalculator factory class")
+    private Class<Factory<OfferType, AbstractORQCalculator<?, ?>>> calcFactory;
 
-    @ConfigOption(altName = "class", descr="FQN of AbstractORQCalculator class that implements this OfferType")
-    private Class<? extends AbstractORQCalculator<?, ?>> clazz;
+    //@ConfigOption(altName = "class", descr="FQN of TaskAction class for this OfferType")
+    //private Class<? extends TaskAction<?>> taskActionClass;
 
-    @ConfigOption(descr="The ORQCalculator Factory Class")
-    private Class<?> factoryClass;
+    @ConfigOption(descr="FQN of TaskAction factory class")
+    private Class<Factory<OfferType, ORQTaskAction<?>>> taskActionFactory;
 
-    @ConfigOption(descr = "File from which the initial config should be read")
+    @ConfigOption(descr = "File from which the initial config should be read; UPDATE will overwrite!")
     private String configFile;
 
     private Properties configProps;
 
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({ "unchecked", "RawUseOfParameterizedType" })
     @Override
     public void initialize() {
         super.initialize();    // Overridden method
         try {
-            if (key == null)
-                setKey(getOption("key"));
-            if (argScope == null && hasOption("argScope"))
-                setArgScope(getOption("argScope"));
-            if (argName == null && hasOption("argName"))
-                setArgName(getOption("argName"));
-            if (resScope == null && hasOption("resScope"))
-                setResScope(getOption("resScope"));
-            if (resName == null && hasOption("resName"))
-                setResName(getOption("resName"));
-            if (clazz == null && hasOption("class"))
-                setClazz(
-                        (Class<? extends AbstractORQCalculator<?, ?>>)
-                                Class.forName(getOption("class"))
-                                        .asSubclass(AbstractORQCalculator.class));
-            if (factoryClass == null && hasOption("factoryClass"))
-                setFactoryClass(Class.forName(getOption("factoryClass")));
-
-            if (configProps == null & hasOption("configFile"))
-                try {
-                    loadConfigFromFile();
-                }
-                catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+            initOptions();
+            initConfigProps();
 
             switch (getMode()) {
                 case CREATE:
-                    if (configProps == null)
-                        configProps = new Properties();
-
-                    requireParameter("argScope", argScope);
-                    requireParameter("argName", argName);
-                    requireParameter("resScope", resScope);
-                    requireParameter("resName", resName);
-                    requireParameter("factoryClass", factoryClass);
-                    requireParameter("class", clazz);
-
+                    requireParameter("orqType", orqType);
+                    requireParameter("resType", resType);
+                    requireParameter("calcFactory", calcFactory);
+                    requireParameter("taskAction", taskActionFactory);
                 default:
             }
         }
@@ -107,6 +79,35 @@ public class SetupOfferTypeAction extends SetupAction<Void> {
         catch (ClassNotFoundException e) {
             throw new IllegalArgumentException(e);
         }
+    }
+
+
+    @SuppressWarnings({ "unchecked", "RawUseOfParameterizedType" })
+    private void initOptions() throws MandatoryOptionMissingException, ClassNotFoundException {
+        if (offerType == null)
+            setOfferType(getOption("offerType"));
+        if (orqType == null && hasOption("orqType"))
+            setOrqType(getISNOption("orqType"));
+        if (resType == null && hasOption("resType"))
+            setResType(getISNOption("resType"));
+        if (calcFactory == null && hasOption("calcFactory"))
+            setCalcFactory((Class)Class.forName(getOption("calcFactory")));
+        if (taskActionFactory == null && hasOption("taskActionFactory"))
+            setTaskActionFactory((Class)Class.forName(getOption("taskActionFactory")));
+    }
+
+
+    private void initConfigProps() {
+        if (configProps == null & hasOption("configFile"))
+            try {
+                loadConfigFromFile();
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+        if (configProps == null)
+            configProps = new Properties();
     }
 
 
@@ -135,26 +136,22 @@ public class SetupOfferTypeAction extends SetupAction<Void> {
 
 
     private void executeDelete(final EntityManager em) {
-        final OfferType type = em.find(OfferType.class, getKey());
+        final OfferType type = em.find(OfferType.class, getOfferType());
         em.remove(type);
     }
 
 
     @SuppressWarnings({ "MethodWithMoreThanThreeNegations", "FeatureEnvy" })
     private void executeUpdate(final EntityManager em) {
-        final OfferType type = em.find(OfferType.class, getKey());
-        if (factoryClass != null)
-            type.setFactoryClassName(factoryClass.getCanonicalName());
-        if (clazz != null)
-            type.setCalculatorClassName(clazz.getName());
-        if (argScope != null)
-            type.setOfferArgumentType(new ImmutableScopedName(argScope, type.getOfferArgumentType().getLocalName()));
-        if (argName != null)
-            type.setOfferArgumentType(new ImmutableScopedName(type.getOfferArgumentType().getNameScope(), argName));
-        if (resScope != null)
-            type.setOfferResultType(new ImmutableScopedName(resScope, type.getOfferResultType().getLocalName()));
-        if (resName != null)
-            type.setOfferResultType(new ImmutableScopedName(type.getOfferResultType().getNameScope(), resName));
+        final @NotNull OfferType type = em.find(OfferType.class, getOfferType());
+        if (calcFactory != null)
+            type.setCalculatorFactoryClassName(calcFactory.getCanonicalName());
+        if (taskActionFactory != null)
+            type.setCalculatorFactoryClassName(taskActionFactory.getCanonicalName());
+        if (orqType != null)
+            type.setOfferArgumentType(orqType);
+        if (resType != null)
+            type.setOfferResultType(resType);
         pushConfigProps(type);        
     }
 
@@ -162,10 +159,11 @@ public class SetupOfferTypeAction extends SetupAction<Void> {
     @SuppressWarnings({ "FeatureEnvy" })
     private void executeCreate(final EntityManager em) {
         final OfferType type = new OfferType();
-        type.setFactoryClassName(getFactoryClass().getCanonicalName());
-        type.setCalculatorClassName(clazz.getName());
-        type.setOfferArgumentType(new ImmutableScopedName(argScope, argName));
-        type.setOfferResultType(new ImmutableScopedName(resScope, resName));
+        type.setOfferTypeKey(getOfferType());
+        type.setCalculatorFactoryClassName(getCalcFactory().getCanonicalName());
+        type.setTaskActionFactoryClassName(getTaskActionFactory().getCanonicalName());
+        type.setOfferArgumentType(orqType);
+        type.setOfferResultType(resType);
         pushConfigProps(type);
         em.persist(type);
     }
@@ -188,80 +186,60 @@ public class SetupOfferTypeAction extends SetupAction<Void> {
 
 
     private void pushConfigProps(final OfferType typeParam) {
-        if (configProps != null) {
-            Map<String, String> map = new HashMap<String, String>(configProps.size());
-            configProps.putAll(map);
-            typeParam.setConfigMap(map);
-        }
+        Map<String, String> map = new HashMap<String, String>(configProps.size());
+        configProps.putAll(map);
+        typeParam.setConfigMap(map);
     }
 
 
-    public String getKey() {
-        return key;
+    public String getOfferType() {
+        return offerType;
     }
 
 
-    public void setKey(final String keyParam) {
-        key = keyParam;
+    public void setOfferType(final String offerTypeParam) {
+        offerType = offerTypeParam;
     }
 
 
-    public String getArgScope() {
-        return argScope;
+    public ImmutableScopedName getOrqType() {
+        return orqType;
     }
 
 
-    public void setArgScope(final String argScopeParam) {
-        argScope = argScopeParam;
+    public void setOrqType(final ImmutableScopedName orqTypeParam) {
+        orqType = orqTypeParam;
     }
 
 
-    public String getArgName() {
-        return argName;
+    public ImmutableScopedName getResType() {
+        return resType;
     }
 
 
-    public void setArgName(final String argNameParam) {
-        argName = argNameParam;
+    public void setResType(final ImmutableScopedName resTypeParam) {
+        resType = resTypeParam;
     }
 
 
-    public String getResScope() {
-        return resScope;
+    public Class<Factory<OfferType, AbstractORQCalculator<?, ?>>> getCalcFactory() {
+        return calcFactory;
     }
 
 
-    public void setResScope(final String resScopeParam) {
-        resScope = resScopeParam;
+    public void setCalcFactory(
+            final Class<Factory<OfferType, AbstractORQCalculator<?, ?>>> calcFactoryParam) {
+        calcFactory = calcFactoryParam;
     }
 
 
-    public String getResName() {
-        return resName;
+    public Class<Factory<OfferType, ORQTaskAction<?>>> getTaskActionFactory() {
+        return taskActionFactory;
     }
 
 
-    public void setResName(final String resNameParam) {
-        resName = resNameParam;
-    }
-
-
-    public Class<? extends AbstractORQCalculator<?, ?>> getClazz() {
-        return clazz;
-    }
-
-
-    public void setClazz(final Class<? extends AbstractORQCalculator<?, ?>> clazzParam) {
-        clazz = clazzParam;
-    }
-
-
-    public Class<?> getFactoryClass() {
-        return factoryClass;
-    }
-
-
-    public void setFactoryClass(final Class<?> factoryClassParam) {
-        factoryClass = factoryClassParam;
+    public void setTaskActionFactory(
+            final Class<Factory<OfferType, ORQTaskAction<?>>> taskActionFactoryParam) {
+        taskActionFactory = taskActionFactoryParam;
     }
 }

@@ -1,8 +1,8 @@
 package de.zib.gndms.logic.model.dspace;
 
 import de.zib.gndms.logic.model.CreateTimedGridResourceAction;
-import de.zib.gndms.logic.model.util.DirectoryAux;
-import de.zib.gndms.logic.model.util.LinuxDirectoryAux;
+import de.zib.gndms.kit.util.DirectoryAux;
+import de.zib.gndms.kit.util.LinuxDirectoryAux;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;

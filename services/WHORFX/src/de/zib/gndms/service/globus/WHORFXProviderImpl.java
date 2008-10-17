@@ -26,12 +26,6 @@ public class WHORFXProviderImpl{
 	}
 	
 
-    public de.zib.gndms.stubs.CallMaintenanceActionResponse callMaintenanceAction(de.zib.gndms.stubs.CallMaintenanceActionRequest params) throws RemoteException {
-    de.zib.gndms.stubs.CallMaintenanceActionResponse boxedResult = new de.zib.gndms.stubs.CallMaintenanceActionResponse();
-    boxedResult.setResponse(impl.callMaintenanceAction(params.getAction(),params.getOptions().getContext()));
-    return boxedResult;
-  }
-
     public de.zib.gndms.stubs.LookupORFResponse lookupORF(de.zib.gndms.stubs.LookupORFRequest params) throws RemoteException, de.zib.gndms.stubs.types.UnknownORFType {
     de.zib.gndms.stubs.LookupORFResponse boxedResult = new de.zib.gndms.stubs.LookupORFResponse();
     boxedResult.setResponse(impl.lookupORF(params.getOrfType(),params.getContext().getContext()));
@@ -41,6 +35,12 @@ public class WHORFXProviderImpl{
     public de.zib.gndms.stubs.UpdateMappingsResponse updateMappings(de.zib.gndms.stubs.UpdateMappingsRequest params) throws RemoteException {
     de.zib.gndms.stubs.UpdateMappingsResponse boxedResult = new de.zib.gndms.stubs.UpdateMappingsResponse();
     impl.updateMappings();
+    return boxedResult;
+  }
+
+    public de.zib.gndms.stubs.CallMaintenanceActionResponse callMaintenanceAction(de.zib.gndms.stubs.CallMaintenanceActionRequest params) throws RemoteException {
+    de.zib.gndms.stubs.CallMaintenanceActionResponse boxedResult = new de.zib.gndms.stubs.CallMaintenanceActionResponse();
+    boxedResult.setResponse(impl.callMaintenanceAction(params.getAction(),params.getOptions().getContext()));
     return boxedResult;
   }
 

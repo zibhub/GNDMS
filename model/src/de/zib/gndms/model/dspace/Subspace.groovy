@@ -27,6 +27,7 @@ import javax.persistence.Transient
 import de.zib.gndms.model.common.ModelUUIDGen
 import org.jetbrains.annotations.NotNull
 import de.zib.gndms.model.common.GridResource
+import javax.persistence.MappedSuperclass
 
 /**
  *
@@ -35,6 +36,7 @@ import de.zib.gndms.model.common.GridResource
  */
 @Entity(name="Subspaces")
 @Table(name="subspaces", schema="dspace")
+@MappedSuperclass
 class Subspace extends GridResource {
 
     @Column(name="avail_size", nullable=false, updatable=false)

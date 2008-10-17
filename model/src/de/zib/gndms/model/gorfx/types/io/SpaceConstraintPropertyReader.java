@@ -41,7 +41,7 @@ public class SpaceConstraintPropertyReader extends AbstractPropertyReader<SpaceC
         );
 
 
-        if( getProperties().contains( SfrProperty.ALT_MIN.key )  ) {
+        if( getProperties().containsKey( SfrProperty.ALT_MIN.key )  ) {
 
             getProduct( ).setAltitude(
                 PropertyReadWriteAux.readMinMaxPair(

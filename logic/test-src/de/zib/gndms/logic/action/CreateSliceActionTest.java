@@ -2,7 +2,7 @@ package de.zib.gndms.logic.action;
 
 import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
 import de.zib.gndms.logic.model.LookupAction;
-import de.zib.gndms.logic.model.util.LinuxDirectoryAux;
+import de.zib.gndms.kit.util.LinuxDirectoryAux;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
 import de.zib.gndms.logic.util.SimpleModelUUIDGen;
 import de.zib.gndms.model.common.ImmutableScopedName;
@@ -12,6 +12,7 @@ import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.dspace.types.SliceKindMode;
+import de.zib.gndms.model.test.ModelEntityTestBase;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;

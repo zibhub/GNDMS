@@ -4,6 +4,8 @@ import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
+import de.zib.gndms.kit.factory.FactoryInstance;
+import de.zib.gndms.kit.factory.Factory;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -17,7 +19,17 @@ import javax.persistence.EntityManager;
  *
  *          User: stepn Date: 02.10.2008 Time: 13:00:56
  */
-public abstract class ORQTaskAction<K extends AbstractORQ> extends TaskAction<Task> {
+public abstract class ORQTaskAction<K extends AbstractORQ> extends TaskAction
+    implements FactoryInstance<OfferType, ORQTaskAction<?>>
+{
+    private Factory<OfferType, ORQTaskAction<?>> factory;
+    private OfferType key;
+
+
+    protected ORQTaskAction() {
+        super();
+    }
+
 
     public ORQTaskAction(final @NotNull EntityManager em, final @NotNull Task model) {
         super(em, model);
@@ -31,7 +43,7 @@ public abstract class ORQTaskAction<K extends AbstractORQ> extends TaskAction<Ta
 
     @SuppressWarnings({ "ThrowableInstanceNeverThrown" })
     @Override
-    protected final void onCreated(final Task model) {
+    protected void onCreated(final Task model) {
         try {
             super.onCreated(model);    // Overridden method
         }
@@ -78,5 +90,27 @@ public abstract class ORQTaskAction<K extends AbstractORQ> extends TaskAction<Ta
         if (model == null)
             throw new IllegalStateException("Model missing");
         return getOrqClass().cast(getModel().getOrq());
+    }
+
+
+    public Factory<OfferType, ORQTaskAction<?>> getFactory() {
+        return factory;
+    }
+
+
+
+
+    public OfferType getKey() {
+        return key;
+    }
+
+
+    public void setFactory(final Factory<OfferType, ORQTaskAction<?>> factoryParam) {
+        factory = factoryParam;
+    }
+
+
+    public void setKey(final OfferType keyParam) {
+        key = keyParam;
     }
 }

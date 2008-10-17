@@ -1,25 +1,20 @@
 package de.zib.gndms.kit.network.test;
-import org.testng.annotations.Parameters;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.Test;
-import org.testng.Assert;
-import org.jetbrains.annotations.NotNull;
-import org.globus.ftp.GridFTPClient;
-import org.globus.ftp.exception.ServerException;
-import org.globus.ftp.exception.ClientException;
+import de.zib.gndms.kit.network.GNDMSFileTransfer;
+import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
+import de.zib.gndms.kit.network.PersistentMarkerListener;
+import de.zib.gndms.model.gorfx.FTPTransferState;
+import de.zib.gndms.model.test.ModelEntityTestBase;
 import org.apache.axis.types.URI;
 import org.apache.log4j.PropertyConfigurator;
+import org.globus.ftp.GridFTPClient;
+import org.globus.ftp.exception.ClientException;
+import org.globus.ftp.exception.ServerException;
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
-import de.zib.gndms.logic.action.ModelEntityTestBase;
-import de.zib.gndms.model.gorfx.FTPTransferState;
-import de.zib.gndms.kit.network.PersistentMarkerListener;
-import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
-import de.zib.gndms.kit.network.GNDMSFileTransfer;
+import org.testng.Assert;
+import org.testng.annotations.*;
 
 import javax.persistence.EntityManager;
-import java.util.TreeMap;
-import java.util.HashMap;
 import java.io.IOException;
 
 /**
@@ -40,15 +35,11 @@ import java.io.IOException;
  */
 public class TransferStateTest extends ModelEntityTestBase {
 
-    private String sourceURI;
-    private String destinationURI;
+    private TransferTestMetaData transferData;
     private String logFileConfig;
-    private TreeMap<String,String> fileMap;
-    private HashMap<String, Long> fileSizes;
     private final String TRANSFER_KEY = "transfer-test-a000-a000-fakekey00001";
     private FTPTransferState transferState;
     private EntityManager eM;
-    private long expectedTransferSize = 0;
 
 
     @Parameters( {"srcURI", "destURI", "logFileCfg", "dbPath", "dbName" } )
@@ -56,8 +47,9 @@ public class TransferStateTest extends ModelEntityTestBase {
                               @NotNull String dbPath, @Optional( "c3grid" ) String dbName )
     {
         super( dbPath, dbName );
-        sourceURI = srcURI;
-        destinationURI = destURI;
+
+        transferData = new TransferTestThreeFiles( srcURI, destURI );
+        
         logFileConfig = logFileCfg;
     }
 
@@ -67,19 +59,7 @@ public class TransferStateTest extends ModelEntityTestBase {
 
         PropertyConfigurator.configure( logFileConfig );
 
-        fileMap = new TreeMap<String, String>( );
-        fileMap.put( "a_1KB_file", null );
-        fileMap.put( "b_1MB_file", "b_1000KB_file" );
-        fileMap.put( "c_1GB_file", "c_largeFile" );
-
-        fileSizes = new HashMap<String, Long>( );
-        fileSizes.put( "a_1KB_file", new Long(       1024) );
-        fileSizes.put( "b_1MB_file", new Long(    1048576) );
-        fileSizes.put( "c_1GB_file", new Long( 1073741824) );
-
-        for( String s: fileSizes.keySet()  ) {
-            expectedTransferSize += fileSizes.get( s );
-        }
+        transferData.initialize();
 
         eM = getEntityManager();
         transferState = (FTPTransferState) eM.find( FTPTransferState.class, TRANSFER_KEY );
@@ -108,8 +88,8 @@ public class TransferStateTest extends ModelEntityTestBase {
             pml.setEntityManager( eM );
             pml.setTransferState( transferState );
 
-            URI suri = new URI ( sourceURI );
-            URI duri = new URI ( destinationURI );
+            URI suri = new URI ( transferData.getSourceURI( ) );
+            URI duri = new URI ( transferData.getDestinationURI( ) );
 
             // obtain clients
             NetworkAuxiliariesProvider prov = new NetworkAuxiliariesProvider( );
@@ -124,11 +104,11 @@ public class TransferStateTest extends ModelEntityTestBase {
             transfer.setDestinationClient( dest );
             transfer.setDestinationPath( duri.getPath() );
 
-            transfer.setFiles( fileMap );
+            transfer.setFiles( transferData.getFileMap( ) );
 
             // estimate transfer time
             long ets = transfer.estimateTransferSize(  );
-            Assert.assertEquals( ets, expectedTransferSize, "Transfer size mismatch" );
+            Assert.assertEquals( ets, transferData.expectedTransferSize( ), "Transfer size mismatch" );
 
             DateTime dat = new DateTime( );
             Float tt = prov.getBandWidthEstimater().estimateBandWidthFromTo( suri.getHost( ), duri.getHost( ) );
@@ -142,13 +122,15 @@ public class TransferStateTest extends ModelEntityTestBase {
 
         } finally {
             eM.close();
+            try {
             if( src != null )
                 src.close();
             if( dest != null )
                 dest.close();
+            } catch ( Exception e ) {
+                System.out.println( "closing server connection gives error: " + e.getMessage() );
+            }
         }
-
-        
     }
 
     
@@ -157,6 +139,5 @@ public class TransferStateTest extends ModelEntityTestBase {
         System.out.println( "Initializing new transfer" );
         transferState = new FTPTransferState();
         transferState.setTransferId( TRANSFER_KEY );
-        eM.persist( transferState );
     }
 }

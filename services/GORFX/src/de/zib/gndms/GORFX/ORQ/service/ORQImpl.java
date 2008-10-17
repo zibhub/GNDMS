@@ -2,13 +2,12 @@ package de.zib.gndms.GORFX.ORQ.service;
 
 import de.zib.gndms.GORFX.ORQ.service.globus.resource.ExtORQResourceHome;
 import de.zib.gndms.GORFX.ORQ.service.globus.resource.ORQResource;
-import de.zib.gndms.GORFX.common.type.io.ContractToXSDTypeWriter;
+import de.zib.gndms.typecon.common.type.ContractXSDTypeWriter;
 import de.zib.gndms.GORFX.offer.service.globus.resource.ExtOfferResourceHome;
 import de.zib.gndms.GORFX.offer.service.globus.resource.OfferResource;
+import org.globus.wsrf.ResourceKey;
 
 import java.rmi.RemoteException;
-
-import org.globus.wsrf.ResourceKey;
 
 /** 
  * TODO:I am the service side implementation class.  IMPLEMENT AND DOCUMENT ME
@@ -34,8 +33,9 @@ public class ORQImpl extends ORQImplBase {
             OfferResource ores = ohome.getResource( key );
             ores.setOfferRequestArguments( orq.getOfferRequestArguments() );
             ores.setOfferExecutionContract(
-                ContractToXSDTypeWriter.fromContract(
+                ContractXSDTypeWriter.fromContract(
                     orq.getOfferExecutionContract( offerExecutionContract ) ) );
+            ores.setOrqCalc(orq.getORQCalculator());
 
             home.remove( orq.getResourceKey() );
             
@@ -51,7 +51,7 @@ public class ORQImpl extends ORQImplBase {
         try {
             ExtORQResourceHome home = (ExtORQResourceHome) getResourceHome();
             ORQResource res = home.getAddressedResource();
-            return ContractToXSDTypeWriter.fromContract(
+            return ContractXSDTypeWriter.fromContract(
                 res.estimatedExecutionContract( offerExecutionContract ) );
         } catch ( Exception e ) {
             throw new RemoteException( e.getMessage( ) );

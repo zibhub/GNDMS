@@ -36,6 +36,13 @@
                 </sequence>
               </complexType>
             </element>
+            <element name="context">
+              <complexType>
+                <sequence>
+                  <element ref="ns5:Context" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
           </sequence>
         </complexType>
       </element>
@@ -48,7 +55,15 @@
       </element>
       <element name="GetSupportedOfferTypesRequest">
         <complexType>
-          <sequence />
+          <sequence>
+            <element name="context">
+              <complexType>
+                <sequence>
+                  <element ref="ns5:Context" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
         </complexType>
       </element>
       <element name="GetSupportedOfferTypesResponse">
