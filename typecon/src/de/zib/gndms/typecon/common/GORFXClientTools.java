@@ -1,4 +1,4 @@
-package de.zib.gndms.GORFX.common;
+package de.zib.gndms.typecon.common;
 
 import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
 import org.apache.axis.description.ElementDesc;

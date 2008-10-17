@@ -2,7 +2,7 @@ package de.zib.gndms.GORFX.ORQ.service;
 
 import de.zib.gndms.GORFX.ORQ.service.globus.resource.ExtORQResourceHome;
 import de.zib.gndms.GORFX.ORQ.service.globus.resource.ORQResource;
-import de.zib.gndms.GORFX.common.type.io.ContractXSDTypeWriter;
+import de.zib.gndms.typecon.common.type.ContractXSDTypeWriter;
 import de.zib.gndms.GORFX.offer.service.globus.resource.ExtOfferResourceHome;
 import de.zib.gndms.GORFX.offer.service.globus.resource.OfferResource;
 import org.globus.wsrf.ResourceKey;

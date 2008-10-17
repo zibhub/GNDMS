@@ -1,40 +1,40 @@
-package de.zib.gndms.GORFX.tests.io;
+package de.zib.gndms.typecon.tests.io;
 
-import de.zib.gndms.GORFX.common.GORFXTools;
-import de.zib.gndms.GORFX.common.type.io.ProviderStageInORQXSDTypeWriter;
-import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
-import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQConverter;
-import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyReader;
-import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyWriter;
-import de.zib.gndms.model.gorfx.types.io.tests.ProviderStageInORQIOTest;
-import static org.testng.Assert.assertEquals;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
+import org.testng.annotations.Optional;
 import org.testng.annotations.Test;
-import types.ProviderStageInORQT;
+import org.testng.annotations.BeforeClass;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
+import java.io.IOException;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.FileNotFoundException;
 
+import de.zib.gndms.model.gorfx.types.io.FileTransferORQPropertyWriter;
+import de.zib.gndms.model.gorfx.types.io.FileTransferORQConverter;
+import de.zib.gndms.model.gorfx.types.io.FileTransferORQPropertyReader;
+import de.zib.gndms.model.gorfx.types.io.tests.FileTransferORQIOTest;
+import de.zib.gndms.model.gorfx.types.FileTransferORQ;
+import de.zib.gndms.typecon.common.type.FileTransferORQXSDTypeWriter;
+import de.zib.gndms.typecon.common.type.FileTransferORQXSDReader;
+import types.FileTransferORQT;
+import static org.testng.Assert.assertEquals;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
  * <p/>
- * User: mjorra, Date: 16.10.2008, Time: 11:16:06
+ * User: mjorra, Date: 16.10.2008, Time: 16:00:56
  */
-public class ProviderStageInORQIO {
+public class FileTransferORQIO {
 
     private String propFileName;
     private Properties prop;
 
 
     @Parameters( "propFileName" )
-    public ProviderStageInORQIO( @Optional( "StageIn_io_test_props.properties" ) String propFileName ) {
+    public FileTransferORQIO( @Optional( "FileTransf_io_test_props.properties" ) String propFileName ) {
         this.propFileName = propFileName;
     }
 
@@ -51,7 +51,7 @@ public class ProviderStageInORQIO {
         } catch ( FileNotFoundException e ) {
             System.err.println( "Please ensure that your specified workingDir contains " +propFileName );
             System.err.println( "If the file isn't present one can use: " );
-            System.err.println( ProviderStageInORQIOTest.class.getName() );
+            System.err.println( FileTransferORQIOTest.class.getName() );
             System.err.println( "to obtain it" );
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch ( IOException e ) {
@@ -71,23 +71,23 @@ public class ProviderStageInORQIO {
     public void testIt ( ) throws Exception {
 
         System.out.println( "Creating ORQ form properties" );
-        ProviderStageInORQPropertyReader orqr = new ProviderStageInORQPropertyReader( prop );
+        FileTransferORQPropertyReader orqr = new FileTransferORQPropertyReader( prop );
         orqr.performReading();
 
-        ProviderStageInORQ orq = orqr.getProduct();
+        FileTransferORQ orq = orqr.getProduct();
 
         // create XSDT form orq
-        ProviderStageInORQXSDTypeWriter writer = new ProviderStageInORQXSDTypeWriter();
-        ProviderStageInORQConverter conv = new ProviderStageInORQConverter( writer, orq );
+        FileTransferORQXSDTypeWriter writer = new FileTransferORQXSDTypeWriter();
+        FileTransferORQConverter conv = new FileTransferORQConverter( writer, orq );
         conv.convert( );
 
-        ProviderStageInORQT orqt = writer.getProduct( );
+        FileTransferORQT orqt = writer.getProduct( );
 
         // convert orqt to orq
-        ProviderStageInORQ norq = GORFXTools.convertProviderStageInORQFromORQT( orqt );
+        FileTransferORQ norq = FileTransferORQXSDReader.read( orqt, null );
         Properties nprop = new Properties( );
 
-        ProviderStageInORQPropertyWriter pwrit = new ProviderStageInORQPropertyWriter( nprop );
+        FileTransferORQPropertyWriter pwrit = new FileTransferORQPropertyWriter( nprop );
         conv.setModel( norq );
         conv.setWriter( pwrit );
         conv.convert( );
@@ -99,4 +99,5 @@ public class ProviderStageInORQIO {
         System.out.println( "Possible exception may be caused by different order of the hashes" );
         assertEquals( prop, nprop );
     }
+
 }

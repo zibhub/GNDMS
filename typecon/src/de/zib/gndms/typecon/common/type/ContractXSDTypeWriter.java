@@ -1,4 +1,4 @@
-package de.zib.gndms.GORFX.common.type.io;
+package de.zib.gndms.typecon.common.type;
 
 import de.zib.gndms.model.gorfx.Contract;
 import de.zib.gndms.model.gorfx.types.io.ContractConverter;

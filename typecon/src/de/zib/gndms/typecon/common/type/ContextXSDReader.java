@@ -1,4 +1,4 @@
-package de.zib.gndms.GORFX.common.type.io;
+package de.zib.gndms.typecon.common.type;
 
 import types.ContextT;
 import types.ContextTEntry;

@@ -1,10 +1,10 @@
-package de.zib.gndms.GORFX.common;
+package de.zib.gndms.typecon.common;
 
 import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.*;
-import de.zib.gndms.GORFX.common.type.io.ContextXSDReader;
-import de.zib.gndms.GORFX.common.type.io.FileTransferORQXSDReader;
+import de.zib.gndms.typecon.common.type.ContextXSDReader;
+import de.zib.gndms.typecon.common.type.FileTransferORQXSDReader;
 import org.apache.axis.types.NormalizedString;
 import org.apache.axis.types.URI;
 import types.*;

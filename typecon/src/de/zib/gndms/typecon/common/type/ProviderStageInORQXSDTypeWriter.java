@@ -1,9 +1,9 @@
-package de.zib.gndms.GORFX.common.type.io;
+package de.zib.gndms.typecon.common.type;
 
 import types.ProviderStageInORQT;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQWriter;
 import de.zib.gndms.model.gorfx.types.io.DataDescriptorWriter;
-import de.zib.gndms.GORFX.common.GORFXClientTools;
+import de.zib.gndms.typecon.common.GORFXClientTools;
 
 import javax.xml.soap.SOAPException;
 import java.util.HashMap;

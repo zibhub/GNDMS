@@ -11,7 +11,7 @@ import de.zib.gndms.GORFX.offer.stubs.OfferPortType;
 import de.zib.gndms.GORFX.offer.stubs.service.OfferServiceAddressingLocator;
 import de.zib.gndms.GORFX.stubs.*;
 import de.zib.gndms.GORFX.stubs.service.GORFXServiceLocator;
-import de.zib.gndms.GORFX.common.type.io.ProviderStageInORQXSDTypeWriter;
+import de.zib.gndms.typecon.common.type.ProviderStageInORQXSDTypeWriter;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyReader;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQConverter;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;

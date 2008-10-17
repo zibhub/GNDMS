@@ -1,8 +1,8 @@
-package de.zib.gndms.GORFX.common.type.io;
+package de.zib.gndms.typecon.common.type;
 
 import types.ProviderStageInResultT;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInResultWriter;
-import de.zib.gndms.GORFX.common.GORFXClientTools;
+import de.zib.gndms.typecon.common.GORFXClientTools;
 
 import javax.xml.soap.SOAPException;
 

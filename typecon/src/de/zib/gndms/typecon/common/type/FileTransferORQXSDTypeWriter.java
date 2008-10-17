@@ -1,8 +1,8 @@
-package de.zib.gndms.GORFX.common.type.io;
+package de.zib.gndms.typecon.common.type;
 
 import types.FileTransferORQT;
 import de.zib.gndms.model.gorfx.types.io.FileTransferORQWriter;
-import de.zib.gndms.GORFX.common.GORFXClientTools;
+import de.zib.gndms.typecon.common.GORFXClientTools;
 
 import java.util.Map;
 import java.util.HashMap;

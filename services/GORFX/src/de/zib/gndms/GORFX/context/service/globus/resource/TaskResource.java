@@ -1,7 +1,7 @@
 package de.zib.gndms.GORFX.context.service.globus.resource;
 
-import de.zib.gndms.GORFX.common.GORFXClientTools;
-import de.zib.gndms.GORFX.common.GORFXTools;
+import de.zib.gndms.typecon.common.GORFXClientTools;
+import de.zib.gndms.typecon.common.GORFXTools;
 import de.zib.gndms.GORFX.context.common.TaskConstants;
 import de.zib.gndms.GORFX.context.stubs.TaskResourceProperties;
 import de.zib.gndms.logic.model.TaskAction;
