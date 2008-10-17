@@ -25,7 +25,7 @@ public class ProviderStageInORQPropertyReader extends ORQPropertyReader<Provider
     public void read() {
 
         super.read();
-        
+
         DataDescriptorPropertyReader dr = new DataDescriptorPropertyReader( getProperties() );
         dr.begin( );
         dr.read( );
