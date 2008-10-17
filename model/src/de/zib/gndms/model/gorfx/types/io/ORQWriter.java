@@ -1,5 +1,7 @@
 package de.zib.gndms.model.gorfx.types.io;
 
+import java.util.HashMap;
+
 /**
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
@@ -10,4 +12,5 @@ public interface ORQWriter extends GORFXWriterBase {
 
     public void writeJustEstimate( boolean je );
 
+    public void writeContext( HashMap<String,String> ctx );
 }

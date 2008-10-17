@@ -12,14 +12,6 @@ import java.rmi.RemoteException;
  */
 public interface DSpaceI {
 
-  /**
-   * Run maintenance actions
-   *
-   * @param action
-   * @param options
-   */
-  public java.lang.Object callMaintenanceAction(java.lang.String action,types.ContextT options) throws RemoteException ;
-
   public org.oasis.wsrf.properties.GetMultipleResourcePropertiesResponse getMultipleResourceProperties(org.oasis.wsrf.properties.GetMultipleResourceProperties_Element params) throws RemoteException ;
 
   public org.oasis.wsrf.properties.GetResourcePropertyResponse getResourceProperty(javax.xml.namespace.QName params) throws RemoteException ;
@@ -64,6 +56,14 @@ public interface DSpaceI {
    *	
    */
   public de.zib.gndms.dspace.slice.client.SliceClient createSliceInSubspace(javax.xml.namespace.QName subspaceSpecifier,types.SliceCreationSpecifier sliceCreationSpecifier,types.ContextT context) throws RemoteException, org.apache.axis.types.URI.MalformedURIException, de.zib.gndms.dspace.subspace.stubs.types.OutOfSpace, de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind, de.zib.gndms.dspace.stubs.types.UnknownSubspace, de.zib.gndms.dspace.stubs.types.InternalFailure ;
+
+  /**
+   * Run maintenance actions
+   *
+   * @param action
+   * @param options
+   */
+  public java.lang.Object callMaintenanceAction(java.lang.String action,types.ContextT options) throws RemoteException ;
 
 }
 

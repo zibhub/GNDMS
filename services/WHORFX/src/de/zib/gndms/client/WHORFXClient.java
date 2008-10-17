@@ -76,19 +76,6 @@ public class WHORFXClient extends WHORFXClientBase implements WHORFXI {
 		}
 	}
 
-  public java.lang.Object callMaintenanceAction(java.lang.String action,types.ContextT options) throws RemoteException {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"callMaintenanceAction");
-    de.zib.gndms.stubs.CallMaintenanceActionRequest params = new de.zib.gndms.stubs.CallMaintenanceActionRequest();
-    params.setAction(action);
-    de.zib.gndms.stubs.CallMaintenanceActionRequestOptions optionsContainer = new de.zib.gndms.stubs.CallMaintenanceActionRequestOptions();
-    optionsContainer.setContext(options);
-    params.setOptions(optionsContainer);
-    de.zib.gndms.stubs.CallMaintenanceActionResponse boxedResult = portType.callMaintenanceAction(params);
-    return boxedResult.getResponse();
-    }
-  }
-
   public org.apache.axis.types.URI lookupORF(org.apache.axis.types.URI orfType,types.ContextT context) throws RemoteException, de.zib.gndms.stubs.types.UnknownORFType {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"lookupORF");
@@ -107,6 +94,19 @@ public class WHORFXClient extends WHORFXClientBase implements WHORFXI {
       configureStubSecurity((Stub)portType,"updateMappings");
     de.zib.gndms.stubs.UpdateMappingsRequest params = new de.zib.gndms.stubs.UpdateMappingsRequest();
     de.zib.gndms.stubs.UpdateMappingsResponse boxedResult = portType.updateMappings(params);
+    }
+  }
+
+  public java.lang.Object callMaintenanceAction(java.lang.String action,types.ContextT options) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"callMaintenanceAction");
+    de.zib.gndms.stubs.CallMaintenanceActionRequest params = new de.zib.gndms.stubs.CallMaintenanceActionRequest();
+    params.setAction(action);
+    de.zib.gndms.stubs.CallMaintenanceActionRequestOptions optionsContainer = new de.zib.gndms.stubs.CallMaintenanceActionRequestOptions();
+    optionsContainer.setContext(options);
+    params.setOptions(optionsContainer);
+    de.zib.gndms.stubs.CallMaintenanceActionResponse boxedResult = portType.callMaintenanceAction(params);
+    return boxedResult.getResponse();
     }
   }
 

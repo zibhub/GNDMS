@@ -18,12 +18,15 @@ services/.metadata/**
 *.gar
 extra/lib/gndms-infra.jar
 extra/lib/gndms-logic.jar
+extra/lib/gndms-kit.jar
+extra/lib/gndms-typecon.jar
 extra/lib/DSpace.jar
 extra/lib/gndms-shared-model.jar
 extra/tools-lib/gndms-groovy.jar
 infra/gndms-infra/**
 model/gndms-shared-model/**
 kit/gndms-kit/**
+typecon/gndms-typecon/**
 tmp/**
 model/derby.log
 logic/gndms-logic/**

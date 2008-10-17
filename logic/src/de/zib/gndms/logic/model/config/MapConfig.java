@@ -24,7 +24,8 @@ public class MapConfig extends AbstractConfig {
     }
 
 
-    public String getNonMandatoryOption(final String nameParam) {
+    @Override
+    public String getConcreteNonMandatoryOption(final String nameParam) {
         return map.get(nameParam);
     }
 

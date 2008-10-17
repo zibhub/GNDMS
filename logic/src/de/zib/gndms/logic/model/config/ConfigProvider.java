@@ -1,9 +1,10 @@
 package de.zib.gndms.logic.model.config;
 
 import de.zib.gndms.logic.action.MandatoryOptionMissingException;
+import de.zib.gndms.model.common.ImmutableScopedName;
 import org.jetbrains.annotations.NotNull;
+import org.joda.time.DateTime;
 
-import java.util.Calendar;
 import java.text.ParseException;
 
 
@@ -16,19 +17,25 @@ import java.text.ParseException;
  *          User: stepn Date: 06.10.2008 Time: 11:17:49
  */
 public interface ConfigProvider extends OptionProvider {
-    int getIntOption(String name) throws MandatoryOptionMissingException;
+    int getIntOption(@NotNull String name) throws MandatoryOptionMissingException;
 
-    int getIntOption(String name, int def);
-
-
-    long getLongOption(String name) throws MandatoryOptionMissingException;
-
-    long getLongOption(String name, long def);
+    int getIntOption(@NotNull String name, int def);
 
 
-    boolean isBooleanOptionSet(String name) throws MandatoryOptionMissingException;
+    long getLongOption(@NotNull String name) throws MandatoryOptionMissingException;
 
-    boolean isBooleanOptionSet(String name, boolean def);
+    long getLongOption(@NotNull String name, long def);
+
+
+
+    @NotNull ImmutableScopedName getISNOption(@NotNull String name) throws MandatoryOptionMissingException;
+
+    @NotNull ImmutableScopedName getISNOption(@NotNull String name, @NotNull ImmutableScopedName def);
+
+
+    boolean isBooleanOptionSet(@NotNull String name) throws MandatoryOptionMissingException;
+
+    boolean isBooleanOptionSet(@NotNull String name, boolean def);
 
 
     @NotNull <E extends Enum<E>> E getEnumOption(@NotNull Class<E> clazz,
@@ -40,9 +47,10 @@ public interface ConfigProvider extends OptionProvider {
 
     
     @SuppressWarnings({ "InstanceMethodNamingConvention" })
-    @NotNull Calendar getISO8601Option(String name, @NotNull Calendar def) throws ParseException;
+    @NotNull
+    DateTime getISO8601Option(@NotNull String name, @NotNull DateTime def) throws ParseException;
 
     @SuppressWarnings({ "InstanceMethodNamingConvention" })
-    @NotNull Calendar getISO8601Option(String name)
+    @NotNull DateTime getISO8601Option(@NotNull String name)
             throws MandatoryOptionMissingException, ParseException;
 }

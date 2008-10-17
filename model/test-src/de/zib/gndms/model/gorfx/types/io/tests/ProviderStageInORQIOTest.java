@@ -2,15 +2,11 @@ package de.zib.gndms.model.gorfx.types.io.tests;
 
 import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.model.gorfx.types.io.*;
+import org.joda.time.DateTime;
 
+import java.io.*;
 import java.util.HashMap;
 import java.util.Properties;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-
-import org.joda.time.DateTime;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -80,6 +76,16 @@ public class ProviderStageInORQIOTest {
         reader.read();
         ProviderStageInORQ rorq = reader.getProduct();
 
+        String fn = "StageIn_io_test_props.properties";
+        try {
+            OutputStream os = new FileOutputStream( fn );
+            prop.store( os, "some test props for proivder stage in io" );
+            os.close();
+        } catch ( FileNotFoundException e ) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch ( IOException e ) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
 
         // example of converter reusage
         ProviderStageInORQStdoutWriter stdwrt = new ProviderStageInORQStdoutWriter( );
@@ -88,11 +94,12 @@ public class ProviderStageInORQIOTest {
         conv.convert( );
 
         System.out.println( "Reading test prop from file" );
-        String fn = "prop_test_file.txt";
+        fn = "prop_test_file.txt";
         try {
             InputStream is = new FileInputStream( fn );
             Properties np = new Properties( );
             np.load( is );
+            is.close( );
             np.store( System.out, "test out" );
             reader.setProperties( np );
             reader.begin( );

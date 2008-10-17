@@ -25,6 +25,8 @@ import java.util.concurrent.Future;
  *          User: stepn Date: 29.09.2008 Time: 17:14:27
  */
 public class DummyTaskActionTest extends SysTestBase {
+    public static final Object lock = new Object();
+
     @Parameters({"gridName"})
     public DummyTaskActionTest(@Optional("c3grid") String gridName) {
         super(gridName);
@@ -43,7 +45,6 @@ public class DummyTaskActionTest extends SysTestBase {
         task.setOfferType(null);
         task.setOrq("null");
         task.setContract(contract);
-        task.setNewTask(true);
         return task;
     }
 
@@ -53,14 +54,16 @@ public class DummyTaskActionTest extends SysTestBase {
     @Test(groups = { "db", "sys", "action", "task"})
     public void runSuccesfulDummyAction()
             throws ExecutionException, InterruptedException, ResourceException {
-        eraseDatabase();
-        runDatabase();
-        final EntityManager em = getSys().getEntityManagerFactory().createEntityManager();
-        final DummyTaskAction action = new DummyTaskAction(em, createInitialTask(nextUUID()));
-        action.setSuccessRate(1.0d);
-        final Future<Task> serializableFuture = getSys().submitAction(action);
-        assert serializableFuture.get().getState().equals(TaskState.FINISHED);
-        shutdownDatabase();
+        synchronized(lock) {
+            eraseDatabase();
+            runDatabase();
+            final EntityManager em = getSys().getEntityManagerFactory().createEntityManager();
+            final DummyTaskAction action = new DummyTaskAction(em, createInitialTask(nextUUID()));
+            action.setSuccessRate(1.0d);
+            final Future<Task> serializableFuture = getSys().submitAction(action);
+            assert serializableFuture.get().getState().equals(TaskState.FINISHED);
+            shutdownDatabase();
+        }
     }
 
 
@@ -72,15 +75,17 @@ public class DummyTaskActionTest extends SysTestBase {
     @Test(groups = { "db", "sys", "action", "task"})
     public void runFailedDummyAction()
             throws ExecutionException, InterruptedException, ResourceException {
-        eraseDatabase();
-        runDatabase();
-        final EntityManager em = getSys().getEntityManagerFactory().createEntityManager();
+        synchronized (lock) {
+            eraseDatabase();
+            runDatabase();
+            final EntityManager em = getSys().getEntityManagerFactory().createEntityManager();
 
-        final DummyTaskAction action = new DummyTaskAction(em, createInitialTask(nextUUID()));
-        action.setSuccessRate(0.0d);
-        final Future<Task> serializableFuture = getSys().submitAction(action);
-        assert serializableFuture.get().getState().equals(TaskState.FAILED);
-        shutdownDatabase();
+            final DummyTaskAction action = new DummyTaskAction(em, createInitialTask(nextUUID()));
+            action.setSuccessRate(0.0d);
+            final Future<Task> serializableFuture = getSys().submitAction(action);
+            assert serializableFuture.get().getState().equals(TaskState.FAILED);
+            shutdownDatabase();
+        }
     }
 
 
@@ -88,29 +93,37 @@ public class DummyTaskActionTest extends SysTestBase {
     @SuppressWarnings({ "FeatureEnvy", "MagicNumber" })
     public void runTwoDummyActions()
             throws ExecutionException, InterruptedException, ResourceException {
-        eraseDatabase();
-        runDatabase();
-        final EntityManager em = getSys().getEntityManagerFactory().createEntityManager();
+        synchronized (lock) {
+            eraseDatabase();
+            runDatabase();
+            final EntityManager em = getSys().getEntityManagerFactory().createEntityManager();
 
-        final DummyTaskAction action = new DummyTaskAction(em, createInitialTask(nextUUID()));
-        action.setSuccessRate(1.0d);
-        action.setSleepInProgress(4000L);
-        final Future<Task> serializableFuture = getSys().submitAction(action);
-        final DummyTaskAction action2 = new DummyTaskAction(em, createInitialTask(nextUUID()));
-        action2.setSleepInProgress(4000L);
-        action2.setSuccessRate(0.0d);
-        final Future<Task> serializableFuture2 = getSys().submitAction(action2);
-        assert serializableFuture2.get().getState().equals(TaskState.FAILED);
-        assert serializableFuture.get().getState().equals(TaskState.FINISHED);
-        shutdownDatabase();
+            final DummyTaskAction action = new DummyTaskAction(em, createInitialTask(nextUUID()));
+            // action.setClosingEntityManagerOnCleanup(false);
+            action.setSuccessRate(1.0d);
+            action.setSleepInProgress(4000L);
+            final Future<Task> serializableFuture = getSys().submitAction(action);
+
+            final EntityManager em2 = getSys().getEntityManagerFactory().createEntityManager();
+            final DummyTaskAction action2 = new DummyTaskAction(em2, createInitialTask(nextUUID()));
+            action2.setSleepInProgress(4000L);
+            action2.setSuccessRate(0.0d);
+            // action2.setClosingEntityManagerOnCleanup(false);
+            final Future<Task> serializableFuture2 = getSys().submitAction(action2);
+            assert serializableFuture2.get().getState().equals(TaskState.FAILED);
+            assert serializableFuture.get().getState().equals(TaskState.FINISHED);
+            shutdownDatabase();
+        }
     }
-
+    
     @Test(groups = { "db", "sys", "action", "task"})
     public void runInterruptedDummyAction()
             throws ExecutionException, InterruptedException, ResourceException {
-        eraseDatabase();
-        DummyTaskAction action = preInterruption();
-        postInterruption(action.getModel().getId());
+        synchronized (lock) {
+            eraseDatabase();
+            DummyTaskAction action = preInterruption();
+            postInterruption(action.getModel().getId());
+        }
     }
 
 
@@ -124,12 +137,13 @@ public class DummyTaskActionTest extends SysTestBase {
         action.setSleepInProgress(10000000L);
         final Future<Task> serializableFuture = getSys().submitAction(action);
         // make sure action is in_progress
-        try {
-            Thread.sleep(4000L);
-        }
-        catch(InterruptedException e) {
-            // onward;
-        }
+        while (! action.getModel().isDone() && ! action.getModel().getState().equals(TaskState.IN_PROGRESS))
+            try {
+                Thread.sleep(4000L);
+            }
+            catch(InterruptedException e) {
+                // onward;
+            }
         shutdownDatabase();
         return action;
     }
