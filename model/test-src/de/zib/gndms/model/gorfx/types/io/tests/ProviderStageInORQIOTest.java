@@ -2,12 +2,11 @@ package de.zib.gndms.model.gorfx.types.io.tests;
 
 import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.model.gorfx.types.io.*;
+import org.joda.time.DateTime;
 
+import java.io.*;
 import java.util.HashMap;
 import java.util.Properties;
-import java.io.*;
-
-import org.joda.time.DateTime;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>

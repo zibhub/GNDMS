@@ -1,22 +1,20 @@
 package de.zib.gndms.kit.network.test;
-import org.testng.annotations.*;
-import org.testng.Assert;
-import org.jetbrains.annotations.NotNull;
-import org.globus.ftp.GridFTPClient;
-import org.globus.ftp.exception.ServerException;
-import org.globus.ftp.exception.ClientException;
-import org.apache.axis.types.URI;
-import org.apache.log4j.PropertyConfigurator;
-import org.joda.time.DateTime;
+import de.zib.gndms.kit.network.GNDMSFileTransfer;
+import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
+import de.zib.gndms.kit.network.PersistentMarkerListener;
 import de.zib.gndms.model.gorfx.FTPTransferState;
 import de.zib.gndms.model.test.ModelEntityTestBase;
-import de.zib.gndms.kit.network.PersistentMarkerListener;
-import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
-import de.zib.gndms.kit.network.GNDMSFileTransfer;
+import org.apache.axis.types.URI;
+import org.apache.log4j.PropertyConfigurator;
+import org.globus.ftp.GridFTPClient;
+import org.globus.ftp.exception.ClientException;
+import org.globus.ftp.exception.ServerException;
+import org.jetbrains.annotations.NotNull;
+import org.joda.time.DateTime;
+import org.testng.Assert;
+import org.testng.annotations.*;
 
 import javax.persistence.EntityManager;
-import java.util.TreeMap;
-import java.util.HashMap;
 import java.io.IOException;
 
 /**

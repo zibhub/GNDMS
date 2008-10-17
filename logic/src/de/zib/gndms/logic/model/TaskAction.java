@@ -4,6 +4,7 @@ import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import org.jetbrains.annotations.NotNull;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import java.io.Serializable;
 
@@ -94,12 +95,29 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
 
 
     public void initFromModel(final EntityManager em, final Task model) {
-        final boolean contained = em.contains(model);
 
-        if (! contained)
-            throw new IllegalArgumentException("EntityManager does not contain provided model");
-        setOwnEntityManager(em);
-        setModel(model);
+        boolean wasActive = em.getTransaction().isActive();
+        if (!wasActive)
+            em.getTransaction().begin();
+        try {
+            final boolean contained = em.contains(model);
+            if (! contained) {
+                try {
+                    em.persist(model);
+                }
+                catch (EntityExistsException e) {
+                    em.merge(model);
+                }
+            }
+            if (!wasActive)
+                em.getTransaction().commit();
+            setOwnEntityManager(em);
+            setModel(model);
+        }
+        finally {
+            if (em.getTransaction().isActive())
+                em.getTransaction().rollback();
+        }
     }
 
 
@@ -110,13 +128,14 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
 
 
     public void initFromPk(final EntityManager em, final String pk) {
-        setOwnEntityManager(em);
+        boolean wasActive = em.getTransaction().isActive();
+        if (!wasActive) em.getTransaction().begin();
         try {
-            em.getTransaction().begin();
             final Task model = em.find(getTaskClass(), pk);
             if (model == null)
                 throw new IllegalArgumentException("Model not found for pk: " + pk);
-            em.getTransaction().commit();
+            if (!wasActive) em.getTransaction().commit();
+            setOwnEntityManager(em);
             setModel(model);
         }
         finally {
@@ -236,19 +255,22 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
         }
     }
 
+    @SuppressWarnings({ "CaughtExceptionImmediatelyRethrown" })
     private void transit(final TaskState newState) {
         final EntityManager em = getEntityManager();
         try {
             final @NotNull Task model = getModel();
             em.getTransaction().begin();
-            model.transit(newState);
+            if (newState != null)
+                model.transit(newState);
             if (! em.contains(model))
                 em.persist(model);
             em.getTransaction().commit();
             transit(model.getState(), model);
         }
+        // for debugging
         catch (RuntimeException e) {
-           throw e;
+            throw e;
         }
         finally {
             if (em.getTransaction().isActive())

@@ -1,32 +1,30 @@
 package de.zib.gndms.infra.tests;
 
 import de.zib.gndms.infra.system.SysTestBase;
-import de.zib.gndms.kit.network.test.TransferTestMetaData;
-import de.zib.gndms.kit.network.test.TransferTestThreeFiles;
 import de.zib.gndms.kit.network.test.LittleTransferData;
-import de.zib.gndms.model.gorfx.FTPTransferState;
+import de.zib.gndms.kit.network.test.TransferTestMetaData;
+import de.zib.gndms.logic.model.gorfx.FileTransferActionFactory;
+import de.zib.gndms.logic.model.gorfx.FileTransferORQCalculator;
+import de.zib.gndms.logic.model.gorfx.FileTransferORQFactory;
+import de.zib.gndms.logic.model.gorfx.FileTransferTaskAction;
+import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.gorfx.Contract;
-import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.OfferType;
+import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.FileTransferORQ;
 import de.zib.gndms.model.gorfx.types.TaskState;
-import de.zib.gndms.model.common.ImmutableScopedName;
-import de.zib.gndms.logic.model.gorfx.FileTransferORQCalculator;
-import de.zib.gndms.logic.model.gorfx.FileTransferTaskAction;
-import de.zib.gndms.logic.model.gorfx.FileTransferORQFactory;
-import de.zib.gndms.logic.model.gorfx.FileTransferActionFactory;
-import org.testng.annotations.*;
 import org.apache.log4j.PropertyConfigurator;
 import org.globus.ftp.exception.ServerException;
 import org.globus.wsrf.ResourceException;
 import org.joda.time.DateTime;
+import org.testng.annotations.*;
 
 import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.concurrent.Future;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
