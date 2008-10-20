@@ -7,6 +7,7 @@ import de.zib.gndms.typecon.common.type.ContextXSDReader;
 import de.zib.gndms.typecon.common.type.FileTransferORQXSDReader;
 import org.apache.axis.types.NormalizedString;
 import org.apache.axis.types.URI;
+import org.apache.axis.types.Token;
 import types.*;
 
 import java.util.HashMap;
@@ -185,5 +186,13 @@ public class GORFXTools {
         }
         
         return null;
+    }
+
+
+    public static ContextTEntry createContextEntry(String key, String value) {
+        final ContextTEntry entry = new ContextTEntry();
+        entry.setKey(new Token(key));
+        entry.set_value(new NormalizedString(value));
+        return entry;
     }
 }

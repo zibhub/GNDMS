@@ -113,7 +113,7 @@ public class SliceImpl extends SliceImplBase {
                 esr.remove( sr.getResourceKey() );
                 return esr.getResourceReference( rk );
             } catch ( Exception e ) {
-                throw new RemoteException( e.getMessage() );
+                throw new RemoteException(e.getMessage(), e);
             }
         } finally {
             if( em != null )

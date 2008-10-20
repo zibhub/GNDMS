@@ -7,13 +7,14 @@ import de.zib.gndms.GORFX.offer.service.globus.resource.ExtOfferResourceHome;
 import de.zib.gndms.GORFX.service.globus.resource.ExtGORFXResourceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.system.InstanceDirectory;
+import org.apache.log4j.Logger;
 import org.globus.wsrf.ResourceKey;
 import org.jetbrains.annotations.NotNull;
-import org.apache.log4j.Logger;
 
 import java.rmi.RemoteException;
 
-/** 
+
+/**
  * TODO:I am the service side implementation class.  IMPLEMENT AND DOCUMENT ME
  * 
  * @created by Introduce Toolkit version 1.2
@@ -52,15 +53,16 @@ public class GORFXImpl extends GORFXImplBase {
     public org.apache.axis.message.addressing.EndpointReferenceType createOfferRequest(types.DynamicOfferDataSeqT offerRequestArguments,types.ContextT context) throws RemoteException, de.zib.gndms.GORFX.stubs.types.UnsupportedOfferType {
 
         try{
-            ExtORQResourceHome home = (ExtORQResourceHome) getORQResourceHome();
-            ResourceKey key = home.createResource();
+            @NotNull ExtORQResourceHome home = (ExtORQResourceHome) getORQResourceHome();
+            @NotNull ResourceKey key = home.createResource();            
             ORQResource orqr = (ORQResource) home.find( key );
             orqr.setOfferRequestArguments( offerRequestArguments, context);
 
             // todo: Do we have to return the epr isn't the resourceRef sufficient.
             return home.getResourceReference( key ).getEndpointReference();
         } catch ( Exception e ) {
-            throw new RemoteException( e.getMessage( ) );
+            e.printStackTrace();
+            throw new RemoteException( e.getMessage(), e );
         }
     }
 
@@ -70,7 +72,7 @@ public class GORFXImpl extends GORFXImplBase {
         try{
             return getResourceHome().getAddressedResource().getSupportedOfferTypes( );
         } catch ( Exception e ) {
-            throw new RemoteException( e.getMessage( ) );
+            throw new RemoteException(e.getMessage(), e);
         }
     }
 
