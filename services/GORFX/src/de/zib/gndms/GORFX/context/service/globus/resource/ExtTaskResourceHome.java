@@ -12,6 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.ResourceKey;
+import org.globus.wsrf.Resource;
 import org.globus.wsrf.impl.SimpleResourceKey;
 import org.jetbrains.annotations.NotNull;
 
@@ -143,5 +144,13 @@ public final class ExtTaskResourceHome extends TaskResourceHome implements GNDMP
 
     public void setSystem( @NotNull GNDMSystem system ) throws IllegalStateException {
         throw new UnsupportedOperationException( "System is read-only" );
+    }
+
+
+    @Override
+    protected Resource createNewInstance() throws ResourceException {
+        final Resource resource = super.createNewInstance();
+        ((TaskResource)resource).setResourceHome(this);
+        return resource;    // Overridden method
     }
 }

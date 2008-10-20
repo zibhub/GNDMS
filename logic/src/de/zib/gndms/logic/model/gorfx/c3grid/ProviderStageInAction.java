@@ -103,7 +103,7 @@ public class ProviderStageInAction extends ORQTaskAction<ProviderStageInORQ> {
             getEntityManager().getTransaction().begin();
         try {
             String subspaceKey = config.getOption("subspace");
-            Subspace subspace = getEntityManager().find(Subspace.class, subspaceKey);
+            final @NotNull Subspace subspace = getEntityManager().find(Subspace.class, subspaceKey);
             String slicekindKey = config.getOption("sliceKind");
             SliceKind kind = getEntityManager().find(SliceKind.class, slicekindKey);
             CreateSliceAction csa = new CreateSliceAction();

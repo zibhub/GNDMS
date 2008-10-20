@@ -22,9 +22,8 @@ public class FileTransferORQ extends AbstractORQ {
     }
 
 
-    public
-    @NotNull
-    String getDescription() {
+    @Override
+    public @NotNull String getDescription() {
         return "File transfer from " + sourceURI + " to " + targetURI;
     }
 

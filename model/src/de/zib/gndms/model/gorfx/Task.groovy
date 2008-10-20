@@ -21,6 +21,7 @@ import javax.persistence.NamedQuery
 import javax.persistence.MappedSuperclass
 import org.joda.time.DateTime
 import org.joda.time.Duration
+import javax.persistence.EntityManager
 
 
 /**
@@ -36,6 +37,20 @@ import org.joda.time.Duration
 @NamedQuery(name="listAllTaskIds", query="SELECT instance.id FROM Tasks instance")
 @MappedSuperclass
 class Task extends TimedGridResource {
+    
+    public void stampOn ( EntityManager em, Task newTask) {
+        newTask.offerType = offerType == null ? null : em.find(OfferType.class, offerType.getOfferTypeKey());
+        if (newTask.offerType != null)
+            newTask.offerType.getTasks().add(newTask);
+        newTask.description = description;
+        newTask.state = state;
+        newTask.progress = progress;
+        newTask.contract = contract;
+        newTask.orq = orq;
+        newTask.faultString = faultString;
+        newTask.data = data;
+    }
+
     /* Nullable for testing purposes */
     @ManyToOne @JoinColumn(name="offerTypeKey", nullable=true, updatable=false, columnDefinition="VARCHAR")
     OfferType offerType

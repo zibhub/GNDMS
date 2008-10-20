@@ -4,6 +4,9 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
+import java.io.Serializable;
+
+
 /**
  * A time constrain is a selection criteria for data stagin.
  * @author Maik Jorra <jorra@zib.de>
@@ -11,15 +14,15 @@ import org.joda.time.format.ISODateTimeFormat;
  * <p/>
  * User: bzcjorra Date: Sep 15, 2008 4:11:00 PM
  */
-public class TimeConstraint {  
+public class TimeConstraint implements Serializable {
 	
 	private DateTime minTime;
     private DateTime maxTime;
-    private DateTimeFormatter ISOFormatter;
 
-    public TimeConstraint( ) {
-        ISOFormatter = ISODateTimeFormat.dateTime( );
-    }
+    private final transient DateTimeFormatter isoFormatter = ISODateTimeFormat.dateTime( );
+
+    private static final long serialVersionUID = 2682486067028199164L;
+
 
     public boolean hasMinTime() {
         return minTime != null;
@@ -31,12 +34,12 @@ public class TimeConstraint {
 
 
     public String getMinTimeString() {
-        return ISOFormatter.print( minTime );
+        return isoFormatter.print( minTime );
     }
 
 
     public void setMinTime( String minTime ) {
-        this.minTime = ISOFormatter.parseDateTime( minTime );
+        this.minTime = isoFormatter.parseDateTime( minTime );
     }
 
     
@@ -56,12 +59,12 @@ public class TimeConstraint {
 
 
     public String getMaxTimeString() {
-        return ISOFormatter.print( maxTime );
+        return isoFormatter.print( maxTime );
     }
 
 
     public void setMaxTime( String maxTime ) {
-        this.maxTime = ISOFormatter.parseDateTime( maxTime );
+        this.maxTime = isoFormatter.parseDateTime( maxTime );
     }
 
 
