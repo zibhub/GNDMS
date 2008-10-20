@@ -1,14 +1,15 @@
 package de.zib.gndms.GORFX.ORQ.service.globus.resource;
 
-import org.globus.wsrf.ResourceException;
-import org.apache.axis.types.URI;
+import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
 import de.zib.gndms.model.gorfx.Contract;
 import de.zib.gndms.typecon.common.GORFXTools;
 import de.zib.gndms.typecon.common.type.ContractXSDReader;
-import de.zib.gndms.infra.system.GNDMSystem;
-import types.OfferExecutionContractT;
+import org.apache.axis.types.URI;
+import org.globus.wsrf.ResourceException;
+import org.jetbrains.annotations.NotNull;
 import types.ContextT;
+import types.OfferExecutionContractT;
 
 
 /** 
@@ -27,7 +28,8 @@ public class ORQResource extends ORQResourceBase {
 
         final GNDMSystem sys = home.getSystem();
         try {
-            final URI offerTypeUri = offerRequestArguments.getOfferType();
+            final @NotNull URI offerTypeUri = offerRequestArguments.getOfferType();
+            logger.debug("setOfferRequestArguments for offerType: " + offerTypeUri);
             ORQCalculator = sys.getInstanceDir().getORQCalculator( sys, sys.getEntityManagerFactory(), offerTypeUri.toString());
             ORQCalculator.setORQArguments( GORFXTools.convertFromORQT( offerRequestArguments, ctx ) );
             ORQCalculator.setNetAux( home.getSystem().getNetAux() );

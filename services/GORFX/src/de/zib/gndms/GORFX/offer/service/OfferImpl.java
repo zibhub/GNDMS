@@ -56,7 +56,7 @@ public class OfferImpl extends OfferImplBase {
                 }
             }
         } catch ( Exception e ) {
-            throw new RemoteException( e.getMessage() );
+            throw new RemoteException(e.getMessage(), e);
         }
 
     }

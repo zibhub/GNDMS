@@ -1,5 +1,6 @@
 package de.zib.gndms.GORFX.ORQ.service.globus.resource;
 
+import de.zib.gndms.GORFX.ORQ.common.ORQConstants;
 import de.zib.gndms.GORFX.service.globus.resource.ExtGORFXResourceHome;
 import de.zib.gndms.infra.GNDMSTools;
 import de.zib.gndms.infra.GridConfig;
@@ -16,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
+import javax.xml.namespace.QName;
 
 
 /**
@@ -124,4 +126,16 @@ public final class ExtORQResourceHome extends ORQResourceHome implements GNDMSer
     public synchronized AttributedURI getServiceAddress() {
         ensureInitialized();
         return serviceAddress;
-    }}
+    }
+
+
+    @Override
+    public Resource find(final ResourceKey resourceKeyParam) throws ResourceException {
+        final @NotNull SimpleResourceKey simple = (SimpleResourceKey) resourceKeyParam;
+        logger.debug("find on home with key: " + (simple == null ? "null" : resourceKeyParam.getClass()));
+        final @NotNull QName qName = ORQConstants.RESOURCE_KEY;
+        final @NotNull Object val = simple.getValue();
+        logger.debug("find: " + qName + " / " + val);
+        return super.find(new SimpleResourceKey(qName, val));    // Overridden method
+    }
+}
