@@ -23,10 +23,10 @@ public class GORFXTools {
 
         AbstractORQ aorq = null;
         if( orq.getOfferType().toString().equals( GORFXConstantURIs.PROVIDER_STAGE_IN_URI ) ) {
-            aorq = convertProviderStageInORQFromORQT( (ProviderStageInORQT) orq );
+            aorq = convertProviderStageInORQFromORQT( orq );
             aorq.setContext( ContextXSDReader.readContext( ctx ) );
         } else if( orq.getOfferType().toString().equals( GORFXConstantURIs.FILE_TRANSFER_URI ) )
-            aorq = FileTransferORQXSDReader.read( ( FileTransferORQT) orq, ctx );
+            aorq = FileTransferORQXSDReader.read( orq, ctx );
         else
             throw new IllegalArgumentException( );
 
@@ -36,7 +36,7 @@ public class GORFXTools {
 
     
     // todo implement this using builder form model.gorfx
-    public static ProviderStageInORQ convertProviderStageInORQFromORQT( ProviderStageInORQT orqt ) throws Exception, InstantiationException, IllegalAccessException {
+    public static ProviderStageInORQ convertProviderStageInORQFromORQT( DynamicOfferDataSeqT orqt ) throws Exception, InstantiationException, IllegalAccessException {
 
         if(! orqt.getOfferType().equals( GORFXClientTools.getProviderStageInURI() ) )
             throw new IllegalArgumentException( );

@@ -2,7 +2,7 @@ package de.zib.gndms.typecon.common.type;
 
 import de.zib.gndms.model.gorfx.types.FileTransferORQ;
 import types.ContextT;
-import types.FileTransferORQT;
+import types.DynamicOfferDataSeqT;
 import types.FileMappingSeqT;
 import org.apache.axis.message.MessageElement;
 
@@ -14,7 +14,7 @@ import org.apache.axis.message.MessageElement;
  */
 public class FileTransferORQXSDReader {
 
-    public static FileTransferORQ read( FileTransferORQT orq, ContextT ctx )  {
+    public static FileTransferORQ read( DynamicOfferDataSeqT orq, ContextT ctx )  {
 
         try {
             FileTransferORQ torq = AbstractORQXSDReader.read( FileTransferORQ.class, ctx );

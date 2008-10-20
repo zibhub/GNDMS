@@ -21,12 +21,16 @@ public class SliceStageInORQConverter extends ORQConverter<SliceStageInORQWriter
     public void convert(){
         super.convert();
         DataDescriptorWriter ddw = getWriter( ).getDataDescriptorWriter();
+        getWriter().beginWritingDataDescriptor();
         DataDescriptorConverter ddc = new DataDescriptorConverter( ddw,  getModel().getDataDescriptor() );
         ddc.convert( );
+        getWriter().doneWritingDataDescriptor();
 
         getWriter().writeDataFileName( getModel().getDataFile() );
-        if ( getModel().hasGridSite())
-        getWriter().writeGridSiteName( getModel().getGridSite() );
+
+        if ( getModel().hasGridSite() )
+            getWriter().writeGridSiteName( getModel().getGridSite() );
+
         getWriter().writeMetaDataFileName( getModel().getMetadataFile() );
         getWriter().done();
     }
