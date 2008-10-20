@@ -57,8 +57,9 @@ public class SubspaceImpl extends SubspaceImplBase {
         SliceReference sref;
         SliceResourceHome srh = null;
         ResourceKey rk = null;
+        EntityManager em = null;
         try {
-            Long ssize = null;
+            Long ssize = sliceCreationSpecifier.getTotalStorageSize().longValue();
 
             srh = getSliceResourceHome( );
             rk = srh.createResource( );
@@ -66,14 +67,14 @@ public class SubspaceImpl extends SubspaceImplBase {
 
             GNDMSystem system = subref.getResourceHome( ).getSystem( );
 
-            EntityManager em = system.getEntityManagerFactory().createEntityManager(  );
+            em = system.getEntityManagerFactory().createEntityManager(  );
             SliceKind sk = em.find( SliceKind.class, sliceCreationSpecifier.getSliceKind( ).toString( ) );
             CreateSliceAction csa =
                     new CreateSliceAction( (String) sr.getID(),
                             sliceCreationSpecifier.getTerminationTime(),
                             system.getModelUUIDGen(),
                             sk,
-                            ssize.longValue( )
+                            ssize != null ? ssize : 0
                     );
 
             GridResourceModelHandler mh = new GridResourceModelHandler<Subspace, ExtSubspaceResourceHome, SubspaceResource>
@@ -91,6 +92,9 @@ public class SubspaceImpl extends SubspaceImplBase {
             if( srh != null && rk != null )
                 srh.remove( rk );
             throw new RemoteException( e.toString() );
+        } finally  {
+            if( em != null && em.isOpen( ) )
+                em.close( );
         }
 
         return sref;

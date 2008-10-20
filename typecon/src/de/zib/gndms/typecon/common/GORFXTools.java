@@ -8,6 +8,7 @@ import de.zib.gndms.typecon.common.type.FileTransferORQXSDReader;
 import org.apache.axis.types.NormalizedString;
 import org.apache.axis.types.URI;
 import org.apache.axis.types.Token;
+import org.apache.axis.types.PositiveInteger;
 import types.*;
 
 import java.util.HashMap;
@@ -131,11 +132,8 @@ public class GORFXTools {
         stat.setDescription( new NormalizedString( tsk.getDescription() ) );
         stat.setContractBroken( tsk.getBroken() );
         stat.setStatus( getXSDTForTaskState( tsk.getState() ) );
-        // todo resolve issue
-        // tsk.progess float vs stat.progress BigInt
-        // stat.setProgress( tsk.getProgress() );
-        // tsk has no max progress
-        //stat.setMaxProgress(  );
+        stat.setProgress( new PositiveInteger( Integer.toString( tsk.getProgress() ) ) );
+        stat.setMaxProgress( new PositiveInteger( Integer.toString( tsk.getMax_progress() ) ) );
 
         return stat;
     }

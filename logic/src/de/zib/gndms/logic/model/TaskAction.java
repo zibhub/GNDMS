@@ -94,7 +94,7 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
     }
 
 
-    public void initFromModel(final EntityManager em, final Task model) {
+    public void initFromModel(final EntityManager em, Task model) {
 
         boolean wasActive = em.getTransaction().isActive();
         if (!wasActive)
@@ -106,7 +106,7 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
                     em.persist(model);
                 }
                 catch (EntityExistsException e) {
-                    em.merge(model);
+                    model = em.merge(model);
                 }
             }
             if (!wasActive)
