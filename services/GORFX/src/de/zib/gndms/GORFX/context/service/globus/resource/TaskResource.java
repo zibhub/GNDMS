@@ -2,11 +2,14 @@ package de.zib.gndms.GORFX.context.service.globus.resource;
 
 import de.zib.gndms.typecon.common.GORFXClientTools;
 import de.zib.gndms.typecon.common.GORFXTools;
+import de.zib.gndms.typecon.common.type.ProviderStageInResultXSDTypeWriter;
 import de.zib.gndms.GORFX.context.common.TaskConstants;
 import de.zib.gndms.GORFX.context.stubs.TaskResourceProperties;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.TaskState;
+import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
+import de.zib.gndms.model.gorfx.types.ProviderStageInResult;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.infra.model.GridResourceModelHandler;
 import org.apache.axis.types.URI;
@@ -15,10 +18,7 @@ import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.ResourceKey;
 import org.globus.wsrf.NoSuchResourceException;
 import org.globus.wsrf.InvalidResourceKeyException;
-import types.DynamicOfferDataSeqT;
-import types.ProviderStageInResultT;
-import types.TaskExecutionFailure;
-import types.TaskExecutionState;
+import types.*;
 
 import javax.persistence.EntityManager;
 import java.util.concurrent.Future;
@@ -80,18 +80,24 @@ public class TaskResource extends TaskResourceBase
     public DynamicOfferDataSeqT getTaskExecutionResults() {
 
         DynamicOfferDataSeqT res;
-        URI uri = GORFXTools.scopedNameToURI( taskAction.getModel().getOfferType().getOfferResultType( ) );
+        // URI uri = GORFXTools.scopedNameToURI( taskAction.getModel().getOfferType().getOfferResultType( ) );
+        String uri = taskAction.getModel().getOfferType( ).getOfferTypeKey();
         TaskState stat = taskAction.getModel().getState();
-        if( uri.equals( GORFXClientTools.getProviderStageInURI() ) ) {
-            if( stat.equals( TaskState.FINISHED ) )
-                // maybe convert result from some result model type
-                res = ( ProviderStageInResultT ) taskAction.getModel().getData( );
-            else
+        if( uri.equals( GORFXConstantURIs.PROVIDER_STAGE_IN_URI ) ) {
+            if( stat.equals( TaskState.FINISHED ) ) {
+
+                ProviderStageInResultXSDTypeWriter writer = new ProviderStageInResultXSDTypeWriter();
+
+                ProviderStageInResult r = (ProviderStageInResult) taskAction.getModel().getData( );
+                writer.writeSliceReference( r.getSliceKey() );
+                res = writer.getProduct();
+            } else
                 res = new ProviderStageInResultT();
-        } else if( uri.equals( GORFXClientTools.getFileTransferURI() ) ) {
+        } else if( uri.equals( GORFXConstantURIs.FILE_TRANSFER_URI ) ) {
 
             if( stat.equals( TaskState.FINISHED ) )
-                res = ( ProviderStageInResultT ) taskAction.getModel().getData( );
+                // todo use result writer
+                res = ( FileTransferResultT ) taskAction.getModel().getData( );
             else
                 res = new ProviderStageInResultT();
         } // etc
@@ -125,7 +131,7 @@ public class TaskResource extends TaskResourceBase
         EntityManager em = home.getEntityManagerFactory().createEntityManager(  );
         Task tsk = (Task) mH.loadModelById( em, id );
         try {
-            taskAction =  getResourceHome().getSystem().getInstanceDir().getTaskAction(em, tsk.getOfferType().getOfferTypeKey());
+            taskAction = getResourceHome().getSystem().getInstanceDir().getTaskAction(em, tsk.getOfferType().getOfferTypeKey());
             taskAction.initFromModel(em, tsk);
             taskAction.setClosingEntityManagerOnCleanup(true);
             
@@ -145,8 +151,6 @@ public class TaskResource extends TaskResourceBase
 
 
     public void loadViaModelId( @NotNull String id ) throws ResourceException {
-        // Not required here
-        // cause we override the getters.
         throw new UnsupportedOperationException( "task resource is readonly" );
     }
 

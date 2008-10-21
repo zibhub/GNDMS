@@ -181,7 +181,7 @@ public class GORFXTools {
     public static URI scopedNameToURI( ImmutableScopedName sn ) {
 
         try {
-            return new URI( sn.getNameScope(), sn.getLocalName() );
+            return new URI( sn.getNameScope() + "/" + sn.getLocalName() );
         } catch ( URI.MalformedURIException e ) {
             e.printStackTrace();
         }
