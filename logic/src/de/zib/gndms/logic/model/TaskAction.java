@@ -284,7 +284,8 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
                 }
             model.transit(newState);
             em.getTransaction().commit();
-            transit(model.getState(), model);
+            final TaskState modelState = model.getState();
+            transit(modelState, model);
         }
         // for debugging
         catch (RuntimeException e) {
