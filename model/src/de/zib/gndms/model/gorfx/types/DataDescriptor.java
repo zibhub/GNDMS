@@ -1,5 +1,7 @@
 package de.zib.gndms.model.gorfx.types;
-import java.util.HashMap;
+
+import java.io.Serializable;
+
 
 /**
  * This is the model class representing a xsd gndms:DataDescriptor.
@@ -16,7 +18,7 @@ import java.util.HashMap;
  *       If *ArchivFormat is provided it means, do create an archive with the requested data in the
  *          given format.
  */
-public class DataDescriptor {
+public class DataDescriptor implements Serializable {
 
     // todo maybe use a real object list here
     private String[] objectList; // required
@@ -25,6 +27,8 @@ public class DataDescriptor {
     private String dataArchiveFormat; // not required
     private String metaDataFormat; // required
     private String metaDataArchiveFormat; // not required
+
+    private static final long serialVersionUID = -574650275362439122L;
 
 
     public DataDescriptor() {

@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import java.io.Serializable;
 
 
@@ -148,10 +149,7 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
 
     @Override
     public void setModel(final @NotNull Task mdl) {
-        if (getModel() == null)
-            super.setModel(mdl);    // Overridden method
-        else
-            throw new IllegalStateException("Illegal attempt to overwrite TaskAction model");
+        super.setModel(mdl);    // Overridden method
     }
 
 
@@ -243,10 +241,13 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
             final EntityManager em = getEntityManager();
             try {
                 em.getTransaction().begin();
-                model.setDone(true);
-                if (! em.contains(model))
-                    em.persist(model);
+                Task newModel = em.find(Task.class, getModel().getId());
+                newModel.setDone(true);
                 em.getTransaction().commit();
+                setModel(newModel);
+            }
+            catch (RuntimeException e) {
+                throw e;
             }
             finally {
                 if (em.getTransaction().isActive())
@@ -259,12 +260,29 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
     private void transit(final TaskState newState) {
         final EntityManager em = getEntityManager();
         try {
-            final @NotNull Task model = getModel();
+            @NotNull Task model = getModel();
             em.getTransaction().begin();
-            if (newState != null)
-                model.transit(newState);
-            if (! em.contains(model))
-                em.persist(model);
+            if (newState != null) {
+                if (! em.contains(model)) {
+                    try {
+                        try {
+                            em.persist(model);
+                        }
+                        catch (EntityExistsException e) {
+                            rewindTransaction(em.getTransaction());
+                            em.merge(model);
+                        }
+                    }
+                    catch (RuntimeException e2) {
+                            rewindTransaction(em.getTransaction());
+                            final @NotNull Task newModel = em.find(Task.class, model.getId());
+                            model.stampOn(em, newModel);
+                            setModel(newModel);
+                            model = getModel();
+                        }
+                    }
+                }
+            model.transit(newState);
             em.getTransaction().commit();
             transit(model.getState(), model);
         }
@@ -275,6 +293,14 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
         finally {
             if (em.getTransaction().isActive())
                 em.getTransaction().rollback();
+        }
+    }
+
+
+    private void rewindTransaction(final EntityTransaction txParam) {
+        if (txParam.getRollbackOnly()) {
+            txParam.rollback();
+            txParam.begin();
         }
     }
 

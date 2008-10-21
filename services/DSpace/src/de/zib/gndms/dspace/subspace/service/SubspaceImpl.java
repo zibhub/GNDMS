@@ -59,7 +59,12 @@ public class SubspaceImpl extends SubspaceImplBase {
         ResourceKey rk = null;
         EntityManager em = null;
         try {
-            Long ssize = sliceCreationSpecifier.getTotalStorageSize().longValue();
+            Long ssize = null;
+
+            if( sliceCreationSpecifier.getTotalStorageSize() != null )
+                ssize = sliceCreationSpecifier.getTotalStorageSize().longValue();
+            else
+                ssize = 0l;
 
             srh = getSliceResourceHome( );
             rk = srh.createResource( );
@@ -74,7 +79,7 @@ public class SubspaceImpl extends SubspaceImplBase {
                             sliceCreationSpecifier.getTerminationTime(),
                             system.getModelUUIDGen(),
                             sk,
-                            ssize != null ? ssize : 0
+                            ssize
                     );
 
             GridResourceModelHandler mh = new GridResourceModelHandler<Subspace, ExtSubspaceResourceHome, SubspaceResource>

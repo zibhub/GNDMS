@@ -5,6 +5,7 @@ import de.zib.gndms.GORFX.ORQ.service.globus.resource.ORQResource;
 import de.zib.gndms.GORFX.offer.service.globus.resource.ExtOfferResourceHome;
 import de.zib.gndms.GORFX.offer.service.globus.resource.OfferResource;
 import de.zib.gndms.typecon.common.type.ContractXSDTypeWriter;
+import de.zib.gndms.model.gorfx.Contract;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.globus.wsrf.ResourceContext;
@@ -43,9 +44,10 @@ public class ORQImpl extends ORQImplBase {
             ResourceKey key = ohome.createResource();
             OfferResource ores = ohome.getResource( key );
             ores.setOfferRequestArguments( orq.getOfferRequestArguments() );
+            final Contract contract = orq.getOfferExecutionContract(offerExecutionContract);
             ores.setOfferExecutionContract(
                 ContractXSDTypeWriter.fromContract(
-                    orq.getOfferExecutionContract( offerExecutionContract ) ) );
+                        contract) );
             ores.setOrqCalc(orq.getORQCalculator());
 
             home.remove( orq.getResourceKey() );

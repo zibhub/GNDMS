@@ -1,14 +1,12 @@
 package de.zib.gndms.typecon.common.type;
 
-import types.FileTransferResultT;
 import de.zib.gndms.model.gorfx.types.io.FileTransferResultWriter;
 import de.zib.gndms.typecon.common.GORFXClientTools;
+import org.apache.axis.description.FieldDesc;
+import org.apache.axis.message.MessageElement;
+import types.FileTransferResultT;
 
 import javax.xml.soap.SOAPException;
-
-import org.apache.axis.message.MessageElement;
-import org.apache.axis.description.FieldDesc;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 

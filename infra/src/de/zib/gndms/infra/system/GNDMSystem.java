@@ -157,7 +157,7 @@ public final class GNDMSystem
             initSharedDir();
 			createDirectories();
 			emf = createEMF();
-			restrictedEmf = new RestrictedEMFactory(emf);
+			restrictedEmf = new RestrictedEMFactory(emf, null);
 			tryTxExecution();
 		}
 		catch (Exception e) {

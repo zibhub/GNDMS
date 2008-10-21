@@ -9,9 +9,12 @@ import org.apache.axis.types.NormalizedString;
 import org.apache.axis.types.URI;
 import org.apache.axis.types.Token;
 import org.apache.axis.types.PositiveInteger;
+import org.jetbrains.annotations.NotNull;
 import types.*;
 
 import java.util.HashMap;
+import java.io.StringWriter;
+import java.io.PrintWriter;
 
 /**
  * @author Maik Jorra <jorra@zib.de>
@@ -132,8 +135,8 @@ public class GORFXTools {
         stat.setDescription( new NormalizedString( tsk.getDescription() ) );
         stat.setContractBroken( tsk.getBroken() );
         stat.setStatus( getXSDTForTaskState( tsk.getState() ) );
-        stat.setProgress( new PositiveInteger( Integer.toString( tsk.getProgress() ) ) );
-        stat.setMaxProgress( new PositiveInteger( Integer.toString( tsk.getMax_progress() ) ) );
+        stat.setProgress( toPositiveInteger( tsk.getProgress() ) );
+        stat.setMaxProgress( toPositiveInteger( tsk.getMax_progress() ) );
 
         return stat;
     }
@@ -192,5 +195,36 @@ public class GORFXTools {
         entry.setKey(new Token(key));
         entry.set_value(new NormalizedString(value));
         return entry;
+    }
+
+
+    public static PositiveInteger toPositiveInteger( int i ) {
+        if( i == 0 )
+            return new PositiveInteger( "1" );
+        else
+            return new PositiveInteger( Integer.toString( i ) );
+    }
+
+
+    public static TaskExecutionFailure failureFromException( @NotNull Exception e ) {
+
+        TaskExecutionFailureImplementationFault fault = new TaskExecutionFailureImplementationFault( );
+        fault.setMessage( e.getMessage() );
+        StringWriter sw = new StringWriter( );
+        PrintWriter pw  = new PrintWriter( sw );
+        e.printStackTrace( pw );
+        pw.close( );
+        fault.setFaultTrace( sw.toString() );
+        fault.setFaultClass( e.getClass().getName() );
+
+        StackTraceElement[] se = e.getStackTrace();
+        if( se.length > 0 )
+            fault.setFaultLocation( se[0].toString() );
+
+        TaskExecutionFailure tef = new TaskExecutionFailure( );
+
+        tef.setImplementationFault( fault );
+
+        return tef;
     }
 }

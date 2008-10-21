@@ -4,6 +4,7 @@ import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
 import de.zib.gndms.model.gorfx.Contract;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
+import de.zib.gndms.typecon.common.type.ContractXSDReader;
 import org.globus.wsrf.ResourceException;
 import org.jetbrains.annotations.NotNull;
 import types.DynamicOfferDataSeqT;
@@ -20,9 +21,6 @@ public class OfferResource extends OfferResourceBase {
 
     private ExtOfferResourceHome home;
     
-    // maybe use custom model here
-    private Contract contract;
-
     private AbstractORQCalculator<?,?> orqCalc;
 
 
@@ -30,6 +28,7 @@ public class OfferResource extends OfferResourceBase {
     public void setOfferExecutionContract( OfferExecutionContractT offerExecutionContract ) throws ResourceException {
         super.setOfferExecutionContract( offerExecutionContract );    //To change body of overridden methods use File | Settings | File Templates.
     }
+
 
 
     @Override
@@ -60,7 +59,9 @@ public class OfferResource extends OfferResourceBase {
 
     @SuppressWarnings({ "FeatureEnvy" })
     public @NotNull Task accept() {
-        Task task = new Task();
+        final @NotNull Task task = new Task();
+        final @NotNull Contract contract;
+        contract = ContractXSDReader.readContract(getOfferExecutionContract());
         task.setContract(contract);
         AbstractORQ orq = getOrqCalc().getORQArguments();
         task.setOrq(orq);

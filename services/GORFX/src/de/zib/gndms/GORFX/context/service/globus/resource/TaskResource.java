@@ -60,11 +60,11 @@ public class TaskResource extends TaskResourceBase
 
     public TaskExecutionFailure getTaskExecutionFailure() {
 
-        TaskExecutionFailure fail;
+        TaskExecutionFailure fail = new TaskExecutionFailure( );
         if( taskAction.getModel( ).getState().equals( TaskState.FAILED ) ) {
-            fail = (TaskExecutionFailure) taskAction.getModel().getData();
+            if( taskAction.getModel().getData() != null )
+                fail = GORFXTools.failureFromException( (Exception) taskAction.getModel().getData() );
         } else {
-            fail = new TaskExecutionFailure( );
             fail.setAllIsFine( new Object() );
         }
 
@@ -154,7 +154,14 @@ public class TaskResource extends TaskResourceBase
     public void loadFromModel( @NotNull Task model ) throws ResourceException {
         // Not required here
         // cause we override the getters.
-        throw new UnsupportedOperationException( "task resource is readonly" );
+        // throw new UnsupportedOperationException( "task resource is readonly" );
+
+        // required getter overriding isn't enough
+        setTaskExecutionState( getTaskExecutionState() );
+        setTerminationTime( taskAction.getModel().getTerminationTime() );
+        setTaskExecutionFailure( getTaskExecutionFailure() );
+        setTaskExecutionResults( getTaskExecutionResults() );
+
     }
 
 
@@ -182,10 +189,11 @@ public class TaskResource extends TaskResourceBase
 
         if ( getResourceHome().getKeyTypeName().equals( resourceKey.getName() ) ) {
             String id = ( String ) resourceKey.getValue();
-            Task sl = loadModelById( id );
+            Task tsk = loadModelById( id );
             setResourceKey( resourceKey );
             initialize( new TaskResourceProperties(),
                 TaskConstants.RESOURCE_PROPERTY_SET, id );
+            loadFromModel( tsk );
         }
         else
             throw new InvalidResourceKeyException("Invalid resourceKey name");

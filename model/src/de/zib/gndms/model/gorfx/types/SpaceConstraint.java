@@ -1,5 +1,8 @@
 package de.zib.gndms.model.gorfx.types;
 
+import java.io.Serializable;
+
+
 /**
  * A space constrain is a selection criteria for data stagin.
  * 
@@ -9,13 +12,15 @@ package de.zib.gndms.model.gorfx.types;
  * User: bzcjorra Date: Sep 15, 2008 4:10:44 PM
  *
  */
-public class SpaceConstraint {
+public class SpaceConstraint implements Serializable {
 
     private MinMaxPair latitude; // required
     private MinMaxPair longitude; // required
     private String areaCRS; // optional
     private MinMaxPair altitude; // optional
     private String verticalCRS; // optional
+
+    private static final long serialVersionUID = -6224923031075051128L;
 
 
     public boolean hasAltitude( ) {
