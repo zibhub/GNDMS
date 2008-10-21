@@ -5,6 +5,7 @@ import de.zib.gndms.model.common.ImmutableScopedName;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 
+import java.io.File;
 import java.text.ParseException;
 
 
@@ -31,6 +32,11 @@ public interface ConfigProvider extends OptionProvider {
     @NotNull ImmutableScopedName getISNOption(@NotNull String name) throws MandatoryOptionMissingException;
 
     @NotNull ImmutableScopedName getISNOption(@NotNull String name, @NotNull ImmutableScopedName def);
+
+
+    @NotNull File getFileOption(@NotNull String name) throws MandatoryOptionMissingException;
+
+    @NotNull File getFileOption(@NotNull String name, @NotNull File def);
 
 
     boolean isBooleanOptionSet(@NotNull String name) throws MandatoryOptionMissingException;

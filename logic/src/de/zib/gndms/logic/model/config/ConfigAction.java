@@ -10,6 +10,7 @@ import org.joda.time.DateTime;
 
 import javax.persistence.EntityManager;
 import java.io.PrintWriter;
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -363,6 +364,18 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
 
     public @NotNull ImmutableScopedName getISNOption(@NotNull final String name)
             throws MandatoryOptionMissingException {return config.getISNOption(name);}
+
+
+    @NotNull
+    public File getFileOption(@NotNull final String name, @NotNull final File def) {
+        return config.getFileOption(name, def);
+    }
+
+
+    @NotNull
+    public File getFileOption(@NotNull final String name) throws MandatoryOptionMissingException {
+        return config.getFileOption(name);
+    }
 
 
     public static class ConfigTools {

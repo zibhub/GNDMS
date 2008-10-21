@@ -36,4 +36,4 @@ moni call .gorfx.SetupOfferType "offerType: 'http://www.c3grid.de/ORQTypes/FileT
 
 moni call .gorfx.SetupOfferType "offerType: 'http://www.c3grid.de/ORQTypes/ProviderStageIn'; orqType: '{http://gndms.zib.de/c3grid/types}ProviderStageInORQT'; resType: '{http://gndms.zib.de/c3grid/types}ProviderStageInResultT'; calcFactory: de.zib.gndms.logic.model.gorfx.c3grid.ProviderStageInORQFactory; taskActionFactory: de.zib.gndms.logic.model.gorfx.c3grid.ProviderStageInActionFactory; mode:"$MODE
 
-moni call .gorfx.ConfigOfferType "offerType: 'http://www.c3grid.de/ORQTypes/ProviderStageIn'; subspace: 'http://www.c3grid.de/G2/Subspace/}ProviderStaging'; sliceKind: 'http://www.c3grid.de/G2/SliceKind/Staging'; stagingCommand='$STAGING_COMMAND'"
+moni call .gorfx.ConfigOfferType "offerType: 'http://www.c3grid.de/ORQTypes/ProviderStageIn'; subspace: '{http://www.c3grid.de/G2/Subspace}ProviderStaging'; sliceKind: 'http://www.c3grid.de/G2/SliceKind/Staging'; stagingCommand='$STAGING_COMMAND'"

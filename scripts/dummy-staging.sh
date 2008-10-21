@@ -1,11 +1,12 @@
 #!/bin/sh
 
-SFR=`cat - | grep -v '^#'` 
+sfr="$(cat - | grep -h '^c3grid')"
 
-DATAFILE=`echo $SFR | grep c3grid.StageFileRequest.TargetBaseDataFile | cut -d= -f2-`
-METAFILE=`echo $SFR | grep c3grid.StageFileRequest.TargetMetaDataFile | cut -d= -f2-`
+datafile=$(echo "$sfr" | grep c3grid.StageFileRequest.TargetBaseDataFile | cut -d= -f2-)
+metafile=$(echo "$sfr" | grep c3grid.StageFileRequest.TargetMetaDataFile | cut -d= -f2-)
 
-echo $SFR > $DATAFILE
-echo $SFR > Â$METAFILE
+echo "$sfr" > $datafile
+echo "$sfr" > $metafile
+
 
 exit 0

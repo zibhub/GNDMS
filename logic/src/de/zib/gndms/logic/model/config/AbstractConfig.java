@@ -10,6 +10,7 @@ import org.joda.time.format.ISOPeriodFormat;
 import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.io.File;
 
 
 /**
@@ -43,16 +44,17 @@ public abstract class AbstractConfig implements ConfigProvider {
     }
 
 
-    public String getNonMandatoryOption(final String nameParam) {
-        final String optionValue = getConcreteNonMandatoryOption(nameParam);
+    public String getNonMandatoryOption(final String optionName) {
+        final String optionValue = getConcreteNonMandatoryOption(optionName);
         if (optionValue == null)
             return optionValue;
         else {
             StringBuffer result = new StringBuffer(optionValue.length() << 2);
             Matcher matcher = SHELL_ENV_PAT.matcher(optionValue);
             while (matcher.find()) {
-                final String varName = matcher.group(1);
-                matcher.appendReplacement(result, replaceVar(nameParam, varName));
+                final String envVarName = matcher.group(1);
+                final String replacement = replaceVar(optionName, envVarName);
+                matcher.appendReplacement(result, replacement == null ? "" : replacement);
             }
             matcher.appendTail(result);
             return result.toString();
@@ -61,8 +63,8 @@ public abstract class AbstractConfig implements ConfigProvider {
 
 
     @SuppressWarnings({ "MethodMayBeStatic" })
-    protected String replaceVar(final String optionName, final String varName) {
-        return System.getenv(optionName);
+    protected String replaceVar(final String optionName, final String envVarName) {
+        return System.getenv(envVarName);
     }
 
 
@@ -148,18 +150,26 @@ public abstract class AbstractConfig implements ConfigProvider {
                 : ISODateTimeFormat.dateTimeParser().parseDateTime(optionParam);
     }
 
-
-    @NotNull
-    public ImmutableScopedName getISNOption(@NotNull final String name)
+    public @NotNull ImmutableScopedName getISNOption(final @NotNull String name)
             throws MandatoryOptionMissingException {
         return new ImmutableScopedName(getOption(name));
     }
 
 
-    @NotNull
-    public ImmutableScopedName getISNOption(
-            @NotNull final String name, @NotNull final ImmutableScopedName def) {
+    public @NotNull ImmutableScopedName getISNOption(
+            final @NotNull String name, final @NotNull ImmutableScopedName def) {
         final String option = getNonMandatoryOption(name);
         return option == null ? def : new ImmutableScopedName(name);
+    }
+
+
+    public @NotNull File getFileOption(final @NotNull String name) throws MandatoryOptionMissingException {
+        return new File(getOption(name));
+    }
+
+
+    public @NotNull File getFileOption(final @NotNull String name, final @NotNull File def) {
+        final String option = getNonMandatoryOption(name);
+        return option == null ? def : new File(option);
     }
 }
