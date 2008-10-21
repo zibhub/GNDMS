@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 public abstract class AbstractModelAction<M extends GridEntity, R> extends AbstractEntityAction<R>
 	  implements ModelAction<M, R> {
 
-    private M model;
+    private volatile M model;
 
     public M getModel() {
         return model;

@@ -49,7 +49,7 @@ public class DSpaceTestClient {
             DSpaceClient client = new DSpaceClient( url );
             SubspaceClient subclient = client.findSubspace( sn, ln );
             // todo insert useful uri
-            String skuri = null;
+            String skuri = "http://www.c3grid.de/G2/SliceKind/DMS";
             GregorianCalendar tt = new GregorianCalendar( );
             tt.add( Calendar.YEAR, 20 );
             long ssize = (long) (20 * 1024 * Math.pow( 10, 12  ));

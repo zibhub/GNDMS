@@ -18,6 +18,7 @@ import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import org.apache.axis.types.URI;
 import org.apache.log4j.Logger;
+import org.apache.openjpa.persistence.NoResultException;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -40,12 +41,14 @@ public class DSpaceImpl extends DSpaceImplBase {
 
     // todo: maybe encapsulate complete queries in actions
     // query strings:
+    /*
     private static final String getSubspaceQuery =
-            "SELECT x FROM Subspaces x WHERE x.metaSubspace = :uriParam";
+            "SELECT x FROM Subspaces x WHERE x.metaSubspace.scopedName = :uriParam";
     private static final String listPublicSubspacesQuery =
-            "SELECT x FROM Subspaces x WHERE ";
+            "SELECT DISTINCT x FROM Subspaces x WHERE x.metaSubspace.scopedName.nameScope = :uriParam";
     private static final String listSupportedSchemasQuery =
             "SELECT DISTINCT x.scopedName.scopeName FROM MetaSubspaces x";
+            */
 
     static {
         logger = Logger.getLogger(DSpaceImpl.class);
@@ -76,8 +79,8 @@ public class DSpaceImpl extends DSpaceImplBase {
     public SubspaceReference[] listPublicSubspaces(org.apache.axis.types.URI schemaURI) throws RemoteException {
 
         EntityManager em = system.getEntityManagerFactory().createEntityManager(  );
-        Query q = em.createQuery( listPublicSubspacesQuery );
-        // q.setParameter( "sysParam",  system.getSystemName( ) );
+        Query q = em.createNamedQuery( "listPublicSubspaces" );
+        q.setParameter( "uriParam",  schemaURI.toString() );
         List<Subspace> rl = (List<Subspace>) q.getResultList( );
 
         ArrayList<SubspaceReference> al = new ArrayList<SubspaceReference>( rl.size( ) );
@@ -95,8 +98,7 @@ public class DSpaceImpl extends DSpaceImplBase {
     public org.apache.axis.types.URI[] listSupportedSchemas() throws RemoteException {
 
         EntityManager em = system.getEntityManagerFactory().createEntityManager(  );
-        Query q = em.createQuery( listSupportedSchemasQuery );
-        // q.setParameter( "sysParam",  system.getSystemName( ) );
+        Query q = em.createNamedQuery( "listSupportedSchemas" );
         List<String> rl = (List<String>) q.getResultList( );
 
         ArrayList<URI> al = new ArrayList<URI>( rl.size( ) );
@@ -105,7 +107,7 @@ public class DSpaceImpl extends DSpaceImplBase {
             for( String s: rl )
                 al.add( new URI( s ) );
         } catch ( URI.MalformedURIException e ) {
-            throw new RemoteException( "Maleformed exception URI occurred: " +e.getMessage( ) );
+            throw new RemoteException( "Malformed exception URI occurred: " +e.getMessage( ) );
         }
 
         return al.toArray( new URI[0] );
@@ -115,15 +117,17 @@ public class DSpaceImpl extends DSpaceImplBase {
     public SubspaceReference getSubspace( QName subspaceSpecifier) throws RemoteException, UnknownSubspace {
 
         EntityManager em = system.getEntityManagerFactory().createEntityManager(  );
-        Query q = em.createQuery( getSubspaceQuery );
+        Query q = em.createNamedQuery( "getSubspace" );
         q.setParameter( "uriParam",  new ImmutableScopedName( subspaceSpecifier ) );
-        Subspace sp = ( Subspace) q.getSingleResult( );
-        if( sp == null )
-            throw new UnknownSubspace( );
-
         try {
+            Subspace sp = ( Subspace) q.getSingleResult( );
+            if( sp == null )
+                throw new UnknownSubspace( );
+
             ExtSubspaceResourceHome srh  = (ExtSubspaceResourceHome) getSubspaceResourceHome();
             return srh.getReferenceForSubspace( sp );
+        } catch ( NoResultException e )  {
+            throw new UnknownSubspace( );
         } catch ( Exception e ) {
             throw new RemoteException( "Following exception occured while creating SubspaceReferenc: " + e.getMessage() );
         }

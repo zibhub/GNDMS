@@ -23,7 +23,6 @@ public class ProviderStageInORQConverter extends ORQConverter<ProviderStageInORQ
     public void convert( ) {
 
         super.convert( );
-        
         DataDescriptorWriter ddw = getWriter( ).getDataDescriptorWriter();
         getWriter( ).beginWritingDataDescriptor();
         DataDescriptorConverter ddc = new DataDescriptorConverter( ddw,  getModel().getDataDescriptor() );

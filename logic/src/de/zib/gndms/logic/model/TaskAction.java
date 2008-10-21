@@ -95,7 +95,7 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
     }
 
 
-    public void initFromModel(final EntityManager em, final Task model) {
+    public void initFromModel(final EntityManager em, Task model) {
 
         boolean wasActive = em.getTransaction().isActive();
         if (!wasActive)
@@ -107,7 +107,7 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
                     em.persist(model);
                 }
                 catch (EntityExistsException e) {
-                    em.merge(model);
+                    model = em.merge(model);
                 }
             }
             if (!wasActive)
@@ -186,6 +186,10 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
         boolean first = true;
         TransitException curEx = null;
         do {
+            // for debugging
+            final String id = getModel().getId();
+            final TaskState curState = getModel().getState();
+            final String foo = id + 'a';
             try {
                 try {
                     if (first) {
@@ -193,7 +197,7 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
                             transit(null);
                         }
                         finally {
-                            first = false;                            
+                            first = false;
                         }
                     }
                     else
@@ -218,7 +222,7 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
                 catch (RuntimeException e) {
                     /* Cant go to FAILED after FINISHED, i.e. onFinish must never fail */
                     if (TaskState.FINISHED.equals(getModel().getState()))
-                        throw e;
+                        throw e;                             // todo log this one
                     else
                         fail(e);
                 }
@@ -230,7 +234,6 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
             catch (TransitException newEx) {
                 curEx = newEx;
             }
-            refreshTaskResource();
         } while (curEx != null);
         return getModel();
     }
@@ -296,6 +299,7 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
             model.transit(newState);
             em.getTransaction().commit();
             final TaskState modelState = model.getState();
+            refreshTaskResource();
             transit(modelState, model);
         }
         // for debugging
@@ -333,8 +337,7 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
                     throw new StopException(TaskState.FAILED);
             case FINISHED:
                     if (! model.isDone())
-                        onFailed(model);
-                    onFinished(model);
+                        onFinished(model);
                     /* safety catch-all */
                     throw new StopException(TaskState.FINISHED);
             default:
@@ -376,6 +379,7 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
 
     protected void fail(final @NotNull RuntimeException e) {
         getModel().fail(e);
+        e.fillInStackTrace();
         throw new FailedException(e);
     }
 
@@ -402,6 +406,13 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
         wrapInterrupt(e);
     }
 
+
+    @SuppressWarnings({ "MethodMayBeStatic" })
+    protected final void maskTransitException(RuntimeException e) {
+        if (e instanceof TransitException) {
+            throw e;
+        }
+    }
 
     public static boolean isTransitException( Exception e ) {
         return e instanceof TransitException;

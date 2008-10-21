@@ -39,7 +39,8 @@ public enum SfrProperty {
     FILE_ARCHIVE_FORMAT("c3grid.StageFileRequest.TargetFileArchiveFormat"),
     JUST_DOWNLOAD("c3grid.StageFileRequest.JustDownload" ),
     AREA_CRS("c3grid.StageFileRequest.SpaceConstr.AreaCRS"),
-
+    // slice stagein
+    GRID_SITE("c3grid.SliceStageInRequest.GridSite"),
     // file transfer orq
     FILE_TRANSFER_SOURCE_URI("c3grid.FileTransferRequest.SourceURI"),
     FILE_TRANSFER_DESTINATION_URI("c3grid.FileTransferRequest.DestinationURI"),

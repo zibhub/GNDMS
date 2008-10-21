@@ -51,7 +51,7 @@ public class ProviderStageInClient {
         // Create reusable context with pseudo DN
         final ContextT xsdContext = new ContextT();
         final ContextTEntry entry =
-                GORFXTools.createContextEntry("c3grid.StageFileRequest.Auth.DN", "Mr. Wichtig");
+                GORFXTools.createContextEntry("Auth.DN", "Mr. Wichtig");
         xsdContext.setEntry(new ContextTEntry[] { entry });
 
         // Load SFR from Props and convert to XML objects

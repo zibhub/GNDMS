@@ -96,10 +96,14 @@ public class ProviderStageInAction extends ORQTaskAction<ProviderStageInORQ> {
 
             action.setProcessBuilder(procBuilder);
             action.setOutputReceiver(recv);
-            Integer result = action.call();
-            finish(slice.getId());
+            int result = action.call();
+            if (result == 0)
+                finish(slice.getId());
+            else
+                fail(new IllegalStateException("Staging script failed with non-zero exit code " + result));
         }
         catch (RuntimeException e) {
+            maskTransitException(e);
             fail(new RuntimeException(recv.toString(), e));
         }
     }
