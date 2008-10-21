@@ -2,6 +2,7 @@ package de.zib.gndms.logic.model.gorfx.c3grid;
 
 import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.logic.action.MandatoryOptionMissingException;
+import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.logic.model.config.ConfigProvider;
 import de.zib.gndms.logic.model.config.MapConfig;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
@@ -13,18 +14,16 @@ import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
-import de.zib.gndms.model.gorfx.types.ProviderStageInResult;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQConverter;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyWriter;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQWriter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.Properties;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -78,53 +77,52 @@ public class ProviderStageInAction extends ORQTaskAction<ProviderStageInORQ> {
     }
 
 
+    @Override
+    @NotNull
+    protected Class<ProviderStageInORQ> getOrqClass() {
+        return ProviderStageInORQ.class;
+    }
+
+
     @SuppressWarnings({ "ThrowableInstanceNeverThrown"})
     @Override
     protected void onInProgress(final @NotNull Task model) {
         final Slice slice = findNewSlice(model);
-        Process proc = null;
-        StreamCollector coll = null;
-        Thread collThread = null;
-        Lock lock = new ReentrantLock();
-        Condition cond = lock.newCondition();
-        try {
-            proc = createProcess(slice);
-            coll = createCollector(proc, lock, cond);
-//            final Process finalProc = proc;
-//            new Thread(new Runnable() {
-//                public void run() {
-//                    try {
-//                        writeOrq(finalProc);
-//                    }
-//                    catch (IOException e) {
-//                        // whatever
-//                    }
-//                }
-//            }).start();
-            // todo: timeout
-            // todo: java plugin
-            lock.lock();
-            try {
-                collThread = new Thread(coll);
-                collThread.start();
-                writeOrq(proc);
-                try {
-                    cond.await();
-                }
-                catch (InterruptedException e) {
-                    // ignore
-                }
-            }
-            finally { lock.unlock(); }
-            waitForProcessToFinish(slice, proc);
-        }
-        catch (IOException e) {
-            fail(new RuntimeException(coll == null ? "" : coll.getResult().toString(), e));
-        }
-        catch (MandatoryOptionMissingException e) {
-            fail(new RuntimeException(coll == null ? "" : coll.getResult().toString(), e));
-        }
+        final ProcessBuilder procBuilder = createProcessBuilder(slice);
+        final StringBuilder recv = new StringBuilder(8);
 
+        try {
+            final ProcessBuilderAction action = createStagingAction();
+
+            action.setProcessBuilder(procBuilder);
+            action.setOutputReceiver(recv);
+            Integer result = action.call();
+            finish(slice.getId());
+        }
+        catch (RuntimeException e) {
+            fail(new RuntimeException(recv.toString(), e));
+        }
+    }
+
+
+    private ProcessBuilderAction createStagingAction() {
+        final Properties props = getSFRProps();
+        final ProcessBuilderAction action = new ProcessBuilderAction() {
+            protected @Override void writeOutput(final @NotNull BufferedOutputStream stream)
+                    throws IOException {
+                props.store(stream, "ProviderStageIn");
+            }
+        };
+        return action;
+    }
+
+
+    private Properties getSFRProps() {
+        final Properties props = new Properties();
+        final ProviderStageInORQWriter writer = new ProviderStageInORQPropertyWriter(props);
+        final ProviderStageInORQConverter converter = new ProviderStageInORQConverter(writer, getOrq());
+        converter.convert();
+        return props;
     }
 
 
@@ -185,141 +183,16 @@ public class ProviderStageInAction extends ORQTaskAction<ProviderStageInORQ> {
     }
 
 
-    private Process createProcess(final Slice sliceParam)
-            throws MandatoryOptionMissingException, IOException {
-        ProcessBuilder builder = new ProcessBuilder();
-        ConfigProvider opts = new MapConfig(getKey().getConfigMap());
-        builder.directory(new File(sliceParam.getOwner().getPathForSlice(sliceParam)));
-        builder.redirectErrorStream(true);
-        builder.command(opts.getFileOption("stagingCommand").getPath());
-        return builder.start();
-    }
-
-
-    private void writeOrq(final Process procParam) throws IOException {
-        Properties props = new Properties();
-        ProviderStageInORQWriter writer = new ProviderStageInORQPropertyWriter(props);
-        ProviderStageInORQConverter converter = new ProviderStageInORQConverter(writer, getOrq());
-        converter.convert();
-
-        BufferedOutputStream outStream = new BufferedOutputStream(procParam.getOutputStream());
+    private ProcessBuilder createProcessBuilder(final Slice sliceParam) {
         try {
-            props.store(outStream, "ProviderStageIn");
+            ProcessBuilder builder = new ProcessBuilder();
+            ConfigProvider opts = new MapConfig(getKey().getConfigMap());
+            builder.directory(new File(sliceParam.getOwner().getPathForSlice(sliceParam)));
+            builder.command(opts.getFileOption("stagingCommand").getPath());
+            return builder;
         }
-        finally {
-            outStream.close(); // forces flush
-        }
-    }
-
-
-    @SuppressWarnings({ "MethodMayBeStatic" })
-    private StreamCollector createCollector(
-            final Process procParam, final Lock lock, final Condition cond) {
-        return new StreamCollector(procParam.getInputStream(), lock, cond);
-    }
-
-
-    @SuppressWarnings(
-            { "InfiniteLoopStatement", "ObjectAllocationInLoop", "ThrowableInstanceNeverThrown" })
-    private void waitForProcessToFinish(final Slice sliceParam, final Process procParam) {
-        while(true) {
-            try {
-                final int exitCode = procParam.waitFor();
-                if (exitCode == 0)
-                    finish(new ProviderStageInResult(sliceParam.getId()));
-                else
-                    fail(new IllegalStateException("Non-zero exitcode "
-                            + Integer.toString(exitCode)));
-            }
-            catch (InterruptedException e) {
-                // do nothing
-            }
-        }
-    }
-
-
-    @Override
-    protected @NotNull Class<ProviderStageInORQ> getOrqClass() {
-        return ProviderStageInORQ.class;
-    }
-
-
-    public static class StreamCollector implements Runnable {
-
-        // kByte
-        private static final int INITIAL_COLLECTOR_SIZE = 64;
-        private final InputStream inStream;
-        private StringBuilder collector;
-        private RuntimeException exception;
-        private Lock runLock;
-        private Condition doneCondition;
-
-
-        public StreamCollector(final InputStream inStreamParam, final Lock lockParam, final Condition conditionParam) {
-            inStream = inStreamParam;
-            runLock = lockParam;
-            doneCondition = conditionParam;
-        }
-
-
-        public void run() {
-            runLock.lock();
-            try {
-                if (exception != null)
-                    throw exception;
-                if (collector != null) {
-                    exception = new IllegalStateException("Can't run collector twice!");
-                    throw exception;
-                }
-                try {
-                    try {
-                        StringBuilder newCollector = new StringBuilder(INITIAL_COLLECTOR_SIZE << 10);
-                        collectOutput(inStream, newCollector);
-                        collector = newCollector;
-                    }
-                    catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-                catch (RuntimeException e) {
-                    exception = e;
-                }
-            }
-            finally {
-                doneCondition.signalAll();
-                runLock.unlock();
-            }
-        }
-
-        @SuppressWarnings({ "NestedAssignment" })
-        private static void collectOutput(InputStream inputStream, StringBuilder collectorParam)
-                throws IOException {
-            final InputStreamReader inReader = new InputStreamReader(inputStream);
-            try {
-                final BufferedReader reader = new BufferedReader(inReader);
-                try {
-                    String line;
-                    while ((line = reader.readLine()) != null)
-                        collectorParam.append(line);
-                }
-                finally {
-                     reader.close();
-                }
-            }
-            finally {
-                inReader.close();
-            }
-        }
-
-        public StringBuilder getResult() {
-            if (collector == null) {
-                if (exception == null)
-                    throw new IllegalStateException("Collector has not yet been run");
-                else
-                    throw exception;
-            }
-            else
-                return collector;
+        catch (MandatoryOptionMissingException e) {
+            throw new RuntimeException(e);
         }
     }
 }

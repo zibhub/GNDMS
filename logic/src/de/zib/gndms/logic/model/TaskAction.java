@@ -230,8 +230,19 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
             catch (TransitException newEx) {
                 curEx = newEx;
             }
+            refreshTaskResource();
         } while (curEx != null);
         return getModel();
+    }
+
+
+    protected void refreshTaskResource() {
+        try {
+            getPostponedActions().getListener().onModelChange(getModel());
+        }
+        catch (RuntimeException e) {
+            // intentionally ignored
+        }
     }
 
 
