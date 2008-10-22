@@ -1,11 +1,11 @@
 package de.zib.gndms.GORFX.ORQ.service.globus.resource;
 
-import de.zib.gndms.GORFX.ORQ.common.ORQConstants;
 import de.zib.gndms.GORFX.service.globus.resource.ExtGORFXResourceHome;
 import de.zib.gndms.infra.GNDMSTools;
 import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.model.common.ModelUUIDGen;
 import org.apache.axis.message.addressing.AttributedURI;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
-import javax.xml.namespace.QName;
 
 
 /**
@@ -131,11 +130,11 @@ public final class ExtORQResourceHome extends ORQResourceHome implements GNDMSer
 
     @Override
     public Resource find(final ResourceKey resourceKeyParam) throws ResourceException {
-        final @NotNull SimpleResourceKey simple = (SimpleResourceKey) resourceKeyParam;
-        logger.debug("find on home with key: " + (simple == null ? "null" : resourceKeyParam.getClass()));
-        final @NotNull QName qName = ORQConstants.RESOURCE_KEY;
-        final @NotNull Object val = simple.getValue();
-        logger.debug("find: " + qName + " / " + val);
-        return super.find(new SimpleResourceKey(qName, val));    // Overridden method
+        return super.find(resourceKeyParam);    // Overridden method
+    }
+
+
+    public ModelUUIDGen getModelUUIDGen() {
+        return getSystem().getModelUUIDGen();
     }
 }

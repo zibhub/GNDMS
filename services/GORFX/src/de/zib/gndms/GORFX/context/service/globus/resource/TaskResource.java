@@ -45,7 +45,7 @@ public class TaskResource extends TaskResourceBase
         
         Task tsk = taskAction.getModel( );
         if(! tsk.getState().equals( TaskState.FINISHED ) || ! tsk.getState().equals( TaskState.FAILED ) )
-            future = home.getSystem( ).submitAction( taskAction );
+            future = home.getSystem( ).submitAction( taskAction, getResourceHome().getLog() );
         else
             taskAction.getEntityManager().close();
     }

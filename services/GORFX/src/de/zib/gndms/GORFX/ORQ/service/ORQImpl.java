@@ -4,8 +4,10 @@ import de.zib.gndms.GORFX.ORQ.service.globus.resource.ExtORQResourceHome;
 import de.zib.gndms.GORFX.ORQ.service.globus.resource.ORQResource;
 import de.zib.gndms.GORFX.offer.service.globus.resource.ExtOfferResourceHome;
 import de.zib.gndms.GORFX.offer.service.globus.resource.OfferResource;
-import de.zib.gndms.typecon.common.type.ContractXSDTypeWriter;
+import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.model.gorfx.Contract;
+import de.zib.gndms.shared.ContextTAux;
+import de.zib.gndms.typecon.common.type.ContractXSDTypeWriter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.globus.wsrf.ResourceContext;
@@ -14,7 +16,8 @@ import org.globus.wsrf.impl.ResourceContextImpl;
 
 import java.rmi.RemoteException;
 
-/** 
+
+/**
  * TODO:I am the service side implementation class.  IMPLEMENT AND DOCUMENT ME
  * 
  * @created by Introduce Toolkit version 1.2
@@ -40,19 +43,26 @@ public class ORQImpl extends ORQImplBase {
             logger.debug(impl.getResourceHomeLocation());
             logger.debug(impl.getResourceKey());
             ORQResource orq = home.getAddressedResource();
-            ExtOfferResourceHome ohome = ( ExtOfferResourceHome) getOfferResourceHome();
-            ResourceKey key = ohome.createResource();
-            OfferResource ores = ohome.getResource( key );
-            ores.setOfferRequestArguments( orq.getOfferRequestArguments() );
-            final Contract contract = orq.getOfferExecutionContract(offerExecutionContract);
-            ores.setOfferExecutionContract(
-                ContractXSDTypeWriter.fromContract(
-                        contract) );
-            ores.setOrqCalc(orq.getORQCalculator());
+            WidAux.initWid(orq.getCachedWid());
+            try {
+                ExtOfferResourceHome ohome = ( ExtOfferResourceHome) getOfferResourceHome();
+                ResourceKey key = ohome.createResource();
+                OfferResource ores = ohome.getResource( key );
+                ores.setCachedWid(WidAux.getWid());
+                ores.setOfferRequestArguments( orq.getOfferRequestArguments() );
+                final Contract contract = orq.getOfferExecutionContract(offerExecutionContract);
+                ores.setOfferExecutionContract(
+                    ContractXSDTypeWriter.fromContract(
+                            contract) );
+                ores.setOrqCalc(orq.getORQCalculator());
 
-            home.remove( orq.getResourceKey() );
-            
-            return ohome.getResourceReference( key ).getEndpointReference();
+                home.remove( orq.getResourceKey() );
+
+                return ohome.getResourceReference( key ).getEndpointReference();
+            }
+            finally {
+                WidAux.removeWid();
+            }
         } catch ( Exception e ) {
             e.printStackTrace();
             throw new RemoteException(e.getMessage(), e);
@@ -63,6 +73,7 @@ public class ORQImpl extends ORQImplBase {
     public types.OfferExecutionContractT permitEstimateAndDestroyRequest(types.OfferExecutionContractT offerExecutionContract,types.ContextT context) throws RemoteException, de.zib.gndms.GORFX.ORQ.stubs.types.UnfullfillableRequest, de.zib.gndms.GORFX.ORQ.stubs.types.PermissionDenied {
 
         try {
+            ContextTAux.initWid(getResourceHome().getModelUUIDGen(), context);
             ExtORQResourceHome home = (ExtORQResourceHome) getResourceHome();
             ORQResource res = home.getAddressedResource();
             return ContractXSDTypeWriter.fromContract(
@@ -70,8 +81,16 @@ public class ORQImpl extends ORQImplBase {
         } catch ( Exception e ) {
             throw new RemoteException(e.getMessage(), e);
         }
+        finally {
+            WidAux.removeWid();
+        }
 
     }
 
+
+    @Override
+    public ExtORQResourceHome getResourceHome() throws Exception {
+        return (ExtORQResourceHome) super.getResourceHome();    // Overridden method
+    }
 }
 

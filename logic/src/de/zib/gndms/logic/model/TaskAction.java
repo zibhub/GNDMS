@@ -1,7 +1,10 @@
 package de.zib.gndms.logic.model;
 
+import de.zib.gndms.kit.util.WidAux;
+import de.zib.gndms.logic.action.LogAction;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.TaskState;
+import org.apache.commons.logging.Log;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityExistsException;
@@ -19,9 +22,11 @@ import java.io.Serializable;
  *          User: stepn Date: 15.09.2008 Time: 11:26:48
  */
 @SuppressWarnings({ "AbstractMethodCallInConstructor" })
-public abstract class TaskAction extends AbstractModelAction<Task, Task>
+public abstract class TaskAction extends AbstractModelAction<Task, Task> implements LogAction
 {
     private TaskExecutionService service;
+    private Log log;
+    private String wid;
 
     private static final class ShutdownTaskActionException extends RuntimeException {
         private static final long serialVersionUID = 2772466358157719820L;
@@ -150,6 +155,7 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
     @Override
     public void setModel(final @NotNull Task mdl) {
         super.setModel(mdl);    // Overridden method
+        wid = mdl.getWid();
     }
 
 
@@ -180,6 +186,20 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
     }
 
 
+    @Override
+    public Task call() throws RuntimeException {
+        try {
+            final Task task = getModel();
+            if (task != null) 
+                WidAux.initWid(getModel().getWid());
+            return super.call();    // Overridden method
+        }
+        finally {
+            WidAux.removeWid();
+        }
+    }
+
+
     @SuppressWarnings({ "ThrowableInstanceNeverThrown", "ObjectAllocationInLoop" })
     @Override
     public Task execute(final @NotNull EntityManager em) {
@@ -189,24 +209,27 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
             // for debugging
             final String id = getModel().getId();
             final TaskState curState = getModel().getState();
-            final String foo = id + 'a';
             try {
                 try {
                     if (first) {
                         try {
+                            trace("transit(null)", null);
                             transit(null);
                         }
                         finally {
                             first = false;
                         }
                     }
-                    else
+                    else {
+                        trace("transit(" + curEx.newState + ')', null);
                         transit(curEx.newState);
+                    }
                     // if we come here, transit has failed
                     throw new IllegalStateException("No proper TransitException thrown");
                 }
                 /* On stop: finish loop and return model to caller */
                 catch (final StopException newEx) {
+                    trace("markAsDone()", null);
                     markAsDone();
                     curEx = null;
                 }
@@ -220,6 +243,7 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
                 }
                 /* On runtime ex: Set task to failed */
                 catch (RuntimeException e) {
+                    trace("catch(RuntimeException)", e);
                     /* Cant go to FAILED after FINISHED, i.e. onFinish must never fail */
                     if (TaskState.FINISHED.equals(getModel().getState()))
                         throw e;                             // todo log this one
@@ -235,7 +259,31 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
                 curEx = newEx;
             }
         } while (curEx != null);
+        trace("return getModel()", null);
         return getModel();
+    }
+
+
+    @SuppressWarnings({ "HardcodedFileSeparator" })
+    protected void trace(final @NotNull String userMsg, final Throwable cause) {
+        final Log log1 = getLog();
+        final Task model = getModel();
+        final String msg;
+        if (model == null)
+            msg = userMsg;
+        else {
+            final TaskState state = model.getState();
+            final String descr = model.getDescription();
+            msg = "TA of Task " + model.getId()
+                    + (state == null ? "" : '/' + state.toString()) + ':'
+                    + (userMsg.length() > 0 ? ' ' : "") + userMsg
+                    + (descr == null ? "" : " descr: '" + descr + '\'');
+        }
+       if (cause == null)
+           log1.trace(msg);
+        else
+           log1.trace(msg, cause);
+
     }
 
 
@@ -300,6 +348,8 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
             em.getTransaction().commit();
             final TaskState modelState = model.getState();
             refreshTaskResource();
+            //noinspection HardcodedFileSeparator
+            trace("on" + modelState + "()", null);
             transit(modelState, model);
         }
         // for debugging
@@ -390,31 +440,36 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
     }
 
 
+    @SuppressWarnings({ "MethodMayBeStatic" })
     protected void stop(final @NotNull Task model) {
         throw new StopException(model.getState());
     }
 
     
-    protected final InterruptedException wrapInterrupt(InterruptedException e) {
+    protected final void shutdownIfTerminating(InterruptedException e) {
         if (getService().isTerminating())
             throw new ShutdownTaskActionException(e);
-        return e;
     }
-
-    @SuppressWarnings({ "ThrowableResultOfMethodCallIgnored" })
-    protected final void wrapInterrupt_(InterruptedException e) {
-        wrapInterrupt(e);
-    }
-
 
     @SuppressWarnings({ "MethodMayBeStatic" })
-    protected final void maskTransitException(RuntimeException e) {
-        if (e instanceof TransitException) {
+    protected final void honorOngoingTransit(RuntimeException e) {
+        if (isTransitException(e))
             throw e;
-        }
     }
 
     public static boolean isTransitException( Exception e ) {
         return e instanceof TransitException;
     }
+
+
+    public Log getLog() {
+        return log;
+    }
+
+
+    public void setLog(final Log logParam) {
+        log = logParam;
+    }
+
+
 }

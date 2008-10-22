@@ -1,6 +1,7 @@
 package de.zib.gndms.logic.model.gorfx.c3grid;
 
 import de.zib.gndms.kit.util.DirectoryAux;
+import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.logic.action.MandatoryOptionMissingException;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.logic.model.config.ConfigProvider;
@@ -103,7 +104,7 @@ public class ProviderStageInAction extends ORQTaskAction<ProviderStageInORQ> {
                 fail(new IllegalStateException("Staging script failed with non-zero exit code " + result));
         }
         catch (RuntimeException e) {
-            maskTransitException(e);
+            honorOngoingTransit(e);
             fail(new RuntimeException(recv.toString(), e));
         }
     }
@@ -111,6 +112,7 @@ public class ProviderStageInAction extends ORQTaskAction<ProviderStageInORQ> {
 
     private ProcessBuilderAction createStagingAction() {
         final Properties props = getSFRProps();
+        props.put("c3grid.CommonRequest.Context.Workflow.Id", WidAux.getWid());
         final ProcessBuilderAction action = new ProcessBuilderAction() {
             protected @Override void writeOutput(final @NotNull BufferedOutputStream stream)
                     throws IOException {

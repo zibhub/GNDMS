@@ -4,6 +4,7 @@ import de.zib.gndms.GORFX.service.globus.resource.ExtGORFXResourceHome;
 import de.zib.gndms.infra.GNDMSTools;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.model.common.ModelUUIDGen;
 import org.apache.axis.message.addressing.AttributedURI;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -117,5 +118,10 @@ public final class ExtOfferResourceHome extends OfferResourceHome implements GND
     public synchronized AttributedURI getServiceAddress() {
         ensureInitialized();
         return serviceAddress;
+    }
+
+
+    public ModelUUIDGen getModelUUIDGen() {
+        return getSystem().getModelUUIDGen();
     }
 }

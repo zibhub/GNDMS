@@ -9,15 +9,18 @@ done
 for SERVICE in services/* ; do
   echo mkdir -p $SERVICE/test/lib
   mkdir -p $SERVICE/test/lib
+  echo ln -sf ../../../../../../typecon/shared_service_src/shared $SERVICE/src/de/zib/gndms/
+  ln -sf ../../../../../../typecon/shared_service_src/shared $SERVICE/src/de/zib/gndms/
   echo find $SERVICE -type f -name '*.gar' -exec ln -sf {} $PWD \;
   find $SERVICE -type f -name '*.gar' -exec ln -sf {} $PWD \;
-  for jar in extra/lib/* ; do
+  for jar in extra/tools-lib/* ; do
     echo ln -sf "../../../$jar" "$SERVICE/lib" 
     ln -sf "../../../$jar" "$SERVICE/lib" 
   done
   echo ln -sf "$GROOVY_HOME"/embeddable/groovy-all*jar "extra/tools-lib/gndms-groovy.jar"
   ln -sf "$GROOVY_HOME"/embeddable/groovy-all*jar "extra/tools-lib/gndms-groovy.jar"
-  for jar in extra/tools-lib/* ; do
+  for jarname in shared-model logic kit typecon infra ; do
+    jar="extra/lib/gndms-$jarname.jar"
     echo ln -sf "../../../../$jar" "$SERVICE/lib" 
     ln -sf "../../../$jar" "$SERVICE/lib" 
   done

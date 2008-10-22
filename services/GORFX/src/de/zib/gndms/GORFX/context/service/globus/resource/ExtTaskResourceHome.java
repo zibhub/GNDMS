@@ -153,4 +153,9 @@ public final class ExtTaskResourceHome extends TaskResourceHome implements GNDMP
         ((TaskResource)resource).setResourceHome(this);
         return resource;    // Overridden method
     }
+
+
+    public Log getLog() {
+        return logger;
+    }
 }

@@ -4,6 +4,7 @@ import de.zib.gndms.GORFX.context.service.globus.resource.ExtTaskResourceHome;
 import de.zib.gndms.GORFX.context.service.globus.resource.TaskResource;
 import de.zib.gndms.GORFX.offer.service.globus.resource.ExtOfferResourceHome;
 import de.zib.gndms.GORFX.offer.service.globus.resource.OfferResource;
+import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.model.gorfx.Task;
 import org.apache.axis.message.addressing.EndpointReferenceType;
@@ -32,6 +33,7 @@ public class OfferImpl extends OfferImplBase {
             // Create task object
             @NotNull final ExtOfferResourceHome home = (ExtOfferResourceHome) getResourceHome( );
             @NotNull final OfferResource ores = home.getAddressedResource();
+            WidAux.initWid(ores.getCachedWid());
             @NotNull final Task task = ores.accept( );
             @NotNull final ExtTaskResourceHome thome = ( ExtTaskResourceHome) getTaskResourceHome();
             @NotNull final EntityManager em = thome.getEntityManagerFactory().createEntityManager();
@@ -60,7 +62,7 @@ public class OfferImpl extends OfferImplBase {
         } catch ( Exception e ) {
             throw new RemoteException(e.getMessage(), e);
         }
-
+        finally { WidAux.removeWid(); }
     }
 
 
@@ -93,5 +95,10 @@ public class OfferImpl extends OfferImplBase {
         }
     }
 
+
+    @Override
+    public ExtOfferResourceHome getResourceHome() throws Exception {
+        return (ExtOfferResourceHome) super.getResourceHome();    // Overridden method
+    }
 }
 

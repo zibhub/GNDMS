@@ -14,7 +14,6 @@ import de.zib.gndms.model.common.SingletonGridResource
  */
 @NamedQueries([
 @NamedQuery(name="findDSpaceInstances", query="SELECT instance FROM DSpaces instance"),
-@NamedQuery(name="listPublicSubspaces", query="SELECT subspace FROM Subspaces subspace WHERE subspace.isPublicSubspace = true"),
 @NamedQuery(name="listAllSubspaceIds", query="SELECT instance.id FROM Subspaces instance"),
 @NamedQuery(name="listAllSliceIds", query="SELECT instance.id FROM Slices instance"),
 @NamedQuery(name="getSubspace", query="SELECT x FROM Subspaces x WHERE x.metaSubspace.scopedName = :uriParam"),

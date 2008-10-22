@@ -4,6 +4,8 @@ import de.zib.gndms.logic.model.DummyTaskAction;
 import de.zib.gndms.model.gorfx.Contract;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.TaskState;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.globus.wsrf.ResourceException;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
@@ -26,6 +28,9 @@ import java.util.concurrent.Future;
  */
 public class DummyTaskActionTest extends SysTestBase {
     public static final Object lock = new Object();
+
+    private static final Log log = LogFactory.getLog(DummyTaskActionTest.class);
+
 
     @Parameters({"gridName"})
     public DummyTaskActionTest(@Optional("c3grid") String gridName) {
@@ -60,7 +65,7 @@ public class DummyTaskActionTest extends SysTestBase {
             final EntityManager em = getSys().getEntityManagerFactory().createEntityManager();
             final DummyTaskAction action = new DummyTaskAction(em, createInitialTask(nextUUID()));
             action.setSuccessRate(1.0d);
-            final Future<Task> serializableFuture = getSys().submitAction(action);
+            final Future<Task> serializableFuture = getSys().submitAction(action, log);
             assert serializableFuture.get().getState().equals(TaskState.FINISHED);
             shutdownDatabase();
         }
@@ -82,7 +87,7 @@ public class DummyTaskActionTest extends SysTestBase {
 
             final DummyTaskAction action = new DummyTaskAction(em, createInitialTask(nextUUID()));
             action.setSuccessRate(0.0d);
-            final Future<Task> serializableFuture = getSys().submitAction(action);
+            final Future<Task> serializableFuture = getSys().submitAction(action, log);
             assert serializableFuture.get().getState().equals(TaskState.FAILED);
             shutdownDatabase();
         }
@@ -102,14 +107,14 @@ public class DummyTaskActionTest extends SysTestBase {
             // action.setClosingEntityManagerOnCleanup(false);
             action.setSuccessRate(1.0d);
             action.setSleepInProgress(4000L);
-            final Future<Task> serializableFuture = getSys().submitAction(action);
+            final Future<Task> serializableFuture = getSys().submitAction(action, log);
 
             final EntityManager em2 = getSys().getEntityManagerFactory().createEntityManager();
             final DummyTaskAction action2 = new DummyTaskAction(em2, createInitialTask(nextUUID()));
             action2.setSleepInProgress(4000L);
             action2.setSuccessRate(0.0d);
             // action2.setClosingEntityManagerOnCleanup(false);
-            final Future<Task> serializableFuture2 = getSys().submitAction(action2);
+            final Future<Task> serializableFuture2 = getSys().submitAction(action2, log);
             assert serializableFuture2.get().getState().equals(TaskState.FAILED);
             assert serializableFuture.get().getState().equals(TaskState.FINISHED);
             shutdownDatabase();
@@ -135,7 +140,7 @@ public class DummyTaskActionTest extends SysTestBase {
         DummyTaskAction action = new DummyTaskAction(em, createInitialTask(nextUUID()));
         action.setSuccessRate(1.0d);
         action.setSleepInProgress(10000000L);
-        final Future<Task> serializableFuture = getSys().submitAction(action);
+        final Future<Task> serializableFuture = getSys().submitAction(action, log);
         // make sure action is in_progress
         while (! action.getModel().isDone() && ! action.getModel().getState().equals(TaskState.IN_PROGRESS))
             try {
@@ -154,7 +159,7 @@ public class DummyTaskActionTest extends SysTestBase {
         final EntityManager newEM = getSys().getEntityManagerFactory().createEntityManager();
         final DummyTaskAction action = new DummyTaskAction(newEM, pk);
         action.setSuccessRate(1.0d);
-        final Future<Task> continuedFuture = getSys().submitAction(action);
+        final Future<Task> continuedFuture = getSys().submitAction(action, log);
         assert continuedFuture.get().getState().equals(TaskState.FINISHED);
         shutdownDatabase();
     }

@@ -13,6 +13,8 @@ import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.FileTransferORQ;
 import de.zib.gndms.model.gorfx.types.TaskState;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.PropertyConfigurator;
 import org.globus.ftp.exception.ServerException;
 import org.globus.wsrf.ResourceException;
@@ -34,6 +36,7 @@ import java.util.concurrent.Future;
  */
 public class FileTransferActionTest extends SysTestBase {
 
+    Log log = LogFactory.getLog(FileTransferActionTest.class);
     TransferTestMetaData transferData;
     String  logFileConfig;
     Task task;
@@ -111,7 +114,7 @@ public class FileTransferActionTest extends SysTestBase {
             em.persist( task );
             em.getTransaction( ).commit( );
             FileTransferTaskAction action = new FileTransferTaskAction( em, task );
-            Future<Task> serializableFuture = getSys().submitAction(action);
+            Future<Task> serializableFuture = getSys().submitAction(action, log);
             assert serializableFuture.get().getState().equals( TaskState.FINISHED );
         } finally {
             if( em != null && em.isOpen( ) )
