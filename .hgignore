@@ -12,6 +12,7 @@ services/*/.metadata/**
 services/*/src/de/zib/gndms/shared
 services/*/src/de/zib/gndms/shared/**
 services/.metadata/**
+services/**/derby.log
 .DS_Store
 *.ipr
 *.iws
