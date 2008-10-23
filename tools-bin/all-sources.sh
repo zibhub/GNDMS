@@ -1,3 +1,5 @@
+find typecon/src -type f
+find typecon/test-src -type f
 find logic/src -type f
 find logic/test-src -type f
 find model/src -type f

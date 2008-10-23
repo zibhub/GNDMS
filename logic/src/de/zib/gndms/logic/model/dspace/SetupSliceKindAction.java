@@ -2,6 +2,7 @@ package de.zib.gndms.logic.model.dspace;
 
 import de.zib.gndms.logic.action.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.config.ConfigActionHelp;
+import de.zib.gndms.logic.model.config.ConfigActionResult;
 import de.zib.gndms.logic.model.config.ConfigOption;
 import de.zib.gndms.logic.model.config.SetupAction;
 import de.zib.gndms.model.dspace.MetaSubspace;
@@ -28,7 +29,7 @@ import java.util.Set;
  */
 @ConfigActionHelp(shortHelp = "Setup a slice kind", longHelp = "A slice kind descripes the permissions of a slice. " +
         "With this action, the kind can be defined or changed. It requires an URI and the mode which can either be RW or RO")
-public class SetupSliceKindAction extends SetupAction<Void> {
+public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
 
     @ConfigOption(descr="The URI of the slice kind (the PK for the db record)")
     private String sliceKind; // must be unique
@@ -79,7 +80,7 @@ public class SetupSliceKindAction extends SetupAction<Void> {
     }
 
 
-    public Void execute( @NotNull EntityManager em, @NotNull PrintWriter writer ) {
+    public ConfigActionResult execute( @NotNull EntityManager em, @NotNull PrintWriter writer ) {
 
         SliceKind r;
         if( isCreating() ) {
@@ -90,19 +91,17 @@ public class SetupSliceKindAction extends SetupAction<Void> {
         } else {
             r = em.find( SliceKind.class, getSliceKind( ) );
             if ( r == null ) {
-                writer.println( "No slice kind with given found (uri: " + sliceKind +")" );
-                return null;
+                return failed( "No slice kind with given found (uri: " + sliceKind +")" );
             }
             if( r.getMode( ).equals( getTheSliceKindMode( ) ) ) {
-                writer.println( "Given sliceKindMode is equal to the slice kinds current sliceKindMode. Nothing changed." );
-                return null;
+                return failed( "Given sliceKindMode is equal to the slice kinds current sliceKindMode. Nothing changed." );
             }
 
             r.setMode( getTheSliceKindMode( ) );
         }
 
 
-        return null;
+        return ok();
     }
 
 
