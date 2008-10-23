@@ -15,6 +15,7 @@ import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
+import de.zib.gndms.model.gorfx.types.ProviderStageInResult;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQConverter;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyWriter;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQWriter;
@@ -99,7 +100,7 @@ public class ProviderStageInAction extends ORQTaskAction<ProviderStageInORQ> {
             action.setOutputReceiver(recv);
             int result = action.call();
             if (result == 0)
-                finish(slice.getId());
+                finish( new ProviderStageInResult( slice.getId() ) );
             else
                 fail(new IllegalStateException("Staging script failed with non-zero exit code " + result));
         }

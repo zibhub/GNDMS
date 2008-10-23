@@ -1,22 +1,16 @@
 package de.zib.gndms.typecon.common.type;
 
-import types.ProviderStageInResultT;
-import types.SliceReferenceT;
-import types.SliceReference;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInResultWriter;
 import de.zib.gndms.typecon.common.GORFXClientTools;
-
-import javax.xml.soap.SOAPException;
-import javax.xml.namespace.QName;
-
-import org.globus.wsrf.ResourceHome;
+import org.apache.axis.message.addressing.EndpointReferenceType;
+import org.globus.wsrf.container.ServiceHost;
 import org.globus.wsrf.impl.SimpleResourceKey;
 import org.globus.wsrf.utils.AddressingUtils;
-import org.globus.wsrf.container.ServiceHost;
-import org.apache.axis.message.addressing.EndpointReference;
-import org.apache.axis.message.addressing.EndpointReferenceType;
+import types.ProviderStageInResultT;
+import types.SliceReference;
 
-import java.io.IOException;
+import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPException;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -32,13 +26,13 @@ public class ProviderStageInResultXSDTypeWriter extends AbstractXSDTypeWriter<Pr
     public void writeSliceReference( String srf ) {
 
         try {
-            String s = ServiceHost.getBaseURL( ).toString( ) + "/" + "c3grid/Slice";
+            String s = ServiceHost.getBaseURL( ).toString( ) + "c3grid/Slice";
 
             SimpleResourceKey sk = new SimpleResourceKey( new QName("http://dspace.gndms.zib.de/dspace/Slice", "SliceKey"), srf );
             EndpointReferenceType epr = AddressingUtils.createEndpointReference( s, sk );
 
-            SliceReferenceT srt = ( SliceReferenceT ) getProduct().get_any()[0].getObjectValue();
-            srt.setSliceReference( new SliceReference( epr) );
+            SliceReference srt = ( SliceReference ) getProduct().get_any()[0].getObjectValue();
+            srt.setEndpointReference( epr );
         } catch ( Exception e ) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             throw new IllegalStateException( e.getMessage(), e );

@@ -94,4 +94,10 @@ public class ORQResource extends ORQResourceBase {
     public void setCachedWid(final String widParam) {
         cachedWid = widParam;
     }
+
+    @Override
+    public void refreshRegistration(final boolean forceRefresh) {
+        // nothing
+    }
+
 }

@@ -5,6 +5,7 @@ import de.zib.gndms.GORFX.client.GORFXClient;
 import de.zib.gndms.GORFX.context.client.TaskClient;
 import de.zib.gndms.GORFX.context.common.TaskConstants;
 import de.zib.gndms.GORFX.offer.client.OfferClient;
+import de.zib.gndms.dspace.slice.client.SliceClient;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQConverter;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyReader;
@@ -12,8 +13,8 @@ import de.zib.gndms.typecon.common.GORFXTools;
 import de.zib.gndms.typecon.common.type.ProviderStageInORQXSDTypeWriter;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI;
-import org.globus.wsrf.encoding.ObjectDeserializer;
 import org.globus.wsrf.encoding.DeserializationException;
+import org.globus.wsrf.encoding.ObjectDeserializer;
 import org.joda.time.DateTime;
 import org.oasis.wsrf.properties.GetResourcePropertyResponse;
 import types.*;
@@ -21,8 +22,8 @@ import types.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Properties;
 import java.rmi.RemoteException;
+import java.util.Properties;
 
 
 /**
@@ -72,7 +73,7 @@ public class ProviderStageInClient {
 
     @SuppressWarnings({ "FeatureEnvy" })
     private static void waitForTaskToFinishOrFail(final TaskClient taskClientParam)
-            throws RemoteException, DeserializationException {
+            throws RemoteException, DeserializationException, URI.MalformedURIException {
         TaskExecutionState state;
         boolean finished;
         boolean failed;
@@ -80,7 +81,7 @@ public class ProviderStageInClient {
         do {
             final GetResourcePropertyResponse rpResponse= taskClientParam.getResourceProperty(
                     TaskConstants.TASKEXECUTIONSTATE);
-            state = (TaskExecutionState) ObjectDeserializer.toObject( rpResponse.get_any()[0], TaskExecutionState.class );
+            state = (TaskExecutionState) rpResponse.get_any()[0].getObjectValue();
             failed = TaskStatusT.failed.equals(state.getStatus());
             finished = TaskStatusT.finished.equals(state.getStatus());
             try {
@@ -96,8 +97,11 @@ public class ProviderStageInClient {
         // Write results to console
         if (finished) {
             final GetResourcePropertyResponse rpResponse= taskClientParam.getResourceProperty(TaskConstants.TASKEXECUTIONRESULTS);
-            final ProviderStageInResultT result = (ProviderStageInResultT) ObjectDeserializer.toObject( rpResponse.get_any()[0], ProviderStageInResultT.class);
-            System.out.println(result);
+            final ProviderStageInResultT result = (ProviderStageInResultT) rpResponse.get_any()[0].getObjectValue();
+            final EndpointReferenceType epr = ((SliceReference) result.get_any()[0].getObjectValue()).getEndpointReference();
+
+            SliceClient sliceClient = new SliceClient(epr);
+            System.out.println(sliceClient.getSliceLocation());
         }
         else {
             final GetResourcePropertyResponse rpResponse= taskClientParam.getResourceProperty(TaskConstants.TASKEXECUTIONFAILURE);

@@ -1,19 +1,23 @@
 package de.zib.gndms.GORFX.context.service.globus.resource;
 
+import de.zib.gndms.GORFX.context.stubs.types.TaskReference;
 import de.zib.gndms.GORFX.service.globus.resource.ExtGORFXResourceHome;
 import de.zib.gndms.infra.GNDMSTools;
 import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.gorfx.Task;
 import org.apache.axis.message.addressing.AttributedURI;
+import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.globus.wsrf.Resource;
 import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.ResourceKey;
-import org.globus.wsrf.Resource;
 import org.globus.wsrf.impl.SimpleResourceKey;
+import org.globus.wsrf.utils.AddressingUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.naming.NamingException;
@@ -94,6 +98,9 @@ public final class ExtTaskResourceHome extends TaskResourceHome implements GNDMP
     public void refresh( @NotNull Task resourceModel ) throws ResourceException {
 
         ResourceKey key = getKeyForResourceModel( resourceModel );
+        String id = null;
+        if (id != null)
+            getSystem().getInstanceDir().getHome(Slice.class).find(getSystem().getInstanceDir().getHome(Slice.class).getKeyForId(id));
         TaskResource  tres = (TaskResource) find( key );
 
         tres.loadFromModel( resourceModel );
@@ -157,5 +164,13 @@ public final class ExtTaskResourceHome extends TaskResourceHome implements GNDMP
 
     public Log getLog() {
         return logger;
+    }
+
+    @Override
+    public TaskReference getResourceReference(final @NotNull ResourceKey key) throws Exception {
+		EndpointReferenceType epr = AddressingUtils.createEndpointReference(serviceAddress.toString(), key);
+		TaskReference ref = new TaskReference();
+		ref.setEndpointReference(epr);
+		return ref;
     }
 }

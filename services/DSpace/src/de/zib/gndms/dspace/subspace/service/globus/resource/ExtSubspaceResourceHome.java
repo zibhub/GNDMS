@@ -10,12 +10,14 @@ import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.model.dspace.Subspace;
 import org.apache.axis.message.addressing.AttributedURI;
+import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.globus.wsrf.Resource;
 import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.ResourceKey;
 import org.globus.wsrf.impl.SimpleResourceKey;
+import org.globus.wsrf.utils.AddressingUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.naming.NamingException;
@@ -23,6 +25,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.xml.namespace.QName;
+import java.net.URL;
 
 
 /**
@@ -184,5 +187,14 @@ public final class ExtSubspaceResourceHome extends SubspaceResourceHome
     protected void add(final ResourceKey resourceKeyParam, final Resource resourceParam) {
         logger.info("add: " +  resourceKeyParam == null ? "null" : resourceKeyParam.getName() + "/" + (resourceKeyParam.getValue() == null ? "null" : resourceKeyParam.getValue()));
         super.add(resourceKeyParam, resourceParam);    // Overridden method
+    }
+
+
+    @Override
+    public SubspaceReference getResourceReference(final @NotNull ResourceKey key) throws Exception {
+		EndpointReferenceType epr = AddressingUtils.createEndpointReference(serviceAddress.toString(), key);
+		de.zib.gndms.dspace.subspace.stubs.types.SubspaceReference ref = new de.zib.gndms.dspace.subspace.stubs.types.SubspaceReference();
+		ref.setEndpointReference(epr);
+		return ref;
     }
 }

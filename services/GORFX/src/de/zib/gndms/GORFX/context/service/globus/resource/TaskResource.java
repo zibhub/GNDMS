@@ -20,6 +20,7 @@ import types.*;
 
 import javax.persistence.EntityManager;
 import java.util.concurrent.Future;
+import java.io.Serializable;
 
 
 /**
@@ -79,14 +80,20 @@ public class TaskResource extends TaskResourceBase
 
         DynamicOfferDataSeqT res;
         // URI uri = GORFXTools.scopedNameToURI( taskAction.getModel().getOfferType().getOfferResultType( ) );
-        String uri = taskAction.getModel().getOfferType( ).getOfferTypeKey();
-        TaskState stat = taskAction.getModel().getState();
+        final String uri = taskAction.getModel().getOfferType( ).getOfferTypeKey();
+        final TaskState stat = taskAction.getModel().getState();
         if( uri.equals( GORFXConstantURIs.PROVIDER_STAGE_IN_URI ) ) {
             if( stat.equals( TaskState.FINISHED ) ) {
 
-                ProviderStageInResultXSDTypeWriter writer = new ProviderStageInResultXSDTypeWriter();
+                final Serializable sr = taskAction.getModel().getData( );
 
-                ProviderStageInResult r = (ProviderStageInResult) taskAction.getModel().getData( );
+                if(! ( sr instanceof ProviderStageInResult ) )
+                    throw new IllegalArgumentException( "task result is not of type " 
+                        + ProviderStageInResult.class.getName( ) );
+
+                final ProviderStageInResult r = (ProviderStageInResult) sr;
+                final ProviderStageInResultXSDTypeWriter writer = new ProviderStageInResultXSDTypeWriter();
+                writer.begin( );
                 writer.writeSliceReference( r.getSliceKey() );
                 res = writer.getProduct();
             } else
@@ -208,7 +215,14 @@ public class TaskResource extends TaskResourceBase
     }
 
 
+    @Override
     public String getID( ) {
         return (String) super.getID();
     }
+
+    @Override
+    public void refreshRegistration(final boolean forceRefresh) {
+        // nothing
+    }
+
 }

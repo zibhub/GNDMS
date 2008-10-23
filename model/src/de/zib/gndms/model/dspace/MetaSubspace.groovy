@@ -25,10 +25,10 @@ class MetaSubspace extends GridEntity {
 	@Column(name="visible", nullable=false, updatable=false)
 	boolean visibleToPublic
 
-	@OneToOne(optional=true, fetch=FetchType.LAZY, mappedBy="metaSubspace", cascade=[CascadeType.ALL])
+	@OneToOne(optional=true, mappedBy="metaSubspace", cascade=[CascadeType.ALL])
 	Subspace instance
 
-	@ManyToMany(targetEntity=SliceKind.class, fetch=FetchType.LAZY, cascade = [CascadeType.REFRESH, CascadeType.MERGE])
+	@ManyToMany(targetEntity=SliceKind.class, cascade = [CascadeType.REFRESH, CascadeType.MERGE])
 	@JoinTable(name = "creatable_slice_kinds", schema="dspace",
 		uniqueConstraints=[@UniqueConstraint(columnNames = ["meta_subspace_schema_uri", "meta_subspace_specifier"]), 
 		                   @UniqueConstraint(columnNames = ["slice_kind_uri"])],

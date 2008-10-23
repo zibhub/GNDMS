@@ -45,7 +45,7 @@ class Subspace extends GridResource {
     @Column(name="total_size", nullable=false, updatable=false)
 	long totalSize
 
-	@OneToOne(targetEntity=MetaSubspace.class, optional=false, fetch=FetchType.LAZY, cascade=[CascadeType.REFRESH])
+	@OneToOne(targetEntity=MetaSubspace.class, optional=false, cascade=[CascadeType.REFRESH])
 	@PrimaryKeyJoinColumns([@PrimaryKeyJoinColumn(name="schema_uri"),
 	                        @PrimaryKeyJoinColumn(name="specifier")])
 	MetaSubspace metaSubspace
@@ -58,7 +58,7 @@ class Subspace extends GridResource {
     ])
 	DSpaceRef dSpaceRef
 
-    @OneToMany( targetEntity=Slice.class, mappedBy="owner", fetch=FetchType.LAZY, cascade=[CascadeType.REFRESH,CascadeType.PERSIST, CascadeType.REMOVE ] )
+    @OneToMany( targetEntity=Slice.class, mappedBy="owner", cascade=[CascadeType.REFRESH,CascadeType.PERSIST, CascadeType.REMOVE ] )
     Set<Slice> slices
 
     String path

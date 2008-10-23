@@ -84,4 +84,10 @@ public class OfferResource extends OfferResourceBase {
     public void setCachedWid(final String cachedWidParam) {
         cachedWid = cachedWidParam;
     }
+
+    @Override
+    public void refreshRegistration(final boolean forceRefresh) {
+        // nothing
+    }
+
 }
