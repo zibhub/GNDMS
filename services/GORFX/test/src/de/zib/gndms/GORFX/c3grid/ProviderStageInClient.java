@@ -97,6 +97,11 @@ public class ProviderStageInClient {
         if (finished) {
             final GetResourcePropertyResponse rpResponse= taskClientParam.getResourceProperty(TaskConstants.TASKEXECUTIONRESULTS);
             final ProviderStageInResultT result = (ProviderStageInResultT) ObjectDeserializer.toObject( rpResponse.get_any()[0], ProviderStageInResultT.class);
+            SliceReference sr =  ( SliceReference ) ObjectDeserializer.toObject( result.get_any()[0], SliceReference.class ) ;
+            if( sr != null ) {
+                EndpointReferenceType epr = sr.getEndpointReference();
+                System.out.println( epr );
+            }
             System.out.println(result);
         }
         else {

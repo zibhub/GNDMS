@@ -47,10 +47,11 @@ public class CreateSliceActionTest extends ModelEntityTestBase {
 
         LookupAction<SliceKind, String> la = new LookupAction( SliceKind.class, sliceKindTestKey );
         la.setOwnEntityManager( getEntityManager() );
+        la.setClosingEntityManagerOnCleanup( false );
         la.setUUIDGen( ug );
         getEntityManager().getTransaction().begin( );
         SliceKind sk = la.call();
-        //sk = getEntityManager().find( SliceKind.class, sliceKindTestKey );
+        //SliceKind sk = getEntityManager().find( SliceKind.class, sliceKindTestKey );
         if( sk != null ) {
             System.out.println( "cleaning up slice kind form last test run" );
             getEntityManager().remove( sk );
@@ -114,10 +115,12 @@ public class CreateSliceActionTest extends ModelEntityTestBase {
 
         DefaultBatchUpdateAction boa = new DefaultBatchUpdateAction( );
         boa.setActions( new Vector<Action<Void>>() );
+        boa.setListener( new FakeEntityUpdateListener() );
         Action = validator.createCreateSliceAction(  );
         Action.setOwnPostponedActions( boa );
         //getEntityManager( ).getTransaction().begin( );
         Action.setOwnEntityManager( getEntityManager( ) );
+        Action.setClosingEntityManagerOnCleanup( false );
         Slice sl = Action.call();
         assert sl != null;
         // getEntityManager( ).getTransaction().commit( );

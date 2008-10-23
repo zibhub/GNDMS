@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.Vector;
+
 import de.zib.gndms.model.gorfx.FTPTransferState;
 
 /**
@@ -58,7 +60,7 @@ public class GNDMSFileTransfer {
      * Estimates the size of a prepared download or transfer.
      * @return The size in byte.
      */
-    public long estimateTransferSize( ) throws IOException, ServerException {
+    public long estimateTransferSize( ) throws IOException, ServerException, ClientException {
 
         if( sourceClient == null )
             throw new IllegalStateException( "no source client provided" );
@@ -69,6 +71,9 @@ public class GNDMSFileTransfer {
         sourceClient.setType( Session.TYPE_ASCII );
 
         sourceClient.changeDir( sourcePath );
+
+        if( files == null || files.size( ) == 0  )
+            fetchFileListing();
 
         for( String s : src ) {
             // todo evaluate usage of msld command
@@ -105,11 +110,14 @@ public class GNDMSFileTransfer {
         destinationClient.changeDir( destinationPath );
 
         sourceClient.setActive( destinationClient.setPassive() );
+        
+        if( files == null || files.size( ) == 0  )
+            fetchFileListing();
 
         // todo beautify the code below
         boolean resume = plist.hasCurrentFile();
         String  rfn = plist.getCurrentFile();
-        
+
         Set<String> keys = files.keySet();
         for( String fn : keys ) {
 
@@ -193,11 +201,27 @@ public class GNDMSFileTransfer {
      * This loads the ftp byte range args from a FTPTransferState object into a GridFTPClient.
      *
      */
-   private void resumeSource( FTPTransferState stat ) throws ServerException, IOException {
-        
+    private void resumeSource( FTPTransferState stat ) throws ServerException, IOException {
+
         ByteRangeList brl = new ByteRangeList();
         GridFTPRestartMarker rm = new GridFTPRestartMarker( stat.getFtpArgsString( ) );
         brl.merge( rm.toVector() );
         sourceClient.setRestartMarker( brl );
-   }
+    }
+
+    
+    private void fetchFileListing( ) throws ClientException, ServerException, IOException {
+
+        files = new TreeMap<String,String>( );
+        Vector<FileInfo> inf = sourceClient.list( );
+        System.out.println( "done" );
+        for( FileInfo fi: inf ) {
+            System.out.println( " fetched file info: " + fi );
+            if( fi.isFile() ) {
+                files.put( fi.getName(), null );
+                System.out.println( "adding file to list" );
+            }
+        }
+
+    }
 }
