@@ -101,6 +101,7 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
             em.remove( transferState );
             em.getTransaction().commit();
 
+
             finish( fc + " files transfered."  );
 
         } catch ( TransitException e ) {

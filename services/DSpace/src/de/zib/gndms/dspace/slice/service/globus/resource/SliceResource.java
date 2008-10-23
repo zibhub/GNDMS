@@ -78,12 +78,6 @@ public class SliceResource extends SliceResourceBase
             throw new ResourceException( e.getMessage(), e );
         }
 
-        try {
-            bean.setSliceLocation( new URI( model.getOwner().getMetaSubspace().getScopedName().getNameScope() ) );
-        } catch ( URI.MalformedURIException e ) {
-            throw new ResourceException( "Following exception occured: " + e.getMessage( ), e );
-        }
-
         bean.setTerminationTime( model.getTerminationTime() );
         bean.setTotalStorageSize( DSpaceTools.unsignedLongFromLong( model.getTotalStorageSize( ) ) );
 
@@ -94,6 +88,7 @@ public class SliceResource extends SliceResourceBase
             Subspace sp =  model.getOwner( );
             subref = srh.getReferenceForSubspace( sp );
             bean.setSubspaceReference( subref );
+            bean.setSliceLocation( new URI( sp.getGsiFtpPathForSlice( model ) ) );
         } catch ( Exception e ) {
             throw new ResourceException( "Can't obtain reference for subspace: " + e.getMessage( ) );
         }

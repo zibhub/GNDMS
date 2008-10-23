@@ -5,7 +5,6 @@ import de.zib.gndms.GORFX.client.GORFXClient;
 import de.zib.gndms.GORFX.context.client.TaskClient;
 import de.zib.gndms.GORFX.context.common.TaskConstants;
 import de.zib.gndms.GORFX.offer.client.OfferClient;
-import de.zib.gndms.dspace.slice.client.SliceClient;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQConverter;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyReader;
@@ -103,8 +102,8 @@ public class ProviderStageInClient {
             if( sr != null ) {
                 EndpointReferenceType epr = sr.getEndpointReference();
                 System.out.println( epr );
-                SliceClient sliceClient = new SliceClient(epr);
-                System.out.println(sliceClient.getSliceLocation());
+                //SliceClient sliceClient = new SliceClient(epr);
+                //System.out.println(sliceClient.getSliceLocation());
             }
         }
         else {

@@ -158,4 +158,7 @@ class Subspace extends GridResource {
     }
 
 
+    public String getGsiFtpPathForSlice( Slice sl )  {
+        gsiFtpPath + "/" + sl.getKind( ).getMode().toString( ) + "/" + sl.getAssociatedPath( )
+    }
 }
