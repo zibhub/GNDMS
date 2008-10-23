@@ -1,6 +1,6 @@
 package de.zib.gndms.logic.model.dspace;
 
-import de.zib.gndms.logic.action.CommandAction;
+import de.zib.gndms.logic.model.config.ParameterTools;
 import de.zib.gndms.logic.model.config.ConfigActionTestBase;
 import org.testng.annotations.*;
 
@@ -36,7 +36,7 @@ public class SetupSubspaceActionTest extends ConfigActionTestBase {
     }
 
     @Test(groups={"db", "action", "config"})
-    public void testExecute() throws CommandAction.ParameterTools.ParameterParseException {
+    public void testExecute() throws ParameterTools.ParameterParseException {
         SetupSubspaceAction action;
 
         action = new SetupSubspaceAction();

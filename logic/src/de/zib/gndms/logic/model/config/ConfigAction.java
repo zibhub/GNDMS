@@ -3,6 +3,7 @@ package de.zib.gndms.logic.model.config;
 import de.zib.gndms.logic.action.CommandAction;
 import de.zib.gndms.logic.action.MandatoryOptionMissingException;
 import de.zib.gndms.logic.action.SkipActionInitializationException;
+import de.zib.gndms.logic.model.config.ParameterTools;
 import de.zib.gndms.logic.model.AbstractEntityAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import org.jetbrains.annotations.NotNull;
@@ -150,7 +151,7 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
 
 
     public final @NotNull String localOptionsToString(boolean withNewlines) {
-        return CommandAction.ParameterTools.asString(getLocalOptions(), OPTION_NAME_PATTERN,
+        return ParameterTools.asString(getLocalOptions(), OPTION_NAME_PATTERN,
                                                      withNewlines);
     }
 
@@ -163,7 +164,7 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
     public final void parseLocalOptions(final @NotNull String cfgParams)
             throws ParameterTools.ParameterParseException {
         Map<String,String> cfgMap = new HashMap<String,String>(8);
-        CommandAction.ParameterTools.parseParameters(cfgMap, cfgParams, OPTION_NAME_PATTERN);
+        ParameterTools.parseParameters(cfgMap, cfgParams, OPTION_NAME_PATTERN);
         setLocalOptions(cfgMap);
     }
 
@@ -234,7 +235,7 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
 
     public final @NotNull String allOptionsToString(boolean withNewLines)
     {
-        return CommandAction.ParameterTools.asString(getAllOptions(), OPTION_NAME_PATTERN,
+        return ParameterTools.asString(getAllOptions(), OPTION_NAME_PATTERN,
                                                      withNewLines);
     }
 

@@ -22,7 +22,7 @@ env GNDMS_SCRIPT=1 `dirname $0`/setup-generic.sh $MODE
 
 moni call .dspace.SetupSliceKind "sliceKind:'http://www.c3grid.de/G2/SliceKind/Staging'; sliceKindMode:RW; mode: $MODE"
 
-moni call .dspace.SetupSubspace   'subspace:"{http://www.c3grid.de/G2/Subspace}ProviderStaging"; path:/tmp; visible:true; size:1000000000; mode:'$MODE
+moni call .dspace.SetupSubspace   'subspace:"{http://www.c3grid.de/G2/Subspace}ProviderStaging"; path:/tmp; gsiFtpPath: "gsiftp://seeker.zib.de/tmp"; visible:true; size:1000000000; mode:'$MODE
 moni call .dspace.AssignSliceKind "subspace:'{http://www.c3grid.de/G2/Subspace}ProviderStaging'; sliceKind: http://www.c3grid.de/G2/SliceKind/Staging; mode:"$ADDMODE
 moni call .dspace.AssignSliceKind "subspace:'{http://www.c3grid.de/G2/Subspace}ProviderStaging'; sliceKind: http://www.c3grid.de/G2/SliceKind/DMS; mode:"$ADDMODE
 
