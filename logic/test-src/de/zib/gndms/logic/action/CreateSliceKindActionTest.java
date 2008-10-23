@@ -53,6 +53,7 @@ public class CreateSliceKindActionTest extends ModelEntityTestBase {
         EntityManager em = getEntityManager();
         DefaultBatchUpdateAction boa = new DefaultBatchUpdateAction( );
         boa.setActions( new Vector<Action<Void>>() );
+        boa.setListener( new FakeEntityUpdateListener() );
 
         SliceKindCreationValidator val = new SliceKindCreationValidator( );
         val.setURI( URI );

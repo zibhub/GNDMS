@@ -56,8 +56,10 @@ public class DSpaceTestClient {
             SliceClient sc = subclient.createSlice( skuri, tt, ssize );
             System.out.println( "Check set values" );
             System.out.println( "slicekind: "+ skuri.equals( sc.getSliceKind() ) );
-            System.out.println( "terminationtim: " + tt.equals( sc.getTerminationTime() ) );
-            System.out.println( "storage size:" +( ssize == sc.getTotalStorageSize() ) );
+            System.out.println( "terminationtime: " + tt.equals( sc.getTerminationTime() ) );
+            System.out.println( "termination time: " + sc.getTerminationTime() );
+            System.out.println( "termination time expected: " + tt );
+            System.out.println( "storage size: " +( ssize == sc.getTotalStorageSize() ) );
         } catch ( ArrayIndexOutOfBoundsException e ) {
             usage();
             System.exit(1);

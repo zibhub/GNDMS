@@ -140,9 +140,10 @@ public class SliceClient extends SliceClientBase implements SliceI {
         return resp.get_any()[0].getValue( );
     }
 
-    public Calendar getTerminationTime( ) throws RemoteException, ParseException {
+    public Calendar getTerminationTime( ) throws RemoteException, ParseException, DeserializationException {
         GetResourcePropertyResponse resp = getResourceProperty( SliceConstants.TERMINATIONTIME );
-        return ISO8601.parseISO8601DateStr( resp.get_any()[0].getValue( ) );
+        String tt = (String) ObjectDeserializer.toObject( resp.get_any()[0], String.class );
+        return ISO8601.parseISO8601DateStr( tt );
     }
 
     public long getTotalStorageSize( ) throws RemoteException, DeserializationException {

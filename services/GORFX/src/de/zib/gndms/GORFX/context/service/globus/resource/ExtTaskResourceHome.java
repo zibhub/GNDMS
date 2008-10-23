@@ -98,9 +98,6 @@ public final class ExtTaskResourceHome extends TaskResourceHome implements GNDMP
     public void refresh( @NotNull Task resourceModel ) throws ResourceException {
 
         ResourceKey key = getKeyForResourceModel( resourceModel );
-        String id = null;
-        if (id != null)
-            getSystem().getInstanceDir().getHome(Slice.class).find(getSystem().getInstanceDir().getHome(Slice.class).getKeyForId(id));
         TaskResource  tres = (TaskResource) find( key );
 
         tres.loadFromModel( resourceModel );

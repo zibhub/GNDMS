@@ -66,28 +66,39 @@ public class SliceResource extends SliceResourceBase
 
     public void loadFromModel( @NotNull Slice model ) throws ResourceException {
 
-        // todo uncomment after xsd change of slice kind uri
-   //     super.setSliceKind( model.getKind( ).getURI( ) );
+        loadFromModel( model, ( SliceResourceProperties ) getResourceBean() );
+    }
+
+
+    public void loadFromModel( @NotNull Slice model, @NotNull SliceResourceProperties bean ) throws ResourceException {
 
         try {
-            super.setSliceLocation( new URI( model.getOwner().getMetaSubspace().getScopedName().getNameScope() ) );
+            bean.setSliceKind( new URI ( model.getKind( ).getURI( ) ) );
         } catch ( URI.MalformedURIException e ) {
-            throw new ResourceException( "Following exception occured: " + e.getMessage( ) );
+            throw new ResourceException( e.getMessage(), e );
         }
 
-        super.setTerminationTime( model.getTerminationTime() );
-        super.setTotalStorageSize( DSpaceTools.unsignedLongFromLong( model.getTotalStorageSize( ) ) );
+        try {
+            bean.setSliceLocation( new URI( model.getOwner().getMetaSubspace().getScopedName().getNameScope() ) );
+        } catch ( URI.MalformedURIException e ) {
+            throw new ResourceException( "Following exception occured: " + e.getMessage( ), e );
+        }
+
+        bean.setTerminationTime( model.getTerminationTime() );
+        bean.setTotalStorageSize( DSpaceTools.unsignedLongFromLong( model.getTotalStorageSize( ) ) );
 
         GNDMSystem sys = resourceHome.getSystem( );
         ExtSubspaceResourceHome srh = (ExtSubspaceResourceHome) sys.getInstanceDir().getHome( Subspace.class );
         SubspaceReference subref;
         try {
-            subref = srh.getReferenceForSubspace( model.getOwner( ) );
-            super.setSubspaceReference( subref );
+            Subspace sp =  model.getOwner( );
+            subref = srh.getReferenceForSubspace( sp );
+            bean.setSubspaceReference( subref );
         } catch ( Exception e ) {
             throw new ResourceException( "Can't obtain reference for subspace: " + e.getMessage( ) );
         }
     }
+
 
     @NotNull
     public ExtSliceResourceHome getResourceHome() {
@@ -106,15 +117,17 @@ public class SliceResource extends SliceResourceBase
 			throw new IllegalStateException("Slice resource home already set");
     }
 
+
     public void load( ResourceKey resourceKey ) throws ResourceException, NoSuchResourceException, InvalidResourceKeyException {
         
         if ( getResourceHome().getKeyTypeName().equals( resourceKey.getName() ) ) {
             String id = ( String ) resourceKey.getValue();
-            Slice sl = loadModelById(id);
             setResourceKey( resourceKey );
-            initialize(new SliceResourceProperties(),
-                    SliceConstants.RESOURCE_PROPERTY_SET, id);
-            loadFromModel(sl);
+
+            Slice sl = loadModelById(id);
+            SliceResourceProperties bean = new SliceResourceProperties();
+            loadFromModel( sl, bean );
+            initialize( bean, SliceConstants.RESOURCE_PROPERTY_SET, id );
         }
         else
             throw new InvalidResourceKeyException("Invalid resourceKey name");

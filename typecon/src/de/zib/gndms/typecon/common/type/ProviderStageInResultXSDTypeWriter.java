@@ -28,7 +28,7 @@ public class ProviderStageInResultXSDTypeWriter extends AbstractXSDTypeWriter<Pr
         try {
             String s = ServiceHost.getBaseURL( ).toString( ) + "c3grid/Slice";
 
-            SimpleResourceKey sk = new SimpleResourceKey( new QName("http://dspace.gndms.zib.de/dspace/Slice", "SliceKey"), srf );
+            SimpleResourceKey sk = new SimpleResourceKey( new QName("http://dspace.gndms.zib.de/DSpace/Slice", "SliceKey"), srf );
             EndpointReferenceType epr = AddressingUtils.createEndpointReference( s, sk );
 
             SliceReference srt = ( SliceReference ) getProduct().get_any()[0].getObjectValue();

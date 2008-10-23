@@ -29,6 +29,9 @@ public class SetupSubspaceAction extends SetupAction<Void> {
     @ConfigOption(descr="Local filesystem root path for all slices stored in this subspace")
     private String path;
 
+    @ConfigOption(descr="GridFTP path for all slices stored under path")
+    private String gsiFtpPath;
+
     @ConfigOption(descr="If set, this subspace is included in the public service listing")
     private Boolean visible;
 
@@ -49,6 +52,9 @@ public class SetupSubspaceAction extends SetupAction<Void> {
             }
             if (path == null && (isCreating() || hasOption("path"))) {
                 setPath(getOption("path"));
+            }
+            if (gsiFtpPath== null && (isCreating() || hasOption("gsiFtpPath"))) {
+                setPath(getOption("gsiFtpPath"));
             }
         }
         catch (MandatoryOptionMissingException e) {
@@ -76,6 +82,9 @@ public class SetupSubspaceAction extends SetupAction<Void> {
 
                if (path != null)
                    subspace.setPath(getPath());
+
+               if (gsiFtpPath != null)
+                   subspace.setGsiFtpPath(getGsiFtpPath());
 
                if (subspace.getDSpaceRef() == null) {
                    DSpaceRef ref = new DSpaceRef();
@@ -182,4 +191,13 @@ public class SetupSubspaceAction extends SetupAction<Void> {
         path = pathParam;
     }
 
+
+    public String getGsiFtpPath() {
+        return gsiFtpPath;
+    }
+
+
+    public void setGsiFtpPath(final String gsiFtpPathParam) {
+        gsiFtpPath = gsiFtpPathParam;
+    }
 }

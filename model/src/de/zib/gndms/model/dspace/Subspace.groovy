@@ -64,6 +64,8 @@ class Subspace extends GridResource {
     String path
 
 
+    String gsiFtpPath
+
     /**
      * Sets the path of the Subspace to pth.
      *

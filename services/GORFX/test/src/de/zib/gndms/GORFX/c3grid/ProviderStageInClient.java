@@ -81,7 +81,7 @@ public class ProviderStageInClient {
         do {
             final GetResourcePropertyResponse rpResponse= taskClientParam.getResourceProperty(
                     TaskConstants.TASKEXECUTIONSTATE);
-            state = (TaskExecutionState) rpResponse.get_any()[0].getObjectValue();
+            state = (TaskExecutionState) ObjectDeserializer.toObject( rpResponse.get_any()[0], TaskExecutionState.class );
             failed = TaskStatusT.failed.equals(state.getStatus());
             finished = TaskStatusT.finished.equals(state.getStatus());
             try {
@@ -97,11 +97,15 @@ public class ProviderStageInClient {
         // Write results to console
         if (finished) {
             final GetResourcePropertyResponse rpResponse= taskClientParam.getResourceProperty(TaskConstants.TASKEXECUTIONRESULTS);
-            final ProviderStageInResultT result = (ProviderStageInResultT) rpResponse.get_any()[0].getObjectValue();
-            final EndpointReferenceType epr = ((SliceReference) result.get_any()[0].getObjectValue()).getEndpointReference();
-
-            SliceClient sliceClient = new SliceClient(epr);
-            System.out.println(sliceClient.getSliceLocation());
+            final ProviderStageInResultT result = (ProviderStageInResultT) ObjectDeserializer.toObject( rpResponse.get_any()[0], ProviderStageInResultT.class);
+            System.out.println(result);
+            SliceReference sr =  ( SliceReference ) ObjectDeserializer.toObject( result.get_any()[0], SliceReference.class ) ;
+            if( sr != null ) {
+                EndpointReferenceType epr = sr.getEndpointReference();
+                System.out.println( epr );
+                SliceClient sliceClient = new SliceClient(epr);
+                System.out.println(sliceClient.getSliceLocation());
+            }
         }
         else {
             final GetResourcePropertyResponse rpResponse= taskClientParam.getResourceProperty(TaskConstants.TASKEXECUTIONFAILURE);

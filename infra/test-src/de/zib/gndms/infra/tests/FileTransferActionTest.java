@@ -17,6 +17,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.PropertyConfigurator;
 import org.globus.ftp.exception.ServerException;
+import org.globus.ftp.exception.ClientException;
 import org.globus.wsrf.ResourceException;
 import org.joda.time.DateTime;
 import org.testng.annotations.*;
@@ -50,7 +51,7 @@ public class FileTransferActionTest extends SysTestBase {
     }
 
     @BeforeClass( groups={ "net", "db", "sys", "action", "task" } )
-    public void beforeClass ( ) throws ServerException, IOException {
+    public void beforeClass ( ) throws ServerException, IOException, ClientException {
 
         PropertyConfigurator.configure( logFileConfig );
         runDatabase();

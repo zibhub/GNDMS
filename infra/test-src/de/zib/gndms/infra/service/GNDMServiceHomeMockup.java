@@ -97,7 +97,7 @@ public final class GNDMServiceHomeMockup implements GNDMServiceHome {
 
 
     public QName getKeyTypeName() {
-        return new QName("http://dspace.gndms.zib.de/dspace", "DSpaceKey");
+        return new QName("http://dspace.gndms.zib.de/DSpace", "DSpaceKey");
     }
 
 
