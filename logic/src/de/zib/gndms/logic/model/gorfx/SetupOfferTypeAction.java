@@ -3,6 +3,7 @@ package de.zib.gndms.logic.model.gorfx;
 import de.zib.gndms.kit.factory.Factory;
 import de.zib.gndms.logic.action.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.config.ConfigActionHelp;
+import de.zib.gndms.logic.model.config.ConfigActionResult;
 import de.zib.gndms.logic.model.config.ConfigOption;
 import de.zib.gndms.logic.model.config.SetupAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
@@ -28,7 +29,7 @@ import java.util.Properties;
  *          User: stepn Date: 15.09.2008 Time: 17:06:54
  */
 @ConfigActionHelp(shortHelp="Sets up supported OfferTypes", longHelp="Create, Update and Delete all OfferTypes supported by this GNDMS installation")
-public class SetupOfferTypeAction extends SetupAction<Void> {
+public class SetupOfferTypeAction extends SetupAction<ConfigActionResult> {
     @ConfigOption(descr="Unique URI identifying this offerType; must match entries in given arg and result xsd types")
     private String offerType;
 
@@ -112,7 +113,7 @@ public class SetupOfferTypeAction extends SetupAction<Void> {
 
 
     @Override
-    public Void execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer) {
+    public ConfigActionResult execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer) {
         switch(getMode()) {
             case CREATE:
                 executeCreate(em);
@@ -131,7 +132,7 @@ public class SetupOfferTypeAction extends SetupAction<Void> {
 
         }
 
-        return null;
+        return ok();
     }
 
 

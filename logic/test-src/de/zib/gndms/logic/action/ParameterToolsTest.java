@@ -1,6 +1,6 @@
 package de.zib.gndms.logic.action;
 
-import static de.zib.gndms.logic.action.CommandAction.ParameterTools.*;
+import static de.zib.gndms.logic.model.config.ParameterTools.*;
 import org.testng.Assert;
 import static org.testng.Assert.assertEquals;
 import org.testng.annotations.Test;

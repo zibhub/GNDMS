@@ -1,6 +1,6 @@
 package de.zib.gndms.logic.model.config;
 
-import de.zib.gndms.logic.action.CommandAction;
+import de.zib.gndms.logic.model.config.ParameterTools;
 import static org.testng.Assert.assertEquals;
 import org.testng.annotations.*;
 
@@ -36,7 +36,7 @@ public class EchoOptionsActionTest extends ConfigActionTestBase {
     }
 
     @Test(groups = {"factory", "action", "config"})
-    public void runPlainAction() throws CommandAction.ParameterTools.ParameterParseException {
+    public void runPlainAction() throws ParameterTools.ParameterParseException {
         EchoOptionsAction action = new EchoOptionsAction();
         final StringWriter strWriter = new StringWriter();
         prepareConfigAction(action, new PrintWriter(strWriter), "foo:bar; florp:flurp");
@@ -46,7 +46,7 @@ public class EchoOptionsActionTest extends ConfigActionTestBase {
 
 
     @Test(groups = {"factory", "action"})
-    public void runInheritanceAction() throws CommandAction.ParameterTools.ParameterParseException {
+    public void runInheritanceAction() throws ParameterTools.ParameterParseException {
         EchoOptionsAction parentAction = new EchoOptionsAction();
         final StringWriter strWriter = new StringWriter();
         prepareConfigAction(parentAction, new PrintWriter(strWriter), "foo:bar");

@@ -7,7 +7,6 @@ import de.zib.gndms.model.test.ModelEntityTestBase;
 import org.apache.axis.types.URI;
 import org.apache.log4j.PropertyConfigurator;
 import org.globus.ftp.GridFTPClient;
-import org.globus.ftp.FileInfo;
 import org.globus.ftp.exception.ClientException;
 import org.globus.ftp.exception.ServerException;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +16,6 @@ import org.testng.annotations.*;
 
 import javax.persistence.EntityManager;
 import java.io.IOException;
-import java.util.Vector;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -51,7 +49,7 @@ public class TransferStateTest extends ModelEntityTestBase {
         super( dbPath, dbName );
 
         // transferData = new TransferTestThreeFiles( srcURI, destURI );
-        transferData = new DirectoryTransferTest( srcURI, destURI );
+        // transferData = new DirectoryTransferTest( srcURI, destURI );
 
         logFileConfig = logFileCfg;
 

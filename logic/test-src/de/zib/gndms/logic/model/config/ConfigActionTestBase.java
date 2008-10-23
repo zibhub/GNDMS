@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model.config;
 
 import de.zib.gndms.logic.action.ActionTestTools;
-import de.zib.gndms.logic.action.CommandAction;
+import de.zib.gndms.logic.model.config.ParameterTools;
 import de.zib.gndms.model.test.ModelEntityTestBase;
 import org.jetbrains.annotations.NotNull;
 import org.testng.annotations.Optional;
@@ -27,7 +27,7 @@ public abstract class ConfigActionTestBase extends ModelEntityTestBase {
     protected void prepareConfigAction(
             final @NotNull ConfigAction<?> actionParam, final PrintWriter pwriterParam,
             final String options)
-            throws CommandAction.ParameterTools.ParameterParseException {
+            throws ParameterTools.ParameterParseException {
         actionParam.setOwnEntityManager(createEntityManager());
         ActionTestTools.setupConfigAction(actionParam, pwriterParam);
         actionParam.parseLocalOptions(options);

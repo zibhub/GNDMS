@@ -1,5 +1,6 @@
 #!/bin/sh
 
+
 FILE="$1"
 
 HOST=`cat $FILE | grep ^monitor.host | cut -d= -f2-`
@@ -17,6 +18,14 @@ PREP=`dirname $0`/moni_prep
 
 MODE="m=call"
 
+
+if [ "$1" = "-v" ] ; then
+   verbose="1"
+   shift
+else
+   verbose=""
+fi
+
 CLASSNAME="$1"
 
 if [ -z "$CLASSNAME" ]; then
@@ -24,15 +33,21 @@ if [ -z "$CLASSNAME" ]; then
 	exit 1
 fi
 
-CLASSNAME=`echo "$CLASSNAME" | $PREP`
+PCLASSNAME=`echo "$CLASSNAME" | $PREP`
 
 shift
 
 REST="$*"
 
 if [ ! -z "$REST" ] ; then
-	REST=`echo "$REST" | $PREP`
-	REST="&args=$REST"
+	PREST=`echo "$REST" | $PREP`
+	PREST="&args=$PREST"
 fi
 
-curl -u "$USER""$PASS" http://"$HOST":"$PORT"/?"$MODE""&action=$CLASSNAME""$REST"
+
+[ -n "$verbose" ] && echo ">>>>>>>> Calling $CLASSNAME \"$REST\""
+curl -u "$USER""$PASS" http://"$HOST":"$PORT"/?"$MODE""&action=$PCLASSNAME""$PREST"
+[ -n "$verbose" ] && echo " "
+[ -n "$verbose" ] && echo "<<<<<<<< Done."
+[ -n "$verbose" ] && echo " "
+[ -n "$verbose" ] && echo " "
