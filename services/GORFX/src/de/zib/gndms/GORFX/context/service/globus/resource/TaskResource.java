@@ -9,8 +9,10 @@ import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
 import de.zib.gndms.model.gorfx.types.ProviderStageInResult;
 import de.zib.gndms.model.gorfx.types.TaskState;
+import de.zib.gndms.model.gorfx.types.FileTransferResult;
 import de.zib.gndms.typecon.common.GORFXTools;
 import de.zib.gndms.typecon.common.type.ProviderStageInResultXSDTypeWriter;
+import de.zib.gndms.typecon.common.type.FileTransferResultXSDTypeWriter;
 import org.globus.wsrf.InvalidResourceKeyException;
 import org.globus.wsrf.NoSuchResourceException;
 import org.globus.wsrf.ResourceException;
@@ -100,11 +102,21 @@ public class TaskResource extends TaskResourceBase
                 res = new ProviderStageInResultT();
         } else if( uri.equals( GORFXConstantURIs.FILE_TRANSFER_URI ) ) {
 
-            if( stat.equals( TaskState.FINISHED ) )
-                // todo use result writer
-                res = ( FileTransferResultT ) taskAction.getModel().getData( );
+            if( stat.equals( TaskState.FINISHED ) ){
+                final Serializable sr = taskAction.getModel().getData( );
+                if(! ( sr instanceof FileTransferResult ) )
+                    throw new IllegalArgumentException( "task result is not of type "
+                        + FileTransferResult.class.getName( ) );
+
+                final FileTransferResult ftr = ( FileTransferResult ) sr;
+                final FileTransferResultXSDTypeWriter writer = new FileTransferResultXSDTypeWriter();
+                writer.begin();
+                writer.writeFiles( ftr.getFiles() );
+                res = writer.getProduct();
+            }
+
             else
-                res = new ProviderStageInResultT();
+                res = new FileTransferResultT();
         } // etc
           // todo add new task results here
         else {

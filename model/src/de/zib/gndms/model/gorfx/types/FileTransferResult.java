@@ -20,7 +20,7 @@ public class FileTransferResult extends AbstractTaskResult {
 }
 
 
-    public void setFiles( String[] fiels ) {
+    public void setFiles( String[] files ) {
         this.files = files;
     }
 }
