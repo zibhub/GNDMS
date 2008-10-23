@@ -3,6 +3,7 @@ package de.zib.gndms.GORFX.ORQ.service.globus.resource;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
 import de.zib.gndms.model.gorfx.Contract;
+import de.zib.gndms.shared.ContextTAux;
 import de.zib.gndms.typecon.common.GORFXTools;
 import de.zib.gndms.typecon.common.type.ContractXSDReader;
 import org.apache.axis.types.URI;
@@ -22,6 +23,7 @@ public class ORQResource extends ORQResourceBase {
 
     ExtORQResourceHome home;
     AbstractORQCalculator ORQCalculator;
+    String cachedWid;
 
 
     public void setOfferRequestArguments(types.DynamicOfferDataSeqT offerRequestArguments, ContextT ctx ) throws ResourceException {
@@ -30,6 +32,7 @@ public class ORQResource extends ORQResourceBase {
         try {
             final @NotNull URI offerTypeUri = offerRequestArguments.getOfferType();
             logger.debug("setOfferRequestArguments for offerType: " + offerTypeUri);
+            cachedWid = ContextTAux.computeWorkflowId(sys.getModelUUIDGen(), ctx);
             ORQCalculator = sys.getInstanceDir().getORQCalculator( sys, sys.getEntityManagerFactory(), offerTypeUri.toString());
             ORQCalculator.setORQArguments( GORFXTools.convertFromORQT( offerRequestArguments, ctx ) );
             ORQCalculator.setNetAux( home.getSystem().getNetAux() );
@@ -81,4 +84,20 @@ public class ORQResource extends ORQResourceBase {
 
        return ORQCalculator.createOffer();
     }
+
+
+    public String getCachedWid() {
+        return cachedWid;
+    }
+
+
+    public void setCachedWid(final String widParam) {
+        cachedWid = widParam;
+    }
+
+    @Override
+    public void refreshRegistration(final boolean forceRefresh) {
+        // nothing
+    }
+
 }

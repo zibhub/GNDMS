@@ -50,7 +50,7 @@ public class DummyTaskAction extends TaskAction {
         }
         catch (InterruptedException e) {
             // onward!
-            wrapInterrupt_(e);
+            shutdownIfTerminating(e);
         }
         if (Math.random() < successRate)
             finish(1);

@@ -141,4 +141,9 @@ public class SliceResource extends SliceResourceBase
         return (String) super.getID( );
     }
 
+
+    @Override
+    public void refreshRegistration(final boolean forceRefresh) {
+        // nothing
+    }
 }

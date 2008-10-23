@@ -5,6 +5,7 @@ import de.zib.gndms.GORFX.client.GORFXClient;
 import de.zib.gndms.GORFX.context.client.TaskClient;
 import de.zib.gndms.GORFX.context.common.TaskConstants;
 import de.zib.gndms.GORFX.offer.client.OfferClient;
+import de.zib.gndms.dspace.slice.client.SliceClient;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQConverter;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyReader;
@@ -12,8 +13,8 @@ import de.zib.gndms.typecon.common.GORFXTools;
 import de.zib.gndms.typecon.common.type.ProviderStageInORQXSDTypeWriter;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI;
-import org.globus.wsrf.encoding.ObjectDeserializer;
 import org.globus.wsrf.encoding.DeserializationException;
+import org.globus.wsrf.encoding.ObjectDeserializer;
 import org.joda.time.DateTime;
 import org.oasis.wsrf.properties.GetResourcePropertyResponse;
 import types.*;
@@ -21,8 +22,8 @@ import types.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Properties;
 import java.rmi.RemoteException;
+import java.util.Properties;
 
 
 /**
@@ -72,7 +73,7 @@ public class ProviderStageInClient {
 
     @SuppressWarnings({ "FeatureEnvy" })
     private static void waitForTaskToFinishOrFail(final TaskClient taskClientParam)
-            throws RemoteException, DeserializationException {
+            throws RemoteException, DeserializationException, URI.MalformedURIException {
         TaskExecutionState state;
         boolean finished;
         boolean failed;
@@ -97,12 +98,14 @@ public class ProviderStageInClient {
         if (finished) {
             final GetResourcePropertyResponse rpResponse= taskClientParam.getResourceProperty(TaskConstants.TASKEXECUTIONRESULTS);
             final ProviderStageInResultT result = (ProviderStageInResultT) ObjectDeserializer.toObject( rpResponse.get_any()[0], ProviderStageInResultT.class);
+            System.out.println(result);
             SliceReference sr =  ( SliceReference ) ObjectDeserializer.toObject( result.get_any()[0], SliceReference.class ) ;
             if( sr != null ) {
                 EndpointReferenceType epr = sr.getEndpointReference();
                 System.out.println( epr );
+                SliceClient sliceClient = new SliceClient(epr);
+                System.out.println(sliceClient.getSliceLocation());
             }
-            System.out.println(result);
         }
         else {
             final GetResourcePropertyResponse rpResponse= taskClientParam.getResourceProperty(TaskConstants.TASKEXECUTIONFAILURE);

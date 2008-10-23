@@ -46,7 +46,7 @@ public class TaskResource extends TaskResourceBase
         
         Task tsk = taskAction.getModel( );
         if(! tsk.getState().equals( TaskState.FINISHED ) || ! tsk.getState().equals( TaskState.FAILED ) )
-            future = home.getSystem( ).submitAction( taskAction );
+            future = home.getSystem( ).submitAction( taskAction, getResourceHome().getLog() );
         else
             taskAction.getEntityManager().close();
     }
@@ -215,7 +215,14 @@ public class TaskResource extends TaskResourceBase
     }
 
 
+    @Override
     public String getID( ) {
         return (String) super.getID();
     }
+
+    @Override
+    public void refreshRegistration(final boolean forceRefresh) {
+        // nothing
+    }
+
 }

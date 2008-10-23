@@ -96,6 +96,8 @@ class Task extends TimedGridResource {
     @Basic Serializable data
 
 
+    @Column(name="wid", nullable=true, updatable=true)
+    @Basic String wid;
 
    def transit(final TaskState newState) {
         final @NotNull TaskState goalState = newState == null ? getState() : newState;

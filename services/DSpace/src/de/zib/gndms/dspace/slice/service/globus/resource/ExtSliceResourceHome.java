@@ -2,6 +2,7 @@ package de.zib.gndms.dspace.slice.service.globus.resource;
 
 import de.zib.gndms.dspace.common.DSpaceTools;
 import de.zib.gndms.dspace.service.globus.resource.ExtDSpaceResourceHome;
+import de.zib.gndms.dspace.slice.stubs.types.SliceReference;
 import de.zib.gndms.infra.GNDMSTools;
 import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
@@ -9,6 +10,7 @@ import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.model.dspace.Slice;
 import org.apache.axis.message.addressing.AttributedURI;
+import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,6 +18,7 @@ import org.globus.wsrf.Resource;
 import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.ResourceKey;
 import org.globus.wsrf.impl.SimpleResourceKey;
+import org.globus.wsrf.utils.AddressingUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.naming.NamingException;
@@ -154,5 +157,13 @@ public final class ExtSliceResourceHome extends SliceResourceHome
     @NotNull
     public ResourceKey getKeyForId(@NotNull final String id) {
         return new SimpleResourceKey( getKeyTypeName(), id );
+    }
+
+    @Override
+    public SliceReference getResourceReference(final @NotNull ResourceKey key) throws Exception {
+		EndpointReferenceType epr = AddressingUtils.createEndpointReference(serviceAddress.toString(), key);
+		SliceReference ref = new SliceReference();
+		ref.setEndpointReference(epr);
+		return ref;
     }
 }

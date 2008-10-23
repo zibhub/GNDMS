@@ -32,11 +32,11 @@ public class Slice extends TimedGridResource {
     @Column( name="directory_id", nullable=false, updatable=false, columnDefinition="CHAR", length=36 )
     private String directoryId
 
-    @ManyToOne( targetEntity=SliceKind.class, fetch=FetchType.LAZY, cascade=[CascadeType.REFRESH] )
+    @ManyToOne( targetEntity=SliceKind.class, cascade=[CascadeType.REFRESH] )
     @JoinColumn( name="kind_uri", nullable=false, referencedColumnName="uri", updatable=false )
     SliceKind kind
 
-    @ManyToOne( targetEntity=Subspace.class, fetch=FetchType.LAZY, cascade=[CascadeType.REFRESH,CascadeType.PERSIST] )
+    @ManyToOne( targetEntity=Subspace.class, cascade=[CascadeType.REFRESH,CascadeType.PERSIST] )
 	@JoinColumn( name="subspace_id", nullable=false, referencedColumnName="id", updatable=false )
     Subspace owner
 

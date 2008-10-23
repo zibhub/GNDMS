@@ -5,6 +5,7 @@ import de.zib.gndms.model.gorfx.Contract;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.typecon.common.type.ContractXSDReader;
+import de.zib.gndms.kit.util.WidAux;
 import org.globus.wsrf.ResourceException;
 import org.jetbrains.annotations.NotNull;
 import types.DynamicOfferDataSeqT;
@@ -23,6 +24,7 @@ public class OfferResource extends OfferResourceBase {
     
     private AbstractORQCalculator<?,?> orqCalc;
 
+    private String cachedWid;
 
     @Override
     public void setOfferExecutionContract( OfferExecutionContractT offerExecutionContract ) throws ResourceException {
@@ -69,6 +71,23 @@ public class OfferResource extends OfferResourceBase {
         task.setOfferType(getOrqCalc().getKey());
         task.setTerminationTime(contract.getCurrentTerminationTime());
         task.setId(getHome().getSystem().nextUUID());
+        task.setWid(WidAux.getWid());
         return task;
     }
+
+
+    public String getCachedWid() {
+        return cachedWid;
+    }
+
+
+    public void setCachedWid(final String cachedWidParam) {
+        cachedWid = cachedWidParam;
+    }
+
+    @Override
+    public void refreshRegistration(final boolean forceRefresh) {
+        // nothing
+    }
+
 }
