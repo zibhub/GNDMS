@@ -98,7 +98,7 @@ public class ConfigOfferTypeAction extends ConfigAction<String> {
     private String genOutput(final Map<String, String> configMapParam) {
         switch (cfgOutFormat) {
             case PRINT_OK:
-                return "OK";
+                return "OK()";
             case NONE:
                 return null;
             case PROPS:
