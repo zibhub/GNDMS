@@ -55,6 +55,23 @@ public class GNDMSFileTransfer {
     }
 
 
+    /**
+     * This method can be called before the actual transfer is performed.
+     *
+     * It ensures that the file set isn't empty. If it is empty the file listing
+     * will be requested from the source client.
+     *
+     * This is useful if one would like to see the file listing befor the transfer starts.
+     */
+    public void prepareTransfer( ) throws ServerException, IOException, ClientException {
+
+        if( sourceClient == null )
+            throw new IllegalStateException( "no source client provided" );
+
+        if( files == null || files.size( ) == 0  )
+            fetchFileListing();
+    }
+
 
     /**
      * Estimates the size of a prepared download or transfer.
@@ -62,19 +79,15 @@ public class GNDMSFileTransfer {
      */
     public long estimateTransferSize( ) throws IOException, ServerException, ClientException {
 
-        if( sourceClient == null )
-            throw new IllegalStateException( "no source client provided" );
+        prepareTransfer( );
 
-        Set<String> src = files.keySet();
-        long size = 0;
 
         sourceClient.setType( Session.TYPE_ASCII );
 
         sourceClient.changeDir( sourcePath );
 
-        if( files == null || files.size( ) == 0  )
-            fetchFileListing();
-
+        Set<String> src = files.keySet();
+        long size = 0;
         for( String s : src ) {
             // todo evaluate usage of msld command
             size += sourceClient.getSize( s );
@@ -101,7 +114,9 @@ public class GNDMSFileTransfer {
      */
     public void performPersistentTransfer( @NotNull PersistentMarkerListener plist ) throws ServerException, IOException, ClientException {
 
-        if( sourceClient == null || destinationClient == null || files == null )
+        prepareTransfer( );
+
+        if( destinationClient == null || files == null )
             throw new IllegalStateException( );
 
         setupClient ( sourceClient );
@@ -110,9 +125,6 @@ public class GNDMSFileTransfer {
         destinationClient.changeDir( destinationPath );
 
         sourceClient.setActive( destinationClient.setPassive() );
-        
-        if( files == null || files.size( ) == 0  )
-            fetchFileListing();
 
         // todo beautify the code below
         boolean resume = plist.hasCurrentFile();
@@ -212,6 +224,7 @@ public class GNDMSFileTransfer {
     
     private void fetchFileListing( ) throws ClientException, ServerException, IOException {
 
+        System.out.println( " fetching file info: " );
         files = new TreeMap<String,String>( );
         Vector<FileInfo> inf = sourceClient.list( );
         System.out.println( "done" );
@@ -222,6 +235,5 @@ public class GNDMSFileTransfer {
                 System.out.println( "adding file to list" );
             }
         }
-
     }
 }

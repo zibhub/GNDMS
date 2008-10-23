@@ -50,8 +50,9 @@ public class TransferStateTest extends ModelEntityTestBase {
     {
         super( dbPath, dbName );
 
-        transferData = new TransferTestThreeFiles( srcURI, destURI );
-        
+        // transferData = new TransferTestThreeFiles( srcURI, destURI );
+        transferData = new DirectoryTransferTest( srcURI, destURI );
+
         logFileConfig = logFileCfg;
 
 
@@ -138,6 +139,7 @@ public class TransferStateTest extends ModelEntityTestBase {
             transfer.performPersistentTransfer( pml );
             System.out.println( "Finished transfer at " + (new DateTime( )).toString( ) );
 
+            
         } finally {
             eM.close();
             try {

@@ -1,6 +1,7 @@
 #!/bin/bash
 DEPLOY_CMD="ssh globus@localhost globus-deploy-gar"
 
+cd $C3SRC/services
 service_dirs=$( find * -maxdepth 0 -type d )
 for i in $service_dirs; do
     if  [ "$#" -eq "1" -a "$1" != "$i" ]; then
