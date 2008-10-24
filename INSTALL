@@ -150,6 +150,11 @@ DETAILED BUILD INSTRUCTIONS
 ---------------------------
 
 
+  0) Excute in services/
+
+     for i in * ; do cd $i && ant compileStubs ; done
+
+
   1) Execute sync.sh in the projects' top level directory. This will create all
 	 necessary symlinks in the services' lib directories. Without doing this,
 	 you're going to miss required jar files and the services will not compile correctly.
