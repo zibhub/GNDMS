@@ -55,6 +55,11 @@ public class GNDMSFileTransfer {
     }
 
 
+    public TreeMap<String, String> getFiles() {
+        return files;
+    }
+
+
     /**
      * This method can be called before the actual transfer is performed.
      *

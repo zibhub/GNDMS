@@ -13,6 +13,7 @@ import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.FileTransferORQ;
 import de.zib.gndms.model.gorfx.types.TaskState;
+import de.zib.gndms.model.gorfx.types.FileTransferResult;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.PropertyConfigurator;
@@ -26,6 +27,7 @@ import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -117,6 +119,10 @@ public class FileTransferActionTest extends SysTestBase {
             FileTransferTaskAction action = new FileTransferTaskAction( em, task );
             Future<Task> serializableFuture = getSys().submitAction(action, log);
             assert serializableFuture.get().getState().equals( TaskState.FINISHED );
+            FileTransferResult ftr = ( FileTransferResult ) task.getData( );
+            for( String s: Arrays.asList( ftr.getFiles( ) ) )
+                System.out.println( s );
+
         } finally {
             if( em != null && em.isOpen( ) )
                 em.close( );
