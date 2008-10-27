@@ -54,10 +54,12 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
             action.setProcessBuilder(procBuilder);
             action.setOutputReceiver(recv);
             int result = action.call();
-            if (result == 0)
-                finish( new ProviderStageInResult( sliceParam.getId() ) );
-            else
-                fail(new IllegalStateException("Staging script failed with non-zero exit code " + result));
+            switch (result) {
+                case 0:
+                    finish( new ProviderStageInResult( sliceParam.getId() ) );                    
+                default:
+                    fail(new IllegalStateException("Staging script failed with non-zero exit code " + result));
+            }
         }
         catch (RuntimeException e) {
             honorOngoingTransit(e);
