@@ -59,4 +59,11 @@ public interface ConfigProvider extends OptionProvider {
     @SuppressWarnings({ "InstanceMethodNamingConvention" })
     @NotNull DateTime getISO8601Option(@NotNull String name)
             throws MandatoryOptionMissingException, ParseException;
+
+    <X> Class<? extends X> getClassOption(final @NotNull Class<X> baseClass, @NotNull String name)
+            throws MandatoryOptionMissingException, ClassNotFoundException;
+
+    <X> Class<? extends X> getClassOption(final @NotNull Class<X> baseClass, @NotNull String name,
+                                          @NotNull Class<? extends X> def)
+            throws ClassNotFoundException;
 }

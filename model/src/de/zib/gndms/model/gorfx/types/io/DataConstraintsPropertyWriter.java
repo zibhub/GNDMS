@@ -1,13 +1,12 @@
 package de.zib.gndms.model.gorfx.types.io;
 
+import de.zib.gndms.model.gorfx.types.TimeConstraint;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
-
-import de.zib.gndms.model.gorfx.types.TimeConstraint;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>

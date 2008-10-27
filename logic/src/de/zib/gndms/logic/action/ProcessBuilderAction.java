@@ -132,8 +132,10 @@ public abstract class ProcessBuilderAction extends AbstractAction<Integer> {
             BufferedReader bufReader = new BufferedReader(inReader);
             try {
                 String line;
-                while ((line = bufReader.readLine()) != null)
+                while ((line = bufReader.readLine()) != null) {
                     outputReceiver.append(line);
+                    outputReceiver.append('\n');
+                }
             }
             finally {
                 bufReader.close();
