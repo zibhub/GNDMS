@@ -2,9 +2,13 @@ package de.zib.gndms.GORFX.ORQ.service;
 
 import de.zib.gndms.GORFX.ORQ.service.globus.resource.ExtORQResourceHome;
 import de.zib.gndms.GORFX.ORQ.service.globus.resource.ORQResource;
+import de.zib.gndms.GORFX.ORQ.stubs.types.PermissionDenied;
+import de.zib.gndms.GORFX.ORQ.stubs.types.UnfullfillableRequest;
 import de.zib.gndms.GORFX.offer.service.globus.resource.ExtOfferResourceHome;
 import de.zib.gndms.GORFX.offer.service.globus.resource.OfferResource;
 import de.zib.gndms.kit.util.WidAux;
+import de.zib.gndms.logic.model.gorfx.PermissionDeniedORQException;
+import de.zib.gndms.logic.model.gorfx.UnfulfillableORQException;
 import de.zib.gndms.model.gorfx.Contract;
 import de.zib.gndms.shared.ContextTAux;
 import de.zib.gndms.typecon.common.type.ContractXSDTypeWriter;
@@ -63,7 +67,14 @@ public class ORQImpl extends ORQImplBase {
             finally {
                 WidAux.removeWid();
             }
-        } catch ( Exception e ) {
+        }
+        catch (UnfulfillableORQException e) {
+            throw new UnfullfillableRequest();
+        }
+        catch (PermissionDeniedORQException e) {
+            throw new PermissionDenied();
+        }
+        catch ( Exception e ) {
             e.printStackTrace();
             throw new RemoteException(e.getMessage(), e);
         }
@@ -78,7 +89,14 @@ public class ORQImpl extends ORQImplBase {
             ORQResource res = home.getAddressedResource();
             return ContractXSDTypeWriter.fromContract(
                 res.estimatedExecutionContract( offerExecutionContract ) );
-        } catch ( Exception e ) {
+        }
+        catch (UnfulfillableORQException e) {
+            throw new UnfullfillableRequest();
+        }
+        catch (PermissionDeniedORQException e) {
+            throw new PermissionDenied();
+        }
+        catch ( Exception e ) {
             throw new RemoteException(e.getMessage(), e);
         }
         finally {

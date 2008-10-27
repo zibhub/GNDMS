@@ -1,8 +1,10 @@
 package de.zib.gndms.logic.model.gorfx.c3grid;
 
 import de.zib.gndms.kit.factory.AbstractRecursiveFactory;
+import de.zib.gndms.logic.model.config.MapConfig;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.model.gorfx.OfferType;
+import org.jetbrains.annotations.NotNull;
 
 
 /**
@@ -17,6 +19,7 @@ public class ProviderStageInActionFactory extends AbstractRecursiveFactory<Offer
     @Override
     public ORQTaskAction<?> newInstance(final OfferType keyParam)
             throws IllegalAccessException, InstantiationException, ClassNotFoundException {
-        return new ProviderStageInAction();
+        final @NotNull MapConfig config = new MapConfig(keyParam.getConfigMap());
+        return config.getClassOption(AbstractProviderStageInAction.class, "stagingClass", ExternalProviderStageInAction.class).newInstance();
     }
 }

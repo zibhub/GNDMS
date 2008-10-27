@@ -1,9 +1,7 @@
 package de.zib.gndms.logic.model.gorfx.c3grid;
 
 import de.zib.gndms.kit.util.DirectoryAux;
-import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.logic.action.MandatoryOptionMissingException;
-import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.logic.model.config.ConfigProvider;
 import de.zib.gndms.logic.model.config.MapConfig;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
@@ -15,17 +13,10 @@ import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
-import de.zib.gndms.model.gorfx.types.ProviderStageInResult;
-import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQConverter;
-import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyWriter;
-import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQWriter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.util.Properties;
 
 
 /**
@@ -37,20 +28,20 @@ import java.util.Properties;
  *          User: stepn Date: 02.10.2008 Time: 15:04:39
  */
 @SuppressWarnings({ "FeatureEnvy" })
-public class ProviderStageInAction extends ORQTaskAction<ProviderStageInORQ> {
+public abstract class AbstractProviderStageInAction extends ORQTaskAction<ProviderStageInORQ> {
 
 
-    public ProviderStageInAction() {
+    public AbstractProviderStageInAction() {
         super();
     }
 
 
-    public ProviderStageInAction(final @NotNull EntityManager em, final @NotNull Task model) {
+    public AbstractProviderStageInAction(final @NotNull EntityManager em, final @NotNull Task model) {
         super(em, model);
     }
 
 
-    public ProviderStageInAction(final @NotNull EntityManager em, final @NotNull String pk) {
+    public AbstractProviderStageInAction(final @NotNull EntityManager em, final @NotNull String pk) {
         super(em, pk);
     }
 
@@ -65,7 +56,7 @@ public class ProviderStageInAction extends ORQTaskAction<ProviderStageInORQ> {
             if (e.isDemandingAbort()) throw e; // dont continue on failure
 
             try {
-                MapConfig config = new MapConfig(getKey().getConfigMap());
+                MapConfig config = getOfferTypeConfig();
                 File stagingCommandFile = config.getFileOption("stagingCommand");
                 if (! stagingCommandFile.exists() || ! stagingCommandFile.canRead() || ! stagingCommandFile.isFile())
                     fail(new IllegalArgumentException("Invalid stagingCommand script: " + stagingCommandFile.getPath()));
@@ -79,63 +70,22 @@ public class ProviderStageInAction extends ORQTaskAction<ProviderStageInORQ> {
     }
 
 
-    @Override
-    @NotNull
-    protected Class<ProviderStageInORQ> getOrqClass() {
-        return ProviderStageInORQ.class;
-    }
-
-
     @SuppressWarnings({ "ThrowableInstanceNeverThrown"})
     @Override
     protected void onInProgress(final @NotNull Task model) {
         final Slice slice = findNewSlice(model);
-        final ProcessBuilder procBuilder = createProcessBuilder(slice);
-        final StringBuilder recv = new StringBuilder(8);
-
-        try {
-            final ProcessBuilderAction action = createStagingAction();
-
-            action.setProcessBuilder(procBuilder);
-            action.setOutputReceiver(recv);
-            int result = action.call();
-            if (result == 0)
-                finish( new ProviderStageInResult( slice.getId() ) );
-            else
-                fail(new IllegalStateException("Staging script failed with non-zero exit code " + result));
-        }
-        catch (RuntimeException e) {
-            honorOngoingTransit(e);
-            fail(new RuntimeException(recv.toString(), e));
-        }
+        doStaging(getOfferTypeConfig(), getOrq(), slice);
     }
 
 
-    private ProcessBuilderAction createStagingAction() {
-        final Properties props = getSFRProps();
-        props.put("c3grid.CommonRequest.Context.Workflow.Id", WidAux.getWid());
-        final ProcessBuilderAction action = new ProcessBuilderAction() {
-            protected @Override void writeOutput(final @NotNull BufferedOutputStream stream)
-                    throws IOException {
-                props.store(stream, "ProviderStageIn");
-            }
-        };
-        return action;
-    }
-
-
-    private Properties getSFRProps() {
-        final Properties props = new Properties();
-        final ProviderStageInORQWriter writer = new ProviderStageInORQPropertyWriter(props);
-        final ProviderStageInORQConverter converter = new ProviderStageInORQConverter(writer, getOrq());
-        converter.convert();
-        return props;
-    }
+    protected abstract void doStaging(
+            final MapConfig offerTypeConfigParam, final ProviderStageInORQ orqParam,
+            final Slice sliceParam);
 
 
     private void createNewSlice(final Task model) throws MandatoryOptionMissingException {
 
-        final ConfigProvider config = new MapConfig(getKey().getConfigMap());
+        final ConfigProvider config = getOfferTypeConfig();
 
         final EntityManager em = getEntityManager();
         final boolean wasActive = em.getTransaction().isActive();
@@ -190,16 +140,14 @@ public class ProviderStageInAction extends ORQTaskAction<ProviderStageInORQ> {
     }
 
 
-    private ProcessBuilder createProcessBuilder(final Slice sliceParam) {
-        try {
-            ProcessBuilder builder = new ProcessBuilder();
-            ConfigProvider opts = new MapConfig(getKey().getConfigMap());
-            builder.directory(new File(sliceParam.getOwner().getPathForSlice(sliceParam)));
-            builder.command(opts.getFileOption("stagingCommand").getPath());
-            return builder;
-        }
-        catch (MandatoryOptionMissingException e) {
-            throw new RuntimeException(e);
-        }
+    @Override
+    @NotNull
+    protected Class<ProviderStageInORQ> getOrqClass() {
+        return ProviderStageInORQ.class;
+    }
+
+
+    protected @NotNull MapConfig getOfferTypeConfig() {
+        return new MapConfig(getKey().getConfigMap());
     }
 }

@@ -172,4 +172,19 @@ public abstract class AbstractConfig implements ConfigProvider {
         final String option = getNonMandatoryOption(name);
         return option == null ? def : new File(option);
     }
+
+
+    public <X> Class<? extends X> getClassOption(
+            final @NotNull Class<X> baseClass, @NotNull final String name)
+            throws MandatoryOptionMissingException, ClassNotFoundException {
+        return Class.forName(getOption(name)).asSubclass(baseClass);
+    }
+
+
+    public <X> Class<? extends X> getClassOption(
+            final @NotNull Class<X> baseClass, @NotNull final String name,
+            @NotNull final Class<? extends X> def) throws ClassNotFoundException {
+        final String option = getNonMandatoryOption(name);
+        return option == null ? def : Class.forName(option).asSubclass(baseClass);
+    }
 }

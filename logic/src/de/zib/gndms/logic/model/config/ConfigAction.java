@@ -377,6 +377,20 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
     }
 
 
+    public <X> Class<? extends X> getClassOption(
+            final @NotNull Class<X> baseClass, @NotNull final String name)
+            throws MandatoryOptionMissingException, ClassNotFoundException {
+        return config.getClassOption(baseClass, name);
+    }
+
+
+    public <X> Class<? extends X> getClassOption(
+            final @NotNull Class<X> baseClass, @NotNull final String name,
+            @NotNull final Class<? extends X> def) throws ClassNotFoundException {
+        return config.getClassOption(baseClass, name, def);
+    }
+
+
     @SuppressWarnings({ "MethodMayBeStatic", "InstanceMethodNamingConvention" })
     protected OkResult ok() {
         return new OkResult();

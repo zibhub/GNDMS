@@ -47,7 +47,11 @@ public enum SfrProperty {
     FILE_TRANSFER_FILE_MAPPING("c3grid.FileTransferRequest.FileMapping"),
     
     // common data for muliple requests
-    CONTEXT( "c3grid.CommonRequest.Context" );
+    CONTEXT( "c3grid.CommonRequest.Context" ), EST_IF_DECISION_BEFORE(
+            "c3grid.StageFileRequest.Estimate.IfDecisionBefore"), EST_CONST_EXEC_TIME(
+            "c3grid.StageFileRequest.Estimate.ConstantExecutionTime"), EST_EXEC_LIKELY_UNTIL(
+            "c3grid.StageFileRequest.Estimate.ExecutionLikelyUntil"), EST_RESULT_VALID_UNTIL(
+            "c3grid.StageFileRequest.Estimate.ResultValidUntil");
 
     public final String key;
 	public final String doc;

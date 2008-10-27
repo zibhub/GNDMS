@@ -9,8 +9,8 @@ done
 for SERVICE in services/* ; do
   echo mkdir -p $SERVICE/test/lib
   mkdir -p $SERVICE/test/lib
-  echo ln -sf ../../../../../../typecon/shared_service_src/shared $SERVICE/src/de/zib/gndms/
-  ln -sf ../../../../../../typecon/shared_service_src/shared $SERVICE/src/de/zib/gndms/
+  echo ln -sf ../../../../../../typecon/shared_service_src/shared $SERVICE/src/de/zib/gndms
+  ln -sf ../../../../../../typecon/shared_service_src/shared $SERVICE/src/de/zib/gndms
   echo find $SERVICE -type f -name '*.gar' -exec ln -sf {} $PWD \;
   find $SERVICE -type f -name '*.gar' -exec ln -sf {} $PWD \;
   for jar in extra/tools-lib/* ; do

@@ -148,6 +148,19 @@ class Contract {
     // can be mapped to constantExecutionTime
     transient boolean deadlineIsOffset = false
 
+    Contract() {}
+
+    Contract(Contract org) {
+        if (org == null)
+            this()
+        else {
+            accepted = (Calendar) org.accepted.clone()
+            deadline = (Calendar) org.deadline.clone()
+            resultValidity = (Calendar) org.resultValidity.clone()
+            deadlineIsOffset = org.deadlineIsOffset
+        }
+    }
+
     Calendar getCurrentDeadline() {
         return  ((deadlineIsOffset) ?
             new DateTime(deadline).plus(new Duration(new DateTime(0L), new DateTime(deadline))).toGregorianCalendar() : deadline)
