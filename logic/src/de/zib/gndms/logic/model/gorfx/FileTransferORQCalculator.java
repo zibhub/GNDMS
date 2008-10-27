@@ -53,6 +53,7 @@ public class FileTransferORQCalculator extends AbstractORQCalculator<FileTransfe
 
             ct.setDeadline( dat.toGregorianCalendar( )  );
             ct.setDeadlineIsOffset( false );
+            ct.setResultValidity( dat.plusHours( ContractConstants.FILE_TRANSFER_RESULT_VALIDITY ).toGregorianCalendar() );
 
             return ct;
         } finally {

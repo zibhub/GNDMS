@@ -104,6 +104,9 @@ you start please make sure you have succesfully installed all prerequisites.
 The following description was written for IntelliJ IDEA 8M1 but you should be
 able to repeat it with any other java tool chain.
 
+There are be some problems with IDE's which doesn't support Groovy,
+e.g. Eclipse (at the time of writing).may
+
 
 -------------
 COMPILE STUBS
@@ -252,7 +255,7 @@ DETAILED BUILD INSTRUCTIONS
 THINGS TO DO WHEN YOUR BUILD FAILS
 ----------------------------------
 
-1) Do you need to regen the stubs? Delete service/*build/ and go from scratch
+1) Do you need to regen the stubs? Delete service/*/build and go from scratch
 
 2) Stale symlinks
 

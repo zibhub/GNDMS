@@ -22,6 +22,7 @@ import javax.persistence.MappedSuperclass
 import org.joda.time.DateTime
 import org.joda.time.Duration
 import javax.persistence.EntityManager
+import javax.persistence.NamedQueries
 
 
 /**
@@ -34,7 +35,10 @@ import javax.persistence.EntityManager
  */
 @Entity(name="Tasks")
 @Table(name="tasks", schema="gorfx")
-@NamedQuery(name="listAllTaskIds", query="SELECT instance.id FROM Tasks instance")
+@NamedQueries( [
+@NamedQuery(name="listAllTaskIds", query="SELECT instance.id FROM Tasks instance"),
+@NamedQuery(name="unfinishedTaskIds", query="SELECT t.id FROM Tasks t WHERE t.state <> de.zib.gndms.model.gorfx.types.TaskState.FAILED AND t.state <> de.zib.gndms.model.gorfx.types.TaskState.FINISHED" )
+])
 @MappedSuperclass
 class Task extends TimedGridResource {
     
