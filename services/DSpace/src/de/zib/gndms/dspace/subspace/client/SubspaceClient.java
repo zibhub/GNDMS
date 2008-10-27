@@ -68,7 +68,7 @@ public class SubspaceClient extends SubspaceClientBase implements SubspaceI {
                                               long totalStorageSize ) throws URI.MalformedURIException, RemoteException, OutOfSpace {
 
         SliceCreationSpecifier scs = new SliceCreationSpecifier( );
-        //scs.setSliceKind( sliceKindURI );
+        scs.setSliceKind( new URI( sliceKindURI ) );
         scs.setTerminationTime( terminationTime );
         scs.setTotalStorageSize( DSpaceTools.unsignedLongFromLong( totalStorageSize ) );
 

@@ -31,14 +31,16 @@ public abstract class IndustrialPark<K, I, T extends FactoryInstance<K, T>>
 
     public synchronized Factory<K, T> getFactory(final @NotNull K key)
             throws IllegalAccessException, InstantiationException, ClassNotFoundException {
-        final I mappedKey = mapKey(key);
+        final @NotNull I mappedKey = mapKey(key);
         if (map.containsKey(mappedKey))
             return map.get(mappedKey);
-        return map.put(mappedKey, getFactory().getInstance(key));
+        final @NotNull RecursiveFactory<K, T> newValue = getFactory().getInstance(key);
+        map.put(mappedKey, newValue);
+        return newValue;
     }
 
 
-    public abstract I mapKey(final K keyParam);
+    public abstract @NotNull I mapKey(final K keyParam);
 
 
     public Factory<K, RecursiveFactory<K, T>> getFactory() {
@@ -55,7 +57,8 @@ public abstract class IndustrialPark<K, I, T extends FactoryInstance<K, T>>
 
     public @NotNull T getInstance(@NotNull final K key)
             throws IllegalAccessException, InstantiationException, ClassNotFoundException {
-        return getFactory(key).getInstance(key);
+        final @NotNull Factory<K, T> factory = getFactory(key);
+        return factory.getInstance(key);
     }
 
 

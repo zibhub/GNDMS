@@ -7,6 +7,7 @@ import de.zib.gndms.model.gorfx.types.FileTransferORQ;
 import org.apache.axis.types.URI;
 import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.exception.ServerException;
+import org.globus.ftp.exception.ClientException;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
@@ -27,7 +28,7 @@ public class FileTransferORQCalculator extends AbstractORQCalculator<FileTransfe
     }
 
 
-    public Contract createOffer() throws ServerException, IOException {
+    public Contract createOffer() throws ServerException, IOException, ClientException {
 
         GridFTPClient clnt = null;
         try {
@@ -52,6 +53,7 @@ public class FileTransferORQCalculator extends AbstractORQCalculator<FileTransfe
 
             ct.setDeadline( dat.toGregorianCalendar( )  );
             ct.setDeadlineIsOffset( false );
+            ct.setResultValidity( dat.plusHours( ContractConstants.FILE_TRANSFER_RESULT_VALIDITY ).toGregorianCalendar() );
 
             return ct;
         } finally {

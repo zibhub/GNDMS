@@ -13,12 +13,15 @@ public class ContractXSDReader {
 
     public static Contract readContract( OfferExecutionContractT src ) {
 
-        Contract con = new Contract();
-        con.setAccepted( src.getIfDecisionBefore() );
-        con.setDeadline( src.getExecutionLikelyUntil() );
-        con.setResultValidity( src.getResultValidUntil() );
-        con.setDeadlineIsOffset( src.isConstantExecutionTime() );
-
-        return con;
+        if( src != null ) {
+            Contract con = new Contract();
+            con.setAccepted( src.getIfDecisionBefore() );
+            con.setDeadline( src.getExecutionLikelyUntil() );
+            con.setResultValidity( src.getResultValidUntil() );
+            con.setDeadlineIsOffset( src.isConstantExecutionTime() );
+            return con;
+        }
+        
+        return null;
     }
 }

@@ -13,8 +13,12 @@ import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.FileTransferORQ;
 import de.zib.gndms.model.gorfx.types.TaskState;
+import de.zib.gndms.model.gorfx.types.FileTransferResult;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.PropertyConfigurator;
 import org.globus.ftp.exception.ServerException;
+import org.globus.ftp.exception.ClientException;
 import org.globus.wsrf.ResourceException;
 import org.joda.time.DateTime;
 import org.testng.annotations.*;
@@ -23,6 +27,7 @@ import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -34,6 +39,7 @@ import java.util.concurrent.Future;
  */
 public class FileTransferActionTest extends SysTestBase {
 
+    Log log = LogFactory.getLog(FileTransferActionTest.class);
     TransferTestMetaData transferData;
     String  logFileConfig;
     Task task;
@@ -47,7 +53,7 @@ public class FileTransferActionTest extends SysTestBase {
     }
 
     @BeforeClass( groups={ "net", "db", "sys", "action", "task" } )
-    public void beforeClass ( ) throws ServerException, IOException {
+    public void beforeClass ( ) throws ServerException, IOException, ClientException {
 
         PropertyConfigurator.configure( logFileConfig );
         runDatabase();
@@ -111,8 +117,12 @@ public class FileTransferActionTest extends SysTestBase {
             em.persist( task );
             em.getTransaction( ).commit( );
             FileTransferTaskAction action = new FileTransferTaskAction( em, task );
-            Future<Task> serializableFuture = getSys().submitAction(action);
+            Future<Task> serializableFuture = getSys().submitAction(action, log);
             assert serializableFuture.get().getState().equals( TaskState.FINISHED );
+            FileTransferResult ftr = ( FileTransferResult ) task.getData( );
+            for( String s: Arrays.asList( ftr.getFiles( ) ) )
+                System.out.println( s );
+
         } finally {
             if( em != null && em.isOpen( ) )
                 em.close( );

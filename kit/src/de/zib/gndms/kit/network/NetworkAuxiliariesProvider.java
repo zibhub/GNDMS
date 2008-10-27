@@ -31,7 +31,8 @@ package de.zib.gndms.kit.network;
  */
 public class NetworkAuxiliariesProvider {
 
-    private final GridFTPClientFactory gridFTPClientFactory = new SimpleGridFTPClientFactory();
+    //private final GridFTPClientFactory gridFTPClientFactory = new SimpleGridFTPClientFactory();
+    private final GridFTPClientFactory gridFTPClientFactory = new CertGridFTPClientFactory();
     private final BandWidthEstimater bandWidthEstimater = new StaticBandWidthEstimater();
 
 
@@ -53,6 +54,6 @@ public class NetworkAuxiliariesProvider {
      * @return The size in sec
      */
     public static int calculateTransferTime( long size, float bandWidth  ){
-        return  Float.valueOf( size * bandWidth ).intValue( );
+        return  Float.valueOf( size / bandWidth ).intValue( );
     }
 }

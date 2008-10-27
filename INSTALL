@@ -37,7 +37,7 @@ configuration (bash) can be found in etc/example.profile):
 - Set $ANT_HOME and have it in your environment
 - Add $ANT_HOME/bin to your path
 
-- Get Globus 4.0.7
+- Get Globus 4.0.X, X >= 7
 - Setup working host and user certificates (You can build without; but then 
   again where, would this  get you?)
 - Set $GLOBUS_LOCATION and have it in your environment
@@ -54,7 +54,7 @@ configuration (bash) can be found in etc/example.profile):
              
 - Install groovy >=1.6
 - Set $GROOVY_HOME and have it in your environment
-- For convenience, have it in your environment, you might also want to 
+- For convenience, you might also want to 
   add $GROOVY_HOME/bin to your PATH
 
 - Install openssl
@@ -91,9 +91,11 @@ configuration (bash) can be found in etc/example.profile):
 ==================
 BUILD INSTRUCTIONS
 ==================
-                                                                                   
-If you dont want to build but instead just want to deploy, please skip to the
-section titled "DEPLOYMENT INSTRUCTION".
+    
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!                                                                               
+!! If you dont want to build but instead just want to deploy, please skip to the
+!! section titled "DEPLOYMENT INSTRUCTION".
+                                                                                 
 
 We don't have a proper global build script yet. Therefore you have to do lots
 of things by hand, meaning this guide is not for the faint of heart. Before
@@ -101,6 +103,9 @@ you start please make sure you have succesfully installed all prerequisites.
 
 The following description was written for IntelliJ IDEA 8M1 but you should be
 able to repeat it with any other java tool chain.
+
+There are be some problems with IDE's which doesn't support Groovy,
+e.g. Eclipse (at the time of writing).may
 
 
 -------------
@@ -140,31 +145,34 @@ When describing the dependencies of a compilation unit, I assume the following
   Nearly everything has a dependency to this one.
 - joda-time: extra/tools-lib/joda-time*.jar
                      
+     
+
 
 ---------------------------
 DETAILED BUILD INSTRUCTIONS
 ---------------------------
 
-- The most tricky piece goes first:
 
-  1) Execute:
+  0) Excute in services/
 
-     ln -sf "$GROOVY_HOME"/embeddable/groovy-all-<some-version>.jar \
-            "extra/tools-lib/gndms-groovy.jar"
-             
-     This will be done later again when you run sync.sh but is needed now to 
-     complete the next substep.
+     for i in * ; do cd $i && ant compileStubs ; done
+
+
+  1) Execute sync.sh in the projects' top level directory. This will create all
+	 necessary symlinks in the services' lib directories. Without doing this,
+	 you're going to miss required jar files and the services will not compile correctly.
+
+	 (Developers: When adding/changing used libs, make sure to run sync.sh again; when
+	  deleting libs, make sure to kill the corresponding symlinks in servics/*/lib)
 
 
   2) Compile gndms-shared-model.jar
 
      Sources: model/src (resp. model/test-src)
      Output:  model/gndms-shared-model/production (resp. test)
-     Dependencies: JDK, GROOVY, annotations, SOURCE, openjpa,
-                   collections, joda-time
+     Dependencies: GROOVY, J2EE, annotations, SOURCE, openjpa,
+                   collections, joda-time, testng
      Re-exports: openjpa, collections
-                 (Alternatively add dependencies to openjpa, and collections to
-                  all modules that depend on gndms-shared-model)
 
      Make sure META-INF gets copied 
      from model/src to model/gndms-shared-model/production!
@@ -176,60 +184,63 @@ DETAILED BUILD INSTRUCTIONS
      
      This enhances the jpa classes and creates extra/lib/gndms-model.jar
 
-  (In IntelliJ: add build-openjpa.xml to the Ant-Build (right side) and
-  configure the target enhance to be run post compilation)
+     (In IntelliJ: add build-openjpa.xml to the Ant-Build (right side) and
+      configure the target enhance to be run post compilation)
 
-  If you ever get weird errors during compilation or ant enhance, delete
-  production/* and rebuild the whole project)
-
-- Compile gndms-kit.jar
-  Sources: kit/src
-  Output: kit/gndms-kit/production (resp. test) classes
-  Dependencies: J2EE, GROOVY, annotations, SOURCE, gndms-shared-model,
-                openjpa, cos, servlet-api, jetty, joda-time, gt4, testng
+     If you ever get weird errors during compilation or ant enhance, delete
+     production/* and rebuild the whole project)
 
 
-- Compile gndms-logic.jar
-  Sources: logic/src (resp. test)
-  Output: logic/gndms-logic/production (resp. test) classes
-  Dependencies: J2EE, GROOVY, annotations, SOURCE, gndms-shared-model,
-                gndms-kit, joda-time, testng, commons, derby
-
-  (In IntelliJ: Use Build/Build Jars.. to build the jar on Make Project)
+  4) Compile gndms-kit.jar
+     Sources: kit/src
+     Output: kit/gndms-kit/production (resp. test) classes
+     Dependencies: GROOVY, J2EE, SOURCE, gt4, gndms-shared-model, annotations,
+                   jetty, servlet-api, cos, testng, joda-time
 
 
-- Compile gndms-infra.jar
-  Sources: infra/src (resp. test)
-  Output: infra/gndms-infra/production (resp. test) classes
-          extra/lib/gndms-infra.jar containing the contents production/
-  Dependencies: JDK, GROOVY, annotations, SOURCES, gndms-logic,
-                gndms-kit, gndms-shared-model, commons, derby, gt4, testng
+  5) Compile gndms-logic.jar
+     Sources: logic/src (resp. test)
+     Output: logic/gndms-logic/production (resp. test) classes
+     Dependencies: GROOVY, J2EE, annotations, SOURCE, gndms-shared-model,
+                   testng, commons, derby, joda-time, gndms-kit, gt4
 
-  (In IntelliJ: Use Build/Build Jars.. to build the jar on Make Project)
+     (In IntelliJ: Use Build/Build Jars.. to build the jar on Make Project)
 
-
-- Execute sync.sh in the projects' top level directory. This will create all
-  necessary symlinks in the services' lib directories. Without doing this,
-  you're going to miss required jar files and the services will not compile correctly.
-
-  (Developers: When adding/changing used libs, make sure to run sync.sh again; when
-   deleting libs, make sure to kill the corresponding symlinks in servics/*/lib)
-
-
-- Build all services in services/* using ant createDeploymentGar
-
-  Recommended build order: DSpace, GORFX, LOFIS, WHORFX
+                
+  6) Compile gndms-typecon.jar
+     Sources: typecon/src (resp. test)
+     Output: typecon/gndms-typecon/production (rest. test) classes
+             extra/lib/gndms-typecon.jar containing the contents of production/
+     Dependencies: GROOVY, J2EE, gorfx-stubs, gndms-shared-model, annotations, joda-time,
+                   gt4, testng           
 
 
-- Though you might want to read the upcoming section on configuration
-  and deployment first, you can now deploy the gar files by executing:
 
-    "globus-deploy-gar <file>"
+  7) Compile gndms-infra.jar
+     Sources: infra/src (resp. test)
+     Output: infra/gndms-infra/production (resp. test) classes
+            extra/lib/gndms-infra.jar containing the contents of production/
+     Dependencies: GROOVY, J2EE, annotations, gndms-logic, gndms-shared-model
+                   commons, derby, cos, servlet-api, jetty, gt4, testng, joda-time,
+                   gndms-kit
 
-  as globus user.
+    (In IntelliJ: Use Build/Build Jars.. to build the jar on Make Project)
 
 
-- Additionally, for IDE based development, you may wish to set up projects per
+  8) Build all services in services/* using ant createDeploymentGar
+
+     Recommended build order: DSpace, GORFX, LOFIS, WHORFX
+
+
+  9) Though you might want to read the upcoming section on configuration
+     and deployment first, you can now deploy the gar files by executing:
+
+       "globus-deploy-gar <file>"
+
+     as globus user.
+
+
+  Additionally, for IDE based development, you may wish to set up projects per
   service with the following dependencies:
 
   J2EE, groovy, annotations, "servicename"-stubs,
@@ -244,11 +255,12 @@ DETAILED BUILD INSTRUCTIONS
   you still need to execute "ant createDeploymentGar" and "globus-deploy-gar"
   manually on the command line.
 
+                  
 
 THINGS TO DO WHEN YOUR BUILD FAILS
 ----------------------------------
 
-1) Do you need to regen the stubs? Delete service/*build/ and go from scratch
+1) Do you need to regen the stubs? Delete service/*/build and go from scratch
 
 2) Stale symlinks
 
@@ -340,7 +352,10 @@ always disable the service after use.
 To enable, edit $GNDMS_MONI_CONFIG and set monitor.enabled to "true". Then
 either restart the container or wait "monitor.configRefreshCycle" ms (defaults
 to 30 seconds). After this period ,the container will load your new
-configuration and start the monitoring servlet.
+configuration and start the monitoring servlet.     
+
+Alternatively, you may set GNDMS_MONITOR_ENABLED to true before starting the
+globus container to enable the monitor.
 
 There are two ways to use the monitoring servlet, the first allows the
 execution of predefined actions, while the second runs arbitrary groovy code.

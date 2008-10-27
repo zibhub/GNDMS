@@ -4,6 +4,7 @@ import de.zib.gndms.logic.action.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.ModelChangedAction;
 import de.zib.gndms.logic.model.config.ConfigAction;
 import de.zib.gndms.logic.model.config.ConfigActionHelp;
+import de.zib.gndms.logic.model.config.ConfigActionResult;
 import de.zib.gndms.logic.model.config.ConfigOption;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.dspace.MetaSubspace;
@@ -24,7 +25,7 @@ import java.util.Set;
  *          User: stepn Date: 08.10.2008 Time: 12:53:58
  */
 @ConfigActionHelp(shortHelp = "Assign SliceKind to MetaSubspace", longHelp = "-")
-public class AssignSliceKindAction extends ConfigAction<Void> {
+public class AssignSliceKindAction extends ConfigAction<ConfigActionResult> {
     @SuppressWarnings({ "EnumeratedClassNamingConvention" })
     enum Mode { ADD, REMOVE }
 
@@ -52,7 +53,7 @@ public class AssignSliceKindAction extends ConfigAction<Void> {
 
 
     @Override
-    public Void execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer) {
+    public ConfigActionResult execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer) {
         final @NotNull MetaSubspace space = em.find(MetaSubspace.class, subspace);
         final @NotNull SliceKind sk = em.find(SliceKind.class, sliceKind);
         final @NotNull Set<SliceKind> sliceKindSet = space.getCreatableSliceKinds();
@@ -73,6 +74,6 @@ public class AssignSliceKindAction extends ConfigAction<Void> {
         // Register resources that require refreshing
         getPostponedActions().addAction(new ModelChangedAction(space.getInstance()));
 
-        return null;
+        return ok();
     }
 }

@@ -24,7 +24,7 @@ import java.util.Properties;
  */
 @ConfigActionHelp(shortHelp="Configure already setup OfferTypes", longHelp="Configure already-setup OfferTypes of this GNDMS installation or print their current configuration")
 public class ConfigOfferTypeAction extends ConfigAction<String> {
-    public enum OutFormat { PROPS, OPTS }
+    public enum OutFormat { PROPS, OPTS, NONE, PRINT_OK }
 
     public enum UpdateMode { UPDATE, OVERWRITE, DELKEYS }
 
@@ -34,7 +34,7 @@ public class ConfigOfferTypeAction extends ConfigAction<String> {
     @ConfigOption(descr="How to update the config; one of UPDATE (default), OVERWRITE, or DELKEYS")
     private UpdateMode cfgUpdateMode;
 
-    @ConfigOption(descr="Output format; one of PROPS or OPTS (default)")
+    @ConfigOption(descr="Output format; one of PROPS, OPTS (default), NONE, or OK")
     private OutFormat cfgOutFormat;
 
     @Override
@@ -55,19 +55,19 @@ public class ConfigOfferTypeAction extends ConfigAction<String> {
 
     @Override
     public String execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer) {
-        final @NotNull OfferType offerType = em.find(OfferType.class, getOfferType());
+        final @NotNull OfferType offerType_ = em.find(OfferType.class, getOfferType());
         final @NotNull Map<String, String> configMap;
 
         boolean update = false;
         switch (cfgUpdateMode) {
             case DELKEYS:
-                configMap = offerType.getConfigMap();
+                configMap = offerType_.getConfigMap();
                 for (String opt : getAllOptionNames())
                     if (isValidConfigOptionName(opt)) configMap.remove(opt);
                 break;
 
             case UPDATE:
-                configMap = offerType.getConfigMap();
+                configMap = offerType_.getConfigMap();
                 update = true;
                 break;
             default:
@@ -97,6 +97,10 @@ public class ConfigOfferTypeAction extends ConfigAction<String> {
 
     private String genOutput(final Map<String, String> configMapParam) {
         switch (cfgOutFormat) {
+            case PRINT_OK:
+                return "OK()";
+            case NONE:
+                return null;
             case PROPS:
                 Properties props = new Properties();
                 props.putAll(configMapParam);

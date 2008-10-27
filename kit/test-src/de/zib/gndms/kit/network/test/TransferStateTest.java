@@ -48,9 +48,17 @@ public class TransferStateTest extends ModelEntityTestBase {
     {
         super( dbPath, dbName );
 
-        transferData = new TransferTestThreeFiles( srcURI, destURI );
-        
+        // transferData = new TransferTestThreeFiles( srcURI, destURI );
+        // transferData = new DirectoryTransferTest( srcURI, destURI );
+
         logFileConfig = logFileCfg;
+
+
+        System.out.println( "srcURI: " + srcURI );
+        System.out.println( "destURI: " + destURI );
+        System.out.println( "logFileCfg: " + logFileCfg );
+        System.out.println( "dbPath: " + getDbPath( ) );
+        System.out.println( "dbName: " + getDbName( ) );
     }
 
 
@@ -96,6 +104,7 @@ public class TransferStateTest extends ModelEntityTestBase {
             src = prov.getGridFTPClientFactory().createClient( suri );
             dest = prov.getGridFTPClientFactory().createClient( duri );
 
+
             // setup transfer handler
             GNDMSFileTransfer transfer = new GNDMSFileTransfer();
             transfer.setSourceClient( src );
@@ -116,10 +125,19 @@ public class TransferStateTest extends ModelEntityTestBase {
             System.out.println( "Estimated transfer time in sec.: "
                 + NetworkAuxiliariesProvider.calculateTransferTime( ets, tt.floatValue() ) );
 
+            /*
+            // listing files
+            System.out.println( "fetching file listing" );
+            Vector<FileInfo> inf = src.list( );
+            for( FileInfo fi: inf )
+                System.out.println( fi );
+                */
+
             System.out.println( "Starting transfer at " + (new DateTime( )).toString( ) );
             transfer.performPersistentTransfer( pml );
             System.out.println( "Finished transfer at " + (new DateTime( )).toString( ) );
 
+            
         } finally {
             eM.close();
             try {

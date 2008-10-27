@@ -1,7 +1,6 @@
 package de.zib.gndms.model.gorfx.types.io;
 
 import org.joda.time.DateTime;
-import org.joda.time.format.ISODateTimeFormat;
 
 import java.util.Properties;
 

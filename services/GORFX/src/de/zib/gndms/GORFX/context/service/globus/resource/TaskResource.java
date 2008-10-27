@@ -1,27 +1,28 @@
 package de.zib.gndms.GORFX.context.service.globus.resource;
 
-import de.zib.gndms.typecon.common.GORFXClientTools;
-import de.zib.gndms.typecon.common.GORFXTools;
 import de.zib.gndms.GORFX.context.common.TaskConstants;
 import de.zib.gndms.GORFX.context.stubs.TaskResourceProperties;
+import de.zib.gndms.infra.model.GridResourceModelHandler;
+import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.model.gorfx.Task;
+import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
+import de.zib.gndms.model.gorfx.types.ProviderStageInResult;
 import de.zib.gndms.model.gorfx.types.TaskState;
-import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
-import de.zib.gndms.infra.model.GridResourceModelHandler;
-import org.apache.axis.types.URI;
-import org.jetbrains.annotations.NotNull;
+import de.zib.gndms.model.gorfx.types.FileTransferResult;
+import de.zib.gndms.typecon.common.GORFXTools;
+import de.zib.gndms.typecon.common.type.ProviderStageInResultXSDTypeWriter;
+import de.zib.gndms.typecon.common.type.FileTransferResultXSDTypeWriter;
+import org.globus.wsrf.InvalidResourceKeyException;
+import org.globus.wsrf.NoSuchResourceException;
 import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.ResourceKey;
-import org.globus.wsrf.NoSuchResourceException;
-import org.globus.wsrf.InvalidResourceKeyException;
-import types.DynamicOfferDataSeqT;
-import types.ProviderStageInResultT;
-import types.TaskExecutionFailure;
-import types.TaskExecutionState;
+import org.jetbrains.annotations.NotNull;
+import types.*;
 
 import javax.persistence.EntityManager;
 import java.util.concurrent.Future;
+import java.io.Serializable;
 
 
 /**
@@ -47,7 +48,7 @@ public class TaskResource extends TaskResourceBase
         
         Task tsk = taskAction.getModel( );
         if(! tsk.getState().equals( TaskState.FINISHED ) || ! tsk.getState().equals( TaskState.FAILED ) )
-            future = home.getSystem( ).submitAction( taskAction );
+            future = home.getSystem( ).submitAction( taskAction, getResourceHome().getLog() );
         else
             taskAction.getEntityManager().close();
     }
@@ -60,11 +61,11 @@ public class TaskResource extends TaskResourceBase
 
     public TaskExecutionFailure getTaskExecutionFailure() {
 
-        TaskExecutionFailure fail;
+        TaskExecutionFailure fail = new TaskExecutionFailure( );
         if( taskAction.getModel( ).getState().equals( TaskState.FAILED ) ) {
-            fail = (TaskExecutionFailure) taskAction.getModel().getData();
+            if( taskAction.getModel().getData() != null )
+                fail = GORFXTools.failureFromException( (Exception) taskAction.getModel().getData() );
         } else {
-            fail = new TaskExecutionFailure( );
             fail.setAllIsFine( new Object() );
         }
 
@@ -80,20 +81,42 @@ public class TaskResource extends TaskResourceBase
     public DynamicOfferDataSeqT getTaskExecutionResults() {
 
         DynamicOfferDataSeqT res;
-        URI uri = GORFXTools.scopedNameToURI( taskAction.getModel().getOfferType().getOfferResultType( ) );
-        TaskState stat = taskAction.getModel().getState();
-        if( uri.equals( GORFXClientTools.getProviderStageInURI() ) ) {
-            if( stat.equals( TaskState.FINISHED ) )
-                // maybe convert result from some result model type
-                res = ( ProviderStageInResultT ) taskAction.getModel().getData( );
-            else
-                res = new ProviderStageInResultT();
-        } else if( uri.equals( GORFXClientTools.getFileTransferURI() ) ) {
+        // URI uri = GORFXTools.scopedNameToURI( taskAction.getModel().getOfferType().getOfferResultType( ) );
+        final String uri = taskAction.getModel().getOfferType( ).getOfferTypeKey();
+        final TaskState stat = taskAction.getModel().getState();
+        if( uri.equals( GORFXConstantURIs.PROVIDER_STAGE_IN_URI ) ) {
+            if( stat.equals( TaskState.FINISHED ) ) {
 
-            if( stat.equals( TaskState.FINISHED ) )
-                res = ( ProviderStageInResultT ) taskAction.getModel().getData( );
-            else
+                final Serializable sr = taskAction.getModel().getData( );
+
+                if(! ( sr instanceof ProviderStageInResult ) )
+                    throw new IllegalArgumentException( "task result is not of type " 
+                        + ProviderStageInResult.class.getName( ) );
+
+                final ProviderStageInResult r = (ProviderStageInResult) sr;
+                final ProviderStageInResultXSDTypeWriter writer = new ProviderStageInResultXSDTypeWriter();
+                writer.begin( );
+                writer.writeSliceReference( r.getSliceKey() );
+                res = writer.getProduct();
+            } else
                 res = new ProviderStageInResultT();
+        } else if( uri.equals( GORFXConstantURIs.FILE_TRANSFER_URI ) ) {
+
+            if( stat.equals( TaskState.FINISHED ) ){
+                final Serializable sr = taskAction.getModel().getData( );
+                if(! ( sr instanceof FileTransferResult ) )
+                    throw new IllegalArgumentException( "task result is not of type "
+                        + FileTransferResult.class.getName( ) );
+
+                final FileTransferResult ftr = ( FileTransferResult ) sr;
+                final FileTransferResultXSDTypeWriter writer = new FileTransferResultXSDTypeWriter();
+                writer.begin();
+                writer.writeFiles( ftr.getFiles() );
+                res = writer.getProduct();
+            }
+
+            else
+                res = new FileTransferResultT();
         } // etc
           // todo add new task results here
         else {
@@ -125,7 +148,7 @@ public class TaskResource extends TaskResourceBase
         EntityManager em = home.getEntityManagerFactory().createEntityManager(  );
         Task tsk = (Task) mH.loadModelById( em, id );
         try {
-            taskAction =  getResourceHome().getSystem().getInstanceDir().getTaskAction(em, tsk.getOfferType().getOfferTypeKey());
+            taskAction = getResourceHome().getSystem().getInstanceDir().getTaskAction(em, tsk.getOfferType().getOfferTypeKey());
             taskAction.initFromModel(em, tsk);
             taskAction.setClosingEntityManagerOnCleanup(true);
             
@@ -145,8 +168,6 @@ public class TaskResource extends TaskResourceBase
 
 
     public void loadViaModelId( @NotNull String id ) throws ResourceException {
-        // Not required here
-        // cause we override the getters.
         throw new UnsupportedOperationException( "task resource is readonly" );
     }
 
@@ -154,7 +175,14 @@ public class TaskResource extends TaskResourceBase
     public void loadFromModel( @NotNull Task model ) throws ResourceException {
         // Not required here
         // cause we override the getters.
-        throw new UnsupportedOperationException( "task resource is readonly" );
+        // throw new UnsupportedOperationException( "task resource is readonly" );
+
+        // required getter overriding isn't enough
+        setTaskExecutionState( getTaskExecutionState() );
+        setTerminationTime( taskAction.getModel().getTerminationTime() );
+        setTaskExecutionFailure( getTaskExecutionFailure() );
+        setTaskExecutionResults( getTaskExecutionResults() );
+
     }
 
 
@@ -182,10 +210,11 @@ public class TaskResource extends TaskResourceBase
 
         if ( getResourceHome().getKeyTypeName().equals( resourceKey.getName() ) ) {
             String id = ( String ) resourceKey.getValue();
-            Task sl = loadModelById( id );
+            Task tsk = loadModelById( id );
             setResourceKey( resourceKey );
             initialize( new TaskResourceProperties(),
                 TaskConstants.RESOURCE_PROPERTY_SET, id );
+            loadFromModel( tsk );
         }
         else
             throw new InvalidResourceKeyException("Invalid resourceKey name");
@@ -198,7 +227,14 @@ public class TaskResource extends TaskResourceBase
     }
 
 
+    @Override
     public String getID( ) {
         return (String) super.getID();
     }
+
+    @Override
+    public void refreshRegistration(final boolean forceRefresh) {
+        // nothing
+    }
+
 }

@@ -21,6 +21,8 @@ import javax.persistence.NamedQuery
 import javax.persistence.MappedSuperclass
 import org.joda.time.DateTime
 import org.joda.time.Duration
+import javax.persistence.EntityManager
+import javax.persistence.NamedQueries
 
 
 /**
@@ -33,9 +35,26 @@ import org.joda.time.Duration
  */
 @Entity(name="Tasks")
 @Table(name="tasks", schema="gorfx")
-@NamedQuery(name="listAllTaskIds", query="SELECT instance.id FROM Tasks instance")
+@NamedQueries( [
+@NamedQuery(name="listAllTaskIds", query="SELECT instance.id FROM Tasks instance"),
+@NamedQuery(name="unfinishedTaskIds", query="SELECT t.id FROM Tasks t WHERE t.state <> de.zib.gndms.model.gorfx.types.TaskState.FAILED AND t.state <> de.zib.gndms.model.gorfx.types.TaskState.FINISHED" )
+])
 @MappedSuperclass
 class Task extends TimedGridResource {
+    
+    public void stampOn ( EntityManager em, Task newTask) {
+        newTask.offerType = offerType == null ? null : em.find(OfferType.class, offerType.getOfferTypeKey());
+        if (newTask.offerType != null)
+            newTask.offerType.getTasks().add(newTask);
+        newTask.description = description;
+        newTask.state = state;
+        newTask.progress = progress;
+        newTask.contract = contract;
+        newTask.orq = orq;
+        newTask.faultString = faultString;
+        newTask.data = data;
+    }
+
     /* Nullable for testing purposes */
     @ManyToOne @JoinColumn(name="offerTypeKey", nullable=true, updatable=false, columnDefinition="VARCHAR")
     OfferType offerType
@@ -81,6 +100,8 @@ class Task extends TimedGridResource {
     @Basic Serializable data
 
 
+    @Column(name="wid", nullable=true, updatable=true)
+    @Basic String wid;
 
    def transit(final TaskState newState) {
         final @NotNull TaskState goalState = newState == null ? getState() : newState;
@@ -126,6 +147,19 @@ class Contract {
 
     // can be mapped to constantExecutionTime
     transient boolean deadlineIsOffset = false
+
+    Contract() {}
+
+    Contract(Contract org) {
+        if (org == null)
+            this()
+        else {
+            accepted = (Calendar) org.accepted.clone()
+            deadline = (Calendar) org.deadline.clone()
+            resultValidity = (Calendar) org.resultValidity.clone()
+            deadlineIsOffset = org.deadlineIsOffset
+        }
+    }
 
     Calendar getCurrentDeadline() {
         return  ((deadlineIsOffset) ?

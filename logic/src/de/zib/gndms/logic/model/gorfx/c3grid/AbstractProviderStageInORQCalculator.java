@@ -1,7 +1,6 @@
 package de.zib.gndms.logic.model.gorfx.c3grid;
 
 import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
-import de.zib.gndms.model.gorfx.Contract;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
 
 
@@ -14,15 +13,12 @@ import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
  * User: bzcjorra Date: Sep 5, 2008 4:12:20 PM
  *
  */
-public class ProviderStageInORQCalculator extends AbstractORQCalculator<ProviderStageInORQ, ProviderStageInORQCalculator> {
-    public ProviderStageInORQCalculator() {
+public abstract class AbstractProviderStageInORQCalculator extends AbstractORQCalculator<ProviderStageInORQ, AbstractProviderStageInORQCalculator> {
+    public AbstractProviderStageInORQCalculator() {
         super( );
         super.setORQModelClass( ProviderStageInORQ.class );
     }
 
 
-    @Override
-    public Contract createOffer() throws Exception {
-        return getPerferredOfferExecution();
-    }
+
 }

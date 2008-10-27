@@ -9,7 +9,10 @@ services/*/tools/lib/*.jar
 services/*/tools/lib/CONTENTS*
 services/*/tmp/**
 services/*/.metadata/**
+services/*/src/de/zib/gndms/shared
+services/*/src/de/zib/gndms/shared/**
 services/.metadata/**
+services/**/derby.log
 .DS_Store
 *.ipr
 *.iws

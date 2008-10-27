@@ -3,7 +3,6 @@ package de.zib.gndms.model.gorfx.types.io;
 import de.zib.gndms.model.gorfx.types.DataDescriptor;
 
 import java.util.Properties;
-import java.util.Set;
 
 /**
  * Reads a data descriptor form a property file.

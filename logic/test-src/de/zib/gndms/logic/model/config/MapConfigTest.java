@@ -22,8 +22,10 @@ public class MapConfigTest {
     @Test
     public void testMapConfig() throws MandatoryOptionMissingException {
         Map<String, String> map = new HashMap<String, String>(8);
-        map.put("HOME","%{HOME}");
+        map.put("HOME", "%{HOME}");
+        map.put("HOME2", "foo%{HOME}bar");
         MapConfig config = new MapConfig(map);
         assert config.getOption("HOME").equals(System.getProperties().getProperty("user.home"));
+        assert config.getOption("HOME2").equals("foo"+System.getProperties().getProperty("user.home")+"bar");
     }
 }

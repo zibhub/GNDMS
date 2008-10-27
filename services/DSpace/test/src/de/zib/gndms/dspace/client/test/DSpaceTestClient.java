@@ -49,15 +49,17 @@ public class DSpaceTestClient {
             DSpaceClient client = new DSpaceClient( url );
             SubspaceClient subclient = client.findSubspace( sn, ln );
             // todo insert useful uri
-            String skuri = null;
+            String skuri = "http://www.c3grid.de/G2/SliceKind/DMS";
             GregorianCalendar tt = new GregorianCalendar( );
             tt.add( Calendar.YEAR, 20 );
             long ssize = (long) (20 * 1024 * Math.pow( 10, 12  ));
             SliceClient sc = subclient.createSlice( skuri, tt, ssize );
             System.out.println( "Check set values" );
             System.out.println( "slicekind: "+ skuri.equals( sc.getSliceKind() ) );
-            System.out.println( "terminationtim: " + tt.equals( sc.getTerminationTime() ) );
-            System.out.println( "storage size:" +( ssize == sc.getTotalStorageSize() ) );
+            System.out.println( "terminationtime: " + tt.equals( sc.getTerminationTime() ) );
+            System.out.println( "termination time: " + sc.getTerminationTime() );
+            System.out.println( "termination time expected: " + tt );
+            System.out.println( "storage size: " +( ssize == sc.getTotalStorageSize() ) );
         } catch ( ArrayIndexOutOfBoundsException e ) {
             usage();
             System.exit(1);

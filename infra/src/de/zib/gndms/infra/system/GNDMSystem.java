@@ -5,6 +5,7 @@ import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
 import de.zib.gndms.kit.monitor.ActionCaller;
 import de.zib.gndms.kit.monitor.GroovyMoniServer;
 import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
+import de.zib.gndms.logic.action.LogAction;
 import de.zib.gndms.logic.model.*;
 import de.zib.gndms.logic.util.LogicTools;
 import de.zib.gndms.model.common.GridResource;
@@ -157,7 +158,7 @@ public final class GNDMSystem
             initSharedDir();
 			createDirectories();
 			emf = createEMF();
-			restrictedEmf = new RestrictedEMFactory(emf);
+			restrictedEmf = new RestrictedEMFactory(emf, null);
 			tryTxExecution();
 		}
 		catch (Exception e) {
@@ -493,14 +494,15 @@ public final class GNDMSystem
     }
 
 
-    public @NotNull <R> Future<R> submitAction(final @NotNull EntityAction<R> action) {
-        return getExecutionService().submitAction(action);
+    public @NotNull <R> Future<R> submitAction(final @NotNull EntityAction<R> action, final @NotNull Log logger) {
+        return getExecutionService().submitAction(action, logger);
     }
 
     
     public @NotNull <R> Future<R> submitAction(final @NotNull EntityManager em,
-                                               final @NotNull EntityAction<R> action) {
-        return getExecutionService().submitAction(em, action);
+                                               final @NotNull EntityAction<R> action,
+                                               final @NotNull Log logger) {
+        return getExecutionService().submitAction(em, action, logger);
     }
 
 
@@ -545,26 +547,29 @@ public final class GNDMSystem
         }
 
 
-        public final @NotNull <R> Future<R> submitAction(final @NotNull EntityAction<R> action) {
+        public final @NotNull <R> Future<R> submitAction(final @NotNull EntityAction<R> action, final @NotNull Log log) {
             final EntityManager ownEm = action.getOwnEntityManager();
             if (ownEm != null)
-                return submit_(action);
+                return submit_(action, log);
             else {
                 final @NotNull EntityManager em = getEntityManagerFactory().createEntityManager();
-                return submitAction(em, action);
+                return submitAction(em, action, log);
             }
         }
 
         @SuppressWarnings({ "FeatureEnvy" })
         public @NotNull <R> Future<R> submitAction(final @NotNull EntityManager em,
-                                                   final @NotNull EntityAction<R> action) {
+                                                   final @NotNull EntityAction<R> action,
+                                                   final @NotNull Log log) {
             action.setOwnEntityManager(em);
-            return submit_(action);
+            return submit_(action, log);
         }
 
 
         @SuppressWarnings({ "FeatureEnvy" })
-        private <R> Future<R> submit_(final EntityAction<R> action) {
+        private <R> Future<R> submit_(final EntityAction<R> action, final @NotNull Log log) {
+            if (action instanceof LogAction)
+                ((LogAction)action).setLog(log);
             if (action instanceof SystemHolder)
                 ((SystemHolder)action).setSystem(GNDMSystem.this);
             if (action.getPostponedActions() == null)

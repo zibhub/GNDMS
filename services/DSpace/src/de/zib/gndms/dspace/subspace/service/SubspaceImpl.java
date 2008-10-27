@@ -14,10 +14,13 @@ import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
+import de.zib.gndms.logic.model.EntityUpdateListener;
+import de.zib.gndms.logic.model.ModelAction;
 import org.globus.wsrf.NoSuchResourceException;
 import org.globus.wsrf.ResourceContext;
 import org.globus.wsrf.ResourceContextException;
 import org.globus.wsrf.ResourceKey;
+import org.apache.axis.types.URI;
 import types.ContextT;
 import types.SliceCreationSpecifier;
 
@@ -48,17 +51,20 @@ public class SubspaceImpl extends SubspaceImplBase {
     public SliceReference createSlice( SliceCreationSpecifier sliceCreationSpecifier, ContextT context ) throws RemoteException, OutOfSpace, UnknownOrInvalidSliceKind, InternalFailure {
 
         SubspaceResource subref = getResource();
-        Subspace sp = subref.loadModelById( subref.getID() );
-
-        if( sp == null )
-           throw new RemoteException( "No subspace found" );
+        //Subspace sp = subref.loadModelById( subref.getID() );
 
 
         SliceReference sref;
         SliceResourceHome srh = null;
         ResourceKey rk = null;
+        EntityManager em = null;
         try {
             Long ssize = null;
+
+            if( sliceCreationSpecifier.getTotalStorageSize() != null )
+                ssize = sliceCreationSpecifier.getTotalStorageSize().longValue();
+            else
+                ssize = 0l;
 
             srh = getSliceResourceHome( );
             rk = srh.createResource( );
@@ -66,20 +72,31 @@ public class SubspaceImpl extends SubspaceImplBase {
 
             GNDMSystem system = subref.getResourceHome( ).getSystem( );
 
-            EntityManager em = system.getEntityManagerFactory().createEntityManager(  );
-            SliceKind sk = em.find( SliceKind.class, sliceCreationSpecifier.getSliceKind( ).toString( ) );
+            em = system.getEntityManagerFactory().createEntityManager(  );
+            String id = sliceCreationSpecifier.getSliceKind( ).toString( );
+            SliceKind sk = em.find( SliceKind.class, id );
+
+            if( sk == null )
+                throw new IllegalArgumentException( "Slice kind doesn't exist: " + id );
+
+            id =  subref.getID();
+            Subspace sp = em.find( Subspace.class, id );
+            if( sp == null )
+                throw new RemoteException( "Subspace doesn't exist: " + id );
+
             CreateSliceAction csa =
                     new CreateSliceAction( (String) sr.getID(),
                             sliceCreationSpecifier.getTerminationTime(),
                             system.getModelUUIDGen(),
                             sk,
-                            ssize.longValue( )
+                            ssize
                     );
+            csa.setClosingEntityManagerOnCleanup( false );
 
             GridResourceModelHandler mh = new GridResourceModelHandler<Subspace, ExtSubspaceResourceHome, SubspaceResource>
                     (Subspace.class, (ExtSubspaceResourceHome) subref.getResourceHome( ) );
 
-            Slice ns = (Slice) mh.callNewModelAction( system, csa, sp );
+            Slice ns = (Slice) mh.callModelAction( em, system,  csa, sp );
 
             csa.getPostponedActions().call( );
 
@@ -90,7 +107,10 @@ public class SubspaceImpl extends SubspaceImplBase {
         } catch ( Exception e ) {
             if( srh != null && rk != null )
                 srh.remove( rk );
-            throw new RemoteException( e.toString() );
+            throw new RemoteException( e.toString(), e );
+        } finally  {
+            if( em != null && em.isOpen( ) )
+                em.close( );
         }
 
         return sref;
@@ -108,14 +128,15 @@ public class SubspaceImpl extends SubspaceImplBase {
         List<SliceKind> rl = (List<SliceKind>) q.getResultList();
         int l = rl.size( );
 
-        ArrayList<String> al = new ArrayList<String>( rl.size( ) );
-        for( SliceKind sk: rl ) {
-            al.add( sk.getURI() );
-        }
+        try {
+            ArrayList<URI> al = new ArrayList<URI>( rl.size( ) );
+            for( SliceKind sk: rl )
+                al.add( new URI( sk.getURI() ) );
+            return al.toArray( new URI[al.size( )] );
 
-        // todo uncommend when sig is changed
-        // return al.toArray( new String[0] );
-        return null;
+        } catch ( URI.MalformedURIException e ) {
+            throw new RemoteException( e.getMessage(), e );
+        }
     }
 
     /**

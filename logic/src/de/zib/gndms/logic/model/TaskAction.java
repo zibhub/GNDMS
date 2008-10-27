@@ -1,11 +1,15 @@
 package de.zib.gndms.logic.model;
 
+import de.zib.gndms.kit.util.WidAux;
+import de.zib.gndms.logic.action.LogAction;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.TaskState;
+import org.apache.commons.logging.Log;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import java.io.Serializable;
 
 
@@ -18,9 +22,11 @@ import java.io.Serializable;
  *          User: stepn Date: 15.09.2008 Time: 11:26:48
  */
 @SuppressWarnings({ "AbstractMethodCallInConstructor" })
-public abstract class TaskAction extends AbstractModelAction<Task, Task>
+public abstract class TaskAction extends AbstractModelAction<Task, Task> implements LogAction
 {
     private TaskExecutionService service;
+    private Log log;
+    private String wid;
 
     private static final class ShutdownTaskActionException extends RuntimeException {
         private static final long serialVersionUID = 2772466358157719820L;
@@ -94,7 +100,7 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
     }
 
 
-    public void initFromModel(final EntityManager em, final Task model) {
+    public void initFromModel(final EntityManager em, Task model) {
 
         boolean wasActive = em.getTransaction().isActive();
         if (!wasActive)
@@ -106,7 +112,7 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
                     em.persist(model);
                 }
                 catch (EntityExistsException e) {
-                    em.merge(model);
+                    model = em.merge(model);
                 }
             }
             if (!wasActive)
@@ -148,10 +154,8 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
 
     @Override
     public void setModel(final @NotNull Task mdl) {
-        if (getModel() == null)
-            super.setModel(mdl);    // Overridden method
-        else
-            throw new IllegalStateException("Illegal attempt to overwrite TaskAction model");
+        super.setModel(mdl);    // Overridden method
+        wid = mdl.getWid();
     }
 
 
@@ -182,29 +186,50 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
     }
 
 
+    @Override
+    public Task call() throws RuntimeException {
+        try {
+            final Task task = getModel();
+            if (task != null) 
+                WidAux.initWid(getModel().getWid());
+            return super.call();    // Overridden method
+        }
+        finally {
+            WidAux.removeWid();
+        }
+    }
+
+
     @SuppressWarnings({ "ThrowableInstanceNeverThrown", "ObjectAllocationInLoop" })
     @Override
     public Task execute(final @NotNull EntityManager em) {
         boolean first = true;
         TransitException curEx = null;
         do {
+            // for debugging
+            final String id = getModel().getId();
+            final TaskState curState = getModel().getState();
             try {
                 try {
                     if (first) {
                         try {
+                            trace("transit(null)", null);
                             transit(null);
                         }
                         finally {
-                            first = false;                            
+                            first = false;
                         }
                     }
-                    else
+                    else {
+                        trace("transit(" + curEx.newState + ')', null);
                         transit(curEx.newState);
+                    }
                     // if we come here, transit has failed
                     throw new IllegalStateException("No proper TransitException thrown");
                 }
                 /* On stop: finish loop and return model to caller */
                 catch (final StopException newEx) {
+                    trace("markAsDone()", null);
                     markAsDone();
                     curEx = null;
                 }
@@ -218,9 +243,10 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
                 }
                 /* On runtime ex: Set task to failed */
                 catch (RuntimeException e) {
+                    trace("catch(RuntimeException)", e);
                     /* Cant go to FAILED after FINISHED, i.e. onFinish must never fail */
                     if (TaskState.FINISHED.equals(getModel().getState()))
-                        throw e;
+                        throw e;                             // todo log this one
                     else
                         fail(e);
                 }
@@ -233,7 +259,41 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
                 curEx = newEx;
             }
         } while (curEx != null);
+        trace("return getModel()", null);
         return getModel();
+    }
+
+
+    @SuppressWarnings({ "HardcodedFileSeparator" })
+    protected void trace(final @NotNull String userMsg, final Throwable cause) {
+        final Log log1 = getLog();
+        final Task model = getModel();
+        final String msg;
+        if (model == null)
+            msg = userMsg;
+        else {
+            final TaskState state = model.getState();
+            final String descr = model.getDescription();
+            msg = "TA of Task " + model.getId()
+                    + (state == null ? "" : '/' + state.toString()) + ':'
+                    + (userMsg.length() > 0 ? ' ' : "") + userMsg
+                    + (descr == null ? "" : " descr: '" + descr + '\'');
+        }
+       if (cause == null)
+           log1.trace(msg);
+        else
+           log1.trace(msg, cause);
+
+    }
+
+
+    protected void refreshTaskResource() {
+        try {
+            getPostponedActions().getListener().onModelChange(getModel());
+        }
+        catch (RuntimeException e) {
+            // intentionally ignored
+        }
     }
 
 
@@ -243,10 +303,13 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
             final EntityManager em = getEntityManager();
             try {
                 em.getTransaction().begin();
-                model.setDone(true);
-                if (! em.contains(model))
-                    em.persist(model);
+                Task newModel = em.find(Task.class, getModel().getId());
+                newModel.setDone(true);
                 em.getTransaction().commit();
+                setModel(newModel);
+            }
+            catch (RuntimeException e) {
+                throw e;
             }
             finally {
                 if (em.getTransaction().isActive())
@@ -259,14 +322,35 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
     private void transit(final TaskState newState) {
         final EntityManager em = getEntityManager();
         try {
-            final @NotNull Task model = getModel();
+            @NotNull Task model = getModel();
             em.getTransaction().begin();
-            if (newState != null)
-                model.transit(newState);
-            if (! em.contains(model))
-                em.persist(model);
+            if (newState != null) {
+                if (! em.contains(model)) {
+                    try {
+                        try {
+                            em.persist(model);
+                        }
+                        catch (EntityExistsException e) {
+                            rewindTransaction(em.getTransaction());
+                            em.merge(model);
+                        }
+                    }
+                    catch (RuntimeException e2) {
+                            rewindTransaction(em.getTransaction());
+                            final @NotNull Task newModel = em.find(Task.class, model.getId());
+                            model.stampOn(em, newModel);
+                            setModel(newModel);
+                            model = getModel();
+                        }
+                    }
+                }
+            model.transit(newState);
             em.getTransaction().commit();
-            transit(model.getState(), model);
+            final TaskState modelState = model.getState();
+            refreshTaskResource();
+            //noinspection HardcodedFileSeparator
+            trace("on" + modelState + "()", null);
+            transit(modelState, model);
         }
         // for debugging
         catch (RuntimeException e) {
@@ -275,6 +359,14 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
         finally {
             if (em.getTransaction().isActive())
                 em.getTransaction().rollback();
+        }
+    }
+
+
+    private void rewindTransaction(final EntityTransaction txParam) {
+        if (txParam.getRollbackOnly()) {
+            txParam.rollback();
+            txParam.begin();
         }
     }
 
@@ -295,8 +387,7 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
                     throw new StopException(TaskState.FAILED);
             case FINISHED:
                     if (! model.isDone())
-                        onFailed(model);
-                    onFinished(model);
+                        onFinished(model);
                     /* safety catch-all */
                     throw new StopException(TaskState.FINISHED);
             default:
@@ -338,6 +429,7 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
 
     protected void fail(final @NotNull RuntimeException e) {
         getModel().fail(e);
+        e.fillInStackTrace();
         throw new FailedException(e);
     }
 
@@ -348,24 +440,36 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task>
     }
 
 
+    @SuppressWarnings({ "MethodMayBeStatic" })
     protected void stop(final @NotNull Task model) {
         throw new StopException(model.getState());
     }
 
     
-    protected final InterruptedException wrapInterrupt(InterruptedException e) {
+    protected final void shutdownIfTerminating(InterruptedException e) {
         if (getService().isTerminating())
             throw new ShutdownTaskActionException(e);
-        return e;
     }
 
-    @SuppressWarnings({ "ThrowableResultOfMethodCallIgnored" })
-    protected final void wrapInterrupt_(InterruptedException e) {
-        wrapInterrupt(e);
+    @SuppressWarnings({ "MethodMayBeStatic" })
+    protected final void honorOngoingTransit(RuntimeException e) {
+        if (isTransitException(e))
+            throw e;
     }
-
 
     public static boolean isTransitException( Exception e ) {
         return e instanceof TransitException;
     }
+
+
+    public Log getLog() {
+        return log;
+    }
+
+
+    public void setLog(final Log logParam) {
+        log = logParam;
+    }
+
+
 }

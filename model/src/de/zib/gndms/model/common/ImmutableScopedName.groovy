@@ -26,7 +26,7 @@ class ImmutableScopedName extends ModelId {
 	ImmutableScopedName() {}
 
     ImmutableScopedName(@NotNull String fullNameStr) {        
-        super(QName.valueOf(fullNameStr))
+        this(QName.valueOf(fullNameStr))
     }
 
 	ImmutableScopedName(@NotNull String theScope, @NotNull String theName) {

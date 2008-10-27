@@ -22,7 +22,7 @@ public abstract class AbstractAction<R> implements Action<R> {
     public void cleanUp() { }
 
 
-    public final R call ( ) throws RuntimeException {
+    public R call ( ) throws RuntimeException {
         try {
 	        initialize( );
         }

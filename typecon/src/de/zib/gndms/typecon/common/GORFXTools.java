@@ -7,9 +7,14 @@ import de.zib.gndms.typecon.common.type.ContextXSDReader;
 import de.zib.gndms.typecon.common.type.FileTransferORQXSDReader;
 import org.apache.axis.types.NormalizedString;
 import org.apache.axis.types.URI;
+import org.apache.axis.types.Token;
+import org.apache.axis.types.PositiveInteger;
+import org.jetbrains.annotations.NotNull;
 import types.*;
 
 import java.util.HashMap;
+import java.io.StringWriter;
+import java.io.PrintWriter;
 
 /**
  * @author Maik Jorra <jorra@zib.de>
@@ -23,10 +28,10 @@ public class GORFXTools {
 
         AbstractORQ aorq = null;
         if( orq.getOfferType().toString().equals( GORFXConstantURIs.PROVIDER_STAGE_IN_URI ) ) {
-            aorq = convertProviderStageInORQFromORQT( (ProviderStageInORQT) orq );
+            aorq = convertProviderStageInORQFromORQT( orq );
             aorq.setContext( ContextXSDReader.readContext( ctx ) );
         } else if( orq.getOfferType().toString().equals( GORFXConstantURIs.FILE_TRANSFER_URI ) )
-            aorq = FileTransferORQXSDReader.read( ( FileTransferORQT) orq, ctx );
+            aorq = FileTransferORQXSDReader.read( orq, ctx );
         else
             throw new IllegalArgumentException( );
 
@@ -36,7 +41,7 @@ public class GORFXTools {
 
     
     // todo implement this using builder form model.gorfx
-    public static ProviderStageInORQ convertProviderStageInORQFromORQT( ProviderStageInORQT orqt ) throws Exception, InstantiationException, IllegalAccessException {
+    public static ProviderStageInORQ convertProviderStageInORQFromORQT( DynamicOfferDataSeqT orqt ) throws Exception, InstantiationException, IllegalAccessException {
 
         if(! orqt.getOfferType().equals( GORFXClientTools.getProviderStageInURI() ) )
             throw new IllegalArgumentException( );
@@ -130,11 +135,8 @@ public class GORFXTools {
         stat.setDescription( new NormalizedString( tsk.getDescription() ) );
         stat.setContractBroken( tsk.getBroken() );
         stat.setStatus( getXSDTForTaskState( tsk.getState() ) );
-        // todo resolve issue
-        // tsk.progess float vs stat.progress BigInt
-        // stat.setProgress( tsk.getProgress() );
-        // tsk has no max progress
-        //stat.setMaxProgress(  );
+        stat.setProgress( toPositiveInteger( tsk.getProgress() ) );
+        stat.setMaxProgress( toPositiveInteger( tsk.getMax_progress() ) );
 
         return stat;
     }
@@ -179,11 +181,50 @@ public class GORFXTools {
     public static URI scopedNameToURI( ImmutableScopedName sn ) {
 
         try {
-            return new URI( sn.getNameScope(), sn.getLocalName() );
+            return new URI( sn.getNameScope() + "/" + sn.getLocalName() );
         } catch ( URI.MalformedURIException e ) {
             e.printStackTrace();
         }
         
         return null;
+    }
+
+
+    public static ContextTEntry createContextEntry(String key, String value) {
+        final ContextTEntry entry = new ContextTEntry();
+        entry.setKey(new Token(key));
+        entry.set_value(new NormalizedString(value));
+        return entry;
+    }
+
+
+    public static PositiveInteger toPositiveInteger( int i ) {
+        if( i == 0 )
+            return new PositiveInteger( "1" );
+        else
+            return new PositiveInteger( Integer.toString( i ) );
+    }
+
+
+    public static TaskExecutionFailure failureFromException( @NotNull Exception e ) {
+
+        TaskExecutionFailureImplementationFault fault = new TaskExecutionFailureImplementationFault( );
+        fault.setMessage( e.getMessage() );
+        StringWriter sw = new StringWriter( );
+        PrintWriter pw  = new PrintWriter( sw );
+        e.printStackTrace( pw );
+        pw.close( );
+        fault.setFaultTrace( sw.toString() );
+        fault.setFaultClass( e.getClass().getName() );
+
+        StackTraceElement[] se = e.getStackTrace();
+        if( se.length > 0 )
+            fault.setFaultLocation( se[0].toString() );
+
+        TaskExecutionFailure tef = new TaskExecutionFailure( );
+
+        tef.setImplementationFault( fault );
+
+        return tef;
     }
 }

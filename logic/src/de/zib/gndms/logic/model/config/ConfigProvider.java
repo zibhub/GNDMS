@@ -5,6 +5,7 @@ import de.zib.gndms.model.common.ImmutableScopedName;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 
+import java.io.File;
 import java.text.ParseException;
 
 
@@ -33,6 +34,11 @@ public interface ConfigProvider extends OptionProvider {
     @NotNull ImmutableScopedName getISNOption(@NotNull String name, @NotNull ImmutableScopedName def);
 
 
+    @NotNull File getFileOption(@NotNull String name) throws MandatoryOptionMissingException;
+
+    @NotNull File getFileOption(@NotNull String name, @NotNull File def);
+
+
     boolean isBooleanOptionSet(@NotNull String name) throws MandatoryOptionMissingException;
 
     boolean isBooleanOptionSet(@NotNull String name, boolean def);
@@ -53,4 +59,11 @@ public interface ConfigProvider extends OptionProvider {
     @SuppressWarnings({ "InstanceMethodNamingConvention" })
     @NotNull DateTime getISO8601Option(@NotNull String name)
             throws MandatoryOptionMissingException, ParseException;
+
+    <X> Class<? extends X> getClassOption(final @NotNull Class<X> baseClass, @NotNull String name)
+            throws MandatoryOptionMissingException, ClassNotFoundException;
+
+    <X> Class<? extends X> getClassOption(final @NotNull Class<X> baseClass, @NotNull String name,
+                                          @NotNull Class<? extends X> def)
+            throws ClassNotFoundException;
 }

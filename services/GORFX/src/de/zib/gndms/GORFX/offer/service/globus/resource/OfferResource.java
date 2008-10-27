@@ -4,10 +4,14 @@ import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
 import de.zib.gndms.model.gorfx.Contract;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
+import de.zib.gndms.typecon.common.type.ContractXSDReader;
+import de.zib.gndms.kit.util.WidAux;
 import org.globus.wsrf.ResourceException;
 import org.jetbrains.annotations.NotNull;
 import types.DynamicOfferDataSeqT;
 import types.OfferExecutionContractT;
+
+import java.util.GregorianCalendar;
 
 
 /** 
@@ -20,16 +24,15 @@ public class OfferResource extends OfferResourceBase {
 
     private ExtOfferResourceHome home;
     
-    // maybe use custom model here
-    private Contract contract;
-
     private AbstractORQCalculator<?,?> orqCalc;
 
+    private String cachedWid;
 
     @Override
     public void setOfferExecutionContract( OfferExecutionContractT offerExecutionContract ) throws ResourceException {
         super.setOfferExecutionContract( offerExecutionContract );    //To change body of overridden methods use File | Settings | File Templates.
     }
+
 
 
     @Override
@@ -60,14 +63,35 @@ public class OfferResource extends OfferResourceBase {
 
     @SuppressWarnings({ "FeatureEnvy" })
     public @NotNull Task accept() {
-        Task task = new Task();
+        final @NotNull Task task = new Task();
+        final @NotNull Contract contract;
+        contract = ContractXSDReader.readContract(getOfferExecutionContract());
+        contract.setAccepted( new GregorianCalendar( ) );
         task.setContract(contract);
         AbstractORQ orq = getOrqCalc().getORQArguments();
         task.setOrq(orq);
         task.setDescription(orq.getDescription());
         task.setOfferType(getOrqCalc().getKey());
+        // todo offer execution contract can be null
         task.setTerminationTime(contract.getCurrentTerminationTime());
         task.setId(getHome().getSystem().nextUUID());
+        task.setWid(WidAux.getWid());
         return task;
     }
+
+
+    public String getCachedWid() {
+        return cachedWid;
+    }
+
+
+    public void setCachedWid(final String cachedWidParam) {
+        cachedWid = cachedWidParam;
+    }
+
+    @Override
+    public void refreshRegistration(final boolean forceRefresh) {
+        // nothing
+    }
+
 }

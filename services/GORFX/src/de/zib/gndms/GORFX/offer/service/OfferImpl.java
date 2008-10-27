@@ -4,9 +4,12 @@ import de.zib.gndms.GORFX.context.service.globus.resource.ExtTaskResourceHome;
 import de.zib.gndms.GORFX.context.service.globus.resource.TaskResource;
 import de.zib.gndms.GORFX.offer.service.globus.resource.ExtOfferResourceHome;
 import de.zib.gndms.GORFX.offer.service.globus.resource.OfferResource;
+import de.zib.gndms.kit.util.WidAux;
+import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.model.gorfx.Task;
-import org.globus.wsrf.ResourceKey;
 import org.apache.axis.message.addressing.EndpointReferenceType;
+import org.globus.wsrf.ResourceKey;
+import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
 import java.rmi.RemoteException;
@@ -28,11 +31,12 @@ public class OfferImpl extends OfferImplBase {
 
         try {
             // Create task object
-            ExtOfferResourceHome home = (ExtOfferResourceHome) getResourceHome( );
-            OfferResource ores = home.getAddressedResource();
-            Task task = ores.accept( );
-            ExtTaskResourceHome thome = ( ExtTaskResourceHome) getTaskResourceHome();
-            EntityManager em = thome.getEntityManagerFactory().createEntityManager();
+            @NotNull final ExtOfferResourceHome home = (ExtOfferResourceHome) getResourceHome( );
+            @NotNull final OfferResource ores = home.getAddressedResource();
+            WidAux.initWid(ores.getCachedWid());
+            @NotNull final Task task = ores.accept( );
+            @NotNull final ExtTaskResourceHome thome = ( ExtTaskResourceHome) getTaskResourceHome();
+            @NotNull final EntityManager em = thome.getEntityManagerFactory().createEntityManager();
 
             // Persist task object
             persistTask(task, em);
@@ -56,9 +60,9 @@ public class OfferImpl extends OfferImplBase {
                 }
             }
         } catch ( Exception e ) {
-            throw new RemoteException( e.getMessage() );
+            throw new RemoteException(e.getMessage(), e);
         }
-
+        finally { WidAux.removeWid(); }
     }
 
 
@@ -79,6 +83,9 @@ public class OfferImpl extends OfferImplBase {
     private void persistTask(final Task taskParam, final EntityManager emParam) {
         emParam.getTransaction().begin();
         try {
+            final @NotNull OfferType newType = emParam.find(OfferType.class, taskParam.getOfferType().getOfferTypeKey());
+            newType.getTasks().add(taskParam);
+            taskParam.setOfferType(newType);
             emParam.persist(taskParam);
             emParam.getTransaction().commit();
         }
@@ -88,5 +95,10 @@ public class OfferImpl extends OfferImplBase {
         }
     }
 
+
+    @Override
+    public ExtOfferResourceHome getResourceHome() throws Exception {
+        return (ExtOfferResourceHome) super.getResourceHome();    // Overridden method
+    }
 }
 

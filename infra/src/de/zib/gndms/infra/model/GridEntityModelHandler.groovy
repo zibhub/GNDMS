@@ -78,7 +78,8 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
 			 if (listener != null)
 				 postponedActions.setListener(listener)
 			theAction.setOwnPostponedActions(postponedActions)
-			theAction.setModel(theModel)
+            theAction.setOwnEntityManager( em )
+            theAction.setModel(theModel)
 			return theAction.call()
 	    } ) 
 	}

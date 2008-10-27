@@ -1,5 +1,6 @@
 package de.zib.gndms.logic.model;
 
+import org.apache.commons.logging.Log;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -18,10 +19,11 @@ import java.util.concurrent.Future;
 public interface TaskExecutionService {
     ExecutorService getExecutorService();
 
-    @NotNull <R> Future<R> submitAction(final @NotNull EntityAction<R> action);
+    @NotNull <R> Future<R> submitAction(final @NotNull EntityAction<R> action, final @NotNull Log logger);
 
     @NotNull <R> Future<R> submitAction(final @NotNull EntityManager em,
-                                        final @NotNull EntityAction<R> action);
+                                        final @NotNull EntityAction<R> action,
+                                        final @NotNull Log logger);
     
     boolean isTerminating();
 

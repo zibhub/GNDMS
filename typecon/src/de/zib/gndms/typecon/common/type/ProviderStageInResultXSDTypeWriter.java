@@ -1,9 +1,15 @@
 package de.zib.gndms.typecon.common.type;
 
-import types.ProviderStageInResultT;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInResultWriter;
 import de.zib.gndms.typecon.common.GORFXClientTools;
+import org.apache.axis.message.addressing.EndpointReferenceType;
+import org.globus.wsrf.container.ServiceHost;
+import org.globus.wsrf.impl.SimpleResourceKey;
+import org.globus.wsrf.utils.AddressingUtils;
+import types.ProviderStageInResultT;
+import types.SliceReference;
 
+import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPException;
 
 /**
@@ -16,10 +22,21 @@ public class ProviderStageInResultXSDTypeWriter extends AbstractXSDTypeWriter<Pr
     implements ProviderStageInResultWriter
 {
 
-
+    
     public void writeSliceReference( String srf ) {
 
-        // todo convert uid-string to epr
+        try {
+            String s = ServiceHost.getBaseURL( ).toString( ) + "c3grid/Slice";
+
+            SimpleResourceKey sk = new SimpleResourceKey( new QName("http://dspace.gndms.zib.de/DSpace/Slice", "SliceKey"), srf );
+            EndpointReferenceType epr = AddressingUtils.createEndpointReference( s, sk );
+
+            SliceReference srt = ( SliceReference ) getProduct().get_any()[0].getObjectValue();
+            srt.setEndpointReference( epr );
+        } catch ( Exception e ) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            throw new IllegalStateException( e.getMessage(), e );
+        }
     }
 
 

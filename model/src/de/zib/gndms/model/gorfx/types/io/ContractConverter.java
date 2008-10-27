@@ -10,10 +10,12 @@ import java.util.Calendar;
  * <p/>
  * User: mjorra, Date: 25.09.2008, Time: 13:16:37
  */
+@SuppressWarnings({ "FeatureEnvy" })
 public class ContractConverter extends GORFXConverterBase<ContractWriter, Contract> {
 
     
     public ContractConverter() {
+        super();
     }
 
 
@@ -22,6 +24,7 @@ public class ContractConverter extends GORFXConverterBase<ContractWriter, Contra
     }
 
 
+    @Override
     public void convert() {
 
         if( getWriter( ) == null || getModel() == null )
@@ -42,5 +45,7 @@ public class ContractConverter extends GORFXConverterBase<ContractWriter, Contra
             getWriter().writeResultValidUntil( dat );
 
         getWriter().writeConstantExecutionTime( getModel().isDeadlineIsOffset() );
+        
+        getWriter().done();
     }
 }

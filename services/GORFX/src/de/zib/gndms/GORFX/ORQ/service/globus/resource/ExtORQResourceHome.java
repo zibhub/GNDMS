@@ -1,17 +1,21 @@
 package de.zib.gndms.GORFX.ORQ.service.globus.resource;
 
+import de.zib.gndms.GORFX.ORQ.stubs.types.ORQReference;
 import de.zib.gndms.GORFX.service.globus.resource.ExtGORFXResourceHome;
 import de.zib.gndms.infra.GNDMSTools;
 import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.model.common.ModelUUIDGen;
 import org.apache.axis.message.addressing.AttributedURI;
+import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.globus.wsrf.Resource;
 import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.ResourceKey;
 import org.globus.wsrf.impl.SimpleResourceKey;
+import org.globus.wsrf.utils.AddressingUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.naming.NamingException;
@@ -124,4 +128,26 @@ public final class ExtORQResourceHome extends ORQResourceHome implements GNDMSer
     public synchronized AttributedURI getServiceAddress() {
         ensureInitialized();
         return serviceAddress;
-    }}
+    }
+
+
+    @Override
+    public Resource find(final ResourceKey resourceKeyParam) throws ResourceException {
+        return super.find(resourceKeyParam);    // Overridden method
+    }
+
+
+    public ModelUUIDGen getModelUUIDGen() {
+        return getSystem().getModelUUIDGen();
+    }
+
+
+    @Override
+    public ORQReference getResourceReference(final @NotNull ResourceKey key) throws Exception {
+		EndpointReferenceType epr = AddressingUtils.createEndpointReference(serviceAddress.toString(), key);
+		ORQReference ref = new ORQReference();
+		ref.setEndpointReference(epr);
+		return ref;
+    }
+
+}

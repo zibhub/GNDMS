@@ -11,6 +11,6 @@ public class NoEntityManagerException extends RuntimeException {
 
 
 	public NoEntityManagerException( ) {
-        super( "No entity menager provided");
+        super( "No entity manager provided");
     }
 }

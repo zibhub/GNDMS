@@ -3,10 +3,14 @@ package de.zib.gndms.logic.model.dspace;
 import de.zib.gndms.logic.action.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.ModelChangedAction;
 import de.zib.gndms.logic.model.config.ConfigActionHelp;
+import de.zib.gndms.logic.model.config.ConfigActionResult;
 import de.zib.gndms.logic.model.config.ConfigOption;
 import de.zib.gndms.logic.model.config.SetupAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
-import de.zib.gndms.model.dspace.*;
+import de.zib.gndms.model.dspace.DSpace;
+import de.zib.gndms.model.dspace.DSpaceRef;
+import de.zib.gndms.model.dspace.MetaSubspace;
+import de.zib.gndms.model.dspace.Subspace;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -22,12 +26,15 @@ import java.io.PrintWriter;
  *          User: stepn Date: 14.08.2008 Time: 17:37:51
  */
 @ConfigActionHelp(shortHelp = "Setup a subspace", longHelp = "Used to prepare the database schema for GNDMS by creating, updating, and deleting subspaces")
-public class SetupSubspaceAction extends SetupAction<Void> {
+public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
     @ConfigOption(descr="The key of the subspace (QName)")
     private ImmutableScopedName subspace;
 
     @ConfigOption(descr="Local filesystem root path for all slices stored in this subspace")
     private String path;
+
+    @ConfigOption(descr="GridFTP path for all slices stored under path")
+    private String gsiFtpPath;
 
     @ConfigOption(descr="If set, this subspace is included in the public service listing")
     private Boolean visible;
@@ -50,6 +57,9 @@ public class SetupSubspaceAction extends SetupAction<Void> {
             if (path == null && (isCreating() || hasOption("path"))) {
                 setPath(getOption("path"));
             }
+            if (gsiFtpPath== null && (isCreating() || hasOption("gsiFtpPath"))) {
+                setGsiFtpPath(getOption("gsiFtpPath"));
+            }
         }
         catch (MandatoryOptionMissingException e) {
             throw new IllegalStateException(e);
@@ -61,7 +71,7 @@ public class SetupSubspaceAction extends SetupAction<Void> {
 
     @SuppressWarnings({ "FeatureEnvy", "MethodWithMoreThanThreeNegations" })
     @Override
-    public Void execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer) {
+    public ConfigActionResult execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer) {
         MetaSubspace meta = prepareMeta(em, subspace);
         Subspace subspace = prepareSubspace(meta);
 
@@ -76,6 +86,9 @@ public class SetupSubspaceAction extends SetupAction<Void> {
 
                if (path != null)
                    subspace.setPath(getPath());
+
+               if (gsiFtpPath != null)
+                   subspace.setGsiFtpPath(getGsiFtpPath());
 
                if (subspace.getDSpaceRef() == null) {
                    DSpaceRef ref = new DSpaceRef();
@@ -104,7 +117,7 @@ public class SetupSubspaceAction extends SetupAction<Void> {
         // Register resources that require refreshing
        getPostponedActions().addAction(new ModelChangedAction(subspace));
         
-       return null;
+       return ok();
     }
 
 
@@ -182,4 +195,13 @@ public class SetupSubspaceAction extends SetupAction<Void> {
         path = pathParam;
     }
 
+
+    public String getGsiFtpPath() {
+        return gsiFtpPath;
+    }
+
+
+    public void setGsiFtpPath(final String gsiFtpPathParam) {
+        gsiFtpPath = gsiFtpPathParam;
+    }
 }

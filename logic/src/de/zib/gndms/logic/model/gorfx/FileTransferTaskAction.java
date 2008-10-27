@@ -3,6 +3,7 @@ package de.zib.gndms.logic.model.gorfx;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.FTPTransferState;
 import de.zib.gndms.model.gorfx.types.FileTransferORQ;
+import de.zib.gndms.model.gorfx.types.FileTransferResult;
 import de.zib.gndms.kit.network.PersistentMarkerListener;
 import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
 import de.zib.gndms.kit.network.GNDMSFileTransfer;
@@ -90,10 +91,12 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
             transfer.setDestinationClient( dest );
             transfer.setDestinationPath( duri.getPath() );
 
-            int fc = files.size( );
-            getModel( ).setMax_progress( fc );
-
             transfer.setFiles( files );
+
+            transfer.prepareTransfer();
+
+            int fc = transfer.getFiles( ).size( );
+            getModel( ).setMax_progress( fc );
 
             transfer.performPersistentTransfer( pml );
 
@@ -101,7 +104,12 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
             em.remove( transferState );
             em.getTransaction().commit();
 
-            finish( fc + " files transfered."  );
+            FileTransferResult ftr = new FileTransferResult();
+
+            ArrayList<String> al = new ArrayList<String>( transfer.getFiles( ).keySet( ) );
+            ftr.setFiles( al.toArray( new String[al.size( )] ));
+
+            finish( ftr );
 
         } catch ( TransitException e ) {
             throw e;

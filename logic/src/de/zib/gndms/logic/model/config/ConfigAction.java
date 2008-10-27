@@ -9,11 +9,11 @@ import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 
 import javax.persistence.EntityManager;
+import java.io.File;
 import java.io.PrintWriter;
-import java.lang.reflect.Field;
+import java.text.ParseException;
 import java.util.*;
 import java.util.regex.Pattern;
-import java.text.ParseException;
 
 
 /**
@@ -26,7 +26,7 @@ import java.text.ParseException;
  *
  *          User: stepn Date: 14.08.2008 Time: 14:53:21
  */
-@SuppressWarnings({ "StaticMethodOnlyUsedInOneClass" })
+@SuppressWarnings({ "StaticMethodOnlyUsedInOneClass", "ClassWithTooManyMethods" })
 public abstract class ConfigAction<R> extends AbstractEntityAction<R>
         implements CommandAction<R> {
 
@@ -149,7 +149,7 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
 
 
     public final @NotNull String localOptionsToString(boolean withNewlines) {
-        return CommandAction.ParameterTools.asString(getLocalOptions(), OPTION_NAME_PATTERN,
+        return ParameterTools.asString(getLocalOptions(), OPTION_NAME_PATTERN,
                                                      withNewlines);
     }
 
@@ -162,7 +162,7 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
     public final void parseLocalOptions(final @NotNull String cfgParams)
             throws ParameterTools.ParameterParseException {
         Map<String,String> cfgMap = new HashMap<String,String>(8);
-        CommandAction.ParameterTools.parseParameters(cfgMap, cfgParams, OPTION_NAME_PATTERN);
+        ParameterTools.parseParameters(cfgMap, cfgParams, OPTION_NAME_PATTERN);
         setLocalOptions(cfgMap);
     }
 
@@ -233,7 +233,7 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
 
     public final @NotNull String allOptionsToString(boolean withNewLines)
     {
-        return CommandAction.ParameterTools.asString(getAllOptions(), OPTION_NAME_PATTERN,
+        return ParameterTools.asString(getAllOptions(), OPTION_NAME_PATTERN,
                                                      withNewLines);
     }
 
@@ -365,78 +365,44 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
             throws MandatoryOptionMissingException {return config.getISNOption(name);}
 
 
-    public static class ConfigTools {
-        private ConfigTools() {
-        }
+    @NotNull
+    public File getFileOption(@NotNull final String name, @NotNull final File def) {
+        return config.getFileOption(name, def);
+    }
 
 
-        public static Map<String, ConfigOption> getParamMap(
-                final @NotNull Class<? extends ConfigAction<?>> clazz) {
-            Map<String, ConfigOption> map = new HashMap<String, ConfigOption>(8);
-            fillParamMapForClass(clazz, map);
-            return map;
-        }
+    @NotNull
+    public File getFileOption(@NotNull final String name) throws MandatoryOptionMissingException {
+        return config.getFileOption(name);
+    }
 
 
-        private static void fillParamMapForClass(
-                final Class<?> clazz, final Map<String, ConfigOption> mapParam) {
-            if (Object.class.equals(clazz))
-                return;
-            else
-                fillParamMapForClass(clazz.getSuperclass(), mapParam);
-            for (Field field : clazz.getDeclaredFields()) {
-                ConfigOption option = field.getAnnotation(ConfigOption.class);
-                if (option != null) {
-                    String altName = option.altName();
-                    if (altName != null && altName.length() > 0) {
-                        if (mapParam.containsKey(altName))
-                            throw new IllegalStateException("Duplicate parameter name detected");
-                        else
-                            mapParam.put(altName, option);
-                    }
-                    else
-                        mapParam.put(field.getName(), option);
-                }
-            }
-        }
-
-        @SuppressWarnings({ "HardcodedFileSeparator" })
-        protected static void printOptionReminder(PrintWriter printWriter) {
-            printWriter.println("Option format reminder: opt1: value1; ...; optN: valueN");
-            printWriter.println(" * Option names must match the regexp: '"
-                    + OPTION_NAME_PATTERN.toString() + "'.");
-            printWriter.println(" * Values may be enclosed in single or double quotes.");
-            printWriter.println("   * Without quotes, values get whitespace-trimmed.");
-            printWriter.println("   * Inside quotes, '\\' may be used for escaping.");
-            printWriter.println(
-                        " * 'foo' or '+foo' denotes a true, '!foo' or '-foo' a false boolean option named 'foo'.");
-            printWriter.println(
-                        " * Timestamps are expected to be in ISO8601-format and based on UTC.");
-        }
+    public <X> Class<? extends X> getClassOption(
+            final @NotNull Class<X> baseClass, @NotNull final String name)
+            throws MandatoryOptionMissingException, ClassNotFoundException {
+        return config.getClassOption(baseClass, name);
+    }
 
 
-        protected static void printOptionHelp(final @NotNull PrintWriter writer,
-                                              final Map<String, ConfigOption> mapParam) {
-            Object[] entries = mapParam.entrySet().toArray();
-            Arrays.sort(entries, new Comparator<Object>() {
-                @SuppressWarnings({ "unchecked" })
-                public int compare(final Object o1, final Object o2) {
-                    return ((Map.Entry<String, ConfigOption>)o1).getKey().compareTo(((Map.Entry<String, ConfigOption>)o2).getKey());
-                }
-            });
-            for (Object obj : entries) {
-                Map.Entry<String, ConfigOption> entry = (Map.Entry<String, ConfigOption>) obj;
-
-                writer.print(" * ");
-                final String key = entry.getKey();
-                writer.print(key);
-                writer.print(": ");
-                final ConfigOption option = entry.getValue();
-                final String descr = option.descr();
-                writer.println(descr == null || descr.length() == 0 ? "The " + key : descr);
-            }
-        }
+    public <X> Class<? extends X> getClassOption(
+            final @NotNull Class<X> baseClass, @NotNull final String name,
+            @NotNull final Class<? extends X> def) throws ClassNotFoundException {
+        return config.getClassOption(baseClass, name, def);
+    }
 
 
+    @SuppressWarnings({ "MethodMayBeStatic", "InstanceMethodNamingConvention" })
+    protected OkResult ok() {
+        return new OkResult();
+    }
+
+    @SuppressWarnings({ "MethodMayBeStatic", "InstanceMethodNamingConvention" })
+    protected OkResult ok(final @NotNull String details) {
+        return new OkResult(details);
+    }
+
+    @SuppressWarnings({ "MethodMayBeStatic" })
+    protected FailedResult failed(final @NotNull String details) {
+        return new FailedResult(details);
     }
 }

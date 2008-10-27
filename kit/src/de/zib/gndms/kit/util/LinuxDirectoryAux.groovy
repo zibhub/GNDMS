@@ -8,12 +8,12 @@ package de.zib.gndms.kit.util
 class LinuxDirectoryAux extends DirectoryAux {
 
     final static String WX = "300"
-        final static String RO = "400"
-        final static String RW = "600"
+    final static String RO = "500"
+    final static String RW = "700"
 
-        public boolean setDirectoryReadWrite( String pth ) {
-            return setMode( RW, pth )
-        }
+    public boolean setDirectoryReadWrite( String pth ) {
+        return setMode( RW, pth )
+    }
 
 
     public boolean setDirectoryReadOnly( String pth ) {

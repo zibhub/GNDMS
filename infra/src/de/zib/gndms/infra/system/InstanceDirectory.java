@@ -89,6 +89,8 @@ public class InstanceDirectory {
         EntityManager em = emf.createEntityManager();
         try {
             OfferType type = em.find(OfferType.class, offerTypeKey);
+            if (type == null)
+                throw new IllegalArgumentException("Unknow offer type: " + offerTypeKey);
             return orqPark.getInstance(type);
         }
         finally {
@@ -281,8 +283,9 @@ public class InstanceDirectory {
         }
 
 
+        @NotNull
         @Override
-            public String mapKey(final OfferType keyParam) {
+            public String mapKey(final @NotNull OfferType keyParam) {
             return keyParam.getOfferTypeKey();
         }
     }

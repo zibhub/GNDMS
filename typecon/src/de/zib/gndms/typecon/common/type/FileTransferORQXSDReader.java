@@ -2,7 +2,7 @@ package de.zib.gndms.typecon.common.type;
 
 import de.zib.gndms.model.gorfx.types.FileTransferORQ;
 import types.ContextT;
-import types.FileTransferORQT;
+import types.DynamicOfferDataSeqT;
 import types.FileMappingSeqT;
 import org.apache.axis.message.MessageElement;
 
@@ -14,7 +14,7 @@ import org.apache.axis.message.MessageElement;
  */
 public class FileTransferORQXSDReader {
 
-    public static FileTransferORQ read( FileTransferORQT orq, ContextT ctx )  {
+    public static FileTransferORQ read( DynamicOfferDataSeqT orq, ContextT ctx )  {
 
         try {
             FileTransferORQ torq = AbstractORQXSDReader.read( FileTransferORQ.class, ctx );
@@ -26,8 +26,8 @@ public class FileTransferORQXSDReader {
             if( mes.length > 3 )
                 throw  new IllegalArgumentException( "Source orq has to many arguments" );
 
-            torq.setSourceURI( mes[0].getObjectValue().toString( ) );
-            torq.setTargetURI( mes[1].getObjectValue().toString( ) );
+            torq.setSourceURI( ( String ) mes[0].getObjectValue( String.class ) );
+            torq.setTargetURI( ( String ) mes[1].getObjectValue( String.class ) );
 
             if( mes.length == 3 ) {
                 torq.setFileMap(
