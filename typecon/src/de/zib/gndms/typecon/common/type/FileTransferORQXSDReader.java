@@ -26,8 +26,8 @@ public class FileTransferORQXSDReader {
             if( mes.length > 3 )
                 throw  new IllegalArgumentException( "Source orq has to many arguments" );
 
-            torq.setSourceURI( mes[0].getObjectValue().toString( ) );
-            torq.setTargetURI( mes[1].getObjectValue().toString( ) );
+            torq.setSourceURI( ( String ) mes[0].getObjectValue( String.class ) );
+            torq.setTargetURI( ( String ) mes[1].getObjectValue( String.class ) );
 
             if( mes.length == 3 ) {
                 torq.setFileMap(

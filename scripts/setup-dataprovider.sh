@@ -4,7 +4,11 @@ STAGING_COMMAND="%{C3GRID_SOURCE}/scripts/dummy-staging.sh"
 ESTIMATION_COMMAND="%{C3GRID_SOURCE}/scripts/dummy-estimation.sh"
 STAGING_AREA_PATH="/tmp"
 STAGING_AREA_SIZE="1000000" # Currently unused
-STAGING_AREA_GSI_FTP_URL="gsiftp://$HOSTNAME""$STAGING_AREA_PATH"
+
+source $(dirname $0)/check-hostname.sh
+# One can set the $hn variable manually in the check-hostname script,
+# if the returned value isn't the desired one.
+STAGING_AREA_GSI_FTP_URL="gsiftp://$hn""$STAGING_AREA_PATH"
 
 
 

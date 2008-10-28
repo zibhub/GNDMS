@@ -11,6 +11,8 @@ import org.jetbrains.annotations.NotNull;
 import types.DynamicOfferDataSeqT;
 import types.OfferExecutionContractT;
 
+import java.util.GregorianCalendar;
+
 
 /** 
  * The implementation of this OfferResource type.
@@ -64,11 +66,13 @@ public class OfferResource extends OfferResourceBase {
         final @NotNull Task task = new Task();
         final @NotNull Contract contract;
         contract = ContractXSDReader.readContract(getOfferExecutionContract());
+        contract.setAccepted( new GregorianCalendar( ) );
         task.setContract(contract);
         AbstractORQ orq = getOrqCalc().getORQArguments();
         task.setOrq(orq);
         task.setDescription(orq.getDescription());
         task.setOfferType(getOrqCalc().getKey());
+        // todo offer execution contract can be null
         task.setTerminationTime(contract.getCurrentTerminationTime());
         task.setId(getHome().getSystem().nextUUID());
         task.setWid(WidAux.getWid());

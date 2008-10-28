@@ -121,7 +121,7 @@ public class GORFXClientTools {
     public static FileTransferORQT createEmptyFileTransferORQT( ) throws SOAPException, IllegalAccessException, InstantiationException {
 
         FileTransferORQT orq = new FileTransferORQT();
-        orq.setOfferType( getProviderStageInURI() );
+        orq.setOfferType( getFileTransferURI() );
 
         orq.set_any( getMessageElementsForFieldDescs( FileTransferORQT.getTypeDesc().getFields() ) );
 
