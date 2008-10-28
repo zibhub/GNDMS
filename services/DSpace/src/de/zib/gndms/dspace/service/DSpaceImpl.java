@@ -153,8 +153,8 @@ public class DSpaceImpl extends DSpaceImplBase {
 			de.zib.gndms.dspace.slice.service.globus.resource.SliceResource thisResource = (de.zib.gndms.dspace.slice.service.globus.resource.SliceResource)home.find(resourceKey);
 			
 			//  This is where the creator of this resource type can set whatever needs
-			//  to be set on the resource so that it can function appropriatly  for instance
-			//  if you want the resouce to only have the query string then there is where you would
+			//  to be set on the resource so that it can function appropriately  for instance
+			//  if you want the resource to only have the query string then there is where you would
 			//  give it the query string.
             EntityManager em = system.getEntityManagerFactory().createEntityManager( );
             MetaSubspace ms = em.find( MetaSubspace.class, new ImmutableScopedName( subspaceSpecifier ) );
@@ -177,6 +177,7 @@ public class DSpaceImpl extends DSpaceImplBase {
                     (Subspace.class, (ExtSubspaceResourceHome) system.getInstanceDir().getHome( Subspace.class ));
 
             ModelAction<Subspace, Slice> ma = csa;
+            csa.setClosingEntityManagerOnCleanup( false );
             Slice ns = (Slice) mh.callModelAction( em, system.getEntityUpdateListener(), ma, sp);
 
             csa.getPostponedActions().call( );
@@ -192,7 +193,7 @@ public class DSpaceImpl extends DSpaceImplBase {
 			transportURL += "Slice";
 			epr = org.globus.wsrf.utils.AddressingUtils.createEndpointReference(transportURL,resourceKey);
 		} catch (Exception e) {
-			throw new RemoteException("Error looking up Slice home:" + e.getMessage(), e);
+			throw new RemoteException("Error looking up Slice home:"  + e.getMessage(), e);
 		}
 
 		//return the typed EPR

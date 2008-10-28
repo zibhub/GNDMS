@@ -50,6 +50,7 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
     @Override
     public void initialize() {
         createSliceAction.setParent( this );
+        createSliceAction.setClosingEntityManagerOnCleanup( false );
         super.initialize();
     }
     
