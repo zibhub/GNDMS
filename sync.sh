@@ -9,6 +9,8 @@ done
 for SERVICE in services/* ; do
   echo mkdir -p $SERVICE/test/lib
   mkdir -p $SERVICE/test/lib
+  echo mkdir -p $SERVICE/test/src
+  mkdir -p $SERVICE/test/src
   echo ln -sf ../../../../../../typecon/shared_service_src/shared $SERVICE/src/de/zib/gndms
   ln -sf ../../../../../../typecon/shared_service_src/shared $SERVICE/src/de/zib/gndms
   echo find $SERVICE -type f -name '*.gar' -exec ln -sf {} $PWD \;

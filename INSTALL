@@ -58,9 +58,10 @@ configuration (bash) can be found in etc/example.profile):
 - For convenience, you might also want to 
   add $GROOVY_HOME/bin to your PATH
 
-- Install openssl
-- Install curl
-- Both should be available in your $PATH
+- Install openssl if not available
+- Install curl if not available
+- Install rsync if not available
+- All three should be available in your $PATH
                                                                                  
 - Set C3GRID_SOURCE to the source directory and have it in your environment
 - Set C3GRID_SHARED to $GLOBUS_LOCATION/etc/c3grid_shared and have it in 
@@ -240,7 +241,7 @@ DETAILED BUILD INSTRUCTIONS
   service with the following dependencies:
 
   J2EE, groovy, annotations, "servicename"-stubs,
-  gndms-infra, gndms-logic, gndms-shared-model,
+  gndms-infra, gndms-logic, gndms-shared-model, joda-time,
   SOURCES, all non-symlinks in service/ServiceName/lib,  gt4
   
   compile to service/ServiceName/out/production (resp. test/), and exclude the

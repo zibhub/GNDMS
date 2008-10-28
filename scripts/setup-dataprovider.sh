@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# %{} is shell variable substitution at container runtime
+
 STAGING_COMMAND="%{C3GRID_SOURCE}/scripts/dummy-staging.sh"
 ESTIMATION_COMMAND="%{C3GRID_SOURCE}/scripts/dummy-estimation.sh"
 STAGING_AREA_PATH="/tmp"

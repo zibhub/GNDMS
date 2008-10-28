@@ -45,14 +45,21 @@ public class ProviderStageInClient {
     @SuppressWarnings({ "UseOfSystemOutOrSystemErr" })
     public static void main(String[] args) throws Exception {
 
+	    if (args.length != 3) {
+		    System.err.println("Call with <URL of GORFX-Endpoint> <staging.properties> <DN>");
+		    System.exit(1);
+	    }
+
+	    
         // Fetch Args
         final String gorfxEpUrl = args[0];
         final String sfrPropFile = args[1];
+	    final String dn = args[2];
 
         // Create reusable context with pseudo DN
         final ContextT xsdContext = new ContextT();
         final ContextTEntry entry =
-                GORFXTools.createContextEntry("Auth.DN", "Mr. Wichtig");
+                GORFXTools.createContextEntry("Auth.DN", dn);
         xsdContext.setEntry(new ContextTEntry[] { entry });
 
         // Load SFR from Props and convert to XML objects
@@ -84,6 +91,7 @@ public class ProviderStageInClient {
             state = (TaskExecutionState) ObjectDeserializer.toObject( rpResponse.get_any()[0], TaskExecutionState.class );
             failed = TaskStatusT.failed.equals(state.getStatus());
             finished = TaskStatusT.finished.equals(state.getStatus());
+	        System.out.println("Waiting for staging to finish...");
             try {
                 Thread.sleep(MILLIS);
             }
@@ -104,6 +112,7 @@ public class ProviderStageInClient {
                 EndpointReferenceType epr = sr.getEndpointReference();
                 System.out.println( epr );
                 SliceClient sliceClient = new SliceClient(epr);
+	            System.out.println("Collect your results at:");
                 System.out.println(sliceClient.getSliceLocation());
             }
         }
