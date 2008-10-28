@@ -21,6 +21,7 @@ import javax.persistence.Query;
 import java.rmi.RemoteException;
 
 import org.globus.wsrf.ResourceKey;
+import org.apache.axis.types.URI;
 
 /** 
  * TODO:I am the service side implementation class.  IMPLEMENT AND DOCUMENT ME
@@ -66,9 +67,7 @@ public class SliceImpl extends SliceImplBase {
                 sp = findSubspace( new ImmutableScopedName( sliceTransformSpecifier.getSubspaceSpecifier() ), em );
                 sk = osl.getKind( );
             } else if( sliceTransformSpecifier.getSliceKind( ) != null ) {
-                // todo uncomment after xsd type change
-                // String uri = sliceTransformSpecifier.getSliceKind( );
-                String uri = null;
+                String uri = sliceTransformSpecifier.getSliceKind( ).toString( );
                 sp = osl.getOwner( );
                 sk = findSliceKind( uri, sp.getId( ), em );
             } else { // must be both
@@ -76,9 +75,7 @@ public class SliceImpl extends SliceImplBase {
                         new ImmutableScopedName (
                                 sliceTransformSpecifier.getSliceTypeSpecifier().getSubspaceSpecifier() ),
                         em );
-                // todo uncomment after xsd type change
-                // String uri = sliceTransformSpecifier.getSliceTypeSpecifier().getSliceKind( );
-                String uri = null;
+                String uri = sliceTransformSpecifier.getSliceTypeSpecifier().getSliceKind( ).toString( );
                 sk = findSliceKind( uri, sp.getId( ), em );
             }
 
