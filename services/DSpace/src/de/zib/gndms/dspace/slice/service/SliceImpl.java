@@ -50,7 +50,7 @@ public class SliceImpl extends SliceImplBase {
             esr = (ExtSliceResourceHome) getResourceHome(  );
             sr = esr.getAddressedResource();
         } catch ( Exception e ) {
-            throw new RemoteException( "Can't obtain slice resource home." );
+            throw new RemoteException( "Can't obtain slice resource home.", e );
         }
 
         EntityManager em = null;
@@ -91,12 +91,13 @@ public class SliceImpl extends SliceImplBase {
             TransformSliceAction tsa =
                     new TransformSliceAction( nsr.getID(), osl.getTerminationTime( ), sk, sp, osl.getTotalStorageSize(), system.getModelUUIDGen() );
 
+            tsa.setClosingEntityManagerOnCleanup( false );
 
             GridResourceModelHandler mh =
                     new GridResourceModelHandler<Slice, ExtSliceResourceHome, SliceResource> (Slice.class, esr );
 
             Slice nsl = (Slice) mh.callModelAction( em, system, tsa, osl );
-            tsa.getPostponedActions().call( );
+            
             if( nsl == null ) {
                 esr.remove( rk );
                 throw new InternalFailure( );

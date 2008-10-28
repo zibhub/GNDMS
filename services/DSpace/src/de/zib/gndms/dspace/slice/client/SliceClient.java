@@ -180,7 +180,7 @@ public class SliceClient extends SliceClientBase implements SliceI {
 
 
     // puts the slice into another subspace
-    public SliceReference transfromSliceTo( javax.xml.namespace.QName subs, ContextT ctx  ) throws RemoteException, InternalFailure, UnknownOrInvalidSliceKind, OutOfSpace {
+    public SliceReference transformSliceTo( javax.xml.namespace.QName subs, ContextT ctx  ) throws RemoteException, InternalFailure, UnknownOrInvalidSliceKind, OutOfSpace {
 
         SliceTransformSpecifierT spec = new SliceTransformSpecifierT( );
         spec.setSubspaceSpecifier( subs );
