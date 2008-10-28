@@ -28,12 +28,13 @@ service you need to satisfy the following prerequisites (an example shell
 configuration (bash) can be found in etc/example.profile):
 
 - Install a current version of J2SEE Version 5 and its accompanying JDK   
+  (Java 6 should also do; however, this has not been tested)
   
   For compiling the services, please make sure that JAVA_HOME points to this 
   version and that this is also the version that is in your PATH.  Naturally,
   this should be the same version than the one you use for globus and ant.
 
-- Install ant
+- Install ant >= 1.5
 - Set $ANT_HOME and have it in your environment
 - Add $ANT_HOME/bin to your path
 
@@ -82,8 +83,8 @@ configuration (bash) can be found in etc/example.profile):
   export DERBY_OPTS="'-Dij.database=jdbc:derby:$C3GRID_SHARED/db/c3grid'"
 
   for peeking inside the derby database using the ij tool. 
-  (Caution! Never ever do this while globus is running! Do not even try, like
-   in *do* and *not*.)
+
+  (Caution! Never ever do this while globus is running!)
 
 
 
@@ -91,10 +92,12 @@ configuration (bash) can be found in etc/example.profile):
 ==================
 BUILD INSTRUCTIONS
 ==================
-    
+               
+
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!                                                                               
-!! If you dont want to build but instead just want to deploy, please skip to the
-!! section titled "DEPLOYMENT INSTRUCTION".
+!! If you dont want to build but instead just want to deploy, please skip to   !!
+!! the section titled "DEPLOYMENT QUICK GUIDE"                                 !!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!                                                                               
                                                                                  
 
 We don't have a proper global build script yet. Therefore you have to do lots
@@ -105,15 +108,6 @@ The following description was written for IntelliJ IDEA 8M1 but you should be
 able to repeat it with any other java tool chain.
 
 
--------------
-COMPILE STUBS
--------------
-
-In the toplevel directory execute:
-
-for i in services/* ; do ( cd $i && ant compileStubs ) ; done
-
-If you ever want to delete all stubs, simply remove services/*/build/*
 
 
 ------------------
@@ -153,7 +147,9 @@ DETAILED BUILD INSTRUCTIONS
   0) Excute in services/
 
      for i in * ; do cd $i && ant compileStubs ; done
-
+             
+	 (If you ever want to delete all stubs, simply remove services/*/build/*)
+	
 
   1) Execute sync.sh in the projects' top level directory. This will create all
 	 necessary symlinks in the services' lib directories. Without doing this,
@@ -283,14 +279,84 @@ Other common reasons for a failed container starts are invalid credentials
 (hostkey/hostcert.pem) or outdated CRLs. In the latter case, the script
 contained in contrib/fetch-crl may help you. Execute "fetch-crl -o
 <grid-cert-dir>" with apropriate permissions (Depends on wget).
+     
+
+                                
+                       
+======================
+DEPLOYMENT QUICK GUIDE
+======================
+           
+           
+---------------------------------------------
+DATAPROVIDER DEPLOYMENT AND SETUP QUICK GUIDE
+---------------------------------------------
+
+
+
+Setting up a dataprovider can be done in a few quick steps:
+
+1) As the user who unpacked the GNDMS distribution, enter
+   $C3GRID_SOURCE and execute
+
+   ant -f build-deploy.xml prepare
+
+
+2) Shutdown the globus container and execute as globus user
+
+   ant -f build-deploy.xml dp-install
+                                     
+
+Now you should have a working installation of GNDMS.  Next, we'll configure it as a dataprovider site.
+                                                                                                      
+
+3) Run the container again with enabled GNDMS monitor. For this, 
+
+   - Set GNDMS_MONITOR_ENABLED=true
+   - Execute globus-start-container in the same shell
+
+
+4) Edit the shell variables at the beginning of 
+  
+     scripts/setup-dataprovider.sh
+   
+   according to your needs.   
+
+   If you want to use java plugin-based staging instead of script-based staging:
+
+   Additionally edit the line starting with "moni call -v .gorfx.ConfigOfferType".  There, enter the names of 
+   your plugin classes ("estimationClass", "stagingClass") and manually add the jar containing these classes
+   to $GLOBUS_LOCATION/lib before proceeding with the next step).
+                               
+
+5) Wait for globus to have finished startup (i.e. it has printed the list of running services on the console).
+
+   As globus user, execute in $C3GRID_SOURCE
+
+     ant -f build-deploy.xml dp-setupdb      
+
+   This can be done only once!
+
+   If this step fails, and you want to retry with a modified setup script, you have to
+ 
+     Shutdown globus, run ant -f build-deploy.xml dp-killdb,
+
+   and try again.
+   
+
+6) Restart globus, possibly with disabled monitor
+
+
+Now, you're done!
 
 
 
 
-==========
-DEPLOYMENT
-==========
-             
+=================
+MANUAL DEPLOYMENT
+=================
+     
+
 
 --------------------
 CONTAINER DEPLOYMENT
@@ -453,5 +519,4 @@ encapsulates JPA transaction processing inside GNDMS).
 CONFIGURATION
 -------------
                                  
-Yet to be written. There will be groovy scripts for this in scripts/.
-
+Edit and run the apropriate configuration script from scripts/ via the enabled monitor.

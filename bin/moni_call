@@ -46,7 +46,7 @@ fi
 
 
 [ -n "$verbose" ] && echo ">>>>>>>> Calling $CLASSNAME \"$REST\""
-curl -u "$USER""$PASS" http://"$HOST":"$PORT"/?"$MODE""&action=$PCLASSNAME""$PREST"
+curl -S -s -u "$USER""$PASS" http://"$HOST":"$PORT"/?"$MODE""&action=$PCLASSNAME""$PREST"
 [ -n "$verbose" ] && echo " "
 [ -n "$verbose" ] && echo "<<<<<<<< Done."
 [ -n "$verbose" ] && echo " "
