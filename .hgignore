@@ -19,6 +19,7 @@ services/**/derby.log
 *.eml
 *.iml
 *.gar
+extra/test-jars/*.jar
 extra/gndms-schema.tar
 extra/lib/gndms-infra.jar
 extra/lib/gndms-logic.jar

@@ -15,9 +15,16 @@ file sets.
 Originally, GNDMS has been written exclusively for the data management needs
 of c3grid (www.c3grid.de). However, the implementation is flexible enough for
 reuse by other projects.
+       
 
+---------------------
+Who should read what?
+---------------------
 
+Data providers: Prerequisites and Quick Deployment Guide
+Developers: Everything from top to bottom.
 
+                 
   
 =============                
 PREREQUISITES
@@ -108,8 +115,8 @@ you start please make sure you have succesfully installed all prerequisites.
 The following description was written for IntelliJ IDEA 8M1 but you should be
 able to repeat it with any other java tool chain.
 
-There are be some problems with IDE's which doesn't support Groovy,
-e.g. Eclipse (at the time of writing).may
+There are some problems with IDE's which don't support Groovy,
+e.g. Eclipse (at the time of writing).
 
 
 
@@ -297,7 +304,6 @@ DATAPROVIDER DEPLOYMENT AND SETUP QUICK GUIDE
 ---------------------------------------------
 
 
-
 Setting up a dataprovider can be done in a few quick steps:
 
 1) As the user who unpacked the GNDMS distribution, enter
@@ -339,11 +345,12 @@ Now you should have a working installation of GNDMS.  Next, we'll configure it a
 
      ant -f build-deploy.xml dp-setupdb      
 
-   This can be done only once!
+   This can be done only once and will produce a few pages of output that should not contain any
+   java stracktraces, just consecutive commands and the string "OK" as result for each command.
 
    If this step fails, and you want to retry with a modified setup script, you have to
  
-     Shutdown globus, run ant -f build-deploy.xml dp-killdb,
+     Shutdown globus, run "ant -f build-deploy.xml dp-killdb",
 
    and try again.
    
@@ -351,8 +358,32 @@ Now you should have a working installation of GNDMS.  Next, we'll configure it a
 6) Restart globus, possibly with disabled monitor
 
 
-Now, you're done!
+Now, you're done!  To test, load your grid-proxy and (assuming bash) execute in $C3GRID_SOURCE:
 
+   ant -f build-deploy.xml dp-test \
+      "-Dpsc.epr=https://$(hostname):8443/wsrf/services/c3grid/GORFX" \
+      "-Dpsc.sfr=test-data/sfr/dummy-sfr.properties" \
+      "-Dpsc.dn=$(grid-proxy-info -identity)"
+
+Output should look like this:
+
+    Buildfile: build-deploy.xml
+
+    check-env:
+
+    dp-test:
+         [java] Waiting for staging to finish...
+         [java] types.ProviderStageInResultT@838ffe5f
+         [java] Address: https://130.73.72.122:8443/wsrf/services/c3grid/Slice
+         [java] Reference property[0]:
+         [java] <ns3:SliceKey xmlns:ns3="http://dspace.gndms.zib.de/DSpace/Slice">c51ea260-a50d-11dd-adb5-ac1efd92dacf</ns3:SliceKey>
+         [java] 
+         [java] Collect your results at:
+         [java] gsiftp://seeker.zib.de/tmp/RW/c51fb3d0-a50d-11dd-adb5-ac1efd92dacf
+
+    BUILD SUCCESSFUL
+	Total time: 7 seconds
+    
 
 
 
