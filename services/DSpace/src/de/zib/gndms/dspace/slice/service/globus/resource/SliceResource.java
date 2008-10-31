@@ -154,11 +154,15 @@ public class SliceResource extends SliceResourceBase
         EntityManager em = null;
         try {
             em = resourceHome.getEntityManagerFactory().createEntityManager(  );
+            em.getTransaction().begin();
             Slice sl = em.find( Slice.class, getID() );
             Subspace sp = sl.getOwner();
             logger.debug( "removing slice directory: " + sl.getAssociatedPath() );
             sp.destroySlice( sl );
             em.remove( sl );
+            em.getTransaction().commit( );
+        } catch ( Exception e) { // for debugg'n
+            e.printStackTrace(  );
         } finally {
             if( em != null && em.isOpen() )
                 em.close( );
