@@ -115,7 +115,7 @@ public class SliceImpl extends SliceImplBase {
                 throw new RemoteException(e.getMessage(), e);
             }
         } finally {
-            if( em != null )
+            if( em != null && em.isOpen( ) )
                 em.close( );
         }
     }

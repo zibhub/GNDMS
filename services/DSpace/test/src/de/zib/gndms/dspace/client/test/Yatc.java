@@ -127,16 +127,24 @@ public class Yatc {
         SliceClient sc = new SliceClient( sref.getEndpointReference() );
         sliceTests( sc, gsiPath, scopeName, localName );
 
+
         boolean dest=false;
-        try {
-            slice.getSliceKind();
-        } catch ( RemoteException e ) {
-            dest=true;
+        System.out.println( "Waiting for slice removal: " );
+        for( int i=0; i < 60 && !dest; ++i ) {
+            System.out.print( i+1 + " " );
+            try {
+                slice.getSliceKind();
+            } catch ( RemoteException e ) {
+                dest=true;
+                System.out.println( "\nSource slice removed" );
+            }
+            Thread.sleep( 1000 );
         }
+
         if( ! dest ) {
             System.out.println( "Transformed slice still exists." );
-        // assertTrue( dest, "slice destruction" );
-        }
+            assertTrue( dest, "slice destruction" );
+       }
 
         System.out.println( "\n>>> Performing dspace.slice tests" );
         System.out.println( "checking transformSlice( Subspace )" );
