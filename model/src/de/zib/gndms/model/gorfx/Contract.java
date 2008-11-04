@@ -29,16 +29,16 @@ public class Contract {
 
     // can be mapped to IfDesisionBefore
     @Temporal(value = TemporalType.TIMESTAMP)
-    Calendar accepted;
+    private Calendar accepted;
 
     // can be mapped to ExecutionLiklyUntil
     @Temporal(value = TemporalType.TIMESTAMP)
-    Calendar deadline;
+    private Calendar deadline;
 
     // can be mapped to ResultValidUntil
     // this must be at least equal to the deadline
     @Temporal(value = TemporalType.TIMESTAMP)
-    Calendar resultValidity;
+    private Calendar resultValidity;
 
     // can be mapped to constantExecutionTime
     transient boolean deadlineIsOffset = false;
