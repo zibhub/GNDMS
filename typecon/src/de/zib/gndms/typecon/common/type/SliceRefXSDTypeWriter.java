@@ -1,6 +1,7 @@
 package de.zib.gndms.typecon.common.type;
 
 import de.zib.gndms.model.gorfx.types.io.SliceRefWriter;
+import de.zib.gndms.model.gorfx.types.io.SliceRefConverter;
 import de.zib.gndms.model.dspace.types.SliceRef;
 import types.SliceReference;
 
@@ -19,6 +20,7 @@ import org.apache.axis.message.addressing.EndpointReferenceType;
  */
 public class SliceRefXSDTypeWriter extends AbstractXSDTypeWriter<SliceReference> implements SliceRefWriter {
 
+    // use write() for one shot writing s.b.
 
     public void writeSliceRef( SliceRef sf ) {
 
@@ -58,5 +60,14 @@ public class SliceRefXSDTypeWriter extends AbstractXSDTypeWriter<SliceReference>
     public void done() {
         //nothing to do
         setProduct( new SliceReference( ) );
+    }
+
+
+    public static SliceReference write( SliceRef sr ) {
+
+        SliceRefXSDTypeWriter wrt = new SliceRefXSDTypeWriter();
+        SliceRefConverter conv = new SliceRefConverter( wrt, sr );
+        conv.convert( );
+        return wrt.getProduct();
     }
 }

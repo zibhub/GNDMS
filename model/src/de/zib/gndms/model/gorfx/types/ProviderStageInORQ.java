@@ -13,9 +13,12 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ProviderStageInORQ extends AbstractORQ {
 
+    private static final long serialVersionUID = -5318593349599919368L;
+
     private DataDescriptor dataDescriptor;
     private String dataFile;
     private String metadataFile;
+
 
     public ProviderStageInORQ( ) {
         super( );

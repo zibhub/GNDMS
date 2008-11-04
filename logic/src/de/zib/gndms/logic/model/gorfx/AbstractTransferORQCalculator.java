@@ -19,12 +19,13 @@ import java.io.IOException;
  * <p/>
  * User: mjorra, Date: 30.09.2008, Time: 10:51:38
  */
-public class FileTransferORQCalculator extends AbstractORQCalculator<FileTransferORQ, FileTransferORQCalculator> {
+public abstract class AbstractTransferORQCalculator<M extends FileTransferORQ, C extends AbstractORQCalculator<M, C>>
+    extends AbstractORQCalculator<M,C> {
 
 
-    public FileTransferORQCalculator( ) {
+    protected AbstractTransferORQCalculator( Class<M> cls ) {
         super();
-        super.setORQModelClass( FileTransferORQ.class );
+        super.setORQModelClass( cls );
     }
 
 

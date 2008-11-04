@@ -16,8 +16,8 @@ public class FileTransferResult extends AbstractTaskResult {
     }
 
     public String[] getFiles() {
-    return files;
-}
+        return files;
+    }
 
 
     public void setFiles( String[] files ) {
