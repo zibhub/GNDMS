@@ -31,7 +31,7 @@ public class ContractPropertyReader extends AbstractPropertyReader<Contract> {
     public void read() {
         final @NotNull Contract con = getProduct();
         con.setAccepted(PropertyReadWriteAux.readISODateTime(getProperties(), SfrProperty.EST_IF_DECISION_BEFORE.key).toDateTimeISO().toGregorianCalendar());
-        con.setDeadLine(PropertyReadWriteAux.readISODateTime(getProperties(), SfrProperty.EST_EXEC_LIKELY_UNTIL.key).toDateTimeISO().toGregorianCalendar());
+        con.setDeadline(PropertyReadWriteAux.readISODateTime(getProperties(), SfrProperty.EST_EXEC_LIKELY_UNTIL.key).toDateTimeISO().toGregorianCalendar());
         con.setResultValidity(PropertyReadWriteAux.readISODateTime(getProperties(), SfrProperty.EST_RESULT_VALID_UNTIL.key).toDateTimeISO().toGregorianCalendar());
         con.setDeadlineIsOffset("true".equals(getProperties().get(SfrProperty.EST_CONST_EXEC_TIME.key).toString().toLowerCase().trim()));
     }

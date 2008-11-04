@@ -3,10 +3,16 @@ package de.zib.gndms.model.gorfx;
 import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import java.util.Calendar;
 import java.util.Calendar;
 
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
+import org.joda.time.format.ISODateTimeFormat;
+import org.apache.openjpa.persistence.Persistent;
+import org.apache.openjpa.persistence.Externalizer;
+import org.apache.openjpa.persistence.Factory;
 
 
 /**
@@ -51,12 +57,14 @@ public class Contract {
     }
 
 
+    @Transient
     public Calendar getCurrentDeadline() {
         return  ((deadlineIsOffset) ?
             new DateTime(deadline).plus(new Duration(new DateTime(0L), new DateTime(deadline))).toGregorianCalendar() : deadline);
     }
 
 
+    @Transient
     public Calendar getCurrentTerminationTime() {
         Calendar deadline = getCurrentDeadline();
         return (deadline.compareTo(resultValidity) <= 0) ? resultValidity : deadline;
@@ -64,11 +72,6 @@ public class Contract {
     }
 
 
-    public void setDeadLine( Calendar dl ) {
-        deadline = dl;
-        if( resultValidity == null )
-            resultValidity = dl;
-    }
 
 
     public Calendar getAccepted() {
@@ -86,9 +89,12 @@ public class Contract {
     }
 
 
-    public void setDeadline( Calendar deadline ) {
-        this.deadline = deadline;
+    public void setDeadline( Calendar dl ) {
+        deadline = dl;
+        if( resultValidity == null )
+            resultValidity = dl;
     }
+
 
 
     public Calendar getResultValidity() {
@@ -108,5 +114,17 @@ public class Contract {
 
     public void setDeadlineIsOffset( boolean deadlineIsOffset ) {
         this.deadlineIsOffset = deadlineIsOffset;
+    }
+
+
+    public static String dateToString( Calendar c ) {
+        DateTime dt = new DateTime( c );
+        return ISODateTimeFormat.dateTime( ).print( dt  );
+    }
+
+    
+    public static Calendar dateToString( String s ) {
+
+        return new DateTime( s ).toGregorianCalendar();
     }
 }
