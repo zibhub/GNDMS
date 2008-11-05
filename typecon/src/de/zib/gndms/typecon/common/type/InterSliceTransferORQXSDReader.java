@@ -17,6 +17,7 @@ public class InterSliceTransferORQXSDReader {
 
 
     public static InterSliceTransferORQ read( DynamicOfferDataSeqT orq, ContextT ctx )  {
+        
         try {
             InterSliceTransferORQ torq = AbstractORQXSDReader.read( InterSliceTransferORQ.class, ctx );
 
@@ -39,12 +40,11 @@ public class InterSliceTransferORQXSDReader {
             }
 
             return torq;
-        } catch ( IllegalAccessException e ) {
-            e.printStackTrace();  //To change body of catch statement use InterSlice | Settings | InterSlice Templates.
         } catch ( InstantiationException e ) {
             e.printStackTrace();  //To change body of catch statement use InterSlice | Settings | InterSlice Templates.
         } catch ( Exception e ) {
             e.printStackTrace();  //To change body of catch statement use InterSlice | Settings | InterSlice Templates.
         }
         return null;
-    }}
+    }
+}
