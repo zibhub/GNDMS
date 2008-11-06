@@ -5,6 +5,8 @@ import de.zib.gndms.dspace.subspace.client.SubspaceClient;
 import de.zib.gndms.dspace.subspace.stubs.types.SubspaceReference;
 import de.zib.gndms.dspace.slice.client.SliceClient;
 import de.zib.gndms.dspace.slice.stubs.types.SliceReference;
+import de.zib.gndms.dspace.slice.common.SliceConstants;
+import de.zib.gndms.dspace.common.DSpaceConstants;
 import de.zib.gndms.model.dspace.SliceKind;
 
 import java.util.Calendar;
@@ -13,6 +15,8 @@ import java.rmi.RemoteException;
 
 import org.apache.axis.types.URI;
 import org.apache.axis.message.addressing.EndpointReferenceType;
+import org.apache.axis.message.addressing.ReferencePropertiesType;
+import org.apache.axis.message.MessageElement;
 import org.testng.annotations.Test;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.BeforeClass;
@@ -112,6 +116,7 @@ public class Yatc {
         ssize = (long) (20 * 1024 * Math.pow( 10, 3 ));
         slice = subc.createSlice( skuri, tt, ssize );
         sliceTests( slice, gsiPath, scopeName, localName );
+        analyseEPR( slice.getEndpointReference() );
     }
 
 
@@ -175,5 +180,13 @@ public class Yatc {
             "Subspace epr"
         );
 
+    }
+
+    private void analyseEPR( EndpointReferenceType epr ) throws Exception {
+
+        ReferencePropertiesType ept = epr.getProperties();
+        MessageElement me = ept.get( SliceConstants.RESOURCE_KEY );
+        String s = ( String ) me.getObjectValue( String.class );
+        System.out.println( s );
     }
 }

@@ -72,8 +72,6 @@ public class Contract {
     }
 
 
-
-
     public Calendar getAccepted() {
         return accepted;
     }
