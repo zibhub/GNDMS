@@ -105,6 +105,7 @@ public class Contract {
     }
 
 
+    @Transient
     public boolean isDeadlineIsOffset() {
         return deadlineIsOffset;
     }
