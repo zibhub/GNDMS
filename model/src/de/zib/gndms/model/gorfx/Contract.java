@@ -28,16 +28,13 @@ public class Contract {
     // XSD OfferExecutionContract type
 
     // can be mapped to IfDesisionBefore
-    @Temporal(value = TemporalType.TIMESTAMP)
     private Calendar accepted;
 
     // can be mapped to ExecutionLiklyUntil
-    @Temporal(value = TemporalType.TIMESTAMP)
     private Calendar deadline;
 
     // can be mapped to ResultValidUntil
     // this must be at least equal to the deadline
-    @Temporal(value = TemporalType.TIMESTAMP)
     private Calendar resultValidity;
 
     // can be mapped to constantExecutionTime
@@ -49,9 +46,9 @@ public class Contract {
 
     public Contract(Contract org) {
         if (org != null) {
-            accepted = (Calendar) org.accepted.clone();
-            deadline = (Calendar) org.deadline.clone();
-            resultValidity = (Calendar) org.resultValidity.clone();
+            setAccepted( (Calendar) org.getAccepted().clone() );
+            setDeadline( (Calendar) org.getDeadline().clone() );
+            setResultValidity( (Calendar) org.getResultValidity().clone() );
             deadlineIsOffset = org.deadlineIsOffset;
         }
     }
@@ -60,18 +57,19 @@ public class Contract {
     @Transient
     public Calendar getCurrentDeadline() {
         return  ((deadlineIsOffset) ?
-            new DateTime(deadline).plus(new Duration(new DateTime(0L), new DateTime(deadline))).toGregorianCalendar() : deadline);
+            new DateTime(getDeadline()).plus(new Duration(new DateTime(0L), new DateTime(getDeadline()))).toGregorianCalendar() : getDeadline() );
     }
 
 
     @Transient
     public Calendar getCurrentTerminationTime() {
         Calendar deadline = getCurrentDeadline();
-        return (deadline.compareTo(resultValidity) <= 0) ? resultValidity : deadline;
+        return (deadline.compareTo(getResultValidity( )) <= 0) ? getResultValidity() : deadline;
 
     }
 
 
+    @Temporal(value = TemporalType.TIMESTAMP)
     public Calendar getAccepted() {
         return accepted;
     }
@@ -82,6 +80,7 @@ public class Contract {
     }
 
 
+    @Temporal(value = TemporalType.TIMESTAMP)
     public Calendar getDeadline() {
         return deadline;
     }
@@ -89,12 +88,13 @@ public class Contract {
 
     public void setDeadline( Calendar dl ) {
         deadline = dl;
-        if( resultValidity == null )
-            resultValidity = dl;
+        if( getResultValidity( ) == null )
+            setResultValidity( dl );
     }
 
 
 
+    @Temporal(value = TemporalType.TIMESTAMP)
     public Calendar getResultValidity() {
         return resultValidity;
     }
