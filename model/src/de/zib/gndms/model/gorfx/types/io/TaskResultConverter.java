@@ -20,7 +20,7 @@ public abstract class TaskResultConverter<W extends TaskResultWriter, M extends 
 
 
     /*
-     * call this method in the convert method of inheriting clas
+     * call this method in the convert method of inheriting class
      * 
      */
     protected void checkedConvert( ) {

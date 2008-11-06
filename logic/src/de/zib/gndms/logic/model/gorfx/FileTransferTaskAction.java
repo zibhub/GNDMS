@@ -23,7 +23,6 @@ import java.util.ArrayList;
  */
 public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
 
-    // note set new task to false when restoring a task form data base
     private FTPTransferState transferState;
 
 
@@ -137,6 +136,6 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
 
     
     private void failWith( Exception e ) {
-        fail( new IllegalStateException( e.getMessage() ) );
+        fail( new IllegalStateException( e.getMessage(), e ) );
     }
 }

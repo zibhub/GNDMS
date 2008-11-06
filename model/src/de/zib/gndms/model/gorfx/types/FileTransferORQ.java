@@ -12,6 +12,8 @@ import java.util.TreeMap;
  */
 public class FileTransferORQ extends AbstractORQ {
 
+    private static final long serialVersionUID = 2695933268050863494L;
+    
     private String sourceURI;
     private String targetURI;
     private TreeMap<String,String> fileMap;

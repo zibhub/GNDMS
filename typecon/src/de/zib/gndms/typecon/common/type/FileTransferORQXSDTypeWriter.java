@@ -74,7 +74,7 @@ public class FileTransferORQXSDTypeWriter extends AbstractXSDTypeWriter<FileTran
 
 
     public void begin() {
-        try {
+       try {
             setProduct( GORFXClientTools.createEmptyFileTransferORQT() );
         } catch ( SOAPException e ) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

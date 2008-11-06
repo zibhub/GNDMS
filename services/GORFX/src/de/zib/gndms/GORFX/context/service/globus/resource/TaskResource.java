@@ -100,7 +100,8 @@ public class TaskResource extends TaskResourceBase
                 res = writer.getProduct();
             } else
                 res = new ProviderStageInResultT();
-        } else if( uri.equals( GORFXConstantURIs.FILE_TRANSFER_URI ) ) {
+        } else if( uri.equals( GORFXConstantURIs.FILE_TRANSFER_URI )
+                   || uri.equals( GORFXConstantURIs.INTER_SLICE_TRANSFER_URI ) ) {
 
             if( stat.equals( TaskState.FINISHED ) ){
                 final Serializable sr = taskAction.getModel().getData( );
