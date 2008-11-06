@@ -3,6 +3,8 @@ package de.zib.gndms.typecon.common.type;
 import types.ProviderStageInORQT;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQWriter;
 import de.zib.gndms.model.gorfx.types.io.DataDescriptorWriter;
+import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQConverter;
+import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
 import de.zib.gndms.typecon.common.GORFXClientTools;
 
 import javax.xml.soap.SOAPException;
@@ -87,5 +89,21 @@ public class ProviderStageInORQXSDTypeWriter extends AbstractXSDTypeWriter<Provi
 
     public void done() {
         //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+
+    /**
+     * On shot write resp. convert operation.
+     *
+     * @param orq Source provider stage in orq.
+     * @return XSD version of the source orq.
+     */
+    public static ProviderStageInORQT write( ProviderStageInORQ orq ) {
+
+        ProviderStageInORQXSDTypeWriter writer = new ProviderStageInORQXSDTypeWriter();
+        ProviderStageInORQConverter conv = new ProviderStageInORQConverter( writer, orq );
+        conv.convert();
+
+        return writer.getProduct();
     }
 }
