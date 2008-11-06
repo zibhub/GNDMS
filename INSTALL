@@ -146,6 +146,7 @@ When describing the dependencies of a compilation unit, I assume the following
 - annotations: extra/tools-lib/annotations.jar
   Nearly everything has a dependency to this one.
 - joda-time: extra/tools-lib/joda-time*.jar
+- args4j: extra/tools-lib/args4j*.jar
                      
      
 
@@ -199,7 +200,7 @@ DETAILED BUILD INSTRUCTIONS
      Sources: kit/src
      Output: kit/gndms-kit/production (resp. test) classes
      Dependencies: GROOVY, J2EE, SOURCE, gt4, gndms-shared-model, annotations,
-                   jetty, servlet-api, cos, testng, joda-time
+                   jetty, servlet-api, cos, testng, joda-time, args4j
 
 
   5) Compile gndms-logic.jar
@@ -250,6 +251,8 @@ DETAILED BUILD INSTRUCTIONS
   J2EE, groovy, annotations, "servicename"-stubs,
   gndms-infra, gndms-logic, gndms-shared-model, joda-time,
   SOURCES, all non-symlinks in service/ServiceName/lib,  gt4
+
+  GORFX also depends on DSpace and args4j.
   
   compile to service/ServiceName/out/production (resp. test/), and exclude the
   services' out,  build, and lib directories from the project sources to reduce
