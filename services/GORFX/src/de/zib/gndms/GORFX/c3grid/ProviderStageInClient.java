@@ -42,7 +42,7 @@ public class ProviderStageInClient extends AbstractApplication {
     private static final long MILLIS = 2000L;
 
     // commandline args
-    @Option( name="-uri", required=true, usage="URL of GORFX-Endpoint" )
+    @Option( name="-uri", required=true, usage="URL of GORFX-Endpoint", metaVar="URI" )
     private String gorfxEpUrl;
     @Option( name="-props", required=true, usage="staging.properties" )
     private String sfrPropFile;
