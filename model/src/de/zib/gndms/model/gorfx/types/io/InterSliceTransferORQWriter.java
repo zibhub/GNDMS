@@ -1,5 +1,7 @@
 package de.zib.gndms.model.gorfx.types.io;
 
+import de.zib.gndms.model.dspace.types.SliceRef;
+
 import java.util.Map;
 
 /**

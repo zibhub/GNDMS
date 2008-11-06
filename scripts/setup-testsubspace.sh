@@ -1,6 +1,6 @@
 #!/bin/sh
 
-STAGING_COMMAND="%{C3GRID_SOURCE}/scripts/dummy-staging.sh"
+STAGING_COMMAND="%{C3GRID_SOURCE}/scripts/ist-staging.sh"
 ESTIMATION_COMMAND="%{C3GRID_SOURCE}/scripts/dummy-estimation.sh"
 STAGING_AREA_PATH="/tmp/testss"
 STAGING_AREA_SIZE="2000000" # Currently unused
@@ -8,7 +8,7 @@ STAGING_AREA_SIZE="2000000" # Currently unused
 source $(dirname $0)/check-hostname.sh
 # One can set the $hn variable manually in the check-hostname script,
 # if the returned value isn't the desired one.
-hn=csr-pc25.zib.de
+#hn=csr-pc25.zib.de
 STAGING_AREA_GSI_FTP_URL="gsiftp://$hn""$STAGING_AREA_PATH"
 
 
@@ -32,3 +32,10 @@ moni call -v .dspace.SetupSubspace "subspace:'{http://www.c3grid.de/G2/Subspace}
 moni call -v .dspace.AssignSliceKind "subspace:'{http://www.c3grid.de/G2/Subspace}SubspaceTests'; sliceKind: http://www.c3grid.de/G2/SliceKind/Staging; mode:'$ADDMODE'"
 moni call -v .dspace.AssignSliceKind "subspace:'{http://www.c3grid.de/G2/Subspace}SubspaceTests'; sliceKind: http://www.c3grid.de/G2/SliceKind/DMS; mode:'$ADDMODE'"
 
+moni call -v .gorfx.ConfigOfferType "offerType: 'http://www.c3grid.de/ORQTypes/ProviderStageIn';\
+cfgOutFormat: 'PRINT_OK'; subspace: '{http://www.c3grid.de/G2/Subspace}SubspaceTests';\
+sliceKind: 'http://www.c3grid.de/G2/SliceKind/Staging';\
+stagingClass: 'de.zib.gndms.logic.model.gorfx.c3grid.ExternalProviderStageInAction';\
+estimationClass: 'de.zib.gndms.logic.model.gorfx.c3grid.ExternalProviderStageInORQCalculator';\
+stagingCommand='$STAGING_COMMAND';\
+estimationCommand='$ESTIMATION_COMMAND'"
