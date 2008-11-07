@@ -94,6 +94,16 @@ public class GORFXClientTools {
         return orq;
     }
 
+
+    public static InterSliceTransferORQT createInterSliceTransferORQT( SliceReference src, SliceReference dest ) throws SOAPException, IllegalAccessException, InstantiationException {
+
+        InterSliceTransferORQT orq = createEmptyInterSliceTransferORQT();
+        MessageElement[] mes = orq.get_any();
+        mes[0].setObjectValue( src );
+        mes[1].setObjectValue( dest );
+        return orq;
+    }
+
     
     public static URI getRePublishSliceURI( ) {
 
