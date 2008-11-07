@@ -5,6 +5,7 @@ import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.typecon.common.type.ContextXSDReader;
 import de.zib.gndms.typecon.common.type.FileTransferORQXSDReader;
+import de.zib.gndms.typecon.common.type.InterSliceTransferORQXSDReader;
 import org.apache.axis.types.NormalizedString;
 import org.apache.axis.types.URI;
 import org.apache.axis.types.Token;
@@ -27,13 +28,16 @@ public class GORFXTools {
     public static AbstractORQ convertFromORQT( DynamicOfferDataSeqT orq, ContextT ctx ) throws Exception {
 
         AbstractORQ aorq = null;
-        if( orq.getOfferType().toString().equals( GORFXConstantURIs.PROVIDER_STAGE_IN_URI ) ) {
+        String ot = orq.getOfferType().toString();
+        if( ot.equals( GORFXConstantURIs.PROVIDER_STAGE_IN_URI ) ) {
             aorq = convertProviderStageInORQFromORQT( orq );
             aorq.setContext( ContextXSDReader.readContext( ctx ) );
-        } else if( orq.getOfferType().toString().equals( GORFXConstantURIs.FILE_TRANSFER_URI ) )
+        } else if( ot.equals( GORFXConstantURIs.FILE_TRANSFER_URI ) )
             aorq = FileTransferORQXSDReader.read( orq, ctx );
+        else if( ot.equals( GORFXConstantURIs.INTER_SLICE_TRANSFER_URI ) )
+            aorq = InterSliceTransferORQXSDReader.read( orq, ctx );
         else
-            throw new IllegalArgumentException( );
+            throw new IllegalArgumentException( "no handler for orq offertype: " + ot );
 
 
         return aorq;

@@ -19,6 +19,7 @@ import de.zib.gndms.infra.system.GNDMSystem;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.rmi.RemoteException;
+import java.util.GregorianCalendar;
 
 import org.globus.wsrf.ResourceKey;
 import org.apache.axis.types.URI;
@@ -107,14 +108,14 @@ public class SliceImpl extends SliceImplBase {
 
 
             try {
-                osl.getOwner( ).destroySlice( osl );
-                esr.remove( sr.getResourceKey() );
+                // mark slice for removal
+                sr.setTerminationTime( new GregorianCalendar( ) );
                 return esr.getResourceReference( rk );
             } catch ( Exception e ) {
                 throw new RemoteException(e.getMessage(), e);
             }
         } finally {
-            if( em != null )
+            if( em != null && em.isOpen( ) )
                 em.close( );
         }
     }

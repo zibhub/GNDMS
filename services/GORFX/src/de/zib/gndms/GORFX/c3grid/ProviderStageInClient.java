@@ -11,12 +11,14 @@ import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQConverter;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyReader;
 import de.zib.gndms.typecon.common.GORFXTools;
 import de.zib.gndms.typecon.common.type.ProviderStageInORQXSDTypeWriter;
+import de.zib.gndms.kit.application.AbstractApplication;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI;
 import org.globus.wsrf.encoding.DeserializationException;
 import org.globus.wsrf.encoding.ObjectDeserializer;
 import org.joda.time.DateTime;
 import org.oasis.wsrf.properties.GetResourcePropertyResponse;
+import org.kohsuke.args4j.Option;
 import types.*;
 
 import java.io.File;
@@ -35,31 +37,36 @@ import java.util.Properties;
  *          User: stepn Date: 15.10.2008 Time: 13:32:25
  */
 @SuppressWarnings({ "UseOfSystemOutOrSystemErr" })
-public class ProviderStageInClient {
+public class ProviderStageInClient extends AbstractApplication {
+
     private static final long MILLIS = 2000L;
+
+    // commandline args
+    @Option( name="-uri", required=true, usage="URL of GORFX-Endpoint" )
+    private String gorfxEpUrl;
+    @Option( name="-props", required=true, usage="staging.properties" )
+    private String sfrPropFile;
+    @Option( name="-dn", required=true, usage="DN" )
+    private String dn;
+
+    @SuppressWarnings({ "UseOfSystemOutOrSystemErr" })
+    public static void main(String[] args) throws Exception {
+
+        ProviderStageInClient cnt = new ProviderStageInClient();
+        cnt.run( args );
+
+    }
 
 
     private ProviderStageInClient() {}
 
 
-    @SuppressWarnings({ "UseOfSystemOutOrSystemErr" })
-    public static void main(String[] args) throws Exception {
-
-	    if (args.length != 3) {
-		    System.err.println("Call with <URL of GORFX-Endpoint> <staging.properties> <DN>");
-		    System.exit(1);
-	    }
-
-	    
-        // Fetch Args
-        final String gorfxEpUrl = args[0];
-        final String sfrPropFile = args[1];
-	    final String dn = args[2];
+    public void run() throws Exception {
 
         // Create reusable context with pseudo DN
         final ContextT xsdContext = new ContextT();
         final ContextTEntry entry =
-                GORFXTools.createContextEntry("Auth.DN", dn);
+            GORFXTools.createContextEntry("Auth.DN", dn);
         xsdContext.setEntry(new ContextTEntry[] { entry });
 
         // Load SFR from Props and convert to XML objects
@@ -76,7 +83,7 @@ public class ProviderStageInClient {
 
         waitForTaskToFinishOrFail(taskClient);
     }
-
+    
 
     @SuppressWarnings({ "FeatureEnvy" })
     private static void waitForTaskToFinishOrFail(final TaskClient taskClientParam)
@@ -181,4 +188,6 @@ public class ProviderStageInClient {
         orqConverter.convert( );
         return orqtWriter.getProduct();
     }
+
+
 }

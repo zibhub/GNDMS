@@ -7,6 +7,8 @@ import org.globus.wsrf.ResourceKey;
 import org.jetbrains.annotations.NotNull;
 import org.apache.axis.types.URI;
 import org.apache.axis.types.UnsignedLong;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
@@ -19,6 +21,7 @@ import de.zib.gndms.dspace.slice.common.SliceConstants;
 import de.zib.gndms.dspace.subspace.service.globus.resource.ExtSubspaceResourceHome;
 import de.zib.gndms.dspace.subspace.stubs.types.SubspaceReference;
 
+import javax.persistence.EntityManager;
 import java.rmi.RemoteException;
 
 
@@ -34,6 +37,7 @@ public class SliceResource extends SliceResourceBase
 
     private ExtSliceResourceHome resourceHome;
     private GridResourceModelHandler<Slice, ExtSliceResourceHome, SliceResource> mH;
+    private final Log logger = LogFactory.getLog( SliceResource.class );
 
     // override generated setter method to pass changes on the resource directly to the model
     public void setTotalStorageSize( UnsignedLong totalStorageSize ) throws ResourceException {
@@ -140,5 +144,28 @@ public class SliceResource extends SliceResourceBase
     @Override
     public void refreshRegistration(final boolean forceRefresh) {
         // nothing
+    }
+
+
+    @Override
+    public void remove( ) {
+
+        logger.debug( "removing slice resource: " + getID() );
+        EntityManager em = null;
+        try {
+            em = resourceHome.getEntityManagerFactory().createEntityManager(  );
+            em.getTransaction().begin();
+            Slice sl = em.find( Slice.class, getID() );
+            Subspace sp = sl.getOwner();
+            logger.debug( "removing slice directory: " + sl.getAssociatedPath() );
+            sp.destroySlice( sl );
+            em.remove( sl );
+            em.getTransaction().commit( );
+        } catch ( Exception e) { // for debugg'n
+            e.printStackTrace(  );
+        } finally {
+            if( em != null && em.isOpen() )
+                em.close( );
+        }
     }
 }

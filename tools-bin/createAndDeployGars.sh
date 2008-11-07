@@ -19,6 +19,9 @@ for i in $service_dirs; do
 
     echo "building gar for $i"
     (cd $i && ant createDeploymentGar && $DEPLOY_CMD $(pwd)/c3grid_$i.gar )
+    if [ "$?" -ne "0" ]; then
+        exit 1
+    fi
 done
 
 
