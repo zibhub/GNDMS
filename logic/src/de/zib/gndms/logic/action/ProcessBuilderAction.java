@@ -179,13 +179,13 @@ public abstract class ProcessBuilderAction extends AbstractAction<Integer> {
     }
 
 
-    private static final class FillOnce<T> {
+    public static final class FillOnce<T> {
         private final boolean ignoreConflicts;
 
         private volatile T value;
 
 
-        private FillOnce(final boolean ignoreConflictsParam) {
+        public FillOnce(final boolean ignoreConflictsParam) {
             ignoreConflicts = ignoreConflictsParam;
         }
 

@@ -13,9 +13,9 @@ import de.zib.gndms.logic.action.MandatoryOptionMissingException;
  *          User: stepn Date: 18.08.2008 Time: 10:56:41
  */
 public abstract class SetupAction<R> extends ConfigAction<R> {
-    public enum SetupMode { CREATE, UPDATE, DELETE }
+    public enum SetupMode { CREATE, READ, UPDATE, DELETE }
 
-    @ConfigOption(descr = "Action mode; one of create, update, or delete")
+    @ConfigOption(descr = "Action mode; one of create, read, update, or delete")
     SetupMode mode;
 
 
@@ -24,13 +24,18 @@ public abstract class SetupAction<R> extends ConfigAction<R> {
         super.initialize();    // Overridden method
         if (mode == null && hasOption("mode"))
             try {
-                setMode(getEnumOption(SetupMode.class, "mode", true));
+	            final SetupMode modeOption = getEnumOption(SetupMode.class, "mode", true);
+	            setMode(modeOption);
+
             }
             catch (MandatoryOptionMissingException e) {
                 throw new IllegalStateException("Invalid mode option specified", e);
             }
-        if (getMode() == null)
+	    final SetupMode setupMode = getMode();
+	    if (setupMode == null)
             throw new IllegalStateException("No mode specified");
+	    if (! isSupportedMode(setupMode))
+		    throw new IllegalStateException("Unsupported mode: " + setupMode.toString());
 
     }
 
@@ -43,6 +48,11 @@ public abstract class SetupAction<R> extends ConfigAction<R> {
         return mode;
     }
 
+
+	@SuppressWarnings({ "MethodMayBeStatic" })
+	public boolean isSupportedMode(SetupMode modeParam) {
+		return !SetupMode.READ.equals(modeParam);
+	}
 
     public void setMode(final SetupMode modeParam) {
         mode = modeParam;
@@ -60,4 +70,7 @@ public abstract class SetupAction<R> extends ConfigAction<R> {
         return SetupMode.DELETE.equals(getMode());
     }
 
+	public final boolean isReading() {
+		return SetupMode.READ.equals(getMode());
+	}
 }
