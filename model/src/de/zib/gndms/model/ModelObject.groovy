@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable
  *
  * User: stepn Date: 30.07.2008 Time: 17:03:24
  */
-abstract class ModelObject {
+public class ModelObject {
 
 	static int hashCode0(Object obj) {
 		return obj == null ? 0 : obj.hashCode();
