@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
  *
  *          User: stepn Date: 06.10.2008 Time: 10:52:30
  */
-public interface OptionProvider {
+public interface OptionProvider extends Iterable<String> {
     boolean hasOption(final @NotNull String name);
     
     String getNonMandatoryOption(final String nameParam);

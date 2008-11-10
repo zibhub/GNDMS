@@ -3,6 +3,8 @@ package de.zib.gndms.logic.model.config;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.List;
+import java.util.LinkedList;
 import java.util.regex.Pattern;
 
 
@@ -32,7 +34,31 @@ public final class ParameterTools {
     public static final int EXPECTED_MAX_KEY_LENGTH = 32;
     public static final int EXPECTED_MAX_VAL_LENGTH = 64;
 
-    private enum ParseMode
+
+	@SuppressWarnings({ "HardcodedFileSeparator" })
+	public static String escape(final String sParam) {
+		final StringBuilder builder = new StringBuilder(sParam.length() + (sParam.length() / 8));
+		for (int i = 0; i < sParam.length(); i++) {
+			final char cur = sParam.charAt(i);
+			switch (cur) {
+				case '\\':
+			    case '[':
+				case ']':
+			    case ',':
+				case ';':
+			    case '\'':
+				case '"':
+				case ':':
+					builder.append('\\');
+				default:
+					builder.append(cur);
+			}
+		}
+		return builder.toString();
+	}
+
+
+	private enum ParseMode
         { KEY_WHITE, KEY, VALUE_BEGIN, TRIMMED_VALUE, EXACT_VALUE, EXACT_VALUE_DONE }
 
     public ParameterTools() { throw new UnsupportedOperationException("Don't"); }
@@ -334,4 +360,59 @@ public final class ParameterTools {
             this (messageParam, builderParam.toString(), iParam);
         }
     }
+
+	@SuppressWarnings({ "HardcodedFileSeparator" })
+	public static List<String> parseStringArray(final String optStrParam) {
+		final List<String> entries = new LinkedList<String>();
+		boolean nested = false;
+		boolean escape = false;
+		boolean leading = false;
+		StringBuilder builder = new StringBuilder(EXPECTED_MAX_VAL_LENGTH);
+		for (int i = 0; i < optStrParam.length(); i++) {
+			final char c = optStrParam.charAt(i);
+			switch (c) {
+				case '\\':
+					  if (! escape) escape = true;
+					  break;
+				case ',':
+					if (!escape && nested) {
+						entries.add(builder.toString());
+						builder.setLength(0);
+						leading = true;
+						break;
+					}
+				case '[':
+					if (!escape && !nested) {
+						builder.setLength(0);
+						nested = true;
+						leading = true;
+						break;
+					}
+				case ']': {
+					if (!escape && nested) {
+						nested = false;
+						leading = false;
+						entries.add(builder.toString());
+						builder.setLength(0);
+						break;
+					}
+				}
+				default:
+					final boolean isWhite = Character.isWhitespace(c);
+					if (escape) {
+						builder.append(c);
+						if (! isWhite) leading = false;
+					}
+					else {
+						if (isWhite) {
+							if (leading) break;
+						}
+						else
+						    leading = false;
+						builder.append(c);
+					}
+			}
+		}
+		return entries;
+	}
 }

@@ -7,6 +7,7 @@ import org.joda.time.DateTime;
 
 import java.io.File;
 import java.text.ParseException;
+import java.util.Iterator;
 
 
 /**
@@ -18,6 +19,7 @@ import java.text.ParseException;
  *          User: stepn Date: 06.10.2008 Time: 11:17:49
  */
 public interface ConfigProvider extends OptionProvider {
+
     int getIntOption(@NotNull String name) throws MandatoryOptionMissingException;
 
     int getIntOption(@NotNull String name, int def);
@@ -66,4 +68,11 @@ public interface ConfigProvider extends OptionProvider {
     <X> Class<? extends X> getClassOption(final @NotNull Class<X> baseClass, @NotNull String name,
                                           @NotNull Class<? extends X> def)
             throws ClassNotFoundException;
+
+	@NotNull ConfigProvider getDynArrayOption(@NotNull String name)
+		  throws ParseException, MandatoryOptionMissingException;
+
+	int dynArraySize();
+	
+	@NotNull Iterator<String> dynArrayKeys();
 }
