@@ -33,4 +33,7 @@ public class GORFXConstantURIs {
         ALL_URIS.add( LOFI_SET_STAGE_IN_URI  );
         ALL_URIS.add( PIN_URI );
     }
+
+    // no task type but also important
+    public static final String PUBLISH_SLICE_KIND_URI = "http://www.c3grid.de/G2/SliceKind/Publish";
 }

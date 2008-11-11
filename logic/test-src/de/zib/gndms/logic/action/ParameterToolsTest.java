@@ -1,12 +1,16 @@
 package de.zib.gndms.logic.action;
 
+import de.zib.gndms.logic.model.config.ConfigProvider;
+import de.zib.gndms.logic.model.config.MapConfig;
 import static de.zib.gndms.logic.model.config.ParameterTools.*;
 import org.testng.Assert;
 import static org.testng.Assert.assertEquals;
 import org.testng.annotations.Test;
 
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
+
 
 /**
  * Tests for ConfigurationAction.ParameterTools
@@ -170,6 +174,20 @@ public class ParameterToolsTest {
         parseParameters(paraMap, "+foo", null);
         assertEquals(paraMap.get("foo"), "true", null);
     }
+
+	@SuppressWarnings({ "HardcodedFileSeparator" })
+	@Test(groups = {"factory"})
+	public void parseDynArrayTest()
+		  throws ParameterParseException, MandatoryOptionMissingException, ParseException {
+	   paraMap.clear();
+	   parseParameters(paraMap, "key: '[1, 2, 3]'", null);
+	   ConfigProvider config = new MapConfig(paraMap);
+	   config = config.getDynArrayOption("key");
+	   assertEquals(config.getIntOption("count"), 3);
+	   assertEquals(config.getIntOption("0"), 1);
+	   assertEquals(config.getIntOption("1"), 2);
+	   assertEquals(config.getIntOption("2"), 3);
+	}
 
     @Test(groups = {"factory"},
           expectedExceptions = { ParameterParseException.class})

@@ -1,6 +1,5 @@
 package de.zib.gndms.logic.model.config;
 
-import de.zib.gndms.logic.model.config.ParameterTools;
 import static org.testng.Assert.assertEquals;
 import org.testng.annotations.*;
 

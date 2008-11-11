@@ -15,8 +15,13 @@ public class SliceRefXSDReader  {
 
     public static SliceRef read( SliceReference rf ) {
 
+        return fromEPR( rf.getEndpointReference() );
+    }
+
+
+    public static SliceRef fromEPR( EndpointReferenceType epr  ) {
+
         SliceRef sr = new SliceRef();
-        EndpointReferenceType epr = rf.getEndpointReference();
         sr.setGridSiteId( epr.getAddress().toString( ) );
         MessageElement me = epr.getProperties().get( sr.getResourceKeyName() );
         try {

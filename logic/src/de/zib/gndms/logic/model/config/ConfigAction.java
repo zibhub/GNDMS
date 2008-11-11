@@ -391,7 +391,26 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
     }
 
 
-    @SuppressWarnings({ "MethodMayBeStatic", "InstanceMethodNamingConvention" })
+	@NotNull
+	public ConfigProvider getDynArrayOption(@NotNull final String name)
+		  throws ParseException, MandatoryOptionMissingException {
+		return config.getDynArrayOption(name);
+	}
+
+
+	public int dynArraySize() {return config.dynArraySize();}
+
+
+	@NotNull
+	public Iterator<String> dynArrayKeys() {return config.dynArrayKeys();}
+
+
+	public Iterator<String> iterator() {
+		return Collections.unmodifiableSet(getAllOptionNames()).iterator();
+	}
+
+
+	@SuppressWarnings({ "MethodMayBeStatic", "InstanceMethodNamingConvention" })
     protected OkResult ok() {
         return new OkResult();
     }

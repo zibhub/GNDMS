@@ -62,6 +62,8 @@ class ConfigTools {
         printWriter.println(" * Values may be enclosed in single or double quotes.");
         printWriter.println("   * Without quotes, values get whitespace-trimmed.");
         printWriter.println("   * Inside quotes, '\\' may be used for escaping.");
+	    printWriter.println(" * Array/list literal syntax is '[a, b, c]'");
+	    printWriter.println(" * Leading whitespace characters are removed from array element values unless they are escaped");
         printWriter.println(
                     " * 'foo' or '+foo' denotes a true, '!foo' or '-foo' a false boolean option named 'foo'.");
         printWriter.println(
