@@ -3,6 +3,10 @@ package de.zib.gndms.model.gorfx.types.io;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
 
 import java.util.Properties;
+import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -38,6 +42,24 @@ public class ProviderStageInORQPropertyReader extends ORQPropertyReader<Provider
 
 
     public void done() {
-        //To change body of implemented methods use File | Settings | File Templates.
+        // not required here
+    }
+
+
+    public static ProviderStageInORQ readFromFile( final String fileName ) throws IOException {
+
+        InputStream is = null;
+        try {
+            is = new FileInputStream( fileName );
+            Properties prop = new Properties( );
+            prop.load( is );
+            is.close( );
+            ProviderStageInORQPropertyReader reader = new ProviderStageInORQPropertyReader( prop );
+            reader.performReading( );
+            return  reader.getProduct();
+        } finally {
+            if( is != null )
+                is.close( );
+        }
     }
 }
