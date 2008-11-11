@@ -105,7 +105,15 @@ public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
     }
 
 
-    public String getSliceKind() {
+	@Override
+	public boolean isSupportedMode(final SetupMode modeParam) {
+		if (SetupMode.CREATE.equals(modeParam)) return true;
+		if (SetupMode.UPDATE.equals(modeParam)) return true;
+		return false;
+	}
+
+
+	public String getSliceKind() {
         return sliceKind;
     }
 

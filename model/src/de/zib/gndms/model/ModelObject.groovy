@@ -43,7 +43,7 @@ abstract class ModelId extends ModelObject {
 
 	@Override
 	 boolean equals(@Nullable Object obj) {
-		if (obj == null) return false;
+		if (obj.is(null)) return false;
 		if (obj.is(this)) return true;
 		if (! this.class.isInstance(obj))
 			return false;
