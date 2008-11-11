@@ -3,16 +3,18 @@ package de.zib.gndms.infra.system;
 import com.google.common.base.Function;
 import com.google.common.collect.Sets;
 import de.zib.gndms.infra.action.GetHomeInfoAction;
+import de.zib.gndms.infra.action.RefreshSystemAction;
 import de.zib.gndms.infra.action.SystemAction;
+import de.zib.gndms.infra.action.SetupDefaultConfigletAction;
 import de.zib.gndms.kit.monitor.ActionCaller;
 import de.zib.gndms.logic.action.Action;
 import de.zib.gndms.logic.action.SkipActionInitializationException;
-import de.zib.gndms.logic.model.config.ParameterTools;
 import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
 import de.zib.gndms.logic.model.DelegatingEntityUpdateListener;
 import de.zib.gndms.logic.model.config.ConfigAction;
 import de.zib.gndms.logic.model.config.EchoOptionsAction;
 import de.zib.gndms.logic.model.config.HelpOverviewAction;
+import de.zib.gndms.logic.model.config.ParameterTools;
 import de.zib.gndms.logic.model.dspace.AssignSliceKindAction;
 import de.zib.gndms.logic.model.dspace.SetupSliceKindAction;
 import de.zib.gndms.logic.model.dspace.SetupSubspaceAction;
@@ -73,6 +75,8 @@ public final class ConfigActionCaller implements ActionCaller {
         configActions.add(ConfigOfferTypeAction.class);
         configActions.add(SetupSliceKindAction.class);
         configActions.add(AssignSliceKindAction.class);
+        configActions.add(RefreshSystemAction.class);
+        configActions.add(SetupDefaultConfigletAction.class);
     }
 
 
