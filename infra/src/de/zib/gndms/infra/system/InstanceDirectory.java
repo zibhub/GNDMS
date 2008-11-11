@@ -99,7 +99,9 @@ public class InstanceDirectory implements ConfigletProvider {
             OfferType type = em.find(OfferType.class, offerTypeKey);
             if (type == null)
                 throw new IllegalArgumentException("Unknow offer type: " + offerTypeKey);
-            return orqPark.getInstance(type);
+            AbstractORQCalculator<?,?> orqc = orqPark.getInstance(type);
+            orqc.setConfigletProvider( this );
+            return orqc;
         }
         finally {
             if (! em.isOpen())
