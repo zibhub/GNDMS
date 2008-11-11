@@ -10,11 +10,18 @@ import org.jetbrains.annotations.Nullable
  * @version $Id$
  *
  * User: stepn Date: 30.07.2008 Time: 17:03:24
+ *
+ * NOTE: do not declare this class abstract!! ( gives compiler trouble )
  */
-abstract class ModelObject {
+class ModelObject {
 
-	static int hashCode0(Object obj) {
-		return obj.is(null) ? 0 : obj.hashCode();
+    protected ModelObject( ) {
+
+    }
+    
+
+    static int hashCode0(Object obj) {
+		return obj == null ? 0 : obj.hashCode();
 	}
 
 }

@@ -7,12 +7,9 @@ sfr="$(cat - | grep -h '^c3grid')"
 
 datafile=$(echo "$sfr" | grep c3grid.StageFileRequest.TargetBaseDataFile | cut -d= -f2-)
 metafile=$(echo "$sfr" | grep c3grid.StageFileRequest.TargetMetaDataFile | cut -d= -f2-)
-dateext=$(echo "$sfr" | grep c3grid.StageFileRequest.TargetFileFormat | cut -d= -f2-)
-database=$(basename $datafile $dataext)
+dataext=$(echo "$sfr" | grep c3grid.StageFileRequest.TargetFileFormat | cut -d= -f2-)
+database=$(basename $datafile .$dataext)
 
-
-datafile="/home/mjorra/tmp/ist-script-test/datafile"
-metafile="/home/mjorra/tmp/ist-script-test/metafile.txt"
 
 RANGE=10
 FLOOR=5
