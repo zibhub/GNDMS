@@ -1,7 +1,7 @@
 package de.zib.gndms.infra.system;
 
 import com.google.common.collect.Maps;
-import de.zib.gndms.infra.configlet.Configlet;
+import de.zib.gndms.kit.configlet.Configlet;
 import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.service.GNDMSingletonServiceHome;
@@ -11,6 +11,7 @@ import de.zib.gndms.kit.factory.IndustrialPark;
 import de.zib.gndms.kit.factory.RecursiveFactory;
 import de.zib.gndms.kit.monitor.GroovyBindingFactory;
 import de.zib.gndms.kit.monitor.GroovyMoniServer;
+import de.zib.gndms.kit.config.ConfigletProvider;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
 import de.zib.gndms.logic.model.gorfx.ORQCalculatorMetaFactory;
@@ -45,7 +46,7 @@ import java.util.Set;
 *
 *          User: stepn Date: 03.09.2008 Time: 16:50:06
 */
-public class InstanceDirectory {
+public class InstanceDirectory implements ConfigletProvider {
     private @NotNull final Log logger = LogFactory.getLog(InstanceDirectory.class);
     private static final int INITIAL_CAPACITY = 32;
     private static final long INSTANCE_RETRIEVAL_INTERVAL = 250L;

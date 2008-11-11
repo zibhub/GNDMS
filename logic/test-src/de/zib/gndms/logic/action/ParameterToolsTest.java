@@ -1,8 +1,9 @@
 package de.zib.gndms.logic.action;
 
-import de.zib.gndms.logic.model.config.ConfigProvider;
-import de.zib.gndms.logic.model.config.MapConfig;
-import static de.zib.gndms.logic.model.config.ParameterTools.*;
+import de.zib.gndms.kit.config.ConfigProvider;
+import de.zib.gndms.kit.config.MapConfig;
+import static de.zib.gndms.kit.config.ParameterTools.*;
+import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import org.testng.Assert;
 import static org.testng.Assert.assertEquals;
 import org.testng.annotations.Test;

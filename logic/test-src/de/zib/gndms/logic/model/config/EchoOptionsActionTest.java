@@ -6,6 +6,8 @@ import org.testng.annotations.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import de.zib.gndms.kit.config.ParameterTools;
+
 
 /**
  * Tests wether EchoOptions actually returns all the options it is given

@@ -14,7 +14,7 @@ import de.zib.gndms.logic.model.DelegatingEntityUpdateListener;
 import de.zib.gndms.logic.model.config.ConfigAction;
 import de.zib.gndms.logic.model.config.EchoOptionsAction;
 import de.zib.gndms.logic.model.config.HelpOverviewAction;
-import de.zib.gndms.logic.model.config.ParameterTools;
+import de.zib.gndms.kit.config.ParameterTools;
 import de.zib.gndms.logic.model.dspace.AssignSliceKindAction;
 import de.zib.gndms.logic.model.dspace.SetupSliceKindAction;
 import de.zib.gndms.logic.model.dspace.SetupSubspaceAction;

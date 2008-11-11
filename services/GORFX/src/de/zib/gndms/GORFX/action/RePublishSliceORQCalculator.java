@@ -4,13 +4,12 @@ import de.zib.gndms.model.gorfx.types.RePublishSliceORQ;
 import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
 import de.zib.gndms.model.gorfx.Contract;
 import de.zib.gndms.logic.model.gorfx.AbstractTransferORQCalculator;
-import de.zib.gndms.infra.configlet.PublishConfiglet;
+import de.zib.gndms.kit.configlet.PublishConfiglet;
 import de.zib.gndms.dspace.subspace.client.SubspaceClient;
 import de.zib.gndms.dspace.slice.client.SliceClient;
 import de.zib.gndms.typecon.common.type.SliceRefXSDReader;
 import org.globus.ftp.exception.ServerException;
 import org.globus.ftp.exception.ClientException;
-import org.apache.axis.types.URI;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
@@ -18,7 +17,6 @@ import java.util.List;
 import java.util.Vector;
 import java.util.Random;
 import java.util.GregorianCalendar;
-import java.rmi.RemoteException;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>

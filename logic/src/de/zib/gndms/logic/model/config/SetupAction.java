@@ -1,6 +1,6 @@
 package de.zib.gndms.logic.model.config;
 
-import de.zib.gndms.logic.action.MandatoryOptionMissingException;
+import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 
 
 /**

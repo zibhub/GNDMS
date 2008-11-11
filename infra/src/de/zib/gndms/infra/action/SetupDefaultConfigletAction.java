@@ -1,7 +1,8 @@
 package de.zib.gndms.infra.action;
 
 import com.google.common.collect.Maps;
-import de.zib.gndms.logic.action.MandatoryOptionMissingException;
+import de.zib.gndms.kit.config.MandatoryOptionMissingException;
+import de.zib.gndms.kit.config.ParameterTools;
 import de.zib.gndms.logic.model.config.*;
 import de.zib.gndms.model.common.ConfigletState;
 import org.jetbrains.annotations.NotNull;

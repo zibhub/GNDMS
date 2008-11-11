@@ -1,9 +1,9 @@
 package de.zib.gndms.logic.model.gorfx.c3grid;
 
 import de.zib.gndms.kit.util.DirectoryAux;
-import de.zib.gndms.logic.action.MandatoryOptionMissingException;
-import de.zib.gndms.logic.model.config.ConfigProvider;
-import de.zib.gndms.logic.model.config.MapConfig;
+import de.zib.gndms.kit.config.MandatoryOptionMissingException;
+import de.zib.gndms.kit.config.ConfigProvider;
+import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
