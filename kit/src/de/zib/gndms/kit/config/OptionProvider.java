@@ -1,6 +1,6 @@
-package de.zib.gndms.logic.model.config;
+package de.zib.gndms.kit.config;
 
-import de.zib.gndms.logic.action.MandatoryOptionMissingException;
+import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
  *
  *          User: stepn Date: 06.10.2008 Time: 10:52:30
  */
-public interface OptionProvider {
+public interface OptionProvider extends Iterable<String> {
     boolean hasOption(final @NotNull String name);
     
     String getNonMandatoryOption(final String nameParam);

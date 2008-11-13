@@ -3,7 +3,7 @@ package de.zib.gndms.infra.action;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.service.GNDMSingletonServiceHome;
 import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
-import de.zib.gndms.logic.action.MandatoryOptionMissingException;
+import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigOption;
 import de.zib.gndms.model.common.GridResource;

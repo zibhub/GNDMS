@@ -15,36 +15,36 @@ import types.FileMappingSeqT;
  */
 public class InterSliceTransferORQXSDReader {
 
+    private static final int MIN_ME = 2; // ME = Message Element
+    private static final int MAX_ME = 3;
 
     public static InterSliceTransferORQ read( DynamicOfferDataSeqT orq, ContextT ctx )  {
-        
+
         try {
-            InterSliceTransferORQ torq = AbstractORQXSDReader.read( InterSliceTransferORQ.class, ctx );
 
             MessageElement[] mes = orq.get_any();
 
-            if( mes.length < 2 )
+            if( mes.length < MIN_ME )
                 throw  new IllegalArgumentException( "Source orq has to few arguments" );
-            if( mes.length > 3 )
+            if( mes.length > MAX_ME )
                 throw  new IllegalArgumentException( "Source orq has to many arguments" );
+
+            InterSliceTransferORQ torq = AbstractORQXSDReader.read( InterSliceTransferORQ.class, ctx );
 
             SliceReference sr =  ( SliceReference ) mes[0].getObjectValue( SliceReference.class );
             torq.setSourceSlice( SliceRefXSDReader.read( sr ) );
             sr = ( SliceReference ) mes[1].getObjectValue( SliceReference.class );
             torq.setDestinationSlice( SliceRefXSDReader.read( sr ) );
 
-            if( mes.length == 3 ) {
+            if( mes.length == MAX_ME ) {
                 torq.setFileMap(
                      XSDReadWriteAux.read( (FileMappingSeqT) mes[2].getObjectValue( FileMappingSeqT.class ) )
                 );
             }
 
             return torq;
-        } catch ( InstantiationException e ) {
-            e.printStackTrace();  //To change body of catch statement use InterSlice | Settings | InterSlice Templates.
         } catch ( Exception e ) {
-            e.printStackTrace();  //To change body of catch statement use InterSlice | Settings | InterSlice Templates.
+            throw new RuntimeException( e.getMessage(), e );  //To change body of catch statement use InterSlice | Settings | InterSlice Templates.
         }
-        return null;
     }
 }

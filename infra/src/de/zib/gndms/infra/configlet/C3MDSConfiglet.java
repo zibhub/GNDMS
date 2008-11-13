@@ -5,7 +5,8 @@ import com.google.common.collect.Sets;
 import de.zib.gndms.c3resource.C3ResourceReader;
 import de.zib.gndms.c3resource.jaxb.Site;
 import de.zib.gndms.c3resource.jaxb.Workspace;
-import de.zib.gndms.logic.action.MandatoryOptionMissingException;
+import de.zib.gndms.kit.config.MandatoryOptionMissingException;
+import de.zib.gndms.kit.configlet.RegularlyRunnableConfiglet;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -48,7 +49,7 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 		try {
 			mdsUrl = getMapConfig().getOption("mdsUrl");
 		}
-		catch (MandatoryOptionMissingException e) {
+		catch ( MandatoryOptionMissingException e) {
 			getLog().warn(e);
 		}
 	}

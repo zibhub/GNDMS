@@ -1,6 +1,6 @@
 package de.zib.gndms.logic.model.dspace;
 
-import de.zib.gndms.logic.action.MandatoryOptionMissingException;
+import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigActionResult;
 import de.zib.gndms.logic.model.config.ConfigOption;

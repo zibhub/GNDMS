@@ -1,17 +1,16 @@
 package de.zib.gndms.infra.action;
 
 import com.google.common.collect.Maps;
-import de.zib.gndms.logic.action.MandatoryOptionMissingException;
-import de.zib.gndms.logic.model.config.ConfigActionHelp;
-import de.zib.gndms.logic.model.config.ConfigActionResult;
-import de.zib.gndms.logic.model.config.ConfigOption;
-import de.zib.gndms.logic.model.config.SetupAction;
+import de.zib.gndms.kit.config.MandatoryOptionMissingException;
+import de.zib.gndms.kit.config.ParameterTools;
+import de.zib.gndms.logic.model.config.*;
 import de.zib.gndms.model.common.ConfigletState;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -63,10 +62,16 @@ public class SetupDefaultConfigletAction extends SetupAction<ConfigActionResult>
 	}
 
 
+	@SuppressWarnings({ "unchecked" })
 	private ConfigActionResult read(final EntityManager emParam, final PrintWriter writerParam) {
-		ConfigletState state = emParam.find(ConfigletState.class, getName());
+		final ConfigletState state = emParam.find(ConfigletState.class, getName());
 		if (state == null) return failed("Configlet not found");
-		else return ok();
+		else {
+			final Map<String, String> map = (Map<String, String>) state.getState();
+			ParameterTools.asString(map, EchoOptionsAction.OPTION_NAME_PATTERN, true);
+			return ok();
+		}
+
 	}
 
 

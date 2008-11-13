@@ -146,8 +146,6 @@ class Subspace extends GridResource {
         } catch (SecurityException e) {
             return false
         }
-
-        return false
     }
 
     /** 

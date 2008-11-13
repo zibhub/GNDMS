@@ -1,9 +1,10 @@
-package de.zib.gndms.logic.model.config;
+package de.zib.gndms.kit.config;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Collections;
+import java.util.Iterator;
 
 
 /**
@@ -33,4 +34,9 @@ public class MapConfig extends AbstractConfig {
     public boolean hasOption(final @NotNull String name) {
         return map.containsKey(name);
     }
+
+
+	public Iterator<String> iterator() {
+		return Collections.unmodifiableSet(map.keySet()).iterator();
+	}
 }

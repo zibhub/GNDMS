@@ -36,13 +36,8 @@ public class FileTransferORQXSDReader {
             }
 
             return torq;
-        } catch ( IllegalAccessException e ) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch ( InstantiationException e ) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch ( Exception e ) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            throw new RuntimeException( e.getMessage(), e );
         }
-        return null;
     }
 }

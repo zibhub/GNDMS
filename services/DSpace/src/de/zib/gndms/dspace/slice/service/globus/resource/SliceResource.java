@@ -43,7 +43,7 @@ public class SliceResource extends SliceResourceBase
     public void setTotalStorageSize( UnsignedLong totalStorageSize ) throws ResourceException {
         Slice sl = loadModelById( getID( ) );
         sl.setTotalStorageSize( totalStorageSize.longValue( ) );
-        mH.mergeModel( null, sl );
+        mH.mergeModel( (EntityManager) null, sl );
     }
 
     public void setSliceKind(javax.xml.namespace.QName sliceKind ) throws ResourceException {

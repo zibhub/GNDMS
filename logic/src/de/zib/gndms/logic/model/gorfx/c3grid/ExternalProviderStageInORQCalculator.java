@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model.gorfx.c3grid;
 
 import de.zib.gndms.logic.action.ProcessBuilderAction;
-import de.zib.gndms.logic.model.config.MapConfig;
+import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.model.gorfx.PermissionDeniedORQException;
 import de.zib.gndms.logic.model.gorfx.UnfulfillableORQException;
 import de.zib.gndms.model.gorfx.Contract;
@@ -28,6 +28,10 @@ public class ExternalProviderStageInORQCalculator extends AbstractProviderStageI
     public static final int EXIT_CODE_UNFULFILLABLE = 255;
     public static final int EXIT_CODE_PERMISSION_DENIED = 254;
 
+    public static final String FORMAT_XML = "XML";
+    public static final String FORMAT_PROPS = "PROPS";
+
+    private String format=FORMAT_PROPS;
 
     @Override
     public Contract createOffer() throws Exception {
@@ -35,6 +39,10 @@ public class ExternalProviderStageInORQCalculator extends AbstractProviderStageI
         final @NotNull Contract result;
 
         MapConfig config = new MapConfig(getKey().getConfigMap());
+        
+        if( config.hasOption( "scriptIoFormat" ) )
+            format = config.getOption( "scriptIoFormat" );
+
         if (config.hasOption("estimationCommand")) {
             File estCommandFile = config.getFileOption("estimationCommand");
             if (! estCommandFile.exists() || ! estCommandFile.canRead() || ! estCommandFile.isFile())
@@ -83,13 +91,31 @@ public class ExternalProviderStageInORQCalculator extends AbstractProviderStageI
         catch (IOException e) {
             throw new IllegalStateException(e);
         }
+
+        ProcessBuilderAction action;
+        if( format.equals( FORMAT_XML ) )
+            action = createXMLParmPBAction( contParam );
+        else
+            action = createDefaultPBAction( contParam );
+        action.setProcessBuilder(pb);
+        action.setOutputReceiver(new StringBuilder(8));
+        return action;
+    }
+
+
+    private ProcessBuilderAction createDefaultPBAction( Contract contParam ) {
+
         final Properties moreProps = new Properties();
         ContractPropertyWriter writer = new ContractPropertyWriter(moreProps);
         ContractConverter conv = new ContractConverter(writer, contParam);
         conv.convert();
-        final @NotNull ProcessBuilderAction action = ProviderStageInTools.createPBAction(getORQArguments(), moreProps);
-        action.setProcessBuilder(pb);
-        action.setOutputReceiver(new StringBuilder(8));
-        return action;
+        return ProviderStageInTools.createPBAction(getORQArguments(), moreProps);
+    }
+
+
+    private ProcessBuilderAction createXMLParmPBAction( Contract contParam ) {
+
+        // todo problem using ORQT's and axis here breaks layer.
+        return null;
     }
 }

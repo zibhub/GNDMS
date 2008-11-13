@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model.gorfx;
 
 import de.zib.gndms.kit.factory.Factory;
-import de.zib.gndms.logic.action.MandatoryOptionMissingException;
+import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigActionResult;
 import de.zib.gndms.logic.model.config.ConfigOption;
