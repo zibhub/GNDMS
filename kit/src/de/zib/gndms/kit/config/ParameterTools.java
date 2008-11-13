@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.model.config;
+package de.zib.gndms.kit.config;
 
 import org.jetbrains.annotations.NotNull;
 
