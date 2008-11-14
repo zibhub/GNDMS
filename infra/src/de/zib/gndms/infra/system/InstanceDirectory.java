@@ -13,10 +13,7 @@ import de.zib.gndms.kit.monitor.GroovyBindingFactory;
 import de.zib.gndms.kit.monitor.GroovyMoniServer;
 import de.zib.gndms.kit.config.ConfigletProvider;
 import de.zib.gndms.logic.model.TaskAction;
-import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
-import de.zib.gndms.logic.model.gorfx.ORQCalculatorMetaFactory;
-import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
-import de.zib.gndms.logic.model.gorfx.ORQTaskActionMetaFactory;
+import de.zib.gndms.logic.model.gorfx.*;
 import de.zib.gndms.model.common.ConfigletState;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.gorfx.OfferType;
@@ -46,7 +43,7 @@ import java.util.Set;
 *
 *          User: stepn Date: 03.09.2008 Time: 16:50:06
 */
-public class InstanceDirectory implements ConfigletProvider {
+public class InstanceDirectory implements ConfigletProvider, ORQCalculatorProvider {
     private @NotNull final Log logger = LogFactory.getLog(InstanceDirectory.class);
     private static final int INITIAL_CAPACITY = 32;
     private static final long INSTANCE_RETRIEVAL_INTERVAL = 250L;
@@ -94,6 +91,15 @@ public class InstanceDirectory implements ConfigletProvider {
             final @NotNull String offerTypeKey)
             throws ClassNotFoundException, IllegalAccessException, InstantiationException,
             NoSuchMethodException, InvocationTargetException {
+        return getORQCalculator( emf, offerTypeKey );
+    }
+
+
+    public AbstractORQCalculator<?,?> getORQCalculator(
+        final @NotNull EntityManagerFactory emf,
+        final @NotNull String offerTypeKey)
+        throws ClassNotFoundException, IllegalAccessException, InstantiationException,
+        NoSuchMethodException, InvocationTargetException {
         EntityManager em = emf.createEntityManager();
         try {
             OfferType type = em.find(OfferType.class, offerTypeKey);

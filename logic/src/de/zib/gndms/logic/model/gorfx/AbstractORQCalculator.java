@@ -32,6 +32,10 @@ public abstract class AbstractORQCalculator<M extends AbstractORQ, C extends Abs
     public AbstractORQCalculator() {
     }
 
+    
+    public AbstractORQCalculator( Class<M> mc ) {
+        orqModelClass = mc;
+    }
 
     // here the computation of the required offer should be performed
     public abstract Contract createOffer( ) throws Exception;

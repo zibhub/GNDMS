@@ -7,14 +7,16 @@ import org.jetbrains.annotations.NotNull;
  * User: roberto
  * Date: 13.10.2008
  * Time: 11:17:06
- * To change this template use File | Settings | File Templates.
  */
-public class SliceStageInORQ extends AbstractORQ{
+public class SliceStageInORQ extends ProviderStageInORQ {
 
-    private DataDescriptor dataDescriptor;
+    private static final long serialVersionUID = 4197416353040463983L;
+
     private String gridSite;
-    private String dataFile;
-    private String metadataFile;
+
+    // this isn't part of the initial request, but part of the offer creation result.
+    private String gridSiteURI;
+
 
     public SliceStageInORQ( ){
         super();
@@ -23,47 +25,37 @@ public class SliceStageInORQ extends AbstractORQ{
 
     @Override
     public @NotNull String getDescription() {
-        return "Slicestaging";
+        return "Slice-staging";
     }
 
-    public DataDescriptor getDataDescriptor() {
-        return dataDescriptor;
-    }
-
-
-    public void setDataDescriptor( DataDescriptor dataDescriptor ) {
-        this.dataDescriptor = dataDescriptor;
-    }
-
-    public String getDataFile() {
-        return dataFile;
-    }
-
-
-    public void setDataFile( String dataFile ) {
-        this.dataFile = dataFile;
-    }
-
-
-    public String getMetadataFile() {
-        return metadataFile;
-    }
-
-
-    public void setMetadataFile( String metadataFile ) {
-        this.metadataFile = metadataFile;
-    }
 
     public void setGridSite( String gridSite ){
         this.gridSite = gridSite;
     }
 
+
     public boolean hasGridSite(){
         return gridSite != null && gridSite.length()!=0;
     }
 
+
     public String getGridSite() {
         return gridSite;
+    }
+
+
+    public String getGridSiteURI() {
+        return gridSiteURI;
+    }
+
+
+    public void setGridSiteURI( String gridSiteURI ) {
+        this.gridSiteURI = gridSiteURI;
+    }
+
+
+    public boolean hasGridSiteURI() {
+        return gridSiteURI != null;
     }
 }
 
