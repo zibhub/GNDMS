@@ -56,7 +56,7 @@
 	</target>
 	
 	<!-- Creates jar-file of binaries -->	
-	<target name="infra.jar" depends="infra.compile.all">
+	<target name="infra.jar" depends="infra.compile">
 		<jar destfile="./${lib.dir}/gndms-infra.jar" basedir="${infra.dest}/production"/>		
 	</target>
 	

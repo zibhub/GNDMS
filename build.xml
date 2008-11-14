@@ -83,6 +83,15 @@
 		<runtarget target="infra.jar"/>
 	</target>
 	
+	<!-- Compiles the whole project with test files. Use this only if target 'deploy' has been invoked once ! -->
+	<target name="compile.test">
+		<runtarget target="model.compile.all"/>
+		<runtarget target="model.enhancer"/>
+		<runtarget target="kit.compile.all"/>
+		<runtarget target="logic.compile.all"/>
+		<runtarget target="typecon.compile.all"/>
+		<runtarget target="infra.compile.all"/>
+	</target>
 	<!-- Building stubs for every service -->
 	<target name='stubs.compile'>
 		<exec executable="sh">

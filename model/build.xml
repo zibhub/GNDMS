@@ -34,7 +34,7 @@
 	</target>
 
 	<!-- Creates jar-file of model binaries -->
-	<target name="model.jar" depends="model.compile.all" description="Creates jar file gndms-shared-model.jar in 'extra/lib'">	
+	<target name="model.jar" depends="model.compile" description="Creates jar file gndms-shared-model.jar in 'extra/lib'">	
 		<jar destfile="${lib.dir}/gndms-shared-model.jar"
 		     basedir="${model.dest}/production">
 		</jar>
