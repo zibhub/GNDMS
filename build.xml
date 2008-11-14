@@ -26,7 +26,7 @@
 	
 	<!-- To avoid problems import just libaries defined in globus_jars.txt-->
 	<fileset dir="${env.GLOBUS_LOCATION}/lib" includesfile="globus_jars.txt" id="globus.lib"/>
-	<property name="link.sync" value="sync.sh"/>
+
 	
 	<!-- using ant contrib for contidionals, looping , and runtarget -->
 	<taskdef resource="net/sf/antcontrib/antlib.xml">
@@ -101,7 +101,7 @@
 	<!-- Create necessary symlinks in the services' lib directories -->
 	<target name="symlink">
 		<exec executable="sh">
-			<arg value="link.sync"/>
+			<arg value="sync.sh"/>
 		</exec>
 	</target>
 	

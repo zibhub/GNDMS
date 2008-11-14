@@ -3,7 +3,7 @@
 		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
 		<pathelement location="${lib.dir}/gndms-kit.jar"/>
 		<pathelement location="${lib.dir}/gndms-logic.jar"/>
-
+		<pathelement location="${lib.dir}/gndms-kit.jar"/>
 		<fileset dir="${tools-lib.dir}" includes="*.jar" />
 		<fileset refid="globus.lib"/>
 		<dirset dir="${infra.dest}/production/" />
@@ -19,10 +19,11 @@
 				<and>
 					<available file="${lib.dir}/gndms-shared-model.jar"/>
 					<available file="${lib.dir}/gndms-logic.jar"/>
+					<available file="${lib.dir}/gndms-kit.jar"/>
 				</and>
 			</not>
 			<then>
-				<fail message="Not able to compile as '${lib.dir}/gndms-shared-model.jar' or '${lib.dir}/gndms-logic.jar' was not found."/>
+				<fail message="Not able to compile as '${lib.dir}/gndms-shared-model.jar' or '${lib.dir}/gndms-logic.jar' or '${lib.dir}/gndms-kit.jar' was not found."/>
 			</then>
 			
 			<else>
