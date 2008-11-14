@@ -5,9 +5,9 @@ import de.zib.gndms.model.gorfx.types.ProviderStageInResult;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
-import de.zib.gndms.logic.action.MandatoryOptionMissingException;
-import de.zib.gndms.logic.model.config.ConfigProvider;
-import de.zib.gndms.logic.model.config.MapConfig;
+import de.zib.gndms.kit.config.MandatoryOptionMissingException;
+import de.zib.gndms.kit.config.ConfigProvider;
+import de.zib.gndms.kit.config.MapConfig;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;

@@ -1,9 +1,9 @@
 package de.zib.gndms.logic.model.gorfx.c3grid;
 
 import de.zib.gndms.kit.util.DirectoryAux;
-import de.zib.gndms.logic.action.MandatoryOptionMissingException;
-import de.zib.gndms.logic.model.config.ConfigProvider;
-import de.zib.gndms.logic.model.config.MapConfig;
+import de.zib.gndms.kit.config.MandatoryOptionMissingException;
+import de.zib.gndms.kit.config.ConfigProvider;
+import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
@@ -13,6 +13,7 @@ import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
+import de.zib.gndms.model.util.TxFrame;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -88,9 +89,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
         final ConfigProvider config = getOfferTypeConfig();
 
         final EntityManager em = getEntityManager();
-        final boolean wasActive = em.getTransaction().isActive();
-        if (! wasActive)
-            getEntityManager().getTransaction().begin();
+        final TxFrame txf = new TxFrame(em);
         try {
             final ImmutableScopedName scopedName = config.getISNOption("subspace");
             final MetaSubspace metaSubspace = getEntityManager().find(
@@ -110,37 +109,45 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
             csa.setSliceKind(kind);
             final Slice slice = csa.execute(getEntityManager());
             model.setData(slice.getId());
-            if (! wasActive)
-                getEntityManager().getTransaction().commit();
+	        txf.commit();
         }
-        finally {
-            if (! wasActive)
-                if (getEntityManager().getTransaction().isActive())
-                    getEntityManager().getTransaction().rollback();
-        }
+        finally { txf.finish();  }
     }
 
 
     private Slice findNewSlice(final Task model) {
-        final EntityManager em = getEntityManager();
-        final boolean wasActive = em.getTransaction().isActive();
-
-        if (! wasActive)
-            getEntityManager().getTransaction().begin();
-        try {
-            final Slice slice = em.find(Slice.class, model.getData());
-            if (! wasActive)
-                getEntityManager().getTransaction().commit();
-            return slice;
-        }
-        finally {
-            if (getEntityManager().getTransaction().isActive())
-                getEntityManager().getTransaction().rollback();
-        }
+	    final EntityManager em = getEntityManager();
+	    final TxFrame txf = new TxFrame(em);
+	    try {
+		    final Slice slice = em.find(Slice.class, model.getData());
+	        txf.commit();
+	        return slice;
+	    }
+	    finally { txf.finish();  }
     }
 
 
-    @Override
+	@Override
+	protected void onFailed(final @NotNull Task model) {
+		try {
+			// wrappend in try-finally to ensure we go to failed even if slice
+			// deletion goes wrong
+			final EntityManager em = getEntityManager();
+			final TxFrame txf = new TxFrame(em);
+			try {
+				final Slice slice = findNewSlice(model);
+				slice.getOwner().destroySlice(slice);
+				em.remove(slice);
+				txf.commit();
+			}
+			catch (RuntimeException e) { getLog().warn(e); throw e; }
+			finally { txf.finish();  }
+		}
+		finally { super.onFailed(model); }
+	}
+
+
+	@Override
     @NotNull
     protected Class<ProviderStageInORQ> getOrqClass() {
         return ProviderStageInORQ.class;

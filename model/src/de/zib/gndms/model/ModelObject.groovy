@@ -10,10 +10,17 @@ import org.jetbrains.annotations.Nullable
  * @version $Id$
  *
  * User: stepn Date: 30.07.2008 Time: 17:03:24
+ *
+ * NOTE: do not declare this class abstract!! ( gives compiler trouble )
  */
-public class ModelObject {
+class ModelObject {
 
-	static int hashCode0(Object obj) {
+    protected ModelObject( ) {
+
+    }
+    
+
+    static int hashCode0(Object obj) {
 		return obj == null ? 0 : obj.hashCode();
 	}
 
@@ -36,7 +43,7 @@ abstract class ModelId extends ModelObject {
 
 	@Override
 	 boolean equals(@Nullable Object obj) {
-		if (obj == null) return false;
+		if (obj.is(null)) return false;
 		if (obj.is(this)) return true;
 		if (! this.class.isInstance(obj))
 			return false;

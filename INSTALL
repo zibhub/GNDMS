@@ -146,6 +146,8 @@ When describing the dependencies of a compilation unit, I assume the following
 - annotations: extra/tools-lib/annotations.jar
   Nearly everything has a dependency to this one.
 - joda-time: extra/tools-lib/joda-time*.jar
+- jaxb: activation.jar jaxb*jar jsr173*jar
+- args4j: extra/tools-lib/args4j*.jar
                      
      
 
@@ -175,7 +177,7 @@ DETAILED BUILD INSTRUCTIONS
      Sources: model/src (resp. model/test-src)
      Output:  model/gndms-shared-model/production (resp. test)
      Dependencies: GROOVY, J2EE, annotations, SOURCE, openjpa,
-                   collections, joda-time, testng
+                   collections, joda-time, testng, jaxb
      Re-exports: openjpa, collections
 
      Make sure META-INF gets copied 
@@ -199,7 +201,7 @@ DETAILED BUILD INSTRUCTIONS
      Sources: kit/src
      Output: kit/gndms-kit/production (resp. test) classes
      Dependencies: GROOVY, J2EE, SOURCE, gt4, gndms-shared-model, annotations,
-                   jetty, servlet-api, cos, testng, joda-time
+                   jetty, servlet-api, cos, testng, joda-time, args4j
 
 
   5) Compile gndms-logic.jar
@@ -216,7 +218,7 @@ DETAILED BUILD INSTRUCTIONS
      Output: typecon/gndms-typecon/production (rest. test) classes
              extra/lib/gndms-typecon.jar containing the contents of production/
      Dependencies: GROOVY, J2EE, gorfx-stubs, gndms-shared-model, annotations, joda-time,
-                   gt4, testng           
+                   gt4, testng, and openjpa (due to javac compiler bug 6365854)
 
 
 
@@ -226,7 +228,7 @@ DETAILED BUILD INSTRUCTIONS
             extra/lib/gndms-infra.jar containing the contents of production/
      Dependencies: GROOVY, J2EE, annotations, gndms-logic, gndms-shared-model
                    commons, derby, cos, servlet-api, jetty, gt4, testng, joda-time,
-                   gndms-kit
+                   gndms-kit, jaxb
 
     (In IntelliJ: Use Build/Build Jars.. to build the jar on Make Project)
 
@@ -250,6 +252,8 @@ DETAILED BUILD INSTRUCTIONS
   J2EE, groovy, annotations, "servicename"-stubs,
   gndms-infra, gndms-logic, gndms-shared-model, joda-time,
   SOURCES, all non-symlinks in service/ServiceName/lib,  gt4
+
+  GORFX also depends on DSpace and args4j.
   
   compile to service/ServiceName/out/production (resp. test/), and exclude the
   services' out,  build, and lib directories from the project sources to reduce
@@ -302,6 +306,20 @@ DEPLOYMENT QUICK GUIDE
 ---------------------------------------------
 DATAPROVIDER DEPLOYMENT AND SETUP QUICK GUIDE
 ---------------------------------------------
+      
+Before we start a remark on logging.  To get access to substantially more log 
+messages, please add
+
+log4j.category.de.zib=DEBUG
+
+to $GLOBUS_LOCATION/container-log4j.properties
+
+For even more log information, please change the line that starts with 
+"log4j.appender.A1.layout.ConversionPattern=" to
+
+log4j.appender.A1.layout.ConversionPattern=%d{ISO8601} %-5p %c{2} [%t,%M:%L] <%x> %m%n
+
+(Techis: This enables NDC logging)
 
 
 Setting up a dataprovider can be done in a few quick steps:
@@ -346,9 +364,9 @@ Now you should have a working installation of GNDMS.  Next, we'll configure it a
      ant -f build-deploy.xml dp-setupdb      
 
    This can be done only once and will produce a few pages of output that should not contain any
-   java stracktraces, just consecutive commands and the string "OK" as result for each command.
+   java stracktraces, just consecutive monitor commands and the string "OK" as result for each command.
 
-   If this step fails, and you want to retry with a modified setup script, you have to
+   ONLY IF THIS STEP FAILS, and you want to retry with a modified setup script, you have to
  
      Shutdown globus, run "ant -f build-deploy.xml dp-killdb",
 
@@ -365,7 +383,7 @@ Now, you're done!  To test, load your grid-proxy and (assuming bash) execute in 
       "-Dpsc.sfr=test-data/sfr/dummy-sfr.properties" \
       "-Dpsc.dn=$(grid-proxy-info -identity)"
 
-Output should look like this:
+dp-test may take quite a while (< 2 min). Output should look like this:
 
     Buildfile: build-deploy.xml
 

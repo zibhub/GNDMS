@@ -3,6 +3,7 @@ package de.zib.gndms.logic.model.gorfx;
 import de.zib.gndms.kit.factory.Factory;
 import de.zib.gndms.kit.factory.FactoryInstance;
 import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
+import de.zib.gndms.kit.config.ConfigletProvider;
 import de.zib.gndms.model.gorfx.Contract;
 import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
@@ -18,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 public abstract class AbstractORQCalculator<M extends AbstractORQ, C extends AbstractORQCalculator<M, C>>
     implements FactoryInstance<OfferType, AbstractORQCalculator<?, ?>> {
 
+    private ConfigletProvider configletProvider;
     private Contract perferredOfferExecution;
     private Class<M> orqModelClass;
     private M orqArguments;
@@ -25,6 +27,10 @@ public abstract class AbstractORQCalculator<M extends AbstractORQ, C extends Abs
 
     private Factory<OfferType, AbstractORQCalculator<?,?>> factory;
     private OfferType offerType;
+
+
+    public AbstractORQCalculator() {
+    }
 
 
     // here the computation of the required offer should be performed
@@ -103,5 +109,15 @@ public abstract class AbstractORQCalculator<M extends AbstractORQ, C extends Abs
 
     public void setKey(final @NotNull OfferType keyParam) {
         offerType = keyParam;
+    }
+
+
+    public ConfigletProvider getConfigletProvider() {
+        return configletProvider;
+    }
+
+
+    public void setConfigletProvider( ConfigletProvider configletProvider ) {
+        this.configletProvider = configletProvider;
     }
 }

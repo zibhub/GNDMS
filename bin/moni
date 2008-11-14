@@ -20,7 +20,7 @@ else
 	FILE="$GNDMS_MONI_CONFIG"
 	if [ ! -f "$FILE" ]; then
 		if [ -z "$FILE" ]; then
-			echo "GOMI_CONFIG not set" >&2
+			echo "GNDMS_MONI_CONFIG not set" >&2
 		else
 			echo "$FILE not found" >&2
 		fi

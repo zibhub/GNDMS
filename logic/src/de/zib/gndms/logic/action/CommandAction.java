@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.action;
 
-import de.zib.gndms.logic.model.config.ConfigProvider;
-import de.zib.gndms.logic.model.config.ParameterTools;
+import de.zib.gndms.kit.config.ConfigProvider;
+import de.zib.gndms.kit.config.ParameterTools;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.PrintWriter;

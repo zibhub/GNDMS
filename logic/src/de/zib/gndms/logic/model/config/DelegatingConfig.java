@@ -3,6 +3,8 @@ package de.zib.gndms.logic.model.config;
 import org.jetbrains.annotations.NotNull;
 import de.zib.gndms.logic.action.MandatoryOptionMissingException;
 
+import java.util.Iterator;
+
 
 /**
  * ThingAMagic.
@@ -44,4 +46,7 @@ public class DelegatingConfig extends AbstractConfig {
             throws MandatoryOptionMissingException {
         return provider.getOption(nameParam);
     }
+
+
+	public Iterator<String> iterator() {return provider.iterator();}
 }
