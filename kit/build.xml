@@ -36,7 +36,7 @@
 	
 	
 	<!-- Creates jar-file of binaries -->
-	<target name="kit.jar" depends="kit.compile" description="Creates jar file gndms-kit.jar in 'extra/lib'">
+	<target name="kit.jar" depends="kit.compile.all" description="Creates jar file gndms-kit.jar in 'extra/lib'">
 		<jar destfile="./${lib.dir}/gndms-kit.jar" basedir="${kit.dest}/production"/>
 	</target>
 

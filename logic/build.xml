@@ -24,7 +24,7 @@
 	
 	
 	<!-- Creates jar-file of logic binaries -->	
-	<target name="logic.jar" depends="logic.compile" description="Creates jar file gndms-logic.jar in 'extra/lib'">	
+	<target name="logic.jar" depends="logic.compile.all" description="Creates jar file gndms-logic.jar in 'extra/lib'">	
 		<jar destfile="./${lib.dir}/gndms-logic.jar"
 		     basedir="${logic.dest}/production">
 		</jar>

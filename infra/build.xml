@@ -5,6 +5,8 @@
 		<fileset refid="globus.lib"/>
 		<dirset dir="${infra.dest}/production/" />
 		<dirset dir="${logic.dest}/production/" />
+		<dirset dir="${model.dest}/test/" />
+		<dirset dir="${kit.dest}/test/" />
 	</path>
 	
 	<!-- Compile infra, but not its test-files -->	
@@ -36,7 +38,7 @@
 	</target>
 	
 	<!-- Creates jar-file of binaries -->	
-	<target name="infra.jar" depends="infra.compile">
+	<target name="infra.jar" depends="infra.compile.all">
 		<jar destfile="./${lib.dir}/gndms-infra.jar" basedir="${infra.dest}/production"/>		
 	</target>
 	

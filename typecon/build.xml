@@ -1,4 +1,4 @@
-<project name="typecon compilation file" default="model.compile" basedir="." >
+<project name="typecon compilation file" default="typecon.compile" basedir="." >
 	
 	<path id="typecon.path">
 		<fileset dir="${lib.dir}" includes="*.jar"/>
@@ -20,7 +20,7 @@
 	</target>
 	
 	<!-- Compile typecon and its test-files -->
-	<target name="typcon.compile.all" depends="typecon.compile" description="Compiles typecon and its test-files">
+	<target name="typecon.compile.all" depends="typecon.compile" description="Compiles typecon and its test-files">
 		<mkdir dir="./${typecon.dest}/test"/>
 		<javac srcdir='${typecon.dir}/test-src' destdir='${typecon.dest}/test' classpathref="typecon.path" includes="**/type/*.java"/>
 		<!-- Copy Meta files to build dir-->
@@ -32,7 +32,7 @@
 	</target>
 	
 	<!-- Creates jar-file of typecon binaries -->
-	<target name="typecon.jar" depends="typecon.compile" description="Creates jar file gndms-typecon.jar in 'extra/lib'">	
+	<target name="typecon.jar" depends="typecon.compile.all" description="Creates jar file gndms-typecon.jar in 'extra/lib'">	
 		<jar destfile="./${lib.dir}/gndms-typecon.jar"
 		     basedir="${typecon.dest}/production">
 		</jar>
