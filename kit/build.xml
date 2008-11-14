@@ -9,17 +9,26 @@
 	</path>
 	<!-- Compile model, but not its test-files -->
 	<target name="kit.compile" description="Compiles kit">
-		<mkdir dir="./${kit.dest}/production"/>
-		<!-- Copy meta-stuff -->
-		<copy todir="${kit.dest}/production">
-			<fileset dir='${kit.dir}/src'>
-				<exclude name="de/**"/>
-			</fileset>
-		</copy>
-		<groovyc srcdir='${kit.dir}/src' destdir='${kit.dest}/production' classpathref="kit.path">
-			<javac/>
-		</groovyc>
-	
+		<if>
+			<available file="${lib.dir}/gndms-shared-model.jar"/>
+		<then>
+			<mkdir dir="./${kit.dest}/production"/>
+			<!-- Copy meta-stuff -->
+			<copy todir="${kit.dest}/production">
+				<fileset dir='${kit.dir}/src'>
+					<exclude name="de/**"/>
+				</fileset>
+			</copy>
+			<groovyc srcdir='${kit.dir}/src' destdir='${kit.dest}/production' classpathref="kit.path">
+				<javac/>
+			</groovyc>
+		</then>
+		<else>
+			<echo> Not able to compile as '${lib.dir}/gndms-shared-model.jar' was not found. </echo>
+		</else>
+		</if>
+		
+		
 	</target>
 
 	<!-- Compile kit and its test-files -->
