@@ -48,7 +48,7 @@ import java.util.concurrent.*;
  * This sets up the configuration and database storage area shared between
  * GNDMS services.
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author Stefan Plantikow <plantikow@zib.de>in
  * @version $Id$
  *
  *          User: stepn Date: 17.06.2008 Time: 23:09:00
@@ -157,9 +157,11 @@ public final class GNDMSystem
 			// A: External script during deployment
             initSharedDir();
 			createDirectories();
+			prepareDbStorage();
 			emf = createEMF();
 			restrictedEmf = new RestrictedEMFactory(emf, null);
 			tryTxExecution();
+			instanceDir.reloadConfiglets(restrictedEmf);
 		}
 		catch (Exception e) {
 			logger.error("Initialization failed", e);
@@ -168,7 +170,9 @@ public final class GNDMSystem
 	}
 
 
-    private synchronized void initSharedDir() throws Exception {
+
+
+	private synchronized void initSharedDir() throws Exception {
         sharedDir = new File(sharedConfig.getGridPath()).getCanonicalFile();
         final String gridName = sharedConfig.getGridName();
 
@@ -185,8 +189,6 @@ public final class GNDMSystem
 
 		logDir = new File(curSharedDir, "log");
 		doCheckOrCreateDir(logDir);
-
-		prepareDbStorage();
 	}
 
 
@@ -276,6 +278,7 @@ public final class GNDMSystem
             if (executionService != null) {
                 executionService.shutdown();
             }
+	        instanceDir.shutdownConfiglets();
             final GroovyMoniServer moniServer = getMonitor();
             if (moniServer != null)
                 moniServer.stopServer();
@@ -453,6 +456,7 @@ public final class GNDMSystem
     }
 
 
+    @SuppressWarnings({ "ConstantConditions" })
     public final <M extends GridResource> void refreshAllResources(
             final @NotNull GNDMPersistentServiceHome<M> home) {
         final EntityManager manager = home.getEntityManagerFactory().createEntityManager();
@@ -494,19 +498,24 @@ public final class GNDMSystem
     }
 
 
-    public @NotNull <R> Future<R> submitAction(final @NotNull EntityAction<R> action, final @NotNull Log logger) {
-        return getExecutionService().submitAction(action, logger);
+    public @NotNull <R> Future<R> submitAction(final @NotNull EntityAction<R> action, final @NotNull Log logParam) {
+        return getExecutionService().submitAction(action, logParam);
     }
 
     
     public @NotNull <R> Future<R> submitAction(final @NotNull EntityManager em,
                                                final @NotNull EntityAction<R> action,
-                                               final @NotNull Log logger) {
-        return getExecutionService().submitAction(em, action, logger);
+                                               final @NotNull Log logParam) {
+        return getExecutionService().submitAction(em, action, logParam);
     }
 
 
-    public final class SysTaskExecutionService implements TaskExecutionService, ThreadFactory {
+	public void reloadConfiglets() {
+		instanceDir.reloadConfiglets(getEntityManagerFactory());
+	}
+
+
+	public final class SysTaskExecutionService implements TaskExecutionService, ThreadFactory {
         private final ThreadPoolExecutor executorService;
         private volatile boolean terminating;
 

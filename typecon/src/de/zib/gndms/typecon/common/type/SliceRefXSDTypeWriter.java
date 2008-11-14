@@ -22,13 +22,10 @@ public class SliceRefXSDTypeWriter extends AbstractXSDTypeWriter<SliceReference>
 
     // use write() for one shot writing s.b.
 
-    public void writeSliceRef( SliceRef sf ) {
+    public void writeSliceRef( SliceRef sr ) {
 
         try {
-
-            SimpleResourceKey sk = new SimpleResourceKey(  sf.getResourceKeyName(), sf.getResourceKeyValue() );
-            EndpointReferenceType epr = AddressingUtils.createEndpointReference( sf.getGridSiteId(), sk );
-
+            EndpointReferenceType epr = getEPRforSliceRef( sr );
             getProduct().setEndpointReference( epr );
         } catch ( Exception e ) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -69,5 +66,12 @@ public class SliceRefXSDTypeWriter extends AbstractXSDTypeWriter<SliceReference>
         SliceRefConverter conv = new SliceRefConverter( wrt, sr );
         conv.convert( );
         return wrt.getProduct();
+    }
+
+
+    public static EndpointReferenceType getEPRforSliceRef( SliceRef sr ) throws Exception {
+
+        SimpleResourceKey sk = new SimpleResourceKey(  sr.getResourceKeyName(), sr.getResourceKeyValue() );
+        return AddressingUtils.createEndpointReference( sr.getGridSiteId(), sk );
     }
 }

@@ -1,6 +1,6 @@
 package de.zib.gndms.logic.model.dspace;
 
-import de.zib.gndms.logic.model.config.ParameterTools;
+import de.zib.gndms.kit.config.ParameterTools;
 import de.zib.gndms.logic.model.config.ConfigActionTestBase;
 import org.testng.annotations.*;
 

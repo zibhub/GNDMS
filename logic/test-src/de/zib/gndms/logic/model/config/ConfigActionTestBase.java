@@ -1,8 +1,8 @@
 package de.zib.gndms.logic.model.config;
 
 import de.zib.gndms.logic.action.ActionTestTools;
-import de.zib.gndms.logic.model.config.ParameterTools;
 import de.zib.gndms.model.test.ModelEntityTestBase;
+import de.zib.gndms.kit.config.ParameterTools;
 import org.jetbrains.annotations.NotNull;
 import org.testng.annotations.Optional;
 

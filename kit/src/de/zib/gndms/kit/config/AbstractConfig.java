@@ -1,16 +1,20 @@
-package de.zib.gndms.logic.model.config;
+package de.zib.gndms.kit.config;
 
-import de.zib.gndms.logic.action.MandatoryOptionMissingException;
+import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
 import org.joda.time.format.ISOPeriodFormat;
 
+import java.io.File;
 import java.text.ParseException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.io.File;
 
 
 /**
@@ -64,11 +68,16 @@ public abstract class AbstractConfig implements ConfigProvider {
 
     @SuppressWarnings({ "MethodMayBeStatic" })
     protected String replaceVar(final String optionName, final String envVarName) {
-        return System.getenv(envVarName);
+        return escape(System.getenv(envVarName));
     }
 
 
-    public abstract String getConcreteNonMandatoryOption(final String nameParam);
+	private static String escape(final String s) {
+		return ParameterTools.escape(s);
+	}
+
+
+	public abstract String getConcreteNonMandatoryOption(final String nameParam);
 
 
     public int getIntOption(@NotNull String name, int def) {
@@ -187,4 +196,50 @@ public abstract class AbstractConfig implements ConfigProvider {
         final String option = getNonMandatoryOption(name);
         return option == null ? def : Class.forName(option).asSubclass(baseClass);
     }
+
+
+	@SuppressWarnings({ "HardcodedFileSeparator" })
+	@NotNull
+	public ConfigProvider getDynArrayOption(@NotNull final String name)
+		  throws ParseException, MandatoryOptionMissingException {
+		final String optStr = getOption(name);
+		final List<String> entries = ParameterTools.parseStringArray(optStr);
+
+		final Map<String, String> map = new HashMap<String, String>(entries.size());
+		map.put("count", Integer.toString(entries.size()));
+		int item = 0;
+		for (String entry : entries) {
+			map.put(Integer.toString(item), entry);
+			item++;
+		}
+		return new MapConfig(map);
+	}
+
+
+	@NotNull
+	public Iterator<String> dynArrayKeys() {
+		final int count = dynArraySize();
+		return new Iterator<String>() {
+			int item = 0;
+
+			public boolean hasNext() {
+				return item < count;
+			}
+
+
+			public String next() {
+				final String val = Integer.toString(item);
+				item++;
+				return val;
+			}
+
+
+			public void remove() {
+				throw new UnsupportedOperationException();
+			}
+		};
+	}
+
+
+	public int dynArraySize() {return getIntOption("count", 0);}
 }

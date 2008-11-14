@@ -6,6 +6,11 @@ STAGING_COMMAND="%{C3GRID_SOURCE}/scripts/dummy-staging.sh"
 ESTIMATION_COMMAND="%{C3GRID_SOURCE}/scripts/dummy-estimation.sh"
 STAGING_AREA_PATH="/tmp"
 STAGING_AREA_SIZE="1000000" # Currently unused
+# In- and Output format for script properties
+# currently only PROPS (java-properties) and XML are supported
+SCRIPT_IO_FORMAT="PROPERTIES"
+#SCRIPT_IO_FORMAT="XML"
+
 
 source $(dirname $0)/check-hostname.sh
 # One can set the $hn variable manually in the check-hostname script,
@@ -50,4 +55,12 @@ moni call -v .gorfx.SetupOfferType "offerType: 'http://www.c3grid.de/ORQTypes/Fi
 
 moni call -v .gorfx.SetupOfferType "offerType: 'http://www.c3grid.de/ORQTypes/ProviderStageIn'; orqType: '{http://gndms.zib.de/c3grid/types}ProviderStageInORQT'; resType: '{http://gndms.zib.de/c3grid/types}ProviderStageInResultT'; calcFactory: de.zib.gndms.logic.model.gorfx.c3grid.ProviderStageInORQFactory; taskActionFactory: de.zib.gndms.logic.model.gorfx.c3grid.ProviderStageInActionFactory; mode:'$MODE'"
 
-moni call -v .gorfx.ConfigOfferType "offerType: 'http://www.c3grid.de/ORQTypes/ProviderStageIn'; cfgOutFormat: 'PRINT_OK'; subspace: '{http://www.c3grid.de/G2/Subspace}ProviderStaging'; sliceKind: 'http://www.c3grid.de/G2/SliceKind/Staging'; stagingClass: 'de.zib.gndms.logic.model.gorfx.c3grid.ExternalProviderStageInAction'; estimationClass: 'de.zib.gndms.logic.model.gorfx.c3grid.ExternalProviderStageInORQCalculator'; stagingCommand='$STAGING_COMMAND'; estimationCommand='$ESTIMATION_COMMAND'"
+moni call -v .gorfx.ConfigOfferType "offerType: 'http://www.c3grid.de/ORQTypes/ProviderStageIn'; \
+cfgOutFormat: 'PRINT_OK'; \
+subspace: '{http://www.c3grid.de/G2/Subspace}ProviderStaging'; \
+sliceKind: 'http://www.c3grid.de/G2/SliceKind/Staging'; \
+stagingClass: 'de.zib.gndms.logic.model.gorfx.c3grid.ExternalProviderStageInAction'; \
+estimationClass: 'de.zib.gndms.logic.model.gorfx.c3grid.ExternalProviderStageInORQCalculator'; \
+stagingCommand='$STAGING_COMMAND'; \
+estimationCommand='$ESTIMATION_COMMAND'; \
+scriptIoFormat='$SCRIPT_IO_FORMAT' '"
