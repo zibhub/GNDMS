@@ -1,6 +1,8 @@
 <project name="infra compilation file" default="infra.compile" basedir=".">
 	<path id="infra.path">
-		<fileset dir="${lib.dir}" includes="*.jar"/>
+		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
+		<pathelement location="${lib.dir}/gndms-logic.jar"/>
+
 		<fileset dir="${tools-lib.dir}" includes="*.jar" />
 		<fileset refid="globus.lib"/>
 		<dirset dir="${infra.dest}/production/" />
@@ -11,6 +13,18 @@
 	
 	<!-- Compile infra, but not its test-files -->	
 	<target name="infra.compile">
+		<if>
+			<not>
+				<and>
+					<available file="${lib.dir}/gndms-shared-model.jar"/>
+					<available file="${lib.dir}/gndms-logic.jar"/>
+				</and>
+			</not>
+			<then>
+				<fail message="Not able to compile as '${lib.dir}/gndms-shared-model.jar' or '${lib.dir}/gndms-logic.jar' was not found."/>
+			</then>
+			
+			<else>
 		<mkdir dir="./${infra.dest}/production"/>
 		<javac srcdir='${infra.dir}/src' destdir='${infra.dest}/production' classpathref="infra.path" />
 		<groovyc srcdir='${infra.dir}/src' destdir='${infra.dest}/production' classpathref="infra.path" />
@@ -21,6 +35,9 @@
 				<exclude name="de/**"/>
 			</fileset>
 		</copy>
+	</else>
+	
+		</if>
 	</target>
 	
 	

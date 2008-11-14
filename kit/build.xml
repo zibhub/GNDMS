@@ -1,7 +1,7 @@
 <project name="kit compilation file" default="kit.compile" basedir=".">
 
 	<path id="kit.path">
-		<fileset dir="${lib.dir}" includes="*.jar"/>
+		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
 		<fileset dir="${tools-lib.dir}" includes="*.jar" />
 		<fileset refid="globus.lib"/>
 		<dirset dir="${model.dest}/test"/>
@@ -24,7 +24,7 @@
 			</groovyc>
 		</then>
 		<else>
-			<echo> Not able to compile as '${lib.dir}/gndms-shared-model.jar' was not found. </echo>
+			<fail message="Not able to compile as '${lib.dir}/gndms-shared-model.jar' was not found."/>
 		</else>
 		</if>
 		

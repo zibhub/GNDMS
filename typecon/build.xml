@@ -1,7 +1,7 @@
 <project name="typecon compilation file" default="typecon.compile" basedir="." >
 	
 	<path id="typecon.path">
-		<fileset dir="${lib.dir}" includes="*.jar"/>
+		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
 		<fileset dir="${tools-lib.dir}" includes="*.jar" />
 		<fileset refid="globus.lib"/>
 		<dirset dir="${model.dest}/production/" />
@@ -9,6 +9,14 @@
 	</path>
 	<!-- Compile typecon, but not its test-files -->
 	<target name="typecon.compile" description="Compiles typecon">
+		<if>
+			<not>
+				<available file="${lib.dir}/gndms-shared-model.jar"/>
+			</not>
+			<then>
+				<fail message="Not able to compile as '${lib.dir}/gndms-shared-model.jar' or ''${lib.dir}/gndms-kit.jar' was not found."/>
+			</then>
+			<else>
 		<mkdir dir="./${typecon.dest}/production"/>
 		<javac srcdir='${typecon.dir}/src' destdir='${typecon.dest}/production' classpathref="typecon.path" includes="**/type/*.java"/>
 		<!-- Copy Meta files to build dir-->
@@ -17,6 +25,9 @@
 				<exclude name="de/**"/>
 			</fileset>
 		</copy>	
+	</else>
+	
+		</if>
 	</target>
 	
 	<!-- Compile typecon and its test-files -->
