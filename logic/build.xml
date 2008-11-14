@@ -2,7 +2,8 @@
 	
 	
 	<path id="logic.path">
-		<fileset dir="${lib.dir}" includes="*.jar"/>
+		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
+		<pathelement location="${lib.dir}/gndms-kit.jar"/>
 		<fileset dir="${tools-lib.dir}" includes="*.jar" />
 		<fileset refid="globus.lib"/>
 		<dirset dir="${model.dest}/test"/>
@@ -10,6 +11,18 @@
 	</path>
 	<!-- Compile logic, but not its test-files -->	
 	<target name="logic.compile" description="Compiles logic">
+		<if>
+			<not>
+				<and>
+					<available file="${lib.dir}/gndms-shared-model.jar"/>
+					<available file="${lib.dir}/gndms-kit.jar"/>
+				</and>
+			</not>
+			<then>
+				<fail message="Not able to compile as '${lib.dir}/gndms-shared-model.jar' or ''${lib.dir}/gndms-kit.jar' was not found."/>
+			</then>
+			
+			<else>
 		<!-- Copy Meta files to build dir-->
 		<copy todir="${logic.dest}/production">
 			<fileset dir='${logic.dir}/src'>
@@ -18,13 +31,16 @@
 		</copy>
 		
 		<javac srcdir='${logic.dir}/src' destdir='${logic.dest}/production' classpathref="logic.path"/>
-		
+	</else>
+	
+		</if>
 		
 	</target>
 	
 	
 	<!-- Creates jar-file of logic binaries -->	
-	<target name="logic.jar" depends="logic.compile" description="Creates jar file gndms-logic.jar in 'extra/lib'">	
+	<target name="logic.jar" depends="logic.compile.all" description="Creates jar file gndms-logic.jar in 'extra/lib'">	
+		
 		<jar destfile="./${lib.dir}/gndms-logic.jar"
 		     basedir="${logic.dest}/production">
 		</jar>
@@ -32,6 +48,8 @@
 	
 	<!-- Compile lgoic and its test-files -->	
 	<target name="logic.compile.all" depends="logic.compile" description="Compiles model and its test-files">
+
+			
 		<mkdir dir="./${logic.dest}/test"/>
 		
 		<javac srcdir='${logic.dir}/test-src' destdir='${logic.dest}/test' classpathref="logic.path" includes="**/action/*">	

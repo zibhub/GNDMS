@@ -1,7 +1,7 @@
-package de.zib.gndms.logic.model.config;
+package de.zib.gndms.kit.config;
 
 import org.jetbrains.annotations.NotNull;
-import de.zib.gndms.logic.action.MandatoryOptionMissingException;
+import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 
 import java.util.Iterator;
 

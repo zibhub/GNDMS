@@ -1,7 +1,7 @@
-package de.zib.gndms.infra.configlet;
+package de.zib.gndms.kit.configlet;
 
-import de.zib.gndms.logic.action.MandatoryOptionMissingException;
-import de.zib.gndms.logic.model.config.ConfigProvider;
+import de.zib.gndms.kit.config.ConfigProvider;
+import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import org.apache.commons.logging.Log;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,7 +56,7 @@ public class PublishConfiglet extends DefaultConfiglet {
 		catch (ParseException e) {
 			getLog().warn(e);
 		}
-		catch (MandatoryOptionMissingException e) {
+		catch ( MandatoryOptionMissingException e) {
 			getLog().warn(e);
 		}
 	}

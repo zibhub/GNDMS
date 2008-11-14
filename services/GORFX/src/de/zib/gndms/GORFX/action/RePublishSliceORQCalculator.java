@@ -37,7 +37,8 @@ public class RePublishSliceORQCalculator extends
 
         // obtain possible target subspace
         // todo find a way to access InstanceDir
-        PublishConfiglet pcl = new PublishConfiglet(); // just temporary 'til 2do is done
+        PublishConfiglet pcl = getConfigletProvider().getConfiglet( PublishConfiglet.class,
+            PublishConfiglet.class.getName() );
         Iterable<String> ist = pcl.getPublishingSites();
         List<String> sl = new Vector<String>();
 

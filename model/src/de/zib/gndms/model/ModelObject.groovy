@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable
  *
  * NOTE: do not declare this class abstract!! ( gives compiler trouble )
  */
+
 class ModelObject {
 
     protected ModelObject( ) {

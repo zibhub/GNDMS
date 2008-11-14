@@ -73,7 +73,7 @@
 		<runtarget target="model.clean"/>
 	</target>
 	
-	<!-- Compiles the whole project -->
+	<!-- Compiles the whole project. Use this only if target 'deploy' has been invoked once ! -->
 	<target name="compile">
 		<runtarget target="model.jar"/>
 		<runtarget target="model.enhancer"/>
