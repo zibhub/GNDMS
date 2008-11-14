@@ -4,7 +4,7 @@
 	<path id="logic.path">
 		<fileset dir="${lib.dir}" includes="*.jar"/>
 		<fileset dir="${tools-lib.dir}" includes="*.jar" />
-		<fileset dir="${env.GLOBUS_LOCATION}/lib" includes="*globus*.jar" />
+		<fileset refid="globus.lib"/>
 		<dirset dir="${model.dest}/test"/>
 		<dirset dir="${logic.dest}/production"/>
 	</path>

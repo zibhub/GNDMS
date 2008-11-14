@@ -2,7 +2,7 @@
 	<path id="infra.path">
 		<fileset dir="${lib.dir}" includes="*.jar"/>
 		<fileset dir="${tools-lib.dir}" includes="*.jar" />
-		<fileset dir="${env.GLOBUS_LOCATION}/lib" includes="*.jar" />
+		<fileset refid="globus.lib"/>
 		<dirset dir="${infra.dest}/production/" />
 		<dirset dir="${logic.dest}/production/" />
 	</path>

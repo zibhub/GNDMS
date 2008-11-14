@@ -24,7 +24,8 @@
 	<property name="infra.dest" value="${infra.dir}/gndms-infra"/>
 	<property name="typecon.dest" value="${typecon.dir}/gndms-typecon"/>
 	
-	
+	<!-- To avoid problems import just libaries defined in globus_jars.txt-->
+	<fileset dir="${env.GLOBUS_LOCATION}/lib" includesfile="globus_jars.txt" id="globus.lib"/>
 	<property name="link.sync" value="sync.sh"/>
 	
 	<!-- using ant contrib for contidionals, looping , and runtarget -->
@@ -34,7 +35,12 @@
 		</classpath>
 	</taskdef>
 
+	
+
 		
+	
+	
+	
 	<!-- Import deployment file of each package-->
 	<import file="${model.dir}/build.xml"/>	
 	<import file="${kit.dir}/build.xml"/>
