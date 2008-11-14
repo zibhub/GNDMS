@@ -1,0 +1,53 @@
+<project name="kit compilation file" default="kit.compile" basedir=".">
+
+	<path id="kit.path">
+		<fileset dir="${lib.dir}" includes="*.jar"/>
+		<fileset dir="${tools-lib.dir}" includes="*.jar" />
+		<fileset dir="${env.GLOBUS_LOCATION}/lib" includes="*globus*.jar" />
+		<dirset dir="${model.dest}/test"/>
+		<dirset dir="kit/gndms-kit/production"/>
+	</path>
+	<!-- Compile model, but not its test-files -->
+	<target name="kit.compile" description="Compiles kit">
+		<mkdir dir="./${kit.dest}/production"/>
+		<!-- Copy meta-stuff -->
+		<copy todir="${kit.dest}/production">
+			<fileset dir='${kit.dir}/src'>
+				<exclude name="de/**"/>
+			</fileset>
+		</copy>
+		<groovyc srcdir='${kit.dir}/src' destdir='${kit.dest}/production' classpathref="kit.path">
+			<javac/>
+		</groovyc>
+	
+	</target>
+
+
+	<!-- Compile kit and its test-files -->
+	<target name="kit.compile.all" depends="kit.compile" description="Compiles kit and its test-files">
+		<mkdir dir="./${kit.dest}/test"/>
+		<!-- Copy meta-stuff -->
+		<copy todir="${kit.dest}/test">
+			<fileset dir='${kit.dir}/test-src'>
+				<exclude name="de/**"/>
+			</fileset>
+		</copy>
+		<javac srcdir='${kit.dir}/test-src' destdir='${kit.dest}/test' classpathref="kit.path"/>
+	</target>
+	
+	
+	<!-- Creates jar-file of binaries -->
+	<target name="kit.jar" depends="kit.compile" description="Creates jar file gndms-kit.jar in 'extra/lib'">
+		<jar destfile="./${lib.dir}/gndms-kit.jar" basedir="${kit.dest}/production"/>
+	</target>
+
+
+	<!-- Deletes binaries and jar-file-->
+	<target name="kit.clean" description="Deletes infra's binaries and jar-file">
+		<delete includeemptydirs="true" >
+			<fileset dir='${kit.dest}/production' includes="**/*.class"/>
+			<fileset dir='${kit.dest}/test' includes="**/*.class"/>
+		</delete>
+		<delete file='${lib.dir}/gndms-kit.jar'/>
+	</target>
+</project>

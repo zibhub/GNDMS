@@ -1,0 +1,51 @@
+<project name="infra compilation file" default="infra.compile" basedir=".">
+	<path id="infra.path">
+		<fileset dir="${lib.dir}" includes="*.jar"/>
+		<fileset dir="${tools-lib.dir}" includes="*.jar" />
+		<fileset dir="${env.GLOBUS_LOCATION}/lib" includes="*.jar" />
+		<dirset dir="${infra.dest}/production/" />
+		<dirset dir="${logic.dest}/production/" />
+	</path>
+	
+	<!-- Compile infra, but not its test-files -->	
+	<target name="infra.compile">
+		<mkdir dir="./${infra.dest}/production"/>
+		<javac srcdir='${infra.dir}/src' destdir='${infra.dest}/production' classpathref="infra.path" />
+		<groovyc srcdir='${infra.dir}/src' destdir='${infra.dest}/production' classpathref="infra.path" />
+		
+		<!-- Copy meta-stuff -->
+		<copy todir="${infra.dest}/production">
+			<fileset dir='${infra.dir}/src'>
+				<exclude name="de/**"/>
+			</fileset>
+		</copy>
+	</target>
+	
+	
+	<!-- Compile infra and its test-files -->
+	<target name="infra.compile.all" depends="infra.compile" description="Compiles infra and its test-files">
+		<mkdir dir="./${infra.dest}/test"/>
+		<javac srcdir='${infra.dir}/test-src' destdir='${infra.dest}/test' classpathref="infra.path" />
+		
+		<!-- Copy meta-stuff -->
+		<copy todir="${infra.dest}/test">
+			<fileset dir='${infra.dir}/test-src'>
+				<exclude name="de/**"/>
+			</fileset>
+		</copy>
+	</target>
+	
+	<!-- Creates jar-file of binaries -->	
+	<target name="infra.jar" depends="infra.compile">
+		<jar destfile="./${lib.dir}/gndms-infra.jar" basedir="${infra.dest}/production"/>		
+	</target>
+	
+	<!-- Deletes binaries and jar-file-->
+	<target name="infra.clean" description="Deletes infra's binaries and jar-file">
+		<delete includeemptydirs="true" >
+			<fileset dir='${infra.dest}/production' includes="**/*.class"/>
+			<fileset dir='${infra.dest}/test' includes="**/*.class"/>
+		</delete>
+		<delete file='${lib.dir}/gndms-infra.jar'/>		
+	</target>
+</project>

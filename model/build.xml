@@ -1,0 +1,54 @@
+<project name="model compilation file" default="model.compile" basedir="." >
+	
+	
+	<path id="model.path">
+		<fileset dir="${tools-lib.dir}" includes="*.jar" />
+		<dirset dir="${model.dest}/production/" />
+	</path>
+	
+	<!-- Compile model, but not its test-files -->
+	<target name="model.compile" description="Compiles model">
+		<mkdir dir="${model.dest}/production"/>
+		<groovyc srcdir="${model.dir}/src" destdir='${model.dest}/production' classpathref="model.path" >
+			<javac/>
+		</groovyc>	
+		<!-- Copy Meta files to build dir-->
+		<copy todir="${model.dest}/production/" >
+			<fileset dir="${model.dir}/src/">
+				<exclude name="de/**"/>
+			</fileset>
+		</copy>
+	</target>
+	<!-- Compile model and its test-files -->
+	<target name="model.compile.all" depends="model.compile" description="Compiles model and its test-files">
+		<mkdir dir="${model.dest}/test"/>
+		<javac srcdir='${model.dir}/test-src' destdir='${model.dest}/test' classpathref="model.path">
+			
+		</javac>
+		<!-- Copy Meta files to build dir-->
+		<copy todir="${model.dest}/test/" >
+			<fileset dir="${model.dir}/test-src/">
+				<exclude name="de/**"/>
+			</fileset>
+		</copy>	
+	</target>
+
+	<!-- Creates jar-file of model binaries -->
+	<target name="model.jar" depends="model.compile" description="Creates jar file gndms-shared-model.jar in 'extra/lib'">	
+		<jar destfile="${lib.dir}/gndms-shared-model.jar"
+		     basedir="${model.dest}/production">
+		</jar>
+	</target>
+	<!-- Deletes binaries and jar-files -->
+	<target name="model.clean" description="Deletes model's binaries and jar-file">
+		<delete includeemptydirs="true" >
+			<fileset dir='${model.dest}/production/' includes="**/*.class"/>
+			<fileset dir='${model.dest}/test/' includes="**/*.class"/>
+		</delete>
+		<delete file='${lib.dir}/gndms-shared-model.jar'/>
+	</target>
+	
+	<target name="model.enhancer">
+		<ant antfile="build-openjpa.xml" dir="model" target="enhance" />	
+	</target>
+</project>
