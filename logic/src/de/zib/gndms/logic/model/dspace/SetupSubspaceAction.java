@@ -1,6 +1,6 @@
 package de.zib.gndms.logic.model.dspace;
 
-import de.zib.gndms.logic.action.MandatoryOptionMissingException;
+import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.ModelChangedAction;
 import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigActionResult;
@@ -61,7 +61,7 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
                 setGsiFtpPath(getOption("gsiFtpPath"));
             }
         }
-        catch (MandatoryOptionMissingException e) {
+        catch ( MandatoryOptionMissingException e) {
             throw new IllegalStateException(e);
         }
 

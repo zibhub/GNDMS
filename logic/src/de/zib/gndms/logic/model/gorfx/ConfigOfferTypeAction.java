@@ -1,6 +1,6 @@
 package de.zib.gndms.logic.model.gorfx;
 
-import de.zib.gndms.logic.action.MandatoryOptionMissingException;
+import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.config.ConfigAction;
 import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigOption;
@@ -47,7 +47,7 @@ public class ConfigOfferTypeAction extends ConfigAction<String> {
             cfgUpdateMode =
                     getEnumOption(UpdateMode.class, "cfgUpdateMode", true, UpdateMode.UPDATE);
         }
-        catch (MandatoryOptionMissingException e) {
+        catch ( MandatoryOptionMissingException e) {
             throw new IllegalArgumentException(offerType);
         }
     }

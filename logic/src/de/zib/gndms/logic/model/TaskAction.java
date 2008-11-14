@@ -462,6 +462,11 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task> impleme
     }
 
 
+    public static boolean isFinishedException( Exception e ) {
+        return e instanceof FinishedException;
+    }
+
+
     public Log getLog() {
         return log;
     }

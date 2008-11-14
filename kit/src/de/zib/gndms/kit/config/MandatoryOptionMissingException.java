@@ -1,9 +1,9 @@
-package de.zib.gndms.logic.action;
+package de.zib.gndms.kit.config;
 
 /**
  * Thrown by CommandAction.getOption()
  *
- * @see CommandAction
+ * @see logic.CommandAction
  * 
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$

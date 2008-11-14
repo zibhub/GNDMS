@@ -1,5 +1,7 @@
 package de.zib.gndms.infra.system;
 
+import com.google.common.collect.Maps;
+import de.zib.gndms.kit.configlet.Configlet;
 import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.service.GNDMSingletonServiceHome;
@@ -9,11 +11,13 @@ import de.zib.gndms.kit.factory.IndustrialPark;
 import de.zib.gndms.kit.factory.RecursiveFactory;
 import de.zib.gndms.kit.monitor.GroovyBindingFactory;
 import de.zib.gndms.kit.monitor.GroovyMoniServer;
+import de.zib.gndms.kit.config.ConfigletProvider;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
 import de.zib.gndms.logic.model.gorfx.ORQCalculatorMetaFactory;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.logic.model.gorfx.ORQTaskActionMetaFactory;
+import de.zib.gndms.model.common.ConfigletState;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.gorfx.OfferType;
 import groovy.lang.Binding;
@@ -25,10 +29,13 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
 import java.lang.reflect.InvocationTargetException;
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -39,7 +46,7 @@ import java.util.Map;
 *
 *          User: stepn Date: 03.09.2008 Time: 16:50:06
 */
-public class InstanceDirectory {
+public class InstanceDirectory implements ConfigletProvider {
     private @NotNull final Log logger = LogFactory.getLog(InstanceDirectory.class);
     private static final int INITIAL_CAPACITY = 32;
     private static final long INSTANCE_RETRIEVAL_INTERVAL = 250L;
@@ -49,6 +56,7 @@ public class InstanceDirectory {
     private final @NotNull Map<String, Object> instances;
     private final @NotNull Map<Class<? extends GridResource>, GNDMPersistentServiceHome<?>> homes;
 
+	private final Map<String, Configlet> configlets = Maps.newConcurrentHashMap();
 
     @SuppressWarnings({ "RawUseOfParameterizedType" })
     private final @NotNull IndustrialPark<OfferType, String, AbstractORQCalculator<?, ?>> orqPark;
@@ -91,7 +99,9 @@ public class InstanceDirectory {
             OfferType type = em.find(OfferType.class, offerTypeKey);
             if (type == null)
                 throw new IllegalArgumentException("Unknow offer type: " + offerTypeKey);
-            return orqPark.getInstance(type);
+            AbstractORQCalculator<?,?> orqc = orqPark.getInstance(type);
+            orqc.setConfigletProvider( this );
+            return orqc;
         }
         finally {
             if (! em.isOpen())
@@ -222,6 +232,117 @@ public class InstanceDirectory {
                   IllegalStateException("Null instance retrieved or invalid or unregistered name");
         return clazz.cast(obj);
     }
+
+
+	public void reloadConfiglets(final EntityManagerFactory emf) {
+		ConfigletState[] states;
+		EntityManager em = emf.createEntityManager();
+		try {
+			states = loadConfigletStates(em);
+			createOrUpdateConfiglets(states);
+			shutdownOldConfiglets(em);
+		}
+		finally { if (em.isOpen()) em.close(); }
+	}
+
+
+	@SuppressWarnings({ "unchecked", "JpaQueryApiInspection", "MethodMayBeStatic" })
+	private ConfigletState[] loadConfigletStates(final EntityManager emParam) {
+		final ConfigletState[] states;
+		emParam.getTransaction().begin();
+		try {
+			Query query = emParam.createNamedQuery("listAllConfiglets");
+			final List<ConfigletState> list = (List<ConfigletState>) query.getResultList();
+			Object[] states_ = list.toArray();
+			states = new ConfigletState[states_.length];
+			for (int i = 0; i < states_.length; i++)
+				states[i] = (ConfigletState) states_[i];
+			return states;
+		}
+		finally {
+			if (emParam.getTransaction().isActive())
+				emParam.getTransaction().commit();
+		}
+	}
+
+
+
+	private void createOrUpdateConfiglets(final ConfigletState[] statesParam) {
+		for (ConfigletState configletState : statesParam) {
+			final String name = configletState.getName();
+			if (configlets.containsKey(name)) {
+				configlets.get(name).update(configletState.getState());
+			}
+			else {
+				final Configlet configlet = createConfiglet(configletState);
+				configlets.put(name, configlet);
+			}
+		}
+	}
+	@SuppressWarnings({ "FeatureEnvy" })
+	private Configlet createConfiglet(final ConfigletState configParam) {
+		try {
+			final Class<? extends Configlet> clazz = Class.forName(configParam.getClassName()).asSubclass(Configlet.class);
+			final Configlet instance = clazz.newInstance();
+			instance.init(logger, configParam.getName(), configParam.getState());
+			return instance;
+		}
+		catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+		catch (InstantiationException e) {
+			throw new RuntimeException(e);
+		}
+		catch (ClassNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+
+
+	private void shutdownOldConfiglets(final EntityManager emParam) {
+		Set<String> set = configlets.keySet();
+		Object[] keys = set.toArray();
+		for (Object name : keys) {
+			emParam.getTransaction().begin();
+			try {
+				if (emParam.find(ConfigletState.class, name) == null) {
+					Configlet let = configlets.get((String)name);
+					configlets.remove((String)name);
+					let.shutdown();
+				}
+			}
+			catch (RuntimeException e) {
+				logger.warn(e);
+			}
+			finally {
+				if (emParam.getTransaction().isActive())
+					emParam.getTransaction().commit();
+			}
+		}
+	}
+
+
+	void shutdownConfiglets() {
+		for (Configlet configlet : configlets.values())
+		    try {
+			    configlet.shutdown();
+		    }
+		    catch (RuntimeException e) {
+			    logger.warn(e);
+		    }		
+	}
+
+	public <V extends Configlet> V getConfliglet(final @NotNull Class<V> clazz,
+	                                             final @NotNull String name) {
+		return clazz.cast(configlets.get(name));
+	}
+
+
+	public <T extends Configlet> T getConfiglet(@NotNull Class<T> clazz, @NotNull String name) {
+		return clazz.cast(configlets.get(name));
+	}
+
 
     public synchronized GNDMServiceHome lookupServiceHome(@NotNull String instancePrefix) {
         return getInstance(GNDMServiceHome.class, instancePrefix+"Home");

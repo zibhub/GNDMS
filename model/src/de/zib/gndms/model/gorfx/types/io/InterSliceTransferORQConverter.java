@@ -20,7 +20,7 @@ public class InterSliceTransferORQConverter extends ORQConverter<InterSliceTrans
 
 
     public void convert() {
-        super.convert();    //To change body of overridden methods use File | Settings | File Templates.
+        super.convert();
         getWriter( ).writeSourceSlice( getModel().getSourceSlice() );
         getWriter( ).writeDestinationSlice( getModel().getDestinationSlice() );
         if( getModel( ).hasFileMap( ) )
