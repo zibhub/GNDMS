@@ -212,6 +212,39 @@ public class GORFXClientTools {
     }
 
 
+    public static InterSliceTransferResultT createInterSliceTransferResultT() throws SOAPException, IllegalAccessException, InstantiationException {
+
+        InterSliceTransferResultT res = new InterSliceTransferResultT();
+        res.setOfferType( getInterSliceTransferURI() );
+
+        res.set_any( getMessageElementsForFieldDescs( InterSliceTransferResultT.getTypeDesc().getFields() ) );
+
+        return res;
+    }
+
+
+    public static RePublishSliceResultT createRePublishSliceResultT() throws SOAPException, IllegalAccessException, InstantiationException {
+
+        RePublishSliceResultT res = new RePublishSliceResultT();
+        res.setOfferType( getRePublishSliceURI() );
+
+        res.set_any( getMessageElementsForFieldDescs( RePublishSliceResultT.getTypeDesc().getFields() ) );
+
+        return res;
+    }
+
+
+    public static SliceStageInResultT createSliceStageInResultT() throws SOAPException, IllegalAccessException, InstantiationException {
+
+        SliceStageInResultT res = new SliceStageInResultT();
+        res.setOfferType( getSliceStageInURI() );
+
+        res.set_any( getMessageElementsForFieldDescs( SliceStageInResultT.getTypeDesc().getFields() ) );
+
+        return res;
+    }
+
+
     public static MessageElement[] getMessageElementsForFieldDescs( FieldDesc[] fds ) throws SOAPException, InstantiationException, IllegalAccessException {
 
         // prune offerType

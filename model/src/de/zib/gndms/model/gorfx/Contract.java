@@ -42,10 +42,10 @@ public class Contract {
     transient boolean deadlineIsOffset = false;
 
     // expected size of task in case of a transfer or staging
-    // todo decide persistence
     Long expectedSize;
 
     // map for additional notes
+    // todo discuss persistence
     HashMap<String,String> additionNotes;
 
 

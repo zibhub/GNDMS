@@ -2,20 +2,21 @@ package de.zib.gndms.GORFX.action.dms;
 
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.logic.model.gorfx.c3grid.AbstractProviderStageInAction;
-import de.zib.gndms.model.gorfx.types.SliceStageInORQ;
-import de.zib.gndms.model.gorfx.types.SliceStageInResult;
-import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
-import de.zib.gndms.model.gorfx.types.ProviderStageInResult;
+import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.model.gorfx.Task;
+import de.zib.gndms.model.gorfx.Contract;
+import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.model.dspace.types.SliceRef;
 import de.zib.gndms.GORFX.action.InterSliceTransferTaskAction;
 import de.zib.gndms.GORFX.action.DSpaceBindingUtils;
+import de.zib.gndms.GORFX.action.InterSliceTransferORQCalculator;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.typecon.common.type.ProviderStageInResultXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.SliceRefXSDReader;
 import de.zib.gndms.dspace.slice.client.SliceClient;
 import de.zib.gndms.dspace.client.DSpaceClient;
 import de.zib.gndms.dspace.subspace.client.SubspaceClient;
+import de.zib.gndms.kit.util.WidAux;
 import org.jetbrains.annotations.NotNull;
 
 import javax.xml.namespace.QName;
@@ -54,6 +55,7 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ> {
         }
 
 
+        SliceRef res_slice = null;
         try {
             // obtain created slice
             ProviderStageInResult psr = ( ProviderStageInResult ) getModel().getData( );
@@ -61,21 +63,42 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ> {
 
 
             // create destination slice
+            DSpaceClient dsc = new DSpaceClient( getOrq().getGridSiteURI() );
 
-            DSpaceClient dsc;
-            if(! getOrq().hasGridSiteURI() )
-                getOrq().setGridSiteURI( SliceStageInORQCalculator.destinationURI( getOrq().getGridSite() ).toString( ) );
-
-            dsc = new DSpaceClient( getOrq().getGridSiteURI() );
 
             // todo find destination subspace
-            SubspaceClient subc = new SubspaceClient( dsc.getSubspace( new QName( "" ) ).getEndpointReference() );
-            
+            SubspaceClient sscnt = new SubspaceClient( dsc.getSubspace( new QName( "" ) ).getEndpointReference() );
+
+            Contract c = model.getContract( );
+            long size = c.getExpectedSize();
+            SliceClient tgt = sscnt.createSlice( GORFXConstantURIs.PUBLISH_SLICE_KIND_URI,
+                c.getDeadline(), size == 0 ? 1 : size );
+
+
+            InterSliceTransferORQ ist_orq = new InterSliceTransferORQ( );
+            ist_orq.setSourceSlice( sr );
+            ist_orq.setDestinationSlice( SliceRefXSDReader.fromEPR( tgt.getEndpointReference() ) );
+
+            Task tsk = new Task( );
+
+            tsk.setContract( c );
+            tsk.setOrq( ist_orq);
+            tsk.setDescription( "child task of slice transfer task, just ignore");
+
+            OfferType ist_of = getEntityManager().find( OfferType.class, GORFXConstantURIs.INTER_SLICE_TRANSFER_URI );
+            tsk.setOfferType( ist_of );
+
+            tsk.setTerminationTime( c.getCurrentTerminationTime() );
+            tsk.setId( getSystem().nextUUID() );
+            tsk.setWid( model.getWid() );
 
             // perform transfer
-            InterSliceTransferTaskAction ista = new InterSliceTransferTaskAction( getEntityManager(), model );
+            InterSliceTransferTaskAction ista = new InterSliceTransferTaskAction( );
+            ista.initFromModel( getEntityManager(), tsk );
             ista.setClosingEntityManagerOnCleanup( false );
             ista.call( );
+            res_slice = ist_orq.getDestinationSlice();
+
         } catch ( TransitException e ) {
             if(! isFinishedException( e ) )
                 throw e;
@@ -83,10 +106,8 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ> {
             boxException( e );
         }
 
-        // trigger script execution in target space
-        // use gsissh?
-
-        //finish( new SliceStageInResult( getOrq().getDestinationSlice() ) );
+        // if we made it this far slice stage should have be successful
+        finish( new SliceStageInResult( res_slice ) );
     }
 
 

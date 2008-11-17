@@ -6,13 +6,13 @@ import de.zib.gndms.infra.model.GridResourceModelHandler;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.model.gorfx.Task;
-import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
-import de.zib.gndms.model.gorfx.types.ProviderStageInResult;
-import de.zib.gndms.model.gorfx.types.TaskState;
-import de.zib.gndms.model.gorfx.types.FileTransferResult;
+import de.zib.gndms.model.gorfx.types.*;
+import de.zib.gndms.model.gorfx.types.io.CommonSliceResultConverter;
 import de.zib.gndms.typecon.common.GORFXTools;
+import de.zib.gndms.typecon.common.GORFXClientTools;
 import de.zib.gndms.typecon.common.type.ProviderStageInResultXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.FileTransferResultXSDTypeWriter;
+import de.zib.gndms.typecon.common.type.RePublishSliceResultXSDTypeWriter;
 import org.globus.wsrf.InvalidResourceKeyException;
 import org.globus.wsrf.NoSuchResourceException;
 import org.globus.wsrf.ResourceException;
@@ -118,8 +118,32 @@ public class TaskResource extends TaskResourceBase
 
             else
                 res = new FileTransferResultT();
+
+            if( uri.equals( GORFXConstantURIs.INTER_SLICE_TRANSFER_URI ) )
+                ( (FileTransferResultT) res).setOfferType( GORFXClientTools.getInterSliceTransferURI() );
+
+
+        } else if( uri.equals( GORFXConstantURIs.RE_PUBLISH_SLICE_URI ) ) {
+
+            if( stat.equals( TaskState.FINISHED ) ){
+                final Serializable sr = taskAction.getModel().getData( );
+                if(! ( sr instanceof RePublishSliceResult ) )
+                    throw new IllegalArgumentException( "task result is not of type "
+                        + RePublishSliceResult.class.getName( ) );
+
+                final RePublishSliceResult tres = ( RePublishSliceResult ) sr;
+                final RePublishSliceResultXSDTypeWriter writer = new RePublishSliceResultXSDTypeWriter();
+                final CommonSliceResultConverter<RePublishSliceResultXSDTypeWriter, RePublishSliceResult> conv =
+                    new CommonSliceResultConverter<RePublishSliceResultXSDTypeWriter, RePublishSliceResult>();
+
+            }
+
+            else
+                res = new FileTransferResultT();
+
         } // etc
           // todo add new task results here
+
         else {
             //throw new RemoteException( "Illegal offer type occured" );
             throw new IllegalStateException( "Illegal offer type occured" );

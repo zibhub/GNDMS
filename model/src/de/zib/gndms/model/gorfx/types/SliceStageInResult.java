@@ -1,5 +1,7 @@
 package de.zib.gndms.model.gorfx.types;
 
+import de.zib.gndms.model.dspace.types.SliceRef;
+
 /**
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
@@ -8,7 +10,12 @@ package de.zib.gndms.model.gorfx.types;
  */
 public class SliceStageInResult extends CommonSliceResult {
 
-    protected SliceStageInResult( ) {
+    public SliceStageInResult( ) {
         super( GORFXConstantURIs.SLICE_STAGE_IN_URI );
+    }
+
+    public SliceStageInResult( SliceRef sr ) {
+        super( GORFXConstantURIs.SLICE_STAGE_IN_URI );
+        setSliceRef( sr );
     }
 }
