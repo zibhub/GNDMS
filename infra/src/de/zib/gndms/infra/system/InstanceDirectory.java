@@ -61,17 +61,25 @@ public class InstanceDirectory implements ConfigletProvider, ORQCalculatorProvid
     @SuppressWarnings({ "RawUseOfParameterizedType" })
     private final @NotNull IndustrialPark<OfferType, String, ORQTaskAction<?>> taskActionPark;
 
+	@SuppressWarnings({ "FieldCanBeLocal" })
+	private final Wrapper<Object> sysHolderWrapper;
 
-    InstanceDirectory(final @NotNull String sysNameParam) {
+    InstanceDirectory(final @NotNull String sysNameParam, Wrapper<Object> systemHolderWrapParam) {
         instances = new HashMap<String, Object>(INITIAL_CAPACITY);
         homes = new HashMap<Class<? extends GridResource>, GNDMPersistentServiceHome<?>>(INITIAL_CAPACITY);
         systemName = sysNameParam;
 
-        orqPark = new OfferTypeIndustrialPark<AbstractORQCalculator<?,?>>(new ORQCalculatorMetaFactory());
-        taskActionPark = new OfferTypeIndustrialPark<ORQTaskAction<?>>(new ORQTaskActionMetaFactory());
+	    sysHolderWrapper = systemHolderWrapParam;
+	    final ORQCalculatorMetaFactory calcMF = new ORQCalculatorMetaFactory();
+	    calcMF.setWrap(sysHolderWrapper);
+	    orqPark = new OfferTypeIndustrialPark<AbstractORQCalculator<?,?>>(calcMF);
+	    final ORQTaskActionMetaFactory taskMF = new ORQTaskActionMetaFactory();
+	    taskMF.setWrap(sysHolderWrapper);
+	    taskActionPark = new OfferTypeIndustrialPark<ORQTaskAction<?>>(taskMF);
     }
 
 
+	
     public synchronized void addHome(final @NotNull GNDMServiceHome home)
             throws ResourceException {
         if (home instanceof GNDMPersistentServiceHome<?>)

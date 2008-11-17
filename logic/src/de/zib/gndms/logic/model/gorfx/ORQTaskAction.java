@@ -105,12 +105,12 @@ public abstract class ORQTaskAction<K extends AbstractORQ> extends TaskAction
     }
 
 
-    public void setFactory(final Factory<OfferType, ORQTaskAction<?>> factoryParam) {
+    public void setFactory(@NotNull final Factory<OfferType, ORQTaskAction<?>> factoryParam) {
         factory = factoryParam;
     }
 
 
-    public void setKey(final OfferType keyParam) {
+    public void setKey(@NotNull final OfferType keyParam) {
         key = keyParam;
     }
 }

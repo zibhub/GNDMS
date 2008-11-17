@@ -7,13 +7,10 @@ import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.*;
-import de.zib.gndms.model.gorfx.types.io.CommonSliceResultConverter;
-import de.zib.gndms.model.gorfx.types.io.RePublishSliceResultConverter;
-import de.zib.gndms.model.gorfx.types.io.SliceStageInResultConverter;
-import de.zib.gndms.typecon.common.GORFXTools;
 import de.zib.gndms.typecon.common.GORFXClientTools;
-import de.zib.gndms.typecon.common.type.ProviderStageInResultXSDTypeWriter;
+import de.zib.gndms.typecon.common.GORFXTools;
 import de.zib.gndms.typecon.common.type.FileTransferResultXSDTypeWriter;
+import de.zib.gndms.typecon.common.type.ProviderStageInResultXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.RePublishSliceResultXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.SliceStageInResultXSDTypeWriter;
 import org.globus.wsrf.InvalidResourceKeyException;
@@ -24,8 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import types.*;
 
 import javax.persistence.EntityManager;
-import java.util.concurrent.Future;
 import java.io.Serializable;
+import java.util.concurrent.Future;
 
 
 /**
@@ -273,14 +270,6 @@ public class TaskResource extends TaskResourceBase
     @Override
     public void refreshRegistration(final boolean forceRefresh) {
         // nothing
-    }
-
-
-    private static void checkResult( Object instance, Class cls  ) {
-
-        if(! ( sr instanceof RePublishSliceResult ) )
-            throw new IllegalArgumentException( "task result is not of type "
-                + RePublishSliceResult.class.getName( ) );
     }
 
 }
