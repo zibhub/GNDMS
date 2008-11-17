@@ -8,11 +8,14 @@ import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.model.gorfx.types.io.CommonSliceResultConverter;
+import de.zib.gndms.model.gorfx.types.io.RePublishSliceResultConverter;
+import de.zib.gndms.model.gorfx.types.io.SliceStageInResultConverter;
 import de.zib.gndms.typecon.common.GORFXTools;
 import de.zib.gndms.typecon.common.GORFXClientTools;
 import de.zib.gndms.typecon.common.type.ProviderStageInResultXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.FileTransferResultXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.RePublishSliceResultXSDTypeWriter;
+import de.zib.gndms.typecon.common.type.SliceStageInResultXSDTypeWriter;
 import org.globus.wsrf.InvalidResourceKeyException;
 import org.globus.wsrf.NoSuchResourceException;
 import org.globus.wsrf.ResourceException;
@@ -131,16 +134,26 @@ public class TaskResource extends TaskResourceBase
                     throw new IllegalArgumentException( "task result is not of type "
                         + RePublishSliceResult.class.getName( ) );
 
-                final RePublishSliceResult tres = ( RePublishSliceResult ) sr;
-                final RePublishSliceResultXSDTypeWriter writer = new RePublishSliceResultXSDTypeWriter();
-                final CommonSliceResultConverter<RePublishSliceResultXSDTypeWriter, RePublishSliceResult> conv =
-                    new CommonSliceResultConverter<RePublishSliceResultXSDTypeWriter, RePublishSliceResult>();
-
+                res = RePublishSliceResultXSDTypeWriter.writeResult( ( RePublishSliceResult ) sr );
             }
 
             else
-                res = new FileTransferResultT();
+                res = new RePublishSliceResultT();
 
+        } else if( uri.equals( GORFXConstantURIs.SLICE_STAGE_IN_URI ) ) {
+            
+            if( stat.equals( TaskState.FINISHED ) ){
+                final Serializable sr = taskAction.getModel().getData( );
+                if(! ( sr instanceof SliceStageInResult ) )
+                    throw new IllegalArgumentException( "task result is not of type "
+                        + SliceStageInResult.class.getName( ) );
+
+                res = SliceStageInResultXSDTypeWriter.writeResult( ( SliceStageInResult ) sr );
+            }
+
+            else
+                res = new SliceStageInResultT();
+            
         } // etc
           // todo add new task results here
 
@@ -260,6 +273,14 @@ public class TaskResource extends TaskResourceBase
     @Override
     public void refreshRegistration(final boolean forceRefresh) {
         // nothing
+    }
+
+
+    private static void checkResult( Object instance, Class cls  ) {
+
+        if(! ( sr instanceof RePublishSliceResult ) )
+            throw new IllegalArgumentException( "task result is not of type "
+                + RePublishSliceResult.class.getName( ) );
     }
 
 }

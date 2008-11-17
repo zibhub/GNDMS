@@ -25,6 +25,8 @@ import java.io.File;
 @SuppressWarnings({ "ThrowableInstanceNeverThrown" })
 public class ExternalProviderStageInAction extends AbstractProviderStageInAction {
 
+    private ParmFormatAux parmAux;
+
     public ExternalProviderStageInAction() {
         super();
     }
@@ -44,12 +46,14 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
     protected void doStaging(
             final MapConfig offerTypeConfigParam, final ProviderStageInORQ orqParam,
             final Slice sliceParam) {
-        
+
+        parmAux.formatFromMap( getOfferTypeConfig() );
+
         final ProcessBuilder procBuilder = createProcessBuilder(sliceParam);
         final StringBuilder recv = new StringBuilder(8);
 
         try {
-            final ProcessBuilderAction action = ProviderStageInTools.createPBAction(orqParam, null);
+            final ProcessBuilderAction action = parmAux.createPBAction(orqParam, null);
 
             action.setProcessBuilder(procBuilder);
             action.setOutputReceiver(recv);

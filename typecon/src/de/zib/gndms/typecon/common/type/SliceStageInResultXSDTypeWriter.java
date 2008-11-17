@@ -1,6 +1,8 @@
 package de.zib.gndms.typecon.common.type;
 
 import de.zib.gndms.typecon.common.GORFXClientTools;
+import de.zib.gndms.model.gorfx.types.io.SliceStageInResultConverter;
+import de.zib.gndms.model.gorfx.types.SliceStageInResult;
 import types.SliceStageInResultT;
 
 import javax.xml.soap.SOAPException;
@@ -36,5 +38,15 @@ public class SliceStageInResultXSDTypeWriter extends CommonSliceResultXSDTypeWri
         } catch ( InstantiationException e ) {
             e.printStackTrace();
         }
+    }
+
+
+    public static SliceStageInResultT writeResult( SliceStageInResult res ) {
+
+        final SliceStageInResultXSDTypeWriter writer = new SliceStageInResultXSDTypeWriter();
+        final SliceStageInResultConverter conv = new SliceStageInResultConverter( writer, res );
+        conv.convert();
+
+        return writer.getProduct();
     }
 }

@@ -8,6 +8,8 @@ import de.zib.gndms.model.gorfx.Contract;
 import de.zib.gndms.model.gorfx.types.io.ContractConverter;
 import de.zib.gndms.model.gorfx.types.io.ContractPropertyReader;
 import de.zib.gndms.model.gorfx.types.io.ContractPropertyWriter;
+import de.zib.gndms.model.gorfx.types.io.xml.ProviderStageInXML;
+import de.zib.gndms.model.gorfx.types.io.xml.ORQWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayInputStream;
@@ -28,10 +30,7 @@ public class ExternalProviderStageInORQCalculator extends AbstractProviderStageI
     public static final int EXIT_CODE_UNFULFILLABLE = 255;
     public static final int EXIT_CODE_PERMISSION_DENIED = 254;
 
-    public static final String FORMAT_XML = "XML";
-    public static final String FORMAT_PROPS = "PROPS";
-
-    private String format=FORMAT_PROPS;
+    private ParmFormatAux parmAux;
 
     @Override
     public Contract createOffer() throws Exception {
@@ -40,8 +39,7 @@ public class ExternalProviderStageInORQCalculator extends AbstractProviderStageI
 
         MapConfig config = new MapConfig(getKey().getConfigMap());
         
-        if( config.hasOption( "scriptIoFormat" ) )
-            format = config.getOption( "scriptIoFormat" );
+        parmAux.formatFromMap( config );
 
         if (config.hasOption("estimationCommand")) {
             File estCommandFile = config.getFileOption("estimationCommand");
@@ -67,16 +65,11 @@ public class ExternalProviderStageInORQCalculator extends AbstractProviderStageI
             case EXIT_CODE_PERMISSION_DENIED:
                 throw new PermissionDeniedORQException();
             case 0:
-                Properties props = new Properties();
                 try {
-                    props.load(new ByteArrayInputStream(recv.toString().getBytes()));
-                }
-                catch (IOException e) {
+                    return parmAux.getResult( recv );
+                } catch (Exception e) {
                     throw new IllegalStateException("Estimation script failed", e);
                 }
-                ContractPropertyReader reader = new ContractPropertyReader(props);
-                reader.performReading();
-                return reader.getProduct();
             default:
                 throw new IllegalStateException("Estimation script failed: " + action.toString());
         }
@@ -93,29 +86,9 @@ public class ExternalProviderStageInORQCalculator extends AbstractProviderStageI
         }
 
         ProcessBuilderAction action;
-        if( format.equals( FORMAT_XML ) )
-            action = createXMLParmPBAction( contParam );
-        else
-            action = createDefaultPBAction( contParam );
+        action = parmAux.createPBAction( getORQArguments(), contParam );
         action.setProcessBuilder(pb);
         action.setOutputReceiver(new StringBuilder(8));
         return action;
-    }
-
-
-    private ProcessBuilderAction createDefaultPBAction( Contract contParam ) {
-
-        final Properties moreProps = new Properties();
-        ContractPropertyWriter writer = new ContractPropertyWriter(moreProps);
-        ContractConverter conv = new ContractConverter(writer, contParam);
-        conv.convert();
-        return ProviderStageInTools.createPBAction(getORQArguments(), moreProps);
-    }
-
-
-    private ProcessBuilderAction createXMLParmPBAction( Contract contParam ) {
-
-        // todo problem using ORQT's and axis here breaks layer.
-        return null;
     }
 }

@@ -2,6 +2,8 @@ package de.zib.gndms.typecon.common.type;
 
 import de.zib.gndms.model.gorfx.types.io.CommonSliceResultWriter;
 import de.zib.gndms.model.gorfx.types.io.SliceRefWriter;
+import de.zib.gndms.model.gorfx.types.io.RePublishSliceResultConverter;
+import de.zib.gndms.model.gorfx.types.RePublishSliceResult;
 import de.zib.gndms.typecon.common.GORFXClientTools;
 import types.RePublishSliceResultT;
 
@@ -39,5 +41,15 @@ public class RePublishSliceResultXSDTypeWriter extends CommonSliceResultXSDTypeW
         } catch ( InstantiationException e ) {
             e.printStackTrace();
         }
+    }
+
+
+    public static RePublishSliceResultT writeResult( RePublishSliceResult res ) {
+
+        final RePublishSliceResultXSDTypeWriter writer = new RePublishSliceResultXSDTypeWriter();
+        final RePublishSliceResultConverter conv = new RePublishSliceResultConverter( writer, tres );
+        conv.convert();
+
+        return writer.getProduct();
     }
 }

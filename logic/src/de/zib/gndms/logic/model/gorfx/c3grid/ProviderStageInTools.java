@@ -6,10 +6,13 @@ import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQConverter;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyWriter;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQWriter;
+import de.zib.gndms.model.gorfx.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.StringWriter;
+import java.io.OutputStreamWriter;
 import java.util.Properties;
 
 
@@ -43,6 +46,19 @@ public final class ProviderStageInTools {
             protected @Override void writeOutput(final @NotNull BufferedOutputStream stream)
                     throws IOException {
                 props.store(stream, "ProviderStageIn");
+            }
+        };
+    }
+
+
+    public static ProcessBuilderAction createPBActionForXML(final @NotNull String orq_parms ) {
+
+        return new ProcessBuilderAction() {
+            protected @Override void writeOutput(final @NotNull BufferedOutputStream stream)
+                throws IOException {
+
+                OutputStreamWriter os = new OutputStreamWriter( stream );
+                os.write( orq_parms );
             }
         };
     }
