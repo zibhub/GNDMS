@@ -34,13 +34,7 @@
 			<pathelement location="${tools-lib.dir}/ant-contrib.jar" />
 		</classpath>
 	</taskdef>
-
-	
-
 		
-	
-	
-	
 	<!-- Import deployment file of each package-->
 	<import file="${model.dir}/build.xml"/>	
 	<import file="${kit.dir}/build.xml"/>
@@ -83,6 +77,15 @@
 		<runtarget target="infra.jar"/>
 	</target>
 	
+	
+	<!-- Compiles the whole project. Use this only if target 'deploy' has been invoked once ! -->
+	<target name="compile.all" depends="compile">
+		<runtarget target="model.compile.all"/>
+		<runtarget target="kit.compile.all"/>
+		<runtarget target="logic.compile.all"/>
+		<runtarget target="typecon.compile.all"/>
+		<runtarget target="infra.compile.all"/>
+	</target>
 	<!-- Compiles the whole project with test files. Use this only if target 'deploy' has been invoked once ! -->
 	<target name="compile.test">
 		<runtarget target="model.compile.all"/>
@@ -132,7 +135,9 @@
 		<echo message="|    Type 'ant deploy' to generate needed binaries and set configuartions      |" />
 		<echo message="|    Type 'ant compile' for generating needed binaries                         |" />
 		<echo message="|    Type 'ant clean' for deleting all generated binaries and jars             |" />
-		<echo message="|    Type 'ant gar.deploy -Dfilename' for deploying a gar file                 |" />
+		<echo message="|    Type 'ant compile.all' to compile all source-codes and test files         |" />
+		<echo message="|    Type 'ant gar.deploy -Dfilename=path' for deploying a gar file located    |" />
+		<echo message="|                                          in path                             |" />
 		<echo message="================================================================================" />
 	</target>
 	

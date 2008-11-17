@@ -19,10 +19,16 @@
 			</fileset>
 		</copy>
 	</target>
+	
+	<path id="model.test.path">
+		<fileset dir="${tools-lib.dir}" includes="*.jar" />
+		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
+	</path>
+	
 	<!-- Compile model and its test-files -->
-	<target name="model.compile.all" depends="model.compile" description="Compiles model and its test-files">
+	<target name="model.compile.all" depends="model.jar" description="Compiles model and its test-files">
 		<mkdir dir="${model.dest}/test"/>
-		<javac srcdir='${model.dir}/test-src' destdir='${model.dest}/test' classpathref="model.path">
+		<javac srcdir='${model.dir}/test-src' destdir='${model.dest}/test' classpathref="model.test.path">
 			
 		</javac>
 		<!-- Copy Meta files to build dir-->

@@ -30,10 +30,14 @@
 		</if>
 	</target>
 	
+	<path id="typecon.test.path">
+		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
+	</path>
+	
 	<!-- Compile typecon and its test-files -->
-	<target name="typecon.compile.all" depends="typecon.compile" description="Compiles typecon and its test-files">
+	<target name="typecon.compile.all" depends="typecon.jar" description="Compiles typecon and its test-files">
 		<mkdir dir="./${typecon.dest}/test"/>
-		<javac srcdir='${typecon.dir}/test-src' destdir='${typecon.dest}/test' classpathref="typecon.path" includes="**/type/*.java"/>
+		<javac srcdir='${typecon.dir}/test-src' destdir='${typecon.dest}/test' classpathref="typecon.test.path" includes="**/type/*.java"/>
 		<!-- Copy Meta files to build dir-->
 		<copy todir="${typecon.dest}/test/" >
 			<fileset dir="${typecon.dir}/test-src">

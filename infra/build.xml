@@ -3,13 +3,9 @@
 		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
 		<pathelement location="${lib.dir}/gndms-kit.jar"/>
 		<pathelement location="${lib.dir}/gndms-logic.jar"/>
-		<pathelement location="${lib.dir}/gndms-kit.jar"/>
 		<fileset dir="${tools-lib.dir}" includes="*.jar" />
 		<fileset refid="globus.lib"/>
 		<dirset dir="${infra.dest}/production/" />
-		<dirset dir="${logic.dest}/production/" />
-		<dirset dir="${model.dest}/test/" />
-		<dirset dir="${kit.dest}/test/" />
 	</path>
 	
 	<!-- Compile infra, but not its test-files -->	
@@ -43,10 +39,21 @@
 	</target>
 	
 	
+	<path id="infra.test.path">
+		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
+		<pathelement location="${lib.dir}/gndms-kit.jar"/>
+		<pathelement location="${lib.dir}/gndms-logic.jar"/>
+		<pathelement location="${lib.dir}/gndms-infra.jar"/>
+		<fileset dir="${tools-lib.dir}" includes="*.jar" />
+		<fileset refid="globus.lib"/>
+		<dirset dir="${model.dest}/test/" />
+		<dirset dir="${kit.dest}/test/" />
+	</path>
+	
 	<!-- Compile infra and its test-files -->
-	<target name="infra.compile.all" depends="infra.compile" description="Compiles infra and its test-files">
+	<target name="infra.compile.all" depends="infra.jar" description="Compiles infra and its test-files">
 		<mkdir dir="./${infra.dest}/test"/>
-		<javac srcdir='${infra.dir}/test-src' destdir='${infra.dest}/test' classpathref="infra.path" />
+		<javac srcdir='${infra.dir}/test-src' destdir='${infra.dest}/test' classpathref="infra.test.path" />
 		
 		<!-- Copy meta-stuff -->
 		<copy todir="${infra.dest}/test">

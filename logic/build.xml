@@ -6,7 +6,7 @@
 		<pathelement location="${lib.dir}/gndms-kit.jar"/>
 		<fileset dir="${tools-lib.dir}" includes="*.jar" />
 		<fileset refid="globus.lib"/>
-		<dirset dir="${model.dest}/test"/>
+
 		<dirset dir="${logic.dest}/production"/>
 	</path>
 	<!-- Compile logic, but not its test-files -->	
@@ -46,16 +46,25 @@
 		</jar>
 	</target>
 	
+	<path id="logic.test.path">
+		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
+		<pathelement location="${lib.dir}/gndms-kit.jar"/>
+		<pathelement location="${lib.dir}/gndms-logic.jar"/>
+		<fileset dir="${tools-lib.dir}" includes="*.jar" />
+		<fileset refid="globus.lib"/>
+		<dirset dir="${model.dest}/test"/>
+	</path>
+	
 	<!-- Compile lgoic and its test-files -->	
 	<target name="logic.compile.all" depends="logic.compile" description="Compiles model and its test-files">
 
 			
 		<mkdir dir="./${logic.dest}/test"/>
 		
-		<javac srcdir='${logic.dir}/test-src' destdir='${logic.dest}/test' classpathref="logic.path" includes="**/action/*">	
+		<javac srcdir='${logic.dir}/test-src' destdir='${logic.dest}/test' classpathref="logic.test.path" includes="**/action/*">	
 		</javac>
 		
-		<javac srcdir='${logic.dir}/test-src' destdir='${logic.dest}/test' classpathref="logic.path" includes="**/model/*">	
+		<javac srcdir='${logic.dir}/test-src' destdir='${logic.dest}/test' classpathref="logic.test.path" includes="**/model/*">	
 		</javac>
 		<!-- Copy Meta files to build dir-->
 		<copy todir="${logic.dest}/test">

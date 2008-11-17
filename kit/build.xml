@@ -4,7 +4,6 @@
 		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
 		<fileset dir="${tools-lib.dir}" includes="*.jar" />
 		<fileset refid="globus.lib"/>
-		<dirset dir="${model.dest}/test"/>
 		<dirset dir="kit/gndms-kit/production"/>
 	</path>
 	<!-- Compile model, but not its test-files -->
@@ -30,9 +29,17 @@
 		
 		
 	</target>
+	
+	<path id="kit.test.path">
+		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
+		<pathelement location="${lib.dir}/gndms-kit.jar"/>
+		<fileset dir="${tools-lib.dir}" includes="*.jar" />
+		<fileset refid="globus.lib"/>
+		<dirset dir="${model.dest}/test"/>
+	</path>
 
 	<!-- Compile kit and its test-files -->
-	<target name="kit.compile.all" depends="kit.compile" description="Compiles kit and its test-files">
+	<target name="kit.compile.all" depends="kit.jar" description="Compiles kit and its test-files">
 		<mkdir dir="./${kit.dest}/test"/>
 		<!-- Copy meta-stuff -->
 		<copy todir="${kit.dest}/test">
@@ -40,7 +47,7 @@
 				<exclude name="de/**"/>
 			</fileset>
 		</copy>
-		<javac srcdir='${kit.dir}/test-src' destdir='${kit.dest}/test' classpathref="kit.path"/>
+		<javac srcdir='${kit.dir}/test-src' destdir='${kit.dest}/test' classpathref="kit.test.path"/>
 	</target>
 	
 	
