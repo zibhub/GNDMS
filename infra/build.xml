@@ -1,6 +1,7 @@
 <project name="infra compilation file" default="infra.compile" basedir=".">
 	<path id="infra.path">
 		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
+		<pathelement location="${lib.dir}/gndms-kit.jar"/>
 		<pathelement location="${lib.dir}/gndms-logic.jar"/>
 		<pathelement location="${lib.dir}/gndms-kit.jar"/>
 		<fileset dir="${tools-lib.dir}" includes="*.jar" />
