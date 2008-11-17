@@ -75,12 +75,16 @@
 	</target>
 	
 	<!-- Deletes binaries and jar-files -->
-	<target name="logic.clean" description="Deletes logic's binaries and jar-file">
+	<target name="logic.clean" description="Deletes logic's binaries">
 		<delete includeemptydirs="true" >
 			<fileset dir='${logic.dest}/production' includes="**/*.class"/>
 			<fileset dir='${logic.dest}/test' includes="**/*.class"/>
 			
 		</delete>
+	</target>
+	
+	<!-- Deletes jar-files -->
+	<target name="logic.clean.jar" description="Deletes logic's jar-file">
 		<delete file='${lib.dir}/gndms-logic.jar'/>
 	</target>
 </project>

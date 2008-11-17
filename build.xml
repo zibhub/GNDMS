@@ -58,14 +58,28 @@
 		<runtarget target="services.compile"/>
 	</target>
 	
-	<!-- Delete build-files and jars of every package -->
-	<target name="clean" description="deletes jar and build-files of every package">
+	<!-- Delete build-files every package -->
+	<target name="clean" description="deletes build-files of every package">
+		<echo> Deleting binaries </echo>
 		<runtarget target="infra.clean"/>
 		<runtarget target="typecon.clean"/>
 		<runtarget target="logic.clean"/>
 		<runtarget target="kit.clean"/>
 		<runtarget target="model.clean"/>
+		<echo level="warning"> Note: Only class-files have been deleted! To delete also the generated jars type 'ant clean.jar' </echo>
 	</target>
+	
+	
+	<!-- Delete generated jars-->
+	<target name="clean.jar" description="deletes all generated jars">
+		<runtarget target="infra.clean.jar"/>
+		<runtarget target="typecon.clean.jar"/>
+		<runtarget target="logic.clean.jar"/>
+		<runtarget target="kit.clean.jar"/>
+		<runtarget target="model.clean.jar"/>
+	</target>
+	<!-- Delete build-files and generated jar every package -->
+	<target name="clean.all" depends="clean,clean.jar" description="deletes build-files and jars of every package"/>
 	
 	<!-- Compiles the whole project. Use this only if target 'deploy' has been invoked once ! -->
 	<target name="compile">
@@ -134,7 +148,8 @@
 		<echo message="|    Type 'ant -p' for a description of available build targets.               |" />
 		<echo message="|    Type 'ant deploy' to generate needed binaries and set configuartions      |" />
 		<echo message="|    Type 'ant compile' for generating needed binaries                         |" />
-		<echo message="|    Type 'ant clean' for deleting all generated binaries and jars             |" />
+		<echo message="|    Type 'ant clean' for deleting all generated binaries	              |" />
+		<echo message="|    Type 'ant clean.all' for deleting all generated binaries and jars         |" />
 		<echo message="|    Type 'ant compile.all' to compile all source-codes and test files         |" />
 		<echo message="|    Type 'ant gar.deploy -Dfilename=path' for deploying a gar file located    |" />
 		<echo message="|                                          in path                             |" />

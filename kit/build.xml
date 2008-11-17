@@ -58,11 +58,17 @@
 
 
 	<!-- Deletes binaries and jar-file-->
-	<target name="kit.clean" description="Deletes infra's binaries and jar-file">
+	<target name="kit.clean" description="Deletes kit's binaries ">
 		<delete includeemptydirs="true" >
 			<fileset dir='${kit.dest}/production' includes="**/*.class"/>
 			<fileset dir='${kit.dest}/test' includes="**/*.class"/>
 		</delete>
+	</target>
+
+
+	<!-- Deletes jar-file-->
+	<target name="kit.clean.jar" description="Deletes kit's jar-file">
 		<delete file='${lib.dir}/gndms-kit.jar'/>
 	</target>
+
 </project>

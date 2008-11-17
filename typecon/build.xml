@@ -53,11 +53,16 @@
 		</jar>
 		
 	</target>
-	<!-- Deletes binaries and jar-files -->
-	<target name="typecon.clean" description="Deletes typecon's binaries and jar-file">
+	<!-- Deletes binaries -->
+	<target name="typecon.clean" description="Deletes typecon's binaries">
 		<delete includeemptydirs="true" >
 			<fileset dir='${typecon.dest}/production' includes="**/*.class"/>
 			<fileset dir='${typecon.dest}/test' includes="**/*.class"/>
 		</delete>
+	</target>
+	
+	<!-- Deletes jar-files -->
+	<target name="typecon.clean.jar" description="Deletes typecon's jar-file">
+		<delete file='${lib.dir}/gndms-typecon.jar'/>	
 	</target>
 </project>
