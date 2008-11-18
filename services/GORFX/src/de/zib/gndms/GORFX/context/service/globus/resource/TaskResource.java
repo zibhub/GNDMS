@@ -274,13 +274,4 @@ public class TaskResource extends TaskResourceBase
     public void refreshRegistration(final boolean forceRefresh) {
         // nothing
     }
-
-
-    private static void checkResult( Object instance, Class cls  ) {
-
-        if(! ( sr instanceof RePublishSliceResult ) )
-            throw new IllegalArgumentException( "task result is not of type "
-                + RePublishSliceResult.class.getName( ) );
-    }
-
 }

@@ -1,15 +1,19 @@
 package de.zib.gndms.GORFX.action.dms;
 
 import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.infra.configlet.C3MDSConfiglet;
 import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
 import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
 import de.zib.gndms.logic.model.gorfx.c3grid.AbstractProviderStageInORQCalculator;
 import de.zib.gndms.model.gorfx.Contract;
 import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
 import de.zib.gndms.model.gorfx.types.SliceStageInORQ;
+import de.zib.gndms.c3resource.jaxb.Workspace;
 import org.globus.wsrf.container.ServiceHost;
 import org.joda.time.DateTime;
 import org.apache.axis.types.URI;
+
+import java.util.Set;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -46,7 +50,6 @@ public class SliceStageInORQCalculator extends
         if( c.hasExpectedSize() ) {
             long s = c.getExpectedSize( );
 
-            // todo replace GridSite with associated host address
             String src = ServiceHost.getBaseURL( ).getHost();
             URI dst_uri = destinationURI( getORQArguments().getGridSite() );
             String dst = dst_uri.getHost( );
@@ -84,8 +87,11 @@ public class SliceStageInORQCalculator extends
     }
 
 
-    public static URI destinationURI( String gs ) {
-        return null;
+    public URI destinationURI( String gs ) throws URI.MalformedURIException {
+        C3MDSConfiglet cfg = getConfigletProvider().getConfiglet( C3MDSConfiglet.class, C3MDSConfiglet.class.getName( ) );
+        Set<Workspace.Archive> a = cfg.getCatalog().getArchivesByOid().get( gs );
+        Workspace w = cfg.getCatalog().getWorkspaceByArchive().get( a.toArray()[0] );
+        return new URI( w.getBaseUrl() );
     }
 }
 

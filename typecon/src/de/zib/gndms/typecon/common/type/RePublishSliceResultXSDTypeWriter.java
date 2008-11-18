@@ -47,7 +47,7 @@ public class RePublishSliceResultXSDTypeWriter extends CommonSliceResultXSDTypeW
     public static RePublishSliceResultT writeResult( RePublishSliceResult res ) {
 
         final RePublishSliceResultXSDTypeWriter writer = new RePublishSliceResultXSDTypeWriter();
-        final RePublishSliceResultConverter conv = new RePublishSliceResultConverter( writer, tres );
+        final RePublishSliceResultConverter conv = new RePublishSliceResultConverter( writer, res );
         conv.convert();
 
         return writer.getProduct();

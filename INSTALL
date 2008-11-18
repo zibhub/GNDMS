@@ -253,7 +253,7 @@ DETAILED BUILD INSTRUCTIONS
   gndms-infra, gndms-logic, gndms-shared-model, joda-time,
   SOURCES, all non-symlinks in service/ServiceName/lib,  gt4
 
-  GORFX also depends on DSpace and args4j.
+  GORFX also depends on DSpace, args4j, DSpace-Stubs and jaxb.
   
   compile to service/ServiceName/out/production (resp. test/), and exclude the
   services' out,  build, and lib directories from the project sources to reduce
