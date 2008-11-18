@@ -24,4 +24,4 @@ STAGING_AREA_GSI_FTP_URL="gsiftp://$GRIDHOST""$STAGING_AREA_PATH"
 
 # Do not edit below this line unless very sure ---------------------------------------------------------------------------------------------------------------------------------------------------
 
-enable_staging
+enable_providerstagein
