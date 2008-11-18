@@ -1,22 +1,19 @@
 package de.zib.gndms.GORFX.action.dms;
 
+import de.zib.gndms.GORFX.action.InterSliceTransferTaskAction;
+import de.zib.gndms.dspace.client.DSpaceClient;
+import de.zib.gndms.dspace.slice.client.SliceClient;
+import de.zib.gndms.dspace.subspace.client.SubspaceClient;
+import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.logic.model.gorfx.c3grid.AbstractProviderStageInAction;
-import de.zib.gndms.model.gorfx.types.*;
-import de.zib.gndms.model.gorfx.Task;
+import de.zib.gndms.model.dspace.types.SliceRef;
 import de.zib.gndms.model.gorfx.Contract;
 import de.zib.gndms.model.gorfx.OfferType;
-import de.zib.gndms.model.dspace.types.SliceRef;
-import de.zib.gndms.GORFX.action.InterSliceTransferTaskAction;
-import de.zib.gndms.GORFX.action.DSpaceBindingUtils;
-import de.zib.gndms.GORFX.action.InterSliceTransferORQCalculator;
-import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.model.gorfx.Task;
+import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.typecon.common.type.ProviderStageInResultXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.SliceRefXSDReader;
-import de.zib.gndms.dspace.slice.client.SliceClient;
-import de.zib.gndms.dspace.client.DSpaceClient;
-import de.zib.gndms.dspace.subspace.client.SubspaceClient;
-import de.zib.gndms.kit.util.WidAux;
 import org.jetbrains.annotations.NotNull;
 
 import javax.xml.namespace.QName;
