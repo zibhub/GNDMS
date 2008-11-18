@@ -17,7 +17,6 @@ public class SliceStageInORQ extends ProviderStageInORQ {
     // this isn't part of the initial request, but part of the offer creation result.
     private String gridSiteURI;
 
-
     public SliceStageInORQ( ){
         super();
         super.setOfferType( GORFXConstantURIs.SLICE_STAGE_IN_URI );

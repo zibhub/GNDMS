@@ -271,5 +271,4 @@ public class TaskResource extends TaskResourceBase
     public void refreshRegistration(final boolean forceRefresh) {
         // nothing
     }
-
 }

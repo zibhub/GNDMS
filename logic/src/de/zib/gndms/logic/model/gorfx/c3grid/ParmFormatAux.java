@@ -76,8 +76,6 @@ public class ParmFormatAux {
     }
 
 
-
-
     private ProcessBuilderAction createDefaultPBAction( ProviderStageInORQ orq, Contract contParam ) {
 
         if( contParam != null ) {
