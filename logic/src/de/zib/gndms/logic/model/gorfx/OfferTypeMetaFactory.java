@@ -17,7 +17,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class OfferTypeMetaFactory<T extends FactoryInstance<OfferType, T>> extends
         AbstractRecursiveFactory<OfferType, RecursiveFactory<OfferType, T>>
+	implements Wrapper<RecursiveFactory<OfferType, T>>
 {
+	private Wrapper<? super RecursiveFactory<OfferType, T>> wrap;
 
     @Override
     @SuppressWarnings({ "unchecked" })
@@ -47,10 +49,32 @@ public abstract class OfferTypeMetaFactory<T extends FactoryInstance<OfferType, 
     public abstract String getFactoryClassName(final OfferType key);
 
 
+    @Override
     @SuppressWarnings({ "NoopMethodInAbstractClass" })
     public void setup() {
         // intentional
     }
 
-    
+
+	public Wrapper<? super RecursiveFactory<OfferType, T>> getWrap() {
+		return wrap;
+	}
+
+
+	public void setWrap(final Wrapper<? super RecursiveFactory<OfferType, T>> wrapParam) {
+		wrap = wrapParam;
+	}
+
+
+	public <X extends RecursiveFactory<OfferType, T>, Y extends RecursiveFactory<OfferType, T>> Y wrap(final Class<Y> wrapClass, final X wrapped) {
+		final Wrapper<? super RecursiveFactory<OfferType, T>> curWrap = getWrap();
+		if (curWrap == null)
+			return wrapClass.cast(wrapped);
+		else
+			return curWrap.wrap(wrapClass, wrapped);
+	}
+
+
+
+
 }

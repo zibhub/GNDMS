@@ -1,19 +1,15 @@
 package de.zib.gndms.model.gorfx;
 
+import org.joda.time.DateTime;
+import org.joda.time.Duration;
+import org.joda.time.format.ISODateTimeFormat;
+
 import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import java.util.Calendar;
-import java.util.Calendar;
 import java.util.HashMap;
-
-import org.joda.time.DateTime;
-import org.joda.time.Duration;
-import org.joda.time.format.ISODateTimeFormat;
-import org.apache.openjpa.persistence.Persistent;
-import org.apache.openjpa.persistence.Externalizer;
-import org.apache.openjpa.persistence.Factory;
 
 
 /**
