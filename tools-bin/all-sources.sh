@@ -1,7 +1,18 @@
 source $(dirname $0)/var-check.sh
 var_check
 
+if [ -z "$*" ]; then 
+	CMD="cat -" 
+else 
+	if [ "$*" = "all" ]; then 
+		ALL="yes"
+		CMD="cat -"
+	else
+		CMD="grep -i $*"
+	fi
+fi
 
+print_sources() {
 echo $C3GRID_SOURCE/sync.sh
 echo $C3GRID_SOURCE/build-deploy.xml
 find $C3GRID_SOURCE/scripts -type f
@@ -19,7 +30,7 @@ find $C3GRID_SOURCE/kit/src -type f
 find $C3GRID_SOURCE/kit/test-src -type f
 find $C3GRID_SOURCE/services/*/test/src -type f | grep -v README.txt
 
-if [ "$*" = "all" ] ; then 
+if [ ! -z "$ALL" ] ; then 
 	find $C3GRID_SOURCE/services/*/schema -type f
 	find $C3GRID_SOURCE/services/*/src -type f
 	find $C3GRID_SOURCE/services/*/*.xml -type f
@@ -52,3 +63,6 @@ echo $C3GRID_SOURCE/services/GORFX/src/de/zib/gndms/GORFX/context/service/TaskIm
 echo $C3GRID_SOURCE/services/GORFX/src/de/zib/gndms/GORFX/context/service/globus/resource/TaskResource.java
 echo $C3GRID_SOURCE/services/GORFX/src/de/zib/gndms/GORFX/context/service/globus/resource/ExtTaskResourceHome.java
 fi
+}
+
+print_sources | $CMD
