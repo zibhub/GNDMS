@@ -46,7 +46,6 @@ public class GORFXClientUtils {
             failed = state.equals( TaskStatusT.failed );
             finished = state.equals( TaskStatusT.finished );
 
-            System.out.println("Waiting for staging to finish...");
             try {
                 Thread.sleep( sleep );
             }
@@ -67,7 +66,7 @@ public class GORFXClientUtils {
      * @param orq The Reques itself.
      * @param ctx The context of the request.
      * @param con The desired contract for the execution.
-     * @return The created slice.
+     * @return An epr to the created task resource.
      *
      * @throws Exception If anything goes wrong.
      */
@@ -90,8 +89,6 @@ public class GORFXClientUtils {
         // create offer client and accept it
         final OfferClient ofcnt = new OfferClient( epr );
         return ofcnt.accept( );
-
-
     }
     
 
