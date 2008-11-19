@@ -91,8 +91,8 @@ public class Contract {
 
     public void setDeadline( Calendar dl ) {
         deadline = dl;
-        if( getResultValidity( ) == null )
-            setResultValidity( dl );
+//        if( getResultValidity( ) == null )
+//            setResultValidity( dl );
     }
 
 

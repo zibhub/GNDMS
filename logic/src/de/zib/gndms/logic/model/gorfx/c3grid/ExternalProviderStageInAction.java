@@ -29,16 +29,19 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
 
     public ExternalProviderStageInAction() {
         super();
+        this.parmAux = new ParmFormatAux();
     }
 
 
     public ExternalProviderStageInAction(final @NotNull EntityManager em, final @NotNull Task model) {
         super(em, model);
+        this.parmAux = new ParmFormatAux();
     }
 
 
     public ExternalProviderStageInAction(final @NotNull EntityManager em, final @NotNull String pk) {
         super(em, pk);
+        this.parmAux = new ParmFormatAux();
     }
 
 

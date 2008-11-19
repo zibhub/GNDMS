@@ -32,6 +32,13 @@ public class ExternalProviderStageInORQCalculator extends AbstractProviderStageI
 
     private ParmFormatAux parmAux;
 
+
+    public ExternalProviderStageInORQCalculator( ) {
+        super( );
+        this.parmAux = new ParmFormatAux();
+    }
+
+
     @Override
     public Contract createOffer() throws Exception {
         final @NotNull Contract cont = getPerferredOfferExecution();
