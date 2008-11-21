@@ -24,9 +24,120 @@
 	<property name="infra.dest" value="${infra.dir}/gndms-infra"/>
 	<property name="typecon.dest" value="${typecon.dir}/gndms-typecon"/>
 	
-	<!-- To avoid problems import just libaries defined in globus_jars.txt-->
-	<fileset dir="${env.GLOBUS_LOCATION}/lib" includesfile="globus_jars.txt" id="globus.lib"/>
-
+	<!-- To avoid problems import just the following libaries -->
+	<!--fileset dir="${env.GLOBUS_LOCATION}/lib" includesfile="globus_jars.txt" id="globus.lib"/-->
+	
+	<!-- To avoid problems import just the following libaries -->
+	<fileset dir="${env.GLOBUS_LOCATION}/lib" id="globus.lib">
+		<OR>
+		<filename name="addressing-1.0.jar"/>
+		<filename name="axis.jar"/>
+		<filename name="axis-url.jar"/>
+		<filename name="backport-util-concurrent.jar"/>
+		<filename name="bootstrap.jar"/>
+		<filename name="cog-axis.jar"/>
+		<filename name="cog-jglobus.jar"/>
+		<filename name="cog-tomcat.jar"/>
+		<filename name="cog-url.jar"/>
+		<filename name="commonj.jar"/>
+		<filename name="commons-beanutils.jar"/>
+		<filename name="commons-cli-2.0.jar"/>
+		<filename name="commons-collections-3.2.jar"/>
+		<filename name="commons-dbcp.jar"/>
+		<filename name="commons-digester.jar"/>
+		<filename name="commons-discovery.jar"/>
+		<filename name="commons-logging.jar"/>
+		<filename name="commons-pool.jar"/>
+		<filename name="concurrent.jar"/>
+		<filename name="cryptix32.jar"/>
+		<filename name="cryptix-asn1.jar"/>
+		<filename name="cryptix.jar"/>
+		<filename name="globus_cas_client.jar"/>
+		<filename name="globus_cas_common.jar"/>
+		<filename name="globus_cas_service.jar"/>
+		<filename name="globus_cas_unit_test.jar"/>
+		<filename name="globus_cas_utils.jar"/>
+		<filename name="globus_delegation_client.jar"/>
+		<filename name="globus_delegation_service.jar"/>
+		<filename name="globus_delegation_stubs.jar"/>
+		<filename name="globus_delegation_test.jar"/>
+		<filename name="globus_usage_core.jar"/>
+		<filename name="globus_usage_packets_common.jar"/>
+		<filename name="globus_wsrf_gram_service_auditing_unit_test.jar"/>
+		<filename name="globus_wsrf_gram_service_java_test_throughput.jar"/>
+		<filename name="globus_wsrf_gram_service_java_test_unit.jar"/>
+		<filename name="globus_wsrf_gram_service_java_usage.jar"/>
+		<filename name="globus_wsrf_mds_aggregator.jar"/>
+		<filename name="globus_wsrf_mds_aggregator_stubs.jar"/>
+		<filename name="globus_wsrf_mds_aggregator_test.jar"/>
+		<filename name="globus_wsrf_mds_index_test.jar"/>
+		<filename name="globus_wsrf_mds_trigger_test.jar"/>
+		<filename name="globus_wsrf_rendezvous_service.jar"/>
+		<filename name="globus_wsrf_rendezvous_stubs.jar"/>
+		<filename name="globus_wsrf_replicator_client.jar"/>
+		<filename name="globus_wsrf_replicator.jar"/>
+		<filename name="globus_wsrf_replicator_stubs.jar"/>
+		<filename name="globus_wsrf_rft_client.jar"/>
+		<filename name="globus_wsrf_rft.jar"/>
+		<filename name="globus_wsrf_rft_service_java_usage.jar"/>
+		<filename name="globus_wsrf_rft_stubs.jar"/>
+		<filename name="globus_wsrf_rft_test.jar"/>
+		<filename name="globus_wsrf_servicegroup.jar"/>
+		<filename name="globus_wsrf_servicegroup_stubs.jar"/>
+		<filename name="globus_wsrf_tools_test.jar"/>
+		<filename name="gram-client.jar"/>
+		<filename name="gram-monitoring.jar"/>
+		<filename name="gram-service.jar"/>
+		<filename name="gram-stubs.jar"/>
+		<filename name="gram-utils.jar"/>
+		<filename name="jaxrpc.jar"/>
+		<filename name="jce-jdk13-125.jar"/>
+		<filename name="jgss.jar"/>
+		<filename name="junit.jar"/>
+		<filename name="log4j-1.2.15.jar"/>
+		<filename name="naming-common.jar"/>
+		<filename name="naming-factory.jar"/>
+		<filename name="naming-java.jar"/>
+		<filename name="naming-resources.jar"/>
+		<filename name="opensaml.jar"/>
+		<filename name="pg73jdbc2.jar"/>
+		<filename name="puretls.jar"/>
+		<filename name="resolver.jar"/>
+		<filename name="saaj.jar"/>
+		<filename name="servlet.jar"/>
+		<filename name="webmds-0.1-dev.jar"/>
+		<filename name="wsdl4j.jar"/>
+		<filename name="wsrf_common.jar"/>
+		<filename name="wsrf_core.jar"/>
+		<filename name="wsrf_core_registry.jar"/>
+		<filename name="wsrf_core_registry_stubs.jar"/>
+		<filename name="wsrf_core_samples_authzService.jar"/>
+		<filename name="wsrf_core_samples_authzService_stubs.jar"/>
+		<filename name="wsrf_core_samples_counter.jar"/>
+		<filename name="wsrf_core_samples_counter_stubs.jar"/>
+		<filename name="wsrf_core_samples_mgmt.jar"/>
+		<filename name="wsrf_core_samples_mgmt_stubs.jar"/>
+		<filename name="wsrf_core_stubs.jar"/>
+		<filename name="wsrf_mds_index.jar"/>
+		<filename name="wsrf_mds_index_stubs.jar"/>
+		<filename name="wsrf_mds_trigger.jar"/>
+		<filename name="wsrf_mds_trigger_stubs.jar"/>
+		<filename name="wsrf_mds_usefulrp.jar"/>
+		<filename name="wsrf_mds_usefulrp_schema_stubs.jar"/>
+		<filename name="wsrf_provider_jce.jar"/>
+		<filename name="wsrf_test_interop.jar"/>
+		<filename name="wsrf_test_interop_stubs.jar"/>
+		<filename name="wsrf_test.jar"/>
+		<filename name="wsrf_test_unit.jar"/>
+		<filename name="wsrf_test_unit_stubs.jar"/>
+		<filename name="wsrf_tools.jar"/>
+		<filename name="wss4j.jar"/>
+		<filename name="xalan.jar"/>
+		<filename name="xercesImpl.jar"/>
+		<filename name="xml-apis.jar"/>
+		<filename name="xmlsec.jar"/>
+	</OR>
+	</fileset>
 	
 	<!-- using ant contrib for contidionals, looping , and runtarget -->
 	<taskdef resource="net/sf/antcontrib/antlib.xml">

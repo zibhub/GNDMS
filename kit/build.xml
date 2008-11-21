@@ -2,10 +2,12 @@
 
 	<path id="kit.path">
 		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
+		<pathelement location="globus.lib"/>
 		<fileset dir="${tools-lib.dir}" includes="*.jar" />
 		<fileset refid="globus.lib"/>
 		<dirset dir="kit/gndms-kit/production"/>
 	</path>
+	
 	<!-- Compile model, but not its test-files -->
 	<target name="kit.compile" description="Compiles kit">
 		<if>
