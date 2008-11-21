@@ -1,10 +1,26 @@
 <project name="kit compilation file" default="kit.compile" basedir=".">
 
 	<path id="kit.path">
-		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
-		<pathelement location="globus.lib"/>
-		<fileset dir="${tools-lib.dir}" includes="*.jar" />
+		<pathelement location="${tools-lib.dir}/groovy-all-1.6-beta-1.jar"/> 
+		<pathelement location="${tools-lib.dir}/geronimo-jpa_3.0_spec-1.0.jar"/>
+		<pathelement location="${tools-lib.dir}/jsr173_1.0_api.jar"/>
+		<dirset dir="kit/gndms-kit/production"/>
 		<fileset refid="globus.lib"/>
+		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
+		<pathelement location="${tools-lib.dir}/annotations.jar"/>
+		<pathelement location="${tools-lib.dir}/jetty-6.1.11.jar"/>
+		<pathelement location="${tools-lib.dir}/jetty-util-6.1.11.jar"/>
+		<pathelement location="${tools-lib.dir}/servlet-api-2.5-6.1.11.jar"/>
+		<pathelement location="${tools-lib.dir}/cos-05Nov2002.jar"/>
+		<pathelement location="${tools-lib.dir}/testng-5.8-jdk15.jar"/> 
+		<pathelement location="${tools-lib.dir}/joda-time-1.5.2.jar"/> 
+		<pathelement location="${tools-lib.dir}/args4j-2.0.9.jar"/>
+		<pathelement location="${tools-lib.dir}/google-collect-snapshot-20080820.jar"/> 
+
+		
+		<!--pathelement location="globus.lib"/-->
+		<!--fileset dir="${tools-lib.dir}" includes="*.jar" /-->
+		
 		<dirset dir="kit/gndms-kit/production"/>
 	</path>
 	
@@ -40,8 +56,8 @@
 		<dirset dir="${model.dest}/test"/>
 	</path>
 
-	<!-- Compile kit and its test-files -->
-	<target name="kit.compile.all" depends="kit.jar" description="Compiles kit and its test-files">
+	<!-- Compile kit's test-classes-->
+	<target name="kit.compile.test" description="Compiles kit and its test-files">
 		<mkdir dir="./${kit.dest}/test"/>
 		<!-- Copy meta-stuff -->
 		<copy todir="${kit.dest}/test">
@@ -53,14 +69,19 @@
 	</target>
 	
 	
-	<!-- Creates jar-file of binaries -->
+	<!-- Creates jar-file containing kit's test-classfiles-->
+	<target name="kit.test.jar" depends="kit.compile.test" description="Creates jar file gndms-kit-test.jar in 'extra/lib'">
+		<jar destfile="./${lib.dir}/gndms-kit-test.jar" basedir="${kit.dest}/test"/>
+	</target>
+	
+	<!-- Creates jar-file containing kit's classfiles-->
 	<target name="kit.jar" depends="kit.compile" description="Creates jar file gndms-kit.jar in 'extra/lib'">
 		<jar destfile="./${lib.dir}/gndms-kit.jar" basedir="${kit.dest}/production"/>
 	</target>
 
 
-	<!-- Deletes binaries and jar-file-->
-	<target name="kit.clean" description="Deletes kit's binaries ">
+	<!-- Deletes kits' classfiles -->
+	<target name="kit.clean" description="Deletes kit's classfiles ">
 		<delete includeemptydirs="true" >
 			<fileset dir='${kit.dest}/production' includes="**/*.class"/>
 			<fileset dir='${kit.dest}/test' includes="**/*.class"/>
@@ -68,9 +89,10 @@
 	</target>
 
 
-	<!-- Deletes jar-file-->
+	<!-- Deletes jar-files-->
 	<target name="kit.clean.jar" description="Deletes kit's jar-file">
 		<delete file='${lib.dir}/gndms-kit.jar'/>
+		<delete file='${lib.dir}/gndms-kit-test.jar'/>
 	</target>
 
 </project>

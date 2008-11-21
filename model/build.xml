@@ -2,8 +2,22 @@
 	
 	
 	<path id="model.path">
-		<fileset dir="${tools-lib.dir}" includes="*.jar" />
+		<pathelement location="${tools-lib.dir}/groovy-all-1.6-beta-1.jar"/> 
+		<pathelement location="${tools-lib.dir}/geronimo-jpa_3.0_spec-1.0.jar"/>
+		<pathelement location="${tools-lib.dir}/jsr173_1.0_api.jar"/>
+		<pathelement location="${tools-lib.dir}/annotations.jar"/> 
 		<dirset dir="${model.dest}/production/" />
+		<pathelement location="${tools-lib.dir}/openjpa-1.1.0.jar"/> 
+		<pathelement location="${tools-lib.dir}/google-collect-snapshot-20080820.jar"/> 
+		<pathelement location="${tools-lib.dir}/joda-time-1.5.2.jar"/> 
+		<pathelement location="${tools-lib.dir}/testng-5.8-jdk15.jar"/> 
+		<pathelement location="${tools-lib.dir}/jaxb-api.jar"/>
+		<pathelement location="${tools-lib.dir}/jaxb1-impl.jar"/>  
+		<pathelement location="${tools-lib.dir}/jaxb-impl.jar"/> 
+		<pathelement location="${tools-lib.dir}/jaxb-xjc.jar"/>
+		
+		<!--fileset dir="${tools-lib.dir}" includes="*.jar" /-->
+		
 	</path>
 	
 	<!-- Compile model, but not its test-files -->
@@ -25,8 +39,8 @@
 		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
 	</path>
 	
-	<!-- Compile model and its test-files -->
-	<target name="model.compile.all" depends="model.jar" description="Compiles model and its test-files">
+	<!-- Compile model's test-files -->
+	<target name="model.compile.test" description="Compiles model test-files">
 		<mkdir dir="${model.dest}/test"/>
 		<javac srcdir='${model.dir}/test-src' destdir='${model.dest}/test' classpathref="model.test.path">
 			
@@ -39,14 +53,21 @@
 		</copy>	
 	</target>
 
-	<!-- Creates jar-file of model binaries -->
+	<!-- Creates jar-file containing model's test-classes-->
+	<target name="model.test.jar" depends="model.compile.test" description="Creates jar file gndms-shared-model-test.jar in 'extra/lib'">	
+		<jar destfile="${lib.dir}/gndms-shared-model-test.jar"
+		     basedir="${model.dest}/test">
+		</jar>
+	</target>
+	
+	<!-- Creates jar-file containing model's classes -->
 	<target name="model.jar" depends="model.compile" description="Creates jar file gndms-shared-model.jar in 'extra/lib'">	
 		<jar destfile="${lib.dir}/gndms-shared-model.jar"
 		     basedir="${model.dest}/production">
 		</jar>
 	</target>
-	<!-- Deletes binaries and jar-files -->
-	<target name="model.clean" description="Deletes model's binaries">
+	<!-- Deletes classfiles-->
+	<target name="model.clean" description="Deletes model's classfiles">
 		<delete includeemptydirs="true" >
 			<fileset dir='${model.dest}/production/' includes="**/*.class"/>
 			<fileset dir='${model.dest}/test/' includes="**/*.class"/>
@@ -54,8 +75,9 @@
 	</target>
 	
 	<!-- Deletes  jar-files -->
-	<target name="model.clean.jar" description="Deletes model's jar-file">
+	<target name="model.clean.jar" description="Deletes model's jar-files">
 		<delete file='${lib.dir}/gndms-shared-model.jar'/>
+		<delete file='${lib.dir}/gndms-shared-model-test.jar'/>
 	</target>
 	
 	<target name="model.enhancer">
