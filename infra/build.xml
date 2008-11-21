@@ -76,7 +76,7 @@
 	</path>
 	
 	<!-- Compile infra and its test-files -->
-	<target name="infra.compile.test" depends="infra.jar" description="Compiles infra's test-files">
+	<target name="infra.compile.test"  description="Compiles infra's test-files">
 		<mkdir dir="./${infra.dest}/test"/>
 		<javac srcdir='${infra.dir}/test-src' destdir='${infra.dest}/test' classpathref="infra.test.path" />
 		

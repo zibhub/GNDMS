@@ -59,7 +59,7 @@
 	
 	
 	<!-- Creates jar containing logic's test-classfiles-->	
-	<target name="logic.test.jar" depends="logic.compile" description="Creates jar file gndms-logic-test.jar in 'extra/lib'">	
+	<target name="logic.test.jar"  depends="logic.compile.test" description="Creates jar file gndms-logic-test.jar in 'extra/lib'">	
 		
 		<jar destfile="./${lib.dir}/gndms-logic-test.jar"
 		     basedir="${logic.dest}/test">

@@ -40,7 +40,7 @@
 	</path>
 	
 	<!-- Compile typecon and its test-files -->
-	<target name="typecon.compile.test" depends="typecon.jar" description="Compiles typecon's test-files">
+	<target name="typecon.compile.test" description="Compiles typecon's test-files">
 		<mkdir dir="./${typecon.dest}/test"/>
 		<javac srcdir='${typecon.dir}/test-src' destdir='${typecon.dest}/test' classpathref="typecon.test.path" includes="**/type/*.java"/>
 		<!-- Copy Meta files to build dir-->
