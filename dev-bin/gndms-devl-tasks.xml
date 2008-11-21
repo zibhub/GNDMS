@@ -1,0 +1,150 @@
+<?xml version="1.0"?>
+<rss version="2.0">
+<channel>
+<title>teamtasks</title>
+<link>http://www.tiddlywiki.com/</link>
+<description>a simple extensible task management tool</description>
+<language>en</language>
+<copyright>Copyright 2008 YourName</copyright>
+<pubDate>Fri, 21 Nov 2008 16:31:53 GMT</pubDate>
+<lastBuildDate>Fri, 21 Nov 2008 16:31:53 GMT</lastBuildDate>
+<docs>http://blogs.law.harvard.edu/tech/rss</docs>
+<generator>TiddlyWiki 2.4.1</generator>
+<item>
+<title>TaskAction commit / Deep Copy</title>
+<description>The tiddler 'New Task' doesn't yet exist. Double-click to create it</description>
+<category>task</category>
+<link>http://www.tiddlywiki.com/#%5B%5BTaskAction%20commit%20%2F%20Deep%20Copy%5D%5D</link>
+<pubDate>Fri, 21 Nov 2008 16:31:53 GMT</pubDate>
+</item>
+<item>
+<title>ModuleDefinitions</title>
+<description>&lt;a class=&quot;externalLink null&quot; href=&quot;http://www.tiddlywiki.com/#DSpace&quot; title=&quot;External link to http://www.tiddlywiki.com/#DSpace&quot; target=&quot;_blank&quot; refresh=&quot;link&quot; tiddlylink=&quot;DSpace&quot;&gt;DSpace&lt;/a&gt;&lt;br&gt;GORFX&lt;br&gt;WHORFX&lt;br&gt;LOFIS&lt;br&gt;multi&lt;br&gt;etc&lt;br&gt;infra&lt;br&gt;logic&lt;br&gt;kit&lt;br&gt;typecon&lt;br&gt;model&lt;br&gt;&lt;a class=&quot;externalLink null&quot; href=&quot;http://www.tiddlywiki.com/#DistributedLogger&quot; title=&quot;External link to http://www.tiddlywiki.com/#DistributedLogger&quot; target=&quot;_blank&quot; refresh=&quot;link&quot; tiddlylink=&quot;DistributedLogger&quot;&gt;DistributedLogger&lt;/a&gt;&lt;br&gt;build&lt;br&gt;docs&lt;br&gt;deploy&lt;br&gt;c3wiki</description>
+<category>TaskDefinitions</category>
+<category>TeamTasks</category>
+<link>http://www.tiddlywiki.com/#ModuleDefinitions</link>
+<pubDate>Fri, 21 Nov 2008 16:12:00 GMT</pubDate>
+</item>
+<item>
+<title>Clean-up Task/Subtask/GORFXID</title>
+<description>The tiddler 'New Task' doesn't yet exist. Double-click to create it</description>
+<category>task</category>
+<link>http://www.tiddlywiki.com/#%5B%5BClean-up%20Task%2FSubtask%2FGORFXID%5D%5D</link>
+<pubDate>Fri, 21 Nov 2008 16:11:00 GMT</pubDate>
+</item>
+<item>
+<title>Release 0.2alpha</title>
+<description>The tiddler 'New Task' doesn't yet exist. Double-click to create it</description>
+<category>task</category>
+<link>http://www.tiddlywiki.com/#%5B%5BRelease%200.2alpha%5D%5D</link>
+<pubDate>Fri, 21 Nov 2008 16:04:00 GMT</pubDate>
+</item>
+<item>
+<title>DistributedLogger certificiate problems</title>
+<description>The tiddler 'New Task' doesn't yet exist. Double-click to create it</description>
+<category>task</category>
+<link>http://www.tiddlywiki.com/#%5B%5BDistributedLogger%20certificiate%20problems%5D%5D</link>
+<pubDate>Fri, 21 Nov 2008 16:03:00 GMT</pubDate>
+</item>
+<item>
+<title>UserDefinitions</title>
+<description>&lt;a class=&quot;externalLink null&quot; href=&quot;http://www.tiddlywiki.com/#StefanPlantikow&quot; title=&quot;External link to http://www.tiddlywiki.com/#StefanPlantikow&quot; target=&quot;_blank&quot; refresh=&quot;link&quot; tiddlylink=&quot;StefanPlantikow&quot;&gt;StefanPlantikow&lt;/a&gt;&lt;br&gt;&lt;a class=&quot;externalLink null&quot; href=&quot;http://www.tiddlywiki.com/#MaikJorra&quot; title=&quot;External link to http://www.tiddlywiki.com/#MaikJorra&quot; target=&quot;_blank&quot; refresh=&quot;link&quot; tiddlylink=&quot;MaikJorra&quot;&gt;MaikJorra&lt;/a&gt;&lt;br&gt;&lt;a class=&quot;externalLink null&quot; href=&quot;http://www.tiddlywiki.com/#RobertoHenschel&quot; title=&quot;External link to http://www.tiddlywiki.com/#RobertoHenschel&quot; target=&quot;_blank&quot; refresh=&quot;link&quot; tiddlylink=&quot;RobertoHenschel&quot;&gt;RobertoHenschel&lt;/a&gt;&lt;br&gt;&lt;a class=&quot;externalLink null&quot; href=&quot;http://www.tiddlywiki.com/#FlorianSchintke&quot; title=&quot;External link to http://www.tiddlywiki.com/#FlorianSchintke&quot; target=&quot;_blank&quot; refresh=&quot;link&quot; tiddlylink=&quot;FlorianSchintke&quot;&gt;FlorianSchintke&lt;/a&gt;&lt;br&gt;&lt;a class=&quot;externalLink null&quot; href=&quot;http://www.tiddlywiki.com/#UnAssigned&quot; title=&quot;External link to http://www.tiddlywiki.com/#UnAssigned&quot; target=&quot;_blank&quot; refresh=&quot;link&quot; tiddlylink=&quot;UnAssigned&quot;&gt;UnAssigned&lt;/a&gt;</description>
+<category>TaskDefinitions</category>
+<category>TeamTasks</category>
+<link>http://www.tiddlywiki.com/#UserDefinitions</link>
+<pubDate>Fri, 21 Nov 2008 16:00:00 GMT</pubDate>
+</item>
+<item>
+<title>Enable XML format support in Providerscripts</title>
+<description>The tiddler 'New Task' doesn't yet exist. Double-click to create it</description>
+<category>task</category>
+<link>http://www.tiddlywiki.com/#%5B%5BEnable%20XML%20format%20support%20in%20Providerscripts%5D%5D</link>
+<pubDate>Fri, 21 Nov 2008 15:58:00 GMT</pubDate>
+</item>
+<item>
+<title>PendingReportView</title>
+<description>&lt;span refresh=&quot;content&quot; tiddler=&quot;PendingReportView&quot; force=&quot;true&quot;&gt;&lt;table class=&quot;sortable&quot;&gt;&lt;thead&gt;&lt;tr&gt;&lt;td&gt;Title&lt;/td&gt;&lt;td class=&quot;autosort&quot;&gt;Priority&lt;/td&gt;&lt;td&gt;Status&lt;/td&gt;&lt;td&gt;Scope&lt;/td&gt;&lt;td&gt;Module&lt;/td&gt;&lt;td&gt;User&lt;/td&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;&lt;a href=&quot;javascript:;&quot; title=&quot;ArchiveAction - YourName, 21. November 2008 16:51:00 MEZ&quot; class=&quot;tiddlyLink tiddlyLinkExisting&quot; refresh=&quot;link&quot; tiddlylink=&quot;ArchiveAction&quot;&gt;ArchiveAction&lt;/a&gt;&lt;/td&gt;&lt;td&gt;Medium&lt;/td&gt;&lt;td&gt;Pending&lt;/td&gt;&lt;td&gt;DMS&lt;/td&gt;&lt;td&gt;GORFX&lt;/td&gt;&lt;td&gt;StefanPlantikow&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;a href=&quot;javascript:;&quot; title=&quot;Mail explaining MDS - YourName, 21. November 2008 16:40:00 MEZ&quot; class=&quot;tiddlyLink tiddlyLinkExisting&quot; refresh=&quot;link&quot; tiddlylink=&quot;Mail explaining MDS&quot;&gt;Mail explaining MDS&lt;/a&gt;&lt;/td&gt;&lt;td&gt;Medium&lt;/td&gt;&lt;td&gt;Pending&lt;/td&gt;&lt;td&gt;Provider&lt;/td&gt;&lt;td&gt;etc&lt;/td&gt;&lt;td&gt;StefanPlantikow&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;a href=&quot;javascript:;&quot; title=&quot;SetupScriptForPublishers - YourName, 21. November 2008 16:40:00 MEZ&quot; class=&quot;tiddlyLink tiddlyLinkExisting&quot; refresh=&quot;link&quot; tiddlylink=&quot;SetupScriptForPublishers&quot;&gt;SetupScriptForPublishers&lt;/a&gt;&lt;/td&gt;&lt;td&gt;Medium&lt;/td&gt;&lt;td&gt;Pending&lt;/td&gt;&lt;td&gt;Provider&lt;/td&gt;&lt;td&gt;etc&lt;/td&gt;&lt;td&gt;StefanPlantikow&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;a href=&quot;javascript:;&quot; title=&quot;TxFrame everywhere - YourName, 21. November 2008 16:51:00 MEZ&quot; class=&quot;tiddlyLink tiddlyLinkExisting&quot; refresh=&quot;link&quot; tiddlylink=&quot;TxFrame everywhere&quot;&gt;TxFrame everywhere&lt;/a&gt;&lt;/td&gt;&lt;td&gt;Low&lt;/td&gt;&lt;td&gt;Pending&lt;/td&gt;&lt;td&gt;Etc&lt;/td&gt;&lt;td&gt;multi&lt;/td&gt;&lt;td&gt;RobertoHenschel&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;a href=&quot;javascript:;&quot; title=&quot;Write global test cases - YourName, 21. November 2008 16:51:00 MEZ&quot; class=&quot;tiddlyLink tiddlyLinkExisting&quot; refresh=&quot;link&quot; tiddlylink=&quot;Write global test cases&quot;&gt;Write global test cases&lt;/a&gt;&lt;/td&gt;&lt;td&gt;Medium&lt;/td&gt;&lt;td&gt;Pending&lt;/td&gt;&lt;td&gt;Test&lt;/td&gt;&lt;td&gt;multi&lt;/td&gt;&lt;td&gt;RobertoHenschel&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/span&gt;</description>
+<link>http://www.tiddlywiki.com/#PendingReportView</link>
+<pubDate>Fri, 21 Nov 2008 15:57:00 GMT</pubDate>
+</item>
+<item>
+<title>OnHoldReportView</title>
+<description>&lt;span refresh=&quot;content&quot; tiddler=&quot;OnHoldReportView&quot; force=&quot;true&quot;&gt;&lt;table class=&quot;sortable&quot;&gt;&lt;thead&gt;&lt;tr&gt;&lt;td&gt;Title&lt;/td&gt;&lt;td class=&quot;autosort&quot;&gt;Priority&lt;/td&gt;&lt;td&gt;Status&lt;/td&gt;&lt;td&gt;Scope&lt;/td&gt;&lt;td&gt;Module&lt;/td&gt;&lt;td&gt;User&lt;/td&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;&lt;a href=&quot;javascript:;&quot; title=&quot;DistributedLogger certificiate problems - YourName, 21. November 2008 17:03:00 MEZ&quot; class=&quot;tiddlyLink tiddlyLinkExisting&quot; refresh=&quot;link&quot; tiddlylink=&quot;DistributedLogger certificiate problems&quot;&gt;DistributedLogger certificiate problems&lt;/a&gt;&lt;/td&gt;&lt;td&gt;Low&lt;/td&gt;&lt;td&gt;OnHold&lt;/td&gt;&lt;td&gt;Etc&lt;/td&gt;&lt;td&gt;multi&lt;/td&gt;&lt;td&gt;RobertoHenschel&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;a href=&quot;javascript:;&quot; title=&quot;Enable XML format support in Providerscripts - YourName, 21. November 2008 16:58:00 MEZ&quot; class=&quot;tiddlyLink tiddlyLinkExisting&quot; refresh=&quot;link&quot; tiddlylink=&quot;Enable XML format support in Providerscripts&quot;&gt;Enable XML format support in Providerscripts&lt;/a&gt;&lt;/td&gt;&lt;td&gt;Medium&lt;/td&gt;&lt;td&gt;OnHold&lt;/td&gt;&lt;td&gt;Provider&lt;/td&gt;&lt;td&gt;GORFX&lt;/td&gt;&lt;td&gt;MaikJorra&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;a href=&quot;javascript:;&quot; title=&quot;IntegrateBuildFile - YourName, 21. November 2008 16:34:00 MEZ&quot; class=&quot;tiddlyLink tiddlyLinkExisting&quot; refresh=&quot;link&quot; tiddlylink=&quot;IntegrateBuildFile&quot;&gt;IntegrateBuildFile&lt;/a&gt;&lt;/td&gt;&lt;td&gt;High&lt;/td&gt;&lt;td&gt;OnHold&lt;/td&gt;&lt;td&gt;Build&lt;/td&gt;&lt;td&gt;build&lt;/td&gt;&lt;td&gt;MaikJorra&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/span&gt;</description>
+<link>http://www.tiddlywiki.com/#OnHoldReportView</link>
+<pubDate>Fri, 21 Nov 2008 15:57:00 GMT</pubDate>
+</item>
+<item>
+<title>InProgressReportView</title>
+<description>&lt;span refresh=&quot;content&quot; tiddler=&quot;InProgressReportView&quot; force=&quot;true&quot;&gt;&lt;table class=&quot;sortable&quot;&gt;&lt;thead&gt;&lt;tr&gt;&lt;td&gt;Title&lt;/td&gt;&lt;td class=&quot;autosort&quot;&gt;Priority&lt;/td&gt;&lt;td&gt;Status&lt;/td&gt;&lt;td&gt;Scope&lt;/td&gt;&lt;td&gt;Module&lt;/td&gt;&lt;td&gt;User&lt;/td&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;&lt;a href=&quot;javascript:;&quot; title=&quot;ChangeBuildFileTargets - YourName, 21. November 2008 15:42:00 MEZ&quot; class=&quot;tiddlyLink tiddlyLinkExisting&quot; refresh=&quot;link&quot; tiddlylink=&quot;ChangeBuildFileTargets&quot;&gt;ChangeBuildFileTargets&lt;/a&gt;&lt;/td&gt;&lt;td&gt;High&lt;/td&gt;&lt;td&gt;InProgress&lt;/td&gt;&lt;td&gt;Build&lt;/td&gt;&lt;td&gt;build&lt;/td&gt;&lt;td&gt;RobertoHenschel&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;a href=&quot;javascript:;&quot; title=&quot;Clean-up Task/Subtask/GORFXID - YourName, 21. November 2008 17:11:00 MEZ&quot; class=&quot;tiddlyLink tiddlyLinkExisting&quot; refresh=&quot;link&quot; tiddlylink=&quot;Clean-up Task/Subtask/GORFXID&quot;&gt;Clean-up Task/Subtask/GORFXID&lt;/a&gt;&lt;/td&gt;&lt;td&gt;High&lt;/td&gt;&lt;td&gt;InProgress&lt;/td&gt;&lt;td&gt;DMS&lt;/td&gt;&lt;td&gt;model&lt;/td&gt;&lt;td&gt;MaikJorra&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;a href=&quot;javascript:;&quot; title=&quot;OIDInterfaceChange - YourName, 21. November 2008 16:51:00 MEZ&quot; class=&quot;tiddlyLink tiddlyLinkExisting&quot; refresh=&quot;link&quot; tiddlylink=&quot;OIDInterfaceChange&quot;&gt;OIDInterfaceChange&lt;/a&gt;&lt;/td&gt;&lt;td&gt;High&lt;/td&gt;&lt;td&gt;InProgress&lt;/td&gt;&lt;td&gt;Schema&lt;/td&gt;&lt;td&gt;multi&lt;/td&gt;&lt;td&gt;StefanPlantikow&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;a href=&quot;javascript:;&quot; title=&quot;TaskAction commit / Deep Copy - YourName, 21. November 2008 17:31:53 MEZ&quot; class=&quot;tiddlyLink tiddlyLinkExisting&quot; refresh=&quot;link&quot; tiddlylink=&quot;TaskAction commit / Deep Copy&quot;&gt;TaskAction commit / Deep Copy&lt;/a&gt;&lt;/td&gt;&lt;td&gt;High&lt;/td&gt;&lt;td&gt;InProgress&lt;/td&gt;&lt;td&gt;DMS&lt;/td&gt;&lt;td&gt;logic&lt;/td&gt;&lt;td&gt;MaikJorra&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;a href=&quot;javascript:;&quot; title=&quot;XML format support for Providerscripts - YourName, 21. November 2008 16:36:00 MEZ&quot; class=&quot;tiddlyLink tiddlyLinkExisting&quot; refresh=&quot;link&quot; tiddlylink=&quot;XML format support for Providerscripts&quot;&gt;XML format support for Providerscripts&lt;/a&gt;&lt;/td&gt;&lt;td&gt;Medium&lt;/td&gt;&lt;td&gt;InProgress&lt;/td&gt;&lt;td&gt;Provider&lt;/td&gt;&lt;td&gt;etc&lt;/td&gt;&lt;td&gt;RobertoHenschel&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/span&gt;</description>
+<link>http://www.tiddlywiki.com/#InProgressReportView</link>
+<pubDate>Fri, 21 Nov 2008 15:57:00 GMT</pubDate>
+</item>
+<item>
+<title>CompletedReportView</title>
+<description>&lt;span refresh=&quot;content&quot; tiddler=&quot;CompletedReportView&quot; force=&quot;true&quot;&gt;&lt;table class=&quot;sortable&quot;&gt;&lt;thead&gt;&lt;tr&gt;&lt;td&gt;Title&lt;/td&gt;&lt;td class=&quot;autosort&quot;&gt;Priority&lt;/td&gt;&lt;td&gt;Status&lt;/td&gt;&lt;td&gt;Scope&lt;/td&gt;&lt;td&gt;Module&lt;/td&gt;&lt;td&gt;User&lt;/td&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;&lt;a href=&quot;javascript:;&quot; title=&quot;Release 0.2alpha - YourName, 21. November 2008 17:04:00 MEZ&quot; class=&quot;tiddlyLink tiddlyLinkExisting&quot; refresh=&quot;link&quot; tiddlylink=&quot;Release 0.2alpha&quot;&gt;Release 0.2alpha&lt;/a&gt;&lt;/td&gt;&lt;td&gt;High&lt;/td&gt;&lt;td&gt;Complete&lt;/td&gt;&lt;td&gt;Etc&lt;/td&gt;&lt;td&gt;multi&lt;/td&gt;&lt;td&gt;StefanPlantikow&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/span&gt;</description>
+<link>http://www.tiddlywiki.com/#CompletedReportView</link>
+<pubDate>Fri, 21 Nov 2008 15:57:00 GMT</pubDate>
+</item>
+<item>
+<title>DefaultReportView</title>
+<description>&lt;span refresh=&quot;content&quot; tiddler=&quot;DefaultReportView&quot; force=&quot;true&quot;&gt;&lt;table class=&quot;sortable&quot;&gt;&lt;thead&gt;&lt;tr&gt;&lt;td&gt;Title&lt;/td&gt;&lt;td class=&quot;autosort&quot;&gt;Priority&lt;/td&gt;&lt;td&gt;Status&lt;/td&gt;&lt;td&gt;Scope&lt;/td&gt;&lt;td&gt;Module&lt;/td&gt;&lt;td&gt;User&lt;/td&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;&lt;a href=&quot;javascript:;&quot; title=&quot;ArchiveAction - YourName, 21. November 2008 16:51:00 MEZ&quot; class=&quot;tiddlyLink tiddlyLinkExisting&quot; refresh=&quot;link&quot; tiddlylink=&quot;ArchiveAction&quot;&gt;ArchiveAction&lt;/a&gt;&lt;/td&gt;&lt;td&gt;Medium&lt;/td&gt;&lt;td&gt;Pending&lt;/td&gt;&lt;td&gt;DMS&lt;/td&gt;&lt;td&gt;GORFX&lt;/td&gt;&lt;td&gt;StefanPlantikow&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;a href=&quot;javascript:;&quot; title=&quot;ChangeBuildFileTargets - YourName, 21. November 2008 15:42:00 MEZ&quot; class=&quot;tiddlyLink tiddlyLinkExisting&quot; refresh=&quot;link&quot; tiddlylink=&quot;ChangeBuildFileTargets&quot;&gt;ChangeBuildFileTargets&lt;/a&gt;&lt;/td&gt;&lt;td&gt;High&lt;/td&gt;&lt;td&gt;InProgress&lt;/td&gt;&lt;td&gt;Build&lt;/td&gt;&lt;td&gt;build&lt;/td&gt;&lt;td&gt;RobertoHenschel&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;a href=&quot;javascript:;&quot; title=&quot;Clean-up Task/Subtask/GORFXID - YourName, 21. November 2008 17:11:00 MEZ&quot; class=&quot;tiddlyLink tiddlyLinkExisting&quot; refresh=&quot;link&quot; tiddlylink=&quot;Clean-up Task/Subtask/GORFXID&quot;&gt;Clean-up Task/Subtask/GORFXID&lt;/a&gt;&lt;/td&gt;&lt;td&gt;High&lt;/td&gt;&lt;td&gt;InProgress&lt;/td&gt;&lt;td&gt;DMS&lt;/td&gt;&lt;td&gt;model&lt;/td&gt;&lt;td&gt;MaikJorra&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;a href=&quot;javascript:;&quot; title=&quot;DistributedLogger certificiate problems - YourName, 21. November 2008 17:03:00 MEZ&quot; class=&quot;tiddlyLink tiddlyLinkExisting&quot; refresh=&quot;link&quot; tiddlylink=&quot;DistributedLogger certificiate problems&quot;&gt;DistributedLogger certificiate problems&lt;/a&gt;&lt;/td&gt;&lt;td&gt;Low&lt;/td&gt;&lt;td&gt;OnHold&lt;/td&gt;&lt;td&gt;Etc&lt;/td&gt;&lt;td&gt;multi&lt;/td&gt;&lt;td&gt;RobertoHenschel&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;a href=&quot;javascript:;&quot; title=&quot;Enable XML format support in Providerscripts - YourName, 21. November 2008 16:58:00 MEZ&quot; class=&quot;tiddlyLink tiddlyLinkExisting&quot; refresh=&quot;link&quot; tiddlylink=&quot;Enable XML format support in Providerscripts&quot;&gt;Enable XML format support in Providerscripts&lt;/a&gt;&lt;/td&gt;&lt;td&gt;Medium&lt;/td&gt;&lt;td&gt;OnHold&lt;/td&gt;&lt;td&gt;Provider&lt;/td&gt;&lt;td&gt;GORFX&lt;/td&gt;&lt;td&gt;MaikJorra&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;a href=&quot;javascript:;&quot; title=&quot;IntegrateBuildFile - YourName, 21. November 2008 16:34:00 MEZ&quot; class=&quot;tiddlyLink tiddlyLinkExisting&quot; refresh=&quot;link&quot; tiddlylink=&quot;IntegrateBuildFile&quot;&gt;IntegrateBuildFile&lt;/a&gt;&lt;/td&gt;&lt;td&gt;High&lt;/td&gt;&lt;td&gt;OnHold&lt;/td&gt;&lt;td&gt;Build&lt;/td&gt;&lt;td&gt;build&lt;/td&gt;&lt;td&gt;MaikJorra&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;a href=&quot;javascript:;&quot; title=&quot;Mail explaining MDS - YourName, 21. November 2008 16:40:00 MEZ&quot; class=&quot;tiddlyLink tiddlyLinkExisting&quot; refresh=&quot;link&quot; tiddlylink=&quot;Mail explaining MDS&quot;&gt;Mail explaining MDS&lt;/a&gt;&lt;/td&gt;&lt;td&gt;Medium&lt;/td&gt;&lt;td&gt;Pending&lt;/td&gt;&lt;td&gt;Provider&lt;/td&gt;&lt;td&gt;etc&lt;/td&gt;&lt;td&gt;StefanPlantikow&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;a href=&quot;javascript:;&quot; title=&quot;OIDInterfaceChange - YourName, 21. November 2008 16:51:00 MEZ&quot; class=&quot;tiddlyLink tiddlyLinkExisting&quot; refresh=&quot;link&quot; tiddlylink=&quot;OIDInterfaceChange&quot;&gt;OIDInterfaceChange&lt;/a&gt;&lt;/td&gt;&lt;td&gt;High&lt;/td&gt;&lt;td&gt;InProgress&lt;/td&gt;&lt;td&gt;Schema&lt;/td&gt;&lt;td&gt;multi&lt;/td&gt;&lt;td&gt;StefanPlantikow&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;a href=&quot;javascript:;&quot; title=&quot;SetupScriptForPublishers - YourName, 21. November 2008 16:40:00 MEZ&quot; class=&quot;tiddlyLink tiddlyLinkExisting&quot; refresh=&quot;link&quot; tiddlylink=&quot;SetupScriptForPublishers&quot;&gt;SetupScriptForPublishers&lt;/a&gt;&lt;/td&gt;&lt;td&gt;Medium&lt;/td&gt;&lt;td&gt;Pending&lt;/td&gt;&lt;td&gt;Provider&lt;/td&gt;&lt;td&gt;etc&lt;/td&gt;&lt;td&gt;StefanPlantikow&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;a href=&quot;javascript:;&quot; title=&quot;TaskAction commit / Deep Copy - YourName, 21. November 2008 17:31:53 MEZ&quot; class=&quot;tiddlyLink tiddlyLinkExisting&quot; refresh=&quot;link&quot; tiddlylink=&quot;TaskAction commit / Deep Copy&quot;&gt;TaskAction commit / Deep Copy&lt;/a&gt;&lt;/td&gt;&lt;td&gt;High&lt;/td&gt;&lt;td&gt;InProgress&lt;/td&gt;&lt;td&gt;DMS&lt;/td&gt;&lt;td&gt;logic&lt;/td&gt;&lt;td&gt;MaikJorra&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;a href=&quot;javascript:;&quot; title=&quot;TxFrame everywhere - YourName, 21. November 2008 16:51:00 MEZ&quot; class=&quot;tiddlyLink tiddlyLinkExisting&quot; refresh=&quot;link&quot; tiddlylink=&quot;TxFrame everywhere&quot;&gt;TxFrame everywhere&lt;/a&gt;&lt;/td&gt;&lt;td&gt;Low&lt;/td&gt;&lt;td&gt;Pending&lt;/td&gt;&lt;td&gt;Etc&lt;/td&gt;&lt;td&gt;multi&lt;/td&gt;&lt;td&gt;RobertoHenschel&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;a href=&quot;javascript:;&quot; title=&quot;Write global test cases - YourName, 21. November 2008 16:51:00 MEZ&quot; class=&quot;tiddlyLink tiddlyLinkExisting&quot; refresh=&quot;link&quot; tiddlylink=&quot;Write global test cases&quot;&gt;Write global test cases&lt;/a&gt;&lt;/td&gt;&lt;td&gt;Medium&lt;/td&gt;&lt;td&gt;Pending&lt;/td&gt;&lt;td&gt;Test&lt;/td&gt;&lt;td&gt;multi&lt;/td&gt;&lt;td&gt;RobertoHenschel&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;a href=&quot;javascript:;&quot; title=&quot;XML format support for Providerscripts - YourName, 21. November 2008 16:36:00 MEZ&quot; class=&quot;tiddlyLink tiddlyLinkExisting&quot; refresh=&quot;link&quot; tiddlylink=&quot;XML format support for Providerscripts&quot;&gt;XML format support for Providerscripts&lt;/a&gt;&lt;/td&gt;&lt;td&gt;Medium&lt;/td&gt;&lt;td&gt;InProgress&lt;/td&gt;&lt;td&gt;Provider&lt;/td&gt;&lt;td&gt;etc&lt;/td&gt;&lt;td&gt;RobertoHenschel&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/span&gt;</description>
+<link>http://www.tiddlywiki.com/#DefaultReportView</link>
+<pubDate>Fri, 21 Nov 2008 15:56:00 GMT</pubDate>
+</item>
+<item>
+<title>TaskViews</title>
+<description>&lt;a class=&quot;externalLink null&quot; href=&quot;http://www.tiddlywiki.com/#DefaultReportView&quot; title=&quot;External link to http://www.tiddlywiki.com/#DefaultReportView&quot; target=&quot;_blank&quot; refresh=&quot;link&quot; tiddlylink=&quot;DefaultReportView&quot;&gt;DefaultReportView&lt;/a&gt;&lt;br&gt;&lt;a class=&quot;externalLink null&quot; href=&quot;http://www.tiddlywiki.com/#PendingReportView&quot; title=&quot;External link to http://www.tiddlywiki.com/#PendingReportView&quot; target=&quot;_blank&quot; refresh=&quot;link&quot; tiddlylink=&quot;PendingReportView&quot;&gt;PendingReportView&lt;/a&gt;&lt;br&gt;&lt;a class=&quot;externalLink null&quot; href=&quot;http://www.tiddlywiki.com/#InProgressReportView&quot; title=&quot;External link to http://www.tiddlywiki.com/#InProgressReportView&quot; target=&quot;_blank&quot; refresh=&quot;link&quot; tiddlylink=&quot;InProgressReportView&quot;&gt;InProgressReportView&lt;/a&gt;&lt;br&gt;&lt;a class=&quot;externalLink null&quot; href=&quot;http://www.tiddlywiki.com/#OnHoldReportView&quot; title=&quot;External link to http://www.tiddlywiki.com/#OnHoldReportView&quot; target=&quot;_blank&quot; refresh=&quot;link&quot; tiddlylink=&quot;OnHoldReportView&quot;&gt;OnHoldReportView&lt;/a&gt;&lt;br&gt;&lt;a class=&quot;externalLink null&quot; href=&quot;http://www.tiddlywiki.com/#CompletedReportView&quot; title=&quot;External link to http://www.tiddlywiki.com/#CompletedReportView&quot; target=&quot;_blank&quot; refresh=&quot;link&quot; tiddlylink=&quot;CompletedReportView&quot;&gt;CompletedReportView&lt;/a&gt;&lt;br&gt;&lt;a class=&quot;externalLink null&quot; href=&quot;http://www.tiddlywiki.com/#CreatingTaskReportViews&quot; title=&quot;External link to http://www.tiddlywiki.com/#CreatingTaskReportViews&quot; target=&quot;_blank&quot; refresh=&quot;link&quot; tiddlylink=&quot;CreatingTaskReportViews&quot;&gt;(create your own task view)&lt;/a&gt;</description>
+<link>http://www.tiddlywiki.com/#TaskViews</link>
+<pubDate>Fri, 21 Nov 2008 15:54:00 GMT</pubDate>
+</item>
+<item>
+<title>Write global test cases</title>
+<description>The tiddler 'New Task' doesn't yet exist. Double-click to create it</description>
+<category>task</category>
+<link>http://www.tiddlywiki.com/#%5B%5BWrite%20global%20test%20cases%5D%5D</link>
+<pubDate>Fri, 21 Nov 2008 15:51:00 GMT</pubDate>
+</item>
+<item>
+<title>TxFrame everywhere</title>
+<description>The tiddler 'New Task' doesn't yet exist. Double-click to create it</description>
+<category>task</category>
+<link>http://www.tiddlywiki.com/#%5B%5BTxFrame%20everywhere%5D%5D</link>
+<pubDate>Fri, 21 Nov 2008 15:51:00 GMT</pubDate>
+</item>
+<item>
+<title>OIDInterfaceChange</title>
+<description>Small changes to XSD</description>
+<category>task</category>
+<link>http://www.tiddlywiki.com/#OIDInterfaceChange</link>
+<pubDate>Fri, 21 Nov 2008 15:51:00 GMT</pubDate>
+</item>
+<item>
+<title>ArchiveAction</title>
+<description>Add prototypical archive actions</description>
+<category>task</category>
+<link>http://www.tiddlywiki.com/#ArchiveAction</link>
+<pubDate>Fri, 21 Nov 2008 15:51:00 GMT</pubDate>
+</item>
+<item>
+<title>SetupScriptForPublishers</title>
+<description>think about enabling...</description>
+<category>task</category>
+<link>http://www.tiddlywiki.com/#SetupScriptForPublishers</link>
+<pubDate>Fri, 21 Nov 2008 15:40:00 GMT</pubDate>
+</item>
+<item>
+<title>Mail explaining MDS</title>
+<description>The tiddler 'New Task' doesn't yet exist. Double-click to create it</description>
+<category>task</category>
+<link>http://www.tiddlywiki.com/#%5B%5BMail%20explaining%20MDS%5D%5D</link>
+<pubDate>Fri, 21 Nov 2008 15:40:00 GMT</pubDate>
+</item>
+<item>
+<title>XML format support for Providerscripts</title>
+<description>The tiddler 'New Task' doesn't yet exist. Double-click to create it</description>
+<category>task</category>
+<link>http://www.tiddlywiki.com/#%5B%5BXML%20format%20support%20for%20Providerscripts%5D%5D</link>
+<pubDate>Fri, 21 Nov 2008 15:36:00 GMT</pubDate>
+</item>
+</channel>
+</rss>
