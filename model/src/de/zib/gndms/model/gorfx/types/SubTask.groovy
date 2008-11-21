@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx
+package de.zib.gndms.model.gorfx.types
 
 import javax.persistence.Entity
 import javax.persistence.Table
@@ -8,6 +8,7 @@ import javax.persistence.ManyToOne
 import javax.persistence.JoinColumn
 import javax.persistence.NamedQueries
 import javax.persistence.MappedSuperclass
+import de.zib.gndms.model.gorfx.Task
 
 /**
  *
@@ -17,6 +18,7 @@ import javax.persistence.MappedSuperclass
  * User: mjorra, Date: 17.11.2008, Time: 17:28:21
  */
 
+/*
 @Entity(name="SubTasks")
 @Table(name="sub_tasks", schema="gorfx")
 @MappedSuperclass
@@ -27,6 +29,23 @@ class SubTask extends Task{
 
     @ManyToOne( targetEntity=Task.class )
     @JoinColumn( name="parent_id", nullable=false, referencedColumnName="id", updatable=false )
+    Task parent;
+
+
+    SubTask( ) {
+
+    }
+
+
+    SubTask( Task par ) {
+        parent = par;
+    }
+}
+*/
+
+// dummy impl for testing purpose
+class SubTask {
+
     Task parent;
 
 

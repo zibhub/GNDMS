@@ -33,9 +33,9 @@ public class ParmFormatAux {
     public Contract getResult( StringBuilder res ) throws Exception {
 
         if( format.equals( FORMAT_XML) )
-            return XMLToResult( res );
+            return xmlToResult( res );
         else
-            return PropsToResult( res );
+            return propsToResult( res );
     }
 
     
@@ -58,7 +58,7 @@ public class ParmFormatAux {
             }
     }
 
-    private Contract PropsToResult( StringBuilder sb ) throws Exception {
+    private Contract propsToResult( StringBuilder sb ) throws Exception {
 
         Properties props = new Properties();
         props.load(new ByteArrayInputStream(sb.toString().getBytes()));
@@ -69,7 +69,7 @@ public class ParmFormatAux {
     }
 
 
-    private Contract XMLToResult( StringBuilder sb ) throws Exception {
+    private Contract xmlToResult( StringBuilder sb ) throws Exception {
 
         ORQWrapper wrp = xmlWriter.fromDocument( sb.toString( ) );
         return wrp.getContract();
