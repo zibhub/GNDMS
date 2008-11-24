@@ -184,8 +184,8 @@
 		</exec>
 	</target>
 	
-	<!-- Compiles the whole project with test files. Use this only if target 'deploy' has been invoked once ! -->
-	<target name="compile.src">
+	<!-- Creates jar's for every service (class files will be created if not already done)-->
+	<target name="compile.src" description="Creates jar files for every service, will be compiled if necessary">
 		<runtarget target="model.jar"/>
 		<runtarget target="model.enhancer"/>
 		<runtarget target="kit.jar"/>
@@ -195,8 +195,8 @@
 	</target>
 	
 	
-	<!-- Delete build-files every package -->
-	<target name="clean" description="deletes build-files of every package">
+	<!-- Delete build-files every service -->
+	<target name="clean" description="deletes build-files of every service">
 		<runtarget target="clean.stubsServices"/>
 		<delete file=".symlink"/>
 		<echo> Deleting binaries </echo>
@@ -223,13 +223,13 @@
 
 
 
-	<!-- Compiles the whole project with test files. Use this only if target 'deploy' has been invoked once ! -->
-	<target name="compile.test">
-		<runtarget target="model.compile.test"/>
-		<runtarget target="kit.compile.test"/>
-		<runtarget target="logic.compile.test"/>
-		<runtarget target="typecon.compile.test"/>
-		<runtarget target="infra.compile.test"/>
+	<!-- Creates jar-file of evey service's test-classes. Will be compiled if necessary -->
+	<target name="compile.test" description="Creates jar-file of evey service's test-classes. Will be compiled if necessary">
+		<runtarget target="model.test.jar"/>
+		<runtarget target="kit.test.jar"/>
+		<runtarget target="logic.test.jar"/>
+		<runtarget target="typecon.test.jar"/>
+		<runtarget target="infra.test.jar"/>
 	</target>
 	
 	<!-- Building stubs for every service -->
@@ -265,18 +265,18 @@
 	
 
 	<target name="help" description="Prints usage information.">
-		<echo message="=================================================================================" />
-		<echo message="|                      C3Grid Deployment                                         |" />
-		<echo message="|                                                                                |" />
-		<echo message="---------------------------------------------------------------------------------" />
-		<echo message="|  USAGE:                                                                        |" />
-		<echo message="|    Type 'ant -h' for general help with Ant	                                    |" />
-		<echo message="|    Type 'ant -p' for a description of available build targets.                 |" />
-		<echo message="|    Type 'ant clean' for deleting all generated class-files.                    |" />
-		<echo message="|    Type 'ant clean.all' for deleting all generated class-files and jars        |" />
-		<echo message="|    Type 'ant compile' to compile all class-files of c3grid	                    |" />
-		<echo message="|    Type 'ant compile.test' to compile all test-class-files	                    |" />
-		<echo message="=================================================================================" />
+		<echo message=" =================================================================================" />
+		<echo message="|                      C3Grid Deployment                                          |" />
+		<echo message="|                                                                                 |" />
+		<echo message=" ---------------------------------------------------------------------------------" />
+		<echo message="|  USAGE:                                                                         |" />
+		<echo message="|    Type 'ant -h' for general help with Ant	                                     |" />
+		<echo message="|    Type 'ant -p' for a description of available build targets.                  |" />
+		<echo message="|    Type 'ant clean' for deleting all generated class-files.                     |" />
+		<echo message="|    Type 'ant clean.all' for deleting all generated class-files and jars         |" />
+		<echo message="|    Type 'ant compile' to compile all class-files of c3grid and create the jars	 |" />
+		<echo message="|    Type 'ant compile.test' to compile all test-class-files and create the jars	 |" />
+		<echo message=" =================================================================================" />
 	</target>
 	
 	
