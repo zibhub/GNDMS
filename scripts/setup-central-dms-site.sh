@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SCRIPTDIR="$(dirname $0)/" ; MODE="$1" ; shift ; source "$SCRIPTDIR"internal/script-setup.sh
+SCRIPTDIR="$(dirname $0)/" ; source "$SCRIPTDIR"internal/script-setup.sh
 
 # %{} is shell variable substitution at container runtime
 
@@ -21,5 +21,4 @@ enable_slicestagein
 enable_filetransfer
 enable_interslicetransfer
 enable_mdscatalog
-
-moni call -v .sys.RefreshSystem
+refresh_system
