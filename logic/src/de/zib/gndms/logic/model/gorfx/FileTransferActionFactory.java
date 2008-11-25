@@ -1,7 +1,6 @@
 package de.zib.gndms.logic.model.gorfx;
 
 import de.zib.gndms.kit.factory.AbstractRecursiveFactory;
-import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.model.gorfx.OfferType;
 
 
