@@ -1,0 +1,81 @@
+<project name="typecon compilation file" default="typecon.compile" basedir="." >
+	
+	<path id="typecon.path">
+		<pathelement location="${tools-lib.dir}/gndms-groovy.jar"/> 
+		<pathelement location="${tools-lib.dir}/geronimo-jpa_3.0_spec-1.0.jar"/>
+		<pathelement location="${tools-lib.dir}/jsr173_1.0_api.jar"/>
+		<dirset dir="services/GORFX/build/stubs-GORFX/classes/" />
+		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
+		<pathelement location="${tools-lib.dir}/annotations.jar"/>
+		<pathelement location="${tools-lib.dir}/joda-time-1.5.2.jar"/> 
+		<fileset refid="globus.lib"/>
+		<pathelement location="${tools-lib.dir}/testng-5.8-jdk15.jar"/> 
+		<pathelement location="${tools-lib.dir}/openjpa-1.1.0.jar"/>
+	</path>
+	<!-- Compile typecon, but not its test-files -->
+	<target name="typecon.compile" description="Compiles typecon">
+		<if>
+			<not>
+				<available file="${lib.dir}/gndms-shared-model.jar"/>
+			</not>
+			<then>
+				<fail message="Not able to compile as '${lib.dir}/gndms-shared-model.jar' or ''${lib.dir}/gndms-kit.jar' was not found."/>
+			</then>
+			<else>
+		<mkdir dir="./${typecon.dest}/production"/>
+		<javac srcdir='${typecon.dir}/src' destdir='${typecon.dest}/production' classpathref="typecon.path" includes="**/type/*.java"/>
+		<!-- Copy Meta files to build dir-->
+		<copy todir="${typecon.dest}/production/" >
+			<fileset dir="${typecon.dir}/src">
+				<exclude name="de/**"/>
+			</fileset>
+		</copy>	
+	</else>
+	
+		</if>
+	</target>
+	
+	<path id="typecon.test.path">
+		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
+	</path>
+	
+	<!-- Compile typecon and its test-files -->
+	<target name="typecon.compile.test" description="Compiles typecon's test-files">
+		<mkdir dir="./${typecon.dest}/test"/>
+		<javac srcdir='${typecon.dir}/test-src' destdir='${typecon.dest}/test' classpathref="typecon.test.path" includes="**/type/*.java"/>
+		<!-- Copy Meta files to build dir-->
+		<copy todir="${typecon.dest}/test/" >
+			<fileset dir="${typecon.dir}/test-src">
+				<exclude name="de/**"/>
+			</fileset>
+		</copy>	
+	</target>
+	
+	<!-- Creates jar-file containing typecon's test-classes -->	
+	<target name="typecon.test.jar" depends="typecon.compile.test" description="Creates jar file gndms-typecon-test.jar in 'extra/lib'">	
+		<jar destfile="./${lib.dir}/gndms-typecon-test.jar"
+		     basedir="${typecon.dest}/test">
+		</jar>
+		
+	</target>
+	
+	<!-- Creates jar-file containing typecon's classes -->	
+	<target name="typecon.jar" depends="typecon.compile" description="Creates jar file gndms-typecon.jar in 'extra/lib'">	
+		<jar destfile="./${lib.dir}/gndms-typecon.jar"
+		     basedir="${typecon.dest}/production">
+		</jar>
+		
+	</target>
+	<!-- Deletes binaries -->
+	<target name="typecon.clean" description="Deletes typecon's binaries">
+		<delete includeemptydirs="true" >
+			<fileset dir='${typecon.dest}/production' includes="**/*.class"/>
+			<fileset dir='${typecon.dest}/test' includes="**/*.class"/>
+		</delete>
+	</target>
+	
+	<!-- Deletes jar-files -->
+	<target name="typecon.clean.jar" description="Deletes typecon's jar-file">
+		<delete file='${lib.dir}/gndms-typecon.jar'/>	
+	</target>
+</project>

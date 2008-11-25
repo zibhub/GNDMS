@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<project default="help" name="GNDMS Deployment Build File" basedir=".">
+
+
+<property environment="env" />
+
+
+<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+  <classpath>
+    <pathelement location="extra/ant/ant-contrib-0.6.jar"/>
+  </classpath>
+</taskdef>
+
+<target name="help">
+	<echo message="First and foremost: Read INSTALL otherwise you will get stuck"/>
+        <echo message=""/>
+        <echo message="targets for owning user: prepare"/>
+        <echo message="targets for globus user: dp-install, dp-killdb (require container to be shutdown)" />
+        <echo message="targets for globus user: dp-setupdb (require running monitor and container)" />
+</target>
+
+<target name="check-env">
+	<fail unless="env.GLOBUS_LOCATION" />
+	<fail unless="env.C3GRID_SHARED" />
+	<fail unless="env.C3GRID_SOURCE" />
+	<fail unless="env.DERBY_HOME" />
+	<fail unless="env.GROOVY_HOME" />
+</target>
+
+<target name="archive-schemas" depends="check-env">
+    <delete file="extra/gndms-schema.tar" />
+    <tar basedir="types" destfile="extra/gndms-schema.tar" excludes="ws/** wsrf/** global/**" />
+</target>
+
+<target name="extract-schemas" depends="check-env">
+	<untar src="extra/gndms-schema.tar" dest="${env.GLOBUS_LOCATION}/share/schema" />
+</target>
+
+<target name="sync">
+	<exec executable="./sync.sh" />
+</target>
+
+<target name="prepare" depends="check-env, sync, archive-schemas" />
+
+<target name="dp-install" depends="check-env, extract-schemas">
+	<exec executable="globus-deploy-gar"><arg value="services/DSpace/c3grid_DSpace.gar" /></exec>
+	<exec executable="globus-deploy-gar"><arg value="services/GORFX/c3grid_GORFX.gar" /></exec>
+</target>
+
+
+<target name="killdb" depends="check-env">
+	<delete dir="${env.C3GRID_SHARED}/db/c3grid" />
+</target>
+
+<target name="dp-killdb" depends="killdb" />
+
+<target name="dp-setupdb" depends="check-env">
+	<exec executable="scripts/setup-dataprovider.sh"><arg value="CREATE"/></exec>
+        <exec executable="./fix-permissions.sh" />
+</target>
+
+
+<target name="dp-test" depends="check-env">
+	<path id="dpclient.path">
+	     <fileset dir=".">
+	        <include name="extra/test-jars/*.jar"/>
+	        <include name="extra/tools-lib/*.jar"/>
+	        <include name="extra/lib/*.jar"/>
+                <include name="services/*/build/lib/*.jar" />
+	     </fileset>
+             <fileset dir="${env.GLOBUS_LOCATION}/lib">
+            	<include name="*.jar" />
+             </fileset>
+	</path>
+
+	<java classname="de.zib.gndms.GORFX.c3grid.ProviderStageInClient" fork="true" classpathref="dpclient.path" failonerror="true">
+		<arg value="${psc.epr}" />
+		<arg value="${psc.sfr}" />
+		<arg value="${psc.dn}" />
+        </java>
+</target>
+
+
+</project>

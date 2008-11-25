@@ -1,0 +1,40 @@
+#!/bin/bash
+
+if [ -z "$*" ] ; then
+	echo "$0 [<monitor.properties>] command [args]"  >&2
+	exit 1
+fi
+
+if [ -f "$1" ]; then
+	FILE="$1"
+	shift
+	if [ ! -z "$1" ]; then
+		CMD="$1"
+		shift
+		"$0_$CMD" "$FILE" $*
+	else
+		echo "$0 [<monitor.properties>] command [args]" >&2
+		exit 1
+	fi
+else
+	FILE="$GNDMS_MONI_CONFIG"
+	if [ ! -f "$FILE" ]; then
+		if [ -z "$FILE" ]; then
+			echo "GNDMS_MONI_CONFIG not set" >&2
+		else
+			echo "$FILE not found" >&2
+		fi
+		exit 1
+	else
+		if [ ! -z "$1" ]; then
+			CMD="$1"
+			shift
+			"$0_$CMD" "$FILE" $*
+		else
+			echo "$0 [<monitor.properties>] command [args]" >&2
+			exit 1
+		fi
+	fi
+fi
+
+

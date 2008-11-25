@@ -13,5 +13,10 @@ import org.globus.wsrf.ResourceKey;
  * 
  */
 public class LOFISResource extends LOFISResourceBase {
+    @Override
+    public void refreshRegistration(final boolean forceRefresh) {
+        // nothing
+    }
+
 
 }

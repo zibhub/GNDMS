@@ -1,0 +1,20 @@
+package de.zib.gndms.model.gorfx.types.io;
+
+/**
+ * Created by IntelliJ IDEA.
+ * User: roberto
+ * Date: 09.10.2008
+ * Time: 18:19:09
+ * To change this template use File | Settings | File Templates.
+ */
+public interface SliceStageInORQWriter extends ORQWriter {
+
+    public void writeGridSiteName ( String gsn );
+    public void writeDataFileName( String dfn );
+    public void writeMetaDataFileName( String mfn );    
+
+    // see DataDescriptorWriter for an explanation of the following methods
+    public DataDescriptorWriter getDataDescriptorWriter( );
+    public void beginWritingDataDescriptor( );
+    public void doneWritingDataDescriptor( );
+}
