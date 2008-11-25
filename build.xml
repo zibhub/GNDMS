@@ -155,7 +155,7 @@
 	<import file="${typecon.dir}/build.xml"/>
 	
 	<path id="groovy.path">
-		<fileset file="${tools-lib.dir}/groovy-all-1.6-beta-1.jar"/>
+		<fileset file="${tools-lib.dir}/gndms-groovy.jar"/>
 	</path>
 	
 	<!-- using groovc as groovy compiler in ant-->
