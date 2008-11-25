@@ -2,6 +2,7 @@ package de.zib.gndms.logic.model.gorfx;
 
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.FTPTransferState;
+import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.FileTransferORQ;
 import de.zib.gndms.model.gorfx.types.FileTransferResult;
 import de.zib.gndms.kit.network.PersistentMarkerListener;
@@ -31,7 +32,7 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
     }
 
 
-    public FileTransferTaskAction( final @NotNull EntityManager em, final @NotNull Task model ) {
+    public FileTransferTaskAction( final @NotNull EntityManager em, final @NotNull AbstractTask model ) {
         super( em, model );
     }
 
@@ -49,7 +50,7 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
 
 
     @Override
-    protected void onInProgress( @NotNull Task model ) {
+    protected void onInProgress( @NotNull AbstractTask model ) {
 
         GridFTPClient src = null;
         GridFTPClient dest = null;
@@ -95,7 +96,7 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
             transfer.prepareTransfer();
 
             int fc = transfer.getFiles( ).size( );
-            getModel( ).setMax_progress( fc );
+            getModel( ).setMaxProgress( fc );
 
             transfer.performPersistentTransfer( pml );
 

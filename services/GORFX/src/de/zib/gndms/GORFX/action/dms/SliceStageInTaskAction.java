@@ -4,6 +4,7 @@ import de.zib.gndms.GORFX.context.client.TaskClient;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.model.dspace.types.SliceRef;
 import de.zib.gndms.model.gorfx.Task;
+import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.SliceStageInORQ;
 import de.zib.gndms.model.gorfx.types.SliceStageInResult;
 import de.zib.gndms.model.gorfx.types.TaskState;
@@ -49,7 +50,7 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
 
     @SuppressWarnings( { "ThrowableInstanceNeverThrown" } )
     @Override
-    protected void onInProgress( @NotNull Task model ) {
+    protected void onInProgress( @NotNull AbstractTask model ) {
 
         try {
             EndpointReferenceType epr;

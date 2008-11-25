@@ -1,6 +1,7 @@
 package de.zib.gndms.logic.model.gorfx.c3grid;
 
 import de.zib.gndms.model.gorfx.Task;
+import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.ProviderStageInResult;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
 import de.zib.gndms.model.dspace.Slice;
@@ -33,7 +34,7 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
     }
 
 
-    public ExternalProviderStageInAction(final @NotNull EntityManager em, final @NotNull Task model) {
+    public ExternalProviderStageInAction(final @NotNull EntityManager em, final @NotNull AbstractTask model) {
         super(em, model);
         this.parmAux = new ParmFormatAux();
     }

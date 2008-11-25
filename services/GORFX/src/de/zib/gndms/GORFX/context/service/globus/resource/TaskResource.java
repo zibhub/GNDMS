@@ -46,7 +46,7 @@ public class TaskResource extends TaskResourceBase
      */
     public void executeTask() {
         
-        Task tsk = taskAction.getModel( );
+        Task tsk = (Task) taskAction.getModel( );
         if(! tsk.getState().equals( TaskState.FINISHED ) || ! tsk.getState().equals( TaskState.FAILED ) )
             future = home.getSystem( ).submitAction( taskAction, getResourceHome().getLog() );
         else
@@ -55,7 +55,7 @@ public class TaskResource extends TaskResourceBase
 
 
     public TaskExecutionState getTaskExecutionState() {
-        return GORFXTools.getStateOfTask( taskAction.getModel( ) );
+        return GORFXTools.getStateOfTask( (Task) taskAction.getModel( ) );
     }
 
 

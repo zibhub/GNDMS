@@ -117,18 +117,6 @@ public class Contract {
     public void setDeadlineIsOffset( boolean deadlineIsOffset ) {
         this.deadlineIsOffset = deadlineIsOffset;
     }
-
-
-    public static String dateToString( Calendar c ) {
-        DateTime dt = new DateTime( c );
-        return ISODateTimeFormat.dateTime( ).print( dt  );
-    }
-
-    
-    public static Calendar dateToString( String s ) {
-
-        return new DateTime( s ).toGregorianCalendar();
-    }
     
 
     @Transient

@@ -11,6 +11,7 @@ import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.gorfx.Contract;
 import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.model.gorfx.Task;
+import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.FileTransferORQ;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.model.gorfx.types.FileTransferResult;
@@ -117,7 +118,7 @@ public class FileTransferActionTest extends SysTestBase {
             em.persist( task );
             em.getTransaction( ).commit( );
             FileTransferTaskAction action = new FileTransferTaskAction( em, task );
-            Future<Task> serializableFuture = getSys().submitAction(action, log);
+            Future<AbstractTask> serializableFuture = getSys().submitAction(action, log);
             assert serializableFuture.get().getState().equals( TaskState.FINISHED );
             FileTransferResult ftr = ( FileTransferResult ) task.getData( );
             for( String s: Arrays.asList( ftr.getFiles( ) ) )
