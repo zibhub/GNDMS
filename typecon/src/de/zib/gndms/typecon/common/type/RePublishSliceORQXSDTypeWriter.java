@@ -1,16 +1,18 @@
 package de.zib.gndms.typecon.common.type;
 
-import types.RePublishSliceORQT;
+import de.zib.gndms.model.dspace.types.SliceRef;
 import de.zib.gndms.model.gorfx.types.io.RePublishSliceORQWriter;
 import de.zib.gndms.model.gorfx.types.io.SliceRefConverter;
-import de.zib.gndms.model.dspace.types.SliceRef;
 import de.zib.gndms.typecon.common.GORFXClientTools;
+import org.apache.axis.description.FieldDesc;
+import org.apache.axis.message.MessageElement;
+import types.RePublishSliceORQT;
 
 import javax.xml.soap.SOAPException;
-import java.util.*;
-
-import org.apache.axis.message.MessageElement;
-import org.apache.axis.description.FieldDesc;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.TreeMap;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>

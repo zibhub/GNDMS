@@ -32,7 +32,6 @@ public enum SfrProperty {
 	BASE_FILE("c3grid.StageFileRequest.TargetBaseDataFile"),
 	META_FILE("c3grid.StageFileRequest.TargetMetaDataFile"),
 	STAGING_TIME("c3grid.StageFileResponse.StagingTime","1234"),
-	REQUIRED_SIZE("c3grid.StageFileResponse.RequiredSize","5678"),
     // G2 additions
     META_FILE_FORMAT("c3grid.StageFileRequest.TargetMetaFileFormat"),
     META_FILE_ARCHIVE_FORMAT("c3grid.StageFileRequest.TargetMetaFileArchiveFormat"),
@@ -47,11 +46,12 @@ public enum SfrProperty {
     FILE_TRANSFER_FILE_MAPPING("c3grid.FileTransferRequest.FileMapping"),
     
     // common data for muliple requests
-    CONTEXT( "c3grid.CommonRequest.Context" ), EST_IF_DECISION_BEFORE(
-            "c3grid.StageFileRequest.Estimate.IfDecisionBefore"), EST_CONST_EXEC_TIME(
-            "c3grid.StageFileRequest.Estimate.ConstantExecutionTime"), EST_EXEC_LIKELY_UNTIL(
-            "c3grid.StageFileRequest.Estimate.ExecutionLikelyUntil"), EST_RESULT_VALID_UNTIL(
-            "c3grid.StageFileRequest.Estimate.ResultValidUntil");
+    CONTEXT( "c3grid.CommonRequest.Context" ),
+	
+	EST_MAX_SIZE("c3grid.StageFileRequest.Estimate.MaxSize","10000"),
+	EST_IF_DECISION_BEFORE("c3grid.StageFileRequest.Estimate.IfDecisionBefore"),
+	EST_EXEC_LIKELY_UNTIL("c3grid.StageFileRequest.Estimate.ExecutionLikelyUntil"),
+	EST_RESULT_VALID_UNTIL("c3grid.StageFileRequest.Estimate.ResultValidUntil");
 
     public final String key;
 	public final String doc;

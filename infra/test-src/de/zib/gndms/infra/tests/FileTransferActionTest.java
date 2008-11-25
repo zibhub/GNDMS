@@ -8,27 +8,28 @@ import de.zib.gndms.logic.model.gorfx.FileTransferORQCalculator;
 import de.zib.gndms.logic.model.gorfx.FileTransferORQFactory;
 import de.zib.gndms.logic.model.gorfx.FileTransferTaskAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
-import de.zib.gndms.model.gorfx.Contract;
+import de.zib.gndms.model.common.PersistentContract;
+import de.zib.gndms.model.common.types.TransientContract;
+import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.model.gorfx.Task;
-import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.FileTransferORQ;
-import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.model.gorfx.types.FileTransferResult;
+import de.zib.gndms.model.gorfx.types.TaskState;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.PropertyConfigurator;
-import org.globus.ftp.exception.ServerException;
 import org.globus.ftp.exception.ClientException;
+import org.globus.ftp.exception.ServerException;
 import org.globus.wsrf.ResourceException;
 import org.joda.time.DateTime;
 import org.testng.annotations.*;
 
 import javax.persistence.EntityManager;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -71,8 +72,8 @@ public class FileTransferActionTest extends SysTestBase {
         calc.setORQArguments( orq );
         calc.setNetAux( getSys().getNetAux() );
 
-        Contract con = calc.createOffer();
-        con.setAccepted( new DateTime().toGregorianCalendar() );
+        TransientContract con = calc.createOffer();
+        PersistentContract pcon = con.acceptAt( new DateTime() );
 
 
         // creating offertype
@@ -98,11 +99,11 @@ public class FileTransferActionTest extends SysTestBase {
         task = new Task( );
         task.setId( getSys().nextUUID() );
         task.setDescription( orq.getDescription() );
-        task.setTerminationTime( con.getResultValidity());
+        task.setTerminationTime( pcon.getCurrentTerminationTime() );
         task.setOfferType( ot );
         task.setOrq( orq );
-        task.setContract( con );
-        Calendar tt = con.getDeadline();
+        task.setContract( pcon );
+        Calendar tt = pcon.getDeadline();
         tt.add( Calendar.YEAR, 10 );
         task.setTerminationTime( tt );
     }

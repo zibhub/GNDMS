@@ -2,7 +2,7 @@ package de.zib.gndms.GORFX.ORQ.service.globus.resource;
 
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
-import de.zib.gndms.model.gorfx.Contract;
+import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.shared.ContextTAux;
 import de.zib.gndms.typecon.common.GORFXTools;
 import de.zib.gndms.typecon.common.type.ContractXSDReader;
@@ -53,7 +53,7 @@ public class ORQResource extends ORQResourceBase {
     }
 
 
-    public Contract estimatedExecutionContract( OfferExecutionContractT pref ) throws Exception {
+    public TransientContract estimatedExecutionContract( OfferExecutionContractT pref ) throws Exception {
 
         ORQCalculator.setJustEstimate( true );
         ORQCalculator.setPerferredOfferExecution( ContractXSDReader.readContract( pref ) );
@@ -77,7 +77,7 @@ public class ORQResource extends ORQResourceBase {
     }
 
 
-   public Contract getOfferExecutionContract( OfferExecutionContractT pref ) throws Exception {
+   public TransientContract getOfferExecutionContract( OfferExecutionContractT pref ) throws Exception {
 
        ORQCalculator.setJustEstimate( false );
        ORQCalculator.setPerferredOfferExecution( ContractXSDReader.readContract( pref ) );

@@ -1,23 +1,25 @@
 package de.zib.gndms.GORFX.action;
 
+import de.zib.gndms.dspace.client.DSpaceClient;
+import de.zib.gndms.dspace.slice.client.SliceClient;
+import de.zib.gndms.dspace.subspace.client.SubspaceClient;
+import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.logic.model.gorfx.c3grid.AbstractProviderStageInAction;
-import de.zib.gndms.model.gorfx.types.*;
-import de.zib.gndms.model.gorfx.*;
+import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.dspace.types.SliceRef;
+import de.zib.gndms.model.gorfx.AbstractTask;
+import de.zib.gndms.model.gorfx.OfferType;
+import de.zib.gndms.model.gorfx.SubTask;
+import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.model.util.TxFrame;
-import de.zib.gndms.GORFX.action.InterSliceTransferTaskAction;
-import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.typecon.common.type.ProviderStageInResultXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.SliceRefXSDReader;
-import de.zib.gndms.dspace.slice.client.SliceClient;
-import de.zib.gndms.dspace.client.DSpaceClient;
-import de.zib.gndms.dspace.subspace.client.SubspaceClient;
 import org.jetbrains.annotations.NotNull;
 
-import javax.xml.namespace.QName;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.xml.namespace.QName;
 import java.util.List;
 
 /**
@@ -83,7 +85,7 @@ public class StagedTransferTaskAction extends ORQTaskAction<SliceStageInORQ> {
             // todo find destination subspace
             SubspaceClient sscnt = new SubspaceClient( dsc.getSubspace( new QName( "" ) ).getEndpointReference() );
 
-            Contract c = model.getContract();
+            PersistentContract c = model.getContract();
             long size = c.getExpectedSize();
             SliceClient tgt = sscnt.createSlice( GORFXConstantURIs.PUBLISH_SLICE_KIND_URI,
                 c.getDeadline(), size == 0 ? 1 : size );
@@ -133,7 +135,7 @@ public class StagedTransferTaskAction extends ORQTaskAction<SliceStageInORQ> {
 
     private ProviderStageInResult doStageIn( AbstractTask model, TxFrame tx ) {
 
-        Contract c = model.getContract( );
+        PersistentContract c = model.getContract( );
 
         // check if this task is resumed and we aleady have a staged the data
 

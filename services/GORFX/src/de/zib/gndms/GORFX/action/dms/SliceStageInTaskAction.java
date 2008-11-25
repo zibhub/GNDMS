@@ -61,7 +61,7 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
                 else {
                     ProviderStageInORQT p_orq = ProviderStageInORQXSDTypeWriter.write( getOrq() );
                     ContextT ctx = ContextXSDTypeWriter.writeContext( getOrq().getContext() );
-                    OfferExecutionContractT con = ContractXSDTypeWriter.fromContract( model.getContract() );
+                    OfferExecutionContractT con = ContractXSDTypeWriter.fromContract( model.getContract().toTransientContract() );
                     
                     epr = GORFXClientUtils.commonTaskPreparation( uri, p_orq, ctx, con  );
                     model.setData( epr );

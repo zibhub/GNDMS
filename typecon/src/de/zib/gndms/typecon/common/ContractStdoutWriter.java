@@ -1,12 +1,10 @@
 package de.zib.gndms.typecon.common;
 
+import de.zib.gndms.model.common.types.FutureTime;
 import de.zib.gndms.model.gorfx.types.io.ContractWriter;
-
-import java.util.Calendar;
-
+import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
-import org.joda.time.DateTime;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -18,22 +16,27 @@ public class ContractStdoutWriter implements ContractWriter {
 
     private final DateTimeFormatter isoFormatter = ISODateTimeFormat.dateTime( );
 
-    public void writeIfDecisionBefore( Calendar dat ) {
+    public void writeIfDecisionBefore( DateTime dat ) {
         showDate( dat, "IfDecisionBefore: " );
     }
 
 
-    public void writeExecutionLikelyUntil( Calendar dat ) {
+    public void writeExecutionLikelyUntil( FutureTime dat ) {
         showDate( dat, "ExecutionLikelyUnitl: " );
     }
 
 
-    public void writeConstantExecutionTime( boolean et ) {
+	public void writeExpectedSize(final Long l) {
+		System.out.println( "ExpectedSize " + (l == null ? "(null)" : l.toString()));		
+	}
+
+
+	public void writeConstantExecutionTime( boolean et ) {
         System.out.println( "ConstantExecutionTime? " + et );
     }
 
 
-    public void writeResultValidUntil( Calendar dat ) {
+    public void writeResultValidUntil( FutureTime dat ) {
         showDate( dat, "ResultValidUntil: " );
     }
 
@@ -48,8 +51,11 @@ public class ContractStdoutWriter implements ContractWriter {
         // Not required here
     }
 
-    private void showDate( Calendar cal, String msg ) {
-        DateTime dt = new DateTime( cal );
-        System.out.println( msg + isoFormatter.print( dt ) );
+    private void showDate( DateTime cal, String msg ) {
+        System.out.println( msg + isoFormatter.print( cal ) );
+    }
+
+    private void showDate( FutureTime cal, String msg ) {
+        System.out.println( msg + ' ' + cal.toString() );
     }
 }

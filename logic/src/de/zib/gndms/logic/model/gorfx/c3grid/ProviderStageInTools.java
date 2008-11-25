@@ -6,12 +6,10 @@ import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQConverter;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyWriter;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQWriter;
-import de.zib.gndms.model.gorfx.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.io.OutputStreamWriter;
 import java.util.Properties;
 

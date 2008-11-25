@@ -16,6 +16,7 @@ http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
 	    <class>de.zib.gndms.model.common.ConfigletState</class>
 	    <class>de.zib.gndms.model.common.VEPRef</class>
 	    <class>de.zib.gndms.model.common.SimpleRKRef</class>
+        <class>de.zib.gndms.model.common.PersistentContract</class>
 	    <class>de.zib.gndms.model.dspace.DSpaceRef</class>
 	    <class>de.zib.gndms.model.dspace.DSpace</class>
 	    <class>de.zib.gndms.model.dspace.SliceKind</class>
@@ -27,7 +28,6 @@ http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
         <class>de.zib.gndms.model.gorfx.AbstractTask</class>
         <class>de.zib.gndms.model.gorfx.Task</class>
         <class>de.zib.gndms.model.gorfx.SubTask</class>
-        <class>de.zib.gndms.model.gorfx.Contract</class>
         <class>de.zib.gndms.model.gorfx.FTPTransferState</class>
 
 	    <exclude-unlisted-classes>true</exclude-unlisted-classes>
