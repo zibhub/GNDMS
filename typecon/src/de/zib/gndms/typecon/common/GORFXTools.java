@@ -140,7 +140,7 @@ public class GORFXTools {
         stat.setContractBroken( tsk.getBroken() );
         stat.setStatus( getXSDTForTaskState( tsk.getState() ) );
         stat.setProgress( toPositiveInteger( tsk.getProgress() ) );
-        stat.setMaxProgress( toPositiveInteger( tsk.getMax_progress() ) );
+        stat.setMaxProgress( toPositiveInteger( tsk.getMaxProgress() ) );
 
         return stat;
     }

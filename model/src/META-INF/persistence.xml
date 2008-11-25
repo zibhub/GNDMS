@@ -24,7 +24,9 @@ http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
 	    <class>de.zib.gndms.model.dspace.Subspace</class>
 	    <class>de.zib.gndms.model.dspace.SubspaceRef</class>
         <class>de.zib.gndms.model.gorfx.OfferType</class>
+        <class>de.zib.gndms.model.gorfx.AbstractTask</class>
         <class>de.zib.gndms.model.gorfx.Task</class>
+        <class>de.zib.gndms.model.gorfx.SubTask</class>
         <class>de.zib.gndms.model.gorfx.Contract</class>
         <class>de.zib.gndms.model.gorfx.FTPTransferState</class>
 
@@ -37,6 +39,7 @@ http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
 		    <property name="openjpa.slice.ConnectionRetainMode" value="on-demand" />
 		    <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(PrimaryKeys=true,Indexes=true,ForeignKeys=true)" />
 		    <property name="openjpa.jdbc.TransactionIsolation" value="serializable" />
+            <!--property name="openjpa.LockManager" value="pessimistic(VersionCheckOnReadLock=true,VersionUpdateOnWriteLock=true)"/-->
         </properties>
 	</persistence-unit>
 </persistence>

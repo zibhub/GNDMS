@@ -25,7 +25,7 @@ public class ProviderStageInORQXSDTypeWriter extends AbstractXSDTypeWriter<Provi
         try {
             getProduct().get_any()[1].setObjectValue( dfn );
         } catch ( SOAPException e ) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            boxException( e );
         }
     }
 
@@ -34,7 +34,7 @@ public class ProviderStageInORQXSDTypeWriter extends AbstractXSDTypeWriter<Provi
         try {
             getProduct().get_any()[2].setObjectValue( mfn );
         } catch ( SOAPException e ) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            boxException( e );
         }
     }
 
@@ -59,7 +59,7 @@ public class ProviderStageInORQXSDTypeWriter extends AbstractXSDTypeWriter<Provi
         try {
             getProduct().get_any()[0].setObjectValue( dataWriter.getProduct( ) );
         } catch ( SOAPException e ) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            boxException( e );
         }
     }
 
@@ -89,6 +89,11 @@ public class ProviderStageInORQXSDTypeWriter extends AbstractXSDTypeWriter<Provi
 
     public void done() {
         //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+
+    protected void boxException( Exception e ) {
+        throw new RuntimeException( e.getMessage(), e );
     }
 
 

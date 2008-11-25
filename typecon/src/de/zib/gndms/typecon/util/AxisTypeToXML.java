@@ -71,7 +71,7 @@ public class AxisTypeToXML {
 
 
     /**
-     * This method is provided an behaves exactly like the above method with
+     * This method is provided for convenience and behaves exactly like the above method with
      * hide=false and type=false;
      * @param o The object
      * @returns s.a. 

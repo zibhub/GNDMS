@@ -128,4 +128,16 @@ public class PropertyReadWriteAux {
 
         return new DateTime( s );
     }
+
+
+    public static String dateToString( Calendar c ) {
+        DateTime dt = new DateTime( c );
+        return ISODateTimeFormat.dateTime( ).print( dt  );
+    }
+
+
+    public static Calendar dateToString( String s ) {
+
+        return new DateTime( s ).toGregorianCalendar();
+    }
 }

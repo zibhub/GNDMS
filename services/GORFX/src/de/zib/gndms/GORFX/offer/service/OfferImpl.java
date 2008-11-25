@@ -88,6 +88,8 @@ public class OfferImpl extends OfferImplBase {
             taskParam.setOfferType(newType);
             emParam.persist(taskParam);
             emParam.getTransaction().commit();
+        } catch ( RuntimeException e ) { // for debug purpose
+            throw e;
         }
         finally {
             if (emParam.getTransaction().isActive())

@@ -5,6 +5,7 @@ import de.zib.gndms.logic.model.gorfx.FileTransferTaskAction;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.model.gorfx.types.InterSliceTransferORQ;
 import de.zib.gndms.model.gorfx.Task;
+import de.zib.gndms.model.gorfx.AbstractTask;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -22,7 +23,7 @@ public class InterSliceTransferTaskAction extends ORQTaskAction<InterSliceTransf
     }
 
 
-    public InterSliceTransferTaskAction( @NotNull EntityManager em, @NotNull Task model ) {
+    public InterSliceTransferTaskAction( @NotNull EntityManager em, @NotNull AbstractTask model ) {
         super( em, model );
     }
 
@@ -32,7 +33,7 @@ public class InterSliceTransferTaskAction extends ORQTaskAction<InterSliceTransf
     }
 
 
-    protected void onInProgress( @NotNull Task model ) {
+    protected void onInProgress( @NotNull AbstractTask model ) {
 
         try {
             InterSliceTransferORQCalculator.checkURIs( getOrq( ) );

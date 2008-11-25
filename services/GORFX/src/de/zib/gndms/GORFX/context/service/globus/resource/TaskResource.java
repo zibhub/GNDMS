@@ -6,13 +6,13 @@ import de.zib.gndms.infra.model.GridResourceModelHandler;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.model.gorfx.Task;
-import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
-import de.zib.gndms.model.gorfx.types.ProviderStageInResult;
-import de.zib.gndms.model.gorfx.types.TaskState;
-import de.zib.gndms.model.gorfx.types.FileTransferResult;
+import de.zib.gndms.model.gorfx.types.*;
+import de.zib.gndms.typecon.common.GORFXClientTools;
 import de.zib.gndms.typecon.common.GORFXTools;
-import de.zib.gndms.typecon.common.type.ProviderStageInResultXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.FileTransferResultXSDTypeWriter;
+import de.zib.gndms.typecon.common.type.ProviderStageInResultXSDTypeWriter;
+import de.zib.gndms.typecon.common.type.RePublishSliceResultXSDTypeWriter;
+import de.zib.gndms.typecon.common.type.SliceStageInResultXSDTypeWriter;
 import org.globus.wsrf.InvalidResourceKeyException;
 import org.globus.wsrf.NoSuchResourceException;
 import org.globus.wsrf.ResourceException;
@@ -21,8 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import types.*;
 
 import javax.persistence.EntityManager;
-import java.util.concurrent.Future;
 import java.io.Serializable;
+import java.util.concurrent.Future;
 
 
 /**
@@ -46,7 +46,7 @@ public class TaskResource extends TaskResourceBase
      */
     public void executeTask() {
         
-        Task tsk = taskAction.getModel( );
+        Task tsk = (Task) taskAction.getModel( );
         if(! tsk.getState().equals( TaskState.FINISHED ) || ! tsk.getState().equals( TaskState.FAILED ) )
             future = home.getSystem( ).submitAction( taskAction, getResourceHome().getLog() );
         else
@@ -55,7 +55,7 @@ public class TaskResource extends TaskResourceBase
 
 
     public TaskExecutionState getTaskExecutionState() {
-        return GORFXTools.getStateOfTask( taskAction.getModel( ) );
+        return GORFXTools.getStateOfTask( (Task) taskAction.getModel( ) );
     }
 
 
@@ -118,8 +118,42 @@ public class TaskResource extends TaskResourceBase
 
             else
                 res = new FileTransferResultT();
+
+            if( uri.equals( GORFXConstantURIs.INTER_SLICE_TRANSFER_URI ) )
+                ( (FileTransferResultT) res).setOfferType( GORFXClientTools.getInterSliceTransferURI() );
+
+
+        } else if( uri.equals( GORFXConstantURIs.RE_PUBLISH_SLICE_URI ) ) {
+
+            if( stat.equals( TaskState.FINISHED ) ){
+                final Serializable sr = taskAction.getModel().getData( );
+                if(! ( sr instanceof RePublishSliceResult ) )
+                    throw new IllegalArgumentException( "task result is not of type "
+                        + RePublishSliceResult.class.getName( ) );
+
+                res = RePublishSliceResultXSDTypeWriter.writeResult( ( RePublishSliceResult ) sr );
+            }
+
+            else
+                res = new RePublishSliceResultT();
+
+        } else if( uri.equals( GORFXConstantURIs.SLICE_STAGE_IN_URI ) ) {
+            
+            if( stat.equals( TaskState.FINISHED ) ){
+                final Serializable sr = taskAction.getModel().getData( );
+                if(! ( sr instanceof SliceStageInResult ) )
+                    throw new IllegalArgumentException( "task result is not of type "
+                        + SliceStageInResult.class.getName( ) );
+
+                res = SliceStageInResultXSDTypeWriter.writeResult( ( SliceStageInResult ) sr );
+            }
+
+            else
+                res = new SliceStageInResultT();
+            
         } // etc
           // todo add new task results here
+
         else {
             //throw new RemoteException( "Illegal offer type occured" );
             throw new IllegalStateException( "Illegal offer type occured" );
@@ -149,7 +183,7 @@ public class TaskResource extends TaskResourceBase
         EntityManager em = home.getEntityManagerFactory().createEntityManager(  );
         Task tsk = (Task) mH.loadModelById( em, id );
         try {
-            taskAction = getResourceHome().getSystem().getInstanceDir().getTaskAction(em, tsk.getOfferType().getOfferTypeKey());
+            taskAction = getResourceHome().getSystem().getInstanceDir().getTaskAction( em, tsk.getOfferType().getOfferTypeKey() );
             taskAction.initFromModel(em, tsk);
             taskAction.setClosingEntityManagerOnCleanup(true);
             
@@ -237,5 +271,4 @@ public class TaskResource extends TaskResourceBase
     public void refreshRegistration(final boolean forceRefresh) {
         // nothing
     }
-
 }

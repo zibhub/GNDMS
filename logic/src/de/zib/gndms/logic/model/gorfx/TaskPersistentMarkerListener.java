@@ -2,6 +2,7 @@ package de.zib.gndms.logic.model.gorfx;
 
 import de.zib.gndms.kit.network.PersistentMarkerListener;
 import de.zib.gndms.model.gorfx.Task;
+import de.zib.gndms.model.gorfx.AbstractTask;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -16,7 +17,7 @@ import de.zib.gndms.model.gorfx.Task;
  */
 public class TaskPersistentMarkerListener extends PersistentMarkerListener {
 
-    Task task;
+    AbstractTask task;
 
     public void setCurrentFile( String currentFile ) {
         super.setCurrentFile( currentFile );
@@ -24,12 +25,12 @@ public class TaskPersistentMarkerListener extends PersistentMarkerListener {
     }
 
 
-    public Task getTask() {
+    public AbstractTask getTask() {
         return task;
     }
 
 
-    public void setTask( Task task ) {
+    public void setTask( AbstractTask task ) {
         this.task = task;
     }
 }

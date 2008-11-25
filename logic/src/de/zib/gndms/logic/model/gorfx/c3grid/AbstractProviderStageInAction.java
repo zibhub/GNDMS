@@ -12,6 +12,7 @@ import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.gorfx.Task;
+import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
 import de.zib.gndms.model.util.TxFrame;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +38,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
     }
 
 
-    public AbstractProviderStageInAction(final @NotNull EntityManager em, final @NotNull Task model) {
+    public AbstractProviderStageInAction(final @NotNull EntityManager em, final @NotNull AbstractTask model) {
         super(em, model);
     }
 
@@ -49,7 +50,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 
     @SuppressWarnings({ "ThrowableInstanceNeverThrown" })
     @Override
-    protected void onCreated(final Task model) {
+    protected void onCreated(final AbstractTask model) {
         try {
             super.onCreated(model);    // Overridden method
         }
@@ -73,7 +74,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 
     @SuppressWarnings({ "ThrowableInstanceNeverThrown"})
     @Override
-    protected void onInProgress(final @NotNull Task model) {
+    protected void onInProgress(final @NotNull AbstractTask model) {
         final Slice slice = findNewSlice(model);
         doStaging(getOfferTypeConfig(), getOrq(), slice);
     }
@@ -84,7 +85,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
             final Slice sliceParam);
 
 
-    private void createNewSlice(final Task model) throws MandatoryOptionMissingException {
+    private void createNewSlice(final AbstractTask model) throws MandatoryOptionMissingException {
 
         final ConfigProvider config = getOfferTypeConfig();
 
@@ -115,7 +116,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
     }
 
 
-    private Slice findNewSlice(final Task model) {
+    private Slice findNewSlice(final AbstractTask model) {
 	    final EntityManager em = getEntityManager();
 	    final TxFrame txf = new TxFrame(em);
 	    try {
@@ -128,7 +129,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 
 
 	@Override
-	protected void onFailed(final @NotNull Task model) {
+	protected void onFailed(final @NotNull AbstractTask model) {
 		try {
 			// wrappend in try-finally to ensure we go to failed even if slice
 			// deletion goes wrong
