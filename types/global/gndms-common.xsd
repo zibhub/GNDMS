@@ -216,7 +216,17 @@
           -->
         <element name="constantExecutionTime" type="boolean" default="false" />
 
+        <element name="estMaxSize" type="long" minOccurs="0" maxOccurs="1" />
+
         <element name="ResultValidUntil" type="dateTime" minOccurs="1" maxOccurs="1"/>
+
+        <!-- Not directly part of the contract, just contains additional information
+             about how the request was interpreted by the remote site like
+             warning message in the presence of obscur staging requests
+
+             intended for the end user only -->
+        <element name="volatileRequestInfo" type="impl:ContextT" minOccurs="0" maxOccurs="1">
+        </element>
     </sequence>
 </complexType>
 

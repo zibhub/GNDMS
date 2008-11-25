@@ -72,7 +72,8 @@ public class SliceStageInORQCalculator extends
 
     public String destinationURI( String gs ) throws URI.MalformedURIException {
         C3MDSConfiglet cfg = getConfigletProvider().getConfiglet( C3MDSConfiglet.class, C3MDSConfiglet.class.getName( ) );
-        Set<Workspace.Archive> a = cfg.getCatalog().getArchivesByOid().get( gs );
+
+        Set<Workspace.Archive> a = cfg.getCatalog().getArchivesByOids( gs, getORQArguments().getDataDescriptor().getObjectList() );
         
         return ((Workspace.Archive) a.toArray()[0]).getBaseUrl();
     }
