@@ -3,6 +3,7 @@ package de.zib.gndms.typecon.common.type;
 import de.zib.gndms.model.common.types.FutureTime;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
+import types.FutureTimeT;
 
 
 /**

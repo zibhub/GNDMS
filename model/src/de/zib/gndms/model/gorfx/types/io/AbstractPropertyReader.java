@@ -39,8 +39,8 @@ public abstract class AbstractPropertyReader<M> extends AbstractPropertyIO {
     }
 
 
-	public M newProduct() {
-		return makeNewProduct();
+	public void newProduct() {
+		product = makeNewProduct();
 	}
 	
     public M makeNewProduct( )  {

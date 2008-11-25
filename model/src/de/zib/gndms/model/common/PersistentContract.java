@@ -1,5 +1,7 @@
 package de.zib.gndms.model.common;
 
+import de.zib.gndms.model.common.types.FutureTime;
+import de.zib.gndms.model.common.types.TransientContract;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 
@@ -8,9 +10,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import java.util.Calendar;
-
-import de.zib.gndms.model.common.types.TransientContract;
-import de.zib.gndms.model.common.types.FutureTime;
 
 
 /**
