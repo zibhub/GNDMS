@@ -51,7 +51,9 @@ public enum SfrProperty {
             "c3grid.StageFileRequest.Estimate.IfDecisionBefore"), EST_CONST_EXEC_TIME(
             "c3grid.StageFileRequest.Estimate.ConstantExecutionTime"), EST_EXEC_LIKELY_UNTIL(
             "c3grid.StageFileRequest.Estimate.ExecutionLikelyUntil"), EST_RESULT_VALID_UNTIL(
-            "c3grid.StageFileRequest.Estimate.ResultValidUntil");
+            "c3grid.StageFileRequest.Estimate.ResultValidUntil"),
+    GORFX_ID( "c3grid.CommonRequest.GORFXId" )
+    ;
 
     public final String key;
 	public final String doc;

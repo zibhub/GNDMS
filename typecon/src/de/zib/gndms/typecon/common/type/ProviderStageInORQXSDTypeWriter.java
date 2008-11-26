@@ -97,6 +97,11 @@ public class ProviderStageInORQXSDTypeWriter extends AbstractXSDTypeWriter<Provi
     }
 
 
+    public void writeId( String id ) {
+        // Not required here
+    }
+
+
     /**
      * On shot write resp. convert operation.
      *

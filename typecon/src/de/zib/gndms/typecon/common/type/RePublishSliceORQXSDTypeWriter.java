@@ -83,4 +83,9 @@ public class RePublishSliceORQXSDTypeWriter extends AbstractXSDTypeWriter<RePubl
     public void done() {
         // not required here
     }
+
+
+    public void writeId( String id ) {
+        // Not required here
+    }
 }

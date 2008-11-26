@@ -46,8 +46,7 @@ public class InterSliceTransferTaskAction extends ORQTaskAction<InterSliceTransf
 
         SubTask st = new SubTask( model );
         try {
-            // todo used for testing propose
-            st.setId( UUIDGenFactory.getUUIDGen().nextUUID() );
+            st.setId( getUUIDGen().nextUUID() );
             st.fromTask( getEntityManager(), model );
             st.setTerminationTime( new GregorianCalendar( ) );
 

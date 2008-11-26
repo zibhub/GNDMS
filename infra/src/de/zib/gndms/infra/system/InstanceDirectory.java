@@ -129,13 +129,14 @@ public class InstanceDirectory implements ConfigletProvider, ORQCalculatorProvid
                     "RawUseOfParameterizedType", "unchecked", "MethodWithTooExceptionsDeclared",
                     "RedundantCast", "OverloadedMethodsWithSameNumberOfParameters" })
     public TaskAction getTaskAction(
+            final @NotNull GNDMSystem sys,
             final @NotNull EntityManagerFactory emf,
             final @NotNull String offerTypeKey)
             throws ClassNotFoundException, IllegalAccessException, InstantiationException,
             NoSuchMethodException, InvocationTargetException {
         EntityManager em = emf.createEntityManager();
         try {
-            return getTaskAction(em, offerTypeKey);
+            return getTaskAction( sys, em, offerTypeKey );
         }
         finally {
             if (! em.isOpen())
@@ -145,10 +146,12 @@ public class InstanceDirectory implements ConfigletProvider, ORQCalculatorProvid
 
 
     @SuppressWarnings({ "OverloadedMethodsWithSameNumberOfParameters" })
-    public TaskAction getTaskAction(final @NotNull EntityManager em, final @NotNull String offerTypeKey)
+    public TaskAction getTaskAction( final @NotNull GNDMSystem sys, final @NotNull EntityManager em, final @NotNull String offerTypeKey)
             throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         OfferType type = em.find(OfferType.class, offerTypeKey);
-        return taskActionPark.getInstance(type);
+        TaskAction ta = taskActionPark.getInstance(type);
+        ta.setUUIDGen( sys.getModelUUIDGen() );
+        return ta;
     }
 
 

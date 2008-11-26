@@ -107,6 +107,11 @@ public class SliceStageInORQXSDTypeWriter extends AbstractXSDTypeWriter<SliceSta
     }
 
 
+    public void writeId( String id ) {
+        // Not required here
+    }
+
+
     /**
      * On shot write resp. convert operation.
      *
