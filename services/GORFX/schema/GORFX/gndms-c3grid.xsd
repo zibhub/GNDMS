@@ -84,8 +84,8 @@
 
 <complexType name="TimeConstraintT">
     <sequence>
-      <!-- actually an xsd:date but due to axis bugs with dates < 1900 AD we use string and
-           specify it to be a proper ISO date string -->
+      <!-- actually an xsd:dateTime but due to axis bugs with dates < 1900 AD we use strings and
+           specify them to be proper ISO 8601 dateTime strings -->
       <element maxOccurs="1" minOccurs="0" name="MinTime" type="string" />
       <element maxOccurs="1" minOccurs="0" name="MaxTime" type="string" />
     </sequence>
@@ -109,12 +109,12 @@
                     <element name="CFList" type="impl:CFListT" />
 
                     <!-- zusätzliche Restrictionen, Prozessing optionen etc. z.B. <...>  -->
-                    <element name="ConstraintList" type="impl:ConstraintListT" />
+                    <element name="ConstraintList" type="impl:ConstraintListT" minOccurs="0" maxOccurs="1"/>
                 </sequence>
             </complexType>
         </element>
 
-		<element name="DataFormat" type="string" minOccurs="1" maxOccurs="1"/>
+		<element name="DataFormat" type="string" minOccurs="0" maxOccurs="1"/>
         <element name="DataArchiveFormat" type="string" minOccurs="0" maxOccurs="1" default="tar" />
 
 		<element name="MetaDataFormat" type="string" minOccurs="1" maxOccurs="1"/>
@@ -170,7 +170,7 @@
 	  <restriction base="gndms:DynamicOfferDataSeqT">
 		  <sequence>
 			<element name="StagedData" type="impl:DataDescriptorT" minOccurs="1" maxOccurs="1" />
-			<element ref="impl:DataFile" minOccurs="1" maxOccurs="1"  />
+			<element ref="impl:DataFile" minOccurs="0" maxOccurs="1"  />
 			<element ref="impl:MetadataFile" minOccurs="1" maxOccurs="1"  />
 		  </sequence>
 		  <attribute name="offerType" type="xsd:anyURI" fixed="http://www.c3grid.de/ORQTypes/ProviderStageIn" />
@@ -199,7 +199,7 @@
           <sequence>
             <element name="GridSite" type="gndms:GridSiteT" minOccurs="0" maxOccurs="1"/>
             <element name="StagedData" type="impl:DataDescriptorT" minOccurs="1" maxOccurs="1" />
-            <element ref="impl:DataFile" minOccurs="1" maxOccurs="1"  />
+            <element ref="impl:DataFile" minOccurs="0" maxOccurs="1"  />
             <element ref="impl:MetadataFile" minOccurs="1" maxOccurs="1"  />
           </sequence>
           <attribute name="offerType" type="xsd:anyURI" fixed="http://www.c3grid.de/ORQTypes/SliceStageIn" />

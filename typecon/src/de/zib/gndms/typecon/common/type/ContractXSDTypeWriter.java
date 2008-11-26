@@ -1,11 +1,13 @@
 package de.zib.gndms.typecon.common.type;
 
-import de.zib.gndms.model.gorfx.Contract;
+import de.zib.gndms.model.common.types.FutureTime;
+import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.gorfx.types.io.ContractConverter;
 import de.zib.gndms.model.gorfx.types.io.ContractWriter;
+import de.zib.gndms.model.gorfx.types.io.FutureTimeConverter;
+import org.joda.time.DateTime;
 import types.OfferExecutionContractT;
 
-import java.util.Calendar;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -15,24 +17,37 @@ import java.util.Calendar;
  */
 public class ContractXSDTypeWriter extends AbstractXSDTypeWriter<OfferExecutionContractT> implements ContractWriter {
 
+	private FutureTimeConverter conv = new FutureTimeConverter();
+	private FutureTimeXSDTypeWriter wr = new FutureTimeXSDTypeWriter();
 
-    public void writeIfDecisionBefore( Calendar dat ) {
-        getProduct( ).setIfDecisionBefore( dat );
+	{
+		conv.setWriter(wr);
+	}
+
+    public void writeIfDecisionBefore( DateTime dat ) {
+        getProduct( ).setIfDecisionBefore( dat.toGregorianCalendar() );
     }
 
 
-    public void writeExecutionLikelyUntil( Calendar dat ) {
-        getProduct( ).setExecutionLikelyUntil( dat );
+    public void writeExecutionLikelyUntil( FutureTime dat ) {
+	    conv.setModel(dat);
+	    conv.convert();
+
+        getProduct( ).setExecutionLikelyUntil( wr.getProduct() );
     }
 
 
-    public void writeConstantExecutionTime( boolean et ) {
-        getProduct( ).setConstantExecutionTime( et );
-    }
+	public void writeExpectedSize(final Long l) {
+		if (l != null)
+			getProduct().setEstMaxSize(l);
+	}
 
 
-    public void writeResultValidUntil( Calendar dat ) {
-        getProduct( ).setResultValidUntil( dat );
+	public void writeResultValidUntil(final FutureTime dat) {
+		conv.setModel(dat);
+		conv.convert();
+
+        getProduct( ).setResultValidUntil( wr.getProduct() );
     }
 
 
@@ -46,7 +61,7 @@ public class ContractXSDTypeWriter extends AbstractXSDTypeWriter<OfferExecutionC
     }
 
 
-    public static OfferExecutionContractT fromContract( Contract con ) {
+    public static OfferExecutionContractT fromContract( TransientContract con ) {
 
         ContractXSDTypeWriter writ = new ContractXSDTypeWriter();
         ContractConverter conv = new ContractConverter( writ, con );

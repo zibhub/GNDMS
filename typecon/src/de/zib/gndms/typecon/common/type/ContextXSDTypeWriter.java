@@ -1,13 +1,13 @@
 package de.zib.gndms.typecon.common.type;
 
-import java.util.HashMap;
-import java.util.Set;
-import java.util.ArrayList;
-
+import org.apache.axis.types.NormalizedString;
+import org.apache.axis.types.Token;
 import types.ContextT;
 import types.ContextTEntry;
-import org.apache.axis.types.Token;
-import org.apache.axis.types.NormalizedString;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>

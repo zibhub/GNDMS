@@ -1,21 +1,15 @@
 package de.zib.gndms.GORFX.action.dms;
 
-import types.*;
-import org.joda.time.DateTime;
-import org.globus.wsrf.encoding.DeserializationException;
-import org.globus.wsrf.encoding.ObjectDeserializer;
-import org.apache.axis.message.addressing.EndpointReferenceType;
-
-import java.rmi.RemoteException;
-
-import de.zib.gndms.GORFX.context.client.TaskClient;
-import de.zib.gndms.GORFX.offer.client.OfferClient;
 import de.zib.gndms.GORFX.ORQ.client.ORQClient;
 import de.zib.gndms.GORFX.client.GORFXClient;
-import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
-import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyReader;
-import de.zib.gndms.typecon.common.type.ProviderStageInORQXSDTypeWriter;
-import de.zib.gndms.dspace.slice.client.SliceClient;
+import de.zib.gndms.GORFX.context.client.TaskClient;
+import de.zib.gndms.GORFX.offer.client.OfferClient;
+import org.apache.axis.message.addressing.EndpointReferenceType;
+import org.globus.wsrf.encoding.DeserializationException;
+import org.joda.time.DateTime;
+import types.*;
+
+import java.rmi.RemoteException;
 
 /**
  * Some helper methods for common tasks at testing.
@@ -94,12 +88,15 @@ public class GORFXClientUtils {
 
     public static OfferExecutionContractT newContract( ) {
 
-        final OfferExecutionContractT xsdOfferContract = new OfferExecutionContractT();
+	    final OfferExecutionContractT xsdOfferContract = new OfferExecutionContractT();
 
-        xsdOfferContract.setExecutionLikelyUntil(new DateTime().plusDays(1).toGregorianCalendar());
-        xsdOfferContract.setResultValidUntil(new DateTime().plusDays(2).toGregorianCalendar());
-        xsdOfferContract.setIfDecisionBefore(new DateTime().plusHours(1).toGregorianCalendar());
-        xsdOfferContract.setConstantExecutionTime( false );
+	    xsdOfferContract.setIfDecisionBefore( new DateTime().plusHours(1).toGregorianCalendar() );
+		final FutureTimeT execLikelyUntil = new FutureTimeT();
+		execLikelyUntil.setTime(new DateTime().plusDays(1).toGregorianCalendar());
+	    xsdOfferContract.setExecutionLikelyUntil( execLikelyUntil );
+		final FutureTimeT resultValidity = new FutureTimeT();
+		resultValidity.setTime(new DateTime().plusDays(2).toGregorianCalendar());
+	    xsdOfferContract.setResultValidUntil( resultValidity );
 
         return xsdOfferContract;
     }

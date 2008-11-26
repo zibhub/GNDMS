@@ -1,22 +1,22 @@
 package de.zib.gndms.GORFX.action;
 
-import de.zib.gndms.model.gorfx.types.RePublishSliceORQ;
-import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
-import de.zib.gndms.model.gorfx.Contract;
-import de.zib.gndms.logic.model.gorfx.AbstractTransferORQCalculator;
-import de.zib.gndms.kit.configlet.PublishConfiglet;
-import de.zib.gndms.dspace.subspace.client.SubspaceClient;
 import de.zib.gndms.dspace.slice.client.SliceClient;
+import de.zib.gndms.dspace.subspace.client.SubspaceClient;
+import de.zib.gndms.kit.configlet.PublishConfiglet;
+import de.zib.gndms.logic.model.gorfx.AbstractTransferORQCalculator;
+import de.zib.gndms.model.common.types.TransientContract;
+import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
+import de.zib.gndms.model.gorfx.types.RePublishSliceORQ;
 import de.zib.gndms.typecon.common.type.SliceRefXSDReader;
-import org.globus.ftp.exception.ServerException;
 import org.globus.ftp.exception.ClientException;
+import org.globus.ftp.exception.ServerException;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Vector;
-import java.util.Random;
 import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Random;
+import java.util.Vector;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -33,7 +33,7 @@ public class RePublishSliceORQCalculator extends
 
 
     @Override
-    public Contract createOffer() throws ServerException, IOException, ClientException {
+    public TransientContract createOffer() throws ServerException, IOException, ClientException {
 
         // obtain possible target subspace
         // todo find a way to access InstanceDir
@@ -61,13 +61,13 @@ public class RePublishSliceORQCalculator extends
         setEstimatedBandWidth( bw );
 
         // create offer
-        Contract res = calculateOffer();
+        TransientContract res = calculateOffer();
 
         if( isJustEstimate() ) {
             // destroy slice
             tgt.setTerminationTime( new GregorianCalendar( ) );
         } else {
-            tgt.setTerminationTime( res.getCurrentTerminationTime() );
+            tgt.setTerminationTime( res.acceptAsIs().getCurrentTerminationTime() );
             getORQArguments().setSourceURI( sp );
             getORQArguments().setTargetURI( dp );
             getORQArguments().setDestinationSlice(

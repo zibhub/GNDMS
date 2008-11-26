@@ -1,7 +1,7 @@
 package de.zib.gndms.infra.system;
 
 import de.zib.gndms.logic.model.DummyTaskAction;
-import de.zib.gndms.model.gorfx.Contract;
+import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.TaskState;
@@ -41,7 +41,7 @@ public class DummyTaskActionTest extends SysTestBase {
     protected @NotNull Task createInitialTask(String id) {
         final Task task = new Task();
         task.setId(id);
-        Contract contract = new Contract();
+        PersistentContract contract = new PersistentContract();
         DateTime dt = new DateTime().toDateTimeISO();
         contract.setAccepted(dt.toGregorianCalendar());
         contract.setDeadline(dt.plusYears(2).toGregorianCalendar());

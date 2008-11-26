@@ -25,6 +25,7 @@ import javax.persistence.EntityManager
 import javax.persistence.NamedQueries
 import javax.persistence.OneToMany
 import javax.persistence.CascadeType
+import de.zib.gndms.model.common.PersistentContract
 
 
 /**
@@ -66,7 +67,7 @@ abstract class AbstractTask extends TimedGridResource {
         @AttributeOverride(name="deadline", column=@Column(name="deadline", nullable=true, updatable=false)),
         @AttributeOverride(name="resultValidity", column=@Column(name="validity", nullable=true, updatable=false)),
     ])
-    Contract contract
+    PersistentContract contract
 
     @Column(name="broken")
     boolean broken = false

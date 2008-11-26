@@ -1,8 +1,9 @@
 package de.zib.gndms.model.gorfx.types.io;
 
-import de.zib.gndms.model.gorfx.Contract;
+import de.zib.gndms.model.common.types.FutureTime;
+import de.zib.gndms.model.common.types.TransientContract;
+import org.joda.time.DateTime;
 
-import java.util.Calendar;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -11,7 +12,7 @@ import java.util.Calendar;
  * User: mjorra, Date: 25.09.2008, Time: 13:16:37
  */
 @SuppressWarnings({ "FeatureEnvy" })
-public class ContractConverter extends GORFXConverterBase<ContractWriter, Contract> {
+public class ContractConverter extends GORFXConverterBase<ContractWriter, TransientContract> {
 
     
     public ContractConverter() {
@@ -19,7 +20,7 @@ public class ContractConverter extends GORFXConverterBase<ContractWriter, Contra
     }
 
 
-    public ContractConverter( ContractWriter writer, Contract model ) {
+    public ContractConverter( ContractWriter writer, TransientContract model ) {
         super( writer, model );
     }
 
@@ -32,19 +33,20 @@ public class ContractConverter extends GORFXConverterBase<ContractWriter, Contra
 
         getWriter().begin();
 
-        Calendar dat = getModel( ).getAccepted( );
+        DateTime dat = getModel( ).getAccepted( );
         if( dat != null )
             getWriter().writeIfDecisionBefore( dat );
 
-        dat = getModel().getDeadline();
-        if( dat != null )
-            getWriter().writeExecutionLikelyUntil( dat );
+        FutureTime dead = getModel().getDeadline();
+        if( dead != null )
+            getWriter().writeExecutionLikelyUntil( dead );
 
-        dat = getModel().getResultValidity();
-        if( dat != null )
-            getWriter().writeResultValidUntil( dat );
+        FutureTime rv = getModel().getResultValidity();
+        if( rv != null )
+            getWriter().writeResultValidUntil( rv );
 
-        getWriter().writeConstantExecutionTime( getModel().isDeadlineIsOffset() );
+	    if (getModel().hasExpectedSize())
+            getWriter().writeExpectedSize( getModel().getExpectedSize() );
         
         getWriter().done();
     }

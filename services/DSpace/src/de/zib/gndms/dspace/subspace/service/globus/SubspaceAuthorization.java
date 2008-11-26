@@ -1,10 +1,6 @@
 package de.zib.gndms.dspace.subspace.service.globus;
 
 
-import org.globus.gsi.GlobusCredential;
-import org.globus.gsi.gssapi.GlobusGSSCredentialImpl;
-import org.globus.gsi.jaas.JaasGssUtil;
-import org.globus.wsrf.impl.security.authentication.Constants;
 import org.globus.wsrf.impl.security.authorization.exceptions.AuthorizationException;
 import org.globus.wsrf.impl.security.authorization.exceptions.CloseException;
 import org.globus.wsrf.impl.security.authorization.exceptions.InitializeException;
@@ -12,7 +8,6 @@ import org.globus.wsrf.impl.security.authorization.exceptions.InvalidPolicyExcep
 import org.globus.wsrf.security.authorization.PDP;
 import org.globus.wsrf.security.authorization.PDPConfig;
 import org.w3c.dom.Node;
-
 import javax.security.auth.Subject;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.handler.MessageContext;
@@ -50,13 +45,6 @@ public class SubspaceAuthorization implements PDP {
 			return caller;
 		}
 	}
-	
-	public static GlobusCredential getInvocationCredential() {
-        org.apache.axis.MessageContext ctx = org.apache.axis.MessageContext.getCurrentContext();
-        Subject subject = (Subject) ctx.getProperty(Constants.INVOCATION_SUBJECT);
-        GlobusGSSCredentialImpl credential = (GlobusGSSCredentialImpl) JaasGssUtil.getCredential(subject);
-        return credential.getGlobusCredential();
-    }
 					
 	public static void authorizeGetServiceSecurityMetadata() throws RemoteException {
 		
