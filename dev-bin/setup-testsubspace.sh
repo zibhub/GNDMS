@@ -10,7 +10,8 @@ source $(dirname $0)/dir-check.sh
 # One can set the $hn variable manually in the check-hostname script,
 # if the returned value isn't the desired one.
 #hn=csr-pc25.zib.de
-STAGING_AREA_GSI_FTP_URL="gsiftp://$hn""$STAGING_AREA_PATH"
+hn=$(echo_hostname)
+STAGING_AREA_GSI_FTP_URL="gsiftp://$hn$STAGING_AREA_PATH"
 
 
 

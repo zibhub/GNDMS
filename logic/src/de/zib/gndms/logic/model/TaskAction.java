@@ -472,8 +472,13 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     }
 
 
-    public static boolean isFinishedException( Exception e ) {
+    public static boolean isFinishedTransition( Exception e ) {
         return e instanceof FinishedException;
+    }
+
+
+    public static boolean isFailedTransition( Exception e ) {
+        return e instanceof FailedException;
     }
 
 

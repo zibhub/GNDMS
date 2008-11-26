@@ -118,7 +118,7 @@ public class StagedTransferTaskAction extends ORQTaskAction<SliceStageInORQ> {
             res_slice = ist_orq.getDestinationSlice();
 
         } catch ( TransitException e ) {
-            if(! isFinishedException( e ) )
+            if(! isFinishedTransition( e ) )
                 throw e;
         } catch ( Exception e ) {
             boxException( e );
@@ -161,7 +161,7 @@ public class StagedTransferTaskAction extends ORQTaskAction<SliceStageInORQ> {
                 psa.call( );
             } catch ( TransitException e ) {
                 tx.commit( );
-                if(! isFinishedException( e ) )
+                if(! isFinishedTransition( e ) )
                     throw e;
             } catch ( Exception e ) {
                 tx.finish( );

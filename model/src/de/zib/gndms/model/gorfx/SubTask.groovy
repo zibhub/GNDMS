@@ -37,7 +37,7 @@ class SubTask extends AbstractTask {
 
 
     SubTask( AbstractTask par ) {
-        parent = par;
+    //    parent = par;
         par.add( this );
     }
 
@@ -54,12 +54,12 @@ class SubTask extends AbstractTask {
         else
             setOfferType( em.find( OfferType.class, tsk.getOfferType( ).getOfferTypeKey() ) );
 
-
         setContract( tsk.getContract( ) );
         setDescription( tsk.getDescription( ) );
         setData( tsk.getData( ) );
         setFaultString( tsk.getFaultString( ) );
         setMaxProgress( tsk.getMaxProgress( ) );
         setOrq( tsk.getOrq( ) );
+        setWid( tsk.getWid( ) );
     }
 }

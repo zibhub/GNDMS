@@ -128,6 +128,9 @@ abstract class AbstractTask extends TimedGridResource {
     }
 
     void add( SubTask st ) {
+        if( subTasks == null )
+            subTasks = new LinkedList<SubTask>( );
+        
         subTasks.add( st );
     }
 }

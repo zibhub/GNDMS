@@ -517,6 +517,9 @@ PriorityDefinitions
 ScopeDefinitions
 StatusDefinitions</pre>
 </div>
+<div title="Add Unique id to AbstractORQ" modifier="MaikJorra" created="200811261329" modified="200811261330" tags="task" changecount="11" tt_scope="DMS" tt_module="GORFX" tt_priority="Medium" tt_user="MaikJorra" tt_status="Pending">
+<pre>The tiddler 'New Task' doesn't yet exist. Double-click to create it</pre>
+</div>
 <div title="AnneOther" modifier="PhilHawksworth" created="200710290946" changecount="1">
 <pre>&lt;html&gt;
 &lt;div class='vcard'&gt;
@@ -530,7 +533,7 @@ StatusDefinitions</pre>
 <div title="ChangeBuildFileTargets" modifier="YourName" created="200811211433" modified="200811211442" tags="task" tt_module="build" tt_status="InProgress" tt_user="RobertoHenschel" tt_priority="High" tt_scope="Build" changecount="14">
 <pre>Roberto needs to change the build file targets and update the dependencies.</pre>
 </div>
-<div title="Clean-up Task/Subtask/GORFXID" modifier="YourName" created="200811211540" modified="200811211611" tags="task" changecount="15" tt_scope="DMS" tt_module="model" tt_priority="High" tt_user="MaikJorra" tt_status="InProgress">
+<div title="Clean-up Task/Subtask/GORFXID" modifier="MaikJorra" created="200811211540" modified="200811251232" tags="task" changecount="16" tt_scope="DMS" tt_module="model" tt_priority="High" tt_user="MaikJorra" tt_status="Untested">
 <pre>The tiddler 'New Task' doesn't yet exist. Double-click to create it</pre>
 </div>
 <div title="CompletedReportView" modifier="YourName" created="200811211557" changecount="18" tt_scope="Etc" tt_module="multi" tt_priority="Low" tt_user="RobertoHenschel" tt_status="OnHold">
@@ -607,6 +610,9 @@ Defining a user is really simple. All you need to do is add user's names to the 
 <div title="Enable XML format support in Providerscripts" modifier="YourName" created="200811211535" modified="200811211558" tags="task" changecount="25" tt_scope="Provider" tt_module="GORFX" tt_priority="Medium" tt_user="MaikJorra" tt_status="OnHold">
 <pre>The tiddler 'New Task' doesn't yet exist. Double-click to create it</pre>
 </div>
+<div title="FlorianSchintke" modifier="MaikJorra" created="200811251309" changecount="11" tt_scope="DMS" tt_module="GORFX" tt_priority="Medium" tt_user="MaikJorra" tt_status="Pending">
+<pre>&lt;&lt;TTReportView DisplayFields:&quot;Title,Priority,Status,Scope,Module,User&quot; OrderBy:&quot;Status,asc&quot; User:&quot;FlorianSchintke&quot;&gt;&gt;</pre>
+</div>
 <div title="Getting Started with TeamTasks" modifier="PhilHawksworth" created="200710231248" modified="200710241425" tags="help" changecount="7">
 <pre>TeamTasks is intended to support you in managing your task lists.  It can be heavily customised to be used in many different ways, but I am presuming that most users will want to do the following to get up and running quickly:
 *[[Define some users|DefineUsers]]
@@ -620,11 +626,19 @@ and then may wish to make further customisations by editing the [[TaskDefinition
 <div title="InProgressReportView" modifier="YourName" created="200811211557" changecount="18" tt_scope="Etc" tt_module="multi" tt_priority="Low" tt_user="RobertoHenschel" tt_status="OnHold">
 <pre>&lt;&lt;TTReportView DisplayFields:&quot;Title,Priority,Status,Scope,Module,User&quot; OrderBy:&quot;Priority,asc&quot; Status:&quot;InProgress&quot;&gt;&gt;</pre>
 </div>
-<div title="IntegrateBuildFile" modifier="YourName" created="200811211432" modified="200811211534" tags="task" tt_module="build" tt_status="OnHold" tt_user="MaikJorra" tt_priority="High" tt_scope="Build" changecount="18">
-<pre>Integrate build file from roberto</pre>
+<div title="IntegrateBuildFile" modifier="MaikJorra" created="200811211432" modified="200811251259" tags="task" tt_module="build" tt_status="InProgress" tt_user="MaikJorra" tt_priority="High" tt_scope="Build" changecount="20">
+<pre>Integrate build file from roberto
+
+Open Issues:
+gndms-shared-model directory in $C3GRID_SOURCE when execution 'ant compile'
+extra/lib/DSpace.jar and serices/GORFX/GORFX.jar are missing
+</pre>
 </div>
 <div title="Listings" modifier="PhilHawksworth" created="200805081121">
 <pre>&lt;&lt;tabs txtMainTab &quot;Timeline&quot; &quot;Timeline&quot; TabTimeline &quot;A - Z&quot; &quot;All tiddlers in alphabetical order&quot; TabAll &quot;Tags&quot; &quot;All tags&quot; TabTags &quot;Missing&quot; &quot;Missing tiddlers&quot; TabMoreMissing &quot;Shadowed&quot; &quot;Shadowed tiddlers&quot; TabMoreShadowed&gt;&gt;</pre>
+</div>
+<div title="MaikJorra" modifier="MaikJorra" created="200811251308" changecount="11" tt_scope="DMS" tt_module="GORFX" tt_priority="Medium" tt_user="MaikJorra" tt_status="Pending">
+<pre>&lt;&lt;TTReportView DisplayFields:&quot;Title,Priority,Status,Scope,Module,User&quot; OrderBy:&quot;Status,asc&quot; User:&quot;MaikJorra&quot;&gt;&gt;</pre>
 </div>
 <div title="Mail explaining MDS" modifier="YourName" created="200811211531" modified="200811211540" tags="task" changecount="24" tt_scope="Provider" tt_module="etc" tt_priority="Medium" tt_user="StefanPlantikow" tt_status="Pending">
 <pre>The tiddler 'New Task' doesn't yet exist. Double-click to create it</pre>
@@ -635,9 +649,9 @@ and then may wish to make further customisations by editing the [[TaskDefinition
 [[Getting Started with TeamTasks]]
 [[Release Notes]]
 [[Migrating to the latest version]]
-&lt;&lt;slider chkSliderOptionsPanel UserDefinitions 'Users &#187;' 'A list of users'&gt;&gt;
-&lt;&lt;slider chkSliderOptionsPanel TaskViews 'Task views &#187;' 'A selection of task views'&gt;&gt;
-&lt;&lt;slider chkSliderOptionsPanel Customise 'Customise &#187;' 'Edit and fiddle and poke to create a system that works best for you'&gt;&gt;
+&lt;&lt;slider chkSliderOptionsPanel UserDefinitions 'Users »' 'A list of users'&gt;&gt;
+&lt;&lt;slider chkSliderOptionsPanel TaskViews 'Task views »' 'A selection of task views'&gt;&gt;
+&lt;&lt;slider chkSliderOptionsPanel Customise 'Customise »' 'Edit and fiddle and poke to create a system that works best for you'&gt;&gt;
 [[about|About TeamTasks]]
 [[download|index.html]]
 {{meta{
@@ -819,7 +833,7 @@ if(!version.extensions.newUserWizard)
 <div title="OnHoldReportView" modifier="YourName" created="200811211557" changecount="18" tt_scope="Etc" tt_module="multi" tt_priority="Low" tt_user="RobertoHenschel" tt_status="OnHold">
 <pre>&lt;&lt;TTReportView DisplayFields:&quot;Title,Priority,Status,Scope,Module,User&quot; OrderBy:&quot;Priority,asc&quot; Status:&quot;OnHold&quot;&gt;&gt;</pre>
 </div>
-<div title="PendingReportView" modifier="YourName" created="200811211557" changecount="18" tt_scope="Etc" tt_module="multi" tt_priority="Low" tt_user="RobertoHenschel" tt_status="OnHold">
+<div title="PendingReportView" modifier="MaikJorra" created="200811211557" modified="200811251245" changecount="19" tt_scope="Etc" tt_module="multi" tt_priority="Low" tt_user="RobertoHenschel" tt_status="OnHold">
 <pre>&lt;&lt;TTReportView DisplayFields:&quot;Title,Priority,Status,Scope,Module,User&quot; OrderBy:&quot;Priority,asc&quot; Status:&quot;Pending&quot;&gt;&gt;</pre>
 </div>
 <div title="PhilHawksworth" modifier="PhilHawksworth" created="200710290942" modified="200711091615" changecount="4">
@@ -933,6 +947,9 @@ ViewTemplate
 ControlsContainer
 [[Listings]]</pre>
 </div>
+<div title="RobertoHenschel" modifier="MaikJorra" created="200811251309" changecount="11" tt_scope="DMS" tt_module="GORFX" tt_priority="Medium" tt_user="MaikJorra" tt_status="Pending">
+<pre>&lt;&lt;TTReportView DisplayFields:&quot;Title,Priority,Status,Scope,Module,User&quot; OrderBy:&quot;Status,asc&quot; User:&quot;RobertoHenschel&quot;&gt;&gt;</pre>
+</div>
 <div title="ScopeDefinitions" modifier="YourName" created="200709041507" modified="200811211449" tags="TaskDefinitions" changecount="4">
 <pre>DSpace
 DMS
@@ -954,14 +971,17 @@ Etc</pre>
 <div title="SiteTitle" modifier="PhilHawksworth" created="200708161546" modified="200709241632">
 <pre>//''team''tasks//</pre>
 </div>
-<div title="StatusDefinitions" modifier="PhilHawksworth" created="200708161721" modified="200710221413" tags="TaskDefinitions">
+<div title="StatusDefinitions" modifier="MaikJorra" created="200708161721" modified="200811251226" tags="TaskDefinitions" changecount="1">
 <pre>Pending
 InProgress
 OnHold
-Complete</pre>
+Complete
+Untested
+</pre>
 </div>
-<div title="StefanPlantikow" modifier="YourName" created="200811211308" changecount="1">
-<pre>That's me!</pre>
+<div title="StefanPlantikow" modifier="MaikJorra" created="200811211308" modified="200811251308" changecount="2">
+<pre>That's me!
+&lt;&lt;TTReportView DisplayFields:&quot;Title,Priority,Status,Scope,Module,User&quot; OrderBy:&quot;Status,asc&quot; User:&quot;StefanPlantikow&quot;&gt;&gt;</pre>
 </div>
 <div title="SupportingSecondOffsetsInProviderStagingProperties" modifier="YourName" created="200811241137" modified="200811241138" tags="task" changecount="7" tt_user="StefanPlantikow" tt_scope="Provider" tt_module="multi" tt_priority="Medium" tt_status="InProgress">
 <pre>The tiddler 'New Task' doesn't yet exist. Double-click to create it</pre>
@@ -1257,9 +1277,9 @@ version.extensions.TTReportViewPlugin = {installed:true};
 |Bloggs, Fred |$12000.00 |1353 |01.20 |6.156Mb |08/17/2003 05:43 |
 |Turvey, Kevin |$191200.00 |2342 |-33 |1b |02/05/1979 |
 |Mbogo, Arnold |$32010.12 |2755 |-21.673 |1.2Gb |09/08/1998 |
-|Shakespeare, Bill |&#65533;122000.00|3211 |6 |33.22Gb |12/11/1961 |
-|Shakespeare, Hamlet |&#65533;9000 |9005 |-8 |3Gb |01/01/2002 |
-|Fitz, Marvin |&#65533;3300.30 |5554 |+5 |4Kb |05/22/1995 |
+|Shakespeare, Bill |�122000.00|3211 |6 |33.22Gb |12/11/1961 |
+|Shakespeare, Hamlet |�9000 |9005 |-8 |3Gb |01/01/2002 |
+|Fitz, Marvin |�3300.30 |5554 |+5 |4Kb |05/22/1995 |
 
 ***/
 // /%
@@ -1294,7 +1314,7 @@ config.tableSorting = {
 		c.fn = c.sortAlpha; 
 		if(!isNaN(Date.parse(itm)))
 			c.fn = c.sortDate; 
-		else if(itm.match(/^[$|&#65533;|&#65533;|\+|\-]{0,1}\d*\.{0,1}\d+$/)) 
+		else if(itm.match(/^[$|�|�|\+|\-]{0,1}\d*\.{0,1}\d+$/)) 
 			c.fn = c.sortNumber; 
 		else if(itm.match(/^\d*\.{0,1}\d+[K|M|G]{0,1}b$/)) 
 			c.fn = c.sortFile; 
@@ -1494,10 +1514,11 @@ StatusDefinitions</pre>
 |assigned to |&lt;&lt;ValueSwitcher type:&quot;dropdown&quot; valuesSource:&quot;UserDefinitions&quot;&gt;&gt; |
 |status |&lt;&lt;ValueSwitcher type:&quot;dropdown&quot; valuesSource:&quot;StatusDefinitions&quot;&gt;&gt; |</pre>
 </div>
-<div title="TaskViews" modifier="YourName" created="200709241546" modified="200811211554" changecount="1">
+<div title="TaskViews" modifier="MaikJorra" created="200709241546" modified="200811251311" changecount="5">
 <pre>DefaultReportView
 PendingReportView
 InProgressReportView
+UntestedReportView
 OnHoldReportView
 CompletedReportView
 [[(create your own task view)|CreatingTaskReportViews]]</pre>
@@ -1762,6 +1783,15 @@ table.sortable thead tr td { background-color: [[TeamTasksColors::LightestShade]
 
 /*}}}*/</pre>
 </div>
+<div title="TestInterSliceTransfer" modifier="MaikJorra" created="200811251252" modified="200811251253" tags="task" changecount="15" tt_module="GORFX" tt_scope="DMS" tt_priority="High" tt_user="MaikJorra" tt_status="InProgress">
+<pre>The tiddler 'New Task' doesn't yet exist. Double-click to create it</pre>
+</div>
+<div title="TestRePublishSlice" modifier="MaikJorra" created="200811251253" modified="200811251254" tags="task" changecount="17" tt_module="GORFX" tt_scope="DMS" tt_priority="Low" tt_user="UnAssigned" tt_status="InProgress">
+<pre>The tiddler 'New Task' doesn't yet exist. Double-click to create it</pre>
+</div>
+<div title="TestSliceStaging" modifier="MaikJorra" created="200811251254" modified="200811251254" tags="task" changecount="7" tt_scope="DMS" tt_module="GORFX" tt_priority="High" tt_user="UnAssigned" tt_status="Pending">
+<pre>The tiddler 'New Task' doesn't yet exist. Double-click to create it</pre>
+</div>
 <div title="TiddlyWiki" modifier="PhilWhitehouse" created="200708171616" server.type="file" server.page.revision="200708171616" server.host="file:///Users/PhilH/Sites/tiddlywikis/osworld/osworld.html">
 <pre>TiddlyWiki is a website on a stick! In one single HTML file, TiddlyWiki gives you the ability to publish and organize information in a whole manner of different ways. If you can't do what you want to, you can write plugins to change the way TiddlyWiki works. A thriving community of developers have generated huge number of plugins that turn TiddlyWiki into a number of different things, from a CD organizer to an online collaboration tool.
 
@@ -1778,6 +1808,19 @@ TiddlyWiki is a piece of open source software created by Jeremy Ruston. The copy
 </div>
 <div title="TxFrame everywhere" modifier="YourName" created="200811211548" modified="200811211551" tags="task" tt_status="Pending" tt_user="RobertoHenschel" tt_priority="Low" tt_module="multi" tt_scope="Etc" changecount="18">
 <pre>The tiddler 'New Task' doesn't yet exist. Double-click to create it</pre>
+</div>
+<div title="UnAssigned" modifier="MaikJorra" created="200811251310" changecount="11" tt_scope="DMS" tt_module="GORFX" tt_priority="Medium" tt_user="MaikJorra" tt_status="Pending">
+<pre>&lt;&lt;TTReportView DisplayFields:&quot;Title,Priority,Status,Scope,Module,User&quot; OrderBy:&quot;Status,asc&quot; User:&quot;UnAssigned&quot;&gt;&gt;</pre>
+</div>
+<div title="UntestedReportView" modifier="MaikJorra" created="200811251229" modified="200811251234" changecount="2">
+<pre>&lt;&lt;TTReportView DisplayFields:&quot;Title,Priority,Status,Scope,Module,User&quot; OrderBy:&quot;Priority,asc&quot; Status:&quot;Untested&quot;&gt;&gt;</pre>
+</div>
+<div title="UpdateBuilder" modifier="MaikJorra" created="200811251306" modified="200811251307" tags="task" changecount="9" tt_scope="DMS" tt_module="model" tt_priority="High" tt_user="MaikJorra" tt_status="Pending">
+<pre>Update builder to reflect xsd changes:
+   MinOccurs for DataFormat and DataFile
+   OidPrefix
+   Contract size and infos
+   ConstraintList min=0</pre>
 </div>
 <div title="UserDefinitions" modifier="YourName" created="200708161718" modified="200811211600" tags="TaskDefinitions TeamTasks" changecount="4">
 <pre>StefanPlantikow
@@ -1919,6 +1962,9 @@ if(!version.extensions.ValueSwitcher)
 </div>
 <div title="YourName" modifier="YourName" created="200811211456" changecount="21" tt_scope="Provider" tt_module="etc" tt_priority="Medium" tt_user="MaikJorra" tt_status="InProgress">
 <pre>The amorphous GNDMS development collective</pre>
+</div>
+<div title="add uuidgen interface to task-action-factory" modifier="MaikJorra" created="200811261331" tags="task" changecount="11" tt_scope="DMS" tt_module="GORFX" tt_priority="Medium" tt_user="MaikJorra" tt_status="Pending">
+<pre>The tiddler 'New Task' doesn't yet exist. Double-click to create it</pre>
 </div>
 <div title="settings" modifier="PhilHawksworth" created="200803251627" tags="systemConfig excludeLists excludeSearch">
 <pre>//{{{

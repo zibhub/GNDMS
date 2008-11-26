@@ -4,7 +4,7 @@ moni call -v .dspace.SetupSliceKind "sliceKind:'http://www.c3grid.de/G2/SliceKin
 
 moni call -v .dspace.SetupSubspace  "subspace:'{http://www.c3grid.de/G2/Subspace}ProviderStaging'; \
 	path:'$STAGING_AREA_PATH'; \
-	gsiFtpPath: '$STAGING_AREA_GSI_FTP_URL'; 
+	gsiFtpPath:'$STAGING_AREA_GSI_FTP_URL'; \
 	visible:true; \
 	size:'$STAGING_AREA_SIZE'; \
 	mode:'$MODE'"
