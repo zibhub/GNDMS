@@ -64,6 +64,10 @@ configuration (bash) can be found in etc/example.profile):
 - Set $GROOVY_HOME and have it in your environment
 - For convenience, you might also want to 
   add $GROOVY_HOME/bin to your PATH
+- Add a link 
+     ln -sf $GROOVY_HOME/embeddable/groovy-all*.jar $C3GRID_SOURCE/extra/tools-lib/gndms-groovy.jar 
+                               
+                               
 
 - Install openssl if not available
 - Install curl if not available

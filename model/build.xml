@@ -1,0 +1,86 @@
+<project name="model compilation file" default="model.compile" basedir="." >
+	
+	
+	<path id="model.path">
+		<pathelement location="${tools-lib.dir}/gndms-groovy.jar"/> 
+		<pathelement location="${tools-lib.dir}/geronimo-jpa_3.0_spec-1.0.jar"/>
+		<pathelement location="${tools-lib.dir}/jsr173_1.0_api.jar"/>
+		<pathelement location="${tools-lib.dir}/annotations.jar"/> 
+		<dirset dir="${model.dest}/production/" />
+		<pathelement location="${tools-lib.dir}/openjpa-1.1.0.jar"/> 
+		<pathelement location="${tools-lib.dir}/google-collect-snapshot-20080820.jar"/> 
+		<pathelement location="${tools-lib.dir}/joda-time-1.5.2.jar"/> 
+		<pathelement location="${tools-lib.dir}/testng-5.8-jdk15.jar"/> 
+		<pathelement location="${tools-lib.dir}/jaxb-api.jar"/>
+		<pathelement location="${tools-lib.dir}/jaxb1-impl.jar"/>  
+		<pathelement location="${tools-lib.dir}/jaxb-impl.jar"/> 
+		<pathelement location="${tools-lib.dir}/jaxb-xjc.jar"/>
+		
+		<!--fileset dir="${tools-lib.dir}" includes="*.jar" /-->
+		
+	</path>
+	
+	<!-- Compile model, but not its test-files -->
+	<target name="model.compile" description="Compiles model">
+		<mkdir dir="${model.dest}/production"/>
+		<groovyc srcdir="${model.dir}/src" destdir='${model.dest}/production' classpathref="model.path" >
+			<javac/>
+		</groovyc>	
+		<!-- Copy Meta files to build dir-->
+		<copy todir="${model.dest}/production/" >
+			<fileset dir="${model.dir}/src/">
+				<exclude name="de/**"/>
+			</fileset>
+		</copy>
+	</target>
+	
+	<path id="model.test.path">
+		<fileset dir="${tools-lib.dir}" includes="*.jar" />
+		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
+	</path>
+	
+	<!-- Compile model's test-files -->
+	<target name="model.compile.test" description="Compiles model test-files">
+		<mkdir dir="${model.dest}/test"/>
+		<javac srcdir='${model.dir}/test-src' destdir='${model.dest}/test' classpathref="model.test.path">
+			
+		</javac>
+		<!-- Copy Meta files to build dir-->
+		<copy todir="${model.dest}/test/" >
+			<fileset dir="${model.dir}/test-src/">
+				<exclude name="de/**"/>
+			</fileset>
+		</copy>	
+	</target>
+
+	<!-- Creates jar-file containing model's test-classes-->
+	<target name="model.test.jar" depends="model.compile.test" description="Creates jar file gndms-shared-model-test.jar in 'extra/lib'">	
+		<jar destfile="${lib.dir}/gndms-shared-model-test.jar"
+		     basedir="${model.dest}/test">
+		</jar>
+	</target>
+	
+	<!-- Creates jar-file containing model's classes -->
+	<target name="model.jar" depends="model.compile" description="Creates jar file gndms-shared-model.jar in 'extra/lib'">	
+		<jar destfile="${lib.dir}/gndms-shared-model.jar"
+		     basedir="${model.dest}/production">
+		</jar>
+	</target>
+	<!-- Deletes classfiles-->
+	<target name="model.clean" description="Deletes model's classfiles">
+		<delete includeemptydirs="true" >
+			<fileset dir='${model.dest}/production/' includes="**/*.class"/>
+			<fileset dir='${model.dest}/test/' includes="**/*.class"/>
+		</delete>
+	</target>
+	
+	<!-- Deletes  jar-files -->
+	<target name="model.clean.jar" description="Deletes model's jar-files">
+		<delete file='${lib.dir}/gndms-shared-model.jar'/>
+		<delete file='${lib.dir}/gndms-shared-model-test.jar'/>
+	</target>
+	
+	<target name="model.enhancer">
+		<ant antfile="build-openjpa.xml" dir="model" target="enhance" />	
+	</target>
+</project>

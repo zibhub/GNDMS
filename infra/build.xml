@@ -1,0 +1,114 @@
+<project name="infra compilation file" default="infra.compile" basedir=".">
+	<path id="infra.path">
+		
+		
+		<pathelement location="${tools-lib.dir}/gndms-groovy.jar"/> 
+		<pathelement location="${tools-lib.dir}/geronimo-jpa_3.0_spec-1.0.jar"/>
+		<pathelement location="${tools-lib.dir}/jsr173_1.0_api.jar"/>
+		<pathelement location="${tools-lib.dir}/annotations.jar"/>
+		<pathelement location="${lib.dir}/gndms-logic.jar"/>
+		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
+		<pathelement location="${tools-lib.dir}/commons-collections-3.2.jar "/>
+		<pathelement location="${tools-lib.dir}/commons-lang-2.1.jar "/>
+		<pathelement location="${tools-lib.dir}/commons-pool-1.3.jar"/>
+		<pathelement location="${tools-lib.dir}/derbyclient.jar"/>
+		<pathelement location="${tools-lib.dir}/derby.jar"/>
+		<pathelement location="${tools-lib.dir}/derbyLocale_de_DE.jar"/>
+		<pathelement location="${tools-lib.dir}/derbynet.jar"/>
+		<pathelement location="${tools-lib.dir}/derbyrun.jar"/>
+		<pathelement location="${tools-lib.dir}/derbytools.jar"/>
+		<pathelement location="${tools-lib.dir}/cos-05Nov2002.jar"/>
+		<pathelement location="${tools-lib.dir}/servlet-api-2.5-6.1.11.jar"/>
+		<pathelement location="${tools-lib.dir}/jetty-6.1.11.jar"/>
+		<pathelement location="${tools-lib.dir}/jetty-util-6.1.11.jar"/>
+		<fileset refid="globus.lib"/>
+		<pathelement location="${tools-lib.dir}/testng-5.8-jdk15.jar"/>
+		<pathelement location="${tools-lib.dir}/joda-time-1.5.2.jar"/> 
+		<pathelement location="${lib.dir}/gndms-kit.jar"/>
+		<pathelement location="${tools-lib.dir}/jaxb-api.jar"/>
+		<pathelement location="${tools-lib.dir}/jaxb1-impl.jar"/>  
+		<pathelement location="${tools-lib.dir}/jaxb-impl.jar"/> 
+		<pathelement location="${tools-lib.dir}/jaxb-xjc.jar"/>
+		<pathelement location="${tools-lib.dir}/google-collect-snapshot-20080820.jar"/> 
+		<dirset dir="${infra.dest}/production/" />
+	</path>
+	
+	<!-- Compile infra, but not its test-files -->	
+	<target name="infra.compile">
+		<if>
+			<not>
+				<and>
+					<available file="${lib.dir}/gndms-shared-model.jar"/>
+					<available file="${lib.dir}/gndms-logic.jar"/>
+					<available file="${lib.dir}/gndms-kit.jar"/>
+				</and>
+			</not>
+			<then>
+				<fail message="Not able to compile as '${lib.dir}/gndms-shared-model.jar' or '${lib.dir}/gndms-logic.jar' or '${lib.dir}/gndms-kit.jar' was not found."/>
+			</then>
+			
+			<else>
+		<mkdir dir="./${infra.dest}/production"/>
+		<javac srcdir='${infra.dir}/src' destdir='${infra.dest}/production' classpathref="infra.path" />
+		<groovyc srcdir='${infra.dir}/src' destdir='${infra.dest}/production' classpathref="infra.path" />
+		
+		<!-- Copy meta-stuff -->
+		<copy todir="${infra.dest}/production">
+			<fileset dir='${infra.dir}/src'>
+				<exclude name="de/**"/>
+			</fileset>
+		</copy>
+	</else>
+	
+		</if>
+	</target>
+	
+	
+	<path id="infra.test.path">
+		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
+		<pathelement location="${lib.dir}/gndms-kit.jar"/>
+		<pathelement location="${lib.dir}/gndms-logic.jar"/>
+		<pathelement location="${lib.dir}/gndms-infra.jar"/>
+		<fileset dir="${tools-lib.dir}" includes="*.jar" />
+		<fileset refid="globus.lib"/>
+		<dirset dir="${model.dest}/test/" />
+		<dirset dir="${kit.dest}/test/" />
+	</path>
+	
+	<!-- Compile infra and its test-files -->
+	<target name="infra.compile.test"  description="Compiles infra's test-files">
+		<mkdir dir="./${infra.dest}/test"/>
+		<javac srcdir='${infra.dir}/test-src' destdir='${infra.dest}/test' classpathref="infra.test.path" />
+		
+		<!-- Copy meta-stuff -->
+		<copy todir="${infra.dest}/test">
+			<fileset dir='${infra.dir}/test-src'>
+				<exclude name="de/**"/>
+			</fileset>
+		</copy>
+	</target>
+	
+	<!-- Creates jar-file containing infra's test-classes -->	
+	<target name="infra.test.jar" depends="infra.compile.test">
+		<jar destfile="./${lib.dir}/gndms-infra-test.jar" basedir="${infra.dest}/test"/>		
+	</target>
+		
+	
+	<!-- Creates jar-file containing infra's classes -->	
+	<target name="infra.jar" depends="infra.compile">
+		<jar destfile="./${lib.dir}/gndms-infra.jar" basedir="${infra.dest}/production"/>		
+	</target>
+	
+	<!-- Deletes binaries-->
+	<target name="infra.clean" description="Deletes infra's binaries">
+		<delete includeemptydirs="true" >
+			<fileset dir='${infra.dest}/production' includes="**/*.class"/>
+			<fileset dir='${infra.dest}/test' includes="**/*.class"/>
+		</delete>
+	</target>
+	
+	<!-- Deletes jar-file-->
+	<target name="infra.clean.jar" description="Deletes infra's jar-file">
+		<delete file='${lib.dir}/gndms-infra.jar'/>		
+	</target>
+</project>
