@@ -1,9 +1,9 @@
 package de.zib.gndms.logic.model.gorfx.c3grid;
 
-import de.zib.gndms.kit.util.DirectoryAux;
-import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.config.ConfigProvider;
+import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.config.MapConfig;
+import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
@@ -11,7 +11,6 @@ import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
 import de.zib.gndms.model.util.TxFrame;
@@ -131,20 +130,55 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 	@Override
 	protected void onFailed(final @NotNull AbstractTask model) {
 		try {
-			// wrappend in try-finally to ensure we go to failed even if slice
-			// deletion goes wrong
-			final EntityManager em = getEntityManager();
-			final TxFrame txf = new TxFrame(em);
-			try {
-				final Slice slice = findNewSlice(model);
-				slice.getOwner().destroySlice(slice);
-				em.remove(slice);
-				txf.commit();
-			}
-			catch (RuntimeException e) { getLog().warn(e); throw e; }
-			finally { txf.finish();  }
+			cancelStaging(model);
 		}
-		finally { super.onFailed(model); }
+		catch(RuntimeException e) { getLog().warn(e); }
+		finally {
+			try {
+				// wrappend in try-finally to ensure we go to failed even if slice
+				// deletion goes wrong
+				killSlice(model);
+			}
+			finally { super.onFailed(model); }
+		}
+	}
+
+
+	private void cancelStaging(final AbstractTask model) {
+		final Slice slice;
+		final File sliceDir;
+		final EntityManager em = getEntityManager();
+		final TxFrame txf = new TxFrame(em);
+		try {
+			slice = findNewSlice(model);
+			sliceDir = new File(slice.getOwner().getPathForSlice(slice));
+			txf.commit();
+		}
+		finally { txf.finish(); }
+		// potentially unsafe but do not want to keep the transaction open
+		// we just dont change the slice dir after creation
+		callCancel(getOfferTypeConfig(), getOrq(), sliceDir);
+	}
+
+
+	private void killSlice(final AbstractTask model) {
+		final EntityManager em = getEntityManager();
+		final TxFrame txf = new TxFrame(em);
+		try {
+			final Slice slice = findNewSlice(model);
+			slice.getOwner().destroySlice(slice);
+			em.remove(slice);
+			txf.commit();
+		}
+		catch (RuntimeException e) { getLog().warn(e); throw e; }
+		finally { txf.finish();  }
+	}
+
+
+	@SuppressWarnings({ "NoopMethodInAbstractClass" })
+	protected void callCancel(final MapConfig offerTypeConfigParam, final ProviderStageInORQ orqParam,
+            final File sliceParam) {
+		/* potentially implement in subclass */
 	}
 
 

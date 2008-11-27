@@ -6,6 +6,10 @@ SCRIPTDIR="$(dirname $0)/" ; source "$SCRIPTDIR"internal/script-setup.sh
 
 STAGING_COMMAND="%{C3GRID_SOURCE}/scripts/dummy-staging.sh"
 ESTIMATION_COMMAND="%{C3GRID_SOURCE}/scripts/dummy-estimation.sh"
+# If set, $CANCEL_COMMAND is called whenever a staging script fails
+# or is aborted prematurely (i.e. due to a timeout of the associated Task Resouce
+# or a user abort)
+CANCEL_COMMAND=""
 
 STAGING_AREA_PATH="/tmp"
 STAGING_AREA_SIZE="1000000" # Currently unused
