@@ -47,7 +47,7 @@ public enum SfrProperty {
     
     // common data for muliple requests
     CONTEXT( "c3grid.CommonRequest.Context" ),
-    GORFX_ID( "c3grid.CommonRequest.GORFXId" )
+    GORFX_ID( "c3grid.CommonRequest.GORFXId" ),
 	
 	EST_MAX_SIZE("c3grid.StageFileRequest.Estimate.MaxSize","10000"),
 	EST_IF_DECISION_BEFORE("c3grid.StageFileRequest.Estimate.IfDecisionBefore"),
