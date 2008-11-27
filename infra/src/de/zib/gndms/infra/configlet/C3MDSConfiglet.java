@@ -29,12 +29,14 @@ import java.util.Set;
 @SuppressWarnings({ "ClassNamingConvention", "ReturnOfCollectionOrArrayField" })
 public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 	private String mdsUrl;
+	private String requiredPrefix;
+
 	private volatile C3Catalog catalog;
 
 	@Override
 	protected synchronized void threadInit() {
 		super.threadInit();
-		configMdsUrl();
+		configProperties();
 	}
 
 
@@ -42,13 +44,14 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 	@Override
 	public synchronized void update(@NotNull final Serializable data) {
 		super.update(data);    // Overridden method
-		configMdsUrl();
+		configProperties();
 	}
 
 
-	private void configMdsUrl() {
+	private synchronized void configProperties() {
 		try {
 			mdsUrl = getMapConfig().getOption("mdsUrl");
+			requiredPrefix = getMapConfig().getOption("requiredPrefix", "");
 		}
 		catch ( MandatoryOptionMissingException e) {
 			getLog().warn(e);
@@ -60,8 +63,9 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 		try {
 			getLog().info("Refreshing C3MDSCatalog...");
 			final C3ResourceReader reader = new C3ResourceReader();
-			Iterator<Site> sites = reader.readXmlSites(new java.net.URL(getMdsUrl()).openStream());
-			C3Catalog newCatalog = new C3Catalog(sites);
+			final String curRequiredPrefix = getRequiredPrefix();
+			Iterator<Site> sites = reader.readXmlSites(curRequiredPrefix, new java.net.URL(getMdsUrl()).openStream());
+			C3Catalog newCatalog = new C3Catalog(curRequiredPrefix, sites);
 			setCatalog(newCatalog);
 			getLog().debug("Finished Refreshing C3MDSCatalog.");
 		}
@@ -103,6 +107,11 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 	}
 
 
+	public synchronized String getRequiredPrefix() {
+		return requiredPrefix;
+	}
+
+
 	public static class C3Catalog {
 		/* forward maps */
 		private Map<String, Site> siteById = Maps.newConcurrentHashMap();
@@ -112,18 +121,23 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 		private Map<Workspace.Archive, Workspace> workspaceByArchive = Maps.newIdentityHashMap();
 		private Map<Workspace, Site> siteByWorkspace = Maps.newIdentityHashMap();
 
+		private final String requiredPrefix;
 
 		@SuppressWarnings({ "FeatureEnvy" })
-		public C3Catalog(Iterator<Site> sites) {
+		public C3Catalog(String requiredPrefixParam, Iterator<Site> sites) {
+			requiredPrefix = requiredPrefixParam;
 			fillMaps(sites);
 			protectMaps();
 		}
 
 
+		@SuppressWarnings({ "FeatureEnvy" })
 		private void fillMaps(final Iterator<Site> sites) {
 			final Set<String> allOidPrefixes = Sets.newTreeSet();
 			while (sites.hasNext()) {
 				final Site site = sites.next();
+				// remove prefix
+				site.setId(site.getId().substring(requiredPrefix.length()));
 				siteById.put(site.getId(), site);
 				for (Workspace ws : site.getWorkspace()) {
 					siteByWorkspace.put(ws, site);
@@ -131,16 +145,19 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 					for (Workspace.Archive archive : ws.getArchive()) {
 						workspaceByArchive.put(archive, ws);
 
-						for (final String oidPrefix : archive.getOidPrefix()) {
-							allOidPrefixes.add(oidPrefix);
-							final Set<Workspace.Archive> set;
-							if (archivesByOid.containsKey(oidPrefix))
-								set  = archivesByOid.get(oidPrefix);
-							else {
-								set = Sets.newConcurrentHashSet();
-								archivesByOid.put(oidPrefix, set);
+						for (final String curOidPrefix : archive.getOidPrefix()) {
+							if (curOidPrefix.startsWith(requiredPrefix)) {
+								final String oidPrefix = curOidPrefix.substring(requiredPrefix.length());
+								allOidPrefixes.add(oidPrefix);
+								final Set<Workspace.Archive> set;
+								if (archivesByOid.containsKey(oidPrefix))
+									set  = archivesByOid.get(oidPrefix);
+								else {
+									set = Sets.newConcurrentHashSet();
+									archivesByOid.put(oidPrefix, set);
+								}
+								set.add(archive);
 							}
-							set.add(archive);
 						}
 					}
 				}

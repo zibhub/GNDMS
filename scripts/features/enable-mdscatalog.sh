@@ -5,5 +5,6 @@ moni call -v .sys.SetupDefaultConfiglet "\
   className: 'de.zib.gndms.infra.configlet.C3MDSConfiglet'; \
   delay: '30000'; \
   initialDelay: '2000'; \
-  mdsUrl: '$MDS_URL'"
+  mdsUrl: '$MDS_URLD'; \
+  requiredPrefix: '$MDS_PREFIX'"
 }
