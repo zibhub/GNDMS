@@ -6,6 +6,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import de.zib.gndms.c3resource.jaxb.C3GridResource;
 import de.zib.gndms.c3resource.jaxb.Site;
+import org.jetbrains.annotations.NotNull;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -88,18 +89,30 @@ public class C3ResourceReader {
 		return new C3ResourceIterator(resourceReader);
 	}
 
-	public Iterator<Site> readXmlSites(final InputStream in) {
+	public Iterator<Site> readXmlSites(final @NotNull String requiredPrefixParam,
+	                                   final @NotNull InputStream in) {
 		return Iterators.concat(
-			Iterators.transform(
-				  Iterators.filter(readResources(in), new Predicate<C3GridResource>() {
-					public boolean apply(@Nullable final C3GridResource resourceParam) {
-						return resourceParam != null && resourceParam.getSite() != null;
-					}
-					}), new Function<C3GridResource, Iterator<Site>>() {
-						public Iterator<Site> apply(@Nullable final C3GridResource resourceParam) {
-						   return resourceParam.getSite().iterator();
-					}
+			Iterators.transform(validResources(in), new Function<C3GridResource, Iterator<Site>>() {
+				public Iterator<Site> apply(@Nullable final C3GridResource resourceParam) {
+				   return Iterators.filter(resourceParam.getSite().iterator(),
+					   new Predicate<Site>() {
+						   public boolean apply(@Nullable final Site siteParam) {
+							   final String id = siteParam.getId();
+							   return id != null && id.startsWith(requiredPrefixParam);
+
+						   }
+					   });
+			}
 		}));
+	}
+
+
+	private Iterator<C3GridResource> validResources(final InputStream in) {
+		return Iterators.filter(readResources(in), new Predicate<C3GridResource>() {
+			public boolean apply(@Nullable final C3GridResource resourceParam) {
+				return resourceParam != null && resourceParam.getSite() != null;
+			}
+		});
 	}
 
 	/*

@@ -2,7 +2,7 @@ package de.zib.gndms.logic.model;
 
 import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.logic.action.LogAction;
-import de.zib.gndms.model.gorfx.Task;
+import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import org.apache.commons.logging.Log;
 import org.jetbrains.annotations.NotNull;
@@ -22,11 +22,12 @@ import java.io.Serializable;
  *          User: stepn Date: 15.09.2008 Time: 11:26:48
  */
 @SuppressWarnings({ "AbstractMethodCallInConstructor" })
-public abstract class TaskAction extends AbstractModelAction<Task, Task> implements LogAction
+public abstract class TaskAction extends AbstractModelAction<AbstractTask, AbstractTask> implements LogAction
 {
     private TaskExecutionService service;
     private Log log;
     private String wid;
+    private Class<? extends AbstractTask> taskClass;
 
     private static final class ShutdownTaskActionException extends RuntimeException {
         private static final long serialVersionUID = 2772466358157719820L;
@@ -94,13 +95,13 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task> impleme
     }
 
     
-    public TaskAction(final @NotNull EntityManager em, final @NotNull Task model) {
+    public TaskAction(final @NotNull EntityManager em, final @NotNull AbstractTask model) {
         super();
         initFromModel(em, model);
     }
 
 
-    public void initFromModel(final EntityManager em, Task model) {
+    public void initFromModel(final EntityManager em, AbstractTask model) {
 
         boolean wasActive = em.getTransaction().isActive();
         if (!wasActive)
@@ -127,8 +128,9 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task> impleme
     }
 
 
-    public TaskAction(final @NotNull EntityManager em, final @NotNull String pk) {
+    public TaskAction(final @NotNull EntityManager em, final @NotNull String pk, Class<? extends AbstractTask> cls ) {
         super();
+        setTaskClass( cls );
         initFromPk(em, pk);
     }
 
@@ -137,7 +139,7 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task> impleme
         boolean wasActive = em.getTransaction().isActive();
         if (!wasActive) em.getTransaction().begin();
         try {
-            final Task model = em.find(getTaskClass(), pk);
+            final AbstractTask model = em.find(getTaskClass(), pk);
             if (model == null)
                 throw new IllegalArgumentException("Model not found for pk: " + pk);
             if (!wasActive) em.getTransaction().commit();
@@ -153,14 +155,22 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task> impleme
 
 
     @Override
-    public void setModel(final @NotNull Task mdl) {
+    public void setModel(final @NotNull AbstractTask mdl) {
         super.setModel(mdl);    // Overridden method
         wid = mdl.getWid();
+        taskClass = mdl.getClass();
     }
 
 
 
-    protected abstract @NotNull Class<Task> getTaskClass();
+    protected @NotNull Class<? extends AbstractTask> getTaskClass() {
+        return taskClass;
+    }
+
+
+    protected void setTaskClass( Class<? extends AbstractTask> cls ) {
+        taskClass = cls;
+    }
 
 
     public TaskExecutionService getService() {
@@ -187,9 +197,9 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task> impleme
 
 
     @Override
-    public Task call() throws RuntimeException {
+    public AbstractTask call() throws RuntimeException {
         try {
-            final Task task = getModel();
+            final AbstractTask task = getModel();
             if (task != null) 
                 WidAux.initWid(getModel().getWid());
             return super.call();    // Overridden method
@@ -202,7 +212,7 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task> impleme
 
     @SuppressWarnings({ "ThrowableInstanceNeverThrown", "ObjectAllocationInLoop" })
     @Override
-    public Task execute(final @NotNull EntityManager em) {
+    public AbstractTask execute(final @NotNull EntityManager em) {
         boolean first = true;
         TransitException curEx = null;
         do {
@@ -267,14 +277,14 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task> impleme
     @SuppressWarnings({ "HardcodedFileSeparator" })
     protected void trace(final @NotNull String userMsg, final Throwable cause) {
         final Log log1 = getLog();
-        final Task model = getModel();
+        final AbstractTask model = getModel();
         final String msg;
         if (model == null)
             msg = userMsg;
         else {
             final TaskState state = model.getState();
             final String descr = model.getDescription();
-            msg = "TA of Task " + model.getId()
+            msg = "TA of AbstractTask " + model.getId()
                     + (state == null ? "" : '/' + state.toString()) + ':'
                     + (userMsg.length() > 0 ? ' ' : "") + userMsg
                     + (descr == null ? "" : " descr: '" + descr + '\'');
@@ -298,12 +308,12 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task> impleme
 
 
     private void markAsDone() {
-        final @NotNull Task model = getModel();
+        final @NotNull AbstractTask model = getModel();
         if (! model.isDone()) {
             final EntityManager em = getEntityManager();
             try {
                 em.getTransaction().begin();
-                Task newModel = em.find(Task.class, getModel().getId());
+                AbstractTask newModel = em.find(AbstractTask.class, getModel().getId());
                 newModel.setDone(true);
                 em.getTransaction().commit();
                 setModel(newModel);
@@ -322,7 +332,7 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task> impleme
     private void transit(final TaskState newState) {
         final EntityManager em = getEntityManager();
         try {
-            @NotNull Task model = getModel();
+            @NotNull AbstractTask model = getModel();
             em.getTransaction().begin();
             if (newState != null) {
                 if (! em.contains(model)) {
@@ -337,7 +347,7 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task> impleme
                     }
                     catch (RuntimeException e2) {
                             rewindTransaction(em.getTransaction());
-                            final @NotNull Task newModel = em.find(Task.class, model.getId());
+                            final @NotNull AbstractTask newModel = em.find(AbstractTask.class, model.getId());
                             model.stampOn(em, newModel);
                             setModel(newModel);
                             model = getModel();
@@ -372,7 +382,7 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task> impleme
 
 
     @SuppressWarnings({ "ThrowableInstanceNeverThrown" })
-    private void transit(final @NotNull TaskState newState, final @NotNull Task model) {
+    private void transit(final @NotNull TaskState newState, final @NotNull AbstractTask model) {
         switch (model.getState().transit(newState)) {
             case CREATED: onCreated(model); break;
             case CREATED_UNKNOWN: onUnknown(model); break;
@@ -395,29 +405,29 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task> impleme
         }
     }
 
-    protected TaskState onUnknown(final Task model) {
+    protected TaskState onUnknown(final AbstractTask model) {
         throw new UnsupportedOperationException();
     }
 
 
-    protected void onCreated(final Task model) {
+    protected void onCreated(final AbstractTask model) {
         transitToState(TaskState.INITIALIZED);
 
     }
 
-    protected void onInitialized(final Task model) {
+    protected void onInitialized(final AbstractTask model) {
         transitToState(TaskState.IN_PROGRESS);
     }
 
-    protected abstract void onInProgress(final @NotNull Task model);
+    protected abstract void onInProgress(final @NotNull AbstractTask model);
 
 
-    protected void onFailed(final @NotNull Task model) {
+    protected void onFailed(final @NotNull AbstractTask model) {
         stop(model);
     }
 
 
-    protected void onFinished(final @NotNull Task model) {
+    protected void onFinished(final @NotNull AbstractTask model) {
         stop(model);
     }
 
@@ -441,7 +451,7 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task> impleme
 
 
     @SuppressWarnings({ "MethodMayBeStatic" })
-    protected void stop(final @NotNull Task model) {
+    protected void stop(final @NotNull AbstractTask model) {
         throw new StopException(model.getState());
     }
 
@@ -462,8 +472,13 @@ public abstract class TaskAction extends AbstractModelAction<Task, Task> impleme
     }
 
 
-    public static boolean isFinishedException( Exception e ) {
+    public static boolean isFinishedTransition( Exception e ) {
         return e instanceof FinishedException;
+    }
+
+
+    public static boolean isFailedTransition( Exception e ) {
+        return e instanceof FailedException;
     }
 
 

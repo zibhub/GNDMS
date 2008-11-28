@@ -98,4 +98,9 @@ public class InterSliceTransferORQXSDTypeWriter extends AbstractXSDTypeWriter<In
     public void done() {
         // not required here
     }
+
+
+    public void writeId( String id ) {
+        // Not required here
+    }
 }

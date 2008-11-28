@@ -40,7 +40,9 @@ public class DataDescriptorPropertyReader extends AbstractPropertyReader<DataDes
 
         getProduct( ).setDataFormat( getProperties().getProperty( SfrProperty.FILE_FORMAT.key ) );
         getProduct( ).setDataArchiveFormat( getProperties().getProperty( SfrProperty.FILE_ARCHIVE_FORMAT.key ) );
-        getProduct( ).setMetaDataFormat( getProperties().getProperty( SfrProperty.META_FILE_FORMAT.key ) );
+
+        getProduct( ).setMetaDataFormat( getMandatoryProperty( SfrProperty.META_FILE_FORMAT.key ) );
+
         getProduct( ).setMetaDataArchiveFormat( getProperties().getProperty( SfrProperty.META_FILE_ARCHIVE_FORMAT.key ) );
     }
 

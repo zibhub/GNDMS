@@ -13,4 +13,6 @@ public interface ORQWriter extends GORFXWriterBase {
     public void writeJustEstimate( boolean je );
 
     public void writeContext( HashMap<String,String> ctx );
+
+    public void writeId( String id );
 }

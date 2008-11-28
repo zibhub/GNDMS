@@ -51,12 +51,12 @@ public class SliceRefXSDTypeWriter extends AbstractXSDTypeWriter<SliceReference>
 
     public void begin() {
         //nothing to do
+        setProduct( new SliceReference( ) );
     }
 
 
     public void done() {
         //nothing to do
-        setProduct( new SliceReference( ) );
     }
 
 

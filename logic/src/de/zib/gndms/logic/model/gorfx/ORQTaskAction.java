@@ -3,6 +3,7 @@ package de.zib.gndms.logic.model.gorfx;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.model.gorfx.Task;
+import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.kit.factory.FactoryInstance;
 import de.zib.gndms.kit.factory.Factory;
@@ -31,19 +32,24 @@ public abstract class ORQTaskAction<K extends AbstractORQ> extends TaskAction
     }
 
 
-    public ORQTaskAction(final @NotNull EntityManager em, final @NotNull Task model) {
+    public ORQTaskAction(final @NotNull EntityManager em, final @NotNull AbstractTask model) {
         super(em, model);
     }
 
 
-    public ORQTaskAction(final @NotNull EntityManager em, final @NotNull String pk) {
-        super(em, pk);
+    public ORQTaskAction( final @NotNull EntityManager em, final @NotNull String pk, Class<? extends AbstractTask> cls ) {
+        super(em, pk, cls );
+    }
+
+    
+    public ORQTaskAction( final @NotNull EntityManager em, final @NotNull String pk ) {
+        super(em, pk, Task.class );
     }
 
 
     @SuppressWarnings({ "ThrowableInstanceNeverThrown" })
     @Override
-    protected void onCreated(final Task model) {
+    protected void onCreated(final AbstractTask model) {
         try {
             super.onCreated(model);    // Overridden method
         }
@@ -72,10 +78,9 @@ public abstract class ORQTaskAction<K extends AbstractORQ> extends TaskAction
 
 
     @Override
-    protected final @NotNull Class<Task> getTaskClass() {
-        return Task.class;
+    protected final @NotNull Class<AbstractTask> getTaskClass() {
+        return AbstractTask.class;
     }
-
 
 
     public void setOrq(final @NotNull K orq) {
@@ -85,8 +90,9 @@ public abstract class ORQTaskAction<K extends AbstractORQ> extends TaskAction
             throw new IllegalStateException("Illgeal attempt to overwrite Task ORQ");
     }
 
+    
     public @NotNull K getOrq() {
-        final Task model = getModel();
+        final AbstractTask model = getModel();
         if (model == null)
             throw new IllegalStateException("Model missing");
         return getOrqClass().cast(getModel().getOrq());
@@ -98,19 +104,17 @@ public abstract class ORQTaskAction<K extends AbstractORQ> extends TaskAction
     }
 
 
-
-
     public OfferType getKey() {
         return key;
     }
 
 
-    public void setFactory(final Factory<OfferType, ORQTaskAction<?>> factoryParam) {
+    public void setFactory(@NotNull final Factory<OfferType, ORQTaskAction<?>> factoryParam) {
         factory = factoryParam;
     }
 
 
-    public void setKey(final OfferType keyParam) {
+    public void setKey(@NotNull final OfferType keyParam) {
         key = keyParam;
     }
 }

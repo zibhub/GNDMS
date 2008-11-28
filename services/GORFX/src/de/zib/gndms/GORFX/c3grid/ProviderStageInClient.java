@@ -6,19 +6,20 @@ import de.zib.gndms.GORFX.context.client.TaskClient;
 import de.zib.gndms.GORFX.context.common.TaskConstants;
 import de.zib.gndms.GORFX.offer.client.OfferClient;
 import de.zib.gndms.dspace.slice.client.SliceClient;
+import de.zib.gndms.kit.application.AbstractApplication;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQConverter;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyReader;
 import de.zib.gndms.typecon.common.GORFXTools;
 import de.zib.gndms.typecon.common.type.ProviderStageInORQXSDTypeWriter;
-import de.zib.gndms.kit.application.AbstractApplication;
 import org.apache.axis.message.addressing.EndpointReferenceType;
+import org.apache.axis.types.Duration;
 import org.apache.axis.types.URI;
 import org.globus.wsrf.encoding.DeserializationException;
 import org.globus.wsrf.encoding.ObjectDeserializer;
-import org.joda.time.DateTime;
-import org.oasis.wsrf.properties.GetResourcePropertyResponse;
 import org.kohsuke.args4j.Option;
+import org.oasis.wsrf.properties.GetResourcePropertyResponse;
+import org.joda.time.DateTime;
 import types.*;
 
 import java.io.File;
@@ -146,11 +147,22 @@ public class ProviderStageInClient extends AbstractApplication {
             throws URI.MalformedURIException, RemoteException {
         final ORQClient orqPort = new ORQClient(orqEPRParam);
 
-        final OfferExecutionContractT xsdOfferContract = new OfferExecutionContractT();
-        xsdOfferContract.setExecutionLikelyUntil(new DateTime().plusDays(1).toGregorianCalendar());
-        xsdOfferContract.setResultValidUntil(new DateTime().plusDays(2).toGregorianCalendar());
-        xsdOfferContract.setIfDecisionBefore(new DateTime().plusHours(1).toGregorianCalendar());
-        xsdOfferContract.setConstantExecutionTime(true);
+	    final OfferExecutionContractT xsdOfferContract = new OfferExecutionContractT();
+
+	    xsdOfferContract.setIfDecisionBefore( new DateTime().plusHours(1).toGregorianCalendar() );
+
+		final FutureTimeT execLikelyUntil = new FutureTimeT();
+	    final Duration dur = new Duration();
+	    dur.setDays(1);
+	    execLikelyUntil.setOffset(dur);
+	    xsdOfferContract.setExecutionLikelyUntil( execLikelyUntil );
+
+		final FutureTimeT resultValidity = new FutureTimeT();
+	    final Duration dur2 = new Duration();
+	    resultValidity.setOffset(dur2);
+	    dur2.setDays(2);
+	    xsdOfferContract.setResultValidUntil( resultValidity );
+
         return orqPort.getOfferAndDestroyRequest(xsdOfferContract, xsdContextParam);
     }
 

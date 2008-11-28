@@ -35,9 +35,10 @@ public class ProviderStageInORQPropertyReader extends ORQPropertyReader<Provider
         dr.read( );
         getProduct().setDataDescriptor( dr.getProduct() );
 
-        getProduct( ).setDataFile( getProperties().getProperty( SfrProperty.BASE_FILE.key ) );
-        getProduct( ).setMetadataFile( getProperties().getProperty( SfrProperty.META_FILE.key ) );
-
+        if( getProperties( ).containsKey( SfrProperty.BASE_FILE.key ) )
+            getProduct( ).setDataFile( getProperties().getProperty( SfrProperty.BASE_FILE.key ) );
+        
+        getProduct( ).setMetadataFile( getMandatoryProperty( SfrProperty.META_FILE.key ) );
     }
 
 

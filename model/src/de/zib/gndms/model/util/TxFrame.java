@@ -32,7 +32,7 @@ public final class TxFrame {
 	}
 
 	public void commit() {
-		if (wasActive)
+		if (! wasActive)
 			em.getTransaction().commit();
 		locallyCommited = true;
 	}

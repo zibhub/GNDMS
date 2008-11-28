@@ -18,6 +18,7 @@ public abstract class AbstractORQ implements Serializable {
     private static final long serialVersionUID = 5782532835559987893L;
 
     private String offerType;
+    private String id;
     private HashMap<String,String> context;
     private transient boolean justEstimate = false;
 
@@ -37,6 +38,21 @@ public abstract class AbstractORQ implements Serializable {
 
     protected void setOfferType( String URI ) {
         this.offerType = URI;
+    }
+
+
+    public String getId() {
+        return id;
+    }
+
+
+    public void setId( String id ) {
+        this.id = id;
+    }
+
+
+    public boolean hasId() {
+        return id != null;
     }
 
 

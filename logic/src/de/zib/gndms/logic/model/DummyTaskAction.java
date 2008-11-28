@@ -1,6 +1,7 @@
 package de.zib.gndms.logic.model;
 
 import de.zib.gndms.model.gorfx.Task;
+import de.zib.gndms.model.gorfx.AbstractTask;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -31,20 +32,13 @@ public class DummyTaskAction extends TaskAction {
 
 
     public DummyTaskAction(final @NotNull EntityManager em, final @NotNull String pk) {
-        super(em, pk);
-    }
-
-
-
-    @Override
-    protected @NotNull Class<Task> getTaskClass() {
-        return Task.class;
+        super(em, pk, Task.class );
     }
 
 
     @SuppressWarnings({ "ThrowableInstanceNeverThrown" })
     @Override
-    protected void onInProgress(final @NotNull Task model) {
+    protected void onInProgress(final @NotNull AbstractTask model) {
         try {
             Thread.sleep(sleepInProgress);
         }

@@ -2,8 +2,8 @@
 	<path id="infra.path">
 		
 		
-		<pathelement location="${tools-lib.dir}/groovy-all-1.6-beta-1.jar"/> 
 		<pathelement location="${tools-lib.dir}/annotations.jar"/>
+		<pathelement location="${tools-lib.dir}/gndms-groovy.jar"/> 
 		<pathelement location="${lib.dir}/gndms-logic.jar"/>
 		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
 		<pathelement location="${tools-lib.dir}/commons-collections-3.2.jar "/>

@@ -2,7 +2,7 @@
 	
 	
 	<path id="model.path">
-		<pathelement location="${tools-lib.dir}/groovy-all-1.6-beta-1.jar"/> 
+		<pathelement location="${tools-lib.dir}/gndms-groovy.jar"/> 
 		<pathelement location="${tools-lib.dir}/annotations.jar"/> 
 		<dirset dir="${model.dest}/production/" />
 		<pathelement location="${tools-lib.dir}/geronimo-jpa_3.0_spec-1.0.jar"/>

@@ -2,12 +2,15 @@ package de.zib.gndms.GORFX.action;
 
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.logic.model.gorfx.FileTransferTaskAction;
-import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.model.gorfx.types.InterSliceTransferORQ;
-import de.zib.gndms.model.gorfx.Task;
+import de.zib.gndms.model.gorfx.types.TaskState;
+import de.zib.gndms.model.gorfx.AbstractTask;
+import de.zib.gndms.model.gorfx.SubTask;
 import org.jetbrains.annotations.NotNull;
+import org.apache.axis.components.uuid.UUIDGenFactory;
 
 import javax.persistence.EntityManager;
+import java.util.GregorianCalendar;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -22,7 +25,7 @@ public class InterSliceTransferTaskAction extends ORQTaskAction<InterSliceTransf
     }
 
 
-    public InterSliceTransferTaskAction( @NotNull EntityManager em, @NotNull Task model ) {
+    public InterSliceTransferTaskAction( @NotNull EntityManager em, @NotNull AbstractTask model ) {
         super( em, model );
     }
 
@@ -32,7 +35,8 @@ public class InterSliceTransferTaskAction extends ORQTaskAction<InterSliceTransf
     }
 
 
-    protected void onInProgress( @NotNull Task model ) {
+    @SuppressWarnings( { "ThrowableInstanceNeverThrown" } )
+    protected void onInProgress( @NotNull AbstractTask model ) {
 
         try {
             InterSliceTransferORQCalculator.checkURIs( getOrq( ) );
@@ -40,9 +44,34 @@ public class InterSliceTransferTaskAction extends ORQTaskAction<InterSliceTransf
             fail( new RuntimeException( e.getMessage( ), e ) );
         }
 
-        FileTransferTaskAction fta = new FileTransferTaskAction( getEntityManager(), model );
-        fta.setClosingEntityManagerOnCleanup( false );
-        fta.call( );
+        SubTask st = new SubTask( model );
+        try {
+            st.setId( getUUIDGen().nextUUID() );
+            st.fromTask( getEntityManager(), model );
+            st.setTerminationTime( new GregorianCalendar( ) );
+
+            FileTransferTaskAction fta = new FileTransferTaskAction( getEntityManager(), st );
+            fta.setClosingEntityManagerOnCleanup( false );
+
+            fta.setLog( getLog() );
+            fta.call( );
+            if( st.getState().equals( TaskState.FINISHED ) )
+                finish( st.getData( ) );
+            else
+                fail( (RuntimeException) st.getData() );
+
+        } catch ( RuntimeException e ) {
+            honorOngoingTransit( e );
+        } catch ( Exception e ) {
+            /*
+            if( isFinishedException( e ) )
+                finish( st.getData( ) );
+            else if( isFailedTransition( e ) )
+                fail( (RuntimeException) st.getData() );
+            else
+            */
+            fail( new RuntimeException( e ) );
+        }
     }
 
 

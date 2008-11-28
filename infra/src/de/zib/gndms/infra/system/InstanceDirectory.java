@@ -13,10 +13,7 @@ import de.zib.gndms.kit.monitor.GroovyBindingFactory;
 import de.zib.gndms.kit.monitor.GroovyMoniServer;
 import de.zib.gndms.kit.config.ConfigletProvider;
 import de.zib.gndms.logic.model.TaskAction;
-import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
-import de.zib.gndms.logic.model.gorfx.ORQCalculatorMetaFactory;
-import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
-import de.zib.gndms.logic.model.gorfx.ORQTaskActionMetaFactory;
+import de.zib.gndms.logic.model.gorfx.*;
 import de.zib.gndms.model.common.ConfigletState;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.gorfx.OfferType;
@@ -46,7 +43,7 @@ import java.util.Set;
 *
 *          User: stepn Date: 03.09.2008 Time: 16:50:06
 */
-public class InstanceDirectory implements ConfigletProvider {
+public class InstanceDirectory implements ConfigletProvider, ORQCalculatorProvider {
     private @NotNull final Log logger = LogFactory.getLog(InstanceDirectory.class);
     private static final int INITIAL_CAPACITY = 32;
     private static final long INSTANCE_RETRIEVAL_INTERVAL = 250L;
@@ -64,17 +61,25 @@ public class InstanceDirectory implements ConfigletProvider {
     @SuppressWarnings({ "RawUseOfParameterizedType" })
     private final @NotNull IndustrialPark<OfferType, String, ORQTaskAction<?>> taskActionPark;
 
+	@SuppressWarnings({ "FieldCanBeLocal" })
+	private final Wrapper<Object> sysHolderWrapper;
 
-    InstanceDirectory(final @NotNull String sysNameParam) {
+    InstanceDirectory(final @NotNull String sysNameParam, Wrapper<Object> systemHolderWrapParam) {
         instances = new HashMap<String, Object>(INITIAL_CAPACITY);
         homes = new HashMap<Class<? extends GridResource>, GNDMPersistentServiceHome<?>>(INITIAL_CAPACITY);
         systemName = sysNameParam;
 
-        orqPark = new OfferTypeIndustrialPark<AbstractORQCalculator<?,?>>(new ORQCalculatorMetaFactory());
-        taskActionPark = new OfferTypeIndustrialPark<ORQTaskAction<?>>(new ORQTaskActionMetaFactory());
+	    sysHolderWrapper = systemHolderWrapParam;
+	    final ORQCalculatorMetaFactory calcMF = new ORQCalculatorMetaFactory();
+	    calcMF.setWrap(sysHolderWrapper);
+	    orqPark = new OfferTypeIndustrialPark<AbstractORQCalculator<?,?>>(calcMF);
+	    final ORQTaskActionMetaFactory taskMF = new ORQTaskActionMetaFactory();
+	    taskMF.setWrap(sysHolderWrapper);
+	    taskActionPark = new OfferTypeIndustrialPark<ORQTaskAction<?>>(taskMF);
     }
 
 
+	
     public synchronized void addHome(final @NotNull GNDMServiceHome home)
             throws ResourceException {
         if (home instanceof GNDMPersistentServiceHome<?>)
@@ -94,6 +99,15 @@ public class InstanceDirectory implements ConfigletProvider {
             final @NotNull String offerTypeKey)
             throws ClassNotFoundException, IllegalAccessException, InstantiationException,
             NoSuchMethodException, InvocationTargetException {
+        return getORQCalculator( emf, offerTypeKey );
+    }
+
+
+    public AbstractORQCalculator<?,?> getORQCalculator(
+        final @NotNull EntityManagerFactory emf,
+        final @NotNull String offerTypeKey)
+        throws ClassNotFoundException, IllegalAccessException, InstantiationException,
+        NoSuchMethodException, InvocationTargetException {
         EntityManager em = emf.createEntityManager();
         try {
             OfferType type = em.find(OfferType.class, offerTypeKey);
@@ -115,13 +129,14 @@ public class InstanceDirectory implements ConfigletProvider {
                     "RawUseOfParameterizedType", "unchecked", "MethodWithTooExceptionsDeclared",
                     "RedundantCast", "OverloadedMethodsWithSameNumberOfParameters" })
     public TaskAction getTaskAction(
+            final @NotNull GNDMSystem sys,
             final @NotNull EntityManagerFactory emf,
             final @NotNull String offerTypeKey)
             throws ClassNotFoundException, IllegalAccessException, InstantiationException,
             NoSuchMethodException, InvocationTargetException {
         EntityManager em = emf.createEntityManager();
         try {
-            return getTaskAction(em, offerTypeKey);
+            return getTaskAction( sys, em, offerTypeKey );
         }
         finally {
             if (! em.isOpen())
@@ -131,10 +146,12 @@ public class InstanceDirectory implements ConfigletProvider {
 
 
     @SuppressWarnings({ "OverloadedMethodsWithSameNumberOfParameters" })
-    public TaskAction getTaskAction(final @NotNull EntityManager em, final @NotNull String offerTypeKey)
+    public TaskAction getTaskAction( final @NotNull GNDMSystem sys, final @NotNull EntityManager em, final @NotNull String offerTypeKey)
             throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         OfferType type = em.find(OfferType.class, offerTypeKey);
-        return taskActionPark.getInstance(type);
+        TaskAction ta = taskActionPark.getInstance(type);
+        ta.setUUIDGen( sys.getModelUUIDGen() );
+        return ta;
     }
 
 

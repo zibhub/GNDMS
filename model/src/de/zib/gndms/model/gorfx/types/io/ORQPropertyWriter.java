@@ -36,4 +36,9 @@ public abstract class ORQPropertyWriter extends AbstractPropertyIO implements OR
     public void writeContext( @NotNull HashMap<String, String> ctx ) {
         PropertyReadWriteAux.writeMap( getProperties(), SfrProperty.CONTEXT.key,  ctx );
     }
+
+
+    public void writeId( String id ) {
+        getProperties( ).setProperty( SfrProperty.GORFX_ID.key, id );
+    }
 }
