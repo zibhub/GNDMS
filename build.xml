@@ -240,12 +240,36 @@
 		</exec>
 	</target>
 	
+	
+	<path id="dspace.path">
+		<fileset refid="globus.lib"/>
+		<fileset dir="services/DSpace/lib/" />
+	</path>
+	
+	
+	<path id="gorfx.path">
+		<fileset refid="globus.lib"/>
+		<fileset dir="services/GORFX/lib/" />
+	</path>
 	<!-- Building all services -->
 	<target name='services.compile'>
-		<exec executable="sh">
+		<mkdir dir="tmp"/>
+		<javac srcdir='services/DSpace/build/stubs-DSpace/src' destdir='tmp' classpathref="dspace.path"/>
+		<jar destfile="${lib.dir}/DSpace.jar"
+		     basedir="tmp">
+		</jar>
+		<delete dir="tmp"/>
+		<mkdir dir="tmp"/>
+		<javac srcdir='services/GORFX/build/stubs-GORFX/src' destdir='tmp' classpathref="gorfx.path"/>
+		<jar destfile="${lib.dir}/GORFX.jar"
+		     basedir="tmp">
+		</jar>
+		<delete dir="tmp"/>
+		
+		<!--exec executable="sh">
 			<arg value="-c"/>
 			<arg value="for i in services/* ; do ( cd $i &amp;&amp; ant createDeploymentGar ) ; done"/>
-		</exec>
+		</exec-->
 	</target>
 	
 	

@@ -4,8 +4,7 @@
 	<path id="logic.path">
 		
 		<pathelement location="${tools-lib.dir}/groovy-all-1.6-beta-1.jar"/> 
-		<pathelement location="${tools-lib.dir}/geronimo-jpa_3.0_spec-1.0.jar"/>
-		<pathelement location="${tools-lib.dir}/jsr173_1.0_api.jar"/>
+
 		<pathelement location="${tools-lib.dir}/annotations.jar"/>
 		<dirset dir="${logic.dest}/production"/>
 		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
@@ -23,6 +22,10 @@
 		<pathelement location="${lib.dir}/gndms-kit.jar"/>
 		<pathelement location="${tools-lib.dir}/google-collect-snapshot-20080820.jar"/>
 		<fileset refid="globus.lib"/>
+		<pathelement location="${tools-lib.dir}/geronimo-jpa_3.0_spec-1.0.jar"/>
+		<pathelement location="${tools-lib.dir}/geronimo-jta_1.1_spec-1.1.jar"/>
+		<pathelement location="${tools-lib.dir}/serp-1.13.1.jar"/>
+		<pathelement location="${tools-lib.dir}/openjpa-1.1.0.jar"/>
 		
          	<!--fileset dir="${tools-lib.dir}" includes="*.jar" /-->
 		
