@@ -242,25 +242,71 @@
 	
 	
 	<path id="dspace.path">
+		<pathelement location="${tools-lib.dir}/groovy-all-1.6-beta-1.jar"/> 
+		<pathelement location="${tools-lib.dir}/annotations.jar"/>
+		<dirset dir="services/DSpace/build/stubs-DSpace/classes/" />
+		<pathelement location="${lib.dir}/gndms-infra.jar"/>
+		<pathelement location="${lib.dir}/gndms-logic.jar"/>
+		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
+		<pathelement location="${tools-lib.dir}/joda-time-1.5.2.jar"/> 
+		<pathelement location="services/DSpace/lib/caGrid-advertisement-1.2.jar"/> 
+		<pathelement location="services/DSpace/lib/caGrid-core-1.2.jar"/> 
+		<pathelement location="services/DSpace/lib/caGrid-Introduce-serviceTools-1.2.jar"/> 
+		<pathelement location="services/DSpace/lib/caGrid-metadata-security-1.2.jar"/> 
+		<pathelement location="services/DSpace/lib/caGrid-ServiceSecurityProvider-client-1.2.jar"/> 
+		<pathelement location="services/DSpace/lib/caGrid-ServiceSecurityProvider-common-1.2.jar"/> 
+		<pathelement location="services/DSpace/lib/caGrid-ServiceSecurityProvider-service-1.2.jar"/> 
+		<pathelement location="services/DSpace/lib/caGrid-ServiceSecurityProvider-stubs-1.2.jar"/> 
+		<pathelement location="services/DSpace/lib/castor-0.9.9.jar"/>
+		<pathelement location="services/DSpace/lib/jdom-1.0.jar"/>
+		<pathelement location="${tools-lib.dir}/geronimo-jpa_3.0_spec-1.0.jar"/>
+		<pathelement location="${tools-lib.dir}/geronimo-jta_1.1_spec-1.1.jar"/>
+		<pathelement location="${tools-lib.dir}/serp-1.13.1.jar"/>
+		<pathelement location="${tools-lib.dir}/openjpa-1.1.0.jar"/>
+
 		<fileset refid="globus.lib"/>
-		<fileset dir="services/DSpace/lib/" />
 	</path>
 	
 	
 	<path id="gorfx.path">
+		<pathelement location="${tools-lib.dir}/groovy-all-1.6-beta-1.jar"/> 
+		<pathelement location="${tools-lib.dir}/annotations.jar"/>
+		<dirset dir="services/GORFX/build/stubs-GORFX/classes/" />
+		<pathelement location="${lib.dir}/gndms-typecon.jar"/>
+		<pathelement location="${lib.dir}/gndms-infra.jar"/>
+		<pathelement location="${lib.dir}/gndms-logic.jar"/>
+		<pathelement location="${lib.dir}/gndms-kit.jar"/>
+		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
+		<pathelement location="${tools-lib.dir}/joda-time-1.5.2.jar"/> 
+		<pathelement location="services/GORFX/lib/caGrid-advertisement-1.2.jar"/> 
+		<pathelement location="services/GORFX/lib/caGrid-core-1.2.jar"/> 
+		<pathelement location="services/GORFX/lib/caGrid-Introduce-serviceTools-1.2.jar"/> 
+		<pathelement location="services/GORFX/lib/caGrid-metadata-security-1.2.jar"/> 
+		<pathelement location="services/GORFX/lib/caGrid-ServiceSecurityProvider-client-1.2.jar"/> 
+		<pathelement location="services/GORFX/lib/caGrid-ServiceSecurityProvider-common-1.2.jar"/> 
+		<pathelement location="services/GORFX/lib/caGrid-ServiceSecurityProvider-service-1.2.jar"/> 
+		<pathelement location="services/GORFX/lib/caGrid-ServiceSecurityProvider-stubs-1.2.jar"/> 
+		<pathelement location="services/GORFX/lib/castor-0.9.9.jar"/>
+		<pathelement location="services/GORFX/lib/jdom-1.0.jar"/>
+		<pathelement location="${tools-lib.dir}/geronimo-jpa_3.0_spec-1.0.jar"/>
+		<pathelement location="${tools-lib.dir}/geronimo-jta_1.1_spec-1.1.jar"/>
+		<pathelement location="${tools-lib.dir}/serp-1.13.1.jar"/>
+		<pathelement location="${tools-lib.dir}/openjpa-1.1.0.jar"/>
 		<fileset refid="globus.lib"/>
-		<fileset dir="services/GORFX/lib/" />
+		<pathelement location="${lib.dir}/DSpace.jar"/>
+		<pathelement location="${tools-lib.dir}/args4j-2.0.9.jar"/>
+		
 	</path>
 	<!-- Building all services -->
 	<target name='services.compile'>
 		<mkdir dir="tmp"/>
-		<javac srcdir='services/DSpace/build/stubs-DSpace/src' destdir='tmp' classpathref="dspace.path"/>
+		<javac srcdir='services/DSpace/src' destdir='tmp' classpathref="dspace.path"/>
 		<jar destfile="${lib.dir}/DSpace.jar"
 		     basedir="tmp">
 		</jar>
 		<delete dir="tmp"/>
 		<mkdir dir="tmp"/>
-		<javac srcdir='services/GORFX/build/stubs-GORFX/src' destdir='tmp' classpathref="gorfx.path"/>
+		<javac srcdir='services/GORFX/src' destdir='tmp' classpathref="gorfx.path"/>
 		<jar destfile="${lib.dir}/GORFX.jar"
 		     basedir="tmp">
 		</jar>

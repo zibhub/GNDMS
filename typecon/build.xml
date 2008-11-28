@@ -25,8 +25,8 @@
 			</then>
 			<else>
 		<mkdir dir="./${typecon.dest}/production"/>
-		<javac srcdir='${typecon.dir}/src' destdir='${typecon.dest}/production' classpathref="typecon.path" includes="**/type/*.java"/>
-		<!-- Copy Meta files to build dir-->
+		<javac srcdir='${typecon.dir}/src' destdir='${typecon.dest}/production' classpathref="typecon.path" />
+			<!-- Copy Meta files to build dir-->
 		<copy todir="${typecon.dest}/production/" >
 			<fileset dir="${typecon.dir}/src">
 				<exclude name="de/**"/>
