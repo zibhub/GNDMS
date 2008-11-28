@@ -23,6 +23,7 @@ moni call -v .gorfx.ConfigOfferType "offerType: 'http://www.c3grid.de/ORQTypes/P
 	estimationClass: 'de.zib.gndms.logic.model.gorfx.c3grid.ExternalProviderStageInORQCalculator'; \
 	stagingCommand: '$STAGING_COMMAND'; \
 	estimationCommand: '$ESTIMATION_COMMAND'; \
+	cancelCommand: '$CANCEL_COMMAND'; \
 	scriptIoFormat: '$SCRIPT_IO_FORMAT'"
 }
 
