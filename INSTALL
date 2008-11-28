@@ -263,6 +263,9 @@ DETAILED BUILD INSTRUCTIONS
   services' out,  build, and lib directories from the project sources to reduce
   the size of the project index.
 
+  You also should build a DSpace.jar form serives/DSpace/src and put
+  in into extra/lib. Create a GORFX.jar in the GORFX-service folder.
+
   This should be enought to compile and develop with your IDE; for deployment
   you still need to execute "ant createDeploymentGar" and "globus-deploy-gar"
   manually on the command line.

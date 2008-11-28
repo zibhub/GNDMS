@@ -39,4 +39,10 @@ public abstract class AbstractPropertyIO implements GORFXWriterBase {
          if( getProperties( ) == null )
              throw new IllegalStateException( "No property instance provided" );
      }
+
+
+    protected String getMandatoryProperty( String key ) throws MandatoryPropertyMissingException {
+
+        return PropertyReadWriteAux.getMandatoryProeprty( properties, key );
+    }
 }

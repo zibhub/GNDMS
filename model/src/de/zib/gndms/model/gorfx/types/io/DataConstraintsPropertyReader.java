@@ -35,8 +35,9 @@ public class DataConstraintsPropertyReader extends AbstractPropertyReader<DataCo
             cfl = PropertyReadWriteAux.readList( getProperties(), SfrProperty.CFLIST_OLD.key, ' ' );
         getProduct( ).setCFList( cfl );
 
-        getProduct( ).setConstraintList(
-            PropertyReadWriteAux.readMap( getProperties(), SfrProperty.CONSTRAINT_LIST.key ) );
+        if( getProperties().containsKey( SfrProperty.CONSTRAINT_LIST.key ) )
+            getProduct( ).setConstraintList(
+                PropertyReadWriteAux.readMap( getProperties(), SfrProperty.CONSTRAINT_LIST.key ) );
     }
 
 

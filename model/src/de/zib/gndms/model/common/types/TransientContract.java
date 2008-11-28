@@ -95,7 +95,13 @@ public final class TransientContract implements Cloneable {
 	}
 
 
-	@SuppressWarnings({ "ReturnOfCollectionOrArrayField" })
+    public boolean hasAdditionalNotes( ) {
+
+        return additionalNotes != null && additionalNotes.size() > 0;
+    }
+
+
+    @SuppressWarnings({ "ReturnOfCollectionOrArrayField" })
 	public Map<String, String> getAdditionalNotes() {
 		return additionalNotes;
 	}

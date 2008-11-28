@@ -161,4 +161,14 @@ public class PropertyReadWriteAux {
             return FutureTime.atTime(new DateTime( s ));
 		}
     }
+
+
+    public static String getMandatoryProeprty( @NotNull Properties prop, @NotNull String key ) throws MandatoryPropertyMissingException {
+
+        String s = prop.getProperty( key );
+        if ( s == null )
+            throw new MandatoryPropertyMissingException( key );
+
+        return s;
+    }
 }

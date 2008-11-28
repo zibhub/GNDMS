@@ -59,6 +59,11 @@ public class DataConstraints implements Serializable {
     }
 
 
+    public boolean hasConstraintList( ) {
+        return constraintList != null && constraintList.size() > 0;
+    }
+
+
     public HashMap<String, String> getConstraintList() {
         return constraintList;
     }

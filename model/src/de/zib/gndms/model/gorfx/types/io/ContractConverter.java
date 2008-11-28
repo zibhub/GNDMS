@@ -6,6 +6,8 @@ import org.joda.time.DateTime;
 
 
 /**
+ * This converter operates on transient contracts.
+ *
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
  * <p/>
@@ -47,6 +49,8 @@ public class ContractConverter extends GORFXConverterBase<ContractWriter, Transi
 
 	    if (getModel().hasExpectedSize())
             getWriter().writeExpectedSize( getModel().getExpectedSize() );
+
+        if ( getModel( ).has )
         
         getWriter().done();
     }
