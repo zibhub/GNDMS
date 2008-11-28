@@ -1,7 +1,7 @@
 <project name="kit compilation file" default="kit.compile" basedir=".">
 
 	<path id="kit.path">
-		<pathelement location="${tools-lib.dir}/groovy-all-1.6-beta-1.jar"/> 
+		<pathelement location="${tools-lib.dir}/gndms-groovy.jar"/> 
 		<pathelement location="${tools-lib.dir}/geronimo-jpa_3.0_spec-1.0.jar"/>
 		<pathelement location="${tools-lib.dir}/jsr173_1.0_api.jar"/>
 		<dirset dir="kit/gndms-kit/production"/>

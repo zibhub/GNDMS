@@ -60,6 +60,7 @@ public class ProviderStageInORQIOTest {
         orq.setDataDescriptor( ddt );
         orq.setDataFile( "data_file" );
         orq.setMetadataFile( "meta_data_file" );
+        orq.setId( "asdfjkl" );
 
         Properties prop = new Properties( );
         ProviderStageInORQPropertyWriter wrt = new ProviderStageInORQPropertyWriter( prop );

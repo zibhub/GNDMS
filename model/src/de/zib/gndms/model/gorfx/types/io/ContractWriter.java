@@ -1,6 +1,8 @@
 package de.zib.gndms.model.gorfx.types.io;
 
-import java.util.Calendar;
+import de.zib.gndms.model.common.types.FutureTime;
+import org.joda.time.DateTime;
+
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -9,9 +11,8 @@ import java.util.Calendar;
  * User: mjorra, Date: 25.09.2008, Time: 13:17:43
  */
 public interface ContractWriter extends GORFXWriterBase {
-
-    public void writeIfDecisionBefore( Calendar dat );
-    public void writeExecutionLikelyUntil( Calendar dat );
-    public void writeConstantExecutionTime( boolean et );
-    public void writeResultValidUntil( Calendar dat );
+    void writeIfDecisionBefore( DateTime dat );
+    void writeExecutionLikelyUntil( FutureTime dat );
+    void writeExpectedSize( Long l );
+    void writeResultValidUntil( FutureTime dat );
 }

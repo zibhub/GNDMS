@@ -11,7 +11,7 @@ import de.zib.gndms.model.dspace.types.SliceRef;
  * <p/>
  * User: mjorra, Date: 04.11.2008, Time: 12:45:15
  */
-public abstract class CommonSliceResultXSDTypeWriter extends AbstractXSDTypeWriter<CommonSliceResult>
+public abstract class CommonSliceResultXSDTypeWriter<M> extends AbstractXSDTypeWriter<M>
     implements CommonSliceResultWriter {
 
     private SliceRefXSDTypeWriter sliceWriter;

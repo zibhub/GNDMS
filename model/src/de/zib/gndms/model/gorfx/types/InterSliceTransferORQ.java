@@ -6,6 +6,10 @@ import de.zib.gndms.model.dspace.types.SliceRef;
 import java.util.TreeMap;
 
 /**
+ * ORQ type class for an inter slice transfer.
+ *
+ * NOTE: There is no matching Result for this one, cause it uses the FileTransferResult and manipulates the OfferType.
+ *
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
  * <p/>

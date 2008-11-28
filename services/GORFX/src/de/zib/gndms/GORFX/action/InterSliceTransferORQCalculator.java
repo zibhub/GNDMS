@@ -1,13 +1,11 @@
 package de.zib.gndms.GORFX.action;
 
-import de.zib.gndms.model.gorfx.types.FileTransferORQ;
-import de.zib.gndms.model.gorfx.types.InterSliceTransferORQ;
-import de.zib.gndms.model.gorfx.Contract;
-import de.zib.gndms.logic.model.gorfx.FileTransferORQCalculator;
 import de.zib.gndms.logic.model.gorfx.AbstractTransferORQCalculator;
-import org.globus.ftp.exception.ServerException;
-import org.globus.ftp.exception.ClientException;
+import de.zib.gndms.model.common.types.TransientContract;
+import de.zib.gndms.model.gorfx.types.InterSliceTransferORQ;
 import org.apache.axis.types.URI;
+import org.globus.ftp.exception.ClientException;
+import org.globus.ftp.exception.ServerException;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -26,7 +24,7 @@ public class InterSliceTransferORQCalculator extends
     }
 
 
-    public Contract createOffer() throws ServerException, IOException, ClientException {
+    public TransientContract createOffer() throws ServerException, IOException, ClientException {
 
         checkURIs( );
         

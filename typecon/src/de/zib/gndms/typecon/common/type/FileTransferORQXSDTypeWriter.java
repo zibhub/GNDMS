@@ -73,6 +73,11 @@ public class FileTransferORQXSDTypeWriter extends AbstractXSDTypeWriter<FileTran
     }
 
 
+    public void writeId( String id ) {
+        // Not required here
+    }
+
+
     public void begin() {
        try {
             setProduct( GORFXClientTools.createEmptyFileTransferORQT() );

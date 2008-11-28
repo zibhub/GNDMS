@@ -42,6 +42,11 @@ public class ProviderStageInORQ extends AbstractORQ {
     }
 
 
+    public boolean hasDataFile( ) {
+        return dataFile != null;
+    }
+
+
     public String getDataFile() {
         return dataFile;
     }

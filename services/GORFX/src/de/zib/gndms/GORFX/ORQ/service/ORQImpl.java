@@ -9,7 +9,7 @@ import de.zib.gndms.GORFX.offer.service.globus.resource.OfferResource;
 import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.logic.model.gorfx.PermissionDeniedORQException;
 import de.zib.gndms.logic.model.gorfx.UnfulfillableORQException;
-import de.zib.gndms.model.gorfx.Contract;
+import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.shared.ContextTAux;
 import de.zib.gndms.typecon.common.type.ContractXSDTypeWriter;
 import org.apache.commons.logging.Log;
@@ -54,7 +54,7 @@ public class ORQImpl extends ORQImplBase {
                 OfferResource ores = ohome.getResource( key );
                 ores.setCachedWid(WidAux.getWid());
                 ores.setOfferRequestArguments( orq.getOfferRequestArguments() );
-                final Contract contract = orq.getOfferExecutionContract(offerExecutionContract);
+                final TransientContract contract = orq.getOfferExecutionContract(offerExecutionContract);
                 ores.setOfferExecutionContract(
                     ContractXSDTypeWriter.fromContract(
                             contract) );

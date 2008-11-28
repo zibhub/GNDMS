@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.Properties;
 
 
@@ -43,6 +44,19 @@ public final class ProviderStageInTools {
             protected @Override void writeOutput(final @NotNull BufferedOutputStream stream)
                     throws IOException {
                 props.store(stream, "ProviderStageIn");
+            }
+        };
+    }
+
+
+    public static ProcessBuilderAction createPBActionForXML(final @NotNull String orq_parms ) {
+
+        return new ProcessBuilderAction() {
+            protected @Override void writeOutput(final @NotNull BufferedOutputStream stream)
+                throws IOException {
+
+                OutputStreamWriter os = new OutputStreamWriter( stream );
+                os.write( orq_parms );
             }
         };
     }
