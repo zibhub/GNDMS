@@ -3,6 +3,7 @@ package de.zib.gndms.typecon.common.type;
 import de.zib.gndms.model.common.types.TransientContract;
 import org.joda.time.DateTime;
 import types.OfferExecutionContractT;
+import types.ContextT;
 
 
 /**
@@ -28,6 +29,12 @@ public class ContractXSDReader {
 	        final Long estMaxSize = src.getEstMaxSize();
 	        if (estMaxSize != null)
 	            con.setExpectedSize(estMaxSize);
+
+            ContextT ctx = src.getVolatileRequestInfo();
+
+            if( ctx != null )
+                con.setAdditionalNotes( ContextXSDReader.readContext( ctx ) );
+
             return con;
         }
         
