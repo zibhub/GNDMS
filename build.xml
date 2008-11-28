@@ -25,9 +25,7 @@
 	<property name="infra.dest" value="${infra.dir}/gndms-infra"/>
 	<property name="typecon.dest" value="${typecon.dir}/gndms-typecon"/>
 	
-	<!-- To avoid problems import just the following libaries -->
-	<!--fileset dir="${env.GLOBUS_LOCATION}/lib" includesfile="globus_jars.txt" id="globus.lib"/-->
-	
+
 	<!-- To avoid problems import just the following libaries -->
 	<fileset dir="${env.GLOBUS_LOCATION}/lib" id="globus.lib">
 		<OR>
@@ -205,7 +203,14 @@
 		<runtarget target="logic.clean"/>
 		<runtarget target="kit.clean"/>
 		<runtarget target="model.clean"/>
-		<echo level="warning"> Note: Only class-files have been deleted! To delete also the generated jars type 'ant clean.all' </echo>
+		<if>
+			<not> 
+				<isset property="cleanALL"/>
+			</not>
+			<then>
+				<echo level="warning"> Note: Only class-files have been deleted! To delete also the generated jars type 'ant clean.all' </echo>
+			</then>
+		</if>
 	</target>
 	
 	
@@ -216,9 +221,15 @@
 		<runtarget target="logic.clean.jar"/>
 		<runtarget target="kit.clean.jar"/>
 		<runtarget target="model.clean.jar"/>
+		<delete file="extra/lib/GORFX.jar"/>
+		<delete file="extra/lib/DSpace.jar"/>
 	</target>
 	<!-- Delete build-files and generated jar every package -->
-	<target name="clean.all" depends="clean,clean.jar" description="deletes build-files and jars of every package"/>
+	<target name="clean.all" description="deletes build-files and jars of every package">
+		<property name="cleanALL" value="true"/>
+		<runtarget target="clean.jar"/>
+		<runtarget target="clean"/>
+	</target>
 	
 
 
@@ -240,7 +251,7 @@
 		</exec>
 	</target>
 	
-	
+	<!-- class-files needed to compile DSpace -->
 	<path id="dspace.path">
 		<pathelement location="${tools-lib.dir}/gndms-groovy.jar"/> 
 		<pathelement location="${tools-lib.dir}/annotations.jar"/>
@@ -267,7 +278,7 @@
 		<fileset refid="globus.lib"/>
 	</path>
 	
-	
+	<!-- class-files needed to compile GORFX -->
 	<path id="gorfx.path">
 		<pathelement location="${tools-lib.dir}/gndms-groovy.jar"/> 
 		<pathelement location="${tools-lib.dir}/annotations.jar"/>
@@ -302,6 +313,7 @@
 		<pathelement location="${tools-lib.dir}/jaxb-impl.jar"/> 
 		<pathelement location="${tools-lib.dir}/jaxb-xjc.jar"/>
 		<pathelement location="${tools-lib.dir}/jsr173_1.0_api.jar"/>
+		<pathelement location="${tools-lib.dir}/google-collect-snapshot-20080820.jar"/>
 		
 		
 		
@@ -320,8 +332,7 @@
 		<jar destfile="${lib.dir}/GORFX.jar"
 		     basedir="tmp">
 		</jar>
-	
-		
+		<delete dir="tmp"/>
 		<exec executable="sh">
 			<arg value="-c"/>
 			<arg value="for i in services/* ; do ( cd $i &amp;&amp; ant createDeploymentGar ) ; done"/>
@@ -336,10 +347,11 @@
 	
 	<!-- Create necessary symlinks in the services' lib directories -->
 	<target name="symlink" depends="symlink.check" unless="linked" description="sets symbolic links, if needed">
+		<echo> setting symbolic links </echo>
 		<exec executable="sh">
 			<arg value="sync.sh"/>
 		</exec>
-		<echo file=".symlink"/>
+		<echo file=".symlink">dummy-file, needed for build-script </echo>
 		
 	</target>
 	
