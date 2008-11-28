@@ -242,7 +242,7 @@
 	
 	
 	<path id="dspace.path">
-		<pathelement location="${tools-lib.dir}/groovy-all-1.6-beta-1.jar"/> 
+		<pathelement location="${tools-lib.dir}/gndms-groovy.jar"/> 
 		<pathelement location="${tools-lib.dir}/annotations.jar"/>
 		<dirset dir="services/DSpace/build/stubs-DSpace/classes/" />
 		<pathelement location="${lib.dir}/gndms-infra.jar"/>
@@ -269,7 +269,7 @@
 	
 	
 	<path id="gorfx.path">
-		<pathelement location="${tools-lib.dir}/groovy-all-1.6-beta-1.jar"/> 
+		<pathelement location="${tools-lib.dir}/gndms-groovy.jar"/> 
 		<pathelement location="${tools-lib.dir}/annotations.jar"/>
 		<dirset dir="services/GORFX/build/stubs-GORFX/classes/" />
 		<pathelement location="${lib.dir}/gndms-typecon.jar"/>
@@ -295,6 +295,16 @@
 		<fileset refid="globus.lib"/>
 		<pathelement location="${lib.dir}/DSpace.jar"/>
 		<pathelement location="${tools-lib.dir}/args4j-2.0.9.jar"/>
+		<dirset dir="services/DSpace/build/stubs-DSpace/classes/" />
+		<pathelement location="${tools-lib.dir}/activation.jar	"/> 
+		<pathelement location="${tools-lib.dir}/jaxb-api.jar"/>
+		<pathelement location="${tools-lib.dir}/jaxb1-impl.jar"/>  
+		<pathelement location="${tools-lib.dir}/jaxb-impl.jar"/> 
+		<pathelement location="${tools-lib.dir}/jaxb-xjc.jar"/>
+		<pathelement location="${tools-lib.dir}/jsr173_1.0_api.jar"/>
+		
+		
+		
 		
 	</path>
 	<!-- Building all services -->
@@ -310,12 +320,12 @@
 		<jar destfile="${lib.dir}/GORFX.jar"
 		     basedir="tmp">
 		</jar>
-		<delete dir="tmp"/>
+	
 		
-		<!--exec executable="sh">
+		<exec executable="sh">
 			<arg value="-c"/>
 			<arg value="for i in services/* ; do ( cd $i &amp;&amp; ant createDeploymentGar ) ; done"/>
-		</exec-->
+		</exec>
 	</target>
 	
 	

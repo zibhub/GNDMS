@@ -18,14 +18,15 @@
 		<pathelement location="${tools-lib.dir}/jaxb-impl.jar"/> 
 		<pathelement location="${tools-lib.dir}/jaxb-xjc.jar"/>
 		<pathelement location="${tools-lib.dir}/jsr173_1.0_api.jar"/>
-		
-		<!--fileset dir="${tools-lib.dir}" includes="*.jar" /-->
+
 		
 	</path>
 	
 	<!-- Compile model, but not its test-files -->
 	<target name="model.compile" description="Compiles model">
+
 		<mkdir dir="${model.dest}/production"/>
+		
 		<groovyc srcdir="${model.dir}/src" destdir='${model.dest}/production' classpathref="model.path" >
 			<javac/>
 		</groovyc>	
