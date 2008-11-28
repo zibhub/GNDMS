@@ -49,7 +49,8 @@ public class DataDescriptorXSDTypeWriter extends AbstractXSDTypeWriter<DataDescr
 
     public void beginWritingDataConstraints() {
         if( constraintWriter == null )
-            throw new IllegalStateException( "no constraint writer present" ); }
+            throw new IllegalStateException( "no constraint writer present" );
+    }
 
 
     public void doneWritingDataConstraints() {

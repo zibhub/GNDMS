@@ -1,35 +1,20 @@
 package de.zib.gndms.GORFX.action.tests;
 
-import org.kohsuke.args4j.Option;
-import org.kohsuke.args4j.CmdLineParser;
-import org.kohsuke.args4j.CmdLineException;
-import org.apache.axis.message.addressing.EndpointReferenceType;
-import org.apache.axis.message.MessageElement;
-import org.joda.time.DateTime;
-import org.globus.wsrf.encoding.ObjectDeserializer;
-import org.globus.wsrf.encoding.DeserializationException;
-import org.oasis.wsrf.properties.GetResourcePropertyResponse;
-import de.zib.gndms.kit.application.AbstractApplication;
-import de.zib.gndms.typecon.common.GORFXTools;
-import de.zib.gndms.typecon.common.GORFXClientTools;
-import de.zib.gndms.typecon.common.type.ProviderStageInORQXSDTypeWriter;
-import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
-import de.zib.gndms.model.gorfx.types.TaskState;
-import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyReader;
-import de.zib.gndms.GORFX.client.GORFXClient;
-import de.zib.gndms.GORFX.ORQ.client.ORQClient;
-import de.zib.gndms.GORFX.offer.client.OfferClient;
-import de.zib.gndms.GORFX.context.client.TaskClient;
-import de.zib.gndms.GORFX.context.common.TaskConstants;
 import de.zib.gndms.dspace.slice.client.SliceClient;
 import de.zib.gndms.dspace.subspace.client.SubspaceClient;
+import de.zib.gndms.dspace.client.DSpaceClient;
+import de.zib.gndms.kit.application.AbstractApplication;
+import de.zib.gndms.typecon.common.GORFXClientTools;
+import de.zib.gndms.typecon.common.GORFXTools;
+import org.apache.axis.message.MessageElement;
+import org.kohsuke.args4j.Option;
 import types.*;
 
-import java.util.GregorianCalendar;
-import java.util.Calendar;
+import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.rmi.RemoteException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -47,7 +32,7 @@ public class InterSliceTransferClient extends AbstractApplication {
 
     @Option( name="-uri", required=true, usage="URI of the gorfx service" )
     public String uri;
-    @Option( name="-duri", required=true, usage="Destination subspace uri" )
+    @Option( name="-duri", required=true, usage="Destination dspace uri (where TransferTest subspace resides)" )
     public String duri;
     @Option( name="-props", required=true, usage="properties for the staging request" )
     public String props;
@@ -69,7 +54,10 @@ public class InterSliceTransferClient extends AbstractApplication {
             GORFXTestClientUtils.doStageIn( uri, props, xsdContext, GORFXTestClientUtils.newContract(), MILLIS );
 
         // create a new Slice in the target subspace
-        SubspaceClient subc = new SubspaceClient( duri );
+        DSpaceClient dcnt = new DSpaceClient( duri );
+        SubspaceClient subc =
+            new SubspaceClient(
+                dcnt.getSubspace( new QName( "{http://www.c3grid.de/G2/Subspace}TransferSubspace" ) ).getEndpointReference() );
 
         Calendar tt = new GregorianCalendar( );
         tt.add( Calendar.YEAR, 20 );

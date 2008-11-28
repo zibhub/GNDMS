@@ -1,18 +1,15 @@
 package de.zib.gndms.model.gorfx;
 
+import org.joda.time.DateTime;
+import org.joda.time.Duration;
+import org.joda.time.format.ISODateTimeFormat;
+
 import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import java.util.Calendar;
-import java.util.Calendar;
-
-import org.joda.time.DateTime;
-import org.joda.time.Duration;
-import org.joda.time.format.ISODateTimeFormat;
-import org.apache.openjpa.persistence.Persistent;
-import org.apache.openjpa.persistence.Externalizer;
-import org.apache.openjpa.persistence.Factory;
+import java.util.HashMap;
 
 
 /**
@@ -40,6 +37,12 @@ public class Contract {
     // can be mapped to constantExecutionTime
     transient boolean deadlineIsOffset = false;
 
+    // expected size of task in case of a transfer or staging
+    Long expectedSize;
+
+    // map for additional notes
+    // todo discuss persistence
+    HashMap<String,String> additionNotes;
 
 
     public Contract() {}
@@ -88,8 +91,8 @@ public class Contract {
 
     public void setDeadline( Calendar dl ) {
         deadline = dl;
-        if( getResultValidity( ) == null )
-            setResultValidity( dl );
+//        if( getResultValidity( ) == null )
+//            setResultValidity( dl );
     }
 
 
@@ -125,5 +128,32 @@ public class Contract {
     public static Calendar dateToString( String s ) {
 
         return new DateTime( s ).toGregorianCalendar();
+    }
+    
+
+    @Transient
+    public Long getExpectedSize() {
+        return expectedSize;
+    }
+
+
+    public boolean hasExpectedSize( ) {
+        return expectedSize != null;
+    }
+
+
+    public void setExpectedSize( Long expectedSize ) {
+        this.expectedSize = expectedSize;
+    }
+
+
+    @Transient
+    public HashMap<String, String> getAdditionNotes() {
+        return additionNotes;
+    }
+
+
+    public void setAdditionNotes( HashMap<String, String> additionNotes ) {
+        this.additionNotes = additionNotes;
     }
 }

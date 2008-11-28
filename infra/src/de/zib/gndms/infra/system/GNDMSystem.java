@@ -7,6 +7,7 @@ import de.zib.gndms.kit.monitor.GroovyMoniServer;
 import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
 import de.zib.gndms.logic.action.LogAction;
 import de.zib.gndms.logic.model.*;
+import de.zib.gndms.logic.model.gorfx.DefaultWrapper;
 import de.zib.gndms.logic.util.LogicTools;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
@@ -111,7 +112,7 @@ public final class GNDMSystem
 			sharedContext.bind(facadeName, theFactory);
 			return theFactory.getInstance();
 		}
-		catch (NameAlreadyBoundException n) {
+		catch (NameAlreadyBoundException ne) {
 			return ((SysFactory) sharedContext.lookup(facadeName)).getInstance();
 		}
 	}
@@ -129,7 +130,7 @@ public final class GNDMSystem
 			sharedContext.bind(facadeName, theFactory);
 			return theFactory.getInstance();
 		}
-		catch (NameAlreadyBoundException n) {
+		catch (NameAlreadyBoundException ne) {
 			return ((SysFactory) sharedContext.lookup(facadeName)).getInstance();
 		}
 	}
@@ -138,7 +139,14 @@ public final class GNDMSystem
     private GNDMSystem(@NotNull GridConfig anySharedConfig, boolean debugModeParam)  {
 		sharedConfig = anySharedConfig;
         debugMode = debugModeParam;
-        instanceDir = new InstanceDirectory(getSystemName());
+        instanceDir = new InstanceDirectory(getSystemName(), new DefaultWrapper<SystemHolder, Object>(SystemHolder.class) {
+
+	        @Override
+	        protected <Y> Y wrapInterfaceInstance(final Class<Y> wrapClass, @NotNull final SystemHolder wrappedParam) {
+		        wrappedParam.setSystem(GNDMSystem.this);
+		        return wrapClass.cast(wrappedParam);
+	        }
+        });
         instanceDir.addInstance("sys", this);
         // Bad style, usually would be an inner class but
         // removed it from this source file to reduce source file size
