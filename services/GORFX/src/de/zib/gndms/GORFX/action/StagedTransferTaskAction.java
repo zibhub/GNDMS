@@ -154,6 +154,8 @@ public class StagedTransferTaskAction extends ORQTaskAction<SliceStageInORQ> {
 
             // perform staging
             try {
+                /*
+                 * TODO overwork this block
                 tx.begin( );
                 AbstractProviderStageInAction psa = (AbstractProviderStageInAction)
                     getSystem().getInstanceDir().getTaskAction( getEntityManager(), GORFXConstantURIs.PROVIDER_STAGE_IN_URI );
@@ -161,6 +163,7 @@ public class StagedTransferTaskAction extends ORQTaskAction<SliceStageInORQ> {
                 psa.setClosingEntityManagerOnCleanup( false );
                 psa.initFromModel( getEntityManager(), providerStageIn );
                 psa.call( );
+                */
             } catch ( TransitException e ) {
                 tx.commit( );
                 if(! isFinishedTransition( e ) )
