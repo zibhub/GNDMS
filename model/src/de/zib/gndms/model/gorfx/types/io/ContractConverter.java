@@ -50,7 +50,8 @@ public class ContractConverter extends GORFXConverterBase<ContractWriter, Transi
 	    if (getModel().hasExpectedSize())
             getWriter().writeExpectedSize( getModel().getExpectedSize() );
 
-        if ( getModel( ).has )
+        if ( getModel( ).hasAdditionalNotes() )
+            getWriter( ).writeAdditionalNotes( getModel().getAdditionalNotes() );
         
         getWriter().done();
     }

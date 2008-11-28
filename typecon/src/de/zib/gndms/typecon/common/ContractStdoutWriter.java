@@ -6,6 +6,8 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
+import java.util.Map;
+
 /**
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
@@ -38,6 +40,11 @@ public class ContractStdoutWriter implements ContractWriter {
 
     public void writeResultValidUntil( FutureTime dat ) {
         showDate( dat, "ResultValidUntil: " );
+    }
+
+
+    public void writeAdditionalNotes( Map<String, String> additionalNotes ) {
+
     }
 
 

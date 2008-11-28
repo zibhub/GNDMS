@@ -96,7 +96,6 @@ public final class TransientContract implements Cloneable {
 
 
     public boolean hasAdditionalNotes( ) {
-
         return additionalNotes != null && additionalNotes.size() > 0;
     }
 
