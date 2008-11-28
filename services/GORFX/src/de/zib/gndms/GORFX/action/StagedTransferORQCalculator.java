@@ -1,17 +1,18 @@
 package de.zib.gndms.GORFX.action;
 
-import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.c3resource.jaxb.Workspace;
 import de.zib.gndms.infra.configlet.C3MDSConfiglet;
+import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
 import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
 import de.zib.gndms.logic.model.gorfx.c3grid.AbstractProviderStageInORQCalculator;
-import de.zib.gndms.model.gorfx.Contract;
+import de.zib.gndms.model.common.types.FutureTime;
+import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
 import de.zib.gndms.model.gorfx.types.SliceStageInORQ;
-import de.zib.gndms.c3resource.jaxb.Workspace;
+import org.apache.axis.types.URI;
 import org.globus.wsrf.container.ServiceHost;
 import org.joda.time.DateTime;
-import org.apache.axis.types.URI;
 
 import java.util.Set;
 
@@ -36,7 +37,7 @@ public class StagedTransferORQCalculator extends
     //
     // offertime = stageing time + transfer-time
     @Override
-    public Contract createOffer() throws Exception {
+    public TransientContract createOffer() throws Exception {
 
         // create provider staging orq using this this offer type
         AbstractProviderStageInORQCalculator psi_calc = ( AbstractProviderStageInORQCalculator )
@@ -45,7 +46,7 @@ public class StagedTransferORQCalculator extends
         psi_calc.setKey( getKey() );
         psi_calc.setORQArguments( getORQArguments() );
 
-        Contract c = psi_calc.createOffer();
+        TransientContract c = psi_calc.createOffer();
 
         if( c.hasExpectedSize() ) {
             long s = c.getExpectedSize( );
@@ -63,7 +64,7 @@ public class StagedTransferORQCalculator extends
             DateTime dat = new DateTime( c.getDeadline() );
             dat = dat.plusSeconds( NetworkAuxiliariesProvider.calculateTransferTime( s, ebw ) );
 
-            c.setDeadline( dat.toGregorianCalendar() );
+            c.setDeadline( FutureTime.atTime(dat) );
         }
 
         return c;

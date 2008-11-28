@@ -1,7 +1,8 @@
 package de.zib.gndms.model.gorfx.types.io.xml;
 
+import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
-import de.zib.gndms.model.gorfx.Contract;
+
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -12,7 +13,7 @@ import de.zib.gndms.model.gorfx.Contract;
 public class ORQWrapper {
 
     private AbstractORQ orq;
-    private Contract contract;
+    private TransientContract contract;
 
 
     public ORQWrapper( ) {
@@ -20,7 +21,7 @@ public class ORQWrapper {
     }
 
 
-    public ORQWrapper( AbstractORQ orq, Contract contract ) {
+    public ORQWrapper( AbstractORQ orq, TransientContract contract ) {
         this.orq = orq;
         this.contract = contract;
     }
@@ -36,12 +37,12 @@ public class ORQWrapper {
     }
 
 
-    public Contract getContract() {
+    public TransientContract getContract() {
         return contract;
     }
 
 
-    public void setContract( Contract contract ) {
+    public void setContract( TransientContract contract ) {
         this.contract = contract;
     }
 }

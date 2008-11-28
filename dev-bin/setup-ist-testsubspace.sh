@@ -1,15 +1,17 @@
 #!/bin/sh
 
-STAGING_COMMAND="%{C3GRID_SOURCE}/tools-bin/ist-staging.sh"
+STAGING_COMMAND="%{C3GRID_SOURCE}/dev-bin/ist-staging.sh"
 ESTIMATION_COMMAND="%{C3GRID_SOURCE}/scripts/dummy-estimation.sh"
 STAGING_AREA_PATH="/tmp/testss"
 STAGING_AREA_SIZE="2000000" # Currently unused
 
 source $(dirname $0)/../scripts/internal/echo-hostname.sh
+source $(dirname $0)/dir-check.sh
 # One can set the $hn variable manually in the check-hostname script,
 # if the returned value isn't the desired one.
 #hn=csr-pc25.zib.de
-STAGING_AREA_GSI_FTP_URL="gsiftp://$hn""$STAGING_AREA_PATH"
+hn=$(echo_hostname)
+STAGING_AREA_GSI_FTP_URL="gsiftp://$hn$STAGING_AREA_PATH"
 
 
 
@@ -21,6 +23,11 @@ MODE=$1
 
 ADDMODE=ADD
 [ "$MODE" = "DELETE" ] && ADDMODE=REMOVE
+
+
+if [ "$MODE" = "CREATE" ]; then
+    dir_check $STAGING_AREA_PATH
+fi
 
 
 # Variables in action parameters denoted using %{VARNAME} will be expanded 
@@ -46,3 +53,8 @@ stagingClass: 'de.zib.gndms.logic.model.gorfx.c3grid.ExternalProviderStageInActi
 estimationClass: 'de.zib.gndms.logic.model.gorfx.c3grid.ExternalProviderStageInORQCalculator'; \
 stagingCommand='$STAGING_COMMAND'; \
 estimationCommand='$ESTIMATION_COMMAND'"
+
+source $C3GRID_SOURCE/scripts/features/enable-interslicetransfer.sh
+source $C3GRID_SOURCE/scripts/features/enable-filetransfer.sh
+enable_interslicetransfer
+enable_filetransfer

@@ -64,6 +64,10 @@ configuration (bash) can be found in etc/example.profile):
 - Set $GROOVY_HOME and have it in your environment
 - For convenience, you might also want to 
   add $GROOVY_HOME/bin to your PATH
+- Add a link 
+     ln -sf $GROOVY_HOME/embeddable/groovy-all*.jar $C3GRID_SOURCE/extra/tools-lib/gndms-groovy.jar 
+                               
+                               
 
 - Install openssl if not available
 - Install curl if not available
@@ -258,6 +262,9 @@ DETAILED BUILD INSTRUCTIONS
   compile to service/ServiceName/out/production (resp. test/), and exclude the
   services' out,  build, and lib directories from the project sources to reduce
   the size of the project index.
+
+  You also should build a DSpace.jar form serives/DSpace/src and put
+  in into extra/lib. Create a GORFX.jar in the GORFX-service folder.
 
   This should be enought to compile and develop with your IDE; for deployment
   you still need to execute "ant createDeploymentGar" and "globus-deploy-gar"

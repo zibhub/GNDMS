@@ -73,6 +73,9 @@ public class GNDMSFileTransfer {
         if( sourceClient == null )
             throw new IllegalStateException( "no source client provided" );
 
+        if( sourcePath != null )
+            sourceClient.changeDir( sourcePath );
+
         if( files == null || files.size( ) == 0  )
             fetchFileListing();
     }
@@ -86,10 +89,7 @@ public class GNDMSFileTransfer {
 
         prepareTransfer( );
 
-
         sourceClient.setType( Session.TYPE_ASCII );
-
-        sourceClient.changeDir( sourcePath );
 
         Set<String> src = files.keySet();
         long size = 0;
@@ -125,7 +125,7 @@ public class GNDMSFileTransfer {
             throw new IllegalStateException( );
 
         setupClient ( sourceClient );
-        sourceClient.changeDir( sourcePath );
+
         setupClient ( destinationClient );
         destinationClient.changeDir( destinationPath );
 

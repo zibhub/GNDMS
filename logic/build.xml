@@ -3,7 +3,7 @@
 	
 	<path id="logic.path">
 		
-		<pathelement location="${tools-lib.dir}/groovy-all-1.6-beta-1.jar"/> 
+		<pathelement location="${tools-lib.dir}/gndms-groovy.jar"/> 
 
 		<pathelement location="${tools-lib.dir}/annotations.jar"/>
 		<dirset dir="${logic.dest}/production"/>

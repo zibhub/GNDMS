@@ -1,11 +1,10 @@
 package de.zib.gndms.model.gorfx.types.io.xml;
 
-import de.zib.gndms.model.gorfx.Contract;
-import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
+import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
 
-import java.io.Writer;
 import java.io.Reader;
+import java.io.Writer;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -22,14 +21,14 @@ public interface ProviderStageInXML {
      *
      * @return An XML representation of the in parameters.
      */
-    String toDocument( AbstractORQ orq,  Contract con );
+    String toDocument( AbstractORQ orq,  TransientContract con );
 
     /**
      * Writes XML document using the provided writer.
      *
      * The orq must allways be provided, the contract can be null
      */
-    void toDocument( Writer w, AbstractORQ orq, Contract con );
+    void toDocument( Writer w, AbstractORQ orq, TransientContract con );
 
 
     /**

@@ -1,10 +1,10 @@
 package de.zib.gndms.logic.model.gorfx;
 
+import de.zib.gndms.kit.config.ConfigletProvider;
 import de.zib.gndms.kit.factory.Factory;
 import de.zib.gndms.kit.factory.FactoryInstance;
 import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
-import de.zib.gndms.kit.config.ConfigletProvider;
-import de.zib.gndms.model.gorfx.Contract;
+import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +20,7 @@ public abstract class AbstractORQCalculator<M extends AbstractORQ, C extends Abs
     implements FactoryInstance<OfferType, AbstractORQCalculator<?, ?>> {
 
     private ConfigletProvider configletProvider;
-    private Contract perferredOfferExecution;
+    private TransientContract perferredOfferExecution;
     private Class<M> orqModelClass;
     private M orqArguments;
     private NetworkAuxiliariesProvider netAux;
@@ -38,16 +38,16 @@ public abstract class AbstractORQCalculator<M extends AbstractORQ, C extends Abs
     }
 
     // here the computation of the required offer should be performed
-    public abstract Contract createOffer( ) throws Exception;
+    public abstract TransientContract createOffer( ) throws Exception;
 
 
-    public Contract getPerferredOfferExecution() {
+    public TransientContract getPreferredOfferExecution() {
         return perferredOfferExecution;
     }
 
 
-    public void setPerferredOfferExecution( Contract preferredOfferContract ) {
-        perferredOfferExecution = preferredOfferContract;
+    public void setPerferredOfferExecution( TransientContract preferredOfferTransientContract ) {
+        perferredOfferExecution = preferredOfferTransientContract;
     }
 
 

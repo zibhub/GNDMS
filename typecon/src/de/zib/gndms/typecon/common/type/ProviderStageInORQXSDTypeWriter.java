@@ -9,6 +9,12 @@ import de.zib.gndms.typecon.common.GORFXClientTools;
 
 import javax.xml.soap.SOAPException;
 import java.util.HashMap;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.LinkedList;
+
+import org.apache.axis.description.FieldDesc;
+import org.apache.axis.message.MessageElement;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -22,17 +28,24 @@ public class ProviderStageInORQXSDTypeWriter extends AbstractXSDTypeWriter<Provi
     private DataDescriptorXSDTypeWriter dataWriter;
 
     public void writeDataFileName( String dfn ) {
+        FieldDesc fd = ProviderStageInORQT.getTypeDesc().getFieldByName( "dataFile" );
+        LinkedList<MessageElement> ll = new LinkedList<MessageElement>( Arrays.asList( getProduct().get_any() ) );
+
         try {
-            getProduct().get_any()[1].setObjectValue( dfn );
+            ll.add( 1,
+                GORFXClientTools.createElementForField( fd, dfn ) );
         } catch ( SOAPException e ) {
             boxException( e );
         }
+        getProduct().set_any( ll.toArray( new MessageElement[ll.size()] ) );
     }
 
 
     public void writeMetaDataFileName( String mfn ) {
         try {
-            getProduct().get_any()[2].setObjectValue( mfn );
+            MessageElement[] mes = getProduct().get_any();
+            int idx = mes.length - 1;
+            mes[idx].setObjectValue( mfn );
         } catch ( SOAPException e ) {
             boxException( e );
         }
@@ -94,6 +107,11 @@ public class ProviderStageInORQXSDTypeWriter extends AbstractXSDTypeWriter<Provi
 
     protected void boxException( Exception e ) {
         throw new RuntimeException( e.getMessage(), e );
+    }
+
+
+    public void writeId( String id ) {
+        // Not required here
     }
 
 

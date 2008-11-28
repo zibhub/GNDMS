@@ -1,8 +1,10 @@
 package de.zib.gndms.model.gorfx.types.io;
 
+import de.zib.gndms.model.common.types.FutureTime;
 import de.zib.gndms.model.gorfx.types.MinMaxPair;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
+import org.joda.time.Duration;
 import org.joda.time.format.ISODateTimeFormat;
 
 import java.util.*;
@@ -127,5 +129,46 @@ public class PropertyReadWriteAux {
             return null;
 
         return new DateTime( s );
+    }
+
+
+    public static String dateToString( Calendar c ) {
+        DateTime dt = new DateTime( c );
+        return ISODateTimeFormat.dateTime( ).print( dt  );
+    }
+
+
+    public static Calendar dateToString( String s ) {
+
+        return new DateTime( s ).toGregorianCalendar();
+    }
+
+
+	public static void writeFutureTime( @NotNull Properties prop, @NotNull String key, @NotNull FutureTime fm ) {
+	    prop.setProperty( key, fm.toString() );
+	}
+
+	public static FutureTime readFutureTime( @NotNull Properties prop, @NotNull String key ) {
+        String s = prop.getProperty( key );
+        if( s == null )
+            return null;
+
+		try {
+			long offsetInMs = Long.parseLong(s.trim());
+			return FutureTime.atOffset(new Duration(offsetInMs));
+		}
+		catch (NumberFormatException nfe) {
+            return FutureTime.atTime(new DateTime( s ));
+		}
+    }
+
+
+    public static String getMandatoryProeprty( @NotNull Properties prop, @NotNull String key ) throws MandatoryPropertyMissingException {
+
+        String s = prop.getProperty( key );
+        if ( s == null )
+            throw new MandatoryPropertyMissingException( key );
+
+        return s;
     }
 }

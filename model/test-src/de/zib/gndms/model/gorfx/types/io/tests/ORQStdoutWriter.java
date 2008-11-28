@@ -30,4 +30,9 @@ public abstract class ORQStdoutWriter implements ORQWriter {
         for( String k : ks )
             System.out.println( "    " + k + " ; " + map.get( k ) );
     }
+
+
+    public void writeId( String id ) {
+        System.out.println( "GORFXId: " + id);
+    }
 }

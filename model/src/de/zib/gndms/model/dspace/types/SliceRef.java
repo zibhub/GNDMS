@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Arrays;
+import java.io.Serializable;
 
 /**
  * This is the model for a slice reference.
@@ -19,7 +20,8 @@ import java.util.Arrays;
  * <p/>
  * User: mjorra, Date: 03.11.2008, Time: 10:30:48
  */
-public class SliceRef extends SimpleRKRef {
+public class SliceRef extends SimpleRKRef implements Serializable {
+    private static final long serialVersionUID = -970796595131309306L;
 
     public static final QName RESOURCE_KEY_NAME =
         new QName("http://dspace.gndms.zib.de/DSpace/Slice", "SliceKey");

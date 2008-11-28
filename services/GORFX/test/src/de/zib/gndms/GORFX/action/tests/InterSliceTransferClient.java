@@ -57,7 +57,7 @@ public class InterSliceTransferClient extends AbstractApplication {
         DSpaceClient dcnt = new DSpaceClient( duri );
         SubspaceClient subc =
             new SubspaceClient(
-                dcnt.getSubspace( new QName( "{http://www.c3grid.de/G2/Subspace}TransferSubspace" ) ).getEndpointReference() );
+                dcnt.getSubspace( new QName( "http://www.c3grid.de/G2/Subspace", "TransferSubspace" ) ).getEndpointReference() );
 
         Calendar tt = new GregorianCalendar( );
         tt.add( Calendar.YEAR, 20 );

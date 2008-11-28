@@ -1,21 +1,14 @@
 package de.zib.gndms.logic.model.gorfx.c3grid;
 
-import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.kit.config.MapConfig;
+import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.logic.model.gorfx.PermissionDeniedORQException;
 import de.zib.gndms.logic.model.gorfx.UnfulfillableORQException;
-import de.zib.gndms.model.gorfx.Contract;
-import de.zib.gndms.model.gorfx.types.io.ContractConverter;
-import de.zib.gndms.model.gorfx.types.io.ContractPropertyReader;
-import de.zib.gndms.model.gorfx.types.io.ContractPropertyWriter;
-import de.zib.gndms.model.gorfx.types.io.xml.ProviderStageInXML;
-import de.zib.gndms.model.gorfx.types.io.xml.ORQWrapper;
+import de.zib.gndms.model.common.types.TransientContract;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.Properties;
 
 
 /**
@@ -40,9 +33,9 @@ public class ExternalProviderStageInORQCalculator extends AbstractProviderStageI
 
 
     @Override
-    public Contract createOffer() throws Exception {
-        final @NotNull Contract cont = getPerferredOfferExecution();
-        final @NotNull Contract result;
+    public TransientContract createOffer() throws Exception {
+        final @NotNull TransientContract cont = getPreferredOfferExecution();
+        final @NotNull TransientContract result;
 
         MapConfig config = new MapConfig(getKey().getConfigMap());
         
@@ -56,13 +49,13 @@ public class ExternalProviderStageInORQCalculator extends AbstractProviderStageI
         }
         else
             /* Use plain copy if no estimation script has been specified */ 
-            result = new Contract(cont);
+            result = cont.clone();
         return result;
     }
 
 
-    private Contract createOfferViaEstScript(
-            final File estCommandFileParam, final Contract contParam) {
+    private TransientContract createOfferViaEstScript(
+            final File estCommandFileParam, final TransientContract contParam) {
         ProcessBuilderAction action = createEstAction(estCommandFileParam, contParam);
         StringBuilder recv = action.getOutputReceiver();
         int exitCode = action.call();
@@ -83,7 +76,7 @@ public class ExternalProviderStageInORQCalculator extends AbstractProviderStageI
     }
 
 
-    private ProcessBuilderAction createEstAction(final File estCommandFileParam, final Contract contParam) {
+    private ProcessBuilderAction createEstAction(final File estCommandFileParam, final TransientContract contParam) {
         final @NotNull ProcessBuilder pb = new ProcessBuilder();
         try {
             pb.command(estCommandFileParam.getCanonicalPath());

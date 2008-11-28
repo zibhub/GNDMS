@@ -1,9 +1,6 @@
 package de.zib.gndms.model.gorfx.types.io;
 
 import de.zib.gndms.model.gorfx.types.DataDescriptor;
-import de.zib.gndms.model.gorfx.types.SpaceConstraint;
-
-import java.util.HashMap;
 
 /**
  * Worker for converting data descriptor instances.
@@ -49,7 +46,8 @@ public class DataDescriptorConverter extends GORFXConverterBase<DataDescriptorWr
             getWriter().writeJustDownload( );
 
 
-        getWriter().writeDataFormat( NotNullString( getModel().getDataFormat() ) );
+        if( getModel().hasDataFormat() )
+            getWriter().writeDataFormat( NotNullString( getModel().getDataFormat() ) );
 
         if( getModel().hasDataArchiveFormat() )
             getWriter().writeDataArchiveFormat( getModel().getDataArchiveFormat() );

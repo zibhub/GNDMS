@@ -4,10 +4,10 @@ import de.zib.gndms.GORFX.ORQ.client.ORQClient;
 import de.zib.gndms.GORFX.client.GORFXClient;
 import de.zib.gndms.c3resource.jaxb.Workspace;
 import de.zib.gndms.infra.configlet.C3MDSConfiglet;
-import de.zib.gndms.infra.system.SystemHolder;
 import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.infra.system.SystemHolder;
 import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
-import de.zib.gndms.model.gorfx.Contract;
+import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.gorfx.types.SliceStageInORQ;
 import de.zib.gndms.typecon.common.type.ContextXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.ContractXSDReader;
@@ -53,7 +53,7 @@ public class SliceStageInORQCalculator extends
 
 
     @Override
-    public Contract createOffer() throws Exception {
+    public TransientContract createOffer() throws Exception {
 
         String sid = getORQArguments().getGridSite();
         getORQArguments().setGridSiteURI( sid );
@@ -63,7 +63,7 @@ public class SliceStageInORQCalculator extends
         ProviderStageInORQT p_orq = ProviderStageInORQXSDTypeWriter.write( getORQArguments() );
         ContextT ctx = ContextXSDTypeWriter.writeContext( getORQArguments().getContext() );
         ORQClient orq_cnt = new ORQClient( cnt.createOfferRequest( p_orq, ctx ) );
-        OfferExecutionContractT con = ContractXSDTypeWriter.fromContract( getPerferredOfferExecution() );
+        OfferExecutionContractT con = ContractXSDTypeWriter.fromContract( getPreferredOfferExecution() );
         OfferExecutionContractT con2 = orq_cnt.permitEstimateAndDestroyRequest( con, ctx );
 
         return ContractXSDReader.readContract( con2 );
@@ -72,7 +72,8 @@ public class SliceStageInORQCalculator extends
 
     public String destinationURI( String gs ) throws URI.MalformedURIException {
         C3MDSConfiglet cfg = getConfigletProvider().getConfiglet( C3MDSConfiglet.class, C3MDSConfiglet.class.getName( ) );
-        Set<Workspace.Archive> a = cfg.getCatalog().getArchivesByOid().get( gs );
+
+        Set<Workspace.Archive> a = cfg.getCatalog().getArchivesByOids( gs, getORQArguments().getDataDescriptor().getObjectList() );
         
         return ((Workspace.Archive) a.toArray()[0]).getBaseUrl();
     }

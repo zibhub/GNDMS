@@ -1,30 +1,25 @@
 package de.zib.gndms.GORFX.action;
 
+import de.zib.gndms.dspace.client.DSpaceClient;
+import de.zib.gndms.dspace.slice.client.SliceClient;
+import de.zib.gndms.dspace.subspace.client.SubspaceClient;
+import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.logic.model.gorfx.c3grid.AbstractProviderStageInAction;
-import de.zib.gndms.model.gorfx.types.*;
-import de.zib.gndms.model.gorfx.Task;
-import de.zib.gndms.model.gorfx.Contract;
+import de.zib.gndms.model.common.PersistentContract;
+import de.zib.gndms.model.dspace.types.SliceRef;
+import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.model.gorfx.SubTask;
-import de.zib.gndms.model.dspace.types.SliceRef;
+import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.model.util.TxFrame;
-import de.zib.gndms.GORFX.action.InterSliceTransferTaskAction;
-import de.zib.gndms.GORFX.action.DSpaceBindingUtils;
-import de.zib.gndms.GORFX.action.InterSliceTransferORQCalculator;
-import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.typecon.common.type.ProviderStageInResultXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.SliceRefXSDReader;
-import de.zib.gndms.dspace.slice.client.SliceClient;
-import de.zib.gndms.dspace.client.DSpaceClient;
-import de.zib.gndms.dspace.subspace.client.SubspaceClient;
-import de.zib.gndms.kit.util.WidAux;
 import org.jetbrains.annotations.NotNull;
 
-import javax.xml.namespace.QName;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import java.io.Serializable;
+import javax.xml.namespace.QName;
 import java.util.List;
 
 /**
@@ -47,7 +42,7 @@ public class StagedTransferTaskAction extends ORQTaskAction<SliceStageInORQ> {
 
     @SuppressWarnings( { "ThrowableInstanceNeverThrown" } )
     @Override
-    protected void onInProgress( @NotNull Task model ) {
+    protected void onInProgress( @NotNull AbstractTask model ) {
 
         EntityManager em = getEntityManager();
         TxFrame tx = new TxFrame( em );
@@ -90,7 +85,7 @@ public class StagedTransferTaskAction extends ORQTaskAction<SliceStageInORQ> {
             // todo find destination subspace
             SubspaceClient sscnt = new SubspaceClient( dsc.getSubspace( new QName( "" ) ).getEndpointReference() );
 
-            Contract c = model.getContract();
+            PersistentContract c = model.getContract();
             long size = c.getExpectedSize();
             SliceClient tgt = sscnt.createSlice( GORFXConstantURIs.PUBLISH_SLICE_KIND_URI,
                 c.getDeadline(), size == 0 ? 1 : size );
@@ -125,7 +120,7 @@ public class StagedTransferTaskAction extends ORQTaskAction<SliceStageInORQ> {
             res_slice = ist_orq.getDestinationSlice();
 
         } catch ( TransitException e ) {
-            if(! isFinishedException( e ) )
+            if(! isFinishedTransition( e ) )
                 throw e;
         } catch ( Exception e ) {
             boxException( e );
@@ -138,9 +133,9 @@ public class StagedTransferTaskAction extends ORQTaskAction<SliceStageInORQ> {
     }
 
 
-    private ProviderStageInResult doStageIn( Task model, TxFrame tx ) {
+    private ProviderStageInResult doStageIn( AbstractTask model, TxFrame tx ) {
 
-        Contract c = model.getContract( );
+        PersistentContract c = model.getContract( );
 
         // check if this task is resumed and we aleady have a staged the data
 
@@ -159,6 +154,8 @@ public class StagedTransferTaskAction extends ORQTaskAction<SliceStageInORQ> {
 
             // perform staging
             try {
+                /*
+                 * TODO overwork this block
                 tx.begin( );
                 AbstractProviderStageInAction psa = (AbstractProviderStageInAction)
                     getSystem().getInstanceDir().getTaskAction( getEntityManager(), GORFXConstantURIs.PROVIDER_STAGE_IN_URI );
@@ -166,9 +163,10 @@ public class StagedTransferTaskAction extends ORQTaskAction<SliceStageInORQ> {
                 psa.setClosingEntityManagerOnCleanup( false );
                 psa.initFromModel( getEntityManager(), providerStageIn );
                 psa.call( );
+                */
             } catch ( TransitException e ) {
                 tx.commit( );
-                if(! isFinishedException( e ) )
+                if(! isFinishedTransition( e ) )
                     throw e;
             } catch ( Exception e ) {
                 tx.finish( );

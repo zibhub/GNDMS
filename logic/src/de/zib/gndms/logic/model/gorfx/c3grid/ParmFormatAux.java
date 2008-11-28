@@ -1,15 +1,15 @@
 package de.zib.gndms.logic.model.gorfx.c3grid;
 
-import de.zib.gndms.model.gorfx.types.io.xml.ProviderStageInXML;
-import de.zib.gndms.model.gorfx.types.io.xml.ORQWrapper;
-import de.zib.gndms.model.gorfx.types.io.ContractPropertyReader;
-import de.zib.gndms.model.gorfx.types.io.ContractConverter;
-import de.zib.gndms.model.gorfx.types.io.ContractPropertyWriter;
-import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
-import de.zib.gndms.model.gorfx.Contract;
-import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
+import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
+import de.zib.gndms.model.common.types.TransientContract;
+import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
+import de.zib.gndms.model.gorfx.types.io.ContractConverter;
+import de.zib.gndms.model.gorfx.types.io.ContractPropertyReader;
+import de.zib.gndms.model.gorfx.types.io.ContractPropertyWriter;
+import de.zib.gndms.model.gorfx.types.io.xml.ORQWrapper;
+import de.zib.gndms.model.gorfx.types.io.xml.ProviderStageInXML;
 
 import java.io.ByteArrayInputStream;
 import java.util.Properties;
@@ -30,16 +30,16 @@ public class ParmFormatAux {
     private String format=FORMAT_PROPS;
 
 
-    public Contract getResult( StringBuilder res ) throws Exception {
+    public TransientContract getResult( StringBuilder res ) throws Exception {
 
         if( format.equals( FORMAT_XML) )
-            return XMLToResult( res );
+            return xmlToResult( res );
         else
-            return PropsToResult( res );
+            return propsToResult( res );
     }
 
     
-    public ProcessBuilderAction createPBAction( ProviderStageInORQ orq, Contract contParam ) {
+    public ProcessBuilderAction createPBAction( ProviderStageInORQ orq, TransientContract contParam ) {
 
         if( format.equals( FORMAT_XML ) )
             return  createXMLParmPBAction( orq, contParam );
@@ -58,7 +58,7 @@ public class ParmFormatAux {
             }
     }
 
-    private Contract PropsToResult( StringBuilder sb ) throws Exception {
+    private TransientContract propsToResult( StringBuilder sb ) throws Exception {
 
         Properties props = new Properties();
         props.load(new ByteArrayInputStream(sb.toString().getBytes()));
@@ -69,14 +69,14 @@ public class ParmFormatAux {
     }
 
 
-    private Contract XMLToResult( StringBuilder sb ) throws Exception {
+    private TransientContract xmlToResult( StringBuilder sb ) throws Exception {
 
         ORQWrapper wrp = xmlWriter.fromDocument( sb.toString( ) );
         return wrp.getContract();
     }
 
 
-    private ProcessBuilderAction createDefaultPBAction( ProviderStageInORQ orq, Contract contParam ) {
+    private ProcessBuilderAction createDefaultPBAction( ProviderStageInORQ orq, TransientContract contParam ) {
 
         if( contParam != null ) {
             final Properties moreProps = new Properties();
@@ -90,7 +90,7 @@ public class ParmFormatAux {
     }
 
 
-    private ProcessBuilderAction createXMLParmPBAction( ProviderStageInORQ orq, Contract contParam ) {
+    private ProcessBuilderAction createXMLParmPBAction( ProviderStageInORQ orq, TransientContract contParam ) {
 
         return ProviderStageInTools.createPBActionForXML(
             xmlWriter.toDocument( orq, contParam ) );

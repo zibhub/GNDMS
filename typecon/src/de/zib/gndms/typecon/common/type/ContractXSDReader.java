@@ -1,7 +1,9 @@
 package de.zib.gndms.typecon.common.type;
 
-import de.zib.gndms.model.gorfx.Contract;
+import de.zib.gndms.model.common.types.TransientContract;
+import org.joda.time.DateTime;
 import types.OfferExecutionContractT;
+
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -10,15 +12,22 @@ import types.OfferExecutionContractT;
  * User: mjorra, Date: 25.09.2008, Time: 11:23:00
  */
 public class ContractXSDReader {
+	private ContractXSDReader() {}
 
-    public static Contract readContract( OfferExecutionContractT src ) {
+
+	@SuppressWarnings({ "FeatureEnvy", "StaticMethodOnlyUsedInOneClass" })
+    public static TransientContract readContract( OfferExecutionContractT src ) {
 
         if( src != null ) {
-            Contract con = new Contract();
-            con.setAccepted( src.getIfDecisionBefore() );
-            con.setDeadline( src.getExecutionLikelyUntil() );
-            con.setResultValidity( src.getResultValidUntil() );
-            con.setDeadlineIsOffset( src.isConstantExecutionTime() );
+            TransientContract con = new TransientContract();
+            con.setAccepted( new DateTime(src.getIfDecisionBefore()) );
+	        
+            con.setDeadline( FutureTimeXSDReader.read(src.getExecutionLikelyUntil()) );
+            con.setResultValidity( FutureTimeXSDReader.read(src.getResultValidUntil()) );
+
+	        final Long estMaxSize = src.getEstMaxSize();
+	        if (estMaxSize != null)
+	            con.setExpectedSize(estMaxSize);
             return con;
         }
         

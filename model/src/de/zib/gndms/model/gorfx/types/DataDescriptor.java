@@ -60,6 +60,11 @@ public class DataDescriptor implements Serializable {
     }
 
 
+    public boolean hasDataFormat( ) {
+        return dataFormat != null;
+    }
+
+    
     public String getDataFormat() {
         return dataFormat;
     }

@@ -11,14 +11,14 @@ import java.util.Properties;
 public abstract class AbstractPropertyReader<M> extends AbstractPropertyIO {
 
     private M product;
-    private Class<M> productClass;
+    private Class<? extends M> productClass;
 
-    protected AbstractPropertyReader( Class productClass ) {
+    protected AbstractPropertyReader( Class<? extends M> productClass ) {
         this.productClass = productClass;
     }
 
 
-    protected AbstractPropertyReader(  Class productClass, Properties properties ) {
+    protected AbstractPropertyReader(  Class<? extends M> productClass, Properties properties ) {
         super( properties );
         this.productClass = productClass;
     }
@@ -39,13 +39,19 @@ public abstract class AbstractPropertyReader<M> extends AbstractPropertyIO {
     }
 
 
-    public void newProduct( )  {
+	public void newProduct() {
+		product = makeNewProduct();
+	}
+	
+    public M makeNewProduct( )  {
         try {
-            product = productClass.newInstance();
+            return productClass.newInstance();
         } catch ( InstantiationException e ) {
             e.printStackTrace();
+	        throw new RuntimeException(e);
         } catch ( IllegalAccessException e ) {
             e.printStackTrace();
+	        throw new RuntimeException(e);
         }
     }
 

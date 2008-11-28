@@ -1,11 +1,15 @@
 #!/bin/sh
 
-SCRIPTDIR="$(dirname $0)/" ; MODE="$1" ; shift ; source "$SCRIPTDIR"internal/script-setup.sh
+SCRIPTDIR="$(dirname $0)/" ; source "$SCRIPTDIR"internal/script-setup.sh
 
 # %{} is shell variable substitution at container runtime
 
 STAGING_COMMAND="%{C3GRID_SOURCE}/scripts/dummy-staging.sh"
 ESTIMATION_COMMAND="%{C3GRID_SOURCE}/scripts/dummy-estimation.sh"
+# If set, $CANCEL_COMMAND is called whenever a staging script fails
+# or is aborted prematurely (i.e. due to a timeout of the associated Task Resouce
+# or a user abort)
+CANCEL_COMMAND=""
 
 STAGING_AREA_PATH="/tmp"
 STAGING_AREA_SIZE="1000000" # Currently unused
@@ -25,6 +29,4 @@ STAGING_AREA_GSI_FTP_URL="gsiftp://$GRIDHOST""$STAGING_AREA_PATH"
 # Do not edit below this line unless very sure ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 enable_providerstagein
-
-moni call -v .sys.RefreshSystem
-
+refresh_system

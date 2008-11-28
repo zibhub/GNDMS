@@ -46,7 +46,7 @@ public class TaskResource extends TaskResourceBase
      */
     public void executeTask() {
         
-        Task tsk = taskAction.getModel( );
+        Task tsk = (Task) taskAction.getModel( );
         if(! tsk.getState().equals( TaskState.FINISHED ) || ! tsk.getState().equals( TaskState.FAILED ) )
             future = home.getSystem( ).submitAction( taskAction, getResourceHome().getLog() );
         else
@@ -55,7 +55,7 @@ public class TaskResource extends TaskResourceBase
 
 
     public TaskExecutionState getTaskExecutionState() {
-        return GORFXTools.getStateOfTask( taskAction.getModel( ) );
+        return GORFXTools.getStateOfTask( (Task) taskAction.getModel( ) );
     }
 
 
@@ -183,7 +183,7 @@ public class TaskResource extends TaskResourceBase
         EntityManager em = home.getEntityManagerFactory().createEntityManager(  );
         Task tsk = (Task) mH.loadModelById( em, id );
         try {
-            taskAction = getResourceHome().getSystem().getInstanceDir().getTaskAction( em, tsk.getOfferType().getOfferTypeKey() );
+            taskAction = getResourceHome().getSystem().getInstanceDir().getTaskAction( getResourceHome().getSystem( ), em, tsk.getOfferType().getOfferTypeKey() );
             taskAction.initFromModel(em, tsk);
             taskAction.setClosingEntityManagerOnCleanup(true);
             

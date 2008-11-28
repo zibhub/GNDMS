@@ -30,5 +30,7 @@ public abstract class ORQPropertyReader<M extends AbstractORQ> extends AbstractP
         if( getProperties().containsKey( SfrProperty.CONTEXT.key ) )
             getProduct().setContext(
                 PropertyReadWriteAux.readMap( getProperties(), SfrProperty.CONTEXT.key ) );
+
+        getProduct().setId( getProperties().getProperty( SfrProperty.GORFX_ID.key ) );
     }
 }
