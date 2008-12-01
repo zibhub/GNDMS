@@ -56,7 +56,7 @@ public class ORQImpl extends ORQImplBase {
                 ores.setOfferRequestArguments( orq.getOfferRequestArguments() );
                 final TransientContract contract = orq.getOfferExecutionContract(offerExecutionContract);
                 ores.setOfferExecutionContract(
-                    ContractXSDTypeWriter.fromContract(
+                    ContractXSDTypeWriter.write(
                             contract) );
                 ores.setOrqCalc(orq.getORQCalculator());
 
@@ -87,7 +87,7 @@ public class ORQImpl extends ORQImplBase {
             ContextTAux.initWid(getResourceHome().getModelUUIDGen(), context);
             ExtORQResourceHome home = (ExtORQResourceHome) getResourceHome();
             ORQResource res = home.getAddressedResource();
-            return ContractXSDTypeWriter.fromContract(
+            return ContractXSDTypeWriter.write(
                 res.estimatedExecutionContract( offerExecutionContract ) );
         }
         catch (UnfulfillableORQException e) {

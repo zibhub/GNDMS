@@ -55,7 +55,7 @@ public class ContractXSDTypeWriter extends AbstractXSDTypeWriter<OfferExecutionC
 
     public void writeAdditionalNotes( Map<String, String> additionalNotes ) {
 
-        
+        getProduct().setVolatileRequestInfo( ContextXSDTypeWriter.writeContext( additionalNotes ) );
     }
 
 
@@ -69,7 +69,7 @@ public class ContractXSDTypeWriter extends AbstractXSDTypeWriter<OfferExecutionC
     }
 
 
-    public static OfferExecutionContractT fromContract( TransientContract con ) {
+    public static OfferExecutionContractT write( TransientContract con ) {
 
         ContractXSDTypeWriter writ = new ContractXSDTypeWriter();
         ContractConverter conv = new ContractConverter( writ, con );

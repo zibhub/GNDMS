@@ -4,6 +4,9 @@ import de.zib.gndms.model.common.types.TransientContract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Properties;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.FileInputStream;
 
 
 /**
@@ -31,8 +34,10 @@ public class ContractPropertyReader extends AbstractPropertyReader<TransientCont
     public void read() {
         final @NotNull TransientContract con = getProduct();
 
-        if( getProperties().containsKey( SfrProperty.EST_IF_DECISION_BEFORE.key ) )
-            con.setAccepted(PropertyReadWriteAux.readISODateTime(getProperties(), SfrProperty.EST_IF_DECISION_BEFORE.key).toDateTimeISO());
+        String s;
+        if( getProperties().containsKey( SfrProperty.EST_IF_DECISION_BEFORE.key ) ) {
+            con.setAccepted(PropertyReadWriteAux.readISODateTime( getProperties(), SfrProperty.EST_IF_DECISION_BEFORE.key ).toDateTimeISO());
+        }
 
         if( getProperties().containsKey( SfrProperty.EST_EXEC_LIKELY_UNTIL.key ) )
             con.setDeadline(PropertyReadWriteAux.readFutureTime(getProperties(), SfrProperty.EST_EXEC_LIKELY_UNTIL.key));
@@ -53,5 +58,23 @@ public class ContractPropertyReader extends AbstractPropertyReader<TransientCont
 
 
     public void done() {
+    }
+
+
+    public static TransientContract readFromFile( final String fileName ) throws IOException {
+
+        InputStream is = null;
+        try {
+            is = new FileInputStream( fileName );
+            Properties prop = new Properties( );
+            prop.load( is );
+            is.close( );
+            ContractPropertyReader reader = new ContractPropertyReader( prop );
+            reader.performReading( );
+            return  reader.getProduct();
+        } finally {
+            if( is != null )
+                is.close( );
+        }
     }
 }

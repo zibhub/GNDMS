@@ -5,6 +5,8 @@ import org.joda.time.DateTime;
 import types.OfferExecutionContractT;
 import types.ContextT;
 
+import java.util.Calendar;
+
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -21,7 +23,9 @@ public class ContractXSDReader {
 
         if( src != null ) {
             TransientContract con = new TransientContract();
-            con.setAccepted( new DateTime(src.getIfDecisionBefore()) );
+            Calendar cal  = src.getIfDecisionBefore();
+            if( cal != null )
+                con.setAccepted( new DateTime( cal ) );
 	        
             con.setDeadline( FutureTimeXSDReader.read(src.getExecutionLikelyUntil()) );
             con.setResultValidity( FutureTimeXSDReader.read(src.getResultValidUntil()) );
