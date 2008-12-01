@@ -263,13 +263,8 @@ DETAILED BUILD INSTRUCTIONS
   service with the following dependencies:
 
   J2EE, groovy, annotations, "servicename"-stubs,
-<<<<<<< local
   gndms-infra, gndms-logic, gndms-shared-model, stuff, joda-time,
   SOURCES, all non-symlinks in service/ServiceName/lib,  gt4
-=======
-  gndms-infra, gndms-logic, gndms-kit, gndms-shared-model, joda-time,
-  SOURCES, all non-symlinks in service/ServiceName/lib, gt4
->>>>>>> other
 
   GORFX also depends on gndms-typecon, DSpace, args4j, DSpace-Stubs and jaxb.
   
