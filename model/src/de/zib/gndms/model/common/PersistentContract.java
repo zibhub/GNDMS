@@ -48,7 +48,7 @@ public class PersistentContract {
 		return curDeadline.compareTo(curRV) < 0 ? curDeadline : curRV; 
 	}
 	
-    @Temporal(value = TemporalType.TIMESTAMP)
+    @Temporal(value = TemporalType.TIMESTAMP )
     public Calendar getAccepted() {
 		return nullSafeClone(accepted);
 	}
