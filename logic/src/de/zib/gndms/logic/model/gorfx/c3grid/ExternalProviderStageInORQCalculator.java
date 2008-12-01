@@ -71,7 +71,9 @@ public class ExternalProviderStageInORQCalculator extends AbstractProviderStageI
                     throw new IllegalStateException("Estimation script failed", e);
                 }
             default:
-                throw new IllegalStateException("Estimation script failed: " + action.toString());
+                throw new IllegalStateException(
+                    "Estimation script returned unexpected exit code: " + exitCode +
+                        "\nScript output was: " + recv.toString() );
         }
     }
 

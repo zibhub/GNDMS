@@ -35,22 +35,46 @@ public final class TransientContract implements Cloneable {
 	public PersistentContract acceptNow() {
 		return acceptAt(new DateTime());
 	}
-	
-	@SuppressWarnings({ "FeatureEnvy" })
-	public PersistentContract acceptAsIs() {
-		PersistentContract pc = new PersistentContract();
+
+
+    /**
+     * Creates a persistent-contract form this contract by fixing future time using the accepted time stamp.
+     *
+     * @note The created contract may be invalid wrt its jpa constraints.
+     *
+     * @return A persistent-contract representing this contract.
+     *
+     * todo maybe set fixed values here
+     */
+    @SuppressWarnings({ "FeatureEnvy" })
+    public PersistentContract acceptAsIs() {
+
+        PersistentContract pc = new PersistentContract();
 		pc.setAccepted(accepted.toGregorianCalendar());
-		final DateTime fixedDeadline = getDeadline().fixedWith(accepted).getFixedTime();
-		pc.setDeadline(fixedDeadline.toGregorianCalendar());
-		final DateTime fixedResultValidity =
-			  getResultValidity().fixedWith(fixedDeadline).getFixedTime();
-		pc.setResultValidity(fixedResultValidity.toGregorianCalendar());
-		if (hasExpectedSize())
+
+        DateTime fixedDeadline = null;
+        if( hasDeadline() ) {
+            fixedDeadline = getDeadline().fixedWith(accepted).getFixedTime();
+            pc.setDeadline(fixedDeadline.toGregorianCalendar());
+        }
+
+        if( hasResultValidity() ) {
+            DateTime fixedResultValidity;
+            if( fixedDeadline != null )
+                fixedResultValidity =  getResultValidity().fixedWith(fixedDeadline).getFixedTime();
+            else  {
+                fixedResultValidity =  getResultValidity().fixedWith(accepted).getFixedTime();
+            }
+            pc.setResultValidity(fixedResultValidity.toGregorianCalendar());
+        }
+
+        if (hasExpectedSize())
 			pc.setExpectedSize(getExpectedSize());
 		return pc;
 	}
 
-	public DateTime getAccepted() {
+
+    public DateTime getAccepted() {
 		return accepted;
 	}
 
@@ -58,6 +82,11 @@ public final class TransientContract implements Cloneable {
 	public void setAccepted(final DateTime acceptedParam) {
 		accepted = acceptedParam;
 	}
+
+
+    private boolean hasDeadline() {
+        return deadline != null;
+    }
 
 
 	public FutureTime getDeadline() {
@@ -68,6 +97,11 @@ public final class TransientContract implements Cloneable {
 	public void setDeadline(final FutureTime deadlineParam) {
 		deadline = deadlineParam;
 	}
+
+
+    private boolean hasResultValidity() {
+        return resultValidity != null;
+    }
 
 
 	public FutureTime getResultValidity() {
