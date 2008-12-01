@@ -1,6 +1,6 @@
 package de.zib.gndms.logic.model.gorfx;
 
-import de.zib.gndms.kit.factory.Factory;
+import de.zib.gndms.model.common.types.factory.KeyFactory;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigActionResult;
@@ -43,13 +43,13 @@ public class SetupOfferTypeAction extends SetupAction<ConfigActionResult> {
     //private Class<? extends AbstractORQCalculator<?, ?>> calcClass;
 
     @ConfigOption(descr="FQN of AbstractORQCalculator factory class")
-    private Class<Factory<OfferType, AbstractORQCalculator<?, ?>>> calcFactory;
+    private Class<KeyFactory<OfferType, AbstractORQCalculator<?, ?>>> calcFactory;
 
     //@ConfigOption(altName = "class", descr="FQN of TaskAction class for this OfferType")
     //private Class<? extends TaskAction<?>> taskActionClass;
 
     @ConfigOption(descr="FQN of TaskAction factory class")
-    private Class<Factory<OfferType, ORQTaskAction<?>>> taskActionFactory;
+    private Class<KeyFactory<OfferType, ORQTaskAction<?>>> taskActionFactory;
 
     @ConfigOption(descr = "File from which the initial config should be read; UPDATE will overwrite!")
     private String configFile;
@@ -223,24 +223,24 @@ public class SetupOfferTypeAction extends SetupAction<ConfigActionResult> {
     }
 
 
-    public Class<Factory<OfferType, AbstractORQCalculator<?, ?>>> getCalcFactory() {
+    public Class<KeyFactory<OfferType, AbstractORQCalculator<?, ?>>> getCalcFactory() {
         return calcFactory;
     }
 
 
     public void setCalcFactory(
-            final Class<Factory<OfferType, AbstractORQCalculator<?, ?>>> calcFactoryParam) {
+            final Class<KeyFactory<OfferType, AbstractORQCalculator<?, ?>>> calcFactoryParam) {
         calcFactory = calcFactoryParam;
     }
 
 
-    public Class<Factory<OfferType, ORQTaskAction<?>>> getTaskActionFactory() {
+    public Class<KeyFactory<OfferType, ORQTaskAction<?>>> getTaskActionFactory() {
         return taskActionFactory;
     }
 
 
     public void setTaskActionFactory(
-            final Class<Factory<OfferType, ORQTaskAction<?>>> taskActionFactoryParam) {
+            final Class<KeyFactory<OfferType, ORQTaskAction<?>>> taskActionFactoryParam) {
         taskActionFactory = taskActionFactoryParam;
     }
 }

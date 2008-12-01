@@ -1,7 +1,5 @@
 package de.zib.gndms.logic.model.gorfx;
 
-import org.jetbrains.annotations.NotNull;
-import de.zib.gndms.kit.factory.Factory;
 import de.zib.gndms.model.gorfx.types.FileTransferORQ;
 
 /**

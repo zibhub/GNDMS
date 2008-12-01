@@ -14,6 +14,8 @@ import static javax.persistence.CascadeType.ALL
 import javax.persistence.Basic
 import javax.persistence.Lob
 import javax.persistence.Transient
+import de.zib.gndms.stuff.copy.Copiable
+import de.zib.gndms.stuff.copy.CopyMode
 
 
 /**
@@ -26,6 +28,7 @@ import javax.persistence.Transient
  */
 @Entity(name="OfferTypes")
 @Table(name="offer_types", schema="gorfx")
+@Copiable(CopyMode.DONT)
 class OfferType {
     @Id
     @Column(name="offer_type_key", nullable=false, updatable=false, columnDefinition="VARCHAR")

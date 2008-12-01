@@ -1,6 +1,5 @@
 package de.zib.gndms.kit.config;
 
-import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;

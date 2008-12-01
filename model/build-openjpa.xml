@@ -28,11 +28,10 @@
 
 	<openjpac directory="gndms-shared-model/production">
 		<config propertiesFile="src/META-INF/persistence.xml" />
-
-
         
 		<classpath>
 			<pathelement location="gndms-shared-model/production" />
+			<pathelement location="../stuff/gndms-stuff/production" />
 			<fileset refid="tooljars" />
 		</classpath>
 
@@ -63,7 +62,8 @@
 
 		<classpath>
 			<pathelement location="gndms-shared-model/production" />
-			<fileset refid="tooljars" />
+			<pathelement location="../stuff/gndms-stuff/production" />
+            <fileset refid="tooljars" />
 		</classpath>
 
 		<fileset refid="model_classes" />

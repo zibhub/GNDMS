@@ -183,7 +183,6 @@
         <element ref="impl:ReplicaSlice" minOccurs="0" maxOccurs="unbounded"/>
 	</sequence>
 </complexType>
-f
 
 
 <element name="ReplicaSlices" type="impl:ReplicaSlicesT" />

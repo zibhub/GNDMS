@@ -1,6 +1,8 @@
 package de.zib.gndms.model.common.types;
 
 import de.zib.gndms.model.common.PersistentContract;
+import de.zib.gndms.stuff.copy.Copiable;
+import de.zib.gndms.stuff.copy.CopyMode;
 import org.joda.time.DateTime;
 
 import java.util.Collections;
@@ -15,6 +17,7 @@ import java.util.Map;
  *
  *          User: stepn Date: 24.11.2008 Time: 15:29:51
  */
+@Copiable(CopyMode.CLONE)
 public final class TransientContract implements Cloneable {
 	private DateTime accepted;
 	private FutureTime deadline;

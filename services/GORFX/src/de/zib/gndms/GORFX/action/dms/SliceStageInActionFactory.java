@@ -2,7 +2,7 @@ package de.zib.gndms.GORFX.action.dms;
 
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.system.SystemHolder;
-import de.zib.gndms.kit.factory.AbstractRecursiveFactory;
+import de.zib.gndms.model.common.types.factory.AbstractRecursiveKeyFactory;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.model.gorfx.OfferType;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
  * <p/>
  * User: mjorra, Date: 04.11.2008, Time: 17:44:10
  */
-public class SliceStageInActionFactory  extends AbstractRecursiveFactory<OfferType, ORQTaskAction<?>> 
+public class SliceStageInActionFactory  extends AbstractRecursiveKeyFactory<OfferType, ORQTaskAction<?>>
 	implements SystemHolder {
 
 	private GNDMSystem system;
