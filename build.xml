@@ -24,6 +24,8 @@
 	<property name="logic.dest" value="${logic.dir}/gndms-logic"/>
 	<property name="infra.dest" value="${infra.dir}/gndms-infra"/>
 	<property name="typecon.dest" value="${typecon.dir}/gndms-typecon"/>
+	<property name="gorfx.dir" value="services/GORFX/"/>
+	<property name="dspace.dir" value="services/DSpace/"/>
 	
 
 	<!-- To avoid problems import just the following libaries -->
@@ -221,7 +223,7 @@
 		<runtarget target="logic.clean.jar"/>
 		<runtarget target="kit.clean.jar"/>
 		<runtarget target="model.clean.jar"/>
-		<delete file="extra/lib/GORFX.jar"/>
+		<delete file="${gorfx.dir}/GORFX.jar"/>
 		<delete file="extra/lib/DSpace.jar"/>
 	</target>
 	<!-- Delete build-files and generated jar every package -->
@@ -255,21 +257,21 @@
 	<path id="dspace.path">
 		<pathelement location="${tools-lib.dir}/gndms-groovy.jar"/> 
 		<pathelement location="${tools-lib.dir}/annotations.jar"/>
-		<dirset dir="services/DSpace/build/stubs-DSpace/classes/" />
+		<dirset dir="${dspace.dir}/build/stubs-DSpace/classes/" />
 		<pathelement location="${lib.dir}/gndms-infra.jar"/>
 		<pathelement location="${lib.dir}/gndms-logic.jar"/>
 		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
 		<pathelement location="${tools-lib.dir}/joda-time-1.5.2.jar"/> 
-		<pathelement location="services/DSpace/lib/caGrid-advertisement-1.2.jar"/> 
-		<pathelement location="services/DSpace/lib/caGrid-core-1.2.jar"/> 
-		<pathelement location="services/DSpace/lib/caGrid-Introduce-serviceTools-1.2.jar"/> 
-		<pathelement location="services/DSpace/lib/caGrid-metadata-security-1.2.jar"/> 
-		<pathelement location="services/DSpace/lib/caGrid-ServiceSecurityProvider-client-1.2.jar"/> 
-		<pathelement location="services/DSpace/lib/caGrid-ServiceSecurityProvider-common-1.2.jar"/> 
-		<pathelement location="services/DSpace/lib/caGrid-ServiceSecurityProvider-service-1.2.jar"/> 
-		<pathelement location="services/DSpace/lib/caGrid-ServiceSecurityProvider-stubs-1.2.jar"/> 
-		<pathelement location="services/DSpace/lib/castor-0.9.9.jar"/>
-		<pathelement location="services/DSpace/lib/jdom-1.0.jar"/>
+		<pathelement location="${dspace.dir}/lib/caGrid-advertisement-1.2.jar"/> 
+		<pathelement location="${dspace.dir}/lib/caGrid-core-1.2.jar"/> 
+		<pathelement location="${dspace.dir}/lib/caGrid-Introduce-serviceTools-1.2.jar"/> 
+		<pathelement location="${dspace.dir}/lib/caGrid-metadata-security-1.2.jar"/> 
+		<pathelement location="${dspace.dir}/lib/caGrid-ServiceSecurityProvider-client-1.2.jar"/> 
+		<pathelement location="${dspace.dir}/lib/caGrid-ServiceSecurityProvider-common-1.2.jar"/> 
+		<pathelement location="${dspace.dir}/lib/caGrid-ServiceSecurityProvider-service-1.2.jar"/> 
+		<pathelement location="${dspace.dir}/lib/caGrid-ServiceSecurityProvider-stubs-1.2.jar"/> 
+		<pathelement location="${dspace.dir}/lib/castor-0.9.9.jar"/>
+		<pathelement location="${dspace.dir}/lib/jdom-1.0.jar"/>
 		<pathelement location="${tools-lib.dir}/geronimo-jpa_3.0_spec-1.0.jar"/>
 		<pathelement location="${tools-lib.dir}/geronimo-jta_1.1_spec-1.1.jar"/>
 		<pathelement location="${tools-lib.dir}/serp-1.13.1.jar"/>
@@ -282,23 +284,23 @@
 	<path id="gorfx.path">
 		<pathelement location="${tools-lib.dir}/gndms-groovy.jar"/> 
 		<pathelement location="${tools-lib.dir}/annotations.jar"/>
-		<dirset dir="services/GORFX/build/stubs-GORFX/classes/" />
+		<dirset dir="${gorfx.dir}/build/stubs-GORFX/classes/" />
 		<pathelement location="${lib.dir}/gndms-typecon.jar"/>
 		<pathelement location="${lib.dir}/gndms-infra.jar"/>
 		<pathelement location="${lib.dir}/gndms-logic.jar"/>
 		<pathelement location="${lib.dir}/gndms-kit.jar"/>
 		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
 		<pathelement location="${tools-lib.dir}/joda-time-1.5.2.jar"/> 
-		<pathelement location="services/GORFX/lib/caGrid-advertisement-1.2.jar"/> 
-		<pathelement location="services/GORFX/lib/caGrid-core-1.2.jar"/> 
-		<pathelement location="services/GORFX/lib/caGrid-Introduce-serviceTools-1.2.jar"/> 
-		<pathelement location="services/GORFX/lib/caGrid-metadata-security-1.2.jar"/> 
-		<pathelement location="services/GORFX/lib/caGrid-ServiceSecurityProvider-client-1.2.jar"/> 
-		<pathelement location="services/GORFX/lib/caGrid-ServiceSecurityProvider-common-1.2.jar"/> 
-		<pathelement location="services/GORFX/lib/caGrid-ServiceSecurityProvider-service-1.2.jar"/> 
-		<pathelement location="services/GORFX/lib/caGrid-ServiceSecurityProvider-stubs-1.2.jar"/> 
-		<pathelement location="services/GORFX/lib/castor-0.9.9.jar"/>
-		<pathelement location="services/GORFX/lib/jdom-1.0.jar"/>
+		<pathelement location="${gorfx.dir}/lib/caGrid-advertisement-1.2.jar"/> 
+		<pathelement location="${gorfx.dir}/lib/caGrid-core-1.2.jar"/> 
+		<pathelement location="${gorfx.dir}/lib/caGrid-Introduce-serviceTools-1.2.jar"/> 
+		<pathelement location="${gorfx.dir}/lib/caGrid-metadata-security-1.2.jar"/> 
+		<pathelement location="${gorfx.dir}/lib/caGrid-ServiceSecurityProvider-client-1.2.jar"/> 
+		<pathelement location="${gorfx.dir}/lib/caGrid-ServiceSecurityProvider-common-1.2.jar"/> 
+		<pathelement location="${gorfx.dir}/lib/caGrid-ServiceSecurityProvider-service-1.2.jar"/> 
+		<pathelement location="${gorfx.dir}/lib/caGrid-ServiceSecurityProvider-stubs-1.2.jar"/> 
+		<pathelement location="${gorfx.dir}/lib/castor-0.9.9.jar"/>
+		<pathelement location="${gorfx.dir}/lib/jdom-1.0.jar"/>
 		<pathelement location="${tools-lib.dir}/geronimo-jpa_3.0_spec-1.0.jar"/>
 		<pathelement location="${tools-lib.dir}/geronimo-jta_1.1_spec-1.1.jar"/>
 		<pathelement location="${tools-lib.dir}/serp-1.13.1.jar"/>
@@ -306,7 +308,7 @@
 		<fileset refid="globus.lib"/>
 		<pathelement location="${lib.dir}/DSpace.jar"/>
 		<pathelement location="${tools-lib.dir}/args4j-2.0.9.jar"/>
-		<dirset dir="services/DSpace/build/stubs-DSpace/classes/" />
+		<dirset dir="${dspace.dir}/build/stubs-DSpace/classes/" />
 		<pathelement location="${tools-lib.dir}/activation.jar	"/> 
 		<pathelement location="${tools-lib.dir}/jaxb-api.jar"/>
 		<pathelement location="${tools-lib.dir}/jaxb1-impl.jar"/>  
@@ -322,14 +324,14 @@
 	<!-- Building all services -->
 	<target name='services.compile'>
 		<mkdir dir="tmp"/>
-		<javac srcdir='services/DSpace/src' destdir='tmp' classpathref="dspace.path"/>
+		<javac srcdir='${dspace.dir}/src' destdir='tmp' classpathref="dspace.path"/>
 		<jar destfile="${lib.dir}/DSpace.jar"
 		     basedir="tmp">
 		</jar>
 		<delete dir="tmp"/>
 		<mkdir dir="tmp"/>
-		<javac srcdir='services/GORFX/src' destdir='tmp' classpathref="gorfx.path"/>
-		<jar destfile="${lib.dir}/GORFX.jar"
+		<javac srcdir='${gorfx.dir}/src' destdir='tmp' classpathref="gorfx.path"/>
+		<jar destfile="${gorfx.dir}/GORFX.jar"
 		     basedir="tmp">
 		</jar>
 		<delete dir="tmp"/>
