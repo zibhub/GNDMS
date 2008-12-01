@@ -27,6 +27,11 @@ for SERVICE in services/* ; do
     ln -sf "../../../$jar" "$SERVICE/lib" 
   done
 done
+# link DSpace.jar to GORFX
+jar="extra/lib/DSpace.jar"
+SERVICE="serivces/GORFX"
+echo ln -sf "../../../../$jar" "$SERVICE/lib" 
+ln -sf "../../../$jar" "$SERVICE/lib" 
 ( cd bin && ln -sf moni_open moni_repl )
 ( cd bin && ln -sf moni_open moni_script )
 ( cd bin && ln -sf moni_open moni_batch )
