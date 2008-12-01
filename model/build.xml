@@ -7,6 +7,7 @@
 		<pathelement location="${tools-lib.dir}/jsr173_1.0_api.jar"/>
 		<pathelement location="${tools-lib.dir}/annotations.jar"/> 
 		<dirset dir="${model.dest}/production/" />
+		<pathelement location="${lib.dir}/gndms-stuff.jar"/>        
 		<pathelement location="${tools-lib.dir}/openjpa-1.1.0.jar"/> 
 		<pathelement location="${tools-lib.dir}/google-collect-snapshot-20080820.jar"/> 
 		<pathelement location="${tools-lib.dir}/joda-time-1.5.2.jar"/> 

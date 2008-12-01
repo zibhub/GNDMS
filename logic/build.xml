@@ -8,6 +8,7 @@
 		<pathelement location="${tools-lib.dir}/jsr173_1.0_api.jar"/>
 		<pathelement location="${tools-lib.dir}/annotations.jar"/>
 		<dirset dir="${logic.dest}/production"/>
+        <pathelement location="${lib.dir}/gndms-stuff.jar"/>                
 		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
 		<pathelement location="${tools-lib.dir}/testng-5.8-jdk15.jar"/> 
 		<pathelement location="${tools-lib.dir}/commons-collections-3.2.jar "/>
