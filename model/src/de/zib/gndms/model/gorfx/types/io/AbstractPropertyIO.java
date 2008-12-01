@@ -43,6 +43,12 @@ public abstract class AbstractPropertyIO implements GORFXWriterBase {
 
     protected String getMandatoryProperty( String key ) throws MandatoryPropertyMissingException {
 
-        return PropertyReadWriteAux.getMandatoryProeprty( properties, key );
+        return PropertyReadWriteAux.getMandatoryProperty( properties, key );
+    }
+
+
+    protected String getPropertyPruneEmpty( String key ) {
+
+        return PropertyReadWriteAux.pruneEmptyProperty( properties, key );
     }
 }

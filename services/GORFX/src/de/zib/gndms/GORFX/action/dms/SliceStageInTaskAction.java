@@ -3,7 +3,6 @@ package de.zib.gndms.GORFX.action.dms;
 import de.zib.gndms.GORFX.context.client.TaskClient;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.model.dspace.types.SliceRef;
-import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.SliceStageInORQ;
 import de.zib.gndms.model.gorfx.types.SliceStageInResult;
@@ -61,7 +60,7 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
                 else {
                     ProviderStageInORQT p_orq = ProviderStageInORQXSDTypeWriter.write( getOrq() );
                     ContextT ctx = ContextXSDTypeWriter.writeContext( getOrq().getContext() );
-                    OfferExecutionContractT con = ContractXSDTypeWriter.fromContract( model.getContract().toTransientContract() );
+                    OfferExecutionContractT con = ContractXSDTypeWriter.write( model.getContract().toTransientContract() );
                     
                     epr = GORFXClientUtils.commonTaskPreparation( uri, p_orq, ctx, con  );
                     model.setData( epr );

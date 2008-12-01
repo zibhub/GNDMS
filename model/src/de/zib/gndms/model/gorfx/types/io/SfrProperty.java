@@ -52,7 +52,8 @@ public enum SfrProperty {
 	EST_MAX_SIZE("c3grid.StageFileRequest.Estimate.MaxSize","10000"),
 	EST_IF_DECISION_BEFORE("c3grid.StageFileRequest.Estimate.IfDecisionBefore"),
 	EST_EXEC_LIKELY_UNTIL("c3grid.StageFileRequest.Estimate.ExecutionLikelyUntil"),
-	EST_RESULT_VALID_UNTIL("c3grid.StageFileRequest.Estimate.ResultValidUntil");
+	EST_RESULT_VALID_UNTIL("c3grid.StageFileRequest.Estimate.ResultValidUntil"),
+    EST_REQUEST_INFO("c3grid.StageFileRequest.Estimate.RequestInfo");
 
     public final String key;
 	public final String doc;

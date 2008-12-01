@@ -4,6 +4,7 @@ import de.zib.gndms.model.common.types.FutureTime;
 import org.joda.time.DateTime;
 
 import java.util.Properties;
+import java.util.Map;
 
 
 /**
@@ -45,6 +46,13 @@ public class ContractPropertyWriter extends AbstractPropertyIO implements Contra
 
     public void writeResultValidUntil(final FutureTime dat) {
         PropertyReadWriteAux.writeFutureTime( getProperties(), SfrProperty.EST_RESULT_VALID_UNTIL.key, dat);
+    }
+
+
+    public void writeAdditionalNotes( Map<String, String> additionalNotes ) {
+        
+        if( additionalNotes != null ) 
+            PropertyReadWriteAux.writeMap( getProperties(), SfrProperty.EST_REQUEST_INFO.key, additionalNotes );
     }
 
 
