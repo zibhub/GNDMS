@@ -8,6 +8,8 @@ import de.zib.gndms.model.gorfx.types.io.FutureTimeConverter;
 import org.joda.time.DateTime;
 import types.OfferExecutionContractT;
 
+import java.util.Map;
+
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -51,6 +53,12 @@ public class ContractXSDTypeWriter extends AbstractXSDTypeWriter<OfferExecutionC
     }
 
 
+    public void writeAdditionalNotes( Map<String, String> additionalNotes ) {
+
+        getProduct().setVolatileRequestInfo( ContextXSDTypeWriter.writeContext( additionalNotes ) );
+    }
+
+
     public void begin() {
         setProduct( new OfferExecutionContractT( ) );
     }
@@ -61,7 +69,7 @@ public class ContractXSDTypeWriter extends AbstractXSDTypeWriter<OfferExecutionC
     }
 
 
-    public static OfferExecutionContractT fromContract( TransientContract con ) {
+    public static OfferExecutionContractT write( TransientContract con ) {
 
         ContractXSDTypeWriter writ = new ContractXSDTypeWriter();
         ContractConverter conv = new ContractConverter( writ, con );

@@ -6,10 +6,14 @@ import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.typecon.common.type.ContractXSDReader;
+import de.zib.gndms.infra.wsrf.WSConstants;
 import org.globus.wsrf.ResourceException;
 import org.jetbrains.annotations.NotNull;
 import types.DynamicOfferDataSeqT;
 import types.OfferExecutionContractT;
+
+import java.util.GregorianCalendar;
+import java.util.Calendar;
 
 
 /** 
@@ -63,15 +67,21 @@ public class OfferResource extends OfferResourceBase {
     public @NotNull Task accept() {
         final @NotNull Task task = new Task();
         final @NotNull PersistentContract contract;
+
+        task.setId(getHome().getSystem().nextUUID());
+
         contract = ContractXSDReader.readContract(getOfferExecutionContract()).acceptNow();
+        if( contract.getDeadline() == null )
+            contract.setDeadline( WSConstants.getDefaultDeadline() );
+        if( contract.getResultValidity() == null )
+            contract.setResultValidity( WSConstants.FOREVER );
+
         task.setContract(contract);
         AbstractORQ orq = getOrqCalc().getORQArguments();
         task.setOrq(orq);
         task.setDescription(orq.getDescription());
         task.setOfferType(getOrqCalc().getKey());
-        // todo offer execution contract can be null
-        task.setTerminationTime(contract.getCurrentTerminationTime());
-        task.setId(getHome().getSystem().nextUUID());
+        task.setTerminationTime( contract.getCurrentTerminationTime() );
         task.setWid(WidAux.getWid());
         return task;
     }

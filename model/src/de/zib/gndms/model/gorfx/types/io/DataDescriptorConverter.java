@@ -46,7 +46,8 @@ public class DataDescriptorConverter extends GORFXConverterBase<DataDescriptorWr
             getWriter().writeJustDownload( );
 
 
-        getWriter().writeDataFormat( NotNullString( getModel().getDataFormat() ) );
+        if( getModel().hasDataFormat() )
+            getWriter().writeDataFormat( NotNullString( getModel().getDataFormat() ) );
 
         if( getModel().hasDataArchiveFormat() )
             getWriter().writeDataArchiveFormat( getModel().getDataArchiveFormat() );

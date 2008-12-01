@@ -124,7 +124,7 @@ public class PropertyReadWriteAux {
 
 
     public static DateTime readISODateTime( @NotNull Properties prop, @NotNull String key ) {
-        String s = prop.getProperty( key );
+        String s = pruneEmptyProperty( prop, key );
         if( s == null )
             return null;
 
@@ -149,7 +149,7 @@ public class PropertyReadWriteAux {
 	}
 
 	public static FutureTime readFutureTime( @NotNull Properties prop, @NotNull String key ) {
-        String s = prop.getProperty( key );
+        String s = pruneEmptyProperty( prop, key );
         if( s == null )
             return null;
 
@@ -160,5 +160,26 @@ public class PropertyReadWriteAux {
 		catch (NumberFormatException nfe) {
             return FutureTime.atTime(new DateTime( s ));
 		}
+    }
+
+
+    public static String getMandatoryProperty( @NotNull Properties prop, @NotNull String key ) throws MandatoryPropertyMissingException {
+
+        String s = pruneEmptyProperty( prop, key );
+            prop.getProperty( key );
+        if ( s == null )
+            throw new MandatoryPropertyMissingException( key );
+
+        return s;
+    }
+
+
+    public static String pruneEmptyProperty( @NotNull Properties prop, @NotNull String key ) {
+
+        String s = prop.getProperty( key );
+        if( s != null )
+            return s.trim().length() > 0 ? s : null;
+
+        return null;
     }
 }

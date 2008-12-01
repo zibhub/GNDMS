@@ -44,10 +44,9 @@ public class DataConstraintsConverter extends GORFXConverterBase<DataConstraints
 
         getWriter().writeCFList( NotNullStringArray( getModel().getCFList() ) );
 
-        HashMap<String,String> hm = getModel().getConstraintList();
-        if( hm == null )
-            hm = new HashMap<String,String>( );
-        getWriter().writeConstraintList( hm );
+        if( getModel().hasConstraintList() )
+            getWriter().writeConstraintList( getModel().getConstraintList() );
+        
         getWriter().done( );
     }
 }

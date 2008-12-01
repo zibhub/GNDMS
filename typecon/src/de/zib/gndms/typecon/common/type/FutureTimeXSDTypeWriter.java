@@ -36,7 +36,8 @@ public class FutureTimeXSDTypeWriter extends AbstractXSDTypeWriter<FutureTimeT> 
 
 
 	public void begin() {
-	}
+        setProduct( new FutureTimeT() );
+    }
 
 
 	public void done() {

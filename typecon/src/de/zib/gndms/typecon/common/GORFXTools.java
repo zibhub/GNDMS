@@ -10,6 +10,7 @@ import org.apache.axis.types.NormalizedString;
 import org.apache.axis.types.URI;
 import org.apache.axis.types.Token;
 import org.apache.axis.types.PositiveInteger;
+import org.apache.axis.message.MessageElement;
 import org.jetbrains.annotations.NotNull;
 import types.*;
 
@@ -54,8 +55,15 @@ public class GORFXTools {
 
         DataDescriptor dds = convertDataDescriptorT( (DataDescriptorT) orqt.get_any()[0].getObjectValue( DataDescriptorT.class ) );
         orq.setDataDescriptor( dds );
-        orq.setDataFile( (String) orqt.get_any()[1].getObjectValue( String.class ));
-        orq.setMetadataFile( (String) orqt.get_any()[2].getObjectValue( String.class ));
+
+        MessageElement[] mes = orqt.get_any();
+        for( int i = 1; i < mes.length; ++i ) {
+            MessageElement me = mes[i];
+            if( me.getElementName().getLocalName().equals( "DataFile" ) )
+                orq.setDataFile( (String) me.getObjectValue( String.class ) );
+            else
+                orq.setMetadataFile( (String) me.getObjectValue( String.class ) );
+        }
 
         return orq;
     }
@@ -117,14 +125,18 @@ public class GORFXTools {
 
         dc.setCFList( cons.getCFList().getCFItem( ) );
 
-        NameValEntryT[] nvl = cons.getConstraintList().getItem();
+        if( cons.getConstraintList() != null ) {
+            NameValEntryT[] nvl = cons.getConstraintList().getItem();
 
-        HashMap<String, String> hm = new HashMap<String, String>( );
-        for( NameValEntryT nve : nvl ) {
-            hm.put( nve.getPName(), nve.getPVal() );
+            if( nvl != null && nvl.length > 0) {
+                HashMap<String, String> hm = new HashMap<String, String>( );
+                for( NameValEntryT nve : nvl ) {
+                    hm.put( nve.getPName(), nve.getPVal() );
+                }
+
+                dc.setConstraintList( hm );
+            }
         }
-
-        dc.setConstraintList( hm );
 
         return dc;
     }

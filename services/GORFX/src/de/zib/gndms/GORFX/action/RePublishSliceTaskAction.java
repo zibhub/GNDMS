@@ -3,7 +3,9 @@ package de.zib.gndms.GORFX.action;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.model.gorfx.types.RePublishSliceORQ;
 import de.zib.gndms.model.gorfx.types.RePublishSliceResult;
+import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.model.gorfx.AbstractTask;
+import de.zib.gndms.model.gorfx.SubTask;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -20,22 +22,34 @@ public class RePublishSliceTaskAction extends ORQTaskAction<RePublishSliceORQ> {
     }
 
 
+    @SuppressWarnings( { "ThrowableInstanceNeverThrown" } )
     @Override
     protected void onInProgress( @NotNull AbstractTask model ) {
 
+        SubTask st = new SubTask( model );
         try {
-            InterSliceTransferTaskAction ista = new InterSliceTransferTaskAction( getEntityManager(), model );
+            st.setId( getUUIDGen().nextUUID() );
+            st.fromTask( getEntityManager(), model );
+            st.setTerminationTime( model.getTerminationTime() );
+
+            InterSliceTransferTaskAction ista = new InterSliceTransferTaskAction( getEntityManager(), st );
             ista.setClosingEntityManagerOnCleanup( false );
+            ista.setLog( getLog() );
             ista.call( );
-        } catch ( TransitException e ) {
-            if(! isFinishedTransition( e ) )
-                throw e;
+
+            // trigger script execution in target space
+            // use gsissh?
+
+            if( st.getState().equals( TaskState.FINISHED ) )
+                finish( new RePublishSliceResult( getOrq().getDestinationSlice() ) );
+            else
+                fail( (RuntimeException) st.getData() );
+
+        } catch ( RuntimeException e ) {
+            honorOngoingTransit( e );
+        } catch ( Exception e ) {
+            fail( new RuntimeException( e ) );
         }
-
-        // trigger script execution in target space
-        // use gsissh?
-
-        finish( new RePublishSliceResult( getOrq().getDestinationSlice() ) );
     }
 
 

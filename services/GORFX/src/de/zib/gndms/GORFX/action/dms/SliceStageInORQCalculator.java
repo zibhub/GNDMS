@@ -63,7 +63,7 @@ public class SliceStageInORQCalculator extends
         ProviderStageInORQT p_orq = ProviderStageInORQXSDTypeWriter.write( getORQArguments() );
         ContextT ctx = ContextXSDTypeWriter.writeContext( getORQArguments().getContext() );
         ORQClient orq_cnt = new ORQClient( cnt.createOfferRequest( p_orq, ctx ) );
-        OfferExecutionContractT con = ContractXSDTypeWriter.fromContract( getPreferredOfferExecution() );
+        OfferExecutionContractT con = ContractXSDTypeWriter.write( getPreferredOfferExecution() );
         OfferExecutionContractT con2 = orq_cnt.permitEstimateAndDestroyRequest( con, ctx );
 
         return ContractXSDReader.readContract( con2 );

@@ -3,27 +3,32 @@
 	
 	<path id="model.path">
 		<pathelement location="${tools-lib.dir}/gndms-groovy.jar"/> 
-		<pathelement location="${tools-lib.dir}/geronimo-jpa_3.0_spec-1.0.jar"/>
-		<pathelement location="${tools-lib.dir}/jsr173_1.0_api.jar"/>
 		<pathelement location="${tools-lib.dir}/annotations.jar"/> 
 		<dirset dir="${model.dest}/production/" />
-		<pathelement location="${lib.dir}/gndms-stuff.jar"/>        
-		<pathelement location="${tools-lib.dir}/openjpa-1.1.0.jar"/> 
+		<pathelement location="${lib.dir}/gndms-stuff.jar"/>
+		<pathelement location="${tools-lib.dir}/openjpa-1.1.0.jar"/>
+		<pathelement location="${tools-lib.dir}/geronimo-jpa_3.0_spec-1.0.jar"/>
+		<pathelement location="${tools-lib.dir}/geronimo-jta_1.1_spec-1.1.jar"/>
+		<pathelement location="${tools-lib.dir}/serp-1.13.1.jar"/>
+		<pathelement location="${tools-lib.dir}/openjpa-1.1.0.jar"/>
 		<pathelement location="${tools-lib.dir}/google-collect-snapshot-20080820.jar"/> 
 		<pathelement location="${tools-lib.dir}/joda-time-1.5.2.jar"/> 
 		<pathelement location="${tools-lib.dir}/testng-5.8-jdk15.jar"/> 
+		<pathelement location="${tools-lib.dir}/activation.jar	"/> 
 		<pathelement location="${tools-lib.dir}/jaxb-api.jar"/>
 		<pathelement location="${tools-lib.dir}/jaxb1-impl.jar"/>  
 		<pathelement location="${tools-lib.dir}/jaxb-impl.jar"/> 
 		<pathelement location="${tools-lib.dir}/jaxb-xjc.jar"/>
-		
-		<!--fileset dir="${tools-lib.dir}" includes="*.jar" /-->
+		<pathelement location="${tools-lib.dir}/jsr173_1.0_api.jar"/>
+
 		
 	</path>
 	
 	<!-- Compile model, but not its test-files -->
 	<target name="model.compile" description="Compiles model">
+
 		<mkdir dir="${model.dest}/production"/>
+		
 		<groovyc srcdir="${model.dir}/src" destdir='${model.dest}/production' classpathref="model.path" >
 			<javac/>
 		</groovyc>	

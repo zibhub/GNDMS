@@ -3,6 +3,9 @@ package de.zib.gndms.typecon.common.type;
 import de.zib.gndms.model.common.types.TransientContract;
 import org.joda.time.DateTime;
 import types.OfferExecutionContractT;
+import types.ContextT;
+
+import java.util.Calendar;
 
 
 /**
@@ -20,7 +23,9 @@ public class ContractXSDReader {
 
         if( src != null ) {
             TransientContract con = new TransientContract();
-            con.setAccepted( new DateTime(src.getIfDecisionBefore()) );
+            Calendar cal  = src.getIfDecisionBefore();
+            if( cal != null )
+                con.setAccepted( new DateTime( cal ) );
 	        
             con.setDeadline( FutureTimeXSDReader.read(src.getExecutionLikelyUntil()) );
             con.setResultValidity( FutureTimeXSDReader.read(src.getResultValidUntil()) );
@@ -28,6 +33,12 @@ public class ContractXSDReader {
 	        final Long estMaxSize = src.getEstMaxSize();
 	        if (estMaxSize != null)
 	            con.setExpectedSize(estMaxSize);
+
+            ContextT ctx = src.getVolatileRequestInfo();
+
+            if( ctx != null )
+                con.setAdditionalNotes( ContextXSDReader.readContext( ctx ) );
+
             return con;
         }
         

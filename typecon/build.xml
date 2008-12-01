@@ -2,7 +2,6 @@
 	
 	<path id="typecon.path">
 		<pathelement location="${tools-lib.dir}/gndms-groovy.jar"/> 
-		<pathelement location="${tools-lib.dir}/geronimo-jpa_3.0_spec-1.0.jar"/>
 		<pathelement location="${tools-lib.dir}/jsr173_1.0_api.jar"/>
 		<dirset dir="services/GORFX/build/stubs-GORFX/classes/" />
 		<pathelement location="${lib.dir}/gndms-stuff.jar"/>
@@ -11,6 +10,9 @@
 		<pathelement location="${tools-lib.dir}/joda-time-1.5.2.jar"/> 
 		<fileset refid="globus.lib"/>
 		<pathelement location="${tools-lib.dir}/testng-5.8-jdk15.jar"/> 
+		<pathelement location="${tools-lib.dir}/geronimo-jpa_3.0_spec-1.0.jar"/>
+		<pathelement location="${tools-lib.dir}/geronimo-jta_1.1_spec-1.1.jar"/>
+		<pathelement location="${tools-lib.dir}/serp-1.13.1.jar"/>
 		<pathelement location="${tools-lib.dir}/openjpa-1.1.0.jar"/>
 	</path>
 	<!-- Compile typecon, but not its test-files -->
@@ -24,8 +26,8 @@
 			</then>
 			<else>
 		<mkdir dir="./${typecon.dest}/production"/>
-		<javac srcdir='${typecon.dir}/src' destdir='${typecon.dest}/production' classpathref="typecon.path" includes="**/type/*.java"/>
-		<!-- Copy Meta files to build dir-->
+		<javac srcdir='${typecon.dir}/src' destdir='${typecon.dest}/production' classpathref="typecon.path" />
+			<!-- Copy Meta files to build dir-->
 		<copy todir="${typecon.dest}/production/" >
 			<fileset dir="${typecon.dir}/src">
 				<exclude name="de/**"/>

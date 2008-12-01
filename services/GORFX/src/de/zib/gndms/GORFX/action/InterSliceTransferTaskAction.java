@@ -7,10 +7,8 @@ import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.SubTask;
 import org.jetbrains.annotations.NotNull;
-import org.apache.axis.components.uuid.UUIDGenFactory;
 
 import javax.persistence.EntityManager;
-import java.util.GregorianCalendar;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -48,7 +46,7 @@ public class InterSliceTransferTaskAction extends ORQTaskAction<InterSliceTransf
         try {
             st.setId( getUUIDGen().nextUUID() );
             st.fromTask( getEntityManager(), model );
-            st.setTerminationTime( new GregorianCalendar( ) );
+            st.setTerminationTime( model.getTerminationTime() );
 
             FileTransferTaskAction fta = new FileTransferTaskAction( getEntityManager(), st );
             fta.setClosingEntityManagerOnCleanup( false );
