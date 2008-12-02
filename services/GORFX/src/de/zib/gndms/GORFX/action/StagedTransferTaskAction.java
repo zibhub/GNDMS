@@ -5,7 +5,6 @@ import de.zib.gndms.dspace.slice.client.SliceClient;
 import de.zib.gndms.dspace.subspace.client.SubspaceClient;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
-import de.zib.gndms.logic.model.gorfx.c3grid.AbstractProviderStageInAction;
 import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.dspace.types.SliceRef;
 import de.zib.gndms.model.gorfx.AbstractTask;

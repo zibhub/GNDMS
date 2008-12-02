@@ -9,5 +9,5 @@ package de.zib.gndms.stuff.copy;
  *          User: stepn Date: 27.11.2008 Time: 17:21:01
  */
 public enum CopyMode {
-	CLONE, MOLD, SERIALIZE, DONT
+	CLONE, MOLD, SERIALIZE, CONSTRUCT, DONT
 }
