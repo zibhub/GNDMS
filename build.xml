@@ -3,6 +3,8 @@
 	
 	<!-- Define the environment variable -->
 	<property environment="env"/>
+
+	<property name="javac.debug" value="true"/>
 	
 	<!-- Jars -->
 	<property name="tools-lib.dir" value="extra/tools-lib" />
@@ -192,8 +194,8 @@
 	<!-- Creates jar's for every service (class files will be created if not already done)-->
 	<target name="compile.src" description="Creates jar files for every service, will be compiled if necessary">
 		<runtarget target="stuff.jar"/>
-		<runtarget target="model.jar"/>
-		<runtarget target="model.enhancer"/>
+		<ant target="model.jar"/>
+		<ant target="model.enhancer"/>
 		<runtarget target="kit.jar"/>
 		<runtarget target="logic.jar"/>
 		<runtarget target="typecon.jar"/>
@@ -210,7 +212,7 @@
 		<runtarget target="typecon.clean"/>
 		<runtarget target="logic.clean"/>
 		<runtarget target="kit.clean"/>
-		<runtarget target="model.clean"/>
+		<ant target="model.clean"/>
 		<runtarget target="stuff.clean"/>
 		<echo level="warning"> Note: Only class-files have been deleted! To delete also the generated jars type 'ant clean.all' </echo>
 	</target>
@@ -222,7 +224,7 @@
 		<runtarget target="typecon.clean.jar"/>
 		<runtarget target="logic.clean.jar"/>
 		<runtarget target="kit.clean.jar"/>
-		<runtarget target="model.clean.jar"/>
+		<ant target="model.clean.jar"/>
 		<runtarget target="stuff.clean.jar"/>
 	</target>
 	<!-- Delete build-files and generated jar every package -->
@@ -234,7 +236,7 @@
 	<!-- Creates jar-file of evey service's test-classes. Will be compiled if necessary -->
 	<target name="compile.test" description="Creates jar-file of evey service's test-classes. Will be compiled if necessary">
 		<runtarget target="stuff.test.jar"/>
-		<runtarget target="model.test.jar"/>
+		<ant target="model.test.jar"/>
 		<runtarget target="kit.test.jar"/>
 		<runtarget target="logic.test.jar"/>
 		<runtarget target="typecon.test.jar"/>
@@ -321,13 +323,13 @@
 	<!-- Building all services -->
 	<target name='services.compile'>
 		<mkdir dir="tmp"/>
-		<javac srcdir='services/DSpace/src' destdir='tmp' classpathref="dspace.path"/>
+		<javac srcdir='services/DSpace/src' destdir='tmp' classpathref="dspace.path" debug="${javac.debug}" />
 		<jar destfile="${lib.dir}/DSpace.jar"
 		     basedir="tmp">
 		</jar>
 		<delete dir="tmp"/>
 		<mkdir dir="tmp"/>
-		<javac srcdir='services/GORFX/src' destdir='tmp' classpathref="gorfx.path"/>
+		<javac srcdir='services/GORFX/src' destdir='tmp' classpathref="gorfx.path" debug="${javac.debug}"/>
 		<jar destfile="${lib.dir}/GORFX.jar"
 		     basedir="tmp">
 		</jar>

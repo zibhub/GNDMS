@@ -37,7 +37,7 @@
 				</fileset>
 			</copy>
 			<groovyc srcdir='${kit.dir}/src' destdir='${kit.dest}/production' classpathref="kit.path">
-				<javac/>
+				<javac debug="${javac.debug}"/>
 			</groovyc>
 		</then>
 		<else>
@@ -65,7 +65,7 @@
 				<exclude name="de/**"/>
 			</fileset>
 		</copy>
-		<javac srcdir='${kit.dir}/test-src' destdir='${kit.dest}/test' classpathref="kit.test.path"/>
+		<javac srcdir='${kit.dir}/test-src' destdir='${kit.dest}/test' classpathref="kit.test.path" debug="${javac.debug}"/>
 	</target>
 	
 	

@@ -1,4 +1,4 @@
-<project name="model compilation file" default="model.compile" basedir="." >
+<project name="model compilation file" default="model.compile">
 	
 	
 	<path id="model.path">
@@ -30,7 +30,7 @@
 		<mkdir dir="${model.dest}/production"/>
 		
 		<groovyc srcdir="${model.dir}/src" destdir='${model.dest}/production' classpathref="model.path" >
-			<javac/>
+			<javac debug="${javac.debug}"/>
 		</groovyc>	
 		<!-- Copy Meta files to build dir-->
 		<copy todir="${model.dest}/production/" >
@@ -48,7 +48,7 @@
 	<!-- Compile model's test-files -->
 	<target name="model.compile.test" description="Compiles model test-files">
 		<mkdir dir="${model.dest}/test"/>
-		<javac srcdir='${model.dir}/test-src' destdir='${model.dest}/test' classpathref="model.test.path">
+		<javac srcdir='${model.dir}/test-src' destdir='${model.dest}/test' classpathref="model.test.path" debug="${javac.debug}">
 			
 		</javac>
 		<!-- Copy Meta files to build dir-->
@@ -87,6 +87,6 @@
 	</target>
 	
 	<target name="model.enhancer">
-		<ant antfile="build-openjpa.xml" dir="model" target="enhance" />	
+		<ant antfile="build-openjpa.xml" target="enhance" dir="${model.dir}" />	
 	</target>
 </project>
