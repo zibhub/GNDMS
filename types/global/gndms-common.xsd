@@ -184,7 +184,7 @@
 	</sequence>
 </complexType>
 
-<element name="ReplicaSlices" type="impl:ReplicaSlicesT" />
+ <element name="ReplicaSlices" type="impl:ReplicaSlicesT" />
 
 <complexType name="ReplicaSliceFilterT">
 	<sequence>

@@ -348,7 +348,8 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
                     catch (RuntimeException e2) {
                             rewindTransaction(em.getTransaction());
                             final @NotNull AbstractTask newModel = em.find(AbstractTask.class, model.getId());
-                            model.stampOn(em, newModel);
+                            model.mold(newModel);
+	                        newModel.refresh(em);
                             setModel(newModel);
                             model = getModel();
                         }

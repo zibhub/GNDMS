@@ -5,8 +5,8 @@ import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
-import de.zib.gndms.kit.factory.FactoryInstance;
-import de.zib.gndms.kit.factory.Factory;
+import de.zib.gndms.model.common.types.factory.KeyFactoryInstance;
+import de.zib.gndms.model.common.types.factory.KeyFactory;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -21,9 +21,9 @@ import javax.persistence.EntityManager;
  *          User: stepn Date: 02.10.2008 Time: 13:00:56
  */
 public abstract class ORQTaskAction<K extends AbstractORQ> extends TaskAction
-    implements FactoryInstance<OfferType, ORQTaskAction<?>>
+    implements KeyFactoryInstance<OfferType, ORQTaskAction<?>>
 {
-    private Factory<OfferType, ORQTaskAction<?>> factory;
+    private KeyFactory<OfferType, ORQTaskAction<?>> factory;
     private OfferType key;
 
 
@@ -99,7 +99,7 @@ public abstract class ORQTaskAction<K extends AbstractORQ> extends TaskAction
     }
 
 
-    public Factory<OfferType, ORQTaskAction<?>> getFactory() {
+    public KeyFactory<OfferType, ORQTaskAction<?>> getFactory() {
         return factory;
     }
 
@@ -109,7 +109,7 @@ public abstract class ORQTaskAction<K extends AbstractORQ> extends TaskAction
     }
 
 
-    public void setFactory(@NotNull final Factory<OfferType, ORQTaskAction<?>> factoryParam) {
+    public void setFactory(@NotNull final KeyFactory<OfferType, ORQTaskAction<?>> factoryParam) {
         factory = factoryParam;
     }
 

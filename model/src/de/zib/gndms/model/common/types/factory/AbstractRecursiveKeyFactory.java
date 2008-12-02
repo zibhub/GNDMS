@@ -1,4 +1,4 @@
-package de.zib.gndms.kit.factory;
+package de.zib.gndms.model.common.types.factory;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -11,8 +11,9 @@ import org.jetbrains.annotations.NotNull;
  *
  *          User: stepn Date: 08.10.2008 Time: 17:44:42
  */
-public abstract class AbstractRecursiveFactory<K, T extends FactoryInstance<K, T>> implements RecursiveFactory<K, T> {
-    Factory<K, RecursiveFactory<K, T>> factory;
+public abstract class AbstractRecursiveKeyFactory<K, T extends KeyFactoryInstance<K, T>> implements
+	  RecursiveKeyFactory<K, T> {
+    KeyFactory<K, RecursiveKeyFactory<K, T>> factory;
     K key;
 
 
@@ -30,12 +31,12 @@ public abstract class AbstractRecursiveFactory<K, T extends FactoryInstance<K, T
             InstantiationException, ClassNotFoundException;
 
 
-    public Factory<K, RecursiveFactory<K, T>> getFactory() {
+    public KeyFactory<K, RecursiveKeyFactory<K, T>> getFactory() {
         return factory;
     }
 
 
-    public void setFactory(@NotNull final Factory<K, RecursiveFactory<K, T>> factoryParam) {
+    public void setFactory(@NotNull final KeyFactory<K, RecursiveKeyFactory<K, T>> factoryParam) {
         factory = factoryParam;
     }
 

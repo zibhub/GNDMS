@@ -1,4 +1,4 @@
-package de.zib.gndms.kit.factory;
+package de.zib.gndms.model.common.types.factory;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
  *
  *          User: stepn Date: 05.09.2008 Time: 18:00:40
  */
-public class InstanceFactory<T extends FactoryInstance<Class<T>, T>> implements Factory<Class<T>, T> {
+public class InstanceFactory<T extends KeyFactoryInstance<Class<T>, T>> implements KeyFactory<Class<T>, T> {
 
     @NotNull
     public T getInstance(@NotNull final Class<T> clazz)

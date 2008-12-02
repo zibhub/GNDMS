@@ -39,6 +39,7 @@ import javax.persistence.CascadeType
 @MappedSuperclass
 class Task extends AbstractTask {
 
+
 }
 
 

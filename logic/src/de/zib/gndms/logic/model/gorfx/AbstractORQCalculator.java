@@ -1,8 +1,8 @@
 package de.zib.gndms.logic.model.gorfx;
 
 import de.zib.gndms.kit.config.ConfigletProvider;
-import de.zib.gndms.kit.factory.Factory;
-import de.zib.gndms.kit.factory.FactoryInstance;
+import de.zib.gndms.model.common.types.factory.KeyFactory;
+import de.zib.gndms.model.common.types.factory.KeyFactoryInstance;
 import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
 import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.gorfx.OfferType;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
  * User: bzcjorra Date: Sep 5, 2008 1:43:46 PM
  */
 public abstract class AbstractORQCalculator<M extends AbstractORQ, C extends AbstractORQCalculator<M, C>>
-    implements FactoryInstance<OfferType, AbstractORQCalculator<?, ?>> {
+    implements KeyFactoryInstance<OfferType, AbstractORQCalculator<?, ?>> {
 
     private ConfigletProvider configletProvider;
     private TransientContract perferredOfferExecution;
@@ -25,7 +25,7 @@ public abstract class AbstractORQCalculator<M extends AbstractORQ, C extends Abs
     private M orqArguments;
     private NetworkAuxiliariesProvider netAux;
 
-    private Factory<OfferType, AbstractORQCalculator<?,?>> factory;
+    private KeyFactory<OfferType, AbstractORQCalculator<?,?>> factory;
     private OfferType offerType;
 
 
@@ -95,13 +95,13 @@ public abstract class AbstractORQCalculator<M extends AbstractORQ, C extends Abs
     }
 
 
-    public Factory<OfferType, AbstractORQCalculator<?, ?>> getFactory() {
+    public KeyFactory<OfferType, AbstractORQCalculator<?, ?>> getFactory() {
         return factory;
     }
 
 
     public void setFactory(
-            final @NotNull Factory<OfferType, AbstractORQCalculator<?, ?>> factoryParam) {
+            final @NotNull KeyFactory<OfferType, AbstractORQCalculator<?, ?>> factoryParam) {
         factory = factoryParam;
     }
 
