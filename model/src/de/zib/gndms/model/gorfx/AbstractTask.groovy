@@ -26,11 +26,11 @@ import javax.persistence.NamedQueries
 import javax.persistence.OneToMany
 import javax.persistence.CascadeType
 import de.zib.gndms.model.common.PersistentContract
-import de.zib.gndms.stuff.copy.Copiable
+import de.zib.gndms.stuff.copy.Copyable
 import de.zib.gndms.stuff.copy.CopyMode
 import de.zib.gndms.stuff.copy.Copier
 import de.zib.gndms.stuff.mold.Molding
-import de.zib.gndms.stuff.copy.Copiable
+import de.zib.gndms.stuff.copy.Copyable
 import de.zib.gndms.stuff.mold.Molder
 import de.zib.gndms.stuff.mold.Mold
 
@@ -43,7 +43,7 @@ import de.zib.gndms.stuff.mold.Mold
  * User: stepn Date: 05.09.2008 Time: 13:41:58
  */
 @MappedSuperclass
-@Copiable(CopyMode.MOLD)
+@Copyable(CopyMode.MOLD)
 abstract class AbstractTask extends TimedGridResource {
     /* Nullable for testing purposes */
     @ManyToOne @JoinColumn(name="offerTypeKey", nullable=true, updatable=false, columnDefinition="VARCHAR")

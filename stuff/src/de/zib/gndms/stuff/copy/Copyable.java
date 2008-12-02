@@ -14,6 +14,6 @@ import java.lang.annotation.*;
  *          User: stepn Date: 27.11.2008 Time: 17:20:28
  */
 @Retention(RetentionPolicy.RUNTIME) @Target(ElementType.TYPE) @Inherited 
-public @interface Copiable {
+public @interface Copyable {
 	@NotNull CopyMode value();
 }

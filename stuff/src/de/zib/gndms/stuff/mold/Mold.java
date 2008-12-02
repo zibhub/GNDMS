@@ -94,8 +94,19 @@ public final class Mold {
 		}
 
 		private void doMold(final @NotNull Object molded)
-			  throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-			moldingClass.getMethod("mold", moldedClass).invoke(molding,  moldedClass.cast(molded));
-		}
+			  throws Throwable {
+            Class curClass = moldedClass;
+            while (! Object.class.equals(curClass)) {
+                try {
+                    moldingClass.getMethod("mold", curClass).invoke(molding,  curClass.cast(molded));
+                    return;
+                }
+                catch (NoSuchMethodException nme) {
+                    curClass = curClass.getSuperclass();
+                    if (Object.class.equals(curClass))
+                        throw nme;
+                }
+            }
+        }
 	}
 }

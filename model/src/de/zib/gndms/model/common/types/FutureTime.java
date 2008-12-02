@@ -1,6 +1,6 @@
 package de.zib.gndms.model.common.types;
 
-import de.zib.gndms.stuff.copy.Copiable;
+import de.zib.gndms.stuff.copy.Copyable;
 import de.zib.gndms.stuff.copy.CopyMode;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
@@ -20,7 +20,7 @@ import java.util.Calendar;
  *          User: stepn Date: 24.11.2008 Time: 14:48:08
  */
 @SuppressWarnings({ "ClassReferencesSubclass", "StaticMethodOnlyUsedInOneClass" })
-@Copiable(CopyMode.CLONE)
+@Copyable(CopyMode.CLONE)
 public abstract class FutureTime implements Serializable, Cloneable {
 	private static final long serialVersionUID = -8564712372634917528L;
 

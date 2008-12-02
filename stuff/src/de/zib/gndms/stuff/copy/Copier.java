@@ -24,7 +24,7 @@ public final class Copier {
 		super();
 	}
 
-
+                                                                                                                    
 	@SuppressWarnings({ "unchecked", "RawUseOfParameterizedType" })
 	public static <T> T copy(final boolean fallbackToClone, final T instance) {
 		if (instance == null)
@@ -32,7 +32,9 @@ public final class Copier {
 		else {
 			final @NotNull Class<T> clazz = (Class<T>) instance.getClass();
 			final CopyMode mode = selectMode(fallbackToClone, instance, clazz);
-			switch (mode) {
+            if (mode == null)
+                throw new IllegalArgumentException("Don't know how to copy instances of class: " + clazz.getName());
+            switch (mode) {
 				case MOLD:
 					return copyInstanceByMolding(clazz, instance);
 				case SERIALIZE:
@@ -54,15 +56,15 @@ public final class Copier {
 	@SuppressWarnings({ "unchecked" })
 	private static <T> CopyMode selectMode(
 		  final boolean fallbackToClone, final T instance, final Class<T> clazz) {
-		final Copiable via = clazz.getAnnotation(Copiable.class);
+		final Copyable via = clazz.getAnnotation( Copyable.class);
 		final CopyMode mode;
 		if (via == null) {
 			if (instance instanceof Molding)
 				mode = CopyMode.MOLD;
-			else if (instance instanceof Serializable)
-				mode = CopyMode.SERIALIZE;
 			else if (fallbackToClone && instance instanceof Cloneable)
 				mode = CopyMode.CLONE;
+            else if (instance instanceof Serializable)
+                mode = CopyMode.SERIALIZE;
 			else
 				mode = null;
 		}

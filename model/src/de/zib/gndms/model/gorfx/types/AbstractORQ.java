@@ -1,6 +1,6 @@
 package de.zib.gndms.model.gorfx.types;
 
-import de.zib.gndms.stuff.copy.Copiable;
+import de.zib.gndms.stuff.copy.Copyable;
 import de.zib.gndms.stuff.copy.CopyMode;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +16,7 @@ import java.util.HashMap;
  * <p/>
  * User: bzcjorra Date: Sep 5, 2008 3:38:17 PM
  */
-@Copiable(CopyMode.SERIALIZE)
+@Copyable(CopyMode.SERIALIZE)
 public abstract class AbstractORQ implements Serializable {
     private static final long serialVersionUID = 5782532835559987893L;
 
