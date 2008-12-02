@@ -17,6 +17,7 @@ import java.lang.reflect.Method;
  *
  *          User: stepn Date: 27.11.2008 Time: 16:47:00
  */
+@SuppressWarnings({ "StaticMethodOnlyUsedInOneClass" })
 public final class Copier {
 
 	private Copier() {
@@ -33,11 +34,13 @@ public final class Copier {
 			final CopyMode mode = selectMode(fallbackToClone, instance, clazz);
 			switch (mode) {
 				case MOLD:
-					return (T) copyMoldableInstance(clazz, instance);
+					return copyInstanceByMolding(clazz, instance);
 				case SERIALIZE:
-					return (T) copySerializableInstance((Serializable) instance);
+					return (T) copyInstanceBySerialization((Serializable) instance);
 				case CLONE:
-					return (T) copyCloneableInstance((Cloneable) instance);
+					return (T) copyInstanceByCloning((Cloneable) instance);
+				case CONSTRUCT:
+					return copyInstanceViaConstructor(clazz, instance);
 				case DONT:
 					throw new IllegalArgumentException("Copying forbidden by Annotaion");
 				default:
@@ -73,13 +76,13 @@ public final class Copier {
 		if (instance == null)
 			return null;
 		else {
-			return copyCloneableInstance(instance);
+			return copyInstanceByCloning(instance);
 		}
 	}
 
 
 	@SuppressWarnings({ "unchecked" })
-	private static <T extends Cloneable> T copyCloneableInstance(final @NotNull T instance) {
+	private static <T extends Cloneable> T copyInstanceByCloning(final @NotNull T instance) {
 		final @NotNull Class<T> clazz = (Class<T>) instance.getClass();
 		try {
 			return (T) cloneMethod(clazz).invoke(instance);
@@ -104,18 +107,18 @@ public final class Copier {
 
 
 	@SuppressWarnings({ "unchecked", "RawUseOfParameterizedType" })
-	public static <T extends Molding> T copyMoldable(final T instance) {
+	public static <T extends Molding> T copyMolding(final T instance) {
 		if (instance == null)
 			return null;
 		else {
-			return (T) copyMoldableInstance((Class<T>) instance.getClass(), instance);
+			return copyInstanceByMolding((Class<T>) instance.getClass(), instance);
 		}
 	}
 
 
 	@SuppressWarnings({ "unchecked" })
 	private static
-	<T> T copyMoldableInstance(final @NotNull Class<T> clazz, final @NotNull T instance) {
+	<T> T copyInstanceByMolding(final @NotNull Class<T> clazz, final @NotNull T instance) {
 		try {
 			final @NotNull T newInstance = clazz.newInstance();
 			Mold.dynCopyMolding(clazz, instance, newInstance);
@@ -134,12 +137,13 @@ public final class Copier {
 		if (instance == null)
 			return null;
 		else
-			return copySerializableInstance(instance);
+			return copyInstanceBySerialization(instance);
 	}
 
 
 	@SuppressWarnings({ "unchecked" })
-	private static <T extends Serializable> T copySerializableInstance(final @NotNull T instance) {
+	private static <T extends Serializable> T copyInstanceBySerialization(final @NotNull T instance)
+	{
 		try {
 			final byte[] data;
 		    final ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
@@ -171,5 +175,36 @@ public final class Copier {
 	    catch (ClassNotFoundException cne) {
 			throw new IllegalArgumentException(cne);
 	    }
+	}
+
+	@SuppressWarnings({ "unchecked" })
+	public static <T> T copyViaConstructor(final T instance) {
+		if (instance == null)
+			return null;
+		else {
+			final @NotNull Class<T> instanceClass = (Class<T>) instance.getClass();
+			return copyInstanceViaConstructor(instanceClass, instance);
+		}
+	}
+
+
+	private static <T> T copyInstanceViaConstructor(final @NotNull Class<T> clazz,
+	                                                final @NotNull T instance)
+	{
+		try {
+			return clazz.getConstructor(clazz).newInstance(instance);
+		}
+		catch (InstantiationException e) {
+			throw new IllegalArgumentException(e);
+		}
+		catch (IllegalAccessException e) {
+			throw new IllegalArgumentException(e);
+		}
+		catch (InvocationTargetException e) {
+			throw new IllegalArgumentException(e);
+		}
+		catch (NoSuchMethodException e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 }
