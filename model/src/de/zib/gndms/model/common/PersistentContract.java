@@ -92,9 +92,12 @@ public class PersistentContract {
 
 
 	public void setExpectedSize(final Long expectedSizeParam) {
-		if (expectedSizeParam < 0)
-			throw new IllegalArgumentException();
-		expectedSize = expectedSizeParam;
+
+        if( expectedSizeParam != null )
+            if ( expectedSizeParam < 0)
+                throw new IllegalArgumentException();
+        
+        expectedSize = expectedSizeParam;
 	}
 
 	private static Calendar nullSafeClone(Calendar cal) {

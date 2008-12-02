@@ -47,13 +47,13 @@ public class NetworkAuxiliariesProvider {
 
 
     /**
-     * Calculated the transfertime in seconds.
+     * Calculated the transfertime in milli-seconds.
      * 
      * @param size The transfer file size in byte.
      * @param bandWidth The bandwidth in byte/s
-     * @return The size in sec
+     * @return The size in ms
      */
-    public static int calculateTransferTime( long size, float bandWidth  ){
-        return  Float.valueOf( size / bandWidth ).intValue( );
+    public static long calculateTransferTime( long size, float bandWidth  ){
+        return  Float.valueOf( size * 1000 / bandWidth ).longValue( );
     }
 }

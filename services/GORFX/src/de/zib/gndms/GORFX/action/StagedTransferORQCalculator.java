@@ -12,7 +12,7 @@ import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
 import de.zib.gndms.model.gorfx.types.SliceStageInORQ;
 import org.apache.axis.types.URI;
 import org.globus.wsrf.container.ServiceHost;
-import org.joda.time.DateTime;
+import org.joda.time.Duration;
 
 import java.util.Set;
 
@@ -61,10 +61,9 @@ public class StagedTransferORQCalculator extends
 
             getORQArguments().setGridSiteURI( dst );
 
-            DateTime dat = new DateTime( c.getDeadline() );
-            dat = dat.plusSeconds( NetworkAuxiliariesProvider.calculateTransferTime( s, ebw ) );
+            long ms = NetworkAuxiliariesProvider.calculateTransferTime( s, ebw );
 
-            c.setDeadline( FutureTime.atTime(dat) );
+            c.setDeadline( FutureTime.atOffset( new Duration( ms ) ) );
         }
 
         return c;
@@ -91,7 +90,7 @@ public class StagedTransferORQCalculator extends
     public URI destinationURI( String gs ) throws URI.MalformedURIException {
         C3MDSConfiglet cfg = getConfigletProvider().getConfiglet( C3MDSConfiglet.class, C3MDSConfiglet.class.getName( ) );
         Set<Workspace.Archive> a = cfg.getCatalog().getArchivesByOid().get( gs );
-        Workspace w = cfg.getCatalog().getWorkspaceByArchive().get( a.toArray()[0] );
+        Workspace w = cfg.getCatalog().getWorkspaceByArchive().get( (Workspace.Archive) a.toArray()[0] );
         return new URI( w.getBaseUrl() );
     }
 }

@@ -8,6 +8,7 @@ import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
 import de.zib.gndms.model.gorfx.types.RePublishSliceORQ;
 import de.zib.gndms.typecon.common.type.SliceRefXSDReader;
+import de.zib.gndms.infra.wsrf.WSConstants;
 import org.globus.ftp.exception.ClientException;
 import org.globus.ftp.exception.ServerException;
 import org.joda.time.DateTime;
@@ -67,7 +68,7 @@ public class RePublishSliceORQCalculator extends
             // destroy slice
             tgt.setTerminationTime( new GregorianCalendar( ) );
         } else {
-            tgt.setTerminationTime( res.acceptAsIs().getCurrentTerminationTime() );
+            tgt.setTerminationTime( WSConstants.FOREVER );
             getORQArguments().setSourceURI( sp );
             getORQArguments().setTargetURI( dp );
             getORQArguments().setDestinationSlice(

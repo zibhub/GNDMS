@@ -10,6 +10,7 @@ import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.exception.ClientException;
 import org.globus.ftp.exception.ServerException;
 import org.joda.time.DateTime;
+import org.joda.time.Duration;
 
 import java.io.IOException;
 
@@ -101,15 +102,12 @@ public abstract class AbstractTransferORQCalculator<M extends FileTransferORQ, C
      */
     protected TransientContract calculateOffer( ) {
         
-        DateTime dat = new DateTime( );
-        dat = dat.plusSeconds(
-            NetworkAuxiliariesProvider.calculateTransferTime( estimatedTransferSize,
-                estimatedBandWidth.floatValue( ) ) );
+        long ms = NetworkAuxiliariesProvider.calculateTransferTime( estimatedTransferSize, estimatedBandWidth );
 
         TransientContract ct = new TransientContract( );
-
-        ct.setDeadline( FutureTime.atTime(dat)  );
-        ct.setResultValidity( FutureTime.atTime(dat.plusHours( ContractConstants.FILE_TRANSFER_RESULT_VALIDITY )) );
+        ct.setDeadline( FutureTime.atOffset( new Duration( ms ) )  );
+        // none means forever
+        // ct.setResultValidity( FutureTime.atTime(dat.plusHours( ContractConstants.FILE_TRANSFER_RESULT_VALIDITY )) );
 
         return ct;
     }
