@@ -4,6 +4,7 @@ import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.logic.action.LogAction;
 import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.TaskState;
+import de.zib.gndms.stuff.copy.Copier;
 import org.apache.commons.logging.Log;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,6 +29,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     private Log log;
     private String wid;
     private Class<? extends AbstractTask> taskClass;
+    private AbstractTask backup;
 
     private static final class ShutdownTaskActionException extends RuntimeException {
         private static final long serialVersionUID = 2772466358157719820L;
@@ -157,6 +159,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     @Override
     public void setModel(final @NotNull AbstractTask mdl) {
         super.setModel(mdl);    // Overridden method
+        setBackup( Copier.copy( false, mdl ) );
         wid = mdl.getWid();
         taskClass = mdl.getClass();
     }
@@ -328,7 +331,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
         }
     }
 
-    @SuppressWarnings({ "CaughtExceptionImmediatelyRethrown" })
+    @SuppressWarnings( { "CaughtExceptionImmediatelyRethrown", "ThrowableInstanceNeverThrown" } )
     private void transit(final TaskState newState) {
         final EntityManager em = getEntityManager();
         try {
@@ -356,7 +359,22 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
                     }
                 }
             model.transit(newState);
-            em.getTransaction().commit();
+            try {
+                em.getTransaction().commit();
+                // if model could be commited it has a clean state
+                // refresh backup
+                setBackup( Copier.copy( false, model ) );
+            } catch ( Exception e ) {
+                rewindTransaction(em.getTransaction());
+                // if this point is reached s.th. is terribly foobared
+                // restore backup and fail
+                model = Copier.copy( false, backup );
+                em.merge( model );
+                // backup should be clean so commit mustn't fail.
+                em.getTransaction().commit();
+                model.fail( e );
+            }
+
             final TaskState modelState = model.getState();
             refreshTaskResource();
             //noinspection HardcodedFileSeparator
@@ -492,5 +510,13 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
         log = logParam;
     }
 
+    
+    protected AbstractTask getBackup() {
+        return backup;
+    }
 
+
+    protected void setBackup( AbstractTask backup ) {
+        this.backup = backup;
+    }
 }
