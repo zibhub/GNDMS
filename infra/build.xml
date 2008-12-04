@@ -57,8 +57,10 @@
 			
 			<else>
 		<mkdir dir="./${infra.dest}/production"/>
-		<javac srcdir='${infra.dir}/src' destdir='${infra.dest}/production' classpathref="infra.path" />
-		<groovyc srcdir='${infra.dir}/src' destdir='${infra.dest}/production' classpathref="infra.path" />
+		<javac srcdir='${infra.dir}/src' destdir='${infra.dest}/production' classpathref="infra.path" debug="${javac.debug}"/>
+		<groovyc srcdir='${infra.dir}/src' destdir='${infra.dest}/production' classpathref="infra.path">
+			<javac debug="${javac.debug}" />
+	        </groovyc>
 		
 		<!-- Copy meta-stuff -->
 		<copy todir="${infra.dest}/production">
@@ -86,7 +88,7 @@
 	<!-- Compile infra and its test-files -->
 	<target name="infra.compile.test"  description="Compiles infra's test-files">
 		<mkdir dir="./${infra.dest}/test"/>
-		<javac srcdir='${infra.dir}/test-src' destdir='${infra.dest}/test' classpathref="infra.test.path" />
+		<javac srcdir='${infra.dir}/test-src' destdir='${infra.dest}/test' classpathref="infra.test.path" debug="${javac.debug}"/>
 		
 		<!-- Copy meta-stuff -->
 		<copy todir="${infra.dest}/test">
