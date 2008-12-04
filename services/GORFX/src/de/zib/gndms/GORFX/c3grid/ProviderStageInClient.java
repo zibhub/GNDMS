@@ -82,8 +82,6 @@ public class ProviderStageInClient extends AbstractApplication {
         // Accept offer and thus create Task
         final TaskClient taskClient = acceptOfferAndCreateTask(offerEpr);
 
-        System.out.println( "Going asleep" );
-        Thread.sleep( 5000 );
         waitForTaskToFinishOrFail(taskClient);
     }
     
@@ -129,6 +127,11 @@ public class ProviderStageInClient extends AbstractApplication {
         else {
             final GetResourcePropertyResponse rpResponse= taskClientParam.getResourceProperty(TaskConstants.TASKEXECUTIONFAILURE);
             final TaskExecutionFailure fail = (TaskExecutionFailure) ObjectDeserializer.toObject(rpResponse.get_any()[0], TaskExecutionFailure.class);
+            TaskExecutionFailureImplementationFault tefif = fail.getImplementationFault();
+            System.out.println( "message:       " + tefif.getMessage( ) );
+            System.out.println( "faultClass:    " + tefif.getFaultClass( ) );
+            System.out.println( "faultTrace:    " + tefif.getFaultTrace( ) );
+            System.out.println( "faultLocation: " + tefif.getFaultLocation( ) );
             throw new RuntimeException(fail.toString());
         }
     }
