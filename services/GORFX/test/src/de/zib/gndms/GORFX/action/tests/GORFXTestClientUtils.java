@@ -31,7 +31,6 @@ public class GORFXTestClientUtils {
 
         final OfferExecutionContractT xsdOfferContract = new OfferExecutionContractT();
 
-
 	    xsdOfferContract.setIfDecisionBefore(new DateTime().plusHours(1).toGregorianCalendar());
 	    FutureTimeT ft = new FutureTimeT();
 	    ft.setTime(new DateTime().plusDays(1).toGregorianCalendar());

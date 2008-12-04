@@ -82,6 +82,8 @@ public class ProviderStageInClient extends AbstractApplication {
         // Accept offer and thus create Task
         final TaskClient taskClient = acceptOfferAndCreateTask(offerEpr);
 
+        System.out.println( "Going asleep" );
+        Thread.sleep( 5000 );
         waitForTaskToFinishOrFail(taskClient);
     }
     
@@ -159,8 +161,8 @@ public class ProviderStageInClient extends AbstractApplication {
 
 		final FutureTimeT resultValidity = new FutureTimeT();
 	    final Duration dur2 = new Duration();
-	    resultValidity.setOffset(dur2);
 	    dur2.setDays(2);
+        resultValidity.setOffset(dur2);
 	    xsdOfferContract.setResultValidUntil( resultValidity );
 
         return orqPort.getOfferAndDestroyRequest(xsdOfferContract, xsdContextParam);
