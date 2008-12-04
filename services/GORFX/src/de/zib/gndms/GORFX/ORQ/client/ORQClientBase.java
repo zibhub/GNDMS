@@ -1,33 +1,20 @@
 package de.zib.gndms.GORFX.ORQ.client;
 
-import java.io.InputStream;
-import java.rmi.RemoteException;
-
-import javax.xml.namespace.QName;
-
-import java.util.Calendar;
-import java.util.List;
-
+import de.zib.gndms.GORFX.ORQ.stubs.ORQPortType;
+import de.zib.gndms.GORFX.ORQ.stubs.service.ORQServiceAddressingLocator;
+import gov.nih.nci.cagrid.introduce.security.client.ServiceSecurityClient;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.client.Stub;
 import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
-
 import org.globus.gsi.GlobusCredential;
-
-import org.globus.wsrf.NotifyCallback;
 import org.globus.wsrf.NotificationConsumerManager;
-import org.globus.wsrf.container.ContainerException;
 
-import org.oasis.wsrf.lifetime.ImmediateResourceTermination;
-import org.oasis.wsrf.lifetime.WSResourceLifetimeServiceAddressingLocator;
-
-import de.zib.gndms.GORFX.ORQ.stubs.ORQPortType;
-import de.zib.gndms.GORFX.ORQ.stubs.service.ORQServiceAddressingLocator;
-import de.zib.gndms.GORFX.ORQ.common.ORQI;
-import gov.nih.nci.cagrid.introduce.security.client.ServiceSecurityClient;
+import java.io.InputStream;
+import java.rmi.RemoteException;
+import java.util.Calendar;
 
 
 /**

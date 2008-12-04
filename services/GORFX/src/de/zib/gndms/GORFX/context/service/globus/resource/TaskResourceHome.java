@@ -24,7 +24,7 @@ import org.apache.axis.components.uuid.UUIDGenFactory;
  * 
  */
 public class TaskResourceHome extends ResourceHomeImpl {
-        private static final UUIDGen UUIDGEN = UUIDGenFactory.getUUIDGen();
+    private static final UUIDGen UUIDGEN = UUIDGenFactory.getUUIDGen();
 
 
 	/**

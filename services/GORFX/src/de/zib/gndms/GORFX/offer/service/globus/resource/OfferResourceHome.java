@@ -83,5 +83,6 @@ public class OfferResourceHome extends ResourceHomeImpl {
         return thisResource;
     }
 
-	
+
+    
 }
