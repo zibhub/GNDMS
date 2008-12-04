@@ -28,6 +28,8 @@ find $C3GRID_SOURCE/infra/src -type f
 find $C3GRID_SOURCE/infra/test-src -type f
 find $C3GRID_SOURCE/kit/src -type f
 find $C3GRID_SOURCE/kit/test-src -type f
+find $C3GRID_SOURCE/stuff/src -type f
+find $C3GRID_SOURCE/stuff/test-src -type f
 find $C3GRID_SOURCE/services/*/test/src -type f | grep -v README.txt
 
 if [ ! -z "$ALL" ] ; then 

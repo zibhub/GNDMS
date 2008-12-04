@@ -17,13 +17,20 @@
 	<property name="logic.dir" value="logic"/>
 	<property name="infra.dir" value="infra"/>
 	<property name="typecon.dir" value="typecon"/>
-		
+    <property name="stuff.dir" value="stuff"/>
+
+
 	<!-- Directories of Build-files  -->
 	<property name="model.dest" value="${model.dir}/gndms-shared-model"/>
 	<property name="kit.dest" value="${kit.dir}/gndms-kit"/>
 	<property name="logic.dest" value="${logic.dir}/gndms-logic"/>
 	<property name="infra.dest" value="${infra.dir}/gndms-infra"/>
 	<property name="typecon.dest" value="${typecon.dir}/gndms-typecon"/>
+	<property name="stuff.dest" value="${stuff.dir}/gndms-stuff"/>
+
+
+	<!-- To avoid problems import just the following libaries -->
+	<!--fileset dir="${env.GLOBUS_LOCATION}/lib" includesfile="globus_jars.txt" id="globus.lib"/-->
 	
 
 	<!-- To avoid problems import just the following libaries -->
@@ -151,7 +158,8 @@
 	<import file="${logic.dir}/build.xml"/>
 	<import file="${infra.dir}/build.xml"/>
 	<import file="${typecon.dir}/build.xml"/>
-	
+	<import file="${stuff.dir}/build.xml"/>
+
 	<path id="groovy.path">
 		<fileset file="${tools-lib.dir}/gndms-groovy.jar"/>
 	</path>
@@ -184,6 +192,7 @@
 	
 	<!-- Creates jar's for every service (class files will be created if not already done)-->
 	<target name="compile.src" description="Creates jar files for every service, will be compiled if necessary">
+		<runtarget target="stuff.jar"/>
 		<runtarget target="model.jar"/>
 		<runtarget target="model.enhancer"/>
 		<runtarget target="kit.jar"/>
@@ -203,14 +212,8 @@
 		<runtarget target="logic.clean"/>
 		<runtarget target="kit.clean"/>
 		<runtarget target="model.clean"/>
-		<if>
-			<not> 
-				<isset property="cleanALL"/>
-			</not>
-			<then>
-				<echo level="warning"> Note: Only class-files have been deleted! To delete also the generated jars type 'ant clean.all' </echo>
-			</then>
-		</if>
+		<runtarget target="stuff.clean"/>
+		<echo level="warning"> Note: Only class-files have been deleted! To delete also the generated jars type 'ant clean.all' </echo>
 	</target>
 	
 	
@@ -221,8 +224,7 @@
 		<runtarget target="logic.clean.jar"/>
 		<runtarget target="kit.clean.jar"/>
 		<runtarget target="model.clean.jar"/>
-		<delete file="extra/lib/GORFX.jar"/>
-		<delete file="extra/lib/DSpace.jar"/>
+		<runtarget target="stuff.clean.jar"/>
 	</target>
 	<!-- Delete build-files and generated jar every package -->
 	<target name="clean.all" description="deletes build-files and jars of every package">
@@ -236,6 +238,7 @@
 
 	<!-- Creates jar-file of evey service's test-classes. Will be compiled if necessary -->
 	<target name="compile.test" description="Creates jar-file of evey service's test-classes. Will be compiled if necessary">
+		<runtarget target="stuff.test.jar"/>
 		<runtarget target="model.test.jar"/>
 		<runtarget target="kit.test.jar"/>
 		<runtarget target="logic.test.jar"/>
@@ -259,6 +262,7 @@
 		<pathelement location="${lib.dir}/gndms-infra.jar"/>
 		<pathelement location="${lib.dir}/gndms-logic.jar"/>
 		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
+		<pathelement location="${lib.dir}/gndms-stuff.jar"/>
 		<pathelement location="${tools-lib.dir}/joda-time-1.5.2.jar"/> 
 		<pathelement location="services/DSpace/lib/caGrid-advertisement-1.2.jar"/> 
 		<pathelement location="services/DSpace/lib/caGrid-core-1.2.jar"/> 
@@ -288,6 +292,7 @@
 		<pathelement location="${lib.dir}/gndms-logic.jar"/>
 		<pathelement location="${lib.dir}/gndms-kit.jar"/>
 		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
+		<pathelement location="${lib.dir}/gndms-stuff.jar"/>
 		<pathelement location="${tools-lib.dir}/joda-time-1.5.2.jar"/> 
 		<pathelement location="services/GORFX/lib/caGrid-advertisement-1.2.jar"/> 
 		<pathelement location="services/GORFX/lib/caGrid-core-1.2.jar"/> 
@@ -358,7 +363,7 @@
 
 	<target name="help" description="Prints usage information.">
 		<echo message=" =================================================================================" />
-		<echo message="|                      C3Grid Deployment                                          |" />
+		<echo message="|                      C3Grid GNDMS Compilation                                   |" />
 		<echo message="|                                                                                 |" />
 		<echo message=" ---------------------------------------------------------------------------------" />
 		<echo message="|  USAGE:                                                                         |" />

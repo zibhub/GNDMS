@@ -21,7 +21,7 @@ for SERVICE in services/* ; do
   done
   echo ln -sf "$GROOVY_HOME"/embeddable/groovy-all*jar "extra/tools-lib/gndms-groovy.jar"
   ln -sf "$GROOVY_HOME"/embeddable/groovy-all*jar "extra/tools-lib/gndms-groovy.jar"
-  for jarname in shared-model logic kit typecon infra ; do
+  for jarname in stuff shared-model logic kit typecon infra ; do
     jar="extra/lib/gndms-$jarname.jar"
     echo ln -sf "../../../../$jar" "$SERVICE/lib" 
     ln -sf "../../../$jar" "$SERVICE/lib" 

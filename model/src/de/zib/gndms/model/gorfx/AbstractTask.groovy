@@ -26,7 +26,13 @@ import javax.persistence.NamedQueries
 import javax.persistence.OneToMany
 import javax.persistence.CascadeType
 import de.zib.gndms.model.common.PersistentContract
-
+import de.zib.gndms.stuff.copy.Copyable
+import de.zib.gndms.stuff.copy.CopyMode
+import de.zib.gndms.stuff.copy.Copier
+import de.zib.gndms.stuff.mold.Molding
+import de.zib.gndms.stuff.copy.Copyable
+import de.zib.gndms.stuff.mold.Molder
+import de.zib.gndms.stuff.mold.Mold
 
 /**
  * ThingAMagic.
@@ -37,22 +43,8 @@ import de.zib.gndms.model.common.PersistentContract
  * User: stepn Date: 05.09.2008 Time: 13:41:58
  */
 @MappedSuperclass
+@Copyable(CopyMode.MOLD)
 abstract class AbstractTask extends TimedGridResource {
-    
-    public void stampOn ( EntityManager em, AbstractTask newTask ) {
-        newTask .offerType = offerType == null ? null : em.find(OfferType.class, offerType.getOfferTypeKey());
-        if (newTask.offerType != null)
-            newTask.offerType.getTasks().add( newTask  );
-        newTask.description = description;
-        newTask.state = state;
-        newTask.progress = progress;
-        newTask.maxProgress = maxProgress;
-        newTask.contract = contract;
-        newTask.orq = orq;
-        newTask.faultString = faultString;
-        newTask.data = data;
-    }
-
     /* Nullable for testing purposes */
     @ManyToOne @JoinColumn(name="offerTypeKey", nullable=true, updatable=false, columnDefinition="VARCHAR")
     OfferType offerType
@@ -102,8 +94,8 @@ abstract class AbstractTask extends TimedGridResource {
     @Basic String wid;
 
     @OneToMany( targetEntity=SubTask.class, cascade=[CascadeType.REMOVE] )
-    List<SubTask> subTasks;
-    
+    List<SubTask> subTasks = null;
+
 
    def transit(final TaskState newState) {
         final @NotNull TaskState goalState = newState == null ? getState() : newState;
@@ -134,6 +126,36 @@ abstract class AbstractTask extends TimedGridResource {
         
         subTasks.add( st );
     }
+
+	@SuppressWarnings(["unchecked"])
+	def <D> Molder<D> molder(@NotNull final Class<D> moldedClazz) {
+		return Mold.newMolderProxy( (Class) getClass(), this, moldedClazz);
+	}
+
+    def void mold(final @NotNull AbstractTask instance) {
+        instance.description = description
+        instance.wid = wid
+        instance.faultString = faultString
+        instance.done = done
+        instance.state = state
+        instance.broken = broken
+        instance.progress = progress
+        instance.maxProgress = maxProgress
+        instance.contract = Copier.copy(false, contract)
+        /* shallow therefore needs refresh */
+        instance.offerType = offerType;
+        instance.orq = Copier.copySerializable(orq);
+        instance.data = Copier.copySerializable(data);
+        if (subTasks == null)
+           instance.subTasks = null;
+        else {
+           instance.subTasks = new LinkedList<SubTask>()
+           instance.subTasks.addAll(subTasks)
+        }
+    }
+
+    def void refresh(final @NotNull EntityManager em) {
+        if (offerType != null)
+            offerType = em.find(OfferType.class, offerType.getOfferTypeKey());
+    }
 }
-
-

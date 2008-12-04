@@ -5,10 +5,10 @@ import de.zib.gndms.kit.configlet.Configlet;
 import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.service.GNDMSingletonServiceHome;
-import de.zib.gndms.kit.factory.Factory;
-import de.zib.gndms.kit.factory.FactoryInstance;
-import de.zib.gndms.kit.factory.IndustrialPark;
-import de.zib.gndms.kit.factory.RecursiveFactory;
+import de.zib.gndms.model.common.types.factory.KeyFactory;
+import de.zib.gndms.model.common.types.factory.KeyFactoryInstance;
+import de.zib.gndms.model.common.types.factory.IndustrialPark;
+import de.zib.gndms.model.common.types.factory.RecursiveKeyFactory;
 import de.zib.gndms.kit.monitor.GroovyBindingFactory;
 import de.zib.gndms.kit.monitor.GroovyMoniServer;
 import de.zib.gndms.kit.config.ConfigletProvider;
@@ -411,12 +411,12 @@ public class InstanceDirectory implements ConfigletProvider, ORQCalculatorProvid
 
     }
 
-    private static class OfferTypeIndustrialPark<T extends FactoryInstance<OfferType, T>>
+    private static class OfferTypeIndustrialPark<T extends KeyFactoryInstance<OfferType, T>>
             extends IndustrialPark<OfferType, String, T> {
 
         private OfferTypeIndustrialPark(
                 final @NotNull
-                Factory<OfferType, RecursiveFactory<OfferType, T>> factoryParam) {
+                KeyFactory<OfferType, RecursiveKeyFactory<OfferType, T>> factoryParam) {
             super(factoryParam);
         }
 

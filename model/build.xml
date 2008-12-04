@@ -5,6 +5,8 @@
 		<pathelement location="${tools-lib.dir}/gndms-groovy.jar"/> 
 		<pathelement location="${tools-lib.dir}/annotations.jar"/> 
 		<dirset dir="${model.dest}/production/" />
+		<pathelement location="${lib.dir}/gndms-stuff.jar"/>
+		<pathelement location="${tools-lib.dir}/openjpa-1.1.0.jar"/>
 		<pathelement location="${tools-lib.dir}/geronimo-jpa_3.0_spec-1.0.jar"/>
 		<pathelement location="${tools-lib.dir}/geronimo-jta_1.1_spec-1.1.jar"/>
 		<pathelement location="${tools-lib.dir}/serp-1.13.1.jar"/>

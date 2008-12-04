@@ -2,6 +2,9 @@ package de.zib.gndms.model.common;
 
 import de.zib.gndms.model.common.types.FutureTime;
 import de.zib.gndms.model.common.types.TransientContract;
+import de.zib.gndms.stuff.copy.CopyMode;
+import de.zib.gndms.stuff.copy.Copyable;
+import de.zib.gndms.stuff.copy.Copier;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 
@@ -20,7 +23,7 @@ import java.util.Calendar;
  *
  *          User: stepn Date: 24.11.2008 Time: 15:22:43
  */
-@Embeddable
+@Embeddable @Copyable(CopyMode.MOLD)
 public class PersistentContract {
 	private Calendar accepted;
 	private Calendar deadline;
@@ -29,7 +32,13 @@ public class PersistentContract {
     // expected size of task in case of a transfer or staging
     private Long expectedSize;
 
-	@SuppressWarnings({ "FeatureEnvy" })
+    public void mold(final @NotNull PersistentContract instance) {
+        instance.accepted = Copier.copy(true, accepted);
+        instance.deadline = Copier.copy(true, deadline);
+        instance.resultValidity = Copier.copy(true, resultValidity);
+    }
+
+    @SuppressWarnings({ "FeatureEnvy" })
 	public @NotNull TransientContract toTransientContract() {
 		final TransientContract tc = new TransientContract();
 		final DateTime acceptedDt = new DateTime(getAccepted());
@@ -92,9 +101,12 @@ public class PersistentContract {
 
 
 	public void setExpectedSize(final Long expectedSizeParam) {
-		if (expectedSizeParam < 0)
-			throw new IllegalArgumentException();
-		expectedSize = expectedSizeParam;
+
+        if( expectedSizeParam != null )
+            if ( expectedSizeParam < 0)
+                throw new IllegalArgumentException();
+        
+        expectedSize = expectedSizeParam;
 	}
 
 	private static Calendar nullSafeClone(Calendar cal) {

@@ -1,14 +1,13 @@
 package de.zib.gndms.model.dspace.types;
 
 import de.zib.gndms.model.common.SimpleRKRef;
-
-import javax.xml.namespace.QName;
-
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.Arrays;
+import javax.xml.namespace.QName;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+
 
 /**
  * This is the model for a slice reference.

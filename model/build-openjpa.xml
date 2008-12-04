@@ -26,13 +26,12 @@
 
 	<delete failonerror="false" file="../extra/lib/gndms-shared-model.jar" />
 
-	<openjpac directory="model/gndms-shared-model/production">
+    <openjpac directory="model/gndms-shared-model/production">
 		<config propertiesFile="src/META-INF/persistence.xml" />
-
-
         
 		<classpath>
 			<pathelement location="gndms-shared-model/production" />
+			<pathelement location="../stuff/gndms-stuff/production" />
 			<fileset refid="tooljars" />
 		</classpath>
 
@@ -63,7 +62,8 @@
 
 		<classpath>
 			<pathelement location="gndms-shared-model/production" />
-			<fileset refid="tooljars" />
+			<pathelement location="../stuff/gndms-stuff/production" />
+            <fileset refid="tooljars" />
 		</classpath>
 
 		<fileset refid="model_classes" />

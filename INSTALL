@@ -176,11 +176,20 @@ DETAILED BUILD INSTRUCTIONS
 	  deleting libs, make sure to kill the corresponding symlinks in servics/*/lib)
 
 
-  2) Compile gndms-shared-model.jar
+
+  2) Compile gndms-stuff.jar
+
+     Sources: stuff/src (resp. model/test-src)
+     Output:  stuff/gndms-stuff/production (resp. test)
+     Dependencies: GROOVY, J2EE, annotations, SOURCE
+
+
+
+  3) Compile gndms-shared-model.jar
 
      Sources: model/src (resp. model/test-src)
      Output:  model/gndms-shared-model/production (resp. test)
-     Dependencies: GROOVY, J2EE, annotations, SOURCE, openjpa,
+     Dependencies: GROOVY, J2EE, annotations, SOURCE, stuff, openjpa,
                    collections, joda-time, testng, jaxb
      Re-exports: openjpa, collections
 
@@ -188,7 +197,7 @@ DETAILED BUILD INSTRUCTIONS
      from model/src to model/gndms-shared-model/production!
    
 
-  3) Run the openjpa enhancer
+  4) Run the openjpa enhancer
 
      In model/, run: ant -f build-openjpa.xml enhance
      
@@ -201,48 +210,48 @@ DETAILED BUILD INSTRUCTIONS
      production/* and rebuild the whole project)
 
 
-  4) Compile gndms-kit.jar
+  5) Compile gndms-kit.jar
      Sources: kit/src
      Output: kit/gndms-kit/production (resp. test) classes
-     Dependencies: GROOVY, J2EE, SOURCE, gt4, gndms-shared-model, annotations,
+     Dependencies: GROOVY, J2EE, SOURCE, stuff, gt4, gndms-shared-model, annotations,
                    jetty, servlet-api, cos, testng, joda-time, args4j
 
 
-  5) Compile gndms-logic.jar
+  6) Compile gndms-logic.jar
      Sources: logic/src (resp. test)
      Output: logic/gndms-logic/production (resp. test) classes
-     Dependencies: GROOVY, J2EE, annotations, SOURCE, gndms-shared-model,
+     Dependencies: GROOVY, J2EE, annotations, SOURCE, stuff, gndms-shared-model,
                    testng, commons, derby, joda-time, gndms-kit, gt4
 
      (In IntelliJ: Use Build/Build Jars.. to build the jar on Make Project)
 
                 
-  6) Compile gndms-typecon.jar
+  7) Compile gndms-typecon.jar
      Sources: typecon/src (resp. test)
      Output: typecon/gndms-typecon/production (rest. test) classes
              extra/lib/gndms-typecon.jar containing the contents of production/
-     Dependencies: GROOVY, J2EE, gorfx-stubs, gndms-shared-model, annotations, joda-time,
+     Dependencies: GROOVY, J2EE, gorfx-stubs, stuff,gndms-shared-model, annotations, joda-time,
                    gt4, testng, and openjpa (due to javac compiler bug 6365854)
 
 
 
-  7) Compile gndms-infra.jar
+  8) Compile gndms-infra.jar
      Sources: infra/src (resp. test)
      Output: infra/gndms-infra/production (resp. test) classes
             extra/lib/gndms-infra.jar containing the contents of production/
-     Dependencies: GROOVY, J2EE, annotations, gndms-logic, gndms-shared-model
+     Dependencies: GROOVY, J2EE, annotations, gndms-logic, stuff, gndms-shared-model
                    commons, derby, cos, servlet-api, jetty, gt4, testng, joda-time,
                    gndms-kit, jaxb
 
     (In IntelliJ: Use Build/Build Jars.. to build the jar on Make Project)
 
 
-  8) Build all services in services/* using ant createDeploymentGar
+  9) Build all services in services/* using ant createDeploymentGar
 
      Recommended build order: DSpace, GORFX, LOFIS, WHORFX
 
 
-  9) Though you might want to read the upcoming section on configuration
+  10) Though you might want to read the upcoming section on configuration
      and deployment first, you can now deploy the gar files by executing:
 
        "globus-deploy-gar <file>"
@@ -254,8 +263,8 @@ DETAILED BUILD INSTRUCTIONS
   service with the following dependencies:
 
   J2EE, groovy, annotations, "servicename"-stubs,
-  gndms-infra, gndms-logic, gndms-kit, gndms-shared-model, joda-time,
-  SOURCES, all non-symlinks in service/ServiceName/lib, gt4
+  gndms-infra, gndms-logic, gndms-shared-model, stuff, joda-time,
+  SOURCES, all non-symlinks in service/ServiceName/lib,  gt4
 
   GORFX also depends on gndms-typecon, DSpace, args4j, DSpace-Stubs and jaxb.
   
