@@ -4,6 +4,25 @@ import org.globus.wsrf.InvalidResourceKeyException;
 import org.globus.wsrf.NoSuchResourceException;
 import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.ResourceKey;
+import org.jetbrains.annotations.NotNull;
+import org.apache.axis.types.URI;
+import org.apache.axis.types.UnsignedLong;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import de.zib.gndms.model.dspace.Slice;
+import de.zib.gndms.model.dspace.Subspace;
+import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
+import de.zib.gndms.infra.model.GridEntityModelHandler;
+import de.zib.gndms.infra.model.GridResourceModelHandler;
+import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.dspace.common.DSpaceTools;
+import de.zib.gndms.dspace.slice.stubs.SliceResourceProperties;
+import de.zib.gndms.dspace.slice.common.SliceConstants;
+import de.zib.gndms.dspace.subspace.service.globus.resource.ExtSubspaceResourceHome;
+import de.zib.gndms.dspace.subspace.stubs.types.SubspaceReference;
+
+import javax.persistence.EntityManager;
+import java.rmi.RemoteException;
 
 
 /** 
@@ -12,6 +31,141 @@ import org.globus.wsrf.ResourceKey;
  * @created by Introduce Toolkit version 1.2
  * 
  */
-public class SliceResource extends SliceResourceBase {
+public class SliceResource extends SliceResourceBase
+        implements ReloadablePersistentResource<Slice, ExtSliceResourceHome> {
 
+
+    private ExtSliceResourceHome resourceHome;
+    private GridResourceModelHandler<Slice, ExtSliceResourceHome, SliceResource> mH;
+    private final Log logger = LogFactory.getLog( SliceResource.class );
+
+    // override generated setter method to pass changes on the resource directly to the model
+    public void setTotalStorageSize( UnsignedLong totalStorageSize ) throws ResourceException {
+        Slice sl = loadModelById( getID( ) );
+        sl.setTotalStorageSize( totalStorageSize.longValue( ) );
+        mH.mergeModel( (EntityManager) null, sl );
+    }
+
+    public void setSliceKind(javax.xml.namespace.QName sliceKind ) throws ResourceException {
+        throw new UnsupportedOperationException( "Setting the sliceKind directly is not allowed (use SliceImpl.transformSliceTo instead)" );
+    }
+
+    public void setSliceLocation(org.apache.axis.types.URI sliceLocation ) throws ResourceException {
+        throw new UnsupportedOperationException( "Changing the slice location is not supported" );
+    }
+
+    public void setSubspaceReference(de.zib.gndms.dspace.subspace.stubs.types.SubspaceReference subspaceReference ) throws ResourceException {
+        throw new UnsupportedOperationException( "Changing the slices subspace is not supported (use SliceImpl.transformSliceTo instead)" );
+    }
+
+
+    @NotNull
+    public Slice loadModelById( @NotNull String id ) throws ResourceException {
+        return (Slice) mH.loadModelById( null, id );
+    }
+
+    public void loadViaModelId( @NotNull String id ) throws ResourceException {
+        loadFromModel(loadModelById( id ) );
+    }
+
+    public void loadFromModel( @NotNull Slice model ) throws ResourceException {
+
+        loadFromModel( model, ( SliceResourceProperties ) getResourceBean() );
+    }
+
+
+    public void loadFromModel( @NotNull Slice model, @NotNull SliceResourceProperties bean ) throws ResourceException {
+
+        try {
+            bean.setSliceKind( new URI ( model.getKind( ).getURI( ) ) );
+        } catch ( URI.MalformedURIException e ) {
+            throw new ResourceException( e.getMessage(), e );
+        }
+
+        bean.setTerminationTime( model.getTerminationTime() );
+        bean.setTotalStorageSize( DSpaceTools.unsignedLongFromLong( model.getTotalStorageSize( ) ) );
+
+        GNDMSystem sys = resourceHome.getSystem( );
+        ExtSubspaceResourceHome srh = (ExtSubspaceResourceHome) sys.getInstanceDir().getHome( Subspace.class );
+        SubspaceReference subref;
+        try {
+            Subspace sp =  model.getOwner( );
+            subref = srh.getReferenceForSubspace( sp );
+            bean.setSubspaceReference( subref );
+            bean.setSliceLocation( new URI( sp.getGsiFtpPathForSlice( model ) ) );
+        } catch ( Exception e ) {
+            throw new ResourceException( "Can't obtain reference for subspace: " + e.getMessage( ) );
+        }
+    }
+
+
+    @NotNull
+    public ExtSliceResourceHome getResourceHome() {
+        if( resourceHome == null )
+            throw new IllegalStateException( "No slice resource home set" );
+        return resourceHome;
+    }
+
+    public void setResourceHome( @NotNull ExtSliceResourceHome resourceHomeParam ) {
+        if (resourceHome == null) {
+			mH = new GridResourceModelHandler<Slice, ExtSliceResourceHome, SliceResource>
+				  (Slice.class, resourceHomeParam);
+			resourceHome = resourceHomeParam;
+		}
+		else
+			throw new IllegalStateException("Slice resource home already set");
+    }
+
+
+    public void load( ResourceKey resourceKey ) throws ResourceException, NoSuchResourceException, InvalidResourceKeyException {
+        
+        if ( getResourceHome().getKeyTypeName().equals( resourceKey.getName() ) ) {
+            String id = ( String ) resourceKey.getValue();
+            setResourceKey( resourceKey );
+
+            Slice sl = loadModelById(id);
+            SliceResourceProperties bean = new SliceResourceProperties();
+            loadFromModel( sl, bean );
+            initialize( bean, SliceConstants.RESOURCE_PROPERTY_SET, id );
+        }
+        else
+            throw new InvalidResourceKeyException("Invalid resourceKey name");
+    }
+
+    public void store() throws ResourceException {
+        // done one model layer
+    }
+
+    public String getID( ) {
+        return (String) super.getID( );
+    }
+
+
+    @Override
+    public void refreshRegistration(final boolean forceRefresh) {
+        // nothing
+    }
+
+
+    @Override
+    public void remove( ) {
+
+        logger.debug( "removing slice resource: " + getID() );
+        EntityManager em = null;
+        try {
+            em = resourceHome.getEntityManagerFactory().createEntityManager(  );
+            em.getTransaction().begin();
+            Slice sl = em.find( Slice.class, getID() );
+            Subspace sp = sl.getOwner();
+            logger.debug( "removing slice directory: " + sl.getAssociatedPath() );
+            sp.destroySlice( sl );
+            em.remove( sl );
+            em.getTransaction().commit( );
+        } catch ( Exception e) { // for debugg'n
+            e.printStackTrace(  );
+        } finally {
+            if( em != null && em.isOpen() )
+                em.close( );
+        }
+    }
 }
