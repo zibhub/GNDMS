@@ -22,7 +22,7 @@
 			</fileset>
 		</copy>
 		
-		<javac srcdir='${stuff.dir}/src' destdir='${stuff.dest}/production' classpathref="stuff.path"/>
+		<javac srcdir='${stuff.dir}/src' destdir='${stuff.dest}/production' classpathref="stuff.path" debug="${javac.debug}"/>
 
 	</target>
 	
@@ -56,11 +56,9 @@
 			
 		<mkdir dir="./${stuff.dest}/test"/>
 		
-		<javac srcdir='${stuff.dir}/test-src' destdir='${stuff.dest}/test' classpathref="stuff.test.path" includes="**/action/*">
+		<javac srcdir='${stuff.dir}/test-src' destdir='${stuff.dest}/test' classpathref="stuff.test.path" includes="**/*" debug="${javac.debug}">
 		</javac>
 		
-		<javac srcdir='${stuff.dir}/test-src' destdir='${stuff.dest}/test' classpathref="stuff.test.path" includes="**/model/*">
-		</javac>
 		<!-- Copy Meta files to build dir-->
 		<copy todir="${stuff.dest}/test">
 			<fileset dir='${stuff.dir}/test-src'>

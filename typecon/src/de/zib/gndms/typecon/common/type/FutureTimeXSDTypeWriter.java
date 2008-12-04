@@ -30,8 +30,8 @@ public class FutureTimeXSDTypeWriter extends AbstractXSDTypeWriter<FutureTimeT> 
 		                            period.getYears(), period.getMonths(), period.getDays(), period.getHours(),
 		                            period.getMinutes(), (double) period.getSeconds() + (double) (period.getMillis() / 1000)); */
 		// while joda time rocks
-		Duration dur = new Duration(false, new DateTime(0L).plus(t.getDuration()).toGregorianCalendar());
-		getProduct().setOffset(dur);
+		// Duration dur = new Duration(false, new DateTime(0L).plus(t.getDuration()).toGregorianCalendar());
+		getProduct().setOffset( t.getDuration().getMillis() );
 	}
 
 

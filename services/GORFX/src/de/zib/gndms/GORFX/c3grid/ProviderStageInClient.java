@@ -13,13 +13,13 @@ import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyReader;
 import de.zib.gndms.typecon.common.GORFXTools;
 import de.zib.gndms.typecon.common.type.ProviderStageInORQXSDTypeWriter;
 import org.apache.axis.message.addressing.EndpointReferenceType;
-import org.apache.axis.types.Duration;
 import org.apache.axis.types.URI;
 import org.globus.wsrf.encoding.DeserializationException;
 import org.globus.wsrf.encoding.ObjectDeserializer;
 import org.kohsuke.args4j.Option;
 import org.oasis.wsrf.properties.GetResourcePropertyResponse;
 import org.joda.time.DateTime;
+import org.joda.time.Duration;
 import types.*;
 
 import java.io.File;
@@ -127,6 +127,11 @@ public class ProviderStageInClient extends AbstractApplication {
         else {
             final GetResourcePropertyResponse rpResponse= taskClientParam.getResourceProperty(TaskConstants.TASKEXECUTIONFAILURE);
             final TaskExecutionFailure fail = (TaskExecutionFailure) ObjectDeserializer.toObject(rpResponse.get_any()[0], TaskExecutionFailure.class);
+            TaskExecutionFailureImplementationFault tefif = fail.getImplementationFault();
+            System.out.println( "message:       " + tefif.getMessage( ) );
+            System.out.println( "faultClass:    " + tefif.getFaultClass( ) );
+            System.out.println( "faultTrace:    " + tefif.getFaultTrace( ) );
+            System.out.println( "faultLocation: " + tefif.getFaultLocation( ) );
             throw new RuntimeException(fail.toString());
         }
     }
@@ -152,15 +157,13 @@ public class ProviderStageInClient extends AbstractApplication {
 	    xsdOfferContract.setIfDecisionBefore( new DateTime().plusHours(1).toGregorianCalendar() );
 
 		final FutureTimeT execLikelyUntil = new FutureTimeT();
-	    final Duration dur = new Duration();
-	    dur.setDays(1);
-	    execLikelyUntil.setOffset(dur);
+
+        long day = 24*60*60*1000;
+        execLikelyUntil.setOffset( day );
 	    xsdOfferContract.setExecutionLikelyUntil( execLikelyUntil );
 
 		final FutureTimeT resultValidity = new FutureTimeT();
-	    final Duration dur2 = new Duration();
-	    resultValidity.setOffset(dur2);
-	    dur2.setDays(2);
+        resultValidity.setOffset( 2*day );
 	    xsdOfferContract.setResultValidUntil( resultValidity );
 
         return orqPort.getOfferAndDestroyRequest(xsdOfferContract, xsdContextParam);

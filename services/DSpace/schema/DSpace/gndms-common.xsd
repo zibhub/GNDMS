@@ -203,7 +203,7 @@
 <complexType name="FutureTimeT">
     <choice>
         <element name="Time" type="dateTime" />
-        <element name="Offset" type="duration" />
+        <element name="Offset" type="long" />
     </choice>
 </complexType>
 
@@ -215,15 +215,14 @@
         <!-- If missing, means "unknown", offset reference point is "acceptance time" -->
         <element name="ExecutionLikelyUntil" type="impl:FutureTimeT" minOccurs="0" maxOccurs="1"/>
 
-        <!-- If missing, means "unknown", offset reference point is "ExecutionLikelyUntil" -->
-        <element name="ResultValidUntil" type="impl:FutureTimeT" minOccurs="1" maxOccurs="1"/>
+        <!-- If missing, means "forever", offset reference point is "ExecutionLikelyUntil" -->
+        <element name="ResultValidUntil" type="impl:FutureTimeT" minOccurs="0" maxOccurs="1"/>
 
         <element name="EstMaxSize" type="long" minOccurs="0" maxOccurs="1" />
 
         <!-- Not directly part of the contract, just contains additional information
              about how the request was interpreted by the remote site like
              warning message in the presence of obscur staging requests
-
              intended for the end user only during offer negotiation -->
         <element name="VolatileRequestInfo" type="impl:ContextT" minOccurs="0" maxOccurs="1">
         </element>

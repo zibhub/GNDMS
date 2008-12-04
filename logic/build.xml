@@ -54,7 +54,7 @@
 			</fileset>
 		</copy>
 		
-		<javac srcdir='${logic.dir}/src' destdir='${logic.dest}/production' classpathref="logic.path"/>
+		<javac srcdir='${logic.dir}/src' destdir='${logic.dest}/production' classpathref="logic.path" debug="${javac.debug}"/>
 	</else>
 	
 		</if>
@@ -93,10 +93,10 @@
 			
 		<mkdir dir="./${logic.dest}/test"/>
 		
-		<javac srcdir='${logic.dir}/test-src' destdir='${logic.dest}/test' classpathref="logic.test.path" includes="**/action/*">	
+		<javac srcdir='${logic.dir}/test-src' destdir='${logic.dest}/test' classpathref="logic.test.path" includes="**/action/*" debug="${javac.debug}">	
 		</javac>
 		
-		<javac srcdir='${logic.dir}/test-src' destdir='${logic.dest}/test' classpathref="logic.test.path" includes="**/model/*">	
+		<javac srcdir='${logic.dir}/test-src' destdir='${logic.dest}/test' classpathref="logic.test.path" includes="**/model/*" debug="${javac.debug}">	
 		</javac>
 		<!-- Copy Meta files to build dir-->
 		<copy todir="${logic.dest}/test">

@@ -121,7 +121,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
             if (!wasActive)
                 em.getTransaction().commit();
             setOwnEntityManager(em);
-            setModel(model);
+            setModelAndBackup(model);
         }
         finally {
             if (em.getTransaction().isActive())
@@ -146,7 +146,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
                 throw new IllegalArgumentException("Model not found for pk: " + pk);
             if (!wasActive) em.getTransaction().commit();
             setOwnEntityManager(em);
-            setModel(model);
+            setModelAndBackup(model);
         }
         finally {
             if (em.getTransaction().isActive()) {
@@ -159,9 +159,14 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     @Override
     public void setModel(final @NotNull AbstractTask mdl) {
         super.setModel(mdl);    // Overridden method
-        setBackup( Copier.copy( false, mdl ) );
         wid = mdl.getWid();
         taskClass = mdl.getClass();
+    }
+
+
+    protected void setModelAndBackup( final @NotNull AbstractTask mdl ) {
+        setModel( mdl );
+        setBackup( Copier.copy( false, mdl ) );
     }
 
 
@@ -319,7 +324,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
                 AbstractTask newModel = em.find(AbstractTask.class, getModel().getId());
                 newModel.setDone(true);
                 em.getTransaction().commit();
-                setModel(newModel);
+                setModelAndBackup(newModel);
             }
             catch (RuntimeException e) {
                 throw e;
