@@ -112,7 +112,7 @@ public class PropertyReadWriteAux {
 
         String s = prop.getProperty( key );
         if( s == null )
-            throw new IllegalStateException( "Missing property entry for " + key );
+            throw new MandatoryPropertyMissingException( "Missing \"double\" entry for " + key );
 
         return Double.parseDouble( s );
     }

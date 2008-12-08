@@ -63,6 +63,7 @@ public class InterSliceTransferClient extends AbstractApplication {
         tt.add( Calendar.YEAR, 20 );
         long ssize = (long) (20 * 1024 * Math.pow( 10, 3 ));
         SliceClient slice = subc.createSlice( skuri, tt, ssize );
+        System.out.println( "DestSlice location: " + slice.getSliceLocation() );
 
         // prepare inter slice transfer
         InterSliceTransferORQT istorq =

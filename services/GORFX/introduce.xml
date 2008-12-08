@@ -417,8 +417,8 @@
  </ns3:Services>
  <ns68:Extensions xsi:type="ns68:ExtensionsType" xmlns:ns68="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
  <ns69:ServiceProperties xmlns:ns69="gme://gov.nih.nci.cagrid.introduce/1/Property">
-  <ns69:Property description="" isFromETC="false" key="gridJNDIEnv" value="TARGET _GRID_env"/>
-  <ns69:Property description="Name of the grid" isFromETC="false" key="gridName" value="TARGET _GRID"/>
-  <ns69:Property description="Path to shared directory for this grid" isFromETC="true" key="gridPath" value="../TARGET _GRID_shared/"/>
+  <ns69:Property description="" isFromETC="false" key="gridJNDIEnv" value="TARGET_GRID_env"/>
+  <ns69:Property description="Name of the grid" isFromETC="false" key="gridName" value="TARGET_GRID"/>
+  <ns69:Property description="Path to shared directory for this grid" isFromETC="true" key="gridPath" value="../TARGET_GRID_shared/"/>
  </ns69:ServiceProperties>
 </ns1:ServiceDescription>

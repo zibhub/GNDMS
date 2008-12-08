@@ -22,7 +22,7 @@ public class FutureTimeXSDReader {
 		if (ft == null)
 			return null;
 		if (ft.getTime() == null) {
-			return FutureTime.atOffset(new Duration(new DateTime(0L), new DateTime(ft.getOffset().getAsCalendar())));
+			return FutureTime.atOffset( new Duration( ft.getOffset() ) );
 		}
 		else
 			return FutureTime.atTime(new DateTime(ft.getTime()));

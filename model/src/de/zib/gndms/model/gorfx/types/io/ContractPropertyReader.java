@@ -2,6 +2,7 @@ package de.zib.gndms.model.gorfx.types.io;
 
 import de.zib.gndms.model.common.types.TransientContract;
 import org.jetbrains.annotations.NotNull;
+import org.joda.time.DateTime;
 
 import java.util.Properties;
 import java.io.IOException;
@@ -36,7 +37,9 @@ public class ContractPropertyReader extends AbstractPropertyReader<TransientCont
 
         String s;
         if( getProperties().containsKey( SfrProperty.EST_IF_DECISION_BEFORE.key ) ) {
-            con.setAccepted(PropertyReadWriteAux.readISODateTime( getProperties(), SfrProperty.EST_IF_DECISION_BEFORE.key ).toDateTimeISO());
+            DateTime dt =  PropertyReadWriteAux.readISODateTime( getProperties(), SfrProperty.EST_IF_DECISION_BEFORE.key );
+            if( dt != null )
+                con.setAccepted( dt.toDateTimeISO() );
         }
 
         if( getProperties().containsKey( SfrProperty.EST_EXEC_LIKELY_UNTIL.key ) )

@@ -12,6 +12,7 @@ import de.zib.gndms.model.gorfx.types.io.xml.ORQWrapper;
 import de.zib.gndms.model.gorfx.types.io.xml.ProviderStageInXML;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Properties;
 
 /**
@@ -92,8 +93,12 @@ public class ParmFormatAux {
 
     private ProcessBuilderAction createXMLParmPBAction( ProviderStageInORQ orq, TransientContract contParam ) {
 
-        return ProviderStageInTools.createPBActionForXML(
-            xmlWriter.toDocument( orq, contParam ) );
+        try{
+            return ProviderStageInTools.createPBActionForXML(
+                xmlWriter.toDocument( orq, contParam ) );
+        } catch ( IOException e ) {
+            throw new RuntimeException( "Error while converting orq to xml document", e );
+        }
     }
 
 

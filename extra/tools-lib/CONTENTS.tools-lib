@@ -9,7 +9,6 @@ Currently includes:
 - jetty 6, current cos, servlet-api 2.5
 - jaxb reference imp from project glassfish
 - joda-time
+- guice 2 and its dependencies: asm, cglib, aopalliance.jar
 - symlink to groovy-jar after execution of sync.sh in toplevel dir
-
-
-
+- args4j

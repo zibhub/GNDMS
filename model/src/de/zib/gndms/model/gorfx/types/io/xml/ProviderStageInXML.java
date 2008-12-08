@@ -5,6 +5,8 @@ import de.zib.gndms.model.gorfx.types.AbstractORQ;
 
 import java.io.Reader;
 import java.io.Writer;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -21,14 +23,14 @@ public interface ProviderStageInXML {
      *
      * @return An XML representation of the in parameters.
      */
-    String toDocument( AbstractORQ orq,  TransientContract con );
+    String toDocument( AbstractORQ orq,  TransientContract con ) throws IOException;
 
     /**
      * Writes XML document using the provided writer.
      *
      * The orq must allways be provided, the contract can be null
      */
-    void toDocument( Writer w, AbstractORQ orq, TransientContract con );
+    void toDocument( Writer w, AbstractORQ orq, TransientContract con ) throws IOException;
 
 
     /**
@@ -40,9 +42,9 @@ public interface ProviderStageInXML {
 
 
     /**
-     * Reads orq information using a given reader.
+     * Reads orq information using a given stream.
      *
      * @return The orq and contract.
      */
-    ORQWrapper fromDocument( Reader r ) throws Exception;
+    ORQWrapper fromDocument( InputStream r ) throws Exception;
 }
