@@ -31,7 +31,7 @@
 		<config propertiesFile="src/META-INF/persistence.xml" />
         
 		<classpath>
-			<pathelement location="${basedir}/gndms-shared-model/production" />
+			<pathelement location="gndms-shared-model/production" />
 			<pathelement location="../stuff/gndms-stuff/production" />
 			<fileset refid="tooljars" />
 		</classpath>
