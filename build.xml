@@ -33,9 +33,6 @@
 	<property name="stuff.dest" value="${stuff.dir}/gndms-stuff"/>
 
 
-	<!-- To avoid problems import just the following libaries -->
-	<!--fileset dir="${env.GLOBUS_LOCATION}/lib" includesfile="globus_jars.txt" id="globus.lib"/-->
-	
 
 	<!-- To avoid problems import just the following libaries -->
 	<fileset dir="${env.GLOBUS_LOCATION}/lib" id="globus.lib">
@@ -73,10 +70,6 @@
 		<filename name="globus_delegation_test.jar"/>
 		<filename name="globus_usage_core.jar"/>
 		<filename name="globus_usage_packets_common.jar"/>
-		<filename name="globus_wsrf_gram_service_auditing_unit_test.jar"/>
-		<filename name="globus_wsrf_gram_service_java_test_throughput.jar"/>
-		<filename name="globus_wsrf_gram_service_java_test_unit.jar"/>
-		<filename name="globus_wsrf_gram_service_java_usage.jar"/>
 		<filename name="globus_wsrf_mds_aggregator.jar"/>
 		<filename name="globus_wsrf_mds_aggregator_stubs.jar"/>
 		<filename name="globus_wsrf_mds_aggregator_test.jar"/>
@@ -87,19 +80,9 @@
 		<filename name="globus_wsrf_replicator_client.jar"/>
 		<filename name="globus_wsrf_replicator.jar"/>
 		<filename name="globus_wsrf_replicator_stubs.jar"/>
-		<filename name="globus_wsrf_rft_client.jar"/>
-		<filename name="globus_wsrf_rft.jar"/>
-		<filename name="globus_wsrf_rft_service_java_usage.jar"/>
-		<filename name="globus_wsrf_rft_stubs.jar"/>
-		<filename name="globus_wsrf_rft_test.jar"/>
 		<filename name="globus_wsrf_servicegroup.jar"/>
 		<filename name="globus_wsrf_servicegroup_stubs.jar"/>
 		<filename name="globus_wsrf_tools_test.jar"/>
-		<filename name="gram-client.jar"/>
-		<filename name="gram-monitoring.jar"/>
-		<filename name="gram-service.jar"/>
-		<filename name="gram-stubs.jar"/>
-		<filename name="gram-utils.jar"/>
 		<filename name="jaxrpc.jar"/>
 		<filename name="jce-jdk13-125.jar"/>
 		<filename name="jgss.jar"/>
@@ -121,12 +104,6 @@
 		<filename name="wsrf_core.jar"/>
 		<filename name="wsrf_core_registry.jar"/>
 		<filename name="wsrf_core_registry_stubs.jar"/>
-		<filename name="wsrf_core_samples_authzService.jar"/>
-		<filename name="wsrf_core_samples_authzService_stubs.jar"/>
-		<filename name="wsrf_core_samples_counter.jar"/>
-		<filename name="wsrf_core_samples_counter_stubs.jar"/>
-		<filename name="wsrf_core_samples_mgmt.jar"/>
-		<filename name="wsrf_core_samples_mgmt_stubs.jar"/>
 		<filename name="wsrf_core_stubs.jar"/>
 		<filename name="wsrf_mds_index.jar"/>
 		<filename name="wsrf_mds_index_stubs.jar"/>
@@ -135,11 +112,6 @@
 		<filename name="wsrf_mds_usefulrp.jar"/>
 		<filename name="wsrf_mds_usefulrp_schema_stubs.jar"/>
 		<filename name="wsrf_provider_jce.jar"/>
-		<filename name="wsrf_test_interop.jar"/>
-		<filename name="wsrf_test_interop_stubs.jar"/>
-		<filename name="wsrf_test.jar"/>
-		<filename name="wsrf_test_unit.jar"/>
-		<filename name="wsrf_test_unit_stubs.jar"/>
 		<filename name="wsrf_tools.jar"/>
 		<filename name="wss4j.jar"/>
 		<filename name="xalan.jar"/>
@@ -264,6 +236,7 @@
 		<pathelement location="${tools-lib.dir}/annotations.jar"/>
 		<dirset dir="${dspace.dir}/build/stubs-DSpace/classes/" />
 		<pathelement location="${lib.dir}/gndms-infra.jar"/>
+		<pathelement location="${lib.dir}/gndms-kit.jar"/>
 		<pathelement location="${lib.dir}/gndms-logic.jar"/>
 		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
 		<pathelement location="${lib.dir}/gndms-stuff.jar"/>
@@ -282,7 +255,12 @@
 		<pathelement location="${tools-lib.dir}/geronimo-jta_1.1_spec-1.1.jar"/>
 		<pathelement location="${tools-lib.dir}/serp-1.13.1.jar"/>
 		<pathelement location="${tools-lib.dir}/openjpa-1.1.0.jar"/>
-
+		<pathelement location="${tools-lib.dir}/guice-snapshot20081123.jar"/>
+		<pathelement location="${tools-lib.dir}/guice-assistedinject-snapshot20081123.jar"/>
+        <pathelement location="${tools-lib.dir}/guice-multibindings-snapshot20081123.jar"/>
+        <pathelement location="${tools-lib.dir}/guice-throwingproviders-snapshot20081123.jar"/>
+        <pathelement location="${tools-lib.dir}/asm-3.1.jar"/>
+        <pathelement location="${tools-lib.dir}/cglib-2.2.jar"/>
 		<fileset refid="globus.lib"/>
 	</path>
 	
@@ -322,11 +300,12 @@
 		<pathelement location="${tools-lib.dir}/jaxb-impl.jar"/> 
 		<pathelement location="${tools-lib.dir}/jaxb-xjc.jar"/>
 		<pathelement location="${tools-lib.dir}/jsr173_1.0_api.jar"/>
-		<pathelement location="${tools-lib.dir}/google-collect-snapshot-20080820.jar"/>
-		
-		
-		
-		
+		<pathelement location="${tools-lib.dir}/guice-snapshot20081123.jar"/>
+		<pathelement location="${tools-lib.dir}/guice-assistedinject-snapshot20081123.jar"/>
+        <pathelement location="${tools-lib.dir}/guice-multibindings-snapshot20081123.jar"/>
+        <pathelement location="${tools-lib.dir}/guice-throwingproviders-snapshot20081123.jar"/>
+        <pathelement location="${tools-lib.dir}/asm-3.1.jar"/>
+        <pathelement location="${tools-lib.dir}/cglib-2.2.jar"/>
 	</path>
 	<!-- Building all services -->
 	<target name='services.compile'>
@@ -361,7 +340,6 @@
 			<arg value="sync.sh"/>
 		</exec>
 		<echo file=".symlink">dummy-file, needed for build-script </echo>
-		
 	</target>
 	
 

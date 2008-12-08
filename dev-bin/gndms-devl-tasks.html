@@ -533,7 +533,7 @@ StatusDefinitions</pre>
 <div title="ChangeBuildFileTargets" modifier="YourName" created="200811211433" modified="200811211442" tags="task" tt_module="build" tt_status="InProgress" tt_user="RobertoHenschel" tt_priority="High" tt_scope="Build" changecount="14">
 <pre>Roberto needs to change the build file targets and update the dependencies.</pre>
 </div>
-<div title="Check OfferResource::accept" modifier="MaikJorra" created="200811271434" modified="200812011405" tags="task" changecount="12" tt_user="MaikJorra" tt_scope="DMS" tt_module="GORFX" tt_priority="High" tt_status="Untested">
+<div title="Check OfferResource::accept" modifier="MaikJorra" created="200811271434" modified="200812080912" tags="task" changecount="13" tt_user="MaikJorra" tt_scope="DMS" tt_module="GORFX" tt_priority="High" tt_status="Complete">
 <pre>check new contract handling
 
 made some changes on TransientContract.acceptAsIs</pre>
@@ -1981,8 +1981,18 @@ if(!version.extensions.ValueSwitcher)
 
 No changes to the action interface, cause it was allready contained</pre>
 </div>
-<div title="give debug output for estimate scripts" modifier="MaikJorra" created="200811280929" modified="200812011236" tags="task" changecount="10" tt_user="MaikJorra" tt_scope="DMS" tt_module="GORFX" tt_priority="High" tt_status="Untested">
+<div title="give debug output for estimate scripts" modifier="MaikJorra" created="200811280929" modified="200812080912" tags="task" changecount="11" tt_user="MaikJorra" tt_scope="DMS" tt_module="GORFX" tt_priority="High" tt_status="Complete">
 <pre>if an estimate script returns an unexpected value, throw an exception containing the value and the script output</pre>
+</div>
+<div title="resume from subtask" modifier="MaikJorra" created="200812081136" modified="200812081136" tags="task" changecount="6" tt_user="MaikJorra" tt_status="Pending" tt_priority="Medium" tt_module="GORFX" tt_scope="DMS">
+<pre>task actions which create their own subtask, should check the subtask state, when they are resumed:
+
+Affected:
+InterSliceTransfer
+DMSStaging</pre>
+</div>
+<div title="set default estimation dir" modifier="MaikJorra" created="200812080937" modified="200812080938" tags="task" changecount="11" tt_scope="DMS" tt_module="GORFX" tt_priority="Low" tt_user="UnAssigned" tt_status="Pending">
+<pre>The tiddler 'New Task' doesn't yet exist. Double-click to create it</pre>
 </div>
 <div title="settings" modifier="PhilHawksworth" created="200803251627" tags="systemConfig excludeLists excludeSearch">
 <pre>//{{{
@@ -1993,6 +2003,9 @@ config.options.chkSaveBackups = false;
 config.options.txtTheme = &quot;TeamTasksSkin&quot;;
 
 //}}}</pre>
+</div>
+<div title="task termination time" modifier="MaikJorra" created="200812080913" modified="200812080938" tags="task" changecount="14" tt_scope="DMS" tt_module="GORFX" tt_priority="High" tt_user="MaikJorra" tt_status="InProgress">
+<pre>in task action and resource check the task lifetime and handle timeout</pre>
 </div>
 </div>
 <!--POST-STOREAREA-->

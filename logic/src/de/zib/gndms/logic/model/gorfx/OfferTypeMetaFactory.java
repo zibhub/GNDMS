@@ -1,5 +1,6 @@
 package de.zib.gndms.logic.model.gorfx;
 
+import com.google.inject.Injector;
 import de.zib.gndms.model.common.types.factory.AbstractRecursiveKeyFactory;
 import de.zib.gndms.model.common.types.factory.KeyFactoryInstance;
 import de.zib.gndms.model.common.types.factory.RecursiveKeyFactory;
@@ -20,6 +21,7 @@ public abstract class OfferTypeMetaFactory<T extends KeyFactoryInstance<OfferTyp
 	implements Wrapper<RecursiveKeyFactory<OfferType, T>>
 {
 	private Wrapper<? super RecursiveKeyFactory<OfferType, T>> wrap;
+	private Injector injector;
 
     @Override
     @SuppressWarnings({ "unchecked" })
@@ -34,7 +36,7 @@ public abstract class OfferTypeMetaFactory<T extends KeyFactoryInstance<OfferTyp
     }
 
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({ "unchecked", "RawUseOfParameterizedType" })
     @Override
     public RecursiveKeyFactory<OfferType, T> newInstance(final OfferType key)
             throws ClassNotFoundException, InstantiationException, IllegalAccessException {
@@ -42,7 +44,7 @@ public abstract class OfferTypeMetaFactory<T extends KeyFactoryInstance<OfferTyp
         Class<? extends RecursiveKeyFactory<OfferType, T>> clazz;
         clazz = (Class<? extends RecursiveKeyFactory<OfferType, T>>)
                 Class.forName(factoryClassName);
-        return clazz.newInstance();
+        return wrap(clazz, (RecursiveKeyFactory) clazz.newInstance());
     }
 
 
@@ -67,7 +69,11 @@ public abstract class OfferTypeMetaFactory<T extends KeyFactoryInstance<OfferTyp
 
 
 	public <X extends RecursiveKeyFactory<OfferType, T>, Y extends RecursiveKeyFactory<OfferType, T>> Y wrap(final Class<Y> wrapClass, final X wrapped) {
+		if (injector != null)
+			injector.injectMembers(wrapped);
+
 		final Wrapper<? super RecursiveKeyFactory<OfferType, T>> curWrap = getWrap();
+
 		if (curWrap == null)
 			return wrapClass.cast(wrapped);
 		else
@@ -75,6 +81,12 @@ public abstract class OfferTypeMetaFactory<T extends KeyFactoryInstance<OfferTyp
 	}
 
 
+	public Injector getInjector() {
+		return injector;
+	}
 
 
+	public void setInjector(final Injector injectorParam) {
+		injector = injectorParam;
+	}
 }

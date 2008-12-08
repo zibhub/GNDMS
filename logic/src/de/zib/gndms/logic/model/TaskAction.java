@@ -4,6 +4,7 @@ import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.logic.action.LogAction;
 import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.TaskState;
+import de.zib.gndms.model.util.TxFrame;
 import de.zib.gndms.stuff.copy.Copier;
 import org.apache.commons.logging.Log;
 import org.jetbrains.annotations.NotNull;
@@ -12,6 +13,7 @@ import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.io.Serializable;
+import java.util.GregorianCalendar;
 
 
 /**
@@ -338,9 +340,38 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
 
     @SuppressWarnings( { "CaughtExceptionImmediatelyRethrown", "ThrowableInstanceNeverThrown" } )
     private void transit(final TaskState newState) {
+
         final EntityManager em = getEntityManager();
+        @NotNull AbstractTask model = getModel();
+
+        // check the task lifetime
+        if( model.getTerminationTime().compareTo( new GregorianCalendar( ) ) < 1 ) {
+            getLog().debug(  "Task lifetime exceeded" );
+            TxFrame tx = new TxFrame( em );
+            boolean containt = false;
+            try {
+                // check if model is still there
+                containt = em.contains( model );
+                if( containt ) {
+                    model.fail( new RuntimeException( "Task lifetime exceeded" ) );
+                    getLog().debug(  "Try to persist task" );
+                }
+                tx.commit( );
+            } catch ( Exception e ) {
+                // exception here  doesn't really matter
+                // task is doomed anyway
+                e.printStackTrace(  );
+            } finally {
+                tx.finish();
+            }
+            // interrupt this thread
+            getLog().debug(  "Stopping task thread" );
+            //Thread.currentThread().interrupt();
+            if( containt ) refreshTaskResource();
+            stop( model );
+        }
+
         try {
-            @NotNull AbstractTask model = getModel();
             em.getTransaction().begin();
             if (newState != null) {
                 if (! em.contains(model)) {
