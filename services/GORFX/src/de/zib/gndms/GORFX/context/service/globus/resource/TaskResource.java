@@ -187,7 +187,7 @@ public class TaskResource extends TaskResourceBase
         EntityManager em = home.getEntityManagerFactory().createEntityManager(  );
         Task tsk = (Task) mH.loadModelById( em, id );
         try {
-            taskAction = getResourceHome().getSystem().getInstanceDir().getTaskAction( getResourceHome().getSystem( ), em, tsk.getOfferType().getOfferTypeKey() );
+            taskAction = getResourceHome().getSystem().getInstanceDir().getTaskAction( em, tsk.getOfferType().getOfferTypeKey() );
             taskAction.initFromModel(em, tsk);
             taskAction.setClosingEntityManagerOnCleanup(true);
             

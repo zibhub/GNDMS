@@ -8,7 +8,7 @@ import de.zib.gndms.dspace.subspace.service.globus.resource.SubspaceResource;
 import de.zib.gndms.dspace.subspace.stubs.types.SubspaceReference;
 import de.zib.gndms.infra.model.GridResourceModelHandler;
 import de.zib.gndms.infra.system.GNDMSystem;
-import de.zib.gndms.infra.system.InstanceDirectory;
+import de.zib.gndms.infra.access.ServiceHomeProvider;
 import de.zib.gndms.logic.model.ModelAction;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
@@ -60,7 +60,7 @@ public class DSpaceImpl extends DSpaceImplBase {
         try {
             final @NotNull ExtDSpaceResourceHome home = getResourceHome();
             system = home.getSystem();
-            InstanceDirectory instanceDir = system.getInstanceDir();
+            ServiceHomeProvider instanceDir = system.getInstanceDir();
             instanceDir.addHome(home);
             instanceDir.addHome(getSubspaceResourceHome());            
             instanceDir.addHome(getSliceResourceHome());

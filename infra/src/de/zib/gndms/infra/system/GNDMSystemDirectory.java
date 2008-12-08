@@ -1,21 +1,29 @@
 package de.zib.gndms.infra.system;
 
 import com.google.common.collect.Maps;
-import de.zib.gndms.kit.configlet.Configlet;
+import com.google.inject.Binder;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
+import de.zib.gndms.infra.access.ServiceHomeProvider;
 import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.service.GNDMSingletonServiceHome;
-import de.zib.gndms.model.common.types.factory.KeyFactory;
-import de.zib.gndms.model.common.types.factory.KeyFactoryInstance;
-import de.zib.gndms.model.common.types.factory.IndustrialPark;
-import de.zib.gndms.model.common.types.factory.RecursiveKeyFactory;
+import de.zib.gndms.kit.config.ConfigletProvider;
+import de.zib.gndms.kit.configlet.Configlet;
 import de.zib.gndms.kit.monitor.GroovyBindingFactory;
 import de.zib.gndms.kit.monitor.GroovyMoniServer;
-import de.zib.gndms.kit.config.ConfigletProvider;
 import de.zib.gndms.logic.model.TaskAction;
+import de.zib.gndms.logic.model.access.TaskActionProvider;
 import de.zib.gndms.logic.model.gorfx.*;
+import de.zib.gndms.model.access.InstanceProvider;
 import de.zib.gndms.model.common.ConfigletState;
 import de.zib.gndms.model.common.GridResource;
+import de.zib.gndms.model.common.ModelUUIDGen;
+import de.zib.gndms.model.common.types.factory.IndustrialPark;
+import de.zib.gndms.model.common.types.factory.KeyFactory;
+import de.zib.gndms.model.common.types.factory.KeyFactoryInstance;
+import de.zib.gndms.model.common.types.factory.RecursiveKeyFactory;
 import de.zib.gndms.model.gorfx.OfferType;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
@@ -43,8 +51,9 @@ import java.util.Set;
 *
 *          User: stepn Date: 03.09.2008 Time: 16:50:06
 */
-public class InstanceDirectory implements ConfigletProvider, ORQCalculatorProvider {
-    private @NotNull final Log logger = LogFactory.getLog(InstanceDirectory.class);
+public class GNDMSystemDirectory implements SystemDirectory, Module {
+
+    private @NotNull final Log logger = LogFactory.getLog(GNDMSystemDirectory.class);
     private static final int INITIAL_CAPACITY = 32;
     private static final long INSTANCE_RETRIEVAL_INTERVAL = 250L;
 
@@ -64,23 +73,38 @@ public class InstanceDirectory implements ConfigletProvider, ORQCalculatorProvid
 	@SuppressWarnings({ "FieldCanBeLocal" })
 	private final Wrapper<Object> sysHolderWrapper;
 
-    InstanceDirectory(final @NotNull String sysNameParam, Wrapper<Object> systemHolderWrapParam) {
+	private final @NotNull ModelUUIDGen uuidGen;
+
+
+	private final @NotNull Injector injector;
+
+
+	@SuppressWarnings({ "ThisEscapedInObjectConstruction" })
+	GNDMSystemDirectory(
+	      final @NotNull String sysNameParam,
+	      final @NotNull ModelUUIDGen uuidGenParam,
+	      final Wrapper<Object> systemHolderWrapParam,
+	      final @NotNull Module sysModule) {
         instances = new HashMap<String, Object>(INITIAL_CAPACITY);
         homes = new HashMap<Class<? extends GridResource>, GNDMPersistentServiceHome<?>>(INITIAL_CAPACITY);
         systemName = sysNameParam;
-
+		uuidGen = uuidGenParam;
 	    sysHolderWrapper = systemHolderWrapParam;
+		injector = Guice.createInjector(sysModule, this);
+
 	    final ORQCalculatorMetaFactory calcMF = new ORQCalculatorMetaFactory();
+		calcMF.setInjector(injector);
 	    calcMF.setWrap(sysHolderWrapper);
 	    orqPark = new OfferTypeIndustrialPark<AbstractORQCalculator<?,?>>(calcMF);
+
 	    final ORQTaskActionMetaFactory taskMF = new ORQTaskActionMetaFactory();
 	    taskMF.setWrap(sysHolderWrapper);
+		taskMF.setInjector(injector);
 	    taskActionPark = new OfferTypeIndustrialPark<ORQTaskAction<?>>(taskMF);
     }
 
 
-	
-    public synchronized void addHome(final @NotNull GNDMServiceHome home)
+	public synchronized void addHome(final @NotNull GNDMServiceHome home)
             throws ResourceException {
         if (home instanceof GNDMPersistentServiceHome<?>)
             addHome(((GNDMPersistentServiceHome<?>) home).getModelClass(), home);
@@ -89,20 +113,8 @@ public class InstanceDirectory implements ConfigletProvider, ORQCalculatorProvid
     }
 
 
-    @SuppressWarnings(
-            {
-                    "RawUseOfParameterizedType", "unchecked", "MethodWithTooExceptionsDeclared",
-                    "RedundantCast" })
-    public AbstractORQCalculator<?,?> getORQCalculator(
-            final @NotNull GNDMSystem sys,
-            final @NotNull EntityManagerFactory emf,
-            final @NotNull String offerTypeKey)
-            throws ClassNotFoundException, IllegalAccessException, InstantiationException,
-            NoSuchMethodException, InvocationTargetException {
-        return getORQCalculator( emf, offerTypeKey );
-    }
-
-
+    @SuppressWarnings({ "MethodWithTooExceptionsDeclared" })
+    @NotNull
     public AbstractORQCalculator<?,?> getORQCalculator(
         final @NotNull EntityManagerFactory emf,
         final @NotNull String offerTypeKey)
@@ -124,19 +136,15 @@ public class InstanceDirectory implements ConfigletProvider, ORQCalculatorProvid
     }
 
 
-    @SuppressWarnings(
-            {
-                    "RawUseOfParameterizedType", "unchecked", "MethodWithTooExceptionsDeclared",
-                    "RedundantCast", "OverloadedMethodsWithSameNumberOfParameters" })
+    @SuppressWarnings({ "MethodWithTooExceptionsDeclared" })
     public TaskAction getTaskAction(
-            final @NotNull GNDMSystem sys,
             final @NotNull EntityManagerFactory emf,
             final @NotNull String offerTypeKey)
             throws ClassNotFoundException, IllegalAccessException, InstantiationException,
             NoSuchMethodException, InvocationTargetException {
         EntityManager em = emf.createEntityManager();
         try {
-            return getTaskAction( sys, em, offerTypeKey );
+	        return getTaskAction(em, offerTypeKey);
         }
         finally {
             if (! em.isOpen())
@@ -145,17 +153,18 @@ public class InstanceDirectory implements ConfigletProvider, ORQCalculatorProvid
     }
 
 
-    @SuppressWarnings({ "OverloadedMethodsWithSameNumberOfParameters" })
-    public TaskAction getTaskAction( final @NotNull GNDMSystem sys, final @NotNull EntityManager em, final @NotNull String offerTypeKey)
-            throws IllegalAccessException, InstantiationException, ClassNotFoundException {
-        OfferType type = em.find(OfferType.class, offerTypeKey);
-        TaskAction ta = taskActionPark.getInstance(type);
-        ta.setUUIDGen( sys.getModelUUIDGen() );
-        return ta;
-    }
+	@SuppressWarnings({ "OverloadedMethodsWithSameNumberOfParameters" })
+	public TaskAction getTaskAction(
+		  final EntityManager emParam, final String offerTypeKey)
+		  throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+		OfferType type = emParam.find(OfferType.class, offerTypeKey);
+		TaskAction ta = taskActionPark.getInstance(type);
+		ta.setUUIDGen( uuidGen );
+		return ta;
+	}
 
 
-    public @NotNull  <T> T retrieveInstance(@NotNull Class<T> clazz, @NotNull String name) {
+	public @NotNull  <T> T waitForInstance(@NotNull Class<T> clazz, @NotNull String name) {
         T instance;
         try { instance = getInstance(clazz, name); }
         catch (IllegalStateException e) { instance = null; }
@@ -164,7 +173,7 @@ public class InstanceDirectory implements ConfigletProvider, ORQCalculatorProvid
                 Thread.sleep(INSTANCE_RETRIEVAL_INTERVAL);
             }
             catch (InterruptedException e) {
-                // inteded
+                // intended
             }
             try { instance = getInstance(clazz, name); }
             catch (IllegalStateException e) { instance = null; }
@@ -174,7 +183,7 @@ public class InstanceDirectory implements ConfigletProvider, ORQCalculatorProvid
 
 
     @SuppressWarnings({ "HardcodedFileSeparator", "RawUseOfParameterizedType" })
-    private synchronized <K extends GridResource> void addHome(
+    public synchronized <K extends GridResource> void addHome(
             final Class<K> modelClazz, final @NotNull GNDMServiceHome home)
             throws ResourceException {
         if (homes.containsKey(modelClazz))
@@ -350,13 +359,7 @@ public class InstanceDirectory implements ConfigletProvider, ORQCalculatorProvid
 		    }		
 	}
 
-	public <V extends Configlet> V getConfliglet(final @NotNull Class<V> clazz,
-	                                             final @NotNull String name) {
-		return clazz.cast(configlets.get(name));
-	}
-
-
-	public <T extends Configlet> T getConfiglet(@NotNull Class<T> clazz, @NotNull String name) {
+	public <T extends Configlet> T getConfiglet(final @NotNull Class<T> clazz, final @NotNull String name) {
 		return clazz.cast(configlets.get(name));
 	}
 
@@ -377,7 +380,19 @@ public class InstanceDirectory implements ConfigletProvider, ORQCalculatorProvid
     }
 
 
-    private final class GNDMSBindingFactory implements GroovyBindingFactory {
+	public void configure(final @NotNull Binder binder) {
+		// binder.bind(EntityManagerFactory.class).toInstance();
+		binder.bind(SystemDirectory.class).toInstance(this);
+		binder.bind(InstanceProvider.class).toInstance(this);
+		binder.bind(ServiceHomeProvider.class).toInstance(this);
+		binder.bind(TaskActionProvider.class).toInstance(this);
+		binder.bind(ORQCalculatorProvider.class).toInstance(this);
+		binder.bind(ConfigletProvider.class).toInstance(this);
+		binder.bind(ModelUUIDGen.class).toInstance(uuidGen);
+	}
+
+
+	private final class GNDMSBindingFactory implements GroovyBindingFactory {
 
         public @NotNull
         Binding createBinding(
@@ -426,5 +441,7 @@ public class InstanceDirectory implements ConfigletProvider, ORQCalculatorProvid
             public String mapKey(final @NotNull OfferType keyParam) {
             return keyParam.getOfferTypeKey();
         }
+
+
     }
 }
