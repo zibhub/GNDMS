@@ -3,6 +3,7 @@ package de.zib.gndms.GORFX.offer.service.globus.resource;
 import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
 import de.zib.gndms.model.common.PersistentContract;
+import de.zib.gndms.model.common.InvalidContractException;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.typecon.common.type.ContractXSDReader;
@@ -64,7 +65,7 @@ public class OfferResource extends OfferResourceBase {
 
 
     @SuppressWarnings({ "FeatureEnvy" })
-    public @NotNull Task accept() {
+    public @NotNull Task accept() throws InvalidContractException {
         final @NotNull Task task = new Task();
         final @NotNull PersistentContract contract;
 
@@ -75,6 +76,9 @@ public class OfferResource extends OfferResourceBase {
             contract.setDeadline( WSConstants.getDefaultDeadline() );
         if( contract.getResultValidity() == null )
             contract.setResultValidity( WSConstants.FOREVER );
+
+        if( ! contract.isValid( false ) )
+            throw new InvalidContractException( contract );
 
         task.setContract(contract);
         AbstractORQ orq = getOrqCalc().getORQArguments();

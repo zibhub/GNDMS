@@ -7,6 +7,7 @@ import de.zib.gndms.stuff.copy.Copyable;
 import de.zib.gndms.stuff.copy.Copier;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
+import org.joda.time.format.ISODateTimeFormat;
 
 import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
@@ -36,6 +37,7 @@ public class PersistentContract {
         instance.accepted = Copier.copy(true, accepted);
         instance.deadline = Copier.copy(true, deadline);
         instance.resultValidity = Copier.copy(true, resultValidity);
+        instance.expectedSize = Copier.copy(true, expectedSize);
     }
 
     @SuppressWarnings({ "FeatureEnvy" })
@@ -54,7 +56,7 @@ public class PersistentContract {
 	public Calendar getCurrentTerminationTime() {
 		final Calendar curDeadline = getDeadline();
 		final Calendar curRV = getResultValidity();
-		return curDeadline.compareTo(curRV) < 0 ? curDeadline : curRV; 
+		return curDeadline.compareTo(curRV) > 0 ? curDeadline : curRV; 
 	}
 	
     @Temporal(value = TemporalType.TIMESTAMP )
@@ -109,7 +111,52 @@ public class PersistentContract {
         expectedSize = expectedSizeParam;
 	}
 
-	private static Calendar nullSafeClone(Calendar cal) {
+
+    /**
+     * Checks if this contract is valid. A valid contract has to meet the following requirements
+     *
+     *      accepted, deadline and resultValidity != null
+     *      accepted < deadline
+     *      accepted < resultValidity
+     * 
+     * If strict also
+     *      deadline < resultValidity
+     * must apply.
+     *
+     * @param strict Activates strict (s.a.) checking
+     * @return True if the contact is valid.
+     */
+    public boolean isValid( boolean strict ) {
+
+        return accepted != null
+            && deadline != null
+            && resultValidity != null
+            && ( accepted.compareTo( deadline ) < 0 )
+            && ( accepted.compareTo( resultValidity ) < 0 )
+            && ( !strict || deadline.compareTo( resultValidity ) < 0 );
+    }
+
+
+    public String toString( ) {
+
+        return "Accepted: " + isoForCalendar( accepted )
+            + "; Deadline: " + isoForCalendar( deadline )
+            + "; ResultValidity: " + isoForCalendar( resultValidity )
+            + "; ExpectedSize: "
+            + ( expectedSize != null ? expectedSize.toString() : "null" );
+    }
+
+
+    private static Calendar nullSafeClone(Calendar cal) {
 		return cal == null ? null : (Calendar) cal.clone();
 	}
+
+
+    private static String isoForCalendar( Calendar cal ) {
+
+        if( cal == null )
+            return "null";
+        
+        return ISODateTimeFormat.dateTime().print( new DateTime( cal ) );
+    }
 }
