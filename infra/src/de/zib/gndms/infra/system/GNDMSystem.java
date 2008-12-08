@@ -1,5 +1,7 @@
 package de.zib.gndms.infra.system;
 
+import com.google.inject.Binder;
+import com.google.inject.Module;
 import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
 import de.zib.gndms.kit.monitor.ActionCaller;
@@ -9,6 +11,7 @@ import de.zib.gndms.logic.action.LogAction;
 import de.zib.gndms.logic.model.*;
 import de.zib.gndms.logic.model.gorfx.DefaultWrapper;
 import de.zib.gndms.logic.util.LogicTools;
+import de.zib.gndms.model.access.EMFactoryProvider;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.model.common.VEPRef;
@@ -58,20 +61,20 @@ import java.util.concurrent.*;
         "OverloadedMethodsWithSameNumberOfParameters", "NestedAssignment",
         "ClassWithTooManyMethods" })
 public final class GNDMSystem
-	  implements Initializable, SystemHolder, EMFactoryProvider, 
+	  implements Initializable, SystemHolder, EMFactoryProvider, Module,
         EntityUpdateListener<GridResource> {
     private static final long EXECUTOR_SHUTDOWN_TIME = 5000L;
+
+	private static @NotNull Log createLogger() { return LogFactory.getLog(GNDMSystem.class); }
+
     private boolean shutdown;
-
-
-    private static @NotNull Log createLogger() { return LogFactory.getLog(GNDMSystem.class); }
 
     private final boolean debugMode;
 
     private @NotNull final UUIDGen uuidGen = UUIDGenFactory.getUUIDGen();
     private @NotNull final ModelUUIDGen uuidGenDelegate;
 	private @NotNull final Log logger = createLogger();
-    private @NotNull final InstanceDirectory instanceDir;
+    private @NotNull GNDMSystemDirectory instanceDir;
     private @NotNull final ConfigActionCaller actionCaller;
 	private @NotNull final GridConfig sharedConfig;
 	private @NotNull File sharedDir;
@@ -80,11 +83,15 @@ public final class GNDMSystem
 	private @NotNull File dbLogFile;
 	private @NotNull EntityManagerFactory emf;
 	private @NotNull EntityManagerFactory restrictedEmf;
-	private @NotNull GroovyMoniServer groovyMonitor;
+	private NetworkAuxiliariesProvider netAux;
 
+	// Outside injector
+	private @NotNull GroovyMoniServer groovyMonitor;
     private TaskExecutionService executionService;
 
-    private NetworkAuxiliariesProvider netAux;
+
+
+
 
     /**
 	 * Retrieves a GNDMSSystem using context.lookup(name).
@@ -139,24 +146,14 @@ public final class GNDMSystem
     private GNDMSystem(@NotNull GridConfig anySharedConfig, boolean debugModeParam)  {
 		sharedConfig = anySharedConfig;
         debugMode = debugModeParam;
-        instanceDir = new InstanceDirectory(getSystemName(), new DefaultWrapper<SystemHolder, Object>(SystemHolder.class) {
-
-	        @Override
-	        protected <Y> Y wrapInterfaceInstance(final Class<Y> wrapClass, @NotNull final SystemHolder wrappedParam) {
-		        wrappedParam.setSystem(GNDMSystem.this);
-		        return wrapClass.cast(wrappedParam);
-	        }
-        });
-        instanceDir.addInstance("sys", this);
-        // Bad style, usually would be an inner class but
-        // removed it from this source file to reduce source file size
-        actionCaller = new ConfigActionCaller(this);
-        uuidGenDelegate = new ModelUUIDGen() {
-            public @NotNull String nextUUID() {
-                return GNDMSystem.this.nextUUID();
-            }
-        };
-		// initialization intentionally deferred to initialize
+		uuidGenDelegate = new ModelUUIDGen() {
+		    public @NotNull String nextUUID() {
+		        return GNDMSystem.this.nextUUID();
+		    }
+		};
+		// Bad style, usually would be an inner class but
+		// removed it from this source file to reduce source file size
+		actionCaller = new ConfigActionCaller(this);
 	}
 
 	public void initialize() throws RuntimeException {
@@ -169,6 +166,18 @@ public final class GNDMSystem
 			emf = createEMF();
 			restrictedEmf = new RestrictedEMFactory(emf, null);
 			tryTxExecution();
+			// initialization intentionally deferred to initialize
+	        instanceDir = new GNDMSystemDirectory(getSystemName(),
+	                                              uuidGenDelegate,
+	                                              new DefaultWrapper<SystemHolder, Object>(SystemHolder.class) {
+
+		        @Override
+		        protected <Y> Y wrapInterfaceInstance(final Class<Y> wrapClass, @NotNull final SystemHolder wrappedParam) {
+			        wrappedParam.setSystem(GNDMSystem.this);
+			        return wrapClass.cast(wrappedParam);
+		        }
+	        }, this);
+	        instanceDir.addInstance("sys", this);
 			instanceDir.reloadConfiglets(restrictedEmf);
 		}
 		catch (Exception e) {
@@ -178,6 +187,15 @@ public final class GNDMSystem
 	}
 
 
+	public void configure(final @NotNull Binder binder) {
+		binder.bind(GNDMSystem.class).toInstance(this);
+		binder.bind(ActionCaller.class).toInstance(actionCaller);
+		binder.bind(EntityManagerFactory.class).toInstance(restrictedEmf);
+		binder.bind(EMFactoryProvider.class).toInstance(this);
+		binder.bind(GridConfig.class).toInstance(sharedConfig);
+		binder.bind(NetworkAuxiliariesProvider.class).toInstance(getNetAux());
+		binder.bind(EntityUpdateListener.class).toInstance(this);
+	}
 
 
 	private synchronized void initSharedDir() throws Exception {
@@ -327,7 +345,8 @@ public final class GNDMSystem
     }
 
 
-    public @NotNull InstanceDirectory getInstanceDir() {
+    public @NotNull
+    GNDMSystemDirectory getInstanceDir() {
         return instanceDir;
     }
 
