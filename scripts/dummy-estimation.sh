@@ -7,3 +7,4 @@ cat -
 # exit 254 if permission denied for DN
 
 exit 0
+

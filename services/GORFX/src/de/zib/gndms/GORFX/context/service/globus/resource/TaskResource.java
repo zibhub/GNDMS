@@ -6,7 +6,9 @@ import de.zib.gndms.infra.model.GridResourceModelHandler;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.model.gorfx.Task;
+import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.*;
+import de.zib.gndms.model.util.TxFrame;
 import de.zib.gndms.typecon.common.GORFXClientTools;
 import de.zib.gndms.typecon.common.GORFXTools;
 import de.zib.gndms.typecon.common.type.FileTransferResultXSDTypeWriter;
@@ -18,11 +20,13 @@ import org.globus.wsrf.NoSuchResourceException;
 import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.ResourceKey;
 import org.jetbrains.annotations.NotNull;
+import org.apache.commons.logging.Log;
 import types.*;
 
 import javax.persistence.EntityManager;
 import java.io.Serializable;
 import java.util.concurrent.Future;
+import java.rmi.RemoteException;
 
 
 /**
@@ -270,5 +274,45 @@ public class TaskResource extends TaskResourceBase
     @Override
     public void refreshRegistration(final boolean forceRefresh) {
         // nothing
+    }
+
+
+    @Override
+    public void remove( ) {
+
+        if( taskAction != null )  {
+            Log log = taskAction.getLog();
+            log.debug( "Removing task resource: " + getID() );
+            AbstractTask tsk = taskAction.getModel();
+            if( tsk != null ) {
+                if ( ! ( taskAction.getModel().getState().equals( TaskState.FAILED )
+                    || taskAction.getModel().getState().equals( TaskState.FINISHED ) ) )
+                { // task is still runing cancel it
+                    log.debug( "cancel task " + tsk.getWid() );
+                    future.cancel( true );
+                    // todo trigger some clean-up
+                    EntityManager em = taskAction.getEntityManager();
+                    if( em != null && em.isOpen() )
+                        em.close( );
+                }
+                
+                // remove task from db
+                try {
+                    EntityManager em = home.getEntityManagerFactory().createEntityManager(  );
+                    TxFrame tx = new TxFrame( em );
+                    try{
+                        AbstractTask at = em.find( AbstractTask.class, tsk.getId() );
+                        em.remove( at );
+                        tx.commit();
+                    } finally {
+                        tx.finish();
+                        if( em.isOpen() )
+                            em.close();
+                    }
+                } catch ( Exception e ) {
+                    e.printStackTrace(  );
+                }
+            }
+        }
     }
 }
