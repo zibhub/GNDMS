@@ -41,7 +41,7 @@ public class StagedTransferORQCalculator extends
 
         // create provider staging orq using this this offer type
         AbstractProviderStageInORQCalculator psi_calc = ( AbstractProviderStageInORQCalculator )
-            getSystem().getInstanceDir().getORQCalculator( getSystem().getEntityManagerFactory(), GORFXConstantURIs.PROVIDER_STAGE_IN_URI );
+            getSystem().getInstanceDir().newORQCalculator( getSystem().getEntityManagerFactory(), GORFXConstantURIs.PROVIDER_STAGE_IN_URI );
         
         psi_calc.setKey( getKey() );
         psi_calc.setORQArguments( getORQArguments() );

@@ -1,7 +1,5 @@
 package de.zib.gndms.logic.model.gorfx.c3grid;
 
-import de.zib.gndms.kit.config.ConfigProvider;
-import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.model.dspace.Slice;
@@ -25,9 +23,7 @@ import java.io.File;
 @SuppressWarnings({ "ThrowableInstanceNeverThrown" })
 public class ExternalProviderStageInAction extends AbstractProviderStageInAction {
 
-    private ParmFormatAux parmAux;
-
-    public ExternalProviderStageInAction() {
+	public ExternalProviderStageInAction() {
         super();
 	    parmAux = new ParmFormatAux();
     }
@@ -73,49 +69,6 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
         catch (RuntimeException e) {
             honorOngoingTransit(e);
             fail(new RuntimeException(recv.toString(), e));
-        }
-    }
-
-
-	@Override
-	protected void callCancel(final MapConfig offerTypeConfigParam, final ProviderStageInORQ orqParam,
-            final File sliceDir) {
-		final ProcessBuilder procBuilder = createProcessBuilder("cancelCommand", sliceDir);
-		if (procBuilder == null)
-			return;
-
-		final StringBuilder recv = new StringBuilder(8);
-		try {
-		    final ProcessBuilderAction action = parmAux.createPBAction(orqParam, null);
-		    action.setProcessBuilder(procBuilder);
-		    action.setOutputReceiver(recv);
-		    int result = action.call();
-		    switch (result) {
-		        case 0:
-		            getLog().debug("Finished calling cancel");
-		        default:
-		            getLog().info("Failure during cancel: " + recv.toString());
-		    }
-		}
-		catch (RuntimeException e) {
-			getLog().warn(e);
-		}
-	}
-
-
-	private ProcessBuilder createProcessBuilder(String name, File dir) {
-        try {
-            ConfigProvider opts = new MapConfig(getKey().getConfigMap());
-	        if (opts.getOption(name, "").trim().length() == 0)
-	            return null;
-	        final File fileOption = opts.getFileOption(name);
-	        ProcessBuilder builder = new ProcessBuilder();
-            builder.directory(dir);
-	        builder.command(fileOption.getPath());
-            return builder;
-        }
-        catch (MandatoryOptionMissingException e) {
-            throw new RuntimeException(e);
         }
     }
 }

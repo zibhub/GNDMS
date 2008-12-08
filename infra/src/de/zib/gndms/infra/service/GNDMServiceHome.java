@@ -1,7 +1,7 @@
 package de.zib.gndms.infra.service;
 
 import de.zib.gndms.infra.system.SystemHolder;
-import de.zib.gndms.model.access.EMFactoryProvider;
+import de.zib.gndms.kit.access.EMFactoryProvider;
 import org.apache.axis.types.URI;
 import org.globus.wsrf.ResourceHome;
 import org.globus.wsrf.ResourceKey;

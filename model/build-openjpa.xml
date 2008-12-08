@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="Runs the OpenJPA enhancer" basedir=".">
+<project name="Runs the OpenJPA enhancer">
 
 <taskdef name="openjpac" classname="org.apache.openjpa.ant.PCEnhancerTask">
 	<classpath>
@@ -26,11 +26,12 @@
 
 	<delete failonerror="false" file="../extra/lib/gndms-shared-model.jar" />
 
-	<openjpac directory="gndms-shared-model/production">
+    <echo message="Basedir is '${basedir}'" />
+	<openjpac directory="${basedir}/gndms-shared-model/production">
 		<config propertiesFile="src/META-INF/persistence.xml" />
         
 		<classpath>
-			<pathelement location="gndms-shared-model/production" />
+			<pathelement location="${basedir}/gndms-shared-model/production" />
 			<pathelement location="../stuff/gndms-stuff/production" />
 			<fileset refid="tooljars" />
 		</classpath>

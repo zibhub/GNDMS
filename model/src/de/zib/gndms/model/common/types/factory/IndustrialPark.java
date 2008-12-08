@@ -18,8 +18,7 @@ public abstract class IndustrialPark<K, I, T extends KeyFactoryInstance<K, T>>
         implements RecursiveKeyFactory<K, T> {
 
     private final @NotNull Map<I, KeyFactory<K, T>> map = Maps.newHashMap();
-    private @NotNull
-    KeyFactory<K, RecursiveKeyFactory<K, T>> metaFactory;
+    private @NotNull  KeyFactory<K, RecursiveKeyFactory<K, T>> metaFactory;
     private K factoryKey;
 
 

@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.model.access;
+package de.zib.gndms.logic.access;
 
 import de.zib.gndms.logic.model.TaskAction;
 import org.jetbrains.annotations.NotNull;
@@ -19,13 +19,13 @@ import java.lang.reflect.InvocationTargetException;
 @SuppressWarnings(
 	  { "OverloadedMethodsWithSameNumberOfParameters", "MethodWithTooExceptionsDeclared" })
 public interface TaskActionProvider {
-	TaskAction getTaskAction(
+	TaskAction newTaskAction(
 	        @NotNull EntityManagerFactory emf,
 	        @NotNull String offerTypeKey)
 	        throws ClassNotFoundException, IllegalAccessException, InstantiationException,
 	        NoSuchMethodException, InvocationTargetException;
 
-	TaskAction getTaskAction(
+	TaskAction newTaskAction(
 		  EntityManager emParam, String offerTypeKey)
 		  throws IllegalAccessException, InstantiationException, ClassNotFoundException;
 }
