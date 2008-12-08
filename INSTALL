@@ -145,6 +145,7 @@ When describing the dependencies of a compilation unit, I assume the following
 - servlet-api: extra/tools-lib/servlet-api*.jar
 - cos: extra/tools-lib/cos-*.jar
 - collections: extras/tools-lib/google-collect*.jar
+- guice: extra/tools-lib/guice*.jar asm*.jar cglib*.jar
 - GROOVY: extra/tools-lib/groovy*.jar
   If you use IntelliJ, use the global library GROOVY instead.
 - annotations: extra/tools-lib/annotations.jar
@@ -181,7 +182,8 @@ DETAILED BUILD INSTRUCTIONS
 
      Sources: stuff/src (resp. model/test-src)
      Output:  stuff/gndms-stuff/production (resp. test)
-     Dependencies: GROOVY, J2EE, annotations, SOURCE
+     Dependencies: GROOVY, J2EE, annotations, SOURCE, collections, guice
+     Re-exports: collections, guice
 
 
 
@@ -191,7 +193,7 @@ DETAILED BUILD INSTRUCTIONS
      Output:  model/gndms-shared-model/production (resp. test)
      Dependencies: GROOVY, J2EE, annotations, SOURCE, stuff, openjpa,
                    collections, joda-time, testng, jaxb
-     Re-exports: openjpa, collections
+     Re-exports: openjpa
 
      Make sure META-INF gets copied 
      from model/src to model/gndms-shared-model/production!
@@ -263,7 +265,7 @@ DETAILED BUILD INSTRUCTIONS
   service with the following dependencies:
 
   J2EE, groovy, annotations, "servicename"-stubs,
-  gndms-infra, gndms-logic, gndms-shared-model, stuff, joda-time,
+  gndms-infra, gndms-kit, gndms-logic, gndms-shared-model, gndms-stuff, joda-time,
   SOURCES, all non-symlinks in service/ServiceName/lib,  gt4
 
   GORFX also depends on gndms-typecon, DSpace, args4j, DSpace-Stubs and jaxb.

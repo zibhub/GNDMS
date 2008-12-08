@@ -5,6 +5,8 @@ import de.zib.gndms.infra.GNDMSTools;
 import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.service.GNDMSingletonServiceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.model.gorfx.types.io.xml.ProviderStageInXML;
+import de.zib.gndms.typecon.util.ProviderStageInXMLImpl;
 import org.apache.axis.message.addressing.AttributedURI;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -85,7 +87,11 @@ public final class ExtGORFXResourceHome extends GORFXResourceHome
                 system = gridConfig.retrieveSystemReference();
 				serviceAddress = GNDMSTools.getServiceAddressFromContext();
 
-				initialized = true;
+                // todo add ProviderStageInXSD to system
+                // no nice place here but i currently don't know another
+                system.getInstanceDir().addInstance( ProviderStageInXML.class.getName(), new ProviderStageInXMLImpl( ) );
+
+                initialized = true;
 
 				super.initialize();    // Overridden method
 			}

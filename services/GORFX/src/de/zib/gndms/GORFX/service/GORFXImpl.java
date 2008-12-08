@@ -6,9 +6,9 @@ import de.zib.gndms.GORFX.context.service.globus.resource.ExtTaskResourceHome;
 import de.zib.gndms.GORFX.offer.service.globus.resource.ExtOfferResourceHome;
 import de.zib.gndms.GORFX.service.globus.resource.ExtGORFXResourceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
-import de.zib.gndms.infra.system.InstanceDirectory;
-import de.zib.gndms.shared.ContextTAux;
+import de.zib.gndms.infra.access.ServiceHomeProvider;
 import de.zib.gndms.kit.util.WidAux;
+import de.zib.gndms.shared.ContextTAux;
 import org.apache.log4j.Logger;
 import org.globus.wsrf.ResourceKey;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +39,7 @@ public class GORFXImpl extends GORFXImplBase {
         try {
             final @NotNull ExtGORFXResourceHome home = getResourceHome();
             system = home.getSystem();
-            InstanceDirectory instanceDir = system.getInstanceDir();
+            ServiceHomeProvider instanceDir = system.getInstanceDir();
             instanceDir.addHome(home);
             instanceDir.addHome(getORQResourceHome());
             instanceDir.addHome(getOfferResourceHome());

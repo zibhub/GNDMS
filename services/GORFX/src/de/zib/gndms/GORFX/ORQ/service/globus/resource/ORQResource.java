@@ -34,7 +34,7 @@ public class ORQResource extends ORQResourceBase {
             final @NotNull URI offerTypeUri = offerRequestArguments.getOfferType();
             logger.debug("setOfferRequestArguments for offerType: " + offerTypeUri);
             cachedWid = ContextTAux.computeWorkflowId(sys.getModelUUIDGen(), ctx);
-            ORQCalculator = sys.getInstanceDir().getORQCalculator( sys, sys.getEntityManagerFactory(), offerTypeUri.toString());
+            ORQCalculator = sys.getInstanceDir().getORQCalculator( sys.getEntityManagerFactory(), offerTypeUri.toString());
             AbstractORQ orq =  GORFXTools.convertFromORQT( offerRequestArguments, ctx );
             orq.setId( ( String ) getID() );
             ORQCalculator.setORQArguments( orq );
