@@ -2,8 +2,10 @@ package de.zib.gndms.infra.system;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
+import de.zib.gndms.GNDMSInfo;
 import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
+import de.zib.gndms.kit.access.EMFactoryProvider;
 import de.zib.gndms.kit.monitor.ActionCaller;
 import de.zib.gndms.kit.monitor.GroovyMoniServer;
 import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
@@ -11,7 +13,6 @@ import de.zib.gndms.logic.action.LogAction;
 import de.zib.gndms.logic.model.*;
 import de.zib.gndms.logic.model.gorfx.DefaultWrapper;
 import de.zib.gndms.logic.util.LogicTools;
-import de.zib.gndms.kit.access.EMFactoryProvider;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.model.common.VEPRef;
@@ -160,6 +161,7 @@ public final class GNDMSystem
 		try {
 			// Q: Think about how to correct UNIX directory/file permissions from java-land
 			// A: External script during deployment
+			printVersion();
             initSharedDir();
 			createDirectories();
 			prepareDbStorage();
@@ -184,6 +186,12 @@ public final class GNDMSystem
 			logger.error("Initialization failed", e);
 			throw new RuntimeException(e);
 		}
+	}
+
+
+	private void printVersion() {
+		final GNDMSInfo info = new GNDMSInfo();
+		logger.info("GNDMS: " + info.readRelease() + " BUILD: " + info.readBuildInfo());
 	}
 
 

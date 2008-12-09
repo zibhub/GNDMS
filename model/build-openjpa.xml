@@ -40,6 +40,20 @@
 
 	</openjpac>
 
+    <exec executable="hostname" osfamily="unix" failifexecutionfails="false" outputproperty="env.COMPUTERNAME"/>
+
+    <property name="env.HOSTNAME" value="${env.COMPUTERNAME}"/>
+
+    <tstamp>
+        <format property="build.time" pattern="MM/dd/yyyy hh:mm aa" />
+    </tstamp>
+
+    <echo message="${build.time} ${user.name}@${env.HOSTNAME}" file="${basedir}/gndms-shared-model/production/META-INF/GNDMS-BUILD-INFO" />
+
+    <mkdir dir="gndms-shared-model/production/META-INF" />
+    
+    <copy file="src/META-INF/GNDMS-RELEASE" tofile="gndms-shared-model/production/META-INF/GNDMS-RELEASE" overwrite="true" />
+
 	<jar file="../extra/lib/gndms-shared-model.jar" basedir="gndms-shared-model/production">
 		<include name="**/*" />
 	</jar>
