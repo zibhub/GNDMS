@@ -31,7 +31,6 @@ import java.io.File;
 @SuppressWarnings({ "FeatureEnvy" })
 public abstract class AbstractProviderStageInAction extends ORQTaskAction<ProviderStageInORQ> {
 
-    private String sliceId;
 	protected ParmFormatAux parmAux = new ParmFormatAux();
 
     public AbstractProviderStageInAction() {
@@ -76,7 +75,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
     @SuppressWarnings({ "ThrowableInstanceNeverThrown"})
     @Override
     protected void onInProgress(final @NotNull AbstractTask model) {
-        final Slice slice = findNewSlice(model);
+        final Slice slice = findSlice(model);
         setSliceId( slice.getId() );
         doStaging(getOfferTypeConfig(), getOrq(), slice);
     }
@@ -111,20 +110,22 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
             csa.setModel(subspace);
             csa.setSliceKind(kind);
             final Slice slice = csa.execute(getEntityManager());
-            model.setData(slice.getId());
-            setSliceId(slice.getId()); 
+            setSliceId(slice.getId());
             txf.commit();
         }
         finally { txf.finish();  }
     }
 
 
-    private Slice findNewSlice(final AbstractTask model) {
+    private Slice findSlice(final AbstractTask model) {
+	    final String sliceId = getSliceId();
+	    if (sliceId == null)
+		    return null;
+
 	    final EntityManager em = getEntityManager();
 	    final TxFrame txf = new TxFrame(em);
 	    try {
-		    //final Slice slice = em.find(Slice.class, model.getData());
-            final Slice slice = em.find(Slice.class, getSliceId() );
+		    final Slice slice = em.find(Slice.class, sliceId);
 	        txf.commit();
 	        return slice;
 	    }
@@ -137,27 +138,28 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 		try {
 			cancelStaging(model);
 		}
-		catch(RuntimeException e) { getLog().warn(e); }
+		catch(RuntimeException e) {
+			getLog().warn(e);
+		}
 		finally {
-			try {
-				// wrappend in try-finally to ensure we go to failed even if slice
-				// deletion goes wrong
-				killSlice(model);
-			}
-			finally {
-                // intentionally
-            }
+			// wrappend in try-finally to ensure we go to failed even if slice
+			// deletion goes wrong
+			killSlice(model);
 		}
 	}
 
 
-	private void cancelStaging(final AbstractTask model) {
+	protected void cancelStaging(final AbstractTask model) {
 		final Slice slice;
 		final File sliceDir;
+
 		final EntityManager em = getEntityManager();
 		final TxFrame txf = new TxFrame(em);
 		try {
-			slice = findNewSlice(model);
+			slice = findSlice(model);
+			if (slice == null)
+				// MAYBE log this somewhere?
+				return;
 			sliceDir = new File(slice.getOwner().getPathForSlice(slice));
 			txf.commit();
 		}
@@ -171,7 +173,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 	@SuppressWarnings({ "NoopMethodInAbstractClass" })
 	protected void callCancel(final MapConfig offerTypeConfigParam, final ProviderStageInORQ orqParam,
             final File sliceParam) {
-		/* potentially implement in subclass */
+		// Implement in subclass
 	}
 
 
@@ -179,7 +181,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 		final EntityManager em = getEntityManager();
 		final TxFrame txf = new TxFrame(em);
 		try {
-			final Slice slice = findNewSlice(model);
+			final Slice slice = findSlice(model);
 			slice.getOwner().destroySlice(slice);
 			em.remove(slice);
 			txf.commit();
@@ -217,12 +219,13 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
     }
 
 
+
     protected void setSliceId( String sliceId ) {
-        this.sliceId = sliceId;
+        getOrq().setActSliceId(sliceId);
     }
 
     
     protected String getSliceId( ) {
-        return sliceId;
+        return getOrq().getActSliceId();
     }
 }

@@ -19,18 +19,19 @@ import java.util.HashMap;
 @Copyable(CopyMode.SERIALIZE)
 public abstract class AbstractORQ implements Serializable {
     private static final long serialVersionUID = 5782532835559987893L;
-
     private String offerType;
-    private String id;
-    private HashMap<String,String> context;
-    private transient boolean justEstimate = false;
+	private transient boolean justEstimate;
 
-    protected AbstractORQ() {
+    private String actId;
+    private HashMap<String,String> actContext;
+
+
+	protected AbstractORQ() {
     }
 
 
-    protected AbstractORQ( String offerType ) {
-        this.offerType = offerType;
+    protected AbstractORQ( String offerTypeParam ) {
+        this.offerType = offerTypeParam;
     }
 
 
@@ -40,22 +41,22 @@ public abstract class AbstractORQ implements Serializable {
 
 
     protected void setOfferType( String URI ) {
-        this.offerType = URI;
+	    offerType = URI;
     }
 
 
-    public String getId() {
-        return id;
+    public String getActId() {
+        return actId;
     }
 
 
-    public void setId( String id ) {
-        this.id = id;
+    public void setActId( String id ) {
+	    actId = id;
     }
 
 
     public boolean hasId() {
-        return id != null;
+        return actId != null;
     }
 
 
@@ -72,17 +73,18 @@ public abstract class AbstractORQ implements Serializable {
     public abstract @NotNull String getDescription();
 
 
-    public HashMap<String, String> getContext() {
-        return context;
+    @SuppressWarnings({ "ReturnOfCollectionOrArrayField" })
+    public HashMap<String, String> getActContext() {
+        return actContext;
     }
 
 
-    public void setContext( HashMap<String, String> context ) {
-        this.context = context;
+    public void setActContext( HashMap<String, String> context ) {
+	    actContext = context;
     }
 
 
     public boolean hasContext() {
-        return context != null;
+        return actContext != null;
     }
 }

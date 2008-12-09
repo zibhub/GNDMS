@@ -27,12 +27,12 @@ public class LofiSetStageInORQPropertyReader extends ORQPropertyReader<LofiSetSt
         DataDescriptorPropertyReader dr = new DataDescriptorPropertyReader( getProperties() );
         dr.begin( );
         dr.read( );
-        getProduct().setDataDescriptor( dr.getProduct() );
+        getProduct().setActDataDescriptor( dr.getProduct() );
 
         if(! getProperties().containsKey( SfrProperty.GRID_SITE.key ) )
-          getProduct().setGridSite( getProperties().getProperty( SfrProperty.GRID_SITE.key ) );
-        getProduct( ).setDataFile( getProperties().getProperty( SfrProperty.BASE_FILE.key ) );
-        getProduct( ).setMetadataFile( getProperties().getProperty( SfrProperty.META_FILE.key ) );
+          getProduct().setActGridSite( getProperties().getProperty( SfrProperty.GRID_SITE.key ) );
+        getProduct( ).setActDataFile( getProperties().getProperty( SfrProperty.BASE_FILE.key ) );
+        getProduct( ).setActMetadataFile( getProperties().getProperty( SfrProperty.META_FILE.key ) );
 
     }
 

@@ -3,13 +3,20 @@
 SCRIPTDIR="$(dirname $0)/" ; source "$SCRIPTDIR"internal/script-setup.sh
 
 # %{} is shell variable substitution at container runtime
+# $STAGING_COMMAND runs in the slice working dir.
 
 STAGING_COMMAND="%{C3GRID_SOURCE}/scripts/dummy-staging.sh"
 ESTIMATION_COMMAND="%{C3GRID_SOURCE}/scripts/dummy-estimation.sh"
+
 # If set, $CANCEL_COMMAND is called whenever a staging script fails
 # or is aborted prematurely (i.e. due to a timeout of the associated Task Resouce
-# or a user abort)
-CANCEL_COMMAND=""
+# or a user abort). $CANCEL_COMMAND runs in the slice working dir.
+#
+# Set to "" if you dont have a cancel/cleanup script.  If you set this, 
+# make sure that $CANCEL_COMMAND always terminates and only runs for a short 
+# duration of time. 
+#
+CANCEL_COMMAND="%{C3GRID_SOURCE}/scripts/dummy-cancel.sh"
 
 STAGING_AREA_PATH="/tmp"
 STAGING_AREA_SIZE="1000000" # Currently unused

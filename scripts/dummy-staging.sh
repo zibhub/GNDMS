@@ -1,5 +1,7 @@
 #!/bin/sh
 
+echo "eaeoeiuieeueeoeiiieoeioeoe" > .GARBAGE
+
 sfr="$(cat - | grep -h '^c3grid')"
 
 datafile=$(echo "$sfr" | grep c3grid.StageFileRequest.TargetBaseDataFile | cut -d= -f2-)
@@ -8,5 +10,12 @@ metafile=$(echo "$sfr" | grep c3grid.StageFileRequest.TargetMetaDataFile | cut -
 echo "$sfr" > $datafile
 echo "$sfr" > $metafile
 
+# Uncomment to test dummy-cancel.sh
+# echo "NAY!" >&2
+# exit 1
 
-exit 0
+rm -f .GARBAGAE
+
+echo "YAY!"
+
+#  exit 0

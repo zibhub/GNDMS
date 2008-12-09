@@ -66,7 +66,7 @@ public class ProviderStageInXMLImpl implements ProviderStageInXML {
             ProviderStageInORQT orqt = ProviderStageInORQXSDTypeWriter.write( porq );
             si.setProviderStageInORQ( orqt );
 
-            ContextT ctx = ContextXSDTypeWriter.writeContext( orq.getContext() );
+            ContextT ctx = ContextXSDTypeWriter.writeContext( orq.getActContext() );
             si.setContext( ctx );
 
             if ( orq.isJustEstimate() )

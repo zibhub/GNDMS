@@ -56,12 +56,12 @@ public class SliceStageInORQCalculator extends
     public TransientContract createOffer() throws Exception {
 
         String sid = getORQArguments().getGridSite();
-        getORQArguments().setGridSiteURI( sid );
+        getORQArguments().setActGridSiteURI( sid );
 
         GORFXClient cnt = new GORFXClient( sid );
 
         ProviderStageInORQT p_orq = ProviderStageInORQXSDTypeWriter.write( getORQArguments() );
-        ContextT ctx = ContextXSDTypeWriter.writeContext( getORQArguments().getContext() );
+        ContextT ctx = ContextXSDTypeWriter.writeContext( getORQArguments().getActContext() );
         ORQClient orq_cnt = new ORQClient( cnt.createOfferRequest( p_orq, ctx ) );
         OfferExecutionContractT con = ContractXSDTypeWriter.write( getPreferredOfferExecution() );
         OfferExecutionContractT con2 = orq_cnt.permitEstimateAndDestroyRequest( con, ctx );

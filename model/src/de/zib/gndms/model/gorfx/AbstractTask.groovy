@@ -84,7 +84,7 @@ abstract class AbstractTask extends TimedGridResource {
     @Column(name="fault", nullable=true, updatable=true, columnDefinition="VARCHAR")
     @Basic String faultString
     /**
-     * Payload depending on state, either task results or a detailed task failure or task arguments 
+     * Payload depending on state, either task results or a detailed task failure
      **/
     @Column(name="data", nullable=true, updatable=true)
     @Basic Serializable data

@@ -246,7 +246,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
                         }
                     }
                     else {
-                        trace("transit(" + curEx.newState + ')', null);
+                        trace("transit(" + curEx.newState + ')', curEx.getCause());
                         transit(curEx.newState);
                     }
                     // if we come here, transit has failed
@@ -501,6 +501,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     protected void fail(final @NotNull RuntimeException e) {
         getModel().fail(e);
         e.fillInStackTrace();
+	    // getLog().info("About to transit(FAIL) due to:", e);
         throw new FailedException(e);
     }
 

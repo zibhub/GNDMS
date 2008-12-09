@@ -36,7 +36,7 @@ public class ORQResource extends ORQResourceBase {
             cachedWid = ContextTAux.computeWorkflowId(sys.getModelUUIDGen(), ctx);
             ORQCalculator = sys.getInstanceDir().newORQCalculator( sys.getEntityManagerFactory(), offerTypeUri.toString());
             AbstractORQ orq =  GORFXTools.convertFromORQT( offerRequestArguments, ctx );
-            orq.setId( ( String ) getID() );
+            orq.setActId( ( String ) getID() );
             ORQCalculator.setORQArguments( orq );
             ORQCalculator.setNetAux( home.getSystem().getNetAux() );
         }
@@ -61,7 +61,13 @@ public class ORQResource extends ORQResourceBase {
         ORQCalculator.setJustEstimate( true );
         ORQCalculator.setPerferredOfferExecution( ContractXSDReader.readContract( pref ) );
 
-        return ORQCalculator.createOffer();
+	    try {
+            return ORQCalculator.createOffer();
+	    }
+	    catch (RuntimeException e) {
+		    logger.info(e);
+		    throw e;
+	    }
     }
 
 
@@ -85,7 +91,13 @@ public class ORQResource extends ORQResourceBase {
        ORQCalculator.setJustEstimate( false );
        ORQCalculator.setPerferredOfferExecution( ContractXSDReader.readContract( pref ) );
 
-       return ORQCalculator.createOffer();
+	   try {
+           return ORQCalculator.createOffer();
+	   }
+	   catch (RuntimeException e) {
+		   logger.info(e);
+		   throw e;
+	   }
     }
 
 

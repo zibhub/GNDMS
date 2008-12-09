@@ -16,14 +16,23 @@ import java.io.*;
  */
 public abstract class ProcessBuilderAction extends AbstractAction<Integer> {
     private StringBuilder outputReceiver;
+    private StringBuilder errorReceiver;
+
     private ProcessBuilder processBuilder;
 
 
-    @Override
+	protected ProcessBuilderAction() {
+		super();
+	}
+
+
+	@Override
     public void initialize() {
         super.initialize();    // Overridden method
         if (outputReceiver == null)
             throw new IllegalStateException("ouputReceiver missing");
+	    if (errorReceiver == null)
+	        throw new IllegalStateException("errorReceiver missing");
         if (processBuilder == null)
             throw new IllegalStateException("processBuilder missing");
     }
@@ -40,21 +49,23 @@ public abstract class ProcessBuilderAction extends AbstractAction<Integer> {
             mainThread.set(Thread.currentThread());
 
             final Thread inputProvider = new Thread(new InputCollector(cause, proc, mainThread));
-            final Thread outputCollector = new Thread(new OutputCollector(cause, proc, mainThread));
+            final Thread outputCollector =
+	              new Thread(new OutputCollector(cause, proc, mainThread, false));
+            final Thread errorCollector =
+	              new Thread(new OutputCollector(cause, proc, mainThread, true));
 
             inputProvider.start();
             outputCollector.start();
+            errorCollector.start();
 
-            // Since we only collect stdout...
-            processBuilder.redirectErrorStream(true);
             final Process process = processBuilder.start();
             proc.set(process);
 
-            final int result = process.waitFor();
+	        inputProvider.join();
+	        errorCollector.join();
             outputCollector.join();
-            inputProvider.join();
 
-            return result;
+	        return process.waitFor();
         }
         catch (IOException e) {
             throw new RuntimeException(e);
@@ -67,8 +78,20 @@ public abstract class ProcessBuilderAction extends AbstractAction<Integer> {
         }
     }
 
-    protected abstract void writeOutput(final @NotNull BufferedOutputStream stream)
+    protected abstract void writeProcessStdIn(final @NotNull BufferedOutputStream stream)
             throws IOException;
+
+	protected void storeProcessStdOut(String line) {
+		getOutputReceiver().append(line);
+		getOutputReceiver().append('\n');
+		getErrorReceiver().append(line);
+		getErrorReceiver().append('\n');
+	}
+
+	protected void storeProcessStdErr(String line) {
+		getErrorReceiver().append(line);
+		getErrorReceiver().append('\n');
+	}
 
 
     public StringBuilder getOutputReceiver() {
@@ -81,17 +104,27 @@ public abstract class ProcessBuilderAction extends AbstractAction<Integer> {
     }
 
 
-    public ProcessBuilder getProcessBuilder() {
+	public StringBuilder getErrorReceiver() {
+		return errorReceiver;
+	}
+
+
+	public void setErrorReceiver(final StringBuilder errorReceiverParam) {
+		errorReceiver = errorReceiverParam;
+	}
+
+	public ProcessBuilder getProcessBuilder() {
         return processBuilder;
     }
 
 
     public void setProcessBuilder(final ProcessBuilder processBuilderParam) {
         processBuilder = processBuilderParam;
+	    processBuilderParam.redirectErrorStream(false);
     }
 
 
-    private final class InputCollector extends Collector {
+	private final class InputCollector extends Collector {
        InputCollector(
                final FillOnce<Throwable> causeParam,
                final FillOnce<Process> procParam,
@@ -105,7 +138,7 @@ public abstract class ProcessBuilderAction extends AbstractAction<Integer> {
            OutputStream outStream = process.getOutputStream();
            BufferedOutputStream bufOutStream = new BufferedOutputStream(outStream);
            try {
-               writeOutput(bufOutStream);
+               writeProcessStdIn(bufOutStream);
            }
            finally {
                bufOutStream.close();
@@ -115,26 +148,32 @@ public abstract class ProcessBuilderAction extends AbstractAction<Integer> {
    }
 
     private final class OutputCollector extends Collector {
+	    final boolean collectingErrorStream;
 
-        OutputCollector(
+
+	    OutputCollector(
                 final FillOnce<Throwable> causeParam,
                 final FillOnce<Process> procParam,
-                final FillOnce<Thread> mainThreadParam) {
+                final FillOnce<Thread> mainThreadParam, boolean collectStdErrParam) {
             super(causeParam, procParam, mainThreadParam);
+	        collectingErrorStream = collectStdErrParam;
         }
 
 
-        @SuppressWarnings({ "NestedAssignment" })
+        @SuppressWarnings({ "NestedAssignment", "HardcodedLineSeparator" })
         @Override
         public void collect(final @NotNull Process process) throws IOException {
-            InputStream inStream = process.getInputStream();
-            InputStreamReader inReader = new InputStreamReader(inStream);
-            BufferedReader bufReader = new BufferedReader(inReader);
+            final InputStream inStream =
+	              collectingErrorStream ? process.getErrorStream() : process.getInputStream();
+            final InputStreamReader inReader = new InputStreamReader(inStream);
+            final BufferedReader bufReader = new BufferedReader(inReader);
             try {
                 String line;
                 while ((line = bufReader.readLine()) != null) {
-                    outputReceiver.append(line);
-                    outputReceiver.append('\n');
+	                if (collectingErrorStream)
+	                    storeProcessStdErr(line);
+	                else
+	                    storeProcessStdOut(line);
                 }
             }
             finally {
@@ -142,6 +181,10 @@ public abstract class ProcessBuilderAction extends AbstractAction<Integer> {
             }
 
         }
+
+	    public boolean isCollectingErrorStream() {
+		    return collectingErrorStream;
+	    }
     }
 
 

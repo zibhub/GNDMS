@@ -9,15 +9,16 @@ import org.jetbrains.annotations.NotNull;
  * Time: 15:32:16
  * To change this template use File | Settings | File Templates.
  */
-public class LofiSetStageInORQ extends AbstractORQ{
+public class LofiSetStageInORQ extends AbstractORQ {
+	private static final long serialVersionUID = 2659352128685279699L;
 
-    private DataDescriptor dataDescriptor;
-    private String dataFile;
-    private String metadataFile;
-    private String gridSite;
+    private DataDescriptor actDataDescriptor;
+    private String actDataFile;
+    private String actMetadataFile;
+    private String actGridSite;
 
 
-    public LofiSetStageInORQ(){
+	public LofiSetStageInORQ(){
         super();
         super.setOfferType(GORFXConstantURIs.LOFI_SET_STAGE_IN_URI);
     }
@@ -28,39 +29,39 @@ public class LofiSetStageInORQ extends AbstractORQ{
     }
 
 
-    public String getMetadataFile() {
-        return metadataFile;
+    public String getActMetadataFile() {
+        return actMetadataFile;
     }
 
-    public String getDataFile() {
-        return dataFile;
+    public String getActDataFile() {
+        return actDataFile;
     }
 
-    public DataDescriptor getDataDescriptor() {
-        return dataDescriptor;
+    public DataDescriptor getActDataDescriptor() {
+        return actDataDescriptor;
     }
 
-    public void setDataDescriptor(DataDescriptor dataDescriptor) {
-        this.dataDescriptor = dataDescriptor;
+    public void setActDataDescriptor(DataDescriptor dataDescriptor) {
+        this.actDataDescriptor = dataDescriptor;
     }
 
-    public void setDataFile(String dataFile) {
-        this.dataFile = dataFile;
+    public void setActDataFile(String dataFile) {
+        this.actDataFile = dataFile;
     }
 
-    public void setMetadataFile(String metadataFile) {
-        this.metadataFile = metadataFile;
+    public void setActMetadataFile(String metadataFile) {
+        this.actMetadataFile = metadataFile;
     }
 
-    public void setGridSite( String gridSite ){
-        this.gridSite = gridSite;
+    public void setActGridSite( String gridSite ){
+        this.actGridSite = gridSite;
     }
 
     public boolean hasGridSite(){
-        return gridSite != null && gridSite.length()!=0;
+        return actGridSite != null && actGridSite.length()!=0;
     }
 
-    public String getGridSite() {
-        return gridSite;
+    public String getActGridSite() {
+        return actGridSite;
     }
 }
