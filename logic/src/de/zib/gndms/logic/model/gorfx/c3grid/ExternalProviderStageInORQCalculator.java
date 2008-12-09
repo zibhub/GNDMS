@@ -24,9 +24,10 @@ public class ExternalProviderStageInORQCalculator extends AbstractProviderStageI
     public static final int EXIT_CODE_PERMISSION_DENIED = 254;
 
     private ParmFormatAux parmAux;
+	private static final int INITIAL_STRING_BUILDER_CAPACITY = 4096;
 
 
-    public ExternalProviderStageInORQCalculator( ) {
+	public ExternalProviderStageInORQCalculator( ) {
         super( );
         this.parmAux = new ParmFormatAux();
     }
@@ -45,7 +46,7 @@ public class ExternalProviderStageInORQCalculator extends AbstractProviderStageI
             File estCommandFile = config.getFileOption("estimationCommand");
             if (! estCommandFile.exists() || ! estCommandFile.canRead() || ! estCommandFile.isFile())
                 throw new IllegalArgumentException("Invalid estimationCommand script: " + estCommandFile.getPath());
-            return createOfferViaEstScript(estCommandFile, cont);
+			return createOfferViaEstScript(estCommandFile, cont);
         }
         else
             /* Use plain copy if no estimation script has been specified */ 
@@ -57,23 +58,25 @@ public class ExternalProviderStageInORQCalculator extends AbstractProviderStageI
     private TransientContract createOfferViaEstScript(
             final File estCommandFileParam, final TransientContract contParam) {
         ProcessBuilderAction action = createEstAction(estCommandFileParam, contParam);
-        StringBuilder recv = action.getOutputReceiver();
+        StringBuilder outRecv = action.getOutputReceiver();
+        StringBuilder errRecv = action.getErrorReceiver();
         int exitCode = action.call();
         switch (exitCode) {
             case EXIT_CODE_UNFULFILLABLE:
-                throw new UnfulfillableORQException();
+                throw new UnfulfillableORQException("Estimation scipt failed (Unfulfillable): " + errRecv.toString());
             case EXIT_CODE_PERMISSION_DENIED:
-                throw new PermissionDeniedORQException();
+                throw new PermissionDeniedORQException("Estimation scipt failed (Permission Denied): " + errRecv.toString());
             case 0:
                 try {
-                    return parmAux.getResult( recv );
+                    return parmAux.getResult( outRecv );
                 } catch (Exception e) {
-                    throw new IllegalStateException("Estimation script failed", e);
+                    throw new IllegalStateException("Estimation script failed: " + errRecv.toString(),
+                                                    e);
                 }
             default:
                 throw new IllegalStateException(
                     "Estimation script returned unexpected exit code: " + exitCode +
-                        "\nScript output was:\n" + recv.toString() );
+                        "\nScript output was:\n" + errRecv.toString() );
         }
     }
 
@@ -90,7 +93,8 @@ public class ExternalProviderStageInORQCalculator extends AbstractProviderStageI
         ProcessBuilderAction action;
         action = parmAux.createPBAction( getORQArguments(), contParam );
         action.setProcessBuilder(pb);
-        action.setOutputReceiver(new StringBuilder(8));
+        action.setOutputReceiver(new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY));
+        action.setErrorReceiver(new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY));
         return action;
     }
 }

@@ -26,12 +26,12 @@ public class SliceStageInORQConverter extends ORQConverter<SliceStageInORQWriter
         ddc.convert( );
         getWriter().doneWritingDataDescriptor();
 
-        getWriter().writeDataFileName( getModel().getDataFile() );
+        getWriter().writeDataFileName( getModel().getActDataFile() );
 
         if ( getModel().hasGridSite() )
             getWriter().writeGridSiteName( getModel().getGridSite() );
 
-        getWriter().writeMetaDataFileName( getModel().getMetadataFile() );
+        getWriter().writeMetaDataFileName( getModel().getActMetadataFile() );
         getWriter().done();
     }
 }

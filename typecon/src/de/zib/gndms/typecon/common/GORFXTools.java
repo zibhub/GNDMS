@@ -32,7 +32,7 @@ public class GORFXTools {
         String ot = orq.getOfferType().toString();
         if( ot.equals( GORFXConstantURIs.PROVIDER_STAGE_IN_URI ) ) {
             aorq = convertProviderStageInORQFromORQT( orq );
-            aorq.setContext( ContextXSDReader.readContext( ctx ) );
+            aorq.setActContext( ContextXSDReader.readContext( ctx ) );
         } else if( ot.equals( GORFXConstantURIs.FILE_TRANSFER_URI ) )
             aorq = FileTransferORQXSDReader.read( orq, ctx );
         else if( ot.equals( GORFXConstantURIs.INTER_SLICE_TRANSFER_URI ) )
@@ -60,9 +60,9 @@ public class GORFXTools {
         for( int i = 1; i < mes.length; ++i ) {
             MessageElement me = mes[i];
             if( me.getElementName().getLocalName().equals( "DataFile" ) )
-                orq.setDataFile( (String) me.getObjectValue( String.class ) );
+                orq.setActDataFile( (String) me.getObjectValue( String.class ) );
             else
-                orq.setMetadataFile( (String) me.getObjectValue( String.class ) );
+                orq.setActMetadataFile( (String) me.getObjectValue( String.class ) );
         }
 
         return orq;

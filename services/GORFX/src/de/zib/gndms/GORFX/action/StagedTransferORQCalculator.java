@@ -59,7 +59,7 @@ public class StagedTransferORQCalculator extends
             if( ebw == null )
                 throw new RuntimeException( "No connection beween" + src +  " and " + dst );
 
-            getORQArguments().setGridSiteURI( dst );
+            getORQArguments().setActGridSiteURI( dst );
 
             long ms = NetworkAuxiliariesProvider.calculateTransferTime( s, ebw );
 

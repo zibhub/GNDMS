@@ -1,9 +1,5 @@
 package de.zib.gndms.model.gorfx.types;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.TreeMap;
-
 /**
  * ORQ for a slice publishing.
  *

@@ -16,10 +16,9 @@ import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI;
 import org.globus.wsrf.encoding.DeserializationException;
 import org.globus.wsrf.encoding.ObjectDeserializer;
+import org.joda.time.DateTime;
 import org.kohsuke.args4j.Option;
 import org.oasis.wsrf.properties.GetResourcePropertyResponse;
-import org.joda.time.DateTime;
-import org.joda.time.Duration;
 import types.*;
 
 import java.io.File;

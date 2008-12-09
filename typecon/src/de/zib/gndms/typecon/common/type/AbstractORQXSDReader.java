@@ -15,7 +15,7 @@ public class AbstractORQXSDReader {
 
         M orq = clazz.newInstance();
         if( ctx != null )
-            orq.setContext( ContextXSDReader.readContext( ctx ) );
+            orq.setActContext( ContextXSDReader.readContext( ctx ) );
 
         return orq;
     }

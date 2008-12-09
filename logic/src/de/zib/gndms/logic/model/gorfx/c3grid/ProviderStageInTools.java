@@ -41,9 +41,10 @@ public final class ProviderStageInTools {
                                                       final Properties moreProps) {
         final Properties props = getSFRProps(orqParam, moreProps);
         return new ProcessBuilderAction() {
-            protected @Override void writeOutput(final @NotNull BufferedOutputStream stream)
+            protected @Override void writeProcessStdIn(final @NotNull BufferedOutputStream stream)
                     throws IOException {
                 props.store(stream, "ProviderStageIn");
+	            stream.flush();
             }
         };
     }
@@ -52,11 +53,12 @@ public final class ProviderStageInTools {
     public static ProcessBuilderAction createPBActionForXML(final @NotNull String orq_parms ) {
 
         return new ProcessBuilderAction() {
-            protected @Override void writeOutput(final @NotNull BufferedOutputStream stream)
+            protected @Override void writeProcessStdIn(final @NotNull BufferedOutputStream stream)
                 throws IOException {
 
                 OutputStreamWriter os = new OutputStreamWriter( stream );
                 os.write( orq_parms );
+	            stream.flush();
             }
         };
     }
