@@ -52,7 +52,8 @@ sliceKind: 'http://www.c3grid.de/G2/SliceKind/Staging'; \
 stagingClass: 'de.zib.gndms.logic.model.gorfx.c3grid.ExternalProviderStageInAction'; \
 estimationClass: 'de.zib.gndms.logic.model.gorfx.c3grid.ExternalProviderStageInORQCalculator'; \
 stagingCommand='$STAGING_COMMAND'; \
-estimationCommand='$ESTIMATION_COMMAND'"
+estimationCommand='$ESTIMATION_COMMAND'; \
+scriptIoFormat='XML' "
 
 source $C3GRID_SOURCE/scripts/features/enable-interslicetransfer.sh
 source $C3GRID_SOURCE/scripts/features/enable-filetransfer.sh
