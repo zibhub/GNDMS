@@ -16,6 +16,7 @@ import javax.persistence.Transient;
 import java.util.Calendar;
 
 
+
 /**
  * ThingAMagic.
  *
@@ -37,7 +38,7 @@ public class PersistentContract {
         instance.accepted = Copier.copy(true, accepted);
         instance.deadline = Copier.copy(true, deadline);
         instance.resultValidity = Copier.copy(true, resultValidity);
-        instance.expectedSize = Copier.copy(true, expectedSize);
+        setExpectedSize(Copier.copy(true, getExpectedSize()));
     }
 
     @SuppressWarnings({ "FeatureEnvy" })
@@ -131,19 +132,20 @@ public class PersistentContract {
         return accepted != null
             && deadline != null
             && resultValidity != null
-            && ( accepted.compareTo( deadline ) < 0 )
-            && ( accepted.compareTo( resultValidity ) < 0 )
+            && accepted.compareTo( deadline ) < 0
+            && accepted.compareTo( resultValidity ) < 0
             && ( !strict || deadline.compareTo( resultValidity ) < 0 );
     }
 
 
+    @Override
     public String toString( ) {
-
-        return "Accepted: " + isoForCalendar( accepted )
+	    final Long theExpectedSize = getExpectedSize();
+	    return "Accepted: " + isoForCalendar( accepted )
             + "; Deadline: " + isoForCalendar( deadline )
             + "; ResultValidity: " + isoForCalendar( resultValidity )
             + "; ExpectedSize: "
-            + ( expectedSize != null ? expectedSize.toString() : "null" );
+            + ( theExpectedSize != null ? theExpectedSize.toString() : "null" );
     }
 
 

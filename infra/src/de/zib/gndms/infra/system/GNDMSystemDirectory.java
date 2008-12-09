@@ -14,9 +14,9 @@ import de.zib.gndms.kit.configlet.Configlet;
 import de.zib.gndms.kit.monitor.GroovyBindingFactory;
 import de.zib.gndms.kit.monitor.GroovyMoniServer;
 import de.zib.gndms.logic.model.TaskAction;
-import de.zib.gndms.logic.model.access.TaskActionProvider;
+import de.zib.gndms.logic.access.TaskActionProvider;
 import de.zib.gndms.logic.model.gorfx.*;
-import de.zib.gndms.model.access.InstanceProvider;
+import de.zib.gndms.kit.access.InstanceProvider;
 import de.zib.gndms.model.common.ConfigletState;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
@@ -91,7 +91,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 		uuidGen = uuidGenParam;
 	    sysHolderWrapper = systemHolderWrapParam;
 		injector = Guice.createInjector(sysModule, this);
-
+		
 	    final ORQCalculatorMetaFactory calcMF = new ORQCalculatorMetaFactory();
 		calcMF.setInjector(injector);
 	    calcMF.setWrap(sysHolderWrapper);
@@ -115,7 +115,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 
     @SuppressWarnings({ "MethodWithTooExceptionsDeclared" })
     @NotNull
-    public AbstractORQCalculator<?,?> getORQCalculator(
+    public AbstractORQCalculator<?,?> newORQCalculator(
         final @NotNull EntityManagerFactory emf,
         final @NotNull String offerTypeKey)
         throws ClassNotFoundException, IllegalAccessException, InstantiationException,
@@ -137,14 +137,14 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 
 
     @SuppressWarnings({ "MethodWithTooExceptionsDeclared" })
-    public TaskAction getTaskAction(
+    public TaskAction newTaskAction(
             final @NotNull EntityManagerFactory emf,
             final @NotNull String offerTypeKey)
             throws ClassNotFoundException, IllegalAccessException, InstantiationException,
             NoSuchMethodException, InvocationTargetException {
         EntityManager em = emf.createEntityManager();
         try {
-	        return getTaskAction(em, offerTypeKey);
+	        return newTaskAction(em, offerTypeKey);
         }
         finally {
             if (! em.isOpen())
@@ -154,7 +154,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 
 
 	@SuppressWarnings({ "OverloadedMethodsWithSameNumberOfParameters" })
-	public TaskAction getTaskAction(
+	public TaskAction newTaskAction(
 		  final EntityManager emParam, final String offerTypeKey)
 		  throws IllegalAccessException, InstantiationException, ClassNotFoundException {
 		OfferType type = emParam.find(OfferType.class, offerTypeKey);

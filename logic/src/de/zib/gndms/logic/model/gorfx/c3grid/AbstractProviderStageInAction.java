@@ -32,7 +32,7 @@ import java.io.File;
 public abstract class AbstractProviderStageInAction extends ORQTaskAction<ProviderStageInORQ> {
 
     private String sliceId;
-
+	protected ParmFormatAux parmAux = new ParmFormatAux();
 
     public AbstractProviderStageInAction() {
         super();
@@ -167,6 +167,53 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 	}
 
 
+	@SuppressWarnings({ "NoopMethodInAbstractClass" })
+	protected void callCancel(final MapConfig offerTypeConfigParam, final ProviderStageInORQ orqParam,
+            final File sliceParam) {
+		/* potentially implement in subclass */
+	}
+
+
+	private void createNewSlice(final AbstractTask model) throws MandatoryOptionMissingException {
+	    final ConfigProvider config = getOfferTypeConfig();
+
+	    final EntityManager em = getEntityManager();
+	    final TxFrame txf = new TxFrame(em);
+	    try {
+	        final ImmutableScopedName scopedName = config.getISNOption("subspace");
+	        final MetaSubspace metaSubspace = getEntityManager().find(
+	                MetaSubspace.class,
+	                scopedName);
+	        final @NotNull Subspace subspace = metaSubspace.getInstance();
+	        String slicekindKey = config.getOption("sliceKind");
+	        SliceKind kind = getEntityManager().find(SliceKind.class, slicekindKey);
+	        CreateSliceAction csa = new CreateSliceAction();
+	        csa.setParent(this);
+	        csa.setTerminationTime(getModel().getContract().getResultValidity());
+	        csa.setClosingEntityManagerOnCleanup(false);
+	        csa.setDirectoryAux(DirectoryAux.getDirectoryAux());
+	        csa.setUUIDGen(getUUIDGen());
+	        csa.setId(getUUIDGen().nextUUID());
+	        csa.setModel(subspace);
+	        csa.setSliceKind(kind);
+	        final Slice slice = csa.execute(getEntityManager());
+	        model.setData(slice.getId());
+		    txf.commit();
+	    }
+	    finally { txf.finish();  }
+	}
+
+
+	private Slice findNewSlice(final AbstractTask model) {
+		final EntityManager em = getEntityManager();
+		final TxFrame txf = new TxFrame(em);
+		try {
+			final Slice slice = em.find(Slice.class, model.getData());
+		    txf.commit();
+		    return slice;
+		}
+		finally { txf.finish();  }
+	}
 	private void killSlice(final AbstractTask model) {
 		final EntityManager em = getEntityManager();
 		final TxFrame txf = new TxFrame(em);
@@ -181,12 +228,21 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 	}
 
 
-	@SuppressWarnings({ "NoopMethodInAbstractClass" })
-	protected void callCancel(final MapConfig offerTypeConfigParam, final ProviderStageInORQ orqParam,
-            final File sliceParam) {
-		/* potentially implement in subclass */
-	}
-
+	protected ProcessBuilder createProcessBuilder(String name, File dir) {
+       try {
+           ConfigProvider opts = new MapConfig(getKey().getConfigMap());
+       if (opts.getOption(name, "").trim().length() == 0)
+           return null;
+       final File fileOption = opts.getFileOption(name);
+       ProcessBuilder builder = new ProcessBuilder();
+           builder.directory(dir);
+       builder.command(fileOption.getPath());
+           return builder;
+       }
+       catch (MandatoryOptionMissingException e) {
+           throw new RuntimeException(e);
+       }
+   }
 
 	@Override
     @NotNull
