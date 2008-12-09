@@ -57,6 +57,8 @@ public final class ProviderStageInTools {
 
                 OutputStreamWriter os = new OutputStreamWriter( stream );
                 os.write( orq_parms );
+                os.flush( );
+                os.close( );
             }
         };
     }

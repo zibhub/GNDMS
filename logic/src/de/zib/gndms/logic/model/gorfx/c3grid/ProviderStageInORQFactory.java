@@ -3,8 +3,10 @@ package de.zib.gndms.logic.model.gorfx.c3grid;
 import de.zib.gndms.model.common.types.factory.AbstractRecursiveKeyFactory;
 import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
 import de.zib.gndms.kit.config.MapConfig;
+import de.zib.gndms.kit.access.InstanceProvider;
 import de.zib.gndms.model.gorfx.OfferType;
 import org.jetbrains.annotations.NotNull;
+import com.google.inject.Inject;
 
 
 /**
@@ -16,6 +18,8 @@ import org.jetbrains.annotations.NotNull;
  *          User: stepn Date: 08.10.2008 Time: 13:54:07
  */
 public class ProviderStageInORQFactory extends AbstractRecursiveKeyFactory<OfferType, AbstractORQCalculator<?,?>> {
+
+    @Inject InstanceProvider instanceProvider;
 
     @Override
     @NotNull

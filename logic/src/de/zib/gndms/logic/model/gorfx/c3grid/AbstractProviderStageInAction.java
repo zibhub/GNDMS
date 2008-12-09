@@ -112,6 +112,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
             csa.setSliceKind(kind);
             final Slice slice = csa.execute(getEntityManager());
             model.setData(slice.getId());
+            setSliceId(slice.getId()); 
             txf.commit();
         }
         finally { txf.finish();  }
@@ -174,46 +175,6 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 	}
 
 
-	private void createNewSlice(final AbstractTask model) throws MandatoryOptionMissingException {
-	    final ConfigProvider config = getOfferTypeConfig();
-
-	    final EntityManager em = getEntityManager();
-	    final TxFrame txf = new TxFrame(em);
-	    try {
-	        final ImmutableScopedName scopedName = config.getISNOption("subspace");
-	        final MetaSubspace metaSubspace = getEntityManager().find(
-	                MetaSubspace.class,
-	                scopedName);
-	        final @NotNull Subspace subspace = metaSubspace.getInstance();
-	        String slicekindKey = config.getOption("sliceKind");
-	        SliceKind kind = getEntityManager().find(SliceKind.class, slicekindKey);
-	        CreateSliceAction csa = new CreateSliceAction();
-	        csa.setParent(this);
-	        csa.setTerminationTime(getModel().getContract().getResultValidity());
-	        csa.setClosingEntityManagerOnCleanup(false);
-	        csa.setDirectoryAux(DirectoryAux.getDirectoryAux());
-	        csa.setUUIDGen(getUUIDGen());
-	        csa.setId(getUUIDGen().nextUUID());
-	        csa.setModel(subspace);
-	        csa.setSliceKind(kind);
-	        final Slice slice = csa.execute(getEntityManager());
-	        model.setData(slice.getId());
-		    txf.commit();
-	    }
-	    finally { txf.finish();  }
-	}
-
-
-	private Slice findNewSlice(final AbstractTask model) {
-		final EntityManager em = getEntityManager();
-		final TxFrame txf = new TxFrame(em);
-		try {
-			final Slice slice = em.find(Slice.class, model.getData());
-		    txf.commit();
-		    return slice;
-		}
-		finally { txf.finish();  }
-	}
 	private void killSlice(final AbstractTask model) {
 		final EntityManager em = getEntityManager();
 		final TxFrame txf = new TxFrame(em);
