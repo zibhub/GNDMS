@@ -54,13 +54,13 @@ public class RePublishSliceTaskAction extends ORQTaskAction<RePublishSliceORQ> {
 
 
     @Override
-    protected void onFailed( @NotNull AbstractTask model ) {
-        super.onFailed( model );
+    public void cleanUpOnFail( @NotNull AbstractTask model ) {
         try{
             DSpaceBindingUtils.destroySlice( getOrq().getDestinationSlice() );
         } catch( Exception e ) {
             // todo do something usefull with this exception
             e.printStackTrace( );
         }
+        super.cleanUpOnFail( model );
     }
 }

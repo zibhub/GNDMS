@@ -91,7 +91,7 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
 
 
     public void setOwnEntityManager(final @NotNull EntityManager entityManagerParam) {
-        doNotOverwrite("entityManager", entityManager);
+        //doNotOverwrite("entityManager", entityManager);
         entityManager = entityManagerParam;
     }
 

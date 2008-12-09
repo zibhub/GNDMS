@@ -1,6 +1,6 @@
 #!/bin/sh
 
-STAGING_COMMAND="%{C3GRID_SOURCE}/dev-bin/ist-staging.sh"
+STAGING_COMMAND="%{C3GRID_SOURCE}/dev-bin/pilot-staging.sh"
 ESTIMATION_COMMAND="%{C3GRID_SOURCE}/scripts/dummy-estimation.sh"
 STAGING_AREA_PATH="/tmp/testss"
 STAGING_AREA_SIZE="2000000" # Currently unused

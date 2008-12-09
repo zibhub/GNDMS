@@ -158,8 +158,8 @@ public class ProviderStageInClient extends AbstractApplication {
 
 		final FutureTimeT execLikelyUntil = new FutureTimeT();
 
-        //long day = 24*60*60*1000;
-        long day = 5*1000;
+        long day = 24*60*60*1000;
+        //long day = 5*1000;
         execLikelyUntil.setOffset( day );
 	    xsdOfferContract.setExecutionLikelyUntil( execLikelyUntil );
 

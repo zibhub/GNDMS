@@ -166,6 +166,11 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     }
 
 
+    public void cleanUpOnFail( final @NotNull AbstractTask model ) {
+        // some actions don't need this
+    }
+
+
     protected void setModelAndBackup( final @NotNull AbstractTask mdl ) {
         setModel( mdl );
         setBackup( Copier.copy( false, mdl ) );
@@ -477,7 +482,8 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     protected abstract void onInProgress(final @NotNull AbstractTask model);
 
 
-    protected void onFailed(final @NotNull AbstractTask model) {
+    protected final void onFailed(final @NotNull AbstractTask model) {
+        cleanUpOnFail( model );
         stop(model);
     }
 

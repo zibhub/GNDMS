@@ -67,7 +67,10 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
                 case 0:
                     finish( new ProviderStageInResult( sliceParam.getId() ) );
                 default:
-                    fail(new IllegalStateException("Staging script failed with non-zero exit code " + result));
+                    //fail(new IllegalStateException("Staging script failed with non-zero exit code " + result));
+                    fail( new IllegalStateException(
+                        "Estimation script returned unexpected exit code: " + result +
+                            "\nScript output was:\n" + recv.toString() ) );
             }
         }
         catch (RuntimeException e) {

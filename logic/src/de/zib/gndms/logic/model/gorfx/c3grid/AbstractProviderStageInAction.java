@@ -31,6 +31,8 @@ import java.io.File;
 @SuppressWarnings({ "FeatureEnvy" })
 public abstract class AbstractProviderStageInAction extends ORQTaskAction<ProviderStageInORQ> {
 
+    private String sliceId;
+
 
     public AbstractProviderStageInAction() {
         super();
@@ -75,6 +77,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
     @Override
     protected void onInProgress(final @NotNull AbstractTask model) {
         final Slice slice = findNewSlice(model);
+        setSliceId( slice.getId() );
         doStaging(getOfferTypeConfig(), getOrq(), slice);
     }
 
@@ -109,7 +112,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
             csa.setSliceKind(kind);
             final Slice slice = csa.execute(getEntityManager());
             model.setData(slice.getId());
-	        txf.commit();
+            txf.commit();
         }
         finally { txf.finish();  }
     }
@@ -119,7 +122,8 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 	    final EntityManager em = getEntityManager();
 	    final TxFrame txf = new TxFrame(em);
 	    try {
-		    final Slice slice = em.find(Slice.class, model.getData());
+		    //final Slice slice = em.find(Slice.class, model.getData());
+            final Slice slice = em.find(Slice.class, getSliceId() );
 	        txf.commit();
 	        return slice;
 	    }
@@ -128,7 +132,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 
 
 	@Override
-	protected void onFailed(final @NotNull AbstractTask model) {
+    public void cleanUpOnFail(final @NotNull AbstractTask model) {
 		try {
 			cancelStaging(model);
 		}
@@ -139,7 +143,9 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 				// deletion goes wrong
 				killSlice(model);
 			}
-			finally { super.onFailed(model); }
+			finally {
+                // intentionally
+            }
 		}
 	}
 
@@ -191,5 +197,15 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 
     protected @NotNull MapConfig getOfferTypeConfig() {
         return new MapConfig(getKey().getConfigMap());
+    }
+
+
+    protected void setSliceId( String sliceId ) {
+        this.sliceId = sliceId;
+    }
+
+    
+    protected String getSliceId( ) {
+        return sliceId;
     }
 }
