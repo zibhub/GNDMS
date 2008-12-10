@@ -5,6 +5,7 @@ import de.zib.gndms.logic.action.LogAction;
 import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.model.util.TxFrame;
+import de.zib.gndms.model.util.EntityManagerAux;
 import de.zib.gndms.stuff.copy.Copier;
 import org.apache.commons.logging.Log;
 import org.jetbrains.annotations.NotNull;
@@ -12,8 +13,11 @@ import org.jetbrains.annotations.NotNull;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.EntityManagerFactory;
 import java.io.Serializable;
 import java.util.GregorianCalendar;
+
+import com.google.inject.Inject;
 
 
 /**
@@ -32,6 +36,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     private String wid;
     private Class<? extends AbstractTask> taskClass;
     private AbstractTask backup;
+    @Inject private EntityManagerFactory emf;
 
     private static final class ShutdownTaskActionException extends RuntimeException {
         private static final long serialVersionUID = 2772466358157719820L;
@@ -349,32 +354,8 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
         final EntityManager em = getEntityManager();
         @NotNull AbstractTask model = getModel();
 
-        // check the task lifetime
-        if( model.getTerminationTime().compareTo( new GregorianCalendar( ) ) < 1 ) {
-            getLog().debug(  "Task lifetime exceeded" );
-            TxFrame tx = new TxFrame( em );
-            boolean containt = false;
-            try {
-                // check if model is still there
-                containt = em.contains( model );
-                if( containt ) {
-                    model.fail( new RuntimeException( "Task lifetime exceeded" ) );
-                    getLog().debug(  "Try to persist task" );
-                }
-                tx.commit( );
-            } catch ( Exception e ) {
-                // exception here  doesn't really matter
-                // task is doomed anyway
-                e.printStackTrace(  );
-            } finally {
-                tx.finish();
-            }
-            // interrupt this thread
-            getLog().debug(  "Stopping task thread" );
-            //Thread.currentThread().interrupt();
-            if( containt ) refreshTaskResource();
-            stop( model );
-        }
+        // this throws a stop exception on timeout
+        checkTimeout( model, em );
 
         try {
             em.getTransaction().begin();
@@ -399,21 +380,44 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
                         }
                     }
                 }
+
             model.transit(newState);
+            
             try {
                 em.getTransaction().commit();
                 // if model could be commited it has a clean state
                 // refresh backup
                 setBackup( Copier.copy( false, model ) );
             } catch ( Exception e ) {
-                rewindTransaction(em.getTransaction());
-                // if this point is reached s.th. is terribly foobared
-                // restore backup and fail
-                model = Copier.copy( false, backup );
-                em.merge( model );
-                // backup should be clean so commit mustn't fail.
-                em.getTransaction().commit();
-                model.fail( e );
+                try {
+                    rewindTransaction(em.getTransaction());
+                    // if this point is reached s.th. is terribly foobared
+                    // restore backup and fail
+                    model = Copier.copy( false, backup );
+                    em.merge( model );
+                    // backup should be clean so commit mustn't fail.
+                    model.fail( e );
+                    em.getTransaction().commit();
+                } catch ( Exception e2 ) {
+                    // refresh em for final commit
+                    EntityManagerAux.rollbackAndClose( em );
+                    EntityManager nem = emf.createEntityManager();
+                    TxFrame tx = new TxFrame( nem );
+                    try {
+                        model = nem.find( model.getClass( ), backup.getId() );
+                        boolean unkown = ( model == null );
+                        model = Copier.copy( false, backup );
+                        model.fail( e2 );
+                        if( unkown )
+                            nem.persist( model );
+                        else
+                            nem.merge( model );
+                        tx.commit();
+                    } finally {
+                        tx.finish();
+                        setOwnEntityManager( nem );
+                    }
+                }
             }
 
             final TaskState modelState = model.getState();
@@ -561,5 +565,36 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
 
     protected void setBackup( AbstractTask backup ) {
         this.backup = backup;
+    }
+
+
+    private void checkTimeout( @NotNull AbstractTask model, @NotNull EntityManager em ) {
+
+        // check the task lifetime
+        if( model.getTerminationTime().compareTo( new GregorianCalendar( ) ) < 1 ) {
+            getLog().debug(  "Task lifetime exceeded" );
+            TxFrame tx = new TxFrame( em );
+            boolean containt = false;
+            try {
+                // check if model is still there
+                containt = em.contains( model );
+                if( containt ) {
+                    model.fail( new RuntimeException( "Task lifetime exceeded" ) );
+                    getLog().debug(  "Try to persist task" );
+                }
+                tx.commit( );
+            } catch ( Exception e ) {
+                // exception here  doesn't really matter
+                // task is doomed anyway
+                e.printStackTrace(  );
+            } finally {
+                tx.finish();
+            }
+            // interrupt this thread
+            getLog().debug(  "Stopping task thread" );
+            //Thread.currentThread().interrupt();
+            if( containt ) refreshTaskResource();
+            stop( model );
+        }
     }
 }
