@@ -7,7 +7,10 @@ import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.logic.model.gorfx.PermissionDeniedORQException;
 import de.zib.gndms.logic.model.gorfx.UnfulfillableORQException;
 import de.zib.gndms.model.common.types.TransientContract;
+import de.zib.gndms.stuff.Sleeper;
 import org.jetbrains.annotations.NotNull;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,14 +25,17 @@ import java.io.IOException;
  *          User: stepn Date: 27.10.2008 Time: 13:29:13
  */
 public class ExternalProviderStageInORQCalculator extends AbstractProviderStageInORQCalculator {
-    public static final int EXIT_CODE_UNFULFILLABLE = 255;
-    public static final int EXIT_CODE_PERMISSION_DENIED = 254;
+	public static final long GLOBUS_DEATH_DURATION = 60000L;
+    public static final int EXIT_CODE_UNFULFILLABLE = 127;
+    public static final int EXIT_CODE_PERMISSION_DENIED = 126;
 
-    private ParmFormatAux parmAux;
 	private static final int INITIAL_STRING_BUILDER_CAPACITY = 4096;
 
+	private @NotNull final Log logger = LogFactory.getLog(ExternalProviderStageInORQCalculator.class);
 
+	private ParmFormatAux parmAux;
 	private SystemInfo sysInfo;
+
 
 	public ExternalProviderStageInORQCalculator( ) {
         super( );
@@ -48,7 +54,7 @@ public class ExternalProviderStageInORQCalculator extends AbstractProviderStageI
 
         if (config.hasOption("estimationCommand")) {
             File estCommandFile = config.getFileOption("estimationCommand");
-            if (! estCommandFile.exists() || ! estCommandFile.canRead() || ! estCommandFile.isFile())
+            if (! AbstractProviderStageInAction.isValidScriptFile(estCommandFile))
                 throw new IllegalArgumentException("Invalid estimationCommand script: " + estCommandFile.getPath());
 			return createOfferViaEstScript(estCommandFile, cont);
         }
@@ -59,7 +65,7 @@ public class ExternalProviderStageInORQCalculator extends AbstractProviderStageI
     }
 
 
-    @SuppressWarnings({ "HardcodedLineSeparator" })
+    @SuppressWarnings({ "HardcodedLineSeparator", "MagicNumber" })
     private TransientContract createOfferViaEstScript(
             final File estCommandFileParam, final TransientContract contParam) {
         ProcessBuilderAction action = createEstAction(estCommandFileParam, contParam);
@@ -79,6 +85,10 @@ public class ExternalProviderStageInORQCalculator extends AbstractProviderStageI
                                                     e);
                 }
             default:
+	            if (exitCode > 127) {
+					logger.debug("Waiting for potential death of container...");     
+		            Sleeper.sleepUninterruptible(GLOBUS_DEATH_DURATION);
+	            }
                 throw new IllegalStateException(
                     "Estimation script returned unexpected exit code: " + exitCode +
                         "\nScript output was:\n" + errRecv.toString() );

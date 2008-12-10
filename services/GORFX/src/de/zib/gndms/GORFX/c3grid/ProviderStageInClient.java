@@ -14,6 +14,7 @@ import de.zib.gndms.typecon.common.GORFXTools;
 import de.zib.gndms.typecon.common.type.ProviderStageInORQXSDTypeWriter;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI;
+import org.globus.wsrf.NoSuchResourceException;
 import org.globus.wsrf.encoding.DeserializationException;
 import org.globus.wsrf.encoding.ObjectDeserializer;
 import org.joda.time.DateTime;
@@ -79,39 +80,51 @@ public class ProviderStageInClient extends AbstractApplication {
         final EndpointReferenceType offerEpr = createOffer(xsdContext, orqEPR);
 
         // Accept offer and thus create Task
-        final TaskClient taskClient = acceptOfferAndCreateTask(offerEpr);
+        final EndpointReferenceType taskClientEpr = acceptOfferAndCreateTask(offerEpr);
 
-        waitForTaskToFinishOrFail(taskClient);
+        waitForTaskToFinishOrFail(taskClientEpr);
     }
     
 
     @SuppressWarnings({ "FeatureEnvy" })
-    private static void waitForTaskToFinishOrFail(final TaskClient taskClientParam)
-            throws RemoteException, DeserializationException, URI.MalformedURIException {
+    private static void waitForTaskToFinishOrFail(final EndpointReferenceType taskClientEpr)
+	      throws RemoteException, DeserializationException, URI.MalformedURIException {
         TaskExecutionState state;
-        boolean finished;
-        boolean failed;
+        boolean finished = false;
+        boolean failed = false ;
+		TaskClient taskClient = null;
 
         do {
-            final GetResourcePropertyResponse rpResponse= taskClientParam.getResourceProperty(
-                    TaskConstants.TASKEXECUTIONSTATE);
-            state = (TaskExecutionState) ObjectDeserializer.toObject( rpResponse.get_any()[0], TaskExecutionState.class );
-            failed = TaskStatusT.failed.equals(state.getStatus());
-            finished = TaskStatusT.finished.equals(state.getStatus());
-	        System.out.println("Waiting for staging to finish...");
+	        try {
+		        if (taskClient == null)
+		            taskClient = new TaskClient(taskClientEpr);
+				final GetResourcePropertyResponse rpResponse= taskClient.getResourceProperty(
+						TaskConstants.TASKEXECUTIONSTATE);
+				state = (TaskExecutionState) ObjectDeserializer.toObject( rpResponse.get_any()[0], TaskExecutionState.class );
+				failed = TaskStatusT.failed.equals(state.getStatus());
+				finished = TaskStatusT.finished.equals(state.getStatus());
+	        }
+	        catch (NoSuchResourceException nre) {
+		        failed = true;
+	        }
+	        catch (Exception re) {
+		        re.printStackTrace(System.err);
+		        taskClient = null;
+	        }
+	        System.out.println("Waiting for staging to finish or fail...");
             try {
-                Thread.sleep(MILLIS);
+	            if (! (failed || finished))
+                    Thread.sleep(MILLIS);
             }
             catch (InterruptedException e) {
                 // intentionally
             }
-        }
-            while (! (failed || finished));
+        }  while (! (failed || finished));
 
 
         // Write results to console
         if (finished) {
-            final GetResourcePropertyResponse rpResponse= taskClientParam.getResourceProperty(TaskConstants.TASKEXECUTIONRESULTS);
+            final GetResourcePropertyResponse rpResponse= taskClient.getResourceProperty(TaskConstants.TASKEXECUTIONRESULTS);
             final ProviderStageInResultT result = (ProviderStageInResultT) ObjectDeserializer.toObject( rpResponse.get_any()[0], ProviderStageInResultT.class);
             System.out.println(result);
             SliceReference sr =  ( SliceReference ) ObjectDeserializer.toObject( result.get_any()[0], SliceReference.class ) ;
@@ -124,7 +137,7 @@ public class ProviderStageInClient extends AbstractApplication {
             }
         }
         else {
-            final GetResourcePropertyResponse rpResponse= taskClientParam.getResourceProperty(TaskConstants.TASKEXECUTIONFAILURE);
+            final GetResourcePropertyResponse rpResponse= taskClient.getResourceProperty(TaskConstants.TASKEXECUTIONFAILURE);
             final TaskExecutionFailure fail = (TaskExecutionFailure) ObjectDeserializer.toObject(rpResponse.get_any()[0], TaskExecutionFailure.class);
             TaskExecutionFailureImplementationFault tefif = fail.getImplementationFault();
             System.out.println( "message:       " + tefif.getMessage( ) );
@@ -136,13 +149,13 @@ public class ProviderStageInClient extends AbstractApplication {
     }
 
 
-    private static TaskClient acceptOfferAndCreateTask(final EndpointReferenceType offerEprParam)
+    private static EndpointReferenceType acceptOfferAndCreateTask(final EndpointReferenceType offerEprParam)
             throws URI.MalformedURIException, RemoteException {
         final OfferClient offerClient = new OfferClient(offerEprParam);
         final EndpointReferenceType taskEpr = offerClient.accept();
 
         // Poll task till completion or failure
-        return new TaskClient(taskEpr);
+        return taskEpr;
     }
 
 

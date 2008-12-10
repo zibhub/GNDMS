@@ -2,10 +2,12 @@ package de.zib.gndms.logic.model.gorfx.c3grid;
 
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
+import static de.zib.gndms.logic.model.gorfx.c3grid.ExternalProviderStageInORQCalculator.GLOBUS_DEATH_DURATION;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
 import de.zib.gndms.model.gorfx.types.ProviderStageInResult;
+import de.zib.gndms.stuff.Sleeper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -43,7 +45,7 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
     }
 
 
-    @SuppressWarnings({ "HardcodedLineSeparator" })
+    @SuppressWarnings({ "HardcodedLineSeparator", "MagicNumber" })
     @Override
     protected void doStaging(
             final MapConfig offerTypeConfigParam, final ProviderStageInORQ orqParam,
@@ -71,8 +73,12 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
 	                /* unreachable: */
 	                break;
                 default:
+	                if (result > 127) {
+					    getLog().debug("Waiting for potential death of container...");
+		                Sleeper.sleepUninterruptible(GLOBUS_DEATH_DURATION);
+	                }	                
                     fail( new IllegalStateException(
-                        "Stagung failed! Estimation script returned unexpected exit code: " + result +
+                        "Stagung failed! Staging script returned unexpected exit code: " + result +
                             "\nScript output was:\n" + errRecv.toString() ) );
             }
         }

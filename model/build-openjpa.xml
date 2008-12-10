@@ -27,6 +27,11 @@
 	<delete failonerror="false" file="../extra/lib/gndms-shared-model.jar" />
 
     <echo message="Basedir is '${basedir}'" />
+
+    <mkdir dir="gndms-shared-model/production/META-INF" />
+
+    <copy file="src/META-INF/GNDMS-RELEASE" tofile="gndms-shared-model/production/META-INF/GNDMS-RELEASE" overwrite="true" />
+
 	<openjpac directory="${basedir}/gndms-shared-model/production">
 		<config propertiesFile="src/META-INF/persistence.xml" />
         
@@ -54,10 +59,6 @@
 
     <echo message="GNDMS RELEASE: ${env.RELEASE}" />
     <echo message="GNDMS BUILD: ${build.time} ${user.name}@${env.HOSTNAME}"/>
-
-    <mkdir dir="gndms-shared-model/production/META-INF" />
-    
-    <copy file="src/META-INF/GNDMS-RELEASE" tofile="gndms-shared-model/production/META-INF/GNDMS-RELEASE" overwrite="true" />
 
 	<jar file="../extra/lib/gndms-shared-model.jar" basedir="gndms-shared-model/production">
 		<include name="**/*" />

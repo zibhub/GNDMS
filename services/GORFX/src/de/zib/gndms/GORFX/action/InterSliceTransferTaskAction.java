@@ -44,12 +44,14 @@ public class InterSliceTransferTaskAction extends ORQTaskAction<InterSliceTransf
 
         SubTask st = new SubTask( model );
         try {
+	        final EntityManager em = getEmf().createEntityManager();
+
             st.setId( getUUIDGen().nextUUID() );
-            st.fromTask( getEntityManager(), model );
+            st.fromTask( em, model );
             st.setTerminationTime( model.getTerminationTime() );
 
-            FileTransferTaskAction fta = new FileTransferTaskAction( getEntityManager(), st );
-            fta.setClosingEntityManagerOnCleanup( false );
+	        FileTransferTaskAction fta = new FileTransferTaskAction(em, st );
+            fta.setClosingEntityManagerOnCleanup( true );
 
             fta.setLog( getLog() );
             fta.call( );

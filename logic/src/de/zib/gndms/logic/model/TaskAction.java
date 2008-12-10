@@ -1,8 +1,10 @@
 package de.zib.gndms.logic.model;
 
+import com.google.inject.Inject;
 import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.logic.action.LogAction;
 import de.zib.gndms.model.gorfx.AbstractTask;
+import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.model.util.TxFrame;
 import de.zib.gndms.stuff.copy.Copier;
@@ -11,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import java.io.Serializable;
 import java.util.GregorianCalendar;
@@ -32,6 +35,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     private String wid;
     private Class<? extends AbstractTask> taskClass;
     private AbstractTask backup;
+	private EntityManagerFactory emf;
 
     private static final class ShutdownTaskActionException extends RuntimeException {
         private static final long serialVersionUID = 2772466358157719820L;
@@ -238,6 +242,8 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
                 try {
                     if (first) {
                         try {
+	                        final AbstractORQ orq = AbstractORQ.class.cast(getModel().getOrq());
+	                        trace("execute() with " + orq.getLoggableDescription(), null);
                             trace("transit(null)", null);
                             transit(null);
                         }
@@ -267,13 +273,15 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
                     throw e;
                 }
                 /* On runtime ex: Set task to failed */
-                catch (RuntimeException e) {
-                    trace("catch(RuntimeException)", e);
+                catch (RuntimeException e_in) {
+	                // no joke
+	                final RuntimeException e_out = e_in == null ? new NullPointerException() : e_in;
+                    trace("catch(RuntimeException)", e_out);
                     /* Cant go to FAILED after FINISHED, i.e. onFinish must never fail */
                     if (TaskState.FINISHED.equals(getModel().getState()))
-                        throw e;                             // todo log this one
+                        throw e_out;                             // todo log this one
                     else
-                        fail(e);
+                        fail(e_out);
                 }
             }
             /* If fail was called due to a RuntimeException in above try block, use resulting
@@ -302,7 +310,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
             msg = "TA of AbstractTask " + model.getId()
                     + (state == null ? "" : '/' + state.toString()) + ':'
                     + (userMsg.length() > 0 ? ' ' : "") + userMsg
-                    + (descr == null ? "" : " descr: '" + descr + '\'');
+                    + (descr == null ? "" : " DESCR: '" + descr + '\'');
         }
        if (cause == null)
            log1.trace(msg);
@@ -355,7 +363,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
             TxFrame tx = new TxFrame( em );
             boolean containt = false;
             try {
-                // check if model is still there
+                // check if model is still there?
                 containt = em.contains( model );
                 if( containt ) {
                     model.fail( new RuntimeException( "Task lifetime exceeded" ) );
@@ -562,4 +570,21 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     protected void setBackup( AbstractTask backup ) {
         this.backup = backup;
     }
+
+
+	@Override
+	public EntityManager getEntityManager() {
+		return getOwnEntityManager();
+	}
+
+
+	public EntityManagerFactory getEmf() {
+		return emf;
+	}
+
+
+	@Inject
+	public void setEmf(final @NotNull EntityManagerFactory emfParam) {
+		emf = emfParam;
+	}
 }

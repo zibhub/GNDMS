@@ -61,7 +61,7 @@ abstract class AbstractTask extends TimedGridResource {
     ])
     PersistentContract contract
 
-    @Column(name="broken")
+    @Column(name="broken", updatable=true)
     boolean broken = false
 
     @Enumerated(EnumType.STRING)
@@ -77,7 +77,7 @@ abstract class AbstractTask extends TimedGridResource {
     @Column(name="max_progress", nullable=false, updatable=false)
     int maxProgress = 100
 
-    @Column(name="orq", nullable=false, updatable=false)
+    @Column(name="orq", nullable=false, updatable=true)
     @Basic Serializable orq
 
 
@@ -90,7 +90,7 @@ abstract class AbstractTask extends TimedGridResource {
     @Basic Serializable data
 
 
-    @Column(name="wid", nullable=true, updatable=true)
+    @Column(name="wid", nullable=true, updatable=false)
     @Basic String wid;
 
     @OneToMany( targetEntity=SubTask.class, cascade=[CascadeType.REMOVE] )

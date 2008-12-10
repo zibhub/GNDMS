@@ -59,9 +59,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 
             try {
                 MapConfig config = getOfferTypeConfig();
-                File stagingCommandFile = config.getFileOption("stagingCommand");
-                if (! stagingCommandFile.exists() || ! stagingCommandFile.canRead() || ! stagingCommandFile.isFile())
-                    fail(new IllegalArgumentException("Invalid stagingCommand script: " + stagingCommandFile.getPath()));
+	            getScriptFileByParam(config, "stagingCommand");
                 createNewSlice(model);
             }
             catch (MandatoryOptionMissingException e1) {
@@ -72,7 +70,16 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
     }
 
 
-    @SuppressWarnings({ "ThrowableInstanceNeverThrown"})
+	@SuppressWarnings({ "ThrowableInstanceNeverThrown" })
+	protected @NotNull File getScriptFileByParam(final MapConfig configParam, String scriptParam) throws MandatoryOptionMissingException {
+		final @NotNull File scriptFile = configParam.getFileOption(scriptParam);
+		if (! isValidScriptFile(scriptFile))
+		    fail(new IllegalArgumentException("Invalid " + scriptParam + " script: " + scriptFile.getPath()));
+		return scriptFile;
+	}
+
+
+	@SuppressWarnings({ "ThrowableInstanceNeverThrown"})
     @Override
     protected void onInProgress(final @NotNull AbstractTask model) {
         final Slice slice = findSlice(model);
@@ -100,6 +107,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
             final @NotNull Subspace subspace = metaSubspace.getInstance();
             String slicekindKey = config.getOption("sliceKind");
             SliceKind kind = getEntityManager().find(SliceKind.class, slicekindKey);
+
             CreateSliceAction csa = new CreateSliceAction();
             csa.setParent(this);
             csa.setTerminationTime(getModel().getContract().getResultValidity());
@@ -114,13 +122,16 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
             txf.commit();
         }
         finally { txf.finish();  }
+	    getLog().info("createNewSlice() = " + getSliceId());
     }
 
 
     private Slice findSlice(final AbstractTask model) {
 	    final String sliceId = getSliceId();
+	    getLog().info("findSlice(" + (sliceId == null ? "null" : '"' + sliceId + '"') + ')');
 	    if (sliceId == null)
 		    return null;
+
 
 	    final EntityManager em = getEntityManager();
 	    final TxFrame txf = new TxFrame(em);
@@ -193,14 +204,14 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 
 	protected ProcessBuilder createProcessBuilder(String name, File dir) {
        try {
-           ConfigProvider opts = new MapConfig(getKey().getConfigMap());
-       if (opts.getOption(name, "").trim().length() == 0)
-           return null;
-       final File fileOption = opts.getFileOption(name);
-       ProcessBuilder builder = new ProcessBuilder();
-           builder.directory(dir);
-       builder.command(fileOption.getPath());
-           return builder;
+           MapConfig opts = new MapConfig(getKey().getConfigMap());
+		   if (opts.getOption(name, "").trim().length() == 0)
+			   return null;
+		   final File fileOption = getScriptFileByParam(opts, name);
+		   ProcessBuilder builder = new ProcessBuilder();
+			   builder.directory(dir);
+		   builder.command(fileOption.getPath());
+			   return builder;
        }
        catch (MandatoryOptionMissingException e) {
            throw new RuntimeException(e);
@@ -228,4 +239,12 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
     protected String getSliceId( ) {
         return getOrq().getActSliceId();
     }
+
+	@SuppressWarnings({ "MethodWithMoreThanThreeNegations" })
+	public static boolean isValidScriptFile(final File scriptFile) {
+		// do we need "r"?
+		return scriptFile != null &&
+			   scriptFile.exists() && scriptFile.canRead() && scriptFile.isFile();
+	}
 }
+
