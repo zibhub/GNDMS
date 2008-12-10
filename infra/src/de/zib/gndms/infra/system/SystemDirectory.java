@@ -17,7 +17,5 @@ import de.zib.gndms.logic.model.gorfx.ORQCalculatorProvider;
  */
 public interface SystemDirectory
 	  extends ConfigletProvider, ORQCalculatorProvider, TaskActionProvider, InstanceProvider,
-	  ServiceHomeProvider {
-
-	String getSystemName();
+	  ServiceHomeProvider, SystemInfo {
 }

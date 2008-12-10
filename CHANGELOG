@@ -12,6 +12,7 @@
 * [CHANGED] Enhanced error reporting via container.log and hopefully more verbose RemoteExceptions
 * [FIX] Lots of many small bugs have been squished making this release much more stable
 * [MINOR] Log software version number on startup
+* [MINOR] Tempdir used during execution of estimation scripts can be set the environment variable GNDMS_TMP
 
 
 @DMS:

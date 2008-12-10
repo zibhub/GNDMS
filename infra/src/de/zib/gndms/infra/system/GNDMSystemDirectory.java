@@ -25,6 +25,7 @@ import de.zib.gndms.model.common.types.factory.KeyFactory;
 import de.zib.gndms.model.common.types.factory.KeyFactoryInstance;
 import de.zib.gndms.model.common.types.factory.RecursiveKeyFactory;
 import de.zib.gndms.model.gorfx.OfferType;
+import de.zib.gndms.stuff.BoundInjector;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.apache.commons.logging.Log;
@@ -76,7 +77,8 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 	private final @NotNull ModelUUIDGen uuidGen;
 
 
-	private final @NotNull Injector injector;
+	private final @NotNull BoundInjector boundInjector = new BoundInjector();
+
 
 
 	@SuppressWarnings({ "ThisEscapedInObjectConstruction" })
@@ -90,8 +92,9 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
         systemName = sysNameParam;
 		uuidGen = uuidGenParam;
 	    sysHolderWrapper = systemHolderWrapParam;
-		injector = Guice.createInjector(sysModule, this);
-		
+		final Injector injector = Guice.createInjector(sysModule, this);
+		boundInjector.setInjector(injector);
+
 	    final ORQCalculatorMetaFactory calcMF = new ORQCalculatorMetaFactory();
 		calcMF.setInjector(injector);
 	    calcMF.setWrap(sysHolderWrapper);
@@ -136,7 +139,8 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
     }
 
 
-    @SuppressWarnings({ "MethodWithTooExceptionsDeclared" })
+    @SuppressWarnings(
+	      { "MethodWithTooExceptionsDeclared", "OverloadedMethodsWithSameNumberOfParameters" })
     public TaskAction newTaskAction(
             final @NotNull EntityManagerFactory emf,
             final @NotNull String offerTypeKey)
@@ -326,6 +330,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 
 
 
+	@SuppressWarnings({ "SuspiciousMethodCalls" })
 	private void shutdownOldConfiglets(final EntityManager emParam) {
 		Set<String> set = configlets.keySet();
 		Object[] keys = set.toArray();
@@ -333,8 +338,8 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 			emParam.getTransaction().begin();
 			try {
 				if (emParam.find(ConfigletState.class, name) == null) {
-					Configlet let = configlets.get((String)name);
-					configlets.remove((String)name);
+					Configlet let = configlets.get(name);
+					configlets.remove(name);
 					let.shutdown();
 				}
 			}
@@ -380,9 +385,26 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
     }
 
 
+	@SuppressWarnings({ "HardcodedFileSeparator" })
+	public String getSystemTempDirName() {
+		String tmp = System.getenv("GNDMS_TMP");
+		tmp = tmp == null ?  ""  : tmp.trim();
+		if (tmp.length() == 0) {
+			tmp = System.getenv("TMPDIR");
+			tmp = tmp == null ?  ""  : tmp.trim();
+		}
+		if (tmp.length() == 0) {
+			tmp = "/tmp";
+		}
+		return tmp;
+	}
+
+
 	public void configure(final @NotNull Binder binder) {
 		// binder.bind(EntityManagerFactory.class).toInstance();
+		binder.bind(BoundInjector.class).toInstance(boundInjector);
 		binder.bind(SystemDirectory.class).toInstance(this);
+		binder.bind(SystemInfo.class).toInstance(this);
 		binder.bind(InstanceProvider.class).toInstance(this);
 		binder.bind(ServiceHomeProvider.class).toInstance(this);
 		binder.bind(TaskActionProvider.class).toInstance(this);
