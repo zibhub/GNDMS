@@ -50,10 +50,14 @@ test-output/**
 doc/*
 **/.svn/**
 .svn/**
-
+types/DSpace
+types/GORFX
+types/LOFIS
+types/WHORFX
+types/ws
+types/wsrf
 
 syntax:regexp
-^types/[A-Za-z].+
 .*\.swp
 .*\.orig
 .*~
