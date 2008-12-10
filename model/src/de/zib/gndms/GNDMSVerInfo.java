@@ -16,7 +16,7 @@ import java.io.IOException;
  *
  *          User: stepn Date: 09.12.2008 Time: 18:01:03
  */
-public class GNDMSInfo {
+public class GNDMSVerInfo {
 
 	@SuppressWarnings({ "HardcodedFileSeparator", "NestedAssignment" })
 	private @NotNull String readInfo(@NotNull String infoTag) {
