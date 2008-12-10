@@ -14,8 +14,8 @@ echo "$sfr" > $metafile
 # echo "NAY!" >&2
 # exit 1
 
-rm -f .GARBAGAE
+rm -f .GARBAGE
 
 echo "YAY!"
 
-#  exit 0
+exit 0

@@ -20,6 +20,8 @@
 	<property name="infra.dir" value="infra"/>
 	<property name="typecon.dir" value="typecon"/>
     	<property name="stuff.dir" value="stuff"/>
+    	<property name="dspace.dir" value="services/DSpace"/>
+    	<property name="gorfx.dir" value="services/GORFX"/>
 
 
 	<!-- Directories of Build-files  -->

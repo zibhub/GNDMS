@@ -1,0 +1,38 @@
+
+
+
+
+0.2.2 alpha: "Wunschkonzert"
+
+@Providers:
+* [NEW] Support for calling external scripts with XML-formatted properties (ExternalProviderStageIn)
+* [NEW] (Optional) cancel-scripts are now supported by ExternalProviderStageIn.  The cancel-script is called when staging has failed
+* [CHANGED] ExternalProviderStaging now logs either StdOut (succesful script execution) or StdOut+StdErr (failed script execution)
+* [CHANGED] Contract-type with support for absolute and relative (duration/offset) values for executionLikelyBefore and resultValidUntil
+* [CHANGED] Enhanced error reporting via container.log and hopefully more verbose RemoteExceptions
+* [FIX] Lots of many small bugs have been squished making this release much more stable
+* [MINOR] Log software version number on startup
+
+
+@DMS:
+* [NEW] C3Catalog Configlet for the integration of G2 DMS and RIS (MDS)
+* [NEW] SliceStageIn: Staging via central DMS site
+* [NEW] InterSliceTransfer: File copy via central DMS site
+
+
+@Developers:
+* [NEW] Ant-file for compiling GNDMS from scratch (Experimental but works)
+* [NEW] Configlets for additional (static) configuration of GNDMS installations
+* [NEW] Persistent subtasks without an associated resource (e.g. for calling transfer inside staging)
+* [CHANGED] Failure handling of GORFX tasks, onFailed() is now called even if the associated TaskResource has timed out
+* [CHANGED] Cleaned up setup-scripts
+* [CHANGED] Quite a bit of refactoring, esp. Contract and InstanceDirectory
+* [CHANGED] Started switching to automatic dependency injection via guice (See SystemDirectory)
+
+
+
+
+0.2 alpha:
+
+	Initial release of GNDMS G2 based on Globus Toolkit, Derby, and OpenJPA
+        and lots of experience with c3grid DMS G1
