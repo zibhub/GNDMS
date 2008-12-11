@@ -27,14 +27,14 @@
 		<pathelement location="${tools-lib.dir}/geronimo-jta_1.1_spec-1.1.jar"/>
 		<pathelement location="${tools-lib.dir}/serp-1.13.1.jar"/>
 		<pathelement location="${tools-lib.dir}/openjpa-1.1.0.jar"/>
-                <pathelement location="${tools-lib.dir}/guice-snapshot20081123.jar"/>
-                <pathelement location="${tools-lib.dir}/guice-assistedinject-snapshot20081123.jar"/>
-                <pathelement location="${tools-lib.dir}/guice-multibindings-snapshot20081123.jar"/>
-                <pathelement location="${tools-lib.dir}/guice-throwingproviders-snapshot20081123.jar"/>
-                <pathelement location="${tools-lib.dir}/asm-3.1.jar"/>
-                <pathelement location="${tools-lib.dir}/cglib-2.2.jar"/>
+        <pathelement location="${tools-lib.dir}/guice-snapshot20081123.jar"/>
+        <pathelement location="${tools-lib.dir}/guice-assistedinject-snapshot20081123.jar"/>
+        <pathelement location="${tools-lib.dir}/guice-multibindings-snapshot20081123.jar"/>
+        <pathelement location="${tools-lib.dir}/guice-throwingproviders-snapshot20081123.jar"/>
+        <pathelement location="${tools-lib.dir}/asm-3.1.jar"/>
+        <pathelement location="${tools-lib.dir}/cglib-2.2.jar"/>
 		
-         	<!--fileset dir="${tools-lib.dir}" includes="*.jar" /-->
+        <!--fileset dir="${tools-lib.dir}" includes="*.jar" /-->
 		
 
 		
