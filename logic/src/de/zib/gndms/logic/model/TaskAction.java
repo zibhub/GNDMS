@@ -505,12 +505,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
 
 
     protected final void onFailed(final @NotNull AbstractTask model) {
-        try{
-            cleanUpOnFail( model );
-        } catch ( Exception e ) {
-             // don' throw them again
-            e.printStackTrace(  );
-        }
+        tryCleanup( model );
         stop(model);
     }
 
@@ -637,4 +632,20 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
 	public void setEmf(final @NotNull EntityManagerFactory emfParam) {
 		emf = emfParam;
 	}
+
+
+    /**
+     * Tries to call the cleanUpOnFailed for the model, catches and logs possible exceptions
+     *
+     * @param model The task to clean.
+     */
+    public void tryCleanup( @NotNull AbstractTask model )  {
+
+        try{
+            cleanUpOnFail( model );
+        } catch ( Exception e ) {
+            // don' throw them again
+            getLog().debug( "Exception on task cleanup: " + e.toString() );
+        }
+    }
 }

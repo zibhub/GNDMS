@@ -23,6 +23,7 @@ import org.globus.wsrf.encoding.ObjectDeserializer;
 import org.joda.time.DateTime;
 import org.kohsuke.args4j.Option;
 import org.oasis.wsrf.properties.GetResourcePropertyResponse;
+import org.oasis.wsrf.properties.ResourceUnknownFaultType;
 import types.*;
 
 import java.io.File;
@@ -118,6 +119,9 @@ public class ProviderStageInClient extends AbstractApplication {
 	        catch (NoSuchResourceException nre) {
 		        failed = true;
 	        }
+            catch ( ResourceUnknownFaultType rfe ) {
+                failed = true;
+            }
 	        catch (Exception re) {
 		        re.printStackTrace(System.err);
 		        taskClient = null;
