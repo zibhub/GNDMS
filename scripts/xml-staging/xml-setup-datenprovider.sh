@@ -1,10 +1,7 @@
 #!/bin/sh
 
-SCRIPTDIR="$(dirname $0)/" 
-
-cd $SCRIPTDIR/..
-source internal/script-setup.sh
-cd $SCRIPTDIR
+SCRIPTDIR="$(dirname $0)/../" 
+source "$SCRIPTDIR"internal/script-setup.sh
 
 # %{} is shell variable substitution at container runtime
 # $STAGING_COMMAND runs in the slice working dir.

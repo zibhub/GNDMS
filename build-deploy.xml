@@ -74,8 +74,11 @@
 	</path>
 
 	<java classname="de.zib.gndms.GORFX.c3grid.ProviderStageInClient" fork="true" classpathref="dpclient.path" failonerror="true">
+		<arg value="-uri" />
 		<arg value="${psc.epr}" />
+		<arg value="-props" />
 		<arg value="${psc.sfr}" />
+		<arg value="-dn" />
 		<arg value="${psc.dn}" />
         </java>
 </target>

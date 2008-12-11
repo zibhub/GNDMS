@@ -217,7 +217,7 @@ DETAILED BUILD INSTRUCTIONS
      Sources: kit/src
      Output: kit/gndms-kit/production (resp. test) classes
      Dependencies: GROOVY, J2EE, SOURCE, stuff, gt4, gndms-shared-model, annotations,
-                   jetty, servlet-api, cos, testng, joda-time, args4j
+                   jetty, servlet-api, cos, testng, joda-time, args4j, guice
 
 
   6) Compile gndms-logic.jar
