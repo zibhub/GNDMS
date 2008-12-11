@@ -25,6 +25,7 @@
 * [NEW] C3Catalog Configlet for the integration of G2 DMS and RIS (MDS)
 * [NEW] SliceStageIn: Staging via central DMS site
 * [NEW] InterSliceTransfer: File copy via central DMS site
+* [NEW] ReadC3CatalogAction
 
 
 @Developers:
@@ -35,6 +36,7 @@
 * [CHANGED] Cleaned up setup-scripts
 * [CHANGED] Quite a bit of refactoring, esp. Contract and InstanceDirectory
 * [CHANGED] Started switching to automatic dependency injection via guice (See SystemDirectory)
+* [CHANGED] Set OpenJPA transaction behaviour to Multithreaded, RetainState, RestoreState=all and fixed looping bugs in TaskAction
 
 
 

@@ -385,6 +385,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
     }
 
 
+	@NotNull
 	@SuppressWarnings({ "HardcodedFileSeparator" })
 	public String getSystemTempDirName() {
 		String tmp = System.getenv("GNDMS_TMP");
@@ -463,7 +464,9 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
             public String mapKey(final @NotNull OfferType keyParam) {
             return keyParam.getOfferTypeKey();
         }
-
-
     }
+
+	public @NotNull Injector getSystemAccessInjector() {
+		return boundInjector.getInjector();
+	}
 }

@@ -75,8 +75,8 @@ public final class GNDMSystem
     private @NotNull final UUIDGen uuidGen = UUIDGenFactory.getUUIDGen();
     private @NotNull final ModelUUIDGen uuidGenDelegate;
 	private @NotNull final Log logger = createLogger();
+	private @NotNull final GNDMSVerInfo verInfo = new GNDMSVerInfo();
     private @NotNull GNDMSystemDirectory instanceDir;
-    private @NotNull final ConfigActionCaller actionCaller;
 	private @NotNull final GridConfig sharedConfig;
 	private @NotNull File sharedDir;
     private @NotNull File dbDir;
@@ -88,8 +88,9 @@ public final class GNDMSystem
 
 
 	// Outside injector
-	private @NotNull GroovyMoniServer groovyMonitor;
-    private TaskExecutionService executionService;
+	private @NotNull GroovyMoniServer groovyMonitor; // shouldnt be accessed by anyone but system
+    private @NotNull TaskExecutionService executionService; // accessible only via system
+	private @NotNull ConfigActionCaller actionCaller; // injected by itself
 
 
 
@@ -153,9 +154,6 @@ public final class GNDMSystem
 		        return GNDMSystem.this.nextUUID();
 		    }
 		};
-		// Bad style, usually would be an inner class but
-		// removed it from this source file to reduce source file size
-		actionCaller = new ConfigActionCaller(this);
 	}
 
 	public void initialize() throws RuntimeException {
@@ -182,6 +180,9 @@ public final class GNDMSystem
 	        }, this);
 	        instanceDir.addInstance("sys", this);
 			instanceDir.reloadConfiglets(restrictedEmf);
+			// Bad style, usually would be an inner class but
+			// removed it from this source file to reduce source file size
+			actionCaller = new ConfigActionCaller(this);
 		}
 		catch (Exception e) {
 			logger.error("Initialization failed", e);
@@ -192,7 +193,6 @@ public final class GNDMSystem
 
 	@SuppressWarnings({ "ValueOfIncrementOrDecrementUsed", "MagicNumber" })
 	private void printVersion() {
-		final GNDMSVerInfo verInfo = new GNDMSVerInfo();
 		final String releaseInfo = verInfo.readRelease();
 		final String curBuildInfo = verInfo.readBuildInfo();
 		int maxSize = Math.max(releaseInfo.length(), curBuildInfo.length()) + 14;
@@ -209,12 +209,16 @@ public final class GNDMSystem
 
 	public void configure(final @NotNull Binder binder) {
 		binder.bind(GNDMSystem.class).toInstance(this);
-		binder.bind(ActionCaller.class).toInstance(actionCaller);
 		binder.bind(EntityManagerFactory.class).toInstance(restrictedEmf);
 		binder.bind(EMFactoryProvider.class).toInstance(this);
 		binder.bind(GridConfig.class).toInstance(sharedConfig);
 		binder.bind(NetworkAuxiliariesProvider.class).toInstance(getNetAux());
 		binder.bind(EntityUpdateListener.class).toInstance(this);
+		binder.bind(BatchUpdateAction.class).to(DefaultBatchUpdateAction.class);
+		binder.bind(UUIDGen.class).toInstance(uuidGen);
+		binder.bind(GNDMSVerInfo.class).toInstance(verInfo);
+		binder.bind(Log.class).toInstance(logger);
+		// TODO later: binder.bind(TxFrame.class).to(TxFrame.class);
 	}
 
 
