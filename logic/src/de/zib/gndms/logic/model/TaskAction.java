@@ -351,11 +351,12 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     @SuppressWarnings( { "CaughtExceptionImmediatelyRethrown", "ThrowableInstanceNeverThrown" } )
     private void transit(final TaskState newState) {
 
-        final EntityManager em = getEntityManager();
+        EntityManager em = getEntityManager();
         @NotNull AbstractTask model = getModel();
 
         // this throws a stop exception on timeout
-        checkTimeout( model, em );
+        if(! ( TaskState.FINISHED.equals( newState ) || TaskState.FAILED.equals( newState ) ) )
+            checkTimeout( model, em );
 
         try {
             em.getTransaction().begin();
@@ -382,12 +383,12 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
                 }
 
             model.transit(newState);
-            
+
+            boolean commited = false;
             try {
                 em.getTransaction().commit();
-                // if model could be commited it has a clean state
-                // refresh backup
-                setBackup( Copier.copy( false, model ) );
+//                em.flush( );
+                commited = true;
             } catch ( Exception e ) {
                 try {
                     rewindTransaction(em.getTransaction());
@@ -410,15 +411,24 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
                         model.fail( e2 );
                         if( unkown )
                             nem.persist( model );
-                        else
-                            nem.merge( model );
+                   //     else
+                   //         nem.merge( model );
                         tx.commit();
+                        setModel( model );
+                    } catch ( RuntimeException e3 ) {
+                        throw e3;
                     } finally {
                         tx.finish();
                         setOwnEntityManager( nem );
+                        em = nem;
                     }
                 }
             }
+
+            // if model could be commited it has a clean state
+            // refresh backup
+            if( commited )
+                setBackup( Copier.copy( false, model ) );
 
             final TaskState modelState = model.getState();
             refreshTaskResource();
@@ -487,7 +497,12 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
 
 
     protected final void onFailed(final @NotNull AbstractTask model) {
-        cleanUpOnFail( model );
+        try{
+            cleanUpOnFail( model );
+        } catch ( Exception e ) {
+             // don' throw them again
+            e.printStackTrace(  );
+        }
         stop(model);
     }
 
@@ -594,7 +609,16 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
             getLog().debug(  "Stopping task thread" );
             //Thread.currentThread().interrupt();
             if( containt ) refreshTaskResource();
-            stop( model );
+            fail( new RuntimeException( "Task lifetime exceeded" ) );
         }
+    }
+
+
+    public EntityManager getEntityManager() {
+        EntityManager em = getOwnEntityManager();
+        if( em != null )
+            return em;
+        else
+            return super.getEntityManager();
     }
 }

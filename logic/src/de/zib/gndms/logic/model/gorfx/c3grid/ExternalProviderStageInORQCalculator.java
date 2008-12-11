@@ -1,5 +1,7 @@
 package de.zib.gndms.logic.model.gorfx.c3grid;
 
+import com.google.inject.Inject;
+import de.zib.gndms.infra.system.SystemInfo;
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.logic.model.gorfx.PermissionDeniedORQException;
@@ -27,9 +29,11 @@ public class ExternalProviderStageInORQCalculator extends AbstractProviderStageI
 	private static final int INITIAL_STRING_BUILDER_CAPACITY = 4096;
 
 
+	private SystemInfo sysInfo;
+
 	public ExternalProviderStageInORQCalculator( ) {
         super( );
-        this.parmAux = new ParmFormatAux();
+		parmAux = new ParmFormatAux();
     }
 
 
@@ -55,6 +59,7 @@ public class ExternalProviderStageInORQCalculator extends AbstractProviderStageI
     }
 
 
+    @SuppressWarnings({ "HardcodedLineSeparator" })
     private TransientContract createOfferViaEstScript(
             final File estCommandFileParam, final TransientContract contParam) {
         ProcessBuilderAction action = createEstAction(estCommandFileParam, contParam);
@@ -85,6 +90,7 @@ public class ExternalProviderStageInORQCalculator extends AbstractProviderStageI
         final @NotNull ProcessBuilder pb = new ProcessBuilder();
         try {
             pb.command(estCommandFileParam.getCanonicalPath());
+	        pb.directory(new File(getSysInfo().getSystemTempDirName()));
         }
         catch (IOException e) {
             throw new IllegalStateException(e);
@@ -97,4 +103,15 @@ public class ExternalProviderStageInORQCalculator extends AbstractProviderStageI
         action.setErrorReceiver(new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY));
         return action;
     }
+
+
+	public SystemInfo getSysInfo() {
+		return sysInfo;
+	}
+
+
+	@Inject
+	public void setSysInfo(final @NotNull SystemInfo sysInfoParam) {
+		sysInfo = sysInfoParam;
+	}
 }

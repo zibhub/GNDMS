@@ -2,7 +2,7 @@ package de.zib.gndms.infra.system;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
-import de.zib.gndms.GNDMSInfo;
+import de.zib.gndms.GNDMSVerInfo;
 import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
 import de.zib.gndms.kit.access.EMFactoryProvider;
@@ -85,6 +85,7 @@ public final class GNDMSystem
 	private @NotNull EntityManagerFactory emf;
 	private @NotNull EntityManagerFactory restrictedEmf;
 	private NetworkAuxiliariesProvider netAux;
+
 
 	// Outside injector
 	private @NotNull GroovyMoniServer groovyMonitor;
@@ -189,9 +190,20 @@ public final class GNDMSystem
 	}
 
 
+	@SuppressWarnings({ "ValueOfIncrementOrDecrementUsed", "MagicNumber" })
 	private void printVersion() {
-		final GNDMSInfo info = new GNDMSInfo();
-		logger.info("GNDMS: " + info.readRelease() + " BUILD: " + info.readBuildInfo());
+		final GNDMSVerInfo verInfo = new GNDMSVerInfo();
+		final String releaseInfo = verInfo.readRelease();
+		final String curBuildInfo = verInfo.readBuildInfo();
+		int maxSize = Math.max(releaseInfo.length(), curBuildInfo.length()) + 14;
+		final StringBuilder builder = new StringBuilder(maxSize);
+		while (maxSize-- >= 0)
+			builder.append('=');
+		final String hrString = builder.toString();
+		logger.warn(hrString);
+		logger.warn("GNDMS RELEASE: " + releaseInfo);
+		logger.warn("GNDMS BUILD: " + curBuildInfo);
+		logger.warn(hrString);
 	}
 
 

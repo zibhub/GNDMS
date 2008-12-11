@@ -111,7 +111,8 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
             csa.setSliceKind(kind);
             final Slice slice = csa.execute(getEntityManager());
             setSliceId(slice.getId());
-            txf.commit();
+            throw new NullPointerException( );
+            //txf.commit();
         }
         finally { txf.finish();  }
     }

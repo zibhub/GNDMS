@@ -77,7 +77,7 @@ abstract class AbstractTask extends TimedGridResource {
     @Column(name="max_progress", nullable=false, updatable=false)
     int maxProgress = 100
 
-    @Column(name="orq", nullable=false, updatable=false)
+    @Column(name="orq", nullable=false, updatable=true)
     @Basic Serializable orq
 
 
@@ -133,6 +133,8 @@ abstract class AbstractTask extends TimedGridResource {
 	}
 
     def void mold(final @NotNull AbstractTask instance) {
+        instance.id = id
+        instance.terminationTime = terminationTime
         instance.description = description
         instance.wid = wid
         instance.faultString = faultString

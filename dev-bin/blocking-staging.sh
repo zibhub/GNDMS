@@ -1,10 +1,16 @@
 #!/bin/bash
 
-# complet runtime is 6s * DUR
-DUR=10
+# complet runtime is 5s * DUR
+
+if [ "$#" -ne 1 ]; then
+    DUR=12
+else 
+    DUR=$1
+fi
 
 i=0
-while [ "$i" -le "$DUR"  ]; do
+while [ "$i" -lt "$DUR"  ]; do
     echo -n z
-    sleep 6
+    sleep 5
+    let i++
 done
