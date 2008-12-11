@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# This doesnt work on BSD and MAC out of the box due to an
+# incompatible "expr" tool
+#
+# Only works on Linux!
+
+
 sfr="$(cat - )"
 
 extFn() {

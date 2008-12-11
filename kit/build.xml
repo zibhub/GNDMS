@@ -16,6 +16,13 @@
 		<pathelement location="${tools-lib.dir}/joda-time-1.5.2.jar"/> 
 		<pathelement location="${tools-lib.dir}/args4j-2.0.9.jar"/>
 		<pathelement location="${tools-lib.dir}/google-collect-snapshot-20080820.jar"/> 
+                <pathelement location="${tools-lib.dir}/guice-snapshot20081123.jar"/>
+                <pathelement location="${tools-lib.dir}/guice-assistedinject-snapshot20081123.jar"/>
+                <pathelement location="${tools-lib.dir}/guice-multibindings-snapshot20081123.jar"/>
+                <pathelement location="${tools-lib.dir}/guice-throwingproviders-snapshot20081123.jar"/>
+                <pathelement location="${tools-lib.dir}/asm-3.1.jar"/>
+                <pathelement location="${tools-lib.dir}/cglib-2.2.jar"/>
+
 
 		
 		<!--pathelement location="globus.lib"/-->
