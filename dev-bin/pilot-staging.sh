@@ -24,7 +24,9 @@
 val=24
 # reduce val to force the task to kill itself
 # use it together with task_kill_contract
-#val=3
+# depending on cpu power and container state
+# this haven't allway to work
+val=3
 exec $(dirname $0)/blocking-staging.sh $val 
 
 #
