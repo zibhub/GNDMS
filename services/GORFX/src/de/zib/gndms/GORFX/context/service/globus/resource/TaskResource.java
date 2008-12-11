@@ -5,8 +5,8 @@ import de.zib.gndms.GORFX.context.stubs.TaskResourceProperties;
 import de.zib.gndms.infra.model.GridResourceModelHandler;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.logic.model.TaskAction;
-import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.AbstractTask;
+import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.model.util.TxFrame;
 import de.zib.gndms.typecon.common.GORFXClientTools;
@@ -15,19 +15,18 @@ import de.zib.gndms.typecon.common.type.FileTransferResultXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.ProviderStageInResultXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.RePublishSliceResultXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.SliceStageInResultXSDTypeWriter;
+import org.apache.commons.logging.Log;
 import org.globus.wsrf.InvalidResourceKeyException;
 import org.globus.wsrf.NoSuchResourceException;
 import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.ResourceKey;
 import org.jetbrains.annotations.NotNull;
-import org.apache.commons.logging.Log;
 import types.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.io.Serializable;
 import java.util.concurrent.Future;
-import java.rmi.RemoteException;
 
 
 /**

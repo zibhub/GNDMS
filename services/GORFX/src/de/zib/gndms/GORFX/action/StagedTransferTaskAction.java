@@ -112,8 +112,8 @@ public class StagedTransferTaskAction extends ORQTaskAction<SliceStageInORQ> {
 
             // perform transfer
             InterSliceTransferTaskAction ista = new InterSliceTransferTaskAction( );
-            ista.initFromModel( getEntityManager(), interSliceTransfer );
-            ista.setClosingEntityManagerOnCleanup( false );
+            ista.initFromModel( getEmf().createEntityManager(), interSliceTransfer );
+            ista.setClosingEntityManagerOnCleanup( true );
             ista.call( );
 
             res_slice = ist_orq.getDestinationSlice();

@@ -1,6 +1,5 @@
 package de.zib.gndms.kit.config;
 
-import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import org.jetbrains.annotations.NotNull;
 
 
