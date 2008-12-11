@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SCRIPTDIR="$(dirname $0)" 
+SCRIPTDIR="$(dirname $0)/" 
 
 cd $SCRIPTDIR/..
 source internal/script-setup.sh

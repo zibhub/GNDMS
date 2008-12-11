@@ -7,6 +7,7 @@ import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.model.util.TxFrame;
+import de.zib.gndms.model.util.EntityManagerAux;
 import de.zib.gndms.stuff.copy.Copier;
 import org.apache.commons.logging.Log;
 import org.jetbrains.annotations.NotNull;
@@ -15,8 +16,11 @@ import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+import javax.persistence.EntityManagerFactory;
 import java.io.Serializable;
 import java.util.GregorianCalendar;
+
+import com.google.inject.Inject;
 
 
 /**
@@ -351,38 +355,16 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
         }
     }
 
+
     @SuppressWarnings( { "CaughtExceptionImmediatelyRethrown", "ThrowableInstanceNeverThrown" } )
     private void transit(final TaskState newState) {
 
-        final EntityManager em = getEntityManager();
+        EntityManager em = getEntityManager();
         @NotNull AbstractTask model = getModel();
 
-        // check the task lifetime
-        if( model.getTerminationTime().compareTo( new GregorianCalendar( ) ) < 1 ) {
-            getLog().debug(  "Task lifetime exceeded" );
-            TxFrame tx = new TxFrame( em );
-            boolean containt = false;
-            try {
-                // check if model is still there?
-                containt = em.contains( model );
-                if( containt ) {
-                    model.fail( new RuntimeException( "Task lifetime exceeded" ) );
-                    getLog().debug(  "Try to persist task" );
-                }
-                tx.commit( );
-            } catch ( Exception e ) {
-                // exception here  doesn't really matter
-                // task is doomed anyway
-                e.printStackTrace(  );
-            } finally {
-                tx.finish();
-            }
-            // interrupt this thread
-            getLog().debug(  "Stopping task thread" );
-            //Thread.currentThread().interrupt();
-            if( containt ) refreshTaskResource();
-            stop( model );
-        }
+        // this throws a stop exception on timeout
+        if(! ( TaskState.FINISHED.equals( newState ) || TaskState.FAILED.equals( newState ) ) )
+            checkTimeout( model, em );
 
         try {
             em.getTransaction().begin();
@@ -407,22 +389,54 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
                         }
                     }
                 }
+
             model.transit(newState);
+
+            boolean commited = false;
             try {
                 em.getTransaction().commit();
-                // if model could be commited it has a clean state
-                // refresh backup
-                setBackup( Copier.copy( false, model ) );
+//                em.flush( );
+                commited = true;
             } catch ( Exception e ) {
-                rewindTransaction(em.getTransaction());
-                // if this point is reached s.th. is terribly foobared
-                // restore backup and fail
-                model = Copier.copy( false, backup );
-                em.merge( model );
-                // backup should be clean so commit mustn't fail.
-                em.getTransaction().commit();
-                model.fail( e );
+                try {
+                    rewindTransaction(em.getTransaction());
+                    // if this point is reached s.th. is terribly foobared
+                    // restore backup and fail
+                    model = Copier.copy( false, backup );
+                    em.merge( model );
+                    // backup should be clean so commit mustn't fail.
+                    model.fail( e );
+                    em.getTransaction().commit();
+                } catch ( Exception e2 ) {
+                    // refresh em for final commit
+                    EntityManagerAux.rollbackAndClose( em );
+                    EntityManager nem = emf.createEntityManager();
+                    TxFrame tx = new TxFrame( nem );
+                    try {
+                        model = nem.find( model.getClass( ), backup.getId() );
+                        boolean unkown = ( model == null );
+                        model = Copier.copy( false, backup );
+                        model.fail( e2 );
+                        if( unkown )
+                            nem.persist( model );
+                   //     else
+                   //         nem.merge( model );
+                        tx.commit();
+                        setModel( model );
+                    } catch ( RuntimeException e3 ) {
+                        throw e3;
+                    } finally {
+                        tx.finish();
+                        setOwnEntityManager( nem );
+                        em = nem;
+                    }
+                }
             }
+
+            // if model could be commited it has a clean state
+            // refresh backup
+            if( commited )
+                setBackup( Copier.copy( false, model ) );
 
             final TaskState modelState = model.getState();
             refreshTaskResource();
@@ -491,7 +505,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
 
 
     protected final void onFailed(final @NotNull AbstractTask model) {
-        cleanUpOnFail( model );
+        tryCleanup( model );
         stop(model);
     }
 
@@ -572,6 +586,37 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     }
 
 
+    private void checkTimeout( @NotNull AbstractTask model, @NotNull EntityManager em ) {
+
+        // check the task lifetime
+        if( model.getTerminationTime().compareTo( new GregorianCalendar( ) ) < 1 ) {
+            getLog().debug(  "Task lifetime exceeded" );
+            TxFrame tx = new TxFrame( em );
+            boolean containt = false;
+            try {
+                // check if model is still there
+                containt = em.contains( model );
+                if( containt ) {
+                    model.fail( new RuntimeException( "Task lifetime exceeded" ) );
+                    getLog().debug(  "Try to persist task" );
+                }
+                tx.commit( );
+            } catch ( Exception e ) {
+                // exception here  doesn't really matter
+                // task is doomed anyway
+                e.printStackTrace(  );
+            } finally {
+                tx.finish();
+            }
+            // interrupt this thread
+            getLog().debug(  "Stopping task thread" );
+            //Thread.currentThread().interrupt();
+            if( containt ) refreshTaskResource();
+            fail( new RuntimeException( "Task lifetime exceeded" ) );
+        }
+    }
+
+
 	@Override
 	public EntityManager getEntityManager() {
 		return getOwnEntityManager();
@@ -587,4 +632,20 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
 	public void setEmf(final @NotNull EntityManagerFactory emfParam) {
 		emf = emfParam;
 	}
+
+
+    /**
+     * Tries to call the cleanUpOnFailed for the model, catches and logs possible exceptions
+     *
+     * @param model The task to clean.
+     */
+    public void tryCleanup( @NotNull AbstractTask model )  {
+
+        try{
+            cleanUpOnFail( model );
+        } catch ( Exception e ) {
+            // don' throw them again
+            getLog().debug( "Exception on task cleanup: " + e.toString() );
+        }
+    }
 }

@@ -133,6 +133,8 @@ abstract class AbstractTask extends TimedGridResource {
 	}
 
     def void mold(final @NotNull AbstractTask instance) {
+        instance.id = id
+        instance.terminationTime = terminationTime
         instance.description = description
         instance.wid = wid
         instance.faultString = faultString

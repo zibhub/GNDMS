@@ -217,11 +217,9 @@ public class TaskResource extends TaskResourceBase
 
 
     public void loadFromModel( @NotNull Task model ) throws ResourceException {
-        // Not required here
-        // cause we override the getters.
-        // throw new UnsupportedOperationException( "task resource is readonly" );
 
-        // required getter overriding isn't enough
+        // Not required here cause we override the getters.
+        // getter overriding isn't enough
         setTaskExecutionState( getTaskExecutionState() );
         setTerminationTime( taskAction.getModel().getTerminationTime() );
         setTaskExecutionFailure( getTaskExecutionFailure() );
@@ -291,9 +289,8 @@ public class TaskResource extends TaskResourceBase
             AbstractTask tsk = taskAction.getModel();
             boolean cleanUp = false;
             if( tsk != null ) {
-                if ( ! ( taskAction.getModel().getState().equals( TaskState.FAILED )
-                    || taskAction.getModel().getState().equals( TaskState.FINISHED ) ) )
-                { // task is still running cancel it and cleanup entity manager
+                if ( ! tsk.isDone() ) {
+                    // task is still running cancel it and cleanup entity manager
                     log.debug( "cancel task " + tsk.getWid() );
                     cleanUp = true;
                     future.cancel( true );

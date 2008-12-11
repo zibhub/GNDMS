@@ -10,8 +10,11 @@ import de.zib.gndms.kit.application.AbstractApplication;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQConverter;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyReader;
+import de.zib.gndms.model.gorfx.types.io.ContractPropertyReader;
+import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.typecon.common.GORFXTools;
 import de.zib.gndms.typecon.common.type.ProviderStageInORQXSDTypeWriter;
+import de.zib.gndms.typecon.common.type.ContractXSDTypeWriter;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI;
 import org.globus.wsrf.NoSuchResourceException;
@@ -20,6 +23,7 @@ import org.globus.wsrf.encoding.ObjectDeserializer;
 import org.joda.time.DateTime;
 import org.kohsuke.args4j.Option;
 import org.oasis.wsrf.properties.GetResourcePropertyResponse;
+import org.oasis.wsrf.properties.ResourceUnknownFaultType;
 import types.*;
 
 import java.io.File;
@@ -27,6 +31,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Properties;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 
 /**
@@ -47,8 +53,11 @@ public class ProviderStageInClient extends AbstractApplication {
     private String gorfxEpUrl;
     @Option( name="-props", required=true, usage="staging.properties" )
     private String sfrPropFile;
+    @Option( name="-con-props", usage="contract.properties" )
+    private String conPropFile;
     @Option( name="-dn", required=true, usage="DN" )
     private String dn;
+    private TransientContract contract;
 
     @SuppressWarnings({ "UseOfSystemOutOrSystemErr" })
     public static void main(String[] args) throws Exception {
@@ -72,6 +81,9 @@ public class ProviderStageInClient extends AbstractApplication {
 
         // Load SFR from Props and convert to XML objects
         final ProviderStageInORQT xsdArgs = loadSFRFromProps(sfrPropFile);
+
+        if( conPropFile !=  null )
+            contract = ContractPropertyReader.readFromFile( conPropFile );
 
         // Open GORFX and create ORQ
         final EndpointReferenceType orqEPR = createORQ(gorfxEpUrl, xsdContext, xsdArgs);
@@ -107,6 +119,9 @@ public class ProviderStageInClient extends AbstractApplication {
 	        catch (NoSuchResourceException nre) {
 		        failed = true;
 	        }
+            catch ( ResourceUnknownFaultType rfe ) {
+                failed = true;
+            }
 	        catch (Exception re) {
 		        re.printStackTrace(System.err);
 		        taskClient = null;
@@ -159,25 +174,18 @@ public class ProviderStageInClient extends AbstractApplication {
     }
 
 
-    private static EndpointReferenceType createOffer(
+    private EndpointReferenceType createOffer(
             final ContextT xsdContextParam, final EndpointReferenceType orqEPRParam)
             throws URI.MalformedURIException, RemoteException {
         final ORQClient orqPort = new ORQClient(orqEPRParam);
 
-	    final OfferExecutionContractT xsdOfferContract = new OfferExecutionContractT();
+        OfferExecutionContractT xsdOfferContract;
 
-	    xsdOfferContract.setIfDecisionBefore( new DateTime().plusHours(1).toGregorianCalendar() );
+        if( contract == null )
+            xsdOfferContract = createContract();
+        else
+            xsdOfferContract = ContractXSDTypeWriter.write( contract );
 
-		final FutureTimeT execLikelyUntil = new FutureTimeT();
-
-        long day = 24*60*60*1000;
-        //long day = 5*1000;
-        execLikelyUntil.setOffset( day );
-	    xsdOfferContract.setExecutionLikelyUntil( execLikelyUntil );
-
-		final FutureTimeT resultValidity = new FutureTimeT();
-        resultValidity.setOffset( 2*day );
-	    xsdOfferContract.setResultValidUntil( resultValidity );
 
         return orqPort.getOfferAndDestroyRequest(xsdOfferContract, xsdContextParam);
     }
@@ -217,5 +225,24 @@ public class ProviderStageInClient extends AbstractApplication {
         return orqtWriter.getProduct();
     }
 
+    private static OfferExecutionContractT createContract ( ) {
+
+        final OfferExecutionContractT xsdOfferContract = new OfferExecutionContractT();
+
+        xsdOfferContract.setIfDecisionBefore( new DateTime().plusHours(1).toGregorianCalendar() );
+
+        final FutureTimeT execLikelyUntil = new FutureTimeT();
+
+        long day = 24*60*60*1000;
+        //long day = 5*1000;
+        execLikelyUntil.setOffset( day );
+        xsdOfferContract.setExecutionLikelyUntil( execLikelyUntil );
+
+        final FutureTimeT resultValidity = new FutureTimeT();
+        resultValidity.setOffset( 2*day );
+        xsdOfferContract.setResultValidUntil( resultValidity );
+
+        return xsdOfferContract;
+    }
 
 }
