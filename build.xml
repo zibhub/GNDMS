@@ -34,7 +34,7 @@
 
 
 	<!-- To avoid problems import just the following libaries -->
-	<!--fileset dir="${env.GLOBUS_LOCATION}/lib" includesfile="globus_jars.txt" id="globus.lib"/-->
+	<!--fileset dir="${env.GLOBUS_LOCATION}/lib" includesfile="etc/globus_jar.deps" id="globus.lib"/-->
 	
 	<!-- To avoid problems import just the following libaries -->
 	<fileset dir="${env.GLOBUS_LOCATION}/lib" id="globus.lib">
