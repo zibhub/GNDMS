@@ -1,91 +1,81 @@
-<project name="stuff compilation file" default="stuff.compile" basedir=".">
+<project name="stuff compilation file" default="jar" basedir=".">
 	
-
+	<property name="c3grid.basedir"  value=".."/>
+	<property file="${c3grid.basedir}/c3grid.properties"/>
+	<property file="${c3grid.basedir}/c3grid.deps"/>
+	<property file="stuff.properties"/>
+	
 	<path id="stuff.path">
-		
-		<pathelement location="${tools-lib.dir}/gndms-groovy.jar"/>
-		<pathelement location="${tools-lib.dir}/annotations.jar"/>
-		<dirset dir="${stuff.dest}/production"/>
-		<pathelement location="${tools-lib.dir}/google-collect-snapshot-20080820.jar"/>
-		<pathelement location="${tools-lib.dir}/guice-snapshot20081123.jar"/>
-		<pathelement location="${tools-lib.dir}/guice-assistedinject-snapshot20081123.jar"/>
-		<pathelement location="${tools-lib.dir}/guice-multibindings-snapshot20081123.jar"/>
-		<pathelement location="${tools-lib.dir}/guice-throwingproviders-snapshot20081123.jar"/>
-		<pathelement location="${tools-lib.dir}/asm-3.1.jar"/>
-		<pathelement location="${tools-lib.dir}/cglib-2.2.jar"/>
-
-		
-         	<!--fileset dir="${tools-lib.dir}" includes="*.jar" /-->
-		
-
-		
+		<pathelement path="${GROOVY}"/>
+		<pathelement path="${annotations}"/>
+		<dirset dir="${stuff.classes.dest}"/>
+		<pathelement path="${collections}"/>
+		<pathelement path="${guice}"/>		
 	</path>
 	<!-- Compile stuff, but not its test-files -->
-	<target name="stuff.compile" description="Compiles stuff">
+	<target name="compile" description="Compiles stuff">
 		<!-- Copy Meta files to build dir-->
-		<copy todir="${stuff.dest}/production">
-			<fileset dir='${stuff.dir}/src'>
+		<copy todir="${stuff.classes.dest}">
+			<fileset dir='src'>
 				<exclude name="de/**"/>
 			</fileset>
 		</copy>
 		
-		<javac srcdir='${stuff.dir}/src' destdir='${stuff.dest}/production' classpathref="stuff.path" debug="${javac.debug}"/>
+		<javac srcdir='src' destdir='${stuff.classes.dest}' classpathref="stuff.path" debug="${javac.debug}"/>
 
 	</target>
 	
 	
 	<!-- Creates jar containing stuff's test-classfiles-->
-	<target name="stuff.test.jar"  depends="stuff.compile.test" description="Creates jar file gndms-stuff-test.jar in 'extra/lib'">
+	<target name="jar.test"  depends="compile.test" description="Creates jar file gndms-stuff-test.jar in 'extra/lib'">
 		
-		<jar destfile="./${lib.dir}/gndms-stuff-test.jar"
-		     basedir="${stuff.dest}/test">
+		<jar destfile="${gndms-stuff-test}"
+		     basedir="${stuff.test.classes.dest}">
 		</jar>
 	</target>
 	
 	<!-- Creates jar containing stuff's classfiles-->
-	<target name="stuff.jar" depends="stuff.compile" description="Creates jar file gndms-stuff.jar in 'extra/lib'">
-
-		<jar destfile="./${lib.dir}/gndms-stuff.jar"
-		     basedir="${stuff.dest}/production">
+	<target name="jar" depends="compile" description="Creates jar file gndms-stuff.jar in 'extra/lib'">
+		<jar destfile="${stuff}"
+		     basedir="${stuff.classes.dest}">
 		</jar>
 	</target>
 	
 	<path id="stuff.test.path">
-		<pathelement location="${lib.dir}/gndms-stuff.jar"/>
-		<fileset dir="${tools-lib.dir}" includes="*.jar" />
-		<fileset refid="globus.lib"/>
-		<dirset dir="${model.dest}/test"/>
+		<pathelement location="${stuff}"/>
+		<path refid="stuff.path"/>
 	</path>
 	
 	<!-- Compile stuff's test-classes-->
-	<target name="stuff.compile.test" description="Compiles stuff's test-files">
+	<target name="compile.test" description="Compiles stuff's test-files">
 
 			
-		<mkdir dir="./${stuff.dest}/test"/>
+		<mkdir dir="${stuff.test.classes.dest}"/>
 		
-		<javac srcdir='${stuff.dir}/test-src' destdir='${stuff.dest}/test' classpathref="stuff.test.path" includes="**/*" debug="${javac.debug}">
+		<javac srcdir='test-src' destdir='${stuff.test.classes.dest}' classpathref="stuff.test.path" includes="**/*" debug="${javac.debug}">
 		</javac>
 		
 		<!-- Copy Meta files to build dir-->
-		<copy todir="${stuff.dest}/test">
-			<fileset dir='${stuff.dir}/test-src'>
+		<copy todir="${stuff.test.classes.dest}">
+			<fileset dir='test-src'>
 				<exclude name="de/**"/>
 			</fileset>
 		</copy>
 	</target>
 	
 	<!-- Deletes binaries and jar-files -->
-	<target name="stuff.clean" description="Deletes stuff's binaries">
+	<target name="clean" description="Deletes stuff's binaries">
 		<delete includeemptydirs="true" >
-			<fileset dir='${stuff.dest}/production' includes="**/*.class"/>
-			<fileset dir='${stuff.dest}/test' includes="**/*.class"/>
+			<fileset dir='${stuff.classes.dest}' includes="**/*.class"/>
+			<fileset dir='${stuff.test.classes.dest}' includes="**/*.class"/>
 			
 		</delete>
 	</target>
 	
 	<!-- Deletes jar-files -->
-	<target name="stuff.clean.jar" description="Deletes stuff's jar-file">
-		<delete file='${lib.dir}/gndms-stuff.jar'/>
+	<target name="clean.jar" description="Deletes stuff's jar-file" depends="clean">
+		<delete file='${stuff}'/>
+		<delete file='${gndms-stuff-test}'/>
 	</target>
 </project>
 	

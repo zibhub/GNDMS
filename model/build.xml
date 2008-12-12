@@ -1,11 +1,11 @@
-<project name="model compilation file" default="model.compile">
+<project name="model compilation file" default="compile" basedir=".">
 	
-	
+	<property name="c3grid.basedir"  value=".."/>
+	<property file="${c3grid.basedir}/c3grid.properties"/>
+	<property file="${c3grid.basedir}/c3grid.deps"/>	
 	<property file="model.properties"/>
-	<property file="../c3grid.properties"/>
-	<property file="../c3grid.deps"/>	
 	
-	<property name="javac.debug" value="true"/>
+	
 	<path id="model.path">
 		<pathelement path="${GROOVY}"/> 
 		<pathelement path="${annotations}"/> 
@@ -18,6 +18,7 @@
 		<pathelement path="${jaxb}"/>
 		<pathelement path="${CXF}"/>
 		<pathelement path="${apache-commons}"/>
+		<pathelement path="${guice}"/>		
 	</path>
 	
 	<path id="groovy.path">
@@ -30,13 +31,13 @@
 	<!-- Compile model, but not its test-files -->
 	<target name="compile" description="Compiles model">
 
-		<mkdir dir="${model.compdest}"/>
+		<mkdir dir="${model.dest.class}"/>
 		
-		<groovyc srcdir="src" destdir='${model.compdest}' classpathref="model.path" >
+		<groovyc srcdir="src" destdir='${model.dest.class}' classpathref="model.path" >
 			<javac debug="${javac.debug}"/>
 		</groovyc>	
 		<!-- Copy Meta files to build dir-->
-		<copy todir="${model.compdest}" >
+		<copy todir="${model.dest.class}" >
 			<fileset dir="src/">
 				<exclude name="de/**"/>
 			</fileset>
@@ -50,12 +51,12 @@
 	
 	<!-- Compile model's test-files -->
 	<target name="model.compile.test" description="Compiles model test-files">
-		<mkdir dir="test"/>
+		<mkdir dir="${model.dest.class.test}"/>
 		<javac srcdir='test-src' destdir='test' classpathref="model.test.path" debug="${javac.debug}">
 			
 		</javac>
 		<!-- Copy Meta files to build dir-->
-		<copy todir="test/" >
+		<copy todir="${model.dest.class.test}" >
 			<fileset dir="test-src/">
 				<exclude name="de/**"/>
 			</fileset>
@@ -64,29 +65,29 @@
 
 	<!-- Creates jar-file containing model's test-classes-->
 	<target name="model.test.jar" depends="model.compile.test" description="Creates jar file gndms-shared-model-test.jar in 'extra/lib'">	
-		<jar destfile="${lib.dir}/gndms-shared-model-test.jar"
-		     basedir="test">
+		<jar destfile="${gndms-shared-model-test.jar}"
+		     basedir="${model.dest.class.test}">
 		</jar>
 	</target>
 	
 	<!-- Creates jar-file containing model's classes -->
 	<target name="model.jar" depends="compile" description="Creates jar file gndms-shared-model.jar in 'extra/lib'">	
-		<jar destfile="${lib.dir}/gndms-shared-model.jar"
-		     basedir="${model.dest}/production">
+		<jar destfile="${gndms-shared-model}"
+		     basedir="${model.dest.class}">
 		</jar>
 	</target>
 	<!-- Deletes classfiles-->
 	<target name="model.clean" description="Deletes model's classfiles">
 		<delete includeemptydirs="true" >
-			<fileset dir='gndms-shared-model/production/' includes="**/*.class"/>
-			<fileset dir='gndms-shared-model//test/' includes="**/*.class"/>
+			<fileset dir='${model.dest.class}' includes="**/*.class"/>
+			<fileset dir='${model.dest.class.test}' includes="**/*.class"/>
 		</delete>
 	</target>
 	
 	<!-- Deletes  jar-files -->
 	<target name="model.clean.jar" description="Deletes model's jar-files">
-		<delete file='${lib.dir}/gndms-shared-model.jar'/>
-		<delete file='${lib.dir}/gndms-shared-model-test.jar'/>
+		<delete file='${gndms-shared-model}'/>
+		<delete file='${gndms-shared-model.jar}'/>
 	</target>
 	
 	<target name="model.enhancer">

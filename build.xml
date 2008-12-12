@@ -11,7 +11,7 @@
 	<property name="build-lib.dir" value="extra/build-lib" />
 	<property name="lib.dir" value="extra/lib" />
 	
-	
+	<property name="c3grid.basedir" value="${basedir}"/>
 	<property file="c3grid.properties"/>
 	<property file="c3grid.deps"/>
 	
@@ -139,12 +139,12 @@
 	</taskdef>
 		
 	<!-- Import deployment file of each package-->
-	<import file="${model.dir}/build.xml"/>	
+	<!--import file="${model.dir}/build.xml"/>	
 	<import file="${kit.dir}/build.xml"/>
 	<import file="${logic.dir}/build.xml"/>
 	<import file="${infra.dir}/build.xml"/>
 	<import file="${typecon.dir}/build.xml"/>
-	<import file="${stuff.dir}/build.xml"/>
+	<import file="${stuff.dir}/build.xml"/-->
 
 	<path id="groovy.path">
 		<pathelement location="${gndms-groovy}"/>
@@ -183,13 +183,13 @@
 
 	<!-- Creates jar's for every service (class files will be created if not already done)-->
 	<target name="compile.src" description="Creates jar files for every service, will be compiled if necessary">
-		<runtarget target="stuff.jar"/>
-		<ant target="model.jar"/>
+		<ant antfile="${stuff.dir}/build.xml" inheritALL="false"/>
+		<!--ant target="model.jar"/>
 		<antcall target="enhance" />
 		<runtarget target="kit.jar"/>
 		<runtarget target="logic.jar"/>
 		<runtarget target="typecon.jar"/>
-		<runtarget target="infra.jar"/>
+		<runtarget target="infra.jar"/-->
 	</target>
 	
 	<target name="ziptest">
