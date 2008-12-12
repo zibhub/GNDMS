@@ -13,6 +13,7 @@
 	
 	
 	<property file="c3grid.properties"/>
+	<property file="c3grid.deps"/>
 	
 	
 	

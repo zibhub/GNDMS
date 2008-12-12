@@ -3,6 +3,7 @@
 	
 	<property file="model.properties"/>
 	<property file="../c3grid.properties"/>
+	<property file="../c3grid.deps"/>	
 	
 	<property name="javac.debug" value="true"/>
 	<path id="model.path">
@@ -20,6 +21,7 @@
 	<path id="groovy.path">
 		<pathelement path="${gndms-groovy}"/>
 	</path>
+	
 	<!-- using groovc as groovy compiler in ant-->
 	<taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" classpathref="groovy.path" />
 	
