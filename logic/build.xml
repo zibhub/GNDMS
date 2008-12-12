@@ -33,7 +33,6 @@
         <pathelement location="${tools-lib.dir}/guice-throwingproviders-snapshot20081123.jar"/>
         <pathelement location="${tools-lib.dir}/asm-3.1.jar"/>
         <pathelement location="${tools-lib.dir}/cglib-2.2.jar"/>
-		
         <!--fileset dir="${tools-lib.dir}" includes="*.jar" /-->
 		
 
@@ -124,6 +123,7 @@
 	<!-- Deletes jar-files -->
 	<target name="logic.clean.jar" description="Deletes logic's jar-file">
 		<delete file='${lib.dir}/gndms-logic.jar'/>
+		<delete file='${lib.dir}/gndms-logic-test.jar'/>
 	</target>
 </project>
 	

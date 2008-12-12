@@ -80,5 +80,6 @@
 	<!-- Deletes jar-files -->
 	<target name="typecon.clean.jar" description="Deletes typecon's jar-file">
 		<delete file='${lib.dir}/gndms-typecon.jar'/>	
+		<delete file='${lib.dir}/gndms-typecon-test.jar'/>	
 	</target>
 </project>

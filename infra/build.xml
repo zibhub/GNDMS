@@ -123,6 +123,7 @@
 	
 	<!-- Deletes jar-file-->
 	<target name="infra.clean.jar" description="Deletes infra's jar-file">
-		<delete file='${lib.dir}/gndms-infra.jar'/>		
+		<delete file='${lib.dir}/gndms-infra.jar'/>	
+		<delete file='${lib.dir}/gndms-infra-test.jar'/>
 	</target>
 </project>

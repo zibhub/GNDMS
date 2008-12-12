@@ -37,11 +37,16 @@
     <copy file="src/META-INF/GNDMS-RELEASE" tofile="gndms-shared-model/production/META-INF/GNDMS-RELEASE" overwrite="true" />
 
 	<openjpac directory="${basedir}/gndms-shared-model/production">
+
 		<config propertiesFile="src/META-INF/persistence.xml" />
         
 		<classpath>
 			<pathelement location="${basedir}/gndms-shared-model/production" />
+<<<<<<< local
 			<pathelement location="${basedir}/../stuff/gndms-stuff/production" />
+=======
+			<pathelement location="../stuff/gndms-stuff/production" />
+>>>>>>> other
 			<fileset refid="tooljars" />
 		</classpath>
 
