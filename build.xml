@@ -145,6 +145,14 @@
 	<!-- using groovc as groovy compiler in ant-->
 	<taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" classpathref="groovy.path" />
 	
+
+	<target name="prereqs" description="Ensure that we're running ant 1.7">
+        <fail message="Please install using ant 1.7">
+                <condition>
+                        <not><contains string="${ant.version}" substring="1.7"/></not>
+                </condition>
+        </fail>
+	</target>
 	
 	<!-- Sets all necessary settings and builds the whole project -->
 	<target name="compile" description="Sets all necessary settings and builds the whole project">
@@ -174,7 +182,7 @@
  	</target>
 
 	<!-- Creates jar's for every service (class files will be created if not already done)-->
-	<target name="compile.src" description="Creates jar files for every service, will be compiled if necessary">
+	<target name="compile.src" depends="prereqs" description="Creates jar files for every service, will be compiled if necessary">
 		<runtarget target="stuff.jar"/>
 		<ant target="model.jar"/>
 		<antcall target="enhance" />
