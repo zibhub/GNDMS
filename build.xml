@@ -324,7 +324,7 @@
 		<delete dir="tmp"/>
 		<mkdir dir="tmp"/>
 		<javac srcdir='services/GORFX/src' destdir='tmp' classpathref="gorfx.path" debug="${javac.debug}"/>
-		<jar destfile="${gorfx.dir}/GORFX.jar"
+		<jar destfile="${lib.dir}/GORFX.jar"
 		     basedir="tmp">
 		</jar>
 		<delete dir="tmp"/>
