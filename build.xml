@@ -266,16 +266,17 @@
 		<pathelement location="${dspace.dir}/lib/caGrid-ServiceSecurityProvider-stubs-1.2.jar"/> 
 		<pathelement location="${dspace.dir}/lib/castor-0.9.9.jar"/>
 		<pathelement location="${dspace.dir}/lib/jdom-1.0.jar"/>
-		<pathelement location="${tools-lib.dir}/geronimo-jpa_3.0_spec-1.0.jar"/>
-		<pathelement location="${tools-lib.dir}/geronimo-jta_1.1_spec-1.1.jar"/>
-		<pathelement location="${tools-lib.dir}/serp-1.13.1.jar"/>
-		<pathelement location="${tools-lib.dir}/openjpa-1.1.0.jar"/>
+                <pathelement location="${tools-lib.dir}/geronimo-jpa_2.0_spec-1.0-EA-SNAPSHOT.jar"/>
+                <pathelement location="${tools-lib.dir}/geronimo-jpa_3.0_spec-1.0.jar"/>
+                <pathelement location="${tools-lib.dir}/geronimo-jta_1.1_spec-1.1.jar"/>
+                <pathelement location="${tools-lib.dir}/serp-1.13.1.jar"/>
+                <pathelement location="${tools-lib.dir}/openjpa-2.0-SNAPSHOT.jar"/>
 		<pathelement location="${tools-lib.dir}/guice-snapshot20081123.jar"/>
 		<pathelement location="${tools-lib.dir}/guice-assistedinject-snapshot20081123.jar"/>
-        <pathelement location="${tools-lib.dir}/guice-multibindings-snapshot20081123.jar"/>
-        <pathelement location="${tools-lib.dir}/guice-throwingproviders-snapshot20081123.jar"/>
-        <pathelement location="${tools-lib.dir}/asm-3.1.jar"/>
-        <pathelement location="${tools-lib.dir}/cglib-2.2.jar"/>
+        	<pathelement location="${tools-lib.dir}/guice-multibindings-snapshot20081123.jar"/>
+        	<pathelement location="${tools-lib.dir}/guice-throwingproviders-snapshot20081123.jar"/>
+        	<pathelement location="${tools-lib.dir}/asm-3.1.jar"/>
+        	<pathelement location="${tools-lib.dir}/cglib-2.2.jar"/>
 		<fileset refid="globus.lib"/>
 	</path>
 	
@@ -301,10 +302,11 @@
 		<pathelement location="${gorfx.dir}/lib/caGrid-ServiceSecurityProvider-stubs-1.2.jar"/> 
 		<pathelement location="${gorfx.dir}/lib/castor-0.9.9.jar"/>
 		<pathelement location="${gorfx.dir}/lib/jdom-1.0.jar"/>
-		<pathelement location="${tools-lib.dir}/geronimo-jpa_3.0_spec-1.0.jar"/>
-		<pathelement location="${tools-lib.dir}/geronimo-jta_1.1_spec-1.1.jar"/>
-		<pathelement location="${tools-lib.dir}/serp-1.13.1.jar"/>
-		<pathelement location="${tools-lib.dir}/openjpa-1.1.0.jar"/>
+                <pathelement location="${tools-lib.dir}/geronimo-jpa_2.0_spec-1.0-EA-SNAPSHOT.jar"/>
+                <pathelement location="${tools-lib.dir}/geronimo-jpa_3.0_spec-1.0.jar"/>
+                <pathelement location="${tools-lib.dir}/geronimo-jta_1.1_spec-1.1.jar"/>
+                <pathelement location="${tools-lib.dir}/serp-1.13.1.jar"/>
+                <pathelement location="${tools-lib.dir}/openjpa-2.0-SNAPSHOT.jar"/>
 		<fileset refid="globus.lib"/>
 		<pathelement location="${lib.dir}/DSpace.jar"/>
 		<pathelement location="${tools-lib.dir}/args4j-2.0.9.jar"/>

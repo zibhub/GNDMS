@@ -33,10 +33,11 @@
 		<pathelement location="${tools-lib.dir}/jsr173_1.0_api.jar"/>
 		<pathelement location="${tools-lib.dir}/google-collect-snapshot-20080820.jar"/> 
 		<dirset dir="${infra.dest}/production/" />
-		<pathelement location="${tools-lib.dir}/geronimo-jpa_3.0_spec-1.0.jar"/>
-		<pathelement location="${tools-lib.dir}/geronimo-jta_1.1_spec-1.1.jar"/>
-		<pathelement location="${tools-lib.dir}/serp-1.13.1.jar"/>
-		<pathelement location="${tools-lib.dir}/openjpa-1.1.0.jar"/>
+                <pathelement location="${tools-lib.dir}/geronimo-jpa_2.0_spec-1.0-EA-SNAPSHOT.jar"/>
+                <pathelement location="${tools-lib.dir}/geronimo-jpa_3.0_spec-1.0.jar"/>
+                <pathelement location="${tools-lib.dir}/geronimo-jta_1.1_spec-1.1.jar"/>
+                <pathelement location="${tools-lib.dir}/serp-1.13.1.jar"/>
+                <pathelement location="${tools-lib.dir}/openjpa-2.0-SNAPSHOT.jar"/>
 		<pathelement location="${tools-lib.dir}/guice-snapshot20081123.jar"/>
 		<pathelement location="${tools-lib.dir}/guice-assistedinject-snapshot20081123.jar"/>
 		<pathelement location="${tools-lib.dir}/guice-multibindings-snapshot20081123.jar"/>

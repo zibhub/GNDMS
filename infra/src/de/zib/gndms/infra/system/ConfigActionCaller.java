@@ -158,9 +158,12 @@ public final class ConfigActionCaller implements ActionCaller, Module {
         action.getPostponedActions().setListener(updateListener);
         if (action instanceof SystemAction)
             ((SystemAction<?>)action).setSystem(system);
-        if (action instanceof HelpOverviewAction) {
-            ((HelpOverviewAction)action).setConfigActions(configActions);
-            ((HelpOverviewAction)action).setNameMapper(classToActionNameMapper);
+	    // Help Action required dynamic casting due to compiler bug in older 1.5 javac
+	    // regarding generics and instanceof
+        if (HelpOverviewAction.class.isInstance(action)) {
+	        HelpOverviewAction helpAction = HelpOverviewAction.class.cast(action);
+            helpAction.setConfigActions(configActions);
+            helpAction.setNameMapper(classToActionNameMapper);
         }
 		injector.injectMembers(action);
 
