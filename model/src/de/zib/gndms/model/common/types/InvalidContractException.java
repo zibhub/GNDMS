@@ -1,4 +1,7 @@
-package de.zib.gndms.model.common;
+package de.zib.gndms.model.common.types;
+
+import de.zib.gndms.model.common.PersistentContract;
+
 
 /**
  * @author: Maik Jorra <jorra@zib.de>

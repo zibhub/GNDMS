@@ -1,9 +1,10 @@
 package de.zib.gndms.GORFX.action.dms;
 
+import com.google.inject.Inject;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.system.SystemHolder;
-import de.zib.gndms.model.common.types.factory.AbstractRecursiveKeyFactory;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
+import de.zib.gndms.model.common.types.factory.InjectingRecursiveKeyFactory;
 import de.zib.gndms.model.gorfx.OfferType;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +15,8 @@ import org.jetbrains.annotations.NotNull;
  * <p/>
  * User: mjorra, Date: 04.11.2008, Time: 17:44:10
  */
-public class SliceStageInActionFactory  extends AbstractRecursiveKeyFactory<OfferType, ORQTaskAction<?>>
+public class SliceStageInActionFactory
+	  extends InjectingRecursiveKeyFactory<OfferType, ORQTaskAction<?>>
 	implements SystemHolder {
 
 	private GNDMSystem system;
@@ -26,6 +28,7 @@ public class SliceStageInActionFactory  extends AbstractRecursiveKeyFactory<Offe
 	}
 
 
+	@Inject
 	public void setSystem(@NotNull final GNDMSystem systemParam) {
 		system = systemParam;
 	}
@@ -34,7 +37,9 @@ public class SliceStageInActionFactory  extends AbstractRecursiveKeyFactory<Offe
 	@Override
     public ORQTaskAction<?> newInstance(final OfferType keyParam)
             throws IllegalAccessException, InstantiationException, ClassNotFoundException {
-        return new SliceStageInTaskAction();
+		final SliceStageInTaskAction stageInTaskAction = new SliceStageInTaskAction();
+		injectMembers(stageInTaskAction);
+		return stageInTaskAction;
     }
 
 }

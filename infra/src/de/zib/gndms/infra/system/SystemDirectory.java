@@ -1,8 +1,8 @@
 package de.zib.gndms.infra.system;
 
-import de.zib.gndms.model.access.InstanceProvider;
+import de.zib.gndms.kit.access.InstanceProvider;
 import de.zib.gndms.infra.access.ServiceHomeProvider;
-import de.zib.gndms.logic.model.access.TaskActionProvider;
+import de.zib.gndms.logic.access.TaskActionProvider;
 import de.zib.gndms.kit.config.ConfigletProvider;
 import de.zib.gndms.logic.model.gorfx.ORQCalculatorProvider;
 
@@ -17,7 +17,5 @@ import de.zib.gndms.logic.model.gorfx.ORQCalculatorProvider;
  */
 public interface SystemDirectory
 	  extends ConfigletProvider, ORQCalculatorProvider, TaskActionProvider, InstanceProvider,
-	  ServiceHomeProvider {
-
-	String getSystemName();
+	  ServiceHomeProvider, SystemInfo {
 }

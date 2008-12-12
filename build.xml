@@ -19,7 +19,7 @@
 	<property name="logic.dir" value="logic"/>
 	<property name="infra.dir" value="infra"/>
 	<property name="typecon.dir" value="typecon"/>
-    	<property name="stuff.dir" value="stuff"/>
+  	<property name="stuff.dir" value="stuff"/>
 	<property name="dspace.dir" value="services/DSpace" />
 	<property name="gorfx.dir" value="services/GORFX" />
 
@@ -33,7 +33,9 @@
 	<property name="stuff.dest" value="${stuff.dir}/gndms-stuff"/>
 
 
-
+	<!-- To avoid problems import just the following libaries -->
+	<!--fileset dir="${env.GLOBUS_LOCATION}/lib" includesfile="etc/globus_jar.deps" id="globus.lib"/-->
+	
 	<!-- To avoid problems import just the following libaries -->
 	<fileset dir="${env.GLOBUS_LOCATION}/lib" id="globus.lib">
 		<OR>
@@ -166,11 +168,16 @@
 		</exec>
 	</target>
 	
+
+	<target name="enhance">
+		<ant target="enhance" dir="${model.dir}" antfile="build-openjpa.xml" />
+ 	</target>
+
 	<!-- Creates jar's for every service (class files will be created if not already done)-->
 	<target name="compile.src" description="Creates jar files for every service, will be compiled if necessary">
 		<runtarget target="stuff.jar"/>
 		<ant target="model.jar"/>
-		<ant target="model.enhancer"/>
+		<antcall target="enhance" />
 		<runtarget target="kit.jar"/>
 		<runtarget target="logic.jar"/>
 		<runtarget target="typecon.jar"/>

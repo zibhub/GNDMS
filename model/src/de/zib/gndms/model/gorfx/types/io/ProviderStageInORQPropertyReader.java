@@ -5,7 +5,6 @@ import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
 import java.util.Properties;
 import java.io.InputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
@@ -36,9 +35,9 @@ public class ProviderStageInORQPropertyReader extends ORQPropertyReader<Provider
         getProduct().setDataDescriptor( dr.getProduct() );
 
         if( getProperties( ).containsKey( SfrProperty.BASE_FILE.key ) )
-            getProduct( ).setDataFile( getProperties().getProperty( SfrProperty.BASE_FILE.key ) );
+            getProduct( ).setActDataFile( getProperties().getProperty( SfrProperty.BASE_FILE.key ) );
         
-        getProduct( ).setMetadataFile( getMandatoryProperty( SfrProperty.META_FILE.key ) );
+        getProduct( ).setActMetadataFile( getMandatoryProperty( SfrProperty.META_FILE.key ) );
     }
 
 

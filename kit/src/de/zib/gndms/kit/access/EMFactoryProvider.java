@@ -1,4 +1,4 @@
-package de.zib.gndms.model.access;
+package de.zib.gndms.kit.access;
 
 import org.jetbrains.annotations.NotNull;
 

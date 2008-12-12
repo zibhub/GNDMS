@@ -16,11 +16,13 @@ public class ProviderStageInORQ extends AbstractORQ {
     private static final long serialVersionUID = -5318593349599919368L;
 
     private DataDescriptor dataDescriptor;
-    private String dataFile;
-    private String metadataFile;
+
+    private String actDataFile;
+    private String actMetadataFile;
+	private String actSliceId;
 
 
-    public ProviderStageInORQ( ) {
+	public ProviderStageInORQ( ) {
         super( );
         super.setOfferType( GORFXConstantURIs.PROVIDER_STAGE_IN_URI );
     }
@@ -43,26 +45,36 @@ public class ProviderStageInORQ extends AbstractORQ {
 
 
     public boolean hasDataFile( ) {
-        return dataFile != null;
+        return actDataFile != null;
     }
 
 
-    public String getDataFile() {
-        return dataFile;
+    public String getActDataFile() {
+        return actDataFile;
     }
 
 
-    public void setDataFile( String dataFile ) {
-        this.dataFile = dataFile;
+    public void setActDataFile( String dataFile ) {
+        this.actDataFile = dataFile;
     }
 
 
-    public String getMetadataFile() {
-        return metadataFile;
+    public String getActMetadataFile() {
+        return actMetadataFile;
     }
 
 
-    public void setMetadataFile( String metadataFile ) {
-        this.metadataFile = metadataFile;
+    public void setActMetadataFile( String metadataFile ) {
+        this.actMetadataFile = metadataFile;
     }
+
+
+	public String getActSliceId() {
+		return actSliceId;
+	}
+
+
+	public void setActSliceId(final String actSliceIdParam) {
+		actSliceId = actSliceIdParam;
+	}
 }

@@ -78,7 +78,7 @@ public class StagedTransferTaskAction extends ORQTaskAction<SliceStageInORQ> {
             SliceRef sr = SliceRefXSDReader.fromEPR( ProviderStageInResultXSDTypeWriter.SliceIdToEPR( psr.getSliceKey() ) );
 
             // create destination slice
-            DSpaceClient dsc = new DSpaceClient( getOrq().getGridSiteURI() );
+            DSpaceClient dsc = new DSpaceClient( getOrq().getActGridSiteURI() );
 
 
             // todo find destination subspace
@@ -112,8 +112,8 @@ public class StagedTransferTaskAction extends ORQTaskAction<SliceStageInORQ> {
 
             // perform transfer
             InterSliceTransferTaskAction ista = new InterSliceTransferTaskAction( );
-            ista.initFromModel( getEntityManager(), interSliceTransfer );
-            ista.setClosingEntityManagerOnCleanup( false );
+            ista.initFromModel( getEmf().createEntityManager(), interSliceTransfer );
+            ista.setClosingEntityManagerOnCleanup( true );
             ista.call( );
 
             res_slice = ist_orq.getDestinationSlice();

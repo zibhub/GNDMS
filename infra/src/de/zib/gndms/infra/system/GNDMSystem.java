@@ -2,8 +2,10 @@ package de.zib.gndms.infra.system;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
+import de.zib.gndms.GNDMSVerInfo;
 import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
+import de.zib.gndms.kit.access.EMFactoryProvider;
 import de.zib.gndms.kit.monitor.ActionCaller;
 import de.zib.gndms.kit.monitor.GroovyMoniServer;
 import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
@@ -11,7 +13,6 @@ import de.zib.gndms.logic.action.LogAction;
 import de.zib.gndms.logic.model.*;
 import de.zib.gndms.logic.model.gorfx.DefaultWrapper;
 import de.zib.gndms.logic.util.LogicTools;
-import de.zib.gndms.model.access.EMFactoryProvider;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.model.common.VEPRef;
@@ -74,8 +75,8 @@ public final class GNDMSystem
     private @NotNull final UUIDGen uuidGen = UUIDGenFactory.getUUIDGen();
     private @NotNull final ModelUUIDGen uuidGenDelegate;
 	private @NotNull final Log logger = createLogger();
+	private @NotNull final GNDMSVerInfo verInfo = new GNDMSVerInfo();
     private @NotNull GNDMSystemDirectory instanceDir;
-    private @NotNull final ConfigActionCaller actionCaller;
 	private @NotNull final GridConfig sharedConfig;
 	private @NotNull File sharedDir;
     private @NotNull File dbDir;
@@ -85,9 +86,11 @@ public final class GNDMSystem
 	private @NotNull EntityManagerFactory restrictedEmf;
 	private NetworkAuxiliariesProvider netAux;
 
+
 	// Outside injector
-	private @NotNull GroovyMoniServer groovyMonitor;
-    private TaskExecutionService executionService;
+	private @NotNull GroovyMoniServer groovyMonitor; // shouldnt be accessed by anyone but system
+    private @NotNull TaskExecutionService executionService; // accessible only via system
+	private @NotNull ConfigActionCaller actionCaller; // injected by itself
 
 
 
@@ -151,15 +154,13 @@ public final class GNDMSystem
 		        return GNDMSystem.this.nextUUID();
 		    }
 		};
-		// Bad style, usually would be an inner class but
-		// removed it from this source file to reduce source file size
-		actionCaller = new ConfigActionCaller(this);
 	}
 
 	public void initialize() throws RuntimeException {
 		try {
 			// Q: Think about how to correct UNIX directory/file permissions from java-land
 			// A: External script during deployment
+			printVersion();
             initSharedDir();
 			createDirectories();
 			prepareDbStorage();
@@ -179,6 +180,9 @@ public final class GNDMSystem
 	        }, this);
 	        instanceDir.addInstance("sys", this);
 			instanceDir.reloadConfiglets(restrictedEmf);
+			// Bad style, usually would be an inner class but
+			// removed it from this source file to reduce source file size
+			actionCaller = new ConfigActionCaller(this);
 		}
 		catch (Exception e) {
 			logger.error("Initialization failed", e);
@@ -187,14 +191,34 @@ public final class GNDMSystem
 	}
 
 
+	@SuppressWarnings({ "ValueOfIncrementOrDecrementUsed", "MagicNumber" })
+	private void printVersion() {
+		final String releaseInfo = verInfo.readRelease();
+		final String curBuildInfo = verInfo.readBuildInfo();
+		int maxSize = Math.max(releaseInfo.length(), curBuildInfo.length()) + 14;
+		final StringBuilder builder = new StringBuilder(maxSize);
+		while (maxSize-- >= 0)
+			builder.append('=');
+		final String hrString = builder.toString();
+		logger.warn(hrString);
+		logger.warn("GNDMS RELEASE: " + releaseInfo);
+		logger.warn("GNDMS BUILD: " + curBuildInfo);
+		logger.warn(hrString);
+	}
+
+
 	public void configure(final @NotNull Binder binder) {
 		binder.bind(GNDMSystem.class).toInstance(this);
-		binder.bind(ActionCaller.class).toInstance(actionCaller);
 		binder.bind(EntityManagerFactory.class).toInstance(restrictedEmf);
 		binder.bind(EMFactoryProvider.class).toInstance(this);
 		binder.bind(GridConfig.class).toInstance(sharedConfig);
 		binder.bind(NetworkAuxiliariesProvider.class).toInstance(getNetAux());
 		binder.bind(EntityUpdateListener.class).toInstance(this);
+		binder.bind(BatchUpdateAction.class).to(DefaultBatchUpdateAction.class);
+		binder.bind(UUIDGen.class).toInstance(uuidGen);
+		binder.bind(GNDMSVerInfo.class).toInstance(verInfo);
+		binder.bind(Log.class).toInstance(logger);
+		// TODO later: binder.bind(TxFrame.class).to(TxFrame.class);
 	}
 
 

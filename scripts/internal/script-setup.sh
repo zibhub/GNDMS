@@ -12,7 +12,7 @@ fi
 ADDMODE=ADD
 [ "$MODE" = "DELETE" ] && ADDMODE=REMOVE
 
-source internal/all-functions.sh
+source "$SCRIPTDIR"internal/all-functions.sh
 
 [ ! -z "$GRIDHOST" ] || GRIDHOST=`echo_hostname`
 setup_generic

@@ -12,10 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -131,7 +128,7 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 		}
 
 
-		@SuppressWarnings({ "FeatureEnvy" })
+		@SuppressWarnings({ "FeatureEnvy", "ObjectAllocationInLoop" })
 		private void fillMaps(final Iterator<Site> sites) {
 			final Set<String> allOidPrefixes = Sets.newTreeSet();
 			while (sites.hasNext()) {
@@ -145,6 +142,7 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 					for (Workspace.Archive archive : ws.getArchive()) {
 						workspaceByArchive.put(archive, ws);
 
+						final List<String> newPrefixes = new LinkedList<String>();
 						for (final String curOidPrefix : archive.getOidPrefix()) {
 							if (curOidPrefix.startsWith(requiredPrefix)) {
 								final String oidPrefix = curOidPrefix.substring(requiredPrefix.length());
@@ -157,8 +155,11 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 									archivesByOid.put(oidPrefix, set);
 								}
 								set.add(archive);
+								newPrefixes.add(oidPrefix);
 							}
 						}
+						archive.getOidPrefix().clear();
+						archive.getOidPrefix().addAll(newPrefixes);
 					}
 				}
 			}

@@ -27,7 +27,7 @@ public class ProcessBuilderActionTest {
         ProcessBuilderAction action = new ProcessBuilderAction() {
 
             @Override
-            protected void writeOutput(final @NotNull BufferedOutputStream stream)
+            protected void writeProcessStdIn(final @NotNull BufferedOutputStream stream)
                     throws IOException {
                 PrintStream prStream = new PrintStream(stream);
                 try {
@@ -39,6 +39,7 @@ public class ProcessBuilderActionTest {
             }
         };
         action.setOutputReceiver(new StringBuilder());
+        action.setErrorReceiver(new StringBuilder());
         action.setProcessBuilder(builder);
         Integer result = action.call();
         assert action.getOutputReceiver().toString().startsWith("Hello World!");

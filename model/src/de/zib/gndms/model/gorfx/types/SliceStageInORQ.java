@@ -15,9 +15,10 @@ public class SliceStageInORQ extends ProviderStageInORQ {
     private String gridSite;
 
     // this isn't part of the initial request, but part of the offer creation result.
-    private String gridSiteURI;
+    private String actGridSiteURI;
 
-    public SliceStageInORQ( ){
+
+	public SliceStageInORQ( ){
         super();
         super.setOfferType( GORFXConstantURIs.SLICE_STAGE_IN_URI );
     }
@@ -28,8 +29,8 @@ public class SliceStageInORQ extends ProviderStageInORQ {
     }
 
 
-    public void setGridSite( String gridSite ){
-        this.gridSite = gridSite;
+    public void setGridSite( String gridSiteParam ){
+	    gridSite = gridSiteParam;
     }
 
 
@@ -43,18 +44,18 @@ public class SliceStageInORQ extends ProviderStageInORQ {
     }
 
 
-    public String getGridSiteURI() {
-        return gridSiteURI;
+    public String getActGridSiteURI() {
+        return actGridSiteURI;
     }
 
 
-    public void setGridSiteURI( String gridSiteURI ) {
-        this.gridSiteURI = gridSiteURI;
+    public void setActGridSiteURI( String gridSiteURI ) {
+	    actGridSiteURI = gridSiteURI;
     }
 
 
     public boolean hasGridSiteURI() {
-        return gridSiteURI != null;
+        return actGridSiteURI != null;
     }
 }
 

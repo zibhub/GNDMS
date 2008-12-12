@@ -5,8 +5,8 @@ import de.zib.gndms.GORFX.context.stubs.TaskResourceProperties;
 import de.zib.gndms.infra.model.GridResourceModelHandler;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.logic.model.TaskAction;
-import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.AbstractTask;
+import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.model.util.TxFrame;
 import de.zib.gndms.typecon.common.GORFXClientTools;
@@ -15,18 +15,18 @@ import de.zib.gndms.typecon.common.type.FileTransferResultXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.ProviderStageInResultXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.RePublishSliceResultXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.SliceStageInResultXSDTypeWriter;
+import org.apache.commons.logging.Log;
 import org.globus.wsrf.InvalidResourceKeyException;
 import org.globus.wsrf.NoSuchResourceException;
 import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.ResourceKey;
 import org.jetbrains.annotations.NotNull;
-import org.apache.commons.logging.Log;
 import types.*;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import java.io.Serializable;
 import java.util.concurrent.Future;
-import java.rmi.RemoteException;
 
 
 /**
@@ -186,11 +186,16 @@ public class TaskResource extends TaskResourceBase
 
         EntityManager em = home.getEntityManagerFactory().createEntityManager(  );
         Task tsk = (Task) mH.loadModelById( em, id );
+        
+        if( tsk.isPostMortem() ) {
+            em.close();
+            throw new NoSuchResourceException( );
+        }
+
         try {
-            taskAction = getResourceHome().getSystem().getInstanceDir().getTaskAction( em, tsk.getOfferType().getOfferTypeKey() );
+            taskAction = getResourceHome().getSystem().getInstanceDir().newTaskAction( em, tsk.getOfferType().getOfferTypeKey() );
             taskAction.initFromModel(em, tsk);
             taskAction.setClosingEntityManagerOnCleanup(true);
-            
         }
         catch (IllegalAccessException e) {
             throw new ResourceException(e);
@@ -212,11 +217,9 @@ public class TaskResource extends TaskResourceBase
 
 
     public void loadFromModel( @NotNull Task model ) throws ResourceException {
-        // Not required here
-        // cause we override the getters.
-        // throw new UnsupportedOperationException( "task resource is readonly" );
 
-        // required getter overriding isn't enough
+        // Not required here cause we override the getters.
+        // getter overriding isn't enough
         setTaskExecutionState( getTaskExecutionState() );
         setTerminationTime( taskAction.getModel().getTerminationTime() );
         setTaskExecutionFailure( getTaskExecutionFailure() );
@@ -284,25 +287,54 @@ public class TaskResource extends TaskResourceBase
             Log log = taskAction.getLog();
             log.debug( "Removing task resource: " + getID() );
             AbstractTask tsk = taskAction.getModel();
+            boolean cleanUp = false;
             if( tsk != null ) {
-                if ( ! ( taskAction.getModel().getState().equals( TaskState.FAILED )
-                    || taskAction.getModel().getState().equals( TaskState.FINISHED ) ) )
-                { // task is still runing cancel it
+                if ( ! tsk.isDone() ) {
+                    // task is still running cancel it and cleanup entity manager
                     log.debug( "cancel task " + tsk.getWid() );
+                    cleanUp = true;
                     future.cancel( true );
-                    // todo trigger some clean-up
-                    EntityManager em = taskAction.getEntityManager();
-                    if( em != null && em.isOpen() )
-                        em.close( );
+                    try {
+                        EntityManager em = taskAction.getEntityManager();
+                        if( em != null &&  em.isOpen() ) {
+                            try{
+                                EntityTransaction tx = em.getTransaction();
+                                if( tx.isActive() )
+                                    tx.rollback();
+                            } finally {
+                                em.close( );
+                            }
+                        }
+                    } catch( Exception e ) {
+                        // don't bother with exceptions
+                        log.debug( "Exception on task future cancel: " + e.toString() );
+                        e.printStackTrace(  );
+                    }
                 }
-                
-                // remove task from db
+
+                EntityManager em = home.getEntityManagerFactory().createEntityManager(  );
+                TxFrame tx = new TxFrame( em );
+                // cleanup if necessary
                 try {
-                    EntityManager em = home.getEntityManagerFactory().createEntityManager(  );
-                    TxFrame tx = new TxFrame( em );
-                    try{
-                        AbstractTask at = em.find( AbstractTask.class, tsk.getId() );
-                        em.remove( at );
+                    try {
+                        Task t = em.find( Task.class, tsk.getId() );
+                        t.setPostMortem( true );
+                        tx.commit( );
+                        
+                        if( cleanUp ) {
+                            log.debug( "Triggering task cleanup" );
+                            try{
+                                taskAction.setOwnEntityManager( em );
+                                taskAction.cleanUpOnFail( t );
+                            } catch ( Exception e ) {
+                                log.debug( "Exception on cleanup: " + e.toString() );
+                            }
+                        }
+
+                        // remove task from db
+                        log.debug( "Removing task: " + t.getId() );
+                        tx.begin( );
+                        em.remove( t );
                         tx.commit();
                     } finally {
                         tx.finish();
@@ -310,6 +342,7 @@ public class TaskResource extends TaskResourceBase
                             em.close();
                     }
                 } catch ( Exception e ) {
+                    log.debug( "Exception on task resource removal: " + e.toString() );
                     e.printStackTrace(  );
                 }
             }

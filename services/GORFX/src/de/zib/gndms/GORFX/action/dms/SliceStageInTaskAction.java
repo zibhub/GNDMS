@@ -54,12 +54,12 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
         try {
             EndpointReferenceType epr;
             if( model.getData( ) == null ) {
-                String uri = ( (SliceStageInORQ) model.getOrq()).getGridSiteURI();
+                String uri = ( (SliceStageInORQ) model.getOrq()).getActGridSiteURI();
                 if( uri == null )
                     fail ( new RuntimeException( "GORFX uri is null" ) );
                 else {
                     ProviderStageInORQT p_orq = ProviderStageInORQXSDTypeWriter.write( getOrq() );
-                    ContextT ctx = ContextXSDTypeWriter.writeContext( getOrq().getContext() );
+                    ContextT ctx = ContextXSDTypeWriter.writeContext( getOrq().getActContext() );
                     OfferExecutionContractT con = ContractXSDTypeWriter.write( model.getContract().toTransientContract() );
                     
                     epr = GORFXClientUtils.commonTaskPreparation( uri, p_orq, ctx, con  );

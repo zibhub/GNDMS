@@ -53,5 +53,4 @@ public abstract class AbstractRecursiveKeyFactory<K, T extends KeyFactoryInstanc
     @SuppressWarnings({ "NoopMethodInAbstractClass" })
     public void setup() {
     }
-
 }
