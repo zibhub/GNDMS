@@ -11,11 +11,11 @@
 	</classpath>
 </taskdef>
 
-<!-- taskdef name="mappingtool" classname="org.apache.openjpa.jdbc.ant.MappingToolTask">
+<taskdef name="mappingtool" classname="org.apache.openjpa.jdbc.ant.MappingToolTask">
 	<classpath>
-		<fileset refid="tooljars" />
+		<fileset refid="enhancepath" />
 	</classpath>
-</taskdef -->
+</taskdef>
 
 <!-- fileset id="model_classes" dir="gndms-shared-model/production">
 	<include name="de/zib/gndms/model/**/*" />
@@ -67,7 +67,7 @@
 
 </target>
 
-<!-- target name="map" description="Calls the OpenJPA mapping tool to build the current schema">
+<target name="map" description="Calls the OpenJPA mapping tool to build the current schema">
 	<mappingtool schemaaction="build"
 	             indexes="true" foreignkeys="true" primarykeys="true"
 	             sqlfile="stdout">
@@ -75,21 +75,14 @@
 			  connectionDriverName="org.apache.derby.jdbc.EmbeddedDriver"
 			  connectionURL="jdbc:derby:/opt/gt-current/etc/c3grid_shared/db/c3grid"
 			  propertiesFile="src/META-INF/persistence.xml"  />
-             
-		<config
+                                                                           
+		<classpath refid="enhancepath" />
+
+		<!-- config
 			  connectionDriverName="org.apache.derby.jdbc.EmbeddedDriver"
               connectionURL="jdbc:derby:/home/mjorra/tmp/C3GridTests/db/ModelActionTests"
-			  propertiesFile="src/META-INF/persistence.xml"  />
-
-		<classpath>
-			<pathelement location="${basedir}/gndms-shared-model/production" />
-			<pathelement location="${basedir}/../stuff/gndms-stuff/production" />
-            <fileset refid="tooljars" />
-		</classpath>
-
-		<fileset refid="model_classes" />
-		
-	</mappingtool>
-</target-->  
+			  propertiesFile="src/META-INF/persistence.xml"  / -->
+    </mappingtool>
+</target>  
 
 </project>
