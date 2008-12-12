@@ -184,9 +184,8 @@
 	<!-- Creates jar's for every service (class files will be created if not already done)-->
 	<target name="compile.src" description="Creates jar files for every service, will be compiled if necessary">
 		<ant antfile="${stuff.dir}/build.xml" inheritALL="false"/>
-		<!--ant target="model.jar"/>
-		<antcall target="enhance" />
-		<runtarget target="kit.jar"/>
+		<ant antfile="${model.dir}/build.xml" inheritALL="false"/>
+		<!--runtarget target="kit.jar"/>
 		<runtarget target="logic.jar"/>
 		<runtarget target="typecon.jar"/>
 		<runtarget target="infra.jar"/-->

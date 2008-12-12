@@ -1,4 +1,4 @@
-<project name="model compilation file" default="compile" basedir=".">
+<project name="model compilation file" default="jar" basedir=".">
 	
 	<property name="c3grid.basedir"  value=".."/>
 	<property file="${c3grid.basedir}/c3grid.properties"/>
@@ -50,7 +50,7 @@
 	</path>
 	
 	<!-- Compile model's test-files -->
-	<target name="model.compile.test" description="Compiles model test-files">
+	<target name="compile.test" description="Compiles model test-files">
 		<mkdir dir="${model.dest.class.test}"/>
 		<javac srcdir='test-src' destdir='test' classpathref="model.test.path" debug="${javac.debug}">
 			
@@ -64,20 +64,20 @@
 	</target>
 
 	<!-- Creates jar-file containing model's test-classes-->
-	<target name="model.test.jar" depends="model.compile.test" description="Creates jar file gndms-shared-model-test.jar in 'extra/lib'">	
+	<target name="jar.test" depends="compile.test" description="Creates jar file gndms-shared-model-test.jar in 'extra/lib'">	
 		<jar destfile="${gndms-shared-model-test.jar}"
 		     basedir="${model.dest.class.test}">
 		</jar>
 	</target>
 	
 	<!-- Creates jar-file containing model's classes -->
-	<target name="model.jar" depends="compile" description="Creates jar file gndms-shared-model.jar in 'extra/lib'">	
+	<target name="prejar" depends="compile" description="Creates jar file gndms-shared-model.jar in 'extra/lib'">	
 		<jar destfile="${gndms-shared-model}"
 		     basedir="${model.dest.class}">
 		</jar>
 	</target>
 	<!-- Deletes classfiles-->
-	<target name="model.clean" description="Deletes model's classfiles">
+	<target name="clean" description="Deletes model's classfiles">
 		<delete includeemptydirs="true" >
 			<fileset dir='${model.dest.class}' includes="**/*.class"/>
 			<fileset dir='${model.dest.class.test}' includes="**/*.class"/>
@@ -85,12 +85,12 @@
 	</target>
 	
 	<!-- Deletes  jar-files -->
-	<target name="model.clean.jar" description="Deletes model's jar-files">
+	<target name="clean.jar" description="Deletes model's jar-files">
 		<delete file='${gndms-shared-model}'/>
-		<delete file='${gndms-shared-model.jar}'/>
+		<delete file='${gndms-shared-model-test}'/>
 	</target>
 	
-	<target name="model.enhancer">
+	<target name="jar" depends="prejar">
 		<ant antfile="build-openjpa.xml" target="enhance" dir="${model.dir}" />	
 	</target>
 </project>
