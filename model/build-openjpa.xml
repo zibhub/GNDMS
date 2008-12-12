@@ -42,11 +42,7 @@
         
 		<classpath>
 			<pathelement location="${basedir}/gndms-shared-model/production" />
-<<<<<<< local
 			<pathelement location="${basedir}/../stuff/gndms-stuff/production" />
-=======
-			<pathelement location="../stuff/gndms-stuff/production" />
->>>>>>> other
 			<fileset refid="tooljars" />
 		</classpath>
 
@@ -91,8 +87,8 @@
           -->
 
 		<classpath>
-			<pathelement location="gndms-shared-model/production" />
-			<pathelement location="../stuff/gndms-stuff/production" />
+			<pathelement location="${basedir}/gndms-shared-model/production" />
+			<pathelement location="${basedir}/../stuff/gndms-stuff/production" />
             <fileset refid="tooljars" />
 		</classpath>
 
