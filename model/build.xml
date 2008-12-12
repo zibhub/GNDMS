@@ -15,7 +15,9 @@
 		<pathelement path="${collections}"/> 
 		<pathelement path="${joda-time}"/> 
 		<pathelement path="${testng}"/> 
-		<pathelement path="${jaxb}"/> 		
+		<pathelement path="${jaxb}"/>
+		<pathelement path="${CXF}"/>
+		<pathelement path="${apache-commons}"/>
 	</path>
 	
 	<path id="groovy.path">
@@ -28,13 +30,13 @@
 	<!-- Compile model, but not its test-files -->
 	<target name="compile" description="Compiles model">
 
-		<mkdir dir="${model.dest}"/>
+		<mkdir dir="${model.compdest}"/>
 		
-		<groovyc srcdir="src" destdir='${model.dest}' classpathref="model.path" >
+		<groovyc srcdir="src" destdir='${model.compdest}' classpathref="model.path" >
 			<javac debug="${javac.debug}"/>
 		</groovyc>	
 		<!-- Copy Meta files to build dir-->
-		<copy todir="gndms-shared-model/production/" >
+		<copy todir="${model.compdest}" >
 			<fileset dir="src/">
 				<exclude name="de/**"/>
 			</fileset>
@@ -43,7 +45,7 @@
 	
 	<path id="model.test.path">
 		<path refid="model.path"  />
-		<pathelement path="${gndms-shared-model}"/>
+		<pathelement path="${gndms-shared-model.jar}"/>
 	</path>
 	
 	<!-- Compile model's test-files -->

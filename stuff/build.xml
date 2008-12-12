@@ -1,11 +1,12 @@
 <project name="stuff compilation file" default="stuff.compile" basedir=".">
 	
-	
+
 	<path id="stuff.path">
 		
 		<pathelement location="${tools-lib.dir}/gndms-groovy.jar"/>
 		<pathelement location="${tools-lib.dir}/annotations.jar"/>
 		<dirset dir="${stuff.dest}/production"/>
+		<pathelement location="${tools-lib.dir}/google-collect-snapshot-20080820.jar"/>
 		<pathelement location="${tools-lib.dir}/guice-snapshot20081123.jar"/>
 		<pathelement location="${tools-lib.dir}/guice-assistedinject-snapshot20081123.jar"/>
 		<pathelement location="${tools-lib.dir}/guice-multibindings-snapshot20081123.jar"/>
@@ -43,7 +44,7 @@
 	
 	<!-- Creates jar containing stuff's classfiles-->
 	<target name="stuff.jar" depends="stuff.compile" description="Creates jar file gndms-stuff.jar in 'extra/lib'">
-		
+
 		<jar destfile="./${lib.dir}/gndms-stuff.jar"
 		     basedir="${stuff.dest}/production">
 		</jar>
