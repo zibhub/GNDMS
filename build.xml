@@ -12,6 +12,9 @@
 	<property name="lib.dir" value="extra/lib" />
 	
 	
+	<property file="c3grid.properties"/>
+	
+	
 	
 	<!-- Source-Code directories of each package-->
 	<property name="model.dir" value="model"/>
@@ -33,7 +36,7 @@
 	<property name="stuff.dest" value="${stuff.dir}/gndms-stuff"/>
 
 
-
+	
 	<!-- To avoid problems import just the following libaries -->
 	<fileset dir="${env.GLOBUS_LOCATION}/lib" id="globus.lib">
 		<OR>
@@ -177,7 +180,9 @@
 		<runtarget target="infra.jar"/>
 	</target>
 	
-	
+	<target name="testzip">
+		<zip destfile="proptest.zip" basedir="extra/tools-lib" includes="${jaxb}"/>
+	</target>
 	<!-- Delete build-files every service -->
 	<target name="clean" description="deletes build-files of every service">
 		<runtarget target="clean.stubsServices"/>
