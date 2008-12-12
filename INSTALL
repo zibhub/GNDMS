@@ -153,6 +153,7 @@ When describing the dependencies of a compilation unit, I assume the following
 - joda-time: extra/tools-lib/joda-time*.jar
 - jaxb: activation.jar jaxb*jar jsr173*jar
 - args4j: extra/tools-lib/args4j*.jar
+- CXF: extra/tools-lib/cxf.jar (for -Xts extension to xjc)
                      
      
 
@@ -182,7 +183,7 @@ DETAILED BUILD INSTRUCTIONS
 
      Sources: stuff/src (resp. model/test-src)
      Output:  stuff/gndms-stuff/production (resp. test)
-     Dependencies: GROOVY, J2EE, annotations, SOURCE, collections, guice
+     Dependencies: GROOVY, J2EE, annotations, SOURCE, collections
      Re-exports: collections, guice
 
 
@@ -192,7 +193,7 @@ DETAILED BUILD INSTRUCTIONS
      Sources: model/src (resp. model/test-src)
      Output:  model/gndms-shared-model/production (resp. test)
      Dependencies: GROOVY, J2EE, annotations, SOURCE, stuff, openjpa,
-                   collections, joda-time, testng, jaxb
+                   collections, joda-time, testng, jaxb, CXF, apache-commons
      Re-exports: openjpa
 
      Make sure META-INF gets copied 
@@ -216,7 +217,7 @@ DETAILED BUILD INSTRUCTIONS
      Sources: kit/src
      Output: kit/gndms-kit/production (resp. test) classes
      Dependencies: GROOVY, J2EE, SOURCE, stuff, gt4, gndms-shared-model, annotations,
-                   jetty, servlet-api, cos, testng, joda-time, args4j
+                   jetty, servlet-api, cos, testng, joda-time, args4j, guice
 
 
   6) Compile gndms-logic.jar

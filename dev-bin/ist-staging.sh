@@ -1,7 +1,6 @@
 #!/bin/sh
 
 # generate 5 to 10 files of arbitrary size between 1 kB and 1 MB
-source $(dirname $0)/blocking-staging.sh
 
 DATA_SRC_DIR=
 sfr="$(cat - | grep -h '^c3grid')"

@@ -14,7 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 public interface ORQCalculatorProvider {
 
     @SuppressWarnings({ "MethodWithTooExceptionsDeclared" })
-    @NotNull AbstractORQCalculator<?,?> getORQCalculator(
+    @NotNull AbstractORQCalculator<?,?> newORQCalculator(
         @NotNull EntityManagerFactory emf,
         @NotNull String offerTypeKey)
         throws ClassNotFoundException, IllegalAccessException, InstantiationException,

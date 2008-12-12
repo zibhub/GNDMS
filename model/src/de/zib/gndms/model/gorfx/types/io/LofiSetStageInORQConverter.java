@@ -22,13 +22,13 @@ public class LofiSetStageInORQConverter extends ORQConverter<LofiSetStageInORQWr
     public void convert(){
         super.convert();
         DataDescriptorWriter ddw = getWriter( ).getDataDescriptorWriter();
-        DataDescriptorConverter ddc = new DataDescriptorConverter( ddw,  getModel().getDataDescriptor() );
+        DataDescriptorConverter ddc = new DataDescriptorConverter( ddw,  getModel().getActDataDescriptor() );
         ddc.convert( );
 
-        getWriter().writeDataFileName( getModel().getDataFile() );
+        getWriter().writeDataFileName( getModel().getActDataFile() );
         if ( getModel().hasGridSite())
-        getWriter().writeGridSiteName( getModel().getGridSite() );
-        getWriter().writeMetaDataFileName( getModel().getMetadataFile() );
+        getWriter().writeGridSiteName( getModel().getActGridSite() );
+        getWriter().writeMetaDataFileName( getModel().getActMetadataFile() );
         getWriter().done();
     }
 

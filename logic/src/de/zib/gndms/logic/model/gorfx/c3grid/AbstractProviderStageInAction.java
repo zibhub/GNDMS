@@ -31,6 +31,7 @@ import java.io.File;
 @SuppressWarnings({ "FeatureEnvy" })
 public abstract class AbstractProviderStageInAction extends ORQTaskAction<ProviderStageInORQ> {
 
+	protected ParmFormatAux parmAux = new ParmFormatAux();
 
     public AbstractProviderStageInAction() {
         super();
@@ -58,9 +59,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 
             try {
                 MapConfig config = getOfferTypeConfig();
-                File stagingCommandFile = config.getFileOption("stagingCommand");
-                if (! stagingCommandFile.exists() || ! stagingCommandFile.canRead() || ! stagingCommandFile.isFile())
-                    fail(new IllegalArgumentException("Invalid stagingCommand script: " + stagingCommandFile.getPath()));
+	            getScriptFileByParam(config, "stagingCommand");
                 createNewSlice(model);
             }
             catch (MandatoryOptionMissingException e1) {
@@ -71,10 +70,20 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
     }
 
 
-    @SuppressWarnings({ "ThrowableInstanceNeverThrown"})
+	@SuppressWarnings({ "ThrowableInstanceNeverThrown" })
+	protected @NotNull File getScriptFileByParam(final MapConfig configParam, String scriptParam) throws MandatoryOptionMissingException {
+		final @NotNull File scriptFile = configParam.getFileOption(scriptParam);
+		if (! isValidScriptFile(scriptFile))
+		    fail(new IllegalArgumentException("Invalid " + scriptParam + " script: " + scriptFile.getPath()));
+		return scriptFile;
+	}
+
+
+	@SuppressWarnings({ "ThrowableInstanceNeverThrown"})
     @Override
     protected void onInProgress(final @NotNull AbstractTask model) {
-        final Slice slice = findNewSlice(model);
+        final Slice slice = findSlice(model);
+        setSliceId( slice.getId() );
         doStaging(getOfferTypeConfig(), getOrq(), slice);
     }
 
@@ -98,6 +107,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
             final @NotNull Subspace subspace = metaSubspace.getInstance();
             String slicekindKey = config.getOption("sliceKind");
             SliceKind kind = getEntityManager().find(SliceKind.class, slicekindKey);
+
             CreateSliceAction csa = new CreateSliceAction();
             csa.setParent(this);
             csa.setTerminationTime(getModel().getContract().getResultValidity());
@@ -108,18 +118,27 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
             csa.setModel(subspace);
             csa.setSliceKind(kind);
             final Slice slice = csa.execute(getEntityManager());
-            model.setData(slice.getId());
-	        txf.commit();
+            setSliceId(slice.getId());
+            // to provoke nasty test condition uncomment the following line
+            //throw new NullPointerException( );
+            txf.commit();
         }
         finally { txf.finish();  }
+	    getLog().info("createNewSlice() = " + getSliceId());
     }
 
 
-    private Slice findNewSlice(final AbstractTask model) {
+    private Slice findSlice(final AbstractTask model) {
+	    final String sliceId = getSliceId();
+	    getLog().info("findSlice(" + (sliceId == null ? "null" : '"' + sliceId + '"') + ')');
+	    if (sliceId == null)
+		    return null;
+
+
 	    final EntityManager em = getEntityManager();
 	    final TxFrame txf = new TxFrame(em);
 	    try {
-		    final Slice slice = em.find(Slice.class, model.getData());
+		    final Slice slice = em.find(Slice.class, sliceId);
 	        txf.commit();
 	        return slice;
 	    }
@@ -128,29 +147,32 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 
 
 	@Override
-	protected void onFailed(final @NotNull AbstractTask model) {
+    public void cleanUpOnFail(final @NotNull AbstractTask model) {
 		try {
 			cancelStaging(model);
 		}
-		catch(RuntimeException e) { getLog().warn(e); }
+		catch(RuntimeException e) {
+			getLog().warn(e);
+		}
 		finally {
-			try {
-				// wrappend in try-finally to ensure we go to failed even if slice
-				// deletion goes wrong
-				killSlice(model);
-			}
-			finally { super.onFailed(model); }
+			// wrappend in try-finally to ensure we go to failed even if slice
+			// deletion goes wrong
+			killSlice(model);
 		}
 	}
 
 
-	private void cancelStaging(final AbstractTask model) {
+	protected void cancelStaging(final AbstractTask model) {
 		final Slice slice;
 		final File sliceDir;
+
 		final EntityManager em = getEntityManager();
 		final TxFrame txf = new TxFrame(em);
 		try {
-			slice = findNewSlice(model);
+			slice = findSlice(model);
+			if (slice == null)
+				// MAYBE log this somewhere?
+				return;
 			sliceDir = new File(slice.getOwner().getPathForSlice(slice));
 			txf.commit();
 		}
@@ -161,11 +183,18 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 	}
 
 
+	@SuppressWarnings({ "NoopMethodInAbstractClass" })
+	protected void callCancel(final MapConfig offerTypeConfigParam, final ProviderStageInORQ orqParam,
+            final File sliceParam) {
+		// Implement in subclass
+	}
+
+
 	private void killSlice(final AbstractTask model) {
 		final EntityManager em = getEntityManager();
 		final TxFrame txf = new TxFrame(em);
 		try {
-			final Slice slice = findNewSlice(model);
+			final Slice slice = findSlice(model);
 			slice.getOwner().destroySlice(slice);
 			em.remove(slice);
 			txf.commit();
@@ -175,12 +204,21 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 	}
 
 
-	@SuppressWarnings({ "NoopMethodInAbstractClass" })
-	protected void callCancel(final MapConfig offerTypeConfigParam, final ProviderStageInORQ orqParam,
-            final File sliceParam) {
-		/* potentially implement in subclass */
-	}
-
+	protected ProcessBuilder createProcessBuilder(String name, File dir) {
+       try {
+           MapConfig opts = new MapConfig(getKey().getConfigMap());
+		   if (opts.getOption(name, "").trim().length() == 0)
+			   return null;
+		   final File fileOption = getScriptFileByParam(opts, name);
+		   ProcessBuilder builder = new ProcessBuilder();
+			   builder.directory(dir);
+		   builder.command(fileOption.getPath());
+			   return builder;
+       }
+       catch (MandatoryOptionMissingException e) {
+           throw new RuntimeException(e);
+       }
+   }
 
 	@Override
     @NotNull
@@ -192,4 +230,23 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
     protected @NotNull MapConfig getOfferTypeConfig() {
         return new MapConfig(getKey().getConfigMap());
     }
+
+
+
+    protected void setSliceId( String sliceId ) {
+        getOrq().setActSliceId(sliceId);
+    }
+
+    
+    protected String getSliceId( ) {
+        return getOrq().getActSliceId();
+    }
+
+	@SuppressWarnings({ "MethodWithMoreThanThreeNegations" })
+	public static boolean isValidScriptFile(final File scriptFile) {
+		// do we need "r"?
+		return scriptFile != null &&
+			   scriptFile.exists() && scriptFile.canRead() && scriptFile.isFile();
+	}
 }
+

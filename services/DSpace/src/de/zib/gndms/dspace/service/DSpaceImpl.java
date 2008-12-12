@@ -178,7 +178,7 @@ public class DSpaceImpl extends DSpaceImplBase {
 
             ModelAction<Subspace, Slice> ma = csa;
             csa.setClosingEntityManagerOnCleanup( false );
-            Slice ns = (Slice) mh.callModelAction( em, system.getEntityUpdateListener(), ma, sp);
+            Slice ns = (Slice) mh.callModelAction( em, system.getEntityUpdateListener(), ma, sp );
 
             csa.getPostponedActions().call( );
 

@@ -3,7 +3,7 @@ package de.zib.gndms.GORFX.offer.service.globus.resource;
 import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
 import de.zib.gndms.model.common.PersistentContract;
-import de.zib.gndms.model.common.InvalidContractException;
+import de.zib.gndms.model.common.types.InvalidContractException;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.typecon.common.type.ContractXSDReader;
@@ -12,9 +12,6 @@ import org.globus.wsrf.ResourceException;
 import org.jetbrains.annotations.NotNull;
 import types.DynamicOfferDataSeqT;
 import types.OfferExecutionContractT;
-
-import java.util.GregorianCalendar;
-import java.util.Calendar;
 
 
 /** 

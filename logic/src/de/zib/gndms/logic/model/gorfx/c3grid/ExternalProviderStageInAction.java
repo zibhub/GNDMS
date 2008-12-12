@@ -1,13 +1,13 @@
 package de.zib.gndms.logic.model.gorfx.c3grid;
 
-import de.zib.gndms.kit.config.ConfigProvider;
-import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
+import static de.zib.gndms.logic.model.gorfx.c3grid.ExternalProviderStageInORQCalculator.GLOBUS_DEATH_DURATION;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
 import de.zib.gndms.model.gorfx.types.ProviderStageInResult;
+import de.zib.gndms.stuff.Sleeper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -24,10 +24,10 @@ import java.io.File;
  */
 @SuppressWarnings({ "ThrowableInstanceNeverThrown" })
 public class ExternalProviderStageInAction extends AbstractProviderStageInAction {
+	private static final int INITIAL_STRING_BUILDER_CAPACITY = 4096;
 
-    private ParmFormatAux parmAux;
 
-    public ExternalProviderStageInAction() {
+	public ExternalProviderStageInAction() {
         super();
 	    parmAux = new ParmFormatAux();
     }
@@ -45,6 +45,7 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
     }
 
 
+    @SuppressWarnings({ "HardcodedLineSeparator", "MagicNumber" })
     @Override
     protected void doStaging(
             final MapConfig offerTypeConfigParam, final ProviderStageInORQ orqParam,
@@ -57,65 +58,59 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
 	    if (procBuilder == null)
 	        fail(new IllegalStateException("No stagingCommand configured"));
 
-        final StringBuilder recv = new StringBuilder(8);
+        final StringBuilder outRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
+        final StringBuilder errRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
         try {
             final ProcessBuilderAction action = parmAux.createPBAction(orqParam, null);
             action.setProcessBuilder(procBuilder);
-            action.setOutputReceiver(recv);
+            action.setOutputReceiver(outRecv);
+            action.setErrorReceiver(errRecv);
             int result = action.call();
             switch (result) {
                 case 0:
+	                getLog().debug("Staging completed: " + outRecv.toString());
                     finish( new ProviderStageInResult( sliceParam.getId() ) );
+	                /* unreachable: */
+	                break;
                 default:
-                    fail(new IllegalStateException("Staging script failed with non-zero exit code " + result));
+	                if (result > 127) {
+					    getLog().debug("Waiting for potential death of container...");
+		                Sleeper.sleepUninterruptible(GLOBUS_DEATH_DURATION);
+	                }	                
+                    fail( new IllegalStateException(
+                        "Stagung failed! Staging script returned unexpected exit code: " + result +
+                            "\nScript output was:\n" + errRecv.toString() ) );
             }
         }
         catch (RuntimeException e) {
             honorOngoingTransit(e);
-            fail(new RuntimeException(recv.toString(), e));
+            fail(new RuntimeException(errRecv.toString(), e));
         }
     }
 
-
+	
 	@Override
-	protected void callCancel(final MapConfig offerTypeConfigParam, final ProviderStageInORQ orqParam,
-            final File sliceDir) {
+	protected void callCancel(final MapConfig offerTypeConfigParam,
+	                          final ProviderStageInORQ orqParam,
+                              final File sliceDir) {
 		final ProcessBuilder procBuilder = createProcessBuilder("cancelCommand", sliceDir);
 		if (procBuilder == null)
+			// MAYBE log this somewhere
 			return;
 
-		final StringBuilder recv = new StringBuilder(8);
-		try {
-		    final ProcessBuilderAction action = parmAux.createPBAction(orqParam, null);
-		    action.setProcessBuilder(procBuilder);
-		    action.setOutputReceiver(recv);
-		    int result = action.call();
-		    switch (result) {
-		        case 0:
-		            getLog().debug("Finished calling cancel");
-		        default:
-		            getLog().info("Failure during cancel: " + recv.toString());
-		    }
-		}
-		catch (RuntimeException e) {
-			getLog().warn(e);
+		final StringBuilder outRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
+		final StringBuilder errRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
+		final ProcessBuilderAction action = parmAux.createPBAction(orqParam, null);
+		action.setProcessBuilder(procBuilder);
+		action.setOutputReceiver(outRecv);
+		action.setErrorReceiver(errRecv);
+		int result = action.call();
+		switch (result) {
+			case 0:
+				getLog().debug("Finished calling cancel: " + outRecv.toString());
+				break;
+			default:
+				getLog().info("Failure during cancel: " + errRecv.toString());
 		}
 	}
-
-
-	private ProcessBuilder createProcessBuilder(String name, File dir) {
-        try {
-            ConfigProvider opts = new MapConfig(getKey().getConfigMap());
-	        if (opts.getOption(name, "").trim().length() == 0)
-	            return null;
-	        final File fileOption = opts.getFileOption(name);
-	        ProcessBuilder builder = new ProcessBuilder();
-            builder.directory(dir);
-	        builder.command(fileOption.getPath());
-            return builder;
-        }
-        catch (MandatoryOptionMissingException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

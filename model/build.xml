@@ -17,7 +17,6 @@
 		<pathelement path="${jaxb}"/> 		
 	</path>
 	
-
 	<path id="groovy.path">
 		<pathelement path="${gndms-groovy}"/>
 	</path>

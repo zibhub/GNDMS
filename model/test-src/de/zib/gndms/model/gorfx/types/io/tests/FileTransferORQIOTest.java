@@ -37,7 +37,7 @@ public class FileTransferORQIOTest {
         ctx.put( "k2", "v2" );
         ctx.put( "k3", "v3" );
         ctx.put( "k4", "v4" );
-        orq.setContext( ctx );
+        orq.setActContext( ctx );
 
         FileTransferORQStdoutWriter cout = new FileTransferORQStdoutWriter( );
         FileTransferORQConverter conv = new FileTransferORQConverter( cout, orq );

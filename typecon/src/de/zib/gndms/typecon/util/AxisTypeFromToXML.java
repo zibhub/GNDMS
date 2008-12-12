@@ -74,8 +74,6 @@ public class AxisTypeFromToXML {
     }
 
 
-
-
     public static <M> M fromXML( InputStream inStream, Class<M> cls ) throws Exception {
 
         TypeDesc td = typeDescForClass( cls );
@@ -98,7 +96,7 @@ public class AxisTypeFromToXML {
     {
         DeserializationContext context;
         SOAPEnvelope env = new SOAPEnvelope();
-        SOAPBodyElement body = new SOAPBodyElement(inStream);
+        SOAPBodyElement body = new SOAPBodyElement( inStream );
         env.addBodyElement(body);
 
         MessageContext mctx = new MessageContext(new AxisServer());

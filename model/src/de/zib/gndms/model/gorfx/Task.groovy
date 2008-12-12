@@ -34,11 +34,13 @@ import javax.persistence.CascadeType
 @Table(name="tasks", schema="gorfx")
 @NamedQueries( [
 @NamedQuery(name="listAllTaskIds", query="SELECT instance.id FROM Tasks instance"),
-@NamedQuery(name="unfinishedTaskIds", query="SELECT t.id FROM Tasks t WHERE t.state <> de.zib.gndms.model.gorfx.types.TaskState.FAILED AND t.state <> de.zib.gndms.model.gorfx.types.TaskState.FINISHED" )
+@NamedQuery(name="unfinishedTaskIds", query="SELECT t.id FROM Tasks t WHERE t.state <> de.zib.gndms.model.gorfx.types.TaskState.FAILED AND t.state <> de.zib.gndms.model.gorfx.types.TaskState.FINISHED AND t.postMortem=false" )
 ])
 @MappedSuperclass
 class Task extends AbstractTask {
 
+    @Column(name="post_mortem", nullable=false)
+    boolean postMortem = false;
 
 }
 

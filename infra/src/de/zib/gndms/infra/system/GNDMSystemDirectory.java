@@ -14,9 +14,9 @@ import de.zib.gndms.kit.configlet.Configlet;
 import de.zib.gndms.kit.monitor.GroovyBindingFactory;
 import de.zib.gndms.kit.monitor.GroovyMoniServer;
 import de.zib.gndms.logic.model.TaskAction;
-import de.zib.gndms.logic.model.access.TaskActionProvider;
+import de.zib.gndms.logic.access.TaskActionProvider;
 import de.zib.gndms.logic.model.gorfx.*;
-import de.zib.gndms.model.access.InstanceProvider;
+import de.zib.gndms.kit.access.InstanceProvider;
 import de.zib.gndms.model.common.ConfigletState;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
@@ -25,6 +25,7 @@ import de.zib.gndms.model.common.types.factory.KeyFactory;
 import de.zib.gndms.model.common.types.factory.KeyFactoryInstance;
 import de.zib.gndms.model.common.types.factory.RecursiveKeyFactory;
 import de.zib.gndms.model.gorfx.OfferType;
+import de.zib.gndms.stuff.BoundInjector;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.apache.commons.logging.Log;
@@ -76,7 +77,8 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 	private final @NotNull ModelUUIDGen uuidGen;
 
 
-	private final @NotNull Injector injector;
+	private final @NotNull BoundInjector boundInjector = new BoundInjector();
+
 
 
 	@SuppressWarnings({ "ThisEscapedInObjectConstruction" })
@@ -90,7 +92,8 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
         systemName = sysNameParam;
 		uuidGen = uuidGenParam;
 	    sysHolderWrapper = systemHolderWrapParam;
-		injector = Guice.createInjector(sysModule, this);
+		final Injector injector = Guice.createInjector(sysModule, this);
+		boundInjector.setInjector(injector);
 
 	    final ORQCalculatorMetaFactory calcMF = new ORQCalculatorMetaFactory();
 		calcMF.setInjector(injector);
@@ -115,7 +118,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 
     @SuppressWarnings({ "MethodWithTooExceptionsDeclared" })
     @NotNull
-    public AbstractORQCalculator<?,?> getORQCalculator(
+    public AbstractORQCalculator<?,?> newORQCalculator(
         final @NotNull EntityManagerFactory emf,
         final @NotNull String offerTypeKey)
         throws ClassNotFoundException, IllegalAccessException, InstantiationException,
@@ -136,15 +139,16 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
     }
 
 
-    @SuppressWarnings({ "MethodWithTooExceptionsDeclared" })
-    public TaskAction getTaskAction(
+    @SuppressWarnings(
+	      { "MethodWithTooExceptionsDeclared", "OverloadedMethodsWithSameNumberOfParameters" })
+    public TaskAction newTaskAction(
             final @NotNull EntityManagerFactory emf,
             final @NotNull String offerTypeKey)
             throws ClassNotFoundException, IllegalAccessException, InstantiationException,
             NoSuchMethodException, InvocationTargetException {
         EntityManager em = emf.createEntityManager();
         try {
-	        return getTaskAction(em, offerTypeKey);
+	        return newTaskAction(em, offerTypeKey);
         }
         finally {
             if (! em.isOpen())
@@ -154,7 +158,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 
 
 	@SuppressWarnings({ "OverloadedMethodsWithSameNumberOfParameters" })
-	public TaskAction getTaskAction(
+	public TaskAction newTaskAction(
 		  final EntityManager emParam, final String offerTypeKey)
 		  throws IllegalAccessException, InstantiationException, ClassNotFoundException {
 		OfferType type = emParam.find(OfferType.class, offerTypeKey);
@@ -326,6 +330,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 
 
 
+	@SuppressWarnings({ "SuspiciousMethodCalls" })
 	private void shutdownOldConfiglets(final EntityManager emParam) {
 		Set<String> set = configlets.keySet();
 		Object[] keys = set.toArray();
@@ -333,8 +338,8 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 			emParam.getTransaction().begin();
 			try {
 				if (emParam.find(ConfigletState.class, name) == null) {
-					Configlet let = configlets.get((String)name);
-					configlets.remove((String)name);
+					Configlet let = configlets.get(name);
+					configlets.remove(name);
 					let.shutdown();
 				}
 			}
@@ -380,9 +385,27 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
     }
 
 
+	@NotNull
+	@SuppressWarnings({ "HardcodedFileSeparator" })
+	public String getSystemTempDirName() {
+		String tmp = System.getenv("GNDMS_TMP");
+		tmp = tmp == null ?  ""  : tmp.trim();
+		if (tmp.length() == 0) {
+			tmp = System.getenv("TMPDIR");
+			tmp = tmp == null ?  ""  : tmp.trim();
+		}
+		if (tmp.length() == 0) {
+			tmp = "/tmp";
+		}
+		return tmp;
+	}
+
+
 	public void configure(final @NotNull Binder binder) {
 		// binder.bind(EntityManagerFactory.class).toInstance();
+		binder.bind(BoundInjector.class).toInstance(boundInjector);
 		binder.bind(SystemDirectory.class).toInstance(this);
+		binder.bind(SystemInfo.class).toInstance(this);
 		binder.bind(InstanceProvider.class).toInstance(this);
 		binder.bind(ServiceHomeProvider.class).toInstance(this);
 		binder.bind(TaskActionProvider.class).toInstance(this);
@@ -441,7 +464,9 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
             public String mapKey(final @NotNull OfferType keyParam) {
             return keyParam.getOfferTypeKey();
         }
-
-
     }
+
+	public @NotNull Injector getSystemAccessInjector() {
+		return boundInjector.getInjector();
+	}
 }

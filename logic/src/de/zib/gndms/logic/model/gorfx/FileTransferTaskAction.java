@@ -1,20 +1,18 @@
 package de.zib.gndms.logic.model.gorfx;
 
-import de.zib.gndms.model.gorfx.Task;
-import de.zib.gndms.model.gorfx.FTPTransferState;
+import de.zib.gndms.kit.network.GNDMSFileTransfer;
+import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
 import de.zib.gndms.model.gorfx.AbstractTask;
+import de.zib.gndms.model.gorfx.FTPTransferState;
 import de.zib.gndms.model.gorfx.types.FileTransferORQ;
 import de.zib.gndms.model.gorfx.types.FileTransferResult;
-import de.zib.gndms.kit.network.PersistentMarkerListener;
-import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
-import de.zib.gndms.kit.network.GNDMSFileTransfer;
-import org.jetbrains.annotations.NotNull;
-import org.globus.ftp.GridFTPClient;
 import org.apache.axis.types.URI;
+import org.globus.ftp.GridFTPClient;
+import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
-import java.util.TreeMap;
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>

@@ -1,10 +1,9 @@
 package de.zib.gndms.model.gorfx.types.io;
 
 import de.zib.gndms.model.gorfx.types.SliceStageInORQ;
-import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
 
 import java.util.Properties;
-import java.util.TreeMap;
+
 
 /**
  * Created by IntelliJ IDEA.
@@ -34,8 +33,8 @@ public class SliceStageInORQPropertyReader extends ORQPropertyReader<SliceStageI
 
         if(! getProperties().containsKey( SfrProperty.GRID_SITE.key ) )
           getProduct().setGridSite( getProperties().getProperty( SfrProperty.GRID_SITE.key ) );
-        getProduct( ).setDataFile( getProperties().getProperty( SfrProperty.BASE_FILE.key ) );
-        getProduct( ).setMetadataFile( getProperties().getProperty( SfrProperty.META_FILE.key ) );
+        getProduct( ).setActDataFile( getProperties().getProperty( SfrProperty.BASE_FILE.key ) );
+        getProduct( ).setActMetadataFile( getProperties().getProperty( SfrProperty.META_FILE.key ) );
 
     }
 

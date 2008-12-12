@@ -1,6 +1,6 @@
 #!/bin/sh
 
-STAGING_COMMAND="%{C3GRID_SOURCE}/dev-bin/ist-staging.sh"
+STAGING_COMMAND="%{C3GRID_SOURCE}/dev-bin/pilot-staging.sh"
 ESTIMATION_COMMAND="%{C3GRID_SOURCE}/scripts/dummy-estimation.sh"
 STAGING_AREA_PATH="/tmp/testss"
 STAGING_AREA_SIZE="2000000" # Currently unused
@@ -52,7 +52,8 @@ sliceKind: 'http://www.c3grid.de/G2/SliceKind/Staging'; \
 stagingClass: 'de.zib.gndms.logic.model.gorfx.c3grid.ExternalProviderStageInAction'; \
 estimationClass: 'de.zib.gndms.logic.model.gorfx.c3grid.ExternalProviderStageInORQCalculator'; \
 stagingCommand='$STAGING_COMMAND'; \
-estimationCommand='$ESTIMATION_COMMAND'"
+estimationCommand='$ESTIMATION_COMMAND'; \
+scriptIoFormat='XML' "
 
 source $C3GRID_SOURCE/scripts/features/enable-interslicetransfer.sh
 source $C3GRID_SOURCE/scripts/features/enable-filetransfer.sh

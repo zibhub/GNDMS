@@ -8,6 +8,9 @@ import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.SubTask;
 import org.jetbrains.annotations.NotNull;
 
+import javax.persistence.EntityManager;
+
+
 /**
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
@@ -29,11 +32,12 @@ public class RePublishSliceTaskAction extends ORQTaskAction<RePublishSliceORQ> {
         SubTask st = new SubTask( model );
         try {
             st.setId( getUUIDGen().nextUUID() );
-            st.fromTask( getEntityManager(), model );
+	        final EntityManager em = getEmf().createEntityManager();
+	        st.fromTask(em, model );
             st.setTerminationTime( model.getTerminationTime() );
 
-            InterSliceTransferTaskAction ista = new InterSliceTransferTaskAction( getEntityManager(), st );
-            ista.setClosingEntityManagerOnCleanup( false );
+            InterSliceTransferTaskAction ista = new InterSliceTransferTaskAction( em, st );
+            ista.setClosingEntityManagerOnCleanup( true );
             ista.setLog( getLog() );
             ista.call( );
 
@@ -54,13 +58,13 @@ public class RePublishSliceTaskAction extends ORQTaskAction<RePublishSliceORQ> {
 
 
     @Override
-    protected void onFailed( @NotNull AbstractTask model ) {
-        super.onFailed( model );
+    public void cleanUpOnFail( @NotNull AbstractTask model ) {
         try{
             DSpaceBindingUtils.destroySlice( getOrq().getDestinationSlice() );
         } catch( Exception e ) {
             // todo do something usefull with this exception
             e.printStackTrace( );
         }
+        super.cleanUpOnFail( model );
     }
 }
