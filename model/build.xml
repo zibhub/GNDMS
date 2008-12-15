@@ -99,10 +99,7 @@
 	</target>
 	<!-- Deletes classfiles-->
 	<target name="clean" description="Deletes model's classfiles">
-		<delete includeemptydirs="true" >
-			<fileset dir='${model.classes.dest}' includes="**/*.class"/>
-			<fileset dir='${model.test.classes.dest}' includes="**/*.class"/>
-		</delete>
+		<delete dir='${model.classes}'/>
 	</target>
 	
 	<!-- Deletes  jar-files -->

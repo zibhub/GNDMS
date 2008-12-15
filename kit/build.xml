@@ -101,10 +101,7 @@
 
 	<!-- Deletes kits' classfiles -->
 	<target name="clean" description="Deletes kit's classfiles ">
-		<delete includeemptydirs="true" >
-			<fileset dir='${kit.classes.dest}' includes="**/*.class"/>
-			<fileset dir='${kit.test.classes.dest}' includes="**/*.class"/>
-		</delete>
+		<delete dir='${kit.classes}'/>
 	</target>
 
 

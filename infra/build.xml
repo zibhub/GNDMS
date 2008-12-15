@@ -122,10 +122,7 @@
 	<!-- Deletes binaries-->
 	<target name="clean" description="Deletes infra's binaries">
 		<echo> deleting </echo>
-		<delete includeemptydirs="true" >
-			<fileset dir='${infra.classes.dest}' includes="**/*.class"/>
-			<fileset dir='${infra.test.classes.dest}' includes="**/*.class"/>
-		</delete>
+		<delete dir='${infra.classes}'/>
 	</target>
 	
 	<!-- Deletes jar-file-->

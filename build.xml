@@ -61,7 +61,7 @@
 	
 	
 	<!-- Delete generated jars-->
-	<target name="clean.jar" description="deletes all generated jars">
+	<target name="clean.jar" description="deletes all generated jars and gars">
 		<echo> Deleting jar-files</echo>
 		<ant antfile="${infra.dir}/build.xml" inheritALL="false" target="clean.jar"/>
 		<ant antfile="${typecon.dir}/build.xml" inheritALL="false" target="clean.jar"/>
@@ -69,6 +69,7 @@
 		<ant antfile="${kit.dir}/build.xml" inheritALL="false" target="clean.jar"/>
 		<ant antfile="${model.dir}/build.xml" inheritALL="false" target="clean.jar"/>
 		<ant antfile="${stuff.dir}/build.xml" inheritALL="false" target="clean.jar"/>
+		<ant antfile="${build-services}" inheritALL="false" target="clean.all"/>
 	</target>
 	<!-- Delete build-files and generated jar every package -->
 	<target name="clean.all" description="deletes build-files and jars of every package">

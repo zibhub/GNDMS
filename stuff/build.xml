@@ -49,9 +49,7 @@
 	</path>
 	
 	<!-- Compile stuff's test-classes-->
-	<target name="compile.test" description="Compiles stuff's test-files">
-
-			
+	<target name="compile.test" description="Compiles stuff's test-files">	
 		<mkdir dir="${stuff.test.classes.dest}"/>
 		
 		<javac srcdir='test-src' destdir='${stuff.test.classes.dest}' classpathref="stuff.test.path" includes="**/*" debug="${javac.debug}">
@@ -67,11 +65,8 @@
 	
 	<!-- Deletes binaries and jar-files -->
 	<target name="clean" description="Deletes stuff's binaries">
-		<delete includeemptydirs="true" >
-			<fileset dir='${stuff.classes.dest}' includes="**/*.class"/>
-			<fileset dir='${stuff.test.classes.dest}' includes="**/*.class"/>
-			
-		</delete>
+			<delete dir='gndms-stuff' />
+			<delete dir='../${stuff.test.classes.dest}' />
 	</target>
 	
 	<!-- Deletes jar-files -->

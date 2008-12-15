@@ -91,10 +91,7 @@
 	</target>
 	<!-- Deletes binaries -->
 	<target name="clean" description="Deletes typecon's binaries">
-		<delete includeemptydirs="true" >
-			<fileset dir='${typecon.classes.dest}' includes="**/*.class"/>
-			<fileset dir='${typecon.test.classes.dest}' includes="**/*.class"/>
-		</delete>
+		<delete dir='${typecon.classes}'/>
 	</target>
 	
 	<!-- Deletes jar-files -->

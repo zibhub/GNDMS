@@ -92,7 +92,7 @@
 		</exec>
 	</target>
 	
-	<target name="clean" depends="clean.stubsServices,clean.services"/>
+	<target name="clean.all" depends="clean.stubsServices,clean.services"/>
 </project>
 
 

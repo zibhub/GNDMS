@@ -112,11 +112,7 @@
 	
 	<!-- Deletes binaries and jar-files -->
 	<target name="clean" description="Deletes logic's binaries">
-		<delete includeemptydirs="true" >
-			<fileset dir='${logic.classes.dest}' includes="**/*.class"/>
-			<fileset dir='${logic.test.classes.dest}' includes="**/*.class"/>
-			
-		</delete>
+		<delete dir='${logic.classes}'/>
 	</target>
 	
 	<!-- Deletes jar-files -->
