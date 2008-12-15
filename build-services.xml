@@ -59,12 +59,40 @@
 	<!-- Building all services -->
 	<target name='services.compile'>
 		<mkdir dir="tmp"/>
+		<for param="jars">
+			<path refid="dspace.path"/>
+			<sequential>
+				<if>
+					<not>
+						<available file="@{jars}"/>			
+					</not>
+					<then>
+						<fail message="Not able to compile as '@{jars}' was not found."/>
+					</then>
+				</if>
+				
+			</sequential>
+		</for>
 		<javac srcdir='${dspace.dir}/src' destdir='tmp' classpathref="dspace.path" debug="${javac.debug}" />
 		<jar destfile="${lib.dir}/DSpace.jar"
 		     basedir="tmp">
 		</jar>
 		<delete dir="tmp"/>
 		<mkdir dir="tmp"/>
+		<for param="jars">
+			<path refid="gorfx.path"/>
+			<sequential>
+				<if>
+					<not>
+						<available file="@{jars}"/>			
+					</not>
+					<then>
+						<fail message="Not able to compile as '@{jars}' was not found."/>
+					</then>
+				</if>
+				
+			</sequential>
+		</for>
 		<javac srcdir='${gorfx.dir}/src' destdir='tmp' classpathref="gorfx.path" debug="${javac.debug}"/>
 		<jar destfile="${gorfx.dir}/GORFX.jar"
 		     basedir="tmp">
