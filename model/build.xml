@@ -42,40 +42,55 @@
 	
 	<!-- Compile model, but not its test-files -->
 	<target name="compile" description="Compiles model">
-
-		<if> 
-			<available file="${stuff}"/>
-			<then>
+		<mkdir dir="${model.classes.dest}"/>
+		<for param="jars">
+			<path refid="model.path"/>
+			<sequential>
+				<if>
+					<not>
+						<available file="@{jars}"/>			
+					</not>
+					<then>
+						<fail message="Not able to compile as '@{jars}' was not found."/>
+					</then>
+				</if>
 				
-				<mkdir dir="${model.classes.dest}"/>
-		
-				<groovyc srcdir="src" destdir='${model.classes.dest}' classpathref="model.path" >
-					<javac debug="${javac.debug}"/>
-				</groovyc>	
-				<!-- Copy Meta files to build dir-->
-				<copy todir="${model.classes.dest}" >
-					<fileset dir="src/">
-						<exclude name="de/**"/>
-					</fileset>
-				</copy>
-			</then>
-			<else>
-				<fail message="Not able to compile as '${stuff}' was not found."/>
-			</else>
-		</if>
+			</sequential>
+		</for>
+		<groovyc srcdir="src" destdir='${model.classes.dest}' classpathref="model.path" >
+			<javac debug="${javac.debug}"/>
+		</groovyc>	
+		<!-- Copy Meta files to build dir-->
+		<copy todir="${model.classes.dest}" >
+			<fileset dir="src/">
+				<exclude name="de/**"/>
+			</fileset>
+		</copy>
 	</target>
 	
 	<path id="model.test.path">
 		<path refid="model.path"  />
-		<pathelement path="${gndms-shared-model.jar}"/>
+		<pathelement path="${gndms-shared-model}"/>
 	</path>
 	
 	<!-- Compile model's test-files -->
 	<target name="compile.test" description="Compiles model test-files">
 		<mkdir dir="${model.test.classes.dest}"/>
-		<javac srcdir='test-src' destdir='${model.test.classes.dest}' classpathref="model.test.path" debug="${javac.debug}">
-			
-		</javac>
+		<for param="jars">
+			<path refid="model.test.path"/>
+			<sequential>
+				<if>
+					<not>
+						<available file="@{jars}"/>			
+					</not>
+					<then>
+						<fail message="Not able to compile as '@{jars}' was not found."/>
+					</then>
+				</if>
+				
+			</sequential>
+		</for>
+		<javac srcdir='test-src' destdir='${model.test.classes.dest}' classpathref="model.test.path" debug="${javac.debug}"/>
 		<!-- Copy Meta files to build dir-->
 		<copy todir="${model.test.classes.dest}" >
 			<fileset dir="test-src/">

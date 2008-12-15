@@ -12,9 +12,8 @@
 	<path id="kit.path">
 		<pathelement path="${GROOVY}"/> 
 		<pathelement path="${openjpa}"/>
-		<dirset dir="${kit.classes.dest}"/>
+		<!--dirset dir="${kit.classes.dest}"/-->
 		<pathelement path="${gt4}"/>
-		<!--fileset refid="globus.lib"/-->
 		<pathelement path="${gndms-shared-model}"/>
 		<pathelement path="${annotations}"/>
 		<pathelement path="${jetty}"/>
@@ -45,9 +44,69 @@
 	
 	<!-- Compile model, but not its test-files -->
 	<target name="compile" description="Compiles kit">
+		<mkdir dir="${kit.classes.dest}"/>
+		<for param="jars">
+			<path refid="kit.path"/>
+			<sequential>
+				<if>
+					<not>
+						<available file="@{jars}"/>			
+					</not>
+					<then>
+						<fail message="Not able to compile as '@{jars}' was not found."/>
+					</then>
+				</if>
+					
+			</sequential>
+		</for>
+				<!-- Copy meta-stuff -->
+				<copy todir="${kit.classes.dest}">
+					<fileset dir='src'>
+						<exclude name="de/**"/>
+					</fileset>
+				</copy>
+				<groovyc srcdir='src' destdir='${kit.classes.dest}' classpathref="kit.path">
+					<javac debug="${javac.debug}"/>
+				</groovyc>	
+	</target>
+	
+	<path id="kit.test.path">
+		<pathelement path="${gndms-shared-model-test}"/>
+		<pathelement path="${gndms-kit}"/>
+		<path refid="kit.path"/>
+		<dirset dir="${kit.test.classes.dest}"/>
+	</path>
+
+	<!-- Compile kit's test-classes-->
+	<target name="compile.test" description="Compiles kit and its test-files">
+		<mkdir dir="${kit.test.classes.dest}"/>
+		<for param="jars">
+			<path refid="kit.test.path"/>
+			<sequential>
+				<if>
+					<not>
+						<available file="@{jars}"/>			
+					</not>
+					<then>
+						<fail message="Not able to compile as '@{jars}' was not found."/>
+					</then>
+				</if>
+				
+			</sequential>
+		</for>
 		
+		<!-- Copy meta-stuff -->
+		<copy todir="${kit.test.classes.dest}">
+			<fileset dir='test-src'>
+				<exclude name="de/**"/>
+			</fileset>
+		</copy>
 		<if>
-			<available file="${gndms-shared-model}"/>
+			<and>
+				<available file="${gndms-shared-model}"/>
+				<available file="${gndms-shared-model-test}"/>
+				<available file="${gndms-kit}"/>
+			</and>
 			<then>
 				<mkdir dir="${kit.classes.dest}"/>
 				<!-- Copy meta-stuff -->
@@ -61,29 +120,9 @@
 				</groovyc>
 			</then>
 			<else>
-				<fail message="Not able to compile as '${gndms-shared-model}' was not found."/>
+				<fail message="Not able to compile as '${gndms-shared-model}','${gndms-shared-model-test}' or '${gndms-kit}' was not found."/>
 			</else>
 		</if>
-		
-		
-	</target>
-	
-	<path id="kit.test.path">
-		<pathelement path="${gndms-shared-model-test}"/>
-		<pathelement path="${gndms-kit}"/>
-		<path refid="kit.path"/>
-		<dirset dir="${kit.test.classes.dest}"/>
-	</path>
-
-	<!-- Compile kit's test-classes-->
-	<target name="compile.test" description="Compiles kit and its test-files">
-		<mkdir dir="${kit.test.classes.dest}"/>
-		<!-- Copy meta-stuff -->
-		<copy todir="${kit.test.classes.dest}">
-			<fileset dir='test-src'>
-				<exclude name="de/**"/>
-			</fileset>
-		</copy>
 		<javac srcdir='test-src' destdir='${kit.test.classes.dest}' classpathref="kit.test.path" debug="${javac.debug}"/>
 	</target>
 	

@@ -35,26 +35,29 @@
 	
 	<!-- Compile typecon, but not its test-files -->
 	<target name="compile" description="Compiles typecon">
-		<if>
-			<not>
-				<available file="${gndms-shared-model}"/>
-			</not>
-			<then>
-				<fail message="Not able to compile as '${gndms-shared-model}' was not found."/>
-			</then>
-		<else>
-			<mkdir dir="${typecon.classes.dest}"/>
-			<javac srcdir='src' destdir='${typecon.classes.dest}' classpathref="typecon.path" />
-			<!-- Copy Meta files to build dir-->
-			
-			<copy todir="${typecon.classes.dest}" >
-				<fileset dir="src">
-					<exclude name="de/**"/>
-				</fileset>
-			</copy>	
-		</else>
-	
-		</if>
+		<mkdir dir="${typecon.classes.dest}"/>
+		<for param="jars">
+			<path refid="typecon.path"/>
+			<sequential>
+				<if>
+					<not>
+						<available file="@{jars}"/>			
+					</not>
+					<then>
+						<fail message="Not able to compile as '@{jars}' was not found."/>
+					</then>
+				</if>
+				
+			</sequential>
+		</for>
+		<javac srcdir='src' destdir='${typecon.classes.dest}' classpathref="typecon.path" />
+		
+		<!-- Copy Meta files to build dir-->	
+		<copy todir="${typecon.classes.dest}" >
+			<fileset dir="src">
+				<exclude name="de/**"/>
+			</fileset>
+		</copy>	
 	</target>
 	
 	<path id="typecon.test.path">
@@ -66,6 +69,20 @@
 	<!-- Compile typecon and its test-files -->
 	<target name="compile.test" description="Compiles typecon's test-files">
 		<mkdir dir="${typecon.test.classes.dest}"/>
+		<for param="jars">
+			<path refid="typecon.test.path"/>
+			<sequential>
+				<if>
+					<not>
+						<available file="@{jars}"/>			
+					</not>
+					<then>
+						<fail message="Not able to compile as '@{jars}' was not found."/>
+					</then>
+				</if>
+				
+			</sequential>
+		</for>
 		<javac srcdir='test-src' destdir='${typecon.test.classes.dest}' classpathref="typecon.test.path" />
 		<!-- Copy Meta files to build dir-->
 		<copy todir="${typecon.test.classes.dest}" >

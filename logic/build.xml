@@ -39,30 +39,29 @@
 	
 	<!-- Compile logic, but not its test-files -->	
 	<target name="compile" description="Compiles logic">
-		<if>
-			<and>
-				<available file="${stuff}"/>
-				<available file="${gndms-shared-model}"/>
-				<available file="${gndms-kit}"/>
-			</and>
-			<then>
-				<mkdir dir="${logic.classes.dest}"/>
-				<!-- Copy Meta files to build dir-->
-				<copy todir="${logic.classes.dest}">
-					<fileset dir='src'>
-						<exclude name="de/**"/>
-					</fileset>
-				</copy>
+		<mkdir dir="${logic.classes.dest}"/>
+		<for param="jars">
+			<path refid="logic.path"/>
+			<sequential>
+				<if>
+					<not>
+						<available file="@{jars}"/>			
+					</not>
+					<then>
+						<fail message="Not able to compile as '@{jars}' was not found."/>
+					</then>
+				</if>
 				
-				<javac srcdir='src' destdir='${logic.classes.dest}' classpathref="logic.path" debug="${javac.debug}"/>
-			</then>
+			</sequential>
+		</for>
+		<!-- Copy Meta files to build dir-->
+		<copy todir="${logic.classes.dest}">
+			<fileset dir='src'>
+				<exclude name="de/**"/>
+			</fileset>
+		</copy>
+		<javac srcdir='src' destdir='${logic.classes.dest}' classpathref="logic.path" debug="${javac.debug}"/>
 			
-			<else>
-		<fail message="Not able to compile as '${gndms-shared-model}', ''${gndms-kit}' or '${stuff}' was not found."/>
-	</else>
-	
-		</if>
-		
 	</target>
 	
 	
@@ -96,6 +95,20 @@
 
 			
 		<mkdir dir="${logic.test.classes.dest}"/>
+		<for param="jars">
+			<path refid="logic.test.path"/>
+			<sequential>
+				<if>
+					<not>
+						<available file="@{jars}"/>			
+					</not>
+					<then>
+						<fail message="Not able to compile as '@{jars}' was not found."/>
+					</then>
+				</if>
+				
+			</sequential>
+		</for>
 		<!-- Split nötig ?-->
 		<javac srcdir='test-src' destdir='${logic.test.classes.dest}' classpathref="logic.test.path" includes="**/action/*" debug="${javac.debug}">	
 		</javac>

@@ -12,7 +12,7 @@
 	<path id="stuff.path">
 		<pathelement path="${GROOVY}"/>
 		<pathelement path="${annotations}"/>
-		<dirset dir="${stuff.classes.dest}"/>
+		<!--dirset dir="${stuff.classes.dest}"/-->
 		<pathelement path="${collections}"/>
 		<pathelement path="${guice}"/>		
 	</path>
