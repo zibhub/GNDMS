@@ -96,8 +96,8 @@
 		<ant antfile="${model.dir}/build.xml" inheritALL="false"/>
 		<ant antfile="${kit.dir}/build.xml" inheritALL="false"/>
 		<ant antfile="${logic.dir}/build.xml" inheritALL="false"/>
-		<!--runtarget target="typecon.jar"/>
-		<runtarget target="infra.jar"/-->
+		<ant antfile="${typecon.dir}/build.xml" inheritALL="false"/>
+		<!--runtarget target="infra.jar"/-->
 	</target>
 	
 	<target name="ziptest">
