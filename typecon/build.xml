@@ -10,10 +10,11 @@
 		<pathelement location="${tools-lib.dir}/joda-time-1.5.2.jar"/> 
 		<fileset refid="globus.lib"/>
 		<pathelement location="${tools-lib.dir}/testng-5.8-jdk15.jar"/> 
+		<pathelement location="${tools-lib.dir}/geronimo-jpa_2.0_spec-1.0-EA-SNAPSHOT.jar"/>
 		<pathelement location="${tools-lib.dir}/geronimo-jpa_3.0_spec-1.0.jar"/>
 		<pathelement location="${tools-lib.dir}/geronimo-jta_1.1_spec-1.1.jar"/>
 		<pathelement location="${tools-lib.dir}/serp-1.13.1.jar"/>
-		<pathelement location="${tools-lib.dir}/openjpa-1.1.0.jar"/>
+		<pathelement location="${tools-lib.dir}/openjpa-2.0-SNAPSHOT.jar"/>
 	</path>
 	<!-- Compile typecon, but not its test-files -->
 	<target name="typecon.compile" description="Compiles typecon">
@@ -80,5 +81,6 @@
 	<!-- Deletes jar-files -->
 	<target name="typecon.clean.jar" description="Deletes typecon's jar-file">
 		<delete file='${lib.dir}/gndms-typecon.jar'/>	
+		<delete file='${lib.dir}/gndms-typecon-test.jar'/>	
 	</target>
 </project>

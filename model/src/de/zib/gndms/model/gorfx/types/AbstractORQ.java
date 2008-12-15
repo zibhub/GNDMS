@@ -126,7 +126,8 @@ public abstract class AbstractORQ implements Serializable {
 					result.append(", ");
 				result.append(key);
 				result.append('=');
-				result.append(context.get(key));				
+				final String str = context.get(key);
+				result.append(str == null ? "(null)" : str);
 			}
 			result.append("}'; ");
 		}

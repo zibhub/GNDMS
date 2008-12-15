@@ -2,25 +2,25 @@
 <project name="Runs the OpenJPA enhancer">
 
 <taskdef name="openjpac" classname="org.apache.openjpa.ant.PCEnhancerTask">
-	<classpath>
-		<fileset dir="../extra/tools-lib" id="tooljars">
+	<classpath id="enhancepath">
+		<fileset dir="${basedir}/../extra/tools-lib" id="tooljars">
 			<include  name="*.jar" />
-		</fileset>
+		</fileset>    
+		<pathelement location="${basedir}/gndms-shared-model/production" />
+		<pathelement location="${basedir}/../stuff/gndms-stuff/production" />		
 	</classpath>
 </taskdef>
 
 <taskdef name="mappingtool" classname="org.apache.openjpa.jdbc.ant.MappingToolTask">
-	<classpath>
-		<fileset refid="tooljars" />
-	</classpath>
+	<classpath refid="enhancepath" />
 </taskdef>
 
-<fileset id="model_classes" dir="gndms-shared-model/production">
+<!-- fileset id="model_classes" dir="gndms-shared-model/production">
 	<include name="de/zib/gndms/model/**/*" />
 	<exclude name="de/zib/gndms/model/*" />
 	<exclude name="de/zib/gndms/model/util/*" />
 	<exclude name="de/zib/gndms/model/*/types/**" />
-</fileset>
+</fileset -->
 
 <target name="enhance" description="Calls the openjpa enhancer ant task on all classed in gndms-shared-model/production">
 
@@ -37,15 +37,10 @@
     <copy file="src/META-INF/GNDMS-RELEASE" tofile="gndms-shared-model/production/META-INF/GNDMS-RELEASE" overwrite="true" />
 
 	<openjpac directory="${basedir}/gndms-shared-model/production">
-		<config propertiesFile="src/META-INF/persistence.xml" />
-        
-		<classpath>
-			<pathelement location="gndms-shared-model/production" />
-			<pathelement location="../stuff/gndms-stuff/production" />
-			<fileset refid="tooljars" />
-		</classpath>
 
-		<fileset refid="model_classes" />
+		<config propertiesFile="src/META-INF/persistence.xml" />
+
+		<classpath refid="enhancepath" />
 
 	</openjpac>
 
@@ -78,21 +73,14 @@
 			  connectionDriverName="org.apache.derby.jdbc.EmbeddedDriver"
 			  connectionURL="jdbc:derby:/opt/gt-current/etc/c3grid_shared/db/c3grid"
 			  propertiesFile="src/META-INF/persistence.xml"  />
-                 <!--
-		<config
+                                                                           
+		<classpath refid="enhancepath" />
+
+		<!-- config
 			  connectionDriverName="org.apache.derby.jdbc.EmbeddedDriver"
               connectionURL="jdbc:derby:/home/mjorra/tmp/C3GridTests/db/ModelActionTests"
-			  propertiesFile="src/META-INF/persistence.xml"  />
-          -->
+			  propertiesFile="src/META-INF/persistence.xml"  / -->
+    </mappingtool>
+</target>  
 
-		<classpath>
-			<pathelement location="gndms-shared-model/production" />
-			<pathelement location="../stuff/gndms-stuff/production" />
-            <fileset refid="tooljars" />
-		</classpath>
-
-		<fileset refid="model_classes" />
-		
-	</mappingtool>
-</target>
 </project>

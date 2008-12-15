@@ -6,8 +6,8 @@ import de.zib.gndms.logic.action.LogAction;
 import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.model.gorfx.types.TaskState;
-import de.zib.gndms.model.util.TxFrame;
 import de.zib.gndms.model.util.EntityManagerAux;
+import de.zib.gndms.model.util.TxFrame;
 import de.zib.gndms.stuff.copy.Copier;
 import org.apache.commons.logging.Log;
 import org.jetbrains.annotations.NotNull;
@@ -16,11 +16,8 @@ import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import javax.persistence.EntityManagerFactory;
 import java.io.Serializable;
 import java.util.GregorianCalendar;
-
-import com.google.inject.Inject;
 
 
 /**

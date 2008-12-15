@@ -7,7 +7,7 @@
 
 		<pathelement location="${tools-lib.dir}/annotations.jar"/>
 		<dirset dir="${logic.dest}/production"/>
-        <pathelement location="${lib.dir}/gndms-stuff.jar"/>                
+	        <pathelement location="${lib.dir}/gndms-stuff.jar"/>                
 		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
 		<pathelement location="${tools-lib.dir}/testng-5.8-jdk15.jar"/> 
 		<pathelement location="${tools-lib.dir}/commons-collections-3.2.jar "/>
@@ -23,18 +23,18 @@
 		<pathelement location="${lib.dir}/gndms-kit.jar"/>
 		<pathelement location="${tools-lib.dir}/google-collect-snapshot-20080820.jar"/>
 		<fileset refid="globus.lib"/>
-		<pathelement location="${tools-lib.dir}/geronimo-jpa_3.0_spec-1.0.jar"/>
-		<pathelement location="${tools-lib.dir}/geronimo-jta_1.1_spec-1.1.jar"/>
-		<pathelement location="${tools-lib.dir}/serp-1.13.1.jar"/>
-		<pathelement location="${tools-lib.dir}/openjpa-1.1.0.jar"/>
-        <pathelement location="${tools-lib.dir}/guice-snapshot20081123.jar"/>
-        <pathelement location="${tools-lib.dir}/guice-assistedinject-snapshot20081123.jar"/>
-        <pathelement location="${tools-lib.dir}/guice-multibindings-snapshot20081123.jar"/>
-        <pathelement location="${tools-lib.dir}/guice-throwingproviders-snapshot20081123.jar"/>
-        <pathelement location="${tools-lib.dir}/asm-3.1.jar"/>
-        <pathelement location="${tools-lib.dir}/cglib-2.2.jar"/>
-		
-        <!--fileset dir="${tools-lib.dir}" includes="*.jar" /-->
+                <pathelement location="${tools-lib.dir}/geronimo-jpa_2.0_spec-1.0-EA-SNAPSHOT.jar"/>
+                <pathelement location="${tools-lib.dir}/geronimo-jpa_3.0_spec-1.0.jar"/>
+                <pathelement location="${tools-lib.dir}/geronimo-jta_1.1_spec-1.1.jar"/>
+                <pathelement location="${tools-lib.dir}/serp-1.13.1.jar"/>
+                <pathelement location="${tools-lib.dir}/openjpa-2.0-SNAPSHOT.jar"/>
+        	<pathelement location="${tools-lib.dir}/guice-snapshot20081123.jar"/>
+	        <pathelement location="${tools-lib.dir}/guice-assistedinject-snapshot20081123.jar"/>
+	        <pathelement location="${tools-lib.dir}/guice-multibindings-snapshot20081123.jar"/>
+        	<pathelement location="${tools-lib.dir}/guice-throwingproviders-snapshot20081123.jar"/>
+        	<pathelement location="${tools-lib.dir}/asm-3.1.jar"/>
+        	<pathelement location="${tools-lib.dir}/cglib-2.2.jar"/>
+        	<!--fileset dir="${tools-lib.dir}" includes="*.jar" /-->
 		
 
 		
@@ -124,6 +124,7 @@
 	<!-- Deletes jar-files -->
 	<target name="logic.clean.jar" description="Deletes logic's jar-file">
 		<delete file='${lib.dir}/gndms-logic.jar'/>
+		<delete file='${lib.dir}/gndms-logic-test.jar'/>
 	</target>
 </project>
 	
