@@ -83,8 +83,8 @@
 	</target>
 	
 	<path id="logic.test.path">
-		<pathelement path="${gndms-shared-model}"/>
-		<pathelement path="${gndms-kit}"/>
+		<pathelement path="${gndms-shared-model-test}"/>
+		<pathelement path="${gndms-kit-test}"/>
 		<pathelement path="${gndms-logic}"/>
 		<path refid="logic.path"/>
 		<!-- Dirset nötig ?-->

@@ -34,11 +34,19 @@ args4j=${tools-lib.dir}/args4j-2.0.9.jar
 CXF=${tools-lib.dir}/cxf.jar
 
 stuff=${lib.dir}/gndms-stuff.jar
+stuff-test=${lib.dir}/gndms-stuff-test.jar
 gndms-shared-model=${lib.dir}/gndms-shared-model.jar
+gndms-shared-model-test=${lib.dir}/gndms-shared-model-test.jar
 gndms-kit=${lib.dir}/gndms-kit.jar
+gndms-kit-test=${lib.dir}/gndms-kit-test.jar
 gndms-logic=${lib.dir}/gndms-logic.jar
+gndms-logic-test=${lib.dir}/gndms-logic-test.jar
 gndms-typecon=${lib.dir}/gndms-typecon.jar
+gndms-typecon-test=${lib.dir}/gndms-typecon-test.jar
 gndms-infra=${lib.dir}/gndms-infra.jar
+gndms-infra-test=${lib.dir}/gndms-infra-test.jar
+
+
 gndms-groovy=${tools-lib.dir}/gndms-groovy.jar
 
 dspace.nonsym=${dspace.dir}/lib/caGrid-advertisement-1.2.jar;${dspace.dir}/lib/caGrid-core-1.2.jar;${dspace.dir}/lib/caGrid-Introduce-serviceTools-1.2.jar;${dspace.dir}/lib/caGrid-metadata-security-1.2.jar;${dspace.dir}/lib/caGrid-ServiceSecurityProvider-client-1.2.jar;${dspace.dir}/lib/caGrid-ServiceSecurityProvider-common-1.2.jar;${dspace.dir}/lib/caGrid-ServiceSecurityProvider-service-1.2.jar;${dspace.dir}/lib/caGrid-ServiceSecurityProvider-stubs-1.2.jar;${dspace.dir}/lib/castor-0.9.9.jar;

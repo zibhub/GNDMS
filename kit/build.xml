@@ -69,8 +69,8 @@
 	</target>
 	
 	<path id="kit.test.path">
-		<pathelement location="${gndms-shared-model}"/>
-		<pathelement location="${gndms-kit}"/>
+		<pathelement path="${gndms-shared-model-test}"/>
+		<pathelement path="${gndms-kit}"/>
 		<path refid="kit.path"/>
 		<dirset dir="${kit.test.classes.dest}"/>
 	</path>

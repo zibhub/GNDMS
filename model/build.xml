@@ -86,7 +86,7 @@
 
 	<!-- Creates jar-file containing model's test-classes-->
 	<target name="jar.test" depends="compile.test" description="Creates jar file gndms-shared-model-test.jar in 'extra/lib'">	
-		<jar destfile="${gndms-shared-model-test.jar}"
+		<jar destfile="${gndms-shared-model-test}"
 		     basedir="${model.test.classes.dest}">
 		</jar>
 	</target>

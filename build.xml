@@ -42,7 +42,7 @@
 
 	<!-- Delete build-files every service -->
 	<target name="clean" description="deletes build-files of every service">
-		<ant antfile="${}/build-services.xml" inheritALL="false" target="clean.stubsServices"/>
+		<ant antfile="${build-services}" inheritALL="false" target="clean.stubsServices"/>
 		<delete file=".symlink"/>
 		<echo> Deleting binaries </echo>
 		<ant antfile="${infra.dir}/build.xml" inheritALL="false" target="clean"/>

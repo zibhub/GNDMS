@@ -31,7 +31,7 @@
 	<!-- Creates jar containing stuff's test-classfiles-->
 	<target name="jar.test"  depends="compile.test" description="Creates jar file gndms-stuff-test.jar in 'extra/lib'">
 		
-		<jar destfile="${gndms-stuff-test}"
+		<jar destfile="${stuff-test}"
 		     basedir="${stuff.test.classes.dest}">
 		</jar>
 	</target>
@@ -77,7 +77,7 @@
 	<!-- Deletes jar-files -->
 	<target name="clean.jar" description="Deletes stuff's jar-file" depends="clean">
 		<delete file='${stuff}'/>
-		<delete file='${gndms-stuff-test}'/>
+		<delete file='${stuff-test}'/>
 	</target>
 </project>
 	

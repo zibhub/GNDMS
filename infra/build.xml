@@ -85,9 +85,9 @@
 	
 	<path id="infra.test.path">
 		<path refid="infra.path"/>
-		<pathelement path="${gndms-shared-model}"/>
-		<pathelement path="${gndms-kit}"/>
-		<pathelement path="${gndms-logic}"/>
+		<pathelement path="${gndms-shared-model-test}"/>
+		<pathelement path="${gndms-kit-test}"/>
+		<pathelement path="${gndms-logic-test}"/>
 		<pathelement path="${gndms-infra}"/>
 		<!--fileset dir="${tools-lib.dir}" includes="*.jar" />
 		<fileset refid="globus.lib"/>
@@ -109,8 +109,8 @@
 	</target>
 	
 	<!-- Creates jar-file containing infra's test-classes -->	
-	<target name="test.jar" depends="compile.test">
-		<jar destfile="${gndms-infra-test}" basedir="test"/>		
+	<target name="jar.test" depends="compile.test">
+		<jar destfile="${gndms-infra-test}" basedir="test-src"/>		
 	</target>
 		
 	
