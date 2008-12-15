@@ -1,6 +1,11 @@
 <project name="model compilation file" default="jar" basedir=".">
 	
+	<!-- Define the environment variable -->
+	<property environment="env"/>
+	
+	<!--Define location of c3grid basedir relative to this service-->
 	<property name="c3grid.basedir"  value=".."/>
+	
 	<property file="${c3grid.basedir}/c3grid.properties"/>
 	<property file="${c3grid.basedir}/c3grid.deps"/>	
 	<property file="model.properties"/>
