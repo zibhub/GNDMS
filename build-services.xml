@@ -76,19 +76,30 @@
 		</exec>
 	</target>
 	
+	
+	<target name="clean.services">
+		<delete file="${lib.dir}/DSpace.jar"/>
+		<delete file="${gorfx.dir}/GORFX.jar"/>
+		<delete file="${c3grid.basedir}/c3grid_DSpace.gar"/>
+		<delete file="${c3grid.basedir}/c3grid_GORFX.gar"/>
+		<delete file="${c3grid.basedir}/c3grid_LOFIS.gar"/>
+		<delete file="${c3grid.basedir}/c3grid_WHORFX.gar"/>
+	</target>
 	<target name="clean.stubsServices">
 		<exec executable="sh">
 			<arg value="-c"/>
 			<arg value="for i in services/* ; do ( cd $i &amp;&amp; ant preClean ) ; done"/>
 		</exec>
 		<delete includeemptydirs="true">
-			<fileset dir="services" includes="**/build/"/>	
+			<fileset dir="${services.dir}" includes="**/build/"/>	
 		</delete>
 		<exec executable="sh">
 			<arg value="-c"/>
 			<arg value="for i in services/* ; do ( cd $i &amp;&amp; ant postClean ) ; done"/>
 		</exec>
 	</target>
+	
+	<target name="clean" depends="clean.stubsServices,clean.services"/>
 </project>
 
 
