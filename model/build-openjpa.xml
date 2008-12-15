@@ -12,9 +12,7 @@
 </taskdef>
 
 <taskdef name="mappingtool" classname="org.apache.openjpa.jdbc.ant.MappingToolTask">
-	<classpath>
-		<fileset refid="enhancepath" />
-	</classpath>
+	<classpath refid="enhancepath" />
 </taskdef>
 
 <!-- fileset id="model_classes" dir="gndms-shared-model/production">
