@@ -88,14 +88,7 @@
 	<target name="clean.stubsServices">
 		<exec executable="sh">
 			<arg value="-c"/>
-			<arg value="for i in services/* ; do ( cd $i &amp;&amp; ant preClean ) ; done"/>
-		</exec>
-		<delete includeemptydirs="true">
-			<fileset dir="${services.dir}" includes="**/build/"/>	
-		</delete>
-		<exec executable="sh">
-			<arg value="-c"/>
-			<arg value="for i in services/* ; do ( cd $i &amp;&amp; ant postClean ) ; done"/>
+			<arg value="for i in services/* ; do ( cd $i &amp;&amp; ant clean) ; done"/>
 		</exec>
 	</target>
 	
