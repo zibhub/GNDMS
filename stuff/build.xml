@@ -18,6 +18,7 @@
 	</path>
 	<!-- Compile stuff, but not its test-files -->
 	<target name="compile" description="Compiles stuff">
+		<mkdir dir="${stuff.classes.dest}"/>
 		<!-- Copy Meta files to build dir-->
 		<copy todir="${stuff.classes.dest}">
 			<fileset dir='src'>
@@ -65,8 +66,7 @@
 	
 	<!-- Deletes binaries and jar-files -->
 	<target name="clean" description="Deletes stuff's binaries">
-			<delete dir='gndms-stuff' />
-			<delete dir='../${stuff.test.classes.dest}' />
+			<delete dir='${stuff.classes}' />
 	</target>
 	
 	<!-- Deletes jar-files -->

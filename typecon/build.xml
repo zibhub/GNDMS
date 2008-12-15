@@ -59,13 +59,14 @@
 	
 	<path id="typecon.test.path">
 		<path refid="typecon.path"/>
-		<pathelement location="${gndms-shared-model}"/>
+		<pathelement location="${gndms-shared-model-test}"/>
+		<pathelement location="${gndms-typecon}"/>
 	</path>
 	
 	<!-- Compile typecon and its test-files -->
 	<target name="compile.test" description="Compiles typecon's test-files">
 		<mkdir dir="${typecon.test.classes.dest}"/>
-		<javac srcdir='test-src' destdir='${typecon.test.classes.dest}' classpathref="typecon.test.path" includes="**/type/*.java"/>
+		<javac srcdir='test-src' destdir='${typecon.test.classes.dest}' classpathref="typecon.test.path" />
 		<!-- Copy Meta files to build dir-->
 		<copy todir="${typecon.test.classes.dest}" >
 			<fileset dir="test-src">
