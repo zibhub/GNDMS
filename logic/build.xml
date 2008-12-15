@@ -1,4 +1,4 @@
-<project name="logic compilation file" default="compile" basedir=".">
+<project name="logic compilation file" default="jar" basedir=".">
 	
 	<!-- Define the environment variable -->
 	<property environment="env"/>
@@ -41,6 +41,7 @@
 	<target name="compile" description="Compiles logic">
 		<if>
 			<and>
+				<available file="${stuff}"/>
 				<available file="${gndms-shared-model}"/>
 				<available file="${gndms-kit}"/>
 			</and>
@@ -57,7 +58,7 @@
 			</then>
 			
 			<else>
-		<fail message="Not able to compile as '${gndms-shared-model}' or ''${gndms-kit}' was not found."/>
+		<fail message="Not able to compile as '${gndms-shared-model}', ''${gndms-kit}' or '${stuff}' was not found."/>
 	</else>
 	
 		</if>

@@ -26,6 +26,13 @@
 		<pathelement path="${guice}"/>		
 	</path>
 	
+	<!-- using ant contrib for contidionals, looping , and runtarget -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${ant.contrib}" />
+		</classpath>
+	</taskdef>
+	
 	<path id="groovy.path">
 		<pathelement path="${gndms-groovy}"/>
 	</path>
@@ -36,17 +43,26 @@
 	<!-- Compile model, but not its test-files -->
 	<target name="compile" description="Compiles model">
 
-		<mkdir dir="${model.classes.dest}"/>
+		<if> 
+			<available file="${stuff}"/>
+			<then>
+				
+				<mkdir dir="${model.classes.dest}"/>
 		
-		<groovyc srcdir="src" destdir='${model.classes.dest}' classpathref="model.path" >
-			<javac debug="${javac.debug}"/>
-		</groovyc>	
-		<!-- Copy Meta files to build dir-->
-		<copy todir="${model.classes.dest}" >
-			<fileset dir="src/">
-				<exclude name="de/**"/>
-			</fileset>
-		</copy>
+				<groovyc srcdir="src" destdir='${model.classes.dest}' classpathref="model.path" >
+					<javac debug="${javac.debug}"/>
+				</groovyc>	
+				<!-- Copy Meta files to build dir-->
+				<copy todir="${model.classes.dest}" >
+					<fileset dir="src/">
+						<exclude name="de/**"/>
+					</fileset>
+				</copy>
+			</then>
+			<else>
+				<fail message="Not able to compile as '${stuff}' was not found."/>
+			</else>
+		</if>
 	</target>
 	
 	<path id="model.test.path">

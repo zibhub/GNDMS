@@ -1,4 +1,4 @@
-<project name="typecon compilation file" default="compile" basedir="." >
+<project name="typecon compilation file" default="jar" basedir="." >
 	
 	
 	<!-- Define the environment variable -->
@@ -12,19 +12,6 @@
 	
 	
 	<path id="typecon.path">
-		<!--pathelement location="${tools-lib.dir}/gndms-groovy.jar"/> 
-		<pathelement location="${tools-lib.dir}/jsr173_1.0_api.jar"/>
-		<dirset dir="services/GORFX/build/stubs-GORFX/classes/" />
-		<pathelement location="${lib.dir}/gndms-stuff.jar"/>
-		<pathelement location="${lib.dir}/gndms-shared-model.jar"/>
-		<pathelement location="${tools-lib.dir}/annotations.jar"/>
-		<pathelement location="${tools-lib.dir}/joda-time-1.5.2.jar"/> 
-		<fileset refid="globus.lib"/>
-		<pathelement location="${tools-lib.dir}/testng-5.8-jdk15.jar"/> 
-		<pathelement location="${tools-lib.dir}/geronimo-jpa_3.0_spec-1.0.jar"/>
-		<pathelement location="${tools-lib.dir}/geronimo-jta_1.1_spec-1.1.jar"/>
-		<pathelement location="${tools-lib.dir}/serp-1.13.1.jar"/>
-		<pathelement location="${tools-lib.dir}/openjpa-1.1.0.jar"/-->
 		<pathelement path="${GROOVY}"/>
 		<dirset dir="${gorfx.stubs}"/>
 		<pathelement path="${tools-lib.dir}"/> 
@@ -37,6 +24,8 @@
 		<pathelement path="${openjpa}"/>
 		
 	</path>
+	
+	
 	<!-- using ant contrib for contidionals, looping , and runtarget -->
 	<taskdef resource="net/sf/antcontrib/antlib.xml">
 		<classpath>

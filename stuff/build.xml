@@ -24,9 +24,7 @@
 				<exclude name="de/**"/>
 			</fileset>
 		</copy>
-		
 		<javac srcdir='src' destdir='${stuff.classes.dest}' classpathref="stuff.path" debug="${javac.debug}"/>
-
 	</target>
 	
 	

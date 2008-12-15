@@ -1,4 +1,4 @@
-<project name="kit compilation file" default="compile" basedir=".">
+<project name="kit compilation file" default="jar" basedir=".">
 
 	<!-- Define the environment variable -->
 	<property environment="env"/>
@@ -72,7 +72,7 @@
 		<pathelement location="${gndms-shared-model}"/>
 		<pathelement location="${gndms-kit}"/>
 		<path refid="kit.path"/>
-		<dirset dir="${kit.test.classes.dest}">
+		<dirset dir="${kit.test.classes.dest}"/>
 	</path>
 
 	<!-- Compile kit's test-classes-->
