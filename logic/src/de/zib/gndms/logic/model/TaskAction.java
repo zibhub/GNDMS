@@ -322,6 +322,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
 
 
     protected void refreshTaskResource() {
+
         try {
             getPostponedActions().getListener().onModelChange(getModel());
         }
