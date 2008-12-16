@@ -276,7 +276,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
                 /* On runtime ex: Set task to failed */
                 catch (RuntimeException e_in) {
 	                // no joke
-	                final RuntimeException e_out = e_in == null ? new NullPointerException() : e_in;
+	                final @NotNull RuntimeException e_out = e_in == null ? new NullPointerException() : e_in;
                     trace("catch(RuntimeException)", e_out);
                     /* Cant go to FAILED after FINISHED, i.e. onFinish must never fail */
                     if (TaskState.FINISHED.equals(getModel().getState()))
@@ -519,7 +519,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
 
     protected void fail(final @NotNull RuntimeException e) {
         getModel().fail(e);
-        e.fillInStackTrace();
+		e.fillInStackTrace();
 	    // getLog().info("About to transit(FAIL) due to:", e);
         throw new FailedException(e);
     }
