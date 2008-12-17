@@ -42,7 +42,7 @@ public class ProviderStageInClient extends AbstractStageInClient {
 
 	@Override
 	protected DynamicOfferDataSeqT loadSFR() throws IOException {// Load SFR from Props and convert to XML objects
-		// final ProviderStageInORQXSDTypeWriter writer = new ProviderStageInORQXSDTypeWriter();
+		final ProviderStageInORQXSDTypeWriter writer = new ProviderStageInORQXSDTypeWriter();
 		loadSFRFromProps(writer, sfrPropFile);
 		return writer.getProduct();
 	}
