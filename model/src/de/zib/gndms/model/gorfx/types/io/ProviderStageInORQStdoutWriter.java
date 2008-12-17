@@ -1,8 +1,5 @@
 package de.zib.gndms.model.gorfx.types.io;
 
-import de.zib.gndms.model.gorfx.types.io.DataDescriptorWriter;
-import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQWriter;
-
 /**
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$

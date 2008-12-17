@@ -20,13 +20,13 @@ for SERVICE in services/* ; do
   echoEval ln -sf "$GROOVY_HOME"/embeddable/groovy-all*jar "extra/tools-lib/gndms-groovy.jar"
   for jarname in stuff shared-model logic kit typecon infra ; do
     jar="extra/lib/gndms-$jarname.jar"
-    echoEval ln -sf "../../../../$jar" "$SERVICE/lib" 
+    echoEval ln -sf "../../../$jar" "$SERVICE/lib" 
   done
 done
 # link DSpace.jar to GORFX
 jar="extra/lib/DSpace.jar"
 SERVICE="services/GORFX"
-echo ln -sf "../../../../$jar" "$SERVICE/lib" 
+echo ln -sf "../../../$jar" "$SERVICE/lib" 
 ln -sf "../../../$jar" "$SERVICE/lib" 
 ( cd bin && ln -sf moni_open moni_repl )
 ( cd bin && ln -sf moni_open moni_script )
