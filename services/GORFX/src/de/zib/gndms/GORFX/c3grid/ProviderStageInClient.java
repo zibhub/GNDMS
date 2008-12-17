@@ -165,8 +165,10 @@ public class ProviderStageInClient extends AbstractApplication {
 		for (MessageElement elem : xsdArgsParam.get_any()) {
 			if (elem != null) {
 				final QName qName = elem.getQName();
-					if (fileNameQName.equals(qName)) dataFile = elem.getAsString();
-					else if (metaFileNameQName.equals(qName)) metaDataFile = elem.getAsString();
+					if (fileNameQName.equals(qName))
+						dataFile = elem.getObjectValue().toString();
+					else if (metaFileNameQName.equals(qName))
+						metaDataFile = elem.getObjectValue().toString();
 			}
 		}
 	}
@@ -340,7 +342,7 @@ public class ProviderStageInClient extends AbstractApplication {
 				stateStr = statusT.toString();
 		}
 		return "Waiting for staging to finish or fail... (state=" + stateStr +
-			  '[' + Integer.toString(progress) + '/' + Integer.toString(maxProgress) + "])";
+			  ", progress=[" + Integer.toString(progress) + '/' + Integer.toString(maxProgress) + "])";
 	}
 
 }

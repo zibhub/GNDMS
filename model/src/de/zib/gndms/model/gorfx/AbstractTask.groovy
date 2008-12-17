@@ -33,6 +33,7 @@ import de.zib.gndms.stuff.mold.Molding
 import de.zib.gndms.stuff.copy.Copyable
 import de.zib.gndms.stuff.mold.Molder
 import de.zib.gndms.stuff.mold.Mold
+import javax.persistence.FetchType
 
 /**
  * ThingAMagic.
@@ -46,7 +47,7 @@ import de.zib.gndms.stuff.mold.Mold
 @Copyable(CopyMode.MOLD)
 abstract class AbstractTask extends TimedGridResource {
     /* Nullable for testing purposes */
-    @ManyToOne @JoinColumn(name="offerTypeKey", nullable=true, updatable=false, columnDefinition="VARCHAR")
+    @ManyToOne(fetch=FetchType.EAGER) @JoinColumn(name="offerTypeKey", nullable=true, updatable=false, columnDefinition="VARCHAR")
     OfferType offerType
     
     @Column(name="descr", nullable=false, updatable=false, columnDefinition="VARCHAR")
@@ -93,8 +94,8 @@ abstract class AbstractTask extends TimedGridResource {
     @Column(name="wid", nullable=true, updatable=false)
     @Basic String wid;
 
-    @OneToMany( targetEntity=SubTask.class, cascade=[CascadeType.REMOVE] )
-    List<SubTask> subTasks = null;
+    @OneToMany( targetEntity=SubTask.class, cascade=[CascadeType.REMOVE], fetch=FetchType.EAGER )
+    List<SubTask> subTasks = new ArrayList<SubTask>();
 
 
    def transit(final TaskState newState) {
