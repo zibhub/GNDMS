@@ -8,6 +8,15 @@
 	<property file="c3grid.properties"/>
 	<property file="c3grid.deps"/>
 	
+	
+	<!-- using ant contrib for contidionals, looping , and runtarget -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${ant.contrib}" />
+		</classpath>
+	</taskdef>
+	
+	
 	<!-- Building stubs for every service -->
 	<target name='stubs.compile'>
 		<exec executable="sh">
