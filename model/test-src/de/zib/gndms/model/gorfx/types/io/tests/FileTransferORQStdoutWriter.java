@@ -1,6 +1,7 @@
 package de.zib.gndms.model.gorfx.types.io.tests;
 
 import de.zib.gndms.model.gorfx.types.io.FileTransferORQWriter;
+import de.zib.gndms.model.gorfx.types.io.ORQStdoutWriter;
 
 import java.util.Map;
 

@@ -54,16 +54,24 @@ public class AssignSliceKindAction extends ConfigAction<ConfigActionResult> {
 
     @Override
     public ConfigActionResult execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer) {
-        final @NotNull MetaSubspace space = em.find(MetaSubspace.class, subspace);
-        final @NotNull SliceKind sk = em.find(SliceKind.class, sliceKind);
-        final @NotNull Set<SliceKind> sliceKindSet = space.getCreatableSliceKinds();
+        final MetaSubspace space = em.find(MetaSubspace.class, subspace);
+	    if (space == null)
+	        throw new IllegalArgumentException("Space not found");
+	    final @NotNull Set<SliceKind> sliceKindSet = space.getCreatableSliceKinds();
+
+        final SliceKind sk = em.find(SliceKind.class, sliceKind);
+	    if (sk == null)
+	        throw new IllegalArgumentException("SliceKind not found");
+	    final @NotNull Set<MetaSubspace> metas =  sk.getMetaSubspaces();
 
         switch (mode) {
             case ADD:
+	            metas.add(space);
                 sliceKindSet.add(sk);
                 break;
 
             case REMOVE:
+	            metas.remove(space);
                 sliceKindSet.remove(sk);
                 break;
 

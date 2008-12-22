@@ -1,7 +1,10 @@
-package de.zib.gndms.model.gorfx.types.io.tests;
+package de.zib.gndms.model.gorfx.types;
 
+import de.zib.gndms.model.gorfx.types.io.ORQStdoutWriter;
+import de.zib.gndms.model.gorfx.types.io.SliceStageInORQWriter;
 import de.zib.gndms.model.gorfx.types.io.DataDescriptorWriter;
-import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQWriter;
+import de.zib.gndms.model.gorfx.types.io.DataDescriptorStdoutWriter;
+
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -9,10 +12,16 @@ import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQWriter;
  * <p/>
  * User: mjorra, Date: 18.09.2008, Time: 17:36:36
  */
-public class ProviderStageInORQStdoutWriter extends ORQStdoutWriter implements ProviderStageInORQWriter {
+public class SliceStageInORQStdoutWriter extends ORQStdoutWriter implements
+	  SliceStageInORQWriter {
 
 
-    public void writeDataFileName( String dfn ) {
+	public void writeGridSiteName(final String gsn) {
+		System.out.println ( "GridSite: " + gsn );
+	}
+
+
+	public void writeDataFileName( String dfn ) {
         System.out.println ( "DataFileName: " +dfn );
     }
 
@@ -38,11 +47,11 @@ public class ProviderStageInORQStdoutWriter extends ORQStdoutWriter implements P
 
 
     public void begin() {
-        System.out.println( "******************** ProviderStageInORQ ********************" );
+        System.out.println( "******************** SliceStageInORQ ********************" );
     }
 
 
     public void done() {
-        System.out.println( "******************* EOProviderStageInORQ *******************" );
+        System.out.println( "******************* EOSliceStageInORQ *******************" );
     }
 }

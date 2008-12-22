@@ -41,8 +41,8 @@ class SliceKind extends GridEntity {
     @Column(name="mode", nullable=false, updatable=false, columnDefinition="VARCHAR", length=8)
 	de.zib.gndms.model.dspace.types.SliceKindMode mode
 
-	@ManyToMany(mappedBy="creatableSliceKinds", cascade=[CascadeType.REFRESH, CascadeType.MERGE])
-	Set<MetaSubspace> metaSubspaces
+	@ManyToMany(mappedBy="creatableSliceKinds", cascade=[CascadeType.REFRESH, CascadeType.MERGE, CascadeType.PERSIST], fetch=FetchType.EAGER)
+	Set<MetaSubspace> metaSubspaces = new HashSet<MetaSubspace>();
 
 /* void setURI( String uriParam ){
         this.uri = uriParam

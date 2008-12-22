@@ -55,8 +55,8 @@ class OfferType {
     @Column(name="task_action_factory_class_name", nullable=false, updatable=true, columnDefinition="VARCHAR")
     String taskActionFactoryClassName
 
-    @OneToMany(cascade=ALL, mappedBy="offerType")
-    Set<Task> tasks
+    @OneToMany(cascade=ALL, mappedBy="offerType", fetch=FetchType.EAGER)
+    Set<Task> tasks = new HashSet<Task>();
 
     @Column(name="config_map_data", nullable=false, updatable=true)
     Serializable configMapData

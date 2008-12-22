@@ -1,10 +1,8 @@
-package de.zib.gndms.model.gorfx.types.io.tests;
-
-import de.zib.gndms.model.gorfx.types.io.ORQWriter;
+package de.zib.gndms.model.gorfx.types.io;
 
 import java.util.HashMap;
-import java.util.Set;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>

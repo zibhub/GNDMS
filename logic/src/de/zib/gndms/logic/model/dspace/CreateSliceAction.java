@@ -71,7 +71,7 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
         Subspace sp = getModel( );
 
         if( ! sp.getMetaSubspace( ).getCreatableSliceKinds( ).contains( sliceKind ) )
-            return null;
+            throw new IllegalStateException("SliceKind not assigned to Subspace");
 
         String lp = sp.getPath( ) +  File.separator + sliceKind.getMode( ).toString( ) + File.separator;
         File f = null;
@@ -87,7 +87,7 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
             // doesn't exist yet.
             f.mkdirs( );
         } catch ( SecurityException e ) {
-            return null;
+            throw new RuntimeException(e);
         }
 
         // fix permissions

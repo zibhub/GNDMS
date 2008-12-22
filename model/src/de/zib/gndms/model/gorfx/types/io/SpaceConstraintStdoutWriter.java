@@ -1,6 +1,5 @@
-package de.zib.gndms.model.gorfx.types.io.tests;
+package de.zib.gndms.model.gorfx.types.io;
 
-import de.zib.gndms.model.gorfx.types.io.SpaceConstraintWriter;
 import de.zib.gndms.model.gorfx.types.MinMaxPair;
 
 /**
