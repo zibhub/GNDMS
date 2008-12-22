@@ -3,12 +3,21 @@
 	<!-- Define the environment variable -->
 	<property environment="env"/>
 	
+	<!-- Do always load properties in the following order: ${c3grid.basedir},${c3grid.properties},${c3grid.deps},${others.properties} -->
+	
 	<!--Define location of c3grid basedir relative to this service-->
 	<property name="c3grid.basedir"  value=".."/>
+	
+	<!-- Loading global project-settings.-->
 	<property file="${c3grid.basedir}/c3grid.properties"/>
+	
+	<!-- Loading global project-dependencies -->
 	<property file="${c3grid.basedir}/c3grid.deps"/>
+	
+	<!-- Loading local project-properties-->
 	<property file="stuff.properties"/>
 	
+	<!-- path needed to compile stuff-->
 	<path id="stuff.path">
 		<pathelement path="${GROOVY}"/>
 		<pathelement path="${annotations}"/>
@@ -58,6 +67,7 @@
 		</jar>
 	</target>
 	
+	<!-- path needed to compile stuff's testfiles-->
 	<path id="stuff.test.path">
 		<pathelement location="${stuff}"/>
 		<path refid="stuff.path"/>

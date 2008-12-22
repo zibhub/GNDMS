@@ -4,13 +4,21 @@
 	<!-- Define the environment variable -->
 	<property environment="env"/>
 	
+	<!-- Do always load properties in the following order: ${c3grid.basedir},${c3grid.properties},${c3grid.deps},${others.properties} -->
+	
 	<!--Define location of c3grid basedir relative to this service-->
 	<property name="c3grid.basedir"  value=".."/>
+	
+	<!-- Loading global project-settings.-->
 	<property file="${c3grid.basedir}/c3grid.properties"/>
+	
+	<!-- Loading global project-dependencies -->
 	<property file="${c3grid.basedir}/c3grid.deps"/>
+	
+	<!-- Loading local project-properties-->
 	<property file="typecon.properties"/>
 	
-	
+	<!-- path needed to compile typecon-->
 	<path id="typecon.path">
 		<pathelement path="${GROOVY}"/>
 		<dirset dir="${gorfx.stubs}"/>
@@ -59,7 +67,7 @@
 			</fileset>
 		</copy>	
 	</target>
-	
+	<!-- path needed to compile typecon's testfiles-->
 	<path id="typecon.test.path">
 		<path refid="typecon.path"/>
 		<pathelement location="${gndms-shared-model-test}"/>

@@ -1,37 +1,42 @@
 <project name="c3grid" default="help" basedir="." >
 	
+	<!-- Do always load properties in the following order: ${c3grid.basedir},${c3grid.properties},${c3grid.deps},${others.properties} -->
 	
 	<!-- Define the environment variable -->
 	<property environment="env"/>
 
+	<!-- Defines whether java-compiler should run in debug mode-->
 	<property name="javac.debug" value="true"/>
 	
-	<!-- Jars -->
-	
+	<!-- Basedir of c3grid. -->
 	<property name="c3grid.basedir" value="${basedir}"/>
+	
+	<!-- Loading global project-settings -->
 	<property file="c3grid.properties"/>
+	
+	<!-- Loading global project-dependencies-->
 	<property file="c3grid.deps"/>
 	
 	<!-- using ant contrib for contidionals, looping , and runtarget -->
 	<taskdef resource="net/sf/antcontrib/antlib.xml">
 		<classpath>
-			<pathelement location="${build-lib.dir}/ant-contrib-0.6.jar" />
+			<pathelement location="${ant.contrib}" />
 		</classpath>
 	</taskdef>
-		
+	
 
 	<!-- Sets all necessary settings and builds the whole project -->
 	<target name="compile" description="Sets all necessary settings and builds the whole project">
 		<ant antfile="${build-services}" inheritALL="false" target="stubs.compile"/>
 		<runtarget target="symlink"/>
 		<runtarget target="compile.src"/>
-		<ant antfile="${build-services}" inheritALL="false" target="services.build"/>
+		<ant antfile="${build-services}" inheritALL="false" target="services.buildGar"/>
 		<ant antfile="${build-services}" inheritALL="false" target="services.compile"/>
 	</target>
 
 
 	<!-- Creates jar's for every service (class files will be created if not already done)-->
-	<target name="compile.src" description="Creates jar files for every service, will be compiled if necessary">
+	<target name="compile.src" description="Creates jar files for every service">
 		<ant antfile="${stuff.dir}/build.xml" inheritALL="false"/>
 		<ant antfile="${model.dir}/build.xml" inheritALL="false"/>
 		<ant antfile="${kit.dir}/build.xml" inheritALL="false"/>
@@ -42,10 +47,9 @@
 	
 
 	<!-- Delete build-files every service -->
-	<target name="clean" description="deletes build-files of every service">
+	<target name="clean" description="Deletes build-files of every service">
 		<ant antfile="${build-services}" inheritALL="false" target="clean.stubsServices"/>
 		<delete file=".symlink"/>
-		<echo> Deleting binaries </echo>
 		<ant antfile="${infra.dir}/build.xml" inheritALL="false" target="clean"/>
 		<ant antfile="${typecon.dir}/build.xml" inheritALL="false" target="clean"/>
 		<ant antfile="${logic.dir}/build.xml" inheritALL="false" target="clean"/>

@@ -3,12 +3,21 @@
 	<!-- Define the environment variable -->
 	<property environment="env"/>
 	
+	<!-- Do always load properties in the following order: ${c3grid.basedir},${c3grid.properties},${c3grid.deps},${others.properties} -->
+	
 	<!--Define location of c3grid basedir relative to this service-->
 	<property name="c3grid.basedir"  value=".."/>
+	
+	<!-- Loading global project-settings.-->
 	<property file="${c3grid.basedir}/c3grid.properties"/>
+	
+	<!-- Loading global project-dependencies -->
 	<property file="${c3grid.basedir}/c3grid.deps"/>
+	
+	<!-- Loading local project-properties-->
 	<property file="kit.properties"/>
 	
+	<!-- path needed to compile kit-->
 	<path id="kit.path">
 		<pathelement path="${GROOVY}"/> 
 		<pathelement path="${openjpa}"/>
@@ -35,7 +44,7 @@
 	</taskdef>
 	
 	<path id="groovy.path">
-		<pathelement location="${gndms-groovy}"/>
+		<pathelement location="${GROOVY}"/>
 	</path>
 	
 	<!-- using groovc as groovy compiler in ant-->
@@ -70,6 +79,7 @@
 				</groovyc>	
 	</target>
 	
+	<!-- path needed to kit's testfiles-->
 	<path id="kit.test.path">
 		<pathelement path="${gndms-shared-model-test}"/>
 		<pathelement path="${gndms-kit}"/>

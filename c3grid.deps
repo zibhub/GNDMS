@@ -1,4 +1,33 @@
+## JAR-FILE OF EVERY PACKAGE
+
+stuff=${lib.dir}/gndms-stuff.jar
+stuff-test=${lib.dir}/gndms-stuff-test.jar
+gndms-shared-model=${lib.dir}/gndms-shared-model.jar
+gndms-shared-model-test=${lib.dir}/gndms-shared-model-test.jar
+gndms-kit=${lib.dir}/gndms-kit.jar
+gndms-kit-test=${lib.dir}/gndms-kit-test.jar
+gndms-logic=${lib.dir}/gndms-logic.jar
+gndms-logic-test=${lib.dir}/gndms-logic-test.jar
+gndms-typecon=${lib.dir}/gndms-typecon.jar
+gndms-typecon-test=${lib.dir}/gndms-typecon-test.jar
+gndms-infra=${lib.dir}/gndms-infra.jar
+gndms-infra-test=${lib.dir}/gndms-infra-test.jar
+
+
+## SETUP DEPENDENCIES
+
+dspace.stubs=${dspace.dir}/build/stubs-DSpace/classes/
+
+gorfx.stubs=${gorfx.dir}/build/stubs-GORFX/classes/
+
+lofis.stubs=${lofis.dir}/build/stubs-LOFIS/classes/
+
+whorfx.stubs=${whorfx.dir}/build/stubs-WHORFX/classes/
+
 openjpa=${tools-lib.dir}/geronimo-jpa_3.0_spec-1.0.jar;${tools-lib.dir}/geronimo-jta_1.1_spec-1.1.jar;${tools-lib.dir}/serp-1.13.1.jar;${tools-lib.dir}/openjpa-1.1.0.jar
+
+gt4.lib.path=${env.GLOBUS_LOCATION}/lib
+gt4=${gt4.lib.path}/addressing-1.0.jar;${gt4.lib.path}/axis.jar;${gt4.lib.path}/axis-url.jar;${gt4.lib.path}/backport-util-concurrent.jar;${gt4.lib.path}/bootstrap.jar;${gt4.lib.path}/cog-axis.jar;${gt4.lib.path}/cog-jglobus.jar;${gt4.lib.path}/cog-tomcat.jar;${gt4.lib.path}/cog-url.jar;${gt4.lib.path}/commonj.jar;${gt4.lib.path}/commons-beanutils.jar;${gt4.lib.path}/commons-cli-2.0.jar;${gt4.lib.path}/commons-collections-3.2.jar;${gt4.lib.path}/commons-dbcp.jar;${gt4.lib.path}/commons-digester.jar;${gt4.lib.path}/commons-discovery.jar;${gt4.lib.path}/commons-logging.jar;${gt4.lib.path}/commons-pool.jar;${gt4.lib.path}/concurrent.jar;${gt4.lib.path}/cryptix32.jar;${gt4.lib.path}/cryptix-asn1.jar;${gt4.lib.path}/cryptix.jar;${gt4.lib.path}/globus_cas_client.jar;${gt4.lib.path}/globus_cas_common.jar;${gt4.lib.path}/globus_cas_service.jar;${gt4.lib.path}/globus_cas_unit_test.jar;${gt4.lib.path}/globus_cas_utils.jar;${gt4.lib.path}/globus_delegation_client.jar;${gt4.lib.path}/globus_delegation_service.jar;${gt4.lib.path}/globus_delegation_stubs.jar;${gt4.lib.path}/globus_delegation_test.jar;${gt4.lib.path}/globus_usage_core.jar;${gt4.lib.path}/globus_usage_packets_common.jar;${gt4.lib.path}/globus_wsrf_mds_aggregator.jar;${gt4.lib.path}/globus_wsrf_mds_aggregator_stubs.jar;${gt4.lib.path}/globus_wsrf_mds_aggregator_test.jar;${gt4.lib.path}/globus_wsrf_mds_index_test.jar;${gt4.lib.path}/globus_wsrf_mds_trigger_test.jar;${gt4.lib.path}/globus_wsrf_rendezvous_service.jar;${gt4.lib.path}/globus_wsrf_rendezvous_stubs.jar;${gt4.lib.path}/globus_wsrf_replicator_client.jar;${gt4.lib.path}/globus_wsrf_replicator.jar;${gt4.lib.path}/globus_wsrf_replicator_stubs.jar;${gt4.lib.path}/globus_wsrf_servicegroup.jar;${gt4.lib.path}/globus_wsrf_servicegroup_stubs.jar;${gt4.lib.path}/globus_wsrf_tools_test.jar;${gt4.lib.path}/jaxrpc.jar;${gt4.lib.path}/jce-jdk13-125.jar;${gt4.lib.path}/jgss.jar;${gt4.lib.path}/junit.jar;${gt4.lib.path}/log4j-1.2.15.jar;${gt4.lib.path}/naming-common.jar;${gt4.lib.path}/naming-factory.jar;${gt4.lib.path}/naming-java.jar;${gt4.lib.path}/naming-resources.jar;${gt4.lib.path}/opensaml.jar;${gt4.lib.path}/pg73jdbc2.jar;${gt4.lib.path}/puretls.jar;${gt4.lib.path}/resolver.jar;${gt4.lib.path}/saaj.jar;${gt4.lib.path}/servlet.jar;${gt4.lib.path}/webmds-0.1-dev.jar;${gt4.lib.path}/wsdl4j.jar;${gt4.lib.path}/wsrf_common.jar;${gt4.lib.path}/wsrf_core.jar;${gt4.lib.path}/wsrf_core_registry.jar;${gt4.lib.path}/wsrf_core_registry_stubs.jar;${gt4.lib.path}/wsrf_core_stubs.jar;${gt4.lib.path}/wsrf_mds_index.jar;${gt4.lib.path}/wsrf_mds_index_stubs.jar;${gt4.lib.path}/wsrf_mds_trigger.jar;${gt4.lib.path}/wsrf_mds_trigger_stubs.jar;${gt4.lib.path}/wsrf_mds_usefulrp.jar;${gt4.lib.path}/wsrf_mds_usefulrp_schema_stubs.jar;${gt4.lib.path}/wsrf_provider_jce.jar;${gt4.lib.path}/wsrf_tools.jar;${gt4.lib.path}/wss4j.jar;${gt4.lib.path}/xalan.jar;${gt4.lib.path}/xercesImpl.jar;${gt4.lib.path}/xml-apis.jar;${gt4.lib.path}/xmlsec.jar
 
 db-derby=${tools-lib.dir}/derbyclient.jar;${tools-lib.dir}/derby.jar;${tools-lib.dir}/derbyLocale_de_DE.jar;${tools-lib.dir}/derbynet.jar;${tools-lib.dir}/derbyrun.jar;${tools-lib.dir}/derbytools.jar
 
@@ -18,11 +47,6 @@ guice=${tools-lib.dir}/guice-assistedinject-snapshot20081123.jar;${tools-lib.dir
 
 GROOVY=${tools-lib.dir}/gndms-groovy.jar
 
-
-gt4.lib.path=${env.GLOBUS_LOCATION}/lib
-gt4=${gt4.lib.path}/addressing-1.0.jar;${gt4.lib.path}/axis.jar;${gt4.lib.path}/axis-url.jar;${gt4.lib.path}/backport-util-concurrent.jar;${gt4.lib.path}/bootstrap.jar;${gt4.lib.path}/cog-axis.jar;${gt4.lib.path}/cog-jglobus.jar;${gt4.lib.path}/cog-tomcat.jar;${gt4.lib.path}/cog-url.jar;${gt4.lib.path}/commonj.jar;${gt4.lib.path}/commons-beanutils.jar;${gt4.lib.path}/commons-cli-2.0.jar;${gt4.lib.path}/commons-collections-3.2.jar;${gt4.lib.path}/commons-dbcp.jar;${gt4.lib.path}/commons-digester.jar;${gt4.lib.path}/commons-discovery.jar;${gt4.lib.path}/commons-logging.jar;${gt4.lib.path}/commons-pool.jar;${gt4.lib.path}/concurrent.jar;${gt4.lib.path}/cryptix32.jar;${gt4.lib.path}/cryptix-asn1.jar;${gt4.lib.path}/cryptix.jar;${gt4.lib.path}/globus_cas_client.jar;${gt4.lib.path}/globus_cas_common.jar;${gt4.lib.path}/globus_cas_service.jar;${gt4.lib.path}/globus_cas_unit_test.jar;${gt4.lib.path}/globus_cas_utils.jar;${gt4.lib.path}/globus_delegation_client.jar;${gt4.lib.path}/globus_delegation_service.jar;${gt4.lib.path}/globus_delegation_stubs.jar;${gt4.lib.path}/globus_delegation_test.jar;${gt4.lib.path}/globus_usage_core.jar;${gt4.lib.path}/globus_usage_packets_common.jar;${gt4.lib.path}/globus_wsrf_mds_aggregator.jar;${gt4.lib.path}/globus_wsrf_mds_aggregator_stubs.jar;${gt4.lib.path}/globus_wsrf_mds_aggregator_test.jar;${gt4.lib.path}/globus_wsrf_mds_index_test.jar;${gt4.lib.path}/globus_wsrf_mds_trigger_test.jar;${gt4.lib.path}/globus_wsrf_rendezvous_service.jar;${gt4.lib.path}/globus_wsrf_rendezvous_stubs.jar;${gt4.lib.path}/globus_wsrf_replicator_client.jar;${gt4.lib.path}/globus_wsrf_replicator.jar;${gt4.lib.path}/globus_wsrf_replicator_stubs.jar;${gt4.lib.path}/globus_wsrf_servicegroup.jar;${gt4.lib.path}/globus_wsrf_servicegroup_stubs.jar;${gt4.lib.path}/globus_wsrf_tools_test.jar;${gt4.lib.path}/jaxrpc.jar;${gt4.lib.path}/jce-jdk13-125.jar;${gt4.lib.path}/jgss.jar;${gt4.lib.path}/junit.jar;${gt4.lib.path}/log4j-1.2.15.jar;${gt4.lib.path}/naming-common.jar;${gt4.lib.path}/naming-factory.jar;${gt4.lib.path}/naming-java.jar;${gt4.lib.path}/naming-resources.jar;${gt4.lib.path}/opensaml.jar;${gt4.lib.path}/pg73jdbc2.jar;${gt4.lib.path}/puretls.jar;${gt4.lib.path}/resolver.jar;${gt4.lib.path}/saaj.jar;${gt4.lib.path}/servlet.jar;${gt4.lib.path}/webmds-0.1-dev.jar;${gt4.lib.path}/wsdl4j.jar;${gt4.lib.path}/wsrf_common.jar;${gt4.lib.path}/wsrf_core.jar;${gt4.lib.path}/wsrf_core_registry.jar;${gt4.lib.path}/wsrf_core_registry_stubs.jar;${gt4.lib.path}/wsrf_core_stubs.jar;${gt4.lib.path}/wsrf_mds_index.jar;${gt4.lib.path}/wsrf_mds_index_stubs.jar;${gt4.lib.path}/wsrf_mds_trigger.jar;${gt4.lib.path}/wsrf_mds_trigger_stubs.jar;${gt4.lib.path}/wsrf_mds_usefulrp.jar;${gt4.lib.path}/wsrf_mds_usefulrp_schema_stubs.jar;${gt4.lib.path}/wsrf_provider_jce.jar;${gt4.lib.path}/wsrf_tools.jar;${gt4.lib.path}/wss4j.jar;${gt4.lib.path}/xalan.jar;${gt4.lib.path}/xercesImpl.jar;${gt4.lib.path}/xml-apis.jar;${gt4.lib.path}/xmlsec.jar
-
-
 annotations=${tools-lib.dir}/annotations.jar
 
 joda-time=${tools-lib.dir}/joda-time-1.5.2.jar
@@ -33,35 +57,11 @@ args4j=${tools-lib.dir}/args4j-2.0.9.jar
 
 CXF=${tools-lib.dir}/cxf.jar
 
-stuff=${lib.dir}/gndms-stuff.jar
-stuff-test=${lib.dir}/gndms-stuff-test.jar
-gndms-shared-model=${lib.dir}/gndms-shared-model.jar
-gndms-shared-model-test=${lib.dir}/gndms-shared-model-test.jar
-gndms-kit=${lib.dir}/gndms-kit.jar
-gndms-kit-test=${lib.dir}/gndms-kit-test.jar
-gndms-logic=${lib.dir}/gndms-logic.jar
-gndms-logic-test=${lib.dir}/gndms-logic-test.jar
-gndms-typecon=${lib.dir}/gndms-typecon.jar
-gndms-typecon-test=${lib.dir}/gndms-typecon-test.jar
-gndms-infra=${lib.dir}/gndms-infra.jar
-gndms-infra-test=${lib.dir}/gndms-infra-test.jar
-
-
-gndms-groovy=${tools-lib.dir}/gndms-groovy.jar
+## NONSYMBOLIC LINKS OF EVERY SERVICE
 
 dspace.nonsym=${dspace.dir}/lib/caGrid-advertisement-1.2.jar;${dspace.dir}/lib/caGrid-core-1.2.jar;${dspace.dir}/lib/caGrid-Introduce-serviceTools-1.2.jar;${dspace.dir}/lib/caGrid-metadata-security-1.2.jar;${dspace.dir}/lib/caGrid-ServiceSecurityProvider-client-1.2.jar;${dspace.dir}/lib/caGrid-ServiceSecurityProvider-common-1.2.jar;${dspace.dir}/lib/caGrid-ServiceSecurityProvider-service-1.2.jar;${dspace.dir}/lib/caGrid-ServiceSecurityProvider-stubs-1.2.jar;${dspace.dir}/lib/castor-0.9.9.jar;
 
-dspace.stubs=${dspace.dir}/build/stubs-DSpace/classes/
-
 gorfx.nonsym=${gorfx.dir}/lib/caGrid-advertisement-1.2.jar;${gorfx.dir}/lib/caGrid-core-1.2.jar; ${gorfx.dir}/lib/caGrid-Introduce-serviceTools-1.2.jar;${gorfx.dir}/lib/caGrid-metadata-security-1.2.jar;${gorfx.dir}/lib/caGrid-ServiceSecurityProvider-client-1.2.jar;${gorfx.dir}/lib/caGrid-ServiceSecurityProvider-common-1.2.jar;${gorfx.dir}/lib/caGrid-ServiceSecurityProvider-service-1.2.jar;${gorfx.dir}/lib/caGrid-ServiceSecurityProvider-stubs-1.2.jar;${gorfx.dir}/lib/castor-0.9.9.jar;${gorfx.dir}/lib/jdom-1.0.jar
-
-gorfx.stubs=${gorfx.dir}/build/stubs-GORFX/classes/
-
-lofis.stubs=${lofis.dir}/build/stubs-LOFIS/classes/
-
-whorfx.stubs=${whorfx.dir}/build/stubs-WHORFX/classes/
-
-
 
 whorfx.nonsym=${whorfx.dir}/lib/caGrid-advertisement-1.2.jar;${whorfx.dir}/lib/caGrid-core-1.2.jar;${whorfx.dir}/lib/caGrid-Introduce-serviceTools-1.2.jar;${whorfx.dir}/lib/caGrid-metadata-security-1.2.jar;${whorfx.dir}/lib/caGrid-ServiceSecurityProvider-client-1.2.jar;${whorfx.dir}/lib/caGrid-ServiceSecurityProvider-common-1.2.jar; ${whorfx.dir}/lib/caGrid-ServiceSecurityProvider-service-1.2.jar;${whorfx.dir}/lib/caGrid-ServiceSecurityProvider-stubs-1.2.jar;${whorfx.dir}/lib/castor-0.9.9.jar;${whorfx.dir}/lib/jdom-1.0.jar;${whorfx.dir}/lib/ant.jar
 

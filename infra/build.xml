@@ -3,13 +3,21 @@
 	<!-- Define the environment variable -->
 	<property environment="env"/>
 	
-	<!--Define location of c3grid basedir relative to this service-->
-	<property name="c3grid.basedir"  value=".."/>
-	<property file="${c3grid.basedir}/c3grid.properties"/>
-	<property file="${c3grid.basedir}/c3grid.deps"/>
+	<!-- Do always load properties in the following order: ${c3grid.basedir},${c3grid.properties},${c3grid.deps},${others.properties} -->
+	
+        <!--Define location of c3grid basedir relative to this service-->
+        <property name="c3grid.basedir"  value=".."/>
+
+        <!-- Loading global project-settings.-->
+        <property file="${c3grid.basedir}/c3grid.properties"/>
+
+        <!-- Loading global project-dependencies -->
+        <property file="${c3grid.basedir}/c3grid.deps"/>
+
+	<!-- Loading local project-properties-->
 	<property file="infra.properties"/>
 	
-	
+	<!-- path needed to compile infra-->
 	<path id="infra.path">
 		<pathelement path="${GROOVY}"/>
 		<pathelement path="${annotations}"/>
@@ -40,7 +48,7 @@
 	</taskdef>
 	
 	<path id="groovy.path">
-		<pathelement location="${gndms-groovy}"/>
+		<pathelement location="${GROOVY}"/>
 	</path>
 	
 	<!-- using groovc as groovy compiler in ant-->
@@ -81,7 +89,7 @@
 		</copy>
 	</target>
 	
-	
+	<!-- path needed to compile infra's testfiles-->
 	<path id="infra.test.path">
 		<path refid="infra.path"/>
 		<pathelement path="${gndms-shared-model-test}"/>

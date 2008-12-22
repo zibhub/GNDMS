@@ -3,17 +3,24 @@
 	<!-- Define the environment variable -->
 	<property environment="env"/>
 	
+	<!-- Do always load properties in the following order: ${c3grid.basedir},${c3grid.properties},${c3grid.deps},${others.properties} -->
+	
 	<!--Define location of c3grid basedir relative to this service-->
 	<property name="c3grid.basedir"  value=".."/>
+	
+	<!-- Loading global project-settings.-->
 	<property file="${c3grid.basedir}/c3grid.properties"/>
+	
+	<!-- Loading global project-dependencies -->
 	<property file="${c3grid.basedir}/c3grid.deps"/>
+	
+	<!-- Loading local project-properties-->
 	<property file="logic.properties"/>
 	
-	
+	<!-- path needed to compile logic-->
 	<path id="logic.path">
 		
 		<pathelement path="${GROOVY}"/> 
-
 		<pathelement path="${annotations}"/>
 		<dirset dir="${logic.classes.dest}"/>
        		<pathelement path="${stuff}"/>                
@@ -81,6 +88,8 @@
 		</jar>
 	</target>
 	
+	
+	<!-- path needed to compile logic's testfiles-->
 	<path id="logic.test.path">
 		<pathelement path="${gndms-shared-model-test}"/>
 		<pathelement path="${gndms-kit-test}"/>
