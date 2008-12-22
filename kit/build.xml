@@ -62,7 +62,7 @@
 				<!-- Copy meta-stuff -->
 				<copy todir="${kit.classes.dest}">
 					<fileset dir='src'>
-						<exclude name="de/**"/>
+						<exclude name="**/*.java"/>
 					</fileset>
 				</copy>
 				<groovyc srcdir='src' destdir='${kit.classes.dest}' classpathref="kit.path">
@@ -98,31 +98,10 @@
 		<!-- Copy meta-stuff -->
 		<copy todir="${kit.test.classes.dest}">
 			<fileset dir='test-src'>
-				<exclude name="de/**"/>
+				<exclude name="**/*.java"/>
 			</fileset>
 		</copy>
-		<if>
-			<and>
-				<available file="${gndms-shared-model}"/>
-				<available file="${gndms-shared-model-test}"/>
-				<available file="${gndms-kit}"/>
-			</and>
-			<then>
-				<mkdir dir="${kit.classes.dest}"/>
-				<!-- Copy meta-stuff -->
-				<copy todir="${kit.classes.dest}">
-					<fileset dir='src'>
-						<exclude name="de/**"/>
-					</fileset>
-				</copy>
-				<groovyc srcdir='src' destdir='${kit.classes.dest}' classpathref="kit.path">
-					<javac debug="${javac.debug}"/>
-				</groovyc>
-			</then>
-			<else>
-				<fail message="Not able to compile as '${gndms-shared-model}','${gndms-shared-model-test}' or '${gndms-kit}' was not found."/>
-			</else>
-		</if>
+
 		<javac srcdir='test-src' destdir='${kit.test.classes.dest}' classpathref="kit.test.path" debug="${javac.debug}"/>
 	</target>
 	

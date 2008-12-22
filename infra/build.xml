@@ -76,7 +76,7 @@
 		<!-- Copy meta-stuff -->
 		<copy todir="${infra.classes.dest}">
 			<fileset dir='src'>
-				<exclude name="de/**"/>
+				<exclude name="**/*.java"/>
 			</fileset>
 		</copy>
 	</target>
@@ -113,7 +113,7 @@
 		<!-- Copy meta-stuff -->
 		<copy todir="${infra.test.classes.dest}">
 			<fileset dir='test-src'>
-				<exclude name="de/**"/>
+				<exclude name="**/*.java"/>
 			</fileset>
 		</copy>
 	</target>

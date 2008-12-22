@@ -271,7 +271,13 @@
 		<runtarget target="postCompileStubs" />
 	</target>
 
-
+	<!-- using ant contrib for contidionals, looping , and runtarget -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${ant.contrib}" />
+		</classpath>
+	</taskdef>
+	
 	<!-- Compile the implementation classes (service, resource, etc.) -->
 	<target name="compile" depends="compileStubs" description="Compiles the service.">
 		<runtarget target="preCompile" />

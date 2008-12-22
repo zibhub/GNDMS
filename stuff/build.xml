@@ -19,10 +19,24 @@
 	<!-- Compile stuff, but not its test-files -->
 	<target name="compile" description="Compiles stuff">
 		<mkdir dir="${stuff.classes.dest}"/>
+		<for param="jars">
+			<path refid="stuff.path"/>
+			<sequential>
+				<if>
+					<not>
+						<available file="@{jars}"/>			
+					</not>
+					<then>
+						<fail message="Not able to compile as '@{jars}' was not found."/>
+					</then>
+				</if>
+				
+			</sequential>
+		</for>
 		<!-- Copy Meta files to build dir-->
 		<copy todir="${stuff.classes.dest}">
 			<fileset dir='src'>
-				<exclude name="de/**"/>
+				<exclude name="**/*.java"/>
 			</fileset>
 		</copy>
 		<javac srcdir='src' destdir='${stuff.classes.dest}' classpathref="stuff.path" debug="${javac.debug}"/>
@@ -52,14 +66,27 @@
 	<!-- Compile stuff's test-classes-->
 	<target name="compile.test" description="Compiles stuff's test-files">	
 		<mkdir dir="${stuff.test.classes.dest}"/>
-		
+		<for param="jars">
+			<path refid="stuff.test.path"/>
+			<sequential>
+				<if>
+					<not>
+						<available file="@{jars}"/>			
+					</not>
+					<then>
+						<fail message="Not able to compile as '@{jars}' was not found."/>
+					</then>
+				</if>
+				
+			</sequential>
+		</for>
 		<javac srcdir='test-src' destdir='${stuff.test.classes.dest}' classpathref="stuff.test.path" includes="**/*" debug="${javac.debug}">
 		</javac>
 		
 		<!-- Copy Meta files to build dir-->
 		<copy todir="${stuff.test.classes.dest}">
 			<fileset dir='test-src'>
-				<exclude name="de/**"/>
+				<exclude name="**/*.java"/>
 			</fileset>
 		</copy>
 	</target>

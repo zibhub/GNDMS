@@ -7,6 +7,7 @@
 	<property name="c3grid.basedir" value="${basedir}"/>
 	<property file="c3grid.properties"/>
 	<property file="c3grid.deps"/>
+	<property file="build-services.properties"/>
 	
 	
 	<!-- using ant contrib for contidionals, looping , and runtarget -->
@@ -25,6 +26,16 @@
 		</exec>
 	</target>
 	
+	
+	<!-- Building all services -->
+	<target name="services.build">
+		<exec executable="sh">
+			<arg value="-c"/>
+			<arg value="for i in services/* ; do ( cd $i &amp;&amp; ant createDeploymentGar ) ; done"/>
+		</exec>
+	</target>
+	
+	
 	<!-- class-files needed to compile DSpace -->
 	<path id="dspace.path">
 		<pathelement path="${GROOVY}"/> 
@@ -41,6 +52,14 @@
 		<pathelement path="${gt4}"/>
 		<pathelement path="${openjpa}"/>
 		<pathelement path="${guice}"/>
+	</path>
+
+	
+	<!-- class-files needed to compile DSpace-Test -->
+	<path id="dspace.test.path">
+		<path refid="dspace.path"/>
+		<pathelement location="${lib.dir}/DSpace.jar"/>
+		<pathelement path="${testng}"/>
 	</path>
 	
 	<!-- class-files needed to compile GORFX -->
@@ -65,9 +84,63 @@
 		<pathelement path="${jaxb}"/>
 		<pathelement path="${guice}"/>
 	</path>
-	<!-- Building all services -->
+	
+	<!-- class-files needed to compile DSpace-Test -->
+	<path id="gorfx.test.path">
+		<path refid="gorfx.path"/>
+		<pathelement location="${gorfx.dir}/GORFX.jar"/>
+		<pathelement path="${testng}"/>
+	</path>
+	
+	<!-- class-files needed to compile DSpace -->
+	<path id="lofis.path">
+		<pathelement path="${GROOVY}"/> 
+		<pathelement path="${annotations}"/>
+		<dirset dir="${lofis.stubs}" />
+		<pathelement path="${gndms-infra}"/>
+		<pathelement location="${gndms-kit}"/>
+		<pathelement location="${gndms-logic}"/>
+		<pathelement location="${gndms-shared-model}"/>
+		<pathelement location="${stuff}"/>
+		<pathelement path="${joda-time}"/> 
+		<dirset dir="${lofis.dir}/src/" />
+		<pathelement path="${dspace.nonsym}"/>
+		<pathelement path="${gt4}"/>
+		<pathelement path="${openjpa}"/>
+		<pathelement path="${guice}"/>
+	</path>
+	
+	
+	<!-- class-files needed to compile DSpace-Test -->
+	<path id="lofis.test.path">
+		<path refid="lofis.path"/>
+	</path>
+	<!-- class-files needed to compile DSpace -->
+	<path id="whorfx.path">
+		<pathelement path="${GROOVY}"/> 
+		<pathelement path="${annotations}"/>
+		<dirset dir="${whorfx.stubs}" />
+		<pathelement path="${gndms-infra}"/>
+		<pathelement location="${gndms-kit}"/>
+		<pathelement location="${gndms-logic}"/>
+		<pathelement location="${gndms-shared-model}"/>
+		<pathelement location="${stuff}"/>
+		<pathelement path="${joda-time}"/> 
+		<dirset dir="${whorfx.dir}/src/" />
+		<pathelement path="${dspace.nonsym}"/>
+		<pathelement path="${gt4}"/>
+		<pathelement path="${openjpa}"/>
+		<pathelement path="${guice}"/>
+	</path>
+	
+	
+	<!-- class-files needed to compile DSpace-Test -->
+	<path id="whorfx.test.path">
+		<path refid="whorfx.path"/>
+	</path>
+	
 	<target name='services.compile'>
-		<mkdir dir="tmp"/>
+		<mkdir dir="${dspace.classes.dest}"/>
 		<for param="jars">
 			<path refid="dspace.path"/>
 			<sequential>
@@ -82,12 +155,48 @@
 				
 			</sequential>
 		</for>
-		<javac srcdir='${dspace.dir}/src' destdir='tmp' classpathref="dspace.path" debug="${javac.debug}" />
+		<javac srcdir='${dspace.dir}/src' destdir='${dspace.classes.dest}' classpathref="dspace.path" debug="${javac.debug}" />
+		<!-- Copy Meta files to build dir-->
+		<copy todir="${dspace.classes.dest}" >
+			<fileset dir="${dspace.dir}/src">
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+		
+		
 		<jar destfile="${lib.dir}/DSpace.jar"
-		     basedir="tmp">
-		</jar>
-		<delete dir="tmp"/>
-		<mkdir dir="tmp"/>
+		     basedir="${dspace.classes.dest}"/>
+		
+		
+		
+		<mkdir dir="${dspace.test.classes.dest}"/>
+		<for param="jars">
+			<path refid="dspace.test.path"/>
+			<sequential>
+				<if>
+					<not>
+						<available file="@{jars}"/>			
+					</not>
+					<then>
+						<fail message="Not able to compile as '@{jars}' was not found."/>
+					</then>
+				</if>
+				
+			</sequential>
+		</for>
+		<javac srcdir='${dspace.dir}/test' destdir='${dspace.test.classes.dest}' classpathref="dspace.test.path" debug="${javac.debug}" />
+		<copy todir="${dspace.test.classes.dest}" >
+			<fileset dir="${dspace.dir}/test">
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+		
+
+
+		
+		
+		
+		<mkdir dir="${gorfx.classes.dest}"/>
 		<for param="jars">
 			<path refid="gorfx.path"/>
 			<sequential>
@@ -102,21 +211,131 @@
 				
 			</sequential>
 		</for>
-		<javac srcdir='${gorfx.dir}/src' destdir='tmp' classpathref="gorfx.path" debug="${javac.debug}"/>
+		<javac srcdir='${gorfx.dir}/src' destdir='${gorfx.classes.dest}' classpathref="gorfx.path" debug="${javac.debug}"/>
 		<jar destfile="${gorfx.dir}/GORFX.jar"
-		     basedir="tmp">
+		     basedir="${gorfx.classes.dest}">
 		</jar>
-		<delete dir="tmp"/>
-		<exec executable="sh">
-			<arg value="-c"/>
-			<arg value="for i in services/* ; do ( cd $i &amp;&amp; ant createDeploymentGar ) ; done"/>
-		</exec>
+		
+		<mkdir dir="${gorfx.test.classes.dest}"/>
+		<for param="jars">
+			<path refid="gorfx.test.path"/>
+			<sequential>
+				<if>
+					<not>
+						<available file="@{jars}"/>			
+					</not>
+					<then>
+						<fail message="Not able to compile as '@{jars}' was not found."/>
+					</then>
+				</if>
+				
+			</sequential>
+		</for>
+		<javac srcdir='${gorfx.dir}/test' destdir='${gorfx.test.classes.dest}' classpathref="gorfx.test.path" debug="${javac.debug}" />
+		<copy todir="${gorfx.test.classes.dest}" >
+			<fileset dir="${gorfx.dir}/test">
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+		
+		
+		
+		
+		<mkdir dir="${lofis.classes.dest}"/>
+		<for param="jars">
+			<path refid="lofis.path"/>
+			<sequential>
+				<if>
+					<not>
+						<available file="@{jars}"/>			
+					</not>
+					<then>
+						<fail message="Not able to compile as '@{jars}' was not found."/>
+					</then>
+				</if>
+				
+			</sequential>
+		</for>
+		<javac srcdir='${lofis.dir}/src' destdir='${lofis.classes.dest}' classpathref="lofis.path" debug="${javac.debug}"/>
+
+		
+		<mkdir dir="${lofis.test.classes.dest}"/>
+		<for param="jars">
+			<path refid="lofis.test.path"/>
+			<sequential>
+				<if>
+					<not>
+						<available file="@{jars}"/>			
+					</not>
+					<then>
+						<fail message="Not able to compile as '@{jars}' was not found."/>
+					</then>
+				</if>
+				
+			</sequential>
+		</for>
+		<javac srcdir='${lofis.dir}/test' destdir='${lofis.test.classes.dest}' classpathref="lofis.test.path" debug="${javac.debug}" />
+		<copy todir="${lofis.test.classes.dest}" >
+			<fileset dir="${lofis.dir}/test">
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+		
+		
+		
+		
+		
+		<mkdir dir="${whorfx.classes.dest}"/>
+		<for param="jars">
+			<path refid="whorfx.path"/>
+			<sequential>
+				<if>
+					<not>
+						<available file="@{jars}"/>			
+					</not>
+					<then>
+						<fail message="Not able to compile as '@{jars}' was not found."/>
+					</then>
+				</if>
+				
+			</sequential>
+		</for>
+		<javac srcdir='${whorfx.dir}/src' destdir='${whorfx.classes.dest}' classpathref="whorfx.path" debug="${javac.debug}"/>
+		
+		<mkdir dir="${whorfx.test.classes.dest}"/>
+		<for param="jars">
+			<path refid="whorfx.test.path"/>
+			<sequential>
+				<if>
+					<not>
+						<available file="@{jars}"/>			
+					</not>
+					<then>
+						<fail message="Not able to compile as '@{jars}' was not found."/>
+					</then>
+				</if>
+				
+			</sequential>
+		</for>
+		<javac srcdir='${whorfx.dir}/test' destdir='${whorfx.test.classes.dest}' classpathref="whorfx.test.path" debug="${javac.debug}" />
+		<copy todir="${whorfx.test.classes.dest}" >
+			<fileset dir="${whorfx.dir}/test">
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+		
+		
+
 	</target>
 	
 	
 	<target name="clean.services">
 		<delete file="${lib.dir}/DSpace.jar"/>
 		<delete file="${gorfx.dir}/GORFX.jar"/>
+		<delete dir="${dspace.dir}/out"/>
+		<delete dir="${gorfx.dir}/out"/>
+		<delete dir="${lofis.dir}/out"/>
+		<delete dir="${whorfx.dir}/out"/>
 		<delete file="${c3grid.basedir}/c3grid_DSpace.gar"/>
 		<delete file="${c3grid.basedir}/c3grid_GORFX.gar"/>
 		<delete file="${c3grid.basedir}/c3grid_LOFIS.gar"/>

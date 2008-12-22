@@ -55,7 +55,7 @@
 		<!-- Copy Meta files to build dir-->	
 		<copy todir="${typecon.classes.dest}" >
 			<fileset dir="src">
-				<exclude name="de/**"/>
+				<exclude name="**/*.java"/>
 			</fileset>
 		</copy>	
 	</target>
@@ -87,7 +87,7 @@
 		<!-- Copy Meta files to build dir-->
 		<copy todir="${typecon.test.classes.dest}" >
 			<fileset dir="test-src">
-				<exclude name="de/**"/>
+				<exclude name="**/*.java"/>
 			</fileset>
 		</copy>	
 	</target>

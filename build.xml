@@ -25,6 +25,7 @@
 		<ant antfile="${build-services}" inheritALL="false" target="stubs.compile"/>
 		<runtarget target="symlink"/>
 		<runtarget target="compile.src"/>
+		<ant antfile="${build-services}" inheritALL="false" target="services.build"/>
 		<ant antfile="${build-services}" inheritALL="false" target="services.compile"/>
 	</target>
 

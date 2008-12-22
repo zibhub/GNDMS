@@ -57,7 +57,7 @@
 		<!-- Copy Meta files to build dir-->
 		<copy todir="${logic.classes.dest}">
 			<fileset dir='src'>
-				<exclude name="de/**"/>
+				<exclude name="**/*.java"/>
 			</fileset>
 		</copy>
 		<javac srcdir='src' destdir='${logic.classes.dest}' classpathref="logic.path" debug="${javac.debug}"/>
@@ -118,7 +118,7 @@
 		<!-- Copy Meta files to build dir-->
 		<copy todir="${logic.test.classes.dest}">
 			<fileset dir='test-src'>
-				<exclude name="de/**"/>
+				<exclude name="**/*.java"/>
 			</fileset>
 		</copy>
 	</target>
