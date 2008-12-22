@@ -20,18 +20,10 @@
       <none />
     </auth-method>
   </method>
-  <authz value="gridmap" />
-  <gridmap value="/etc/grid-security/grid-mapfile" />
   <auth-method>
-    <GSISecureConversation>
-      <protection-level>
-        <privacy />
-      </protection-level>
-    </GSISecureConversation>
+    <none />
   </auth-method>
-  <run-as>
-    <system-identity />
-  </run-as>
+  <authz value="none" />
 </securityConfig>
 
 
