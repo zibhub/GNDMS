@@ -63,7 +63,7 @@
 	
 	<!-- Creates jar containing stuff's classfiles-->
 	<target name="jar" depends="compile" description="Creates jar file gndms-stuff.jar in 'extra/lib'">
-		<echo>Gnerating gndms-stuff.jar</echo>
+		<echo>Generating gndms-stuff.jar</echo>
 		<jar destfile="${stuff}"
 		     basedir="${stuff.classes.dest}">
 		</jar>
@@ -71,7 +71,6 @@
 	
 	<!-- path needed to compile stuff's testfiles-->
 	<path id="stuff.test.path">
-		<echo>Generating gndms-stuff-test.jar</echo>
 		<pathelement location="${stuff}"/>
 		<path refid="stuff.path"/>
 	</path>

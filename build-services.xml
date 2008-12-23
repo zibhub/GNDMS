@@ -37,7 +37,7 @@
 	
 	
 	<!-- Creates needed deployment-gars for globus-->
-	<target name="services.buildGar" description="creates needed deployment-gars">
+	<target name="buildGar" description="creates needed deployment-gars">
 		<exec executable="sh">
 			<arg value="-c"/>
 			<arg value="for i in services/* ; do ( cd $i &amp;&amp; ant createDeploymentGar ) ; done"/>
@@ -148,7 +148,7 @@
 		<path refid="whorfx.path"/>
 	</path>
 	<!-- Compiles every service to service/ServiceName/out/.. and creates DSpace.jar aswell as GORFX.jar-->
-	<target name='services.compile' description="compiles every service, creates DSpace.jar and GORFX.jar">
+	<target name='compile' description="compiles every service, creates DSpace.jar and GORFX.jar">
 		<mkdir dir="${dspace.classes.dest}"/>
 		<for param="jars">
 			<path refid="dspace.path"/>

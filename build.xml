@@ -30,8 +30,8 @@
 		<ant antfile="${build-services}" inheritALL="false" target="stubs.compile"/>
 		<runtarget target="symlink.create"/>
 		<runtarget target="compile.src"/>
-		<ant antfile="${build-services}" inheritALL="false" target="services.compile"/>
-		<ant antfile="${build-services}" inheritALL="false" target="services.buildGar"/>
+		<ant antfile="${build-services}" inheritALL="false" target="compile"/>
+		<ant antfile="${build-services}" inheritALL="false" target="buildGar"/>
 		<runtarget target="symlink.create"/>
 
 	</target>
