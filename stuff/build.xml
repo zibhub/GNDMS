@@ -27,6 +27,7 @@
 	</path>
 	<!-- Compile stuff, but not its test-files -->
 	<target name="compile" description="Compiles stuff">
+		<echo>Compiling stuff's class-files</echo>
 		<mkdir dir="${stuff.classes.dest}"/>
 		<for param="jars">
 			<path refid="stuff.path"/>
@@ -54,7 +55,7 @@
 	
 	<!-- Creates jar containing stuff's test-classfiles-->
 	<target name="jar.test"  depends="compile.test" description="Creates jar file gndms-stuff-test.jar in 'extra/lib'">
-		
+		<echo>Generating gndms-stuff-test.jar</echo>
 		<jar destfile="${stuff-test}"
 		     basedir="${stuff.test.classes.dest}">
 		</jar>
@@ -62,6 +63,7 @@
 	
 	<!-- Creates jar containing stuff's classfiles-->
 	<target name="jar" depends="compile" description="Creates jar file gndms-stuff.jar in 'extra/lib'">
+		<echo>Gnerating gndms-stuff.jar</echo>
 		<jar destfile="${stuff}"
 		     basedir="${stuff.classes.dest}">
 		</jar>
@@ -69,12 +71,14 @@
 	
 	<!-- path needed to compile stuff's testfiles-->
 	<path id="stuff.test.path">
+		<echo>Generating gndms-stuff-test.jar</echo>
 		<pathelement location="${stuff}"/>
 		<path refid="stuff.path"/>
 	</path>
 	
 	<!-- Compile stuff's test-classes-->
 	<target name="compile.test" description="Compiles stuff's test-files">	
+		<echo>Compiling stuff's test-classes</echo>
 		<mkdir dir="${stuff.test.classes.dest}"/>
 		<for param="jars">
 			<path refid="stuff.test.path"/>
@@ -103,11 +107,13 @@
 	
 	<!-- Deletes binaries and jar-files -->
 	<target name="clean" description="Deletes stuff's binaries">
-			<delete dir='${stuff.classes}' />
+		<echo>Deleting stuff's class-files</echo>
+		<delete dir='${stuff.classes}' />
 	</target>
 	
 	<!-- Deletes jar-files -->
 	<target name="clean.jar" description="Deletes stuff's jar-file" depends="clean">
+		<echo>Deleting all jars belonging to stuff</echo>
 		<delete file='${stuff}'/>
 		<delete file='${stuff-test}'/>
 	</target>

@@ -46,6 +46,7 @@
 	
 	<!-- Compile logic, but not its test-files -->	
 	<target name="compile" description="Compiles logic">
+		<echo>Compiling logic's class-files</echo>
 		<mkdir dir="${logic.classes.dest}"/>
 		<for param="jars">
 			<path refid="logic.path"/>
@@ -74,7 +75,7 @@
 	
 	<!-- Creates jar containing logic's test-classfiles-->	
 	<target name="jar.test"  depends="compile.test" description="Creates jar file gndms-logic-test.jar in 'extra/lib'">	
-		
+		<echo>Generating gmds-logic-test.jar</echo>
 		<jar destfile="${gndms-logic-test}"
 		     basedir="${logic.test.classes.dest}">
 		</jar>
@@ -82,7 +83,7 @@
 	
 	<!-- Creates jar containing logic's classfiles-->	
 	<target name="jar" depends="compile" description="Creates jar file gndms-logic.jar in 'extra/lib'">	
-		
+		<echo>Generating gndms-logic.jar</echo>
 		<jar destfile="${gndms-logic}"
 		     basedir="${logic.classes.dest}">
 		</jar>
@@ -101,8 +102,7 @@
 	
 	<!-- Compile logic's test-classes-->	
 	<target name="compile.test" description="Compiles logic's test-files">
-
-			
+		<echo>Compiling kit's test-classes</echo>
 		<mkdir dir="${logic.test.classes.dest}"/>
 		<for param="jars">
 			<path refid="logic.test.path"/>
@@ -134,11 +134,13 @@
 	
 	<!-- Deletes binaries and jar-files -->
 	<target name="clean" description="Deletes logic's binaries">
+		<echo>Deleting logic's class-files</echo>
 		<delete dir='${logic.classes}'/>
 	</target>
 	
 	<!-- Deletes jar-files -->
 	<target name="clean.jar" description="Deletes logic's jar-file">
+		<echo>Deleting all generated jars belonging to logic</echo>
 		<delete file='${gndms-logic}'/>
 		<delete file='${gndms-logic-test}'/>
 	</target>

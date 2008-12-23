@@ -59,6 +59,7 @@
 	
 	<!-- Compile infra, but not its test-files -->	
 	<target name="compile">
+		<echo>Compiling infra's classes</echo>
 		<mkdir dir="${infra.classes.dest}"/>
 		<for param="jars">
 			<path refid="infra.path"/>
@@ -100,6 +101,7 @@
 	
 	<!-- Compile infra and its test-files -->
 	<target name="compile.test"  description="Compiles infra's test-files">
+		<echo>Compiling infra's test-classes</echo>
 		<mkdir dir="${infra.test.classes.dest}"/>
 		<for param="jars">
 			<path refid="infra.test.path"/>
@@ -128,23 +130,26 @@
 	
 	<!-- Creates jar-file containing infra's test-classes -->	
 	<target name="jar.test" depends="compile.test">
+		<echo>Generating gndms-infra-test.jar</echo>
 		<jar destfile="${gndms-infra-test}" basedir="test-src"/>		
 	</target>
 		
 	
 	<!-- Creates jar-file containing infra's classes -->	
 	<target name="jar" depends="compile">
+		<echo>Generating gndms-infra.jar</echo>
 		<jar destfile="${gndms-infra}" basedir="${infra.classes.dest}"/>		
 	</target>
 	
 	<!-- Deletes binaries-->
 	<target name="clean" description="Deletes infra's binaries">
-		<echo> deleting </echo>
+		<echo> Deleting infra's class-files</echo>
 		<delete dir='${infra.classes}'/>
 	</target>
 	
 	<!-- Deletes jar-file-->
 	<target name="clean.jar" description="Deletes infra's jar-file">
+		<echo>Deleting all generated jar's belonging to infra</echo>
 		<delete file='${gndms-infra}'/>	
 		<delete file='${gndms-infra-test}'/>
 	</target>

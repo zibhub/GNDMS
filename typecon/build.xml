@@ -43,6 +43,7 @@
 	
 	<!-- Compile typecon, but not its test-files -->
 	<target name="compile" description="Compiles typecon">
+		<echo>Compiling typecon's classes</echo>
 		<mkdir dir="${typecon.classes.dest}"/>
 		<for param="jars">
 			<path refid="typecon.path"/>
@@ -76,6 +77,7 @@
 	
 	<!-- Compile typecon and its test-files -->
 	<target name="compile.test" description="Compiles typecon's test-files">
+		<echo>Compiling typecon's test-classes</echo>
 		<mkdir dir="${typecon.test.classes.dest}"/>
 		<for param="jars">
 			<path refid="typecon.test.path"/>
@@ -102,6 +104,7 @@
 	
 	<!-- Creates jar-file containing typecon's test-classes -->	
 	<target name="jar.test" depends="compile.test" description="Creates jar file gndms-typecon-test.jar in 'extra/lib'">	
+		<echo>Generating gndms-typecon-test.jar</echo>
 		<jar destfile="${gndms-typecon-test}"
 		     basedir="${typecon.test.classes.dest}">
 		</jar>
@@ -110,6 +113,7 @@
 	
 	<!-- Creates jar-file containing typecon's classes -->	
 	<target name="jar" depends="compile" description="Creates jar file gndms-typecon.jar in 'extra/lib'">	
+		<echo>Generating gndms-typecon.jar</echo>
 		<jar destfile="${gndms-typecon}"
 		     basedir="${typecon.classes.dest}">
 		</jar>
@@ -117,11 +121,13 @@
 	</target>
 	<!-- Deletes binaries -->
 	<target name="clean" description="Deletes typecon's binaries">
+		<echo>Deleting typecon's classes</echo>
 		<delete dir='${typecon.classes}'/>
 	</target>
 	
 	<!-- Deletes jar-files -->
 	<target name="clean.jar" description="Deletes typecon's jar-file">
+		<echo>Deleting all jars belonging to typecon</echo>
 		<delete file='${gndms-typecon}'/>	
 		<delete file='${gndms-typecon-test}'/>	
 	</target>

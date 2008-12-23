@@ -49,6 +49,7 @@
 	
 	<!-- Compile model, but not its test-files -->
 	<target name="compile" description="Compiles model">
+		<echo>Compiling model's class-files</echo>
 		<mkdir dir="${model.classes.dest}"/>
 		<for param="jars">
 			<path refid="model.path"/>
@@ -83,6 +84,7 @@
 	
 	<!-- Compile model's test-files -->
 	<target name="compile.test" description="Compiles model test-files">
+		<echo>Compiling model's test-classes</echo>
 		<mkdir dir="${model.test.classes.dest}"/>
 		<for param="jars">
 			<path refid="model.test.path"/>
@@ -109,6 +111,7 @@
 
 	<!-- Creates jar-file containing model's test-classes-->
 	<target name="jar.test" depends="compile.test" description="Creates jar file gndms-shared-model-test.jar in 'extra/lib'">	
+		<echo>Generating gndms-shared-model-test.jar</echo>
 		<jar destfile="${gndms-shared-model-test}"
 		     basedir="${model.test.classes.dest}">
 		</jar>
@@ -116,17 +119,20 @@
 	
 	<!-- Creates jar-file containing model's classes -->
 	<target name="prejar" depends="compile" description="Creates jar file gndms-shared-model.jar in 'extra/lib'">	
+		<echo>Generating gndms-shared-model.jar</echo>
 		<jar destfile="${gndms-shared-model}"
 		     basedir="${model.classes.dest}">
 		</jar>
 	</target>
 	<!-- Deletes classfiles-->
 	<target name="clean" description="Deletes model's classfiles">
+		<echo>Deleting model's class-files</echo>
 		<delete dir='${model.classes}'/>
 	</target>
 	
 	<!-- Deletes  jar-files -->
 	<target name="clean.jar" description="Deletes model's jar-files">
+		<echo>Deleting all generated jars belonging to model</echo>
 		<delete file='${gndms-shared-model}'/>
 		<delete file='${gndms-shared-model-test}'/>
 	</target>

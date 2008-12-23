@@ -51,8 +51,9 @@
 	<taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" classpathref="groovy.path" />
 	
 	
-	<!-- Compile model, but not its test-files -->
+	<!-- Compile kit, but not its test-files -->
 	<target name="compile" description="Compiles kit">
+		<echo>Compile kit's class-files</echo>
 		<mkdir dir="${kit.classes.dest}"/>
 		<for param="jars">
 			<path refid="kit.path"/>
@@ -89,6 +90,7 @@
 
 	<!-- Compile kit's test-classes-->
 	<target name="compile.test" description="Compiles kit and its test-files">
+		<echo>Compiling kit's test-classes</echo>
 		<mkdir dir="${kit.test.classes.dest}"/>
 		<for param="jars">
 			<path refid="kit.test.path"/>
@@ -118,23 +120,27 @@
 	
 	<!-- Creates jar-file containing kit's test-classfiles-->
 	<target name="jar.test" depends="compile.test" description="Creates jar file gndms-kit-test.jar in 'extra/lib'">
+		<echo>Generating gndms-kit-test.jar</echo>
 		<jar destfile="${gndms-kit-test}" basedir="${kit.test.classes.dest}"/>
 	</target>
 	
 	<!-- Creates jar-file containing kit's classfiles-->
 	<target name="jar" depends="compile" description="Creates jar file gndms-kit.jar in 'extra/lib'">
+		<echo>Generating gndms-kit.jar</echo>
 		<jar destfile="${gndms-kit}" basedir="${kit.classes.dest}"/>
 	</target>
 
 
 	<!-- Deletes kits' classfiles -->
 	<target name="clean" description="Deletes kit's classfiles ">
+		<echo>Deleting kit's class-files</echo>
 		<delete dir='${kit.classes}'/>
 	</target>
 
 
 	<!-- Deletes jar-files-->
 	<target name="clean.jar" description="Deletes kit's jar-file">
+		<echo>Deleting all generated jars belonging to kit</echo>
 		<delete file='${gndms-kit}'/>
 		<delete file='${gndms-kit-test}'/>
 	</target>
