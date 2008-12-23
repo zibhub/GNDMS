@@ -28,10 +28,12 @@
 	<!-- Sets all necessary settings and builds the whole project -->
 	<target name="compile" description="Sets all necessary settings and builds the whole project">
 		<ant antfile="${build-services}" inheritALL="false" target="stubs.compile"/>
-		<runtarget target="symlink"/>
+		<runtarget target="symlink.create"/>
 		<runtarget target="compile.src"/>
-		<ant antfile="${build-services}" inheritALL="false" target="services.buildGar"/>
 		<ant antfile="${build-services}" inheritALL="false" target="services.compile"/>
+		<ant antfile="${build-services}" inheritALL="false" target="services.buildGar"/>
+		<runtarget target="symlink.create"/>
+
 	</target>
 
 
@@ -74,7 +76,7 @@
 		<ant antfile="${kit.dir}/build.xml" inheritALL="false" target="clean.jar"/>
 		<ant antfile="${model.dir}/build.xml" inheritALL="false" target="clean.jar"/>
 		<ant antfile="${stuff.dir}/build.xml" inheritALL="false" target="clean.jar"/>
-		<ant antfile="${build-services}" inheritALL="false" target="clean.all"/>
+		<ant antfile="${build-services}" inheritALL="false" target="clean"/>
 	</target>
 	<!-- Delete build-files and generated jar every package -->
 	<target name="clean.all" description="deletes build-files and jars of every package">
@@ -98,19 +100,28 @@
 	
 	
 	<!-- Checks if symlink has been executed before -->
-	<target name="symlink.check">
+	<!--target name="symlink.check">
 		<available property="linked" file=".symlink"/>
-	</target>
+	</target-->
 	
 	<!-- Create necessary symlinks in the services' lib directories -->
-	<target name="symlink" depends="symlink.check" unless="linked" description="sets symbolic links, if needed">
+	<!--target name="symlink.create" depends="symlink.check" unless="linked" description="sets symbolic links, if needed">
 		<echo> setting symbolic links </echo>
 		<exec executable="sh">
 			<arg value="sync.sh"/>
 		</exec>
 		<echo file=".symlink">dummy-file, needed for build-script </echo>
+	</target-->
+	
+	<!-- Create necessary symlinks in the services' lib directories -->
+	<target name="symlink.create" description="sets symbolic links">
+	<echo> setting symbolic links </echo>
+	<exec executable="sh">
+		<arg value="sync.sh"/>
+	</exec>
 	</target>
 	
+
 
 	<target name="help" description="Prints usage information.">
 		<echo message=" =================================================================================" />
