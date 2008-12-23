@@ -1,6 +1,8 @@
 package de.zib.gndms.kit.util
 
 import java.nio.channels.FileChannel
+import de.zib.gndms.model.common.AccessMask
+import de.zib.gndms.model.common.AccessMask
 
 /**
  * Interface for some helpers for directory access.
@@ -54,6 +56,14 @@ abstract class DirectoryAux {
      */
     public abstract boolean setSubspacePermissions( String pth )
 
+    /**
+     * Sets the premission of the directory to perm
+     * @perm The new permissions, overwriting all current permissions.
+     * @perm pth The path of the directory.
+     * 
+     * @return true if the operation was successful
+     */
+    public abstract boolean setPermissions( AccessMask perm, String pth );
 
     /** 
      *  

@@ -1,5 +1,9 @@
 package de.zib.gndms.kit.util
 
+import de.zib.gndms.model.common.AccessMask
+import de.zib.gndms.model.common.AccessMask
+import de.zib.gndms.model.common.AccessMask
+
 /**
  * Implementation of the directory helpers for a linux system.
  *
@@ -20,8 +24,15 @@ class LinuxDirectoryAux extends DirectoryAux {
         return setMode( RO, pth )
     }
 
+
     public boolean setSubspacePermissions( String pth ) {
         return setMode( WX, pth )
+    }
+
+
+    public boolean setPermissions( AccessMask perm, String pth ) {
+
+        setMode( perm.toString(), pth )
     }
 
     private static boolean setMode( String md, String pth ) {
