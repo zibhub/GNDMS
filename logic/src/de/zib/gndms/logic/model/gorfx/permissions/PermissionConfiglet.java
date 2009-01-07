@@ -9,7 +9,7 @@ import org.apache.commons.logging.Log;
 import java.io.Serializable;
 
 /**
- * A place to configure the permissions of newly created file by the GORFX service.
+ * A class to configure the permissions of files created by the GORFX service.
  *
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
@@ -52,7 +52,7 @@ public class PermissionConfiglet implements Configlet {
     /** This method always returns vaild permissions which respect the current user mode.
      *
      * @param un The username to request the permissoin for. The username is only taken in account
-     *          iff the mode is Caller.
+     *          iff the mode is Caller, in any other cases it can be null.
      */
     public FilePermissions getPermissionsFor( String un ) {
 

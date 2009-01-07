@@ -5,6 +5,7 @@ import javax.persistence.Transient;
 import javax.persistence.Column;
 import java.util.Map;
 import java.util.HashMap;
+import java.io.Serializable;
 
 /**
  * @author Maik Jorra <jorra@zib.de>
@@ -14,7 +15,8 @@ import java.util.HashMap;
  */
 
 @Embeddable
-public class AccessMask {
+public class AccessMask implements Serializable {
+    // todo add serialVersionUId
 
     public enum AccessFlags {
         READABLE( 0x4 ),

@@ -2,13 +2,17 @@ package de.zib.gndms.model.common.types;
 
 import de.zib.gndms.model.common.AccessMask;
 
+import java.io.Serializable;
+
 /**
- * @author: Maik Jorra <jorra@zib.de>
- * @version: $Id$
+ * @author Maik Jorra <jorra@zib.de>
+ * @version $Id$
  * <p/>
  * User: mjorra, Date: 22.12.2008, Time: 13:12:37
  */
-public class FilePermissions {
+public class FilePermissions implements Serializable {
+    // todo add serialVersionUId
+
 
     private String user;
     private String group;
