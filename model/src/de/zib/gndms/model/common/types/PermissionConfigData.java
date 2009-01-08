@@ -27,7 +27,7 @@ public class PermissionConfigData implements Serializable {
 
     private UserMode mode; // The mode for permission handling.
     private FilePermissions defaultPermissions; // The default file access mask.
-                                                // todo then why don't use AccessMask instead?
+                                                // The meaning of group and name differ from mode to mode.
 
     private String singleUser; // name of the single user, only required when user-mode is set to SINGLE.
 
@@ -188,5 +188,16 @@ public class PermissionConfigData implements Serializable {
         Matcher m = pat_grp.matcher( grp );
         if( !m.matches() )
             throw new IllegalArgumentException( grp + "is not a vaild group name" );
+    }
+
+
+    @Override
+    public String toString() {
+        return "PermissionConfigData{" +
+            "mode=" + mode +
+            ", defaultPermissions=" + defaultPermissions +
+            ", singleUser='" + singleUser + '\'' +
+            ", perUserPermissions=" + perUserPermissions +
+            '}';
     }
 }

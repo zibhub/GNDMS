@@ -16,7 +16,6 @@ public class FilePermissions implements Serializable {
 
     private String user;
     private String group;
-
     private AccessMask accessMask;
 
 
@@ -60,5 +59,16 @@ public class FilePermissions implements Serializable {
     public void setAccessMask( AccessMask accessMask ) {
         this.accessMask = accessMask;
     }
+
+
+    @Override
+    public String toString() {
+        return "FilePermissions{" +
+            "user='" + user + '\'' +
+            ", group='" + group + '\'' +
+            ", accessMask=" + accessMask +
+            '}';
+    }
 }
+
 

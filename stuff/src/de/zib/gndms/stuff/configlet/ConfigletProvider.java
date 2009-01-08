@@ -1,6 +1,5 @@
-package de.zib.gndms.kit.config;
+package de.zib.gndms.stuff.configlet;
 
-import de.zib.gndms.kit.configlet.Configlet;
 import org.jetbrains.annotations.NotNull;
 
 /**

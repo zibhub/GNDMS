@@ -26,7 +26,7 @@ public class PermissionInfo {
     private String userName; // Name of the user who is creating the task.
                      // If this one is null it means that the configlet should be queried.
 
-    private static de.zib.gndms.kit.configlet.Configlet permissionConfiglet;
+    private static de.zib.gndms.stuff.configlet.Configlet permissionConfiglet;
 
 
     public PermissionInfo( ) {
@@ -56,12 +56,12 @@ public class PermissionInfo {
 
 
     @Transient
-    public static de.zib.gndms.kit.configlet.Configlet getPermissionConfiglet() {
+    public static de.zib.gndms.stuff.configlet.Configlet getPermissionConfiglet() {
         return permissionConfiglet;
     }
 
 
-    public static void setPermissionConfiglet( de.zib.gndms.kit.configlet.Configlet permissionConfiglet ) {
+    public static void setPermissionConfiglet( de.zib.gndms.stuff.configlet.Configlet permissionConfiglet ) {
         PermissionInfo.permissionConfiglet = permissionConfiglet;
     }
 }

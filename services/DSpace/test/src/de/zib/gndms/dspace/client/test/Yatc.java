@@ -30,7 +30,7 @@ import javax.xml.namespace.QName;
  *
  * This test client does unit testing on the dspace entities.
  * It expects a dspace which is set up using the default setup-dataprovider.sh script.
- * If there are some more subspaces or the like some tests may trigger assertions even so they are correct.
+ * If there are some more subspaces or the like, some tests may trigger assertions even so they are correct.
  *
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$

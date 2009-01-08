@@ -1,6 +1,7 @@
 package de.zib.gndms.kit.configlet;
 
 import de.zib.gndms.kit.config.MapConfig;
+import de.zib.gndms.stuff.configlet.Configlet;
 import org.apache.commons.logging.Log;
 import org.jetbrains.annotations.NotNull;
 

@@ -1,6 +1,6 @@
 package de.zib.gndms.logic.model.gorfx.permissions;
 
-import de.zib.gndms.kit.configlet.Configlet;
+import de.zib.gndms.stuff.configlet.Configlet;
 import de.zib.gndms.model.common.types.FilePermissions;
 import de.zib.gndms.model.common.types.PermissionConfigData;
 import org.jetbrains.annotations.NotNull;
@@ -76,7 +76,7 @@ public class PermissionConfiglet implements Configlet {
             logger.debug( "Return permissions for user " + un );
             return config.getPerUserPermissions().get( un );
         } else {
-            logger.debug( "Return default permissions for use " + un );
+            logger.debug( "Return default permissions for user " + un );
             return config.getDefaultPermissions();
         }
     }
