@@ -39,12 +39,12 @@
 
 	<!-- Creates jar's for every service (class files will be created if not already done)-->
 	<target name="compile.src" description="Creates jar files for every service">
-		<ant antfile="${stuff.dir}/build.xml" inheritALL="false"/>
-		<ant antfile="${model.dir}/build.xml" inheritALL="false"/>
-		<ant antfile="${kit.dir}/build.xml" inheritALL="false"/>
-		<ant antfile="${logic.dir}/build.xml" inheritALL="false"/>
-		<ant antfile="${typecon.dir}/build.xml" inheritALL="false"/>
-		<ant antfile="${infra.dir}/build.xml" inheritALL="false"/>
+		<ant antfile="${stuff.dir}/build.xml" inheritALL="false" target="jar"/>
+		<ant antfile="${model.dir}/build.xml" inheritALL="false" target="jar"/>
+		<ant antfile="${kit.dir}/build.xml" inheritALL="false" target="jar"/>
+		<ant antfile="${logic.dir}/build.xml" inheritALL="false" target="jar"/>
+		<ant antfile="${typecon.dir}/build.xml" inheritALL="false" target="jar"/>
+		<ant antfile="${infra.dir}/build.xml" inheritALL="false" target="jar"/>
 	</target>
 	
 

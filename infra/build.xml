@@ -1,4 +1,4 @@
-<project name="infra compilation file" default="jar" basedir=".">
+<project name="infra compilation file" default="help" basedir=".">
 	
 	<!-- Define the environment variable -->
 	<property environment="env"/>
@@ -152,5 +152,21 @@
 		<echo>Deleting all generated jar's belonging to infra</echo>
 		<delete file='${gndms-infra}'/>	
 		<delete file='${gndms-infra-test}'/>
+	</target>
+	
+	<target name="help" description="Prints usage information.">
+		<echo message=" =================================================================================" />
+		<echo message="|                      INFRA Compilation                                          |" />
+		<echo message="|                                                                                 |" />
+		<echo message=" ---------------------------------------------------------------------------------" />
+		<echo message="|  USAGE:                                                                         |" />
+		<echo message="|    Type 'ant -h' for general help with Ant	                                     |" />
+		<echo message="|    Type 'ant -p' for a description of available build targets.                  |" />
+		<echo message="|    Type 'ant clean' for deleting all generated class-files.                     |" />
+		<echo message="|    Type 'ant clean.all' for deleting all generated class-files and jars         |" />
+		<echo message="|    Type 'ant compile' to compile all class-files of infra                       |" />
+		<echo message="|    Type 'ant jar' to  create the jars	                                         |" />
+		<echo message="|    Type 'ant compile.test' to compile all test-class-files and create the jars	 |" />
+		<echo message=" =================================================================================" />
 	</target>
 </project>
