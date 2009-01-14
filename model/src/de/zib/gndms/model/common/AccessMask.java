@@ -12,9 +12,10 @@ import java.util.HashMap;
  * <p/>
  * User: mjorra, Date: 22.12.2008, Time: 13:13:43
  */
-
 @Embeddable
 public class AccessMask {
+    // todo add serialVersionUId
+
 
     public enum AccessFlags {
         READABLE( 0x4 ),
@@ -28,12 +29,7 @@ public class AccessMask {
 
         private final int mask;
         private final static Map<Integer, AccessFlags> valueForFlag = new HashMap<Integer, AccessFlags>( );
-
-        static{
-            for ( AccessFlags f: AccessFlags.values() )
-                valueForFlag.put( f.getMask(), f );
-        }
-
+        private static boolean uninitialized = true;
 
 
         AccessFlags( int msk ) {
@@ -67,6 +63,12 @@ public class AccessMask {
 
             if( mask > 7 || mask < 0 )
                 throw new IllegalArgumentException( "Numeric mask must be between 0x0 and 0x7. Received: " + mask );
+
+            if( uninitialized ) {
+                for ( AccessFlags f: AccessFlags.values() )
+                    valueForFlag.put( f.getMask(), f );
+                uninitialized = false;
+            }
 
             return valueForFlag.get( mask );
         }
@@ -205,6 +207,7 @@ public class AccessMask {
     public String getAsString( ) {
         return toString();
     }
+
 
     public void setAsString( String msk ) {
         setUserAccess( AccessFlags.fromChar( msk.charAt( 0 ) ) );

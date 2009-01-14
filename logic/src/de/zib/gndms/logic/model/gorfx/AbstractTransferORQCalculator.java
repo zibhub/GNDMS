@@ -9,7 +9,6 @@ import org.apache.axis.types.URI;
 import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.exception.ClientException;
 import org.globus.ftp.exception.ServerException;
-import org.joda.time.DateTime;
 import org.joda.time.Duration;
 
 import java.io.IOException;

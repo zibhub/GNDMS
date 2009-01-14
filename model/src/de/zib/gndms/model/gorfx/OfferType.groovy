@@ -16,7 +16,6 @@ import javax.persistence.Lob
 import javax.persistence.Transient
 import de.zib.gndms.stuff.copy.Copyable
 import de.zib.gndms.stuff.copy.CopyMode
-import de.zib.gndms.stuff.copy.Copyable
 
 
 /**

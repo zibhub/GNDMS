@@ -27,7 +27,7 @@ import java.util.Set;
  */
 @ConfigActionHelp(shortHelp = "Print current C3Grid MDS Catalog", longHelp = "Retrieves and prints the current C3Grid MDS Catalog via C3MDSConfiglet")
 public class ReadC3CatalogAction extends ConfigAction<ConfigActionResult> {
-	public enum OutputMode { SITES, ARCHIVES }
+	public enum OutputMode { SITES, ARCHIVES, OIDPREFIXES }
 
 	@ConfigOption(descr = "Name of C3MDSConfiglet")
 	private String name;
@@ -59,11 +59,23 @@ public class ReadC3CatalogAction extends ConfigAction<ConfigActionResult> {
 				printArchives(writer, cat);
 				break;
 
+			case OIDPREFIXES:
+				printOidPrefixes(writer, cat);
+				break;
+
 			default:
 				throw new IllegalArgumentException("Unknown outputMode");
 		}
 
 		return ok();
+	}
+
+
+	public static void printOidPrefixes(
+		  final PrintWriter writer, final C3MDSConfiglet.C3Catalog catParam) {
+		for (Map.Entry<String, Set<Workspace.Archive>> setEntry : catParam.getArchivesByOid().entrySet()) {
+			writer.println(setEntry.getKey());
+		}
 	}
 
 
