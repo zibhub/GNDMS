@@ -19,6 +19,7 @@ import java.util.regex.Matcher;
 public class PermissionConfigData implements Serializable {
     private static final long serialVersionUID = 4015833130066124297L;
 
+
     public enum UserMode {
         DEFAULT, // the owner of the container
         SINGLE,  // use a single user which is different for the containers owner
@@ -67,6 +68,10 @@ public class PermissionConfigData implements Serializable {
 
 
     public Map<String, FilePermissions> getPerUserPermissions() {
+
+        if( perUserPermissions == null )
+            perUserPermissions = new HashMap<String, FilePermissions>( );
+
         return perUserPermissions;
     }
 
@@ -112,16 +117,29 @@ public class PermissionConfigData implements Serializable {
     public void fromPropertyFile( File f ) throws IOException {
 
         PropertyTree props = PropertyTreeFactory.createPropertyTree( f );
+        fromPropertyTree( props );
+    }
 
-        mode = UserMode.valueOf( props.getProperty( "PermissionConfig.userMode", "DEFAULT" ) );
+
+    public void fromProperties( Properties properties ) {
+
+        PropertyTree props = PropertyTreeFactory.createPropertyTree( properties );
+        fromPropertyTree( props );
+    }
+
+
+    public void fromPropertyTree( PropertyTree props ) {
+
+        mode = UserMode.valueOf( props.getProperty( "PermissionConfig.userMode", "DEFAULT" ).trim() );
 
         PropertyTree fp = props.subTree( "PermissionConfig.defaultPermissions" );
 
         defaultPermissions = readPermissions( fp, System.getProperty( "user.name" ), null, "600" );
 
-        String usr = props.getProperty( "PermissionConig.singleUserName" );
+        String usr = props.getProperty( "PermissionConfig.singleUserName" );
 
         if( usr != null ) {
+            usr = usr.trim( );
             checkUserName( usr );
             singleUser = usr;
         }
@@ -160,14 +178,16 @@ public class PermissionConfigData implements Serializable {
         if( pt == null )
             return null;
 
-        String usr = pt.getProperty( "user", un );
+        String usr = pt.getProperty( "user", un ).trim();
         checkUserName( usr );
 
         String grp = pt.getProperty( "group", gn );
-        if( grp != null )
+        if( grp != null )  {
+            grp = grp.trim();
             checkGroupName( grp );
+        }
 
-        String perm = pt.getProperty( "mask", msk);
+        String perm = pt.getProperty( "mask", msk).trim();
 
         return new FilePermissions( usr, grp, perm );
     }
@@ -178,7 +198,7 @@ public class PermissionConfigData implements Serializable {
         final Pattern pat_usr = Pattern.compile( "[a-z_][a-z0-9_]*" );
         Matcher m = pat_usr.matcher( usr );
         if( ! m.matches() )
-            throw new IllegalArgumentException( usr + "is not a vaild user name" );
+            throw new IllegalArgumentException( usr + " is not a vaild user name" );
     }
 
 
@@ -187,7 +207,7 @@ public class PermissionConfigData implements Serializable {
 
         Matcher m = pat_grp.matcher( grp );
         if( !m.matches() )
-            throw new IllegalArgumentException( grp + "is not a vaild group name" );
+            throw new IllegalArgumentException( grp + " is not a vaild group name" );
     }
 
 

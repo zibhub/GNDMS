@@ -11,6 +11,8 @@ import de.zib.gndms.model.dspace.SliceKind;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Arrays;
 import java.rmi.RemoteException;
 
 import org.apache.axis.types.URI;
@@ -29,8 +31,10 @@ import javax.xml.namespace.QName;
  * Yet another test client
  *
  * This test client does unit testing on the dspace entities.
- * It expects a dspace which is set up using the default setup-dataprovider.sh script.
+ * It expects a dspace which is set up using the default setup-dataprovider.sh script. Also setup-testsubspace.sh should
+ * be executed befor running this test.
  * If there are some more subspaces or the like, some tests may trigger assertions even so they are correct.
+ *
  *
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
@@ -52,7 +56,7 @@ public class Yatc {
     private String skuri;
 
 
-    // Params should be self-explanatory. gsiPath denots the public grid ftp location
+    // Params should be self-explanatory. gsiPath denotes the public grid ftp location
     // of the provided workspace. And scope- resp. localName are the address of the test
     // subspace.
     @Parameters( { "dspaceURI", "scopeName", "localName", "gsiPath" } )
@@ -102,13 +106,14 @@ public class Yatc {
 
         System.out.println( "checking listCreatableSliceKinds()" );
         URI[] sks = subc.listCreatableSliceKinds();
-        assertEquals ( sks.length, 2, "slice kind count" );
+        assertEquals ( sks.length, 3, "slice kind count" );
         URI sk1 = new URI(  "http://www.c3grid.de/G2/SliceKind/Staging" );
-        assertEquals ( sks[0], sk1, "First slice kind uri" );
+        List<URI> uris = Arrays.asList( sks );
+        assertTrue( uris.contains( sk1 ), "Contains "+ sk1 + "?" );
         URI sk2 = new URI(  "http://www.c3grid.de/G2/SliceKind/DMS" );
-        assertEquals ( sks[1], sk2, "Second slice kind uri" );
+        assertTrue( uris.contains( sk2 ), "Contains "+ sk2 + "?" );
 
-        System.out.println( "\nChecking createSubspace()" );
+        System.out.println( "\nChecking createSlice()" );
 
         skuri = "http://www.c3grid.de/G2/SliceKind/DMS";
         tt = new GregorianCalendar( );
@@ -134,8 +139,9 @@ public class Yatc {
 
 
         boolean dest=false;
-        System.out.println( "Waiting for slice removal: " );
-        for( int i=0; i < 60 && !dest; ++i ) {
+        //slice.setTerminationTime( new GregorianCalendar( ) );
+        System.out.println( "Waiting for slice removal (this may take a while): " );
+        for( int i=0; i < 120 && !dest; ++i ) {
             System.out.print( i+1 + " " );
             try {
                 slice.getSliceKind();

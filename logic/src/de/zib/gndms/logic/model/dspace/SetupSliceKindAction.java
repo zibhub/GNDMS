@@ -37,6 +37,9 @@ public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
     @ConfigOption(descr="The write mode of the slice kind (its a required attribute)")
     private String theSliceKindMode; // must not be null
 
+    @ConfigOption(descr="The directory to store the slices belonging to this kind (its a required attribute)")
+    private String uniqueDirName;
+
     private Set<MetaSubspace> metaSubspaces; // can be null
     
     private SliceKind theSliceKind;
@@ -66,6 +69,8 @@ public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
                 setSliceKind(getOption("sliceKind"));
             if( theSliceKindMode == null && (isCreating() || hasOption("sliceKindMode")))
                 setTheSliceKindMode( getOption("sliceKindMode") );
+            if( uniqueDirName == null && (isCreating() || hasOption("uniqueDirName")))
+                setUniqueDirName( getOption("uniqueDirName") );
         } catch ( MandatoryOptionMissingException e) {
             throw new IllegalStateException(e);
         }
@@ -77,6 +82,7 @@ public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
 
         requireParameter( "sliceKind", sliceKind);
         requireParameter( "sliceKindMode", theSliceKindMode);
+        requireParameter( "uniqueDirName", uniqueDirName );
     }
 
 
@@ -88,17 +94,19 @@ public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
             r = new SliceKind( );
             r.setURI( getSliceKind( ) );
             r.setPermission( msk );
+            r.setSliceDirectory( uniqueDirName );
             em.persist( r );
         } else {
             r = em.find( SliceKind.class, getSliceKind( ) );
             if ( r == null ) {
                 return failed( "No slice kind with given found (uri: " + sliceKind +")" );
             }
-            if( r.getPermission( ).equals( msk ) ) {
-                return failed( "Given sliceKindMode is equal to the slice kinds current sliceKindMode. Nothing changed." );
+            if( r.getPermission( ).equals( msk ) && r.getSliceDirectory( ).equals( uniqueDirName )  ) {
+                return failed( "Nothing to changed." );
             }
 
             r.setPermission( msk );
+            r.setSliceDirectory( uniqueDirName );
         }
 
         return ok();
@@ -138,4 +146,12 @@ public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
     }
 
 
+    public String getUniqueDirName() {
+        return uniqueDirName;
+    }
+
+
+    public void setUniqueDirName( String uniqueDirName ) {
+        this.uniqueDirName = uniqueDirName;
+    }
 }

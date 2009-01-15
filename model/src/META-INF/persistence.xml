@@ -18,6 +18,7 @@ http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
 	    <class>de.zib.gndms.model.common.SimpleRKRef</class>
         <class>de.zib.gndms.model.common.PersistentContract</class>
         <class>de.zib.gndms.model.common.AccessMask</class>
+        <class>de.zib.gndms.model.common.PermissionInfo</class>
 	    <class>de.zib.gndms.model.dspace.DSpaceRef</class>
 	    <class>de.zib.gndms.model.dspace.DSpace</class>
 	    <class>de.zib.gndms.model.dspace.SliceKind</class>

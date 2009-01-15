@@ -9,14 +9,12 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.Vector;
 
-import de.zib.gndms.model.gorfx.FTPTransferState;
 
 /**
- * @author: Maik Jorra <jorra@zib.de>
- * @version: $Id$
+ * @author Maik Jorra <jorra@zib.de>
+ * @version $Id$
  * <p/>
  * User: mjorra, Date: 30.09.2008, Time: 13:02:37
  */
@@ -36,8 +34,6 @@ public class GNDMSFileTransfer {
      * @param fm
      * The given map consists of pairs of source and target file names.
      * The target file name may be null, if it should be identical to the source files name.
-     *
-     * @return true if
      *
      * This resets any previously prepared download stats.
      */
@@ -138,12 +134,12 @@ public class GNDMSFileTransfer {
         Set<String> keys = files.keySet();
         for( String fn : keys ) {
 
-            if( resume == true && fn.equals( rfn ) ) {
+            if( resume && fn.equals( rfn ) ) {
                 resume = false;
                 resumeSource( plist.getTransferState() );
             }
 
-            if( resume == false ) {
+            if( !resume ) {
                 plist.setCurrentFile( fn );
                 String dfn = files.get( fn );
                 sourceClient.extendedTransfer( fn, destinationClient, ( dfn == null ? fn : dfn ), plist );
@@ -229,15 +225,11 @@ public class GNDMSFileTransfer {
     
     private void fetchFileListing( ) throws ClientException, ServerException, IOException {
 
-        System.out.println( " fetching file info: " );
         files = new TreeMap<String,String>( );
         Vector<FileInfo> inf = sourceClient.list( );
-        System.out.println( "done" );
         for( FileInfo fi: inf ) {
-            System.out.println( " fetched file info: " + fi );
             if( fi.isFile() ) {
                 files.put( fi.getName(), null );
-                System.out.println( "adding file to list" );
             }
         }
     }

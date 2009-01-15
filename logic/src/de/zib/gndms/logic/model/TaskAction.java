@@ -3,12 +3,15 @@ package de.zib.gndms.logic.model;
 import com.google.inject.Inject;
 import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.logic.action.LogAction;
+import de.zib.gndms.logic.model.gorfx.permissions.PermissionConfiglet;
 import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.model.util.EntityManagerAux;
 import de.zib.gndms.model.util.TxFrame;
+import de.zib.gndms.model.common.types.FilePermissions;
 import de.zib.gndms.stuff.copy.Copier;
+import de.zib.gndms.stuff.configlet.ConfigletProvider;
 import org.apache.commons.logging.Log;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,6 +40,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     private Class<? extends AbstractTask> taskClass;
     private AbstractTask backup;
 	private EntityManagerFactory emf;
+    private ConfigletProvider configletProvider;
 
     private static final class ShutdownTaskActionException extends RuntimeException {
         private static final long serialVersionUID = 2772466358157719820L;
@@ -632,6 +636,17 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
 	}
 
 
+    public ConfigletProvider getConfigletProvider() {
+        return configletProvider;
+    }
+
+
+    @Inject
+    public void setConfigletProvider( ConfigletProvider configletProvider ) {
+        this.configletProvider = configletProvider;
+    }
+
+
     /**
      * Tries to call the cleanUpOnFailed for the model, catches and logs possible exceptions
      *
@@ -645,5 +660,18 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
             // don' throw them again
             getLog().debug( "Exception on task cleanup: " + e.toString() );
         }
+    }
+
+
+    // Extracts the actual permissions form a tasks permission info object
+    public FilePermissions actualPermissions( ) {
+
+        if( getModel().getPermissions() != null ) {
+            PermissionConfiglet pc = configletProvider.getConfiglet( PermissionConfiglet.class, getModel().getPermissions().getPermissionConfigletName() );
+            if( pc != null )
+                return pc.permissionsFor( getModel().getPermissions().getUserName() );
+        }
+
+        return null;
     }
 }

@@ -152,11 +152,11 @@ class Subspace extends GridResource {
      * @brief Delivers the absolute path to a slice sl.
      */
     public String getPathForSlice( Slice sl )  {
-        path + File.separator + sl.getKind( ).getPermission().toString( ) + File.separator + sl.getAssociatedPath( )
+        path + File.separator + sl.getKind( ).getSliceDirectory() + File.separator + sl.getAssociatedPath( )
     }
 
 
     public String getGsiFtpPathForSlice( Slice sl )  {
-        gsiFtpPath + "/" + sl.getKind( ).getPermission().toString( ) + "/" + sl.getAssociatedPath( )
+        gsiFtpPath + "/" + sl.getKind( ).getSliceDirectory() + "/" + sl.getAssociatedPath( )
     }
 }

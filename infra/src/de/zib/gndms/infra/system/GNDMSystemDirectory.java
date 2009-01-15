@@ -296,7 +296,6 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 	}
 
 
-
 	private void createOrUpdateConfiglets(final ConfigletState[] statesParam) {
 		for (ConfigletState configletState : statesParam) {
 			final String name = configletState.getName();
@@ -309,6 +308,8 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 			}
 		}
 	}
+
+    
 	@SuppressWarnings({ "FeatureEnvy" })
 	private Configlet createConfiglet(final ConfigletState configParam) {
 		try {

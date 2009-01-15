@@ -61,7 +61,7 @@ public class StagedTransferORQCalculator extends
 
             getORQArguments().setActGridSiteURI( dst );
 
-            long ms = NetworkAuxiliariesProvider.calculateTransferTime( s, ebw );
+            long ms = NetworkAuxiliariesProvider.calculateTransferTime( s, ebw, 10000 );
 
             c.setDeadline( FutureTime.atOffset( new Duration( ms ) ) );
         }

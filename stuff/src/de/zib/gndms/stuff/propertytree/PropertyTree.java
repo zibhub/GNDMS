@@ -198,7 +198,7 @@ public class PropertyTree {
         if( !root && getLabel( ) != null ) {
             prefix += getLabel( );
             if ( getValue( ) != null )
-                props.setProperty( getLabel(), getValue() );
+                props.setProperty( prefix, getValue() );
         }
 
         if( nodes != null ) {

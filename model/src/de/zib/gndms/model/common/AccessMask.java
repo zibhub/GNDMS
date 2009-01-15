@@ -5,7 +5,6 @@ import javax.persistence.Transient;
 import javax.persistence.Column;
 import java.util.Map;
 import java.util.HashMap;
-import java.io.Serializable;
 
 /**
  * @author Maik Jorra <jorra@zib.de>
@@ -13,10 +12,10 @@ import java.io.Serializable;
  * <p/>
  * User: mjorra, Date: 22.12.2008, Time: 13:13:43
  */
-
 @Embeddable
-public class AccessMask implements Serializable {
+public class AccessMask {
     // todo add serialVersionUId
+
 
     public enum AccessFlags {
         READABLE( 0x4 ),
@@ -208,6 +207,7 @@ public class AccessMask implements Serializable {
     public String getAsString( ) {
         return toString();
     }
+
 
     public void setAsString( String msk ) {
         setUserAccess( AccessFlags.fromChar( msk.charAt( 0 ) ) );

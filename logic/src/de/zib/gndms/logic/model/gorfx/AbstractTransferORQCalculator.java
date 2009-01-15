@@ -101,13 +101,10 @@ public abstract class AbstractTransferORQCalculator<M extends FileTransferORQ, C
      * @return The band width NULL if it wasn't estimated yet.
      */
     protected TransientContract calculateOffer( ) {
-        
-        long ms = NetworkAuxiliariesProvider.calculateTransferTime( estimatedTransferSize, estimatedBandWidth );
 
-        // catch possible rounding errors, which may occur when the transfer size is to small and the connection is
-        // very fast. let it be at least 10 seconds, this should cover communication overhead.
-        if ( ms < 10000 )
-            ms = 10000;
+        // may at least take 10 s to cover comunication overhead.
+        long ms = NetworkAuxiliariesProvider.calculateTransferTime( estimatedTransferSize, estimatedBandWidth, 10000 );
+
 
         TransientContract ct = new TransientContract( );
         ct.setDeadline( FutureTime.atOffset( new Duration( ms ) )  );

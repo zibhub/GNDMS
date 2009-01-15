@@ -41,7 +41,11 @@ class SliceKind extends GridEntity {
 //    @Column(name="permission", nullable=false, updatable=false, columnDefinition="VARCHAR", length=15)
     @Column(name="permission", nullable=false, updatable=false )
     AccessMask permission
+
 	//de.zib.gndms.model.dspace.types.SliceKindMode mode
+
+    @Column( name="slice_directory", nullable=false, columnDefinition="VARCHAR" )
+    String sliceDirectory
 
 	@ManyToMany(mappedBy="creatableSliceKinds", cascade=[CascadeType.REFRESH, CascadeType.MERGE, CascadeType.PERSIST], fetch=FetchType.EAGER)
 	Set<MetaSubspace> metaSubspaces = new HashSet<MetaSubspace>();

@@ -3,6 +3,7 @@ package de.zib.gndms.model.common.types;
 import de.zib.gndms.model.common.AccessMask;
 
 import java.io.Serializable;
+import java.util.Properties;
 
 /**
  * @author Maik Jorra <jorra@zib.de>
@@ -68,6 +69,16 @@ public class FilePermissions implements Serializable {
             ", group='" + group + '\'' +
             ", accessMask=" + accessMask +
             '}';
+    }
+
+
+    public void toProperties( String prefix, Properties moreProps ) {
+
+        final String pre = prefix != null ? prefix + "." : "" ;
+        moreProps.setProperty( pre + "user", user );
+        moreProps.setProperty( pre + "group", group );
+        moreProps.setProperty( pre + "mask", accessMask.toString() );
+
     }
 }
 

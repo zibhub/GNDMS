@@ -2,6 +2,7 @@ package de.zib.gndms.model.common;
 
 import de.zib.gndms.stuff.copy.Copyable;
 import de.zib.gndms.stuff.copy.CopyMode;
+import de.zib.gndms.stuff.configlet.Configlet;
 
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;
@@ -24,9 +25,10 @@ import javax.persistence.Column;
 public class PermissionInfo {
 
     private String userName; // Name of the user who is creating the task.
-                     // If this one is null it means that the configlet should be queried.
+                             // If this one is null it means that the configlet should be queried.
 
-    private static de.zib.gndms.stuff.configlet.Configlet permissionConfiglet;
+    // The name of the configlet whose permission set should be applied.
+    private String permissionConfigletName;
 
 
     public PermissionInfo( ) {
@@ -39,9 +41,19 @@ public class PermissionInfo {
     }
 
 
+    public PermissionInfo( String cn, String config ) {
+
+        this.userName = cn;
+        permissionConfigletName = config;
+    }
+    
+
     public PermissionInfo( PermissionInfo pi ) {
         this.userName = pi.userName;
+        this.permissionConfigletName = pi.permissionConfigletName;
     }
+
+
 
 
     @Column( name="user_name", nullable=true )
@@ -55,13 +67,13 @@ public class PermissionInfo {
     }
 
 
-    @Transient
-    public static de.zib.gndms.stuff.configlet.Configlet getPermissionConfiglet() {
-        return permissionConfiglet;
+    @Column( name="permission_config", nullable=true )
+    public String getPermissionConfigletName() {
+        return permissionConfigletName;
     }
 
 
-    public static void setPermissionConfiglet( de.zib.gndms.stuff.configlet.Configlet permissionConfiglet ) {
-        PermissionInfo.permissionConfiglet = permissionConfiglet;
+    public void setPermissionConfigletName( String permissionConfigletName ) {
+        this.permissionConfigletName = permissionConfigletName;
     }
 }

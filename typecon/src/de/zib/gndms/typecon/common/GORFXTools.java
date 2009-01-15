@@ -3,9 +3,7 @@ package de.zib.gndms.typecon.common;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.*;
-import de.zib.gndms.typecon.common.type.ContextXSDReader;
-import de.zib.gndms.typecon.common.type.FileTransferORQXSDReader;
-import de.zib.gndms.typecon.common.type.InterSliceTransferORQXSDReader;
+import de.zib.gndms.typecon.common.type.*;
 import org.apache.axis.types.NormalizedString;
 import org.apache.axis.types.URI;
 import org.apache.axis.types.Token;
@@ -20,7 +18,7 @@ import java.io.PrintWriter;
 
 /**
  * @author Maik Jorra <jorra@zib.de>
- * @verson \$id$
+ * @version \$id$
  * <p/>
  * User: bzcjorra Date: Sep 5, 2008 5:08:47 PM
  */
@@ -31,41 +29,18 @@ public class GORFXTools {
         AbstractORQ aorq = null;
         String ot = orq.getOfferType().toString();
         if( ot.equals( GORFXConstantURIs.PROVIDER_STAGE_IN_URI ) ) {
-            aorq = convertProviderStageInORQFromORQT( orq );
-            aorq.setActContext( ContextXSDReader.readContext( ctx ) );
+            aorq = ProviderStageInORQXSDReader.read( orq, ctx );
         } else if( ot.equals( GORFXConstantURIs.FILE_TRANSFER_URI ) )
             aorq = FileTransferORQXSDReader.read( orq, ctx );
         else if( ot.equals( GORFXConstantURIs.INTER_SLICE_TRANSFER_URI ) )
             aorq = InterSliceTransferORQXSDReader.read( orq, ctx );
+        else if( ot.equals( GORFXConstantURIs.SLICE_STAGE_IN_URI ) )
+             aorq = SliceStageInORQXSDReader.read( orq, ctx );
         else
             throw new IllegalArgumentException( "no handler for orq offertype: " + ot );
 
 
         return aorq;
-    }
-
-    
-    // todo implement this using builder form model.gorfx
-    public static ProviderStageInORQ convertProviderStageInORQFromORQT( DynamicOfferDataSeqT orqt ) throws Exception, InstantiationException, IllegalAccessException {
-
-        if(! orqt.getOfferType().equals( GORFXClientTools.getProviderStageInURI() ) )
-            throw new IllegalArgumentException( );
-
-        ProviderStageInORQ orq = new ProviderStageInORQ();
-
-        DataDescriptor dds = convertDataDescriptorT( (DataDescriptorT) orqt.get_any()[0].getObjectValue( DataDescriptorT.class ) );
-        orq.setDataDescriptor( dds );
-
-        MessageElement[] mes = orqt.get_any();
-        for( int i = 1; i < mes.length; ++i ) {
-            MessageElement me = mes[i];
-            if( me.getElementName().getLocalName().equals( "DataFile" ) )
-                orq.setActDataFile( (String) me.getObjectValue( String.class ) );
-            else
-                orq.setActMetadataFile( (String) me.getObjectValue( String.class ) );
-        }
-
-        return orq;
     }
 
 

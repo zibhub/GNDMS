@@ -5,7 +5,7 @@ import de.zib.gndms.model.gorfx.types.io.FileTransferORQConverter;
 import de.zib.gndms.model.gorfx.types.io.ContractConverter;
 import de.zib.gndms.typecon.common.ContractStdoutWriter;
 import de.zib.gndms.model.gorfx.types.FileTransferORQ;
-import de.zib.gndms.model.gorfx.Contract;
+import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.typecon.common.type.FileTransferORQXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.ContextXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.ContractXSDReader;
@@ -29,6 +29,7 @@ import org.oasis.wsrf.properties.GetResourcePropertyResponse;
 import org.globus.wsrf.encoding.ObjectDeserializer;
 
 /**
+ * WARNING ths class may uses obsolet operation and should be checked befor running it
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
  * <p/>
@@ -62,7 +63,7 @@ public class RemoteFileTransferTest {
         FileTransferORQT orqArgs = writer.getProduct();
 
         // extract context from orq
-        ContextT ctx = ContextXSDTypeWriter.writeContext( orq.getContext() );
+        ContextT ctx = ContextXSDTypeWriter.writeContext( orq.getActContext() );
 
         // Create gorfx client and request offer request.
         GORFXClient gc = new GORFXClient( args[0] );
@@ -136,7 +137,7 @@ public class RemoteFileTransferTest {
 
     private static void showContract( OfferExecutionContractT con ) {
 
-        Contract c = ContractXSDReader.readContract( con );
+        TransientContract c = ContractXSDReader.readContract( con );
         ContractStdoutWriter writer = new ContractStdoutWriter();
         ContractConverter conv = new ContractConverter( writer, c );
         conv.convert( );
