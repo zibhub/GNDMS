@@ -1,33 +1,25 @@
 package de.zib.gndms.typecon.util;
 
+import org.apache.axis.Constants;
+import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
 import org.apache.axis.description.TypeDesc;
-import org.apache.axis.encoding.SerializationContext;
-
-import javax.xml.namespace.QName;
-import java.util.IdentityHashMap;
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
-import java.io.Writer;
-import java.io.IOException;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.TypeMapping;
-import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.*;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
+import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.RPCElement;
-import org.apache.axis.MessageContext;
-import org.apache.axis.Message;
-import org.apache.axis.Constants;
-import org.apache.axis.handlers.ErrorHandler;
 import org.apache.axis.server.AxisServer;
 import org.xml.sax.InputSource;
 
-import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.namespace.QName;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
-import java.io.Reader;
+import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.IdentityHashMap;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>

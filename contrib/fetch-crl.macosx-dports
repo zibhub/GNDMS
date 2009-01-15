@@ -51,7 +51,7 @@
 #
 openssl=/opt/local/bin/openssl
 lynx=/opt/local/bin/lynx
-wget=$(which wget)
+wget=/opt/local/bin/wget
 basename=/usr/bin/basename
 getopt=/opt/local/bin/getopt
 awk=/opt/local/bin/gawk

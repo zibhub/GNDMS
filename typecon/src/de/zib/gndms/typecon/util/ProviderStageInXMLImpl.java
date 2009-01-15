@@ -1,22 +1,21 @@
 package de.zib.gndms.typecon.util;
 
-import de.zib.gndms.model.gorfx.types.io.xml.ProviderStageInXML;
-import de.zib.gndms.model.gorfx.types.io.xml.ORQWrapper;
+import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
-import de.zib.gndms.model.common.types.TransientContract;
-import de.zib.gndms.typecon.common.type.ProviderStageInORQXSDTypeWriter;
-import de.zib.gndms.typecon.common.type.ContextXSDTypeWriter;
-import de.zib.gndms.typecon.common.type.ContractXSDTypeWriter;
-import de.zib.gndms.typecon.common.type.ContractXSDReader;
+import de.zib.gndms.model.gorfx.types.io.xml.ORQWrapper;
+import de.zib.gndms.model.gorfx.types.io.xml.ProviderStageInXML;
 import de.zib.gndms.typecon.common.GORFXTools;
-
-import java.io.*;
-
-import types.ProviderStageInORQT;
+import de.zib.gndms.typecon.common.type.ContextXSDTypeWriter;
+import de.zib.gndms.typecon.common.type.ContractXSDReader;
+import de.zib.gndms.typecon.common.type.ContractXSDTypeWriter;
+import de.zib.gndms.typecon.common.type.ProviderStageInORQXSDTypeWriter;
 import types.ContextT;
 import types.OfferExecutionContractT;
+import types.ProviderStageInORQT;
+
+import java.io.*;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
