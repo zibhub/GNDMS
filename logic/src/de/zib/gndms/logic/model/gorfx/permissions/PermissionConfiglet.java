@@ -1,6 +1,6 @@
 package de.zib.gndms.logic.model.gorfx.permissions;
 
-import de.zib.gndms.stuff.configlet.Configlet;
+import de.zib.gndms.kit.configlet.Configlet;
 import de.zib.gndms.model.common.types.FilePermissions;
 import de.zib.gndms.model.common.types.PermissionConfigData;
 import org.jetbrains.annotations.NotNull;

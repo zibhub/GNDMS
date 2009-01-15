@@ -11,7 +11,7 @@ import de.zib.gndms.model.util.EntityManagerAux;
 import de.zib.gndms.model.util.TxFrame;
 import de.zib.gndms.model.common.types.FilePermissions;
 import de.zib.gndms.stuff.copy.Copier;
-import de.zib.gndms.stuff.configlet.ConfigletProvider;
+import de.zib.gndms.kit.configlet.ConfigletProvider;
 import org.apache.commons.logging.Log;
 import org.jetbrains.annotations.NotNull;
 

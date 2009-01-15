@@ -2,10 +2,8 @@ package de.zib.gndms.model.common;
 
 import de.zib.gndms.stuff.copy.Copyable;
 import de.zib.gndms.stuff.copy.CopyMode;
-import de.zib.gndms.stuff.configlet.Configlet;
 
 import javax.persistence.Embeddable;
-import javax.persistence.Transient;
 import javax.persistence.Column;
 
 /**

@@ -1,6 +1,6 @@
 package de.zib.gndms.logic.model.gorfx;
 
-import de.zib.gndms.stuff.configlet.ConfigletProvider;
+import de.zib.gndms.kit.configlet.ConfigletProvider;
 import de.zib.gndms.model.common.types.factory.KeyFactory;
 import de.zib.gndms.model.common.types.factory.KeyFactoryInstance;
 import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;

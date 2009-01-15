@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import de.zib.gndms.c3resource.jaxb.Site;
 import de.zib.gndms.c3resource.jaxb.Workspace;
 import de.zib.gndms.infra.configlet.C3MDSConfiglet;
-import de.zib.gndms.stuff.configlet.ConfigletProvider;
+import de.zib.gndms.kit.configlet.ConfigletProvider;
 import de.zib.gndms.logic.model.config.ConfigAction;
 import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigActionResult;
