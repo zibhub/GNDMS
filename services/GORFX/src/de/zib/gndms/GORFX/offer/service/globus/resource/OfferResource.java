@@ -2,8 +2,11 @@ package de.zib.gndms.GORFX.offer.service.globus.resource;
 
 import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
+import de.zib.gndms.logic.model.gorfx.permissions.PermissionConfiglet;
 import de.zib.gndms.model.common.PersistentContract;
+import de.zib.gndms.model.common.PermissionInfo;
 import de.zib.gndms.model.common.types.InvalidContractException;
+import de.zib.gndms.model.common.types.PermissionConfigData;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.typecon.common.type.ContractXSDReader;
@@ -84,6 +87,7 @@ public class OfferResource extends OfferResourceBase {
         task.setOfferType(getOrqCalc().getKey());
         task.setTerminationTime( contract.getCurrentTerminationTime() );
         task.setWid(WidAux.getWid());
+        addPermissions( task );
         return task;
     }
 
@@ -97,9 +101,29 @@ public class OfferResource extends OfferResourceBase {
         cachedWid = cachedWidParam;
     }
 
+
     @Override
     public void refreshRegistration(final boolean forceRefresh) {
         // nothing
+    }
+
+    
+    private void addPermissions( Task tsk ) {
+
+
+        String cn = null;
+        PermissionConfiglet config = home.getSystem().getInstanceDir().getConfiglet( PermissionConfiglet.class, WSConstants.GORFX_PERMISSION_CONFIGLET);
+        if( config.getMode().equals( PermissionConfigData.UserMode.CALLER ) ) {
+            try {
+                String[] l = org.globus.wsrf.security.SecurityManager.getManager(  ).getLocalUsernames();
+                if( l != null )
+                    cn = l.length > 0 ? l[0] : null;
+            } catch ( org.globus.wsrf.security.SecurityException e ) {
+                // do nothing this may happen, depending on the security config
+            }
+        }
+
+        tsk.setPermissions( new PermissionInfo( config.actualUserName( cn ), WSConstants.GORFX_PERMISSION_CONFIGLET ) );
     }
 
 }

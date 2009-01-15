@@ -21,7 +21,6 @@ import java.rmi.RemoteException;
  */
 public class GORFXClientUtils {
 
-
     /**
      * Waits for a task to finish or fail.
      *

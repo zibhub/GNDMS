@@ -3,7 +3,7 @@ package de.zib.gndms.infra.system;
 import de.zib.gndms.kit.access.InstanceProvider;
 import de.zib.gndms.infra.access.ServiceHomeProvider;
 import de.zib.gndms.logic.access.TaskActionProvider;
-import de.zib.gndms.kit.config.ConfigletProvider;
+import de.zib.gndms.stuff.configlet.ConfigletProvider;
 import de.zib.gndms.logic.model.gorfx.ORQCalculatorProvider;
 
 

@@ -48,12 +48,24 @@ public class NetworkAuxiliariesProvider {
 
     /**
      * Calculated the transfertime in milli-seconds.
-     * 
+     *
+     * To catch possible rounding errors, which may occur when the transfer size is to small and the connection is
+     * very fast. A minimal value for the transfer time can be provieded (see the <EM>min</EM> parameter).
+     *
      * @param size The transfer file size in byte.
      * @param bandWidth The bandwidth in byte/s
-     * @return The size in ms
+     * @param min The minimum time which is retured if the calculated time is smaller.
+     *            If min is < 1 it will be ignored.
+     *
+     * @return The transfer-time in ms.
      */
-    public static long calculateTransferTime( long size, float bandWidth  ){
-        return  Float.valueOf( size * 1000 / bandWidth ).longValue( );
+    public static long calculateTransferTime( long size, float bandWidth, int min ){
+
+        long tt = Float.valueOf( size * 1000 / bandWidth ).longValue( );
+
+        if ( min > 0 && tt < min )
+            tt = min;
+
+        return tt;
     }
 }

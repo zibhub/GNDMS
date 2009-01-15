@@ -123,7 +123,7 @@ public class TransferStateTest extends ModelEntityTestBase {
             Float tt = prov.getBandWidthEstimater().estimateBandWidthFromTo( suri.getHost( ), duri.getHost( ) );
             Assert.assertNotNull ( tt, "estimated band width" );
             System.out.println( "Estimated transfer time in sec.: "
-                + NetworkAuxiliariesProvider.calculateTransferTime( ets, tt.floatValue() ) );
+                + NetworkAuxiliariesProvider.calculateTransferTime( ets, tt.floatValue(), -1 ) );
 
             /*
             // listing files

@@ -1,4 +1,4 @@
-package de.zib.gndms.kit.configlet;
+package de.zib.gndms.stuff.configlet;
 
 import org.jetbrains.annotations.NotNull;
 import org.apache.commons.logging.Log;

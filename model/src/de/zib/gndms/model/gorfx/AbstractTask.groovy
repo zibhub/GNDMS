@@ -34,6 +34,7 @@ import de.zib.gndms.stuff.copy.Copyable
 import de.zib.gndms.stuff.mold.Molder
 import de.zib.gndms.stuff.mold.Mold
 import javax.persistence.FetchType
+import de.zib.gndms.model.common.PermissionInfo
 
 /**
  * ThingAMagic.
@@ -94,6 +95,9 @@ abstract class AbstractTask extends TimedGridResource {
     @Column(name="wid", nullable=true, updatable=false)
     @Basic String wid;
 
+    @Embedded
+    PermissionInfo permissions;
+
     @OneToMany( targetEntity=SubTask.class, cascade=[CascadeType.REMOVE], fetch=FetchType.EAGER )
     List<SubTask> subTasks = new ArrayList<SubTask>();
 
@@ -128,6 +132,7 @@ abstract class AbstractTask extends TimedGridResource {
         subTasks.add( st );
     }
 
+
 	@SuppressWarnings(["unchecked"])
 	def <D> Molder<D> molder(@NotNull final Class<D> moldedClazz) {
 		return Mold.newMolderProxy( (Class) getClass(), this, moldedClazz);
@@ -149,6 +154,7 @@ abstract class AbstractTask extends TimedGridResource {
         instance.offerType = offerType;
         instance.orq = Copier.copySerializable(orq);
         instance.data = Copier.copySerializable(data);
+        instance.permissions = Copier.copyViaConstructor( permissions );
         if (subTasks == null)
            instance.subTasks = null;
         else {

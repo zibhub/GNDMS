@@ -22,8 +22,8 @@ import types.ProviderStageInORQT;
 import java.util.Set;
 
 /**
- * @author: Maik Jorra <jorra@zib.de>
- * @version: $Id$
+ * @author Maik Jorra <jorra@zib.de>
+ * @version $Id$
  * <p/>
  * User: mjorra, Date: 11.11.2008, Time: 14:57:06
  */
@@ -55,7 +55,7 @@ public class SliceStageInORQCalculator extends
     @Override
     public TransientContract createOffer() throws Exception {
 
-        String sid = getORQArguments().getGridSite();
+        String sid = destinationURI( getORQArguments().getGridSite() ); 
         getORQArguments().setActGridSiteURI( sid );
 
         GORFXClient cnt = new GORFXClient( sid );

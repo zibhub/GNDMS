@@ -2,6 +2,7 @@ package de.zib.gndms.typecon.tests.io;
 
 import de.zib.gndms.typecon.common.GORFXTools;
 import de.zib.gndms.typecon.common.type.ProviderStageInORQXSDTypeWriter;
+import de.zib.gndms.typecon.common.type.ProviderStageInORQXSDReader;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQConverter;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyReader;
@@ -84,7 +85,7 @@ public class ProviderStageInORQIO {
         ProviderStageInORQT orqt = writer.getProduct( );
 
         // convert orqt to orq
-        ProviderStageInORQ norq = GORFXTools.convertProviderStageInORQFromORQT( orqt );
+        ProviderStageInORQ norq = ProviderStageInORQXSDReader.read( orqt, null );
         Properties nprop = new Properties( );
 
         ProviderStageInORQPropertyWriter pwrit = new ProviderStageInORQPropertyWriter( nprop );

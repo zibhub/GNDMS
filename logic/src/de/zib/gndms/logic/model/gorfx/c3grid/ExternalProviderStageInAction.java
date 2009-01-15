@@ -3,6 +3,7 @@ package de.zib.gndms.logic.model.gorfx.c3grid;
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
 import static de.zib.gndms.logic.model.gorfx.c3grid.ExternalProviderStageInORQCalculator.GLOBUS_DEATH_DURATION;
+import de.zib.gndms.logic.model.gorfx.permissions.PermissionConfiglet;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
@@ -61,7 +62,8 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
         final StringBuilder outRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
         final StringBuilder errRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
         try {
-            final ProcessBuilderAction action = parmAux.createPBAction(orqParam, null);
+
+            final ProcessBuilderAction action = parmAux.createPBAction(orqParam, null, actualPermissions() );
             action.setProcessBuilder(procBuilder);
             action.setOutputReceiver(outRecv);
             action.setErrorReceiver(errRecv);
@@ -100,7 +102,7 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
 
 		final StringBuilder outRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
 		final StringBuilder errRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
-		final ProcessBuilderAction action = parmAux.createPBAction(orqParam, null);
+		final ProcessBuilderAction action = parmAux.createPBAction( orqParam, null, actualPermissions() );
 		action.setProcessBuilder(procBuilder);
 		action.setOutputReceiver(outRecv);
 		action.setErrorReceiver(errRecv);
@@ -112,5 +114,5 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
 			default:
 				getLog().info("Failure during cancel: " + errRecv.toString());
 		}
-	}
+    }
 }
