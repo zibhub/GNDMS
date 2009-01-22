@@ -64,22 +64,26 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
                     
                     epr = GORFXClientUtils.commonTaskPreparation( uri, p_orq, ctx, con  );
                     model.setData( epr );
-                    transitToState( TaskState.IN_PROGRESS );
+     //               transitToState( TaskState.IN_PROGRESS );
                 }
             }
 
             epr = (EndpointReferenceType) model.getData( );
 
             TaskClient cnt = new TaskClient( epr );
+            trace( "Starting remote staging.", null );
             boolean finished = GORFXClientUtils.waitForFinish( cnt, 1000 );
 
             if (finished) {
+                trace( "Remote staging finished.", null );
                 ProviderStageInResultT res =  cnt.getExecutionResult( ProviderStageInResultT.class );
                 SliceReference sk = (SliceReference) res.get_any()[0].getObjectValue( SliceReference.class );
                 SliceRef sr = SliceRefXSDReader.read( sk );
                 finish( new SliceStageInResult( sr ) );
             } else {
                 TaskExecutionFailure f = cnt.getExecutionFailure();
+                trace( "Remote staging failed with: \n"
+                    +  GORFXClientUtils.taskExecutionFailureToString( f ), null );
                 fail( new RuntimeException( f.toString() ) );
             }
         } catch( RuntimeException e ) {

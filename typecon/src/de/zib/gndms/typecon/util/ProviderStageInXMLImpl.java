@@ -18,8 +18,8 @@ import types.ProviderStageInORQT;
 import java.io.*;
 
 /**
- * @author: Maik Jorra <jorra@zib.de>
- * @version: $Id$
+ * @author Maik Jorra <jorra@zib.de>
+ * @version $Id$
  * <p/>
  * User: mjorra, Date: 03.12.2008, Time: 15:59:26
  */

@@ -12,6 +12,8 @@ import de.zib.gndms.logic.model.gorfx.UnfulfillableORQException;
 import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.shared.ContextTAux;
 import de.zib.gndms.typecon.common.type.ContractXSDTypeWriter;
+import de.zib.gndms.typecon.util.AxisToXMLTest;
+import de.zib.gndms.typecon.util.AxisTypeFromToXML;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.globus.wsrf.ResourceContext;
@@ -19,11 +21,15 @@ import org.globus.wsrf.ResourceKey;
 import org.globus.wsrf.impl.ResourceContextImpl;
 
 import java.rmi.RemoteException;
+import java.io.StringWriter;
+import java.io.IOException;
+
+import types.OfferExecutionContractT;
 
 
 /**
- * TODO:I am the service side implementation class.  IMPLEMENT AND DOCUMENT ME
- * 
+ * TODO:I am the service side implementation class.  IMPLEMENT AND DOCUMENT ME -- document yourself 
+ *
  * @created by Introduce Toolkit version 1.2
  * 
  */
@@ -46,6 +52,7 @@ public class ORQImpl extends ORQImplBase {
             logger.debug(impl.getResourceKeyHeader());
             logger.debug(impl.getResourceHomeLocation());
             logger.debug(impl.getResourceKey());
+            logger.debug( "Context: " + loggableXSDT( context ) );
             ORQResource orq = home.getAddressedResource();
             WidAux.initWid(orq.getCachedWid());
             try {
@@ -55,12 +62,16 @@ public class ORQImpl extends ORQImplBase {
                 ores.setCachedWid(WidAux.getWid());
                 ores.setOfferRequestArguments( orq.getOfferRequestArguments() );
                 final TransientContract contract = orq.getOfferExecutionContract(offerExecutionContract);
-                ores.setOfferExecutionContract(
-                    ContractXSDTypeWriter.write(
-                            contract) );
+
+                OfferExecutionContractT oec =
+                    ContractXSDTypeWriter.write( contract );
+                ores.setOfferExecutionContract( oec );
                 ores.setOrqCalc(orq.getORQCalculator());
 
                 home.remove( orq.getResourceKey() );
+
+                // log contract
+                logger.debug( "Calculated contract: " + loggableXSDT( oec ) );
 
                 return ohome.getResourceReference( key ).getEndpointReference();
             }
@@ -69,13 +80,15 @@ public class ORQImpl extends ORQImplBase {
             }
         }
         catch (UnfulfillableORQException e) {
+            logger.error( "UnfulfillableORQException: " + e.getMessage() + "\n" + e.getStackTrace().toString() );
             throw new UnfullfillableRequest();
         }
         catch (PermissionDeniedORQException e) {
+            logger.error( "PermissionDeniedORQException: " + e.getMessage() + "\n" + e.getStackTrace().toString() );
             throw new PermissionDenied();
         }
         catch ( Exception e ) {
-            e.printStackTrace();
+            logger.error( "Exception: " + e.getMessage() + "\n" + e.getStackTrace().toString() );
             throw new RemoteException(e.getMessage(), e);
         }
     }
@@ -87,16 +100,25 @@ public class ORQImpl extends ORQImplBase {
             ContextTAux.initWid(getResourceHome().getModelUUIDGen(), context);
             ExtORQResourceHome home = (ExtORQResourceHome) getResourceHome();
             ORQResource res = home.getAddressedResource();
-            return ContractXSDTypeWriter.write(
-                res.estimatedExecutionContract( offerExecutionContract ) );
+
+            OfferExecutionContractT oec =
+                ContractXSDTypeWriter.write( res.estimatedExecutionContract( offerExecutionContract ) );
+
+            // log contract
+            logger.debug( "Calculated contract: " + loggableXSDT( oec ) );
+
+            return oec;
         }
         catch (UnfulfillableORQException e) {
+            logger.error( "UnfulfillableORQException: " + e.getMessage() + "\n" + e.getStackTrace().toString() );
             throw new UnfullfillableRequest();
         }
         catch (PermissionDeniedORQException e) {
+            logger.error( "PermissionDeniedORQException: " + e.getMessage() + "\n" + e.getStackTrace().toString() );
             throw new PermissionDenied();
         }
         catch ( Exception e ) {
+            logger.error( "Exception: " + e.getMessage() + "\n" + e.getStackTrace().toString() );
             throw new RemoteException(e.getMessage(), e);
         }
         finally {
@@ -109,6 +131,21 @@ public class ORQImpl extends ORQImplBase {
     @Override
     public ExtORQResourceHome getResourceHome() throws Exception {
         return (ExtORQResourceHome) super.getResourceHome();    // Overridden method
+    }
+
+
+    private static String loggableXSDT( Object o ) {
+
+        if( o == null )
+            return "NULL";
+        
+        try {
+            StringWriter sw = new StringWriter( );
+            AxisTypeFromToXML.toXML( sw, o, false, true );
+            return sw.toString();
+        } catch ( IOException e ) { // can hardly occure
+            return "Object to xml conversion error. " + e.getMessage();
+        }
     }
 }
 

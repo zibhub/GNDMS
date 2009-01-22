@@ -10,6 +10,7 @@ import org.joda.time.DateTime;
 import types.*;
 
 import java.rmi.RemoteException;
+import java.io.StringWriter;
 
 /**
  * Some helper methods for common tasks at testing.
@@ -98,5 +99,22 @@ public class GORFXClientUtils {
 	    xsdOfferContract.setResultValidUntil( resultValidity );
 
         return xsdOfferContract;
+    }
+
+
+    public static String taskExecutionFailureToString( TaskExecutionFailure tef ) {
+
+        if( tef == null )
+            return "NULL";
+
+
+        StringWriter sw = new StringWriter( );
+        TaskExecutionFailureImplementationFault tefif = tef.getImplementationFault();
+        sw.write( "message:       " + tefif.getMessage( ) + "\n");
+        sw.write( "faultClass:    " + tefif.getFaultClass( ) + "\n");
+        sw.write( "faultTrace:    " + tefif.getFaultTrace( ) + "\n");
+        sw.write( "faultLocation: " + tefif.getFaultLocation( ) );
+
+        return sw.toString();
     }
 }

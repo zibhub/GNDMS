@@ -32,7 +32,7 @@ public class ReadC3CatalogAction extends ConfigAction<ConfigActionResult> {
 	@ConfigOption(descr = "Name of C3MDSConfiglet")
 	private String name;
 
-	@ConfigOption(descr = "Output Mode (One of SITES (default), ARCHIVES)")
+	@ConfigOption(descr = "Output Mode (One of SITES (default), ARCHIVES, OIDPREFIXES)")
 	private OutputMode outputMode;
 
 	private ConfigletProvider confligets;

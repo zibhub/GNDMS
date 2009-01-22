@@ -9,6 +9,11 @@ import de.zib.gndms.typecon.common.GORFXClientTools;
 
 import javax.xml.soap.SOAPException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Arrays;
+
+import org.apache.axis.description.FieldDesc;
+import org.apache.axis.message.MessageElement;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -23,26 +28,20 @@ public class SliceStageInORQXSDTypeWriter extends AbstractXSDTypeWriter<SliceSta
 
 
     public void writeGridSiteName( String gsn ) {
-        try {
-            getProduct().get_any()[0].setObjectValue( gsn );
-        } catch ( SOAPException e ) {
-            boxException( e );
-        }
+        addElement( 0, "gridSite", gsn );
     }
 
 
     public void writeDataFileName( String dfn ) {
-        try {
-            getProduct().get_any()[2].setObjectValue( dfn );
-        } catch ( SOAPException e ) {
-            boxException( e );
-        }
+        addElement( 2, "dataFile", dfn );
     }
 
 
     public void writeMetaDataFileName( String mfn ) {
         try {
-            getProduct().get_any()[3].setObjectValue( mfn );
+            String fn = "MetadataFile";
+            MessageElement me = findElement( fn );
+            me.setObjectValue( mfn );
         } catch ( SOAPException e ) {
             boxException( e );
         }
@@ -67,7 +66,9 @@ public class SliceStageInORQXSDTypeWriter extends AbstractXSDTypeWriter<SliceSta
         if( dataWriter == null )
             throw new IllegalStateException( "no data writer present" );
         try {
-            getProduct().get_any()[1].setObjectValue( dataWriter.getProduct( ) );
+            String fn = "StagedData";
+            MessageElement me = findElement( fn );
+            me.setObjectValue( dataWriter.getProduct( ) );
         } catch ( SOAPException e ) {
             boxException( e );
         }
@@ -125,5 +126,36 @@ public class SliceStageInORQXSDTypeWriter extends AbstractXSDTypeWriter<SliceSta
         conv.convert();
 
         return writer.getProduct();
+    }
+
+
+    protected void addElement( int idx, String nam, Object elm ) {
+
+        FieldDesc fd = SliceStageInORQT.getTypeDesc().getFieldByName( nam );
+        LinkedList<MessageElement> ll = new LinkedList<MessageElement>( Arrays.asList( getProduct().get_any() ) );
+
+        try {
+            ll.add( idx,
+                GORFXClientTools.createElementForField( fd, elm ) );
+        } catch ( SOAPException e ) {
+            boxException( e );
+        }
+        getProduct().set_any( ll.toArray( new MessageElement[ll.size()] ) );
+    }
+
+
+    protected MessageElement findElement( String nam ) {
+
+        MessageElement[] mes = getProduct().get_any();
+
+        if( mes == null )
+            return null;
+
+        for ( MessageElement me : mes ) {
+            if ( nam.equals( me.getName() ) )
+                return me;
+        }
+
+        return null;
     }
 }

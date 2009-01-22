@@ -81,7 +81,6 @@ public abstract class AbstractStageInClient extends AbstractApplication {
 	    else
 	        xsdOfferContract = ContractXSDTypeWriter.write( contract );
 
-
 	    return orqPort.getOfferAndDestroyRequest(xsdOfferContract, xsdContextParam);
 	}
 
