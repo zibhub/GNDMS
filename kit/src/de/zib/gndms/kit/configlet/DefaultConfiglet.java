@@ -37,25 +37,34 @@ public class DefaultConfiglet implements Configlet {
 		// whatever
 	}
 
-
+    /**
+     * Returns the current configurations-map. Method is synchronized.
+     * @return the current configurations-map
+     */
 	public synchronized MapConfig getMapConfig() {
 		return mapConfig;
 	}
 
-
+    /**
+     * Returns the used logger
+     * @return the used logger
+     */
 	public Log getLog() {
 		return log;
 	}
 
-
+    
 	public String getName() {
 		return name;
 	}
 
-
+    /**
+     * Overrides used {@link MapConfig} with the new configuration. Method is synchronized.
+     * @param data the new configurations, expected to be a {@code Map<String, String>}
+     */
 	@SuppressWarnings({ "unchecked" })
 	private synchronized void configConfig(final Serializable data) {
 		final Map<String, String> map = (Map<String, String>) data;
 		mapConfig = new MapConfig(map);
-	}
+    }
 }

@@ -15,7 +15,23 @@ import java.io.Serializable;
  *          User: stepn Date: 06.11.2008 Time: 17:02:47
  */
 public interface Configlet {
-	void init(@NotNull final Log loggerParam, @NotNull final String name, Serializable data);
-	void update(@NotNull Serializable data);
-	void shutdown();
+
+    /**
+     *  initializes Configlet with a logger, a start-configuration and a name
+     * @param loggerParam  
+     * @param name  the name of the configuration
+     * @param data  the configuration, expected to be a {@code Map<String, String>}
+     */
+    void init(@NotNull final Log loggerParam, @NotNull final String name, Serializable data);
+
+    /**
+     * Sets a new configuration
+     * @param data the new configuration, expected to be a {@code Map<String, String>}
+     */
+    void update(@NotNull Serializable data);
+
+    /**
+     * 
+     */
+    void shutdown();
 }

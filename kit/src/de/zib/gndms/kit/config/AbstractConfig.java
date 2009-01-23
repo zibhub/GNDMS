@@ -84,7 +84,6 @@ public abstract class AbstractConfig implements ConfigProvider {
         return option == null ? def : Integer.parseInt(option);
     }
 
-
     public int getIntOption(@NotNull String name) throws MandatoryOptionMissingException {
         final String option = getOption(name);
         return Integer.parseInt(option);
@@ -195,7 +194,6 @@ public abstract class AbstractConfig implements ConfigProvider {
         final String option = getNonMandatoryOption(name);
         return option == null ? def : Class.forName(option).asSubclass(baseClass);
     }
-
 
 	@SuppressWarnings({ "HardcodedFileSeparator" })
 	@NotNull

@@ -28,7 +28,9 @@ public class PublishConfiglet extends DefaultConfiglet {
 		configPublishingSites();
 	}
 
-
+    /**
+     * 
+     */
 	private void configPublishingSites() {
 		try {
 			final ConfigProvider mapConfig = getMapConfig().getDynArrayOption("publishers");
@@ -61,7 +63,10 @@ public class PublishConfiglet extends DefaultConfiglet {
 		}
 	}
 
-
+    /**
+     * 
+     * @return
+     */
 	public Iterable<String> getPublishingSites() {
 		return publishingSites;
 	}

@@ -40,7 +40,7 @@ public class ReadC3CatalogAction extends ConfigAction<ConfigActionResult> {
 
 	@Override
 	public void initialize() {
-		super.initialize();    // Overridden method
+        super.initialize();    // Overridden method
 		name = getOption("name", "mds");
 		outputMode = getEnumOption(OutputMode.class, "outputMode", true, OutputMode.SITES);
 	}
@@ -101,4 +101,9 @@ public class ReadC3CatalogAction extends ConfigAction<ConfigActionResult> {
 	public void setConfligets(final ConfigletProvider confligetsParam) {
 		confligets = confligetsParam;
 	}
+
+    public static void main(String [] args){
+        ReadC3CatalogAction test= new ReadC3CatalogAction();
+       
+    }
 }

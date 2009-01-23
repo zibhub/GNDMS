@@ -19,8 +19,10 @@ import java.io.Serializable;
 public abstract class RunnableConfiglet extends DefaultConfiglet implements Runnable {
 	private Thread thread;
 
-
-	@Override
+               // serializer data selber ueber Setter und setzen und diese init Methode benutzen
+               // um Thread zu starten. dann auf der Festplatte zwei configdatei (url) und dann wecheslen,
+              // sowie testen ob veränderung eingelesen wird
+    @Override
 	public final synchronized void init(@NotNull final Log loggerParam,
 	                                 @NotNull String name, final Serializable data) {
 		super.init(loggerParam, name, data);    // Overridden method
@@ -40,9 +42,15 @@ public abstract class RunnableConfiglet extends DefaultConfiglet implements Runn
 		}
 	}
 
-	protected abstract void threadInit();
+    /**
+     * 
+     */
+    protected abstract void threadInit();
 
-	public abstract void run_();
+    /**
+     *
+     */
+    public abstract void run_();
 
 	@Override
 	public synchronized void update(@NotNull final Serializable data) {

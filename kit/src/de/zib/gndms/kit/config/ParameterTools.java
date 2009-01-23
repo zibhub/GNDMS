@@ -34,7 +34,11 @@ public final class ParameterTools {
     public static final int EXPECTED_MAX_KEY_LENGTH = 32;
     public static final int EXPECTED_MAX_VAL_LENGTH = 64;
 
-
+    /**
+     * Escapes the following characters from a given String {@code [ ] ,  : ; ' \ "}
+     * @param sParam the String wich shall be escaped
+     * @return the escpaded String
+     */
 	@SuppressWarnings({ "HardcodedFileSeparator" })
 	public static String escape(final String sParam) {
 		final StringBuilder builder = new StringBuilder(sParam.length() + (sParam.length() / 8));
@@ -58,7 +62,7 @@ public final class ParameterTools {
 	}
 
 
-	private enum ParseMode
+    private enum ParseMode
         { KEY_WHITE, KEY, VALUE_BEGIN, TRIMMED_VALUE, EXACT_VALUE, EXACT_VALUE_DONE }
 
     public ParameterTools() { throw new UnsupportedOperationException("Don't"); }
@@ -219,7 +223,6 @@ public final class ParameterTools {
         }
     }
 
-
     private static void putBoolKey(
             final Map<String, String> targetMap, final Pattern keyPattern,
             final String boolKeyParam, final String val, final int index)
@@ -229,6 +232,7 @@ public final class ParameterTools {
         else
             throw new ParameterParseException("Invalid key  name", index);
     }
+
 
 
     private static char escape(
@@ -315,6 +319,7 @@ public final class ParameterTools {
             final @NotNull Map<String, String> map, final Pattern keyPattern) {
         return asString(map, keyPattern, false);
     }
+
 
     private static void makeEntry(
             final @NotNull Map<String, String> targetMap,
