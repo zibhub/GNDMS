@@ -2,10 +2,11 @@ package de.zib.gndms.kit.config;
 
 import org.jetbrains.annotations.NotNull;
 
+
+import java.util.regex.Pattern;
 import java.util.Map;
 import java.util.List;
 import java.util.LinkedList;
-import java.util.regex.Pattern;
 
 
 /**
@@ -14,7 +15,7 @@ import java.util.regex.Pattern;
  * Supported format (assumes greedy matching):
  *
  * <pre>
- * (params) = (entry [';' (entry)]* [';']
+ * (params) = (entry) [';' (entry)]* [';']
  * (entry) = (ws-char)* (printable-non-ws-char)+[{':'|'='} (value)]
  * (value) = (ignored-ws-char)* {(trimmed-value) | (exact-value)} (ignored-ws-char)*
  * (trimmed-value) = (pintable-chars-taken-as-value)*
@@ -234,7 +235,6 @@ public final class ParameterTools {
     }
 
 
-
     private static char escape(
             final StringBuilder builderParam, final char[] charsParam, final int index)
             throws ParameterParseException {
@@ -245,7 +245,14 @@ public final class ParameterTools {
             return charsParam[index + 1];
     }
 
-
+    /**
+     * Returns a {@code String} out of the {@code StringBuilder} if it is a valid key, matching the pattern
+     * @param builderParam the characters which shall be converted into a key-String
+     * @param keyPattern a Pattern the characters must match to be a valid key
+     * @param index can be used to trace the current character position of the original String, when this method is invoked
+     * @return   Returns a {@code String} out of the {@code StringBuilder} if it is a valid key, matching the pattern
+     * @throws ParameterParseException if the key name is invalid, e.g. starts with {@code ! + -} or does not match {@code keypattern}
+     */
     private static String makeKey(final StringBuilder builderParam,
                                   final Pattern keyPattern, final int index)
             throws ParameterParseException {
@@ -263,7 +270,19 @@ public final class ParameterTools {
         return currentKey;
     }
 
-
+    /**
+     * Appends all keys with their corresponding values from the {@code Map} to a {@code StringBuilder} matching the pattern.
+     * Strings containing whitespaces or {@code ' : ; =} are not allowed.
+     * <br>
+     * Syntax:
+     * <pre>
+     * key: 'value' [; key: 'value' ]*  
+     * </pre>
+     * @param builder the resulting String will be appended to {@code builder}
+     * @param map contains the keys and their corresponding values
+     * @param keyPattern the pattern a valid key must match. If {@code null} all Strings containing legal characters are accepted
+     * @param addNewlines if true, a new line follows after every semicolon
+     */
     @SuppressWarnings({ "HardcodedLineSeparator" })
     public static void append(final @NotNull StringBuilder builder,
                               final @NotNull Map<String, String> map,
@@ -296,6 +315,10 @@ public final class ParameterTools {
     }
 
 
+    /**
+     * Invokes {@link de.zib.gndms.kit.config.ParameterTools#append(StringBuilder, java.util.Map, java.util.regex.Pattern, boolean)}
+     * with {@code addNewlines=false} so that no new line follows after a semicolon
+     */
     public static void append(
             final @NotNull StringBuilder builder,
             final @NotNull Map<String, String> map,
@@ -303,7 +326,13 @@ public final class ParameterTools {
         append(builder, map, keyPattern, false);
     }
 
-
+    /**
+     * 
+     * @param map
+     * @param keyPattern
+     * @param addNewlines
+     * @return
+     */
     public static @NotNull String asString(final @NotNull Map<String, String> map,
         final Pattern keyPattern, final boolean addNewlines) {
         StringBuilder resultBuilder =
@@ -366,7 +395,8 @@ public final class ParameterTools {
         }
     }
 
-	@SuppressWarnings({ "HardcodedFileSeparator" })
+ 
+    @SuppressWarnings({ "HardcodedFileSeparator" })
 	public static List<String> parseStringArray(final String optStrParam) {
 		final List<String> entries = new LinkedList<String>();
 		boolean nested = false;
@@ -420,4 +450,5 @@ public final class ParameterTools {
 		}
 		return entries;
 	}
+
 }

@@ -20,26 +20,22 @@ public interface OptionProvider extends Iterable<String> {
      */
     boolean hasOption(final @NotNull String name);
 
-    /**
-     * 
-     * @param nameParam
-     * @return
-     */
+
     String getNonMandatoryOption(final String nameParam);
 
     /**
-     * 
+     * Returns the value set in the current configuration for the chosen option
      * @param nameParam the name of the option
-     * @return  
+     * @return  the value set in the current configuration
      * @throws MandatoryOptionMissingException if the configuration has not set the option
      */
     @NotNull String getOption(final String nameParam) throws MandatoryOptionMissingException;
 
     /**
-     * 
-     * @param name
-     * @param def
-     * @return
+     * Returns the value for the chosen option set in the current configuration. If it has not been set, a default value will be returned
+     * @param name the name of the option
+     * @param def the default-value, needed if no value has been set in the current configuration
+     * @return either the value set in the current configuration or a default value if no value has been set
      */
     @NotNull String getOption(final @NotNull String name, final @NotNull String def);
 }

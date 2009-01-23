@@ -35,19 +35,16 @@ public interface ConfigProvider extends OptionProvider {
      */
     int getIntOption(@NotNull String name, int def);
 
+
+    
+
     /**
-     *  Returns the value set in the current configuration for the chosen option
-     * @param name the name of the option
-     * @return the value set in the current configuration
-     * @throws MandatoryOptionMissingException if the current configuration does not have the option {@code name}
+     * @see ConfigProvider#getIntOption(String)
      */
     long getLongOption(@NotNull String name) throws MandatoryOptionMissingException;
 
-     /**
-     * Returns the value for the chosen option set in the current configuration. If it has not been set, a default value will be returned
-     * @param name the name of the option
-     * @param def the default-value, needed if no value has been set in the current configuration
-     * @return either the value set in the current configuration or a default value if no value has been set
+    /**
+     * @see ConfigProvider#getIntOption(String, int) 
      */
     long getLongOption(@NotNull String name, long def);
 
@@ -75,19 +72,13 @@ public interface ConfigProvider extends OptionProvider {
     @NotNull File getFileOption(@NotNull String name, @NotNull File def);
 
 
-     /**
-     *  Returns the value set in the current configuration for the chosen option
-     * @param name the name of the option
-     * @return the value set in the current configuration
-     * @throws MandatoryOptionMissingException if the current configuration does not have the option {@code name}
+    /**
+     * @see ConfigProvider#getIntOption(String) 
      */
     boolean isBooleanOptionSet(@NotNull String name) throws MandatoryOptionMissingException;
 
-     /**
-     * Returns the value for the chosen option set in the current configuration. If it has not been set, a default value will be returned
-     * @param name the name of the option
-     * @param def the default-value, needed if no value has been set in the current configuration
-     * @return either the value set in the current configuration or a default value if no value has been set
+    /**
+     * @see ConfigProvider#getIntOption(String, int)
      */
     boolean isBooleanOptionSet(@NotNull String name, boolean def);
 
