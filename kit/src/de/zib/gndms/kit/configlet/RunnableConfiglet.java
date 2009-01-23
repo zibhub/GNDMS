@@ -19,9 +19,6 @@ import java.io.Serializable;
 public abstract class RunnableConfiglet extends DefaultConfiglet implements Runnable {
 	private Thread thread;
 
-               // serializer data selber ueber Setter und setzen und diese init Methode benutzen
-               // um Thread zu starten. dann auf der Festplatte zwei configdatei (url) und dann wecheslen,
-              // sowie testen ob veränderung eingelesen wird
     @Override
 	public final synchronized void init(@NotNull final Log loggerParam,
 	                                 @NotNull String name, final Serializable data) {

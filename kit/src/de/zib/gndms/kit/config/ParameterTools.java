@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 import java.util.Map;
 import java.util.List;
 import java.util.LinkedList;
-import java.util.HashMap;
+
 
 
 /**
@@ -202,24 +202,10 @@ public final class ParameterTools {
     }
 
 
-    public static void main(String [] args){
-        StringBuilder key=new StringBuilder("!test");
-        Map t=new HashMap();
-
-        try {
-            makeBoolEntry(t,key,null,1);
-            System.out.println(asString(t,null));
-        } catch (ParameterParseException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-    }
     /**
-     *
-     * @param targetMap
-     * @param builderParam
-     * @param keyPattern
-     * @param index
-     * @throws ParameterParseException
+     * Associates a boolean value as String to a character-key (according to {@link ParameterTools description}) and stores it on the map.
+     * If the first character is an encoding for its value, it  will be deleted.
+     * @see de.zib.gndms.kit.config.ParameterTools#putBoolKey(java.util.Map, java.util.regex.Pattern, String, String, int)  
      */
     private static void makeBoolEntry(
             final Map<String, String> targetMap, final StringBuilder builderParam,
@@ -246,24 +232,14 @@ public final class ParameterTools {
     }
 
 
-        /**
-     * Puts the specified key with his corresponding value in the map
-     *
-     * @param targetMap the Map where the key and the associated value will be stored at
-     * @param currentKeyParam the key with which the value is associated
-     * @param valueBuilderParam the value to be associated with the key
-     * @param index can be used to trace the current character position of the original String, when this method is invoked
-     * @param trim if true String's trim()-Method will be invoked on {@code valueBuilderParam} before saving in {@code targetMap}
-     * @throws ParameterParseException if key {@code currentKeyParam} duplicate
-     */
     
     /**
      * Puts the key {@code boolKeyParam} with the value {@code val} on {@code targetMap} if either
-     * the key matches a specific pattern or {@code keyPattern=null}
+     * the key matches a specific pattern or {@code keyPattern=null}.
      * @param targetMap the Map where the key and the associated value will be stored at
      * @param keyPattern the pattern a key must match
      * @param boolKeyParam the key with which the value is associated
-     * @param val the value to be associated with the key
+     * @param val the value to be associated with the key. Should be "false" or "true"
      * @param index can be used to trace the current character position of the original String, when this method is invoked
      * @throws ParameterParseException if the key does not match the pattern 
      */
@@ -278,6 +254,14 @@ public final class ParameterTools {
     }
 
 
+    /**
+     * 
+     * @param builderParam
+     * @param charsParam
+     * @param index
+     * @return
+     * @throws ParameterParseException
+     */
     private static char escape(
             final StringBuilder builderParam, final char[] charsParam, final int index)
             throws ParameterParseException {
