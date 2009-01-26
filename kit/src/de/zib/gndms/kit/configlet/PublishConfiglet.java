@@ -19,7 +19,10 @@ import java.util.Iterator;
  *          User: stepn Date: 10.11.2008 Time: 14:22:34
  */
 public class PublishConfiglet extends DefaultConfiglet {
-	private volatile Iterable<String> publishingSites;
+    /**
+     * provides an iterator over all publishers
+     */
+    private volatile Iterable<String> publishingSites;
 
 	@Override
 	public void init(
@@ -29,7 +32,7 @@ public class PublishConfiglet extends DefaultConfiglet {
 	}
 
     /**
-     * 
+     *  Updates {@link PublishConfiglet#publishingSites} with the newest publishers. Should be invoked by {@link PublishConfiglet#update}
      */
 	private void configPublishingSites() {
 		try {
@@ -64,17 +67,17 @@ public class PublishConfiglet extends DefaultConfiglet {
 	}
 
     /**
-     * 
+     * Returns an iterable over the publishing Site, as described in the current loaded configuration
      * @return
      */
 	public Iterable<String> getPublishingSites() {
-		return publishingSites;
+        return publishingSites;
 	}
 
 
 	@Override
 	public void update(@NotNull final Serializable data) {
 		super.update(data);    // Overridden method
-		configPublishingSites();
+        configPublishingSites();
 	}
 }

@@ -30,14 +30,22 @@ public abstract class RegularlyRunnableConfiglet extends RunnableConfiglet {
 		configDelays();
 	}
 
-
+    /**
+     * Sets the {@code delay} and {@code initDelay} according to the values as set in the current configuration. If not set,
+     * {@code initDelay} will be set to 3 seconds and {@code delay} will be set to 5 seconds.Should be invoked by {@link RegularlyRunnableConfiglet#update(java.io.Serializable)} 
+     */
 	private void configDelays() {
 		setInitDelay(getMapConfig().getLongOption("initialDelay", 3000L));
 		setDelay(getMapConfig().getLongOption("delay", 5000L));
 	}
 
 
-	@Override
+    /**
+     * Loop which invokes {@link RegularlyRunnableConfiglet#threadRun()} after {@code delay} seconds. Do not call this method directly !
+     * Will be invoked by {@code RunnableConfiglet}'s {@code run()}-Method to run concurrent.
+     */
+
+    @Override
 	public void run_() {
 		try { Thread.sleep(initDelay); }
 		catch (InterruptedException e) { /* intentional */ }
@@ -49,32 +57,49 @@ public abstract class RegularlyRunnableConfiglet extends RunnableConfiglet {
 
 	}
 
-
+    /**
+     *  This method is invoked by {@link RegularlyRunnableConfiglet#run_()}'s loop, will be executed concurrent  
+     */
 	protected abstract void threadRun();
 
 
-	@Override
+    /**
+     *
+     */
+    @Override
 	protected void threadStop() {
 		stop = true;
 		getThread().interrupt();
 	}
 
-
+    /**
+     *
+     * @return
+     */
 	public synchronized long getInitDelay() {
 		return initDelay;
 	}
 
-
+    /**
+     * Sets the value for the inital Delay in miliseconds, after that {@code threadRun()} will be invoked for the first time}
+     * @param initDelayParam the value for the inital delay in miliseconds, after that {@code threadRun()} will be invoked for the first time}
+     */
 	public synchronized void setInitDelay(final long initDelayParam) {
 		initDelay = initDelayParam;
 	}
 
-
+    /**
+     *
+     * @return
+     */
 	public synchronized long getDelay() {
 		return delay;
 	}
 
-
+    /**
+     * Sets the value for the delay in miliseconds, after that {@code threadRun()} will do the next interation in the loop
+     * @param delayParam the value for the delay in miliseconds, after that {@code threadRun()} will do the next interation in the loop
+     */
 	public synchronized void setDelay(final long delayParam) {
 		delay = delayParam;
 	}

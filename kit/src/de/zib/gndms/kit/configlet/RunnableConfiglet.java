@@ -17,7 +17,10 @@ import java.io.Serializable;
  */
 @SuppressWarnings({ "NoopMethodInAbstractClass" })
 public abstract class RunnableConfiglet extends DefaultConfiglet implements Runnable {
-	private Thread thread;
+    /**
+     * The current Thread used by this-Object
+     */
+    private Thread thread;
 
     @Override
 	public final synchronized void init(@NotNull final Log loggerParam,
@@ -40,12 +43,12 @@ public abstract class RunnableConfiglet extends DefaultConfiglet implements Runn
 	}
 
     /**
-     * 
+     *  Initializes settings concerning this.getThread()
      */
     protected abstract void threadInit();
 
     /**
-     *
+     * This method will be invoked concurrent. Do not call it directly !
      */
     public abstract void run_();
 
@@ -57,14 +60,17 @@ public abstract class RunnableConfiglet extends DefaultConfiglet implements Runn
 
 	@Override
 	public synchronized void shutdown() {
-		super.shutdown();    // Overridden method
+        super.shutdown();    // Overridden method
 		threadStop();
 	}
 
 
 	protected abstract void threadStop();
 
-
+    /**
+     * Returns the Thread used by this
+     * @return the Thread used by this
+     */
 	public synchronized Thread getThread() {
 		return thread;
 	}

@@ -50,8 +50,22 @@ public interface ConfigProvider extends OptionProvider {
 
 
 
+
+    /**
+     *  Returns an ImmutableScopedName-Object as set in the current configuration for the chosen option
+     * @param name the name of the option
+     * @return an ImmutableScopedName-Object as set in the current configuration for the chosen option
+     * @throws MandatoryOptionMissingException if the current configuration does not have the option {@code name}
+     */
     @NotNull ImmutableScopedName getISNOption(@NotNull String name) throws MandatoryOptionMissingException;
 
+
+    /**
+     *  Returns an ImmutableScopedName-Object as set in the current configuration for the chosen option
+     * @param name the name of the option
+     * @param def the default-value, needed if no value has been set in the current configuration
+     * @return either the value set in the current configuration or a default value if no value has been set
+     */
     @NotNull ImmutableScopedName getISNOption(@NotNull String name, @NotNull ImmutableScopedName def);
 
 
@@ -82,42 +96,97 @@ public interface ConfigProvider extends OptionProvider {
      */
     boolean isBooleanOptionSet(@NotNull String name, boolean def);
 
-   
+
+    /**
+     *  Returns the Enum-constant set in the current configuration for the chosen option
+     * @param clazz the specific enum-class the constant belongs to
+     * @param name the name of the option
+     * @param toUpper if true, the name will converted to uppercase
+     * @return the Enum-constant set in the current configuration for the chosen option
+     * @throws MandatoryOptionMissingException if the current configuration does not have the option {@code name}
+     */
     @NotNull <E extends Enum<E>> E getEnumOption(@NotNull Class<E> clazz,
                                         @NotNull String name, boolean toUpper)
                                                 throws MandatoryOptionMissingException;
 
+    /**
+     *  Returns the Enum-constant set in the current configuration for the chosen option. If it has not been set, a default enum-constant will be returned
+     * @param clazz the specific enum-class the constant belongs to
+     * @param name the name of the option
+     * @param toUpper if true, the name will converted to uppercase
+     * @param def default-value if the option could not be found
+     * @return either the enum-constant set in the current configuration or a default value if no class has been set
+     * @throws MandatoryOptionMissingException if the current configuration does not have the option {@code name}
+     */
     @NotNull <E extends Enum<E>> E getEnumOption(
             @NotNull Class<E> clazz, @NotNull String name, boolean toUpper, @NotNull E def);
 
-    
+
+    /**
+     *  Returns an DateTime-Object as set in the current configuration for the chosen option. If it has not been set, a default DateTime will be returned
+     * @param name the name of the option
+     * @param def default-value if the option could not be found
+     * @return either DateTime-Object set in the current configuration or a default value if no DateTime-Object has been set
+     * @throws ParseException if the String-value set in current configuration is not in ISO8601-format
+     */
     @SuppressWarnings({ "InstanceMethodNamingConvention" })
     @NotNull
     DateTime getISO8601Option(@NotNull String name, @NotNull DateTime def) throws ParseException;
 
+
+    /**
+     *  Returns an DateTime-Object as set in the current configuration for the chosen option
+     * @param name the name of the option
+     * @return either the DateTime-Object as set in the current configuration
+     * @throws ParseException if the String-value set in current configuration is not in ISO8601-format
+     */
     @SuppressWarnings({ "InstanceMethodNamingConvention" })
     @NotNull DateTime getISO8601Option(@NotNull String name)
             throws MandatoryOptionMissingException, ParseException;
 
+    /**
+     * Returns the class set in the current configuration for the chosen option
+     * @param baseClass the class the returned class will be subclass of
+     * @param name the name of the option
+     * @return the class set in the current configuration for the chosen option
+     * @throws MandatoryOptionMissingException if the current configuration does not have the option {@code name}
+     * @throws ClassNotFoundException
+     */
     <X> Class<? extends X> getClassOption(final @NotNull Class<X> baseClass, @NotNull String name)
             throws MandatoryOptionMissingException, ClassNotFoundException;
 
+    /**
+     * Returns the class set in the current configuration for the chosen option. If it has not been set, a default class will be returned 
+     * @param baseClass  the class the returned class will be subclass of
+     * @param name the name of the option
+     * @param def default-class if the option could not be found
+     * @return  either the class set in the current configuration or a default value if no class has been set
+     * @throws ClassNotFoundException
+     */
     <X> Class<? extends X> getClassOption(final @NotNull Class<X> baseClass, @NotNull String name,
                                           @NotNull Class<? extends X> def)
             throws ClassNotFoundException;
 
-
     /**
-     * Returns a ConfigProvider as set in the current configuration for the chosen option
+     * Returns an ConfigProvider containing the array as set in the current configuration for the chosen option
      * @param name the name of the option
-     * @return the ConfigProvider , as set in the current configuration
+     * @return an ConfigProvider containing the array as set in the current configuration for the chosen option
      * @throws ParseException
      * @throws MandatoryOptionMissingException if the current configuration does not have the option {@code name}
      */
     @NotNull ConfigProvider getDynArrayOption(@NotNull String name)
 		  throws ParseException, MandatoryOptionMissingException;
 
-	int dynArraySize();
-	
-	@NotNull Iterator<String> dynArrayKeys();
+
+    /**
+     * Returns the amount of entries of the array as created by {@link ConfigProvider#getDynArrayOption(String)}
+     * @return the amount of entries of the array as created by {@link ConfigProvider#getDynArrayOption(String)} 
+     */
+    int dynArraySize();
+
+    /**
+     * An iterator over the keys of the created array
+     * @return An iterator over the keys of the created array
+     */
+    @NotNull Iterator<String> dynArrayKeys();
 }

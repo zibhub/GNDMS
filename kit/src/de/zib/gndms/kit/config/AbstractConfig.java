@@ -65,12 +65,15 @@ public abstract class AbstractConfig implements ConfigProvider {
     }
 
 
+    
     @SuppressWarnings({ "MethodMayBeStatic" })
     protected String replaceVar(final String optionName, final String envVarName) {
         return escape(System.getenv(envVarName));
     }
 
-
+    /**
+     * @see ParameterTools#escape(String) 
+     */
 	private static String escape(final String s) {
 		return ParameterTools.escape(s);
 	}
@@ -184,6 +187,7 @@ public abstract class AbstractConfig implements ConfigProvider {
     public <X> Class<? extends X> getClassOption(
             final @NotNull Class<X> baseClass, @NotNull final String name)
             throws MandatoryOptionMissingException, ClassNotFoundException {
+        
         return Class.forName(getOption(name)).asSubclass(baseClass);
     }
 

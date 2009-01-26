@@ -20,7 +20,11 @@ public interface OptionProvider extends Iterable<String> {
      */
     boolean hasOption(final @NotNull String name);
 
-
+    /**
+     * Returns the String set in the current configuration for a specific option
+     * @param nameParam the name of the option
+     * @return the String set in the current configuration for a specific option
+     */
     String getNonMandatoryOption(final String nameParam);
 
     /**

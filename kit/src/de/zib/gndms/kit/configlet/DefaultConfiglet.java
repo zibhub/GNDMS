@@ -9,7 +9,9 @@ import java.util.Map;
 
 
 /**
- * ThingAMagic.
+ * Provides a default implementation of the {@code Configlet-Interface}. Data will be stored into a {@link MapConfig}.
+ * Everytime the object is updated, a new {@code Mapconfig}-Object will be created.
+ *
  *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
@@ -17,9 +19,12 @@ import java.util.Map;
  *          User: stepn Date: 06.11.2008 Time: 18:20:09
  */
 public class DefaultConfiglet implements Configlet {
-	private MapConfig mapConfig;
-	private Log log;
-	private String name;
+    /**
+     * Holds the data of the current configuration
+     */
+    private MapConfig mapConfig;
+    private Log log;
+    private String name;
 
 	public void init(final @NotNull Log loggerParam,  @NotNull final String aName, final Serializable data) {
 		configConfig(data);
@@ -53,7 +58,10 @@ public class DefaultConfiglet implements Configlet {
 		return log;
 	}
 
-    
+    /**
+     * Returns the name of the Configlet
+     * @return the name of the Configlet
+     */
 	public String getName() {
 		return name;
 	}
