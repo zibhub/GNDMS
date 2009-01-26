@@ -16,6 +16,9 @@ import java.util.Iterator;
 *          User: stepn Date: 06.10.2008 Time: 11:21:58
 */
 public class MapConfig extends AbstractConfig {
+    /**
+     * the map containing the keys and their corresponding values
+     */
     private final Map<String, String> map;
 
 
@@ -35,7 +38,10 @@ public class MapConfig extends AbstractConfig {
         return map.containsKey(name);
     }
 
-
+    /**
+     * Returns an iterator over the keys of the configuration
+     * @return an iterator over the keys of the configuration
+     */
 	public Iterator<String> iterator() {
 		return Collections.unmodifiableSet(map.keySet()).iterator();
 	}

@@ -21,7 +21,13 @@ public abstract class RunnableConfiglet extends DefaultConfiglet implements Runn
      * The current Thread used by this-Object
      */
     private Thread thread;
-
+    
+    /**
+      *  initializes Configlet with a logger, a start-configuration, a name and starts a new Thread 
+     * @param loggerParam
+     * @param name the name of the configuration
+     * @param data the configuration, expected to be a {@code Map<String, String>}
+     */
     @Override
 	public final synchronized void init(@NotNull final Log loggerParam,
 	                                 @NotNull String name, final Serializable data) {
@@ -31,7 +37,9 @@ public abstract class RunnableConfiglet extends DefaultConfiglet implements Runn
 		thread.start();
 	}
 
-
+    /**
+     * Calls {@code run_()}
+     */
 	public void run() {
 		NDC.push(getName());
 		try {
@@ -48,7 +56,7 @@ public abstract class RunnableConfiglet extends DefaultConfiglet implements Runn
     protected abstract void threadInit();
 
     /**
-     * This method will be invoked concurrent. Do not call it directly !
+     * This method will be executed concurrent. Do not call it directly !
      */
     public abstract void run_();
 
@@ -64,7 +72,9 @@ public abstract class RunnableConfiglet extends DefaultConfiglet implements Runn
 		threadStop();
 	}
 
-
+    /**
+     * Stops the current running Thread
+     */
 	protected abstract void threadStop();
 
     /**

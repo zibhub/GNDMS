@@ -47,6 +47,6 @@ public class DelegatingConfig extends AbstractConfig {
         return provider.getOption(nameParam);
     }
 
-
-	public Iterator<String> iterator() {return provider.iterator();}
+    
+    public Iterator<String> iterator() {return provider.iterator();}
 }

@@ -152,6 +152,11 @@ public abstract class AbstractConfig implements ConfigProvider {
     }
 
 
+    /**
+     * Parse a String in ISO8601-format to DateTime-Object
+     * @param optionParam a String in ISO8601-format 
+     * @return a DateTime-Object retrieved from the String
+     */
     public static @NotNull DateTime parseISO8601(final @NotNull String optionParam) {
         if (optionParam.length() == 0)
             throw new IllegalArgumentException("Empty ISO 8601 timestamp");

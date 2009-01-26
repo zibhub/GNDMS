@@ -24,7 +24,9 @@ public class PublishConfiglet extends DefaultConfiglet {
      */
     private volatile Iterable<String> publishingSites;
 
-	@Override
+
+    
+    @Override
 	public void init(
 		  final @NotNull Log loggerParam, @NotNull final String aName, final Serializable data) {
 		super.init(loggerParam, aName, data);    // Overridden method

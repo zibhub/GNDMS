@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 public interface OptionProvider extends Iterable<String> {
 
     /**
-     * Checks if the used configuration has a specific option
+     * Checks if the current used configuration has a specific option
      * @param name the name of the option
      * @return true if the used configuration has specified a value for this option
      */

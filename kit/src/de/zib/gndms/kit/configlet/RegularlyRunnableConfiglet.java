@@ -14,9 +14,19 @@ import java.io.Serializable;
  *          User: stepn Date: 06.11.2008 Time: 18:30:51
  */
 public abstract class RegularlyRunnableConfiglet extends RunnableConfiglet {
-	private long initDelay;
-	private long delay;
-	private volatile boolean stop;
+
+    /**
+     * delay in miliseconds after that the {@code run_()}'s loop-Method does the first iteration.
+     */
+    private long initDelay;
+    /**
+     * delay in miliseconds after that the {@code run_()}'s loop-Method does every iteration. 
+     */
+    private long delay;
+    /**
+     * flag needed to stop loop
+     */
+    private volatile boolean stop;
 
 	@Override
 	protected synchronized void threadInit() {
@@ -73,8 +83,8 @@ public abstract class RegularlyRunnableConfiglet extends RunnableConfiglet {
 	}
 
     /**
-     *
-     * @return
+     * Returns the initial delay for {@code run-()}'s loop in miliseconds
+     * @return the initial delay for {@code run-()}'s loop in miliseconds
      */
 	public synchronized long getInitDelay() {
 		return initDelay;
@@ -89,8 +99,8 @@ public abstract class RegularlyRunnableConfiglet extends RunnableConfiglet {
 	}
 
     /**
-     *
-     * @return
+    * Returns the delay for {@code run-()}'s loop in miliseconds
+     * @return the delay for {@code run-()}'s loop in miliseconds
      */
 	public synchronized long getDelay() {
 		return delay;

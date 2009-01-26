@@ -31,7 +31,7 @@ public interface Configlet {
     void update(@NotNull Serializable data);
 
     /**
-     * 
+     * Cleanup
      */
     void shutdown();
 }
