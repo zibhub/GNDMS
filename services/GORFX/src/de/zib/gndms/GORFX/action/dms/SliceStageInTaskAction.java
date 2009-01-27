@@ -79,6 +79,7 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
                 ProviderStageInResultT res =  cnt.getExecutionResult( ProviderStageInResultT.class );
                 SliceReference sk = (SliceReference) res.get_any()[0].getObjectValue( SliceReference.class );
                 SliceRef sr = SliceRefXSDReader.read( sk );
+                trace( "Remote staging finished. SliceId: " + sr.getResourceKeyValue() + "@"  + sr.getGridSiteId() , null );
                 finish( new SliceStageInResult( sr ) );
             } else {
                 TaskExecutionFailure f = cnt.getExecutionFailure();
