@@ -26,6 +26,7 @@ import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.stuff.BoundInjector;
 import de.zib.gndms.kit.configlet.ConfigletProvider;
 import de.zib.gndms.kit.configlet.Configlet;
+import de.zib.gndms.kit.system.SystemInfo;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.apache.commons.logging.Log;
@@ -406,7 +407,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 		// binder.bind(EntityManagerFactory.class).toInstance();
 		binder.bind(BoundInjector.class).toInstance(boundInjector);
 		binder.bind(SystemDirectory.class).toInstance(this);
-		binder.bind(SystemInfo.class).toInstance(this);
+		binder.bind( SystemInfo.class).toInstance(this);
 		binder.bind(InstanceProvider.class).toInstance(this);
 		binder.bind(ServiceHomeProvider.class).toInstance(this);
 		binder.bind(TaskActionProvider.class).toInstance(this);

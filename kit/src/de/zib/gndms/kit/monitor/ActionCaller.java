@@ -16,4 +16,5 @@ import java.io.PrintWriter;
 public interface ActionCaller {
     Object callAction(final @NotNull String className, final @NotNull String opts,
                       final @NotNull PrintWriter writer) throws Exception;
+
 }

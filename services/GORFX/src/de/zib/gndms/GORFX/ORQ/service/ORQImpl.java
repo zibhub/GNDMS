@@ -12,7 +12,6 @@ import de.zib.gndms.logic.model.gorfx.UnfulfillableORQException;
 import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.shared.ContextTAux;
 import de.zib.gndms.typecon.common.type.ContractXSDTypeWriter;
-import de.zib.gndms.typecon.util.AxisToXMLTest;
 import de.zib.gndms.typecon.util.AxisTypeFromToXML;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

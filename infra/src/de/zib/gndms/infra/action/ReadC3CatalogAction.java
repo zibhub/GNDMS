@@ -26,7 +26,7 @@ import java.util.Set;
  *          User: stepn Date: 11.12.2008 Time: 12:47:32
  */
 @ConfigActionHelp(shortHelp = "Print current C3Grid MDS Catalog", longHelp = "Retrieves and prints the current C3Grid MDS Catalog via C3MDSConfiglet")
-public class ReadC3CatalogAction extends ConfigAction<ConfigActionResult> {
+public class ReadC3CatalogAction extends ConfigAction<ConfigActionResult> implements PublicAccessible {
 	public enum OutputMode { SITES, ARCHIVES, OIDPREFIXES }
 
 	@ConfigOption(descr = "Name of C3MDSConfiglet")

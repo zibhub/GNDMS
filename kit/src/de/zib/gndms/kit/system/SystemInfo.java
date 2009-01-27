@@ -1,4 +1,4 @@
-package de.zib.gndms.infra.system;
+package de.zib.gndms.kit.system;
 
 import org.jetbrains.annotations.NotNull;
 import com.google.inject.Injector;
