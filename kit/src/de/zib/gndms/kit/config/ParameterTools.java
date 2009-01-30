@@ -2,12 +2,10 @@ package de.zib.gndms.kit.config;
 
 import org.jetbrains.annotations.NotNull;
 
-
-import java.util.regex.Pattern;
-import java.util.Map;
-import java.util.List;
 import java.util.LinkedList;
-import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 
 /**
@@ -341,7 +339,7 @@ public final class ParameterTools {
                 }
                 builder.append(key);
                 builder.append(": '");
-                final String escaped = val.replaceAll("'", "\'");
+                final String escaped = val.replaceAll("'", "\\'");
                 builder.append(escaped);
                 builder.append('\'');
             }

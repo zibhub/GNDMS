@@ -196,11 +196,11 @@ public class ParameterToolsTest {
 	public void parseStringArrayTest(){
 	    paraMap.clear();
 	    List<String> config=parseStringArray("[1 ,2 ,3\\,4]");
-        assertEquals(config.size(),4);
+        assertEquals(config.size(), 3);
         assertEquals(config.get(0),"1");
         assertEquals(config.get(1)," 2");
-        assertEquals(config.get(2)," 3");
-        assertEquals(config.get(3),"4");
+        assertEquals(config.get(2),"3,4");
+        // assertEquals(config.get(3),"4");
     }
 
     @Test(groups = {"factory"},
