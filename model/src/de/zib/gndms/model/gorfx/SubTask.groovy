@@ -13,9 +13,9 @@ import javax.persistence.EntityManager
 
 /**
  *
- * @author: Maik Jorra <jorra@zib.de>
- * @version: $Id$
- *   
+ * @author Maik Jorra <jorra@zib.de>
+ * @version $Id$
+ *
  * User: mjorra, Date: 17.11.2008, Time: 17:28:21
  */
 
@@ -61,5 +61,7 @@ class SubTask extends AbstractTask {
         setMaxProgress( tsk.getMaxProgress( ) );
         setOrq( tsk.getOrq( ) );
         setWid( tsk.getWid( ) );
+        setPermissions( tsk.getPermissions() ) ;
     }
+
 }

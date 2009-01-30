@@ -12,3 +12,4 @@ Currently includes:
 - guice 2 and its dependencies: asm, cglib, aopalliance.jar
 - symlink to groovy-jar after execution of sync.sh in toplevel dir
 - args4j
+- saxon9 ( open source version 9.1.0.5J )

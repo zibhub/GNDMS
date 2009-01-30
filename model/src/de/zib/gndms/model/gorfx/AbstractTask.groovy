@@ -33,6 +33,8 @@ import de.zib.gndms.stuff.mold.Molding
 import de.zib.gndms.stuff.copy.Copyable
 import de.zib.gndms.stuff.mold.Molder
 import de.zib.gndms.stuff.mold.Mold
+import javax.persistence.FetchType
+import de.zib.gndms.model.common.PermissionInfo
 
 /**
  * ThingAMagic.
@@ -46,7 +48,7 @@ import de.zib.gndms.stuff.mold.Mold
 @Copyable(CopyMode.MOLD)
 abstract class AbstractTask extends TimedGridResource {
     /* Nullable for testing purposes */
-    @ManyToOne @JoinColumn(name="offerTypeKey", nullable=true, updatable=false, columnDefinition="VARCHAR")
+    @ManyToOne(fetch=FetchType.EAGER) @JoinColumn(name="offerTypeKey", nullable=true, updatable=false, columnDefinition="VARCHAR")
     OfferType offerType
     
     @Column(name="descr", nullable=false, updatable=false, columnDefinition="VARCHAR")
@@ -93,8 +95,11 @@ abstract class AbstractTask extends TimedGridResource {
     @Column(name="wid", nullable=true, updatable=false)
     @Basic String wid;
 
-    @OneToMany( targetEntity=SubTask.class, cascade=[CascadeType.REMOVE] )
-    List<SubTask> subTasks = null;
+    @Embedded
+    PermissionInfo permissions;
+
+    @OneToMany( targetEntity=SubTask.class, cascade=[CascadeType.REMOVE], fetch=FetchType.EAGER )
+    List<SubTask> subTasks = new ArrayList<SubTask>();
 
 
    def transit(final TaskState newState) {
@@ -127,6 +132,7 @@ abstract class AbstractTask extends TimedGridResource {
         subTasks.add( st );
     }
 
+
 	@SuppressWarnings(["unchecked"])
 	def <D> Molder<D> molder(@NotNull final Class<D> moldedClazz) {
 		return Mold.newMolderProxy( (Class) getClass(), this, moldedClazz);
@@ -148,6 +154,7 @@ abstract class AbstractTask extends TimedGridResource {
         instance.offerType = offerType;
         instance.orq = Copier.copySerializable(orq);
         instance.data = Copier.copySerializable(data);
+        instance.permissions = Copier.copyViaConstructor( permissions );
         if (subTasks == null)
            instance.subTasks = null;
         else {

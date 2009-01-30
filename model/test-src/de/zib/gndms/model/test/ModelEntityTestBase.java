@@ -11,14 +11,14 @@ import java.io.File;
 import java.util.Properties;
 
 /**
- * A base class class for model tests.
+ * A base class for model tests.
  *
  * To uses this class provide the path to the home of the data-base and optional
  * the name of the relation to use (it defaults to "c3grid"). Then simply call
  * getEntityManager ( ) to obtain the entity manager.
  * 
- * @author: Maik Jorra <jorra@zib.de>
- * @version: $Id$
+ * @author Maik Jorra <jorra@zib.de>
+ * @version $Id$
  *
  * User: mjorra, Date: 15.08.2008, Time: 12:38:08
  */

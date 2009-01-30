@@ -43,7 +43,7 @@ import java.util.Set;
 *
 *          User: stepn Date: 03.09.2008 Time: 16:43:46
 */
-public final class ConfigActionCaller implements ActionCaller, Module {
+public final class ConfigActionCaller implements WSActionCaller, Module {
     private @NotNull final Log logger = LogFactory.getLog(ConfigActionCaller.class);
 
     private @NotNull final UUIDGen uuidGen = UUIDGenFactory.getUUIDGen();
@@ -85,6 +85,7 @@ public final class ConfigActionCaller implements ActionCaller, Module {
         configActions.add(RefreshSystemAction.class);
         configActions.add(SetupDefaultConfigletAction.class);
         configActions.add(ReadC3CatalogAction.class);
+        configActions.add(ReadGNDMSVersionAction.class);
 
 		injector = system.getInstanceDir().getSystemAccessInjector().createChildInjector(this);
     }
@@ -92,10 +93,25 @@ public final class ConfigActionCaller implements ActionCaller, Module {
 
     @SuppressWarnings({ "RawUseOfParameterizedType", "unchecked" })
     public ConfigAction<?> instantiateConfigAction(final @NotNull String name,
-                                                   final @NotNull String params)
+                                                   final @NotNull String params,
+                                                   final boolean pub
+                                                  )
             throws ClassNotFoundException, IllegalAccessException, InstantiationException,
             ParameterTools.ParameterParseException {
         final Class<? extends ConfigAction<?>> clazz = findActionClass(name);
+        
+        if( pub ) {
+            boolean isPub = false;
+
+            for( Class c : clazz.getInterfaces() )
+                if( PublicAccessible.class == c ) {
+                    isPub = true;
+                    break;
+                }
+            if( !isPub )
+                throw new IllegalArgumentException( name + " is not public accessible." );
+        }
+
         if (ConfigAction.class.isAssignableFrom(clazz)) {
             final ConfigAction configAction = clazz.newInstance();
             configAction.parseLocalOptions(params);
@@ -146,7 +162,20 @@ public final class ConfigActionCaller implements ActionCaller, Module {
     public Object callAction(
             final @NotNull String className, final @NotNull String opts,
             final @NotNull PrintWriter writer) throws Exception {
-        ConfigAction<?> action = instantiateConfigAction(className, opts.trim());
+        ConfigAction<?> action = instantiateConfigAction(className, opts.trim(), false);
+        return realCallAction( action, className, opts, writer );
+    }
+
+
+    public Object callPublicAction( final @NotNull String className, final @NotNull String opts, final @NotNull PrintWriter writer ) throws Exception {
+
+        ConfigAction<?> action = instantiateConfigAction(className, opts.trim(), true);
+        return realCallAction( action, className, opts, writer );
+    }
+
+
+    protected Object realCallAction( ConfigAction<?> action, final @NotNull String className, final @NotNull String opts, final @NotNull PrintWriter writer ) throws Exception {
+
         action.setOwnEntityManager(system.getEntityManagerFactory().createEntityManager());
         action.setPrintWriter(writer);
         action.setClosingWriterOnCleanUp(false);
@@ -154,15 +183,18 @@ public final class ConfigActionCaller implements ActionCaller, Module {
         action.setUUIDGen(actionUUIDGen);
         action.setOwnPostponedActions(new DefaultBatchUpdateAction<GridResource>());
         final DelegatingEntityUpdateListener<GridResource> updateListener =
-                DelegatingEntityUpdateListener.getInstance(system);
+            DelegatingEntityUpdateListener.getInstance(system);
         action.getPostponedActions().setListener(updateListener);
         if (action instanceof SystemAction)
             ((SystemAction<?>)action).setSystem(system);
-        if (action instanceof HelpOverviewAction) {
-            ((HelpOverviewAction)action).setConfigActions(configActions);
-            ((HelpOverviewAction)action).setNameMapper(classToActionNameMapper);
+        // Help Action required dynamic casting due to compiler bug in older 1.5 javac
+        // regarding generics and instanceof
+        if (HelpOverviewAction.class.isInstance(action)) {
+            HelpOverviewAction helpAction = HelpOverviewAction.class.cast(action);
+            helpAction.setConfigActions(configActions);
+            helpAction.setNameMapper(classToActionNameMapper);
         }
-		injector.injectMembers(action);
+        injector.injectMembers(action);
 
         logger.info("Running " + className + ' ' + opts);
         try {
@@ -182,7 +214,7 @@ public final class ConfigActionCaller implements ActionCaller, Module {
     }
 
 
-	public void configure(final @NotNull Binder binder) {
+    public void configure(final @NotNull Binder binder) {
 		binder.skipSources(GNDMSystem.class,
 		                   EntityManager.class,
 		                   ModelUUIDGen.class,

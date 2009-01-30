@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import de.zib.gndms.c3resource.jaxb.Site;
 import de.zib.gndms.c3resource.jaxb.Workspace;
 import de.zib.gndms.infra.configlet.C3MDSConfiglet;
-import de.zib.gndms.kit.config.ConfigletProvider;
+import de.zib.gndms.kit.configlet.ConfigletProvider;
 import de.zib.gndms.logic.model.config.ConfigAction;
 import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigActionResult;
@@ -26,13 +26,13 @@ import java.util.Set;
  *          User: stepn Date: 11.12.2008 Time: 12:47:32
  */
 @ConfigActionHelp(shortHelp = "Print current C3Grid MDS Catalog", longHelp = "Retrieves and prints the current C3Grid MDS Catalog via C3MDSConfiglet")
-public class ReadC3CatalogAction extends ConfigAction<ConfigActionResult> {
-	public enum OutputMode { SITES, ARCHIVES }
+public class ReadC3CatalogAction extends ConfigAction<ConfigActionResult> implements PublicAccessible {
+	public enum OutputMode { SITES, ARCHIVES, OIDPREFIXES }
 
 	@ConfigOption(descr = "Name of C3MDSConfiglet")
 	private String name;
 
-	@ConfigOption(descr = "Output Mode (One of SITES (default), ARCHIVES)")
+	@ConfigOption(descr = "Output Mode (One of SITES (default), ARCHIVES, OIDPREFIXES)")
 	private OutputMode outputMode;
 
 	private ConfigletProvider confligets;
@@ -59,11 +59,23 @@ public class ReadC3CatalogAction extends ConfigAction<ConfigActionResult> {
 				printArchives(writer, cat);
 				break;
 
+			case OIDPREFIXES:
+				printOidPrefixes(writer, cat);
+				break;
+
 			default:
 				throw new IllegalArgumentException("Unknown outputMode");
 		}
 
 		return ok();
+	}
+
+
+	public static void printOidPrefixes(
+		  final PrintWriter writer, final C3MDSConfiglet.C3Catalog catParam) {
+		for (Map.Entry<String, Set<Workspace.Archive>> setEntry : catParam.getArchivesByOid().entrySet()) {
+			writer.println(setEntry.getKey());
+		}
 	}
 
 

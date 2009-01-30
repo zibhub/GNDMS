@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.lang.reflect.InvocationTargetException;
 
 
 /**
@@ -33,6 +32,8 @@ public final class Mold {
 			molder = newMolderProxy( moldingClass, molding, moldedClass );
 		molder.mold(molded);
 	}
+
+
 	public static <C extends Molding, D> void copyMolding(final C molding, final D molded) {
 		if (molding == null) return;
 		if (molded == null)	return;

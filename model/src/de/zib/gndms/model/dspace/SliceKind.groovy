@@ -18,6 +18,7 @@ import javax.persistence.Entity
 import javax.persistence.Embeddable
 import de.zib.gndms.model.common.GridEntity
 import javax.persistence.MappedSuperclass
+import de.zib.gndms.model.common.AccessMask
 
 /**
  * SliceKinds are identified by a kindURI
@@ -37,12 +38,17 @@ class SliceKind extends GridEntity {
 	@Id @Column(name="uri", nullable=false, updatable=false, columnDefinition="VARCHAR")
     String URI
 
-    @Enumerated(EnumType.STRING)
-    @Column(name="mode", nullable=false, updatable=false, columnDefinition="VARCHAR", length=8)
-	de.zib.gndms.model.dspace.types.SliceKindMode mode
+//    @Column(name="permission", nullable=false, updatable=false, columnDefinition="VARCHAR", length=15)
+    @Column(name="permission", nullable=false, updatable=false )
+    AccessMask permission
 
-	@ManyToMany(mappedBy="creatableSliceKinds", cascade=[CascadeType.REFRESH, CascadeType.MERGE])
-	Set<MetaSubspace> metaSubspaces
+	//de.zib.gndms.model.dspace.types.SliceKindMode mode
+
+    @Column( name="slice_directory", nullable=false, columnDefinition="VARCHAR" )
+    String sliceDirectory
+
+	@ManyToMany(mappedBy="creatableSliceKinds", cascade=[CascadeType.REFRESH, CascadeType.MERGE, CascadeType.PERSIST], fetch=FetchType.EAGER)
+	Set<MetaSubspace> metaSubspaces = new HashSet<MetaSubspace>();
 
 /* void setURI( String uriParam ){
         this.uri = uriParam

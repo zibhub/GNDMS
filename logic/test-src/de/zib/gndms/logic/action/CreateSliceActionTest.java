@@ -7,11 +7,11 @@ import de.zib.gndms.logic.model.dspace.CreateSliceAction;
 import de.zib.gndms.logic.util.SimpleModelUUIDGen;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.common.ModelUUIDGen;
+import de.zib.gndms.model.common.AccessMask;
 import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.model.dspace.types.SliceKindMode;
 import de.zib.gndms.model.test.ModelEntityTestBase;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
@@ -66,7 +66,7 @@ public class CreateSliceActionTest extends ModelEntityTestBase {
 
         SliceKind knd = new SliceKind( );
         knd.setURI( sliceKindTestKey );
-        knd.setMode( SliceKindMode.RW );
+        knd.setPermission( AccessMask.fromString( "750" ) );
         validator.setKind(  knd );
 
         //getEntityManager( ) = emf.createEntityManager();
@@ -75,7 +75,7 @@ public class CreateSliceActionTest extends ModelEntityTestBase {
         getEntityManager( ).getTransaction().commit( );
 
         //knd = new SliceKind( );
-        //knd.setMode( SliceKindMode.RW );
+        //knd.setPermission( SliceKindMode.RW );
         //knd.setURI( "maiks-test-slice-kind" );
         TreeSet ts = new TreeSet( );
         ts.add( knd );

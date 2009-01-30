@@ -28,14 +28,12 @@ class MetaSubspace extends GridEntity {
 	@OneToOne(optional=true, mappedBy="metaSubspace", cascade=[CascadeType.ALL])
 	Subspace instance
 
-	@ManyToMany(targetEntity=SliceKind.class, cascade = [CascadeType.REFRESH, CascadeType.MERGE])
+	@ManyToMany(targetEntity=SliceKind.class, cascade = [CascadeType.REFRESH, CascadeType.MERGE, CascadeType.PERSIST], fetch=FetchType.EAGER)
 	@JoinTable(name = "creatable_slice_kinds", schema="dspace",
-		uniqueConstraints=[@UniqueConstraint(columnNames = ["meta_subspace_schema_uri", "meta_subspace_specifier"]), 
-		                   @UniqueConstraint(columnNames = ["slice_kind_uri"])],
-		joinColumns=[@JoinColumn(name="meta_subspace_schema_uri", referencedColumnName="schema_uri", columnDefinition="VARCHAR", nullable=false),
-		             @JoinColumn(name="meta_subspace_specifier", referencedColumnName="specifier", columnDefinition="VARCHAR", nullable=false)],
-        inverseJoinColumns=[@JoinColumn(name="slice_kind_uri", referencedColumnName="uri", columnDefinition="VARCHAR", nullable=false)])
-		//inverseJoinColumns=[@JoinColumn(name="slice_kind_uri", referencedColumnName="uri", columnDefinition="VARCHAR", nullable=false),
-		//                    @JoinColumn(name="slice_kind_class", referencedColumnName="class", columnDefinition="VARCHAR", nullable=false)])
-	Set<SliceKind> creatableSliceKinds
+		uniqueConstraints=[@UniqueConstraint(columnNames = ["meta_subspace_schema_uri", "meta_subspace_specifier", "slice_kind_uri"])],
+		joinColumns=[@JoinColumn(name="meta_subspace_schema_uri", referencedColumnName="schema_uri", columnDefinition="VARCHAR", nullable=false, updatable=true),
+		             @JoinColumn(name="meta_subspace_specifier", referencedColumnName="specifier", columnDefinition="VARCHAR", nullable=false, updatable=true)],
+        inverseJoinColumns=[@JoinColumn(name="slice_kind_uri", referencedColumnName="uri", columnDefinition="VARCHAR", nullable=false, updatable=true)])
+	Set<SliceKind> creatableSliceKinds = new HashSet<SliceKind>();
 }
+ 

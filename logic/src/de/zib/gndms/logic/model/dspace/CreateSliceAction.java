@@ -30,7 +30,7 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
 
     
     public CreateSliceAction( ) {
-         directoryAux = new LinuxDirectoryAux( );
+         directoryAux = DirectoryAux.getDirectoryAux();
     }
 
 
@@ -40,7 +40,7 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
         setUUIDGen(gen);
         this.sliceKind = kind;
         this.storageSize = ssize;
-        this.directoryAux = new LinuxDirectoryAux( );
+        directoryAux = DirectoryAux.getDirectoryAux();
 
     }
 
@@ -71,9 +71,9 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
         Subspace sp = getModel( );
 
         if( ! sp.getMetaSubspace( ).getCreatableSliceKinds( ).contains( sliceKind ) )
-            return null;
+            throw new IllegalStateException("SliceKind not assigned to Subspace");
 
-        String lp = sp.getPath( ) +  File.separator + sliceKind.getMode( ).toString( ) + File.separator;
+        String lp = sp.getPath( ) +  File.separator + sliceKind.getSliceDirectory() + File.separator;
         File f = null;
         String did = new String( );
 
@@ -87,14 +87,11 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
             // doesn't exist yet.
             f.mkdirs( );
         } catch ( SecurityException e ) {
-            return null;
+            throw new RuntimeException(e);
         }
 
         // fix permissions
-        if( sliceKind.getMode( ).equals( SliceKindMode.RW ) )
-            directoryAux.setDirectoryReadWrite( f.getAbsolutePath( ) );
-        else
-            directoryAux.setDirectoryReadOnly( f.getAbsolutePath( ) );
+        directoryAux.setPermissions( sliceKind.getPermission(), f.getAbsolutePath( ) );
 
         Slice sl = new Slice( did, sliceKind, sp );
         sl.setId( getId( ) );

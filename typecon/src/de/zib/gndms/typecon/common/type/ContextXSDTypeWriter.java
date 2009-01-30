@@ -26,8 +26,8 @@ public class ContextXSDTypeWriter {
 
         for( String s: keys ) {
             String v = ctx.get( s );
-            ContextTEntry ent = new ContextTEntry( new NormalizedString( v ) );
             if( v != null ) {
+                ContextTEntry ent = new ContextTEntry( new NormalizedString( v ) );
                 ent.setKey( new Token( s ) );
                 al.add( ent );
             } else

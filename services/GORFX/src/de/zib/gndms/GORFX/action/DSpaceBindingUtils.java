@@ -1,8 +1,7 @@
 package de.zib.gndms.GORFX.action;
 
-import de.zib.gndms.model.dspace.types.SliceRef;
-import de.zib.gndms.model.gorfx.types.io.SliceRefConverter;
 import de.zib.gndms.dspace.slice.client.SliceClient;
+import de.zib.gndms.model.dspace.types.SliceRef;
 import de.zib.gndms.typecon.common.type.SliceRefXSDTypeWriter;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI;

@@ -1,20 +1,18 @@
 package de.zib.gndms.typecon.common.type;
 
-import types.ProviderStageInORQT;
-import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQWriter;
+import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
 import de.zib.gndms.model.gorfx.types.io.DataDescriptorWriter;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQConverter;
-import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
+import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQWriter;
 import de.zib.gndms.typecon.common.GORFXClientTools;
-
-import javax.xml.soap.SOAPException;
-import java.util.HashMap;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.LinkedList;
-
 import org.apache.axis.description.FieldDesc;
 import org.apache.axis.message.MessageElement;
+import types.ProviderStageInORQT;
+
+import javax.xml.soap.SOAPException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>

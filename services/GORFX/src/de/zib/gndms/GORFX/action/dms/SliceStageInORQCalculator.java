@@ -20,10 +20,14 @@ import types.OfferExecutionContractT;
 import types.ProviderStageInORQT;
 
 import java.util.Set;
+import java.io.StringWriter;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
- * @author: Maik Jorra <jorra@zib.de>
- * @version: $Id$
+ * @author Maik Jorra <jorra@zib.de>
+ * @version $Id$
  * <p/>
  * User: mjorra, Date: 11.11.2008, Time: 14:57:06
  */
@@ -31,6 +35,7 @@ public class SliceStageInORQCalculator extends
     AbstractORQCalculator<SliceStageInORQ, SliceStageInORQCalculator> implements SystemHolder {
 
 	private GNDMSystem system;
+    private static Log logger = LogFactory.getLog( SliceStageInORQCalculator.class );
 
 
 	@NotNull
@@ -43,10 +48,7 @@ public class SliceStageInORQCalculator extends
 		system = systemParam;
 	}
 
-
-
-
-
+    
     public SliceStageInORQCalculator( ) {
         super( SliceStageInORQ.class );
     }
@@ -55,7 +57,7 @@ public class SliceStageInORQCalculator extends
     @Override
     public TransientContract createOffer() throws Exception {
 
-        String sid = getORQArguments().getGridSite();
+        String sid = destinationURI( getORQArguments().getGridSite() ); 
         getORQArguments().setActGridSiteURI( sid );
 
         GORFXClient cnt = new GORFXClient( sid );
@@ -71,11 +73,31 @@ public class SliceStageInORQCalculator extends
 
 
     public String destinationURI( String gs ) throws URI.MalformedURIException {
-        C3MDSConfiglet cfg = getConfigletProvider().getConfiglet( C3MDSConfiglet.class, C3MDSConfiglet.class.getName( ) );
 
-        Set<Workspace.Archive> a = cfg.getCatalog().getArchivesByOids( gs, getORQArguments().getDataDescriptor().getObjectList() );
-        
-        return ((Workspace.Archive) a.toArray()[0]).getBaseUrl();
+        logger.debug( "Looking up archive for siteId: " + gs );
+        C3MDSConfiglet cfg = getConfigletProvider().getConfiglet( C3MDSConfiglet.class, "mds" );
+
+        String[] olist = getORQArguments().getDataDescriptor().getObjectList();
+
+        logger.debug( "with oipPrfix: " + loggalbeStringArray( olist ) );
+        Set<Workspace.Archive> a = cfg.getCatalog().getArchivesByOids( gs, olist  );
+
+        String uri = ((Workspace.Archive) a.toArray()[0]).getBaseUrl().trim();
+        logger.debug( "Found: " + uri );
+        return uri;
+    }
+
+
+    public static String loggalbeStringArray ( String [] sl ) {
+
+        if( sl.length == 0 )
+            return "null";
+
+        StringWriter sw =  new StringWriter( );
+        for ( String s : sl )
+            sw.write( s );
+
+        return sw.toString( );
     }
 }
 
