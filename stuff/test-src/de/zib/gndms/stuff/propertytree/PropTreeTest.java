@@ -4,12 +4,12 @@ package de.zib.gndms.stuff.propertytree;
 
 
 
-import java.util.Properties;
-import java.util.logging.Logger;
-
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.util.Properties;
+import java.util.logging.Logger;
 
 
 public class PropTreeTest {
