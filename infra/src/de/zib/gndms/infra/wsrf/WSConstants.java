@@ -22,6 +22,9 @@ public final class WSConstants {
     /** Default deadline in seconds for tasks */
     public final static int DEFAULT_DEADLINE_OFFSET = 120;
 
+    /** Name of gorfx permission configlet */
+    public final static String GORFX_PERMISSION_CONFIGLET = "PermissionConfiglet";
+
 
 
     /** @return Delivers a valid termination-time starting from now */

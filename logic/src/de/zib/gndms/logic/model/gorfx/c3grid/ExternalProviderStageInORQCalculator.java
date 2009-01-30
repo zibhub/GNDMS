@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model.gorfx.c3grid;
 
 import com.google.inject.Inject;
-import de.zib.gndms.infra.system.SystemInfo;
+import de.zib.gndms.kit.system.SystemInfo;
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.logic.model.gorfx.PermissionDeniedORQException;
@@ -107,7 +107,8 @@ public class ExternalProviderStageInORQCalculator extends AbstractProviderStageI
         }
 
         ProcessBuilderAction action;
-        action = parmAux.createPBAction( getORQArguments(), contParam );
+        // todo add permissions here when delegation is implemented
+        action = parmAux.createPBAction( getORQArguments(), contParam, null );
         action.setProcessBuilder(pb);
         action.setOutputReceiver(new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY));
         action.setErrorReceiver(new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY));

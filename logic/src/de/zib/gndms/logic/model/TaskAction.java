@@ -3,12 +3,15 @@ package de.zib.gndms.logic.model;
 import com.google.inject.Inject;
 import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.logic.action.LogAction;
+import de.zib.gndms.logic.model.gorfx.permissions.PermissionConfiglet;
 import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.model.gorfx.types.TaskState;
-import de.zib.gndms.model.util.TxFrame;
 import de.zib.gndms.model.util.EntityManagerAux;
+import de.zib.gndms.model.util.TxFrame;
+import de.zib.gndms.model.common.types.FilePermissions;
 import de.zib.gndms.stuff.copy.Copier;
+import de.zib.gndms.kit.configlet.ConfigletProvider;
 import org.apache.commons.logging.Log;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,11 +19,8 @@ import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import javax.persistence.EntityManagerFactory;
 import java.io.Serializable;
 import java.util.GregorianCalendar;
-
-import com.google.inject.Inject;
 
 
 /**
@@ -40,6 +40,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     private Class<? extends AbstractTask> taskClass;
     private AbstractTask backup;
 	private EntityManagerFactory emf;
+    private ConfigletProvider configletProvider;
 
     private static final class ShutdownTaskActionException extends RuntimeException {
         private static final long serialVersionUID = 2772466358157719820L;
@@ -279,7 +280,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
                 /* On runtime ex: Set task to failed */
                 catch (RuntimeException e_in) {
 	                // no joke
-	                final RuntimeException e_out = e_in == null ? new NullPointerException() : e_in;
+	                final @NotNull RuntimeException e_out = e_in == null ? new NullPointerException() : e_in;
                     trace("catch(RuntimeException)", e_out);
                     /* Cant go to FAILED after FINISHED, i.e. onFinish must never fail */
                     if (TaskState.FINISHED.equals(getModel().getState()))
@@ -325,6 +326,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
 
 
     protected void refreshTaskResource() {
+
         try {
             getPostponedActions().getListener().onModelChange(getModel());
         }
@@ -522,7 +524,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
 
     protected void fail(final @NotNull RuntimeException e) {
         getModel().fail(e);
-        e.fillInStackTrace();
+		e.fillInStackTrace();
 	    // getLog().info("About to transit(FAIL) due to:", e);
         throw new FailedException(e);
     }
@@ -634,6 +636,17 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
 	}
 
 
+    public ConfigletProvider getConfigletProvider() {
+        return configletProvider;
+    }
+
+
+    @Inject
+    public void setConfigletProvider( ConfigletProvider configletProvider ) {
+        this.configletProvider = configletProvider;
+    }
+
+
     /**
      * Tries to call the cleanUpOnFailed for the model, catches and logs possible exceptions
      *
@@ -647,5 +660,18 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
             // don' throw them again
             getLog().debug( "Exception on task cleanup: " + e.toString() );
         }
+    }
+
+
+    // Extracts the actual permissions form a tasks permission info object
+    public FilePermissions actualPermissions( ) {
+
+        if( getModel().getPermissions() != null ) {
+            PermissionConfiglet pc = configletProvider.getConfiglet( PermissionConfiglet.class, getModel().getPermissions().getPermissionConfigletName() );
+            if( pc != null )
+                return pc.permissionsFor( getModel().getPermissions().getUserName() );
+        }
+
+        return null;
     }
 }

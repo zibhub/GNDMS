@@ -1,8 +1,8 @@
 package de.zib.gndms.logic.action;
 
-import de.zib.gndms.model.dspace.types.SliceKindMode;
 import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.SliceKind;
+import de.zib.gndms.model.common.AccessMask;
 import de.zib.gndms.logic.model.dspace.CreateSliceKindAction;
 import static org.testng.AssertJUnit.*;
 
@@ -20,7 +20,7 @@ import java.util.List;
 public class SliceKindCreationValidator {
 
     private String  URI; // must be unique
-    private SliceKindMode mode; // must not be null
+    private AccessMask mode; // must not be null
     private Set<MetaSubspace> metaSubspaces; // can be null
 
     private CreateSliceKindAction Action;
@@ -46,7 +46,7 @@ public class SliceKindCreationValidator {
 
     void validate( SliceKind sk ) {
         assertEquals( URI, sk.getURI( ) );
-        assertEquals( mode, sk.getMode( ) );
+        assertEquals( mode, sk.getPermission( ) );
      //   assertSame( null, sk.getMetaSubspaces( ) );
     }
 
@@ -59,10 +59,10 @@ public class SliceKindCreationValidator {
         System.out.println( "validiate slice kind form db " );
         validate(  rl.get( 0 ) );
 
-        q = em.createQuery( "SELECT x.mode FROM SliceKinds x WHERE x.URI = :uriParam " );
+        q = em.createQuery( "SELECT x.permission FROM SliceKinds x WHERE x.URI = :uriParam " );
         q.setParameter( "uriParam", URI );
-        SliceKindMode slm = (SliceKindMode) q.getSingleResult();
-        assertEquals( mode, slm);
+        AccessMask msk = (AccessMask) q.getSingleResult();
+        assertEquals( mode, msk);
 
        // q = em.createQuery( "SELECT x.metaSubspaces FROM SliceKinds x WHERE x.URI = :uriParam " );
        // q.setParameter( "uriParam", URI );
@@ -79,12 +79,12 @@ public class SliceKindCreationValidator {
         this.URI = URI;
     }
 
-    public SliceKindMode getMode() {
+    public AccessMask getPermission() {
         return mode;
     }
 
-    public void setMode( SliceKindMode mode ) {
-        this.mode = mode;
+    public void setPermission( AccessMask perm ) {
+        this.mode = perm;
     }
 
     public Set<MetaSubspace> getMetaSubspaces() {

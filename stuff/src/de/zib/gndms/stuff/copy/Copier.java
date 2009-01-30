@@ -44,7 +44,7 @@ public final class Copier {
 				case CONSTRUCT:
 					return copyInstanceViaConstructor(clazz, instance);
 				case DONT:
-					throw new IllegalArgumentException("Copying forbidden by Annotaion");
+					throw new IllegalArgumentException("Copying forbidden by Annotation");
 				default:
 					throw new IllegalArgumentException(
 						  "Don't know how to copy given instance of class: " + clazz.getName());

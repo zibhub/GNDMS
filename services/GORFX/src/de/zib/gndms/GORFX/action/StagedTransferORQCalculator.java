@@ -40,8 +40,8 @@ public class StagedTransferORQCalculator extends
     public TransientContract createOffer() throws Exception {
 
         // create provider staging orq using this this offer type
-        AbstractProviderStageInORQCalculator psi_calc = ( AbstractProviderStageInORQCalculator )
-            getSystem().getInstanceDir().newORQCalculator( getSystem().getEntityManagerFactory(), GORFXConstantURIs.PROVIDER_STAGE_IN_URI );
+        AbstractProviderStageInORQCalculator psi_calc = AbstractProviderStageInORQCalculator.class.cast(
+            getSystem().getInstanceDir().newORQCalculator( getSystem().getEntityManagerFactory(), GORFXConstantURIs.PROVIDER_STAGE_IN_URI ));
         
         psi_calc.setKey( getKey() );
         psi_calc.setORQArguments( getORQArguments() );
@@ -61,7 +61,7 @@ public class StagedTransferORQCalculator extends
 
             getORQArguments().setActGridSiteURI( dst );
 
-            long ms = NetworkAuxiliariesProvider.calculateTransferTime( s, ebw );
+            long ms = NetworkAuxiliariesProvider.calculateTransferTime( s, ebw, 10000 );
 
             c.setDeadline( FutureTime.atOffset( new Duration( ms ) ) );
         }

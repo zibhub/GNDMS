@@ -200,7 +200,13 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 			txf.commit();
 		}
 		catch (RuntimeException e) { getLog().warn(e); throw e; }
-		finally { txf.finish();  }
+		finally {
+            try{
+                txf.finish();
+            } catch ( Exception e ) { // no exception must leave this method
+                trace( "Exception on commit or rollback", e );
+            }
+        }
 	}
 
 

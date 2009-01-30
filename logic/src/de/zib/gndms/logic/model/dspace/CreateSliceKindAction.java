@@ -3,7 +3,7 @@ package de.zib.gndms.logic.model.dspace;
 import de.zib.gndms.logic.model.AbstractModelAction;
 import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.SliceKind;
-import de.zib.gndms.model.dspace.types.SliceKindMode;
+import de.zib.gndms.model.common.AccessMask;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -20,22 +20,22 @@ import java.util.Set;
 public class CreateSliceKindAction extends AbstractModelAction<SliceKind, SliceKind> {
 
     private String  URI; // must be unique
-    private SliceKindMode mode; // must not be null
+    private AccessMask permission; // must not be null
     private Set<MetaSubspace> metaSubspaces; // can be null
 
 
     public CreateSliceKindAction( ) {
     }
 
-    public CreateSliceKindAction( @NotNull String URI, @NotNull SliceKindMode mode ) {
+    public CreateSliceKindAction( @NotNull String URI, @NotNull AccessMask perm ) {
         this.URI = URI;
-        this.mode = mode;
+        this.permission = perm;
         this.metaSubspaces = null;
     }
 
-    public CreateSliceKindAction( @NotNull String URI, @NotNull SliceKindMode mode, Set<MetaSubspace> metaSubspaces ) {
+    public CreateSliceKindAction( @NotNull String URI, @NotNull AccessMask perm, Set<MetaSubspace> metaSubspaces ) {
         this.URI = URI;
-        this.mode = mode;
+        this.permission = permission;
         this.metaSubspaces = metaSubspaces;
     }
 
@@ -43,7 +43,7 @@ public class CreateSliceKindAction extends AbstractModelAction<SliceKind, SliceK
     public void inititalize( ) {
         super.initialize();
         requireParameter( "URI", URI );
-        requireParameter( "mode", mode );
+        requireParameter( "permission", permission );
     }
 
 
@@ -51,7 +51,7 @@ public class CreateSliceKindAction extends AbstractModelAction<SliceKind, SliceK
 
         SliceKind sl = new SliceKind( );
         sl.setURI( URI );
-        sl.setMode( mode );
+        sl.setPermission( permission );
         sl.setMetaSubspaces( metaSubspaces );
 
         em.persist( sl );
@@ -67,12 +67,12 @@ public class CreateSliceKindAction extends AbstractModelAction<SliceKind, SliceK
         this.URI = URI;
     }
 
-    public SliceKindMode getMode() {
-        return mode;
+    public AccessMask getMode() {
+        return permission;
     }
 
-    public void setMode( SliceKindMode mode ) {
-        this.mode = mode;
+    public void setMode( AccessMask permission ) {
+        this.permission = permission;
     }
 
     public Set<MetaSubspace> getMetaSubspaces() {

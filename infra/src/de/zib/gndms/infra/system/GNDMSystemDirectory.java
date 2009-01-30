@@ -9,8 +9,6 @@ import de.zib.gndms.infra.access.ServiceHomeProvider;
 import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.service.GNDMSingletonServiceHome;
-import de.zib.gndms.kit.config.ConfigletProvider;
-import de.zib.gndms.kit.configlet.Configlet;
 import de.zib.gndms.kit.monitor.GroovyBindingFactory;
 import de.zib.gndms.kit.monitor.GroovyMoniServer;
 import de.zib.gndms.logic.model.TaskAction;
@@ -26,6 +24,9 @@ import de.zib.gndms.model.common.types.factory.KeyFactoryInstance;
 import de.zib.gndms.model.common.types.factory.RecursiveKeyFactory;
 import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.stuff.BoundInjector;
+import de.zib.gndms.kit.configlet.ConfigletProvider;
+import de.zib.gndms.kit.configlet.Configlet;
+import de.zib.gndms.kit.system.SystemInfo;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.apache.commons.logging.Log;
@@ -296,7 +297,6 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 	}
 
 
-
 	private void createOrUpdateConfiglets(final ConfigletState[] statesParam) {
 		for (ConfigletState configletState : statesParam) {
 			final String name = configletState.getName();
@@ -309,6 +309,8 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 			}
 		}
 	}
+
+    
 	@SuppressWarnings({ "FeatureEnvy" })
 	private Configlet createConfiglet(final ConfigletState configParam) {
 		try {
@@ -405,7 +407,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 		// binder.bind(EntityManagerFactory.class).toInstance();
 		binder.bind(BoundInjector.class).toInstance(boundInjector);
 		binder.bind(SystemDirectory.class).toInstance(this);
-		binder.bind(SystemInfo.class).toInstance(this);
+		binder.bind( SystemInfo.class).toInstance(this);
 		binder.bind(InstanceProvider.class).toInstance(this);
 		binder.bind(ServiceHomeProvider.class).toInstance(this);
 		binder.bind(TaskActionProvider.class).toInstance(this);

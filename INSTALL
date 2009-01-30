@@ -207,7 +207,8 @@ DETAILED BUILD INSTRUCTIONS
      This enhances the jpa classes and creates extra/lib/gndms-model.jar
 
      (In IntelliJ: add build-openjpa.xml to the Ant-Build (right side) and
-      configure the target enhance to be run post compilation)
+      configure the target enhance to be run post compilation.  You need to
+      add gndms-groovy.jar to the classpath of the ant target for this to work)
 
      If you ever get weird errors during compilation or ant enhance, delete
      production/* and rebuild the whole project)
@@ -253,8 +254,17 @@ DETAILED BUILD INSTRUCTIONS
 
      Recommended build order: DSpace, GORFX, LOFIS, WHORFX
 
+  10) 
+     If desired compile gndms-wscommon.jar
+     Sources: ws-common/src (resp. test)
+     Output: infra/gndms-wscommon/production (resp. test) classes
+            extra/lib/gndms-infra.jar containing the contents of production/
+     Dependencies: J2EE, annotations, gndms-logic, gndms-kit, gndms-infra, 
+                   DSpace, GORFX, LOFIS, WHORFX, args4j, gt4, GORFX-stubs, 
+                   GORFX-deps,
+                   
 
-  10) Though you might want to read the upcoming section on configuration
+  11) Though you might want to read the upcoming section on configuration
      and deployment first, you can now deploy the gar files by executing:
 
        "globus-deploy-gar <file>"

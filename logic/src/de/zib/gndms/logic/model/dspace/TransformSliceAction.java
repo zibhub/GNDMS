@@ -3,8 +3,8 @@ package de.zib.gndms.logic.model.dspace;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.model.dspace.types.SliceKindMode;
 import de.zib.gndms.model.common.ModelUUIDGen;
+import de.zib.gndms.model.common.AccessMask;
 import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.logic.model.AbstractModelAction;
 import org.jetbrains.annotations.NotNull;
@@ -76,10 +76,14 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
 
         String[] ls = sl.getFileListing( );
 
-        SliceKindMode sm = createSliceAction.getSliceKind( ).getMode( );
+        AccessMask msk = createSliceAction.getSliceKind( ).getPermission( );
+        boolean ro = msk.queryFlagsOff( AccessMask.Ugo.USER, AccessMask.AccessFlags.WRITABLE );
+
         // make slice path writable to copy content
-        if ( sm.equals( SliceKindMode.RO ) )
-            createSliceAction.getDirectoryAux().setDirectoryReadWrite( tgt_pth );
+        if ( ro ) {
+            msk.addFlag( AccessMask.Ugo.USER, AccessMask.AccessFlags.WRITABLE );
+            DirectoryAux.getDirectoryAux().setPermissions( msk, tgt_pth );
+        }
 
 
         boolean suc = true;
@@ -91,8 +95,10 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
         }
 
         // restore slice path settings
-        if ( sm.equals( SliceKindMode.RO ) )
-            createSliceAction.getDirectoryAux().setDirectoryReadOnly( tgt_pth );
+        if ( ro ) {
+            msk.removeFlag( AccessMask.Ugo.USER, AccessMask.AccessFlags.WRITABLE );
+            DirectoryAux.getDirectoryAux().setPermissions( msk, tgt_pth );
+        }
 
         // sth went wrong destroy created slice
         if( ! suc ) {

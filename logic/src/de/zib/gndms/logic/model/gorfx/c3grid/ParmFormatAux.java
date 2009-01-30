@@ -4,12 +4,14 @@ import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.model.common.types.TransientContract;
+import de.zib.gndms.model.common.types.FilePermissions;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
 import de.zib.gndms.model.gorfx.types.io.ContractConverter;
 import de.zib.gndms.model.gorfx.types.io.ContractPropertyReader;
 import de.zib.gndms.model.gorfx.types.io.ContractPropertyWriter;
 import de.zib.gndms.model.gorfx.types.io.xml.ORQWrapper;
 import de.zib.gndms.model.gorfx.types.io.xml.ProviderStageInXML;
+import de.zib.gndms.stuff.propertytree.PropertyTree;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -40,12 +42,12 @@ public class ParmFormatAux {
     }
 
     
-    public ProcessBuilderAction createPBAction( ProviderStageInORQ orq, TransientContract contParam ) {
+    public ProcessBuilderAction createPBAction( ProviderStageInORQ orq, TransientContract contParam, FilePermissions fp ) {
 
         if( format.equals( FORMAT_XML ) )
-            return  createXMLParmPBAction( orq, contParam );
+            return  createXMLParmPBAction( orq, contParam, fp );
         else
-            return  createDefaultPBAction( orq, contParam );
+            return  createDefaultPBAction( orq, contParam, fp );
     }
 
 
@@ -77,23 +79,37 @@ public class ParmFormatAux {
     }
 
 
-    private ProcessBuilderAction createDefaultPBAction( ProviderStageInORQ orq, TransientContract contParam ) {
+    private ProcessBuilderAction createDefaultPBAction( ProviderStageInORQ orq, TransientContract contParam, FilePermissions fp ) {
 
+        Properties moreProps = null;
         if( contParam != null ) {
-            final Properties moreProps = new Properties();
+            moreProps = new Properties();
             ContractPropertyWriter writer = new ContractPropertyWriter(moreProps);
             ContractConverter conv = new ContractConverter(writer, contParam);
             conv.convert();
-            return ProviderStageInTools.createPBAction( orq, moreProps);
         }
+
+        if( fp != null ) {
+            if( moreProps == null )
+                moreProps = new Properties( );
+            fp.toProperties( "c3grid.CommonRequest.Permissions", moreProps );
+        }
+
+        if( moreProps != null )
+            return ProviderStageInTools.createPBAction( orq, moreProps);
         
         return ProviderStageInTools.createPBAction( orq, null );
     }
 
 
-    private ProcessBuilderAction createXMLParmPBAction( ProviderStageInORQ orq, TransientContract contParam ) {
+    private ProcessBuilderAction createXMLParmPBAction( ProviderStageInORQ orq, TransientContract contParam, FilePermissions fp ) {
 
         try{
+            if( fp != null ) {
+                orq.getActContext().put( "user", fp.getUser( ) );
+                orq.getActContext().put( "group", fp.getGroup( ) );
+                orq.getActContext().put( "mask", fp.getAccessMask( ).toString() );
+            }
             return ProviderStageInTools.createPBActionForXML(
                 xmlWriter.toDocument( orq, contParam ) );
         } catch ( IOException e ) {

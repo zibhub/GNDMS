@@ -1,0 +1,71 @@
+package de.zib.gndms.model.gorfx.types.io;
+
+import de.zib.gndms.model.gorfx.types.io.DataConstraintsWriter;
+import de.zib.gndms.model.gorfx.types.io.SpaceConstraintWriter;
+import de.zib.gndms.model.gorfx.types.TimeConstraint;
+
+import java.util.Set;
+import java.util.HashMap;
+
+/**
+ * @author: Maik Jorra <jorra@zib.de>
+ * @version: $Id$
+ * <p/>
+ * User: mjorra, Date: 08.10.2008, Time: 16:44:31
+ */
+public class DataConstraintsStdoutWriter implements DataConstraintsWriter {
+
+    public void writeTimeConstraint( TimeConstraint timeConstraint ) {
+        System.out.println( "TimeConstraint" );
+        System.out.println( "    MinTime: " + timeConstraint.getMinTimeString() );
+        System.out.println( "    MaxTime: " + timeConstraint.getMaxTimeString() );
+    }
+
+
+    public void writeCFList( String[] CFList ) {
+        System.out.println( "CFList: " );
+        showStringList( CFList, "    " );
+    }
+
+
+    public void writeConstraintList( HashMap<String, String> constraintList ) {
+        System.out.println( "Constraint list: " );
+        Set<String> ks = constraintList.keySet();
+        for( String k : ks )
+            System.out.println( "    " + k + " ; " + constraintList.get( k ) );
+    }
+
+    
+    public SpaceConstraintWriter getSpaceConstraintWriter() {
+        return new SpaceConstraintStdoutWriter( );
+
+    }
+
+
+    public void beginWritingSpaceConstraint() {
+        System.out.println( "SpaceConstraint" );
+    }
+
+
+    public void doneWritingSpaceConstraint() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    
+    public void begin() {
+        System.out.println( "********************* DataConstraints *********************" );
+    }
+
+
+    public void done() {
+        System.out.println( "******************** EODataConstraints ********************" );
+    }
+
+
+    private void showStringList( String[] sl, String ind ) {
+        if( sl == null )
+            System.out.println( ind + "null" );
+        for( int i=0; i < sl.length; ++i )
+            System.out.println( ind + sl[i] );
+    }
+}

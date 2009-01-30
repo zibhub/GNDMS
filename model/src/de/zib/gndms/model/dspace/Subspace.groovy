@@ -45,7 +45,7 @@ class Subspace extends GridResource {
     @Column(name="total_size", nullable=false, updatable=false)
 	long totalSize
 
-	@OneToOne(targetEntity=MetaSubspace.class, optional=false, cascade=[CascadeType.REFRESH])
+	@OneToOne(targetEntity=MetaSubspace.class, optional=false, cascade=[CascadeType.REFRESH], fetch=FetchType.EAGER)
 	@PrimaryKeyJoinColumns([@PrimaryKeyJoinColumn(name="schema_uri"),
 	                        @PrimaryKeyJoinColumn(name="specifier")])
 	MetaSubspace metaSubspace
@@ -58,8 +58,8 @@ class Subspace extends GridResource {
     ])
 	DSpaceRef dSpaceRef
 
-    @OneToMany( targetEntity=Slice.class, mappedBy="owner", cascade=[CascadeType.REFRESH,CascadeType.PERSIST, CascadeType.REMOVE ] )
-    Set<Slice> slices
+    @OneToMany( targetEntity=Slice.class, mappedBy="owner", cascade=[CascadeType.REFRESH,CascadeType.PERSIST, CascadeType.REMOVE ], fetch=FetchType.EAGER )
+    Set<Slice> slices = new HashSet<Slice>();
 
     String path
 
@@ -152,11 +152,11 @@ class Subspace extends GridResource {
      * @brief Delivers the absolute path to a slice sl.
      */
     public String getPathForSlice( Slice sl )  {
-        path + File.separator + sl.getKind( ).getMode().toString( ) + File.separator + sl.getAssociatedPath( ) 
+        path + File.separator + sl.getKind( ).getSliceDirectory() + File.separator + sl.getAssociatedPath( )
     }
 
 
     public String getGsiFtpPathForSlice( Slice sl )  {
-        gsiFtpPath + "/" + sl.getKind( ).getMode().toString( ) + "/" + sl.getAssociatedPath( )
+        gsiFtpPath + "/" + sl.getKind( ).getSliceDirectory() + "/" + sl.getAssociatedPath( )
     }
 }

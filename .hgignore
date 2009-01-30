@@ -43,6 +43,8 @@ logic/test/**
 logic/production/**
 infra/production/**
 infra/test/**
+ws-common/gndms-ws-common/production/**
+ws-common/gndms-ws-common/test/**
 .classpath
 .project
 test-output/**

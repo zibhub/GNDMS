@@ -5,8 +5,8 @@ import de.zib.gndms.logic.model.LookupAction;
 import de.zib.gndms.logic.model.dspace.CreateSliceKindAction;
 import de.zib.gndms.logic.util.SimpleModelUUIDGen;
 import de.zib.gndms.model.common.ModelUUIDGen;
+import de.zib.gndms.model.common.AccessMask;
 import de.zib.gndms.model.dspace.SliceKind;
-import de.zib.gndms.model.dspace.types.SliceKindMode;
 import de.zib.gndms.model.test.ModelEntityTestBase;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
@@ -57,7 +57,7 @@ public class CreateSliceKindActionTest extends ModelEntityTestBase {
 
         SliceKindCreationValidator val = new SliceKindCreationValidator( );
         val.setURI( URI );
-        val.setMode( SliceKindMode.RO );
+        val.setPermission( AccessMask.fromString( "550" ) );
         CreateSliceKindAction action =  val.createCreateSliceAction();
         action.setOwnEntityManager( em );
         action.setOwnPostponedActions( boa );

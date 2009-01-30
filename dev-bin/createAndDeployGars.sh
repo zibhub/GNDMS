@@ -39,5 +39,6 @@ for i in $service_dirs; do
         exit 1
     fi
 done
+echo "done at $(date)"
 
 

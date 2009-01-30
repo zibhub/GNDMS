@@ -61,7 +61,8 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
         final StringBuilder outRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
         final StringBuilder errRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
         try {
-            final ProcessBuilderAction action = parmAux.createPBAction(orqParam, null);
+
+            final ProcessBuilderAction action = parmAux.createPBAction(orqParam, null, actualPermissions() );
             action.setProcessBuilder(procBuilder);
             action.setOutputReceiver(outRecv);
             action.setErrorReceiver(errRecv);
@@ -100,7 +101,7 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
 
 		final StringBuilder outRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
 		final StringBuilder errRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
-		final ProcessBuilderAction action = parmAux.createPBAction(orqParam, null);
+		final ProcessBuilderAction action = parmAux.createPBAction( orqParam, null, actualPermissions() );
 		action.setProcessBuilder(procBuilder);
 		action.setOutputReceiver(outRecv);
 		action.setErrorReceiver(errRecv);
@@ -112,5 +113,5 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
 			default:
 				getLog().info("Failure during cancel: " + errRecv.toString());
 		}
-	}
+    }
 }
