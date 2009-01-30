@@ -11,6 +11,7 @@ import org.testng.annotations.Test;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 
 /**
@@ -41,6 +42,7 @@ public class ParameterToolsTest {
                 "test1: 'val1'; test2: 'val2'".equals(strVal)
                           || "test2: 'val2'; test1: 'val1'".equals(strVal));
     }
+
 
 
     @Test(groups = {"factory"})
@@ -189,6 +191,17 @@ public class ParameterToolsTest {
 	   assertEquals(config.getIntOption("1"), 2);
 	   assertEquals(config.getIntOption("2"), 3);
 	}
+
+	@Test(groups = {"factory"})
+	public void parseStringArrayTest(){
+	    paraMap.clear();
+	    List<String> config=parseStringArray("[1 ,2 ,3\\,4]");
+        assertEquals(config.size(),4);
+        assertEquals(config.get(0),"1");
+        assertEquals(config.get(1)," 2");
+        assertEquals(config.get(2)," 3");
+        assertEquals(config.get(3),"4");
+    }
 
     @Test(groups = {"factory"},
           expectedExceptions = { ParameterParseException.class})

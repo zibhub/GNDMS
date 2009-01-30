@@ -89,7 +89,7 @@ public class CreateSliceActionTest extends ModelEntityTestBase {
         LinuxDirectoryAux lda = new LinuxDirectoryAux();
         String spd = MY_PATH + "/subspace";
         lda.createSubspaceDirectory( spd );
-        sp.setPath( spd );
+      //  sp.setPath( spd );
         sp.setMetaSubspace( msp );
         GregorianCalendar cal = new GregorianCalendar( );
         cal.add( Calendar.DAY_OF_YEAR, 20 );
