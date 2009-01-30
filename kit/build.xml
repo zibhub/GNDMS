@@ -1,0 +1,164 @@
+<project name="kit compilation file" default="help" basedir=".">
+
+	<!-- Define the environment variable -->
+	<property environment="env"/>
+	
+	<!-- Do always load properties in the following order: ${c3grid.basedir},${c3grid.properties},${c3grid.deps},${others.properties} -->
+	
+	<!--Define location of c3grid basedir relative to this service-->
+	<property name="c3grid.basedir"  value=".."/>
+	
+	<!-- Loading global project-settings.-->
+	<property file="${c3grid.basedir}/c3grid.properties"/>
+	
+	<!-- Loading global project-dependencies -->
+	<property file="${c3grid.basedir}/c3grid.deps"/>
+	
+	<!-- Loading local project-properties-->
+	<property file="kit.properties"/>
+	
+	<!-- path needed to compile kit-->
+	<path id="kit.path">
+		<pathelement path="${GROOVY}"/> 
+		<pathelement path="${openjpa}"/>
+		<!--dirset dir="${kit.classes.dest}"/-->
+		<pathelement path="${gt4}"/>
+		<pathelement path="${gndms-shared-model}"/>
+		<pathelement path="${annotations}"/>
+		<pathelement path="${jetty}"/>
+		<pathelement path="${servlet-api}"/>
+		<pathelement path="${cos}"/>
+		<pathelement path="${testng}"/> 
+		<pathelement path="${joda-time}"/> 
+		<pathelement path="${args4j}"/>
+		<pathelement path="${collections}"/> 
+                <pathelement path="${guice}"/>
+	</path>
+	
+	
+	<!-- using ant contrib for contidionals, looping , and runtarget -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${ant.contrib}" />
+		</classpath>
+	</taskdef>
+	
+	<path id="groovy.path">
+		<pathelement location="${GROOVY}"/>
+	</path>
+	
+	<!-- using groovc as groovy compiler in ant-->
+	<taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" classpathref="groovy.path" />
+	
+	
+	<!-- Compile kit, but not its test-files -->
+	<target name="compile" description="Compiles kit">
+		<echo>Compile kit's class-files</echo>
+		<mkdir dir="${kit.classes.dest}"/>
+		<for param="jars">
+			<path refid="kit.path"/>
+			<sequential>
+				<if>
+					<not>
+						<available file="@{jars}"/>			
+					</not>
+					<then>
+						<fail message="Not able to compile as '@{jars}' was not found."/>
+					</then>
+				</if>
+					
+			</sequential>
+		</for>
+				<!-- Copy meta-stuff -->
+				<copy todir="${kit.classes.dest}">
+					<fileset dir='src'>
+						<exclude name="**/*.java"/>
+					</fileset>
+				</copy>
+				<groovyc srcdir='src' destdir='${kit.classes.dest}' classpathref="kit.path">
+					<javac debug="${javac.debug}"/>
+				</groovyc>	
+	</target>
+	
+	<!-- path needed to kit's testfiles-->
+	<path id="kit.test.path">
+		<pathelement path="${gndms-shared-model-test}"/>
+		<pathelement path="${gndms-kit}"/>
+		<path refid="kit.path"/>
+		<dirset dir="${kit.test.classes.dest}"/>
+	</path>
+
+	<!-- Compile kit's test-classes-->
+	<target name="compile.test" description="Compiles kit and its test-files">
+		<echo>Compiling kit's test-classes</echo>
+		<mkdir dir="${kit.test.classes.dest}"/>
+		<for param="jars">
+			<path refid="kit.test.path"/>
+			<sequential>
+				<if>
+					<not>
+						<available file="@{jars}"/>			
+					</not>
+					<then>
+						<fail message="Not able to compile as '@{jars}' was not found."/>
+					</then>
+				</if>
+				
+			</sequential>
+		</for>
+		
+		<!-- Copy meta-stuff -->
+		<copy todir="${kit.test.classes.dest}">
+			<fileset dir='test-src'>
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+
+		<javac srcdir='test-src' destdir='${kit.test.classes.dest}' classpathref="kit.test.path" debug="${javac.debug}"/>
+	</target>
+	
+	
+	<!-- Creates jar-file containing kit's test-classfiles-->
+	<target name="jar.test" depends="compile.test" description="Creates jar file gndms-kit-test.jar in 'extra/lib'">
+		<echo>Generating gndms-kit-test.jar</echo>
+		<jar destfile="${gndms-kit-test}" basedir="${kit.test.classes.dest}"/>
+	</target>
+	
+	<!-- Creates jar-file containing kit's classfiles-->
+	<target name="jar" depends="compile" description="Creates jar file gndms-kit.jar in 'extra/lib'">
+		<echo>Generating gndms-kit.jar</echo>
+		<jar destfile="${gndms-kit}" basedir="${kit.classes.dest}"/>
+	</target>
+
+
+	<!-- Deletes kits' classfiles -->
+	<target name="clean" description="Deletes kit's classfiles ">
+		<echo>Deleting kit's class-files</echo>
+		<delete dir='${kit.classes}'/>
+	</target>
+
+
+	<!-- Deletes jar-files-->
+	<target name="clean.jar" description="Deletes kit's jar-file">
+		<echo>Deleting all generated jars belonging to kit</echo>
+		<delete file='${gndms-kit}'/>
+		<delete file='${gndms-kit-test}'/>
+	</target>
+	
+	<target name="help" description="Prints usage information.">
+		<echo message=" =================================================================================" />
+		<echo message="|                        KIT Compilation                                          |" />
+		<echo message="|                                                                                 |" />
+		<echo message=" ---------------------------------------------------------------------------------" />
+		<echo message="|  USAGE:                                                                         |" />
+		<echo message="|    Type 'ant -h' for general help with Ant	                                     |" />
+		<echo message="|    Type 'ant -p' for a description of available build targets.                  |" />
+		<echo message="|    Type 'ant clean' for deleting all generated class-files.                     |" />
+		<echo message="|    Type 'ant clean.all' for deleting all generated class-files and jars         |" />
+		<echo message="|    Type 'ant compile' to compile all class-files of kit                         |" />
+		<echo message="|    Type 'ant compile.test' to compile all test-class-files and create the jars	 |" />
+		<echo message="|    Type 'ant jar' to  create the jars	                                         |" />
+		<echo message=" =================================================================================" />
+	</target>
+
+</project>

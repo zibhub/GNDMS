@@ -1,0 +1,71 @@
+package de.zib.gndms.kit.network;
+
+/**
+ * @author: Maik Jorra <jorra@zib.de>
+ * @version: $Id$
+ * <p/>
+ * User: mjorra, Date: 01.10.2008, Time: 10:51:58
+ *
+ * Usage of the network package for a file transfer:
+ *
+ * Use the GridFTPClientFactory provided by this class to create an GridFTPClient.
+ * Given that this class is correctly set up and returns the desired factory, the GridFTPClient, should be configured to
+ * your needs, e.g. with the correct security setup.
+ *
+ * Then create a GNDMSFileTransfer, and add a map with the files which should be transferred, the source and destination
+ * directory and client to the instance.
+ *
+ * If it is of interest how big the download is, you can uses the GNDMSFileTransfer::estimateSize method to acquire the
+ * size of the files in byte. Together with a descent implementation of the BandWidthEstimater interface this can be
+ * used to predict the duration of a transfer, using the calculateTransferTime method of this class.
+ *
+ * To make your transfer reliable you should instantiate the persistentMarkerListener, supply it with a fresh instance of
+ * a FTPTransferState, which must have a unique transferId. Then use the performPersistenFileTransfer method of your
+ * GNDMSFileTransfer instance to trigger the transfer.
+ *
+ * An aborted transfer can be easily resumed, by setting the same GNDMSFileTransfer up again,
+ * Loading the transfer state object from the database, setting it into a new persistentMarkerListener and calling
+ * performPersistenFileTransfer with this listener again.
+ *
+ * See TransferStatTest::testIt for an code example of the described procedure.
+ */
+public class NetworkAuxiliariesProvider {
+
+    private final GridFTPClientFactory gridFTPClientFactory = new SimpleGridFTPClientFactory();
+   // private final GridFTPClientFactory gridFTPClientFactory = new CertGridFTPClientFactory();
+    private final BandWidthEstimater bandWidthEstimater = new StaticBandWidthEstimater();
+
+
+    public GridFTPClientFactory getGridFTPClientFactory() {
+        return gridFTPClientFactory;
+    }
+
+
+    public BandWidthEstimater getBandWidthEstimater() {
+        return bandWidthEstimater;
+    }
+
+
+    /**
+     * Calculated the transfertime in milli-seconds.
+     *
+     * To catch possible rounding errors, which may occur when the transfer size is to small and the connection is
+     * very fast. A minimal value for the transfer time can be provieded (see the <EM>min</EM> parameter).
+     *
+     * @param size The transfer file size in byte.
+     * @param bandWidth The bandwidth in byte/s
+     * @param min The minimum time which is retured if the calculated time is smaller.
+     *            If min is < 1 it will be ignored.
+     *
+     * @return The transfer-time in ms.
+     */
+    public static long calculateTransferTime( long size, float bandWidth, int min ){
+
+        long tt = Float.valueOf( size * 1000 / bandWidth ).longValue( );
+
+        if ( min > 0 && tt < min )
+            tt = min;
+
+        return tt;
+    }
+}

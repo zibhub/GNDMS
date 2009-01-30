@@ -13,6 +13,7 @@ services/*/src/de/zib/gndms/shared
 services/*/src/de/zib/gndms/shared/**
 services/.metadata/**
 services/**/derby.log
+services/GORFX.jar
 .DS_Store
 *.ipr
 *.iws

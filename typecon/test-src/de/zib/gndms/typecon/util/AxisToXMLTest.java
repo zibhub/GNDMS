@@ -1,13 +1,11 @@
 package de.zib.gndms.typecon.util;
 
 import de.zib.gndms.kit.application.AbstractApplication;
-import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
-import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyReader;
-import de.zib.gndms.model.gorfx.types.io.ContractPropertyReader;
 import de.zib.gndms.model.common.types.TransientContract;
-import de.zib.gndms.typecon.common.type.ProviderStageInORQXSDTypeWriter;
+import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
+import de.zib.gndms.model.gorfx.types.io.ContractPropertyReader;
+import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyReader;
 import org.kohsuke.args4j.Option;
-import types.ProviderStageInORQT;
 
 /**
  * @author Maik Jorra <jorra@zib.de>

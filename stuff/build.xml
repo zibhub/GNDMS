@@ -25,6 +25,15 @@
 		<pathelement path="${collections}"/>
 		<pathelement path="${guice}"/>		
 	</path>
+	
+	<!-- using ant contrib for contidionals, looping , and runtarget -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${ant.contrib}" />
+		</classpath>
+	</taskdef>
+	
+	
 	<!-- Compile stuff, but not its test-files -->
 	<target name="compile" description="Compiles stuff">
 		<echo>Compiling stuff's class-files</echo>
