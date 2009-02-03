@@ -62,10 +62,10 @@ public class GORFXImpl extends GORFXImplBase {
 
     public org.apache.axis.message.addressing.EndpointReferenceType createOfferRequest(types.DynamicOfferDataSeqT offerRequestArguments,types.ContextT context) throws RemoteException, de.zib.gndms.GORFX.stubs.types.UnsupportedOfferType {
 
-        logSecInfo( "createOfferRequest" );
         try{
             ContextTAux.initWid(getSystem().getModelUUIDGen(), context);
-	        
+            logSecInfo( "createOfferRequest" );
+
             @NotNull ExtORQResourceHome home = getORQResourceHome();
             @NotNull ResourceKey key = home.createResource();            
             ORQResource orqr = (ORQResource) home.find( key );

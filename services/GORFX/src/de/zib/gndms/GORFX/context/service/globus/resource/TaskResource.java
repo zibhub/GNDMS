@@ -15,6 +15,9 @@ import de.zib.gndms.typecon.common.type.FileTransferResultXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.ProviderStageInResultXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.RePublishSliceResultXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.SliceStageInResultXSDTypeWriter;
+import de.zib.gndms.typecon.util.AxisTypeFromToXML;
+import de.zib.gndms.shared.ContextTAux;
+import de.zib.gndms.kit.util.WidAux;
 import org.apache.commons.logging.Log;
 import org.globus.wsrf.InvalidResourceKeyException;
 import org.globus.wsrf.NoSuchResourceException;
@@ -26,7 +29,9 @@ import types.*;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.util.concurrent.Future;
+import java.rmi.RemoteException;
 
 
 /**
@@ -88,82 +93,103 @@ public class TaskResource extends TaskResourceBase
         // URI uri = GORFXTools.scopedNameToURI( taskAction.getModel().getOfferType().getOfferResultType( ) );
         final String uri = taskAction.getModel().getOfferType( ).getOfferTypeKey();
         final TaskState stat = taskAction.getModel().getState();
-        if( uri.equals( GORFXConstantURIs.PROVIDER_STAGE_IN_URI ) ) {
-            if( stat.equals( TaskState.FINISHED ) ) {
 
-                final Serializable sr = taskAction.getModel().getData( );
+        //WidAux.initWid( taskAction.getModel().getWid() );
+        logger.debug( "type: " + uri );
 
-                if(! ( sr instanceof ProviderStageInResult ) )
-                    throw new IllegalArgumentException( "task result is not of type " 
-                        + ProviderStageInResult.class.getName( ) );
+        try{
+            if( uri.equals( GORFXConstantURIs.PROVIDER_STAGE_IN_URI ) ) {
+                if( stat.equals( TaskState.FINISHED ) ) {
 
-                final ProviderStageInResult r = (ProviderStageInResult) sr;
-                final ProviderStageInResultXSDTypeWriter writer = new ProviderStageInResultXSDTypeWriter();
-                writer.begin( );
-                writer.writeSliceReference( r.getSliceKey() );
-                res = writer.getProduct();
-            } else
-                res = new ProviderStageInResultT();
-        } else if( uri.equals( GORFXConstantURIs.FILE_TRANSFER_URI )
-                   || uri.equals( GORFXConstantURIs.INTER_SLICE_TRANSFER_URI ) ) {
+                    final Serializable sr = taskAction.getModel().getData( );
 
-            if( stat.equals( TaskState.FINISHED ) ){
-                final Serializable sr = taskAction.getModel().getData( );
-                if(! ( sr instanceof FileTransferResult ) )
-                    throw new IllegalArgumentException( "task result is not of type "
-                        + FileTransferResult.class.getName( ) );
+                    if(! ( sr instanceof ProviderStageInResult ) )
+                        throw new IllegalArgumentException( "task result is not of type "
+                            + ProviderStageInResult.class.getName( ) );
 
-                final FileTransferResult ftr = ( FileTransferResult ) sr;
-                final FileTransferResultXSDTypeWriter writer = new FileTransferResultXSDTypeWriter();
-                writer.begin();
-                writer.writeFiles( ftr.getFiles() );
-                res = writer.getProduct();
+                    final ProviderStageInResult r = (ProviderStageInResult) sr;
+                    final ProviderStageInResultXSDTypeWriter writer = new ProviderStageInResultXSDTypeWriter();
+                    writer.begin( );
+                    writer.writeSliceReference( r.getSliceKey() );
+                    res = writer.getProduct();
+                } else
+                    res = new ProviderStageInResultT();
+            } else if( uri.equals( GORFXConstantURIs.FILE_TRANSFER_URI )
+                || uri.equals( GORFXConstantURIs.INTER_SLICE_TRANSFER_URI ) ) {
+
+                if( stat.equals( TaskState.FINISHED ) ){
+                    final Serializable sr = taskAction.getModel().getData( );
+                    if(! ( sr instanceof FileTransferResult ) )
+                        throw new IllegalArgumentException( "task result is not of type "
+                            + FileTransferResult.class.getName( ) );
+
+                    final FileTransferResult ftr = ( FileTransferResult ) sr;
+                    final FileTransferResultXSDTypeWriter writer = new FileTransferResultXSDTypeWriter();
+                    writer.begin();
+                    writer.writeFiles( ftr.getFiles() );
+                    res = writer.getProduct();
+                }
+
+                else
+                    res = new FileTransferResultT();
+
+                if( uri.equals( GORFXConstantURIs.INTER_SLICE_TRANSFER_URI ) )
+                    ( (FileTransferResultT) res).setOfferType( GORFXClientTools.getInterSliceTransferURI() );
+
+
+            } else if( uri.equals( GORFXConstantURIs.RE_PUBLISH_SLICE_URI ) ) {
+
+                if( stat.equals( TaskState.FINISHED ) ){
+                    final Serializable sr = taskAction.getModel().getData( );
+                    if(! ( sr instanceof RePublishSliceResult ) )
+                        throw new IllegalArgumentException( "task result is not of type "
+                            + RePublishSliceResult.class.getName( ) );
+
+                    res = RePublishSliceResultXSDTypeWriter.writeResult( ( RePublishSliceResult ) sr );
+                }
+
+                else
+                    res = new RePublishSliceResultT();
+
+            } else if( uri.equals( GORFXConstantURIs.SLICE_STAGE_IN_URI ) ) {
+
+                if( stat.equals( TaskState.FINISHED ) ){
+                    final Serializable sr = taskAction.getModel().getData( );
+                    if(! ( sr instanceof SliceStageInResult ) )
+                        throw new IllegalArgumentException( "task result is not of type "
+                            + SliceStageInResult.class.getName( ) );
+
+                    res = SliceStageInResultXSDTypeWriter.writeResult( ( SliceStageInResult ) sr );
+                }
+
+                else
+                    res = new SliceStageInResultT();
+
+            } // etc
+            // todo add new task results here
+
+            else {
+                //throw new RemoteException( "Illegal offer type occured" );
+                logger.debug( "Illegal offer type occured"+ uri );
+                throw new IllegalStateException( "Illegal offer type occured" );
             }
 
-            else
-                res = new FileTransferResultT();
 
-            if( uri.equals( GORFXConstantURIs.INTER_SLICE_TRANSFER_URI ) )
-                ( (FileTransferResultT) res).setOfferType( GORFXClientTools.getInterSliceTransferURI() );
+            StringWriter wr = new StringWriter();
+            AxisTypeFromToXML.toXML(wr, res, false, true);
+            logger.info("Result is: " + wr.toString());
 
+            return res;
 
-        } else if( uri.equals( GORFXConstantURIs.RE_PUBLISH_SLICE_URI ) ) {
-
-            if( stat.equals( TaskState.FINISHED ) ){
-                final Serializable sr = taskAction.getModel().getData( );
-                if(! ( sr instanceof RePublishSliceResult ) )
-                    throw new IllegalArgumentException( "task result is not of type "
-                        + RePublishSliceResult.class.getName( ) );
-
-                res = RePublishSliceResultXSDTypeWriter.writeResult( ( RePublishSliceResult ) sr );
-            }
-
-            else
-                res = new RePublishSliceResultT();
-
-        } else if( uri.equals( GORFXConstantURIs.SLICE_STAGE_IN_URI ) ) {
-            
-            if( stat.equals( TaskState.FINISHED ) ){
-                final Serializable sr = taskAction.getModel().getData( );
-                if(! ( sr instanceof SliceStageInResult ) )
-                    throw new IllegalArgumentException( "task result is not of type "
-                        + SliceStageInResult.class.getName( ) );
-
-                res = SliceStageInResultXSDTypeWriter.writeResult( ( SliceStageInResult ) sr );
-            }
-
-            else
-                res = new SliceStageInResultT();
-            
-        } // etc
-          // todo add new task results here
-
-        else {
-            //throw new RemoteException( "Illegal offer type occured" );
-            throw new IllegalStateException( "Illegal offer type occured" );
-        }
-
-        return res;
+        } catch  ( RuntimeException e ) {
+            logger.error( "RuntimeException: ", e );
+            throw e;
+        } catch  ( Exception e ) {
+            logger.error( "Exception: ", e );
+            throw new RuntimeException( e );
+        } // finally  {
+          //  WidAux.removeWid();
+        //}
     }
 
 

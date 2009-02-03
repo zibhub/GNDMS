@@ -391,8 +391,7 @@ final class SingletonGridResourceModelHandler<M extends SingletonGridResource, H
 				final @NotNull M model = (M) createNewGridEntity()
 				if (creator != null)
 					creator.initializeModel(model)
-				//return persistModel(em, (M) model)
-                return null
+				return persistModel(em, (GridEntity)model)
             }
 			catch (NonUniqueResultException e)
 				{ throw new ResourceException(e); }

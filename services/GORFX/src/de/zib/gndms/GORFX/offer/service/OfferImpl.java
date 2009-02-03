@@ -8,6 +8,8 @@ import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.model.gorfx.Task;
 import org.apache.axis.message.addressing.EndpointReferenceType;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import org.globus.wsrf.ResourceKey;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,6 +24,7 @@ import java.rmi.RemoteException;
  */
 public class OfferImpl extends OfferImplBase {
 
+    private static final Log logger = LogFactory.getLog(OfferImpl.class);
 
     public OfferImpl() throws RemoteException {
         super();
@@ -37,6 +40,8 @@ public class OfferImpl extends OfferImplBase {
             @NotNull final Task task = ores.accept( );
             @NotNull final ExtTaskResourceHome thome = ( ExtTaskResourceHome) getTaskResourceHome();
             @NotNull final EntityManager em = thome.getEntityManagerFactory().createEntityManager();
+            logger.debug( "accepted" );
+
 
             // Persist task object
             persistTask(task, em);
@@ -51,8 +56,8 @@ public class OfferImpl extends OfferImplBase {
             }
             catch (RuntimeException e) {
                 try {
+                    logger.error( "Runtime Exception, removing task", e);
                     removeTask(task, em);
-
                 }
                 finally {
                     // but keep causing exception if even that fails
@@ -60,6 +65,7 @@ public class OfferImpl extends OfferImplBase {
                 }
             }
         } catch ( Exception e ) {
+            logger.error( "Exception occured", e);
             throw new RemoteException(e.getMessage(), e);
         }
         finally { WidAux.removeWid(); }

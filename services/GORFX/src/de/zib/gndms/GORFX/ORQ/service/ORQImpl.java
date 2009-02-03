@@ -96,15 +96,16 @@ public class ORQImpl extends ORQImplBase {
     public types.OfferExecutionContractT permitEstimateAndDestroyRequest(types.OfferExecutionContractT offerExecutionContract,types.ContextT context) throws RemoteException, de.zib.gndms.GORFX.ORQ.stubs.types.UnfullfillableRequest, de.zib.gndms.GORFX.ORQ.stubs.types.PermissionDenied {
 
         try {
-            ContextTAux.initWid(getResourceHome().getModelUUIDGen(), context);
+            //ContextTAux.initWid(getResourceHome().getModelUUIDGen(), context);
             ExtORQResourceHome home = (ExtORQResourceHome) getResourceHome();
             ORQResource res = home.getAddressedResource();
+            WidAux.initWid(res.getCachedWid());
 
             OfferExecutionContractT oec =
                 ContractXSDTypeWriter.write( res.estimatedExecutionContract( offerExecutionContract ) );
 
             // log contract
-            logger.debug( "Calculated contract: " + loggableXSDT( oec ) );
+            logger.debug( "Estimated contract: " + loggableXSDT( oec ) );
 
             return oec;
         }
