@@ -8,10 +8,9 @@ import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.model.gorfx.Task;
 import org.apache.axis.message.addressing.EndpointReferenceType;
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 import org.globus.wsrf.ResourceKey;
 import org.jetbrains.annotations.NotNull;
+import org.apache.log4j.Logger;
 
 import javax.persistence.EntityManager;
 import java.rmi.RemoteException;
@@ -24,7 +23,7 @@ import java.rmi.RemoteException;
  */
 public class OfferImpl extends OfferImplBase {
 
-    private static final Log logger = LogFactory.getLog(OfferImpl.class);
+    private static final Logger logger = Logger.getLogger(OfferImpl.class);
 
     public OfferImpl() throws RemoteException {
         super();
@@ -37,6 +36,7 @@ public class OfferImpl extends OfferImplBase {
             @NotNull final ExtOfferResourceHome home = (ExtOfferResourceHome) getResourceHome( );
             @NotNull final OfferResource ores = home.getAddressedResource();
             WidAux.initWid(ores.getCachedWid());
+            WidAux.initGORFXid( ores.getOrqCalc().getORQArguments().getActId() );
             @NotNull final Task task = ores.accept( );
             @NotNull final ExtTaskResourceHome thome = ( ExtTaskResourceHome) getTaskResourceHome();
             @NotNull final EntityManager em = thome.getEntityManagerFactory().createEntityManager();
@@ -68,7 +68,10 @@ public class OfferImpl extends OfferImplBase {
             logger.error( "Exception occured", e);
             throw new RemoteException(e.getMessage(), e);
         }
-        finally { WidAux.removeWid(); }
+        finally {
+            WidAux.removeGORFXid(); 
+            WidAux.removeWid();
+        }
     }
 
 

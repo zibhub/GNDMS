@@ -13,8 +13,7 @@ import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.shared.ContextTAux;
 import de.zib.gndms.typecon.common.type.ContractXSDTypeWriter;
 import de.zib.gndms.typecon.util.AxisTypeFromToXML;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.globus.wsrf.ResourceContext;
 import org.globus.wsrf.ResourceKey;
 import org.globus.wsrf.impl.ResourceContextImpl;
@@ -33,7 +32,8 @@ import types.OfferExecutionContractT;
  * 
  */
 public class ORQImpl extends ORQImplBase {
-    private static final Log logger = LogFactory.getLog(ORQImpl.class);
+
+    private static final Logger logger = Logger.getLogger(ORQImpl.class);
 
     public ORQImpl() throws RemoteException {
         super();
@@ -54,6 +54,7 @@ public class ORQImpl extends ORQImplBase {
             logger.debug( "Context: " + loggableXSDT( context ) );
             ORQResource orq = home.getAddressedResource();
             WidAux.initWid(orq.getCachedWid());
+            WidAux.initGORFXid( orq.getORQCalculator().getORQArguments().getActId() );
             try {
                 ExtOfferResourceHome ohome = ( ExtOfferResourceHome) getOfferResourceHome();
                 ResourceKey key = ohome.createResource();
@@ -75,6 +76,7 @@ public class ORQImpl extends ORQImplBase {
                 return ohome.getResourceReference( key ).getEndpointReference();
             }
             finally {
+                WidAux.removeGORFXid();
                 WidAux.removeWid();
             }
         }
@@ -100,6 +102,7 @@ public class ORQImpl extends ORQImplBase {
             ExtORQResourceHome home = (ExtORQResourceHome) getResourceHome();
             ORQResource res = home.getAddressedResource();
             WidAux.initWid(res.getCachedWid());
+            WidAux.initGORFXid( res.getORQCalculator().getORQArguments().getActId() );
 
             OfferExecutionContractT oec =
                 ContractXSDTypeWriter.write( res.estimatedExecutionContract( offerExecutionContract ) );
@@ -122,6 +125,7 @@ public class ORQImpl extends ORQImplBase {
             throw new RemoteException(e.getMessage(), e);
         }
         finally {
+            WidAux.removeGORFXid();
             WidAux.removeWid();
         }
 

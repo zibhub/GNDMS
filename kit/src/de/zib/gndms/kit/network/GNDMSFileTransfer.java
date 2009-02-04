@@ -292,18 +292,25 @@ public class GNDMSFileTransfer {
 
         nmsg.write( " from " +
             printWithNull( sourceClient )
-            + "/" + printWithNull( sourcePath ) );
+            +  printWithNull( sourcePath ) );
 
         nmsg.write( " to " +
             printWithNull( destinationClient )
-                + "/" + printWithNull( destinationPath ) );
+                 + printWithNull( destinationPath ) );
 
         nmsg.write( "\nan Exception occured: " + msg );
 
         return nmsg.toString( );
     }
 
-    static private String printWithNull( Object o ) {
+    static private String printWithNull( String o ) {
         return o == null ? "<null>" : o.toString() ;
+    }
+
+    static private String printWithNull( GridFTPClient o ) {
+        if( o == null )
+            return "<null>";
+
+        return o.getHost() + ":" +  o.getPort();
     }
 }

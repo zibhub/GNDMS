@@ -19,6 +19,7 @@ import de.zib.gndms.typecon.util.AxisTypeFromToXML;
 import de.zib.gndms.shared.ContextTAux;
 import de.zib.gndms.kit.util.WidAux;
 import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.globus.wsrf.InvalidResourceKeyException;
 import org.globus.wsrf.NoSuchResourceException;
 import org.globus.wsrf.ResourceException;
@@ -43,10 +44,12 @@ public class TaskResource extends TaskResourceBase
     implements ReloadablePersistentResource<Task, ExtTaskResourceHome> {
 
 
+    private static final Logger log = Logger.getLogger( TaskResource.class );
     private ExtTaskResourceHome home;
     private TaskAction taskAction;
     private GridResourceModelHandler<Task, ExtTaskResourceHome, TaskResource> mH;
     private Future<?> future;
+
 
 
     /**
@@ -95,7 +98,7 @@ public class TaskResource extends TaskResourceBase
         final TaskState stat = taskAction.getModel().getState();
 
         //WidAux.initWid( taskAction.getModel().getWid() );
-        logger.debug( "type: " + uri );
+        log.debug( "type: " + uri );
 
         try{
             if( uri.equals( GORFXConstantURIs.PROVIDER_STAGE_IN_URI ) ) {
@@ -170,22 +173,22 @@ public class TaskResource extends TaskResourceBase
 
             else {
                 //throw new RemoteException( "Illegal offer type occured" );
-                logger.debug( "Illegal offer type occured"+ uri );
+                log.debug( "Illegal offer type occured"+ uri );
                 throw new IllegalStateException( "Illegal offer type occured" );
             }
 
 
             StringWriter wr = new StringWriter();
             AxisTypeFromToXML.toXML(wr, res, false, true);
-            logger.info("Result is: " + wr.toString());
+            log.info("Result is: " + wr.toString());
 
             return res;
 
         } catch  ( RuntimeException e ) {
-            logger.error( "RuntimeException: ", e );
+            log.error( "RuntimeException: ", e );
             throw e;
         } catch  ( Exception e ) {
-            logger.error( "Exception: ", e );
+            log.error( "Exception: ", e );
             throw new RuntimeException( e );
         } // finally  {
           //  WidAux.removeWid();

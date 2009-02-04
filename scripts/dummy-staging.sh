@@ -17,8 +17,8 @@ echo "$sfr" > $metafile
 
 
 # Uncomment to test dummy-cancel.sh
-echo "NAY!" >&2
-exit 1
+#echo "NAY!" >&2
+#exit 1
 
 
 rm -f .GARBAGE

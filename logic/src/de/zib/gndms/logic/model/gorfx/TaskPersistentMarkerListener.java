@@ -4,6 +4,7 @@ import de.zib.gndms.kit.network.PersistentMarkerListener;
 import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.AbstractTask;
+import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import org.globus.ftp.Marker;
 
 /**
@@ -19,15 +20,18 @@ import org.globus.ftp.Marker;
  */
 public class TaskPersistentMarkerListener extends PersistentMarkerListener {
 
-    AbstractTask task;
+    private AbstractTask task;
+    private String gorfxid;
 
 
     @Override
     public void markerArrived( final Marker marker ) {
         try{
             WidAux.initWid( task.getWid() );
+            WidAux.initGORFXid( task.getWid() );
             super.markerArrived( marker );
         } finally{
+            WidAux.removeGORFXid( );
             WidAux.removeWid( );
         }
     }
@@ -46,5 +50,6 @@ public class TaskPersistentMarkerListener extends PersistentMarkerListener {
 
     public void setTask( AbstractTask task ) {
         this.task = task;
+        gorfxid = (( AbstractORQ ) task.getOrq()).getActId();
     }
 }
