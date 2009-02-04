@@ -145,6 +145,7 @@ When describing the dependencies of a compilation unit, I assume the following
 - servlet-api: extra/tools-lib/servlet-api*.jar
 - cos: extra/tools-lib/cos-*.jar
 - collections: extras/tools-lib/google-collect*.jar
+- httpcore: extras/tools-lib/http*.jar
 - guice: extra/tools-lib/guice*.jar asm*.jar cglib*.jar
 - GROOVY: extra/tools-lib/groovy*.jar
   If you use IntelliJ, use the global library GROOVY instead.
@@ -245,7 +246,7 @@ DETAILED BUILD INSTRUCTIONS
             extra/lib/gndms-infra.jar containing the contents of production/
      Dependencies: GROOVY, J2EE, annotations, gndms-logic, stuff, gndms-shared-model
                    commons, derby, cos, servlet-api, jetty, gt4, testng, joda-time,
-                   gndms-kit, jaxb
+                   gndms-kit, jaxb, httpcore
 
     (In IntelliJ: Use Build/Build Jars.. to build the jar on Make Project)
 

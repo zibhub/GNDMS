@@ -7,11 +7,18 @@ import de.zib.gndms.c3resource.jaxb.Site;
 import de.zib.gndms.c3resource.jaxb.Workspace;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.configlet.RegularlyRunnableConfiglet;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
+import java.net.URL;
 import java.util.*;
 
 
@@ -28,7 +35,7 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 	private String mdsUrl;
 	private String requiredPrefix;
 
-	private volatile C3Catalog catalog;
+	private C3Catalog catalog;
 
 	@Override
 	protected synchronized void threadInit() {
@@ -56,15 +63,30 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 	}
 
 	@Override
-	protected void threadRun() {
+	protected synchronized void threadRun() {
 		try {
 			getLog().info("Refreshing C3MDSCatalog...");
 			final C3ResourceReader reader = new C3ResourceReader();
 			final String curRequiredPrefix = getRequiredPrefix();
-			Iterator<Site> sites = reader.readXmlSites(curRequiredPrefix, new java.net.URL(getMdsUrl()).openStream());
-			C3Catalog newCatalog = new C3Catalog(curRequiredPrefix, sites);
-			setCatalog(newCatalog);
-			getLog().debug("Finished Refreshing C3MDSCatalog.");
+			final InputStream inputStream = openMdsInputStream();
+			C3Catalog newCatalog = null;
+			// pointless since MDS includes dynamically generated timestamps...
+			//final MD5InputStream checkedStream = new MD5InputStream(inputStream);
+			try {
+				final Iterator<Site> sites = reader.readXmlSites(curRequiredPrefix, inputStream);
+				newCatalog = new C3Catalog(curRequiredPrefix, sites);
+			}
+			finally {
+				try {
+					inputStream.close();
+					if (newCatalog == null)
+						getLog().warn("No new C3MDSCatalog was created (unknown reason)");
+					setCatalog(newCatalog);
+				}
+				catch (IOException e)
+					{ getLog().warn("Error closing MDS stream; new catalog *not* set"); }
+			}
+			getLog().debug("Finished Refreshing C3MDSCatalog");
 		}
 		catch (RuntimeException e) {
 			getLog().warn(e);
@@ -75,8 +97,30 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 	}
 
 
+	private InputStream openMdsInputStream() throws IOException {
+		final String urlStr = getMdsUrl();
+		final URL url = new URL(urlStr);
+		if (url.getProtocol().startsWith("http")) {
+			getLog().debug("Loading C3MDSCatalog via http core...");
+			// if http use http client from apache commons
+			final HttpClient client = new DefaultHttpClient();
+			final HttpGet get = new HttpGet(urlStr);
+			get.addHeader(new BasicHeader("Pragma", "no-cache"));
+			get.addHeader(new BasicHeader("Cache-Control",
+			                              "private, no-store, no-cache, must-revalidate, max-age=0"));
+			final HttpResponse resp = client.execute(get);
+			return resp.getEntity().getContent();
+		}
+		else {
+			getLog().debug("Loading C3MDSCatalog via java.net.URL.openStream...");
+			// defer to java-built in url handling otherwise
+			return url.openStream();
+		}
+	}
+
+
 	public synchronized C3Catalog getCatalog() {
-		while (catalog == null)
+		while (getCatalog() == null)
 			try {
 				wait();
 			}

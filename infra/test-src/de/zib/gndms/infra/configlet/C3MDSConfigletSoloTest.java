@@ -21,16 +21,16 @@ public class C3MDSConfigletSoloTest {
 	public void testC3MDS() {
 		Log log = LogFactory.getLog("test");
 		HashMap<String, String> configMap = Maps.newHashMap();
-		configMap.put("delay", "5000");
+		configMap.put("delay", "10000");
 		configMap.put("initialDelay", "1000");
 		configMap.put("mdsUrl", "http://c3grid-gt.e-technik.uni-dortmund.de:8080/webmds/webmds?info=indexinfo");
 
 		C3MDSConfiglet configlet = new C3MDSConfiglet();
 		configlet.init(log, "c3mds", configMap);
-		configlet.run();
+		// configlet.run();
 
 		try {
-			Thread.sleep(5000L);
+			Thread.sleep(23000L);
 		}
 		catch (InterruptedException e) {
 			e.printStackTrace();
