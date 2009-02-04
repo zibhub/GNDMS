@@ -39,8 +39,11 @@ public abstract class RunnableConfiglet extends DefaultConfiglet implements Runn
 
     /**
      * Calls {@code run_()}
+     *
+     * ensures we're synchronized
+     * (required for sensible semantics of thread.interrupt during update)
      */
-	public void run() {
+	public final void run() {
 		NDC.push(getName());
 		try {
 			run_();
@@ -55,6 +58,7 @@ public abstract class RunnableConfiglet extends DefaultConfiglet implements Runn
      */
     protected abstract void threadInit();
 
+	
     /**
      * This method will be executed concurrent. Do not call it directly !
      */
@@ -63,6 +67,7 @@ public abstract class RunnableConfiglet extends DefaultConfiglet implements Runn
 	@Override
 	public synchronized void update(@NotNull final Serializable data) {
 		super.update(data);    // Overridden method
+		thread.interrupt();
 	}
 
 

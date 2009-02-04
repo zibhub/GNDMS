@@ -30,6 +30,7 @@
 		<pathelement path="${servlet-api}"/>
 		<pathelement path="${jetty}"/>
 		<pathelement path="${gt4}"/>
+		<pathelement path="${httpcore}"/>
 		<pathelement path="${testng}"/>
 		<pathelement path="${joda-time}"/>
 		<pathelement path="${gndms-kit}"/>

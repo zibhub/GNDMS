@@ -51,6 +51,8 @@ annotations=${tools-lib.dir}/annotations.jar
 
 joda-time=${tools-lib.dir}/joda-time-1.5.2.jar
 
+httpcore=${tools-lib.dir}/httpclient-4.0-beta2.jar:${tools-lib.dir}/httpcore-4.0-beta3.jar:${tools-lib.dir}/httpcore-nio-4.0-beta3.jar:${tools-lib.dir}/httpmime-4.0-beta2.jar
+
 jaxb=${tools-lib.dir}/activation.jar;${tools-lib.dir}/jaxb1-impl.jar;${tools-lib.dir}/jaxb-api.jar;${tools-lib.dir}/jaxb-impl.jar;${tools-lib.dir}/jaxb-xjc.jar;${tools-lib.dir}/jsr173_1.0_api.jar
 
 args4j=${tools-lib.dir}/args4j-2.0.9.jar
