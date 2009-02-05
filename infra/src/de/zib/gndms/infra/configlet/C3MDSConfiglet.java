@@ -120,7 +120,7 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 
 
 	public synchronized C3Catalog getCatalog() {
-		while (getCatalog() == null)
+		while ( catalog == null )
 			try {
 				wait();
 			}
