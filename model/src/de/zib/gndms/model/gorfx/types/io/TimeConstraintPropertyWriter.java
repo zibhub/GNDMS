@@ -35,10 +35,20 @@ public class TimeConstraintPropertyWriter extends AbstractPropertyIO implements 
     public static void writeMinTimeToProperties( Properties prop, DateTime dt  ) {
        PropertyReadWriteAux.writeISODateTime( prop, SfrProperty.TIME_MIN.key, dt );
     }
+    
+
+    public static void writeMinTimeToProperties( Properties prop, String dt  ) {
+        prop.setProperty( SfrProperty.TIME_MIN.key, dt );
+    }
 
 
     public static void writeMaxTimeToProperties( Properties prop, DateTime dt ) {
         PropertyReadWriteAux.writeISODateTime( prop, SfrProperty.TIME_MAX.key, dt );
+    }
+
+
+    public static void writeMaxTimeToProperties( Properties prop, String dt  ) {
+        prop.setProperty( SfrProperty.TIME_MAX.key, dt );
     }
 
 

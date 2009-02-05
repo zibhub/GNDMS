@@ -26,10 +26,20 @@ public class TimeConstraintXSDTypeWriter extends AbstractXSDTypeWriter<TimeConst
     }
 
 
+    public void writeMinTime( String dt ) {
+        getProduct().setMinTime( dt );
+    }
+
+
     public void writeMaxTime( DateTime dt ) {
         getProduct().setMaxTime( ISOFormatter.print( dt ) );
     }
 
+
+    public void writeMaxTime( String dt ) {
+        getProduct().setMaxTime( dt );
+    }
+    
 
     public void begin() {
         setProduct( new TimeConstraintT( ) );

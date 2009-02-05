@@ -16,35 +16,33 @@ import java.io.Serializable;
  */
 public class TimeConstraint implements Serializable {
 	
-	private DateTime minTime;
-    private DateTime maxTime;
+	private String minTime;
+    private String maxTime;
 
-    private final transient DateTimeFormatter isoFormatter = ISODateTimeFormat.dateTime( );
-
-    private static final long serialVersionUID = 2682486067028199164L;
+    private static final long serialVersionUID = 2682486067028199165L;
 
 
     public boolean hasMinTime() {
         return minTime != null;
     }
 
-    public DateTime getMinTime() {
+    public String getMinTime() {
         return minTime;
     }
 
 
     public String getMinTimeString() {
-        return isoFormatter.print( minTime );
+        return minTime;
     }
 
 
     public void setMinTime( String minTime ) {
-        this.minTime = isoFormatter.parseDateTime( minTime );
+        this.minTime = minTime;
     }
 
     
     public void setMinTime( DateTime minTime ) {
-        this.minTime = minTime;
+        this.minTime = minTime.toString();
     }
 
 
@@ -53,22 +51,22 @@ public class TimeConstraint implements Serializable {
     }
 
 
-    public DateTime getMaxTime() {
+    public String getMaxTime() {
         return maxTime;
     }
 
 
     public String getMaxTimeString() {
-        return isoFormatter.print( maxTime );
+        return maxTime;
     }
 
 
     public void setMaxTime( String maxTime ) {
-        this.maxTime = isoFormatter.parseDateTime( maxTime );
+        this.maxTime = maxTime;
     }
 
 
     public void setMaxTime( DateTime maxTime ) {
-        this.maxTime = maxTime;
+        this.maxTime = maxTime.toString( );
     }
 }
