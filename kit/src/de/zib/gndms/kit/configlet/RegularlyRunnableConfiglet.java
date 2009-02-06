@@ -6,7 +6,10 @@ import java.io.Serializable;
 
 
 /**
- * ThingAMagic.
+ * This abstract class stores a configuration in a map and will executed a loop concurrently.
+ *
+ * Implement {@code threadRun()}  to be executed concurrently in a loop after the {@code init} method has been invoked.
+ *
  *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
@@ -16,11 +19,11 @@ import java.io.Serializable;
 public abstract class RegularlyRunnableConfiglet extends RunnableConfiglet {
 
     /**
-     * delay in miliseconds after that the {@code run_()}'s loop-Method does the first iteration.
+     * delay in miliseconds after that the {@code run_()}'s loop-Method executes the first iteration.
      */
     private long initDelay;
     /**
-     * delay in miliseconds after that the {@code run_()}'s loop-Method does every iteration. 
+     * delay in miliseconds after that the {@code run_()}'s loop-Method executes every iteration.
      */
     private long delay;
     /**
@@ -54,7 +57,6 @@ public abstract class RegularlyRunnableConfiglet extends RunnableConfiglet {
      * Loop which invokes {@link RegularlyRunnableConfiglet#threadRun()} after {@code delay} seconds. Do not call this method directly !
      * Will be invoked by {@code RunnableConfiglet}'s {@code run()}-Method to run concurrent.
      */
-
     @Override
 	public void run_() {
 		try { Thread.sleep(initDelay); }
@@ -68,14 +70,11 @@ public abstract class RegularlyRunnableConfiglet extends RunnableConfiglet {
 	}
 
     /**
-     *  This method is invoked by {@link RegularlyRunnableConfiglet#run_()}'s loop, will be executed concurrent  
+     *  This method is invoked by {@link RegularlyRunnableConfiglet#run_()}'s loop, will be executed concurrently  
      */
 	protected abstract void threadRun();
 
 
-    /**
-     *
-     */
     @Override
 	protected void threadStop() {
 		stop = true;

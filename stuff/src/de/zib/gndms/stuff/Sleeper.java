@@ -11,7 +11,11 @@ package de.zib.gndms.stuff;
 public class Sleeper {
 	private Sleeper() {}
 
-
+    /**
+     * Causes the currently executing thread to sleep uniterruptible for a specific time of milliseconds
+     * 
+     * @param millis time in milliseconds
+     */
 	public static void sleepUninterruptible(final long millis) {
 		final long end = System.currentTimeMillis() + millis;
 		while (true) {

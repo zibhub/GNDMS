@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 
 /**
-     * Helper class for parsing string parameters and rendering string-string-maps
+ * Helper class for parsing string parameters and rendering string-string-maps.
  *
  * Supported format (assumes greedy matching):
  *

@@ -36,7 +36,10 @@ public final class BoundInjector {
 				throw new IllegalStateException("Attempt to overwrite injector");
 	}
 
-
+    /**
+     * Invokes {@link Injector#injectMembers(Object)}  on the currently used {@code Injector}
+     * @param obj
+     */
 	public void injectMembers(Object obj) {
 		if (obj == null)
 			return;

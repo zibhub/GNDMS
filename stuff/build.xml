@@ -82,6 +82,7 @@
 	<path id="stuff.test.path">
 		<pathelement location="${stuff}"/>
 		<path refid="stuff.path"/>
+		<pathelement location="${testng}"/>
 	</path>
 	
 	<!-- Compile stuff's test-classes-->

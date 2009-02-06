@@ -17,7 +17,11 @@ import java.util.regex.Pattern;
 
 
 /**
- * ThingAMagic.
+ * This abstract class provides an implementation of the {@code ConfigProvider} interface.
+ * 
+ *
+ * To implement this class, the method {@link OptionProvider#hasOption(String)} must be implemented, defining if the
+ * configuration has a value set for the specific option.
  *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
