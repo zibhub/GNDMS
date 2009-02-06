@@ -118,7 +118,7 @@
 	</target>
 	
 	<!-- Creates jar-file containing model's classes -->
-	<target name="prejar" depends="compile" description="Creates jar file gndms-shared-model.jar in 'extra/lib'">	
+	<target name="prejar" depends="compile" >	
 		<echo>Generating gndms-shared-model.jar</echo>
 		<jar destfile="${gndms-shared-model}"
 		     basedir="${model.classes.dest}">
@@ -137,7 +137,7 @@
 		<delete file='${gndms-shared-model-test}'/>
 	</target>
 	
-	<target name="jar" depends="prejar">
+	<target name="jar" depends="prejar" description="Creates jar file gndms-shared-model.jar in 'extra/lib'">
 		<ant antfile="build-openjpa.xml" target="enhance" dir="${model.dir}" />	
 	</target>
 	

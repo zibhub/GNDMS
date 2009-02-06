@@ -11,7 +11,10 @@ import java.util.Iterator;
 
 
 /**
- * ThingAMagic.
+ *  
+ * This class stores a configuration in a map and provides an Iterable over all publishers.
+ *
+ * To retrieve the List of the publisher, they must be stored as dynamic arrray with '{@code publishers}' as {@code optionname}
  *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
@@ -20,7 +23,7 @@ import java.util.Iterator;
  */
 public class PublishConfiglet extends DefaultConfiglet {
     /**
-     * provides an iterator over all publishers
+     * Provides an iterator over all publishers
      */
     private volatile Iterable<String> publishingSites;
 
@@ -37,7 +40,7 @@ public class PublishConfiglet extends DefaultConfiglet {
      *  Updates {@link PublishConfiglet#publishingSites} with the newest publishers. Should be invoked by {@link PublishConfiglet#update}
      */
 	private void configPublishingSites() {
-		try {
+        try {
 			final ConfigProvider mapConfig = getMapConfig().getDynArrayOption("publishers");
 			publishingSites = new Iterable<String>() {
 				public Iterator<String> iterator() {
@@ -70,7 +73,8 @@ public class PublishConfiglet extends DefaultConfiglet {
 
     /**
      * Returns an iterable over the publishing Site, as described in the current loaded configuration
-     * @return
+     *
+     * @return an iterable over the publishing Site, as described in the current loaded configuration
      */
 	public Iterable<String> getPublishingSites() {
         return publishingSites;

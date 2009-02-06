@@ -32,7 +32,6 @@
 		<runtarget target="compile.src"/>
 		<ant antfile="${build-services}" inheritALL="false" target="compile"/>
 		<ant antfile="${build-services}" inheritALL="false" target="buildGar"/>
-		<runtarget target="symlink.create"/>
 
 	</target>
 

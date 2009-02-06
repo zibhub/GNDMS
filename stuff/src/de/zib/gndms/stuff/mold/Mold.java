@@ -33,7 +33,7 @@ public final class Mold {
 		molder.mold(molded);
 	}
 
-
+    
 	public static <C extends Molding, D> void copyMolding(final C molding, final D molded) {
 		if (molding == null) return;
 		if (molded == null)	return;
@@ -94,7 +94,7 @@ public final class Mold {
 			return null;
 		}
 
-		private void doMold(final @NotNull Object molded)
+        private void doMold(final @NotNull Object molded)
 			  throws Throwable {
             Class curClass = moldedClass;
             while (! Object.class.equals(curClass)) {

@@ -8,7 +8,10 @@ import java.io.Serializable;
 
 
 /**
- * ThingAMagic.
+ * This abstract class stores a configuration in a map and will run concurrently.
+ *
+ * A {@code RunnbaleConfiglet} will run concurrently after it's {@code init} method has been invoked.
+ * Implement the {@code run_()} method to define what it supposed to do concurrently.
  *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
@@ -23,7 +26,8 @@ public abstract class RunnableConfiglet extends DefaultConfiglet implements Runn
     private Thread thread;
     
     /**
-      *  initializes Configlet with a logger, a start-configuration, a name and starts a new Thread 
+     *  Initializes Configlet with a logger, a start-configuration, a name and starts a new Thread
+     *
      * @param loggerParam
      * @param name the name of the configuration
      * @param data the configuration, expected to be a {@code Map<String, String>}
@@ -38,7 +42,7 @@ public abstract class RunnableConfiglet extends DefaultConfiglet implements Runn
 	}
 
     /**
-     * Calls {@code run_()}
+     * Calls {@code run_()} concurrently
      *
      * ensures we're synchronized
      * (required for sensible semantics of thread.interrupt during update)
@@ -84,6 +88,7 @@ public abstract class RunnableConfiglet extends DefaultConfiglet implements Runn
 
     /**
      * Returns the Thread used by this
+     *
      * @return the Thread used by this
      */
 	public synchronized Thread getThread() {

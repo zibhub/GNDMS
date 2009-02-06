@@ -59,7 +59,7 @@
 
 	
 	<!-- Compile infra, but not its test-files -->	
-	<target name="compile">
+	<target name="compile" description="Compiles infra">
 		<echo>Compiling infra's classes</echo>
 		<mkdir dir="${infra.classes.dest}"/>
 		<for param="jars">
@@ -130,14 +130,14 @@
 	</target>
 	
 	<!-- Creates jar-file containing infra's test-classes -->	
-	<target name="jar.test" depends="compile.test">
+	<target name="jar.test" depends="compile.test" description="Creates jar file gndms-infra-test.jar in 'extra/lib'">
 		<echo>Generating gndms-infra-test.jar</echo>
 		<jar destfile="${gndms-infra-test}" basedir="test-src"/>		
 	</target>
 		
 	
 	<!-- Creates jar-file containing infra's classes -->	
-	<target name="jar" depends="compile">
+	<target name="jar" depends="compile" description="Creates jar file gndms-infra.jar in 'extra/lib'">
 		<echo>Generating gndms-infra.jar</echo>
 		<jar destfile="${gndms-infra}" basedir="${infra.classes.dest}"/>		
 	</target>

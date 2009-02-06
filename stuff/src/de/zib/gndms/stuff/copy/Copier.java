@@ -101,7 +101,7 @@ public final class Copier {
 		}
 	}
 
-
+    
 	private static <T extends Cloneable> Method cloneMethod(final Class<T> clazzParam)
 		  throws NoSuchMethodException {
 		return clazzParam.getMethod("clone");

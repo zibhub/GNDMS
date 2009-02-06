@@ -4,11 +4,13 @@ import org.jetbrains.annotations.NotNull;
 import org.apache.commons.logging.Log;
 
 import java.io.Serializable;
-
+import de.zib.gndms.kit.config.OptionProvider;
 
 /**
- * ThingAMagic.
+ * A Configlet creates a new configuration object or updates the currently used one.
  *
+ * A configuration object (see {@link OptionProvider}) can be created by every arbitriary {@code serializable} source.
+ * 
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
  *
