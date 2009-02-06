@@ -8,7 +8,10 @@ import java.util.Iterator;
 
 
 /**
- * ThingAMagic.
+* This class holds a configuration in a map with methods to read the value of a chosen option
+*
+ * 
+*
 *
 * @author Stefan Plantikow<plantikow@zib.de>
 * @version $Id$
@@ -22,6 +25,11 @@ public class MapConfig extends AbstractConfig {
     private final Map<String, String> map;
 
 
+    /**
+     * Loads a new configuration.
+     *
+     * @param mapParam the new configuration, mapping the optionnames to their set values
+     */
     public MapConfig(final Map<String, String> mapParam) {
         super();
         map = Collections.unmodifiableMap(mapParam);

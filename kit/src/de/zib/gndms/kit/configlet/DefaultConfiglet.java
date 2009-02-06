@@ -67,8 +67,9 @@ public class DefaultConfiglet implements Configlet {
 	}
 
     /**
-     * Overrides used {@link MapConfig} with the new configuration. Method is synchronized.
-     * @param data the new configurations, expected to be a {@code Map<String, String>}
+     * Overrides used {@code Map} with the new configuration. Method is synchronized.
+     * @param data the new configurations,
+     * expected to be a {@code Map<String, String>}  mapping the {@code optionnames} to their {@code values}
      */
 	@SuppressWarnings({ "unchecked" })
 	private synchronized void configConfig(final Serializable data) {

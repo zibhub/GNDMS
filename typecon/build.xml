@@ -72,6 +72,8 @@
 	<path id="typecon.test.path">
 		<path refid="typecon.path"/>
 		<pathelement location="${gndms-shared-model-test}"/>
+		<pathelement location="${gndms-kit}"/>
+		<pathelement path="${args4j}"/>
 		<pathelement location="${gndms-typecon}"/>
 	</path>
 	

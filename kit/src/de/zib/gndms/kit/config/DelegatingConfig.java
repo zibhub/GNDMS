@@ -7,7 +7,7 @@ import java.util.Iterator;
 
 
 /**
- * ThingAMagic.
+ * This class stores a configuration-object
 *
 * @author Stefan Plantikow<plantikow@zib.de>
 * @version $Id$
@@ -16,7 +16,6 @@ import java.util.Iterator;
 */
 public class DelegatingConfig extends AbstractConfig {
     private final OptionProvider provider;
-
 
     public DelegatingConfig(final OptionProvider providerParam) {
         super();

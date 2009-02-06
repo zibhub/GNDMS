@@ -10,8 +10,25 @@ import java.util.Iterator;
 
 
 /**
- * ThingAMagic.
+ * A configuration-object with methods
+ * to convert the option values (being a String) to their appropriate types.
  *
+ * <p>
+ * In detail a class implementing this interface must define how to convert a String representing one of the following types:
+ * <ul>
+ *  <li> numercial value (Int,Long)</li>
+ *  <li> Boolean </li>
+ *  <li> File </li>
+ *  <li> ISN </li>
+ * <li> Enum</li>
+ * <li> ISO8601</li>
+ * <li> class</li>
+ * <li> dynamic array </li>
+ * </ul>
+ * to it's appropriate type
+ * </p>
+ *
+ * 
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
  *
@@ -28,7 +45,9 @@ public interface ConfigProvider extends OptionProvider {
     int getIntOption(@NotNull String name) throws MandatoryOptionMissingException;
 
     /**
-     * Returns the value for the chosen option set in the current configuration. If it has not been set, a default value will be returned
+     * Returns the value for the chosen option set in the current configuration.
+     * If it has not been set, a default value will be returned
+     *
      * @param name the name of the option
      * @param def the default-value, needed if no value has been set in the current configuration
      * @return either the value set in the current configuration or a default value if no value has been set 
