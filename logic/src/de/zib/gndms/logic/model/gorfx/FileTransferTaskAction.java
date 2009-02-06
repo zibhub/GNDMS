@@ -130,11 +130,11 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
     private void newTransfer( ) {
 
         transferState = new FTPTransferState();
-        transferState.setTransferId( getModel().getId());
+        transferState.setTransferId( getModel().getId() );
     }
 
     
     private void failWith( Exception e ) {
-        fail( new IllegalStateException( e.getMessage(), e ) );
+        fail( new IllegalStateException( getModel().getDescription() + " failure " +  e.getMessage(), e ) );
     }
 }

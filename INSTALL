@@ -145,6 +145,7 @@ When describing the dependencies of a compilation unit, I assume the following
 - servlet-api: extra/tools-lib/servlet-api*.jar
 - cos: extra/tools-lib/cos-*.jar
 - collections: extras/tools-lib/google-collect*.jar
+- httpcore: extras/tools-lib/http*.jar
 - guice: extra/tools-lib/guice*.jar asm*.jar cglib*.jar
 - GROOVY: extra/tools-lib/groovy*.jar
   If you use IntelliJ, use the global library GROOVY instead.
@@ -162,6 +163,10 @@ When describing the dependencies of a compilation unit, I assume the following
 DETAILED BUILD INSTRUCTIONS
 ---------------------------
 
+If you do a full build, do not load the globus environment during compile as 
+this may cause weird groovy errors or set CLASSPATH='' before compiling.  
+However it needs to be loaded for deployment.
+
 
   0) Excute in services/
 
@@ -172,10 +177,12 @@ DETAILED BUILD INSTRUCTIONS
 
   1) Execute sync.sh in the projects' top level directory. This will create all
 	 necessary symlinks in the services' lib directories. Without doing this,
-	 you're going to miss required jar files and the services will not compile correctly.
+	 you're going to miss required jar files and the services will not compile 
+	correctly.
 
-	 (Developers: When adding/changing used libs, make sure to run sync.sh again; when
-	  deleting libs, make sure to kill the corresponding symlinks in servics/*/lib)
+	 (Developers: When adding/changing used libs, make sure to run sync.sh again; 
+	  when deleting libs, make sure to kill the corresponding symlinks in 
+	  servics/*/lib)
 
 
 
@@ -234,8 +241,9 @@ DETAILED BUILD INSTRUCTIONS
      Sources: typecon/src (resp. test)
      Output: typecon/gndms-typecon/production (rest. test) classes
              extra/lib/gndms-typecon.jar containing the contents of production/
-     Dependencies: GROOVY, J2EE, gorfx-stubs, stuff,gndms-shared-model, annotations, joda-time,
-                   gt4, testng, and openjpa (due to javac compiler bug 6365854)
+     Dependencies: GROOVY, J2EE, gorfx-stubs, stuff,gndms-shared-model, annotations, 
+		   joda-time, gt4, testng, 
+		   and openjpa (due to javac compiler bug 6365854)
 
 
 
@@ -243,9 +251,9 @@ DETAILED BUILD INSTRUCTIONS
      Sources: infra/src (resp. test)
      Output: infra/gndms-infra/production (resp. test) classes
             extra/lib/gndms-infra.jar containing the contents of production/
-     Dependencies: GROOVY, J2EE, annotations, gndms-logic, stuff, gndms-shared-model
-                   commons, derby, cos, servlet-api, jetty, gt4, testng, joda-time,
-                   gndms-kit, jaxb
+     Dependencies: GROOVY, J2EE, annotations, gndms-logic, stuff, 
+		   gndms-shared-model, commons, derby, cos, servlet-api, jetty, 
+		   gt4, testng, joda-time, gndms-kit, jaxb, httpcore
 
     (In IntelliJ: Use Build/Build Jars.. to build the jar on Make Project)
 
@@ -276,8 +284,8 @@ DETAILED BUILD INSTRUCTIONS
   service with the following dependencies:
 
   J2EE, groovy, annotations, "servicename"-stubs,
-  gndms-infra, gndms-kit, gndms-logic, gndms-shared-model, gndms-stuff, joda-time,
-  SOURCES, all non-symlinks in service/ServiceName/lib,  gt4
+  gndms-infra, gndms-kit, gndms-logic, gndms-shared-model, gndms-stuff, 
+  joda-time, SOURCES, all non-symlinks in service/ServiceName/lib,  gt4
 
   GORFX also depends on gndms-typecon, DSpace, args4j, DSpace-Stubs and jaxb.
   
@@ -303,10 +311,10 @@ THINGS TO DO WHEN YOUR BUILD FAILS
 
 3) Reexecute sync.sh
 
-4) Developers: If you cant deploy (i.e. globus-start-container balks with one of
-   those 40+-lines stacktraces) it's likely that you either miss some jars or that
-   introduce created an invalid jndi-config.xml which can happen but is easy
-   enough to fix: Just make sure there are neither duplicate service nor
+4) Developers: If you cant deploy (i.e. globus-start-container balks with one 
+   of those 40+-lines stacktraces) it's likely that you either miss some jars 
+   or that introduce created an invalid jndi-config.xml which can happen but is
+   easy enough to fix: Just make sure there are neither duplicate service nor
    resourceHome entries in any of the jndi-config.xml files.
 
 5) Do not use the character ':' in your directory path (it will mess up your
@@ -601,4 +609,5 @@ encapsulates JPA transaction processing inside GNDMS).
 CONFIGURATION
 -------------
                                  
-Edit and run the apropriate configuration script from scripts/ via the enabled monitor.
+Edit and run the apropriate configuration script from scripts/ via the enabled 
+monitor.

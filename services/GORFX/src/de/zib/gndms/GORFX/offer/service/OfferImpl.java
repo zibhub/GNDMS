@@ -10,6 +10,7 @@ import de.zib.gndms.model.gorfx.Task;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.globus.wsrf.ResourceKey;
 import org.jetbrains.annotations.NotNull;
+import org.apache.log4j.Logger;
 
 import javax.persistence.EntityManager;
 import java.rmi.RemoteException;
@@ -22,6 +23,7 @@ import java.rmi.RemoteException;
  */
 public class OfferImpl extends OfferImplBase {
 
+    private static final Logger logger = Logger.getLogger(OfferImpl.class);
 
     public OfferImpl() throws RemoteException {
         super();
@@ -34,9 +36,12 @@ public class OfferImpl extends OfferImplBase {
             @NotNull final ExtOfferResourceHome home = (ExtOfferResourceHome) getResourceHome( );
             @NotNull final OfferResource ores = home.getAddressedResource();
             WidAux.initWid(ores.getCachedWid());
+            WidAux.initGORFXid( ores.getOrqCalc().getORQArguments().getActId() );
             @NotNull final Task task = ores.accept( );
             @NotNull final ExtTaskResourceHome thome = ( ExtTaskResourceHome) getTaskResourceHome();
             @NotNull final EntityManager em = thome.getEntityManagerFactory().createEntityManager();
+            logger.debug( "accepted" );
+
 
             // Persist task object
             persistTask(task, em);
@@ -51,8 +56,8 @@ public class OfferImpl extends OfferImplBase {
             }
             catch (RuntimeException e) {
                 try {
+                    logger.error( "Runtime Exception, removing task", e);
                     removeTask(task, em);
-
                 }
                 finally {
                     // but keep causing exception if even that fails
@@ -60,9 +65,13 @@ public class OfferImpl extends OfferImplBase {
                 }
             }
         } catch ( Exception e ) {
+            logger.error( "Exception occured", e);
             throw new RemoteException(e.getMessage(), e);
         }
-        finally { WidAux.removeWid(); }
+        finally {
+            WidAux.removeGORFXid(); 
+            WidAux.removeWid();
+        }
     }
 
 

@@ -2,6 +2,38 @@
 
 
 
+0.2.8 beta: "Kyle"
+
+
+
+@Everybody:
+* [NEW] Explicitely nameable directories for SliceKinds
+* [NEW] Configurable UNIX permissions for slice directories (per SliceKind)
+* [CHANGED] Much better and more verbose logging messages
+* [FIX] Small fix concerning string escaping of moni call XXX arguments
+* [FIX] Numerous fixes of smaller bugs regarding GORFX task execution
+
+
+@Providers:
+* [CHANGED] Exchanged DateTime with String in TimeConstraints
+
+
+@DMS:
+* [CHANGED] C3Catalog is now read via http using apache http core components and http client
+* [FIX] RefreshSystemAction did not cause a proper reload of C3Catalog.  Fixed.
+* [NEW] Support for calling some (non-sensitive) actions via the webservice's callMaintenanceAction method (GORFX and DSpace)
+* [NEW] Remote version check via webservice
+
+
+@Developers:
+* [CHANGED] Seriously improved ant file 
+* [FIX] sync.sh missed some jars
+* [CHANGED] Updated version of joda-time to 1.6
+* [CHANGED] Updated version of open-jpa to 2.0-SNAPSHOT
+
+
+
+
 0.2.2 alpha: "Marcelino"
 
 @Providers:

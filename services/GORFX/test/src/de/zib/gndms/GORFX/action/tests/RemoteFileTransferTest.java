@@ -1,4 +1,4 @@
-package de.zib.gndms.GORFX.tests.action;
+package de.zib.gndms.GORFX.action.tests;
 
 import de.zib.gndms.model.gorfx.types.io.FileTransferORQPropertyReader;
 import de.zib.gndms.model.gorfx.types.io.FileTransferORQConverter;

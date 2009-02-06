@@ -619,24 +619,6 @@ Defining a user is really simple. All you need to do is add user's names to the 
 MISSING: adding ProviderStageInXMLImpl to ParmFormatAux
 </pre>
 </div>
-<div title="FP: add generic mechanism to add abritray tasks" modifier="MaikJorra" created="200901271030" modified="200901271030" tags="task" changecount="5" tt_scope="DMS" tt_module="GORFX" tt_priority="Low" tt_status="OnHold">
-<pre>Create a way to treat tasks which ORQ and result type aren't well known wrt the c3grid XSD.</pre>
-</div>
-<div title="FP: add some more maintenance actions" modifier="MaikJorra" created="200901271023" modified="200901271024" tags="task" changecount="7" tt_module="multi" tt_priority="Low" tt_status="OnHold">
-<pre>Add som actions to gather information about the running WS and its config
-</pre>
-</div>
-<div title="FP: maybe sort GORFX tasks" modifier="MaikJorra" created="200901271027" modified="200901271027" tags="task" changecount="5" tt_module="GORFX" tt_scope="DMS" tt_priority="Low" tt_status="OnHold">
-<pre>Possible create a package for each task containing: 
-
-  ORQ
-  ORQCalc
-  IO - classes 
-  the task action itself</pre>
-</div>
-<div title="FP: rewrite task action" modifier="MaikJorra" created="200901271021" modified="200901271023" tags="task" changecount="7" tt_module="GORFX" tt_priority="Low" tt_status="OnHold">
-<pre>The tiddler 'New Task' doesn't yet exist. Double-click to create it</pre>
-</div>
 <div title="FlorianSchintke" modifier="MaikJorra" created="200811251309" tt_status="Pending" tt_user="MaikJorra" tt_priority="Medium" tt_module="GORFX" tt_scope="DMS" changecount="11">
 <pre>&lt;&lt;TTReportView DisplayFields:&quot;Title,Priority,Status,Scope,Module,User&quot; OrderBy:&quot;Status,asc&quot; User:&quot;FlorianSchintke&quot;&gt;&gt;</pre>
 </div>
@@ -679,9 +661,9 @@ extra/lib/DSpace.jar and serices/GORFX/GORFX.jar are missing
 [[Getting Started with TeamTasks]]
 [[Release Notes]]
 [[Migrating to the latest version]]
-&lt;&lt;slider chkSliderOptionsPanel UserDefinitions 'Users »' 'A list of users'&gt;&gt;
-&lt;&lt;slider chkSliderOptionsPanel TaskViews 'Task views »' 'A selection of task views'&gt;&gt;
-&lt;&lt;slider chkSliderOptionsPanel Customise 'Customise »' 'Edit and fiddle and poke to create a system that works best for you'&gt;&gt;
+&lt;&lt;slider chkSliderOptionsPanel UserDefinitions 'Users &#187;' 'A list of users'&gt;&gt;
+&lt;&lt;slider chkSliderOptionsPanel TaskViews 'Task views &#187;' 'A selection of task views'&gt;&gt;
+&lt;&lt;slider chkSliderOptionsPanel Customise 'Customise &#187;' 'Edit and fiddle and poke to create a system that works best for you'&gt;&gt;
 [[about|About TeamTasks]]
 [[download|index.html]]
 {{meta{
@@ -1309,9 +1291,9 @@ version.extensions.TTReportViewPlugin = {installed:true};
 |Bloggs, Fred |$12000.00 |1353 |01.20 |6.156Mb |08/17/2003 05:43 |
 |Turvey, Kevin |$191200.00 |2342 |-33 |1b |02/05/1979 |
 |Mbogo, Arnold |$32010.12 |2755 |-21.673 |1.2Gb |09/08/1998 |
-|Shakespeare, Bill |�122000.00|3211 |6 |33.22Gb |12/11/1961 |
-|Shakespeare, Hamlet |�9000 |9005 |-8 |3Gb |01/01/2002 |
-|Fitz, Marvin |�3300.30 |5554 |+5 |4Kb |05/22/1995 |
+|Shakespeare, Bill |&#65533;122000.00|3211 |6 |33.22Gb |12/11/1961 |
+|Shakespeare, Hamlet |&#65533;9000 |9005 |-8 |3Gb |01/01/2002 |
+|Fitz, Marvin |&#65533;3300.30 |5554 |+5 |4Kb |05/22/1995 |
 
 ***/
 // /%
@@ -1346,7 +1328,7 @@ config.tableSorting = {
 		c.fn = c.sortAlpha; 
 		if(!isNaN(Date.parse(itm)))
 			c.fn = c.sortDate; 
-		else if(itm.match(/^[$|�|�|\+|\-]{0,1}\d*\.{0,1}\d+$/)) 
+		else if(itm.match(/^[$|&#65533;|&#65533;|\+|\-]{0,1}\d*\.{0,1}\d+$/)) 
 			c.fn = c.sortNumber; 
 		else if(itm.match(/^\d*\.{0,1}\d+[K|M|G]{0,1}b$/)) 
 			c.fn = c.sortFile; 

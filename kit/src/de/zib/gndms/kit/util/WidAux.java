@@ -17,8 +17,7 @@ public class WidAux {
 
 
     public static void removeWid() {
-        MDC.remove("c3wid");
-        NDC.pop();
+        removeId("c3wid");
     }
 
 
@@ -28,11 +27,37 @@ public class WidAux {
 
 
     public static void initWid(final String cachedWid) {
-        if (cachedWid == null)
+        initId("c3wid", cachedWid);
+    }
+
+
+    public static void removeGORFXid( )  {
+        removeId( "gorfxid" );
+    }
+
+    
+    public static void initGORFXid(final String id) {
+        initId("gorfxid", id);
+    }
+
+
+    public static void initId( final String id, final String val ) {
+
+        if ( id  == null || val == null )
             return;
         else {
-            MDC.put("c3wid", cachedWid);
-            NDC.push("c3wid:" + cachedWid);
+            MDC.put( id, val );
+            NDC.push( id + ":" + val);
         }
+    }
+
+    public static void removeId( final String id ) {
+        MDC.remove( id );
+        NDC.pop();
+    }
+
+
+    public static String getId( final String id ) {
+        return (String) MDC.get( id );
     }
 }

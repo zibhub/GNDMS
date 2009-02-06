@@ -4,9 +4,11 @@ import de.zib.gndms.model.gorfx.FTPTransferState;
 import org.globus.ftp.*;
 import org.globus.ftp.exception.ClientException;
 import org.globus.ftp.exception.ServerException;
+import org.globus.ftp.exception.FTPException;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -67,13 +69,25 @@ public class GNDMSFileTransfer {
     public void prepareTransfer( ) throws ServerException, IOException, ClientException {
 
         if( sourceClient == null )
-            throw new IllegalStateException( "no source client provided" );
+            throw new IllegalStateException( enrichExceptionMsg( "no source client provided" ) );
 
-        if( sourcePath != null )
-            sourceClient.changeDir( sourcePath );
+        try {
+            if( sourcePath != null )
+                sourceClient.changeDir( sourcePath );
 
-        if( files == null || files.size( ) == 0  )
-            fetchFileListing();
+            if( files == null || files.size( ) == 0  )
+                fetchFileListing();
+        } catch ( ServerException ex ) {
+            ex.setCustomMessage( enrichExceptionMsg( ex.getMessage() ) );
+            throw ex;
+        } catch ( ClientException ex ) {
+            ex.setCustomMessage( enrichExceptionMsg( ex.getMessage() ) );
+            throw ex;
+        } catch ( IOException ex ) {
+            IOException ioe = new IOException( enrichExceptionMsg( ex.getMessage() ) );
+            ioe.setStackTrace( ex.getStackTrace() );
+            throw ioe;
+        }
     }
 
 
@@ -83,18 +97,33 @@ public class GNDMSFileTransfer {
      */
     public long estimateTransferSize( ) throws IOException, ServerException, ClientException {
 
-        prepareTransfer( );
+        String nm = null;
+        try {
+            prepareTransfer( );
 
-        sourceClient.setType( Session.TYPE_ASCII );
+            sourceClient.setType( Session.TYPE_ASCII );
 
-        Set<String> src = files.keySet();
-        long size = 0;
-        for( String s : src ) {
-            // todo evaluate usage of msld command
-            size += sourceClient.getSize( s );
+            Set<String> src = files.keySet();
+            long size = 0;
+
+            for( String s : src ) {
+                // todo evaluate usage of msld command
+                nm = s;
+                size += sourceClient.getSize( s );
+            }
+
+            return size;
+        } catch ( ServerException ex ) {
+            ex.setCustomMessage( enrichExceptionMsg( ex.getMessage(), nm ) );
+            throw ex;
+        } catch ( ClientException ex ) {
+            ex.setCustomMessage( enrichExceptionMsg( ex.getMessage(), nm ) );
+            throw ex;
+        } catch ( IOException ex ) {
+            IOException ioe = new IOException( enrichExceptionMsg( ex.getMessage(), nm ) );
+            ioe.setStackTrace( ex.getStackTrace() );
+            throw ioe;
         }
-
-        return size;
     }
 
 
@@ -115,35 +144,48 @@ public class GNDMSFileTransfer {
      */
     public void performPersistentTransfer( @NotNull PersistentMarkerListener plist ) throws ServerException, IOException, ClientException {
 
-        prepareTransfer( );
+        String nm = null;
+        try {
+            prepareTransfer( );
 
-        if( destinationClient == null || files == null )
-            throw new IllegalStateException( );
+            if( destinationClient == null || files == null )
+                throw new IllegalStateException( );
 
-        setupClient ( sourceClient );
+            setupClient ( sourceClient );
 
-        setupClient ( destinationClient );
-        destinationClient.changeDir( destinationPath );
+            setupClient ( destinationClient );
+            destinationClient.changeDir( destinationPath );
 
-        sourceClient.setActive( destinationClient.setPassive() );
+            sourceClient.setActive( destinationClient.setPassive() );
 
-        // todo beautify the code below
-        boolean resume = plist.hasCurrentFile();
-        String  rfn = plist.getCurrentFile();
+            // todo beautify the code below
+            boolean resume = plist.hasCurrentFile();
+            String  rfn = plist.getCurrentFile();
 
-        Set<String> keys = files.keySet();
-        for( String fn : keys ) {
+            Set<String> keys = files.keySet();
+            for( String fn : keys ) {
+                nm = fn;
+                if( resume && fn.equals( rfn ) ) {
+                    resume = false;
+                    resumeSource( plist.getTransferState() );
+                }
 
-            if( resume && fn.equals( rfn ) ) {
-                resume = false;
-                resumeSource( plist.getTransferState() );
+                if( !resume ) {
+                    plist.setCurrentFile( fn );
+                    String dfn = files.get( fn );
+                    sourceClient.extendedTransfer( fn, destinationClient, ( dfn == null ? fn : dfn ), plist );
+                }
             }
-
-            if( !resume ) {
-                plist.setCurrentFile( fn );
-                String dfn = files.get( fn );
-                sourceClient.extendedTransfer( fn, destinationClient, ( dfn == null ? fn : dfn ), plist );
-            }
+        } catch ( ServerException ex ) {
+            ex.setCustomMessage( enrichExceptionMsg( ex.getMessage(), nm ) );
+            throw ex;
+        } catch ( ClientException ex ) {
+            ex.setCustomMessage( enrichExceptionMsg( ex.getMessage(), nm ) );
+            throw ex;
+        } catch ( IOException ex ) {
+            IOException ioe = new IOException( enrichExceptionMsg( ex.getMessage(), nm ) );
+            ioe.setStackTrace( ex.getStackTrace() );
+            throw ioe;
         }
     }
 
@@ -232,5 +274,43 @@ public class GNDMSFileTransfer {
                 files.put( fi.getName(), null );
             }
         }
+    }
+
+
+    private String enrichExceptionMsg( String msg ) {
+        return enrichExceptionMsg( msg, null );
+    }
+
+
+    private String enrichExceptionMsg( String msg, String fn ) {
+
+        StringWriter nmsg = new StringWriter(  );
+        nmsg.write( "Tansfer" );
+        if( fn != null ) {
+            nmsg.write( " with file " +fn );
+        }
+
+        nmsg.write( " from " +
+            printWithNull( sourceClient )
+            +  printWithNull( sourcePath ) );
+
+        nmsg.write( " to " +
+            printWithNull( destinationClient )
+                 + printWithNull( destinationPath ) );
+
+        nmsg.write( "\nan Exception occured: " + msg );
+
+        return nmsg.toString( );
+    }
+
+    static private String printWithNull( String o ) {
+        return o == null ? "<null>" : o.toString() ;
+    }
+
+    static private String printWithNull( GridFTPClient o ) {
+        if( o == null )
+            return "<null>";
+
+        return o.getHost() + ":" +  o.getPort();
     }
 }

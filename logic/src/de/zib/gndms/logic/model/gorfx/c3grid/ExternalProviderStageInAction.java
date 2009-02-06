@@ -77,10 +77,12 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
 	                if (result > 127) {
 					    getLog().debug("Waiting for potential death of container...");
 		                Sleeper.sleepUninterruptible(GLOBUS_DEATH_DURATION);
-	                }	                
-                    fail( new IllegalStateException(
-                        "Stagung failed! Staging script returned unexpected exit code: " + result +
-                            "\nScript output was:\n" + errRecv.toString() ) );
+	                }
+                    String log = "Stagung failed! Staging script returned unexpected exit code: " + result +
+                            "\nScript output was:\n" + errRecv.toString();
+
+                    trace( log, null ) ;
+                    fail( new IllegalStateException( log ) );
             }
         }
         catch (RuntimeException e) {

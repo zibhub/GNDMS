@@ -62,13 +62,16 @@ public abstract class RegularlyRunnableConfiglet extends RunnableConfiglet {
 		try { Thread.sleep(initDelay); }
 		catch (InterruptedException e) { /* intentional */ }
 		while (! stop) {
-			threadRun();
+			threadRun_();
 			try { Thread.sleep(delay); }
 			catch (InterruptedException e) { /* intentional */ }
 		}
 
 	}
 
+	private synchronized void threadRun_() { threadRun(); }
+
+	
     /**
      *  This method is invoked by {@link RegularlyRunnableConfiglet#run_()}'s loop, will be executed concurrently  
      */

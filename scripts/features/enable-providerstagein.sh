@@ -1,7 +1,7 @@
 enable_providerstagein() {
-RW="750"
+RW="700"
 
-moni call -v .dspace.SetupSliceKind "sliceKind:'http://www.c3grid.de/G2/SliceKind/Staging'; sliceKindMode:$RW; uniqueDirName:stagingSlices; mode: $MODE"
+moni call -v .dspace.SetupSliceKind "sliceKind:'http://www.c3grid.de/G2/SliceKind/Staging'; sliceKindMode:$RW; uniqueDirName:RW; mode: $MODE"
 
 moni call -v .dspace.SetupSubspace  "subspace:'{http://www.c3grid.de/G2/Subspace}ProviderStaging'; \
 	path:'$STAGING_AREA_PATH'; 

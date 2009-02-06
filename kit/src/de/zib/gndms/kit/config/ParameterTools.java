@@ -339,7 +339,7 @@ public final class ParameterTools {
                 }
                 builder.append(key);
                 builder.append(": '");
-                final String escaped = val.replaceAll("'", "\\'");
+                final String escaped = val.replaceAll("'", "\\\'");
                 builder.append(escaped);
                 builder.append('\'');
             }

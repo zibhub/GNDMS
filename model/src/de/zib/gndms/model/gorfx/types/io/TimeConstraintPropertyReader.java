@@ -25,9 +25,11 @@ public class TimeConstraintPropertyReader extends AbstractPropertyReader<TimeCon
 
     public void read() {
 
-        DateTime min = PropertyReadWriteAux.readISODateTime( getProperties(), SfrProperty.TIME_MIN.key );
+        // DateTime min = PropertyReadWriteAux.readISODateTime( getProperties(), SfrProperty.TIME_MIN.key );
+         String min = getProperties().getProperty( SfrProperty.TIME_MIN.key );
 
-        DateTime max = PropertyReadWriteAux.readISODateTime( getProperties(), SfrProperty.TIME_MAX.key );
+        // DateTime max = PropertyReadWriteAux.readISODateTime( getProperties(), SfrProperty.TIME_MAX.key );
+        String max = getProperties().getProperty( SfrProperty.TIME_MAX.key );
 
         if( min == null && max == null ) {
             deleteProduct( );
