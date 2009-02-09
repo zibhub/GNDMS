@@ -167,6 +167,17 @@ If you do a full build, do not load the globus environment during compile as
 this may cause weird groovy errors or set CLASSPATH='' before compiling.  
 However it needs to be loaded for deployment.
 
+The quick way to do things is executing 
+
+ant clean.all
+ant compile
+
+in the toplevel directory of the source package ($C3GRID_SOURCE).
+
+If you want to do things step-by-step or understand how the project is actually build,
+continue with the really detailed build instructions below.
+
+
 
   0) Excute in services/
 
