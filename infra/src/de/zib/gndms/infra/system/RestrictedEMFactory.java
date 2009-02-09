@@ -3,10 +3,14 @@ package de.zib.gndms.infra.system;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.persistence.Cache;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.QueryBuilder;
+import java.util.Collections;
 import static java.util.Collections.unmodifiableMap;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -65,4 +69,17 @@ public final class RestrictedEMFactory implements EntityManagerFactory {
 	public Map getParamMap() {
 		return paramMap;
 	}
+
+
+	public Cache getCache() {return factory.getCache();}
+
+
+	public Set<String> getSupportedProperties() {return factory.getSupportedProperties();}
+
+
+	public QueryBuilder getQueryBuilder() {return factory.getQueryBuilder();}
+
+
+	@SuppressWarnings({ "unchecked" })
+	public Map getProperties() {return Collections.unmodifiableMap(factory.getProperties());}
 }
