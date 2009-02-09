@@ -224,11 +224,16 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     public AbstractTask call() throws RuntimeException {
         try {
             final AbstractTask task = getModel();
-            if (task != null) 
+            if (task != null)  {
                 WidAux.initWid(getModel().getWid());
+                if( task.getOrq() != null ) {
+                    WidAux.initGORFXid( ( (AbstractORQ) task.getOrq()).getActId() );
+                }
+            }
             return super.call();    // Overridden method
         }
         finally {
+            WidAux.removeGORFXid();
             WidAux.removeWid();
         }
     }
@@ -346,13 +351,16 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
                 newModel.setDone(true);
                 em.getTransaction().commit();
                 setModelAndBackup(newModel);
-            }
-            catch (RuntimeException e) {
-                throw e;
+            }  catch (RuntimeException e) {
+                trace( "Non throwable exception: ", e );
             }
             finally {
-                if (em.getTransaction().isActive())
-                    em.getTransaction().rollback();
+                try{
+                    if (em.getTransaction().isActive())
+                        em.getTransaction().rollback();
+                } catch ( RuntimeException e ) {
+                    trace( "Non throwable exception: ", e );
+                }
             }
         }
     }

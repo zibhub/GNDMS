@@ -3,6 +3,7 @@ package de.zib.gndms.kit.config;
 /**
  * Thrown by CommandAction.getOption()
  *
+ * @see
  * @see logic.CommandAction
  * 
  * @author Stefan Plantikow <plantikow@zib.de>

@@ -265,7 +265,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
     }
 
 
-	public void reloadConfiglets(final EntityManagerFactory emf) {
+	public synchronized void reloadConfiglets(final EntityManagerFactory emf) {
 		ConfigletState[] states;
 		EntityManager em = emf.createEntityManager();
 		try {
@@ -278,7 +278,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 
 
 	@SuppressWarnings({ "unchecked", "JpaQueryApiInspection", "MethodMayBeStatic" })
-	private ConfigletState[] loadConfigletStates(final EntityManager emParam) {
+	private synchronized ConfigletState[] loadConfigletStates(final EntityManager emParam) {
 		final ConfigletState[] states;
 		emParam.getTransaction().begin();
 		try {
@@ -297,7 +297,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 	}
 
 
-	private void createOrUpdateConfiglets(final ConfigletState[] statesParam) {
+	private synchronized void createOrUpdateConfiglets(final ConfigletState[] statesParam) {
 		for (ConfigletState configletState : statesParam) {
 			final String name = configletState.getName();
 			if (configlets.containsKey(name)) {
@@ -312,7 +312,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 
     
 	@SuppressWarnings({ "FeatureEnvy" })
-	private Configlet createConfiglet(final ConfigletState configParam) {
+	private synchronized Configlet createConfiglet(final ConfigletState configParam) {
 		try {
 			final Class<? extends Configlet> clazz = Class.forName(configParam.getClassName()).asSubclass(Configlet.class);
 			final Configlet instance = clazz.newInstance();
@@ -333,7 +333,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 
 
 	@SuppressWarnings({ "SuspiciousMethodCalls" })
-	private void shutdownOldConfiglets(final EntityManager emParam) {
+	private synchronized void shutdownOldConfiglets(final EntityManager emParam) {
 		Set<String> set = configlets.keySet();
 		Object[] keys = set.toArray();
 		for (Object name : keys) {
@@ -356,7 +356,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 	}
 
 
-	void shutdownConfiglets() {
+	synchronized void shutdownConfiglets() {
 		for (Configlet configlet : configlets.values())
 		    try {
 			    configlet.shutdown();

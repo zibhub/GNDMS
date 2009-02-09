@@ -13,7 +13,6 @@ for SERVICE in services/* ; do
   echoEval mkdir -p $SERVICE/test/lib
   echoEval mkdir -p $SERVICE/test/src
   echoEval ln -sf ../../../../../../typecon/shared_service_src/shared $SERVICE/src/de/zib/gndms
-  echoEval find $SERVICE -type f -name \'*.gar\' -exec ln -sf \'{}\' $PWD \\\;
   for jar in extra/tools-lib/* ; do
     echoEval ln -sf "../../../$jar" "$SERVICE/lib" 
   done
@@ -22,6 +21,10 @@ for SERVICE in services/* ; do
     jar="extra/lib/gndms-$jarname.jar"
     echoEval ln -sf "../../../$jar" "$SERVICE/lib" 
   done
+  done
+
+for garname in services/* ; do
+	echoEval ln -sf $garname/c3grid_${garname##*/}.gar $PWD
 done
 # link DSpace.jar to GORFX
 jar="extra/lib/DSpace.jar"

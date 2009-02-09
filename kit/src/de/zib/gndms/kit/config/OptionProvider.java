@@ -4,8 +4,12 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
- * ThingAMagic.
+ * An Interface for an configuration Object. <br>
  *
+ * The value set for an option is stored as a String.
+ * A {@code getOption(String optionname)} method is used to get the value set for the option {@code optionname}
+ * in a current loaded configuration.
+ *  
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
  *
@@ -15,6 +19,7 @@ public interface OptionProvider extends Iterable<String> {
 
     /**
      * Checks if the current used configuration has a specific option
+     * 
      * @param name the name of the option
      * @return true if the used configuration has specified a value for this option
      */
@@ -22,6 +27,7 @@ public interface OptionProvider extends Iterable<String> {
 
     /**
      * Returns the String set in the current configuration for a specific option
+     *
      * @param nameParam the name of the option
      * @return the String set in the current configuration for a specific option
      */
@@ -29,6 +35,7 @@ public interface OptionProvider extends Iterable<String> {
 
     /**
      * Returns the value set in the current configuration for the chosen option
+     *
      * @param nameParam the name of the option
      * @return  the value set in the current configuration
      * @throws MandatoryOptionMissingException if the configuration has not set the option
@@ -37,6 +44,7 @@ public interface OptionProvider extends Iterable<String> {
 
     /**
      * Returns the value for the chosen option set in the current configuration. If it has not been set, a default value will be returned
+     *
      * @param name the name of the option
      * @param def the default-value, needed if no value has been set in the current configuration
      * @return either the value set in the current configuration or a default value if no value has been set

@@ -74,6 +74,7 @@ public class GORFXImpl extends GORFXImplBase {
 
 	        StringWriter wr = new StringWriter();
 	        AxisTypeFromToXML.toXML(wr, offerRequestArguments, false, true);
+            wr.write( "\nassigned GORFXId: " + orqr.getID() );
 	        logger.info("ORQ is: " + wr.toString());
 
             return home.getResourceReference( key ).getEndpointReference();

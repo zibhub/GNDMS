@@ -3,8 +3,8 @@ package de.zib.gndms.shared;
 import org.jetbrains.annotations.NotNull;
 import org.apache.axis.types.Token;
 import org.apache.axis.types.NormalizedString;
-import org.apache.log4j.MDC;
 import de.zib.gndms.model.common.ModelUUIDGen;
+import de.zib.gndms.kit.util.WidAux;
 import types.ContextT;
 import types.ContextTEntry;
 
@@ -58,6 +58,6 @@ public class ContextTAux {
 
     public static void initWid(final ModelUUIDGen gen, final ContextT contextParam) {
         String id = computeWorkflowId(gen, contextParam);
-        MDC.put("c3wid", id);
+        WidAux.initWid( id );
     }
 }
