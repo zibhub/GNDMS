@@ -181,7 +181,7 @@ continue with the really detailed build instructions below.
 
   0) Excute in services/
 
-     for i in * ; do cd $i && ( ant compileStubs ) ; done
+     for i in * ; do ( cd $i && ant compileStubs ) ; done
              
 	 (If you ever want to delete all stubs, simply remove services/*/build/*)
 	
