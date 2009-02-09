@@ -10,10 +10,23 @@ import org.globus.wsrf.impl.security.authorization.NoAuthorization;
 import org.globus.wsrf.utils.AddressingUtils;
 
 import org.globus.axis.util.Util;
-import org.globus.delegation.DelegationUtil;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 
+import org.globus.delegation.DelegationUtil;
+import org.globus.delegation.DelegationConstants;
+
+
+import org.globus.wsrf.encoding.ObjectSerializer;
+
+import org.globus.wsrf.impl.security.util.AuthUtil;
+
 import java.security.cert.X509Certificate;
+
+import org.globus.gsi.GlobusCredential;
+
+import javax.xml.namespace.QName;
+
+import java.io.FileWriter;
 
 /**
  * @author Maik Jorra <jorra@zib.de>
@@ -37,16 +50,19 @@ public class DelClient extends AbstractApplication {
 
     public void run() throws Exception {
 
+        // aquire cert chain
         ClientSecurityDescriptor desc = new ClientSecurityDescriptor();
 
 //        desc.setGSITransport( (Integer) Constants.ENCRYPTION );
-        desc.setGSITransport( (Integer) Constants.SIGNATURE );
-        Util.registerTransport();
-        desc.setAuthz( NoAuthorization.getInstance() );
 
         System.out.println( "connecting to service: " + uri );
         EndpointReferenceType delegEpr = AddressingUtils.createEndpointReference( uri, null);
         System.out.println( "epr: " + delegEpr );
+
+        desc.setGSITransport( (Integer) Constants.SIGNATURE );
+        Util.registerTransport();
+        desc.setAuthz( NoAuthorization.getInstance() );
+        
         X509Certificate[] certs = DelegationUtil.getCertificateChainRP( delegEpr, desc );
 
         if( certs == null  )
@@ -56,5 +72,10 @@ public class DelClient extends AbstractApplication {
         System.out.println( "Cert cnt: " + len );
         if( len > 0 )
         System.out.println( certs[0] );
+
+
+
+        //  load global cert
+        
     }
 }
