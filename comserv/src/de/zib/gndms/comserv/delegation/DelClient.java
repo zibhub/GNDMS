@@ -40,6 +40,9 @@ public class DelClient extends AbstractApplication {
     @Option( name="-uri", required=true, usage="URL of GORFX-Endpoint", metaVar="URI" )
     protected String uri;
 
+    @Option( name="-proxyfile", usage="grid-proxy-file to lead", metaVar="proxy-file" )
+    protected String proxyFile;
+
 
     public static void main(String[] args) throws Exception {
         
@@ -74,8 +77,31 @@ public class DelClient extends AbstractApplication {
         System.out.println( certs[0] );
 
 
-
         //  load global cert
-        
+        GlobusCredential credential = null;
+        if (proxyFile == null) {
+            credential = GlobusCredential.getDefaultCredential();
+        } else {
+            credential = new GlobusCredential(proxyFile);
+        }
+        System.out.println( credential );
+
+        // get delegate:
+        int tt = 600;
+        EndpointReferenceType delegatedCredEPR = DelegationUtil.delegate( uri, credential, certs[0], tt, true, desc);
+
+        System.out.println("Delegated credential EPR:\n" + delegatedCredEPR);
+
+        FileWriter writer = null;
+        try {
+            writer = new FileWriter( "/home/mjorra/tmp/cred_out");
+            QName qName = new QName("", "DelegatedEPR");
+            writer.write(ObjectSerializer.toString(delegatedCredEPR,
+                qName));
+        } finally {
+            if (writer != null) {
+                writer.close();
+            }
+        }
     }
 }
