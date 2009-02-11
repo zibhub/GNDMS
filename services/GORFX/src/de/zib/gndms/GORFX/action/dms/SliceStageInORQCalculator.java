@@ -13,7 +13,9 @@ import de.zib.gndms.typecon.common.type.ContextXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.ContractXSDReader;
 import de.zib.gndms.typecon.common.type.ContractXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.ProviderStageInORQXSDTypeWriter;
+import de.zib.gndms.comserv.delegation.DelegationAux;
 import org.apache.axis.types.URI;
+import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.jetbrains.annotations.NotNull;
 import types.ContextT;
 import types.OfferExecutionContractT;
@@ -24,6 +26,7 @@ import java.io.StringWriter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.globus.gsi.GlobusCredential;
 
 /**
  * @author Maik Jorra <jorra@zib.de>
@@ -36,9 +39,10 @@ public class SliceStageInORQCalculator extends
 
 	private GNDMSystem system;
     private static Log logger = LogFactory.getLog( SliceStageInORQCalculator.class );
+    private GlobusCredential credential;
 
 
-	@NotNull
+    @NotNull
 	public GNDMSystem getSystem() {
 		return system;
 	}
@@ -62,9 +66,21 @@ public class SliceStageInORQCalculator extends
 
         GORFXClient cnt = new GORFXClient( sid );
 
+
+        String delfac = DelegationAux.createDelationAddress( sid );
+
+        EndpointReferenceType epr = DelegationAux.createProxy( delfac, credential );
+        logger.debug( "createOffer creds: " + credential );
+
         ProviderStageInORQT p_orq = ProviderStageInORQXSDTypeWriter.write( getORQArguments() );
         ContextT ctx = ContextXSDTypeWriter.writeContext( getORQArguments().getActContext() );
+
+        DelegationAux.addDelegationEPR( ctx, epr );
+        cnt.setProxy( credential );
+
+        logger.debug( "calling createORQ" );
         ORQClient orq_cnt = new ORQClient( cnt.createOfferRequest( p_orq, ctx ) );
+        logger.debug( "createORQ returned" );
         OfferExecutionContractT con = ContractXSDTypeWriter.write( getPreferredOfferExecution() );
         OfferExecutionContractT con2 = orq_cnt.permitEstimateAndDestroyRequest( con, ctx );
 
@@ -98,6 +114,16 @@ public class SliceStageInORQCalculator extends
             sw.write( s );
 
         return sw.toString( );
+    }
+
+
+    public GlobusCredential getCredential() {
+        return credential;
+    }
+
+
+    public void setCredential( final GlobusCredential credential ) {
+        this.credential = credential;
     }
 }
 

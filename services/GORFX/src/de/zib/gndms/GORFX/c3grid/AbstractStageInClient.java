@@ -15,12 +15,14 @@ import de.zib.gndms.typecon.common.ContractStdoutWriter;
 import de.zib.gndms.typecon.common.GORFXTools;
 import de.zib.gndms.typecon.common.type.ContractXSDReader;
 import de.zib.gndms.typecon.common.type.ContractXSDTypeWriter;
+import de.zib.gndms.comserv.delegation.DelegationAux;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.types.URI;
 import org.globus.wsrf.NoSuchResourceException;
 import org.globus.wsrf.encoding.DeserializationException;
 import org.globus.wsrf.encoding.ObjectDeserializer;
+import org.globus.gsi.GlobusCredential;
 import org.joda.time.DateTime;
 import org.kohsuke.args4j.Option;
 import org.oasis.wsrf.properties.GetResourcePropertyResponse;
@@ -63,11 +65,13 @@ public abstract class AbstractStageInClient extends AbstractApplication {
 	protected String conPropFile;
 	@Option( name="-dn", required=true, usage="DN" )
 	protected String dn;
+    @Option( name="-proxyfile", usage="grid-proxy-file to lead", metaVar="proxy-file" )
+    protected String proxyFile = null;
 
 	protected TransientContract contract;
 	protected String dataFile;
 	protected String metaDataFile;
-
+    protected GlobusCredential credential;
 
 	protected EndpointReferenceType createOffer(
 	        final ContextT xsdContextParam, final EndpointReferenceType orqEPRParam)
@@ -81,6 +85,7 @@ public abstract class AbstractStageInClient extends AbstractApplication {
 	    else
 	        xsdOfferContract = ContractXSDTypeWriter.write( contract );
 
+        orqPort.setProxy( credential );
 	    return orqPort.getOfferAndDestroyRequest(xsdOfferContract, xsdContextParam);
 	}
 
@@ -312,6 +317,14 @@ public abstract class AbstractStageInClient extends AbstractApplication {
 		  throws Exception, RemoteException {
 
         GORFXClient gorfx = new GORFXClient(gorfxEpUrlParam);
+
+        String delfac = DelegationAux.createDelationAddress( gorfxEpUrlParam );
+
+        credential = DelegationAux.findCredential( proxyFile );
+        EndpointReferenceType epr = DelegationAux.createProxy( delfac, credential );
+
+        DelegationAux.addDelegationEPR( xsdContextParam, epr );
+        gorfx.setProxy( credential );
 
         // Create ORQ via GORFX
         return gorfx.createOfferRequest(xsdArgsParam, xsdContextParam);

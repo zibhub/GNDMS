@@ -7,8 +7,15 @@ import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.shared.ContextTAux;
 import de.zib.gndms.typecon.common.GORFXTools;
 import de.zib.gndms.typecon.common.type.ContractXSDReader;
+import de.zib.gndms.comserv.delegation.GNDMSCredibleResource;
+import de.zib.gndms.comserv.delegation.GNDMSDelegationListener;
+import de.zib.gndms.GORFX.action.dms.SliceStageInORQCalculator;
 import org.apache.axis.types.URI;
+import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.globus.wsrf.ResourceException;
+import org.globus.gsi.GlobusCredential;
+import org.globus.delegation.DelegationUtil;
+import org.globus.delegation.DelegationException;
 import org.jetbrains.annotations.NotNull;
 import types.ContextT;
 import types.OfferExecutionContractT;
@@ -20,11 +27,12 @@ import types.OfferExecutionContractT;
  * @created by Introduce Toolkit version 1.2
  * 
  */
-public class ORQResource extends ORQResourceBase {
+public class ORQResource extends ORQResourceBase implements GNDMSCredibleResource {
 
     ExtORQResourceHome home;
     AbstractORQCalculator ORQCalculator;
     String cachedWid;
+    GlobusCredential credential;
 
 
     public void setOfferRequestArguments(types.DynamicOfferDataSeqT offerRequestArguments, ContextT ctx ) throws ResourceException {
@@ -91,6 +99,10 @@ public class ORQResource extends ORQResourceBase {
        ORQCalculator.setJustEstimate( false );
        ORQCalculator.setPerferredOfferExecution( ContractXSDReader.readContract( pref ) );
 
+       if( ORQCalculator instanceof SliceStageInORQCalculator ) {
+           ( (SliceStageInORQCalculator) ORQCalculator ).setCredential ( credential );
+       }
+
 	   try {
            return ORQCalculator.createOffer();
 	   }
@@ -115,4 +127,25 @@ public class ORQResource extends ORQResourceBase {
         // nothing
     }
 
+
+    public void setCredential( final GlobusCredential cred ) {
+        System.out.println( "setCredential called with " + cred );
+        credential = cred;
+    }
+
+
+    public GlobusCredential getCredential() {
+        return credential;
+    }
+
+
+    public void setDelegateEPR( final EndpointReferenceType epr ) {
+
+        GNDMSDelegationListener list = new GNDMSDelegationListener( getResourceKey(), home );
+        try {
+            DelegationUtil.registerDelegationListener(epr, list);
+        } catch ( DelegationException e ) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
 }

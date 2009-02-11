@@ -2,8 +2,8 @@ package de.zib.gndms.comserv.delegation;
 
 import de.zib.gndms.kit.application.AbstractApplication;
 import org.kohsuke.args4j.Option;
-import org.globus.wsrf.impl.security.descriptor.ClientSecurityDescriptor;
 
+import org.globus.wsrf.impl.security.descriptor.ClientSecurityDescriptor;
 import org.globus.wsrf.impl.security.authentication.Constants;
 import org.globus.wsrf.impl.security.authorization.HostAuthorization;
 import org.globus.wsrf.impl.security.authorization.NoAuthorization;

@@ -12,12 +12,16 @@ import de.zib.gndms.infra.system.WSMaintenance;
 import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.shared.ContextTAux;
 import de.zib.gndms.typecon.util.AxisTypeFromToXML;
+import de.zib.gndms.comserv.delegation.DelegationAux;
 import org.apache.log4j.Logger;
+import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.globus.wsrf.ResourceKey;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.StringWriter;
 import java.rmi.RemoteException;
+
+import types.ContextT;
 
 
 /**
@@ -70,6 +74,9 @@ public class GORFXImpl extends GORFXImplBase {
             @NotNull ResourceKey key = home.createResource();            
             ORQResource orqr = (ORQResource) home.find( key );
             orqr.setCachedWid(WidAux.getWid());
+
+            EndpointReferenceType et = DelegationAux.extractDelegationEPR( context );
+            orqr.setDelegateEPR( et );
             orqr.setOfferRequestArguments( offerRequestArguments, context);
 
 	        StringWriter wr = new StringWriter();

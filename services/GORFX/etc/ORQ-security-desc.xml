@@ -20,10 +20,8 @@
       <none />
     </auth-method>
   </method>
-  <auth-method>
-    <none />
-  </auth-method>
-  <authz value="none" />
+  <authz value="gridmap" />
+  <gridmap value="etc/c3grid_shared/grid-mapfile" />
 </securityConfig>
 
 

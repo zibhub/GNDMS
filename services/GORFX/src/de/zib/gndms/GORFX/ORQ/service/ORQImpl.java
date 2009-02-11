@@ -2,10 +2,12 @@ package de.zib.gndms.GORFX.ORQ.service;
 
 import de.zib.gndms.GORFX.ORQ.service.globus.resource.ExtORQResourceHome;
 import de.zib.gndms.GORFX.ORQ.service.globus.resource.ORQResource;
+import de.zib.gndms.GORFX.ORQ.service.globus.ORQAuthorization;
 import de.zib.gndms.GORFX.ORQ.stubs.types.PermissionDenied;
 import de.zib.gndms.GORFX.ORQ.stubs.types.UnfullfillableRequest;
 import de.zib.gndms.GORFX.offer.service.globus.resource.ExtOfferResourceHome;
 import de.zib.gndms.GORFX.offer.service.globus.resource.OfferResource;
+import de.zib.gndms.GORFX.service.GORFXImpl;
 import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.logic.model.gorfx.PermissionDeniedORQException;
 import de.zib.gndms.logic.model.gorfx.UnfulfillableORQException;
@@ -55,6 +57,7 @@ public class ORQImpl extends ORQImplBase {
             ORQResource orq = home.getAddressedResource();
             WidAux.initWid(orq.getCachedWid());
             WidAux.initGORFXid( orq.getORQCalculator().getORQArguments().getActId() );
+            logSecInfo( "getOfferAndDestroyRequest" );
             try {
                 ExtOfferResourceHome ohome = ( ExtOfferResourceHome) getOfferResourceHome();
                 ResourceKey key = ohome.createResource();
@@ -103,6 +106,7 @@ public class ORQImpl extends ORQImplBase {
             ORQResource res = home.getAddressedResource();
             WidAux.initWid(res.getCachedWid());
             WidAux.initGORFXid( res.getORQCalculator().getORQArguments().getActId() );
+            logSecInfo( "permitEstimateAndDestroyRequest" );
 
             OfferExecutionContractT oec =
                 ContractXSDTypeWriter.write( res.estimatedExecutionContract( offerExecutionContract ) );
@@ -150,6 +154,16 @@ public class ORQImpl extends ORQImplBase {
         } catch ( IOException e ) { // can hardly occure
             return "Object to xml conversion error. " + e.getMessage();
         }
+    }
+
+    private void logSecInfo( String s ) throws org.globus.wsrf.security.SecurityException {
+
+        logger.debug( "Method " +s + " called by: " + ORQAuthorization.getCallerIdentity() );
+        String[] l = org.globus.wsrf.security.SecurityManager.getManager(  ).getLocalUsernames();
+        if( l == null )
+            logger.debug( "No mappings found" );
+        else
+            logger.debug( "Mapped to" + ( l.length > 0 ? l[0] : "none" ) );
     }
 }
 
