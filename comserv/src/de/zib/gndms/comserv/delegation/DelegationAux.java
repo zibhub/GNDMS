@@ -69,6 +69,9 @@ public class DelegationAux {
         ClientSecurityDescriptor desc = new ClientSecurityDescriptor();
 
 //        desc.setGSITransport( (Integer) Constants.ENCRYPTION );
+        org.ietf.jgss.GSSCredential gss = new org.globus.gsi.gssapi.GlobusGSSCredentialImpl( credential,
+            org.ietf.jgss.GSSCredential.INITIATE_AND_ACCEPT);
+        desc.setGSSCredential( gss );
 
         System.out.println( "connecting to service: " + uri );
         EndpointReferenceType delegEpr = AddressingUtils.createEndpointReference( uri, null);

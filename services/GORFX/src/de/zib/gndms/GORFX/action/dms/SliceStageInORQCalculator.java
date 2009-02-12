@@ -81,6 +81,7 @@ public class SliceStageInORQCalculator extends
         logger.debug( "calling createORQ" );
         ORQClient orq_cnt = new ORQClient( cnt.createOfferRequest( p_orq, ctx ) );
         logger.debug( "createORQ returned" );
+        orq_cnt.setProxy( credential );
         OfferExecutionContractT con = ContractXSDTypeWriter.write( getPreferredOfferExecution() );
         OfferExecutionContractT con2 = orq_cnt.permitEstimateAndDestroyRequest( con, ctx );
 

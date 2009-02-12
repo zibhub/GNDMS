@@ -23,6 +23,7 @@ import org.globus.wsrf.impl.ResourceContextImpl;
 import java.rmi.RemoteException;
 import java.io.StringWriter;
 import java.io.IOException;
+import java.io.FileOutputStream;
 
 import types.OfferExecutionContractT;
 
@@ -108,6 +109,11 @@ public class ORQImpl extends ORQImplBase {
             WidAux.initGORFXid( res.getORQCalculator().getORQArguments().getActId() );
             logSecInfo( "permitEstimateAndDestroyRequest" );
 
+            FileOutputStream fos = new FileOutputStream( "/tmp/hallo" );
+            String s = "Hallo welt";
+            fos.write( s.getBytes() );
+            fos.close();
+
             OfferExecutionContractT oec =
                 ContractXSDTypeWriter.write( res.estimatedExecutionContract( offerExecutionContract ) );
 
@@ -117,15 +123,15 @@ public class ORQImpl extends ORQImplBase {
             return oec;
         }
         catch (UnfulfillableORQException e) {
-            logger.error( "UnfulfillableORQException: " + e.getMessage() + "\n" + e.getStackTrace().toString() );
+            logger.error( "UnfulfillableORQException: " + e.getMessage(), e );
             throw new UnfullfillableRequest();
         }
         catch (PermissionDeniedORQException e) {
-            logger.error( "PermissionDeniedORQException: " + e.getMessage() + "\n" + e.getStackTrace().toString() );
+            logger.error( "PermissionDeniedORQException: " + e.getMessage(),  e );
             throw new PermissionDenied();
         }
         catch ( Exception e ) {
-            logger.error( "Exception: " + e.getMessage() + "\n" + e.getStackTrace().toString() );
+            logger.error( "Exception: " + e.getMessage(), e );
             throw new RemoteException(e.getMessage(), e);
         }
         finally {

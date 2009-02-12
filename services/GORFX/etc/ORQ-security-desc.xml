@@ -20,6 +20,30 @@
       <none />
     </auth-method>
   </method>
+  <method name="permitEstimateAndDestroyRequest">
+    <auth-method>
+    <GSITransport>
+      <protection-level>
+        <privacy />
+      </protection-level>
+    </GSITransport>
+    </auth-method>
+    <run-as> 
+    	<caller-identity/>
+    </run-as> 
+  </method>
+  <method name="getOfferAndDestroyRequest">
+    <auth-method>
+    <GSITransport>
+      <protection-level>
+        <privacy />
+      </protection-level>
+    </GSITransport>
+    </auth-method>
+    <run-as> 
+    	<caller-identity/>
+    </run-as> 
+  </method>
   <authz value="gridmap" />
   <gridmap value="etc/c3grid_shared/grid-mapfile" />
 </securityConfig>
