@@ -97,6 +97,12 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
             return val;
     }
 
+    /**
+     * Returns a Map containg all fields of this and their corresponding {@code ConfigOption} object,
+     * holding a description about the field.
+     *
+     * @return a Map containg all fields of this and their corresponding {@code ConfigOption} object.
+     */
     @SuppressWarnings({ "unchecked" })
     public Map<String, ConfigOption> getParamMap() {
         return ConfigTools.getParamMap((Class<? extends ConfigAction<?>>) getClass());

@@ -23,7 +23,13 @@ class ConfigTools {
     private ConfigTools() {
     }
 
-
+    /**
+     * Returns a Map containing all fields and their corresponding description as an {@code ConfigOption} object
+     * of a {@code clazz}'s instance.
+     * @param clazz the class object whose fields and their description should be put into a map
+     * @return a Map containing all fields and their corresponding description as an {@code ConfigOption} object
+     * of a {@code clazz}'s instance
+     */
     public static Map<String, ConfigOption> getParamMap(
             final @NotNull Class<? extends ConfigAction<?>> clazz) {
         Map<String, ConfigOption> map = new HashMap<String, ConfigOption>(8);
@@ -31,7 +37,12 @@ class ConfigTools {
         return map;
     }
 
-
+    /**
+     * Fills a map with the names of all fields and their corresponding description as an {@code ConfigOption} object.
+     * If denoted in the {@code ConfigOption} object, the alternative field name will be taken
+     * @param clazz the class object whose fields and their description should be added to the map
+     * @param mapParam the map to be filled with all field names and their corresponding
+     */
     private static void fillParamMapForClass(
             final Class<?> clazz, final Map<String, ConfigOption> mapParam) {
         if (Object.class.equals(clazz))
@@ -54,6 +65,10 @@ class ConfigTools {
         }
     }
 
+    /**
+     * Prints the syntax description using a {@code PrintWriter}
+     * @param printWriter the {@code PrintWriter} the option reminder will printed to
+     */
     @SuppressWarnings({ "HardcodedFileSeparator" })
     protected static void printOptionReminder(PrintWriter printWriter) {
         printWriter.println("Option format reminder: opt1: value1; ...; optN: valueN");
@@ -70,7 +85,11 @@ class ConfigTools {
                     " * Timestamps are expected to be in ISO8601-format and based on UTC.");
     }
 
-
+    /**
+     * Prints a Map containing the possible keys with their description to a {@code PrintWriter}
+     * @param writer the {@code PrintWriter} the option reminder will printed to
+     * @param mapParam a Map containing the possible keys with their description
+     */
     protected static void printOptionHelp(final @NotNull PrintWriter writer,
                                           final Map<String, ConfigOption> mapParam) {
         Object[] entries = mapParam.entrySet().toArray();
@@ -92,6 +111,5 @@ class ConfigTools {
             writer.println(descr == null || descr.length() == 0 ? "The " + key : descr);
         }
     }
-
 
 }

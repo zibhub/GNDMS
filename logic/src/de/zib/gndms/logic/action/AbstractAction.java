@@ -17,6 +17,10 @@ import java.util.List;
 public abstract class AbstractAction<R> implements Action<R> {
 	private Action<?> parent;
 
+    /**
+     * Will be invoked before {@code execute()}. Does nothing by default, but can be overridden by subclasses,
+     *
+     */
     public void initialize() { }
 
     public void cleanUp() { }
@@ -40,7 +44,10 @@ public abstract class AbstractAction<R> implements Action<R> {
         }
     }
 
-
+    /**
+     * This method will be invoked after
+     * @return
+     */
 	public abstract R execute();
 
 
@@ -99,6 +106,7 @@ public abstract class AbstractAction<R> implements Action<R> {
         if (object == null)
             throw new IllegalStateException("Parameter '\'" + parameterName + "' not set");
     }
+
 
     @SuppressWarnings({ "StaticMethodOnlyUsedInOneClass" })
     public static void doNotOverwrite(final @NotNull String parameterName, final Object object) {
