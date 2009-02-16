@@ -15,10 +15,13 @@ import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.shared.ContextTAux;
 import de.zib.gndms.typecon.common.type.ContractXSDTypeWriter;
 import de.zib.gndms.typecon.util.AxisTypeFromToXML;
+import de.zib.gndms.comserv.delegation.DelegationAux;
 import org.apache.log4j.Logger;
+import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.globus.wsrf.ResourceContext;
 import org.globus.wsrf.ResourceKey;
 import org.globus.wsrf.impl.ResourceContextImpl;
+import org.globus.gsi.GlobusCredential;
 
 import java.rmi.RemoteException;
 import java.io.StringWriter;
@@ -59,11 +62,14 @@ public class ORQImpl extends ORQImplBase {
             WidAux.initWid(orq.getCachedWid());
             WidAux.initGORFXid( orq.getORQCalculator().getORQArguments().getActId() );
             logSecInfo( "getOfferAndDestroyRequest" );
+            System.out.println( "Default creds: " + GlobusCredential.getDefaultCredential() );
             try {
                 ExtOfferResourceHome ohome = ( ExtOfferResourceHome) getOfferResourceHome();
                 ResourceKey key = ohome.createResource();
                 OfferResource ores = ohome.getResource( key );
                 ores.setCachedWid(WidAux.getWid());
+                EndpointReferenceType et = DelegationAux.extractDelegationEPR( context );
+                ores.setDelegateEPR( et );
                 ores.setOfferRequestArguments( orq.getOfferRequestArguments() );
                 final TransientContract contract = orq.getOfferExecutionContract(offerExecutionContract);
 

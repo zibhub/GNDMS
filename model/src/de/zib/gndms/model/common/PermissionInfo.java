@@ -5,6 +5,7 @@ import de.zib.gndms.stuff.copy.CopyMode;
 
 import javax.persistence.Embeddable;
 import javax.persistence.Column;
+import java.io.Serializable;
 
 /**
  * A class to store information about task permissions. Usually instanziated in the middleware when creating the task.
@@ -27,6 +28,19 @@ public class PermissionInfo {
 
     // The name of the configlet whose permission set should be applied.
     private String permissionConfigletName;
+
+
+    public Serializable getCredential() {
+        return credential;
+    }
+
+
+    public void setCredential( final Serializable credential ) {
+        this.credential = credential;
+    }
+
+
+    private Serializable credential;
 
 
     public PermissionInfo( ) {
