@@ -5,7 +5,8 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
- * ThingAMagic.
+ * The {@code BoundInjector} class wrappes an {@link Injector}.
+ * Thus, it provides setter and getter methods and a method to inject dependencies into an object
  *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
@@ -13,11 +14,15 @@ import org.jetbrains.annotations.NotNull;
  *          User: stepn Date: 10.12.2008 Time: 12:37:41
  */
 public final class BoundInjector {
+
 	private Injector injector;
 
-
+    /**
+     * Returns the currently used {@¢ode Injector}.If not set, {@code null} will be return
+     * @return the currently used {@¢ode Injector}.If not set, {@code null} will be return
+     */
 	public synchronized Injector optionallyGetInjector() {
-		return injector;
+        return injector;
 	}
 
 	public synchronized @NotNull Injector getInjector() {
@@ -27,8 +32,8 @@ public final class BoundInjector {
 			return injector;
 	}
 
-
-	public synchronized void setInjector(final @NotNull Injector injectorParam) {
+    
+    public synchronized void setInjector(final @NotNull Injector injectorParam) {
 		if (injector == null)
 			injector = injectorParam;
 		else
@@ -37,8 +42,9 @@ public final class BoundInjector {
 	}
 
     /**
-     * Invokes {@link Injector#injectMembers(Object)}  on the currently used {@code Injector}
-     * @param obj
+     * Invokes {@link Injector#injectMembers(Object)} on the currently used {@code Injector}.
+     *
+     * @param obj the obj, dependencies should be injected to 
      */
 	public void injectMembers(Object obj) {
 		if (obj == null)

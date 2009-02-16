@@ -1,14 +1,17 @@
 package de.zib.gndms.stuff.mold;
 
-import org.jetbrains.annotations.NotNull;
 
+import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.InvocationHandler;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 
 /**
- * ThingAMagic.
+ * This class provides methods to copy an instance which either has implemented {@link Molding} or at least has a method
+ * {@code void mold(D molded)}.
+ * See {@link Molder} for further details about the actual copy process and the difference to a 'normal' copy.
  *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
@@ -21,7 +24,17 @@ public final class Mold {
 	private Mold() {}
 
 
-	public static <C, D> void dynCopyMolding(final Class<C> moldingClass, final C molding, final D molded) {
+    /**
+     * Copies {@code molding} to {@code molded} using a {@code Molder}&lt;D&gt;.
+     * This means only the <i>D-part</i> of {@code molding} will be copied.
+     * The instance {@code molding} must either implement {@link Molding} or at least it must have a method
+     * {@code mold(D molded)}.
+     * See {@link Molder} for further details about the copy process.
+     * @param moldingClass the class of the molder
+     * @param molding the instance which will mold a new instance
+     * @param molded the instance to be molded out of {@code molding}-instance
+     */
+    public static <C, D> void dynCopyMolding(final Class<C> moldingClass, final C molding, final D molded) {
 		if (molding == null) return;
 		if (molded == null)	return;
 		final @NotNull Class<D> moldedClass = (Class<D>) molded.getClass();
@@ -30,10 +43,16 @@ public final class Mold {
 			molder = ((Molding) molding).molder(moldedClass);
 		else
 			molder = newMolderProxy( moldingClass, molding, moldedClass );
-		molder.mold(molded);
+        molder.mold(molded);
 	}
 
-    
+    /**
+     * Copies an Object implementing {@code Molding} to a new instance.
+     * In this case it is the same like {@code dynCopyMolding(molding.getClass(),molding,molded)}
+     *
+     * @param molding the instance which will mold a new instance
+     * @param molded the instance to be molded out of {@code molding}-instance
+     */
 	public static <C extends Molding, D> void copyMolding(final C molding, final D molded) {
 		if (molding == null) return;
 		if (molded == null)	return;
@@ -41,7 +60,15 @@ public final class Mold {
 		molding.molder(aClass).mold(molded);
 	}
 
-
+    /**
+     * Implements the {@code Molder}-Interface at runtime for {@code moldingParam} and returns a {@code Molder}&lt;D&gt;
+     * out of {@code moldingParam}.
+     * Therefore {@code moldingParam} must have a method {@code void mold(D obj)}, at least in a superclass.
+     * @param moldingClassParam the Class of the instance supposed to mold a new instance
+     * @param moldingParam the instance supposed to mold a new instance
+     * @param moldedClassParam the Class of the instance to be molded
+     * @return a {@code Molder}&lt;D&gt; out of {@code moldingParam}
+     */
 	public static <C, D> Molder<D> newMolderProxy(
 		  @NotNull Class<C> moldingClassParam, @NotNull C moldingParam,
 		  @NotNull Class<D> moldedClassParam) {
@@ -61,14 +88,34 @@ public final class Mold {
 												  new Class[] { Molder.class }, handler);
 	}
 
-
+    /**
+     * An InvocationHandler for classes having a {@code mold} method.
+     *
+     * @see Mold
+     */
 	private static final class MoldInvocationHandler<C, D> implements InvocationHandler {
-		private final @NotNull Class<C> moldingClass;
-		private final @NotNull C molding;
-		private final @NotNull Method moldMethod;
-		private final @NotNull Class<D> moldedClass;
 
+        /**
+         * the Class of the molding instance, which should be copied
+         */
+        private final @NotNull Class<C> moldingClass;
 
+        /**
+         * the molding instance, which should be copied
+         */
+        private final @NotNull C molding;
+
+        /**
+         * the mold method of the molding instance,signature: mold(Object o)
+         */
+        private final @NotNull Method moldMethod;
+
+        /**
+         * the Class of the molded instance, which will be a copy of the molding instance
+         */
+        private final @NotNull Class<D> moldedClass;
+
+ 
 		private MoldInvocationHandler(
 			  @NotNull final Class<C> moldingClassParam,
 			  @NotNull final C moldingParam, @NotNull final Method moldMethodParam,
@@ -80,8 +127,16 @@ public final class Mold {
 			moldMethod = moldMethodParam;
 		}
 
-
-		@SuppressWarnings({ "unchecked" })
+        /**
+         * Tries to invoke {@code mold(molded)} on the Object {@code molding}.
+         * @param proxy
+         * @param method
+         * @param args
+         * @return
+         * @throws Throwable  if {@code moldingClass} and all it's superclasses dont have a method {@code void mold(Object )}
+         *
+         */
+        @SuppressWarnings({ "unchecked" })
 		public Object invoke(final Object proxy, final Method method, final Object[] args)
 			  throws Throwable {
 			if (moldMethod.equals(method) && args[0] != null)
@@ -94,6 +149,14 @@ public final class Mold {
 			return null;
 		}
 
+        /**
+         * Tries to invoke {@code mold(molded)} on the Object {@code molding}.
+         * If {@code molding} does not have a method {@code mold(C molded)} where {@code C} is
+         * {@code moldedClass} or one of its superclasses, an exception will be thrown.
+         * 
+         * @param molded the Object, the {@code mold} method should be invoked with
+         * @throws Throwable if {@code moldingClass} and all it's superclasses dont have a method {@code void mold(Object )}
+         */
         private void doMold(final @NotNull Object molded)
 			  throws Throwable {
             Class curClass = moldedClass;

@@ -128,7 +128,7 @@ public class PropertyTree {
      * @param key The key under which the tree should be stored.
      *            It must neither start nor end with '.' .
      * @param pt The tree itself.
-     * @note pt must no have a label, i.e. it must not be a subtree.
+     *   pt must not have a label, i.e. it must not be a subtree.
      */
     public void addTree( String key, PropertyTree pt ) {
 
