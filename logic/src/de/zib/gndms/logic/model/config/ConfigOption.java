@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * ThingAMagic.
+ * This annotation provides a description and an alternative name for object fields.
  *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$

@@ -72,6 +72,7 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
             }
     }
 
+
     public abstract R execute( final @NotNull EntityManager em );
 
     public EntityManager getEntityManager() {

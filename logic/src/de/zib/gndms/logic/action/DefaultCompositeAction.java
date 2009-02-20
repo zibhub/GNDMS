@@ -4,7 +4,11 @@ import java.util.Collection;
 
 
 /**
- * ThingAMagic.
+ * This class executes a list of actions concurrently.
+ *
+ * By default an instance of {@code DefaultCompositeAction} will return {@code null} after all actions have been executed.
+ * Override {@link DefaultCompositeAction#getResult()} and {@link DefaultCompositeAction#addResult(Object)} to define
+ * what the instance should return based upon the preceding results. 
  *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
@@ -12,8 +16,10 @@ import java.util.Collection;
  *          User: stepn Date: 12.08.2008 Time: 18:07:11
  */
 public class DefaultCompositeAction<R, V> extends AbstractAction<R> implements CompositeAction<R,V> 
-{ 
-
+{
+    /**
+     * a collection of all actions added by {@code addAction()}
+     */
 	private Collection<Action<V>> actions;
 
 
@@ -31,12 +37,23 @@ public class DefaultCompositeAction<R, V> extends AbstractAction<R> implements C
 		return getResult();
 	}
 
-
+    /**
+     * Returns the result of this action.
+     * Must be overridden by subclasses to implement funcionality
+     *
+     * @return the result of this action
+     */
 	protected R getResult() {
 		return null;
 	}
 
-	protected void addResult(final V o) {
+    /**
+     * Adds the result of an action to the calculation of the result of this.
+     * Must be overridden by subclasses to implement funcionality
+     * 
+     * @param o the result of a preceding calculation made by an action of the list
+     */
+    protected void addResult(final V o) {
 
 	}
 
@@ -51,8 +68,8 @@ public class DefaultCompositeAction<R, V> extends AbstractAction<R> implements C
 		return actions;
 	}
 
-
-	public void setActions(final Collection<Action<V>> actionsParam) {
+    
+    public void setActions(final Collection<Action<V>> actionsParam) {
 		actions = actionsParam;
 	}
 }

@@ -6,8 +6,10 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
- * ThingAMagic.
  *
+ * A BatchUpdateAction will executed several actions and can inform an EntityUpdateListener about a change on the model.
+ * 
+ * 
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
  *
@@ -15,8 +17,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface BatchUpdateAction<M extends GridResource, R> extends CompositeAction<R, Void> {
 
-	EntityUpdateListener<M> getListener();
+    EntityUpdateListener<M> getListener();
 
-	void setListener(final @NotNull EntityUpdateListener<M> listenerParam);
+    void setListener(final @NotNull EntityUpdateListener<M> listenerParam);
 
 }

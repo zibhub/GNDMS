@@ -79,26 +79,27 @@ public final class ISO8601 {
 		zeroZoneStrings.add("+00:00");
 	}
 
-	/**
-	 * 	Sets all values of the calendar to zero,
-	 *	parses a given String in ISO8601-format, and applies it to the calendar.
-	 *
-	 *  When an exception is thrown, the state of the calendar is undefined.
-	 *
-	 */
-	public static void parseISO8601DateStr(GregorianCalendar cal, String isoDateStr)
+    /**
+     *  Resets the calendar by setting all its values to undefined, parses a given String in ISO8601-format
+     * and applies it to the calendar.
+     *
+     * @param cal the calendar the date should be applied to.
+     * @param isoDateStr a date in ISO8601-format
+     * @throws java.text.ParseException If the string is not in ISO8601-format.
+     *      When an exception is thrown, the state of the calendar is undefined.
+     */
+    public static void parseISO8601DateStr(GregorianCalendar cal, String isoDateStr)
 		  throws java.text.ParseException {
 		cal.clear();
 		parseISO8601DateStrNoInit(cal, isoDateStr.trim());
 	}
 
 	/**
-	 * Construct new calendar set according to isoDateStr
+	 * Returns a new calendar, set according to isoDateStr
 	 *
-	 * @param date
-	 * @param isoDateStr
-	 * @return GregorianCalendar set to isoDateStr
-	 * @throws ParseException
+	 * @param isoDateStr a date in ISO8601-format
+	 * @return a new calendar ,set according to isoDateStr
+	 * @throws ParseException If the string is not in ISO8601-format
 	 */
 	public static GregorianCalendar parseISO8601DateStr(String isoDateStr)
 		  throws java.text.ParseException {
@@ -109,41 +110,43 @@ public final class ISO8601 {
 
 	/**
 	 * Parses a given String in ISO08601-format and applies it to a given calendar.
-	 * Pay attention that the calendar will not have been reset before the string is applied.
-	 * So it will take the current date and time as it's values and will overwrite only the
+	 * Pay attention that the calendar will not be reset before the string is applied.
+	 * Thus it will take the current date and time as it's values and will overwrite only the
 	 * values which are contained in the string.
- 	 */
-	@SuppressWarnings({"AssignmentToMethodParameter"})
+     * 
+     * @param cal the calendar the date should be applied to.
+     * @param isoDateStr a date in ISO8601-format
+     * @throws ParseException If the string is not in ISO8601-format
+     */
+    @SuppressWarnings({"AssignmentToMethodParameter"})
 	private static void parseISO8601DateStrNoInit(GregorianCalendar cal,
 			String isoDateStr) throws ParseException {
 
 		try {
 			// SPLITTING DATE and TIME
 			String timeStr = "";
-			boolean isFullFormat = false;
 			if (isoDateStr.contains("T")) {
 				String[] tmp = isoDateStr.split("T");
 				if (tmp.length > 2)
 					throw new ParseException(isoDateStr, 0);
 				isoDateStr = tmp[0];
 				timeStr = tmp[1];
-				isFullFormat = true;
 			}
 
-			parseSplitIsoAndTimeStr(cal, isoDateStr, timeStr, isFullFormat);
+			parseSplitIsoAndTimeStr(cal, isoDateStr, timeStr);
 		} catch (NumberFormatException e) {
 			throw new ParseException(e.getMessage(), 0);
 		}
 	}
 
 	/**
-	 * Set calendar to time contained in date
-	 *
-	 * @param calendar
-	 * @param date
+	 * Sets calendar's time according to {@code date}
+     *
+	 * @param calendar a calendar whose time is set according to {@code date}
+	 * @param date a date, whose time and is being set as calendar's time
 	 */
 	public static void setCalendarFromDate(Calendar calendar, Date date) {
-		calendar.setTimeInMillis(date.getTime());
+        calendar.setTimeInMillis(date.getTime());
 	}
 
 	/**
@@ -257,7 +260,7 @@ public final class ISO8601 {
 	public static String formatAsISO8601DateStr(
 		  ISO8601Subformat subformat, boolean normalizeTZ, Calendar cal) {
 
-		// We cant avoid cloning here since we might have to change teh dateFormats timezone
+		// We cant avoid cloning here since we might have to change the dateFormat's timezone
 		// TODO: Cache to avoid cloning?
 		SimpleDateFormat dateFormat= (SimpleDateFormat) ISO08601format.get(subformat).clone();
 		dateFormat.setTimeZone(normalizeTZ ? zeroZone : cal.getTimeZone());
@@ -276,22 +279,29 @@ public final class ISO8601 {
 			return prefixWithEra(cal, resultString);
 	}
 
-	private static void parseSplitIsoAndTimeStr(
-		  GregorianCalendar cal, String theIsoDateStr, String timeStr, boolean fullFormat)
+
+    /**
+     * Constructs the calendar from the time and date part of the original string.
+     * @param cal the calendar the date should be applied to.
+     * @param theIsoDateStr contains just the date part
+     * @param timeStr containts just the time part
+     * @throws ParseException if some part of the string does not match ISO8601 format
+     */
+    private static void parseSplitIsoAndTimeStr(
+		  GregorianCalendar cal, String theIsoDateStr, String timeStr)
 		  throws ParseException {
 		int era = GregorianCalendar.AD;
-		final String isoDateStr;
-		if (theIsoDateStr.charAt(0) == '-') {
-			isoDateStr = theIsoDateStr.substring(1);
+        //check if date is AD or BC
+        if (theIsoDateStr.charAt(0) == '-') {
+			theIsoDateStr = theIsoDateStr.substring(1);
 			era = GregorianCalendar.BC;
 		}
-		else isoDateStr = theIsoDateStr;
 
-		String[] dateval = isoDateStr.split("-");
+		String[] dateval = theIsoDateStr.split("-");
 
 		String zone = "";
 		int[] timeEntries = null;
-		if (dateval.length > 4 || fullFormat && dateval.length != 3)
+		if (dateval.length > 4 || (timeStr.length()>0 && dateval.length != 3))
 			throw new ParseException(timeStr, 0);
 
 		//SPLITTING TIME and OFFSET
@@ -320,9 +330,15 @@ public final class ISO8601 {
 
 
 
-	//Splits a time-String into an Array
-	//so that a time like '12:14:04.12' will result in [12,14,4,12]
-	@SuppressWarnings({"NumericCastThatLosesPrecision", "MagicNumber"})
+    /**
+     * Splits a time-String into an Array so that a time like '12:14:04.12' will result in [12,14,4,120]
+     * 
+     * @param str a time string, where each component is seperated by ":". Fractional seconds are allowed, denoted
+     *      by "."
+     * @return the corresponding array where each component is seperated: {@code [hour,minutes,seconds,milisecond]} 
+     * @throws ParseException if the string is not compatible with ISO8601
+     */
+    @SuppressWarnings({"NumericCastThatLosesPrecision", "MagicNumber"})
 	private static int[] getTimeEntries(String str) throws ParseException {
 		int milSec = 0;
 		String[] values = str.split(":");
@@ -356,7 +372,15 @@ public final class ISO8601 {
 		return time;
 	}
 
-	private static void setTimezone(Calendar cal, String zoneString) throws ParseException {
+
+    /**
+     * Sets the calendar's time zone.
+     *
+     * @param cal the calendar, the time zone should be set
+     * @param zoneString the time zone in format {@code [+-]hh:mm}. If nothing denoted, local timezone will be used
+     * @throws ParseException if the time zone is unkown
+     */
+    private static void setTimezone(Calendar cal, String zoneString) throws ParseException {
 		if (!"".equals(zoneString)) {
 			final String gmtZoneString = "GMT" + zoneString;
 			final TimeZone zone = TimeZone.getTimeZone(gmtZoneString);
@@ -371,7 +395,8 @@ public final class ISO8601 {
 		}
 	}
 
-	private static void setDateValue(Calendar cal, String[] dateval) {
+   
+    private static void setDateValue(Calendar cal, String[] dateval) {
 		switch (dateval.length) {
 			case 3:
 				cal.set(Calendar.DAY_OF_MONTH, Integer.valueOf(dateval[2]));
@@ -384,7 +409,8 @@ public final class ISO8601 {
 		}
 	}
 
-	private static void setTimeValue(Calendar cal, int[] timeEntries) {
+
+    private static void setTimeValue(Calendar cal, int[] timeEntries) {
 		if (timeEntries != null) {
 			cal.set(Calendar.HOUR_OF_DAY, timeEntries[0]);
 			cal.set(Calendar.MINUTE, timeEntries[1]);
@@ -393,7 +419,8 @@ public final class ISO8601 {
 		}
 	}
 
-	private static String fixTimeZone(final String inStr) {
+
+    private static String fixTimeZone(final String inStr) {
 		int lastColon = inStr.length() - 2;
 		if (lastColon < 0)
 			throw new RuntimeException("Invalid timeStr during output");
@@ -448,5 +475,16 @@ public final class ISO8601 {
 		}
 		System.out.println(formatAsISO8601DateStr(ISO8601Subformat.DATE_HMS, false, cal));
 		System.out.println(formatAsISO8601DateStr(ISO8601Subformat.DATE_HMSMS, true, cal));
-	}
+
+        String timetest="12:14:04.12";
+        try{
+         int [] bl=getTimeEntries(timetest);
+        for (int i=0;i< bl.length;i++){
+            System.out.println(bl[i]);
+        }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
 }

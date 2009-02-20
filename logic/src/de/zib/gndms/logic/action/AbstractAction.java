@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 
 /**
@@ -18,11 +19,17 @@ public abstract class AbstractAction<R> implements Action<R> {
 	private Action<?> parent;
 
     /**
-     * Will be invoked before {@code execute()}. Does nothing by default, but can be overridden by subclasses,
+     * Will be invoked before {@code execute()} when this is submitted to an {@code Executor}.
+     * Does nothing by default, but can be overridden by subclasses.
      *
      */
     public void initialize() { }
 
+    /**
+     * Will be invoked after {@code execute()} when this is submitted to an {@code Executor}.
+     * Does nothing by default, but can be overridden by subclasses.
+     *
+     */
     public void cleanUp() { }
 
 
@@ -45,8 +52,15 @@ public abstract class AbstractAction<R> implements Action<R> {
     }
 
     /**
-     * This method will be invoked after
-     * @return
+     * A subclass must implement this method to declare an action.
+     *
+     * Do not call this method directly ! Use an {@link Executor} instead.
+     *
+     * The execution is done concurrently.
+     * The system will wait for the result not until really needed.
+     *
+     *
+     * @return calculated result
      */
 	public abstract R execute();
 
@@ -63,7 +77,8 @@ public abstract class AbstractAction<R> implements Action<R> {
 		parent = parentParam;
 	}
 
-	public final @Nullable <V> V nextParentOfType(final @NotNull Class<V> interfaceClass) {
+    
+    public final @Nullable <V> V nextParentOfType(final @NotNull Class<V> interfaceClass) {
 		return nextParentOfType(interfaceClass, getParent());
 	}
 
@@ -73,7 +88,16 @@ public abstract class AbstractAction<R> implements Action<R> {
         return getParentChain(interfaceClass, getParent());
     }
 
-	public static @Nullable <V> V nextParentOfType(final @NotNull Class<V> interfaceClass,
+
+    /**
+     * Returns the next parent of {@code startParent}, which is an instance of {@code interfaceClass}.
+     *
+     * @param interfaceClass the class, {@code startParent} or one of its parents should be an instance of.
+     * @param startParent the first appearance in the parentchain, starting from {@code startParent}
+     * being an instance of {@code interfaceClass} is searched for
+     * @return the first parent in the parentchain of {@code startParent}, which is an instance of {@code interfaceClass}
+     */
+    public static @Nullable <V> V nextParentOfType(final @NotNull Class<V> interfaceClass,
 	                                               final Action<?> startParent) {
 		Action<?> currentParent = startParent;
 		while (true) {
@@ -89,6 +113,14 @@ public abstract class AbstractAction<R> implements Action<R> {
 		}
 	}
 
+    /**
+     * Returns a list containing all {@code Actions} being a parent of {@code startParent} and
+     * an instance of {@code interfaceClass}.  
+     * @param interfaceClass the class, {@code startParent} and its parents should be an instance of.
+     * @param startParent all appearances in the parentchain, starting from {@code startParent}
+     * being an instance of {@code interfaceClass} are searched for
+     * @return  all parents in the parentchain of {@code startParent}, which are an instance of {@code interfaceClass}
+     */
     public static <V extends Action<?>> List<V> getParentChain(
             final @NotNull Class<V> interfaceClass,
             final Action<?> startParent) {

@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model.config;
 
 /**
- * ThingAMagic.
+ * An ConfigActionResult 
  *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
