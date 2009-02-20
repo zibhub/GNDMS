@@ -12,6 +12,8 @@ gndms-typecon=${lib.dir}/gndms-typecon.jar
 gndms-typecon-test=${lib.dir}/gndms-typecon-test.jar
 gndms-infra=${lib.dir}/gndms-infra.jar
 gndms-infra-test=${lib.dir}/gndms-infra-test.jar
+gndms-wscommon=${lib.dir}/gndms-wscommon.jar
+gndms-wscommon-test=${lib.dir}/gndms-wscommon-test.jar
 
 
 ## SETUP DEPENDENCIES
