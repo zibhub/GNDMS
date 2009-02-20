@@ -47,7 +47,7 @@ configuration (bash) can be found in etc/example.profile):
 
 - Get Globus 4.0.X, X >= 7
 - Setup working host and user certificates (You can build without; but then 
-  again where, would this  get you?)
+  again where, would this get you?)
 - Set $GLOBUS_LOCATION and have it in your environment
 - Load $GLOBUS_LOCATION/etc/globus-user-env.sh and 
   $GLOBUS_LOCATION/etc/globus-devel-env.sh into your environment
@@ -193,7 +193,7 @@ continue with the really detailed build instructions below.
 
 	 (Developers: When adding/changing used libs, make sure to run sync.sh again; 
 	  when deleting libs, make sure to kill the corresponding symlinks in 
-	  servics/*/lib)
+	  services/*/lib)
 
 
 
@@ -296,11 +296,11 @@ continue with the really detailed build instructions below.
 
   J2EE, groovy, annotations, "servicename"-stubs,
   gndms-infra, gndms-kit, gndms-logic, gndms-shared-model, gndms-stuff, 
-  joda-time, SOURCES, all non-symlinks in service/ServiceName/lib,  gt4
+  joda-time, SOURCES, all non-symlinks in services/ServiceName/lib,  gt4
 
   GORFX also depends on gndms-typecon, DSpace, args4j, DSpace-Stubs and jaxb.
   
-  compile to service/ServiceName/out/production (resp. test/), and exclude the
+  compile to services/ServiceName/out/production (resp. test/), and exclude the
   services' out,  build, and lib directories from the project sources to reduce
   the size of the project index.
 
@@ -316,7 +316,7 @@ continue with the really detailed build instructions below.
 THINGS TO DO WHEN YOUR BUILD FAILS
 ----------------------------------
 
-1) Do you need to regen the stubs? Delete service/*/build and go from scratch
+1) Do you need to regen the stubs? Delete services/*/build and go from scratch
 
 2) Stale symlinks
 
