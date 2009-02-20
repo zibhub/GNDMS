@@ -480,6 +480,7 @@ public final class ParameterTools {
                     default:
                         final boolean isWhite = Character.isWhitespace(c);
                         if (escape) {
+                            escape=false;
                             builder.append(c);
                             if (! isWhite) leading = false;
                         }
@@ -496,6 +497,15 @@ public final class ParameterTools {
             return entries;
         }
 
+
+    public static void main(String [] args){
+        String testStr="[1 ,2 ,3\\,4]";
+        List<String> result=parseStringArray(testStr);
+        for (String entry : result){
+            System.out.println("Entry: "+entry+"| ENDE");
+        }
+        System.out.println(result.size());
+    }
 
 
 
