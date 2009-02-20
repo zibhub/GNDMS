@@ -61,6 +61,15 @@ args4j=${tools-lib.dir}/args4j-2.0.9.jar
 
 CXF=${tools-lib.dir}/cxf.jar
 
+DSpace=${dspace.dir}/out/production
+
+GORFX=${gorfx.dir}/out/production
+
+LOFIS=${lofis.dir}/out/production
+
+WHORFX=${whorfx.dir}/out/production
+
+
 ## NONSYMBOLIC LINKS OF EVERY SERVICE
 
 dspace.nonsym=${dspace.dir}/lib/caGrid-advertisement-1.2.jar;${dspace.dir}/lib/caGrid-core-1.2.jar;${dspace.dir}/lib/caGrid-Introduce-serviceTools-1.2.jar;${dspace.dir}/lib/caGrid-metadata-security-1.2.jar;${dspace.dir}/lib/caGrid-ServiceSecurityProvider-client-1.2.jar;${dspace.dir}/lib/caGrid-ServiceSecurityProvider-common-1.2.jar;${dspace.dir}/lib/caGrid-ServiceSecurityProvider-service-1.2.jar;${dspace.dir}/lib/caGrid-ServiceSecurityProvider-stubs-1.2.jar;${dspace.dir}/lib/castor-0.9.9.jar;
