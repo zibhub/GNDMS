@@ -437,10 +437,11 @@ public final class ParameterTools {
     }
 
 
-
-        /*
-        Sollte bei [A\\,C] nicht A,C als ein Eintrag herauskommen ?
-         */
+       /**
+         *
+         * @param optStrParam
+         * @return
+        */
         @SuppressWarnings({ "HardcodedFileSeparator" })
         public static List<String> parseStringArray(final String optStrParam) {
             final List<String> entries = new LinkedList<String>();
@@ -496,21 +497,5 @@ public final class ParameterTools {
             }
             return entries;
         }
-
-
-    public static void main(String [] args){
-        String testStr="[1 ,2 ,3\\,4]";
-        List<String> result=parseStringArray(testStr);
-        for (String entry : result){
-            System.out.println("Entry: "+entry+"| ENDE");
-        }
-        System.out.println(result.size());
-    }
-
-
-
-    
-
-
 
 }
