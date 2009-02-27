@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model.gorfx;
 
 /**
- * ThingAMagic.
+ * An Interface for an Wrapper.
  *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$

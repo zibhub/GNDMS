@@ -9,6 +9,14 @@ import java.util.concurrent.Executor;
 
 
 /**
+ *
+ * This class provides a default implementation of the {@code Action} Interface.
+ *
+ * An implementing action just has to define its action by implementing the {@code execute()} method.
+ *
+ * An action is started by invoking {@code call()}. If the action should compute the result concurrently,
+ * submit it to an Executor, instead of directly invoking {@code call()]}}.
+ * 
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
  * 
@@ -21,18 +29,31 @@ public abstract class AbstractAction<R> implements Action<R> {
     /**
      * Will be invoked before {@code execute()} when this is submitted to an {@code Executor}.
      * Does nothing by default, but can be overridden by subclasses.
-     *
      */
     public void initialize() { }
 
     /**
      * Will be invoked after {@code execute()} when this is submitted to an {@code Executor}.
      * Does nothing by default, but can be overridden by subclasses.
-     *
      */
     public void cleanUp() { }
 
 
+
+   /**
+     * Do not call this method directly unless you don't need it to be executed concurrently.
+     * 
+     * An implementing should not override this method.
+     * Use {@link AbstractAction#execute()} } instead
+     *
+     * If concurrent execution is neeed this has to be submitted to an {@code Executor}.
+     * The system will wait for the result not until really needed.
+     * See {@link Executor} about the invocation and retrieving of the result
+     *
+     * @return the calculated result
+     * @throws ActionInitializationException
+     * @throws RuntimeException
+     */
     public R call ( ) throws RuntimeException {
         try {
 	        initialize( );
@@ -52,15 +73,8 @@ public abstract class AbstractAction<R> implements Action<R> {
     }
 
     /**
-     * A subclass must implement this method to declare an action.
-     *
-     * Do not call this method directly ! Use an {@link Executor} instead.
-     *
-     * The execution is done concurrently.
-     * The system will wait for the result not until really needed.
-     *
-     *
-     * @return calculated result
+     * An implementing action class can define here its action, being executed concurrently
+     * @return the calculated result
      */
 	public abstract R execute();
 

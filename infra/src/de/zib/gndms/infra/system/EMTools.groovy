@@ -6,7 +6,7 @@ import javax.persistence.EntityTransaction
 import de.zib.gndms.infra.system.TxSafeRuntimeException
 
 /**
- * THelper code for executing jpa transactions in groovy
+ * Helper code for executing jpa transactions in groovy
  * 
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$ 

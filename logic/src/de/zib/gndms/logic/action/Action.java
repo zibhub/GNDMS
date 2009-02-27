@@ -26,14 +26,22 @@ import java.util.List;
 public interface Action<R> extends Callable<R> {
 
     /**
-     * Initializations which need to be done before before the action is started
+     * Will be invoked before {@code execute()} when this is submitted to an {@code Executor}.
+     *
      */
     void initialize( );
 
+
     /**
-     * This method will calculate the result concurrently, if invoked properly.
+     * An implementing class must declare an action.
+     *
+     * Do not call this method directly and use an {@link Executor} instead to execute
+     * the computation in a seperate thread.
+     *
+     *
      * The system will wait for the result not until really needed.
      * See {@link Executor} about the invocation and retrieving of the result
+     * 
      * @return the calculated result
      * @throws ActionInitializationException
      * @throws RuntimeException

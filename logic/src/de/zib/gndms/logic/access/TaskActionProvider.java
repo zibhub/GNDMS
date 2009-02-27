@@ -19,6 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 @SuppressWarnings(
 	  { "OverloadedMethodsWithSameNumberOfParameters", "MethodWithTooExceptionsDeclared" })
 public interface TaskActionProvider {
+   
 	TaskAction newTaskAction(
 	        @NotNull EntityManagerFactory emf,
 	        @NotNull String offerTypeKey)

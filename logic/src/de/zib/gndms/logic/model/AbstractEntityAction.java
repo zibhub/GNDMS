@@ -10,7 +10,9 @@ import javax.persistence.EntityTransaction;
 
 
 /**
- * ThingAMagic.
+ * A default implementation of the {@code EntityAction} Interface.
+ *
+ * 
  *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
@@ -19,12 +21,20 @@ import javax.persistence.EntityTransaction;
  */
 public abstract class AbstractEntityAction<R> extends AbstractAction<R> implements EntityAction<R> {
     private EntityManager entityManager;
+    /**
+     * Postponed actions are executed during cleanup.
+     */
     private BatchUpdateAction<GridResource, ?> postponedActions;
     @SuppressWarnings({ "InstanceVariableNamingConvention" })
     private ModelUUIDGen UUIDGen;   // the uuid generator
     private boolean runningOwnPostponedActions = true;
     private boolean closingEntityManagerOnCleanup = true;
 
+
+    /**
+     * Will be invoked before execute() when this is submitted to an Executor.
+     * Initializes {@code postponed actions}.
+     */
     @Override
     public void initialize() {
 
@@ -38,6 +48,11 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
     }
 
 
+    /**
+     * Executes the EntityManager on its persistence context.
+     * 
+     * @return the result of the EntityManager being invoked on a its persistence context.
+     */
     @Override
     public final R execute( ) {
         final EntityManager em = getEntityManager();
@@ -48,12 +63,26 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
          return execute(em);
     }
 
+    /**
+     * Returns true by default
+     * @return true by default
+     */
     @SuppressWarnings({ "MethodMayBeStatic" })
     protected boolean isExecutingInsideTransaction() {
         return true;
     }
 
-
+    /**
+     * Tries to execute an EntityManager inside a transaction.
+     *
+     * If not already active, the transaction corresponding to the EntityManager will be activated
+     * and the EntityManager executed.
+     *
+     * If an errpr occurs durings the transaction, it will be rolled back.
+     * 
+     * @param emParam
+     * @return
+     */
     private R executeInsideTransaction(final EntityManager emParam) {
         final EntityTransaction tx = emParam.getTransaction();
         if (tx.isActive())
@@ -73,6 +102,12 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
     }
 
 
+    /**
+     * Defines how the EntityManager is executed on its persistence context.
+     *
+     * @param em the EntityManager  being executed on its persistence context.
+     * @return the result of the execution
+     */
     public abstract R execute( final @NotNull EntityManager em );
 
     public EntityManager getEntityManager() {
@@ -140,15 +175,30 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
             return uuidGen.nextUUID();
     }
 
+    /**
+     * Adds a {@code ModelChangedAction} to the postponed actions.
+     * 
+     * @param model the model which has been changed
+     */
     public void addChangedModel( GridResource model  ) {
         getPostponedActions( ).addAction( new ModelChangedAction( model ) );
     }
 
 
+    /**
+     * Returns true, if this action has postponed actions.
+     *
+     * @return true, if this action has postponed actions.
+     */
     public boolean hasOwnPostponedActions() {
         return postponedActions != null;
     }
 
+    /**
+     * Returns whether the postponned actions should be executed on {@code cleanUp}
+     * 
+     * @return whether the postponned actions should be executed on {@code cleanUp}
+     */
     public boolean isRunningOwnPostponedActions() {
         return runningOwnPostponedActions;
     }
@@ -159,6 +209,11 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
     }
 
 
+    /**
+     * Executes postponed actions, if {@code isRunningOwnPostponedActions()} is true
+     * and calls {@code super.cleanUp()}.
+     * 
+     */
     @Override
     public void cleanUp() {
         final BatchUpdateAction<GridResource, ?> batched = getPostponedActions();
@@ -170,12 +225,19 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
         super.cleanUp();    // Overridden method
     }
 
-
+    /**
+     * Returns whether the EntityManager should be closed on cleanup
+     * @return whether the EntityManager should be closed on cleanup
+     */
     public boolean isClosingEntityManagerOnCleanup() {
         return closingEntityManagerOnCleanup;
     }
 
-
+    /**
+     * Decides whether the EntityManager should be closed on cleanup
+     * 
+     * @param closingEntityManagerOnCleanupParam if ture the EntityManager will be closed on cleanup
+     */
     public void setClosingEntityManagerOnCleanup(final boolean closingEntityManagerOnCleanupParam) {
         closingEntityManagerOnCleanup = closingEntityManagerOnCleanupParam;
     }

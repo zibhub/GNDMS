@@ -9,7 +9,7 @@ import javax.persistence.EntityManager;
 
 
 /**
- * ThingAMagic.
+ * An EntityAction is an Action containing an EntityManager and a list of actions being executed on cleanup.
  *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
@@ -33,12 +33,21 @@ public interface EntityAction<R> extends Action<R>, ModelUUIDGen {
      */
     EntityManager getOwnEntityManager();
 
+
     void setOwnEntityManager(final @NotNull EntityManager entityManagerParam);
 
 
+    /**
+     * Returns the postponend actions.
+     * @return the postponend actions
+     */
     BatchUpdateAction<GridResource, ?> getPostponedActions();
 
-
+    /**
+     * Define actions that will be executed on {@code this.cleanup()}
+     * 
+     * @param postponedActionsParam a BatchUpdateAction containg actions, that will be executed on cleanup
+     */
     void setOwnPostponedActions(final @NotNull BatchUpdateAction<GridResource, ?> postponedActionsParam);
 
 }

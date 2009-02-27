@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * ThingAMagic.
+ * An anntotaion giving a description about a {@link ConfigAction}
  *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
