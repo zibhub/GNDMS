@@ -11,9 +11,11 @@ import java.util.List;
 /**
  * Interface for an action which requires a EntityManager.
  *
- * Its action will be executed concurrently and the system will wait for its result, but not until really needed
- * .
+ * Its action will be executed concurrently and the system will wait for its result, but not until really needed.
  * The action must be implemented in {@code call()} and invoked by an {@code Executor}.
+ *
+ * The template parameter is the return type.
+ *
  *
  *
  * @author: Maik Jorra <jorra@zib.de>

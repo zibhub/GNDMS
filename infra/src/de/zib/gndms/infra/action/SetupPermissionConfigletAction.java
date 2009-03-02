@@ -86,7 +86,11 @@ public class SetupPermissionConfigletAction extends SetupConfigletAction {
         return ok( );
     }
 
-
+    /**
+     * Returns {@code permissionProperties}. If not set using {@code setPermissionProperties},
+     * it will try to retrive it from its configuration map.
+     * @return
+     */
     public String getPermissionProperties() {
 
         if( permissionProperties == null ) {
@@ -106,6 +110,10 @@ public class SetupPermissionConfigletAction extends SetupConfigletAction {
     }
 
 
+    /**
+     * Returns the {@code permissionProperties] as {@code Properties}
+     * @return the {@code permissionProperties] as {@code Properties}
+     */
     private Properties asProperties(  ) {
 
         Properties prop = new Properties( );

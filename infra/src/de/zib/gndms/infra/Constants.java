@@ -28,6 +28,11 @@ public final class Constants {
 
 	private Constants() {}
 
+    /**
+     * Returns the root context, by looking up the JNDI base name
+     * @return Returns the root, by looking up the JNDI base name
+     * @throws NamingException if a naming exception occurs.
+     */
 	@SuppressWarnings({"StaticMethodOnlyUsedInOneClass"})
 	public static @NotNull Context getRootContext() throws NamingException {
 		InitialContext ctx = null;

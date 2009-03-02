@@ -8,7 +8,9 @@ import java.util.Collection;
  *
  * By default an instance of {@code DefaultCompositeAction} will return {@code null} after all actions have been executed.
  * Override {@link DefaultCompositeAction#getResult()} and {@link DefaultCompositeAction#addResult(Object)} to define
- * what the instance should return based upon the preceding results. 
+ * what the instance should return based upon the preceding results.
+ *
+ * The first template parameter is the return type, the second is the type of the other actions, wich can be added.
  *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$

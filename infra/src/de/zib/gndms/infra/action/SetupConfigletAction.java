@@ -91,6 +91,7 @@ public abstract class SetupConfigletAction extends SetupAction<ConfigActionResul
 
     protected void preDelete(  ConfigletState state, final EntityManager emParam, final PrintWriter writerParam ) { }
 
+    
     protected ConfigActionResult delete(final EntityManager emParam, final PrintWriter writerParam) {
         ConfigletState state = emParam.find(ConfigletState.class, getName());
         if (state == null) return failed("Configlet not found");

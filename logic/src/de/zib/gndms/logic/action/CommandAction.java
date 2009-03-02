@@ -13,6 +13,8 @@ import java.util.Set;
  * Configuration actions take a string-string map parameter from some external source
  * and may write results to an optional print writer
  *
+ * The first template parameter is the return type.
+ * 
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
  *

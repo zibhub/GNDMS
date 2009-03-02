@@ -9,6 +9,9 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 /**
+ *
+ * A class to configure {@link FilePermission} per user.
+ * Configuration can be set either manually or load from  {@code properties}.
  * The setting here are considered as recommendation an will applied only if possible.
  *
  * @author Maik Jorra <jorra@zib.de>

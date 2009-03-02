@@ -12,7 +12,7 @@ import javax.persistence.EntityTransaction;
 /**
  * A default implementation of the {@code EntityAction} Interface.
  *
- * 
+ * The template parameter is the return type.
  *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$

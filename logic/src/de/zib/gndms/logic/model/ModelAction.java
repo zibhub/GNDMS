@@ -6,6 +6,9 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  *
+ * A ModelAction extends an EntityAction by containing a {@code Model}.
+ *
+ * The first template parameter is the model for this action, the second is the return type.
  *
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$

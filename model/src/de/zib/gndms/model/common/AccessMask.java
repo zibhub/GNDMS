@@ -7,16 +7,39 @@ import java.util.Map;
 import java.util.HashMap;
 
 /**
+ *
+ * An AccessMask is used to handle access rights for the access types user, group and other.
+ *
+ * Read, write and execute rights can be set or unset by using a bitmask.
+ *
+ *
+ *
  * @author Maik Jorra <jorra@zib.de>
  * @version $Id$
- * <p/>
+ * @see AccessFlags for the representation of a bit mask.
  * User: mjorra, Date: 22.12.2008, Time: 13:13:43
  */
 @Embeddable
 public class AccessMask {
     // todo add serialVersionUId
 
-
+    /**
+     * AccessFlags is an enum for the different access types.
+     *
+     * Its value can be chosen by bit flags.
+     * In detail an int will be interpreted as follows:
+     *
+     * <pre>
+     * If we have an int x = x1 x2 x3  , in binary representation with x element of [0;7]
+     * Then if set to 1 the meaning of the flags are
+     *        x1 = Executable
+     *        x2 = Writable
+     *        x3 = Readable
+     * </pre>
+     *
+     *
+     *
+     */
     public enum AccessFlags {
         READABLE( 0x4 ),
         WRITABLE( 0x2 ),
@@ -27,38 +50,80 @@ public class AccessMask {
         ALL( 0X7 ),
         NONE( 0x0 );
 
+        /**
+         * A bit mask containg the different access flags
+         */
         private final int mask;
+
+        /**
+         * Maps a bit mask to its correspondig access flags.
+         */
         private final static Map<Integer, AccessFlags> valueForFlag = new HashMap<Integer, AccessFlags>( );
+
+        /**
+         * If true, the {@code valueForFlag} Map will be initialized with all enum values
+         */
         private static boolean uninitialized = true;
 
 
+        /**
+         * Sets the access flags according to the flags encoded by {@code msk}.
+         * 
+         * @param msk a value, encoding the access flags.
+         */
         AccessFlags( int msk ) {
             mask = msk;
         }
 
 
+        /**
+         * Returns the access mask, containg the flags for the different access types.
+         * 
+         * @return the access mask, containg the flags for the different access types.
+         */
         @Transient
         public int getMask( ) {
             return mask;    
         }
-        
 
+
+        /**
+         * Returns a String representation of the mask.
+         * @return a String representation of the mask.
+         */
         public String toString( ) {
             return maskToString( this );
         }
 
 
+        /**
+         * Returns a String representation of {@code accessFlag}'s mask.
+         * 
+         * @param accessFlag an instance of AccessFlags.
+         * @return a String represantation of {@code accessFlag}'s mask.
+         */
         public String maskToString( AccessFlags accessFlag ) {
 
             return maskToString( accessFlag.getMask() );
         }
 
 
-        public String maskToString( int accessFlag ) {
-            return Integer.toString( accessFlag );
+        /**
+         * Returns the value of access mask, in decimal base, as String.
+         * 
+         * @param accessMask an access mask as int value.
+         * @return  a String representation  of the access mask.
+         */
+        public String maskToString( int accessMask ) {
+            return Integer.toString( accessMask );
         }
 
-
+        /**
+         * Returns an {@code AccessFlags} with the flags set as intended by the bit {@code mask}.
+         * 
+         * @param mask the bitmask containg the settings for the access configuration.
+         * @return an {@code AccessFlags} with the flags set as intended by the bit {@code mask}.
+         */
         public static AccessFlags flagsForMask( int mask ) {
 
             if( mask > 7 || mask < 0 )
@@ -74,17 +139,34 @@ public class AccessMask {
         }
 
 
-        // s must only contain a single char which matches an int in [0;7]
+        /**
+         * {@code s} must be a single character, mathing an int in [0;7]
+         * 
+         * @see AccessFlags#fromChar(char) 
+         */
         public static AccessFlags fromString( String s ) {
             return flagsForMask( Integer.valueOf( s ) );
         }
 
+
+
+        /**
+         * An {@code AccessFlags} type will be returned, set as intended by the bit mask of the
+         * numerical value of the char.
+         *
+         * @param c a char, mathing an int in [0;7].
+         * @return an {@code AccessFlags}, set as intended by the bit mask of the numerical value of the char.
+         */
         public static AccessFlags fromChar( char c ) {
             return fromString( Character.toString( c ) );
         }
     }
 
-
+    /**
+     * An enum to distinguish rights for a {@code user}, a {@code group} and {@code other}.
+     * The enum provides an index for all three entries, starting from 0 with user and incrementing in the order,
+     * given above. 
+     */
     public enum Ugo{
         USER( 0 ),
         GROUP( 1 ),
@@ -97,15 +179,25 @@ public class AccessMask {
         }
     }
 
-
+    /**
+     * This array holds the access-rights for the different groups.
+     * @see Ugo
+     */
     public AccessFlags access[] = new AccessFlags[3];
 
+    /**
+     * Returns the access rights for a user.
+     * @return the access rights for a user.
+     */
     @Transient
     public AccessFlags getUserAccess() {
         return getAccess()[ Ugo.USER.index ];
     }
 
-
+    /**
+     * Sets the access rights for a user.
+     * @param userAccess the access rights for a user.
+     */
     public void setUserAccess( AccessFlags userAccess ) {
         getAccess()[ Ugo.USER.index ] = userAccess;
     }
@@ -157,7 +249,7 @@ public class AccessMask {
         return ! queryFlagsOn( ugo, flag );
     }
 
-
+    
     public void addFlag( Ugo ugo, AccessFlags flag ) {
 
         getAccess()[ ugo.index ] = AccessFlags.flagsForMask(
@@ -173,12 +265,29 @@ public class AccessMask {
         );
     }
 
-
+    /**
+     * Returns the access masks' int values for user,group and other as String.
+     * @return the access masks' int values for user,group and other as String
+     */
     public String toString( ) {
         return getUserAccess().toString() + getGroupAccess().toString() + getOtherAccess().toString();
     }
 
 
+    /**
+     * Returns an {@code AccessMask} from a String containing the bitmasks for
+     * all three access groups.
+     *
+     * The String must consist of exactly three characters, each one representing a number in [0;7].
+     * The first character defines the access mask of {@code user}
+     * The second character defines the access mask of {@code group}
+     * The third character defines the access mask of {@code other}
+     *
+     * @param msk a String representing the access masks of the different access groups.
+     * @return an {@code AccessMask} containing the bitmasks for
+     * all three access groups.
+     * @see AccessFlags
+     */
     public static AccessMask fromString( String msk ) {
 
         if( msk.length( ) != 3 )
@@ -192,6 +301,11 @@ public class AccessMask {
         return am;
     }
 
+
+    /**
+     * Returns the access flags belonging to user, group and other.
+     * @return the access flags belonging to user, group and other.
+     */
     @Transient
     public AccessFlags[] getAccess() {
         return access;
@@ -209,9 +323,14 @@ public class AccessMask {
     }
 
 
+    /**
+     *
+     * @see AccessFlags#fromString(String) 
+     */
     public void setAsString( String msk ) {
         setUserAccess( AccessFlags.fromChar( msk.charAt( 0 ) ) );
         setGroupAccess( AccessFlags.fromChar( msk.charAt( 1 ) ) );
         setOtherAccess( AccessFlags.fromChar( msk.charAt( 2 ) ) );
     }
+
 }

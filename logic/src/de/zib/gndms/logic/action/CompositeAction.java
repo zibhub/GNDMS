@@ -1,10 +1,12 @@
 package de.zib.gndms.logic.action;
 
 /**
- * A CompositeAction is an {@code action} of Type <i>R</i> ,which can use several actions of Type <i>V</i> to return its result.
+ * A CompositeAction is an {@code action}, which can use several actions of another type to return its result.
  *
- * Thus, an implementation could execute a list of actions of Type <i>V</i> and return itself a result
- * of Type <i>R</i> , based upon the results of the executed actions.
+ * Thus, an implementation could execute a list of actions and return itself a result, 
+ * based upon the results of the executed actions.
+ *
+ * The first template parameter is the return type, the second is the type of the other actions, wich can be added.
  *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$

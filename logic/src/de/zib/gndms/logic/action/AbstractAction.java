@@ -16,6 +16,8 @@ import java.util.concurrent.Executor;
  *
  * An action is started by invoking {@code call()}. If the action should compute the result concurrently,
  * submit it to an Executor, instead of directly invoking {@code call()]}}.
+ *
+ * The first template parameter is the return type.
  * 
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$

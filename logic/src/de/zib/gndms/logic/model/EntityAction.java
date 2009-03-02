@@ -11,6 +11,8 @@ import javax.persistence.EntityManager;
 /**
  * An EntityAction is an Action containing an EntityManager and a list of actions being executed on cleanup.
  *
+ * The template parameter is the return type.
+ *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
  *
