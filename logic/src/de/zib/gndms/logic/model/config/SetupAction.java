@@ -4,7 +4,7 @@ import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 
 
 /**
- * Setup actions are actions that know wether they should create a new object or update
+ * Setup actions are actions that know whether they should create a new object or update
  * an existing one.
  *
  * @author Stefan Plantikow <plantikow@zib.de>
@@ -19,6 +19,13 @@ public abstract class SetupAction<R> extends ConfigAction<R> {
     SetupMode mode;
 
 
+    /**
+     * Calls {@code super.initalize()} and tries to set the setup mode.
+     * If no setup mode has been denoted, it will try to retrieve it by looking up the
+     * configuration map (ConfigAction's {@code  cmdParam} map).
+     * 
+     * @see ConfigAction#initialize() 
+     */
     @Override
     public void initialize() {
         super.initialize();    // Overridden method
@@ -39,6 +46,12 @@ public abstract class SetupAction<R> extends ConfigAction<R> {
 
     }
 
+    /**
+     * Returns the setup mode. If no mode has been set it will try to return a parent of this,
+     * being a {@code SetupAction} and having setup mode properly set.
+     * 
+     * @return the setup mode of this or one of its parents.
+     */
     @SuppressWarnings({ "NonBooleanMethodNameMayNotStartWithQuestion" })
     public SetupMode getMode() {
         if (mode == null) {
@@ -49,14 +62,21 @@ public abstract class SetupAction<R> extends ConfigAction<R> {
     }
 
 
+    /**
+     * Returns true if {@code modeParam} is not in Read mode.
+     * @param modeParam
+     * @return true if {@code modeParam} is not in Read mode.
+     */
 	@SuppressWarnings({ "MethodMayBeStatic" })
 	public boolean isSupportedMode(SetupMode modeParam) {
 		return !SetupMode.READ.equals(modeParam);
 	}
 
+
     public void setMode(final SetupMode modeParam) {
         mode = modeParam;
     }
+
 
     public final boolean isCreating() {
         return SetupMode.CREATE.equals(getMode());

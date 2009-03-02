@@ -24,6 +24,8 @@ import java.util.regex.Pattern;
  *
  * Takes care of command parsing and handles the associated print writer.
  *
+ * The template parameter is the return type.
+ *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
  *
@@ -35,6 +37,9 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
 
     public static final Pattern OPTION_NAME_PATTERN = Pattern.compile("[a-zA-Z][a-zA-Z0-9-_]*");
 
+    /**
+     * A configuration map. It maps an option name to its configuration value.
+     */
     private Map<String, String> cmdParams;
     private PrintWriter printWriter;
     private boolean writeResult;
@@ -44,6 +49,11 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
     private final ConfigProvider config = new DelegatingConfig(this);
 
 
+    /**
+     *  Prints some help about the usage to the {@code printWriter}.
+     *  Calls {@code super.initialize()} if {@code !hasOption("help")==true}
+     *
+     */
     @Override
     public void initialize() {
         if (hasOption("help")) {
@@ -239,7 +249,16 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
         return allOptions;
     }
 
-
+    /**
+     * Returns a String, listing all option keys and their corresponding values.
+     * Note the returned String will is not based only on the local configuration map,
+     * but also from all configuration maps in the parent chain.
+     * A key must start a letter to be listed.
+     * 
+     * @param withNewLines if true, a new line follows after every key value String pair.
+     * @return a String, listing all option keys and their corresponding values of all configurations map starting
+     * from this, in the parent chain.
+     */
     public final @NotNull String allOptionsToString(boolean withNewLines)
     {
         return ParameterTools.asString(getAllOptions(), OPTION_NAME_PATTERN,

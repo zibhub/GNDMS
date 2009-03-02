@@ -33,12 +33,7 @@ public abstract class GridConfig {
 	public abstract String getGridPath() throws Exception;
 
 
-    /**
-     * Returns
-     * @param partitionName
-     * @return
-     * @throws NamingException
-     */
+
 	@NotNull
 	public Context getGridContext(@NotNull String partitionName) throws NamingException {
 		try {

@@ -313,7 +313,7 @@ public final class ParameterTools {
      * @param builder the resulting String will be appended to {@code builder}
      * @param map contains the keys and their corresponding values
      * @param keyPattern the pattern a valid key must match. If {@code null} all Strings containing legal characters are accepted
-     * @param addNewlines if true, a new line follows after every semicolon
+     * @param addNewlines if true, a new line follows after every key value String pair.
      */
     @SuppressWarnings({ "HardcodedLineSeparator" })
     public static void append(final @NotNull StringBuilder builder,
