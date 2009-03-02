@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
- * ThingAMagic.
+ * A Class to indicate that an action failed returning its result.
  *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$

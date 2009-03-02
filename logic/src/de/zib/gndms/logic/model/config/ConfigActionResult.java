@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model.config;
 
 /**
- * An ConfigActionResult 
+ * An ConfigActionResult contains a String hold informations about the result of an action.
  *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
@@ -21,7 +21,11 @@ public abstract class ConfigActionResult {
         this(null);
     }
 
-
+    /**
+     * Return the details about the result.
+     *
+     * @return the details about the result.
+     */
     public String getDetails() {
         return details;
     }

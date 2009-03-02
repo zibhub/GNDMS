@@ -13,6 +13,11 @@ import de.zib.gndms.kit.config.MandatoryOptionMissingException;
  *          User: stepn Date: 18.08.2008 Time: 10:56:41
  */
 public abstract class SetupAction<R> extends ConfigAction<R> {
+
+    /**
+     * A SetupAction can create, read, update and delete its state
+     *
+     */
     public enum SetupMode { CREATE, READ, UPDATE, DELETE }
 
     @ConfigOption(descr = "Action mode; one of create, read, update, or delete")

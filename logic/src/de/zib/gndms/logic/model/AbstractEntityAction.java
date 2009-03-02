@@ -80,8 +80,8 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
      *
      * If an errpr occurs durings the transaction, it will be rolled back.
      * 
-     * @param emParam
-     * @return
+     * @param emParam the EntityManager which should be executed
+     * @return the result of the execution.
      */
     private R executeInsideTransaction(final EntityManager emParam) {
         final EntityTransaction tx = emParam.getTransaction();

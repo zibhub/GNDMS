@@ -12,6 +12,7 @@ import java.io.*;
 import java.util.Properties;
 
 /**
+ *
  * @author Maik Jorra <jorra@zib.de>
  * @version $Id$
  *          <p/>
@@ -31,6 +32,7 @@ public class SetupPermissionConfigletAction extends SetupConfigletAction {
         setName( NAME );
         setClassName( CLAZZ.getName() );
     }
+
 
 
     @Override
@@ -88,7 +90,8 @@ public class SetupPermissionConfigletAction extends SetupConfigletAction {
 
     /**
      * Returns {@code permissionProperties}. If not set using {@code setPermissionProperties},
-     * it will try to retrive it from its configuration map.
+     * it will try to retrive it from the value set for the option {@code permissionProperties} in the configuration map.
+     *  
      * @return
      */
     public String getPermissionProperties() {
@@ -111,8 +114,8 @@ public class SetupPermissionConfigletAction extends SetupConfigletAction {
 
 
     /**
-     * Returns the {@code permissionProperties] as {@code Properties}
-     * @return the {@code permissionProperties] as {@code Properties}
+     * Returns the {@code permissionProperties} as {@code Properties}
+     * @return the {@code permissionProperties} as {@code Properties}
      */
     private Properties asProperties(  ) {
 
