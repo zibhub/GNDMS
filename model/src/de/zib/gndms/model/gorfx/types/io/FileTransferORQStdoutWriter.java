@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types.io.tests;
+package de.zib.gndms.model.gorfx.types.io;
 
 import de.zib.gndms.model.gorfx.types.io.FileTransferORQWriter;
 import de.zib.gndms.model.gorfx.types.io.ORQStdoutWriter;

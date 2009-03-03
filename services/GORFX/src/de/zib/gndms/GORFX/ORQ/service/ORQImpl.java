@@ -56,40 +56,48 @@ public class ORQImpl extends ORQImplBase {
             WidAux.initWid(orq.getCachedWid());
             WidAux.initGORFXid( orq.getORQCalculator().getORQArguments().getActId() );
             try {
+                final TransientContract contract = orq.getOfferExecutionContract(offerExecutionContract);
+                OfferExecutionContractT oec =
+                    ContractXSDTypeWriter.write( contract );
+
+                // log contract
+                logger.debug( "Calculated contract: " + loggableXSDT( oec ) );
+                logger.debug( "Creating offer resouce" );
+
+
                 ExtOfferResourceHome ohome = ( ExtOfferResourceHome) getOfferResourceHome();
                 ResourceKey key = ohome.createResource();
                 OfferResource ores = ohome.getResource( key );
                 ores.setCachedWid(WidAux.getWid());
                 ores.setOfferRequestArguments( orq.getOfferRequestArguments() );
-                final TransientContract contract = orq.getOfferExecutionContract(offerExecutionContract);
 
-                OfferExecutionContractT oec =
-                    ContractXSDTypeWriter.write( contract );
                 ores.setOfferExecutionContract( oec );
                 ores.setOrqCalc(orq.getORQCalculator());
 
                 home.remove( orq.getResourceKey() );
 
-                // log contract
-                logger.debug( "Calculated contract: " + loggableXSDT( oec ) );
 
                 return ohome.getResourceReference( key ).getEndpointReference();
+            }
+            catch (UnfulfillableORQException e) {
+                logger.error( e );
+                throw new UnfullfillableRequest();
+            }
+            catch (PermissionDeniedORQException e) {
+                logger.error( e );
+                throw new PermissionDenied();
+            }
+            catch ( Exception e ) {
+                logger.error( e );
+                throw new RemoteException(e.getMessage(), e);
             }
             finally {
                 WidAux.removeGORFXid();
                 WidAux.removeWid();
             }
         }
-        catch (UnfulfillableORQException e) {
-            logger.error( "UnfulfillableORQException: " + e.getMessage() + "\n" + e.getStackTrace().toString() );
-            throw new UnfullfillableRequest();
-        }
-        catch (PermissionDeniedORQException e) {
-            logger.error( "PermissionDeniedORQException: " + e.getMessage() + "\n" + e.getStackTrace().toString() );
-            throw new PermissionDenied();
-        }
         catch ( Exception e ) {
-            logger.error( "Exception: " + e.getMessage() + "\n" + e.getStackTrace().toString() );
+            logger.error( e );
             throw new RemoteException(e.getMessage(), e);
         }
     }

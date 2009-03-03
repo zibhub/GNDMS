@@ -4,6 +4,7 @@ import de.zib.gndms.model.gorfx.types.FileTransferORQ;
 import de.zib.gndms.model.gorfx.types.io.FileTransferORQPropertyWriter;
 import de.zib.gndms.model.gorfx.types.io.FileTransferORQConverter;
 import de.zib.gndms.model.gorfx.types.io.FileTransferORQPropertyReader;
+import de.zib.gndms.model.gorfx.types.io.FileTransferORQStdoutWriter;
 
 import java.util.TreeMap;
 import java.util.Properties;
