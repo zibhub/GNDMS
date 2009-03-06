@@ -17,7 +17,7 @@ import java.io.PrintWriter;
 
 
 /**
- * Figure out key type names and other inforamtion about a resource home wat runtime
+ * Figure out key type names and other information about a resource home wat runtime
  *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$

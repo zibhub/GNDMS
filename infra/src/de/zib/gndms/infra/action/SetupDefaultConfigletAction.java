@@ -56,7 +56,10 @@ public class SetupDefaultConfigletAction extends SetupConfigletAction {
         return ok();
 	}
 
-
+    /**
+     * 
+     * @param stateParam
+     */
 	private void update_(final ConfigletState stateParam) {
 		final @NotNull HashMap<String, String> configMap = Maps.newHashMap();
 		for (String optName : getAllOptionNames())

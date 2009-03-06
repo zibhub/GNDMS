@@ -11,7 +11,11 @@ import java.util.Set;
 
 /**
  * Configuration actions take a string-string map parameter from some external source
- * and may write results to an optional print writer
+ * and may write results to an optional print writer.
+ *
+ * A CommandAction instance has access to local and global options. Whereas local option are the ones
+ * set in the configuration for an CommandAction object, global options are the local ones plus all options from
+ * set in the parent chain of the instance, being a CommandAction.
  *
  * The first template parameter is the return type.
  * 
