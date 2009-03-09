@@ -5,6 +5,7 @@ import de.zib.gndms.model.util.TxFrame;
 import org.globus.ftp.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import javax.persistence.EntityManager;
 
@@ -25,7 +26,8 @@ import javax.persistence.EntityManager;
 public class PersistentMarkerListener implements MarkerListener {
 
     private FTPTransferState transferState;
-    private static Log logger = LogFactory.getLog( PersistentMarkerListener.class );
+    //private static Log logger = LogFactory.getLog( PersistentMarkerListener.class );
+    private static Logger logger = Logger.getLogger( PersistentMarkerListener.class );
     private ByteRangeList byteRanges;
     private EntityManager entityManager;
 

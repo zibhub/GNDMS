@@ -34,6 +34,7 @@ public class ReadGNDMSVersionAction extends ConfigAction<ConfigActionResult> imp
     public ConfigActionResult execute( final @NotNull EntityManager em, final @NotNull PrintWriter writer ) {
 
         writer.print( verInfo.readRelease() + "\n" );
+        //writer.print( "javarebel test\n" );
         return ok();
     }
     

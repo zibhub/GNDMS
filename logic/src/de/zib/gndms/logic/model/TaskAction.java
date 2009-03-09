@@ -459,17 +459,22 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
             throw e;
         }
         finally {
-            if (em.getTransaction().isActive())
+            // for debuggin'
+            boolean ta = em.getTransaction().isActive();
+            if ( ta )
                 em.getTransaction().rollback();
         }
     }
 
 
     private void rewindTransaction(final EntityTransaction txParam) {
-        if (txParam.getRollbackOnly()) {
-            txParam.rollback();
+        if( txParam.isActive() ) {
+            if ( txParam.getRollbackOnly()) {
+                txParam.rollback();
+                txParam.begin();
+            }
+        } else
             txParam.begin();
-        }
     }
 
 

@@ -38,7 +38,7 @@ public class ORQResource extends ORQResourceBase {
             AbstractORQ orq =  GORFXTools.convertFromORQT( offerRequestArguments, ctx );
             orq.setActId( ( String ) getID() );
             ORQCalculator.setORQArguments( orq );
-            ORQCalculator.setNetAux( home.getSystem().getNetAux() );
+            //ORQCalculator.setNetAux( home.getSystem().getNetAux() );
         }
         catch (ClassNotFoundException e) {
             throw new ResourceException(e);

@@ -54,7 +54,8 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
         GridFTPClient src = null;
         GridFTPClient dest = null;
 
-        EntityManager em = getEntityManager();
+        EntityManager em = getEmf().createEntityManager(  );
+        // EntityManager em = getEntityManager(  );
         TxFrame tx = new TxFrame( em );
         try {
             transferState = em.find( FTPTransferState.class, getModel( ).getId() );
@@ -70,6 +71,9 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
                 }
             }
 
+            tx.commit();
+
+
             TaskPersistentMarkerListener pml = new TaskPersistentMarkerListener( );
             pml.setEntityManager( em );
             pml.setTransferState( transferState );
@@ -79,9 +83,8 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
             URI duri = new URI ( getOrq().getTargetURI() );
 
             // obtain clients
-            NetworkAuxiliariesProvider prov = new NetworkAuxiliariesProvider( );
-            src = prov.getGridFTPClientFactory().createClient( suri );
-            dest = prov.getGridFTPClientFactory().createClient( duri );
+            src = NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( suri );
+            dest = NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( duri );
 
             // setup transfer handler
             GNDMSFileTransfer transfer = new GNDMSFileTransfer();
@@ -100,6 +103,7 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
 
             transfer.performPersistentTransfer( pml );
 
+            tx.begin();
             em.remove( transferState );
             tx.commit();
 
@@ -118,6 +122,7 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
 
             try {
                 tx.finish();
+                em.close();
             } catch ( Exception e ) {
                 trace( "Exception while closing entityManager client.", e );
             }

@@ -84,7 +84,7 @@ public final class GNDMSystem
 	private @NotNull File dbLogFile;
 	private @NotNull EntityManagerFactory emf;
 	private @NotNull EntityManagerFactory restrictedEmf;
-	private NetworkAuxiliariesProvider netAux;
+//	private NetworkAuxiliariesProvider netAux;
 
 
 	// Outside injector
@@ -212,7 +212,7 @@ public final class GNDMSystem
 		binder.bind(EntityManagerFactory.class).toInstance(restrictedEmf);
 		binder.bind(EMFactoryProvider.class).toInstance(this);
 		binder.bind(GridConfig.class).toInstance(sharedConfig);
-		binder.bind(NetworkAuxiliariesProvider.class).toInstance(getNetAux());
+		//binder.bind(NetworkAuxiliariesProvider.class).toInstance(getNetAux());
 		binder.bind(EntityUpdateListener.class).toInstance(this);
 		binder.bind(BatchUpdateAction.class).to(DefaultBatchUpdateAction.class);
 		binder.bind(UUIDGen.class).toInstance(uuidGen);
@@ -728,6 +728,7 @@ public final class GNDMSystem
 	}
 
 
+   /*
     public NetworkAuxiliariesProvider getNetAux( ) {
 
         if( netAux == null )
@@ -735,4 +736,5 @@ public final class GNDMSystem
 
         return netAux;
     }
+    */
 }

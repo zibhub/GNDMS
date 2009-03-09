@@ -19,26 +19,26 @@ import de.zib.gndms.stuff.qexecuter.QueuedExecutor;
  */
 public class NonblockingClientFactory extends AbstractGridFTPClientFactory{
 
-    private int timeout = 10;
-    private TimeUnit unit = TimeUnit.SECONDS;
-    private int delay = 1000; // in ms
+    private int timeout = 20;
+    private final TimeUnit unit = TimeUnit.SECONDS;
+    private long delay = 500; // in ms
     private ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool( 1 );
-    private Map<String, QueuedExecutor> hostExecutores = new HashMap<String, QueuedExecutor>( );
+    private Map<String, QueuedExecutor> hostExecutors = new HashMap<String, QueuedExecutor>( );
     private Logger log = Logger.getLogger( NonblockingClientFactory.class );
 
 
     public GridFTPClient createClient( String host, int port ) throws ServerException, IOException {
 
         QueuedExecutor exec;
-        synchronized( hostExecutores ) {
-            if( hostExecutores.containsKey( host ) ) {
+        synchronized( hostExecutors ) {
+            if( hostExecutors.containsKey( host ) ) {
                 log.debug( "Returning executor for host: " + host );
-                exec = hostExecutores.get( host ) ;
+                exec = hostExecutors.get( host ) ;
             } else {
                 exec = new QueuedExecutor( scheduledExecutor );
                 log.debug( "Creating executor for host: " + host );
                 exec.setDefaultDelay( delay );
-                hostExecutores.put( host, exec );
+                hostExecutors.put( host, exec );
             }
         }
 
@@ -69,19 +69,51 @@ public class NonblockingClientFactory extends AbstractGridFTPClientFactory{
     public void shutdown() {
 
         log.info( "shuting down executors" );
-        for( String hn: hostExecutores.keySet() ) {
-            hostExecutores.get( hn ).shutdown();
+        for( String hn: hostExecutors.keySet() ) {
+            hostExecutors.get( hn ).shutdown();
         }
 
         /*
         log.debug( "awaiting termination" );
-        for( String hn: hostExecutores.keySet() ) {
+        for( String hn: hostExecutors.keySet() ) {
             try {
-                hostExecutores.get( hn ).awaitTermination( timeout, TimeUnit.SECONDS );
+                hostExecutors.get( hn ).awaitTermination( timeout, TimeUnit.SECONDS );
             } catch ( InterruptedException e ) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
         }
         */
+    }
+
+
+    public int getTimeout() {
+        return timeout;
+    }
+
+
+    public void setTimeout( int timeout ) {
+        
+        if( timeout < 0 )
+            throw new IllegalArgumentException( "Timeout must be greater or equal 0" );
+        
+        this.timeout = timeout;
+    }
+
+
+    public long getDelay() {
+        return delay;
+    }
+
+
+    public void setDelay( int delay ) {
+
+        if( delay < 0 )
+            throw new IllegalArgumentException( "Delay must be greater or equal 0" );
+
+        this.delay = delay;
+
+        for( String hn: hostExecutors.keySet() ) {
+            hostExecutors.get( hn ).setDefaultDelay( delay );
+        }
     }
 }

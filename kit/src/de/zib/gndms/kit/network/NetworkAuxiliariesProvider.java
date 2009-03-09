@@ -31,18 +31,20 @@ package de.zib.gndms.kit.network;
  */
 public class NetworkAuxiliariesProvider {
 
+    private NetworkAuxiliariesProvider( )  { }
+
     // private final GridFTPClientFactory gridFTPClientFactory = new SimpleGridFTPClientFactory();
    // private final GridFTPClientFactory gridFTPClientFactory = new CertGridFTPClientFactory();
-     private final GridFTPClientFactory gridFTPClientFactory = new NonblockingClientFactory();
-    private final BandWidthEstimater bandWidthEstimater = new StaticBandWidthEstimater();
+    private final static GridFTPClientFactory gridFTPClientFactory = new NonblockingClientFactory();
+    private final static BandWidthEstimater bandWidthEstimater = new StaticBandWidthEstimater();
 
 
-    public GridFTPClientFactory getGridFTPClientFactory() {
+    public static GridFTPClientFactory getGridFTPClientFactory() {
         return gridFTPClientFactory;
     }
 
 
-    public BandWidthEstimater getBandWidthEstimater() {
+    public static BandWidthEstimater getBandWidthEstimater() {
         return bandWidthEstimater;
     }
 

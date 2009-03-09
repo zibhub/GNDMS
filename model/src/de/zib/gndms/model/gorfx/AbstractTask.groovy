@@ -83,7 +83,7 @@ abstract class AbstractTask extends TimedGridResource {
     @Basic Serializable orq
 
 
-    @Column(name="fault", nullable=true, updatable=true, columnDefinition="VARCHAR")
+    @Column(name="fault", nullable=true, updatable=true, columnDefinition="VARCHAR", length=5000 )
     @Basic String faultString
     /**
      * Payload depending on state, either task results or a detailed task failure

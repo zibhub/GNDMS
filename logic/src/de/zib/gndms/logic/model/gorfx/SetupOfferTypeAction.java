@@ -148,7 +148,7 @@ public class SetupOfferTypeAction extends SetupAction<ConfigActionResult> {
         if (calcFactory != null)
             type.setCalculatorFactoryClassName(calcFactory.getCanonicalName());
         if (taskActionFactory != null)
-            type.setCalculatorFactoryClassName(taskActionFactory.getCanonicalName());
+            type.setTaskActionFactoryClassName(taskActionFactory.getCanonicalName());
         if (orqType != null)
             type.setOfferArgumentType(orqType);
         if (resType != null)

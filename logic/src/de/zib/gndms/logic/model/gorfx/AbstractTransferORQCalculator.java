@@ -48,7 +48,7 @@ public abstract class AbstractTransferORQCalculator<M extends FileTransferORQ, C
         GridFTPClient clnt = null;
         try {
             URI suri =  new URI( getORQArguments().getSourceURI() );
-            clnt =  getNetAux().getGridFTPClientFactory().createClient( suri );
+            clnt =  NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( suri );
             GNDMSFileTransfer ft = new GNDMSFileTransfer();
             ft.setSourceClient( clnt );
             ft.setSourcePath( suri.getPath( ) );
@@ -75,7 +75,7 @@ public abstract class AbstractTransferORQCalculator<M extends FileTransferORQ, C
      * Estimates the bandwidth
      */
     protected Float estimateBandWidth( ) throws IOException {
-        estimatedBandWidth = getNetAux().getBandWidthEstimater().estimateBandWidthFromTo(
+        estimatedBandWidth = NetworkAuxiliariesProvider.getBandWidthEstimater().estimateBandWidthFromTo(
             getORQArguments( ).getSourceURI(), getORQArguments( ).getTargetURI() );
 
         if( estimatedBandWidth == null )

@@ -14,8 +14,8 @@ import java.util.ArrayList;
 public class QueuedExecutor implements ExecutorService {
 
     private ScheduledExecutorService executor;
-    private int defaultDelay;
-    private long lastTimeStamp;
+    private long defaultDelay;
+    private long lastTimeStamp = 0;
 
 
     public QueuedExecutor() {
@@ -168,12 +168,12 @@ public class QueuedExecutor implements ExecutorService {
 
 
 
-    public int getDefaultDelay() {
+    public long getDefaultDelay() {
         return defaultDelay;
     }
 
 
-    public void setDefaultDelay( final int defaultDelay ) {
+    public void setDefaultDelay( final long defaultDelay ) {
         this.defaultDelay = defaultDelay;
     }
 
@@ -187,13 +187,13 @@ public class QueuedExecutor implements ExecutorService {
     }
 
     
-    private long actualDelay( int delay ) {
+    private long actualDelay( long delay ) {
         long ct = System.currentTimeMillis();
         long cd = ct - lastTimeStamp;
 
         long nd;
         if( cd <= 0 )
-            nd = lastTimeStamp + delay;
+            nd = StrictMath.abs( cd ) + delay;
         else if( cd < delay )
                 nd = delay - cd;
         else

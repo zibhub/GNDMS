@@ -54,7 +54,7 @@ public class StagedTransferORQCalculator extends
             String src = ServiceHost.getBaseURL( ).getHost();
             URI dst_uri = destinationURI( getORQArguments().getGridSite() );
             String dst = dst_uri.getHost( );
-            Float ebw = getNetAux().getBandWidthEstimater().estimateBandWidthFromTo( src, dst );
+            Float ebw = NetworkAuxiliariesProvider.getBandWidthEstimater().estimateBandWidthFromTo( src, dst );
 
             if( ebw == null )
                 throw new RuntimeException( "No connection beween" + src +  " and " + dst );

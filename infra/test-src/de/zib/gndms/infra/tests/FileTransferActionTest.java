@@ -70,7 +70,7 @@ public class FileTransferActionTest extends SysTestBase {
         // create orq-calc
         FileTransferORQCalculator calc = new FileTransferORQCalculator();
         calc.setORQArguments( orq );
-        calc.setNetAux( getSys().getNetAux() );
+       // calc.setNetAux( getSys().getNetAux() );
 
         TransientContract con = calc.createOffer();
         PersistentContract pcon = con.acceptAt( new DateTime() );

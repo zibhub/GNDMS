@@ -100,9 +100,8 @@ public class TransferStateTest extends ModelEntityTestBase {
             URI duri = new URI ( transferData.getDestinationURI( ) );
 
             // obtain clients
-            NetworkAuxiliariesProvider prov = new NetworkAuxiliariesProvider( );
-            src = prov.getGridFTPClientFactory().createClient( suri );
-            dest = prov.getGridFTPClientFactory().createClient( duri );
+            src = NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( suri );
+            dest = NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( duri );
 
 
             // setup transfer handler
@@ -120,7 +119,7 @@ public class TransferStateTest extends ModelEntityTestBase {
             Assert.assertEquals( ets, transferData.expectedTransferSize( ), "Transfer size mismatch" );
 
             DateTime dat = new DateTime( );
-            Float tt = prov.getBandWidthEstimater().estimateBandWidthFromTo( suri.getHost( ), duri.getHost( ) );
+            Float tt = NetworkAuxiliariesProvider.getBandWidthEstimater().estimateBandWidthFromTo( suri.getHost( ), duri.getHost( ) );
             Assert.assertNotNull ( tt, "estimated band width" );
             System.out.println( "Estimated transfer time in sec.: "
                 + NetworkAuxiliariesProvider.calculateTransferTime( ets, tt.floatValue(), -1 ) );
