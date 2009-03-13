@@ -70,17 +70,17 @@ public interface CommandAction<R> extends Action<R>, ConfigProvider {
             throws ParameterTools.ParameterParseException;
 
     /**
-     * Returns the map containing the local configuration settings plus the ones from the parent chain.
+     * Returns the map containing the local configuration settings plus the ones from the parent chain of this CommandAction.
      * 
-     * @return the map containing the local configuration settings plus the ones from the parent chain.
+     * @return the map containing the local configuration settings plus the ones from the parent chain of this CommandAction.
      */
     @NotNull Map<String, String> getAllOptions();
 
     /**
-     * Returns a set containing all local and global options.
-     * Global means all all CommandActions in the parent chain, starting from this.
+     * Returns a set containing all availabel option names.
+     * This means all option names in the parent chain for a CommandAction, starting from this.
      *
-     * @return a set containing all local and global options.
+     * @return a set containing all set options.
      */
     @NotNull Set<String> getAllOptionNames();
 

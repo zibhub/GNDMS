@@ -14,8 +14,37 @@ import javax.persistence.EntityManager;
 import java.io.PrintWriter;
 import java.util.Set;
 
+
 /**
- * Action to create a new slice kind object from scratch.
+ *
+ * An Action to create a new slice kind object from scratch.
+ *
+ * <p>An instance if this class manages entities, being an instance of {@code SliceKind}, which will be retrieved from the
+ * configuration map during the initialization.
+ *
+ *
+ * <p>When this action is started, the configuration map must have the options 'sliceKind', 'sliceKindMode' and 'uniqueDirName' set.
+ * Otherwise an <tt>IllegalStateException</tt> will be thrown.
+ *
+ * <p>If SetupMode is set to
+ * <ul>
+ *  <li>
+ *      create, a new SliceKind instance will be created and its fields are set 
+ *      using the corrisponding getter methods of this class.
+ *  </li>
+ *  <li>
+ *      update, the SliceKind instance will be retrieved from the EntityManager, using <tt>getSliceKind()</tt>
+     * as primary key and {@code SliceKind.class} as entityclass. Then the permissions and slice directory will be
+     * updated.
+    </li>
+ *  </ul>
+ *
+ * <p> Note other setup modes are not supported.
+ *
+ * <p>An instance of this class returns a {@code ConfigActionResult} informing about the success of its execution, when
+ * the <tt>execute()</tt> method is called.
+/**
+ *
  *
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
@@ -61,6 +90,12 @@ public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
     }
 
 
+
+  /**
+    * Calls <tt>super.initialize()</tt> and retrieves several field values from the configuration map,
+    * if SetupMode is <tt>create</tt>.
+    * The options 'sliceKind', 'sliceKindMode' and 'uniqueDirName' must be set anyway.
+    */
     @Override
     public void initialize( ) {
 
@@ -86,6 +121,19 @@ public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
     }
 
 
+    /**
+     *
+     * If SetupMode is <tt>create</tt>, this method creates a new <tt>SliceKind</tt> instance and its fields are set 
+     * using the corrisponding getter methods of this class.
+     *
+     * <p>On <tt>update</tt> the SliceKind instance will be retrieved from the EntityManager, using <tt>getSliceKind()</tt>
+     * as primary key and {@code SliceKind.class} as entityclass. Then the permissions and slice directory will be
+     * updated.
+     *
+     * @param em an EntityManager managing SliceKind entities.
+     * @param writer
+     * @return An {@code OKResult} instance, if no problem occurred. Otherwise a {@code FailedResult} instance.
+     */
     public ConfigActionResult execute( @NotNull EntityManager em, @NotNull PrintWriter writer ) {
 
         SliceKind r;
@@ -112,7 +160,12 @@ public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
         return ok();
     }
 
-
+    /**
+     * Returns true if {@code modeParam} is either <tt>create</tt> or <tt>update</tt>. Otherwise returns false.
+     *
+     * @param modeParam 
+     * @return true if {@code modeParam} is either <tt>create</tt> or <tt>update</tt>. Otherwise returns false.
+     */
 	@Override
 	public boolean isSupportedMode(final SetupMode modeParam) {
 		if (SetupMode.CREATE.equals(modeParam)) return true;

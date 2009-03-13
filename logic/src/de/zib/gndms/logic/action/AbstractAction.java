@@ -12,7 +12,7 @@ import java.util.concurrent.Executor;
  *
  * This class provides a default implementation of the {@code Action} Interface.
  *
- * An implementing action just has to define its action by implementing the {@code execute()} method.
+ * A concrete subclass needs to implement the {@code execute()} method.
  *
  * An action is started by invoking {@code call()}. If the action should compute the result concurrently,
  * submit it to an Executor, instead of directly invoking {@code call()]}}.
@@ -150,6 +150,12 @@ public abstract class AbstractAction<R> implements Action<R> {
     }
 
 
+    /**
+     * Checks if a required parameter has been set.
+     * If not set (if <tt>object == null </tt> ), an {@code IllegalStateException} will be thrown.
+     * @param parameterName the name of a parameter
+     * @param object the value set for the parameter
+     */
     public static void requireParameter(final @NotNull String parameterName, final Object object) {
         if (object == null)
             throw new IllegalStateException("Parameter '\'" + parameterName + "' not set");

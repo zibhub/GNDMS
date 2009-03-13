@@ -4,8 +4,24 @@ import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 
 
 /**
- * Setup actions are actions that know whether they should create a new object or update
- * an existing one.
+ * A {@code SetupActions} extends a {@link ConfigAction} by a setup mode flag.
+ * The setup mode must be either
+ * <ul>
+ *       <li> create </li>
+ *       <li> read </li>
+ *       <li> update </li>
+ *       <li> delete </li>
+ * </ul>
+ * and may be used during {@code initialize()},{@code execute()} and {@code cleanUp()}.
+ *
+ * <p>The template parameter R is the type of the result that is computed by the action.
+ *
+ * <p>When {@code initialize()} is invoked, it will try to retrieve the setup mode.
+ * If no value has been set yet, it looks up the option 'mode' from the configuration map.
+ * If nothing denoted, it tries to retrieve the setup mode from its parent chain.
+ *
+ * By default, read mode is not supported. If a subclass shall support this mode, overwrite
+ * {@link #isSupportedMode(de.zib.gndms.logic.model.config.SetupAction.SetupMode)} }.
  *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
@@ -16,7 +32,6 @@ public abstract class SetupAction<R> extends ConfigAction<R> {
 
     /**
      * A SetupAction can create, read, update and delete its state
-     *
      */
     public enum SetupMode { CREATE, READ, UPDATE, DELETE }
 
@@ -52,7 +67,7 @@ public abstract class SetupAction<R> extends ConfigAction<R> {
     }
 
     /**
-     * Returns the setup mode. If no mode has been set it will try to return a parent of this,
+     * Returns the setup mode. If no mode has been set, it looks up the parent chain for an instance,
      * being a {@code SetupAction} and having setup mode properly set.
      * 
      * @return the setup mode of this or one of its parents.
@@ -68,9 +83,10 @@ public abstract class SetupAction<R> extends ConfigAction<R> {
 
 
     /**
-     * Returns true if {@code modeParam} is not in Read mode.
+     * Returns true if {@code modeParam} is not in <tt>read</tt> mode.
+     *
      * @param modeParam
-     * @return true if {@code modeParam} is not in Read mode.
+     * @return true if {@code modeParam} is not in <tt>read</tt> mode.
      */
 	@SuppressWarnings({ "MethodMayBeStatic" })
 	public boolean isSupportedMode(SetupMode modeParam) {

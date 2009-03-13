@@ -9,13 +9,20 @@ import java.util.List;
 
 
 /**
- * Interface for an action which requires a EntityManager.
+ * Interface for an action.  Actions are atomic activities that are carried out by the system,
  *
- * Its action will be executed concurrently and the system will wait for its result, but not until really needed.
- * The action must be implemented in {@code call()} and invoked by an {@code Executor}.
+ * A new action is implemented by defining {@code initialize()}, {@code call()}, and {@code cleanUp()}.
  *
- * The template parameter is the return type.
+ * {@code call()} is expected to be shaped like {@code initialize(); ... try { somehting() } finally { cleanup() }}
+ * This pattern is realized by the default implementation AbstractAction.
  *
+ * The template parameter R is the type of the result that is computed by the action.
+ *
+ * Actions may be executed concurrently using an {@code Executor}. Alternatively, an action may be executed
+ * blockingly.
+ *
+ * Every action may have a parent unless it is a top-level action.  This means, hierarchies of nested
+ * actions may be created.
  *
  *
  * @author: Maik Jorra <jorra@zib.de>
@@ -29,21 +36,17 @@ public interface Action<R> extends Callable<R> {
 
     /**
      * Will be invoked before {@code execute()} when this is submitted to an {@code Executor}.
-     *
      */
     void initialize( );
 
 
     /**
-     * An implementing class must declare an action.
+     * An implementing class must declare its action here.
      *
-     * Do not call this method directly and use an {@link Executor} instead to execute
+     *
+     * Do not call this method directly unless and use an {@link Executor} instead to execute
      * the computation in a seperate thread.
      *
-     *
-     * The system will wait for the result not until really needed.
-     * See {@link Executor} about the invocation and retrieving of the result
-     * 
      * @return the calculated result
      * @throws ActionInitializationException
      * @throws RuntimeException

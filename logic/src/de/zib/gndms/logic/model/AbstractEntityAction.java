@@ -65,6 +65,7 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
 
     /**
      * Returns true by default
+     *
      * @return true by default
      */
     @SuppressWarnings({ "MethodMayBeStatic" })

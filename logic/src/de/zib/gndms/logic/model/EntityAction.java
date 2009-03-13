@@ -25,6 +25,7 @@ public interface EntityAction<R> extends Action<R>, ModelUUIDGen {
      * Returns the EntityManager as set by {@code setOwnEntityManager}.
      * If not set, the first EntityManger of the parents of this action, being not {@code null}, will be returned.
      * If no parent has an EntityManager, {@code null} will be returned.
+     *
      * @return the first appereance of an EntityManager in the parent chain of this action
      */
     EntityManager getEntityManager();
@@ -41,6 +42,7 @@ public interface EntityAction<R> extends Action<R>, ModelUUIDGen {
 
     /**
      * Returns the postponend actions.
+     *
      * @return the postponend actions
      */
     BatchUpdateAction<GridResource, ?> getPostponedActions();
