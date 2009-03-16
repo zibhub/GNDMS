@@ -18,7 +18,7 @@ import java.io.PrintWriter;
 
 
 /**
- * A SetupSubspaceAction is intended to store Subspaces in database and manipulate them
+ * An Action to store Subspaces in the database and manipulate them.
  *
  * <p>An instance contains an <tt>ImmutableScopedName</tt> <tt>subspace</tt> for the
  *  key of the subspace (QName).It must be set in the configuration map and

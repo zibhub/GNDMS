@@ -16,7 +16,6 @@ import java.util.Properties;
  * This class provides a default implementation of {@code SetupConfigletAction}, intended to store
  * permissions in database and manipulate them.
  *
-
  * <p>A <tt>SetupPermissionConfigletAction</tt> contains a String <tt>permissionProperties</tt> which will either be retrieved from the
  * configuration map during the initialization, or can be set using the corresponding setter methods.
  *

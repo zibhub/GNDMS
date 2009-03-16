@@ -13,17 +13,16 @@ import java.util.Map;
 
 
 /**
- * This class provides a default implementation of {@code SetupConfigletAction}, intended to store and manage
- * all option names and their current chosen values of the configuration map in the database.
+ * This class provides a default implementation of {@code SetupConfigletAction}, intended to manage
+ * all option names and their current chosen values of a <tt>Configlet</tt> entity.
+ *
+ * <p>If SetupMode ist set to <tt>create</tt> or <tt>update</tt>, the state of the <tt>ConfigletState</tt> entity will be overwritten by a new map,
+ * containing all options and their chosen values in the current configuration.
  *
  * <p>When this action is started with <tt>create</tt> as SetupMode, the configuration map must
  * have an option 'className' set. Otherwise an <tt>IllegalStateException</tt> will be thrown.
  *
- *
- * <p>An instance of {@code SetupPermissionConfigletAction} manages entities, being an instance of {@code ConfigletState}.
- * If SetupMode ist set to <tt>create</tt> or <tt>update</tt>, the <tt>ConfigletState</tt> entity will be overwritten by a new map,
- * containing all options and their chosen values in the current configuration.
- *
+ * 
  * <p>The current configuration will be written to a given <tt>PrintWriter</tt>, if SetupMode is <tt>read</tt>.
  *
  * @author Stefan Plantikow<plantikow@zib.de>

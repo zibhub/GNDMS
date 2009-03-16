@@ -19,7 +19,7 @@ import java.util.Set;
  *
  * An Action to create a new slice kind object from scratch.
  *
- * <p>An instance if this class manages entities, being an instance of {@code SliceKind}, which will be retrieved from the
+ * <p>An instance of this class manages entities, being an instance of {@code SliceKind}, which will be retrieved from the
  * configuration map during the initialization.
  *
  *

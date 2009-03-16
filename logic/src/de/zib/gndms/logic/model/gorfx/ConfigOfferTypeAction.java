@@ -14,8 +14,18 @@ import java.util.Map;
 import java.util.Properties;
 
 
+
 /**
- * 
+ * An Action to manage the configuration map of an <tt>OfferType</tt> entity.
+ *
+ * <p>Depending on the <tt>UpdateMode</tt> it will either delete, just update or completly overwrite
+ * all keys and their corresponding values in the configuration map, being a valid config option (see {@link #isValidConfigOptionName(String)})
+ * of an already existing <tt>OfferType</tt> entity.
+ *
+ * <p>Before this action is started,
+ *  the following parameters must be set in the configuration map: <tt>'cfgOutFormat','cfgUpdateMode'</tt>.
+ * If not already denoted, 'offerType' must also be set in the map.
+ * Otherwise an <tt>IllegalStateException</tt> will be thrown.
  *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
@@ -52,12 +62,6 @@ public class ConfigOfferTypeAction extends ConfigAction<String> {
         }
     }
 
- /**
-     * Creates, updates or deletes the entity with the primary key {@code getOfferType()} from the entityclass {@code OfferType.class}
-     * @param em the EntityManager, where the entity will be created, updated or removed.
-     * @param writer
-     * @return An {@code OKResult} instance, if no problem occurred. Otherwise a {@code FailedResult} instance.
-     */
 
 
     /**
@@ -65,7 +69,7 @@ public class ConfigOfferTypeAction extends ConfigAction<String> {
      * and the entityclass <tt>OfferType.class</tt>, which is managed by <tt>em</tt>.
      *
      * <p> Depending on the <tt>UpdateMode</tt> it will manipulate the entity's configuration map.
-     *   If the mode is set to 'DELKEYS', all options from entity's configuration map are delete, which have a valid config option name,
+     *   If the mode is set to 'DELKEYS', all options from entity's configuration map are deleted, which have a valid config option name
      *   according to <tt>isValidConfigOpionName()</tt>.
      *
      *  Otherwise it will put all available options (<tt>getAllOptionName()</tt>) and their chosen values to the configuration map, if they are valid
@@ -126,7 +130,7 @@ public class ConfigOfferTypeAction extends ConfigAction<String> {
     /**
      * Depending on the selected <tt>OutFormat</tt>, another message is returned.
      *
-     * If OutFormat is set to
+     * If <tt>OutFormat</tt> is set to
      * <ul>
      *      <li>
      *          <tt>PRINT_OK</tt>, the String "OK()" is returned.

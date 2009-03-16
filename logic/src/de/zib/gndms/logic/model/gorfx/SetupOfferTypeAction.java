@@ -21,20 +21,17 @@ import java.util.Properties;
 
 
 /**
- * This class provides a default implementation of {@code SetupAction} for database manipulation of entities,
- * being an {@code OfferType}.
+ * <p>An Action to create new <tt>OfferType</tt> instances and store them in the database.
  *
- * <p>A <tt>SetupOfferTypeAction </tt> will either create or update an {@code OfferType} entity by using the getter methods
- * provide in this class to create an {@code OfferType} instance.
- * So on both modes, the entity is completly overwritten.
+ * <p>Depending on the <tt>SetupMode</tt>, it will either create or update an {@code OfferType} entity by using the getter methods
+ * provided in this class.
+ * On both modes, the entity is completly overwritten and stored in the database. If only the entity's configmap should be updated,
+ * use {@link de.zib.gndms.logic.model.gorfx.ConfigOfferTypeAction} instead, after the entity has been created once.
  *
- * When this action is started with <tt>create</tt> as SetupMode, the configuration map must
- * have an option 'permissionProperties' set.
- *
- *
- * <p>The following parameters are required for a new entity creation: <tt>orqType,resType,calcFactory,taskAction</tt>
- * They must be set in the configuration map before this action is started in <tt>create</tt> modus.
+ * <p>The following parameters are required for a new entity creation: <tt>orqType,resType,calcFactory,taskAction</tt>.
+ * They must be set in the configuration map before this action is started on <tt>create</tt> modus.
  * Otherwise an <tt>IllegalStateException</tt> will be thrown.
+ * <tt>orqType</tt> must be set in every mode.
  *
  * <p>An instance of this class returns a {@code ConfigActionResult} informing about the success of its execution, when
  * the execute method is called.

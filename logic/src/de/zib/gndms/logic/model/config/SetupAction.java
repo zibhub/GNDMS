@@ -4,7 +4,7 @@ import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 
 
 /**
- * A {@code SetupActions} extends a {@link ConfigAction} by a setup mode flag.
+ * A {@code SetupActions} extends a {@link ConfigAction} by a <tt>SetupMode</tt> flag.
  * The setup mode must be either
  * <ul>
  *       <li> create </li>
@@ -12,15 +12,14 @@ import de.zib.gndms.kit.config.MandatoryOptionMissingException;
  *       <li> update </li>
  *       <li> delete </li>
  * </ul>
- * and may be used during {@code initialize()},{@code execute()} and {@code cleanUp()}.
+ * and is mostly used during {@code initialize()},{@code execute()} and {@code cleanUp()}.
  *
  * <p>The template parameter R is the type of the result that is computed by the action.
  *
  * <p>When {@code initialize()} is invoked, it will try to retrieve the setup mode.
- * If no value has been set yet, it looks up the option 'mode' from the configuration map.
- * If nothing denoted, it tries to retrieve the setup mode from its parent chain.
+ * If no value has been set yet, it looks up the option 'mode' from the configuration map but also if necessary from the parent chain.
  *
- * By default, read mode is not supported. If a subclass shall support this mode, overwrite
+ * <p>By default, <tt>read</tt> mode is not supported. If a subclass shall support this mode, overwrite
  * {@link #isSupportedMode(de.zib.gndms.logic.model.config.SetupAction.SetupMode)} }.
  *
  * @author Stefan Plantikow <plantikow@zib.de>
@@ -31,7 +30,7 @@ import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 public abstract class SetupAction<R> extends ConfigAction<R> {
 
     /**
-     * A SetupAction can create, read, update and delete its state
+     * A SetupAction can create, read, update and delete its entity
      */
     public enum SetupMode { CREATE, READ, UPDATE, DELETE }
 

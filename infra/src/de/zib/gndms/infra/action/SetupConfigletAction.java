@@ -13,16 +13,17 @@ import java.io.PrintWriter;
 
 /**
  *
- * This class provides a default implementation of {@code SetupAction} for database manipulation of entities,
+ * This abstract class provides a default implementation of {@code SetupAction} for database manipulation of entities,
  * being a {@code ConfigletState}.
  *
- *
- * <p>Depending on the setup mode, it will either create, read, update or delete an entity, when this action is executed.
+ * <p>All values of <tt>SetupMode</tt> are supported.
+ * Depending on the chosen value, it will either create a new ConfigletState and registers it on the database,
+ * update its <tt>state</tt>, read the entity to a PrintWriter or deletes it, when this action is executed.
  * It returns a {@code ConfigActionResult} informing about the success of its execution.
  *
- * <p>When {@code initialize()} is invoked, it will try to retrieve the {@code name} and {@code className}.
- * If no value has been set yet, it looks up the option 'name' and 'className' from the configuration map.
- * If nothing denoted, it tries to retrieve the setup mode from its parent chain.
+ * <p>When {@code initialize()} is invoked, it will try to retrieve the fields {@code name} and {@code className}.
+ * If no value has been set yet, it looks up the options 'name' and 'className' in the configuration map of this instance,
+ * but also if necessary of the parent chain.
  *
  * 
  * @author Maik Jorra <jorra@zib.de>
@@ -39,7 +40,7 @@ public abstract class SetupConfigletAction extends SetupAction<ConfigActionResul
     String className;
 
     /**
-     * Tries to retrieve the fields {@code name}, {@code className} and calls {@code super.initialize()}
+     * Calls {@code super.initialize()} and tries to retrieve the fields {@code name}, {@code className}.
      */
     @Override
     public void initialize() {
@@ -114,6 +115,7 @@ public abstract class SetupConfigletAction extends SetupAction<ConfigActionResul
      * {@code getName()} and {@code getClassName()}.
      * Makes the entity managed and persistent.
      * Calls {@link de.zib.gndms.infra.action.SetupConfigletAction#create(de.zib.gndms.model.common.ConfigletState, javax.persistence.EntityManager, java.io.PrintWriter)}
+     * to set its <tt>state</tt>.
      * 
      * @param emParam the EntityManager, the new created {@code ConfigletState} will be managed by.
      * @param writerParam
@@ -131,8 +133,9 @@ public abstract class SetupConfigletAction extends SetupAction<ConfigActionResul
 
     
     /**
-     * Will be called by {@link de.zib.gndms.infra.action.SetupConfigletAction#update(javax.persistence.EntityManager, java.io.PrintWriter)}.
-     * Updates an entity.
+     * Will be called by {@link de.zib.gndms.infra.action.SetupConfigletAction#update(javax.persistence.EntityManager, java.io.PrintWriter)} to update the state
+     * of an <tt>ConfigletState</tt> entity.
+     *
      * 
      * @param state the ConfigletState to be changed
      * @param emParam the EnityManager, containing the entity instance {@code state}.
@@ -144,7 +147,7 @@ public abstract class SetupConfigletAction extends SetupAction<ConfigActionResul
     /**
      * Retrieves the entity instance with the primary key {@code getName()} from the entityclass {@code ConfigletState.class}
      * and calls {@link de.zib.gndms.infra.action.SetupConfigletAction#update(de.zib.gndms.model.common.ConfigletState, javax.persistence.EntityManager, java.io.PrintWriter)}
-     * to update the entity.
+     * to update the <tt>state</tt> of the entity.
      *  
      * @param emParam the EnityManager, containing an entity instance for the entityClass {@code ConfigletState} and
      *      the primary key {@code getName()}
