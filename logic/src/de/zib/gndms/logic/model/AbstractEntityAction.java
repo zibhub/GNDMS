@@ -104,6 +104,8 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
 
 
     /**
+     * Will be invoked with <tt>getEntityManager</tt> as EntityManager, when the action is started.
+     * 
      * Defines how the EntityManager is executed on its persistence context.
      *
      * @param em the EntityManager  being executed on its persistence context.

@@ -7,8 +7,8 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
- * ThingAMagic.
- *
+ * A SystemAction is a ConfigAction with a <tt>GNDMSystem</tt> instance.
+ * 
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
  *

@@ -75,6 +75,12 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
     }
 
 
+    /**
+     * Calls {@link #execute(javax.persistence.EntityManager, java.io.PrintWriter)},
+     * writes the result to <tt>getPrintWriter()</tt>if available, and returns the result. 
+     * @param em the EntityManager  being executed on its persistence context.
+     * @return the result of {@code execute(EntityManager, PrintWriter)},
+     */
     @Override
     public final R execute(final @NotNull EntityManager em) {
         final R retVal = execute(em, getPrintWriter());
@@ -118,6 +124,13 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
         return ConfigTools.getParamMap((Class<? extends ConfigAction<?>>) getClass());
     }
 
+    /**
+     * Will be invoked when the action is started, using the EntityManager and PrintWriter of <tt>this</tt> instance.
+     * 
+     * @param em
+     * @param writer
+     * @return
+     */
     public abstract R execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer);
 
 

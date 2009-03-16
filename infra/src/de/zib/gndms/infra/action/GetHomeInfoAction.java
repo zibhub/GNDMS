@@ -17,8 +17,12 @@ import java.io.PrintWriter;
 
 
 /**
- * Figure out key type names and other information about a resource home wat runtime
+ * Figures out key type names and other information about a resource home at runtime
  *
+ * <p>When {@code initialize()} is invoked, it tries to retrieve the lookup service home of the GNDMSystem from the
+ * configuration map. Therefore the option 'home' must be set.
+ *
+ * 
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
  *

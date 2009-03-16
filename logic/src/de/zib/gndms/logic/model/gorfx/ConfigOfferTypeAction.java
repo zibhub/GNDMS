@@ -15,7 +15,7 @@ import java.util.Properties;
 
 
 /**
- * ThingAMagic.
+ * 
  *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
@@ -52,7 +52,31 @@ public class ConfigOfferTypeAction extends ConfigAction<String> {
         }
     }
 
+ /**
+     * Creates, updates or deletes the entity with the primary key {@code getOfferType()} from the entityclass {@code OfferType.class}
+     * @param em the EntityManager, where the entity will be created, updated or removed.
+     * @param writer
+     * @return An {@code OKResult} instance, if no problem occurred. Otherwise a {@code FailedResult} instance.
+     */
 
+
+    /**
+     * Retrieves the <tt>OfferType</tt> entity with the primary key <tt>getOfferType()</tt>
+     * and the entityclass <tt>OfferType.class</tt>, which is managed by <tt>em</tt>.
+     *
+     * <p> Depending on the <tt>UpdateMode</tt> it will manipulate the entity's configuration map.
+     *   If the mode is set to 'DELKEYS', all options from entity's configuration map are delete, which have a valid config option name,
+     *   according to <tt>isValidConfigOpionName()</tt>.
+     *
+     *  Otherwise it will put all available options (<tt>getAllOptionName()</tt>) and their chosen values to the configuration map, if they are valid
+     *      according to <tt>isValidConfigOpionName()</tt>.
+     *
+     * Calls {@link #genOutput(java.util.Map)}, with the modified configuration map, returning a result string.
+     *
+     * @param em
+     * @param writer
+     * @return {@link #genOutput(java.util.Map)} 
+     */
     @Override
     public String execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer) {
         final @NotNull OfferType offerType_ = em.find(OfferType.class, getOfferType());
@@ -89,12 +113,37 @@ public class ConfigOfferTypeAction extends ConfigAction<String> {
     }
 
 
+    /**
+     * Returns ! name.startsWith("cfg") && ! "offerType".equals(name)
+     * @param name a name of an option
+     * @return
+     */
     @SuppressWarnings({ "MethodMayBeStatic" })
     private boolean isValidConfigOptionName(final String name) {
         return ! name.startsWith("cfg") && ! "offerType".equals(name);
     }
 
-
+    /**
+     * Depending on the selected <tt>OutFormat</tt>, another message is returned.
+     *
+     * If OutFormat is set to
+     * <ul>
+     *      <li>
+     *          <tt>PRINT_OK</tt>, the String "OK()" is returned.
+     *      </li>
+     *      <li>
+     *          <tt>NONE</tt>, null is returned
+     *      </li>
+     *      <li>
+     *          <tt>PROPS</tt>, <tt>configMapParam</tt> is loaded as Properties and <tt>props.toString()</tt> will be returned.
+     *      </li>
+     *      <li>
+     *          <tt>OPTS</tt> returns <tt>this.allOptionsToString(false)</tt>
+     *      </li>
+     * </ul>
+     * @param configMapParam a Map containing the config map of an offer type instance.
+     * @return
+     */
     private String genOutput(final Map<String, String> configMapParam) {
         switch (cfgOutFormat) {
             case PRINT_OK:

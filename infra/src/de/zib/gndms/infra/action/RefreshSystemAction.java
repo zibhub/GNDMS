@@ -9,7 +9,7 @@ import java.io.PrintWriter;
 
 
 /**
- * ThingAMagic.
+ * Reloads current <tt>Configlet</tt> to the GNDMSystem.
  *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
