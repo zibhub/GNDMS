@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
  *          User: stepn Date: 14.08.2008 Time: 14:53:21
  */
 @SuppressWarnings({ "StaticMethodOnlyUsedInOneClass", "ClassWithTooManyMethods" })
+
 public abstract class ConfigAction<R> extends AbstractEntityAction<R>
         implements CommandAction<R> {
 
@@ -51,7 +52,7 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
 
     /**
      *  Prints some help about the usage to the {@code printWriter}.
-     *  Calls {@code super.initialize()} if {@code !hasOption("help")==true}
+     *  Calls {@code super.initialize()} if the configuration does not have an option 'help'.
      *
      */
     @Override

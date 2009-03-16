@@ -14,8 +14,9 @@ import java.util.Comparator;
  * Prints a list of available config actions.
  *
  *
- * A name mapper can be denoted, using <tt>setNameMapper()</tt>, mapping for each action class contained in the given set,
- * <tt>actionClass.getCanonicalName()</tt> to another String and will used when printing the list.
+ * A name mapper can be denoted, using <tt>setNameMapper()</tt>, mapping the canonical name (<tt>actionClass.getCanonicalName()</tt> )
+ * of each action class contained in the given set,
+ * to another String and will used when printing the list.
  *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$

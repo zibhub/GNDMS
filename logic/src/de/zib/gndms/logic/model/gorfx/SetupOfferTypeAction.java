@@ -34,7 +34,7 @@ import java.util.Properties;
  * <tt>orqType</tt> must be set in every mode.
  *
  * <p>An instance of this class returns a {@code ConfigActionResult} informing about the success of its execution, when
- * the execute method is called.
+ * the <tt>execute()</tt> method is called.
  *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
@@ -119,7 +119,7 @@ public class SetupOfferTypeAction extends SetupAction<ConfigActionResult> {
     /**
      * Initializes the config properties.
      * If the configuration map has an option <tt>configFile</tt>, the properities will be loaded from the file <tt>configFile</tt>,
-     * using {@code loadConfigFromFile()}. 
+     * using {@link #loadConfigFromFile()}. 
      */
     private void initConfigProps() {
         if (configProps == null & hasOption("configFile"))
@@ -137,7 +137,7 @@ public class SetupOfferTypeAction extends SetupAction<ConfigActionResult> {
     
     /**
      * Creates, updates or deletes the entity with the primary key {@code getOfferType()} from the entityclass {@code OfferType.class}
-     * @param em the EntityManager, where the entity will be created, updated or removed.
+     * @param em the EntityManager, managing the OfferType instance.
      * @param writer
      * @return An {@code OKResult} instance, if no problem occurred. Otherwise a {@code FailedResult} instance.
      */
@@ -165,7 +165,7 @@ public class SetupOfferTypeAction extends SetupAction<ConfigActionResult> {
     }
 
     /**
-     * Removes the entity with the primary key {@code getOfferType()} from the entityclass {@code OfferType.class} from the EntityManager
+     * Removes the entity with the primary key {@code getOfferType()} and the entityclass {@code OfferType.class} from the EntityManager.
      *
      * @param em the EnityManager, containing an entity instance for the entityClass {@code OfferType} and
      *      the primary key {@code getOfferType()}
@@ -178,7 +178,7 @@ public class SetupOfferTypeAction extends SetupAction<ConfigActionResult> {
 
     /**
      * Retrieves the entity instance with the primary key {@code getOfferType()} from the entityclass {@code OfferType.class}
-     * and sets its fields using the getter method of this.
+     * and sets its fields using the getter method of this class.
      * 
      * @param em the EnityManager, containing an entity instance for the entityClass {@code OfferType} and
      *      the primary key {@code getOfferType()}
@@ -200,7 +200,7 @@ public class SetupOfferTypeAction extends SetupAction<ConfigActionResult> {
 
     /**
      * Creates a new {@code OfferType} ,sets its fields using the getter method of this
-     * SetupOfferTypeAction, and makes it managed and perstistent by the EntityManager.
+     * class and makes it managed and persistent by the EntityManager.
      *
      * @param em the EntityManager, 
      */

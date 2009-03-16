@@ -19,11 +19,10 @@ import java.util.Set;
  *
  * An Action to create a new slice kind object from scratch.
  *
- * <p>An instance of this class manages entities, being an instance of {@code SliceKind}, which will be retrieved from the
- * configuration map during the initialization.
+ * <p>An instance of this class manages entities, being an instance of {@code SliceKind}.
  *
- *
- * <p>When this action is started, the configuration map must have the options 'sliceKind', 'sliceKindMode' and 'uniqueDirName' set.
+ * <p>When this action is started, the configuration map must have the options 'sliceKind', 'sliceKindMode' and 'uniqueDirName' set,
+ * if not already denoted.
  * Otherwise an <tt>IllegalStateException</tt> will be thrown.
  *
  * <p>If SetupMode is set to
@@ -39,7 +38,7 @@ import java.util.Set;
     </li>
  *  </ul>
  *
- * <p> Note other setup modes are not supported.
+ * <p> Note: other setup modes are not supported.
  *
  * <p>An instance of this class returns a {@code ConfigActionResult} informing about the success of its execution, when
  * the <tt>execute()</tt> method is called.
@@ -123,7 +122,7 @@ public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
 
     /**
      *
-     * If SetupMode is <tt>create</tt>, this method creates a new <tt>SliceKind</tt> instance and its fields are set 
+     * If SetupMode is <tt>create</tt>, this method creates a new <tt>SliceKind</tt> instance and sets its fields 
      * using the corrisponding getter methods of this class.
      *
      * <p>On <tt>update</tt> the SliceKind instance will be retrieved from the EntityManager, using <tt>getSliceKind()</tt>
@@ -161,10 +160,10 @@ public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
     }
 
     /**
-     * Returns true if {@code modeParam} is either <tt>create</tt> or <tt>update</tt>. Otherwise returns false.
+     * Returns true only if {@code modeParam} is either <tt>create</tt> or <tt>update</tt>
      *
      * @param modeParam 
-     * @return true if {@code modeParam} is either <tt>create</tt> or <tt>update</tt>. Otherwise returns false.
+     * @return true only if {@code modeParam} is either <tt>create</tt> or <tt>update</tt>
      */
 	@Override
 	public boolean isSupportedMode(final SetupMode modeParam) {

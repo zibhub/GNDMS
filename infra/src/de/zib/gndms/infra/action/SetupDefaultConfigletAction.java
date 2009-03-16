@@ -16,15 +16,19 @@ import java.util.Map;
  * This class provides a default implementation of {@code SetupConfigletAction}, intended to manage
  * all option names and their current chosen values of a <tt>Configlet</tt> entity.
  *
- * <p>If SetupMode ist set to <tt>create</tt> or <tt>update</tt>, the state of the <tt>ConfigletState</tt> entity will be overwritten by a new map,
- * containing all options and their chosen values in the current configuration.
+ * <p>If SetupMode ist set to <tt>create</tt> or <tt>update</tt>,
+ * the state of the <tt>ConfigletState</tt> entity will be overwritten by a new map,
+ * containing all options and their chosen values of the current configuration.
  *
  * <p>When this action is started with <tt>create</tt> as SetupMode, the configuration map must
  * have an option 'className' set. Otherwise an <tt>IllegalStateException</tt> will be thrown.
- *
+ * The option 'name' must be set in any case.
  * 
  * <p>The current configuration will be written to a given <tt>PrintWriter</tt>, if SetupMode is <tt>read</tt>.
  *
+ * <p>An instance of this class returns a {@code ConfigActionResult} informing about the success of its execution, when
+ * the <tt>execute()</tt> method is called.
+ * 
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
  *
@@ -61,7 +65,7 @@ public class SetupDefaultConfigletAction extends SetupConfigletAction {
      * @param state the ConfigletState to be created
      * @param emParam the EnityManager, containing the entity instance {@code state}.
      * @param writerParam
-     * @return Return An {@code OKResult} instance, if no problem occurred. Otherwise a {@code FailedResult} instance.
+     * @return An {@code OKResult} instance, if no problem occurred. Otherwise a {@code FailedResult} instance.
      */
     @Override
 	protected ConfigActionResult create( ConfigletState state, final EntityManager emParam, final PrintWriter writerParam) {

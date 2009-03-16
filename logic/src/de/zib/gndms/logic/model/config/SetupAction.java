@@ -20,7 +20,7 @@ import de.zib.gndms.kit.config.MandatoryOptionMissingException;
  * If no value has been set yet, it looks up the option 'mode' from the configuration map but also if necessary from the parent chain.
  *
  * <p>By default, <tt>read</tt> mode is not supported. If a subclass shall support this mode, overwrite
- * {@link #isSupportedMode(de.zib.gndms.logic.model.config.SetupAction.SetupMode)} }.
+ * {@link #isSupportedMode(de.zib.gndms.logic.model.config.SetupAction.SetupMode)}.
  *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$

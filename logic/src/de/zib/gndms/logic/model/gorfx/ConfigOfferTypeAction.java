@@ -118,7 +118,8 @@ public class ConfigOfferTypeAction extends ConfigAction<String> {
 
 
     /**
-     * Returns ! name.startsWith("cfg") && ! "offerType".equals(name)
+     * Returns true if <tt>name</tt> does not start with 'cfg' and is not the String 'offerType'
+     * 
      * @param name a name of an option
      * @return
      */

@@ -18,15 +18,17 @@ import java.io.PrintWriter;
 
 
 /**
- * An Action to store Subspaces in the database and manipulate them.
+ * An Action to manage Subspaces with their corresponding MetaSubspaces in the database.
  *
  * <p>An instance contains an <tt>ImmutableScopedName</tt> <tt>subspace</tt> for the
  *  key of the subspace (QName).It must be set in the configuration map and
  *  will be retrieved during the initialization.
  *
- * <p>A <tt>SetupSubspaceAction</tt> manages entities, being an instance of {@code MetaSubspace} and {@code Subspace}.
- * When this action is started with <tt>create</tt> or <tt>update</tt> as SetupMode, it will retrieve the entities corresponding
- * to the <tt>ImmutableScopedName</tt> and (re)set their fields using the getter methods of this class.
+ * <p>A <tt>SetupSubspaceAction</tt> manages entities, being an instance of {@code MetaSubspace}.
+ *
+ * <p>When this action is started with <tt>create</tt> or <tt>update</tt> as SetupMode, it will retrieve the entity and the
+ * linked Subspace instance and (re)sets their fields using the getter methods of this class.
+ * If necessary, it may create a new MetaSubspace or Subspace instance and link them on <tt>create</tt> mode.
  *
  * <p>Note: <tt>read</tt> mode is not supported.
  *
@@ -92,12 +94,13 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
 
     /**
      *  Tries to retrieve the MetaSubspace entity with the primary key <tt>getSubspace()</tt> from the entityclass {@code MetaSubspace.class}
-     *  managed by {@code em} and the linked <tt>Subspace</tt> instance.
+     *  managed by {@code em} and a corresponding <tt>Subspace</tt> instance.
      *
-     *  <p>If SetupMode is either <tt>create</tt> or <tt>update</tt> the fields of the Meta- and Subspace instance are
-     *  (re)set using the corresponding getter methods of this class.
-     *
-     *  <p> Makes the both instances managed and persistent by the EntityManager, if not already done.
+     *  <p>If <tt>SetupMode</tt> is set to <tt>create</tt> and if necessary,
+     *  it creates a new Subspace or MetaSubspcae instance and link them.
+     *  The fields of the entity and the corresponding Subspace instance
+     *  are then (re)set using the corresponding getter methods of this class.
+     *  Makes both instances managed and persistent by the EntityManager, if not already done.
      *
      *  <p> Removes both instances from the EntityManager, if SetupMode is <tt>delete</tt>
      *
@@ -159,7 +162,7 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
     }
 
     /**
-     * Tries to retrieve the entity instance with the primary key {@code pkParam} from the entityclass {@code MetaSubspace.class}
+     * Tries to retrieve the entity instance with the primary key {@code pkParam} from the entityclass {@code MetaSubspace.class}.
      * If not <tt>null</tt> it will be returned. Otherwise a new <tt>MetaSubspace</tt> instance is created,
      * with <tt>pkParam</tt> as its ScopedName.
      *

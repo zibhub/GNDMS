@@ -21,9 +21,9 @@ import java.io.PrintWriter;
  * update its <tt>state</tt>, read the entity to a PrintWriter or deletes it, when this action is executed.
  * It returns a {@code ConfigActionResult} informing about the success of its execution.
  *
- * <p>When {@code initialize()} is invoked, it will try to retrieve the fields {@code name} and {@code className}.
- * If no value has been set yet, it looks up the options 'name' and 'className' in the configuration map of this instance,
- * but also if necessary of the parent chain.
+ * <p>When {@code initialize()} is invoked, it checks if all necessary fields have been set yet.
+ * If not denoted, it looks up the options 'name' and 'className' in the current configuration map,
+ * if necessary also from an instance of the parent chain.
  *
  * 
  * @author Maik Jorra <jorra@zib.de>
@@ -88,7 +88,8 @@ public abstract class SetupConfigletAction extends SetupAction<ConfigActionResul
     protected abstract ConfigActionResult read( final ConfigletState state, final EntityManager emParam, final PrintWriter writerParam );
 
     /**
-     * calls {@link de.zib.gndms.infra.action.SetupConfigletAction#read(de.zib.gndms.model.common.ConfigletState, javax.persistence.EntityManager, java.io.PrintWriter)}
+     * Retrieves the entity instance with the primary key {@code getName()} from the entityclass {@code ConfigletState.class}
+     * and calls {@link de.zib.gndms.infra.action.SetupConfigletAction#read(de.zib.gndms.model.common.ConfigletState, javax.persistence.EntityManager, java.io.PrintWriter)}
      * to read the state into the printwriter.
      *
      * @param emParam the EnityManager, containing an entity instance for the entityClass {@code ConfigletState} and
@@ -106,14 +107,15 @@ public abstract class SetupConfigletAction extends SetupAction<ConfigActionResul
 
 
     /**
-     * Will be called by {@link de.zib.gndms.infra.action.SetupConfigletAction#create(javax.persistence.EntityManager, java.io.PrintWriter)} 
+     * Will be called by {@link de.zib.gndms.infra.action.SetupConfigletAction#create(javax.persistence.EntityManager, java.io.PrintWriter)} to
+     * set the state of the entity. 
      */
     protected abstract ConfigActionResult create( ConfigletState state, final EntityManager emParam, final PrintWriter writerParam );
 
     /**
-     * Creates a new entity instance ({@code ConfigletState}) by setting its {@code name} and {@code classname} to the values
+     * Creates a new entity instance (a {@code ConfigletState}) by setting its {@code name} and {@code classname} to the values
      * {@code getName()} and {@code getClassName()}.
-     * Makes the entity managed and persistent.
+     * Makes the entity managed and persistent by the <tt>EntityManager</tt>.
      * Calls {@link de.zib.gndms.infra.action.SetupConfigletAction#create(de.zib.gndms.model.common.ConfigletState, javax.persistence.EntityManager, java.io.PrintWriter)}
      * to set its <tt>state</tt>.
      * 
@@ -173,7 +175,7 @@ public abstract class SetupConfigletAction extends SetupAction<ConfigActionResul
 
     /**
      *  Invokes {@link de.zib.gndms.infra.action.SetupConfigletAction#preDelete(de.zib.gndms.model.common.ConfigletState, javax.persistence.EntityManager, java.io.PrintWriter)}
-     *  and removes the entity with with the entityClass {@code ConfigletState} and the primary key {@code getName()}
+     *  and removes the entity with the entityClass {@code ConfigletState} and the primary key {@code getName()}
      *  from the EntityManager {@code emParam}. 
      *
      * @param emParam the EnityManager, containing a entity instance for the entityClass {@code ConfigletState} and
