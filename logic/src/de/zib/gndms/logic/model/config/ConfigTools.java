@@ -11,21 +11,30 @@ import java.io.PrintWriter;
 
 
 /**
- * ThingAMagic.
-*
-* @author Stefan Plantikow<plantikow@zib.de>
-* @version $Id$
-*
-*          User: stepn Date: 23.10.2008 Time: 16:37:27
-*/
+ * This Class provides methods to print help regarding the proper configuration of an ConfigAction instance.
+ *
+ * <tt>PrintOptionReminder()</tt> prints a details description about the syntax of the configuration.
+ *
+ * <tt>PrintOptionHelp()</tt> can be used with <tt>getParamMap()</tt> to print all possible configurations of a
+ * specific ConfigAction class.
+ * .
+ *
+ * @see  de.zib.gndms.logic.model.config.ConfigAction
+ * @see de.zib.gndms.logic.model.config.ConfigOption
+ * @author Stefan Plantikow<plantikow@zib.de>
+ * @version $Id$
+ *
+ *          User: stepn Date: 23.10.2008 Time: 16:37:27
+ */
 @SuppressWarnings({ "StaticMethodOnlyUsedInOneClass" })
 class ConfigTools {
     private ConfigTools() {
     }
 
     /**
-     * Returns a Map containing all fields and their corresponding description as an {@code ConfigOption} object
-     * of a {@code clazz}'s instance.
+     * Returns a Map containing all annotated field names and their corresponding description for a specific class.
+     * (See {@link #fillParamMapForClass(Class, java.util.Map)}).
+     *
      * @param clazz the class object whose fields and their description should be put into a map
      * @return a Map containing all fields and their corresponding description as an {@code ConfigOption} object
      * of a {@code clazz}'s instance
@@ -38,8 +47,11 @@ class ConfigTools {
     }
 
     /**
-     * Fills a map with the names of all fields and their corresponding description as an {@code ConfigOption} object.
-     * If denoted in the {@code ConfigOption} object, the alternative field name will be taken
+     * Fills a map with the names of all annotated fields (<tt>ConfigOption</tt>) and their description,
+     * for a given class class.
+     * A field is stored in the map using its name as key and its corresponding {@link ConfigOption} Object as its value.
+     * If an alternative name is given, the alternative field name will be taken as its key.
+     *
      * @param clazz the class object whose fields and their description should be added to the map
      * @param mapParam the map to be filled with all field names and their corresponding
      */
@@ -52,6 +64,7 @@ class ConfigTools {
         for (Field field : clazz.getDeclaredFields()) {
             ConfigOption option = field.getAnnotation(ConfigOption.class);
             if (option != null) {
+                //TODO fix possibly key collision
                 String altName = option.altName();
                 if (altName != null && altName.length() > 0) {
                     if (mapParam.containsKey(altName))
@@ -66,7 +79,8 @@ class ConfigTools {
     }
 
     /**
-     * Prints the syntax description using a {@code PrintWriter}
+     * Prints the syntax description used for the configuration of a ConfigAction.
+     * 
      * @param printWriter the {@code PrintWriter} the option reminder will printed to
      */
     @SuppressWarnings({ "HardcodedFileSeparator" })
@@ -86,9 +100,11 @@ class ConfigTools {
     }
 
     /**
-     * Prints a Map containing the possible keys with their description to a {@code PrintWriter}
-     * @param writer the {@code PrintWriter} the option reminder will printed to
-     * @param mapParam a Map containing the possible keys with their description
+     * Writes all possible configurations for specific ConfigAction class along with their description to an PrintWriter.
+     * The map must be created using {@link #getParamMap(Class)}.
+     *
+     * @param writer the {@code PrintWriter} the help will be printed to
+     * @param mapParam a map corresponding to a specific ConfigAction class
      */
     protected static void printOptionHelp(final @NotNull PrintWriter writer,
                                           final Map<String, ConfigOption> mapParam) {

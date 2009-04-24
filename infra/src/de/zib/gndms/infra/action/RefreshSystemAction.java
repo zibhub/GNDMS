@@ -9,7 +9,11 @@ import java.io.PrintWriter;
 
 
 /**
- * Reloads current <tt>Configlet</tt> to the GNDMSystem.
+ * Reloads current <tt>Configlets</tt> to the GNDMSystem.
+ *
+ * @see de.zib.gndms.kit.configlet.Configlet
+ * @see de.zib.gndms.model.common.ConfigletState
+ * @see de.zib.gndms.infra.system.GNDMSystem
  *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$

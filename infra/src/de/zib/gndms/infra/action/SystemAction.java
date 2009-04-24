@@ -8,7 +8,9 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * A SystemAction is a ConfigAction with a <tt>GNDMSystem</tt> instance.
- * 
+ *
+ * @see GNDMSystem
+ *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
  *

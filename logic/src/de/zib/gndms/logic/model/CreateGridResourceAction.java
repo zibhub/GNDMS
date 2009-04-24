@@ -4,6 +4,10 @@ import de.zib.gndms.model.common.GridResource;
 import org.jetbrains.annotations.NotNull;
 
 /**
+ * An AbstractModelAction with an ID.
+ *
+ *
+ * @see de.zib.gndms.logic.model.AbstractModelAction
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
  * <p/>

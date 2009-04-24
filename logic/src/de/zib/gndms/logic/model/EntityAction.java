@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
  *
  * The template parameter is the return type.
  *
+ * @see javax.persistence.EntityManager
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
  *

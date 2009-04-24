@@ -16,31 +16,35 @@ import java.util.Properties;
  * This class provides a default implementation of {@code SetupConfigletAction}, intended to store
  * permissions in database and manipulate them.
  *
- * <p>A <tt>SetupPermissionConfigletAction</tt> contains a String <tt>permissionProperties</tt> which will either be retrieved from the
+ * <p>A <tt>SetupPermissionConfigletAction</tt> contains a String {@link #permissionProperties} which will either be retrieved from the
  * configuration map during the initialization, or can be set using the corresponding setter methods.
  *
- * <p>An instance manages entities, being an instance of {@code ConfigletState}.
+ * 
  * When this action is started with <tt>create</tt> or <tt>update</tt> as SetupMode, the configuration map must
  * have an option 'permissionProperties' set. Otherwise an <tt>IllegalStateException</tt> will be thrown.
  *
+ * On
  * <ul>
  *  <li>
- *      On creation, <tt>permissionProperties</tt> (converted as <tt>Properties</tt>) will be set as the state
+ *       <tt>create</tt> mode, <tt>permissionProperties</tt> (converted as <tt>Properties</tt>) will be set as the state
  *      of the entity.
  *  </li>
  *  <li>
- *      On update, permissions declared in <tt>permissionProperties</tt> will be added to an existing entity
+ *      <tt>update</tt> mode, permissions declared in <tt>permissionProperties</tt> will be added to an existing entity
  *      and may overwrite allocated values.
     </li>
  *  <li>
- *      On read, the permission properties from an entity will be written to an printwriter
+ *      <tt>read</tt> mode, the permission properties from an entity will be written to an printwriter
     </li>
  *  </ul>
  *
- *
+ * <p>By default the field {@link #name} will be set to "PermissionConfiglet" and
+ * the {@link #className} will be set to PermissionConfiglet.class
+ * 
  * <p>An instance of this class returns a {@code ConfigActionResult} informing about the success of its execution, when
  * the <tt>execute()</tt> method is called.
  *
+ * @see ConfigletState
  * @author Maik Jorra <jorra@zib.de>
  * @version $Id$
  *          <p/>
@@ -79,7 +83,8 @@ public class SetupPermissionConfigletAction extends SetupConfigletAction {
 
 
     /**
-     * Reads the properties from <tt>state </tt> into the printwriter.
+     * Writes the properties from <tt>state </tt> into the Printwriter.
+     *
      * @param state the state, the printwriter will read from
      * @param emParam 
      * @param writerParam the printwriter the state will be written to.

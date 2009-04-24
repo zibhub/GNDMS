@@ -10,9 +10,15 @@ import javax.persistence.EntityTransaction;
 
 
 /**
- * A default implementation of the {@code EntityAction} Interface.
+ * This class extends an AbstractAction by database functionality.
  *
- * The template parameter is the return type.
+ * <p>An <tt>AbstractEntityAction</tt> contains an EntityManager and list of Actions being executed on
+ * cleanup ({@link #postponedActions}).
+ *
+ * <p> A subclass must implement {@link #execute(javax.persistence.EntityManager)} to define, what this action will do,
+ * when it is executed. The method will be invoked with the current EntityManager (see {@link #entityManager}).
+ *
+ * <p>The template parameter is the return type.
  *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
@@ -50,7 +56,11 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
 
     /**
      * Executes the EntityManager on its persistence context.
-     * 
+     *
+     * <p>If the EnityManager is executing inside a transaction (see {@link #executeInsideTransaction(javax.persistence.EntityManager)} ),
+     * {@link #executeInsideTransaction(javax.persistence.EntityManager)} will be called to run the action.
+     * <p> Otherwise just {@link #execute(javax.persistence.EntityManager)} will be invoked.
+     *
      * @return the result of the EntityManager being invoked on a its persistence context.
      */
     @Override
@@ -76,10 +86,11 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
     /**
      * Tries to execute an EntityManager inside a transaction.
      *
-     * If not already active, the transaction corresponding to the EntityManager will be activated
-     * and the EntityManager executed.
+     * If the transaction is already active, it just calls {@link #execute(javax.persistence.EntityManager)}
+     * with the current EntityManager.
+     * Otherwise it starts the transaction before calling the method.
      *
-     * If an errpr occurs durings the transaction, it will be rolled back.
+     * <p>If an error occurs during the transaction, a roll back of the transaction is done.
      * 
      * @param emParam the EntityManager which should be executed
      * @return the result of the execution.

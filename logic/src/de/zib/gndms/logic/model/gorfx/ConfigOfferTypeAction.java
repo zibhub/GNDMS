@@ -18,15 +18,15 @@ import java.util.Properties;
 /**
  * An Action to manage the configuration map of an <tt>OfferType</tt> entity.
  *
- * <p>Depending on the <tt>UpdateMode</tt> it will either delete, just update or completly overwrite
- * all keys and their corresponding values in the configuration map, being a valid config option (see {@link #isValidConfigOptionName(String)})
- * of an already existing <tt>OfferType</tt> entity.
+ * <p>Depending on the chosen <tt>UpdateMode</tt>, it will either delete, just update or completly overwrite
+ * all keys and their corresponding values of the entity's configuration map, being a valid config option (see {@link #isValidConfigOptionName(String)}).
  *
  * <p>Before this action is started,
- *  the following parameters must be set in the configuration map: <tt>'cfgOutFormat','cfgUpdateMode'</tt>.
- * If not already denoted, 'offerType' must also be set in the map.
+ *  the following parameters must be set in the configuration map: {@link #cfgOutFormat 'cfgOutFormat'}, {@link #cfgUpdateMode 'cfgUpdateMode'}.
+ * If not already denoted, {@link #offerType 'offerType'} must also be set in the map.
  * Otherwise an <tt>IllegalStateException</tt> will be thrown.
  *
+ * @see OfferType
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
  *

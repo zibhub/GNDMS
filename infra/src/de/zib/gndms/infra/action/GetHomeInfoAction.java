@@ -20,9 +20,9 @@ import java.io.PrintWriter;
  * Figures out key type names and other information about a resource home at runtime
  *
  * <p>When {@code initialize()} is invoked, it tries to retrieve the lookup service home of the GNDMSystem from the
- * configuration map. Therefore the option 'home' must be set.
+ * configuration map. Therefore the option {@link #home 'home'} must be set.
  *
- * 
+ * @see de.zib.gndms.infra.service.GNDMServiceHome
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
  *

@@ -8,10 +8,10 @@ import java.io.Serializable;
 
 
 /**
- * This abstract class stores a configuration in a map and will run concurrently.
+ * This abstract class stores a configuration in a map and provides a method which runs concurrently.
  *
- * A {@code RunnbaleConfiglet} will run concurrently after it's {@code init} method has been invoked.
  * Implement the {@code run_()} method to define what it supposed to do concurrently.
+ * Execution is done when {@link #init(org.apache.commons.logging.Log, String, java.io.Serializable)} is invoked.
  *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$

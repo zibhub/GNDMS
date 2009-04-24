@@ -21,14 +21,15 @@ import java.util.Properties;
 
 
 /**
- * <p>An Action to create new <tt>OfferType</tt> instances and store them in the database.
+ * <p>An Action to create new {@link OfferType} instances and store them in the database.
  *
- * <p>Depending on the <tt>SetupMode</tt>, it will either create or update an {@code OfferType} entity by using the getter methods
+ * <p>Depending on the chosen <tt>SetupMode</tt>, it will either create or update an {@code OfferType} entity by using the getter methods
  * provided in this class.
  * On both modes, the entity is completly overwritten and stored in the database. If only the entity's configmap should be updated,
  * use {@link de.zib.gndms.logic.model.gorfx.ConfigOfferTypeAction} instead, after the entity has been created once.
  *
- * <p>The following parameters are required for a new entity creation: <tt>orqType,resType,calcFactory,taskAction</tt>.
+ * <p>The following parameters are required for a new entity creation:
+ * {@link #orqType 'orqType'},{@link #resType 'resType'}. {@link #calcFactory 'calcFactory'},{@link #taskActionFactory 'taskAction'}.
  * They must be set in the configuration map before this action is started on <tt>create</tt> modus.
  * Otherwise an <tt>IllegalStateException</tt> will be thrown.
  * <tt>orqType</tt> must be set in every mode.

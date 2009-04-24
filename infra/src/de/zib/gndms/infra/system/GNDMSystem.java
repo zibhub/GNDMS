@@ -76,6 +76,9 @@ public final class GNDMSystem
     private @NotNull final ModelUUIDGen uuidGenDelegate;
 	private @NotNull final Log logger = createLogger();
 	private @NotNull final GNDMSVerInfo verInfo = new GNDMSVerInfo();
+    /**
+     * the GNDMSystemDirectory connected with this GNDMSystem
+     */
     private @NotNull GNDMSystemDirectory instanceDir;
 	private @NotNull final GridConfig sharedConfig;
 	private @NotNull File sharedDir;
@@ -231,7 +234,11 @@ public final class GNDMSystem
 
     }
 
-
+    /**
+     * Creates the path {@link #sharedDir} and the file {@link #logDir} on the file system.
+     *
+     * @throws IOException if an error occurs while accessing the file system
+     */
 	private void createDirectories() throws IOException {
         File curSharedDir = getSharedDir();
 
@@ -241,7 +248,12 @@ public final class GNDMSystem
 		doCheckOrCreateDir(logDir);
 	}
 
-
+    /**
+     * Create the files {@link #dbDir} and {@link #dbLogFile} on the file system and stores the paths
+     * in the system property "derby.system.home" respectively "derby.stream.error.file".
+     *
+     * @throws IOException if an error occurs while accessing the file system
+     */
 	@SuppressWarnings({ "ResultOfMethodCallIgnored" })
     private void prepareDbStorage() throws IOException {
         File curSharedDir = getSharedDir();
@@ -295,7 +307,7 @@ public final class GNDMSystem
 			{ em.close(); }
 	}
 
-
+    
 	@SuppressWarnings({ "MethodOnlyUsedFromInnerClass" })
 	private synchronized void setupShellService() throws Exception {
 		File monitorConfig = new File(sharedDir, "monitor.properties");
@@ -306,8 +318,12 @@ public final class GNDMSystem
 	}
 
 
-
-
+    /**
+     * Checks if the path denoted by <tt>mainDir</tt> exists and may create the path on the filesystem,
+     * if not already done.
+     *
+     * @param mainDir a <tt>File</tt> instance denoting a path
+     */
 	@SuppressWarnings({ "ResultOfMethodCallIgnored" })
     private void doCheckOrCreateDir(File mainDir) {
 		if (!mainDir.exists()) {
@@ -319,6 +335,12 @@ public final class GNDMSystem
 	}
 
 
+    /**
+     * Invokes a shutdown on the ExecutorService {@link #executionService}, on the configlets of the <tt>GNDMSystemDirectory</tt>,
+     * stops the <tt>GroovyMoniServer</tt> and closes the EntityManagerFactory {@link #emf}.
+     *
+     * @throws Exception if an error occurs while stopping the monitorserver
+     */
     @SuppressWarnings({
             "MethodOnlyUsedFromInnerClass", "SleepWhileHoldingLock",
             "CallToNativeMethodWhileLocked" })
@@ -466,15 +488,20 @@ public final class GNDMSystem
         }
     }
 
-
+    /**
+     * Invokes <tt>refresh(model)</tt> on the <tt>GNDMPersistentServiceHome</tt> corresponding to the model class.
+     * (see {@link de.zib.gndms.infra.system.GNDMSystemDirectory#addHome(Class, de.zib.gndms.infra.service.GNDMServiceHome)} )
+     *
+     * @param model the new model
+     * @param <M> the class of the model
+     * @throws ResourceException
+     */
     @SuppressWarnings({ "unchecked" })
     private <M extends GridResource> void onModelChange_(final M model) throws ResourceException {
         final Class<M> modelClazz = (Class<M>) model.getClass();
         GNDMPersistentServiceHome<M> home = getInstanceDir().getHome(modelClazz);
         home.refresh(model);
     }
-
-
 
     @SuppressWarnings({ "unchecked", "MethodMayBeStatic" })
     public @NotNull <M extends GridResource> List<String> listAllResources(
@@ -654,6 +681,11 @@ public final class GNDMSystem
         }
     }
 
+    /**
+     * A factory class for a <tt>GNDMSxstem</tt>.
+     * 
+     * @see de.zib.gndms.infra.system.GNDMSystem
+     */
     public static final class SysFactory {
 		private final Log logger;
 
@@ -670,10 +702,27 @@ public final class GNDMSystem
             debugMode = debugModeParam;
 		}
 
+        /**
+         * Calls {@code getInstance(true)}
+         * 
+         * @return
+         */
 		public synchronized GNDMSystem getInstance() {
 			return getInstance(true);
 		}
-		
+
+        /**
+         * Returns the current GNDMSystem if it has already been created.
+         * Otherwise a new instance will be created.
+         *
+         * <p>The system will be loaded with the values set in the fields {@link #sharedConfig} and {@link #debugMode}.
+         * If <tt>setupShellService</tt> is set to <tt>true</tt>, {@code setupShellService()} will be invoked on the new
+         * system. The new create system will be stored at {@link #instance}.
+         *
+         * @param setupShellService a boolean to decide whether setupShellService() is invoked on a new GNDM System or not
+         *
+         * @return the current used GNDM system
+         */
 		public synchronized GNDMSystem getInstance(boolean setupShellService) {
 			if (cachedException != null)
 				throw cachedException;
@@ -707,6 +756,11 @@ public final class GNDMSystem
 			return instance;
 		}
 
+        /**
+         * Shuts down the current GNDM system by invoking {@code shutdown} on {@link #instance}.
+         *
+         * @throws Exception if an error occurs during the initialization or setup of the shell service of the GNDM system
+         */
 		@SuppressWarnings({ "MethodOnlyUsedFromInnerClass" })
 		private synchronized void shutdown() throws Exception {
 			if (instance == null)
@@ -715,6 +769,12 @@ public final class GNDMSystem
 				getInstance().shutdown();
 		}
 
+
+        /**
+         * Returns a <tt>Runnable</tt> which calls {@link #shutdown()}
+         * 
+         * @return a <tt>Runnable</tt> which calls {@link #shutdown()}
+         */
 		public @NotNull Runnable createShutdownAction() {
 			return new Runnable() {
 				public void run() {

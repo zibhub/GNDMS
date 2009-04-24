@@ -21,15 +21,15 @@ import java.util.Set;
  *
  * <p>An instance of this class manages entities, being an instance of {@code SliceKind}.
  *
- * <p>When this action is started, the configuration map must have the options 'sliceKind', 'sliceKindMode' and 'uniqueDirName' set,
- * if not already denoted.
+ * <p>When this action is started, the configuration map must have the options {@link #sliceKind 'sliceKind'}, {@link #theSliceKindMode 'sliceKindMode'}
+ * and {@link #uniqueDirName 'uniqueDirName'} set, if not already denoted.
  * Otherwise an <tt>IllegalStateException</tt> will be thrown.
  *
- * <p>If SetupMode is set to
+ * <p>If the SetupMode field is set to
  * <ul>
  *  <li>
  *      create, a new SliceKind instance will be created and its fields are set 
- *      using the corrisponding getter methods of this class.
+ *      using the corresponding getter methods of this class.
  *  </li>
  *  <li>
  *      update, the SliceKind instance will be retrieved from the EntityManager, using <tt>getSliceKind()</tt>

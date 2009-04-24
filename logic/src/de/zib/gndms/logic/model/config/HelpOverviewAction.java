@@ -13,10 +13,12 @@ import java.util.Comparator;
 /**
  * Prints a list of available config actions.
  *
+ * <p>The list contains all actions of the set {@link #configActions} with their corresponding descriptions,
+ * as denoted in their {@link ConfigActionHelp} annotation.
  *
- * A name mapper can be denoted, using <tt>setNameMapper()</tt>, mapping the canonical name (<tt>actionClass.getCanonicalName()</tt> )
- * of each action class contained in the given set,
- * to another String and will used when printing the list.
+ *
+ * <p>A name mapper can be denoted, using {@code setNameMapper()}, mapping the canonical name (<tt>actionClass.getCanonicalName()</tt> )
+ * of each action class contained in the set to a predefined String and will used when printing the list.
  *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$

@@ -15,8 +15,9 @@ import com.google.inject.Inject;
 
 /**
  * 
- * Reads the GNDMSVersion into a printwriter
+ * Writes the GNDMSVersion to a printwriter
  *
+ * @see GNDMSVerInfo
  * @author Maik Jorra <jorra@zib.de>
  * @version $Id$
  *          <p/>
@@ -44,6 +45,7 @@ public class ReadGNDMSVersionAction extends ConfigAction<ConfigActionResult> imp
 
     /**
      * Overriden method, returning always false.
+     *
      * @see de.zib.gndms.logic.model.config.ConfigAction#isExecutingInsideTransaction() 
      */
     @Override

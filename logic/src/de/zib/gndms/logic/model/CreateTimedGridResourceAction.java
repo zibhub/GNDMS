@@ -6,6 +6,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Calendar;
 
 /**
+ * A CreateGridResourceAction with a termination time
+ *
+ * @see de.zib.gndms.logic.model.CreateGridResourceAction
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
  * 

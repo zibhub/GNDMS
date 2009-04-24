@@ -30,6 +30,7 @@ public final class Constants {
 
     /**
      * Returns the root context, by looking up the JNDI base name
+     *
      * @return Returns the root, by looking up the JNDI base name
      * @throws NamingException if a naming exception occurs.
      */

@@ -9,7 +9,7 @@ import java.util.concurrent.Future;
 
 
 /**
- * Wrapper around ExecutorService allowing just to submit EntityActions to the Executor.
+ * Wrapper around ExecutorService to submit only EntityActions to an Executor.
  *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$

@@ -676,7 +676,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     }
 
 
-    // Extracts the actual permissions form a tasks permission info object
+    // Extracts the actual permissions from a tasks permission info object
     public FilePermissions actualPermissions( ) {
 
         if( getModel().getPermissions() != null ) {

@@ -10,20 +10,22 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
 import java.io.PrintWriter;
+import java.lang.annotation.Documented;
 
 /**
  *
  * This abstract class provides a default implementation of {@code SetupAction} for database manipulation of entities,
- * being a {@code ConfigletState}.
+ * being a {@link ConfigletState}.
  *
- * <p>All values of <tt>SetupMode</tt> are supported.
- * Depending on the chosen value, it will either create a new ConfigletState and registers it on the database,
- * update its <tt>state</tt>, read the entity to a PrintWriter or deletes it, when this action is executed.
- * It returns a {@code ConfigActionResult} informing about the success of its execution.
+ * <p>All values of {@link SetupMode} are supported.
+ *
+ * <p>Depending on the chosen value, it will either setup a new Configlet and store its associated state in the database,
+ * update a configlet's <tt>state</tt>, write it to a PrintWriter or remove it from the database,
+ * when this action is executed. A {@code ConfigActionResult} will be returned, informing about the success of the execution.
  *
  * <p>When {@code initialize()} is invoked, it checks if all necessary fields have been set yet.
- * If not denoted, it looks up the options 'name' and 'className' in the current configuration map,
- * if necessary also from an instance of the parent chain.
+ * If not denoted, it looks up the options {@link #name 'name'} and {@link #className 'className'} in the current configuration map,
+ * if necessary also from an instance of the parent chain. 
  *
  * 
  * @author Maik Jorra <jorra@zib.de>
@@ -33,6 +35,7 @@ import java.io.PrintWriter;
  */
 public abstract class SetupConfigletAction extends SetupAction<ConfigActionResult> {
 
+    
     @ConfigOption(descr = "Name of the configlet")
     String name;
 
@@ -138,7 +141,6 @@ public abstract class SetupConfigletAction extends SetupAction<ConfigActionResul
      * Will be called by {@link de.zib.gndms.infra.action.SetupConfigletAction#update(javax.persistence.EntityManager, java.io.PrintWriter)} to update the state
      * of an <tt>ConfigletState</tt> entity.
      *
-     * 
      * @param state the ConfigletState to be changed
      * @param emParam the EnityManager, containing the entity instance {@code state}.
      * @param writerParam

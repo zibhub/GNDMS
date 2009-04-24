@@ -20,7 +20,7 @@ import java.util.Set;
 /**
  * <p>An Action to read the <tt>C3Catalog</tt>.
  *
- * <p>Depending on the <tt>OutputMode</tt>, it will either print
+ * <p>Depending on the choosen <tt>OutputMode</tt>, it will either write
  * <ul>
  *      <li>
  *          all sites with their corresponding ID
@@ -34,12 +34,14 @@ import java.util.Set;
  * </ul>
  * of the C3Catalog to a Printwriter.
  *
- * <p>When this action is started it tries to retrieve the <tt>output mode</tt> and the name of the <tt>C3MDSConfiglet</tt> from
- * the configuration map. If nothing denoted, default values will be used.
+ * <p>When this action is started, it tries to retrieve the {@link #outputMode 'outputMode'} and the {@link #name 'name'}
+ * of the <tt>C3MDSConfiglet</tt> from the configuration map.
+ * If nothing denoted, default values will be used.
  *
  * <p>An instance of this class returns a {@code ConfigActionResult} informing about the success of its execution, when
  * the execute method is called.
  * 
+ * @see de.zib.gndms.infra.configlet.C3MDSConfiglet.C3Catalog
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
  *
@@ -151,6 +153,7 @@ public class ReadC3CatalogAction extends ConfigAction<ConfigActionResult> implem
 
     /**
      * Overriden method, returning always false
+     *
      * @return
      */
 	@Override

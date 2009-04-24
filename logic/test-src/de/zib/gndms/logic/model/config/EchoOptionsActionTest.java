@@ -10,7 +10,7 @@ import de.zib.gndms.kit.config.ParameterTools;
 
 
 /**
- * Tests wether EchoOptions actually returns all the options it is given
+ * Tests whether EchoOptions actually returns all the options it is given
  *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$

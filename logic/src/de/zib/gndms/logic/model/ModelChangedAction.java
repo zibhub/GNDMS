@@ -10,6 +10,7 @@ import de.zib.gndms.model.common.GridResource;
  * Therefore the {@code BatchUpdateAction} must be parent action of a {@code ModelChangedAction} instance.
  * The instance will then automatically retrieve and inform the parent's listener.
  *
+ * @see GridResource
  * 
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$

@@ -43,6 +43,9 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
      */
     private Map<String, String> cmdParams;
     private PrintWriter printWriter;
+    /**
+     * Decides whether the results of {@link #execute(javax.persistence.EntityManager)} should be written to a PrintWriter or not.
+     */
     private boolean writeResult;
     private boolean closingWriterOnCleanUp;
 
@@ -77,8 +80,9 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
 
 
     /**
-     * Calls {@link #execute(javax.persistence.EntityManager, java.io.PrintWriter)},
-     * writes the result to <tt>getPrintWriter()</tt>if available, and returns the result. 
+     * Calls {@link #execute(javax.persistence.EntityManager, java.io.PrintWriter)} and returns the Result.
+     * Writes the result to <tt>getPrintWriter()</tt>if a PrintWriter is available and if <tt>isWriteResult()</tt> is true.
+     *
      * @param em the EntityManager  being executed on its persistence context.
      * @return the result of {@code execute(EntityManager, PrintWriter)},
      */
@@ -130,7 +134,7 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
      * 
      * @param em
      * @param writer
-     * @return
+     * @return the result of a the computation
      */
     public abstract R execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer);
 
@@ -180,7 +184,13 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
         cmdParams = Collections.unmodifiableMap(cfgParams);
     }
 
-
+    /**
+     * Prints all local option as one large string.
+     * See {@link de.zib.gndms.kit.config.ParameterTools#asString(java.util.Map, java.util.regex.Pattern)}
+     * 
+     * @param withNewlines
+     * @return
+     */
     public final @NotNull String localOptionsToString(boolean withNewlines) {
         return ParameterTools.asString(getLocalOptions(), OPTION_NAME_PATTERN,
                                                      withNewlines);

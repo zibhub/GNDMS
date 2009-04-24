@@ -20,14 +20,12 @@ import java.io.PrintWriter;
 /**
  * An Action to manage Subspaces with their corresponding MetaSubspaces in the database.
  *
- * <p>An instance contains an <tt>ImmutableScopedName</tt> <tt>subspace</tt> for the
+ * <p>An instance contains an <tt>ImmutableScopedName</tt> {@link #subspace} for the
  *  key of the subspace (QName).It must be set in the configuration map and
  *  will be retrieved during the initialization.
  *
- * <p>A <tt>SetupSubspaceAction</tt> manages entities, being an instance of {@code MetaSubspace}.
- *
- * <p>When this action is started with <tt>create</tt> or <tt>update</tt> as SetupMode, it will retrieve the entity and the
- * linked Subspace instance and (re)sets their fields using the getter methods of this class.
+ * <p>When this action is started with <tt>create</tt> or <tt>update</tt> as SetupMode, it will retrieve
+ * the MetaSubspace entity and the linked Subspace instance and (re)sets their fields using the getter methods of this class.
  * If necessary, it may create a new MetaSubspace or Subspace instance and link them on <tt>create</tt> mode.
  *
  * <p>Note: <tt>read</tt> mode is not supported.
@@ -36,7 +34,9 @@ import java.io.PrintWriter;
  * the <tt>execute()</tt> method is called.
  *
 
- *
+ * @see MetaSubspace
+ * @see Subspace
+ * @see ImmutableScopedName
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
  *

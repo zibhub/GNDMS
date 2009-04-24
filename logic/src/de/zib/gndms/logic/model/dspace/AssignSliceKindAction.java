@@ -26,6 +26,8 @@ import java.util.Set;
      * <p>An instance of this class returns a {@code ConfigActionResult} informing about the success of its execution, when
      * the <tt>execute()</tt> method is called.
      *
+     * @see de.zib.gndms.model.dspace.SliceKind
+     * @see de.zib.gndms.model.dspace.MetaSubspace
      * @author Stefan Plantikow<plantikow@zib.de>
      * @version $Id$
      *

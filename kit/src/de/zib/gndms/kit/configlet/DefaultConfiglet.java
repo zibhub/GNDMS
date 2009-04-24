@@ -9,8 +9,8 @@ import java.util.Map;
 
 
 /**
- * Provides a default implementation of the {@code Configlet-Interface}. Data will be stored into a {@link MapConfig}.
- * Everytime the object is updated, a new {@code Mapconfig}-Object will be created.
+ * Provides a default implementation of the {@code Configlet-Interface}. Data will be stored using a {@link MapConfig}.
+ * Everytime the configuration is updated, a new {@code Mapconfig}-Object, storing the data, will be created.
  *
  *
  * @author Stefan Plantikow<plantikow@zib.de>
@@ -44,6 +44,7 @@ public class DefaultConfiglet implements Configlet {
 
     /**
      * Returns the current configurations-map. Method is synchronized.
+     *
      * @return the current configurations-map
      */
 	public synchronized MapConfig getMapConfig() {
@@ -52,6 +53,7 @@ public class DefaultConfiglet implements Configlet {
 
     /**
      * Returns the used logger
+     *
      * @return the used logger
      */
 	public Log getLog() {
@@ -60,6 +62,7 @@ public class DefaultConfiglet implements Configlet {
 
     /**
      * Returns the name of the Configlet
+     *
      * @return the name of the Configlet
      */
 	public String getName() {
@@ -68,6 +71,7 @@ public class DefaultConfiglet implements Configlet {
 
     /**
      * Overrides used {@code Map} with the new configuration. Method is synchronized.
+     *
      * @param data the new configurations,
      * expected to be a {@code Map<String, String>}  mapping the {@code optionnames} to their {@code values}
      */

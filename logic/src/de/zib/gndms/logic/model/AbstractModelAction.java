@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
- * An abstract action on a given persisten model.
+ * An abstract entity action on a given persistence model.
  * 
  * The first template parameter is the model for this action, the second is the return type.
  *

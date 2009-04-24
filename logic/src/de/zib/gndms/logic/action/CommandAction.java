@@ -62,7 +62,7 @@ public interface CommandAction<R> extends Action<R>, ConfigProvider {
 
     /**
      * Parses {@code options} and sets them as the new configuration map.
-     * See the {@link de.zib.gndms.kit.config.ParameterTools description} about the syntax.
+     * See {@link de.zib.gndms.kit.config.ParameterTools} description about the syntax.
      * @param options a String containg the option keys and their corresponding values.
      * @throws ParameterTools.ParameterParseException if the String is not valid according to the syntax described above.
      */
