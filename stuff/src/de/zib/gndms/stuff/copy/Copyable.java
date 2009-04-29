@@ -6,7 +6,9 @@ import java.lang.annotation.*;
 
 
 /**
- * This annotation is used to choose a copymode.
+ * This annotation is used to choose a copymode
+ *
+ * @see Copier
  *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$

@@ -12,6 +12,9 @@ import java.util.Set;
 /**
  * Action to create a new slice kind object from scratch.
  *
+ * The object will be created when this action is executed.
+ *
+ * @see SliceKind
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
  *
@@ -46,7 +49,13 @@ public class CreateSliceKindAction extends AbstractModelAction<SliceKind, SliceK
         requireParameter( "permission", permission );
     }
 
-
+    /**
+     * Creates a new SliceKind object using the fields of this class.
+     * The object will be made managed and persistent by the given EntityManager
+     * 
+     * @param em the EntityManager  being executed on its persistence context.
+     * @return the new slice kind object
+     */
     public SliceKind execute( @NotNull EntityManager em ) {
 
         SliceKind sl = new SliceKind( );

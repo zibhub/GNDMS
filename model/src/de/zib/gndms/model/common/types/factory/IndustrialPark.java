@@ -39,7 +39,14 @@ public abstract class IndustrialPark<K, I, T extends KeyFactoryInstance<K, T>>
         return newValue;
     }
 
-
+    /**
+     * Maps an Object of type K to an Object of type I.
+     * This is mainly used to map specific {@link de.zib.gndms.model.gorfx.OfferType} object, which shall be viewed as equally,
+     * although they are different using {@code compare()}, to the same object.
+     *
+     * @param keyParam a key which will be mapped to an {@code I} instance
+     * @return the instance corresponding the key {@code keyParam}
+     */
     public abstract @NotNull I mapKey(final K keyParam);
 
 

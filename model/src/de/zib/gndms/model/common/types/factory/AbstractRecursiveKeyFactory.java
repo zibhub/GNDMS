@@ -4,8 +4,12 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
- * ThingAMagic.
+ * Default implementation of the RecursiveKeyFactory interface.
  *
+ * The creation of a new instance is delegated to the implementing subclass by defining the {@link #newInstance(Object)}
+ * method.
+ *
+ * @see RecursiveKeyFactory
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
  *
@@ -26,7 +30,16 @@ public abstract class AbstractRecursiveKeyFactory<K, T extends KeyFactoryInstanc
         return newInstance;
     }
 
-
+    /**
+     * Must be implemented to define how a new instance corresponding to the given key is created.
+     * Will be used by {@link #getInstance(Object)}.
+     * 
+     * @param keyParam a key defining which instance should be created
+     * @return a new instance, corresponding to the given key
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     * @throws ClassNotFoundException
+     */
     public abstract T newInstance(final K keyParam) throws IllegalAccessException,
             InstantiationException, ClassNotFoundException;
 

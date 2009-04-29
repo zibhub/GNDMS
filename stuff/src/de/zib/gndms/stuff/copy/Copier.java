@@ -82,6 +82,7 @@ public final class Copier {
      * The copymode will be choosen by {@link Copyable}'s annotation.
      * If nothing denoted, the copy mode will be select by checking if {@code instance} belongs to {@code Molding, Clonable or Serializable}
      * in the given order. The first match will be taken.
+     *
      * @param fallbackToClone if true the instance will be copied using the {@code clone()} method,
      * if it implements {@code Cloneable} but not {@code Molding}.
      * @param instance the instance to be copied
@@ -159,6 +160,7 @@ public final class Copier {
 
     /**
      * Copies an object using {@code copyInstanceByMolding((Class<T>) instance.getClass(), instance)}, if {@code instance} is not {@code null}
+     *
      * @param instance the instance to be copied
      * @return {@code copyInstanceByMolding((Class<T>) instance.getClass(), instance)} or {@code null} if {@code instance} is {@code null}
      */
@@ -173,6 +175,7 @@ public final class Copier {
 
     /**
      * Copies an instance by molding.
+     *
      * @see Mold
      * @param clazz the class the instance belongs to
      * @param instance the instance to be copied
@@ -209,6 +212,7 @@ public final class Copier {
      /**
      * Copies an instance by serialization. <br>
      * The Object will be deserialized and serialized again.
+      *
      * @param instance the Object to be copied
      * @return A copy of a Instance by serialization
      */
@@ -269,6 +273,7 @@ public final class Copier {
      * Copies an instance by the Object's Constructor to create a new instance.<br>
       * If {@code oldObj} is a instance belonging to class {@code T} this method will invoke
       * {@code T newObj=new T(oldObj); }
+      *
      * @param instance the Object to be copied
      * @return A copy of a Instance by serialization
      */

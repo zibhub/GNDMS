@@ -5,6 +5,10 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * An AbstractModelAction with an ID.
+ * An ID has to be denoted before {@link #initialize()} is called.
+ *
+ * The first template parameter describes the model type. It must be a {@link GridResource}.
+ * The second parameter is the return type of this action.
  *
  *
  * @see de.zib.gndms.logic.model.AbstractModelAction

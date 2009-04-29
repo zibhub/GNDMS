@@ -3,6 +3,7 @@ package de.zib.gndms.stuff;
 /**
  * This class provides a method to suspend a thread's execution uniterruptible for a specific time  
  *
+ * @see Thread
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
  *
