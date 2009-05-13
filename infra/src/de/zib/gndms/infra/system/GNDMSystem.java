@@ -757,7 +757,7 @@ public final class GNDMSystem
 		}
 
         /**
-         * Shuts down the current GNDM system by invoking {@code shutdown} on {@link #instance}.
+         * Shuts down the current GNDM system by invoking {@code shutdown()} on {@link #instance}.
          *
          * @throws Exception if an error occurs during the initialization or setup of the shell service of the GNDM system
          */
@@ -771,9 +771,9 @@ public final class GNDMSystem
 
 
         /**
-         * Returns a <tt>Runnable</tt> which calls {@link #shutdown()}
+         * Returns a <tt>Runnable</tt> which calls {@link #shutdown()}, when it is executed
          * 
-         * @return a <tt>Runnable</tt> which calls {@link #shutdown()}
+         * @return a <tt>Runnable</tt> which calls {@link #shutdown()}, when it is executed
          */
 		public @NotNull Runnable createShutdownAction() {
 			return new Runnable() {

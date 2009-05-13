@@ -140,7 +140,7 @@ public class AccessMask {
 
 
         /**
-         * {@code s} must be a single character, mathing an int in [0;7]
+         * {@code s} must be a single character, matching an int in [0;7]
          * 
          * @see AccessFlags#fromChar(char) 
          */
@@ -187,6 +187,7 @@ public class AccessMask {
 
     /**
      * Returns the access rights for a user.
+     *
      * @return the access rights for a user.
      */
     @Transient

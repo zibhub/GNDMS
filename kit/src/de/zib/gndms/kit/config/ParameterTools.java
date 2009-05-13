@@ -308,9 +308,8 @@ public final class ParameterTools {
 
     /**
      * Appends all keys with their corresponding values from the {@code Map} to a {@code StringBuilder} matching the pattern.
-     * Strings containing whitespaces or {@code ' : ; =} are not allowed.
-     * <br>
-     * Syntax:
+     * Keys containing whitespaces or {@code ' : ; =} are not allowed.
+     * The generated String has the following syntax:
      * <pre>
      * key: 'value' [; key: 'value' ]*  
      * </pre>

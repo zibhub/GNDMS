@@ -8,7 +8,9 @@ import java.util.Properties;
 /**
  *
  * A FilePermissions class is used to controll access rights for a file.
- *
+ * An instance corresponds to one user and one file. It contains the {@link AccessMask},
+ * describing the concrete access rights, the name of the user and the name of the group, the user belongs to.
+ * 
  * @see AccessMask
  * @author Maik Jorra <jorra@zib.de>
  * @version $Id$

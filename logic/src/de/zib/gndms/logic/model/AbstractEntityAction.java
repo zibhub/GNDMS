@@ -18,7 +18,7 @@ import javax.persistence.EntityTransaction;
  * <p> A subclass must implement {@link #execute(javax.persistence.EntityManager)} to define, what this action will do,
  * when it is executed. The method will be invoked with the current EntityManager (see {@link #entityManager}).
  *
- * <p>The template parameter is the return type.
+ * <p>The template parameter is the return type of this action.
  *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
@@ -241,6 +241,7 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
 
     /**
      * Returns whether the EntityManager should be closed on cleanup
+     *
      * @return whether the EntityManager should be closed on cleanup
      */
     public boolean isClosingEntityManagerOnCleanup() {

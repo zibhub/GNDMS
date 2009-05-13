@@ -83,7 +83,7 @@ public class SetupPermissionConfigletAction extends SetupConfigletAction {
 
 
     /**
-     * Writes the properties from <tt>state </tt> into the Printwriter.
+     * Prints the properties from <tt>state </tt> using the Printwriter {@code writerParam}.
      *
      * @param state the state, the printwriter will read from
      * @param emParam 
@@ -178,7 +178,7 @@ public class SetupPermissionConfigletAction extends SetupConfigletAction {
      * @return the {@code permissionProperties} as {@code Properties}
      */
     private Properties asProperties(  ) {
-
+                                          
         Properties prop = new Properties( );
         try{
             ByteArrayInputStream bis = new ByteArrayInputStream( getPermissionProperties().getBytes( "ISO8859_1" ) );

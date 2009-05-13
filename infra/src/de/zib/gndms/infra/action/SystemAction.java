@@ -9,8 +9,10 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A SystemAction is a ConfigAction with a <tt>GNDMSystem</tt> instance.
  *
- * @see GNDMSystem
+ * The template parameter is the return type.
  *
+ * @see GNDMSystem
+ * @see ConfigAction
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
  *

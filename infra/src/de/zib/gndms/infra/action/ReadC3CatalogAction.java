@@ -29,10 +29,10 @@ import java.util.Set;
  *          all archives  with their corresponding <tt>oid</tt>
  *      </li>
  *      <li>
- *          all <tt>oid</tt> prefixes
+ *          all <tt>oid</tt> prefices
  *      </li>
  * </ul>
- * of the C3Catalog to a Printwriter.
+ * of the C3Catalog using a given Printwriter.
  *
  * <p>When this action is started, it tries to retrieve the {@link #outputMode 'outputMode'} and the {@link #name 'name'}
  * of the <tt>C3MDSConfiglet</tt> from the configuration map.
@@ -110,7 +110,7 @@ public class ReadC3CatalogAction extends ConfigAction<ConfigActionResult> implem
 
 
    /**
-     * Prints all <tt>oid</tt> prefixes of a specific <tt>C3Catalog</tt> to a given PrintWriter.
+     * Prints all <tt>oid</tt> prefixes of a specific <tt>C3Catalog</tt> using the given PrintWriter.
      *
      * @param writer a PrintWriter, the list should be printed to
      * @param catParam the catalog containg all sites
@@ -123,7 +123,7 @@ public class ReadC3CatalogAction extends ConfigAction<ConfigActionResult> implem
 	}
 
     /**
-     * Prints all sites of a specific <tt>C3Catalog</tt> with their corresponding ID to a given PrintWriter.
+     * Prints all sites of a specific <tt>C3Catalog</tt> with their corresponding ID using the given PrintWriter.
      * 
      * @param writer a PrintWriter, the list should be printed to
      * @param catParam the catalog containg all sites
@@ -137,7 +137,7 @@ public class ReadC3CatalogAction extends ConfigAction<ConfigActionResult> implem
 	}
 
     /**
-     * Prints all archives of a specific <tt>C3Catalog</tt> with their corresponding <tt>oid</tt> to a given PrintWriter.
+     * Prints all archives of a specific <tt>C3Catalog</tt> with their corresponding <tt>oid</tt> using the given PrintWriter.
      * 
      * @param writer a PrintWriter, the list should be printed to
      * @param catParam the catalog containg all sites

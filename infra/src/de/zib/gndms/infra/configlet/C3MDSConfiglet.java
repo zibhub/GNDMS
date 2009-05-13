@@ -171,10 +171,30 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 			protectMaps();
 		}
 
-
+        /**
+         * Fills the maps {@link #siteById}, {@link #siteByWorkspace}, {@link #workspaceByArchive}, {@link #archivesByOid} 
+         * for all sites and their
+         * corresponding Objects which are collected by the iterator {@code sites}.
+         *
+         * Every site is stored in {@link #siteById}, using its own id (see {@link Site#getId()}), but without the
+         * prefix {@link #requiredPrefix}.
+         * A {@code Workspace} is assigned to its {@code site} by {@code siteByWorkspace}.
+         * The same applies to an Archive of an Workspace, using {@code workspaceByArchive}.
+         *
+         * Every {@code object id prefix} (see {@link Workspace.Archive#getOidPrefix()})
+         * is assigned to all {@code Archive}s, where it is included ({@link #archivesByOid}).
+         *
+         * Every {@code object id prefix} is shortened by the prefix {@link #requiredPrefix}, before it is stored in the map.
+         * Besides that, the entries of the list {@link Workspace.Archive#oidPrefix} are replaced with the new shorted Strings.
+         * If an oid prefix does not start with {@link #requiredPrefix} it is removed from the {@code oidPrefix} list of
+         * the corresponding {@code Workspace.Archive}.
+         *
+         * @param sites an Iterator containing {@link Site}s to be registered in the system.
+         */
 		@SuppressWarnings({ "FeatureEnvy", "ObjectAllocationInLoop" })
 		private void fillMaps(final Iterator<Site> sites) {
-			final Set<String> allOidPrefixes = Sets.newTreeSet();
+            // Unused at the moment
+			// final Set<String> allOidPrefixes = Sets.newTreeSet();
 			while (sites.hasNext()) {
 				final Site site = sites.next();
 				// remove prefix
@@ -190,7 +210,8 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 						for (final String curOidPrefix : archive.getOidPrefix()) {
 							if (curOidPrefix.startsWith(requiredPrefix)) {
 								final String oidPrefix = curOidPrefix.substring(requiredPrefix.length());
-								allOidPrefixes.add(oidPrefix);
+                                // Unused at the moment
+								// allOidPrefixes.add(oidPrefix);
 								final Set<Workspace.Archive> set;
 								if (archivesByOid.containsKey(oidPrefix))
 									set  = archivesByOid.get(oidPrefix);
@@ -209,14 +230,15 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 			}
 		}
 
-
+        /**
+         * Makes all maps of a C3Catalog instance immutable
+         */
 		private void protectMaps() {
 			siteById = immutableMap(siteById);
 			archivesByOid = immutableMap(archivesByOid);
 			workspaceByArchive = immutableMap(workspaceByArchive);
 			siteByWorkspace = immutableMap(siteByWorkspace);
 		}
-
 
 		private static <K, V> Map<K, V> immutableMap(final Map<K, V> map) {
 			return Collections.unmodifiableMap(map);
@@ -243,6 +265,16 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 		}
 
 
+        /**
+         * Returns the set of {@code Workspace.Archive}s to which {@code oidPrefixIn} or a prefix of it has been mapped.
+         * If {@code oidPrefixIn} could not be found in {@link #archivesByOid}, the lookup is repeated with the String,
+         * shortened by last character. This procedure is repeated until a prefix has been found as key of {@link #archivesByOid}.
+         * Otherwise an exception will be thrown.
+         *
+         * @param oidPrefixIn either oidPrefixIn or a prefix of it, being a key for the map {@link #archivesByOid}
+         *
+         * @return the assigned set of {@code Archives} for the key oidPrefixIn or a prefix of the String using the map {@code archivesByOid}
+         */
 		public @NotNull Set<Workspace.Archive> getArchivesByOid(final String oidPrefixIn) {
 			if (oidPrefixIn != null) {
 				final String oidPrefix = oidPrefixIn.trim();
@@ -256,6 +288,21 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 				  (oidPrefixIn == null ? "(null)" : oidPrefixIn));
 		}
 
+        /**
+         * Returns the set of all {@code Workspace.Archive}s, which are contained in an {@code Workspace} belong to the {@code Site},
+         * which corresponds to {@code siteId} and where {@code oidPrefixIn} is a prefix of an {@code Archive}'s oid prefix.
+         *
+         * Note: the set contains only those archives, which have an oidprefix, being a prefix of {@code oidPrefixIn}
+         * with maximum lenght.
+         * TODO: check if maximum lenght is need, or should all Archives returned containing an oidPrefix, being an oidPrefixIn prefix. 
+         *
+         *
+         * @param siteId constraint for the archives.
+         *      Only Archives contained in a {@code Workspace} of the site corresponding to siteID are used for the lookup
+         * @param oidPrefixIn an archive is added to the list, if it contains an oid prefix, being a prefix of oidPrefixIn
+         *
+         * @return a set of Archives corresponding to a chosen site, containing an oid prefix being an prefix of oidPrefixIn
+         */
 		@SuppressWarnings({ "OverlyNestedMethod" })
 		public @NotNull Set<Workspace.Archive> getArchivesByOid(final @Nullable String siteId, final @NotNull String oidPrefixIn) {
 			if (siteId == null || siteId.trim().length() == 0)
@@ -300,10 +347,26 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 			return getArchivesByOid(siteId, sharedPrefix(oidPrefices));
 		}
 
+
+        /**
+         * Returns {@code getArchivesByOid(prefix)},
+         * where prefix is the longest common prefix of all Strings in {@code oidPrefices}.
+         *
+         * @param oidPrefices an array of oid prefices
+         * @return {@code getArchivesByOid(prefix)},
+         *         where prefix is the longest common prefix of all Strings in {@code oidPrefices}
+         */
 		public @NotNull Set<Workspace.Archive> getArchivesByOids(final String[] oidPrefices) {
 			return getArchivesByOid(sharedPrefix(oidPrefices));
 		}
 
+        /**
+         * Returns the longest common prefix contained in all Strings of the array
+         *
+         * @param strings several Strings, whose longstest common prefix is seeked
+         *
+         * @return the longest common prexif contained in all String of the array
+         */
 		private static @NotNull String sharedPrefix(String[] strings) {
 			if (strings == null || strings.length == 0) return "";
 			String prefix = strings[0].trim();
@@ -318,6 +381,13 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 		}
 
 
+        /**
+         * Returns the longest common prefix for two Strings.
+         *
+         * @param smaller a String to be compared with another String.
+         * @param larger a second String to be compared with the first String.
+         * @return the longest common prefix in both Strings
+         */
 		@SuppressWarnings({ "TailRecursion" })
 		private static @NotNull String sharedPrefix(
 			  final @NotNull String smaller, final @NotNull String larger) {

@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.Properties;
 
 /**
- * A class to configure the permissions of files created by the GORFX service.
+ * A class to configure permissions of files created by the GORFX service.
  *
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$

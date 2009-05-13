@@ -49,7 +49,11 @@ public class WSMaintenance {
         return res;
     }
 
-
+    /**
+     * Returns the GNDMSystem
+     * 
+     * @return the GNDMSystem
+     */
     public GNDMSystem getSystem() {
         return system;
     }

@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 
 
 /**
- * Default implementation of command actions for database manipulations.
+ * Default implementation of {@link CommandAction} using a database (See {@link AbstractEntityAction)).
  *
  * Takes care of command parsing and handles the associated print writer.
  *
@@ -42,6 +42,15 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
      * A configuration map. It maps an option name to its configuration value.
      */
     private Map<String, String> cmdParams;
+
+    /**
+     * The PrintWriter is used by a ConfigAction to print a help about the usage or the result of an action.
+     *
+     * An implementing subclass can either print its result directly to the PrintWriter, as {@code printWriter} is
+     * delegated to subclasses,
+     * or it makes sure that {@link #isWriteResult()} and {@link #hasPrintWriter()} return {@code true}.
+     * The result of the action will then automatically be printed using {@code printWriter}.
+     */
     private PrintWriter printWriter;
     /**
      * Decides whether the results of {@link #execute(javax.persistence.EntityManager)} should be written to a PrintWriter or not.

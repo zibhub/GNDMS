@@ -7,8 +7,8 @@ import javax.persistence.Embeddable;
 import javax.persistence.Column;
 
 /**
- * A class to store information about task permissions. Usually instanziated in the middleware when creating the task.
- * It also privides access to the PermissionConfiglet.
+ * A class to store information about task permissions. Usually instantiated in the middleware when creating the task.
+ * It also provides access to the PermissionConfiglet.
  *
  * @author Maik Jorra <jorra@zib.de>
  * @version $Id$

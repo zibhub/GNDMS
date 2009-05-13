@@ -12,14 +12,23 @@ import java.util.Calendar;
 
 
 /**
- * This class calculates based on a reference time, a time in the future,
- * no matter whether it is denoted absolute or relative.
+ * A FutureTime compares a reference {@code DateTime} with a preset duration or {@code DateTime} and reset itself to
+ * the lastet of both {@code DateTime}s.
  *
- *
- * Once an instance has been created,a reference date has to be denoted,which can be done by invoking
- * {@code fix(referenceDate)} or {@code fixedWith(referenceDate)} first. The computed value can now be returned
- * using {@code getFixedTime()}.
+ * This is done using {@code fix()}, which will be called with a reference {@code DateTime}.
  * 
+ * If a duration has been set (using  {@link #atOffset(org.joda.time.Duration)}),
+ * the method checks if the reference time plus the duration is later than the {@code DateTime} itself.
+ * In this case, the method returns the addition of these times.
+ * Otherwise, only the {@code DateTime} is returned.
+ *
+ * If a {@code DateTime} has been set (using {@link #atTime(org.joda.time.DateTime)} ) ,
+ * the method returns the latest of both {@code DateTime}s.
+ *
+ * A FutureTime object can be fixed only once.
+ *
+ * @see DateTime
+ * @see Duration
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
  *
@@ -31,20 +40,26 @@ public abstract class FutureTime implements Serializable, Cloneable {
 	private static final long serialVersionUID = -8564712372634917528L;
 
     /**
-     * the computed time in future based on a given reference date
+     * holds the fixed dateTime, i.e. the lastest of the reference time and the preset time / duration+time. 
+     * (See description above)
      */
 	private DateTime fixed;
 
 	private FutureTime() {}
 
+    /**
+     * Returns true, if time has already been fixed.
+     * @return
+     */
 	public boolean isFixed() {
 		return fixed != null;
 	}
 
     /**
-     * Returns the computed DateTime.
-     * Note: the computation must be invoked elsewhere before.
-     * @return the computed DateTime
+     * Returns the fixed DateTime.
+     * Note: the {@link #fix(org.joda.time.DateTime)}  must be called before.
+     * 
+     * @return the fixed DateTime
      */
 	public DateTime getFixedTime() {
 		if (isFixed())
@@ -54,11 +69,10 @@ public abstract class FutureTime implements Serializable, Cloneable {
 	}
 
     /**
-     * Computes the {@code DateTime} of the denoted time in the future, based on {@code referenceData}.
-     * A reference date can be denoted only one time, therefore it throws an IllegalStateExecption, if invoked twice.
+     * Computes the fixed {@code DateTime}, which can be retrieved using {@link #getFixedTime()}.
+     * This method must be invoked only once.
      *
-     * 
-     * @param referenceDate the {@code DateTime}, the computation will be based on
+     * @param referenceDate the {@code DateTime} to be compared with the preset time or duration
      */
 	public final void fix(@NotNull DateTime referenceDate) {
 		if (isFixed())
@@ -68,7 +82,7 @@ public abstract class FutureTime implements Serializable, Cloneable {
 	}
 
     /**
-     * Returns itself, after computing the wanted time in the future.
+     * Computes the fixed {@code DateTime} and returns itself.
      *
      * @see de.zib.gndms.model.common.types.FutureTime#fix(org.joda.time.DateTime) ;
      */
@@ -80,11 +94,15 @@ public abstract class FutureTime implements Serializable, Cloneable {
 
 
     /**
+     * Returns a String representation of the {@code DateTime} object.
+     * If {@code fix()} or {@code fixedWith()} has been called before, it will use the fixed {@code DateTime}.
      *
-     * @return If the wanted time in the future has already been computed, then it will be returned
-     * in ISO8601-format. Otherwise the denoted duration or absolute time will be returned.
+     * Otherwise it will just return a String representation of the preset values.
+     * @return A String representation of a {@code DateTime} or a {@code Duration}.
+     * @see de.zib.gndms.model.common.types.FutureTime.AbsoluteFutureTime#toStringIfUnfixed()
+     * @see de.zib.gndms.model.common.types.FutureTime.RelativeFutureTime#toStringIfUnfixed() 
      */
-	@Override
+    @Override
 	public String toString() {
 		if (isFixed()) {
 			return ISODateTimeFormat.dateTime( ).print(getFixedTime());
@@ -101,16 +119,38 @@ public abstract class FutureTime implements Serializable, Cloneable {
 		return clone;    // Overridden method
 	}
 
-
+    /**
+     * Compares the refrence {@code DateTime} with the preset time or duration and returns the of both DateTime.
+     * If a duration has been set, it compares the {@code DateTime} with the {@code DateTime} plus the duration.
+     *
+     * @param referenceDate
+     * @return
+     */
 	public abstract @NotNull DateTime computeFixedTime(@NotNull DateTime referenceDate);
 
-
+    /**
+     * A String representation of the preset {@code DateTime} or {@code Duration}
+     *
+     * @return
+     */
 	public abstract @NotNull String toStringIfUnfixed();
 
 
+    /**
+     * Returns true if the {@code FutureTime} instance uses an absolute time as its preset value.
+     *
+     * @return
+     */
 	public abstract boolean isAbsolute();
 
 
+    /**
+     * Returns a {@code FutureTime} object, with a preset absolute {@code DateTime}.
+     * 
+     * @param date the time which will be compared later on with a reference time.
+     *
+     * @return
+     */
 	public static @NotNull FutureTime atTime(@NotNull DateTime date) {
 		final AbsoluteFutureTime absoluteFutureTime = new AbsoluteFutureTime();
 		absoluteFutureTime.setAbsoluteDate(date);
@@ -118,7 +158,13 @@ public abstract class FutureTime implements Serializable, Cloneable {
 	}
 
 
-
+    /**
+     * Returns a {@code FutureTime} object, with a preset duration.
+     *
+     * @param dur the duration which will be used when {@code computedFixedTime()} is called.
+     * 
+     * @return
+     */
 	public static @NotNull FutureTime atOffset(@NotNull Duration dur) {
 		final RelativeFutureTime relativeFutureTime = new RelativeFutureTime();
 		relativeFutureTime.setDuration(dur);
@@ -126,6 +172,15 @@ public abstract class FutureTime implements Serializable, Cloneable {
 	}
 
 
+    /**
+     * Returns a {@code FutureTime} object, which will allready be fixed with the value of {@code deadlineParam}.
+     * This means the object cant be fixed again with another reference time, as the invokation of
+     * {@link #fix(org.joda.time.DateTime)} throws an exception in this case.
+     *
+     * @param deadlineParam a time to be fixed
+     *
+     * @return a FutureTime object with the date/time of {@code deadlineParam}. It cant be fixed to another time
+     */
 	public static FutureTime atFixedTime(final Calendar deadlineParam) {
 		DateTime dt = new DateTime(deadlineParam);
 		return atTime(dt).fixedWith(dt);

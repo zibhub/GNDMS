@@ -44,7 +44,7 @@ public final class Copier {
      *
      * Selection of the copy mode is done using {@link Copier#selectMode(boolean, Object, Class)}}
      * 
-     * @param fallbackToClone fallbackToClone if true the instance will be copied using the {@code clone()} method,
+     * @param fallbackToClone if true the instance will be copied using the {@code clone()} method,
      *        if it implements {@code Cloneable} but not {@code Molding}.
      * @param instance the instance to be copied
      * @return a copy of the instance
