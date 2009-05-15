@@ -26,8 +26,8 @@ public interface TaskExecutionService {
      * 
      * @param action the EntityAction which should be executed
      * @param logger A logger, which can be added to the action, if it's a LogAction
-     * @param <R>
-     * @return A Future Object representing the result of action's computation
+     * @param <R>  the return type of the action
+     * @return A Future Object holding the result of action's computation
      * @see Future
      */
     @NotNull <R> Future<R> submitAction(final @NotNull EntityAction<R> action, final @NotNull Log logger);
@@ -40,8 +40,8 @@ public interface TaskExecutionService {
      * @param em an EntityManger for the EntityAction
      * @param action the EntityAction which should be executed
      * @param logger A logger, which can be added to the action, if it's a LogAction
-     * @param <R>
-     * @return A Future Object representing the result of action's computation
+     * @param <R> the return type of the action
+     * @return A Future Object holding the result of action's computation
      * @see Future
      */
     @NotNull <R> Future<R> submitAction(final @NotNull EntityManager em,
@@ -57,8 +57,7 @@ public interface TaskExecutionService {
     boolean isTerminating();
 
     /**
-     * Stopps the ExecturService.Depending on the implementation,either only new tasks will be rejected or
-     * additionally it will attempt to stop all its running tasks
+     * Stopps the ExecturService.
      * 
      * @see ExecutorService#shutdown()
      * @see ExecutorService#shutdownNow() 

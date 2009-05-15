@@ -59,7 +59,7 @@ public class GNDMSVerInfo {
     /**
      * Returns the content of the {@code GNDMS-BUILD-INFO} file, containg informations about the build version.
      * 
-     * @return
+     * @return the content of the {@code GNDMS-BUILD-INFO} file, containg informations about the build version.
      */
 	public String readBuildInfo() {
 		return readInfo("BUILD-INFO");
@@ -67,7 +67,8 @@ public class GNDMSVerInfo {
 
     /**
      * Returns the content of the {@code GNDMS-RELEASE} file, containg informations about the release version.
-     * @return
+     *
+     * @return the content of the {@code GNDMS-RELEASE} file, containg informations about the release version.
      */
 	public String readRelease() {
 		return readInfo("RELEASE");

@@ -179,7 +179,7 @@ public final class ISO8601 {
 	/**
 	 *
 	 * @param calendar
-	 * @throw IllegalArgumentException if calendar is set before the beginning of the epoch
+	 * @throws IllegalArgumentException if calendar is set before the beginning of the epoch
 	 * @return date for calendar
 	 */
 	public static Date dateForCalendar(Calendar calendar) {

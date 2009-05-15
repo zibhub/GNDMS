@@ -18,8 +18,8 @@ public final class BoundInjector {
 	private Injector injector;
 
     /**
-     * Returns the currently used {@¢ode Injector}.If not set, {@code null} will be return
-     * @return the currently used {@¢ode Injector}.If not set, {@code null} will be return
+     * Returns the currently used {@code Injector}.If not set, {@code null} will be return
+     * @return the currently used {@code Injector}.If not set, {@code null} will be return
      */
 	public synchronized Injector optionallyGetInjector() {
         return injector;

@@ -41,6 +41,7 @@ import javax.persistence.EntityManagerFactory;
 import static javax.persistence.Persistence.createEntityManagerFactory;
 import javax.persistence.Query;
 import javax.xml.namespace.QName;
+import javax.transaction.NotSupportedException;
 import java.io.File;
 import java.io.IOException;
 import static java.lang.Thread.sleep;
@@ -159,6 +160,7 @@ public final class GNDMSystem
 		};
 	}
 
+
 	public void initialize() throws RuntimeException {
 		try {
 			// Q: Think about how to correct UNIX directory/file permissions from java-land
@@ -194,6 +196,9 @@ public final class GNDMSystem
 	}
 
 
+    /**
+     * Writes information about the GNDMS release and GNDMS build (using {@link #verInfo}) to the logger.
+     */
 	@SuppressWarnings({ "ValueOfIncrementOrDecrementUsed", "MagicNumber" })
 	private void printVersion() {
 		final String releaseInfo = verInfo.readRelease();
@@ -209,7 +214,11 @@ public final class GNDMSystem
 		logger.warn(hrString);
 	}
 
-
+    /**
+     * Binds several classes with {@code this} or other corresponding fields
+     * 
+     * @param binder binds several classe with certain fields.
+     */
 	public void configure(final @NotNull Binder binder) {
 		binder.bind(GNDMSystem.class).toInstance(this);
 		binder.bind(EntityManagerFactory.class).toInstance(restrictedEmf);
@@ -224,7 +233,11 @@ public final class GNDMSystem
 		// TODO later: binder.bind(TxFrame.class).to(TxFrame.class);
 	}
 
-
+    /**
+     * Retrieves the grid path using {@code sharedConfig} and stores the corresponding file in {@code sharedDir}.
+     *
+     * @throws Exception if an error occurs while creating the {@link File} instance.
+     */
 	private synchronized void initSharedDir() throws Exception {
         sharedDir = new File(sharedConfig.getGridPath()).getCanonicalFile();
         final String gridName = sharedConfig.getGridName();
@@ -294,15 +307,22 @@ public final class GNDMSystem
 		return createEntityManagerFactory(gridName, map);
 	}
 
-
-	private void tryTxExecution() {
+    /**
+     * Checks if a commit can be done on the database
+     *
+     * @throws RuntimeException if an error occured while commiting on the database
+     */
+	private void tryTxExecution() throws RuntimeException{
 		final EntityManager em = emf.createEntityManager();
 		try {
 			em.getTransaction().begin();
 			em.getTransaction().commit();
 		}
 		catch (RuntimeException re)
-			{ em.getTransaction().rollback(); }
+			{ em.getTransaction().rollback();
+              em.close();
+              throw re;
+        }
 		finally
 			{ em.close(); }
 	}
@@ -358,7 +378,12 @@ public final class GNDMSystem
         }
 	}
 
-
+    /**
+     * Returns the {@code TaskExecutionService}, which is used by this system. If it does not exist, 
+     * a new instance will be created.
+     *
+     * @return the TaskExecutionService instance, which is uses by this system.
+     */
     private synchronized @NotNull TaskExecutionService getExecutionService() {
         if (executionService == null)
             executionService = new SysTaskExecutionService();
@@ -434,6 +459,11 @@ public final class GNDMSystem
 		throw new IllegalStateException("Cant set this system");
 	}
 
+    /**
+     * Returns using {@link #uuidGen}
+     * 
+     * @return the next UUID
+     */
 	public @NotNull String nextUUID() {
 		return uuidGen.nextUUID();
 	}
@@ -463,19 +493,20 @@ public final class GNDMSystem
 
 
 	public static @NotNull VEPRef modelEPRT(@NotNull QName keyTypeName,
-                                            @NotNull EndpointReferenceType epr) {
+                                            @NotNull EndpointReferenceType epr) throws NotSupportedException{
 		@NotNull ReferencePropertiesType props = epr.getProperties();
 		@NotNull MessageElement msgElem = props.get(keyTypeName);
 		SimpleResourceKey key = new SimpleResourceKey(keyTypeName, msgElem.getObjectValue());
 
 		// theVEPREF.setSite("");
 		// theVEPREF.setRk(key);
+        if (1==1) throw new NotSupportedException();
 		return new DSpaceRef();
 	}
 
 
 	public @NotNull VEPRef modelEPRT(@NotNull String instPrefix,
-                                     @NotNull EndpointReferenceType epr) {
+                                     @NotNull EndpointReferenceType epr) throws NotSupportedException{
 		return modelEPRT(getInstanceDir().lookupServiceHome(instPrefix).getKeyTypeName(), epr);
 	}
 
@@ -503,6 +534,14 @@ public final class GNDMSystem
         home.refresh(model);
     }
 
+    /**
+     * Returns a list of all {@code home}'s {@link org.globus.wsrf.Resource}s, managed by {@code em}.
+     *
+     * @param home a {@link org.globus.wsrf.ResourceHome} managing {@code Resources}
+     * @param em the entityManager, on which the query will be done
+     * @param <M> the model type
+     * @return a list of all {@code home}'s {@link org.globus.wsrf.Resource}s, managed by {@code em}.
+     */
     @SuppressWarnings({ "unchecked", "MethodMayBeStatic" })
     public @NotNull <M extends GridResource> List<String> listAllResources(
             final @NotNull GNDMPersistentServiceHome<M> home, final @NotNull EntityManager em) {
@@ -510,10 +549,19 @@ public final class GNDMSystem
         return query.getResultList();
     }
 
-
+    /**
+     * Returns a list of all {@link org.globus.wsrf.Resource}s, which are managed by an EntityManager, corresponding to
+     * the given EntityManagerFactory and
+     * which are managed by the {@code GNDMPersistentServiceHome} {@link de.zib.gndms.infra.system.GNDMSystemDirectory#getHome(Class)}    
+     *
+     * @param emg the factory to create the EntityManager, used for the {@code list all} query
+     * @param clazz the class, whose corresponding GNDMPersistentServiceHome will be used for the query.(See {@link de.zib.gndms.infra.system.GNDMSystemDirectory#homes})
+     * @param <M> the model type
+     * @return  a list of all {@code Resources}, corresponding to a specific EntityManager and GNDMPersistentServiceHome.
+     */
     public final @NotNull  <M extends GridResource> List<String> listAllResources(
             final @NotNull EntityManagerFactory emg, final @NotNull Class<M> clazz) {
-        final EntityManager manager = emf.createEntityManager();
+        final EntityManager manager = emg.createEntityManager();
         List<String> retList = null;
         try {
             try {
@@ -533,7 +581,11 @@ public final class GNDMSystem
         return retList;
     }
 
-
+    /**
+     * Refreshes all resources corresponding to a specific GNDMPersistentServiceHome
+     * @param home the GNDMPersistentServiceHome,whose Resource will be refreshed
+     * @param <M>  the model type
+     */
     @SuppressWarnings({ "ConstantConditions" })
     public final <M extends GridResource> void refreshAllResources(
             final @NotNull GNDMPersistentServiceHome<M> home) {
@@ -565,22 +617,42 @@ public final class GNDMSystem
     }
 
 
+    /**
+     * Returns {@code this}
+     *
+     * @return {@code this}
+     */
     @SuppressWarnings({ "ReturnOfThis" })
     public EntityUpdateListener<GridResource> getEntityUpdateListener() {
         return this;
     }
 
 
+    /**
+     * Returns {@link #uuidGenDelegate}
+     *
+     * @return {@link #uuidGenDelegate}
+     */
     public @NotNull ModelUUIDGen getModelUUIDGen() {
         return uuidGenDelegate;
     }
 
 
+    /**
+     * Calls {@code sumitAction(action,logParam)} on {@code getExecutionService()}.
+     *
+     * @see SysTaskExecutionService#submitAction(de.zib.gndms.logic.model.EntityAction, org.apache.commons.logging.Log)
+     */
     public @NotNull <R> Future<R> submitAction(final @NotNull EntityAction<R> action, final @NotNull Log logParam) {
         return getExecutionService().submitAction(action, logParam);
     }
 
-    
+    /**
+     * Calls {@code sumitAction(em,action,logParam)} on {@code getExecutionService()}
+     * 
+     * @see SysTaskExecutionService#submitAction(javax.persistence.EntityManager, de.zib.gndms.logic.model.EntityAction, org.apache.commons.logging.Log) 
+     *
+     */
     public @NotNull <R> Future<R> submitAction(final @NotNull EntityManager em,
                                                final @NotNull EntityAction<R> action,
                                                final @NotNull Log logParam) {
@@ -594,28 +666,52 @@ public final class GNDMSystem
 
 
     /**
-     * 
+     * A SysTaskExecutionService submits {@link EntityAction}s to an {@link ExecutorService}.
+     *
+     * Before the action is submitted to the executor, using a suitable {@code submitAction(..)} method,
+     * {@link #submit_(de.zib.gndms.logic.model.EntityAction, org.apache.commons.logging.Log)} will automatically
+     * prepare the action using certain setters.
+     *
+     * When the executor is shutted down, using {@link #shutdown()},
+     * the system will wait {@link de.zib.gndms.infra.system.GNDMSystem#EXECUTOR_SHUTDOWN_TIME} milliseconds.
+     *
      */
 	public final class SysTaskExecutionService implements TaskExecutionService, ThreadFactory {
         private final ThreadPoolExecutor executorService;
         private volatile boolean terminating;
 
 
+        /**
+         * Initializes the ExecutorService
+         * 
+         */
         public SysTaskExecutionService() {
             super();
             executorService = (ThreadPoolExecutor) Executors.newCachedThreadPool();
             executorService.prestartCoreThread();
         }
 
+
         public ExecutorService getExecutorService() {
             return executorService;
         }
 
+        /**
+         * Returns whether {@link #shutdown()} has already been invoked or not.
+         *
+         * @return whether {@link #shutdown()} has already been invoked or not.
+         */
         public boolean isTerminating() {
             return terminating;
         }
 
 
+        /**
+         * Stopps all currently executed and waiting tasks on the Executor {@code getExecutorService()}.
+         * Sets {@link #terminating} to {@code true}.
+         * The method waits {@link GNDMSystem#EXECUTOR_SHUTDOWN_TIME} milliseconds until it returns.
+         *
+         */
         @SuppressWarnings({ "BusyWait" })
         public void shutdown() {
             terminating = true;
@@ -655,7 +751,28 @@ public final class GNDMSystem
             return submit_(action, log);
         }
 
-
+        /**
+         * Prepares {@code action} using certain setters, before it is submitted to the Executor.
+         *
+         * <p>
+         * If {@code action} is a
+         * <ul>
+         *  <li>{@link LogAction}, its logger will be set to {@code log} </li>
+         *  <li>{@link SystemHolder}, the GNDMSystem ({@code GNDMSystem.this}) will be stored</li>
+         *  <li>{@link AbstractEntityAction}, its UUID generator will be set to {@link GNDMSystem#uuidGenDelegate}</li>
+         *  <li>{@link TaskAction}, its service will be set to {@code this}.</li>
+         * </ul>
+         *
+         * If {@code action} does not already have postponed actions,
+         * they are set to a new {@link de.zib.gndms.logic.model.DefaultBatchUpdateAction}.
+         * If {@code action} does not already have listerns for the postponed actions, 
+         * they are set to {@link GNDMSystem#getEntityUpdateListener()}.
+         *
+         * @param action the EntityAction which should be executed
+         * @param log A logger, which can be added to the action, if it's a LogAction
+         * @param <R> the return type of the action
+         * @return A Future Object holding the result of action's computation
+         */
         @SuppressWarnings({ "FeatureEnvy" })
         private <R> Future<R> submit_(final EntityAction<R> action, final @NotNull Log log) {
             if (action instanceof LogAction)
@@ -682,7 +799,9 @@ public final class GNDMSystem
     }
 
     /**
-     * A factory class for a <tt>GNDMSxstem</tt>.
+     * A factory class for the <tt>GNDMSystem</tt>.
+     *
+     *
      * 
      * @see de.zib.gndms.infra.system.GNDMSystem
      */
@@ -717,7 +836,7 @@ public final class GNDMSystem
          *
          * <p>The system will be loaded with the values set in the fields {@link #sharedConfig} and {@link #debugMode}.
          * If <tt>setupShellService</tt> is set to <tt>true</tt>, {@code setupShellService()} will be invoked on the new
-         * system. The new create system will be stored at {@link #instance}.
+         * system. The new created system will be stored at {@link #instance}.
          *
          * @param setupShellService a boolean to decide whether setupShellService() is invoked on a new GNDM System or not
          *
