@@ -18,7 +18,8 @@ import org.jetbrains.annotations.NotNull;
 public interface KeyFactoryInstance<K, T extends KeyFactoryInstance<K, T>> {
     /**
      * Returns the {@code KeyFactory} of a this instance
-     * @return
+     *
+     * @return the {@code KeyFactory} of a this instance
      */
     KeyFactory<K, T> getFactory();
 
@@ -30,15 +31,13 @@ public interface KeyFactoryInstance<K, T extends KeyFactoryInstance<K, T>> {
 
     /**
      * Returns the key of this instance
-     * @return
+     *
+     * @return the key of this instance
      */
     K getKey();
 
     /**
-     * WAS ist die Bedeutung des keys ?
-     * Er meinte nicht Vaterknoten der ihn erstellt hat.
      * Sets the key for this instance
-     * 
      * @param keyParam a key which will be stored along with a KeyFactory
      */
     void setKey(final @NotNull K keyParam);

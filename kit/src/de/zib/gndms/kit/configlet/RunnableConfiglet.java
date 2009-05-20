@@ -10,8 +10,10 @@ import java.io.Serializable;
 /**
  * This abstract class stores a configuration in a map and provides a method which runs concurrently.
  *
- * Implement the {@code run_()} method to define what it supposed to do concurrently.
- * Execution is done when {@link #init(org.apache.commons.logging.Log, String, java.io.Serializable)} is invoked.
+ * A method of an implementing subclass, which should run concurrently must be either {@code run_()} or a method,
+ * which is invoked by {@code run_().
+ * Concurrent execution is done automatically,
+ * as soon as {@link #init(org.apache.commons.logging.Log, String, java.io.Serializable)} is invoked.
  *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
@@ -26,7 +28,8 @@ public abstract class RunnableConfiglet extends DefaultConfiglet implements Runn
     private Thread thread;
     
     /**
-     *  Initializes Configlet with a logger, a start-configuration, a name and starts a new Thread
+     *  Initializes Configlet with a logger, a start-configuration, a name and starts a new Thread, executing {@code run()}
+     * concurrently.
      *
      * @param loggerParam
      * @param name the name of the configuration

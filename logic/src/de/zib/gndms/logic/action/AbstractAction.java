@@ -45,8 +45,9 @@ public abstract class AbstractAction<R> implements Action<R> {
    /**
      * Do not call this method directly unless you don't need it to be executed concurrently.
      * 
-     * An implementing should not override this method.
-     * Use {@link AbstractAction#execute()} } instead
+     * An implementing class should not override this method.
+     * Use {@link AbstractAction#execute()} } instead to define what the action is supposed to done, when {@code call()}
+     * is executed.
      *
      * If concurrent execution is neeed this has to be submitted to an {@code Executor}.
      * The system will wait for the result not until really needed.

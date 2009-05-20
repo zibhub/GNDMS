@@ -16,6 +16,7 @@ public interface EntityUpdateListener<M extends GridResource> {
 
     /**
      * A class waiting for changes on the model must implement this method.
+     * It will be notified about a change, using this method with the new model.
      *
      * @param model the new model
      */

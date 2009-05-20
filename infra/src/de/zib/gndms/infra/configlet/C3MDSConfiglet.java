@@ -23,8 +23,19 @@ import java.util.*;
 
 
 /**
- * ThingAMagic.
+ * A C3MDSConfiglet is used to bulid a {@code C3Catalog} out of a given {@code monitoring and discovery system (mds)} URL.
  *
+ * Therefore the option {@code 'mdsURL'} must be set in the configuration map, before {@link #threadRun()} is invoked.
+ *
+ * Reading and building the C3Catalog is done concurrently,
+ * if this object is started properly (using {@link #init(org.apache.commons.logging.Log, String, java.io.Serializable)}).
+ *
+ * The option {@code 'requiredPrefix'} can be set to allow just those {@link Workspace.Archive}'s oidPrefix
+ * (see {@link de.zib.gndms.c3resource.jaxb.Workspace.Archive#getOidPrefix()} in the C3Catalog,
+ * which start with the denoted prefix.
+ *
+ *
+ * @see de.zib.gndms.kit.configlet.RunnableConfiglet
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
  *
@@ -32,6 +43,9 @@ import java.util.*;
  */
 @SuppressWarnings({ "ClassNamingConvention", "ReturnOfCollectionOrArrayField" })
 public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
+    /**
+     * the url of the monitoring and discovery system
+     */
 	private String mdsUrl;
 	private String requiredPrefix;
 
@@ -51,7 +65,9 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 		configProperties();
 	}
 
+    /*
 
+     */
 	private synchronized void configProperties() {
 		try {
 			mdsUrl = getMapConfig().getOption("mdsUrl");
@@ -62,6 +78,11 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 		}
 	}
 
+    /**
+     * Writes the {@code C3Catalog} from a {@code mds} into {@link #catalog}
+     *
+     * @see super#threadRun()  
+     */
 	@Override
 	protected synchronized void threadRun() {
 		try {
@@ -96,7 +117,14 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 		}
 	}
 
-
+    /**
+     * Returns an InputStream, connected to the mds.
+     * The URL is retrieved from {@link #getMdsUrl()}
+     * 
+     * @return
+     *
+     * @throws IOException
+     */
 	private InputStream openMdsInputStream() throws IOException {
 		final String urlStr = getMdsUrl();
 		final URL url = new URL(urlStr);
@@ -119,6 +147,11 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 	}
 
 
+    /**
+     * Waits until a {@code C3Catalog} is avaible and returns it.
+     *
+     * @return the C3Catalog of the Configlet
+     */
 	public synchronized C3Catalog getCatalog() {
 		while ( catalog == null )
 			try {
@@ -153,6 +186,11 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 	}
 
 
+    /**
+     * A C3Catalog contains several Maps,
+     * storing {@link Site}s and their corresponding {@link Workspace}s and {@link Workspace.Archive}s.
+     *
+     */
 	public static class C3Catalog {
 		/* forward maps */
 		private Map<String, Site> siteById = Maps.newConcurrentHashMap();

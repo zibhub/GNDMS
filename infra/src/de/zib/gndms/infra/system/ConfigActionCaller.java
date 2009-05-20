@@ -91,7 +91,7 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
     }
 
     /**
-     * Instantiates a new config action or a specific  subclass of it according to the String <tt>name</tt>,
+     * Instantiates a new config action or a specific subclass of it according to the String <tt>name</tt>,
      * sets its configurations map to the values set in <tt>params</tt> and returns the action.
      *
      <p>If the instance should be public accessible (see {@link de.zib.gndms.infra.action.PublicAccessible}) set <tt>pub</tt>

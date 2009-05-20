@@ -431,8 +431,8 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
     /**
      * Removes old configlets from the {@link #configlets} map.
      *
-     * Checks for every <tt>Configlet</tt> from the map, if it is still in the database.
-     * If not, it will be removed from the map and <tt>shutdown()</tt> will be invoked on the configlet instance. 
+     * Checks for every <tt>Configlet</tt> in the map, if still exists in the database.
+     * If not, the map entry will be removed and <tt>shutdown()</tt> invoked on the old configlet entry. 
      *
      * @param emParam an EntityManager managing <tt>Configlet</tt>s
      */
@@ -529,6 +529,11 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 	}
 
 
+   /**
+     * Binds several classes with {@code this} or other corresponding fields
+     *
+     * @param binder binds several classe with certain fields.
+     */
 	public void configure(final @NotNull Binder binder) {
 		// binder.bind(EntityManagerFactory.class).toInstance();
 		binder.bind(BoundInjector.class).toInstance(boundInjector);

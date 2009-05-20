@@ -60,10 +60,10 @@ public class PermissionConfiglet implements Configlet {
     }
 
 
-    /** This method always returns vaild permissions which respect the current user mode.
+    /** This method always returns vaild permissions with respect to the current user mode.
      *
      * @param un The username to request the permissoin for. The username is only taken in account
-     *          iff the mode is Caller, in any other cases it can be null.
+     *          if the mode is Caller, in any other cases it can be null.
      */
     public FilePermissions permissionsFor( String un ) {
 

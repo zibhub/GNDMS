@@ -34,10 +34,10 @@ public abstract class GridConfig {
 
 
     /**
-     * Returns the subContext of {@link Constants#getRootContext()}, which is bounded to {@code partitionName}.
-     * Furthermore it makes sure, that the subcontexts, bounded to {@code getGridJNDIEnvName()} and {@code getGridName()}
-     * exists.
-     *
+     * Creates a subContext-chain, starting from {@link Constants#getRootContext()},
+     * with the names {@link #getGridJNDIEnvName()} ,{@link #getGridName()}, {@code partionName} in the given order
+     * and returns the last subContext.
+     * 
      * @see #findSharedContext(javax.naming.Context, String)
      * @param partitionName a name, a subcontext is or will be bounded to
      * @return the subcontext, which has been bounded with partitionName
@@ -56,7 +56,6 @@ public abstract class GridConfig {
 	}
 
     /**
-     *
      * @see #findSharedContext(javax.naming.Context, String)
      */
 	@NotNull
@@ -109,15 +108,17 @@ public abstract class GridConfig {
 	}
 
     /**
-     * Checks for all entries in {@code names}, if a subcontext of {@code startContext} exists,
-     * bounded to the corresponding name.
-     * If not, a new subcontext is created and bounded to the name.
+     * Let {@code names} be a list of m entries {@code names={name_1, .. , name_m} }, sC_1 the startContext,
+     * then this method makes sure, that {@code sC_i} has a subContext {@code sC_(i+1)} bounded to the name {@code name_i},
+     * for all Integers {@code i} between 1 and {@code m}.
      *
-     * The subcontext, corresponding to the last entry of {@code names} will be returned.
+     * The last Context in this subContext-chain ({@code sC_(m+1)}) is returned.
      *
-     * @param startContext a Context, which is supposed to have a certain subContexts
-     * @param names a list of names subcontexts of {@code startContext}
-     * @return the subcontext corresponding to the last entry of {@code names}
+     * A new subContext is only created if a Context does not already have the desired subContext.
+     *
+     * @param startContext a Context, for which a subContext chain will be created
+     * @param names the list of names for the subcontext chain, created in the given order
+     * @return the subcontext corresponding to the last entry of {@code names} in the subContext-chain
      * @throws NamingException if a naming exception occurs, while executing {@code createSubcontext()} or {@code lookup()}
      */
 	@NotNull

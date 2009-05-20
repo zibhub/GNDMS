@@ -4,6 +4,10 @@ import java.io.Serializable;
 
 
 /**
+ *
+ * Stores a pair of doubles, denoting a min and a max value.
+ * 
+ * 
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
  * <p/>

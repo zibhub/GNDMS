@@ -214,12 +214,13 @@ public final class GNDMSystem
 		logger.warn(hrString);
 	}
 
-    /**
+
+   /**
      * Binds several classes with {@code this} or other corresponding fields
-     * 
+     *
      * @param binder binds several classe with certain fields.
      */
-	public void configure(final @NotNull Binder binder) {
+   public void configure(final @NotNull Binder binder) {
 		binder.bind(GNDMSystem.class).toInstance(this);
 		binder.bind(EntityManagerFactory.class).toInstance(restrictedEmf);
 		binder.bind(EMFactoryProvider.class).toInstance(this);
@@ -500,8 +501,8 @@ public final class GNDMSystem
 
 		// theVEPREF.setSite("");
 		// theVEPREF.setRk(key);
-        if (1==1) throw new NotSupportedException();
-		return new DSpaceRef();
+        throw new NotSupportedException();
+		// return new DSpaceRef();
 	}
 
 

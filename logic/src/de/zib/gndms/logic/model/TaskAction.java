@@ -180,6 +180,13 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     }
 
 
+    /**
+     * Stores the model {@code mdl} and makes a backup of it using a deep copy, not a reference copy.
+     *
+     * @see #setModel(de.zib.gndms.model.gorfx.AbstractTask) 
+     * @see #setBackup(de.zib.gndms.model.gorfx.AbstractTask) 
+     * @param mdl a model to be set
+     */
     protected void setModelAndBackup( final @NotNull AbstractTask mdl ) {
         setModel( mdl );
         setBackup( Copier.copy( false, mdl ) );
@@ -329,7 +336,9 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
 
     }
 
-
+    /**
+     * Inform all listeners about the current model.
+     */
     protected void refreshTaskResource() {
 
         try {
@@ -340,7 +349,9 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
         }
     }
 
-
+    /**
+     * Marks the model belonging to {@code this} as done and updates the corresponding object in the database. 
+     */
     private void markAsDone() {
         final @NotNull AbstractTask model = getModel();
         if (! model.isDone()) {
@@ -466,7 +477,12 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
         }
     }
 
-
+    /**
+     * Invokes a rollback on a entity transaction and a following {@code begin()},
+     * if it has been marked ({@code setRollbackOnly()).
+     *
+     * @param txParam a transaction to be rewinded
+     */
     private void rewindTransaction(final EntityTransaction txParam) {
         if( txParam.isActive() ) {
             if ( txParam.getRollbackOnly()) {
@@ -542,7 +558,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
         throw new FailedException(e);
     }
 
-
+    
     protected void finish(final Serializable result) {
         getModel().finish(result);
         throw new FinishedException(result);
@@ -600,7 +616,16 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
         this.backup = backup;
     }
 
-
+    /**
+     * Checks if the task lifetime is already exceeded.
+     *
+     * In this case, a commit and finish is done on {@code em}'s transaction.
+     * If the model is still in the database, {@link de.zib.gndms.model.gorfx.AbstractTask#fail(Exception)} will be
+     * invoked.
+     * 
+     * @param model a task with a termination time
+     * @param em the entityManager storing the model
+     */
     private void checkTimeout( @NotNull AbstractTask model, @NotNull EntityManager em ) {
 
         // check the task lifetime
@@ -676,7 +701,11 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     }
 
 
-    // Extracts the actual permissions from a tasks permission info object
+    /**
+     * Extracts the actual permissions from a tasks permission info object
+     *
+     * @return
+     */
     public FilePermissions actualPermissions( ) {
 
         if( getModel().getPermissions() != null ) {
