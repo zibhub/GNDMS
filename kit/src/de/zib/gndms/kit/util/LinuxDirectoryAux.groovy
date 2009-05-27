@@ -5,7 +5,7 @@ import de.zib.gndms.model.common.AccessMask
 /**
  * Implementation of the directory helpers for a linux system.
  *
- * This implementation uses the system-call "chmod"
+ * This implementation uses the system call "chmod"
  */
 class LinuxDirectoryAux extends DirectoryAux {
 

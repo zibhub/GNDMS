@@ -530,7 +530,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 
 
    /**
-     * Binds several classes with {@code this} or other corresponding fields
+     * Binds certain classes to {@code this} or other corresponding instances
      *
      * @param binder binds several classe with certain fields.
      */
@@ -549,6 +549,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 
 
 	private final class GNDMSBindingFactory implements GroovyBindingFactory {
+
 
         public @NotNull
         Binding createBinding(

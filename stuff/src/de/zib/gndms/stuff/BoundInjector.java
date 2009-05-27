@@ -19,6 +19,7 @@ public final class BoundInjector {
 
     /**
      * Returns the currently used {@code Injector}.If not set, {@code null} will be return
+     * 
      * @return the currently used {@code Injector}.If not set, {@code null} will be return
      */
 	public synchronized Injector optionallyGetInjector() {
