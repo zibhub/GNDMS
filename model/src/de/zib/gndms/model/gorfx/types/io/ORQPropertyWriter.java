@@ -6,6 +6,10 @@ import java.util.Properties;
 import java.util.HashMap;
 
 /**
+ * Writes an ORQ as a Properties instance.
+ * It should be used in conjunction with an ORQConverter.
+ *
+ * @see de.zib.gndms.model.gorfx.types.io.ORQConverter
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
  * <p/>

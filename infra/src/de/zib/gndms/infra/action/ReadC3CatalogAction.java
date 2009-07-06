@@ -20,7 +20,7 @@ import java.util.Set;
 /**
  * <p>An Action to read the <tt>C3Catalog</tt>.
  *
- * <p>Depending on the choosen <tt>OutputMode</tt>, it will either write
+ * <p>Depending on the chosen <tt>OutputMode</tt>, it will either write
  * <ul>
  *      <li>
  *          all sites with their corresponding ID

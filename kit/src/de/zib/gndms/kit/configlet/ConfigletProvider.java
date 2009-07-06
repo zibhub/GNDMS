@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface ConfigletProvider {
     /**
-     * Return a specific {@code Configlet}
+     * Returns a specific {@code Configlet}
      *
      * @param clazz the class the Configlet belongs to
      * @param name the name of the Configlet

@@ -40,7 +40,7 @@ public final class Copier {
 	}
 
     /**
-     * Returns a copy of an instance. Object will be copied either
+     * Returns a copy of an instance. 
      *
      * Selection of the copy mode is done using {@link Copier#selectMode(boolean, Object, Class)}}
      * 
@@ -79,9 +79,9 @@ public final class Copier {
     /**
      * Selects a proper copy mode for an instance.
      *
-     * The copymode will be choosen by {@link Copyable}'s annotation.
+     * The copymode will be chosen by {@link Copyable}'s annotation.
      * If nothing denoted, the copy mode will be select by checking if {@code instance} belongs to {@code Molding, Clonable or Serializable}
-     * in the given order. The first match will be taken.
+     * in the given order. The first match will be used.
      *
      * @param fallbackToClone if true the instance will be copied using the {@code clone()} method,
      * if it implements {@code Cloneable} but not {@code Molding}.

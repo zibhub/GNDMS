@@ -38,8 +38,13 @@ import java.util.Set;
 /**
  * Default implementation of the {@code WSActionCaller} interface.
  *
+ * A ConfigActionCaller is used to dynamically instantiate and call new {@code ConfigAction}s.
+ * The main method of this class is {@code  callPublicAction(String, String, java.io.PrintWriter)} which is used for
+ * this purpose. See {@link WSActionCaller#callPublicAction(String, String, java.io.PrintWriter)}
+ * for a description.
  *
-* @see de.zib.gndms.logic.model.config.ConfigAction
+ * @see ConfigAction
+ * @see WSActionCaller
 * @author Stefan Plantikow<plantikow@zib.de>
 * @version $Id$
 *

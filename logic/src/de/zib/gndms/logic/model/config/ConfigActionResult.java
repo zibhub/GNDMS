@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model.config;
 
 /**
- * An ConfigActionResult contains a String hold informations about the result of an action.
+ * An ConfigActionResult contains a String holding information about the result of an action.
  *
  * @see ConfigAction
  * @author Stefan Plantikow<plantikow@zib.de>

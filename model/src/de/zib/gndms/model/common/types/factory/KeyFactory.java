@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
  * The first template parameter is the key type, the second parameter specifies the type of the KeyFactoryInstance object,
  * which will be created and returned.
  *
- * @see KeyFactory
+ * @see KeyFactoryInstance
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
  *
@@ -23,7 +23,7 @@ public interface KeyFactory<K, T extends KeyFactoryInstance<K, T>> {
      * Returns the {@code KeyFactoryInstance} object corresponding to {@code key}.
      *
      * @param key a key corresponding to a KeyFactoryInstance object
-     * @return
+     * @return the {@code KeyFactoryInstance} object corresponding to {@code key}.
      * @throws IllegalAccessException
      * @throws InstantiationException
      * @throws ClassNotFoundException

@@ -20,7 +20,7 @@ import java.util.Map;
  * the state of the <tt>ConfigletState</tt> entity will be overwritten by a new map,
  * containing all options and their chosen values of the current configuration.
  *
- * <p>When this action is started with <tt>create</tt> as choosen SetupMode, the configuration map must
+ * <p>When this action is started with <tt>create</tt> as chosen SetupMode, the configuration map must
  * have an option {@link #className 'className'} set. Otherwise an <tt>IllegalStateException</tt> will be thrown.
  * The option {@link #name 'name'} must be set in any case.
  * 

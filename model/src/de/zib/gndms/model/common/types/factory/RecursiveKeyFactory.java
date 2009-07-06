@@ -1,14 +1,21 @@
 package de.zib.gndms.model.common.types.factory;
 
 /**
- * A {@code RecursiveKeyFactory} is {@code KeyFactory} for {@code KeyFactoryInstances} and a KeyFactoryInstance of a RecursiveKeyFactory.
+ * With {@code RecursiveKeyFactory}s it is possible to make KeyFactory-chains.
+ * This means a RecursiveKeyFactory is created by another KeyFactory. 
+ * So a KeyFactory can now created certain KeyFactories.
  *
- * This means an instance of this class can create a {@code KeyFactoryInstance} for a specific key.
- * Besides that the instance is a KeyFactoryInstance, so that it knows the factory (a RecursiveKeyFactory) it has been created of,
- * along with the corresponding key.
+ * At the same time, every RecursiveKeyFactory is a KeyFactory for instances being a KeyFactoryInstance.
  *
- * @see de.zib.gndms.model.common.types.factory.KeyFactory
- * @see de.zib.gndms.model.common.types.factory.KeyFactoryInstance
+ * 
+ * The first template parameter specifies the type of the keys,
+ *  which will be used when a KeyFactoryInstance is created by this factory, but also
+ * the key type which is used for the parent RecursiveKeyfactory which created this factory.
+ *
+ * The second template parameter specifies the {@code KeyFactoryInstance} type this KeyFactory creates.
+ *
+ * @see KeyFactory
+ * @see KeyFactoryInstance
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
  *

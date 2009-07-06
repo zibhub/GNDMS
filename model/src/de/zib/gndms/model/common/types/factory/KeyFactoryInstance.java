@@ -4,10 +4,11 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
- * An instance of this class stores one {@link KeyFactory} along with a corresponding key.
+ * A KeyFactoryInstance is created by a KeyFactory.
  *
- * The instance's factory creates, given the right key, the instance.
- *
+ * It stores the {@link KeyFactory}, from which it has been created along with the specific key
+ * for {@code this}
+ * 
  * The first template parameter is the key type, the second template parameter specifies the {@code KeyFactoryInstance} type.
  *
  * @author Stefan Plantikow<plantikow@zib.de>
@@ -17,28 +18,30 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface KeyFactoryInstance<K, T extends KeyFactoryInstance<K, T>> {
     /**
-     * Returns the {@code KeyFactory} of a this instance
+     * Returns the {@code KeyFactory} which created {@code this}
      *
-     * @return the {@code KeyFactory} of a this instance
+     * @return the {@code KeyFactory} which created {@code this}
      */
     KeyFactory<K, T> getFactory();
 
     /**
+     * Sets the KeyFactory, which created {@code this}
      *
-     * @param factoryParam
+     * @param factoryParam the KeyFactory, which created {@code this}
      */
     void setFactory(final @NotNull KeyFactory<K, T> factoryParam);
 
     /**
-     * Returns the key of this instance
-     *
-     * @return the key of this instance
+     * Returns the key which is needed to return {@code this} when calling {@code getFactory().getInstance(key)}
+     * 
+     * @return the key which is needed to return {@code this} when calling {@code getFactory().getInstance(key)} 
      */
     K getKey();
 
     /**
-     * Sets the key for this instance
-     * @param keyParam a key which will be stored along with a KeyFactory
+     * Sets the key, which is needed to return {@code this} when calling {@code getFactory().getInstance(key)}
+     * 
+     * @param keyParam the key, which is needed to return {@code this} when calling {@code getFactory().getInstance(key)} 
      */
     void setKey(final @NotNull K keyParam);
 }

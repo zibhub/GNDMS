@@ -18,9 +18,9 @@ public final class BoundInjector {
 	private Injector injector;
 
     /**
-     * Returns the currently used {@code Injector}.If not set, {@code null} will be return
+     * Returns the currently used {@code Injector}.If not set, {@code null} is returned
      * 
-     * @return the currently used {@code Injector}.If not set, {@code null} will be return
+     * @return the currently used {@code Injector}.If not set, {@code null} is returned
      */
 	public synchronized Injector optionallyGetInjector() {
         return injector;
@@ -43,7 +43,7 @@ public final class BoundInjector {
 	}
 
     /**
-     * Invokes {@link Injector#injectMembers(Object)} on the currently used {@code Injector}.
+     * Injects the dependecies into the methods and fields of {@code obj}.
      *
      * @param obj the obj, dependencies should be injected to 
      */

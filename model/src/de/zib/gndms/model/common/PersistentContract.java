@@ -18,7 +18,6 @@ import java.util.Calendar;
 
 
 /**
- * ThingAMagic.
  *
  * A PersistenContract can be transformed to an TransientContract
  *

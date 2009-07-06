@@ -104,7 +104,7 @@ public final class GNDMSystem
 	 * Retrieves a GNDMSSystem using context.lookup(name).
 	 *
 	 * A lightweight factory facade is either atomically retrieved from context or bound under name
-	 * iff name is unbound in context. The factory acts as an intermediary and ensures that at most
+	 * if name is unbound in context. The factory acts as an intermediary and ensures that at most
 	 * one DbSetupFacade ever gets instantiated and initialized.
 	 *
 	 * This instance is returned by this call from the factory facade.
@@ -131,6 +131,16 @@ public final class GNDMSystem
 		}
 	}
 
+    /**
+     * @see #lookupSystem(javax.naming.Context, javax.naming.Name, de.zib.gndms.infra.GridConfig, boolean)
+     *
+     * @param sharedContext
+     * @param facadeName
+     * @param anySharedConfig
+     * @param debugModeParam
+     * @return
+     * @throws NamingException
+     */
 	@SuppressWarnings({"StaticMethodOnlyUsedInOneClass"})
 	@NotNull
 	public static GNDMSystem lookupSystem(
@@ -287,7 +297,12 @@ public final class GNDMSystem
 				  dbLogFile.getCanonicalPath());
 	}
 
-
+    /**
+     * Creates an EntityManagerFactory.
+     * 
+     * @return an EntityManagerFactory
+     * @throws Exception
+     */
 	@SuppressWarnings({ "ResultOfMethodCallIgnored" })
     public @NotNull EntityManagerFactory createEMF() throws Exception {
 		final String gridName = sharedConfig.getGridName();
@@ -461,7 +476,7 @@ public final class GNDMSystem
 	}
 
     /**
-     * Returns using {@link #uuidGen}
+     * Returns the next UUID using {@link #uuidGen}
      * 
      * @return the next UUID
      */

@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 
 /**
  * A class implementing the WSActionCaller interface must provide a method to created specified ConfigActions
- * and return the result of the ConfigAction's {@code call()} invokation.
+ * and return the result of the ConfigAction's {@code call()} invocation.
  *
  * Note: WSActionCaller is intended to be applicably only for actions implementing the {@code PublicAccess} interface. 
  *

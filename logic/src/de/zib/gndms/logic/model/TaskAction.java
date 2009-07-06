@@ -24,7 +24,12 @@ import java.util.GregorianCalendar;
 
 
 /**
- * ThingAMagic.
+ * A TaskAction is used to execute a model of type {@link AbstractTask}s.
+ *
+ * The method {@link #execute(EntityManager)} invokes {@code transit()} in a loop, wich changes the TaskState of the model and
+ * invokes a method corresponding to the TaskSate. A concrete subclass must define the model's action
+ * (on {@code IN_PROGRESS}) by implementing {@link #onInProgress(AbstractTask)}. 
+ *
  *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
@@ -34,14 +39,27 @@ import java.util.GregorianCalendar;
 @SuppressWarnings({ "AbstractMethodCallInConstructor" })
 public abstract class TaskAction extends AbstractModelAction<AbstractTask, AbstractTask> implements LogAction
 {
+    /**
+     * the ExecutionService on which this TaskAction runs
+     */
     private TaskExecutionService service;
     private Log log;
     private String wid;
     private Class<? extends AbstractTask> taskClass;
+    /**
+     * A backup of the model
+     */
     private AbstractTask backup;
+    /**
+     * an EntityManagerFactory in the case that the used EntityManager is broken
+     */
 	private EntityManagerFactory emf;
     private ConfigletProvider configletProvider;
 
+
+    /**
+     *
+     */
     private static final class ShutdownTaskActionException extends RuntimeException {
         private static final long serialVersionUID = 2772466358157719820L;
 
@@ -50,16 +68,46 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
         }
     }
 
+    /**
+     * A TransitException is used to store a new desired {@code TaskState}, the model (an AbstractTask) shall use.
+     * Its state can be changed using {@link AbstractTask#transit(TaskState)}.
+     * Note that there is a predefined order in wich state a TaskState can be changed. 
+     *
+     * There a some special subclasses used to stop an AbstractTask in special situations.
+     *
+     * To stop an AbstractTask use the subclass {@link StopException}.
+     * If the model has finished its computation, throw a {@link FinishedException}
+     * If something went wrong, throw a {@link FailedException}
+     *
+     * @see TaskState
+     * @see AbstractTask
+     */
     protected static class TransitException extends RuntimeException {
         private static final long serialVersionUID = 1101501745642141770L;
 
+        /**
+         * the new, desired TaskState for the model.
+         * Its state is changed using {@link AbstractTask#transit(TaskState)} 
+         */
         protected final TaskState newState;
 
+        /**
+         * Creates a new TransitException and stores the new state, a corresponding AbstractTask shall use.
+         *
+         * @param newStateParam the new TaskState for an AbstractTask
+         */
         protected TransitException(final @NotNull TaskState newStateParam) {
             super();
             newState = newStateParam;
         }
 
+        /**
+         * Creates a new TransitException and stores the new state, a corresponding AbstractTask shall use.
+         * A RuntimeException must be denoted, which will be included in this RuntimeException.
+         *
+         * @param newStateParam the new TaskState for an AbstractTask
+         * @param cause the RuntimeException, which will be included in this RuntimeException
+         */
         protected TransitException(final @NotNull TaskState newStateParam,
                                    final @NotNull RuntimeException cause) {
             super(cause);
@@ -69,6 +117,12 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
         public boolean isDemandingAbort() { return false; }
     }
 
+    /**
+     * A TransitException used to signalize that a failure occured during the model's computation.
+     *
+     * It sets {@link TransitException#newState} to {@code FAILED} and stores a RuntimeException.
+     *
+     */
     protected static class FailedException extends TransitException {
         private static final long serialVersionUID = -4220356706557491625L;
 
@@ -80,6 +134,11 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
         public boolean isDemandingAbort() { return true; }
     }
 
+   /**
+     * A TransitException used to signalize that model's computation is finished.
+     *
+     * It stores the result of the computation and sets {@link TransitException#newState} to {@code FINISHED}
+     */
     protected static class FinishedException extends TransitException {
         private static final long serialVersionUID = 196914329532915066L;
 
@@ -91,10 +150,18 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
         }
     }
 
+   /**
+     * A TransitException used to signalize that the model's computation has to stop now.
+    *
+     */
     private static class StopException extends TransitException {
         private static final long serialVersionUID = 7783981039310846994L;
 
-
+       /**
+        * Signalizes that the TaskAction has to stop now.
+        * 
+        * @param newStateParam the current TaskState of the model.
+        */
         protected StopException(final @NotNull TaskState newStateParam) {
             super(newStateParam);
         }
@@ -113,7 +180,17 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
         initFromModel(em, model);
     }
 
-
+    /**
+     * Initializes a TaskAction by denoting an EntityManager and a model.
+     *
+     * The model is made persistent by the EntityManager.
+     * The EntityManager and the model are stored, using {@code setOwnEntityManager()} and {@code setModelAndBackup()}.
+     * A Backup of the model is done.
+     *
+     *
+     * @param em an EntityManager, storing AbstractTasks
+     * @param model an AbstractTask to be stored as model of {@code this} and to be stored in the database
+     */
     public void initFromModel(final EntityManager em, AbstractTask model) {
 
         boolean wasActive = em.getTransaction().isActive();
@@ -147,7 +224,18 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
         initFromPk(em, pk);
     }
 
-
+    /**
+     * Initializes a TaskAction by denoting an EntityManager and primary key
+     *
+     * Retrieves the model (an AbstractTask), managed by the EntityManager, sets it as the model of {@code this} and
+     * makes a backup of it.
+     *
+     * The AbstractTask is select by the primary key {@code pk}. The EntityManager {@code em}
+     * will be set as EntityManager for {@code this}, using {@link #setOwnEntityManager(javax.persistence.EntityManager)}.
+     *
+     * @param em an EntityManager, storing AbstractTasks
+     * @param pk the primary key a of specific AbstractTask, which is managed by the EntityManager
+     */
     public void initFromPk(final EntityManager em, final String pk) {
         boolean wasActive = em.getTransaction().isActive();
         if (!wasActive) em.getTransaction().begin();
@@ -204,6 +292,11 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     }
 
 
+    /**
+     * Returns the TaskExecutionService corresponding to this TaskAction or a parent TaskAction.
+     *
+     * @return the TaskExecutionService corresponding to this TaskAction or a parent TaskAction.
+     */
     public TaskExecutionService getService() {
         if (service == null) {
             final TaskAction taskAction = nextParentOfType(TaskAction.class);
@@ -245,7 +338,24 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
         }
     }
 
-
+    /**
+     * Invokes {@link #transit(TaskState)} in a loop, which may change the model's TaskState and invokes then a method,
+     * corresponding to current {@code TaskState}.
+     *
+     * It stops as soon as {@code transit} throws a {@code StopException},
+     * which is thrown if the model's TaskState is set to {@code FAILED} or {@code FINISHED}.
+     * The model is then returned.
+     *
+     * An implementing class must at least define, what the model is supposed to do, when its TaskState is set to
+     * {@code IN_PROGRESS}, using the method {@link #onInProgress(AbstractTask)}.
+     * The methods for the other TaskState-values are already implemented (see {@link #onInitialized(AbstractTask)} for example),
+     * but may be overwritten by a subclass.
+     *
+     * Note: Flow control in the loop is done using Exceptions
+     *
+     * @param em the EntityManager being executed on its persistence context.
+     * @return the model after it has been executed
+     */
     @SuppressWarnings({ "ThrowableInstanceNeverThrown", "ObjectAllocationInLoop" })
     @Override
     public AbstractTask execute(final @NotNull EntityManager em) {
@@ -350,7 +460,13 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     }
 
     /**
-     * Marks the model belonging to {@code this} as done and updates the corresponding object in the database. 
+     *
+     * Retrieves the AbstractTask from the database, which corresponds to {@code getModel()).
+     * It is marked as done, by invoking {@code setDone(true)} on it and restored to the database.
+     *
+     * It will be set as {@code this}' the new model by calling {@code setModelAndBackup()}, which also makes a backup
+     * of the new model.
+     *
      */
     private void markAsDone() {
         final @NotNull AbstractTask model = getModel();
@@ -377,6 +493,22 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     }
 
 
+    /**
+     * Retrieves the current model and checks if its lifetime is already exceeded.
+     * In this case the model's TaskState will be set to {@code failed} and a {@link FailedException} is thrown,
+     * which will stop the the main loop in {@code execute()}.
+     *
+     * Otherwise, the model's TaskState is set to {@code newState} and {@link #transit(TaskState, AbstractTask)}
+     * will be invoked,
+     * which calls a method corresponding to the TaskState {@code newState} and throws a {@code TransitException} after its
+     * execution specifying the next TaskSate value for the model.
+     *
+     * The model is made persistent by the EntityManager and the changed model will be 
+     * commited to the database.
+     * If something goes wrong while commiting the new model, a stable rollback is assured.
+     *
+     * @param newState the new TaskState for the model
+     */
     @SuppressWarnings( { "CaughtExceptionImmediatelyRethrown", "ThrowableInstanceNeverThrown" } )
     private void transit(final TaskState newState) {
 
@@ -478,8 +610,8 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     }
 
     /**
-     * Invokes a rollback on a entity transaction and a following {@code begin()},
-     * if it has been marked ({@code setRollbackOnly()).
+     * Invokes a rollback on an entity transaction and a following {@code begin()},
+     * only if it has been marked (using {@code setRollbackOnly()}).
      *
      * @param txParam a transaction to be rewinded
      */
@@ -494,6 +626,27 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     }
 
 
+    /**
+     * This method is used to control and change the Taskstate of an AbstractTask.
+     *
+     * It checks if the {@code model}'s TaskState can be set to {@code newState}.
+     * If it is allowed (according to the order given in {@link TaskState}),
+     * a method corresponding to the value of {@code newState} will be invoked.
+     * 
+     * All these methods must throw a {@code TransitException} to specify the new desired state.
+     *
+     *
+     * @see TaskState
+     * @see #onCreated(AbstractTask)
+     * @see #onInitialized(AbstractTask)
+     * @see #onUnknown(AbstractTask)
+     * @see #onInProgress(AbstractTask)
+     * @see #onFailed(AbstractTask) 
+     * @see #onFinished(AbstractTask)
+     *
+     * @param newState the state, the model's state should be changed to
+     * @param model the model whose state should be changed.
+     */
     @SuppressWarnings({ "ThrowableInstanceNeverThrown" })
     private void transit(final @NotNull TaskState newState, final @NotNull AbstractTask model) {
         switch (model.getState().transit(newState)) {
@@ -518,39 +671,112 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
         }
     }
 
+    /**
+     * This method will be called by {@link #transit(TaskState)},
+     * if the model's state is unknown (so {@code CREATED_UNKNOWN}, {@code INITIALIZED_UNKNOWN} or {@code IN_PROGRESS_UNKNOWN}).
+     *
+     * It throws an UnsupportedOperationException.
+     * 
+     * @param model the model, whose TaskState is set to unknown.
+     *
+     * @return it throws an UnsupportedOperationException
+     */
     protected TaskState onUnknown(final AbstractTask model) {
         throw new UnsupportedOperationException();
     }
 
 
+    /**
+     * This method will be called by {@link #transit(TaskState)},
+     * if the model's TaskState is set to {@code CREATED}.
+     *
+     * It throws a {@code TransitException} with {@code INITIALIZED} as its TaskState.
+     * This signalizes to change the model's TaskState to {@code INITIALIZED}.
+     *
+     *
+     * @param model the model, whose TaskState is set to {@code CREATED}
+     */
     protected void onCreated(final AbstractTask model) {
         transitToState(TaskState.INITIALIZED);
 
     }
 
+
+    /**
+     * This method will be called by {@link #transit(TaskState)},
+     * if the model's TaskState is set to {@code INITIALIZED}.
+     *
+     * It throws a {@code TransitException} with {@code IN_PROGRESS} as its TaskState.
+     * This signalizes to change the model's TaskState to {@code IN_PROGRESS}.
+     *
+     * @param model the model, whose TaskState is set to {@code INITIALIZED}
+     */
     protected void onInitialized(final AbstractTask model) {
         transitToState(TaskState.IN_PROGRESS);
     }
 
+    /**
+     * This method will be called by {@link #transit(TaskState)},
+     * if the model's TaskState is set to {@code IN_PROGRESS}.
+     *
+     * Define here what the action on the model, when its {@code TaskState} is set to {@code IN_PROGRESS}.
+     *
+     * An implementation of this method must throw a {@code TransitException} to define to which state the model
+     * shall be set to.
+     *
+     * @param model the model, whose TaskState is set to {@code IN_PROGRESS}
+     */
     protected abstract void onInProgress(final @NotNull AbstractTask model);
 
 
+   /**
+     * This method will be called by {@link #transit(TaskState)},
+     * if the model's TaskState is set to {@code FAILED}.
+     *
+     * It makes a cleanup by calling {@code tryCleanup()} and calls {@link #stop(AbstractTask)} afterwards.
+     *
+     * @param model the model, whose TaskState is set to {@code FAILED}
+     */
     protected final void onFailed(final @NotNull AbstractTask model) {
         tryCleanup( model );
         stop(model);
     }
 
-
+    /**
+     * This method will be called by {@link #transit(TaskState)},
+     * if the model's TaskState is set to {@code FINISHED}
+     *
+     * It calls {@link #stop(AbstractTask)} 
+     *
+     * @param model the model, whose TaskState is set to {@code FINISHED}
+     */
     protected void onFinished(final @NotNull AbstractTask model) {
         stop(model);
     }
 
-
+    /**
+     * Throws a new {@code TransitException} with {@code newState] as its TaskState.
+     *
+     * Note: It does not check if the state change is allow (according to the given order by {@link TaskState}.
+     *
+     * @param newState the new desired TaskState for the model belonging to this
+     */
     protected static void transitToState(final @NotNull TaskState newState) {
         throw new TransitException(newState);
     }
 
 
+    /**
+     * Use this method to signalize, that an error occured during the model's computation.
+     *
+     * It throws a {@link FailedException} containing the RuntimeException {@code e}.
+     *
+     * Sets the progress of the AbstractTask to {@code zero} and stores the Exception in
+     * the model's failure String {@link AbstractTask#getFaultString()}.
+     * The data of the AbstractTask will be set to {@code e} and the TaskState is set to {@code FAILED}.
+     *
+     * @param e a RuntimeException which occured during the model's computation
+     */
     protected void fail(final @NotNull RuntimeException e) {
         getModel().fail(e);
 		e.fillInStackTrace();
@@ -558,19 +784,40 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
         throw new FailedException(e);
     }
 
-    
+
+    /**
+     * Use this method to signalize, that an model's computation is finished.
+     *
+     * It throws a {@link FinishedException} containing the result of the computation.
+     *
+     * It sets the progress of the AbstractTask to {@link AbstractTask#maxProgress} and stores the result in
+     * {@link de.zib.gndms.model.gorfx.AbstractTask#getData()}.
+     *
+     * The model's TaskState is set to {@code FINISHED}.
+     *
+     * @param result the result of the the model's computation
+     */
     protected void finish(final Serializable result) {
         getModel().finish(result);
         throw new FinishedException(result);
     }
 
-
+    /**
+     * Throws a StopException with and stores the model's current state in the Exception
+     *
+     * @param model an AbstractTask, which has to be stopped.
+     */
     @SuppressWarnings({ "MethodMayBeStatic" })
     protected void stop(final @NotNull AbstractTask model) {
         throw new StopException(model.getState());
     }
 
-    
+    /**
+     * If the {@code TaskExecutionService} this TaskAction runs on, is terminating or already terminated,
+     * a {@link ShutdownTaskActionException} is thrown.
+     *
+     * @param e an InterruptedException, which will be passed to the {@code ShutdownTaskActionException}
+     */
     protected final void shutdownIfTerminating(InterruptedException e) {
         if (getService().isTerminating())
             throw new ShutdownTaskActionException(e);
@@ -617,12 +864,14 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     }
 
     /**
-     * Checks if the task lifetime is already exceeded.
+     * Stopps the computation of the model if the task lifetime is already exceeded.
      *
-     * In this case, a commit and finish is done on {@code em}'s transaction.
-     * If the model is still in the database, {@link de.zib.gndms.model.gorfx.AbstractTask#fail(Exception)} will be
-     * invoked.
-     * 
+     * If the lifetime is exceeded, it sets the TaskState of the given model as well as the corresponding AbstractTask
+     * in the database (if still present) to {@code FAILURE} by invoking {@code fail()}.
+     *
+     * @see #fail(RuntimeException)
+     * @see AbstractTask#fail(Exception)
+     *  
      * @param model a task with a termination time
      * @param em the entityManager storing the model
      */
@@ -686,9 +935,10 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
 
 
     /**
-     * Tries to call the cleanUpOnFailed for the model, catches and logs possible exceptions
+     * Tries to call the {@link #cleanUpOnFail(de.zib.gndms.model.gorfx.AbstractTask)} } method for the model,
+     * catches and logs possible exceptions.
      *
-     * @param model The task to clean.
+     * @param model The model, on which a cleanup must be done.
      */
     public void tryCleanup( @NotNull AbstractTask model )  {
 

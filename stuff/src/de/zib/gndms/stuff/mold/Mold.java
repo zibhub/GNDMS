@@ -30,6 +30,7 @@ public final class Mold {
      * The instance {@code molding} must either implement {@link Molding} or at least it must have a method
      * {@code mold(D molded)}.
      * See {@link Molder} for further details about the copy process.
+     *
      * @param moldingClass the class of the molder
      * @param molding the instance which will mold a new instance
      * @param molded the instance to be molded out of {@code molding}-instance
@@ -64,6 +65,7 @@ public final class Mold {
      * Implements the {@code Molder}-Interface at runtime for {@code moldingParam} and returns a {@code Molder}&lt;D&gt;
      * out of {@code moldingParam}.
      * Therefore {@code moldingParam} must have a method {@code void mold(D obj)}, at least in a superclass.
+     *
      * @param moldingClassParam the Class of the instance supposed to mold a new instance
      * @param moldingParam the instance supposed to mold a new instance
      * @param moldedClassParam the Class of the instance to be molded

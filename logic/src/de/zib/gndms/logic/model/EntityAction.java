@@ -37,7 +37,11 @@ public interface EntityAction<R> extends Action<R>, ModelUUIDGen {
      */
     EntityManager getOwnEntityManager();
 
-
+    /**
+     * Sets the EntityManager the EntityAction will use.
+     *
+     * @param entityManagerParam
+     */
     void setOwnEntityManager(final @NotNull EntityManager entityManagerParam);
 
 

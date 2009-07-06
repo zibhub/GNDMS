@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
  * The creation of a new instance is delegated to the implementing subclass by defining the {@link #newInstance(Object)}
  * method.
  *
+ * As described in {@link RecursiveKeyFactory}, this factory can be created by a KeyFactory.
+ *
  * @see RecursiveKeyFactory
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
@@ -21,6 +23,19 @@ public abstract class AbstractRecursiveKeyFactory<K, T extends KeyFactoryInstanc
     K key;
 
 
+    /**
+     * A new instance of type {@code T} is created by invoking {@link #newInstance(Object)}.
+     * Before the instance is returned, {@code this} KeyFactory will be registered as new Factory of the created instance,
+     * and the used key {@code keyParam} will be registered as the used key for the instance,
+     * by calling the methods {@code setKey()} and {@code setFactory} and the created instance.
+     *
+     * @param keyParam the key for the new instance, which shall be created
+     * @return a new instance of type {@code T} which has been created by {@link #newInstance(Object)}
+     *         using the key {@code keyParam}
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     * @throws ClassNotFoundException
+     */
     @NotNull
     public T getInstance(@NotNull final K keyParam)
             throws IllegalAccessException, InstantiationException, ClassNotFoundException {

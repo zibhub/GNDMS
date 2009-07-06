@@ -7,7 +7,7 @@ import javax.persistence.*;
  * A TxFrame allows nesting within a transaction.
  *
  * It wrapps the methods {@code begin()}, {@code commit()}, {@code rollback()}, ensuring that
- * nested invocations do not interrupt with invocations of higher level.
+ * nested invocations do not interrupt invocations of higher level.
  *
  * @see javax.persistence.EntityTransaction
  * @see javax.persistence.Entity

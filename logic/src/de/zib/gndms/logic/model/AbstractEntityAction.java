@@ -51,6 +51,7 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
         //    throw new IllegalThreadStateException( "No UUId generator provided" );
         if (postponedActions != null)
             postponedActions.initialize();
+
     }
 
 
@@ -119,7 +120,7 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
      * 
      * Defines how the EntityManager is executed on its persistence context.
      *
-     * @param em the EntityManager  being executed on its persistence context.
+     * @param em the EntityManager being executed on its persistence context.
      * @return the result of the execution
      */
     public abstract R execute( final @NotNull EntityManager em );
