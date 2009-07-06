@@ -2,9 +2,9 @@ package de.zib.gndms.model.common;
 
 import de.zib.gndms.model.common.types.FutureTime;
 import de.zib.gndms.model.common.types.TransientContract;
+import de.zib.gndms.stuff.copy.Copier;
 import de.zib.gndms.stuff.copy.CopyMode;
 import de.zib.gndms.stuff.copy.Copyable;
-import de.zib.gndms.stuff.copy.Copier;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;

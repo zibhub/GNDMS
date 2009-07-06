@@ -135,7 +135,7 @@ abstract class AbstractTask extends TimedGridResource {
 
 	@SuppressWarnings(["unchecked"])
 	def <D> Molder<D> molder(@NotNull final Class<D> moldedClazz) {
-		return Mold.newMolderProxy( (Class) getClass(), this, moldedClazz);
+		return Mold.newMolderProxy( (Class<D>) getClass(), this, moldedClazz);
 	}
 
     def void mold(final @NotNull AbstractTask instance) {

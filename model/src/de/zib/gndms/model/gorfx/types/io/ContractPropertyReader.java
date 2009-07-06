@@ -4,10 +4,10 @@ import de.zib.gndms.model.common.types.TransientContract;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 
-import java.util.Properties;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.FileInputStream;
+import java.util.Properties;
 
 
 /**
