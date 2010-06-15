@@ -3,6 +3,7 @@ package de.zib.gndms.GORFX.action.dms;
 import de.zib.gndms.GORFX.ORQ.client.ORQClient;
 import de.zib.gndms.GORFX.client.GORFXClient;
 import de.zib.gndms.c3resource.jaxb.Workspace;
+import de.zib.gndms.comserv.delegation.DelegationAux;
 import de.zib.gndms.infra.configlet.C3MDSConfiglet;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.system.SystemHolder;
@@ -13,20 +14,18 @@ import de.zib.gndms.typecon.common.type.ContextXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.ContractXSDReader;
 import de.zib.gndms.typecon.common.type.ContractXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.ProviderStageInORQXSDTypeWriter;
-import de.zib.gndms.comserv.delegation.DelegationAux;
-import org.apache.axis.types.URI;
 import org.apache.axis.message.addressing.EndpointReferenceType;
+import org.apache.axis.types.URI;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.globus.gsi.GlobusCredential;
 import org.jetbrains.annotations.NotNull;
 import types.ContextT;
 import types.OfferExecutionContractT;
 import types.ProviderStageInORQT;
 
-import java.util.Set;
 import java.io.StringWriter;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.globus.gsi.GlobusCredential;
+import java.util.Set;
 
 /**
  * @author Maik Jorra <jorra@zib.de>

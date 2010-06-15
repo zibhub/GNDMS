@@ -5,7 +5,6 @@ import org.apache.axis.client.Stub;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
 import org.globus.gsi.GlobusCredential;
-import org.globus.wsrf.impl.security.authentication.Constants;
 
 import java.rmi.RemoteException;
 import java.util.Iterator;

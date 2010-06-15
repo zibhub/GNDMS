@@ -1,8 +1,7 @@
 package de.zib.gndms.comserv.delegation;
 
-import org.globus.gsi.GlobusCredential;
-import org.apache.axis.message.addressing.EndpointReference;
 import org.apache.axis.message.addressing.EndpointReferenceType;
+import org.globus.gsi.GlobusCredential;
 
 /**
  * @author Maik Jorra <jorra@zib.de>

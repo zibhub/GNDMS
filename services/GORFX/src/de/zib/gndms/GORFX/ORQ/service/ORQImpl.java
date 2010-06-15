@@ -2,33 +2,26 @@ package de.zib.gndms.GORFX.ORQ.service;
 
 import de.zib.gndms.GORFX.ORQ.service.globus.resource.ExtORQResourceHome;
 import de.zib.gndms.GORFX.ORQ.service.globus.resource.ORQResource;
-import de.zib.gndms.GORFX.ORQ.service.globus.ORQAuthorization;
 import de.zib.gndms.GORFX.ORQ.stubs.types.PermissionDenied;
 import de.zib.gndms.GORFX.ORQ.stubs.types.UnfullfillableRequest;
 import de.zib.gndms.GORFX.offer.service.globus.resource.ExtOfferResourceHome;
 import de.zib.gndms.GORFX.offer.service.globus.resource.OfferResource;
-import de.zib.gndms.GORFX.service.GORFXImpl;
+import de.zib.gndms.comserv.delegation.DelegationAux;
+import de.zib.gndms.comserv.util.LogAux;
 import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.logic.model.gorfx.PermissionDeniedORQException;
 import de.zib.gndms.logic.model.gorfx.UnfulfillableORQException;
 import de.zib.gndms.model.common.types.TransientContract;
-import de.zib.gndms.shared.ContextTAux;
 import de.zib.gndms.typecon.common.type.ContractXSDTypeWriter;
-import de.zib.gndms.typecon.util.AxisTypeFromToXML;
-import de.zib.gndms.comserv.delegation.DelegationAux;
-import org.apache.log4j.Logger;
 import org.apache.axis.message.addressing.EndpointReferenceType;
+import org.apache.log4j.Logger;
+import org.globus.gsi.GlobusCredential;
 import org.globus.wsrf.ResourceContext;
 import org.globus.wsrf.ResourceKey;
 import org.globus.wsrf.impl.ResourceContextImpl;
-import org.globus.gsi.GlobusCredential;
+import types.OfferExecutionContractT;
 
 import java.rmi.RemoteException;
-import java.io.StringWriter;
-import java.io.IOException;
-import java.io.FileOutputStream;
-
-import types.OfferExecutionContractT;
 
 
 /**
@@ -47,7 +40,10 @@ public class ORQImpl extends ORQImplBase {
 
 
     @SuppressWarnings({ "FeatureEnvy" })
-    public org.apache.axis.message.addressing.EndpointReferenceType getOfferAndDestroyRequest(types.OfferExecutionContractT offerExecutionContract,types.ContextT context) throws RemoteException, de.zib.gndms.GORFX.ORQ.stubs.types.UnfullfillableRequest, de.zib.gndms.GORFX.ORQ.stubs.types.PermissionDenied {
+    public EndpointReferenceType getOfferAndDestroyRequest(
+        types.OfferExecutionContractT offerExecutionContract,types.ContextT context)
+        throws RemoteException, UnfullfillableRequest, PermissionDenied
+    {
 
         try {
             logger.warn("ORQImpl");
@@ -57,12 +53,12 @@ public class ORQImpl extends ORQImplBase {
             logger.debug(impl.getResourceKeyHeader());
             logger.debug(impl.getResourceHomeLocation());
             logger.debug(impl.getResourceKey());
-            logger.debug( "Context: " + loggableXSDT( context ) );
+            logger.debug( "Context: " + LogAux.loggableXSDT( context ) );
             ORQResource orq = home.getAddressedResource();
             WidAux.initWid(orq.getCachedWid());
             WidAux.initGORFXid( orq.getORQCalculator().getORQArguments().getActId() );
-            logSecInfo( "getOfferAndDestroyRequest" );
-            System.out.println( "Default creds: " + GlobusCredential.getDefaultCredential() );
+            LogAux.logSecInfo( logger, "getOfferAndDestroyRequest" );
+            logger.debug( "Default creds: " + GlobusCredential.getDefaultCredential() );
             try {
                 ExtOfferResourceHome ohome = ( ExtOfferResourceHome) getOfferResourceHome();
                 ResourceKey key = ohome.createResource();
@@ -81,7 +77,7 @@ public class ORQImpl extends ORQImplBase {
                 home.remove( orq.getResourceKey() );
 
                 // log contract
-                logger.debug( "Calculated contract: " + loggableXSDT( oec ) );
+                logger.debug( "Calculated contract: " + LogAux.loggableXSDT( oec ) );
 
                 return ohome.getResourceReference( key ).getEndpointReference();
             }
@@ -105,7 +101,7 @@ public class ORQImpl extends ORQImplBase {
     }
     
 
-    public types.OfferExecutionContractT permitEstimateAndDestroyRequest(types.OfferExecutionContractT offerExecutionContract,types.ContextT context) throws RemoteException, de.zib.gndms.GORFX.ORQ.stubs.types.UnfullfillableRequest, de.zib.gndms.GORFX.ORQ.stubs.types.PermissionDenied {
+    public types.OfferExecutionContractT permitEstimateAndDestroyRequest(types.OfferExecutionContractT offerExecutionContract,types.ContextT context) throws RemoteException, UnfullfillableRequest, PermissionDenied {
 
         try {
             //ContextTAux.initWid(getResourceHome().getModelUUIDGen(), context);
@@ -113,18 +109,13 @@ public class ORQImpl extends ORQImplBase {
             ORQResource res = home.getAddressedResource();
             WidAux.initWid(res.getCachedWid());
             WidAux.initGORFXid( res.getORQCalculator().getORQArguments().getActId() );
-            logSecInfo( "permitEstimateAndDestroyRequest" );
-
-            FileOutputStream fos = new FileOutputStream( "/tmp/hallo" );
-            String s = "Hallo welt";
-            fos.write( s.getBytes() );
-            fos.close();
+            LogAux.logSecInfo( logger, "permitEstimateAndDestroyRequest" );
 
             OfferExecutionContractT oec =
                 ContractXSDTypeWriter.write( res.estimatedExecutionContract( offerExecutionContract ) );
 
             // log contract
-            logger.debug( "Estimated contract: " + loggableXSDT( oec ) );
+            logger.debug( "Estimated contract: " + LogAux.loggableXSDT( oec ) );
 
             return oec;
         }
@@ -151,31 +142,6 @@ public class ORQImpl extends ORQImplBase {
     @Override
     public ExtORQResourceHome getResourceHome() throws Exception {
         return (ExtORQResourceHome) super.getResourceHome();    // Overridden method
-    }
-
-
-    private static String loggableXSDT( Object o ) {
-
-        if( o == null )
-            return "NULL";
-        
-        try {
-            StringWriter sw = new StringWriter( );
-            AxisTypeFromToXML.toXML( sw, o, false, true );
-            return sw.toString();
-        } catch ( IOException e ) { // can hardly occure
-            return "Object to xml conversion error. " + e.getMessage();
-        }
-    }
-
-    private void logSecInfo( String s ) throws org.globus.wsrf.security.SecurityException {
-
-        logger.debug( "Method " +s + " called by: " + ORQAuthorization.getCallerIdentity() );
-        String[] l = org.globus.wsrf.security.SecurityManager.getManager(  ).getLocalUsernames();
-        if( l == null )
-            logger.debug( "No mappings found" );
-        else
-            logger.debug( "Mapped to" + ( l.length > 0 ? l[0] : "none" ) );
     }
 }
 

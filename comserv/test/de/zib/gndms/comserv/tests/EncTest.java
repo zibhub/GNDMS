@@ -2,18 +2,16 @@ package de.zib.gndms.comserv.tests;
 
 import de.zib.gndms.comserv.delegation.DelegationAux;
 import de.zib.gndms.comserv.delegation.MyUUDecoder;
-import org.globus.wsrf.encoding.ObjectSerializer;
-import org.globus.wsrf.encoding.ObjectDeserializer;
 import org.apache.axis.message.addressing.EndpointReferenceType;
+import org.globus.wsrf.encoding.ObjectDeserializer;
+import org.globus.wsrf.encoding.ObjectSerializer;
 import org.xml.sax.InputSource;
+import sun.misc.UUEncoder;
 import types.ContextT;
 import types.ContextTEntry;
 
-import java.io.*;
-
-import sun.misc.UUEncoder;
-
 import javax.xml.namespace.QName;
+import java.io.*;
 
 /**
  * @author Maik Jorra <jorra@zib.de>

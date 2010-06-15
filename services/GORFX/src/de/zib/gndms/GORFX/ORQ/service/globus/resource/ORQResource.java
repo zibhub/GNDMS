@@ -14,11 +14,18 @@ import org.apache.axis.types.URI;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.globus.wsrf.ResourceException;
 import org.globus.gsi.GlobusCredential;
+import org.globus.gsi.gssapi.GlobusGSSCredentialImpl;
 import org.globus.delegation.DelegationUtil;
 import org.globus.delegation.DelegationException;
 import org.jetbrains.annotations.NotNull;
+import org.ietf.jgss.GSSCredential;
+import org.gridforum.jgss.ExtendedGSSCredential;
 import types.ContextT;
 import types.OfferExecutionContractT;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 
 
 /** 
@@ -131,6 +138,23 @@ public class ORQResource extends ORQResourceBase implements GNDMSCredibleResourc
     public void setCredential( final GlobusCredential cred ) {
         System.out.println( "setCredential called with " + cred );
         credential = cred;
+        storeCredential();
+    }
+
+
+    private void storeCredential() {
+        
+        try {
+            File f = new File( "/tmp/" + (String) getID() );
+            FileOutputStream fos = new FileOutputStream( f );
+           // ObjectOutputStream oos = new ObjectOutputStream( fos );
+           // credential.save( oos );
+            GlobusGSSCredentialImpl crd = new GlobusGSSCredentialImpl( credential, GSSCredential.ACCEPT_ONLY );
+            fos.write( crd.export( ExtendedGSSCredential.IMPEXP_OPAQUE  ) );
+            fos.close();
+        } catch( Exception e ) {
+            logger.error( e );
+        }
     }
 
 

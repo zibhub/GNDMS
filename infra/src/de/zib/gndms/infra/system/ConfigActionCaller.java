@@ -7,7 +7,6 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import de.zib.gndms.infra.action.*;
 import de.zib.gndms.kit.config.ParameterTools;
-import de.zib.gndms.kit.monitor.ActionCaller;
 import de.zib.gndms.logic.action.Action;
 import de.zib.gndms.logic.action.SkipActionInitializationException;
 import de.zib.gndms.logic.model.BatchUpdateAction;

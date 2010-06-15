@@ -8,28 +8,27 @@ import de.zib.gndms.dspace.subspace.service.globus.resource.SubspaceResource;
 import de.zib.gndms.dspace.subspace.stubs.types.OutOfSpace;
 import de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind;
 import de.zib.gndms.infra.system.GNDMSystem;
-import de.zib.gndms.model.dspace.DSpace;
-import de.zib.gndms.model.dspace.MetaSubspace;
-import de.zib.gndms.model.dspace.SliceKind;
-import de.zib.gndms.model.dspace.Slice;
-import de.zib.gndms.model.util.TxFrame;
-import de.zib.gndms.model.common.ImmutableScopedName;
-import de.zib.gndms.model.common.GridResource;
-import de.zib.gndms.logic.model.dspace.CreateSliceAction;
 import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
+import de.zib.gndms.logic.model.dspace.CreateSliceAction;
+import de.zib.gndms.model.common.GridResource;
+import de.zib.gndms.model.common.ImmutableScopedName;
+import de.zib.gndms.model.dspace.MetaSubspace;
+import de.zib.gndms.model.dspace.Slice;
+import de.zib.gndms.model.dspace.SliceKind;
+import de.zib.gndms.model.util.TxFrame;
+import org.apache.axis.types.URI;
 import org.globus.wsrf.NoSuchResourceException;
 import org.globus.wsrf.ResourceContext;
 import org.globus.wsrf.ResourceContextException;
 import org.globus.wsrf.ResourceKey;
-import org.apache.axis.types.URI;
 import types.ContextT;
 import types.SliceCreationSpecifier;
 
-import javax.persistence.Query;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.rmi.RemoteException;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /** 
  * TODO:I am the service side implementation class.  IMPLEMENT AND DOCUMENT ME

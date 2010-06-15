@@ -1,11 +1,10 @@
 package de.zib.gndms.comserv.delegation;
 
 import sun.misc.UUDecoder;
-import sun.misc.CEFormatException;
 
-import java.io.PushbackInputStream;
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PushbackInputStream;
 
 /**
  * @author Maik Jorra <jorra@zib.de>

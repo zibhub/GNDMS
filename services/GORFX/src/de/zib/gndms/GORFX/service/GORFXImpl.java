@@ -4,24 +4,22 @@ import de.zib.gndms.GORFX.ORQ.service.globus.resource.ExtORQResourceHome;
 import de.zib.gndms.GORFX.ORQ.service.globus.resource.ORQResource;
 import de.zib.gndms.GORFX.context.service.globus.resource.ExtTaskResourceHome;
 import de.zib.gndms.GORFX.offer.service.globus.resource.ExtOfferResourceHome;
-import de.zib.gndms.GORFX.service.globus.GORFXAuthorization;
 import de.zib.gndms.GORFX.service.globus.resource.ExtGORFXResourceHome;
+import de.zib.gndms.comserv.delegation.DelegationAux;
+import de.zib.gndms.comserv.util.LogAux;
 import de.zib.gndms.infra.access.ServiceHomeProvider;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.system.WSMaintenance;
 import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.shared.ContextTAux;
 import de.zib.gndms.typecon.util.AxisTypeFromToXML;
-import de.zib.gndms.comserv.delegation.DelegationAux;
-import org.apache.log4j.Logger;
 import org.apache.axis.message.addressing.EndpointReferenceType;
+import org.apache.log4j.Logger;
 import org.globus.wsrf.ResourceKey;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.StringWriter;
 import java.rmi.RemoteException;
-
-import types.ContextT;
 
 
 /**
@@ -68,7 +66,7 @@ public class GORFXImpl extends GORFXImplBase {
 
         try{
             ContextTAux.initWid(getSystem().getModelUUIDGen(), context);
-            logSecInfo( "createOfferRequest" );
+            LogAux.logSecInfo( logger, "createOfferRequest" );
 
             @NotNull ExtORQResourceHome home = getORQResourceHome();
             @NotNull ResourceKey key = home.createResource();            
@@ -92,17 +90,6 @@ public class GORFXImpl extends GORFXImplBase {
         finally {
             WidAux.removeWid();
         }
-    }
-
-
-    private void logSecInfo( String s ) throws org.globus.wsrf.security.SecurityException {
-
-        logger.debug( "Method " +s + " called by: " + GORFXAuthorization.getCallerIdentity() );
-        String[] l = org.globus.wsrf.security.SecurityManager.getManager(  ).getLocalUsernames();
-        if( l == null )
-            logger.debug( "No mappings found" );
-        else
-            logger.debug( "Mapped to" + ( l.length > 0 ? l[0] : "none" ) );
     }
 
 

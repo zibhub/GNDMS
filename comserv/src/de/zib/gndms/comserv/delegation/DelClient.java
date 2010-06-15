@@ -1,32 +1,20 @@
 package de.zib.gndms.comserv.delegation;
 
 import de.zib.gndms.kit.application.AbstractApplication;
+import org.apache.axis.message.addressing.EndpointReferenceType;
+import org.globus.axis.util.Util;
+import org.globus.delegation.DelegationUtil;
+import org.globus.gsi.GlobusCredential;
+import org.globus.wsrf.encoding.ObjectSerializer;
+import org.globus.wsrf.impl.security.authentication.Constants;
+import org.globus.wsrf.impl.security.authorization.NoAuthorization;
+import org.globus.wsrf.impl.security.descriptor.ClientSecurityDescriptor;
+import org.globus.wsrf.utils.AddressingUtils;
 import org.kohsuke.args4j.Option;
 
-import org.globus.wsrf.impl.security.descriptor.ClientSecurityDescriptor;
-import org.globus.wsrf.impl.security.authentication.Constants;
-import org.globus.wsrf.impl.security.authorization.HostAuthorization;
-import org.globus.wsrf.impl.security.authorization.NoAuthorization;
-import org.globus.wsrf.utils.AddressingUtils;
-
-import org.globus.axis.util.Util;
-import org.apache.axis.message.addressing.EndpointReferenceType;
-
-import org.globus.delegation.DelegationUtil;
-import org.globus.delegation.DelegationConstants;
-
-
-import org.globus.wsrf.encoding.ObjectSerializer;
-
-import org.globus.wsrf.impl.security.util.AuthUtil;
-
-import java.security.cert.X509Certificate;
-
-import org.globus.gsi.GlobusCredential;
-
 import javax.xml.namespace.QName;
-
 import java.io.FileWriter;
+import java.security.cert.X509Certificate;
 
 /**
  * @author Maik Jorra <jorra@zib.de>
@@ -37,10 +25,10 @@ import java.io.FileWriter;
 public class DelClient extends AbstractApplication {
 
 
-    @Option( name="-uri", required=true, usage="URL of GORFX-Endpoint", metaVar="URI" )
+    @Option( name="-uri", required=true, usage="URL of delegation-Endpoint", metaVar="URI" )
     protected String uri;
 
-    @Option( name="-proxyfile", usage="grid-proxy-file to lead", metaVar="proxy-file" )
+    @Option( name="-proxyfile", usage="grid-proxy-file to load", metaVar="proxy-file" )
     protected String proxyFile;
 
 

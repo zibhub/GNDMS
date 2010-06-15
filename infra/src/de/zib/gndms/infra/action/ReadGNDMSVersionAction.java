@@ -1,17 +1,16 @@
 package de.zib.gndms.infra.action;
 
+import com.google.inject.Inject;
+import de.zib.gndms.GNDMSVerInfo;
+import de.zib.gndms.infra.system.SystemDirectory;
+import de.zib.gndms.logic.model.config.ConfigAction;
 import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigActionResult;
 import de.zib.gndms.logic.model.config.ConfigOption;
-import de.zib.gndms.logic.model.config.ConfigAction;
-import de.zib.gndms.GNDMSVerInfo;
-import de.zib.gndms.infra.system.SystemDirectory;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
 import java.io.PrintWriter;
-
-import com.google.inject.Inject;
 
 /**
  * @author Maik Jorra <jorra@zib.de>
@@ -27,7 +26,7 @@ public class ReadGNDMSVersionAction extends ConfigAction<ConfigActionResult> imp
     private GNDMSVerInfo verInfo;
     private SystemDirectory sysDri;
 
-    @ConfigOption(descr = "Output Mode (One of SITES (default), ARCHIVES, OIDPREFIXES)")
+    @ConfigOption(descr = "Version text format either HUMAN or machine (UUID) readable ")
     private VersionFormat versionFormat = VersionFormat.HUMAN;
 
 

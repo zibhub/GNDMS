@@ -2,13 +2,10 @@ package de.zib.gndms.kit.network;
 
 import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.exception.ServerException;
-import org.globus.gsi.CertUtil;
-import org.globus.gsi.TrustedCertificates;
 import org.globus.gsi.GlobusCredential;
 import org.globus.gsi.gssapi.GlobusGSSCredentialImpl;
 import org.ietf.jgss.GSSCredential;
 
-import javax.security.cert.X509Certificate;
 import java.io.IOException;
 
 /**

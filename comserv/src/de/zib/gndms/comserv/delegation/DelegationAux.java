@@ -1,48 +1,30 @@
 package de.zib.gndms.comserv.delegation;
 
-import org.globus.gsi.GlobusCredential;
-import org.globus.wsrf.impl.security.descriptor.ClientSecurityDescriptor;
-import org.apache.axis.message.addressing.EndpointReference;
-import org.apache.axis.message.addressing.EndpointReferenceType;
-import types.ContextT;
-import types.ContextTEntry;
 import de.zib.gndms.typecon.util.AxisTypeFromToXML;
-
-import java.io.*;
-import java.util.ArrayList;
-
-import org.globus.wsrf.impl.security.descriptor.ClientSecurityDescriptor;
-import org.globus.wsrf.impl.security.authentication.Constants;
-import org.globus.wsrf.impl.security.authorization.HostAuthorization;
-import org.globus.wsrf.impl.security.authorization.NoAuthorization;
-import org.globus.wsrf.utils.AddressingUtils;
-
-import org.globus.axis.util.Util;
 import org.apache.axis.message.addressing.EndpointReferenceType;
-import org.apache.axis.message.addressing.AttributedURI;
 import org.apache.axis.types.NormalizedString;
 import org.apache.axis.types.Token;
 import org.apache.axis.types.URI;
-
+import org.globus.axis.util.Util;
 import org.globus.delegation.DelegationUtil;
-import org.globus.delegation.DelegationConstants;
-
-
-import org.globus.wsrf.encoding.ObjectSerializer;
-import org.globus.wsrf.encoding.SerializationException;
-import org.globus.wsrf.encoding.ObjectDeserializer;
-
-import org.globus.wsrf.impl.security.util.AuthUtil;
-
-import java.security.cert.X509Certificate;
-
 import org.globus.gsi.GlobusCredential;
 import org.globus.gsi.GlobusCredentialException;
+import org.globus.wsrf.encoding.ObjectDeserializer;
+import org.globus.wsrf.encoding.ObjectSerializer;
+import org.globus.wsrf.encoding.SerializationException;
+import org.globus.wsrf.impl.security.authentication.Constants;
+import org.globus.wsrf.impl.security.authorization.NoAuthorization;
+import org.globus.wsrf.impl.security.descriptor.ClientSecurityDescriptor;
+import org.globus.wsrf.utils.AddressingUtils;
 import org.xml.sax.InputSource;
+import sun.misc.UUEncoder;
+import types.ContextT;
+import types.ContextTEntry;
 
 import javax.xml.namespace.QName;
-
-import sun.misc.UUEncoder;
+import java.io.*;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 
 /**
  * @author Maik Jorra <jorra@zib.de>
@@ -58,14 +40,16 @@ public class DelegationAux {
     private DelegationAux() {
     }
 
+
     public static String createDelationAddress( String addr ) throws URI.MalformedURIException {
         URI uri = new URI( addr );
         return uri.getScheme()  + "://" + uri.getHost( ) + ":" + uri.getPort() +  "/wsrf/services/DelegationFactoryService";
     }
+    
 
     public static EndpointReferenceType createProxy( String uri, GlobusCredential credential ) throws Exception {
 
-        // aquire cert chain
+        // acquire cert chain
         ClientSecurityDescriptor desc = new ClientSecurityDescriptor();
 
 //        desc.setGSITransport( (Integer) Constants.ENCRYPTION );
@@ -127,7 +111,6 @@ public class DelegationAux {
 
         con.setEntry( r );
 
-        UUEncoder enc;
         return epr;
     }
 
@@ -165,6 +148,7 @@ public class DelegationAux {
         return AxisTypeFromToXML.fromXML( is, EndpointReferenceType.class );
     }
 
+    
     public static GlobusCredential  findCredential( String fn ) throws GlobusCredentialException {
         if ( fn == null ) {
             return GlobusCredential.getDefaultCredential();
