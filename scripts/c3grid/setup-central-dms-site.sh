@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SCRIPTDIR="$(dirname $0)/" ; source "$SCRIPTDIR"internal/script-setup.sh
+SCRIPTDIR="$(dirname $0)/../" ; source "$SCRIPTDIR"internal/script-setup.sh
 
 # %{} is shell variable substitution at container runtime
 
@@ -13,7 +13,7 @@ DMS_AREA_SIZE="10000" # Unused
 # if the detected value isn't the desired one
 # GRIDHOST=""
 
-DMS_AREA_GSI_FTP_URL="gsiftp://$GRIDHOST""$DMS_ARE_PATH"
+DMS_AREA_GSI_FTP_URL="gsiftp://$GRIDHOST""$DMS_AREA_PATH"
 
 
 # Do not edit below this line unless very sure ------------------------------------------------------------------------------------------------------------
