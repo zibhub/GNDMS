@@ -1,8 +1,9 @@
 package de.zib.gndms.logic.model.config;
 
 /**
- * ThingAMagic.
+ * An ConfigActionResult contains a String holding information about the result of an action.
  *
+ * @see ConfigAction
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
  *
@@ -21,7 +22,11 @@ public abstract class ConfigActionResult {
         this(null);
     }
 
-
+    /**
+     * Return the details about the result.
+     *
+     * @return the details about the result.
+     */
     public String getDetails() {
         return details;
     }

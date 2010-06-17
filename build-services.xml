@@ -4,16 +4,16 @@
 	<!-- Define the environment variable -->
 	<property environment="env"/>
 	
-	<!-- Do always load properties in the following order: ${c3grid.basedir},${c3grid.properties},${c3grid.deps},${others.properties} -->
+	<!-- Do always load properties in the following order: ${gndms.basedir},${gndms.properties},${gndms.deps},${others.properties} -->
 	
-	<!-- Basedir of c3grid. -->
-	<property name="c3grid.basedir" value="${basedir}"/>
+	<!-- Basedir of gndms. -->
+	<property name="gndms.basedir" value="${basedir}"/>
 	
 	<!-- Loading global project-settings.-->
-	<property file="c3grid.properties"/>
+	<property file="gndms.properties"/>
 	
 	<!-- Loading global project-dependencies -->
-	<property file="c3grid.deps"/>
+	<property file="gndms.deps"/>
 	
 	<!-- Loading local project-properties-->
 	<property file="build-services.properties"/>

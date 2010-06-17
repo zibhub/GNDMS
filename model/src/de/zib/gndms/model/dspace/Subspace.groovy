@@ -66,6 +66,9 @@ class Subspace extends GridResource {
 
     String gsiFtpPath
 
+    public DSpaceRef getDSpaceRef() { return dSpaceRef }
+    public void setDSpaceRef(newRef) { dSpaceRef = newRef }
+
     /**
      * Sets the path of the Subspace to pth.
      *

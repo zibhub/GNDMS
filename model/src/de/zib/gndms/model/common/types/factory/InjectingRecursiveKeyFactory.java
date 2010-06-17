@@ -6,8 +6,10 @@ import com.google.inject.Inject;
 
 
 /**
- * ThingAMagic.
- *
+ * An InjectingRecursiveKeyFactory extends an AbstractRecursiveKeyFactory by an {@link BoundInjector}.
+ * 
+ * All methods concerning the Boundinjector are made {@code synchronized}.
+ * 
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
  *
@@ -24,13 +26,22 @@ public abstract class InjectingRecursiveKeyFactory<K, T extends KeyFactoryInstan
 
 	private BoundInjector boundInjector;
 
-
+    /**
+     * Invokes {@link #injectMembers(Object)} on {@code obj} if a {@code BoundInjector} has been set and
+     * if obj is not {@code null}.
+     *
+     * @param obj an Object, members shall be injected on
+     */
 	public synchronized void optionallyInjectMembers(Object obj) {
 		if (obj == null) return;
 		final BoundInjector inj = optionallyGetBoundInjector();
 		if (inj != null) inj.injectMembers(obj);
 	}
 
+    /**
+     *
+     * @see de.zib.gndms.stuff.BoundInjector#injectMembers(Object) 
+     */
 	public synchronized void injectMembers(Object obj) {
 		if (obj == null) return;
 		getBoundInjector().injectMembers(obj);

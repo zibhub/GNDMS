@@ -42,6 +42,15 @@ public class MultiRequestClient extends AbstractApplication {
     public void run() throws Exception {
 
         PropertyTree pt = PropertyTreeFactory.createPropertyTree( new File( propFile ) );
+        String rc = pt.getProperty( "RunnerClass" );
+
+        Class<? extends RequestRunner> runner;
+        try {
+            runner = (Class<? extends RequestRunner>) Class.forName( rc );
+        } catch ( Exception e ) {
+            System.err.println( "Failed to load class " + e );
+            throw e;
+        }
 
         List<Properties> pl = new ArrayList<Properties>( );
 
@@ -54,12 +63,13 @@ public class MultiRequestClient extends AbstractApplication {
 
         System.out.println( "Creating " + pl.size() + " staging threads" );
 
-        List<StagingRunner> runner = createStagingRunners( pl );
+        List<RequestRunner> runners = createRequestRunners( runner, pl );
 
-        ExecutorService exec = Executors.newFixedThreadPool( runner.size() );
+        ExecutorService exec = Executors.newFixedThreadPool( runners.size() );
 
-        for( StagingRunner run : runner )  {
+        for( RequestRunner run : runners )  {
             System.out.println( "Starting thread: " );
+            
             run.show( );
             exec.submit( run );
             Thread.sleep( dl );
@@ -73,15 +83,16 @@ public class MultiRequestClient extends AbstractApplication {
     }
 
 
-    private List<StagingRunner> createStagingRunners(  List<Properties> pts ) {
+    private <M extends RequestRunner> List<RequestRunner> createRequestRunners( Class<M> r,  List<Properties> pts ) throws IllegalAccessException, InstantiationException {
 
-        List<StagingRunner> res = new ArrayList<StagingRunner>( );
+        List<RequestRunner> res = new ArrayList<RequestRunner>( );
         for( Properties prop : pts ) {
-            StagingRunner sr =  new StagingRunner( prop, gorfxEpUrl );
+            RequestRunner sr =  r.newInstance( );
+            sr.setGorfxUri( gorfxEpUrl );
+            sr.fromProps( prop );
             sr.prepare();
             res.add( sr );
         }
-
         return res;
     }
 

@@ -1,9 +1,11 @@
 package de.zib.gndms.kit.network;
 
 import de.zib.gndms.model.gorfx.FTPTransferState;
+import de.zib.gndms.model.util.TxFrame;
 import org.globus.ftp.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import javax.persistence.EntityManager;
 
@@ -24,7 +26,8 @@ import javax.persistence.EntityManager;
 public class PersistentMarkerListener implements MarkerListener {
 
     private FTPTransferState transferState;
-    private static Log logger = LogFactory.getLog( PersistentMarkerListener.class );
+    //private static Log logger = LogFactory.getLog( PersistentMarkerListener.class );
+    private static Logger logger = Logger.getLogger( PersistentMarkerListener.class );
     private ByteRangeList byteRanges;
     private EntityManager entityManager;
 
@@ -78,11 +81,11 @@ public class PersistentMarkerListener implements MarkerListener {
         this.transferState = transferState;
         byteRanges = new ByteRangeList();
 
+        TxFrame tx = new TxFrame( entityManager );
         try {
-            entityManager.getTransaction().begin();
             if (! entityManager.contains( transferState ) )
                 entityManager.persist( transferState );
-            entityManager.getTransaction().commit();
+            tx.commit();
 
             if( transferState.getFtpArgs() != null ) {
                 GridFTPRestartMarker rm = new GridFTPRestartMarker( transferState.getFtpArgsString() );
@@ -90,8 +93,7 @@ public class PersistentMarkerListener implements MarkerListener {
             }
         }
         finally {
-            if ( entityManager.getTransaction().isActive() )
-                entityManager.getTransaction().rollback();
+            tx.finish();
         }
     }
 
@@ -114,15 +116,14 @@ public class PersistentMarkerListener implements MarkerListener {
      */
     public void setCurrentFile( String currentFile ) {
 
+        TxFrame tx = new TxFrame( entityManager );
         try {
-            entityManager.getTransaction().begin();
             transferState.setCurrentFile( currentFile );
             transferState.setFtpArgs( "0-0" );
-            entityManager.getTransaction().commit();
+            tx.commit();
         }
         finally {
-            if ( entityManager.getTransaction().isActive() )
-                entityManager.getTransaction().rollback();
+            tx.finish();
         }
     }
 

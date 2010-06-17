@@ -1,8 +1,9 @@
 package de.zib.gndms.stuff;
 
 /**
- * ThingAMagic.
+ * This class provides a method to suspend a thread's execution uniterruptible for a specific time  
  *
+ * @see Thread
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
  *
@@ -12,7 +13,7 @@ public class Sleeper {
 	private Sleeper() {}
 
     /**
-     * Causes the currently executing thread to sleep uniterruptible for a specific time of milliseconds
+     * Causes the currently executing thread to suspend execution uniterruptible for a specific time of milliseconds
      * 
      * @param millis time in milliseconds
      */

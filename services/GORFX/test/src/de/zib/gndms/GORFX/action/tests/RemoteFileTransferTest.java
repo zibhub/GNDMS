@@ -1,32 +1,30 @@
 package de.zib.gndms.GORFX.action.tests;
 
-import de.zib.gndms.model.gorfx.types.io.FileTransferORQPropertyReader;
-import de.zib.gndms.model.gorfx.types.io.FileTransferORQConverter;
-import de.zib.gndms.model.gorfx.types.io.ContractConverter;
-import de.zib.gndms.typecon.common.ContractStdoutWriter;
-import de.zib.gndms.model.gorfx.types.FileTransferORQ;
-import de.zib.gndms.model.common.types.TransientContract;
-import de.zib.gndms.typecon.common.type.FileTransferORQXSDTypeWriter;
-import de.zib.gndms.typecon.common.type.ContextXSDTypeWriter;
-import de.zib.gndms.typecon.common.type.ContractXSDReader;
-import de.zib.gndms.GORFX.client.GORFXClient;
 import de.zib.gndms.GORFX.ORQ.client.ORQClient;
+import de.zib.gndms.GORFX.client.GORFXClient;
+import de.zib.gndms.GORFX.context.client.TaskClient;
 import de.zib.gndms.GORFX.offer.client.OfferClient;
 import de.zib.gndms.GORFX.offer.common.OfferConstants;
-import de.zib.gndms.GORFX.context.client.TaskClient;
-
-import java.io.InputStream;
-import java.io.FileInputStream;
-import java.util.Properties;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.lang.reflect.Array;
-
-import types.*;
-import org.apache.axis.message.addressing.EndpointReferenceType;
+import de.zib.gndms.model.common.types.TransientContract;
+import de.zib.gndms.model.gorfx.types.FileTransferORQ;
+import de.zib.gndms.model.gorfx.types.io.ContractConverter;
+import de.zib.gndms.model.gorfx.types.io.FileTransferORQConverter;
+import de.zib.gndms.model.gorfx.types.io.FileTransferORQPropertyReader;
+import de.zib.gndms.typecon.common.ContractStdoutWriter;
+import de.zib.gndms.typecon.common.type.ContextXSDTypeWriter;
+import de.zib.gndms.typecon.common.type.ContractXSDReader;
+import de.zib.gndms.typecon.common.type.FileTransferORQXSDTypeWriter;
 import org.apache.axis.message.MessageElement;
-import org.oasis.wsrf.properties.GetResourcePropertyResponse;
+import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.globus.wsrf.encoding.ObjectDeserializer;
+import org.oasis.wsrf.properties.GetResourcePropertyResponse;
+import types.*;
+
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Properties;
 
 /**
  * WARNING ths class may uses obsolet operation and should be checked befor running it

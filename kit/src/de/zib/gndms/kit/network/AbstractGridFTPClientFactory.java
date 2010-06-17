@@ -7,6 +7,11 @@ import org.apache.axis.types.URI;
 import java.io.IOException;
 
 /**
+ * Default implementation of the GridFTPClientFactory interface.
+ *
+ * If {@code createClient(String host)} is invoked, number {@code 2811} will be used as default port value.
+ * 
+ *
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
  * <p/>
@@ -14,6 +19,14 @@ import java.io.IOException;
  */
 public abstract class AbstractGridFTPClientFactory implements GridFTPClientFactory {
 
+/**
+     * Returns a GridFTPClient, which is connected to a server with the given hostname using '2811' as port value.
+     *
+     * @param host the hostname of the server
+     * @return a GridFTPClient, which is connected to the given hostname and a default port value will be used.
+     * @throws ServerException
+     * @throws IOException
+     */
     public GridFTPClient createClient( String host ) throws ServerException, IOException {
         return createClient( host, 2811 );
     }

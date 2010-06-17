@@ -70,7 +70,7 @@ public class FileTransferActionTest extends SysTestBase {
         // create orq-calc
         FileTransferORQCalculator calc = new FileTransferORQCalculator();
         calc.setORQArguments( orq );
-        calc.setNetAux( getSys().getNetAux() );
+       // calc.setNetAux( getSys().getNetAux() );
 
         TransientContract con = calc.createOffer();
         PersistentContract pcon = con.acceptAt( new DateTime() );
@@ -81,7 +81,7 @@ public class FileTransferActionTest extends SysTestBase {
         EntityManager em = null;
         try{
             em = getSys().getEntityManagerFactory().createEntityManager();
-            ot = em.find( OfferType.class, "http://www.c3grid.de/ORQTypes/FileTransfer" );
+            ot = em.find( OfferType.class, "http://gndms.zib.de/ORQTypes/FileTransfer" );
             if( ot == null ) {
                 ot = createFTOfferType();
                 em.getTransaction().begin( );
@@ -134,7 +134,7 @@ public class FileTransferActionTest extends SysTestBase {
 
     public static OfferType createFTOfferType( ) {
         OfferType ot = new OfferType( );
-        ot.setOfferTypeKey( "http://www.c3grid.de/ORQTypes/FileTransfer" );
+        ot.setOfferTypeKey( "http://gndms.zib.de/ORQTypes/FileTransfer" );
         ot.setOfferResultType( new ImmutableScopedName( "http://gndms.zib.de/c3grid/types", "FileTransferORQT" ) );
         ot.setOfferResultType( new ImmutableScopedName( "http://gndms.zib.de/c3grid/types", "FileTransferResultT" ) );
         ot.setCalculatorFactoryClassName( FileTransferORQFactory.class.getName() );

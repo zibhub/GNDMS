@@ -7,8 +7,8 @@ import java.io.Serializable;
 import de.zib.gndms.kit.config.OptionProvider;
 
 /**
- * A Configlet creates a new configuration object or updates the currently used one.
- *
+ * A Configlet stores a configuration and provides a method to update it.
+ * 
  * A configuration object (see {@link OptionProvider}) can be created by every arbitriary {@code serializable} source.
  * 
  * @author Stefan Plantikow<plantikow@zib.de>
@@ -20,6 +20,7 @@ public interface Configlet {
 
     /**
      *  initializes Configlet with a logger, a start-configuration and a name
+     *
      * @param loggerParam  
      * @param name  the name of the configuration
      * @param data  the configuration, expected to be a {@code Map<String, String>}
@@ -28,6 +29,7 @@ public interface Configlet {
 
     /**
      * Sets a new configuration
+     *
      * @param data the new configuration, expected to be a {@code Map<String, String>}
      */
     void update(@NotNull Serializable data);

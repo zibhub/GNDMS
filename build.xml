@@ -1,6 +1,6 @@
-<project name="c3grid" default="help" basedir="." >
+<project name="gndms" default="help" basedir="." >
 	
-	<!-- Do always load properties in the following order: ${c3grid.basedir},${c3grid.properties},${c3grid.deps},${others.properties} -->
+	<!-- Do always load properties in the following order: ${gndms.basedir},${gndms.properties},${gndms.deps},${others.properties} -->
 	
 	<!-- Define the environment variable -->
 	<property environment="env"/>
@@ -8,14 +8,14 @@
 	<!-- Defines whether java-compiler should run in debug mode-->
 	<property name="javac.debug" value="true"/>
 	
-	<!-- Basedir of c3grid. -->
-	<property name="c3grid.basedir" value="${basedir}"/>
+	<!-- Basedir of gndms. -->
+	<property name="gndms.basedir" value="${basedir}"/>
 	
 	<!-- Loading global project-settings -->
-	<property file="c3grid.properties"/>
+	<property file="gndms.properties"/>
 	
 	<!-- Loading global project-dependencies-->
-	<property file="c3grid.deps"/>
+	<property file="gndms.deps"/>
 	
 	<!-- using ant contrib for contidionals, looping , and runtarget -->
 	<taskdef resource="net/sf/antcontrib/antlib.xml">
@@ -98,19 +98,6 @@
 	</target>
 	
 	
-	<!-- Checks if symlink has been executed before -->
-	<!--target name="symlink.check">
-		<available property="linked" file=".symlink"/>
-	</target-->
-	
-	<!-- Create necessary symlinks in the services' lib directories -->
-	<!--target name="symlink.create" depends="symlink.check" unless="linked" description="sets symbolic links, if needed">
-		<echo> setting symbolic links </echo>
-		<exec executable="sh">
-			<arg value="sync.sh"/>
-		</exec>
-		<echo file=".symlink">dummy-file, needed for build-script </echo>
-	</target-->
 	
 	<!-- Create necessary symlinks in the services' lib directories -->
 	<target name="symlink.create" description="sets symbolic links">
@@ -132,7 +119,7 @@
 		<echo message="|    Type 'ant -p' for a description of available build targets.                  |" />
 		<echo message="|    Type 'ant clean' for deleting all generated class-files.                     |" />
 		<echo message="|    Type 'ant clean.all' for deleting all generated class-files and jars         |" />
-		<echo message="|    Type 'ant compile' to compile all class-files of c3grid and create the jars	 |" />
+		<echo message="|    Type 'ant compile' to compile all class-files of gndms and create the jars	 |" />
 		<echo message="|    Type 'ant compile.test' to compile all test-class-files and create the jars	 |" />
 		<echo message=" =================================================================================" />
 	</target>

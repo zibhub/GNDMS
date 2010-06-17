@@ -6,6 +6,7 @@ import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.FTPTransferState;
 import de.zib.gndms.model.gorfx.types.FileTransferORQ;
 import de.zib.gndms.model.gorfx.types.FileTransferResult;
+import de.zib.gndms.model.util.TxFrame;
 import org.apache.axis.types.URI;
 import org.globus.ftp.GridFTPClient;
 import org.jetbrains.annotations.NotNull;
@@ -53,8 +54,10 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
         GridFTPClient src = null;
         GridFTPClient dest = null;
 
+        EntityManager em = getEmf().createEntityManager(  );
+        // EntityManager em = getEntityManager(  );
+        TxFrame tx = new TxFrame( em );
         try {
-            EntityManager em = getEntityManager();
             transferState = em.find( FTPTransferState.class, getModel( ).getId() );
 
             TreeMap<String,String> files =  getOrq().getFileMap();
@@ -68,6 +71,9 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
                 }
             }
 
+            tx.commit();
+
+
             TaskPersistentMarkerListener pml = new TaskPersistentMarkerListener( );
             pml.setEntityManager( em );
             pml.setTransferState( transferState );
@@ -77,9 +83,8 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
             URI duri = new URI ( getOrq().getTargetURI() );
 
             // obtain clients
-            NetworkAuxiliariesProvider prov = new NetworkAuxiliariesProvider( );
-            src = prov.getGridFTPClientFactory().createClient( suri );
-            dest = prov.getGridFTPClientFactory().createClient( duri );
+            src = NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( suri );
+            dest = NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( duri );
 
             // setup transfer handler
             GNDMSFileTransfer transfer = new GNDMSFileTransfer();
@@ -98,9 +103,9 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
 
             transfer.performPersistentTransfer( pml );
 
-            em.getTransaction().begin();
+            tx.begin();
             em.remove( transferState );
-            em.getTransaction().commit();
+            tx.commit();
 
             FileTransferResult ftr = new FileTransferResult();
 
@@ -114,14 +119,26 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
         } catch ( Exception e ) {
                 failWith( e );
         } finally {
-     //       getEntityManager().close();
+
+            try {
+                tx.finish();
+                em.close();
+            } catch ( Exception e ) {
+                trace( "Exception while closing entityManager client.", e );
+            }
+
             try {
                 if( src != null )
                     src.close();
+            } catch ( Exception e ) {
+                trace( "Exception while closing src client.", e );
+            }
+
+            try {
                 if( dest != null )
                     dest.close();
             } catch ( Exception e ) {
-                failWith( e );
+                trace( "Exception while closing dest client.", e );
             }
         }
 

@@ -24,7 +24,7 @@ public class StagingInformationT  implements java.io.Serializable {
     public StagingInformationT(
            types.ContextT context,
            java.lang.Object justDownload,
-           java.lang.Object justEstimate,
+           java.lang.Object justEstimate,     
            types.OfferExecutionContractT offerExecutionContract,
            types.ProviderStageInORQT providerStageInORQ) {
            this.providerStageInORQ = providerStageInORQ;
@@ -195,6 +195,9 @@ public class StagingInformationT  implements java.io.Serializable {
     private static org.apache.axis.description.TypeDesc typeDesc =
         new org.apache.axis.description.TypeDesc(StagingInformationT.class, true);
 
+    /**
+     * XSD-Schema description
+     */
     static {
         typeDesc.setXmlType(new javax.xml.namespace.QName("http://gndms.zib.de/c3grid/types", "StagingInformationT"));
         org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();

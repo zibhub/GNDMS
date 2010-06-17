@@ -1,10 +1,22 @@
 
 
 
+0.2.9 beta: "Kylie"
+
+@DMS:
+* [NEW] Added a configurable delay for gridftp client creation 
+* [NEW] Added a configurable timeout to kill defective clients after creation
+* [CHANGED] Made transaction handling for file transfers more solid
+* [FIX] Made file transfer client closeing more fault tolerant
+
+@Everybody
+* [FIX] Possible Exception on transaction rollback in task action
+* [CHANGED] Changed database field of task.faultString to VARCHAR(5000) due to an issue with the current jpa version
+
+
+
 
 0.2.8 beta: "Kyle"
-
-
 
 @Everybody:
 * [NEW] Explicitely nameable directories for SliceKinds

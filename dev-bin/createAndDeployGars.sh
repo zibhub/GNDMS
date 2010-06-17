@@ -34,7 +34,7 @@ for i in $service_dirs; do
     fi
 
     echo "building gar for $i"
-    (cd $i && ant createDeploymentGar && $DEPLOY_CMD $(pwd)/c3grid_$i.gar )
+    (cd $i && ant createDeploymentGar && $DEPLOY_CMD $(pwd)/gndms_$i.gar )
     if [ "$?" -ne "0" ]; then
         exit 1
     fi

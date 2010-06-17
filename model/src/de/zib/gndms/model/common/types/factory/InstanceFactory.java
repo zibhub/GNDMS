@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
- * ThingAMagic.
+ * An InstanceFactory creates instances for a chosen class. being a subclass of KeyFactoryInstance
  *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$

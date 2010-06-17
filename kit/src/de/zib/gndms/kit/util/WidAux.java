@@ -17,17 +17,17 @@ public class WidAux {
 
 
     public static void removeWid() {
-        removeId("c3wid");
+        removeId("dmswid");
     }
 
 
     public static String getWid() {
-        return (String) MDC.get("c3wid");
+        return (String) MDC.get("dmswid");
     }
 
 
     public static void initWid(final String cachedWid) {
-        initId("c3wid", cachedWid);
+        initId("dmswid", cachedWid);
     }
 
 
@@ -40,7 +40,14 @@ public class WidAux {
         initId("gorfxid", id);
     }
 
-
+    /**
+     * Stores {@code val} in the MDC, with {@code id} as its key and pushes 'id+":"val' on the NDC.
+     *
+     * @see org.apache.log4j.MDC
+     * @see org.apache.log4j.NDC
+     * @param id key
+     * @param val value
+     */
     public static void initId( final String id, final String val ) {
 
         if ( id  == null || val == null )
@@ -51,12 +58,27 @@ public class WidAux {
         }
     }
 
+    /**
+     * Removes the entry with the key {@code id} from the MDC.
+     * Calls {@code NDC.pop()}.
+     *
+     * @see org.apache.log4j.MDC
+     * @see org.apache.log4j.NDC
+     * @param id a key
+     */
     public static void removeId( final String id ) {
         MDC.remove( id );
         NDC.pop();
     }
 
-
+    /**
+     * Returns the value for a specific, which has been stored in the MDC
+     *
+     * @see org.apache.log4j.MDC
+     *
+     * @param id a key for a value
+     * @return the value for a specific, which has been stored in the MDC
+     */
     public static String getId( final String id ) {
         return (String) MDC.get( id );
     }

@@ -3,6 +3,7 @@ package de.zib.gndms.GORFX.action;
 import de.zib.gndms.dspace.slice.client.SliceClient;
 import de.zib.gndms.dspace.subspace.client.SubspaceClient;
 import de.zib.gndms.kit.configlet.PublishConfiglet;
+import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
 import de.zib.gndms.logic.model.gorfx.AbstractTransferORQCalculator;
 import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
@@ -58,7 +59,7 @@ public class RePublishSliceORQCalculator extends
         String sp = DSpaceBindingUtils.getFtpPathForSlice( getORQArguments().getSourceSlice() );
         String dp = tgt.getSliceLocation();
 
-        Float bw = getNetAux().getBandWidthEstimater().estimateBandWidthFromTo( sp, dp );
+        Float bw = NetworkAuxiliariesProvider.getBandWidthEstimater().estimateBandWidthFromTo( sp, dp );
         setEstimatedBandWidth( bw );
 
         // create offer

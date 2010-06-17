@@ -8,6 +8,7 @@ import org.joda.time.DateTime;
  * NOTE Cause of the few methods there is now converter class for the
  *      time constraint yet. This might change if the class gets more
  *      complex.
+ * 
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
  * <p/>

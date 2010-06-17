@@ -23,7 +23,7 @@ public abstract class AbstractORQCalculator<M extends AbstractORQ, C extends Abs
     private TransientContract perferredOfferExecution;
     private Class<M> orqModelClass;
     private M orqArguments;
-    private NetworkAuxiliariesProvider netAux;
+    //private NetworkAuxiliariesProvider netAux;
 
     private KeyFactory<OfferType, AbstractORQCalculator<?,?>> factory;
     private OfferType offerType;
@@ -85,14 +85,14 @@ public abstract class AbstractORQCalculator<M extends AbstractORQ, C extends Abs
     }
 
 
-    public NetworkAuxiliariesProvider getNetAux() {
-        return netAux;
-    }
+    //public NetworkAuxiliariesProvider getNetAux() {
+    //    return netAux;
+    //}
 
 
-    public void setNetAux( NetworkAuxiliariesProvider networkAuxiliariesProvider ) {
-        this.netAux = networkAuxiliariesProvider;
-    }
+    //public void setNetAux( NetworkAuxiliariesProvider networkAuxiliariesProvider ) {
+    //    this.netAux = networkAuxiliariesProvider;
+    //}
 
 
     public KeyFactory<OfferType, AbstractORQCalculator<?, ?>> getFactory() {

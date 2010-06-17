@@ -10,7 +10,15 @@ import javax.persistence.EntityTransaction;
 
 
 /**
- * ThingAMagic.
+ * This class extends an AbstractAction by database functionality.
+ *
+ * <p>An <tt>AbstractEntityAction</tt> contains an EntityManager and list of Actions being executed on
+ * cleanup ({@link #postponedActions}).
+ *
+ * <p> A subclass must implement {@link #execute(javax.persistence.EntityManager)} to define, what this action will do,
+ * when it is executed. The method will be invoked with the current EntityManager (see {@link #entityManager}).
+ *
+ * <p>The template parameter is the return type of this action.
  *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
@@ -19,12 +27,20 @@ import javax.persistence.EntityTransaction;
  */
 public abstract class AbstractEntityAction<R> extends AbstractAction<R> implements EntityAction<R> {
     private EntityManager entityManager;
+    /**
+     * Postponed actions are executed during cleanup.
+     */
     private BatchUpdateAction<GridResource, ?> postponedActions;
     @SuppressWarnings({ "InstanceVariableNamingConvention" })
     private ModelUUIDGen UUIDGen;   // the uuid generator
     private boolean runningOwnPostponedActions = true;
     private boolean closingEntityManagerOnCleanup = true;
 
+
+    /**
+     * Will be invoked before execute() when this is submitted to an Executor.
+     * Initializes {@code postponed actions}.
+     */
     @Override
     public void initialize() {
 
@@ -35,9 +51,19 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
         //    throw new IllegalThreadStateException( "No UUId generator provided" );
         if (postponedActions != null)
             postponedActions.initialize();
+
     }
 
 
+    /**
+     * Executes the EntityManager on its persistence context.
+     *
+     * <p>If the EnityManager is executing inside a transaction (see {@link #executeInsideTransaction(javax.persistence.EntityManager)} ),
+     * {@link #executeInsideTransaction(javax.persistence.EntityManager)} will be called to run the action.
+     * <p> Otherwise just {@link #execute(javax.persistence.EntityManager)} will be invoked.
+     *
+     * @return the result of the EntityManager being invoked on a its persistence context.
+     */
     @Override
     public final R execute( ) {
         final EntityManager em = getEntityManager();
@@ -48,12 +74,28 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
          return execute(em);
     }
 
+    /**
+     * Returns true by default
+     *
+     * @return true by default
+     */
     @SuppressWarnings({ "MethodMayBeStatic" })
     protected boolean isExecutingInsideTransaction() {
         return true;
     }
 
-
+    /**
+     * Tries to execute an EntityManager inside a transaction.
+     *
+     * If the transaction is already active, it just calls {@link #execute(javax.persistence.EntityManager)}
+     * with the current EntityManager.
+     * Otherwise it starts the transaction before calling the method.
+     *
+     * <p>If an error occurs during the transaction, a roll back of the transaction is done.
+     * 
+     * @param emParam the EntityManager which should be executed
+     * @return the result of the execution.
+     */
     private R executeInsideTransaction(final EntityManager emParam) {
         final EntityTransaction tx = emParam.getTransaction();
         if (tx.isActive())
@@ -72,6 +114,15 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
             }
     }
 
+
+    /**
+     * Will be invoked with <tt>getEntityManager</tt> as EntityManager, when the action is started.
+     * 
+     * Defines how the EntityManager is executed on its persistence context.
+     *
+     * @param em the EntityManager being executed on its persistence context.
+     * @return the result of the execution
+     */
     public abstract R execute( final @NotNull EntityManager em );
 
     public EntityManager getEntityManager() {
@@ -139,15 +190,30 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
             return uuidGen.nextUUID();
     }
 
+    /**
+     * Adds a {@code ModelChangedAction} to the postponed actions.
+     * 
+     * @param model the model which has been changed
+     */
     public void addChangedModel( GridResource model  ) {
         getPostponedActions( ).addAction( new ModelChangedAction( model ) );
     }
 
 
+    /**
+     * Returns true, if this action has postponed actions.
+     *
+     * @return true, if this action has postponed actions.
+     */
     public boolean hasOwnPostponedActions() {
         return postponedActions != null;
     }
 
+    /**
+     * Returns whether the postponned actions should be executed on {@code cleanUp}
+     * 
+     * @return whether the postponned actions should be executed on {@code cleanUp}
+     */
     public boolean isRunningOwnPostponedActions() {
         return runningOwnPostponedActions;
     }
@@ -158,6 +224,11 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
     }
 
 
+    /**
+     * Executes postponed actions, if {@code isRunningOwnPostponedActions()} is true
+     * and calls {@code super.cleanUp()}.
+     * 
+     */
     @Override
     public void cleanUp() {
         final BatchUpdateAction<GridResource, ?> batched = getPostponedActions();
@@ -169,12 +240,20 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
         super.cleanUp();    // Overridden method
     }
 
-
+    /**
+     * Returns whether the EntityManager should be closed on cleanup
+     *
+     * @return whether the EntityManager should be closed on cleanup
+     */
     public boolean isClosingEntityManagerOnCleanup() {
         return closingEntityManagerOnCleanup;
     }
 
-
+    /**
+     * Decides whether the EntityManager should be closed on cleanup
+     * 
+     * @param closingEntityManagerOnCleanupParam if ture the EntityManager will be closed on cleanup
+     */
     public void setClosingEntityManagerOnCleanup(final boolean closingEntityManagerOnCleanupParam) {
         closingEntityManagerOnCleanup = closingEntityManagerOnCleanupParam;
     }

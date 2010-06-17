@@ -65,11 +65,20 @@ public class AxisTypeFromToXML {
         toXML(  w, o, false, false );
     }
 
-
+    /**
+     * Reads the the first element of the SOAP body for a given XML-InputStream
+     *  and returns its content.
+     * element.
+     *
+     * @param inStream an XML-InputStream
+     * @param cls specifies the class of the element's content
+     * @param <M>
+     * @return the content of the first element of the SOAP body
+     * @throws Exception
+     */
     public static <M> M fromXML( InputStream inStream, Class<M> cls ) throws Exception {
 
         TypeDesc td = typeDescForClass( cls );
-
         final QName qname = td.getXmlType();
         DeserializerFactory dserFactory = new BeanDeserializerFactory( cls, td.getXmlType());
         DeserializationContext context = createDeserializationContext(inStream, qname, cls, dserFactory);
@@ -106,7 +115,17 @@ public class AxisTypeFromToXML {
         return context;
     }
 
-
+    /**
+     * Returns the xsd schema, as {@code TypeDesc} for a given class.
+     *
+     * Retrieves the static method "getTypeDesc" from the class {@code c} and puts it,
+     * if not already done to the map {@link #methodMap}.
+     * It invokes the method on the given class and returns the result.
+     *
+     * @see org.apache.axis.types.Schema#getTypeDesc() 
+     * @param c a class, which must have inplemented the static method getTypeDesc
+     * @return the xsd schema for the desired class
+     */
     private static TypeDesc typeDescForClass( Class c ) {
 
         try {
@@ -132,7 +151,14 @@ public class AxisTypeFromToXML {
         }
     }
 
-
+    /**
+     * Returns the method object corresponding to axis' method "getTypeDesc" which returns a TypeDesc object,
+     * from the given class {@code c}.
+     *
+     * @param c a class which must have the axis method "getTypeDesc" implemented
+     * @return the corresponding method object
+     * @throws NoSuchMethodException
+     */
     private static Method findGetTypeDesc( Class c ) throws NoSuchMethodException {
 
         Method m = c.getMethod( "getTypeDesc" );

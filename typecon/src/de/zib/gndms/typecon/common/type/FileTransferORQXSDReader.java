@@ -7,6 +7,10 @@ import types.FileMappingSeqT;
 import org.apache.axis.message.MessageElement;
 
 /**
+ * This class is used to create a FileTransfer instance out of a {@code DynamicOfferDataSeqT} object.
+ * To opposite way is done by {@link de.zib.gndms.typecon.common.type.FileTransferORQXSDTypeWriter}.
+ *
+ *
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
  * <p/>
@@ -14,6 +18,13 @@ import org.apache.axis.message.MessageElement;
  */
 public class FileTransferORQXSDReader {
 
+    /**
+     * Creates a {@code FileTransferORQ} instance out of a given {@code DynamicOfferDataSeqT} along with its ContextT parameter
+     *
+     * @param orq
+     * @param ctx
+     * @return
+     */
     public static FileTransferORQ read( DynamicOfferDataSeqT orq, ContextT ctx )  {
 
         try {

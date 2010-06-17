@@ -38,6 +38,10 @@ public abstract class ProcessBuilderAction extends AbstractAction<Integer> {
     }
 
 
+    /**
+     * 
+     * @return
+     */
     @SuppressWarnings({ "ThrowableResultOfMethodCallIgnored" })
     @Override
     public Integer execute() {
@@ -47,7 +51,6 @@ public abstract class ProcessBuilderAction extends AbstractAction<Integer> {
 
         try {
             mainThread.set(Thread.currentThread());
-
             final Thread inputProvider = new Thread(new InputCollector(cause, proc, mainThread));
             final Thread outputCollector =
 	              new Thread(new OutputCollector(cause, proc, mainThread, false));
@@ -81,6 +84,11 @@ public abstract class ProcessBuilderAction extends AbstractAction<Integer> {
     protected abstract void writeProcessStdIn(final @NotNull BufferedOutputStream stream)
             throws IOException;
 
+    /**
+     * Stores the process' outgoing streams from a process.
+     * Messages will be stored in the outputreceiver as well as in the errorReceiver
+     * @param line the outgoing String to be stored from a process
+     */
 	protected void storeProcessStdOut(String line) {
 		getOutputReceiver().append(line);
 		getOutputReceiver().append('\n');
@@ -88,27 +96,47 @@ public abstract class ProcessBuilderAction extends AbstractAction<Integer> {
 		getErrorReceiver().append('\n');
 	}
 
+    /**
+     * Stores the process' outgoing error stream into the error receiver
+     * @param line the outgoing error String to be stored from a process
+     */
 	protected void storeProcessStdErr(String line) {
 		getErrorReceiver().append(line);
 		getErrorReceiver().append('\n');
 	}
 
-
+    /**
+     * Returns the output receiver
+     * 
+     * @return the output receiver
+     */
     public StringBuilder getOutputReceiver() {
         return outputReceiver;
     }
 
-
+    /**
+     * Sets the output receiver
+     *
+     * @param outputReceiverParam the output receiver to be set
+     */
     public void setOutputReceiver(final StringBuilder outputReceiverParam) {
         outputReceiver = outputReceiverParam;
     }
 
-
+    /**
+     * Returns the error receiver
+     *
+     * @return the error receiver
+     */
 	public StringBuilder getErrorReceiver() {
 		return errorReceiver;
 	}
 
-
+    /**
+     * Sets the error receiver
+     *
+     * @param errorReceiverParam the error receiver to be set
+     */
 	public void setErrorReceiver(final StringBuilder errorReceiverParam) {
 		errorReceiver = errorReceiverParam;
 	}
@@ -124,6 +152,9 @@ public abstract class ProcessBuilderAction extends AbstractAction<Integer> {
     }
 
 
+    /**
+     * An InputCollector collects the incoming stream from an process and sends it to an receiver
+     */
 	private final class InputCollector extends Collector {
        InputCollector(
                final FillOnce<Throwable> causeParam,
@@ -132,7 +163,12 @@ public abstract class ProcessBuilderAction extends AbstractAction<Integer> {
            super(causeParam, procParam, mainThreadParam);
        }
 
-
+        /**
+         * Collects incoming stream of the process and sends it to the corresponding receiver ((@link ProcessBuilderAction#writeProcessStdIn }).
+         * 
+         * @param process the process the incoming stream comes from.
+         * @throws IOException
+         */
         @Override
        protected void collect(final @NotNull Process process) throws IOException {
            OutputStream outStream = process.getOutputStream();
@@ -147,6 +183,9 @@ public abstract class ProcessBuilderAction extends AbstractAction<Integer> {
        }
    }
 
+    /**
+     * An OutputCollector collects the process' outgoing streams and sends them to their corresponding receivers.
+     */
     private final class OutputCollector extends Collector {
 	    final boolean collectingErrorStream;
 
@@ -159,7 +198,15 @@ public abstract class ProcessBuilderAction extends AbstractAction<Integer> {
 	        collectingErrorStream = collectStdErrParam;
         }
 
-
+        /**
+         * Collects the outgoing streams from the process and sends it to the corresponding receiver.
+         *
+         * The receivers are {@link de.zib.gndms.logic.action.ProcessBuilderAction#storeProcessStdErr(String)}
+         * if {@code isCollectingErrorStream()} is true
+         * and else {@link ProcessBuilderAction#storeProcessStdOut(String)} 
+         * @param process the process who is sending an output stream
+         * @throws IOException
+         */
         @SuppressWarnings({ "NestedAssignment", "HardcodedLineSeparator" })
         @Override
         public void collect(final @NotNull Process process) throws IOException {
@@ -182,18 +229,31 @@ public abstract class ProcessBuilderAction extends AbstractAction<Integer> {
 
         }
 
+        /**
+         * Return whether the current stream is an error stream.
+         * 
+         * @return whether the current stream is an error stream.
+         */
 	    public boolean isCollectingErrorStream() {
 		    return collectingErrorStream;
 	    }
     }
 
-
+    /**
+     * A Collector is intented to map a system Process to Java
+     */
     private abstract static class Collector implements Runnable {
         private final @NotNull FillOnce<Throwable> cause;
         private final @NotNull FillOnce<Process> proc;
         private final @NotNull FillOnce<Thread> mainThread;
 
-
+        /**
+         * Creates a new Collector and sets its fields.
+         *
+         * @param causeParam holds the expection if an error occurs.
+         * @param procParam the process being invoked with {@code collect()}
+         * @param mainThreadParam this thread will be interrupted, if an error occurs during {@code collect(process)}
+         */
         Collector(
                 final FillOnce<Throwable> causeParam,
                 final FillOnce<Process> procParam,
@@ -203,7 +263,14 @@ public abstract class ProcessBuilderAction extends AbstractAction<Integer> {
             mainThread = mainThreadParam;
         }
 
-
+        /**
+         * Invokes {@code collect()] with the process, set in {@link ProcessBuilderAction#proc}.
+         * If the method throws an exception, the expection will be saved to {@link ProcessBuilderAction#cause}
+         * and the Thread saved in in {@link ProcessBuilderAction#mainThread} will be interrupted.
+         *
+         * Do not call this method directly, as it should be executed concurrently.
+         * (see {@link Runnable#run()})
+         */
         @SuppressWarnings({ "FeatureEnvy" })
         public void run() {
             final Thread theThread = mainThread.get();
@@ -217,17 +284,36 @@ public abstract class ProcessBuilderAction extends AbstractAction<Integer> {
             }
         }
 
-
+        /**
+         * Implement this method to define how to handle the streams from a process.
+         *
+         * This method will be invoked, when this.run() is invoked. 
+         * @param process
+         * @throws IOException
+         */
         protected abstract void collect(final @NotNull Process process) throws IOException;
     }
 
-
+    /**
+     * A FillOnce instance represents an object holding exactly one value.
+     *
+     *
+     * When retrieving its value {@code get()} will wait, if no value has been set yet.
+     * 
+     * @param <T> the class type of the one value, a FillOnce instance contains.
+     */
     public static final class FillOnce<T> {
         private final boolean ignoreConflicts;
 
         private volatile T value;
 
 
+        /**
+         * Creates a new FillOnce instance.
+         * If {@code ignoreConflictsParam} is false an Execption will be thrown while trying to override the value.
+         * 
+         * @param ignoreConflictsParam decides whether an Exception will be thrown while trying to override the value
+         */
         public FillOnce(final boolean ignoreConflictsParam) {
             ignoreConflicts = ignoreConflictsParam;
         }
@@ -243,6 +329,12 @@ public abstract class ProcessBuilderAction extends AbstractAction<Integer> {
                     throw new IllegalStateException("Second attempt to set value");
         }
 
+        /**
+         * Returns the value set for this.
+         * If it has not been set yet, it will wait.
+         *
+         * @return the value set for this
+         */
         public synchronized T get() {
            while (value == null)
                try {
@@ -254,10 +346,18 @@ public abstract class ProcessBuilderAction extends AbstractAction<Integer> {
             return value;
         }
 
+        /**
+         * Return whether a value has already been assigned to this.
+         *
+         * @return whether a value has already been assigned to this.
+         */
         public synchronized boolean has() {
             return value == null;
         }
 
+        /**
+         * Removes the value instance from this, so that a new value can be assigned
+         */
         public synchronized void reset() {
             value = null;
         }

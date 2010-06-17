@@ -24,7 +24,7 @@ for SERVICE in services/* ; do
   done
 
 for garname in services/* ; do
-	echoEval ln -sf $garname/c3grid_${garname##*/}.gar $PWD
+	echoEval ln -sf $garname/gndms_${garname##*/}.gar $PWD
 done
 # link DSpace.jar to GORFX
 jar="extra/lib/DSpace.jar"

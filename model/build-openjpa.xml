@@ -71,7 +71,7 @@
 	             sqlfile="stdout">
 		<config
 			  connectionDriverName="org.apache.derby.jdbc.EmbeddedDriver"
-			  connectionURL="jdbc:derby:/opt/gt-current/etc/c3grid_shared/db/c3grid"
+			  connectionURL="jdbc:derby:/opt/gt-current/etc/gndms_shared/db/gndms"
 			  propertiesFile="src/META-INF/persistence.xml"  />
                                                                            
 		<classpath refid="enhancepath" />

@@ -7,8 +7,12 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
- * ThingAMagic.
+ * A SystemAction is a ConfigAction with a <tt>GNDMSystem</tt> instance.
  *
+ * The template parameter is the return type.
+ *
+ * @see GNDMSystem
+ * @see ConfigAction
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
  *

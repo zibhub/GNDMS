@@ -11,7 +11,14 @@ import java.util.Comparator;
 
 
 /**
- * Prints a list of available config actions
+ * Prints a list of available config actions.
+ *
+ * <p>The list contains all actions of the set {@link #configActions} with their corresponding descriptions,
+ * as denoted in their {@link ConfigActionHelp} annotation.
+ *
+ *
+ * <p>A name mapper can be denoted, using {@code setNameMapper()}, mapping the canonical name (<tt>actionClass.getCanonicalName()</tt> )
+ * of each action class contained in the set to a predefined String and will used when printing the list.
  *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
@@ -37,6 +44,11 @@ public class HelpOverviewAction extends ConfigAction<String> {
     }
 
 
+    /**
+     * Sets a function which will be used to Map <tt>getCanonicalName()</tt> of each class in the set to another String,
+     * when printing the list. 
+     * @param nameMapperParam
+     */
     public void setNameMapper(final Function<String, String> nameMapperParam) {
         nameMapper = nameMapperParam;
     }
@@ -46,7 +58,10 @@ public class HelpOverviewAction extends ConfigAction<String> {
         return configActions;
     }
 
-
+    /**
+     * Sets the list of available <tt>ConfigAction</tt>s.
+     * @param configActionsParam list of available <tt>ConfigAction</tt>s.
+     */
     public void setConfigActions(
             final @NotNull Set<Class<? extends ConfigAction<?>>> configActionsParam) {
         configActions = configActionsParam;

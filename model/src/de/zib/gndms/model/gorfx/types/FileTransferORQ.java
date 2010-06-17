@@ -5,6 +5,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.TreeMap;
 
 /**
+ * An ORQ for file transfer.
+ *
+ *
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
  * <p/>
@@ -13,9 +16,21 @@ import java.util.TreeMap;
 public class FileTransferORQ extends AbstractORQ {
 
     private static final long serialVersionUID = 2695933268050863494L;
-    
+
+    /**
+     * URI of the source files
+     */
     private String sourceURI;
+
+    /**
+     * URI of the target files
+     */
     private String targetURI;
+
+    /**
+     * The map consists of pairs of source and target file names.
+     * The target file name may be null, if it should be identical to the source files name.
+     */ 
     private TreeMap<String,String> fileMap;
 
     public FileTransferORQ( ) {

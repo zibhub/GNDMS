@@ -335,7 +335,7 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 
 	/**
 	 * Start server if it is not running, otherwise,
-	 * restart server if a new configuration is available (kills current connections)
+	 * restarts server if a new configuration is available (kills current connections)
 	 *
 	 * @param evenIfNoNewConfig if true, will restart in any case
 	 * @return true if the server is running after this call

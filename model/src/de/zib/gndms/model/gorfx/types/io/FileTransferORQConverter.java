@@ -3,6 +3,12 @@ package de.zib.gndms.model.gorfx.types.io;
 import de.zib.gndms.model.gorfx.types.FileTransferORQ;
 
 /**
+ * Implementation of ORQConverter to convert FileTransferORQ instances to a desired type,
+ * which can be their corresponding axis type, a convertion to a Properties instance, or it will be written to Stdout.
+ *
+ * @see de.zib.gndms.model.gorfx.types.io.FileTransferORQWriter
+ * @see de.zib.gndms.model.gorfx.types.io.ORQConverter
+ * @see de.zib.gndms.model.gorfx.types.io.ORQWriter
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
  * <p/>

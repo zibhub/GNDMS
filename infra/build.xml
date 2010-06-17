@@ -3,16 +3,16 @@
 	<!-- Define the environment variable -->
 	<property environment="env"/>
 	
-	<!-- Do always load properties in the following order: ${c3grid.basedir},${c3grid.properties},${c3grid.deps},${others.properties} -->
+	<!-- Do always load properties in the following order: ${gndms.basedir},${gndms.properties},${gndms.deps},${others.properties} -->
 	
-        <!--Define location of c3grid basedir relative to this service-->
-        <property name="c3grid.basedir"  value=".."/>
+        <!--Define location of gndms basedir relative to this service-->
+        <property name="gndms.basedir"  value=".."/>
 
         <!-- Loading global project-settings.-->
-        <property file="${c3grid.basedir}/c3grid.properties"/>
+        <property file="${gndms.basedir}/gndms.properties"/>
 
         <!-- Loading global project-dependencies -->
-        <property file="${c3grid.basedir}/c3grid.deps"/>
+        <property file="${gndms.basedir}/gndms.deps"/>
 
 	<!-- Loading local project-properties-->
 	<property file="infra.properties"/>
@@ -47,7 +47,7 @@
 			<pathelement location="${ant.contrib}" />
 		</classpath>
 	</taskdef>
-	
+
 	<path id="groovy.path">
 		<pathelement location="${GROOVY}"/>
 	</path>

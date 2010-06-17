@@ -1,9 +1,7 @@
 package de.zib.gndms.model.gorfx.types;
 
-import org.jetbrains.annotations.NotNull;
 import de.zib.gndms.model.dspace.types.SliceRef;
-
-import java.util.TreeMap;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * ORQ type class for an inter slice transfer.

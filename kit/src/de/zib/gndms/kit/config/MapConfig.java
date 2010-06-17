@@ -8,11 +8,10 @@ import java.util.Iterator;
 
 
 /**
-* This class holds a configuration in a map with methods to read the value of a chosen option
-*
- * 
-*
-*
+* This class holds a configuration in a map with methods to read the value of a chosen option.
+* Note: A value can also contain system environment variables.                                 
+* 
+* @see de.zib.gndms.kit.config.AbstractConfig
 * @author Stefan Plantikow<plantikow@zib.de>
 * @version $Id$
 *

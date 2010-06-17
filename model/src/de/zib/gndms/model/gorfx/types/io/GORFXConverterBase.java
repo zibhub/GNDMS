@@ -1,6 +1,12 @@
 package de.zib.gndms.model.gorfx.types.io;
 
 /**
+ * A GORFXConverterBase uses a writer to convert a gndms class to a desired type, which can be the corresponding
+ * axis type, a convertion to a Properties instance, or it will be written to Stdout.
+ *
+ *
+ * The template parameter W specifies the writer and M the model, so a gndms class.
+ * 
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
  * <p/>
@@ -8,7 +14,14 @@ package de.zib.gndms.model.gorfx.types.io;
  */
 public abstract class GORFXConverterBase<W,M> {
 
+    /**
+     * A writer which is used to create a new axis type.
+     */
     private W writer;
+
+    /**
+     * A gndms class instance, which shall be converted to an axis type.
+     */
     private M model;
 
 
@@ -42,7 +55,10 @@ public abstract class GORFXConverterBase<W,M> {
         this.writer = writer;
     }
 
-
+    /**
+     * Returns the original model, which shall be converted to an axis type
+     * @return the original model, which shall be converted to an axis type
+     */
     public M getModel() {
         return model;
     }

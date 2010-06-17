@@ -90,7 +90,7 @@ public abstract class ORQTaskAction<K extends AbstractORQ> extends TaskAction
             throw new IllegalStateException("Illgeal attempt to overwrite Task ORQ");
     }
 
-    
+
     public @NotNull K getOrq() {
         final AbstractTask model = getModel();
         if (model == null)

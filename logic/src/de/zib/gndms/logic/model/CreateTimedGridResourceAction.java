@@ -6,6 +6,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Calendar;
 
 /**
+ * A CreateGridResourceAction with a termination time.
+ *
+ * A termination time has to be denoted before {@link #initialize()} is called.
+ *
+ * The first template parameter is the model type. The second parameter is the return type of this action.
+ *
+ * @see de.zib.gndms.logic.model.CreateGridResourceAction
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
  * 

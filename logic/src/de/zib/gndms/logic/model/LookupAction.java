@@ -6,9 +6,9 @@ import org.jetbrains.annotations.NotNull;
 import javax.persistence.EntityManager;
 
 /**
- * An action to look up items form the data base by their key.
+ * An action to look up items from the data base by their key.
  *
- * Delegates calls to the
+ * Delegates calls to the 
  * 
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$

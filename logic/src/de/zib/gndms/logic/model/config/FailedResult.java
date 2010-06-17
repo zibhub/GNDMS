@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
- * ThingAMagic.
+ * A Class to indicate that an action failed returning its result.
  *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
@@ -12,6 +12,8 @@ import org.jetbrains.annotations.NotNull;
  *          User: stepn Date: 23.10.2008 Time: 16:36:32
  */
 public final class FailedResult extends ConfigActionResult {
+
+
     public FailedResult(final @NotNull String detailsParam) {
         super(detailsParam);
     }
@@ -21,4 +23,6 @@ public final class FailedResult extends ConfigActionResult {
     protected String getResultTypeNick() {
         return "FAILED";
     }
+
+    
 }

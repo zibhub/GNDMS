@@ -1,6 +1,9 @@
 package de.zib.gndms.kit.network;
 
 /**
+ *
+ * An Interface for an Bandwith estimator.
+ * 
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
  * <p/>

@@ -145,7 +145,7 @@
             <element name="DestinationUri" type="xsd:anyURI" minOccurs="1" maxOccurs="1" />
             <element name="Files" type="gndms:FileMappingSeqT" minOccurs="0" maxOccurs="1" />
           </sequence>
-          <attribute name="offerType" type="xsd:anyURI" fixed="http://www.c3grid.de/ORQTypes/FileTransfer" />
+          <attribute name="offerType" type="xsd:anyURI" fixed="http://gndms.zib.de/ORQTypes/FileTransfer" />
       </restriction>
   </complexContent>
 </complexType>
@@ -156,7 +156,7 @@
             <sequence>
                 <element ref="gndms:File" minOccurs="0" maxOccurs="unbounded" />
             </sequence>
-            <attribute name="offerType" type="xsd:anyURI" fixed="http://www.c3grid.de/ORQTypes/FileTransfer" />
+            <attribute name="offerType" type="xsd:anyURI" fixed="http://gndms.zib.de/ORQTypes/FileTransfer" />
         </restriction>
     </complexContent>
 </complexType>
@@ -226,7 +226,7 @@
             <element name="DestinationSlice" type="gndms:SliceReferenceT" minOccurs="1" maxOccurs="1" />
             <element name="Files" type="gndms:FileMappingSeqT" minOccurs="0" maxOccurs="1" />
           </sequence>
-          <attribute name="offerType" type="xsd:anyURI" fixed="http://www.c3grid.de/ORQTypes/InterSliceTransfer" />
+          <attribute name="offerType" type="xsd:anyURI" fixed="http://gndms.zib.de/ORQTypes/InterSliceTransfer" />
       </restriction>
   </complexContent>
 </complexType>
@@ -237,7 +237,7 @@
             <sequence>
                 <element ref="gndms:File" minOccurs="0" maxOccurs="unbounded" />
             </sequence>
-            <attribute name="offerType" type="xsd:anyURI" fixed="http://www.c3grid.de/ORQTypes/InterSliceTransfer" />
+            <attribute name="offerType" type="xsd:anyURI" fixed="http://gndms.zib.de/ORQTypes/InterSliceTransfer" />
         </restriction>
     </complexContent>
 </complexType>

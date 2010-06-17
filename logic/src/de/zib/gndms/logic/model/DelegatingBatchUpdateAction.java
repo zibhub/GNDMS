@@ -9,7 +9,9 @@ import java.util.List;
 
 
 /**
- * ThingAMagic.
+ * A BatchUpdateAction using delegation.
+ * Note: An instance can't change it's delegation object.
+ * Therefore its BatchUpdateAction can be denoted only by the constructor and #setListener() is not supported. 
  *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$

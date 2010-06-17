@@ -83,7 +83,7 @@ abstract class AbstractTask extends TimedGridResource {
     @Basic Serializable orq
 
 
-    @Column(name="fault", nullable=true, updatable=true, columnDefinition="VARCHAR")
+    @Column(name="fault", nullable=true, updatable=true, columnDefinition="VARCHAR", length=5000 )
     @Basic String faultString
     /**
      * Payload depending on state, either task results or a detailed task failure
@@ -135,7 +135,7 @@ abstract class AbstractTask extends TimedGridResource {
 
 	@SuppressWarnings(["unchecked"])
 	def <D> Molder<D> molder(@NotNull final Class<D> moldedClazz) {
-		return Mold.newMolderProxy( (Class) getClass(), this, moldedClazz);
+		return Mold.newMolderProxy( (Class<D>) getClass(), this, moldedClazz);
 	}
 
     def void mold(final @NotNull AbstractTask instance) {

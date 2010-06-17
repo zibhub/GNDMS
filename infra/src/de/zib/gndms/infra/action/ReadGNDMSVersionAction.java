@@ -13,6 +13,10 @@ import javax.persistence.EntityManager;
 import java.io.PrintWriter;
 
 /**
+ * 
+ * Writes the GNDMSVersion to a printwriter
+ *
+ * @see GNDMSVerInfo
  * @author Maik Jorra <jorra@zib.de>
  * @version $Id$
  *          <p/>
@@ -33,10 +37,16 @@ public class ReadGNDMSVersionAction extends ConfigAction<ConfigActionResult> imp
     public ConfigActionResult execute( final @NotNull EntityManager em, final @NotNull PrintWriter writer ) {
 
         writer.print( verInfo.readRelease() + "\n" );
+        //writer.print( "javarebel test\n" );
         return ok();
     }
-    
 
+
+    /**
+     * Overriden method, returning always false.
+     *
+     * @see de.zib.gndms.logic.model.config.ConfigAction#isExecutingInsideTransaction() 
+     */
     @Override
     protected boolean isExecutingInsideTransaction() {
         return false;
