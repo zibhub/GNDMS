@@ -18,4 +18,5 @@ enable_ptresource
 enable_filetransfer
 enable_interslicetransfer
 enable_permissions
+enable_gsiftpDeadlockPrevention
 refresh_system
