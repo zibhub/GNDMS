@@ -17,17 +17,17 @@ public class WidAux {
 
 
     public static void removeWid() {
-        removeId("c3wid");
+        removeId("dmswid");
     }
 
 
     public static String getWid() {
-        return (String) MDC.get("c3wid");
+        return (String) MDC.get("dmswid");
     }
 
 
     public static void initWid(final String cachedWid) {
-        initId("c3wid", cachedWid);
+        initId("dmswid", cachedWid);
     }
 
 

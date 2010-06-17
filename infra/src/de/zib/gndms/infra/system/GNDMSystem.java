@@ -8,7 +8,6 @@ import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
 import de.zib.gndms.kit.access.EMFactoryProvider;
 import de.zib.gndms.kit.monitor.ActionCaller;
 import de.zib.gndms.kit.monitor.GroovyMoniServer;
-import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
 import de.zib.gndms.logic.action.LogAction;
 import de.zib.gndms.logic.model.*;
 import de.zib.gndms.logic.model.gorfx.DefaultWrapper;

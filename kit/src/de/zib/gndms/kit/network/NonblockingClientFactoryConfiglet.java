@@ -1,11 +1,10 @@
 package de.zib.gndms.kit.network;
 
-import de.zib.gndms.kit.configlet.DefaultConfiglet;
-import de.zib.gndms.kit.config.ConfigProvider;
-import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
-import org.jetbrains.annotations.NotNull;
+import de.zib.gndms.kit.config.MapConfig;
+import de.zib.gndms.kit.configlet.DefaultConfiglet;
 import org.apache.commons.logging.Log;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 

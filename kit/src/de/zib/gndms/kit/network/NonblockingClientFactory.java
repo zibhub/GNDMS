@@ -1,15 +1,14 @@
 package de.zib.gndms.kit.network;
 
+import de.zib.gndms.stuff.qexecuter.QueuedExecutor;
+import org.apache.log4j.Logger;
 import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.exception.ServerException;
-import org.apache.log4j.Logger;
 
 import java.io.IOException;
-import java.util.concurrent.*;
-import java.util.Map;
 import java.util.HashMap;
-
-import de.zib.gndms.stuff.qexecuter.QueuedExecutor;
+import java.util.Map;
+import java.util.concurrent.*;
 
 /**
  * @author Maik Jorra <jorra@zib.de>

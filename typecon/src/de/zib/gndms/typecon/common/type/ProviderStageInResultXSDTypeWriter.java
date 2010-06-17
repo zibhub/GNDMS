@@ -1,7 +1,7 @@
 package de.zib.gndms.typecon.common.type;
 
-import de.zib.gndms.model.gorfx.types.io.ProviderStageInResultWriter;
 import de.zib.gndms.model.gorfx.types.ProviderStageInResult;
+import de.zib.gndms.model.gorfx.types.io.ProviderStageInResultWriter;
 import de.zib.gndms.typecon.common.GORFXClientTools;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.globus.wsrf.container.ServiceHost;
@@ -13,7 +13,6 @@ import types.SliceReference;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPException;
-import java.io.IOException;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -69,7 +68,7 @@ public class ProviderStageInResultXSDTypeWriter extends AbstractXSDTypeWriter<Pr
 
     static public EndpointReferenceType SliceIdToEPR( String sid ) throws Exception {
 
-        String s = ServiceHost.getBaseURL( ).toString( ) + "c3grid/Slice";
+        String s = ServiceHost.getBaseURL( ).toString( ) + "gndms/Slice";
 
         SimpleResourceKey sk =
             new SimpleResourceKey( new QName("http://dspace.gndms.zib.de/DSpace/Slice", "SliceKey"), sid );

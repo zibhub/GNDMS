@@ -12,10 +12,10 @@ import java.util.Vector;
  */
 public class GORFXConstantURIs {
 
-    public static final String FILE_TRANSFER_URI = "http://www.c3grid.de/ORQTypes/FileTransfer";
+    public static final String FILE_TRANSFER_URI = "http://gndms.zib.de/ORQTypes/FileTransfer";
     public static final String PROVIDER_STAGE_IN_URI = "http://www.c3grid.de/ORQTypes/ProviderStageIn";
     public static final String SLICE_STAGE_IN_URI = "http://www.c3grid.de/ORQTypes/SliceStageIn";
-    public static final String INTER_SLICE_TRANSFER_URI = "http://www.c3grid.de/ORQTypes/InterSliceTransfer";
+    public static final String INTER_SLICE_TRANSFER_URI = "http://gndms.zib.de/ORQTypes/InterSliceTransfer";
     public static final String RE_PUBLISH_SLICE_URI = "http://www.c3grid.de/ORQTypes/RePublishSlice";
     public static final String LOFI_SET_STAGE_IN_URI = "http://www.c3grid.de/ORQTypes/LofiSetStageIn";
     public static final String PIN_URI = "http://www.c3grid.de/ORQTypes/Pin";

@@ -43,13 +43,13 @@
 <target name="prepare" depends="check-env, sync, archive-schemas" />
 
 <target name="dp-install" depends="check-env, extract-schemas">
-	<exec executable="globus-deploy-gar"><arg value="services/DSpace/c3grid_DSpace.gar" /></exec>
-	<exec executable="globus-deploy-gar"><arg value="services/GORFX/c3grid_GORFX.gar" /></exec>
+	<exec executable="globus-deploy-gar"><arg value="services/DSpace/gndms_DSpace.gar" /></exec>
+	<exec executable="globus-deploy-gar"><arg value="services/GORFX/gndms_GORFX.gar" /></exec>
 </target>
 
 
 <target name="killdb" depends="check-env">
-	<delete dir="${env.C3GRID_SHARED}/db/c3grid" />
+	<delete dir="${env.C3GRID_SHARED}/db/gndms" />
 </target>
 
 <target name="dp-killdb" depends="killdb" />

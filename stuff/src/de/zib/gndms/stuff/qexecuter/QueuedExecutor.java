@@ -77,7 +77,7 @@ public class QueuedExecutor implements ExecutorService {
     }
 
 
-    public <T> List<Future<T>> invokeAll( final Collection<Callable<T>> tasks ) throws InterruptedException {
+    public <T> List<Future<T>> invokeAll( final Collection<? extends Callable<T>> tasks ) throws InterruptedException {
         List<Future<T>> res = submitList( tasks );
 
         for( Future<T> f :  res ) {
@@ -92,7 +92,7 @@ public class QueuedExecutor implements ExecutorService {
     }
 
 
-    public <T> List<Future<T>> invokeAll( final Collection<Callable<T>> tasks, final long timeout, final TimeUnit unit ) throws InterruptedException {
+    public <T> List<Future<T>> invokeAll( final Collection<? extends Callable<T>> tasks, final long timeout, final TimeUnit unit ) throws InterruptedException {
         List<Future<T>> res = submitList( tasks );
 
         unit.sleep( timeout );
@@ -105,7 +105,7 @@ public class QueuedExecutor implements ExecutorService {
     }
 
 
-    public <T> T invokeAny( final Collection<Callable<T>> tasks ) throws InterruptedException, ExecutionException {
+    public <T> T invokeAny( final Collection<? extends Callable<T>> tasks ) throws InterruptedException, ExecutionException {
 
         List<Future<T>> l = submitList( tasks );
         T res = null;
@@ -122,7 +122,7 @@ public class QueuedExecutor implements ExecutorService {
     }
 
 
-    public <T> T invokeAny( final Collection<Callable<T>> tasks, final long timeout, final TimeUnit unit ) throws InterruptedException, ExecutionException, TimeoutException {
+    public <T> T invokeAny( final Collection<? extends Callable<T>> tasks, final long timeout, final TimeUnit unit ) throws InterruptedException, ExecutionException, TimeoutException {
 
         List<Future<T>> l = submitList( tasks );
         T res = null;
@@ -178,7 +178,7 @@ public class QueuedExecutor implements ExecutorService {
     }
 
 
-    private <T> List<Future<T>> submitList( final Collection<Callable<T>> tasks ) {
+    private <T> List<Future<T>> submitList( final Collection<? extends Callable<T>> tasks ) {
         List<Future<T>> res = new ArrayList<Future<T>>();
         for( Callable<T> ct: tasks )
             res.add( submit( ct ) );
