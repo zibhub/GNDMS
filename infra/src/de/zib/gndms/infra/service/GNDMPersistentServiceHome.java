@@ -12,6 +12,7 @@ import javax.persistence.Query;
 /**
  * ThingAMagic.
  *
+ * @see org.globus.wsrf.Resource
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
  *
@@ -21,6 +22,13 @@ public interface GNDMPersistentServiceHome<M extends GridResource> extends GNDMS
 
     void refresh(final @NotNull M resourceModel) throws ResourceException;
 
+    /**
+     * Returns a {@code Query} to find all {@code Resources} of {@code this} 
+     *
+     * @param em the EntityManager, on which the query will be done
+     *
+     * @return a {@code Query} to find all {@code Resources} of {@code this}
+     */
     @NotNull Query getListAllQuery(final @NotNull EntityManager em);
 
     @NotNull Class<M> getModelClass();

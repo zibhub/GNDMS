@@ -5,6 +5,13 @@ import de.zib.gndms.model.gorfx.types.AbstractORQ;
 
 
 /**
+ * An ORQWrapper wrapper.
+ *
+ * Bundles an Offerrequest with its corresponding TransientContract.
+ *
+ *
+ * @see AbstractORQ
+ * @see TransientContract
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
  * <p/>

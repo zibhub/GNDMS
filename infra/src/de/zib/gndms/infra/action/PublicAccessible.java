@@ -3,7 +3,7 @@ package de.zib.gndms.infra.action;
 /**
  * This is a marker interface.
  *
- * All config action which implement this interface are accessible through the WS interfaceö.
+ * All config action which implement this interface are accessible through the WS interface.
  * 
  * @author Maik Jorra <jorra@zib.de>
  * @version $Id$

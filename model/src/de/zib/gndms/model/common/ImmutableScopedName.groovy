@@ -16,14 +16,13 @@ import org.jetbrains.annotations.NotNull
  */
 @Embeddable
 class ImmutableScopedName extends ModelId {
-    public _Dummy_ ( final String optionParam ) { super ( ) ; }
 	@Column(name="scope", columnDefinition="VARCHAR", nullable=true, updatable=false)
 	private String nameScope
 
 	@Column(name="local", columnDefinition="VARCHAR", nullable=false, updatable=false)
 	private String localName
 
-	ImmutableScopedName() {}
+	ImmutableScopedName() {super()}
 
     ImmutableScopedName(@NotNull String fullNameStr) {        
         this(QName.valueOf(fullNameStr))

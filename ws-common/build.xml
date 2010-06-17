@@ -1,0 +1,156 @@
+<project name="ws-common compilation file" default="help" basedir=".">
+	
+	<!-- Define the environment variable -->
+	<property environment="env"/>
+	
+	<!-- Do always load properties in the following order: ${c3grid.basedir},${c3grid.properties},${c3grid.deps},${others.properties} -->
+	
+	<!--Define location of c3grid basedir relative to this service-->
+	<property name="c3grid.basedir"  value=".."/>
+	
+	<!-- Loading global project-settings.-->
+	<property file="${c3grid.basedir}/c3grid.properties"/>
+	
+	<!-- Loading global project-dependencies -->
+	<property file="${c3grid.basedir}/c3grid.deps"/>
+	
+	<!-- Loading local project-properties-->
+	<property file="wscommon.properties"/>
+	
+	<!-- path needed to compile logic-->
+	<path id="wscommon.path">
+		
+		<pathelement path="${annotations}"/>
+		<pathelement path="${gndms-logic}"/>
+		<pathelement path="${gndms-kit}"/>		
+		<pathelement path="${gndms-infra}"/>
+		<pathelement path="${DSpace}"/>
+		<pathelement path="${GORFX}"/>
+		<pathelement path="${LOFIS}"/>
+		<pathelement path="${WHORFX}"/>
+		<pathelement path="${args4j}"/>
+		<pathelement path="${gt4}"/>
+		<pathelement path="${gorfx.stubs}"/>
+		<pathelement path="${gorfx.nonsym}"/> 
+	</path>
+	
+	<!-- using ant contrib for contidionals, looping , and runtarget -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${ant.contrib}" />
+		</classpath>
+	</taskdef>
+	
+	
+	<!-- Compile logic, but not its test-files -->	
+	<target name="compile" description="Compiles ws-common">
+		<echo>Compiling ws-common's class-files</echo>
+		<mkdir dir="${wscommon.classes.dest}"/>
+		<for param="jars">
+			<path refid="wscommon.path"/>
+			<sequential>
+				<if>
+					<not>
+						<available file="@{jars}"/>			
+					</not>
+					<then>
+						<fail message="Not able to compile as '@{jars}' was not found."/>
+					</then>
+				</if>
+				
+			</sequential>
+		</for>
+		<!-- Copy Meta files to build dir-->
+		<copy todir="${wscommon.classes.dest}">
+			<fileset dir='src'>
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+		<javac srcdir='src' destdir='${wscommon.classes.dest}' classpathref="wscommon.path" debug="${javac.debug}"/>
+			
+	</target>
+	
+	
+	<!-- Creates jar containing logic's test-classfiles-->	
+	<target name="jar.test"  depends="compile.test" description="Creates jar file gndms-wscommon-test.jar in 'extra/lib'">	
+		<echo>Generating gmds-logic-test.jar</echo>
+		<jar destfile="${gndms-wscommon-test}"
+		     basedir="${wscommon.test.classes.dest}">
+		</jar>
+	</target>
+	
+	<!-- Creates jar containing logic's classfiles-->	
+	<target name="jar" depends="compile" description="Creates jar file gndms-wscommon.jar in 'extra/lib'">	
+		<echo>Generating gndms-wscommon.jar</echo>
+		<jar destfile="${gndms-wscommon}"
+		     basedir="${wscommon.classes.dest}">
+		</jar>
+	</target>
+	
+	
+	<!-- path needed to compile logic's testfiles-->
+	<path id="wscommon.test.path">
+	</path>
+	
+	<!-- Compile logic's test-classes-->	
+	<target name="compile.test" description="Compiles wscommon's test-files">
+		<echo>Compiling kit's test-classes</echo>
+		<mkdir dir="${wscommon.test.classes.dest}"/>
+		<for param="jars">
+			<path refid="wscommon.test.path"/>
+			<sequential>
+				<if>
+					<not>
+						<available file="@{jars}"/>			
+					</not>
+					<then>
+						<fail message="Not able to compile as '@{jars}' was not found."/>
+					</then>
+				</if>
+				
+			</sequential>
+		</for>
+		<!-- Split nötig ?-->
+		<javac srcdir='test-src' destdir='${wscommon.test.classes.dest}' classpathref="wscommon.test.path" debug="${javac.debug}">	
+		</javac>
+		
+		<javac srcdir='test-src' destdir='${wscommon.test.classes.dest}' classpathref="wscommon.test.path" debug="${javac.debug}">	
+		</javac>
+		<!-- Copy Meta files to build dir-->
+		<copy todir="${wscommon.test.classes.dest}">
+			<fileset dir='test-src'>
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+	</target>
+	
+	<!-- Deletes binaries and jar-files -->
+	<target name="clean" description="Deletes wscommon's binaries">
+		<echo>Deleting wscommon's class-files</echo>
+		<delete dir='${wscommon.classes}'/>
+	</target>
+	
+	<!-- Deletes jar-files -->
+	<target name="clean.jar" description="Deletes wscommon's jar-file">
+		<echo>Deleting all generated jars belonging to logic</echo>
+		<delete file='${gndms-wscommon}'/>
+		<delete file='${gndms-wscommon-test}'/>
+	</target>
+	
+	<target name="help" description="Prints usage information.">
+		<echo message=" =================================================================================" />
+		<echo message="|                    WS-COMMON Compilation                                          |" />
+		<echo message="|                                                                                 |" />
+		<echo message=" ---------------------------------------------------------------------------------" />
+		<echo message="|  USAGE:                                                                         |" />
+		<echo message="|    Type 'ant -h' for general help with Ant	                                     |" />
+		<echo message="|    Type 'ant -p' for a description of available build targets.                  |" />
+		<echo message="|    Type 'ant clean' for deleting all generated class-files.                     |" />
+		<echo message="|    Type 'ant clean.all' for deleting all generated class-files and jars         |" />
+		<echo message="|    Type 'ant compile' to compile all class-files of ws-common                   |" />
+		<echo message="|    Type 'ant compile.test' to compile all test-class-files and create the jars	 |" />
+		<echo message="|    Type 'ant jar' to  create the jars	                                         |" />
+		<echo message=" =================================================================================" />
+	</target>
+</project>
+	

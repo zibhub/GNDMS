@@ -36,8 +36,15 @@ import java.util.Set;
 
 
 /**
- * ThingAMagic.
-*
+ * Default implementation of the {@code WSActionCaller} interface.
+ *
+ * A ConfigActionCaller is used to dynamically instantiate and call new {@code ConfigAction}s.
+ * The main method of this class is {@code  callPublicAction(String, String, java.io.PrintWriter)} which is used for
+ * this purpose. See {@link WSActionCaller#callPublicAction(String, String, java.io.PrintWriter)}
+ * for a description.
+ *
+ * @see ConfigAction
+ * @see WSActionCaller
 * @author Stefan Plantikow<plantikow@zib.de>
 * @version $Id$
 *
@@ -53,6 +60,10 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
             }
     };
 
+    /**
+     * A set of ConfigAction.{@link HelpOverviewAction} is excluded, as this set used in the {@code HelpOverviewAction}
+     * to print help about all available ConfigActions.
+     */
     private final Set<Class<? extends ConfigAction<?>>> configActions =
             Sets.newConcurrentHashSet();
 
@@ -72,6 +83,12 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
 	private final Injector injector;
 
 
+    /**
+     * Fills {@link #configActions} with all implemented {@link ConfigAction}s, except the {@link HelpOverviewAction}.
+     * Load the GNDMSystem's injector into {@link #injector} as a new {@code ChildInjector} of this.
+     *
+     * @param systemParam the GNDMSystem
+     */
 	@SuppressWarnings({ "ThisEscapedInObjectConstruction", "OverlyCoupledMethod" })
 	public ConfigActionCaller(final @NotNull GNDMSystem systemParam) {
         system = systemParam;
@@ -90,7 +107,28 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
 		injector = system.getInstanceDir().getSystemAccessInjector().createChildInjector(this);
     }
 
-
+    /**
+     * Instantiates a new config action or a specific subclass of it according to the String <tt>name</tt>,
+     * sets its configurations map to the values set in <tt>params</tt> and returns the action.
+     *
+     <p>If the instance should be public accessible (see {@link de.zib.gndms.infra.action.PublicAccessible}) set <tt>pub</tt>
+     * to <tt>true</tt>.
+     *
+     *
+     * @param name A String giving a description about the action class or a help request.
+     *        See {@link #findActionClass(String)} )
+     * @param params A String containing the configuration for the Config Action.
+     *        See {@link ConfigAction#parseLocalOptions(String)}
+     * @param pub a boolean to flag that the instance is public accessible or not.
+     *        See {@link PublicAccessible}.
+     *
+     * @return a ConfigAction instance with a given configuration
+     *
+     * @throws ClassNotFoundException if the class given by <tt>name></tt> could not be found.
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     * @throws ParameterTools.ParameterParseException if <tt>params</tt> is not valid according to defined Syntax.
+     */
     @SuppressWarnings({ "RawUseOfParameterizedType", "unchecked" })
     public ConfigAction<?> instantiateConfigAction(final @NotNull String name,
                                                    final @NotNull String params,
@@ -121,7 +159,26 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
             throw new IllegalArgumentException("Not a ConfigAction");
     }
 
-
+    /**
+     * Finds a specific ConfigAction class.
+     *
+     * If <tt>name</tt>
+     * <ul>
+     *      <li>
+     *      is denoted as "help", "-help" or "--help" a {@link HelpOverviewAction} class instance will be returned.
+     *      </li>
+     *      <li>
+     *      starts with ".sys", the class 'de.zib.gndms.infra.action'+name.substring(4)+'Action' will be returned.
+     *      </li>
+     * *      <li>
+     *      starts with ".", the class 'de.zib.gndms.logic.model'+name+'Action' will be returned.
+     *      </li>
+     * </ul>
+     * 
+     * @param name a String containing the name of a config action class or a help request.
+     * @return a ConfigAction class corresponding the given String.
+     * @throws ClassNotFoundException if <tt>name</tt> is null or the class could not be found
+     */
     @SuppressWarnings({ "MethodMayBeStatic" })
     private Class<? extends ConfigAction<?>> findActionClass(
             final @NotNull String name) throws ClassNotFoundException
@@ -147,7 +204,14 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
         return toConfigActionClass(Class.forName(name));
     }
 
-
+    /**
+     * Checks if <tt>helpOverviewActionClassParam</tt> is a <tt>ConfigAction</tt> class or a subclass of it.
+     * In this case the class object will be returned with a cast, as denoted in the signature.
+     * Otherwise an IllegalArgumentException will be thrown.
+     * 
+     * @param helpOverviewActionClassParam the class which will be casted and returned
+     * @return  <tt>helpOverviewActionClassParam</tt> if it is a <tt>ConfigAction</tt> class or a subclass of it.
+     */
     @SuppressWarnings({ "unchecked" })
     private static Class<? extends ConfigAction<?>> toConfigActionClass(
             final Class<?> helpOverviewActionClassParam) {
@@ -166,7 +230,7 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
         return realCallAction( action, className, opts, writer );
     }
 
-
+        
     public Object callPublicAction( final @NotNull String className, final @NotNull String opts, final @NotNull PrintWriter writer ) throws Exception {
 
         ConfigAction<?> action = instantiateConfigAction(className, opts.trim(), true);
@@ -174,8 +238,21 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
     }
 
 
+    /**
+     * Sets all necessary fields of the newly created ConfigAction instance,
+     * invokes {@code call()} on the ConfigAction instance and its postponed actions
+     * and returns the result of the ConfigAction's computation.
+     *
+     * Note: the options of the action ({@code opts}) must be already be set before this method is invoked.
+     *
+     * @param action the ConfigAction which shall be invoked
+     * @param className the classname of the ConfigAction which shall be created
+     * @param opts A String containing the configuration for the ConfigAction
+     * @param writer a printwriter where all output, generated by the ConfigAction, will be written to
+     * @return the result of the ConfigAction's computation
+     * @throws Exception
+     */
     protected Object realCallAction( ConfigAction<?> action, final @NotNull String className, final @NotNull String opts, final @NotNull PrintWriter writer ) throws Exception {
-
         action.setOwnEntityManager(system.getEntityManagerFactory().createEntityManager());
         action.setPrintWriter(writer);
         action.setClosingWriterOnCleanUp(false);

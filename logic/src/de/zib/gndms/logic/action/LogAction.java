@@ -5,7 +5,8 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
- * ThingAMagic.
+ * This interface is intented only to be implemented by {@link Action}s.
+ * It provides a logger for the action.
  *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$

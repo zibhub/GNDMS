@@ -10,7 +10,10 @@ import java.util.Collection;
 
 
 /**
- * ThingAMagic.
+ * The DefaultBatchUpdateAction provides a default implementation of a BatchUpdateAction. 
+ *
+ * All actions in the list will be children of this BatchUpdateAction.
+ *
  *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
@@ -41,6 +44,13 @@ public class DefaultBatchUpdateAction<M extends GridResource> extends DefaultCom
 	}
 
 
+    /**
+     * Sets {@code this} as parent of {@code voidActionParam} and
+     * adds {@code voidActionParam} to the list of actions to be executed.
+     *
+     * @param voidActionParam an action which should be executed
+     * @see DefaultCompositeAction#addAction(de.zib.gndms.logic.action.Action) 
+     */
     @Override
     public void addAction(final Action<Void> voidActionParam) {
         voidActionParam.setParent(this);

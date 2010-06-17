@@ -3,6 +3,9 @@ package de.zib.gndms.kit.network;
 import org.apache.axis.types.URI;
 
 /**
+ *
+ * An Interface for an Bandwith estimator.
+ * 
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
  * <p/>

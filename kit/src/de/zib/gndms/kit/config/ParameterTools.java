@@ -36,6 +36,7 @@ public final class ParameterTools {
 
     /**
      * Escapes the following characters from a given String {@code [ ] ,  : ; ' \ "}
+     *
      * @param sParam the String wich shall be escaped
      * @return the escpaded String
      */
@@ -70,6 +71,7 @@ public final class ParameterTools {
 
     /**
      * Parses the parameters of a String according to the description given above ({@link ParameterTools description}) and puts the keys with their corresponding values onto the map
+     * 
      * @param targetMap The Map receiving all the keys with their values
      * @param params the String holding all the keys and their values in the Syntax described above
      * @param keyPattern  The pattern a valid key must match. Can be {@code null}, but still the keyname must not start with "+", "-", "!" if it's not a boolean value
@@ -241,6 +243,7 @@ public final class ParameterTools {
     /**
      * Puts the key {@code boolKeyParam} with the value {@code val} on {@code targetMap} if either
      * the key matches a specific pattern or {@code keyPattern=null}.
+     *
      * @param targetMap the Map where the key and the associated value will be stored at
      * @param keyPattern the pattern a key must match
      * @param boolKeyParam the key with which the value is associated
@@ -279,6 +282,7 @@ public final class ParameterTools {
 
     /**
      * Returns a {@code String} out of the {@code StringBuilder} if it is a valid key, matching the pattern
+     *
      * @param builderParam the characters which shall be converted into a key-String
      * @param keyPattern a Pattern the characters must match to be a valid key
      * @param index can be used to trace the current character position of the original String, when this method is invoked
@@ -304,16 +308,16 @@ public final class ParameterTools {
 
     /**
      * Appends all keys with their corresponding values from the {@code Map} to a {@code StringBuilder} matching the pattern.
-     * Strings containing whitespaces or {@code ' : ; =} are not allowed.
-     * <br>
-     * Syntax:
+     * Keys containing whitespaces or {@code ' : ; =} are not allowed.
+     * The generated String has the following syntax:
      * <pre>
      * key: 'value' [; key: 'value' ]*  
      * </pre>
+     *
      * @param builder the resulting String will be appended to {@code builder}
      * @param map contains the keys and their corresponding values
      * @param keyPattern the pattern a valid key must match. If {@code null} all Strings containing legal characters are accepted
-     * @param addNewlines if true, a new line follows after every semicolon
+     * @param addNewlines if true, a new line follows after every key value String pair.
      */
     @SuppressWarnings({ "HardcodedLineSeparator" })
     public static void append(final @NotNull StringBuilder builder,
@@ -437,10 +441,13 @@ public final class ParameterTools {
     }
 
 
-
-        /*
-        Sollte bei [A\\,C] nicht A,C als ein Eintrag herauskommen ?
-         */
+       /**
+         *
+        *
+        *  
+        *  @param optStrParam
+         * @return
+        */
         @SuppressWarnings({ "HardcodedFileSeparator" })
         public static List<String> parseStringArray(final String optStrParam) {
             final List<String> entries = new LinkedList<String>();
@@ -480,6 +487,7 @@ public final class ParameterTools {
                     default:
                         final boolean isWhite = Character.isWhitespace(c);
                         if (escape) {
+                            escape=false;
                             builder.append(c);
                             if (! isWhite) leading = false;
                         }
@@ -495,12 +503,5 @@ public final class ParameterTools {
             }
             return entries;
         }
-
-
-
-
-    
-
-
 
 }

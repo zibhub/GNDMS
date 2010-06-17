@@ -6,6 +6,12 @@ import java.io.Serializable;
 import java.util.Properties;
 
 /**
+ *
+ * The FilePermissions class is used to control access rights for a file.
+ * An instance corresponds to one user and one file. It contains the {@link AccessMask},
+ * describing the concrete access rights, the name of the user and the name of the group, the user belongs to.
+ * 
+ * @see AccessMask
  * @author Maik Jorra <jorra@zib.de>
  * @version $Id$
  * <p/>
@@ -62,6 +68,18 @@ public class FilePermissions implements Serializable {
     }
 
 
+    /**
+     * Returns a String in format
+     * <pre>
+     *      FilePermissions{user='$user', group='$group', acesssMask=$accessMask}
+     *
+     * where
+     *      $user is the username
+     *      $group is the groupname
+     *      $accessmask is the accessMask in decimal representation
+     * 
+     * @return a String showing the username, groupname and access mask
+     */
     @Override
     public String toString() {
         return "FilePermissions{" +
@@ -72,6 +90,13 @@ public class FilePermissions implements Serializable {
     }
 
 
+    /**
+     * Puts the username, groupname and mask to {@code moreProps}.
+     *
+     * @param prefix a String can be denoted, which will be prefix for the new keys of {@code moreProps}.
+     * 
+     * @param moreProps the {@code Properties} instance, the values will be appended to.
+     */
     public void toProperties( String prefix, Properties moreProps ) {
 
         final String pre = prefix != null ? prefix + "." : "" ;

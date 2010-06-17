@@ -17,12 +17,14 @@ import java.util.regex.Pattern;
 
 
 /**
- * This abstract class provides an implementation of the {@code ConfigProvider} interface.
- * 
+ * This abstract class provides a default implementation of the {@code ConfigProvider} interface.
  *
- * To implement this class, the method {@link OptionProvider#hasOption(String)} must be implemented, defining if the
+ * A concrete subclass must implement the method {@link OptionProvider#hasOption(String)}, defining if the
  * configuration has a value set for the specific option.
+ * A Value may contain system environment variables which are denoted by <tt> %{[a-zA-Z_][a-zA-Z0-9_]*} </tt> and
+ * will be replaced automatically with their current values when the value of an option is returned. 
  *
+ * @see ConfigProvider
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
  *
@@ -50,7 +52,15 @@ public abstract class AbstractConfig implements ConfigProvider {
         }
     }
 
-
+    /**
+     * Returns the String set in the current configuration for a specific option.
+     * Its value may use system environment variables, which will be replaced by their actual values.
+     * A system environment variable must be denoted in the following syntax:
+     * <tt> %{[a-zA-Z_][a-zA-Z0-9_]*} </tt>
+     *
+     * @param optionName the name of a specific option
+     * @return the value set for a specific option. System enviroment variables are replaced with their values
+     */
     public String getNonMandatoryOption(final String optionName) {
         final String optionValue = getConcreteNonMandatoryOption(optionName);
         if (optionValue == null)
@@ -69,7 +79,13 @@ public abstract class AbstractConfig implements ConfigProvider {
     }
 
 
-    
+    /**
+     * Replaces a system enviroment variable name with its value.
+     * 
+     * @param optionName
+     * @param envVarName the name of the system enviroment variable
+     * @return the value of a specific system enviroment variable
+     */
     @SuppressWarnings({ "MethodMayBeStatic" })
     protected String replaceVar(final String optionName, final String envVarName) {
         return escape(System.getenv(envVarName));
@@ -159,6 +175,7 @@ public abstract class AbstractConfig implements ConfigProvider {
 
     /**
      * Parse a String in ISO8601-format to DateTime-Object
+     *
      * @param optionParam a String in ISO8601-format 
      * @return a DateTime-Object retrieved from the String
      */

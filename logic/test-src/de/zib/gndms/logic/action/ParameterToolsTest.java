@@ -194,13 +194,13 @@ public class ParameterToolsTest {
 
 	@Test(groups = {"factory"})
 	public void parseStringArrayTest(){
-	    paraMap.clear();
-	    List<String> config=parseStringArray("[1 ,2 ,3\\,4]");
-        assertEquals(config.size(), 3);
-        assertEquals(config.get(0),"1");
-        assertEquals(config.get(1)," 2");
+	    List<String> config=parseStringArray("[1 ,2 ,3\\,4, 5 plus 2]");
+        assertEquals(config.size(), 4);
+        assertEquals(config.get(0),"1 ");
+        assertEquals(config.get(1),"2 ");
         assertEquals(config.get(2),"3,4");
-        // assertEquals(config.get(3),"4");
+        assertEquals(config.get(3),"5 plus 2");
+
     }
 
     @Test(groups = {"factory"},
@@ -259,4 +259,5 @@ public class ParameterToolsTest {
         paraMap.clear();
         parseParameters(paraMap, "foo:bar; foo:", null);
     }
+
 }

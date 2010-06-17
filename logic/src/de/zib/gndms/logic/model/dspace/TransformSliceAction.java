@@ -14,8 +14,10 @@ import java.io.File;
 import java.util.Calendar;
 
 /**
- * Converts a slice to another slice kind and addes it to
- * another subspace.
+ * A TransformSliceAction converts its slice to a new created slice (using {@link de.zib.gndms.logic.model.dspace.CreateSliceAction})
+ * and adds it to the subspace corresponding to new slice object.
+ *
+ * The new slice instance is specified and will be created by the constructor of this class.
  *
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
@@ -32,7 +34,17 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
 
     private CreateSliceAction createSliceAction;
 
-    
+    /**
+     * Creates a new {@link CreateSliceAction} instances with the parameters given
+     * in the signature and sets the model of {@link #createSliceAction} to {@code tgt}.
+     *
+     * @param uuid a uuid identifying the grid resource of the new slice instance
+     * @param ttm the termination time of the slice object
+     * @param kind the sliceKind instance for the slice. (See {@link Slice}).
+     * @param tgt a subspace the new created slice will be registered on
+     * @param ssize total storage size for the slice instance
+     * @param uuidgen an uuid generator for the directory id of the new slice object
+     */
     public TransformSliceAction( String uuid, Calendar ttm, SliceKind kind, Subspace tgt, long ssize, ModelUUIDGen uuidgen ) {
 
         createSliceAction = new CreateSliceAction( uuid, ttm, uuidgen, kind, ssize );
@@ -40,6 +52,18 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
     }
 
 
+   /**
+     * Creates a new {@link CreateSliceAction} instances with the parameters given
+     * in the signature and sets the model of {@link #createSliceAction} to {@code tgt}.
+     *
+     * @param uuid a uuid identifying the grid resource of the new slice instance
+     * @param ttm the termination time of the slice object
+     * @param kind the sliceKind instance for the slice. (See {@link Slice}).
+     * @param tgt a subspace the new created slice will be registered on
+     * @param ssize total storage size for the slice instance
+     * @param uuidgen an uuid generator for the directory id of the new slice object
+     * @param da an helper object for directory access
+     */
     public TransformSliceAction( String uuid, Calendar ttm, SliceKind kind, Subspace tgt, long ssize, ModelUUIDGen uuidgen, DirectoryAux da ) {
 
         createSliceAction = new CreateSliceAction( uuid, ttm, uuidgen, kind, ssize, da );

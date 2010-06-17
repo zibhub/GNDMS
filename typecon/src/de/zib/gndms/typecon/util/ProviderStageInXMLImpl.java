@@ -89,7 +89,18 @@ public class ProviderStageInXMLImpl implements ProviderStageInXML {
         return createStagingInformation( wrp.getOrq(), wrp.getContract() );
     }
 
-
+    /**
+     * Reads the TransientContract and the AbstractORQ from {@code si} and returns an {@code QRQWrapper} containing
+     * both instances.
+     *
+     * @see TransientContract
+     * @see AbstractORQ
+     * @see ORQWrapper
+     * 
+     * @param si
+     * @return an ORQWrapper containing the AbstractORQ given in {@code si}, along with its TransientContract
+     * @throws Exception
+     */
     public static ORQWrapper createORQWrapper( StagingInformationT si ) throws Exception {
 
         ORQWrapper wrp = new ORQWrapper(  );

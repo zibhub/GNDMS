@@ -21,7 +21,8 @@ reuse by other projects.
 Who should read what?
 ---------------------
 
-Data providers: Prerequisites and Quick Deployment Guide
+Deployer of grid software: Prerequisites and Deployment Quick Guide portion for
+the grid in question (INSTALL.<name of grid>)
 Developers: Everything from top to bottom.
 
                  
@@ -47,7 +48,7 @@ configuration (bash) can be found in etc/example.profile):
 
 - Get Globus 4.0.X, X >= 7
 - Setup working host and user certificates (You can build without; but then 
-  again where, would this  get you?)
+  again where, would this get you?)
 - Set $GLOBUS_LOCATION and have it in your environment
 - Load $GLOBUS_LOCATION/etc/globus-user-env.sh and 
   $GLOBUS_LOCATION/etc/globus-devel-env.sh into your environment
@@ -65,7 +66,7 @@ configuration (bash) can be found in etc/example.profile):
 - For convenience, you might also want to 
   add $GROOVY_HOME/bin to your PATH
 - Add a link 
-     ln -sf $GROOVY_HOME/embeddable/groovy-all*.jar $C3GRID_SOURCE/extra/tools-lib/gndms-groovy.jar 
+     ln -sf $GROOVY_HOME/embeddable/groovy-all*.jar $GNDMS_SOURCE/extra/tools-lib/gndms-groovy.jar 
                                
                                
 
@@ -74,10 +75,10 @@ configuration (bash) can be found in etc/example.profile):
 - Install rsync if not available
 - All three should be available in your $PATH
                                                                                  
-- Set C3GRID_SOURCE to the source directory and have it in your environment
-- Set C3GRID_SHARED to $GLOBUS_LOCATION/etc/c3grid_shared and have it in 
+- Set GNDMS_SOURCE to the source directory and have it in your environment
+- Set GNDMS_SHARED to $GLOBUS_LOCATION/etc/gndms_shared and have it in 
   your environment
-- Set GNDMS_MONI_CONFIG to $C3GRID_SHARED/monitor.properties and have it in 
+- Set GNDMS_MONI_CONFIG to $GNDMS_SHARED/monitor.properties and have it in 
   your environment
 
 - Add the directory called "bin" below the directory of this INSTALL file to 
@@ -92,7 +93,7 @@ configuration (bash) can be found in etc/example.profile):
 
 - Developers might want to add
 
-  export DERBY_OPTS="'-Dij.database=jdbc:derby:$C3GRID_SHARED/db/c3grid'"
+  export DERBY_OPTS="'-Dij.database=jdbc:derby:$GNDMS_SHARED/db/c3grid'"
 
   for peeking inside the derby database using the ij tool. 
 
@@ -172,7 +173,7 @@ The quick way to do things is executing
 ant clean.all
 ant compile
 
-in the toplevel directory of the source package ($C3GRID_SOURCE).
+in the toplevel directory of the source package ($GNDMS_SOURCE).
 
 If you want to do things step-by-step or understand how the project is actually build,
 continue with the really detailed build instructions below.
@@ -193,7 +194,7 @@ continue with the really detailed build instructions below.
 
 	 (Developers: When adding/changing used libs, make sure to run sync.sh again; 
 	  when deleting libs, make sure to kill the corresponding symlinks in 
-	  servics/*/lib)
+	  services/*/lib)
 
 
 
@@ -296,15 +297,15 @@ continue with the really detailed build instructions below.
 
   J2EE, groovy, annotations, "servicename"-stubs,
   gndms-infra, gndms-kit, gndms-logic, gndms-shared-model, gndms-stuff, 
-  joda-time, SOURCES, all non-symlinks in service/ServiceName/lib,  gt4
+  joda-time, SOURCES, all non-symlinks in services/ServiceName/lib,  gt4
 
   GORFX also depends on gndms-typecon, DSpace, args4j, DSpace-Stubs and jaxb.
   
-  compile to service/ServiceName/out/production (resp. test/), and exclude the
+  compile to services/ServiceName/out/production (resp. test/), and exclude the
   services' out,  build, and lib directories from the project sources to reduce
   the size of the project index.
 
-  You also should build a DSpace.jar form serives/DSpace/src and put
+  You also should build a DSpace.jar form services/DSpace/src and put
   in into extra/lib. Create a GORFX.jar in the GORFX-service folder.
 
   This should be enought to compile and develop with your IDE; for deployment
@@ -316,7 +317,7 @@ continue with the really detailed build instructions below.
 THINGS TO DO WHEN YOUR BUILD FAILS
 ----------------------------------
 
-1) Do you need to regen the stubs? Delete service/*/build and go from scratch
+1) Do you need to regen the stubs? Delete services/*/build and go from scratch
 
 2) Stale symlinks
 
@@ -340,8 +341,8 @@ THINGS TO DO WHEN YOUR BUILD FAILS
 
 Other common reasons for a failed container starts are invalid credentials
 (hostkey/hostcert.pem) or outdated CRLs. In the latter case, the script
-contained in contrib/fetch-crl may help you. Execute "fetch-crl -o
-<grid-cert-dir>" with apropriate permissions (Depends on wget).
+contained in contrib/fetch-crl may help you. Execute
+"fetch-crl -o <grid-cert-dir>" with apropriate permissions (Requries wget).
      
 
                                 
@@ -349,128 +350,28 @@ contained in contrib/fetch-crl may help you. Execute "fetch-crl -o
 ======================
 DEPLOYMENT QUICK GUIDE
 ======================
-           
-           
----------------------------------------------
-DATAPROVIDER DEPLOYMENT AND SETUP QUICK GUIDE
----------------------------------------------
-      
-Before we start a remark on logging.  To get access to substantially more log 
-messages, please add
 
-log4j.category.de.zib=DEBUG
-
-to $GLOBUS_LOCATION/container-log4j.properties
-
-For even more log information, please change the line that starts with 
-"log4j.appender.A1.layout.ConversionPattern=" to
-
-log4j.appender.A1.layout.ConversionPattern=%d{ISO8601} %-5p %c{2} [%t,%M:%L] <%x> %m%n
-
-(Techis: This enables NDC logging)
-
-
-Setting up a dataprovider can be done in a few quick steps:
-
-1) As the user who unpacked the GNDMS distribution, enter
-   $C3GRID_SOURCE and execute
-
-   ant -f build-deploy.xml prepare
-
-
-2) Shutdown the globus container and execute as globus user
-
-   ant -f build-deploy.xml dp-install
-                                     
-
-Now you should have a working installation of GNDMS.  Next, we'll configure it as a dataprovider site.
-                                                                                                      
-
-3) Run the container again with enabled GNDMS monitor. For this, 
-
-   - Set GNDMS_MONITOR_ENABLED=true
-   - Execute globus-start-container in the same shell
-
-
-4) Edit the shell variables at the beginning of 
-  
-     scripts/setup-dataprovider.sh
-   
-   according to your needs.   
-
-   If you want to use java plugin-based staging instead of script-based staging:
-
-   Additionally edit the line starting with "moni call -v .gorfx.ConfigOfferType".  There, enter the names of 
-   your plugin classes ("estimationClass", "stagingClass") and manually add the jar containing these classes
-   to $GLOBUS_LOCATION/lib before proceeding with the next step).
-                               
-
-5) Wait for globus to have finished startup (i.e. it has printed the list of running services on the console).
-
-   As globus user, execute in $C3GRID_SOURCE
-
-     ant -f build-deploy.xml dp-setupdb      
-
-   This can be done only once and will produce a few pages of output that should not contain any
-   java stracktraces, just consecutive monitor commands and the string "OK" as result for each command.
-
-   ONLY IF THIS STEP FAILS, and you want to retry with a modified setup script, you have to
+Moved.
+          
+See INSTALL.<gridname> files.
  
-     Shutdown globus, run "ant -f build-deploy.xml dp-killdb",
-
-   and try again.
-   
-
-6) Restart globus, possibly with disabled monitor
-
-
-Now, you're done!  To test, load your grid-proxy and (assuming bash) execute in $C3GRID_SOURCE:
-
-   ant -f build-deploy.xml dp-test \
-      "-Dpsc.epr=https://$(hostname):8443/wsrf/services/c3grid/GORFX" \
-      "-Dpsc.sfr=test-data/sfr/dummy-sfr.properties" \
-      "-Dpsc.dn=$(grid-proxy-info -identity)"
-
-dp-test may take quite a while (< 2 min). Output should look like this:
-
-    Buildfile: build-deploy.xml
-
-    check-env:
-
-    dp-test:
-         [java] Waiting for staging to finish...
-         [java] types.ProviderStageInResultT@838ffe5f
-         [java] Address: https://130.73.72.122:8443/wsrf/services/c3grid/Slice
-         [java] Reference property[0]:
-         [java] <ns3:SliceKey xmlns:ns3="http://dspace.gndms.zib.de/DSpace/Slice">c51ea260-a50d-11dd-adb5-ac1efd92dacf</ns3:SliceKey>
-         [java] 
-         [java] Collect your results at:
-         [java] gsiftp://seeker.zib.de/tmp/RW/c51fb3d0-a50d-11dd-adb5-ac1efd92dacf
-
-    BUILD SUCCESSFUL
-	Total time: 7 seconds
-    
-
+           
 
 
 =================
 MANUAL DEPLOYMENT
 =================
      
-
+These are generic instructions for deployment of the GNDMS software.
 
 --------------------
 CONTAINER DEPLOYMENT
 --------------------
 
-This is a general description. Further down are additional configuration
-instructions for each possible role of a GNDMS site (data provider, publishing
-storage site, main GNDMS site, etc.)
-
 First, please make sure you have fullfilled all prerequisites as described in
-the section titled "PRERQUISITES".
+the section above titled "PRERQUISITES".
 
-In order to deploy, simply execute as globus user
+In order to deploy, simply execute as the globus user
 
 globus-deply-gar <garfile>
 
@@ -556,7 +457,7 @@ See below for a list of possible run modes).
 
 To use a previously opened monitor, open a second shell and execute:
 
-"moni send foo $C3GRID_SOURCE/scrips/hello.groovy"
+"moni send foo $GNDMS_SOURCE/scrips/hello.groovy"
 
 If you see "Hello, World!" followed by "null" in the first shell you have
 succesfully enabled the monitoring console.

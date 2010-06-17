@@ -21,7 +21,21 @@ import java.util.Properties;
 
 
 /**
- * ThingAMagic.
+ * <p>An Action to create new {@link OfferType} instances and store them in the database.
+ *
+ * <p>Depending on the chosen <tt>SetupMode</tt>, it will either create or update an {@code OfferType} entity by using the getter methods
+ * provided in this class.
+ * On both modes, the entity is completly overwritten and stored in the database. If only the entity's configmap should be updated,
+ * use {@link de.zib.gndms.logic.model.gorfx.ConfigOfferTypeAction} instead, after the entity has been created once.
+ *
+ * <p>The following parameters are required for a new entity creation:
+ * {@link #orqType 'orqType'},{@link #resType 'resType'}. {@link #calcFactory 'calcFactory'},{@link #taskActionFactory 'taskAction'}.
+ * They must be set in the configuration map before this action is started on <tt>create</tt> modus.
+ * Otherwise an <tt>IllegalStateException</tt> will be thrown.
+ * <tt>orqType</tt> must be set in every mode.
+ *
+ * <p>An instance of this class returns a {@code ConfigActionResult} informing about the success of its execution, when
+ * the <tt>execute()</tt> method is called.
  *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$
@@ -83,6 +97,12 @@ public class SetupOfferTypeAction extends SetupAction<ConfigActionResult> {
     }
 
 
+    /**
+     * Tries to initialize all OfferType fields from the configuration map.
+     * 
+     * @throws MandatoryOptionMissingException if the configuration has not all need options set, needed for an OfferType
+     * @throws ClassNotFoundException if calcFactory or taskActionFactory class could not be found
+     */
     @SuppressWarnings({ "unchecked", "RawUseOfParameterizedType" })
     private void initOptions() throws MandatoryOptionMissingException, ClassNotFoundException {
         if (offerType == null)
@@ -97,7 +117,11 @@ public class SetupOfferTypeAction extends SetupAction<ConfigActionResult> {
             setTaskActionFactory((Class)Class.forName(getOption("taskActionFactory")));
     }
 
-
+    /**
+     * Initializes the config properties.
+     * If the configuration map has an option <tt>configFile</tt>, the properities will be loaded from the file <tt>configFile</tt>,
+     * using {@link #loadConfigFromFile()}. 
+     */
     private void initConfigProps() {
         if (configProps == null & hasOption("configFile"))
             try {
@@ -111,7 +135,13 @@ public class SetupOfferTypeAction extends SetupAction<ConfigActionResult> {
             configProps = new Properties();
     }
 
-
+    
+    /**
+     * Creates, updates or deletes the entity with the primary key {@code getOfferType()} from the entityclass {@code OfferType.class}
+     * @param em the EntityManager, managing the OfferType instance.
+     * @param writer
+     * @return An {@code OKResult} instance, if no problem occurred. Otherwise a {@code FailedResult} instance.
+     */
     @Override
     public ConfigActionResult execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer) {
         switch(getMode()) {
@@ -135,13 +165,25 @@ public class SetupOfferTypeAction extends SetupAction<ConfigActionResult> {
         return ok();
     }
 
-
+    /**
+     * Removes the entity with the primary key {@code getOfferType()} and the entityclass {@code OfferType.class} from the EntityManager.
+     *
+     * @param em the EnityManager, containing an entity instance for the entityClass {@code OfferType} and
+     *      the primary key {@code getOfferType()}
+     */
     private void executeDelete(final EntityManager em) {
         final OfferType type = em.find(OfferType.class, getOfferType());
         em.remove(type);
     }
 
 
+    /**
+     * Retrieves the entity instance with the primary key {@code getOfferType()} from the entityclass {@code OfferType.class}
+     * and sets its fields using the getter method of this class.
+     * 
+     * @param em the EnityManager, containing an entity instance for the entityClass {@code OfferType} and
+     *      the primary key {@code getOfferType()}
+     */
     @SuppressWarnings({ "MethodWithMoreThanThreeNegations", "FeatureEnvy" })
     private void executeUpdate(final EntityManager em) {
         final @NotNull OfferType type = em.find(OfferType.class, getOfferType());
@@ -157,6 +199,12 @@ public class SetupOfferTypeAction extends SetupAction<ConfigActionResult> {
     }
 
 
+    /**
+     * Creates a new {@code OfferType} ,sets its fields using the getter method of this
+     * class and makes it managed and persistent by the EntityManager.
+     *
+     * @param em the EntityManager, 
+     */
     @SuppressWarnings({ "FeatureEnvy" })
     private void executeCreate(final EntityManager em) {
         final OfferType type = new OfferType();
@@ -170,6 +218,11 @@ public class SetupOfferTypeAction extends SetupAction<ConfigActionResult> {
     }
 
 
+    /**
+     * Loads <tt> configFile </tt> as properties into <tt>configProps</tt>.
+     * 
+     * @throws IOException if the file could not be loaded
+     */
     private void loadConfigFromFile() throws IOException {
         FileInputStream in = new FileInputStream(new File(configFile));
         try {
@@ -185,7 +238,11 @@ public class SetupOfferTypeAction extends SetupAction<ConfigActionResult> {
         }
     }
 
-
+    /**
+     * Loads the current properties (<tt>configProps</tt>) to a map and and sets it as {@code typeParam}'s config map.
+     *
+     * @param typeParam an OfferType, which should use the current properties as its config map
+     */
     private void pushConfigProps(final OfferType typeParam) {
         Map<String, String> map = new HashMap<String, String>(configProps.size());
         configProps.putAll(map);

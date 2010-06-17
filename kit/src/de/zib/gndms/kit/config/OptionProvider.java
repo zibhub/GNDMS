@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * The value set for an option is stored as a String.
  * A {@code getOption(String optionname)} method is used to get the value set for the option {@code optionname}
- * in a current loaded configuration.
+ * in a currently loaded configuration.
  *  
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$

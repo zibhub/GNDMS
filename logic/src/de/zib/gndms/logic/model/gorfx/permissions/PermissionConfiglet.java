@@ -10,8 +10,9 @@ import java.io.Serializable;
 import java.util.Properties;
 
 /**
- * A class to configure the permissions of files created by the GORFX service.
+ * A class to configure permissions of files created by the GORFX service.
  *
+ * 
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
  * <p/>
@@ -35,6 +36,13 @@ public class PermissionConfiglet implements Configlet {
     }
 
 
+
+   /**
+   *  Tries to deserialzies {@code data} by casting it as a {@code PermissionConfigData}.
+    * If this is not possible, it will be casted as {@code Properties}.
+    *
+    * Then {@link #config} will be filled with the data.
+    */
     private void deserializeConfig(  @NotNull Serializable data ) {
 
         try{
@@ -60,10 +68,10 @@ public class PermissionConfiglet implements Configlet {
     }
 
 
-    /** This method always returns vaild permissions which respect the current user mode.
+    /** This method always returns vaild permissions with respect to the current user mode.
      *
-     * @param un The username to request the permissoin for. The username is only taken in account
-     *          iff the mode is Caller, in any other cases it can be null.
+     * @param un The username to request the permission for. The username is only taken in account
+     *          if the mode is Caller, in any other cases it can be null.
      */
     public FilePermissions permissionsFor( String un ) {
 

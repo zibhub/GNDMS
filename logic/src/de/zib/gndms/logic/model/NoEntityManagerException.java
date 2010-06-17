@@ -1,6 +1,8 @@
 package de.zib.gndms.logic.model;
 
 /**
+ * An Exception which will be thrown if an entity manager was expected, but not provided.
+ *
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
  * <p/>

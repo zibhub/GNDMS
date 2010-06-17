@@ -24,6 +24,7 @@
 		<!--dirset dir="${kit.classes.dest}"/-->
 		<pathelement path="${gt4}"/>
 		<pathelement path="${gndms-shared-model}"/>
+		<pathelement path="${stuff}"/>
 		<pathelement path="${annotations}"/>
 		<pathelement path="${jetty}"/>
 		<pathelement path="${servlet-api}"/>

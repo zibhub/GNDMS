@@ -18,8 +18,25 @@ import java.io.PrintWriter;
 
 
 /**
- * Creates a new subspace
+ * An Action to manage Subspaces with their corresponding MetaSubspaces in the database.
  *
+ * <p>An instance contains an <tt>ImmutableScopedName</tt> {@link #subspace} for the
+ *  key of the subspace (QName).It must be set in the configuration map and
+ *  will be retrieved during the initialization.
+ *
+ * <p>When this action is started with <tt>create</tt> or <tt>update</tt> as SetupMode, it will retrieve
+ * the MetaSubspace entity and the linked Subspace instance and (re)sets their fields using the getter methods of this class.
+ * If necessary, it may create a new MetaSubspace or Subspace instance and link them on <tt>create</tt> mode.
+ *
+ * <p>Note: <tt>read</tt> mode is not supported.
+ *
+ * <p>An instance of this class returns a {@code ConfigActionResult} informing about the success of its execution, when
+ * the <tt>execute()</tt> method is called.
+ *
+
+ * @see MetaSubspace
+ * @see Subspace
+ * @see ImmutableScopedName
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
  *
@@ -43,6 +60,12 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
     private Long size;
 
 
+  /**
+    * Calls <tt>super.initialize()</tt> and retrieves several field values from the configuration map,
+    * if SetupMode is <tt>create</tt>.
+    * The option 'subspace' must be set anyway.
+    * 
+    */
     @Override
     public void initialize() {
         super.initialize();    // Overridden method
@@ -69,6 +92,24 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
     }
 
 
+    /**
+     *  Tries to retrieve the MetaSubspace entity with the primary key <tt>getSubspace()</tt> from the entityclass {@code MetaSubspace.class}
+     *  managed by {@code em} and a corresponding <tt>Subspace</tt> instance.
+     *
+     *  <p>If <tt>SetupMode</tt> is set to <tt>create</tt> and if necessary,
+     *  it creates a new Subspace or MetaSubspcae instance and link them.
+     *  The fields of the entity and the corresponding Subspace instance
+     *  are then (re)set using the corresponding getter methods of this class.
+     *  Makes both instances managed and persistent by the EntityManager, if not already done.
+     *
+     *  <p> Removes both instances from the EntityManager, if SetupMode is <tt>delete</tt>
+     *
+     *  <p> Adds a new <tt>ModelChangedAction(subspace)</tt> to the postponedActions of this action instance. 
+     * 
+     * @param em an EntityManager managing MetaSubspace and Subspace entities.
+     * @param writer
+     * @return An {@code OKResult} instance, if no problem occurred. Otherwise a {@code FailedResult} instance.
+     */
     @SuppressWarnings({ "FeatureEnvy", "MethodWithMoreThanThreeNegations" })
     @Override
     public ConfigActionResult execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer) {
@@ -120,7 +161,15 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
        return ok();
     }
 
-
+    /**
+     * Tries to retrieve the entity instance with the primary key {@code pkParam} from the entityclass {@code MetaSubspace.class}.
+     * If not <tt>null</tt> it will be returned. Otherwise a new <tt>MetaSubspace</tt> instance is created,
+     * with <tt>pkParam</tt> as its ScopedName.
+     *
+     * @param em
+     * @param pkParam
+     * @return
+     */
     private MetaSubspace prepareMeta(final EntityManager em, final ImmutableScopedName pkParam) {
         MetaSubspace meta= em.find(MetaSubspace.class, pkParam);
         if (meta == null) {
@@ -133,6 +182,14 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
     }
 
 
+    /**
+     * If SetupMode is not <tt>create</tt> the <tt>metaParam</tt>'s subspace is returned.
+     * Otherwise a new <tt>Subspace</tt> instance is created, linked with <tt>metaParam</tt> and returned.
+     *
+     * @param metaParam A <tt>MetaSubspace</tt> containing a <tt>Subspace</tt> if setupMode is not <tt>create</tt>.
+     *      Otherwise a new <tt>Subspace</tt> instance is created, linked with <tt>metaParam</tt>
+     * @return the subspace linked with <tt>metaParam</tt>
+     */
     @SuppressWarnings({ "FeatureEnvy" })
     private Subspace prepareSubspace(final MetaSubspace metaParam) {
         Subspace subspace;

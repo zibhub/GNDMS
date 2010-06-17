@@ -3,6 +3,7 @@ package de.zib.gndms.model.gorfx.types.io;
 import java.util.Map;
 
 /**
+ *
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
  * <p/>

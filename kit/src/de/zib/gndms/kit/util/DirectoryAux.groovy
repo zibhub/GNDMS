@@ -5,7 +5,7 @@ import de.zib.gndms.model.common.AccessMask
 import de.zib.gndms.model.common.AccessMask
 
 /**
- * Interface for some helpers for directory access.
+ * This abstract class provides usefull methods concerning directory access.
  *
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$

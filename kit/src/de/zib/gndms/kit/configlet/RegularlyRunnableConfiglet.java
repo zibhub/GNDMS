@@ -6,9 +6,10 @@ import java.io.Serializable;
 
 
 /**
- * This abstract class stores a configuration in a map and will executed a loop concurrently.
+ * This abstract class extends the <tt>RunnableConfiglet</tt> class by a loop, which calls {@link #threadRun_()} concurrently.
+ * An initial delay before the first execution and a delay after every execution can be denoted.
  *
- * Implement {@code threadRun()}  to be executed concurrently in a loop after the {@code init} method has been invoked.
+ * Loop starts as soon as {@link #init(org.apache.commons.logging.Log, String, java.io.Serializable)} } is invoked.
  *
  *
  * @author Stefan Plantikow<plantikow@zib.de>
@@ -55,7 +56,7 @@ public abstract class RegularlyRunnableConfiglet extends RunnableConfiglet {
 
     /**
      * Loop which invokes {@link RegularlyRunnableConfiglet#threadRun()} after {@code delay} seconds. Do not call this method directly !
-     * Will be invoked by {@code RunnableConfiglet}'s {@code run()}-Method to run concurrent.
+     * Will be invoked by {@code RunnableConfiglet}'s {@code run()}-Method to run concurrently.
      */
     @Override
 	public void run_() {
@@ -86,6 +87,7 @@ public abstract class RegularlyRunnableConfiglet extends RunnableConfiglet {
 
     /**
      * Returns the initial delay for {@code run-()}'s loop in miliseconds
+     *
      * @return the initial delay for {@code run-()}'s loop in miliseconds
      */
 	public synchronized long getInitDelay() {
@@ -94,6 +96,7 @@ public abstract class RegularlyRunnableConfiglet extends RunnableConfiglet {
 
     /**
      * Sets the value for the inital Delay in miliseconds, after that {@code threadRun()} will be invoked for the first time}
+     *
      * @param initDelayParam the value for the inital delay in miliseconds, after that {@code threadRun()} will be invoked for the first time}
      */
 	public synchronized void setInitDelay(final long initDelayParam) {
@@ -102,6 +105,7 @@ public abstract class RegularlyRunnableConfiglet extends RunnableConfiglet {
 
     /**
     * Returns the delay for {@code run-()}'s loop in miliseconds
+     *
      * @return the delay for {@code run-()}'s loop in miliseconds
      */
 	public synchronized long getDelay() {
@@ -110,6 +114,7 @@ public abstract class RegularlyRunnableConfiglet extends RunnableConfiglet {
 
     /**
      * Sets the value for the delay in miliseconds, after that {@code threadRun()} will do the next interation in the loop
+     *
      * @param delayParam the value for the delay in miliseconds, after that {@code threadRun()} will do the next interation in the loop
      */
 	public synchronized void setDelay(final long delayParam) {

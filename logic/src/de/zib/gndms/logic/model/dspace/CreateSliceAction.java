@@ -15,6 +15,15 @@ import java.util.Calendar;
 /**
  * An action which creates a new slice in a given workspace
  *
+ * It takes care of the hierarchic structur between {@link Subspace},{@link SliceKind} and {@link Slice}.
+ * The new slice instance will be registered on the corresponding subspace object and the system will be notified about
+ * the model change by calling {@code addChangedModel()}. See {@link #execute(javax.persistence.EntityManager)}
+ *
+ * @see de.zib.gndms.model.dspace.DSpace
+ * @see de.zib.gndms.model.dspace.Subspace
+ * @see Slice
+ *
+ *
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
  *
@@ -32,6 +41,17 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
     }
 
 
+    /**
+     * Creates a new {@code CreateSliceAction} action and sets its fields as given by the signature.
+     * It creates and returns a new slice object, when this action is executed.
+     *
+     *
+     * @param uuid a uuid identifying the grid resource of the new slice instance
+     * @param ttm the termination time of the slice object
+     * @param gen an uuid generator for the directory id of the new slice object
+     * @param kind the sliceKind instance for the slice. (See {@link Slice}).
+     * @param ssize total storage size for the slice instance
+     */
     public CreateSliceAction( String uuid, Calendar ttm, ModelUUIDGen gen, SliceKind kind, long ssize ) {
 
         super( uuid, ttm );
@@ -42,7 +62,18 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
 
     }
 
-
+        /**
+     * Creates a new {@code CreateSliceAction} action and sets its fields as given by the signature.
+     * It creates and returns a new slice object, when this action is executed.
+     *
+     *
+     * @param uuid a uuid identifying the grid resource of the new slice instance
+     * @param ttm the termination time of the slice object
+     * @param gen an uuid generator for the directory id of the new slice object
+     * @param kind the sliceKind instance for the slice. (See {@link Slice}).
+     * @param ssize total storage size for the slice instance
+     * @param da an helper object for directory access 
+     */
     public CreateSliceAction( String uuid, Calendar ttm, ModelUUIDGen gen, SliceKind kind, long ssize, DirectoryAux da ) {
         
         super( uuid, ttm );
@@ -52,7 +83,12 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
         this.directoryAux = da;
     }
 
-
+    /**
+     * Checks if a {@link de.zib.gndms.model.dspace.SliceKind} instance has been denoted and throws an exception if not given.
+     * Calls super.initialize()
+     *
+     * @see CreateTimedGridResourceAction#initialize()
+     */
     @Override
     public void initialize() {
 
@@ -62,7 +98,21 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
         super.initialize();
     }
 
-
+    /**
+     * Creates and returns a new slice instance.
+     * It will be created using the fields given with the constructor of this class and the subspace retrieved from
+     * {@code getModel()}.
+     *
+     * It arranges the hierarchic structor between {@link Subspace},{@link SliceKind} and {@link Slice}.
+     * At the moment this is done using subfolders. The permissions of the folder corresponding to the slice instance
+     * are set as denoted in {@link #sliceKind}.
+     * The new Slice instance will be registered on the corresponding Subspace.
+     * Therefore {@link #addChangedModel(de.zib.gndms.model.common.GridResource)} is called with the new slice instance
+     * and the changed subspace instance.
+     * 
+     * @param em the EntityManager  being executed on its persistence context.
+     * @return the new created slice instance
+     */
     @Override
     public Slice execute( @NotNull EntityManager em ) {
 
@@ -128,7 +178,11 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
         return directoryAux;
     }
 
-
+    /**
+     * Sets the DirectoryAux instance used to set the permissions of the newly created slice directory.
+     *
+     * @param da
+     */
     public void setDirectoryAux( DirectoryAux da ) {
         directoryAux = da;
     }

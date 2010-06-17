@@ -6,7 +6,9 @@ import java.lang.annotation.*;
 
 
 /**
- * ThingAMagic.
+ * This annotation is used to choose a copymode
+ *
+ * @see Copier
  *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$

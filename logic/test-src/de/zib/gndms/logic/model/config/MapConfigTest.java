@@ -9,7 +9,7 @@ import java.util.Map;
 
 
 /**
- * ThingAMagic.
+ * Tests whether MapConfig correctly handles system enviroment variables, denoted in key's value
  *
  * @author Stefan Plantikow<plantikow@zib.de>
  * @version $Id$

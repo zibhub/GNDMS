@@ -4,8 +4,9 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
- * ThingAMagic.
-*
+ * A Class to indicate that an action succeeded in returning its result.
+ *
+ * @see ConfigAction
 * @author Stefan Plantikow<plantikow@zib.de>
 * @version $Id$
 *

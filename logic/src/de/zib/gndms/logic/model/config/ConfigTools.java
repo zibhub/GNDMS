@@ -11,19 +11,34 @@ import java.io.PrintWriter;
 
 
 /**
- * ThingAMagic.
-*
-* @author Stefan Plantikow<plantikow@zib.de>
-* @version $Id$
-*
-*          User: stepn Date: 23.10.2008 Time: 16:37:27
-*/
+ * This Class provides methods to print help regarding the proper configuration of an ConfigAction instance.
+ *
+ * <tt>PrintOptionReminder()</tt> prints a details description about the syntax of the configuration.
+ *
+ * <tt>PrintOptionHelp()</tt> can be used with <tt>getParamMap()</tt> to print all possible configurations of a
+ * specific ConfigAction class.
+ * .
+ *
+ * @see  de.zib.gndms.logic.model.config.ConfigAction
+ * @see de.zib.gndms.logic.model.config.ConfigOption
+ * @author Stefan Plantikow<plantikow@zib.de>
+ * @version $Id$
+ *
+ *          User: stepn Date: 23.10.2008 Time: 16:37:27
+ */
 @SuppressWarnings({ "StaticMethodOnlyUsedInOneClass" })
 class ConfigTools {
     private ConfigTools() {
     }
 
-
+    /**
+     * Returns a Map containing all annotated field names and their corresponding description for a specific class.
+     * (See {@link #fillParamMapForClass(Class, java.util.Map)}).
+     *
+     * @param clazz the class object whose fields and their description should be put into a map
+     * @return a Map containing all fields and their corresponding description as an {@code ConfigOption} object
+     * of a {@code clazz}'s instance
+     */
     public static Map<String, ConfigOption> getParamMap(
             final @NotNull Class<? extends ConfigAction<?>> clazz) {
         Map<String, ConfigOption> map = new HashMap<String, ConfigOption>(8);
@@ -31,7 +46,15 @@ class ConfigTools {
         return map;
     }
 
-
+    /**
+     * Fills a map with the names of all annotated fields (<tt>ConfigOption</tt>) and their description,
+     * for a given class class.
+     * A field is stored in the map using its name as key and its corresponding {@link ConfigOption} Object as its value.
+     * If an alternative name is given, the alternative field name will be taken as its key.
+     *
+     * @param clazz the class object whose fields and their description should be added to the map
+     * @param mapParam the map to be filled with all field names and their corresponding
+     */
     private static void fillParamMapForClass(
             final Class<?> clazz, final Map<String, ConfigOption> mapParam) {
         if (Object.class.equals(clazz))
@@ -41,6 +64,7 @@ class ConfigTools {
         for (Field field : clazz.getDeclaredFields()) {
             ConfigOption option = field.getAnnotation(ConfigOption.class);
             if (option != null) {
+                //TODO fix possibly key collision
                 String altName = option.altName();
                 if (altName != null && altName.length() > 0) {
                     if (mapParam.containsKey(altName))
@@ -54,6 +78,11 @@ class ConfigTools {
         }
     }
 
+    /**
+     * Prints the syntax description used for the configuration of a ConfigAction.
+     * 
+     * @param printWriter the {@code PrintWriter} the option reminder will printed to
+     */
     @SuppressWarnings({ "HardcodedFileSeparator" })
     protected static void printOptionReminder(PrintWriter printWriter) {
         printWriter.println("Option format reminder: opt1: value1; ...; optN: valueN");
@@ -70,7 +99,13 @@ class ConfigTools {
                     " * Timestamps are expected to be in ISO8601-format and based on UTC.");
     }
 
-
+    /**
+     * Writes all possible configurations for specific ConfigAction class along with their description to an PrintWriter.
+     * The map must be created using {@link #getParamMap(Class)}.
+     *
+     * @param writer the {@code PrintWriter} the help will be printed to
+     * @param mapParam a map corresponding to a specific ConfigAction class
+     */
     protected static void printOptionHelp(final @NotNull PrintWriter writer,
                                           final Map<String, ConfigOption> mapParam) {
         Object[] entries = mapParam.entrySet().toArray();
@@ -92,6 +127,5 @@ class ConfigTools {
             writer.println(descr == null || descr.length() == 0 ? "The " + key : descr);
         }
     }
-
 
 }

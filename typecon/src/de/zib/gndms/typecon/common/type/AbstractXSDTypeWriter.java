@@ -1,6 +1,10 @@
 package de.zib.gndms.typecon.common.type;
 
 /**
+ * An AbstractXSDTypeWriter is used to convert a gndms class to the corresponding axis type.
+ * It should be used in conjunction with {@link de.zib.gndms.model.gorfx.types.io.ORQWriter}
+ * It contains the created axis type.
+ * 
  * @author: Maik Jorra <jorra@zib.de>
  * @version: $Id$
  * <p/>

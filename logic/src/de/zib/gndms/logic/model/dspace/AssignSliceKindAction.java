@@ -10,22 +10,33 @@ import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.SliceKind;
 import org.jetbrains.annotations.NotNull;
-
 import javax.persistence.EntityManager;
 import java.io.PrintWriter;
 import java.util.Set;
 
 
-/**
- * ThingAMagic.
- *
- * @author Stefan Plantikow<plantikow@zib.de>
- * @version $Id$
- *
- *          User: stepn Date: 08.10.2008 Time: 12:53:58
- */
+    /**
+     * An Action assigning or removing a connection between a SliceKind and a MetaSubspace.
+     *
+     * <p>When this action is started, the configuration map must have the options 'subspace', 'sliceKind' set.
+     * Otherwise an <tt>IllegalStateException</tt> will be thrown.
+     * Furthermore it retrieves the value for the enum {@code Mode} if denoted in the current configuration.
+     * Otherwise <tt>Mode.ADD</tt> will be used.
+     *
+     * <p>An instance of this class returns a {@code ConfigActionResult} informing about the success of its execution, when
+     * the <tt>execute()</tt> method is called.
+     *
+     * @see de.zib.gndms.model.dspace.SliceKind
+     * @see de.zib.gndms.model.dspace.MetaSubspace
+     * @author Stefan Plantikow<plantikow@zib.de>
+     * @version $Id$
+     *
+     *          User: stepn Date: 08.10.2008 Time: 12:53:58
+     */
 @ConfigActionHelp(shortHelp = "Assign SliceKind to MetaSubspace", longHelp = "-")
 public class AssignSliceKindAction extends ConfigAction<ConfigActionResult> {
+
+
     @SuppressWarnings({ "EnumeratedClassNamingConvention" })
     enum Mode { ADD, REMOVE }
 
@@ -38,6 +49,10 @@ public class AssignSliceKindAction extends ConfigAction<ConfigActionResult> {
     @ConfigOption(descr="One of ADD (DEFAULT) or REMOVE")
     Mode mode;
 
+   /**
+    * Calls {@code super.initialize()} and tries to retrieve the fields {@code subspace}, {@code sliceKind},
+    * and {@code mode}.
+    */
     @Override
     public void initialize() {
         super.initialize();
@@ -52,6 +67,19 @@ public class AssignSliceKindAction extends ConfigAction<ConfigActionResult> {
     }
 
 
+   /**
+     *
+     * Retrieves the MetaSubspace entity with the entityClass {@code MetaSubspace.class} and the primary key {@code subspace} and
+     * a SliceKind entity with the entityClass {@code SliceKind.class} and the primary key {@code sliceKind}.
+     *
+     * Depending on the chosen <tt>Mode</tt> value, the sliceKind entity and the MetaSubspace entity are assigned to or removed from each other.
+     *
+     * <p>The change on the model will be registerd to the postponed actions.
+    * 
+     * @param em an EntityManager managing SliceKind and MetaSubspace entities.
+     * @param writer
+     * @return An {@code OKResult} instance, if no problem occurred. Otherwise a {@code FailedResult} instance.
+     */
     @Override
     public ConfigActionResult execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer) {
         final MetaSubspace space = em.find(MetaSubspace.class, subspace);

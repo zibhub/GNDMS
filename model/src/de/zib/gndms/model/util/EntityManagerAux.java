@@ -11,6 +11,7 @@ import javax.persistence.EntityTransaction;
  */
 public class EntityManagerAux {
 
+
     public static void rollbackAndClose( EntityManager em ) {
 
         if( em != null &&  em.isOpen() ) {

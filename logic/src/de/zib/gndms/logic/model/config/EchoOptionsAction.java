@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 
 
 /**
- * Just returns all option parameters and prints them by virtue of ConfigAction.setWriteResult(true)
+ * Just returns all option parameters and prints them by virtue of ConfigAction.setWriteResult(true).
  *
  * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$

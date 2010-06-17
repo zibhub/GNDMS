@@ -98,19 +98,6 @@
 	</target>
 	
 	
-	<!-- Checks if symlink has been executed before -->
-	<!--target name="symlink.check">
-		<available property="linked" file=".symlink"/>
-	</target-->
-	
-	<!-- Create necessary symlinks in the services' lib directories -->
-	<!--target name="symlink.create" depends="symlink.check" unless="linked" description="sets symbolic links, if needed">
-		<echo> setting symbolic links </echo>
-		<exec executable="sh">
-			<arg value="sync.sh"/>
-		</exec>
-		<echo file=".symlink">dummy-file, needed for build-script </echo>
-	</target-->
 	
 	<!-- Create necessary symlinks in the services' lib directories -->
 	<target name="symlink.create" description="sets symbolic links">
