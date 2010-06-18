@@ -21,8 +21,8 @@
 
 <target name="check-env">
 	<fail unless="env.GLOBUS_LOCATION" />
-	<fail unless="env.C3GRID_SHARED" />
-	<fail unless="env.C3GRID_SOURCE" />
+	<fail unless="env.GNDMS_SHARED" />
+	<fail unless="env.GNDMS_SOURCE" />
 	<fail unless="env.DERBY_HOME" />
 	<fail unless="env.GROOVY_HOME" />
 </target>

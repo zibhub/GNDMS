@@ -1,6 +1,5 @@
 package de.zib.gndms.kit.monitor;
 
-import com.oreilly.servlet.Base64Decoder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,7 +12,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.security.Principal;
 import java.util.Enumeration;
-
+import org.apache.commons.codec.binary.Base64;
 
 /**
  * This servlet is run from GroovyMonitorServer to provide access to GroovyMonitors via
@@ -301,12 +300,14 @@ public class GroovyMoniServlet extends HttpServlet {
 
     private static String parseAction(HttpServletRequestWrapper requestWrapper) {
         final String monitorArgs = requestWrapper.getParameter("action");
-        return monitorArgs == null ? "" : Base64Decoder.decode(monitorArgs);
+        final Base64 b64 = new Base64();
+        return monitorArgs == null ? "" : new String(b64.decode(monitorArgs));
     }
 
 	private static String parseArgs(HttpServletRequestWrapper requestWrapper) {
 		final String monitorArgs = requestWrapper.getParameter("args");
-		return monitorArgs == null ? "" : Base64Decoder.decode(monitorArgs);
+        final Base64 b64 = new Base64();
+		return monitorArgs == null ? "" : new String(b64.decode(monitorArgs));
 	}
 
 	// Im scared about this one: Didnt know thats not allowed

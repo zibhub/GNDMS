@@ -28,12 +28,12 @@
 		<pathelement path="${annotations}"/>
 		<pathelement path="${jetty}"/>
 		<pathelement path="${servlet-api}"/>
-		<pathelement path="${cos}"/>
 		<pathelement path="${testng}"/> 
 		<pathelement path="${joda-time}"/> 
 		<pathelement path="${args4j}"/>
 		<pathelement path="${collections}"/> 
-                <pathelement path="${guice}"/>
+    <pathelement path="${guice}"/>
+    <pathelement path="${apache-commons}"/>
 	</path>
 	
 	

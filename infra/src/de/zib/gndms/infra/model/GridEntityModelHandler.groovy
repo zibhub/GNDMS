@@ -197,7 +197,7 @@ class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R 
      *  @see #callModelAction(EntityManager, de.zib.gndms.logic.model.BatchUpdateAction, de.zib.gndms.logic.model.EntityUpdateListener, de.zib.gndms.logic.model.ModelAction, M)
      */
 	public final <B> B callNewResourceAction(
-		final @NotNull BatchUpdateAction<?> postponedActions,
+		final @NotNull BatchUpdateAction<?, R> postponedActions,
 		final @NotNull EntityUpdateListener listener,
 		final @NotNull ModelAction<M, B> theAction,
 	    final @NotNull R resource) {
