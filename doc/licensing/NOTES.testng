@@ -1,0 +1,23 @@
+=====
+Maven
+=====
+
+If you ran the full dist build, it should have generated a file on your hard drive called
+"testng-5.12-bundle.jar".
+
+Testing:
+
+-> Update <version>5.12</version> in bundle-pom.xml to the correct version
+  mvn install:install-file -DpomFile=bundle-pom.xml -Dfile=testng-5.12.1.jar
+  cd /tmp
+  svn co http://svn.apache.org/repos/asf/maven/surefire/trunk/surefire-integration-tests/src/test/resources/testng-simple/
+  cd testng-simple
+-ory appropriately):
+
+Linux:
+-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl}    -application org.eclipse.equinox.p2.metadata.generator.EclipseGenerator -updateSite /usr/local/cbeust/java/testng-eclipse-update-site -site file:/usr/local/cbeust/java/testng-eclipse-update-site/site.xml  -metadataRepository file:/usr/local/cbeust/java/testng-eclipse-update-site/  -artifactRepository file:/usr/local/cbeust/java/testng-eclipse-update-site -artifactRepositoryName "Ganymede Artifacts" -compress  -append  -reusePack200Files  -noDefaultIUs  -vmargs -Xmx256m
+
+Mac
+-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl}    -application org.eclipse.equinox.p2.metadata.generator.EclipseGenerator -updateSite /Users/cbeust/java/testng-eclipse-update-site -site file:/Users/cbeust/java/testng-eclipse-update-site/site.xml  -metadataRepository file:/Users/cbeust/java/testng-eclipse-update-site/  -artifactRepository file:/Users/cbeust/java/testng-eclipse-update-site -artifactRepositoryName "Ganymede Artifacts" -compress  -append  -reusePack200Files  -noDefaultIUs  -vmargs -Xmx256m
+
+This will generate the site in ~/java/testng-eclipse-update-site

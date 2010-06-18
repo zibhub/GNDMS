@@ -50,7 +50,6 @@ ws-common/gndms-ws-common/test/**
 .project
 test-output/**
 ./changes
-doc/*
 **/.svn/**
 .svn/**
 types/DSpace

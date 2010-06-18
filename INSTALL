@@ -144,7 +144,6 @@ When describing the dependencies of a compilation unit, I assume the following
 - jetty: extra/tools-lib/jetty*.jar
 - testng: extra/tools-lib/testng*.jar
 - servlet-api: extra/tools-lib/servlet-api*.jar
-- cos: extra/tools-lib/cos-*.jar
 - collections: extras/tools-lib/google-collect*.jar
 - httpcore: extras/tools-lib/http*.jar
 - guice: extra/tools-lib/guice*.jar asm*.jar cglib*.jar
@@ -237,7 +236,7 @@ continue with the really detailed build instructions below.
      Sources: kit/src
      Output: kit/gndms-kit/production (resp. test) classes
      Dependencies: GROOVY, J2EE, SOURCE, stuff, gt4, gndms-shared-model, annotations,
-                   jetty, servlet-api, cos, testng, joda-time, args4j, guice
+                   jetty, servlet-api, testng, joda-time, args4j, guice
 
 
   6) Compile gndms-logic.jar
@@ -264,7 +263,7 @@ continue with the really detailed build instructions below.
      Output: infra/gndms-infra/production (resp. test) classes
             extra/lib/gndms-infra.jar containing the contents of production/
      Dependencies: GROOVY, J2EE, annotations, gndms-logic, stuff, 
-		   gndms-shared-model, commons, derby, cos, servlet-api, jetty, 
+		   gndms-shared-model, commons, derby, servlet-api, jetty, 
 		   gt4, testng, joda-time, gndms-kit, jaxb, httpcore
 
     (In IntelliJ: Use Build/Build Jars.. to build the jar on Make Project)
