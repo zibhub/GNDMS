@@ -127,12 +127,22 @@ BUILD INSTRUCTIONS
 !! If you dont want to build but instead just want to deploy, please skip to   !!
 !! the section titled "DEPLOYMENT QUICK GUIDE" in INSTALL.<gridname>           !!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!                                                                               
-                                                                                 
-Since their now is a global build script (build-compile.xml) all you have to do
-ist ant -f build-compile.xml [clean|compile|none for help message].
+                              
+If you do a full build, do not load the globus environment during compile as 
+this may cause weird groovy errors or set CLASSPATH='' before compiling.  
+However it needs to be loaded for deployment.
 
-However in case you need to build from hand, this section describes the neccesary
-steps.  It requires doing many things by hand, meaning this guide is not for the 
+Since their now is a global build script (build-compile.xml) all you have to do
+is
+
+ant -f build-compile.xml clean.all
+ant -f build-compile.xml compile
+
+in the toplevel directory of the source package ($GNDMS_SOURCE). 
+"ant -f build-compile.xml" will print a list of additional targets.
+
+However in case you need to build from hand, the next section describes the neccesary
+steps.  It requires doing many things manually, meaning this guide is not for the 
 faint of heart. Before you start please make sure you have succesfully installed 
 all prerequisites as described in the previous section.
 
@@ -182,20 +192,8 @@ When describing the dependencies of a compilation unit, we'll refer to the follo
 DETAILED BUILD INSTRUCTIONS
 ---------------------------
 
-If you do a full build, do not load the globus environment during compile as 
-this may cause weird groovy errors or set CLASSPATH='' before compiling.  
-However it needs to be loaded for deployment.
-
-The quick way to do things is executing 
-
-ant clean.all
-ant compile
-
-in the toplevel directory of the source package ($GNDMS_SOURCE).
-
 If you want to do things step-by-step or understand how the project is actually build,
-continue with the really detailed build instructions below.
-
+continue with the detailed build instructions below.
 
 
   0) Excute in services/
@@ -380,7 +378,8 @@ See INSTALL.<gridname> files.
 MANUAL DEPLOYMENT
 =================
      
-These are generic instructions for deployment of the GNDMS software.
+These are generic instructions for deployment of the GNDMS software. Unless you are
+a developer, this section is not for you.  See INSTALL.<gridname> instead.
 
 --------------------
 CONTAINER DEPLOYMENT
