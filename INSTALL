@@ -93,11 +93,24 @@ configuration (bash) can be found in etc/example.profile):
 
 - Developers might want to add
 
-  export DERBY_OPTS="'-Dij.database=jdbc:derby:$GNDMS_SHARED/db/c3grid'"
+  export DERBY_OPTS="'-Dij.database=jdbc:derby:$GNDMS_SHARED/db/gndms'"
 
   for peeking inside the derby database using the ij tool. 
 
   (Caution! Never ever do this while globus is running!)
+
+- To get access to substantially more log messages, please add
+
+    log4j.category.de.zib=DEBUG
+
+  to $GLOBUS_LOCATION/container-log4j.properties
+
+  For even more log information, please change the line that starts with
+  "log4j.appender.A1.layout.ConversionPattern=" to
+
+    log4j.appender.A1.layout.ConversionPattern=%d{ISO8601} %-5p %c{2} [%t,%M:%L] <%x> %m%n
+
+  (Techis: This enables NDC logging)
 
 
 

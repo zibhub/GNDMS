@@ -1,4 +1,4 @@
-setup_generic() { 
+c3grid_generic() { 
    RO="500" 
    RW="700" 
 	if [ -z "$ADDON" ] ; then
