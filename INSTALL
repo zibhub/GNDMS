@@ -13,17 +13,18 @@ garbage collection, workspace management and a centralized catalog for logical
 file sets.
 
 Originally, GNDMS has been written exclusively for the data management needs
-of c3grid (www.c3grid.de). However, the implementation is flexible enough for
-reuse by other projects.
+of c3grid (www.c3grid.de) and plasmagrid (www.ptgrid.de). However, the implementation 
+is flexible enough for reuse by other projects.
        
 
 ---------------------
 Who should read what?
 ---------------------
 
-Deployer of grid software: Prerequisites and Deployment Quick Guide portion for
-the grid in question (INSTALL.<name of grid>)
-Developers: Everything from top to bottom.
+"Admin/Deployer of grid software": Prerequisites section in this file and the 
+Deployment Quick Guide section for your grid (cf. INSTALL.<name of grid>)
+
+"Developers": Everything from top to bottom + Grid specific documentation
 
                  
   
@@ -54,7 +55,9 @@ configuration (bash) can be found in etc/example.profile):
   $GLOBUS_LOCATION/etc/globus-devel-env.sh into your environment
 
   (bash: add
+
      "source $GLOBUS_LOCATION/etc/globus-user-env.sh $GLOBUS_LOCATION/etc/globus-devel-env.sh"
+
    to your .profile)
 
 - Install apache-derby-bin-10.4.X
@@ -120,21 +123,24 @@ BUILD INSTRUCTIONS
 ==================
                
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!                                                                               
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !! If you dont want to build but instead just want to deploy, please skip to   !!
-!! the section titled "DEPLOYMENT QUICK GUIDE"                                 !!
+!! the section titled "DEPLOYMENT QUICK GUIDE" in INSTALL.<gridname>           !!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!                                                                               
                                                                                  
+Since their now is a global build script (build-compile.xml) all you have to do
+ist ant -f build-compile.xml [clean|compile|none for help message].
 
-We don't have a proper global build script yet. Therefore you have to do lots
-of things by hand, meaning this guide is not for the faint of heart. Before
-you start please make sure you have succesfully installed all prerequisites.
+However in case you need to build from hand, this section describes the neccesary
+steps.  It requires doing many things by hand, meaning this guide is not for the 
+faint of heart. Before you start please make sure you have succesfully installed 
+all prerequisites as described in the previous section.
 
 The following description was written for IntelliJ IDEA 8M1 but you should be
 able to repeat it with any other java tool chain.
 
-There are some problems with IDE's which don't support Groovy,
-e.g. Eclipse (at the time of writing).
+There are some problems with IDE's which don't support propert joint compilation of
+Groovy and Java, e.g. Eclipse (at the time of writing).
 
 
 
@@ -143,7 +149,7 @@ e.g. Eclipse (at the time of writing).
 SETUP DEPENDENCIES
 ------------------
                                                                                   
-When describing the dependencies of a compilation unit, I assume the following 
+When describing the dependencies of a compilation unit, we'll refer to the following 
 "project libraries"
 
 - SOURCES: The sources of the respective compilation unit

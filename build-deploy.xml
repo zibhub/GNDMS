@@ -12,11 +12,17 @@
 </taskdef>
 
 <target name="help">
-	<echo message="First and foremost: Read INSTALL otherwise you will get stuck"/>
+	<echo message="First and foremost: Read INSTALL and INSTALL.&lt;gridname&gt; otherwise you will get stuck"/>
         <echo message=""/>
         <echo message="targets for owning user: prepare"/>
-        <echo message="targets for globus user: dp-install, dp-killdb (require container to be shutdown)" />
+	<echo message=""/>
+	<echo message="C3GRID TARGETS" />
+        <echo message="targets for globus user: dp-install, dp-killdb (requires prior container shutdown)" />
         <echo message="targets for globus user: dp-setupdb (require running monitor and container)" />
+	<echo message=""/>
+	<echo message="PTGRID TARGETS" />
+	<echo message="targets for globus user: pt-install, pt-killdb (requires prior container shutdown)" />
+        <echo message="targets for globus user: pt-setupdb (require running monitor and container)" />
 </target>
 
 <target name="check-env">
@@ -83,5 +89,19 @@
         </java>
 </target>
 
+
+<target name="pt-killdb" depends="killdb" />
+
+<target name="pt-setupdb" depends="check-env">
+        <exec executable="scripts/setup-dataprovider.sh"><arg value="CREATE"/></exec>
+        <exec executable="./fix-permissions.sh" />
+</target>
+
+<target name="pt-install" depends="check-env, extract-schemas">
+        <exec executable="globus-deploy-gar"><arg value="services/DSpace/gndms_DSpace.gar" /></exec>
+        <exec executable="globus-deploy-gar"><arg value="services/GORFX/gndms_GORFX.gar" /></exec>
+	<!-- TODO find out why there is a GORFX.Task -> LOFIS dependency right now, shouldnt be required -->
+        <exec executable="globus-deploy-gar"><arg value="services/GORFX/gndms_LOFIS.gar" /></exec>
+</target>
 
 </project>
