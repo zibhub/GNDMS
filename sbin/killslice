@@ -26,6 +26,7 @@ if id "$NEWOWNER" > /dev/null ; then true ; else
 	 echo "$NEWOWNER is not a known user" ; exit 3
 fi
 
+SUBDIRID=`echo $SUBDIRID | tr -c -d abcdefghijklmnopqrstuvxyz0123456789-`
 # Targetdir must be a directory owned by either griduser or newowner
 TARGETDIR=`find -H "$AREAPATH/$SUBDIRID" -maxdepth 0 \( -user "$GRIDUSER" -or -user "$NEWOWNER" \)`
 if test -d "$TARGETDIR" ; then true ; else
