@@ -100,8 +100,8 @@ public class TransferStateTest extends ModelEntityTestBase {
             URI duri = new URI ( transferData.getDestinationURI( ) );
 
             // obtain clients
-            src = NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( suri );
-            dest = NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( duri );
+            src = NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( suri, null );
+            dest = NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( duri, null );
 
 
             // setup transfer handler

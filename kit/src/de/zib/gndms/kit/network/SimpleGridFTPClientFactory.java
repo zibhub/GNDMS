@@ -1,8 +1,8 @@
 package de.zib.gndms.kit.network;
 
+import de.zib.gndms.kit.access.CredentialProvider;
 import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.exception.ServerException;
-import org.apache.axis.types.URI;
 
 import java.io.IOException;
 
@@ -22,11 +22,12 @@ public class SimpleGridFTPClientFactory extends AbstractGridFTPClientFactory {
      *
      * @param host the hostname of the server
      * @param port the port value used for a connection to the server
+     * @param cp is ignored
      * @return a GridFTPClient, which is connected to server with the given hostname and port value.
      * @throws ServerException
      * @throws IOException
      */
-    public GridFTPClient createClient( String host, int port ) throws ServerException, IOException {
+    public GridFTPClient createClient( String host, int port, CredentialProvider cp ) throws ServerException, IOException {
         GridFTPClient clnt = new GridFTPClient( host, port );
         clnt.authenticate( null );
         return clnt;

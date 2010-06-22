@@ -1,6 +1,7 @@
 package de.zib.gndms.kit.network;
 
 import de.zib.gndms.stuff.qexecuter.QueuedExecutor;
+import de.zib.gndms.kit.access.CredentialProvider;
 import org.apache.log4j.Logger;
 import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.exception.ServerException;
@@ -26,7 +27,7 @@ public class NonblockingClientFactory extends AbstractGridFTPClientFactory{
     private Logger log = Logger.getLogger( NonblockingClientFactory.class );
 
 
-    public GridFTPClient createClient( String host, int port ) throws ServerException, IOException {
+    public GridFTPClient createClient( String host, int port, CredentialProvider cp ) throws ServerException, IOException {
 
         QueuedExecutor exec;
         synchronized( hostExecutors ) {
@@ -34,14 +35,14 @@ public class NonblockingClientFactory extends AbstractGridFTPClientFactory{
                 log.debug( "Returning executor for host: " + host );
                 exec = hostExecutors.get( host ) ;
             } else {
-                exec = new QueuedExecutor( scheduledExecutor );
                 log.debug( "Creating executor for host: " + host );
+                exec = new QueuedExecutor( scheduledExecutor );
                 exec.setDefaultDelay( delay );
                 hostExecutors.put( host, exec );
             }
         }
 
-        GridFTPClientCreator c = new GridFTPClientCreator( host, port );
+        GridFTPClientCreator c = new GridFTPClientCreator( host, port, cp );
         Future<GridFTPClient> f = exec.submit( c );
         try {
             try{

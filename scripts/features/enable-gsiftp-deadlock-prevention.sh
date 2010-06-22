@@ -1,5 +1,5 @@
 #!/bin/sh
-enable_gsiftpDeadlockPrevetion() {
+enable_gsiftpDeadlockPrevention() {
 moni call -v .sys.SetupDefaultConfiglet "\
   mode: '$MODE'; \
   name: 'nbcf'; \

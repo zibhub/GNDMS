@@ -6,7 +6,6 @@ import de.zib.gndms.infra.GNDMSTools;
 import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
-import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.gorfx.Task;
 import org.apache.axis.message.addressing.AttributedURI;
 import org.apache.axis.message.addressing.EndpointReferenceType;

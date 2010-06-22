@@ -15,7 +15,6 @@ import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.typecon.common.type.ContractXSDTypeWriter;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.log4j.Logger;
-import org.globus.gsi.GlobusCredential;
 import org.globus.wsrf.ResourceContext;
 import org.globus.wsrf.ResourceKey;
 import org.globus.wsrf.impl.ResourceContextImpl;
@@ -58,14 +57,14 @@ public class ORQImpl extends ORQImplBase {
             WidAux.initWid(orq.getCachedWid());
             WidAux.initGORFXid( orq.getORQCalculator().getORQArguments().getActId() );
             LogAux.logSecInfo( logger, "getOfferAndDestroyRequest" );
-            logger.debug( "Default creds: " + GlobusCredential.getDefaultCredential() );
+          //  logger.debug( "Default creds: " + GlobusCredential.getDefaultCredential() );
             try {
                 final TransientContract contract = orq.getOfferExecutionContract(offerExecutionContract);
                 OfferExecutionContractT oec =
                     ContractXSDTypeWriter.write( contract );
 
                 // log contract
-                logger.debug( "Calculated contract: " + loggableXSDT( oec ) );
+                logger.debug( "Calculated contract: " + LogAux.loggableXSDT( oec ) );
                 logger.debug( "Creating offer resouce" );
 
 

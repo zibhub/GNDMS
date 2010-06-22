@@ -1,27 +1,26 @@
 package de.zib.gndms.GORFX.action.tests;
 
-import org.apache.log4j.*;
+import de.zib.gndms.GORFX.ORQ.client.ORQClient;
+import de.zib.gndms.GORFX.client.GORFXClient;
+import de.zib.gndms.GORFX.context.client.TaskClient;
+import de.zib.gndms.GORFX.offer.client.OfferClient;
+import de.zib.gndms.model.common.types.TransientContract;
+import de.zib.gndms.model.gorfx.types.AbstractORQ;
+import de.zib.gndms.model.gorfx.types.io.ORQConverter;
+import de.zib.gndms.model.gorfx.types.io.ORQPropertyReader;
+import de.zib.gndms.model.gorfx.types.io.ORQWriter;
+import de.zib.gndms.typecon.common.type.AbstractXSDTypeWriter;
+import de.zib.gndms.typecon.common.type.ContextXSDTypeWriter;
+import de.zib.gndms.typecon.common.type.ContractXSDTypeWriter;
 import org.apache.axis.components.uuid.UUIDGen;
 import org.apache.axis.components.uuid.UUIDGenFactory;
 import org.apache.axis.message.addressing.EndpointReferenceType;
+import org.apache.log4j.*;
 import types.*;
 
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Properties;
-import java.io.PrintWriter;
-
-import de.zib.gndms.typecon.common.type.ContextXSDTypeWriter;
-import de.zib.gndms.typecon.common.type.AbstractXSDTypeWriter;
-import de.zib.gndms.typecon.common.type.ContractXSDTypeWriter;
-import de.zib.gndms.model.gorfx.types.AbstractORQ;
-import de.zib.gndms.model.gorfx.types.io.ORQConverter;
-import de.zib.gndms.model.gorfx.types.io.ORQWriter;
-import de.zib.gndms.model.gorfx.types.io.ORQPropertyReader;
-import de.zib.gndms.model.common.types.TransientContract;
-import de.zib.gndms.GORFX.client.GORFXClient;
-import de.zib.gndms.GORFX.ORQ.client.ORQClient;
-import de.zib.gndms.GORFX.offer.client.OfferClient;
-import de.zib.gndms.GORFX.context.client.TaskClient;
 
 public abstract class RequestRunner implements Runnable{
 

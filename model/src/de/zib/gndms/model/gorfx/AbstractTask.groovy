@@ -35,6 +35,7 @@ import de.zib.gndms.stuff.mold.Molder
 import de.zib.gndms.stuff.mold.Mold
 import javax.persistence.FetchType
 import de.zib.gndms.model.common.PermissionInfo
+import javax.persistence.Lob
 
 /**
  * ThingAMagic.
@@ -53,6 +54,10 @@ abstract class AbstractTask extends TimedGridResource {
     
     @Column(name="descr", nullable=false, updatable=false, columnDefinition="VARCHAR")
     String description
+
+    @Column(name="cred", nullable=true, updatable=true, columnDefinition="BLOB")
+    @Lob
+    byte[] serializedCredential
 
     /* always this.tod >= this.validity */
     @Embedded

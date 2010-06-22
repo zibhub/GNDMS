@@ -1,31 +1,31 @@
 package de.zib.gndms.GORFX.ORQ.service.globus.resource;
 
+import de.zib.gndms.GORFX.action.dms.SliceStageInORQCalculator;
+import de.zib.gndms.comserv.delegation.GNDMSCredibleResource;
+import de.zib.gndms.comserv.delegation.GNDMSDelegationListener;
+import de.zib.gndms.comserv.util.GlobusCredentialProviderImpl;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
-import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.model.common.types.TransientContract;
+import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.shared.ContextTAux;
 import de.zib.gndms.typecon.common.GORFXTools;
 import de.zib.gndms.typecon.common.type.ContractXSDReader;
-import de.zib.gndms.comserv.delegation.GNDMSCredibleResource;
-import de.zib.gndms.comserv.delegation.GNDMSDelegationListener;
-import de.zib.gndms.GORFX.action.dms.SliceStageInORQCalculator;
-import org.apache.axis.types.URI;
 import org.apache.axis.message.addressing.EndpointReferenceType;
-import org.globus.wsrf.ResourceException;
+import org.apache.axis.types.URI;
+import org.globus.delegation.DelegationException;
+import org.globus.delegation.DelegationUtil;
 import org.globus.gsi.GlobusCredential;
 import org.globus.gsi.gssapi.GlobusGSSCredentialImpl;
-import org.globus.delegation.DelegationUtil;
-import org.globus.delegation.DelegationException;
-import org.jetbrains.annotations.NotNull;
-import org.ietf.jgss.GSSCredential;
+import org.globus.wsrf.ResourceException;
 import org.gridforum.jgss.ExtendedGSSCredential;
+import org.ietf.jgss.GSSCredential;
+import org.jetbrains.annotations.NotNull;
 import types.ContextT;
 import types.OfferExecutionContractT;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
 
 
 /** 
@@ -36,8 +36,8 @@ import java.io.ObjectOutputStream;
  */
 public class ORQResource extends ORQResourceBase implements GNDMSCredibleResource {
 
-    ExtORQResourceHome home;
-    AbstractORQCalculator ORQCalculator;
+    transient ExtORQResourceHome home;
+    transient AbstractORQCalculator ORQCalculator;
     String cachedWid;
     GlobusCredential credential;
 
@@ -73,16 +73,7 @@ public class ORQResource extends ORQResourceBase implements GNDMSCredibleResourc
 
     public TransientContract estimatedExecutionContract( OfferExecutionContractT pref ) throws Exception {
 
-        ORQCalculator.setJustEstimate( true );
-        ORQCalculator.setPerferredOfferExecution( ContractXSDReader.readContract( pref ) );
-
-	    try {
-            return ORQCalculator.createOffer();
-	    }
-	    catch (RuntimeException e) {
-		    logger.info(e);
-		    throw e;
-	    }
+        return doExecutionContract( pref, false );
     }
 
 
@@ -103,20 +94,28 @@ public class ORQResource extends ORQResourceBase implements GNDMSCredibleResourc
 
    public TransientContract getOfferExecutionContract( OfferExecutionContractT pref ) throws Exception {
 
-       ORQCalculator.setJustEstimate( false );
-       ORQCalculator.setPerferredOfferExecution( ContractXSDReader.readContract( pref ) );
+       return doExecutionContract( pref, false );
+    }
 
-       if( ORQCalculator instanceof SliceStageInORQCalculator ) {
-           ( (SliceStageInORQCalculator) ORQCalculator ).setCredential ( credential );
-       }
 
-	   try {
-           return ORQCalculator.createOffer();
-	   }
-	   catch (RuntimeException e) {
-		   logger.info(e);
-		   throw e;
-	   }
+    protected TransientContract doExecutionContract( OfferExecutionContractT pref, boolean est ) throws Exception {
+
+        ORQCalculator.setJustEstimate( est );
+        ORQCalculator.setPerferredOfferExecution( ContractXSDReader.readContract( pref ) );
+        ORQCalculator.setCredentialProvider(
+            new GlobusCredentialProviderImpl( ORQCalculator.getKey().getOfferTypeKey(), credential ) );
+
+        if( ORQCalculator instanceof SliceStageInORQCalculator ) {
+            ( (SliceStageInORQCalculator) ORQCalculator ).setCredential ( credential );
+        }
+
+        try {
+            return ORQCalculator.createOffer();
+        }
+        catch (RuntimeException e) {
+            logger.info(e);
+            throw e;
+        }
     }
 
 
@@ -138,11 +137,11 @@ public class ORQResource extends ORQResourceBase implements GNDMSCredibleResourc
     public void setCredential( final GlobusCredential cred ) {
         System.out.println( "setCredential called with " + cred );
         credential = cred;
-        storeCredential();
+   //     storeCredential();
     }
 
 
-    private void storeCredential() {
+    public void storeCredential() {
         
         try {
             File f = new File( "/tmp/" + (String) getID() );

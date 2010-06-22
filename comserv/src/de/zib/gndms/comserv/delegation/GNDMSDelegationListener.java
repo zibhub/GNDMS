@@ -17,7 +17,7 @@ public class GNDMSDelegationListener implements DelegationListener {
     private static Logger logger = Logger.getLogger( GNDMSDelegationListener.class );
     private String regristrationId;
     private ResourceKey resourceKey;
-    private ResourceHome home;
+    transient private ResourceHome home;
 
 
     public GNDMSDelegationListener() {

@@ -1,17 +1,19 @@
 package de.zib.gndms.logic.model;
 
 import com.google.inject.Inject;
+import de.zib.gndms.kit.access.RequiresCredentialProvider;
+import de.zib.gndms.kit.access.CredentialProvider;
+import de.zib.gndms.kit.configlet.ConfigletProvider;
 import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.logic.action.LogAction;
 import de.zib.gndms.logic.model.gorfx.permissions.PermissionConfiglet;
+import de.zib.gndms.model.common.types.FilePermissions;
 import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.model.util.EntityManagerAux;
 import de.zib.gndms.model.util.TxFrame;
-import de.zib.gndms.model.common.types.FilePermissions;
 import de.zib.gndms.stuff.copy.Copier;
-import de.zib.gndms.kit.configlet.ConfigletProvider;
 import org.apache.commons.logging.Log;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,7 +39,7 @@ import java.util.GregorianCalendar;
  *          User: stepn Date: 15.09.2008 Time: 11:26:48
  */
 @SuppressWarnings({ "AbstractMethodCallInConstructor" })
-public abstract class TaskAction extends AbstractModelAction<AbstractTask, AbstractTask> implements LogAction
+public abstract class TaskAction extends AbstractModelAction<AbstractTask, AbstractTask> implements LogAction, RequiresCredentialProvider
 {
     /**
      * the ExecutionService on which this TaskAction runs
@@ -55,6 +57,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
      */
 	private EntityManagerFactory emf;
     private ConfigletProvider configletProvider;
+    private CredentialProvider credentialProvider;
 
 
     /**
@@ -965,5 +968,16 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
         }
 
         return null;
+    }
+
+
+    public void setCredentialProvider( CredentialProvider cp ) {
+        this.credentialProvider = cp;
+    }
+
+
+    public CredentialProvider getCredentialProvider() {
+
+        return this.credentialProvider;
     }
 }

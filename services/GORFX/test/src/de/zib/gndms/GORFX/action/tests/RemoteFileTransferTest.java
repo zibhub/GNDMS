@@ -5,6 +5,7 @@ import de.zib.gndms.GORFX.client.GORFXClient;
 import de.zib.gndms.GORFX.context.client.TaskClient;
 import de.zib.gndms.GORFX.offer.client.OfferClient;
 import de.zib.gndms.GORFX.offer.common.OfferConstants;
+import de.zib.gndms.comserv.delegation.DelegationAux;
 import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.gorfx.types.FileTransferORQ;
 import de.zib.gndms.model.gorfx.types.io.ContractConverter;
@@ -16,6 +17,7 @@ import de.zib.gndms.typecon.common.type.ContractXSDReader;
 import de.zib.gndms.typecon.common.type.FileTransferORQXSDTypeWriter;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.addressing.EndpointReferenceType;
+import org.globus.gsi.GlobusCredential;
 import org.globus.wsrf.encoding.ObjectDeserializer;
 import org.oasis.wsrf.properties.GetResourcePropertyResponse;
 import types.*;
@@ -37,6 +39,7 @@ public class RemoteFileTransferTest {
 
     public static void main( String[] args ) throws Exception {
 
+        String proxyFile = "/tmp/x509up_u1000";
         if( args.length != 2 ) {
             usage( );
             System.exit( 1 );
@@ -64,7 +67,17 @@ public class RemoteFileTransferTest {
         ContextT ctx = ContextXSDTypeWriter.writeContext( orq.getActContext() );
 
         // Create gorfx client and request offer request.
-        GORFXClient gc = new GORFXClient( args[0] );
+        String gorfxEpUrlParam  = args[0];
+        GORFXClient gc = new GORFXClient( gorfxEpUrlParam );
+
+        // with delegation
+        String delfac = DelegationAux.createDelationAddress( gorfxEpUrlParam );
+        GlobusCredential credential = DelegationAux.findCredential( proxyFile );
+        EndpointReferenceType epr = DelegationAux.createProxy( delfac, credential );
+        DelegationAux.addDelegationEPR( ctx, epr );
+        gc.setProxy( credential );
+
+        // Create ORQ via GORFX
         EndpointReferenceType orqepr = gc.createOfferRequest( orqArgs, ctx );
 
         // Create orq client and request offer

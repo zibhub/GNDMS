@@ -1,12 +1,14 @@
 package de.zib.gndms.logic.model.gorfx;
 
+import de.zib.gndms.kit.access.CredentialProvider;
+import de.zib.gndms.kit.access.RequiresCredentialProvider;
 import de.zib.gndms.logic.model.TaskAction;
+import de.zib.gndms.model.common.types.factory.KeyFactory;
+import de.zib.gndms.model.common.types.factory.KeyFactoryInstance;
+import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.model.gorfx.Task;
-import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
-import de.zib.gndms.model.common.types.factory.KeyFactoryInstance;
-import de.zib.gndms.model.common.types.factory.KeyFactory;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -21,10 +23,11 @@ import javax.persistence.EntityManager;
  *          User: stepn Date: 02.10.2008 Time: 13:00:56
  */
 public abstract class ORQTaskAction<K extends AbstractORQ> extends TaskAction
-    implements KeyFactoryInstance<OfferType, ORQTaskAction<?>>
+    implements KeyFactoryInstance<OfferType, ORQTaskAction<?>>, RequiresCredentialProvider
 {
     private KeyFactory<OfferType, ORQTaskAction<?>> factory;
     private OfferType key;
+    private CredentialProvider credentialProvider;
 
 
     protected ORQTaskAction() {
@@ -116,5 +119,15 @@ public abstract class ORQTaskAction<K extends AbstractORQ> extends TaskAction
 
     public void setKey(@NotNull final OfferType keyParam) {
         key = keyParam;
+    }
+
+
+    public CredentialProvider getCredentialProvider() {
+        return credentialProvider;
+    }
+
+
+    public void setCredentialProvider( CredentialProvider credentialProvider ) {
+        this.credentialProvider = credentialProvider;
     }
 }

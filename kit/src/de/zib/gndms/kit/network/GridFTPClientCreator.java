@@ -1,14 +1,15 @@
 package de.zib.gndms.kit.network;
 
-import org.globus.ftp.GridFTPClient;
-import org.globus.ftp.exception.ServerException;
-import org.globus.ftp.exception.ClientException;
+import de.zib.gndms.kit.access.CredentialProvider;
 import org.apache.log4j.Logger;
 import org.apache.log4j.NDC;
+import org.globus.ftp.GridFTPClient;
+import org.globus.ftp.exception.ClientException;
+import org.globus.ftp.exception.ServerException;
 
-import java.util.concurrent.Callable;
-import java.util.Stack;
 import java.io.IOException;
+import java.util.Stack;
+import java.util.concurrent.Callable;
 
 /**
  * @author Maik Jorra <jorra@zib.de>
@@ -22,6 +23,7 @@ public class GridFTPClientCreator implements Callable<GridFTPClient>  {
     private int port;
     private Logger log = Logger.getLogger( GridFTPClientCreator.class );
     private Stack ctx;
+    private CredentialProvider credProvider;
 
 
     public GridFTPClientCreator() {
@@ -29,9 +31,12 @@ public class GridFTPClientCreator implements Callable<GridFTPClient>  {
     }
 
 
-    public GridFTPClientCreator( final String host, final int port ) {
+
+
+    public GridFTPClientCreator( String host, int port, CredentialProvider cp ) {
         this.host = host;
         this.port = port;
+        this.credProvider = cp;
         ctx = NDC.cloneStack();
     }
 
@@ -48,6 +53,7 @@ public class GridFTPClientCreator implements Callable<GridFTPClient>  {
         try {
             log.info( "creating client" );
             GridFTPClient cnt = new GridFTPClient( host, port );
+            credProvider.installCredentials( cnt );
             validateClient( cnt );
             return cnt;
         } finally {
@@ -62,7 +68,6 @@ public class GridFTPClientCreator implements Callable<GridFTPClient>  {
         boolean d = false;
         try {
             log.debug( "validating client " + host + ":" + port );
-            cnt.authenticate( null );
             //cnt.getFeatureList();
             cnt.list();
             d = true;

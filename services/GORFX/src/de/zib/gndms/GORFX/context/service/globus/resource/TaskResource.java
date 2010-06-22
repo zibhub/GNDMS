@@ -2,9 +2,12 @@ package de.zib.gndms.GORFX.context.service.globus.resource;
 
 import de.zib.gndms.GORFX.context.common.TaskConstants;
 import de.zib.gndms.GORFX.context.stubs.TaskResourceProperties;
+import de.zib.gndms.comserv.delegation.DelegationAux;
+import de.zib.gndms.comserv.util.GlobusCredentialProviderImpl;
 import de.zib.gndms.infra.model.GridResourceModelHandler;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.logic.model.TaskAction;
+import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.*;
@@ -16,10 +19,9 @@ import de.zib.gndms.typecon.common.type.ProviderStageInResultXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.RePublishSliceResultXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.SliceStageInResultXSDTypeWriter;
 import de.zib.gndms.typecon.util.AxisTypeFromToXML;
-import de.zib.gndms.shared.ContextTAux;
-import de.zib.gndms.kit.util.WidAux;
 import org.apache.commons.logging.Log;
 import org.apache.log4j.Logger;
+import org.globus.gsi.GlobusCredential;
 import org.globus.wsrf.InvalidResourceKeyException;
 import org.globus.wsrf.NoSuchResourceException;
 import org.globus.wsrf.ResourceException;
@@ -32,7 +34,6 @@ import javax.persistence.EntityTransaction;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.concurrent.Future;
-import java.rmi.RemoteException;
 
 
 /**
@@ -49,7 +50,6 @@ public class TaskResource extends TaskResourceBase
     private TaskAction taskAction;
     private GridResourceModelHandler<Task, ExtTaskResourceHome, TaskResource> mH;
     private Future<?> future;
-
 
 
     /**
@@ -215,16 +215,23 @@ public class TaskResource extends TaskResourceBase
 
         EntityManager em = home.getEntityManagerFactory().createEntityManager(  );
         Task tsk = (Task) mH.loadModelById( em, id );
-        
+
         if( tsk.isPostMortem() ) {
             em.close();
             throw new NoSuchResourceException( );
         }
 
+        byte[] bcred = tsk.getSerializedCredential();
+        GlobusCredential gcred = null;
+        if( bcred.length > 0 )
+            gcred = DelegationAux.fromByteArray( bcred );
+
         try {
             taskAction = getResourceHome().getSystem().getInstanceDir().newTaskAction( em, tsk.getOfferType().getOfferTypeKey() );
             taskAction.initFromModel(em, tsk);
             taskAction.setClosingEntityManagerOnCleanup(true);
+            taskAction.setCredentialProvider( new GlobusCredentialProviderImpl(
+                ( ( ORQTaskAction ) taskAction).getOrq().getOfferType(), gcred ) );
         }
         catch (IllegalAccessException e) {
             throw new ResourceException(e);
@@ -377,4 +384,6 @@ public class TaskResource extends TaskResourceBase
             }
         }
     }
+
+
 }

@@ -1,24 +1,25 @@
 package de.zib.gndms.GORFX.offer.service.globus.resource;
 
+import de.zib.gndms.comserv.delegation.DelegationAux;
+import de.zib.gndms.comserv.delegation.GNDMSCredibleResource;
+import de.zib.gndms.comserv.delegation.GNDMSDelegationListener;
+import de.zib.gndms.infra.wsrf.WSConstants;
 import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
 import de.zib.gndms.logic.model.gorfx.permissions.PermissionConfiglet;
-import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.common.PermissionInfo;
+import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.common.types.InvalidContractException;
 import de.zib.gndms.model.common.types.PermissionConfigData;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.typecon.common.type.ContractXSDReader;
-import de.zib.gndms.infra.wsrf.WSConstants;
-import de.zib.gndms.comserv.delegation.GNDMSCredibleResource;
-import de.zib.gndms.comserv.delegation.GNDMSDelegationListener;
-import org.globus.wsrf.ResourceException;
-import org.globus.gsi.GlobusCredential;
-import org.globus.delegation.DelegationUtil;
-import org.globus.delegation.DelegationException;
-import org.jetbrains.annotations.NotNull;
 import org.apache.axis.message.addressing.EndpointReferenceType;
+import org.globus.delegation.DelegationException;
+import org.globus.delegation.DelegationUtil;
+import org.globus.gsi.GlobusCredential;
+import org.globus.wsrf.ResourceException;
+import org.jetbrains.annotations.NotNull;
 import types.DynamicOfferDataSeqT;
 import types.OfferExecutionContractT;
 
@@ -95,6 +96,9 @@ public class OfferResource extends OfferResourceBase implements GNDMSCredibleRes
         task.setOfferType(getOrqCalc().getKey());
         task.setTerminationTime( contract.getCurrentTerminationTime() );
         task.setWid(WidAux.getWid());
+        task.setSerializedCredential(
+            DelegationAux.toByteArray( credential )
+        );
         addPermissions( task );
         return task;
     }

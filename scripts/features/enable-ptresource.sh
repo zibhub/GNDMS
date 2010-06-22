@@ -12,4 +12,4 @@ moni call -v .dspace.SetupSubspace  "subspace:'{http://www.ptgrid.de/G1/Subspace
 
 moni call -v .dspace.AssignSliceKind "subspace:'{http://www.ptgrid.de/G1/Subspace}Staging'; sliceKind: http://www.ptgrid.de/G1/SliceKind/Staging_RW; mode:'$ADDMODE'"
 
-
+}

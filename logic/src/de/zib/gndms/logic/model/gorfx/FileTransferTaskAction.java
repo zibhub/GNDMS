@@ -83,8 +83,8 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
             URI duri = new URI ( getOrq().getTargetURI() );
 
             // obtain clients
-            src = NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( suri );
-            dest = NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( duri );
+            src = NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( suri, getCredentialProvider() );
+            dest = NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( duri, getCredentialProvider() );
 
             // setup transfer handler
             GNDMSFileTransfer transfer = new GNDMSFileTransfer();

@@ -1,10 +1,11 @@
 package de.zib.gndms.logic.model.gorfx;
 
+import de.zib.gndms.kit.access.CredentialProvider;
+import de.zib.gndms.kit.access.RequiresCredentialProvider;
 import de.zib.gndms.kit.configlet.ConfigletProvider;
+import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.common.types.factory.KeyFactory;
 import de.zib.gndms.model.common.types.factory.KeyFactoryInstance;
-import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
-import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
  * User: bzcjorra Date: Sep 5, 2008 1:43:46 PM
  */
 public abstract class AbstractORQCalculator<M extends AbstractORQ, C extends AbstractORQCalculator<M, C>>
-    implements KeyFactoryInstance<OfferType, AbstractORQCalculator<?, ?>> {
+    implements KeyFactoryInstance<OfferType, AbstractORQCalculator<?, ?>>, RequiresCredentialProvider {
 
     private ConfigletProvider configletProvider;
     private TransientContract perferredOfferExecution;
@@ -27,6 +28,7 @@ public abstract class AbstractORQCalculator<M extends AbstractORQ, C extends Abs
 
     private KeyFactory<OfferType, AbstractORQCalculator<?,?>> factory;
     private OfferType offerType;
+    private CredentialProvider credentialProvider;
 
 
     public AbstractORQCalculator() {
@@ -123,5 +125,15 @@ public abstract class AbstractORQCalculator<M extends AbstractORQ, C extends Abs
 
     public void setConfigletProvider( ConfigletProvider configletProvider ) {
         this.configletProvider = configletProvider;
+    }
+
+
+    public void setCredentialProvider( CredentialProvider cp ) {
+        credentialProvider = cp;
+    }
+
+
+    public CredentialProvider getCredentialProvider() {
+        return credentialProvider;
     }
 }

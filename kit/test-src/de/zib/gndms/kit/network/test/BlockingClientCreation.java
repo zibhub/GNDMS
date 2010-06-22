@@ -1,7 +1,6 @@
 package de.zib.gndms.kit.network.test;
 
 import de.zib.gndms.kit.network.NonblockingClientFactory;
-import de.zib.gndms.kit.network.GridFTPClientCreator;
 import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.exception.ServerException;
 
@@ -19,7 +18,7 @@ public class BlockingClientCreation {
         NonblockingClientFactory nbc = new NonblockingClientFactory();
         System.out.println( "precreate" );
 
-        GridFTPClient cln = nbc.createClient( "mardschana2.zib.de", 2811 );
+        GridFTPClient cln = nbc.createClient( "mardschana2.zib.de", 2811, null );
 //        GridFTPClient cln = nbc.createClient( "hallo", 123 );
         System.out.println( "postcreate" );
         if( cln != null )

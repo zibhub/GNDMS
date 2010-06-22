@@ -115,6 +115,31 @@ public class DelegationAux {
     }
 
 
+    public static GlobusCredential fromByteArray( byte[] ba  ){
+
+        ByteArrayInputStream bo = new ByteArrayInputStream( ba );
+        try {
+            return new GlobusCredential( bo );
+        } catch ( GlobusCredentialException e ) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            throw new RuntimeException( e );
+        }
+    }
+
+
+    public static byte[] toByteArray( GlobusCredential cred  ){
+
+        ByteArrayOutputStream bo = new ByteArrayOutputStream( );
+        try {
+            cred.save( bo );
+            return bo.toByteArray();
+        } catch ( IOException e ) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            throw new RuntimeException( e );
+        }
+    }
+
+
     public static void addDelegationEPR( ContextT con, EndpointReferenceType epr ) throws IOException, SerializationException {
 
         StringWriter sw = new StringWriter( );

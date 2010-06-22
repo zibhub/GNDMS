@@ -1,18 +1,17 @@
 package de.zib.gndms.GORFX.action.dms;
 
 import de.zib.gndms.GORFX.context.client.TaskClient;
+import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.infra.system.SystemHolder;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.model.dspace.types.SliceRef;
 import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.SliceStageInORQ;
 import de.zib.gndms.model.gorfx.types.SliceStageInResult;
-import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.typecon.common.type.ContextXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.ContractXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.ProviderStageInORQXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.SliceRefXSDReader;
-import de.zib.gndms.infra.system.SystemHolder;
-import de.zib.gndms.infra.system.GNDMSystem;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.jetbrains.annotations.NotNull;
 import types.*;
