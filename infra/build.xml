@@ -26,7 +26,7 @@
 		<pathelement path="${gndms-shared-model}"/>
 		<pathelement path="${apache-commons}"/>
 		<pathelement path="${db-derby}"/>
-		<pathelement path="${cos}"/>
+		<pathelement path="${apache-commons}"/>
 		<pathelement path="${servlet-api}"/>
 		<pathelement path="${jetty}"/>
 		<pathelement path="${gt4}"/>

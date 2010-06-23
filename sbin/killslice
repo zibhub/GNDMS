@@ -1,0 +1,36 @@
+#!/bin/sh
+
+if test "$#" -eq "4" ; then true ; else
+	echo "$0 grid-user subspace-path new-owner subdir-name"
+	exit 1
+fi
+
+GRIDUSER=$1
+AREAPATH=$2
+NEWOWNER=$3
+SUBDIRID=$4
+
+# Grid user must be a valid user
+if id "$GRIDUSER" > /dev/null ; then true ; else
+	echo "$GRIDUSER is not a known user" ; exit 1
+fi
+
+# Areapath must be a directory owned by griduser
+AREAPATH=`find -H "$AREAPATH" -maxdepth 0 -user "$GRIDUSER"`
+if test -d "$AREAPATH" ; then true ; else
+ echo "$AREAPATH is not a valid directory" ; exit 2
+fi
+
+# New owner must be a valid user
+if id "$NEWOWNER" > /dev/null ; then true ; else
+	 echo "$NEWOWNER is not a known user" ; exit 3
+fi
+
+SUBDIRID=`echo $SUBDIRID | tr -c -d abcdefghijklmnopqrstuvwxyz0123456789-`
+# Targetdir must be a directory owned by either griduser or newowner
+TARGETDIR=`find -H "$AREAPATH/$SUBDIRID" -maxdepth 0 \( -user "$GRIDUSER" -or -user "$NEWOWNER" \)`
+if test -d "$TARGETDIR" ; then true ; else
+	echo "$AREAPATH/$SUBDIRID is not a valid directory" ; exit 4
+fi
+
+chown -R "$NEWOWNER" "$TARGETDIR"

@@ -111,7 +111,7 @@
 
 	<target name="help" description="Prints usage information.">
 		<echo message=" =================================================================================" />
-		<echo message="|                      C3Grid GNDMS Compilation                                   |" />
+		<echo message="|                           GNDMS Compilation                                     |" />
 		<echo message="|                                                                                 |" />
 		<echo message=" ---------------------------------------------------------------------------------" />
 		<echo message="|  USAGE:                                                                         |" />
