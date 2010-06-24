@@ -5,6 +5,7 @@ import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
+import de.zib.gndms.logic.model.dspace.DeleteSliceAction;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.dspace.MetaSubspace;
@@ -173,7 +174,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 			if (slice == null)
 				// MAYBE log this somewhere?
 				return;
-			sliceDir = new File(slice.getOwner().getPathForSlice(slice));
+			sliceDir = new File(slice.getSubspace().getPathForSlice(slice));
 			txf.commit();
 		}
 		finally { txf.finish(); }
@@ -195,7 +196,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 		final TxFrame txf = new TxFrame(em);
 		try {
 			final Slice slice = findSlice(model);
-			slice.getOwner().destroySlice(slice);
+			DeleteSliceAction.deleteSlice( slice, this );
 			em.remove(slice);
 			txf.commit();
 		}

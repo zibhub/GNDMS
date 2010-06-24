@@ -150,7 +150,9 @@ public class OfferResource extends OfferResourceBase implements GNDMSCredibleRes
 
     public void setDelegateEPR( final EndpointReferenceType epr ) {
 
-        GNDMSDelegationListener list = new GNDMSDelegationListener( getResourceKey(), home );
+        String servicePath =  org.apache.axis.MessageContext.getCurrentContext().getTargetService();
+        String homeName = org.globus.wsrf.Constants.JNDI_SERVICES_BASE_NAME + servicePath + "/" + "offerHome";
+        GNDMSDelegationListener list = new GNDMSDelegationListener( getResourceKey(), homeName );
         try {
             DelegationUtil.registerDelegationListener(epr, list);
         } catch ( DelegationException e ) {

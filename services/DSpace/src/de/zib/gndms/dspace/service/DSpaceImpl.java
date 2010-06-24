@@ -1,15 +1,16 @@
 package de.zib.gndms.dspace.service;
 
+import de.zib.gndms.comserv.util.LogAux;
 import de.zib.gndms.dspace.service.globus.resource.ExtDSpaceResourceHome;
 import de.zib.gndms.dspace.slice.service.globus.resource.ExtSliceResourceHome;
 import de.zib.gndms.dspace.stubs.types.UnknownSubspace;
 import de.zib.gndms.dspace.subspace.service.globus.resource.ExtSubspaceResourceHome;
 import de.zib.gndms.dspace.subspace.service.globus.resource.SubspaceResource;
 import de.zib.gndms.dspace.subspace.stubs.types.SubspaceReference;
+import de.zib.gndms.infra.access.ServiceHomeProvider;
 import de.zib.gndms.infra.model.GridResourceModelHandler;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.system.WSMaintenance;
-import de.zib.gndms.infra.access.ServiceHomeProvider;
 import de.zib.gndms.logic.model.ModelAction;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
@@ -22,8 +23,8 @@ import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 import javax.xml.namespace.QName;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -139,6 +140,9 @@ public class DSpaceImpl extends DSpaceImplBase {
 
 
     public de.zib.gndms.dspace.slice.stubs.types.SliceReference createSliceInSubspace( QName subspaceSpecifier,types.SliceCreationSpecifier sliceCreationSpecifier,types.ContextT context) throws RemoteException, de.zib.gndms.dspace.subspace.stubs.types.OutOfSpace, de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind, UnknownSubspace, de.zib.gndms.dspace.stubs.types.InternalFailure {
+
+        LogAux.logSecInfo( logger, "createSliceInSubspace" );
+
 		org.apache.axis.message.addressing.EndpointReferenceType epr = new org.apache.axis.message.addressing.EndpointReferenceType();
 		de.zib.gndms.dspace.slice.service.globus.resource.SliceResourceHome home = null;
 		org.globus.wsrf.ResourceKey resourceKey = null;
@@ -169,6 +173,7 @@ public class DSpaceImpl extends DSpaceImplBase {
             SliceKind sk = em.find( SliceKind.class, sliceCreationSpecifier.getSliceKind( ).toString( ) );
             CreateSliceAction csa =
                     new CreateSliceAction( (String) thisResource.getID(),
+                            LogAux.getLocalName(),
                             sliceCreationSpecifier.getTerminationTime(),
                             system.getModelUUIDGen(),
                             sk,

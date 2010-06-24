@@ -34,6 +34,7 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
     private SliceKind sliceKind;     // kind of the slice to create
     private long storageSize;
     private DirectoryAux directoryAux;
+    private String uid = System.getProperty( "user.name" );
 
     
     public CreateSliceAction( ) {
@@ -47,15 +48,18 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
      *
      *
      * @param uuid a uuid identifying the grid resource of the new slice instance
+     * @param uid name of the owner of the new slice, can be null, then the current user will become the owner.
      * @param ttm the termination time of the slice object
      * @param gen an uuid generator for the directory id of the new slice object
      * @param kind the sliceKind instance for the slice. (See {@link Slice}).
      * @param ssize total storage size for the slice instance
      */
-    public CreateSliceAction( String uuid, Calendar ttm, ModelUUIDGen gen, SliceKind kind, long ssize ) {
+    public CreateSliceAction( String uuid, String uid, Calendar ttm, ModelUUIDGen gen, SliceKind kind, long ssize ) {
 
         super( uuid, ttm );
         setUUIDGen(gen);
+        if( uid != null )
+            this.uid = uid;
         this.sliceKind = kind;
         this.storageSize = ssize;
         directoryAux = DirectoryAux.getDirectoryAux();
@@ -68,16 +72,19 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
      *
      *
      * @param uuid a uuid identifying the grid resource of the new slice instance
+     * @param uid name of the owner of the new slice, can be null, then the current user will become the owner.
      * @param ttm the termination time of the slice object
      * @param gen an uuid generator for the directory id of the new slice object
      * @param kind the sliceKind instance for the slice. (See {@link Slice}).
      * @param ssize total storage size for the slice instance
      * @param da an helper object for directory access 
      */
-    public CreateSliceAction( String uuid, Calendar ttm, ModelUUIDGen gen, SliceKind kind, long ssize, DirectoryAux da ) {
+    public CreateSliceAction( String uuid, String uid, Calendar ttm, ModelUUIDGen gen, SliceKind kind, long ssize, DirectoryAux da ) {
         
         super( uuid, ttm );
         setUUIDGen(gen);
+        if( uid != null )
+            this.uid = uid;
         this.sliceKind = kind;
         this.storageSize = ssize;
         this.directoryAux = da;
@@ -140,22 +147,18 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
 
         // fix permissions
         directoryAux.setPermissions( sliceKind.getPermission(), f.getAbsolutePath( ) );
+        if(! uid.equals( System.getProperty( "user.name" ) ) )
+            directoryAux.changeOwner( uid, f.getAbsolutePath() );
 
-        Slice sl = new Slice( did, sliceKind, sp );
+        Slice sl = new Slice( did, sliceKind, sp, uid );
         sl.setId( getId( ) );
         sl.setTerminationTime( getTerminationTime( ) );
         sl.setTotalStorageSize( storageSize );
-        sl.setOwner( sp );
         sp.addSlice( sl );
-
-        // todo maybe persist slice first
-//        em.persist( sl );
-
-//        em.merge( sp );
 
         addChangedModel( sl );
 
-        // maybe this isn't of interesst
+        // maybe this isn't of interest
         addChangedModel( sp );
         
         return  sl;
@@ -171,6 +174,26 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
     public void setSliceKind( SliceKind knd ) {
 
         sliceKind = knd;
+    }
+
+
+    public String getUid() {
+        return uid;
+    }
+
+
+    public void setUid( String uid ) {
+        this.uid = uid;
+    }
+
+
+    public long getStorageSize() {
+        return storageSize;
+    }
+
+
+    public void setStorageSize( long storageSize ) {
+        this.storageSize = storageSize;
     }
 
 

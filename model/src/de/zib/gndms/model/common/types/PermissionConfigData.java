@@ -27,9 +27,9 @@ public class PermissionConfigData implements Serializable {
 
 
     public enum UserMode {
-        DEFAULT, // the owner of the container
-        SINGLE,  // use a single user which is different for the containers owner
-        CALLER   // the caller of the service i.e. the cert owner (intended for later use)
+        DEFAULT, // the subspace of the container
+        SINGLE,  // use a single user which is different for the containers subspace
+        CALLER   // the caller of the service i.e. the cert subspace (intended for later use)
     }
 
     private UserMode mode; // The mode for permission handling.

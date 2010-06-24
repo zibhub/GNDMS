@@ -24,14 +24,23 @@ public class LogAux {
     }
 
 
-    public static void logSecInfo( Logger logger, String s ) throws org.globus.wsrf.security.SecurityException {
+    public static void logSecInfo( Logger logger, String methodName ) throws org.globus.wsrf.security.SecurityException {
 
-        logger.debug( "Method " + s + " called by: " +
+        logger.info( "Method " + methodName + " called by: " +
             SecurityManager.getManager().getCaller() );
-        String[] l = SecurityManager.getManager().getLocalUsernames();
-        if ( l == null )
+        String uid = getLocalName();
+        if ( uid == null )
             logger.debug( "No mappings found" );
         else
-            logger.debug( "Mapped to" + ( l.length > 0 ? l[0] : "none" ) );
+            logger.info( "Mapped to " + uid );
+    }
+
+
+    public static String getLocalName( ) throws org.globus.wsrf.security.SecurityException {
+        String[] l = SecurityManager.getManager().getLocalUsernames();
+        if ( l != null && l.length > 0 )
+            return l[0];
+
+        return null;
     }
 }

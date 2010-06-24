@@ -1,5 +1,6 @@
 package de.zib.gndms.dspace.subspace.service;
 
+import de.zib.gndms.comserv.util.LogAux;
 import de.zib.gndms.dspace.slice.service.globus.resource.SliceResource;
 import de.zib.gndms.dspace.slice.service.globus.resource.SliceResourceHome;
 import de.zib.gndms.dspace.slice.stubs.types.SliceReference;
@@ -17,6 +18,7 @@ import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.util.TxFrame;
 import org.apache.axis.types.URI;
+import org.apache.log4j.Logger;
 import org.globus.wsrf.NoSuchResourceException;
 import org.globus.wsrf.ResourceContext;
 import org.globus.wsrf.ResourceContextException;
@@ -38,12 +40,15 @@ import java.util.List;
  */
 public class SubspaceImpl extends SubspaceImplBase {
 
+    protected Logger logger = Logger.getLogger( this.getClass() );
 
     public SubspaceImpl() throws RemoteException {
 		super();
 	}
 
     public SliceReference createSlice( SliceCreationSpecifier sliceCreationSpecifier, ContextT context ) throws RemoteException, OutOfSpace, UnknownOrInvalidSliceKind, InternalFailure {
+
+        LogAux.logSecInfo( logger, "createSliceInSubspace" );
 
         SubspaceResource subref = getResource();
         //Subspace sp = subref.loadModelById( subref.getID() );
@@ -89,6 +94,7 @@ public class SubspaceImpl extends SubspaceImplBase {
 
             final CreateSliceAction csa =
                     new CreateSliceAction( (String) sr.getID(),
+                            LogAux.getLocalName(),
                             sliceCreationSpecifier.getTerminationTime(),
                             system.getModelUUIDGen(),
                             sk,

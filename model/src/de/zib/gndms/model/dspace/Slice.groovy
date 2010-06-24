@@ -38,27 +38,33 @@ public class Slice extends TimedGridResource {
 
     @ManyToOne( targetEntity=Subspace.class, cascade=[CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE], fetch=FetchType.EAGER )
 	@JoinColumn( name="subspace_id", nullable=false, referencedColumnName="id", updatable=false )
-    Subspace owner
+    Subspace subspace
+
+    @Column(name="owner", nullable=false, updatable=false)
+    String owner
 
     @Column(name="total_size", nullable=false, updatable=false)
     long totalStorageSize
 
     protected Slice( ) { }
 
-    Slice( String idParam, Calendar ttParam, String didParam, SliceKind kndParam, Subspace ownParam, long tssParam ) {
+    Slice( String idParam, Calendar ttParam, String didParam, SliceKind kndParam, Subspace subsParam, String ownParam, long tssParam ) {
         super( )
         setId( idParam )
         setTerminationTime ( ttParam )
         directoryId = didParam
         kind = kndParam
+        subspace = subsParam
         owner = ownParam
         totalStorageSize = tssParam
     }
 
-    Slice( String didParam, SliceKind kndParam, Subspace ownParam ) {
+    
+    Slice( String didParam, SliceKind kndParam, Subspace subsParam, String ownParam ) {
         super( )
         directoryId = didParam
         kind = kndParam
+        subspace = subsParam
         owner = ownParam
     }
 
@@ -66,7 +72,7 @@ public class Slice extends TimedGridResource {
 
     String[] getFileListing( ) {
         
-        File f = new File ( owner.getPathForSlice( this ) )
+        File f = new File ( subspace.getPathForSlice( this ) )
         f.list( )
     }
 

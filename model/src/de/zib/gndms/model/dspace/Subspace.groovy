@@ -58,7 +58,7 @@ class Subspace extends GridResource {
     ])
 	DSpaceRef dSpaceRef
 
-    @OneToMany( targetEntity=Slice.class, mappedBy="owner", cascade=[CascadeType.REFRESH,CascadeType.PERSIST, CascadeType.REMOVE ], fetch=FetchType.EAGER )
+    @OneToMany( targetEntity=Slice.class, mappedBy="subspace", cascade=[CascadeType.REFRESH,CascadeType.PERSIST, CascadeType.REMOVE ], fetch=FetchType.EAGER )
     Set<Slice> slices = new HashSet<Slice>();
 
     String path
@@ -99,57 +99,16 @@ class Subspace extends GridResource {
     }
 
 
-    /** 
-     * @brief Destroys a slice and removes its directory.
-     *
-     * @param sl The slice to remove.
-     *
-     * @return True if the destruction was successful.
-     *   Reasons for failure might be:
-     *       - Subspace doesn't own the slice.
-     *       - Directory of the slice couldn't be removed.
-     *
-     * @note The subspace can only destroy its own slices.
-     */
-    public boolean destroySlice( Slice sl ) {
-
-        if(! slices.contains( sl ) )
-            return false 
-
-        if ( deleteDirectory( getPathForSlice( sl ) ) ) {
-            slices.remove( sl )
-            return true
-        }
-
-        return false
-    }
-
     /**
-     * Little helper which delets a direcotry and its contents.
+     * Remove a slice from the slice set.
      *
-     * @param pth The complete Path to the directory.
-     * @return The success of the operation.
+     * The slice itself isn't destroy, and the fold stil exists.
      */
-    public static boolean deleteDirectory( String pth ) {
+    public void removeSlice( @NotNull Slice sl ) {
 
-        File f = new File( pth )
-
-        if( ! ( f.exists( ) && f.isDirectory( ) ) )
-            return false
-
-        try{
-            String[] fl = f.list( )
-            for( i in 0..<fl.length )  {
-                File cf = new File( fl[i] )
-                cf.delete( )
-            }
-
-            return f.delete( )
-
-        } catch (SecurityException e) {
-            return false
-        }
+        slices.remove( sl )
     }
+
 
     /** 
      * @brief Delivers the absolute path to a slice sl.

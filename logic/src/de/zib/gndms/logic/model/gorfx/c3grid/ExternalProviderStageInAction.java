@@ -53,7 +53,7 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
 
         parmAux.formatFromMap( getOfferTypeConfig() );
 
-	    final File sliceDir = new File(sliceParam.getOwner().getPathForSlice(sliceParam));
+	    final File sliceDir = new File(sliceParam.getSubspace().getPathForSlice(sliceParam));
         final ProcessBuilder procBuilder = createProcessBuilder("stagingCommand", sliceDir);
 	    if (procBuilder == null)
 	        fail(new IllegalStateException("No stagingCommand configured"));

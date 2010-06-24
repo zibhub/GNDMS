@@ -3,15 +3,14 @@ package de.zib.gndms.logic.model.gorfx.c3grid;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
-import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.common.types.FilePermissions;
+import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
 import de.zib.gndms.model.gorfx.types.io.ContractConverter;
 import de.zib.gndms.model.gorfx.types.io.ContractPropertyReader;
 import de.zib.gndms.model.gorfx.types.io.ContractPropertyWriter;
 import de.zib.gndms.model.gorfx.types.io.xml.ORQWrapper;
 import de.zib.gndms.model.gorfx.types.io.xml.ProviderStageInXML;
-import de.zib.gndms.stuff.propertytree.PropertyTree;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

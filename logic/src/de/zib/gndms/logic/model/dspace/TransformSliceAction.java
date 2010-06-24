@@ -25,7 +25,7 @@ import java.util.Calendar;
  * User: mjorra, Date: 13.08.2008, Time: 13:20:25
  *
  * In this version the out-dated slices remains in the db and its directory on disk, the caller must take care of
- * removing it e.g. with Subspace.destroySlice( );
+ * removing it with the appropriate action.
  *
  * todo make uses of UUIdGen from AbstractEntityAction
  */
@@ -39,15 +39,16 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
      * in the signature and sets the model of {@link #createSliceAction} to {@code tgt}.
      *
      * @param uuid a uuid identifying the grid resource of the new slice instance
+     * @param uid name of the owner of the new slice, can be null, then the current user will become the owner.
      * @param ttm the termination time of the slice object
      * @param kind the sliceKind instance for the slice. (See {@link Slice}).
      * @param tgt a subspace the new created slice will be registered on
      * @param ssize total storage size for the slice instance
      * @param uuidgen an uuid generator for the directory id of the new slice object
      */
-    public TransformSliceAction( String uuid, Calendar ttm, SliceKind kind, Subspace tgt, long ssize, ModelUUIDGen uuidgen ) {
+    public TransformSliceAction( String uuid, String uid, Calendar ttm, SliceKind kind, Subspace tgt, long ssize, ModelUUIDGen uuidgen ) {
 
-        createSliceAction = new CreateSliceAction( uuid, ttm, uuidgen, kind, ssize );
+        createSliceAction = new CreateSliceAction( uuid, uid, ttm, uuidgen, kind, ssize );
         createSliceAction.setModel( tgt );
     }
 
@@ -57,6 +58,7 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
      * in the signature and sets the model of {@link #createSliceAction} to {@code tgt}.
      *
      * @param uuid a uuid identifying the grid resource of the new slice instance
+     * @param uid name of the owner of the new slice, can be null, then the current user will become the owner.
      * @param ttm the termination time of the slice object
      * @param kind the sliceKind instance for the slice. (See {@link Slice}).
      * @param tgt a subspace the new created slice will be registered on
@@ -64,9 +66,9 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
      * @param uuidgen an uuid generator for the directory id of the new slice object
      * @param da an helper object for directory access
      */
-    public TransformSliceAction( String uuid, Calendar ttm, SliceKind kind, Subspace tgt, long ssize, ModelUUIDGen uuidgen, DirectoryAux da ) {
+    public TransformSliceAction( String uuid, String uid, Calendar ttm, SliceKind kind, Subspace tgt, long ssize, ModelUUIDGen uuidgen, DirectoryAux da ) {
 
-        createSliceAction = new CreateSliceAction( uuid, ttm, uuidgen, kind, ssize, da );
+        createSliceAction = new CreateSliceAction( uuid, uid, ttm, uuidgen, kind, ssize, da );
         createSliceAction.setModel( tgt );
     }
 
@@ -83,7 +85,7 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
     public Slice execute(@NotNull EntityManager em) {
 
         Slice sl = getModel( );
-        Subspace sp = sl.getOwner( );
+        Subspace sp = sl.getSubspace( );
 
         if(! sp.getMetaSubspace( ).getCreatableSliceKinds( ).contains( createSliceAction.getSliceKind( ) ) )
             return null;
@@ -112,6 +114,7 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
 
         boolean suc = true;
         for( int i=0; i < ls.length; ++i ) {
+            // todo maybe use gridftp for this crap, NEEDS CERT 
             suc = suc &&
                     createSliceAction.getDirectoryAux().copyFile(
                             src_pth + File.separator + ls[i], tgt_pth + File.separator + ls[i]
@@ -126,7 +129,7 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
 
         // sth went wrong destroy created slice
         if( ! suc ) {
-            createSliceAction.getModel().destroySlice( nsl );
+            DeleteSliceAction.deleteSlice( sl, this );
             throw new RuntimeException( "Can't copy slice content" );
         }
 
@@ -134,5 +137,7 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
 
         return nsl;
     }
+
+
 
 }

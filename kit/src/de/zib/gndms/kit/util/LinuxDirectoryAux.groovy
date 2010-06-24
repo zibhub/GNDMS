@@ -38,4 +38,16 @@ class LinuxDirectoryAux extends DirectoryAux {
         Process p = Runtime.getRuntime().exec( "chmod " +md+ " " + pth )
             return p.waitFor( ) == 0
     }
+
+
+    public boolean changeOwner(String uid, String path) {
+        throw new IllegalStateException( "method not implemented yet" )
+        return false;  // not required here
+    }
+
+
+    public boolean deleteDirectory(String owner, String pth) {
+        throw new IllegalStateException( "method not implemented yet" )
+        return false;  // not required here
+    }
 }

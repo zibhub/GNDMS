@@ -4,7 +4,6 @@ import de.zib.gndms.model.gorfx.FTPTransferState;
 import org.globus.ftp.*;
 import org.globus.ftp.exception.ClientException;
 import org.globus.ftp.exception.ServerException;
-import org.globus.ftp.exception.FTPException;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;

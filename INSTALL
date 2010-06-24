@@ -286,6 +286,16 @@ continue with the detailed build instructions below.
     (In IntelliJ: Use Build/Build Jars.. to build the jar on Make Project)
 
 
+  8.1) Compile gndms-comserv.jar
+     Sources: comserv/src (resp. test)
+     Output: comserv/gndms-comserv/production (resp. test) classes
+            extra/lib/gndms-comserv.jar containing the contents of production/
+     Dependencies: annotations, gt4, gndms-kit, gndms-infra, args4j,
+		   gndms-typecon, DSpace_stubs, gndms-shared-model
+
+    (In IntelliJ: Use Build/Build Jars.. to build the jar on Make Project)
+
+
   9) Build all services in services/* using ant createDeploymentGar
 
      Recommended build order: DSpace, GORFX, LOFIS, WHORFX
@@ -293,8 +303,8 @@ continue with the detailed build instructions below.
   10) 
      If desired compile gndms-wscommon.jar
      Sources: ws-common/src (resp. test)
-     Output: infra/gndms-wscommon/production (resp. test) classes
-            extra/lib/gndms-infra.jar containing the contents of production/
+     Output: wscommon/gndms-wscommon/production (resp. test) classes
+            extra/lib/gndms-wscommon.jar containing the contents of production/
      Dependencies: J2EE, annotations, gndms-logic, gndms-kit, gndms-infra, 
                    DSpace, GORFX, LOFIS, WHORFX, args4j, gt4, GORFX-stubs, 
                    GORFX-deps,
@@ -311,9 +321,9 @@ continue with the detailed build instructions below.
   Additionally, for IDE based development, you may wish to set up projects per
   service with the following dependencies:
 
-  J2EE, groovy, annotations, "servicename"-stubs,
-  gndms-infra, gndms-kit, gndms-logic, gndms-shared-model, gndms-stuff, 
-  joda-time, SOURCES, all non-symlinks in services/ServiceName/lib,  gt4
+  J2EE, groovy, annotations, "servicename"-stubs, gndms-comserv, gndms-infra,
+  gndms-kit, gndms-logic, gndms-shared-model, gndms-stuff, joda-time, SOURCES,
+  all non-symlinks in services/ServiceName/lib,  gt4
 
   GORFX also depends on gndms-typecon, DSpace, args4j, DSpace-Stubs and jaxb.
   

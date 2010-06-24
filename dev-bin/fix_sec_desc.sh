@@ -3,6 +3,12 @@ source $(dirname $0)/var-check.sh
 
 var_check
 
+if [ "$#" -eq "1" ]; then 
+    SERVICE_NAME="$1"
+else 
+    SERVICE_NAME="*"
+fi
+
 XSLT_FILE=$(dirname $0)/fix_sec_desc.xsl
 
 run_saxon() {
@@ -12,7 +18,7 @@ run_saxon() {
 }
 
 
-for i in $C3GRID_SOURCE/services/*/etc/*-security-desc.xml; do
+for i in $C3GRID_SOURCE/services/$SERVICE_NAME/etc/*-security-desc.xml; do
     echo $i
     run_saxon $i $i
 done
