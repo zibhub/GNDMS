@@ -61,7 +61,7 @@
 <target name="dp-killdb" depends="killdb" />
 
 <target name="dp-setupdb" depends="check-env">
-	<exec executable="scripts/setup-dataprovider.sh"><arg value="CREATE"/></exec>
+	<exec executable="scripts/c3grid/setup-dataprovider.sh"><arg value="CREATE"/></exec>
         <exec executable="./fix-permissions.sh" />
 </target>
 
@@ -93,7 +93,7 @@
 <target name="pt-killdb" depends="killdb" />
 
 <target name="pt-setupdb" depends="check-env">
-        <exec executable="scripts/setup-dataprovider.sh"><arg value="CREATE"/></exec>
+        <exec executable="scripts/ptgrid/setup-resource.sh"><arg value="CREATE"/></exec>
         <exec executable="./fix-permissions.sh" />
 </target>
 
@@ -101,7 +101,7 @@
         <exec executable="globus-deploy-gar"><arg value="services/DSpace/gndms_DSpace.gar" /></exec>
         <exec executable="globus-deploy-gar"><arg value="services/GORFX/gndms_GORFX.gar" /></exec>
 	<!-- TODO find out why there is a GORFX.Task -> LOFIS dependency right now, shouldnt be required -->
-        <exec executable="globus-deploy-gar"><arg value="services/GORFX/gndms_LOFIS.gar" /></exec>
+        <exec executable="globus-deploy-gar"><arg value="services/LOFIS/gndms_LOFIS.gar" /></exec>
 </target>
 
 </project>

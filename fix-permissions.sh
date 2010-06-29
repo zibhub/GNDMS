@@ -1,4 +1,4 @@
 #!/bin/sh
 
-echo "Running chmod og-rwx $C3GRID_SHARED"
-chmod og-rwx $C3GRID_SHARED
+echo "Running chmod og-rwx $GNDMS_SHARED"
+chmod og-rwx $GNDMS_SHARED
