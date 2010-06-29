@@ -1,8 +1,13 @@
 #!/bin/sh
 
-SCRIPTDIR="$(dirname $0)/../" ; source "$SCRIPTDIR"internal/script-setup.sh
+export SCRIPTDIR="$(dirname $0)/../"
 
-STAGING_AREA_PATH="/tmp"
+source "$SCRIPTDIR"internal/script-setup.sh
+
+# chown globus:globus $STAGING_AREA_PATH
+# chmod +t $STAGING_AREA_PATH
+# chmod a+w $STAGING_AREA_PATH
+STAGING_AREA_PATH="/tmp/gndms"
 
 # Set your hostname if it is not detected correctly
 # GRIDHOST=""
