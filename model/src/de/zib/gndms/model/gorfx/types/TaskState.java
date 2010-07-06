@@ -1,9 +1,9 @@
 package de.zib.gndms.model.gorfx.types;
 
+import de.zib.gndms.model.gorfx.AbstractTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
-import de.zib.gndms.model.gorfx.AbstractTask;              
 //import org.jetbrains.annotations.NotNull;
 
 

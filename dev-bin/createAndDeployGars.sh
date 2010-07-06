@@ -17,7 +17,7 @@ list_contain() {
     return 1
 }
 
-cd $C3GRID_SOURCE/services
+cd $GNDMS_SOURCE/services
 service_dirs=$( find * -maxdepth 0 -type d )
 for i in $service_dirs; do
     if  [ "$#" -ge "1" ]; then 

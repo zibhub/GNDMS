@@ -68,7 +68,7 @@
 </item>
 <item>
 <title>IntegrateBuildFile</title>
-<description>Integrate build file from roberto&lt;br&gt;&lt;br&gt;Open Issues:&lt;br&gt;gndms-shared-model directory in $&lt;a class=&quot;externalLink null&quot; href=&quot;http://www.tiddlywiki.com/#C3GRID_SOURCE&quot; title=&quot;External link to http://www.tiddlywiki.com/#C3GRID_SOURCE&quot; target=&quot;_blank&quot; refresh=&quot;link&quot; tiddlylink=&quot;C3GRID_SOURCE&quot;&gt;C3GRID_SOURCE&lt;/a&gt; when execution 'ant compile'&lt;br&gt;extra/lib/&lt;a class=&quot;externalLink null&quot; href=&quot;http://www.tiddlywiki.com/#DSpace&quot; title=&quot;External link to http://www.tiddlywiki.com/#DSpace&quot; target=&quot;_blank&quot; refresh=&quot;link&quot; tiddlylink=&quot;DSpace&quot;&gt;DSpace&lt;/a&gt;.jar and serices/GORFX/GORFX.jar are missing&lt;br&gt;</description>
+<description>Integrate build file from roberto&lt;br&gt;&lt;br&gt;Open Issues:&lt;br&gt;gndms-shared-model directory in $&lt;a class=&quot;externalLink null&quot; href=&quot;http://www.tiddlywiki.com/#GNDMS_SOURCE&quot; title=&quot;External link to http://www.tiddlywiki.com/#GNDMS_SOURCE&quot; target=&quot;_blank&quot; refresh=&quot;link&quot; tiddlylink=&quot;GNDMS_SOURCE&quot;&gt;GNDMS_SOURCE&lt;/a&gt; when execution 'ant compile'&lt;br&gt;extra/lib/&lt;a class=&quot;externalLink null&quot; href=&quot;http://www.tiddlywiki.com/#DSpace&quot; title=&quot;External link to http://www.tiddlywiki.com/#DSpace&quot; target=&quot;_blank&quot; refresh=&quot;link&quot; tiddlylink=&quot;DSpace&quot;&gt;DSpace&lt;/a&gt;.jar and serices/GORFX/GORFX.jar are missing&lt;br&gt;</description>
 <category>task</category>
 <link>http://www.tiddlywiki.com/#IntegrateBuildFile</link>
 <pubDate>Thu, 04 Dec 2008 16:09:00 GMT</pubDate>

@@ -1,10 +1,14 @@
 package de.zib.gndms.comserv.util;
 
 import de.zib.gndms.typecon.util.AxisTypeFromToXML;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 import org.globus.wsrf.security.SecurityManager;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.StringWriter;
 
 public class LogAux {
@@ -42,5 +46,20 @@ public class LogAux {
             return l[0];
 
         return null;
+    }
+
+
+    public static Logger stdSetupLogger ( Class clazz ) {
+
+        Logger logger = Logger.getLogger( clazz );
+        ConsoleAppender app = new ConsoleAppender( );
+        PatternLayout lay = new PatternLayout( );
+        lay.setConversionPattern( "%d{ISO8601} %-5p %c{2} [%t,%M:%L] <%x> %m%n" );
+        app.setLayout( lay );
+        app.setWriter( new PrintWriter( System.out ) );
+        app.setTarget( "System.out");
+        logger.addAppender( app );
+        logger.setLevel( Level.DEBUG );
+        return logger;
     }
 }
