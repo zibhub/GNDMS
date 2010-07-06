@@ -48,7 +48,7 @@ public class SetupDefaultConfigletAction extends SetupConfigletAction {
 	}
 
 
-    /**
+    /**                                      
      * Prints all option names and their chosen values of the Configlet entity using the PrintWriter {@code writerParam}
      * and the syntax as described in {@link de.zib.gndms.kit.config.ParameterTools#asString(java.util.Map, java.util.regex.Pattern, boolean)}
      *

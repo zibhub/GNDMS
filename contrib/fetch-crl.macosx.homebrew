@@ -49,12 +49,12 @@
 # in order to be able to run this script within te context of a user whitout the
 # PATH environment varible initialized (e.g. cron, root, ...)
 #
-openssl=/opt/local/bin/openssl
-lynx=/opt/local/bin/lynx
-wget=/opt/local/bin/wget
-basename=/usr/bin/basename
-getopt=/opt/local/bin/getopt
-awk=/opt/local/bin/gawk
+openssl=openssl
+lynx=lynx
+wget=wget
+basename=basename
+getopt=/usr/local/bin/getopt
+awk=gawk
 cat=/bin/cat
 cp=/bin/cp
 chmod=/bin/chmod
@@ -410,14 +410,6 @@ fi
 if [ "$syslogfacility" ]; then
   timeStamp=`${date} +%Y%m%dT%H%M%S%z`
   logger -p "${syslogfacility}.info" -t "${programName}[$$]" -- starting CRL retrieval process at ${timeStamp}
-fi
-
-#
-# Make sure that we can write to the specified output directory
-#
-if [ ! -d "${outputDirectory}" -o ! -w "${outputDirectory}" ]; then
-   PrintError "'"${outputDirectory}"' is not a directory or cannot be written"
-   exit 1
 fi
 
 #

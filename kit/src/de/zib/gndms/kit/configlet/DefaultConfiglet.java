@@ -76,7 +76,7 @@ public class DefaultConfiglet implements Configlet {
      * expected to be a {@code Map<String, String>}  mapping the {@code optionnames} to their {@code values}
      */
 	@SuppressWarnings({ "unchecked" })
-	private synchronized void configConfig(final Serializable data) {
+	protected synchronized void configConfig(final Serializable data) {
 		final Map<String, String> map = (Map<String, String>) data;
 		mapConfig = new MapConfig(map);
     }

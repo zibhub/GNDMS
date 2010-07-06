@@ -40,7 +40,9 @@ import static javax.persistence.Persistence.createEntityManagerFactory;
 import javax.persistence.Query;
 import javax.transaction.NotSupportedException;
 import javax.xml.namespace.QName;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import static java.lang.Thread.sleep;
 import java.util.List;
@@ -84,6 +86,7 @@ public final class GNDMSystem
     private @NotNull File dbDir;
     private @NotNull File logDir;
 	private @NotNull File dbLogFile;
+    private @NotNull File containerHome;
 	private @NotNull EntityManagerFactory emf;
 	private @NotNull EntityManagerFactory restrictedEmf;
 //	private NetworkAuxiliariesProvider netAux;
@@ -171,9 +174,9 @@ public final class GNDMSystem
 
 	public void initialize() throws RuntimeException {
 		try {
-			// Q: Think about how to correct UNIX directory/file permissions from java-land
-			// A: External script during deployment
 			printVersion();
+            containerHome = new File(System.getenv("GLOBUS_LOCATION")).getAbsoluteFile();
+            logger.info("Container home directory is '" + containerHome.toString() + '\'');
             initSharedDir();
 			createDirectories();
 			prepareDbStorage();
@@ -923,8 +926,47 @@ public final class GNDMSystem
 
 	}
 
+    @NotNull
+    public File getContainerHome() {
+        return containerHome;
+    }
 
-   /*
+    public boolean isGridAdmin(final String dn) {
+        // This only works on UNIX
+        final File gridAdmins = new File(File.pathSeparator + "etc" + File.pathSeparatorChar + "grid-security" + File.pathSeparatorChar + getInstanceDir().getSubGridName() + "-support-staff");
+
+        if (! (gridAdmins.isFile() && gridAdmins.canRead()))
+            return false;
+
+        BufferedReader rd;
+        try {
+            rd = new BufferedReader(new FileReader(gridAdmins.getName()));
+            try {
+                String line;
+
+                while ((line = rd.readLine()) != null) {
+                    String trLine = line.trim();
+                    if (trLine.length() > 0 && trLine.charAt(0) == '\"') {
+                        int endIndex = trLine.lastIndexOf('\"');
+                        if (endIndex > 0)
+                            trLine = trLine.substring(1, endIndex).trim();
+                    }
+                    if (trLine.equals(dn))
+                        return true;
+                }
+
+
+            }
+            finally { rd.close(); }
+        }
+        catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return false;
+    }
+
+    /*
     public NetworkAuxiliariesProvider getNetAux( ) {
 
         if( netAux == null )

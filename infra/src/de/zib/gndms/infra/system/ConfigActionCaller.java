@@ -137,17 +137,8 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
             ParameterTools.ParameterParseException {
         final Class<? extends ConfigAction<?>> clazz = findActionClass(name);
         
-        if( pub ) {
-            boolean isPub = false;
-
-            for( Class c : clazz.getInterfaces() )
-                if( PublicAccessible.class == c ) {
-                    isPub = true;
-                    break;
-                }
-            if( !isPub )
+        if( pub && !PublicAccessible.class.isAssignableFrom(clazz) )
                 throw new IllegalArgumentException( name + " is not public accessible." );
-        }
 
         if (ConfigAction.class.isAssignableFrom(clazz)) {
             final ConfigAction configAction = clazz.newInstance();

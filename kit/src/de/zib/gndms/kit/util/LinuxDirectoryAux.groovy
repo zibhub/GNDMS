@@ -7,7 +7,7 @@ import de.zib.gndms.model.common.AccessMask
  *
  * This implementation uses the system call "chmod"
  */
-class LinuxDirectoryAux extends DirectoryAux {
+class LinuxDirectoryAux extends DirecwtoryAux {
 
     final static String WX = "300"
     final static String RO = "500"
@@ -40,7 +40,7 @@ class LinuxDirectoryAux extends DirectoryAux {
     }
 
 
-    public boolean changeOwner(String uid, String path) {
+    public boolean changeOwner( String uid, String path) {
         throw new IllegalStateException( "method not implemented yet" )
         return false;  // not required here
     }

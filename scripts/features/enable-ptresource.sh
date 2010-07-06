@@ -12,4 +12,9 @@ moni call -v .dspace.SetupSubspace  "subspace:'{http://www.ptgrid.de/G1/Subspace
 
 moni call -v .dspace.AssignSliceKind "subspace:'{http://www.ptgrid.de/G1/Subspace}Staging'; sliceKind: http://www.ptgrid.de/G1/SliceKind/Staging_RW; mode:'$ADDMODE'"
 
+moni call -v .sys.SetupDefaultConfiglet "\
+  mode: '$MODE'; \
+  class: 'de.zib.gndms.kit.configlet.DefaultConfiglet'; \
+  name: 'gridconfig'; \
+  subGridName: 'ptgrid';"
 }
