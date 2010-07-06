@@ -9,6 +9,8 @@ import de.zib.gndms.infra.access.ServiceHomeProvider;
 import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.service.GNDMSingletonServiceHome;
+import de.zib.gndms.kit.access.GNDMSBinding;
+import de.zib.gndms.kit.configlet.DefaultConfiglet;
 import de.zib.gndms.kit.monitor.GroovyBindingFactory;
 import de.zib.gndms.kit.monitor.GroovyMoniServer;
 import de.zib.gndms.logic.model.TaskAction;
@@ -102,6 +104,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 	    sysHolderWrapper = systemHolderWrapParam;
 		final Injector injector = Guice.createInjector(sysModule, this);
 		boundInjector.setInjector(injector);
+        GNDMSBinding.setDefaultInjector(injector);
 
 	    final ORQCalculatorMetaFactory calcMF = new ORQCalculatorMetaFactory();
 		calcMF.setInjector(injector);
@@ -548,8 +551,13 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 		binder.bind(ModelUUIDGen.class).toInstance(uuidGen);
 	}
 
+    @NotNull
+    public String getSubGridName() {
+        return getConfiglet(DefaultConfiglet.class, "").getMapConfig().getOption("subGridName", "GNDMS");
+    }
 
-	private final class GNDMSBindingFactory implements GroovyBindingFactory {
+
+    private final class GNDMSBindingFactory implements GroovyBindingFactory {
 
 
         public @NotNull
