@@ -1,5 +1,7 @@
 package de.zib.gndms.logic.action;
 
+import com.google.inject.Injector;
+import de.zib.gndms.kit.access.InjectorProvider;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +34,7 @@ import java.util.List;
  */
 
 @SuppressWarnings({ "InterfaceNamingConvention" })
-public interface Action<R> extends Callable<R> {
+public interface Action<R> extends Callable<R>, InjectorProvider {
 
     /**
      * Will be invoked before {@code execute()} when this is submitted to an {@code Executor}.
@@ -71,4 +73,6 @@ public interface Action<R> extends Callable<R> {
     @Nullable <V> V nextParentOfType(final @NotNull Class<V> interfaceClass);
 
     @NotNull <V extends Action<?>> List<V> getParentChain(final @NotNull Class<V> interfaceClass);
+
+    void setInjector(Injector anInjector);
 }

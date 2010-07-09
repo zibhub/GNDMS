@@ -1,5 +1,7 @@
 package de.zib.gndms.logic.action;
 
+import com.google.inject.Injector;
+import de.zib.gndms.kit.access.GNDMSBinding;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,6 +30,8 @@ import java.util.concurrent.Executor;
 public abstract class AbstractAction<R> implements Action<R> {
 	private Action<?> parent;
 
+    private Injector injector;
+
     /**
      * Will be invoked before {@code execute()} when this is submitted to an {@code Executor}.
      * Does nothing by default, but can be overridden by subclasses.
@@ -49,7 +53,7 @@ public abstract class AbstractAction<R> implements Action<R> {
      * Use {@link AbstractAction#execute()} } instead to define what the action is supposed to done, when {@code call()}
      * is executed.
      *
-     * If concurrent execution is neeed this has to be submitted to an {@code Executor}.
+     * If concurrent execution is need this has to be submitted to an {@code Executor}.
      * The system will wait for the result not until really needed.
      * See {@link Executor} about the invocation and retrieving of the result
      *
@@ -167,5 +171,22 @@ public abstract class AbstractAction<R> implements Action<R> {
     public static void doNotOverwrite(final @NotNull String parameterName, final Object object) {
         if (object != null)
             throw new IllegalStateException("Overwriting the set parameter '\'" + parameterName + "' is not allowed");
+    }
+
+    public void setInjector(Injector anInjector) {
+        injector = anInjector;
+    }
+
+    @NotNull
+    public Injector getInjector() {
+        if (injector == null) {
+            final Action<?> theParent = getParent();
+            if (theParent == null)
+                return GNDMSBinding.getInjector();
+            else
+                return theParent.getInjector();
+        }
+        else
+            return injector;
     }
 }
