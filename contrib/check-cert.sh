@@ -51,7 +51,7 @@ while [ "$#" -gt 0 ]; do
     shift
 done
 
-openssl s_client -ssl3 -cert ~/.globus/usercert.pem -key ~/.globus/userkey.pem \
+openssl s_client -debug -msg -state -ssl3 -cert ~/.globus/usercert.pem -key ~/.globus/userkey.pem \
 -CApath $CERTDIR -connect $HOST:$PORT
 
 

@@ -8,7 +8,7 @@
  * If you redistribute this file, with or without
  * modifications, you must include this notice in the file.
  */
-package de.zib.gndms.comserv.util;
+package de.zib.gndms.infra.grams;
 
 import org.apache.log4j.Logger;
 import org.globus.common.ChainedIOException;
@@ -481,8 +481,8 @@ public class GNDMSJobManagerScript {
 
     static Logger logger;
     static {
-        // logger = LogFactory.getLog(GNDMSJobManagerScript.class);
-        logger = LogAux.stdSetupLogger(GNDMSJobManagerScript.class);
+         logger = LogFactory.getLog(GNDMSJobManagerScript.class);
+        //logger = LogAux.stdSetupLogger(GNDMSJobManagerScript.class);
     }
 
     private static I18n i18n = I18n.getI18n(Resources.class.getName());

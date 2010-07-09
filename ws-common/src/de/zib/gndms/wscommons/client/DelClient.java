@@ -1,4 +1,4 @@
-package de.zib.gndms.comserv.delegation;
+package de.zib.gndms.wscommons.client;
 
 import de.zib.gndms.kit.application.AbstractApplication;
 import org.apache.axis.message.addressing.EndpointReferenceType;

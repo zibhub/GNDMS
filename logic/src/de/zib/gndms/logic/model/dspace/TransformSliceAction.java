@@ -87,6 +87,10 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
         Slice sl = getModel( );
         Subspace sp = sl.getSubspace( );
 
+        if( directoryAux == null ) {
+            directoryAux = get
+        }
+
         if(! sp.getMetaSubspace( ).getCreatableSliceKinds( ).contains( createSliceAction.getSliceKind( ) ) )
             return null;
 

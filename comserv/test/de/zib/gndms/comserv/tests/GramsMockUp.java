@@ -1,6 +1,6 @@
 package de.zib.gndms.comserv.tests;
 
-import de.zib.gndms.comserv.util.GNDMSJobManagerScript;
+import de.zib.gndms.infra.grams.GNDMSJobManagerScript;
 import de.zib.gndms.kit.application.AbstractApplication;
 import org.globus.exec.generated.ScriptCommandEnumeration;
 import org.globus.exec.service.exec.PerlJobDescription;
