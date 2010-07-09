@@ -1,3 +1,6 @@
+
+
+
 package de.zib.gndms.kit.util
 
 import de.zib.gndms.model.common.AccessMask
@@ -7,7 +10,7 @@ import de.zib.gndms.model.common.AccessMask
  *
  * This implementation uses the system call "chmod"
  */
-class LinuxDirectoryAux extends DirecwtoryAux {
+class LinuxDirectoryAux extends DirectoryAux {
 
     final static String WX = "300"
     final static String RO = "500"
