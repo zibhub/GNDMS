@@ -5,7 +5,7 @@ import de.zib.gndms.model.gorfx.types.SliceStageInORQStdoutWriter;
 import de.zib.gndms.model.gorfx.types.io.SliceStageInORQConverter;
 import de.zib.gndms.model.gorfx.types.io.SliceStageInORQPropertyReader;
 import de.zib.gndms.model.gorfx.types.io.SliceStageInORQWriter;
-import de.zib.gndms.typecon.common.type.SliceStageInORQXSDTypeWriter;
+import de.zib.gndms.gritserv.typecon.types.SliceStageInORQXSDTypeWriter;
 import org.jetbrains.annotations.NotNull;
 import types.DynamicOfferDataSeqT;
 

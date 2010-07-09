@@ -3,10 +3,6 @@ package de.zib.gndms.kit.util;
 import de.zib.gndms.model.common.AccessMask;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.channels.FileChannel;
 
 /**
  * This abstract class provides usefull methods concerning directory access.
@@ -28,7 +24,7 @@ public interface DirectoryAux {
      *
      * @return true if the operation was successful
      */
-    public boolean setDirectoryReadWrite( String pth );
+    public boolean setDirectoryReadWrite( String uid, String pth );
 
     /**
      * Removes the owner-writable flag for the directory.
@@ -85,6 +81,15 @@ public interface DirectoryAux {
      */
     public boolean deleteDirectory( String owner, String pth );
 
+    /**
+     * Creates a directory.
+     *
+     * @param uid The owner of the new directory.
+     * @param pth The Path.
+     * @param perm The permission of the target
+     */
+    public boolean mkdir( String uid, String pth, AccessMask perm );
+
 
     public static class Utils {
         /**
@@ -95,6 +100,9 @@ public interface DirectoryAux {
          */
         public static boolean copyFile( String src, String tgt )  {
 
+            throw new IllegalStateException( "nocando ask someone else" );
+
+            /*
             File sf = new File( src );
             File tf = new File( tgt );
 
@@ -122,6 +130,7 @@ public interface DirectoryAux {
             }
 
             return true;
+            */
         }
 
 

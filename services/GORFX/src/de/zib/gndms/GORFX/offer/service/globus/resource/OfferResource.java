@@ -1,8 +1,8 @@
 package de.zib.gndms.GORFX.offer.service.globus.resource;
 
-import de.zib.gndms.comserv.delegation.DelegationAux;
-import de.zib.gndms.comserv.delegation.GNDMSCredibleResource;
-import de.zib.gndms.comserv.delegation.GNDMSDelegationListener;
+import de.zib.gndms.gritserv.delegation.DelegationAux;
+import de.zib.gndms.gritserv.delegation.GNDMSCredibleResource;
+import de.zib.gndms.gritserv.delegation.GNDMSDelegationListener;
 import de.zib.gndms.infra.wsrf.WSConstants;
 import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
@@ -13,7 +13,7 @@ import de.zib.gndms.model.common.types.InvalidContractException;
 import de.zib.gndms.model.common.types.PermissionConfigData;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
-import de.zib.gndms.typecon.common.type.ContractXSDReader;
+import de.zib.gndms.gritserv.typecon.types.ContractXSDReader;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.globus.delegation.DelegationException;
 import org.globus.delegation.DelegationUtil;

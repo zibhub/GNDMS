@@ -38,7 +38,6 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
 
     
     public CreateSliceAction( ) {
-         directoryAux = DirectoryAux.getDirectoryAux();
     }
 
 
@@ -62,7 +61,6 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
             this.uid = uid;
         this.sliceKind = kind;
         this.storageSize = ssize;
-        directoryAux = DirectoryAux.getDirectoryAux();
 
     }
 
@@ -123,6 +121,9 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
     @Override
     public Slice execute( @NotNull EntityManager em ) {
 
+        if( directoryAux == null )
+            directoryAux = getInjector().getInstance( DirectoryAux.class );
+
         Subspace sp = getModel( );
 
         if( ! sp.getMetaSubspace( ).getCreatableSliceKinds( ).contains( sliceKind ) )
@@ -141,14 +142,17 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
             // this also creats the dir for the namespace if it
             // doesn't exist yet.
             f.mkdirs( );
+            directoryAux.mkdir( uid, f.getAbsolutePath(), sliceKind.getPermission() );
         } catch ( SecurityException e ) {
             throw new RuntimeException(e);
         }
 
+        /*
         // fix permissions
-        directoryAux.setPermissions( sliceKind.getPermission(), f.getAbsolutePath( ) );
+        directoryAux.setPermissions( uid, sliceKind.getPermission(), f.getAbsolutePath( ) );
         if(! uid.equals( System.getProperty( "user.name" ) ) )
             directoryAux.changeOwner( uid, f.getAbsolutePath() );
+            */
 
         Slice sl = new Slice( did, sliceKind, sp, uid );
         sl.setId( getId( ) );

@@ -6,7 +6,7 @@ import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.service.GNDMSingletonServiceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.model.gorfx.types.io.xml.ProviderStageInXML;
-import de.zib.gndms.typecon.util.ProviderStageInXMLImpl;
+import de.zib.gndms.gritserv.typecon.util.ProviderStageInXMLImpl;
 import de.zib.gndms.logic.model.gorfx.c3grid.ParmFormatAux;
 import org.apache.axis.message.addressing.AttributedURI;
 import org.apache.commons.logging.Log;

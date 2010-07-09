@@ -33,6 +33,8 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
 
 
     private CreateSliceAction createSliceAction;
+    private DirectoryAux directoryAux;
+
 
     /**
      * Creates a new {@link CreateSliceAction} instances with the parameters given
@@ -66,11 +68,12 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
      * @param uuidgen an uuid generator for the directory id of the new slice object
      * @param da an helper object for directory access
      */
-    public TransformSliceAction( String uuid, String uid, Calendar ttm, SliceKind kind, Subspace tgt, long ssize, ModelUUIDGen uuidgen, DirectoryAux da ) {
+   public TransformSliceAction( String uuid, String uid, Calendar ttm, SliceKind kind, Subspace tgt, long ssize, ModelUUIDGen uuidgen, DirectoryAux da ) {
 
-        createSliceAction = new CreateSliceAction( uuid, uid, ttm, uuidgen, kind, ssize, da );
-        createSliceAction.setModel( tgt );
-    }
+       directoryAux = da;
+       createSliceAction = new CreateSliceAction( uuid, uid, ttm, uuidgen, kind, ssize, da );
+       createSliceAction.setModel( tgt );
+   }
 
 
     @Override
@@ -88,7 +91,7 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
         Subspace sp = sl.getSubspace( );
 
         if( directoryAux == null ) {
-            directoryAux = get
+            directoryAux = getInjector().getInstance( DirectoryAux.class );
         }
 
         if(! sp.getMetaSubspace( ).getCreatableSliceKinds( ).contains( createSliceAction.getSliceKind( ) ) )
@@ -112,7 +115,7 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
         // make slice path writable to copy content
         if ( ro ) {
             msk.addFlag( AccessMask.Ugo.USER, AccessMask.AccessFlags.WRITABLE );
-            DirectoryAux.getDirectoryAux().setPermissions( msk, tgt_pth );
+            directoryAux.setPermissions( nsl.getOwner(), msk, tgt_pth );
         }
 
 
@@ -120,7 +123,7 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
         for( int i=0; i < ls.length; ++i ) {
             // todo maybe use gridftp for this crap, NEEDS CERT 
             suc = suc &&
-                    createSliceAction.getDirectoryAux().copyFile(
+                    DirectoryAux.Utils.copyFile(
                             src_pth + File.separator + ls[i], tgt_pth + File.separator + ls[i]
                     );
         }
@@ -128,7 +131,7 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
         // restore slice path settings
         if ( ro ) {
             msk.removeFlag( AccessMask.Ugo.USER, AccessMask.AccessFlags.WRITABLE );
-            DirectoryAux.getDirectoryAux().setPermissions( msk, tgt_pth );
+            directoryAux.setPermissions( nsl.getOwner(), msk, tgt_pth );
         }
 
         // sth went wrong destroy created slice
@@ -137,7 +140,7 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
             throw new RuntimeException( "Can't copy slice content" );
         }
 
-        // no entries in BatchUpdateAction required, allready done by the create action
+        // no entries in BatchUpdateAction required, already done by the create action
 
         return nsl;
     }

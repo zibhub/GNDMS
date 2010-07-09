@@ -4,7 +4,7 @@ import de.zib.gndms.GORFX.context.client.TaskClient;
 import de.zib.gndms.model.gorfx.types.io.FileTransferORQConverter;
 import de.zib.gndms.model.gorfx.types.io.FileTransferORQPropertyReader;
 import de.zib.gndms.model.gorfx.types.io.FileTransferORQStdoutWriter;
-import de.zib.gndms.typecon.common.type.FileTransferORQXSDTypeWriter;
+import de.zib.gndms.gritserv.typecon.types.FileTransferORQXSDTypeWriter;
 import org.apache.axis.message.MessageElement;
 import types.FileTransferResultT;
 

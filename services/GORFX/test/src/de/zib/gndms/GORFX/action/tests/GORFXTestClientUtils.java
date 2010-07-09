@@ -7,7 +7,7 @@ import de.zib.gndms.GORFX.offer.client.OfferClient;
 import de.zib.gndms.dspace.slice.client.SliceClient;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyReader;
-import de.zib.gndms.typecon.common.type.ProviderStageInORQXSDTypeWriter;
+import de.zib.gndms.gritserv.typecon.types.ProviderStageInORQXSDTypeWriter;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.globus.wsrf.encoding.DeserializationException;
 import org.globus.wsrf.encoding.ObjectDeserializer;

@@ -42,7 +42,7 @@
 		<ant antfile="${model.dir}/build.xml" inheritALL="false" target="jar"/>
 		<ant antfile="${kit.dir}/build.xml" inheritALL="false" target="jar"/>
 		<ant antfile="${logic.dir}/build.xml" inheritALL="false" target="jar"/>
-		<ant antfile="${typecon.dir}/build.xml" inheritALL="false" target="jar"/>
+		<ant antfile="${gritserv.dir}/build.xml" inheritALL="false" target="jar"/>
 		<ant antfile="${infra.dir}/build.xml" inheritALL="false" target="jar"/>
 	</target>
 	
@@ -52,7 +52,7 @@
 		<ant antfile="${build-services}" inheritALL="false" target="clean.stubsServices"/>
 		<delete file=".symlink"/>
 		<ant antfile="${infra.dir}/build.xml" inheritALL="false" target="clean"/>
-		<ant antfile="${typecon.dir}/build.xml" inheritALL="false" target="clean"/>
+		<ant antfile="${gritserv.dir}/build.xml" inheritALL="false" target="clean"/>
 		<ant antfile="${logic.dir}/build.xml" inheritALL="false" target="clean"/>
 		<ant antfile="${kit.dir}/build.xml" inheritALL="false" target="clean"/>
 		<ant antfile="${model.dir}/build.xml" inheritALL="false" target="clean"/>
@@ -70,7 +70,7 @@
 	<target name="clean.jar" description="deletes all generated jars and gars">
 		<echo> Deleting jar-files</echo>
 		<ant antfile="${infra.dir}/build.xml" inheritALL="false" target="clean.jar"/>
-		<ant antfile="${typecon.dir}/build.xml" inheritALL="false" target="clean.jar"/>
+		<ant antfile="${gritserv.dir}/build.xml" inheritALL="false" target="clean.jar"/>
 		<ant antfile="${logic.dir}/build.xml" inheritALL="false" target="clean.jar"/>
 		<ant antfile="${kit.dir}/build.xml" inheritALL="false" target="clean.jar"/>
 		<ant antfile="${model.dir}/build.xml" inheritALL="false" target="clean.jar"/>
@@ -93,7 +93,7 @@
 		<ant antfile="${model.dir}/build.xml" inheritALL="false" target="jar.test"/>
 		<ant antfile="${kit.dir}/build.xml" inheritALL="false" target="jar.test"/>
 		<ant antfile="${logic.dir}/build.xml" inheritALL="false" target="jar.test"/>
-		<ant antfile="${typecon.dir}/build.xml" inheritALL="false" target="jar.test"/>
+		<ant antfile="${gritserv.dir}/build.xml" inheritALL="false" target="jar.test"/>
 		<ant antfile="${infra.dir}/build.xml" inheritALL="false" target="jar.test"/>
 	</target>
 	

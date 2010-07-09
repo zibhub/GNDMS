@@ -12,8 +12,8 @@ import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.model.gorfx.SubTask;
 import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.model.util.TxFrame;
-import de.zib.gndms.typecon.common.type.ProviderStageInResultXSDTypeWriter;
-import de.zib.gndms.typecon.common.type.SliceRefXSDReader;
+import de.zib.gndms.gritserv.typecon.types.ProviderStageInResultXSDTypeWriter;
+import de.zib.gndms.gritserv.typecon.types.SliceRefXSDReader;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;

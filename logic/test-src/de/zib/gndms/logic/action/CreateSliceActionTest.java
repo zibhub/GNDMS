@@ -2,7 +2,6 @@ package de.zib.gndms.logic.action;
 
 import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
 import de.zib.gndms.logic.model.LookupAction;
-import de.zib.gndms.kit.util.LinuxDirectoryAux;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
 import de.zib.gndms.logic.util.SimpleModelUUIDGen;
 import de.zib.gndms.model.common.ImmutableScopedName;
@@ -86,9 +85,9 @@ public class CreateSliceActionTest extends ModelEntityTestBase {
 
         Subspace sp = new Subspace( );
         sp.setId( ug.nextUUID() );
-        LinuxDirectoryAux lda = new LinuxDirectoryAux();
-        String spd = MY_PATH + "/subspace";
-        lda.createSubspaceDirectory( spd );
+      //  LinuxDirectoryAux lda = new LinuxDirectoryAux();
+      //  String spd = MY_PATH + "/subspace";
+      //  lda.createSubspaceDirectory( spd );
       //  sp.setPath( spd );
         sp.setMetaSubspace( msp );
         GregorianCalendar cal = new GregorianCalendar( );

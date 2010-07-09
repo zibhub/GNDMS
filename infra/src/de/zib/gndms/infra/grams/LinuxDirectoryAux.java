@@ -110,4 +110,15 @@ class LinuxDirectoryAux implements DirectoryAux {
         throw new IllegalStateException( "method not implemented yet" );
         // return false;  // not required here
     }
+
+
+
+    public boolean mkdir( String uid, String pth, AccessMask perm ) {
+
+        HashMap<String, Object> jd = new HashMap<String, Object>( 2 );
+        jd.put( EXECUTABLE, "/bin/mkdir" );
+        jd.put( ARGS, new String[] { "-p", pth, "-m", perm.toString() } );
+
+        return executeGramsJob( uid, jd );
+    }
 }

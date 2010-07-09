@@ -76,7 +76,7 @@
 		<pathelement path="${GROOVY}"/> 
 		<pathelement path="${annotations}"/>
 		<dirset dir="${gorfx.dir}/build/stubs-GORFX/classes/" />
-		<pathelement location="${gndms-typecon}"/>
+		<pathelement location="${gndms-gritserv}"/>
 		<pathelement location="${gndms-infra}"/>
 		<pathelement location="${gndms-kit}"/>
 		<pathelement location="${gndms-logic}"/>

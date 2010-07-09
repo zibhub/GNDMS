@@ -1,6 +1,6 @@
 package de.zib.gndms.dspace.service;
 
-import de.zib.gndms.comserv.util.LogAux;
+import de.zib.gndms.gritserv.util.LogAux;
 import de.zib.gndms.dspace.service.globus.resource.ExtDSpaceResourceHome;
 import de.zib.gndms.dspace.slice.service.globus.resource.ExtSliceResourceHome;
 import de.zib.gndms.dspace.stubs.types.UnknownSubspace;

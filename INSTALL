@@ -264,18 +264,8 @@ continue with the detailed build instructions below.
 
      (In IntelliJ: Use Build/Build Jars.. to build the jar on Make Project)
 
-                
-  7) Compile gndms-typecon.jar
-     Sources: typecon/src (resp. test)
-     Output: typecon/gndms-typecon/production (rest. test) classes
-             extra/lib/gndms-typecon.jar containing the contents of production/
-     Dependencies: GROOVY, J2EE, gorfx-stubs, stuff,gndms-shared-model, annotations, 
-		   joda-time, gt4, testng, 
-		   and openjpa (due to javac compiler bug 6365854)
 
-
-
-  8) Compile gndms-infra.jar
+  7) Compile gndms-infra.jar
      Sources: infra/src (resp. test)
      Output: infra/gndms-infra/production (resp. test) classes
             extra/lib/gndms-infra.jar containing the contents of production/
@@ -286,14 +276,16 @@ continue with the detailed build instructions below.
     (In IntelliJ: Use Build/Build Jars.. to build the jar on Make Project)
 
 
-  8.1) Compile gndms-comserv.jar
-     Sources: comserv/src (resp. test)
-     Output: comserv/gndms-comserv/production (resp. test) classes
-            extra/lib/gndms-comserv.jar containing the contents of production/
-     Dependencies: annotations, gt4, gndms-kit, gndms-infra, args4j,
-		   gndms-typecon, DSpace_stubs, gndms-shared-model
+  8) Compile gndms-gritserv.jar
+     Sources: gritserv/src (resp. test)
+     Output: gritserv/gndms-gritserv/production (rest. test) classes
+             extra/lib/gndms-gritserv.jar containing the contents of production/
+     Dependencies: GROOVY, J2EE, gorfx-stubs, stuff,gndms-shared-model, annotations, 
+		   joda-time, gt4, testng, 
+		   and openjpa (due to javac compiler bug 6365854)
 
     (In IntelliJ: Use Build/Build Jars.. to build the jar on Make Project)
+
 
 
   9) Build all services in services/* using ant createDeploymentGar
@@ -325,7 +317,7 @@ continue with the detailed build instructions below.
   gndms-kit, gndms-logic, gndms-shared-model, gndms-stuff, joda-time, SOURCES,
   all non-symlinks in services/ServiceName/lib,  gt4
 
-  GORFX also depends on gndms-typecon, DSpace, args4j, DSpace-Stubs and jaxb.
+  GORFX also depends on gndms-gritserv, DSpace, args4j, DSpace-Stubs and jaxb.
   
   compile to services/ServiceName/out/production (resp. test/), and exclude the
   services' out,  build, and lib directories from the project sources to reduce

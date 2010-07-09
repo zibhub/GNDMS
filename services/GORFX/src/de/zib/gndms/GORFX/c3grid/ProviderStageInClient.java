@@ -5,7 +5,7 @@ import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQConverter;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyReader;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQStdoutWriter;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQWriter;
-import de.zib.gndms.typecon.common.type.ProviderStageInORQXSDTypeWriter;
+import de.zib.gndms.gritserv.typecon.types.ProviderStageInORQXSDTypeWriter;
 import org.jetbrains.annotations.NotNull;
 import org.kohsuke.args4j.Option;
 import types.DynamicOfferDataSeqT;

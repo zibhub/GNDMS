@@ -5,7 +5,7 @@ import de.zib.gndms.dspace.slice.client.SliceClient;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQConverter;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyReader;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQStdoutWriter;
-import de.zib.gndms.typecon.common.type.ProviderStageInORQXSDTypeWriter;
+import de.zib.gndms.gritserv.typecon.types.ProviderStageInORQXSDTypeWriter;
 import org.globus.wsrf.encoding.ObjectDeserializer;
 import types.ProviderStageInResultT;
 import types.SliceReference;

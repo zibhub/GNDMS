@@ -113,7 +113,6 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
             csa.setParent(this);
             csa.setTerminationTime(getModel().getContract().getResultValidity());
             csa.setClosingEntityManagerOnCleanup(false);
-            csa.setDirectoryAux(DirectoryAux.getDirectoryAux());
             csa.setUUIDGen(getUUIDGen());
             csa.setId(getUUIDGen().nextUUID());
             csa.setModel(subspace);

@@ -481,7 +481,7 @@ public class GNDMSJobManagerScript {
 
     static Logger logger;
     static {
-         logger = LogFactory.getLog(GNDMSJobManagerScript.class);
+         logger = Logger.getLogger(GNDMSJobManagerScript.class);
         //logger = LogAux.stdSetupLogger(GNDMSJobManagerScript.class);
     }
 

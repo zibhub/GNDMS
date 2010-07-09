@@ -12,12 +12,12 @@ done
 for SERVICE in services/* ; do
   echoEval mkdir -p $SERVICE/test/lib
   echoEval mkdir -p $SERVICE/test/src
-  echoEval ln -sf ../../../../../../typecon/shared_service_src/shared $SERVICE/src/de/zib/gndms
+  echoEval ln -sf ../../../../../../gritserv/shared_service_src/shared $SERVICE/src/de/zib/gndms
   for jar in extra/tools-lib/* ; do
     echoEval ln -sf "../../../$jar" "$SERVICE/lib" 
   done
   echoEval ln -sf "$GROOVY_HOME"/embeddable/groovy-all*jar "extra/tools-lib/gndms-groovy.jar"
-  for jarname in stuff shared-model logic kit typecon infra ; do
+  for jarname in stuff shared-model logic kit gritserv infra ; do
     jar="extra/lib/gndms-$jarname.jar"
     echoEval ln -sf "../../../$jar" "$SERVICE/lib" 
   done

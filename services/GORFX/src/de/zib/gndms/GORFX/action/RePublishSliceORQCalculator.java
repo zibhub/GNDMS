@@ -8,7 +8,7 @@ import de.zib.gndms.logic.model.gorfx.AbstractTransferORQCalculator;
 import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
 import de.zib.gndms.model.gorfx.types.RePublishSliceORQ;
-import de.zib.gndms.typecon.common.type.SliceRefXSDReader;
+import de.zib.gndms.gritserv.typecon.types.SliceRefXSDReader;
 import de.zib.gndms.infra.wsrf.WSConstants;
 import org.globus.ftp.exception.ClientException;
 import org.globus.ftp.exception.ServerException;

@@ -25,7 +25,6 @@ public class DeleteSliceAction extends AbstractModelAction<Subspace, Slice> {
 
     
     public DeleteSliceAction( ) {
-         directoryAux = DirectoryAux.getDirectoryAux();
     }
 
 
@@ -36,7 +35,6 @@ public class DeleteSliceAction extends AbstractModelAction<Subspace, Slice> {
      */
     public DeleteSliceAction( Slice slice ) {
         this.slice = slice;
-        directoryAux = DirectoryAux.getDirectoryAux();
     }
 
     /**
@@ -74,6 +72,9 @@ public class DeleteSliceAction extends AbstractModelAction<Subspace, Slice> {
      */
     @Override
     public Slice execute( @NotNull EntityManager em ) {
+
+        if( directoryAux == null )
+            directoryAux = getInjector().getInstance( DirectoryAux.class );
 
         Subspace sp = getModel( );
 
