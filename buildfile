@@ -87,6 +87,9 @@ GT4_XML = gt4jars(['xalan-2.6.jar', 'xercesImpl-2.7.1.jar', 'xml-apis.jar', 'xml
 
 DB_DERBY = 'org.apache.derby:derby:jar:10.5.3.0'
 
+DSPACE_STUBS = file('services/DSpace/build/lib/gndms-dspace-stubs.jar')
+GORFX_STUBS = file('services/DSpace/build/lib/gndms-gorfx-stubs.jar')
+
 desc 'Germanys Next Data Management System'
 define 'gndms' do
     project.version = VERSION_NUMBER
@@ -116,8 +119,19 @@ define 'gndms' do
 
     desc 'GNDMS logic classes (actions for manipulating resources)'
     define 'logic', :layout => dmsLayout('logic', 'gndms-logic') do
-       compile.with JETBRAINS_ANNOTATIONS, project('stuff'), project('model'), project('kit'), JODA_TIME, GOOGLE_COLLECTIONS, GUICE, DB_DERBY, GT4_LOG, GT4_AXIS, GT4_COG, GT4_SEC, GT4_XML, COMMONS_LANG, OPENJPA
+       compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('stuff'), project('model'), JODA_TIME, GOOGLE_COLLECTIONS, GUICE, DB_DERBY, GT4_LOG, GT4_AXIS, GT4_COG, GT4_SEC, GT4_XML, COMMONS_LANG, OPENJPA
        package :jar
     end
+
+
+#     desc 'GNDMS classes for dealing with wsrf and xsd types'
+#     define 'typecon', :layout => dmsLayout('typecon', gndms-typecon') do
+#       compile.with JETBRAINS_ANNOTATIONS, project('stuff'), project('model'), JODA_TIME, GORFX_STUBS, OPENJPA
+#       package :jar
+#     end
+
+#    desc 'Build stubs for the DSpace service'
+#    file(_("services/DSpace)
+#    end
 end
 

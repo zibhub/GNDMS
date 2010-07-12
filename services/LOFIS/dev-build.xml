@@ -12,7 +12,7 @@
 	<!-- ============================================================== -->
 
 	<import file="../../gndms-service-dev-build.xml" />
-	<property name="jar.prefix" value="c3grid-lofis" />
+	<property name="jar.prefix" value="gndms-lofis" />
 
 	<!-- ============================================================== -->
 	<!-- Create any extended Classpaths here                            -->
