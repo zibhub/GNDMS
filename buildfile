@@ -18,12 +18,17 @@ repositories.remote << 'http://guiceyfruit.googlecode.com/svn/repo/releases'
 repositories.remote << 'http://download.java.net/maven/2'
 repositories.remote << 'http://static.appfuse.org/repository'
 repositories.remote << 'http://repository.jboss.org/maven2/'
+repositories.remote << 'http://google-maven-repository.googlecode.com/svn/repository/'
 
 OPENJPA = transitive(['org.apache.openjpa:openjpa:jar:2.0.0-beta',
-                      'net.sourceforge.serp:serp:jar:1.12.0'])
+                      'net.sourceforge.serp:serp:jar:1.12.0',
+                      file('extra/tools/lib/geronimo-jpa_2.0_spec-1.0-EA-SNAPSHOT.jar'),
+                      file('extra/tools/lib/geronimo-jta_1.1_spec-1.1.jar')])
 
 require 'buildr/openjpa2'
 include Buildr::OpenJPA2
+
+ACTI = 'javax.activation:activation:jar:1.1.1'
 
 GOOGLE_COLLECTIONS = transitive('com.google.collections:google-collections:jar:0.9')
 
@@ -83,12 +88,17 @@ GT4_SEC = gt4jars(['puretls.jar', 'opensaml.jar',
                    'globus_delegation_service.jar',
                    'globus_delegation_stubs.jar'])
 
-GT4_XML = gt4jars(['xalan-2.6.jar', 'xercesImpl-2.7.1.jar', 'xml-apis.jar', 'xmlsec.jar'])
+GT4_XML = gt4jars(['xalan-2.6.jar', 'xercesImpl-2.7.1.jar', 'xml-apis.jar', 'xmlsec.jar', 'jaxrpc.jar'])
+
+GT4_GRAM = gt4jars(['gram-monitoring.jar', 'gram-service.jar', 'gram-stubs.jar', 'gram-utils.jar'])
 
 DB_DERBY = 'org.apache.derby:derby:jar:10.5.3.0'
 
+HTTP_CORE = ['org.apache.httpcomponents:httpcore:jar:4.0', 'org.apache.httpcomponents:httpcore-nio:jar:4.0', 'org.apache.httpcomponents:httpclient:jar:4.0.1']
+
+SERVICES = ['GORFX', 'DSpace']
 DSPACE_STUBS = file('services/DSpace/build/lib/gndms-dspace-stubs.jar')
-GORFX_STUBS = file('services/DSpace/build/lib/gndms-gorfx-stubs.jar')
+GORFX_STUBS  = file('services/GORFX/build/lib/gndms-gorfx-stubs.jar')
 
 desc 'Germanys Next Data Management System'
 define 'gndms' do
@@ -123,15 +133,15 @@ define 'gndms' do
        package :jar
     end
 
+    desc 'GNDMS core infrastructure classes'
+    define 'infra', :layout => dmsLayout('infra', 'gndms-infra') do
+      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('logic'), project('kit'), project('stuff'), project('model'), ACTI, GORFX_STUBS, JODA_TIME, JAXB, GT4_SERVLET, JETTY, GOOGLE_COLLECTIONS, GUICE, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, GT4_COMMONS, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE
+    end
 
-#     desc 'GNDMS classes for dealing with wsrf and xsd types'
-#     define 'typecon', :layout => dmsLayout('typecon', gndms-typecon') do
-#       compile.with JETBRAINS_ANNOTATIONS, project('stuff'), project('model'), JODA_TIME, GORFX_STUBS, OPENJPA
-#       package :jar
-#     end
-
-#    desc 'Build stubs for the DSpace service'
-#    file(_("services/DSpace)
-#    end
+    desc 'GNDMS classes for dealing with wsrf and xsd types'
+    define 'gritserv', :layout => dmsLayout('gritserv', 'gndms-gritserv') do
+      compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('stuff'), project('model'), ARGS4J, JODA_TIME, GORFX_STUBS, OPENJPA, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, GT4_COMMONS, COMMONS_LANG, COMMONS_COLLECTIONS
+      package :jar
+    end
 end
 

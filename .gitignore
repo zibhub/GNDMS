@@ -37,6 +37,9 @@ extra/lib/GORFX.jar
 extra/lib/gndms-model.jar
 extra/lib/model/*
 extra/tools-lib/gndms-groovy.jar
+extra/lib/gritserv/*
+extra/lib/gndms-gritserv.jar
+gritserv/gndms-gritserv/**
 infra/gndms-infra/**
 model/gndms-model/**
 kit/gndms-kit/**
