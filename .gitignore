@@ -75,3 +75,7 @@ syntax:regexp
 .symlink
 .#buildfile
 extra/DEPENDENCIES
+*/resources/META-INF/GNDMS-RELEASE
+*/resources/META-INF/GNDMS-BUILD-INFO
+*/resources/META-INF/LICENSE
+.#Buildfile

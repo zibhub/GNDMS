@@ -20,7 +20,9 @@ repositories.remote << 'http://google-maven-repository.googlecode.com/svn/reposi
 
 VERSION_NUMBER = '0.3-pre'
 GROUP_NAME = 'de.zib.gndms'
-MF_COPYRIGHT = '2008-2010 (c) Zuse Institute Berlin (ZIB)'
+MF_COPYRIGHT = 'Copyright 2008-2010 Zuse Institute Berlin (ZIB)'
+MF_LICENSE ='This software has been licensed to you under the terms and conditions of the Apache License 2.0 (APL 2.0) only.  See META-INF/LICENSE for detailed terms and conditions.'
+USERNAME = ENV['USER'].to_s
 
 # Helper to create non-standard GNDMS sub-project layouts
 require 'buildr/gndms'
@@ -28,13 +30,16 @@ include GNDMS
 
 
 # Test environment
-testEnv('GLOBUS_LOCATION', 'the root directory of Globus Toolkit 4.0.X')
+testEnv('GLOBUS_LOCATION', 'the root directory of Globus Toolkit 4.0.X (minimal requirements: GridFTP, ws-core, GRAMS)')
 testEnv('ANT_HOME', 'the root directory of Apache Ant')
 testEnv('JAVA_HOME', 'the root directory of J2SE ' + TARGET)
 testEnv('GNDMS_SOURCE', 'the root directory of GNDMS source distribution (i.e. the toplevel directory in which the Buildfile resides)')
+testEnv('USER', 'your user\'s login (your UNIX is weird)')
 testTool('rsync')
 testTool('curl')
 testTool('openssl')
+testTool('hostname')
+HOSTNAME = `hostname`
 
 
 # Helper to construct GT4 jar pathes
@@ -114,11 +119,13 @@ define 'gndms' do
     project.version = VERSION_NUMBER
     project.group = GROUP_NAME
     manifest['Copyright'] = MF_COPYRIGHT
+    manifest['License'] = MF_LICENSE
     compile.options.target = TARGET
 
     desc 'GT4-independent utility classes for GNDMS'
     define 'stuff', :layout => dmsLayout('stuff', 'gndms-stuff') do
        compile.with GUICE, GOOGLE_COLLECTIONS, JETBRAINS_ANNOTATIONS
+       compile { add_build_info('stuff') }                              
        package :jar
     end
 
@@ -126,7 +133,10 @@ define 'gndms' do
     define 'model', :layout => dmsLayout('model', 'gndms-model') do
        compile.with project('stuff'), COMMONS_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS, GUICE, CXF, OPENJPA
        # buildr rox!
-       compile { open_jpa_enhance }
+       compile { 
+        open_jpa_enhance 
+        add_build_info('model')
+       }
        package :jar
     end
 
@@ -171,8 +181,8 @@ define 'gndms' do
         deps = Buildr.artifacts(project('infra').compile.dependencies).map(&:to_s)
         depsFile = File.new(_('../extra/DEPENDENCIES'), 'w')
         deps.select { |jar| jar[0, GT4LIB.length] != GT4LIB }.each { |file| 
-           puts 'cp_f: \'' + file + '\' to: \'' + GT4LIB + '\''
-           cp_f(file, GT4LIB); 
+           puts 'cp: \'' + file + '\' to: \'' + GT4LIB + '\''
+           cp(file, GT4LIB); 
            depsFile.syswrite(file + "\n") 
         }
         depsFile.close
