@@ -19,6 +19,7 @@ repositories.remote << 'http://google-maven-repository.googlecode.com/svn/reposi
 # --------------------------------------------------------------------------------------------------
 
 VERSION_NUMBER = '0.3-pre'
+VERSION_NAME = 'Kylie++'
 GROUP_NAME = 'de.zib.gndms'
 MF_COPYRIGHT = 'Copyright 2008-2010 Zuse Institute Berlin (ZIB)'
 MF_LICENSE ='This software has been licensed to you under the terms and conditions of the Apache License 2.0 (APL 2.0) only.  See META-INF/LICENSE for detailed terms and conditions.'
@@ -50,7 +51,7 @@ include GT4
 require 'buildr/groovy'
 
 
-# Essentially GT4 package management is total crap
+# Essentially GT4 package management is classloading unaware crap
 # Therefore we have to filter out some jars in order to avoid invalid jar-shadowing through dependencies
 def skipDeps(deps) 
   deps = deps.select { |ding| !ding.include?("/commons-cli") }
@@ -63,7 +64,7 @@ end
 
 # Non-GT4 dependencies
 ACTI = 'javax.activation:activation:jar:1.1.1'
-GOOGLE_COLLECTIONS = 'com.google.collections:google-collections:jar:0.9'
+# GOOGLE_COLLECTIONS = 'com.google.collections:google-collections:jar:0.9'
 GUICE = 'org.guiceyfruit:guice-core:jar:2.0-beta-4'
 JETBRAINS_ANNOTATIONS = 'com.intellij:annotations:jar:7.0.3'
 JODA_TIME = transitive('joda-time:joda-time:jar:1.6')
@@ -120,41 +121,59 @@ include Buildr::OpenJPA2
 
 desc 'Germanys Next Data Management System'
 define 'gndms' do
+    # Remaining extra dependencies.. Google in its infinite wisdom doesnt do maven
+    GOOGLE_COLLECTIONS = file(_('extra/guava-r06.jar'))
+
     project.version = VERSION_NUMBER
     project.group = GROUP_NAME
     manifest['Copyright'] = MF_COPYRIGHT
     manifest['License'] = MF_LICENSE
     compile.options.target = TARGET
+    meta_inf << file(_('LICENSE'))
+    meta_inf << file(_('GNDMS-RELEASE'))
 
     # WSRF GT4 services to be built
     SERVICES = ['GORFX', 'DSpace']
+    # TODO: Replace with some ruby magic
     DSPACE_STUBS = _('services/DSpace/build/lib/gndms-dspace-stubs.jar')
+    DSPACE_CLIENT = _('services/DSpace/build/lib/gndms-dspace-client.jar')
+    DSPACE_COMMON = _('services/DSpace/build/lib/gndms-dspace-common.jar')
     GORFX_STUBS  = _('services/GORFX/build/lib/gndms-gorfx-stubs.jar')
+    GORFX_CLIENT  = _('services/GORFX/build/lib/gndms-gorfx-client.jar')
+    GORFX_COMMON  = _('services/GORFX/build/lib/gndms-gorfx-common.jar')
     SERVICE_STUBS = [GORFX_STUBS, DSPACE_STUBS]
 
+    buildFile = File.new(_('GNDMS-BUILD-INFO'), 'w')
+    timestamp = Time.now.to_s
+    buildFile.syswrite('built-at: ' + timestamp + ' built-by: ' + USERNAME + '@' + HOSTNAME)
+    buildFile.close
+    meta_inf << file(_('GNDMS-BUILD-INFO'))
+
+    versionString = 'Generation N Data Management System VERSION: ' + VERSION_NUMBER + ' "' + VERSION_NAME + '"'
+    relFile = File.new(_('GNDMS-RELEASE'), 'w')
+    relFile.syswrite(versionString)
+    relFile.close
+ 
     desc 'GT4-independent utility classes for GNDMS'
     define 'stuff', :layout => dmsLayout('stuff', 'gndms-stuff') do
        compile.with GUICE, GOOGLE_COLLECTIONS, JETBRAINS_ANNOTATIONS
-       compile { add_build_info('stuff') }                              
+       compile
        package :jar
     end
 
     desc 'Shared database model classes'
     define 'model', :layout => dmsLayout('model', 'gndms-model') do
-       compile.with project('stuff'), COMMONS_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS, GUICE, CXF, OPENJPA
-       # buildr rox!
-       compile { 
-        open_jpa_enhance 
-        add_build_info('model')
-       }
-       package :jar
+      compile.with project('stuff'), COMMONS_COLLECTIONS, GOOGLE_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS, GUICE, CXF, OPENJPA
+      # buildr rox!
+      compile { open_jpa_enhance }
+      package :jar
     end
 
     desc 'GT4-dependent utility classes for GNDMS'
     define 'kit', :layout => dmsLayout('kit', 'gndms-kit') do
-       compile.with JETTY, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('stuff'), project('model'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_AXIS, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, GUICE, GT4_SERVLET, COMMONS_LANG, OPENJPA, Buildr::Groovy::Groovyc.dependencies
-       compile { add_build_info('kit') }                              
-       package :jar
+      compile.with JETTY, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('stuff'), project('model'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_AXIS, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, GUICE, GT4_SERVLET, COMMONS_LANG, OPENJPA, Buildr::Groovy::Groovyc.dependencies
+      compile
+      package :jar
     end
 
     desc 'GNDMS logic classes (actions for manipulating resources)'
@@ -166,7 +185,7 @@ define 'gndms' do
     desc 'GNDMS classes for dealing with wsrf and xsd types'
     define 'gritserv', :layout => dmsLayout('gritserv', 'gndms-gritserv') do
       compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('stuff'), project('model'), ARGS4J, JODA_TIME, GORFX_STUBS, OPENJPA, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, GT4_COMMONS, COMMONS_LANG, COMMONS_COLLECTIONS
-      compile { add_build_info('gritserv') }
+      compile
       package :jar
     end
 
@@ -174,9 +193,11 @@ define 'gndms' do
     define 'infra', :layout => dmsLayout('infra', 'gndms-infra') do
       # Infra *must* have all dependencies since we use this list in copy/link-deps
       compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gritserv'), project('logic'), project('kit'), project('stuff'), project('model'), ARGS4J, ACTI, SERVICE_STUBS, JODA_TIME, JAXB, GT4_SERVLET, JETTY, CXF, GOOGLE_COLLECTIONS, GUICE, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TESTNG
-      compile { add_build_info('') }
+      compile
       package :jar
 
+      # Symlink or copy all dependencies of infra + the infra jar - whatever gets filtered by skipDeps to GT4LIB
+      # and log source jars used to lib/DEPENDENCIES and lib/dependencies.xml (both files are not further used by the build - FYI only)
       def installDeps(copy)
         deps = Buildr.artifacts(project('infra').compile.dependencies).map(&:to_s)
         deps << project('infra').package.to_s

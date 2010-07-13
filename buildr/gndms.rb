@@ -27,13 +27,4 @@ module GNDMS
     end
   end
 
-  def add_build_info(prj)
-        puts 'Adding license and build information to ' + prj + '/resources'
-        buildFile = File.new(_('resources/META-INF/GNDMS-BUILD-INFO'), 'w')
-        timestamp = Time.now.to_s
-        buildFile.syswrite('built-at: ' + timestamp + ' built-by: ' + USERNAME + '@' + HOSTNAME + ' package: ' + prj)
-        buildFile.close
-        cp(_('../GNDMS-RELEASE'), _('resources/META-INF/GNDMS-RELEASE'))
-        cp(_('../doc/LICENSE.GNDMS'), _('resources/META-INF/LICENSE'))
-  end
 end
