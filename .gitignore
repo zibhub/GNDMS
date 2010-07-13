@@ -74,3 +74,4 @@ syntax:regexp
 .*~
 .symlink
 .#buildfile
+extra/DEPENDENCIES
