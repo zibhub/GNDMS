@@ -46,43 +46,39 @@ HOSTNAME = `hostname`
 require 'buildr/gt4'
 include GT4
 
-# WSRF GT4 services to be built
-SERVICES = ['GORFX', 'DSpace']
-DSPACE_STUBS = file('services/DSpace/build/lib/gndms-dspace-stubs.jar')
-GORFX_STUBS  = file('services/GORFX/build/lib/gndms-gorfx-stubs.jar')
-SERVICE_STUBS = [GORFX_STUBS, DSPACE_STUBS]
-
-
 # Groovy support is needed by the monitor
 require 'buildr/groovy'
 
 
-# OpenJPA is required by gndms:model
-OPENJPA = transitive(['org.apache.openjpa:openjpa:jar:2.0.0-beta',
-                      'net.sourceforge.serp:serp:jar:1.12.0'])
-
-require 'buildr/openjpa2'
-include Buildr::OpenJPA2
+# Essentially GT4 package management is total crap
+# Therefore we have to filter out some jars in order to avoid invalid jar-shadowing through dependencies
+def skipDeps(deps) 
+  deps = deps.select { |ding| !ding.include?("/commons-cli") }
+  deps = deps.select { |ding| !ding.include?("/commons-logging") }
+#  deps = deps.select { |ding| !ding.include?("/commons-lang-2.1") }
+  deps = deps.select { |ding| !ding.include?("/commons-pool") }
+  return deps
+end
 
 
 # Non-GT4 dependencies
 ACTI = 'javax.activation:activation:jar:1.1.1'
-GOOGLE_COLLECTIONS = transitive('com.google.collections:google-collections:jar:0.9')
-GUICE = transitive('org.guiceyfruit:guice-core:jar:2.0-beta-4')
+GOOGLE_COLLECTIONS = 'com.google.collections:google-collections:jar:0.9'
+GUICE = 'org.guiceyfruit:guice-core:jar:2.0-beta-4'
 JETBRAINS_ANNOTATIONS = 'com.intellij:annotations:jar:7.0.3'
 JODA_TIME = transitive('joda-time:joda-time:jar:1.6')
 CXF = 'org.apache.cxf:cxf-bundle:jar:2.1.4'
 JAXB = 'javax.xml.bind:jaxb-api:jar:2.2.1'
-COMMONS_COLLECTIONS = transitive(['commons-collections:commons-collections:jar:3.2'])
-COMMONS_CODEC = transitive(['commons-codec:commons-codec:jar:1.4'])
-COMMONS_LANG = transitive(['commons-lang:commons-lang:jar:2.4'])
+COMMONS_COLLECTIONS = transitive(['commons-collections:commons-collections:jar:3.2.1'])
+COMMONS_CODEC = 'commons-codec:commons-codec:jar:1.4'
+COMMONS_LANG = 'commons-lang:commons-lang:jar:2.1'
 COMMONS_FILEUPLOAD = transitive(['commons-fileupload:commons-fileupload:jar:1.2.1'])
 JETTY = ['jetty:jetty:jar:6.0.2', 'jetty:jetty-util:jar:6.0.2']
 ARGS4J = 'args4j:args4j:jar:2.0.14'
 TESTNG = download(artifact('org.testng:testng:jar:5.1-jdk15') => 'http://static.appfuse.org/repository/org/testng/testng/5.1/testng-5.1-jdk15.jar')
+# TESTNG = 'org.testng:testng:jar:5.1'
 DB_DERBY = 'org.apache.derby:derby:jar:10.5.3.0'
 HTTP_CORE = ['org.apache.httpcomponents:httpcore:jar:4.0', 'org.apache.httpcomponents:httpcore-nio:jar:4.0', 'org.apache.httpcomponents:httpclient:jar:4.0.1']
-
 
 # Grouped GT4 dependencies
 GT4_COMMONS = gt4jars(['commons-beanutils.jar', 
@@ -114,6 +110,14 @@ GT4_XML = gt4jars(['xalan-2.6.jar', 'xercesImpl-2.7.1.jar', 'xml-apis.jar', 'xml
 GT4_GRAM = gt4jars(['gram-monitoring.jar', 'gram-service.jar', 'gram-stubs.jar', 'gram-utils.jar'])
 
 
+# OpenJPA is required by gndms:model
+OPENJPA = transitive('org.apache.openjpa:openjpa:jar:2.0.0-beta')
+
+require 'buildr/openjpa2'
+include Buildr::OpenJPA2
+
+
+
 desc 'Germanys Next Data Management System'
 define 'gndms' do
     project.version = VERSION_NUMBER
@@ -121,6 +125,12 @@ define 'gndms' do
     manifest['Copyright'] = MF_COPYRIGHT
     manifest['License'] = MF_LICENSE
     compile.options.target = TARGET
+
+    # WSRF GT4 services to be built
+    SERVICES = ['GORFX', 'DSpace']
+    DSPACE_STUBS = _('services/DSpace/build/lib/gndms-dspace-stubs.jar')
+    GORFX_STUBS  = _('services/GORFX/build/lib/gndms-gorfx-stubs.jar')
+    SERVICE_STUBS = [GORFX_STUBS, DSPACE_STUBS]
 
     desc 'GT4-independent utility classes for GNDMS'
     define 'stuff', :layout => dmsLayout('stuff', 'gndms-stuff') do
@@ -143,6 +153,7 @@ define 'gndms' do
     desc 'GT4-dependent utility classes for GNDMS'
     define 'kit', :layout => dmsLayout('kit', 'gndms-kit') do
        compile.with JETTY, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('stuff'), project('model'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_AXIS, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, GUICE, GT4_SERVLET, COMMONS_LANG, OPENJPA, Buildr::Groovy::Groovyc.dependencies
+       compile { add_build_info('kit') }                              
        package :jar
     end
 
@@ -155,37 +166,49 @@ define 'gndms' do
     desc 'GNDMS classes for dealing with wsrf and xsd types'
     define 'gritserv', :layout => dmsLayout('gritserv', 'gndms-gritserv') do
       compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('stuff'), project('model'), ARGS4J, JODA_TIME, GORFX_STUBS, OPENJPA, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, GT4_COMMONS, COMMONS_LANG, COMMONS_COLLECTIONS
+      compile { add_build_info('gritserv') }
       package :jar
     end
 
     desc 'GNDMS core infrastructure classes'
     define 'infra', :layout => dmsLayout('infra', 'gndms-infra') do
       # Infra *must* have all dependencies since we use this list in copy/link-deps
-      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gritserv'), project('logic'), project('kit'), project('stuff'), project('model'), ARGS4J, ACTI, SERVICE_STUBS, JODA_TIME, JAXB, GT4_SERVLET, JETTY, CXF, GOOGLE_COLLECTIONS, GUICE, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE
+      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gritserv'), project('logic'), project('kit'), project('stuff'), project('model'), ARGS4J, ACTI, SERVICE_STUBS, JODA_TIME, JAXB, GT4_SERVLET, JETTY, CXF, GOOGLE_COLLECTIONS, GUICE, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TESTNG
+      compile { add_build_info('') }
       package :jar
 
-      desc 'Symlink dependencies to $GLOBUS_LOCATION/lib'
-      task 'link-deps'  => :package do
+      def installDeps(copy)
         deps = Buildr.artifacts(project('infra').compile.dependencies).map(&:to_s)
-        depsFile = File.new(_('../extra/DEPENDENCIES'), 'w')
+        deps << project('infra').package.to_s
+        deps = skipDeps(deps)
+
+        classpathFile = File.new(_('../lib/dependencies.xml'), 'w')
+        classpathFile.syswrite('<?xml version="1.0"?>' + "\n" + '<target id="setGNDMSDeps"><path id="service.build.extended.classpath">' + "\n")
+        depsFile = File.new(_('../lib/DEPENDENCIES'), 'w')
         deps.select { |jar| jar[0, GT4LIB.length] != GT4LIB }.each { |file| 
-           puts 'ln_sf: \'' + file + '\' to: \'' + GT4LIB + '\''
-           ln_sf(file, GT4LIB); 
+           if (copy)
+             puts 'cp: \'' + file + '\' to: \'' + GT4LIB + '\''
+             cp(file, GT4LIB)
+           else
+             puts 'ln_sf: \'' + file + '\' to: \'' + GT4LIB + '\''
+             ln_sf(file, GT4LIB)
+           end
            depsFile.syswrite(file + "\n") 
+           classpathFile.syswrite('<pathelement location="' + file + '" />' + "\n")
         }
         depsFile.close
+        classpathFile.syswrite('</target></path></project>' + "\n\n")
+        classpathFile.close
+      end
+
+      desc 'Symlink dependencies to $GLOBUS_LOCATION/lib'
+      task 'link-deps' => :package do
+        installDeps(false)
       end
 
       desc 'Copy dependencies to $GLOBUS_LOCATION/lib'
-      task 'copy-deps'  => :package do
-        deps = Buildr.artifacts(project('infra').compile.dependencies).map(&:to_s)
-        depsFile = File.new(_('../extra/DEPENDENCIES'), 'w')
-        deps.select { |jar| jar[0, GT4LIB.length] != GT4LIB }.each { |file| 
-           puts 'cp: \'' + file + '\' to: \'' + GT4LIB + '\''
-           cp(file, GT4LIB); 
-           depsFile.syswrite(file + "\n") 
-        }
-        depsFile.close
+      task 'copy-deps' => :package do
+        installDeps(true)
       end
 
     end
@@ -205,14 +228,15 @@ define 'gndms' do
     end
 
     desc 'Create GARs for deployment (Requires packaged GNDMS and installed dependencies)'
-    task :package_gars => 'package' do
+    task 'package-gars' do
       SERVICES.each { |service| 
         system 'cd ' + _('services/'+service) + ' && ant createDeploymentGar'
+        ln_sf(_('services/' + service + '/gndms_' + service + '.gar'), _('.'))
       }
     end
 end
 
-task 'package-stubs' => 'gndms:package_stubs' do
+task 'package-stubs' => 'gndms:package-stubs' do
 end
 
 task 'install-deps' => 'gndms:infra:copy-deps' do
@@ -224,7 +248,7 @@ end
 task 'link-deps' => 'gndms:infra:link-deps' do
 end
 
-task 'package-gars' => 'gndms:package_gars' do
+task 'package-gars' => 'gndms:package-gars' do
 end
 
 task 'pt-install' => ['package-stubs', 'install-deps', 'package-gars'] do

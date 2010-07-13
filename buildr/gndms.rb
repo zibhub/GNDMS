@@ -9,7 +9,7 @@ module GNDMS
     l[:source, :main, :resources] = _(prj + '/resources')
     l[:target, :main, :classes] = _(prjOut + '/production')
     l[:target, :main, :resources] = _(prjOut + '/production-resources')
-    l[:target] = _('extra/lib/' + prj)
+    l[:target] = _('lib/' + prj)
     return l
   end
 

@@ -74,7 +74,8 @@ syntax:regexp
 .*~
 .symlink
 .#buildfile
-extra/DEPENDENCIES
+lib/DEPENDENCIES
+lib/dependencies.xml
 */resources/META-INF/GNDMS-RELEASE
 */resources/META-INF/GNDMS-BUILD-INFO
 */resources/META-INF/LICENSE
