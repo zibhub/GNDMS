@@ -2,6 +2,7 @@ package de.zib.gndms.infra.system;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Sets;
+import com.google.common.collect.MapMaker;
 import com.google.inject.Binder;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -32,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.persistence.EntityManager;
 import java.io.PrintWriter;
 import java.util.Set;
+import java.util.Map;
 
 
 /**
@@ -59,16 +61,17 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
             }
     };
 
+	  private final Map<Class<? extends ConfigAction<?>>, Boolean> configActionMap = new MapMaker().makeMap();
     /**
      * A set of ConfigAction.{@link HelpOverviewAction} is excluded, as this set used in the {@code HelpOverviewAction}
      * to print help about all available ConfigActions.
      */
     private final Set<Class<? extends ConfigAction<?>>> configActions =
-            Sets.newConcurrentHashSet();
+            Sets.newSetFromMap(configActionMap);
 
     private final Function<String, String> classToActionNameMapper =
         new Function<String, String>() {
-            public String apply(@com.google.common.base.Nullable final String s) {
+            public String apply(final String s) {
                 if (s.startsWith("de.zib.gndms.infra.action") && s.endsWith("Action"))
                     return ".sys" + s.substring("de.zib.gndms.infra.action".length(), s.length()-6);
                 if (s.startsWith("de.zib.gndms.logic.model") && s.endsWith("Action"))

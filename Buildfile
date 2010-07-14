@@ -31,7 +31,7 @@ include GNDMS
 
 
 # Test environment
-testEnv('GLOBUS_LOCATION', 'the root directory of Globus Toolkit 4.0.X (minimal requirements: GridFTP, ws-core, GRAMS)')
+testEnv('GLOBUS_LOCATION', 'the root directory of Globus Toolkit 4.0.X')
 testEnv('ANT_HOME', 'the root directory of Apache Ant')
 testEnv('JAVA_HOME', 'the root directory of J2SE ' + TARGET)
 testEnv('GNDMS_SOURCE', 'the root directory of GNDMS source distribution (i.e. the toplevel directory in which the Buildfile resides)')
@@ -135,12 +135,16 @@ define 'gndms' do
     # WSRF GT4 services to be built
     SERVICES = ['GORFX', 'DSpace']
     # TODO: Replace with some ruby magic
-    DSPACE_STUBS = _('services/DSpace/build/lib/gndms-dspace-stubs.jar')
-    DSPACE_CLIENT = _('services/DSpace/build/lib/gndms-dspace-client.jar')
-    DSPACE_COMMON = _('services/DSpace/build/lib/gndms-dspace-common.jar')
-    GORFX_STUBS  = _('services/GORFX/build/lib/gndms-gorfx-stubs.jar')
+    DSPACE_STUBS   = _('services/DSpace/build/lib/gndms-dspace-stubs.jar')
+    DSPACE_CLIENT  = _('services/DSpace/build/lib/gndms-dspace-client.jar')
+    DSPACE_COMMON  = _('services/DSpace/build/lib/gndms-dspace-common.jar')
+    DSPACE_SERVICE = _('services/DSpace/build/lib/gndms-dspace-service.jar')
+    DSPACE_TESTS   = _('services/DSpace/build/lib/gndms-dspace-tests.jar')
+    GORFX_STUBS   = _('services/GORFX/build/lib/gndms-gorfx-stubs.jar')
     GORFX_CLIENT  = _('services/GORFX/build/lib/gndms-gorfx-client.jar')
     GORFX_COMMON  = _('services/GORFX/build/lib/gndms-gorfx-common.jar')
+    GORFX_SERVICE = _('services/GORFX/build/lib/gndms-gorfx-service.jar')
+    GORFX_TESTS   = _('services/GORFX/build/lib/gndms-gorfx-tests.jar')
     SERVICE_STUBS = [GORFX_STUBS, DSPACE_STUBS]
 
     buildFile = File.new(_('GNDMS-BUILD-INFO'), 'w')
@@ -204,7 +208,7 @@ define 'gndms' do
         deps = skipDeps(deps)
 
         classpathFile = File.new(_('../lib/dependencies.xml'), 'w')
-        classpathFile.syswrite('<?xml version="1.0"?>' + "\n" + '<target id="setGNDMSDeps"><path id="service.build.extended.classpath">' + "\n")
+        classpathFile.syswrite('<?xml version="1.0"?>' + "\n" + '<project><target id="setGNDMSDeps"><path id="service.build.extended.classpath">' + "\n")
         depsFile = File.new(_('../lib/DEPENDENCIES'), 'w')
         deps.select { |jar| jar[0, GT4LIB.length] != GT4LIB }.each { |file| 
            if (copy)
@@ -218,7 +222,7 @@ define 'gndms' do
            classpathFile.syswrite('<pathelement location="' + file + '" />' + "\n")
         }
         depsFile.close
-        classpathFile.syswrite('</target></path></project>' + "\n\n")
+        classpathFile.syswrite('</path></target></project>' + "\n\n")
         classpathFile.close
       end
 
@@ -242,6 +246,12 @@ define 'gndms' do
       }
     end
 
+    task 'clean-services' do
+      SERVICES.each { |service| 
+        system 'cd ' + _('services/'+service) + ' && ant clean'
+      }
+    end
+
     task 'package-stubs' do
       SERVICES.each { |service| 
         system 'cd ' + _('services/'+service) + ' && ant jarStubs'
@@ -255,6 +265,9 @@ define 'gndms' do
         ln_sf(_('services/' + service + '/gndms_' + service + '.gar'), _('.'))
       }
     end
+end
+
+task 'clean-services' => 'gndms:clean-services' do
 end
 
 task 'package-stubs' => 'gndms:package-stubs' do
