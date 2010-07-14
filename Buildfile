@@ -63,13 +63,14 @@ end
 
 
 # Non-GT4 dependencies
-ACTI = 'javax.activation:activation:jar:1.1.1'
+# ACTI = 'javax.activation:activation:jar:1.1.1'
 # GOOGLE_COLLECTIONS = 'com.google.collections:google-collections:jar:0.9'
 GUICE = 'org.guiceyfruit:guice-core:jar:2.0-beta-4'
 JETBRAINS_ANNOTATIONS = 'com.intellij:annotations:jar:7.0.3'
 JODA_TIME = transitive('joda-time:joda-time:jar:1.6')
 CXF = 'org.apache.cxf:cxf-bundle:jar:2.1.4'
 JAXB = 'javax.xml.bind:jaxb-api:jar:2.2.1'
+STAX = 'stax:stax-api:jar:1.0.1'
 COMMONS_COLLECTIONS = transitive(['commons-collections:commons-collections:jar:3.2.1'])
 COMMONS_CODEC = 'commons-codec:commons-codec:jar:1.4'
 COMMONS_LANG = 'commons-lang:commons-lang:jar:2.1'
@@ -88,7 +89,7 @@ GT4_COMMONS = gt4jars(['commons-beanutils.jar',
                        'commons-pool.jar'])
 GT4_LOG = gt4jars(['commons-logging.jar', 'log4j-1.2.15.jar'])
 GT4_COG = gt4jars(['cog-axis.jar', 'cog-jglobus.jar', 'cog-url.jar'])
-GT4_AXIS = gt4jars(['axis.jar', 'axis-url.jar'])
+GT4_AXIS = gt4jars(['axis.jar', 'axis-url.jar', 'saaj.jar'])
 GT4_WSRF = gt4jars(['addressing-1.0.jar',
                     'axis-url.jar',
                     'axis.jar',
@@ -97,6 +98,7 @@ GT4_WSRF = gt4jars(['addressing-1.0.jar',
                     'globus_wsrf_rft_stubs.jar',
                     'naming-common.jar',
                     'wsdl4j.jar',
+                    'saaj.jar',
                     'wsrf_common.jar',
                     'wsrf_core.jar',
                     'wsrf_core_stubs.jar',
@@ -107,7 +109,7 @@ GT4_SEC = gt4jars(['puretls.jar', 'opensaml.jar',
                    'jce-jdk13-125.jar', 'wss4j.jar', 'jgss.jar', 
                    'globus_delegation_service.jar',
                    'globus_delegation_stubs.jar'])
-GT4_XML = gt4jars(['xalan-2.6.jar', 'xercesImpl-2.7.1.jar', 'xml-apis.jar', 'xmlsec.jar', 'jaxrpc.jar'])
+GT4_XML = gt4jars(['xalan.jar', 'xercesImpl.jar', 'xml-apis.jar', 'xmlsec.jar', 'jaxrpc.jar'])
 GT4_GRAM = gt4jars(['gram-monitoring.jar', 'gram-service.jar', 'gram-stubs.jar', 'gram-utils.jar'])
 
 
@@ -147,16 +149,16 @@ define 'gndms' do
     GORFX_TESTS   = _('services/GORFX/build/lib/gndms-gorfx-tests.jar')
     SERVICE_STUBS = [GORFX_STUBS, DSPACE_STUBS]
 
-    buildFile = File.new(_('GNDMS-BUILD-INFO'), 'w')
-    timestamp = Time.now.to_s
-    buildFile.syswrite('built-at: ' + timestamp + ' built-by: ' + USERNAME + '@' + HOSTNAME)
-    buildFile.close
+    # buildFile = File.new(_('GNDMS-BUILD-INFO'), 'w')
+    # timestamp = Time.now.to_s
+    # buildFile.syswrite('built-at: ' + timestamp + ' built-by: ' + USERNAME + '@' + HOSTNAME)
+    # buildFile.close
     meta_inf << file(_('GNDMS-BUILD-INFO'))
 
-    versionString = 'Generation N Data Management System VERSION: ' + VERSION_NUMBER + ' "' + VERSION_NAME + '"'
-    relFile = File.new(_('GNDMS-RELEASE'), 'w')
-    relFile.syswrite(versionString)
-    relFile.close
+    # versionString = 'Generation N Data Management System VERSION: ' + VERSION_NUMBER + ' "' + VERSION_NAME + '"'
+    # relFile = File.new(_('GNDMS-RELEASE'), 'w')
+    # relFile.syswrite(versionString)
+    # relFile.close
  
     desc 'GT4-independent utility classes for GNDMS'
     define 'stuff', :layout => dmsLayout('stuff', 'gndms-stuff') do
@@ -167,7 +169,8 @@ define 'gndms' do
 
     desc 'Shared database model classes'
     define 'model', :layout => dmsLayout('model', 'gndms-model') do
-      compile.with project('stuff'), COMMONS_COLLECTIONS, GOOGLE_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS, GUICE, CXF, OPENJPA
+      # TODO: Better XML
+      compile.with project('stuff'), COMMONS_COLLECTIONS, GOOGLE_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS, GUICE, CXF, OPENJPA, JAXB, STAX
       # buildr rox!
       compile { open_jpa_enhance }
       package :jar
@@ -188,7 +191,7 @@ define 'gndms' do
 
     desc 'GNDMS classes for dealing with wsrf and xsd types'
     define 'gritserv', :layout => dmsLayout('gritserv', 'gndms-gritserv') do
-      compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('stuff'), project('model'), ARGS4J, JODA_TIME, GORFX_STUBS, OPENJPA, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, GT4_COMMONS, COMMONS_LANG, COMMONS_COLLECTIONS
+      compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('stuff'), project('model'), ARGS4J, JODA_TIME, GORFX_STUBS, OPENJPA, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, GT4_COMMONS, COMMONS_LANG, COMMONS_COLLECTIONS, Buildr::Groovy::Groovyc.dependencies
       compile
       package :jar
     end
@@ -196,7 +199,7 @@ define 'gndms' do
     desc 'GNDMS core infrastructure classes'
     define 'infra', :layout => dmsLayout('infra', 'gndms-infra') do
       # Infra *must* have all dependencies since we use this list in copy/link-deps
-      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gritserv'), project('logic'), project('kit'), project('stuff'), project('model'), ARGS4J, ACTI, SERVICE_STUBS, JODA_TIME, JAXB, GT4_SERVLET, JETTY, CXF, GOOGLE_COLLECTIONS, GUICE, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TESTNG
+      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gritserv'), project('logic'), project('kit'), project('stuff'), project('model'), ARGS4J, SERVICE_STUBS, JODA_TIME, JAXB, GT4_SERVLET, JETTY, CXF, GOOGLE_COLLECTIONS, GUICE, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TESTNG
       compile
       package :jar
 
@@ -258,12 +261,16 @@ define 'gndms' do
       }
     end
 
-    desc 'Create GARs for deployment (Requires packaged GNDMS and installed dependencies)'
-    task 'package-gars' do
-      SERVICES.each { |service| 
-        system 'cd ' + _('services/'+service) + ' && ant createDeploymentGar'
-        ln_sf(_('services/' + service + '/gndms_' + service + '.gar'), _('.'))
-      }
+    desc 'Create DSpace GAR for deployment (Requires packaged GNDMS and installed dependencies)'
+    task 'package-DSpace' do
+      system 'cd ' + _('services/DSpace') + ' && ant createDeploymentGar'
+      ln_sf(_('services/' + service + '/gndms_' + service + '.gar'), _('.'))
+    end
+
+    desc 'Create GORFX GAR for deployment (Requires packaged GNDMS and installed dependencies)'
+    task 'package-GORFX' do
+      system 'cd ' + _('services/GORFX') + ' && ant createDeploymentGar'
+      ln_sf(_('services/' + service + '/gndms_' + service + '.gar'), _('.'))
     end
 end
 
@@ -282,8 +289,11 @@ end
 task 'link-deps' => 'gndms:infra:link-deps' do
 end
 
-task 'package-gars' => 'gndms:package-gars' do
+task 'package-DSpace' => 'gndms:package-DSpace' do
 end
 
-task 'pt-install' => ['package-stubs', 'install-deps', 'package-gars'] do
+task 'package-GORFX' => 'gndms:package-GORFX' do
 end
+
+# task 'pt-install' => ['package-stubs', 'install-deps', 'package-gars'] do
+# end
