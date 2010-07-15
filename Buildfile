@@ -1,7 +1,3 @@
-# Target Platform, GT4/GNDMS have been developed against J2SE 1.5, but in case your production 
-# system is 1.6 or 1.7 change this here
-TARGET = '1.5'
-
 # Large amounts of memory ensure a fast build
 ENV['JAVA_OPTS'] ||= '-Xms512m -Xmx768m'
 
@@ -31,9 +27,13 @@ include GNDMS
 
 
 # Test environment
-testEnv('GLOBUS_LOCATION', 'the root directory of Globus Toolkit 4.0.X')
+testEnv('GLOBUS_LOCATION', 'the root directory of Globus Toolkit 4.0.8')
 testEnv('ANT_HOME', 'the root directory of Apache Ant')
-testEnv('JAVA_HOME', 'the root directory of J2SE ' + TARGET)
+testEnv('JAVA_HOME', 'the root directory of J2SE v. 1.5 (not: 1.6)')
+JAVA_HOME = ENV['JAVA_HOME']
+# ENV['PATH'] = File.join([ENV['JAVA_HOME'], 'bin']) + File::PATH_SEPARATOR + ENV['PATH']
+SOURCE = '1.5'
+TARGET = '1.5'
 testEnv('GNDMS_SOURCE', 'the root directory of GNDMS source distribution (i.e. the toplevel directory in which the Buildfile resides)')
 testEnv('USER', 'your user\'s login (your UNIX is weird)')
 testTool('rsync')
@@ -109,7 +109,7 @@ GT4_SEC = gt4jars(['puretls.jar', 'opensaml.jar',
                    'jce-jdk13-125.jar', 'wss4j.jar', 'jgss.jar', 
                    'globus_delegation_service.jar',
                    'globus_delegation_stubs.jar'])
-GT4_XML = gt4jars(['xalan.jar', 'xercesImpl.jar', 'xml-apis.jar', 'xmlsec.jar', 'jaxrpc.jar'])
+GT4_XML = gt4jars(['xalan.jar-2.6', 'xercesImpl-2.7.1.jar', 'xml-apis.jar', 'xmlsec.jar', 'jaxrpc.jar'])
 GT4_GRAM = gt4jars(['gram-monitoring.jar', 'gram-service.jar', 'gram-stubs.jar', 'gram-utils.jar'])
 
 
@@ -130,9 +130,11 @@ define 'gndms' do
     project.group = GROUP_NAME
     manifest['Copyright'] = MF_COPYRIGHT
     manifest['License'] = MF_LICENSE
-    compile.options.target = TARGET
+    compile.options.target = SOURCE
+    compile.options.source = TARGET
     meta_inf << file(_('LICENSE'))
     meta_inf << file(_('GNDMS-RELEASE'))
+    test.using :testng
 
     # WSRF GT4 services to be built
     SERVICES = ['GORFX', 'DSpace']
