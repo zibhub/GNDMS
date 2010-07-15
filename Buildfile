@@ -29,7 +29,7 @@ include GNDMS
 # Test environment
 testEnv('GLOBUS_LOCATION', 'the root directory of Globus Toolkit 4.0.8')
 testEnv('ANT_HOME', 'the root directory of Apache Ant')
-testEnv('JAVA_HOME', 'the root directory of J2SE v. 1.5 (not: 1.6)')
+testEnv('JAVA_HOME', 'the root directory of J2SE 1.6')
 JAVA_HOME = ENV['JAVA_HOME']
 # ENV['PATH'] = File.join([ENV['JAVA_HOME'], 'bin']) + File::PATH_SEPARATOR + ENV['PATH']
 SOURCE = '1.5'
@@ -172,7 +172,7 @@ define 'gndms' do
     define 'model', :layout => dmsLayout('model', 'gndms-model') do
       # TODO: Better XML
       compile.with project('stuff'), COMMONS_COLLECTIONS, GOOGLE_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS, GUICE, CXF, OPENJPA, JAXB, STAX
-      compile { open_jpa_enhance }
+      compile.enhance do open_jpa_enhance end
       package :jar
     end
 
