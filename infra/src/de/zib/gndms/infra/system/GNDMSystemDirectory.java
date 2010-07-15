@@ -1,6 +1,6 @@
 package de.zib.gndms.infra.system;
 
-import com.google.common.collect.MapMaker;
+import com.google.common.collect.Maps;
 import com.google.inject.Binder;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -73,7 +73,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
     private final @NotNull Map<Class<? extends GridResource>, GNDMPersistentServiceHome<?>> homes;
 
 
-	private final Map<String, Configlet> configlets = new MapMaker().makeMap();
+	private final Map<String, Configlet> configlets = Maps.newConcurrentHashMap();
 
     @SuppressWarnings({ "RawUseOfParameterizedType" })
     private final @NotNull IndustrialPark<OfferType, String, AbstractORQCalculator<?, ?>> orqPark;

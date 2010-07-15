@@ -25,7 +25,7 @@ import javax.persistence.MappedSuperclass
  * User: mjorra, Date: 06.08.2008, Time: 16:26:37
  */
 @Entity(name="Slices")
-@Table(name="slices", schema="dspace")
+// @Table(name="slices", schema="dspace")
 @MappedSuperclass
 public class Slice extends TimedGridResource {
  

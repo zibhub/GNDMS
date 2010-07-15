@@ -18,7 +18,7 @@ import javax.persistence.NamedQuery
  *
  * User: stepn Date: 06.11.2008 Time: 18:01:53
  */
-@Entity(name="ConfigletStates") @Table(name="configlet_states", schema="common")
+@Entity(name="ConfigletStates") // @Table(name="configlet_states", schema="common")
 @MappedSuperclass
 @NamedQueries([
 @NamedQuery(name="listAllConfiglets", query="SELECT x FROM ConfigletStates x" )

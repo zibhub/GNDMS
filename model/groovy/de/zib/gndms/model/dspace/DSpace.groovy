@@ -23,7 +23,7 @@ import de.zib.gndms.model.common.SingletonGridResource
 @NamedQuery(name="listCreatableSliceKinds", query="SELECT sk FROM MetaSubspaces x INNER JOIN x.creatableSliceKinds sk WHERE x.scopedName.nameScope = (SELECT y.metaSubspace.scopedName.nameScope FROM Subspaces y WHERE y.id = :idParam) AND x.scopedName.localName = (SELECT y.metaSubspace.scopedName.localName FROM Subspaces y WHERE y.id = :idParam)")
 ])
 @Entity(name="DSpaces")
-@Table(name="dspace", schema="dspace")
+// @Table(name="dspace", schema="dspace")
 @MappedSuperclass
 class DSpace extends SingletonGridResource {
 

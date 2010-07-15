@@ -1,6 +1,5 @@
 package de.zib.gndms.infra.configlet;
 
-import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import de.zib.gndms.c3resource.C3ResourceReader;
@@ -194,7 +193,7 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
      */
 	public static class C3Catalog {
 		/* forward maps */
-		private Map<String, Site> siteById = new MapMaker().makeMap();
+		private Map<String, Site> siteById = Maps.newConcurrentHashMap();
 		private Map<String, Set<Workspace.Archive>> archivesByOid = Maps.newTreeMap();
 
 		/* reverse maps */
@@ -255,7 +254,7 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 								if (archivesByOid.containsKey(oidPrefix))
 									set  = archivesByOid.get(oidPrefix);
 								else {
-									final Map<Workspace.Archive, Boolean> amap = new MapMaker().makeMap();
+									final Map<Workspace.Archive, Boolean> amap = Maps.newConcurrentHashMap();
 								  set = Sets.newSetFromMap(amap);
 									archivesByOid.put(oidPrefix, set);
 								}

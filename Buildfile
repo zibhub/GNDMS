@@ -65,7 +65,8 @@ end
 # Non-GT4 dependencies
 # ACTI = 'javax.activation:activation:jar:1.1.1'
 # GOOGLE_COLLECTIONS = 'com.google.collections:google-collections:jar:0.9'
-GUICE = 'org.guiceyfruit:guice-core:jar:2.0-beta-4'
+GUICE = 'com.google.code.guice:guice:jar:2.0'
+GOOGLE_COLLECTIONS = 'com.google.code.google-collections:google-collect:jar:snapshot-20080530'
 JETBRAINS_ANNOTATIONS = 'com.intellij:annotations:jar:7.0.3'
 JODA_TIME = transitive('joda-time:joda-time:jar:1.6')
 CXF = 'org.apache.cxf:cxf-bundle:jar:2.1.4'
@@ -109,12 +110,12 @@ GT4_SEC = gt4jars(['puretls.jar', 'opensaml.jar',
                    'jce-jdk13-125.jar', 'wss4j.jar', 'jgss.jar', 
                    'globus_delegation_service.jar',
                    'globus_delegation_stubs.jar'])
-GT4_XML = gt4jars(['xalan.jar-2.6', 'xercesImpl-2.7.1.jar', 'xml-apis.jar', 'xmlsec.jar', 'jaxrpc.jar'])
+GT4_XML = gt4jars(['xalan-2.6.jar', 'xercesImpl-2.7.1.jar', 'xml-apis.jar', 'xmlsec.jar', 'jaxrpc.jar'])
 GT4_GRAM = gt4jars(['gram-monitoring.jar', 'gram-service.jar', 'gram-stubs.jar', 'gram-utils.jar'])
 
 
 # OpenJPA is required by gndms:model
-OPENJPA = transitive('org.apache.openjpa:openjpa:jar:2.0.0-beta')
+OPENJPA = transitive('org.apache.openjpa:openjpa:jar:2.0.0')
 
 require 'buildr/openjpa2'
 include Buildr::OpenJPA2
@@ -123,15 +124,13 @@ include Buildr::OpenJPA2
 
 desc 'Germanys Next Data Management System'
 define 'gndms' do
-    # Remaining extra dependencies.. Google in its infinite wisdom doesnt do maven
-    GOOGLE_COLLECTIONS = file(_('extra/guava-r06.jar'))
-
     project.version = VERSION_NUMBER
     project.group = GROUP_NAME
     manifest['Copyright'] = MF_COPYRIGHT
     manifest['License'] = MF_LICENSE
-    compile.options.target = SOURCE
-    compile.options.source = TARGET
+    compile.options.source = SOURCE
+    compile.options.target = TARGET
+    compile.options.lint = 'all'
     meta_inf << file(_('LICENSE'))
     meta_inf << file(_('GNDMS-RELEASE'))
     test.using :testng
@@ -173,7 +172,6 @@ define 'gndms' do
     define 'model', :layout => dmsLayout('model', 'gndms-model') do
       # TODO: Better XML
       compile.with project('stuff'), COMMONS_COLLECTIONS, GOOGLE_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS, GUICE, CXF, OPENJPA, JAXB, STAX
-      # buildr rox!
       compile { open_jpa_enhance }
       package :jar
     end
@@ -266,13 +264,13 @@ define 'gndms' do
     desc 'Create DSpace GAR for deployment (Requires packaged GNDMS and installed dependencies)'
     task 'package-DSpace' do
       system 'cd ' + _('services/DSpace') + ' && ant createDeploymentGar'
-      ln_sf(_('services/' + service + '/gndms_' + service + '.gar'), _('.'))
+      ln_sf(_('services/DSpace/gndms_DSpace.gar'), _('.'))
     end
 
     desc 'Create GORFX GAR for deployment (Requires packaged GNDMS and installed dependencies)'
     task 'package-GORFX' do
       system 'cd ' + _('services/GORFX') + ' && ant createDeploymentGar'
-      ln_sf(_('services/' + service + '/gndms_' + service + '.gar'), _('.'))
+      ln_sf(_('services/GORFX/gndms_GORFX.gar'), _('.'))
     end
 end
 

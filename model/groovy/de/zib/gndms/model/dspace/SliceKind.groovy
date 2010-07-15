@@ -32,7 +32,7 @@ import de.zib.gndms.model.common.AccessMask
 // @Inheritance
 // @DiscriminatorColumn(name="class", discriminatorType=DiscriminatorType.STRING, length=8)
 // @DiscriminatorValue("PLAIN")
-@Table(name="slice_kinds", schema="dspace")
+// @Table(name="slice_kinds", schema="dspace")
 @MappedSuperclass
 class SliceKind extends GridEntity {
 	@Id @Column(name="uri", nullable=false, updatable=false, columnDefinition="VARCHAR")

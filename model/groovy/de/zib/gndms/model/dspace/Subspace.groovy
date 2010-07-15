@@ -35,7 +35,7 @@ import javax.persistence.MappedSuperclass
  *
  */
 @Entity(name="Subspaces")
-@Table(name="subspaces", schema="dspace")
+// @Table(name="subspaces", schema="dspace")
 @MappedSuperclass
 class Subspace extends GridResource {
 
@@ -76,7 +76,7 @@ class Subspace extends GridResource {
      *
      * @note The read permission will be removed form pth.
      */
-    public boolean setPath( String pth ) {
+    public void setPath( String pth ) {
 
         File f = new File( pth )
 
