@@ -130,7 +130,7 @@ define 'gndms' do
     manifest['License'] = MF_LICENSE
     compile.options.source = SOURCE
     compile.options.target = TARGET
-    compile.options.lint = 'all'
+    # compile.options.lint = 'all'
     meta_inf << file(_('LICENSE'))
     meta_inf << file(_('GNDMS-RELEASE'))
     test.using :testng
