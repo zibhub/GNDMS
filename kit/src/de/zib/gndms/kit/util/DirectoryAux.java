@@ -90,6 +90,14 @@ public interface DirectoryAux {
      */
     public boolean mkdir( String uid, String pth, AccessMask perm );
 
+    /**
+     * Creates the contents of a directory...
+     *
+     * @param src_pth
+     * @param tgt_pth
+     */
+    public boolean copyDir( String uid, String src_pth, String tgt_pth );
+
 
     public static class Utils {
         /**

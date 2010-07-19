@@ -1,16 +1,15 @@
 package de.zib.gndms.logic.model.dspace;
 
+import de.zib.gndms.kit.util.DirectoryAux;
+import de.zib.gndms.logic.model.AbstractModelAction;
+import de.zib.gndms.model.common.AccessMask;
+import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.model.common.ModelUUIDGen;
-import de.zib.gndms.model.common.AccessMask;
-import de.zib.gndms.kit.util.DirectoryAux;
-import de.zib.gndms.logic.model.AbstractModelAction;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
-import java.io.File;
 import java.util.Calendar;
 
 /**
@@ -107,8 +106,6 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
         String src_pth = sp.getPathForSlice( sl );
         String tgt_pth = createSliceAction.getModel( ).getPathForSlice( nsl );
 
-        String[] ls = sl.getFileListing( );
-
         AccessMask msk = createSliceAction.getSliceKind( ).getPermission( );
         boolean ro = msk.queryFlagsOff( AccessMask.Ugo.USER, AccessMask.AccessFlags.WRITABLE );
 
@@ -119,7 +116,9 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
         }
 
 
+        /*
         boolean suc = true;
+        String[] ls = sl.getFileListing( );
         for( int i=0; i < ls.length; ++i ) {
             // todo maybe use gridftp for this crap, NEEDS CERT 
             suc = suc &&
@@ -127,6 +126,8 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
                             src_pth + File.separator + ls[i], tgt_pth + File.separator + ls[i]
                     );
         }
+        */
+        directoryAux.copyDir( nsl.getOwner(), src_pth, tgt_pth );
 
         // restore slice path settings
         if ( ro ) {
@@ -134,11 +135,13 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
             directoryAux.setPermissions( nsl.getOwner(), msk, tgt_pth );
         }
 
+        /*
         // sth went wrong destroy created slice
         if( ! suc ) {
             DeleteSliceAction.deleteSlice( sl, this );
             throw new RuntimeException( "Can't copy slice content" );
         }
+        */
 
         // no entries in BatchUpdateAction required, already done by the create action
 

@@ -54,7 +54,7 @@ public final class ExtSliceResourceHome extends SliceResourceHome
 	@NotNull
 	private GNDMSystem system;
 
-	// Serbice Address: set during initialization
+	// Service Address: set during initialization
 	@SuppressWarnings({"FieldAccessedSynchronizedAndUnsynchronized"})
 	private AttributedURI serviceAddress;
 

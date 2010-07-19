@@ -152,11 +152,8 @@ public class SliceResource extends SliceResourceBase
     public void remove( ) {
 
         logger.debug( "removing slice resource: " + getID() );
-        EntityManager em = null;
-        TxFrame tx = new TxFrame( em );
-        em = resourceHome.getEntityManagerFactory().createEntityManager(  );
+        EntityManager em = resourceHome.getEntityManagerFactory().createEntityManager();
         Slice sl = em.find( Slice.class, getID() );
-        Subspace sp = sl.getSubspace();
         logger.debug( "removing slice directory: " + sl.getAssociatedPath() );
         // the action takes care of the EntityManager from now on
         /*Future f =*/ resourceHome.getSystem().submitAction( em, new DeleteSliceAction( sl ), logger );

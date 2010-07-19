@@ -4,10 +4,12 @@ import com.google.inject.Binder;
 import com.google.inject.Module;
 import de.zib.gndms.GNDMSVerInfo;
 import de.zib.gndms.infra.GridConfig;
+import de.zib.gndms.infra.grams.LinuxDirectoryAux;
 import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
 import de.zib.gndms.kit.access.EMFactoryProvider;
 import de.zib.gndms.kit.monitor.ActionCaller;
 import de.zib.gndms.kit.monitor.GroovyMoniServer;
+import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.logic.action.LogAction;
 import de.zib.gndms.logic.model.*;
 import de.zib.gndms.logic.model.gorfx.DefaultWrapper;
@@ -232,18 +234,19 @@ public final class GNDMSystem
      * @param binder binds several classe with certain fields.
      */
    public void configure(final @NotNull Binder binder) {
-		binder.bind(GNDMSystem.class).toInstance(this);
-		binder.bind(EntityManagerFactory.class).toInstance(restrictedEmf);
-		binder.bind(EMFactoryProvider.class).toInstance(this);
-		binder.bind(GridConfig.class).toInstance(sharedConfig);
-		//binder.bind(NetworkAuxiliariesProvider.class).toInstance(getNetAux());
-		binder.bind(EntityUpdateListener.class).toInstance(this);
-		binder.bind(BatchUpdateAction.class).to(DefaultBatchUpdateAction.class);
-		binder.bind(UUIDGen.class).toInstance(uuidGen);
-		binder.bind(GNDMSVerInfo.class).toInstance(verInfo);
-		binder.bind(Log.class).toInstance(logger);
-		// TODO later: binder.bind(TxFrame.class).to(TxFrame.class);
-	}
+       binder.bind(GNDMSystem.class).toInstance(this);
+       binder.bind(EntityManagerFactory.class).toInstance(restrictedEmf);
+       binder.bind(EMFactoryProvider.class).toInstance(this);
+       binder.bind(GridConfig.class).toInstance(sharedConfig);
+       //binder.bind(NetworkAuxiliariesProvider.class).toInstance(getNetAux());
+       binder.bind(EntityUpdateListener.class).toInstance(this);
+       binder.bind(BatchUpdateAction.class).to(DefaultBatchUpdateAction.class);
+       binder.bind(UUIDGen.class).toInstance(uuidGen);
+       binder.bind(GNDMSVerInfo.class).toInstance(verInfo);
+       binder.bind(Log.class).toInstance(logger);
+       binder.bind( DirectoryAux.class).toInstance( new LinuxDirectoryAux() );
+       // TODO later: binder.bind(TxFrame.class).to(TxFrame.class);
+   }
 
     /**
      * Retrieves the grid path using {@code sharedConfig} and stores the corresponding file in {@code sharedDir}.

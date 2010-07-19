@@ -20,16 +20,16 @@
          <none/>
       </auth-method>
   </method>
-  <authz value="gridmap" />
-  <gridmap value="etc/gndms_shared/grid-mapfile" />
-  <auth-method>
+   <authz value="gridmap"/>
+   <gridmap value="etc/gndms_shared/grid-mapfile"/>
+   <auth-method>
       <GSITransport>
           <protection-level>
-              <privacy />
+              <privacy/>
           </protection-level>
       </GSITransport>
   </auth-method>
-  <run-as>
-      <system-identity />
+   <run-as>
+      <system-identity/>
   </run-as>
 </securityConfig>

@@ -1,30 +1,30 @@
 package de.zib.gndms.dspace.client.test;
 
 import de.zib.gndms.dspace.client.DSpaceClient;
+import de.zib.gndms.dspace.slice.client.SliceClient;
+import de.zib.gndms.dspace.slice.common.SliceConstants;
+import de.zib.gndms.dspace.slice.stubs.types.SliceReference;
 import de.zib.gndms.dspace.subspace.client.SubspaceClient;
 import de.zib.gndms.dspace.subspace.stubs.types.SubspaceReference;
-import de.zib.gndms.dspace.slice.client.SliceClient;
-import de.zib.gndms.dspace.slice.stubs.types.SliceReference;
-import de.zib.gndms.dspace.slice.common.SliceConstants;
-import de.zib.gndms.dspace.common.DSpaceConstants;
-import de.zib.gndms.model.dspace.SliceKind;
+import de.zib.gndms.gritserv.delegation.DelegationAux;
+import org.apache.axis.message.MessageElement;
+import org.apache.axis.message.addressing.EndpointReferenceType;
+import org.apache.axis.message.addressing.ReferencePropertiesType;
+import org.apache.axis.types.URI;
+import org.globus.gsi.GlobusCredential;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Parameters;
+import org.testng.annotations.Test;
+import types.ContextT;
 
+import javax.xml.namespace.QName;
+import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Arrays;
-import java.rmi.RemoteException;
-
-import org.apache.axis.types.URI;
-import org.apache.axis.message.addressing.EndpointReferenceType;
-import org.apache.axis.message.addressing.ReferencePropertiesType;
-import org.apache.axis.message.MessageElement;
-import org.testng.annotations.Test;
-import org.testng.annotations.Parameters;
-import org.testng.annotations.BeforeClass;
-import static org.testng.Assert.*;
-
-import javax.xml.namespace.QName;
 
 
 /**
@@ -43,8 +43,17 @@ import javax.xml.namespace.QName;
  */
 public class Yatc {
 
+    private static final String[] C3GRID_SLICE_KINDS =
+        {"http://www.c3grid.de/G2/SliceKind/Staging", "http://www.c3grid.de/G2/SliceKind/DMS"};
+    private static final String[] PTGRID_SLICE_KINDS =
+        {"http://www.ptgrid.de/G1/SliceKind/Staging_RW", "http://www.c3grid.de/G2/SliceKind/DMS"};
+    private static String[] SLICE_KINDS = PTGRID_SLICE_KINDS;
+
     private String dspaceURI;
-    private static final String SCHEMA_URI = "http://www.c3grid.de/G2/Subspace";
+    // c3grid workspace
+    // private static final String SCHEMA_URI = "http://www.c3grid.de/G2/Subspace";
+    // ptgrid workspace
+    private static final String SCHEMA_URI = "http://www.ptgrid.de/G1/Subspace";
     private String localName;
     private String scopeName;
     private String gsiPath;
@@ -54,6 +63,8 @@ public class Yatc {
     private GregorianCalendar tt;
     private long ssize;
     private String skuri;
+
+    private boolean useDelegation = true;
 
 
     // Params should be self-explanatory. gsiPath denotes the public grid ftp location
@@ -71,20 +82,29 @@ public class Yatc {
     @BeforeClass( groups={ "dspace", "subspace" } )
     public void beforeTest( ) throws Exception {
         client = new DSpaceClient( dspaceURI );
+
+        if( useDelegation ) {
+            // with delegation
+            String delfac = DelegationAux.createDelationAddress( dspaceURI );
+            GlobusCredential credential = DelegationAux.findCredential( DelegationAux.defaultProxyFileName( "1000" ) );
+            EndpointReferenceType epr = DelegationAux.createProxy( delfac, credential );
+            DelegationAux.addDelegationEPR( new ContextT(), epr );
+            client.setProxy( credential );
+        }
     }
 
 
 
-    @Parameters( { "noSubspaces" } )
+    @Parameters( { "noSubspaces", "noSchemas"} )
     @Test( groups={ "dspace"  } ) 
-    public void runDspaceTests( int noSubspaces ) throws Exception {
+    public void runDspaceTests( int noSubspaces, int noSchemas ) throws Exception {
 
         System.out.println( ">>> Performing dspace tests" );
 
         System.out.println( "checking listSupportedSchemas()" );
         URI[] uris = client.listSupportedSchemas();
 
-        assertEquals ( uris.length, 1, "length of result" );
+        assertEquals ( uris.length, noSchemas, "length of result" );
         URI suri = new URI( SCHEMA_URI );
         assertEquals ( uris[0], suri, "expected value?" );
 
@@ -98,24 +118,25 @@ public class Yatc {
     }
 
 
+    @Parameters( { "noSliceKinds"} )
     @Test( dependsOnGroups={ "dspace" }, groups={"subspace"} )
-    public void runSubspaceTests( ) throws Exception {
+    public void runSubspaceTests( int noSliceKinds ) throws Exception {
 
         System.out.println( "\n>>> Performing dspace.subspace tests" );
         SubspaceClient subc = client.findSubspace( scopeName, localName ); // findSubspace uses getSubspace
 
         System.out.println( "checking listCreatableSliceKinds()" );
         URI[] sks = subc.listCreatableSliceKinds();
-        assertEquals ( sks.length, 3, "slice kind count" );
-        URI sk1 = new URI(  "http://www.c3grid.de/G2/SliceKind/Staging" );
+        assertEquals ( sks.length, noSliceKinds, "slice kind count" );
+        URI sk1 = new URI(  SLICE_KINDS[0] );
         List<URI> uris = Arrays.asList( sks );
         assertTrue( uris.contains( sk1 ), "Contains "+ sk1 + "?" );
-        URI sk2 = new URI(  "http://www.c3grid.de/G2/SliceKind/DMS" );
-        assertTrue( uris.contains( sk2 ), "Contains "+ sk2 + "?" );
+        // URI sk2 = new URI(  SLICE_KINDS[1] );
+        // assertTrue( uris.contains( sk2 ), "Contains "+ sk2 + "?" );
 
         System.out.println( "\nChecking createSlice()" );
 
-        skuri = "http://www.c3grid.de/G2/SliceKind/DMS";
+        skuri = SLICE_KINDS[1];
         tt = new GregorianCalendar( );
         tt.add( Calendar.YEAR, 20 );
         ssize = (long) (20 * 1024 * Math.pow( 10, 3 ));
@@ -132,19 +153,24 @@ public class Yatc {
         System.out.println( "\n>>> Performing dspace.slice tests" );
         System.out.println( "checking transformSlice( SliceKind )" );
 
-        skuri = "http://www.c3grid.de/G2/SliceKind/Staging";
+        skuri = SLICE_KINDS[0];
         SliceReference sref = slice.transformSliceTo( skuri, null );
         SliceClient sc = new SliceClient( sref.getEndpointReference() );
         sliceTests( sc, gsiPath, scopeName, localName );
 
 
         boolean dest=false;
-        //slice.setTerminationTime( new GregorianCalendar( ) );
+       // slice.setTerminationTime( new GregorianCalendar( ) );
         System.out.println( "Waiting for slice removal (this may take a while): " );
+        String rs;
         for( int i=0; i < 120 && !dest; ++i ) {
             System.out.print( i+1 + " " );
             try {
-                slice.getSliceKind();
+                rs = slice.getSliceKind();
+                if( rs == null || "".equals( rs.trim() ) ) {
+                    System.out.println( "rs is empty..." );
+                    dest=true;
+                }
             } catch ( RemoteException e ) {
                 dest=true;
                 System.out.println( "\nSource slice removed" );
@@ -155,7 +181,7 @@ public class Yatc {
         if( ! dest ) {
             System.out.println( "Transformed slice still exists." );
             assertTrue( dest, "slice destruction" );
-       }
+        }
 
         System.out.println( "\n>>> Performing dspace.slice tests" );
         System.out.println( "checking transformSlice( Subspace )" );
@@ -165,7 +191,7 @@ public class Yatc {
 
 
         System.out.println( "checking transformSlice( SliceTypeSpecifierSubspace )" );
-        skuri = "http://www.c3grid.de/G2/SliceKind/DMS";
+        skuri = SLICE_KINDS[1];
         sref = slice.transformSliceTo( skuri, new QName( scopeName, localName ), null );
         sc = new SliceClient( sref.getEndpointReference() );
         sliceTests( sc, gsiPath, scopeName, localName );

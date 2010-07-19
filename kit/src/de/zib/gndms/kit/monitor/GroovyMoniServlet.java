@@ -1,5 +1,6 @@
 package de.zib.gndms.kit.monitor;
 
+import org.apache.commons.codec.binary.Base64;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,7 +13,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.security.Principal;
 import java.util.Enumeration;
-import org.apache.commons.codec.binary.Base64;
 
 /**
  * This servlet is run from GroovyMonitorServer to provide access to GroovyMonitors via

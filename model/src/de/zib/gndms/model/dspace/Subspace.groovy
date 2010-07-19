@@ -76,7 +76,7 @@ class Subspace extends GridResource {
      *
      * @note The read permission will be removed form pth.
      */
-    public boolean setPath( String pth ) {
+    public void setPath( String pth ) {
 
         File f = new File( pth )
 

@@ -32,6 +32,7 @@ public class LogAux {
 
         logger.info( "Method " + methodName + " called by: " +
             SecurityManager.getManager().getCaller() );
+
         String uid = getLocalName();
         if ( uid == null )
             logger.debug( "No mappings found" );

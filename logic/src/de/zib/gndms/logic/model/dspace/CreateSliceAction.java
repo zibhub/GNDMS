@@ -2,6 +2,7 @@ package de.zib.gndms.logic.model.dspace;
 
 import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.logic.model.CreateTimedGridResourceAction;
+import de.zib.gndms.model.common.AccessMask;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
@@ -139,9 +140,12 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
         }
 
         try {
-            // this also creats the dir for the namespace if it
-            // doesn't exist yet.
-            f.mkdirs( );
+            // check if slice kind dir exists
+            File p = f.getParentFile();
+            if(! p.exists() )
+                directoryAux.mkdir( System.getProperty( "user.name" ),
+                    p.getAbsolutePath(), AccessMask.fromString( "1777" ) );
+            
             directoryAux.mkdir( uid, f.getAbsolutePath(), sliceKind.getPermission() );
         } catch ( SecurityException e ) {
             throw new RuntimeException(e);

@@ -37,6 +37,19 @@ moni call -v .dspace.SetupSubspace "subspace:'{http://www.c3grid.de/G2/Subspace}
 moni call -v .dspace.SetupSliceKind "sliceKind:'http://www.c3grid.de/G2/SliceKind/TransferDst'; sliceKindMode:664; uniqueDirName: testSlices; mode: $MODE"
 moni call -v .dspace.AssignSliceKind "subspace:'{http://www.c3grid.de/G2/Subspace}TransferSubspace'; sliceKind: http://www.c3grid.de/G2/SliceKind/TransferDst; mode:'$ADDMODE'"
 
+
+#for ptgrid tests:
+moni call -v .dspace.SetupSliceKind "\
+        sliceKind:'http://www.c3grid.de/G2/SliceKind/DMS'; \
+        sliceKindMode:500; \
+        uniqueDirName: dmsROSlices; \
+        mode: '$MODE'"
+moni call -v .dspace.AssignSliceKind "\
+    subspace:'{http://www.ptgrid.de/G1/Subspace}Staging';\
+    sliceKind: http://www.c3grid.de/G2/SliceKind/DMS;\
+    mode:'$ADDMODE'"
+
+
 #moni call -v .gorfx.ConfigOfferType "offerType: 'http://www.c3grid.de/ORQTypes/ProviderStageIn';\
 #cfgOutFormat: 'PRINT_OK'; subspace: '{http://www.c3grid.de/G2/Subspace}SubspaceTests';\
 #sliceKind: 'http://www.c3grid.de/G2/SliceKind/Staging';\

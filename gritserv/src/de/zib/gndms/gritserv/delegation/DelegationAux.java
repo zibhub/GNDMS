@@ -40,6 +40,9 @@ public class DelegationAux {
     private DelegationAux() {
     }
 
+    public static String defaultProxyFileName( String uid ) {
+        return "/tmp/x509up_u" +uid;
+    }
 
     public static String createDelationAddress( String addr ) throws URI.MalformedURIException {
         URI uri = new URI( addr );
@@ -146,9 +149,14 @@ public class DelegationAux {
         AxisTypeFromToXML.toXML( sw, epr );
 
         ContextTEntry[] entries = con.getEntry();
-        ArrayList<ContextTEntry> al = new ArrayList<ContextTEntry>( entries.length + 1 );
-        for( ContextTEntry e : entries )
+        ArrayList<ContextTEntry> al;
+        if ( entries != null ) {
+            al = new ArrayList<ContextTEntry>( entries.length + 1 );
+            for( ContextTEntry e : entries )
                 al.add( e );
+        } else
+            al = new ArrayList<ContextTEntry>( 1 );
+
 
         ContextTEntry ct = new ContextTEntry( );
 

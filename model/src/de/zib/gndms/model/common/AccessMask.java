@@ -21,6 +21,7 @@ import java.util.HashMap;
  */
 @Embeddable
 public class AccessMask {
+
     // todo add serialVersionUId
 
     /**
@@ -183,7 +184,14 @@ public class AccessMask {
      * This array holds the access-rights for the different groups.
      * @see Ugo
      */
-    public AccessFlags access[] = new AccessFlags[3];
+    private AccessFlags access[] = new AccessFlags[3];
+
+    /**
+     * Special attribute of the access masc.
+     *
+     * Can be s.th. like stickybit etc.
+     */
+    private Integer special = null;
 
     /**
      * Returns the access rights for a user.
@@ -271,7 +279,9 @@ public class AccessMask {
      * @return the access masks' int values for user,group and other as String
      */
     public String toString( ) {
-        return getUserAccess().toString() + getGroupAccess().toString() + getOtherAccess().toString();
+        return
+            (special != null ? String.valueOf( special ) : "" ) +
+            getUserAccess().toString() + getGroupAccess().toString() + getOtherAccess().toString();
     }
 
 
@@ -284,22 +294,28 @@ public class AccessMask {
      * The second character defines the access mask of {@code group}
      * The third character defines the access mask of {@code other}
      *
+     * The string might be prefixed with the spacial byte (@see special).
+     *
      * @param msk a String representing the access masks of the different access groups.
      * @return an {@code AccessMask} containing the bitmasks for
      * all three access groups.
      * @see AccessFlags
      */
     public static AccessMask fromString( String msk ) {
-
-        if( msk.length( ) != 3 )
-            throw new IllegalArgumentException( "msk must have the length 3. Argument is: " + msk );
-
-        AccessMask am = new AccessMask();
-        am.setUserAccess( AccessFlags.fromChar( msk.charAt( 0 ) ) );
-        am.setGroupAccess( AccessFlags.fromChar( msk.charAt( 1 ) ) );
-        am.setOtherAccess( AccessFlags.fromChar( msk.charAt( 2 ) ) );
-
+        AccessMask am = new AccessMask( );
+        am.setAsString( msk );
         return am;
+    }
+
+
+    private void setSpecial( Integer i ) {
+        special = i;
+    }
+
+
+    @Transient
+    public Integer getSpecial() {
+        return special;
     }
 
 
@@ -329,9 +345,20 @@ public class AccessMask {
      * @see AccessFlags#fromString(String) 
      */
     public void setAsString( String msk ) {
-        setUserAccess( AccessFlags.fromChar( msk.charAt( 0 ) ) );
-        setGroupAccess( AccessFlags.fromChar( msk.charAt( 1 ) ) );
-        setOtherAccess( AccessFlags.fromChar( msk.charAt( 2 ) ) );
+
+        int l = msk.length( );
+
+        if( l < 3 || l > 4 )
+            throw new IllegalArgumentException( "msk must have the length 3 or 4. Argument is: " + msk );
+
+        // AccessMask am = new AccessMask();
+        int i = 0;
+        if( l == 4 )
+            setSpecial (  Integer.valueOf( "" + msk.charAt( i++ ) ) );
+
+        setUserAccess( AccessFlags.fromChar( msk.charAt( i ) ) );
+        setGroupAccess( AccessFlags.fromChar( msk.charAt( ++i ) ) );
+        setOtherAccess( AccessFlags.fromChar( msk.charAt( ++i ) ) );
     }
 
 }

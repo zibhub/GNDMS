@@ -116,49 +116,53 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
         MetaSubspace meta = prepareMeta(em, subspace);
         Subspace subspace = prepareSubspace(meta);
 
-       switch (getMode()) {
-           case CREATE:
-           case UPDATE:
-               if (isVisibleToPublic() != null)
-                   meta.setVisibleToPublic(isVisibleToPublic());
+        try {
+        switch (getMode()) {
+            case CREATE:
+            case UPDATE:
+                if (isVisibleToPublic() != null)
+                    meta.setVisibleToPublic(isVisibleToPublic());
 
-               if (size != null)
-                   subspace.setTotalSize(getSize());
+                if (size != null)
+                    subspace.setTotalSize(getSize());
 
-               if (path != null)
-                   subspace.setPath(getPath());
+                if (path != null)
+                    subspace.setPath(getPath());
 
-               if (gsiFtpPath != null)
-                   subspace.setGsiFtpPath(getGsiFtpPath());
+                if (gsiFtpPath != null)
+                    subspace.setGsiFtpPath(getGsiFtpPath());
 
-               if (subspace.getDSpaceRef() == null) {
-                   DSpaceRef ref = new DSpaceRef();
+                if (subspace.getDSpaceRef() == null) {
+                    DSpaceRef ref = new DSpaceRef();
 
-                   // HACK: There should be a better way than this...
-                   DSpace dspace =
-                           (DSpace) em.createNamedQuery("findDSpaceInstances").getSingleResult();
+                    // HACK: There should be a better way than this...
+                    DSpace dspace =
+                        (DSpace) em.createNamedQuery("findDSpaceInstances").getSingleResult();
 
-                   ref.setGridSiteId(null);
-                   ref.setResourceKeyValue(dspace.getId());
-                   subspace.setDSpaceRef(ref);
-               }
+                    ref.setGridSiteId(null);
+                    ref.setResourceKeyValue(dspace.getId());
+                    subspace.setDSpaceRef(ref);
+                }
 
-               if (! em.contains(subspace))
+                if (! em.contains(subspace))
                     em.persist(subspace);
 
-               if (! em.contains(meta))
+                if (! em.contains(meta))
                     em.persist(meta);
-               break;
-           case DELETE:
-               em.remove(meta);
-               em.remove(subspace);
-               break;
-       }
+                break;
+            case DELETE:
+                em.remove(meta);
+                em.remove(subspace);
+                break;
+        }
 
+        } catch ( Exception e ) {
+           throw new RuntimeException( e ); 
+        }
         // Register resources that require refreshing
-       getPostponedActions().addAction(new ModelChangedAction(subspace));
-        
-       return ok();
+        getPostponedActions().addAction(new ModelChangedAction(subspace));
+
+        return ok();
     }
 
     /**

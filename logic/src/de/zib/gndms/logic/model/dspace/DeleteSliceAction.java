@@ -81,8 +81,10 @@ public class DeleteSliceAction extends AbstractModelAction<Subspace, Slice> {
         directoryAux.deleteDirectory( slice.getOwner(), sp.getPathForSlice( slice ) );
 
         sp.removeSlice( slice );
+        getEntityManager().remove( slice );
 
         addChangedModel( sp );
+        addChangedModel( slice );
         return  null;
     }
 

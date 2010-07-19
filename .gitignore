@@ -46,6 +46,8 @@ infra/production/**
 infra/test/**
 ws-common/gndms-ws-common/production/**
 ws-common/gndms-ws-common/test/**
+gritserv/gndms-gritserv/production/**
+gritserv/gndms-gritserv/test/**
 .classpath
 .project
 test-output/**

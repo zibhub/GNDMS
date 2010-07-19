@@ -14,7 +14,7 @@ moni call -v .dspace.AssignSliceKind "subspace:'{http://www.ptgrid.de/G1/Subspac
 
 moni call -v .sys.SetupDefaultConfiglet "\
   mode: '$MODE'; \
-  class: 'de.zib.gndms.kit.configlet.DefaultConfiglet'; \
+  className: 'de.zib.gndms.kit.configlet.DefaultConfiglet'; \
   name: 'gridconfig'; \
   subGridName: 'ptgrid';"
 }

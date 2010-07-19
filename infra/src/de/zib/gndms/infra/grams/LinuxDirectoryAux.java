@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.globus.exec.generated.ScriptCommandEnumeration;
 import org.globus.exec.service.exec.PerlJobDescription;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -14,7 +15,7 @@ import java.util.HashMap;
  *
  * This implementation uses the system call "chmod"
  */
-class LinuxDirectoryAux implements DirectoryAux {
+public class LinuxDirectoryAux implements DirectoryAux {
 
     protected Logger logger = Logger.getLogger( this.getClass() );
 
@@ -106,9 +107,13 @@ class LinuxDirectoryAux implements DirectoryAux {
     }
 
 
-    public boolean deleteDirectory(String owner, String pth) {
-        throw new IllegalStateException( "method not implemented yet" );
-        // return false;  // not required here
+    public boolean deleteDirectory(String uid, String pth) {
+
+        HashMap<String, Object> jd = new HashMap<String, Object>( 2 );
+        jd.put( EXECUTABLE, "/bin/rm" );
+        jd.put( ARGS, new String[] { "-rf", pth } );
+
+        return executeGramsJob( uid, jd );
     }
 
 
@@ -118,6 +123,15 @@ class LinuxDirectoryAux implements DirectoryAux {
         HashMap<String, Object> jd = new HashMap<String, Object>( 2 );
         jd.put( EXECUTABLE, "/bin/mkdir" );
         jd.put( ARGS, new String[] { "-p", pth, "-m", perm.toString() } );
+
+        return executeGramsJob( uid, jd );
+    }
+
+    public boolean copyDir( String uid, String src_pth, String tgt_pth ) {
+
+        HashMap<String, Object> jd = new HashMap<String, Object>( 2 );
+        jd.put( EXECUTABLE, "/bin/cp" );
+        jd.put( ARGS, new String[] { "-r", src_pth + File.separator + "*", tgt_pth } );
 
         return executeGramsJob( uid, jd );
     }
