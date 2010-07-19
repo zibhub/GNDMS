@@ -4,12 +4,12 @@ ENV['JAVA_OPTS'] ||= '-Xms512m -Xmx768m'
 
 # Additional maven repositories 
 repositories.remote << 'http://www.ibiblio.org/maven2'
-repositories.remote << 'http://people.apache.org/repo/m2-incubating-repository/'
+repositories.remote << 'http://people.apache.org/repo/m2-incubating-repository'
 repositories.remote << 'http://guiceyfruit.googlecode.com/svn/repo/releases'
 repositories.remote << 'http://download.java.net/maven/2'
 repositories.remote << 'http://static.appfuse.org/repository'
-repositories.remote << 'http://repository.jboss.org/maven2/'
-repositories.remote << 'http://google-maven-repository.googlecode.com/svn/repository/'
+repositories.remote << 'http://repository.jboss.org/maven2'
+repositories.remote << 'http://google-maven-repository.googlecode.com/svn/repository'
 
 
 # Don't touch below unless you know what you are doing
@@ -41,7 +41,7 @@ testTool('rsync')
 testTool('curl')
 testTool('openssl')
 testTool('hostname')
-HOSTNAME = `hostname`
+HOSTNAME = `hostname`.split[0]
 
 
 # Helper to construct GT4 jar pathes
@@ -63,8 +63,6 @@ def skipDeps(deps)
 end
 
 # Non-GT4 dependencies
-# ACTI = 'javax.activation:activation:jar:1.1.1'
-# GOOGLE_COLLECTIONS = 'com.google.collections:google-collections:jar:0.9'
 GUICE = 'com.google.code.guice:guice:jar:2.0'
 GOOGLE_COLLECTIONS = 'com.google.code.google-collections:google-collect:jar:snapshot-20080530'
 JETBRAINS_ANNOTATIONS = 'com.intellij:annotations:jar:7.0.3'
@@ -78,14 +76,14 @@ COMMONS_LANG = 'commons-lang:commons-lang:jar:2.1'
 COMMONS_FILEUPLOAD = transitive(['commons-fileupload:commons-fileupload:jar:1.2.1'])
 JETTY = ['jetty:jetty:jar:6.0.2', 'jetty:jetty-util:jar:6.0.2']
 ARGS4J = 'args4j:args4j:jar:2.0.14'
-TESTNG = download(artifact('org.testng:testng:jar:5.1-jdk15') => 'http://static.appfuse.org/repository/org/testng/testng/5.1/testng-5.1-jdk15.jar')
-# TESTNG = 'org.testng:testng:jar:5.1'
-DB_DERBY = [artifact('org.apache.derby:derby:jar:10.4.2').from('extra/derby.jar'),
-            artifact('org.apache.derby:derby-net:jar:10.4.2').from('extra/derbynet.jar'),
-            artifact('org.apache.derby:derby-run:jar:10.4.2').from('extra/derbyrun.jar'),
-            artifact('org.apache.derby:derby-client:jar:10.4.2').from('extra/derbyclient.jar'),
-            artifact('org.apache.derby:derby-locale-de:jar:10.4.2').from('extra/derbyLocale_de_DE.jar'),
-            artifact('org.apache.derby:derby-tools:jar:10.4.2').from('extra/derbytools.jar')]
+# TESTNG = download(artifact('org.testng:testng:jar:5.1-jdk15') => 'http://static.appfuse.org/repository/org/testng/testng/5.1/testng-5.1-jdk15.jar')
+# DB_DERBY = [artifact('org.apache.derby:derby:jar:10.4.2').from('extra/derby.jar'),
+#            artifact('org.apache.derby:derby-net:jar:10.4.2').from('extra/derbynet.jar'),
+#            artifact('org.apache.derby:derby-run:jar:10.4.2').from('extra/derbyrun.jar'),
+#            artifact('org.apache.derby:derby-client:jar:10.4.2').from('extra/derbyclient.jar'),
+#            artifact('org.apache.derby:derby-locale-de:jar:10.4.2').from('extra/derbyLocale_de_DE.jar'),
+#            artifact('org.apache.derby:derby-tools:jar:10.4.2').from('extra/derbytools.jar')]
+DB_DERBY = 'org.apache.derby:derby:jar:10.6.1.0' 
 
 HTTP_CORE = ['org.apache.httpcomponents:httpcore:jar:4.0', 'org.apache.httpcomponents:httpcore-nio:jar:4.0', 'org.apache.httpcomponents:httpclient:jar:4.0.1']
 
@@ -121,10 +119,6 @@ GT4_GRAM = gt4jars(['gram-monitoring.jar', 'gram-service.jar', 'gram-stubs.jar',
 
 
 # OpenJPA is required by gndms:model
-#OPENJPA = ['org.apache.openjpa:openjpa-kernel:jar:2.0.0', 'org.apache.openjpa:openjpa-kernel-5:jar:2.0.0', 'org.apache.openjpa:openjpa-lib:jar:2.0.0', #'org.apache.openjpa:openjpa-jdbc:jar:2.0.0', 'org.apache.openjpa:openjpa-jdbc-5:jar:2.0.0', 'org.apache.openjpa:openjpa-persistence-jdbc:jar:2.0.0', 
-#           artifact('jpa:jpa:jar:2.0').from('extra/javax.persistence_2.0.0.v200911271158.jar')]
-# OPENJPA = [ COMMONS_LANG, 'org.apache.geronimo.specs:geronimo-jpa_3.0_spec:jar:1.1.1', 'org.apache.geronimo.specs:geronimo-jta_1.1_spec:jar:1.1.1', 'org.apache.openjpa:openjpa:jar:2.0.0' ]
-#OPENJPA = [ COMMONS_LANG, 'org.apache.geronimo.specs:geronimo-jpa_3.0_spec:jar:1.1.1', 'org.apache.geronimo.specs:geronimo-jta_1.1_spec:jar:1.1.1', 'javax:javaee-api:jar:6.0', 'org.apache.openjpa:openjpa:jar:2.0.0' ]
 # OPENJPA = [ COMMONS_LANG, 
 #            artifact('org.apache.geronimo.specs:geronimo-jpa_3.0_spec:jar:1.0').from('extra/geronimo-jpa_3.0_spec-1.0.jar'), 
 #            artifact('org.apache.geronimo.specs:geronimo-jpa_2.0_spec:jar:1.0').from('extra/geronimo-jpa_2.0_spec-1.0.jar'), 
@@ -146,11 +140,12 @@ define 'gndms' do
     manifest['License'] = MF_LICENSE
     compile.options.source = SOURCE
     compile.options.target = TARGET
-    puts compile
     # compile.options.lint = 'all'
     meta_inf << file(_('LICENSE'))
     meta_inf << file(_('GNDMS-RELEASE'))
     test.using :testng
+    @buildInfo = nil
+    @versionString = nil
 
     # WSRF GT4 services to be built
     SERVICES = ['GORFX', 'DSpace']
@@ -167,21 +162,41 @@ define 'gndms' do
     GORFX_TESTS   = _('services/GORFX/build/lib/gndms-gorfx-tests.jar')
     SERVICE_STUBS = [GORFX_STUBS, DSPACE_STUBS]
 
-    # buildFile = File.new(_('GNDMS-BUILD-INFO'), 'w')
-    # timestamp = Time.now.to_s
-    # buildFile.syswrite('built-at: ' + timestamp + ' built-by: ' + USERNAME + '@' + HOSTNAME)
-    # buildFile.close
+    def buildInfo()
+      if (@buildInfo == nil) then
+        buildFile = File.new(_('GNDMS-BUILD-INFO'), 'w')
+        timestamp = Time.now.to_s
+        @buildInfo = 'built-at: ' + timestamp + ' built-by: ' + USERNAME + '@' + HOSTNAME
+        buildFile.syswrite(@buildInfo)
+        buildFile.close
+        puts '>>>> '
+        puts '>>>> GNDMS_BUILD_INFO is \'' + @buildInfo + '\''
+        puts '>>>> '
+      end
+    end
+
+    task 'build-info' do buildInfo() end
+
+    def prepRelease()
+      if (@versionString == nil) then
+        @versionString = 'Generation N Data Management System VERSION: ' + VERSION_NUMBER + ' "' + VERSION_NAME + '"'
+        relFile = File.new(_('GNDMS-RELEASE'), 'w')
+        relFile.syswrite(versionString)
+        relFile.close
+        puts '>>>> '
+        puts '>>>> GNDMS_RELEASE is \'' + @versionString + '\''
+        puts '>>>> '
+      end
+    end
+
+    task 'prep-release' do prepRelease() end
+
     meta_inf << file(_('GNDMS-BUILD-INFO'))
 
-    # versionString = 'Generation N Data Management System VERSION: ' + VERSION_NUMBER + ' "' + VERSION_NAME + '"'
-    # relFile = File.new(_('GNDMS-RELEASE'), 'w')
-    # relFile.syswrite(versionString)
-    # relFile.close
- 
     desc 'GT4-independent utility classes for GNDMS'
     define 'stuff', :layout => dmsLayout('stuff', 'gndms-stuff') do
        compile.with GUICE, GOOGLE_COLLECTIONS, JETBRAINS_ANNOTATIONS
-       compile
+       compile { project('gndms').buildInfo() }
        package :jar
     end
 
@@ -190,7 +205,7 @@ define 'gndms' do
       # TODO: Better XML
       compile.with project('stuff'), SERVICE_STUBS, COMMONS_COLLECTIONS, COMMONS_LANG, GOOGLE_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS, GUICE, CXF, OPENJPA, JAXB, STAX
       compile.using :javac => { :source => SOURCE, :target => TARGET }
-      compile { open_jpa_enhance }
+      compile { open_jpa_enhance; project('gndms').buildInfo() }
 
       task :enhance => compile do
         cp = compile.dependencies
@@ -224,29 +239,30 @@ define 'gndms' do
     desc 'GT4-dependent utility classes for GNDMS'
     define 'kit', :layout => dmsLayout('kit', 'gndms-kit') do
       compile.with JETTY, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('stuff'), project('model'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_AXIS, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, GUICE, GT4_SERVLET, COMMONS_LANG, OPENJPA, Buildr::Groovy::Groovyc.dependencies
-      compile
+       compile { project('gndms').buildInfo() }
       package :jar
     end
 
     desc 'GNDMS logic classes (actions for manipulating resources)'
     define 'logic', :layout => dmsLayout('logic', 'gndms-logic') do
        compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('stuff'), project('model'), JODA_TIME, GOOGLE_COLLECTIONS, GUICE, DB_DERBY, GT4_LOG, GT4_AXIS, GT4_COG, GT4_SEC, GT4_XML, COMMONS_LANG, OPENJPA, Buildr::Groovy::Groovyc.dependencies
+       compile { project('gndms').buildInfo() }
        package :jar
     end
 
     desc 'GNDMS classes for dealing with wsrf and xsd types'
     define 'gritserv', :layout => dmsLayout('gritserv', 'gndms-gritserv') do
       compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('stuff'), project('model'), ARGS4J, JODA_TIME, GORFX_STUBS, OPENJPA, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, GT4_COMMONS, COMMONS_LANG, COMMONS_COLLECTIONS, Buildr::Groovy::Groovyc.dependencies
-      compile
+       compile { project('gndms').buildInfo() }
       package :jar
     end
 
     desc 'GNDMS core infrastructure classes'
     define 'infra', :layout => dmsLayout('infra', 'gndms-infra') do
       # Infra *must* have all dependencies since we use this list in copy/link-deps
-      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gritserv'), project('logic'), project('kit'), project('stuff'), project('model'), ARGS4J, SERVICE_STUBS, JODA_TIME, JAXB, GT4_SERVLET, JETTY, CXF, GOOGLE_COLLECTIONS, GUICE, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TESTNG
+      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gritserv'), project('logic'), project('kit'), project('stuff'), project('model'), ARGS4J, SERVICE_STUBS, JODA_TIME, JAXB, GT4_SERVLET, JETTY, CXF, GOOGLE_COLLECTIONS, GUICE, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies
       compile.using :javac => { :source => SOURCE, :target => TARGET }
-      compile
+      compile { project('gndms').buildInfo() }
       package :jar
 
       # Symlink or copy all dependencies of infra + the infra jar - whatever gets filtered by skipDeps to GT4LIB

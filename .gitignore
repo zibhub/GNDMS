@@ -60,5 +60,6 @@ lib/*/
 */resources/META-INF/LICENSE
 .#Buildfile
 GNDMS-BUILD-INFO
-GNDMS-RELEASE
 services/GORFX/GORFX.jar
+extra/
+reports/

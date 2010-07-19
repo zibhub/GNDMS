@@ -32,12 +32,6 @@ module Buildr
 
         properties = file(options[:properties]).tap { |task| task.invoke }.to_s
 
-        puts requires
-        puts ':-)'
-        puts artifacts
-        puts ':-)'
-        puts properties
-
         Buildr.ant "openjpa" do |ant|
           ant.taskdef :name=>"enhancer", :classname=>"org.apache.openjpa.ant.PCEnhancerTask",
             :classpath=>requires.join(File::PATH_SEPARATOR)
