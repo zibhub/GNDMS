@@ -83,7 +83,7 @@ ARGS4J = 'args4j:args4j:jar:2.0.14'
 #            artifact('org.apache.derby:derby-client:jar:10.4.2').from('extra/derbyclient.jar'),
 #            artifact('org.apache.derby:derby-locale-de:jar:10.4.2').from('extra/derbyLocale_de_DE.jar'),
 #            artifact('org.apache.derby:derby-tools:jar:10.4.2').from('extra/derbytools.jar')]
-DB_DERBY = 'org.apache.derby:derby:jar:10.6.1.0' 
+DB_DERBY = 'org.apache.derby:derby:jar:10.5.3.0' 
 
 HTTP_CORE = ['org.apache.httpcomponents:httpcore:jar:4.0', 'org.apache.httpcomponents:httpcore-nio:jar:4.0', 'org.apache.httpcomponents:httpclient:jar:4.0.1']
 
