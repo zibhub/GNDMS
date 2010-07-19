@@ -1,18 +1,26 @@
-package de.zib.gndms.model.common
+package de.zib.gndms.model.common;
 
-import de.zib.gndms.model.ModelEntity
-import javax.persistence.*
+import de.zib.gndms.model.ModelEntity;
+import javax.persistence.*;
 
 /**
- * Superclass of grid entities with a version field
+ * Super class of grid entities with a version field
  *
  **/
 @MappedSuperclass
-abstract class GridEntity extends ModelEntity {
-	@Version
-	int version
+abstract public class GridEntity extends ModelEntity {
+	int version;
 
-	// @Column(name="sys_id", nullable=false, length=16, columnDefinition="CHAR", updatable=false)
+    @Version
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    // @Column(name="sys_id", nullable=false, length=16, columnDefinition="CHAR", updatable=false)
 	// String systemId
 }
 

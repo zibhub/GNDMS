@@ -1,8 +1,8 @@
-package de.zib.gndms.model.common
+package de.zib.gndms.model.common;
 
-import javax.persistence.MappedSuperclass
-import javax.persistence.Column
-import javax.persistence.Id
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Column;
+import javax.persistence.Id;
 
 /**
  *
@@ -10,7 +10,15 @@ import javax.persistence.Id
  *
  **/
 @MappedSuperclass
-abstract class GridResource extends GridEntity {
+abstract public class GridResource extends GridEntity {
+    private String id;
+
 	@Id @Column(name="id", nullable=false, length=36, columnDefinition="CHAR", updatable=false)
-	String id
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 }

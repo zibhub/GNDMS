@@ -36,7 +36,7 @@ class ImmutableScopedName extends ModelId {
 
 	ImmutableScopedName(@NotNull QName qname) { this(qname.namespaceURI, qname.localPart) }
 
-	protected boolean equalFields(Object obj) {
+	protected boolean equalFields(@NotNull Object obj) {
 		ImmutableScopedName other = (ImmutableScopedName) obj
 		return nameScope == other.nameScope && localName == other.localName
 	}

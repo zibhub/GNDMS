@@ -1,9 +1,10 @@
-package de.zib.gndms.infra.system
+package de.zib.gndms.infra.system;
 
-import org.jetbrains.annotations.NotNull
-import javax.persistence.EntityManager
-import javax.persistence.EntityTransaction
-import de.zib.gndms.infra.system.TxSafeRuntimeException
+import com.google.common.base.Function;
+import org.jetbrains.annotations.NotNull;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import de.zib.gndms.infra.system.TxSafeRuntimeException;
 
 /**
  * Helper code for executing jpa transactions in groovy
@@ -13,27 +14,27 @@ import de.zib.gndms.infra.system.TxSafeRuntimeException
  *
  * User: stepn Date: 13.08.2008 Time: 15:24:02
  */
-final class EMTools {
+final public class EMTools {
     private EMTools() { throw new UnsupportedOperationException("Don't"); }
 
 
     public static void txBegin(final @NotNull EntityManager em) {
-            em.getTransaction().begin()
+            em.getTransaction().begin();
     }
 
 
     public static void txRollback(final @NotNull EntityManager em) {
-            em.getTransaction().rollback()
+            em.getTransaction().rollback();
     }
 
 
     public static void txCommit(final @NotNull EntityManager em) {
-            em.getTransaction().commit()
+            em.getTransaction().commit();
     }
 
 
     public static boolean txIsActive(final @NotNull EntityManager em) {
-            em.getTransaction().isActive()
+            return em.getTransaction().isActive();
     }
 
     /**
@@ -44,35 +45,35 @@ final class EMTools {
      * If a new EntityManager was created by txRun, it is finally closed before returning
      * the result of block.
      *
-     * @param EntityManager em the entity manager to be used
+     * @param em EntityManager em the entity manager to be used
      * @param closeEM wether em should be closed finally
      * @param block the Closure to be executed
      */
     public static <T> T txRun(final @NotNull EntityManager em, boolean closeEM,
-                              final @NotNull Closure block) {
+                              final @NotNull Function<EntityManager, T> block) {
             final EntityTransaction tx = em.getTransaction();
             final boolean isNewTx = ! tx.isActive();
 
-            final T result
+            final T result;
             try {
                     if (isNewTx) {
                             tx.begin();
-                            result = (T) block(em)
-                            tx.commit()
+                            result = block.apply(em);
+                            tx.commit();
                     }
                     else
-                            result = (T) block(em)
-                    return result
+                            result = block.apply(em);
+                    return result;
             }
             catch (TxSafeRuntimeException re) {
-                    throw re.getCause()
+                    throw new RuntimeException(re.getCause());
             }
             catch (RuntimeException re) {
-                    if (tx.isActive()) tx.rollback()
-                    throw re
+                    if (tx.isActive()) tx.rollback();
+                    throw re;                         
             }
             finally {
-                    if (closeEM && em.isOpen()) em.close()
+                    if (closeEM && em.isOpen()) em.close();
             }
     }
 }

@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
  * NOTE: do not declare this class abstract!! ( gives compiler trouble )
  */
 
-class ModelObject {
+public class ModelObject {
 
     protected ModelObject( ) {
 
@@ -27,25 +27,3 @@ class ModelObject {
 
 }
 
-/**
- * Shared super class of all model entities.
- */
-abstract class ModelEntity extends ModelObject {
-}
-
-/**
- * Subclassed by model entity id helper classes
- *
- * Defines a sensible default equals method based on identity, null, and instanceof-testing
- * and defer all other checks to equalFields.
- */
-abstract class ModelId extends ModelObject {
-	abstract protected boolean equalFields(@NotNull Object obj);
-
-	@Override
-	public boolean equals(@Nullable Object obj) {
-		if (obj == null) return false;
-		if (obj == this) return true;
-        return this.getClass().isInstance(obj) && this.equalFields(obj);
-    }
-}
