@@ -1,12 +1,12 @@
-package de.zib.gndms.model
+package de.zib.gndms.model;
 
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
- * Shared superclass of all model objects.
+ * Shared super class of all model objects.
  * 
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author Stefan Plantikow <plantikow@zib.de>
  * @version $Id$
  *
  * User: stepn Date: 30.07.2008 Time: 17:03:24
@@ -28,7 +28,7 @@ class ModelObject {
 }
 
 /**
- * Shared superclass of all model entities.
+ * Shared super class of all model entities.
  */
 abstract class ModelEntity extends ModelObject {
 }
@@ -37,17 +37,15 @@ abstract class ModelEntity extends ModelObject {
  * Subclassed by model entity id helper classes
  *
  * Defines a sensible default equals method based on identity, null, and instanceof-testing
- * and deferrs all other checks to equalFields.
+ * and defer all other checks to equalFields.
  */
 abstract class ModelId extends ModelObject {
-	abstract protected boolean equalFields(@NotNull Object obj)
+	abstract protected boolean equalFields(@NotNull Object obj);
 
 	@Override
-	 boolean equals(@Nullable Object obj) {
-		if (obj.is(null)) return false;
-		if (obj.is(this)) return true;
-		if (! this.class.isInstance(obj))
-			return false;
-		return this.equalFields(obj);
-	}
+	public boolean equals(@Nullable Object obj) {
+		if (obj == null) return false;
+		if (obj == this) return true;
+        return this.getClass().isInstance(obj) && this.equalFields(obj);
+    }
 }

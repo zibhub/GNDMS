@@ -1,9 +1,9 @@
-package de.zib.gndms.model.gorfx
+package de.zib.gndms.model.gorfx;
 
-import javax.persistence.Embeddable
-import javax.persistence.Temporal
-import javax.persistence.TemporalType
-import javax.persistence.Basic
+import javax.persistence.Embeddable;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Basic;
 import de.zib.gndms.model.common.TimedGridResource
 import javax.persistence.Entity
 import javax.persistence.Table
