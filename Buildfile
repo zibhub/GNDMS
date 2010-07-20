@@ -153,7 +153,7 @@ define 'gndms' do
     meta_inf << file(_('GNDMS-RELEASE'))
     test.using :testng
     @buildInfo = nil
-    @versionString = nil
+    @releaseInfo = nil
 
     # WSRF GT4 services to be built
     SERVICES = ['GORFX', 'DSpace']
@@ -170,7 +170,7 @@ define 'gndms' do
     GORFX_TESTS   = _('services/GORFX/build/lib/gndms-gorfx-tests.jar')
     SERVICE_STUBS = [GORFX_STUBS, DSPACE_STUBS]
 
-    def buildInfo()
+    def updateBuildInfo()
       if (@buildInfo == nil) then
         buildFile = File.new(_('GNDMS-BUILD-INFO'), 'w')
         timestamp = Time.now.to_s
@@ -183,28 +183,28 @@ define 'gndms' do
       end
     end
 
-    task 'update-build-info' do buildInfo() end
+    task 'update-build-info' do updateBuildInfo() end
 
-    def prepRelease()
-      if (@versionString == nil) then
-        @versionString = 'Generation N Data Management System VERSION: ' + VERSION_NUMBER + ' "' + VERSION_NAME + '"'
+    def updateReleaseInfo()
+      if (@releaseInfo == nil) then
+        @releaseInfo = 'Generation N Data Management System VERSION: ' + VERSION_NUMBER + ' "' + VERSION_NAME + '"'
         relFile = File.new(_('GNDMS-RELEASE'), 'w')
-        relFile.syswrite(versionString)
+        relFile.syswrite(@releaseInfo)
         relFile.close
         puts '>>>> '
-        puts '>>>> GNDMS_RELEASE is \'' + @versionString + '\''
+        puts '>>>> GNDMS_RELEASE is \'' + @releaseInfo + '\''
         puts '>>>> '
       end
     end
 
-    task 'prep-release' do prepRelease() end
+    task 'update-release-info' do updateReleaseInfo() end
 
     meta_inf << file(_('GNDMS-BUILD-INFO'))
 
     desc 'GT4-independent utility classes for GNDMS'
     define 'stuff', :layout => dmsLayout('stuff', 'gndms-stuff') do
        compile.with GUICE, GOOGLE_COLLECTIONS, JETBRAINS_ANNOTATIONS
-       compile { project('gndms').buildInfo() }
+       compile { project('gndms').updateBuildInfo() }
        package :jar
     end
 
@@ -270,7 +270,7 @@ define 'gndms' do
         classpathFile.close
       end
 
-      desc 'Install dependencies to $GLOBUS_LOCATION/lib'
+      desc 'Install dependencies to $GLOBUS_LOCATION/lib (execute as globus user)'
       task 'install-deps' => task('package') do
 				if (ENV['GNDMS_DEPS'] != 'skip') then
         	installDeps(ENV['GNDMS_DEPS']!='link')
@@ -334,6 +334,7 @@ end
 task 'package-stubs' => task('gndms:package-stubs') do
 end
 
+desc 'Install missing dependencies (execute as globus user)'
 task 'install-deps' => task('gndms:infra:install-deps') do
 end
 
@@ -355,11 +356,16 @@ end
 task 'rebuild-GORFX' => task('gndms:rebuild-GORFX') do
 end
 
-# Assumes properly linked dependencies!
-task 'rebuild' => [task('clean'), task('clean-services'), task('gndms:model:package'), task('package-stubs'), task('package'), task('install-deps'), task('rebuild-DSpace'), task('rebuild-GORFX')] do
+desc 'Do a full rebuild and deploy (execute as globus user)'
+task 'rebuild' => ['clean', 'clean-services', 'gndms:model:package', 'package-stubs', 'package', 'install-deps', 'rebuild-DSpace', 'rebuild-GORFX'] do
 end
 
-task 'gndms-release' => [task('prep-release'), task('rebuild'), task('clean-services'), task('clean')] do
+desc 'Do a full release build and deploy (execute as globus user)'
+task 'gndms-release' => ['gndms:update-release-info', 'rebuild', 'clean-services', 'clean'] do
+end
+
+desc 'Does nothing'
+task 'dummy' do 
 end
 
 # task 'pt-install' => ['package-stubs', 'install-deps', 'package-gars'] do
