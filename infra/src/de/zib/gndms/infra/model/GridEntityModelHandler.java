@@ -44,9 +44,9 @@ public class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceH
 
 	final private Log logger = LogFactory.getLog(GridEntityModelHandler.class);
 
-	final private @NotNull Class<M> modelClass;
+	private @NotNull Class<M> modelClass;
 
-	final private @NotNull GNDMServiceHome home;
+	private @NotNull GNDMServiceHome home;
 
 	GridEntityModelHandler(final @NotNull Class<M> theClazz, final @NotNull H homeParam) {
 		modelClass = theClazz;
@@ -240,6 +240,14 @@ public class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceH
             return EMTools.txRun(emParam, false, block);
     }
 
+    protected <B> B txResRun(final EntityManager emParam, final @NotNull Function<EntityManager, B> block)
+            throws ResourceException {
+        if (emParam == null)
+            return EMTools.txResRun(getEntityManagerFactory().createEntityManager(), true, block);
+        else
+            return EMTools.txResRun(emParam, false, block);
+    }
+
 	/**
 	 * @param emParam the EntityManager to be used or null for an EM from this handler's system
 	 * @param resource a resource
@@ -401,6 +409,14 @@ public class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceH
     @NotNull
     public GNDMServiceHome getHome() {
         return home;
+    }
+
+    public void setModelClass(@NotNull Class<M> modelClass) {
+        this.modelClass = modelClass;
+    }
+
+    public void setHome(@NotNull GNDMServiceHome home) {
+        this.home = home;
     }
 }
 
