@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx
+package de.zib.gndms.model.gorfx;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;

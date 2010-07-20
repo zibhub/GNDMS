@@ -6,28 +6,28 @@
  *
  * User: stepn Date: 24.07.2008 Time: 11:17:22
  */
-package de.zib.gndms.model.dspace
+package de.zib.gndms.model.dspace;
 
-import de.zib.gndms.model.common.TimedGridResource
-import javax.persistence.OneToMany
-import de.zib.gndms.model.dspace.types.SliceKindMode
-import javax.persistence.Entity
-import javax.persistence.Table
-import javax.persistence.Embedded
-import javax.persistence.AttributeOverrides
-import javax.persistence.AttributeOverride
-import javax.persistence.OneToOne
-import javax.persistence.PrimaryKeyJoinColumns
-import javax.persistence.FetchType
-import javax.persistence.CascadeType
-import javax.persistence.PrimaryKeyJoinColumn
-import javax.persistence.EntityListeners
-import javax.persistence.Column
-import javax.persistence.Transient
-import de.zib.gndms.model.common.ModelUUIDGen
-import org.jetbrains.annotations.NotNull
-import de.zib.gndms.model.common.GridResource
-import javax.persistence.MappedSuperclass
+import de.zib.gndms.model.common.TimedGridResource;
+import javax.persistence.OneToMany;
+import de.zib.gndms.model.dspace.types.SliceKindMode;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Embedded;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.AttributeOverride;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumns;
+import javax.persistence.FetchType;
+import javax.persistence.CascadeType;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.EntityListeners;
+import javax.persistence.Column;
+import javax.persistence.Transient;
+import de.zib.gndms.model.common.ModelUUIDGen;
+import org.jetbrains.annotations.NotNull;
+import de.zib.gndms.model.common.GridResource;
+import javax.persistence.MappedSuperclass;
 
 /**
  *
@@ -40,31 +40,31 @@ import javax.persistence.MappedSuperclass
 class Subspace extends GridResource {
 
     @Column(name="avail_size", nullable=false, updatable=false)
-    long availableSize
+    private long availableSize;
 
     @Column(name="total_size", nullable=false, updatable=false)
-	long totalSize
+    private long totalSize;
 
-	@OneToOne(targetEntity=MetaSubspace.class, optional=false, cascade=[CascadeType.REFRESH], fetch=FetchType.EAGER)
-	@PrimaryKeyJoinColumns([@PrimaryKeyJoinColumn(name="schema_uri"),
-	                        @PrimaryKeyJoinColumn(name="specifier")])
-	MetaSubspace metaSubspace
+    @OneToOne(targetEntity=MetaSubspace.class, optional=false, cascade=[CascadeType.REFRESH], fetch=FetchType.EAGER)
+    @PrimaryKeyJoinColumns([@PrimaryKeyJoinColumn(name="schema_uri"),
+                            @PrimaryKeyJoinColumn(name="specifier")])
+    private MetaSubspace metaSubspace;
 
-	@Embedded
-	@AttributeOverrides([
-		@AttributeOverride(name="gridSiteId", column=@Column(name="dspace_site", nullable=true, updatable=false)),
+    @Embedded
+    @AttributeOverrides([
+        @AttributeOverride(name="gridSiteId", column=@Column(name="dspace_site", nullable=true, updatable=false)),
         @AttributeOverride(name="resourceKeyValue", column=@Column(name="dspace_uuid", nullable=false, updatable=false)),
 
     ])
-	DSpaceRef dSpaceRef
+    private DSpaceRef dSpaceRef;
 
     @OneToMany( targetEntity=Slice.class, mappedBy="subspace", cascade=[CascadeType.REFRESH,CascadeType.PERSIST, CascadeType.REMOVE ], fetch=FetchType.EAGER )
     Set<Slice> slices = new HashSet<Slice>();
 
-    String path
+    private String path;
 
 
-    String gsiFtpPath
+    private String gsiFtpPath;
 
     public DSpaceRef getDSpaceRef() { return dSpaceRef }
     public void setDSpaceRef(newRef) { dSpaceRef = newRef }

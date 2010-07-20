@@ -1,11 +1,11 @@
-package de.zib.gndms.model.dspace
+package de.zib.gndms.model.dspace;
 
-import de.zib.gndms.model.common.SimpleRKRef
-import javax.persistence.Column
-import javax.persistence.Embeddable
-import javax.persistence.Transient
-import javax.xml.namespace.QName
-import javax.persistence.Embedded
+import de.zib.gndms.model.common.SimpleRKRef;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.Transient;
+import javax.xml.namespace.QName;
+import javax.persistence.Embedded;
 
 /**
  * VEPRef to a Subspace instance
@@ -17,24 +17,24 @@ import javax.persistence.Embedded
  */
 @Embeddable
 class SubspaceRef extends SimpleRKRef {
-	private static RESOURCE_KEY_NAME =
-		new QName("http://dspace.gndms.zib.de/DSpace/Subspace", "SubspaceKey")
-	private static final List<String> RESOURCE_NAMES = ["DSpace", "Subspace"].asImmutable()
+    private static RESOURCE_KEY_NAME =
+        new QName("http://dspace.gndms.zib.de/DSpace/Subspace", "SubspaceKey")
+    private static final List<String> RESOURCE_NAMES = ["DSpace", "Subspace"].asImmutable()
 
-	private String gridSiteId;
-	private String resourceKeyValue;
+    private String gridSiteId;
+    private String resourceKeyValue;
 
-	@Transient
-	QName getResourceKeyName() { RESOURCE_KEY_NAME }
+    @Transient
+    QName getResourceKeyName() { RESOURCE_KEY_NAME }
     
-	@Transient
-	List<String> getResourceNames() { RESOURCE_NAMES }
+    @Transient
+    List<String> getResourceNames() { RESOURCE_NAMES }
 
     @Column(name="key_site", nullable=true, updatable=false, columnDefinition="CHAR", length=64)
-	String getGridSiteId() { gridSiteId }
-	void setGridSiteId(final String newSiteId) { gridSiteId = newSiteId }
+    String getGridSiteId() { gridSiteId }
+    void setGridSiteId(final String newSiteId) { gridSiteId = newSiteId }
 
-	@Column(name="key_val", nullable=false, updatable=false, columnDefinition="CHAR", length=36)
-	String getResourceKeyValue() { resourceKeyValue }
-	void setResourceKeyValue(final String newValue) { resourceKeyValue = newValue }
+    @Column(name="key_val", nullable=false, updatable=false, columnDefinition="CHAR", length=36)
+    String getResourceKeyValue() { resourceKeyValue }
+    void setResourceKeyValue(final String newValue) { resourceKeyValue = newValue }
 }

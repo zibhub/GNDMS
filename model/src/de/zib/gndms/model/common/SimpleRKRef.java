@@ -1,8 +1,8 @@
-package de.zib.gndms.model.common
+package de.zib.gndms.model.common;
 
-import javax.persistence.Embeddable
-import javax.xml.namespace.QName
-import org.jetbrains.annotations.NotNull
+import javax.persistence.Embeddable;
+import javax.xml.namespace.QName;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * VEPRefs for grid resources that use a SimpleResourceKey with a UUID string value
@@ -15,10 +15,10 @@ import org.jetbrains.annotations.NotNull
  */
 @Embeddable
 abstract class SimpleRKRef extends VEPRef {
-	@NotNull
-	abstract QName getResourceKeyName()
+    @NotNull
+    abstract QName getResourceKeyName()
 
-	abstract String getResourceKeyValue()
-	abstract void setResourceKeyValue(final String newValue)
+    abstract String getResourceKeyValue()
+    abstract void setResourceKeyValue(final String newValue)
 }
 

@@ -1,9 +1,9 @@
-package de.zib.gndms.model.common
+package de.zib.gndms.model.common;
 
-import javax.persistence.MappedSuperclass
-import javax.persistence.Column
-import javax.persistence.Temporal
-import javax.persistence.TemporalType
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Column;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 
 
@@ -13,7 +13,7 @@ import javax.persistence.TemporalType
  **/
 @MappedSuperclass
 abstract class TimedGridResource extends GridResource {
-	@Column(name="tod", nullable=false) @Temporal(value = TemporalType.TIMESTAMP)
-	Calendar terminationTime
+    @Column(name="tod", nullable=false) @Temporal(value = TemporalType.TIMESTAMP)
+    private Calendar terminationTime;
 }
 

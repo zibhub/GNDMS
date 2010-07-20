@@ -1,7 +1,7 @@
-package de.zib.gndms.model.common
+package de.zib.gndms.model.common;
 
-import de.zib.gndms.model.ModelObject
-import javax.persistence.Embeddable
+import de.zib.gndms.model.ModelObject;
+import javax.persistence.Embeddable;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -21,9 +21,9 @@ import org.jetbrains.annotations.NotNull;
 @Embeddable
 abstract class VEPRef extends ModelObject {
 
-	abstract String getGridSiteId()
-	abstract void setGridSiteId(final String newSiteId)
+    abstract String getGridSiteId()
+    abstract void setGridSiteId(final String newSiteId)
 
-	@NotNull
-	abstract List<String> getResourceNames();
+    @NotNull
+    abstract List<String> getResourceNames();
 }

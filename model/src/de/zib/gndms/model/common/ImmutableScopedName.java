@@ -1,10 +1,10 @@
-package de.zib.gndms.model.common
+package de.zib.gndms.model.common;
 
-import de.zib.gndms.model.ModelId
-import javax.persistence.Column
-import javax.persistence.Embeddable
-import javax.xml.namespace.QName
-import org.jetbrains.annotations.NotNull
+import de.zib.gndms.model.ModelId;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.xml.namespace.QName;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Model-class for a QName
@@ -16,38 +16,38 @@ import org.jetbrains.annotations.NotNull
  */
 @Embeddable
 class ImmutableScopedName extends ModelId {
-	@Column(name="scope", columnDefinition="VARCHAR", nullable=true, updatable=false)
-	private String nameScope
+    @Column(name="scope", columnDefinition="VARCHAR", nullable=true, updatable=false)
+    private String nameScope
 
-	@Column(name="local", columnDefinition="VARCHAR", nullable=false, updatable=false)
-	private String localName
+    @Column(name="local", columnDefinition="VARCHAR", nullable=false, updatable=false)
+    private String localName
 
-	ImmutableScopedName() {super()}
+    ImmutableScopedName() {super()}
 
     ImmutableScopedName(@NotNull String fullNameStr) {        
         this(QName.valueOf(fullNameStr))
     }
 
-	ImmutableScopedName(@NotNull String theScope, @NotNull String theName) {
-		this()
-		nameScope = theScope
-		localName = theName
-	}
+    ImmutableScopedName(@NotNull String theScope, @NotNull String theName) {
+        this()
+        nameScope = theScope
+        localName = theName
+    }
 
-	ImmutableScopedName(@NotNull QName qname) { this(qname.namespaceURI, qname.localPart) }
+    ImmutableScopedName(@NotNull QName qname) { this(qname.namespaceURI, qname.localPart) }
 
-	protected boolean equalFields(@NotNull Object obj) {
-		ImmutableScopedName other = (ImmutableScopedName) obj
-		return nameScope == other.nameScope && localName == other.localName
-	}
+    protected boolean equalFields(@NotNull Object obj) {
+        ImmutableScopedName other = (ImmutableScopedName) obj
+        return nameScope == other.nameScope && localName == other.localName
+    }
 
-	@Override
-	int hashCode() {
-		return hashCode0(nameScope) ^ hashCode0(localName)
-	}
+    @Override
+    int hashCode() {
+        return hashCode0(nameScope) ^ hashCode0(localName)
+    }
 
-	QName toQName()
-		{ return new QName(nameScope, localName) }
+    QName toQName()
+        { return new QName(nameScope, localName) }
 
     public String getNameScope() { return nameScope }
 

@@ -4,38 +4,38 @@ import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Basic;
-import de.zib.gndms.model.common.TimedGridResource
-import javax.persistence.Entity
-import javax.persistence.Table
-import javax.persistence.Column
-import javax.persistence.Embedded
-import javax.persistence.AttributeOverride
-import javax.persistence.AttributeOverrides
-import de.zib.gndms.model.gorfx.types.TaskState
-import javax.persistence.ManyToOne
-import javax.persistence.JoinColumn
-import javax.persistence.Enumerated
-import javax.persistence.EnumType
-import org.jetbrains.annotations.NotNull
-import javax.persistence.NamedQuery
-import javax.persistence.MappedSuperclass
-import org.joda.time.DateTime
-import org.joda.time.Duration
-import javax.persistence.EntityManager
-import javax.persistence.NamedQueries
-import javax.persistence.OneToMany
-import javax.persistence.CascadeType
-import de.zib.gndms.model.common.PersistentContract
-import de.zib.gndms.stuff.copy.Copyable
-import de.zib.gndms.stuff.copy.CopyMode
-import de.zib.gndms.stuff.copy.Copier
-import de.zib.gndms.stuff.mold.Molding
-import de.zib.gndms.stuff.copy.Copyable
-import de.zib.gndms.stuff.mold.Molder
-import de.zib.gndms.stuff.mold.Mold
-import javax.persistence.FetchType
-import de.zib.gndms.model.common.PermissionInfo
-import javax.persistence.Lob
+import de.zib.gndms.model.common.TimedGridResource;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import de.zib.gndms.model.gorfx.types.TaskState;
+import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.Enumerated;
+import javax.persistence.EnumType;
+import org.jetbrains.annotations.NotNull;
+import javax.persistence.NamedQuery;
+import javax.persistence.MappedSuperclass;
+import org.joda.time.DateTime;
+import org.joda.time.Duration;
+import javax.persistence.EntityManager;
+import javax.persistence.NamedQueries;
+import javax.persistence.OneToMany;
+import javax.persistence.CascadeType;
+import de.zib.gndms.model.common.PersistentContract;
+import de.zib.gndms.stuff.copy.Copyable;
+import de.zib.gndms.stuff.copy.CopyMode;
+import de.zib.gndms.stuff.copy.Copier;
+import de.zib.gndms.stuff.mold.Molding;
+import de.zib.gndms.stuff.copy.Copyable;
+import de.zib.gndms.stuff.mold.Molder;
+import de.zib.gndms.stuff.mold.Mold;
+import javax.persistence.FetchType;
+import de.zib.gndms.model.common.PermissionInfo;
+import javax.persistence.Lob;
 
 /**
  * ThingAMagic.
@@ -50,10 +50,10 @@ import javax.persistence.Lob
 abstract class AbstractTask extends TimedGridResource {
     /* Nullable for testing purposes */
     @ManyToOne(fetch=FetchType.EAGER) @JoinColumn(name="offerTypeKey", nullable=true, updatable=false, columnDefinition="VARCHAR")
-    OfferType offerType
+    private OfferType offerType;
     
     @Column(name="descr", nullable=false, updatable=false, columnDefinition="VARCHAR")
-    String description
+    private String description;
 
     @Column(name="cred", nullable=true, updatable=true, columnDefinition="BLOB")
     @Lob
@@ -66,7 +66,7 @@ abstract class AbstractTask extends TimedGridResource {
         @AttributeOverride(name="deadline", column=@Column(name="deadline", nullable=true, updatable=false)),
         @AttributeOverride(name="resultValidity", column=@Column(name="validity", nullable=true, updatable=false)),
     ])
-    PersistentContract contract
+    private PersistentContract contract;
 
     @Column(name="broken", updatable=true)
     boolean broken = false
@@ -101,7 +101,7 @@ abstract class AbstractTask extends TimedGridResource {
     @Basic String wid;
 
     @Embedded
-    PermissionInfo permissions;
+    private PermissionInfo permissions;
 
     @OneToMany( targetEntity=SubTask.class, cascade=[CascadeType.REMOVE], fetch=FetchType.EAGER )
     List<SubTask> subTasks = new ArrayList<SubTask>();
@@ -138,10 +138,10 @@ abstract class AbstractTask extends TimedGridResource {
     }
 
 
-	@SuppressWarnings(["unchecked"])
-	def <D> Molder<D> molder(@NotNull final Class<D> moldedClazz) {
-		return Mold.newMolderProxy( (Class<D>) getClass(), this, moldedClazz);
-	}
+    @SuppressWarnings(["unchecked"])
+    def <D> Molder<D> molder(@NotNull final Class<D> moldedClazz) {
+        return Mold.newMolderProxy( (Class<D>) getClass(), this, moldedClazz);
+    }
 
     def void mold(final @NotNull AbstractTask instance) {
         instance.id = id

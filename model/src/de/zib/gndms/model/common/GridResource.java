@@ -13,7 +13,7 @@ import javax.persistence.Id;
 abstract public class GridResource extends GridEntity {
     private String id;
 
-	@Id @Column(name="id", nullable=false, length=36, columnDefinition="CHAR", updatable=false)
+    @Id @Column(name="id", nullable=false, length=36, columnDefinition="CHAR", updatable=false)
     public String getId() {
         return id;
     }

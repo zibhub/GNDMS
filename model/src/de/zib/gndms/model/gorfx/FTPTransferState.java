@@ -19,13 +19,13 @@ class FTPTransferState extends GridEntity {
     // maybe use fc constraint here
     @Id
     @Column(name="transfer_id", nullable=false, length=36, columnDefinition="CHAR", updatable=false)
-    String transferId;
+    private String transferId;
 
     @Column(name="ftp_arguments", columnDefinition="VARCHAR")
-    String ftpArgs;
+    private String ftpArgs;
     
     @Column(name="current_file", columnDefinition="VARCHAR")
-    String currentFile;
+    private String currentFile;
 
     /**
      * Returns the ready to use version of the ftpArgs argument.

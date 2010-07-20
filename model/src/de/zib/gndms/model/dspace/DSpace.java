@@ -1,8 +1,8 @@
-package de.zib.gndms.model.dspace
+package de.zib.gndms.model.dspace;
 
-import javax.persistence.*
-import org.jetbrains.annotations.NotNull
-import de.zib.gndms.model.common.SingletonGridResource
+import javax.persistence.*;
+import org.jetbrains.annotations.NotNull;
+import de.zib.gndms.model.common.SingletonGridResource;
 
 /**
  * Instances represent an installations' DSpace singleton resource on the database model side
@@ -27,10 +27,10 @@ import de.zib.gndms.model.common.SingletonGridResource
 @MappedSuperclass
 class DSpace extends SingletonGridResource {
 
-	@NotNull DSpaceRef createRef() {
-		DSpaceRef ref = new DSpaceRef()
-		ref.setGridSiteId(null)
-		ref.setResourceKeyValue(getId())
-		return ref
-	}
+    @NotNull DSpaceRef createRef() {
+        DSpaceRef ref = new DSpaceRef()
+        ref.setGridSiteId(null)
+        ref.setResourceKeyValue(getId())
+        return ref
+    }
 }

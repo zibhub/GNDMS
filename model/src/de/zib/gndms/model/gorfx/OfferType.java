@@ -1,21 +1,21 @@
-package de.zib.gndms.model.gorfx
+package de.zib.gndms.model.gorfx;
 
-import de.zib.gndms.model.common.ImmutableScopedName
-import javax.persistence.Column
-import javax.persistence.Embedded
-import javax.persistence.AttributeOverride
-import javax.persistence.AttributeOverrides
-import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.Table
-import javax.persistence.OneToMany
-import javax.persistence.FetchType
+import de.zib.gndms.model.common.ImmutableScopedName;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.OneToMany;
+import javax.persistence.FetchType;
 import static javax.persistence.CascadeType.ALL
-import javax.persistence.Basic
-import javax.persistence.Lob
-import javax.persistence.Transient
-import de.zib.gndms.stuff.copy.Copyable
-import de.zib.gndms.stuff.copy.CopyMode
+import javax.persistence.Basic;
+import javax.persistence.Lob;
+import javax.persistence.Transient;
+import de.zib.gndms.stuff.copy.Copyable;
+import de.zib.gndms.stuff.copy.CopyMode;
 
 
 /**
@@ -32,33 +32,33 @@ import de.zib.gndms.stuff.copy.CopyMode
 class OfferType {
     @Id
     @Column(name="offer_type_key", nullable=false, updatable=false, columnDefinition="VARCHAR")
-    String offerTypeKey
+    private String offerTypeKey;
 
     @Embedded
     @AttributeOverrides([
           @AttributeOverride(name="nameScope", column=@Column(name="result_scope", nullable=false, updatable=false, columnDefinition="VARCHAR")),
           @AttributeOverride(name="localName", column=@Column(name="result_lname", nullable=false, updatable=false, columnDefinition="VARCHAR", length=64))
     ])
-    ImmutableScopedName offerResultType
+    private ImmutableScopedName offerResultType;
 
     @Embedded
     @AttributeOverrides([
           @AttributeOverride(name="nameScope", column=@Column(name="arg_scope", nullable=false, updatable=false, columnDefinition="VARCHAR")),
           @AttributeOverride(name="localName", column=@Column(name="arg_lname", nullable=false, updatable=false, columnDefinition="VARCHAR", length=64))
     ])
-    ImmutableScopedName offerArgumentType
+    private ImmutableScopedName offerArgumentType;
 
     @Column(name="calc_factory_class_name", nullable=false, updatable=true)
-    String calculatorFactoryClassName
+    private String calculatorFactoryClassName;
 
     @Column(name="task_action_factory_class_name", nullable=false, updatable=true, columnDefinition="VARCHAR")
-    String taskActionFactoryClassName
+    private String taskActionFactoryClassName;
 
     @OneToMany(cascade=ALL, mappedBy="offerType", fetch=FetchType.EAGER)
     Set<Task> tasks = new HashSet<Task>();
 
     @Column(name="config_map_data", nullable=false, updatable=true)
-    Serializable configMapData
+    private Serializable configMapData;
 
     Map<String, String> getConfigMap() {
         return (Map<String, String>) getConfigMapData()

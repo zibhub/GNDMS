@@ -9,6 +9,6 @@ import javax.persistence.Column;
  **/
 @MappedSuperclass
 abstract public class SingletonGridResource extends GridResource {
-	// @Column(name="grid", nullable=false, length=16, columnDefinition="CHAR", updatable=false)
-	// String gridName
+    // @Column(name="grid", nullable=false, length=16, columnDefinition="CHAR", updatable=false)
+    // String gridName
 }

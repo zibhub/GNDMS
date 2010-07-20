@@ -1,7 +1,5 @@
 package de.zib.gndms.model;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Shared super class of all model objects.
@@ -21,7 +19,7 @@ public class ModelObject {
     }
     
 
-    static int hashCode0(Object obj) {
+    public static int hashCode0(Object obj) {
 		return obj == null ? 0 : obj.hashCode();
 	}
 

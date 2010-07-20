@@ -1,22 +1,22 @@
-package de.zib.gndms.model.dspace
+package de.zib.gndms.model.dspace;
 
-import de.zib.gndms.model.common.GridResource
+import de.zib.gndms.model.common.GridResource;
 
-import javax.persistence.Id
-import javax.persistence.Embedded
-import javax.persistence.AttributeOverrides
-import javax.persistence.AttributeOverride
-import javax.persistence.Column
-import java.io.File
-import javax.persistence.ManyToOne
-import javax.persistence.Entity
-import javax.persistence.FetchType
-import javax.persistence.CascadeType
-import javax.persistence.JoinColumn
-import javax.persistence.Table
-import de.zib.gndms.model.common.TimedGridResource
-import javax.persistence.OneToMany
-import javax.persistence.MappedSuperclass
+import javax.persistence.Id;
+import javax.persistence.Embedded;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import java.io.File;
+import javax.persistence.ManyToOne;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.CascadeType;
+import javax.persistence.JoinColumn;
+import javax.persistence.Table;
+import de.zib.gndms.model.common.TimedGridResource;
+import javax.persistence.OneToMany;
+import javax.persistence.MappedSuperclass;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -34,17 +34,17 @@ public class Slice extends TimedGridResource {
 
     @ManyToOne( targetEntity=SliceKind.class, cascade=[CascadeType.REFRESH], fetch=FetchType.EAGER )
     @JoinColumn( name="kind_uri", nullable=false, referencedColumnName="uri", updatable=false )
-    SliceKind kind
+    private SliceKind kind;
 
     @ManyToOne( targetEntity=Subspace.class, cascade=[CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE], fetch=FetchType.EAGER )
-	@JoinColumn( name="subspace_id", nullable=false, referencedColumnName="id", updatable=false )
-    Subspace subspace
+    @JoinColumn( name="subspace_id", nullable=false, referencedColumnName="id", updatable=false )
+    private Subspace subspace;
 
     @Column(name="owner", nullable=false, updatable=false)
-    String owner
+    private String owner;
 
     @Column(name="total_size", nullable=false, updatable=false)
-    long totalStorageSize
+    private long totalStorageSize;
 
     protected Slice( ) { }
 
