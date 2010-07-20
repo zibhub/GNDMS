@@ -1,14 +1,7 @@
 package de.zib.gndms.model.common;
 
-import javax.persistence.Id;
-import javax.persistence.Column;
-import javax.persistence.Basic;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Query;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
+import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * ThingAMagic.
@@ -20,16 +13,47 @@ import javax.persistence.NamedQuery;
  */
 @Entity(name="ConfigletStates") // @Table(name="configlet_states", schema="common")
 @MappedSuperclass
-@NamedQueries([
+@NamedQueries({
 @NamedQuery(name="listAllConfiglets", query="SELECT x FROM ConfigletStates x" )
-])
+})
 public class ConfigletState extends GridEntity {
-    @Id @Column(name = "name", nullable = false, updatable = false, columnDefinition="VARCHAR")
+
     private String name;
 
-    @Column(name ="class_name", nullable = false, updatable = false, columnDefinition="VARCHAR")
     private String className;
 
-    @Basic @Column(name = "state")
     private Serializable state;
+
+
+    @Id @Column(name = "name", nullable = false, updatable = false, columnDefinition="VARCHAR")
+    public String getName() {
+        return name;
+    }
+
+
+    public void setName( String name ) {
+        this.name = name;
+    }
+
+
+    @Column(name ="class_name", nullable = false, updatable = false, columnDefinition="VARCHAR")
+    public String getClassName() {
+        return className;
+    }
+
+
+    public void setClassName( String className ) {
+        this.className = className;
+    }
+
+
+    @Basic @Column(name = "state")
+    public Serializable getState() {
+        return state;
+    }
+
+
+    public void setState( Serializable state ) {
+        this.state = state;
+    }
 }

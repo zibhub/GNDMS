@@ -10,7 +10,8 @@ import javax.persistence.Id;
  *
  **/
 @MappedSuperclass
-abstract public class GridResource extends GridEntity {
+public abstract class GridResource extends GridEntity {
+    
     private String id;
 
     @Id @Column(name="id", nullable=false, length=36, columnDefinition="CHAR", updatable=false)

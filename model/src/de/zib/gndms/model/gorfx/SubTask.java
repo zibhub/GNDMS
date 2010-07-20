@@ -32,7 +32,7 @@ public class SubTask extends AbstractTask {
    // Task parent;
 
     public SubTask( ) {
-
+        super();
     }
 
 
@@ -47,7 +47,7 @@ public class SubTask extends AbstractTask {
      *
      * Note: Neither the state nor the progress are updated.
      */
-    void fromTask( EntityManager em, AbstractTask tsk ) {
+    public void fromTask ( EntityManager em, AbstractTask tsk ) {
 
         if( tsk.getOfferType( ) == null )
             setOfferType( null );

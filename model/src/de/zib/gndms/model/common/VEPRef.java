@@ -1,8 +1,9 @@
 package de.zib.gndms.model.common;
 
 import de.zib.gndms.model.ModelObject;
+
 import javax.persistence.Embeddable;
-import org.jetbrains.annotations.NotNull;
+import java.util.List;
 
 /**
  * Abstract superclass of "virtual" endpoint references.
@@ -19,11 +20,10 @@ import org.jetbrains.annotations.NotNull;
  *          User: stepn Date: 28.07.2008 Time: 14:34:05
  */
 @Embeddable
-abstract class VEPRef extends ModelObject {
+public abstract class VEPRef extends ModelObject {
 
-    abstract String getGridSiteId()
-    abstract void setGridSiteId(final String newSiteId)
+    public abstract String getGridSiteId();
+    public abstract void setGridSiteId(final String newSiteId);
 
-    @NotNull
-    abstract List<String> getResourceNames();
+    public abstract List<String> getResourceNames();
 }

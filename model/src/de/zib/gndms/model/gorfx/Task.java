@@ -1,25 +1,6 @@
 package de.zib.gndms.model.gorfx;
 
-import javax.persistence.Basic;
-import de.zib.gndms.model.common.TimedGridResource;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import de.zib.gndms.model.gorfx.types.TaskState;
-import javax.persistence.ManyToOne;
-import javax.persistence.JoinColumn;
-import javax.persistence.Enumerated;
-import javax.persistence.EnumType;
-import org.jetbrains.annotations.NotNull;
-import javax.persistence.NamedQuery;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.EntityManager;
-import javax.persistence.NamedQueries;
-import javax.persistence.OneToMany;
-import javax.persistence.CascadeType;
+import javax.persistence.*;
 
 
 /**
@@ -39,7 +20,7 @@ import javax.persistence.CascadeType;
 @MappedSuperclass
 public class Task extends AbstractTask {
 
-    boolean postMortem = false;
+    private boolean postMortem = false;
 
     @Column(name="post_mortem", nullable=false)
     public boolean isPostMortem() {

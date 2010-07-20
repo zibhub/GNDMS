@@ -11,7 +11,6 @@ import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.logic.model.dspace.DeleteSliceAction;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.model.util.TxFrame;
 import org.apache.axis.types.URI;
 import org.apache.axis.types.UnsignedLong;
 import org.apache.commons.logging.Log;
@@ -23,7 +22,6 @@ import org.globus.wsrf.ResourceKey;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
-import java.util.concurrent.Future;
 
 
 /** 
@@ -154,7 +152,7 @@ public class SliceResource extends SliceResourceBase
         logger.debug( "removing slice resource: " + getID() );
         EntityManager em = resourceHome.getEntityManagerFactory().createEntityManager();
         Slice sl = em.find( Slice.class, getID() );
-        logger.debug( "removing slice directory: " + sl.getAssociatedPath() );
+        logger.debug( "removing slice directory: " + sl.getDirectoryId() );
         // the action takes care of the EntityManager from now on
         /*Future f =*/ resourceHome.getSystem().submitAction( em, new DeleteSliceAction( sl ), logger );
     }

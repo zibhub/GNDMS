@@ -1,24 +1,11 @@
 package de.zib.gndms.model.dspace;
 
-import de.zib.gndms.model.ModelEntity;
-import javax.persistence.Id;
-import javax.persistence.Column;
-import javax.persistence.Enumerated;
-import javax.persistence.EnumType;
-import javax.persistence.Inheritance;
-import javax.persistence.Table;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.FetchType;
-import javax.persistence.CascadeType;
-//import de.zib.gndms.model.dspace.types.SliceKindMode
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Embeddable;
-import de.zib.gndms.model.common.GridEntity;
-import javax.persistence.MappedSuperclass;
 import de.zib.gndms.model.common.AccessMask;
+import de.zib.gndms.model.common.GridEntity;
+
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * SliceKinds are identified by a kindURI
@@ -34,28 +21,59 @@ import de.zib.gndms.model.common.AccessMask;
 // @DiscriminatorValue("PLAIN")
 // @Table(name="slice_kinds", schema="dspace")
 @MappedSuperclass
-class SliceKind extends GridEntity {
-    @Id @Column(name="uri", nullable=false, updatable=false, columnDefinition="VARCHAR")
+public class SliceKind extends GridEntity {
     private String URI;
 
 //    @Column(name="permission", nullable=false, updatable=false, columnDefinition="VARCHAR", length=15)
-    @Column(name="permission", nullable=false, updatable=false )
     private AccessMask permission;
 
     //de.zib.gndms.model.dspace.types.SliceKindMode mode
 
-    @Column( name="slice_directory", nullable=false, columnDefinition="VARCHAR" )
     private String sliceDirectory;
 
-    @ManyToMany(mappedBy="creatableSliceKinds", cascade=[CascadeType.REFRESH, CascadeType.MERGE, CascadeType.PERSIST], fetch=FetchType.EAGER)
-    Set<MetaSubspace> metaSubspaces = new HashSet<MetaSubspace>();
+    private Set<MetaSubspace> metaSubspaces = new HashSet<MetaSubspace>();
 
-/* void setURI( String uriParam ){
-        this.uri = uriParam
+
+    @Id @Column(name="uri", nullable=false, updatable=false, columnDefinition="VARCHAR")
+    public String getURI() {
+        return URI;
     }
 
-    void getURI( ){
-        this.uri
+
+    @Column(name="permission", nullable=false, updatable=false )
+    public AccessMask getPermission() {
+        return permission;
     }
-    */
+
+
+    @Column( name="slice_directory", nullable=false, columnDefinition="VARCHAR" )
+    public String getSliceDirectory() {
+        return sliceDirectory;
+    }
+
+
+    @ManyToMany(mappedBy="creatableSliceKinds", cascade={CascadeType.REFRESH, CascadeType.MERGE, CascadeType.PERSIST}, fetch=FetchType.EAGER)
+    public Set<MetaSubspace> getMetaSubspaces() {
+        return metaSubspaces;
+    }
+
+
+    public void setURI( String URI ) {
+        this.URI = URI;
+    }
+
+
+    public void setPermission( AccessMask permission ) {
+        this.permission = permission;
+    }
+
+
+    public void setSliceDirectory( String sliceDirectory ) {
+        this.sliceDirectory = sliceDirectory;
+    }
+
+
+    public void setMetaSubspaces( Set<MetaSubspace> metaSubspaces ) {
+        this.metaSubspaces = metaSubspaces;
+    }
 }

@@ -8,8 +8,9 @@ import javax.persistence.*;
  *
  **/
 @MappedSuperclass
-abstract public class GridEntity extends ModelEntity {
-	int version;
+public abstract class GridEntity extends ModelEntity {
+    
+	private int version;
 
     @Version
     public int getVersion() {

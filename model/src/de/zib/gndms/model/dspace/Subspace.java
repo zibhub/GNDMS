@@ -8,26 +8,13 @@
  */
 package de.zib.gndms.model.dspace;
 
-import de.zib.gndms.model.common.TimedGridResource;
-import javax.persistence.OneToMany;
-import de.zib.gndms.model.dspace.types.SliceKindMode;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Embedded;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.AttributeOverride;
-import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumns;
-import javax.persistence.FetchType;
-import javax.persistence.CascadeType;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.EntityListeners;
-import javax.persistence.Column;
-import javax.persistence.Transient;
-import de.zib.gndms.model.common.ModelUUIDGen;
-import org.jetbrains.annotations.NotNull;
 import de.zib.gndms.model.common.GridResource;
-import javax.persistence.MappedSuperclass;
+import org.jetbrains.annotations.NotNull;
+
+import javax.persistence.*;
+import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -37,37 +24,30 @@ import javax.persistence.MappedSuperclass;
 @Entity(name="Subspaces")
 // @Table(name="subspaces", schema="dspace")
 @MappedSuperclass
-class Subspace extends GridResource {
+public class Subspace extends GridResource {
 
-    @Column(name="avail_size", nullable=false, updatable=false)
     private long availableSize;
 
-    @Column(name="total_size", nullable=false, updatable=false)
     private long totalSize;
 
-    @OneToOne(targetEntity=MetaSubspace.class, optional=false, cascade=[CascadeType.REFRESH], fetch=FetchType.EAGER)
-    @PrimaryKeyJoinColumns([@PrimaryKeyJoinColumn(name="schema_uri"),
-                            @PrimaryKeyJoinColumn(name="specifier")])
     private MetaSubspace metaSubspace;
 
-    @Embedded
-    @AttributeOverrides([
-        @AttributeOverride(name="gridSiteId", column=@Column(name="dspace_site", nullable=true, updatable=false)),
-        @AttributeOverride(name="resourceKeyValue", column=@Column(name="dspace_uuid", nullable=false, updatable=false)),
-
-    ])
     private DSpaceRef dSpaceRef;
 
-    @OneToMany( targetEntity=Slice.class, mappedBy="subspace", cascade=[CascadeType.REFRESH,CascadeType.PERSIST, CascadeType.REMOVE ], fetch=FetchType.EAGER )
-    Set<Slice> slices = new HashSet<Slice>();
+    private Set<Slice> slices = new HashSet<Slice>();
 
     private String path;
 
-
     private String gsiFtpPath;
 
-    public DSpaceRef getDSpaceRef() { return dSpaceRef }
-    public void setDSpaceRef(newRef) { dSpaceRef = newRef }
+
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name="gridSiteId", column=@Column(name="dspace_site", nullable=true, updatable=false)),
+        @AttributeOverride(name="resourceKeyValue", column=@Column(name="dspace_uuid", nullable=false, updatable=false))
+        })
+    public DSpaceRef getDSpaceRef() { return dSpaceRef; }
+    public void setDSpaceRef( DSpaceRef newRef ) { dSpaceRef = newRef; }
 
     /**
      * Sets the path of the Subspace to pth.
@@ -78,13 +58,13 @@ class Subspace extends GridResource {
      */
     public void setPath( String pth ) {
 
-        File f = new File( pth )
+        File f = new File( pth );
 
         if( ! ( f.exists( ) && f.isDirectory( ) ) )
-            throw new IllegalStateException( pth+" does not exists or isn't a directory" )
+            throw new IllegalStateException( pth+" does not exists or isn't a directory" );
 
         if( ! f.canWrite( ) )
-            throw new IllegalStateException( pth+" is not writable" )
+            throw new IllegalStateException( pth+" is not writable" );
 
         path = pth;
     }
@@ -93,9 +73,9 @@ class Subspace extends GridResource {
     public void addSlice( @NotNull Slice sl ) {
 
         if( slices == null )
-            throw IllegalStateException( "No slices set provided" )
+            throw new IllegalStateException( "No slices set provided" );
 
-        slices.add( sl )
+        slices.add( sl );
     }
 
 
@@ -106,7 +86,7 @@ class Subspace extends GridResource {
      */
     public void removeSlice( @NotNull Slice sl ) {
 
-        slices.remove( sl )
+        slices.remove( sl );
     }
 
 
@@ -114,11 +94,72 @@ class Subspace extends GridResource {
      * @brief Delivers the absolute path to a slice sl.
      */
     public String getPathForSlice( Slice sl )  {
-        path + File.separator + sl.getKind( ).getSliceDirectory() + File.separator + sl.getAssociatedPath( )
+        return path + File.separator + sl.getKind( ).getSliceDirectory() + File.separator + sl.getDirectoryId( );
     }
 
 
     public String getGsiFtpPathForSlice( Slice sl )  {
-        gsiFtpPath + "/" + sl.getKind( ).getSliceDirectory() + "/" + sl.getAssociatedPath( )
+        return gsiFtpPath + "/" + sl.getKind( ).getSliceDirectory() + "/" + sl.getDirectoryId( );
+    }
+
+
+    @Column(name="avail_size", nullable=false, updatable=false)
+    public long getAvailableSize() {
+        return availableSize;
+    }
+
+
+    @Column(name="total_size", nullable=false, updatable=false)
+    public long getTotalSize() {
+        return totalSize;
+    }
+
+
+    @OneToOne(targetEntity=MetaSubspace.class, optional=false, cascade={ CascadeType.REFRESH}, fetch=FetchType.EAGER)
+    @PrimaryKeyJoinColumns({@PrimaryKeyJoinColumn(name="schema_uri"),
+                            @PrimaryKeyJoinColumn(name="specifier")})
+    public MetaSubspace getMetaSubspace() {
+        return metaSubspace;
+    }
+
+
+    @OneToMany( targetEntity=Slice.class, mappedBy="subspace", cascade={CascadeType.REFRESH,CascadeType.PERSIST, CascadeType.REMOVE }, fetch=FetchType.EAGER )
+    public Set<Slice> getSlices() {
+        return slices;
+    }
+
+
+    public String getPath() {
+        return path;
+    }
+
+
+    public String getGsiFtpPath() {
+        return gsiFtpPath;
+    }
+
+
+    public void setAvailableSize( long availableSize ) {
+        this.availableSize = availableSize;
+    }
+
+
+    public void setTotalSize( long totalSize ) {
+        this.totalSize = totalSize;
+    }
+
+
+    public void setMetaSubspace( MetaSubspace metaSubspace ) {
+        this.metaSubspace = metaSubspace;
+    }
+
+
+    public void setSlices( Set<Slice> slices ) {
+        this.slices = slices;
+    }
+
+
+    public void setGsiFtpPath( String gsiFtpPath ) {
+        this.gsiFtpPath = gsiFtpPath;
     }
 }

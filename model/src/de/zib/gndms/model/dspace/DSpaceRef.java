@@ -1,11 +1,13 @@
 package de.zib.gndms.model.dspace;
 
 import de.zib.gndms.model.common.SimpleRKRef;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;
 import javax.xml.namespace.QName;
-import javax.persistence.Embedded;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * VEPRef to a DSpace instance
@@ -16,24 +18,25 @@ import javax.persistence.Embedded;
  * User: stepn Date: 30.07.2008 Time: 15:01:58
  */
 @Embeddable
-class DSpaceRef extends SimpleRKRef {
+public class DSpaceRef extends SimpleRKRef {
     private static final QName RESOURCE_KEY_NAME =
-        new QName("http://dspace.gndms.zib.de/DSpace", "DSpaceKey")
-    private static final List<String> RESOURCE_NAMES = ["DSpace"].asImmutable()
+        new QName("http://dspace.gndms.zib.de/DSpace", "DSpaceKey");
+    private static final List<String> RESOURCE_NAMES =
+        new ArrayList( 1 ) {{ add( "DSpace" ); }};
 
     private String gridSiteId;
     private String resourceKeyValue;
 
     @Transient
-    QName getResourceKeyName() { RESOURCE_KEY_NAME }
+    public QName getResourceKeyName () { return RESOURCE_KEY_NAME; }
     @Transient
-    List<String> getResourceNames() { RESOURCE_NAMES }
+    public List<String> getResourceNames () { return RESOURCE_NAMES; }
 
     @Column(name="key_site", nullable=true, updatable=false, columnDefinition="CHAR", length=64)
-    String getGridSiteId() { gridSiteId }
-    void setGridSiteId(final String newSiteId) { gridSiteId = newSiteId }
+    public String getGridSiteId () { return gridSiteId; }
+    public void setGridSiteId (final String newSiteId) { gridSiteId = newSiteId; }
 
     @Column(name="key_val", nullable=false, updatable=false, columnDefinition="CHAR", length=36)
-    String getResourceKeyValue() { resourceKeyValue }
-    void setResourceKeyValue(final String newValue) { resourceKeyValue = newValue }
+    public String getResourceKeyValue () { return resourceKeyValue; }
+    public void setResourceKeyValue (final String newValue) { resourceKeyValue = newValue; }
 }
