@@ -54,9 +54,11 @@ syntax:regexp
 .*~
 .symlink
 .#buildfile
-lib/DEPENDENCIES
-lib/dependencies.xml
-lib/*/
+lib/model/*
+lib/stuff/*
+lib/gritserv/*
+lib/kit/*
+lib/logic/*
 */resources/META-INF/GNDMS-RELEASE
 */resources/META-INF/GNDMS-BUILD-INFO
 */resources/META-INF/LICENSE
@@ -65,3 +67,4 @@ GNDMS-BUILD-INFO
 services/GORFX/GORFX.jar
 extra/
 reports/
+lib/jruby-*
