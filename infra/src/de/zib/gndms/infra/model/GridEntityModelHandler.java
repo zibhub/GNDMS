@@ -1,36 +1,25 @@
 package de.zib.gndms.infra.model;
 
 import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import de.zib.gndms.infra.system.GNDMSystem;
-import de.zib.gndms.kit.access.GNDMSBinding;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
 import de.zib.gndms.infra.service.GNDMServiceHome;
-import de.zib.gndms.kit.access.EMFactoryProvider;
 import de.zib.gndms.infra.system.EMTools;
+import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
+import de.zib.gndms.kit.access.EMFactoryProvider;
+import de.zib.gndms.kit.access.GNDMSBinding;
+import de.zib.gndms.logic.model.*;
 import de.zib.gndms.model.common.GridEntity;
 import de.zib.gndms.model.common.GridResource;
-import de.zib.gndms.model.common.SingletonGridResource;
-import de.zib.gndms.logic.model.BatchUpdateAction;
-import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
-import de.zib.gndms.logic.model.EntityUpdateListener;
-import de.zib.gndms.logic.model.ModelAction;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.globus.wsrf.NoSuchResourceException;
 import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.ResourceIdentifier;
-import de.zib.gndms.logic.model.DelegatingEntityUpdateListener;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import de.zib.gndms.kit.access.EMFactoryProvider;
-import de.zib.gndms.infra.system.EMTools;
-import de.zib.gndms.kit.access.EMFactoryProvider;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 
 /**
  * Helper class for managing persistent models of GNDMS resources 
@@ -253,7 +242,7 @@ public class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceH
 	 * @param resource a resource
 	 * @return model for resource if included in database, null otherwise
 	 */
-	final @Nullable M tryLoadModel(final EntityManager emParam, final @NotNull R resource) {
+	public final @Nullable M tryLoadModel(final EntityManager emParam, final @NotNull R resource) {
 		return txRun(emParam, new Function<EntityManager, M>() {
 
             public M apply(@com.google.common.base.Nullable EntityManager em) {
@@ -268,7 +257,7 @@ public class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceH
 	 * @param id a resource id
 	 * @return model with id id if included in database, null otherwise
 	 */
-	final @Nullable M tryLoadModelById(final EntityManager emParam, final @NotNull String id)
+	public final @Nullable M tryLoadModelById(final EntityManager emParam, final @NotNull String id)
 	{
             final @NotNull Class<M> curModelClass = getModelClass();
             return txRun(emParam, new Function<EntityManager, M>() {
@@ -285,7 +274,7 @@ public class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceH
 	 * @return model for resource
 	 * @throws NoSuchResourceException if no model exists
 	 */
-	final @NotNull M loadModel(final EntityManager emParam, final @NotNull R resource)
+	public final @NotNull M loadModel(final EntityManager emParam, final @NotNull R resource)
 		  throws ResourceException {
 		return txRun(emParam, new Function<EntityManager, M>() {
 
@@ -308,7 +297,7 @@ public class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceH
 	 * @return model for resource id
 	 * @throws NoSuchResourceException if no model exists
 	 */
-	final @NotNull M loadModelById(final EntityManager emParam, final @NotNull String id)
+	public final @NotNull M loadModelById(final EntityManager emParam, final @NotNull String id)
 		  throws ResourceException {
 		return txRun(emParam, new Function<EntityManager, M>() {
 
@@ -324,7 +313,7 @@ public class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceH
 	}
 
 
-	final public @NotNull M refreshModel(final EntityManager emParam, final @NotNull M model)
+	public final @NotNull M refreshModel(final EntityManager emParam, final @NotNull M model)
     {
         return txRun(emParam, new Function<EntityManager, M>() {
             public M apply(@com.google.common.base.Nullable @NotNull EntityManager em) {

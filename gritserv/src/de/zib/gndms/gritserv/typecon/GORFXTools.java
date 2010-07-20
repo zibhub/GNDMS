@@ -126,7 +126,7 @@ public class GORFXTools {
 
         TaskExecutionState stat = new TaskExecutionState( );
         stat.setDescription( new NormalizedString( tsk.getDescription() ) );
-        stat.setContractBroken( tsk.getBroken() );
+        stat.setContractBroken( tsk.isBroken() );
         stat.setStatus( getXSDTForTaskState( tsk.getState() ) );
         stat.setProgress( toPositiveInteger( tsk.getProgress() ) );
         stat.setMaxProgress( toPositiveInteger( tsk.getMaxProgress() ) );

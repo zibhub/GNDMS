@@ -3,7 +3,6 @@ package de.zib.gndms.infra.model;
 import com.google.common.base.Function;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
-import de.zib.gndms.model.common.GridEntity;
 import de.zib.gndms.model.common.SingletonGridResource;
 import org.globus.wsrf.ResourceException;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +22,7 @@ import javax.persistence.Query;
  */
 public final class SingletonGridResourceModelHandler<M extends SingletonGridResource, H extends GNDMServiceHome, R extends ReloadablePersistentResource<M, H>> extends GridResourceModelHandler<M, H, R> {
 
-	SingletonGridResourceModelHandler(final Class<M> theClazz, final H homeParam) {
+	public SingletonGridResourceModelHandler(final Class<M> theClazz, final H homeParam) {
 		super(theClazz, homeParam);
 	}
 
