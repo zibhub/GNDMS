@@ -95,9 +95,10 @@ public abstract class AbstractTask extends TimedGridResource {
     }
 
 
+    // TODO veryify "(D) this"
     @SuppressWarnings({"unchecked"})
     public <D> Molder<D> molder(@NotNull final Class<D> moldedClazz) {
-        return Mold.newMolderProxy( (Class<D>) getClass(), this, moldedClazz);
+        return Mold.newMolderProxy( (Class<D>) getClass(), (D) this, moldedClazz);
     }
 
     public void mold(final @NotNull AbstractTask instance) {
