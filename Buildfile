@@ -201,7 +201,7 @@ define 'gndms' do
     define 'model', :layout => dmsLayout('model', 'gndms-model') do
       # TODO: Better XML
       compile.with project('stuff'), SERVICE_STUBS, COMMONS_COLLECTIONS, COMMONS_LANG, GOOGLE_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS, GUICE, CXF, OPENJPA, JAXB, STAX
-      compile { open_jpa_enhance; project('gndms').buildInfo() }
+      compile { project('gndms').buildInfo(); open_jpa_enhance }
 
       task :enhance => compile do
         cp = compile.dependencies
@@ -235,7 +235,7 @@ define 'gndms' do
     desc 'GT4-dependent utility classes for GNDMS'
     define 'kit', :layout => dmsLayout('kit', 'gndms-kit') do
       compile.with JETTY, GROOVY, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('stuff'), project('model'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_AXIS, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, GUICE, GT4_SERVLET, COMMONS_LANG, OPENJPA
-       compile { project('gndms').buildInfo() }
+      compile { project('gndms').buildInfo() }
       package :jar
     end
 
@@ -249,7 +249,7 @@ define 'gndms' do
     desc 'GNDMS classes for dealing with wsrf and xsd types'
     define 'gritserv', :layout => dmsLayout('gritserv', 'gndms-gritserv') do
       compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('stuff'), project('model'), ARGS4J, JODA_TIME, GORFX_STUBS, OPENJPA, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, GT4_COMMONS, COMMONS_LANG, COMMONS_COLLECTIONS
-       compile { project('gndms').buildInfo() }
+      compile { project('gndms').buildInfo() }
       package :jar
     end
 
@@ -267,9 +267,9 @@ define 'gndms' do
         deps << project('infra').package.to_s
         deps = skipDeps(deps)
 
-        classpathFile = File.new(_('../lib/dependencies.xml'), 'w')
+        classpathFile = File.new(GT4LIB + 'gndms-dependencies.xml', 'w')
         classpathFile.syswrite('<?xml version="1.0"?>' + "\n" + '<project><target id="setGNDMSDeps"><path id="service.build.extended.classpath">' + "\n")
-        depsFile = File.new(_('../lib/DEPENDENCIES'), 'w')
+        depsFile = File.new(GT4LIB + 'gndms-dependencies', 'w')
         deps.select { |jar| jar[0, GT4LIB.length] != GT4LIB }.each { |file| 
            if (copy)
              puts 'cp: \'' + file + '\' to: \'' + GT4LIB + '\''
@@ -287,12 +287,12 @@ define 'gndms' do
       end
 
       desc 'Symlink dependencies to $GLOBUS_LOCATION/lib'
-      task 'link-deps' => :package do
+      task 'link-deps' => task('package') do
         installDeps(false)
       end
 
       desc 'Copy dependencies to $GLOBUS_LOCATION/lib'
-      task 'copy-deps' => :package do
+      task 'copy-deps' => task('package') do
         installDeps(true)
       end
 
