@@ -47,21 +47,21 @@ public abstract class AbstractTask extends TimedGridResource {
 
     private int maxProgress = 100;
 
-    @Basic private Serializable orq;
+    private Serializable orq;
 
 
-    @Basic private String faultString;
+    private String faultString;
     /**
      * Payload depending on state, either task results or a detailed task failure
      **/
-    @Basic private Serializable data;
+    private Serializable data;
 
 
-    @Basic private String wid;
+    private String wid;
 
     private PermissionInfo permissions;
 
-    List<SubTask> subTasks = new ArrayList<SubTask>();
+    private List<SubTask> subTasks = new ArrayList<SubTask>();
 
 
     public void transit(final TaskState newState) {
@@ -84,14 +84,14 @@ public abstract class AbstractTask extends TimedGridResource {
         setState(getState().transit(TaskState.FINISHED));
         setFaultString("");
         setData(result);
-        setProgress(maxProgress);
+        setProgress( getMaxProgress() );
     }
 
     public void add ( SubTask st ) {
-        if( subTasks == null );
-            subTasks = new LinkedList<SubTask>( );
+        if( getSubTasks() == null );
+            setSubTasks( new LinkedList<SubTask>( ) );
         
-        subTasks.add( st );
+        getSubTasks().add( st );
     }
 
 
@@ -104,31 +104,31 @@ public abstract class AbstractTask extends TimedGridResource {
     public void mold(final @NotNull AbstractTask instance) {
         instance.setId( getId() );
         instance.setTerminationTime( getTerminationTime() );
-        instance.description = description;
-        instance.wid = wid;
-        instance.faultString = faultString;
-        instance.done = done;
-        instance.state = state;
-        instance.broken = broken;
-        instance.progress = progress;
-        instance.maxProgress = maxProgress;
-        instance.contract = Copier.copy(false, contract);
+        instance.setDescription( getDescription() );
+        instance.setWid( getWid() );
+        instance.setFaultString( getFaultString() );
+        instance.setDone( isDone() );
+        instance.setState( getState() );
+        instance.setBroken( isBroken() );
+        instance.setProgress( getProgress() );
+        instance.setMaxProgress( getMaxProgress() );
+        instance.setContract( Copier.copy(false, getContract() ) );
         /* shallow therefore needs refresh */
-        instance.offerType = offerType;
-        instance.orq = Copier.copySerializable(orq);
-        instance.data = Copier.copySerializable(data);
-        instance.permissions = Copier.copyViaConstructor( permissions );
-        if (subTasks == null)
-           instance.subTasks = null;
+        instance.setOfferType( getOfferType() );
+        instance.setOrq( Copier.copySerializable( getOrq() ) );
+        instance.setData( Copier.copySerializable( getData() ) );
+        instance.setPermissions( Copier.copyViaConstructor( getPermissions() ) );
+        if ( getSubTasks() == null)
+           instance.setSubTasks( null );
         else {
-           instance.subTasks = new LinkedList<SubTask>();
-           instance.subTasks.addAll(subTasks);
+           instance.setSubTasks( new LinkedList<SubTask>() );
+           instance.getSubTasks().addAll( getSubTasks() );
         }
     }
 
     public void refresh(final @NotNull EntityManager em) {
-        if (offerType != null)
-            offerType = em.find(OfferType.class, offerType.getOfferTypeKey());
+        if ( getOfferType() != null)
+            setOfferType( em.find(OfferType.class, getOfferType().getOfferTypeKey()) );
     }
 
 
@@ -196,24 +196,28 @@ public abstract class AbstractTask extends TimedGridResource {
 
 
     @Column(name="orq", nullable=false, updatable=true)
+    @Basic
     public Serializable getOrq() {
         return orq;
     }
 
 
     @Column(name="fault", nullable=true, updatable=true, columnDefinition="VARCHAR", length=5000 )
+    @Basic
     public String getFaultString() {
         return faultString;
     }
 
 
     @Column(name="data", nullable=true, updatable=true)
+    @Basic 
     public Serializable getData() {
         return data;
     }
 
 
     @Column(name="wid", nullable=true, updatable=false)
+    @Basic
     public String getWid() {
         return wid;
     }

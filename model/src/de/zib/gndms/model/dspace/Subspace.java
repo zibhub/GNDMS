@@ -72,10 +72,10 @@ public class Subspace extends GridResource {
 
     public void addSlice( @NotNull Slice sl ) {
 
-        if( slices == null )
+        if( getSlices() == null )
             throw new IllegalStateException( "No slices set provided" );
 
-        slices.add( sl );
+        getSlices().add( sl );
     }
 
 
@@ -86,7 +86,7 @@ public class Subspace extends GridResource {
      */
     public void removeSlice( @NotNull Slice sl ) {
 
-        slices.remove( sl );
+        getSlices().remove( sl );
     }
 
 
@@ -94,12 +94,12 @@ public class Subspace extends GridResource {
      * @brief Delivers the absolute path to a slice sl.
      */
     public String getPathForSlice( Slice sl )  {
-        return path + File.separator + sl.getKind( ).getSliceDirectory() + File.separator + sl.getDirectoryId( );
+        return getPath() + File.separator + sl.getKind( ).getSliceDirectory() + File.separator + sl.getDirectoryId( );
     }
 
 
     public String getGsiFtpPathForSlice( Slice sl )  {
-        return gsiFtpPath + "/" + sl.getKind( ).getSliceDirectory() + "/" + sl.getDirectoryId( );
+        return getGsiFtpPath() + "/" + sl.getKind( ).getSliceDirectory() + "/" + sl.getDirectoryId( );
     }
 
 

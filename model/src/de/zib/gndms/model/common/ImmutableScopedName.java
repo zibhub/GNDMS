@@ -30,8 +30,8 @@ public class ImmutableScopedName extends ModelId {
 
     public ImmutableScopedName (@NotNull String theScope, @NotNull String theName) {
         this();
-        nameScope = theScope;
-        localName = theName;
+        setNameScope( theScope );
+        setLocalName( theName );
     }
 
     public ImmutableScopedName (@NotNull QName qname) {
@@ -40,16 +40,16 @@ public class ImmutableScopedName extends ModelId {
 
     protected boolean equalFields(@NotNull Object obj) {
         ImmutableScopedName other = (ImmutableScopedName) obj;
-        return nameScope == other.nameScope && localName == other.localName;
+        return getNameScope() == other.getNameScope() && getLocalName() == other.getLocalName();
     }
 
     @Override
     public int hashCode() {
-        return hashCode0(nameScope) ^ hashCode0(localName);
+        return hashCode0( getNameScope() ) ^ hashCode0( getLocalName() );
     }
 
     public QName toQName()
-        { return new QName(nameScope, localName); }
+        { return new QName( getNameScope(), getLocalName() ); }
 
 
     @Column(name="scope", columnDefinition="VARCHAR", nullable=true, updatable=false)
