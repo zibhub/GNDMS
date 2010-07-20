@@ -15,35 +15,15 @@
 	<classpath refid="enhancepath" />
 </taskdef>
 
-<!-- fileset id="model_classes" dir="gndms-shared-model/production">
-	<include name="de/zib/gndms/model/**/*" />
-	<exclude name="de/zib/gndms/model/*" />
-	<exclude name="de/zib/gndms/model/util/*" />
-	<exclude name="de/zib/gndms/model/*/types/**" />
-</fileset -->
-
 <target name="enhance" description="Calls the openjpa enhancer ant task on all classed in gndms-shared-model/production">
-
-	<delete failonerror="false" file="../extra/lib/gndms-shared-model.jar" />
-
-    <mkdir dir="gndms-shared-model/production/META-INF" />
-    
-    <copy file="src/META-INF/GNDMS-RELEASE" tofile="gndms-shared-model/production/META-INF/GNDMS-RELEASE" overwrite="true" />
-
-    <echo message="Basedir is '${basedir}'" />
-
-    <mkdir dir="gndms-shared-model/production/META-INF" />
-
-    <copy file="src/META-INF/GNDMS-RELEASE" tofile="gndms-shared-model/production/META-INF/GNDMS-RELEASE" overwrite="true" />
-
+  <echo message="Basedir is '${basedir}'" />
 	<openjpac directory="${basedir}/gndms-shared-model/production">
-
-		<config propertiesFile="src/META-INF/persistence.xml" />
-
+		<config propertiesFile="${basedir}/gndms-shared-model/production-resources/META-INF/persistence.xml" />
 		<classpath refid="enhancepath" />
-
 	</openjpac>
+</target>
 
+<target name="touchrel">
     <exec executable="hostname" osfamily="unix" failifexecutionfails="false" outputproperty="env.COMPUTERNAME"/>
 
     <property name="env.HOSTNAME" value="${env.COMPUTERNAME}"/>
@@ -52,17 +32,12 @@
         <format property="build.time" pattern="yyyy-MM-dd'T'HH:mm:ssZ" />
     </tstamp>
 
-    <echo message="${build.time} ${user.name}@${env.HOSTNAME}" file="${basedir}/gndms-shared-model/production/META-INF/GNDMS-BUILD-INFO" />
+    <echo message="${build.time} ${user.name}@${env.HOSTNAME}" file="${basedir}/resources/META-INF/GNDMS-BUILD-INFO" />
 
-    <loadfile srcfile="${basedir}/gndms-shared-model/production/META-INF/GNDMS-RELEASE" property="env.RELEASE" />
+    <loadfile srcfile="${basedir}/resources/META-INF/GNDMS-RELEASE" property="env.RELEASE" />
 
     <echo message="GNDMS RELEASE: ${env.RELEASE}" />
     <echo message="GNDMS BUILD: ${build.time} ${user.name}@${env.HOSTNAME}"/>
-
-	<jar file="../extra/lib/gndms-shared-model.jar" basedir="gndms-shared-model/production">
-		<include name="**/*" />
-	</jar>
-
 </target>
 
 <target name="map" description="Calls the OpenJPA mapping tool to build the current schema">
@@ -72,7 +47,7 @@
 		<config
 			  connectionDriverName="org.apache.derby.jdbc.EmbeddedDriver"
 			  connectionURL="jdbc:derby:/opt/gt-current/etc/gndms_shared/db/gndms"
-			  propertiesFile="src/META-INF/persistence.xml"  />
+			  propertiesFile="resources/META-INF/persistence.xml"  />
                                                                            
 		<classpath refid="enhancepath" />
 
