@@ -29,6 +29,7 @@ module Buildr
       def enhance(options)
         rake_check_options options, :classpath, :properties, :output
         artifacts = Buildr.artifacts(options[:classpath]).each { |a| a.invoke }.map(&:to_s) + [options[:output].to_s]
+
         properties = file(options[:properties]).tap { |task| task.invoke }.to_s
 
         Buildr.ant "openjpa" do |ant|

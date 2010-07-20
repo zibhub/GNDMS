@@ -75,7 +75,7 @@ public class SliceCreationValidator {
         q = em.createQuery( "SELECT x.directoryId FROM Slices x WHERE x.id = :idParam" );
         q.setParameter( "idParam", sl.getId() );
         String did = (String) q.getSingleResult();
-        assertEquals( sl.getAssociatedPath(), did );
+        assertEquals( sl.getDirectoryId(), did );
 
         q = em.createQuery( "SELECT x.terminationTime FROM Slices x WHERE x.id = :idParam" );
         q.setParameter( "idParam", sl.getId() );
