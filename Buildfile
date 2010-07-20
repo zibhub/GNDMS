@@ -41,7 +41,18 @@ testTool('rsync')
 testTool('curl')
 testTool('openssl')
 testTool('hostname')
+testTool('globus-deploy-gar')
 HOSTNAME = `hostname`.split[0]
+
+if ENV['GNDMS_DEPS']=='skip' then 
+	puts 'This run will not provide GT4 with dependencies.'
+else
+	if ENV['GNDMS_DEPS']=='link' then 
+		puts 'This run will use symlinks to provide GT4 with dependencies.' 
+	else
+		puts 'This run will use file copying to provide GT4 with dependencies.'
+	end
+end
 
 
 # Helper to construct GT4 jar pathes
@@ -80,7 +91,7 @@ ARGS4J = 'args4j:args4j:jar:2.0.14'
 #            artifact('org.apache.derby:derby-client:jar:10.4.2').from('extra/derbyclient.jar'),
 #            artifact('org.apache.derby:derby-locale-de:jar:10.4.2').from('extra/derbyLocale_de_DE.jar'),
 #            artifact('org.apache.derby:derby-tools:jar:10.4.2').from('extra/derbytools.jar')]
-DB_DERBY = 'org.apache.derby:derby:jar:10.5.3.0' 
+DB_DERBY = ['org.apache.derby:derby:jar:10.5.3.0', 'org.apache.derby:derbytools:jar:10.5.3.0']
 
 HTTP_CORE = ['org.apache.httpcomponents:httpcore:jar:4.0', 'org.apache.httpcomponents:httpcore-nio:jar:4.0', 'org.apache.httpcomponents:httpclient:jar:4.0.1']
 
@@ -172,7 +183,7 @@ define 'gndms' do
       end
     end
 
-    task 'build-info' do buildInfo() end
+    task 'update-build-info' do buildInfo() end
 
     def prepRelease()
       if (@versionString == nil) then
@@ -201,55 +212,28 @@ define 'gndms' do
     define 'model', :layout => dmsLayout('model', 'gndms-model') do
       # TODO: Better XML
       compile.with project('stuff'), SERVICE_STUBS, COMMONS_COLLECTIONS, COMMONS_LANG, GOOGLE_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS, GUICE, CXF, OPENJPA, JAXB, STAX
-      compile { project('gndms').buildInfo(); open_jpa_enhance }
-
-      task :enhance => compile do
-        cp = compile.dependencies
-
-        puts cp.join(File::PATH_SEPARATOR)
-        puts compile.target.to_s
-        puts Dir.pwd
-      
-        # props = 'META-INF/persistence.xml'
-        # puts props
-
-        Buildr.ant("openjpa") do |ant|
-          ant.path(:id => "enhancepath") do |ant|
-            ant.pathelement(:location => 'model/gndms-model/production')
-            ant.pathelement(:location => 'model/gndms-model/production-resources')
-            ant.pathelement(:path => cp.join(File::PATH_SEPARATOR))
-          end
-
-         ant.taskdef :name=>"enhance", :classname=>"org.apache.openjpa.ant.PCEnhancerTask", :classpath => ant.path(:refid => 'enhancepath')
-
-         ant.enhance :directory => compile.target.to_s do
-           ant.config 'propertiesFile'=> 'model/resources/META-INF/persistence.xml'
-           ant.classpath(:refid => 'enhancepath')
-         end
-       end
-      end
-
+      compile { open_jpa_enhance }
       package :jar
     end
 
     desc 'GT4-dependent utility classes for GNDMS'
     define 'kit', :layout => dmsLayout('kit', 'gndms-kit') do
       compile.with JETTY, GROOVY, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('stuff'), project('model'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_AXIS, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, GUICE, GT4_SERVLET, COMMONS_LANG, OPENJPA
-      compile { project('gndms').buildInfo() }
+      compile
       package :jar
     end
 
     desc 'GNDMS logic classes (actions for manipulating resources)'
     define 'logic', :layout => dmsLayout('logic', 'gndms-logic') do
        compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('stuff'), project('model'), JODA_TIME, GOOGLE_COLLECTIONS, GUICE, DB_DERBY, GT4_LOG, GT4_AXIS, GT4_COG, GT4_SEC, GT4_XML, COMMONS_LANG, OPENJPA
-       compile { project('gndms').buildInfo() }
+       compile
        package :jar
     end
 
     desc 'GNDMS classes for dealing with wsrf and xsd types'
     define 'gritserv', :layout => dmsLayout('gritserv', 'gndms-gritserv') do
       compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('stuff'), project('model'), ARGS4J, JODA_TIME, GORFX_STUBS, OPENJPA, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, GT4_COMMONS, COMMONS_LANG, COMMONS_COLLECTIONS
-      compile { project('gndms').buildInfo() }
+      compile
       package :jar
     end
 
@@ -257,7 +241,7 @@ define 'gndms' do
     define 'infra', :layout => dmsLayout('infra', 'gndms-infra') do
       # Infra *must* have all dependencies since we use this list in copy/link-deps
       compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gritserv'), project('logic'), project('kit'), project('stuff'), project('model'), ARGS4J, SERVICE_STUBS, JODA_TIME, JAXB, GT4_SERVLET, JETTY, CXF, GROOVY, GOOGLE_COLLECTIONS, GUICE, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies
-      compile { project('gndms').buildInfo() }
+      compile
       package :jar
 
       # Symlink or copy all dependencies of infra + the infra jar - whatever gets filtered by skipDeps to GT4LIB
@@ -286,14 +270,11 @@ define 'gndms' do
         classpathFile.close
       end
 
-      desc 'Symlink dependencies to $GLOBUS_LOCATION/lib'
-      task 'link-deps' => task('package') do
-        installDeps(false)
-      end
-
-      desc 'Copy dependencies to $GLOBUS_LOCATION/lib'
-      task 'copy-deps' => task('package') do
-        installDeps(true)
+      desc 'Install dependencies to $GLOBUS_LOCATION/lib'
+      task 'install-deps' => task('package') do
+				if (ENV['GNDMS_DEPS'] != 'skip') then
+        	installDeps(ENV['GNDMS_DEPS']!='link')
+				end
       end
 
     end
@@ -324,32 +305,61 @@ define 'gndms' do
       ln_sf(_('services/DSpace/gndms_DSpace.gar'), _('.'))
     end
 
+    desc 'Deploy current gndms_DSpace.gar'
+	  task 'deploy-DSpace' do
+			system 'globus-deploy-gar ' + _('services', 'DSpace', 'gndms_DSpace.gar')
+	  end
+
+	  task 'rebuild-DSpace' => [task('package-DSpace'), task('deploy-DSpace')] do
+    end
+
     desc 'Create GORFX GAR for deployment (Requires packaged GNDMS and installed dependencies)'
     task 'package-GORFX' do
       system 'cd ' + _('services/GORFX') + ' && ant createDeploymentGar'
       ln_sf(_('services/GORFX/gndms_GORFX.gar'), _('.'))
     end
+
+    desc 'Deploy current gndms_GORFX.gar'
+	  task 'deploy-GORFX' do
+			system 'globus-deploy-gar ' + _('services', 'GORFX', 'gndms_GORFX.gar')
+	  end
+
+	  task 'rebuild-GORFX' => [task('package-GORFX'), task('deploy-GORFX')] do
+    end
 end
 
-task 'clean-services' => 'gndms:clean-services' do
+task 'clean-services' => task('gndms:clean-services') do
 end
 
-task 'package-stubs' => 'gndms:package-stubs' do
+task 'package-stubs' => task('gndms:package-stubs') do
 end
 
-task 'install-deps' => 'gndms:infra:copy-deps' do
+task 'install-deps' => task('gndms:infra:install-deps') do
 end
 
-task 'copy-deps' => 'gndms:infra:copy-deps' do
+task 'package-DSpace' => task('gndms:package-DSpace') do
 end
 
-task 'link-deps' => 'gndms:infra:link-deps' do
+task 'deploy-DSpace' => task('gndms:deploy-DSpace') do
 end
 
-task 'package-DSpace' => 'gndms:package-DSpace' do
+task 'rebuild-DSpace' => task('gndms:rebuild-DSpace') do
 end
 
-task 'package-GORFX' => 'gndms:package-GORFX' do
+task 'package-GORFX' => task('gndms:package-GORFX') do
+end
+
+task 'deploy-GORFX' => task('gndms:deploy-GORFX') do
+end
+
+task 'rebuild-GORFX' => task('gndms:rebuild-GORFX') do
+end
+
+# Assumes properly linked dependencies!
+task 'rebuild' => [task('clean'), task('clean-services'), task('gndms:model:package'), task('package-stubs'), task('package'), task('install-deps'), task('rebuild-DSpace'), task('rebuild-GORFX')] do
+end
+
+task 'gndms-release' => [task('prep-release'), task('rebuild'), task('clean-services'), task('clean')] do
 end
 
 # task 'pt-install' => ['package-stubs', 'install-deps', 'package-gars'] do

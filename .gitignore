@@ -58,6 +58,7 @@ lib/model/*
 lib/stuff/*
 lib/gritserv/*
 lib/kit/*
+lib/infra/*
 lib/logic/*
 */resources/META-INF/GNDMS-RELEASE
 */resources/META-INF/GNDMS-BUILD-INFO
@@ -68,3 +69,6 @@ services/GORFX/GORFX.jar
 extra/
 reports/
 lib/jruby-*
+services/DSpace/build/*
+services/GORFX/build/*
+services/LOFIS/build/*
