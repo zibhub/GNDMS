@@ -183,7 +183,7 @@ public final class GNDMSystem
 			createDirectories();
 			prepareDbStorage();
 			emf = createEMF();
-			restrictedEmf = new RestrictedEMFactory(emf, null);
+			restrictedEmf = emf;
 			tryTxExecution();
 			// initialization intentionally deferred to initialize
 	        instanceDir = new GNDMSystemDirectory(getSystemName(),

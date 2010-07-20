@@ -14,6 +14,5 @@ import javax.persistence.EntityManagerFactory;
  *          User: stepn Date: 08.08.2008 Time: 11:27:22
  */
 public interface EMFactoryProvider {
-	@NotNull
-	EntityManagerFactory getEntityManagerFactory();
+	public @NotNull	EntityManagerFactory getEntityManagerFactory();
 }

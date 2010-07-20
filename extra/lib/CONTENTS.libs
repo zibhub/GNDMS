@@ -1,3 +1,0 @@
-All additional jar files created from GNDMS non-service or shared-interservice code (currently gndms-infra.jar, gndms-logic.jar, gndms-shared-model.jar)
-
-Intentionally not checked in and recreated per checkout

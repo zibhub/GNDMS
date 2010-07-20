@@ -1,12 +1,12 @@
 package de.zib.gndms.c3resource;
 
 import com.google.common.base.Function;
-import com.google.common.base.Nullable;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import de.zib.gndms.c3resource.jaxb.C3GridResource;
 import de.zib.gndms.c3resource.jaxb.Site;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;

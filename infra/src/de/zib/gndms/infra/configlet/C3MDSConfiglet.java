@@ -254,7 +254,8 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 								if (archivesByOid.containsKey(oidPrefix))
 									set  = archivesByOid.get(oidPrefix);
 								else {
-									set = Sets.newConcurrentHashSet();
+									final Map<Workspace.Archive, Boolean> amap = Maps.newConcurrentHashMap();
+								  set = Sets.newSetFromMap(amap);
 									archivesByOid.put(oidPrefix, set);
 								}
 								set.add(archive);
