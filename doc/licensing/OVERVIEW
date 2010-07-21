@@ -25,6 +25,7 @@ Saxon               MPL und AElfred License      LICENSE.MPL + LICENSE.AElfred
 Activation          CDDL                         LICENSE.acti
 serp                BSD-Style                    LICENSE.serp
 groovy              Apache License 2.0           LICENSE.apl2; NOTICE file from base distribution (see jar)
+cagrid introduce    Apache License 2.0           LICENSE.introduce; NOTES.introduce
 
 
 Not included but used in deployment therefore indirectly licensed by you:
