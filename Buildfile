@@ -130,6 +130,9 @@ OPENJPA = [ COMMONS_LANG, 'org.apache.openjpa:openjpa-all:jar:2.0.0']
 require 'buildr/openjpa2'
 include Buildr::OpenJPA2
 
+# helper for derby ij
+require 'buildr/derbyij'
+include DERBYIJ
 
 
 desc 'Germanys Next Data Management System'
@@ -331,6 +334,12 @@ define 'gndms' do
 	  end
 
 	  task 'rebuild-GORFX' => [task('package-GORFX'), task('deploy-GORFX')] do
+    end
+
+    desc 'Peek into the gndms derby database'
+    task 'derby-ij' do
+        GNDMS_DB=[ ENV['GLOBUS_LOCATION'], 'etc', 'gndms_shared', 'db', 'gndms' ].join(File::SEPARATOR)
+        callIJ( GNDMS_DB, DB_DERBY )
     end
 end
 
