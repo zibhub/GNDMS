@@ -161,16 +161,16 @@ define 'gndms' do
     GORFX_SERVICE = _('services/GORFX/build/lib/gndms-gorfx-service.jar')
     GORFX_TESTS   = _('services/GORFX/build/lib/gndms-gorfx-tests.jar')
     SERVICE_STUBS = [GORFX_STUBS, DSPACE_STUBS]
-		EXTRA_JARS = [ _('extra/caGrid-Introduce-serviceTools-1.2.jar'),
-								   _('extra/caGrid-ServiceSecurityProvider-client-1.2.jar'),
-								   _('extra/caGrid-ServiceSecurityProvider-common-1.2.jar'),
-								   _('extra/caGrid-ServiceSecurityProvider-service-1.2.jar'),
-								   _('extra/caGrid-ServiceSecurityProvider-stubs-1.2.jar'),
-								   _('extra/caGrid-advertisement-1.2.jar'),
-								   _('extra/caGrid-core-1.2.jar'),
-								   _('extra/caGrid-metadata-security-1.2.jar'),
-								   _('extra/castor-0.9.9.jar'),
-								   _('extra/jdom-1.0.jar')]
+    EXTRA_JARS = [ _('extra/caGrid-Introduce-serviceTools-1.2.jar'),
+                   _('extra/caGrid-ServiceSecurityProvider-client-1.2.jar'),
+                   _('extra/caGrid-ServiceSecurityProvider-common-1.2.jar'),
+                   _('extra/caGrid-ServiceSecurityProvider-service-1.2.jar'),
+                   _('extra/caGrid-ServiceSecurityProvider-stubs-1.2.jar'),
+                   _('extra/caGrid-advertisement-1.2.jar'),
+                   _('extra/caGrid-core-1.2.jar'),
+                   _('extra/caGrid-metadata-security-1.2.jar'),
+                   _('extra/castor-0.9.9.jar'),
+                   _('extra/jdom-1.0.jar')]
 
 
     def updateBuildInfo()
