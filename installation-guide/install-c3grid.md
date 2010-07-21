@@ -1,3 +1,8 @@
+---
+title: C3Grid GNDMS Quick Deployment Guide
+layout: wikitext
+---
+
 =============================
 C3GRID DEPLOYMENT QUICK GUIDE
 =============================

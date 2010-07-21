@@ -1,119 +1,94 @@
-               
+---
+title: GNDMS Installation
+layout: wikistyle
+---
+ 
+
+GNDMS Installation Guide
+========================
+
+This is the installation guide for the [Generation N Data Management System](../index.html).
 
 
+Prerequisites
+-------------
 
-========                                           
-OVERVIEW
-========
+In order to build or install GNDMS, the following prerquisites need to be fulfilled
 
-GNDMS consists of a set of globus wsrf services for distributed grid data
-management based on staging and co-scheduling. It abstracts from data sources
-via a data integration layer and provides logical names, data transfers,
-garbage collection, workspace management and a centralized catalog for logical
-file sets.
 
-Originally, GNDMS has been written exclusively for the data management needs
-of c3grid (www.c3grid.de) and plasmagrid (www.ptgrid.de). However, the implementation 
-is flexible enough for reuse by other projects.
-       
-
----------------------
-Who should read what?
----------------------
-
-"Admin/Deployer of grid software": Prerequisites section in this file and the 
-Deployment Quick Guide section for your grid (cf. INSTALL.<name of grid>)
-
-"Developers": Everything from top to bottom + Grid specific documentation
-
-                 
+#### Install a current version of the [Java](http://java.sun.com) 2 SE Development Toolkit Version 1.6 (JDK 1.6)
   
-=============                
-PREREQUISITES
-=============
+For compiling the services, please make sure that `$JAVA_HOME` points to this 
+version and that this is also the version that is in your `$PATH`.  Naturally,
+this should be the same version than the one you use(d) for building and 
+running globus and ant.
 
-Whether you want to build the project yourself or just want to deploy the
-service you need to satisfy the following prerequisites (an example shell
-configuration (bash) can be found in etc/example.profile):
 
-- Install a current version of J2SEE Version 5 and its accompanying JDK   
-  (Java 6 should also do; however, this has not been tested)
-  
-  For compiling the services, please make sure that JAVA_HOME points to this 
-  version and that this is also the version that is in your PATH.  Naturally,
-  this should be the same version than the one you use for globus and ant.
+#### Install [Apache Ant](http://ant.apache.org) 1.7 (1.8 might cause trouble on Linux)
 
-- Install ant >= 1.5
-- Set $ANT_HOME and have it in your environment
-- Add $ANT_HOME/bin to your path
+Please set `$ANT_HOME`, add it to your environment, and add $ANT_HOME/bin to your `$PATH`
 
-- Get Globus 4.0.X, X >= 7
-- Setup working host and user certificates (You can build without; but then 
-  again where, would this get you?)
-- Set $GLOBUS_LOCATION and have it in your environment
-- Load $GLOBUS_LOCATION/etc/globus-user-env.sh and 
-  $GLOBUS_LOCATION/etc/globus-devel-env.sh into your environment
 
-  (bash: add
+#### Install local UNIX software
 
-     "source $GLOBUS_LOCATION/etc/globus-user-env.sh $GLOBUS_LOCATION/etc/globus-devel-env.sh"
+In order to install GNDMS, please make sure you have installed the following software
 
-   to your .profile)
+* openssl
+* curl
+* rsync
 
-- Install apache-derby-bin-10.4.X
-- Set $DERBY_HOME and have it in your environment
-- Add $DERBY_HOME/bin to your PATH
-             
-- Install groovy >=1.6
-- Set $GROOVY_HOME and have it in your environment
-- For convenience, you might also want to 
-  add $GROOVY_HOME/bin to your PATH
-- Add a link 
-     ln -sf $GROOVY_HOME/embeddable/groovy-all*.jar $GNDMS_SOURCE/extra/tools-lib/gndms-groovy.jar 
-                               
-                               
+Additionally, it is expected that your UNIX provides the following shell tools: hostname, which, bash
 
-- Install openssl if not available
-- Install curl if not available
-- Install rsync if not available
-- All three should be available in your $PATH
-                                                                                 
-- Set GNDMS_SOURCE to the source directory and have it in your environment
-- Set GNDMS_SHARED to $GLOBUS_LOCATION/etc/gndms_shared and have it in 
-  your environment
-- Set GNDMS_MONI_CONFIG to $GNDMS_SHARED/monitor.properties and have it in 
-  your environment
 
-- Add the directory called "bin" below the directory of this INSTALL file to 
-  your PATH (This means you should *not* delete the downloaded sources after 
-  installation)
+#### Install Globus Toolit 4.0.8
 
-  Alternatively, copy all scripts from bin to some directory accessible from
-  your PATH.
+Please download and make a full installation of [Globus Toolkit 4.0.8](http://www.globus.org/toolkit/downloads/4.0.8/) 
 
-  In any case, whenever you update GNDMS, please make sure that you also
-  apropriately point your PATH to the new version's bin-scripts.
+* Setup working host and user certificates (You can build without)
+* Set `$GLOBUS_LOCATION` and add it to your environment
+* It is a good idea to `source $GLOBUS_LOCATION/etc/globus-user-env.sh` and 
+  `source $GLOBUS_LOCATION/etc/globus-devel-env.sh` when working with Globus Toolkit 
 
-- Developers might want to add
+         
+#### Optionally configure Globus Toolkit 4.0.8 to generate more log messages
+            
+This step is optional but highly recommended.
 
-  export DERBY_OPTS="'-Dij.database=jdbc:derby:$GNDMS_SHARED/db/gndms'"
-
-  for peeking inside the derby database using the ij tool. 
-
-  (Caution! Never ever do this while globus is running!)
-
-- To get access to substantially more log messages, please add
+To configure the Globus Container to generate substantially more log messages for easier debugging, please add
 
     log4j.category.de.zib=DEBUG
 
-  to $GLOBUS_LOCATION/container-log4j.properties
+to `$GLOBUS_LOCATION/container-log4j.properties`
 
-  For even more log information, please change the line that starts with
-  "log4j.appender.A1.layout.ConversionPattern=" to
+For even more log information, please change the line that starts with `log4j.appender.A1.layout.ConversionPattern=` to
 
     log4j.appender.A1.layout.ConversionPattern=%d{ISO8601} %-5p %c{2} [%t,%M:%L] <%x> %m%n
 
-  (Techis: This enables NDC logging)
+in the same file.
+
+  
+#### Set additional environment variables
+
+Please set the following environment variables as specified below
+
+* `$GNDMS_SOURCE` to the root directory of your GNDMS source distribution (The directory that contains `Buildfile`)
+* `$GNDMS_SHARED` to `$GLOBUS_LOCATION/etc/gndms_shared`
+* `GNDMS_MONI_CONFIG` to `GNDMS_SHARED/monitor.properties
+* Finally, please add `$GNDMS_SOURCE/bin`to your `$PATH `
+
+After this step, there should be no further need to adjust your environment.  Please consult `$GNDMS_SOURCE/example.profile` for an example of a properly configured environment.
+
+
+#### Optionally Install Apache buildr 1.4.1 locally
+
+This step is optional.
+
+GNDMS is built and installed using [Apache buildr](http:///buildr.apache.org). A pre-packaged
+version of buildr is included with GNDMS and can be executed by running `$GNDMS_SOURCE/bin/gndms-buildr`.
+However, if you prever to install buildr locally, please
+
+* Install Ruby 1.8
+* Install buildr by executing `gem install buildr`
 
 
 
