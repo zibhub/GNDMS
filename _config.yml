@@ -1,10 +1,10 @@
 destination: ./_site
 auto:        false
 lsi:         false
-server_port: 4000
+server_port: 4042
 pygments:    true
 markdown:    maruku
-permalink:   date
+permalink:   pretty
 maruku:
   use_tex:  false
   use_divs: false
