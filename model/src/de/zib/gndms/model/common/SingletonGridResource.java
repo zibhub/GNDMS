@@ -2,7 +2,6 @@ package de.zib.gndms.model.common;
 
 import javax.persistence.MappedSuperclass;
 
-
 /**
  * GridResource + terminationTime
  **/

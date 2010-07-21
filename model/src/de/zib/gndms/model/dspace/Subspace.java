@@ -22,8 +22,8 @@ import java.util.Set;
  *
  */
 @Entity(name="Subspaces")
-// @Table(name="subspaces", schema="dspace")
-@MappedSuperclass
+@Table(name="subspaces", schema="dspace")
+//@MappedSuperclass
 public class Subspace extends GridResource {
 
     private long availableSize;

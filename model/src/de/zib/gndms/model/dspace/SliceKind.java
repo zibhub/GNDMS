@@ -19,8 +19,8 @@ import java.util.Set;
 // @Inheritance
 // @DiscriminatorColumn(name="class", discriminatorType=DiscriminatorType.STRING, length=8)
 // @DiscriminatorValue("PLAIN")
-// @Table(name="slice_kinds", schema="dspace")
-@MappedSuperclass
+@Table(name="slice_kinds", schema="dspace")
+//@MappedSuperclass
 public class SliceKind extends GridEntity {
     private String URI;
 
