@@ -1,6 +1,7 @@
 Third-Party components used by GNDMS (without relicensed transitive dependencies)
 
 Package             License                      Files
+=======             =======                      =====
 OpenJPA             Apache License 2.0           LICENSE.apl2; NOTICE file from base distribution (see jar)
 Derby               Apache License 2.0           LICENSE.apl2; NOTICE file from base distribution (see jar)
 ApacheCommons       Apache License 2.0           LICENSE.apl2; NOTICE file from base distribution (see jars / NOTICE.commons)
@@ -27,4 +28,10 @@ groovy              Apache License 2.0           LICENSE.apl2; NOTICE file from 
 
 
 Not included but used in deployment therefore indirectly licensed by you:
-globus toolkit      Apache License 2.0           LICENSE.apl2
+Globus Toolkit      Apache License 2.0           LICENSE.apl2
+
+
+Build System (*not* used by GNDMS, but nevertheless used to *build* it, provided for your convenience only)
+Ruby                GPL / Ruby License           LICENSE.RUBY
+Apache Buildr       Apache License 2.0           LICENSE.apl2; NOTICE file from base distribution
+
