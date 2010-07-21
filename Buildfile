@@ -19,7 +19,8 @@ VERSION_NUMBER = '0.3-pre'
 VERSION_NAME = 'Kylie++'
 GROUP_NAME = 'de.zib.gndms'
 MF_COPYRIGHT = 'Copyright 2008-2010 Zuse Institute Berlin (ZIB)'
-MF_LICENSE ='This software has been licensed to you under the terms and conditions of the Apache License 2.0 (APL 2.0) only.  See META-INF/LICENSE for detailed terms and conditions.'
+LICENSE ='This software has been licensed to you under the terms and conditions of the Apache License 2.0 (APL 2.0) only.'
+MF_LICENSE="#{LICENSE}  See META-INF/LICENSE for detailed terms and conditions."
 USERNAME = ENV['USER'].to_s
 
 # Helper to create non-standard GNDMS sub-project layouts
@@ -44,6 +45,9 @@ testTool('openssl')
 testTool('hostname')
 HOSTNAME = `hostname`.split[0]
 
+puts "GNDMS #{VERSION_NUMBER} '#{VERSION_NAME}'" 
+puts MF_COPYRIGHT
+puts "#{LICENSE}  Please consult doc/licensing about licensing conditions of downloaded 3rd party software."
 if ENV['GNDMS_DEPS']=='skip' then 
 	puts 'This run will not provide GT4 with dependencies.'
 else
@@ -85,12 +89,6 @@ JETTY = ['jetty:jetty:jar:6.0.2', 'jetty:jetty-util:jar:6.0.2']
 GROOVY = ['org.codehaus.groovy:groovy:jar:1.6.9']
 ARGS4J = 'args4j:args4j:jar:2.0.14'
 # TESTNG = download(artifact('org.testng:testng:jar:5.1-jdk15') => 'http://static.appfuse.org/repository/org/testng/testng/5.1/testng-5.1-jdk15.jar')
-# DB_DERBY = [artifact('org.apache.derby:derby:jar:10.4.2').from('extra/derby.jar'),
-#            artifact('org.apache.derby:derby-net:jar:10.4.2').from('extra/derbynet.jar'),
-#            artifact('org.apache.derby:derby-run:jar:10.4.2').from('extra/derbyrun.jar'),
-#            artifact('org.apache.derby:derby-client:jar:10.4.2').from('extra/derbyclient.jar'),
-#            artifact('org.apache.derby:derby-locale-de:jar:10.4.2').from('extra/derbyLocale_de_DE.jar'),
-#            artifact('org.apache.derby:derby-tools:jar:10.4.2').from('extra/derbytools.jar')]
 DB_DERBY = ['org.apache.derby:derby:jar:10.5.3.0', 'org.apache.derby:derbytools:jar:10.5.3.0']
 
 HTTP_CORE = ['org.apache.httpcomponents:httpcore:jar:4.0', 'org.apache.httpcomponents:httpcore-nio:jar:4.0', 'org.apache.httpcomponents:httpclient:jar:4.0.1']
@@ -127,12 +125,6 @@ GT4_GRAM = gt4jars(['gram-monitoring.jar', 'gram-service.jar', 'gram-stubs.jar',
 
 
 # OpenJPA is required by gndms:model
-# OPENJPA = [ COMMONS_LANG, 
-#            artifact('org.apache.geronimo.specs:geronimo-jpa_3.0_spec:jar:1.0').from('extra/geronimo-jpa_3.0_spec-1.0.jar'), 
-#            artifact('org.apache.geronimo.specs:geronimo-jpa_2.0_spec:jar:1.0').from('extra/geronimo-jpa_2.0_spec-1.0.jar'), 
-#            artifact('org.apache.geronimo.specs:geronimo-jta_1.1_spec:jar:1.1').from('extra/geronimo-jta_1.1_spec-1.1.jar'), 
-#            'net.sourceforge.serp:serp:jar:1.13.1',
-#            artifact('org.apache.openjpa:openjpa:jar:2.0-SNAPSHOT').from('extra/openjpa-2.0-SNAPSHOT.jar') ]
 OPENJPA = [ COMMONS_LANG, 'org.apache.openjpa:openjpa-all:jar:2.0.0']
 
 require 'buildr/openjpa2'
@@ -169,6 +161,17 @@ define 'gndms' do
     GORFX_SERVICE = _('services/GORFX/build/lib/gndms-gorfx-service.jar')
     GORFX_TESTS   = _('services/GORFX/build/lib/gndms-gorfx-tests.jar')
     SERVICE_STUBS = [GORFX_STUBS, DSPACE_STUBS]
+		EXTRA_JARS = [ _('extra/caGrid-Introduce-serviceTools-1.2.jar'),
+								   _('extra/caGrid-ServiceSecurityProvider-client-1.2.jar'),
+								   _('extra/caGrid-ServiceSecurityProvider-common-1.2.jar'),
+								   _('extra/caGrid-ServiceSecurityProvider-service-1.2.jar'),
+								   _('extra/caGrid-ServiceSecurityProvider-stubs-1.2.jar'),
+								   _('extra/caGrid-advertisement-1.2.jar'),
+								   _('extra/caGrid-core-1.2.jar'),
+								   _('extra/caGrid-metadata-security-1.2.jar'),
+								   _('extra/castor-0.9.9.jar'),
+								   _('extra/jdom-1.0.jar')]
+
 
     def updateBuildInfo()
       if (@buildInfo == nil) then
@@ -249,6 +252,9 @@ define 'gndms' do
       def installDeps(copy)
         deps = Buildr.artifacts(project('infra').compile.dependencies).map(&:to_s)
         deps << project('infra').package.to_s
+		    EXTRA_JARS.each do |jar|
+					deps << jar
+				end
         deps = skipDeps(deps)
 
         classpathFile = File.new(GT4LIB + 'gndms-dependencies.xml', 'w')

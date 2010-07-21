@@ -35,6 +35,9 @@
 	<!-- Loading global project-dependencies-->
 	<property file="${gndms.basedir}/gndms.deps"/>
 		<path id="base.extended.classpath">
+         <fileset dir="${lib.dir}/../../../extra">
+             <include name="*.jar" />
+         </fileset>
 		</path>
 		<path id="service.build.extended.classpath">
 			<pathelement path="${dspace.stubs}"/>			
@@ -54,6 +57,9 @@
 		<path id="run.extended.classpath">
 		</path>
 		<path id="tasks.run.extended.classpath">
+         <fileset dir="${lib.dir}/../../../extra">
+             <include name="*.jar" />
+         </fileset>
 		</path>
 	</target>
 
