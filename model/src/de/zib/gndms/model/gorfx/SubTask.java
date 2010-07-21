@@ -20,11 +20,11 @@ import javax.persistence.EntityManager;
  */
 
 @Entity(name="SubTasks")
-// @Table(name="sub_tasks", schema="gorfx")
+@Table(name="sub_tasks", schema="gorfx")
 @NamedQueries({
 @NamedQuery( name="findSubTasks", query="SELECT * FROM SubTasks x WHERE t.parent_id = :idparm" ),
 @NamedQuery( name="findSubTasksOfType",  query="SELECT * FROM SubTasks x WHERE t.parent_id = :idParm AND t.offerTypeKey.offer_type_key = :typKeyParm" )})
-@MappedSuperclass
+//@MappedSuperclass
 public class SubTask extends AbstractTask {
 
    // @ManyToOne( targetEntity=Task.class )

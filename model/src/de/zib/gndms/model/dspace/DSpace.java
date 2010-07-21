@@ -3,10 +3,8 @@ package de.zib.gndms.model.dspace;
 import de.zib.gndms.model.common.SingletonGridResource;
 import org.jetbrains.annotations.NotNull;
 
-import javax.persistence.Entity;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
+import javax.persistence.*;
+import javax.persistence.Table;
 
 /**
  * Instances represent an installations' DSpace singleton resource on the database model side
@@ -27,8 +25,8 @@ import javax.persistence.NamedQuery;
 @NamedQuery(name="listCreatableSliceKinds", query="SELECT sk FROM MetaSubspaces x INNER JOIN x.creatableSliceKinds sk WHERE x.scopedName.nameScope = (SELECT y.metaSubspace.scopedName.nameScope FROM Subspaces y WHERE y.id = :idParam) AND x.scopedName.localName = (SELECT y.metaSubspace.scopedName.localName FROM Subspaces y WHERE y.id = :idParam)")
 })
 @Entity(name="DSpaces")
-// @Table(name="dspace", schema="dspace")
-@MappedSuperclass
+@Table(name="dspace", schema="dspace")
+//@MappedSuperclass
 public class DSpace extends SingletonGridResource {
 
     public @NotNull DSpaceRef createRef() {
