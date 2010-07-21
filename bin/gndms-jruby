@@ -11,5 +11,5 @@ if [ ! -d "$GNDMS_SOURCE/lib/jruby-1.5.1" ] ; then
 	( cd lib && tar -zxf jruby-1.5.1.tgz )
 fi
 
-$GNDMS_SOURCE/lib/jruby-1.5.1/bin/jruby $*
+$GNDMS_SOURCE/lib/jruby-1.5.1/bin/jruby $@
 
