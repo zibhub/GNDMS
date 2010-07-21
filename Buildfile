@@ -29,6 +29,7 @@ include GNDMS
 
 # Test environment
 testEnv('GLOBUS_LOCATION', 'the root directory of Globus Toolkit 4.0.8')
+DEPLOY_GAR=[ ENV['GLOBUS_LOCATION'], 'bin', 'globus-deploy-gar' ].join(File::SEPARATOR)
 testEnv('ANT_HOME', 'the root directory of Apache Ant')
 testEnv('JAVA_HOME', 'the root directory of J2SE')
 JAVA_HOME = ENV['JAVA_HOME']
@@ -41,7 +42,6 @@ testTool('rsync')
 testTool('curl')
 testTool('openssl')
 testTool('hostname')
-testTool('globus-deploy-gar')
 HOSTNAME = `hostname`.split[0]
 
 if ENV['GNDMS_DEPS']=='skip' then 
@@ -307,7 +307,7 @@ define 'gndms' do
 
     desc 'Deploy current gndms_DSpace.gar'
 	  task 'deploy-DSpace' do
-			system 'globus-deploy-gar ' + _('services', 'DSpace', 'gndms_DSpace.gar')
+			system DEPLOY_GAR + _('services', 'DSpace', 'gndms_DSpace.gar')
 	  end
 
 	  task 'rebuild-DSpace' => [task('package-DSpace'), task('deploy-DSpace')] do
@@ -321,7 +321,7 @@ define 'gndms' do
 
     desc 'Deploy current gndms_GORFX.gar'
 	  task 'deploy-GORFX' do
-			system 'globus-deploy-gar ' + _('services', 'GORFX', 'gndms_GORFX.gar')
+			system DEPLOY_GAR + _('services', 'GORFX', 'gndms_GORFX.gar')
 	  end
 
 	  task 'rebuild-GORFX' => [task('package-GORFX'), task('deploy-GORFX')] do
