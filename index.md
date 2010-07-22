@@ -28,5 +28,3 @@ reuse by other grid projects with similiar data management
 requirements. Core components may be of use to developers of non-data
 management GT4 services as well.
 
-* [Installation](installation-guide)
-
