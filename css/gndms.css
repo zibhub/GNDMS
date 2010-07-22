@@ -7,11 +7,11 @@ div#wholepage {
        width: 48em;
        font-family: helvetica, verdana, arial, sans-serif;
        font-size: 14px;
-       color:#444;
+       color:#232;
 }
 
 h1 {
-	margin-top: 70px;
+	margin-top: 90px;
         margin-bottom: 20px;
 	font-size:28px;
 	line-height:28px;
@@ -23,8 +23,8 @@ h2 {
 	border-style:solid;
 	border-color:#aaa;
 	border-width:1px 0px 0px 0px; /* top and bottom borders: 1px; left and right borders: 0px */
-	margin-top: 50px;
-        margin-bottom: 10px;
+	margin-top: 80px;
+        margin-bottom: 15px;
 	padding:0px;
 	font-size:20px;
 	line-height:26px;
@@ -112,7 +112,7 @@ div#content {
 	line-height:5px;
         font-size: 19px;
         font-weight: bold;
-	background-color:#eee;
+	background-color:#f0f0f0;
  
 /* Here is the ugly brilliant hack that protects IE5/Win from its own stupidity. 
 Thanks to Tantek Celik for the hack and to Eric Costello for publicizing it. 
@@ -132,7 +132,7 @@ body>#header {height:14px; }
  
 #menu {
 	position:fixed;
-	top:186px;
+	top:208px;
 	left:52em;
 	width:172px;
 	padding:10px;

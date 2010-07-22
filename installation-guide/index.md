@@ -9,10 +9,11 @@ layout: wikistyle
 GNDMS Installation Guide
 ========================
 
-This is the installation guide for the
+This is the Installation Guide for the
 [Generation N Data Management System](../index.html).
 
-
+* Maruku will replace this with a fine Table of Contents
+{:toc}
 
 Prerequisites
 -------------
@@ -25,8 +26,11 @@ be fulfilled
 ### Prepare your local software installation
 
 
-#### Install the [Java](http://java.sun.com) 2 SE Development Toolkit Version 1.6 
-  
+#### Install the Java 2 SE Development Toolkit Version 1.6 
+ 
+Please Install the [Java](http://java.sun.com) 2 SE Development
+Toolkit Version 1.6.
+ 
 For compiling the services, please make sure that `$JAVA_HOME` points
 to this version and that this is also the version that is in your
 `$PATH`.  Naturally, this should be the same version than the one you
@@ -34,12 +38,13 @@ use(d) for building and running globus and ant.
 
 
 
-#### Install [Apache Ant](http://ant.apache.org) 1.7 
+#### Install Apache Ant 1.7 
 
-**NOTE** *Using 1.8 might cause trouble on Linux*
+Please install [Apache Ant](http://ant.apache.org) 1.7 and set
+`$ANT_HOME`, add it to your environment, and add `$ANT_HOME/bin` to your
+`$PATH`
 
-Please set `$ANT_HOME`, add it to your environment, and add
-$ANT_HOME/bin to your `$PATH`
+**NOTE** *Using 1.8 might cause trouble on Linux, YMMV*
 
 
 #### Install local UNIX software
@@ -77,7 +82,7 @@ In the following it will be assumed that globus is run by the user
 Toolkit.
 
          
-#### Optionally Configure Globus Toolkit 4.0.8 to Generate more Log Messages
+#### Optionally Configure Globus Toolkit Logging
             
 This step is optional but highly recommended.
 
@@ -163,10 +168,17 @@ Installation and Deployment from Distribution Package
 * Restart the globus with `globus-start-container-detached` and check
  `$GLOBUS_LOCATION/var/container.log` If everything goes right and you
  enabled additional logging as described in the previous section, the
- output should contain something like
+ output should contain output like
    
-       <TODO: INSERT GNDMS STARTUP MESSAGE HERE>
+      =================================================================================
+      GNDMS RELEASE: Generation N Data Management System VERSION: 0.3-pre "Kylie++"
+      GNDMS BUILD: built-at: Wed Jul 21 11:14:01 +0200 2010 built-by: mjorra@csr-pc35
+      =================================================================================
+      Container home directory is '/opt/gt-current'
 
+ (In the case of an error, you may want to compare with a
+ [full startup log](startup-log.txt)).
+ 
 After succesful startup, please shutdown the container again by
 calling `globus-stop-container-detached`.  At this point the GNDMS
 software has been succesfully installed.  Next, we'll describe how it
@@ -184,24 +196,62 @@ modifies the configuration in the database.
 
 To enable it, after having startet the globus container with deployed
 GNDMS once, please edit `$GNDMS_MONI_CONFIG` and set
-`monitor.enabled=true`. Next, start globus.  The monitoring shell will
-be running now.
+`monitor.enabled=true`. 
+
+Finally, please restart globus.  The monitoring shell will be running
+now. You have nearly finished the installation at this point. All that
+is left to do, is to actually configure GNDMS for the chosen community
+grid.
 
 **NOTE** *The shell is accessed via localhosts network interface and
 protected with a clear-text password only. Do not make the monitoring
 shell accessible via unsecure networks.*
 
+
 ### Configuring your Grid
+
+Currently, there are specialized build targets for the setup of some
+D-Grid projects directly in the `Buildfile`.
+
+**C3-Grid Setup & Configuration** 
+: Edit `$GNDMS_SOURCE/scripts/c3grid/setup-dataprovider.sh` and execute `gndms-buildr c3grid-dp-setubdb`
+
+**C3-Grid Quick Test** 
+: `gndms-buildr c3grid-dp-test`
+
+**PT-Grid Setup & Configuration** 
+: Edit `$GNDMS_SOURCE/scripts/ptgrid/setup-resource.sh` and execute `gndms-buildr ptgrid-setubdb`
+
+**PT-Grid Quick Test** 
+: `gndms-buildr ptgrid-test`
+
+Additionally, please consult the documentation for the respective 
+community grid platform.
 
 
 Advanced Configuration
 ----------------------
 
-### Inspecting the Database
-
 ### Resetting the Database
 
-### Monitor Shell
+First, **shutdown the globus container**.  Next, in `$GNDMS_SOURCE`, issue
+
+   gndms-buildr kill-db
+    
+This will delete your database.
+
+
+### Inspecting the Database
+
+First, **shutdown the globus container**.  Next, in `$GNDMS_SOURCE`, issue
+
+   gndms-buildr inspect-db
+   
+Thisl will open a shell to the derby-ij tool for looking at the
+internal database of GNDMS.
+
+
+### Using the Monitor Shell
 
 Please consult the [monitor shell guide](/moni-guide)
 
@@ -242,7 +292,7 @@ therefore considerably eases trying out small changed to framework classes.
 
 * Symlinks/copies of old jars in `$GLOBUS_LOCATION/lib`.  
 
-    find $GLOBUS_LOCATION/lib -type l -name *.jar -exec rm -i {} \;
+      find $GLOBUS_LOCATION/lib -type l -name *.jar -exec rm -i {} \;
   
   may help
   
@@ -251,9 +301,9 @@ therefore considerably eases trying out small changed to framework classes.
    an invalid jndi-config.xml which can happen during development but
    is easy enough to fix: Just make sure there are neither duplicate
    service nor resourceHome entries in any of the jndi-config.xml
-   files.
+   files
 
-* This is not supposed to work on Microsoft Windows.
+* This build is not supposed to work on Microsoft Windows
 
 * If you get an error about a missing "test/src" directory simply
   mkdir -p test/src in the respective services' directory
