@@ -362,16 +362,21 @@ end
 task 'rebuild-GORFX' => task('gndms:rebuild-GORFX') do
 end
 
+task 'package-services' => [task('package-DSpace'), task('package-GORFX')] do
+end
+
+task 'deploy-services' => [task('deploy-DSpace'), task('deploy-GORFX')] do
+end
+
+task 'rebuild-services' => [task('rebuild-DSpace'), task('rebuild-GORFX')] do
+end
+
 desc 'Do a full rebuild and deploy (execute as globus user)'
-task 'rebuild' => ['clean', 'clean-services', 'gndms:model:package', 'package-stubs', 'package', 'install-deps', 'rebuild-DSpace', 'rebuild-GORFX'] do
+task 'rebuild' => ['clean', 'clean-services', 'gndms:model:package', 'package-stubs', 'package', 'install-deps', 'rebuild-services'] do
 end
 
 desc 'Do a full release build and deploy (execute as globus user)'
 task 'gndms-release' => ['gndms:update-release-info', 'rebuild', 'clean-services', 'clean'] do
-end
-
-desc 'Does nothing'
-task 'dummy' do 
 end
 
 # task 'pt-install' => ['package-stubs', 'install-deps', 'package-gars'] do
