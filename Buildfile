@@ -343,6 +343,9 @@ define 'gndms' do
     end
 end
 
+task 'inspect-db' => task('gndms:derby-ij') do
+end
+
 task 'clean-services' => task('gndms:clean-services') do
 end
 
