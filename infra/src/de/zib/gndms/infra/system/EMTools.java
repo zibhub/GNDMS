@@ -1,11 +1,12 @@
 package de.zib.gndms.infra.system;
 
 import com.google.common.base.Function;
+import org.apache.log4j.Logger;
 import org.globus.wsrf.ResourceException;
 import org.jetbrains.annotations.NotNull;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import de.zib.gndms.infra.system.TxSafeRuntimeException;
 
 /**
  * Helper code for executing jpa transactions in groovy
@@ -74,7 +75,13 @@ final public class EMTools {
                     throw re;                         
             }
             finally {
+                // w/o try catch this often shadows above exceptions
+                // maybe use workaround which stores exception in variable
+                try {
                     if (closeEM && em.isOpen()) em.close();
+                } catch ( Exception e ) {
+                    Logger.getLogger( EMTools.class ).fatal( "Exception on entity manager close.", e );
+                }
             }
     }
 

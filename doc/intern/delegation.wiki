@@ -1,0 +1,318 @@
+﻿''''Achtung:'''' ''Folgender Artikel befindet sich noch in Bearbeitung und sollte von niemanden gelesen werden!!!''
+
+= HowTo: Zertifiakt-Delegation =
+
+Um in einem Service Zertifikatsdelegation zu nutzen, sind zwei Schritte erforderlich: Zuerst müssen allgemeine Sicherheitseinstellungen für den Service vorgenommen werden, anschließend müssen Client und Service-Code um Aufrufe zur Zertifikats-Proxy Erstellung und Delegation erweitert werden. 
+
+Anschließend werden mögliche Verwendungen eine eines delegierten Zertifikats-Proxys aufgezeigt.
+
+== Security-Descriptor ==
+
+''Die folgenden Beschreibung des Security-Descriptors ist stark verkürzt, es sind durchaus weitere Einstellungen möglich um A&A auf Methodenebene zu steuern oder andere Mechanismen für die Authentifizierung zu nutzen.''
+
+=== Allgemein ===
+Bevor Delegation genutzt werden kann müssen die grundlegenden Sicherheitseinstellungen für Service und Client konfiguriert werden. Dies geschieht im Security-Descriptor.
+
+Der Security-Descriptor (kurz: SD) beschreibt welche Verfahren von Client und Server zur Authentifizierung und Autorisierung genutzt werden sollen. Dem Service wird durch einen Eintrag im entsprechenden WSDD-File mitgeteilt wo sein SD zu finden ist. Der Eintrag hat die Form:
+
+<source lang="xml">
+    <?xml version="1.0" encoding="UTF-8"?>
+    <deployment .... >
+        <service .... >
+             <parameter name="securityDescriptor" value="etc/*-security-desc.xml" /> 
+        </service .... >
+    </deployment .... >
+</source>
+
+Wobei * für den Service Namen steht und <tt>etc/</tt> relativ zur <tt>$GLOBUS_LOCATION</tt> ist. 
+
+Der Client Security-Descriptor wird idR. im Java-Code des Clients geladen wie z.B.
+
+<source lang="java">
+    // Client security descriptor file 
+    String CLIENT_DESC = ".../client-security-config.xml";
+    ClientSecurityDescriptor desc = new ClientSecurityDescriptor( CLIENT_DESC );
+    //Set descriptor on Stub 
+    ( (Stub)port )._setProperty( Constants.CLIENT_DESCRIPTOR, desc )
+</source >
+
+Detailierte Informationen zu den SD's finden sich [http://www.globus.org/toolkit/docs/development/4.1.2/security/security-secdesc.html hier]. 
+
+=== Authentifizierung und Autorisierung ===
+
+Folgender Eintrag im SD verschlüsselt die Kommunikation von Client zum Service unter Verwendung von TLS. 
+
+<source lang="xml">
+    <?xml version="1.0" encoding="UTF-8"?>
+    <securityConfig xmlns="http://www.globus.org">
+    ...
+        <auth-method>
+            <GSITransport>
+                <protection-level>
+                    <privacy />
+                </protection-level>
+            </GSITransport>
+        </auth-method>
+    </securityConfig>
+</source>
+
+Client und Server müssen hier die selbe Einstellung haben um kommunizieren zu können.
+
+Für die Sicherstellung der Autorisierung ist es sinnvoll einen zweiten Eintrag hinzuzufügen, der den Service dazu zwingt nur Benutzer zuzulassen, die im Grid-Mapfile eingetragen sind.
+     
+    ...
+    <authz value="gridmap" />
+    ...
+
+Mit diesem Eintrag sind nur Nutzer autorisiert, die in <tt>/etc/grid-security/grid-mapfile</tt> eingetragen sind. Da es sich dabei um Nutzer handeln kann, die nicht auf C3-Ressource zugreifen können sollen, kann man die Granularität der Zugriffssteuerung durch die Angabe eines Service-spezifisches Grid-Mapfiles erhöhen. Dies geschieht über den Eintrag:
+
+    ...
+    <gridmap value="etc/c3grid_shared/grid-mapfile" />
+    ...
+
+<tt>etc/</tt> ist hier wieder relativ zu <tt>$GLOBUS_LOCATION</tt>.
+
+Von Globus-Seite aus ist noch folgender Eintrag erforderlich:
+
+    ...
+    <run-as>
+        <system-identity />
+    </run-as>
+    ...
+
+Andere Werte als <tt>system-identity</tt> wären nur dann relevant, wenn man JAAS benutzen würde.
+
+Ein minimaler SD für TSL Authentifizierung und Grid-Mapfile Autorisierung sähe damit wie folgt aus:
+
+<source lang="xml">
+    <?xml version="1.0" encoding="UTF-8"?>
+    <securityConfig xmlns="http://www.globus.org">
+        <authz value="gridmap" />
+        <gridmap value="etc/c3grid_shared/grid-mapfile" />
+        <auth-method>
+            <GSITransport>
+                <protection-level>
+                    <privacy />
+                </protection-level>
+            </GSITransport>
+        </auth-method>
+        <run-as>
+            <system-identity />
+        </run-as>
+    </securityConfig>
+</source>
+
+
+== Delegation == 
+
+In diesem Abschnitt geht es um die Implementation der Mechanismen zu Delegation: Zuerst soll hier die Client-Seite betrachtet werden, dann die Service Seite. Das zugrunde liegende Konzept soll hier nicht erläutert werden, der allgemeine Ansatz kann  [http://www.globus.org/toolkit/docs/4.0/security/key-index.html hier] und das Architekturmodel [http://www.globus.org/toolkit/docs/4.0/security/delegation/developer-index.html hier] nachgelesen werden.
+
+=== Client-Seite ===
+
+Für die Delegation wird der Delegation-Service von Globus verwendet. Der Client verbindet sich zuerst zu diesem Service, holt sich dessen ''Certificat-Chain'' und erzeugt damit ein Proxy-Zertifikat, welches er dann dem Delegation-Service sendet. Der Service erstellt einen Endpunkt mit dem der Zertifikatsproxy referenziert werden kann. Anschließend kann der Client diesen Endpunkt verwenden um ihm entweder einer Ressource, die mit dem Proxy Arbeiten soll, oder einer Factory-Methode, zur Erstellung einer neuen Ressource, zu übergeben. Der folgende Code erledigt diese Aufgaben.
+
+<source lang="java">
+    // path to the file containing the proxy cert
+    String proxyFile = ...;
+    
+    // uri of the delegation service
+    String delUri =  "http://somehost/wsrf/services/DelegationFactoryService"
+    
+    // port type of our service acquired in the usual fashion
+    PortType port = ... ;
+    
+    
+    GlobusCredential credential = new GlobusCredential( proxyFile );
+    
+    // Create security descriptor for the communication with the delegation service
+    // This descriptor is not the same we use to communicate with
+    // the actual service
+    ClientSecurityDescriptor desc = new ClientSecurityDescriptor();
+    org.ietf.jgss.GSSCredential gss = new org.globus.gsi.gssapi.GlobusGSSCredentialImpl( credential,
+            org.ietf.jgss.GSSCredential.INITIATE_AND_ACCEPT );
+    desc.setGSSCredential( gss );
+    EndpointReferenceType delegEpr = AddressingUtils.createEndpointReference( delUri, null );
+    desc.setGSITransport( (Integer) Constants.SIGNATURE );
+    Util.registerTransport();
+    desc.setAuthz( NoAuthorization.getInstance() );
+    
+    // acquire cert chain 
+    X509Certificate[] certs = DelegationUtil.getCertificateChainRP( delegEpr, desc );
+    
+    if( certs == null  )
+        throw new Exception( "No Certs received" );
+    
+    // create delegate
+    int ttl = 600; // a time to life for the proxy in seconds 
+    // the boolean value can be ignored
+    EndpointReferenceType delegate = DelegationUtil.delegate( delUri, credential, certs[0], ttl, true, desc );
+    
+    // reuse credentials for this call
+    ( (Stub) port )._setProperty( org.globus.axis.gsi.GSIConstants.GSI_CREDENTIALS, gss ); 
+    
+    // creates a new resource which uses the delegate, i.e. proxy cert
+    EndpointReferenceType epr = ( (SomePortType) port ).createResource( delegate );
+</source>
+
+
+=== Service-Seite ===
+
+Wie im Client-Code angedeutet erhalten die Factory Methoden des Services eine Endpoint-Referenz auf einen Proxy. Diese Referenz wird den erstellten Ressourcen übergeben. Neben dieser Referenz wird noch ein Delegation-Listener benötigt, der Zustandsänderungen des Proxys, wie Update oder Destroy, an die Ressource weiter gibt.
+
+Die Methode eines Services (hier <tt>SomeService</tt>), die eine Ressource erstellt und eine Proxy Referenz als Parameter erhält, könnte wie folgt aussehen
+
+<source lang="java">
+     public EndpointReferenceType createResource ( EndpointReferenceType delegate ) {
+        SomeResource sr = new SomeResource( );
+        sr.setDelegationEPR( delegate );
+        ...
+        return endPointRefOf( sr );
+     }
+</source>
+
+Das ist alles für den unmittelbaren Service. Als nächstes muss die Ressource angepasst werden:
+
+<source lang="java">
+    public class SomeResource implements Resource {
+
+        SomeResourceHome home;
+        GlobusCredential credential;
+ 
+        public void refreshRegistration( final boolean forceRefresh ) {
+            // do refreshing stuff if required
+        }
+
+
+        public void setCredential( final GlobusCredential cred ) {
+            credential = cred;
+        }
+
+
+        public GlobusCredential getCredential( ) {
+            return credential;
+        }
+
+
+        public void setDelegateEPR( final EndpointReferenceType epr ) {
+
+            SomeDelegationListener list = new SomeDelegationListener( getResourceKey(), home );
+            try {
+                // registers listener with the delegation service
+                DelegationUtil.registerDelegationListener( epr, list );
+            } catch ( DelegationException e ) {
+                e.printStackTrace();
+            }
+        }
+
+        // other service specific stuff here ...
+    }
+</source>
+
+Die <tt>set/getCredential</tt> Methoden werden vom Listener gecalled. Hier die prinzipielle Implementation eines einfachen Listeners:
+
+<source lang="java">
+    public class SomeDelegationListener implements DelegationListener {
+
+        private static Logger logger = Logger.getLogger( SomeDelegationListener.class );
+        private String regristrationId;
+        private ResourceKey resourceKey;
+        private ResourceHome home;
+
+
+        public SomeDelegationListener() {
+        }
+
+
+        public SomeDelegationListener( final ResourceKey resourceKey, final ResourceHome home ) {
+            this.resourceKey = resourceKey;
+            this.home = home;
+        }
+
+
+        public void setCredential( final GlobusCredential credential ) throws DelegationException {
+
+            try{
+                SomeCredibleResource res = ( SomeCredibleResource ) home.find( resourceKey );
+                res.setCredential( credential );
+            } catch ( ResourceException e ) {
+                logger.error( e );
+            }
+        }
+
+
+        public void credentialDeleted() {
+            // Can notify the resource
+        }
+
+        // getters and setters for the instance vars are omitted for the sake of shortness
+        // ....
+    }
+</source>
+
+Die <tt>setCredential</tt>-Methode wird automatisch bei der Registrierung des des Listeners beim Delegation-Service aufgerufen.
+
+Mit diesen Erweiterungen hat eine Ressource Zugriff auf die Credentials des Nutzers dem der Proxy gehört.
+
+
+== Verwendung des delegierten Proxys ==
+
+=== Service-Ebene ===
+Ein Zertifikatsproxy ist dann am sinnvollsten wenn ein Service selbst Client eines anderen Services ist und einen Aufruf im Namen des Nutzers machen soll.
+
+Angenommen <tt>SomeService</tt> ist Client von <tt>AnotherService</tt>. Bin einem Aufruf von <tt>AnotherService</tt> durch  <tt>SomeResource</tt> können die Proxy Credentials verwendet werden indem sie in den ClientDescriptor geladen werden: 
+
+<source lang="java">
+    AnotherPortType port = ...;
+    ( (Stub) port )._setProperty( org.globus.wsrf.security.Constants.GSI_TRANSPORT,
+                        org.globus.wsrf.security.Constants.ENCRYPTION );
+            // SIGNATUR should also work
+    org.ietf.jgss.GSSCredential gss = new org.globus.gsi.gssapi.GlobusGSSCredentialImpl( credential,
+        org.ietf.jgss.GSSCredential.INITIATE_AND_ACCEPT );
+    ( (Stub) port )._setProperty( org.globus.axis.gsi.GSIConstants.GSI_CREDENTIALS, gss );
+    ( (Stub) port ).doAnotherThing();
+</source>
+
+Um das Ergebnis auf der Seite von <tt>AnotherService</tt> zu verifizieren, kann in der <tt>doAnotherThing</tt>-Methode geprüft werden vom welchen Nutzer der Aufruf kam:
+
+    org.globus.wsrf.security.SecurityManager.getManager( ).getCaller();
+
+gibt die DN des Nutzers zurück (oder <tt>null<\tt> bei anonymer Kommunikation) und mit 
+
+    org.globus.wsrf.security.SecurityManager.getManager( ).getLocalUsernames()
+
+können die lokalen Benutzernamen abgefragt werden auf die die DN im Grid-Mapfile gemapped wurde.
+
+
+=== Export ===
+
+Proxy Credentials können auch exportiert werden um sie beispielshalber in einer Datei zu speichern. Folgender Codeschnippsel erledigt das:
+<source lang="java">
+   public void storeCredential( Sting filename ) {
+        
+        try {
+            File f = new File( filename );
+            FileOutputStream fos = new FileOutputStream( f );
+            GlobusGSSCredentialImpl crd = new GlobusGSSCredentialImpl( credential, GSSCredential.ACCEPT_ONLY );
+            fos.write( crd.export( ExtendedGSSCredential.IMPEXP_OPAQUE  ) );
+            fos.close();
+        } catch( Exception e ) {
+            // an exception --- do something
+        }
+    }
+</source>
+
+Die geschriebene Datei ist wie folgt aufgebaut: An erster Stelle steht das zuletzt erzeugte Proxy-Zertifikat gefolgt von seinem privaten Schlüssel, dann kommt die Zertifikatskette in absteigender Reihenfolge. Um den Proxy zu verifizieren kann auf der Kommandozeile <tt>openssl</tt> verwendet werden. Dazu muss der Proxy-Zertifikat Teil in einer Datei, hier ''head'', und die Zertifikatskette in einer anderen, hier ''tail'' gespeichert werden. Der Schlüssel ist nicht von Interesse.  Damit ''openssl'' Proxys akzeptiert muss die Umgebungsvariable <tt>OPENSSL_ALLOW_PROXY_CERTS</tt> auf 1 gesetzt werden.
+
+    export OPENSSL_ALLOW_PROXY_CERTS=1
+
+Wenn die D-Grid Zertifikate an bekannter Stelle liegen kann der Proxy nun mit folgendem Befehl geprüft werden:
+
+    /usr/bin/openssl verify -CApath /etc/grid-security/certificates -CAfile tail head
+
+Ist das Zertifikat gültig wird 
+
+    head: OK
+
+ausgegeben, ansonsten erscheint eine aussagekräftiger Fehlermeldung.
+
+Das Tool [http://www.nikhef.nl/~janjust/proxy-verify/ <tt>grid-proxy-verify</tt>] erledigt die selbe Aufgabe, dabei entfällt das lästige aufsplitten der exportierten Credentials. Außerdem gibt ein Blick in den Source-Code des Tools interessante Aufschlüsse darüber wie sei die Proxy-Verifizierung programmiertechnisch  unter Verwendung der OpenSSL-Bibliothek realisieren lässt.

@@ -1,0 +1,23 @@
+
+Requires the following classpath to work:
+/opt/gt-current/lib/gndms-stuff-0.3-pre.jar:/opt/gt-current/lib/joda-time-1.6.jar:/home/mjorra/.m2/repository/org/apache/derby/derby/10.5.3.0/derby-10.5.3.0.jar:/opt/gt-current/lib/gndms-model-0.3-pre.jar:/opt/gt-current/lib/openjpa-all-2.0.0.jar
+
+i.e. requires derby openjpa and the model package  plus some utils.
+
+
+NOTE for the next two ones: Even so the ConnectionURL is given the database isn't touched. 
+
+#create an SQL schema from the classes and store it in a file:
+java org.apache.openjpa.jdbc.meta.MappingTool -ConnectionURL 'jdbc:derby:<db-path>/db/gndms' -sql schema.sql
+
+#create an XML schema from the classes and store it in a file:
+java org.apache.openjpa.jdbc.meta.MappingTool -ConnectionURL 'jdbc:derby:<db-path>/db/gndms' -sf schema.xml
+
+
+
+# import a schema into a database
+java org.apache.openjpa.jdbc.schema.SchemaTool  -ConnectionURL 'jdbc:derby:<db-path>/gndms;create=true' -a import schema.xml
+
+# extract the current database schema as xml:
+java org.apache.openjpa.jdbc.schema.SchemaTool -ConnectionURL jdbc:derby:$GLOBUS_LOCATION/etc/gndms_shared/db/gndms -a reflect -f stdout
+
