@@ -16,13 +16,18 @@ import org.globus.wsrf.impl.security.authentication.Constants;
 import org.globus.wsrf.impl.security.authorization.NoAuthorization;
 import org.globus.wsrf.impl.security.descriptor.ClientSecurityDescriptor;
 import org.globus.wsrf.utils.AddressingUtils;
+import org.oasis.wsrf.lifetime.ImmediateResourceTermination;
+import org.oasis.wsrf.lifetime.WSResourceLifetimeServiceAddressingLocator;
+import org.oasis.wsrf.lifetime.Destroy;
 import org.xml.sax.InputSource;
 import sun.misc.UUEncoder;
 import types.ContextT;
 import types.ContextTEntry;
 
 import javax.xml.namespace.QName;
+import javax.xml.rpc.ServiceException;
 import java.io.*;
+import java.rmi.RemoteException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 
@@ -219,5 +224,14 @@ public class DelegationAux {
 
         System.out.println( "deinlined:\n\"" + res.toString() + "\"" );
         return res.toString();
+    }
+
+
+    public static void destroyDelegationEPR ( EndpointReferenceType epr ) throws ServiceException, RemoteException {
+
+        WSResourceLifetimeServiceAddressingLocator ll = new WSResourceLifetimeServiceAddressingLocator();
+
+        ImmediateResourceTermination term = ll.getImmediateResourceTerminationPort( epr );
+        term.destroy( new Destroy() );
     }
 }

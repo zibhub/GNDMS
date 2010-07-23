@@ -1,19 +1,19 @@
 package de.zib.gndms.gritserv.typecon.types;
 
-import types.FileTransferORQT;
-import de.zib.gndms.model.gorfx.types.io.FileTransferORQWriter;
 import de.zib.gndms.gritserv.typecon.GORFXClientTools;
-
-import java.util.Map;
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import org.apache.axis.types.URI;
+import de.zib.gndms.model.gorfx.types.FileTransferORQ;
+import de.zib.gndms.model.gorfx.types.io.FileTransferORQConverter;
+import de.zib.gndms.model.gorfx.types.io.FileTransferORQWriter;
 import org.apache.axis.description.FieldDesc;
 import org.apache.axis.message.MessageElement;
+import org.apache.axis.types.URI;
+import types.FileTransferORQT;
 
 import javax.xml.soap.SOAPException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author: Maik Jorra <jorra@zib.de>
@@ -93,5 +93,20 @@ public class FileTransferORQXSDTypeWriter extends AbstractXSDTypeWriter<FileTran
 
     public void done() {
         // Not required here
+    }
+
+    /**
+     * On shot write resp. convert operation.
+     *
+     * @param orq Source transfer  orq.
+     * @return XSD version of the source orq.
+     */
+    public static FileTransferORQT write( FileTransferORQ orq ) {
+
+        FileTransferORQXSDTypeWriter writer = new FileTransferORQXSDTypeWriter();
+        FileTransferORQConverter conv = new FileTransferORQConverter( writer, orq );
+        conv.convert();
+
+        return writer.getProduct();
     }
 }
