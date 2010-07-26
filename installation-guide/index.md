@@ -214,7 +214,8 @@ Currently, there are specialized build targets for the setup of some
 D-Grid projects directly in the `Buildfile`.
 
 **C3-Grid Setup & Configuration** 
-: Edit `$GNDMS_SOURCE/scripts/c3grid/setup-dataprovider.sh` and execute `gndms-buildr c3grid-dp-setubdb`
+: Edit `$GNDMS_SOURCE/scripts/c3grid/setup-dataprovider.sh` and
+execute `gndms-buildr c3grid-dp-setubdb`
 
 **C3-Grid Quick Test** 
 : `gndms-buildr c3grid-dp-test`
@@ -260,13 +261,22 @@ Please consult the [monitor shell guide](/moni-guide)
 Building GNDMS from Source
 --------------------------
 
+
 #### Quick Rebuild
 
 A quick full rebuild and reinstallation may be done by executing
 
     gndms-buildr rebuild
     
+    
+#### Regeneration of Javadocs
 
+Manually delete `$GLOBUS_LOCATION/doc/api`. Now regenerate the
+javadocs by executing
+
+    gndms-buildr gndms:infra:doc
+    
+    
 #### Building Manually from Scratch
 
     gndms-buildr clean clean-services # Cleans everything
