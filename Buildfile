@@ -39,6 +39,8 @@ JAVA_HOME = ENV['JAVA_HOME']
 SOURCE = '1.5'
 TARGET = '1.5'
 testEnv('GNDMS_SOURCE', 'the root directory of GNDMS source distribution (i.e. the toplevel directory in which the Buildfile resides)')
+testEnv('GNDMS_SHARED', '$GLOBUS_LOCATION/etc/gndms_shared')
+testEnv('GNDMS_MONI_CONFIG', '$GNDMS_SHARED/monitor.properties')
 testEnv('USER', 'your user\'s login (your UNIX is weird)')
 testTool('rsync')
 testTool('curl')
@@ -122,7 +124,8 @@ GT4_SEC = gt4jars(['puretls.jar', 'opensaml.jar',
                    'globus_delegation_service.jar',
                    'globus_delegation_stubs.jar'])
 GT4_XML = gt4jars(['xalan-2.6.jar', 'xercesImpl-2.7.1.jar', 'xml-apis.jar', 'xmlsec.jar', 'jaxrpc.jar'])
-GT4_GRAM = gt4jars( ['gram-monitoring.jar', 'gram-service.jar', 'gram-stubs.jar', 'gram-utils.jar'])
+GT4_GRAM = gt4jars(['gram-monitoring.jar', 'gram-service.jar', 'gram-stubs.jar', 'gram-utils.jar'])
+GT4_USEAGE = gt4jars([ 'globus-usage-core.java' ])
 
 
 # OpenJPA is required by gndms:model
@@ -290,6 +293,17 @@ define 'gndms' do
 
     end
 
+
+    desc 'Miscellaneous clients for the GNDMS services'
+    define 'gndmc', :layout => dmsLayout('gndmc', 'gndms-gndmc') do
+      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gritserv'), project('kit'), project('stuff'), project('model'), ARGS4J, SERVICE_STUBS, GORFX_CLIENT, DSPACE_CLIENT, JODA_TIME, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, EXTRA_JARS, TestNG.dependencies
+      compile
+      package :jar
+
+    end
+
+
+
     desc 'rsync type schemata between services and types'
     task :typesync  => :package do
       SERVICES.each { |service|
@@ -397,9 +411,9 @@ task 'gndms-release' => ['gndms:update-release-info', 'rebuild', 'clean-services
 end
 
 task 'ptgrid-setupdb' do
-	system "#{ENV['GNDMS_SOURCE]}/scripts/ptgrid/setup-resource.sh"
+	system "#{ENV['GNDMS_SOURCE']}/scripts/ptgrid/setup-resource.sh CREATE"
 end
 
 task 'c3grid-dp-setupdb' do
-	system "#{ENV['GNDMS_SOURCE]}/scripts/c3grid/setup-dataprovider.sh"
+	system "#{ENV['GNDMS_SOURCE']}/scripts/c3grid/setup-dataprovider.sh CREATE"
 end

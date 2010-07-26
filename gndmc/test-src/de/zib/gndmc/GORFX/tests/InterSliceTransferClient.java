@@ -6,7 +6,7 @@ import de.zib.gndms.dspace.client.DSpaceClient;
 import de.zib.gndms.kit.application.AbstractApplication;
 import de.zib.gndms.gritserv.typecon.GORFXClientTools;
 import de.zib.gndms.gritserv.typecon.GORFXTools;
-import de.zib.gndmc.GORFX.GORFXTestClientUtils;
+import de.zib.gndmc.GORFX.GORFXClientUtils;
 import org.apache.axis.message.MessageElement;
 import org.kohsuke.args4j.Option;
 import types.*;
@@ -52,7 +52,7 @@ public class InterSliceTransferClient extends AbstractApplication {
         xsdContext.setEntry(new ContextTEntry[] { entry });
 
         SliceReference sr =
-            GORFXTestClientUtils.doStageIn( uri, props, xsdContext, GORFXTestClientUtils.newContract(), MILLIS );
+            GORFXClientUtils.doStageIn( uri, props, xsdContext, GORFXClientUtils.newContract(), MILLIS );
 
         // create a new Slice in the target subspace
         DSpaceClient dcnt = new DSpaceClient( duri );
@@ -71,8 +71,8 @@ public class InterSliceTransferClient extends AbstractApplication {
             GORFXClientTools.createInterSliceTransferORQT( sr, new SliceReference( slice.getEndpointReference() ) );
 
         InterSliceTransferResultT isrt =
-            GORFXTestClientUtils.commonTaskExecution( "slice transfer", uri, istorq, xsdContext,
-                GORFXTestClientUtils.newContract(), MILLIS, InterSliceTransferResultT.class );
+            GORFXClientUtils.commonTaskExecution( "slice transfer", uri, istorq, xsdContext,
+                GORFXClientUtils.newContract(), MILLIS, InterSliceTransferResultT.class );
 
         MessageElement[] mes = isrt.get_any( );
         ArrayList<String> al = new ArrayList( mes.length );

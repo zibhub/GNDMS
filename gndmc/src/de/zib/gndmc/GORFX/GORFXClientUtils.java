@@ -6,7 +6,9 @@ import de.zib.gndms.GORFX.context.client.TaskClient;
 import de.zib.gndms.GORFX.offer.client.OfferClient;
 import de.zib.gndms.dspace.slice.client.SliceClient;
 import de.zib.gndms.gritserv.delegation.DelegationAux;
+import de.zib.gndms.gritserv.typecon.types.FileTransferORQXSDTypeWriter;
 import de.zib.gndms.gritserv.typecon.types.ProviderStageInORQXSDTypeWriter;
+import de.zib.gndms.model.gorfx.types.FileTransferORQ;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
 import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyReader;
 import org.apache.axis.message.addressing.EndpointReferenceType;
@@ -26,7 +28,7 @@ import java.rmi.RemoteException;
  * <p/>
  * User: mjorra, Date: 06.11.2008, Time: 17:08:37
  */
-public class GORFXTestClientUtils {
+public class GORFXClientUtils {
 
 
     public static OfferExecutionContractT newContract( ) {
@@ -117,6 +119,30 @@ public class GORFXTestClientUtils {
 
 
     /**
+     * Performs an FileTransfer action.
+     *
+     * @param gorfxURI Service URI
+     * @param ctx The context should include delegation epr.
+     * @param src The gsiftp source url.
+     * @param dest A  gsiftp url for the target.
+     *
+     * @return The tasks result type object.
+     *
+     * @throws Exception If something goes wrong blah blah ....
+     */
+    public static FileTransferResultT performCopy( String gorfxURI, ContextT ctx, String src, String dest ) throws Exception {
+
+        FileTransferORQ orq = new FileTransferORQ();
+        orq.setSourceURI( src );
+        orq.setTargetURI( dest );
+        return
+            GORFXClientUtils.commonTaskExecution( "transfer", gorfxURI,
+                FileTransferORQXSDTypeWriter.write( orq ), ctx, null, 1000, FileTransferResultT.class );
+
+    }
+
+
+    /**
      * Executes a single task request and waits for it to complete.
      *
      * @param name
@@ -155,7 +181,7 @@ public class GORFXTestClientUtils {
         // create task resource an wait for completion
         final TaskClient tcnt = new TaskClient( epr );
 
-        boolean finished = GORFXTestClientUtils.waitForFinish( name, tcnt, slp );
+        boolean finished = GORFXClientUtils.waitForFinish( name, tcnt, slp );
 
         if (finished)
             return tcnt.getExecutionResult( resClazz );
