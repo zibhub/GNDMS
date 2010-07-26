@@ -3,9 +3,8 @@ package de.zib.gndmc.GORFX.c3grid;
 import de.zib.gndms.GORFX.ORQ.client.ORQClient;
 import de.zib.gndms.GORFX.client.GORFXClient;
 import de.zib.gndms.GORFX.context.client.TaskClient;
-import de.zib.gndms.GORFX.context.common.TaskConstants;
+import de.zib.gndmc.GORFX.constants.TaskConstants;
 import de.zib.gndms.GORFX.offer.client.OfferClient;
-import de.zib.gndms.GORFX.offer.common.OfferConstants;
 import de.zib.gndms.dspace.slice.client.SliceClient;
 import de.zib.gndms.gritserv.delegation.DelegationAux;
 import de.zib.gndms.gritserv.typecon.ContractStdoutWriter;
@@ -94,7 +93,7 @@ public abstract class AbstractStageInClient extends AbstractApplication {
         final OfferClient offerClient = new OfferClient(offerEprParam);
 
 		final GetResourcePropertyResponse rpResponse= offerClient.getResourceProperty(
-				OfferConstants.OFFEREXECUTIONCONTRACT);
+				de.zib.gndmc.GORFX.constants.OfferConstants.OFFEREXECUTIONCONTRACT);
 		final OfferExecutionContractT contractT = (OfferExecutionContractT) ObjectDeserializer.toObject( rpResponse.get_any()[0], OfferExecutionContractT.class );
 		final TransientContract readContract = ContractXSDReader.readContract(contractT);
 

@@ -1,16 +1,19 @@
 package de.zib.gndmc;
 
-import de.zib.gndmc.GORFX.GORFXTestClientUtils;
+import de.zib.gndmc.DSpace.beans.SliceCreationBean;
+import de.zib.gndmc.GORFX.GORFXClientUtils;
+import de.zib.gndmc.GORFX.beans.FileTransferBean;
 import de.zib.gndms.dspace.client.DSpaceClient;
 import de.zib.gndms.dspace.slice.client.SliceClient;
 import de.zib.gndms.dspace.subspace.client.SubspaceClient;
 import de.zib.gndms.gritserv.delegation.DelegationAux;
-import de.zib.gndms.gritserv.typecon.types.FileTransferORQXSDTypeWriter;
-import de.zib.gndms.model.gorfx.types.FileTransferORQ;
+import de.zib.gndms.kit.application.AbstractApplication;
+import de.zib.gndms.stuff.exception.FinallyException;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI;
 import org.globus.gsi.GlobusCredentialException;
+import org.kohsuke.args4j.Option;
 import types.ContextT;
 import types.FileTransferResultT;
 
@@ -29,44 +32,52 @@ import java.util.Properties;
  */
 public class SliceInOutClient {
 
+    private SliceCreationBean creationBean;
+    private FileTransferBean transferBean;
+
+
+    private SubspaceClient subSpaceClient;
+    private DSpaceClient dspaceClient;
+
 
     public void run( ) throws Exception, RemoteException, GlobusCredentialException {
 
-        String sourcePath ="";
-        boolean useDelegation = true;
-        int uid = 100;
-        String gorfxURI = "";
-
-
-        SliceInOutClient client = new SliceInOutClient( /* propsfile */ );
-        DSpaceClient dc = client.getDSpaceClient();
-        String v = client.queryDMSVersion();
+        DSpaceClient dc = getDSpaceClient();
+        String v = queryDMSVersion();
         System.out.println( "Connected to GNDMS: " + v );
 
         System.out.println( "Creating slice" );
-        SliceClient sc = client.createSlice();
+        SliceClient sc = createSlice();
 
         String loc = sc.getSliceLocation();
 
 
         ContextT ctx = new ContextT( );
         EndpointReferenceType delegatEPR = null;
-        if( useDelegation ) {
+        if(! transferBean.isDisableDelegation() ) {
             System.out.println( "Setting up delegation" );
-            delegatEPR = GORFXTestClientUtils.setupDelegation( ctx, dspaceURI, uid );
+            delegatEPR = GORFXClientUtils.setupDelegation( ctx, getDspaceURI(), transferBean.getUid() );
         }
-        performCopy( gorfxURI, ctx, sourcePath, loc );
+
+        System.out.println( "Copy " + getSourcePath() + "->" + loc );
+        FileTransferResultT res = GORFXClientUtils.performCopy( getGorfxURI(), ctx, getSourcePath(), loc );
+        System.out.println( "File transfer passed" );
+        showCopyResult( res );
+
 
 
         System.out.println( "\nNow the otherway round!" );
-        performCopy( gorfxURI, ctx, sourcePath, loc );
+        System.out.println( "Copy " + loc + "->" + getSourcePath() );
+        res = GORFXClientUtils.performCopy( getGorfxURI(), ctx, loc, getSourcePath() );
+        System.out.println( "File transfer passed -- again" );
+        showCopyResult( res );
 
 
         System.out.println( "\nOkay, all done. Cleaning up!" );
         System.out.println( "* Destroying Slice" );
-        client.destroySlice( sc );
+        destroySlice( sc );
 
-        if( useDelegation ) {
+        if(! transferBean.isDisableDelegation() ) {
             System.out.println( "* Destroying Slice" );
             DelegationAux.destroyDelegationEPR( delegatEPR );
         }
@@ -74,27 +85,6 @@ public class SliceInOutClient {
     }
 
     
-    public static void performCopy( String gorfxURI, ContextT ctx, String source, String dest ) throws Exception {
-
-        FileTransferORQ orq = new FileTransferORQ();
-        orq.setSourceURI( source );
-        orq.setTargetURI( dest );
-        System.out.println( "Copy " + source + "->" + dest );
-        FileTransferResultT res =
-            GORFXTestClientUtils.commonTaskExecution( "transfer", gorfxURI,
-                FileTransferORQXSDTypeWriter.write( orq ), ctx, null, 1000, FileTransferResultT.class );
-
-        System.out.println( "CheckIn complete: "  );
-        showCopyResult( res );
-
-    }
-
-
-    public String sliceKindURI;
-    public String subSpaceQName;
-    public SubspaceClient subSpaceClient;
-    private DSpaceClient dspaceClient;
-    private String dspaceURI;
 
     public SliceInOutClient( ) {
 
@@ -112,6 +102,11 @@ public class SliceInOutClient {
     }
 
     private void setProperties( Properties prop ) {
+        creationBean = new SliceCreationBean();
+        creationBean.setProperties( prop );
+        
+        transferBean = new FileTransferBean( );
+        transferBean.setProperties( prop );
     }
 
 
@@ -126,17 +121,17 @@ public class SliceInOutClient {
 
     public SliceClient createSlice( Calendar tt, long ssize ) throws URI.MalformedURIException, RemoteException {
 
-        return subSpaceClient.createSlice( sliceKindURI, tt, ssize );
+        return subSpaceClient.createSlice( getSliceKindURI(), tt, ssize );
     }
 
 
     public SubspaceClient getSubSpaceClient() throws URI.MalformedURIException, RemoteException {
 
         if( subSpaceClient == null  ) {
-            if( subSpaceQName == null || subSpaceQName.trim().equals( "" ) )
+            if( getSubSpaceQName() == null || getSubSpaceQName().trim().equals( "" ) )
                 throw new IllegalStateException( "SubSpace URI is required" );
 
-            subSpaceClient =  getDSpaceClient().findSubspace( new QName( subSpaceQName ) );
+            subSpaceClient =  getDSpaceClient().findSubspace( new QName( getSubSpaceQName() ) );
 
         }
         return subSpaceClient;
@@ -145,14 +140,13 @@ public class SliceInOutClient {
 
     public DSpaceClient getDSpaceClient() throws URI.MalformedURIException, RemoteException {
 
-        if( dspaceURI == null  ) {
-            if( dspaceURI == null || dspaceURI.trim().equals( "" ) )
+        if( dspaceClient == null ) {
+            if( getDspaceURI() == null || getDspaceURI().trim().equals( "" ) )
                 throw new IllegalStateException( "dspace URI is required" );
 
-            dspaceClient = new DSpaceClient( dspaceURI );
-
+            dspaceClient = new DSpaceClient( getDspaceURI() );
         }
-        
+
         return dspaceClient;
     }
 
@@ -233,5 +227,117 @@ public class SliceInOutClient {
             sw.write( "    " + ( (String) me.getObjectValue( String.class ) ) + '\n' ) ;
 
         System.out.println( "Copied the following file(s):\n" + sw.toString() );
+    }
+
+
+    public String getSliceKindURI() {
+        return creationBean.getSliceKindURI();
+    }
+
+
+    public String getSubSpaceQName() {
+        return creationBean.getSubSpaceQName();
+    }
+
+
+    public String getDspaceURI() {
+        return creationBean.getDspaceURI();
+    }
+
+
+    public SliceCreationBean getCreationBean() {
+        return creationBean;
+    }
+
+
+    public void setCreationBean( SliceCreationBean creationBean ) {
+        this.creationBean = creationBean;
+    }
+
+
+    public String getGorfxURI() {
+        return transferBean.getGorfxURI();
+    }
+
+
+    public String getSourcePath() {
+        return transferBean.getSourceAddress();
+    }
+
+
+    public String getDestinationPath() {
+        return transferBean.getDestinationAddress();
+    }
+
+
+    public FileTransferBean getTransferBean() {
+        return transferBean;
+    }
+
+
+    public void setTransferBean( FileTransferBean transferBean ) {
+        this.transferBean = transferBean;
+    }
+
+
+    public static void main( String[] args ) throws Exception {
+
+        SliceInOutClientApp app = new SliceInOutClientApp();
+        app.run( args );
+
+        System.exit( 0 );
+    }
+
+
+    public static class SliceInOutClientApp extends AbstractApplication {
+
+        @Option( name="-p", required=true, usage="", metaVar="property-file" )
+        protected String props;
+        @Option( name="-e", required=false, usage="Creates an example \"propertiy-file\".\nWARNING the given file will be overwritten" )
+        protected boolean example;
+
+        public void run() throws Exception {
+            // not required here
+            if( example ) {
+                Properties prop = new Properties( );
+                (new SliceCreationBean() ).createExampleProperties( prop );
+                (new FileTransferBean() ).createExampleProperties( prop );
+                storeProperties( prop, props );
+            } else
+            System.out.println( "example is " + example );
+
+            /*
+            SliceInOutClient c = new SliceInOutClient( args[0] );
+            c.run();
+            */
+        }
+
+
+        public void storeProperties( Properties prop, String fn ) {
+
+            // read property file
+            OutputStream f = null;
+            RuntimeException exc = null;
+            try {
+                f = new FileOutputStream( fn );
+                prop.store( f, "SliceInOutClient example properties." );
+            } catch ( FileNotFoundException e ) {
+                exc =  new RuntimeException( "Failed to open properties file " + fn, e );
+            } catch ( IOException e ) {
+                exc =  new RuntimeException( "Failed to store properties to file " + fn, e );
+            } finally {
+                if( f != null )
+                    try {
+                        f.close( );
+                    } catch ( IOException e ) {
+                        if( exc != null )
+                            throw new FinallyException( "Failed to close properties file " + fn, exc, e );
+
+                        throw new RuntimeException( "Failed to close properties file " + fn, e );
+                    }
+                if( exc != null )
+                    throw exc;
+            }
+        }
     }
 }
