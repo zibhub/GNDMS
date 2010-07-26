@@ -106,7 +106,7 @@ GT4_WSRF = gt4jars(['addressing-1.0.jar',
                     'axis.jar',
                     'commonj.jar',
                     'concurrent.jar',
-                    'globus_wsrf_rft_stubs.jar',
+                    # 'globus_wsrf_rft_stubs.jar',
                     'naming-common.jar',
                     'wsdl4j.jar',
                     'saaj.jar',
@@ -250,6 +250,7 @@ define 'gndms' do
       compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gritserv'), project('logic'), project('kit'), project('stuff'), project('model'), ARGS4J, SERVICE_STUBS, JODA_TIME, JAXB, GT4_SERVLET, JETTY, CXF, GROOVY, GOOGLE_COLLECTIONS, GUICE, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies
       compile
       package :jar
+      doc projects('gndms:stuff', 'gndms:model', 'gndms:gritserv', 'gndms:kit', 'gndms:logic')
 
       # Symlink or copy all dependencies of infra + the infra jar - whatever gets filtered by skipDeps to GT4LIB
       # and log source jars used to lib/DEPENDENCIES and lib/dependencies.xml (both files are not further used by the build - FYI only)
@@ -261,9 +262,9 @@ define 'gndms' do
 				end
         deps = skipDeps(deps)
 
-        classpathFile = File.new(GT4LIB + 'gndms-dependencies.xml', 'w')
+        classpathFile = File.new(GT4LIB + '/gndms-dependencies.xml', 'w')
         classpathFile.syswrite('<?xml version="1.0"?>' + "\n" + '<project><target id="setGNDMSDeps"><path id="service.build.extended.classpath">' + "\n")
-        depsFile = File.new(GT4LIB + 'gndms-dependencies', 'w')
+        depsFile = File.new(GT4LIB + '/gndms-dependencies', 'w')
         deps.select { |jar| jar[0, GT4LIB.length] != GT4LIB }.each { |file| 
            if (copy)
              puts 'cp: \'' + file + '\' to: \'' + GT4LIB + '\''
@@ -316,36 +317,36 @@ define 'gndms' do
 
     task 'package-stubs' do
       SERVICES.each { |service| 
-        system 'cd ' + _('services/'+service) + ' && ant jarStubs'
+        system "cd '#{_('services', service)}' && ant jarStubs"
       }
     end
 
     desc 'Create DSpace GAR for deployment (Requires packaged GNDMS and installed dependencies)'
     task 'package-DSpace' do
-      system 'cd ' + _('services/DSpace') + ' && ant createDeploymentGar'
-      ln_sf(_('services/DSpace/gndms_DSpace.gar'), _('.'))
+      system "cd '#{_('services', 'DSpace')}' && ant createDeploymentGar"
+      ln_sf(_('services', 'DSpace', 'gndms_DSpace.gar'), _('.'))
     end
 
     desc 'Deploy current gndms_DSpace.gar'
-	  task 'deploy-DSpace' do
-			system DEPLOY_GAR + _('services', 'DSpace', 'gndms_DSpace.gar')
-	  end
+    task 'deploy-DSpace' do
+       system "#{DEPLOY_GAR} '#{_('services', 'DSpace', 'gndms_DSpace.gar')}'"
+    end
 
-	  task 'rebuild-DSpace' => [task('package-DSpace'), task('deploy-DSpace')] do
+    task 'rebuild-DSpace' => [task('package-DSpace'), task('deploy-DSpace')] do
     end
 
     desc 'Create GORFX GAR for deployment (Requires packaged GNDMS and installed dependencies)'
     task 'package-GORFX' do
-      system 'cd ' + _('services/GORFX') + ' && ant createDeploymentGar'
-      ln_sf(_('services/GORFX/gndms_GORFX.gar'), _('.'))
+      system "cd '#{_('services', 'GORFX')}' && ant createDeploymentGar"
+      ln_sf(_('services', 'GORFX', 'gndms_GORFX.gar'), _('.'))
     end
 
     desc 'Deploy current gndms_GORFX.gar'
-	  task 'deploy-GORFX' do
-			system DEPLOY_GAR + _('services', 'GORFX', 'gndms_GORFX.gar')
-	  end
+    task 'deploy-GORFX' do
+      system "#{DEPLOY_GAR} '#{_('services', 'GORFX', 'gndms_GORFX.gar')}'"
+    end
 
-	  task 'rebuild-GORFX' => [task('package-GORFX'), task('deploy-GORFX')] do
+    task 'rebuild-GORFX' => [task('package-GORFX'), task('deploy-GORFX')] do
     end
 
     desc 'Peek into the gndms derby database'
@@ -353,6 +354,9 @@ define 'gndms' do
         GNDMS_DB=[ ENV['GLOBUS_LOCATION'], 'etc', 'gndms_shared', 'db', 'gndms' ].join(File::SEPARATOR)
         callIJ( GNDMS_DB, DB_DERBY )
     end
+end
+
+task 'inspect-db' => task('gndms:derby-ij') do
 end
 
 task 'clean-services' => task('gndms:clean-services') do
@@ -383,16 +387,21 @@ end
 task 'rebuild-GORFX' => task('gndms:rebuild-GORFX') do
 end
 
+task 'package-services' => [task('package-DSpace'), task('package-GORFX')] do
+end
+
+task 'deploy-services' => [task('deploy-DSpace'), task('deploy-GORFX')] do
+end
+
+task 'rebuild-services' => [task('rebuild-DSpace'), task('rebuild-GORFX')] do
+end
+
 desc 'Do a full rebuild and deploy (execute as globus user)'
-task 'rebuild' => ['clean', 'clean-services', 'gndms:model:package', 'package-stubs', 'package', 'install-deps', 'rebuild-DSpace', 'rebuild-GORFX'] do
+task 'rebuild' => ['clean', 'clean-services', 'gndms:model:package', 'package-stubs', 'package', 'install-deps', 'rebuild-services'] do
 end
 
 desc 'Do a full release build and deploy (execute as globus user)'
 task 'gndms-release' => ['gndms:update-release-info', 'rebuild', 'clean-services', 'clean'] do
-end
-
-desc 'Does nothing'
-task 'dummy' do 
 end
 
 # task 'pt-install' => ['package-stubs', 'install-deps', 'package-gars'] do

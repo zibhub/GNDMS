@@ -72,3 +72,4 @@ lib/jruby-*
 services/DSpace/build/*
 services/GORFX/build/*
 services/LOFIS/build/*
+doc/api/*
