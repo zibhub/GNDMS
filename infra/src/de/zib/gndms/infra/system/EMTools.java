@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
+import de.zib.gndms.stuff.exception.FinallyException;
+
 /**
  * Helper code for executing jpa transactions in groovy
  * 
@@ -57,6 +59,7 @@ final public class EMTools {
             final boolean isNewTx = ! tx.isActive();
 
             final T result;
+            RuntimeException ex = null;
             try {
                     if (isNewTx) {
                             tx.begin();
@@ -68,19 +71,22 @@ final public class EMTools {
                     return result;
             }
             catch (TxSafeRuntimeException re) {
-                    throw new RuntimeException(re.getCause());
+                    ex = new RuntimeException( re );
             }
             catch (RuntimeException re) {
                     if (tx.isActive()) tx.rollback();
-                    throw re;                         
+                    ex = re;
             }
             finally {
                 // w/o try catch this often shadows above exceptions
-                // maybe use workaround which stores exception in variable
+                // so wrap in finally
                 try {
                     if (closeEM && em.isOpen()) em.close();
-                } catch ( Exception e ) {
-                    Logger.getLogger( EMTools.class ).fatal( "Exception on entity manager close.", e );
+                } catch ( RuntimeException e ) {
+                    if( ex != null )
+                        throw new FinallyException( "From finally", ex, e );
+                    else
+                        throw e;
                 }
             }
     }

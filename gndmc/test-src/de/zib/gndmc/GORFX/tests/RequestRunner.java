@@ -12,7 +12,7 @@ import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.model.gorfx.types.io.ORQConverter;
 import de.zib.gndms.model.gorfx.types.io.ORQPropertyReader;
 import de.zib.gndms.model.gorfx.types.io.ORQWriter;
-import de.zib.gndmc.GORFX.GORFXTestClientUtils;
+import de.zib.gndmc.GORFX.GORFXClientUtils;
 import org.apache.axis.components.uuid.UUIDGen;
 import org.apache.axis.components.uuid.UUIDGenFactory;
 import org.apache.axis.message.addressing.EndpointReferenceType;
@@ -94,7 +94,7 @@ public abstract class RequestRunner implements Runnable{
         orqt = w.getProduct();
         ctxt = ContextXSDTypeWriter.writeContext( ctx );
         if( con == null )
-            cont = GORFXTestClientUtils.newContract();
+            cont = GORFXClientUtils.newContract();
         else
             cont = ContractXSDTypeWriter.write( con );
     }

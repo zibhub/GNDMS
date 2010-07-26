@@ -122,7 +122,8 @@ GT4_SEC = gt4jars(['puretls.jar', 'opensaml.jar',
                    'globus_delegation_service.jar',
                    'globus_delegation_stubs.jar'])
 GT4_XML = gt4jars(['xalan-2.6.jar', 'xercesImpl-2.7.1.jar', 'xml-apis.jar', 'xmlsec.jar', 'jaxrpc.jar'])
-GT4_GRAM = gt4jars( ['gram-monitoring.jar', 'gram-service.jar', 'gram-stubs.jar', 'gram-utils.jar'])
+GT4_GRAM = gt4jars(['gram-monitoring.jar', 'gram-service.jar', 'gram-stubs.jar', 'gram-utils.jar'])
+GT4_USEAGE = gt4jars([ 'globus-usage-core.java' ])
 
 
 # OpenJPA is required by gndms:model
@@ -289,6 +290,17 @@ define 'gndms' do
       end
 
     end
+
+
+    desc 'Miscellaneous clients for the GNDMS services'
+    define 'gndmc', :layout => dmsLayout('gndmc', 'gndms-gndmc') do
+      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gritserv'), project('kit'), project('stuff'), project('model'), ARGS4J, SERVICE_STUBS, GORFX_CLIENT, DSPACE_CLIENT, JODA_TIME, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, EXTRA_JARS, TestNG.dependencies
+      compile
+      package :jar
+
+    end
+
+
 
     desc 'rsync type schemata between services and types'
     task :typesync  => :package do

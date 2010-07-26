@@ -4,7 +4,6 @@ import de.zib.gndms.GORFX.ORQ.client.ORQClient;
 import de.zib.gndms.GORFX.client.GORFXClient;
 import de.zib.gndms.GORFX.context.client.TaskClient;
 import de.zib.gndms.GORFX.offer.client.OfferClient;
-import de.zib.gndms.GORFX.offer.common.OfferConstants;
 import de.zib.gndms.gritserv.delegation.DelegationAux;
 import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.gorfx.types.FileTransferORQ;
@@ -86,7 +85,7 @@ public class RemoteFileTransferTest {
 
         // create offer client check offer and accept it.
         OfferClient oc = new OfferClient( oepr );
-        GetResourcePropertyResponse resp =  oc.getResourceProperty( OfferConstants.OFFEREXECUTIONCONTRACT );
+        GetResourcePropertyResponse resp =  oc.getResourceProperty( de.zib.gndmc.GORFX.constants.OfferConstants.OFFEREXECUTIONCONTRACT );
         OfferExecutionContractT con =
             (OfferExecutionContractT) ObjectDeserializer.toObject( resp.get_any( )[0], OfferExecutionContractT.class );
         showContract( con );
