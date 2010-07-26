@@ -106,7 +106,7 @@ GT4_WSRF = gt4jars(['addressing-1.0.jar',
                     'axis.jar',
                     'commonj.jar',
                     'concurrent.jar',
-                    'globus_wsrf_rft_stubs.jar',
+                    # 'globus_wsrf_rft_stubs.jar',
                     'naming-common.jar',
                     'wsdl4j.jar',
                     'saaj.jar',
@@ -121,7 +121,7 @@ GT4_SEC = gt4jars(['puretls.jar', 'opensaml.jar',
                    'globus_delegation_service.jar',
                    'globus_delegation_stubs.jar'])
 GT4_XML = gt4jars(['xalan-2.6.jar', 'xercesImpl-2.7.1.jar', 'xml-apis.jar', 'xmlsec.jar', 'jaxrpc.jar'])
-GT4_GRAM = gt4jars(['gram-monitoring.jar', 'gram-service.jar', 'gram-stubs.jar', 'gram-utils.jar'])
+GT4_GRAM = gt4jars( ['gram-monitoring.jar', 'gram-service.jar', 'gram-stubs.jar', 'gram-utils.jar'])
 
 
 # OpenJPA is required by gndms:model
@@ -261,9 +261,9 @@ define 'gndms' do
 				end
         deps = skipDeps(deps)
 
-        classpathFile = File.new(GT4LIB + 'gndms-dependencies.xml', 'w')
+        classpathFile = File.new(GT4LIB + '/gndms-dependencies.xml', 'w')
         classpathFile.syswrite('<?xml version="1.0"?>' + "\n" + '<project><target id="setGNDMSDeps"><path id="service.build.extended.classpath">' + "\n")
-        depsFile = File.new(GT4LIB + 'gndms-dependencies', 'w')
+        depsFile = File.new(GT4LIB + '/gndms-dependencies', 'w')
         deps.select { |jar| jar[0, GT4LIB.length] != GT4LIB }.each { |file| 
            if (copy)
              puts 'cp: \'' + file + '\' to: \'' + GT4LIB + '\''
@@ -305,36 +305,36 @@ define 'gndms' do
 
     task 'package-stubs' do
       SERVICES.each { |service| 
-        system 'cd ' + _('services/'+service) + ' && ant jarStubs'
+        system "cd '#{_('services', service)}' && ant jarStubs"
       }
     end
 
     desc 'Create DSpace GAR for deployment (Requires packaged GNDMS and installed dependencies)'
     task 'package-DSpace' do
-      system 'cd ' + _('services/DSpace') + ' && ant createDeploymentGar'
-      ln_sf(_('services/DSpace/gndms_DSpace.gar'), _('.'))
+      system "cd '#{_('services', 'DSpace')}' && ant createDeploymentGar"
+      ln_sf(_('services', 'DSpace', 'gndms_DSpace.gar'), _('.'))
     end
 
     desc 'Deploy current gndms_DSpace.gar'
-	  task 'deploy-DSpace' do
-			system DEPLOY_GAR + _('services', 'DSpace', 'gndms_DSpace.gar')
-	  end
+    task 'deploy-DSpace' do
+       system "#{DEPLOY_GAR} '#{_('services', 'DSpace', 'gndms_DSpace.gar')}'"
+    end
 
-	  task 'rebuild-DSpace' => [task('package-DSpace'), task('deploy-DSpace')] do
+    task 'rebuild-DSpace' => [task('package-DSpace'), task('deploy-DSpace')] do
     end
 
     desc 'Create GORFX GAR for deployment (Requires packaged GNDMS and installed dependencies)'
     task 'package-GORFX' do
-      system 'cd ' + _('services/GORFX') + ' && ant createDeploymentGar'
-      ln_sf(_('services/GORFX/gndms_GORFX.gar'), _('.'))
+      system "cd '#{_('services', 'GORFX')}' && ant createDeploymentGar"
+      ln_sf(_('services', 'GORFX', 'gndms_GORFX.gar'), _('.'))
     end
 
     desc 'Deploy current gndms_GORFX.gar'
-	  task 'deploy-GORFX' do
-			system DEPLOY_GAR + _('services', 'GORFX', 'gndms_GORFX.gar')
-	  end
+    task 'deploy-GORFX' do
+      system "#{DEPLOY_GAR} '#{_('services', 'GORFX', 'gndms_GORFX.gar')}'"
+    end
 
-	  task 'rebuild-GORFX' => [task('package-GORFX'), task('deploy-GORFX')] do
+    task 'rebuild-GORFX' => [task('package-GORFX'), task('deploy-GORFX')] do
     end
 
     desc 'Peek into the gndms derby database'

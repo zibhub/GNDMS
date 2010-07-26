@@ -1,4 +1,4 @@
 #!/bin/bash
 
-$GNDMS_SOURCE/bin/gndms-jruby -S buildr $@
+$(dirname $0)/gndms-jruby -S buildr $@
 
