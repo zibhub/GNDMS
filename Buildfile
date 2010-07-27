@@ -30,6 +30,7 @@ include GNDMS
 
 # Test environment
 testEnv('GLOBUS_LOCATION', 'the root directory of Globus Toolkit 4.0.8')
+GNDMS_DB=[ ENV['GLOBUS_LOCATION'], 'etc', 'gndms_shared', 'db', 'gndms' ].join(File::SEPARATOR)
 DEPLOY_GAR=[ ENV['GLOBUS_LOCATION'], 'bin', 'globus-deploy-gar' ].join(File::SEPARATOR)
 testEnv('ANT_HOME', 'the root directory of Apache Ant')
 testEnv('JAVA_HOME', 'the root directory of J2SE')
@@ -38,6 +39,8 @@ JAVA_HOME = ENV['JAVA_HOME']
 SOURCE = '1.5'
 TARGET = '1.5'
 testEnv('GNDMS_SOURCE', 'the root directory of GNDMS source distribution (i.e. the toplevel directory in which the Buildfile resides)')
+testEnv('GNDMS_SHARED', '$GLOBUS_LOCATION/etc/gndms_shared')
+testEnv('GNDMS_MONI_CONFIG', '$GNDMS_SHARED/monitor.properties')
 testEnv('USER', 'your user\'s login (your UNIX is weird)')
 testTool('rsync')
 testTool('curl')
@@ -351,9 +354,12 @@ define 'gndms' do
 
     desc 'Peek into the gndms derby database'
     task 'derby-ij' do
-        GNDMS_DB=[ ENV['GLOBUS_LOCATION'], 'etc', 'gndms_shared', 'db', 'gndms' ].join(File::SEPARATOR)
         callIJ( GNDMS_DB, DB_DERBY )
     end
+end
+
+task 'kill-db' do
+		rm_rf GNDMS_DB
 end
 
 task 'inspect-db' => task('gndms:derby-ij') do
@@ -404,5 +410,10 @@ desc 'Do a full release build and deploy (execute as globus user)'
 task 'gndms-release' => ['gndms:update-release-info', 'rebuild', 'clean-services', 'clean'] do
 end
 
-# task 'pt-install' => ['package-stubs', 'install-deps', 'package-gars'] do
-# end
+task 'ptgrid-setupdb' do
+	system "#{ENV['GNDMS_SOURCE']}/scripts/ptgrid/setup-resource.sh CREATE"
+end
+
+task 'c3grid-dp-setupdb' do
+	system "#{ENV['GNDMS_SOURCE']}/scripts/c3grid/setup-dataprovider.sh CREATE"
+end

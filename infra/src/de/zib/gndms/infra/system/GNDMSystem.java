@@ -25,6 +25,7 @@ import org.apache.axis.message.addressing.ReferencePropertiesType;
 import org.apache.axis.types.URI;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.NDC;
 import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.impl.SimpleResourceKey;
 import org.globus.wsrf.jndi.Initializable;
@@ -934,11 +935,25 @@ public final class GNDMSystem
         return containerHome;
     }
 
-    public boolean isGridAdmin(final String dn) {
+    public boolean isGridAdmin(final String tag, final String dn) {
+        final boolean ret = isGridAdmin_(dn);
+        NDC.push(tag);
+        try {
+            if (ret)
+                logger.info("Authenticated Grid Admin " + dn);
+            else
+                logger.info("Denied Access to Non-Grid Admin " + dn);
+
+            return ret;
+        }
+        finally { NDC.pop(); }
+    }
+
+    private public boolean isGridAdmin_(final String dn) {
         // This only works on UNIX
         final File gridAdmins = new File(File.pathSeparator + "etc" + File.pathSeparatorChar + "grid-security" + File.pathSeparatorChar + getInstanceDir().getSubGridName() + "-support-staff");
 
-        if (! (gridAdmins.isFile() && gridAdmins.canRead()))
+        if (! (gridAdmins.isFile() && gridAdmins.exists() && gridAdmins.canRead()))
             return false;
 
         BufferedReader rd;
@@ -957,8 +972,6 @@ public final class GNDMSystem
                     if (trLine.equals(dn))
                         return true;
                 }
-
-
             }
             finally { rd.close(); }
         }

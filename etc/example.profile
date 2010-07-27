@@ -1,16 +1,21 @@
 # This has been written for bash
 
-export ANT_HOME=""
-export GLOBUS_LOCATION="/opt/gt-4.0.7"
-export DERBY_HOME=""
-export GROOVY_HOME=""
+# Top-level installation directory of globus toolkit 4.0.8
+export GLOBUS_LOCATION="/opt/gt-current"
+
+# Top-level distribution directory of GNDMS software
 export GNDMS_SOURCE=""
+
+# export JAVA_HOME=""
+# export ANT_HOME=""
 
 export GNDMS_SHARED="$GLOBUS_LOCATION/etc/gndms_shared"
 export GNDMS_MONI_CONFIG="$GNDMS_SHARED/monitor.properties"
 
-export PATH="$PATH:$ANT_HOME/bin:$DERBY_HOME/bin:$GROOVY_HOME/bin:$GNDMS_SOURCE/bin"
+export PATH="$PATH:$ANT_HOME/bin:$GNDMS_SOURCE/bin"
 
-source $GLOBUS_LOCATION/etc/globus-user-env.sh
-source $GLOBUS_LOCATION/etc/globus-devel-env.sh
+# You might want to source these
+#
+# source $GLOBUS_LOCATION/etc/globus-user-env.sh
+# source $GLOBUS_LOCATION/etc/globus-devel-env.sh
 

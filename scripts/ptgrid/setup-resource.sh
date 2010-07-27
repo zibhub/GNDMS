@@ -15,9 +15,9 @@ STAGING_AREA_PATH="/tmp/gndms"
 # URL to GridFTP Space
 STAGING_AREA_GSI_FTP_URL="gsiftp://$GRIDHOST""$STAGING_AREA_PATH"
 
-if [ "$MODE" == "CREATE" ]; then
-    createDMSDir $STAGING_AREA_PATH
-fi
+# if [ "$MODE" == "CREATE" ]; then
+#     createDMSDir $STAGING_AREA_PATH
+# fi
 
 # Do not edit below this line unless very sure ------------------------------------------------------------------------
 
