@@ -30,7 +30,7 @@ public class ReadContainerLogAction extends SystemAction implements PublicAccess
         final File logFile = getLogFile();
 
         final String dn = SecurityManager.getManager().getCaller();
-        if (! getSystem().isGridAdmin(dn))
+        if (! getSystem().isGridAdmin("ReadContainerLogAction", dn))
             throw new SecurityException("Authenticated user not allowed to access log files. DN was '" + dn + '\'');
         
         if (numLines == 0) {
