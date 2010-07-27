@@ -142,7 +142,7 @@ buildr locally, please
 * Install Ruby 1.8
 * Install buildr by executing `gem install buildr`
 
-This guide assumes that usage of the pre-packaged version of buildr.
+This guide assumes the usage of the pre-packaged version of buildr.
 
 
 
@@ -154,16 +154,17 @@ Installation and Deployment from Distribution Package
  prepared as described in the previous section.
  
  
-* Please enter `$GNDMS_SOURCE` and exeucte `gndms-buildr install-deps`
+* Please enter `$GNDMS_SOURCE` and exeucte `gndms-buildr installs`
     
-  This will download and install required software dependencies into
-  `$GLOBUS_LOCATION/lib`. Please consult
-  `$GNDMS_SOURCE/doc/licensing`for details on licensing conditions of
-  3rd party software components used by the GNDMS package.
+  This will 
   
-* Next, install the globus packages (gar-files)
-   
-       gndms-buildr deploy-services
+   * Download and install required software dependencies into
+     `$GLOBUS_LOCATION/lib`. 
+     
+     **Please consult `$GNDMS_SOURCE/doc/licensing` for details on licensing conditions of
+      3rd party software components used by the GNDMS package.**
+   * Build API Documentation (Javadocs) in `$GNDMS_SOURCE/doc/api`
+   * and finally install the globus packages (gar-files)
     
 * Restart the globus with `globus-start-container-detached` and check
  `$GLOBUS_LOCATION/var/container.log` If everything goes right and you
@@ -280,19 +281,34 @@ javadocs by executing
 #### Building Manually from Scratch
 
     gndms-buildr clean clean-services # Cleans everything
-    gndms-buildr gndms:model:compile  # Compile basic DAO classes
+    gndms-buildr gndms:model:package  # Compile basic DAO classes
     gndms-buildr package-stubs        # Compile service stubs
-    gndms-buildr package              # Compile GNDMS framework
+    gndms-buildr gndms:infra:package  # Compile GNDMS framework
+    globus-stop-container-detached    # Ensure globus is shutdown
     gndms-buildr install-deps         # Install dependencies
     gndms-buildr package-DSpace       # Compile DSpace service
     gndms-buildr deploy-DSpace        # Deploy DSpace
     gndms-buildr package-GORFX        # Compile GORFX service
     gndms-buildr deploy-GORFX         # Deploy GORFX
-    
-In order to get speedier builds, developers may set
+    globus-start-container-detached   # Restart globus
+    gndms-buildr gndms:gndmc:package  # Build client
+    gndms-buildr gndms:infra:doc      # Build Javadocs (gndms is excluded)
+   
+**NOTE** In order to get speedier builds, developers may set
 `$GNDMS_DEPS=link`. This will make `gndms-buildr install-deps` symlink
 dependencies to `$GLOBUS_LOCATION/lib` instead of copying them and
-therefore considerably eases trying out small changed to framework classes.    
+therefore considerably eases trying out small changes to framework
+classes.  However, when using this method, make sure that required
+symlinked jar files from `$HOME/.m2/repository` and
+`$GNDMS_SOURCE/lib`and `$GNDMS_SOURCE/extra` are not deleted
+accidentally and remain readable for the globus user.
+
+**NOTE** Once symlinks have been set up properly, developers may set
+`$GNDMS_DEPS=skip` to skip install-deps alltogether.
+
+**NOTE** To even setup symlinks for the service jars, use
+  the `gndms-buildr link-services`
+   
     
     
 #### Problem Shooting Tips for Development Builds
