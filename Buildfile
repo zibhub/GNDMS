@@ -314,6 +314,15 @@ define 'gndms' do
       }
     end
 
+    task 'link-services' do
+      SERVICES.each { |service| 
+        lcService = service.downcase
+        [ "gndms-#{lcService}-stubs.jar", "gndms-#{lcService}-common.jar", "gndms-#{lcService}-client.jar", "gndms-#{lcService}-tests.jar" ].each { |jar|
+          ln_sf(_('services', service, 'build', 'lib', jar), GT4LIB)
+        }        
+      }
+    end
+
     desc 'Create DSpace GAR for deployment (Requires packaged GNDMS and installed dependencies)'
     task 'package-DSpace' do
       system "cd '#{_('services', 'DSpace')}' && ant createDeploymentGar"
@@ -368,65 +377,48 @@ define 'gndms' do
     end
 end
 
+
+# Database stuff
+
 task 'kill-db' do
     rm_rf GNDMS_DB
 end
 
-task 'inspect-db' => task('gndms:derby-ij') do
+task 'inspect-db' => task('gndms:derby-ij') 
+
+
+# Nice toplevel targets that redirect to service targets
+
+task 'package-DSpace' => task('gndms:package-DSpace')
+task 'deploy-DSpace' => task('gndms:deploy-DSpace')
+task 'rebuild-DSpace' => task('gndms:rebuild-DSpace')
+
+task 'package-GORFX' => task('gndms:package-GORFX') 
+task 'deploy-GORFX' => task('gndms:deploy-GORFX') 
+task 'rebuild-GORFX' => task('gndms:rebuild-GORFX') 
+
+task 'clean-services' => task('gndms:clean-services')
+task 'package-stubs' => task('gndms:package-stubs')
+
+task 'rebuild-services' => [task('rebuild-DSpace'), task('rebuild-GORFX')] 
+task 'package-services' => [task('package-DSpace'), task('package-GORFX')] 
+task 'deploy-services' => [task('deploy-DSpace'), task('deploy-GORFX')] 
+task 'link-services' => task('gndms:link-services') 
+
+
+# Doc targets
+
+task('clean-apidocs') do
+    rm_rf [ENV['GNDMS_SOURCE'], 'doc', 'api'].join(File::SEPARATOR)
 end
 
-task 'clean-services' => task('gndms:clean-services') do
+task('compile-apidocs') do
+    task('gndms:infra:doc').invoke
 end
 
-task 'package-stubs' => task('gndms:package-stubs') do
-end
+task :apidocs => task('compile-apidocs')
 
-desc 'Install missing dependencies (execute as globus user)'
-task 'install-deps' => task('gndms:infra:install-deps') do
-end
-
-task 'package-DSpace' => task('gndms:package-DSpace') do
-end
-
-task 'deploy-DSpace' => task('gndms:deploy-DSpace') do
-end
-
-task 'rebuild-DSpace' => task('gndms:rebuild-DSpace') do
-end
-
-task 'package-GORFX' => task('gndms:package-GORFX') do
-end
-
-task 'deploy-GORFX' => task('gndms:deploy-GORFX') do
-end
-
-task 'rebuild-GORFX' => task('gndms:rebuild-GORFX') do
-end
-
-task 'package-services' => [task('package-DSpace'), task('package-GORFX')] do
-end
-
-task 'deploy-services' => [task('deploy-DSpace'), task('deploy-GORFX')] do
-end
-
-task 'rebuild-services' => [task('rebuild-DSpace'), task('rebuild-GORFX')] do
-end
-
-desc 'Do a full rebuild'
-task 'rebuild' => ['clean', 'clean-services', 'gndms:stuff:package', 'package-stubs', 'gndms:infra:package', 'install-deps', 'package-services', 'gndms:gndmc:package'] do
-end
-
-desc 'Do a full rebuild and deploy (execute as globus user)'
-task 'redeploy' => ['clean', 'clean-services', 'gndms:stuff:package', 'package-stubs', 'gndms:infra:package', 'install-deps', 'package-DSpace', 'deploy-DSpace', 'package-GORFX', 'deploy-GORFX', 'gndms:gndmc:package'] do
-end
-
-desc 'Do a full release build and deploy (execute as globus user)'
-task 'release' => ['gndms:update-release-info', 'redeploy', 'clean', 'clean-services' ] do
-end
-
-desc 'Install and deploy a release build'
-task 'install' => ['install-deps', 'gndms:infra:doc', 'deploy-DSpace', 'deploy-GORFX'] do
-end
+# Per-Grid Targets
 
 task 'ptgrid-setupdb' do
     system "#{ENV['GNDMS_SOURCE']}/scripts/ptgrid/setup-resource.sh CREATE"
@@ -436,9 +428,30 @@ task 'c3grid-dp-setupdb' do
     system "#{ENV['GNDMS_SOURCE']}/scripts/c3grid/setup-dataprovider.sh CREATE"
 end
 
+
+# Main targets
+
+desc 'Install missing dependencies (execute as globus user)'
+task 'install-deps' => task('gndms:infra:install-deps')
+
+desc 'Do a full rebuild'
+task 'rebuild' => ['clean', 'clean-services', 'gndms:stuff:package', 'package-stubs', 'gndms:infra:package', 'install-deps', 'package-services', 'gndms:gndmc:package']
+
+desc 'Do a full rebuild and deploy (execute as globus user)'
+task 'redeploy' => ['clean', 'clean-services', 'gndms:stuff:package', 'package-stubs', 'gndms:infra:package', 'install-deps', 'package-DSpace', 'deploy-DSpace', 'package-GORFX', 'deploy-GORFX', 'gndms:gndmc:package'] do
+end
+
+desc 'Do a full release build and deploy (execute as globus user)'
+task 'release' => ['gndms:update-release-info', 'redeploy', 'clean', 'clean-services' ]
+
+desc 'Install and deploy a release build'
+task 'install' => ['install-deps', 'gndms:infra:doc', 'deploy-DSpace', 'deploy-GORFX']
+
 Rake::Task[:default].prerequisites.clear
 task :default do
-    puts ''
-    puts 'Please consult the documentation on how to build, install, and deploy this software.  It is considerably easy, but not straightforward.'
-    puts ''
+     puts ''
+     puts 'Please read the documentation on how to build, install, and deploy this software.  It is considerably easy, but not straightforward.'
+     puts ''
 end
+
+
