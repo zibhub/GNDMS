@@ -1,14 +1,13 @@
 package de.zib.gndms.gritserv.tests;
 
 import de.zib.gndms.gritserv.delegation.DelegationAux;
-import de.zib.gndms.gritserv.delegation.MyUUDecoder;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.globus.wsrf.encoding.ObjectDeserializer;
 import org.globus.wsrf.encoding.ObjectSerializer;
 import org.xml.sax.InputSource;
-import sun.misc.UUEncoder;
 import types.ContextT;
 import types.ContextTEntry;
+import org.apache.commons.codec.binary.Base64;
 
 import javax.xml.namespace.QName;
 import java.io.*;
@@ -62,12 +61,12 @@ public class EncTest {
         String sepr =  ObjectSerializer.toString( epr , QNAME );
         System.out.println( sepr );
         oos.writeObject( sepr );
-        UUEncoder enc = new UUEncoder( );
-        String uuepr = enc.encode( bse.toByteArray() );
+
+				Base64 b64 = new Base64(0, new byte[] { }, true);
+        String uuepr = b64.encodeToString( bse.toByteArray() );
         System.out.println( "uuepr: \"" + uuepr+ "\"" );
 
-        MyUUDecoder dec = new MyUUDecoder();
-        byte[] bt = dec.decodeBuffer( uuepr );
+        byte[] bt = b64.decode(uuepr.getBytes());
 
         ByteArrayInputStream bis = new ByteArrayInputStream( bt );
         ObjectInputStream ois = new ObjectInputStream( bis );
