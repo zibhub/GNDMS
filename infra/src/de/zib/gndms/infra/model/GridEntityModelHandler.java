@@ -219,8 +219,8 @@ public class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceH
 
 	public @NotNull EntityUpdateListener<GridResource> getEntityUpdateListener() {
         // TODO: Uh-Oh
-	 	// return DelegatingEntityUpdateListener.getInstance(GNDMSBinding.getInjector().getInstance(GNDMSystem.class));
-        return null;
+	 	return DelegatingEntityUpdateListener.getInstance(GNDMSBinding.getInjector().getInstance(GNDMSystem.class));
+        // return null;
 	}
 
     protected <B> B txRun(final EntityManager emParam, final @NotNull Function<EntityManager, B> block) {
