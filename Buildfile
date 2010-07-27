@@ -88,7 +88,7 @@ COMMONS_COLLECTIONS = transitive(['commons-collections:commons-collections:jar:3
 COMMONS_CODEC = 'commons-codec:commons-codec:jar:1.4'
 COMMONS_LANG = 'commons-lang:commons-lang:jar:2.1'
 COMMONS_FILEUPLOAD = transitive(['commons-fileupload:commons-fileupload:jar:1.2.1'])
-JETTY = ['jetty:jetty:jar:6.0.2', 'jetty:jetty-util:jar:6.0.2']
+JETTY = ['org.mortbay.jetty:jetty:jar:6.1.11', 'org.mortbay.jetty:jetty-util:jar:6.1.11']
 GROOVY = ['org.codehaus.groovy:groovy:jar:1.6.9']
 ARGS4J = 'args4j:args4j:jar:2.0.14'
 # TESTNG = download(artifact('org.testng:testng:jar:5.1-jdk15') => 'http://static.appfuse.org/repository/org/testng/testng/5.1/testng-5.1-jdk15.jar')
@@ -434,4 +434,11 @@ end
 
 task 'c3grid-dp-setupdb' do
     system "#{ENV['GNDMS_SOURCE']}/scripts/c3grid/setup-dataprovider.sh CREATE"
+end
+
+Rake::Task[:default].prerequisites.clear
+task :default do
+    puts ''
+    puts 'Please consult the documentation on how to build, install, and deploy this software.  It is considerably easy, but not straightforward.'
+    puts ''
 end
