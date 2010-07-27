@@ -113,7 +113,7 @@ public abstract class OfferResourceBase extends ReflectionResource implements Re
 	}
 	
 	public void setOfferExecutionContract(types.OfferExecutionContractT offerExecutionContract ) throws ResourceException {
-        ResourceProperty prop = getResourcePropertySet().get( de.zib.gndmc.GORFX.constants.OfferConstants.OFFEREXECUTIONCONTRACT);
+        ResourceProperty prop = getResourcePropertySet().get( de.zib.gndms.GORFX.offer.common.OfferConstants.OFFEREXECUTIONCONTRACT);
 		prop.set(0, offerExecutionContract);
 	}
 	
@@ -124,7 +124,7 @@ public abstract class OfferResourceBase extends ReflectionResource implements Re
 	}
 	
 	public void setOfferRequestArguments(types.DynamicOfferDataSeqT offerRequestArguments ) throws ResourceException {
-        ResourceProperty prop = getResourcePropertySet().get( de.zib.gndmc.GORFX.constants.OfferConstants.OFFERREQUESTARGUMENTS);
+        ResourceProperty prop = getResourcePropertySet().get( de.zib.gndms.GORFX.offer.common.OfferConstants.OFFERREQUESTARGUMENTS);
 		prop.set(0, offerRequestArguments);
 	}
 	

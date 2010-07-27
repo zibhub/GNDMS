@@ -1,6 +1,6 @@
 package de.zib.gndms.GORFX.offer.service.globus.resource;
 
-import de.zib.gndmc.GORFX.constants.OfferConstants;
+import de.zib.gndms.GORFX.offer.common.OfferConstants;
 import de.zib.gndms.GORFX.offer.stubs.OfferResourceProperties;
 
 import org.globus.wsrf.ResourceException;

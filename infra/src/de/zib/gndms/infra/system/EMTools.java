@@ -50,7 +50,9 @@ final public class EMTools {
      * @param em EntityManager em the entity manager to be used
      * @param closeEM wether em should be closed finally
      * @param block the Closure to be executed
+     * @return Result of executing block in transaction context
      */
+    @SuppressWarnings({"ThrowFromFinallyBlock"})
     public static <T> T txRun(final @NotNull EntityManager em, boolean closeEM,
                               final @NotNull Function<EntityManager, T> block) {
         final EntityTransaction tx = em.getTransaction();
@@ -80,16 +82,17 @@ final public class EMTools {
             // so wrap in finally
             try {
                 if (closeEM && em.isOpen()) em.close();
-            } catch ( RuntimeException e ) {
+            }
+            catch ( RuntimeException e ) {
                 if( ex != null )
                     throw new FinallyException( "From finally", ex, e );
                 else
                     throw e;
             }
-            if( ex != null )
-                throw ex;
         }
-        return null; // unreachable, but the compiler does complain 
+        if( ex != null )
+            throw ex;
+        throw new IllegalStateException("Supposedly Unreachable");
     }
 
     // TODO: Integrate this with GridEntityModelHandler, requires better exception handling in AbstractEntityModelAction

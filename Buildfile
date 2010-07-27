@@ -286,22 +286,12 @@ define 'gndms' do
 
       desc 'Install dependencies to $GLOBUS_LOCATION/lib (execute as globus user)'
       task 'install-deps' => task('package') do
-				if (ENV['GNDMS_DEPS'] != 'skip') then
+	if (ENV['GNDMS_DEPS'] != 'skip') then
         	installDeps(ENV['GNDMS_DEPS']!='link')
-				end
+	end
       end
 
     end
-
-
-    desc 'Miscellaneous clients for the GNDMS services'
-    define 'gndmc', :layout => dmsLayout('gndmc', 'gndms-gndmc') do
-      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gritserv'), project('kit'), project('stuff'), project('model'), ARGS4J, SERVICE_STUBS, GORFX_CLIENT, DSPACE_CLIENT, JODA_TIME, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, EXTRA_JARS, TestNG.dependencies
-      compile
-      package :jar
-
-    end
-
 
 
     desc 'rsync type schemata between services and types'
@@ -336,7 +326,14 @@ define 'gndms' do
     end
 
     task 'rebuild-DSpace' => [task('package-DSpace'), task('deploy-DSpace')] do
+      system "cd '#{_('services', 'DSpace')}' && ant jars"
     end
+
+    # file DSPACE_STUBS.to_s => task('gndms:package-stubs') do end
+    # file DSPACE_COMMON.to_s => task('gndms:rebuild-DSpace') do end
+    # file DSPACE_CLIENT.to_s => task('gndms:rebuild-DSpace') do end
+    # file DSPACE_SERVICE.to_s => task('gndms:rebuild-DSpace') do end
+    # file DSPACE_TESTS.to_s => task('gndms:rebuild-DSpace') do end
 
     desc 'Create GORFX GAR for deployment (Requires packaged GNDMS and installed dependencies)'
     task 'package-GORFX' do
@@ -349,17 +346,30 @@ define 'gndms' do
       system "#{DEPLOY_GAR} '#{_('services', 'GORFX', 'gndms_GORFX.gar')}'"
     end
 
-    task 'rebuild-GORFX' => [task('package-GORFX'), task('deploy-GORFX')] do
+    task 'rebuild-GORFX' do
+      system "cd '#{_('services', 'GORFX')}' && ant jars"
     end
+
+    # file GORFX_STUBS.to_s => task('gndms:package-stubs') do end
+    # file GORFX_COMMON.to_s => task('gndms:rebuild-GORFX') do end
+    # file GORFX_CLIENT.to_s => task('gndms:rebuild-GORFX') do end
+    # file GORFX_SERVICE.to_s => task('gndms:rebuild-GORFX') do end
+    # file GORFX_TESTS.to_s => task('gndms:rebuild-GORFX') do end
 
     desc 'Peek into the gndms derby database'
     task 'derby-ij' do
         callIJ( GNDMS_DB, DB_DERBY )
     end
+
+    define 'gndmc', :layout => dmsLayout('gndmc', 'gndms-gndmc') do
+      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gndms:gritserv'), project('gndms:kit'), project('gndms:stuff'), project('gndms:model'), ARGS4J, SERVICE_STUBS, GORFX_CLIENT, DSPACE_CLIENT, JODA_TIME, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, EXTRA_JARS, TestNG.dependencies
+      compile
+      package :jar
+    end
 end
 
 task 'kill-db' do
-		rm_rf GNDMS_DB
+    rm_rf GNDMS_DB
 end
 
 task 'inspect-db' => task('gndms:derby-ij') do
@@ -402,18 +412,26 @@ end
 task 'rebuild-services' => [task('rebuild-DSpace'), task('rebuild-GORFX')] do
 end
 
+desc 'Do a full rebuild'
+task 'rebuild' => ['clean', 'clean-services', 'gndms:stuff:package', 'package-stubs', 'gndms:infra:package', 'install-deps', 'package-services', 'gndms:gndmc:package'] do
+end
+
 desc 'Do a full rebuild and deploy (execute as globus user)'
-task 'rebuild' => ['clean', 'clean-services', 'gndms:model:package', 'package-stubs', 'package', 'install-deps', 'rebuild-services'] do
+task 'redeploy' => ['clean', 'clean-services', 'gndms:stuff:package', 'package-stubs', 'gndms:infra:package', 'install-deps', 'package-DSpace', 'deploy-DSpace', 'package-GORFX', 'deploy-GORFX', 'gndms:gndmc:package'] do
 end
 
 desc 'Do a full release build and deploy (execute as globus user)'
-task 'gndms-release' => ['gndms:update-release-info', 'rebuild', 'clean-services', 'clean'] do
+task 'release' => ['gndms:update-release-info', 'redeploy', 'clean', 'clean-services' ] do
+end
+
+desc 'Install and deploy a release build'
+task 'install' => ['install-deps', 'gndms:infra:doc', 'deploy-DSpace', 'deploy-GORFX'] do
 end
 
 task 'ptgrid-setupdb' do
-	system "#{ENV['GNDMS_SOURCE']}/scripts/ptgrid/setup-resource.sh CREATE"
+    system "#{ENV['GNDMS_SOURCE']}/scripts/ptgrid/setup-resource.sh CREATE"
 end
 
 task 'c3grid-dp-setupdb' do
-	system "#{ENV['GNDMS_SOURCE']}/scripts/c3grid/setup-dataprovider.sh CREATE"
+    system "#{ENV['GNDMS_SOURCE']}/scripts/c3grid/setup-dataprovider.sh CREATE"
 end

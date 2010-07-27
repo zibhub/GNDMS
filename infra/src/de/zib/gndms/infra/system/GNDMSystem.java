@@ -949,16 +949,25 @@ public final class GNDMSystem
         finally { NDC.pop(); }
     }
 
-    private public boolean isGridAdmin_(final String dn) {
+    private boolean isGridAdmin_(final String dn) {
         // This only works on UNIX
-        final File gridAdmins = new File(File.pathSeparator + "etc" + File.pathSeparatorChar + "grid-security" + File.pathSeparatorChar + getInstanceDir().getSubGridName() + "-support-staff");
+        for (final File gridAdminFile : new File[] {
+                new File(File.pathSeparator + "etc" + File.pathSeparatorChar + "grid-security" + File.pathSeparatorChar + getInstanceDir().getSubGridName() + "-support-staff"),
+                new File(getSharedDir(), getInstanceDir().getSubGridName() + "-support-staff")
+        })
+            if (isDNInFile(dn, gridAdminFile))
+                return true;
 
-        if (! (gridAdmins.isFile() && gridAdmins.exists() && gridAdmins.canRead()))
+        return false;
+    }
+
+    private boolean isDNInFile(final String dn, final File file) {
+        if (! (file.isFile() && file.exists() && file.canRead()))
             return false;
 
         BufferedReader rd;
         try {
-            rd = new BufferedReader(new FileReader(gridAdmins.getName()));
+            rd = new BufferedReader(new FileReader(file.getName()));
             try {
                 String line;
 
@@ -981,7 +990,6 @@ public final class GNDMSystem
 
         return false;
     }
-
     /*
     public NetworkAuxiliariesProvider getNetAux( ) {
 
