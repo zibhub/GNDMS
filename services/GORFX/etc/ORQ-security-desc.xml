@@ -45,5 +45,5 @@
       </run-as> 
   </method>
    <authz value="gridmap"/>
-   <gridmap value="etc/gndms_shared/grid-mapfile"/>
+   <gridmap value="/etc/grid-security/grid-mapfile"/>
 </securityConfig>

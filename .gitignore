@@ -35,6 +35,7 @@ ws-common/gndms-ws-common/production/**
 ws-common/gndms-ws-common/test/**
 gritserv/gndms-gritserv/production/**
 gritserv/gndms-gritserv/test/**
+gndmc/gndms-gndmc/production/**
 .classpath
 .project
 test-output/**

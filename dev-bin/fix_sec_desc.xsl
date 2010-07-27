@@ -6,7 +6,8 @@
 <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
 
 <!-- the location of the gridmap file for all gndms-c3grid services-->
-<xsl:variable name="GRID_MAP_PATH">etc/gndms_shared/grid-mapfile</xsl:variable>
+<!--xsl:variable name="GRID_MAP_PATH">etc/gndms_shared/grid-mapfile</xsl:variable-->
+<xsl:variable name="GRID_MAP_PATH">/etc/grid-security/grid-mapfile</xsl:variable>
 
 
 <xsl:template match="/">

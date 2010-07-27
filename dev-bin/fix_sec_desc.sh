@@ -13,7 +13,7 @@ XSLT_FILE=$(dirname $0)/fix_sec_desc.xsl
 
 run_saxon() {
 
-    java -jar $GNDMS_SOURCE/extra/tools-lib/saxon9.jar -s:$1 \
+    java -jar $GNDMS_SOURCE/extra/saxon9.jar -s:$1 \
     -xsl:$XSLT_FILE -o:$2
 }
 

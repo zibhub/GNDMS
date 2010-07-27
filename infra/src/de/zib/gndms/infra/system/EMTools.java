@@ -1,14 +1,12 @@
 package de.zib.gndms.infra.system;
 
 import com.google.common.base.Function;
-import org.apache.log4j.Logger;
+import de.zib.gndms.stuff.exception.FinallyException;
 import org.globus.wsrf.ResourceException;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-
-import de.zib.gndms.stuff.exception.FinallyException;
 
 /**
  * Helper code for executing jpa transactions in groovy
@@ -55,40 +53,43 @@ final public class EMTools {
      */
     public static <T> T txRun(final @NotNull EntityManager em, boolean closeEM,
                               final @NotNull Function<EntityManager, T> block) {
-            final EntityTransaction tx = em.getTransaction();
-            final boolean isNewTx = ! tx.isActive();
+        final EntityTransaction tx = em.getTransaction();
+        final boolean isNewTx = ! tx.isActive();
 
-            final T result;
-            RuntimeException ex = null;
+        final T result;
+        RuntimeException ex = null;
+        try {
+            if (isNewTx) {
+                tx.begin();
+                result = block.apply(em);
+                tx.commit();
+            }
+            else
+                result = block.apply(em);
+            return result;
+        }
+        catch (TxSafeRuntimeException re) {
+            ex = new RuntimeException( re );
+        }
+        catch (RuntimeException re) {
+            if (tx.isActive()) tx.rollback();
+            ex = re;
+        }
+        finally {
+            // w/o try catch this often shadows above exceptions
+            // so wrap in finally
             try {
-                    if (isNewTx) {
-                            tx.begin();
-                            result = block.apply(em);
-                            tx.commit();
-                    }
-                    else
-                            result = block.apply(em);
-                    return result;
+                if (closeEM && em.isOpen()) em.close();
+            } catch ( RuntimeException e ) {
+                if( ex != null )
+                    throw new FinallyException( "From finally", ex, e );
+                else
+                    throw e;
             }
-            catch (TxSafeRuntimeException re) {
-                    ex = new RuntimeException( re );
-            }
-            catch (RuntimeException re) {
-                    if (tx.isActive()) tx.rollback();
-                    ex = re;
-            }
-            finally {
-                // w/o try catch this often shadows above exceptions
-                // so wrap in finally
-                try {
-                    if (closeEM && em.isOpen()) em.close();
-                } catch ( RuntimeException e ) {
-                    if( ex != null )
-                        throw new FinallyException( "From finally", ex, e );
-                    else
-                        throw e;
-                }
-            }
+            if( ex != null )
+                throw ex;
+        }
+        return null; // unreachable, but the compiler does complain 
     }
 
     // TODO: Integrate this with GridEntityModelHandler, requires better exception handling in AbstractEntityModelAction

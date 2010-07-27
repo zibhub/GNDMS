@@ -8,6 +8,7 @@ import de.zib.gndms.dspace.slice.client.SliceClient;
 import de.zib.gndms.dspace.subspace.client.SubspaceClient;
 import de.zib.gndms.gritserv.delegation.DelegationAux;
 import de.zib.gndms.kit.application.AbstractApplication;
+import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.stuff.exception.FinallyException;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.addressing.EndpointReferenceType;
@@ -17,7 +18,6 @@ import org.kohsuke.args4j.Option;
 import types.ContextT;
 import types.FileTransferResultT;
 
-import javax.xml.namespace.QName;
 import java.io.*;
 import java.rmi.RemoteException;
 import java.util.Calendar;
@@ -113,25 +113,32 @@ public class SliceInOutClient {
     public SliceClient createSlice( ) throws URI.MalformedURIException, RemoteException {
 
         Calendar tt = new GregorianCalendar( );
-        tt.add( Calendar.YEAR, 20 );
-        long ssize = (long) (20 * 1024 * Math.pow( 10, 3 ));
+        if( creationBean.hasLifeSpan( ) )
+            tt.add( Calendar.MINUTE, (int) creationBean.getLifeSpan() );
+        else
+            tt.add( Calendar.MINUTE, 20 );
+        long ssize;
+        if( creationBean.hasSize() )
+            ssize = creationBean.getSize();
+        else
+            ssize = (long) (20 * 1024 * Math.pow( 10, 3 ));
         return createSlice( tt, ssize );
     }
 
 
     public SliceClient createSlice( Calendar tt, long ssize ) throws URI.MalformedURIException, RemoteException {
 
-        return subSpaceClient.createSlice( getSliceKindURI(), tt, ssize );
+        return getSubSpaceClient().createSlice( getSliceKindURI(), tt, ssize );
     }
 
 
     public SubspaceClient getSubSpaceClient() throws URI.MalformedURIException, RemoteException {
 
         if( subSpaceClient == null  ) {
-            if( getSubSpaceQName() == null || getSubSpaceQName().trim().equals( "" ) )
+            if( getSubSpaceQName() == null )
                 throw new IllegalStateException( "SubSpace URI is required" );
 
-            subSpaceClient =  getDSpaceClient().findSubspace( new QName( getSubSpaceQName() ) );
+            subSpaceClient =  getDSpaceClient().findSubspace( getSubSpaceQName() );
 
         }
         return subSpaceClient;
@@ -152,7 +159,7 @@ public class SliceInOutClient {
 
 
     public String queryDMSVersion ( ) throws URI.MalformedURIException, RemoteException {
-        return (String) getDSpaceClient().callMaintenanceAction( ".sys.ReadGNDMSVersion", null );
+        return (String) getDSpaceClient().callMaintenanceAction( ".sys.ReadGNDMSVersion ", null );
     }
 
     public void destroySlice( SliceClient sl ) throws RemoteException {
@@ -235,8 +242,8 @@ public class SliceInOutClient {
     }
 
 
-    public String getSubSpaceQName() {
-        return creationBean.getSubSpaceQName();
+    public ImmutableScopedName getSubSpaceQName() {
+        return creationBean.getSubSpaceScopedName();
     }
 
 
@@ -303,13 +310,10 @@ public class SliceInOutClient {
                 (new SliceCreationBean() ).createExampleProperties( prop );
                 (new FileTransferBean() ).createExampleProperties( prop );
                 storeProperties( prop, props );
-            } else
-            System.out.println( "example is " + example );
-
-            /*
-            SliceInOutClient c = new SliceInOutClient( args[0] );
-            c.run();
-            */
+            } else {
+                SliceInOutClient c = new SliceInOutClient( props );
+                c.run();
+            }
         }
 
 

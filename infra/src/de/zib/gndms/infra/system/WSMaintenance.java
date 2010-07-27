@@ -52,8 +52,15 @@ public class WSMaintenance {
 
         // remove classname from string:
         final int idx = action.indexOf( ' ' );
-        final String cn = action.substring( 0, idx ).trim();
-        final String parms = action.substring( idx ).trim();
+        String cn, parms;
+        if( idx > 0 ) {
+            cn = action.substring( 0, idx ).trim();
+            parms = action.substring( idx ).trim();
+        } else  {
+            cn = action;
+            parms = "";
+        }
+
 
         ByteArrayOutputStream os = new ByteArrayOutputStream( );
         PrintWriter printer = new PrintWriter( os );

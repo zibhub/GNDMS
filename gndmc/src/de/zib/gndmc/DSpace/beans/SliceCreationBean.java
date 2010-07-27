@@ -16,8 +16,8 @@ public class SliceCreationBean extends SubSpaceBean {
 
 
     private String sliceKindURI;
-    private long size;
-    private long lifeSpan; //lifetime in minutes
+    private Long size;
+    private Long lifeSpan; //lifetime in minutes
 
 
     public String getSliceKindURI() {
@@ -65,9 +65,20 @@ public class SliceCreationBean extends SubSpaceBean {
 
         sliceKindURI = prop.getProperty( SLICE_KIND_URI_KEY );
         if( prop.contains( SIZE_KEY ) )
-            size = Integer.parseInt( prop.getProperty( SIZE_KEY ) );
+            size = Math.abs( Long.parseLong( prop.getProperty( SIZE_KEY ) ) );
         if( prop.contains( LIFE_SPAN_KEY ) )
-            lifeSpan = Integer.parseInt( prop.getProperty( LIFE_SPAN_KEY ) );
+            lifeSpan = Math.abs( Long.parseLong( prop.getProperty( LIFE_SPAN_KEY ) ) );
     }
 
+
+    public boolean hasLifeSpan() {
+
+        return lifeSpan != null && lifeSpan != 0;
+    }
+
+
+    public boolean hasSize( ) {
+
+        return size != null && size != 0;
+    }
 }
