@@ -65,22 +65,26 @@ The security descriptor (Short: **SD**) describes authentication and
 authorization requirements of clients and WSRF web services. The **SD** of
 a service is configured in the `service` section of the WSDD file.
 
-    <?xml version="1.0" encoding="UTF-8"?>
-    <deployment .... >
-        <service .... >
+{% highlight xml %}
+   <?xml version="1.0" encoding="UTF-8"?>
+    <deployment>
+        <service>
              <parameter name="securityDescriptor" value="etc/*-security-desc.xml" /> 
-        </service .... >
-    </deployment .... >
+        </service>
+    </deployment>
+{% endhighlight %}
       
-(Here `*`refers to the service name and pathes are relative to `$GLOBUS_LOCATION`)
+(Here `*` refers to the service name and pathes are relative to `$GLOBUS_LOCATION`)
  
 Client security descriptors are loaded directly in the client software:
  
+{% highlight java %} 
     // Client security descriptor file 
     String CLIENT_DESC = ".../client-security-config.xml";
     ClientSecurityDescriptor desc = new ClientSecurityDescriptor( CLIENT_DESC );
     //Set descriptor on Stub 
     ( (Stub)port )._setProperty( Constants.CLIENT_DESCRIPTOR, desc )
+{% endhighlight %}    
       
 For more details, please consult the
 [documentation on security descriptors](http://www.globus.org/toolkit/docs/development/4.1.2/security/security-secdesc.html).
@@ -90,6 +94,7 @@ For more details, please consult the
 
 The following **SD** example shows how mandatory TLS encryption is enforced:
 
+{% highlight xml %}
     <?xml version="1.0" encoding="UTF-8"?>
     <securityConfig xmlns="http://www.globus.org">
     ...
@@ -101,35 +106,37 @@ The following **SD** example shows how mandatory TLS encryption is enforced:
             </GSITransport>
         </auth-method>
     </securityConfig>
+{% endhighlight %}
 	
 This setting must be made both on the server and the client.
 
 For authorization, a gridmap file needs to be set:
 
-    ...
+{% highlight xml %}
     <authz value="gridmap" />
-    ...
+{% endhighlight %}
 
 This enables use of the system wide gridmap-file.  To use a service
 specific gridmap file, please add:
 
-    ...
+{% highlight xml %}
     <gridmap value="etc/gndms_shared/grid-mapfile" />
-    ...	
+{% endhighlight %}
 
 Finally, it is necessary to configure (unless you are using JAAS):
 
 
-    ...
+{% highlight xml %}
     <run-as>
        <system-identity />
     </run-as>
-    ...
+{% endhighlight %}
       
       
 Below is a complete example:
 
 
+{% highlight xml %}
     <?xml version="1.0" encoding="UTF-8"?>
     <securityConfig xmlns="http://www.globus.org">
         <authz value="gridmap" />
@@ -145,6 +152,7 @@ Below is a complete example:
             <system-identity />
         </run-as>
     </securityConfig>      
+{% endhighlight %}
 
 
 ### Client-Side Delegation
@@ -156,7 +164,8 @@ the delegation service in order to obtain an EPR for the proxy. This
 EPR may be passed when accessing resources directly or is sent to
 factory methods during resource instantiation.
 
-    // path to the file containing the proxy cert
+{% highlight java %}
+   // path to the file containing the proxy cert
     String proxyFile = ...;
  
     // uri of the delegation service
@@ -172,15 +181,19 @@ factory methods during resource instantiation.
     // This descriptor is not the same we use to communicate with
     // the actual service
     ClientSecurityDescriptor desc = new ClientSecurityDescriptor();
-    org.ietf.jgss.GSSCredential gss = new org.globus.gsi.gssapi.GlobusGSSCredentialImpl( credential, org.ietf.jgss.GSSCredential.INITIATE_AND_ACCEPT );
+    org.ietf.jgss.GSSCredential gss = 
+        new org.globus.gsi.gssapi.GlobusGSSCredentialImpl( credential, 
+	   org.ietf.jgss.GSSCredential.INITIATE_AND_ACCEPT );
     desc.setGSSCredential( gss );
-    EndpointReferenceType delegEpr = AddressingUtils.createEndpointReference( delUri, null );
+    EndpointReferenceType delegEpr = 
+        AddressingUtils.createEndpointReference( delUri, null );
     desc.setGSITransport( (Integer) Constants.SIGNATURE );
     Util.registerTransport();
     desc.setAuthz( NoAuthorization.getInstance() );
  
     // acquire cert chain 
-    X509Certificate[] certs = DelegationUtil.getCertificateChainRP( delegEpr, desc );
+    X509Certificate[] certs = 
+        DelegationUtil.getCertificateChainRP( delegEpr, desc );
  
     if( certs == null  )
          throw new Exception( "No Certs received" );
@@ -188,13 +201,18 @@ factory methods during resource instantiation.
     // create delegate
     int ttl = 600; // a time to life for the proxy in seconds 
     // the boolean value can be ignored
-    EndpointReferenceType delegate = DelegationUtil.delegate( delUri, credential, certs[0], ttl, true, desc );
+    EndpointReferenceType delegate = 
+        DelegationUtil.delegate( delUri, credential, certs[0], ttl, true, desc );
  
     // reuse credentials for this call
-    ( (Stub) port )._setProperty( org.globus.axis.gsi.GSIConstants.GSI_CREDENTIALS, gss ); 
+    ( (Stub) port )._setProperty( 
+        org.globus.axis.gsi.GSIConstants.GSI_CREDENTIALS, gss ); 
  
     // creates a new resource which uses the delegate, i.e. proxy cert
-    EndpointReferenceType epr = ( (SomePortType) port ).createResource( delegate );
+    EndpointReferenceType epr = 
+        ( (SomePortType) port ).createResource( delegate );
+{% endhighlight %}
+
 
 
 ### Server-Side Delegation
@@ -205,15 +223,18 @@ registered to be informed about proxy state changes (Update, Destroy).
 
 Example service factory method that instantiates a resource:
 
+{% highlight java %}
     public EndpointReferenceType createResource ( EndpointReferenceType delegate ) {
         SomeResource sr = new SomeResource( );
         sr.setDelegationEPR( delegate );
         ...
         return endPointRefOf( sr );
     }
+{% endhighlight %}
 
 The resource needs to be modified accordingly as well:
 
+{% highlight java %}
     public class SomeResource implements Resource {
  
         SomeResourceHome home;
@@ -236,7 +257,8 @@ The resource needs to be modified accordingly as well:
 
         public void setDelegateEPR( final EndpointReferenceType epr ) {
  
-            SomeDelegationListener list = new SomeDelegationListener( getResourceKey(), home );
+            SomeDelegationListener list = 
+	        new SomeDelegationListener( getResourceKey(), home );
             try {
                 // registers listener with the delegation service
                 DelegationUtil.registerDelegationListener( epr, list );
@@ -247,10 +269,12 @@ The resource needs to be modified accordingly as well:
  
         // other service specific stuff here ...
      }
+{% endhighlight %}
 
 The container will be calling `get/setCredential` on the listener
 interface.  A simple default implementation follows:
 
+{% highlight java %}
     public class SomeDelegationListener implements DelegationListener {
  
         private static Logger logger = Logger.getLogger( SomeDelegationListener.class );
@@ -263,16 +287,19 @@ interface.  A simple default implementation follows:
         }
  
  
-        public SomeDelegationListener( final ResourceKey resourceKey, final ResourceHome home ) {
+        public SomeDelegationListener( final ResourceKey resourceKey, 
+	final ResourceHome home ) {
             this.resourceKey = resourceKey;
             this.home = home;
         }
  
  
-        public void setCredential( final GlobusCredential credential ) throws DelegationException {
+        public void setCredential( final GlobusCredential credential )
+	throws DelegationException {
  
              try {
-               SomeCredibleResource res = ( SomeCredibleResource ) home.find( resourceKey );
+               SomeCredibleResource res = 
+	           ( SomeCredibleResource ) home.find( resourceKey );
                res.setCredential( credential );
              } catch ( ResourceException e ) {
                logger.error( e );
@@ -287,6 +314,7 @@ interface.  A simple default implementation follows:
         // getters and setters for the instance vars are omitted for the sake of shortness
         // ....
     }
+{% endhighlight %}
 
 The `setCredential` method will be called at listener registration
 time.
@@ -308,39 +336,49 @@ is a client of `AnotherService`.  In the following example
 `AnotherService` is called by `SomeService` with the proxy credentials
 by first loading them into the `ClientDescriptor`:
 
+{% highlight java %}
     AnotherPortType port = ...;
         ( (Stub) port )._setProperty( org.globus.wsrf.security.Constants.GSI_TRANSPORT,
                             org.globus.wsrf.security.Constants.ENCRYPTION );
                 // SIGNATUR should also work
-        org.ietf.jgss.GSSCredential gss = new org.globus.gsi.gssapi.GlobusGSSCredentialImpl( credential,
-            org.ietf.jgss.GSSCredential.INITIATE_AND_ACCEPT );
-        ( (Stub) port )._setProperty( org.globus.axis.gsi.GSIConstants.GSI_CREDENTIALS, gss );
+        org.ietf.jgss.GSSCredential gss = 
+	    new org.globus.gsi.gssapi.GlobusGSSCredentialImpl( credential,
+                org.ietf.jgss.GSSCredential.INITIATE_AND_ACCEPT );
+        ( (Stub) port )._setProperty( 
+	    org.globus.axis.gsi.GSIConstants.GSI_CREDENTIALS, gss );
         ( (Stub) port ).doAnotherThing();
+{% endhighlight %}
 
 Now, in `AnotherService`, the caller DN (`null` in anonymous
 communication) is obtainable by calling:
 
+{% highlight java %}
      org.globus.wsrf.security.SecurityManager.getManager().getCaller();
+{% endhighlight %}
      
 This may be mapped to local UNIX users via the grid-map mechanism:
 
+{% highlight java %}
       org.globus.wsrf.security.SecurityManager.getManager( ).getLocalUsernames()
+{% endhighlight %}
 
      
 #### Export Proxy Credentials to a File
 
+{% highlight java %}
     public void storeCredential( Sting filename ) {
          try {
              File f = new File( filename );
              FileOutputStream fos = new FileOutputStream( f );
-             GlobusGSSCredentialImpl crd = new GlobusGSSCredentialImpl( credential, GSSCredential.ACCEPT_ONLY );
+             GlobusGSSCredentialImpl crd = 
+	         new GlobusGSSCredentialImpl( credential, GSSCredential.ACCEPT_ONLY );
              fos.write( crd.export( ExtendedGSSCredential.IMPEXP_OPAQUE  ) );
              fos.close();
          } catch( Exception e ) {
              // an exception --- do something
          }
     }
-
+{% endhighlight %}
 
 The resulting file is structured  as follows:
 

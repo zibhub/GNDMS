@@ -70,6 +70,11 @@ Please download and make a full installation of
 needs to be there.  However, due to the way the GT4 build system
 works, we suggest you just install everything.*
 
+**NOTE** *If you want to cut down the build, try `./configure
+  --prefix=/opt/gt-4.0.8 --with-flavor=gcc32dbg --disable-rls
+  --disable-tests --disable-wstests --disable-drs` (or
+  `--flavor=gcc64dbg` on 64-Bit Linux or Mac OS X)*
+
 * Setup working host and user certificates (You can build without)
 * Set `$GLOBUS_LOCATION` and add it to your environment
 * Life gets easier by putting `source
@@ -275,7 +280,7 @@ A quick full rebuild and reinstallation may be done by executing
 Manually delete `$GLOBUS_LOCATION/doc/api`. Now regenerate the
 javadocs by executing
 
-    gndms-buildr gndms:infra:doc
+    gndms-buildr apidocs
     
     
 #### Building Manually from Scratch
@@ -292,22 +297,22 @@ javadocs by executing
     gndms-buildr deploy-GORFX         # Deploy GORFX
     globus-start-container-detached   # Restart globus
     gndms-buildr gndms:gndmc:package  # Build client
-    gndms-buildr gndms:infra:doc      # Build Javadocs (gndms is excluded)
+    gndms-buildr apidocs              # Build Javadocs (gndms is excluded)
    
-**NOTE** In order to get speedier builds, developers may set
+**NOTE** *In order to get speedier builds, developers may set
 `$GNDMS_DEPS=link`. This will make `gndms-buildr install-deps` symlink
 dependencies to `$GLOBUS_LOCATION/lib` instead of copying them and
 therefore considerably eases trying out small changes to framework
 classes.  However, when using this method, make sure that required
 symlinked jar files from `$HOME/.m2/repository` and
 `$GNDMS_SOURCE/lib`and `$GNDMS_SOURCE/extra` are not deleted
-accidentally and remain readable for the globus user.
+accidentally and remain readable for the globus user.*
 
-**NOTE** Once symlinks have been set up properly, developers may set
-`$GNDMS_DEPS=skip` to skip install-deps alltogether.
+**NOTE** *Once symlinks have been set up properly, developers may set
+`$GNDMS_DEPS=skip` to skip install-deps alltogether.*
 
-**NOTE** To even setup symlinks for the service jars, use
-  the `gndms-buildr link-services`
+**NOTE** *To even setup symlinks for the service jars, use
+  the `gndms-buildr link-services` target.*
    
     
     

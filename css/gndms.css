@@ -4,7 +4,7 @@ body {
 }
 
 div#wholepage {
-       width: 48em;
+       width: 54em;
        font-family: helvetica, verdana, arial, sans-serif;
        font-size: 14px;
        color:#232;
@@ -65,6 +65,15 @@ h5 {
 	color:#555;
 }
 
+h6 {
+	margin-top: 12px;
+        margin-bottom: 0px;
+	font-size:12px;
+	line-height:16px;
+	font-weight:900;
+	color:#555;
+}
+
 p {
 	font:14px/22px helvetica, verdana, arial, sans-serif;
 	margin-top: 12px;
@@ -76,6 +85,11 @@ a {
 	text-decoration:none;
 	font-weight:600;
 	font-family: helvetica, verdana, arial, sans-serif;
+}
+
+.date {
+        font-size: 10px;
+        color: #888
 }
 
 #menu>a {
@@ -100,7 +114,6 @@ a:hover {background-color:#eee;}
 div#content {
         margin-left: 25px;
 }
-
 
 #header {
 	margin:50px 0px 10px 0px;
@@ -132,8 +145,8 @@ body>#header {height:14px; }
  
 #menu {
 	position:fixed;
-	top:208px;
-	left:52em;
+	top:168px;
+	left:58em;
 	width:172px;
 	padding:10px;
 	line-height:17px;
