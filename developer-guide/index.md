@@ -551,8 +551,8 @@ completion time **CT** = **ELU** = **ST** + **Delta-ELU**, **RVU** =
 **CT** + **Delta-RVU** and therefore always **ELU** <= **RVU**
 
 It always holds that **ST**<=**IDB**<=**CT**<=**ELU**.  If
-**Delta-RVU** was requested, it additionally holds always that **CT**
-<= **ELU** <= **RVU**.
+**Delta-RVU** was requested. Additionally always **CT** <= **ELU** <=
+**RVU** is true.
 
 Clients need to honor all invariants.  Servers need to honor all
 invariants which do not contain **RVU**.  Servers may only modify **ELU**.

@@ -54,7 +54,6 @@ following software
 
 * openssl
 * curl
-* wget (You need both!)
 * rsync
 
 Additionally, it is expected that your UNIX provides the following
@@ -285,6 +284,7 @@ javadocs by executing
     
 #### Building Manually from Scratch
 
+{% highlight shell %}
     gndms-buildr clean clean-services # Cleans everything
     gndms-buildr gndms:model:package  # Compile basic DAO classes
     gndms-buildr package-stubs        # Compile service stubs
@@ -298,6 +298,7 @@ javadocs by executing
     globus-start-container-detached   # Restart globus
     gndms-buildr gndms:gndmc:package  # Build client
     gndms-buildr apidocs              # Build Javadocs (gndms is excluded)
+{% endhighlight %}   
    
 **NOTE** *In order to get speedier builds, developers may set
 `$GNDMS_DEPS=link`. This will make `gndms-buildr install-deps` symlink
