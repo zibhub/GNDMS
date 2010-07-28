@@ -1,21 +1,12 @@
 package de.zib.gndms.GORFX.offer.service;
 
-import de.zib.gndms.GORFX.offer.service.globus.resource.OfferResource;
-import  de.zib.gndms.GORFX.service.GORFXConfiguration;
-
-import java.rmi.RemoteException;
-
-import javax.naming.InitialContext;
-import javax.xml.namespace.QName;
-
+import de.zib.gndms.GORFX.service.GORFXConfiguration;
 import org.apache.axis.MessageContext;
 import org.globus.wsrf.Constants;
-import org.globus.wsrf.ResourceContext;
-import org.globus.wsrf.ResourceContextException;
-import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.ResourceHome;
-import org.globus.wsrf.ResourceProperty;
-import org.globus.wsrf.ResourcePropertySet;
+
+import javax.naming.InitialContext;
+import java.rmi.RemoteException;
 
 
 /** 

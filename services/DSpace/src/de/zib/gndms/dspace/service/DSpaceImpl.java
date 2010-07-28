@@ -121,7 +121,8 @@ public class DSpaceImpl extends DSpaceImplBase {
 
         EntityManager em = system.getEntityManagerFactory().createEntityManager(  );
         Query q = em.createNamedQuery( "getSubspace" );
-        q.setParameter( "uriParam",  new ImmutableScopedName( subspaceSpecifier ) );
+        q.setParameter( "uriScopeParam",  subspaceSpecifier.getNamespaceURI() );
+        q.setParameter( "uriLocalParam",  subspaceSpecifier.getLocalPart() );
         try {
             Subspace sp = ( Subspace) q.getSingleResult( );
             if( sp == null )

@@ -58,6 +58,7 @@ public class Subspace extends GridResource {
      */
     public void setPath( String pth ) {
 
+        /*
         File f = new File( pth );
 
         if( ! ( f.exists( ) && f.isDirectory( ) ) )
@@ -65,7 +66,10 @@ public class Subspace extends GridResource {
 
         if( ! f.canWrite( ) )
             throw new IllegalStateException( pth+" is not writable" );
+            */
 
+//        if( pth == null )
+//            throw new IllegalStateException( "path must not be null" );
         path = pth;
     }
 
@@ -129,6 +133,7 @@ public class Subspace extends GridResource {
     }
 
 
+    @Column(name="path", nullable=false, updatable=true)
     public String getPath() {
         return path;
     }
