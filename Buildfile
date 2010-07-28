@@ -442,10 +442,13 @@ task 'redeploy' => ['clean', 'clean-services', 'gndms:stuff:package', 'package-s
 end
 
 desc 'Do a full release build and deploy (execute as globus user)'
-task 'release' => ['gndms:update-release-info', 'redeploy', 'clean', 'clean-services' ]
+task :release => ['gndms:update-release-info', 'redeploy', 'clean', 'clean-services' ]
+
+desc 'Build all docs'
+task 'build-docs' => ['apidocs']
 
 desc 'Install and deploy a release build'
-task 'install' => ['install-deps', 'gndms:infra:doc', 'deploy-DSpace', 'deploy-GORFX']
+task :install => ['install-deps', 'build-docs', 'deploy-DSpace', 'deploy-GORFX']
 
 Rake::Task[:default].prerequisites.clear
 task :default do
