@@ -16,11 +16,11 @@ import org.globus.wsrf.impl.security.authentication.Constants;
 import org.globus.wsrf.impl.security.authorization.NoAuthorization;
 import org.globus.wsrf.impl.security.descriptor.ClientSecurityDescriptor;
 import org.globus.wsrf.utils.AddressingUtils;
+import org.apache.commons.codec.binary.Base64;
 import org.oasis.wsrf.lifetime.ImmediateResourceTermination;
 import org.oasis.wsrf.lifetime.WSResourceLifetimeServiceAddressingLocator;
 import org.oasis.wsrf.lifetime.Destroy;
 import org.xml.sax.InputSource;
-import sun.misc.UUEncoder;
 import types.ContextT;
 import types.ContextTEntry;
 
@@ -100,11 +100,11 @@ public class DelegationAux {
         for( ContextTEntry e : entries ) {
             if( e.getKey().equals( DELEGATION_EPR_KEY ) ) {
                 //epr = eprFormXML( e.get_value().toString( ) );
-                MyUUDecoder dec = new MyUUDecoder( );
-
-                String uuepr =  deinlineUUString( e.get_value().toString( ) );
+                final String uuepr = e.get_value().toString( );
                 System.out.println( "uuepr: " + uuepr );
-                byte[] ba = dec.decodeBuffer( uuepr );
+
+                final Base64 b64   = new Base64(4000, new byte[] { }, true);
+                byte[] ba = b64.decode(uuepr);
                 ByteArrayInputStream bis = new ByteArrayInputStream( ba );
                 ObjectInputStream ois = new ObjectInputStream( bis );
                 String eprs  = (String) ois.readObject();
@@ -168,8 +168,9 @@ public class DelegationAux {
         ByteArrayOutputStream bse = new ByteArrayOutputStream( );
         ObjectOutputStream oos = new ObjectOutputStream( bse );
         oos.writeObject( ObjectSerializer.toString( epr , QNAME ) );
-        UUEncoder enc = new UUEncoder( );
-        String uuepr = enc.encode( bse.toByteArray() );
+
+        final Base64 b64   = new Base64(4000, new byte[] { }, true);
+        final String uuepr = b64.encodeToString(bse.toByteArray());
         System.out.println( "uuepr: \"" + uuepr+ "\"" );
         ct.set_value( new NormalizedString( inlineUUString( uuepr ) ) );
         ct.setKey( new Token( DELEGATION_EPR_KEY ) );
