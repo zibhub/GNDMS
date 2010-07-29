@@ -164,8 +164,10 @@ public class ORQResource extends ORQResourceBase implements GNDMSCredibleResourc
 
     public void setDelegateEPR( final EndpointReferenceType epr ) {
 
-        String servicePath =  org.apache.axis.MessageContext.getCurrentContext().getTargetService();
-        String homeName = org.globus.wsrf.Constants.JNDI_SERVICES_BASE_NAME + servicePath + "/" + "orqHome";
+        // this gives wron gorfx path
+        //String servicePath =  org.apache.axis.MessageContext.getCurrentContext().getTargetService();
+        String servicePath = "gndms/ORQ/home";
+        String homeName = org.globus.wsrf.Constants.JNDI_SERVICES_BASE_NAME + servicePath;
         GNDMSDelegationListener list = new GNDMSDelegationListener( getResourceKey(), homeName );
         try {
             DelegationUtil.registerDelegationListener(epr, list);

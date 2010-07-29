@@ -19,7 +19,7 @@ public class GorfxBean extends LoadablePropertyBean {
     // or
     public static final String DELEGATION_PROXY_FILE_KEY = "GORFX.delegation.proxyFile";
 
-    private boolean disableDelegation = true;
+    private boolean disableDelegation = false;
     private Integer uid = null;
     private String proxyFile;
 
@@ -28,10 +28,10 @@ public class GorfxBean extends LoadablePropertyBean {
 
     public void setProperties( Properties prop ) {
         gorfxURI = prop.getProperty( GORFX_URI_KEY );
-        if( prop.contains( USE_DELEGATION_KEY ) )
+        if( prop.containsKey( USE_DELEGATION_KEY ) )
             disableDelegation = Boolean.parseBoolean( prop.getProperty( USE_DELEGATION_KEY ) );
 
-        if( prop.contains( DELEGATION_UID_KEY ) )
+        if( prop.containsKey( DELEGATION_UID_KEY ) )
             uid = Integer.parseInt( prop.getProperty( DELEGATION_UID_KEY ) ) ;
         else if( prop.contains( DELEGATION_PROXY_FILE_KEY ) )
             proxyFile = prop.getProperty( DELEGATION_PROXY_FILE_KEY );

@@ -12,6 +12,7 @@ import org.globus.ftp.exception.ServerException;
 import org.joda.time.Duration;
 
 import java.io.IOException;
+import java.rmi.ServerException;
 
 
 /**

@@ -376,15 +376,16 @@ define 'gndms' do
     end
 
     define 'gndmc', :layout => dmsLayout('gndmc', 'gndms-gndmc') do
-      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gndms:gritserv'), project('gndms:kit'), project('gndms:stuff'), project('gndms:model'), ARGS4J, SERVICE_STUBS, GORFX_CLIENT, DSPACE_CLIENT, JODA_TIME, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, EXTRA_JARS, TestNG.dependencies
+      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gndms:gritserv'), project('gndms:kit'), project('gndms:stuff'), project('gndms:model'), ARGS4J, SERVICE_STUBS, GORFX_CLIENT, DSPACE_COMMON, DSPACE_CLIENT, JODA_TIME, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, EXTRA_JARS, TestNG.dependencies
       compile
       package :jar
 
       task 'call' do
         jars = compile.dependencies.map(&:to_s)
-        jars << '/Users/stepn/Source/GNDMS/lib/gndmc/gndms-gndmc-0.3-pre.jar'
+
+        jars << '/home/mjorra/projects/C3Grid/impl/gndms/lib/gndmc/gndms-gndmc-0.3-pre.jar'
         puts jars
-        Commands.java('de.zib.gndmc.MaintenanceClient', { :classpath => jars, :verbose => true, :java_args => [ENV['ARGS']] } )
+        Commands.java('de.zib.gndmc.MaintenanceClient', ENV['ARGS'].split(" "), { :classpath => jars, :verbose => true } ) #, :java_args => [ENV['ARGS']] } )
       end
     end
 end

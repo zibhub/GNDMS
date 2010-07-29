@@ -60,18 +60,18 @@ public class DelegationAux {
         // acquire cert chain
         ClientSecurityDescriptor desc = new ClientSecurityDescriptor();
 
-//        desc.setGSITransport( (Integer) Constants.ENCRYPTION );
+       // desc.setGSITransport( (Integer) Constants.ENCRYPTION );
         org.ietf.jgss.GSSCredential gss = new org.globus.gsi.gssapi.GlobusGSSCredentialImpl( credential,
             org.ietf.jgss.GSSCredential.INITIATE_AND_ACCEPT);
         desc.setGSSCredential( gss );
 
-        System.out.println( "connecting to service: " + uri );
-        EndpointReferenceType delegEpr = AddressingUtils.createEndpointReference( uri, null);
-        System.out.println( "epr: " + delegEpr );
-
         desc.setGSITransport( (Integer) Constants.SIGNATURE );
         Util.registerTransport();
         desc.setAuthz( NoAuthorization.getInstance() );
+
+        System.out.println( "connecting to service: " + uri );
+        EndpointReferenceType delegEpr = AddressingUtils.createEndpointReference( uri, null);
+        System.out.println( "epr: " + delegEpr );
 
         X509Certificate[] certs = DelegationUtil.getCertificateChainRP( delegEpr, desc );
 
