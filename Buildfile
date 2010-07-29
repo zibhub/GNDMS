@@ -131,6 +131,15 @@ GT4_SEC = gt4jars(['puretls.jar', 'opensaml.jar',
 GT4_XML = gt4jars(['xalan-2.6.jar', 'xercesImpl-2.7.1.jar', 'xml-apis.jar', 'xmlsec.jar', 'jaxrpc.jar'])
 GT4_GRAM = gt4jars(['gram-monitoring.jar', 'gram-service.jar', 'gram-stubs.jar', 'gram-utils.jar'])
 GT4_USEAGE = gt4jars([ 'globus-usage-core.java' ])
+GT4_MDS = gt4jars(['globus_wsrf_mds_aggregator.jar',
+                   'globus_wsrf_mds_aggregator_stubs.jar',
+                   'webmds-0.1-dev.jar',
+                   'wsrf_mds_index.jar',
+                   'wsrf_mds_index_stubs.jar',
+                   'wsrf_mds_trigger.jar',
+                   'wsrf_mds_trigger_stubs.jar',
+                   'wsrf_mds_usefulrp.jar',
+                   'wsrf_mds_usefulrp_schema_stubs.jar'])
 
 
 # OpenJPA is required by gndms:model
@@ -376,18 +385,31 @@ define 'gndms' do
     end
 
     define 'gndmc', :layout => dmsLayout('gndmc', 'gndms-gndmc') do
-      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gndms:gritserv'), project('gndms:kit'), project('gndms:stuff'), project('gndms:model'), ARGS4J, SERVICE_STUBS, GORFX_CLIENT, DSPACE_CLIENT, JODA_TIME, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, EXTRA_JARS, TestNG.dependencies
+      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gndms:gritserv'), project('gndms:kit'), project('gndms:stuff'), project('gndms:model'), ARGS4J, SERVICE_STUBS, GORFX_CLIENT, DSPACE_CLIENT, GORFX_COMMON, DSPACE_COMMON, COMMONS_COLLECTIONS, GT4_COMMONS, JODA_TIME, GT4_GRAM, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, EXTRA_JARS, GT4_MDS, TestNG.dependencies
       compile
       package :jar
 
-      task 'call' do
+      task 'show-log' do
         jars = compile.dependencies.map(&:to_s)
-        jars << '/Users/stepn/Source/GNDMS/lib/gndmc/gndms-gndmc-0.3-pre.jar'
-        puts jars
-        Commands.java('de.zib.gndmc.MaintenanceClient', { :classpath => jars, :verbose => true, :java_args => [ENV['ARGS']] } )
+        jars << compile.target.to_s
+        uri  = ENV['URI']
+        if (uri == nil) then
+          puts 'Call with env URI="GORFX or DSpace EPR" ARGS="Arguments to .sys.ReadContainerLog'
+          exit 1
+        end
+        args = ENV['ARGS']
+        if (args == nil) then args = "" end
+        full_args = [ '-uri', uri, '.sys.ReadContainerLog' ]
+        full_args << args  
+        Commands.java('de.zib.gndmc.MaintenanceClient',  full_args, { :classpath => jars, :verbose => true } )
       end
     end
 end
+
+
+# Utility stuff
+
+task 'show-log' => task('gndms:gndmc:show-log')
 
 
 # Database stuff
