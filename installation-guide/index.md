@@ -158,7 +158,7 @@ Installation and Deployment from Distribution Package
  prepared as described in the previous section.
  
  
-* Please enter `$GNDMS_SOURCE` and exeucte `gndms-buildr installs`
+* Please enter `$GNDMS_SOURCE` and exeucte `gndms-buildr install`
     
   This will 
   
@@ -233,6 +233,29 @@ execute `gndms-buildr c3grid-dp-setubdb`
 
 Additionally, please consult the documentation for the respective 
 community grid platform.
+
+### Remote Access to container.log
+
+To enable a select group of users to read the container.log from
+outside, add their DNs to either
+`/etc/grid-security/gndms-support-stuff` or
+`$GLOBUS_LOCATION/etc/gndms_shared/gndms-support-stuff`.  Depending on
+your setup, you need to replace `gndms` with your subgrid name
+(`ptgrid`, `c3grid`, etc.) in these file names.
+
+To access the log, please load your user credentials (e.g. with
+`grid-proxy-init`) and run in `$GNDMS_SOURCE`
+
+    `env URI="<URI>" ARGS="<ARGS>" gndms-buildr show-log`
+    
+where `<URI>` is the EPR of either a DSpace or a GORFX service (see
+container.log startup section, looks like
+`https://$HOSTNAME:8443/wsrf/services/gndms/GORFX`) and `<ARGS>` are
+the arguments that need to be passed to the actual show-log service
+maintenance call.  Please use `env URI="<URI>" ARGS="help"` to obtain
+a synopsis of possible parameters or leave it empty to retrieve
+`$GLOBUS_LOCATION/var/container.log` completely.
+
 
 
 Advanced Configuration

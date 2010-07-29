@@ -31,9 +31,23 @@ Writing Webservice Clients
   [installation guide](../installation-guide)
 * Use `gndms-buildr idea` or `gndms-buildr eclipse` to generate
   template IDEA or eclipse projects.
-* You might need to add `$GLOBUS_LOCATION/lib/*.jar` (Minus all
-  gndms-* jars) to the resulting project
+* You might need to add `$GLOBUS_LOCATION/lib/*.jar` 
+  * Skip `gndms-*.jar`, but
+  * include`gndms-*-service.jar` and `gndms-*-client.jar`  
   
+  
+## Setup a Development Environment for Debugging
+
+* Ensure that the generated modules in your IDE setup compile
+to the same output path as buildr and that globus, buildr, and your
+IDE compile using the same JDK.
+
+* Edit your globus scripts such that Java is configured to enable
+remote debugging and set up a matching run target in your IDE. 
+
+**NOTE** *If the globus container is started with `-debug` it prints
+full stacktraces, otherwise not!*
+
   
   
 ### Writing a Web Service Client
@@ -556,3 +570,4 @@ It always holds that **ST**<=**IDB**<=**CT**<=**ELU**.  If
 
 Clients need to honor all invariants.  Servers need to honor all
 invariants which do not contain **RVU**.  Servers may only modify **ELU**.
+
