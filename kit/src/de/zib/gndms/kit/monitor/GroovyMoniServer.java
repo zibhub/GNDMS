@@ -126,7 +126,7 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 	@Nullable
 	private GroovyBindingFactory bindingFactory;
 
-	private boolean enabled; // = false initially
+	private boolean enabled = false;
 
 	@NotNull
 	private String host;
@@ -455,9 +455,16 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 		roleName = getProperty(props, "monitor.roleName").trim();
         final String envVar = System.getenv("GNDMS_MONITOR_ENABLED");
         enabled = envVar != null && envVar.trim().length() > 0;
+//        if (enabled)
+//            logger.info("monitor.enabled due to $GNDMS_MONITOR_ENABLED");
         enabled |= "true".equals(getProperty(props, "monitor.enabled").trim());
+//        if (enabled)
+//            logger.info("monitor.enabled due to $GNDMS_MONITOR_ENABLED or Properties");
 		final String loggedStr = getProperty(props, "monitor.logged").trim();
 		enabled &= isSaneSetup(LoggingDecisionPoint.Parser.parseTokenSet(loggedStr));
+//        if (enabled)
+//            logger.info("monitor.enabled due to $GNDMS_MONITOR_ENABLED or Properties and setup is sane");
+        logger.info("The monitor has been enabled");
 	}
 
 	/**

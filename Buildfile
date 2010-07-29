@@ -303,6 +303,11 @@ define 'gndms' do
 	if (ENV['GNDMS_DEPS'] != 'skip') then
         	installDeps(ENV['GNDMS_DEPS']!='link')
 	end
+        # Fix monitor.properties permissions
+        system "test -d '#{ENV['GNDMS_SHARED']}' || mkdir 'ENV['GNDMS_SHARED']'"
+        propsFile = [ ENV['GNDMS_SHARED'], 'monitor.properties' ].join(File::SEPARATOR)
+        system "touch '#{propsFile}'"
+        system "chmod 0600 '#{propsFile}'"
       end
 
     end
@@ -416,6 +421,7 @@ task 'show-log' => task('gndms:gndmc:show-log')
 
 task 'kill-db' do
     rm_rf GNDMS_DB
+    puts 'ATTENTION Do not forget to call fix-permissions after you have recreated the database'
 end
 
 task 'inspect-db' => task('gndms:derby-ij') 
@@ -483,10 +489,15 @@ task 'build-docs' => ['apidocs']
 desc 'Install and deploy a release build'
 task :install => ['install-deps', 'build-docs', 'deploy-DSpace', 'deploy-GORFX']
 
+task 'fix-permissions' do
+    system "#{ENV['GNDMS_SOURCE']}/fix-permissions.sh"
+end
+
 Rake::Task[:default].prerequisites.clear
 task :default do
      puts ''
-     puts 'Please read the documentation on how to build, install, and deploy this software.  It is considerably easy, but not straightforward.'
+     puts 'Please read the documentation on how to build, install, and deploy this software (doc/html or doc/md).'
+     puts 'The installation of GNDMS is considerably easy, but not straightforward.'
      puts ''
 end
 

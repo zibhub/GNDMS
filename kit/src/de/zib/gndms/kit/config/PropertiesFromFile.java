@@ -89,7 +89,7 @@ implements LoggingDecisionPoint, LDPHolder {
 		if (shouldLog("load"))
 			logger.debug("Loading " + desciptiveName);
 		try {
-			if (!configFile.exists())
+			if (!configFile.exists() || (configFile.length() == 0))
 				return createDefaultElement();
 			else {
 				in = new FileInputStream(configFile);
