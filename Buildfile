@@ -23,6 +23,11 @@ LICENSE ='This software has been licensed to you under the terms and conditions 
 MF_LICENSE="#{LICENSE}  See META-INF/LICENSE for detailed terms and conditions."
 USERNAME = ENV['USER'].to_s
 
+# Yes, this project uses java
+require 'buildr/java'
+include Java
+include Commands
+
 # Helper to create non-standard GNDMS sub-project layouts
 require 'buildr/gndms'
 include GNDMS
@@ -84,7 +89,7 @@ JODA_TIME = transitive('joda-time:joda-time:jar:1.6')
 CXF = 'org.apache.cxf:cxf-bundle:jar:2.1.4'
 JAXB = 'javax.xml.bind:jaxb-api:jar:2.2.1'
 STAX = 'stax:stax-api:jar:1.0.1'
-COMMONS_COLLECTIONS = transitive(['commons-collections:commons-collections:jar:3.2.1'])
+COMMONS_COLLECTIONS = transitive(['commons-collections:commons-collections:jar:3.2'])
 COMMONS_CODEC = 'commons-codec:commons-codec:jar:1.4'
 COMMONS_LANG = 'commons-lang:commons-lang:jar:2.1'
 COMMONS_FILEUPLOAD = transitive(['commons-fileupload:commons-fileupload:jar:1.2.1'])
@@ -242,7 +247,7 @@ define 'gndms' do
 
     desc 'GNDMS classes for dealing with wsrf and xsd types'
     define 'gritserv', :layout => dmsLayout('gritserv', 'gndms-gritserv') do
-      compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('stuff'), project('model'), ARGS4J, JODA_TIME, GORFX_STUBS, OPENJPA, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, GT4_COMMONS, COMMONS_LANG, COMMONS_COLLECTIONS
+      compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('stuff'), project('model'), ARGS4J, JODA_TIME, GORFX_STUBS, OPENJPA, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, GT4_COMMONS, COMMONS_LANG, COMMONS_COLLECTIONS, COMMONS_CODEC
       compile
       package :jar
     end
@@ -250,7 +255,7 @@ define 'gndms' do
     desc 'GNDMS core infrastructure classes'
     define 'infra', :layout => dmsLayout('infra', 'gndms-infra') do
       # Infra *must* have all dependencies since we use this list in copy/link-deps
-      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gritserv'), project('logic'), project('kit'), project('stuff'), project('model'), ARGS4J, SERVICE_STUBS, JODA_TIME, JAXB, GT4_SERVLET, JETTY, CXF, GROOVY, GOOGLE_COLLECTIONS, GUICE, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies
+      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gritserv'), project('logic'), project('kit'), project('stuff'), project('model'), ARGS4J, SERVICE_STUBS, JODA_TIME, JAXB, GT4_SERVLET, JETTY, CXF, GROOVY, GOOGLE_COLLECTIONS, GUICE, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies, COMMONS_FILEUPLOAD
       compile
       package :jar
       doc projects('gndms:stuff', 'gndms:model', 'gndms:gritserv', 'gndms:kit', 'gndms:logic')
@@ -374,6 +379,13 @@ define 'gndms' do
       compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gndms:gritserv'), project('gndms:kit'), project('gndms:stuff'), project('gndms:model'), ARGS4J, SERVICE_STUBS, GORFX_CLIENT, DSPACE_CLIENT, JODA_TIME, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, EXTRA_JARS, TestNG.dependencies
       compile
       package :jar
+
+      task 'call' do
+        jars = compile.dependencies.map(&:to_s)
+        jars << '/Users/stepn/Source/GNDMS/lib/gndmc/gndms-gndmc-0.3-pre.jar'
+        puts jars
+        Commands.java('de.zib.gndmc.MaintenanceClient', { :classpath => jars, :verbose => true, :java_args => [ENV['ARGS']] } )
+      end
     end
 end
 
@@ -385,7 +397,6 @@ task 'kill-db' do
 end
 
 task 'inspect-db' => task('gndms:derby-ij') 
-
 
 # Nice toplevel targets that redirect to service targets
 
