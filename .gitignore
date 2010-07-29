@@ -59,6 +59,7 @@ lib/model/*
 lib/stuff/*
 lib/gritserv/*
 lib/kit/*
+lib/gndmc/*
 lib/infra/*
 lib/logic/*
 */resources/META-INF/GNDMS-RELEASE

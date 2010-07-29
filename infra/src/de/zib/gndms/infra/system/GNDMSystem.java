@@ -936,7 +936,7 @@ public final class GNDMSystem
     }
 
     public boolean isGridAdmin(final String tag, final String dn) {
-        final boolean ret = isGridAdmin_(dn);
+        final boolean ret = isGridAdmin_(dn == null ? "null" : dn);
         NDC.push(tag);
         try {
             if (ret)
@@ -952,7 +952,7 @@ public final class GNDMSystem
     private boolean isGridAdmin_(final String dn) {
         // This only works on UNIX
         for (final File gridAdminFile : new File[] {
-                new File(File.pathSeparator + "etc" + File.pathSeparatorChar + "grid-security" + File.pathSeparatorChar + getInstanceDir().getSubGridName() + "-support-staff"),
+                new File(File.separatorChar + "etc" + File.separatorChar + "grid-security" + File.separatorChar + getInstanceDir().getSubGridName() + "-support-staff"),
                 new File(getSharedDir(), getInstanceDir().getSubGridName() + "-support-staff")
         })
             if (isDNInFile(dn, gridAdminFile))
@@ -962,12 +962,13 @@ public final class GNDMSystem
     }
 
     private boolean isDNInFile(final String dn, final File file) {
+        logger.debug("Checking if '" + dn + "' is in '" + file.getAbsolutePath() + '\'');
         if (! (file.isFile() && file.exists() && file.canRead()))
             return false;
 
         BufferedReader rd;
         try {
-            rd = new BufferedReader(new FileReader(file.getName()));
+            rd = new BufferedReader(new FileReader(file));
             try {
                 String line;
 

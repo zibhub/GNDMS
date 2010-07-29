@@ -551,9 +551,15 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 		binder.bind(ModelUUIDGen.class).toInstance(uuidGen);
 	}
 
+    public final String DEFAULT_SUBGRID_NAME="gndms";
+
     @NotNull
     public String getSubGridName() {
-        return getConfiglet(DefaultConfiglet.class, "").getMapConfig().getOption("subGridName", "GNDMS");
+        final DefaultConfiglet defaultConfiglet = getConfiglet(DefaultConfiglet.class, "gridconfig");
+        if (defaultConfiglet == null)
+            return DEFAULT_SUBGRID_NAME;
+        else
+            return defaultConfiglet.getMapConfig().getOption("subGridName", DEFAULT_SUBGRID_NAME);
     }
 
 

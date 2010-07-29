@@ -104,6 +104,7 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
         configActions.add(RefreshSystemAction.class);
         configActions.add(SetupDefaultConfigletAction.class);
         configActions.add(ReadC3CatalogAction.class);
+        configActions.add((Class<? extends ConfigAction<?>>) ReadContainerLogAction.class);
         configActions.add(ReadGNDMSVersionAction.class);
 
 		injector = system.getInstanceDir().getSystemAccessInjector().createChildInjector(this);
