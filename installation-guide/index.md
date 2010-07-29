@@ -185,9 +185,17 @@ Installation and Deployment from Distribution Package
  [full startup log](startup-log.txt)).
  
 After succesful startup, please shutdown the container again by
-calling `globus-stop-container-detached`.  At this point the GNDMS
-software has been succesfully installed.  Next, we'll describe how it
-may be configured for actual use.
+calling `globus-stop-container-detached`. 
+
+* Fix the permissions of database files by executing
+
+    gndms-buildr fix-permissions
+    
+  **ATTENTION** *Skipping this step may cause leaing og sensitive
+  information to local UNIX users*
+    
+At this point the GNDMS software has been succesfully installed.
+Next, we'll describe how it may be configured for actual use.
  
 
  
@@ -200,13 +208,13 @@ GNDMS is configured via a builtin monitoring shell that accesses and
 modifies the configuration in the database.
 
 To enable it, after having startet the globus container with deployed
-GNDMS once, please edit `$GNDMS_MONI_CONFIG` and set
-`monitor.enabled=true`. 
+GNDMS once (as described in the previous section), please edit
+`$GNDMS_MONI_CONFIG` such that `monitor.enabled` is set to `true` and
+restart the globus container.  
 
-Finally, please restart globus.  The monitoring shell will be running
-now. You have nearly finished the installation at this point. All that
-is left to do, is to actually configure GNDMS for the chosen community
-grid.
+The monitoring shell will be running now. You have nearly finished the
+installation at this point. All that is left to do, is to actually
+configure GNDMS for the chosen community grid platform.
 
 **NOTE** *The shell is accessed via localhosts network interface and
 protected with a clear-text password only. Do not make the monitoring
@@ -233,6 +241,18 @@ execute `gndms-buildr c3grid-dp-setubdb`
 
 Additionally, please consult the documentation for the respective 
 community grid platform.
+
+
+### Finalize installation
+
+Please edit `$GLOBUS_LOCATION/etc/gndms_shared/monitor.properties` and
+set `monitor.enabled = false`. This will disable the monitor shell
+after `monitor.configRefreshCycle` ms (defaults to 30 seconds).
+Alternatively, just restart the globus container.
+
+**Congratulations** *At this point the installation is complete and you
+have a running installation of GNDMS.*
+
 
 ### Remote Access to container.log
 
