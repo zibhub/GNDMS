@@ -131,6 +131,15 @@ GT4_SEC = gt4jars(['puretls.jar', 'opensaml.jar',
 GT4_XML = gt4jars(['xalan-2.6.jar', 'xercesImpl-2.7.1.jar', 'xml-apis.jar', 'xmlsec.jar', 'jaxrpc.jar'])
 GT4_GRAM = gt4jars(['gram-monitoring.jar', 'gram-service.jar', 'gram-stubs.jar', 'gram-utils.jar'])
 GT4_USEAGE = gt4jars([ 'globus-usage-core.java' ])
+GT4_MDS = gt4jars(['globus_wsrf_mds_aggregator.jar',
+                   'globus_wsrf_mds_aggregator_stubs.jar',
+                   'webmds-0.1-dev.jar',
+                   'wsrf_mds_index.jar',
+                   'wsrf_mds_index_stubs.jar',
+                   'wsrf_mds_trigger.jar',
+                   'wsrf_mds_trigger_stubs.jar',
+                   'wsrf_mds_usefulrp.jar',
+                   'wsrf_mds_usefulrp_schema_stubs.jar'])
 
 
 # OpenJPA is required by gndms:model
@@ -294,6 +303,11 @@ define 'gndms' do
 	if (ENV['GNDMS_DEPS'] != 'skip') then
         	installDeps(ENV['GNDMS_DEPS']!='link')
 	end
+        # Fix monitor.properties permissions
+        system "test -d '#{ENV['GNDMS_SHARED']}' || mkdir 'ENV['GNDMS_SHARED']'"
+        propsFile = [ ENV['GNDMS_SHARED'], 'monitor.properties' ].join(File::SEPARATOR)
+        system "touch '#{propsFile}'"
+        system "chmod 0600 '#{propsFile}'"
       end
 
     end
@@ -376,25 +390,38 @@ define 'gndms' do
     end
 
     define 'gndmc', :layout => dmsLayout('gndmc', 'gndms-gndmc') do
-      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gndms:gritserv'), project('gndms:kit'), project('gndms:stuff'), project('gndms:model'), ARGS4J, SERVICE_STUBS, GORFX_CLIENT, DSPACE_COMMON, DSPACE_CLIENT, JODA_TIME, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, EXTRA_JARS, TestNG.dependencies
+      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gndms:gritserv'), project('gndms:kit'), project('gndms:stuff'), project('gndms:model'), ARGS4J, SERVICE_STUBS, GORFX_CLIENT, DSPACE_CLIENT, GORFX_COMMON, DSPACE_COMMON, COMMONS_COLLECTIONS, GT4_COMMONS, JODA_TIME, GT4_GRAM, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, EXTRA_JARS, GT4_MDS, TestNG.dependencies
       compile
       package :jar
 
-      task 'call' do
+      task 'show-log' do
         jars = compile.dependencies.map(&:to_s)
-
-        jars << '/home/mjorra/projects/C3Grid/impl/gndms/lib/gndmc/gndms-gndmc-0.3-pre.jar'
-        puts jars
-        Commands.java('de.zib.gndmc.MaintenanceClient', ENV['ARGS'].split(" "), { :classpath => jars, :verbose => true } ) #, :java_args => [ENV['ARGS']] } )
+        jars << compile.target.to_s
+        uri  = ENV['URI']
+        if (uri == nil) then
+          puts 'Call with env URI="GORFX or DSpace EPR" ARGS="Arguments to .sys.ReadContainerLog'
+          exit 1
+        end
+        args = ENV['ARGS']
+        if (args == nil) then args = "" end
+        full_args = [ '-uri', uri, '.sys.ReadContainerLog' ]
+        full_args << args  
+        Commands.java('de.zib.gndmc.MaintenanceClient',  full_args, { :classpath => jars, :verbose => true } )
       end
     end
 end
+
+
+# Utility stuff
+
+task 'show-log' => task('gndms:gndmc:show-log')
 
 
 # Database stuff
 
 task 'kill-db' do
     rm_rf GNDMS_DB
+    puts 'ATTENTION Do not forget to call fix-permissions after you have recreated the database'
 end
 
 task 'inspect-db' => task('gndms:derby-ij') 
@@ -462,10 +489,15 @@ task 'build-docs' => ['apidocs']
 desc 'Install and deploy a release build'
 task :install => ['install-deps', 'build-docs', 'deploy-DSpace', 'deploy-GORFX']
 
+task 'fix-permissions' do
+    system "#{ENV['GNDMS_SOURCE']}/fix-permissions.sh"
+end
+
 Rake::Task[:default].prerequisites.clear
 task :default do
      puts ''
-     puts 'Please read the documentation on how to build, install, and deploy this software.  It is considerably easy, but not straightforward.'
+     puts 'Please read the documentation on how to build, install, and deploy this software (doc/html or doc/md).'
+     puts 'The installation of GNDMS is considerably easy, but not straightforward.'
      puts ''
 end
 

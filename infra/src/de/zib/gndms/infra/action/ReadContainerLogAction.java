@@ -19,24 +19,30 @@ public class ReadContainerLogAction extends SystemAction<ConfigActionResult> imp
         return new File(getSystem().getContainerHome().getAbsolutePath() + File.separatorChar + "var" +  File.separatorChar + "container.log");
     }
 
-    @ConfigOption(descr = "Lines to skip")
-    int skipLines;
+    @ConfigOption(descr = "Number of lines to be skipped")
+    public int skip;
 
-    @ConfigOption(descr = "Number of lines to return after skipping (n==0: all lines, n<0: last n lines from tail after discarding skipLines last lines")
-    int numLines;
+    @ConfigOption(descr = "Number of lines to return after skipping (n==0: all lines, n<0: last n lines from tail after discarding skip last lines")
+    public int num;
 
 
-    @ConfigOption(descr = "If set, remove all lines that contain this substring from output")
-    String skip;
+    @ConfigOption(descr = "If set, remove all lines that contain this substring from the output")
+    public String filter;
 
     @ConfigOption(descr = "Only return lines that contain this substring")
-    String grep;
+    public String grep;
+
+    @ConfigOption(descr = "If set, do not print line numbers")
+    public boolean raw;
 
     @Override
     public void initialize() {
         super.initialize();
-        skipLines = Math.abs(getIntOption("skipLines", 0));
-        numLines  = getIntOption("numLines", 0);
+        skip = Math.abs(getIntOption("skip", 0));
+        num = getIntOption("num", 0);
+        filter = getOption("filter", "");
+        grep = getOption("grep", "");
+        raw = isBooleanOptionSet("raw", false);
     }
 
     @Override
@@ -47,27 +53,28 @@ public class ReadContainerLogAction extends SystemAction<ConfigActionResult> imp
         if (! getSystem().isGridAdmin("ReadContainerLogAction", dn))
             throw new SecurityException("Authenticated user not allowed to access log files. DN was '" + dn + '\'');
 
-        if (skip == null) skip = "";
-        if (grep == null) grep = "";
-
-        if (numLines == 0) {
-            streamLog(writer, logFile, 0, Integer.MAX_VALUE);
-            return null;
+        final int maxValue;
+        if (num < 0) {
+            maxValue  = streamLog(writer, logFile, Integer.MAX_VALUE, 0, false);
+            num = Math.abs(num);
+            skip = Math.min(0, maxValue - skip - num);
         }
+        else
+            maxValue = Integer.MAX_VALUE - skip - 1;
 
-        if (numLines > 0) {
-            streamLog(writer, logFile, skipLines, numLines);
-            return null;
-        }
+        if (num == 0)
+            num = maxValue;
 
-        // numLines < 0
-        int count = streamLog(writer, logFile, Integer.MAX_VALUE, 0);
-        streamLog(writer, logFile, count + numLines + skipLines, Math.abs(numLines) - skipLines);
+        streamLog(writer, logFile, skip, num, true);
         return ok();
     }
 
     @SuppressWarnings({"NestedAssignment"})
-    private int streamLog(PrintWriter writer, File logFile, int skipLinesParam, int numLinesParam) {
+    private int streamLog(PrintWriter writer, File logFile, int skipLinesParam, int numLinesParam, boolean print) {
+//        writer.print('\'' + filter + '\'');
+//        writer.print('\'' + grep + '\'');
+//        writer.print(skip);
+//        writer.println(num);
         BufferedReader rd;
         try {
             rd = new BufferedReader(new FileReader(logFile));
@@ -76,13 +83,25 @@ public class ReadContainerLogAction extends SystemAction<ConfigActionResult> imp
                 int count = 0;
                 String line;
 
-                for (; (numLinesParam == 0 || count < maxLines) && (line = rd.readLine()) != null; count ++)
-                    if (count >= skipLines) {
-                        if ((skip.length() == 0 || !line.contains(skip)) &&
-                            ((grep.length() == 0) || line.contains(grep)))
-                            writer.println(Integer.toString(count) + ':' + ' ' + line);
-                    }
-
+                for (; (numLinesParam == 0 || count <= maxLines) && (line = rd.readLine()) != null; count ++) {
+//                    writer.println("");
+//                    writer.print(count);
+                    if (!print)
+                        continue;
+//                    writer.print("print");
+                    if (count < skipLinesParam)
+                        continue;
+//                    writer.print("count");
+                    if (filter.length() > 0 && line.contains(filter))
+                        continue;
+//                    writer.print("filter");
+                    if (grep.length() > 0 && !line.contains(grep))
+                        continue;
+//                    writer.print("grep");
+                    if (!raw)
+                        writer.print(Integer.toString(count) + ':' + ' ');
+                    writer.println(line);
+                }
                 return count;
             }
             finally { rd.close(); }
