@@ -32,6 +32,9 @@ public class GridFTPCheck extends AbstractApplication {
     @Option( name="-t", required=false, usage="Create Client in diffrent thread")
     boolean threaded = false;
 
+    @Option( name="-u", required=true, usage="numeric uid" )
+    String uid;
+
     GridFTPClient c;
 
 
@@ -44,7 +47,7 @@ public class GridFTPCheck extends AbstractApplication {
 
         LogAux.stdSetupLogger( this.getClass() );
         GlobusCredential cred = DelegationAux.findCredential(
-            DelegationAux.defaultProxyFileName( "1000" ) );
+            DelegationAux.defaultProxyFileName( uid ) );
         CredentialProvider cp =
             new GlobusCredentialProviderImpl( GORFXConstantURIs.FILE_TRANSFER_URI, cred );
 
