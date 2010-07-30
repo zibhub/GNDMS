@@ -77,11 +77,10 @@ public class QueuedExecutor implements ExecutorService {
     }
 
 
-    public List invokeAll( final Collection tasks ) throws InterruptedException {
-        List res = submitList( tasks );
+    public <T> List<Future<T>> invokeAll( final Collection<Callable<T>> tasks ) throws InterruptedException {
+        List<Future<T>> res = submitList( tasks );
 
-        for( Object o :  res ) {
-						Future f = (Future) o;
+        for( Future<T> f :  res ) {
             try {
                 f.get();
             } catch ( ExecutionException e ) {
@@ -93,12 +92,11 @@ public class QueuedExecutor implements ExecutorService {
     }
 
 
-    public List invokeAll( final Collection tasks, final long timeout, final TimeUnit unit ) throws InterruptedException {
-        List res = submitList( tasks );
+    public <T> List<Future<T>> invokeAll( final Collection<Callable<T>> tasks, final long timeout, final TimeUnit unit ) throws InterruptedException {
+        List<Future<T>> res = submitList( tasks );
 
         unit.sleep( timeout );
-        for( Object o :  res ) {
-            Future f = (Future) o;
+        for( Future<T> f :  res ) {
             if(! f.isDone() )
                 f.cancel( true );
         }
@@ -107,14 +105,13 @@ public class QueuedExecutor implements ExecutorService {
     }
 
 
-    public Object invokeAny( final Collection tasks ) throws InterruptedException, ExecutionException {
+    public <T> T invokeAny( final Collection<Callable<T>> tasks ) throws InterruptedException, ExecutionException {
 
-        List l = submitList( tasks );
-        Object res = null;
+        List<Future<T>> l = submitList( tasks );
+        T res = null;
 
-        for( Object o :  l ) {
+        for( Future<T> f :  l ) {
             try {
-	              Future f = (Future) o;
                 res = f.get();
             } catch ( ExecutionException e ) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -125,14 +122,13 @@ public class QueuedExecutor implements ExecutorService {
     }
 
 
-    public Object invokeAny( final Collection tasks, final long timeout, final TimeUnit unit ) throws InterruptedException, ExecutionException, TimeoutException {
+    public <T> T invokeAny( final Collection<Callable<T>> tasks, final long timeout, final TimeUnit unit ) throws InterruptedException, ExecutionException, TimeoutException {
 
-        List l = submitList( tasks );
-        Object res = null;
+        List<Future<T>> l = submitList( tasks );
+        T res = null;
 
         unit.sleep( timeout );
-        for( Object o : l ) {
-            Future f = (Future) o;
+        for( Future<T> f : l ) {
             if(! f.isDone() )
                 f.cancel( true );
             else

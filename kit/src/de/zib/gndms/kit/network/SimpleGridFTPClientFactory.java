@@ -29,7 +29,7 @@ public class SimpleGridFTPClientFactory extends AbstractGridFTPClientFactory {
      */
     public GridFTPClient createClient( String host, int port, CredentialProvider cp ) throws ServerException, IOException {
         GridFTPClient clnt = new GridFTPClient( host, port );
-        clnt.authenticate( null );
+        cp.installCredentials( clnt );
         return clnt;
     }
 }
