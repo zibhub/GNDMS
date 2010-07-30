@@ -1,6 +1,6 @@
 package de.zib.gndms.kit.network;
 
-import de.zib.gndms.stuff.qexecuter.QueuedExecutor;
+import de.zib.gndms.stuff.threading.QueuedExecutor;
 import de.zib.gndms.kit.access.CredentialProvider;
 import org.apache.log4j.Logger;
 import org.globus.ftp.GridFTPClient;
@@ -18,18 +18,18 @@ import java.util.concurrent.*;
  *          User: mjorra, Date: 20.02.2009, Time: 17:37:59
  */
 public class NonblockingClientFactory extends AbstractGridFTPClientFactory{
+    private static final Logger log = Logger.getLogger( NonblockingClientFactory.class );
 
     private int timeout = 20;
     private final TimeUnit unit = TimeUnit.SECONDS;
     private long delay = 500; // in ms
-    private ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool( 1 );
-    private Map<String, QueuedExecutor> hostExecutors = new HashMap<String, QueuedExecutor>( );
-    private Logger log = Logger.getLogger( NonblockingClientFactory.class );
+    private final ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool( 1 );
+    private final Map<String, QueuedExecutor> hostExecutors = new HashMap<String, QueuedExecutor>( );
 
 
     public GridFTPClient createClient( String host, int port, CredentialProvider cp ) throws ServerException, IOException {
 
-        QueuedExecutor exec;
+        final QueuedExecutor exec;
         synchronized( hostExecutors ) {
             if( hostExecutors.containsKey( host ) ) {
                 log.debug( "Returning executor for host: " + host );
@@ -42,8 +42,8 @@ public class NonblockingClientFactory extends AbstractGridFTPClientFactory{
             }
         }
 
-        GridFTPClientCreator c = new GridFTPClientCreator( host, port, cp );
-        Future<GridFTPClient> f = exec.submit( c );
+        final GridFTPClientCreator c = new GridFTPClientCreator( host, port, cp );
+        final Future<GridFTPClient> f = exec.submit( c );
         try {
             try{
                 return f.get( exec.actualTimeout( f, timeout, unit ), unit );

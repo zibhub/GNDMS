@@ -18,10 +18,10 @@ import java.util.concurrent.Callable;
  *          User: mjorra, Date: 20.02.2009, Time: 17:40:03
  */
 public class GridFTPClientCreator implements Callable<GridFTPClient>  {
+    private static final Logger log = Logger.getLogger( GridFTPClientCreator.class );
 
     private String host;
     private int port;
-    private Logger log = Logger.getLogger( GridFTPClientCreator.class );
     private Stack ctx;
     private CredentialProvider credProvider;
 
@@ -52,7 +52,7 @@ public class GridFTPClientCreator implements Callable<GridFTPClient>  {
         */
         try {
             log.info( "creating client" );
-            GridFTPClient cnt = new GridFTPClient( host, port );
+            final GridFTPClient cnt = new GridFTPClient( host, port );
             credProvider.installCredentials( cnt );
             validateClient( cnt );
             return cnt;
