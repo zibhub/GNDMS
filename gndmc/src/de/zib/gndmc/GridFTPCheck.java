@@ -61,6 +61,11 @@ public class GridFTPCheck extends AbstractApplication {
             cp.installCredentials( c );
         }
         System.out.println( "Cliend created" );
+        System.out.println( "Waiting" );
+
+  //      for( int i = 0; i < 300; ++i )
+  //          Thread.sleep( 1000 );
+        
 
         // GridFTPClientCreator cc =
         //     new GridFTPClientCreator( "csr-pc35",  2811, cp );

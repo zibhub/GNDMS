@@ -69,7 +69,8 @@ public class GridFTPClientCreator implements Callable<GridFTPClient>  {
         try {
             log.debug( "validating client " + host + ":" + port );
             //cnt.getFeatureList();
-            cnt.list();
+         //   cnt.list();
+            cnt.changeDir( "/" );
             d = true;
             log.debug( "successful validated" );
         } finally {
