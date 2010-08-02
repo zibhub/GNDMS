@@ -29,7 +29,7 @@ import java.io.Serializable;
  * A class to store information about task permissions. Usually instantiated in the middleware when creating the task.
  * It also provides access to the PermissionConfiglet.
  *
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version $Id$
  *          <p/>
  *          User: mjorra, Date: 06.01.2009, Time: 13:58:52

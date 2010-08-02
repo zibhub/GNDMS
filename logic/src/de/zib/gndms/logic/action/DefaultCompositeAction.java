@@ -30,7 +30,7 @@ import java.util.Collection;
  *
  * The first template parameter is the return type, the second is the type of the other actions, wich can be added.
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 12.08.2008 Time: 18:07:11

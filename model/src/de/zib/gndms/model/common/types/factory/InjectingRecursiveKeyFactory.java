@@ -28,7 +28,7 @@ import com.google.inject.Inject;
  * 
  * All methods concerning the Boundinjector are made {@code synchronized}.
  * 
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 10.12.2008 Time: 13:39:27

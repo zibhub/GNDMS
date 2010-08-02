@@ -23,7 +23,7 @@ package de.zib.gndms.kit.network;
  * Its estimateBandWidthFromTo-method returns a fixed value, which is
  * independent of the given hosts.
  * 
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 01.10.2008, Time: 10:29:43

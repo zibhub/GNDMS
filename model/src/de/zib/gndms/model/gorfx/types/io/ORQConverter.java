@@ -32,7 +32,7 @@ import de.zib.gndms.model.gorfx.types.AbstractORQ;
  *
  * @see de.zib.gndms.model.gorfx.types.io.ORQWriter
  * @see de.zib.gndms.model.gorfx.types.AbstractORQ
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 25.09.2008, Time: 17:52:45

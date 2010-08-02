@@ -33,7 +33,7 @@ import java.io.PrintWriter;
  * @see de.zib.gndms.model.common.ConfigletState
  * @see de.zib.gndms.infra.system.GNDMSystem
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 07.11.2008 Time: 15:19:18

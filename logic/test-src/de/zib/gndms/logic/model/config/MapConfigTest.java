@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * Tests whether MapConfig correctly handles system enviroment variables, denoted in key's value
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 16.10.2008 Time: 14:34:29

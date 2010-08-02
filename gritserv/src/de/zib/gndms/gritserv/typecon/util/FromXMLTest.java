@@ -28,7 +28,7 @@ import org.kohsuke.args4j.Option;
 import java.io.FileInputStream;
 
 /**
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version $Id$
  *          <p/>
  *          User: mjorra, Date: 09.02.2009, Time: 16:18:19

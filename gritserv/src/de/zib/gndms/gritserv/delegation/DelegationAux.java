@@ -50,7 +50,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 
 /**
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version $Id$
  *          <p/>
  *          User: mjorra, Date: 10.02.2009, Time: 15:44:09

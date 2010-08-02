@@ -25,7 +25,7 @@ import javax.xml.namespace.QName;
  * VEPRefs for grid resources that use a SimpleResourceKey with a UUID string value
  * (i.e. resource instances from introduce-generated services)
  * 
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$ 
  *
  * User: stepn Date: 30.07.2008 Time: 15:03:31

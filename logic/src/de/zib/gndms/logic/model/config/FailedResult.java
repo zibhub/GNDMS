@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A Class to indicate that an action failed returning its result.
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 23.10.2008 Time: 16:36:32

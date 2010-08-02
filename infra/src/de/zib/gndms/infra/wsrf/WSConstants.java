@@ -24,7 +24,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 /**
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 01.12.2008, Time: 12:47:58

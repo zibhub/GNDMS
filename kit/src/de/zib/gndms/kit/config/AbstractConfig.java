@@ -43,7 +43,7 @@ import java.util.regex.Pattern;
  * will be replaced automatically with their current values when the value of an option is returned. 
  *
  * @see ConfigProvider
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 06.10.2008 Time: 10:49:31

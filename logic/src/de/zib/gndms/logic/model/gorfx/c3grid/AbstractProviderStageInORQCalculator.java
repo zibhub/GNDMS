@@ -25,7 +25,7 @@ import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
 /**
  * Example class of provider state in calculator.
  *
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @verson \$id$
  * <p/>
  * User: bzcjorra Date: Sep 5, 2008 4:12:20 PM

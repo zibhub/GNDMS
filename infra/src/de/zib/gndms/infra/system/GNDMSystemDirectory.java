@@ -69,7 +69,7 @@ import java.util.Set;
  * ThingAMagic.
 *
 * @see GNDMSystem
-* @author Stefan Plantikow<plantikow@zib.de>
+* @author: try ste fan pla nti kow zib
 * @version $Id$
 *
 *          User: stepn Date: 03.09.2008 Time: 16:50:06

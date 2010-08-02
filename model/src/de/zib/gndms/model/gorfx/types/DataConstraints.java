@@ -23,7 +23,7 @@ import java.util.HashMap;
 
 
 /**
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @verson \$id$
  * <p/>
  * User: bzcjorra Date: Sep 15, 2008 4:08:44 PM

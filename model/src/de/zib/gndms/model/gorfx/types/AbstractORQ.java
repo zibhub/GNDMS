@@ -30,7 +30,7 @@ import java.util.Map;
 /**
  * An base class for model classes representing ORQ's.
  *
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @verson \$id$
  * <p/>
  * User: bzcjorra Date: Sep 5, 2008 3:38:17 PM

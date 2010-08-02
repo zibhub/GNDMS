@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
  * interface, a special wrap method will be used.
  * The template parameter {@code T} defines a common superclass of class {@code X} and class {code Y}.
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 17.11.2008 Time: 16:54:01

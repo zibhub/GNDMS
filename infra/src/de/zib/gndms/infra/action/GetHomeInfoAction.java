@@ -41,7 +41,7 @@ import java.io.PrintWriter;
  * configuration map. Therefore the option {@link #home 'home'} must be set.
  *
  * @see de.zib.gndms.infra.service.GNDMServiceHome
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 22.08.2008 Time: 16:47:23

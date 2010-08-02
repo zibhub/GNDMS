@@ -19,7 +19,7 @@ package de.zib.gndms.GORFX.context.service.globus.resource;
 
 
 /**
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version $Id$
  *          <p/>
  *          User: mjorra, Date: 18.06.2010, Time: 14:23:39

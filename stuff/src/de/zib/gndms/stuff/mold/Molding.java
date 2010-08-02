@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
  *
  *
  * @see Molder
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 01.12.2008 Time: 12:08:19

@@ -36,7 +36,7 @@ import java.io.IOException;
 import java.util.Vector;
 
 /**
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version $Id$
  *          <p/>
  *          User: mjorra, Date: 29.07.2010, Time: 12:48:59

@@ -31,7 +31,7 @@ import java.io.PrintWriter;
 /**
  * ThingAMagic.
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 15.08.2008 Time: 14:38:39

@@ -30,7 +30,7 @@ import javax.xml.namespace.QName;
  * implementing the writeSliceRef-method, or the parts of the reference, i.e.
  * the id, name and url can be written separately.
  *
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 04.11.2008, Time: 13:27:34

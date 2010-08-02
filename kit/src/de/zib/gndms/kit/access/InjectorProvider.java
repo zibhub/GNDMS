@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Provides a guice injector
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  */
 public interface InjectorProvider {
     @NotNull Injector getInjector();

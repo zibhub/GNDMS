@@ -22,7 +22,7 @@ import de.zib.gndms.logic.model.EntityUpdateListener;
 import de.zib.gndms.model.common.GridResource;
 
 /**
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 22.10.2008, Time: 14:56:09

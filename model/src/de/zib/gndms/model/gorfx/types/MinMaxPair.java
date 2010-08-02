@@ -26,7 +26,7 @@ import java.io.Serializable;
  * Stores a pair of doubles, denoting a min and a max value.
  * 
  * 
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 17.09.2008, Time: 14:02:40

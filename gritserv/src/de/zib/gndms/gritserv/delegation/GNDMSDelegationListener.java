@@ -27,7 +27,7 @@ import org.apache.log4j.Logger;
 import javax.naming.NamingException;
 
 /**
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version $Id$
  *          <p/>
  *          User: mjorra, Date: 10.02.2009, Time: 14:58:55

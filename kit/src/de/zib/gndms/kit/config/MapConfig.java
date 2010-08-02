@@ -30,7 +30,7 @@ import java.util.Iterator;
 * Note: A value can also contain system environment variables.                                 
 * 
 * @see de.zib.gndms.kit.config.AbstractConfig
-* @author Stefan Plantikow<plantikow@zib.de>
+* @author: try ste fan pla nti kow zib
 * @version $Id$
 *
 *          User: stepn Date: 06.10.2008 Time: 11:21:58

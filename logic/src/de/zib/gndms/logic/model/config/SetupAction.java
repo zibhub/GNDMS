@@ -42,7 +42,7 @@ import de.zib.gndms.kit.config.MandatoryOptionMissingException;
  * {@link #isSupportedMode(de.zib.gndms.logic.model.config.SetupAction.SetupMode)}.
  *
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 18.08.2008 Time: 10:56:41

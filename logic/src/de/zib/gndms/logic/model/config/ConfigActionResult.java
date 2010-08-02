@@ -22,7 +22,7 @@ package de.zib.gndms.logic.model.config;
  * An ConfigActionResult contains a String holding information about the result of an action.
  *
  * @see ConfigAction
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 23.10.2008 Time: 16:27:45

@@ -55,7 +55,7 @@ import java.util.Properties;
  * <p>An instance of this class returns a {@code ConfigActionResult} informing about the success of its execution, when
  * the <tt>execute()</tt> method is called.
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 15.09.2008 Time: 17:06:54

@@ -33,7 +33,7 @@ import java.io.OutputStream;
 import java.io.FileOutputStream;
 
 /**
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 14.10.2008, Time: 14:38:41

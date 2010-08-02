@@ -22,7 +22,7 @@ package de.zib.gndms.model;
 /**
  * Shared super class of all model objects.
  * 
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  * User: stepn Date: 30.07.2008 Time: 17:03:24

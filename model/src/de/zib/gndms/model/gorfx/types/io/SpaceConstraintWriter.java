@@ -26,7 +26,7 @@ import de.zib.gndms.model.gorfx.types.MinMaxPair;
  * NOTE Cause of the few methods ther is now converter class for the
  *      space constraint yet. This might change if the class gets more
  *      complex.
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 17.09.2008, Time: 15:14:49

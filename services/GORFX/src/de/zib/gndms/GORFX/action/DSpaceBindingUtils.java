@@ -29,7 +29,7 @@ import java.util.GregorianCalendar;
 
 /**
  * This class provides methods which are clients of the DSpace service.
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 04.11.2008, Time: 17:02:53

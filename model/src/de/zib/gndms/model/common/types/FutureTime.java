@@ -47,7 +47,7 @@ import java.util.Calendar;
  *
  * @see DateTime
  * @see Duration
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 24.11.2008 Time: 14:48:08

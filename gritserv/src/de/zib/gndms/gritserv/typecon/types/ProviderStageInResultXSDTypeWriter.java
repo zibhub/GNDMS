@@ -33,7 +33,7 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPException;
 
 /**
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 13.10.2008, Time: 17:49:16

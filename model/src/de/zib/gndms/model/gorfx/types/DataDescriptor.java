@@ -25,7 +25,7 @@ import java.io.Serializable;
  * This is the model class representing a xsd gndms:DataDescriptor.
  * It is intended to store common data for staging requests.
  *
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @verson \$id$
  * <p/>
  * User: bzcjorra Date: Sep 5, 2008 3:57:32 PM

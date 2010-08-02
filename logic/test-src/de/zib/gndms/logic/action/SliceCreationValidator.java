@@ -33,7 +33,7 @@ import java.util.GregorianCalendar;
 import java.io.File;
 
 /**
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * 
  * User: mjorra, Date: 14.08.2008, Time: 14:03:31

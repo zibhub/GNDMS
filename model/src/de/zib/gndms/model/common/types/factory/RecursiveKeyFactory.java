@@ -34,7 +34,7 @@ package de.zib.gndms.model.common.types.factory;
  *
  * @see KeyFactory
  * @see KeyFactoryInstance
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 08.10.2008 Time: 16:36:22

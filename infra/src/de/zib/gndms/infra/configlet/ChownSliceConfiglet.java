@@ -33,7 +33,7 @@ import java.io.Serializable;
  *
  * DOES NOT WORK
  * 
- * @author Stefan Plantikow <stefan.plantikow@googlemail.com>
+ * @author: try ste fan pla nti kow zib
  *
  **/
 public class ChownSliceConfiglet extends DefaultConfiglet {

@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Wrapper interface for the separation of model and webservice layer.
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 11.08.2008 Time: 14:15:24

@@ -28,7 +28,7 @@ import java.lang.annotation.*;
  *
  * @see Copier
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 27.11.2008 Time: 17:20:28

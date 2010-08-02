@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  *
  * An Interface to provide Configlets
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 11.11.2008, Time: 18:24:02

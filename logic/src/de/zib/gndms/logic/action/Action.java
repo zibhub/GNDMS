@@ -45,7 +45,7 @@ import java.util.List;
  * actions may be created.
  *
  *
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  *
  * User: mjorra, Date: 12.08.2008, Time: 15:25:36

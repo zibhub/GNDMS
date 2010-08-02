@@ -24,7 +24,7 @@ package de.zib.gndms.kit.config;
  * @see
  * @see logic.CommandAction
  * 
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 14.08.2008 Time: 18:06:09

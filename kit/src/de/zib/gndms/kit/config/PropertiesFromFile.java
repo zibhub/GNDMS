@@ -39,7 +39,7 @@ import java.util.Properties;
  * first place (than a default one is written to disk) or if it has changed since the last time
  * it was read.
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 17.07.2008 Time: 23:05:39

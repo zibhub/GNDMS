@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
  * and a new instance {@code A inst=new A();}<br>
  * then invoking {@code molder.mold(ins)} delivers {@code ins.equals((A)obj)} being true.
  * </p>
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  *
  * @version $Id$
  *

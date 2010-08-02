@@ -30,7 +30,7 @@ import java.util.Properties;
  * describing the concrete access rights, the name of the user and the name of the group, the user belongs to.
  * 
  * @see AccessMask
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version $Id$
  * <p/>
  * User: mjorra, Date: 22.12.2008, Time: 13:12:37

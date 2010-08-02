@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
  * A BatchUpdateAction will executed several actions and can inform an EntityUpdateListener about a change on the model.
  * 
  * 
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 13.08.2008 Time: 10:35:07

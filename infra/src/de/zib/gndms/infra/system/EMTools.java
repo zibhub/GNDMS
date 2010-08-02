@@ -29,7 +29,7 @@ import javax.persistence.EntityTransaction;
 /**
  * Helper code for executing jpa transactions in groovy
  * 
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$ 
  *
  * User: stepn Date: 13.08.2008 Time: 15:24:02

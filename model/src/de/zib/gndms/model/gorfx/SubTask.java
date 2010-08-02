@@ -31,7 +31,7 @@ import javax.persistence.EntityManager;
 
 /**
  *
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version $Id$
  *
  * User: mjorra, Date: 17.11.2008, Time: 17:28:21

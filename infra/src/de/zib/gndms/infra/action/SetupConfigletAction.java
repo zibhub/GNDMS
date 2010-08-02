@@ -46,7 +46,7 @@ import java.lang.annotation.Documented;
  * if necessary also from an instance of the parent chain. 
  *
  * 
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version $Id$
  *          <p/>
  *          User: mjorra, Date: 09.01.2009, Time: 16:29:43

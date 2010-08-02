@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.ArrayList;
 
 /**
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version $Id$
  *          <p/>
  *          User: mjorra, Date: 24.02.2009, Time: 14:53:59

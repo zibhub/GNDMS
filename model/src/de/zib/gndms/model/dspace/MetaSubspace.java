@@ -28,7 +28,7 @@ import java.util.Set;
 /**
  * Instances reprent the logical role of a subspace in a GNDMS instance
  * 
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$ 
  *
  * User: stepn Date: 01.08.2008 Time: 23:16:48

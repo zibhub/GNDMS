@@ -33,7 +33,7 @@ import java.util.List;
  * Note: An instance can't change it's delegation object.
  * Therefore its BatchUpdateAction can be denoted only by the constructor and #setListener() is not supported. 
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 04.09.2008 Time: 13:01:25

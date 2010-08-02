@@ -51,7 +51,7 @@ import java.util.GregorianCalendar;
  * (on {@code IN_PROGRESS}) by implementing {@link #onInProgress(AbstractTask)}. 
  *
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 15.09.2008 Time: 11:26:48

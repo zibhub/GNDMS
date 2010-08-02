@@ -35,7 +35,7 @@ import java.util.regex.Matcher;
  * The configuration of all permissions can be done using a file or a properties variable.
  * See the description of {@link #fromPropertyFile(java.io.File)} for the configuration syntax.
  *
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version $Id$
  * <p/>
  * User: mjorra, Date: 23.12.2008, Time: 12:40:13

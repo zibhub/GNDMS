@@ -21,7 +21,7 @@ package de.zib.gndms.logic.model.gorfx;
 /**
  * ThingAMagic.
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 27.10.2008 Time: 14:40:12

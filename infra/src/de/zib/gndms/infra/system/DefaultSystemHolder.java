@@ -29,7 +29,7 @@ import javax.persistence.EntityManagerFactory;
  *
  * @see SystemHolder
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 25.07.2008 Time: 13:07:12

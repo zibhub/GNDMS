@@ -45,7 +45,7 @@ import java.lang.reflect.Method;
      *      </li>
      * </ul> 
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 27.11.2008 Time: 16:47:00

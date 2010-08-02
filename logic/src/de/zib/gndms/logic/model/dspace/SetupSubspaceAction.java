@@ -55,7 +55,7 @@ import java.io.PrintWriter;
  * @see MetaSubspace
  * @see Subspace
  * @see ImmutableScopedName
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 14.08.2008 Time: 17:37:51

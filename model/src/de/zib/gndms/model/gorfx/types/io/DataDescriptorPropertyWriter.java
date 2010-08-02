@@ -30,7 +30,7 @@ import java.util.Properties;
  * Builder to export a data descriptor into a property file.
  *
  * NOTE loading and storing of the Properties must be performed by their provider.
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 17.09.2008, Time: 15:34:01

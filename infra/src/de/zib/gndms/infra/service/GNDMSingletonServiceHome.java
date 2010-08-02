@@ -24,7 +24,7 @@ import org.globus.wsrf.ResourceException;
 /**
  * Marker interface; to be extended later
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 15.08.2008 Time: 18:29:01

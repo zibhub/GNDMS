@@ -33,7 +33,7 @@ import java.io.IOException;
 
 
 /**
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 30.09.2008, Time: 10:51:38

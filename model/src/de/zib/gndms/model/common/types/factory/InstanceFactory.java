@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * An InstanceFactory creates instances for a chosen class. being a subclass of KeyFactoryInstance
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 05.09.2008 Time: 18:00:40

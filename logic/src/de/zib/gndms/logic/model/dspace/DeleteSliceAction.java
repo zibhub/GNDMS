@@ -31,7 +31,7 @@ import javax.persistence.EntityManager;
  *
  * When the slice is deleted, its associed folder is also removed.
  *
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  *
  * User: mjorra, Date: Mi 23. Jun 17:40:11 CEST 2010

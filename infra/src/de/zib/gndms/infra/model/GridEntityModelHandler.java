@@ -42,7 +42,7 @@ import javax.persistence.EntityManagerFactory;
 /**
  * Helper class for managing persistent models of GNDMS resources 
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 27.07.2008 Time: 19:41:17

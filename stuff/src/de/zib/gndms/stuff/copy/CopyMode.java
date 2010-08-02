@@ -22,7 +22,7 @@ package de.zib.gndms.stuff.copy;
  * An enum holding all implemented possibilities to copy an instance.
  *
  * @see Copier
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 27.11.2008 Time: 17:21:01

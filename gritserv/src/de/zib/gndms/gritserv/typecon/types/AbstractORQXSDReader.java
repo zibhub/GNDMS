@@ -25,7 +25,7 @@ import types.ContextT;
  * An AbstractORQXSDReader is used to created an AbstractORQ instance and load the ContextT into the object.
  * See {@link #read(Class, types.ContextT)} 
  *
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 14.10.2008, Time: 13:16:31

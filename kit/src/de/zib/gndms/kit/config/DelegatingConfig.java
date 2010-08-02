@@ -27,7 +27,7 @@ import java.util.Iterator;
 /**
  * This class stores a configuration-object
 *
-* @author Stefan Plantikow<plantikow@zib.de>
+* @author: try ste fan pla nti kow zib
 * @version $Id$
 *
 *          User: stepn Date: 06.10.2008 Time: 11:21:46

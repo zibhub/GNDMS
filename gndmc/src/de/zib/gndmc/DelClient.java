@@ -35,7 +35,7 @@ import java.io.FileWriter;
 import java.security.cert.X509Certificate;
 
 /**
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version $Id$
  *          <p/>
  *          User: mjorra, Date: 28.01.2009, Time: 12:16:24

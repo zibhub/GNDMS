@@ -47,7 +47,7 @@ import java.util.List;
  *
  * @see GroovyMoniServlet
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 19.07.2008 Time: 13:08:00

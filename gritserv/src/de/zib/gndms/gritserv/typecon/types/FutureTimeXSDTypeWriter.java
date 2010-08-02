@@ -26,7 +26,7 @@ import types.FutureTimeT;
 /**
  * ThingAMagic.
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 24.11.2008 Time: 17:31:14

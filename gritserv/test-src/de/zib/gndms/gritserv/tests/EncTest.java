@@ -31,7 +31,7 @@ import javax.xml.namespace.QName;
 import java.io.*;
 
 /**
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version $Id$
  *          <p/>
  *          User: mjorra, Date: 11.02.2009, Time: 11:04:27

@@ -25,7 +25,7 @@ import org.apache.log4j.NDC;
 /**
  * ThingAMagic.
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 22.10.2008 Time: 14:31:50

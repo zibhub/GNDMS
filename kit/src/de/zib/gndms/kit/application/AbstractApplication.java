@@ -24,7 +24,7 @@ import org.kohsuke.args4j.CmdLineException;
 /**
  * Abstract base class for a application with args4j support.
  *
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 06.11.2008, Time: 12:39:03

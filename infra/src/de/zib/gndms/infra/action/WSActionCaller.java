@@ -31,7 +31,7 @@ import java.io.PrintWriter;
  *
  * @see PublicAccessible
  * @see ActionCaller
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version $Id$
  *          <p/>
  *          User: mjorra, Date: 26.01.2009, Time: 18:28:25

@@ -47,7 +47,7 @@ import java.util.Properties;
 
 /**
  * WARNING ths class may uses obsolet operation and should be checked befor running it
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 24.10.2008, Time: 09:48:52

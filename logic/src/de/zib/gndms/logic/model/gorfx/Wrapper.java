@@ -21,7 +21,7 @@ package de.zib.gndms.logic.model.gorfx;
 /**
  * An Interface for an Wrapper.
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 17.11.2008 Time: 16:36:32

@@ -37,7 +37,7 @@ import java.util.Set;
  *
  * The first template parameter is the return type.
  * 
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 14.08.2008 Time: 10:36:15

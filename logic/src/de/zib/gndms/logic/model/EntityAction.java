@@ -32,7 +32,7 @@ import javax.persistence.EntityManager;
  * The template parameter is the return type.
  *
  * @see javax.persistence.EntityManager
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 14.08.2008 Time: 14:44:57

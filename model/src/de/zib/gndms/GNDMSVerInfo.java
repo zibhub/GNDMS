@@ -30,7 +30,7 @@ import java.io.IOException;
  * A GNDMSVerInfo instance returns a String, containg informations about a specific version of the GNDMSystem.
  * It uses text-files located at {@code META-INF/} .
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 09.12.2008 Time: 18:01:03

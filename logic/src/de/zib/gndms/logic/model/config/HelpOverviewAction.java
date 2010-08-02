@@ -38,7 +38,7 @@ import java.util.Comparator;
  * <p>A name mapper can be denoted, using {@code setNameMapper()}, mapping the canonical name (<tt>actionClass.getCanonicalName()</tt> )
  * of each action class contained in the set to a predefined String and will used when printing the list.
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 26.08.2008 Time: 10:55:17

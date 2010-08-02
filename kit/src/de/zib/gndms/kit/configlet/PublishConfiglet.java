@@ -34,7 +34,7 @@ import java.util.Iterator;
  *
  * To retrieve the List of the publisher, they must be stored as dynamic arrray with '{@code publishers}' as {@code optionname}
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 10.11.2008 Time: 14:22:34

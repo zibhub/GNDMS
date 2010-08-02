@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
  * As described in {@link RecursiveKeyFactory}, this factory can be created by a KeyFactory.
  *
  * @see RecursiveKeyFactory
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 08.10.2008 Time: 17:44:42

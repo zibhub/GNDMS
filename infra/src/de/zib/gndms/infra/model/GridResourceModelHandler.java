@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
  * Specializing ModelHandler for GridResources
  *
  * @see de.zib.gndms.model.common.GridResource
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 09.08.2008 Time: 12:21:32

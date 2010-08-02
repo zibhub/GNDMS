@@ -37,7 +37,7 @@ import java.lang.reflect.InvocationTargetException;
  * @see de.zib.gndms.model.common.types.factory.KeyFactoryInstance
  * @see de.zib.gndms.model.common.types.factory.IndustrialPark
  * 
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 05.12.2008 Time: 17:51:48

@@ -35,7 +35,7 @@ import java.util.Properties;
  * the name of the relation to use (it defaults to "c3grid"). Then simply call
  * getEntityManager ( ) to obtain the entity manager.
  * 
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version $Id$
  *
  * User: mjorra, Date: 15.08.2008, Time: 12:38:08

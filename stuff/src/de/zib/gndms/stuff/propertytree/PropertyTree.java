@@ -51,7 +51,7 @@ import java.util.Set;
  *
  * This tree can be accessed like classic properties or only subtrees may taken into account.
  *
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version $Id$
  *
  *          User: mjorra, Date: 06.01.2009, Time: 17:28:32

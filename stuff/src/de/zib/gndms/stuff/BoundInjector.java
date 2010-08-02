@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
  * The {@code BoundInjector} class wrappes an {@link Injector}.
  * Thus, it provides setter and getter methods and a method to inject dependencies into an object
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 10.12.2008 Time: 12:37:41

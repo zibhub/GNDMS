@@ -20,7 +20,7 @@ package de.zib.gndms.model.dspace;
 /**
  * Subspace model class
  * 
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$ 
  *
  * User: stepn Date: 24.07.2008 Time: 11:17:22

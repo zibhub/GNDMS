@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Shared interface of all GNDMS service resource homes
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 08.08.2008 Time: 11:51:59

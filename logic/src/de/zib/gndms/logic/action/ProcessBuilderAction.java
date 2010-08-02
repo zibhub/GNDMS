@@ -29,7 +29,7 @@ import java.io.*;
  * Wrapper around ProcessBuilder that allows piping into the process and collecting
  * all output in a string builder.
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 21.10.2008 Time: 15:05:18

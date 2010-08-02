@@ -27,7 +27,7 @@ import java.io.FileInputStream;
 import java.util.Iterator;
 
 /**
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version $Id$
  *          <p/>
  *          User: mjorra, Date: 16.01.2009, Time: 14:12:56

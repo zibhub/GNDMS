@@ -60,7 +60,7 @@ import java.util.Set;
  * the execute method is called.
  * 
  * @see de.zib.gndms.infra.configlet.C3MDSConfiglet.C3Catalog
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 11.12.2008 Time: 12:47:32

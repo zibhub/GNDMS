@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
  * 
  * The first template parameter is the key type, the second template parameter specifies the {@code KeyFactoryInstance} type.
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 07.10.2008 Time: 10:58:31

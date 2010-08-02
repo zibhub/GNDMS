@@ -29,7 +29,7 @@ import java.util.WeakHashMap;
 /**
  * Delegating EntityUpdateListener.  Used to avoid leaking of GNDMSystem.
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 15.08.2008 Time: 13:18:43

@@ -21,7 +21,7 @@ package de.zib.gndms.logic.model.gorfx;
 /**
  * Just a place to define some values required for ORQs, mainly contract time spans.
  *
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 27.10.2008, Time: 10:01:49

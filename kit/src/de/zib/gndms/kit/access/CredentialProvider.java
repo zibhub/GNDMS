@@ -25,7 +25,7 @@ import java.util.List;
  *
  * Implementations of this interface should provided the ability to install credentials in a specific object.
  *
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version $Id$
  *          <p/>
  *          User: mjorra, Date: 18.06.2010, Time: 10:12:35

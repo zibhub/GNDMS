@@ -32,7 +32,7 @@ import java.util.List;
  *
  * No version field since instances are immutable
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 28.07.2008 Time: 14:34:05

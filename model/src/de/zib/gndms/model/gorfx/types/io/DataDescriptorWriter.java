@@ -30,7 +30,7 @@ import java.util.HashMap;
  * Then hand this implementation over to the DataDescriptorConverter along with the instance
  * you want to be converted.
  *
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 17.09.2008, Time: 15:25:08

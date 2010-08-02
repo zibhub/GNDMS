@@ -31,7 +31,7 @@ import java.util.Properties;
  * A class to configure permissions of files created by the GORFX service.
  *
  * 
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 23.12.2008, Time: 11:00:25

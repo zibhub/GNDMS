@@ -25,7 +25,7 @@ import de.zib.gndms.model.common.GridResource;
  * An EntityUpdateListener will be informed by an <tt>BatchUpdateAction</tt> on a model.
  *
  * @see BatchUpdateAction
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 12.08.2008 Time: 18:33:47

@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
 /**
  * ThingAMagic.
  * 
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$ 
  *
  * User: stepn Date: 12.08.2008 Time: 16:06:58

@@ -30,7 +30,7 @@ import java.io.Serializable;
  * Loop starts as soon as {@link #init(org.apache.commons.logging.Log, String, java.io.Serializable)} } is invoked.
  *
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 06.11.2008 Time: 18:30:51

@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
  * A Class to indicate that an action succeeded in returning its result.
  *
  * @see ConfigAction
-* @author Stefan Plantikow<plantikow@zib.de>
+* @author: try ste fan pla nti kow zib
 * @version $Id$
 *
 *          User: stepn Date: 23.10.2008 Time: 16:35:54

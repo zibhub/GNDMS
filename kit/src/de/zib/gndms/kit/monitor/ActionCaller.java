@@ -31,7 +31,7 @@ import java.io.PrintWriter;
  * and return the result of the ConfigAction's {@code call()} invokation.
  * 
  * @see de.zib.gndms.logic.model.config.ConfigAction
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 15.08.2008 Time: 13:02:48

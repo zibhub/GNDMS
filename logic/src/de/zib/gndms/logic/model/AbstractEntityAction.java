@@ -38,7 +38,7 @@ import javax.persistence.EntityTransaction;
  *
  * <p>The template parameter is the return type of this action.
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 14.08.2008 Time: 14:45:38

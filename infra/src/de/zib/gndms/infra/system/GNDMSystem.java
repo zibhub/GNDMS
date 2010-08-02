@@ -75,7 +75,7 @@ import java.util.concurrent.*;
  * This sets up the configuration and database storage area shared between
  * GNDMS services.
  *
- * @author Stefan Plantikow <plantikow@zib.de>in
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 17.06.2008 Time: 23:09:00

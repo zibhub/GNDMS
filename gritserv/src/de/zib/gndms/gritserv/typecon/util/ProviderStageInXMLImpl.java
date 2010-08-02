@@ -36,7 +36,7 @@ import types.ProviderStageInORQT;
 import java.io.*;
 
 /**
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version $Id$
  * <p/>
  * User: mjorra, Date: 03.12.2008, Time: 15:59:26

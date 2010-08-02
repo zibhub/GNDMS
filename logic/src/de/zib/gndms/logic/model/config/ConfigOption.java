@@ -24,7 +24,7 @@ import java.lang.annotation.*;
 /**
  * This annotation provides a description and an alternative name for object fields.
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 18.08.2008 Time: 16:41:05

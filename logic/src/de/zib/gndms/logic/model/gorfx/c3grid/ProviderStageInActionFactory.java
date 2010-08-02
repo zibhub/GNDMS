@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * ThingAMagic.
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 09.10.2008 Time: 12:30:22

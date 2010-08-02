@@ -31,7 +31,7 @@ import de.zib.gndms.model.dspace.types.SliceRef;
 /**
  * Utility functions that are used globally.
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 07.08.2008 Time: 15:52:55

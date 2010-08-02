@@ -27,7 +27,7 @@ import java.io.Serializable;
 
 /**
  * A time constrain is a selection criteria for data stagin.
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @verson \$id$
  * <p/>
  * User: bzcjorra Date: Sep 15, 2008 4:11:00 PM

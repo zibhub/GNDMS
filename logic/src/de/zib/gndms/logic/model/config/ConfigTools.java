@@ -39,7 +39,7 @@ import java.io.PrintWriter;
  *
  * @see  de.zib.gndms.logic.model.config.ConfigAction
  * @see de.zib.gndms.logic.model.config.ConfigOption
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 23.10.2008 Time: 16:37:27

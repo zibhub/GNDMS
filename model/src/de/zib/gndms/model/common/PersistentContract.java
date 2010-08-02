@@ -42,7 +42,7 @@ import java.util.Calendar;
  *
  * @see de.zib.gndms.model.common.types.TransientContract
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 24.11.2008 Time: 15:22:43

@@ -24,7 +24,7 @@ import javax.persistence.EntityManagerFactory;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 14.11.2008, Time: 11:08:56

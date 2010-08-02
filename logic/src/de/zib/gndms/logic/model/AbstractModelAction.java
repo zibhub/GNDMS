@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
  * The first template parameter is the model for this action, the second is the return type of this action.
  *
  * @see AbstractEntityAction
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * 
  * User: mjorra, Date: 12.08.2008, Time: 16:36:20

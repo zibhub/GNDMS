@@ -25,7 +25,7 @@ import com.google.inject.Injector;
 /**
  * A SystemInfo class returns informations about the GNDM system.
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 10.12.2008 Time: 11:18:10

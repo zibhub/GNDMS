@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Additional methods required by GNDMS PersistentResources
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 28.07.2008 Time: 11:07:52

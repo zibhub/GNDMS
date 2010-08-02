@@ -31,7 +31,7 @@ import java.util.Set;
 import java.util.ArrayList;
 
 /**
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 16.10.2008, Time: 09:12:27

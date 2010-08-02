@@ -27,7 +27,7 @@ import java.security.Principal;
 /**
  * A binding factory that does not besides creating empty bindings.
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 25.07.2008 Time: 14:09:55

@@ -33,7 +33,7 @@ import javax.persistence.Query;
 /**
  * ModelHandler specializing for SingletonGridResources
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 09.08.2008 Time: 12:29:43

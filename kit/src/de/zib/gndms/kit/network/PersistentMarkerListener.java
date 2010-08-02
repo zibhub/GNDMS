@@ -36,7 +36,7 @@ import javax.persistence.EntityManager;
  * Note even after a successful transfer the data base entry isn't deleted
  * you have to do this manually using derby's ij tool.
  * 
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 01.10.2008, Time: 13:27:12

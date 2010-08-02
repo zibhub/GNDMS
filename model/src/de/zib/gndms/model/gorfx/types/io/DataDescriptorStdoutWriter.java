@@ -22,7 +22,7 @@ import de.zib.gndms.model.gorfx.types.io.DataConstraintsWriter;
 import de.zib.gndms.model.gorfx.types.io.DataDescriptorWriter;
 
 /**
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 18.09.2008, Time: 17:22:28

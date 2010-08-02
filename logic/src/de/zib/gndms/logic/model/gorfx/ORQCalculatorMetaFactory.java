@@ -24,7 +24,7 @@ import de.zib.gndms.model.gorfx.OfferType;
 /**
  * ThingAMagic.
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 08.10.2008 Time: 17:35:27

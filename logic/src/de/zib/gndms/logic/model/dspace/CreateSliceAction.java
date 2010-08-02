@@ -43,7 +43,7 @@ import java.util.Calendar;
  * @see Slice
  *
  *
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  *
  * User: mjorra, Date: 13.08.2008, Time: 10:21:36

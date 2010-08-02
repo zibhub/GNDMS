@@ -31,7 +31,7 @@ import java.util.Map;
  * Everytime the configuration is updated, a new {@code Mapconfig}-Object, storing the data, will be created.
  *
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 06.11.2008 Time: 18:20:09

@@ -32,7 +32,7 @@ import java.util.List;
  *
  * Use infra.GNDMSTools::SliceRefAsEPR to obtain a EPR for this ref.
  *
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 03.11.2008, Time: 10:30:48

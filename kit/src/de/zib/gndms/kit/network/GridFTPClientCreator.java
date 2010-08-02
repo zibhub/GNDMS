@@ -30,7 +30,7 @@ import java.util.Stack;
 import java.util.concurrent.Callable;
 
 /**
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version $Id$
  *          <p/>
  *          User: mjorra, Date: 20.02.2009, Time: 17:40:03

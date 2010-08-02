@@ -31,7 +31,7 @@ import java.io.IOException;
  * If {@code createClient(String host)} is invoked, number {@code 2811} will be used as default port value.
  * 
  *
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 30.09.2008, Time: 13:31:30

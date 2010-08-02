@@ -31,7 +31,7 @@ import javax.naming.NamingException;
 /**
  * ThingAMagic.
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 15.07.2008 Time: 14:22:20

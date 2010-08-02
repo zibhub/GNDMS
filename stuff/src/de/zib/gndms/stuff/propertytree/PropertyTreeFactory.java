@@ -28,7 +28,7 @@ import java.io.IOException;
 /**
  * This factory class creates a {@code PropertyTree} out of a {@code File} or {@code Properties} object.
  *
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version $Id$
  *          <p/>
  *          User: mjorra, Date: 06.01.2009, Time: 17:30:53

@@ -29,7 +29,7 @@ import org.apache.axis.message.MessageElement;
  * To opposite way is done by {@link FileTransferORQXSDTypeWriter}.
  *
  *
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 14.10.2008, Time: 13:14:47

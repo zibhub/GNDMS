@@ -28,7 +28,7 @@ import javax.xml.namespace.QName;
 /**
  * Model-class for a QName
  * 
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  * User: stepn Date: 02.08.2008 Time: 00:41:09

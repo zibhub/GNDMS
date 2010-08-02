@@ -36,7 +36,7 @@ import java.util.Calendar;
  *
  * The new slice instance is specified and will be created by the constructor of this class.
  *
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  *
  * User: mjorra, Date: 13.08.2008, Time: 13:20:25

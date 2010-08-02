@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 
 /**
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 04.11.2008, Time: 15:37:13

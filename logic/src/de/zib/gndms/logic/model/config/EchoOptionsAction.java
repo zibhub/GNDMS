@@ -27,7 +27,7 @@ import java.io.PrintWriter;
 /**
  * Just returns all option parameters and prints them by virtue of ConfigAction.setWriteResult(true).
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 15.08.2008 Time: 11:06:40

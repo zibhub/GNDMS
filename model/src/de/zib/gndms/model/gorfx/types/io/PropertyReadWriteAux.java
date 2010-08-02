@@ -30,7 +30,7 @@ import java.util.*;
 /**
  * Auxiliary methods for conversion into a property.
  * 
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 17.09.2008, Time: 15:39:59

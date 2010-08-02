@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
  * A {@code getOption(String optionname)} method is used to get the value set for the option {@code optionname}
  * in a currently loaded configuration.
  *  
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 06.10.2008 Time: 10:52:30

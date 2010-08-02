@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Implementors initialize model objects
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 06.08.2008 Time: 14:50:41

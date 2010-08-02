@@ -27,7 +27,7 @@ import java.io.IOException;
 /**
  * A GridFTPClient factory for clients without a GSSCredential authentification.
  *
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 30.09.2008, Time: 13:29:57

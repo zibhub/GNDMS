@@ -37,7 +37,7 @@ import java.io.StringWriter;
 import java.io.PrintWriter;
 
 /**
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version \$id$
  * <p/>
  * User: bzcjorra Date: Sep 5, 2008 5:08:47 PM

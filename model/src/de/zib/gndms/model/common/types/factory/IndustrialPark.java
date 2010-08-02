@@ -43,7 +43,7 @@ import java.util.Map;
  * The template parameter {@code T} specifies the type of the instances, which are created by all factories, which are
  * managed by this IndustrialPark.
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 08.10.2008 Time: 15:48:08

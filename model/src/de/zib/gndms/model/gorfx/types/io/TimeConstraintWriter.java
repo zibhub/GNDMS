@@ -27,7 +27,7 @@ import org.joda.time.DateTime;
  *      time constraint yet. This might change if the class gets more
  *      complex.
  * 
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 17.09.2008, Time: 14:54:27

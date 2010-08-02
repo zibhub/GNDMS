@@ -40,7 +40,7 @@ import java.lang.reflect.Method;
 import java.util.IdentityHashMap;
 
 /**
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 12.11.2008, Time: 14:39:36

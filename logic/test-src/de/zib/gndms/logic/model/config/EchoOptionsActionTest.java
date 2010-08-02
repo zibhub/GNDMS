@@ -30,7 +30,7 @@ import de.zib.gndms.kit.config.ParameterTools;
 /**
  * Tests whether EchoOptions actually returns all the options it is given
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 15.08.2008 Time: 11:27:15

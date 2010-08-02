@@ -23,7 +23,7 @@ package de.zib.gndms.infra.action;
  *
  * All config action which implement this interface are accessible through the WS interface.
  * 
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version $Id$
  *          <p/>
  *          User: mjorra, Date: 26.01.2009, Time: 17:38:20

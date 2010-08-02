@@ -40,7 +40,7 @@ import types.FileTransferORQT;
 import static org.testng.Assert.assertEquals;
 
 /**
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 16.10.2008, Time: 16:00:56

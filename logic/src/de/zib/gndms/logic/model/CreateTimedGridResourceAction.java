@@ -31,7 +31,7 @@ import java.util.Calendar;
  * The first template parameter is the model type. The second parameter is the return type of this action.
  *
  * @see de.zib.gndms.logic.model.CreateGridResourceAction
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * 
  * User: mjorra, Date: 13.08.2008, Time: 14:57:06

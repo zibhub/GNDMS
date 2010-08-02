@@ -21,7 +21,7 @@ package de.zib.gndms.model.gorfx.types.io;
 import de.zib.gndms.model.dspace.types.SliceRef;
 
 /**
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 04.11.2008, Time: 13:38:15

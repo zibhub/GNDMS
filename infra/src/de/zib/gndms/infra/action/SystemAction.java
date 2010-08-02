@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @see GNDMSystem
  * @see ConfigAction
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 22.08.2008 Time: 16:33:53

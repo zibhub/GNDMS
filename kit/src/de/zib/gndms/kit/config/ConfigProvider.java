@@ -48,7 +48,7 @@ import java.util.Iterator;
  * </p>
  *
  * 
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @see OptionProvider
  * @version $Id$
  *

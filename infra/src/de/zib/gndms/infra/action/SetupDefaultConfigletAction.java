@@ -47,7 +47,7 @@ import java.util.Map;
  * <p>An instance of this class returns a {@code ConfigActionResult} informing about the success of its execution, when
  * the <tt>execute()</tt> method is called.
  * 
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 07.11.2008 Time: 15:06:35

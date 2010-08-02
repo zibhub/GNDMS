@@ -28,7 +28,7 @@ import java.util.HashSet;
 /**
  * Logging decision points decide wether a certain type of log message should be emitted.
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 29.07.2008 Time: 18:04:37

@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Model class for a provider stage in orq.
  *
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @verson \$id$
  * <p/>
  * User: bzcjorra Date: Sep 5, 2008 3:55:45 PM

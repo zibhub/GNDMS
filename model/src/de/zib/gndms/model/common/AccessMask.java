@@ -32,7 +32,7 @@ import java.util.HashMap;
  *
  *
  *
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version $Id$
  * @see AccessFlags for the representation of a bit mask.
  * User: mjorra, Date: 22.12.2008, Time: 13:13:43

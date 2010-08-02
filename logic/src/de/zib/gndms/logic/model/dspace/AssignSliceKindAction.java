@@ -46,7 +46,7 @@ import java.util.Set;
      *
      * @see de.zib.gndms.model.dspace.SliceKind
      * @see de.zib.gndms.model.dspace.MetaSubspace
-     * @author Stefan Plantikow<plantikow@zib.de>
+     * @author: try ste fan pla nti kow zib
      * @version $Id$
      *
      *          User: stepn Date: 08.10.2008 Time: 12:53:58

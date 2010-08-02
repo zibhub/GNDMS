@@ -53,7 +53,7 @@ import java.util.List;
  * If there are some more subspaces or the like, some tests may trigger assertions even so they are correct.
  *
  *
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 27.10.2008, Time: 17:39:54

@@ -41,7 +41,7 @@ import java.util.TreeSet;
 import java.util.Vector;
 
 /**
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * 
  * User: mjorra, Date: 14.08.2008, Time: 11:02:24

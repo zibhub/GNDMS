@@ -26,7 +26,7 @@ import de.zib.gndms.model.gorfx.types.RePublishSliceORQ;
  * Pretty much the same as the InterSliceTransfer converter, but doesn't write the destination slice,
  * cause it isn't part of the initial request.
  * 
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 14.10.2008, Time: 14:48:27

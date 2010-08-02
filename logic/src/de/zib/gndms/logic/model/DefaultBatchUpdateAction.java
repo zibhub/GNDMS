@@ -33,7 +33,7 @@ import java.util.Collection;
  * All actions in the list will be children of this BatchUpdateAction.
  *
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 12.08.2008 Time: 18:54:38

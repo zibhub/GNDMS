@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 08.10.2008, Time: 14:56:59

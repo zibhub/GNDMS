@@ -54,7 +54,7 @@ import javax.xml.namespace.QName;
  * of the web service container that notifies succesfull initialization of the extended resource
  * home.
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 16.07.2008 Time: 12:35:27

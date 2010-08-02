@@ -29,7 +29,7 @@ import de.zib.gndms.kit.config.OptionProvider;
  * 
  * A configuration object (see {@link OptionProvider}) can be created by every arbitriary {@code serializable} source.
  * 
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 06.11.2008 Time: 17:02:47

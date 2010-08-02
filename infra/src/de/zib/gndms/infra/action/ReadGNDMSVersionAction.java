@@ -35,7 +35,7 @@ import java.io.PrintWriter;
  * Writes the GNDMSVersion to a printwriter
  *
  * @see GNDMSVerInfo
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version $Id$
  *          <p/>
  *          User: mjorra, Date: 26.01.2009, Time: 17:06:40

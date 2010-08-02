@@ -31,7 +31,7 @@ import java.lang.reflect.Proxy;
  * {@code void mold(D molded)}.
  * See {@link Molder} for further details about the actual copy process and the difference to a 'normal' copy.
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 01.12.2008 Time: 11:25:18

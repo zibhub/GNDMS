@@ -21,7 +21,7 @@ package de.zib.gndms.logic.action;
 /**
  * Used to skip action initialization and executing; i.e. when printing a help screen.
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 18.08.2008 Time: 17:56:50

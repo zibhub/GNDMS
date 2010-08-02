@@ -25,7 +25,7 @@ import java.io.File;
 /**
  * This abstract class provides usefull methods concerning directory access.
  *
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  *
  * User: mjorra, Date: 08.08.2008, Time: 10:44:04

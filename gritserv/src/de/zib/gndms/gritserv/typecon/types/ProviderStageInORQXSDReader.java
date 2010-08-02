@@ -28,7 +28,7 @@ import types.ContextT;
 import org.apache.axis.message.MessageElement;
 
 /**
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version $Id$
  *          <p/>
  *          User: mjorra, Date: 14.01.2009, Time: 13:35:41

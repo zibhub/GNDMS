@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * NOTE: There is no matching Result for this one, cause it uses the FileTransferResult and manipulates the OfferType.
  *
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 04.11.2008, Time: 15:10:34

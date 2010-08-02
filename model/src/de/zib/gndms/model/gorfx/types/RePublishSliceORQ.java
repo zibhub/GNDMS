@@ -27,7 +27,7 @@ package de.zib.gndms.model.gorfx.types;
  * the gsiftp addresses of the slices are required, so this ORQ requires the
  * same data like an inter-slice transfer.
  *
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 31.10.2008, Time: 17:10:30

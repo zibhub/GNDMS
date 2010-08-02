@@ -21,7 +21,7 @@ package de.zib.gndms.logic.action;
 /**
  * ThingAMagic.
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 13.08.2008 Time: 10:32:17

@@ -28,7 +28,7 @@ import javax.persistence.EntityManager;
 /**
  * Dummy action that finishes with probability SUCCESS_RATE.
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 29.09.2008 Time: 17:06:35

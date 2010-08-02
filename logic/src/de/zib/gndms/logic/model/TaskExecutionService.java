@@ -29,7 +29,7 @@ import java.util.concurrent.Future;
 /**
  * Wrapper around ExecutorService to submit only EntityActions to an Executor.
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 30.09.2008 Time: 15:04:26

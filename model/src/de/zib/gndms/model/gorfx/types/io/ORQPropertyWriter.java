@@ -28,7 +28,7 @@ import java.util.HashMap;
  * It should be used in conjunction with an ORQConverter.
  *
  * @see de.zib.gndms.model.gorfx.types.io.ORQConverter
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 25.09.2008, Time: 17:23:58

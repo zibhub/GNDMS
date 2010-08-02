@@ -31,7 +31,7 @@ import javax.persistence.Query;
  * ThingAMagic.
  *
  * @see org.globus.wsrf.Resource
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 07.10.2008 Time: 16:20:10

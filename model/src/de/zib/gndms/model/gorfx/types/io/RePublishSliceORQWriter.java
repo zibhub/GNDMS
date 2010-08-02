@@ -23,7 +23,7 @@ import de.zib.gndms.model.dspace.types.SliceRef;
 import java.util.TreeMap;
 
 /**
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 12.11.2008, Time: 10:31:26

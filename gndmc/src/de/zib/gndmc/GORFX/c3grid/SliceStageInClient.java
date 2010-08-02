@@ -34,7 +34,7 @@ import java.util.Properties;
 /**
  * ThingAMagic.
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 17.12.2008 Time: 18:10:04

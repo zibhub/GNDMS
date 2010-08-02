@@ -35,7 +35,7 @@ import org.joda.time.Duration;
 import java.util.Set;
 
 /**
- * @author: Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version: $Id$
  * <p/>
  * User: mjorra, Date: 11.11.2008, Time: 14:57:06

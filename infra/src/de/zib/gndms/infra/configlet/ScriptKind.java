@@ -23,7 +23,7 @@ package de.zib.gndms.infra.configlet;
  *
  * @see de.zib.gndms.infra.configlet.ChownSliceConfiglet
  *
- * @author Stefan Plantikow <stefan.plantikow@googlemail.com>
+ * @author: try ste fan pla nti kow zib
 */
 enum ScriptKind {
     EXEC

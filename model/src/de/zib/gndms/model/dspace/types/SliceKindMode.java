@@ -21,7 +21,7 @@ package de.zib.gndms.model.dspace.types;
 /**
  * Slicekind modes
  * 
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$ 
  *
  * User: stepn Date: 01.08.2008 Time: 16:46:03

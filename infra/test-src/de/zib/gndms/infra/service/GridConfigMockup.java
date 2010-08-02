@@ -27,7 +27,7 @@ import java.io.File;
 /**
  * Mockup GridConfig for Testing
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 08.08.2008 Time: 17:34:44

@@ -28,7 +28,7 @@ import java.util.Set;
 /**
  * SliceKinds are identified by a kindURI
  * 
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author: try ste fan pla nti kow zib
  * @version $Id$ 
  *
  * User: stepn Date: 01.08.2008 Time: 16:17:45

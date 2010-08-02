@@ -63,7 +63,7 @@ import java.util.Properties;
  * the <tt>execute()</tt> method is called.
  *
  * @see ConfigletState
- * @author Maik Jorra <jorra@zib.de>
+ * @author: try ma ik jo rr a zib
  * @version $Id$
  *          <p/>
  *          User: mjorra, Date: 09.01.2009, Time: 14:53:12
