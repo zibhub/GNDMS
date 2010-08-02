@@ -408,6 +408,15 @@ define 'gndms' do
         full_args << args  
         Commands.java('de.zib.gndmc.MaintenanceClient',  full_args, { :classpath => jars, :verbose => true } )
       end
+
+      task 'run-test' do
+        jars = compile.dependencies.map(&:to_s)
+        jars << compile.target.to_s
+        args = [ '-p', ENV['GNDMS_SOURCE']+'/etc/sliceInOutClient.properties' ]
+        Commands.java('de.zib.gndmc.SliceInOutClient',  args, 
+                      { :classpath => jars, :properties => 
+                          { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" } } )
+      end
     end
 end
 

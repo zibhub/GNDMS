@@ -114,8 +114,8 @@ public class GORFXClient extends GORFXClientBase implements GORFXI {
   public org.apache.axis.message.addressing.EndpointReferenceType createOfferRequest(types.DynamicOfferDataSeqT offerRequestArguments,types.ContextT context) throws RemoteException, de.zib.gndms.GORFX.stubs.types.UnsupportedOfferType {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"createOfferRequest");
-        System.out.println( "Stub properties (after configureStubSecurity): ");
-        showStubProps();
+    //    System.out.println( "Stub properties (after configureStubSecurity): ");
+    //    showStubProps();
     //    ( (Stub)portType )._setProperty( Constants.GSI_SEC_CONV, Constants.ENCRYPTION );
     //    System.out.println( "Stub properties (after manual propset): ");
     //    showStubProps();

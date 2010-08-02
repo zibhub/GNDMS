@@ -17,12 +17,13 @@ package de.zib.gndms.gritserv.delegation;
  */
 
 
-
 import de.zib.gndms.gritserv.typecon.util.AxisTypeFromToXML;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.NormalizedString;
 import org.apache.axis.types.Token;
 import org.apache.axis.types.URI;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.log4j.Logger;
 import org.globus.axis.util.Util;
 import org.globus.delegation.DelegationUtil;
 import org.globus.gsi.GlobusCredential;
@@ -34,10 +35,9 @@ import org.globus.wsrf.impl.security.authentication.Constants;
 import org.globus.wsrf.impl.security.authorization.NoAuthorization;
 import org.globus.wsrf.impl.security.descriptor.ClientSecurityDescriptor;
 import org.globus.wsrf.utils.AddressingUtils;
-import org.apache.commons.codec.binary.Base64;
+import org.oasis.wsrf.lifetime.Destroy;
 import org.oasis.wsrf.lifetime.ImmediateResourceTermination;
 import org.oasis.wsrf.lifetime.WSResourceLifetimeServiceAddressingLocator;
-import org.oasis.wsrf.lifetime.Destroy;
 import org.xml.sax.InputSource;
 import types.ContextT;
 import types.ContextTEntry;
@@ -59,6 +59,7 @@ public class DelegationAux {
 
     public static final String DELEGATION_EPR_KEY = "DelegationEPR";
     public static final QName QNAME = new QName("", "DelegatedEPR");
+    public static Logger logger = Logger.getLogger( DelegationAux.class ); 
 
     private DelegationAux() {
     }
@@ -87,19 +88,21 @@ public class DelegationAux {
         Util.registerTransport();
         desc.setAuthz( NoAuthorization.getInstance() );
 
-        System.out.println( "connecting to service: " + uri );
+        logger.info( "connecting to service: " + uri );
         EndpointReferenceType delegEpr = AddressingUtils.createEndpointReference( uri, null);
-        System.out.println( "epr: " + delegEpr );
+        logger.debug( "epr: " + delegEpr );
 
         X509Certificate[] certs = DelegationUtil.getCertificateChainRP( delegEpr, desc );
 
         if( certs == null  )
             throw new Exception( "No Certs received" );
 
-        int len = certs.length;
-        System.out.println( "Cert cnt: " + len );
-        if( len > 0 )
-            System.out.println( certs[0] );
+        if( logger.isDebugEnabled() ) {
+            int len = certs.length;
+            logger.debug( "Cerfiicate chain length: " + len );
+            if( len > 0 )
+                logger.debug( "Chain head: " + certs[0] );
+        }
 
 
         // get delegate:
@@ -119,7 +122,7 @@ public class DelegationAux {
             if( e.getKey().equals( DELEGATION_EPR_KEY ) ) {
                 //epr = eprFormXML( e.get_value().toString( ) );
                 final String uuepr = e.get_value().toString( );
-                System.out.println( "uuepr: " + uuepr );
+                logger.debug( "encoded delegation epr: " + uuepr );
 
                 final Base64 b64   = new Base64(4000, new byte[] { }, true);
                 byte[] ba = b64.decode(uuepr);
@@ -189,7 +192,7 @@ public class DelegationAux {
 
         final Base64 b64   = new Base64(4000, new byte[] { }, true);
         final String uuepr = b64.encodeToString(bse.toByteArray());
-        System.out.println( "uuepr: \"" + uuepr+ "\"" );
+        logger.debug( "base64 encoded uepr: \"" + uuepr+ "\"" );
         ct.set_value( new NormalizedString( inlineUUString( uuepr ) ) );
         ct.setKey( new Token( DELEGATION_EPR_KEY ) );
         al.add( ct );
@@ -218,31 +221,6 @@ public class DelegationAux {
     public static String inlineUUString( String s ) {
         // remove all newlines
         return s.replace( "\n", "" );
-    }
-
-
-    // this uses the fact that in a uuencoded string every single data line is 60 chars wide.
-    public static String deinlineUUString( String s ) {
-
-        final String start = "encoder.buf";
-        final String end = "end";
-        StringWriter res = new StringWriter( );
-        int idx = s.indexOf( start );
-        idx += start.length( );
-        res.write( s.substring( 0, idx ) + "\n" );
-
-        // 61 cause nidx is excluded
-        for( int nidx = idx + 61; nidx < s.length() - end.length(); idx = nidx, nidx += 61 )
-            res.write( s.substring( idx, nidx ) + "\n" );
-
-        // treat last line
-        int lidx = s.lastIndexOf( end );
-
-        res.write( s.substring( idx, lidx ) + "\n" );
-        res.write( s.substring( lidx, s.length() ) );
-
-        System.out.println( "deinlined:\n\"" + res.toString() + "\"" );
-        return res.toString();
     }
 
 

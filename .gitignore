@@ -48,6 +48,7 @@ types/LOFIS
 types/WHORFX
 types/ws
 types/wsrf
+etc/sliceInOutClient.properties
 
 syntax:regexp
 .*\.swp

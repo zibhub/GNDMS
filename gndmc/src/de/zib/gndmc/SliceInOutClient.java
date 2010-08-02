@@ -74,7 +74,7 @@ public class SliceInOutClient {
             delegatEPR = GORFXClientUtils.setupDelegation( ctx, getDspaceURI(), transferBean.getUid() );
         }
 
-        System.out.println( "Copy " + getSourcePath() + "->" + loc );
+        System.out.println( "Copy " + getSourcePath() + " -> " + loc );
         FileTransferResultT res = GORFXClientUtils.performCopy( getGorfxURI(), ctx, getSourcePath(), loc );
         System.out.println( "File transfer passed" );
         showCopyResult( res );
@@ -82,18 +82,18 @@ public class SliceInOutClient {
 
 
         System.out.println( "\nNow the otherway round!" );
-        System.out.println( "Copy " + loc + "->" + getSourcePath() );
-        res = GORFXClientUtils.performCopy( getGorfxURI(), ctx, loc, getSourcePath() );
+        System.out.println( "Copy " + loc + " -> " + getDestinationPath() );
+        res = GORFXClientUtils.performCopy( getGorfxURI(), ctx, loc, getDestinationPath() );
         System.out.println( "File transfer passed -- again" );
         showCopyResult( res );
 
 
         System.out.println( "\nOkay, all done. Cleaning up!" );
-        System.out.println( "* Destroying Slice" );
+        System.out.println( "\t* Destroying Slice" );
         destroySlice( sc );
 
         if(! transferBean.isDisableDelegation() ) {
-            System.out.println( "* Destroying Slice" );
+            System.out.println( "\t* Destroying delegate" );
             DelegationAux.destroyDelegationEPR( delegatEPR );
         }
         System.out.println( "Done." );

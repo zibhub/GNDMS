@@ -52,8 +52,6 @@ public class SubSpaceBean extends DSpaceBean {
         String s = prop.getProperty( SUBSPACE_SCOPE_KEY );
         String l = prop.getProperty( SUBSPACE_LOCAL_KEY );
         scopedName = new ImmutableScopedName( s, l );
-
-        System.out.println( "s: " + scopedName.getNameScope() + "| l: " + scopedName.getLocalName() ); 
     }
 
 
