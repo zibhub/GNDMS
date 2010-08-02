@@ -83,7 +83,7 @@ monitor to reread the confuration, execute `moni refresh`. To force a restart
 even if the configuration has not been altered, execute `moni restart`.
 
 
-             
+
 ### List of Supported Monitor Shell Run Modes
 
 `SCRIPT` *Default mode*
@@ -104,7 +104,6 @@ even if the configuration has not been altered, execute `moni restart`.
 Appendix
 --------
 
-    
 ### Troubleshooting
 
 * If you don't get a connection, check `$GLOBUS_LOCATION/var/container.log` and ensure that the
@@ -119,7 +118,7 @@ forgotten an argument. Currently, moni is just a bunch of helper `bash`
 scripts that call `curl` and lack proper argument checking. If you do
 not provide `moni send` with apropriate arguments, it may wait while
 attempting to read from stdin.
-   
+
 * `monitor.minConnections` should always be >= 2
 
 
@@ -135,4 +134,4 @@ is called first which affects the semantics of Groovy.
 
 Additional properties like resource homes and singleton resource instances are
 made available using the same mechanism.
-             
+

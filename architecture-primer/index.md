@@ -20,7 +20,7 @@ The Layers of the Software Stack
 --------------------------------
 
 The running GNDMS software stack roughly looks like this:
-                                                  
+
     < Service Clients ------------------------------------------------------ >
     [ services: DSpace, GORFX ---------------------------------------------- ]    
     [ gritserv-------------------------------------------------------------- ]
@@ -38,7 +38,7 @@ The running GNDMS software stack roughly looks like this:
     |                                                  [ Derby    ]-[ Jetty  ]
     |                                                                        |    
     [ Additional External Libraries ---------------------------------------- ]
-        
+
 Legend:
 
     [ Module ]        # Software Module
@@ -50,16 +50,16 @@ Legend:
 
 
 For the gndmc client, an additional layer is required:
-     
+
     < gndmc client --------------------------------------------------------- >
     [ gndmc ---------------------------------------------------------------- ]
     [ services: DSpace, GORFX ---------------------------------------------- ]    
     ..........................................................................
-   
-    
+
+
 The software stack for building, installing, deployment, and
 configuration of GNDMS roughly looks like this:
-    
+
     < buildr --------------------------------------------------------------- >
     [ Build ---------------------------------------------------------------- ]
     [ Buildr 1.4 ----------------------------------------------------------- ] 
@@ -67,8 +67,8 @@ configuration of GNDMS roughly looks like this:
     [ JRuby 1.5 ] [ Ant ]                    < Configuration --------------- >    
     [ Java 2 SDK 1.6 --------------------- ] < Monitor Shell --------------- >
     < local UNIX tools ----------------------------------------------------- > 
-    
-  
+
+
 Components
 ----------
 
@@ -98,8 +98,8 @@ build process, consists of XSD, WSDL, and Java)
 
 **Build**
 : All code needed to build and install the software (Ruby and
-Shell). Of primary relevance are the `Buildfile` in `$GNDMS_SOURCE`and
-everything in `$GNDMS_SOURCE/buildr`
+Shell). Of primary relevance are the `Buildfile` in `$GNDMS_SOURCE` and
+everything in `$GNDMS_SOURCE/buildr`.
 
 **Config**
 : All code needed to configure GNDMS from the outside (Shell and
@@ -184,14 +184,14 @@ components.
 
 **Buildr 1.4** *(Build)*
 : GNDMS relies on Apache Buildr for build, installation, and
-deployment.  
+deployment.
 
 **introduce** *(Build)*
 : The Introduce Tool from the CAGrid project was used to generate
 service skeletons below `$GNDMS_SOURCE/services`.
 
 **JRuby 1.5** *(Build)*
-: **Buildr** needs this.  
+: **Buildr** needs this.
 
 **Java 2 SDK 1.6** *(All)*
 : GNDMS has been written in Java.

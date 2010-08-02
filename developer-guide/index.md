@@ -32,9 +32,9 @@ Writing Webservice Clients
   template IDEA or eclipse projects.
 * You might need to add `$GLOBUS_LOCATION/lib/*.jar` 
   * Skip `gndms-*.jar`, but
-  * include`gndms-*-service.jar` and `gndms-*-client.jar`  
-  
-  
+  * include`gndms-*-service.jar` and `gndms-*-client.jar`
+
+
 ## Setup a Development Environment for Debugging
 
 * Ensure that the generated modules in your IDE setup compile
@@ -47,8 +47,8 @@ remote debugging and set up a matching run target in your IDE.
 **NOTE** *If the globus container is started with `-debug` it prints
 full stacktraces, otherwise not!*
 
-  
-  
+
+
 ### Writing a Web Service Client
 
 * Take a look at `ProviderStageInClient`
@@ -79,38 +79,40 @@ authorization requirements of clients and WSRF web services. The **SD** of
 a service is configured in the `service` section of the WSDD file.
 
 {% highlight xml %}
-   <?xml version="1.0" encoding="UTF-8"?>
+
+    <?xml version="1.0" encoding="UTF-8"?>
     <deployment>
         <service>
-             <parameter name="securityDescriptor" value="etc/*-security-desc.xml" /> 
+             <parameter name="securityDescriptor" value="etc/serviceFoo-security-desc.xml" /> 
         </service>
     </deployment>
+
 {% endhighlight %}
-      
-(Here `*` refers to the service name and pathes are relative to `$GLOBUS_LOCATION`)
- 
+
 Client security descriptors are loaded directly in the client software:
  
-{% highlight java %} 
+{% highlight java %}
+
     // Client security descriptor file 
     String CLIENT_DESC = ".../client-security-config.xml";
     ClientSecurityDescriptor desc = new ClientSecurityDescriptor( CLIENT_DESC );
     //Set descriptor on Stub 
     ( (Stub)port )._setProperty( Constants.CLIENT_DESCRIPTOR, desc )
-{% endhighlight %}    
-      
+
+{% endhighlight %}
+
 For more details, please consult the
 [documentation on security descriptors](http://www.globus.org/toolkit/docs/development/4.1.2/security/security-secdesc.html).
 
 
 ### Authentication and Authorization
 
-The following **SD** example shows how mandatory TLS encryption is enforced:
+The following example shows how mandatory TLS encryption is enforced with a security descriptor:
 
 {% highlight xml %}
+
     <?xml version="1.0" encoding="UTF-8"?>
     <securityConfig xmlns="http://www.globus.org">
-    ...
         <auth-method>
             <GSITransport>
                 <protection-level>
@@ -119,37 +121,45 @@ The following **SD** example shows how mandatory TLS encryption is enforced:
             </GSITransport>
         </auth-method>
     </securityConfig>
+
 {% endhighlight %}
-	
+
 This setting must be made both on the server and the client.
 
 For authorization, a gridmap file needs to be set:
 
 {% highlight xml %}
+
     <authz value="gridmap" />
+
 {% endhighlight %}
 
 This enables use of the system wide gridmap-file.  To use a service
 specific gridmap file, please add:
 
 {% highlight xml %}
+
     <gridmap value="etc/gndms_shared/grid-mapfile" />
+
 {% endhighlight %}
 
 Finally, it is necessary to configure (unless you are using JAAS):
 
 
 {% highlight xml %}
+
     <run-as>
        <system-identity />
     </run-as>
+
 {% endhighlight %}
-      
-      
+
+
 Below is a complete example:
 
 
 {% highlight xml %}
+
     <?xml version="1.0" encoding="UTF-8"?>
     <securityConfig xmlns="http://www.globus.org">
         <authz value="gridmap" />
@@ -165,6 +175,7 @@ Below is a complete example:
             <system-identity />
         </run-as>
     </securityConfig>      
+
 {% endhighlight %}
 
 
@@ -178,18 +189,19 @@ EPR may be passed when accessing resources directly or is sent to
 factory methods during resource instantiation.
 
 {% highlight java %}
+
    // path to the file containing the proxy cert
     String proxyFile = ...;
- 
+
     // uri of the delegation service
     String delUri =  "http://somehost/wsrf/services/DelegationFactoryService"
- 
+
     // port type of our service acquired in the usual fashion
     PortType port = ... ;
- 
-     
+
+
     GlobusCredential credential = new GlobusCredential( proxyFile );
-     
+
     // Create security descriptor for the communication with the delegation service
     // This descriptor is not the same we use to communicate with
     // the actual service
@@ -203,27 +215,28 @@ factory methods during resource instantiation.
     desc.setGSITransport( (Integer) Constants.SIGNATURE );
     Util.registerTransport();
     desc.setAuthz( NoAuthorization.getInstance() );
- 
+
     // acquire cert chain 
     X509Certificate[] certs = 
         DelegationUtil.getCertificateChainRP( delegEpr, desc );
- 
+
     if( certs == null  )
          throw new Exception( "No Certs received" );
- 
+
     // create delegate
     int ttl = 600; // a time to life for the proxy in seconds 
     // the boolean value can be ignored
     EndpointReferenceType delegate = 
         DelegationUtil.delegate( delUri, credential, certs[0], ttl, true, desc );
- 
+
     // reuse credentials for this call
     ( (Stub) port )._setProperty( 
         org.globus.axis.gsi.GSIConstants.GSI_CREDENTIALS, gss ); 
- 
+
     // creates a new resource which uses the delegate, i.e. proxy cert
     EndpointReferenceType epr = 
         ( (SomePortType) port ).createResource( delegate );
+
 {% endhighlight %}
 
 
@@ -237,39 +250,42 @@ registered to be informed about proxy state changes (Update, Destroy).
 Example service factory method that instantiates a resource:
 
 {% highlight java %}
+
     public EndpointReferenceType createResource ( EndpointReferenceType delegate ) {
         SomeResource sr = new SomeResource( );
         sr.setDelegationEPR( delegate );
         ...
         return endPointRefOf( sr );
     }
+
 {% endhighlight %}
 
 The resource needs to be modified accordingly as well:
 
 {% highlight java %}
+
     public class SomeResource implements Resource {
- 
+
         SomeResourceHome home;
         GlobusCredential credential;
- 
+
         public void refreshRegistration( final boolean forceRefresh ) {
             // do refreshing stuff if required
         }
- 
- 
+
+
         public void setCredential( final GlobusCredential cred ) {
             credential = cred;
         }
- 
- 
+
+
         public GlobusCredential getCredential( ) {
             return credential;
         }
- 
+
 
         public void setDelegateEPR( final EndpointReferenceType epr ) {
- 
+
             SomeDelegationListener list = 
 	        new SomeDelegationListener( getResourceKey(), home );
             try {
@@ -279,37 +295,39 @@ The resource needs to be modified accordingly as well:
                 e.printStackTrace();
             }
         }
- 
+
         // other service specific stuff here ...
      }
+
 {% endhighlight %}
 
 The container will be calling `get/setCredential` on the listener
 interface.  A simple default implementation follows:
 
 {% highlight java %}
+
     public class SomeDelegationListener implements DelegationListener {
- 
+
         private static Logger logger = Logger.getLogger( SomeDelegationListener.class );
         private String regristrationId;
         private ResourceKey resourceKey;
         private ResourceHome home;
- 
- 
+
+
         public SomeDelegationListener() {
         }
- 
- 
+
+
         public SomeDelegationListener( final ResourceKey resourceKey, 
 	final ResourceHome home ) {
             this.resourceKey = resourceKey;
             this.home = home;
         }
- 
- 
+
+
         public void setCredential( final GlobusCredential credential )
 	throws DelegationException {
- 
+
              try {
                SomeCredibleResource res = 
 	           ( SomeCredibleResource ) home.find( resourceKey );
@@ -318,15 +336,16 @@ interface.  A simple default implementation follows:
                logger.error( e );
              }
         }
- 
- 
+
+
         public void credentialDeleted() {
            // Can notify the resource
         }
- 
+
         // getters and setters for the instance vars are omitted for the sake of shortness
         // ....
     }
+
 {% endhighlight %}
 
 The `setCredential` method will be called at listener registration
@@ -350,6 +369,7 @@ is a client of `AnotherService`.  In the following example
 by first loading them into the `ClientDescriptor`:
 
 {% highlight java %}
+
     AnotherPortType port = ...;
         ( (Stub) port )._setProperty( org.globus.wsrf.security.Constants.GSI_TRANSPORT,
                             org.globus.wsrf.security.Constants.ENCRYPTION );
@@ -360,25 +380,31 @@ by first loading them into the `ClientDescriptor`:
         ( (Stub) port )._setProperty( 
 	    org.globus.axis.gsi.GSIConstants.GSI_CREDENTIALS, gss );
         ( (Stub) port ).doAnotherThing();
+
 {% endhighlight %}
 
 Now, in `AnotherService`, the caller DN (`null` in anonymous
 communication) is obtainable by calling:
 
 {% highlight java %}
+
      org.globus.wsrf.security.SecurityManager.getManager().getCaller();
+
 {% endhighlight %}
-     
+
 This may be mapped to local UNIX users via the grid-map mechanism:
 
 {% highlight java %}
+
       org.globus.wsrf.security.SecurityManager.getManager( ).getLocalUsernames()
+
 {% endhighlight %}
 
-     
+
 #### Export Proxy Credentials to a File
 
 {% highlight java %}
+
     public void storeCredential( Sting filename ) {
          try {
              File f = new File( filename );
@@ -391,6 +417,7 @@ This may be mapped to local UNIX users via the grid-map mechanism:
              // an exception --- do something
          }
     }
+
 {% endhighlight %}
 
 The resulting file is structured  as follows:
@@ -405,18 +432,18 @@ certificate chain) and the `tail` (containing the certificate chain)
 and setting `$OPENSSL_ALLOW_PROXY_CERTS=1`. Now execute:
 
     openssl verify -CApath /etc/grid-security/certificates -CAfile tail head
-    
+
 If everything is ok, `openssl` will print
 
     head: OK
-    
+
 Otherwise a lengthy error message will be shown.
 
 All this is typically done by
 `$GLOBUS_LOCATION/bin/grid-proxy-verify`.  A look at the source code
 is an interesting read concerning the details of proxy verification
 with openssl.
-     
+
 
 
 
@@ -430,11 +457,11 @@ contracts may specify requirements on execution time,
 duration and location.  Offers are negotiated between a client and
  server in rounds until agreement is reached and a contract is
  succesfully established.
- 
- Client and server roles are taken by different participants. For
- example, a grid meta scheduler may be a client to a central data
- management site that runs GNDMS, while the same site may be a client
- to a data provider site in a different negotiation.
+
+Client and server roles are taken by different participants. For
+example, a grid meta scheduler may be a client to a central data
+management site that runs GNDMS, while the same site may be a client
+to a data provider site in a different negotiation.
 
 
 
@@ -488,8 +515,8 @@ A contract consists of
   remarks, warnings etc.  From a middleware point of view, **RI** is
   *not* part of the contract.
 
-  
-  
+
+
 ### Contract Semantics
 
 **Precise contract semantics**

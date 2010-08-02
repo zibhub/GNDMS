@@ -8,13 +8,13 @@ layout: wikistyle
     Konrad-Zuse-Zentrum fuer Informationstechnik Berlin
     Takustrasse 7
     D-14195 Berlin-Dahlem
-    
+
     GERMANY
-    
+
     Tel  +49 30 84185-0
     Fax  +49 30 84185-125
     Web  http://www.zib.de
-    
+
     Das Konrad-Zuse-Zentrum fuer Informationstechnik Berlin ist eine Anstalt des oeffentlichen Rechts.
 
 ### Rechtliche Grundlagen
@@ -25,7 +25,7 @@ Trotz sorgfaeltiger inhaltlicher Kontrolle uebernehmen wir keine
 Haftung fuer die Inhalte.
 
 Sofern innerhalb unseres Internetangebotes die Möglichkeit zur Eingabe
-persönlicher oder geschaeftlicher Daten (Emailadressen, Namen,
+persoenlicher oder geschaeftlicher Daten (Emailadressen, Namen,
 Anschriften usw.) besteht, so erfolgt die Preisgabe dieser Daten
 seitens des Nutzers auf ausdruecklich freiwilliger Basis.
 
@@ -35,13 +35,13 @@ seitens des Nutzers auf ausdruecklich freiwilliger Basis.
     Konrad-Zuse-Zentrum fuer Informationstechnik Berlin
     Takustrasse 7
     D-14195 Berlin-Dahlem
-    
+
     GERMANY
-    
+
     Tel  +49 30 84185-0
     Fax  +49 30 84185-125
     Web  http://www.zib.de
-    
+
     ZIB was founded as an institution under public law.
 
 ### Legal Grounds

@@ -85,9 +85,9 @@ In the following it will be assumed that globus is run by the user
 `globus` which you will have created during the installation of Globus
 Toolkit.
 
-         
+
 #### Optionally Configure Globus Toolkit Logging
-            
+
 This step is optional but highly recommended.
 
 To configure the Globus Container to generate substantially more log
@@ -123,7 +123,7 @@ the servlet container of your installation of Globus Toolkit.
 
 Download either an official GNDMS distribution package and unpack it
 or get the current development version from github.
-  
+
 Please set `$GNDMS_SOURCE` to the root directory of your GNDMS
 distribution (The directory that contains `Buildfile`) and
 add `$GNDMS_SOURCE/bin` to your `$PATH`
@@ -159,22 +159,22 @@ Installation and Deployment from Distribution Package
  
  
 * Please enter `$GNDMS_SOURCE` and exeucte `gndms-buildr install`
-    
+
   This will 
-  
+
    * Download and install required software dependencies into
      `$GLOBUS_LOCATION/lib`. 
-     
-     **Please consult `$GNDMS_SOURCE/doc/licensing` for details on licensing conditions of
-      3rd party software components used by the GNDMS package.**
+
+     * Please consult `$GNDMS_SOURCE/doc/licensing` for details on licensing conditions of
+       3rd party software components used by the GNDMS package.**
    * Build API Documentation (Javadocs) in `$GNDMS_SOURCE/doc/api`
    * and finally install the globus packages (gar-files)
-    
+
 * Restart the globus with `globus-start-container-detached` and check
  `$GLOBUS_LOCATION/var/container.log` If everything goes right and you
  enabled additional logging as described in the previous section, the
  output should contain output like
-   
+
       =================================================================================
       GNDMS RELEASE: Generation N Data Management System VERSION: 0.3-pre "Kylie++"
       GNDMS BUILD: built-at: Wed Jul 21 11:14:01 +0200 2010 built-by: mjorra@csr-pc35
@@ -190,10 +190,10 @@ calling `globus-stop-container-detached`.
 * Fix the permissions of database files by executing
 
     gndms-buildr fix-permissions
-    
+
   **ATTENTION** *Skipping this step may cause leaing og sensitive
   information to local UNIX users*
-    
+
 At this point the GNDMS software has been succesfully installed.
 Next, we'll describe how it may be configured for actual use.
  
@@ -210,7 +210,7 @@ modifies the configuration in the database.
 To enable it, after having startet the globus container with deployed
 GNDMS once (as described in the previous section), please edit
 `$GNDMS_MONI_CONFIG` such that `monitor.enabled` is set to `true` and
-restart the globus container.  
+restart the globus container.
 
 The monitoring shell will be running now. You have nearly finished the
 installation at this point. All that is left to do, is to actually
@@ -267,7 +267,7 @@ To access the log, please load your user credentials (e.g. with
 `grid-proxy-init`) and run in `$GNDMS_SOURCE`
 
     `env URI="<URI>" ARGS="<ARGS>" gndms-buildr show-log`
-    
+
 where `<URI>` is the EPR of either a DSpace or a GORFX service (see
 container.log startup section, looks like
 `https://$HOSTNAME:8443/wsrf/services/gndms/GORFX`) and `<ARGS>` are
@@ -286,7 +286,7 @@ Advanced Configuration
 First, **shutdown the globus container**.  Next, in `$GNDMS_SOURCE`, issue
 
    gndms-buildr kill-db
-    
+
 This will delete your database.
 
 
@@ -295,8 +295,8 @@ This will delete your database.
 First, **shutdown the globus container**.  Next, in `$GNDMS_SOURCE`, issue
 
    gndms-buildr inspect-db
-   
-Thisl will open a shell to the derby-ij tool for looking at the
+
+This will open a shell to the derby-ij tool for looking at the
 internal database of GNDMS.
 
 
@@ -315,19 +315,20 @@ Building GNDMS from Source
 A quick full rebuild and reinstallation may be done by executing
 
     gndms-buildr rebuild
-    
-    
+
+
 #### Regeneration of Javadocs
 
 Manually delete `$GLOBUS_LOCATION/doc/api`. Now regenerate the
 javadocs by executing
 
     gndms-buildr apidocs
-    
-    
+
+
 #### Building Manually from Scratch
 
 {% highlight shell %}
+
     gndms-buildr clean clean-services # Cleans everything
     gndms-buildr gndms:model:package  # Compile basic DAO classes
     gndms-buildr package-stubs        # Compile service stubs
@@ -341,8 +342,9 @@ javadocs by executing
     globus-start-container-detached   # Restart globus
     gndms-buildr gndms:gndmc:package  # Build client
     gndms-buildr apidocs              # Build Javadocs (gndms is excluded)
-{% endhighlight %}   
-   
+
+{% endhighlight %}
+
 **NOTE** *In order to get speedier builds, developers may set
 `$GNDMS_DEPS=link`. This will make `gndms-buildr install-deps` symlink
 dependencies to `$GLOBUS_LOCATION/lib` instead of copying them and
@@ -357,9 +359,9 @@ accidentally and remain readable for the globus user.*
 
 **NOTE** *To even setup symlinks for the service jars, use
   the `gndms-buildr link-services` target.*
-   
-    
-    
+
+
+
 #### Problem Shooting Tips for Development Builds
 
 * Do you need to regen the stubs? `gndms-buildr clean-services
@@ -368,9 +370,9 @@ accidentally and remain readable for the globus user.*
 * Symlinks/copies of old jars in `$GLOBUS_LOCATION/lib`.  
 
       find $GLOBUS_LOCATION/lib -type l -name *.jar -exec rm -i {} \;
-  
+
   may help
-  
+
 * If you cant deploy (i.e. globus-start-container balks with one of
    those 40+-lines stacktraces) it's possible that introduce created
    an invalid jndi-config.xml which can happen during development but
@@ -387,5 +389,5 @@ Other common reasons for a failed container starts are invalid credentials
 (hostkey/hostcert.pem) or outdated CRLs. In the latter case, the script
 contained in `$GNDMS_SOURCE/contrib/fetch-crl` may help you. Execute
 `fetch-crl -o <grid-cert-dir>` with apropriate permissions (Requries `wget`).
-     
+
 
