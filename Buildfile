@@ -15,8 +15,8 @@ repositories.remote << 'http://google-maven-repository.googlecode.com/svn/reposi
 # Don't touch below unless you know what you are doing
 # --------------------------------------------------------------------------------------------------
 
-VERSION_NUMBER = '0.3-pre'
-VERSION_NAME = 'Kylie++'
+VERSION_NUMBER = '0.3-rc1'
+VERSION_NAME = 'Rob'
 GROUP_NAME = 'de.zib.gndms'
 MF_COPYRIGHT = 'Copyright 2008-2010 Zuse Institute Berlin (ZIB)'
 LICENSE ='This software has been licensed to you under the terms and conditions of the Apache License 2.0 (APL 2.0) only.'
