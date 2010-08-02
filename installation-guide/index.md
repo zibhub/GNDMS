@@ -155,7 +155,8 @@ Installation and Deployment from Distribution Package
  
  This section describes the actual installation of the GNDMS software
  into the Globus Container. It requires that your system has been
- prepared as described in the previous section.
+ prepared as described in the previous section. Again the following
+ steps should be executed by the `globus` user.
  
  
 * Please enter `$GNDMS_SOURCE` and exeucte `gndms-buildr install`
@@ -166,7 +167,7 @@ Installation and Deployment from Distribution Package
      `$GLOBUS_LOCATION/lib`. 
 
      * Please consult `$GNDMS_SOURCE/doc/licensing` for details on licensing conditions of
-       3rd party software components used by the GNDMS package.**
+       3rd party software components used by the GNDMS package.\*
    * Build API Documentation (Javadocs) in `$GNDMS_SOURCE/doc/api`
    * and finally install the globus packages (gar-files)
 
@@ -191,7 +192,7 @@ calling `globus-stop-container-detached`.
 
     gndms-buildr fix-permissions
 
-  **ATTENTION** *Skipping this step may cause leaing og sensitive
+  **ATTENTION** *Skipping this step may cause leaking of sensitive
   information to local UNIX users*
 
 At this point the GNDMS software has been succesfully installed.
@@ -254,6 +255,46 @@ Alternatively, just restart the globus container.
 have a running installation of GNDMS.*
 
 
+Testing your installation
+-------------------------
+
+The GNDMS contains a client application which tests some basic
+functionality to ensure your setup is ready to use. In order to run
+the test-client the following prerequisites must be satisfied:
+
+- You must own a valid gird certificate,
+- have access to a grid-ftp-server, which accepts your certificate
+  and offers write permission,
+- and of curse a running globus container providing the
+  GNDMS-services, with at least on subspace and file-transfer enabled.
+
+### About
+The test client simulates a standard GNDMS-use-case, it creates as
+target slice, copies some file into the slice. Then it copies the
+files from the slice to some target directory and destroys the slice.
+
+### Setup
+For the scenario the following setup is required. On your grid-ftp
+space create a directory, and add some file, e.g. using the following
+base command-line:
+
+{% highlight bash %}
+
+    for i in $( seq 1 3 ); do \
+        dd if=/dev/urandom bs=1024 count=1024 of=transfer_test$i.dat; done
+
+{% endhighlight %}
+
+
+
+
+
+
+
+
+Advanced Configuration
+----------------------
+
 ### Remote Access to container.log
 
 To enable a select group of users to read the container.log from
@@ -276,10 +317,6 @@ maintenance call.  Please use `env URI="<URI>" ARGS="help"` to obtain
 a synopsis of possible parameters or leave it empty to retrieve
 `$GLOBUS_LOCATION/var/container.log` completely.
 
-
-
-Advanced Configuration
-----------------------
 
 ### Resetting the Database
 
@@ -327,7 +364,7 @@ javadocs by executing
 
 #### Building Manually from Scratch
 
-{% highlight shell %}
+{% highlight bash %}
 
     gndms-buildr clean clean-services # Cleans everything
     gndms-buildr gndms:model:package  # Compile basic DAO classes
@@ -359,6 +396,11 @@ accidentally and remain readable for the globus user.*
 
 **NOTE** *To even setup symlinks for the service jars, use
   the `gndms-buildr link-services` target.*
+
+
+#### Packaging GNDMS
+In case you want do distribute your own spin-of GNDMS the follow in
+
 
 
 
