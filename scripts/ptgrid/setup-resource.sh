@@ -15,7 +15,7 @@ source "$SCRIPTDIR"internal/script-setup.sh
 # chmod a+w $STAGING_AREA_PATH
 STAGING_AREA_PATH="/tmp/gndms"
 
-if [ -d "$STAGING_AREA_PATH" ]; then
+if [ ! -d "$STAGING_AREA_PATH" ]; then
 	echo 'Directory $STAGING_AREA_PATH does not exist!'
 	exit 1
 fi
