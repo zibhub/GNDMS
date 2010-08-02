@@ -166,8 +166,9 @@ Installation and Deployment from Distribution Package
    * Download and install required software dependencies into
      `$GLOBUS_LOCATION/lib`. 
 
-     * Please consult `$GNDMS_SOURCE/doc/licensing` for details on licensing conditions of
-       3rd party software components used by the GNDMS package.\*
+     **Please consult `$GNDMS_SOURCE/doc/licensing` for details on licensing conditions of
+       3rd party software components used by the GNDMS package.**
+
    * Build API Documentation (Javadocs) in `$GNDMS_SOURCE/doc/api`
    * and finally install the globus packages (gar-files)
 
@@ -243,6 +244,9 @@ execute `gndms-buildr c3grid-dp-setubdb`
 Additionally, please consult the documentation for the respective 
 community grid platform.
 
+**NOTE** *In case of failure during setup, please execute
+  `gndms-buildr kill-db` and try again.*
+
 
 ### Finalize installation
 
@@ -269,11 +273,13 @@ the test-client the following prerequisites must be satisfied:
   GNDMS-services, with at least on subspace and file-transfer enabled.
 
 ### About
+
 The test client simulates a standard GNDMS-use-case, it creates as
 target slice, copies some file into the slice. Then it copies the
 files from the slice to some target directory and destroys the slice.
 
 ### Setup
+
 For the scenario the following setup is required. On your grid-ftp
 space create a directory, and add some file, e.g. using the following
 base command-line:
@@ -285,11 +291,62 @@ base command-line:
 
 {% endhighlight %}
 
+Additionally create a destination directory on the grid-ftp space.
+
+The client reads its properties from a file:
+
+    $GNDMS_SOURCE/etc/sliceInOut.properties
+
+Now it's time to edit this file. All properties whose values contain
+angle brackets require attention. The contains comments and hopefully 
+explains itself. When you are the file must not contain any
+angle-brackets, the client will complain if thats the case.
+
+### Running the test client
+
+Once the setup is complete, load a grid-proxy using:
+
+    grid-proxy-init
+
+Now you can use buildr to fire up the client:
+
+    gndms-buildr gndms:gndmc:run-test
+
+It takes quite some time until the first output appears, be patient.
+After a successful run your output start with:
+
+    Connected to GNDMS: Generation N Data Management System VERSION: 0.3-pre "Kylie++"
+    OK()
+    Creating slice
+
+and end with:
+
+    Okay, all done. Cleaning up!
+        * Destroying Slice
+        * Destroying Delegate
+    Done.
+
+Click [here](test-output.txt) to view the full output. If the test
+runs successfully you should have identical files in your grid-ftp
+source and destination directory, in that case CONGRATULATIONS!! you
+have a working GNDMS installation, and can provide data management
+service for your community.
 
 
+### Trouble shooting
 
+**The client hangs after the "`Copy gsiftp: ...`" message.**
+: This can be a problem with your firewall configuration. It
+happens when the control-channel can be established but the
+data-channel is blocked. Please check your firewall setup especially
+if the `GLOBUS_TCP_PORT_RANGE` environment variable is set correctly
+and is fore wared by the firewall.
 
-
+**I'm getting a "`GSSException: Defective credential detected`" exception.**
+: This can have to reasons: your certificate-proxy maybe outdated or
+doesn't exist or your CA directory isn't up to date. In the first case
+just call `grid-proxy-init` again, in the second refer to the
+`fetch-crl` section <a href="#fetch-crl">below</a>.
 
 
 Advanced Configuration
@@ -399,8 +456,16 @@ accidentally and remain readable for the globus user.*
 
 
 #### Packaging GNDMS
-In case you want do distribute your own spin-of GNDMS the follow in
+In case you want do distribute your own spin-of GNDMS and use intellij
+for development, the following tar commands may be useful for you:
 
+    release-build
+    find $GNDMS_SOURCE -type f -name '*.class' -exec rm '{}' \;
+    mv $GNDMS_SOURCE $GNDMS_SOURCE/../gndms-releasname
+
+     tar zcvf GNDMS-Releases/gndms-0.3-rc1.tgz --exclude .git \
+        --exclude *.ipr --exclude *.iml --exclude *.iws \
+        --exclude *.DS_Store --exclude *._.DS_Store gndms-0.3-rc1/
 
 
 
@@ -431,5 +496,5 @@ Other common reasons for a failed container starts are invalid credentials
 (hostkey/hostcert.pem) or outdated CRLs. In the latter case, the script
 contained in `$GNDMS_SOURCE/contrib/fetch-crl` may help you. Execute
 `fetch-crl -o <grid-cert-dir>` with apropriate permissions (Requries `wget`).
-
+<a name="fetch-crl" />
 

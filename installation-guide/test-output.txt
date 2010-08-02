@@ -1,0 +1,42 @@
+Connected to GNDMS: Generation N Data Management System VERSION: 0.3-pre "Kylie++"
+OK()
+Creating slice
+Setting up delegation
+Copy gsiftp://csr-pc35:2811/home/mjorra/tmp/ftsrc -> gsiftp://csr-pc35.zib.de/tmp/gndms/RW/3b707b00-9e4a-11df-80c6-81e0000bf3f0
+Stub properties (after configureStubSecurity): 
+org.globus.security.authorization org.globus.wsrf.impl.security.authorization.NoAuthorization@2627cd63
+org.apache.axis.message.addressing.SHARED_HEADERS org.apache.axis.message.addressing.AddressingHeaders@7f1d3226
+org.globus.security.transport.type 2
+Waiting for transfer to finish...
+Waiting for transfer to finish...
+Waiting for transfer to finish...
+Waiting for transfer to finish...
+Waiting for transfer to finish...
+File transfer passed
+Copied the following file(s):
+    transfer_test1.dat
+    transfer_test2.dat
+    transfer_test3.dat
+Now the otherway round!
+
+Copy gsiftp://csr-pc35.zib.de/tmp/gndms/RW/3b707b00-9e4a-11df-80c6-81e0000bf3f0 -> gsiftp://csr-pc35:2811/home/mjorra/tmp/ftsrc
+Stub properties (after configureStubSecurity): 
+org.globus.security.authorization org.globus.wsrf.impl.security.authorization.NoAuthorization@2627cd63
+org.apache.axis.message.addressing.SHARED_HEADERS org.apache.axis.message.addressing.AddressingHeaders@633a1778
+org.globus.security.transport.type 2
+Waiting for transfer to finish...
+Waiting for transfer to finish...
+Waiting for transfer to finish...
+Waiting for transfer to finish...
+Waiting for transfer to finish...
+File transfer passed -- again
+Copied the following file(s):
+    transfer_test1.dat
+    transfer_test2.dat
+    transfer_test3.dat
+
+Okay, all done. Cleaning up!
+    * Destroying Slice
+    * Destroying Delegate
+Done.
+
