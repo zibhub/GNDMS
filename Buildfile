@@ -490,7 +490,7 @@ task 'redeploy' => ['clean', 'clean-services', 'gndms:stuff:package', 'package-s
 end
 
 desc 'Do a full release build and deploy (execute as globus user)'
-task 'release-build' => ['gndms:update-release-info', 'redeploy', 'clean', 'clean-services' ]
+task 'release-build' => ['gndms:update-release-info', 'redeploy' ]
 
 desc 'Build all docs'
 task 'build-docs' => ['apidocs']
