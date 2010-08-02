@@ -17,7 +17,6 @@ package de.zib.gndmc;
  */
 
 
-
 import de.zib.gndmc.DSpace.beans.SliceCreationBean;
 import de.zib.gndmc.GORFX.GORFXClientUtils;
 import de.zib.gndmc.GORFX.beans.FileTransferBean;
@@ -38,9 +37,7 @@ import types.FileTransferResultT;
 
 import java.io.*;
 import java.rmi.RemoteException;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * @author: try ma ik jo rr a zib
@@ -329,9 +326,67 @@ public class SliceInOutClient {
                 (new FileTransferBean() ).createExampleProperties( prop );
                 storeProperties( prop, props );
             } else {
-                SliceInOutClient c = new SliceInOutClient( props );
-                c.run();
+                if( verifyProps( props ) ) {
+                    SliceInOutClient c = new SliceInOutClient( props );
+                    c.run();
+                }
             }
+        }
+
+
+        private boolean verifyProps( String fn ) {
+
+            InputStream f = null;
+            RuntimeException exc = null;
+            Properties prop = new Properties( );
+
+            try {
+                f = new FileInputStream( fn );
+                prop.load( f );
+            } catch ( FileNotFoundException e ) {
+                exc =  new RuntimeException( "Failed to load properties file " + fn, e );
+            } catch ( IOException e ) {
+                exc =  new RuntimeException( "Failed to read properties from file " + fn, e );
+            } finally {
+                if( f != null )
+                    try {
+                        f.close( );
+                    } catch ( IOException e ) {
+                        RuntimeException re =
+                            new RuntimeException( "Failed to close properties file " + fn, e );
+                        if( exc != null )
+                            re.initCause( exc );
+                        throw re;
+                    }
+                if( exc != null )
+                    throw exc;
+            }
+
+            
+            ArrayList<String> bad = new ArrayList<String>( 0 );
+            for( Object k: prop.keySet() ) {
+                String s = String.class.cast( k );
+                String v = prop.getProperty( s );
+                if( v.contains( "<" ) || v.contains( ">" ) )
+                    bad.add( s );
+            }
+
+            if( bad.size() > 0 ) {
+                printHintMessage( fn, bad );
+                return false;
+            }
+
+            return true;
+        }
+
+
+        protected void printHintMessage( String fn, List<String> bad ) {
+            System.out.println( "\nYour properties-file \""+fn+"\" contains placeholders for the following "
+                +"properties:" );
+            for ( String s : bad ) {
+                System.out.println( "\t"+s );
+            }
+            System.out.println( "\nPlease fix them and try again." );
         }
 
 

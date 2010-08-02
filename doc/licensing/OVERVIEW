@@ -28,11 +28,14 @@ groovy              Apache License 2.0           LICENSE.apl2; NOTICE file from 
 cagrid introduce    Apache License 2.0           LICENSE.introduce; NOTES.introduce
 
 
-Not included but used in deployment therefore indirectly licensed by you:
+Not included but used in deployment therefore indirectly licensed by you
+------------------------------------------------------------------------
 Globus Toolkit      Apache License 2.0           LICENSE.apl2
 
 
-Build System (*not* used by GNDMS, but nevertheless used to *build* it, provided for your convenience only)
+Build System (*not* a part of GNDMS, but nevertheless used to *build* it, provided for your convenience only)
+-------------------------------------------------------------------------------------------------------------
 Ruby                GPL / Ruby License           LICENSE.RUBY
 Apache Buildr       Apache License 2.0           LICENSE.apl2; NOTICE file from base distribution
-
+Jekyll              MIT LICENSE                  LICENSE.JEKYLL
+Maruku              GPL

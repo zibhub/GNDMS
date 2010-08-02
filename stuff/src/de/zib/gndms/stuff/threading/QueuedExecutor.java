@@ -125,7 +125,7 @@ public class QueuedExecutor implements ExecutorService {
     }
 
 
-    public final Object invokeAny( final Collection tasks ) throws InterruptedException, ExecutionException {
+    public Object invokeAny( final Collection tasks ) throws InterruptedException, ExecutionException {
 
         final List l = submitList( tasks );
         Object res = null;
