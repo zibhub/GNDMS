@@ -299,7 +299,7 @@ define 'gndms' do
       end
 
       desc 'Install dependencies to $GLOBUS_LOCATION/lib (execute as globus user)'
-      task 'install-deps' => task('package') do
+      task 'install-deps' do
 	if (ENV['GNDMS_DEPS'] != 'skip') then
         	installDeps(ENV['GNDMS_DEPS']!='link')
 	end
@@ -496,7 +496,7 @@ desc 'Build all docs'
 task 'build-docs' => ['apidocs']
 
 desc 'Install and deploy a release build'
-task :install => ['install-deps', 'build-docs', 'deploy-DSpace', 'deploy-GORFX']
+task 'install-distribution' => ['install-deps', 'deploy-DSpace', 'deploy-GORFX']
 
 task 'fix-permissions' do
     system "#{ENV['GNDMS_SOURCE']}/fix-permissions.sh"
