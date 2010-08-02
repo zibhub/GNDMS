@@ -145,7 +145,7 @@ implemented **kit** (located below `$GNDMS_SOURCE/bin`).
 Toolkit and/or **model**. Kit contains the implementation of theGNDMS
 monitor shell (located below `$GNDMS_SOURCE/kit`).
 
-**model** *(Main*
+**model** *(Main)*
 : Database model classes (located below `$GNDMS_SOURCE/model`)
 
 **stuff** *(Main)*
