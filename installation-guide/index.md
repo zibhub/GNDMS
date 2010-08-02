@@ -165,8 +165,9 @@ Installation and Deployment from Distribution Package
    * Download and install required software dependencies into
      `$GLOBUS_LOCATION/lib`. 
 
-     * Please consult `$GNDMS_SOURCE/doc/licensing` for details on licensing conditions of
-       3rd party software components used by the GNDMS package.**
+     **Please consult `$GNDMS_SOURCE/doc/licensing` for details on licensing conditions of
+     3rd party software components used by the GNDMS package**
+     
    * Build API Documentation (Javadocs) in `$GNDMS_SOURCE/doc/api`
    * and finally install the globus packages (gar-files)
 
@@ -241,6 +242,9 @@ execute `gndms-buildr c3grid-dp-setubdb`
 
 Additionally, please consult the documentation for the respective 
 community grid platform.
+
+**NOTE** *In case of failure during setup, please execute
+  `gndms-buildr kill-db` and try again.*
 
 
 ### Finalize installation
@@ -327,7 +331,7 @@ javadocs by executing
 
 #### Building Manually from Scratch
 
-{% highlight shell %}
+{% highlight bash %}
 
     gndms-buildr clean clean-services # Cleans everything
     gndms-buildr gndms:model:package  # Compile basic DAO classes
