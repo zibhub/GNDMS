@@ -1,4 +1,4 @@
-/**
+package de.zib.gndms.model.dspace;
 /*
  * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
  *
@@ -17,6 +17,7 @@
 
 
 
+/**
  * Subspace model class
  * 
  * @author Stefan Plantikow<plantikow@zib.de>
@@ -24,7 +25,6 @@
  *
  * User: stepn Date: 24.07.2008 Time: 11:17:22
  */
-package de.zib.gndms.model.dspace;
 
 import de.zib.gndms.model.common.GridResource;
 import org.jetbrains.annotations.NotNull;

@@ -1,4 +1,4 @@
-/**
+package de.zib.gndms.model.gorfx.types.io;
 /*
  * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
  *
@@ -16,17 +16,14 @@
  */
 
 
+import java.io.OutputStream;
+import java.io.PrintStream;
 
- * (c) 2006 Zuse Institute Berlin, Takustr 7, D-14195 Berlin, Germany
+/**
  *
  * @author langhammer 
  *
  */
-package de.zib.gndms.model.gorfx.types.io;
-
-import java.io.OutputStream;
-import java.io.PrintStream;
-
 public enum SfrProperty {
 	JUST_ASK("c3grid.StageFileRequest.JustAsk", "true or false"),
 	OBJECT_ITEMS("c3grid.StageFileRequest.ObjectList.Item"),

@@ -1,4 +1,4 @@
-/**
+package de.zib.gndms.gritserv.typecon.util;
 /*
  * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
  *
@@ -17,13 +17,13 @@
 
 
 
+/**
  * StagingInformationT.java
  *
  * This file was auto-generated from WSDL
  * by the Apache Axis 1.2RC2 Feb 27, 2008 (08:34:14 CST) WSDL2Java emitter.
  */
 
-package de.zib.gndms.gritserv.typecon.util;
 
 import types.ProviderStageInORQT;
 import types.OfferExecutionContractT;
