@@ -299,12 +299,12 @@ define 'gndms' do
       end
 
       desc 'Install dependencies to $GLOBUS_LOCATION/lib (execute as globus user)'
-      task 'install-deps' do
+      task 'install-deps' => 'artifacts' do
 	if (ENV['GNDMS_DEPS'] != 'skip') then
         	installDeps(ENV['GNDMS_DEPS']!='link')
 	end
         # Fix monitor.properties permissions
-        system "test -d '#{ENV['GNDMS_SHARED']}' || mkdir 'ENV['GNDMS_SHARED']'"
+        system "test -d '#{ENV['GNDMS_SHARED']}' || mkdir '#{ENV['GNDMS_SHARED']}'"
         propsFile = [ ENV['GNDMS_SHARED'], 'monitor.properties' ].join(File::SEPARATOR)
         system "touch '#{propsFile}'"
         system "chmod 0600 '#{propsFile}'"
@@ -502,12 +502,22 @@ task 'fix-permissions' do
     system "#{ENV['GNDMS_SOURCE']}/fix-permissions.sh"
 end
 
-Rake::Task[:default].prerequisites.clear
-task :default do
+def nope()
      puts ''
      puts 'Please read the documentation on how to build, install, and deploy this software (doc/html or doc/md).'
      puts 'The installation of GNDMS is considerably easy, but not straightforward.'
      puts ''
 end
+
+Rake::Task[:default].prerequisites.clear
+Rake::Task[:release].prerequisites.clear
+Rake::Task[:release].clear
+Rake::Task[:install].prerequisites.clear
+Rake::Task[:install].clear
+
+task :default do nope() end
+task :release do nope() end
+task :install do nope() end
+
 
 
