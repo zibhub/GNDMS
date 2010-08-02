@@ -19,7 +19,6 @@ different Wikis.  YMMV.  Use the source, luke!
 {:toc}
 
 
-
 Writing Webservice Clients
 --------------------------
 
