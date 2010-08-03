@@ -256,7 +256,8 @@ execute `gndms-buildr c3grid-dp-setubdb`
 : Edit `$GNDMS_SOURCE/scripts/ptgrid/setup-resource.sh` and execute `gndms-buildr ptgrid-setubdb`
 
 **PT-Grid Quick Test** 
-: Edit `$GNDMS_SOURCE/etc/sliceInOutClient.properties` and execute `gndms-buildr ptgrid-test`
+: Follow the setup instructions in the testing section <a href='#testing_your_installation'>below</a>
+and execute `gndms-buildr ptgrid-test`
 
 Additionally, please consult the documentation for the respective 
 community grid platform.
@@ -327,6 +328,7 @@ Now you can use buildr to fire up the client:
 
     gndms-buildr gndms:gndmc:run-test
 
+(Or if provided: your grid specific test target)
 It takes quite some time until the first output appears, be patient.
 After a successful run your output start with:
 
