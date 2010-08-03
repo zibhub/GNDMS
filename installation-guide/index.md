@@ -111,12 +111,13 @@ Please set the following environment variables as specified below
 
 Now it's time to start installing GNDMS.
 
+**ATTENTION** *The default globus log file in `$GLOBUS_LOCATION/var/container.log` gets installed with very liberal file permisssions.  You might want to `chmod 0640 $GLOBUS_LOCATION/var/container.log` for security reasons.*
 
 
 ### Preparation of GNDMS Software
 
-The following steps need to be executed as the `globus` user that runs
-the servlet container of your installation of Globus Toolkit.
+**ATTENTION** *The following steps need to be executed as the `globus` user that runs
+the servlet container of your installation of Globus Toolkit.*
 
 
 #### Download and Unpack GNDMS
@@ -159,7 +160,7 @@ Installation and Deployment from Distribution Package
  steps should be executed by the `globus` user.
  
  
-* Please enter `$GNDMS_SOURCE` and exeucte `gndms-buildr install`
+* Please enter `$GNDMS_SOURCE` and exeucte `gndms-buildr install-distribution`
 
   This will 
 
@@ -172,13 +173,13 @@ Installation and Deployment from Distribution Package
    * Build API Documentation (Javadocs) in `$GNDMS_SOURCE/doc/api`
    * and finally install the globus packages (gar-files)
 
-* Restart the globus with `globus-start-container-detached` and check
+* (Re)start the globus container with `globus-start-container-detached` and check
  `$GLOBUS_LOCATION/var/container.log` If everything goes right and you
  enabled additional logging as described in the previous section, the
  output should contain output like
 
       =================================================================================
-      GNDMS RELEASE: Generation N Data Management System VERSION: 0.3-pre "Kylie++"
+      GNDMS RELEASE: Generation N Data Management System VERSION: 0.3 "Rob"
       GNDMS BUILD: built-at: Wed Jul 21 11:14:01 +0200 2010 built-by: mjorra@csr-pc35
       =================================================================================
       Container home directory is '/opt/gt-current'
@@ -186,10 +187,8 @@ Installation and Deployment from Distribution Package
  (In the case of an error, you may want to compare with a
  [full startup log](startup-log.txt)).
  
-After succesful startup, please shutdown the container again by
-calling `globus-stop-container-detached`. 
-
-* Fix the permissions of database files by executing
+* *After having checked succesful startup by looking at the logs*, fix
+   the permissions of database files by executing
 
     gndms-buildr fix-permissions
 
@@ -204,15 +203,21 @@ Next, we'll describe how it may be configured for actual use.
 Gridconfiguration of GNDMS Software
 -----------------------------------
  
-### Enabling the Monitoring Shell
-
 GNDMS is configured via a builtin monitoring shell that accesses and
 modifies the configuration in the database.
 
-To enable it, after having startet the globus container with deployed
-GNDMS once (as described in the previous section), please edit
-`$GNDMS_MONI_CONFIG` such that `monitor.enabled` is set to `true` and
-restart the globus container.
+If you did a fresh installation, the monitoring shell will have been
+enabled temporarily at this point and you may just proceed. Otherwise
+you need to enable in manually as described in the following section.
+
+
+### Enabling the Monitoring Shell Manually
+
+To enable the monitor shell manually, after having startet the globus
+container with deployed GNDMS at least once (as described in the
+previous section), please edit `$GNDMS_MONI_CONFIG` such that
+`monitor.enabled` is set to `true` and either wait until GNDMS picks
+up the new configuration or restart the globus container.
 
 The monitoring shell will be running now. You have nearly finished the
 installation at this point. All that is left to do, is to actually
@@ -222,24 +227,33 @@ configure GNDMS for the chosen community grid platform.
 protected with a clear-text password only. Do not make the monitoring
 shell accessible via unsecure networks.*
 
+### Disabling the Monitoring Shell
+
+To disable the monitor shell, please edit `$GNDMS_MONI_CONFIG` such
+that *both* `monitor.enabled` and `monitor.noShutdownIfRunning` are
+set to `false`.  Now, either wait until the new configuration gets
+activated or just restart the globus container manually.
+
 
 ### Configuring your Grid
 
 Currently, there are specialized build targets for the setup of some
 D-Grid projects directly in the `Buildfile`.
 
+{% if 1==0 %}
 **C3-Grid Setup & Configuration** 
 : Edit `$GNDMS_SOURCE/scripts/c3grid/setup-dataprovider.sh` and
 execute `gndms-buildr c3grid-dp-setubdb`
 
 **C3-Grid Quick Test** 
 : `gndms-buildr c3grid-dp-test`
+{% endif %}
 
 **PT-Grid Setup & Configuration** 
 : Edit `$GNDMS_SOURCE/scripts/ptgrid/setup-resource.sh` and execute `gndms-buildr ptgrid-setubdb`
 
 **PT-Grid Quick Test** 
-: `gndms-buildr ptgrid-test`
+: Edit `$GNDMS_SOURCE/etc/sliceInOutClient.properties` and execute `gndms-buildr ptgrid-test`
 
 Additionally, please consult the documentation for the respective 
 community grid platform.
@@ -293,11 +307,12 @@ bash command-line:
 
 Additionally create a destination directory on the grid-ftp space.
 
-The client reads its properties from a file: `$GNDMS_SOURCE/etc/sliceInOut.properties`. Now it's time to edit this file. All properties whose values contain
-angle brackets require attention. The file contains comments to every
-property and hopefully explains itself. When you have finished the
-file must not contain any angle-brackets, the client will complain if
-that's not the case.
+The client reads its properties from a file:
+`$GNDMS_SOURCE/etc/sliceInOut.properties`. Now it's time to edit this
+file. All properties whose values contain angle brackets require
+attention. The file contains comments to every property and hopefully
+explains itself. When you have finished the file must not contain any
+angle-brackets, the client will complain if that's not the case.
 
 ### Running the test client
 
@@ -421,6 +436,7 @@ javadocs by executing
 {% highlight bash %}
 
     gndms-buildr clean clean-services # Cleans everything
+    gndms-buildr artifcats            # Download all 3rd party components
     gndms-buildr gndms:model:package  # Compile basic DAO classes
     gndms-buildr package-stubs        # Compile service stubs
     gndms-buildr gndms:infra:package  # Compile GNDMS framework
@@ -453,17 +469,25 @@ accidentally and remain readable for the globus user.*
 
 
 #### Packaging GNDMS
-In case you want do distribute your own spin-of GNDMS and use intellij
-for development, the following tar commands may be useful for you:
 
-    release-build
+In case you want do distribute your own spin-of GNDMS, we suggest you
+follow the procedure described below when making a release:
+
+    cd $GNDMS_SOURCE
+    vi Buildfile # Set VERSION_NUMBER and optionally VERSION_NAME
+    gndms-buildr release-build
+    git commit -m "Made a Release"
+    git tag gndms-release-ver
+    git push --tags origin master
     find $GNDMS_SOURCE -type f -name '*.class' -exec rm '{}' \;
-    mv $GNDMS_SOURCE $GNDMS_SOURCE/../gndms-releasname
+    cd ..
+    mv $GNDMS_SOURCE $GNDMS_SOURCE/../gndms-release-ver
 
-     tar zcvf GNDMS-Releases/gndms-0.3-rc1.tgz --exclude .git \
+     tar zcvf GNDMS-Releases/gndms-release-ver.tgz --exclude .git \
         --exclude *.ipr --exclude *.iml --exclude *.iws \
-        --exclude *.DS_Store --exclude *._.DS_Store gndms-0.3-rc1/
+        --exclude *.DS_Store --exclude *._.DS_Store gndms-release-ver
 
+Now, please upload the tarball and let the world know about it.
 
 
 #### Problem Shooting Tips for Development Builds

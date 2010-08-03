@@ -24,7 +24,7 @@ layout: wikistyle
 Trotz sorgfaeltiger inhaltlicher Kontrolle uebernehmen wir keine
 Haftung fuer die Inhalte.
 
-Sofern innerhalb unseres Internetangebotes die Möglichkeit zur Eingabe
+Sofern innerhalb unseres Internetangebotes die Moeglichkeit zur Eingabe
 persoenlicher oder geschaeftlicher Daten (Emailadressen, Namen,
 Anschriften usw.) besteht, so erfolgt die Preisgabe dieser Daten
 seitens des Nutzers auf ausdruecklich freiwilliger Basis.

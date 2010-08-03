@@ -36,7 +36,7 @@ it only on demand and always disable the service after use.
 
 To enable, edit `$GNDMS_MONI_CONFIG` and set `monitor.enabled` to `true`. Then
 either restart the container or wait `monitor.configRefreshCycl` ms (defaults
-to 30 seconds). After this period, the container will load your new
+to 17 seconds). After this period, the container will load your new
 configuration and start the monitor shell automatically.
 
 Alternatively, you may set `$GNDMS_MONITOR_ENABLED` to `true` before starting the
@@ -65,7 +65,7 @@ Executing Groovy Code
 
 This mode of executions is based on http sessions.
 
-`moni init` creates a new session (Default session timeout is ca. 20 mins).
+`moni init` creates a new session (Default session timeout is 22 mins).
 `moni open repl foo` to create a new monitor named "foo" in the current session
 that accepts multiple commands (`repl` is the *run mode* of the monitor.
 See below for a list of possible run modes).
