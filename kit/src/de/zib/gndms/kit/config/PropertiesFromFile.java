@@ -128,7 +128,7 @@ implements LoggingDecisionPoint, LDPHolder {
 	}
 
 	@NotNull
-	private Map<Object, Object> createDefaultElement() throws IOException {
+	protected Map<Object, Object> createDefaultElement() throws IOException {
 		tryWriteDefaults();
 		return Collections.unmodifiableMap(defaults);
 	}

@@ -40,6 +40,7 @@ import org.mortbay.jetty.servlet.*;
 import org.mortbay.thread.BoundedThreadPool;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
 import java.util.Properties;
@@ -232,15 +233,29 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
             final @NotNull GroovyBindingFactory theBindingFactory, final ActionCaller callerParam)
             throws Exception
 	{
-		this(theUnitName,
-			 new PropertiesFromFile(theConfigFile, theUnitName + " monitor config",
-			    DEFAULT_PROPERTIES, DEFAULT_COMMENT, logger), theBindingFactory, callerParam);
+		this(theUnitName, mkPropStream(theUnitName, theConfigFile, true), theBindingFactory, callerParam);
 		if (shouldLog("config"))
 			logger.info(theUnitName + " GroovyMoniServer config is "
 				  + theConfigFile.getCanonicalPath());
 	}
 
-	/**
+    private static PropertiesFromFile mkPropStream(final String theUnitName, final File theConfigFile,
+                                                   final boolean enableInitially) {
+        final String descriptiveName = theUnitName + " monitor config";
+        return new PropertiesFromFile(theConfigFile, descriptiveName, DEFAULT_PROPERTIES, DEFAULT_COMMENT, logger) {
+            // Override defaults to enable monitor
+            @NotNull
+            @Override
+            protected Map<Object, Object> createDefaultElement() throws IOException {
+                final Map<Object, Object> defaults = super.createDefaultElement();
+                if (enableInitially)
+                    defaults.put("monitor.noShutdownIfRunning", "true");
+                return defaults;
+            }
+        };
+    }
+
+    /**
 	 * Will run a monitor server using $HOME/monitor.properties
 	 *
 	 * @param args
@@ -492,7 +507,8 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 //        if (enabled)
 //            logger.info("monitor.enabled due to $GNDMS_MONITOR_ENABLED or Properties and setup is sane");
         noShutdownIfRunning = "true".equals(getProperty(props, "monitor.noShutdownIfRunning").trim());
-        logger.info("The monitor has been enabled");
+        logger.info("The monitor has been setup " + (enabled ? "and enabled " : " ") +
+                (noShutdownIfRunning ? "and will not shutdown if it is running even if disabled " : " "));
 	}
 
 	/**
