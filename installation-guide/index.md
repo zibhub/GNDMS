@@ -269,20 +269,20 @@ the test-client the following prerequisites must be satisfied:
 - You must own a valid gird certificate,
 - have access to a grid-ftp-server, which accepts your certificate
   and offers write permission,
-- and of curse a running globus container providing the
+- and of course a running globus container providing the
   GNDMS-services, with at least on subspace and file-transfer enabled.
 
 ### About
 
 The test client simulates a standard GNDMS-use-case, it creates as
-target slice, copies some file into the slice. Then it copies the
-files from the slice to some target directory and destroys the slice.
+target slice, copies some files into the slice. Then it copies the
+files back from the slice to some target directory and destroys the slice.
 
 ### Setup
 
 For the scenario the following setup is required. On your grid-ftp
-space create a directory, and add some file, e.g. using the following
-base command-line:
+space create a directory and add some files, e.g. using the following
+bash command-line:
 
 {% highlight bash %}
 
@@ -293,14 +293,11 @@ base command-line:
 
 Additionally create a destination directory on the grid-ftp space.
 
-The client reads its properties from a file:
-
-    $GNDMS_SOURCE/etc/sliceInOut.properties
-
-Now it's time to edit this file. All properties whose values contain
-angle brackets require attention. The contains comments and hopefully 
-explains itself. When you are the file must not contain any
-angle-brackets, the client will complain if thats the case.
+The client reads its properties from a file: `$GNDMS_SOURCE/etc/sliceInOut.properties`. Now it's time to edit this file. All properties whose values contain
+angle brackets require attention. The file contains comments to every
+property and hopefully explains itself. When you have finished the
+file must not contain any angle-brackets, the client will complain if
+that's not the case.
 
 ### Running the test client
 
@@ -319,7 +316,7 @@ After a successful run your output start with:
     OK()
     Creating slice
 
-and end with:
+(of course the version may differ) and end with:
 
     Okay, all done. Cleaning up!
         * Destroying Slice
@@ -340,7 +337,7 @@ service for your community.
 happens when the control-channel can be established but the
 data-channel is blocked. Please check your firewall setup especially
 if the `GLOBUS_TCP_PORT_RANGE` environment variable is set correctly
-and is fore wared by the firewall.
+and is forwarded by the firewall.
 
 **I'm getting a "`GSSException: Defective credential detected`" exception.**
 : This can have to reasons: your certificate-proxy maybe outdated or

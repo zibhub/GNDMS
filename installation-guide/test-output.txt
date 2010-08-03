@@ -3,10 +3,6 @@ OK()
 Creating slice
 Setting up delegation
 Copy gsiftp://csr-pc35:2811/home/mjorra/tmp/ftsrc -> gsiftp://csr-pc35.zib.de/tmp/gndms/RW/3b707b00-9e4a-11df-80c6-81e0000bf3f0
-Stub properties (after configureStubSecurity): 
-org.globus.security.authorization org.globus.wsrf.impl.security.authorization.NoAuthorization@2627cd63
-org.apache.axis.message.addressing.SHARED_HEADERS org.apache.axis.message.addressing.AddressingHeaders@7f1d3226
-org.globus.security.transport.type 2
 Waiting for transfer to finish...
 Waiting for transfer to finish...
 Waiting for transfer to finish...
@@ -20,10 +16,6 @@ Copied the following file(s):
 Now the otherway round!
 
 Copy gsiftp://csr-pc35.zib.de/tmp/gndms/RW/3b707b00-9e4a-11df-80c6-81e0000bf3f0 -> gsiftp://csr-pc35:2811/home/mjorra/tmp/ftsrc
-Stub properties (after configureStubSecurity): 
-org.globus.security.authorization org.globus.wsrf.impl.security.authorization.NoAuthorization@2627cd63
-org.apache.axis.message.addressing.SHARED_HEADERS org.apache.axis.message.addressing.AddressingHeaders@633a1778
-org.globus.security.transport.type 2
 Waiting for transfer to finish...
 Waiting for transfer to finish...
 Waiting for transfer to finish...
