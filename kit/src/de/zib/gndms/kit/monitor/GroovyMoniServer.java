@@ -111,7 +111,7 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 		props.put("monitor.user", "admin");
 		// random, unguessable default password
 		props.put("monitor.password", UUID.randomUUID().toString());
-		props.put("monitor.configRefreshCycle", "30000");
+		props.put("monitor.configRefreshCycle", "17000");
 		props.put("monitor.maxScriptSizeInBytes", "65535");
 		props.put("monitor.maxConnections", "8");
 		props.put("monitor.minConnections", "4");
