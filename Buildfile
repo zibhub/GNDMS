@@ -345,7 +345,7 @@ define 'gndms' do
     desc 'Create DSpace GAR for deployment (Requires packaged GNDMS and installed dependencies)'
     task 'package-DSpace' do
       system "cd '#{_('services', 'DSpace')}' && ant createDeploymentGar"
-      ln_sf(_('services', 'DSpace', 'gndms_DSpace.gar'), _('.'))
+      # ln_sf(_('services', 'DSpace', 'gndms_DSpace.gar'), _('.'))
     end
 
     desc 'Deploy current gndms_DSpace.gar'
@@ -366,7 +366,7 @@ define 'gndms' do
     desc 'Create GORFX GAR for deployment (Requires packaged GNDMS and installed dependencies)'
     task 'package-GORFX' do
       system "cd '#{_('services', 'GORFX')}' && ant createDeploymentGar"
-      ln_sf(_('services', 'GORFX', 'gndms_GORFX.gar'), _('.'))
+      # ln_sf(_('services', 'GORFX', 'gndms_GORFX.gar'), _('.'))
     end
 
     desc 'Deploy current gndms_GORFX.gar'
