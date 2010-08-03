@@ -15,7 +15,7 @@ repositories.remote << 'http://google-maven-repository.googlecode.com/svn/reposi
 # Don't touch below unless you know what you are doing
 # --------------------------------------------------------------------------------------------------
 
-VERSION_NUMBER = '0.3-rc1'
+VERSION_NUMBER = '0.3-rc2'
 VERSION_NAME = 'Rob'
 GROUP_NAME = 'de.zib.gndms'
 MF_COPYRIGHT = 'Copyright 2008-2010 Zuse Institute Berlin (ZIB)'
@@ -472,9 +472,13 @@ task 'ptgrid-setupdb' do
     system "#{ENV['GNDMS_SOURCE']}/scripts/ptgrid/setup-resource.sh CREATE"
 end
 
+task 'ptgrid-test' => task('gndms:gndmc:run-test') 
+
 task 'c3grid-dp-setupdb' do
     system "#{ENV['GNDMS_SOURCE']}/scripts/c3grid/setup-dataprovider.sh CREATE"
 end
+
+task 'c3grid-dp-test' => task('gndms:gndmc:run-test') 
 
 
 # Main targets
