@@ -250,10 +250,12 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
             protected Map<Object, Object> createDefaultElement() throws IOException {
                 if (enableInitially)  {
                     final ImmutableMap.Builder<Object, Object> builder = new ImmutableMap.Builder<Object, Object>();
-                    for (Map.Entry<Object, Object> entry : super.createDefaultElement().entrySet())
-                        if (! "monitor.notShutdownIfRunning".equals(entry.getKey()))
-                            builder.put(entry.getKey(), entry.getValue());
                     builder.put("monitor.noShutdownIfRunning", "true");
+                    for (Map.Entry<Object, Object> entry : super.createDefaultElement().entrySet())
+                        if ("monitor.notShutdownIfRunning".equals(entry.getKey()))
+                            logger.debug("Skipped default entry " + entry);
+                        else
+                            builder.put(entry.getKey(), entry.getValue());
                     return builder.build();
                 }
                 else
