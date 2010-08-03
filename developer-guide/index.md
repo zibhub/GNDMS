@@ -32,7 +32,7 @@ Writing Webservice Clients
   template IDEA or eclipse projects.
 * You might need to add `$GLOBUS_LOCATION/lib/*.jar` 
   * Skip `gndms-*.jar`, but
-  * include`gndms-*-service.jar` and `gndms-*-client.jar`
+  * include `gndms-*-service.jar` and `gndms-*-client.jar`
 
 
 ## Setup a Development Environment for Debugging
@@ -210,11 +210,12 @@ factory methods during resource instantiation.
         new org.globus.gsi.gssapi.GlobusGSSCredentialImpl( credential, 
 	   org.ietf.jgss.GSSCredential.INITIATE_AND_ACCEPT );
     desc.setGSSCredential( gss );
-    EndpointReferenceType delegEpr = 
-        AddressingUtils.createEndpointReference( delUri, null );
     desc.setGSITransport( (Integer) Constants.SIGNATURE );
     Util.registerTransport();
     desc.setAuthz( NoAuthorization.getInstance() );
+
+    EndpointReferenceType delegEpr = 
+        AddressingUtils.createEndpointReference( delUri, null );
 
     // acquire cert chain 
     X509Certificate[] certs = 
@@ -439,10 +440,11 @@ If everything is ok, `openssl` will print
 
 Otherwise a lengthy error message will be shown.
 
-All this is typically done by
-`$GLOBUS_LOCATION/bin/grid-proxy-verify`.  A look at the source code
-is an interesting read concerning the details of proxy verification
-with openssl.
+Another way to acompish this is to install the tool
+[grid-proxy-verify](http://www.nikhef.nl/~janjust/proxy-verify/), which handles
+the proxy-file without the need of splitting. A look at the source
+code is an interesting read concerning the details of proxy
+verification with openssl.
 
 
 
@@ -483,14 +485,14 @@ The protocol consists of three steps.
          |     createOffer( ORQ )*      |
          X----------------------------->|--+
          |                              |  |
-         |                              |  | EstimateScript( ORQ )
+         |                              |  | Estimation( ORQ )
          |                              |  |
          |    offerContract             |<-+
          |<-----------------------------X
          |       Accept                 |
          X----------------------------->|--+
          |                              |  |
-         |                              |  | StagingScript
+         |                              |  | run task
          |                              |  |
          |        Result                |<-+
          |<-----------------------------X

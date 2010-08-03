@@ -7,9 +7,9 @@ GNDMS Architecture Primer
 =========================
 
 This is the GNDMS Architecture Primer.  It is developer-level
-documentation that gives a high-level overview of the differen layers
-of GNDMS, how they interoperate with Globus Toolkit, as well as
-important concepts, components, and, classes.  It is incomplete at
+documentation that gives a general overview of the different layers
+of GNDMS, how they inter-operate with Globus Toolkit, as well as
+important concepts, components and classes.  It is incomplete at
 this point.
 
 * Maruku will replace this with a fine Table of Contents
@@ -57,7 +57,7 @@ For the gndmc client, an additional layer is required:
     ..........................................................................
 
 
-The software stack for building, installing, deployment, and
+The software stack for building, installing, deployment and
 configuration of GNDMS roughly looks like this:
 
     < buildr --------------------------------------------------------------- >
@@ -127,73 +127,73 @@ like e.g. XSD type conversion (located below `$GNDMS_SOURCE/gritserv`).
 : Main infrastructure code that ties the service code to GNDMS *main*
 classes. Configuration, Database setup, Dependency injection (located below `$GNDMS_SOURCE/infra`).
 
-**logic** *Main*
+**logic** *(Main)*
 : All 'Business' logic of GNDMS that can be implemented outside of
 the actual service classes (located below `$GNDMS_SOURCE/logic`).
 
-**Configuration** *Config*
+**Configuration** *(Config)*
 : Configuration scripts below `$GNDMS_SOURCE` scripts are executing
 during installation in order to configure a GNDMS instance for
 its purpose in a given community grid (located below `$GNDMS_SOURCE/scrips`).
 
-**Monitor Shell and Utilities** *Config*
+**Monitor Shell and Utilities** *(Config)*
 : The monitor shell (client) allows access to the monitor shell
 implemented **kit** (located below `$GNDMS_SOURCE/bin`).
 
-**kit** *Main*
+**kit** *(Main)*
 : Utility classes that depend on some functionality from Globus
-Toolkit and/or **model**. Kit contains the implementation of theGNDMS
-monitor shell (located below `$GNDMS_SOURCE/kit`).
+Toolkit and/or **model**. Kit contains the implementation of the GNDMS
+monitor shell and GridFTP auxiliaries (located below `$GNDMS_SOURCE/kit`).
 
-**model** *Main*
+**model** *(Main)*
 : Database model classes (located below `$GNDMS_SOURCE/model`)
 
-**stuff** *Main*
+**stuff** *(Main)*
 : Various utility classes (located below `$GNDMS_SOURCE/stuff`)
 
-**Service Stubs** *Service*
+**Service Stubs** *(Service)*
 : Stub code needed to communicate with the Grid WSRF Services of GNDMS
 (located inside services).
 
-**GT4 Container** *Globus*
+**GT4 Container** *(Globus)*
 : The Globus Toolkit 4 WSRF Service Container.
 
-**Open JPA** *External*
+**Open JPA** *(External)*
 : GNDMS uses Apache OpenJPA 2.0 as its Object Relational Mapper (ORM).
 
-**Derby** *External*
+**Derby** *(External)*
 : GNDMS uses Apache Derby 1.5 as its underlying embedded database.
 
-**Groovy** *External*
+**Groovy** *(External)*
 : GNDMS provides support to access the system at runtime by means of
 executing groovy script code via the monitor shell.
 
-**Jetty** *External*
+**Jetty** *(External)*
 : The monitor shell is implemented atop a stripped-down version of jetty.
 
-**Additional External Libraries** *External*
+**Additional External Libraries** *(External)*
 : GNDMS uses a large selection of 3rd party libraries.  Please either
 consult the `Buildfile` or `$GNDMS_SOURCE/lib/gndms-depencies[.xml]`
 (post-install) to find out more details.  Consult
 `$GNDMS_SOURCE/doc/licensing` for licensing conditions of 3rd party
 components.
 
-**Build** *Build*
+**Build** *(Build)*
 : Build scripts are written in ruby and placed in
 `$GNDMS_SOURCE/Buildfile` and `$GNDMS_SOURCE/buildr/*`.
 
-**Buildr 1.4** *Build*
+**Buildr 1.4** *(Build)*
 : GNDMS relies on Apache Buildr for build, installation, and
 deployment.
 
-**introduce** *Build*
+**introduce** *(Build)*
 : The Introduce Tool from the CAGrid project was used to generate
 service skeletons below `$GNDMS_SOURCE/services`.
 
-**JRuby 1.5** *Build*
+**JRuby 1.5** *(Build)*
 : **Buildr** needs this.
 
-**Java 2 SDK 1.6** *All*
+**Java 2 SDK 1.6** *(All)*
 : GNDMS has been written in Java.
 
 **Documentation**
