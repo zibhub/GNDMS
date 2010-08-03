@@ -18,7 +18,6 @@ package de.zib.gndms.kit.monitor;
 
 
 
-import com.google.common.collect.ImmutableMap;
 import de.zib.gndms.stuff.config.InfiniteEnumeration;
 import de.zib.gndms.kit.config.PropertiesFromFile;
 import de.zib.gndms.kit.logging.LDPHolder;
@@ -41,7 +40,6 @@ import org.mortbay.jetty.servlet.*;
 import org.mortbay.thread.BoundedThreadPool;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
 import java.util.Properties;
@@ -193,7 +191,7 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 	// avoids double restarts if restart is triggered from servlet and thread at the same time
 	private boolean skipThreadBasedRefresh;
 
-    // for supporting action runnning
+    // for supporting action running
     private ActionCaller actionCaller;
 
 
@@ -203,7 +201,6 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 	 *
 	 * @param theUnitName descriptive name for this server (used in logs)
      * @param theCfg continuous stream of properties for this server
-     * @param shouldEnableInitially
      * @param theBindingFactory for creating groovy biding objects per console instance/connection
      */
 	public GroovyMoniServer(final @NotNull String theUnitName,
@@ -385,20 +382,8 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 			if (skipThreadBasedRefresh)
 				return isServerRunning();
 
-			synchronized(this) {
-				if (server == null && enabled)
-						;
-				else {
-					Map<Object, Object> next = configStream.nextElementIfDifferent();
-					if (next == null && !evenIfNoNewConfig)
-						return server != null;
-					else {
-						stopServer();
-						if (next != null)
-							setupState(next);
-					}
-				}
-			}
+            if (shouldRestartAfterRefresh(evenIfNoNewConfig))
+                return server != null;
 
 			if (thread != null) {
 				skipThreadBasedRefresh = true;
@@ -409,7 +394,32 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 		finally { lock.unlock(); }
 	}
 
-	/**
+    private synchronized boolean shouldRestartAfterRefresh(boolean evenIfNoNewConfig) throws Exception {
+        if (server != null || !enabled) {
+            final Map<Object, Object> next = configStream.nextElementIfDifferent();
+            if (next == null && !evenIfNoNewConfig)
+                return true;
+            else {
+                if (noShutdownIfRunning) {
+                    if (shouldLog("stop"))
+                        logger.info("No shutdown because 'monitor.noShutdownIfRunning = true'");
+                    if (next != null)
+                        setupState(next);
+                    if (!noShutdownIfRunning) {
+                        logger.info("Late shutdown because now 'monitor.noShutdownIfRunning != true'");
+                        stopServer();
+                    }
+                } else {
+                    stopServer();
+                    if (next != null)
+                        setupState(next);
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
 	 * Start the servlet server for serving monitoring consoles
 	 *
 	 * @return true if the server was started succesfully
@@ -463,18 +473,12 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 	@SuppressWarnings({"AccessToStaticFieldLockedOnInstance"})
 	public synchronized void stopServer() throws Exception {
 		try {
-            if (noShutdownIfRunning) {
+            final Server aServer = server;
+            if (aServer != null) {
                 if (shouldLog("stop"))
-                    logger.info("No shutdown because 'monitor.noShutdownIfRunning = true'");
+                    logger.info("Stopping monitor server for '" + unitName + '\'');
+                aServer.stop();
             }
-			else {
-                final Server aServer = server;
-    			if (aServer != null) {
-	    			if (shouldLog("stop"))
-		    			logger.info("Stopping monitor server for '" + unitName + '\'');
-			    	aServer.stop();
-                }
-			}
 		}
 		finally {
 			server = null;
@@ -496,19 +500,20 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 		setupNumbers(props);
 		roleName = getProperty(props, "monitor.roleName").trim();
         final String envVar = System.getenv("GNDMS_MONITOR_ENABLED");
-        enabled = envVar != null && envVar.trim().length() > 0;
-//        if (enabled)
-//            logger.info("monitor.enabled due to $GNDMS_MONITOR_ENABLED");
-        enabled |= "true".equals(getProperty(props, "monitor.enabled").trim());
-//        if (enabled)
-//            logger.info("monitor.enabled due to $GNDMS_MONITOR_ENABLED or Properties");
+        final boolean envEnabled = envVar != null && envVar.trim().length() > 0;
+        final boolean propsEnabled = "true".equals(getProperty(props, "monitor.enabled").trim());
 		final String loggedStr = getProperty(props, "monitor.logged").trim();
-		enabled &= isSaneSetup(LoggingDecisionPoint.Parser.parseTokenSet(loggedStr));
-//        if (enabled)
-//            logger.info("monitor.enabled due to $GNDMS_MONITOR_ENABLED or Properties and setup is sane");
+        final boolean isSane = isSaneSetup(Parser.parseTokenSet(loggedStr));
+        enabled = (envEnabled || propsEnabled) && isSane;
         noShutdownIfRunning = "true".equals(getProperty(props, "monitor.noShutdownIfRunning").trim());
-        logger.info("The monitor has been setup " + (enabled ? "and enabled " : "and disabled ") +
-                (noShutdownIfRunning ? "and will not shutdown even if it gets disabled later on " : ""));
+        
+        logger.info("Setup monitor state: "
+                + (envEnabled ? "[ ! -z \"$GNDMS_MONITOR_ENABLED\"Ê] " : "")
+                + (propsEnabled ? "monitor.enabled=true " : "")
+                + (isSane ? "sane " : "insane ")
+                + (enabled ? "=> enabled " : "=> disabled ")
+                + (noShutdownIfRunning ? "and -NO-ShutdownIfRunning" : "and -DO-shutdownIfRunning")
+        );
 	}
 
 	/**

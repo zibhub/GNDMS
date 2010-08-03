@@ -90,7 +90,11 @@ public class PropertiesFromFile extends InfiniteEnumeration<Map<Object, Object>>
 	@NotNull
 	synchronized protected Map<Object, Object> createInitialDefaultElement() {
 		try {
-			return tryLoadProperties();
+            final Map<Object, Object> map = tryLoadProperties();
+            if (map == null)
+                throw new NullPointerException("Could not create initial default element");
+            else
+                return map;
 		}
 		catch (IOException e) {
 			logger.warn("Failure while attempting to initialize " + desciptiveName, e);
@@ -98,7 +102,7 @@ public class PropertiesFromFile extends InfiniteEnumeration<Map<Object, Object>>
 		}
 	}
 
-	@NotNull
+	@Nullable
 	private Map<Object, Object> tryLoadProperties() throws IOException {
 		Properties props;
 		FileInputStream in = null;
