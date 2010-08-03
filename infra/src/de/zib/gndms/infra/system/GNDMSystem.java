@@ -220,6 +220,7 @@ public final class GNDMSystem
 			// Bad style, usually would be an inner class but
 			// removed it from this source file to reduce source file size
 			actionCaller = new ConfigActionCaller(this);
+            logger.info("getSubGridName() /* gridconfig subGridName */ is '" + getInstanceDir().getSubGridName() + '\'');
 		}
 		catch (Exception e) {
 			logger.error("Initialization failed", e);
