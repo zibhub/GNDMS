@@ -105,6 +105,7 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 
 		Properties props = new Properties();
 		props.put("monitor.enabled", "false");
+        props.put("monitor.noShutdownIfRunning", "true");
 		props.put("monitor.host", "localhost");
 		props.put("monitor.port", "23232");
 		props.put("monitor.user", "admin");
@@ -145,6 +146,8 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 	private GroovyBindingFactory bindingFactory;
 
 	private boolean enabled = false;
+
+    private boolean noShutdownIfRunning = false;
 
 	@NotNull
 	private String host;
@@ -445,11 +448,17 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 	@SuppressWarnings({"AccessToStaticFieldLockedOnInstance"})
 	public synchronized void stopServer() throws Exception {
 		try {
-			final Server aServer = server;
-			if (aServer != null) {
-				if (shouldLog("stop"))
-					logger.info("Stopping monitor server for '" + unitName + '\'');
-				aServer.stop();
+            if (noShutdownIfRunning) {
+                if (shouldLog("stop"))
+                    logger.info("No shutdown because 'monitor.noShutdownIfRunning = true'");
+            }
+			else {
+                final Server aServer = server;
+    			if (aServer != null) {
+	    			if (shouldLog("stop"))
+		    			logger.info("Stopping monitor server for '" + unitName + '\'');
+			    	aServer.stop();
+                }
 			}
 		}
 		finally {
@@ -482,6 +491,7 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 		enabled &= isSaneSetup(LoggingDecisionPoint.Parser.parseTokenSet(loggedStr));
 //        if (enabled)
 //            logger.info("monitor.enabled due to $GNDMS_MONITOR_ENABLED or Properties and setup is sane");
+        noShutdownIfRunning = "true".equals(getProperty(props, "monitor.noShutdownIfRunning").trim());
         logger.info("The monitor has been enabled");
 	}
 
