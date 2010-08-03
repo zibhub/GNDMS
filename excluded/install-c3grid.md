@@ -1,5 +1,6 @@
 ---
 title: C3Grid GNDMS Quick Deployment Guide
+root: ../
 layout: wikitext
 ---
 

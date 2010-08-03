@@ -1,5 +1,6 @@
 ---
 title: GNDMS
+root: .
 layout: wikistyle
 ---
 

@@ -1,5 +1,6 @@
 ---
 title: GNDMS Developer Guide
+root: ..
 layout: wikistyle
 ---
 

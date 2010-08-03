@@ -1,5 +1,6 @@
 ---
 title: GNDMS Installation
+root: ..
 layout: wikistyle
 ---
  
@@ -10,7 +11,7 @@ GNDMS Installation Guide
 ========================
 
 This is the Installation Guide for the
-[Generation N Data Management System](../index.html).
+[Generation N Data Management System]({{ page.root }}index.html).
 
 * Maruku will replace this with a fine Table of Contents
 {:toc}

@@ -1,5 +1,6 @@
 ---
 title: GNDMS Imprint
+root: ..
 layout: wikistyle
 ---
 

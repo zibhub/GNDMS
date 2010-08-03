@@ -1,5 +1,6 @@
 ---
 title: GNDMS Architecture Primer
+root: ..
 layout: wikistyle
 ---
 
