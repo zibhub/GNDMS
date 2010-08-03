@@ -1,7 +1,7 @@
 package de.zib.gndms.kit.network;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.concurrent.*;
 
 /**
- * @author: try ma ik jo rr a zib
+ * @author  try ma ik jo rr a zib
  * @version $Id$
  *          <p/>
  *          User: mjorra, Date: 20.02.2009, Time: 17:37:59

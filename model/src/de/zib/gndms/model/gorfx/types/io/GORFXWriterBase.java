@@ -1,7 +1,7 @@
 package de.zib.gndms.model.gorfx.types.io;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,8 @@ package de.zib.gndms.model.gorfx.types.io;
  * A gndms class can be written to Stdout, it can be written as a Properties instance, or a their corresponding axis type.
  *
  * @see de.zib.gndms.model.gorfx.types.io.GORFXConverterBase
- * @author: try ma ik jo rr a zib
- * @version: $Id$
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  * <p/>
  * User: mjorra, Date: 17.09.2008, Time: 15:27:47
  */

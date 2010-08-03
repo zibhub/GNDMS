@@ -1,7 +1,7 @@
 package de.zib.gndms.kit.access;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Provides a guice injector
  *
- * @author: try ste fan pla nti kow zib
+ * @author  try ste fan pla nti kow zib
  */
 public interface InjectorProvider {
     @NotNull Injector getInjector();

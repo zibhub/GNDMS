@@ -1,7 +1,7 @@
 package de.zib.gndms.dspace.subspace.service.globus.resource;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ import javax.xml.namespace.QName;
  * of the web service container that notifies succesfull initialization of the extended resource
  * home.
  *
- * @author: try ste fan pla nti kow zib
+ * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 16.07.2008 Time: 12:35:27

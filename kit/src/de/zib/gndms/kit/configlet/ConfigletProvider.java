@@ -1,7 +1,7 @@
 package de.zib.gndms.kit.configlet;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  *
  * An Interface to provide Configlets
- * @author: try ma ik jo rr a zib
- * @version: $Id$
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  * <p/>
  * User: mjorra, Date: 11.11.2008, Time: 18:24:02
  */

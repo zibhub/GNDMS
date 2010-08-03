@@ -1,7 +1,7 @@
 package de.zib.gndmc.GORFX.beans;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import de.zib.gndms.gritserv.delegation.DelegationAux;
 import java.util.Properties;
 
 /**
- * @author: try ma ik jo rr a zib
+ * @author  try ma ik jo rr a zib
  * @version $Id$
  *          <p/>
  *          User: mjorra, Date: 26.07.2010, Time: 13:35:52

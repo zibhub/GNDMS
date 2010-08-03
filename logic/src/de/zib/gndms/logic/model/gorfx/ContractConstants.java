@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model.gorfx;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ package de.zib.gndms.logic.model.gorfx;
 /**
  * Just a place to define some values required for ORQs, mainly contract time spans.
  *
- * @author: try ma ik jo rr a zib
- * @version: $Id$
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  * <p/>
  * User: mjorra, Date: 27.10.2008, Time: 10:01:49
  */

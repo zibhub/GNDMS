@@ -1,7 +1,7 @@
 package de.zib.gndms.gritserv.typecon;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ import java.io.StringWriter;
 import java.io.PrintWriter;
 
 /**
- * @author: try ma ik jo rr a zib
+ * @author  try ma ik jo rr a zib
  * @version \$id$
  * <p/>
  * User: bzcjorra Date: Sep 5, 2008 5:08:47 PM

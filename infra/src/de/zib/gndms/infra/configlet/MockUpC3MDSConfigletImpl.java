@@ -1,7 +1,7 @@
 package de.zib.gndms.infra.configlet;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import java.io.FileInputStream;
 import java.util.Iterator;
 
 /**
- * @author: try ma ik jo rr a zib
+ * @author  try ma ik jo rr a zib
  * @version $Id$
  *          <p/>
  *          User: mjorra, Date: 16.01.2009, Time: 14:12:56

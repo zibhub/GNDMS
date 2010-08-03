@@ -1,7 +1,7 @@
 package de.zib.gndms.model.gorfx.types;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import java.io.Serializable;
 
 /**
  * A time constrain is a selection criteria for data stagin.
- * @author: try ma ik jo rr a zib
+ * @author  try ma ik jo rr a zib
  * @verson \$id$
  * <p/>
  * User: bzcjorra Date: Sep 15, 2008 4:11:00 PM

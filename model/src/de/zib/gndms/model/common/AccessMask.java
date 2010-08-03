@@ -1,7 +1,7 @@
 package de.zib.gndms.model.common;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import java.util.HashMap;
  *
  *
  *
- * @author: try ma ik jo rr a zib
+ * @author  try ma ik jo rr a zib
  * @version $Id$
  * @see AccessFlags for the representation of a bit mask.
  * User: mjorra, Date: 22.12.2008, Time: 13:13:43

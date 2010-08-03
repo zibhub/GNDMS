@@ -1,7 +1,7 @@
 package de.zib.gndms.gritserv.typecon.types;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,8 @@ import types.ContextT;
  * An AbstractORQXSDReader is used to created an AbstractORQ instance and load the ContextT into the object.
  * See {@link #read(Class, types.ContextT)} 
  *
- * @author: try ma ik jo rr a zib
- * @version: $Id$
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  * <p/>
  * User: mjorra, Date: 14.10.2008, Time: 13:16:31
  */

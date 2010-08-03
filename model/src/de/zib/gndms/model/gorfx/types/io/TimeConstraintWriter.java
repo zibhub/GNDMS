@@ -1,7 +1,7 @@
 package de.zib.gndms.model.gorfx.types.io;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,8 @@ import org.joda.time.DateTime;
  *      time constraint yet. This might change if the class gets more
  *      complex.
  * 
- * @author: try ma ik jo rr a zib
- * @version: $Id$
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  * <p/>
  * User: mjorra, Date: 17.09.2008, Time: 14:54:27
  */

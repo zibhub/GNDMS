@@ -1,7 +1,7 @@
 package de.zib.gndms.infra.action;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ import java.io.PrintWriter;
  * configuration map. Therefore the option {@link #home 'home'} must be set.
  *
  * @see de.zib.gndms.infra.service.GNDMServiceHome
- * @author: try ste fan pla nti kow zib
+ * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 22.08.2008 Time: 16:47:23

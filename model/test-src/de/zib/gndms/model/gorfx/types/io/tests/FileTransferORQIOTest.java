@@ -1,7 +1,7 @@
 package de.zib.gndms.model.gorfx.types.io.tests;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +33,8 @@ import java.io.OutputStream;
 import java.io.FileOutputStream;
 
 /**
- * @author: try ma ik jo rr a zib
- * @version: $Id$
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  * <p/>
  * User: mjorra, Date: 14.10.2008, Time: 14:38:41
  */

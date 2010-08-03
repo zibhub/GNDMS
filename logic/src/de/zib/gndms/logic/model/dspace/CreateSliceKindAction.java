@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model.dspace;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +33,8 @@ import java.util.Set;
  * The object will be created when this action is executed.
  *
  * @see SliceKind
- * @author: try ma ik jo rr a zib
- * @version: $Id$
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  *
  * User: mjorra, Date: 18.08.2008, Time: 13:44:55
  */

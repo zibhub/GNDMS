@@ -1,7 +1,7 @@
 package de.zib.gndms.GORFX.context.service.globus.resource;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package de.zib.gndms.GORFX.context.service.globus.resource;
 
 
 /**
- * @author: try ma ik jo rr a zib
+ * @author  try ma ik jo rr a zib
  * @version $Id$
  *          <p/>
  *          User: mjorra, Date: 18.06.2010, Time: 14:23:39

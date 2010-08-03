@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.action;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
  * This interface is intented only to be implemented by {@link Action}s.
  * It provides a logger for the action.
  *
- * @author: try ste fan pla nti kow zib
+ * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 22.10.2008 Time: 11:18:28

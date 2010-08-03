@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.access;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ import java.lang.reflect.InvocationTargetException;
  * @see de.zib.gndms.model.common.types.factory.KeyFactoryInstance
  * @see de.zib.gndms.model.common.types.factory.IndustrialPark
  * 
- * @author: try ste fan pla nti kow zib
+ * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 05.12.2008 Time: 17:51:48

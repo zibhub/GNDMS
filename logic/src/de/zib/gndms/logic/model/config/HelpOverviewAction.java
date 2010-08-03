@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model.config;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import java.util.Comparator;
  * <p>A name mapper can be denoted, using {@code setNameMapper()}, mapping the canonical name (<tt>actionClass.getCanonicalName()</tt> )
  * of each action class contained in the set to a predefined String and will used when printing the list.
  *
- * @author: try ste fan pla nti kow zib
+ * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 26.08.2008 Time: 10:55:17

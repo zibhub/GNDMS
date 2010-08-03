@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model.gorfx.permissions;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,8 @@ import java.util.Properties;
  * A class to configure permissions of files created by the GORFX service.
  *
  * 
- * @author: try ma ik jo rr a zib
- * @version: $Id$
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  * <p/>
  * User: mjorra, Date: 23.12.2008, Time: 11:00:25
  */

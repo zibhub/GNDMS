@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,8 @@ import java.util.Calendar;
  * The first template parameter is the model type. The second parameter is the return type of this action.
  *
  * @see de.zib.gndms.logic.model.CreateGridResourceAction
- * @author: try ma ik jo rr a zib
- * @version: $Id$
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  * 
  * User: mjorra, Date: 13.08.2008, Time: 14:57:06
  */

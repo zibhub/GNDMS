@@ -1,7 +1,7 @@
 package de.zib.gndmc.GORFX.tests;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import java.util.concurrent.Executors;
 /**
  * This client reads multiple staging orqs from a file and sends them to a given site using mulitple threads
  *
- * @author: try ma ik jo rr a zib
+ * @author  try ma ik jo rr a zib
  * @version $Id$
  *          <p/>
  *          User: mjorra, Date: 05.02.2009, Time: 15:47:02
