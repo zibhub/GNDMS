@@ -18,6 +18,7 @@ package de.zib.gndms.kit.monitor;
 
 
 
+import com.google.common.collect.ImmutableMap;
 import de.zib.gndms.kit.config.InfiniteEnumeration;
 import de.zib.gndms.kit.config.PropertiesFromFile;
 import de.zib.gndms.kit.logging.LDPHolder;
@@ -247,10 +248,14 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
             @NotNull
             @Override
             protected Map<Object, Object> createDefaultElement() throws IOException {
-                final Map<Object, Object> defaults = super.createDefaultElement();
-                if (enableInitially)
-                    defaults.put("monitor.noShutdownIfRunning", "true");
-                return defaults;
+                if (enableInitially)  {
+                    final ImmutableMap.Builder<Object, Object> builder = new ImmutableMap.Builder<Object, Object>();
+                    builder.putAll(super.createDefaultElement());
+                    builder.put("monitor.noShutdownIfRunning", "true");
+                    return builder.build();
+                }
+                else
+                    return super.createDefaultElement();
             }
         };
     }
@@ -262,9 +267,9 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		GroovyMoniServer theMoniServer;
-		File configFile;
-		boolean killConfig = false;
+		final GroovyMoniServer theMoniServer;
+		final File configFile;
+		final boolean killConfig = false;
 		if (args.length > 0)
 			configFile = new File(args[0]);
 		else {

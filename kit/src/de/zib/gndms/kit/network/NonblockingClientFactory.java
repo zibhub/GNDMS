@@ -30,7 +30,8 @@ import java.util.Map;
 import java.util.concurrent.*;
 
 /**
- * @author: try ma ik jo rr a zib
+ * @author try ma ik jo rr a zib
+ * 
  * @version $Id$
  *          <p/>
  *          User: mjorra, Date: 20.02.2009, Time: 17:37:59
