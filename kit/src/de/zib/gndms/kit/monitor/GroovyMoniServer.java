@@ -18,7 +18,7 @@ package de.zib.gndms.kit.monitor;
 
 
 
-import de.zib.gndms.kit.config.InfiniteEnumeration;
+import de.zib.gndms.stuff.config.InfiniteEnumeration;
 import de.zib.gndms.kit.config.PropertiesFromFile;
 import de.zib.gndms.kit.logging.LDPHolder;
 import de.zib.gndms.kit.logging.LoggingDecisionPoint;
@@ -105,6 +105,7 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 
 		Properties props = new Properties();
 		props.put("monitor.enabled", "false");
+        props.put("monitor.noShutdownIfRunning", "true");
 		props.put("monitor.host", "localhost");
 		props.put("monitor.port", "23232");
 		props.put("monitor.user", "admin");
@@ -145,6 +146,8 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 	private GroovyBindingFactory bindingFactory;
 
 	private boolean enabled = false;
+
+    private boolean noShutdownIfRunning = false;
 
 	@NotNull
 	private String host;
@@ -188,7 +191,7 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 	// avoids double restarts if restart is triggered from servlet and thread at the same time
 	private boolean skipThreadBasedRefresh;
 
-    // for supporting action runnning
+    // for supporting action running
     private ActionCaller actionCaller;
 
 
@@ -197,12 +200,12 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 	 * groovy and jetty.
 	 *
 	 * @param theUnitName descriptive name for this server (used in logs)
-	 * @param theCfg continuous stream of properties for this server
-	 * @param theBindingFactory for creating groovy biding objects per console instance/connection
-	 */
+     * @param theCfg continuous stream of properties for this server
+     * @param theBindingFactory for creating groovy biding objects per console instance/connection
+     */
 	public GroovyMoniServer(final @NotNull String theUnitName,
-	                        final @NotNull InfiniteEnumeration<? extends Map<Object,Object>> theCfg,
-	                        final @NotNull GroovyBindingFactory theBindingFactory,
+                            final @NotNull InfiniteEnumeration<? extends Map<Object, Object>> theCfg,
+                            final @NotNull GroovyBindingFactory theBindingFactory,
                             final @NotNull ActionCaller callerParam) {
 
 		if (theCfg instanceof LDPHolder)
@@ -229,24 +232,36 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
             final @NotNull GroovyBindingFactory theBindingFactory, final ActionCaller callerParam)
             throws Exception
 	{
-		this(theUnitName,
-			 new PropertiesFromFile(theConfigFile, theUnitName + " monitor config",
-			    DEFAULT_PROPERTIES, DEFAULT_COMMENT, logger), theBindingFactory, callerParam);
+		this(theUnitName, mkPropStream(theUnitName, theConfigFile), theBindingFactory, callerParam);
 		if (shouldLog("config"))
 			logger.info(theUnitName + " GroovyMoniServer config is "
 				  + theConfigFile.getCanonicalPath());
 	}
 
-	/**
+    private static PropertiesFromFile mkPropStream(final String theUnitName, final File theConfigFile) {
+        final String descriptiveName = theUnitName + " monitor config";
+        return new PropertiesFromFile(theConfigFile, descriptiveName, DEFAULT_PROPERTIES, DEFAULT_COMMENT, logger) {
+            // Override defaults to enable monitor
+            @NotNull
+            @Override
+            protected Map<Object, Object> createInitialDefaultElement() {
+                final Map<Object, Object> map = super.createInitialDefaultElement();
+                map.put("monitor.enabled", "true");
+                return map;
+            }
+        };
+    }
+
+    /**
 	 * Will run a monitor server using $HOME/monitor.properties
 	 *
 	 * @param args
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		GroovyMoniServer theMoniServer;
-		File configFile;
-		boolean killConfig = false;
+		final GroovyMoniServer theMoniServer;
+		final File configFile;
+		final boolean killConfig = false;
 		if (args.length > 0)
 			configFile = new File(args[0]);
 		else {
@@ -367,20 +382,8 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 			if (skipThreadBasedRefresh)
 				return isServerRunning();
 
-			synchronized(this) {
-				if (server == null && enabled)
-						;
-				else {
-					Map<Object, Object> next = configStream.nextElementIfDifferent();
-					if (next == null && !evenIfNoNewConfig)
-						return server != null;
-					else {
-						stopServer();
-						if (next != null)
-							setupState(next);
-					}
-				}
-			}
+            if (shouldRestartAfterRefresh(evenIfNoNewConfig))
+                return server != null;
 
 			if (thread != null) {
 				skipThreadBasedRefresh = true;
@@ -391,7 +394,32 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 		finally { lock.unlock(); }
 	}
 
-	/**
+    private synchronized boolean shouldRestartAfterRefresh(boolean evenIfNoNewConfig) throws Exception {
+        if (server != null || !enabled) {
+            final Map<Object, Object> next = configStream.nextElementIfDifferent();
+            if (next == null && !evenIfNoNewConfig)
+                return true;
+            else {
+                if (noShutdownIfRunning) {
+                    if (shouldLog("stop"))
+                        logger.info("No shutdown because 'monitor.noShutdownIfRunning = true'");
+                    if (next != null)
+                        setupState(next);
+                    if (!noShutdownIfRunning) {
+                        logger.info("Late shutdown because now 'monitor.noShutdownIfRunning != true'");
+                        stopServer();
+                    }
+                } else {
+                    stopServer();
+                    if (next != null)
+                        setupState(next);
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
 	 * Start the servlet server for serving monitoring consoles
 	 *
 	 * @return true if the server was started succesfully
@@ -445,12 +473,12 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 	@SuppressWarnings({"AccessToStaticFieldLockedOnInstance"})
 	public synchronized void stopServer() throws Exception {
 		try {
-			final Server aServer = server;
-			if (aServer != null) {
-				if (shouldLog("stop"))
-					logger.info("Stopping monitor server for '" + unitName + '\'');
-				aServer.stop();
-			}
+            final Server aServer = server;
+            if (aServer != null) {
+                if (shouldLog("stop"))
+                    logger.info("Stopping monitor server for '" + unitName + '\'');
+                aServer.stop();
+            }
 		}
 		finally {
 			server = null;
@@ -472,17 +500,20 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 		setupNumbers(props);
 		roleName = getProperty(props, "monitor.roleName").trim();
         final String envVar = System.getenv("GNDMS_MONITOR_ENABLED");
-        enabled = envVar != null && envVar.trim().length() > 0;
-//        if (enabled)
-//            logger.info("monitor.enabled due to $GNDMS_MONITOR_ENABLED");
-        enabled |= "true".equals(getProperty(props, "monitor.enabled").trim());
-//        if (enabled)
-//            logger.info("monitor.enabled due to $GNDMS_MONITOR_ENABLED or Properties");
+        final boolean envEnabled = envVar != null && envVar.trim().length() > 0;
+        final boolean propsEnabled = "true".equals(getProperty(props, "monitor.enabled").trim());
 		final String loggedStr = getProperty(props, "monitor.logged").trim();
-		enabled &= isSaneSetup(LoggingDecisionPoint.Parser.parseTokenSet(loggedStr));
-//        if (enabled)
-//            logger.info("monitor.enabled due to $GNDMS_MONITOR_ENABLED or Properties and setup is sane");
-        logger.info("The monitor has been enabled");
+        final boolean isSane = isSaneSetup(Parser.parseTokenSet(loggedStr));
+        enabled = (envEnabled || propsEnabled) && isSane;
+        noShutdownIfRunning = "true".equals(getProperty(props, "monitor.noShutdownIfRunning").trim());
+        
+        logger.info("Setup monitor state: "
+                + (envEnabled ? "[ ! -z \"$GNDMS_MONITOR_ENABLED\"Ê] " : "")
+                + (propsEnabled ? "monitor.enabled=true " : "")
+                + (isSane ? "sane " : "insane ")
+                + (enabled ? "=> enabled " : "=> disabled ")
+                + (noShutdownIfRunning ? "and -NO-ShutdownIfRunning" : "and -DO-shutdownIfRunning")
+        );
 	}
 
 	/**

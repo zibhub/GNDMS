@@ -1,4 +1,4 @@
-package de.zib.gndms.kit.config;
+package de.zib.gndms.stuff.config;
 
 /*
  * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
@@ -68,13 +68,18 @@ public abstract class InfiniteEnumeration<T> implements Enumeration<T> {
 	public final synchronized T nextElementIfDifferent() {
 		final T oldCurrent = current;
 		final T nextElement = nextElement();
-		if (nextElement().equals(oldCurrent))
+		if (areEqualElements(oldCurrent, nextElement))
 			return null;
 		else
 			return nextElement;
 	}
 
-	@NotNull
+    protected boolean areEqualElements(final T oldCurrent, final T nextElement) {
+        return oldCurrent == nextElement ||
+                (oldCurrent == null ? nextElement.equals(oldCurrent) : oldCurrent.equals(nextElement));
+    }
+
+    @NotNull
 	public final synchronized T currentElement() {
 		if (current == null)
 			throw new IllegalStateException(
@@ -86,11 +91,11 @@ public abstract class InfiniteEnumeration<T> implements Enumeration<T> {
 	 * @return an object if one is available, null otherwise
 	 */
 	@Nullable
-	abstract T tryNextElement();
+	protected abstract T tryNextElement();
 
 	/**
 	 * @return a newly created default object. will be called at most once per instance.
 	 */
 	@NotNull
-	abstract T createInitialDefaultElement();
+	protected abstract T createInitialDefaultElement();
 }

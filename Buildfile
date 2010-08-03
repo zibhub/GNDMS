@@ -15,8 +15,8 @@ repositories.remote << 'http://google-maven-repository.googlecode.com/svn/reposi
 # Don't touch below unless you know what you are doing
 # --------------------------------------------------------------------------------------------------
 
-VERSION_NUMBER = '0.3-pre'
-VERSION_NAME = 'Kylie++'
+VERSION_NUMBER = '0.3-rc1'
+VERSION_NAME = 'Rob'
 GROUP_NAME = 'de.zib.gndms'
 MF_COPYRIGHT = 'Copyright 2008-2010 Zuse Institute Berlin (ZIB)'
 LICENSE ='This software has been licensed to you under the terms and conditions of the Apache License 2.0 (APL 2.0) only.'
@@ -242,7 +242,7 @@ define 'gndms' do
 
     desc 'GT4-dependent utility classes for GNDMS'
     define 'kit', :layout => dmsLayout('kit', 'gndms-kit') do
-      compile.with JETTY, GROOVY, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('stuff'), project('model'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_AXIS, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, GUICE, GT4_SERVLET, COMMONS_LANG, OPENJPA
+      compile.with JETTY, GROOVY, GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('stuff'), project('model'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_AXIS, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, GUICE, GT4_SERVLET, COMMONS_LANG, OPENJPA
       compile
       package :jar
     end
@@ -299,12 +299,12 @@ define 'gndms' do
       end
 
       desc 'Install dependencies to $GLOBUS_LOCATION/lib (execute as globus user)'
-      task 'install-deps' => task('package') do
+      task 'install-deps' => 'artifacts' do
 	if (ENV['GNDMS_DEPS'] != 'skip') then
         	installDeps(ENV['GNDMS_DEPS']!='link')
 	end
         # Fix monitor.properties permissions
-        system "test -d '#{ENV['GNDMS_SHARED']}' || mkdir 'ENV['GNDMS_SHARED']'"
+        system "test -d '#{ENV['GNDMS_SHARED']}' || mkdir '#{ENV['GNDMS_SHARED']}'"
         propsFile = [ ENV['GNDMS_SHARED'], 'monitor.properties' ].join(File::SEPARATOR)
         system "touch '#{propsFile}'"
         system "chmod 0600 '#{propsFile}'"
@@ -490,24 +490,34 @@ task 'redeploy' => ['clean', 'clean-services', 'gndms:stuff:package', 'package-s
 end
 
 desc 'Do a full release build and deploy (execute as globus user)'
-task :release => ['gndms:update-release-info', 'redeploy', 'clean', 'clean-services' ]
+task 'release-build' => ['gndms:update-release-info', 'redeploy' ]
 
 desc 'Build all docs'
 task 'build-docs' => ['apidocs']
 
 desc 'Install and deploy a release build'
-task :install => ['install-deps', 'build-docs', 'deploy-DSpace', 'deploy-GORFX']
+task 'install-distribution' => ['install-deps', 'deploy-DSpace', 'deploy-GORFX']
 
 task 'fix-permissions' do
     system "#{ENV['GNDMS_SOURCE']}/fix-permissions.sh"
 end
 
-Rake::Task[:default].prerequisites.clear
-task :default do
+def nope()
      puts ''
      puts 'Please read the documentation on how to build, install, and deploy this software (doc/html or doc/md).'
      puts 'The installation of GNDMS is considerably easy, but not straightforward.'
      puts ''
 end
+
+Rake::Task[:default].prerequisites.clear
+Rake::Task[:release].prerequisites.clear
+Rake::Task[:release].clear
+Rake::Task[:install].prerequisites.clear
+Rake::Task[:install].clear
+
+task :default do nope() end
+task :release do nope() end
+task :install do nope() end
+
 
 

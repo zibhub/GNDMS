@@ -20,6 +20,7 @@ package de.zib.gndms.kit.config;
 
 import de.zib.gndms.kit.logging.LDPHolder;
 import de.zib.gndms.kit.logging.LoggingDecisionPoint;
+import de.zib.gndms.stuff.config.InfiniteEnumeration;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +29,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
 
@@ -44,8 +44,7 @@ import java.util.Properties;
  *
  *          User: stepn Date: 17.07.2008 Time: 23:05:39
  */
-public class PropertiesFromFile extends InfiniteEnumeration<Map<Object, Object>>
-implements LoggingDecisionPoint, LDPHolder {
+public class PropertiesFromFile extends InfiniteEnumeration<Map<Object, Object>> implements LoggingDecisionPoint, LDPHolder {
 	@NotNull
 	private final File configFile;
 
@@ -76,9 +75,8 @@ implements LoggingDecisionPoint, LDPHolder {
 		logger = aLogger;
 	}
 
-
-	@Override
-	synchronized Map<Object, Object> tryNextElement() {
+	@Override @Nullable
+	synchronized protected Map<Object, Object> tryNextElement() {
 		try {
 			return tryLoadProperties();
 		}
@@ -90,9 +88,13 @@ implements LoggingDecisionPoint, LDPHolder {
 
 	@Override
 	@NotNull
-	synchronized Map<Object, Object> createInitialDefaultElement() {
+	synchronized protected Map<Object, Object> createInitialDefaultElement() {
 		try {
-			return tryLoadProperties();
+            final Map<Object, Object> map = tryLoadProperties();
+            if (map == null)
+                throw new NullPointerException("Could not create initial default element");
+            else
+                return map;
 		}
 		catch (IOException e) {
 			logger.warn("Failure while attempting to initialize " + desciptiveName, e);
@@ -100,21 +102,21 @@ implements LoggingDecisionPoint, LDPHolder {
 		}
 	}
 
-	@NotNull
+	@Nullable
 	private Map<Object, Object> tryLoadProperties() throws IOException {
 		Properties props;
 		FileInputStream in = null;
 		if (shouldLog("load"))
 			logger.debug("Loading " + desciptiveName);
 		try {
-			if (!configFile.exists() || (configFile.length() == 0))
-				return createDefaultElement();
-			else {
-				in = new FileInputStream(configFile);
-				props = new Properties();
-				props.load(in);
-				return props;
-			}
+			if (! configFile.exists() || (configFile.length() == 0)) {
+				tryWriteDefaults();
+                return null;
+            }
+            in = new FileInputStream(configFile);
+            props = new Properties();
+            props.load(in);
+            return props;
 		}
 		finally {
 			if (in != null)
@@ -125,12 +127,6 @@ implements LoggingDecisionPoint, LDPHolder {
 					// intentionally left empty
 				}
 		}
-	}
-
-	@NotNull
-	private Map<Object, Object> createDefaultElement() throws IOException {
-		tryWriteDefaults();
-		return Collections.unmodifiableMap(defaults);
 	}
 
 	private  void tryWriteDefaults() throws IOException {

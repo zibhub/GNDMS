@@ -369,7 +369,7 @@ public final class GNDMSystem
     
 	@SuppressWarnings({ "MethodOnlyUsedFromInnerClass" })
 	private synchronized void setupShellService() throws Exception {
-		File monitorConfig = new File(sharedDir, "monitor.properties");
+		final File monitorConfig = new File(sharedDir, "monitor.properties");
 		groovyMonitor = new GroovyMoniServer(getGridName(), monitorConfig,
                                              getInstanceDir().createBindingFactory(),
                                              getActionCaller());
