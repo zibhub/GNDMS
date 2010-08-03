@@ -80,6 +80,9 @@ works, we suggest you just install everything.*
   $GLOBUS_LOCATION/etc/globus-user-env.sh` and `source
   $GLOBUS_LOCATION/etc/globus-devel-env.sh` in `$HOME/.profile` when
   working with Globus Toolkit
+* We strongly suggest that you create a tarball of your fresh 
+  installation of globus toolkit for backup purposes. This allows
+  you to rollback later and try again in case something goes wrong.
 
 In the following it will be assumed that globus is run by the user
 `globus` which you will have created during the installation of Globus
@@ -265,9 +268,9 @@ community grid platform.
 ### Finalize installation
 
 Please edit `$GLOBUS_LOCATION/etc/gndms_shared/monitor.properties` and
-set `monitor.enabled = false`. This will disable the monitor shell
-after `monitor.configRefreshCycle` ms (defaults to 30 seconds).
-Alternatively, just restart the globus container.
+set `monitor.enabled=false` and `monitor.noShutdownIfRunning=false`. 
+This will disable the monitor shell after `monitor.configRefreshCycle` ms 
+(defaults to 17 seconds).  Alternatively, just restart the globus container.
 
 **Congratulations** *At this point the installation is complete and you
 have a running installation of GNDMS.*
