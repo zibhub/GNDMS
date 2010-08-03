@@ -1,7 +1,4 @@
-destination: _site
-auto:        false
 lsi:         false
-server_port: 4042
 markdown:    maruku
 permalink:   pretty
 pygments:    true
