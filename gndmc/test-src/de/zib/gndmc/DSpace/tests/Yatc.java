@@ -1,7 +1,7 @@
 package de.zib.gndmc.DSpace.tests;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,8 +53,8 @@ import java.util.List;
  * If there are some more subspaces or the like, some tests may trigger assertions even so they are correct.
  *
  *
- * @author: try ma ik jo rr a zib
- * @version: $Id$
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  * <p/>
  * User: mjorra, Date: 27.10.2008, Time: 17:39:54
  */

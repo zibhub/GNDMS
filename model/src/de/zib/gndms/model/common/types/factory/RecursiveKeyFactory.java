@@ -1,7 +1,7 @@
 package de.zib.gndms.model.common.types.factory;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ package de.zib.gndms.model.common.types.factory;
  *
  * @see KeyFactory
  * @see KeyFactoryInstance
- * @author: try ste fan pla nti kow zib
+ * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 08.10.2008 Time: 16:36:22

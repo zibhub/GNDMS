@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model.gorfx;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
  * interface, a special wrap method will be used.
  * The template parameter {@code T} defines a common superclass of class {@code X} and class {code Y}.
  *
- * @author: try ste fan pla nti kow zib
+ * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 17.11.2008 Time: 16:54:01

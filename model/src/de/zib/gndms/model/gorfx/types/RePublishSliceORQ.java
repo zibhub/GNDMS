@@ -1,7 +1,7 @@
 package de.zib.gndms.model.gorfx.types;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,8 @@ package de.zib.gndms.model.gorfx.types;
  * the gsiftp addresses of the slices are required, so this ORQ requires the
  * same data like an inter-slice transfer.
  *
- * @author: try ma ik jo rr a zib
- * @version: $Id$
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  * <p/>
  * User: mjorra, Date: 31.10.2008, Time: 17:10:30
  */

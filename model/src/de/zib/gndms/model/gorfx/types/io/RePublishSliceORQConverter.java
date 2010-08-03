@@ -1,7 +1,7 @@
 package de.zib.gndms.model.gorfx.types.io;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ import de.zib.gndms.model.gorfx.types.RePublishSliceORQ;
  * Pretty much the same as the InterSliceTransfer converter, but doesn't write the destination slice,
  * cause it isn't part of the initial request.
  * 
- * @author: try ma ik jo rr a zib
- * @version: $Id$
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  * <p/>
  * User: mjorra, Date: 14.10.2008, Time: 14:48:27
  */

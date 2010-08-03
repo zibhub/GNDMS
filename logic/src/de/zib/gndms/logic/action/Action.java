@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.action;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,8 +45,8 @@ import java.util.List;
  * actions may be created.
  *
  *
- * @author: try ma ik jo rr a zib
- * @version: $Id$
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  *
  * User: mjorra, Date: 12.08.2008, Time: 15:25:36
  */

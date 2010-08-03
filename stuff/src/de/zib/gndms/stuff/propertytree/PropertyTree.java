@@ -1,7 +1,7 @@
 package de.zib.gndms.stuff.propertytree;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ import java.util.Set;
  *
  * This tree can be accessed like classic properties or only subtrees may taken into account.
  *
- * @author: try ma ik jo rr a zib
+ * @author  try ma ik jo rr a zib
  * @version $Id$
  *
  *          User: mjorra, Date: 06.01.2009, Time: 17:28:32

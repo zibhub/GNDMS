@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ import java.util.GregorianCalendar;
  * (on {@code IN_PROGRESS}) by implementing {@link #onInProgress(AbstractTask)}. 
  *
  *
- * @author: try ste fan pla nti kow zib
+ * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 15.09.2008 Time: 11:26:48

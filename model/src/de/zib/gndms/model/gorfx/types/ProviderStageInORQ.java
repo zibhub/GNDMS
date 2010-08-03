@@ -1,7 +1,7 @@
 package de.zib.gndms.model.gorfx.types;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Model class for a provider stage in orq.
  *
- * @author: try ma ik jo rr a zib
+ * @author  try ma ik jo rr a zib
  * @verson \$id$
  * <p/>
  * User: bzcjorra Date: Sep 5, 2008 3:55:45 PM

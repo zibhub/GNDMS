@@ -1,7 +1,7 @@
 package de.zib.gndms.stuff.propertytree;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import java.io.IOException;
 /**
  * This factory class creates a {@code PropertyTree} out of a {@code File} or {@code Properties} object.
  *
- * @author: try ma ik jo rr a zib
+ * @author  try ma ik jo rr a zib
  * @version $Id$
  *          <p/>
  *          User: mjorra, Date: 06.01.2009, Time: 17:30:53

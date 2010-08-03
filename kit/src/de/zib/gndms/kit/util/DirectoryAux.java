@@ -1,7 +1,7 @@
 package de.zib.gndms.kit.util;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,8 @@ import java.io.File;
 /**
  * This abstract class provides usefull methods concerning directory access.
  *
- * @author: try ma ik jo rr a zib
- * @version: $Id$
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  *
  * User: mjorra, Date: 08.08.2008, Time: 10:44:04
  */

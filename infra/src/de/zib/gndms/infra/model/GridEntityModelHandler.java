@@ -1,7 +1,7 @@
 package de.zib.gndms.infra.model;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ import javax.persistence.EntityManagerFactory;
 /**
  * Helper class for managing persistent models of GNDMS resources 
  *
- * @author: try ste fan pla nti kow zib
+ * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 27.07.2008 Time: 19:41:17

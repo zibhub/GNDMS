@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model.dspace;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,8 @@ import javax.persistence.EntityManager;
  *
  * When the slice is deleted, its associed folder is also removed.
  *
- * @author: try ma ik jo rr a zib
- * @version: $Id$
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  *
  * User: mjorra, Date: Mi 23. Jun 17:40:11 CEST 2010
  */

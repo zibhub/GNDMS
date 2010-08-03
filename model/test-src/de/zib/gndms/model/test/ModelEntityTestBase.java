@@ -1,7 +1,7 @@
 package de.zib.gndms.model.test;
 
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import java.util.Properties;
  * the name of the relation to use (it defaults to "c3grid"). Then simply call
  * getEntityManager ( ) to obtain the entity manager.
  * 
- * @author: try ma ik jo rr a zib
+ * @author  try ma ik jo rr a zib
  * @version $Id$
  *
  * User: mjorra, Date: 15.08.2008, Time: 12:38:08

@@ -1,7 +1,7 @@
 package de.zib.gndms.kit.network.test;
 import de.zib.gndms.kit.network.GNDMSFileTransfer;
 /*
- * Copyright 2008-2010 Zuse Institut Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,8 +36,8 @@ import javax.persistence.EntityManager;
 import java.io.IOException;
 
 /**
- * @author: try ma ik jo rr a zib
- * @version: $Id$
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  * <p/>
  * User: mjorra, Date: 06.10.2008, Time: 11:05:48
  *
