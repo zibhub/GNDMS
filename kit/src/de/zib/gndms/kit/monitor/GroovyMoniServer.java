@@ -19,7 +19,7 @@ package de.zib.gndms.kit.monitor;
 
 
 import com.google.common.collect.ImmutableMap;
-import de.zib.gndms.kit.config.InfiniteEnumeration;
+import de.zib.gndms.stuff.config.InfiniteEnumeration;
 import de.zib.gndms.kit.config.PropertiesFromFile;
 import de.zib.gndms.kit.logging.LDPHolder;
 import de.zib.gndms.kit.logging.LoggingDecisionPoint;
@@ -202,12 +202,13 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 	 * groovy and jetty.
 	 *
 	 * @param theUnitName descriptive name for this server (used in logs)
-	 * @param theCfg continuous stream of properties for this server
-	 * @param theBindingFactory for creating groovy biding objects per console instance/connection
-	 */
+     * @param theCfg continuous stream of properties for this server
+     * @param shouldEnableInitially
+     * @param theBindingFactory for creating groovy biding objects per console instance/connection
+     */
 	public GroovyMoniServer(final @NotNull String theUnitName,
-	                        final @NotNull InfiniteEnumeration<? extends Map<Object,Object>> theCfg,
-	                        final @NotNull GroovyBindingFactory theBindingFactory,
+                            final @NotNull InfiniteEnumeration<? extends Map<Object, Object>> theCfg,
+                            final @NotNull GroovyBindingFactory theBindingFactory,
                             final @NotNull ActionCaller callerParam) {
 
 		if (theCfg instanceof LDPHolder)
@@ -234,32 +235,22 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
             final @NotNull GroovyBindingFactory theBindingFactory, final ActionCaller callerParam)
             throws Exception
 	{
-		this(theUnitName, mkPropStream(theUnitName, theConfigFile, true), theBindingFactory, callerParam);
+		this(theUnitName, mkPropStream(theUnitName, theConfigFile), theBindingFactory, callerParam);
 		if (shouldLog("config"))
 			logger.info(theUnitName + " GroovyMoniServer config is "
 				  + theConfigFile.getCanonicalPath());
 	}
 
-    private static PropertiesFromFile mkPropStream(final String theUnitName, final File theConfigFile,
-                                                   final boolean enableInitially) {
+    private static PropertiesFromFile mkPropStream(final String theUnitName, final File theConfigFile) {
         final String descriptiveName = theUnitName + " monitor config";
         return new PropertiesFromFile(theConfigFile, descriptiveName, DEFAULT_PROPERTIES, DEFAULT_COMMENT, logger) {
             // Override defaults to enable monitor
             @NotNull
             @Override
-            protected Map<Object, Object> createDefaultElement() throws IOException {
-                if (enableInitially)  {
-                    final ImmutableMap.Builder<Object, Object> builder = new ImmutableMap.Builder<Object, Object>();
-                    builder.put("monitor.noShutdownIfRunning", "true");
-                    for (Map.Entry<Object, Object> entry : super.createDefaultElement().entrySet())
-                        if ("monitor.noShutdownIfRunning".equals(entry.getKey()))
-                            logger.debug("Skipped default entry " + entry);
-                        else
-                            builder.put(entry.getKey(), entry.getValue());
-                    return builder.build();
-                }
-                else
-                    return super.createDefaultElement();
+            protected Map<Object, Object> createInitialDefaultElement() {
+                final Map<Object, Object> map = super.createInitialDefaultElement();
+                map.put("monitor.enabled", "true");
+                return map;
             }
         };
     }
@@ -516,8 +507,8 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 //        if (enabled)
 //            logger.info("monitor.enabled due to $GNDMS_MONITOR_ENABLED or Properties and setup is sane");
         noShutdownIfRunning = "true".equals(getProperty(props, "monitor.noShutdownIfRunning").trim());
-        logger.info("The monitor has been setup " + (enabled ? "and enabled " : " ") +
-                (noShutdownIfRunning ? "and will not shutdown if it is running even if disabled " : " "));
+        logger.info("The monitor has been setup " + (enabled ? "and enabled " : "and disabled ") +
+                (noShutdownIfRunning ? "and will not shutdown even if it gets disabled later on " : ""));
 	}
 
 	/**
