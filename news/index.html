@@ -1,5 +1,6 @@
 ---
 title: GNDMS Newsblog
+root: ..
 layout: wikistyle
 ---
 <h1 class="blog">Newsblog</h1>
@@ -7,7 +8,7 @@ layout: wikistyle
 <div id="posts">
 {% for post in site.posts %}
 <div class="post">
-<h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
+<h2><a href="{{page.root}}{{ post.url }}/index.html">{{ post.title }}</a></h2>
 <div class="date">Published at {{ post.date | date_to_string }}</div>
 {{ post.content }}
 </div>

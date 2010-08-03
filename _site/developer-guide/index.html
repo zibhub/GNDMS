@@ -1,0 +1,523 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+ <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>GNDMS Developer Guide</title>
+   <link rel="stylesheet" type="text/css" href="../css/gndms.css" />
+   <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+</head>
+<body><div id="wholepage">
+
+<div id="header">
+<a href="">GNDMS Generation N Data Management System</a>
+</div>
+
+<div id="content">
+  <div class="wikistyle">
+
+<h1 id='gndms_developer_guide'>GNDMS Developer Guide</h1>
+
+<p>This is the Developer Guide for the <a href='../index.html'>Generation N Data Management System</a>. It is far from complete. It currently contains various tidbits copied together from different Wikis. YMMV. Use the source, luke!</p>
+<div class='maruku_toc'><ul style='list-style: none;'><li><a href='#writing_webservice_clients'>Writing Webservice Clients</a><ul style='list-style: none;'><li><a href='#setup_a_development_environment'>Setup a Development Environment</a></li></ul></li><li><a href='#setup_a_development_environment_for_debugging'>Setup a Development Environment for Debugging</a><ul style='list-style: none;'><li><a href='#writing_a_web_service_client'>Writing a Web Service Client</a></li></ul></li><li><a href='#notes_on_certificate_delegation'>Notes on Certificate Delegation</a><ul style='list-style: none;'><li><a href='#security_descriptor_basics'>Security Descriptor Basics</a></li><li><a href='#authentication_and_authorization'>Authentication and Authorization</a></li><li><a href='#clientside_delegation'>Client-Side Delegation</a></li><li><a href='#serverside_delegation'>Server-Side Delegation</a></li><li><a href='#using_delegation_with_proxy_certificates'>Using Delegation with Proxy Certificates</a><ul style='list-style: none;'><li><a href='#service_orchestration'>Service Orchestration</a></li><li><a href='#export_proxy_credentials_to_a_file'>Export Proxy Credentials to a File</a></li></ul></li></ul></li><li><a href='#contract_semantics'>Contract Semantics</a><ul style='list-style: none;'><li><a href='#protocol'>Protocol</a></li><li><a href='#contract_structure'>Contract Structure</a></li><li><a href='#contract_semantics'>Contract Semantics</a></li><li><a href='#generic_client_restrictions'>Generic Client Restrictions</a></li><li><a href='#c3grid_data_provider_server_restrictions'>C3-Grid Data Provider Server Restrictions</a></li><li><a href='#support_for_missing_timing_estimates'>Support for Missing Timing Estimates</a></li><li><a href='#contract_invariants'>Contract Invariants</a></li></ul></li></ul></div>
+<h2 id='writing_webservice_clients'>Writing Webservice Clients</h2>
+
+<h3 id='setup_a_development_environment'>Setup a Development Environment</h3>
+
+<ul>
+<li>
+<p>Install GNDMS as described in the <a href='../installation-guide'>installation guide</a></p>
+</li>
+
+<li>
+<p>Use <code>gndms-buildr idea</code> or <code>gndms-buildr eclipse</code> to generate template IDEA or eclipse projects.</p>
+</li>
+
+<li>
+<p>You might need to add <code>$GLOBUS_LOCATION/lib/*.jar</code></p>
+
+<ul>
+<li>Skip <code>gndms-*.jar</code>, but</li>
+
+<li>include <code>gndms-*-service.jar</code> and <code>gndms-*-client.jar</code></li>
+</ul>
+</li>
+</ul>
+
+<h2 id='setup_a_development_environment_for_debugging'>Setup a Development Environment for Debugging</h2>
+
+<ul>
+<li>
+<p>Ensure that the generated modules in your IDE setup compile to the same output path as buildr and that globus, buildr, and your IDE compile using the same JDK.</p>
+</li>
+
+<li>
+<p>Edit your globus scripts such that Java is configured to enable remote debugging and set up a matching run target in your IDE.</p>
+</li>
+</ul>
+
+<p><strong>NOTE</strong> <em>If the globus container is started with <code>-debug</code> it prints full stacktraces, otherwise not!</em></p>
+
+<h3 id='writing_a_web_service_client'>Writing a Web Service Client</h3>
+
+<ul>
+<li>Take a look at <code>ProviderStageInClient</code></li>
+
+<li>Do not directly instantiate port types. Always use the associated <code>PortTypeFooClient</code> classes to get port type instances.</li>
+
+<li>If you really need to instantiate port types directly, ensure that the used axis engine is configured with the correct <code>.wsdd</code> files. This work is done by <code>PortTypeFooClient</code> classes if you use them.</li>
+</ul>
+
+<h2 id='notes_on_certificate_delegation'>Notes on Certificate Delegation</h2>
+
+<p>To use certificate delegation, two steps are necessary. First, service security settings need to be changed. Second, client and and service code need to be modified slightly to incorporate support for certificate delegation.</p>
+
+<h3 id='security_descriptor_basics'>Security Descriptor Basics</h3>
+
+<p><strong>NOTE</strong> This is a very brief description of security descriptors. More advanced configuration is possible, e.g. service method level A&amp;A.</p>
+
+<p>The security descriptor (Short: <strong>SD</strong>) describes authentication and authorization requirements of clients and WSRF web services. The <strong>SD</strong> of a service is configured in the <code>service</code> section of the WSDD file.</p>
+<div class='highlight'><pre><code class='xml'>    <span class='cp'>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+    <span class='nt'>&lt;deployment&gt;</span>
+        <span class='nt'>&lt;service&gt;</span>
+             <span class='nt'>&lt;parameter</span> <span class='na'>name=</span><span class='s'>&quot;securityDescriptor&quot;</span> <span class='na'>value=</span><span class='s'>&quot;etc/serviceFoo-security-desc.xml&quot;</span> <span class='nt'>/&gt;</span> 
+        <span class='nt'>&lt;/service&gt;</span>
+    <span class='nt'>&lt;/deployment&gt;</span>
+</code></pre>
+</div>
+<p>Client security descriptors are loaded directly in the client software:</p>
+<div class='highlight'><pre><code class='java'>    <span class='c1'>// Client security descriptor file </span>
+    <span class='n'>String</span> <span class='n'>CLIENT_DESC</span> <span class='o'>=</span> <span class='s'>&quot;.../client-security-config.xml&quot;</span><span class='o'>;</span>
+    <span class='n'>ClientSecurityDescriptor</span> <span class='n'>desc</span> <span class='o'>=</span> <span class='k'>new</span> <span class='n'>ClientSecurityDescriptor</span><span class='o'>(</span> <span class='n'>CLIENT_DESC</span> <span class='o'>);</span>
+    <span class='c1'>//Set descriptor on Stub </span>
+    <span class='o'>(</span> <span class='o'>(</span><span class='n'>Stub</span><span class='o'>)</span><span class='n'>port</span> <span class='o'>).</span><span class='na'>_setProperty</span><span class='o'>(</span> <span class='n'>Constants</span><span class='o'>.</span><span class='na'>CLIENT_DESCRIPTOR</span><span class='o'>,</span> <span class='n'>desc</span> <span class='o'>)</span>
+</code></pre>
+</div>
+<p>For more details, please consult the <a href='http://www.globus.org/toolkit/docs/development/4.1.2/security/security-secdesc.html'>documentation on security descriptors</a>.</p>
+
+<h3 id='authentication_and_authorization'>Authentication and Authorization</h3>
+
+<p>The following example shows how mandatory TLS encryption is enforced with a security descriptor:</p>
+<div class='highlight'><pre><code class='xml'>    <span class='cp'>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+    <span class='nt'>&lt;securityConfig</span> <span class='na'>xmlns=</span><span class='s'>&quot;http://www.globus.org&quot;</span><span class='nt'>&gt;</span>
+        <span class='nt'>&lt;auth-method&gt;</span>
+            <span class='nt'>&lt;GSITransport&gt;</span>
+                <span class='nt'>&lt;protection-level&gt;</span>
+                    <span class='nt'>&lt;privacy</span> <span class='nt'>/&gt;</span>
+                <span class='nt'>&lt;/protection-level&gt;</span>
+            <span class='nt'>&lt;/GSITransport&gt;</span>
+        <span class='nt'>&lt;/auth-method&gt;</span>
+    <span class='nt'>&lt;/securityConfig&gt;</span>
+</code></pre>
+</div>
+<p>This setting must be made both on the server and the client.</p>
+
+<p>For authorization, a gridmap file needs to be set:</p>
+<div class='highlight'><pre><code class='xml'>    <span class='nt'>&lt;authz</span> <span class='na'>value=</span><span class='s'>&quot;gridmap&quot;</span> <span class='nt'>/&gt;</span>
+</code></pre>
+</div>
+<p>This enables use of the system wide gridmap-file. To use a service specific gridmap file, please add:</p>
+<div class='highlight'><pre><code class='xml'>    <span class='nt'>&lt;gridmap</span> <span class='na'>value=</span><span class='s'>&quot;etc/gndms_shared/grid-mapfile&quot;</span> <span class='nt'>/&gt;</span>
+</code></pre>
+</div>
+<p>Finally, it is necessary to configure (unless you are using JAAS):</p>
+<div class='highlight'><pre><code class='xml'>    <span class='nt'>&lt;run-as&gt;</span>
+       <span class='nt'>&lt;system-identity</span> <span class='nt'>/&gt;</span>
+    <span class='nt'>&lt;/run-as&gt;</span>
+</code></pre>
+</div>
+<p>Below is a complete example:</p>
+<div class='highlight'><pre><code class='xml'>    <span class='cp'>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+    <span class='nt'>&lt;securityConfig</span> <span class='na'>xmlns=</span><span class='s'>&quot;http://www.globus.org&quot;</span><span class='nt'>&gt;</span>
+        <span class='nt'>&lt;authz</span> <span class='na'>value=</span><span class='s'>&quot;gridmap&quot;</span> <span class='nt'>/&gt;</span>
+        <span class='nt'>&lt;gridmap</span> <span class='na'>value=</span><span class='s'>&quot;etc/c3grid_shared/grid-mapfile&quot;</span> <span class='nt'>/&gt;</span>
+        <span class='nt'>&lt;auth-method&gt;</span>
+            <span class='nt'>&lt;GSITransport&gt;</span>
+                <span class='nt'>&lt;protection-level&gt;</span>
+                    <span class='nt'>&lt;privacy</span> <span class='nt'>/&gt;</span>
+                <span class='nt'>&lt;/protection-level&gt;</span>
+            <span class='nt'>&lt;/GSITransport&gt;</span>
+        <span class='nt'>&lt;/auth-method&gt;</span>
+        <span class='nt'>&lt;run-as&gt;</span>
+            <span class='nt'>&lt;system-identity</span> <span class='nt'>/&gt;</span>
+        <span class='nt'>&lt;/run-as&gt;</span>
+    <span class='nt'>&lt;/securityConfig&gt;</span>      
+</code></pre>
+</div>
+<h3 id='clientside_delegation'>Client-Side Delegation</h3>
+
+<p>This section described delegation from the viewpoint of the client. The client uses the Delegation Service to retrieve the Certificate Chain. This is used to generate a proxy certificate which is sent to the delegation service in order to obtain an EPR for the proxy. This EPR may be passed when accessing resources directly or is sent to factory methods during resource instantiation.</p>
+<div class='highlight'><pre><code class='java'>   <span class='c1'>// path to the file containing the proxy cert</span>
+    <span class='n'>String</span> <span class='n'>proxyFile</span> <span class='o'>=</span> <span class='o'>...;</span>
+
+    <span class='c1'>// uri of the delegation service</span>
+    <span class='n'>String</span> <span class='n'>delUri</span> <span class='o'>=</span>  <span class='s'>&quot;http://somehost/wsrf/services/DelegationFactoryService&quot;</span>
+
+    <span class='c1'>// port type of our service acquired in the usual fashion</span>
+    <span class='n'>PortType</span> <span class='n'>port</span> <span class='o'>=</span> <span class='o'>...</span> <span class='o'>;</span>
+
+
+    <span class='n'>GlobusCredential</span> <span class='n'>credential</span> <span class='o'>=</span> <span class='k'>new</span> <span class='n'>GlobusCredential</span><span class='o'>(</span> <span class='n'>proxyFile</span> <span class='o'>);</span>
+
+    <span class='c1'>// Create security descriptor for the communication with the delegation service</span>
+    <span class='c1'>// This descriptor is not the same we use to communicate with</span>
+    <span class='c1'>// the actual service</span>
+    <span class='n'>ClientSecurityDescriptor</span> <span class='n'>desc</span> <span class='o'>=</span> <span class='k'>new</span> <span class='n'>ClientSecurityDescriptor</span><span class='o'>();</span>
+    <span class='n'>org</span><span class='o'>.</span><span class='na'>ietf</span><span class='o'>.</span><span class='na'>jgss</span><span class='o'>.</span><span class='na'>GSSCredential</span> <span class='n'>gss</span> <span class='o'>=</span> 
+        <span class='k'>new</span> <span class='n'>org</span><span class='o'>.</span><span class='na'>globus</span><span class='o'>.</span><span class='na'>gsi</span><span class='o'>.</span><span class='na'>gssapi</span><span class='o'>.</span><span class='na'>GlobusGSSCredentialImpl</span><span class='o'>(</span> <span class='n'>credential</span><span class='o'>,</span> 
+	   <span class='n'>org</span><span class='o'>.</span><span class='na'>ietf</span><span class='o'>.</span><span class='na'>jgss</span><span class='o'>.</span><span class='na'>GSSCredential</span><span class='o'>.</span><span class='na'>INITIATE_AND_ACCEPT</span> <span class='o'>);</span>
+    <span class='n'>desc</span><span class='o'>.</span><span class='na'>setGSSCredential</span><span class='o'>(</span> <span class='n'>gss</span> <span class='o'>);</span>
+    <span class='n'>desc</span><span class='o'>.</span><span class='na'>setGSITransport</span><span class='o'>(</span> <span class='o'>(</span><span class='n'>Integer</span><span class='o'>)</span> <span class='n'>Constants</span><span class='o'>.</span><span class='na'>SIGNATURE</span> <span class='o'>);</span>
+    <span class='n'>Util</span><span class='o'>.</span><span class='na'>registerTransport</span><span class='o'>();</span>
+    <span class='n'>desc</span><span class='o'>.</span><span class='na'>setAuthz</span><span class='o'>(</span> <span class='n'>NoAuthorization</span><span class='o'>.</span><span class='na'>getInstance</span><span class='o'>()</span> <span class='o'>);</span>
+
+    <span class='n'>EndpointReferenceType</span> <span class='n'>delegEpr</span> <span class='o'>=</span> 
+        <span class='n'>AddressingUtils</span><span class='o'>.</span><span class='na'>createEndpointReference</span><span class='o'>(</span> <span class='n'>delUri</span><span class='o'>,</span> <span class='kc'>null</span> <span class='o'>);</span>
+
+    <span class='c1'>// acquire cert chain </span>
+    <span class='n'>X509Certificate</span><span class='o'>[]</span> <span class='n'>certs</span> <span class='o'>=</span> 
+        <span class='n'>DelegationUtil</span><span class='o'>.</span><span class='na'>getCertificateChainRP</span><span class='o'>(</span> <span class='n'>delegEpr</span><span class='o'>,</span> <span class='n'>desc</span> <span class='o'>);</span>
+
+    <span class='k'>if</span><span class='o'>(</span> <span class='n'>certs</span> <span class='o'>==</span> <span class='kc'>null</span>  <span class='o'>)</span>
+         <span class='k'>throw</span> <span class='k'>new</span> <span class='nf'>Exception</span><span class='o'>(</span> <span class='s'>&quot;No Certs received&quot;</span> <span class='o'>);</span>
+
+    <span class='c1'>// create delegate</span>
+    <span class='kt'>int</span> <span class='n'>ttl</span> <span class='o'>=</span> <span class='mi'>600</span><span class='o'>;</span> <span class='c1'>// a time to life for the proxy in seconds </span>
+    <span class='c1'>// the boolean value can be ignored</span>
+    <span class='n'>EndpointReferenceType</span> <span class='n'>delegate</span> <span class='o'>=</span> 
+        <span class='n'>DelegationUtil</span><span class='o'>.</span><span class='na'>delegate</span><span class='o'>(</span> <span class='n'>delUri</span><span class='o'>,</span> <span class='n'>credential</span><span class='o'>,</span> <span class='n'>certs</span><span class='o'>[</span><span class='mi'>0</span><span class='o'>],</span> <span class='n'>ttl</span><span class='o'>,</span> <span class='kc'>true</span><span class='o'>,</span> <span class='n'>desc</span> <span class='o'>);</span>
+
+    <span class='c1'>// reuse credentials for this call</span>
+    <span class='o'>(</span> <span class='o'>(</span><span class='n'>Stub</span><span class='o'>)</span> <span class='n'>port</span> <span class='o'>).</span><span class='na'>_setProperty</span><span class='o'>(</span> 
+        <span class='n'>org</span><span class='o'>.</span><span class='na'>globus</span><span class='o'>.</span><span class='na'>axis</span><span class='o'>.</span><span class='na'>gsi</span><span class='o'>.</span><span class='na'>GSIConstants</span><span class='o'>.</span><span class='na'>GSI_CREDENTIALS</span><span class='o'>,</span> <span class='n'>gss</span> <span class='o'>);</span> 
+
+    <span class='c1'>// creates a new resource which uses the delegate, i.e. proxy cert</span>
+    <span class='n'>EndpointReferenceType</span> <span class='n'>epr</span> <span class='o'>=</span> 
+        <span class='o'>(</span> <span class='o'>(</span><span class='n'>SomePortType</span><span class='o'>)</span> <span class='n'>port</span> <span class='o'>).</span><span class='na'>createResource</span><span class='o'>(</span> <span class='n'>delegate</span> <span class='o'>);</span>
+</code></pre>
+</div>
+<h3 id='serverside_delegation'>Server-Side Delegation</h3>
+
+<p>On the server side, the EPR needs to be used to retrieve the proxy certificate. Additionally, a <code>DelegationListener</code> needs to be registered to be informed about proxy state changes (Update, Destroy).</p>
+
+<p>Example service factory method that instantiates a resource:</p>
+<div class='highlight'><pre><code class='java'>    <span class='kd'>public</span> <span class='n'>EndpointReferenceType</span> <span class='nf'>createResource</span> <span class='o'>(</span> <span class='n'>EndpointReferenceType</span> <span class='n'>delegate</span> <span class='o'>)</span> <span class='o'>{</span>
+        <span class='n'>SomeResource</span> <span class='n'>sr</span> <span class='o'>=</span> <span class='k'>new</span> <span class='n'>SomeResource</span><span class='o'>(</span> <span class='o'>);</span>
+        <span class='n'>sr</span><span class='o'>.</span><span class='na'>setDelegationEPR</span><span class='o'>(</span> <span class='n'>delegate</span> <span class='o'>);</span>
+        <span class='o'>...</span>
+        <span class='k'>return</span> <span class='nf'>endPointRefOf</span><span class='o'>(</span> <span class='n'>sr</span> <span class='o'>);</span>
+    <span class='o'>}</span>
+</code></pre>
+</div>
+<p>The resource needs to be modified accordingly as well:</p>
+<div class='highlight'><pre><code class='java'>    <span class='kd'>public</span> <span class='kd'>class</span> <span class='nc'>SomeResource</span> <span class='kd'>implements</span> <span class='n'>Resource</span> <span class='o'>{</span>
+
+        <span class='n'>SomeResourceHome</span> <span class='n'>home</span><span class='o'>;</span>
+        <span class='n'>GlobusCredential</span> <span class='n'>credential</span><span class='o'>;</span>
+
+        <span class='kd'>public</span> <span class='kt'>void</span> <span class='nf'>refreshRegistration</span><span class='o'>(</span> <span class='kd'>final</span> <span class='kt'>boolean</span> <span class='n'>forceRefresh</span> <span class='o'>)</span> <span class='o'>{</span>
+            <span class='c1'>// do refreshing stuff if required</span>
+        <span class='o'>}</span>
+
+
+        <span class='kd'>public</span> <span class='kt'>void</span> <span class='nf'>setCredential</span><span class='o'>(</span> <span class='kd'>final</span> <span class='n'>GlobusCredential</span> <span class='n'>cred</span> <span class='o'>)</span> <span class='o'>{</span>
+            <span class='n'>credential</span> <span class='o'>=</span> <span class='n'>cred</span><span class='o'>;</span>
+        <span class='o'>}</span>
+
+
+        <span class='kd'>public</span> <span class='n'>GlobusCredential</span> <span class='nf'>getCredential</span><span class='o'>(</span> <span class='o'>)</span> <span class='o'>{</span>
+            <span class='k'>return</span> <span class='n'>credential</span><span class='o'>;</span>
+        <span class='o'>}</span>
+
+
+        <span class='kd'>public</span> <span class='kt'>void</span> <span class='nf'>setDelegateEPR</span><span class='o'>(</span> <span class='kd'>final</span> <span class='n'>EndpointReferenceType</span> <span class='n'>epr</span> <span class='o'>)</span> <span class='o'>{</span>
+
+            <span class='n'>SomeDelegationListener</span> <span class='n'>list</span> <span class='o'>=</span> 
+	        <span class='k'>new</span> <span class='nf'>SomeDelegationListener</span><span class='o'>(</span> <span class='n'>getResourceKey</span><span class='o'>(),</span> <span class='n'>home</span> <span class='o'>);</span>
+            <span class='k'>try</span> <span class='o'>{</span>
+                <span class='c1'>// registers listener with the delegation service</span>
+                <span class='n'>DelegationUtil</span><span class='o'>.</span><span class='na'>registerDelegationListener</span><span class='o'>(</span> <span class='n'>epr</span><span class='o'>,</span> <span class='n'>list</span> <span class='o'>);</span>
+            <span class='o'>}</span> <span class='k'>catch</span> <span class='o'>(</span> <span class='n'>DelegationException</span> <span class='n'>e</span> <span class='o'>)</span> <span class='o'>{</span>
+                <span class='n'>e</span><span class='o'>.</span><span class='na'>printStackTrace</span><span class='o'>();</span>
+            <span class='o'>}</span>
+        <span class='o'>}</span>
+
+        <span class='c1'>// other service specific stuff here ...</span>
+     <span class='o'>}</span>
+</code></pre>
+</div>
+<p>The container will be calling <code>get/setCredential</code> on the listener interface. A simple default implementation follows:</p>
+<div class='highlight'><pre><code class='java'>    <span class='kd'>public</span> <span class='kd'>class</span> <span class='nc'>SomeDelegationListener</span> <span class='kd'>implements</span> <span class='n'>DelegationListener</span> <span class='o'>{</span>
+
+        <span class='kd'>private</span> <span class='kd'>static</span> <span class='n'>Logger</span> <span class='n'>logger</span> <span class='o'>=</span> <span class='n'>Logger</span><span class='o'>.</span><span class='na'>getLogger</span><span class='o'>(</span> <span class='n'>SomeDelegationListener</span><span class='o'>.</span><span class='na'>class</span> <span class='o'>);</span>
+        <span class='kd'>private</span> <span class='n'>String</span> <span class='n'>regristrationId</span><span class='o'>;</span>
+        <span class='kd'>private</span> <span class='n'>ResourceKey</span> <span class='n'>resourceKey</span><span class='o'>;</span>
+        <span class='kd'>private</span> <span class='n'>ResourceHome</span> <span class='n'>home</span><span class='o'>;</span>
+
+
+        <span class='kd'>public</span> <span class='nf'>SomeDelegationListener</span><span class='o'>()</span> <span class='o'>{</span>
+        <span class='o'>}</span>
+
+
+        <span class='kd'>public</span> <span class='nf'>SomeDelegationListener</span><span class='o'>(</span> <span class='kd'>final</span> <span class='n'>ResourceKey</span> <span class='n'>resourceKey</span><span class='o'>,</span> 
+	<span class='kd'>final</span> <span class='n'>ResourceHome</span> <span class='n'>home</span> <span class='o'>)</span> <span class='o'>{</span>
+            <span class='k'>this</span><span class='o'>.</span><span class='na'>resourceKey</span> <span class='o'>=</span> <span class='n'>resourceKey</span><span class='o'>;</span>
+            <span class='k'>this</span><span class='o'>.</span><span class='na'>home</span> <span class='o'>=</span> <span class='n'>home</span><span class='o'>;</span>
+        <span class='o'>}</span>
+
+
+        <span class='kd'>public</span> <span class='kt'>void</span> <span class='nf'>setCredential</span><span class='o'>(</span> <span class='kd'>final</span> <span class='n'>GlobusCredential</span> <span class='n'>credential</span> <span class='o'>)</span>
+	<span class='kd'>throws</span> <span class='n'>DelegationException</span> <span class='o'>{</span>
+
+             <span class='k'>try</span> <span class='o'>{</span>
+               <span class='n'>SomeCredibleResource</span> <span class='n'>res</span> <span class='o'>=</span> 
+	           <span class='o'>(</span> <span class='n'>SomeCredibleResource</span> <span class='o'>)</span> <span class='n'>home</span><span class='o'>.</span><span class='na'>find</span><span class='o'>(</span> <span class='n'>resourceKey</span> <span class='o'>);</span>
+               <span class='n'>res</span><span class='o'>.</span><span class='na'>setCredential</span><span class='o'>(</span> <span class='n'>credential</span> <span class='o'>);</span>
+             <span class='o'>}</span> <span class='k'>catch</span> <span class='o'>(</span> <span class='n'>ResourceException</span> <span class='n'>e</span> <span class='o'>)</span> <span class='o'>{</span>
+               <span class='n'>logger</span><span class='o'>.</span><span class='na'>error</span><span class='o'>(</span> <span class='n'>e</span> <span class='o'>);</span>
+             <span class='o'>}</span>
+        <span class='o'>}</span>
+
+
+        <span class='kd'>public</span> <span class='kt'>void</span> <span class='nf'>credentialDeleted</span><span class='o'>()</span> <span class='o'>{</span>
+           <span class='c1'>// Can notify the resource</span>
+        <span class='o'>}</span>
+
+        <span class='c1'>// getters and setters for the instance vars are omitted for the sake of shortness</span>
+        <span class='c1'>// ....</span>
+    <span class='o'>}</span>
+</code></pre>
+</div>
+<p>The <code>setCredential</code> method will be called at listener registration time.</p>
+
+<p>With these extensions, a resource has access to the credentials of the user to which the proxy belongs.</p>
+
+<h3 id='using_delegation_with_proxy_certificates'>Using Delegation with Proxy Certificates</h3>
+
+<h4 id='service_orchestration'>Service Orchestration</h4>
+
+<p>The main purpose of certificate delegation is to allow a service to call another service on behalf of the user. Let&#8217;s assume <code>SomeService</code> is a client of <code>AnotherService</code>. In the following example <code>AnotherService</code> is called by <code>SomeService</code> with the proxy credentials by first loading them into the <code>ClientDescriptor</code>:</p>
+<div class='highlight'><pre><code class='java'>    <span class='n'>AnotherPortType</span> <span class='n'>port</span> <span class='o'>=</span> <span class='o'>...;</span>
+        <span class='o'>(</span> <span class='o'>(</span><span class='n'>Stub</span><span class='o'>)</span> <span class='n'>port</span> <span class='o'>).</span><span class='na'>_setProperty</span><span class='o'>(</span> <span class='n'>org</span><span class='o'>.</span><span class='na'>globus</span><span class='o'>.</span><span class='na'>wsrf</span><span class='o'>.</span><span class='na'>security</span><span class='o'>.</span><span class='na'>Constants</span><span class='o'>.</span><span class='na'>GSI_TRANSPORT</span><span class='o'>,</span>
+                            <span class='n'>org</span><span class='o'>.</span><span class='na'>globus</span><span class='o'>.</span><span class='na'>wsrf</span><span class='o'>.</span><span class='na'>security</span><span class='o'>.</span><span class='na'>Constants</span><span class='o'>.</span><span class='na'>ENCRYPTION</span> <span class='o'>);</span>
+                <span class='c1'>// SIGNATUR should also work</span>
+        <span class='n'>org</span><span class='o'>.</span><span class='na'>ietf</span><span class='o'>.</span><span class='na'>jgss</span><span class='o'>.</span><span class='na'>GSSCredential</span> <span class='n'>gss</span> <span class='o'>=</span> 
+	    <span class='k'>new</span> <span class='n'>org</span><span class='o'>.</span><span class='na'>globus</span><span class='o'>.</span><span class='na'>gsi</span><span class='o'>.</span><span class='na'>gssapi</span><span class='o'>.</span><span class='na'>GlobusGSSCredentialImpl</span><span class='o'>(</span> <span class='n'>credential</span><span class='o'>,</span>
+                <span class='n'>org</span><span class='o'>.</span><span class='na'>ietf</span><span class='o'>.</span><span class='na'>jgss</span><span class='o'>.</span><span class='na'>GSSCredential</span><span class='o'>.</span><span class='na'>INITIATE_AND_ACCEPT</span> <span class='o'>);</span>
+        <span class='o'>(</span> <span class='o'>(</span><span class='n'>Stub</span><span class='o'>)</span> <span class='n'>port</span> <span class='o'>).</span><span class='na'>_setProperty</span><span class='o'>(</span> 
+	    <span class='n'>org</span><span class='o'>.</span><span class='na'>globus</span><span class='o'>.</span><span class='na'>axis</span><span class='o'>.</span><span class='na'>gsi</span><span class='o'>.</span><span class='na'>GSIConstants</span><span class='o'>.</span><span class='na'>GSI_CREDENTIALS</span><span class='o'>,</span> <span class='n'>gss</span> <span class='o'>);</span>
+        <span class='o'>(</span> <span class='o'>(</span><span class='n'>Stub</span><span class='o'>)</span> <span class='n'>port</span> <span class='o'>).</span><span class='na'>doAnotherThing</span><span class='o'>();</span>
+</code></pre>
+</div>
+<p>Now, in <code>AnotherService</code>, the caller DN (<code>null</code> in anonymous communication) is obtainable by calling:</p>
+<div class='highlight'><pre><code class='java'>     <span class='n'>org</span><span class='o'>.</span><span class='na'>globus</span><span class='o'>.</span><span class='na'>wsrf</span><span class='o'>.</span><span class='na'>security</span><span class='o'>.</span><span class='na'>SecurityManager</span><span class='o'>.</span><span class='na'>getManager</span><span class='o'>().</span><span class='na'>getCaller</span><span class='o'>();</span>
+</code></pre>
+</div>
+<p>This may be mapped to local UNIX users via the grid-map mechanism:</p>
+<div class='highlight'><pre><code class='java'>      <span class='n'>org</span><span class='o'>.</span><span class='na'>globus</span><span class='o'>.</span><span class='na'>wsrf</span><span class='o'>.</span><span class='na'>security</span><span class='o'>.</span><span class='na'>SecurityManager</span><span class='o'>.</span><span class='na'>getManager</span><span class='o'>(</span> <span class='o'>).</span><span class='na'>getLocalUsernames</span><span class='o'>()</span>
+</code></pre>
+</div>
+<h4 id='export_proxy_credentials_to_a_file'>Export Proxy Credentials to a File</h4>
+<div class='highlight'><pre><code class='java'>    <span class='kd'>public</span> <span class='kt'>void</span> <span class='nf'>storeCredential</span><span class='o'>(</span> <span class='n'>Sting</span> <span class='n'>filename</span> <span class='o'>)</span> <span class='o'>{</span>
+         <span class='k'>try</span> <span class='o'>{</span>
+             <span class='n'>File</span> <span class='n'>f</span> <span class='o'>=</span> <span class='k'>new</span> <span class='n'>File</span><span class='o'>(</span> <span class='n'>filename</span> <span class='o'>);</span>
+             <span class='n'>FileOutputStream</span> <span class='n'>fos</span> <span class='o'>=</span> <span class='k'>new</span> <span class='n'>FileOutputStream</span><span class='o'>(</span> <span class='n'>f</span> <span class='o'>);</span>
+             <span class='n'>GlobusGSSCredentialImpl</span> <span class='n'>crd</span> <span class='o'>=</span> 
+	         <span class='k'>new</span> <span class='nf'>GlobusGSSCredentialImpl</span><span class='o'>(</span> <span class='n'>credential</span><span class='o'>,</span> <span class='n'>GSSCredential</span><span class='o'>.</span><span class='na'>ACCEPT_ONLY</span> <span class='o'>);</span>
+             <span class='n'>fos</span><span class='o'>.</span><span class='na'>write</span><span class='o'>(</span> <span class='n'>crd</span><span class='o'>.</span><span class='na'>export</span><span class='o'>(</span> <span class='n'>ExtendedGSSCredential</span><span class='o'>.</span><span class='na'>IMPEXP_OPAQUE</span>  <span class='o'>)</span> <span class='o'>);</span>
+             <span class='n'>fos</span><span class='o'>.</span><span class='na'>close</span><span class='o'>();</span>
+         <span class='o'>}</span> <span class='k'>catch</span><span class='o'>(</span> <span class='n'>Exception</span> <span class='n'>e</span> <span class='o'>)</span> <span class='o'>{</span>
+             <span class='c1'>// an exception --- do something</span>
+         <span class='o'>}</span>
+    <span class='o'>}</span>
+</code></pre>
+</div>
+<p>The resulting file is structured as follows:</p>
+
+<ul>
+<li>Proxy certificate generated last</li>
+
+<li>Private key of this certificate</li>
+
+<li>Certificate chain in descending order</li>
+</ul>
+
+<p>The exported proxy may be verified manually with openssl by first splitting this file into the <code>head</code> (containing everything but the certificate chain) and the <code>tail</code> (containing the certificate chain) and setting <code>$OPENSSL_ALLOW_PROXY_CERTS=1</code>. Now execute:</p>
+
+<pre><code>openssl verify -CApath /etc/grid-security/certificates -CAfile tail head</code></pre>
+
+<p>If everything is ok, <code>openssl</code> will print</p>
+
+<pre><code>head: OK</code></pre>
+
+<p>Otherwise a lengthy error message will be shown.</p>
+
+<p>Another way to acompish this is to install the tool <a href='http://www.nikhef.nl/~janjust/proxy-verify/'>grid-proxy-verify</a>, which handles the proxy-file without the need of splitting. A look at the source code is an interesting read concerning the details of proxy verification with openssl.</p>
+
+<h2 id='contract_semantics'>Contract Semantics</h2>
+
+<p>This section describes the precise semantics of offer contracts in <em>GNDMS</em>. An <em>offer</em> is an negotiable offer for the execution of a data management task (like Staging, Transfer, and Publishing). Offer contracts may specify requirements on execution time, duration and location. Offers are negotiated between a client and server in rounds until agreement is reached and a contract is succesfully established.</p>
+
+<p>Client and server roles are taken by different participants. For example, a grid meta scheduler may be a client to a central data management site that runs GNDMS, while the same site may be a client to a data provider site in a different negotiation.</p>
+
+<h3 id='protocol'>Protocol</h3>
+
+<p>The protocol consists of three steps.</p>
+
+<ul>
+<li>
+<p>Client send an OfferRequest with desired task and requirements</p>
+</li>
+
+<li>
+<p>Server replies with an offer contract that tries to match clients requirements.</p>
+</li>
+
+<li>
+<p>Client either accepts the offer. In this case, the protocol is finished with the creation of a task resource that allows the client to monitor task execution and to fetch results. Otherwise, the client is free to discard the offer and redo the protocol with another site or another contract.</p>
+
+<pre><code>Client                      GORFXServer 
+   |                              |
+   |     createOffer( ORQ )*      |
+   X-----------------------------&gt;|--+
+   |                              |  |
+   |                              |  | Estimation( ORQ )
+   |                              |  |
+   |    offerContract             |&lt;-+
+   |&lt;-----------------------------X
+   |       Accept                 |
+   X-----------------------------&gt;|--+
+   |                              |  |
+   |                              |  | run task
+   |                              |  |
+   |        Result                |&lt;-+
+   |&lt;-----------------------------X
+   |                              |
+   .                              .</code></pre>
+</li>
+</ul>
+
+<h3 id='contract_structure'>Contract Structure</h3>
+
+<p>A contract consists of</p>
+
+<ul>
+<li>An (optional) point in time called <code>IfDecisionBefore</code>, <strong>IDB</strong> for short</li>
+
+<li>An (optional) point in time called <code>ExecutionLikelyUntil</code>, <strong>ELU</strong> for short</li>
+
+<li>A point in time or an offet calles <code>ResultValidUntil</code>, <strong>RVU</strong> for short, or <strong>Delta-RVU</strong>, respectively</li>
+
+<li>An (optional) size estimation calles <code>EstMaxSize</code>, <strong>EMS</strong> for short (upper bound on the number of bytes of result data)</li>
+
+<li>An (optional) set of key-value apires called <code>RequestInfo</code>, <strong>RI</strong> for short. <strong>RI</strong> may be used to pass additional information like remarks, warnings etc. From a middleware point of view, <strong>RI</strong> is <em>not</em> part of the contract.</li>
+</ul>
+
+<h3 id='contract_semantics'>Contract Semantics</h3>
+
+<dl>
+<dt><strong>Precise contract semantics</strong></dt>
+
+<dd>If the Offer is accepted before <strong>IDB</strong>, the task will be executed before <strong>ELU</strong> with high probability. Results are made available until <strong>RVU</strong> as long as they do not need more than <strong>EMS</strong> bytes of storage.</dd>
+</dl>
+
+<p>If <strong>IDB</strong> is missing, it is interpreted as an <em>arbitrary, undefined point in the future</em>. This is currently not supported by the software but specifiable according to the underlying XSD schema.</p>
+
+<p>If <strong>ELU</strong> is missing, it is interpreted as <em>arbitrary, unknown task execution duration</em>. This is currently not supported by the software but specifiable according to the underlying XSD schema.</p>
+
+<h3 id='generic_client_restrictions'>Generic Client Restrictions</h3>
+
+<p><strong>IDB</strong> is mandatory. All mandatory invariants need to be fulfilled.</p>
+
+<h3 id='c3grid_data_provider_server_restrictions'>C3-Grid Data Provider Server Restrictions</h3>
+
+<p>Contract semantic variables are mapped to staging properties as detailed below:</p>
+
+<pre><code>IDB = c3grid.StageFileRequest.Estimate.IfDecisionBefore, 
+ELU = c3grid.StageFileRequest.Estimate.ExecutionLikelyUntil, 
+RVU = c3grid.StageFileRequest.Estimate.ResultValidUntil, 
+EMS = c3grid.StageFileRequest.Estimate.MaxSize, 
+RI  = c3grid.StageFileRequest.Estimate.RequestInfo</code></pre>
+
+<ul>
+<li>Data providers must specify an <strong>ELU</strong> that must be identical to the <strong>ELU</strong> requested from the client</li>
+
+<li><strong>IDB</strong> and <strong>RVU</strong> may not be modified by the server. In the case of <strong>RVU</strong> &lt; <strong>ELU</strong>, the client should discard the request.</li>
+
+<li>Client <strong>EMS</strong> may be discarded or overwritten by the server in his offer</li>
+
+<li><strong>RI</strong> is filtered for keys</li>
+</ul>
+
+<dl>
+<dt><strong>Summary</strong></dt>
+
+<dd>For staging requests to data providers, it is sufficient to specify <strong>ELU</strong> in ms and <strong>EMS</strong> in bytes, and to optionally include key-value data in <strong>RI</strong></dd>
+</dl>
+
+<h3 id='support_for_missing_timing_estimates'>Support for Missing Timing Estimates</h3>
+
+<h3 id='contract_invariants'>Contract Invariants</h3>
+
+<p>Depending on how the contract requested by the client looks like, some invariants need to be fulfilled:</p>
+
+<dl>
+<dt><strong>ELU, RVU</strong> requested</dt>
+
+<dd><strong>IDB</strong> &lt; <strong>ELU</strong> and <strong>IDB</strong> &lt; <strong>RVU</strong> (Therefore in practice, choose <strong>IDB</strong> &lt; <strong>ELU</strong> &lt; <strong>RVU</strong>)</dd>
+
+<dt><strong>Delta-ELU, RVU</strong> requested</dt>
+
+<dd><strong>IDB</strong> &lt; <strong>RVU</strong> (Therefore in practice, choose <strong>IDB</strong> + <strong>Delta-ELU</strong> &lt; <strong>RVU</strong>)</dd>
+
+<dt><strong>ELU, Delta-RVU</strong> requested</dt>
+
+<dd><strong>IDB</strong> &lt; <strong>ELU</strong> (and <strong>RVU</strong> is <strong>ELU</strong> + <strong>Delta-RVU</strong> and therefore <strong>ELU</strong> &lt;= <strong>RVU</strong> always holds)</dd>
+
+<dt><strong>Delta-ELU, Delta-RVU</strong> requested</dt>
+
+<dd>No invariants, it holds that start time <strong>ST</strong> &lt;= <strong>IDB</strong>, completion time <strong>CT</strong> = <strong>ELU</strong> = <strong>ST</strong> + <strong>Delta-ELU</strong>, <strong>RVU</strong> = <strong>CT</strong> + <strong>Delta-RVU</strong> and therefore always <strong>ELU</strong> &lt;= <strong>RVU</strong></dd>
+</dl>
+
+<p>It always holds that <strong>ST</strong>&lt;=<strong>IDB</strong>&lt;=<strong>CT</strong>&lt;=<strong>ELU</strong>. If <strong>Delta-RVU</strong> was requested. Additionally always <strong>CT</strong> &lt;= <strong>ELU</strong> &lt;= <strong>RVU</strong> is true.</p>
+
+<p>Clients need to honor all invariants. Servers need to honor all invariants which do not contain <strong>RVU</strong>. Servers may only modify <strong>ELU</strong>.</p>
+
+</div>
+
+</div>
+
+<div id="menu">
+  <h6><a href="../index.html">About</a></h6>
+  <h6><a href="../news/index.html">Newsblog</a></h6>
+  <p>
+  <h6>Get It</h6>
+  <a href="http://github.com/zibhub/GNDMS/downloads">Download Releases</a><br></br>
+  <a href="http://github.com/zibhub/GNDMS">Source Repository</a><br></br>
+  </p>
+  <p>
+  <h6>Docs</h6>
+  <a href="../installation-guide/index.html">Installation Guide</a><br></br>
+  <a href="../moni-guide/index.html">Monitor Shell Guide</a><br></br>
+  <a href="../architecture-primer/index.html">Architecture Primer</a><br></br>
+  <a href="../developer-guide/index.html">Developer Guide</a><br></br>
+ <a href="../glossary/index.html">Glossary</a><br></br>
+  </p>
+  <p>
+  <h6>Contribute</h6>
+  <a href="http://github.com/zibhub/GNDMS/issues">Bug Tracker</a><br></br>
+  <a href="http://github.com/zibhub/GNDMS">Wiki</a>
+  </p>
+  <p>
+  <h6>Related</h6>
+  <a href="http://www.zib.de">Zuse Institute Berlin</a><br></br>
+  <a href="http://www.irf.tu-dortmund.de/cms/de/Institut/">IRF TU Dortmund</a><br></br>
+  <a href="http://www.c3grid.de">C3-Grid</a><br></br>
+  <a href="http://www.pt-grid.de">PT-Grid</a><br></br>
+  <a href="http://www.d-grid.de">D-Grid</a><br></br>
+  </p>
+  <h6><a href="../imprint/index.html">Imprint</a></h6>
+  <h6><a href="../license/index.html">License</a></h6>
+</div>
+
+</div></body></html>

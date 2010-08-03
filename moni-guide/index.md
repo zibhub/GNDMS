@@ -1,5 +1,6 @@
 ---
 title: GNDMDS Monitoring and Configuration Shell Guide
+root: ..
 layout: wikistyle
 ---
 

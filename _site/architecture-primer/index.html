@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+ <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>GNDMS Architecture Primer</title>
+   <link rel="stylesheet" type="text/css" href="../css/gndms.css" />
+   <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+</head>
+<body><div id="wholepage">
+
+<div id="header">
+<a href="">GNDMS Generation N Data Management System</a>
+</div>
+
+<div id="content">
+  <div class="wikistyle">
+
+<h1 id='gndms_architecture_primer'>GNDMS Architecture Primer</h1>
+
+<p>This is the GNDMS Architecture Primer. It is developer-level documentation that gives a general overview of the different layers of GNDMS, how they inter-operate with Globus Toolkit, as well as important concepts, components and classes. It is incomplete at this point.</p>
+<div class='maruku_toc'><ul style='list-style: none;'><li><a href='#the_layers_of_the_software_stack'>The Layers of the Software Stack</a></li><li><a href='#components'>Components</a><ul style='list-style: none;'><li><a href='#component_categories'>Component Categories</a></li><li><a href='#components'>Components</a></li></ul></li><li><a href='#suggested_code_walkthrough'>Suggested Code Walkthrough</a></li></ul></div>
+<h2 id='the_layers_of_the_software_stack'>The Layers of the Software Stack</h2>
+
+<p>The running GNDMS software stack roughly looks like this:</p>
+
+<pre><code>&lt; Service Clients ------------------------------------------------------ &gt;
+[ services: DSpace, GORFX ---------------------------------------------- ]    
+[ gritserv-------------------------------------------------------------- ]
+|                 [ infra ---------------------------------------------- ]
+|                 [ logic ---------------------------------------------- ]
+|                 |                                    &lt; Configuration &gt; |
+|                 |                                    &lt; Monitor Shell &gt; |
+|                 [ kit ------------------------------------------------ ]
+|                 |                                                      |    
+|                 |               [ model --------------------]          |
+|                 |               |                           |          |    
+|                 |               [ stuff -------- ]          |          |      
+|                 |               |                |          |          |
+[ Service Stubs ]-[ GT4 Container ]                [ Open-JPA ]-[ Groovy ]
+|                                                  [ Derby    ]-[ Jetty  ]
+|                                                                        |    
+[ Additional External Libraries ---------------------------------------- ]</code></pre>
+
+<p>Legend:</p>
+
+<pre><code>[ Module ]        # Software Module
+                  # -- modules higher in the Stack
+                  # -- depend on modules below them
+	      
+&lt; Tool   &gt;        # Software Tool
+                  # -- what is below is needed to run</code></pre>
+
+<p>For the gndmc client, an additional layer is required:</p>
+
+<pre><code>&lt; gndmc client --------------------------------------------------------- &gt;
+[ gndmc ---------------------------------------------------------------- ]
+[ services: DSpace, GORFX ---------------------------------------------- ]    
+..........................................................................</code></pre>
+
+<p>The software stack for building, installing, deployment and configuration of GNDMS roughly looks like this:</p>
+
+<pre><code>&lt; buildr --------------------------------------------------------------- &gt;
+[ Build ---------------------------------------------------------------- ]
+[ Buildr 1.4 ----------------------------------------------------------- ] 
+|             [ introduce ------------ ]                                 |
+[ JRuby 1.5 ] [ Ant ]                    &lt; Configuration --------------- &gt;    
+[ Java 2 SDK 1.6 --------------------- ] &lt; Monitor Shell --------------- &gt;
+&lt; local UNIX tools ----------------------------------------------------- &gt; </code></pre>
+
+<h2 id='components'>Components</h2>
+
+<h3 id='component_categories'>Component Categories</h3>
+
+<p>There are several kinds of components that make up the GNDMS service stack. They can be grouped into various categories</p>
+
+<dl>
+<dt><strong>Main</strong></dt>
+
+<dd>GNDMS source code to be found below a top-level diretory and directly built to a jar (Java)</dd>
+
+<dt><strong>Service</strong></dt>
+
+<dd>Located below <code>services</code> and compiled with introduce (XSD, WSDL, Java)</dd>
+
+<dt><strong>Client</strong></dt>
+
+<dd>Located below <code>services</code> and compiled with introduce (Part of service build process, consists of XSD, WSDL, and Java)</dd>
+
+<dt><strong>External</strong></dt>
+
+<dd>downloaded from the Internet during installation.</dd>
+
+<dt><strong>Globus</strong></dt>
+
+<dd>part of your local installation of Globus Toolkit 4.</dd>
+
+<dt><strong>Build</strong></dt>
+
+<dd>All code needed to build and install the software (Ruby and Shell). Of primary relevance are the <code>Buildfile</code> in <code>$GNDMS_SOURCE</code> and everything in <code>$GNDMS_SOURCE/buildr</code>.</dd>
+
+<dt><strong>Config</strong></dt>
+
+<dd>All code needed to configure GNDMS from the outside (Shell and possibly Groovy)</dd>
+</dl>
+
+<h3 id='components'>Components</h3>
+
+<dl>
+<dt><strong>Service Clients</strong> <em>(Client)</em></dt>
+
+<dd>Any program that accesses GNDMS via WSRF.</dd>
+
+<dt><strong>GORFX</strong> <em>(Service)</em></dt>
+
+<dd>The GORFX service provides the negotiation and execution of data management activites (like Staging and File Transfer) according to a co-scheduling protocol (located below <code>$GNDMS_SOURCE/services/GORFX</code>).</dd>
+
+<dt><strong>DSpace</strong> <em>(Service)</em></dt>
+
+<dd>The DSpace service provides management of storage resources (located below <code>$GNDMS_SOURCE/services/DSpace</code>).</dd>
+
+<dt><strong>gritserv</strong> <em>(Main)</em></dt>
+
+<dd>Service-level code that is shared between different grid services, like e.g. XSD type conversion (located below <code>$GNDMS_SOURCE/gritserv</code>).</dd>
+
+<dt><strong>infra</strong> <em>(Main)</em></dt>
+
+<dd>Main infrastructure code that ties the service code to GNDMS <em>main</em> classes. Configuration, Database setup, Dependency injection (located below <code>$GNDMS_SOURCE/infra</code>).</dd>
+
+<dt><strong>logic</strong> <em>(Main)</em></dt>
+
+<dd>All &#8216;Business&#8217; logic of GNDMS that can be implemented outside of the actual service classes (located below <code>$GNDMS_SOURCE/logic</code>).</dd>
+
+<dt><strong>Configuration</strong> <em>(Config)</em></dt>
+
+<dd>Configuration scripts below <code>$GNDMS_SOURCE</code> scripts are executing during installation in order to configure a GNDMS instance for its purpose in a given community grid (located below <code>$GNDMS_SOURCE/scrips</code>).</dd>
+
+<dt><strong>Monitor Shell and Utilities</strong> <em>(Config)</em></dt>
+
+<dd>The monitor shell (client) allows access to the monitor shell implemented <strong>kit</strong> (located below <code>$GNDMS_SOURCE/bin</code>).</dd>
+
+<dt><strong>kit</strong> <em>(Main)</em></dt>
+
+<dd>Utility classes that depend on some functionality from Globus Toolkit and/or <strong>model</strong>. Kit contains the implementation of the GNDMS monitor shell and GridFTP auxiliaries (located below <code>$GNDMS_SOURCE/kit</code>).</dd>
+
+<dt><strong>model</strong> <em>(Main)</em></dt>
+
+<dd>Database model classes (located below <code>$GNDMS_SOURCE/model</code>)</dd>
+
+<dt><strong>stuff</strong> <em>(Main)</em></dt>
+
+<dd>Various utility classes (located below <code>$GNDMS_SOURCE/stuff</code>)</dd>
+
+<dt><strong>Service Stubs</strong> <em>(Service)</em></dt>
+
+<dd>Stub code needed to communicate with the Grid WSRF Services of GNDMS (located inside services).</dd>
+
+<dt><strong>GT4 Container</strong> <em>(Globus)</em></dt>
+
+<dd>The Globus Toolkit 4 WSRF Service Container.</dd>
+
+<dt><strong>Open JPA</strong> <em>(External)</em></dt>
+
+<dd>GNDMS uses Apache OpenJPA 2.0 as its Object Relational Mapper (ORM).</dd>
+
+<dt><strong>Derby</strong> <em>(External)</em></dt>
+
+<dd>GNDMS uses Apache Derby 1.5 as its underlying embedded database.</dd>
+
+<dt><strong>Groovy</strong> <em>(External)</em></dt>
+
+<dd>GNDMS provides support to access the system at runtime by means of executing groovy script code via the monitor shell.</dd>
+
+<dt><strong>Jetty</strong> <em>(External)</em></dt>
+
+<dd>The monitor shell is implemented atop a stripped-down version of jetty.</dd>
+
+<dt><strong>Additional External Libraries</strong> <em>(External)</em></dt>
+
+<dd>GNDMS uses a large selection of 3rd party libraries. Please either consult the <code>Buildfile</code> or <code>$GNDMS_SOURCE/lib/gndms-depencies[.xml]</code> (post-install) to find out more details. Consult <code>$GNDMS_SOURCE/doc/licensing</code> for licensing conditions of 3rd party components.</dd>
+
+<dt><strong>Build</strong> <em>(Build)</em></dt>
+
+<dd>Build scripts are written in ruby and placed in <code>$GNDMS_SOURCE/Buildfile</code> and <code>$GNDMS_SOURCE/buildr/*</code>.</dd>
+
+<dt><strong>Buildr 1.4</strong> <em>(Build)</em></dt>
+
+<dd>GNDMS relies on Apache Buildr for build, installation, and deployment.</dd>
+
+<dt><strong>introduce</strong> <em>(Build)</em></dt>
+
+<dd>The Introduce Tool from the CAGrid project was used to generate service skeletons below <code>$GNDMS_SOURCE/services</code>.</dd>
+
+<dt><strong>JRuby 1.5</strong> <em>(Build)</em></dt>
+
+<dd><strong>Buildr</strong> needs this.</dd>
+
+<dt><strong>Java 2 SDK 1.6</strong> <em>(All)</em></dt>
+
+<dd>GNDMS has been written in Java.</dd>
+
+<dt><strong>Documentation</strong></dt>
+
+<dd>Documentation is generated using Javadoc and Jekyll (has been installed in the included JRuby distribution)</dd>
+</dl>
+
+<p>GNDMS distribution packages contain a version of JRuby with preinstalled buildr and Jekyll. This is not a part of GNDMS (You could always fallback to your local installation of these tools) and provided for convenience only.</p>
+
+<h2 id='suggested_code_walkthrough'>Suggested Code Walkthrough</h2>
+
+<ul>
+<li>Read the available documentation before entering the code, it will give you a rough idea of how everything is connected</li>
+
+<li>Get to know the model classes</li>
+
+<li>Read the action framework (Everything that inherits from de.zib.gndms.logic.action.Action)</li>
+
+<li>Checkout <code>infra/src/de/zib/gndms/infra/system/EMTools.java</code> to understand how actions and the database are connected</li>
+
+<li>Checkout <code>Ext*ResourceHome</code> in <strong>DSpace</strong> to see how resources are persisted.</li>
+
+<li>Read the <code>*ServiceImpl</code> classes to see the actual workflow that is triggered by incoming requests. Follow down to code in <strong>logic</strong> as you see fit.</li>
+
+<li>Read <code>infra/src/de/zib/gndms/infra/system/GNDMSystem.java</code> and <code>infra/src/de/zib/gndms/infra/system/GNDMSystemDirectory.java</code> to understand how GNDMS is bootstrapped and wired</li>
+
+<li>The monitor is in kit in case you need to touch it</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="menu">
+  <h6><a href="../index.html">About</a></h6>
+  <h6><a href="../news/index.html">Newsblog</a></h6>
+  <p>
+  <h6>Get It</h6>
+  <a href="http://github.com/zibhub/GNDMS/downloads">Download Releases</a><br></br>
+  <a href="http://github.com/zibhub/GNDMS">Source Repository</a><br></br>
+  </p>
+  <p>
+  <h6>Docs</h6>
+  <a href="../installation-guide/index.html">Installation Guide</a><br></br>
+  <a href="../moni-guide/index.html">Monitor Shell Guide</a><br></br>
+  <a href="../architecture-primer/index.html">Architecture Primer</a><br></br>
+  <a href="../developer-guide/index.html">Developer Guide</a><br></br>
+ <a href="../glossary/index.html">Glossary</a><br></br>
+  </p>
+  <p>
+  <h6>Contribute</h6>
+  <a href="http://github.com/zibhub/GNDMS/issues">Bug Tracker</a><br></br>
+  <a href="http://github.com/zibhub/GNDMS">Wiki</a>
+  </p>
+  <p>
+  <h6>Related</h6>
+  <a href="http://www.zib.de">Zuse Institute Berlin</a><br></br>
+  <a href="http://www.irf.tu-dortmund.de/cms/de/Institut/">IRF TU Dortmund</a><br></br>
+  <a href="http://www.c3grid.de">C3-Grid</a><br></br>
+  <a href="http://www.pt-grid.de">PT-Grid</a><br></br>
+  <a href="http://www.d-grid.de">D-Grid</a><br></br>
+  </p>
+  <h6><a href="../imprint/index.html">Imprint</a></h6>
+  <h6><a href="../license/index.html">License</a></h6>
+</div>
+
+</div></body></html>

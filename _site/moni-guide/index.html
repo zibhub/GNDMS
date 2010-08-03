@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+ <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>GNDMDS Monitoring and Configuration Shell Guide</title>
+   <link rel="stylesheet" type="text/css" href="../css/gndms.css" />
+   <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+</head>
+<body><div id="wholepage">
+
+<div id="header">
+<a href="">GNDMS Generation N Data Management System</a>
+</div>
+
+<div id="content">
+  <div class="wikistyle">
+
+<h1 id='gndms_monitor_shell_guide'>GNDMS Monitor Shell Guide</h1>
+
+<p>This is the Monitor Shell Guide for the <a href='../index.html'>Generation N Data Management System</a>.</p>
+<div class='maruku_toc'><ul style='list-style: none;'><li><a href='#executing_actions'>Executing Actions</a></li><li><a href='#executing_groovy_code'>Executing Groovy Code</a><ul style='list-style: none;'><li><a href='#list_of_supported_monitor_shell_run_modes'>List of Supported Monitor Shell Run Modes</a></li></ul></li><li><a href='#appendix'>Appendix</a><ul style='list-style: none;'><li><a href='#troubleshooting'>Troubleshooting</a></li><li><a href='#tips_for_script_developers'>Tips for Script Developers</a></li></ul></li></ul></div>
+<p>If you have set up your environment as described in the <a href='/installation-guide/#prerequisites'>prerequisites section</a> of the GNDMS Installation Guide you may use the GNDMS monitoring and configuration shell to access a running instance of the GNDMS software. This is a little servlet that allows the execution of predefined actions or <a href='http://groovy.codehaus.org'>Groovy 1.6</a> script code inside the running globus container in order to initialize and configure the database or peek inside the running system for debugging purposes.</p>
+
+<p>On most sites, the GNDMS Monitor Shell is only accessed once to initialize the database during installation.</p>
+
+<p>The GNDMS Monitor Shell is disabled by default and protected by a randomly generated default password. If enabled, it opens a socket on localhost for incoming connections. Please consider that connections are <em>unencrypted</em> before configuring it to be accessible from an external network. Again, be aware that you can truely execute arbitrary groovy code with globus user permissions through this channel and therefore be cautious whenever using it. You should enable it only on demand and always disable the service after use.</p>
+
+<p>To enable, edit <code>$GNDMS_MONI_CONFIG</code> and set <code>monitor.enabled</code> to <code>true</code>. Then either restart the container or wait <code>monitor.configRefreshCycl</code> ms (defaults to 17 seconds). After this period, the container will load your new configuration and start the monitor shell automatically.</p>
+
+<p>Alternatively, you may set <code>$GNDMS_MONITOR_ENABLED</code> to <code>true</code> before starting the globus container to enable the monitor.</p>
+
+<p>There are two ways to use the monitor shell, the first allows the execution of predefined actions, while the second runs arbitrary Groovy code.</p>
+
+<h2 id='executing_actions'>Executing Actions</h2>
+
+<p>To test the monitoring and configurations shell and retrieve a list of all available actions, execute:</p>
+
+<pre><code>moni call help</code></pre>
+
+<p>To call an action, execute:</p>
+
+<pre><code>moni call &lt;Name of action&gt; &lt;Action Parameters or help&gt;</code></pre>
+
+<h2 id='executing_groovy_code'>Executing Groovy Code</h2>
+
+<p>This mode of executions is based on http sessions.</p>
+
+<p><code>moni init</code> creates a new session (Default session timeout is 22 mins). <code>moni open repl foo</code> to create a new monitor named &#8220;foo&#8221; in the current session that accepts multiple commands (<code>repl</code> is the <em>run mode</em> of the monitor. See below for a list of possible run modes).</p>
+
+<p>To use a previously opened monitor, open a second shell and execute:</p>
+
+<pre><code>moni send foo $GNDMS_SOURCE/scrips/hello.groovy</code></pre>
+
+<p>If you see <code>Hello, World!</code> followed by <code>null</code> in the first shell you have succesfully enabled the monitor shell.</p>
+
+<p>To close the connection named <code>foo</code>, execute <code>moni close foo</code>. To destroy your session and close all named connections, execute <code>moni destroy</code>. To force the monitor to reread the confuration, execute <code>moni refresh</code>. To force a restart even if the configuration has not been altered, execute <code>moni restart</code>.</p>
+
+<h3 id='list_of_supported_monitor_shell_run_modes'>List of Supported Monitor Shell Run Modes</h3>
+
+<dl>
+<dt><code>SCRIPT</code> <em>Default mode</em></dt>
+
+<dd>Accept one send command, do not print result object.</dd>
+
+<dt><code>REPL</code></dt>
+
+<dd>Accept many send commands, always print result objects.</dd>
+
+<dt><code>BATCH</code></dt>
+
+<dd>Accept many send commands, but do not print result objects.</dd>
+
+<dt><code>EVAL_SCRIPT</code></dt>
+
+<dd>Accept one send command, print result object.</dd>
+</dl>
+
+<p><strong>NOTE</strong> Specifying the <code>&lt;mode&gt;</code> in <code>moni open &lt;mode&gt; &lt;connection-name&gt;</code> is case-insensitive</p>
+
+<h2 id='appendix'>Appendix</h2>
+
+<h3 id='troubleshooting'>Troubleshooting</h3>
+
+<ul>
+<li>
+<p>If you don&#8217;t get a connection, check <code>$GLOBUS_LOCATION/var/container.log</code> and ensure that the GNDMS Monitor Shell has been started.</p>
+</li>
+
+<li>
+<p>Make sure you have set up your environment as described in the <a href='/installation-guide/#prerequisites'>prerequisites section</a> of the GNDMS Installation Guide.</p>
+</li>
+
+<li>
+<p>If you execute moni and nothing happens you might just have forgotten an argument. Currently, moni is just a bunch of helper <code>bash</code> scripts that call <code>curl</code> and lack proper argument checking. If you do not provide <code>moni send</code> with apropriate arguments, it may wait while attempting to read from stdin.</p>
+</li>
+
+<li>
+<p><code>monitor.minConnections</code> should always be &gt;= 2</p>
+</li>
+</ul>
+
+<h3 id='tips_for_script_developers'>Tips for Script Developers</h3>
+
+<p>Inside your own groovy classes, you should always print to <code>out</code> or <code>err</code> which contain the current monitor&#8217;s output stream. Plain println only works correctly in the (outmost) script scope or top-level functions.</p>
+
+<p><code>out</code> and <code>err</code> properties are added automatically to <code>Object.metaClass</code> when a monitor is instantiated. To enable them, <code>ExpandoMetaClass.enableGlobally()</code> is called first which affects the semantics of Groovy.</p>
+
+<p>Additional properties like resource homes and singleton resource instances are made available using the same mechanism.</p>
+
+</div>
+
+</div>
+
+<div id="menu">
+  <h6><a href="../index.html">About</a></h6>
+  <h6><a href="../news/index.html">Newsblog</a></h6>
+  <p>
+  <h6>Get It</h6>
+  <a href="http://github.com/zibhub/GNDMS/downloads">Download Releases</a><br></br>
+  <a href="http://github.com/zibhub/GNDMS">Source Repository</a><br></br>
+  </p>
+  <p>
+  <h6>Docs</h6>
+  <a href="../installation-guide/index.html">Installation Guide</a><br></br>
+  <a href="../moni-guide/index.html">Monitor Shell Guide</a><br></br>
+  <a href="../architecture-primer/index.html">Architecture Primer</a><br></br>
+  <a href="../developer-guide/index.html">Developer Guide</a><br></br>
+ <a href="../glossary/index.html">Glossary</a><br></br>
+  </p>
+  <p>
+  <h6>Contribute</h6>
+  <a href="http://github.com/zibhub/GNDMS/issues">Bug Tracker</a><br></br>
+  <a href="http://github.com/zibhub/GNDMS">Wiki</a>
+  </p>
+  <p>
+  <h6>Related</h6>
+  <a href="http://www.zib.de">Zuse Institute Berlin</a><br></br>
+  <a href="http://www.irf.tu-dortmund.de/cms/de/Institut/">IRF TU Dortmund</a><br></br>
+  <a href="http://www.c3grid.de">C3-Grid</a><br></br>
+  <a href="http://www.pt-grid.de">PT-Grid</a><br></br>
+  <a href="http://www.d-grid.de">D-Grid</a><br></br>
+  </p>
+  <h6><a href="../imprint/index.html">Imprint</a></h6>
+  <h6><a href="../license/index.html">License</a></h6>
+</div>
+
+</div></body></html>

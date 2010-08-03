@@ -1,5 +1,6 @@
 ---
 title: GNDMS Glossary
+root: ..
 layout: wikistyle
 ---
 
