@@ -12,13 +12,14 @@
 * [CHANGED] Tested against globus-4.0.8 (previously 4.0.7)
 * [CHANGED] Update and integration testing of many third party dependencies 
 * [NEW] The container log can be accessed through the WS interface
+* [NEW] Added notion of community grid name (subgrid name)
 * [FIX] Monitor glitch
 
 @DMS:
 * [NEW] Slices are now owned by the grid user who triggered the creation
 * [NEW] Slices are now created using the GRAMS backend
 * [CHANGE] Slices are now deleted by a standalone action
-* [NEW] Added new setup scripts for the Pt-Grid community
+* [NEW] Added new setup scripts for the PT-Grid community
 * [NEW] Test client for DMS functionality
 
 
@@ -33,7 +34,7 @@
 
 
 
-0.2.9 beta: "Kylie"
+INTERNAL 0.2.9 beta: "Kylie"
 
 @DMS:
 * [NEW] Added a configurable delay for gridftp client creation 
@@ -42,6 +43,7 @@
 * [FIX] Made file transfer client closeing more fault tolerant
 
 @Everybody
+* [NEW] Maintenance infrastructure for the services
 * [FIX] Possible Exception on transaction rollback in task action
 * [CHANGED] Changed database field of task.faultString to VARCHAR(5000) due to an issue with the current jpa version
 
