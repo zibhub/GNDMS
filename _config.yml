@@ -5,4 +5,4 @@ server_port: 4042
 markdown:    maruku
 permalink:   pretty
 pygments:    true
-exclude:     excluded, .git
+exclude:     excluded,.git

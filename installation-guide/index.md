@@ -484,14 +484,21 @@ follow the procedure described below when making a release:
     git commit -m "Made a Release"
     git tag gndms-release-ver
     git push --tags origin master
-    find $GNDMS_SOURCE -type f -name '*.class' -exec rm '{}' \;
-    # Additionally delete */target name/gndms-name and the like
+    find $GNDMS_SOURCE -type f -name '\*.class' -exec rm '{}' \;
+    find $GNDMS_SOURCE -type d -name classes | xargs rm -fR
+    # Additionally delete 
+    #   \*/target 
+    #   name/gndms-name
+    #   dev-bin
+    #   test-data
+    # 
+    buildr apidocs
     cd ..
     mv $GNDMS_SOURCE $GNDMS_SOURCE/../gndms-release-ver
     tar zcvf GNDMS-Releases/gndms-release-ver.tgz --exclude .git \
-        --exclude *.ipr --exclude *.iml --exclude *.iws \
-        --exclude *.DS_Store --exclude *._.DS_Store gndms-release-ver
-    mv $GNDMS_SOURCE/../gndms-release-ver $GNDMS_SOURCE
+        --exclude \*.ipr --exclude \*.iml --exclude \*.iws \
+        --exclude \*.DS_Store --exclude \*._.DS_Store gndms-release-ver
+    mv $GNDMS_SOURCE/../gndms-release-ver $GNDMS_SOURCE  # done*
 
 
 Now, please upload the tarball and let the world know about it.
