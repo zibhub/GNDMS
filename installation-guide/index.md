@@ -108,15 +108,9 @@ For even more log information, please change the line that starts with
 
 in the same file.
 
-Please set the following environment variables as specified below
-
-* `$GNDMS_SHARED` to `$GLOBUS_LOCATION/etc/gndms_shared`
-* `GNDMS_MONI_CONFIG` to `$GNDMS_SHARED/monitor.properties`
-
-Now it's time to start installing GNDMS.
-
 **ATTENTION** *The default globus log file in `$GLOBUS_LOCATION/var/container.log` gets installed with very liberal file permisssions.  You might want to `chmod 0640 $GLOBUS_LOCATION/var/container.log` for security reasons.*
 
+Now it's time to start installing GNDMS.
 
 ### Preparation of GNDMS Software
 
@@ -132,6 +126,11 @@ or get the current development version from github.
 Please set `$GNDMS_SOURCE` to the root directory of your GNDMS
 distribution (The directory that contains `Buildfile`) and
 add `$GNDMS_SOURCE/bin` to your `$PATH`
+
+Additionally, please set the following environment variables as specified below
+
+* `$GNDMS_SHARED` to `$GLOBUS_LOCATION/etc/gndms_shared`
+* `GNDMS_MONI_CONFIG` to `$GNDMS_SHARED/monitor.properties`
 
 After this step, there should be no further need to adjust your
 environment.  Please consult `$GNDMS_SOURCE/example.profile` for an
@@ -285,11 +284,11 @@ The GNDMS contains a client application which tests some basic
 functionality to ensure your setup is ready to use. In order to run
 the test-client the following prerequisites must be satisfied:
 
-- You must own a valid gird certificate,
-- have access to a grid-ftp-server, which accepts your certificate
+* You must own a valid grid certificate,
+* have access to a grid-ftp-server, which accepts your certificate
   and offers write permission,
-- and of course a running globus container providing the
-  GNDMS-services, with at least on subspace and file-transfer enabled.
+* and of course you need a running globus container that provides the
+  GNDMS-services, has at least on subspace, and file-transfer enabled.
 
 ### About
 
@@ -486,12 +485,14 @@ follow the procedure described below when making a release:
     git tag gndms-release-ver
     git push --tags origin master
     find $GNDMS_SOURCE -type f -name '*.class' -exec rm '{}' \;
+    # Additionally delete */target name/gndms-name and the like
     cd ..
     mv $GNDMS_SOURCE $GNDMS_SOURCE/../gndms-release-ver
-
-     tar zcvf GNDMS-Releases/gndms-release-ver.tgz --exclude .git \
+    tar zcvf GNDMS-Releases/gndms-release-ver.tgz --exclude .git \
         --exclude *.ipr --exclude *.iml --exclude *.iws \
         --exclude *.DS_Store --exclude *._.DS_Store gndms-release-ver
+    mv $GNDMS_SOURCE/../gndms-release-ver $GNDMS_SOURCE
+
 
 Now, please upload the tarball and let the world know about it.
 

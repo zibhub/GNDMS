@@ -92,17 +92,9 @@ $GLOBUS_LOCATION/etc/globus-devel-env.sh</code> in <code>$HOME/.profile</code> w
 
 <p>in the same file.</p>
 
-<p>Please set the following environment variables as specified below</p>
-
-<ul>
-<li><code>$GNDMS_SHARED</code> to <code>$GLOBUS_LOCATION/etc/gndms_shared</code></li>
-
-<li><code>GNDMS_MONI_CONFIG</code> to <code>$GNDMS_SHARED/monitor.properties</code></li>
-</ul>
+<p><strong>ATTENTION</strong> <em>The default globus log file in <code>$GLOBUS_LOCATION/var/container.log</code> gets installed with very liberal file permisssions. You might want to <code>chmod 0640 $GLOBUS_LOCATION/var/container.log</code> for security reasons.</em></p>
 
 <p>Now it&#8217;s time to start installing GNDMS.</p>
-
-<p><strong>ATTENTION</strong> <em>The default globus log file in <code>$GLOBUS_LOCATION/var/container.log</code> gets installed with very liberal file permisssions. You might want to <code>chmod 0640 $GLOBUS_LOCATION/var/container.log</code> for security reasons.</em></p>
 
 <h3 id='preparation_of_gndms_software'>Preparation of GNDMS Software</h3>
 
@@ -113,6 +105,14 @@ $GLOBUS_LOCATION/etc/globus-devel-env.sh</code> in <code>$HOME/.profile</code> w
 <p>Download either an official GNDMS distribution package and unpack it or get the current development version from github.</p>
 
 <p>Please set <code>$GNDMS_SOURCE</code> to the root directory of your GNDMS distribution (The directory that contains <code>Buildfile</code>) and add <code>$GNDMS_SOURCE/bin</code> to your <code>$PATH</code></p>
+
+<p>Additionally, please set the following environment variables as specified below</p>
+
+<ul>
+<li><code>$GNDMS_SHARED</code> to <code>$GLOBUS_LOCATION/etc/gndms_shared</code></li>
+
+<li><code>GNDMS_MONI_CONFIG</code> to <code>$GNDMS_SHARED/monitor.properties</code></li>
+</ul>
 
 <p>After this step, there should be no further need to adjust your environment. Please consult <code>$GNDMS_SOURCE/example.profile</code> for an example of a properly configured environment.</p>
 
@@ -229,11 +229,11 @@ Container home directory is &#39;/opt/gt-current&#39;</code></pre>
 <p>The GNDMS contains a client application which tests some basic functionality to ensure your setup is ready to use. In order to run the test-client the following prerequisites must be satisfied:</p>
 
 <ul>
-<li>You must own a valid gird certificate,</li>
+<li>You must own a valid grid certificate,</li>
 
 <li>have access to a grid-ftp-server, which accepts your certificate and offers write permission,</li>
 
-<li>and of course a running globus container providing the GNDMS-services, with at least on subspace and file-transfer enabled.</li>
+<li>and of course you need a running globus container that provides the GNDMS-services, has at least on subspace, and file-transfer enabled.</li>
 </ul>
 
 <h3 id='about'>About</h3>
@@ -368,12 +368,13 @@ git commit -m &quot;Made a Release&quot;
 git tag gndms-release-ver
 git push --tags origin master
 find $GNDMS_SOURCE -type f -name &#39;*.class&#39; -exec rm &#39;{}&#39; \;
+# Additionally delete */target name/gndms-name and the like
 cd ..
 mv $GNDMS_SOURCE $GNDMS_SOURCE/../gndms-release-ver
-
- tar zcvf GNDMS-Releases/gndms-release-ver.tgz --exclude .git \
+tar zcvf GNDMS-Releases/gndms-release-ver.tgz --exclude .git \
     --exclude *.ipr --exclude *.iml --exclude *.iws \
-    --exclude *.DS_Store --exclude *._.DS_Store gndms-release-ver</code></pre>
+    --exclude *.DS_Store --exclude *._.DS_Store gndms-release-ver
+mv $GNDMS_SOURCE/../gndms-release-ver $GNDMS_SOURCE</code></pre>
 
 <p>Now, please upload the tarball and let the world know about it.</p>
 

@@ -1,0 +1,59 @@
+\contentsline {section}{Generation N Data Management System}{4}{section*.2}
+\contentsline {subsection}{Impressum (DE)}{4}{section*.3}
+\contentsline {subsubsection}{Rechtliche Grundlagen}{4}{section*.4}
+\contentsline {subsection}{Impressum (EN)}{5}{section*.5}
+\contentsline {subsubsection}{Legal Grounds}{5}{section*.6}
+\contentsline {section}{GNDMS Installation Guide}{5}{section*.7}
+\contentsline {subsection}{Prerequisites}{5}{section*.8}
+\contentsline {subsubsection}{Prepare your local software installation}{5}{section*.9}
+\contentsline {subsubsection}{Preparation of GNDMS Software}{7}{section*.10}
+\contentsline {subsection}{Installation and Deployment from Distribution Package}{8}{section*.11}
+\contentsline {subsection}{Gridconfiguration of GNDMS Software}{9}{section*.12}
+\contentsline {subsubsection}{Enabling the Monitoring Shell Manually}{9}{section*.13}
+\contentsline {subsubsection}{Disabling the Monitoring Shell}{9}{section*.14}
+\contentsline {subsubsection}{Configuring your Grid}{9}{section*.15}
+\contentsline {subsubsection}{Finalize installation}{10}{section*.16}
+\contentsline {subsection}{Testing your installation}{10}{section*.17}
+\contentsline {subsubsection}{About}{10}{section*.18}
+\contentsline {subsubsection}{Setup}{10}{section*.19}
+\contentsline {subsubsection}{Running the test client}{11}{section*.20}
+\contentsline {subsubsection}{Trouble shooting}{11}{section*.21}
+\contentsline {subsection}{Advanced Configuration}{12}{section*.22}
+\contentsline {subsubsection}{Remote Access to container.log}{12}{section*.23}
+\contentsline {subsubsection}{Resetting the Database}{12}{section*.24}
+\contentsline {subsubsection}{Inspecting the Database}{12}{section*.25}
+\contentsline {subsubsection}{Using the Monitor Shell}{12}{section*.26}
+\contentsline {subsection}{Building GNDMS from Source}{13}{section*.27}
+\contentsline {section}{GNDMS Monitor Shell Guide}{15}{section*.28}
+\contentsline {subsection}{Executing Actions}{15}{section*.29}
+\contentsline {subsection}{Executing Groovy Code}{16}{section*.30}
+\contentsline {subsubsection}{List of Supported Monitor Shell Run Modes}{16}{section*.31}
+\contentsline {subsection}{Appendix}{16}{section*.32}
+\contentsline {subsubsection}{Troubleshooting}{16}{section*.33}
+\contentsline {subsubsection}{Tips for Script Developers}{17}{section*.34}
+\contentsline {section}{GNDMS Architecture Primer}{17}{section*.35}
+\contentsline {subsection}{The Layers of the Software Stack}{17}{section*.36}
+\contentsline {subsection}{Components}{18}{section*.37}
+\contentsline {subsubsection}{Component Categories}{18}{section*.38}
+\contentsline {subsubsection}{Components}{19}{section*.39}
+\contentsline {subsection}{Suggested Code Walkthrough}{20}{section*.40}
+\contentsline {section}{GNDMS Developer Guide}{21}{section*.41}
+\contentsline {subsection}{Writing Webservice Clients}{21}{section*.42}
+\contentsline {subsubsection}{Setup a Development Environment}{21}{section*.43}
+\contentsline {subsection}{Setup a Development Environment for Debugging}{21}{section*.44}
+\contentsline {subsubsection}{Writing a Web Service Client}{21}{section*.45}
+\contentsline {subsection}{Notes on Certificate Delegation}{22}{section*.46}
+\contentsline {subsubsection}{Security Descriptor Basics}{22}{section*.47}
+\contentsline {subsubsection}{Authentication and Authorization}{22}{section*.48}
+\contentsline {subsubsection}{Client-Side Delegation}{24}{section*.49}
+\contentsline {subsubsection}{Server-Side Delegation}{25}{section*.50}
+\contentsline {subsubsection}{Using Delegation with Proxy Certificates}{27}{section*.51}
+\contentsline {subsection}{Contract Semantics}{29}{section*.52}
+\contentsline {subsubsection}{Protocol}{29}{section*.53}
+\contentsline {subsubsection}{Contract Structure}{30}{section*.54}
+\contentsline {subsubsection}{Contract Semantics}{30}{section*.55}
+\contentsline {subsubsection}{Generic Client Restrictions}{30}{section*.56}
+\contentsline {subsubsection}{C3-Grid Data Provider Server Restrictions}{30}{section*.57}
+\contentsline {subsubsection}{Support for Missing Timing Estimates}{31}{section*.58}
+\contentsline {subsubsection}{Contract Invariants}{31}{section*.59}
+\contentsline {section}{License}{32}{section*.60}
