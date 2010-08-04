@@ -1,4 +1,36 @@
 
+0.3.0: "Rob"
+
+@Everybody
+* [NEW] Released GNDMS under Apache License 2.0
+* [NEW] Automated and simplified installation process
+* [NEW] Added lots of documentation
+* [NEW] Added and verified licensing information for third-party components
+* [CHANGED] User-authentication is now mandatory (previously optional)
+* [NEW] Added notion of community grid admin
+* [CHANGED] Now requires java 1.6 (previously 1.5)
+* [CHANGED] Tested against globus-4.0.8 (previously 4.0.7)
+* [CHANGED] Update and integration testing of many third party dependencies 
+* [NEW] The container log can be accessed through the WS interface
+* [FIX] Monitor glitch
+
+@DMS:
+* [NEW] Slices are now owned by the grid user who triggered the creation
+* [NEW] Slices are now created using the GRAMS backend
+* [CHANGE] Slices are now deleted by a standalone action
+* [NEW] Added new setup scripts for the Pt-Grid community
+* [NEW] Test client for DMS functionality
+
+
+@Developers
+* [CHANGED] Replaced ant-build with buildr
+* [CHANGED] Rewrote all groovy code in java
+* [NEW] Infrastructure for credential delegation below WS-layer
+* [NEW] Improved infrastructure for Guice usage in the action framework
+* [NEW] Module for client packages
+* [CHANGED] The typecon module is now a package of the newly created gritserv module
+
+
 
 
 0.2.9 beta: "Kylie"
