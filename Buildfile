@@ -15,7 +15,7 @@ repositories.remote << 'http://google-maven-repository.googlecode.com/svn/reposi
 # Don't touch below unless you know what you are doing
 # --------------------------------------------------------------------------------------------------
 
-VERSION_NUMBER = '0.3-rc2'
+VERSION_NUMBER = '0.3.0'
 VERSION_NAME = 'Rob'
 GROUP_NAME = 'de.zib.gndms'
 MF_COPYRIGHT = 'Copyright 2008-2010 Zuse Institute Berlin (ZIB)'
@@ -286,8 +286,10 @@ define 'gndms' do
            if (copy)
              puts 'cp: \'' + file + '\' to: \'' + GT4LIB + '\''
              cp(file, GT4LIB)
+             chmod 0644, GT4LIB+"/"+ File.basename( file ), :verbose=>false
            else
              puts 'ln_sf: \'' + file + '\' to: \'' + GT4LIB + '\''
+             chmod 0644, file, :verbose=>false
              ln_sf(file, GT4LIB)
            end
            depsFile.syswrite(file + "\n") 
@@ -472,7 +474,9 @@ task 'ptgrid-setupdb' do
     system "#{ENV['GNDMS_SOURCE']}/scripts/ptgrid/setup-resource.sh CREATE"
 end
 
-task 'ptgrid-test' => task('gndms:gndmc:run-test') 
+task 'ptgrid-test' do
+    system "#{ENV['GNDMS_SOURCE']}/scripts/ptgrid/test-resource.sh"
+end
 
 task 'c3grid-dp-setupdb' do
     system "#{ENV['GNDMS_SOURCE']}/scripts/c3grid/setup-dataprovider.sh CREATE"
