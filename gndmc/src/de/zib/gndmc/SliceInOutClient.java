@@ -71,7 +71,7 @@ public class SliceInOutClient {
         EndpointReferenceType delegatEPR = null;
         if(! transferBean.isDisableDelegation() ) {
             System.out.println( "Setting up delegation" );
-            delegatEPR = GORFXClientUtils.setupDelegation( ctx, getDspaceURI(), transferBean.getUid() );
+            delegatEPR = GORFXClientUtils.setupDelegation( ctx, getDspaceURI(), transferBean.getProxyFile() );
         }
 
         System.out.println( "Copy " + getSourcePath() + " -> " + loc );
