@@ -108,15 +108,9 @@ For even more log information, please change the line that starts with
 
 in the same file.
 
-Please set the following environment variables as specified below
-
-* `$GNDMS_SHARED` to `$GLOBUS_LOCATION/etc/gndms_shared`
-* `GNDMS_MONI_CONFIG` to `$GNDMS_SHARED/monitor.properties`
-
-Now it's time to start installing GNDMS.
-
 **ATTENTION** *The default globus log file in `$GLOBUS_LOCATION/var/container.log` gets installed with very liberal file permisssions.  You might want to `chmod 0640 $GLOBUS_LOCATION/var/container.log` for security reasons.*
 
+Now it's time to start installing GNDMS.
 
 ### Preparation of GNDMS Software
 
@@ -132,6 +126,11 @@ or get the current development version from github.
 Please set `$GNDMS_SOURCE` to the root directory of your GNDMS
 distribution (The directory that contains `Buildfile`) and
 add `$GNDMS_SOURCE/bin` to your `$PATH`
+
+Additionally, please set the following environment variables as specified below
+
+* `$GNDMS_SHARED` to `$GLOBUS_LOCATION/etc/gndms_shared`
+* `GNDMS_MONI_CONFIG` to `$GNDMS_SHARED/monitor.properties`
 
 After this step, there should be no further need to adjust your
 environment.  Please consult `$GNDMS_SOURCE/example.profile` for an
@@ -285,17 +284,21 @@ The GNDMS contains a client application which tests some basic
 functionality to ensure your setup is ready to use. In order to run
 the test-client the following prerequisites must be satisfied:
 
-- You must own a valid gird certificate,
-- have access to a grid-ftp-server, which accepts your certificate
+* You must own a valid grid certificate,
+* have access to a grid-ftp-server, which accepts your certificate
   and offers write permission,
-- and of course a running globus container providing the
-  GNDMS-services, with at least on subspace and file-transfer enabled.
+* and of course you need a running globus container that provides the
+  GNDMS-services, has at least on subspace, and file-transfer enabled.
 
 ### About
 
 The test client simulates a standard GNDMS-use-case, it creates as
 target slice, copies some files into the slice. Then it copies the
 files back from the slice to some target directory and destroys the slice.
+
+This test should be executed as *ordinary grid-user* not the
+globus-user. (The only thing you need the globus-user for is to
+edit the property-file, but more about that in the next section.)
 
 ### Setup
 
@@ -366,6 +369,35 @@ doesn't exist or your CA directory isn't up to date. In the first case
 just call `grid-proxy-init` again, in the second refer to the
 `fetch-crl` section <a href="#fetch-crl">below</a>.
 
+
+**The file transfer throws an execption:**
+: If the exeption looks something like
+<pre><code>
+    java.lang.IllegalStateException: File transfer from 
+        gsiftp://some.foo.org:2811/tmp/srcDir to 
+        gsiftp://more.bar.org/tmp/gndms/RW/f521ba10-a06a-11df-b70c-f2b2b7430fda failure 
+        Server refused performing the request. ...`
+</code></pre>
+: Or the client prints out infinite `Waiting for transfer to finish...`
+messages and the destination directory contains a single empty file,
+please ensure the both grid-ftp servers are running, accepting your
+credential and can talk to each other. Best way to verify this is to
+search the test-clients output for a line like:
+<pre><code>
+    Copy gsiftp://some.foo.org:2811/tmp/srcDir ->
+        gsiftp://more.bar.org/tmp/gndms/RW/f521ba10-a06a-11df-b70c-f2b2b7430fda
+</code></pre>
+: and try `globus-url-copy` with:
+<pre><code>
+    globus-url-copy gsiftp://some.for.org:2811/tmp/srcDir/someFile \
+        gsiftp://more.bar.org/tmp/gndms/RW/f521ba10-a06a-11df-b70c-f2b2b7430fda/targetFile
+</code></pre>
+: If you get an error message like "No route to host" or the like
+ensure that the grid-ftp servers of both hosts are listening on the
+right network device and that now firewall is blocking the connection.
+If this hangs infinitely something with the data-channel setup is
+wrong. Consult the grid-ftp documentation about the --data-channel
+argument.
 
 Advanced Configuration
 ----------------------
@@ -485,13 +517,22 @@ follow the procedure described below when making a release:
     git commit -m "Made a Release"
     git tag gndms-release-ver
     git push --tags origin master
-    find $GNDMS_SOURCE -type f -name '*.class' -exec rm '{}' \;
+    find $GNDMS_SOURCE -type f -name '\*.class' -exec rm '{}' \;
+    find $GNDMS_SOURCE -type d -name classes | xargs rm -fR
+    # Additionally delete 
+    #   \*/target 
+    #   name/gndms-name
+    #   dev-bin
+    #   test-data
+    # 
+    buildr apidocs
     cd ..
     mv $GNDMS_SOURCE $GNDMS_SOURCE/../gndms-release-ver
+    tar zcvf GNDMS-Releases/gndms-release-ver.tgz --exclude .git \
+        --exclude \*.ipr --exclude \*.iml --exclude \*.iws \
+        --exclude \*.DS_Store --exclude \*._.DS_Store gndms-release-ver
+    mv $GNDMS_SOURCE/../gndms-release-ver $GNDMS_SOURCE  # done*
 
-     tar zcvf GNDMS-Releases/gndms-release-ver.tgz --exclude .git \
-        --exclude *.ipr --exclude *.iml --exclude *.iws \
-        --exclude *.DS_Store --exclude *._.DS_Store gndms-release-ver
 
 Now, please upload the tarball and let the world know about it.
 

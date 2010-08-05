@@ -1,0 +1,1882 @@
+\documentclass{article}
+\usepackage{amssymb,amsmath}
+\usepackage[mathletters]{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage{array}
+% This is needed because raggedright in table elements redefines \\:
+\newcommand{\PreserveBackslash}[1]{\let\temp=\\#1\let\\=\temp}
+\let\PBS=\PreserveBackslash
+\usepackage[breaklinks=true,unicode=true]{hyperref}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+\setcounter{secnumdepth}{0}
+
+\title{GNDMS Generation N Data Management System Documentation Bundle}
+\author{Stefan Plantikow and Maik Jorra\\Zuse Institute Berlin (ZIB)}
+\date{4.8.2010}
+
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\newpage
+
+
+\section{Generation N Data Management System}
+
+The Generation N Data Management System (\textbf{GNDMS}) is a set
+of \href{http://www.globus.org}{Globus Toolkit 4} WSRF services and
+associated tools for distributed grid data management based on
+staging and co-scheduling. It abstracts from data sources via a
+data integration layer and provides logical names, data transfers
+via GridFTP, proper handling of GSI certificate delegation and
+workspace management.
+
+Besides data management functionality the implementation provides
+components for remote logging, run-time reconfiguration,
+persistence, and failover beyond what is available from
+\href{http://www.globus.org}{Globus Toolkit 4}.
+
+Originally, GNDMS was written and deployed for the data management
+needs of the
+\href{http://www.c3grid.de}{Collaborative Climate Community Data and Processing Grid (C3-Grid)}
+and is now being used in the
+\href{http://www.pt-grid.de}{Plasma-Technologie-Grid (PT-Grid)} as
+part of the German \href{http://www.dgrid.de}{D-Grid} grid
+computing initiative. Nevertheless, the implementation is flexible
+and has been written for reuse by other grid projects with similiar
+data management requirements. Core components may be of use to
+developers of non-data management GT4 services as well.
+
+\subsection{Impressum (DE)}
+
+\begin{verbatim}
+Konrad-Zuse-Zentrum fuer Informationstechnik Berlin
+Takustrasse 7
+D-14195 Berlin-Dahlem
+
+GERMANY
+
+Tel  +49 30 84185-0
+Fax  +49 30 84185-125
+Web  http://www.zib.de
+\end{verbatim}
+
+Das Konrad-Zuse-Zentrum fuer Informationstechnik Berlin ist eine Anstalt des oeffentlichen Rechts.
+
+\subsubsection{Rechtliche Grundlagen}
+
+\href{http://www.zib.de/General/Organization/gesetz/index.en.html}{Gesetz ueber das Zentrum fuer Informationstechnik (ZInfG)}
+
+Trotz sorgfaeltiger inhaltlicher Kontrolle uebernehmen wir keine
+Haftung fuer die Inhalte.
+
+Sofern innerhalb unseres Internetangebotes die Moeglichkeit zur
+Eingabe persoenlicher oder geschaeftlicher Daten (Emailadressen,
+Namen, Anschriften usw.) besteht, so erfolgt die Preisgabe dieser
+Daten seitens des Nutzers auf ausdruecklich freiwilliger Basis.
+
+\subsection{Impressum (EN)}
+
+\begin{verbatim}
+Konrad-Zuse-Zentrum fuer Informationstechnik Berlin
+Takustrasse 7
+D-14195 Berlin-Dahlem
+
+GERMANY
+
+Tel  +49 30 84185-0
+Fax  +49 30 84185-125
+Web  http://www.zib.de
+\end{verbatim}
+
+ZIB was founded as an institution under public law.
+
+\subsubsection{Legal Grounds}
+
+\href{http://www.zib.de/General/Organization/gesetz/index.en.html}{Gesetz ueber das Zentrum fuer Informationstechnik (ZInfG)}
+
+Although we carefully revise all texts we assume no liability for
+the contents of external links for which solely the external
+provider is responsible.
+
+In case our Internet offer provides the option to enter personal or
+business data (e.g. e-mail addresses, names, addresses), it is
+deemed to be agreed that the user expressly voluntarily reveals
+such data.
+
+\section{GNDMS Installation Guide}
+
+This is the Installation Guide for the
+\href{%7B%7B%20page.root%20%7D%7Dindex.html}{Generation N Data Management System}.
+
+\subsection{Prerequisites}
+
+In order to build or install GNDMS, the following prerequisites
+need to be fulfilled
+
+\subsubsection{Prepare your local software installation}
+
+Install the Java 2 SE Development Toolkit Version 1.6
+
+Please Install the \href{http://java.sun.com}{Java} 2 SE
+Development Toolkit Version 1.6.
+
+For compiling the services, please make sure that \verb!$JAVA_HOME!
+points to this version and that this is also the version that is in
+your \verb!$PATH!. Naturally, this should be the same version than
+the one you use(d) for building and running globus and ant.
+
+Install Apache Ant 1.7
+
+Please install \href{http://ant.apache.org}{Apache Ant} 1.7 and set
+\verb!$ANT_HOME!, add it to your environment, and add
+\verb!$ANT_HOME/bin! to your \verb!$PATH!
+
+\textbf{NOTE} \emph{Using 1.8 might cause trouble on Linux, YMMV}
+
+Install local UNIX software
+
+In order to install GNDMS, please make sure you have installed the
+following software
+
+\begin{itemize}
+\item
+  openssl
+\item
+  curl
+\item
+  rsync
+\end{itemize}
+Additionally, it is expected that your UNIX provides the following
+shell tools: hostname, which, bash
+
+Install Globus Toolit 4.0.8
+
+Please download and make a full installation of
+\href{http://www.globus.org/toolkit/downloads/4.0.8/}{Globus Toolkit 4.0.8}
+
+\textbf{NOTE}
+\emph{To be precise, GNDMS doesn't use CAS and RLS, everything else needs to be there. However, due to the way the GT4 build system works, we suggest you just install everything.}
+
+\textbf{NOTE}
+\emph{If you want to cut down the build, try \texttt{./configure   --prefix=/opt/gt-4.0.8 --with-flavor=gcc32dbg --disable-rls   --disable-tests --disable-wstests --disable-drs} (or \texttt{--flavor=gcc64dbg} on 64-Bit Linux or Mac OS X)}
+
+\begin{itemize}
+\item
+  Setup working host and user certificates (You can build without)
+\item
+  Set \verb!$GLOBUS_LOCATION! and add it to your environment
+\item
+  Life gets easier by putting
+  \verb!source   $GLOBUS_LOCATION/etc/globus-user-env.sh! and
+  \verb!source   $GLOBUS_LOCATION/etc/globus-devel-env.sh! in
+  \verb!$HOME/.profile! when working with Globus Toolkit
+\item
+  We strongly suggest that you create a tarball of your fresh
+  installation of globus toolkit for backup purposes. This allows you
+  to rollback later and try again in case something goes wrong.
+\end{itemize}
+In the following it will be assumed that globus is run by the user
+\verb!globus! which you will have created during the installation
+of Globus Toolkit.
+
+Optionally Configure Globus Toolkit Logging
+
+This step is optional but highly recommended.
+
+To configure the Globus Container to generate substantially more
+log messages for easier debugging, please add
+
+\begin{verbatim}
+log4j.category.de.zib=DEBUG
+\end{verbatim}
+to \verb!$GLOBUS_LOCATION/container-log4j.properties!
+
+For even more log information, please change the line that starts
+with 
+
+\verb!log4j.appender.A1.layout.ConversionPattern=! to
+
+\begin{verbatim}
+log4j.appender.A1.layout.ConversionPattern=%d{ISO8601} %-5p %c{2} [%t,%M:%L] <%x> %m%n
+\end{verbatim}
+in the same file.
+
+\textbf{ATTENTION}
+\emph{The default globus log file in \texttt{\$GLOBUS\_LOCATION/var/container.log} gets installed with very liberal file permisssions. You might want to \texttt{chmod 0640 \$GLOBUS\_LOCATION/var/container.log} for security reasons.}
+
+Now it's time to start installing GNDMS.
+
+\subsubsection{Preparation of GNDMS Software}
+
+\textbf{ATTENTION}
+\emph{The following steps need to be executed as the \texttt{globus} user that runs the servlet container of your installation of Globus Toolkit.}
+
+Download and Unpack GNDMS
+
+Download either an official GNDMS distribution package and unpack
+it or get the current development version from github at:
+
+  \verb!http://github.com/zibhub/GNDMS/downloads!
+
+Please set \verb!$GNDMS_SOURCE! to the root directory of your GNDMS
+distribution (The directory that contains \verb!Buildfile!) and add
+\verb!$GNDMS_SOURCE/bin! to your \verb!$PATH!
+
+Additionally, please set the following environment variables as specified below
+
+\begin{itemize}
+\item
+  \verb!$GNDMS_SHARED! to \verb!$GLOBUS_LOCATION/etc/gndms_shared!
+\item
+  \verb!GNDMS_MONI_CONFIG! to \verb!$GNDMS_SHARED/monitor.properties!
+\end{itemize}
+
+After this step, there should be no further need to adjust your
+environment. Please consult \verb!$GNDMS_SOURCE/example.profile!
+for an example of a properly configured environment.
+
+Optionally Install Apache buildr 1.4.1 locally
+
+This step is optional.
+
+GNDMS is built and installed using
+\href{http:///buildr.apache.org}{Apache buildr}. A pre-packaged
+version of buildr is included with GNDMS and can be executed by
+running \verb!$GNDMS_SOURCE/bin/gndms-buildr!. However, if you
+prever to install buildr locally, please
+
+\begin{itemize}
+\item
+  Install Ruby 1.8
+\item
+  Install buildr by executing \verb!gem install buildr!
+\end{itemize}
+This guide assumes the usage of the pre-packaged version of
+buildr.
+
+\subsection{Installation and Deployment from Distribution Package}
+
+This section describes the actual installation of the GNDMS
+software into the Globus Container. It requires that your system
+has been prepared as described in the previous section. Again the
+following steps should be executed by the \verb!globus! user.
+
+\begin{itemize}
+\item
+  Please enter \verb!$GNDMS_SOURCE! and exeucte
+  \verb!gndms-buildr install-distribution!
+\end{itemize}
+This will
+
+\begin{itemize}
+\item
+  Download and install required software dependencies into
+  \verb!$GLOBUS_LOCATION/lib!.
+
+  \textbf{Please consult \texttt{\$GNDMS\_SOURCE/doc/licensing} for details on licensing conditions of 3rd party software components used by the GNDMS package.}
+
+\item
+  Build API Documentation (Javadocs) in \verb!$GNDMS_SOURCE/doc/api!
+\item
+  and finally install the globus packages (gar-files)
+
+\item
+  (Re)start the globus container with
+  \verb!globus-start-container-detached! and check
+  \verb!$GLOBUS_LOCATION/var/container.log! If everything goes right
+  and you enabled additional logging as described in the previous
+  section, the output should contain output like
+
+  {\small ============================================\\
+  GNDMS RELEASE: Generation N Data Management System VERSION: 0.3\\
+  ``Rob'' GNDMS BUILD: built-at: Wed Jul 21 11:14:01 +0200 2010\\
+  built-by: mjorra@csr-pc35\\
+  ============================================\\
+  Container home directory is `/opt/gt-current'}
+
+\end{itemize}
+(In the case of an error, you may want to compare with a
+\href{startup-log.txt}{full startup log}).
+
+\begin{itemize}
+\item
+  \emph{After having checked succesful startup by looking at the logs},
+  fix the permissions of database files by executing
+
+  gndms-buildr fix-permissions
+
+\end{itemize}
+\textbf{ATTENTION}
+\emph{Skipping this step may cause leaking of sensitive information to local UNIX users}
+
+At this point the GNDMS software has been succesfully installed.
+Next, we'll describe how it may be configured for actual use.
+
+\subsection{Gridconfiguration of GNDMS Software}
+
+GNDMS is configured via a builtin monitoring shell that accesses
+and modifies the configuration in the database.
+
+If you did a fresh installation, the monitoring shell will have
+been enabled temporarily at this point and you may just proceed.
+Otherwise you need to enable in manually as described in the
+following section.
+
+\subsubsection{Enabling the Monitoring Shell Manually}
+
+To enable the monitor shell manually, after having startet the
+globus container with deployed GNDMS at least once (as described in
+the previous section), please edit \verb!$GNDMS_MONI_CONFIG! such
+that \verb!monitor.enabled! is set to \verb!true! and either wait
+until GNDMS picks up the new configuration or restart the globus
+container.
+
+The monitoring shell will be running now. You have nearly finished
+the installation at this point. All that is left to do, is to
+actually configure GNDMS for the chosen community grid platform.
+
+\textbf{NOTE}
+\emph{The shell is accessed via localhosts network interface and protected with a clear-text password only. Do not make the monitoring shell accessible via unsecure networks.}
+
+\subsubsection{Disabling the Monitoring Shell}
+
+To disable the monitor shell, please edit \verb!$GNDMS_MONI_CONFIG!
+such that \emph{both} \verb!monitor.enabled! and
+\verb!monitor.noShutdownIfRunning! are set to \verb!false!. Now,
+either wait until the new configuration gets activated or just
+restart the globus container manually.
+
+\subsubsection{Configuring your Grid}
+
+Currently, there are specialized build targets for the setup of
+some D-Grid projects directly in the \verb!Buildfile!.
+
+\textbf{PT-Grid Setup \& Configuration} : Edit
+\verb!$GNDMS_SOURCE/scripts/ptgrid/setup-resource.sh! and execute
+\verb!gndms-buildr ptgrid-setubdb!
+
+\textbf{PT-Grid Quick Test} : Follow the setup instructions in the
+testing section below and execute \verb!gndms-buildr ptgrid-test!
+
+Additionally, please consult the documentation for the respective
+community grid platform.
+
+\textbf{NOTE}
+\emph{In case of failure during setup, please execute \texttt{gndms-buildr kill-db} and try again.}
+
+\subsubsection{Finalize installation}
+
+Please edit
+\verb!$GLOBUS_LOCATION/etc/gndms_shared/monitor.properties! and set
+\verb!monitor.enabled=false! and
+\verb!monitor.noShutdownIfRunning=false!. This will disable the
+monitor shell after \verb!monitor.configRefreshCycle! ms (defaults
+to 17 seconds). Alternatively, just restart the globus container.
+
+\textbf{Congratulations}
+\emph{At this point the installation is complete and you have a running installation of GNDMS.}
+
+\subsection{Testing your installation}
+
+The GNDMS contains a client application which tests some basic
+functionality to ensure your setup is ready to use. In order to run
+the test-client the following prerequisites must be satisfied:
+
+\begin{itemize}
+\item
+  You must own a valid grid certificate,
+\item
+  have access to a grid-ftp-server, which accepts your certificate
+  and offers write permission,
+\item
+  and of course a running you need a globus container that provides the
+  GNDMS-services, has at least on subspace, and file-transfer
+  enabled.
+\end{itemize}
+\subsubsection{About}
+
+The test client simulates a standard GNDMS-use-case, it creates as
+target slice, copies some files into the slice. Then it copies the
+files back from the slice to some target directory and destroys the
+slice.
+
+This test should be executed as \textit{ordinary grid-user} not the
+globus-user. (The only thing you need the globus-user for is to
+edit the property-file, but more about that in the next section.)
+
+\subsubsection{Setup}
+
+For the scenario the following setup is required. On your grid-ftp
+space create a directory and add some files, e.g.~using the
+following bash command-line:
+
+\begin{verbatim}
+for i in $( seq 1 3 ); do \
+    dd if=/dev/urandom bs=1024 count=1024 of=transfer_test$i.dat; done
+\end{verbatim}
+
+Additionally create a destination directory on the grid-ftp space.
+
+The client reads its properties from a file:
+\verb!$GNDMS_SOURCE/etc/sliceInOut.properties!. Now it's time to
+edit this file. All properties whose values contain angle brackets
+require attention. The file contains comments to every property and
+hopefully explains itself. When you have finished the file must not
+contain any angle-brackets, the client will complain if that's not
+the case.
+
+\subsubsection{Running the test client}
+
+Once the setup is complete, load a grid-proxy using:
+
+\begin{verbatim}
+grid-proxy-init
+\end{verbatim}
+Now you can use buildr to fire up the client:
+
+\begin{verbatim}
+gndms-buildr gndms:gndmc:run-test
+\end{verbatim}
+(Or if provided: your grid specific test target) It takes quite
+some time until the first output appears, be patient. After a
+successful run your output start with:
+
+\begin{verbatim}
+Connected to GNDMS: Generation N Data Management System VERSION: 0.3-pre "Kylie++"
+OK()
+Creating slice
+\end{verbatim}
+(of course the version may differ) and end with:
+
+\begin{verbatim}
+Okay, all done. Cleaning up!
+    * Destroying Slice
+    * Destroying Delegate
+Done.
+\end{verbatim}
+Click \href{test-output.txt}{here} to view the full output. If the
+test runs successfully you should have identical files in your
+grid-ftp source and destination directory, in that case
+CONGRATULATIONS!! you have a working GNDMS installation, and can
+provide data management service for your community.
+
+\subsubsection{Trouble shooting}
+
+\textbf{The client hangs after the }\verb|Copy gsiftp: ...|\textbf{
+message.}
+
+This can be a problem with your firewall configuration. It
+happens when the control-channel can be established but the
+data-channel is blocked. Please check your firewall setup
+especially if the \verb!GLOBUS_TCP_PORT_RANGE! environment variable
+is set correctly and is forwarded by the firewall.
+
+\textbf{I'm getting a }\verb|GSSException: Defective credential detected|\textbf{ exception.}
+
+This can have to reasons: your certificate-proxy maybe outdated
+or doesn't exist or your CA directory isn't up to date. In the
+first case just call \verb!grid-proxy-init! again, in the second
+refer to the \verb!fetch-crl! section below.
+
+\textbf{The file transfer throws an execption.}
+
+ If the exeption looks something like
+\begin{verbatim}
+java.lang.IllegalStateException: File transfer from 
+    gsiftp://some.foo.org:2811/tmp/srcDir to 
+    gsiftp://more.bar.org/tmp/gndms/RW/f521ba10-a06a-11df-b70c-f2b2b7430fda failure 
+    Server refused performing the request. ...`
+\end{verbatim}
+Or the client prints out infinite `Waiting for transfer to finish...`
+messages and the destination directory contains a single empty file,
+please ensure the both grid-ftp servers are running, accepting your
+credential and can talk to each other. Best way to verify this is to
+search the test-clients output for a line like:
+ \begin{verbatim}
+Copy gsiftp://some.foo.org:2811/tmp/srcDir ->
+    gsiftp://more.bar.org/tmp/gndms/RW/f521ba10-a06a-11df-b70c-f2b2b7430fda
+ \end{verbatim}
+and try `globus-url-copy` with:
+ \begin{verbatim}
+globus-url-copy gsiftp://some.for.org:2811/tmp/srcDir/someFile \
+    gsiftp://more.bar.org/tmp/gndms/RW/f521ba10-a06a-11df-b70c-f2b2b7430fda/targetFile
+ \end{verbatim}
+If you get an error message like "No route to host" or the like
+ensure that the grid-ftp servers of both hosts are listening on the
+right network device and that now firewall is blocking the connection.
+If this hangs infinitely something with the data-channel setup is
+wrong. Consult the grid-ftp documentation about the
+\verb+--data-channel+ argument.
+
+\subsection{Advanced Configuration}
+
+\subsubsection{Remote Access to container.log}
+
+To enable a select group of users to read the container.log from
+outside, add their DNs to either
+
+\verb!/etc/grid-security/gndms-support-stuff! or \\
+\verb!$GLOBUS_LOCATION/etc/gndms_shared/gndms-support-stuff!.
+
+Depending on your setup, you need to replace \verb!gndms! with your
+subgrid name (\verb!ptgrid!, \verb!c3grid!, etc.) in these file
+names.
+
+To access the log, please load your user credentials (e.g. with
+\verb!grid-proxy-init!) and run in \verb!$GNDMS_SOURCE!
+
+\begin{verbatim}
+`env URI="<URI>" ARGS="<ARGS>" gndms-buildr show-log`
+\end{verbatim}
+where \verb!<URI>! is the EPR of either a DSpace or a GORFX service
+(see container.log startup section, looks like
+\verb!https://$HOSTNAME:8443/wsrf/services/gndms/GORFX!) and
+\verb!<ARGS>! are the arguments that need to be passed to the
+actual show-log service maintenance call. Please use
+\verb!env URI="<URI>" ARGS="help"! to obtain a synopsis of possible
+parameters or leave it empty to retrieve
+\verb!$GLOBUS_LOCATION/var/container.log! completely.
+
+\subsubsection{Resetting the Database}
+
+First, \textbf{shutdown the globus container}. Next, in
+\verb!$GNDMS_SOURCE!, issue
+
+gndms-buildr kill-db
+
+This will delete your database.
+
+\subsubsection{Inspecting the Database}
+
+First, \textbf{shutdown the globus container}. Next, in
+\verb!$GNDMS_SOURCE!, issue
+
+gndms-buildr inspect-db
+
+This will open a shell to the derby-ij tool for looking at the
+internal database of GNDMS.
+
+\subsubsection{Using the Monitor Shell}
+
+Please consult the \href{/moni-guide}{monitor shell guide}
+
+\subsection{Building GNDMS from Source}
+
+Quick Rebuild
+
+A quick full rebuild and reinstallation may be done by executing
+
+\begin{verbatim}
+gndms-buildr rebuild
+\end{verbatim}
+Regeneration of Javadocs
+
+Manually delete \verb!$GLOBUS_LOCATION/doc/api!. Now regenerate the
+javadocs by executing
+
+\begin{verbatim}
+gndms-buildr apidocs
+\end{verbatim}
+Building Manually from Scratch
+
+\begin{verbatim}
+gndms-buildr clean clean-services # Cleans everything
+gndms-buildr artifcats            # Download all 3rd party components
+gndms-buildr gndms:model:package  # Compile basic DAO classes
+gndms-buildr package-stubs        # Compile service stubs
+gndms-buildr gndms:infra:package  # Compile GNDMS framework
+globus-stop-container-detached    # Ensure globus is shutdown
+gndms-buildr install-deps         # Install dependencies
+gndms-buildr package-DSpace       # Compile DSpace service
+gndms-buildr deploy-DSpace        # Deploy DSpace
+gndms-buildr package-GORFX        # Compile GORFX service
+gndms-buildr deploy-GORFX         # Deploy GORFX
+globus-start-container-detached   # Restart globus
+gndms-buildr gndms:gndmc:package  # Build client
+gndms-buildr apidocs              # Build Javadocs (gndms is excluded)
+\end{verbatim}
+
+\textbf{NOTE}
+\emph{In order to get speedier builds, developers may set \texttt{\$GNDMS\_DEPS=link}. This will make \texttt{gndms-buildr install-deps} symlink dependencies to \texttt{\$GLOBUS\_LOCATION/lib} instead of copying them and therefore considerably eases trying out small changes to framework classes. However, when using this method, make sure that required symlinked jar files from \texttt{\$HOME/.m2/repository} and \texttt{\$GNDMS\_SOURCE/lib}and \texttt{\$GNDMS\_SOURCE/extra} are not deleted accidentally and remain readable for the globus user.}
+
+\textbf{NOTE}
+\emph{Once symlinks have been set up properly, developers may set \texttt{\$GNDMS\_DEPS=skip} to skip install-deps alltogether.}
+
+\textbf{NOTE}
+\emph{To even setup symlinks for the service jars, use the \texttt{gndms-buildr link-services} target.}
+
+Packaging GNDMS
+
+In case you want do distribute your own spin-of GNDMS, we suggest
+you follow the procedure described below when making a release:
+
+\begin{verbatim}
+cd $GNDMS_SOURCE
+vi Buildfile # Set VERSION_NUMBER and optionally VERSION_NAME
+gndms-buildr release-build
+git commit -m "Made a Release"
+git tag gndms-release-ver
+git push --tags origin master
+find $GNDMS_SOURCE -type f -name '*.class' -exec rm '{}' \;
+find $GNDMS_SOURCE -type d -name classes | xargs rm -fR
+# Additionally delete 
+#   */target 
+#   name/gndms-name
+#   dev-bin
+#   test-data
+# 
+buildr apidocs
+cd ..
+mv $GNDMS_SOURCE $GNDMS_SOURCE/../gndms-release-ver
+tar zcvf GNDMS-Releases/gndms-release-ver.tgz --exclude .git \
+    --exclude *.ipr --exclude *.iml --exclude *.iws \
+    --exclude *.DS_Store --exclude *._.DS_Store gndms-release-ver
+mv $GNDMS_SOURCE/../gndms-release-ver $GNDMS_SOURCE
+\end{verbatim}
+
+Now, please upload the tarball and let the world know about it.
+
+Problem Shooting Tips for Development Builds
+
+\begin{itemize}
+\item
+  Do you need to regen the stubs?
+  \verb!gndms-buildr clean-services   package-stubs! to the rescue.
+
+\item
+  Symlinks/copies of old jars in \verb!$GLOBUS_LOCATION/lib!.
+
+  find \$GLOBUS\_LOCATION/lib -type l -name *.jar -exec rm -i \{\} ;
+
+\end{itemize}
+may help
+
+\begin{itemize}
+\item
+  If you cant deploy (i.e. globus-start-container balks with one of
+  those 40+-lines stacktraces) it's possible that introduce created
+  an invalid jndi-config.xml which can happen during development but
+  is easy enough to fix: Just make sure there are neither duplicate
+  service nor resourceHome entries in any of the jndi-config.xml
+  files
+
+\item
+  This build is not supposed to work on Microsoft Windows
+
+\item
+  If you get an error about a missing ``test/src'' directory simply
+  mkdir -p test/src in the respective services' directory
+
+\end{itemize}
+Other common reasons for a failed container starts are invalid
+credentials (hostkey/hostcert.pem) or outdated CRLs. In the latter
+case, the script contained in
+\verb!$GNDMS_SOURCE/contrib/fetch-crl! may help you. Execute
+\verb!fetch-crl -o <grid-cert-dir>! with apropriate permissions
+(Requries \verb!wget!).
+
+\section{GNDMS Monitor Shell Guide}
+
+This is the Monitor Shell Guide for the \href{../index.html}{Generation N Data Management System}.
+
+If you have set up your environment as described in the
+\href{/installation-guide/#prerequisites}{prerequisites section} of
+the GNDMS Installation Guide you may use the GNDMS monitoring and
+configuration shell to access a running instance of the GNDMS
+software. This is a little servlet that allows the execution of
+predefined actions or \href{http://groovy.codehaus.org}{Groovy 1.6}
+script code inside the running globus container in order to
+initialize and configure the database or peek inside the running
+system for debugging purposes.
+
+On most sites, the GNDMS Monitor Shell is only accessed once to
+initialize the database during installation.
+
+The GNDMS Monitor Shell is disabled by default and protected by a
+randomly generated default password. If enabled, it opens a socket
+on localhost for incoming connections. Please consider that
+connections are \emph{unencrypted} before configuring it to be
+accessible from an external network. Again, be aware that you can
+truely execute arbitrary groovy code with globus user permissions
+through this channel and therefore be cautious whenever using it.
+You should enable it only on demand and always disable the service
+after use.
+
+To enable, edit \verb!$GNDMS_MONI_CONFIG! and set
+\verb!monitor.enabled! to \verb!true!. Then either restart the
+container or wait \verb!monitor.configRefreshCycl! ms (defaults to
+17 seconds). After this period, the container will load your new
+configuration and start the monitor shell automatically.
+
+Alternatively, you may set \verb!$GNDMS_MONITOR_ENABLED! to
+\verb!true! before starting the globus container to enable the
+monitor.
+
+There are two ways to use the monitor shell, the first allows the
+execution of predefined actions, while the second runs arbitrary
+Groovy code.
+
+\subsection{Executing Actions}
+
+To test the monitoring and configurations shell and retrieve a list
+of all available actions, execute:
+
+\begin{verbatim}
+moni call help
+\end{verbatim}
+To call an action, execute:
+
+\begin{verbatim}
+moni call <Name of action> <Action Parameters or help>
+\end{verbatim}
+\subsection{Executing Groovy Code}
+
+This mode of executions is based on http sessions.
+
+\verb!moni init! creates a new session (Default session timeout is
+22 mins). \verb!moni open repl foo! to create a new monitor named
+``foo'' in the current session that accepts multiple commands
+(\verb!repl! is the \emph{run mode} of the monitor. See below for a
+list of possible run modes).
+
+To use a previously opened monitor, open a second shell and
+execute:
+
+\begin{verbatim}
+moni send foo $GNDMS_SOURCE/scrips/hello.groovy
+\end{verbatim}
+If you see \verb"Hello, World!" followed by \verb!null! in the
+first shell you have succesfully enabled the monitor shell.
+
+To close the connection named \verb!foo!, execute
+\verb!moni close foo!. To destroy your session and close all named
+connections, execute \verb!moni destroy!. To force the monitor to
+reread the confuration, execute \verb!moni refresh!. To force a
+restart even if the configuration has not been altered, execute
+\verb!moni restart!.
+
+\subsubsection{List of Supported Monitor Shell Run Modes}
+
+\verb!SCRIPT! \emph{Default mode} : Accept one send command, do not
+print result object.
+
+\verb!REPL! : Accept many send commands, always print result
+objects.
+
+\verb!BATCH! : Accept many send commands, but do not print result
+objects.
+
+\verb!EVAL_SCRIPT! : Accept one send command, print result object.
+
+\textbf{NOTE} Specifying the \verb!<mode>! in
+\verb!moni open <mode> <connection-name>! is case-insensitive
+
+\subsection{Appendix}
+
+\subsubsection{Troubleshooting}
+
+\begin{itemize}
+\item
+  If you don't get a connection, check
+  \verb!$GLOBUS_LOCATION/var/container.log! and ensure that the GNDMS
+  Monitor Shell has been started.
+
+\item
+  Make sure you have set up your environment as described in the
+  \href{/installation-guide/#prerequisites}{prerequisites section} of
+  the GNDMS Installation Guide.
+
+\item
+  If you execute moni and nothing happens you might just have
+  forgotten an argument. Currently, moni is just a bunch of helper
+  \verb!bash! scripts that call \verb!curl! and lack proper argument
+  checking. If you do not provide \verb!moni send! with apropriate
+  arguments, it may wait while attempting to read from stdin.
+
+\item
+  \verb!monitor.minConnections! should always be \textgreater{}= 2
+
+\end{itemize}
+\subsubsection{Tips for Script Developers}
+
+Inside your own groovy classes, you should always print to
+\verb!out! or \verb!err! which contain the current monitor's output
+stream. Plain println only works correctly in the (outmost) script
+scope or top-level functions.
+
+\verb!out! and \verb!err! properties are added automatically to
+\verb!Object.metaClass! when a monitor is instantiated. To enable
+them, \verb!ExpandoMetaClass.enableGlobally()! is called first
+which affects the semantics of Groovy.
+
+Additional properties like resource homes and singleton resource
+instances are made available using the same mechanism.
+
+\section{GNDMS Architecture Primer}
+
+This is the GNDMS Architecture Primer. It is developer-level
+documentation that gives a general overview of the different layers
+of GNDMS, how they inter-operate with Globus Toolkit, as well as
+important concepts, components and classes. It is incomplete at
+this point.
+
+\subsection{The Layers of the Software Stack}
+
+The running GNDMS software stack roughly looks like this:
+
+\begin{verbatim}
+< Service Clients ------------------------------------------------------ >
+[ services: DSpace, GORFX ---------------------------------------------- ]    
+[ gritserv-------------------------------------------------------------- ]
+|                 [ infra ---------------------------------------------- ]
+|                 [ logic ---------------------------------------------- ]
+|                 |                                    < Configuration > |
+|                 |                                    < Monitor Shell > |
+|                 [ kit ------------------------------------------------ ]
+|                 |                                                      |    
+|                 |               [ model --------------------]          |
+|                 |               |                           |          |    
+|                 |               [ stuff -------- ]          |          |      
+|                 |               |                |          |          |
+[ Service Stubs ]-[ GT4 Container ]                [ Open-JPA ]-[ Groovy ]
+|                                                  [ Derby    ]-[ Jetty  ]
+|                                                                        |    
+[ Additional External Libraries ---------------------------------------- ]
+\end{verbatim}
+Legend:
+
+\begin{verbatim}
+[ Module ]        # Software Module
+                  # -- modules higher in the Stack
+                  # -- depend on modules below them
+
+< Tool   >        # Software Tool
+                  # -- what is below is needed to run
+\end{verbatim}
+For the gndmc client, an additional layer is required:
+
+\begin{verbatim}
+< gndmc client --------------------------------------------------------- >
+[ gndmc ---------------------------------------------------------------- ]
+[ services: DSpace, GORFX ---------------------------------------------- ]    
+..........................................................................
+\end{verbatim}
+The software stack for building, installing, deployment and
+configuration of GNDMS roughly looks like this:
+
+\begin{verbatim}
+< buildr --------------------------------------------------------------- >
+[ Build ---------------------------------------------------------------- ]
+[ Buildr 1.4 ----------------------------------------------------------- ] 
+|             [ introduce ------------ ]                                 |
+[ JRuby 1.5 ] [ Ant ]                    < Configuration --------------- >    
+[ Java 2 SDK 1.6 --------------------- ] < Monitor Shell --------------- >
+< local UNIX tools ----------------------------------------------------- > 
+\end{verbatim}
+\subsection{Components}
+
+\subsubsection{Component Categories}
+
+There are several kinds of components that make up the GNDMS
+service stack. They can be grouped into various categories
+
+\textbf{Main} : GNDMS source code to be found below a top-level
+diretory and directly built to a jar (Java)
+
+\textbf{Service} : Located below \verb!services! and compiled with
+introduce (XSD, WSDL, Java)
+
+\textbf{Client} : Located below \verb!services! and compiled with
+introduce (Part of service build process, consists of XSD, WSDL,
+and Java)
+
+\textbf{External} : downloaded from the Internet during
+installation.
+
+\textbf{Globus} : part of your local installation of Globus Toolkit
+4.
+
+\textbf{Build} : All code needed to build and install the software
+(Ruby and Shell). Of primary relevance are the \verb!Buildfile! in
+\verb!$GNDMS_SOURCE! and everything in
+\verb!$GNDMS_SOURCE/buildr!.
+
+\textbf{Config} : All code needed to configure GNDMS from the
+outside (Shell and possibly Groovy)
+
+\subsubsection{Components}
+
+\textbf{Service Clients} \emph{(Client)} : Any program that
+accesses GNDMS via WSRF.
+
+\textbf{GORFX} \emph{(Service)} : The GORFX service provides the
+negotiation and execution of data management activites (like
+Staging and File Transfer) according to a co-scheduling protocol
+(located below \verb!$GNDMS_SOURCE/services/GORFX!).
+
+\textbf{DSpace} \emph{(Service)} : The DSpace service provides
+management of storage resources (located below
+\verb!$GNDMS_SOURCE/services/DSpace!).
+
+\textbf{gritserv} \emph{(Main)} : Service-level code that is shared
+between different grid services, like e.g.~XSD type conversion
+(located below \verb!$GNDMS_SOURCE/gritserv!).
+
+\textbf{infra} \emph{(Main)} : Main infrastructure code that ties
+the service code to GNDMS \emph{main} classes. Configuration,
+Database setup, Dependency injection (located below
+\verb!$GNDMS_SOURCE/infra!).
+
+\textbf{logic} \emph{(Main)} : All `Business' logic of GNDMS that
+can be implemented outside of the actual service classes (located
+below \verb!$GNDMS_SOURCE/logic!).
+
+\textbf{Configuration} \emph{(Config)} : Configuration scripts
+below \verb!$GNDMS_SOURCE! scripts are executing during
+installation in order to configure a GNDMS instance for its purpose
+in a given community grid (located below
+\verb!$GNDMS_SOURCE/scrips!).
+
+\textbf{Monitor Shell and Utilities} \emph{(Config)} : The monitor
+shell (client) allows access to the monitor shell implemented
+\textbf{kit} (located below \verb!$GNDMS_SOURCE/bin!).
+
+\textbf{kit} \emph{(Main)} : Utility classes that depend on some
+functionality from Globus Toolkit and/or \textbf{model}. Kit
+contains the implementation of the GNDMS monitor shell and GridFTP
+auxiliaries (located below \verb!$GNDMS_SOURCE/kit!).
+
+\textbf{model} \emph{(Main)} : Database model classes (located
+below \verb!$GNDMS_SOURCE/model!)
+
+\textbf{stuff} \emph{(Main)} : Various utility classes (located
+below \verb!$GNDMS_SOURCE/stuff!)
+
+\textbf{Service Stubs} \emph{(Service)} : Stub code needed to
+communicate with the Grid WSRF Services of GNDMS (located inside
+services).
+
+\textbf{GT4 Container} \emph{(Globus)} : The Globus Toolkit 4 WSRF
+Service Container.
+
+\textbf{Open JPA} \emph{(External)} : GNDMS uses Apache OpenJPA 2.0
+as its Object Relational Mapper (ORM).
+
+\textbf{Derby} \emph{(External)} : GNDMS uses Apache Derby 1.5 as
+its underlying embedded database.
+
+\textbf{Groovy} \emph{(External)} : GNDMS provides support to
+access the system at runtime by means of executing groovy script
+code via the monitor shell.
+
+\textbf{Jetty} \emph{(External)} : The monitor shell is implemented
+atop a stripped-down version of jetty.
+
+\textbf{Additional External Libraries} \emph{(External)} : GNDMS
+uses a large selection of 3rd party libraries. Please either
+consult the \verb!Buildfile! or
+\verb!$GNDMS_SOURCE/lib/gndms-depencies[.xml]! (post-install) to
+find out more details. Consult \verb!$GNDMS_SOURCE/doc/licensing!
+for licensing conditions of 3rd party components.
+
+\textbf{Build} \emph{(Build)} : Build scripts are written in ruby
+and placed in \verb!$GNDMS_SOURCE/Buildfile! and
+\verb!$GNDMS_SOURCE/buildr/*!.
+
+\textbf{Buildr 1.4} \emph{(Build)} : GNDMS relies on Apache Buildr
+for build, installation, and deployment.
+
+\textbf{introduce} \emph{(Build)} : The Introduce Tool from the
+CAGrid project was used to generate service skeletons below
+\verb!$GNDMS_SOURCE/services!.
+
+\textbf{JRuby 1.5} \emph{(Build)} : \textbf{Buildr} needs this.
+
+\textbf{Java 2 SDK 1.6} \emph{(All)} : GNDMS has been written in
+Java.
+
+\textbf{Documentation} : Documentation is generated using Javadoc
+and Jekyll (has been installed in the included JRuby distribution)
+
+GNDMS distribution packages contain a version of JRuby with
+preinstalled buildr and Jekyll. This is not a part of GNDMS (You
+could always fallback to your local installation of these tools)
+and provided for convenience only.
+
+\subsection{Suggested Code Walkthrough}
+
+\begin{itemize}
+\item
+  Read the available documentation before entering the code, it will
+  give you a rough idea of how everything is connected
+\item
+  Get to know the model classes
+\item
+  Read the action framework (Everything that inherits from
+  de.zib.gndms.logic.action.Action)
+\item
+  Checkout \verb!infra/src/de/zib/gndms/infra/system/EMTools.java! to
+  understand how actions and the database are connected
+\item
+  Checkout \verb!Ext*ResourceHome! in \textbf{DSpace} to see how
+  resources are persisted.
+\item
+  Read the \verb!*ServiceImpl! classes to see the actual workflow
+  that is triggered by incoming requests. Follow down to code in
+  \textbf{logic} as you see fit.
+\item
+  Read \verb!infra/src/de/zib/gndms/infra/system/GNDMSystem.java! and
+\item
+  Read \verb!infra/src/de/zib/gndms/infra/system/GNDMSystemDirectory.java!
+  to understand how GNDMS is bootstrapped and wired
+\item
+  The monitor is in kit in case you need to touch it
+\end{itemize}
+
+\section{GNDMS Developer Guide}
+
+This is the Developer Guide for the
+\href{../index.html}{Generation N Data Management System}. It is
+far from complete. It currently contains various tidbits copied
+together from different Wikis. YMMV. Use the source, luke!
+
+\subsection{Writing Webservice Clients}
+
+\subsubsection{Setup a Development Environment}
+
+\begin{itemize}
+\item
+  Install GNDMS as described in the
+  \href{../installation-guide}{installation guide}
+\item
+  Use \verb!gndms-buildr idea! or \verb!gndms-buildr eclipse! to
+  generate template IDEA or eclipse projects.
+\item
+  You might need to add \verb!$GLOBUS_LOCATION/lib/*.jar!
+\item
+  Skip \verb!gndms-*.jar!, but
+\item
+  include \verb!gndms-*-service.jar! and \verb!gndms-*-client.jar!
+\end{itemize}
+\subsection{Setup a Development Environment for Debugging}
+
+\begin{itemize}
+\item
+  Ensure that the generated modules in your IDE setup compile to the
+  same output path as buildr and that globus, buildr, and your IDE
+  compile using the same JDK.
+
+\item
+  Edit your globus scripts such that Java is configured to enable
+  remote debugging and set up a matching run target in your IDE.
+
+\end{itemize}
+\textbf{NOTE}
+\emph{If the globus container is started with \texttt{-debug} it prints full stacktraces, otherwise not!}
+
+\subsubsection{Writing a Web Service Client}
+
+\begin{itemize}
+\item
+  Take a look at \verb!ProviderStageInClient!
+\item
+  Do not directly instantiate port types. Always use the associated
+  \verb!PortTypeFooClient! classes to get port type instances.
+\item
+  If you really need to instantiate port types directly, ensure that
+  the used axis engine is configured with the correct \verb!.wsdd!
+  files. This work is done by \verb!PortTypeFooClient! classes if you
+  use them.
+\end{itemize}
+\subsection{Notes on Certificate Delegation}
+
+To use certificate delegation, two steps are necessary. First,
+service security settings need to be changed. Second, client and
+and service code need to be modified slightly to incorporate
+support for certificate delegation.
+
+\subsubsection{Security Descriptor Basics}
+
+\textbf{NOTE} This is a very brief description of security
+descriptors. More advanced configuration is possible, e.g.~service
+method level A\&A.
+
+The security descriptor (Short: \textbf{SD}) describes
+authentication and authorization requirements of clients and WSRF
+web services. The \textbf{SD} of a service is configured in the
+\verb!service! section of the WSDD file.
+
+\begin{verbatim}
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment>
+    <service>
+         <parameter name="securityDescriptor" value="etc/serviceFoo-security-desc.xml" /> 
+    </service>
+</deployment>
+\end{verbatim}
+
+Client security descriptors are loaded directly in the client
+software:
+
+\begin{verbatim}
+// Client security descriptor file 
+String CLIENT_DESC = ".../client-security-config.xml";
+ClientSecurityDescriptor desc = new ClientSecurityDescriptor( CLIENT_DESC );
+//Set descriptor on Stub 
+( (Stub)port )._setProperty( Constants.CLIENT_DESCRIPTOR, desc )
+\end{verbatim}
+
+For more details, please consult the
+\href{http://www.globus.org/toolkit/docs/development/4.1.2/security/security-secdesc.html}{documentation on security descriptors}.
+
+\subsubsection{Authentication and Authorization}
+
+The following example shows how mandatory TLS encryption is
+enforced with a security descriptor:
+
+
+\begin{verbatim}
+<?xml version="1.0" encoding="UTF-8"?>
+<securityConfig xmlns="http://www.globus.org">
+    <auth-method>
+        <GSITransport>
+            <protection-level>
+                <privacy />
+            </protection-level>
+        </GSITransport>
+    </auth-method>
+</securityConfig>
+\end{verbatim}
+
+This setting must be made both on the server and the client.
+
+For authorization, a gridmap file needs to be set:
+
+
+\begin{verbatim}
+<authz value="gridmap" />
+\end{verbatim}
+
+This enables use of the system wide gridmap-file. To use a service
+specific gridmap file, please add:
+
+
+\begin{verbatim}
+<gridmap value="etc/gndms_shared/grid-mapfile" />
+\end{verbatim}
+
+Finally, it is necessary to configure (unless you are using JAAS):
+
+\begin{verbatim}
+<run-as>
+   <system-identity />
+</run-as>
+\end{verbatim}
+
+Below is a complete example:
+
+\begin{verbatim}
+<?xml version="1.0" encoding="UTF-8"?>
+<securityConfig xmlns="http://www.globus.org">
+    <authz value="gridmap" />
+    <gridmap value="etc/c3grid_shared/grid-mapfile" />
+    <auth-method>
+        <GSITransport>
+            <protection-level>
+                <privacy />
+            </protection-level>
+        </GSITransport>
+    </auth-method>
+    <run-as>
+        <system-identity />
+    </run-as>
+</securityConfig>      
+\end{verbatim}
+
+\subsubsection{Client-Side Delegation}
+
+This section described delegation from the viewpoint of the client.
+The client uses the Delegation Service to retrieve the Certificate
+Chain. This is used to generate a proxy certificate which is sent
+to the delegation service in order to obtain an EPR for the proxy.
+This EPR may be passed when accessing resources directly or is sent
+to factory methods during resource instantiation.
+
+
+// path to the file containing the proxy cert String proxyFile =
+\ldots{};
+
+\begin{verbatim}
+// uri of the delegation service
+String delUri =  "http://somehost/wsrf/services/DelegationFactoryService"
+
+// port type of our service acquired in the usual fashion
+PortType port = ... ;
+
+
+GlobusCredential credential = new GlobusCredential( proxyFile );
+
+// Create security descriptor for the communication with the delegation service
+// This descriptor is not the same we use to communicate with
+// the actual service
+ClientSecurityDescriptor desc = new ClientSecurityDescriptor();
+org.ietf.jgss.GSSCredential gss = 
+    new org.globus.gsi.gssapi.GlobusGSSCredentialImpl( credential, 
+   org.ietf.jgss.GSSCredential.INITIATE_AND_ACCEPT );
+desc.setGSSCredential( gss );
+desc.setGSITransport( (Integer) Constants.SIGNATURE );
+Util.registerTransport();
+desc.setAuthz( NoAuthorization.getInstance() );
+
+EndpointReferenceType delegEpr = 
+    AddressingUtils.createEndpointReference( delUri, null );
+
+// acquire cert chain 
+X509Certificate[] certs = 
+    DelegationUtil.getCertificateChainRP( delegEpr, desc );
+
+if( certs == null  )
+     throw new Exception( "No Certs received" );
+
+// create delegate
+int ttl = 600; // a time to life for the proxy in seconds 
+// the boolean value can be ignored
+EndpointReferenceType delegate = 
+    DelegationUtil.delegate( delUri, credential, certs[0], ttl, true, desc );
+
+// reuse credentials for this call
+( (Stub) port )._setProperty( 
+    org.globus.axis.gsi.GSIConstants.GSI_CREDENTIALS, gss ); 
+
+// creates a new resource which uses the delegate, i.e. proxy cert
+EndpointReferenceType epr = 
+    ( (SomePortType) port ).createResource( delegate );
+\end{verbatim}
+
+\subsubsection{Server-Side Delegation}
+
+On the server side, the EPR needs to be used to retrieve the proxy
+certificate. Additionally, a \verb!DelegationListener! needs to be
+registered to be informed about proxy state changes (Update,
+Destroy).
+
+Example service factory method that instantiates a resource:
+
+\begin{verbatim}
+public EndpointReferenceType createResource ( EndpointReferenceType delegate ) {
+    SomeResource sr = new SomeResource( );
+    sr.setDelegationEPR( delegate );
+    ...
+    return endPointRefOf( sr );
+}
+\end{verbatim}
+
+The resource needs to be modified accordingly as well:
+
+
+\begin{verbatim}
+public class SomeResource implements Resource {
+
+    SomeResourceHome home;
+    GlobusCredential credential;
+
+    public void refreshRegistration( final boolean forceRefresh ) {
+        // do refreshing stuff if required
+    }
+
+
+    public void setCredential( final GlobusCredential cred ) {
+        credential = cred;
+    }
+
+
+    public GlobusCredential getCredential( ) {
+        return credential;
+    }
+
+
+    public void setDelegateEPR( final EndpointReferenceType epr ) {
+
+        SomeDelegationListener list = 
+        new SomeDelegationListener( getResourceKey(), home );
+        try {
+            // registers listener with the delegation service
+            DelegationUtil.registerDelegationListener( epr, list );
+        } catch ( DelegationException e ) {
+            e.printStackTrace();
+        }
+    }
+
+    // other service specific stuff here ...
+ }
+\end{verbatim}
+
+The container will be calling \verb!get/setCredential! on the
+listener interface. A simple default implementation follows:
+
+\begin{verbatim}
+public class SomeDelegationListener implements DelegationListener {
+
+    private static Logger logger = Logger.getLogger( SomeDelegationListener.class );
+    private String regristrationId;
+    private ResourceKey resourceKey;
+    private ResourceHome home;
+
+
+    public SomeDelegationListener() {
+    }
+
+
+    public SomeDelegationListener( final ResourceKey resourceKey, 
+final ResourceHome home ) {
+        this.resourceKey = resourceKey;
+        this.home = home;
+    }
+
+
+    public void setCredential( final GlobusCredential credential )
+throws DelegationException {
+
+         try {
+           SomeCredibleResource res = 
+           ( SomeCredibleResource ) home.find( resourceKey );
+           res.setCredential( credential );
+         } catch ( ResourceException e ) {
+           logger.error( e );
+         }
+    }
+
+
+    public void credentialDeleted() {
+       // Can notify the resource
+    }
+
+    // getters and setters for the instance vars are omitted for the sake of shortness
+    // ....
+}
+\end{verbatim}
+
+The \verb!setCredential! method will be called at listener
+registration time.
+
+With these extensions, a resource has access to the credentials of
+the user to which the proxy belongs.
+
+\subsubsection{Using Delegation with Proxy Certificates}
+
+Service Orchestration
+
+The main purpose of certificate delegation is to allow a service to
+call another service on behalf of the user. Let's assume
+\verb!SomeService! is a client of \verb!AnotherService!. In the
+following example \verb!AnotherService! is called by
+\verb!SomeService! with the proxy credentials by first loading them
+into the \verb!ClientDescriptor!:
+
+\begin{verbatim}
+AnotherPortType port = ...;
+    ( (Stub) port )._setProperty( org.globus.wsrf.security.Constants.GSI_TRANSPORT,
+                        org.globus.wsrf.security.Constants.ENCRYPTION );
+            // SIGNATUR should also work
+    org.ietf.jgss.GSSCredential gss = 
+    new org.globus.gsi.gssapi.GlobusGSSCredentialImpl( credential,
+            org.ietf.jgss.GSSCredential.INITIATE_AND_ACCEPT );
+    ( (Stub) port )._setProperty( 
+    org.globus.axis.gsi.GSIConstants.GSI_CREDENTIALS, gss );
+    ( (Stub) port ).doAnotherThing();
+\end{verbatim}
+
+Now, in \verb!AnotherService!, the caller DN (\verb!null! in
+anonymous communication) is obtainable by calling:
+
+\begin{verbatim}
+ org.globus.wsrf.security.SecurityManager.getManager().getCaller();
+\end{verbatim}
+
+This may be mapped to local UNIX users via the grid-map mechanism:
+
+\begin{verbatim}
+  org.globus.wsrf.security.SecurityManager.getManager( ).getLocalUsernames()
+\end{verbatim}
+
+Export Proxy Credentials to a File
+
+
+\begin{verbatim}
+public void storeCredential( Sting filename ) {
+     try {
+         File f = new File( filename );
+         FileOutputStream fos = new FileOutputStream( f );
+         GlobusGSSCredentialImpl crd = 
+         new GlobusGSSCredentialImpl( credential, GSSCredential.ACCEPT_ONLY );
+         fos.write( crd.export( ExtendedGSSCredential.IMPEXP_OPAQUE  ) );
+         fos.close();
+     } catch( Exception e ) {
+         // an exception --- do something
+     }
+}
+\end{verbatim}
+
+The resulting file is structured as follows:
+
+\begin{itemize}
+\item
+  Proxy certificate generated last
+\item
+  Private key of this certificate
+\item
+  Certificate chain in descending order
+\end{itemize}
+The exported proxy may be verified manually with openssl by first
+splitting this file into the \verb!head! (containing everything but
+the certificate chain) and the \verb!tail! (containing the
+certificate chain) and setting \verb!$OPENSSL_ALLOW_PROXY_CERTS=1!.
+Now execute:
+
+\begin{verbatim}
+openssl verify -CApath /etc/grid-security/certificates -CAfile tail head
+\end{verbatim}
+If everything is ok, \verb!openssl! will print
+
+\begin{verbatim}
+head: OK
+\end{verbatim}
+Otherwise a lengthy error message will be shown.
+
+Another way to acompish this is to install the tool
+\href{http://www.nikhef.nl/~janjust/proxy-verify/}{grid-proxy-verify},
+which handles the proxy-file without the need of splitting. A look
+at the source code is an interesting read concerning the details of
+proxy verification with openssl.
+
+\subsection{Contract Semantics}
+
+This section describes the precise semantics of offer contracts in
+\emph{GNDMS}. An \emph{offer} is an negotiable offer for the
+execution of a data management task (like Staging, Transfer, and
+Publishing). Offer contracts may specify requirements on execution
+time, duration and location. Offers are negotiated between a client
+and server in rounds until agreement is reached and a contract is
+succesfully established.
+
+Client and server roles are taken by different participants. For
+example, a grid meta scheduler may be a client to a central data
+management site that runs GNDMS, while the same site may be a
+client to a data provider site in a different negotiation.
+
+\subsubsection{Protocol}
+
+The protocol consists of three steps.
+
+\begin{itemize}
+\item
+  Client send an OfferRequest with desired task and requirements
+\item
+  Server replies with an offer contract that tries to match clients
+  requirements.
+\item
+  Client either accepts the offer. In this case, the protocol is
+  finished with the creation of a task resource that allows the
+  client to monitor task execution and to fetch results. Otherwise,
+  the client is free to discard the offer and redo the protocol with
+  another site or another contract.
+
+\begin{verbatim}
+Client                      GORFXServer 
+   |                              |
+   |     createOffer( ORQ )*      |
+   X----------------------------->|--+
+   |                              |  |
+   |                              |  | Estimation( ORQ )
+   |                              |  |
+   |    offerContract             |<-+
+   |<-----------------------------X
+   |       Accept                 |
+   X----------------------------->|--+
+   |                              |  |
+   |                              |  | run task
+   |                              |  |
+   |        Result                |<-+
+   |<-----------------------------X
+   |                              |
+   .                              .
+\end{verbatim}
+\end{itemize}
+
+\subsubsection{Contract Structure}
+
+A contract consists of
+
+\begin{itemize}
+\item
+  An (optional) point in time called \verb!IfDecisionBefore!,
+  \textbf{IDB} for short
+\item
+  An (optional) point in time called \verb!ExecutionLikelyUntil!,
+  \textbf{ELU} for short
+\item
+  A point in time or an offet calles \verb!ResultValidUntil!,
+  \textbf{RVU} for short, or \textbf{Delta-RVU}, respectively
+\item
+  An (optional) size estimation calles \verb!EstMaxSize!,
+  \textbf{EMS} for short (upper bound on the number of bytes of
+  result data)
+\item
+  An (optional) set of key-value apires called \verb!RequestInfo!,
+  \textbf{RI} for short. \textbf{RI} may be used to pass additional
+  information like remarks, warnings etc. From a middleware point of
+  view, \textbf{RI} is \emph{not} part of the contract.
+\end{itemize}
+\subsubsection{Contract Semantics}
+
+\textbf{Precise contract semantics} : If the Offer is accepted
+before \textbf{IDB}, the task will be executed before \textbf{ELU}
+with high probability. Results are made available until
+\textbf{RVU} as long as they do not need more than \textbf{EMS}
+bytes of storage.
+
+If \textbf{IDB} is missing, it is interpreted as an
+\emph{arbitrary, undefined point in the future}. This is currently
+not supported by the software but specifiable according to the
+underlying XSD schema.
+
+If \textbf{ELU} is missing, it is interpreted as
+\emph{arbitrary, unknown task execution duration}. This is
+currently not supported by the software but specifiable according
+to the underlying XSD schema.
+
+\subsubsection{Generic Client Restrictions}
+
+\textbf{IDB} is mandatory. All mandatory invariants need to be
+fulfilled.
+
+\subsubsection{C3-Grid Data Provider Server Restrictions}
+
+Contract semantic variables are mapped to staging properties as
+detailed below:
+
+\begin{verbatim}
+IDB = c3grid.StageFileRequest.Estimate.IfDecisionBefore, 
+ELU = c3grid.StageFileRequest.Estimate.ExecutionLikelyUntil, 
+RVU = c3grid.StageFileRequest.Estimate.ResultValidUntil, 
+EMS = c3grid.StageFileRequest.Estimate.MaxSize, 
+RI  = c3grid.StageFileRequest.Estimate.RequestInfo
+\end{verbatim}
+\begin{itemize}
+\item
+  Data providers must specify an \textbf{ELU} that must be identical
+  to the \textbf{ELU} requested from the client
+\item
+  \textbf{IDB} and \textbf{RVU} may not be modified by the server. In
+  the case of \textbf{RVU} \textless{} \textbf{ELU}, the client
+  should discard the request.
+\item
+  Client \textbf{EMS} may be discarded or overwritten by the server
+  in his offer
+\item
+  \textbf{RI} is filtered for keys
+\end{itemize}
+\textbf{Summary} : For staging requests to data providers, it is
+sufficient to specify \textbf{ELU} in ms and \textbf{EMS} in bytes,
+and to optionally include key-value data in \textbf{RI}
+
+\subsubsection{Support for Missing Timing Estimates}
+
+\subsubsection{Contract Invariants}
+
+Depending on how the contract requested by the client looks like,
+some invariants need to be fulfilled:
+
+\textbf{ELU, RVU} requested : \textbf{IDB} \textless{} \textbf{ELU}
+and \textbf{IDB} \textless{} \textbf{RVU} (Therefore in practice,
+choose \textbf{IDB} \textless{} \textbf{ELU} \textless{}
+\textbf{RVU})
+
+\textbf{Delta-ELU, RVU} requested : \textbf{IDB} \textless{}
+\textbf{RVU} (Therefore in practice, choose \textbf{IDB} +
+\textbf{Delta-ELU} \textless{} \textbf{RVU})
+
+\textbf{ELU, Delta-RVU} requested : \textbf{IDB} \textless{}
+\textbf{ELU} (and \textbf{RVU} is \textbf{ELU} + \textbf{Delta-RVU}
+and therefore \textbf{ELU} \textless{}= \textbf{RVU} always holds)
+
+\textbf{Delta-ELU, Delta-RVU} requested : No invariants, it holds
+that start time \textbf{ST} \textless{}= \textbf{IDB}, completion
+time \textbf{CT} = \textbf{ELU} = \textbf{ST} + \textbf{Delta-ELU},
+\textbf{RVU} = \textbf{CT} + \textbf{Delta-RVU} and therefore
+always \textbf{ELU} \textless{}= \textbf{RVU}
+
+It always holds that
+\textbf{ST}\textless{}=\textbf{IDB}\textless{}=\textbf{CT}\textless{}=\textbf{ELU}.
+If \textbf{Delta-RVU} was requested. Additionally always
+\textbf{CT} \textless{}= \textbf{ELU} \textless{}= \textbf{RVU} is
+true.
+
+Clients need to honor all invariants. Servers need to honor all
+invariants which do not contain \textbf{RVU}. Servers may only
+modify \textbf{ELU}.
+
+\textbf{Contract} : GNDMS negotiates \emph{contracts} with clients
+about task execution. A contract specifies what is to be done, and
+optionally when and where it is to be done by GNDMS on behalf of
+the client. \emph{Contracts} are accepted \emph{Offers}.
+
+\textbf{Data Provider} : In \href{http://www.c3grid.de}{C3-Grid},
+data providers are sites that run GNDMS with the Staging Plugin in
+order to grant access to their local climate data archives.
+
+\textbf{DMS} : Often used for the (or a) central data management
+coordination site of a community grid.
+
+\textbf{DMS-Publish} : In \href{http://www.c3grid.de}{C3-Grid},
+load balancing publish to a dedicated storage server.
+
+\textbf{DMS-Staging} : In \href{http://www.c3grid.de}{C3-Grid},
+indirection of a staging request to a matching data provider or
+cache.
+
+\textbf{DSpace} : Workspace management service of GNDMS. Each
+DSpace is structured into a set of \emph{subspaces} (Logical
+stroage group). Each subspace consists of multiple \emph{slices}
+(Non-hierachical container of files).
+
+\textbf{GNDMS} : Generation N Data Management System. A data
+management solution for community grids based on the
+\href{http://www.globus.orrg}{Globus Toolkit 4 Middleware}.
+
+\textbf{GORFX} (aka \textbf{G}eneric \textbf{O}ffer
+\textbf{R}equest \textbf{F}actory \textbf{X}) : Service for the
+negotation of data management task execution.
+
+\textbf{Offer} : Cf. \emph{Contract}, offers are the subjects of
+contract negotiation, Offers are not-yet accepted contracts.
+
+\textbf{Offer Request} : Description of a task and required
+\emph{offer} constraints.
+
+\textbf{Publish} : In \href{http://www.c3grid.de}{C3-Grid},
+publishing of intermediary results
+
+\textbf{Publish-Host} : Host that provides storage resources for
+\emph{Publish}. Needs to run \emph{DSpace} and \emph{GORFX}
+configured for support of the \emph{Publish} task.
+
+\textbf{Staging} : In \href{http://www.c3grid.de}{C3-Grid}, import
+of climate data from external archives into the data management
+infrastructure of the community grid.
+
+
+\section{License}
+
+GNDMS is distributed under the Apache License 2.0
+
+Please consult the file LICENSE and everything below
+`doc/licensing' in your release tarball for details.
+
+Copyright 2008--2010 Zuse Institut Berlin (ZIB)
+
+Licensed under the Apache License, Version 2.0 (the ``License'');
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+\begin{verbatim}
+   http://www.apache.org/licenses/LICENSE-2.0
+\end{verbatim}
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an ``AS IS'' BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+implied. See the License for the specific language governing
+permissions and limitations under the License.
+
+\begin{verbatim}
+                             Apache License
+                       Version 2.0, January 2004
+                    http://www.apache.org/licenses/
+\end{verbatim}
+TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+  Definitions.
+
+  ``License'' shall mean the terms and conditions for use,
+  reproduction, and distribution as defined by Sections 1 through 9
+  of this document.
+
+  ``Licensor'' shall mean the copyright owner or entity authorized by
+  the copyright owner that is granting the License.
+
+  ``Legal Entity'' shall mean the union of the acting entity and all
+  other entities that control, are controlled by, or are under common
+  control with that entity. For the purposes of this definition,
+  ``control'' means (i) the power, direct or indirect, to cause the
+  direction or management of such entity, whether by contract or
+  otherwise, or (ii) ownership of fifty percent (50\%) or more of the
+  outstanding shares, or (iii) beneficial ownership of such entity.
+
+  ``You'' (or ``Your'') shall mean an individual or Legal Entity
+  exercising permissions granted by this License.
+
+  ``Source'' form shall mean the preferred form for making
+  modifications, including but not limited to software source code,
+  documentation source, and configuration files.
+
+  ``Object'' form shall mean any form resulting from mechanical
+  transformation or translation of a Source form, including but not
+  limited to compiled object code, generated documentation, and
+  conversions to other media types.
+
+  ``Work'' shall mean the work of authorship, whether in Source or
+  Object form, made available under the License, as indicated by a
+  copyright notice that is included in or attached to the work (an
+  example is provided in the Appendix below).
+
+  ``Derivative Works'' shall mean any work, whether in Source or
+  Object form, that is based on (or derived from) the Work and for
+  which the editorial revisions, annotations, elaborations, or other
+  modifications represent, as a whole, an original work of
+  authorship. For the purposes of this License, Derivative Works
+  shall not include works that remain separable from, or merely link
+  (or bind by name) to the interfaces of, the Work and Derivative
+  Works thereof.
+
+  ``Contribution'' shall mean any work of authorship, including the
+  original version of the Work and any modifications or additions to
+  that Work or Derivative Works thereof, that is intentionally
+  submitted to Licensor for inclusion in the Work by the copyright
+  owner or by an individual or Legal Entity authorized to submit on
+  behalf of the copyright owner. For the purposes of this definition,
+  ``submitted'' means any form of electronic, verbal, or written
+  communication sent to the Licensor or its representatives,
+  including but not limited to communication on electronic mailing
+  lists, source code control systems, and issue tracking systems that
+  are managed by, or on behalf of, the Licensor for the purpose of
+  discussing and improving the Work, but excluding communication that
+  is conspicuously marked or otherwise designated in writing by the
+  copyright owner as ``Not a Contribution.''
+
+  ``Contributor'' shall mean Licensor and any individual or Legal
+  Entity on behalf of whom a Contribution has been received by
+  Licensor and subsequently incorporated within the Work.
+
+  Grant of Copyright License. 
+
+  Subject to the terms and conditions of
+  this License, each Contributor hereby grants to You a perpetual,
+  worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+  copyright license to reproduce, prepare Derivative Works of,
+  publicly display, publicly perform, sublicense, and distribute the
+  Work and such Derivative Works in Source or Object form.
+
+  Grant of Patent License. 
+
+  Subject to the terms and conditions of
+  this License, each Contributor hereby grants to You a perpetual,
+  worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+  (except as stated in this section) patent license to make, have
+  made, use, offer to sell, sell, import, and otherwise transfer the
+  Work, where such license applies only to those patent claims
+  licensable by such Contributor that are necessarily infringed by
+  their Contribution(s) alone or by combination of their
+  Contribution(s) with the Work to which such Contribution(s) was
+  submitted. If You institute patent litigation against any entity
+  (including a cross-claim or counterclaim in a lawsuit) alleging
+  that the Work or a Contribution incorporated within the Work
+  constitutes direct or contributory patent infringement, then any
+  patent licenses granted to You under this License for that Work
+  shall terminate as of the date such litigation is filed.
+
+  Redistribution. 
+
+  You may reproduce and distribute copies of the Work
+  or Derivative Works thereof in any medium, with or without
+  modifications, and in Source or Object form, provided that You meet
+  the following conditions:
+
+    You must give any other recipients of the Work or Derivative Works
+    a copy of this License; and
+
+    You must cause any modified files to carry prominent notices
+    stating that You changed the files; and
+
+    You must retain, in the Source form of any Derivative Works that
+    You distribute, all copyright, patent, trademark, and attribution
+    notices from the Source form of the Work, excluding those notices
+    that do not pertain to any part of the Derivative Works; and
+
+    If the Work includes a ``NOTICE'' text file as part of its
+    distribution, then any Derivative Works that You distribute must
+    include a readable copy of the attribution notices contained within
+    such NOTICE file, excluding those notices that do not pertain to
+    any part of the Derivative Works, in at least one of the following
+    places: within a NOTICE text file distributed as part of the
+    Derivative Works; within the Source form or documentation, if
+    provided along with the Derivative Works; or, within a display
+    generated by the Derivative Works, if and wherever such third-party
+    notices normally appear. The contents of the NOTICE file are for
+    informational purposes only and do not modify the License. You may
+    add Your own attribution notices within Derivative Works that You
+    distribute, alongside or as an addendum to the NOTICE text from the
+    Work, provided that such additional attribution notices cannot be
+    construed as modifying the License.
+
+  You may add Your own copyright statement to Your modifications and
+  may provide additional or different license terms and conditions
+  for use, reproduction, or distribution of Your modifications, or
+  for any such Derivative Works as a whole, provided Your use,
+  reproduction, and distribution of the Work otherwise complies with
+  the conditions stated in this License.
+
+  Submission of Contributions. Unless You explicitly state otherwise,
+  any Contribution intentionally submitted for inclusion in the Work
+  by You to the Licensor shall be under the terms and conditions of
+  this License, without any additional terms or conditions.
+  Notwithstanding the above, nothing herein shall supersede or modify
+  the terms of any separate license agreement you may have executed
+  with Licensor regarding such Contributions.
+
+  Trademarks. This License does not grant permission to use the trade
+  names, trademarks, service marks, or product names of the Licensor,
+  except as required for reasonable and customary use in describing
+  the origin of the Work and reproducing the content of the NOTICE
+  file.
+
+  Disclaimer of Warranty. Unless required by applicable law or agreed
+  to in writing, Licensor provides the Work (and each Contributor
+  provides its Contributions) on an ``AS IS'' BASIS, WITHOUT
+  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied,
+  including, without limitation, any warranties or conditions of
+  TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+  PARTICULAR PURPOSE. You are solely responsible for determining the
+  appropriateness of using or redistributing the Work and assume any
+  risks associated with Your exercise of permissions under this
+  License.
+
+  Limitation of Liability. In no event and under no legal theory,
+  whether in tort (including negligence), contract, or otherwise,
+  unless required by applicable law (such as deliberate and grossly
+  negligent acts) or agreed to in writing, shall any Contributor be
+  liable to You for damages, including any direct, indirect, special,
+  incidental, or consequential damages of any character arising as a
+  result of this License or out of the use or inability to use the
+  Work (including but not limited to damages for loss of goodwill,
+  work stoppage, computer failure or malfunction, or any and all
+  other commercial damages or losses), even if such Contributor has
+  been advised of the possibility of such damages.
+
+  Accepting Warranty or Additional Liability. While redistributing
+  the Work or Derivative Works thereof, You may choose to offer, and
+  charge a fee for, acceptance of support, warranty, indemnity, or
+  other liability obligations and/or rights consistent with this
+  License. However, in accepting such obligations, You may act only
+  on Your own behalf and on Your sole responsibility, not on behalf
+  of any other Contributor, and only if You agree to indemnify,
+  defend, and hold each Contributor harmless for any liability
+  incurred by, or claims asserted against, such Contributor by reason
+  of your accepting any such warranty or additional liability.
+
+END OF TERMS AND CONDITIONS
+\end{document}
