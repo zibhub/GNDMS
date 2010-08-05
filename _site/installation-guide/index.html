@@ -240,6 +240,8 @@ Container home directory is &#39;/opt/gt-current&#39;</code></pre>
 
 <p>The test client simulates a standard GNDMS-use-case, it creates as target slice, copies some files into the slice. Then it copies the files back from the slice to some target directory and destroys the slice.</p>
 
+<p>This test should be executed as <em>ordinary grid-user</em> not the globus-user. (The only thing you need the globus-user for is to edit the property-file, but more about that in the next section.)</p>
+
 <h3 id='setup'>Setup</h3>
 
 <p>For the scenario the following setup is required. On your grid-ftp space create a directory and add some files, e.g. using the following bash command-line:</p>
@@ -286,6 +288,27 @@ Done.</code></pre>
 <dt><strong>I&#8217;m getting a &#8221;<code>GSSException: Defective credential detected</code>&#8221; exception.</strong></dt>
 
 <dd>This can have to reasons: your certificate-proxy maybe outdated or doesn&#8217;t exist or your CA directory isn&#8217;t up to date. In the first case just call <code>grid-proxy-init</code> again, in the second refer to the <code>fetch-crl</code> section <a href='#fetch-crl'>below</a>.</dd>
+
+<dt><strong>The file transfer throws an execption:</strong></dt>
+
+<dd>If the exeption looks something like <pre><code>
+java.lang.IllegalStateException: File transfer from 
+    gsiftp://some.foo.org:2811/tmp/srcDir to 
+    gsiftp://more.bar.org/tmp/gndms/RW/f521ba10-a06a-11df-b70c-f2b2b7430fda failure 
+    Server refused performing the request. ...`
+</code></pre></dd>
+
+<dd>Or the client prints out infinite <code>Waiting for transfer to finish...</code> messages and the destination directory contains a single empty file, please ensure the both grid-ftp servers are running, accepting your credential and can talk to each other. Best way to verify this is to search the test-clients output for a line like: <pre><code>
+Copy gsiftp://some.foo.org:2811/tmp/srcDir ->
+    gsiftp://more.bar.org/tmp/gndms/RW/f521ba10-a06a-11df-b70c-f2b2b7430fda
+</code></pre></dd>
+
+<dd>and try <code>globus-url-copy</code> with: <pre><code>
+globus-url-copy gsiftp://some.for.org:2811/tmp/srcDir/someFile \
+    gsiftp://more.bar.org/tmp/gndms/RW/f521ba10-a06a-11df-b70c-f2b2b7430fda/targetFile
+</code></pre></dd>
+
+<dd>If you get an error message like &#8220;No route to host&#8221; or the like ensure that the grid-ftp servers of both hosts are listening on the right network device and that now firewall is blocking the connection. If this hangs infinitely something with the data-channel setup is wrong. Consult the grid-ftp documentation about the &#8211;data-channel argument.</dd>
 </dl>
 
 <h2 id='advanced_configuration'>Advanced Configuration</h2>

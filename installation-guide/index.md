@@ -296,6 +296,10 @@ The test client simulates a standard GNDMS-use-case, it creates as
 target slice, copies some files into the slice. Then it copies the
 files back from the slice to some target directory and destroys the slice.
 
+This test should be executed as *ordinary grid-user* not the
+globus-user. (The only thing you need the globus-user for is to
+edit the property-file, but more about that in the next section.)
+
 ### Setup
 
 For the scenario the following setup is required. On your grid-ftp
@@ -365,6 +369,35 @@ doesn't exist or your CA directory isn't up to date. In the first case
 just call `grid-proxy-init` again, in the second refer to the
 `fetch-crl` section <a href="#fetch-crl">below</a>.
 
+
+**The file transfer throws an execption:**
+: If the exeption looks something like
+<pre><code>
+    java.lang.IllegalStateException: File transfer from 
+        gsiftp://some.foo.org:2811/tmp/srcDir to 
+        gsiftp://more.bar.org/tmp/gndms/RW/f521ba10-a06a-11df-b70c-f2b2b7430fda failure 
+        Server refused performing the request. ...`
+</code></pre>
+: Or the client prints out infinite `Waiting for transfer to finish...`
+messages and the destination directory contains a single empty file,
+please ensure the both grid-ftp servers are running, accepting your
+credential and can talk to each other. Best way to verify this is to
+search the test-clients output for a line like:
+<pre><code>
+    Copy gsiftp://some.foo.org:2811/tmp/srcDir ->
+        gsiftp://more.bar.org/tmp/gndms/RW/f521ba10-a06a-11df-b70c-f2b2b7430fda
+</code></pre>
+: and try `globus-url-copy` with:
+<pre><code>
+    globus-url-copy gsiftp://some.for.org:2811/tmp/srcDir/someFile \
+        gsiftp://more.bar.org/tmp/gndms/RW/f521ba10-a06a-11df-b70c-f2b2b7430fda/targetFile
+</code></pre>
+: If you get an error message like "No route to host" or the like
+ensure that the grid-ftp servers of both hosts are listening on the
+right network device and that now firewall is blocking the connection.
+If this hangs infinitely something with the data-channel setup is
+wrong. Consult the grid-ftp documentation about the --data-channel
+argument.
 
 Advanced Configuration
 ----------------------
