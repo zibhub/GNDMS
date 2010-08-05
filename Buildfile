@@ -507,7 +507,7 @@ desc 'Install and deploy a release build'
 task 'install-distribution' => ['install-deps', 'deploy-DSpace', 'deploy-GORFX']
 
 task 'fix-permissions' do
-    system "#{ENV['GNDMS_SOURCE']}/fix-permissions.sh"
+    system "#{ENV['GNDMS_SOURCE']}/scripts/internal/fix-permissions.sh"
 end
 
 def nope()
