@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 syntax:glob
 
 services/*/build/**
@@ -76,5 +75,3 @@ lib/jruby-*
 services/DSpace/build/*
 services/GORFX/build/*
 services/LOFIS/build/*
-doc/api/*
-_site
