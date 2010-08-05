@@ -12,7 +12,7 @@ GNDMS Developer Guide
 =====================
 
 This is the Developer Guide for the
-[Generation N Data Management System](../index.html). It is far from
+[Generation N Data Management System]({{ page.root }}index.html). It is far from
 complete.  It currently contains various tidbits copied together from
 different Wikis.  YMMV.  Use the source, luke!
 
@@ -28,7 +28,7 @@ Writing Webservice Clients
 ### Setup a Development Environment
 
 * Install GNDMS as described in the
-  [installation guide](../installation-guide)
+  [installation guide]({{ page.root }}installation-guide)
 * Use `gndms-buildr idea` or `gndms-buildr eclipse` to generate
   template IDEA or eclipse projects.
 * You might need to add `$GLOBUS_LOCATION/lib/*.jar` 

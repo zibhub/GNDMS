@@ -446,7 +446,7 @@ internal database of GNDMS.
 
 ### Using the Monitor Shell
 
-Please consult the [monitor shell guide](/moni-guide)
+Please consult the [monitor shell guide]({{ page.root }}moni-guide)
 
 
 
@@ -519,6 +519,7 @@ follow the procedure described below when making a release:
     git push --tags origin master
     find $GNDMS_SOURCE -type f -name '\*.class' -exec rm '{}' \;
     find $GNDMS_SOURCE -type d -name classes | xargs rm -fR
+    rm .gitignore
     # Additionally delete 
     #   \*/target 
     #   name/gndms-name
