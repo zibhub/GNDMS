@@ -8,13 +8,13 @@ GNDMS Monitor Shell Guide
 =========================
 
 This is the Monitor Shell Guide for the
-[Generation N Data Management System](../index.html).
+[Generation N Data Management System]({{ page.root }}index.html).
 
 * Maruku will replace this with a fine Table of Contents
 {:toc}
 
 If you have set up your environment as described in the
-[prerequisites section](/installation-guide/#prerequisites) of the
+[prerequisites section]({{ page.root }}installation-guide/#prerequisites) of the
 GNDMS Installation Guide you may use the GNDMS monitoring and
 configuration shell to access a running instance of the GNDMS
 software. This is a little servlet that allows the execution of
