@@ -160,5 +160,15 @@ body>#header {height:14px; }
 	border-width:0px 0px 0px 0px; /* top and bottom borders: 1px; left and right borders: 0px */
 }
 
+#stats {
+  position: relative;
+  top: 32px;
+  left: -86px;
+  padding: 0px;
+  margin: 0px;
+	border-width: 4px;
+  width: 57em;
+}
+
 /* Again, "be nice to Opera 5". */
 body>#menu {width:150px;}

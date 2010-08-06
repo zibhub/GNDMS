@@ -1,7 +1,7 @@
 ---
 title: GNDMS
 root: .
-layout: wikistyle
+layout: main
 ---
 
 Generation N Data Management System
@@ -31,5 +31,5 @@ reuse by other grid projects with similiar data management
 requirements. Core components may be of use to developers of non-data
 management GT4 services as well.
 
-GNDMS was written at [Zuse Institute Berlin (ZIB)](http://www.zib.de).
+GNDMS was developed at [Zuse Institute Berlin (ZIB)](http://www.zib.de).
 
