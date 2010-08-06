@@ -209,7 +209,7 @@ factory methods during resource instantiation.
     ClientSecurityDescriptor desc = new ClientSecurityDescriptor();
     org.ietf.jgss.GSSCredential gss = 
         new org.globus.gsi.gssapi.GlobusGSSCredentialImpl( credential, 
-	   org.ietf.jgss.GSSCredential.INITIATE_AND_ACCEPT );
+       org.ietf.jgss.GSSCredential.INITIATE_AND_ACCEPT );
     desc.setGSSCredential( gss );
     desc.setGSITransport( (Integer) Constants.SIGNATURE );
     Util.registerTransport();
@@ -289,7 +289,7 @@ The resource needs to be modified accordingly as well:
         public void setDelegateEPR( final EndpointReferenceType epr ) {
 
             SomeDelegationListener list = 
-	        new SomeDelegationListener( getResourceKey(), home );
+            new SomeDelegationListener( getResourceKey(), home );
             try {
                 // registers listener with the delegation service
                 DelegationUtil.registerDelegationListener( epr, list );
@@ -321,18 +321,18 @@ interface.  A simple default implementation follows:
 
 
         public SomeDelegationListener( final ResourceKey resourceKey, 
-	final ResourceHome home ) {
+    final ResourceHome home ) {
             this.resourceKey = resourceKey;
             this.home = home;
         }
 
 
         public void setCredential( final GlobusCredential credential )
-	throws DelegationException {
+    throws DelegationException {
 
              try {
                SomeCredibleResource res = 
-	           ( SomeCredibleResource ) home.find( resourceKey );
+               ( SomeCredibleResource ) home.find( resourceKey );
                res.setCredential( credential );
              } catch ( ResourceException e ) {
                logger.error( e );
@@ -377,10 +377,10 @@ by first loading them into the `ClientDescriptor`:
                             org.globus.wsrf.security.Constants.ENCRYPTION );
                 // SIGNATUR should also work
         org.ietf.jgss.GSSCredential gss = 
-	    new org.globus.gsi.gssapi.GlobusGSSCredentialImpl( credential,
+        new org.globus.gsi.gssapi.GlobusGSSCredentialImpl( credential,
                 org.ietf.jgss.GSSCredential.INITIATE_AND_ACCEPT );
         ( (Stub) port )._setProperty( 
-	    org.globus.axis.gsi.GSIConstants.GSI_CREDENTIALS, gss );
+        org.globus.axis.gsi.GSIConstants.GSI_CREDENTIALS, gss );
         ( (Stub) port ).doAnotherThing();
 
 {% endhighlight %}
@@ -412,7 +412,7 @@ This may be mapped to local UNIX users via the grid-map mechanism:
              File f = new File( filename );
              FileOutputStream fos = new FileOutputStream( f );
              GlobusGSSCredentialImpl crd = 
-	         new GlobusGSSCredentialImpl( credential, GSSCredential.ACCEPT_ONLY );
+             new GlobusGSSCredentialImpl( credential, GSSCredential.ACCEPT_ONLY );
              fos.write( crd.export( ExtendedGSSCredential.IMPEXP_OPAQUE  ) );
              fos.close();
          } catch( Exception e ) {
@@ -449,6 +449,74 @@ verification with openssl.
 
 
 
+### How to send a delegation EPR to the GORFX-service
+
+Every method which is accessible via the GORFX WS-interface and which
+requires a delegation proxy, has a parameter of `ContextT`. ContextT
+itself is defined as:
+
+{% highlight xml %}
+    <complexType name="ContextT">
+        <sequence>
+            <element name="entry" minOccurs="0" maxOccurs="unbounded">
+                <complexType>
+                    <simpleContent>
+                        <extension base="xsd:normalizedString">
+                            <attribute name="key" type="xsd:token" />
+                        </extension>
+                    </simpleContent>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+{% endhighlight %}
+
+Which basically describes a map, whose keys and values are *normalized
+strings*. The delegation EPR is just another entry in this map. Now you
+might say an EPR isn't a normalized string, and you would be right,
+thats why we use the Base64 encoder from 
+[Apache-Commons](http://commons.apache.org/codec/) to normalize the EPR.
+Find below a java example:
+
+{% highlight java %}
+    public void addDelegationEPR( ContextT con, EndpointReferenceType epr ) {
+
+        final String DELEGATION_EPR_KEY = "DelegationEPR";
+        final QName QNAME = new QName("", "DelegatedEPR");
+
+        // boilerplate code which extracts the "map"
+        ContextTEntry[] entries = con.getEntry();
+        ArrayList<ContextTEntry> al;
+        if ( entries != null ) {
+            al = new ArrayList<ContextTEntry>( entries.length + 1 );
+            for( ContextTEntry e : entries )
+                al.add( e );
+        } else
+            al = new ArrayList<ContextTEntry>( 1 );
+
+        // now serialize the epr
+        ByteArrayOutputStream bse = new ByteArrayOutputStream( );
+        ObjectOutputStream oos = new ObjectOutputStream( bse );
+        oos.writeObject( ObjectSerializer.toString( epr , QNAME ) );
+
+        // here the encoding happends
+        final Base64 b64   = new Base64( 4000, new byte[] { }, true );
+        final String uuepr = b64.encodeToString( bse.toByteArray() );
+
+        // create a new entry for the delegation pair
+        ContextTEntry ct = new ContextTEntry( );
+        ct.set_value( new NormalizedString( uuepr ) );
+        ct.setKey( new Token( DELEGATION_EPR_KEY ) );
+        al.add( ct );
+
+        // put it pack in the contract
+        con.setEntry( al.toArray( new ContextTEntry[al.size()] ) );
+    }
+{% endhighlight %}
+
+Note the map key for the EPR must be `DelegationEPR` or the service
+will not find it.
+
 
 Contract Semantics
 ------------------
@@ -465,7 +533,6 @@ Client and server roles are taken by different participants. For
 example, a grid meta scheduler may be a client to a central data
 management site that runs GNDMS, while the same site may be a client
 to a data provider site in a different negotiation.
-
 
 
 ### Protocol
