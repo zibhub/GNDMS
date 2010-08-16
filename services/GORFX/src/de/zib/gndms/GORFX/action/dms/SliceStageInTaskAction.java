@@ -1,6 +1,8 @@
 package de.zib.gndms.GORFX.action.dms;
 
 import de.zib.gndms.GORFX.context.client.TaskClient;
+import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.infra.system.SystemHolder;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.model.dspace.types.SliceRef;
 import de.zib.gndms.model.gorfx.AbstractTask;
@@ -11,8 +13,6 @@ import de.zib.gndms.typecon.common.type.ContextXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.ContractXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.ProviderStageInORQXSDTypeWriter;
 import de.zib.gndms.typecon.common.type.SliceRefXSDReader;
-import de.zib.gndms.infra.system.SystemHolder;
-import de.zib.gndms.infra.system.GNDMSystem;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.jetbrains.annotations.NotNull;
 import types.*;
@@ -72,7 +72,8 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
 
             TaskClient cnt = new TaskClient( epr );
             trace( "Starting remote staging.", null );
-            boolean finished = GORFXClientUtils.waitForFinish( cnt, 1000 );
+            // poll every 15 seconds
+            boolean finished = GORFXClientUtils.waitForFinish( cnt, 15000 );
 
             if (finished) {
                 trace( "Remote staging finished.", null );
