@@ -11,7 +11,7 @@ div#wholepage {
 }
 
 h1 {
-	margin-top: 90px;
+	margin-top: 85px;
         margin-bottom: 20px;
 	font-size:28px;
 	line-height:28px;
@@ -113,6 +113,7 @@ a:hover {background-color:#eee;}
 
 div#content {
         margin-left: 25px;
+	min-height: 1024px;
 }
 
 #header {
@@ -168,6 +169,13 @@ body>#header {height:14px; }
   margin: 0px;
 	border-width: 4px;
   width: 57em;
+}
+
+#logo {
+  position: absolute;
+  top: 40px;
+  left: 51em;
+  
 }
 
 /* Again, "be nice to Opera 5". */
