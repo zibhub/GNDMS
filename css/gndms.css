@@ -94,6 +94,7 @@ a {
 
 #menu>a {
         font-size: 12px;
+	line-height: 18px;
 }
 
 a:link {color:#09c;}
@@ -150,7 +151,6 @@ body>#header {height:14px; }
 	left:58em;
 	width:172px;
 	padding:10px;
-	line-height:17px;
 /* Again, the ugly brilliant hack. */
 	voice-family: "\"}\"";
 	voice-family:inherit;
@@ -172,9 +172,9 @@ body>#header {height:14px; }
 }
 
 #logo {
-  position: absolute;
+  position: fixed;
   top: 40px;
-  left: 51em;
+  left: 50.8em;
   
 }
 
