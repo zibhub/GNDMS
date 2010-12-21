@@ -82,16 +82,38 @@ def skipDeps(deps)
 end
 
 # Non-GT4 dependencies
+SPRING_VERSION = "3.0.5.RELEASE"
+SPRING = [ "org.springframework:spring-core:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-beans:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-context:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-oxm:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-web:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-webmvc:jar:#{SPRING_VERSION}",
+         ] 
+SERVLET = 'javax.servlet:servlet-api:jar:2.5'
+XSTREAM = 'com.thoughtworks.xstream:xstream:jar:1.3.1'
+#required by XSTREAM
+CGLIB='cglib:cglib-nodep:jar:2.2'
+DOM4J='dom4j:dom4j:jar:1.6.1'
+JETTISON='org.codehaus.jettison:jettison:jar:1.0.1'
+WSTX='org.codehaus.woodstox:wstx-asl:jar:3.2.7'
+JDOM='org.jdom:jdom:jar:1.1'
+XOM='xom:xom:jar:1.1'
+XPP='xpp3:xpp3_min:jar:1.1.4c'
+# together with STAX JODA_TIME
+
 GUICE = 'com.google.code.guice:guice:jar:2.0'
 GOOGLE_COLLECTIONS = 'com.google.code.google-collections:google-collect:jar:snapshot-20080530'
 JETBRAINS_ANNOTATIONS = 'com.intellij:annotations:jar:7.0.3'
 JODA_TIME = transitive('joda-time:joda-time:jar:1.6')
 CXF = 'org.apache.cxf:cxf-bundle:jar:2.1.4'
 JAXB = 'javax.xml.bind:jaxb-api:jar:2.2.1'
-STAX = 'stax:stax-api:jar:1.0.1'
+STAX_API = 'stax:stax-api:jar:1.0.1'
+STAX = 'stax:stax:jar:1.2.0'
 COMMONS_COLLECTIONS = transitive(['commons-collections:commons-collections:jar:3.2'])
 COMMONS_CODEC = 'commons-codec:commons-codec:jar:1.4'
 COMMONS_LANG = 'commons-lang:commons-lang:jar:2.1'
+COMMONS_LOGGING = 'commons-logging:commons-logging:jar:1.1.1'
 COMMONS_FILEUPLOAD = transitive(['commons-fileupload:commons-fileupload:jar:1.2.1'])
 JETTY = ['org.mortbay.jetty:jetty:jar:6.1.11', 'org.mortbay.jetty:jetty-util:jar:6.1.11']
 GROOVY = ['org.codehaus.groovy:groovy:jar:1.6.9']
@@ -235,7 +257,7 @@ define 'gndms' do
     desc 'Shared database model classes'
     define 'model', :layout => dmsLayout('model', 'gndms-model') do
       # TODO: Better XML
-      compile.with project('stuff'), COMMONS_COLLECTIONS, COMMONS_LANG, GOOGLE_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS, GUICE, CXF, OPENJPA, JAXB, STAX
+      compile.with project('stuff'), COMMONS_COLLECTIONS, COMMONS_LANG, GOOGLE_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS, GUICE, CXF, OPENJPA, JAXB, STAX_API
       compile { open_jpa_enhance }
       package :jar
     end
@@ -419,6 +441,15 @@ define 'gndms' do
                       { :classpath => jars, :properties => 
                           { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" } } )
       end
+
+    end
+
+    desc 'Test REST setup'
+    define 'rest', :layout => dmsLayout('rest', 'test-rest') do
+        compile.with SPRING, XSTREAM, COMMONS_LOGGING, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME
+        compile
+        package :war
+
     end
 end
 
@@ -506,9 +537,14 @@ task 'build-docs' => ['apidocs']
 desc 'Install and deploy a release build'
 task 'install-distribution' => ['install-deps', 'deploy-DSpace', 'deploy-GORFX']
 
+
 task 'fix-permissions' do
     system "#{ENV['GNDMS_SOURCE']}/scripts/internal/fix-permissions.sh"
 end
+
+
+desc 'Test REST setup'
+task 'restTest' => task( 'gndms:rest:package' )
 
 def nope()
      puts ''
