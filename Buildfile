@@ -83,9 +83,12 @@ end
 
 # Non-GT4 dependencies
 SPRING_VERSION = "3.0.5.RELEASE"
-SPRING = [ "org.springframework:spring-core:jar:#{SPRING_VERSION}",
+SPRING = [ 
+           "org.springframework:spring-asm:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-core:jar:#{SPRING_VERSION}",
            "org.springframework:spring-beans:jar:#{SPRING_VERSION}",
            "org.springframework:spring-context:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-expression:jar:#{SPRING_VERSION}",
            "org.springframework:spring-oxm:jar:#{SPRING_VERSION}",
            "org.springframework:spring-web:jar:#{SPRING_VERSION}",
            "org.springframework:spring-webmvc:jar:#{SPRING_VERSION}",
@@ -451,6 +454,9 @@ define 'gndms' do
     define 'rest', :layout => dmsLayout('rest', 'test-rest') do
         compile.with SPRING, SLF4J, XSTREAM, COMMONS_LOGGING, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME
         compile
+
+        # workaround for builder dependence bug
+        package(:war).enhance FileList[_(:web,  '**/*')]
         package :war
 
     end

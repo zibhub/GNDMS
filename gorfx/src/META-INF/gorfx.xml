@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+            http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
+            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+
+    <!-- load possible custom properties -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="ignoreResourceNotFound" value="true"/>
+        <property name="locations">
+            <list>
+                <value>META-INF/gorfx.properties</value>
+                <value>classpath:gorfx.properties</value>
+            </list>
+        </property>
+    </bean>
+
+
+    <bean id="gorfxService" class="de.zib.gndms.GORFX.service.GORFXService">
+        <property name="baseUrl" value="${gorfxBaseURL}"/>
+        <property name="gorfxFacets" ref="gorfxFacets" />
+    </bean>
+
+    <bean id="gorfxFacets" class="de.zib.gndms.gritserv.rest.Facets">
+        <property name="facets">
+            <list>
+                <ref bean="config"/>
+                <ref bean="batch"/>
+                <ref bean="taskflows"/>
+                <ref bean="tasks"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="config" class="de.zib.gndms.gritserv.rest.Facet">
+        <property name="config" value="${gorfxBaseURL}/gorfx/config"/>
+    </bean>
+
+    <bean id="batch" class="de.zib.gndms.gritserv.rest.Facet">
+        <property name="batch" value="${gorfxBaseURL}/gorfx/batch"/>
+    </bean>
+    
+    <bean id="taskflows" class="de.zib.gndms.gritserv.rest.Facet">
+        <property name="taskflows" value="${gorfxBaseURL}/gorfx/taskflows"/>
+    </bean>
+
+    <bean id="tasks" class="de.zib.gndms.gritserv.rest.Facet">
+        <property name="tasks" value="${gorfxBaseURL}/gorfx/tasks"/>
+    </bean>
+</beans>
