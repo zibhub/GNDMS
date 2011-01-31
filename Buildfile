@@ -57,8 +57,8 @@ JAVA_HOME = ENV['JAVA_HOME']
 SOURCE = '1.5'
 TARGET = '1.5'
 testEnv('GNDMS_SOURCE', 'the root directory of GNDMS source distribution (i.e. the toplevel directory in which the Buildfile resides)')
-testEnv('GNDMS_SHARED', '$GLOBUS_LOCATION/etc/gndms_shared')
-testEnv('GNDMS_MONI_CONFIG', '$GNDMS_SHARED/monitor.properties')
+#testEnv('GNDMS_SHARED', '$GLOBUS_LOCATION/etc/gndms_shared')
+#testEnv('GNDMS_MONI_CONFIG', '$GNDMS_SHARED/monitor.properties')
 testEnv('USER', 'your user\'s login (your UNIX is weird)')
 testTool('rsync')
 testTool('curl')
@@ -116,6 +116,9 @@ JDOM='org.jdom:jdom:jar:1.1'
 XOM='xom:xom:jar:1.1'
 XPP='xpp3:xpp3_min:jar:1.1.4c'
 # together with STAX JODA_TIME
+
+# logging
+SLF4J = transitive( ['org.slf4j:slf4j-log4j12:jar:1.5.8'])
 
 GUICE = 'com.google.code.guice:guice:jar:2.0'
 GOOGLE_COLLECTIONS = 'com.google.code.google-collections:google-collect:jar:snapshot-20080530'
@@ -587,7 +590,7 @@ define 'gndms' do
 
     desc 'Test REST setup'
     define 'rest', :layout => dmsLayout('rest', 'test-rest') do
-        compile.with SPRING, XSTREAM, COMMONS_LOGGING, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME
+        compile.with SPRING, SLF4J, XSTREAM, COMMONS_LOGGING, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME
         compile
         package :war
 

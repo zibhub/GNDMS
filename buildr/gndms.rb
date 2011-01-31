@@ -6,6 +6,7 @@ module GNDMS
     l[:source, :main, :java] = _(prj, 'src')
     l[:source, :main, :groovy] = _(prj, 'groovy')
     l[:source, :main, :resources] = _(prj, 'resources')
+    l[:source, :main, :webapp] = _(prj, 'web')
     l[:target, :main, :classes] = _(prjOut, 'production')
     l[:target, :main, :resources] = _(prjOut, 'production-resources')
     l[:target, :doc] = _('doc', 'api')
