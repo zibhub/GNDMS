@@ -1,5 +1,6 @@
 package de.zib.firstrest.service;
 
+import java.util.ArrayList;
 import de.zib.firstrest.domain.Foo;
 import de.zib.firstrest.repository.FooDao;
 import org.apache.commons.logging.Log;
@@ -56,10 +57,10 @@ public class FooService implements ServletContextAware {
 
     @RequestMapping( value = "/foo/{id}" )
     public ModelAndView findFoo( @PathVariable String id ) {
-        Foo foo = dao.getFoo( id );
+        final Foo foo = dao.getFoo( id );
         ModelAndView mv;
         if( foo != null )
-            mv = new ModelAndView( "testXmlView", BindingResult.MODEL_KEY_PREFIX + "foo", foo );
+            mv = new ModelAndView( "foos", "foo", new ArrayList<Foo>( 1 ) {{ add( foo ); }} );
         else {
             RedirectView rv = new RedirectView( );
             rv.setStatusCode( HttpStatus.NOT_FOUND );

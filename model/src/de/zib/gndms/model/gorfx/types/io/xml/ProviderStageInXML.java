@@ -21,10 +21,9 @@ package de.zib.gndms.model.gorfx.types.io.xml;
 import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
 
-import java.io.Reader;
-import java.io.Writer;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Writer;
 
 /**
  * @author  try ma ik jo rr a zib

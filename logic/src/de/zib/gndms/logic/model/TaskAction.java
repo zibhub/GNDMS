@@ -92,7 +92,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     /**
      * A TransitException is used to store a new desired {@code TaskState}, the model (an AbstractTask) shall use.
      * Its state can be changed using {@link AbstractTask#transit(TaskState)}.
-     * Note that there is a predefined order in wich state a TaskState can be changed. 
+     * Note that there is a predefined order in which state a TaskState can be changed.
      *
      * There a some special subclasses used to stop an AbstractTask in special situations.
      *

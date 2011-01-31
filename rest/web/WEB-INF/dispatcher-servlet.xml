@@ -41,12 +41,6 @@
 		</property>
      </bean>
 
-    <!-- this is view converter for GET -->
-    <bean id="testXmlView" class="org.springframework.web.servlet.view.xml.MarshallingView">
-        <constructor-arg ref="marshaller">
-        </constructor-arg>
-    </bean>
-
     <!-- this are some test values -->
     <bean id="foo1" class="de.zib.firstrest.domain.Foo"  >
         <property name="id" value="1"/>
@@ -60,4 +54,29 @@
         <property name="id" value="42"/>
         <property name="value" value="theAnswer"/>
     </bean>
+
+    <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+        <property name="mediaTypes">
+            <map>
+                <entry key="xml" value="application/xml"/>
+                <entry key="html" value="text/html"/>
+            </map>
+        </property>
+        <property name="viewResolvers">
+            <list>
+                <bean ref="testXmlView"/>
+                <bean class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+                    <property name="viewClass" value= "org.springframework.web.servlet.view.JstlView"/>
+                    <property name="prefix" value="/WEB-INF/jsp/"/>
+                    <property name="suffix" value=".jsp"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    <!-- this is view converter for GET -->
+    <bean id="testXmlView" class="org.springframework.web.servlet.view.xml.MarshallingView">
+        <constructor-arg ref="marshaller">
+        </constructor-arg>
+    </bean>
+
 </beans>
