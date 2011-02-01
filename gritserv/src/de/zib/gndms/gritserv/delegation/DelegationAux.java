@@ -171,9 +171,6 @@ public class DelegationAux {
 
     public static void addDelegationEPR( ContextT con, EndpointReferenceType epr ) throws IOException, SerializationException {
 
-        StringWriter sw = new StringWriter( );
-        AxisTypeFromToXML.toXML( sw, epr );
-
         ContextTEntry[] entries = con.getEntry();
         ArrayList<ContextTEntry> al;
         if ( entries != null ) {
@@ -193,7 +190,7 @@ public class DelegationAux {
         final Base64 b64   = new Base64(4000, new byte[] { }, true);
         final String uuepr = b64.encodeToString(bse.toByteArray());
         logger.debug( "base64 encoded uepr: \"" + uuepr+ "\"" );
-        ct.set_value( new NormalizedString( inlineUUString( uuepr ) ) );
+        ct.set_value( new NormalizedString( uuepr ) );
         ct.setKey( new Token( DELEGATION_EPR_KEY ) );
         al.add( ct );
 
