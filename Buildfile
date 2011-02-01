@@ -44,8 +44,8 @@ JAVA_HOME = ENV['JAVA_HOME']
 SOURCE = '1.5'
 TARGET = '1.5'
 testEnv('GNDMS_SOURCE', 'the root directory of GNDMS source distribution (i.e. the toplevel directory in which the Buildfile resides)')
-testEnv('GNDMS_SHARED', '$GLOBUS_LOCATION/etc/gndms_shared')
-testEnv('GNDMS_MONI_CONFIG', '$GNDMS_SHARED/monitor.properties')
+#testEnv('GNDMS_SHARED', '$GLOBUS_LOCATION/etc/gndms_shared')
+#testEnv('GNDMS_MONI_CONFIG', '$GNDMS_SHARED/monitor.properties')
 testEnv('USER', 'your user\'s login (your UNIX is weird)')
 testTool('rsync')
 testTool('curl')

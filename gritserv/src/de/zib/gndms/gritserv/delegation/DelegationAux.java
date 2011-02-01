@@ -74,6 +74,13 @@ public class DelegationAux {
     }
     
 
+    /// @brief Creates a delegation proxy.
+    /// 
+    /// @param uri URI of the delegation service.
+    /// @param credential The user credential, of which the proxy
+    ///     delegation proxy should be created.
+    /// 
+    /// @return  The end-point of the delegation resource.
     public static EndpointReferenceType createProxy( String uri, GlobusCredential credential ) throws Exception {
 
         // acquire cert chain
@@ -99,7 +106,7 @@ public class DelegationAux {
 
         if( logger.isDebugEnabled() ) {
             int len = certs.length;
-            logger.debug( "Cerfiicate chain length: " + len );
+            logger.debug( "Certificate chain length: " + len );
             if( len > 0 )
                 logger.debug( "Chain head: " + certs[0] );
         }
@@ -112,6 +119,11 @@ public class DelegationAux {
     }
 
 
+    /// @brief Extracts the delegation epr from a context-type.
+    /// 
+    /// @param con The context
+    /// 
+    /// @return The delegation epr.
     public static EndpointReferenceType extractDelegationEPR( ContextT con ) throws Exception {
 
         ContextTEntry[] entries = con.getEntry();
@@ -150,7 +162,7 @@ public class DelegationAux {
         try {
             return new GlobusCredential( bo );
         } catch ( GlobusCredentialException e ) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();  
             throw new RuntimeException( e );
         }
     }
@@ -163,12 +175,20 @@ public class DelegationAux {
             cred.save( bo );
             return bo.toByteArray();
         } catch ( IOException e ) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace(); 
             throw new RuntimeException( e );
         }
     }
 
 
+    /// @brief Adds a delegation epr to a context-type.
+    /// 
+    /// A base64 encoder is used to normalize the epr.
+    ///
+    /// @param con The context-type object.
+    /// @param epr The delegation epr.
+    /// 
+    /// @return Nothing, the \c con argument serves as io-parameter.
     public static void addDelegationEPR( ContextT con, EndpointReferenceType epr ) throws IOException, SerializationException {
 
         ContextTEntry[] entries = con.getEntry();
@@ -215,12 +235,10 @@ public class DelegationAux {
     }
 
 
-    public static String inlineUUString( String s ) {
-        // remove all newlines
-        return s.replace( "\n", "" );
-    }
-
-
+    /// @brief Unregisters an delegate from the delegation service.
+    /// 
+    /// @param epr The epr of the delegate.
+    /// 
     public static void destroyDelegationEPR ( EndpointReferenceType epr ) throws ServiceException, RemoteException {
 
         WSResourceLifetimeServiceAddressingLocator ll = new WSResourceLifetimeServiceAddressingLocator();
