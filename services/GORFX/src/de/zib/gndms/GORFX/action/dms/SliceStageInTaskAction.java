@@ -102,7 +102,7 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
                 TaskExecutionFailure f = cnt.getExecutionFailure();
                 trace( "Remote staging failed with: \n"
                     +  GORFXClientUtils.taskExecutionFailureToString( f ), null );
-                fail( new RuntimeException( f.toString() ) );
+                failFrom( new RuntimeException( f.toString() ) );
             }
         } catch( RuntimeException e ) {
             honorOngoingTransit( e );
@@ -115,6 +115,6 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
 
     @SuppressWarnings( { "ThrowableInstanceNeverThrown" } )
     private void boxException( Exception e ) {
-        fail( new RuntimeException( e.getMessage(), e ) );
+        failFrom( new RuntimeException( e.getMessage(), e ) );
     }
 }
