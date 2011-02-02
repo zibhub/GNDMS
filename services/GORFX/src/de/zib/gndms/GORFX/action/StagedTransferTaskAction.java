@@ -74,7 +74,7 @@ public class StagedTransferTaskAction extends ORQTaskAction<SliceStageInORQ> {
             else if( st.size() > 2 )
                 restoreSubTask( st.get( 1 ) );
             else if( st.size( ) > 3 )
-                fail( new RuntimeException( "to much subtasks" ) );
+                failFrom( new RuntimeException( "to much subtasks" ) );
             tx.commit( );
         } finally{
             tx.finish();
@@ -201,7 +201,7 @@ public class StagedTransferTaskAction extends ORQTaskAction<SliceStageInORQ> {
 
     @SuppressWarnings( { "ThrowableInstanceNeverThrown" } )
     private void boxException( Exception e ) {
-        fail( new RuntimeException( e.getMessage(), e ) );
+        failFrom( e );
     }
 
 
@@ -230,7 +230,7 @@ public class StagedTransferTaskAction extends ORQTaskAction<SliceStageInORQ> {
         else if( st.getOfferType().getOfferTypeKey().equals( GORFXConstantURIs.INTER_SLICE_TRANSFER_URI ) )
             interSliceTransfer = checkedAssignment( interSliceTransfer, st );
         else
-            fail( new RuntimeException( "Unexpected sub-task occurred") );
+            failFrom( new RuntimeException( "Unexpected sub-task occurred") );
     }
 
 
@@ -239,7 +239,7 @@ public class StagedTransferTaskAction extends ORQTaskAction<SliceStageInORQ> {
         if( tgt == null )
             return src;
         else
-            fail( new RuntimeException( "Sub-task occurres multiple times" ) );
+            failFrom( new RuntimeException( "Sub-task occurres multiple times" ) );
 
         return null;
     }
@@ -247,6 +247,6 @@ public class StagedTransferTaskAction extends ORQTaskAction<SliceStageInORQ> {
 
     private void checkFailed( SubTask st ) {
         if( st.getState().equals( TaskState.FAILED ) )
-            fail( ( RuntimeException) st.getData() );
+            failFrom( ( RuntimeException) st.getData() );
     }
 }

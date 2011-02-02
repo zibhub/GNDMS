@@ -76,7 +76,7 @@ public class InterSliceTransferTaskAction extends ORQTaskAction<InterSliceTransf
             if( st.getState().equals( TaskState.FINISHED ) )
                 finish( st.getData( ) );
             else
-                fail( (RuntimeException) st.getData() );
+                failFrom( (RuntimeException) st.getData() );
 
         } catch ( RuntimeException e ) {
             honorOngoingTransit( e );
@@ -88,7 +88,7 @@ public class InterSliceTransferTaskAction extends ORQTaskAction<InterSliceTransf
                 fail( (RuntimeException) st.getData() );
             else
             */
-            fail( new RuntimeException( e ) );
+            failFrom( e );
         }
     }
 

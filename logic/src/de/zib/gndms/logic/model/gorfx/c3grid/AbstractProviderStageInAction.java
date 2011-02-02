@@ -82,7 +82,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
                 createNewSlice(model);
             }
             catch (MandatoryOptionMissingException e1) {
-                fail(new RuntimeException(e1));
+                failFrom(e1);
             }
             throw e; // accept state transition decision from super
         }
@@ -93,7 +93,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 	protected @NotNull File getScriptFileByParam(final MapConfig configParam, String scriptParam) throws MandatoryOptionMissingException {
 		final @NotNull File scriptFile = configParam.getFileOption(scriptParam);
 		if (! isValidScriptFile(scriptFile))
-		    fail(new IllegalArgumentException("Invalid " + scriptParam + " script: " + scriptFile.getPath()));
+		    failFrom(new IllegalArgumentException("Invalid " + scriptParam + " script: " + scriptFile.getPath()));
 		return scriptFile;
 	}
 
@@ -240,7 +240,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 			   return builder;
        }
        catch (MandatoryOptionMissingException e) {
-           throw new RuntimeException(e);
+           throw new RuntimeException("createProcessBuilder " + (name==null?"null":name) + " " + (dir==null?"(null)":dir), e);
        }
    }
 
