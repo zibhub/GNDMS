@@ -48,6 +48,7 @@ import java.io.*;
 import java.rmi.RemoteException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * @author  try ma ik jo rr a zib
@@ -203,18 +204,36 @@ public class DelegationAux {
 
         ContextTEntry ct = new ContextTEntry( );
 
+        ct.set_value( encodeDelegationEPR( epr ) );
+        ct.setKey( new Token( DELEGATION_EPR_KEY ) );
+        al.add( ct );
+
+        con.setEntry( al.toArray( new ContextTEntry[al.size()] ) );
+    }
+
+
+    /// @brief Adds a delegation epr to a hash map.
+    ///
+    /// A base64 encoder is used to normalize the epr.
+    ///
+    /// @param con The context-type object.
+    /// @param epr The delegation epr.
+    ///
+    /// @return Nothing, the \c con argument serves as io-parameter.
+    public static void addDelegationEPR( HashMap<String,String> con, EndpointReferenceType epr ) throws SerializationException, IOException {
+        con.put( DELEGATION_EPR_KEY, encodeDelegationEPR( epr ).toString() );
+    }
+
+
+    public static NormalizedString encodeDelegationEPR( EndpointReferenceType epr )  throws IOException, SerializationException {
+
         ByteArrayOutputStream bse = new ByteArrayOutputStream( );
         ObjectOutputStream oos = new ObjectOutputStream( bse );
         oos.writeObject( ObjectSerializer.toString( epr , QNAME ) );
 
         final Base64 b64   = new Base64(4000, new byte[] { }, true);
         final String uuepr = b64.encodeToString(bse.toByteArray());
-        logger.debug( "base64 encoded uepr: \"" + uuepr+ "\"" );
-        ct.set_value( new NormalizedString( uuepr ) );
-        ct.setKey( new Token( DELEGATION_EPR_KEY ) );
-        al.add( ct );
-
-        con.setEntry( al.toArray( new ContextTEntry[al.size()] ) );
+        return new NormalizedString( uuepr );
     }
 
 
@@ -246,4 +265,6 @@ public class DelegationAux {
         ImmediateResourceTermination term = ll.getImmediateResourceTerminationPort( epr );
         term.destroy( new Destroy() );
     }
+
+
 }

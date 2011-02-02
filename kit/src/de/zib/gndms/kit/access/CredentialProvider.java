@@ -21,7 +21,7 @@ package de.zib.gndms.kit.access;
 import java.util.List;
 
 /**
- * Interface that hides the gredential mechanism.
+ * Interface that hides the credential mechanism.
  *
  * Implementations of this interface should provided the ability to install credentials in a specific object.
  *
