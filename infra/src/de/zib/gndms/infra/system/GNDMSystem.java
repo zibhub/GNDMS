@@ -50,6 +50,8 @@ import org.globus.wsrf.jndi.Initializable;
 import org.globus.wsrf.utils.AddressingUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.kernel.EmbeddedGraphDatabase;
 
 import javax.naming.Context;
 import javax.naming.Name;
@@ -88,7 +90,7 @@ public final class GNDMSystem
         EntityUpdateListener<GridResource> {
     private static final long EXECUTOR_SHUTDOWN_TIME = 5000L;
 
-	private static @NotNull Log createLogger() { return LogFactory.getLog(GNDMSystem.class); }
+    private static @NotNull Log createLogger() { return LogFactory.getLog(GNDMSystem.class); }
 
     private boolean shutdown;
 
@@ -105,11 +107,13 @@ public final class GNDMSystem
 	private @NotNull final GridConfig sharedConfig;
 	private @NotNull File sharedDir;
     private @NotNull File dbDir;
+    private @NotNull File neoDir;
     private @NotNull File logDir;
 	private @NotNull File dbLogFile;
     private @NotNull File containerHome;
 	private @NotNull EntityManagerFactory emf;
 	private @NotNull EntityManagerFactory restrictedEmf;
+    private @NotNull GraphDatabaseService neo;
 //	private NetworkAuxiliariesProvider netAux;
 
 
@@ -202,6 +206,7 @@ public final class GNDMSystem
 			createDirectories();
 			prepareDbStorage();
 			emf = createEMF();
+            neo = loadNeo();
 			restrictedEmf = emf;
 			tryTxExecution();
 			// initialization intentionally deferred to initialize
@@ -227,6 +232,10 @@ public final class GNDMSystem
 			throw new RuntimeException(e);
 		}
 	}
+
+    private GraphDatabaseService loadNeo() {
+        return new EmbeddedGraphDatabase(getNeoDir().getAbsolutePath());
+    }
 
 
     /**
@@ -306,6 +315,7 @@ public final class GNDMSystem
     private void prepareDbStorage() throws IOException {
         File curSharedDir = getSharedDir();
 		dbDir = new File(curSharedDir, "db");
+        neoDir = new File(curSharedDir, "neo");
 		doCheckOrCreateDir(dbDir);
 
 		System.setProperty("derby.system.home", dbDir.getCanonicalPath());
@@ -415,6 +425,7 @@ public final class GNDMSystem
             if (moniServer != null)
                 moniServer.stopServer();
             emf.close();
+            neo.shutdown();
         }
 	}
 
@@ -475,6 +486,10 @@ public final class GNDMSystem
 		return logDir;
 	}
 
+
+    public @NotNull File getNeoDir() {
+        return dbDir;
+    }
 
 	public @NotNull File getDbDir() {
 		return dbDir;
@@ -1010,6 +1025,12 @@ public final class GNDMSystem
 
         return false;
     }
+
+    @NotNull
+    public GraphDatabaseService getNeo() {
+        return neo;
+    }
+
     /*
     public NetworkAuxiliariesProvider getNetAux( ) {
 
