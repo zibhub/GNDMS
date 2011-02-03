@@ -38,15 +38,17 @@ import java.util.Map;
 @Copyable(CopyMode.SERIALIZE)
 public abstract class AbstractORQ implements Serializable {
     private static final long serialVersionUID = 5782532835559987893L;
-    private String offerType;
-	private transient boolean justEstimate;
+    private String offerType;  ///< Type of the requested task.
+	private transient boolean justEstimate; ///< Flag for the contract calculation
 
-    private String actId;
-    private HashMap<String,String> actContext;
+    private String actId; ///< A unique id inherited from the ORQResource
+    private HashMap<String,String> actContext; ///< The contex of the ORQResource
+                                               /// Contains stuff like, delegation epr, and workflow id
 	private static final int INITIAL_STRING_BUILDER_CAPACITY = 256;
+    private String localUser; ///< The user name map to the credential of the request.
 
 
-	protected AbstractORQ() {
+    protected AbstractORQ() {
     }
 
 
@@ -151,4 +153,14 @@ public abstract class AbstractORQ implements Serializable {
 		}
 		return result.toString();
 	}
+
+
+   public void setLocalUser( String localUser ) {
+        this.localUser = localUser;
+    }
+
+
+    public String getLocalUser() {
+        return localUser;
+    }
 }

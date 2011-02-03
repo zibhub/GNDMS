@@ -24,6 +24,7 @@ import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
 import de.zib.gndms.logic.model.dspace.DeleteSliceAction;
+import de.zib.gndms.logic.model.dspace.TransformSliceAction;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.dspace.MetaSubspace;
@@ -32,7 +33,9 @@ import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
+import de.zib.gndms.model.gorfx.types.ProviderStageInResult;
 import de.zib.gndms.model.util.TxFrame;
+import de.zib.gndms.stuff.Sleeper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -103,13 +106,63 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
     protected void onInProgress(final @NotNull AbstractTask model) {
         final Slice slice = findSlice(model);
         setSliceId( slice.getId() );
-        doStaging(getOfferTypeConfig(), getOrq(), slice);
+        try {
+            doStaging(getOfferTypeConfig(), getOrq(), slice);
+            try{
+                transformToResultSlice( slice );
+            } catch ( Exception e ) {
+                failFrom( new RuntimeException( "Failed while creating result slice." ,e ) );
+            }
+            finish( new ProviderStageInResult( getSliceId()) );
+        }
+        catch (RuntimeException e) {
+            honorOngoingTransit(e);
+            failFrom( e );
+        }
+    }
+
+
+    protected void transformToResultSlice( Slice slice ) {
+
+        final EntityManager em = getEntityManager();
+        final TxFrame txf = new TxFrame(em);
+        try {
+            String slicekindKey = "http://www.c3grid.de/G2/SliceKind/Result";
+            SliceKind kind = getEntityManager().find(SliceKind.class, slicekindKey);
+
+            TransformSliceAction tsa =  new TransformSliceAction(
+                getUUIDGen().nextUUID(),
+                getOrq().getLocalUser(),
+                slice.getTerminationTime(),
+                kind,
+                slice.getSubspace(),
+                slice.getTotalStorageSize(),
+                getUUIDGen()
+            );
+
+            tsa.setParent( this );
+            tsa.setModel( slice );
+            tsa.initialize();
+            tsa.setClosingEntityManagerOnCleanup( false );
+            final Slice tgt_slice = tsa.execute( em );
+
+            setSliceId( tgt_slice.getId() );
+
+            DeleteSliceAction dsa = new DeleteSliceAction( slice );
+            dsa.setParent( this );
+            dsa.setClosingEntityManagerOnCleanup( false );
+            dsa.setModel( slice.getSubspace() );
+            dsa.execute( em );
+            txf.commit();
+        }
+        finally { txf.finish();  }
+
     }
 
 
     protected abstract void doStaging(
-            final MapConfig offerTypeConfigParam, final ProviderStageInORQ orqParam,
-            final Slice sliceParam);
+        final MapConfig offerTypeConfigParam, final ProviderStageInORQ orqParam,
+        final Slice sliceParam );
 
 
     private void createNewSlice(final AbstractTask model) throws MandatoryOptionMissingException {
@@ -129,6 +182,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 
             CreateSliceAction csa = new CreateSliceAction();
             csa.setParent(this);
+            // uid should be the id of hte container
             csa.setTerminationTime(getModel().getContract().getResultValidity());
             csa.setClosingEntityManagerOnCleanup(false);
             csa.setUUIDGen(getUUIDGen());

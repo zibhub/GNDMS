@@ -115,7 +115,7 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
             return null;
 
         // create an new slice of the given kind
-        Slice nsl = createSliceAction.call( );
+        Slice nsl = createSliceAction.execute( em );
         if ( nsl == null )
              throw new RuntimeException( "Can't create slice" );
 
