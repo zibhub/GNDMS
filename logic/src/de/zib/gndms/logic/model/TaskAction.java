@@ -652,7 +652,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
      *
      * It checks if the {@code model}'s TaskState can be set to {@code newState}.
      * If it is allowed (according to the order given in {@link TaskState}),
-     * a method corresponding to the value of {@code newState} will be invoked.
+     * a method corresponding to the value of {@codeT newState} will be invoked.
      * 
      * All these methods must throw a {@code TransitException} to specify the new desired state.
      *

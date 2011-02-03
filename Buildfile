@@ -1,3 +1,5 @@
+# -*- mode: ruby -*-
+
 # Large amounts of memory ensure a fast build
 ENV['JAVA_OPTS'] ||= '-Xms512m -Xmx768m'
 
@@ -10,7 +12,8 @@ repositories.remote << 'http://download.java.net/maven/2'
 repositories.remote << 'http://static.appfuse.org/repository'
 repositories.remote << 'http://repository.jboss.org/maven2'
 repositories.remote << 'http://google-maven-repository.googlecode.com/svn/repository'
-
+repositories.remote << 'http://repository.jboss.org/nexus/content/groups/public'
+repositories.remote << 'http://repo.marketcetera.org/maven'
 
 # Don't touch below unless you know what you are doing
 # --------------------------------------------------------------------------------------------------
@@ -145,6 +148,29 @@ GT4_MDS = gt4jars(['globus_wsrf_mds_aggregator.jar',
 # OpenJPA is required by gndms:model
 OPENJPA = [ COMMONS_LANG, 'org.apache.openjpa:openjpa-all:jar:2.0.0']
 
+# NEODATAGRAPH = transitive('org.springframework.data:spring-data-neo4j:jar:1.0.0.M2')
+
+require 'buildr/neo4j' 
+include NEO4J
+
+NEODATAGRAPH = neo4jars(['geronimo-jta_1.1_spec-1.1.1.jar',
+                        'neo4j-examples-1.2.jar',
+                        'neo4j-graph-algo-0.7-1.2.jar',
+                        'neo4j-ha-0.5-1.2.jar',
+                        'neo4j-index-1.2-1.2.jar',
+                        'neo4j-kernel-1.2-1.2.jar',
+                        'neo4j-lucene-index-0.2-1.2.jar',
+                        'neo4j-management-1.2-1.2.jar',
+                        'neo4j-online-backup-0.7-1.2.jar',
+                        'neo4j-remote-graphdb-0.8-1.2.jar',
+                        'neo4j-shell-1.2-1.2.jar',
+                        'neo4j-udc-0.1-1.2-neo4j.jar',
+                        'netty-3.2.1.Final.jar',
+                        'org.apache.servicemix.bundles.jline-0.9.94_1.jar',
+                        'org.apache.servicemix.bundles.lucene-3.0.1_2.jar',
+                        'protobuf-java-2.3.0.jar'
+])
+
 require 'buildr/openjpa2'
 include Buildr::OpenJPA2
 
@@ -235,7 +261,7 @@ define 'gndms' do
     desc 'Shared database model classes'
     define 'model', :layout => dmsLayout('model', 'gndms-model') do
       # TODO: Better XML
-      compile.with project('stuff'), COMMONS_COLLECTIONS, COMMONS_LANG, GOOGLE_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS, GUICE, CXF, OPENJPA, JAXB, STAX
+      compile.with project('stuff'), COMMONS_COLLECTIONS, COMMONS_LANG, GOOGLE_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS, GUICE, CXF, OPENJPA, JAXB, STAX, NEODATAGRAPH
       compile { open_jpa_enhance }
       package :jar
     end
@@ -264,7 +290,7 @@ define 'gndms' do
     desc 'GNDMS core infrastructure classes'
     define 'infra', :layout => dmsLayout('infra', 'gndms-infra') do
       # Infra *must* have all dependencies since we use this list in copy/link-deps
-      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gritserv'), project('logic'), project('kit'), project('stuff'), project('model'), ARGS4J, JODA_TIME, JAXB, GT4_SERVLET, JETTY, CXF, GROOVY, GOOGLE_COLLECTIONS, GUICE, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies, COMMONS_FILEUPLOAD
+      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gritserv'), project('logic'), project('kit'), project('stuff'), project('model'), ARGS4J, JODA_TIME, JAXB, GT4_SERVLET, JETTY, CXF, GROOVY, GOOGLE_COLLECTIONS, GUICE, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies, COMMONS_FILEUPLOAD, NEODATAGRAPH
       compile
       package :jar
       doc projects('gndms:stuff', 'gndms:model', 'gndms:gritserv', 'gndms:kit', 'gndms:logic')
