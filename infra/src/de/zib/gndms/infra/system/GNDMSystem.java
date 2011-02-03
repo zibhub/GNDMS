@@ -35,6 +35,7 @@ import de.zib.gndms.logic.util.LogicTools;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.model.common.VEPRef;
+import de.zib.gndms.neomodel.common.NeoDao;
 import org.apache.axis.components.uuid.UUIDGen;
 import org.apache.axis.components.uuid.UUIDGenFactory;
 import org.apache.axis.message.MessageElement;
@@ -114,6 +115,7 @@ public final class GNDMSystem
 	private @NotNull EntityManagerFactory emf;
 	private @NotNull EntityManagerFactory restrictedEmf;
     private @NotNull GraphDatabaseService neo;
+    private @NotNull NeoDao dao;
 //	private NetworkAuxiliariesProvider netAux;
 
 
@@ -207,6 +209,7 @@ public final class GNDMSystem
 			prepareDbStorage();
 			emf = createEMF();
             neo = loadNeo();
+            dao = new NeoDao(getGridName(), neo);
 			restrictedEmf = emf;
 			tryTxExecution();
 			// initialization intentionally deferred to initialize
@@ -234,6 +237,7 @@ public final class GNDMSystem
 	}
 
     private GraphDatabaseService loadNeo() {
+        logger.info("Loading neo4j graph database");
         return new EmbeddedGraphDatabase(getNeoDir().getAbsolutePath());
     }
 
@@ -488,7 +492,7 @@ public final class GNDMSystem
 
 
     public @NotNull File getNeoDir() {
-        return dbDir;
+        return neoDir;
     }
 
 	public @NotNull File getDbDir() {
