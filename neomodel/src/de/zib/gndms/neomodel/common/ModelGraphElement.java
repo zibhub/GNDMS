@@ -1,10 +1,13 @@
 package de.zib.gndms.neomodel.common;
 
 import de.zib.gndms.model.ModelObject;
+import org.apache.commons.lang.SerializationUtils;
 import org.jetbrains.annotations.NotNull;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.PropertyContainer;
 import org.neo4j.graphdb.index.Index;
+
+import java.io.Serializable;
 
 /**
  * Created by IntelliJ IDEA.
@@ -46,9 +49,47 @@ public abstract class ModelGraphElement<U extends PropertyContainer> extends Mod
     protected abstract Index<U> getTypeNickIndex();
 
 
+    protected boolean hasProperty(String s) {
+        return representation.hasProperty(s);
+    }
+
+    protected Object getProperty(String s) {
+        return representation.getProperty(s);
+    }
+
+    protected Object getProperty(String s, Object o) {
+        return representation.getProperty(s, o);
+    }
+
+    protected void setProperty(String s, Object o) {
+        representation.setProperty(s, o);
+    }
+
+    protected Object removeProperty(String s) {
+        return representation.removeProperty(s);
+    }
+
+    protected Iterable<String> getPropertyKeys() {
+        return representation.getPropertyKeys();
+    }
+
+    protected <S extends Serializable> S getProperty(@NotNull Class<S> clazz, String key) {
+        return clazz.cast(SerializationUtils.deserialize((byte[]) repr().getProperty(key)));
+    }
+
+    protected <S extends Serializable> S getProperty(@NotNull Class<S> clazz, String key, Object value) {
+        return clazz.cast(SerializationUtils.deserialize((byte[]) repr().getProperty(key, value)));
+    }
+
+    protected <S extends Serializable> void setProperty(@NotNull Class<S> clazz, String key, S value) {
+        repr().setProperty(key, SerializationUtils.serialize(value));
+    }
+
     public final void delete(@NotNull NeoSession session) {
         if (session != session())
             throw new IllegalArgumentException("Attempt to delete domain object from another session");
+        else
+            this.delete();
     }
 
     protected void delete() {

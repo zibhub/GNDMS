@@ -3,6 +3,7 @@ package de.zib.gndms.neomodel.gorfx;
 import de.zib.gndms.model.common.ImmutableScopedName;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 /*
@@ -66,65 +67,54 @@ public class NeoOfferType extends NodeGridResource {
 
     @Override
     final public void setId(String id) {
-        final Index<Node> nodeIndex = getTypeNickIndex();
-        final String oldId = getId();
-        if (oldId != null)
-            nodeIndex.remove(repr(), session().getGridName(), oldId);
-
-        if (nodeIndex.get(session().getGridName(), id).size() > 0) {
-            session().failure();
-            throw new IllegalArgumentException("Node already exists");
-        }
-        nodeIndex.add(repr(), session().getGridName(), id);
+        session().setSingleIndex(getTypeNickIndex(), repr(), session().getGridName(), getId(), id);
         super.setId(id);
     }
 
     public Map<String, String> getConfigMapData() {
         //noinspection unchecked
-        return (Map<String, String>) SerializationUtils.deserialize((byte[]) repr().getProperty(CONFIG_MAP_DATA_KEY));
+        return (Map<String, String>) getProperty(Serializable.class, CONFIG_MAP_DATA_KEY);
     }
 
     public void setConfigMapData(Map<String, String> configMapData) {
-        repr().setProperty(CONFIG_MAP_DATA_KEY, SerializationUtils.serialize( (Serializable) configMapData));
+        setProperty(Serializable.class, CONFIG_MAP_DATA_KEY, (Serializable) configMapData);
     }
 
     public ImmutableScopedName getOfferResultType() {
-        return (ImmutableScopedName) SerializationUtils.deserialize((byte[]) repr().getProperty(OFFER_RESULT_TYPE_KEY));
+        return getProperty(ImmutableScopedName.class, OFFER_RESULT_TYPE_KEY);
     }
 
     public void setOfferResultType(ImmutableScopedName offerResultType) {
-        repr().setProperty(OFFER_RESULT_TYPE_KEY, SerializationUtils.serialize( offerResultType ));
+        setProperty(ImmutableScopedName.class, OFFER_RESULT_TYPE_KEY, offerResultType);
     }
 
     public ImmutableScopedName getOfferArgumentType() {
-        return
-            (ImmutableScopedName) SerializationUtils.deserialize((byte[]) repr().getProperty(OFFER_ARGUMENT_TYPE_KEY));
+        return getProperty(ImmutableScopedName.class, OFFER_ARGUMENT_TYPE_KEY);
     }
 
     public void setOfferArgumentType(ImmutableScopedName offerArgumentType) {
-        repr().setProperty(OFFER_ARGUMENT_TYPE_KEY, SerializationUtils.serialize( offerArgumentType ));
+        setProperty(ImmutableScopedName.class, OFFER_ARGUMENT_TYPE_KEY, offerArgumentType);
     }
 
     public String getCalculatorFactoryClassName() {
-        return (String) repr().getProperty(CALCULATOR_FACTORY_CLASS_NAME_KEY);
+        return (String) getProperty(CALCULATOR_FACTORY_CLASS_NAME_KEY);
     }
 
     public void setCalculatorFactoryClassName(String calculatorFactoryClassName) {
-        repr().setProperty(CALCULATOR_FACTORY_CLASS_NAME_KEY, calculatorFactoryClassName);
+        setProperty(CALCULATOR_FACTORY_CLASS_NAME_KEY, calculatorFactoryClassName);
     }
 
     public String getTaskActionFactoryClassName() {
-        return (String) repr().getProperty(TASK_ACTION_FACTORY_CLASS_NAME_KEY);
+        return (String) getProperty(TASK_ACTION_FACTORY_CLASS_NAME_KEY);
     }
 
     public void setTaskActionFactoryClassName(String taskActionFactoryClassName) {
-        repr().setProperty(TASK_ACTION_FACTORY_CLASS_NAME_KEY, taskActionFactoryClassName);
+        setProperty(TASK_ACTION_FACTORY_CLASS_NAME_KEY, taskActionFactoryClassName);
     }
 
     @Override
     public void delete() {
-        final Index<Node> nodeIndex = getTypeNickIndex();
-        nodeIndex.remove(repr(), session().getGridName(), getId());
-        repr().delete();
+        getTypeNickIndex().remove(repr(), session().getGridName(), getId());
+        super.delete();
     }
 }

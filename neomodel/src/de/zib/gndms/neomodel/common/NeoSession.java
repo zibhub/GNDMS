@@ -4,6 +4,7 @@ import de.zib.gndms.neomodel.gorfx.NeoOfferType;
 import org.jetbrains.annotations.NotNull;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.PropertyContainer;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 
@@ -59,5 +60,17 @@ public class NeoSession {
 
     @NotNull protected static String classNick(Class c) {
         return c.getSimpleName();
+    }
+
+    public <U extends PropertyContainer> void setSingleIndex(@NotNull Index<U> index, @NotNull U repr,
+                                                             String key, String oldVal, String newVal) {
+        if (oldVal != null)
+            index.remove(repr, key, oldVal);
+
+        if (index.get(key, newVal).size() > 0) {
+            this.failure();
+            throw new IllegalArgumentException("Node already exists");
+        }
+        index.add(repr, key, newVal);
     }
 }

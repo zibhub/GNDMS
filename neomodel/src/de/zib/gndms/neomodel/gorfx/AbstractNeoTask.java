@@ -7,6 +7,10 @@ import de.zib.gndms.model.common.TimedGridResourceItf;
 import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.model.gorfx.SubTask;
 import de.zib.gndms.model.gorfx.types.TaskState;
+import de.zib.gndms.neomodel.common.NeoSession;
+import de.zib.gndms.neomodel.common.NodeGridResource;
+import org.jetbrains.annotations.NotNull;
+import org.neo4j.graphdb.Node;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -20,7 +24,7 @@ import java.util.List;
  * Time: 15:28
  * To change this template use File | Settings | File Templates.
  */
-public abstract class AbstractNeoTask extends ModelEntity implements TimedGridResourceItf {
+public abstract class AbstractNeoTask extends NodeGridResource implements TimedGridResourceItf {
   /*
     private OfferType offerType;
 
@@ -44,6 +48,13 @@ public abstract class AbstractNeoTask extends ModelEntity implements TimedGridRe
 
 
     private String faultString;
-
     */
-  }
+
+    protected AbstractNeoTask(@NotNull NeoSession session, @NotNull String typeNick, @NotNull Node underlying) {
+        super(session, typeNick, underlying);
+    }
+
+
+}
+
+

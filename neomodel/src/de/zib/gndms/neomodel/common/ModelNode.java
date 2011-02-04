@@ -19,4 +19,9 @@ public class ModelNode extends ModelGraphElement<Node> {
     protected Index<Node> getTypeNickIndex() {
         return repr().getGraphDatabase().index().forNodes(getTypeNick());
     }
+
+    @Override
+    protected void delete() {
+        repr().delete();
+    }
 }

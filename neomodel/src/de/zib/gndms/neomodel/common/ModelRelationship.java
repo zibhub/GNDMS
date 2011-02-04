@@ -21,4 +21,5 @@ public class ModelRelationship extends ModelGraphElement<Relationship> {
     protected Index<Relationship> getTypeNickIndex() {
         return repr().getGraphDatabase().index().forRelationships(getTypeNick());
     }
+
 }
