@@ -1,5 +1,6 @@
 syntax:glob
 
+
 lib/apache-ant-current
 lib/jruby-current
 lib/apache-ant-1.7.1
@@ -9,6 +10,8 @@ doc/text-html
 gndmc/gndms-gndmc/
 gndmc/target/
 Buildfile~
+
+neomodel/target/**
 services/*/build/**
 services/*/out/**
 services/*/production/**
@@ -26,6 +29,9 @@ services/**/derby.log
 *.eml
 *.iml
 *.gar
+gndmc/gndms-gndmc
+gndmc/target
+doc/api
 gritserv/gndms-gritserv/**
 infra/gndms-infra/**
 model/gndms-model/**
@@ -34,6 +40,7 @@ stuff/gndms-stuff/**
 typecon/gndms-typecon/**
 tmp/**
 model/derby.log
+neomodel/gndms-neomodel/**
 logic/gndms-logic/**
 logic/out/**
 logic/test/**
@@ -72,11 +79,7 @@ lib/kit/*
 lib/gndmc/*
 lib/infra/*
 lib/logic/*
-lib/common/*
-lib/gndmc-rest/*
-lib/gorfx/*
-lib/dspace/*
-lib/gndms/*
+lib/neomodel/*
 */resources/META-INF/GNDMS-RELEASE
 */resources/META-INF/GNDMS-BUILD-INFO
 */resources/META-INF/LICENSE
