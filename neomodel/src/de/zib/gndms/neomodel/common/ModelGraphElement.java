@@ -3,7 +3,6 @@ package de.zib.gndms.neomodel.common;
 import de.zib.gndms.model.ModelObject;
 import org.apache.commons.lang.SerializationUtils;
 import org.jetbrains.annotations.NotNull;
-import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.PropertyContainer;
 import org.neo4j.graphdb.index.Index;
 
@@ -20,13 +19,15 @@ public abstract class ModelGraphElement<U extends PropertyContainer> extends Mod
     private static final String TYPE_KEY = "type";
 
     final @NotNull U representation;
-    final @NotNull NeoSession session;
+    final @NotNull NeoReprSession reprSession;
     final @NotNull private String typeNick;
 
-    protected ModelGraphElement(@NotNull NeoSession session, @NotNull String typeNick, @NotNull U underlying) {
-        this.session        = session;
+    protected ModelGraphElement(@NotNull NeoReprSession session, @NotNull String typeNick, @NotNull U underlying) {
+        this.reprSession = session;
         this.representation = underlying;
         this.typeNick       = typeNick;
+        if (! underlying.hasProperty("TYPE_P"))
+            underlying.setProperty("TYPE_P", getTypeNick());
         repr().setProperty(TYPE_KEY, getTypeNick());
     }
 
@@ -37,7 +38,7 @@ public abstract class ModelGraphElement<U extends PropertyContainer> extends Mod
     final @NotNull protected U repr() { return getRepresentation(); }
 
     @NotNull protected NeoSession getSession() {
-        return session;
+        return reprSession.getSession();
     }
 
     final @NotNull protected NeoSession session() { return getSession(); }
@@ -94,5 +95,17 @@ public abstract class ModelGraphElement<U extends PropertyContainer> extends Mod
 
     protected void delete() {
         throw new UnsupportedOperationException("delete() of this domain object is unsupported");
+    }
+
+
+    @NotNull protected NeoReprSession getReprSession() {
+        return reprSession;
+    }
+
+    public U repr(Object authenticator) {
+        if (authenticator == getReprSession())
+            return repr();
+        else
+            throw new IllegalArgumentException("May not access implementation object without involvement of the Dao");
     }
 }

@@ -18,24 +18,28 @@ import org.neo4j.graphdb.index.Index;
 public class NeoSession {
     private static final String OFFER_TYPE_T = classNick(NeoOfferType.class);
 
-    final @NotNull GraphDatabaseService gdb;
-    final @NotNull Transaction tx;
-    final @NotNull String gridName;
+    private final @NotNull GraphDatabaseService gdb;
+    private final @NotNull Transaction tx;
+    private final @NotNull String gridName;
+    private final @NotNull
+    NeoReprSession reprSession;
 
     public NeoSession(@NotNull String gridName, @NotNull GraphDatabaseService gdb) {
-        this.gdb      = gdb;
-        this.tx       = gdb.beginTx();
-        this.gridName = gridName;
+        this.gdb          =    gdb;
+        this.tx           = gdb.beginTx();
+        this.gridName     = gridName;
+        this.reprSession = new NeoReprSession(this);
     }
 
 
     public NeoOfferType createOfferType() {
         final Node node = gdb.createNode();
-        return new NeoOfferType(this, OFFER_TYPE_T, node);
+        return new NeoOfferType(reprSession, OFFER_TYPE_T, node);
     }
 
     @NotNull public NeoOfferType findOfferType(@NotNull String offerTypeId) {
-        return new NeoOfferType(this, OFFER_TYPE_T, getTypeIndex(OFFER_TYPE_T).get(gridName, offerTypeId).getSingle());
+        return new NeoOfferType(reprSession, OFFER_TYPE_T,
+                getTypeIndex(OFFER_TYPE_T).get(gridName, offerTypeId).getSingle());
     }
 
     protected Index<Node> getTypeIndex(@NotNull String indexName) {

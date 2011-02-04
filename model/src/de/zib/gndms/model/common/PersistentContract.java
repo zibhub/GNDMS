@@ -31,6 +31,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import java.io.Serializable;
 import java.util.Calendar;
 
 
@@ -48,8 +49,10 @@ import java.util.Calendar;
  *          User: stepn Date: 24.11.2008 Time: 15:22:43
  */
 @Embeddable @Copyable(CopyMode.MOLD)
-public class PersistentContract {
-	private Calendar accepted;
+public class PersistentContract implements Serializable {
+    private static final long serialVersionUID = -7695057432890400329L;
+
+    private Calendar accepted;
 	private Calendar deadline;
 	private Calendar resultValidity;
 

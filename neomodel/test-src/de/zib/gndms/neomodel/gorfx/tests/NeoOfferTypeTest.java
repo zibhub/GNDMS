@@ -59,6 +59,7 @@ public class NeoOfferTypeTest {
             assertTrue(ot.getOfferResultType().equalFields(new ImmutableScopedName("x", "z")));
 
             ot.delete(session);
+
             session.success();
         }
         finally {

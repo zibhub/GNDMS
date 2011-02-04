@@ -3,7 +3,6 @@ package de.zib.gndms.neomodel.gorfx;
 import de.zib.gndms.model.common.ImmutableScopedName;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
 
 /*
@@ -24,12 +23,10 @@ import java.util.Map;
 
 
 
-import de.zib.gndms.neomodel.common.NeoSession;
+import de.zib.gndms.neomodel.common.NeoReprSession;
 import de.zib.gndms.neomodel.common.NodeGridResource;
-import org.apache.commons.lang.SerializationUtils;
 import org.jetbrains.annotations.NotNull;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.index.Index;
 
 
 /**
@@ -42,74 +39,74 @@ import org.neo4j.graphdb.index.Index;
  */
 public class NeoOfferType extends NodeGridResource {
 
-    private static final String TASK_ACTION_FACTORY_CLASS_NAME_KEY = "taskActionFactoryClassName";
-    private static final String CALCULATOR_FACTORY_CLASS_NAME_KEY = "calculatorFactoryClassName";
-    private static final String OFFER_ARGUMENT_TYPE_KEY = "offerArgumentType";
-    private static final String OFFER_RESULT_TYPE_KEY = "offerResultType";
-    private static final String CONFIG_MAP_DATA_KEY = "configMapData";
+    private static final String TASK_ACTION_FACTORY_CLASS_NAME_P = "TASK_ACTION_FACTORY_CLASS_NAME_P";
+    private static final String CALCULATOR_FACTORY_CLASS_NAME_P = "CALCULATOR_FACTORY_CLASS_NAME_P";
+    private static final String OFFER_ARGUMENT_TYPE_P = "OFFER_ARGUMENT_TYPE_P";
+    private static final String OFFER_RESULT_TYPE_P = "OFFER_RESULT_TYPE_P";
+    private static final String CONFIG_MAP_DATA_P = "CONFIG_MAP_DATA_P";
 
-    public NeoOfferType(@NotNull NeoSession session, @NotNull String typeNick, @NotNull Node underlying) {
+    public NeoOfferType(@NotNull NeoReprSession session, @NotNull String typeNick, @NotNull Node underlying) {
         super(session, typeNick, underlying);
     }
 
-    public String getOfferTypeKey() {
+    public @NotNull String getOfferTypeKey() {
         return getId();
     }
 
-    public void setOfferTypeKey(String offerTypeKey) {
+    public void setOfferTypeKey(@NotNull String offerTypeKey) {
         setId(offerTypeKey);
     }
 
     @Override
-    final public String getId() {
+    final public @NotNull String getId() {
         return super.getId();
     }
 
     @Override
-    final public void setId(String id) {
+    final public void setId(@NotNull String id) {
         session().setSingleIndex(getTypeNickIndex(), repr(), session().getGridName(), getId(), id);
         super.setId(id);
     }
 
     public Map<String, String> getConfigMapData() {
         //noinspection unchecked
-        return (Map<String, String>) getProperty(Serializable.class, CONFIG_MAP_DATA_KEY);
+        return (Map<String, String>) getProperty(Serializable.class, CONFIG_MAP_DATA_P);
     }
-
+    
     public void setConfigMapData(Map<String, String> configMapData) {
-        setProperty(Serializable.class, CONFIG_MAP_DATA_KEY, (Serializable) configMapData);
+        setProperty(Serializable.class, CONFIG_MAP_DATA_P, (Serializable) configMapData);
     }
 
     public ImmutableScopedName getOfferResultType() {
-        return getProperty(ImmutableScopedName.class, OFFER_RESULT_TYPE_KEY);
+        return getProperty(ImmutableScopedName.class, OFFER_RESULT_TYPE_P);
     }
 
     public void setOfferResultType(ImmutableScopedName offerResultType) {
-        setProperty(ImmutableScopedName.class, OFFER_RESULT_TYPE_KEY, offerResultType);
+        setProperty(ImmutableScopedName.class, OFFER_RESULT_TYPE_P, offerResultType);
     }
 
     public ImmutableScopedName getOfferArgumentType() {
-        return getProperty(ImmutableScopedName.class, OFFER_ARGUMENT_TYPE_KEY);
+        return getProperty(ImmutableScopedName.class, OFFER_ARGUMENT_TYPE_P);
     }
 
     public void setOfferArgumentType(ImmutableScopedName offerArgumentType) {
-        setProperty(ImmutableScopedName.class, OFFER_ARGUMENT_TYPE_KEY, offerArgumentType);
+        setProperty(ImmutableScopedName.class, OFFER_ARGUMENT_TYPE_P, offerArgumentType);
     }
 
     public String getCalculatorFactoryClassName() {
-        return (String) getProperty(CALCULATOR_FACTORY_CLASS_NAME_KEY);
+        return (String) getProperty(CALCULATOR_FACTORY_CLASS_NAME_P);
     }
 
     public void setCalculatorFactoryClassName(String calculatorFactoryClassName) {
-        setProperty(CALCULATOR_FACTORY_CLASS_NAME_KEY, calculatorFactoryClassName);
+        setProperty(CALCULATOR_FACTORY_CLASS_NAME_P, calculatorFactoryClassName);
     }
 
     public String getTaskActionFactoryClassName() {
-        return (String) getProperty(TASK_ACTION_FACTORY_CLASS_NAME_KEY);
+        return (String) getProperty(TASK_ACTION_FACTORY_CLASS_NAME_P);
     }
 
     public void setTaskActionFactoryClassName(String taskActionFactoryClassName) {
-        setProperty(TASK_ACTION_FACTORY_CLASS_NAME_KEY, taskActionFactoryClassName);
+        setProperty(TASK_ACTION_FACTORY_CLASS_NAME_P, taskActionFactoryClassName);
     }
 
     @Override

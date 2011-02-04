@@ -1,7 +1,6 @@
 package de.zib.gndms.neomodel.common;
 
 import org.jetbrains.annotations.NotNull;
-import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.index.Index;
 
@@ -13,7 +12,7 @@ import org.neo4j.graphdb.index.Index;
  * To change this template use File | Settings | File Templates.
  */
 public class ModelRelationship extends ModelGraphElement<Relationship> {
-    protected ModelRelationship(@NotNull NeoSession session, @NotNull String typeNick,
+    protected ModelRelationship(@NotNull NeoReprSession session, @NotNull String typeNick,
                                 @NotNull Relationship underlying) {
         super(session, typeNick, underlying);
     }

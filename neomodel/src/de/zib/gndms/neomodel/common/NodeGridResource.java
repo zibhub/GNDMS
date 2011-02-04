@@ -14,7 +14,7 @@ import org.neo4j.graphdb.Node;
 public class NodeGridResource extends ModelNode implements GridResourceItf {
     private static final String GRID_RESOURCE_ID_KEY = "gridResourceId";
 
-    protected NodeGridResource(@NotNull NeoSession session, @NotNull String typeNick, @NotNull Node underlying) {
+    protected NodeGridResource(@NotNull NeoReprSession session, @NotNull String typeNick, @NotNull Node underlying) {
         super(session, typeNick, underlying);
     }
 

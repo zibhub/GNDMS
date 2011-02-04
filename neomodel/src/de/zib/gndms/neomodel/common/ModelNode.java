@@ -12,7 +12,7 @@ import org.neo4j.graphdb.index.Index;
  * To change this template use File | Settings | File Templates.
  */
 public class ModelNode extends ModelGraphElement<Node> {
-    protected ModelNode(@NotNull NeoSession session, @NotNull String typeNick, @NotNull Node underlying) {
+    protected ModelNode(@NotNull NeoReprSession session, @NotNull String typeNick, @NotNull Node underlying) {
         super(session, typeNick, underlying);
     }
 
