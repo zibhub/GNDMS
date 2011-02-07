@@ -101,6 +101,11 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
     }
     
 
+    /**
+     * Executes the slice transformation.
+     *
+     * NOTE: Since this method uses DirectoryAux.copyDir the obeys the restriction of this method.
+     */
     @Override
     public Slice execute(@NotNull EntityManager em) {
 
@@ -145,6 +150,7 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
                     );
         }
         */
+
         directoryAux.copyDir( nsl.getOwner(), src_pth, tgt_pth );
 
         // restore slice path settings

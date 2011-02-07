@@ -22,6 +22,8 @@ import de.zib.gndms.kit.config.ConfigProvider;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.kit.util.DirectoryAux;
+import de.zib.gndms.logic.action.ProcessBuilderAction;
+import de.zib.gndms.logic.model.dspace.ChownSliceConfiglet;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
 import de.zib.gndms.logic.model.dspace.DeleteSliceAction;
 import de.zib.gndms.logic.model.dspace.TransformSliceAction;
@@ -108,8 +110,8 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
         setSliceId( slice.getId() );
         try {
             doStaging(getOfferTypeConfig(), getOrq(), slice);
+            changeSliceOwner( slice ) ;
             try{
-                transformToResultSlice( slice );
             } catch ( Exception e ) {
                 failFrom( new RuntimeException( "Failed while creating result slice." ,e ) );
             }
@@ -120,6 +122,24 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
             failFrom( e );
         }
     }
+
+
+    protected  void changeSliceOwner( Slice slice ) {
+
+        ChownSliceConfiglet csc = getConfigletProvider().getConfiglet( ChownSliceConfiglet.class, "sliceChown" );
+
+        if( csc == null )
+            throw new IllegalStateException( "chown configlet is null!");
+
+        String dn = getOrq().getActContext().get( "DN" );
+        getLog().debug( "cso DN: "+ dn );
+        getLog().debug( "changing owner of " + slice.getId() + " to " + getOrq().getLocalUser() );
+        ProcessBuilderAction chownAct = csc.createChownSliceAction( getOrq().getLocalUser(),
+            slice.getSubspace().getPath() + File.separator + slice.getKind().getSliceDirectory(),
+            slice.getDirectoryId() );
+        chownAct.call();
+    }
+
 
 
     protected void transformToResultSlice( Slice slice ) {

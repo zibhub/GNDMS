@@ -93,7 +93,7 @@ public class GridFTPClientCreator implements Callable<GridFTPClient>  {
             log.debug( "successful validated" );
         } finally {
             if( d == false ) {
-                log.debug( "validaton failed, discarding client" );
+                log.debug( "validation failed, discarding client" );
                 cnt.close();
                 log.debug( "done" ); 
             }

@@ -109,7 +109,7 @@ public class LinuxDirectoryAux implements DirectoryAux {
                 logger.debug( "Source: " + jms.getFailureSource() );
                 return false;
             } else
-               logger.debug( "Job successfull" );
+               logger.debug( "Job successful" );
         } catch ( IOException e ) {
             logger.error( e );
             return false;
@@ -119,9 +119,8 @@ public class LinuxDirectoryAux implements DirectoryAux {
     }
 
 
-    public boolean changeOwner( String uid, String path) {
-        throw new IllegalStateException( "method not implemented yet" );
-        // return false;  // not required here
+    public boolean changeOwner( String dn, String path) {
+        logger.debug( "changing owner of Slice " + path +" to " + dn );
     }
 
 
@@ -149,7 +148,7 @@ public class LinuxDirectoryAux implements DirectoryAux {
 
         HashMap<String, Object> jd = new HashMap<String, Object>( 2 );
         jd.put( EXECUTABLE, "/bin/cp" );
-        jd.put( ARGS, new String[] { "-r", src_pth + File.separator + "*", tgt_pth } );
+        jd.put( ARGS, new String[] { "-r", src_pth + File.separator + "parms", tgt_pth } );
 
         return executeGramsJob( uid, jd );
     }
