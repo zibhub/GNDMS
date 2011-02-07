@@ -1,1 +1,16 @@
 Please consult the HTML documentation in doc/web/_site/index.html which contains the installation guide
+
+Until 'devel' goes 'master' additional documentation is gathered here:
+
+Setup the slice-chown:
+----------------------
+The configlet setup is located in 
+    scripts/features/enable-slice-chown.sh
+It introduces the path of the chown-script to GNDMS. 
+The script is located in $GNDMS_SOURCE/dev-bin/chownSlice.sh and
+should be installed to $GNDMS_SHARED with owner root and perm 700.
+Additionall the 'globus' user must be allowed to call this script as
+root. For this copy the following entry to your 'sudoers' file
+globus ALL=(root) NOPASSWD: <$GNDMS_SHARED>/chownSlice.sh
+Note: The <$GNDMS_SHARED> must be expanded to the contents of
+$GNDMS_SHARED MANUALLY.

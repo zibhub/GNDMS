@@ -419,9 +419,11 @@ define 'gndms' do
         callIJ( GNDMS_DB, DB_DERBY )
     end
 
-    define 'gndmc', :layout => dmsLayout('gndmc', 'gndms-gndmc') do
-      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gndms:gritserv'), project('gndms:kit'), project('gndms:stuff'), project('gndms:model'), ARGS4J, SERVICE_STUBS, GORFX_CLIENT, DSPACE_CLIENT, GORFX_COMMON, DSPACE_COMMON, COMMONS_COLLECTIONS, GT4_COMMONS, JODA_TIME, GT4_GRAM, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, EXTRA_JARS, GT4_MDS, TestNG.dependencies
+    define 'gndmc', :layout => dmsTestLayout('gndmc', 'gndms-gndmc') do
+      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gndms:gritserv'), project('gndms:kit'), project('gndms:stuff'), project('gndms:model'), ARGS4J, SERVICE_STUBS, GORFX_CLIENT, DSPACE_CLIENT, GORFX_COMMON, DSPACE_COMMON, COMMONS_CODEC, COMMONS_COLLECTIONS, GT4_COMMONS, JODA_TIME, GT4_GRAM, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, EXTRA_JARS, GT4_MDS, TestNG.dependencies
       compile
+      test.compile
+      test.exclude '*'
       package :jar
 
       task 'show-log' do
@@ -448,6 +450,18 @@ define 'gndms' do
                           { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" } } )
       end
 
+      task 'run-staging-test' do
+        jars = compile.dependencies.map(&:to_s)
+        jars << compile.target.to_s
+        args = [ '-props', ENV['GNDMS_SOURCE']+'/test-data/test-properties/g2_stage_del_local.properties', 
+                 '-con-props', ENV['GNDMS_SOURCE']+'/test-data/test-properties/contract.properties', 
+                 '-uri', 'https://130.73.78.15:8443/wsrf/services/gndms/GORFX',
+	             '-dn', '/C=DE/O=GridGermany/OU=Konrad-Zuse-Zentrum fuer Informationstechnik Berlin (ZIB)/OU=CSR/CN=Maik Jorra'
+        ]
+        Commands.java('de.zib.gndmc.GORFX.c3grid.SliceStageInClient',  args, 
+                      { :classpath => jars, :properties => 
+                          { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" } } )
+      end
     end
 
     desc 'Test REST setup'

@@ -19,6 +19,7 @@ package de.zib.gndms.GORFX.action.dms;
 
 
 import de.zib.gndms.GORFX.context.client.TaskClient;
+import de.zib.gndms.gritserv.util.GlobusCredentialProvider;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.system.SystemHolder;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
@@ -31,6 +32,7 @@ import de.zib.gndms.gritserv.typecon.types.SliceRefXSDReader;
 import de.zib.gndms.gritserv.typecon.types.ContextXSDTypeWriter;
 import de.zib.gndms.gritserv.typecon.types.ContractXSDTypeWriter;
 import org.apache.axis.message.addressing.EndpointReferenceType;
+import org.globus.gsi.GlobusCredential;
 import org.jetbrains.annotations.NotNull;
 import types.*;
 
@@ -70,6 +72,7 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
 
         try {
             EndpointReferenceType epr;
+            GlobusCredential gc = GlobusCredentialProvider.class.cast( getCredentialProvider() ).getCredential();
             if( model.getData( ) == null ) {
                 String uri = ( (SliceStageInORQ) model.getOrq()).getActGridSiteURI();
                 if( uri == null )
@@ -79,7 +82,7 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
                     ContextT ctx = ContextXSDTypeWriter.writeContext( getOrq().getActContext() );
                     OfferExecutionContractT con = ContractXSDTypeWriter.write( model.getContract().toTransientContract() );
                     
-                    epr = GORFXClientUtils.commonTaskPreparation( uri, p_orq, ctx, con  );
+                    epr = GORFXClientUtils.commonTaskPreparation( uri, p_orq, ctx, con, gc );
                     model.setData( epr );
      //               transitToState( TaskState.IN_PROGRESS );
                 }
@@ -88,6 +91,8 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
             epr = (EndpointReferenceType) model.getData( );
 
             TaskClient cnt = new TaskClient( epr );
+            cnt.setProxy( gc );
+
             trace( "Starting remote staging.", null );
             boolean finished = GORFXClientUtils.waitForFinish( cnt, 1000 );
 
@@ -102,7 +107,7 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
                 TaskExecutionFailure f = cnt.getExecutionFailure();
                 trace( "Remote staging failed with: \n"
                     +  GORFXClientUtils.taskExecutionFailureToString( f ), null );
-                fail( new RuntimeException( f.toString() ) );
+                failFrom( new RuntimeException( f.toString() ) );
             }
         } catch( RuntimeException e ) {
             honorOngoingTransit( e );
@@ -115,6 +120,6 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
 
     @SuppressWarnings( { "ThrowableInstanceNeverThrown" } )
     private void boxException( Exception e ) {
-        fail( new RuntimeException( e.getMessage(), e ) );
+        failFrom( new RuntimeException( e.getMessage(), e ) );
     }
 }

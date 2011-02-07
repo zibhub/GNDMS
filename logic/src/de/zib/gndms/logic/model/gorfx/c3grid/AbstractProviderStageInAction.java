@@ -22,8 +22,11 @@ import de.zib.gndms.kit.config.ConfigProvider;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.kit.util.DirectoryAux;
+import de.zib.gndms.logic.action.ProcessBuilderAction;
+import de.zib.gndms.logic.model.dspace.ChownSliceConfiglet;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
 import de.zib.gndms.logic.model.dspace.DeleteSliceAction;
+import de.zib.gndms.logic.model.dspace.TransformSliceAction;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.dspace.MetaSubspace;
@@ -32,7 +35,9 @@ import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
+import de.zib.gndms.model.gorfx.types.ProviderStageInResult;
 import de.zib.gndms.model.util.TxFrame;
+import de.zib.gndms.stuff.Sleeper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -82,7 +87,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
                 createNewSlice(model);
             }
             catch (MandatoryOptionMissingException e1) {
-                fail(new RuntimeException(e1));
+                failFrom(e1);
             }
             throw e; // accept state transition decision from super
         }
@@ -93,7 +98,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 	protected @NotNull File getScriptFileByParam(final MapConfig configParam, String scriptParam) throws MandatoryOptionMissingException {
 		final @NotNull File scriptFile = configParam.getFileOption(scriptParam);
 		if (! isValidScriptFile(scriptFile))
-		    fail(new IllegalArgumentException("Invalid " + scriptParam + " script: " + scriptFile.getPath()));
+		    failFrom(new IllegalArgumentException("Invalid " + scriptParam + " script: " + scriptFile.getPath()));
 		return scriptFile;
 	}
 
@@ -103,13 +108,81 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
     protected void onInProgress(final @NotNull AbstractTask model) {
         final Slice slice = findSlice(model);
         setSliceId( slice.getId() );
-        doStaging(getOfferTypeConfig(), getOrq(), slice);
+        try {
+            doStaging(getOfferTypeConfig(), getOrq(), slice);
+            changeSliceOwner( slice ) ;
+            try{
+            } catch ( Exception e ) {
+                failFrom( new RuntimeException( "Failed while creating result slice." ,e ) );
+            }
+            finish( new ProviderStageInResult( getSliceId()) );
+        }
+        catch (RuntimeException e) {
+            honorOngoingTransit(e);
+            failFrom( e );
+        }
+    }
+
+
+    protected  void changeSliceOwner( Slice slice ) {
+
+        ChownSliceConfiglet csc = getConfigletProvider().getConfiglet( ChownSliceConfiglet.class, "sliceChown" );
+
+        if( csc == null )
+            throw new IllegalStateException( "chown configlet is null!");
+
+        String dn = getOrq().getActContext().get( "DN" );
+        getLog().debug( "cso DN: "+ dn );
+        getLog().debug( "changing owner of " + slice.getId() + " to " + getOrq().getLocalUser() );
+        ProcessBuilderAction chownAct = csc.createChownSliceAction( getOrq().getLocalUser(),
+            slice.getSubspace().getPath() + File.separator + slice.getKind().getSliceDirectory(),
+            slice.getDirectoryId() );
+        chownAct.call();
+    }
+
+
+
+    protected void transformToResultSlice( Slice slice ) {
+
+        final EntityManager em = getEntityManager();
+        final TxFrame txf = new TxFrame(em);
+        try {
+            String slicekindKey = "http://www.c3grid.de/G2/SliceKind/Result";
+            SliceKind kind = getEntityManager().find(SliceKind.class, slicekindKey);
+
+            TransformSliceAction tsa =  new TransformSliceAction(
+                getUUIDGen().nextUUID(),
+                getOrq().getLocalUser(),
+                slice.getTerminationTime(),
+                kind,
+                slice.getSubspace(),
+                slice.getTotalStorageSize(),
+                getUUIDGen()
+            );
+
+            tsa.setParent( this );
+            tsa.setModel( slice );
+            tsa.initialize();
+            tsa.setClosingEntityManagerOnCleanup( false );
+            final Slice tgt_slice = tsa.execute( em );
+
+            setSliceId( tgt_slice.getId() );
+
+            DeleteSliceAction dsa = new DeleteSliceAction( slice );
+            dsa.setParent( this );
+            dsa.setClosingEntityManagerOnCleanup( false );
+            dsa.setModel( slice.getSubspace() );
+            dsa.execute( em );
+            txf.commit();
+        }
+        finally { txf.finish();  }
+
     }
 
 
     protected abstract void doStaging(
-            final MapConfig offerTypeConfigParam, final ProviderStageInORQ orqParam,
-            final Slice sliceParam);
+        final MapConfig offerTypeConfigParam, final ProviderStageInORQ orqParam,
+        final Slice sliceParam );
 
 
     private void createNewSlice(final AbstractTask model) throws MandatoryOptionMissingException {
@@ -129,6 +202,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 
             CreateSliceAction csa = new CreateSliceAction();
             csa.setParent(this);
+            // uid should be the id of hte container
             csa.setTerminationTime(getModel().getContract().getResultValidity());
             csa.setClosingEntityManagerOnCleanup(false);
             csa.setUUIDGen(getUUIDGen());
@@ -240,7 +314,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 			   return builder;
        }
        catch (MandatoryOptionMissingException e) {
-           throw new RuntimeException(e);
+           throw new RuntimeException("createProcessBuilder " + (name==null?"null":name) + " " + (dir==null?"(null)":dir), e);
        }
    }
 

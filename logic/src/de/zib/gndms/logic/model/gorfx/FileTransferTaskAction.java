@@ -135,7 +135,7 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
         } catch ( TransitException e ) {
             throw e;
         } catch ( Exception e ) {
-                failWith( e );
+                failFrom( e );
         } finally {
 
             try {
@@ -169,7 +169,4 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
     }
 
     
-    private void failWith( Exception e ) {
-        fail( new IllegalStateException( getModel().getDescription() + " failure " +  e.getMessage(), e ) );
-    }
 }

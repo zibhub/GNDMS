@@ -78,34 +78,27 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
 
         final StringBuilder outRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
         final StringBuilder errRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
-        try {
 
-            final ProcessBuilderAction action = parmAux.createPBAction(orqParam, null, actualPermissions() );
-            action.setProcessBuilder(procBuilder);
-            action.setOutputReceiver(outRecv);
-            action.setErrorReceiver(errRecv);
-            int result = action.call();
-            switch (result) {
-                case 0:
-	                getLog().debug("Staging completed: " + outRecv.toString());
-                    finish( new ProviderStageInResult( sliceParam.getId() ) );
-	                /* unreachable: */
-	                break;
-                default:
-	                if (result > 127) {
-					    getLog().debug("Waiting for potential death of container...");
-		                Sleeper.sleepUninterruptible(GLOBUS_DEATH_DURATION);
-	                }
-                    String log = "Stagung failed! Staging script returned unexpected exit code: " + result +
-                            "\nScript output was:\n" + errRecv.toString();
+        final ProcessBuilderAction action = parmAux.createPBAction(orqParam, null, actualPermissions() );
+        action.setProcessBuilder(procBuilder);
+        action.setOutputReceiver(outRecv);
+        action.setErrorReceiver(errRecv);
+        int result =  action.call();
+        switch (result) {
+            case 0:
+                getLog().debug("Staging completed: " + outRecv.toString());
+                /* unreachable: */
+                break;
+            default:
+                if (result > 127) {
+                    getLog().debug("Waiting for potential death of container...");
+                    Sleeper.sleepUninterruptible( GLOBUS_DEATH_DURATION );
+                }
+                String log = "Staging failed! Staging script returned unexpected exit code: " + result +
+                    "\nScript output was:\n" + errRecv.toString();
 
-                    trace( log, null ) ;
-                    fail( new IllegalStateException( log ) );
-            }
-        }
-        catch (RuntimeException e) {
-            honorOngoingTransit(e);
-            fail(new RuntimeException(errRecv.toString(), e));
+                trace( log, null ) ;
+                failFrom( new IllegalStateException( log ) );
         }
     }
 
