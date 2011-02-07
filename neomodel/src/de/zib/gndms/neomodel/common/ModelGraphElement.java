@@ -17,17 +17,22 @@ import java.io.Serializable;
  * To change this template use File | Settings | File Templates.
  */
 public abstract class ModelGraphElement<U extends PropertyContainer> extends ModelObject {
-    private static final String TYPE_KEY = "type";
+    public static final String INDEX_SEPARATOR = "@@";
+    public static final String TYPE_P = "TYPE_P";
 
     final @NotNull U representation;
     final @NotNull NeoSession session;
     final @NotNull private String typeNick;
 
-    protected ModelGraphElement(@NotNull NeoSession session, @NotNull String typeNick, @NotNull U underlying) {
-        this.session        = session;
+    protected ModelGraphElement(@NotNull NeoReprSession session, @NotNull String typeNick, @NotNull U underlying) {
+        if (typeNick.contains(INDEX_SEPARATOR))
+            throw new IllegalArgumentException("typeNick must not contain " + INDEX_SEPARATOR);
+        this.reprSession = session;
         this.representation = underlying;
         this.typeNick       = typeNick;
-        repr().setProperty(TYPE_KEY, getTypeNick());
+        if (! underlying.hasProperty(TYPE_P))
+            underlying.setProperty(TYPE_P, getTypeNick());
+        repr().setProperty(TYPE_P, getTypeNick());
     }
 
     @NotNull protected U getRepresentation() {
@@ -48,6 +53,7 @@ public abstract class ModelGraphElement<U extends PropertyContainer> extends Mod
 
     protected abstract Index<U> getTypeNickIndex();
 
+    protected abstract Index<U> getTypeNickIndex(final @NotNull String... names);
 
     protected boolean hasProperty(String s) {
         return representation.hasProperty(s);

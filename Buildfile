@@ -94,6 +94,7 @@ def skipDeps(deps)
   deps = deps.select { |ding| !ding.include?("/commons-logging") }
   deps = deps.select { |ding| !ding.include?("/commons-lang-2.1") }
   deps = deps.select { |ding| !ding.include?("/commons-pool") }
+  deps = deps.select { |ding| !ding.include?("/commons-io") }
   return deps
 end
 
@@ -143,6 +144,7 @@ COMMONS_CODEC = 'commons-codec:commons-codec:jar:1.4'
 COMMONS_LANG = 'commons-lang:commons-lang:jar:2.1'
 COMMONS_LOGGING = 'commons-logging:commons-logging:jar:1.1.1'
 COMMONS_FILEUPLOAD = transitive(['commons-fileupload:commons-fileupload:jar:1.2.1'])
+COMMONS_IO = transitive(['commons-io:commons-io:jar:2.0.1'])
 JETTY = ['org.mortbay.jetty:jetty:jar:6.1.11', 'org.mortbay.jetty:jetty-util:jar:6.1.11']
 GROOVY = ['org.codehaus.groovy:groovy:jar:1.6.9']
 ARGS4J = 'args4j:args4j:jar:2.0.14'
@@ -320,6 +322,18 @@ define 'gndms' do
        compile.with GUICE, GOOGLE_COLLECTIONS, JETBRAINS_ANNOTATIONS, SLF4J
        compile { project('gndms').updateBuildInfo() }
        package :jar
+    end
+
+    desc 'Shared graph database model classes'
+    define 'neomodel', :layout => dmsTestLayout('neomodel', 'gndms-neomodel') do
+      compile.with project('model'), project('stuff'), JETBRAINS_ANNOTATIONS, NEODATAGRAPH, OPENJPA, COMMONS_LANG
+      
+      test.using :testng
+      test.with COMMONS_IO
+      test.compile
+
+      test.include 'de.zib.gndms.neomodel.gorfx.tests.NeoOfferTypeTest'
+      package :jar      
     end
 
     desc 'Shared database model classes'
