@@ -64,8 +64,8 @@ public class NeoOfferType extends NodeGridResource {
 
     @Override
     final public void setId(@NotNull String id) {
-        session().setSingleIndex(getTypeNickIndex(), repr(), session().getGridName(), getId(), id);
         super.setId(id);
+        session().setSingleIndex(getTypeNickIndex(), repr(), session().getGridName(), getId(), id);
     }
 
     public Map<String, String> getConfigMapData() {

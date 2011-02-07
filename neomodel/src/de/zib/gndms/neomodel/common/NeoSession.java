@@ -1,6 +1,7 @@
 package de.zib.gndms.neomodel.common;
 
 import de.zib.gndms.neomodel.gorfx.NeoOfferType;
+import de.zib.gndms.neomodel.gorfx.NeoTask;
 import org.jetbrains.annotations.NotNull;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -17,6 +18,7 @@ import org.neo4j.graphdb.index.Index;
  */
 public class NeoSession {
     private static final String OFFER_TYPE_T = classNick(NeoOfferType.class);
+    private static final String TASK_T = classNick(NeoTask.class);
 
     private final @NotNull GraphDatabaseService gdb;
     private final @NotNull Transaction tx;
@@ -40,6 +42,16 @@ public class NeoSession {
     @NotNull public NeoOfferType findOfferType(@NotNull String offerTypeId) {
         return new NeoOfferType(reprSession, OFFER_TYPE_T,
                 getTypeIndex(OFFER_TYPE_T).get(gridName, offerTypeId).getSingle());
+    }
+    
+    public NeoTask createTask() {
+        final Node node = gdb.createNode();
+        return new NeoTask(reprSession, TASK_T, node);
+    }
+
+    @NotNull public NeoTask findTask(@NotNull String taskId) {
+        return new NeoTask(reprSession, TASK_T,
+                getTypeIndex(TASK_T).get(gridName, taskId).getSingle());
     }
 
     protected Index<Node> getTypeIndex(@NotNull String indexName) {

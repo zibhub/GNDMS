@@ -39,7 +39,8 @@ import java.io.Serializable;
  */
 @Embeddable
 @Copyable( CopyMode.CONSTRUCT )
-public class PermissionInfo {
+public class PermissionInfo implements Serializable {
+    private static final long serialVersionUID = -5056270282074831436L;
 
     private String userName; // Name of the user who is creating the task.
                              // If this one is null it means that the configlet should be queried.

@@ -12,6 +12,7 @@ import org.neo4j.graphdb.index.Index;
  * To change this template use File | Settings | File Templates.
  */
 public class ModelRelationship extends ModelGraphElement<Relationship> {
+
     protected ModelRelationship(@NotNull NeoReprSession session, @NotNull String typeNick,
                                 @NotNull Relationship underlying) {
         super(session, typeNick, underlying);
@@ -19,6 +20,20 @@ public class ModelRelationship extends ModelGraphElement<Relationship> {
 
     protected Index<Relationship> getTypeNickIndex() {
         return repr().getGraphDatabase().index().forRelationships(getTypeNick());
+    }
+
+    @NotNull protected Index<Relationship> getTypeNickIndex(@NotNull String... names) {
+        final StringBuffer indexName = new StringBuffer(getTypeNick());
+        for (final String name : names)
+            if (name == null)
+                throw new IllegalArgumentException("(null) index name component");
+            else if (name.contains(INDEX_SEPARATOR))
+                throw new IllegalArgumentException("index name component must not contain " + INDEX_SEPARATOR);
+            else {
+                indexName.append(INDEX_SEPARATOR);
+                indexName.append(names);
+            }
+        return repr().getGraphDatabase().index().forRelationships(indexName.toString());
     }
 
 }

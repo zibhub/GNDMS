@@ -18,53 +18,35 @@ import java.util.HashMap;
  * Time: 17:07
  * To change this template use File | Settings | File Templates.
  */
-public class NeoOfferTypeTest {
+public class NeoOfferTypeTest extends NeoTest {
 
     @Test( groups = { "neo" } )
     public void createOfferType() {
-        GraphDatabaseService gdb = new EmbeddedGraphDatabase("/tmp/neo");
-        NeoDao dao = new NeoDao("gndms", gdb);
-        NeoSession session = dao.beginSession();
-        try {
-            NeoOfferType ot = session.createOfferType();
+        NeoOfferType ot = session.createOfferType();
 
-            ot.setId("offerTypeNr1");
-            ot.setCalculatorFactoryClassName("cfn");
-            ot.setTaskActionFactoryClassName("tfn");
-            ot.setConfigMapData(new HashMap<String,String>());
-            ot.setOfferArgumentType(new ImmutableScopedName("a", "b"));
-            ot.setOfferResultType(new ImmutableScopedName("x", "z"));
+        ot.setId("offerTypeNr1");
+        ot.setCalculatorFactoryClassName("cfn");
+        ot.setTaskActionFactoryClassName("tfn");
+        ot.setConfigMapData(new HashMap<String,String>());
+        ot.setOfferArgumentType(new ImmutableScopedName("a", "b"));
+        ot.setOfferResultType(new ImmutableScopedName("x", "z"));
 
-            session.success();
-        }
-        finally {
-            session.finish();
-            gdb.shutdown();
-        }
+        session.success();
     }
 
     @Test( groups = { "neo" }, dependsOnMethods = { "createOfferType" } )
     public void findOfferType() {
-        GraphDatabaseService gdb = new EmbeddedGraphDatabase("/tmp/neo");
-        NeoDao dao = new NeoDao("gndms", gdb);
-        NeoSession session = dao.beginSession();
-        try {
-            NeoOfferType ot = session.findOfferType("offerTypeNr1");
+        NeoOfferType ot = session.findOfferType("offerTypeNr1");
 
-            assertEquals(ot.getId(), "offerTypeNr1");
-            assertEquals(ot.getCalculatorFactoryClassName(), "cfn");
-            assertEquals(ot.getTaskActionFactoryClassName(), "tfn");
-            assertEquals(ot.getConfigMapData(), new HashMap<String, String>());
-            assertTrue(ot.getOfferArgumentType().equalFields(new ImmutableScopedName("a", "b")));
-            assertTrue(ot.getOfferResultType().equalFields(new ImmutableScopedName("x", "z")));
+        assertEquals(ot.getId(), "offerTypeNr1");
+        assertEquals(ot.getCalculatorFactoryClassName(), "cfn");
+        assertEquals(ot.getTaskActionFactoryClassName(), "tfn");
+        assertEquals(ot.getConfigMapData(), new HashMap<String, String>());
+        assertTrue(ot.getOfferArgumentType().equalFields(new ImmutableScopedName("a", "b")));
+        assertTrue(ot.getOfferResultType().equalFields(new ImmutableScopedName("x", "z")));
 
-            ot.delete(session);
+        ot.delete(session);
 
-            session.success();
-        }
-        finally {
-            session.finish();
-            gdb.shutdown();
-        }
+        session.success();
     }
 }

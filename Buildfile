@@ -81,6 +81,7 @@ def skipDeps(deps)
   deps = deps.select { |ding| !ding.include?("/commons-logging") }
   deps = deps.select { |ding| !ding.include?("/commons-lang-2.1") }
   deps = deps.select { |ding| !ding.include?("/commons-pool") }
+  deps = deps.select { |ding| !ding.include?("/commons-io") }
   return deps
 end
 
@@ -96,6 +97,7 @@ COMMONS_COLLECTIONS = transitive(['commons-collections:commons-collections:jar:3
 COMMONS_CODEC = 'commons-codec:commons-codec:jar:1.4'
 COMMONS_LANG = 'commons-lang:commons-lang:jar:2.1'
 COMMONS_FILEUPLOAD = transitive(['commons-fileupload:commons-fileupload:jar:1.2.1'])
+COMMONS_IO = transitive(['commons-io:commons-io:jar:2.0.1'])
 JETTY = ['org.mortbay.jetty:jetty:jar:6.1.11', 'org.mortbay.jetty:jetty-util:jar:6.1.11']
 GROOVY = ['org.codehaus.groovy:groovy:jar:1.6.9']
 ARGS4J = 'args4j:args4j:jar:2.0.14'
@@ -257,6 +259,7 @@ NEODATAGRAPH = [_('lib/neo4j-1.2/geronimo-jta_1.1_spec-1.1.1.jar'),
       compile.with project('model'), project('stuff'), JETBRAINS_ANNOTATIONS, NEODATAGRAPH, OPENJPA, COMMONS_LANG
       
       test.using :testng
+      test.with COMMONS_IO
       test.compile
 
       test.include 'de.zib.gndms.neomodel.gorfx.tests.NeoOfferTypeTest'
