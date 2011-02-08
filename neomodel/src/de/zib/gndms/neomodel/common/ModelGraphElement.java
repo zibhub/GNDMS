@@ -3,7 +3,6 @@ package de.zib.gndms.neomodel.common;
 import de.zib.gndms.model.ModelObject;
 import org.apache.commons.lang.SerializationUtils;
 import org.jetbrains.annotations.NotNull;
-import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.PropertyContainer;
 import org.neo4j.graphdb.index.Index;
 
@@ -107,10 +106,49 @@ public abstract class ModelGraphElement<U extends PropertyContainer> extends Mod
         return reprSession;
     }
 
+    @NotNull final protected NeoReprSession reprSession() {
+        return getReprSession();
+    }
+
     public U repr(Object authenticator) {
         if (authenticator == getReprSession())
             return repr();
         else
             throw new IllegalArgumentException("May not access implementation object without involvement of the Dao");
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null) return false;
+        if (o == this) return true;
+        if (! getClass().equals(o.getClass())) return false;
+
+        final ModelGraphElement other = getClass().cast(o);
+        return other.reprSession == other.reprSession &&
+               repr().getClass().equals(other.repr().getClass()) &&
+                getReprId() == other.getReprId();
+    }
+
+
+    @Override
+    public int hashCode() {
+        final long reprId = getReprId();
+        return 851 + (int) (reprId ^ (reprId << 32));
+    }
+
+    public static String getTypeNickIndexName(String typeNick, String... names) {
+        final StringBuffer indexName = new StringBuffer(typeNick);
+        for (final String name : names)
+            if (name == null)
+                throw new IllegalArgumentException("(null) index name component");
+            else if (name.contains(INDEX_SEPARATOR))
+                throw new IllegalArgumentException("index name component must not contain " + INDEX_SEPARATOR);
+            else {
+                indexName.append(INDEX_SEPARATOR);
+                indexName.append(name);
+            }
+        return indexName.toString();
+    }
+
+    protected abstract long getReprId();
 }

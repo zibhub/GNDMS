@@ -1,13 +1,18 @@
 package de.zib.gndms.neomodel.common;
 
+import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.gorfx.NeoOfferType;
 import de.zib.gndms.neomodel.gorfx.NeoTask;
+import org.apache.lucene.search.NumericRangeQuery;
 import org.jetbrains.annotations.NotNull;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.PropertyContainer;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
+import org.neo4j.graphdb.index.IndexHits;
+
+import java.util.Calendar;
 
 /**
  * Created by IntelliJ IDEA.
@@ -17,14 +22,13 @@ import org.neo4j.graphdb.index.Index;
  * To change this template use File | Settings | File Templates.
  */
 public class NeoSession {
-    private static final String OFFER_TYPE_T = classNick(NeoOfferType.class);
-    private static final String TASK_T = classNick(NeoTask.class);
+    private static final String OFFER_TYPE_T = classNickName(NeoOfferType.class);
+    private static final String TASK_T = classNickName(NeoTask.class);
 
     private final @NotNull GraphDatabaseService gdb;
     private final @NotNull Transaction tx;
     private final @NotNull String gridName;
-    private final @NotNull
-    NeoReprSession reprSession;
+    private final @NotNull NeoReprSession reprSession;
 
     public NeoSession(@NotNull String gridName, @NotNull GraphDatabaseService gdb) {
         this.gdb          =    gdb;
@@ -54,6 +58,22 @@ public class NeoSession {
                 getTypeIndex(TASK_T).get(gridName, taskId).getSingle());
     }
 
+
+    public Iterable<Node> listTasksByState(@NotNull TaskState state) {
+        final Index<Node> index = gdb.index().forNodes(typeIndexNickName(TASK_T, NeoTask.TASK_STATE_IDX));
+        final IndexHits<Node> query = index.get(getGridName(), state.name());
+        return query;
+    }
+
+    @SuppressWarnings({"UnnecessaryLocalVariable"})
+    public Iterable<Node> listTasksDeadBeforeTimeout(@NotNull Calendar timeout) {
+        final Index<Node> index = gdb.index().forNodes(typeIndexNickName(TASK_T, NeoTask.TERMINATION_TIME_IDX));
+        final IndexHits<Node> query =
+                index.query(NumericRangeQuery.newLongRange(getGridName(), 0L, timeout.getTimeInMillis(), true, false));
+        return query;
+
+    }
+
     protected Index<Node> getTypeIndex(@NotNull String indexName) {
         return gdb.index().forNodes(indexName);
     }
@@ -74,8 +94,12 @@ public class NeoSession {
         tx.finish();
     }
 
-    @NotNull protected static String classNick(Class c) {
+    @NotNull protected static String classNickName(Class c) {
         return c.getSimpleName();
+    }
+
+    @NotNull protected static String typeIndexNickName(String typeNick, String... names) {
+        return ModelGraphElement.getTypeNickIndexName(typeNick, names);
     }
 
     public <U extends PropertyContainer> void setSingleIndex(@NotNull Index<U> index, @NotNull U repr,
@@ -85,7 +109,7 @@ public class NeoSession {
 
         if (index.get(key, newVal).size() > 0) {
             this.failure();
-            throw new IllegalArgumentException("Node already exists");
+            throw new IllegalArgumentException("Graph element already exists");
         }
         index.add(repr, key, newVal);
     }
