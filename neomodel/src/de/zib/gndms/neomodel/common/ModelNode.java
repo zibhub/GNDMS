@@ -29,16 +29,11 @@ public class ModelNode extends ModelGraphElement<Node> {
     }
 
     @NotNull protected Index<Node> getTypeNickIndex(@NotNull String... names) {
-        final StringBuffer indexName = new StringBuffer(getTypeNick());
-        for (final String name : names)
-            if (name == null)
-                throw new IllegalArgumentException("(null) index name component");
-            else if (name.contains(INDEX_SEPARATOR))
-                throw new IllegalArgumentException("index name component must not contain " + INDEX_SEPARATOR);
-            else {
-                indexName.append(INDEX_SEPARATOR);
-                indexName.append(names);
-            }
-        return repr().getGraphDatabase().index().forNodes(indexName.toString());
+        final String typeNickIndexName = getTypeNickIndexName(getTypeNick(), names);
+        return repr().getGraphDatabase().index().forNodes(typeNickIndexName);
+    }
+
+    protected long getReprId() {
+        return repr().getId();
     }
 }
