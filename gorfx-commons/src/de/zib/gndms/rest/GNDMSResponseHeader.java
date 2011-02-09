@@ -1,4 +1,4 @@
-package de.zib.gndms.gritserv.rest;
+package de.zib.gndms.rest;
 /*
  * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
@@ -28,12 +28,6 @@ import java.util.List;
  * A class for the generic Http response-header specified for GNDMS.
  */
 public class GNDMSResponseHeader extends HttpHeaders {
-
-    private String resourceURL;
-    private String facetURL;
-    private String parentURL;
-    private String DN;
-
 
     public List<String> getResourceURL() {
         return get( "resourceURL" );
@@ -72,5 +66,16 @@ public class GNDMSResponseHeader extends HttpHeaders {
 
     public void setDN( String DN ) {
         this.add( "DN", DN );
+    }
+
+
+    public List<String> getWid() {
+
+        return get( "WId" );
+    }
+
+
+    public void setWid( String wid ) {
+        this.add( "WId", wid );
     }
 }
