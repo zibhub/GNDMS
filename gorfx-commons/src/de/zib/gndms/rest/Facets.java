@@ -1,4 +1,4 @@
-package de.zib.gndms.gritserv.rest;
+package de.zib.gndms.rest;
 /*
  * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
@@ -16,7 +16,6 @@ package de.zib.gndms.gritserv.rest;
  */
 
 import java.util.List;
-import java.util.ListIterator;
 
 /**
  * @author try ma ik jo rr a zib

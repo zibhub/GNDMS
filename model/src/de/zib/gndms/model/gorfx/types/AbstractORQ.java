@@ -42,7 +42,7 @@ public abstract class AbstractORQ implements Serializable {
 	private transient boolean justEstimate; ///< Flag for the contract calculation
 
     private String actId; ///< A unique id inherited from the ORQResource
-    private HashMap<String,String> actContext; ///< The contex of the ORQResource
+    private HashMap<String,String> actContext; ///< The context of the ORQResource
                                                /// Contains stuff like, delegation epr, and workflow id
 	private static final int INITIAL_STRING_BUILDER_CAPACITY = 256;
     private String localUser; ///< The user name map to the credential of the request.

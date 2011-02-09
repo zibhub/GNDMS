@@ -24,12 +24,12 @@
     </bean>
 
 
-    <bean id="gorfxService" class="de.zib.gndms.GORFX.service.GORFXService">
+    <bean id="gorfxService" class="de.zib.gndms.GORFX.service.GORFXServiceImpl">
         <property name="baseUrl" value="${gorfxBaseURL}"/>
         <property name="gorfxFacets" ref="gorfxFacets" />
     </bean>
 
-    <bean id="gorfxFacets" class="de.zib.gndms.gritserv.rest.Facets">
+    <bean id="gorfxFacets" class="de.zib.gndms.rest.Facets">
         <property name="facets">
             <list>
                 <ref bean="config"/>
@@ -40,19 +40,22 @@
         </property>
     </bean>
 
-    <bean id="config" class="de.zib.gndms.gritserv.rest.Facet">
+    <bean id="config" class="de.zib.gndms.rest.Facet">
         <property name="config" value="${gorfxBaseURL}/gorfx/config"/>
     </bean>
 
-    <bean id="batch" class="de.zib.gndms.gritserv.rest.Facet">
+    <bean id="batch" class="de.zib.gndms.rest.Facet">
         <property name="batch" value="${gorfxBaseURL}/gorfx/batch"/>
     </bean>
     
-    <bean id="taskflows" class="de.zib.gndms.gritserv.rest.Facet">
+    <bean id="taskflows" class="de.zib.gndms.rest.Facet">
         <property name="taskflows" value="${gorfxBaseURL}/gorfx/taskflows"/>
     </bean>
 
-    <bean id="tasks" class="de.zib.gndms.gritserv.rest.Facet">
+    <bean id="tasks" class="de.zib.gndms.rest.Facet">
         <property name="tasks" value="${gorfxBaseURL}/gorfx/tasks"/>
     </bean>
+
+    <import resource="gorfx-mockups.xml"/>
+
 </beans>

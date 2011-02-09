@@ -1,6 +1,6 @@
-package de.zib.gndms.kit.config;
+package de.zib.gndms.model.gorfx.types;
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,12 @@ package de.zib.gndms.kit.config;
 
 /**
  * @author try ma ik jo rr a zib
- * @version $Id$
- *          <p/>
- *          Date: 26.01.11, Time: 15:10
+ *         Date: 09.02.11, Time: 12:47
  *
- * Should provided meta information about a configuration like, description, help and parameter detail.
+ * Implementors of this interface should provide information about a task flow.
  */
-public interface ConfigMeta {
+public interface TaskFlowInfo {
 
-    String getConfigName();
-    String getConfigHelp();
-    String getConfigDescription();
+    String getStatistics();
+    String getDescription();
 }
