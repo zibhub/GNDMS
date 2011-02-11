@@ -27,6 +27,7 @@ import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.model.dspace.Subspace;
+import de.zib.gndms.neomodel.common.NeoDao;
 import org.apache.axis.message.addressing.AttributedURI;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.commons.logging.Log;
@@ -213,5 +214,9 @@ public final class ExtSubspaceResourceHome extends SubspaceResourceHome
 		de.zib.gndms.dspace.subspace.stubs.types.SubspaceReference ref = new de.zib.gndms.dspace.subspace.stubs.types.SubspaceReference();
 		ref.setEndpointReference(epr);
 		return ref;
+    }
+
+    @NotNull public NeoDao getDao() {
+        return system.getDao();
     }
 }

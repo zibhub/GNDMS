@@ -95,7 +95,7 @@ public abstract class ORQResourceBase extends ReflectionResource implements Reso
 		this.desc = null;
 
 
-		// register the service to the index service
+		// onCreate the service to the index service
 		refreshRegistration(true);
 		
 	}
@@ -169,7 +169,7 @@ public abstract class ORQResourceBase extends ReflectionResource implements Reso
 
 
     /**
-     * This checks the configuration file, and attempts to register to the
+     * This checks the configuration file, and attempts to onCreate to the
      * IndexService if shouldPerformRegistration==true. It will first read the
      * current container URL, and compare it against the saved value. If the
      * value exists, it will only try to reregister if the values are different.
@@ -252,7 +252,7 @@ public abstract class ORQResourceBase extends ReflectionResource implements Reso
                 if (pollType != null) {
                     
                     // if there are properties names that need to be registered then
-                    // register them to the index service
+                    // onCreate them to the index service
                     if (pollType.getResourcePropertyNames()!=null && pollType.getResourcePropertyNames().length != 0) {
 
                         URL currentContainerURL = null;
@@ -264,14 +264,14 @@ public abstract class ORQResourceBase extends ReflectionResource implements Reso
                         }
 
                         if (this.baseURL != null) {
-                            // we've tried to register before (or we are being
+                            // we've tried to onCreate before (or we are being
                             // forced to
                             // retry)
                             // do a string comparison as we don't want to do DNS
                             // lookups
                             // for comparison
                             if (forceRefresh || !this.baseURL.equals(currentContainerURL)) {
-                                // we've tried to register before, and we have a
+                                // we've tried to onCreate before, and we have a
                                 // different
                                 // URL now.. so cancel the old registration (if
                                 // it
@@ -301,7 +301,7 @@ public abstract class ORQResourceBase extends ReflectionResource implements Reso
                             // we've never saved the baseURL (and therefore
                             // haven't
                             // tried to
-                            // register)
+                            // onCreate)
                             this.baseURL = currentContainerURL;
                             logger.info("Attempting registration for the first time[container URL=" + this.baseURL
                                 + "].");
@@ -313,10 +313,10 @@ public abstract class ORQResourceBase extends ReflectionResource implements Reso
                             this.registrationClient.register();
 
                         } catch (Exception e) {
-                            logger.error("Exception when trying to register service (" + epr + "): " + e, e);
+                            logger.error("Exception when trying to onCreate service (" + epr + "): " + e, e);
                         }
                     } else {
-                        logger.info("No resource properties to register for service (" + epr + ")");
+                        logger.info("No resource properties to onCreate for service (" + epr + ")");
                     }
                 } else {
                     logger.warn("Registration file deserialized with no poll type (" + epr + ")");

@@ -20,6 +20,7 @@ package de.zib.gndms.infra.service;
 
 import de.zib.gndms.infra.system.SystemHolder;
 import de.zib.gndms.kit.access.EMFactoryProvider;
+import de.zib.gndms.neomodel.common.NeoDao;
 import org.apache.axis.types.URI;
 import org.globus.wsrf.ResourceHome;
 import org.globus.wsrf.ResourceKey;
@@ -37,6 +38,8 @@ import org.jetbrains.annotations.NotNull;
 public interface GNDMServiceHome
         extends EMFactoryProvider, SystemHolder, ResourceHome {
 
+
+    @NotNull NeoDao getDao();
 
     @NotNull String getNickName();
 

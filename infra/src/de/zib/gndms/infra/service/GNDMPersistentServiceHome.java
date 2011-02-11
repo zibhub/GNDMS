@@ -18,7 +18,9 @@ package de.zib.gndms.infra.service;
 
 
 
+import de.zib.gndms.model.common.GridEntity;
 import de.zib.gndms.model.common.GridResource;
+import de.zib.gndms.model.common.GridResourceItf;
 import org.jetbrains.annotations.NotNull;
 import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.ResourceKey;
@@ -36,7 +38,7 @@ import javax.persistence.Query;
  *
  *          User: stepn Date: 07.10.2008 Time: 16:20:10
  */
-public interface GNDMPersistentServiceHome<M extends GridResource> extends GNDMServiceHome {
+public interface GNDMPersistentServiceHome<M extends GridEntity & GridResourceItf> extends GNDMServiceHome {
 
     void refresh(final @NotNull M resourceModel) throws ResourceException;
 

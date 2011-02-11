@@ -37,6 +37,7 @@ import de.zib.gndms.gritserv.typecon.types.FileTransferResultXSDTypeWriter;
 import de.zib.gndms.gritserv.typecon.types.ProviderStageInResultXSDTypeWriter;
 import de.zib.gndms.gritserv.typecon.types.*;
 import de.zib.gndms.gritserv.typecon.types.SliceStageInResultXSDTypeWriter;
+import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.apache.commons.logging.Log;
 import org.apache.log4j.Logger;
 import org.globus.gsi.GlobusCredential;
@@ -60,7 +61,7 @@ import java.util.concurrent.Future;
  * @created by Introduce Toolkit version 1.2
  */
 public class TaskResource extends TaskResourceBase
-    implements ReloadablePersistentResource<Task, ExtTaskResourceHome> {
+    implements ReloadablePersistentResource<Taskling, ExtTaskResourceHome> {
 
 
     private static final Logger log = Logger.getLogger( TaskResource.class );
@@ -227,7 +228,7 @@ public class TaskResource extends TaskResourceBase
      * @throws ResourceException If this resource already go an task object.
      */
     @NotNull
-    public Task loadModelById( @NotNull String id ) throws ResourceException {
+    public Taskling loadModelById( @NotNull String id ) throws ResourceException {
         if( taskAction != null )
             throw new ResourceException( "task action already loaded" );
 

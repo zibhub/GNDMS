@@ -26,6 +26,7 @@ import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.model.gorfx.types.io.xml.ProviderStageInXML;
 import de.zib.gndms.gritserv.typecon.util.ProviderStageInXMLImpl;
 import de.zib.gndms.logic.model.gorfx.c3grid.ParmFormatAux;
+import de.zib.gndms.neomodel.common.NeoDao;
 import org.apache.axis.message.addressing.AttributedURI;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -184,5 +185,9 @@ public final class ExtGORFXResourceHome extends GORFXResourceHome
     @NotNull
     public EntityManagerFactory getEntityManagerFactory() {
        return getSystem().getEntityManagerFactory();
+    }
+
+    @NotNull public NeoDao getDao() {
+        return system.getDao();
     }
 }

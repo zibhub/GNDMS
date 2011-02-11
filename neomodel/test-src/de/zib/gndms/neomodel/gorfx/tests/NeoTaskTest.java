@@ -159,18 +159,26 @@ public class NeoTaskTest extends NeoTest {
         {
             Calendar instance = Calendar.getInstance();
             instance.setTimeInMillis(System.currentTimeMillis());
-            final Iterable<Node> iterable = session.listTasksDeadBeforeTimeout(instance);
-            final List<Node> list = new LinkedList<Node>();
-            for (Node node: iterable)
-                list.add(node);
+            final Iterable<NeoTask> iterable = session.listTasksDeadBeforeTimeout(instance);
+            final List<NeoTask> list = new LinkedList<NeoTask>();
+            for (NeoTask neoTask: iterable)
+                list.add(neoTask);
             assertEquals(list.size(), 6);
         }
 
         {
-            final Iterable<Node> iterable = session.listTasksByState(TaskState.FAILED);
-            final List<Node> list = new LinkedList<Node>();
-            for (Node node: iterable)
-                list.add(node);
+            final Iterable<NeoTask> iterable = session.listTasksByState(TaskState.FAILED);
+            final List<NeoTask> list = new LinkedList<NeoTask>();
+            for (NeoTask neoTask: iterable)
+                list.add(neoTask);
+            assertEquals(list.size(), 6);
+        }
+
+        {
+            final Iterable<NeoTask> iterable = session.listTasks();
+            final List<NeoTask> list = new LinkedList<NeoTask>();
+            for (NeoTask neoTask: iterable)
+                list.add(neoTask);
             assertEquals(list.size(), 6);
         }
 
