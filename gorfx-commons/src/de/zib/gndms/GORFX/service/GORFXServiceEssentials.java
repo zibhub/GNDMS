@@ -15,7 +15,6 @@ package de.zib.gndms.GORFX.service;
  * limitations under the License.
  */
 
-import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.model.gorfx.types.AbstractTF;
 import de.zib.gndms.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.rest.Facets;

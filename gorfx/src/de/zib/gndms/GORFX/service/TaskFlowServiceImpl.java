@@ -1,18 +1,20 @@
 package de.zib.gndms.GORFX.service;
 
-import com.sun.deploy.util.StringQuoteUtil;
-import de.zib.gndms.model.common.types.TransientContract;
-import de.zib.gndms.model.gorfx.repository.ORQDao;
-import de.zib.gndms.model.gorfx.repository.TypedUUId;
-import de.zib.gndms.model.gorfx.types.*;
+import de.zib.gndms.model.gorfx.types.AbstractTF;
+import de.zib.gndms.model.gorfx.types.Quote;
+import de.zib.gndms.model.gorfx.types.TaskFlowFailure;
+import de.zib.gndms.model.gorfx.types.TaskFlowResult;
+import de.zib.gndms.model.gorfx.types.TaskFlowStatus;
 import de.zib.gndms.rest.Facets;
 import de.zib.gndms.rest.GNDMSResponseHeader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 /*
@@ -33,11 +35,9 @@ import java.util.List;
 
 /**
  * @author try ma ik jo rr a zib
- * @version $Id$
- *          <p/>
- *          Date: 13.01.2011, Time: 15:17:47
+ * @date 13.01.2011 15:17:47
  *
- * A controller for a REST taskflow resource which implements the
+ * @biref A controller for a REST taskflow resource which implements the
  * TaskFlowService interface.
  *
  * The taskflow service acts as interface to instantiated taskflow
@@ -51,7 +51,7 @@ import java.util.List;
 @RequestMapping( "/gorfx" )
 public class TaskFlowServiceImpl implements TaskFlowService {
 
-    private ORQDao orqDao;
+    // private ORQDao orqDao;
     private String serviceUrl; // inject or read from properties
 
     @RequestMapping( value = "/{type}/{id}", method = RequestMethod.GET )
@@ -63,7 +63,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
     @RequestMapping( value = "/{type}/{id}/order", method = RequestMethod.GET )
     public ResponseEntity<AbstractTF> getOrder( @PathVariable String type, @PathVariable String id ) {
-        TypedUUId uid = orqDao.create( type );
+      //  TypedUUId uid = orqDao.create( type );
         return null;
     }
 
@@ -77,15 +77,15 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
 
     @RequestMapping( value = "/{type}/{id}/quotes", method = RequestMethod.GET )
-    public ResponseEntity<List<TransientContract>> getQuotes( @PathVariable String type, @PathVariable String id ) {
+    public ResponseEntity<List<Quote>> getQuotes( @PathVariable String type, @PathVariable String id ) {
         // retrieve a list
         return null;
     }
 
 
     @RequestMapping( value = "/{type}/{id}/quotes/", method = RequestMethod.POST )
-    public ResponseEntity<Void> setOrder( @PathVariable String type, @PathVariable String id, int idx,
-                                          @RequestBody TransientContract cont ) {
+    public ResponseEntity<Void> setQuote( @PathVariable String type, @PathVariable String id,
+                                          @RequestBody Quote cont ) {
         // add an desired quotation for the order
         return null;
     }
@@ -94,7 +94,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
 
     @RequestMapping( value = "/{type}/{id}/quotes/{idx}", method = RequestMethod.GET )
-    public ModelAndView getQuotes( @PathVariable String type, @PathVariable String id, @PathVariable int idx ) {
+    public ResponseEntity<Quote> getQuote( @PathVariable String type, @PathVariable String id, @PathVariable int idx ) {
         // retrieve desired quotes for the order.
         return null;
     }

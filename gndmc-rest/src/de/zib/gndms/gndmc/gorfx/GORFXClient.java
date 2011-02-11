@@ -20,6 +20,7 @@ import de.zib.gndms.model.gorfx.types.AbstractTF;
 import de.zib.gndms.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.rest.Facets;
 import de.zib.gndms.rest.GNDMSResponseHeader;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -30,12 +31,15 @@ import java.util.List;
 
 /**
  * @author try ma ik jo rr a zib
- *         Date: 09.02.11, Time: 14:20
+ * @date 09.02.11, Time: 14:20
+ *
+ * @brief
  */
 public class GORFXClient implements GORFXServiceEssentials {
 
     private RestTemplate restTemplate; ///< Just for internal use.
     private String serviceURL; ///< The service url like http://www.barz.org/gndms/<gridname>
+                               /// \note no gorfx foo in the url
 
 
     public GORFXClient() {
@@ -54,12 +58,12 @@ public class GORFXClient implements GORFXServiceEssentials {
 
 
     public ResponseEntity<List<String>> listTaskFlows( String dn ) {
-        return ( ResponseEntity<List<String>> ) unifiedGet( List.class, serviceURL + "/gorfx/taskflows", dn );
+        return ( ResponseEntity<List<String>> ) (Object) unifiedGet( List.class, serviceURL + "/gorfx/taskflows", dn );
     }
 
 
     public ResponseEntity<TaskFlowInfo> getTaskFlowInfo( String type, String dn ) {
-        return unifiedGet( TaskFlowInfo.class, serviceURL + "/gorfx/taskflows", dn );
+        return unifiedGet( TaskFlowInfo.class, serviceURL + "/gorfx/" + type, dn );
     }
 
 
@@ -67,7 +71,7 @@ public class GORFXClient implements GORFXServiceEssentials {
         GNDMSResponseHeader requestHeaders = new GNDMSResponseHeader();
         requestHeaders.setDN( dn );
         requestHeaders.setWid( wid );
-        return unifiedPost( String.class, AbstractTF.class, serviceURL + "/gorfx/taskflows", requestHeaders );
+        return unifiedPost( String.class, AbstractTF.class, serviceURL + "/gorfx/" + type, requestHeaders );
     }
 
 
@@ -94,4 +98,14 @@ public class GORFXClient implements GORFXServiceEssentials {
     }
 
 
+    public RestTemplate getRestTemplate() {
+        return restTemplate;
+    }
+
+
+    @Autowired
+    public void setRestTemplate( RestTemplate restTemplate ) {
+        System.out.println( "ijecting restTemplate" );
+        this.restTemplate = restTemplate;
+    }
 }
