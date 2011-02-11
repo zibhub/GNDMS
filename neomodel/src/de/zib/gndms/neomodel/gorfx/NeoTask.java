@@ -324,8 +324,8 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
         super.delete();
     }
 
-    public TaskRef getTaskRef() {
-        return new TaskRef(getId(), reprSession().getDao());
+    public Taskling getTaskling() {
+        return new Taskling(getId(), reprSession().getDao());
     }
 }
 
