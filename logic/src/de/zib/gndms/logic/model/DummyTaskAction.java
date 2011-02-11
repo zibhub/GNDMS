@@ -20,9 +20,14 @@ package de.zib.gndms.logic.model;
 
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.AbstractTask;
+import de.zib.gndms.model.gorfx.types.TaskState;
+import de.zib.gndms.neomodel.common.NeoDao;
+import de.zib.gndms.neomodel.common.NeoSession;
+import de.zib.gndms.neomodel.gorfx.NeoTask;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
+import java.io.Serializable;
 
 
 /**
@@ -70,6 +75,30 @@ public class DummyTaskAction extends TaskAction {
             fail(new IllegalStateException("Random failure"));
     }
 
+
+    @Override
+    protected void onTransit(@NotNull NeoDao dao, @NotNull String taskId,
+                             @NotNull TaskState taskState, @NotNull Serializable payload, final boolean unknown) {
+
+        switch(taskState) {
+            case IN_PROGRESS:
+                try {
+                    Thread.sleep(sleepInProgress);
+                }
+                catch (InterruptedException e) {
+                    transitTo(dao, taskId, TaskState.FINISHED);
+                    return;
+                }
+
+                if (Math.random() < successRate) {
+                    transitTo(dao, taskId, TaskState.FINISHED, 1);
+                    return;
+                } else
+                    throw new IllegalStateException("Random failure");
+            default:
+                transitToDefault(dao, taskId);
+        }
+    }
 
     public double getSuccessRate() {
         return successRate;

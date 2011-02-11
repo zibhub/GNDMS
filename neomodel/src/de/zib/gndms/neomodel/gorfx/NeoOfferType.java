@@ -37,68 +37,32 @@ import org.neo4j.graphdb.Node;
  *
  * User: stepn Date: 05.09.2008 Time: 14:48:36
  */
-public class NeoOfferType extends NodeGridResource {
-
-    private static final String TASK_ACTION_FACTORY_CLASS_NAME_P = "TASK_ACTION_FACTORY_CLASS_NAME_P";
-    private static final String CALCULATOR_FACTORY_CLASS_NAME_P = "CALCULATOR_FACTORY_CLASS_NAME_P";
-    private static final String OFFER_ARGUMENT_TYPE_P = "OFFER_ARGUMENT_TYPE_P";
-    private static final String OFFER_RESULT_TYPE_P = "OFFER_RESULT_TYPE_P";
-    private static final String CONFIG_MAP_DATA_P = "CONFIG_MAP_DATA_P";
+public class NeoOfferType extends NodeGridResource<NeoOfferTypeAccessor> implements NeoOfferTypeAccessor {
+    public static final String TASK_ACTION_FACTORY_CLASS_NAME_P = "TASK_ACTION_FACTORY_CLASS_NAME_P";
+    public static final String CALCULATOR_FACTORY_CLASS_NAME_P = "CALCULATOR_FACTORY_CLASS_NAME_P";
+    public static final String CONFIG_MAP_DATA_P = "CONFIG_MAP_DATA_P";
+    public static final String OFFER_ARGUMENT_TYPE_P = "OFFER_ARGUMENT_TYPE_P";
+    public static final String OFFER_RESULT_TYPE_P = "OFFER_RESULT_TYPE_P";
 
     public NeoOfferType(@NotNull NeoReprSession session, @NotNull String typeNick, @NotNull Node underlying) {
         super(session, typeNick, underlying);
     }
 
-    public @NotNull String getOfferTypeKey() {
+    final public @NotNull String getId() {
+        return super.getId();
+    }
+
+    @Override final public void setId(@NotNull String id) {
+        super.setId(id);
+        session().setSingleIndex(getTypeNickIndex(), repr(), session().getGridName(), getId(), id);
+    }
+
+    public final @NotNull String getOfferTypeKey() {
         return getId();
     }
 
     public void setOfferTypeKey(@NotNull String offerTypeKey) {
         setId(offerTypeKey);
-    }
-
-    @Override
-    final public @NotNull String getId() {
-        return super.getId();
-    }
-
-    @Override
-    final public void setId(@NotNull String id) {
-        super.setId(id);
-        session().setSingleIndex(getTypeNickIndex(), repr(), session().getGridName(), getId(), id);
-    }
-
-    public Map<String, String> getConfigMapData() {
-        //noinspection unchecked
-        return (Map<String, String>) getProperty(Serializable.class, CONFIG_MAP_DATA_P);
-    }
-    
-    public void setConfigMapData(Map<String, String> configMapData) {
-        setProperty(Serializable.class, CONFIG_MAP_DATA_P, (Serializable) configMapData);
-    }
-
-    public ImmutableScopedName getOfferResultType() {
-        return getProperty(ImmutableScopedName.class, OFFER_RESULT_TYPE_P);
-    }
-
-    public void setOfferResultType(ImmutableScopedName offerResultType) {
-        setProperty(ImmutableScopedName.class, OFFER_RESULT_TYPE_P, offerResultType);
-    }
-
-    public ImmutableScopedName getOfferArgumentType() {
-        return getProperty(ImmutableScopedName.class, OFFER_ARGUMENT_TYPE_P);
-    }
-
-    public void setOfferArgumentType(ImmutableScopedName offerArgumentType) {
-        setProperty(ImmutableScopedName.class, OFFER_ARGUMENT_TYPE_P, offerArgumentType);
-    }
-
-    public String getCalculatorFactoryClassName() {
-        return (String) getProperty(CALCULATOR_FACTORY_CLASS_NAME_P);
-    }
-
-    public void setCalculatorFactoryClassName(String calculatorFactoryClassName) {
-        setProperty(CALCULATOR_FACTORY_CLASS_NAME_P, calculatorFactoryClassName);
     }
 
     public String getTaskActionFactoryClassName() {
@@ -109,9 +73,41 @@ public class NeoOfferType extends NodeGridResource {
         setProperty(TASK_ACTION_FACTORY_CLASS_NAME_P, taskActionFactoryClassName);
     }
 
+    public String getCalculatorFactoryClassName() {
+        return (String) getProperty(CALCULATOR_FACTORY_CLASS_NAME_P);
+    }
+
+    public void setCalculatorFactoryClassName(String calculatorFactoryClassName) {
+        setProperty(CALCULATOR_FACTORY_CLASS_NAME_P, calculatorFactoryClassName);
+    }
+
+    public Map<String, String> getConfigMapData() {
+        //noinspection unchecked
+        return (Map<String, String>) getProperty(Serializable.class, CONFIG_MAP_DATA_P);
+    }
+
+    public void setConfigMapData(Map<String, String> configMapData) {
+        setProperty(Serializable.class, CONFIG_MAP_DATA_P, (Serializable) configMapData);
+    }
+
+    public ImmutableScopedName getOfferArgumentType() {
+        return getProperty(ImmutableScopedName.class, OFFER_ARGUMENT_TYPE_P);
+    }
+
+    public void setOfferArgumentType(ImmutableScopedName offerArgumentType) {
+        setProperty(ImmutableScopedName.class, OFFER_ARGUMENT_TYPE_P, offerArgumentType);
+    }
+
+    public ImmutableScopedName getOfferResultType() {
+        return getProperty(ImmutableScopedName.class, OFFER_RESULT_TYPE_P);
+    }
+
+    public void setOfferResultType(ImmutableScopedName offerResultType) {
+        setProperty(ImmutableScopedName.class, OFFER_RESULT_TYPE_P, offerResultType);
+    }
+
     @Override
     public void delete() {
         getTypeNickIndex().remove(repr(), session().getGridName(), getId());
         super.delete();
-    }
-}
+    }}

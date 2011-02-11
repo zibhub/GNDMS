@@ -18,6 +18,7 @@ package de.zib.gndms.logic.model;
 
 
 
+import de.zib.gndms.model.ModelEntity;
 import de.zib.gndms.model.common.GridEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
  * 
  * User: mjorra, Date: 12.08.2008, Time: 16:36:20
  */
-public abstract class AbstractModelAction<M extends GridEntity, R> extends AbstractEntityAction<R>
+public abstract class AbstractModelAction<M extends ModelEntity, R> extends AbstractEntityAction<R>
 	  implements ModelAction<M, R> {
 
     private volatile M model;

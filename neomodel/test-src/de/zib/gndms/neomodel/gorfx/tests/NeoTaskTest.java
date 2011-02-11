@@ -51,6 +51,7 @@ public class NeoTaskTest extends NeoTest {
         task.setDescription("Will #fail");
         task.setId(id);
         task.setOfferType(ot);
+        task.setPayload(1);
         task.setTerminationTime(CLASS_STARTUP_TIME);
         task.setSerializedCredential(new byte[] { 1, 2, 3 });
         PermissionInfo permInfo = new PermissionInfo();
@@ -75,6 +76,7 @@ public class NeoTaskTest extends NeoTest {
         assertEquals(task.getTaskState(), TaskState.FAILED);
         assertEquals(task.getDescription(), "Will #fail");
         assertEquals(task.getFaultString(), "Faulty Towers");
+        assertEquals(task.getPayload(), 1);
 
         NeoOfferType ot = session.findOfferType("offerTypeNr1");
         assertEquals(task.getOfferType().getId(), ot.getId());

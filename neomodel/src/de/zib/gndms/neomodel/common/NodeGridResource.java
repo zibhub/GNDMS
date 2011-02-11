@@ -11,7 +11,7 @@ import org.neo4j.graphdb.Node;
  * Time: 16:33
  * To change this template use File | Settings | File Templates.
  */
-public class NodeGridResource extends ModelNode implements GridResourceItf {
+public class NodeGridResource<I> extends ModelNode implements GridResourceItf, ROType<I> {
     private static final String GRID_RESOURCE_ID_KEY = "gridResourceId";
 
     protected NodeGridResource(@NotNull NeoReprSession session, @NotNull String typeNick, @NotNull Node underlying) {
@@ -24,5 +24,9 @@ public class NodeGridResource extends ModelNode implements GridResourceItf {
 
     public void setId(String id) {
         repr().setProperty(GRID_RESOURCE_ID_KEY, id);
+    }
+
+    public I getReadOnly() {
+        return (I) this;
     }
 }
