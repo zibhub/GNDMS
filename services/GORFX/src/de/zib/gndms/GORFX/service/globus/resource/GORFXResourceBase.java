@@ -92,7 +92,7 @@ public abstract class GORFXResourceBase extends ReflectionResource implements Re
 		// this loads the metadata from XML files if this is the main service
 		populateResourceProperties();
 
-		// register the service to the index service
+		// onCreate the service to the index service
 		refreshRegistration(true);
 		
 	}
@@ -146,7 +146,7 @@ public abstract class GORFXResourceBase extends ReflectionResource implements Re
 
 
     /**
-     * This checks the configuration file, and attempts to register to the
+     * This checks the configuration file, and attempts to onCreate to the
      * IndexService if shouldPerformRegistration==true. It will first read the
      * current container URL, and compare it against the saved value. If the
      * value exists, it will only try to reregister if the values are different.
@@ -178,7 +178,7 @@ public abstract class GORFXResourceBase extends ReflectionResource implements Re
             EndpointReferenceType epr;
             try {
                 // since this is a singleton, pretty sure we dont't want to
-                // register the key (allows multiple instances of same service
+                // onCreate the key (allows multiple instances of same service
                 // on successive restarts)
                 epr = AddressingUtils.createEndpointReference(ctx, null);
             } catch (Exception e) {
@@ -229,7 +229,7 @@ public abstract class GORFXResourceBase extends ReflectionResource implements Re
                 if (pollType != null) {
                     
                     // if there are properties names that need to be registered then
-                    // register them to the index service
+                    // onCreate them to the index service
                     if (pollType.getResourcePropertyNames()!=null && pollType.getResourcePropertyNames().length != 0) {
 
                         URL currentContainerURL = null;
@@ -241,14 +241,14 @@ public abstract class GORFXResourceBase extends ReflectionResource implements Re
                         }
 
                         if (this.baseURL != null) {
-                            // we've tried to register before (or we are being
+                            // we've tried to onCreate before (or we are being
                             // forced to
                             // retry)
                             // do a string comparison as we don't want to do DNS
                             // lookups
                             // for comparison
                             if (forceRefresh || !this.baseURL.equals(currentContainerURL)) {
-                                // we've tried to register before, and we have a
+                                // we've tried to onCreate before, and we have a
                                 // different
                                 // URL now.. so cancel the old registration (if
                                 // it
@@ -278,7 +278,7 @@ public abstract class GORFXResourceBase extends ReflectionResource implements Re
                             // we've never saved the baseURL (and therefore
                             // haven't
                             // tried to
-                            // register)
+                            // onCreate)
                             this.baseURL = currentContainerURL;
                             logger.info("Attempting registration for the first time[container URL=" + this.baseURL
                                 + "].");
@@ -290,10 +290,10 @@ public abstract class GORFXResourceBase extends ReflectionResource implements Re
                             this.registrationClient.register();
 
                         } catch (Exception e) {
-                            logger.error("Exception when trying to register service (" + epr + "): " + e, e);
+                            logger.error("Exception when trying to onCreate service (" + epr + "): " + e, e);
                         }
                     } else {
-                        logger.info("No resource properties to register for service (" + epr + ")");
+                        logger.info("No resource properties to onCreate for service (" + epr + ")");
                     }
                 } else {
                     logger.warn("Registration file deserialized with no poll type (" + epr + ")");

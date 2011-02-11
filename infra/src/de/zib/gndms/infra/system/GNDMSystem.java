@@ -1059,6 +1059,10 @@ public final class GNDMSystem
         return neo;
     }
 
+
+    public @NotNull NeoDao getDao() {
+        return dao;
+    }
     /*
     public NetworkAuxiliariesProvider getNetAux( ) {
 

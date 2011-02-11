@@ -54,6 +54,12 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
 
     public NeoTask(@NotNull NeoReprSession session, @NotNull String typeNick, @NotNull Node underlying) {
         super(session, typeNick, underlying);
+    }
+
+
+    @Override
+    public void onCreate(NeoReprSession reprSession) {
+        super.onCreate(reprSession);
         if (getProperty(TASK_STATE_P, null) == null)   {
             final @NotNull String newTaskStateName = TaskState.INITIALIZED.name();
             setProperty(TASK_STATE_P, newTaskStateName);
@@ -61,7 +67,6 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
             typeNickIndex.add(repr(), session().getGridName(), newTaskStateName);
         }
     }
-
 
     final public @NotNull String getId() {
         return super.getId();
@@ -258,6 +263,14 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
         setProperty(PersistentContract.class, CONTRACT_P, contract);
     }
 
+    public boolean isBroken() {
+        return (Boolean) getProperty(BROKEN_P, false);
+    }
+
+    public void setBroken(boolean brokenState) {
+        setProperty(BROKEN_P, brokenState);
+    }
+
     public @NotNull PermissionInfo getPermissionInfo() {
         return getProperty(PermissionInfo.class, PERMISSION_INFO_P);
     }
@@ -292,22 +305,6 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
         setProperty(DONE_P, doneState);
     }
 
-    public boolean isBroken() {
-        return (Boolean) getProperty(BROKEN_P, false);
-    }
-
-    public void setBroken(boolean brokenState) {
-        setProperty(BROKEN_P, brokenState);
-    }
-
-    public boolean isPostMortem() {
-        return (Boolean) getProperty(POST_MORTEM_P);
-    }
-
-    public void setPostMortem(boolean postMortem) {
-        setProperty(POST_MORTEM_P, postMortem);
-    }
-
     public @Nullable String getFaultString() {
         return (String) getProperty(FAULT_STRING_P, null);
     }
@@ -325,7 +322,7 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
     }
 
     public Taskling getTaskling() {
-        return new Taskling(getId(), reprSession().getDao());
+        return new Taskling(reprSession().getDao(), getId());
     }
 }
 

@@ -54,6 +54,8 @@ public interface NeoTaskAccessor extends GridResourceItf, TimedGridResourceItf {
 
     @NotNull PersistentContract getContract();
 
+    boolean isBroken();
+
     @NotNull PermissionInfo getPermissionInfo();
 
     @NotNull byte[] getSerializedCredential();
@@ -61,10 +63,6 @@ public interface NeoTaskAccessor extends GridResourceItf, TimedGridResourceItf {
     @Nullable Serializable getPayload();
 
     boolean isDone();
-
-    boolean isBroken();
-
-    boolean isPostMortem();
 
     @Nullable String getFaultString();
 }

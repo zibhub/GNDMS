@@ -28,6 +28,7 @@ import de.zib.gndms.infra.service.GNDMSingletonServiceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.model.dspace.DSpace;
+import de.zib.gndms.neomodel.common.NeoDao;
 import org.apache.axis.message.addressing.AttributedURI;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -232,5 +233,9 @@ public final class ExtDSpaceResourceHome  extends DSpaceResourceHome
     @SuppressWarnings({ "unchecked" })
     public String getSingletonID() throws ResourceException {
         return ((ReloadablePersistentResource<DSpace, ExtDSpaceResourceHome>)find(null)).getID();
+    }
+
+    @NotNull public NeoDao getDao() {
+        return system.getDao();
     }
 }
