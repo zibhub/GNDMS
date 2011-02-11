@@ -18,6 +18,7 @@ package de.zib.gndms.logic.model;
 
 
 
+import de.zib.gndms.model.ModelEntity;
 import de.zib.gndms.model.common.GridEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * User: mjorra, Date: 12.08.2008, Time: 16:24:56
  */
-public interface ModelAction<M extends GridEntity, R> extends EntityAction<R> {
+public interface ModelAction<M extends ModelEntity, R> extends EntityAction<R> {
 
 	M getModel( );
 

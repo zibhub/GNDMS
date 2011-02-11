@@ -1,5 +1,6 @@
 package de.zib.gndms.neomodel.common;
 
+import de.zib.gndms.model.ModelEntity;
 import de.zib.gndms.model.ModelObject;
 import org.apache.commons.lang.SerializationUtils;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +16,7 @@ import java.io.Serializable;
  * Time: 16:19
  * To change this template use File | Settings | File Templates.
  */
-public abstract class ModelGraphElement<U extends PropertyContainer> extends ModelObject {
+public abstract class ModelGraphElement<U extends PropertyContainer> extends ModelEntity {
     public static final String INDEX_SEPARATOR = "@@";
     public static final String TYPE_P = "TYPE_P";
 

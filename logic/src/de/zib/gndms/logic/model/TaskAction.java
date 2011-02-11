@@ -31,6 +31,9 @@ import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.model.util.EntityManagerAux;
 import de.zib.gndms.model.util.TxFrame;
+import de.zib.gndms.neomodel.common.NeoDao;
+import de.zib.gndms.neomodel.common.NeoSession;
+import de.zib.gndms.neomodel.gorfx.NeoTask;
 import de.zib.gndms.stuff.copy.Copier;
 import org.apache.commons.logging.Log;
 import org.jetbrains.annotations.NotNull;
@@ -77,6 +80,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     private ConfigletProvider configletProvider;
     private CredentialProvider credentialProvider;
 
+    private NeoDao dao;
 
     /**
      *
@@ -92,7 +96,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     /**
      * A TransitException is used to store a new desired {@code TaskState}, the model (an AbstractTask) shall use.
      * Its state can be changed using {@link AbstractTask#transit(TaskState)}.
-     * Note that there is a predefined order in wich state a TaskState can be changed. 
+     * Note that there is a predefined order in wich state a TaskState can be changed.
      *
      * There a some special subclasses used to stop an AbstractTask in special situations.
      *
@@ -108,7 +112,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
 
         /**
          * the new, desired TaskState for the model.
-         * Its state is changed using {@link AbstractTask#transit(TaskState)} 
+         * Its state is changed using {@link AbstractTask#transit(TaskState)}
          */
         protected final TaskState newState;
 
@@ -180,7 +184,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
 
        /**
         * Signalizes that the TaskAction has to stop now.
-        * 
+        *
         * @param newStateParam the current TaskState of the model.
         */
         protected StopException(final @NotNull TaskState newStateParam) {
@@ -692,6 +696,74 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
         }
     }
 
+    protected void onTransit(@NotNull NeoDao dao, @NotNull String taskId,
+                             @NotNull TaskState taskState, @NotNull Serializable payload, final boolean unknown) {
+        throw new UnsupportedOperationException("not yet implemented");
+    }
+
+
+    protected void transitTo(@NotNull NeoDao dao, @NotNull String taskId,
+                             @NotNull TaskState taskState, @NotNull Serializable payload) {
+        final @NotNull NeoSession session = dao.beginSession();
+        try {
+            final NeoTask task = session.findTask(taskId);
+            task.setTaskState(task.getTaskState().transit(taskState));
+            task.setPayload(payload);
+            session.success();
+        }
+        finally { session.finish(); }
+    }
+
+    protected void transitTo(@NotNull NeoDao dao, @NotNull String taskId,
+                             @NotNull TaskState taskState) {
+        final @NotNull NeoSession session = dao.beginSession();
+        try {
+            final NeoTask task = session.findTask(taskId);
+            task.setTaskState(task.getTaskState().transit(taskState));
+            session.success();
+        }
+        finally { session.finish(); }
+    }
+
+    protected void transitToDefault(@NotNull NeoDao dao, @NotNull String taskId, Serializable payload) {
+        final @NotNull NeoSession session = dao.beginSession();
+        try {
+            final NeoTask task = session.findTask(taskId);
+            final TaskState taskState = task.getTaskState();
+            final TaskState nextState;
+            switch(taskState) {
+                case CREATED: nextState = TaskState.INITIALIZED; break;
+                case INITIALIZED: nextState = TaskState.IN_PROGRESS; break;
+                case IN_PROGRESS: nextState = TaskState.FINISHED; break;
+                case FINISHED: nextState = TaskState.FINISHED; break;
+                default: nextState = TaskState.FAILED; break;
+            }
+            task.setTaskState(taskState.transit(nextState));
+            task.setPayload(payload);
+            session.success();
+        }
+        finally { session.finish(); }
+    }
+
+    protected void transitToDefault(@NotNull NeoDao dao, @NotNull String taskId) {
+        final @NotNull NeoSession session = dao.beginSession();
+        try {
+            final NeoTask task = session.findTask(taskId);
+            final TaskState taskState = task.getTaskState();
+            final TaskState nextState;
+            switch(taskState) {
+                case CREATED: nextState = TaskState.INITIALIZED; break;
+                case INITIALIZED: nextState = TaskState.IN_PROGRESS; break;
+                case IN_PROGRESS: nextState = TaskState.FINISHED; break;
+                case FINISHED: nextState = TaskState.FINISHED; break;
+                default: nextState = TaskState.FAILED; break;
+            }
+            task.setTaskState(taskState.transit(nextState));
+            session.success();
+        }
+        finally { session.finish(); }
+    }
+
     /**
      * This method will be called by {@link #transit(TaskState)},
      * if the model's state is unknown (so {@code CREATED_UNKNOWN}, {@code INITIALIZED_UNKNOWN} or {@code IN_PROGRESS_UNKNOWN}).
@@ -864,6 +936,10 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
         return e instanceof FailedException;
     }
 
+    @Override
+    public AbstractTask getModel() {
+        return super.getModel();    //To change body of overridden methods use File | Settings | File Templates.
+    }
 
     public Log getLog() {
         return log;
@@ -989,6 +1065,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     }
 
 
+
     public void setCredentialProvider( CredentialProvider cp ) {
         this.credentialProvider = cp;
     }
@@ -997,5 +1074,13 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     public CredentialProvider getCredentialProvider() {
 
         return this.credentialProvider;
+    }
+
+    public NeoDao getDao() {
+        return dao;
+    }
+
+    public void setDao(NeoDao dao) {
+        this.dao = dao;
     }
 }

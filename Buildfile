@@ -258,11 +258,12 @@ NEODATAGRAPH = [_('lib/neo4j-1.2/geronimo-jta_1.1_spec-1.1.1.jar'),
     define 'neomodel', :layout => dmsTestLayout('neomodel', 'gndms-neomodel') do
       compile.with project('model'), project('stuff'), JETBRAINS_ANNOTATIONS, NEODATAGRAPH, OPENJPA, COMMONS_LANG
       
-      test.using :testng
       test.with COMMONS_IO
       test.compile
 
       test.include 'de.zib.gndms.neomodel.gorfx.tests.NeoOfferTypeTest'
+      test.include 'de.zib.gndms.neomodel.gorfx.tests.NeoTaskTest'
+      
       package :jar      
     end
 
@@ -276,21 +277,21 @@ NEODATAGRAPH = [_('lib/neo4j-1.2/geronimo-jta_1.1_spec-1.1.1.jar'),
 
     desc 'GT4-dependent utility classes for GNDMS'
     define 'kit', :layout => dmsLayout('kit', 'gndms-kit') do
-      compile.with JETTY, GROOVY, GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('stuff'), project('model'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_AXIS, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, GUICE, GT4_SERVLET, COMMONS_LANG, OPENJPA
+      compile.with JETTY, GROOVY, GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('stuff'), project('model'), project('neomodel'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_AXIS, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, GUICE, GT4_SERVLET, COMMONS_LANG, OPENJPA
       compile
       package :jar
     end
 
     desc 'GNDMS logic classes (actions for manipulating resources)'
     define 'logic', :layout => dmsLayout('logic', 'gndms-logic') do
-       compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('stuff'), project('model'), JODA_TIME, GOOGLE_COLLECTIONS, GUICE, DB_DERBY, GT4_LOG, GT4_AXIS, GT4_COG, GT4_SEC, GT4_XML, COMMONS_LANG, OPENJPA
+       compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('stuff'), project('model'), project('neomodel'), JODA_TIME, GOOGLE_COLLECTIONS, GUICE, DB_DERBY, GT4_LOG, GT4_AXIS, GT4_COG, GT4_SEC, GT4_XML, COMMONS_LANG, OPENJPA
        compile
        package :jar
     end
 
     desc 'GNDMS classes for dealing with wsrf and xsd types'
     define 'gritserv', :layout => dmsLayout('gritserv', 'gndms-gritserv') do
-      compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('stuff'), project('model'), ARGS4J, JODA_TIME, GORFX_STUBS, OPENJPA, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, GT4_COMMONS, COMMONS_LANG, COMMONS_COLLECTIONS, COMMONS_CODEC
+      compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('stuff'), project('model'), project('neomodel'), ARGS4J, JODA_TIME, GORFX_STUBS, OPENJPA, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, GT4_COMMONS, COMMONS_LANG, COMMONS_COLLECTIONS, COMMONS_CODEC
       compile
       package :jar
     end
