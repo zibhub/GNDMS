@@ -323,6 +323,10 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
         getTypeNickIndex().remove(repr(), session().getGridName(), getId());
         super.delete();
     }
+
+    public TaskRef getTaskRef() {
+        return new TaskRef(getId(), reprSession().getDao());
+    }
 }
 
 

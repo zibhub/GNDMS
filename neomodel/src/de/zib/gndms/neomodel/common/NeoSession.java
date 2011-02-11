@@ -30,11 +30,11 @@ public class NeoSession {
     private final @NotNull String gridName;
     private final @NotNull NeoReprSession reprSession;
 
-    public NeoSession(@NotNull String gridName, @NotNull GraphDatabaseService gdb) {
+    public NeoSession(@NotNull NeoDao dao, @NotNull String gridName, @NotNull GraphDatabaseService gdb) {
         this.gdb          =    gdb;
         this.tx           = gdb.beginTx();
         this.gridName     = gridName;
-        this.reprSession = new NeoReprSession(this);
+        this.reprSession = new NeoReprSession(dao, this);
     }
 
 
