@@ -21,7 +21,7 @@ public class NeoDao {
     }
 
     public NeoSession beginSession() {
-        return new NeoSession(gridName, gdb);
+        return new NeoSession(this, gridName, gdb);
     }
 
     @NotNull

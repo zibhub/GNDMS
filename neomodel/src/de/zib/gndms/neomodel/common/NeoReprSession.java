@@ -12,13 +12,19 @@ import org.jetbrains.annotations.NotNull;
  */
 public class NeoReprSession {
     private final @NotNull NeoSession session;
+    private final @NotNull NeoDao dao;
 
-    NeoReprSession(@NotNull NeoSession session) {
+    NeoReprSession(@NotNull NeoDao dao, @NotNull NeoSession session) {
+        this.dao     = dao;
         this.session = session;
     }
 
     @NotNull public NeoSession getSession() {
         return session;
+    }
+
+    @NotNull public NeoDao getDao() {
+        return dao;
     }
 }
 
