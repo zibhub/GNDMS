@@ -30,7 +30,7 @@ import java.util.List;
  */
 public class FullGORFXClient extends GORFXClient implements GORFXService {
 
-    /// \note no gorfx foo in the url
+
 
     public FullGORFXClient() {
     }
@@ -42,7 +42,7 @@ public class FullGORFXClient extends GORFXClient implements GORFXService {
 
 
     public ResponseEntity<List<String>> listConfigActions( String dn ) {
-        return (ResponseEntity<List<String>>) unifiedGet( List.class, getServiceURL() + "/gorfx/config", dn );
+        return ( ResponseEntity<List<String>> ) (Object) unifiedGet( List.class, getServiceURL() + "/gorfx/config", dn );
     }
 
 

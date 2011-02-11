@@ -17,7 +17,7 @@
         <property name="ignoreResourceNotFound" value="true"/>
         <property name="locations">
             <list>
-                <value>META-INF/gorfx.properties</value>
+                <value>classpath:/META-INF/gorfx.properties</value>
                 <value>classpath:gorfx.properties</value>
             </list>
         </property>
@@ -56,6 +56,6 @@
         <property name="tasks" value="${gorfxBaseURL}/gorfx/tasks"/>
     </bean>
 
-    <import resource="gorfx-mockups.xml"/>
+    <import resource="classpath:/META-INF/gorfx-mockups.xml"/>
 
 </beans>

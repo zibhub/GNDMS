@@ -170,6 +170,7 @@ GT4_MDS = gt4jars(['globus_wsrf_mds_aggregator.jar',
                    'wsrf_mds_usefulrp_schema_stubs.jar'])
 
 
+XSTREAM_DEPS= [ CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME ]
 # OpenJPA is required by gndms:model
 OPENJPA = [ COMMONS_LANG, 'org.apache.openjpa:openjpa-all:jar:2.0.0']
 
@@ -473,6 +474,42 @@ define 'gndms' do
         package(:war).enhance FileList[_(:web,  '**/*')]
         package :war
 
+    end
+
+    desc 'Common gorfx classes'
+    define 'gorfx-commons', :layout => dmsLayout('gorfx-commons', 'gndms-gorfx-commons') do
+        compile.with SPRING, ARGS4J, JODA_TIME
+        compile
+        package :jar
+    end
+
+    desc 'Common gorfx classes'
+    define 'gndmc-rest', :layout => dmsLayout('gndmc-rest', 'gndms-gndmc-rest') do
+        compile.with project('gorfx-commons'), SPRING, ARGS4J, JODA_TIME, SLF4J, COMMONS_LOGGING, XSTREAM, XSTREAM_DEPS
+        meta_inf << file(_('src/META-INF/client-context.xml'))
+        package(:jar).with :manifest=>manifest.merge( 'Main-Class'=>'de.zib.gndms.gndmc.gorfx.GORFXClientMain' )
+
+        task 'run' do
+            jars = compile.dependencies.map(&:to_s)
+            jars << project('gndms:gndmc-rest')
+            args = [ '-uri', ENV['GORFX_URL'], 
+                '-dn', '/C=DE/O=GridGermany/OU=Konrad-Zuse-Zentrum fuer Informationstechnik Berlin (ZIB)/OU=CSR/CN=Maik Jorra'
+            ]
+            Commands.java('de.zib.gndms.gndmc.gorfx.GORFXClientMain',  args, { :classpath => jars } )
+        end
+    end
+
+    desc 'GORFX rest service'
+    define 'gorfx-rest', :layout => dmsLayout('gorfx', 'gndms-gorfx-rest') do
+        compile.with project('gorfx-commons'), SPRING, SLF4J, XSTREAM, COMMONS_LOGGING, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME
+        compile
+
+       # web_inf << file(_('../gorfx/src/META-INF/gorfx.xml'))
+       # web_inf << file(_('../gorfx/src/META-INF/gorfx-mockups.xml'))
+        # workaround for builder dependence bug
+        package(:war).enhance FileList[_(:web,  '**/*')]
+        package(:war).include _('../gorfx/src/META-INF/*'), :path=>"WEB-INF/classes/META-INF"
+        package :war
     end
 end
 
