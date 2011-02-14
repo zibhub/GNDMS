@@ -29,6 +29,15 @@ import java.util.List;
  */
 public class GNDMSResponseHeader extends HttpHeaders {
 
+    public GNDMSResponseHeader() {
+    }
+
+
+    public GNDMSResponseHeader( HttpHeaders h ) {
+        putAll( h );
+    }
+
+
     public List<String> getResourceURL() {
         return get( "resourceURL" );
     }

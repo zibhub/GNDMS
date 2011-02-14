@@ -21,15 +21,12 @@ package de.zib.gndms.rest;
  *          <p/>
  *          Date: 26.01.11, Time: 12:29
  *
- * Class representing a facet of a rest resource.
+ * @brief Class representing a facet of a rest resource.
  */
 public class Facet {
+
     private String name; ///< The short name of the facet
     private String url;  ///< the complete url
-    private String config;
-    private String batch;
-    private String taskflows;
-    private String tasks;
 
 
     public Facet() {
@@ -59,45 +56,5 @@ public class Facet {
 
     public void setUrl( String url ) {
         this.url = url;
-    }
-
-
-    public void setConfig( String config ) {
-        this.config = config;
-    }
-
-
-    public String getConfig() {
-        return config;
-    }
-
-
-    public void setBatch( String batch ) {
-        this.batch = batch;
-    }
-
-
-    public String getBatch() {
-        return batch;
-    }
-
-
-    public void setTaskflows( String taskflows ) {
-        this.taskflows = taskflows;
-    }
-
-
-    public String getTaskflows() {
-        return taskflows;
-    }
-
-
-    public void setTasks( String tasks ) {
-        this.tasks = tasks;
-    }
-
-
-    public String getTasks() {
-        return tasks;
     }
 }

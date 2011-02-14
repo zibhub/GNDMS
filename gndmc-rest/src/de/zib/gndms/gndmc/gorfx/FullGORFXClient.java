@@ -42,7 +42,7 @@ public class FullGORFXClient extends GORFXClient implements GORFXService {
 
 
     public ResponseEntity<List<String>> listConfigActions( String dn ) {
-        return ( ResponseEntity<List<String>> ) (Object) unifiedGet( List.class, getServiceURL() + "/gorfx/config", dn );
+        return ( ResponseEntity<List<String>> ) (Object) unifiedGet( List.class, getServiceURL() + "/gorfx/config/", dn );
     }
 
 

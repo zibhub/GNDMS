@@ -23,7 +23,6 @@
         </property>
     </bean>
 
-
     <bean id="gorfxService" class="de.zib.gndms.GORFX.service.GORFXServiceImpl">
         <property name="baseUrl" value="${gorfxBaseURL}"/>
         <property name="gorfxFacets" ref="gorfxFacets" />
@@ -41,19 +40,23 @@
     </bean>
 
     <bean id="config" class="de.zib.gndms.rest.Facet">
-        <property name="config" value="${gorfxBaseURL}/gorfx/config"/>
+        <property name="name" value="config"/>
+        <property name="url" value="${gorfxBaseURL}/gorfx/config"/>
     </bean>
 
     <bean id="batch" class="de.zib.gndms.rest.Facet">
-        <property name="batch" value="${gorfxBaseURL}/gorfx/batch"/>
+        <property name="name" value="batch"/>
+        <property name="url" value="${gorfxBaseURL}/gorfx/batch"/>
     </bean>
     
     <bean id="taskflows" class="de.zib.gndms.rest.Facet">
-        <property name="taskflows" value="${gorfxBaseURL}/gorfx/taskflows"/>
+        <property name="name" value="taskflows"/>
+        <property name="url" value="${gorfxBaseURL}/gorfx/taskflows"/>
     </bean>
 
     <bean id="tasks" class="de.zib.gndms.rest.Facet">
-        <property name="tasks" value="${gorfxBaseURL}/gorfx/tasks"/>
+        <property name="name" value="tasks"/>
+        <property name="url" value="${gorfxBaseURL}/gorfx/tasks"/>
     </bean>
 
     <import resource="classpath:/META-INF/gorfx-mockups.xml"/>

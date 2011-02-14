@@ -1,3 +1,46 @@
 Please consult the HTML documentation in doc/web/_site/index.html which contains the installation guide
 
 Until 'devel' goes 'master' additional documentation is gathered here:
+
+Setup the slice-chown:
+----------------------
+The configlet setup is located in 
+    scripts/features/enable-slice-chown.sh
+It introduces the path of the chown-script to GNDMS. 
+The script is located in $GNDMS_SOURCE/dev-bin/chownSlice.sh and
+should be installed to $GNDMS_SHARED with owner root and perm 700.
+Additionall the 'globus' user must be allowed to call this script as
+root. For this copy the following entry to your 'sudoers' file
+globus ALL=(root) NOPASSWD: <$GNDMS_SHARED>/chownSlice.sh
+Note: The <$GNDMS_SHARED> must be expanded to the contents of
+$GNDMS_SHARED MANUALLY.
+
+
+Setup rest example:
+-------------------
+
+buildr gndms:gorfx-rest:package
+    -> $GNDMS_SOURCE/lib/gorfx/gndms-gorfx-rest-0.3.0.war
+
+Download and install Jetty to $JETTY_HOME
+Copy 
+    $GNDMS_SOURCE/lib/gorfx/gndms-gorfx-rest-0.3.0.war
+to 
+    $JETTY_HOME/webapps/gndms.war
+
+Setup the service config:
+   Copy $GNDMS_SOURCE/gorfx/src/META-INF/gorfx.properties 
+   to   $JETTY_HOME/resources/gorfx.properties
+Set the environment variable GORFX_URL to
+    http://<yourhost>:<and-port>/gndms/<grid-name>
+Echo this to your grofx.properties
+echo gorfxBaseURL=$GORFX_URL > $JETTY_HOME/resources/gorfx.properties
+
+Start Jetty
+
+Running the client
+NOTE this requires the GORFX_URL environment variable.
+Additionally an env-var GNDMS_DN must be set, with your grid dn.
+
+To compile and run the client simply enter:
+buildr gndms:gndmc-rest:run
