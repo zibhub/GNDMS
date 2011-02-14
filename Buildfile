@@ -490,10 +490,13 @@ define 'gndms' do
         package(:jar).with :manifest=>manifest.merge( 'Main-Class'=>'de.zib.gndms.gndmc.gorfx.GORFXClientMain' )
 
         task 'run' do
+
+            testEnv('GORFX_URL', 'http://<yourhost>:<and-port>/gndms/<grid-name>')
+            testEnv('GNDMS_DN', 'your grid DN')
             jars = compile.dependencies.map(&:to_s)
             jars << project('gndms:gndmc-rest')
             args = [ '-uri', ENV['GORFX_URL'], 
-                '-dn', '/C=DE/O=GridGermany/OU=Konrad-Zuse-Zentrum fuer Informationstechnik Berlin (ZIB)/OU=CSR/CN=Maik Jorra'
+                '-dn', ENV['GNDMS_DN']
             ]
             Commands.java('de.zib.gndms.gndmc.gorfx.GORFXClientMain',  args, { :classpath => jars } )
         end

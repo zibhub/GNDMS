@@ -17,6 +17,7 @@ package de.zib.gndms.gndmc.gorfx;
 
 import com.sun.net.httpserver.HttpHandler;
 import de.zib.gndms.kit.application.AbstractApplication;
+import de.zib.gndms.rest.Facet;
 import de.zib.gndms.rest.Facets;
 import de.zib.gndms.rest.GNDMSResponseHeader;
 import org.kohsuke.args4j.Option;
@@ -57,7 +58,8 @@ public class GORFXClientMain extends AbstractApplication {
 
         ApplicationContext context = new ClassPathXmlApplicationContext( "classpath:META-INF/client-context.xml");
         FullGORFXClient gorfxClient =
-            ( FullGORFXClient ) context.getAutowireCapableBeanFactory().createBean( FullGORFXClient.class, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
+            ( FullGORFXClient ) context.getAutowireCapableBeanFactory().createBean(
+                FullGORFXClient.class, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
         gorfxClient.setServiceURL( gorfxEpUrl );
 
         if( gorfxClient.getRestTemplate() == null )
@@ -68,12 +70,16 @@ public class GORFXClientMain extends AbstractApplication {
         System.out.println( "StatusCode: " + res.getStatusCode() );
         showHeader( res.getHeaders() );
         System.out.println( "Body: " );
+        Facets f = res.getBody();
+        for ( Facet fa : f.getFacets() ) {
+            System.out.println( fa.getName() + " " + fa.getUrl() );
+        }
     }
 
 
     public static void showHeader( HttpHeaders head ) {
 
-        GNDMSResponseHeader h = ( GNDMSResponseHeader ) head;
+        GNDMSResponseHeader h = new GNDMSResponseHeader( head );
 
         showList( "parentURL", h.getParentURL() );
         showList( "facetURL", h.getFacetURL() );
@@ -87,7 +93,7 @@ public class GORFXClientMain extends AbstractApplication {
         StringBuffer sb = new StringBuffer(  );
 
         sb.append( name + ": "  );
-        if ( list.size() == 0 ) {
+        if ( list == null || list.size() == 0 ) {
             sb.append( "NIL\n" );
             return;
         }

@@ -52,13 +52,13 @@ public class GORFXClient implements GORFXServiceEssentials {
 
 
     public ResponseEntity<Facets> listAvailableFacets( String dn ) {
-        return unifiedGet( Facets.class, serviceURL + "/gorfx", dn );
+        return unifiedGet( Facets.class, serviceURL + "/gorfx/", dn );
     }
 
 
 
     public ResponseEntity<List<String>> listTaskFlows( String dn ) {
-        return ( ResponseEntity<List<String>> ) (Object) unifiedGet( List.class, serviceURL + "/gorfx/taskflows", dn );
+        return ( ResponseEntity<List<String>> ) (Object) unifiedGet( List.class, serviceURL + "/gorfx/taskflows/", dn );
     }
 
 
@@ -105,7 +105,6 @@ public class GORFXClient implements GORFXServiceEssentials {
 
     @Autowired
     public void setRestTemplate( RestTemplate restTemplate ) {
-        System.out.println( "ijecting restTemplate" );
         this.restTemplate = restTemplate;
     }
 }
