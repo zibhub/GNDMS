@@ -2,7 +2,6 @@
 # Large amounts of memory ensure a fast build
 ENV['JAVA_OPTS'] ||= '-Xms512m -Xmx768m'
 
-
 # Additional maven repositories 
 repositories.remote << 'http://www.ibiblio.org/maven2'
 repositories.remote << 'http://people.apache.org/repo/m2-incubating-repository'

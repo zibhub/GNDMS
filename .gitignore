@@ -1,5 +1,10 @@
 syntax:glob
 
+lib/apache-ant-1.7.1
+doc/api
+gndmc/gndms-gndmc/
+gndmc/target/
+Buildfile~
 services/*/build/**
 services/*/out/**
 services/*/production/**
