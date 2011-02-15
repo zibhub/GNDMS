@@ -1,3 +1,4 @@
+# -*- mode: ruby -*-
 # Large amounts of memory ensure a fast build
 ENV['JAVA_OPTS'] ||= '-Xms512m -Xmx768m'
 
@@ -15,10 +16,10 @@ repositories.remote << 'http://google-maven-repository.googlecode.com/svn/reposi
 # Don't touch below unless you know what you are doing
 # --------------------------------------------------------------------------------------------------
 
-VERSION_NUMBER = '0.3.0'
-VERSION_NAME = 'Rob'
+VERSION_NUMBER = '0.3.2'
+VERSION_NAME = 'Shigeru'
 GROUP_NAME = 'de.zib.gndms'
-MF_COPYRIGHT = 'Copyright 2008-2010 Zuse Institute Berlin (ZIB)'
+MF_COPYRIGHT = 'Copyright 2008-2011 Zuse Institute Berlin (ZIB)'
 LICENSE ='This software has been licensed to you under the terms and conditions of the Apache License 2.0 (APL 2.0) only.'
 MF_LICENSE="#{LICENSE}  See META-INF/LICENSE for detailed terms and conditions."
 USERNAME = ENV['USER'].to_s
@@ -44,8 +45,8 @@ JAVA_HOME = ENV['JAVA_HOME']
 SOURCE = '1.5'
 TARGET = '1.5'
 testEnv('GNDMS_SOURCE', 'the root directory of GNDMS source distribution (i.e. the toplevel directory in which the Buildfile resides)')
-#testEnv('GNDMS_SHARED', '$GLOBUS_LOCATION/etc/gndms_shared')
-#testEnv('GNDMS_MONI_CONFIG', '$GNDMS_SHARED/monitor.properties')
+testEnv('GNDMS_SHARED', '$GLOBUS_LOCATION/etc/gndms_shared')
+testEnv('GNDMS_MONI_CONFIG', '$GNDMS_SHARED/monitor.properties')
 testEnv('USER', 'your user\'s login (your UNIX is weird)')
 testTool('rsync')
 testTool('curl')
@@ -425,12 +426,19 @@ define 'gndms' do
       task 'run-staging-test' do
         jars = compile.dependencies.map(&:to_s)
         jars << compile.target.to_s
-        args = [ '-props', ENV['GNDMS_SOURCE']+'/test-data/test-properties/g2_stage_del_local.properties', 
-                 '-con-props', ENV['GNDMS_SOURCE']+'/test-data/test-properties/contract.properties', 
-                 '-uri', 'https://130.73.78.15:8443/wsrf/services/gndms/GORFX',
-	             '-dn', '/C=DE/O=GridGermany/OU=Konrad-Zuse-Zentrum fuer Informationstechnik Berlin (ZIB)/OU=CSR/CN=Maik Jorra'
+        host = `hostname`.chomp
+        dn = `grid-proxy-info -identity`
+        dn = dn.chomp
+        if (ENV['GNDMS_SFR'] == nil)
+            prop = 'test-data/sfr/dummy-sfr.properties'
+        else 
+            prop = ENV['GNDMS_SFR']
+        end
+        args = [ '-props', prop, 
+                 '-uri', 'https://' + host + ':8443/wsrf/services/gndms/GORFX',
+	             '-dn', dn
         ]
-        Commands.java('de.zib.gndmc.GORFX.c3grid.SliceStageInClient',  args, 
+        Commands.java('de.zib.gndmc.GORFX.c3grid.ProviderStageInClient',  args, 
                       { :classpath => jars, :properties => 
                           { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" } } )
       end
@@ -524,6 +532,8 @@ task 'install-distribution' => ['install-deps', 'deploy-DSpace', 'deploy-GORFX']
 task 'fix-permissions' do
     system "#{ENV['GNDMS_SOURCE']}/scripts/internal/fix-permissions.sh"
 end
+
+task 'artifcats' => ['artifacts']
 
 def nope()
      puts ''
