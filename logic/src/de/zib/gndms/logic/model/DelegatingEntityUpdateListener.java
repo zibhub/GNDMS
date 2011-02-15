@@ -18,7 +18,9 @@ package de.zib.gndms.logic.model;
 
 
 
+import de.zib.gndms.model.common.GridEntity;
 import de.zib.gndms.model.common.GridResource;
+import de.zib.gndms.model.common.GridResourceItf;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
@@ -34,7 +36,7 @@ import java.util.WeakHashMap;
  *
  *          User: stepn Date: 15.08.2008 Time: 13:18:43
  */
-public final class DelegatingEntityUpdateListener<M extends GridResource> implements
+public final class DelegatingEntityUpdateListener<M extends GridEntity & GridResourceItf> implements
         EntityUpdateListener<M> {
     private static final @NotNull
     Map<EntityUpdateListener<?>, WeakReference<DelegatingEntityUpdateListener<?>>> map =
