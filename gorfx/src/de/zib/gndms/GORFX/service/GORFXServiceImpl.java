@@ -33,6 +33,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -60,7 +61,7 @@ public class GORFXServiceImpl implements GORFXService {
     public ResponseEntity<Facets> listAvailableFacets( @RequestHeader( "DN" ) String dn ) {
 
         GNDMSResponseHeader responseHeaders = new GNDMSResponseHeader();
-        responseHeaders.setResourceURL( baseUrl + "/gorfx" );
+        responseHeaders.setResourceURL( baseUrl + "/gorfx/" );
         responseHeaders.setParentURL( baseUrl );
         if( dn != null ) responseHeaders.setDN( dn );
 
@@ -72,7 +73,7 @@ public class GORFXServiceImpl implements GORFXService {
     public ResponseEntity<List<String>> listConfigActions( @RequestHeader( "DN" ) String dn ) {
 
         GNDMSResponseHeader responseHeaders = new GNDMSResponseHeader();
-        responseHeaders.setResourceURL( baseUrl + "/gorfx" );
+        responseHeaders.setResourceURL( baseUrl + "/gorfx/" );
         responseHeaders.setFacetURL( gorfxFacets.findFacet( "config" ).getUrl() );
         responseHeaders.setParentURL( baseUrl );
         if( dn != null ) responseHeaders.setDN( dn );
@@ -87,7 +88,7 @@ public class GORFXServiceImpl implements GORFXService {
 
         GNDMSResponseHeader responseHeaders = new GNDMSResponseHeader();
         responseHeaders.setResourceURL( gorfxFacets.findFacet( "config" ).getUrl() );
-        responseHeaders.setParentURL( baseUrl + "/gorfx" );
+        responseHeaders.setParentURL( baseUrl + "/gorfx/" );
         if( dn != null ) responseHeaders.setDN( dn );
         return null;
     }
@@ -108,20 +109,50 @@ public class GORFXServiceImpl implements GORFXService {
         responseHeaders.setResourceURL( baseUrl + "/gorfx/" );
         responseHeaders.setFacetURL( gorfxFacets.findFacet( "batch" ).getUrl() );
         responseHeaders.setParentURL( baseUrl );
-        return null;
+        return new ResponseEntity<List<String>>( new ArrayList<String>( 1 ) {{ add( "mockup" ); }},
+            responseHeaders, HttpStatus.OK );
     }
 
     @RequestMapping( value = "/batch/{actionName}", method = RequestMethod.GET )
     public ResponseEntity<ActionMeta> getBatchActionInfo( @PathVariable String actionName,
                                                           @RequestHeader( "DN" ) String dn ) {
-        return null;
+
+        GNDMSResponseHeader headers = new GNDMSResponseHeader();
+        headers.setResourceURL( gorfxFacets.findFacet( "batch" ).getUrl() );
+        headers.setParentURL( baseUrl + "/gorfx/" );
+        if( dn != null ) headers.setDN( dn );
+
+        if (! actionName.equals( "mockup" ) )
+            return new ResponseEntity<ActionMeta>( null, headers, HttpStatus.NOT_FOUND );
+
+        return new ResponseEntity<ActionMeta>(
+            new ActionMeta() {
+                public String getName() {
+                    return "mockup";
+                }
+                public String getHelp() {
+                    return "Sorry, I can't even help myself";
+                }
+                public String getDescription() {
+                    return "I just mock you";
+                }
+            }, headers, HttpStatus.OK );
     }
+
 
     @RequestMapping( value = "/batch/{actionName}", method = RequestMethod.POST )
     public ResponseEntity<String> callBatchAction( @PathVariable String actionName, @RequestBody String args,
                                                    @RequestHeader( "DN" ) String dn ) {
-        // Fires a batch action
-        return null;
+
+        GNDMSResponseHeader headers = new GNDMSResponseHeader();
+        headers.setResourceURL( gorfxFacets.findFacet( "batch" ).getUrl() );
+        headers.setParentURL( baseUrl + "/gorfx/" );
+        if( dn != null ) headers.setDN( dn );
+
+        if (! actionName.equals( "mockup" ) )
+            return new ResponseEntity<String>( null, headers, HttpStatus.NOT_FOUND );
+
+        return new ResponseEntity<String>( "Are you happy, Punk?", headers, HttpStatus.OK );
     }
 
 
@@ -129,7 +160,7 @@ public class GORFXServiceImpl implements GORFXService {
     @RequestMapping( value = "/taskflows/", method = RequestMethod.GET )
     public ResponseEntity<List<String>> listTaskFlows( @RequestHeader( "DN" ) String dn ) {
         GNDMSResponseHeader responseHeaders = new GNDMSResponseHeader();
-        responseHeaders.setResourceURL( baseUrl + "/gorfx" );
+        responseHeaders.setResourceURL( baseUrl + "/gorfx/" );
         responseHeaders.setFacetURL( gorfxFacets.findFacet( "taskflow" ).getUrl() );
         responseHeaders.setParentURL( baseUrl );
         if( dn != null ) responseHeaders.setDN( dn );
@@ -140,12 +171,16 @@ public class GORFXServiceImpl implements GORFXService {
 
     @RequestMapping( value = "/taskflows/{type}", method = RequestMethod.GET )
     public ResponseEntity<TaskFlowInfo> getTaskFlowInfo( @PathVariable String type, @RequestHeader( "DN" ) String dn ) {
+
+        taskFlowProvider.getTaskFlowMeta( type  );
+
         return null;  // not required here
     }
 
 
     @RequestMapping( value = "/taskflows/{type}", method = RequestMethod.POST )
-    public ResponseEntity<String> createTaskFlow( @PathVariable String type, AbstractTF order, @RequestHeader( "DN" ) String dn,
+    public ResponseEntity<String> createTaskFlow( @PathVariable String type, AbstractTF order,
+                                                  @RequestHeader( "DN" ) String dn,
                                                   @RequestHeader( "WId" ) String wid ) {
         return null;  // not required here
     }

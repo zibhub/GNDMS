@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types.tfmockup;
+package de.zib.gndms.logic.taskflow.tfmockup;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *

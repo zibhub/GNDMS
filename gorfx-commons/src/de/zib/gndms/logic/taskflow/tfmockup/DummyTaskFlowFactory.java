@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types.tfmockup;
+package de.zib.gndms.logic.taskflow.tfmockup;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -17,8 +17,7 @@ package de.zib.gndms.model.gorfx.types.tfmockup;
 
 import de.zib.gndms.logic.taskflow.AbstractQuoteCalculator;
 import de.zib.gndms.logic.taskflow.TaskFlowFactory;
-import de.zib.gndms.model.gorfx.types.AbstractTF;
-import de.zib.gndms.model.gorfx.types.TaskFlow;
+import de.zib.gndms.model.gorfx.types.TaskFlowInfo;
 
 /**
  * @author try ma ik jo rr a zib
@@ -30,5 +29,19 @@ public class DummyTaskFlowFactory implements TaskFlowFactory {
 
     public AbstractQuoteCalculator getQuoteCalculator() {
         return new DummyQuoteCalculator( );
+    }
+
+
+    public TaskFlowInfo getInfo() {
+        return new TaskFlowInfo() {
+            public String getStatistics() {
+                return null;  // not required here
+            }
+
+
+            public String getDescription() {
+                return null;  // not required here
+            }
+        };
     }
 }

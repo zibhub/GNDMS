@@ -70,7 +70,7 @@ public class GORFXClient implements GORFXServiceEssentials {
     public ResponseEntity<String> createTaskFlow( String type, AbstractTF order, String dn, String wid ) {
         GNDMSResponseHeader requestHeaders = new GNDMSResponseHeader();
         requestHeaders.setDN( dn );
-        requestHeaders.setWid( wid );
+        requestHeaders.setWId( wid );
         return unifiedPost( String.class, AbstractTF.class, serviceURL + "/gorfx/" + type, requestHeaders );
     }
 
