@@ -20,6 +20,7 @@ package de.zib.gndms.logic.model.gorfx;
 
 import de.zib.gndms.kit.access.CredentialProvider;
 import de.zib.gndms.kit.access.RequiresCredentialProvider;
+import de.zib.gndms.logic.model.DefaultTaskAction;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.model.common.types.factory.KeyFactory;
 import de.zib.gndms.model.common.types.factory.KeyFactoryInstance;
@@ -40,7 +41,7 @@ import javax.persistence.EntityManager;
  *
  *          User: stepn Date: 02.10.2008 Time: 13:00:56
  */
-public abstract class ORQTaskAction<K extends AbstractORQ> extends TaskAction
+public abstract class ORQTaskAction<K extends AbstractORQ> extends DefaultTaskAction
     implements KeyFactoryInstance<OfferType, ORQTaskAction<?>>, RequiresCredentialProvider
 {
     private KeyFactory<OfferType, ORQTaskAction<?>> factory;
@@ -96,12 +97,6 @@ public abstract class ORQTaskAction<K extends AbstractORQ> extends TaskAction
 
 
     protected abstract @NotNull Class<K> getOrqClass();
-
-
-    @Override
-    protected final @NotNull Class<AbstractTask> getTaskClass() {
-        return AbstractTask.class;
-    }
 
 
     public void setOrq(final @NotNull K orq) {

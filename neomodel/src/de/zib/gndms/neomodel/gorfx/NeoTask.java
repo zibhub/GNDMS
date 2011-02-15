@@ -1,9 +1,26 @@
 package de.zib.gndms.neomodel.gorfx;
 
+/*
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import de.zib.gndms.model.common.PermissionInfo;
 import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.NeoReprSession;
+import de.zib.gndms.neomodel.common.NeoSession;
 import de.zib.gndms.neomodel.common.NodeGridResource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,11 +37,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
- * User: stepn
- * Date: 03.02.11
- * Time: 15:28
- * To change this template use File | Settings | File Templates.
+ * NeoTask
+ *
+ * @author  try ste fan pla nti kow zib
+ *
+ * User: stepn Date: 05.09.2008 Time: 14:48:36
  */
 public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTaskAccessor {
     public static final String WID_P = "WID_P";
@@ -38,9 +55,9 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
     public static final String PERMISSION_INFO_P = "PERMISSION_INFO_P";
     public static final String SERIALIZED_CREDENTIAL_P = "SERIALIZED_CREDENTIAL_P";
     public static final String PAYLOAD_P = "PAYLOAD_P";
+    public static final String CAUSE_P = "CAUSE_P";
     public static final String DONE_P = "DONE_P";
     public static final String BROKEN_P = "BROKEN_P";
-    public static final String POST_MORTEM_P = "POST_MORTEM_P";
     public static final String FAULT_STRING_P = "FAULT_STRING_P";
     public static final String TASK_STATE_IDX = "taskStateIdx";
     public static final String TERMINATION_TIME_IDX = "terminationTimeIdx";
@@ -297,11 +314,34 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
             setProperty(Serializable.class, PAYLOAD_P, payload);
     }
 
+    public @Nullable LinkedList<RuntimeException> getCause() {
+        return (LinkedList<RuntimeException>) getProperty(LinkedList.class, CAUSE_P, null);
+    }
+
+    public void setCause(final @Nullable LinkedList<RuntimeException> cause) {
+        if (cause == null && hasProperty(CAUSE_P))
+            removeProperty(CAUSE_P);
+        else
+            setProperty(LinkedList.class, CAUSE_P, cause);
+    }
+
+
+    public @NotNull LinkedList<RuntimeException> addCause(final @NotNull RuntimeException exception) {
+        final LinkedList<RuntimeException> oldList = getCause();
+        final LinkedList<RuntimeException> newList = oldList == null ? new LinkedList<RuntimeException>() : oldList;
+        newList.add(exception);
+        setCause(newList);
+        return newList;
+    }
+
     public boolean isDone() {
         return (Boolean) getProperty(DONE_P, false);
     }
 
     public void setDone(boolean doneState) {
+        if (isDone())
+            if (! doneState)
+                throw new IllegalArgumentException("Illegal setDone(false) after setDone(true)");
         setProperty(DONE_P, doneState);
     }
 
@@ -323,6 +363,149 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
 
     public Taskling getTaskling() {
         return new Taskling(reprSession().getDao(), getId());
+    }
+    
+    public NeoTaskAccessor getSnapshot() {
+        final NeoSession session = session();
+        try {
+            final String id = this.getId();
+            final String WID = this.getWID();
+            final String descr = this.getDescription();
+            final Calendar terminationTime = this.getTerminationTime();
+            final TaskState taskState = this.getTaskState();
+            final int maxProgress = this.getMaxProgress();
+            final int progress = this.getProgress();
+            final boolean hasParent = this.hasParent();
+            final boolean isBroken = this.isBroken();
+            final boolean isRootTask = this.isRootTask();
+            final boolean isSubTask = this.isSubTask();
+            final boolean isDone = this.isDone();
+            final Serializable orq = this.getORQ();
+            final PermissionInfo permInfo = this.getPermissionInfo();
+            final PersistentContract contract = this.getContract();
+            final byte[] cred = this.getSerializedCredential();
+            final String faultString = this.getFaultString();
+            final Serializable payload = this.getPayload();
+            final LinkedList<RuntimeException> causes = this.getCause();
+            final NeoTaskAccessor snapshot = new NeoTaskAccessor() {
+                @NotNull
+                public String getId() {
+                    return id;
+                }
+
+                @NotNull
+                public String getWID() {
+                    return WID;
+                }
+
+                @NotNull
+                public String getDescription() {
+                    return descr;
+                }
+
+                public NeoOfferType getOfferType() {
+                    throw new UnsupportedOperationException();
+                }
+
+                public Calendar getTerminationTime() {
+                    return terminationTime;
+                }
+
+                @NotNull
+                public TaskState getTaskState() {
+                    return taskState;
+                }
+
+                public int getMaxProgress() {
+                    return maxProgress;
+                }
+
+                public int getProgress() {
+                    return progress;
+                }
+
+                @NotNull
+                public NeoTaskAccessor getRootTask() {
+                    throw new UnsupportedOperationException();
+                }
+
+                public boolean hasParent() {
+                    return hasParent;
+                }
+
+                public NeoTaskAccessor getParent() {
+                    throw new UnsupportedOperationException();
+                }
+
+                public boolean isRootTask() {
+                    return isRootTask;
+                }
+
+                public boolean isSubTask() {
+                    return isSubTask;
+                }
+
+                @NotNull
+                public Iterable<? extends NeoTaskAccessor> getSubTasks() {
+                    throw new UnsupportedOperationException();
+                }
+
+                @NotNull
+                public Iterable<? extends NeoTaskAccessor> getSubTasks(NeoOfferType ot) {
+                    throw new UnsupportedOperationException();
+                }
+
+                public Serializable getORQ() {
+                    return orq;
+                }
+
+                @NotNull
+                public PersistentContract getContract() {
+                    return contract;
+                }
+
+                public boolean isBroken() {
+                    return isBroken();
+                }
+
+                @NotNull
+                public PermissionInfo getPermissionInfo() {
+                    return permInfo;
+                }
+
+                @NotNull
+                public byte[] getSerializedCredential() {
+                    return cred;
+                }
+
+                public Serializable getPayload() {
+                    return payload;
+                }
+
+                public Iterable<RuntimeException> getCause() {
+                    return causes;
+                }
+
+                public boolean isDone() {
+                    return isDone;
+                }
+
+                public String getFaultString() {
+                    return faultString;
+                }
+
+                public void setTerminationTime(Calendar terminationTime) {
+                    throw new UnsupportedOperationException();
+                }
+
+                public void setId(String id) {
+                    throw new UnsupportedOperationException();
+                }
+            };
+            session.finish();
+            return snapshot;
+        }
+        finally { session.success(); }
     }
 }
 

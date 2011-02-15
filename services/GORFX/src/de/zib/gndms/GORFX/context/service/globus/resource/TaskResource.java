@@ -22,7 +22,6 @@ import de.zib.gndms.GORFX.context.common.TaskConstants;
 import de.zib.gndms.GORFX.context.stubs.TaskResourceProperties;
 import de.zib.gndms.gritserv.delegation.DelegationAux;
 import de.zib.gndms.gritserv.util.GlobusCredentialProviderImpl;
-import de.zib.gndms.infra.model.GridResourceModelHandler;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
@@ -37,6 +36,9 @@ import de.zib.gndms.gritserv.typecon.types.FileTransferResultXSDTypeWriter;
 import de.zib.gndms.gritserv.typecon.types.ProviderStageInResultXSDTypeWriter;
 import de.zib.gndms.gritserv.typecon.types.*;
 import de.zib.gndms.gritserv.typecon.types.SliceStageInResultXSDTypeWriter;
+import de.zib.gndms.neomodel.common.NeoDao;
+import de.zib.gndms.neomodel.common.NeoSession;
+import de.zib.gndms.neomodel.gorfx.NeoTask;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.apache.commons.logging.Log;
 import org.apache.log4j.Logger;
@@ -67,7 +69,7 @@ public class TaskResource extends TaskResourceBase
     private static final Logger log = Logger.getLogger( TaskResource.class );
     private ExtTaskResourceHome home;
     private TaskAction taskAction;
-    private GridResourceModelHandler<Task, ExtTaskResourceHome, TaskResource> mH;
+//    private GridResourceModelHandler<Taskling, ExtTaskResourceHome, TaskResource> mH;
     private Future<?> future;
 
 
@@ -76,31 +78,49 @@ public class TaskResource extends TaskResourceBase
      * GNDMSystem.
      */
     public void executeTask() {
-        
-        Task tsk = (Task) taskAction.getModel( );
-        if(! tsk.getState().equals( TaskState.FINISHED ) || ! tsk.getState().equals( TaskState.FAILED ) )
-            future = home.getSystem( ).submitAction( taskAction, getResourceHome().getLog() );
-        else
-            taskAction.getEntityManager().close();
+        Taskling ling = (Taskling) (Object) taskAction.getModel( );
+        NeoSession session = home.getDao().beginSession();
+        try {
+            final NeoTask tsk = ling.getTask(session);
+            if (! tsk.isDone() )
+                future = home.getSystem( ).submitAction( taskAction, getResourceHome().getLog() );
+            else
+                taskAction.getEntityManager().close();
+            session.success();
+        }
+        finally { session.finish(); }
     }
 
 
     public TaskExecutionState getTaskExecutionState() {
-        return GORFXTools.getStateOfTask( (Task) taskAction.getModel( ) );
+        NeoSession session = home.getDao().beginSession();
+        try {
+            TaskExecutionState stateOfTask =
+                    GORFXTools.getStateOfTask(((Taskling) (Object) taskAction.getModel()).getTask(session));
+            session.success();
+            return stateOfTask;
+        }
+        finally { session.success(); }
     }
 
 
     public TaskExecutionFailure getTaskExecutionFailure() {
-
-        TaskExecutionFailure fail = new TaskExecutionFailure( );
-        if( taskAction.getModel( ).getState().equals( TaskState.FAILED ) ) {
-            if( taskAction.getModel().getData() != null )
-                fail = GORFXTools.failureFromException( (Exception) taskAction.getModel().getData() );
-        } else {
-            fail.setAllIsFine( new Object() );
+        NeoSession session = home.getDao().beginSession();
+        try {
+            TaskExecutionFailure fail = new TaskExecutionFailure( );
+            NeoTask task = ((Taskling) (Object) taskAction.getModel()).getTask(session);
+            if( task.getTaskState().equals( TaskState.FAILED ) ) {
+                Serializable payload = task.getPayload();
+                if( payload != null )
+                    fail = GORFXTools.failureFromException( (Exception) payload);
+            } else {
+                fail.setAllIsFine( new Object() );
+            }
+            session.success();
+            return fail;
         }
+        finally { session.success(); }
 
-        return fail;
     }
 
 
@@ -232,22 +252,25 @@ public class TaskResource extends TaskResourceBase
         if( taskAction != null )
             throw new ResourceException( "task action already loaded" );
 
-        EntityManager em = home.getEntityManagerFactory().createEntityManager(  );
-        Task tsk = (Task) mH.loadModelById( em, id );
-
-        if( tsk.isPostMortem() ) {
-            em.close();
-            throw new NoSuchResourceException( );
+        NeoDao dao = home.getDao();
+        NeoSession session = dao.beginSession();
+        Taskling tsk;
+        byte[] bcred;
+        try {
+            NeoTask task = session.findTask(id);
+            tsk = task.getTaskling();
+            bcred = task.getSerializedCredential();
+            session.success();
         }
+        finally { session.finish();}
 
-        byte[] bcred = tsk.getSerializedCredential();
         GlobusCredential gcred = null;
         if( bcred.length > 0 )
             gcred = DelegationAux.fromByteArray( bcred );
 
         try {
             taskAction = getResourceHome().getSystem().getInstanceDir().newTaskAction( em, tsk.getOfferType().getOfferTypeKey() );
-            taskAction.initFromModel(em, tsk);
+            taskAction.initFromModel(em, dao, tsk);
             taskAction.setClosingEntityManagerOnCleanup(true);
             taskAction.setCredentialProvider( new GlobusCredentialProviderImpl(
                 ( ( ORQTaskAction ) taskAction).getOrq().getOfferType(), gcred ) );
@@ -267,19 +290,24 @@ public class TaskResource extends TaskResourceBase
 
 
     public void loadViaModelId( @NotNull String id ) throws ResourceException {
-        throw new UnsupportedOperationException( "task resource is readonly" );
+        loadFromModel(loadModelById(id));
     }
 
 
-    public void loadFromModel( @NotNull Task model ) throws ResourceException {
-
-        // Not required here cause we override the getters.
-        // getter overriding isn't enough
-        setTaskExecutionState( getTaskExecutionState() );
-        setTerminationTime( taskAction.getModel().getTerminationTime() );
-        setTaskExecutionFailure( getTaskExecutionFailure() );
-        setTaskExecutionResults( getTaskExecutionResults() );
-
+    public void loadFromModel( @NotNull Taskling model ) throws ResourceException {
+        NeoDao dao = home.getDao();
+        NeoSession session = dao.beginSession();
+        try {
+            NeoTask task = model.getTask(session);
+            // Not required here cause we override the getters.
+            // getter overriding isn't enough
+            setTaskExecutionState( getTaskExecutionState() );
+            setTerminationTime( task.getTerminationTime() );
+            setTaskExecutionFailure( getTaskExecutionFailure() );
+            setTaskExecutionResults( getTaskExecutionResults() );
+            session.success();
+        }
+        finally { session.finish();}
     }
 
 
@@ -294,8 +322,6 @@ public class TaskResource extends TaskResourceBase
     public void setResourceHome( @NotNull ExtTaskResourceHome resourceHomeParam ) {
 
         if ( home == null ) {
-            mH = new GridResourceModelHandler<Task, ExtTaskResourceHome, TaskResource>
-                ( Task.class, resourceHomeParam );
             home = resourceHomeParam;
         }
         else
@@ -307,11 +333,11 @@ public class TaskResource extends TaskResourceBase
 
         if ( getResourceHome().getKeyTypeName().equals( resourceKey.getName() ) ) {
             String id = ( String ) resourceKey.getValue();
-            Task tsk = loadModelById( id );
+            Taskling ling = loadModelById( id );
             setResourceKey( resourceKey );
             initialize( new TaskResourceProperties(),
                 TaskConstants.RESOURCE_PROPERTY_SET, id );
-            loadFromModel( tsk );
+            loadFromModel( ling );
         }
         else
             throw new InvalidResourceKeyException("Invalid resourceKey name");

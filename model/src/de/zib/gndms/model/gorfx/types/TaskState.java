@@ -105,7 +105,17 @@ public enum TaskState implements Serializable {
     }
 
 
-    public boolean isUnknownState() {
+    public boolean isRestartedState() {
         return unknownState;
+    }
+
+    public TaskState getCanonicalState() {
+        switch (this) {
+            case CREATED_UNKNOWN: return CREATED;
+            case INITIALIZED_UNKNOWN: return INITIALIZED;
+            case IN_PROGRESS_UNKNOWN: return IN_PROGRESS;
+            default:
+                return this;
+        }
     }
 }
