@@ -15,7 +15,6 @@ package de.zib.gndms.gndmc.gorfx;
  * limitations under the License.
  */
 
-import com.sun.net.httpserver.HttpHandler;
 import de.zib.gndms.kit.application.AbstractApplication;
 import de.zib.gndms.rest.Facet;
 import de.zib.gndms.rest.Facets;
@@ -23,7 +22,6 @@ import de.zib.gndms.rest.GNDMSResponseHeader;
 import org.kohsuke.args4j.Option;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -84,7 +82,7 @@ public class GORFXClientMain extends AbstractApplication {
         showList( "parentURL", h.getParentURL() );
         showList( "facetURL", h.getFacetURL() );
         showList( "DN", h.getDN() );
-        showList( "WId", h.getWid() );
+        showList( "WId", h.getWId() );
     }
 
 

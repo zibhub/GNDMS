@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types.tfmockup;
+package de.zib.gndms.logic.taskflow;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -15,30 +15,17 @@ package de.zib.gndms.model.gorfx.types.tfmockup;
  * limitations under the License.
  */
 
-import de.zib.gndms.logic.taskflow.TaskFlowMeta;
+import java.util.List;
 
 /**
  * @author try ma ik jo rr a zib
- * @date 14.02.11  14:54
- * @brief An example implementation for the new taskflow api.
- *
+ * @date 14.02.11  14:20
+ * @brief
  */
-public class DummyTaskFlowMeta implements TaskFlowMeta {
+public interface TaskFlowProvider {
 
-    private String description;
+    List<String> listTaskFlows( );
+    TaskFlowMeta getTaskFlowMeta( String taskFlow );
+    TaskFlowFactory getFactoryForTaskFlow(  String taskFlow );
 
-
-    public DummyTaskFlowMeta( String description ) {
-        this.description = description;
-    }
-
-
-    public String getDescription() {
-        return description;
-    }
-
-
-    public void setDescription( String description ) {
-        this.description = description;
-    }
 }

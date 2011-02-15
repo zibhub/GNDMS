@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types.tfmockup;
+package de.zib.gndms.logic.taskflow.tfmockup;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -21,8 +21,6 @@ import de.zib.gndms.model.gorfx.types.AbstractTF;
 import de.zib.gndms.model.gorfx.types.Quote;
 import org.joda.time.DateTime;
 
-import javax.management.DescriptorAccess;
-import java.rmi.UnexpectedException;
 import java.util.ArrayList;
 import java.util.List;
 

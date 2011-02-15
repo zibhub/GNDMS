@@ -32,6 +32,19 @@ public class GNDMSResponseHeader extends HttpHeaders {
     public GNDMSResponseHeader() {
     }
 
+    public GNDMSResponseHeader( String resourceURL, String facetURL, String parentURL, String dn, String wid ) {
+         if( resourceURL != null )
+             setResourceURL( resourceURL );
+         if( facetURL != null )
+             setFacetURL( facetURL );
+         if( parentURL != null )
+             setParentURL( parentURL );
+         if( dn != null )
+             setDN( dn );
+         if( wid != null )
+             setWId( wid );
+
+    }
 
     public GNDMSResponseHeader( HttpHeaders h ) {
         putAll( h );
@@ -78,13 +91,13 @@ public class GNDMSResponseHeader extends HttpHeaders {
     }
 
 
-    public List<String> getWid() {
+    public List<String> getWId() {
 
         return get( "WId" );
     }
 
 
-    public void setWid( String wid ) {
+    public void setWId( String wid ) {
         this.add( "WId", wid );
     }
 }
