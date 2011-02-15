@@ -19,6 +19,7 @@ package de.zib.gndms.GORFX.service;
 
 import de.zib.gndms.kit.config.ActionMeta;
 import de.zib.gndms.kit.config.ConfigActionProvider;
+import de.zib.gndms.logic.taskflow.TaskFlowProvider;
 import de.zib.gndms.model.gorfx.types.AbstractTF;
 import de.zib.gndms.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.rest.Facets;
@@ -53,6 +54,7 @@ public class GORFXServiceImpl implements GORFXService {
     private Facets gorfxFacets; ///< List of facets under /gorfx/
     private String baseUrl; ///< The base url something like: \c http://my.host.org/gndms/grid_id
     private ConfigActionProvider configProvider; ///< List of config actions, todo uncertain who provided these.
+    private TaskFlowProvider taskFlowProvider; ///< List of config actions, todo uncertain who provided these.
 
     @RequestMapping( value = "/", method = RequestMethod.GET )
     public ResponseEntity<Facets> listAvailableFacets( @RequestHeader( "DN" ) String dn ) {
@@ -112,7 +114,6 @@ public class GORFXServiceImpl implements GORFXService {
     @RequestMapping( value = "/batch/{actionName}", method = RequestMethod.GET )
     public ResponseEntity<ActionMeta> getBatchActionInfo( @PathVariable String actionName,
                                                           @RequestHeader( "DN" ) String dn ) {
-        // delivers info to the action
         return null;
     }
 
@@ -127,8 +128,13 @@ public class GORFXServiceImpl implements GORFXService {
 
     @RequestMapping( value = "/taskflows/", method = RequestMethod.GET )
     public ResponseEntity<List<String>> listTaskFlows( @RequestHeader( "DN" ) String dn ) {
-        // list possible task flows
-        return null;
+        GNDMSResponseHeader responseHeaders = new GNDMSResponseHeader();
+        responseHeaders.setResourceURL( baseUrl + "/gorfx" );
+        responseHeaders.setFacetURL( gorfxFacets.findFacet( "taskflow" ).getUrl() );
+        responseHeaders.setParentURL( baseUrl );
+        if( dn != null ) responseHeaders.setDN( dn );
+
+        return new ResponseEntity<List<String>>( taskFlowProvider.listTaskFlows(), responseHeaders, HttpStatus.OK );
     }
 
 

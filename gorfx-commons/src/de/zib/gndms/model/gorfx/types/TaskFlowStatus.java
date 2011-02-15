@@ -21,4 +21,16 @@ package de.zib.gndms.model.gorfx.types;
  */
 public interface TaskFlowStatus {
 
+    /**
+     * @brief Enum for the state of a task;
+     */
+    enum Status{ FINISHED,  ///< Task has finished (successfully)
+                 FAILED, ///< Some exception has occurred and the task is failed
+                 RUNNING, ///< Task is still running
+                 WAITING, ///< Task hasn't been started yet.
+        }
+
+    Status getStatus();
+    int getProgress( );
+    int getMaxProgress( );
 }

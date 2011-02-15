@@ -21,4 +21,11 @@ package de.zib.gndms.model.gorfx.types;
  */
 public interface TaskFlowFailure {
 
+    String getMessage();
+
+    String getFaultTrace();
+
+    String getFaultClass();
+
+    String getFaultLocation();
 }
