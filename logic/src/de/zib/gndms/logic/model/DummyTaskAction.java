@@ -18,16 +18,13 @@ package de.zib.gndms.logic.model;
 
 
 
-import de.zib.gndms.model.gorfx.Task;
-import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.NeoDao;
-import de.zib.gndms.neomodel.common.NeoSession;
-import de.zib.gndms.neomodel.gorfx.NeoTask;
+import de.zib.gndms.neomodel.gorfx.NeoTaskAccessor;
+import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
-import java.io.Serializable;
 
 
 /**
@@ -48,55 +45,30 @@ public class DummyTaskAction extends TaskAction {
         super();
     }
 
-
-    public DummyTaskAction(final @NotNull EntityManager em, final @NotNull Task model) {
-        super(em, model);
+    public DummyTaskAction(@NotNull EntityManager em, @NotNull NeoDao dao, @NotNull Taskling model) {
+        super(em, dao, model);
     }
-
-
-    public DummyTaskAction(final @NotNull EntityManager em, final @NotNull String pk) {
-        super(em, pk, Task.class );
-    }
-
-
-    @SuppressWarnings({ "ThrowableInstanceNeverThrown" })
-    @Override
-    protected void onInProgress(final @NotNull AbstractTask model) {
-        try {
-            Thread.sleep(sleepInProgress);
-        }
-        catch (InterruptedException e) {
-            // onward!
-            shutdownIfTerminating(e);
-        }
-        if (Math.random() < successRate)
-            finish(1);
-         else
-            fail(new IllegalStateException("Random failure"));
-    }
-
 
     @Override
-    protected void onTransit(@NotNull NeoDao dao, @NotNull String taskId,
-                             @NotNull TaskState taskState, @NotNull Serializable payload, final boolean unknown) {
+    protected void onTransit(@NotNull NeoTaskAccessor snapshot, boolean isRestartedTask) {
 
-        switch(taskState) {
+        switch(snapshot.getTaskState()) {
             case IN_PROGRESS:
                 try {
                     Thread.sleep(sleepInProgress);
                 }
                 catch (InterruptedException e) {
-                    transitTo(dao, taskId, TaskState.FINISHED);
+                    transit(TaskState.FINISHED);
                     return;
                 }
 
                 if (Math.random() < successRate) {
-                    transitTo(dao, taskId, TaskState.FINISHED, 1);
+                    transitWithPayload(TaskState.FINISHED, 1);
                     return;
                 } else
                     throw new IllegalStateException("Random failure");
             default:
-                transitToDefault(dao, taskId);
+                autoTransit();
         }
     }
 

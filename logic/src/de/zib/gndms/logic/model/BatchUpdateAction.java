@@ -19,7 +19,9 @@ package de.zib.gndms.logic.model;
 
 
 import de.zib.gndms.logic.action.CompositeAction;
+import de.zib.gndms.model.common.GridEntity;
 import de.zib.gndms.model.common.GridResource;
+import de.zib.gndms.model.common.GridResourceItf;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -33,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
  *
  *          User: stepn Date: 13.08.2008 Time: 10:35:07
  */
-public interface BatchUpdateAction<M extends GridResource, R> extends CompositeAction<R, Void> {
+public interface BatchUpdateAction<M extends GridEntity & GridResourceItf, R> extends CompositeAction<R, Void> {
 
     EntityUpdateListener<M> getListener();
 

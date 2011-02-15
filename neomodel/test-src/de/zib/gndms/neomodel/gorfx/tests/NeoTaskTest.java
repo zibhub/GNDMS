@@ -1,5 +1,21 @@
 package de.zib.gndms.neomodel.gorfx.tests;
 
+/*
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.common.PermissionInfo;
 import de.zib.gndms.model.common.PersistentContract;
@@ -13,11 +29,12 @@ import static org.testng.Assert.*;
 import java.util.*;
 
 /**
- * Created by IntelliJ IDEA.
- * User: stepn
- * Date: 07.02.11
- * Time: 14:34
- * To change this template use File | Settings | File Templates.
+ * NeoTaskTest
+ *
+ * @author  try ste fan pla nti kow zib
+ * @version $Id$
+ *
+ * User: stepn Date: 05.09.2008 Time: 14:48:36
  */
 public class NeoTaskTest extends NeoTest {
 
@@ -44,7 +61,6 @@ public class NeoTaskTest extends NeoTest {
         task.setBroken(true);
         task.setDone(true);
         task.setFaultString("Faulty Towers");
-        task.setPostMortem(true);
         task.setMaxProgress(101);
         task.setProgress(5);
         task.setTaskState(TaskState.FAILED);
@@ -52,6 +68,7 @@ public class NeoTaskTest extends NeoTest {
         task.setId(id);
         task.setOfferType(ot);
         task.setPayload(1);
+        task.addCause(new RuntimeException("LOL"));
         task.setTerminationTime(CLASS_STARTUP_TIME);
         task.setSerializedCredential(new byte[] { 1, 2, 3 });
         PermissionInfo permInfo = new PermissionInfo();
@@ -70,13 +87,14 @@ public class NeoTaskTest extends NeoTest {
         assertEquals(task.getId(), TASK_ID);
         assertEquals(task.isBroken(), true);
         assertEquals(task.isDone(), true);
-        assertEquals(task.isPostMortem(), true);
         assertEquals(task.getMaxProgress(), 101);
         assertEquals(task.getProgress(), 5);
         assertEquals(task.getTaskState(), TaskState.FAILED);
         assertEquals(task.getDescription(), "Will #fail");
         assertEquals(task.getFaultString(), "Faulty Towers");
         assertEquals(task.getPayload(), 1);
+        assertEquals(task.getCause().getLast().getMessage(), "LOL");
+
 
         NeoOfferType ot = session.findOfferType("offerTypeNr1");
         assertEquals(task.getOfferType().getId(), ot.getId());

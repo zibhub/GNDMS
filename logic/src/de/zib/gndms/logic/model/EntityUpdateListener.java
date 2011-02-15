@@ -18,7 +18,9 @@ package de.zib.gndms.logic.model;
 
 
 
+import de.zib.gndms.model.common.GridEntity;
 import de.zib.gndms.model.common.GridResource;
+import de.zib.gndms.model.common.GridResourceItf;
 
 
 /**
@@ -30,7 +32,7 @@ import de.zib.gndms.model.common.GridResource;
  *
  *          User: stepn Date: 12.08.2008 Time: 18:33:47
  */
-public interface EntityUpdateListener<M extends GridResource> {
+public interface EntityUpdateListener<M extends GridEntity & GridResourceItf> {
 
     /**
      * A class waiting for changes on the model must implement this method.

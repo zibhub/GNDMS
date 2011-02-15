@@ -20,9 +20,11 @@ package de.zib.gndms.logic.model;
 
 import com.google.inject.Injector;
 import de.zib.gndms.kit.access.GNDMSBinding;
+import de.zib.gndms.model.common.GridEntity;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.logic.action.Action;
 import de.zib.gndms.logic.action.ActionInitializationException;
+import de.zib.gndms.model.common.GridResourceItf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -38,7 +40,7 @@ import java.util.List;
  *
  *          User: stepn Date: 04.09.2008 Time: 13:01:25
  */
-public class DelegatingBatchUpdateAction<M extends GridResource, R>
+public class DelegatingBatchUpdateAction<M extends GridEntity & GridResourceItf, R>
         implements BatchUpdateAction<M, R> {
     private final BatchUpdateAction<M, R> delegate;
     private Injector injector;

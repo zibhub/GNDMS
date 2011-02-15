@@ -7,11 +7,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 
 /**
- * Created by IntelliJ IDEA.
- * User: stepn
- * Date: 11.02.11
- * Time: 14:06
- * To change this template use File | Settings | File Templates.
+ * NeoOfferTypeAccessor
+ *
+ * @author  try ste fan pla nti kow zib
+ * @version $Id$
+ *
+ * User: stepn Date: 05.09.2008 Time: 14:48:36
  */
 public interface NeoOfferTypeAccessor extends GridResourceItf {
     @NotNull String getId();
