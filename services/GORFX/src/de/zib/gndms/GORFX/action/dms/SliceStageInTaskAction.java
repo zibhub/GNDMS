@@ -31,6 +31,11 @@ import de.zib.gndms.gritserv.typecon.types.ProviderStageInORQXSDTypeWriter;
 import de.zib.gndms.gritserv.typecon.types.SliceRefXSDReader;
 import de.zib.gndms.gritserv.typecon.types.ContextXSDTypeWriter;
 import de.zib.gndms.gritserv.typecon.types.ContractXSDTypeWriter;
+import de.zib.gndms.model.gorfx.types.TaskState;
+import de.zib.gndms.typecon.common.type.ContextXSDTypeWriter;
+import de.zib.gndms.typecon.common.type.ContractXSDTypeWriter;
+import de.zib.gndms.typecon.common.type.ProviderStageInORQXSDTypeWriter;
+import de.zib.gndms.typecon.common.type.SliceRefXSDReader;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.globus.gsi.GlobusCredential;
 import org.jetbrains.annotations.NotNull;
@@ -94,7 +99,8 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
             cnt.setProxy( gc );
 
             trace( "Starting remote staging.", null );
-            boolean finished = GORFXClientUtils.waitForFinish( cnt, 1000 );
+            // poll every 15 seconds
+            boolean finished = GORFXClientUtils.waitForFinish( cnt, 15000 );
 
             if (finished) {
                 trace( "Remote staging finished.", null );
