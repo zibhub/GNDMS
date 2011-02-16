@@ -2,6 +2,7 @@
 # Large amounts of memory ensure a fast build
 ENV['JAVA_OPTS'] ||= '-Xms512m -Xmx768m'
 
+
 # Additional maven repositories 
 repositories.remote << 'http://www.ibiblio.org/maven2'
 repositories.remote << 'http://people.apache.org/repo/m2-incubating-repository'
@@ -66,6 +67,8 @@ else
 	end
 end
 
+# ant binary to use
+gndms_ant = ENV['GNDMS_SOURCE'] + '/bin/gndms-ant'
 
 # Helper to construct GT4 jar pathes
 require 'buildr/gt4'
@@ -325,13 +328,13 @@ define 'gndms' do
 
     task 'clean-services' do
       SERVICES.each { |service| 
-        system 'cd ' + _('services/'+service) + ' && ant clean'
+        system 'cd ' + _('services/'+service) + ' && ' + gndms_ant + ' clean'
       }
     end
 
     task 'package-stubs' do
       SERVICES.each { |service| 
-        system "cd '#{_('services', service)}' && ant jarStubs"
+        system "cd '#{_('services', service)}' && " + gndms_ant + " jarStubs"
       }
     end
 
@@ -346,7 +349,7 @@ define 'gndms' do
 
     desc 'Create DSpace GAR for deployment (Requires packaged GNDMS and installed dependencies)'
     task 'package-DSpace' do
-      system "cd '#{_('services', 'DSpace')}' && ant createDeploymentGar"
+      system "cd '#{_('services', 'DSpace')}' && " + gndms_ant + " createDeploymentGar"
       # ln_sf(_('services', 'DSpace', 'gndms_DSpace.gar'), _('.'))
     end
 
@@ -356,7 +359,7 @@ define 'gndms' do
     end
 
     task 'rebuild-DSpace' => [task('package-DSpace'), task('deploy-DSpace')] do
-      system "cd '#{_('services', 'DSpace')}' && ant jars"
+      system "cd '#{_('services', 'DSpace')}' && " + gndms_ant + " jars"
     end
 
     # file DSPACE_STUBS.to_s => task('gndms:package-stubs') do end
@@ -367,7 +370,7 @@ define 'gndms' do
 
     desc 'Create GORFX GAR for deployment (Requires packaged GNDMS and installed dependencies)'
     task 'package-GORFX' do
-      system "cd '#{_('services', 'GORFX')}' && ant createDeploymentGar"
+      system "cd '#{_('services', 'GORFX')}' && " + gndms_ant + " createDeploymentGar"
       # ln_sf(_('services', 'GORFX', 'gndms_GORFX.gar'), _('.'))
     end
 
@@ -377,7 +380,7 @@ define 'gndms' do
     end
 
     task 'rebuild-GORFX' do
-      system "cd '#{_('services', 'GORFX')}' && ant jars"
+      system "cd '#{_('services', 'GORFX')}' && " + gndms_ant + " jars"
     end
 
     # file GORFX_STUBS.to_s => task('gndms:package-stubs') do end
