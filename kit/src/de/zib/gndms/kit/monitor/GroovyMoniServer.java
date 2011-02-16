@@ -1,7 +1,7 @@
 package de.zib.gndms.kit.monitor;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -508,7 +508,7 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
         noShutdownIfRunning = "true".equals(getProperty(props, "monitor.noShutdownIfRunning").trim());
         
         logger.info("Setup monitor state: "
-                + (envEnabled ? "[ ! -z \"$GNDMS_MONITOR_ENABLED\"Ê] " : "")
+                + (envEnabled ? "[ ! -z \"$GNDMS_MONITOR_ENABLED\"ï¿½] " : "")
                 + (propsEnabled ? "monitor.enabled=true " : "")
                 + (isSane ? "sane " : "insane ")
                 + (enabled ? "=> enabled " : "=> disabled ")

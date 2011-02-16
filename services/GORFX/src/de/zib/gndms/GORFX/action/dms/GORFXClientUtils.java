@@ -1,7 +1,7 @@
 package de.zib.gndms.GORFX.action.dms;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,15 +24,12 @@ import de.zib.gndms.GORFX.context.client.TaskClient;
 import de.zib.gndms.GORFX.offer.client.OfferClient;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.globus.gsi.GlobusCredential;
-import org.apache.log4j.Logger;
 import org.globus.wsrf.encoding.DeserializationException;
 import org.joda.time.DateTime;
 import types.*;
 
-import java.io.StringWriter;
-import java.net.SocketTimeoutException;
 import java.rmi.RemoteException;
-import java.util.Calendar;
+import java.io.StringWriter;
 
 /**
  * Some helper methods for common tasks at testing.
@@ -44,8 +41,6 @@ import java.util.Calendar;
  */
 public class GORFXClientUtils {
 
-    private static Logger log = Logger.getLogger( GORFXClientUtils.class );
-
     /**
      * Waits for a task to finish or fail.
      *
@@ -56,51 +51,24 @@ public class GORFXClientUtils {
     public static boolean waitForFinish( TaskClient tcnt, int sleep ) throws RemoteException, DeserializationException {
 
         TaskStatusT state = TaskStatusT.unknown;
-        boolean finished=false;
-        boolean failed=false;
-        int exceptions=0;
-        final int min = 15;
-        final int delay = min * 60 * 1000;
-
-        long lastException = Calendar.getInstance().getTimeInMillis() - 2* delay;
+        boolean finished;
+        boolean failed;
 
         do {
+            state = tcnt.getTaskState();
+            failed = state.equals( TaskStatusT.failed );
+            finished = state.equals( TaskStatusT.finished );
+
             try {
-                state = checkState( tcnt );
-                failed = state.equals( TaskStatusT.failed );
-                finished = state.equals( TaskStatusT.finished );
-                if( failed || finished )
-                    break;
-                else
-                    Thread.sleep( sleep );
-
-            } catch( SocketTimeoutException e ) {
-
-                long now = Calendar.getInstance().getTimeInMillis();
-                if( now - lastException > delay ) {
-                    log.debug( "Resetting exception count from: " + exceptions );
-                    exceptions = 1;
-                    lastException = now;
-                }
-
-
-                if( exceptions < 6 )
-                    log.debug( "Cought: "+e.toString()+" No. " + ++exceptions, e  );
-                else
-                    throw new RuntimeException( "Cought " + exceptions + " exceptions. ABORTING", e );
-
-            } catch (InterruptedException e) {
+                Thread.sleep( sleep );
+            }
+            catch (InterruptedException e) {
                 // intentionally
             }
         }
-        while ( true );
+        while (! (failed || finished ) );
 
         return finished;
-    }
-
-
-    private static TaskStatusT checkState( TaskClient tc ) throws SocketTimeoutException, RemoteException, DeserializationException {
-        return tc.getTaskState();
     }
 
 
