@@ -1,3 +1,21 @@
+0.3.2: "Shigeru"
+
+@Everybody
+* [FIX] Build now uses included distirbution of apache-ant 1.7.1
+  (avoids problems with ant 1.8 and introduce)
+* [CHANGED] Updated documentation
+* [CHANGED] Now uses sudo in order to change slice ownership
+
+@DMS
+* [NEW] Proper handling of connection timeouts 
+* [NEW] Made task messages more verbose
+
+@C3Grid
+* [NEW] Certificate delegation for stage-in tasks
+* [CHANGED] Updated stage-in test client
+
+
+
 
 0.3.0: "Rob"
 
