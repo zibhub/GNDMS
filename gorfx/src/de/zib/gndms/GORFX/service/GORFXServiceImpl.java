@@ -17,8 +17,8 @@ package de.zib.gndms.GORFX.service;
  */
 
 
-import de.zib.gndms.kit.config.ActionMeta;
-import de.zib.gndms.kit.config.ConfigActionProvider;
+import de.zib.gndms.kit.action.ActionMeta;
+import de.zib.gndms.kit.action.ActionProvider;
 import de.zib.gndms.logic.taskflow.TaskFlowProvider;
 import de.zib.gndms.model.gorfx.types.AbstractTF;
 import de.zib.gndms.model.gorfx.types.TaskFlowInfo;
@@ -54,7 +54,7 @@ public class GORFXServiceImpl implements GORFXService {
     protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
     private Facets gorfxFacets; ///< List of facets under /gorfx/
     private String baseUrl; ///< The base url something like: \c http://my.host.org/gndms/grid_id
-    private ConfigActionProvider configProvider; ///< List of config actions, todo uncertain who provided these.
+    private ActionProvider configProvider; ///< List of config actions, todo uncertain who provided these.
     private TaskFlowProvider taskFlowProvider; ///< List of config actions, todo uncertain who provided these.
 
     @RequestMapping( value = "/", method = RequestMethod.GET )
@@ -97,7 +97,9 @@ public class GORFXServiceImpl implements GORFXService {
     @RequestMapping( value = "/config/{actionName}", method = RequestMethod.POST )
     public ResponseEntity<String> callConfigAction( @PathVariable String actionName,
                                                     @RequestBody String args, @RequestHeader( "DN" ) String dn ) {
-        // Fires a config action
+        GNDMSResponseHeader responseHeaders =
+            new GNDMSResponseHeader( gorfxFacets.findFacet( "config" ).getUrl(), null, baseUrl + "/gorfx/", dn, null );
+        configProvider.getAction( actionName );
         return null;
     }
 
@@ -144,10 +146,8 @@ public class GORFXServiceImpl implements GORFXService {
     public ResponseEntity<String> callBatchAction( @PathVariable String actionName, @RequestBody String args,
                                                    @RequestHeader( "DN" ) String dn ) {
 
-        GNDMSResponseHeader headers = new GNDMSResponseHeader();
-        headers.setResourceURL( gorfxFacets.findFacet( "batch" ).getUrl() );
-        headers.setParentURL( baseUrl + "/gorfx/" );
-        if( dn != null ) headers.setDN( dn );
+        GNDMSResponseHeader headers =
+            new GNDMSResponseHeader( gorfxFacets.findFacet( "batch" ).getUrl(), null, baseUrl + "/gorfx/", dn, null );
 
         if (! actionName.equals( "mockup" ) )
             return new ResponseEntity<String>( null, headers, HttpStatus.NOT_FOUND );
@@ -172,7 +172,7 @@ public class GORFXServiceImpl implements GORFXService {
     @RequestMapping( value = "/taskflows/{type}", method = RequestMethod.GET )
     public ResponseEntity<TaskFlowInfo> getTaskFlowInfo( @PathVariable String type, @RequestHeader( "DN" ) String dn ) {
 
-        taskFlowProvider.getTaskFlowMeta( type  );
+        taskFlowProvider.getTaskFlowInfo( type );
 
         return null;  // not required here
     }
@@ -206,13 +206,13 @@ public class GORFXServiceImpl implements GORFXService {
     }
 
 
-    public ConfigActionProvider getConfigProvider() {
+    public ActionProvider getConfigProvider() {
         return configProvider;
     }
 
 
     @Autowired
-    public void setConfigProvider( ConfigActionProvider configProvider ) {
+    public void setConfigProvider( ActionProvider configProvider ) {
         this.configProvider = configProvider;
     }
 }

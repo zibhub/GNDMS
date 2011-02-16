@@ -15,9 +15,7 @@ package de.zib.gndms.kit.config;
  * limitations under the License.
  */
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import de.zib.gndms.kit.action.ActionProviderMockUp;
 
 /**
  * @author try ma ik jo rr a zib
@@ -25,26 +23,7 @@ import java.util.List;
  *          <p/>
  *          Date: 08.02.11, Time: 16:16
  */
-public class ConfigActionProviderMockUp implements ConfigActionProvider {
-
-    private HashMap<String,ConfigMeta> actions;
-
-    public List<String> listAvailableActions() {
-
-        return new ArrayList<String>( actions.keySet() );
-    }
+public class ConfigActionProviderMockUp extends ActionProviderMockUp<ConfigMeta, ConfigAction> {
 
 
-    public ConfigMeta getMeta( String config ) {
-        return actions.get( config );
-    }
-
-
-    public void setActions( List<ConfigMeta> actions ) {
-
-        this.actions = new HashMap<String, ConfigMeta>( actions.size() );
-
-        for( ConfigMeta cm : actions )
-            this.actions.put( cm.getName(), cm );
-    }
 }

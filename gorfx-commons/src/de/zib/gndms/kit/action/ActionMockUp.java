@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types;
+package de.zib.gndms.kit.action;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -17,11 +17,25 @@ package de.zib.gndms.model.gorfx.types;
 
 /**
  * @author try ma ik jo rr a zib
- *         Date: 09.02.11, Time: 12:47
- *
- * Implementors of this interface should provide information about a task flow.
+ * @date 16.02.11  11:56
+ * @brief
  */
-public interface TaskFlowInfo extends TaskFlowMeta{
+public class ActionMockUp implements Action<String> {
 
-    String getStatistics();
+    private String message;
+
+
+    public ActionMockUp() {
+    }
+
+
+    public ActionMockUp( String msg ) {
+
+        message = msg;
+    }
+
+
+    public String call() {
+        return message;
+    }
 }

@@ -1,4 +1,4 @@
-package de.zib.gndms.kit.config;
+package de.zib.gndms.kit.action;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -19,11 +19,13 @@ package de.zib.gndms.kit.config;
  * @author try ma ik jo rr a zib
  *         Date: 09.02.11, Time: 11:42
  */
-public interface ActionMeta {
+public interface ActionMeta<A extends Action> {
 
     String getName();
 
     String getHelp();
 
     String getDescription();
+
+    A getAction( );
 }

@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types;
+package de.zib.gndms.kit.config;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -15,22 +15,13 @@ package de.zib.gndms.model.gorfx.types;
  * limitations under the License.
  */
 
+import de.zib.gndms.kit.action.Action;
+
 /**
  * @author try ma ik jo rr a zib
- * @date 14.02.11  17:40
+ * @date 16.02.11  10:59
  * @brief
  */
-public interface TaskFlowAction<T extends AbstractTF> {
-
-    void setTaskFlow( TaskFlow<T> tf );
-
-    void run( );
-
-    boolean hasStatus( );
-    TaskFlowStatus getStatus( );
-    boolean hasError( );
-    TaskFlowFailure getError( );
-    boolean hasResult( );
-    TaskFlowResult getResult( );
+public interface ConfigAction extends Action<String> {
 
 }

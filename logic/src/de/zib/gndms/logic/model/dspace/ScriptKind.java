@@ -1,6 +1,7 @@
-package de.zib.gndms.logic.taskflow;
+package de.zib.gndms.logic.model.dspace;
+
 /*
- * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,15 +16,15 @@ package de.zib.gndms.logic.taskflow;
  * limitations under the License.
  */
 
+
+
 /**
- * @author try ma ik jo rr a zib
- * @date 14.02.11  14:23
- * @brief Interface for Taskflow meta data.
+ * ScriptKind
  *
- * Implementers may choose the way the data is accessed.
- */
-public interface TaskFlowMeta {
-
-    String getDescription();
-
+ * @see de.zib.gndms.logic.model.dspace.ChownSliceConfiglet
+ *
+ * @author  try ste fan pla nti kow zib
+*/
+enum ScriptKind {
+    EXEC
 }

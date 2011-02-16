@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types;
+package de.zib.gndms.kit.action;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -15,13 +15,18 @@ package de.zib.gndms.model.gorfx.types;
  * limitations under the License.
  */
 
+import java.util.List;
+
 /**
  * @author try ma ik jo rr a zib
- *         Date: 09.02.11, Time: 12:47
- *
- * Implementors of this interface should provide information about a task flow.
+ * @version $Id$
+ *          <p/>
+ *          Date: 08.02.11, Time: 16:12
  */
-public interface TaskFlowInfo extends TaskFlowMeta{
+public interface ActionProvider<M extends ActionMeta, A extends Action> {
 
-    String getStatistics();
+    List<String> listAvailableActions();
+    M getMeta( String config );
+
+    A getAction( String actionName );
 }

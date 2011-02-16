@@ -15,6 +15,8 @@ package de.zib.gndms.model.gorfx.types;
  * limitations under the License.
  */
 
+import de.zib.gndms.logic.taskflow.TaskFlowAction;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 

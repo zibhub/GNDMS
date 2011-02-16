@@ -17,11 +17,13 @@ package de.zib.gndms.model.gorfx.types;
 
 /**
  * @author try ma ik jo rr a zib
- *         Date: 09.02.11, Time: 12:47
+ * @date 14.02.11  14:23
+ * @brief Interface for Taskflow meta data.
  *
- * Implementors of this interface should provide information about a task flow.
+ * Implementers may choose the way the data is accessed.
  */
-public interface TaskFlowInfo extends TaskFlowMeta{
+public interface TaskFlowMeta {
 
-    String getStatistics();
+    String getDescription();
+
 }

@@ -15,6 +15,8 @@ package de.zib.gndms.kit.config;
  * limitations under the License.
  */
 
+import de.zib.gndms.kit.action.ActionMeta;
+
 /**
  * @author try ma ik jo rr a zib
  * @version $Id$
@@ -23,6 +25,6 @@ package de.zib.gndms.kit.config;
  *
  * Should provided meta information about a configuration like, description, help and parameter detail.
  */
-public interface ConfigMeta extends ActionMeta {
+public interface ConfigMeta extends ActionMeta<ConfigAction> {
 
 }
