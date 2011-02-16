@@ -121,6 +121,7 @@ public class LinuxDirectoryAux implements DirectoryAux {
 
     public boolean changeOwner( String dn, String path) {
         logger.debug( "changing owner of Slice " + path +" to " + dn );
+        return false;
     }
 
 
