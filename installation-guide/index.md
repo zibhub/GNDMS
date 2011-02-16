@@ -181,10 +181,10 @@ Installation and Deployment from Distribution Package
  enabled additional logging as described in the previous section, the
  output should contain output like
 
-      =================================================================================
-      GNDMS RELEASE: Generation N Data Management System VERSION: 0.3 "Rob"
-      GNDMS BUILD: built-at: Wed Jul 21 11:14:01 +0200 2010 built-by: mjorra@csr-pc35
-      =================================================================================
+      ===============================================================================
+      GNDMS RELEASE: Generation N Data Management System VERSION: 0.3.2 "Shigeru"
+      GNDMS BUILD: built-at: Wed Feb 16 15:04:23 +0100 2011 built-by: globus@csr-pc35
+      ===============================================================================
       Container home directory is '/opt/gt-current'
 
  (In the case of an error, you may want to compare with a
@@ -213,10 +213,35 @@ If you did a fresh installation, the monitoring shell will have been
 enabled temporarily at this point and you may just proceed. Otherwise
 you need to enable in manually as described in the following section.
 
+### Preparing your System 
+
+**Setup the slice-chown:**
+To enable GNDMS to change the ownership of a slice you need to change
+your **sudoers** file:
+The globus user must be allowed to call the chown-script as
+root. For this, log in as root and execute `visudo`. This opens
+/etc/sudoers in your `$EDITOR`. Now 
+copy the following entry to your 'sudoers' file
+
+    globus ALL=(root) NOPASSWD: <$GNDMS_SHARED>/chownSlice.sh
+
+Note: The `<$GNDMS_SHARED>` above must be replaced with the contents of
+`$GNDMS_SHARED` **MANUALLY**.
+
+This entry allows the globus user to execute the chownSlice script,
+located in 
+
+    $GNDMS_SOURCE/dev-bin/chownSlice.sh 
+
+with super-user permissions and without password verification.
+
+Now copy the script to `$GNDMS_SHARED` and change the owner to
+**root** and ensure that file permissions are set to 700.
+
 
 ### Enabling the Monitoring Shell Manually
 
-To enable the monitor shell manually, after having startet the globus
+To enable the monitor shell manually, after having started the globus
 container with deployed GNDMS at least once (as described in the
 previous section), please edit `$GNDMS_MONI_CONFIG` such that
 `monitor.enabled` is set to `true` and either wait until GNDMS picks
@@ -279,6 +304,10 @@ have a running installation of GNDMS.*
 
 Testing your installation
 -------------------------
+
+*Please note: The below test describes the testing of the file
+transfer capabilities of GNDMS. To test the stage-in functionality
+click <a href='#testing_your_c3_installation'>here</a>.*
 
 The GNDMS contains a client application which tests some basic
 functionality to ensure your setup is ready to use. In order to run
@@ -352,6 +381,58 @@ runs successfully you should have identical files in your grid-ftp
 source and destination directory, in that case CONGRATULATIONS!! you
 have a working GNDMS installation, and can provide data management
 service for your community.
+
+### Testing your C3 installation
+
+Once the setup is complete, load your grid-proxy using:
+
+    grid-proxy-init
+
+In order to simulate a provider stage-in please execute:
+
+    gndms-buildr gndms:gndmc:run-staging-test
+
+A successful run\'s output should end with:
+
+    # Staging request
+    ******************** ProviderStageInORQ ********************
+    Just estimate: false
+    ********************* DataDescriptor *********************
+    ObjectList: 
+        O1
+    Just Download TRUE
+    dataFormat: cdo
+    metaDataFormat: xml
+    ******************** EODataDescriptor ********************
+    DataFileName: data.cdo
+    MetaDataFileName: meta.xml
+    ******************* EOProviderStageInORQ *******************
+    # Accepted contract
+    IfDecisionBefore: 2011-02-16T15:09:18.691Z
+    ExecutionLikelyUnitl:  86400000
+    ResultValidUntil:  172800000
+    Waiting for staging to finish or fail... (state=created, progress=[1/100])
+    Waiting for staging to finish or fail... (state=inprogress, progress=[1/100])
+    Waiting for staging to finish or fail... (state=inprogress, progress=[1/100])
+    Waiting for staging to finish or fail... (state=finished, progress=[100/100])
+    types.ProviderStageInResultT@a5a3c573
+    Address: https://130.73.78.137:8443/wsrf/services/gndms/Slice
+    Reference property[0]:
+    <ns3:SliceKey xmlns:ns3="http://dspace.gndms.zib.de/DSpace/Slice"
+        59dac910-39d6-11e0-bcb2-c9c6a341d8b8</ns3:SliceKey>
+    
+    Collect your results at:
+    gsiftp://csr-pc35.zib.de/tmp/Work/59daf020-39d6-11e0-bcb2-c9c6a341d8b8
+    
+    Collect your results by executing:
+    globus-url-copy 'gsiftp://csr-pc35.zib.de/tmp/Work/59daf020-39d6-11e0-bcb2-c9c6a341d8b8/data.cdo' 
+        'file:///home/mjorra/data.cdo'
+    globus-url-copy 'gsiftp://csr-pc35.zib.de/tmp/Work/59daf020-39d6-11e0-bcb2-c9c6a341d8b8/meta.xml' 
+        'file:///home/mjorra/meta.xml'
+
+
+Click [here](staging-test-output.txt) to view the full output.
+
 
 
 ### Trouble shooting
