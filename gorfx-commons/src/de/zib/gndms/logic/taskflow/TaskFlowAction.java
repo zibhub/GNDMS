@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types;
+package de.zib.gndms.logic.taskflow;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -15,13 +15,24 @@ package de.zib.gndms.model.gorfx.types;
  * limitations under the License.
  */
 
+import de.zib.gndms.model.gorfx.types.*;
+
 /**
  * @author try ma ik jo rr a zib
- *         Date: 09.02.11, Time: 12:47
- *
- * Implementors of this interface should provide information about a task flow.
+ * @date 14.02.11  17:40
+ * @brief
  */
-public interface TaskFlowInfo extends TaskFlowMeta{
+public interface TaskFlowAction<T extends AbstractTF> {
 
-    String getStatistics();
+    void setTaskFlow( TaskFlow<T> tf );
+
+    void run( );
+
+    boolean hasStatus( );
+    TaskFlowStatus getStatus( );
+    boolean hasError( );
+    TaskFlowFailure getError( );
+    boolean hasResult( );
+    TaskFlowResult getResult( );
+
 }

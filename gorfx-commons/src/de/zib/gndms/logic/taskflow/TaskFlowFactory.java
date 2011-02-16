@@ -15,14 +15,7 @@ package de.zib.gndms.logic.taskflow;
  * limitations under the License.
  */
 
-import de.zib.gndms.kit.application.AbstractApplication;
-import de.zib.gndms.model.gorfx.types.AbstractTF;
-import de.zib.gndms.model.gorfx.types.Quote;
-import de.zib.gndms.model.gorfx.types.TaskFlow;
-import de.zib.gndms.model.gorfx.types.TaskFlowInfo;
-import sun.font.CreatedFontTracker;
-
-import java.util.List;
+import de.zib.gndms.model.gorfx.types.*;
 
 /**
  * @author try ma ik jo rr a zib
@@ -51,5 +44,4 @@ public interface TaskFlowFactory<T extends TaskFlow > {
      * @return A task info object.
      */
     TaskFlowInfo getInfo( );
-
 }

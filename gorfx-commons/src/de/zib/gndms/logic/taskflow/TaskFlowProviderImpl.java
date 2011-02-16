@@ -18,18 +18,35 @@ package de.zib.gndms.logic.taskflow;
 import de.zib.gndms.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.model.gorfx.types.TaskFlowMeta;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * @author try ma ik jo rr a zib
- * @date 14.02.11  14:20
+ * @date 16.02.11  12:02
  * @brief
  */
-public interface TaskFlowProvider {
+public class TaskFlowProviderImpl implements TaskFlowProvider {
 
-    boolean exists( String taskFlow );
-    List<String> listTaskFlows( );
-    TaskFlowInfo getTaskFlowInfo( String taskFlow );
-    TaskFlowFactory getFactoryForTaskFlow(  String taskFlow );
+    private HashMap<String, TaskFlowFactory> factories;
 
+    public boolean exists( String taskFlow ) {
+        return factories.containsKey( taskFlow );
+    }
+
+
+    public List<String> listTaskFlows() {
+        return new ArrayList<String>( factories.keySet() );
+    }
+
+
+    public TaskFlowInfo getTaskFlowInfo( String taskFlow ) {
+        return getFactoryForTaskFlow( taskFlow ).getInfo();
+    }
+
+
+    public TaskFlowFactory getFactoryForTaskFlow( String taskFlow ) {
+        return factories.get( taskFlow );
+    }
 }

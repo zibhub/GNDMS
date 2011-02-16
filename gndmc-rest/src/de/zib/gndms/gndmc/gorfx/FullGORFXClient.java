@@ -16,7 +16,7 @@ package de.zib.gndms.gndmc.gorfx;
  */
 
 import de.zib.gndms.GORFX.service.GORFXService;
-import de.zib.gndms.kit.config.ActionMeta;
+import de.zib.gndms.kit.action.ActionMeta;
 import de.zib.gndms.kit.config.ConfigMeta;
 import org.springframework.http.ResponseEntity;
 

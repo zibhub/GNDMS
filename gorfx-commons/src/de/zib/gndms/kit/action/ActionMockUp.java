@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.taskflow;
+package de.zib.gndms.kit.action;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -17,13 +17,25 @@ package de.zib.gndms.logic.taskflow;
 
 /**
  * @author try ma ik jo rr a zib
- * @date 14.02.11  14:23
- * @brief Interface for Taskflow meta data.
- *
- * Implementers may choose the way the data is accessed.
+ * @date 16.02.11  11:56
+ * @brief
  */
-public interface TaskFlowMeta {
+public class ActionMockUp implements Action<String> {
 
-    String getDescription();
+    private String message;
 
+
+    public ActionMockUp() {
+    }
+
+
+    public ActionMockUp( String msg ) {
+
+        message = msg;
+    }
+
+
+    public String call() {
+        return message;
+    }
 }

@@ -15,16 +15,20 @@ package de.zib.gndms.kit.config;
  * limitations under the License.
  */
 
-import java.util.List;
+import de.zib.gndms.kit.action.ActionMockUp;
 
 /**
  * @author try ma ik jo rr a zib
- * @version $Id$
- *          <p/>
- *          Date: 08.02.11, Time: 16:12
+ * @date 16.02.11  12:43
+ * @brief
  */
-public interface ConfigActionProvider {
+public class ConfigActionMockUp extends ActionMockUp implements ConfigAction {
 
-    List<String> listAvailableActions();
-    ConfigMeta getMeta( String config );
+    public ConfigActionMockUp() {
+    }
+
+
+    public ConfigActionMockUp( String msg ) {
+        super( msg );
+    }
 }

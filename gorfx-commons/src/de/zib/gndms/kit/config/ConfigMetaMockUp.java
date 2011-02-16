@@ -15,44 +15,18 @@ package de.zib.gndms.kit.config;
  * limitations under the License.
  */
 
+import de.zib.gndms.kit.action.ActionMetaMockUp;
+
 /**
  * @author try ma ik jo rr a zib
  * @version $Id$
  *          <p/>
  *          Date: 08.02.11, Time: 17:06
  */
-public class ConfigMetaMockUp implements ConfigMeta {
-
-    private String configName;
-    private String configHelp;
-    private String configDescription;
-
-    public String getName() {
-        return configName;
-    }
+public class ConfigMetaMockUp extends ActionMetaMockUp implements ConfigMeta {
 
 
-    public String getHelp() {
-        return configHelp;
-    }
-
-
-    public String getDescription() {
-        return configDescription;
-    }
-
-
-    public void setConfigDescription( String configDescription ) {
-        this.configDescription = configDescription;
-    }
-
-
-    public void setConfigHelp( String configHelp ) {
-        this.configHelp = configHelp;
-    }
-
-
-    public void setConfigName( String configName ) {
-        this.configName = configName;
+    public ConfigAction getAction() {
+        return new ConfigActionMockUp( getName() + " called" );
     }
 }
