@@ -217,18 +217,18 @@ you need to enable in manually as described in the following section.
 
 ### Preparing your System 
 
-**Setup the slice-chown: (only versions >= 0.3.2)**
+**Setup the slice-chown script: (only versions >= 0.3.2)**  
 To enable GNDMS to change the ownership of a slice you need to change
-your **sudoers** file:
+your **sudoers** file:  
 The globus user must be allowed to call the chown-script as
 root. For this, log in as root and execute `visudo`. This opens
-/etc/sudoers in your `$EDITOR`. Now 
-copy the following entry to your 'sudoers' file
+/etc/sudoers in your `$EDITOR`. Now copy the following entry to your
+'sudoers' file
 
     globus ALL=(root) NOPASSWD: <$GNDMS_SHARED>/chownSlice.sh
 
 Note: The `<$GNDMS_SHARED>` above must be replaced with the contents of
-`$GNDMS_SHARED` **MANUALLY**.
+`$GNDMS_SHARED` **manually**. 
 
 This entry allows the globus user to execute the chownSlice script,
 located in 
@@ -237,8 +237,13 @@ located in
 
 with super-user permissions and without password verification.
 
-Now copy the script to `$GNDMS_SHARED` and change the owner to
-**root** and ensure that file permissions are set to 700.
+
+Now as **root** execute:
+
+    buildr install-chown-script
+
+This copies the above script to `$GNDMS_SHARED` and changes the owner to
+root and sets the file permissions to 700.
 
 
 ### Enabling the Monitoring Shell Manually
