@@ -41,6 +41,8 @@ use(d) for building and running globus and ant.
 
 #### Install Apache Ant 1.7 
 
+This step is obsolete for all versions of GNDMS >= 0.3.2.
+
 Please install [Apache Ant](http://ant.apache.org) 1.7 and set
 `$ANT_HOME`, add it to your environment, and add `$ANT_HOME/bin` to your
 `$PATH`
@@ -254,6 +256,7 @@ configure GNDMS for the chosen community grid platform.
 **NOTE** *The shell is accessed via localhosts network interface and
 protected with a clear-text password only. Do not make the monitoring
 shell accessible via unsecure networks.*
+
 
 ### Disabling the Monitoring Shell
 
