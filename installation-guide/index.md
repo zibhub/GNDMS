@@ -215,7 +215,7 @@ you need to enable in manually as described in the following section.
 
 ### Preparing your System 
 
-**Setup the slice-chown:**
+**Setup the slice-chown: (only versions >= 0.3.2)**
 To enable GNDMS to change the ownership of a slice you need to change
 your **sudoers** file:
 The globus user must be allowed to call the chown-script as
