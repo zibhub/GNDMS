@@ -163,7 +163,28 @@ Installation and Deployment from Distribution Package
  into the Globus Container. It requires that your system has been
  prepared as described in the previous section. Again the following
  steps should be executed by the `globus` user.
- 
+
+
+
+### Migrating from a previous installation
+
+In case you already run an older version of GNDMS, it might be
+neccesary to properly uninstall some of its components before
+installing a new version. The list below describes which users need to
+do this. In any case, please enter `$GNDMS_SOURCE` first.
+
+* If you participated in C3Grid/INAD or have used GNDMS < 0.3.0, please run
+  `gndms-buildr clean-0.2.8`
+
+
+Note: *Only* if you installed a source snapshot of GNDMS, you have to
+  delete all jars that were installed before manually.  Newer versions
+  of GNDMS write a list of these installed jars to
+  `$GLOBUS_LOCATION/lib/gndms-dependencies`. `globus-undeploy-gar` may
+  also be of help.
+
+
+### Installation and Initial Deployment
  
 * Please enter `$GNDMS_SOURCE` and exeucte `gndms-buildr install-distribution`
 
