@@ -36,6 +36,10 @@ ws-common/gndms-ws-common/test/**
 gritserv/gndms-gritserv/production/**
 gritserv/gndms-gritserv/test/**
 gndmc/gndms-gndmc/production/**
+gndmc/gndms-gndmc/test/**
+gndmc-rest/gndms-gndmc-rest/production/**
+gorfx/gndms-gorfx-rest/production/**
+gorfx-commons/gndms-gorfx-commons/production/**
 .classpath
 .project
 test-output/**
@@ -63,6 +67,10 @@ lib/kit/*
 lib/gndmc/*
 lib/infra/*
 lib/logic/*
+lib/gorfx/*
+lib/rest/*
+lib/gorfx-commons/*
+lib/gndmc-rest/*
 */resources/META-INF/GNDMS-RELEASE
 */resources/META-INF/GNDMS-BUILD-INFO
 */resources/META-INF/LICENSE
