@@ -513,6 +513,28 @@ end
 
 task 'c3grid-dp-test' => task('gndms:gndmc:run-staging-test') 
 
+  
+task 'c3grid-dp-post-deploy-test' do
+    host = `hostname`.chomp
+    dn = `grid-proxy-info -identity`
+    dn = dn.chomp
+    if (ENV['GNDMS_SFR'] == nil)
+      prop = 'test-data/sfr/dummy-sfr.properties'
+    else 
+      prop = ENV['GNDMS_SFR']
+    end
+    # Yes, this is a hack
+    cp = deployedJars()
+    cp << "#{ENV['GNDMS_SOURCE']}/lib/gndmc/gndms-gndmc-#{VERSION_NUMBER}.jar"
+    print cp
+    args = [ '-props', prop, 
+             '-uri', 'https://' + host + ':8443/wsrf/services/gndms/GORFX',
+             '-dn', dn
+           ]
+    Commands.java('de.zib.gndmc.GORFX.c3grid.ProviderStageInClient',  args, 
+                  { :classpath => cp,
+                    :properties => { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" } } )
+end
 
 # Main targets
 
