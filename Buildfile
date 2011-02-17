@@ -566,7 +566,9 @@ task 'artifcats' => ['artifacts']
 
 task 'clean-0.2.8' do
     IO.foreach( "#{ENV['GNDMS_SOURCE']}/buildr/0.2.8/files" )  { |block|
-        File.delete ( eval( '"'+block+'"' ) )
+        fn = eval( '"'+block+'"' ).chomp
+        #puts "deleting #{fn}" if( File.exists?( fn ) )  
+        File.delete ( fn ) if( File.exists?( fn ) )  
     }
 end
 
