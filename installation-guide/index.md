@@ -281,7 +281,7 @@ D-Grid projects directly in the `Buildfile`.
 execute `gndms-buildr c3grid-dp-setubdb`
 
 **C3-Grid Quick Test** 
-: `gndms-buildr c3grid-dp-test`
+: `gndms-buildr c3grid-dp-post-deploy-test`
 See <a href='#testing_your_c3_installation'>below</a> for a more detailed
 description of the test.
 
@@ -399,7 +399,10 @@ Once the setup is complete, load your grid-proxy using:
 
 In order to simulate a provider stage-in please execute:
 
-    gndms-buildr c3grid-dp-test
+    gndms-buildr c3grid-dp-post-deploy-test
+
+Note: If you have built GNDMS from scratch you should use the
+alternative target `gndms-buildr c3grid-dp-test` instead.
 
 A successful run\'s output should end with:
 
