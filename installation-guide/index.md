@@ -268,14 +268,15 @@ activated or just restart the globus container manually.
 Currently, there are specialized build targets for the setup of some
 D-Grid projects directly in the `Buildfile`.
 
-{% if 1==0 %}
 **C3-Grid Setup & Configuration** 
 : Edit `$GNDMS_SOURCE/scripts/c3grid/setup-dataprovider.sh` and
 execute `gndms-buildr c3grid-dp-setubdb`
 
 **C3-Grid Quick Test** 
 : `gndms-buildr c3grid-dp-test`
-{% endif %}
+See <a href='#testing_your_c3_installation'>below</a> for a more detailed
+description of the test.
+
 
 **PT-Grid Setup & Configuration** 
 : Edit `$GNDMS_SOURCE/scripts/ptgrid/setup-resource.sh` and execute `gndms-buildr ptgrid-setubdb`
@@ -390,7 +391,7 @@ Once the setup is complete, load your grid-proxy using:
 
 In order to simulate a provider stage-in please execute:
 
-    gndms-buildr gndms:gndmc:run-staging-test
+    gndms-buildr c3grid-dp-test
 
 A successful run\'s output should end with:
 
