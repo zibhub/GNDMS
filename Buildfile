@@ -507,6 +507,10 @@ task 'c3grid-dp-setupdb' do
     system "#{ENV['GNDMS_SOURCE']}/scripts/c3grid/setup-dataprovider.sh CREATE"
 end
 
+task 'install-chown-script' do
+    system "install -o root -g root -m 700 #{ENV['GNDMS_SOURCE']}/dev-bin/chownSlice.sh #{ENV['GNDMS_SHARED']}"
+end
+
 task 'c3grid-dp-test' => task('gndms:gndmc:run-staging-test') 
 
 
@@ -536,6 +540,15 @@ task 'fix-permissions' do
 end
 
 task 'artifcats' => ['artifacts']
+
+
+task 'clean-0.2.8' do
+    IO.foreach( "#{ENV['GNDMS_SOURCE']}/buildr/0.2.8/files" )  { |block|
+        File.delete ( eval( '"'+block+'"' ) )
+    }
+end
+
+
 
 def nope()
      puts ''
