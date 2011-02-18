@@ -52,7 +52,7 @@ import java.util.GregorianCalendar;
  * User: stepn Date: 15.09.2008 Time: 11:26:48
  */
 @SuppressWarnings({ "AbstractMethodCallInConstructor" })
-public abstract class TaskAction extends AbstractModelAction<Taskling, Taskling>
+public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskling>
         implements LogAction, RequiresCredentialProvider
 {
     /**
@@ -74,11 +74,6 @@ public abstract class TaskAction extends AbstractModelAction<Taskling, Taskling>
      * An EntityManagerFactory for task actions that need it
      */
 	private EntityManagerFactory emf;
-
-    /**
-     * A NeoDao for access to NeoTask models
-     */
-    private NeoDao dao;
 
     private ConfigletProvider configletProvider;
 
@@ -103,7 +98,7 @@ public abstract class TaskAction extends AbstractModelAction<Taskling, Taskling>
      */
     public TaskAction(final @NotNull EntityManager em, final @NotNull NeoDao dao, final @NotNull Taskling model) {
         super();
-        setDao(dao);
+        setOwnDao(dao);
         setOwnEntityManager(em);
         setModel(model);
     }
@@ -162,7 +157,7 @@ public abstract class TaskAction extends AbstractModelAction<Taskling, Taskling>
             TaskState state;
         
             // Capture state snapshot from Task and prep in-loop state
-            session = dao.beginSession();            
+            session = getDao().beginSession();            
             try {
                 final NeoTask task = getModel().getTask(session);
                 state              = task.getTaskState();
@@ -195,7 +190,7 @@ public abstract class TaskAction extends AbstractModelAction<Taskling, Taskling>
                             onTransit(snapshot, isRestartedTask);
                         }
                         finally {
-                            session = dao.beginSession();
+                            session = getDao().beginSession();
                             try {
                                 getModel().getTask(session).setDone(true);
                                 session.success();
@@ -216,7 +211,7 @@ public abstract class TaskAction extends AbstractModelAction<Taskling, Taskling>
                         fail(e);
                 }
             }
-            
+
             inFirstStep = false;
         }
 
@@ -448,7 +443,7 @@ public abstract class TaskAction extends AbstractModelAction<Taskling, Taskling>
 
 
     protected void transitWithPayload(@NotNull Serializable payload, @NotNull TaskState taskState) {
-        final @NotNull NeoSession session = dao.beginSession();
+        final @NotNull NeoSession session = getDao().beginSession();
         try {
             final NeoTask task = session.findTask(getModel().getId());
             task.setTaskState(task.getTaskState().transit(taskState));
@@ -459,7 +454,7 @@ public abstract class TaskAction extends AbstractModelAction<Taskling, Taskling>
     }
 
     protected void transit(@NotNull TaskState taskState) {
-        final @NotNull NeoSession session = dao.beginSession();
+        final @NotNull NeoSession session = getDao().beginSession();
         try {
             final NeoTask task = session.findTask(getModel().getId());
             task.setTaskState(task.getTaskState().transit(taskState));
@@ -469,7 +464,7 @@ public abstract class TaskAction extends AbstractModelAction<Taskling, Taskling>
     }
 
     protected void autoTransitWithPayload(Serializable payload) {
-        final @NotNull NeoSession session = dao.beginSession();
+        final @NotNull NeoSession session = getDao().beginSession();
         try {
             final NeoTask task = session.findTask(getModel().getId());
             final TaskState taskState = task.getTaskState().getCanonicalState();
@@ -489,7 +484,7 @@ public abstract class TaskAction extends AbstractModelAction<Taskling, Taskling>
     }
 
     protected void autoTransit() {
-        final @NotNull NeoSession session = dao.beginSession();
+        final @NotNull NeoSession session = getDao().beginSession();
         try {
             final NeoTask task = session.findTask(getModel().getId());
             final TaskState taskState = task.getTaskState();
@@ -508,7 +503,7 @@ public abstract class TaskAction extends AbstractModelAction<Taskling, Taskling>
     }
 
     protected void failWithPayload(Serializable payload, @NotNull RuntimeException... exceptions) {
-        final NeoSession session = dao.beginSession();
+        final NeoSession session = getDao().beginSession();
         try {
             final NeoTask task = getModel().getTask(session);
             task.setTaskState(TaskState.FAILED);
@@ -521,7 +516,7 @@ public abstract class TaskAction extends AbstractModelAction<Taskling, Taskling>
     }
 
     protected void fail(@NotNull RuntimeException... exceptions) {
-        final NeoSession session = dao.beginSession();
+        final NeoSession session = getDao().beginSession();
         try {
             final NeoTask task = getModel().getTask(session);
             task.setTaskState(TaskState.FAILED);
@@ -809,7 +804,8 @@ public abstract class TaskAction extends AbstractModelAction<Taskling, Taskling>
     protected void refreshTaskResource() {
 
         try {
-            getPostponedActions().getListener().onModelChange(getModel());
+            Taskling model = getModel();
+            getModelUpdateListener().onModelChange(model);
         }
         catch (RuntimeException e) {
             // intentionally ignored
@@ -910,15 +906,6 @@ public abstract class TaskAction extends AbstractModelAction<Taskling, Taskling>
 	public void setEmf(final @NotNull EntityManagerFactory emfParam) {
 		emf = emfParam;
 	}
-
-    public NeoDao getDao() {
-        return dao;
-    }
-
-    public void setDao(NeoDao dao) {
-        this.dao = dao;
-    }
-
 
     public ConfigletProvider getConfigletProvider() {
         return configletProvider;

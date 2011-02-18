@@ -126,7 +126,7 @@ public class AssignSliceKindAction extends ConfigAction<ConfigActionResult> {
         }
 
         // Register resources that require refreshing
-        getPostponedActions().addAction(new ModelChangedAction(space.getInstance()));
+        getPostponedEntityActions().addAction(new ModelChangedAction(space.getInstance()));
 
         return ok();
     }

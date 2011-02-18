@@ -19,7 +19,7 @@ package de.zib.gndms.logic.model.dspace;
 
 
 import de.zib.gndms.kit.util.DirectoryAux;
-import de.zib.gndms.logic.model.AbstractModelAction;
+import de.zib.gndms.logic.model.AbstractModelEntityAction;
 import de.zib.gndms.model.common.AccessMask;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.model.dspace.Slice;
@@ -46,7 +46,7 @@ import java.util.Calendar;
  *
  * todo make uses of UUIdGen from AbstractEntityAction
  */
-public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
+public class TransformSliceAction extends AbstractModelEntityAction<Slice, Slice> {
 
 
     private CreateSliceAction createSliceAction;

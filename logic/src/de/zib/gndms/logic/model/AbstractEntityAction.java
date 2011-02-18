@@ -164,19 +164,19 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
     }
 
 
-    public final BatchUpdateAction<GridResource, ?> getPostponedActions() {
+    public final BatchUpdateAction<GridResource, ?> getPostponedEntityActions() {
         if (postponedActions == null) {
             final EntityAction<?> entityAction = nextParentOfType(EntityAction.class);
             if (entityAction != null)
-                return entityAction.getPostponedActions();
+                return entityAction.getPostponedEntityActions();
         }
 
         return postponedActions;
     }
 
 
-    public final void setOwnPostponedActions(
-          @NotNull final BatchUpdateAction<GridResource, ?> postponedActionsParam) {
+    public final void setOwnPostponedEntityActions(
+            @NotNull final BatchUpdateAction<GridResource, ?> postponedActionsParam) {
         doNotOverwrite("postponedActions", postponedActions);
         postponedActions = postponedActionsParam;
     }
@@ -213,7 +213,7 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
      * @param model the model which has been changed
      */
     public void addChangedModel( GridResource model  ) {
-        getPostponedActions( ).addAction( new ModelChangedAction( model ) );
+        getPostponedEntityActions().addAction( new ModelChangedAction( model ) );
     }
 
 
@@ -248,7 +248,7 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
      */
     @Override
     public void cleanUp() {
-        final BatchUpdateAction<GridResource, ?> batched = getPostponedActions();
+        final BatchUpdateAction<GridResource, ?> batched = getPostponedEntityActions();
         if (hasOwnPostponedActions() && isRunningOwnPostponedActions())
             postponedActions.call();
         if (isClosingEntityManagerOnCleanup() && getEntityManager() != null)

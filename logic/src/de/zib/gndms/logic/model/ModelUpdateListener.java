@@ -18,27 +18,29 @@ package de.zib.gndms.logic.model;
 
 
 
-import de.zib.gndms.logic.action.Action;
 import de.zib.gndms.model.ModelEntity;
 import de.zib.gndms.model.common.GridEntity;
-import org.jetbrains.annotations.NotNull;
+import de.zib.gndms.model.common.GridResource;
+import de.zib.gndms.model.common.GridResourceItf;
 
 
 /**
+ * An ModelUpdateListener will be informed by an <tt>BatchUpdateAction</tt> on a model.
  *
- * A ModelAction extends an EntityAction by a {@code Model} field.
+ * @see BatchUpdateAction
+ * @author  try ste fan pla nti kow zib
+ * @version $Id$
  *
- * The first template parameter is the model for this action, the second is the return type.
- *
- * @see GridEntity
- * @author  try ma ik jo rr a zib
- * @version  $Id$
- *
- * User: mjorra, Date: 12.08.2008, Time: 16:24:56
+ *          User: stepn Date: 12.08.2008 Time: 18:33:47
  */
-public interface ModelAction<M extends ModelEntity, R> extends Action<R> {
+public interface ModelUpdateListener<M extends ModelEntity & GridResourceItf> {
 
-	M getModel( );
+    /**
+     * A class waiting for changes on the model must implement this method.
+     * It will be notified about a change, using this method with the new model.
+     *
+     * @param model the new model
+     */
+    void onModelChange(M model);
 
-    void setModel( final @NotNull M mdl );
 }

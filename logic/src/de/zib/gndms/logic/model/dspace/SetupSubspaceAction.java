@@ -178,7 +178,7 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
            throw new RuntimeException( e ); 
         }
         // Register resources that require refreshing
-        getPostponedActions().addAction(new ModelChangedAction(subspace));
+        getPostponedEntityActions().addAction(new ModelChangedAction(subspace));
 
         return ok();
     }
