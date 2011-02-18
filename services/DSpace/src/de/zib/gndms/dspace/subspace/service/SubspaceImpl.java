@@ -123,11 +123,11 @@ public class SubspaceImpl extends SubspaceImplBase {
             csa.setModel( msp.getInstance( ) );
             DefaultBatchUpdateAction bua = new DefaultBatchUpdateAction<GridResource>();
             bua.setListener( system );
-            csa.setOwnPostponedActions( bua );
+            csa.setOwnPostponedEntityActions(bua);
 
             final Slice ns = csa.call();
 
-            csa.getPostponedActions().call( );
+            csa.getPostponedEntityActions().call( );
 
             sr.loadFromModel( ns );
             sref = srh.getResourceReference( rk );

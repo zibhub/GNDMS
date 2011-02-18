@@ -30,8 +30,8 @@ import de.zib.gndms.logic.action.Action;
 import de.zib.gndms.logic.action.SkipActionInitializationException;
 import de.zib.gndms.logic.model.BatchUpdateAction;
 import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
-import de.zib.gndms.logic.model.DelegatingEntityUpdateListener;
-import de.zib.gndms.logic.model.EntityUpdateListener;
+import de.zib.gndms.logic.model.DelegatingModelUpdateListener;
+import de.zib.gndms.logic.model.ModelUpdateListener;
 import de.zib.gndms.logic.model.config.ConfigAction;
 import de.zib.gndms.logic.model.config.EchoOptionsAction;
 import de.zib.gndms.logic.model.config.HelpOverviewAction;
@@ -270,10 +270,10 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
         action.setClosingWriterOnCleanUp(false);
         action.setWriteResult(true);
         action.setUUIDGen(actionUUIDGen);
-        action.setOwnPostponedActions(new DefaultBatchUpdateAction<GridResource>());
-        final DelegatingEntityUpdateListener<GridResource> updateListener =
-            DelegatingEntityUpdateListener.getInstance(system);
-        action.getPostponedActions().setListener(updateListener);
+        action.setOwnPostponedEntityActions(new DefaultBatchUpdateAction<GridResource>());
+        final DelegatingModelUpdateListener<GridResource> updateListener =
+            DelegatingModelUpdateListener.getInstance(system);
+        action.getPostponedEntityActions().setListener(updateListener);
         if (action instanceof SystemAction)
             ((SystemAction<?>)action).setSystem(system);
         // Help Action required dynamic casting due to compiler bug in older 1.5 javac
@@ -288,7 +288,7 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
         logger.info("Running " + className + ' ' + opts);
         try {
             Object retVal = action.call();
-            Action<?> postAction = action.getPostponedActions();
+            Action<?> postAction = action.getPostponedEntityActions();
             postAction.call();
             return retVal;
         }
@@ -308,7 +308,7 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
 		                   EntityManager.class,
 		                   ModelUUIDGen.class,
 		                   UUIDGen.class,
-		                   EntityUpdateListener.class,
+		                   ModelUpdateListener.class,
 		                   BatchUpdateAction.class);
 		binder.bind(ConfigActionCaller.class).toInstance(this);
 	}

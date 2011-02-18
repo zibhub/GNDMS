@@ -403,7 +403,7 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
                     return descr;
                 }
 
-                public NeoOfferType getOfferType() {
+                public NeoOfferType getOfferType() throws UnsupportedOperationException {
                     throw new UnsupportedOperationException();
                 }
 
@@ -425,7 +425,7 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
                 }
 
                 @NotNull
-                public NeoTaskAccessor getRootTask() {
+                public NeoTaskAccessor getRootTask() throws UnsupportedOperationException  {
                     throw new UnsupportedOperationException();
                 }
 
@@ -433,7 +433,7 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
                     return hasParent;
                 }
 
-                public NeoTaskAccessor getParent() {
+                public NeoTaskAccessor getParent() throws UnsupportedOperationException  {
                     throw new UnsupportedOperationException();
                 }
 
@@ -494,11 +494,11 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
                     return faultString;
                 }
 
-                public void setTerminationTime(Calendar terminationTime) {
+                public void setTerminationTime(Calendar terminationTime) throws UnsupportedOperationException {
                     throw new UnsupportedOperationException();
                 }
 
-                public void setId(String id) {
+                public void setId(String id) throws UnsupportedOperationException {
                     throw new UnsupportedOperationException();
                 }
             };
