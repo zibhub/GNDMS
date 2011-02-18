@@ -297,7 +297,7 @@ define 'gndms' do
              ln_sf(file, GT4LIB)
            end
            depsFile.syswrite(basename + "\n") 
-           classpathFile.syswrite('<pathelement location="' + file + '" />' + "\n")
+           classpathFile.syswrite('<pathelement location="' + basename + '" />' + "\n")
         }
         depsFile.close
         classpathFile.syswrite('</path></target></project>' + "\n\n")
