@@ -286,17 +286,18 @@ define 'gndms' do
         classpathFile.syswrite('<?xml version="1.0"?>' + "\n" + '<project><target id="setGNDMSDeps"><path id="service.build.extended.classpath">' + "\n")
         depsFile = File.new(GT4LIB + '/gndms-dependencies', 'w')
         deps.select { |jar| jar[0, GT4LIB.length] != GT4LIB }.each { |file| 
+          basename = File.basename( file )
            if (copy)
              puts 'cp: \'' + file + '\' to: \'' + GT4LIB + '\''
              cp(file, GT4LIB)
-             chmod 0644, GT4LIB+"/"+ File.basename( file ), :verbose=>false
+             chmod 0644, GT4LIB+"/"+basename, :verbose=>false
            else
              puts 'ln_sf: \'' + file + '\' to: \'' + GT4LIB + '\''
              chmod 0644, file, :verbose=>false
              ln_sf(file, GT4LIB)
            end
-           depsFile.syswrite(file + "\n") 
-           classpathFile.syswrite('<pathelement location="' + file + '" />' + "\n")
+           depsFile.syswrite(basename + "\n") 
+           classpathFile.syswrite('<pathelement location="' + basename + '" />' + "\n")
         }
         depsFile.close
         classpathFile.syswrite('</path></target></project>' + "\n\n")
