@@ -5,6 +5,7 @@
   (avoids problems with ant 1.8 and introduce)
 * [CHANGED] Updated documentation
 * [CHANGED] Now uses sudo in order to change slice ownership
+* [NEW] Build now has limited support for migration
 
 @DMS
 * [NEW] Proper handling of connection timeouts 
@@ -13,7 +14,7 @@
 @C3Grid
 * [NEW] Certificate delegation for stage-in tasks
 * [CHANGED] Updated stage-in test client
-
+* [NEW] added c3grid-dp-post-deploy-test that uses local installation jars
 
 
 
