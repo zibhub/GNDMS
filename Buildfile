@@ -563,14 +563,46 @@ end
 
 task 'artifcats' => ['artifacts']
 
+desc 'Guesses the previous installed version and removes it' 
+task 'auto-clean' do
+    
+    path = "#{ENV['GLOBUS_LOCATION']}/lib/"
+    if( File.exists?( "#{path}gndms-shared-model.jar" ) )   
+        puts "assuming 0.2.8"
+        cleanRev( '0.2.8' )
+    elsif( File.exists?( "#{path}gndms-model-0.3.0.jar" ) )
+        puts "assuming 0.3.0"
+        cleanRev( '0.3.0' )
+    elsif( File.exists?( "#{path}gndms-model-0.3.2.jar" ) )
+        puts "assuming 0.3.2"
+        cleanRev( '0.3.2' )
+    else
+        puts "Couldn't guess your previous installed version"
+        puts "Please remove it manuelley."
+    end
+end
+
 
 task 'clean-0.2.8' do
-    IO.foreach( "#{ENV['GNDMS_SOURCE']}/buildr/0.2.8/files" )  { |block|
-        fn = eval( '"'+block+'"' ).chomp
-        #puts "deleting #{fn}" if( File.exists?( fn ) )  
-        File.delete ( fn ) if( File.exists?( fn ) )  
-    }
+    cleanRev( '0.2.8' )
 end
+
+task 'clean-0.3.0' do
+    cleanRev( '0.3.0' )
+end
+
+task 'clean-0.3.2' do
+    cleanRev( '0.3.2' )
+end
+
+
+def cleanRev( version )
+    IO.foreach( "#{ENV['GNDMS_SOURCE']}/buildr/#{version}/files" )  { |block|
+        fn = eval( '"'+block+'"' ).chomp
+        puts "deleting #{fn}" if( File.exists?( fn ) )  
+       # File.delete ( fn ) if( File.exists?( fn ) )  
+    }
+end 
 
 
 
