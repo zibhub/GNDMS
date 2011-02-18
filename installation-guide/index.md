@@ -168,21 +168,20 @@ Installation and Deployment from Distribution Package
 
 ### Migrating from a previous installation
 
-In case you already run an older version of GNDMS, it might be
-neccesary to properly uninstall some of its components before
-installing a new version. The list below describes which users need to
-do this. In any case, please enter `$GNDMS_SOURCE` first.
+If there is an exitsing installation of GNDMS in
+your globus toolkit container, it must be properly
+removed bevore continuing. To do so, please shutdown
+your container using `globus-stop-container-detached`,
+enter `$GNDMS_SOURCE`, and execure
 
-* If you participated in C3Grid/INAD or have used GNDMS < 0.3.0, please run
-  `gndms-buildr clean-0.2.8`
+  gndms-buildr auto-clean
 
-
-Note: *Only* if you installed a source snapshot of GNDMS, you have to
-  delete all jars that were installed before manually.  Newer versions
-  of GNDMS write a list of these installed jars to
-  `$GLOBUS_LOCATION/lib/gndms-dependencies`. `globus-undeploy-gar` may
-  also be of help.
-
+Note: *Only* if you installed a source snapshot of GNDMS with an
+  irregular version number, you have to delete all jars that were
+  installed before manually.  Newer versions of GNDMS write a list of
+  these installed jars to `$GLOBUS_LOCATION/lib/gndms-dependencies`. 
+ 
+ 
 
 ### Installation and Initial Deployment
  
