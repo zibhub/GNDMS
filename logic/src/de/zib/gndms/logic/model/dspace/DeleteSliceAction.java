@@ -19,7 +19,7 @@ package de.zib.gndms.logic.model.dspace;
 
 
 import de.zib.gndms.kit.util.DirectoryAux;
-import de.zib.gndms.logic.model.AbstractModelAction;
+import de.zib.gndms.logic.model.AbstractModelEntityAction;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.Subspace;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +36,7 @@ import javax.persistence.EntityManager;
  *
  * User: mjorra, Date: Mi 23. Jun 17:40:11 CEST 2010
  */
-public class DeleteSliceAction extends AbstractModelAction<Subspace, Slice> {
+public class DeleteSliceAction extends AbstractModelEntityAction<Subspace, Slice> {
 
     private Slice slice;
     private DirectoryAux directoryAux;
@@ -129,7 +129,7 @@ public class DeleteSliceAction extends AbstractModelAction<Subspace, Slice> {
      * @param sl The slice which should be deleted.
      * @param par The parent action.
      */
-    public static DeleteSliceAction deleteSlice( @NotNull Slice sl, @NotNull AbstractModelAction par ) {
+    public static DeleteSliceAction deleteSlice( @NotNull Slice sl, @NotNull AbstractModelEntityAction par ) {
         
         DeleteSliceAction dla = new DeleteSliceAction( sl );
         dla.setParent( par );

@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model;
 
 /*
- * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,27 +18,29 @@ package de.zib.gndms.logic.model;
 
 
 
-import de.zib.gndms.logic.action.CompositeAction;
 import de.zib.gndms.model.ModelEntity;
 import de.zib.gndms.model.common.GridEntity;
+import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.GridResourceItf;
-import org.jetbrains.annotations.NotNull;
 
 
 /**
+ * An ModelUpdateListener will be informed by an <tt>BatchUpdateAction</tt> on a model.
  *
- * A BatchUpdateAction will executed several actions and can inform an ModelUpdateListener about a change on the model.
- * 
- * 
+ * @see BatchUpdateAction
  * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
- *          User: stepn Date: 13.08.2008 Time: 10:35:07
+ *          User: stepn Date: 12.08.2008 Time: 18:33:47
  */
-public interface BatchUpdateAction<M extends ModelEntity & GridResourceItf, R> extends CompositeAction<R, Void> {
+public interface ModelUpdateListener<M extends ModelEntity & GridResourceItf> {
 
-    ModelUpdateListener<M> getListener();
-
-    void setListener(final @NotNull ModelUpdateListener<M> listenerParam);
+    /**
+     * A class waiting for changes on the model must implement this method.
+     * It will be notified about a change, using this method with the new model.
+     *
+     * @param model the new model
+     */
+    void onModelChange(M model);
 
 }

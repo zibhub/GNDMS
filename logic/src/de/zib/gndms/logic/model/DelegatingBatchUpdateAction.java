@@ -20,8 +20,8 @@ package de.zib.gndms.logic.model;
 
 import com.google.inject.Injector;
 import de.zib.gndms.kit.access.GNDMSBinding;
+import de.zib.gndms.model.ModelEntity;
 import de.zib.gndms.model.common.GridEntity;
-import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.logic.action.Action;
 import de.zib.gndms.logic.action.ActionInitializationException;
 import de.zib.gndms.model.common.GridResourceItf;
@@ -40,7 +40,7 @@ import java.util.List;
  *
  *          User: stepn Date: 04.09.2008 Time: 13:01:25
  */
-public class DelegatingBatchUpdateAction<M extends GridEntity & GridResourceItf, R>
+public class DelegatingBatchUpdateAction<M extends ModelEntity & GridResourceItf, R>
         implements BatchUpdateAction<M, R> {
     private final BatchUpdateAction<M, R> delegate;
     private Injector injector;
@@ -51,12 +51,12 @@ public class DelegatingBatchUpdateAction<M extends GridEntity & GridResourceItf,
     }
 
 
-    public EntityUpdateListener<M> getListener() {
+    public ModelUpdateListener<M> getListener() {
         return delegate.getListener();
     }
 
 
-    public void setListener(final @NotNull EntityUpdateListener<M> mEntityUpdateListenerParam) {
+    public void setListener(final @NotNull ModelUpdateListener<M> mEntityUpdateListenerParam) {
         throw new UnsupportedOperationException();
     }
 

@@ -68,13 +68,13 @@ public interface EntityAction<R> extends Action<R>, ModelUUIDGen {
      *
      * @return the postponend actions
      */
-    BatchUpdateAction<GridResource, ?> getPostponedActions();
+    BatchUpdateAction<GridResource, ?> getPostponedEntityActions();
 
     /**
      * Define actions that will be executed on {@code this.cleanup()}
      * 
      * @param postponedActionsParam a BatchUpdateAction containg actions, that will be executed on cleanup
      */
-    void setOwnPostponedActions(final @NotNull BatchUpdateAction<GridResource, ?> postponedActionsParam);
+    void setOwnPostponedEntityActions(final @NotNull BatchUpdateAction<GridResource, ?> postponedActionsParam);
 
 }
