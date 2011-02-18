@@ -110,7 +110,7 @@ INTERNAL 0.2.9 beta: "Kylie"
 * [CHANGED] Changed exit codes of estimation scripts to be more in line with UNIX conventions
     public static final int EXIT_CODE_UNFULFILLABLE = 127;
     public static final int EXIT_CODE_PERMISSION_DENIED = 126;
-* [CHANGED] Shutdown behaviour; exit code > 127 willl cause a delay of 60s before marking a staging task as failed.  This became necessary
+* [CHANGED] Shutdown behaviour; exit code > 127 will cause a delay of 60s before marking a staging task as failed.  This became necessary
   to deal with globus shutdown behaviour which may cause spurious script exit codes and thus broke restarting old tasks upon restart
   of Globus...
 * [FIX] Lots of many small bugs have been squished making this release much more stable
