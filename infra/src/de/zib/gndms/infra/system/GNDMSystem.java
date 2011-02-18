@@ -32,9 +32,10 @@ import de.zib.gndms.logic.action.LogAction;
 import de.zib.gndms.logic.model.*;
 import de.zib.gndms.logic.model.gorfx.DefaultWrapper;
 import de.zib.gndms.logic.util.LogicTools;
-import de.zib.gndms.model.common.GridResource;
-import de.zib.gndms.model.common.ModelUUIDGen;
-import de.zib.gndms.model.common.VEPRef;
+import de.zib.gndms.model.common.*;
+import de.zib.gndms.neomodel.common.NeoDao;
+import de.zib.gndms.neomodel.common.NodeGridResource;
+import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.apache.axis.components.uuid.UUIDGen;
 import org.apache.axis.components.uuid.UUIDGenFactory;
 import org.apache.axis.message.MessageElement;
@@ -91,7 +92,7 @@ import java.util.concurrent.*;
         "ClassWithTooManyMethods" })
 public final class GNDMSystem
 	  implements Initializable, SystemHolder, EMFactoryProvider, Module,
-        EntityUpdateListener<GridResource> {
+        ModelUpdateListener<GridResource> {
     private static final long EXECUTOR_SHUTDOWN_TIME = 5000L;
 
     private static @NotNull Log createLogger() { return LogFactory.getLog(GNDMSystem.class); }
@@ -272,7 +273,7 @@ public final class GNDMSystem
        binder.bind(EMFactoryProvider.class).toInstance(this);
        binder.bind(GridConfig.class).toInstance(sharedConfig);
        //binder.bind(NetworkAuxiliariesProvider.class).toInstance(getNetAux());
-       binder.bind(EntityUpdateListener.class).toInstance(this);
+       binder.bind(ModelUpdateListener.class).toInstance(this);
        binder.bind(BatchUpdateAction.class).to(DefaultBatchUpdateAction.class);
        binder.bind(UUIDGen.class).toInstance(uuidGen);
        binder.bind(GNDMSVerInfo.class).toInstance(verInfo);
@@ -570,7 +571,7 @@ public final class GNDMSystem
 	}
 
 
-    public void onModelChange( GridResource model ) {
+    public void onModelChange(GridResource model) {
         try {
             onModelChange_(model);
         } catch ( ResourceException e ) {
@@ -682,7 +683,7 @@ public final class GNDMSystem
      * @return {@code this}
      */
     @SuppressWarnings({ "ReturnOfThis" })
-    public EntityUpdateListener<GridResource> getEntityUpdateListener() {
+    public ModelUpdateListener<GridResource> getEntityUpdateListener() {
         return this;
     }
 
@@ -843,10 +844,10 @@ public final class GNDMSystem
                 ((LogAction)action).setLog(log);
             if (action instanceof SystemHolder)
                 ((SystemHolder)action).setSystem(GNDMSystem.this);
-            if (action.getPostponedActions() == null)
-                action.setOwnPostponedActions(new DefaultBatchUpdateAction<GridResource>());
-            if (action.getPostponedActions().getListener() == null)
-                action.getPostponedActions().setListener(getEntityUpdateListener());
+            if (action.getPostponedEntityActions() == null)
+                action.setOwnPostponedEntityActions(new DefaultBatchUpdateAction<GridResource>());
+            if (action.getPostponedEntityActions().getListener() == null)
+                action.getPostponedEntityActions().setListener(getEntityUpdateListener());
             if (action instanceof AbstractEntityAction)
                 ((AbstractEntityAction<?>)action).setUUIDGen(uuidGenDelegate);
             if (action instanceof TaskAction) {
@@ -1072,4 +1073,10 @@ public final class GNDMSystem
         return netAux;
     }
     */
+
+    private final ModelUpdateListener<Taskling> tasklingUpdater = new ModelUpdateListener<Taskling>() {
+        public void onModelChange(Taskling model) {
+            // TODO IMPLEMENT
+        }
+    };
 }

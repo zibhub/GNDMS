@@ -206,7 +206,7 @@ public class DSpaceImpl extends DSpaceImplBase {
             csa.setClosingEntityManagerOnCleanup( false );
             Slice ns = (Slice) mh.callModelAction( em, system.getEntityUpdateListener(), ma, sp );
 
-            csa.getPostponedActions().call( );
+            csa.getPostponedEntityActions().call( );
 
             thisResource.loadFromModel( ns );
 
