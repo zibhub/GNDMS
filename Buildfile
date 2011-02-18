@@ -577,8 +577,7 @@ task 'auto-clean' do
         puts "assuming 0.3.2"
         cleanRev( '0.3.2' )
     else
-        puts "Couldn't guess your previous installed version"
-        puts "Please remove it manuelley."
+        puts "No previously installed version detected."
     end
 end
 
@@ -599,8 +598,8 @@ end
 def cleanRev( version )
     IO.foreach( "#{ENV['GNDMS_SOURCE']}/buildr/#{version}/files" )  { |block|
         fn = eval( '"'+block+'"' ).chomp
-        puts "deleting #{fn}" if( File.exists?( fn ) )  
-       # File.delete ( fn ) if( File.exists?( fn ) )  
+        #puts "deleting #{fn}" if( File.exists?( fn ) )  
+        File.delete ( fn ) if( File.exists?( fn ) )  
     }
 end 
 
