@@ -6,8 +6,8 @@ source "$SCRIPTDIR"internal/script-setup.sh
 # %{} is shell variable substitution at container runtime
 # $STAGING_COMMAND runs in the slice working dir.
 
-STAGING_COMMAND="%{C3GRID_SOURCE}/scripts/xml-staging/xml-dummy-staging.sh"
-ESTIMATION_COMMAND="%{C3GRID_SOURCE}/scripts/dummy-estimation.sh"
+STAGING_COMMAND="%{GNDMS_SOURCE}/scripts/xml-staging/xml-dummy-staging.sh"
+ESTIMATION_COMMAND="%{GNDMS_SOURCE}/scripts/dummy-estimation.sh"
 
 # If set, $CANCEL_COMMAND is called whenever a staging script fails
 # or is aborted prematurely (i.e. due to a timeout of the associated Task Resouce
