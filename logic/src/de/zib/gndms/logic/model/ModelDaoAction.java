@@ -10,6 +10,7 @@ import de.zib.gndms.model.common.GridResourceItf;
  *         <p/>
  *         User stepn Date: 18.02.11 TIME: 18:37
  */
-public interface ModelDaoAction<M extends ModelEntity & GridResourceItf, R> extends DaoAction<R>, ModelAction<M, R> {
+public interface ModelDaoAction<M extends ModelEntity & GridResourceItf, R>
+        extends DaoAction<R>, ModelAction<M, R>, EntityAction<R> {
     ModelUpdateListener<M> getModelUpdateListener();
 }

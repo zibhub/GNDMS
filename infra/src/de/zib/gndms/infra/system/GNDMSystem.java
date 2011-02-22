@@ -471,8 +471,7 @@ public final class GNDMSystem
     }
 
 
-    public @NotNull
-    GNDMSystemDirectory getInstanceDir() {
+    public @NotNull GNDMSystemDirectory getInstanceDir() {
         return instanceDir;
     }
 
@@ -719,7 +718,17 @@ public final class GNDMSystem
     }
 
 
-	public void reloadConfiglets() {
+    @NotNull
+    public <R> Future<R> submitDaoAction(@NotNull EntityManager em, @NotNull NeoDao dao, @NotNull ModelDaoAction<?, R> action, @NotNull Log log) {
+        return executionService.submitDaoAction(em, dao, action, log);
+    }
+
+    @NotNull
+    public <R> Future<R> submitDaoAction(@NotNull ModelDaoAction<?, R> action, @NotNull Log log) {
+        return executionService.submitDaoAction(action, log);
+    }
+
+    public void reloadConfiglets() {
 		instanceDir.reloadConfiglets(getEntityManagerFactory());
 	}
 
@@ -802,13 +811,32 @@ public final class GNDMSystem
             }
         }
 
+        public final @NotNull <R> Future<R> submitDaoAction(final @NotNull ModelDaoAction<?, R> action,
+                                                            final @NotNull Log log) {
+            final NeoDao dao = action.getOwnDao();
+            if (dao != null)
+                return submitAction(action, log);
+            else {
+                action.setOwnDao(getDao());
+                return submitAction(action, log);
+            }
+        }
+
         @SuppressWarnings({ "FeatureEnvy" })
         public @NotNull <R> Future<R> submitAction(final @NotNull EntityManager em,
                                                    final @NotNull EntityAction<R> action,
                                                    final @NotNull Log log) {
-            action.setOwnEntityManager(em);
             return submit_(action, log);
         }
+
+        public @NotNull <R> Future<R> submitDaoAction(final @NotNull EntityManager em,
+                                                      final @NotNull NeoDao dao,
+                                                      final @NotNull ModelDaoAction<?, R> action,
+                                                      final @NotNull Log log) {
+            action.setOwnDao(getDao());
+            return submitAction(em, action, log);
+        }
+
 
         /**
          * Prepares {@code action} using certain setters, before it is submitted to the Executor.
@@ -842,6 +870,8 @@ public final class GNDMSystem
                 action.setOwnPostponedEntityActions(new DefaultBatchUpdateAction<GridResource>());
             if (action.getPostponedEntityActions().getListener() == null)
                 action.getPostponedEntityActions().setListener(getEntityUpdateListener());
+            if (action instanceof ModelDaoAction)
+                ((ModelDaoAction) action).setOwnDao(getDao());
             if (action instanceof AbstractEntityAction)
                 ((AbstractEntityAction<?>)action).setUUIDGen(uuidGenDelegate);
             if (action instanceof TaskAction) {
