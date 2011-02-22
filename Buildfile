@@ -509,7 +509,7 @@ task 'c3grid-dp-setupdb' do
 end
 
 task 'install-chown-script' do
-    system "install -o root -g root -m 700 #{ENV['GNDMS_SOURCE']}/dev-bin/chownSlice.sh #{ENV['GNDMS_SHARED']}"
+    system "install -o 0 -g 0 -m 700 #{ENV['GNDMS_SOURCE']}/dev-bin/chownSlice.sh #{ENV['GNDMS_SHARED']}"
 end
 
 task 'c3grid-dp-test' => task('gndms:gndmc:run-staging-test') 
