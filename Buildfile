@@ -286,15 +286,17 @@ define 'gndms' do
         classpathFile.syswrite('<?xml version="1.0"?>' + "\n" + '<project><target id="setGNDMSDeps"><path id="service.build.extended.classpath">' + "\n")
         depsFile = File.new(GT4LIB + '/gndms-dependencies', 'w')
         deps.select { |jar| jar[0, GT4LIB.length] != GT4LIB }.each { |file| 
-          basename = File.basename( file )
+           basename = File.basename( file )
+           newname = GT4LIB+'/'+basename
            if (copy)
-             puts 'cp: \'' + file + '\' to: \'' + GT4LIB + '\''
-             cp(file, GT4LIB)
-             chmod 0644, GT4LIB+"/"+basename, :verbose=>false
+             puts 'cp: \'' + file + '\' to: \'' + newname + '\''
+             cp(file, newname)
+	     puts 'yay'
+             chmod 0644, newname
            else
-             puts 'ln_sf: \'' + file + '\' to: \'' + GT4LIB + '\''
-             chmod 0644, file, :verbose=>false
-             ln_sf(file, GT4LIB)
+             puts 'ln_sf: \'' + file + '\' to: \'' + newname + '\''
+             chmod 0644, file
+             ln_sf(file, newname)
            end
            depsFile.syswrite(basename + "\n") 
            classpathFile.syswrite('<pathelement location="' + basename + '" />' + "\n")
@@ -564,12 +566,12 @@ end
 
 task 'artifcats' => ['artifacts']
 
+def hasPath?(path)
+    return ( File.exists?(path) or File.symlink?(path) )
+end
+
 desc 'Guesses the previous installed version and removes it' 
 task 'auto-clean' do
-    def hasPath?(path)
-      return ( File.exists?(path) or File.symlink?(path) )
-    end
-
     puts 'Guessing installed version...'
     path = "#{ENV['GLOBUS_LOCATION']}/lib/"
     if( hasPath?( "#{path}gndms-shared-model.jar" ) )   
@@ -617,8 +619,8 @@ end
 def cleanRev( version )
     IO.foreach( "#{ENV['GNDMS_SOURCE']}/buildr/#{version}/files" )  { |block|
         fn = eval( '"'+block+'"' ).chomp
-        puts "Removing #{fn}" if( File.exists?( fn ) )  
-        File.delete( fn ) if( File.exists?( fn ) )  
+        puts "Removing #{fn}" if( hasPath?( fn ) )  
+        File.delete( fn ) if( hasPath?( fn ) )  
     }
 end 
 
