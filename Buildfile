@@ -582,12 +582,18 @@ task 'auto-clean' do
     end
     puts 'About to remove old c3grid service directories (if existing)'
     rm_rf( "#{ENV['GLOBUS_LOCATION']}/lib/c3grid_DSpace" )
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/etc/gpt/packages/c3grid_DSpace" )
     rm_rf( "#{ENV['GLOBUS_LOCATION']}/lib/c3grid_GORFX" )
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/etc/gpt/packages/c3grid_GORFX" )
     rm_rf( "#{ENV['GLOBUS_LOCATION']}/lib/c3grid_WHORFX" )
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/etc/gpt/packages/c3grid_WHORFX" )
     puts 'About to remove old gndms service directories (if existing)'
     rm_rf( "#{ENV['GLOBUS_LOCATION']}/lib/gndms_DSpace" )
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/etc/gpt/packages/gndms_DSpace" )
     rm_rf( "#{ENV['GLOBUS_LOCATION']}/lib/gndms_GORFX" )
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/etc/gpt/packages/gndms_GORFX" )
     rm_rf( "#{ENV['GLOBUS_LOCATION']}/lib/gndms_WHORFX" )
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/etc/gpt/packages/gndms_WHORFX" )
 end
 
 
