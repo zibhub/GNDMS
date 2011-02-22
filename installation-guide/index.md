@@ -50,7 +50,7 @@ Please install [Apache Ant](http://ant.apache.org) 1.7 and set
 **NOTE** *Using 1.8 might cause trouble on Linux, YMMV*
 
 
-#### Install local UNIX software
+#### Install Local UNIX Software
 
 In order to install GNDMS, please make sure you have installed the
 following software
@@ -63,7 +63,7 @@ Additionally, it is expected that your UNIX provides the following
 shell tools: hostname, which, bash
 
 
-#### Install Globus Toolit 4.0.8
+#### Install Globus Toolkit 4.0.8
 
 Please download and make a full installation of
 [Globus Toolkit 4.0.8](http://www.globus.org/toolkit/downloads/4.0.8/)
@@ -139,7 +139,7 @@ environment.  Please consult `$GNDMS_SOURCE/example.profile` for an
 example of a properly configured environment.
 
 
-#### Optionally Install Apache buildr 1.4.1 locally
+#### Optionally Install Apache buildr 1.4.1 Locally
 
 This step is optional.
 
@@ -166,13 +166,13 @@ Installation and Deployment from Distribution Package
 
 
 
-### Migrating from a previous installation
+### Migrating from a Previous Installation
 
-If there is an exitsing installation of GNDMS in
+If there is an existing installation of GNDMS in
 your globus toolkit container, it must be properly
-removed bevore continuing. To do so, please shutdown
+removed before continuing. To do so, please shutdown
 your container using `globus-stop-container-detached`,
-enter `$GNDMS_SOURCE`, and execure
+enter `$GNDMS_SOURCE`, and execute
 
   gndms-buildr auto-clean
 
@@ -228,12 +228,12 @@ Next, we'll describe how it may be configured for actual use.
 Gridconfiguration of GNDMS Software
 -----------------------------------
  
-GNDMS is configured via a builtin monitoring shell that accesses and
+GNDMS is configured via a built-in monitoring shell that accesses and
 modifies the configuration in the database.
 
 If you did a fresh installation, the monitoring shell will have been
 enabled temporarily at this point and you may just proceed. Otherwise
-you need to enable in manually as described in the following section.
+you need to enable it manually as described in the following section.
 
 ### Preparing your System 
 
@@ -260,7 +260,7 @@ with super-user permissions and without password verification.
 
 Now as **root** execute:
 
-    buildr install-chown-script
+    gndms-buildr install-chown-script
 
 This copies the above script to `$GNDMS_SHARED` and changes the owner to
 root and sets the file permissions to 700.
@@ -283,14 +283,6 @@ protected with a clear-text password only. Do not make the monitoring
 shell accessible via unsecure networks.*
 
 
-### Disabling the Monitoring Shell
-
-To disable the monitor shell, please edit `$GNDMS_MONI_CONFIG` such
-that *both* `monitor.enabled` and `monitor.noShutdownIfRunning` are
-set to `false`.  Now, either wait until the new configuration gets
-activated or just restart the globus container manually.
-
-
 ### Configuring your Grid
 
 Currently, there are specialized build targets for the setup of some
@@ -298,7 +290,7 @@ D-Grid projects directly in the `Buildfile`.
 
 **C3-Grid Setup & Configuration** 
 : Edit `$GNDMS_SOURCE/scripts/c3grid/setup-dataprovider.sh` and
-execute `gndms-buildr c3grid-dp-setubdb`
+execute `gndms-buildr c3grid-dp-setupdb`
 
 **C3-Grid Quick Test** 
 : `gndms-buildr c3grid-dp-post-deploy-test`
@@ -320,25 +312,26 @@ community grid platform.
   `gndms-buildr kill-db` and try again.*
 
 
-### Finalize installation
+### Finalize Installation by Disabling the Monitoring Shell
 
-Please edit `$GLOBUS_LOCATION/etc/gndms_shared/monitor.properties` and
-set `monitor.enabled=false` and `monitor.noShutdownIfRunning=false`. 
-This will disable the monitor shell after `monitor.configRefreshCycle` ms 
-(defaults to 17 seconds).  Alternatively, just restart the globus container.
+As a security precaution, finally you should disable the monitoring
+shell.
+
+To do this, please edit
+`$GLOBUS_LOCATION/etc/gndms_shared/monitor.properties` and set
+`monitor.enabled=false` and `monitor.noShutdownIfRunning=false`.  This
+will disable the monitor shell after `monitor.configRefreshCycle` ms
+(defaults to 17 seconds).  Alternatively, just restart the globus
+container.
 
 **Congratulations** *At this point the installation is complete and you
 have a running installation of GNDMS.*
 
 
-Testing your installation
+Testing your Installation
 -------------------------
 
-*Please note: The below test describes the testing of the file
-transfer capabilities of GNDMS. To test the stage-in functionality
-click <a href='#testing_your_c3_installation'>here</a>.*
-
-The GNDMS contains a client application which tests some basic
+The GNDMS contains client applications which tests some basic
 functionality to ensure your setup is ready to use. In order to run
 the test-client the following prerequisites must be satisfied:
 
@@ -346,17 +339,24 @@ the test-client the following prerequisites must be satisfied:
 * have access to a grid-ftp-server, which accepts your certificate
   and offers write permission,
 * and of course you need a running globus container that provides the
-  GNDMS-services, has at least on subspace, and file-transfer enabled.
+  GNDMS-services, has at least one subspace, and file-transfer
+  enabled.
+* To execute the tests, it may be necessary to temporarily change the
+  ownership of `$GNDMS_SOURCE` to the unix user of the used grid
+  certificate~(i.e. your grid user account) by executing `chown -R <userid> $GNDMS_SOURCE`.
 
 ### About
 
-The test client simulates a standard GNDMS-use-case, it creates as
+The test client simulates a standard GNDMS-use-case, it creates a
 target slice, copies some files into the slice. Then it copies the
 files back from the slice to some target directory and destroys the slice.
 
+*C3Grid/INAD: To test the stage-in functionality
+click <a href='#testing_your_c3_installation'>here</a>.*
+
 This test should be executed as *ordinary grid-user* not the
-globus-user. (The only thing you need the globus-user for is to
-edit the property-file, but more about that in the next section.)
+as the globus user.
+
 
 ### Setup
 
@@ -380,9 +380,11 @@ attention. The file contains comments to every property and hopefully
 explains itself. When you have finished the file must not contain any
 angle-brackets, the client will complain if that's not the case.
 
-### Running the test client
+### Running the Test Client
 
-Once the setup is complete, load a grid-proxy using:
+If you want to run the test client, first install GNDMS locally. Then
+edit `$GNDMS_SOURCE/etc/sliceInOutClient.properties` as you see fit,
+and load a grid-proxy using:
 
     grid-proxy-init
 
@@ -394,7 +396,7 @@ Now you can use buildr to fire up the client:
 It takes quite some time until the first output appears, be patient.
 After a successful run your output start with:
 
-    Connected to GNDMS: Generation N Data Management System VERSION: 0.3-pre "Kylie++"
+    Connected to GNDMS: Generation N Data Management System VERSION: 0.3.2 "Shigeru"
     OK()
     Creating slice
 
@@ -411,7 +413,11 @@ source and destination directory, in that case CONGRATULATIONS!! you
 have a working GNDMS installation, and can provide data management
 service for your community.
 
-### Testing your C3 installation
+
+### Testing your C3 Installation
+
+This tests the staging functionality of your GNDMS/C3Grid
+installation.
 
 Once the setup is complete, load your grid-proxy using:
 
@@ -467,7 +473,7 @@ Click [here](staging-test-output.txt) to view the full output.
 
 
 
-### Trouble shooting
+### Trouble Shooting
 
 **The client hangs after the "`Copy gsiftp: ...`" message.**
 : This can be a problem with your firewall configuration. It
@@ -636,12 +642,11 @@ follow the procedure described below when making a release:
     # Additionally delete 
     #   \*/target 
     #   name/gndms-name
-    #   dev-bin
-    #   test-data
     # 
     buildr apidocs
     cd ..
     mv $GNDMS_SOURCE $GNDMS_SOURCE/../gndms-release-ver
+    # mac only: export COPYFILE_DISABLE=true
     tar zcvf GNDMS-Releases/gndms-release-ver.tgz --exclude .git \
         --exclude \*.ipr --exclude \*.iml --exclude \*.iws \
         --exclude \*.DS_Store --exclude \*._.DS_Store gndms-release-ver
