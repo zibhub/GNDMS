@@ -566,15 +566,19 @@ task 'artifcats' => ['artifacts']
 
 desc 'Guesses the previous installed version and removes it' 
 task 'auto-clean' do
+    def hasPath?(path)
+      return ( File.exists?(path) or File.symlink?(path) )
+    end
+
     puts 'Guessing installed version...'
     path = "#{ENV['GLOBUS_LOCATION']}/lib/"
-    if( File.exists?( "#{path}gndms-shared-model.jar" ) )   
+    if( hasPath?( "#{path}gndms-shared-model.jar" ) )   
         puts 'GNDMS 0.2.8 detected.'
         cleanRev( '0.2.8' )
-    elsif( File.exists?( "#{path}gndms-model-0.3.0.jar" ) )
+    elsif( hasPath?( "#{path}gndms-model-0.3.0.jar" ) )
         puts 'GNDMS 0.3.0 detected.'
         cleanRev( '0.3.0' )
-    elsif( File.exists?( "#{path}gndms-model-0.3.2.jar" ) )
+    elsif( hasPath?( "#{path}gndms-model-0.3.2.jar" ) )
         puts 'GNDMS 0.3.2 detected.'
         cleanRev( '0.3.2' )
     else

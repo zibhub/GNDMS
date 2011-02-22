@@ -8,8 +8,8 @@ fi
 
 if [ ! -d "$GNDMS_SOURCE/lib/apache-ant-1.7.1" ] ; then
   echo "Unpacking apache-ant-1.7.1"
-	( cd lib && tar -zxf apache-ant-1.7.1.tgz )
-  ( cd lib && chmod 0755 apache-ant-1.7.1 )
+  ( cd "$GNDMS_SOURCE/lib" && tar -zxf apache-ant-1.7.1.tgz )
+  ( cd "$GNDMS_SOURCE/lib" && chmod 0755 apache-ant-1.7.1 )
 fi
 
 env ANT_HOME="$GNDMS_SOURCE/lib/apache-ant-1.7.1/" "$GNDMS_SOURCE/lib/apache-ant-1.7.1/bin/ant" $@
