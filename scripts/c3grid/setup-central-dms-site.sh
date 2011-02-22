@@ -23,4 +23,6 @@ enable_slicestagein
 enable_filetransfer
 enable_interslicetransfer
 enable_mdscatalog
+enable_permissions
+enable_sliceChown
 refresh_system

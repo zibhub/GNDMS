@@ -566,22 +566,28 @@ task 'artifcats' => ['artifacts']
 
 desc 'Guesses the previous installed version and removes it' 
 task 'auto-clean' do
-    
+    puts 'Guessing installed version...'
     path = "#{ENV['GLOBUS_LOCATION']}/lib/"
     if( File.exists?( "#{path}gndms-shared-model.jar" ) )   
-        puts "assuming 0.2.8"
+        puts 'GNDMS 0.2.8 detected.'
         cleanRev( '0.2.8' )
     elsif( File.exists?( "#{path}gndms-model-0.3.0.jar" ) )
-        puts "assuming 0.3.0"
+        puts 'GNDMS 0.3.0 detected.'
         cleanRev( '0.3.0' )
     elsif( File.exists?( "#{path}gndms-model-0.3.2.jar" ) )
-        puts "assuming 0.3.2"
+        puts 'GNDMS 0.3.2 detected.'
         cleanRev( '0.3.2' )
     else
-        puts "No previously installed version detected."
+        puts 'No previously installed version detected.'
     end
-    puts "Killing old c3grid directories if existing."
-
+    puts 'About to remove old c3grid service directories (if existing)'
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/lib/c3grid_DSpace" )
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/lib/c3grid_GORFX" )
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/lib/c3grid_WHORFX" )
+    puts 'About to remove old gndms service directories (if existing)'
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/lib/gndms_DSpace" )
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/lib/gndms_GORFX" )
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/lib/gndms_WHORFX" )
 end
 
 
@@ -601,7 +607,7 @@ end
 def cleanRev( version )
     IO.foreach( "#{ENV['GNDMS_SOURCE']}/buildr/#{version}/files" )  { |block|
         fn = eval( '"'+block+'"' ).chomp
-        #puts "deleting #{fn}" if( File.exists?( fn ) )  
+        puts "Removing #{fn}" if( File.exists?( fn ) )  
         File.delete( fn ) if( File.exists?( fn ) )  
     }
 end 
