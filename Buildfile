@@ -1,3 +1,5 @@
+# -*- mode: ruby -*-
+
 # Large amounts of memory ensure a fast build
 ENV['JAVA_OPTS'] ||= '-Xms512m -Xmx768m'
 

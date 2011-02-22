@@ -1,0 +1,18 @@
+#!/bin/bash
+
+if [ -z "$GNDMS_SOURCE" ] || [ ! -d "$GNDMS_SOURCE" ] || [ ! -x "$GNDMS_SOURCE" ] ; then
+	echo "Please set $GNDMS_SOURCE to the top-level directory of the GNDMS distribution. Likely this requires export GNDMS_SOURCE='"$PWD'/'$(dirname $0)"/..'"
+	exit 1
+fi
+
+
+if [ ! -d "$GNDMS_SOURCE/lib/ant-1.7.1" ] ; then
+  echo "Unpacking ant-1.7.1"
+	( cd lib && tar -zxf apache-ant-1.7.1.tgz )
+  ( cd lib && chmod 0755 apache-ant-1.7.1 )
+fi
+
+env ANT_HOME="$GNDMS_SOURCE/lib/apache-ant-1.7.1/" $GNDMS_SOURCE/lib/apache-ant-1.7.1/bin/ant $@
+
+
+
