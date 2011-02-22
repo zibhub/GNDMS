@@ -24,6 +24,7 @@ import de.zib.gndms.kit.access.CredentialProvider;
 import de.zib.gndms.kit.configlet.ConfigletProvider;
 import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.logic.action.LogAction;
+import de.zib.gndms.logic.model.gorfx.LifetimeExceededException;
 import de.zib.gndms.logic.model.gorfx.permissions.PermissionConfiglet;
 import de.zib.gndms.model.common.types.FilePermissions;
 import de.zib.gndms.model.gorfx.AbstractTask;
@@ -68,7 +69,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
 
 
     /***
-     * Workflow Id
+     * Workflow id
      */
     private String wid;
 
@@ -87,7 +88,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
 
     
     /**
-     * Initializes a TaskAction by denoting an EntityManager and a model.
+     * Initializes a TaskAction from an EntityManager, a dao and a (shallow) model.
      *
      * The model is made persistent by the EntityManager.
      * The EntityManager and the model are stored, using {@code setOwnEntityManager()} and {@code setModelAndBackup()}.
@@ -95,7 +96,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
      *
      *
      * @param em an EntityManager, storing AbstractTasks
-     * @param dao
+     * @param dao the dao for storing task nodes in the graph database
      * @param model an AbstractTask to be stored as model of {@code this} and to be stored in the database
      */
     public TaskAction(final @NotNull EntityManager em, final @NotNull NeoDao dao, final @NotNull Taskling model) {
@@ -107,9 +108,9 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
 
 
     /***
-     * Set-up workflow id before redirecting to execute
+     * Sets the task's workflow id from WidAux before calling {@link #execute()} via {@code super.call()}
      * 
-     * @return
+     * @return model after being finished
      * @throws RuntimeException
      */
     @Override
@@ -136,7 +137,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
 }
 
     /**
-     * Invokes {@link #onTransit(NeoTaskAccessor,boolean)} in a loop which is expected to change the task state.
+     * Invokes {@link #onTransit(String,NeoTaskAccessor,boolean)} in a loop which is expected to change the task state.
      * This goes on until either the state FINISHED or FAILED is reached.
      *
      * All Tasks become FAILED when an unhandled exception is caught.
@@ -148,6 +149,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
     @Override
     public Taskling execute(final @NotNull EntityManager em) {
         // Cross-Loop state
+        String thisWID = wid == null? "(null)" : wid;
         boolean inFirstStep   = true;
         boolean afterLastStep = false;
 
@@ -189,7 +191,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
                 try {
                     if (TaskState.FINISHED.equals(state) || TaskState.FAILED.equals(state)) {
                         try {
-                            onTransit(snapshot, isRestartedTask);
+                            onTransit(thisWID, snapshot, isRestartedTask);
                         }
                         finally {
                             session = getDao().beginSession();
@@ -202,7 +204,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
                     }
                     else {
                         checkTimeout(getModel());
-                        onTransit(snapshot, isRestartedTask);
+                        onTransit(thisWID, snapshot, isRestartedTask);
                     }
                 }
                 catch (RuntimeException e) {
@@ -439,7 +441,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
 //    }
 
 
-    protected void onTransit(@NotNull NeoTaskAccessor snapshot, boolean isRestartedTask) {
+    protected void onTransit(@NotNull String wid, @NotNull NeoTaskAccessor snapshot, boolean isRestartedTask) {
         throw new UnsupportedOperationException("not yet implemented");
     }
 
@@ -528,6 +530,212 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
         }
         finally { session.finish(); }
     }
+
+
+    @SuppressWarnings({ "HardcodedFileSeparator" })
+    protected void trace(final @NotNull String userMsg, final Throwable cause) {
+        final Log log1 = getLog();
+        final Taskling model = getModel();
+        final String msg;
+        if (model == null)
+            msg = userMsg;
+        else {
+            NeoSession session = getDao().beginSession();
+            try {
+                final NeoTask task = model.getTask(session);
+                final TaskState state = task.getTaskState();
+                final String descr = task.getDescription();
+                msg = "TA of AbstractTask " + model.getId()
+                        + ('/' + state.toString()) + ':'
+                        + (userMsg.length() > 0 ? ' ' : "") + userMsg
+                        + (" DESCR: '" + descr + '\'');
+                session.finish();
+            }
+            finally { session.success(); }
+        }
+       if (cause == null)
+           log1.trace(msg);
+        else
+           log1.trace(msg, cause);
+
+    }
+
+
+    @Override
+    public Taskling getModel() {
+        return super.getModel();
+    }
+
+
+    @Override
+    public void setModel(final @NotNull Taskling ling) {
+        final NeoSession session = getDao().beginSession();
+        final String newWID;
+        try {
+            newWID = ling.getTask(session).getWID();
+            session.success();
+        }
+        finally { session.finish();}
+        super.setModel(ling);    // Overridden method
+        wid = newWID;
+    }
+
+    /**
+     * Inform all listeners about the current model.
+     */
+    protected void refreshTaskResource() {
+        getModelUpdateListener().onModelChange(getModel());
+    }
+
+
+    /**
+     * Returns the TaskExecutionService corresponding to this TaskAction or a parent TaskAction.
+     *
+     * @return the TaskExecutionService corresponding to this TaskAction or a parent TaskAction.
+     */
+    public TaskExecutionService getService() {
+        if (service == null) {
+            final TaskAction taskAction = nextParentOfType(TaskAction.class);
+            return taskAction == null ? null : taskAction.getService();
+        }
+        return service;
+    }
+
+
+    public void setService(final @NotNull TaskExecutionService serviceParam) {
+        if (service == null)
+            service = serviceParam;
+        else
+           throw new IllegalStateException("Can't overwrite service");
+    }
+
+    @NotNull public Log getLog() {
+        return log;
+    }
+
+
+    public void setLog(@NotNull final Log logParam) {
+        log = logParam;
+    }
+
+    
+    /**
+     * Stopps this action if the associated task lifetime is already exceeded.
+     *
+     * If the lifetime is exceeded, this sets the TaskState
+     * to {@code FAILURE} by throwing an exception.
+     *
+     * @param ling shallow model to be checked
+     * @throws LifetimeExceededException
+     * @see #fail(RuntimeException)
+     * @see AbstractTask#fail(Exception)
+     */
+    private void checkTimeout( @NotNull Taskling ling ) {
+
+        NeoSession session = getDao().beginSession();
+        try {
+            NeoTask model = ling.getTask(session);
+
+            // check the task lifetime
+            if(new GregorianCalendar().compareTo(model.getTerminationTime()) >= 1 ) {
+                getLog().debug(  "Task lifetime exceeded" );
+                throw new LifetimeExceededException();
+//                boolean containt = false;
+//                try {
+//                    // check if model is still there
+//                    containt = em.contains( model );
+//                    if( containt ) {
+//                        model.fail( new RuntimeException( "Task lifetime exceeded" ) );
+//                        getLog().debug(  "Try to persist task" );
+//                    }
+//                    tx.commit( );
+//                } catch ( Exception e ) {
+//                    // exception here  doesn't really matter
+//                    // task is doomed anyway
+//                    e.printStackTrace(  );
+//                } finally {
+//                    tx.finish();
+//                }
+//                // interrupt this thread
+//                getLog().debug(  "Stopping task thread" );
+//                //Thread.currentThread().interrupt();
+//                if( containt ) refreshTaskResource();
+//                fail( new RuntimeException( "Task lifetime exceeded" ) );
+            }
+            session.success();
+        }
+        finally { session.finish(); }
+    }
+
+
+	@Override
+	public EntityManager getEntityManager() {
+		return getOwnEntityManager();
+	}
+
+
+	public EntityManagerFactory getEmf() {
+		return emf;
+	}
+
+
+	@Inject
+	public void setEmf(final @NotNull EntityManagerFactory emfParam) {
+		emf = emfParam;
+	}
+
+    public ConfigletProvider getConfigletProvider() {
+        return configletProvider;
+    }
+
+
+    @Inject
+    public void setConfigletProvider( ConfigletProvider configletProvider ) {
+        this.configletProvider = configletProvider;
+    }
+
+
+
+    public void setCredentialProvider( CredentialProvider cp ) {
+        this.credentialProvider = cp;
+    }
+
+
+    public CredentialProvider getCredentialProvider() {
+
+        return this.credentialProvider;
+    }
+
+
+    /**
+     * Extracts the actual permissions from a tasks permission info object
+     *
+     * @return the actual permissions
+     */
+    public FilePermissions actualPermissions( ) {
+        NeoSession session = getDao().beginSession();
+        try {
+            NeoTask task = getModel().getTask(session);
+            FilePermissions filePermissions = null;
+            if( task.getPermissionInfo() != null ) {
+                PermissionConfiglet pc = configletProvider.getConfiglet( PermissionConfiglet.class,
+                        task.getPermissionInfo().getPermissionConfigletName() );
+                if( pc != null ) {
+                    filePermissions = pc.permissionsFor(task.getPermissionInfo().getUserName());
+                }
+            }
+
+            session.success();
+            return filePermissions;
+        }
+        finally { session.finish(); }
+
+
+    }
+
+
+//    // TODO Delete later below
+//
 //            try {
 //
 //                try {
@@ -581,36 +789,6 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
 //                curEx = newEx;
 //            }
 //        } while (curEx != null);
-
-
-    @SuppressWarnings({ "HardcodedFileSeparator" })
-    protected void trace(final @NotNull String userMsg, final Throwable cause) {
-        final Log log1 = getLog();
-        final Taskling model = getModel();
-        final String msg;
-        if (model == null)
-            msg = userMsg;
-        else {
-            NeoSession session = getDao().beginSession();
-            try {
-                final NeoTask task = model.getTask(session);
-                final TaskState state = task.getTaskState();
-                final String descr = task.getDescription();
-                msg = "TA of AbstractTask " + model.getId()
-                        + (state == null ? "" : '/' + state.toString()) + ':'
-                        + (userMsg.length() > 0 ? ' ' : "") + userMsg
-                        + (descr == null ? "" : " DESCR: '" + descr + '\'');
-                session.finish();
-            }
-            finally { session.success(); }
-        }
-       if (cause == null)
-           log1.trace(msg);
-        else
-           log1.trace(msg, cause);
-
-    }
-
 //    /**
 //     * This method will be called by {@link #transit(TaskState)},
 //     * if the model's state is restarted (so {@code CREATED_restarted}, {@code INITIALIZED_restarted} or {@code IN_PROGRESS_restarted}).
@@ -783,155 +961,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
 //        return e instanceof FailedException;
 //    }
 
-    @Override
-    public Taskling getModel() {
-        return super.getModel();
-    }
-
-
-    @Override
-    public void setModel(final @NotNull Taskling ling) {
-        super.setModel(ling);    // Overridden method
-        NeoSession session = getDao().beginSession();
-        try {
-            wid = ling.getTask(session).getWID();
-            session.success();
-        }
-        finally { session.finish(); }
-    }
-
-    /**
-     * Inform all listeners about the current model.
-     */
-    protected void refreshTaskResource() {
-
-        try {
-            Taskling model = getModel();
-            getModelUpdateListener().onModelChange(model);
-        }
-        catch (RuntimeException e) {
-            // intentionally ignored
-        }
-    }
-
-
-    /**
-     * Returns the TaskExecutionService corresponding to this TaskAction or a parent TaskAction.
-     *
-     * @return the TaskExecutionService corresponding to this TaskAction or a parent TaskAction.
-     */
-    public TaskExecutionService getService() {
-        if (service == null) {
-            final TaskAction taskAction = nextParentOfType(TaskAction.class);
-            return taskAction == null ? null : taskAction.getService();
-        }
-        return service;
-    }
-
-
-    public void setService(final @NotNull TaskExecutionService serviceParam) {
-        if (service == null)
-            service = serviceParam;
-        else
-           throw new IllegalStateException("Can't overwrite service");
-    }
-
-    public Log getLog() {
-        return log;
-    }
-
-
-    public void setLog(final Log logParam) {
-        //log = logParam;
-    }
-
-    
-    /**
-     * Stopps the computation of the model if the task lifetime is already exceeded.
-     *
-     * If the lifetime is exceeded, it sets the TaskState of the given model as well as the corresponding AbstractTask
-     * in the database (if still present) to {@code FAILURE} by invoking {@code fail()}.
-     *
-     * @see #fail(RuntimeException)
-     * @see AbstractTask#fail(Exception)
-     */
-    private void checkTimeout( @NotNull Taskling ling ) {
-
-        NeoSession session = getDao().beginSession();
-        try {
-            NeoTask model = ling.getTask(session);
-
-            // check the task lifetime
-            if( model.getTerminationTime().compareTo( new GregorianCalendar( ) ) < 1 ) {
-                getLog().debug(  "Task lifetime exceeded" );
-                throw new RuntimeException("Task lifetime exceeded");
-//                boolean containt = false;
-//                try {
-//                    // check if model is still there
-//                    containt = em.contains( model );
-//                    if( containt ) {
-//                        model.fail( new RuntimeException( "Task lifetime exceeded" ) );
-//                        getLog().debug(  "Try to persist task" );
-//                    }
-//                    tx.commit( );
-//                } catch ( Exception e ) {
-//                    // exception here  doesn't really matter
-//                    // task is doomed anyway
-//                    e.printStackTrace(  );
-//                } finally {
-//                    tx.finish();
-//                }
-//                // interrupt this thread
-//                getLog().debug(  "Stopping task thread" );
-//                //Thread.currentThread().interrupt();
-//                if( containt ) refreshTaskResource();
-//                fail( new RuntimeException( "Task lifetime exceeded" ) );
-            }
-            session.success();
-        }
-        finally { session.finish(); }
-    }
-
-
-	@Override
-	public EntityManager getEntityManager() {
-		return getOwnEntityManager();
-	}
-
-
-	public EntityManagerFactory getEmf() {
-		return emf;
-	}
-
-
-	@Inject
-	public void setEmf(final @NotNull EntityManagerFactory emfParam) {
-		emf = emfParam;
-	}
-
-    public ConfigletProvider getConfigletProvider() {
-        return configletProvider;
-    }
-
-
-    @Inject
-    public void setConfigletProvider( ConfigletProvider configletProvider ) {
-        this.configletProvider = configletProvider;
-    }
-
-
-
-    public void setCredentialProvider( CredentialProvider cp ) {
-        this.credentialProvider = cp;
-    }
-
-
-    public CredentialProvider getCredentialProvider() {
-
-        return this.credentialProvider;
-    }
-
-
+//
 //    /**
 //     * Tries to call the {@link #cleanUpOnFail(de.zib.gndms.model.gorfx.AbstractTask)} } method for the model,
 //     * catches and logs possible exceptions.
@@ -947,36 +977,6 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
 //            getLog().debug( "Exception on task cleanup: " + e.toString() );
 //        }
 //    }
-//
-
-    /**
-     * Extracts the actual permissions from a tasks permission info object
-     *
-     * @return
-     */
-    public FilePermissions actualPermissions( ) {
-        NeoSession session = getDao().beginSession();
-        try {
-            NeoTask task = getModel().getTask(session);
-            FilePermissions filePermissions = null;
-            if( task.getPermissionInfo() != null ) {
-                PermissionConfiglet pc = configletProvider.getConfiglet( PermissionConfiglet.class,
-                        task.getPermissionInfo().getPermissionConfigletName() );
-                if( pc != null ) {
-                    filePermissions = pc.permissionsFor(task.getPermissionInfo().getUserName());
-                }
-            }
-
-            session.success();
-            return filePermissions;
-        }
-        finally { session.finish(); }
-
-
-    }
-
-
-//    // TODO Delete later below
 //
 //    /**
 //     *
@@ -1090,6 +1090,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
 //        @Override
 //        public boolean isDemandingAbort() { return true; }
 //    }
+
 
 
 }
