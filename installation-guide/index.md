@@ -168,6 +168,8 @@ Installation and Deployment from Distribution Package
 
 ### Migrating from a Previous Installation
 
+**Attention:** *Please backup your `$GLOBUS_LOCATION/lib` before proceeding*
+
 If there is an existing installation of GNDMS in
 your globus toolkit container, it must be properly
 removed before continuing. To do so, please shutdown
@@ -176,10 +178,10 @@ enter `$GNDMS_SOURCE`, and execute
 
   gndms-buildr auto-clean
 
-Note: *Only* if you installed a source snapshot of GNDMS with an
+**Note:** *Only if you installed a source snapshot of GNDMS with an
   irregular version number, you have to delete all jars that were
   installed before manually.  Newer versions of GNDMS write a list of
-  these installed jars to `$GLOBUS_LOCATION/lib/gndms-dependencies`. 
+  these installed jars to `$GLOBUS_LOCATION/lib/gndms-dependencies`.*
  
  
 
@@ -297,9 +299,8 @@ execute `gndms-buildr c3grid-dp-setupdb`
 See <a href='#testing_your_c3_installation'>below</a> for a more detailed
 description of the test.
 
-
 **PT-Grid Setup & Configuration** 
-: Edit `$GNDMS_SOURCE/scripts/ptgrid/setup-resource.sh` and execute `gndms-buildr ptgrid-setubdb`
+: Edit `$GNDMS_SOURCE/scripts/ptgrid/setup-resource.sh` and execute `gndms-buildr ptgrid-setupdb`
 
 **PT-Grid Quick Test** 
 : Follow the setup instructions in the testing section <a href='#testing_your_installation'>below</a>
@@ -351,8 +352,8 @@ The test client simulates a standard GNDMS-use-case, it creates a
 target slice, copies some files into the slice. Then it copies the
 files back from the slice to some target directory and destroys the slice.
 
-*C3Grid/INAD: To test the stage-in functionality
-click <a href='#testing_your_c3_installation'>here</a>.*
+**C3Grid/INAD**: *This test is <b>not</b> for you, to test the stage-in
+  functionality click <a href='#testing_your_c3_installation'>here</a>.*
 
 This test should be executed as *ordinary grid-user* not the
 as the globus user.
@@ -525,8 +526,8 @@ Advanced Configuration
 
 To enable a select group of users to read the container.log from
 outside, add their DNs to either
-`/etc/grid-security/gndms-support-stuff` or
-`$GLOBUS_LOCATION/etc/gndms_shared/gndms-support-stuff`.  Depending on
+`/etc/grid-security/gndms-support-staff` or
+`$GLOBUS_LOCATION/etc/gndms_shared/gndms-support-staff`.  Depending on
 your setup, you need to replace `gndms` with your subgrid name
 (`ptgrid`, `c3grid`, etc.) in these file names.
 
