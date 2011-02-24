@@ -8,9 +8,9 @@ fi
 
 if [ ! -d "$GNDMS_SOURCE/lib/jruby-1.5.1" ] ; then
   echo "Unpacking jruby-1.5.1 with installed jbuildr 1.4.1"
-	( cd lib && tar -zxf jruby-1.5.1.tgz )
-  ( cd lib && chmod 0755 jruby-1.5.1 )
+	( cd "$GNDMS_SOURCE/lib" && tar -zxf jruby-1.5.1.tgz )
+  ( cd "$GNDMS_SOURCE/lib" && chmod 0755 jruby-1.5.1 )
 fi
 
-$GNDMS_SOURCE/lib/jruby-1.5.1/bin/jruby $@
+"$GNDMS_SOURCE/lib/jruby-1.5.1/bin/jruby" $@
 
