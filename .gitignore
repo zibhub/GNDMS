@@ -1,5 +1,7 @@
 syntax:glob
 
+lib/apache-ant-current
+lib/jruby-current
 lib/apache-ant-1.7.1
 doc/api
 doc/markdown
