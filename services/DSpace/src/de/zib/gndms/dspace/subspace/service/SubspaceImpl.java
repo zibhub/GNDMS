@@ -133,8 +133,10 @@ public class SubspaceImpl extends SubspaceImplBase {
             sref = srh.getResourceReference( rk );
             tx.commit( );
         } catch ( OutOfSpace e ) {
+            logger.debug(e);
             throw e;
         } catch ( Exception e ) {
+            logger.debug(e);
             if( srh != null && rk != null )
                 srh.remove( rk );
             throw new RemoteException( e.toString(), e );

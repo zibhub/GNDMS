@@ -54,7 +54,7 @@ testTool('openssl')
 testTool('hostname')
 HOSTNAME = `hostname`.split[0]
 
-puts "GNDMS #{VERSION_NUMBER} '#{VERSION_NAME}'" 
+puts "GNDMS #{VERSION_NUMBER} \”#{VERSION_NAME}\""
 puts MF_COPYRIGHT
 puts "#{LICENSE}  Please consult doc/licensing about licensing conditions of downloaded 3rd party software."
 if ENV['GNDMS_DEPS']=='skip' then 
@@ -286,15 +286,17 @@ define 'gndms' do
         classpathFile.syswrite('<?xml version="1.0"?>' + "\n" + '<project><target id="setGNDMSDeps"><path id="service.build.extended.classpath">' + "\n")
         depsFile = File.new(GT4LIB + '/gndms-dependencies', 'w')
         deps.select { |jar| jar[0, GT4LIB.length] != GT4LIB }.each { |file| 
-          basename = File.basename( file )
+           basename = File.basename( file )
+           newname = GT4LIB+'/'+basename
            if (copy)
-             puts 'cp: \'' + file + '\' to: \'' + GT4LIB + '\''
-             cp(file, GT4LIB)
-             chmod 0644, GT4LIB+"/"+basename, :verbose=>false
+             puts 'cp: \'' + file + '\' to: \'' + newname + '\''
+             cp(file, newname)
+	     puts 'yay'
+             chmod 0644, newname
            else
-             puts 'ln_sf: \'' + file + '\' to: \'' + GT4LIB + '\''
-             chmod 0644, file, :verbose=>false
-             ln_sf(file, GT4LIB)
+             puts 'ln_sf: \'' + file + '\' to: \'' + newname + '\''
+             chmod 0644, file
+             ln_sf(file, newname)
            end
            depsFile.syswrite(basename + "\n") 
            classpathFile.syswrite('<pathelement location="' + basename + '" />' + "\n")
@@ -509,7 +511,7 @@ task 'c3grid-dp-setupdb' do
 end
 
 task 'install-chown-script' do
-    system "install -o root -g root -m 700 #{ENV['GNDMS_SOURCE']}/dev-bin/chownSlice.sh #{ENV['GNDMS_SHARED']}"
+    system "install -o 0 -g 0 -m 700 #{ENV['GNDMS_SOURCE']}/dev-bin/chownSlice.sh #{ENV['GNDMS_SHARED']}"
 end
 
 task 'c3grid-dp-test' => task('gndms:gndmc:run-staging-test') 
@@ -564,22 +566,40 @@ end
 
 task 'artifcats' => ['artifacts']
 
+def hasPath?(path)
+    return ( File.exists?(path) or File.symlink?(path) )
+end
+
 desc 'Guesses the previous installed version and removes it' 
 task 'auto-clean' do
-    
+    puts 'Guessing installed version...'
     path = "#{ENV['GLOBUS_LOCATION']}/lib/"
-    if( File.exists?( "#{path}gndms-shared-model.jar" ) )   
-        puts "assuming 0.2.8"
+    if( hasPath?( "#{path}gndms-shared-model.jar" ) )   
+        puts 'GNDMS 0.2.8 detected.'
         cleanRev( '0.2.8' )
-    elsif( File.exists?( "#{path}gndms-model-0.3.0.jar" ) )
-        puts "assuming 0.3.0"
+    elsif( hasPath?( "#{path}gndms-model-0.3.0.jar" ) )
+        puts 'GNDMS 0.3.0 detected.'
         cleanRev( '0.3.0' )
-    elsif( File.exists?( "#{path}gndms-model-0.3.2.jar" ) )
-        puts "assuming 0.3.2"
+    elsif( hasPath?( "#{path}gndms-model-0.3.2.jar" ) )
+        puts 'GNDMS 0.3.2 detected.'
         cleanRev( '0.3.2' )
     else
-        puts "No previously installed version detected."
+        puts 'No previously installed version detected.'
     end
+    puts 'About to remove old c3grid service directories (if existing)'
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/lib/c3grid_DSpace" )
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/etc/gpt/packages/c3grid_DSpace" )
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/lib/c3grid_GORFX" )
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/etc/gpt/packages/c3grid_GORFX" )
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/lib/c3grid_WHORFX" )
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/etc/gpt/packages/c3grid_WHORFX" )
+    puts 'About to remove old gndms service directories (if existing)'
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/lib/gndms_DSpace" )
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/etc/gpt/packages/gndms_DSpace" )
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/lib/gndms_GORFX" )
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/etc/gpt/packages/gndms_GORFX" )
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/lib/gndms_WHORFX" )
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/etc/gpt/packages/gndms_WHORFX" )
 end
 
 
@@ -599,8 +619,8 @@ end
 def cleanRev( version )
     IO.foreach( "#{ENV['GNDMS_SOURCE']}/buildr/#{version}/files" )  { |block|
         fn = eval( '"'+block+'"' ).chomp
-        #puts "deleting #{fn}" if( File.exists?( fn ) )  
-        File.delete ( fn ) if( File.exists?( fn ) )  
+        puts "Removing #{fn}" if( hasPath?( fn ) )  
+        File.delete( fn ) if( hasPath?( fn ) )  
     }
 end 
 

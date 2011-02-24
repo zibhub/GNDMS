@@ -2,6 +2,8 @@ syntax:glob
 
 lib/apache-ant-1.7.1
 doc/api
+doc/markdown
+doc/html
 gndmc/gndms-gndmc/
 gndmc/target/
 Buildfile~
