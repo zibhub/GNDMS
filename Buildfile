@@ -16,8 +16,8 @@ repositories.remote << 'http://google-maven-repository.googlecode.com/svn/reposi
 # Don't touch below unless you know what you are doing
 # --------------------------------------------------------------------------------------------------
 
-VERSION_NUMBER = '0.3.2'
-VERSION_NAME = 'Shigeru'
+VERSION_NUMBER = '0.6.0-pre'
+VERSION_NAME = 'RESTIFY'
 GROUP_NAME = 'de.zib.gndms'
 MF_COPYRIGHT = 'Copyright 2008-2011 Zuse Institute Berlin (ZIB)'
 LICENSE ='This software has been licensed to you under the terms and conditions of the Apache License 2.0 (APL 2.0) only.'
@@ -45,8 +45,8 @@ JAVA_HOME = ENV['JAVA_HOME']
 SOURCE = '1.5'
 TARGET = '1.5'
 testEnv('GNDMS_SOURCE', 'the root directory of GNDMS source distribution (i.e. the toplevel directory in which the Buildfile resides)')
-testEnv('GNDMS_SHARED', '$GLOBUS_LOCATION/etc/gndms_shared')
-testEnv('GNDMS_MONI_CONFIG', '$GNDMS_SHARED/monitor.properties')
+#testEnv('GNDMS_SHARED', '$GLOBUS_LOCATION/etc/gndms_shared')
+#testEnv('GNDMS_MONI_CONFIG', '$GNDMS_SHARED/monitor.properties')
 testEnv('USER', 'your user\'s login (your UNIX is weird)')
 testTool('rsync')
 testTool('curl')
@@ -644,6 +644,9 @@ task 'fix-permissions' do
     system "#{ENV['GNDMS_SOURCE']}/scripts/internal/fix-permissions.sh"
 end
 
+
+desc 'Test REST setup'
+task 'restTest' => task( 'gndms:rest:package' )
 
 task 'artifcats' => ['artifacts']
 
