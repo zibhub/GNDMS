@@ -146,7 +146,7 @@ This step is optional.
 GNDMS is built and installed using
 [Apache buildr](http:///buildr.apache.org). A pre-packaged version of
 buildr is included with GNDMS and can be executed by running
-`$GNDMS_SOURCE/bin/gndms-buildr`.  However, if you prever to install
+`$GNDMS_SOURCE/bin/gndms-buildr`.  However, if you prefer to install
 buildr locally, please
 
 * Install Ruby 1.8
@@ -174,7 +174,7 @@ If there is an existing installation of GNDMS in
 your globus toolkit container, it must be properly
 removed before continuing. To do so, please shutdown
 your container using `globus-stop-container-detached`,
-enter `$GNDMS_SOURCE`, and execute
+enter `$GNDMS_SOURCE`, and execute 
 
   gndms-buildr auto-clean
 
@@ -183,7 +183,10 @@ enter `$GNDMS_SOURCE`, and execute
   installed before manually.  Newer versions of GNDMS write a list of
   these installed jars to `$GLOBUS_LOCATION/lib/gndms-dependencies`.*
  
- 
+**Note for data-provider:** *If you come from a release < 0.3.0 you
+need to change the permissions of the folders located in your `STAGING_AREA_PATH`
+to 1777. Alternatively you can simply delete them, they will be
+created when the next staging is performed*
 
 ### Installation and Initial Deployment
  
@@ -362,7 +365,7 @@ as the globus user.
 ### Setup
 
 For the scenario the following setup is required. On your grid-ftp
-space create a source directory and `chown 1777` it.  Then, please add
+space create a source directory.  Then, please add
 some files, e.g. by using the following bash command-line:
 
 {% highlight bash %}
@@ -489,6 +492,17 @@ doesn't exist or your CA directory isn't up to date. In the first case
 just call `grid-proxy-init` again, in the second refer to the
 `fetch-crl` section <a href="#fetch-crl">below</a>.
 
+**I'm getting an java.lang.IllegalStateException from the first transfer**
+: If the exception message contains the custom message:
+<pre><code>
+...
+Custom message: Server refused changing directory (error code 1) [Nested exception message:  Custom message: Unexpected reply: 550-/some/dir/2257abd0-433a-11e0-bb7b-9a0f3bfb91a0: Could not change directory. : System error in stat: Permission denied
+...
+</code></pre>
+Please make sure that `/some/dir` is owned by the globus user and has
+permissions 1777. Also make sure that your GRAM setup (especially the
+sudoers entries) is correct.
+
 
 **The file transfer throws an execption:**
 : If the exeption looks something like
@@ -518,6 +532,7 @@ right network device and that now firewall is blocking the connection.
 If this hangs infinitely something with the data-channel setup is
 wrong. Consult the grid-ftp documentation about the --data-channel
 argument.
+
 
 Advanced Configuration
 ----------------------
