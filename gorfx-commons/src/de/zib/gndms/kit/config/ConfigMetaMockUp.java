@@ -23,10 +23,10 @@ import de.zib.gndms.kit.action.ActionMetaMockUp;
  *          <p/>
  *          Date: 08.02.11, Time: 17:06
  */
-public class ConfigMetaMockUp extends ActionMetaMockUp implements ConfigMeta {
+public class ConfigMetaMockUp extends ActionMetaMockUp<ConfigAction> implements ConfigMeta {
 
 
-    public ConfigAction getAction() {
+    public ConfigActionMockUp getAction() {
         return new ConfigActionMockUp( getName() + " called" );
     }
 }

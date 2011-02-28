@@ -37,7 +37,7 @@ import java.util.List;
  *  <li> The <b>dn</b> parameter is a identifier for the user responsible for the method invocation. It is required to check if
  *       the user has the necessary permissions for the call.  <br>
  *          Using REST the attribute should be provided using a http-header property called "DN".
- *  <li> <b>wid</b> stands for Workflow-ID and is used to associate calles to a single workflow mainly for logging and
+ *  <li> <b>wid</b> stands for Workflow-ID and is used to associate calls to a single workflow mainly for logging and
  *      debugging. <br>
  *          Using REST the attribute should be provided using a http-header property "wid".
  * </ul>
