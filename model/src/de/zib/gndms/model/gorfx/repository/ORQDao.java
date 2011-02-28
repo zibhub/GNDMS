@@ -38,5 +38,6 @@ public class ORQDao<M extends AbstractORQ> extends QueuedTransientDao<TypedUUId,
 
 
     public TypedUUId create( String descriptor ) {
+    	return null;
     }
 }

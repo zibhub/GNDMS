@@ -41,11 +41,22 @@ public interface TaskFlowService {
      * 
      * @param type The type of the task flow.
      * @param id The id of the task flow.
+     * @param dn The dn of the user invoking the method.
      * 
      * @return The facets of the task flow.
      */
-    ResponseEntity<Facets> getFacets( String type, String id );
+    ResponseEntity<Facets> getFacets( String type, String id, String dn );
 
+    /** @brief Deletes a task flow.
+     * 
+     * @param type The type of the task flow.
+     * @param id The id of the task flow.
+     * @param dn The dn of the user invoking the method.
+     * 
+     * @return 
+     */
+    ResponseEntity<Void> deleteTaskflow ( String type, String id, String dn);
+    
     /** @brief Delivers the order of the task flow.
      * 
      * The order contains the parameters of the taskflow, i.e. which
@@ -54,10 +65,11 @@ public interface TaskFlowService {
      *
      * @param type The type of the task flow.
      * @param id The id of the task flow.
+     * @param dn The dn of the user invoking the method.
      * 
      * @return The order details of the task flow.
      */
-    ResponseEntity<AbstractTF> getOrder( String type, String id );
+    ResponseEntity<AbstractTF> getOrder( String type, String id, String dn );
 
     /** 
      * @brief Changes the order of a task flow.
@@ -65,11 +77,12 @@ public interface TaskFlowService {
      * @param type The type of the task flow.
      * @param id The id of the task flow.
      * @param orq The new order.
+     * @param dn The dn of the user invoking the method.
      * 
      * @return A confirmation if the order was accepted, in the
      * HTTP-status of the response entity.
      */
-    ResponseEntity<Void> setOrder( String type, String id, AbstractTF orq );
+    ResponseEntity<Void> setOrder( String type, String id, AbstractTF orq, String dn);
 
     /** 
      * @brief Delivers all quotes for the order.
@@ -80,10 +93,11 @@ public interface TaskFlowService {
      *
      * @param type The type of the task flow.
      * @param id The id of the task flow.
+     * @param dn The dn of the user invoking the method.
      *
      * @return A list of quotes.
      */
-    ResponseEntity<List<Quote>> getQuotes( String type, String id );
+    ResponseEntity<List<Quote>> getQuotes( String type, String id, String dn );
 
     /** 
      * @brief Allows the client to provide a preferred quote.
@@ -94,11 +108,12 @@ public interface TaskFlowService {
      * @param type The type of the task flow.
      * @param id The id of the task flow.
      * @param cont The preferred quote.
+     * @param dn The dn of the user invoking the method.
      *
      * @return A confirmation if the quote was accepted, in the
      * HTTP-status of the response entity.
      */
-    ResponseEntity<Void> setQuote( String type, String id, Quote cont );
+    ResponseEntity<Void> setQuote( String type, String id, Quote cont, String dn );
 
     /** 
      * @brief Delivers a single quote.
@@ -106,11 +121,12 @@ public interface TaskFlowService {
      * @param type The type of the task flow.
      * @param id The id of the task flow.
      * @param idx The index of the quote.
+     * @param dn The dn of the user invoking the method.
      *
      * @return The quote, or HTTP-status 404 if the index doesn't point
      * to a valid quote.
      */
-    ResponseEntity<Quote> getQuote( String type, String id, int idx );
+    ResponseEntity<Quote> getQuote( String type, String id, int idx, String dn );
 
     /** 
      * @brief Removes a quote form the list, ^
@@ -118,23 +134,25 @@ public interface TaskFlowService {
      * @param type
      * @param id
      * @param idx
+     * @param dn The dn of the user invoking the method.
      * 
      * @return 
      *
      * \note I think this is required.
      */
-    ResponseEntity<Void> deleteQuotes( String type, String id, int idx );
+    ResponseEntity<Void> deleteQuotes( String type, String id, int idx, String dn );
 
     /** 
      * @brief Requests the task of the taskflow.
      * 
      * @param type The type of the task flow.
      * @param id The id of the task flow.
+     * @param dn The dn of the user invoking the method.
      * 
      * @return The URL of the task resource or HTTP-status 404 the
      * task hasn't been created yet.
      */
-    ResponseEntity<String> getTask( String type, String id );
+    ResponseEntity<String> getTask( String type, String id, String dn );
 
     /** 
      * @brief Creates the task for a taskflow.
@@ -145,17 +163,20 @@ public interface TaskFlowService {
      * @param id The id of the task flow.
      * @param quoteId The id of the quote which should be honored.
      * (OPTIONAL, can be null ).
+     * @param dn The dn of the user invoking the method.
      * 
      * @return HTTP-status 201 if the creation was successful,
      * together with the URL of the created resource. 
      */
-    ResponseEntity<String> createTask( String type, String id, String quoteId );
-
+	ResponseEntity<String> createTask(String type, String id,
+			String quoteId, String dn);
+	
     /** 
      * @brief Delivers the status of the taskflow execution.
      * 
      * @param type The type of the task flow.
      * @param id The id of the task flow.
+     * @param dn The dn of the user invoking the method.
      * 
      * @return The taskflow status, which might be HTTP-status 302
      * together with the URL of the task status if the task is
@@ -163,25 +184,27 @@ public interface TaskFlowService {
      * taskflow. Note the 200 doesn't mean that the taskflow is okay,
      * the status can be failed.
      */
-    ResponseEntity<TaskFlowStatus> getStatus( String type, String id );
+    ResponseEntity<TaskFlowStatus> getStatus( String type, String id, String dn );
 
     /** 
      * @brief Delivers the result of the taskflow execution.
      * 
      * @param type The type of the task flow.
      * @param id The id of the task flow.
+     * @param dn The dn of the user invoking the method.
      * 
      * @return The taskflow result, which might be HTTP-status 302
      * together with the URL of the task result or 404 if no result is
      * available.
      * */
-    ResponseEntity<TaskFlowResult> getResult( String type, String id );
+    ResponseEntity<TaskFlowResult> getResult( String type, String id, String dn );
 
     /** 
      * @brief Delivers possible errors from the task(flow) execution. 
      * 
      * @param type The type of the task flow.
      * @param id The id of the task flow.
+     * @param dn The dn of the user invoking the method.
      * 
      * @return Possible values:
      *     - 404 if there haven't been errors yet,
@@ -191,5 +214,5 @@ public interface TaskFlowService {
      *     - 200 together with the error of the taskflow, e.g. an
      *       unfulfillable order.
      */
-    ResponseEntity<TaskFlowFailure> getErrors( String type, String id ); 
+    ResponseEntity<TaskFlowFailure> getErrors( String type, String id, String dn ); 
 }
