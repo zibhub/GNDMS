@@ -496,7 +496,9 @@ just call `grid-proxy-init` again, in the second refer to the
 : If the exception message contains the custom message:
 <pre><code>
 ...
-Custom message: Server refused changing directory (error code 1) [Nested exception message:  Custom message: Unexpected reply: 550-/some/dir/2257abd0-433a-11e0-bb7b-9a0f3bfb91a0: Could not change directory. : System error in stat: Permission denied
+Custom message: Server refused changing directory (error code 1) [Nested exception message:  
+    Custom message: Unexpected reply: 550-/some/dir/2257abd0-433a-11e0-bb7b-9a0f3bfb91a0: 
+        Could not change directory. : System error in stat: Permission denied
 ...
 </code></pre>
 Please make sure that `/some/dir` is owned by the globus user and has
