@@ -44,7 +44,7 @@ public class TaskFlowClient implements TaskFlowService {
 	}
 
 	public ResponseEntity<Void> setOrder(String type, String id, AbstractTF orq, String dn) {
-        return unifiedPut( orq, serviceURL + "/gorfx/" + type + "/" + id + "/order", dn );
+        return unifiedPut( Void.class, orq, serviceURL + "/gorfx/" + type + "/" + id + "/order", dn );
 	}
 
 	public ResponseEntity<List<Quote>> getQuotes(String type, String id, String dn) {
@@ -52,7 +52,7 @@ public class TaskFlowClient implements TaskFlowService {
 	}
 
 	public ResponseEntity<Void> setQuote(String type, String id, Quote cont, String dn) {
-        return unifiedPut( cont, serviceURL + "/gorfx/" + type + "/" + id + "/quote", dn );
+        return unifiedPut( Void.class, cont, serviceURL + "/gorfx/" + type + "/" + id + "/quote", dn );
 	}
 
 	public ResponseEntity<Quote> getQuote(String type, String id, int idx, String dn) {
@@ -69,9 +69,7 @@ public class TaskFlowClient implements TaskFlowService {
 
 	public ResponseEntity<String> createTask(String type, String id,
 			String quoteId, String dn) {
-		// how to get task to be created
-        // return unifiedPut( ???, serviceURL + "/gorfx/" + type + "/" + id + "/task", dn );
-		return null;
+        return unifiedPut( String.class, quoteId, serviceURL + "/gorfx/" + type + "/" + id + "/task", dn );
 	}
 
 	public ResponseEntity<TaskFlowStatus> getStatus(String type, String id, String dn) {
@@ -98,11 +96,11 @@ public class TaskFlowClient implements TaskFlowService {
         return restTemplate.exchange( url, HttpMethod.POST, requestEntity, clazz );
     }
 
-    protected <P> ResponseEntity<Void> unifiedPut( P parm, String url, String dn ) {
+    protected <T,P> ResponseEntity<T> unifiedPut( Class<T> clazz, P parm, String url, String dn ) {
         GNDMSResponseHeader requestHeaders = new GNDMSResponseHeader();
         requestHeaders.setDN( dn );
         HttpEntity<P> requestEntity = new HttpEntity<P>(parm, requestHeaders );
-        return restTemplate.exchange( url, HttpMethod.PUT, requestEntity, Void.class );
+        return restTemplate.exchange( url, HttpMethod.PUT, requestEntity, clazz );
     }
 
     protected ResponseEntity<Void> unifiedDelete( String url, String dn ) {
