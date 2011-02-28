@@ -21,9 +21,8 @@ repositories.remote << 'http://repo.marketcetera.org/maven'
 #
 require "open3"
 
-VERSION_NUMBER = '0.3.5'
-VERSION_NAME = 'Richie'
-FALLBACK_VERSION_TAG = 'release-Richie'
+VERSION_NUMBER = '0.6.0-pre'
+VERSION_NAME = 'RESTIFY'
 GROUP_NAME = 'de.zib.gndms'
 MF_COPYRIGHT = 'Copyright 2008-2011 Zuse Institute Berlin (ZIB)'
 LICENSE ='This software has been licensed to you under the terms and conditions of the Apache License 2.0 (APL 2.0) only.'
@@ -823,6 +822,10 @@ task 'install-distribution' => ['install-deps', 'deploy-DSpace', 'deploy-GORFX']
 task 'fix-permissions' do
     system "#{ENV['GNDMS_SOURCE']}/scripts/internal/fix-permissions.sh"
 end
+
+
+desc 'Test REST setup'
+task 'restTest' => task( 'gndms:rest:package' )
 
 task 'artifcats' => ['artifacts']
 
