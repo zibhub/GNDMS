@@ -1,3 +1,4 @@
+# -*- mode: ruby -*-
 # Large amounts of memory ensure a fast build
 ENV['JAVA_OPTS'] ||= '-Xms512m -Xmx768m'
 
@@ -15,10 +16,10 @@ repositories.remote << 'http://google-maven-repository.googlecode.com/svn/reposi
 # Don't touch below unless you know what you are doing
 # --------------------------------------------------------------------------------------------------
 
-VERSION_NUMBER = '0.3.0'
-VERSION_NAME = 'Rob'
+VERSION_NUMBER = '0.3.2'
+VERSION_NAME = 'Shigeru'
 GROUP_NAME = 'de.zib.gndms'
-MF_COPYRIGHT = 'Copyright 2008-2010 Zuse Institute Berlin (ZIB)'
+MF_COPYRIGHT = 'Copyright 2008-2011 Zuse Institute Berlin (ZIB)'
 LICENSE ='This software has been licensed to you under the terms and conditions of the Apache License 2.0 (APL 2.0) only.'
 MF_LICENSE="#{LICENSE}  See META-INF/LICENSE for detailed terms and conditions."
 USERNAME = ENV['USER'].to_s
@@ -44,8 +45,8 @@ JAVA_HOME = ENV['JAVA_HOME']
 SOURCE = '1.5'
 TARGET = '1.5'
 testEnv('GNDMS_SOURCE', 'the root directory of GNDMS source distribution (i.e. the toplevel directory in which the Buildfile resides)')
-#testEnv('GNDMS_SHARED', '$GLOBUS_LOCATION/etc/gndms_shared')
-#testEnv('GNDMS_MONI_CONFIG', '$GNDMS_SHARED/monitor.properties')
+testEnv('GNDMS_SHARED', '$GLOBUS_LOCATION/etc/gndms_shared')
+testEnv('GNDMS_MONI_CONFIG', '$GNDMS_SHARED/monitor.properties')
 testEnv('USER', 'your user\'s login (your UNIX is weird)')
 testTool('rsync')
 testTool('curl')
@@ -53,7 +54,7 @@ testTool('openssl')
 testTool('hostname')
 HOSTNAME = `hostname`.split[0]
 
-puts "GNDMS #{VERSION_NUMBER} '#{VERSION_NAME}'" 
+puts "GNDMS #{VERSION_NUMBER} \”#{VERSION_NAME}\""
 puts MF_COPYRIGHT
 puts "#{LICENSE}  Please consult doc/licensing about licensing conditions of downloaded 3rd party software."
 if ENV['GNDMS_DEPS']=='skip' then 
@@ -66,6 +67,8 @@ else
 	end
 end
 
+# ant binary to use
+gndms_ant = ENV['GNDMS_SOURCE'] + '/bin/gndms-ant'
 
 # Helper to construct GT4 jar pathes
 require 'buildr/gt4'
@@ -312,17 +315,20 @@ define 'gndms' do
         classpathFile.syswrite('<?xml version="1.0"?>' + "\n" + '<project><target id="setGNDMSDeps"><path id="service.build.extended.classpath">' + "\n")
         depsFile = File.new(GT4LIB + '/gndms-dependencies', 'w')
         deps.select { |jar| jar[0, GT4LIB.length] != GT4LIB }.each { |file| 
+           basename = File.basename( file )
+           newname = GT4LIB+'/'+basename
            if (copy)
-             puts 'cp: \'' + file + '\' to: \'' + GT4LIB + '\''
-             cp(file, GT4LIB)
-             chmod 0644, GT4LIB+"/"+ File.basename( file ), :verbose=>false
+             puts 'cp: \'' + file + '\' to: \'' + newname + '\''
+             cp(file, newname)
+	     puts 'yay'
+             chmod 0644, newname
            else
-             puts 'ln_sf: \'' + file + '\' to: \'' + GT4LIB + '\''
-             chmod 0644, file, :verbose=>false
-             ln_sf(file, GT4LIB)
+             puts 'ln_sf: \'' + file + '\' to: \'' + newname + '\''
+             chmod 0644, file
+             ln_sf(file, newname)
            end
-           depsFile.syswrite(file + "\n") 
-           classpathFile.syswrite('<pathelement location="' + file + '" />' + "\n")
+           depsFile.syswrite(basename + "\n") 
+           classpathFile.syswrite('<pathelement location="' + basename + '" />' + "\n")
         }
         depsFile.close
         classpathFile.syswrite('</path></target></project>' + "\n\n")
@@ -354,13 +360,13 @@ define 'gndms' do
 
     task 'clean-services' do
       SERVICES.each { |service| 
-        system 'cd ' + _('services/'+service) + ' && ant clean'
+        system 'cd ' + _('services/'+service) + ' && ' + gndms_ant + ' clean'
       }
     end
 
     task 'package-stubs' do
       SERVICES.each { |service| 
-        system "cd '#{_('services', service)}' && ant jarStubs"
+        system "cd '#{_('services', service)}' && " + gndms_ant + " jarStubs"
       }
     end
 
@@ -375,7 +381,7 @@ define 'gndms' do
 
     desc 'Create DSpace GAR for deployment (Requires packaged GNDMS and installed dependencies)'
     task 'package-DSpace' do
-      system "cd '#{_('services', 'DSpace')}' && ant createDeploymentGar"
+      system "cd '#{_('services', 'DSpace')}' && " + gndms_ant + " createDeploymentGar"
       # ln_sf(_('services', 'DSpace', 'gndms_DSpace.gar'), _('.'))
     end
 
@@ -385,7 +391,7 @@ define 'gndms' do
     end
 
     task 'rebuild-DSpace' => [task('package-DSpace'), task('deploy-DSpace')] do
-      system "cd '#{_('services', 'DSpace')}' && ant jars"
+      system "cd '#{_('services', 'DSpace')}' && " + gndms_ant + " jars"
     end
 
     # file DSPACE_STUBS.to_s => task('gndms:package-stubs') do end
@@ -396,7 +402,7 @@ define 'gndms' do
 
     desc 'Create GORFX GAR for deployment (Requires packaged GNDMS and installed dependencies)'
     task 'package-GORFX' do
-      system "cd '#{_('services', 'GORFX')}' && ant createDeploymentGar"
+      system "cd '#{_('services', 'GORFX')}' && " + gndms_ant + " createDeploymentGar"
       # ln_sf(_('services', 'GORFX', 'gndms_GORFX.gar'), _('.'))
     end
 
@@ -406,7 +412,7 @@ define 'gndms' do
     end
 
     task 'rebuild-GORFX' do
-      system "cd '#{_('services', 'GORFX')}' && ant jars"
+      system "cd '#{_('services', 'GORFX')}' && " + gndms_ant + " jars"
     end
 
     # file GORFX_STUBS.to_s => task('gndms:package-stubs') do end
@@ -454,12 +460,19 @@ define 'gndms' do
       task 'run-staging-test' do
         jars = compile.dependencies.map(&:to_s)
         jars << compile.target.to_s
-        args = [ '-props', ENV['GNDMS_SOURCE']+'/test-data/test-properties/g2_stage_del_local.properties', 
-                 '-con-props', ENV['GNDMS_SOURCE']+'/test-data/test-properties/contract.properties', 
-                 '-uri', 'https://130.73.78.15:8443/wsrf/services/gndms/GORFX',
-	             '-dn', '/C=DE/O=GridGermany/OU=Konrad-Zuse-Zentrum fuer Informationstechnik Berlin (ZIB)/OU=CSR/CN=Maik Jorra'
+        host = `hostname`.chomp
+        dn = `grid-proxy-info -identity`
+        dn = dn.chomp
+        if (ENV['GNDMS_SFR'] == nil)
+            prop = 'test-data/sfr/dummy-sfr.properties'
+        else 
+            prop = ENV['GNDMS_SFR']
+        end
+        args = [ '-props', prop, 
+                 '-uri', 'https://' + host + ':8443/wsrf/services/gndms/GORFX',
+	             '-dn', dn
         ]
-        Commands.java('de.zib.gndmc.GORFX.c3grid.SliceStageInClient',  args, 
+        Commands.java('de.zib.gndmc.GORFX.c3grid.ProviderStageInClient',  args, 
                       { :classpath => jars, :properties => 
                           { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" } } )
       end
@@ -578,6 +591,32 @@ end
 
 task 'c3grid-dp-test' => task('gndms:gndmc:run-staging-test') 
 
+task 'install-chown-script' do
+    system "install -o 0 -g 0 -m 700 #{ENV['GNDMS_SOURCE']}/dev-bin/chownSlice.sh #{ENV['GNDMS_SHARED']}"
+end
+
+  
+task 'c3grid-dp-post-deploy-test' do
+    host = `hostname`.chomp
+    dn = `grid-proxy-info -identity`
+    dn = dn.chomp
+    if (ENV['GNDMS_SFR'] == nil)
+      prop = 'test-data/sfr/dummy-sfr.properties'
+    else 
+      prop = ENV['GNDMS_SFR']
+    end
+    # Yes, this is a hack
+    cp = deployedJars()
+    cp << "#{ENV['GNDMS_SOURCE']}/lib/gndmc/gndms-gndmc-#{VERSION_NUMBER}.jar"
+    print cp
+    args = [ '-props', prop, 
+             '-uri', 'https://' + host + ':8443/wsrf/services/gndms/GORFX',
+             '-dn', dn
+           ]
+    Commands.java('de.zib.gndmc.GORFX.c3grid.ProviderStageInClient',  args, 
+                  { :classpath => cp,
+                    :properties => { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" } } )
+end
 
 # Main targets
 
@@ -606,8 +645,67 @@ task 'fix-permissions' do
 end
 
 
-desc 'Test REST setup'
-task 'restTest' => task( 'gndms:rest:package' )
+task 'artifcats' => ['artifacts']
+
+def hasPath?(path)
+    return ( File.exists?(path) or File.symlink?(path) )
+end
+
+desc 'Guesses the previous installed version and removes it' 
+task 'auto-clean' do
+    puts 'Guessing installed version...'
+    path = "#{ENV['GLOBUS_LOCATION']}/lib/"
+    if( hasPath?( "#{path}gndms-shared-model.jar" ) )   
+        puts 'GNDMS 0.2.8 detected.'
+        cleanRev( '0.2.8' )
+    elsif( hasPath?( "#{path}gndms-model-0.3.0.jar" ) )
+        puts 'GNDMS 0.3.0 detected.'
+        cleanRev( '0.3.0' )
+    elsif( hasPath?( "#{path}gndms-model-0.3.2.jar" ) )
+        puts 'GNDMS 0.3.2 detected.'
+        cleanRev( '0.3.2' )
+    else
+        puts 'No previously installed version detected.'
+    end
+    puts 'About to remove old c3grid service directories (if existing)'
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/lib/c3grid_DSpace" )
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/etc/gpt/packages/c3grid_DSpace" )
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/lib/c3grid_GORFX" )
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/etc/gpt/packages/c3grid_GORFX" )
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/lib/c3grid_WHORFX" )
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/etc/gpt/packages/c3grid_WHORFX" )
+    puts 'About to remove old gndms service directories (if existing)'
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/lib/gndms_DSpace" )
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/etc/gpt/packages/gndms_DSpace" )
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/lib/gndms_GORFX" )
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/etc/gpt/packages/gndms_GORFX" )
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/lib/gndms_WHORFX" )
+    rm_rf( "#{ENV['GLOBUS_LOCATION']}/etc/gpt/packages/gndms_WHORFX" )
+end
+
+
+task 'clean-0.2.8' do
+    cleanRev( '0.2.8' )
+end
+
+task 'clean-0.3.0' do
+    cleanRev( '0.3.0' )
+end
+
+task 'clean-0.3.2' do
+    cleanRev( '0.3.2' )
+end
+
+
+def cleanRev( version )
+    IO.foreach( "#{ENV['GNDMS_SOURCE']}/buildr/#{version}/files" )  { |block|
+        fn = eval( '"'+block+'"' ).chomp
+        puts "Removing #{fn}" if( hasPath?( fn ) )  
+        File.delete( fn ) if( hasPath?( fn ) )  
+    }
+end 
+
+
 
 def nope()
      puts ''

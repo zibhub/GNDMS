@@ -1,8 +1,7 @@
 enable_providerstagein() {
 RW="700"
 
-moni call -v .dspace.SetupSliceKind "sliceKind:'http://www.c3grid.de/G2/SliceKind/Result'; sliceKindMode:$RW; uniqueDirName:RW; mode: $MODE"
-moni call -v .dspace.SetupSliceKind "sliceKind:'http://www.c3grid.de/G2/SliceKind/Staging'; sliceKindMode:711; uniqueDirName:Work; mode: $MODE"
+moni call -v .dspace.SetupSliceKind "sliceKind:'http://www.c3grid.de/G2/SliceKind/Staging'; sliceKindMode:$RW; uniqueDirName:RW; mode: $MODE"
 
 moni call -v .dspace.SetupSubspace  "subspace:'{http://www.c3grid.de/G2/Subspace}ProviderStaging'; \
 	path:'$STAGING_AREA_PATH'; 
@@ -12,7 +11,6 @@ moni call -v .dspace.SetupSubspace  "subspace:'{http://www.c3grid.de/G2/Subspace
 	mode:'$MODE'"
 
 moni call -v .dspace.AssignSliceKind "subspace:'{http://www.c3grid.de/G2/Subspace}ProviderStaging'; sliceKind: http://www.c3grid.de/G2/SliceKind/Staging; mode:'$ADDMODE'"
-moni call -v .dspace.AssignSliceKind "subspace:'{http://www.c3grid.de/G2/Subspace}ProviderStaging'; sliceKind: http://www.c3grid.de/G2/SliceKind/Result; mode:'$ADDMODE'"
 moni call -v .dspace.AssignSliceKind "subspace:'{http://www.c3grid.de/G2/Subspace}ProviderStaging'; sliceKind: http://www.c3grid.de/G2/SliceKind/DMS; mode:'$ADDMODE'"
 moni call -v .dspace.AssignSliceKind "subspace:'{http://www.c3grid.de/G2/Subspace}ProviderStaging'; sliceKind: http://www.c3grid.de/G2/SliceKind/DMS_RW; mode:'$ADDMODE'"
 

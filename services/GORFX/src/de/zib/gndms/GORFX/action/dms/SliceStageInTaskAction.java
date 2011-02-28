@@ -1,7 +1,7 @@
 package de.zib.gndms.GORFX.action.dms;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,7 +94,8 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
             cnt.setProxy( gc );
 
             trace( "Starting remote staging.", null );
-            boolean finished = GORFXClientUtils.waitForFinish( cnt, 1000 );
+            // poll every 15 seconds
+            boolean finished = GORFXClientUtils.waitForFinish( cnt, 15000 );
 
             if (finished) {
                 trace( "Remote staging finished.", null );

@@ -1,4 +1,3 @@
-
 module GNDMS
 
   def dmsLayout(prj, out)
