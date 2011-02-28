@@ -365,8 +365,8 @@ as the globus user.
 ### Setup
 
 For the scenario the following setup is required. On your grid-ftp
-space create a source directory.  Then, please add
-some files, e.g. by using the following bash command-line:
+space create a source directory and add some files, e.g. by using the
+following bash command-line:
 
 {% highlight bash %}
 
