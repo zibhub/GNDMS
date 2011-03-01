@@ -1,7 +1,7 @@
 package de.zib.gndms.gndmc.gorfx;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,84 +58,84 @@ public class TaskFlowClient extends AbstractClient implements TaskFlowService {
 	}
 
 	@Override
-	public final ResponseEntity<Void> deleteTaskflow(final String type, final String id, final String dn) {
-		return unifiedDelete(serviceURL + "/gorfx/" + type + "/" + id, dn);
+	public final ResponseEntity<Void> deleteTaskflow(final String type, final String id, final String dn, final String wid) {
+		return unifiedDelete(serviceURL + "/gorfx/" + type + "/" + id, dn, wid);
 	}
 
 	@Override
-	public final ResponseEntity<AbstractTF> getOrder(final String type, final String id, final String dn) {
+	public final ResponseEntity<AbstractTF> getOrder(final String type, final String id, final String dn, final String wid) {
 		return unifiedGet(AbstractTF.class, serviceURL + "/gorfx/" + type + "/"
-				+ id + "/order", dn);
+				+ id + "/order", dn, wid);
 	}
 
 	@Override
 	public final ResponseEntity<Void> setOrder(final String type, final String id,
-			final AbstractTF orq, final String dn) {
+			final AbstractTF orq, final String dn, final String wid) {
 		return unifiedPut(Void.class, orq, serviceURL + "/gorfx/" + type + "/"
-				+ id + "/order", dn);
+				+ id + "/order", dn, wid);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public final ResponseEntity<List<Quote>> getQuotes(final String type, final String id,
-			final String dn) {
+			final String dn, final String wid) {
 		return (ResponseEntity<List<Quote>>) (Object) unifiedGet(List.class,
-				serviceURL + "/gorfx/" + type + "/" + id + "/quote", dn);
+				serviceURL + "/gorfx/" + type + "/" + id + "/quote", dn, wid);
 	}
 
 	@Override
 	public final ResponseEntity<Void> setQuote(final String type, final String id, final Quote cont,
-			final String dn) {
+			final String dn, final String wid) {
 		return unifiedPost(Void.class, cont, serviceURL + "/gorfx/" + type + "/"
-				+ id + "/quote", dn);
+				+ id + "/quote", dn, wid);
 	}
 
 	@Override
 	public final ResponseEntity<Quote> getQuote(final String type, final String id, final int idx,
-			final String dn) {
+			final String dn, final String wid) {
 		return unifiedGet(Quote.class, serviceURL + "/gorfx/" + type + "/" + id
-				+ "/quote/" + idx, dn);
+				+ "/quote/" + idx, dn, wid);
 	}
 
 	@Override
 	public final ResponseEntity<Void> deleteQuotes(final String type, final String id, final int idx,
-			final String dn) {
+			final String dn, final String wid) {
 		return unifiedDelete(serviceURL + "/gorfx/" + type + "/" + id
-				+ "/quote/" + idx, dn);
+				+ "/quote/" + idx, dn, wid);
 	}
 
 	@Override
-	public final ResponseEntity<String> getTask(final String type, final String id, final String dn) {
+	public final ResponseEntity<String> getTask(final String type, final String id, final String dn, final String wid) {
 		return unifiedGet(String.class, serviceURL + "/gorfx/" + type + "/"
-				+ id + "/task", dn);
+				+ id + "/task", dn, wid);
 	}
 
 	@Override
 	public final ResponseEntity<String> createTask(final String type, final String id,
-			final String quoteId, final String dn) {
+			final String quoteId, final String dn, final String wid) {
 		return unifiedPut(String.class, quoteId, serviceURL + "/gorfx/" + type
-				+ "/" + id + "/task", dn);
+				+ "/" + id + "/task", dn, wid);
 	}
 
 	@Override
 	public final ResponseEntity<TaskFlowStatus> getStatus(final String type, final String id,
-			final String dn) {
+			final String dn, final String wid) {
 		return unifiedGet(TaskFlowStatus.class, serviceURL + "/gorfx/" + type
-				+ "/" + id + "/status", dn);
+				+ "/" + id + "/status", dn, wid);
 	}
 
 	@Override
 	public final ResponseEntity<TaskFlowResult> getResult(final String type, final String id,
-			final String dn) {
+			final String dn, final String wid) {
 		return unifiedGet(TaskFlowResult.class, serviceURL + "/gorfx/" + type
-				+ "/" + id + "/result", dn);
+				+ "/" + id + "/result", dn, wid);
 	}
 
 	@Override
 	public final ResponseEntity<TaskFlowFailure> getErrors(final String type, final String id,
-			final String dn) {
+			final String dn, final String wid) {
 		return unifiedGet(TaskFlowFailure.class, serviceURL + "/gorfx/" + type
-				+ "/" + id + "/errors", dn);
+				+ "/" + id + "/errors", dn, wid);
 	}
 
 }

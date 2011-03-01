@@ -1,7 +1,7 @@
 package de.zib.gndms.gndmc;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,49 +40,55 @@ public abstract class AbstractClient {
 	 */
 	protected String serviceURL;
 
-	protected final <T> ResponseEntity<T> unifiedGet(final Class<T> clazz, final String url,
-			final String dn) {
+	private <T,P> ResponseEntity<T> unifiedX(HttpMethod x, final Class<T> clazz, final P parm,
+			final String url, final String dn, final String wid){
 		GNDMSResponseHeader requestHeaders = new GNDMSResponseHeader();
 		requestHeaders.setDN(dn);
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		HttpEntity<?> requestEntity = new HttpEntity(requestHeaders);
-		return restTemplate.exchange(url, HttpMethod.GET, requestEntity, clazz);
+		if (wid != null) {
+			requestHeaders.setWId(wid);
+		}
+		HttpEntity<P> requestEntity = new HttpEntity<P>(parm, requestHeaders);
+		return restTemplate.exchange(url, x, requestEntity, clazz);
+	}
+	
+	protected final <T> ResponseEntity<T> unifiedGet(final Class<T> clazz, final String url,
+			final String dn) {
+		return unifiedX(HttpMethod.GET, clazz, null, url, dn, null);
+	}
+
+	protected final <T> ResponseEntity<T> unifiedGet(final Class<T> clazz, final String url,
+			final String dn, final String wid) {
+		return unifiedX(HttpMethod.GET, clazz, null, url, dn, wid);
 	}
 
 	protected final <T, P> ResponseEntity<T> unifiedPost(final Class<T> clazz, final P parm,
 			final String url, final String dn) {
-		GNDMSResponseHeader requestHeaders = new GNDMSResponseHeader();
-		requestHeaders.setDN(dn);
-		HttpEntity<P> requestEntity = new HttpEntity<P>(parm, requestHeaders);
-		return restTemplate.exchange(url, HttpMethod.POST, requestEntity, clazz);
+		return unifiedX(HttpMethod.POST, clazz, parm, url, dn, null);
 	}
 
 	protected final <T, P> ResponseEntity<T> unifiedPost(final Class<T> clazz, final P parm,
 			final String url, final String wid, final String dn) {
-		GNDMSResponseHeader requestHeaders = new GNDMSResponseHeader();
-		requestHeaders.setDN(dn);
-		requestHeaders.setWId(wid);
-		HttpEntity<P> requestEntity = new HttpEntity<P>(parm, requestHeaders);
-		return restTemplate.exchange(url, HttpMethod.POST, requestEntity, clazz);
+		return unifiedX(HttpMethod.POST, clazz, parm, url, dn, wid);
 	}
 
 	protected final <T, P> ResponseEntity<T> unifiedPut(final Class<T> clazz, final P parm,
 			final String url, final String dn) {
-		GNDMSResponseHeader requestHeaders = new GNDMSResponseHeader();
-		requestHeaders.setDN(dn);
-		HttpEntity<P> requestEntity = new HttpEntity<P>(parm, requestHeaders);
-		return restTemplate.exchange(url, HttpMethod.PUT, requestEntity, clazz);
+		return unifiedX(HttpMethod.PUT, clazz, parm, url, dn, null);
+	}
+
+	protected final <T, P> ResponseEntity<T> unifiedPut(final Class<T> clazz, final P parm,
+			final String url, final String dn, final String wid) {
+		return unifiedX(HttpMethod.PUT, clazz, parm, url, dn, wid);
 	}
 
 	protected final ResponseEntity<Void> unifiedDelete(final String url, final String dn) {
-		GNDMSResponseHeader requestHeaders = new GNDMSResponseHeader();
-		requestHeaders.setDN(dn);
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		HttpEntity<?> requestEntity = new HttpEntity(requestHeaders);
-		return restTemplate.exchange(url, HttpMethod.DELETE, requestEntity,
-				Void.class);
+		return unifiedX(HttpMethod.DELETE, Void.class, null, url, dn, null);
 	}
 
+	protected final ResponseEntity<Void> unifiedDelete(final String url, final String dn, final String wid) {
+		return unifiedX(HttpMethod.DELETE, Void.class, null, url, dn, wid);
+	}
+	
 	public RestTemplate getRestTemplate() {
 		return restTemplate;
 	}
