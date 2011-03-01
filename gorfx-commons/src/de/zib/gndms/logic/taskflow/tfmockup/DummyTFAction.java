@@ -16,8 +16,8 @@ package de.zib.gndms.logic.taskflow.tfmockup;
  */
 
 import de.zib.gndms.model.gorfx.types.AbstractTaskFlowAction;
-import de.zib.gndms.model.gorfx.types.DefaultTaskFlowStatus;
-import de.zib.gndms.model.gorfx.types.TaskFlowStatus;
+import de.zib.gndms.model.gorfx.types.DefaultTaskStatus;
+import de.zib.gndms.model.gorfx.types.TaskStatus;
 
 /**
  * @author try ma ik jo rr a zib
@@ -27,12 +27,12 @@ import de.zib.gndms.model.gorfx.types.TaskFlowStatus;
 public class DummyTFAction extends AbstractTaskFlowAction<DummyTF> {
 
     public DummyTFAction() {
-        setStatus( new DefaultTaskFlowStatus() );
+        setStatus( new DefaultTaskStatus() );
     }
 
 
     public void run() {
-        DefaultTaskFlowStatus stat = DefaultTaskFlowStatus.class.cast( getStatus() );
+        DefaultTaskStatus stat = DefaultTaskStatus.class.cast( getStatus() );
 
         try {
             StringBuffer sb = new StringBuffer();
@@ -47,21 +47,21 @@ public class DummyTFAction extends AbstractTaskFlowAction<DummyTF> {
                     throw new RuntimeException( "Halp -- I'm failing intentionally" );
                 updateProgress( stat, i );
             }
-            updateStatus( stat,  TaskFlowStatus.Status.FINISHED  );
+            updateStatus( stat,  TaskStatus.Status.FINISHED  );
         } catch( Exception e ) {
             setFailure( e );
-            updateStatus( stat, TaskFlowStatus.Status.FAILED );
+            updateStatus( stat, TaskStatus.Status.FAILED );
         }
     }
 
 
-    private void updateStatus( DefaultTaskFlowStatus stat, TaskFlowStatus.Status s ) {
+    private void updateStatus( DefaultTaskStatus stat, TaskStatus.Status s ) {
         stat.setStatus( s );
         setStatus( stat );
     }
 
 
-    private void updateProgress( DefaultTaskFlowStatus stat, int i ) {
+    private void updateProgress( DefaultTaskStatus stat, int i ) {
         stat.setProgress( i );
         setStatus( stat );
     }

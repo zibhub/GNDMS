@@ -29,10 +29,10 @@ public interface TaskFlowAction<T extends AbstractTF> {
     void run( );
 
     boolean hasStatus( );
-    TaskFlowStatus getStatus( );
+    TaskStatus getStatus( );
     boolean hasError( );
     TaskFlowFailure getError( );
     boolean hasResult( );
-    TaskFlowResult getResult( );
+    TaskResult getResult( );
 
 }

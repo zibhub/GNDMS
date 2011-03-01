@@ -20,9 +20,9 @@ package de.zib.gndms.model.gorfx.types;
  * @date 14.02.11  18:40
  * @brief
  */
-public class DefaultTaskFlowStatus implements TaskFlowStatus {
+public class DefaultTaskStatus implements TaskStatus {
 
-    private TaskFlowStatus.Status status = Status.WAITING;
+    private TaskStatus.Status status = Status.WAITING;
     private int progress = 0;
     private int maxProgress = 100;
 
