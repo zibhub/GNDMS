@@ -1,4 +1,5 @@
 package de.zib.gndms.gndmc.gorfx;
+
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -16,95 +17,60 @@ package de.zib.gndms.gndmc.gorfx;
  */
 
 import de.zib.gndms.GORFX.service.GORFXServiceEssentials;
+import de.zib.gndms.gndmc.AbstractClient;
 import de.zib.gndms.model.gorfx.types.AbstractTF;
 import de.zib.gndms.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.rest.Facets;
-import de.zib.gndms.rest.GNDMSResponseHeader;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
 /**
  * @author try ma ik jo rr a zib
- * @date 09.02.11, Time: 14:20
- *
+ * 
  * @brief
  */
-public class GORFXClient implements GORFXServiceEssentials {
+public class GORFXClient extends AbstractClient implements
+		GORFXServiceEssentials {
 
-    private RestTemplate restTemplate; ///< Just for internal use.
-    private String serviceURL; ///< The service url like http://www.barz.org/gndms/<gridname>
-                               /// \note no gorfx foo in the url
+	/**
+	 * The constructor.
+	 */
+	public GORFXClient() {
+	}
 
+	/**
+	 * The constructor.
+	 * 
+	 * @param serviceURL
+	 *            The base url of the grid.
+	 */
+	public GORFXClient(final String serviceURL) {
+		this.serviceURL = serviceURL;
+	}
 
-    public GORFXClient() {
-    }
+	@Override
+	public final ResponseEntity<Facets> listAvailableFacets(final String dn) {
+		return unifiedGet(Facets.class, serviceURL + "/gorfx/", dn);
+	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public final ResponseEntity<List<String>> listTaskFlows(final String dn) {
+		return (ResponseEntity<List<String>>) (Object) unifiedGet(List.class,
+				serviceURL + "/gorfx/taskflows/", dn);
+	}
 
-    public GORFXClient( String serviceURL ) {
-        this.serviceURL = serviceURL;
-    }
+	@Override
+	public final ResponseEntity<TaskFlowInfo> getTaskFlowInfo(final String type, final String dn) {
+		return unifiedGet(TaskFlowInfo.class, serviceURL + "/gorfx/" + type, dn);
+	}
 
+	@Override
+	public final ResponseEntity<String> createTaskFlow(final String type, final AbstractTF order,
+			final String dn, final String wid) {
+		return unifiedPost(String.class, AbstractTF.class, serviceURL
+				+ "/gorfx/" + type, wid, dn);
+	}
 
-    public ResponseEntity<Facets> listAvailableFacets( String dn ) {
-        return unifiedGet( Facets.class, serviceURL + "/gorfx/", dn );
-    }
-
-
-
-    public ResponseEntity<List<String>> listTaskFlows( String dn ) {
-        return ( ResponseEntity<List<String>> ) (Object) unifiedGet( List.class, serviceURL + "/gorfx/taskflows/", dn );
-    }
-
-
-    public ResponseEntity<TaskFlowInfo> getTaskFlowInfo( String type, String dn ) {
-        return unifiedGet( TaskFlowInfo.class, serviceURL + "/gorfx/" + type, dn );
-    }
-
-
-    public ResponseEntity<String> createTaskFlow( String type, AbstractTF order, String dn, String wid ) {
-        GNDMSResponseHeader requestHeaders = new GNDMSResponseHeader();
-        requestHeaders.setDN( dn );
-        requestHeaders.setWId( wid );
-        return unifiedPost( String.class, AbstractTF.class, serviceURL + "/gorfx/" + type, requestHeaders );
-    }
-
-
-    protected <T> ResponseEntity<T> unifiedGet( Class<T> clazz, String url, String dn ) {
-        GNDMSResponseHeader requestHeaders = new GNDMSResponseHeader();
-        requestHeaders.setDN( dn );
-        HttpEntity<?> requestEntity = new HttpEntity(requestHeaders);
-        return restTemplate.exchange( url, HttpMethod.GET, requestEntity, clazz );
-    }
-
-
-    protected <T,P> ResponseEntity<T> unifiedPost( Class<T> resClazz, P parm, String url, HttpHeaders headers ) {
-        HttpEntity<P> requestEntity = new HttpEntity<P>(parm, headers );
-        return restTemplate.exchange( url, HttpMethod.POST, requestEntity, resClazz );
-    }
-
-    public String getServiceURL() {
-        return serviceURL;
-    }
-
-
-    public void setServiceURL( String serviceURL ) {
-        this.serviceURL = serviceURL;
-    }
-
-
-    public RestTemplate getRestTemplate() {
-        return restTemplate;
-    }
-
-
-    @Autowired
-    public void setRestTemplate( RestTemplate restTemplate ) {
-        this.restTemplate = restTemplate;
-    }
 }

@@ -64,7 +64,7 @@ public interface GORFXService extends GORFXServiceEssentials {
      * @param dn The dn of the user invoking the method.
      * @return The "help" of the action.
      */
-    ResponseEntity<ConfigMeta> getContigActionInfo( String actionName, String dn );
+    ResponseEntity<ConfigMeta> getConfigActionInfo( String actionName, String dn );
 
     /**
      * Executes a config action with the given arguments.
