@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types;
+package de.zib.gndms.GORFX.service;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -17,19 +17,12 @@ package de.zib.gndms.model.gorfx.types;
 
 /**
  * @author try ma ik jo rr a zib
- * @date 01.03.11  13:57
+ * @date 01.03.11  12:06
  * @brief
  */
-public class TaskFlowStatus {
+public class TaskServiceImpl {
 
-    enum State {
-        TASK_STARTED, ///< Taskflow has a running task.
-        TASK_PREPARED, ///< Taskflow's task can be executed.
-        TASK_DONE, ///< Taskflow's task has finished or failed.
-        ORDER_UNFULFILLABLE ///< Task order is unfulfillable
-    };
+    getServiceInfo(  )
 
-    private TaskStatus taskStatus; ///< The status of the task associated with the task flow.
-    private String task; ///< The id of the task associated with the task flow.
 
 }

@@ -15,11 +15,7 @@ package de.zib.gndms.GORFX.service;
  * limitations under the License.
  */
 
-import de.zib.gndms.model.gorfx.types.AbstractTF;
-import de.zib.gndms.model.gorfx.types.Quote;
-import de.zib.gndms.model.gorfx.types.TaskFlowFailure;
-import de.zib.gndms.model.gorfx.types.TaskFlowResult;
-import de.zib.gndms.model.gorfx.types.TaskFlowStatus;
+import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.rest.Facets;
 import org.springframework.http.ResponseEntity;
 
@@ -211,7 +207,7 @@ public interface TaskFlowService {
      * together with the URL of the task result or 404 if no result is
      * available.
      * */
-    ResponseEntity<TaskFlowResult> getResult( String type, String id, String dn, String wid );
+    ResponseEntity<TaskResult> getResult( String type, String id, String dn, String wid );
 
     /** 
      * @brief Delivers possible errors from the task(flow) execution. 

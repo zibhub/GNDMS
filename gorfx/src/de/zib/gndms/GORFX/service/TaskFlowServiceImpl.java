@@ -1,10 +1,7 @@
 package de.zib.gndms.GORFX.service;
 
-import de.zib.gndms.model.gorfx.types.AbstractTF;
-import de.zib.gndms.model.gorfx.types.Quote;
-import de.zib.gndms.model.gorfx.types.TaskFlowFailure;
-import de.zib.gndms.model.gorfx.types.TaskFlowResult;
-import de.zib.gndms.model.gorfx.types.TaskFlowStatus;
+import de.zib.gndms.model.gorfx.types.*;
+import de.zib.gndms.model.gorfx.types.TaskStatus;
 import de.zib.gndms.rest.Facets;
 import de.zib.gndms.rest.GNDMSResponseHeader;
 import org.springframework.http.HttpStatus;
@@ -147,7 +144,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
 
     @RequestMapping( value = "/{type}/{id}/status", method = RequestMethod.GET )
-    public ResponseEntity<TaskFlowStatus> getStatus( @PathVariable String type, @PathVariable String id,
+    public ResponseEntity<TaskStatus> getStatus( @PathVariable String type, @PathVariable String id,
                                                      @RequestHeader( "DN" ) String dn,
                                                      @RequestHeader( "WId" ) String wid ) {
 
@@ -157,7 +154,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
 
     @RequestMapping( value = "/{type}/{id}/result", method = RequestMethod.GET )
-    public ResponseEntity<TaskFlowResult> getResult( @PathVariable String type, @PathVariable String id,
+    public ResponseEntity<TaskResult> getResult( @PathVariable String type, @PathVariable String id,
                                                      @RequestHeader( "DN" ) String dn,
                                                      @RequestHeader( "WId" ) String wid ) {
 

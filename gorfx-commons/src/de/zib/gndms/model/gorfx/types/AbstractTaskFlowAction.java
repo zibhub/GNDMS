@@ -28,8 +28,8 @@ import java.io.StringWriter;
 public abstract class AbstractTaskFlowAction<T extends AbstractTF> implements TaskFlowAction<T> {
 
     private TaskFlow<T> taskFlow;
-    private TaskFlowStatus status;
-    private TaskFlowResult result;
+    private TaskStatus status;
+    private TaskResult result;
     private TaskFlowFailure failure;
 
 
@@ -48,7 +48,7 @@ public abstract class AbstractTaskFlowAction<T extends AbstractTF> implements Ta
     }
 
 
-    public TaskFlowStatus getStatus() {
+    public TaskStatus getStatus() {
         return status;
     }
 
@@ -68,19 +68,19 @@ public abstract class AbstractTaskFlowAction<T extends AbstractTF> implements Ta
     }
 
 
-    public TaskFlowResult getResult() {
+    public TaskResult getResult() {
         return result;
     }
 
 
-    protected void setStatus( TaskFlowStatus status ) {
+    protected void setStatus( TaskStatus status ) {
         this.status = status;
     }
 
 
 
 
-    protected void setResult( TaskFlowResult result ) {
+    protected void setResult( TaskResult result ) {
         this.result = result;
     }
 

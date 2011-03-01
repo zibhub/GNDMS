@@ -2,6 +2,7 @@ package de.zib.gndms.gndmc.gorfx;
 
 import java.util.List;
 
+import de.zib.gndms.model.gorfx.types.*;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -9,11 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import de.zib.gndms.GORFX.service.TaskFlowService;
-import de.zib.gndms.model.gorfx.types.AbstractTF;
-import de.zib.gndms.model.gorfx.types.Quote;
-import de.zib.gndms.model.gorfx.types.TaskFlowFailure;
-import de.zib.gndms.model.gorfx.types.TaskFlowResult;
-import de.zib.gndms.model.gorfx.types.TaskFlowStatus;
+import de.zib.gndms.model.gorfx.types.TaskResult;
 import de.zib.gndms.rest.Facets;
 import de.zib.gndms.rest.GNDMSResponseHeader;
 
@@ -72,12 +69,12 @@ public class TaskFlowClient implements TaskFlowService {
         return unifiedPut( String.class, quoteId, serviceURL + "/gorfx/" + type + "/" + id + "/task", dn );
 	}
 
-	public ResponseEntity<TaskFlowStatus> getStatus(String type, String id, String dn) {
-		return unifiedGet( TaskFlowStatus.class, serviceURL + "/gorfx/" + type + "/" + id + "/status", dn );
+	public ResponseEntity<TaskStatus> getStatus(String type, String id, String dn) {
+		return unifiedGet( TaskStatus.class, serviceURL + "/gorfx/" + type + "/" + id + "/status", dn );
 	}
 
-	public ResponseEntity<TaskFlowResult> getResult(String type, String id, String dn) {
-		return unifiedGet( TaskFlowResult.class, serviceURL + "/gorfx/" + type + "/" + id + "/result", dn );
+	public ResponseEntity<TaskResult> getResult(String type, String id, String dn) {
+		return unifiedGet( TaskResult.class, serviceURL + "/gorfx/" + type + "/" + id + "/result", dn );
 	}
 
 	public ResponseEntity<TaskFlowFailure> getErrors(String type, String id, String dn) {
