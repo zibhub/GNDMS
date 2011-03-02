@@ -1,6 +1,7 @@
 package de.zib.gndms.gndmc.gorfx;
+
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,43 +31,56 @@ import java.util.List;
  */
 public class FullGORFXClient extends GORFXClient implements GORFXService {
 
+	/**
+	 * The constructor.
+	 */
+	public FullGORFXClient() {
+	}
 
+	/**
+	 * The constructor.
+	 * 
+	 * @param serviceURL
+	 *            The base url of the grid.
+	 */
+	public FullGORFXClient(final String serviceURL) {
+		super(serviceURL);
+	}
 
-    public FullGORFXClient() {
-    }
+	@Override
+	@SuppressWarnings("unchecked")
+	public final ResponseEntity<List<String>> listConfigActions(final String dn) {
+		return (ResponseEntity<List<String>>) (Object) unifiedGet(List.class,
+				serviceURL + "/gorfx/config/", dn);
+	}
 
+	@Override
+	public final ResponseEntity<ConfigMeta> getConfigActionInfo(final String actionName,
+			final String dn) {
+		return unifiedGet(ConfigMeta.class, serviceURL + "/gorfx/config/"
+				+ actionName, dn);
+	}
 
-    public FullGORFXClient( String serviceURL ) {
-        super( serviceURL );
-    }
+	@Override
+	public final ResponseEntity<String> callConfigAction(final String actionName,
+			final String args, final String dn) {
+		return null; // not required here
+	}
 
+	@Override
+	public final ResponseEntity<List<String>> listBatchActions(final String dn) {
+		return null; // not required here
+	}
 
-    public ResponseEntity<List<String>> listConfigActions( String dn ) {
-        return ( ResponseEntity<List<String>> ) (Object) unifiedGet( List.class, getServiceURL() + "/gorfx/config/", dn );
-    }
+	@Override
+	public final ResponseEntity<ActionMeta> getBatchActionInfo(final String actionName,
+			final String dn) {
+		return null; // not required here
+	}
 
-
-    public ResponseEntity<ConfigMeta> getContigActionInfo( String actionName, String dn ) {
-        return unifiedGet( ConfigMeta.class, getServiceURL() + "/gorfx/config/" + actionName, dn );
-    }
-
-
-    public ResponseEntity<String> callConfigAction( String actionName, String args, String dn ) {
-        return null;  // not required here
-    }
-
-
-    public ResponseEntity<List<String>> listBatchActions( String dn ) {
-        return null;  // not required here
-    }
-
-
-    public ResponseEntity<ActionMeta> getBatchActionInfo( String actionName, String dn ) {
-        return null;  // not required here
-    }
-
-
-    public ResponseEntity<String> callBatchAction( String actionName, String args, String dn ) {
-        return null;  // not required here
-    }
+	@Override
+	public final ResponseEntity<String> callBatchAction(final String actionName,
+			final String args, final String dn) {
+		return null; // not required here
+	}
 }
