@@ -30,7 +30,7 @@ public abstract class AbstractTaskFlowAction<T extends AbstractTF> implements Ta
     private TaskFlow<T> taskFlow;
     private TaskStatus status;
     private TaskResult result;
-    private TaskFlowFailure failure;
+    private TaskFailure failure;
 
 
     public TaskFlow<T> getTaskFlow() {
@@ -58,7 +58,7 @@ public abstract class AbstractTaskFlowAction<T extends AbstractTF> implements Ta
     }
 
 
-    public TaskFlowFailure getError() {
+    public TaskFailure getError() {
         return failure;
     }
 
@@ -85,14 +85,14 @@ public abstract class AbstractTaskFlowAction<T extends AbstractTF> implements Ta
     }
 
 
-    protected void setFailure( TaskFlowFailure failure ) {
+    protected void setFailure( TaskFailure failure ) {
         this.failure = failure;
     }
 
 
     protected void setFailure ( Exception e ) {
 
-        TaskFlowFailureImpl tff = new TaskFlowFailureImpl( );
+        TaskFailureImpl tff = new TaskFailureImpl( );
 
         tff.setMessage( e.getMessage() );
         StringWriter sw = new StringWriter( );

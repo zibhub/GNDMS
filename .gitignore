@@ -69,6 +69,7 @@ types/WHORFX
 types/ws
 types/wsrf
 etc/sliceInOutClient.properties
+bkp*
 
 syntax:regexp
 .*\.swp

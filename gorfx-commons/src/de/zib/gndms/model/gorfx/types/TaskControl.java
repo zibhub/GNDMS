@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.taskflow;
+package de.zib.gndms.model.gorfx.types;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -15,24 +15,18 @@ package de.zib.gndms.logic.taskflow;
  * limitations under the License.
  */
 
-import de.zib.gndms.model.gorfx.types.*;
-
 /**
  * @author try ma ik jo rr a zib
- * @date 14.02.11  17:40
- * @brief
+ * @date 02.03.11  12:32
+ * @brief Enum type for control options of a task.
+ *
+ * If an option is valid depends on the features of the task and its current state.
  */
-public interface TaskFlowAction<T extends AbstractTF> {
-
-    void setTaskFlow( TaskFlow<T> tf );
-
-    void run( );
-
-    boolean hasStatus( );
-    TaskStatus getStatus( );
-    boolean hasError( );
-    TaskFailure getError( );
-    boolean hasResult( );
-    TaskResult getResult( );
-
+public enum TaskControl {
+    PAUSE,   ///< Pauses the task execution
+    RESUME,  ///< Resumes the task execution
+    RESTART, ///< Restarts the current task
+    ABORT    ///< Requests abort of the task execution
 }
+
+

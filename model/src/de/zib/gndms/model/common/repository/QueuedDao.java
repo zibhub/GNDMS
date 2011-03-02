@@ -23,7 +23,7 @@ import java.util.Queue;
  *          <p/>
  *          Date: 05.01.2011, Time: 17:46:12
  *
- * This isn't a real dao yet but offers the functionallity to maintain domain objects in a queue.
+ * This isn't a real dao yet but offers the functionality to maintain domain objects in a queue.
  */
 public abstract class QueuedDao<K, M, D> implements Dao<K,M,D> {
 
@@ -42,7 +42,7 @@ public abstract class QueuedDao<K, M, D> implements Dao<K,M,D> {
 
 
     /**
-     * This should return new models or delegate calls to underiying daos..
+     * This should return new models or delegate calls to underlying daos..
      *
      * @param key Model key if required for construction.
      * @return A new model.
