@@ -17,15 +17,45 @@ package de.zib.gndms.model.gorfx.types;
 
 /**
  * @author try ma ik jo rr a zib
- *         Date: 09.02.11, Time: 17:45
+ * @date 02.03.11  11:08
+ * @brief Interface for task flow failures.
+ *
+ * Taskflow failures are less technically than TaskFailures. They are
+ * commonly showed to a user and thus should be human readable.
+ *
+ * However they might contain TaskFailures
  */
 public interface TaskFlowFailure {
 
-    String getMessage();
+    /** 
+     * @brief Checks if an taskflow failed.
+     * 
+     * @return \c true if the task flow has failed.
+     */
+    boolean hasFailed();
 
-    String getFaultTrace();
+    /** 
+     * @brief A human readable error message.
+     * 
+     * Its likly that there exist some problems with the Order at this
+     * point, thus the user have to correct it.
+     *
+     * @return A human readable error message. 
+     */
+    String getFailureMessage();
 
-    String getFaultClass();
+    /** 
+     * @brief Checks if an task failure occurred
+     * 
+     * @return \c true fi an task failure occurred.
+     */
+    boolean hasTaskFailure();
 
-    String getFaultLocation();
+    /** 
+     * @brief Delivers the task failure object if existing.
+     * 
+     * @return The task failure.
+     */
+    TaskFailure getTaskFailure();
+
 }

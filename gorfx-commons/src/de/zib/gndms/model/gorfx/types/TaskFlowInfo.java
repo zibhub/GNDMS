@@ -23,5 +23,5 @@ package de.zib.gndms.model.gorfx.types;
  */
 public interface TaskFlowInfo extends TaskFlowMeta{
 
-    String getStatistics();
+    TaskStatistics getStatistics();
 }

@@ -15,42 +15,37 @@ package de.zib.gndms.model.gorfx.types;
  * limitations under the License.
  */
 
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.List;
+
 /**
  * @author try ma ik jo rr a zib
- * @date 02.03.11  11:22
- * @brief
+ * @date 02.03.11  12:03
+ * @brief Object  with common task service information.
  */
-public class TaskFlowFailureImpl implements TaskFlowFailure {
+public class TaskServiceInfo {
 
-    String message = null;
-    TaskFailure taskFailure=null;
+    private List<TaskStatistics> statistics; ///< Statistics over all task types
+    private List<String> taskTypes; ///< List of all task types
 
-    public boolean hasFailed() {
-        return message != null;
+    List<TaskStatistics> getStatistics( ) {
+        return statistics;
     }
 
 
-    public String getFailureMessage() {
-        return message;
+    public void setStatistics( List<TaskStatistics> statistics ) {
+        this.statistics = statistics;
     }
 
 
-    public boolean hasTaskFailure() {
-        return taskFailure != null;
+    public List<String> getTaskTypes() {
+        return taskTypes;
     }
 
 
-    public TaskFailure getTaskFailure() {
-        return taskFailure;
-    }
-
-
-    public void setMessage( String message ) {
-        this.message = message;
-    }
-
-
-    public void setTaskFailure( TaskFailure taskFailure ) {
-        this.taskFailure = taskFailure;
+    public void setTaskTypes( List<String> taskTypes ) {
+        this.taskTypes = taskTypes;
     }
 }

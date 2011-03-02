@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.taskflow;
+package de.zib.gndms.model.gorfx.types;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -15,24 +15,17 @@ package de.zib.gndms.logic.taskflow;
  * limitations under the License.
  */
 
-import de.zib.gndms.model.gorfx.types.*;
+import de.zib.gndms.model.gorfx.Task;
 
 /**
  * @author try ma ik jo rr a zib
- * @date 14.02.11  17:40
+ * @date 02.03.11  13:48
  * @brief
  */
-public interface TaskFlowAction<T extends AbstractTF> {
+public interface TaskDao {
 
-    void setTaskFlow( TaskFlow<T> tf );
-
-    void run( );
-
-    boolean hasStatus( );
-    TaskStatus getStatus( );
-    boolean hasError( );
-    TaskFailure getError( );
-    boolean hasResult( );
-    TaskResult getResult( );
+    Task find ( String id );
+    Task delete( String id );
+    Task create( );
 
 }

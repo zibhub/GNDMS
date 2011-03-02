@@ -77,8 +77,8 @@ public class TaskFlowClient implements TaskFlowService {
 		return unifiedGet( TaskResult.class, serviceURL + "/gorfx/" + type + "/" + id + "/result", dn );
 	}
 
-	public ResponseEntity<TaskFlowFailure> getErrors(String type, String id, String dn) {
-		return unifiedGet( TaskFlowFailure.class, serviceURL + "/gorfx/" + type + "/" + id + "/errors", dn );
+	public ResponseEntity<TaskFailure> getErrors(String type, String id, String dn) {
+		return unifiedGet( TaskFailure.class, serviceURL + "/gorfx/" + type + "/" + id + "/errors", dn );
 	}
 
     protected <T> ResponseEntity<T> unifiedGet( Class<T> clazz, String url, String dn ) {

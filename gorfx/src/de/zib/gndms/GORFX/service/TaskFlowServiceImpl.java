@@ -144,7 +144,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
 
     @RequestMapping( value = "/{type}/{id}/status", method = RequestMethod.GET )
-    public ResponseEntity<TaskStatus> getStatus( @PathVariable String type, @PathVariable String id,
+    public ResponseEntity<TaskFlowStatus> getStatus( @PathVariable String type, @PathVariable String id,
                                                      @RequestHeader( "DN" ) String dn,
                                                      @RequestHeader( "WId" ) String wid ) {
 

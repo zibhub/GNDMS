@@ -225,5 +225,5 @@ public interface TaskFlowService {
      *     - 200 together with the error of the taskflow, e.g. an
      *       unfulfillable order.
      */
-    ResponseEntity<TaskFlowFailure> getErrors( String type, String id, String dn, String wid ); 
+    ResponseEntity<TaskFlowFailure> getErrors( String type, String id, String dn, String wid );
 }

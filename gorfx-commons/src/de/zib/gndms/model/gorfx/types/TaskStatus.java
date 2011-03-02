@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.taskflow;
+package de.zib.gndms.model.gorfx.types;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -15,24 +15,23 @@ package de.zib.gndms.logic.taskflow;
  * limitations under the License.
  */
 
-import de.zib.gndms.model.gorfx.types.*;
-
 /**
  * @author try ma ik jo rr a zib
- * @date 14.02.11  17:40
- * @brief
+ *         Date: 09.02.11, Time: 17:44
  */
-public interface TaskFlowAction<T extends AbstractTF> {
+public interface TaskStatus {
 
-    void setTaskFlow( TaskFlow<T> tf );
+    /**
+     * @brief Enum for the state of a task;
+     */
+    enum Status{ FINISHED,  ///< Task has finished (successfully)
+                 FAILED, ///< Some exception has occurred and the task is failed
+                 RUNNING, ///< Task is still running
+                 WAITING, ///< Task hasn't been started yet.
+                 PAUSED ///< Task execution was paused.
+        }
 
-    void run( );
-
-    boolean hasStatus( );
-    TaskStatus getStatus( );
-    boolean hasError( );
-    TaskFailure getError( );
-    boolean hasResult( );
-    TaskResult getResult( );
-
+    Status getStatus();
+    int getProgress( );
+    int getMaxProgress( );
 }
