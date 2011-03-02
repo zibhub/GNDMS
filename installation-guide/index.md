@@ -183,10 +183,13 @@ enter `$GNDMS_SOURCE`, and execute
   installed before manually.  Newer versions of GNDMS write a list of
   these installed jars to `$GLOBUS_LOCATION/lib/gndms-dependencies`.*
  
-**Note for data-provider:** *If you come from a release < 0.3.0 you
-need to change the permissions of the folders located in your `STAGING_AREA_PATH`
-to 1777. Alternatively you can simply delete them, they will be
-created when the next staging is performed*
+**Note for data-provider:** *If you come from a release < 0.3.0 please
+remember two things:*
+
+* *You need to change the permissions of the folders located in your `STAGING_AREA_PATH` to 1777. Alternatively you can simply delete them, they will be created when the next staging is performed.*
+
+* *Update the ccc:baseurl tag of your MDS entry: The addresses of the GNDMS services have
+  changed from services/c3grid/\* to services/gndms/\**
 
 ### Installation and Initial Deployment
  
