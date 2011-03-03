@@ -21,6 +21,7 @@ import de.zib.gndms.gndmc.AbstractClient;
 import de.zib.gndms.model.gorfx.types.AbstractTF;
 import de.zib.gndms.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.rest.Facets;
+import de.zib.gndms.rest.Specifier;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -49,27 +50,26 @@ public class GORFXClient extends AbstractClient implements
 		this.serviceURL = serviceURL;
 	}
 
-	@Override
 	public final ResponseEntity<Facets> listAvailableFacets(final String dn) {
 		return unifiedGet(Facets.class, serviceURL + "/gorfx/", dn);
 	}
 
+
 	@SuppressWarnings("unchecked")
-	@Override
 	public final ResponseEntity<List<String>> listTaskFlows(final String dn) {
 		return (ResponseEntity<List<String>>) (Object) unifiedGet(List.class,
 				serviceURL + "/gorfx/taskflows/", dn);
 	}
 
-	@Override
 	public final ResponseEntity<TaskFlowInfo> getTaskFlowInfo(final String type, final String dn) {
 		return unifiedGet(TaskFlowInfo.class, serviceURL + "/gorfx/" + type, dn);
 	}
 
-	@Override
-	public final ResponseEntity<String> createTaskFlow(final String type, final AbstractTF order,
-			final String dn, final String wid) {
-		return unifiedPost(String.class, AbstractTF.class, serviceURL
+
+    @SuppressWarnings("unchecked")
+	public final ResponseEntity<Specifier<Facets>> createTaskFlow( final String type, final AbstractTF order,
+                                                                   final String dn, final String wid ) {
+		return ( ResponseEntity<Specifier<Facets>> ) unifiedPost(Specifier.class, AbstractTF.class, serviceURL
 				+ "/gorfx/" + type, wid, dn);
 	}
 

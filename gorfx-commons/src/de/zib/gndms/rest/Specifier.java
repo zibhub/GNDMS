@@ -30,6 +30,7 @@ public class Specifier<T> {
     private String URL; ///< The whole url of the resource.
     private HashMap<String,String> urlMap; ///< An id map for the resource. Useful to fill url templates.
     private T payload; ///< Some additional data for the resource. Usually the results of a GET request.
+    private Specifier specifier; ///< Specifiers might be nested.
 
 
     public String getURL() {
@@ -52,6 +53,15 @@ public class Specifier<T> {
     }
 
 
+    public void addMapping( String key, String value ) {
+
+        if ( urlMap == null )
+            urlMap = new HashMap<String, String>( 1 );
+
+        urlMap.put( key, value );
+    }
+
+
     public boolean hasPayload() {
         return payload != null;
     }
@@ -64,5 +74,15 @@ public class Specifier<T> {
 
     public void setPayload( T payload ) {
         this.payload = payload;
+    }
+
+
+    public Specifier getSpecifier() {
+        return specifier;
+    }
+
+
+    public void setSpecifier( Specifier specifier ) {
+        this.specifier = specifier;
     }
 }

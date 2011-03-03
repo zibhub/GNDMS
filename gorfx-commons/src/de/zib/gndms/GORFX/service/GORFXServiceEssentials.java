@@ -18,6 +18,7 @@ package de.zib.gndms.GORFX.service;
 import de.zib.gndms.model.gorfx.types.AbstractTF;
 import de.zib.gndms.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.rest.Facets;
+import de.zib.gndms.rest.Specifier;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -80,7 +81,7 @@ public interface GORFXServiceEssentials {
      * @param order The order consists parameters for the taskflow.
      * @param dn The dn of the user invoking the method.
      * @param wid The workflow id.
-     * @return The url of the created taskflow.
+     * @return The specifier of the newly created task.
      */
-    ResponseEntity<String> createTaskFlow( String type, AbstractTF order, String dn, String wid );
+    ResponseEntity<Specifier<Facets>> createTaskFlow( String type, AbstractTF order, String dn, String wid );
 }
