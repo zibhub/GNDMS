@@ -25,9 +25,13 @@ import de.zib.gndms.gndmc.AbstractClient;
 import de.zib.gndms.model.gorfx.types.AbstractTF;
 import de.zib.gndms.model.gorfx.types.Quote;
 import de.zib.gndms.model.gorfx.types.TaskFlowFailure;
-import de.zib.gndms.model.gorfx.types.TaskFlowResult;
 import de.zib.gndms.model.gorfx.types.TaskFlowStatus;
+import de.zib.gndms.model.gorfx.types.TaskResult;
 import de.zib.gndms.rest.Facets;
+import de.zib.gndms.rest.Specifier;
+import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 /**
  * The task flow client implementing the task flow service.
@@ -77,9 +81,9 @@ public class TaskFlowClient extends AbstractClient implements TaskFlowService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public final ResponseEntity<List<Quote>> getQuotes(final String type, final String id,
+	public final ResponseEntity<List<Specifier<Quote>>> getQuotes(final String type, final String id,
 			final String dn, final String wid) {
-		return (ResponseEntity<List<Quote>>) (Object) unifiedGet(List.class,
+		return ( ResponseEntity<List<Specifier<Quote>>> ) (Object) unifiedGet(List.class,
 				serviceURL + "/gorfx/" + type + "/" + id + "/quote", dn, wid);
 	}
 
@@ -90,48 +94,51 @@ public class TaskFlowClient extends AbstractClient implements TaskFlowService {
 				+ id + "/quote", dn, wid);
 	}
 
-	@Override
+
 	public final ResponseEntity<Quote> getQuote(final String type, final String id, final int idx,
 			final String dn, final String wid) {
 		return unifiedGet(Quote.class, serviceURL + "/gorfx/" + type + "/" + id
 				+ "/quote/" + idx, dn, wid);
 	}
 
-	@Override
+
 	public final ResponseEntity<Void> deleteQuotes(final String type, final String id, final int idx,
 			final String dn, final String wid) {
 		return unifiedDelete(serviceURL + "/gorfx/" + type + "/" + id
 				+ "/quote/" + idx, dn, wid);
 	}
 
-	@Override
-	public final ResponseEntity<String> getTask(final String type, final String id, final String dn, final String wid) {
-		return unifiedGet(String.class, serviceURL + "/gorfx/" + type + "/"
+
+    @SuppressWarnings("unchecked")
+	public final ResponseEntity<Specifier<Facets>> getTask( final String type, final String id, final String dn, final String wid ) {
+		return ( ResponseEntity<Specifier<Facets>> ) unifiedGet(Specifier.class, serviceURL + "/gorfx/" + type + "/"
 				+ id + "/task", dn, wid);
 	}
 
-	@Override
-	public final ResponseEntity<String> createTask(final String type, final String id,
-			final String quoteId, final String dn, final String wid) {
-		return unifiedPut(String.class, quoteId, serviceURL + "/gorfx/" + type
+
+    @SuppressWarnings("unchecked")
+	public final ResponseEntity<Specifier<Facets>> createTask( final String type, final String id,
+                                                               final String quoteId, final String dn, final String wid ) {
+		return ( ResponseEntity<Specifier<Facets>> ) unifiedPut(Specifier.class, quoteId, serviceURL + "/gorfx/" + type
 				+ "/" + id + "/task", dn, wid);
 	}
 
-	@Override
+
 	public final ResponseEntity<TaskFlowStatus> getStatus(final String type, final String id,
 			final String dn, final String wid) {
 		return unifiedGet(TaskFlowStatus.class, serviceURL + "/gorfx/" + type
 				+ "/" + id + "/status", dn, wid);
 	}
 
-	@Override
-	public final ResponseEntity<TaskFlowResult> getResult(final String type, final String id,
-			final String dn, final String wid) {
-		return unifiedGet(TaskFlowResult.class, serviceURL + "/gorfx/" + type
+
+    @SuppressWarnings("unchecked")
+	public final ResponseEntity<Specifier<TaskResult>> getResult( final String type, final String id,
+                                                                  final String dn, final String wid ) {
+		return ( ResponseEntity<Specifier<TaskResult>> ) unifiedGet(Specifier.class, serviceURL + "/gorfx/" + type
 				+ "/" + id + "/result", dn, wid);
 	}
 
-	@Override
+
 	public final ResponseEntity<TaskFlowFailure> getErrors(final String type, final String id,
 			final String dn, final String wid) {
 		return unifiedGet(TaskFlowFailure.class, serviceURL + "/gorfx/" + type

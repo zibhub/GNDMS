@@ -17,6 +17,8 @@ package de.zib.gndms.GORFX.service;
 
 import de.zib.gndms.kit.action.ActionMeta;
 import de.zib.gndms.kit.config.ConfigMeta;
+import de.zib.gndms.rest.Facets;
+import de.zib.gndms.rest.Specifier;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -110,6 +112,16 @@ public interface GORFXService extends GORFXServiceEssentials {
     ResponseEntity<ActionMeta> getBatchActionInfo( String actionName, String dn );
 
     /**
+     * @brief Delivers the specifier of a running action.
+     *
+     * @param actionName The name of the action
+     * @param id The id of the running action.
+     * @param dn The dn of the user invoking the method.
+     * @return HttpStatus 200 together with a task specifier if the batch exists, 404 otherwise.
+     */
+    ResponseEntity<Specifier<Facets>> getBatchAction( String actionName, String id, String dn );
+
+    /**
      * Executes a config action with the given arguments.
      *
      * @see GORFXService.callConfigAction() for details.
@@ -117,7 +129,8 @@ public interface GORFXService extends GORFXServiceEssentials {
      * @param actionName The name of the action to execute.
      * @param args The arguments of the action.
      * @param dn The dn of the user invoking the method.
-     * @return The result state of the action.
+     * @return A batch action specifier which might contain the result object, or if it triggers task a
+     * specifier for the task.
      */
-    ResponseEntity<String> callBatchAction( String actionName, String args, String dn );
+    ResponseEntity<Specifier> callBatchAction( String actionName, String args, String dn );
 }

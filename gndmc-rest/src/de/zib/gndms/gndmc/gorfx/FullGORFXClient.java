@@ -19,6 +19,8 @@ package de.zib.gndms.gndmc.gorfx;
 import de.zib.gndms.GORFX.service.GORFXService;
 import de.zib.gndms.kit.action.ActionMeta;
 import de.zib.gndms.kit.config.ConfigMeta;
+import de.zib.gndms.rest.Facets;
+import de.zib.gndms.rest.Specifier;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -47,39 +49,40 @@ public class FullGORFXClient extends GORFXClient implements GORFXService {
 		super(serviceURL);
 	}
 
-	@Override
 	@SuppressWarnings("unchecked")
 	public final ResponseEntity<List<String>> listConfigActions(final String dn) {
 		return (ResponseEntity<List<String>>) (Object) unifiedGet(List.class,
 				serviceURL + "/gorfx/config/", dn);
 	}
 
-	@Override
-	public final ResponseEntity<ConfigMeta> getConfigActionInfo(final String actionName,
+
+    public final ResponseEntity<ConfigMeta> getConfigActionInfo(final String actionName,
 			final String dn) {
 		return unifiedGet(ConfigMeta.class, serviceURL + "/gorfx/config/"
 				+ actionName, dn);
 	}
 
-	@Override
 	public final ResponseEntity<String> callConfigAction(final String actionName,
 			final String args, final String dn) {
 		return null; // not required here
 	}
 
-	@Override
 	public final ResponseEntity<List<String>> listBatchActions(final String dn) {
 		return null; // not required here
 	}
 
-	@Override
 	public final ResponseEntity<ActionMeta> getBatchActionInfo(final String actionName,
 			final String dn) {
 		return null; // not required here
 	}
 
-	@Override
-	public final ResponseEntity<String> callBatchAction(final String actionName,
+
+    public ResponseEntity<Specifier<Facets>> getBatchAction( String actionName, String id, String dn ) {
+        return null;  // not required here
+    }
+
+
+    public final ResponseEntity<Specifier> callBatchAction(final String actionName,
 			final String args, final String dn) {
 		return null; // not required here
 	}

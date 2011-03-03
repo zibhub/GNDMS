@@ -17,6 +17,7 @@ package de.zib.gndms.GORFX.service;
 
 import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.rest.Facets;
+import de.zib.gndms.rest.Specifier;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -98,9 +99,9 @@ public interface TaskFlowService {
      * @param dn The dn of the user invoking the method.
      * @param wid The id of the workflow, for logging purpose.
      *
-     * @return A list of quotes.
+     * @return A list of quotes specifiers, which carry the quote information as payload.
      */
-    ResponseEntity<List<Quote>> getQuotes( String type, String id, String dn, String wid );
+    ResponseEntity<List<Specifier<Quote>>> getQuotes( String type, String id, String dn, String wid );
 
     /** 
      * @brief Allows the client to provide a preferred quote.
@@ -156,10 +157,10 @@ public interface TaskFlowService {
      * @param dn The dn of the user invoking the method.
      * @param wid The id of the workflow, for logging purpose.
      * 
-     * @return The URL of the task resource or HTTP-status 404 the
+     * @return The specifier of the task resource or HTTP-status 404 the
      * task hasn't been created yet.
      */
-    ResponseEntity<String> getTask( String type, String id, String dn, String wid );
+    ResponseEntity<Specifier<Facets>> getTask( String type, String id, String dn, String wid );
 
     /** 
      * @brief Creates the task for a taskflow.
@@ -176,7 +177,7 @@ public interface TaskFlowService {
      * @return HTTP-status 201 if the creation was successful,
      * together with the URL of the created resource. 
      */
-	ResponseEntity<String> createTask(String type, String id,
+	ResponseEntity<Specifier<Facets>> createTask(String type, String id,
 			String quoteId, String dn, String wid );
 	
     /** 
@@ -203,11 +204,11 @@ public interface TaskFlowService {
      * @param dn The dn of the user invoking the method.
      * @param wid The id of the workflow, for logging purpose.
      * 
-     * @return The taskflow result, which might be HTTP-status 302
-     * together with the URL of the task result or 404 if no result is
+     * @return The a specifier for the task result, which carries the result as payload if available,
+     * which might be HTTP-status 302 together with the URL of the task result or 404 if no result is
      * available.
      * */
-    ResponseEntity<TaskResult> getResult( String type, String id, String dn, String wid );
+    ResponseEntity<Specifier<TaskResult>> getResult( String type, String id, String dn, String wid );
 
     /** 
      * @brief Delivers possible errors from the task(flow) execution. 

@@ -17,6 +17,7 @@ package de.zib.gndms.GORFX.service;
  */
 
 
+import de.zib.gndms.kit.action.Action;
 import de.zib.gndms.kit.action.ActionMeta;
 import de.zib.gndms.kit.action.ActionProvider;
 import de.zib.gndms.logic.taskflow.TaskFlowProvider;
@@ -25,6 +26,7 @@ import de.zib.gndms.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.rest.Facets;
 import de.zib.gndms.rest.GNDMSResponseHeader;
 import de.zib.gndms.kit.config.ConfigMeta;
+import de.zib.gndms.rest.Specifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -83,7 +86,7 @@ public class GORFXServiceImpl implements GORFXService {
 
 
     @RequestMapping( value = "/config/{actionName}", method = RequestMethod.GET )
-    public ResponseEntity<ConfigMeta> getContigActionInfo( @PathVariable String actionName,
+    public ResponseEntity<ConfigMeta> getConfigActionInfo( @PathVariable String actionName,
                                                            @RequestHeader( "DN" ) String dn ) {
 
         GNDMSResponseHeader responseHeaders = new GNDMSResponseHeader();
@@ -138,21 +141,36 @@ public class GORFXServiceImpl implements GORFXService {
                 public String getDescription() {
                     return "I just mock you";
                 }
+
+
+                public Action getAction() {
+                    return null;  // not required here
+                }
             }, headers, HttpStatus.OK );
     }
 
 
+    public ResponseEntity<Specifier<Facets>> getBatchAction( String actionName, String id, String dn ) {
+        return null;  // not required here
+    }
+
+
     @RequestMapping( value = "/batch/{actionName}", method = RequestMethod.POST )
-    public ResponseEntity<String> callBatchAction( @PathVariable String actionName, @RequestBody String args,
+    public ResponseEntity<Specifier> callBatchAction( @PathVariable String actionName, @RequestBody String args,
                                                    @RequestHeader( "DN" ) String dn ) {
 
         GNDMSResponseHeader headers =
             new GNDMSResponseHeader( gorfxFacets.findFacet( "batch" ).getUrl(), null, baseUrl + "/gorfx/", dn, null );
 
         if (! actionName.equals( "mockup" ) )
-            return new ResponseEntity<String>( null, headers, HttpStatus.NOT_FOUND );
+            return new ResponseEntity<Specifier>( null, headers, HttpStatus.NOT_FOUND );
 
-        return new ResponseEntity<String>( "Are you happy, Punk?", headers, HttpStatus.OK );
+        Specifier<String> res = new Specifier<String>();
+        res.addMapping( "actionName", actionName );
+        res.setURL( baseUrl + "/batch/_" + actionName );
+        res.setPayload( "Feeling lucky?" );
+
+        return (ResponseEntity<Specifier>) new ResponseEntity<Specifier<String>>( res, headers, HttpStatus.OK );
     }
 
 
@@ -179,7 +197,7 @@ public class GORFXServiceImpl implements GORFXService {
 
 
     @RequestMapping( value = "/taskflows/{type}", method = RequestMethod.POST )
-    public ResponseEntity<String> createTaskFlow( @PathVariable String type, AbstractTF order,
+    public ResponseEntity<Specifier<Facets>> createTaskFlow( @PathVariable String type, AbstractTF order,
                                                   @RequestHeader( "DN" ) String dn,
                                                   @RequestHeader( "WId" ) String wid ) {
         return null;  // not required here
