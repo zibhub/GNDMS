@@ -15,7 +15,7 @@ package de.zib.gndms.model.gorfx.types;
  * limitations under the License.
  */
 
-import de.zib.gndms.logic.taskflow.TaskFlowAction;
+import de.zib.gndms.logic.taskflow.TaskAction;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -25,21 +25,21 @@ import java.io.StringWriter;
  * @date 14.02.11  17:44
  * @brief
  */
-public abstract class AbstractTaskFlowAction<T extends AbstractTF> implements TaskFlowAction<T> {
+public abstract class AbstractTaskAction<T extends AbstractTF> implements TaskAction<T> {
 
-    private TaskFlow<T> taskFlow;
+    private Task<T> task;
     private TaskStatus status;
     private TaskResult result;
     private TaskFailure failure;
 
 
-    public TaskFlow<T> getTaskFlow() {
-        return taskFlow;
+    public Task<T> getTask() {
+        return task;
     }
 
 
-    public void setTaskFlow( TaskFlow<T> tf ) {
-        this.taskFlow = tf;
+    public void setTask( Task<T> tf ) {
+        this.task = tf;
     }
 
 

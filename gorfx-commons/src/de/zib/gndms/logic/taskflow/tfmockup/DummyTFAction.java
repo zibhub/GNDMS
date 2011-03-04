@@ -15,7 +15,7 @@ package de.zib.gndms.logic.taskflow.tfmockup;
  * limitations under the License.
  */
 
-import de.zib.gndms.model.gorfx.types.AbstractTaskFlowAction;
+import de.zib.gndms.model.gorfx.types.AbstractTaskAction;
 import de.zib.gndms.model.gorfx.types.DefaultTaskStatus;
 import de.zib.gndms.model.gorfx.types.TaskStatus;
 
@@ -24,7 +24,7 @@ import de.zib.gndms.model.gorfx.types.TaskStatus;
  * @date 14.02.11  17:53
  * @brief
  */
-public class DummyTFAction extends AbstractTaskFlowAction<DummyTF> {
+public class DummyTFAction extends AbstractTaskAction<DummyTF> {
 
     public DummyTFAction() {
         setStatus( new DefaultTaskStatus() );
@@ -36,7 +36,7 @@ public class DummyTFAction extends AbstractTaskFlowAction<DummyTF> {
 
         try {
             StringBuffer sb = new StringBuffer();
-            DummyTF tf = getTaskFlow().getOrder();
+            DummyTF tf = (DummyTF) getTask().getModel();
             stat.setMaxProgress( tf.getTimes() );
             for( int i = 0; i < tf.getTimes(); ++i ) {
                 sb.append( tf.getMessage() );

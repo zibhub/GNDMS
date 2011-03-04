@@ -21,7 +21,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * @author try ma ik jo rr a zib
@@ -42,13 +41,13 @@ public class TaskServiceImpl implements TaskService {
 
     @RequestMapping( value = "/config", method = RequestMethod.GET )
     public ResponseEntity<TaskServiceConfig> getServiceConfig( @RequestHeader String dn ) {
-        throw new NotImplementedException();
+        throw new NotYetImplementedException();
     }
 
 
     @RequestMapping( value = "/config", method = RequestMethod.POST )
     public ResponseEntity<String> setServiceConfig( @RequestBody TaskServiceConfig cfg, @RequestHeader String dn ) {
-        throw new NotImplementedException();
+        throw new NotYetImplementedException();
     }
 
 

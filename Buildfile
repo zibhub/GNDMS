@@ -517,7 +517,7 @@ define 'gndms' do
 
     desc 'GORFX rest service'
     define 'gorfx-rest', :layout => dmsLayout('gorfx', 'gndms-gorfx-rest') do
-        compile.with project('gorfx-commons'), SPRING, SLF4J, XSTREAM, COMMONS_LOGGING, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME
+        compile.with project('gorfx-commons'), project('gndmc-rest'), SPRING, SLF4J, XSTREAM, COMMONS_LOGGING, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME
         compile
 
        # web_inf << file(_('../gorfx/src/META-INF/gorfx.xml'))

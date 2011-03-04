@@ -51,7 +51,7 @@ public class GORFXClient extends AbstractClient implements
 	}
 
 	public final ResponseEntity<Facets> listAvailableFacets(final String dn) {
-		return unifiedGet(Facets.class, serviceURL + "/gorfx/", dn);
+		return unifiedGet(Facets.class, serviceURL + "/gorfx/_", dn);
 	}
 
 
@@ -62,15 +62,15 @@ public class GORFXClient extends AbstractClient implements
 	}
 
 	public final ResponseEntity<TaskFlowInfo> getTaskFlowInfo(final String type, final String dn) {
-		return unifiedGet(TaskFlowInfo.class, serviceURL + "/gorfx/" + type, dn);
+		return unifiedGet(TaskFlowInfo.class, serviceURL + "/gorfx/_" + type, dn);
 	}
 
 
     @SuppressWarnings("unchecked")
 	public final ResponseEntity<Specifier<Facets>> createTaskFlow( final String type, final AbstractTF order,
                                                                    final String dn, final String wid ) {
-		return ( ResponseEntity<Specifier<Facets>> ) unifiedPost(Specifier.class, AbstractTF.class, serviceURL
-				+ "/gorfx/" + type, wid, dn);
+		return ( ResponseEntity<Specifier<Facets>> ) (Object) unifiedPost(Specifier.class, AbstractTF.class, serviceURL
+				+ "/gorfx/_" + type, wid, dn);
 	}
 
 }

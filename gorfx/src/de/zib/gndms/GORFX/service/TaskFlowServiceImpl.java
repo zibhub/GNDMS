@@ -1,15 +1,18 @@
 package de.zib.gndms.GORFX.service;
 
+import de.zib.gndms.logic.taskflow.TaskFlowProvider;
 import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.model.gorfx.types.TaskStatus;
-import de.zib.gndms.rest.Facets;
-import de.zib.gndms.rest.GNDMSResponseHeader;
+import de.zib.gndms.rest.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 /*
  * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
@@ -34,7 +37,7 @@ import java.util.List;
  * TaskFlowService interface.
  *
  * The taskflow service acts as interface to instantiated taskflow
- * resouces. The instantitiation or creation happens through the GORFX
+ * resources. The instantiation or creation happens through the GORFX
  * service itself.
  *
  * This implicates that all method invocation concern a single
@@ -45,16 +48,48 @@ import java.util.List;
 public class TaskFlowServiceImpl implements TaskFlowService {
 
     // private ORQDao orqDao;
-    private String serviceUrl; // inject or read from properties
+    private String serviceUrl; // inject or read from properties TODO CHECK IF THIS INCLUDES GORFX POSTFIX
+    private TaskFlowProvider taskFlowProvider;
+    private List<String> facetsNames = new ArrayList<String>( 7 );
 
-    @RequestMapping( value = "/{type}/{id}", method = RequestMethod.GET )
+    public void init( ) {
+        facetsNames.add( "order" );
+        facetsNames.add( "quote" );
+        facetsNames.add( "task" );
+        facetsNames.add( "result" );
+        facetsNames.add( "status" );
+        facetsNames.add( "errors" );
+
+    }
+
+    @RequestMapping( value = "/_{type}/_{id}", method = RequestMethod.GET )
     public ResponseEntity<Facets> getFacets( @PathVariable String type, @PathVariable String id, @RequestHeader( "DN" ) String dn ) {
 
-        return null;
+        Map<String,String> uriargs = new HashMap<String, String>( 2 );
+        uriargs.put( "id", id );
+        uriargs.put( "type", type );
+        UrlFactory uf = new UrlFactory( serviceUrl );
+
+        GNDMSResponseHeader header = new GNDMSResponseHeader( uf.taskFlowTypeUrl( uriargs, null ), null, serviceUrl, dn, null );
+
+        if( taskFlowProvider.exists( type ) ) {
+            TaskFlow tf = taskFlowProvider.getFactoryForTaskFlow( type ).find( id );
+            if ( tf != null ) {
+                List<Facet> fl = new ArrayList<Facet>( 6 );
+                for( String f : facetsNames ) {
+                    String fn = uf.taskFlowUrl( uriargs, f );
+                    fl.add( new Facet( f, fn ) );
+                }
+
+                return new ResponseEntity<Facets>( new Facets( fl ), header, HttpStatus.OK );
+            }
+        }
+
+        return new ResponseEntity<Facets>( null, header, HttpStatus.NOT_FOUND );
     }
 
 
-    @RequestMapping( value = "/{type}/{id}", method = RequestMethod.DELETE )
+    @RequestMapping( value = "/_{type}/_{id}", method = RequestMethod.DELETE )
     public ResponseEntity<Void> deleteTaskflow( @PathVariable String type, @PathVariable String id,
                                                 @RequestHeader( "DN" ) String dn,
                                                 @RequestHeader( "WId" ) String wid ) {
@@ -62,7 +97,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     }
 
 
-    @RequestMapping( value = "/{type}/{id}/order", method = RequestMethod.GET )
+    @RequestMapping( value = "/_{type}/_{id}/order", method = RequestMethod.GET )
     public ResponseEntity<AbstractTF> getOrder( @PathVariable String type, @PathVariable String id,
                                                 @RequestHeader( "DN" ) String dn,
                                                 @RequestHeader( "WId" ) String wid ) {
@@ -71,7 +106,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     }
 
 
-    @RequestMapping( value = "/{type}/{id}/order", method = RequestMethod.POST )
+    @RequestMapping( value = "/_{type}/_{id}/order", method = RequestMethod.POST )
     public ResponseEntity<Void> setOrder( @PathVariable String type, @PathVariable String id,
                                           @RequestBody AbstractTF orq, @RequestHeader( "DN" ) String dn,
                                           @RequestHeader( "WId" ) String wid ) {
@@ -80,8 +115,8 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     }
 
 
-    @RequestMapping( value = "/{type}/{id}/quotes", method = RequestMethod.GET )
-    public ResponseEntity<List<Quote>> getQuotes( @PathVariable String type, @PathVariable String id,
+    @RequestMapping( value = "/_{type}/_{id}/quotes", method = RequestMethod.GET )
+    public ResponseEntity<List<Specifier<Quote>>> getQuotes( @PathVariable String type, @PathVariable String id,
                                                   @RequestHeader( "DN" ) String dn,
                                                   @RequestHeader( "WId" ) String wid ) {
         // retrieve a list
@@ -89,7 +124,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     }
 
 
-    @RequestMapping( value = "/{type}/{id}/quotes/", method = RequestMethod.POST )
+    @RequestMapping( value = "/_{type}/_{id}/quotes/", method = RequestMethod.POST )
     public ResponseEntity<Void> setQuote( @PathVariable String type, @PathVariable String id,
                                           @RequestBody Quote cont, @RequestHeader( "DN" ) String dn,
                                           @RequestHeader( "WId" ) String wid ) {
@@ -100,7 +135,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
 
 
-    @RequestMapping( value = "/{type}/{id}/quotes/{idx}", method = RequestMethod.GET )
+    @RequestMapping( value = "/_{type}/_{id}/quotes/_{idx}", method = RequestMethod.GET )
     public ResponseEntity<Quote> getQuote( @PathVariable String type, @PathVariable String id, @PathVariable int idx,
                                            @RequestHeader( "DN" ) String dn, @RequestHeader( "WId" ) String wid ) {
         // retrieve desired quotes for the order.
@@ -108,7 +143,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     }
 
 
-    @RequestMapping( value = "/{type}/{id}/quotes/{idx}", method = RequestMethod.DELETE )
+    @RequestMapping( value = "/_{type}/_{id}/quotes/_{idx}", method = RequestMethod.DELETE )
     public ResponseEntity<Void> deleteQuotes( @PathVariable String type, @PathVariable String id,
                                               @PathVariable int idx, @RequestHeader( "DN" ) String dn,
                                               @RequestHeader( "WId" ) String wid ) {
@@ -117,8 +152,8 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     }
 
 
-    @RequestMapping( value = "/{type}/{id}/task/", method = RequestMethod.GET )
-    public ResponseEntity<String> getTask( @PathVariable String type, @PathVariable String id,
+    @RequestMapping( value = "/_{type}/_{id}/task/", method = RequestMethod.GET )
+    public ResponseEntity<Specifier<Facets>> getTask( @PathVariable String type, @PathVariable String id,
                                            @RequestHeader( "DN" ) String dn, @RequestHeader( "WId" ) String wid ) {
         // redirects to the task of the taskflow, creates this task if it doesn't exists.
         boolean taskExists=true;
@@ -129,21 +164,23 @@ public class TaskFlowServiceImpl implements TaskFlowService {
         else
             resp = new ResponseEntity<String>( null, responseHeaders, HttpStatus.NOT_FOUND );
 
-        return resp;
+        return null;
     }
 
 
-    @RequestMapping( value = "/{type}/{id}/task/", method = RequestMethod.PUT )
-    public ResponseEntity<String> createTask( @PathVariable String type, @PathVariable String id,
+    @RequestMapping( value = "/_{type}/_{id}/task/", method = RequestMethod.PUT )
+    public ResponseEntity<Specifier<Facets>> createTask( @PathVariable String type, @PathVariable String id,
                                               @RequestParam( value = "quote", required = false ) String quoteId,
                                               @RequestHeader( "DN" ) String dn, @RequestHeader( "WId" ) String wid ) {
         // redirects to the task of the taskflow, creates this task if it doesn't exists.
         GNDMSResponseHeader responseHeaders = new GNDMSResponseHeader();
-        return new ResponseEntity<String>( "the string URL", responseHeaders, HttpStatus.CREATED );
+        //return new ResponseEntity<Specifier<Facets>>( "the string URL", responseHeaders, HttpStatus.CREATED );
+        return null;
+
     }
 
 
-    @RequestMapping( value = "/{type}/{id}/status", method = RequestMethod.GET )
+    @RequestMapping( value = "/_{type}/_{id}/status", method = RequestMethod.GET )
     public ResponseEntity<TaskFlowStatus> getStatus( @PathVariable String type, @PathVariable String id,
                                                      @RequestHeader( "DN" ) String dn,
                                                      @RequestHeader( "WId" ) String wid ) {
@@ -153,8 +190,8 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     }
 
 
-    @RequestMapping( value = "/{type}/{id}/result", method = RequestMethod.GET )
-    public ResponseEntity<TaskResult> getResult( @PathVariable String type, @PathVariable String id,
+    @RequestMapping( value = "/_{type}/_{id}/result", method = RequestMethod.GET )
+    public ResponseEntity<Specifier<TaskResult>> getResult( @PathVariable String type, @PathVariable String id,
                                                      @RequestHeader( "DN" ) String dn,
                                                      @RequestHeader( "WId" ) String wid ) {
 
@@ -163,7 +200,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     }
 
 
-    @RequestMapping( value = "/{type}/{id}/errors", method = RequestMethod.GET )
+    @RequestMapping( value = "/_{type}/_{id}/errors", method = RequestMethod.GET )
     public ResponseEntity<TaskFlowFailure> getErrors( @PathVariable String type, @PathVariable String id,
                                                       @RequestHeader( "DN" ) String dn,
                                                       @RequestHeader( "WId" ) String wid ) {

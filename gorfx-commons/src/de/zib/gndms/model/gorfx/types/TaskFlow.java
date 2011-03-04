@@ -1,6 +1,5 @@
 package de.zib.gndms.model.gorfx.types;
 
-import de.zib.gndms.model.gorfx.Task;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +32,7 @@ public class TaskFlow<T extends AbstractTF> {
     private String id;
     private T order;
     private List<Quote> quotes;
-    private Task task;
+    private Task<T> task;
 
 
     public String getId() {
@@ -85,12 +84,12 @@ public class TaskFlow<T extends AbstractTF> {
     }
 
 
-    public Task getTask() {
+    public Task<T> getTask() {
         return task;
     }
 
 
-    public void setTask( Task task ) {
+    public void setTask( Task<T> task ) {
         this.task = task;
     }
 
