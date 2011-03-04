@@ -15,17 +15,44 @@ package de.zib.gndms.model.gorfx.types;
  * limitations under the License.
  */
 
-import de.zib.gndms.model.gorfx.types.Task;
-
 /**
  * @author try ma ik jo rr a zib
- * @date 02.03.11  13:48
+ * @date 04.03.11  12:14
  * @brief
  */
-public interface TaskDao {
+public class Task<T> {
 
-    Task find ( String id );
-    Task delete( String id );
-    Task create( );
+    private String id;
+    private T model;
+    private TaskStatus taskStatus;
 
+
+    public String getId() {
+        return id;
+    }
+
+
+    public void setId( String id ) {
+        this.id = id;
+    }
+
+
+    public T getModel() {
+        return model;
+    }
+
+
+    public void setModel( T model ) {
+        this.model = model;
+    }
+
+
+    public TaskStatus getStatus() {
+        return taskStatus;
+    }
+
+
+    public void setStatus( TaskStatus taskStatus ) {
+        this.taskStatus = taskStatus;
+    }
 }

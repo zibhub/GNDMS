@@ -17,11 +17,13 @@ package de.zib.gndms.GORFX.service;
  */
 
 
+import de.zib.gndms.gndmc.gorfx.TaskFlowClient;
 import de.zib.gndms.kit.action.Action;
 import de.zib.gndms.kit.action.ActionMeta;
 import de.zib.gndms.kit.action.ActionProvider;
 import de.zib.gndms.logic.taskflow.TaskFlowProvider;
 import de.zib.gndms.model.gorfx.types.AbstractTF;
+import de.zib.gndms.model.gorfx.types.TaskFlow;
 import de.zib.gndms.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.rest.Facets;
 import de.zib.gndms.rest.GNDMSResponseHeader;
@@ -35,6 +37,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.ws.Response;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,6 +62,13 @@ public class GORFXServiceImpl implements GORFXService {
     private String baseUrl; ///< The base url something like: \c http://my.host.org/gndms/grid_id
     private ActionProvider configProvider; ///< List of config actions, todo uncertain who provided these.
     private TaskFlowProvider taskFlowProvider; ///< List of config actions, todo uncertain who provided these.
+    private TaskFlowClient taskFlowClient;
+
+    public void init( ) {
+         taskFlowClient = new TaskFlowClient( baseUrl );
+
+    }
+
 
     @RequestMapping( value = "/", method = RequestMethod.GET )
     public ResponseEntity<Facets> listAvailableFacets( @RequestHeader( "DN" ) String dn ) {
@@ -85,7 +95,7 @@ public class GORFXServiceImpl implements GORFXService {
     }
 
 
-    @RequestMapping( value = "/config/{actionName}", method = RequestMethod.GET )
+    @RequestMapping( value = "/config/_{actionName}", method = RequestMethod.GET )
     public ResponseEntity<ConfigMeta> getConfigActionInfo( @PathVariable String actionName,
                                                            @RequestHeader( "DN" ) String dn ) {
 
@@ -97,7 +107,7 @@ public class GORFXServiceImpl implements GORFXService {
     }
 
 
-    @RequestMapping( value = "/config/{actionName}", method = RequestMethod.POST )
+    @RequestMapping( value = "/config/_{actionName}", method = RequestMethod.POST )
     public ResponseEntity<String> callConfigAction( @PathVariable String actionName,
                                                     @RequestBody String args, @RequestHeader( "DN" ) String dn ) {
         GNDMSResponseHeader responseHeaders =
@@ -118,7 +128,7 @@ public class GORFXServiceImpl implements GORFXService {
             responseHeaders, HttpStatus.OK );
     }
 
-    @RequestMapping( value = "/batch/{actionName}", method = RequestMethod.GET )
+    @RequestMapping( value = "/batch/_{actionName}", method = RequestMethod.GET )
     public ResponseEntity<ActionMeta> getBatchActionInfo( @PathVariable String actionName,
                                                           @RequestHeader( "DN" ) String dn ) {
 
@@ -150,12 +160,14 @@ public class GORFXServiceImpl implements GORFXService {
     }
 
 
-    public ResponseEntity<Specifier<Facets>> getBatchAction( String actionName, String id, String dn ) {
+    @RequestMapping( value = "/batch/_{actionName}/_{id}", method = RequestMethod.GET )
+    public ResponseEntity<Specifier<Facets>> getBatchAction( @PathVariable String actionName, @PathVariable String id,
+                                                             @RequestHeader String dn ) {
         return null;  // not required here
     }
 
 
-    @RequestMapping( value = "/batch/{actionName}", method = RequestMethod.POST )
+    @RequestMapping( value = "/batch/_{actionName}", method = RequestMethod.POST )
     public ResponseEntity<Specifier> callBatchAction( @PathVariable String actionName, @RequestBody String args,
                                                    @RequestHeader( "DN" ) String dn ) {
 
@@ -170,7 +182,7 @@ public class GORFXServiceImpl implements GORFXService {
         res.setURL( baseUrl + "/batch/_" + actionName );
         res.setPayload( "Feeling lucky?" );
 
-        return (ResponseEntity<Specifier>) new ResponseEntity<Specifier<String>>( res, headers, HttpStatus.OK );
+        return (ResponseEntity<Specifier>) (Object) new ResponseEntity<Specifier<String>>( res, headers, HttpStatus.OK );
     }
 
 
@@ -187,20 +199,42 @@ public class GORFXServiceImpl implements GORFXService {
     }
 
 
-    @RequestMapping( value = "/taskflows/{type}", method = RequestMethod.GET )
+    @RequestMapping( value = "/taskflows/_{type}", method = RequestMethod.GET )
     public ResponseEntity<TaskFlowInfo> getTaskFlowInfo( @PathVariable String type, @RequestHeader( "DN" ) String dn ) {
+
+        GNDMSResponseHeader headers = new GNDMSResponseHeader(
+            gorfxFacets.findFacet( "taskflow" ).getUrl(), null, baseUrl + "/gorfx/", dn, null );
+
+        if(! taskFlowProvider.exists( type  ) )
+            return new ResponseEntity<TaskFlowInfo>( null, headers, HttpStatus.NOT_FOUND );
 
         taskFlowProvider.getTaskFlowInfo( type );
 
-        return null;  // not required here
+        return new ResponseEntity<TaskFlowInfo>( taskFlowProvider.getTaskFlowInfo( type ), headers, HttpStatus.OK );
+
     }
 
 
-    @RequestMapping( value = "/taskflows/{type}", method = RequestMethod.POST )
+    @RequestMapping( value = "/taskflows/_{type}", method = RequestMethod.POST )
     public ResponseEntity<Specifier<Facets>> createTaskFlow( @PathVariable String type, AbstractTF order,
                                                   @RequestHeader( "DN" ) String dn,
                                                   @RequestHeader( "WId" ) String wid ) {
-        return null;  // not required here
+
+        GNDMSResponseHeader headers = new GNDMSResponseHeader(
+            gorfxFacets.findFacet( "taskflow" ).getUrl(), null, baseUrl + "/gorfx/", dn, wid );
+
+        if(! taskFlowProvider.exists( type  ) )
+            return new ResponseEntity<Specifier<Facets>>( null, headers, HttpStatus.NOT_FOUND );
+
+        TaskFlow tf = taskFlowProvider.getFactoryForTaskFlow( type ).create();
+        Specifier<Facets> spec = new Specifier<Facets>();
+        spec.addMapping( "id", tf.getId() );
+        spec.addMapping( "type", type );
+
+        ResponseEntity<Facets> re = taskFlowClient.getFacets( type, tf.getId(), dn );
+        spec.setPayload( re.getBody() );
+
+        return new ResponseEntity<Specifier<Facets>>( spec, headers, HttpStatus.OK );
     }
 
 

@@ -44,4 +44,30 @@ public interface TaskFlowFactory<T extends TaskFlow > {
      * @return A task info object.
      */
     TaskFlowInfo getInfo( );
+
+    /**
+     * @brief Creates a new taskflow instance.
+     *
+     * The created task is registered in its factory.
+     *
+     * @return A taskflow object.
+     */
+    T create( );
+
+
+    /**
+     * @brief Finds an existing taskflow.
+     *
+     * @param id The id of the taskflow.
+     * @return The taskflow or null if it doesn't exist.
+     */
+    T find( String id );
+
+    /**
+     * @brief Removes a taskflow.
+     *
+     * @param id The id of the taskflow.
+     */
+    void delete( String id );
+
 }

@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.taskflow;
+package de.zib.gndms.GORFX.service;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -15,24 +15,12 @@ package de.zib.gndms.logic.taskflow;
  * limitations under the License.
  */
 
-import de.zib.gndms.model.gorfx.types.*;
-
 /**
  * @author try ma ik jo rr a zib
- * @date 14.02.11  17:40
+ * @date 04.03.11  12:50
  * @brief
  */
-public interface TaskFlowAction<T extends AbstractTF> {
+public class NotYetImplementedException extends RuntimeException {
 
-    void setTaskFlow( TaskFlow<T> tf );
-
-    void run( );
-
-    boolean hasStatus( );
-    TaskStatus getStatus( );
-    boolean hasError( );
-    TaskFailure getError( );
-    boolean hasResult( );
-    TaskResult getResult( );
-
+    private static final long serialVersionUID = 8566379615719291478L;
 }

@@ -17,14 +17,28 @@ package de.zib.gndms.logic.taskflow.tfmockup;
 
 import de.zib.gndms.logic.taskflow.AbstractQuoteCalculator;
 import de.zib.gndms.logic.taskflow.TaskFlowFactory;
+import de.zib.gndms.model.gorfx.types.Task;
+import de.zib.gndms.model.gorfx.types.TaskFlow;
 import de.zib.gndms.model.gorfx.types.TaskFlowInfo;
+import de.zib.gndms.model.gorfx.types.TaskStatistics;
+
+import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * @author try ma ik jo rr a zib
  * @date 14.02.11  16:10
  * @brief
  */
-public class DummyTaskFlowFactory implements TaskFlowFactory {
+public class DummyTaskFlowFactory implements TaskFlowFactory<TaskFlow<DummyTF>> {
+
+    private HashMap<String, TaskFlow<DummyTF>> taskFlows = new HashMap<String, TaskFlow<DummyTF>>( 10 );
+    private TaskStatistics stats = new TaskStatistics();
+
+
+    public DummyTaskFlowFactory() {
+        stats.setType( "DummyTF" );
+    }
 
 
     public AbstractQuoteCalculator getQuoteCalculator() {
@@ -34,8 +48,9 @@ public class DummyTaskFlowFactory implements TaskFlowFactory {
 
     public TaskFlowInfo getInfo() {
         return new TaskFlowInfo() {
-            public String getStatistics() {
-                return null;  // not required here
+            private TaskStatistics statistics = stats;
+            public TaskStatistics getStatistics() {
+                return statistics;
             }
 
 
@@ -43,5 +58,42 @@ public class DummyTaskFlowFactory implements TaskFlowFactory {
                 return null;  // not required here
             }
         };
+    }
+
+
+    public TaskFlow<DummyTF> create() {
+        TaskFlow<DummyTF> tf = new TaskFlow<DummyTF>();
+        String uuid = UUID.randomUUID().toString();
+        taskFlows.put( uuid, tf );
+        tf.setId( uuid );
+        stats.setActive( stats.getActive() + 1 );
+        return tf;
+    }
+
+
+    public TaskFlow<DummyTF> find( String id ) {
+        return taskFlows.get( id );
+    }
+
+
+    public void delete( String id ) {
+        TaskFlow tf = taskFlows.remove( id );
+        Task t = tf.getTask();
+        if( t != null )
+            switch ( t.getStatus().getStatus() ) {
+                case FINISHED:
+                    stats.setFinished( stats.getFinished() +1 );
+                case FAILED:
+                    stats.setFailed( stats.getFailed() +1 );
+                    break;
+                case RUNNING:
+                    break;
+                case WAITING:
+                    break;
+                case PAUSED:
+                    break;
+            }
+
+        stats.setActive( stats.getActive() - 1 );
     }
 }

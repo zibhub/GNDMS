@@ -58,7 +58,7 @@ public class FullGORFXClient extends GORFXClient implements GORFXService {
 
     public final ResponseEntity<ConfigMeta> getConfigActionInfo(final String actionName,
 			final String dn) {
-		return unifiedGet(ConfigMeta.class, serviceURL + "/gorfx/config/"
+		return unifiedGet(ConfigMeta.class, serviceURL + "/gorfx/config/_"
 				+ actionName, dn);
 	}
 
