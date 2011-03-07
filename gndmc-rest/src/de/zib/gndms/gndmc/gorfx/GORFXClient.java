@@ -51,7 +51,7 @@ public class GORFXClient extends AbstractClient implements
 	}
 
 	public final ResponseEntity<Facets> listAvailableFacets(final String dn) {
-		return unifiedGet(Facets.class, serviceURL + "/gorfx/_", dn);
+		return unifiedGet(Facets.class, serviceURL + "/gorfx/", dn);
 	}
 
 

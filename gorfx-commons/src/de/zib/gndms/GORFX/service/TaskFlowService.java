@@ -84,6 +84,9 @@ public interface TaskFlowService {
      * 
      * @return A confirmation if the order was accepted, in the
      * HTTP-status of the response entity.
+     *      - 200 if it was accepted
+     *      - 400 if it wasn't successfully  validated
+     *      - 404 if type or id are not valid.
      */
     ResponseEntity<Void> setOrder( String type, String id, AbstractTF orq, String dn, String wid );
 
@@ -107,7 +110,8 @@ public interface TaskFlowService {
      * @brief Allows the client to provide a preferred quote.
      * 
      * If the preferred quote is valid, wrt. it can be satisfied, it is
-     * added to the list of possible quotes.
+     * added to the list of possible quotes. Use getQuote() to see if the
+     * quote was accepted.
      *
      * @param type The type of the task flow.
      * @param id The id of the task flow.
@@ -115,8 +119,7 @@ public interface TaskFlowService {
      * @param dn The dn of the user invoking the method.
      * @param wid The id of the workflow, for logging purpose.
      *
-     * @return A confirmation if the quote was accepted, in the
-     * HTTP-status of the response entity.
+     * \note Only one preferred quote can be provided.
      */
     ResponseEntity<Void> setQuote( String type, String id, Quote cont, String dn, String wid );
 

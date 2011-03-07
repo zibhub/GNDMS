@@ -32,7 +32,9 @@ public class TaskFlow<T extends AbstractTF> {
     private String id;
     private T order;
     private List<Quote> quotes;
+    private Quote preferredQuote;
     private Task<T> task;
+    private boolean unfulfillableOrder = false;
 
 
     public String getId() {
@@ -96,5 +98,30 @@ public class TaskFlow<T extends AbstractTF> {
 
     public boolean hasTask( ) {
         return task != null;
+    }
+
+
+    public boolean hasPreferredQuote() {
+        return preferredQuote != null;
+    }
+
+
+    public Quote getPreferredQuote() {
+        return preferredQuote;
+    }
+
+
+    public void setPreferredQuote( Quote preferredQuote ) {
+        this.preferredQuote = preferredQuote;
+    }
+
+
+    public void setUnfulfillableOrder( boolean b ) {
+        unfulfillableOrder = b;
+    }
+
+
+    public boolean isUnfulfillableOrder() {
+        return unfulfillableOrder;
     }
 }

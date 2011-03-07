@@ -17,6 +17,7 @@ package de.zib.gndms.rest;
 
 import org.springframework.web.util.UriTemplate;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -24,35 +25,50 @@ import java.util.Map;
  * @date 03.03.11  18:23
  * @brief
  */
-public class UrlFactory {
+public class UriFactory {
 
     private String baseUrl;
-    private UriTemplate taskFlowTemplate = new UriTemplate ( baseUrl +"/_{type}/_{id}" );
-    private UriTemplate taskFlowTypeTemplate = new UriTemplate( baseUrl +"/_{type}/" );
+    private UriTemplate taskFlowTemplate;
+    private UriTemplate taskFlowTypeTemplate;
+    private UriTemplate quoteTemplate;
+    private UriTemplate taskTemplate;
 
 
-    public UrlFactory() {
+    public UriFactory() {
     }
 
 
-    public UrlFactory( String baseUrl ) {
+    public UriFactory( String baseUrl ) {
         this.baseUrl = baseUrl;
+        init();
     }
 
 
     private void init( ) {
-        taskFlowTemplate = new UriTemplate ( baseUrl +"/_{type}/_{id}" );
-        taskFlowTypeTemplate = new UriTemplate( baseUrl +"/_{type}/" );
+        taskFlowTemplate = new UriTemplate ( baseUrl +"/{service}/_{type}/_{id}" );
+        taskFlowTypeTemplate = new UriTemplate( baseUrl +"/{service}/_{type}" );
+        quoteTemplate = new UriTemplate ( baseUrl +"/{service}/_{type}/_{id}/quotes/{idx}" );
+        taskTemplate = new UriTemplate ( baseUrl +"/{service}/task/_{taskId}" );
     }
 
 
-    public String taskFlowUrl ( Map<String,String> vars, String facet ) {
+    public String taskFlowUri( Map<String, String> vars, String facet ) {
         return taskFlowTemplate.expand( vars ).toString() + "/" +facet;
     }
 
 
-    public String taskFlowTypeUrl ( Map<String,String> vars, String facet ) {
-        return taskFlowTypeTemplate.expand( vars ).toString();
+    public String taskFlowTypeUri( Map<String, String> vars, String facet ) {
+        return taskFlowTypeTemplate.expand( vars ).toString() + "/" +facet;
+    }
+
+
+    public String quoteUri( HashMap<String,String> urimap ) {
+        return quoteTemplate.expand( urimap ).toString();
+    }
+
+
+    public String taskUri( HashMap<String,String> urimap, String facet ) {
+        return taskTemplate.expand( urimap ).toString() + "/" + facet;
     }
 
 

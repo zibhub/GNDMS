@@ -82,7 +82,7 @@ public class DummyTaskFlowFactory implements TaskFlowFactory<TaskFlow<DummyTF>> 
         if( t != null )
             switch ( t.getStatus().getStatus() ) {
                 case FINISHED:
-                    stats.setFinished( stats.getFinished() +1 );
+                    stats.setFinished( stats.getFinished() + 1 );
                 case FAILED:
                     stats.setFailed( stats.getFailed() +1 );
                     break;
@@ -95,5 +95,10 @@ public class DummyTaskFlowFactory implements TaskFlowFactory<TaskFlow<DummyTF>> 
             }
 
         stats.setActive( stats.getActive() - 1 );
+    }
+
+
+    public Class getOrderClass() {
+        return DummyTF.class;
     }
 }

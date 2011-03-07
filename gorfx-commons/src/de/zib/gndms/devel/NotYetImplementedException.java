@@ -1,4 +1,4 @@
-package de.zib.gndms.GORFX.service;
+package de.zib.gndms.devel;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *

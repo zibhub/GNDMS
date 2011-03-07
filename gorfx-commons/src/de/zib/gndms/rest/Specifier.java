@@ -48,7 +48,7 @@ public class Specifier<T> {
     }
 
 
-    public void setUrlMap( HashMap<String, String> urlMap ) {
+    public void setUriMap( HashMap<String, String> urlMap ) {
         this.urlMap = urlMap;
     }
 

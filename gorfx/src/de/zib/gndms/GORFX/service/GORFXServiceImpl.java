@@ -29,6 +29,7 @@ import de.zib.gndms.rest.Facets;
 import de.zib.gndms.rest.GNDMSResponseHeader;
 import de.zib.gndms.kit.config.ConfigMeta;
 import de.zib.gndms.rest.Specifier;
+import de.zib.gndms.rest.UriFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.ws.Response;
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,10 +64,13 @@ public class GORFXServiceImpl implements GORFXService {
     private ActionProvider configProvider; ///< List of config actions, todo uncertain who provided these.
     private TaskFlowProvider taskFlowProvider; ///< List of config actions, todo uncertain who provided these.
     private TaskFlowClient taskFlowClient;
+    private UriFactory uriFactory;
 
+
+    @PostConstruct
     public void init( ) {
-         taskFlowClient = new TaskFlowClient( baseUrl );
-
+        taskFlowClient = new TaskFlowClient( baseUrl );
+        uriFactory = new UriFactory( baseUrl );
     }
 
 
@@ -230,6 +234,9 @@ public class GORFXServiceImpl implements GORFXService {
         Specifier<Facets> spec = new Specifier<Facets>();
         spec.addMapping( "id", tf.getId() );
         spec.addMapping( "type", type );
+        HashMap<String,String> hm = new HashMap<String, String>( spec.getUrlMap() );
+        hm.put( "service", "gorfx" );
+        spec.setURL( uriFactory.taskFlowUri( hm, null )  );
 
         ResponseEntity<Facets> re = taskFlowClient.getFacets( type, tf.getId(), dn );
         spec.setPayload( re.getBody() );

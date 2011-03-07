@@ -63,6 +63,7 @@ public class GORFXClientMain extends AbstractApplication {
         if( gorfxClient.getRestTemplate() == null )
             throw new IllegalStateException( "restTemplate is null" );
 
+        System.out.println( "connecting to: \"" + gorfxEpUrl + "\"" );
         System.out.println( "requesting facets" );
         ResponseEntity<Facets> res = gorfxClient.listAvailableFacets( dn );
         System.out.println( "StatusCode: " + res.getStatusCode() );
