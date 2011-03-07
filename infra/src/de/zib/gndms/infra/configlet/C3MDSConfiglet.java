@@ -247,7 +247,7 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 	}
 
 
-	public synchronized String getRequiredPrefix() {
+	public String getRequiredPrefix() {
         stateLock.readLock().lock();
         try {
             return requiredPrefix;
