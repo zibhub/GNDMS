@@ -40,7 +40,17 @@ public abstract class AbstractClient {
 	 */
 	protected String serviceURL;
 
-	private <T,P> ResponseEntity<T> unifiedX(HttpMethod x, final Class<T> clazz, final P parm,
+
+    protected AbstractClient() {
+    }
+
+
+    public AbstractClient( String serviceURL ) {
+        this.serviceURL = serviceURL;
+    }
+
+
+    private <T,P> ResponseEntity<T> unifiedX(HttpMethod x, final Class<T> clazz, final P parm,
 			final String url, final String dn, final String wid){
 		GNDMSResponseHeader requestHeaders = new GNDMSResponseHeader();
 		requestHeaders.setDN(dn);

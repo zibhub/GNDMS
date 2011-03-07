@@ -70,4 +70,11 @@ public interface TaskFlowFactory<T extends TaskFlow > {
      */
     void delete( String id );
 
+    /**
+     * @brief Delivers the class of the order type.
+     *
+     * @return The class of the taskflows order type.
+     */
+    Class getOrderClass( );
+
 }
