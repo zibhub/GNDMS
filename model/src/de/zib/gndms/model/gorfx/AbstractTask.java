@@ -23,7 +23,7 @@ import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.common.TimedGridResource;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.stuff.copy.Copier;
-import de.zib.gndms.stuff.copy.CopyMode;
+import de.zib.gndms.stuff.copy.Copyable.CopyMode;
 import de.zib.gndms.stuff.copy.Copyable;
 import de.zib.gndms.stuff.mold.Mold;
 import de.zib.gndms.stuff.mold.Molder;

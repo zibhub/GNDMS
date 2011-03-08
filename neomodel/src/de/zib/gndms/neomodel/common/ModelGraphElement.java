@@ -72,24 +72,24 @@ public abstract class ModelGraphElement<U extends PropertyContainer> extends Mod
 
     protected abstract Index<U> getTypeNickIndex(final @NotNull String... names);
 
-    protected boolean hasProperty(String s) {
-        return representation.hasProperty(s);
+    protected boolean hasProperty(String key) {
+        return representation.hasProperty(key);
     }
 
-    protected Object getProperty(String s) {
-        return representation.getProperty(s);
+    protected Object getProperty(String key) {
+        return representation.getProperty(key);
     }
 
-    protected Object getProperty(String s, Object o) {
-        return representation.getProperty(s, o);
+    protected Object getProperty(String key, Object defaultValue) {
+        return representation.getProperty(key, defaultValue);
     }
 
-    protected void setProperty(String s, Object o) {
-        representation.setProperty(s, o);
+    protected void setProperty(String key, Object value) {
+        representation.setProperty(key, value);
     }
 
-    protected Object removeProperty(String s) {
-        return representation.removeProperty(s);
+    protected Object removeProperty(String key) {
+        return representation.removeProperty(key);
     }
 
     protected Iterable<String> getPropertyKeys() {
@@ -100,8 +100,12 @@ public abstract class ModelGraphElement<U extends PropertyContainer> extends Mod
         return clazz.cast(SerializationUtils.deserialize((byte[]) repr().getProperty(key)));
     }
 
-    protected <S extends Serializable> S getProperty(@NotNull Class<S> clazz, String key, Object value) {
-        return clazz.cast(SerializationUtils.deserialize((byte[]) repr().getProperty(key, value)));
+    protected <S extends Serializable> S getProperty(@NotNull Class<S> clazz, String key, S deaultValue) {
+        Object property = repr().getProperty(key, deaultValue);
+        if (property == deaultValue)
+            return deaultValue;
+        else
+            return clazz.cast(SerializationUtils.deserialize((byte[]) property));
     }
 
     protected <S extends Serializable> void setProperty(@NotNull Class<S> clazz, String key, S value) {

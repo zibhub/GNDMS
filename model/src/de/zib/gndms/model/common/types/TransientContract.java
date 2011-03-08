@@ -20,7 +20,7 @@ package de.zib.gndms.model.common.types;
 
 import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.stuff.copy.Copyable;
-import de.zib.gndms.stuff.copy.CopyMode;
+import de.zib.gndms.stuff.copy.Copyable.CopyMode;
 import org.joda.time.DateTime;
 
 import java.util.Collections;

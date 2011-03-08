@@ -19,7 +19,7 @@ package de.zib.gndms.model.common;
 
 
 import de.zib.gndms.stuff.copy.Copyable;
-import de.zib.gndms.stuff.copy.CopyMode;
+import de.zib.gndms.stuff.copy.Copyable.CopyMode;
 
 import javax.persistence.Embeddable;
 import javax.persistence.Column;
