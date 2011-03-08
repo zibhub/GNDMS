@@ -50,7 +50,7 @@ public class Facets {
 
 
     /**
-     * Searches for the faced of a given facet name.
+     * Searches for the facet of a given facet name.
      *
      *
      * @param fn The facets name
