@@ -19,7 +19,7 @@ package de.zib.gndms.model.common.types;
 
 
 import de.zib.gndms.stuff.copy.Copyable;
-import de.zib.gndms.stuff.copy.CopyMode;
+import de.zib.gndms.stuff.copy.Copyable.CopyMode;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;

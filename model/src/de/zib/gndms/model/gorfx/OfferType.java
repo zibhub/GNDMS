@@ -19,7 +19,7 @@ package de.zib.gndms.model.gorfx;
 
 
 import de.zib.gndms.model.common.ImmutableScopedName;
-import de.zib.gndms.stuff.copy.CopyMode;
+import de.zib.gndms.stuff.copy.Copyable.CopyMode;
 import de.zib.gndms.stuff.copy.Copyable;
 
 import javax.persistence.*;
