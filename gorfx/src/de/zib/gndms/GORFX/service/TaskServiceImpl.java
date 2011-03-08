@@ -15,6 +15,7 @@ package de.zib.gndms.GORFX.service;
  * limitations under the License.
  */
 
+import de.zib.gndms.devel.NotYetImplementedException;
 import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.rest.Facets;
 import org.springframework.http.HttpStatus;
