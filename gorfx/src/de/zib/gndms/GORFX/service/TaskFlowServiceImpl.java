@@ -130,7 +130,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
             order = tf.getOrder();
             if ( order != null )
                 hs = HttpStatus.OK;
-        } catch ( NoSuchTaskFlowException e ) { /* intentionally */ }
+        } catch ( NoSuchResourceException e ) { /* intentionally */ }
 
         return new ResponseEntity<AbstractTF>( order, getHeader( type, id, "order", dn, wid ), hs );
     }
@@ -202,16 +202,23 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     }
 
 
-    @RequestMapping( value = "/_{type}/_{id}/quotes/", method = RequestMethod.POST )
+    @RequestMapping( value = "/_{type}/_{id}/quotes", method = RequestMethod.POST )
     public ResponseEntity<Void> setQuote( @PathVariable String type, @PathVariable String id,
                                           @RequestBody Quote cont, @RequestHeader( "DN" ) String dn,
                                           @RequestHeader( "WId" ) String wid ) {
 
+        HttpStatus hs = HttpStatus.NOT_FOUND;
+        try {
+            TaskFlow tf = findTF( type, id );
+            tf.setPreferredQuote( cont );
+            hs = HttpStatus.OK;
 
-        return new ResponseEntity<Void>( null, getHeader( type, id, "quotes", dn, wid ), HttpStatus.OK );
+        } catch ( NoSuchResourceException e ) {
+
+        }
+
+        return new ResponseEntity<Void>( null, getHeader( type, id, "quotes", dn, wid ), hs );
     }
-
-
 
 
     @RequestMapping( value = "/_{type}/_{id}/quotes/_{idx}", method = RequestMethod.GET )
@@ -228,7 +235,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                 hs = HttpStatus.OK;
             }
 
-        } catch ( NoSuchTaskFlowException e ) {
+        } catch ( NoSuchResourceException e ) {
             // intentionally
         }
 
@@ -245,7 +252,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     }
 
 
-    @RequestMapping( value = "/_{type}/_{id}/task/", method = RequestMethod.GET )
+    @RequestMapping( value = "/_{type}/_{id}/task", method = RequestMethod.GET )
     public ResponseEntity<Specifier<Facets>> getTask( @PathVariable String type, @PathVariable String id,
                                            @RequestHeader( "DN" ) String dn, @RequestHeader( "WId" ) String wid ) {
 
@@ -265,20 +272,26 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                 spec.setPayload( res.getBody() );
                 hs = HttpStatus.OK;
             }
-        } catch ( NoSuchTaskFlowException e ) {
+        } catch ( NoSuchResourceException e ) {
             // intentionally
         }
         return new ResponseEntity<Specifier<Facets>>( spec, getHeader( type, id, "task", dn, wid ), hs );
     }
 
 
-    @RequestMapping( value = "/_{type}/_{id}/task/", method = RequestMethod.PUT )
+    @RequestMapping( value = "/_{type}/_{id}/task", method = RequestMethod.PUT )
     public ResponseEntity<Specifier<Facets>> createTask( @PathVariable String type, @PathVariable String id,
                                               @RequestParam( value = "quote", required = false ) String quoteId,
                                               @RequestHeader( "DN" ) String dn, @RequestHeader( "WId" ) String wid ) {
-        // redirects to the task of the taskflow, creates this task if it doesn't exists.
         GNDMSResponseHeader responseHeaders = new GNDMSResponseHeader();
-        //return new ResponseEntity<Specifier<Facets>>( "the string URL", responseHeaders, HttpStatus.CREATED );
+
+        try {
+            TaskFlow tf = findTF( type, id );
+            Task t = tf.getTask();
+            if( t != null )
+        } catch ( NoSuchResourceException e ) {
+
+        }
         return null;
 
     }
@@ -298,13 +311,13 @@ public class TaskFlowServiceImpl implements TaskFlowService {
             if( t != null ) {
                 Specifier<Void> spec = new Specifier<Void>();
                 HashMap<String, String> urimap = taskUriMap( type, id, t );
-                spec.setURL( uriFactory.taskUri( urimap, null ) );
+                spec.setURL( uriFactory.taskUri( urimap, "status" ) );
                 spec.setUriMap( urimap );
                 tfs.setTaskSpecifier( spec );
 
                 hs = HttpStatus.OK;
             }
-        } catch ( NoSuchTaskFlowException e ) {
+        } catch ( NoSuchResourceException e ) {
             // intentionally
         }
         return new ResponseEntity<TaskFlowStatus>( tfs, getHeader( type, id, "status", dn, wid ), hs );
@@ -319,20 +332,14 @@ public class TaskFlowServiceImpl implements TaskFlowService {
         HttpStatus hs = HttpStatus.NOT_FOUND;
         Specifier<TaskResult> spec = null;
         try {
-            TaskFlow tf = findTF( type, id );
-            Task t = tf.getTask();
-            if( t != null ) {
+            spec = createTaskSpecifier( TaskResult.class, type, id, "result" );
 
-                spec = new Specifier<TaskResult>();
-                HashMap<String, String> urimap = taskUriMap( type, id, t );
-                spec.setURL( uriFactory.taskUri( urimap, null ) );
-                spec.setUriMap( urimap );
-
-                ResponseEntity<TaskResult> res = taskClient.getResult( t.getId(), dn, wid );
+            ResponseEntity<TaskResult> res = taskClient.getResult( spec.getUrlMap().get( "taskId" ), dn, wid );
+            if ( res.getStatusCode() == HttpStatus.OK ) {
                 spec.setPayload( res.getBody() );
                 hs = HttpStatus.OK;
-            }
-        } catch ( NoSuchTaskFlowException e ) {
+            } else spec = null;
+        } catch ( NoSuchResourceException e ) {
             // intentionally
         }
         return new ResponseEntity<Specifier<TaskResult>>( spec, getHeader( type, id, "result", dn, wid ), hs );
@@ -340,12 +347,23 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
 
     @RequestMapping( value = "/_{type}/_{id}/errors", method = RequestMethod.GET )
-    public ResponseEntity<TaskFlowFailure> getErrors( @PathVariable String type, @PathVariable String id,
-                                                      @RequestHeader( "DN" ) String dn,
-                                                      @RequestHeader( "WId" ) String wid ) {
+    public ResponseEntity<Specifier<TaskFailure>> getErrors( @PathVariable String type, @PathVariable String id,
+                                                             @RequestHeader( "DN" ) String dn,
+                                                             @RequestHeader( "WId" ) String wid ) {
 
-		// Actual Task Error URL (Maybe as Redirect)
-        return null;
+        HttpStatus hs = HttpStatus.NOT_FOUND;
+        Specifier<TaskFailure> spec = null;
+        try {
+            spec = createTaskSpecifier( TaskFailure.class, type, id, "errors" );
+            ResponseEntity<TaskFailure> res = taskClient.getErrors( spec.getUrlMap().get( "taskId" ), dn, wid );
+            if ( res.getStatusCode() == HttpStatus.OK ) {
+                spec.setPayload( res.getBody() );
+                hs = HttpStatus.OK;
+            } else spec = null;
+        } catch ( NoSuchResourceException e ) {
+            // intentionally
+        }
+        return new ResponseEntity<Specifier<TaskFailure>>( spec, getHeader( type, id, "result", dn, wid ), hs );
     }
 
 
@@ -356,9 +374,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
         uriargs.put( "type", type );
         uriargs.put( "service", "gorfx" );
 
-
         return new GNDMSResponseHeader( uriFactory.taskFlowTypeUri( uriargs, facet ), facet, serviceUrl, dn, wid );
-
     }
 
 
@@ -371,7 +387,25 @@ public class TaskFlowServiceImpl implements TaskFlowService {
         return urimap;
     }
 
-    protected TaskFlow findTF( String type, String id ) throws NoSuchTaskFlowException {
+
+    private <T> Specifier<T> createTaskSpecifier( Class<T> resClass,  String type, String id, String facet ) throws NoSuchResourceException {
+
+        TaskFlow tf = findTF( type, id );
+        Task t = tf.getTask();
+        HashMap<String, String> urimap = taskUriMap( type, id, t );
+        Specifier<T> spec;
+        if( t != null ) {
+            spec = new Specifier<T>();
+            spec.setURL( uriFactory.taskUri( urimap, facet ) );
+            spec.setUriMap( urimap );
+        } else
+            throw new NoSuchResourceException( "task", urimap );
+
+        return spec;
+    }
+
+
+    protected TaskFlow findTF( String type, String id ) throws NoSuchResourceException {
 
         if( taskFlowProvider.exists( type ) ) {
             TaskFlowFactory tff = taskFlowProvider.getFactoryForTaskFlow( type );
@@ -380,6 +414,6 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                 return tf;
         }
 
-        throw new NoSuchTaskFlowException( );
+        throw new NoSuchResourceException( );
     }
 }

@@ -18,11 +18,7 @@ package de.zib.gndms.gndmc.gorfx;
 
 import de.zib.gndms.GORFX.service.TaskFlowService;
 import de.zib.gndms.gndmc.AbstractClient;
-import de.zib.gndms.model.gorfx.types.AbstractTF;
-import de.zib.gndms.model.gorfx.types.Quote;
-import de.zib.gndms.model.gorfx.types.TaskFlowFailure;
-import de.zib.gndms.model.gorfx.types.TaskFlowStatus;
-import de.zib.gndms.model.gorfx.types.TaskResult;
+import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.rest.Facets;
 import de.zib.gndms.rest.Specifier;
 import org.springframework.http.ResponseEntity;
@@ -135,8 +131,8 @@ public class TaskFlowClient extends AbstractClient implements TaskFlowService {
 	}
 
 
-	public final ResponseEntity<TaskFlowFailure> getErrors(final String type, final String id,
-			final String dn, final String wid) {
+	public final ResponseEntity<Specifier<TaskFailure>> getErrors( final String type, final String id,
+                                                                   final String dn, final String wid ) {
 		return unifiedGet(TaskFlowFailure.class, serviceURL + "/gorfx/_" + type
 				+ "/_" + id + "/errors", dn, wid);
 	}
