@@ -1,4 +1,5 @@
 package de.zib.gndms.gndmc.gorfx;
+
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -15,10 +16,19 @@ package de.zib.gndms.gndmc.gorfx;
  * limitations under the License.
  */
 
+import de.zib.gndms.kit.action.ActionMeta;
 import de.zib.gndms.kit.application.AbstractApplication;
+import de.zib.gndms.kit.config.ConfigMeta;
+import de.zib.gndms.logic.taskflow.tfmockup.DummyTF;
+import de.zib.gndms.model.gorfx.types.AbstractTF;
+import de.zib.gndms.model.gorfx.types.TaskFlowFailure;
+import de.zib.gndms.model.gorfx.types.TaskFlowStatus;
+import de.zib.gndms.model.gorfx.types.TaskResult;
 import de.zib.gndms.rest.Facet;
 import de.zib.gndms.rest.Facets;
 import de.zib.gndms.rest.GNDMSResponseHeader;
+import de.zib.gndms.rest.Specifier;
+
 import org.kohsuke.args4j.Option;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -26,84 +36,256 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
  * @author try ma ik jo rr a zib
- * @date 10.02.11  15:57
+ * @date 10.02.11 15:57
  * @brief A test run for the gorfx client.
  */
 public class GORFXClientMain extends AbstractApplication {
 
+	@Option(name = "-uri", required = true, usage = "URL of GORFX-Endpoint", metaVar = "URI")
+	protected String gorfxEpUrl;
+	@Option(name = "-dn", required = true, usage = "DN")
+	protected String dn;
+	@Option(name = "-wid", required = true, usage = "Wid")
+	protected String wid;
 
-    @Option( name="-uri", required=true, usage="URL of GORFX-Endpoint", metaVar="URI" )
-    protected String gorfxEpUrl;
-    @Option( name="-dn", required=true, usage="DN" )
-    protected String dn;
+	public static void main(String[] args) throws Exception {
 
+		GORFXClientMain cnt = new GORFXClientMain();
+		cnt.run(args);
+		System.exit(0);
+	}
 
-    public static void main(String[] args) throws Exception {
+	@Override
+	public void run() throws Exception {
 
+		ApplicationContext context = new ClassPathXmlApplicationContext(
+				"classpath:META-INF/client-context.xml");
+		FullGORFXClient gorfxClient = (FullGORFXClient) context
+				.getAutowireCapableBeanFactory().createBean(
+						FullGORFXClient.class,
+						AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
+		gorfxClient.setServiceURL(gorfxEpUrl);
 
-        GORFXClientMain cnt = new GORFXClientMain();
-        cnt.run( args );
-        System.exit( 0 );
-    }
+		if (gorfxClient.getRestTemplate() == null)
+			throw new IllegalStateException("restTemplate is null");
 
+		System.out.println("connecting to: \"" + gorfxEpUrl + "\"");
 
-    @Override
-    public void run() throws Exception {
+		System.out.println("requesting facets");
+		ResponseEntity<Facets> res = gorfxClient.listAvailableFacets(dn);
+		System.out.println("StatusCode: " + res.getStatusCode());
+		showHeader(res.getHeaders());
+		System.out.println("Body: ");
+		Facets f = res.getBody();
+		for (Facet fa : f.getFacets()) {
+			System.out.println(fa.getName() + " " + fa.getUrl());
+		}
+		
+		DummyTF dft = new DummyTF();
+		// set dft attributes
+		dft.setMessage("Test task flow");
+		dft.setFailIntentionally(false);
+		executeTaskFlow(gorfxClient, "test", dft);
+	}
 
-        ApplicationContext context = new ClassPathXmlApplicationContext( "classpath:META-INF/client-context.xml");
-        FullGORFXClient gorfxClient =
-            ( FullGORFXClient ) context.getAutowireCapableBeanFactory().createBean(
-                FullGORFXClient.class, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
-        gorfxClient.setServiceURL( gorfxEpUrl );
+	private void executeTaskFlow(FullGORFXClient gorfxClient, String type, AbstractTF order) {
+		System.out.println("Testing workflow: Execute Task Flow of type " + type);
+		System.out.println("Step 1: requesting facets and find facet config");
+		ResponseEntity<Facets> res = gorfxClient.listAvailableFacets(dn);
+		Facets facets = res.getBody();
+		Facet f = facets.findFacet("taskflows");
+		if (f == null) {
+			System.out.println("Taskflows facet not found");
+			return;
+		}
+		System.out.println(f.getName() + " " + f.getUrl());
 
-        if( gorfxClient.getRestTemplate() == null )
-            throw new IllegalStateException( "restTemplate is null" );
+		System.out.println("Step 2: requesting task flow types");
+		ResponseEntity<List<String>> res1 = gorfxClient.listTaskFlows(dn);
+		if (!res1.getBody().contains(type)) {
+			System.out.println("Taskflow type " + type + " not found");
+			return;
+		}
+		System.out.println("Taskflow type " + type + "exists");
 
-        System.out.println( "requesting facets" );
-        ResponseEntity<Facets> res = gorfxClient.listAvailableFacets( dn );
-        System.out.println( "StatusCode: " + res.getStatusCode() );
-        showHeader( res.getHeaders() );
-        System.out.println( "Body: " );
-        Facets f = res.getBody();
-        for ( Facet fa : f.getFacets() ) {
-            System.out.println( fa.getName() + " " + fa.getUrl() );
-        }
-    }
+		System.out.println("Step 3: creating task flow");
+		ResponseEntity<Specifier<Facets>> res2 = gorfxClient.createTaskFlow( type, order, dn, wid );
+		
+		// optionally: change order, select quote?
+		
+		// define with res2.getBody().getUrlMap() ??
+		String wid = null;
+		String id = null;
+		getTaskFlowStatus(id, type, wid);
 
+	}
 
-    public static void showHeader( HttpHeaders head ) {
+	private void executeConfigAction(FullGORFXClient gorfxClient, String action) {
+		System.out.println("Testing workflow: Execute Config Action" + action);
 
-        GNDMSResponseHeader h = new GNDMSResponseHeader( head );
+		System.out.println("Step 1: requesting facets and find facet config");
+		ResponseEntity<Facets> res = gorfxClient.listAvailableFacets(dn);
+		Facets facets = res.getBody();
+		Facet f = facets.findFacet("config");
+		if (f == null) {
+			System.out.println("Config facet not found");
+			return;
+		}
+		System.out.println(f.getName() + " " + f.getUrl());
+		
+		System.out.println("Step 2: requesting actions");
+		ResponseEntity<List<String>> res2 = gorfxClient.listConfigActions(dn);
+		if (!res2.getBody().contains(action)) {
+			System.out.println("Action" + action + "unknown");
+			return;
+		}
+		
+		System.out.println("Step 3: requesting description of action" + action);
+		ResponseEntity<ConfigMeta> res3 = gorfxClient.getConfigActionInfo(
+				action, dn);
+		System.out.println(res3.getBody().getDescription());
+		
+		System.out.println("Step 4: executing action" + action);
+		// String args = res3.getBody.???
+		String args = null;
+		ResponseEntity<String> res4 = gorfxClient.callConfigAction(action,
+				args, dn);
+		System.out.println(res4.getBody());
+	}
 
-        showList( "parentURL", h.getParentURL() );
-        showList( "facetURL", h.getFacetURL() );
-        showList( "DN", h.getDN() );
-        showList( "WId", h.getWId() );
-    }
+	private void executeBatchAction(FullGORFXClient gorfxClient, String action) {
+		System.out.println("Testing workflow: Execute Batch Action" + action);
+		
+		System.out.println("Step 1: requesting facets and find facet batch");
+		ResponseEntity<Facets> res = gorfxClient.listAvailableFacets(dn);
+		Facets facets = res.getBody();
+		Facet f = facets.findFacet("batch");
+		if (f == null) {
+			System.out.println("Batch facet not found");
+			return;
+		}
+		System.out.println(f.getName() + " " + f.getUrl());
+		
+		System.out.println("Step 2: requesting actions");
+		ResponseEntity<List<String>> res2 = gorfxClient.listBatchActions(dn);
+		if (!res2.getBody().contains(action)) {
+			System.out.println("Action" + action + "unknown");
+			return;
+		}
+		
+		System.out.println("Step 3: requesting description of action" + action);
+		ResponseEntity<ActionMeta> res3 = gorfxClient.getBatchActionInfo(
+				action, dn);
+		System.out.println(res3.getBody().getDescription());
+		
+		System.out.println("Step 4: executing action" + action);
+		// String args = res3.getBody().???
+		String args = null;
+		ResponseEntity<Specifier> res4 = gorfxClient.callBatchAction(action,
+				args, dn);
+		System.out.println(res4.getBody().toString());
+		
+		System.out.println("Step 5: requesting task specifier");
+		// String id = res4.getBody().???
+		String batchId = null;
+		ResponseEntity<Specifier<Facets>> res5 = gorfxClient.getBatchAction(
+				action, batchId, dn);
+		System.out.println("Task URL" + res5.getBody().getURL());
+		// define with res5.getBody().getUrlMap() ??
+		String type = null;
+		String wid = null;
+		String id = null;
 
+		getTaskFlowStatus(id, type, wid);
 
-    public static void showList( String name, List<String> list ) {
+	}
 
-        StringBuffer sb = new StringBuffer(  );
+	private void getTaskFlowStatus(String id, String type, String wid) {
+		Facets facets;
+		Facet f;
+		ApplicationContext context = new ClassPathXmlApplicationContext(
+				"classpath:META-INF/client-context.xml");
+		TaskFlowClient tfClient = (TaskFlowClient) context
+				.getAutowireCapableBeanFactory().createBean(
+						TaskFlowClient.class,
+						AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
+		tfClient.setServiceURL(gorfxEpUrl);
 
-        sb.append( name + ": "  );
-        if ( list == null || list.size() == 0 ) {
-            sb.append( "NIL\n" );
-            return;
-        }
+		System.out
+				.println("Step 6: requesting facets of task flow, retrieving status results");
+		ResponseEntity<Facets> res6 = tfClient.getFacets(type, id, dn);
+		// should define facets status, result, errors
+		facets = res6.getBody();
+		f = facets.findFacet("status");
+		if (f == null) {
+			System.out.println("Status facet not found");
+		} else {
+			System.out.println(f.getName() + " " + f.getUrl());
+			ResponseEntity<TaskFlowStatus> res7 = tfClient.getStatus(type, id,
+					dn, wid);
+			System.out.println(res7.getBody().toString());
+		}
 
-        for ( String s: list) {
-            sb.append( s );
-            sb.append( "," );
-        }
+		f = facets.findFacet("result");
+		if (f == null) {
+			System.out.println("Result facet not found");
+		} else {
+			System.out.println(f.getName() + " " + f.getUrl());
+			ResponseEntity<Specifier<TaskResult>> res8 = tfClient.getResult(
+					type, id, dn, wid);
+			System.out.println(res8.getBody().toString());
+		}
 
-        sb.replace( sb.length() - 1, sb.length() - 1, "" );
+		f = facets.findFacet("errors");
+		if (f == null) {
+			System.out.println("Errors facet not found");
+		} else {
+			System.out.println(f.getName() + " " + f.getUrl());
+			ResponseEntity<TaskFlowFailure> res9 = tfClient.getErrors(type, id,
+					dn, wid);
+			if (res9.getBody().hasFailed()) {
+				System.out.println("Failure"
+						+ res9.getBody().getFailureMessage());
+			} else {
+				System.out.println("No errors");
 
-        System.out.println( sb.toString() );
-    }
+			}
+		}
+	}
+
+	public static void showHeader(HttpHeaders head) {
+
+		GNDMSResponseHeader h = new GNDMSResponseHeader(head);
+
+		showList("parentURL", h.getParentURL());
+		showList("facetURL", h.getFacetURL());
+		showList("DN", h.getDN());
+		showList("WId", h.getWId());
+	}
+
+	public static void showList(String name, List<String> list) {
+
+		StringBuffer sb = new StringBuffer();
+
+		sb.append(name + ": ");
+		if (list == null || list.size() == 0) {
+			sb.append("NIL\n");
+			return;
+		}
+
+		for (String s : list) {
+			sb.append(s);
+			sb.append(",");
+		}
+
+		sb.replace(sb.length() - 1, sb.length() - 1, "");
+
+		System.out.println(sb.toString());
+	}
 
 }
