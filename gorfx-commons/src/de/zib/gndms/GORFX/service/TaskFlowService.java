@@ -220,7 +220,7 @@ public interface TaskFlowService {
      * @param id The id of the task flow.
      * @param dn The dn of the user invoking the method.
      * @param wid The id of the workflow, for logging purpose.
-     * 
+     *
      * @return Possible values:
      *     - 404 if there haven't been errors yet,
      *     - 302 together with the task URL, note this doesn't mean
@@ -229,5 +229,5 @@ public interface TaskFlowService {
      *     - 200 together with the error of the taskflow, e.g. an
      *       unfulfillable order.
      */
-    ResponseEntity<TaskFlowFailure> getErrors( String type, String id, String dn, String wid );
+    ResponseEntity<Specifier<TaskFailure>> getErrors( String type, String id, String dn, String wid );
 }
