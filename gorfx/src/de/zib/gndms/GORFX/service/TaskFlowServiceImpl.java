@@ -3,18 +3,18 @@ package de.zib.gndms.GORFX.service;
 import de.zib.gndms.devel.NotYetImplementedException;
 import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.logic.taskflow.*;
+import de.zib.gndms.logic.taskflow.executor.TFExecutor;
 import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.rest.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -55,6 +55,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     private List<String> facetsNames = new ArrayList<String>( 7 );
     private UriFactory uriFactory;
     private TaskClient taskClient;
+    private TFExecutor executorService;
 
 
     @PostConstruct
@@ -292,13 +293,14 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                     hs = HttpStatus.CONFLICT;
                 else {
                     t = new Task();
+                    t.setId( UUID.randomUUID().toString() );
                     t.setModel( tf.getOrder() );
                     TaskAction ta = tff.createAction( t );
+                    executorService.submit( ta );
                 }
             }
         }
         return null;
-
     }
 
 
@@ -420,5 +422,21 @@ public class TaskFlowServiceImpl implements TaskFlowService {
         }
 
         throw new NoSuchResourceException( );
+    }
+
+
+    public TFExecutor getExecutorService() {
+        return executorService;
+    }
+
+
+    @Autowired
+    public void setExecutorService( TFExecutor executorService ) {
+        this.executorService = executorService;
+    }
+
+
+    public void setServiceUrl( String serviceUrl ) {
+        this.serviceUrl = serviceUrl;
     }
 }

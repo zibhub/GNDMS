@@ -17,6 +17,9 @@ package de.zib.gndms.logic.taskflow.executor;
 
 import de.zib.gndms.logic.taskflow.TaskAction;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.*;
 
 /**
@@ -28,11 +31,15 @@ public class TFExecutor {
 
     private ExecutorService executor = null;
 
+    private Map<String, TaskAction> actions = new ConcurrentHashMap<String,TaskAction>( 10 );
+
     public TFExecutor() {
         executor = Executors.newCachedThreadPool();
     }
 
     public void submit( TaskAction ta ) {
+        String id = ta.getTask().getId();
+        actions.put( id, ta );
         executor.execute( new TaskActionRunner( ta ) );
     }
 
@@ -40,4 +47,18 @@ public class TFExecutor {
         executor.shutdown();
     }
 
+
+    public TaskAction find( String id ) {
+        return actions.get( id );
+    }
+
+
+    public boolean exists( String id ) {
+        return actions.containsKey( id );
+    }
+
+
+    public void remove( String id ) {
+        actions.remove( id ); // we don't bother stopping the thread
+    }
 }

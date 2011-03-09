@@ -195,7 +195,7 @@ public class GORFXServiceImpl implements GORFXService {
     public ResponseEntity<List<String>> listTaskFlows( @RequestHeader( "DN" ) String dn ) {
         GNDMSResponseHeader responseHeaders = new GNDMSResponseHeader();
         responseHeaders.setResourceURL( baseUrl + "/gorfx/" );
-        responseHeaders.setFacetURL( gorfxFacets.findFacet( "taskflow" ).getUrl() );
+        responseHeaders.setFacetURL( gorfxFacets.findFacet( "taskflows" ).getUrl() );
         responseHeaders.setParentURL( baseUrl );
         if( dn != null ) responseHeaders.setDN( dn );
 
@@ -207,7 +207,7 @@ public class GORFXServiceImpl implements GORFXService {
     public ResponseEntity<TaskFlowInfo> getTaskFlowInfo( @PathVariable String type, @RequestHeader( "DN" ) String dn ) {
 
         GNDMSResponseHeader headers = new GNDMSResponseHeader(
-            gorfxFacets.findFacet( "taskflow" ).getUrl(), null, baseUrl + "/gorfx/", dn, null );
+            gorfxFacets.findFacet( "taskflows" ).getUrl(), null, baseUrl + "/gorfx/", dn, null );
 
         if(! taskFlowProvider.exists( type  ) )
             return new ResponseEntity<TaskFlowInfo>( null, headers, HttpStatus.NOT_FOUND );
@@ -225,7 +225,7 @@ public class GORFXServiceImpl implements GORFXService {
                                                   @RequestHeader( "WId" ) String wid ) {
 
         GNDMSResponseHeader headers = new GNDMSResponseHeader(
-            gorfxFacets.findFacet( "taskflow" ).getUrl(), null, baseUrl + "/gorfx/", dn, wid );
+            gorfxFacets.findFacet( "taskflows" ).getUrl(), null, baseUrl + "/gorfx/", dn, wid );
 
         if(! taskFlowProvider.exists( type  ) )
             return new ResponseEntity<Specifier<Facets>>( null, headers, HttpStatus.NOT_FOUND );
@@ -273,6 +273,12 @@ public class GORFXServiceImpl implements GORFXService {
     @Autowired
     public void setConfigProvider( ActionProvider configProvider ) {
         this.configProvider = configProvider;
+    }
+
+
+    @Autowired
+    public void setTaskFlowProvider( TaskFlowProvider taskFlowProvider ) {
+        this.taskFlowProvider = taskFlowProvider;
     }
 }
 

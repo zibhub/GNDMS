@@ -32,6 +32,7 @@ public class UriFactory {
     private UriTemplate taskFlowTypeTemplate;
     private UriTemplate quoteTemplate;
     private UriTemplate taskTemplate;
+    private UriTemplate taskServiceTemplate;
 
 
     public UriFactory() {
@@ -48,7 +49,8 @@ public class UriFactory {
         taskFlowTemplate = new UriTemplate ( baseUrl +"/{service}/_{type}/_{id}" );
         taskFlowTypeTemplate = new UriTemplate( baseUrl +"/{service}/_{type}" );
         quoteTemplate = new UriTemplate ( baseUrl +"/{service}/_{type}/_{id}/quotes/{idx}" );
-        taskTemplate = new UriTemplate ( baseUrl +"/{service}/task/_{taskId}" );
+        taskTemplate = new UriTemplate ( baseUrl +"/{service}/tasks/_{taskId}" );
+        taskServiceTemplate = new UriTemplate ( baseUrl +"/{service}/tasks" );
     }
 
 
@@ -62,15 +64,18 @@ public class UriFactory {
     }
 
 
-    public String quoteUri( HashMap<String,String> urimap ) {
+    public String quoteUri( Map<String,String> urimap ) {
         return quoteTemplate.expand( urimap ).toString();
     }
 
 
-    public String taskUri( HashMap<String,String> urimap, String facet ) {
+    public String taskUri( Map<String,String> urimap, String facet ) {
         return taskTemplate.expand( urimap ).toString() + "/" + facet;
     }
 
+    public String taskServiceUri( Map<String,String> urimap ) {
+        return taskServiceTemplate.expand( urimap ).toString();
+    }
 
     public String getBaseUrl() {
         return baseUrl;
