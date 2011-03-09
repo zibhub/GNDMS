@@ -126,12 +126,12 @@ public abstract class AbstractORQCalculator<M extends AbstractORQ, C extends Abs
     }
 
 
-    public OfferType getKey() {
+    public OfferType getOfferTypeId() {
         return offerType;
     }
 
 
-    public void setKey(final @NotNull OfferType keyParam) {
+    public void setOfferTypeId(final @NotNull OfferType keyParam) {
         offerType = keyParam;
     }
 

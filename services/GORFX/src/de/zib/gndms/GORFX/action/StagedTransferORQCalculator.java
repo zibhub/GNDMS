@@ -61,7 +61,7 @@ public class StagedTransferORQCalculator extends
         AbstractProviderStageInORQCalculator psi_calc = AbstractProviderStageInORQCalculator.class.cast(
             getSystem().getInstanceDir().newORQCalculator( getSystem().getEntityManagerFactory(), GORFXConstantURIs.PROVIDER_STAGE_IN_URI ));
         
-        psi_calc.setKey( getKey() );
+        psi_calc.setOfferTypeId(getOfferTypeId());
         psi_calc.setORQArguments( getORQArguments() );
 
         TransientContract c = psi_calc.createOffer();

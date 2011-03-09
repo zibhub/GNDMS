@@ -137,7 +137,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
 }
 
     /**
-     * Invokes {@link #onTransit(String,NeoTaskAccessor,boolean)} in a loop which is expected to change the task state.
+     * Invokes {@link #onTransit(String,TaskState,boolean,boolean)} in a loop which is expected to change the task state.
      * This goes on until either the state FINISHED or FAILED is reached.
      *
      * All Tasks become FAILED when an unhandled exception is caught.
@@ -156,42 +156,45 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
         while ( ! afterLastStep ) {
             // In-Loop state
             NeoSession session;
-            NeoTaskAccessor snapshot;
             boolean isRestartedTask;
             TaskState state;
+            boolean altTaskState;
+            String descr;
         
             // Capture state snapshot from Task and prep in-loop state
-            session = getDao().beginSession();            
+            session = getDao().beginSession();
             try {
-                final NeoTask task = getModel().getTask(session);
-                state              = task.getTaskState();
+                final NeoTask task = getTask(session);
+                state              = task.getAltTaskState();
+                altTaskState       = state != null;
+                if (! altTaskState)
+                    state = task.getTaskState();
+
+                descr              = task.getDescription();
                 isRestartedTask    = ! TaskState.CREATED.equals(state);
                 if (state.isRestartedState()) {
                     // canonify state if it isn't
                     state = state.getCanonicalState();
                     task.setTaskState(state);
-                    isRestartedTask &= true;
                 }
                 else
                     isRestartedTask &= inFirstStep;
 
-                snapshot           = task.getSnapshot();
-                state              = snapshot.getTaskState();
-                afterLastStep      = task.isDone();
+                afterLastStep = task.isDone();
                 session.success();
             }
             finally { session.finish(); }
 
 
             if ( inFirstStep )
-                trace("execute() with " + ((AbstractORQ)snapshot.getORQ()).getLoggableDescription(), null);
+                trace("execute() with " + descr, null);
 
             if (! afterLastStep ) {
                 trace("transit(" + state.name() + ")", null);
                 try {
-                    if (TaskState.FINISHED.equals(state) || TaskState.FAILED.equals(state)) {
+                    if (state.isDoneState()) {
                         try {
-                            onTransit(thisWID, snapshot, isRestartedTask);
+                            onTransit(thisWID, state, isRestartedTask, altTaskState);
                         }
                         finally {
                             session = getDao().beginSession();
@@ -204,10 +207,10 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
                     }
                     else {
                         checkTimeout(getModel());
-                        onTransit(thisWID, snapshot, isRestartedTask);
+                        onTransit(thisWID, state, isRestartedTask, altTaskState);
                     }
                 }
-                catch (RuntimeException e) {
+                catch (Exception e) {
                     // Oh yes, this is possible
                     if (e == null)
                         fail(new NullPointerException());
@@ -216,12 +219,33 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
                 }
             }
 
+            if (altTaskState) {
+            }
             inFirstStep = false;
         }
 
         trace("return getModel()", null);
         return getModel();
     }
+
+    protected @NotNull NeoTaskAccessor getTaskSnapshot(@NotNull NeoDao dao) {
+        final NeoSession session = dao.beginSession();
+        try {
+            final NeoTaskAccessor snapshot = getTask(session).getSnapshot();
+            session.success();
+            return snapshot;
+        }
+        finally { session.finish(); }
+    }
+
+    protected @NotNull NeoTask getTask(@NotNull NeoSession session) {
+        Taskling model = getModel();
+        if (model == null)
+            throw new NullPointerException("Task action without model (Taskling)");
+        else
+            return model.getTask(session);
+    }
+
 
     @Override
     protected final boolean isExecutingInsideTransaction() {
@@ -441,7 +465,8 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
 //    }
 
 
-    protected void onTransit(@NotNull String wid, @NotNull NeoTaskAccessor snapshot, boolean isRestartedTask) {
+    protected void onTransit(@NotNull String wid,
+                             @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) {
         throw new UnsupportedOperationException("not yet implemented");
     }
 
@@ -470,7 +495,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
     protected void autoTransitWithPayload(Serializable payload) {
         final @NotNull NeoSession session = getDao().beginSession();
         try {
-            final NeoTask task = session.findTask(getModel().getId());
+            final NeoTask task = getTask(session);
             final TaskState taskState = task.getTaskState().getCanonicalState();
             final TaskState nextState;
             switch(taskState) {
@@ -490,7 +515,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
     protected void autoTransit() {
         final @NotNull NeoSession session = getDao().beginSession();
         try {
-            final NeoTask task = session.findTask(getModel().getId());
+            final NeoTask task = getTask(session);
             final TaskState taskState = task.getTaskState();
             final TaskState nextState;
             switch(taskState.getCanonicalState()) {
@@ -509,7 +534,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
     protected void failWithPayload(Serializable payload, @NotNull RuntimeException... exceptions) {
         final NeoSession session = getDao().beginSession();
         try {
-            final NeoTask task = getModel().getTask(session);
+            final NeoTask task = getTask(session);
             task.setTaskState(TaskState.FAILED);
             task.setPayload(payload);
             for (RuntimeException e: exceptions)
@@ -519,16 +544,20 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
         finally { session.finish(); }
     }
 
-    protected void fail(@NotNull RuntimeException... exceptions) {
+    protected void fail(@NotNull Exception... exceptions) {
         final NeoSession session = getDao().beginSession();
         try {
-            final NeoTask task = getModel().getTask(session);
+            final NeoTask task = getTask(session);
             task.setTaskState(TaskState.FAILED);
-            for (RuntimeException e: exceptions)
+            for (Exception e: exceptions)
                 task.addCause(e);
             session.success();
         }
         finally { session.finish(); }
+    }
+
+    protected void removeAltTaskState() {
+        getDao().removeAltTaskState(getModel().getId());
     }
 
 
@@ -627,7 +656,6 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
      *
      * @param ling shallow model to be checked
      * @throws LifetimeExceededException
-     * @see #fail(RuntimeException)
      * @see AbstractTask#fail(Exception)
      */
     private void checkTimeout( @NotNull Taskling ling ) {
@@ -715,14 +743,12 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
     public FilePermissions actualPermissions( ) {
         NeoSession session = getDao().beginSession();
         try {
-            NeoTask task = getModel().getTask(session);
+            NeoTask task = getTask(session);
             FilePermissions filePermissions = null;
-            if( task.getPermissionInfo() != null ) {
-                PermissionConfiglet pc = configletProvider.getConfiglet( PermissionConfiglet.class,
-                        task.getPermissionInfo().getPermissionConfigletName() );
-                if( pc != null ) {
-                    filePermissions = pc.permissionsFor(task.getPermissionInfo().getUserName());
-                }
+            PermissionConfiglet pc = configletProvider.getConfiglet( PermissionConfiglet.class,
+                    task.getPermissionInfo().getPermissionConfigletName() );
+            if( pc != null ) {
+                filePermissions = pc.permissionsFor(task.getPermissionInfo().getUserName());
             }
 
             session.success();

@@ -66,7 +66,7 @@ public class ExternalProviderStageInORQCalculator extends AbstractProviderStageI
         final @NotNull TransientContract cont = getPreferredOfferExecution();
         final @NotNull TransientContract result;
 
-        MapConfig config = new MapConfig(getKey().getConfigMap());
+        MapConfig config = new MapConfig(getOfferTypeId().getConfigMap());
         
         parmAux.formatFromMap( config );
 

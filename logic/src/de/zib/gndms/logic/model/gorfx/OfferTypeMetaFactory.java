@@ -47,7 +47,7 @@ public abstract class OfferTypeMetaFactory<T extends KeyFactoryInstance<OfferTyp
     public RecursiveKeyFactory<OfferType, T> getInstance(@NotNull final OfferType key)
             throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         final RecursiveKeyFactory<OfferType, T> factory = newInstance(key);
-        factory.setKey(key);
+        factory.setOfferTypeId(key);
         factory.setFactory(this);
         factory.setup();
         return factory;

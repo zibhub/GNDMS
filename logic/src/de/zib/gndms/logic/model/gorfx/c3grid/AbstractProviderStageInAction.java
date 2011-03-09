@@ -314,7 +314,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 
 	protected ProcessBuilder createProcessBuilder(String name, File dir) {
        try {
-           MapConfig opts = new MapConfig(getKey().getConfigMap());
+           MapConfig opts = new MapConfig(getOfferTypeId().getConfigMap());
 		   if (opts.getOption(name, "").trim().length() == 0)
 			   return null;
 		   final File fileOption = getScriptFileByParam(opts, name);
@@ -336,7 +336,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 
 
     protected @NotNull MapConfig getOfferTypeConfig() {
-        return new MapConfig(getKey().getConfigMap());
+        return new MapConfig(getOfferTypeId().getConfigMap());
     }
 
 

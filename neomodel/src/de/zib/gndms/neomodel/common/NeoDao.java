@@ -17,7 +17,9 @@ package de.zib.gndms.neomodel.common;
  */
 
 import de.zib.gndms.neomodel.gorfx.NeoOfferType;
+import de.zib.gndms.neomodel.gorfx.NeoTask;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 /**
@@ -44,5 +46,26 @@ public class NeoDao {
     @NotNull
     public String getGridName() {
         return gridName;
+    }
+
+    public void createTask(final String id) {
+        final NeoSession session = beginSession();
+        try {
+            final NeoTask task = session.createTask();
+            task.setId(id);
+            session.success();
+        }
+        finally {
+            session.finish();
+        }
+    }
+
+    public void removeAltTaskState(final String taskId) {
+        final NeoSession session = beginSession();
+        try {
+            session.findTask(taskId).setAltTaskState(null);
+            session.finish();
+        }
+        finally { session.success(); }
     }
 }
