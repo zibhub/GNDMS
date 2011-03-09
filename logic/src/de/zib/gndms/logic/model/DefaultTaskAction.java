@@ -51,7 +51,7 @@ public class DefaultTaskAction extends TaskAction {
 
     @Override
     protected void onTransit(@NotNull String wid,
-                             @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) {
+                             @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) throws Exception {
         switch(state) {
             case CREATED:
                 onCreated(wid, state, isRestartedTask, altTaskState);
@@ -70,35 +70,38 @@ public class DefaultTaskAction extends TaskAction {
     }
 
     protected void onCreated(@NotNull String wid,
-                             @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) {
+                             @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) throws Exception {
         super.autoTransit();
         if (killAltTaskState && altTaskState)
             removeAltTaskState();
     }
 
     protected void onInitialized(@NotNull String wid,
-                                 @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) {
+                                 @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState)
+            throws Exception {
         super.autoTransit();
         if (killAltTaskState && altTaskState)
             removeAltTaskState();
     }
 
     protected void onInProgress(@NotNull String wid,
-                                @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) {
+                                @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState)
+            throws Exception {
         super.autoTransit();
         if (killAltTaskState && altTaskState)
             removeAltTaskState();
     }
 
     protected void onFinished(@NotNull String wid,
-                              @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) {
+                              @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState)
+            throws Exception {
         super.autoTransit();
         if (killAltTaskState && altTaskState)
             removeAltTaskState();
     }
 
     protected void onFailed(@NotNull String wid,
-                            @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) {
+                            @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) throws Exception {
         super.autoTransit();
         if (killAltTaskState && altTaskState)
             removeAltTaskState();

@@ -20,9 +20,8 @@ package de.zib.gndms.logic.model.gorfx;
 
 import de.zib.gndms.kit.network.PersistentMarkerListener;
 import de.zib.gndms.kit.util.WidAux;
-import de.zib.gndms.model.gorfx.Task;
-import de.zib.gndms.model.gorfx.AbstractTask;
-import de.zib.gndms.model.gorfx.types.AbstractORQ;
+import de.zib.gndms.neomodel.common.NeoSession;
+import de.zib.gndms.neomodel.gorfx.NeoTask;
 import org.globus.ftp.Marker;
 
 /**
@@ -37,16 +36,15 @@ import org.globus.ftp.Marker;
  * of a single file.
  */
 public class TaskPersistentMarkerListener extends PersistentMarkerListener {
-
-    private AbstractTask task;
-    private String gorfxid;
+    private String gorfxId = "";
+    private String wid = "";
 
 
     @Override
     public void markerArrived( final Marker marker ) {
         try{
-            WidAux.initWid( task.getWid() );
-            WidAux.initGORFXid( task.getWid() );
+            WidAux.initWid( wid );
+            WidAux.initGORFXid( wid );
             super.markerArrived( marker );
         } finally{
             WidAux.removeGORFXid( );
@@ -57,17 +55,29 @@ public class TaskPersistentMarkerListener extends PersistentMarkerListener {
 
     public void setCurrentFile( String currentFile ) {
         super.setCurrentFile( currentFile );
-        task.setProgress( task.getProgress( ) + 1 );
+        final NeoSession session = getDao().beginSession();
+        try {
+            NeoTask task = getTaskling().getTask(session);
+            task.setProgress(task.getProgress() + 1);
+            session.success();
+        }
+        finally { session.finish(); }
     }
 
 
-    public AbstractTask getTask() {
-        return task;
+    public String getWid() {
+        return wid;
     }
 
+    public void setWid(String wid) {
+        this.wid = wid;
+    }
 
-    public void setTask( AbstractTask task ) {
-        this.task = task;
-        gorfxid = (( AbstractORQ ) task.getOrq()).getActId();
+    public String getGORFXId() {
+        return gorfxId;
+    }
+
+    public void setGORFXId(String gorfxid) {
+        this.gorfxId = gorfxid;
     }
 }

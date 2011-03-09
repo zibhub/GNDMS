@@ -20,14 +20,14 @@ package de.zib.gndms.logic.model.gorfx;
 
 import de.zib.gndms.kit.network.GNDMSFileTransfer;
 import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
-import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.FTPTransferState;
 import de.zib.gndms.model.gorfx.types.FileTransferORQ;
 import de.zib.gndms.model.gorfx.types.FileTransferResult;
-import de.zib.gndms.model.util.TxFrame;
+import de.zib.gndms.model.gorfx.types.TaskState;
+import de.zib.gndms.neomodel.common.NeoDao;
 import de.zib.gndms.neomodel.common.NeoSession;
 import de.zib.gndms.neomodel.gorfx.NeoTask;
-import de.zib.gndms.neomodel.gorfx.NeoTaskAccessor;
+import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.apache.axis.types.URI;
 import org.globus.ftp.GridFTPClient;
 import org.jetbrains.annotations.NotNull;
@@ -45,130 +45,111 @@ import java.util.TreeMap;
 public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
 
     private FTPTransferState transferState;
+    private FileTransferORQ orq;
 
 
     public FileTransferTaskAction() {
         super();
     }
 
-
-    public FileTransferTaskAction( final @NotNull EntityManager em, final @NotNull AbstractTask model ) {
-        super( em, model );
+    public FileTransferTaskAction(@NotNull EntityManager em, @NotNull NeoDao dao, @NotNull Taskling model) {
+        super(em, dao, model);
     }
-
-
-    public FileTransferTaskAction( final @NotNull EntityManager em, final @NotNull String pk ) {
-        super( em, pk );
-    }
-
 
     @Override
     @NotNull
-    protected Class<FileTransferORQ> getOrqClass() {
+    public Class<FileTransferORQ> getOrqClass() {
         return FileTransferORQ.class;
     }
 
 
     @Override
-    protected void onInProgress(@NotNull NeoTaskAccessor snapshot, boolean isRestartedTask) {
-        GridFTPClient src = null;
-        GridFTPClient dest = null;
+    protected void onInProgress(@NotNull String wid,
+                                @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState)
+            throws Exception {
+        TreeMap<String,String> files;
+        GridFTPClient src;
+        GridFTPClient dest;
 
 
         NeoSession session = getDao().beginSession();
         try {
-            NeoTask task = session.findTask(snapshot.getId());
-            FTPTransferState transferState = (FTPTransferState) task.getPayload();
-
-            TreeMap<String,String> files =  getOrq().getFileMap();
+            NeoTask task  = getTask(session);
+            transferState = (FTPTransferState) task.getPayload();
+            orq           = ((FileTransferORQ)task.getORQ());
+            files         = orq.getFileMap();
             if( transferState == null )
-                newTransfer( );
+                newTransfer( task );
             else {
                 String s = transferState.getCurrentFile();
                 if( s != null ) {
                     int p =  new ArrayList<String>( files.keySet() ).indexOf( s );
-                    getModel().setProgress( p );
+                    task.setProgress( p );
                 }
             }
+            session.success();
         }
         finally { session.finish(); }
 
-            tx.commit();
 
+        TaskPersistentMarkerListener pml = new TaskPersistentMarkerListener( );
+        pml.setDao( getDao() );
+        pml.setTransferState( transferState );
+        pml.setTaskling(getModel());
+        pml.setWid(wid);
+        pml.setGORFXId(orq.getActId());
 
-            TaskPersistentMarkerListener pml = new TaskPersistentMarkerListener( );
-            pml.setEntityManager( em );
-            pml.setTransferState( transferState );
-            pml.setTask( getModel() );
+        URI suri = new URI ( orq.getSourceURI() );
+        URI duri = new URI ( orq.getTargetURI() );
 
-            URI suri = new URI ( getOrq().getSourceURI() );
-            URI duri = new URI ( getOrq().getTargetURI() );
+        // obtain clients
+        src = NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( suri, getCredentialProvider() );
 
-            // obtain clients
-            src = NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( suri, getCredentialProvider() );
+        try {
             dest = NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( duri, getCredentialProvider() );
 
-            // setup transfer handler
-            GNDMSFileTransfer transfer = NetworkAuxiliariesProvider.newGNDMSFileTransfer();
-            transfer.setSourceClient( src );
-            transfer.setSourcePath( suri.getPath() );
-
-            transfer.setDestinationClient( dest );
-            transfer.setDestinationPath( duri.getPath() );
-
-            transfer.setFiles( files );
-
-            transfer.prepareTransfer();
-
-            int fc = transfer.getFiles( ).size( );
-            getModel( ).setMaxProgress( fc );
-
-            transfer.performPersistentTransfer( pml );
-
-            tx.begin();
-            em.remove( transferState );
-            tx.commit();
-
-            FileTransferResult ftr = new FileTransferResult();
-
-            ArrayList<String> al = new ArrayList<String>( transfer.getFiles( ).keySet( ) );
-            ftr.setFiles( al.toArray( new String[al.size( )] ));
-
-            finish( ftr );
-
-        } catch ( TransitException e ) {
-            throw e;
-        } catch ( Exception e ) {
-                failFrom( e );
-        } finally {
-
             try {
-                tx.finish();
-                em.close();
-            } catch ( Exception e ) {
-                trace( "Exception while closing entityManager client.", e );
-            }
+                // setup transfer handler
+                GNDMSFileTransfer transfer = new GNDMSFileTransfer();
+                transfer.setSourceClient( src );
+                transfer.setSourcePath( suri.getPath() );
 
-            try {
-                if( src != null )
-                    src.close();
-            } catch ( Exception e ) {
-                trace( "Exception while closing src client.", e );
-            }
+                transfer.setDestinationClient( dest );
+                transfer.setDestinationPath( duri.getPath() );
 
-            try {
-                if( dest != null )
-                    dest.close();
-            } catch ( Exception e ) {
-                trace( "Exception while closing dest client.", e );
+                transfer.setFiles( files );
+
+                transfer.prepareTransfer();
+
+                int fc = transfer.getFiles( ).size( );
+
+                session = getDao().beginSession();
+                try {
+                    getTask(session).setMaxProgress( fc );
+                    session.success();
+                }
+                finally { session.finish(); }
+
+                transfer.performPersistentTransfer( pml );
+
+                FileTransferResult ftr = new FileTransferResult();
+
+                ArrayList<String> al = new ArrayList<String>( transfer.getFiles( ).keySet( ) );
+                ftr.setFiles( al.toArray( new String[al.size( )] ));
+
+                transitWithPayload(ftr, TaskState.FINISHED);
+                if (altTaskState)
+                    getDao().removeAltTaskState(getModel().getId());
             }
+            finally { dest.close(); }
         }
-
+        finally { src.close(); }
     }
 
-    private void newTransfer( ) {
+    private void newTransfer( @NotNull NeoTask task ) {
         transferState = new FTPTransferState();
         transferState.setTransferId( getModel().getId() );
+        task.setPayload( transferState );
     }
 
     

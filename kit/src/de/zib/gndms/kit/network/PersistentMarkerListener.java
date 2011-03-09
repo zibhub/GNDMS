@@ -20,6 +20,9 @@ package de.zib.gndms.kit.network;
 
 import de.zib.gndms.model.gorfx.FTPTransferState;
 import de.zib.gndms.model.util.TxFrame;
+import de.zib.gndms.neomodel.common.NeoDao;
+import de.zib.gndms.neomodel.common.NeoSession;
+import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.globus.ftp.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,14 +45,13 @@ import javax.persistence.EntityManager;
  * User: mjorra, Date: 01.10.2008, Time: 13:27:12
  */
 public class PersistentMarkerListener implements MarkerListener {
-
-    private FTPTransferState transferState;
-    //private static Log logger = LogFactory.getLog( PersistentMarkerListener.class );
     private static Logger logger = Logger.getLogger( PersistentMarkerListener.class );
     private ByteRangeList byteRanges;
-    private EntityManager entityManager;
+    private NeoDao dao;
+    private FTPTransferState transferState;
+    private Taskling taskling;
 
-    
+
     public PersistentMarkerListener( ) {
         byteRanges = new ByteRangeList();
     }
@@ -71,15 +73,14 @@ public class PersistentMarkerListener implements MarkerListener {
 
         byteRanges.merge( marker.toVector() );
         String args = byteRanges.toFtpCmdArgument();
-        try{
-            logger.debug( "Transfer " + transferState.getTransferId() + " markers: " + args );
-            entityManager.getTransaction().begin();
+        logger.debug( "Transfer " + transferState.getTransferId() + " markers: " + args );
+        final NeoSession session = dao.beginSession();
+        try {
             transferState.setFtpArgs( args );
-            entityManager.getTransaction().commit();
-        } finally {
-            if( entityManager.getTransaction().isActive() )
-                entityManager.getTransaction().rollback();
+            taskling.getTask(session).setPayload(transferState);
+            session.success();
         }
+        finally { session.finish(); }
     }
 
     
@@ -99,20 +100,17 @@ public class PersistentMarkerListener implements MarkerListener {
         this.transferState = transferState;
         byteRanges = new ByteRangeList();
 
-        TxFrame tx = new TxFrame( entityManager );
+        final NeoSession session = dao.beginSession();
         try {
-            if (! entityManager.contains( transferState ) )
-                entityManager.persist( transferState );
-            tx.commit();
-
-            if( transferState.getFtpArgs() != null ) {
-                GridFTPRestartMarker rm = new GridFTPRestartMarker( transferState.getFtpArgsString() );
-                byteRanges.merge( rm.toVector() );
+            taskling.getTask(session).setPayload(transferState);
+            if (transferState.getFtpArgs() != null) {
+                GridFTPRestartMarker rm = new GridFTPRestartMarker(( transferState.getFtpArgsString()) );
+                byteRanges.merge(rm.toVector());
             }
+
+            session.success();
         }
-        finally {
-            tx.finish();
-        }
+        finally { session.finish(); }
     }
 
 
@@ -133,25 +131,29 @@ public class PersistentMarkerListener implements MarkerListener {
      * The new state is written to the database immediately.
      */
     public void setCurrentFile( String currentFile ) {
-
-        TxFrame tx = new TxFrame( entityManager );
+        final NeoSession session = dao.beginSession();
         try {
             transferState.setCurrentFile( currentFile );
             transferState.setFtpArgs( "0-0" );
-            tx.commit();
+            taskling.getTask(session).setPayload(transferState);
+            session.success();
         }
-        finally {
-            tx.finish();
-        }
+        finally { session.finish(); }
     }
 
-
-    public EntityManager getEntityManager() {
-        return entityManager;
+    public Taskling getTaskling() {
+        return taskling;
     }
 
+    public void setTaskling(Taskling taskling) {
+        this.taskling = taskling;
+    }
 
-    public void setEntityManager( EntityManager entityManager ) {
-        this.entityManager = entityManager;
+    public NeoDao getDao() {
+        return dao;
+    }
+
+    public void setDao(NeoDao dao) {
+        this.dao = dao;
     }
 }
