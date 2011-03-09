@@ -39,7 +39,6 @@ import javax.persistence.EntityManager;
  */
 public class DefaultTaskAction extends TaskAction {
     private volatile boolean killAltTaskState = true;
-    private volatile ModelUpdateListener<Taskling> modelUpdateListener = null;
 
     public DefaultTaskAction() {
         super();
@@ -113,13 +112,5 @@ public class DefaultTaskAction extends TaskAction {
 
     protected void setKillAltTaskState(boolean shouldKill) {
         killAltTaskState = shouldKill;
-    }
-
-    public @NotNull ModelUpdateListener<Taskling> getModelUpdateListener() {
-        return modelUpdateListener;
-    }
-
-    protected void setModelUpdateListener(@NotNull ModelUpdateListener<Taskling> listener) {
-        modelUpdateListener = listener;
     }
 }
