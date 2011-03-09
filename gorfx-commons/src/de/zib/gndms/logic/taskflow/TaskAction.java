@@ -25,6 +25,7 @@ import de.zib.gndms.model.gorfx.types.*;
 public interface TaskAction<T extends AbstractTF> {
 
     void setTask( Task<T> t );
+    Task getTask( );
 
     void onInit() throws Exception;
     void onProgress() throws Exception;

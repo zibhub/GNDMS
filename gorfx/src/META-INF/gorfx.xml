@@ -28,6 +28,16 @@
         <property name="gorfxFacets" ref="gorfxFacets" />
     </bean>
 
+    <bean id="taskFlowService" class="de.zib.gndms.GORFX.service.TaskFlowServiceImpl">
+        <property name="serviceUrl" value="${gorfxBaseURL}"/>
+    </bean>
+
+    <bean id="taskService" class="de.zib.gndms.GORFX.service.TaskServiceImpl">
+        <property name="serviceUrl" value="${gorfxBaseURL}"/>
+    </bean>
+
+    <bean id="executorService" class="de.zib.gndms.logic.taskflow.executor.TFExecutor" />
+
     <bean id="gorfxFacets" class="de.zib.gndms.rest.Facets">
         <property name="facets">
             <list>
@@ -58,6 +68,15 @@
         <property name="name" value="tasks"/>
         <property name="url" value="${gorfxBaseURL}/gorfx/tasks"/>
     </bean>
+
+    <bean id="taskFlowProvider" class="de.zib.gndms.logic.taskflow.TaskFlowProviderImpl" >
+        <property name="factories">
+            <map>
+                <entry key="DummyTF" value-ref="dummyFactory"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="dummyFactory" class="de.zib.gndms.logic.taskflow.tfmockup.DummyTaskFlowFactory"/>
 
     <import resource="classpath:/META-INF/gorfx-mockups.xml"/>
 

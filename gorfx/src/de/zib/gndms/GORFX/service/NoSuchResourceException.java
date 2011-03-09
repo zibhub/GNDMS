@@ -22,7 +22,7 @@ import java.util.HashMap;
  * @date 04.03.11  18:36
  * @brief
  */
-public class NoSuchResourceException extends Throwable {
+public class NoSuchResourceException extends RuntimeException {
 
     private HashMap<String,String> uriMap;
 

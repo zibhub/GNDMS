@@ -21,6 +21,7 @@ import de.zib.gndms.model.gorfx.types.TaskFlowMeta;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author try ma ik jo rr a zib
@@ -29,7 +30,7 @@ import java.util.List;
  */
 public class TaskFlowProviderImpl implements TaskFlowProvider {
 
-    private HashMap<String, TaskFlowFactory> factories;
+    private Map<String, TaskFlowFactory> factories;
 
     public boolean exists( String taskFlow ) {
         return factories.containsKey( taskFlow );
@@ -48,5 +49,10 @@ public class TaskFlowProviderImpl implements TaskFlowProvider {
 
     public TaskFlowFactory getFactoryForTaskFlow( String taskFlow ) {
         return factories.get( taskFlow );
+    }
+
+
+    public void setFactories( Map<String, TaskFlowFactory> factories ) {
+        this.factories = factories;
     }
 }
