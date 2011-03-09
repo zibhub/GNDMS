@@ -25,6 +25,9 @@ import de.zib.gndms.model.gorfx.FTPTransferState;
 import de.zib.gndms.model.gorfx.types.FileTransferORQ;
 import de.zib.gndms.model.gorfx.types.FileTransferResult;
 import de.zib.gndms.model.util.TxFrame;
+import de.zib.gndms.neomodel.common.NeoSession;
+import de.zib.gndms.neomodel.gorfx.NeoTask;
+import de.zib.gndms.neomodel.gorfx.NeoTaskAccessor;
 import org.apache.axis.types.URI;
 import org.globus.ftp.GridFTPClient;
 import org.jetbrains.annotations.NotNull;
@@ -67,16 +70,15 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
 
 
     @Override
-    protected void onInProgress( @NotNull AbstractTask model ) {
-
+    protected void onInProgress(@NotNull NeoTaskAccessor snapshot, boolean isRestartedTask) {
         GridFTPClient src = null;
         GridFTPClient dest = null;
 
-        EntityManager em = getEmf().createEntityManager(  );
-        // EntityManager em = getEntityManager(  );
-        TxFrame tx = new TxFrame( em );
+
+        NeoSession session = getDao().beginSession();
         try {
-            transferState = em.find( FTPTransferState.class, getModel( ).getId() );
+            NeoTask task = session.findTask(snapshot.getId());
+            FTPTransferState transferState = (FTPTransferState) task.getPayload();
 
             TreeMap<String,String> files =  getOrq().getFileMap();
             if( transferState == null )
@@ -88,6 +90,8 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
                     getModel().setProgress( p );
                 }
             }
+        }
+        finally { session.finish(); }
 
             tx.commit();
 
@@ -163,7 +167,6 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
     }
 
     private void newTransfer( ) {
-
         transferState = new FTPTransferState();
         transferState.setTransferId( getModel().getId() );
     }

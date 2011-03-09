@@ -35,8 +35,8 @@ public class Taskling extends GridEntity implements GridResourceItf {
     @NotNull String id;
 
     public Taskling(@NotNull NeoDao dao, @NotNull String taskId) {
-        this.id = taskId;
-        this.dao    = dao;
+        this.id  = taskId;
+        this.dao = dao;
     }
 
     @NotNull

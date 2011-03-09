@@ -121,7 +121,7 @@ public class ORQResource extends ORQResourceBase implements GNDMSCredibleResourc
         ORQCalculator.setJustEstimate( est );
         ORQCalculator.setPerferredOfferExecution( ContractXSDReader.readContract( pref ) );
         ORQCalculator.setCredentialProvider(
-            new GlobusCredentialProviderImpl( ORQCalculator.getKey().getOfferTypeKey(), credential ) );
+            new GlobusCredentialProviderImpl( ORQCalculator.getOfferTypeId().getOfferTypeKey(), credential ) );
 
         if( ORQCalculator instanceof SliceStageInORQCalculator ) {
             ( (SliceStageInORQCalculator) ORQCalculator ).setCredential ( credential );

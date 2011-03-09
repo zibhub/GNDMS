@@ -48,6 +48,7 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
     public static final String DESCRIPTION_P = "DESCRIPTION_P";
     public static final String TERMINATION_TIME_P = "TERMINATION_TIME_P";
     public static final String TASK_STATE_P = "TASK_STATE_P";
+    public static final String ALT_TASK_STATE_P = "ALT_TASK_STATE_P";
     public static final String MAX_PROGRESS_P = "MAX_PROGRESS_P";
     public static final String PROGRESS_P = "PROGRESS_P";
     public static final String ORQ_P = "ORQ_P";
@@ -160,7 +161,7 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
     }
 
     public @NotNull TaskState getTaskState() {
-        return Enum.valueOf(TaskState.class, (String) getProperty(TASK_STATE_P));
+        return Enum.valueOf(TaskState.class, (String) getProperty(TASK_STATE_P, TaskState.CREATED.name()));
     }
 
     public void setTaskState(@NotNull TaskState newTaskState) {
@@ -170,6 +171,20 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
         final @NotNull Index<Node> typeNickIndex = getTypeNickIndex(TASK_STATE_IDX);
         typeNickIndex.remove(repr(), session().getGridName(), oldTaskStateName);
         typeNickIndex.add(repr(), session().getGridName(), newTaskStateName);
+    }
+
+    public @Nullable TaskState getAltTaskState() {
+        final String property = (String) getProperty(ALT_TASK_STATE_P, null);
+        return property == null ? null : Enum.valueOf(TaskState.class, property);
+    }
+
+    public void setAltTaskState(@Nullable TaskState newAltTaskState) {
+        if (null == newAltTaskState) {
+            if (hasProperty(ALT_TASK_STATE_P))
+                removeProperty(ALT_TASK_STATE_P);
+        }
+        else
+            setProperty(ALT_TASK_STATE_P, newAltTaskState.name());
     }
 
     public int getMaxProgress() {
@@ -314,11 +329,11 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
             setProperty(Serializable.class, PAYLOAD_P, payload);
     }
 
-    public @Nullable LinkedList<RuntimeException> getCause() {
-        return (LinkedList<RuntimeException>) getProperty(LinkedList.class, CAUSE_P, null);
+    public @Nullable LinkedList<Exception> getCause() {
+        return (LinkedList<Exception>) getProperty(LinkedList.class, CAUSE_P, null);
     }
 
-    public void setCause(final @Nullable LinkedList<RuntimeException> cause) {
+    public void setCause(final @Nullable LinkedList<Exception> cause) {
         if (cause == null && hasProperty(CAUSE_P))
             removeProperty(CAUSE_P);
         else
@@ -326,9 +341,9 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
     }
 
 
-    public @NotNull LinkedList<RuntimeException> addCause(final @NotNull RuntimeException exception) {
-        final LinkedList<RuntimeException> oldList = getCause();
-        final LinkedList<RuntimeException> newList = oldList == null ? new LinkedList<RuntimeException>() : oldList;
+    public @NotNull LinkedList<Exception> addCause(final @NotNull Exception exception) {
+        final LinkedList<Exception> oldList = getCause();
+        final LinkedList<Exception> newList = oldList == null ? new LinkedList<Exception>() : oldList;
         newList.add(exception);
         setCause(newList);
         return newList;
@@ -386,7 +401,7 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
             final byte[] cred = this.getSerializedCredential();
             final String faultString = this.getFaultString();
             final Serializable payload = this.getPayload();
-            final LinkedList<RuntimeException> causes = this.getCause();
+            final LinkedList<Exception> causes = this.getCause();
             final NeoTaskAccessor snapshot = new NeoTaskAccessor() {
                 @NotNull
                 public String getId() {
@@ -465,7 +480,7 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
                 }
 
                 public boolean isBroken() {
-                    return isBroken();
+                    return isBroken;
                 }
 
                 @NotNull
@@ -482,7 +497,7 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
                     return payload;
                 }
 
-                public Iterable<RuntimeException> getCause() {
+                public Iterable<Exception> getCause() {
                     return causes;
                 }
 

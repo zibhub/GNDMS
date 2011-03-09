@@ -111,7 +111,7 @@ public class OfferResource extends OfferResourceBase implements GNDMSCredibleRes
         AbstractORQ orq = getOrqCalc().getORQArguments();
         task.setOrq(orq);
         task.setDescription(orq.getDescription());
-        task.setOfferType(getOrqCalc().getKey());
+        task.setOfferType(getOrqCalc().getOfferTypeId());
         task.setTerminationTime( contract.getCurrentTerminationTime() );
         task.setWid(WidAux.getWid());
         task.setSerializedCredential(

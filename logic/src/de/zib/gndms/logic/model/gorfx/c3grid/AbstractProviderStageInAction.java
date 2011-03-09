@@ -21,7 +21,6 @@ package de.zib.gndms.logic.model.gorfx.c3grid;
 import de.zib.gndms.kit.config.ConfigProvider;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.config.MapConfig;
-import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
 import de.zib.gndms.logic.model.dspace.DeleteSliceAction;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
@@ -230,7 +229,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 
 	protected ProcessBuilder createProcessBuilder(String name, File dir) {
        try {
-           MapConfig opts = new MapConfig(getKey().getConfigMap());
+           MapConfig opts = new MapConfig(getOfferTypeId().getConfigMap());
 		   if (opts.getOption(name, "").trim().length() == 0)
 			   return null;
 		   final File fileOption = getScriptFileByParam(opts, name);
@@ -252,7 +251,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 
 
     protected @NotNull MapConfig getOfferTypeConfig() {
-        return new MapConfig(getKey().getConfigMap());
+        return new MapConfig(getOfferTypeId().getConfigMap());
     }
 
 

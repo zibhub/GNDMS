@@ -81,7 +81,7 @@ public interface NeoTaskAccessor extends GridResourceItf, TimedGridResourceItf {
 
     @Nullable Serializable getPayload();
 
-    @Nullable Iterable<RuntimeException> getCause();
+    @Nullable Iterable<Exception> getCause();
 
     boolean isDone();
 

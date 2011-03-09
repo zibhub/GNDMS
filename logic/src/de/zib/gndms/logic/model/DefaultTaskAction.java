@@ -38,6 +38,9 @@ import javax.persistence.EntityManager;
  * User: stepn Date: 15.02.2011 Time: 14:11
  */
 public class DefaultTaskAction extends TaskAction {
+    private volatile boolean killAltTaskState = true;
+    private volatile ModelUpdateListener<Taskling> modelUpdateListener = null;
+
     public DefaultTaskAction() {
         super();
     }
@@ -47,54 +50,73 @@ public class DefaultTaskAction extends TaskAction {
     }
 
     @Override
-    protected void onTransit(@NotNull NeoTaskAccessor snapshot, boolean isRestartedTask) {
-        final TaskState state = snapshot.getTaskState();
+    protected void onTransit(@NotNull String wid,
+                             @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) {
         switch(state) {
             case CREATED:
-                onCreated(snapshot, isRestartedTask);
+                onCreated(wid, state, isRestartedTask, altTaskState);
                 break;
             case INITIALIZED:
-                onInitialized(snapshot, isRestartedTask);
+                onInitialized(wid, state, isRestartedTask, altTaskState);
                 break;
             case IN_PROGRESS:
-                onInProgress(snapshot, isRestartedTask);
+                onInProgress(wid, state, isRestartedTask, altTaskState);
                 break;
             case FINISHED:
-                onFinished(snapshot, isRestartedTask);
+                onFinished(wid, state, isRestartedTask, altTaskState);
             case FAILED:
-                onFailed(snapshot, isRestartedTask);
+                onFailed(wid, state, isRestartedTask, altTaskState);
         }
     }
 
-    protected void onCreated(@NotNull NeoTaskAccessor snapshot, boolean isRestartedTask) {
+    protected void onCreated(@NotNull String wid,
+                             @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) {
         super.autoTransit();
+        if (killAltTaskState && altTaskState)
+            removeAltTaskState();
     }
 
-    protected void onInitialized(@NotNull NeoTaskAccessor snapshot, boolean isRestartedTask) {
+    protected void onInitialized(@NotNull String wid,
+                                 @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) {
         super.autoTransit();
+        if (killAltTaskState && altTaskState)
+            removeAltTaskState();
     }
 
-    protected void onInProgress(@NotNull NeoTaskAccessor snapshot, boolean isRestartedTask) {
+    protected void onInProgress(@NotNull String wid,
+                                @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) {
         super.autoTransit();
+        if (killAltTaskState && altTaskState)
+            removeAltTaskState();
     }
 
-    protected void onFinished(@NotNull NeoTaskAccessor snapshot, boolean isRestartedTask) {
+    protected void onFinished(@NotNull String wid,
+                              @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) {
         super.autoTransit();
+        if (killAltTaskState && altTaskState)
+            removeAltTaskState();
     }
 
-
-    protected void onFailed(@NotNull NeoTaskAccessor snapshot, boolean isRestartedTask) {
+    protected void onFailed(@NotNull String wid,
+                            @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) {
         super.autoTransit();
+        if (killAltTaskState && altTaskState)
+            removeAltTaskState();
     }
 
-    protected @NotNull NeoTaskAccessor getTaskSnapshot() {
-        final NeoSession session = getDao().beginSession();
-        try {
-            final NeoTask task = getModel().getTask(session);
-            final NeoTaskAccessor result = task.getSnapshot();
-            session.success();
-            return result;
-        }
-        finally { session.finish(); }
+    public boolean isKillAltTaskState() {
+        return killAltTaskState;
+    }
+
+    protected void setKillAltTaskState(boolean shouldKill) {
+        killAltTaskState = shouldKill;
+    }
+
+    public @NotNull ModelUpdateListener<Taskling> getModelUpdateListener() {
+        return modelUpdateListener;
+    }
+
+    protected void setModelUpdateListener(@NotNull ModelUpdateListener<Taskling> listener) {
+        modelUpdateListener = listener;
     }
 }
