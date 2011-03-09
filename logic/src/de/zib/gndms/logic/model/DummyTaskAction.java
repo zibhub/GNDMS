@@ -35,7 +35,6 @@ import javax.persistence.EntityManager;
  *
  *          User: stepn Date: 29.09.2008 Time: 17:06:35
  */
-@SuppressWarnings({ "FeatureEnvy" })
 public class DummyTaskAction extends TaskAction {
     private double successRate = 1.0d;
     private long sleepInProgress;
@@ -50,25 +49,33 @@ public class DummyTaskAction extends TaskAction {
     }
 
     @Override
-    protected void onTransit(@NotNull NeoTaskAccessor snapshot, boolean isRestartedTask) {
+    protected void onTransit(@NotNull String wid,
+                             @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) throws Exception {
 
-        switch(snapshot.getTaskState()) {
+        switch(state) {
             case IN_PROGRESS:
                 try {
                     Thread.sleep(sleepInProgress);
                 }
                 catch (InterruptedException e) {
                     transit(TaskState.FINISHED);
+                    if (altTaskState)
+                        getDao().removeAltTaskState(getModel().getId());
                     return;
                 }
 
                 if (Math.random() < successRate) {
-                    transitWithPayload(TaskState.FINISHED, 1);
+                    transitWithPayload(1, TaskState.FINISHED);
+                    if (altTaskState)
+                        getDao().removeAltTaskState(getModel().getId());
                     return;
-                } else
+                } else {
+                    if (altTaskState)
+                        getDao().removeAltTaskState(getModel().getId());
                     throw new IllegalStateException("Random failure");
+                }
             default:
-                autoTransit();
+                super.onTransit(wid, state, isRestartedTask, altTaskState);
         }
     }
 

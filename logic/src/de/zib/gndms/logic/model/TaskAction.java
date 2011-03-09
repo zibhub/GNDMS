@@ -80,6 +80,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
     private ConfigletProvider configletProvider;
 
     private CredentialProvider credentialProvider;
+    protected volatile ModelUpdateListener<Taskling> modelUpdateListener = null;
 
     public TaskAction() {
         super();
@@ -1125,4 +1126,11 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
 
 
 
+    public @NotNull ModelUpdateListener<Taskling> getModelUpdateListener() {
+        return modelUpdateListener;
+    }
+
+    protected void setModelUpdateListener(@NotNull ModelUpdateListener<Taskling> listener) {
+        modelUpdateListener = listener;
+    }
 }
