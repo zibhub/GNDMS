@@ -27,7 +27,6 @@ import de.zib.gndms.logic.action.LogAction;
 import de.zib.gndms.logic.model.gorfx.LifetimeExceededException;
 import de.zib.gndms.logic.model.gorfx.permissions.PermissionConfiglet;
 import de.zib.gndms.model.common.types.FilePermissions;
-import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.NeoDao;
@@ -464,7 +463,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
 
 
     protected void onTransit(@NotNull String wid,
-                             @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) {
+                             @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) throws Exception {
         throw new UnsupportedOperationException("not yet implemented");
     }
 
@@ -475,6 +474,8 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
             final NeoTask task = session.findTask(getModel().getId());
             task.setTaskState(task.getTaskState().transit(taskState));
             task.setPayload(payload);
+            if (TaskState.FINISHED.equals(taskState))
+                task.setProgress(task.getMaxProgress());
             session.success();
         }
         finally { session.finish(); }
@@ -485,6 +486,8 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
         try {
             final NeoTask task = session.findTask(getModel().getId());
             task.setTaskState(task.getTaskState().transit(taskState));
+            if (TaskState.FINISHED.equals(taskState))
+                task.setProgress(task.getMaxProgress());
             session.success();
         }
         finally { session.finish(); }
@@ -505,6 +508,8 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
             }
             task.setTaskState(taskState.transit(nextState));
             task.setPayload(payload);
+            if (TaskState.FINISHED.equals(taskState))
+                task.setProgress(task.getMaxProgress());
             session.success();
         }
         finally { session.finish(); }
@@ -524,6 +529,8 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
                 default: nextState = TaskState.FAILED; break;
             }
             task.setTaskState(taskState.transit(nextState));
+            if (TaskState.FINISHED.equals(taskState))
+                task.setProgress(task.getMaxProgress());
             session.success();
         }
         finally { session.finish(); }
@@ -654,7 +661,6 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
      *
      * @param ling shallow model to be checked
      * @throws LifetimeExceededException
-     * @see AbstractTask#fail(Exception)
      */
     private void checkTimeout( @NotNull Taskling ling ) {
 

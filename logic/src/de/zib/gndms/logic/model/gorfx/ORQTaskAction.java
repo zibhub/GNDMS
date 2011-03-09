@@ -23,8 +23,6 @@ import de.zib.gndms.kit.access.RequiresCredentialProvider;
 import de.zib.gndms.logic.model.DefaultTaskAction;
 import de.zib.gndms.model.common.types.factory.KeyFactory;
 import de.zib.gndms.model.common.types.factory.KeyFactoryInstance;
-import de.zib.gndms.model.gorfx.AbstractTask;
-import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.model.gorfx.types.io.ORQConverter;
@@ -67,7 +65,7 @@ public abstract class ORQTaskAction<K extends AbstractORQ> extends DefaultTaskAc
 
     @Override
     protected void onCreated(@NotNull String wid,
-                             @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) {
+                             @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) throws Exception {
         if (! isRestartedTask) {
             final NeoSession session = getDao().beginSession();
             try {
@@ -130,5 +128,5 @@ public abstract class ORQTaskAction<K extends AbstractORQ> extends DefaultTaskAc
         orq = newORQ;
     }
 
-    public abstract Class<K> getORQClass();
+    public abstract Class<K> getOrqClass();
 }
