@@ -26,13 +26,8 @@ public interface TaskAction<T extends AbstractTF> {
 
     void setTask( Task<T> t );
 
-    void run( );
-
-    boolean hasStatus( );
-    TaskStatus getStatus( );
-    boolean hasError( );
-    TaskFailure getError( );
-    boolean hasResult( );
-    TaskResult getResult( );
-
+    void onInit() throws Exception;
+    void onProgress() throws Exception;
+    void onFailed( Exception e );
+    void run( ) throws Exception;
 }

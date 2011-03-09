@@ -31,6 +31,10 @@ import java.util.List;
  * The taskflow service acts as interface to instantiated taskflow
  * resources. The instantiation or creation happens through the GORFX
  * service itself.
+ *
+ * @Note Regarding the return values if not documented differently the HttpStatus is 200 (OK) if the call was successful,
+ *  404 if the resource wasn't found
+ *  or 403 (Forbidden) if the user hasn't the necessary credentials to access the resource.
  */
 public interface TaskFlowService {
 
@@ -69,7 +73,8 @@ public interface TaskFlowService {
      * @param dn The dn of the user invoking the method.
      * @param wid The id of the workflow, for logging purpose.
      * 
-     * @return The order details of the task flow.
+     * @return The order details of the task flow and HttpStatus.Ok, or
+     *      404 if there isn't any order.
      */
     ResponseEntity<AbstractTF> getOrder( String type, String id, String dn, String wid );
 
@@ -103,6 +108,9 @@ public interface TaskFlowService {
      * @param wid The id of the workflow, for logging purpose.
      *
      * @return A list of quotes specifiers, which carry the quote information as payload.
+     *      - 200 if all went well,
+     *      - 400 if the order wasn't correct or unfulfillable.
+     *      - 404 if type or id are not valid.
      */
     ResponseEntity<List<Specifier<Quote>>> getQuotes( String type, String id, String dn, String wid );
 
@@ -119,7 +127,7 @@ public interface TaskFlowService {
      * @param dn The dn of the user invoking the method.
      * @param wid The id of the workflow, for logging purpose.
      *
-     * \note Only one preferred quote can be provided.
+     * \note Only one preferred quote can be provided and will overwrite previously provided quotes.
      */
     ResponseEntity<Void> setQuote( String type, String id, Quote cont, String dn, String wid );
 
@@ -178,7 +186,8 @@ public interface TaskFlowService {
      * @param wid The id of the workflow, for logging purpose.
      * 
      * @return HTTP-status 201 if the creation was successful,
-     * together with the URL of the created resource. 
+     * together with the URL of the created resource. HTTP-status
+     * 409 if the task already exists.
      */
 	ResponseEntity<Specifier<Facets>> createTask(String type, String id,
 			String quoteId, String dn, String wid );

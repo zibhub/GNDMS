@@ -2,10 +2,7 @@ package de.zib.gndms.GORFX.service;
 
 import de.zib.gndms.devel.NotYetImplementedException;
 import de.zib.gndms.gndmc.gorfx.TaskClient;
-import de.zib.gndms.logic.taskflow.AbstractQuoteCalculator;
-import de.zib.gndms.logic.taskflow.TaskFlowFactory;
-import de.zib.gndms.logic.taskflow.TaskFlowProvider;
-import de.zib.gndms.logic.taskflow.UnsatisfiableOrderException;
+import de.zib.gndms.logic.taskflow.*;
 import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.rest.*;
 import org.springframework.http.HttpStatus;
@@ -283,14 +280,22 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     public ResponseEntity<Specifier<Facets>> createTask( @PathVariable String type, @PathVariable String id,
                                               @RequestParam( value = "quote", required = false ) String quoteId,
                                               @RequestHeader( "DN" ) String dn, @RequestHeader( "WId" ) String wid ) {
-        GNDMSResponseHeader responseHeaders = new GNDMSResponseHeader();
 
-        try {
-            TaskFlow tf = findTF( type, id );
-            Task t = tf.getTask();
-            if( t != null )
-        } catch ( NoSuchResourceException e ) {
+        HttpStatus hs = HttpStatus.NOT_FOUND;
 
+        if( taskFlowProvider.exists( type ) ) {
+            TaskFlowFactory tff = taskFlowProvider.getFactoryForTaskFlow( type );
+            TaskFlow tf = tff.find( id );
+            if ( tf != null ) {
+                Task t = tf.getTask();
+                if( t != null )
+                    hs = HttpStatus.CONFLICT;
+                else {
+                    t = new Task();
+                    t.setModel( tf.getOrder() );
+                    TaskAction ta = tff.createAction( t );
+                }
+            }
         }
         return null;
 

@@ -56,4 +56,19 @@ public interface TaskFailure {
      * Class:line
      */
     String getFaultLocation();
+
+
+    /**
+     * @brief Checks if this failure carries another one.
+     *
+     * @return \c true if there are more failure objects.
+     */
+    boolean hasNext();
+
+    /**
+     * @brief Allows changing of failures messages.
+     *
+     * @return The next failure object if existing.
+     */
+    TaskFailure getNext();
 }

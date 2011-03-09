@@ -131,9 +131,10 @@ public class TaskFlowClient extends AbstractClient implements TaskFlowService {
 	}
 
 
+    @SuppressWarnings("unchecked")
 	public final ResponseEntity<Specifier<TaskFailure>> getErrors( final String type, final String id,
                                                                    final String dn, final String wid ) {
-		return unifiedGet(TaskFlowFailure.class, serviceURL + "/gorfx/_" + type
+		return ( ResponseEntity<Specifier<TaskFailure>> ) (Object) unifiedGet(Specifier.class, serviceURL + "/gorfx/_" + type
 				+ "/_" + id + "/errors", dn, wid);
 	}
 

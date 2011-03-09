@@ -16,6 +16,7 @@ package de.zib.gndms.logic.taskflow.tfmockup;
  */
 
 import de.zib.gndms.logic.taskflow.AbstractQuoteCalculator;
+import de.zib.gndms.logic.taskflow.TaskAction;
 import de.zib.gndms.logic.taskflow.TaskFlowFactory;
 import de.zib.gndms.model.gorfx.types.Task;
 import de.zib.gndms.model.gorfx.types.TaskFlow;
@@ -100,5 +101,10 @@ public class DummyTaskFlowFactory implements TaskFlowFactory<TaskFlow<DummyTF>> 
 
     public Class getOrderClass() {
         return DummyTF.class;
+    }
+
+
+    public TaskAction createAction( Task t ) {
+        return new DummyTFAction( t );
     }
 }

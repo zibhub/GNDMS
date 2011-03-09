@@ -32,7 +32,7 @@ public class TFExecutor {
         executor = Executors.newCachedThreadPool();
     }
 
-    public void execute( TaskAction ta ) {
+    public void submit( TaskAction ta ) {
         executor.execute( new TaskActionRunner( ta ) );
     }
 
