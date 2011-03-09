@@ -28,9 +28,15 @@ import java.io.StringWriter;
 public abstract class AbstractTaskAction<T extends AbstractTF> implements TaskAction<T> {
 
     private Task<T> task;
-    private TaskStatus status;
-    private TaskResult result;
-    private TaskFailure failure;
+
+
+    protected AbstractTaskAction( ) {
+    }
+
+
+    protected AbstractTaskAction( Task<T> task ) {
+        this.task = task;
+    }
 
 
     public Task<T> getTask() {
@@ -43,50 +49,20 @@ public abstract class AbstractTaskAction<T extends AbstractTF> implements TaskAc
     }
 
 
-    public boolean hasStatus() {
-        return status != null;
+    public void run() throws Exception{
+
+        try {
+            onInit();
+            onProgress();
+        } catch ( Exception e ) {
+            onFailed( e );
+            throw e;
+        }
     }
 
 
-    public TaskStatus getStatus() {
-        return status;
-    }
-
-
-    public boolean hasError() {
-        return failure != null;
-    }
-
-
-    public TaskFailure getError() {
-        return failure;
-    }
-
-
-    public boolean hasResult() {
-        return result != null;
-    }
-
-
-    public TaskResult getResult() {
-        return result;
-    }
-
-
-    protected void setStatus( TaskStatus status ) {
-        this.status = status;
-    }
-
-
-
-
-    protected void setResult( TaskResult result ) {
-        this.result = result;
-    }
-
-
-    protected void setFailure( TaskFailure failure ) {
-        this.failure = failure;
+    public void onFailed( Exception e ) {
+        setFailure( e );
     }
 
 
@@ -106,6 +82,6 @@ public abstract class AbstractTaskAction<T extends AbstractTF> implements TaskAc
         if( se.length > 0 )
             tff.setFaultLocation( se[0].toString() );
 
-        setFailure( tff );
+        task.setFailure( tff );
     }
 }

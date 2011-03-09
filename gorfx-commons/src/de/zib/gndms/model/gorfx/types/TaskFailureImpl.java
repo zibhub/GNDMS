@@ -29,6 +29,7 @@ public class TaskFailureImpl implements TaskFailure {
     private String trace;
     private String name;
     private String frame;
+    private TaskFailure failure = null; // for chaining
 
 
     public void setMessage( String message ) {
@@ -63,6 +64,21 @@ public class TaskFailureImpl implements TaskFailure {
 
     public String getFaultLocation() {
         return frame;
+    }
+
+
+    public boolean hasNext() {
+        return failure != null;
+    }
+
+
+    public TaskFailure getNext() {
+        return failure;
+    }
+
+
+    public void setNext( TaskFailure failure ) {
+        this.failure = failure;
     }
 
 

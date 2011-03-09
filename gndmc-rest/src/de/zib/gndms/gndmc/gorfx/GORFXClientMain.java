@@ -20,10 +20,7 @@ import de.zib.gndms.kit.action.ActionMeta;
 import de.zib.gndms.kit.application.AbstractApplication;
 import de.zib.gndms.kit.config.ConfigMeta;
 import de.zib.gndms.logic.taskflow.tfmockup.DummyTF;
-import de.zib.gndms.model.gorfx.types.AbstractTF;
-import de.zib.gndms.model.gorfx.types.TaskFlowFailure;
-import de.zib.gndms.model.gorfx.types.TaskFlowStatus;
-import de.zib.gndms.model.gorfx.types.TaskResult;
+import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.rest.Facet;
 import de.zib.gndms.rest.Facets;
 import de.zib.gndms.rest.GNDMSResponseHeader;
@@ -34,6 +31,7 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Iterator;
@@ -246,11 +244,11 @@ public class GORFXClientMain extends AbstractApplication {
 			System.out.println("Errors facet not found");
 		} else {
 			System.out.println(f.getName() + " " + f.getUrl());
-			ResponseEntity<TaskFlowFailure> res9 = tfClient.getErrors(type, id,
+			ResponseEntity<Specifier<TaskFailure>> res9 = tfClient.getErrors(type, id,
 					dn, wid);
-			if (res9.getBody().hasFailed()) {
+			if (res9.getStatusCode().equals( HttpStatus.OK )) {
 				System.out.println("Failure"
-						+ res9.getBody().getFailureMessage());
+						+ res9.getBody().getPayload().getMessage());
 			} else {
 				System.out.println("No errors");
 

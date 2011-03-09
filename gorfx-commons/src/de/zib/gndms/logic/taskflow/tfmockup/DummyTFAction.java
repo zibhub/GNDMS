@@ -17,6 +17,7 @@ package de.zib.gndms.logic.taskflow.tfmockup;
 
 import de.zib.gndms.model.gorfx.types.AbstractTaskAction;
 import de.zib.gndms.model.gorfx.types.DefaultTaskStatus;
+import de.zib.gndms.model.gorfx.types.Task;
 import de.zib.gndms.model.gorfx.types.TaskStatus;
 
 /**
@@ -27,42 +28,60 @@ import de.zib.gndms.model.gorfx.types.TaskStatus;
 public class DummyTFAction extends AbstractTaskAction<DummyTF> {
 
     public DummyTFAction() {
-        setStatus( new DefaultTaskStatus() );
     }
 
 
-    public void run() {
-        DefaultTaskStatus stat = DefaultTaskStatus.class.cast( getStatus() );
+    public DummyTFAction( Task<DummyTF> t ) {
+        super( t );
+    }
 
-        try {
-            StringBuffer sb = new StringBuffer();
-            DummyTF tf = (DummyTF) getTask().getModel();
-            stat.setMaxProgress( tf.getTimes() );
-            for( int i = 0; i < tf.getTimes(); ++i ) {
-                sb.append( tf.getMessage() );
-                sb.append( '\n' );
-                Thread.sleep( tf.getDelay() );
-                if( tf.isFailIntentionally()
-                    && i > tf.getTimes( ) / 2 )
-                    throw new RuntimeException( "Halp -- I'm failing intentionally" );
-                updateProgress( stat, i );
-            }
-            updateStatus( stat,  TaskStatus.Status.FINISHED  );
-        } catch( Exception e ) {
-            setFailure( e );
-            updateStatus( stat, TaskStatus.Status.FAILED );
+
+    public void onInit( ) throws Exception {
+
+        DefaultTaskStatus stat = new DefaultTaskStatus();
+        stat.setMaxProgress( getTask().getModel().getTimes() );
+        stat.setProgress( 0 );
+        stat.setStatus( TaskStatus.Status.WAITING );
+    }
+
+
+    public void onProgress( ) throws Exception {
+
+        DefaultTaskStatus stat = DefaultTaskStatus.class.cast(  getTask().getStatus() );
+        updateStatus( stat,  TaskStatus.Status.RUNNING  );
+
+        StringBuffer sb = new StringBuffer();
+        DummyTF tf = (DummyTF) getTask().getModel();
+        stat.setMaxProgress( tf.getTimes() );
+        for( int i = 0; i < tf.getTimes(); ++i ) {
+            sb.append( tf.getMessage() );
+            sb.append( '\n' );
+            Thread.sleep( tf.getDelay() );
+            if( tf.isFailIntentionally()
+                && i > tf.getTimes( ) / 2 )
+                throw new RuntimeException( "Halp -- I'm failing intentionally" );
+            updateProgress( stat, i );
         }
+        updateStatus( stat,  TaskStatus.Status.FINISHED  );
+    }
+
+
+    public void onFailed( Exception e )  {
+        super.onFailed( e );
+        DefaultTaskStatus stat = DefaultTaskStatus.class.cast(  getTask().getStatus() );
+        stat.setStatus( TaskStatus.Status.FAILED );
+        getTask().setStatus( stat );
     }
 
 
     private void updateStatus( DefaultTaskStatus stat, TaskStatus.Status s ) {
         stat.setStatus( s );
-        setStatus( stat );
+        getTask().setStatus( stat );
     }
 
 
     private void updateProgress( DefaultTaskStatus stat, int i ) {
         stat.setProgress( i );
-        setStatus( stat );
+        getTask().setStatus( stat );
     }
 }

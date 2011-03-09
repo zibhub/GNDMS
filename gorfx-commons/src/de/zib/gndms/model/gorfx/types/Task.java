@@ -24,7 +24,18 @@ public class Task<T> {
 
     private String id;
     private T model;
-    private TaskStatus taskStatus;
+    private TaskStatus status;
+    private TaskResult result;
+    private TaskFailure failure;
+
+
+    public Task() {
+    }
+
+
+    public Task( String id ) {
+        this.id = id;
+    }
 
 
     public String getId() {
@@ -37,22 +48,57 @@ public class Task<T> {
     }
 
 
-    public T getModel() {
+    public synchronized T getModel() {
         return model;
     }
 
 
-    public void setModel( T model ) {
+    public synchronized void setModel( T model ) {
         this.model = model;
     }
 
 
-    public TaskStatus getStatus() {
-        return taskStatus;
+    public synchronized TaskStatus getStatus() {
+        return status;
     }
 
 
-    public void setStatus( TaskStatus taskStatus ) {
-        this.taskStatus = taskStatus;
+    public synchronized void setStatus( TaskStatus taskStatus ) {
+        this.status = taskStatus;
+    }
+
+
+    public synchronized boolean hasStatus() {
+        return status != null;
+    }
+
+
+    public synchronized boolean hasError() {
+        return failure != null;
+    }
+
+
+    public synchronized TaskFailure getError() {
+        return failure;
+    }
+
+
+    public synchronized boolean hasResult() {
+        return result != null;
+    }
+
+
+    public synchronized TaskResult getResult() {
+        return result;
+    }
+
+
+    public synchronized void setResult( TaskResult result ) {
+        this.result = result;
+    }
+
+
+    public synchronized void setFailure( TaskFailure failure ) {
+        this.failure = failure;
     }
 }

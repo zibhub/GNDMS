@@ -49,6 +49,10 @@ public class TaskActionRunner implements Runnable {
 
 
     public void run() {
-        taskAction.run();
+        try {
+            taskAction.run();
+        } catch ( Exception e ) {
+            throw new RuntimeException( e );
+        }
     }
 }
