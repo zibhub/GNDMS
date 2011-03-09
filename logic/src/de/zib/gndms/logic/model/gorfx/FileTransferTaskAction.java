@@ -151,6 +151,4 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
         transferState.setTransferId( getModel().getId() );
         task.setPayload( transferState );
     }
-
-    
 }
