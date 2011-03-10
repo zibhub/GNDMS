@@ -52,13 +52,13 @@ public class FullGORFXClient extends GORFXClient implements GORFXService {
 	@SuppressWarnings("unchecked")
 	public final ResponseEntity<List<String>> listConfigActions(final String dn) {
 		return (ResponseEntity<List<String>>) (Object) unifiedGet(List.class,
-				serviceURL + "/gorfx/config/", dn);
+				getServiceURL() + "/gorfx/config/", dn);
 	}
 
 
     public final ResponseEntity<ConfigMeta> getConfigActionInfo(final String actionName,
 			final String dn) {
-		return unifiedGet(ConfigMeta.class, serviceURL + "/gorfx/config/_"
+		return unifiedGet(ConfigMeta.class, getServiceURL() + "/gorfx/config/_"
 				+ actionName, dn);
 	}
 

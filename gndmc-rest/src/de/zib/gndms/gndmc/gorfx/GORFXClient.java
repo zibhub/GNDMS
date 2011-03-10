@@ -26,13 +26,16 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author try ma ik jo rr a zib
  * 
  * @brief
  */
-public class GORFXClient extends AbstractClient implements
-		GORFXServiceEssentials {
+public class GORFXClient extends AbstractClient implements GORFXServiceEssentials {
+
 
 	/**
 	 * The constructor.
@@ -47,29 +50,29 @@ public class GORFXClient extends AbstractClient implements
 	 *            The base url of the grid.
 	 */
 	public GORFXClient(final String serviceURL) {
-		this.serviceURL = serviceURL;
+		this.setServiceURL( serviceURL );
 	}
 
 	public final ResponseEntity<Facets> listAvailableFacets(final String dn) {
-		return unifiedGet(Facets.class, serviceURL + "/gorfx/", dn);
+		return unifiedGet(Facets.class, getServiceURL() + "/gorfx/", dn);
 	}
 
 
 	@SuppressWarnings("unchecked")
 	public final ResponseEntity<List<String>> listTaskFlows(final String dn) {
 		return (ResponseEntity<List<String>>) (Object) unifiedGet(List.class,
-				serviceURL + "/gorfx/taskflows/", dn);
+				getServiceURL() + "/gorfx/taskflows/", dn);
 	}
 
 	public final ResponseEntity<TaskFlowInfo> getTaskFlowInfo(final String type, final String dn) {
-		return unifiedGet(TaskFlowInfo.class, serviceURL + "/gorfx/_" + type, dn);
+		return unifiedGet(TaskFlowInfo.class, getServiceURL() + "/gorfx/_" + type, dn);
 	}
 
 
     @SuppressWarnings("unchecked")
 	public final ResponseEntity<Specifier<Facets>> createTaskFlow( final String type, final AbstractTF order,
                                                                    final String dn, final String wid ) {
-		return ( ResponseEntity<Specifier<Facets>> ) (Object) unifiedPost(Specifier.class, AbstractTF.class, serviceURL
+		return ( ResponseEntity<Specifier<Facets>> ) (Object) unifiedPost(Specifier.class, order, getServiceURL()
 				+ "/gorfx/_" + type, wid, dn);
 	}
 

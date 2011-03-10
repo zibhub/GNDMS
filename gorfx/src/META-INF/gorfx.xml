@@ -12,6 +12,7 @@
             http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
 
+    <context:annotation-config/>
     <!-- load possible custom properties -->
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="ignoreResourceNotFound" value="true"/>
@@ -22,6 +23,16 @@
             </list>
         </property>
     </bean>
+
+    <bean id="taskFlowProvider" class="de.zib.gndms.logic.taskflow.TaskFlowProviderImpl" >
+        <property name="factories">
+            <map>
+                <entry key="dummyTaskFlow" value-ref="dummyFactory"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="dummyFactory" class="de.zib.gndms.logic.taskflow.tfmockup.DummyTaskFlowFactory"/>
+
 
     <bean id="gorfxService" class="de.zib.gndms.GORFX.service.GORFXServiceImpl">
         <property name="baseUrl" value="${gorfxBaseURL}"/>
@@ -69,15 +80,11 @@
         <property name="url" value="${gorfxBaseURL}/gorfx/tasks"/>
     </bean>
 
-    <bean id="taskFlowProvider" class="de.zib.gndms.logic.taskflow.TaskFlowProviderImpl" >
-        <property name="factories">
-            <map>
-                <entry key="DummyTF" value-ref="dummyFactory"/>
-            </map>
-        </property>
+    <bean id="taskFlowClient" class="de.zib.gndms.gndmc.gorfx.TaskFlowClient" >
+        <property name="restTemplate" ref="restTemplate" />
     </bean>
-    <bean id="dummyFactory" class="de.zib.gndms.logic.taskflow.tfmockup.DummyTaskFlowFactory"/>
 
     <import resource="classpath:/META-INF/gorfx-mockups.xml"/>
+    <import resource="classpath:/META-INF/client-context.xml"/>
 
 </beans>

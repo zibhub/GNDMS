@@ -38,36 +38,37 @@ public class TaskFlowClient extends AbstractClient implements TaskFlowService {
 	public TaskFlowClient() {
 	}
 
-	/**
+    /**
 	 * The constructor.
 	 * 
 	 * @param serviceURL The base url of the grid.
 	 */
 	public TaskFlowClient(final String serviceURL) {
-		this.serviceURL = serviceURL;
+		this.setServiceURL( serviceURL );
 	}
 
 	@Override
 	public final ResponseEntity<Facets> getFacets(final String type, final String id, final String dn) {
-		return unifiedGet(Facets.class, serviceURL + "/gorfx/_" + type + "/_"
+        logger.debug( "calling getFacets to: " + getServiceURL() + "/gorfx/_" + type + "/_" + id );
+		return unifiedGet(Facets.class, getServiceURL() + "/gorfx/_" + type + "/_"
 				+ id, dn);
 	}
 
 	@Override
 	public final ResponseEntity<Void> deleteTaskflow(final String type, final String id, final String dn, final String wid) {
-		return unifiedDelete(serviceURL + "/gorfx/_" + type + "/_" + id, dn, wid);
+		return unifiedDelete( getServiceURL() + "/gorfx/_" + type + "/_" + id, dn, wid);
 	}
 
 	@Override
 	public final ResponseEntity<AbstractTF> getOrder(final String type, final String id, final String dn, final String wid) {
-		return unifiedGet(AbstractTF.class, serviceURL + "/gorfx/_" + type + "/_"
+		return unifiedGet(AbstractTF.class, getServiceURL() + "/gorfx/_" + type + "/_"
 				+ id + "/order", dn, wid);
 	}
 
 	@Override
 	public final ResponseEntity<Void> setOrder(final String type, final String id,
 			final AbstractTF orq, final String dn, final String wid) {
-		return unifiedPut(Void.class, orq, serviceURL + "/gorfx/_" + type + "/_"
+		return unifiedPut(Void.class, orq, getServiceURL() + "/gorfx/_" + type + "/_"
 				+ id + "/order", dn, wid);
 	}
 
@@ -76,34 +77,34 @@ public class TaskFlowClient extends AbstractClient implements TaskFlowService {
 	public final ResponseEntity<List<Specifier<Quote>>> getQuotes(final String type, final String id,
 			final String dn, final String wid) {
 		return ( ResponseEntity<List<Specifier<Quote>>> ) (Object) unifiedGet(List.class,
-				serviceURL + "/gorfx/_" + type + "/_" + id + "/quote", dn, wid);
+				getServiceURL() + "/gorfx/_" + type + "/_" + id + "/quote", dn, wid);
 	}
 
 	@Override
 	public final ResponseEntity<Void> setQuote(final String type, final String id, final Quote cont,
 			final String dn, final String wid) {
-		return unifiedPost(Void.class, cont, serviceURL + "/gorfx/_" + type + "/_"
+		return unifiedPost(Void.class, cont, getServiceURL() + "/gorfx/_" + type + "/_"
 				+ id + "/quote", dn, wid);
 	}
 
 
 	public final ResponseEntity<Quote> getQuote(final String type, final String id, final int idx,
 			final String dn, final String wid) {
-		return unifiedGet(Quote.class, serviceURL + "/gorfx/_" + type + "/_" + id
+		return unifiedGet(Quote.class, getServiceURL() + "/gorfx/_" + type + "/_" + id
 				+ "/quote/_" + idx, dn, wid);
 	}
 
 
 	public final ResponseEntity<Void> deleteQuotes(final String type, final String id, final int idx,
 			final String dn, final String wid) {
-		return unifiedDelete(serviceURL + "/gorfx/_" + type + "/_" + id
+		return unifiedDelete( getServiceURL() + "/gorfx/_" + type + "/_" + id
 				+ "/quote/_" + idx, dn, wid);
 	}
 
 
     @SuppressWarnings("unchecked")
 	public final ResponseEntity<Specifier<Facets>> getTask( final String type, final String id, final String dn, final String wid ) {
-		return ( ResponseEntity<Specifier<Facets>> ) (Object) unifiedGet(Specifier.class, serviceURL + "/gorfx/_" + type + "/_"
+		return ( ResponseEntity<Specifier<Facets>> ) (Object) unifiedGet(Specifier.class, getServiceURL() + "/gorfx/_" + type + "/_"
 				+ id + "/task", dn, wid);
 	}
 
@@ -111,14 +112,14 @@ public class TaskFlowClient extends AbstractClient implements TaskFlowService {
     @SuppressWarnings("unchecked")
 	public final ResponseEntity<Specifier<Facets>> createTask( final String type, final String id,
                                                                final String quoteId, final String dn, final String wid ) {
-		return ( ResponseEntity<Specifier<Facets>> ) (Object) unifiedPut(Specifier.class, quoteId, serviceURL + "/gorfx/_" + type
+		return ( ResponseEntity<Specifier<Facets>> ) (Object) unifiedPut(Specifier.class, quoteId, getServiceURL() + "/gorfx/_" + type
 				+ "/_" + id + "/task", dn, wid);
 	}
 
 
 	public final ResponseEntity<TaskFlowStatus> getStatus(final String type, final String id,
 			final String dn, final String wid) {
-		return unifiedGet(TaskFlowStatus.class, serviceURL + "/gorfx/_" + type
+		return unifiedGet(TaskFlowStatus.class, getServiceURL() + "/gorfx/_" + type
 				+ "/_" + id + "/status", dn, wid);
 	}
 
@@ -126,7 +127,7 @@ public class TaskFlowClient extends AbstractClient implements TaskFlowService {
     @SuppressWarnings("unchecked")
 	public final ResponseEntity<Specifier<TaskResult>> getResult( final String type, final String id,
                                                                   final String dn, final String wid ) {
-		return ( ResponseEntity<Specifier<TaskResult>> ) (Object) unifiedGet(Specifier.class, serviceURL + "/gorfx/_" + type
+		return ( ResponseEntity<Specifier<TaskResult>> ) (Object) unifiedGet(Specifier.class, getServiceURL() + "/gorfx/_" + type
 				+ "/_" + id + "/result", dn, wid);
 	}
 
@@ -134,7 +135,7 @@ public class TaskFlowClient extends AbstractClient implements TaskFlowService {
     @SuppressWarnings("unchecked")
 	public final ResponseEntity<Specifier<TaskFailure>> getErrors( final String type, final String id,
                                                                    final String dn, final String wid ) {
-		return ( ResponseEntity<Specifier<TaskFailure>> ) (Object) unifiedGet(Specifier.class, serviceURL + "/gorfx/_" + type
+		return ( ResponseEntity<Specifier<TaskFailure>> ) (Object) unifiedGet(Specifier.class, getServiceURL() + "/gorfx/_" + type
 				+ "/_" + id + "/errors", dn, wid);
 	}
 
