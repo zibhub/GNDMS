@@ -36,6 +36,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author try ma ik jo rr a zib
@@ -48,8 +49,7 @@ public class GORFXClientMain extends AbstractApplication {
 	protected String gorfxEpUrl;
 	@Option(name = "-dn", required = true, usage = "DN")
 	protected String dn;
-	@Option(name = "-wid", required = true, usage = "Wid")
-	protected String wid;
+	protected String wid = UUID.randomUUID().toString();
 
 	public static void main(String[] args) throws Exception {
 
