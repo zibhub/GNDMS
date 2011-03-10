@@ -680,12 +680,12 @@ define 'gndms' do
 
             testEnv('GORFX_URL', 'http://<yourhost>:<and-port>/gndms/<grid-name>')
             testEnv('GNDMS_DN', 'your grid DN')
-            testEnv('GNDMS_WID', 'your whatever fuuuu')
+            #testEnv('GNDMS_WID', 'your whatever fuuuu')
             jars = compile.dependencies.map(&:to_s)
             jars << project('gndms:gndmc-rest')
             args = [ '-uri', ENV['GORFX_URL'], 
-                '-dn', ENV['GNDMS_DN'],
-                '-wid', ENV['GNDMS_WID']
+                '-dn', ENV['GNDMS_DN']
+                #'-wid', ENV['GNDMS_WID']
             ]
             Commands.java('de.zib.gndms.gndmc.gorfx.GORFXClientMain',  args, { :classpath => jars } )
         end
@@ -704,6 +704,16 @@ define 'gndms' do
         package :war
     end
 end
+
+
+task 'deploy-gorfx-rest' do
+    src = project('gndms:gorfx-rest').package(:war).to_s
+    testEnv('JETTY_HOME', 'the root directory of your jetty installation')
+    tgt = "#{ENV['JETTY_HOME']}/webapps/gndms.war"
+    puts "deploying #{src} => #{tgt}"
+    cp( src, tgt ) 
+end
+
 
 # Utility stuff
 
@@ -740,6 +750,9 @@ task 'rebuild-services' => [task('rebuild-DSpace'), task('rebuild-GORFX')]
 task 'package-services' => [task('package-DSpace'), task('package-GORFX')] 
 task 'deploy-services' => [task('deploy-DSpace'), task('deploy-GORFX')] 
 task 'link-services' => task('gndms:link-services') 
+
+desc 'deployes GNMDS-rest war'
+task 'deploy-rest' => ['gndms:gorfx-rest:package', 'deploy-gorfx-rest']
 
 
 # Doc targets
@@ -802,7 +815,7 @@ end
 # Main targets
 
 desc 'Install missing dependencies (execute as globus user)'
-task 'install-deps' => task('gndms:infra:install-deps')
+task 'install-deps' => 'gndms:infra:install-deps'
 
 desc 'Do a full rebuild'
 task 'rebuild' => ['clean', 'clean-services', 'gndms:stuff:package', 'package-stubs', 'gndms:infra:package', 'install-deps', 'package-services', 'gndms:gndmc:package']
