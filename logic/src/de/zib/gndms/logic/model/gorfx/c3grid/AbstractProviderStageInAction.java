@@ -25,17 +25,26 @@ import de.zib.gndms.logic.model.dspace.CreateSliceAction;
 import de.zib.gndms.logic.model.dspace.DeleteSliceAction;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
+import de.zib.gndms.model.common.PersistentContract;
+import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.model.gorfx.AbstractTask;
+import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
+import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.model.util.TxFrame;
+import de.zib.gndms.neomodel.common.NeoDao;
+import de.zib.gndms.neomodel.common.NeoSession;
+import de.zib.gndms.neomodel.gorfx.NeoTask;
+import de.zib.gndms.neomodel.gorfx.NeoTaskAccessor;
+import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
 import java.io.File;
+import java.util.Map;
 
 
 /**
@@ -56,53 +65,37 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
     }
 
 
-    public AbstractProviderStageInAction(final @NotNull EntityManager em, final @NotNull AbstractTask model) {
-        super(em, model);
+    public AbstractProviderStageInAction(@NotNull EntityManager em, @NotNull NeoDao dao, @NotNull Taskling model) {
+        super(em, dao, model);
     }
 
 
-    public AbstractProviderStageInAction(final @NotNull EntityManager em, final @NotNull String pk) {
-        super(em, pk);
-    }
-
-
-    @SuppressWarnings({ "ThrowableInstanceNeverThrown" })
     @Override
-    protected void onCreated(final AbstractTask model) {
-        try {
-            super.onCreated(model);    // Overridden method
-        }
-        catch (TransitException e) {
-            if (e.isDemandingAbort()) throw e; // dont continue on failure
-
-            try {
-                MapConfig config = getOfferTypeConfig();
-	            getScriptFileByParam(config, "stagingCommand");
-                createNewSlice(model);
-            }
-            catch (MandatoryOptionMissingException e1) {
-                failFrom(e1);
-            }
-            throw e; // accept state transition decision from super
-        }
+    protected void onCreated(@NotNull String wid,
+                             @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) throws Exception {
+        MapConfig config = getOfferTypeConfig();
+	    getScriptFileByParam(config, "stagingCommand");
+        createNewSlice();
+        super.onCreated(wid, state, isRestartedTask, altTaskState);
     }
 
 
 	@SuppressWarnings({ "ThrowableInstanceNeverThrown" })
-	protected @NotNull File getScriptFileByParam(final MapConfig configParam, String scriptParam) throws MandatoryOptionMissingException {
+	protected @NotNull File getScriptFileByParam(final MapConfig configParam, String scriptParam)
+            throws MandatoryOptionMissingException {
 		final @NotNull File scriptFile = configParam.getFileOption(scriptParam);
 		if (! isValidScriptFile(scriptFile))
-		    failFrom(new IllegalArgumentException("Invalid " + scriptParam + " script: " + scriptFile.getPath()));
+		    throw new IllegalArgumentException("Invalid " + scriptParam + " script: " + scriptFile.getPath());
 		return scriptFile;
 	}
 
 
-	@SuppressWarnings({ "ThrowableInstanceNeverThrown"})
     @Override
-    protected void onInProgress(final @NotNull AbstractTask model) {
-        final Slice slice = findSlice(model);
-        setSliceId( slice.getId() );
-        doStaging(getOfferTypeConfig(), getOrq(), slice);
+    protected void onInProgress(@NotNull String wid, @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) throws Exception {
+        final Slice slice = findSlice();
+        setSliceId(slice.getId());
+        doStaging(getOfferTypeConfig(), getORQ(), slice);
+        super.onInProgress(wid, state, isRestartedTask, altTaskState);
     }
 
 
@@ -111,7 +104,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
             final Slice sliceParam);
 
 
-    private void createNewSlice(final AbstractTask model) throws MandatoryOptionMissingException {
+    private void createNewSlice() throws MandatoryOptionMissingException {
 
         final ConfigProvider config = getOfferTypeConfig();
 
@@ -128,7 +121,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 
             CreateSliceAction csa = new CreateSliceAction();
             csa.setParent(this);
-            csa.setTerminationTime(getModel().getContract().getResultValidity());
+            csa.setTerminationTime(getContract().getResultValidity());
             csa.setClosingEntityManagerOnCleanup(false);
             csa.setUUIDGen(getUUIDGen());
             csa.setId(getUUIDGen().nextUUID());
@@ -145,7 +138,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
     }
 
 
-    private Slice findSlice(final AbstractTask model) {
+    private Slice findSlice() {
 	    final String sliceId = getSliceId();
 	    getLog().info("findSlice(" + (sliceId == null ? "null" : '"' + sliceId + '"') + ')');
 	    if (sliceId == null)
@@ -163,30 +156,25 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
     }
 
 
-	@Override
-    public void cleanUpOnFail(final @NotNull AbstractTask model) {
-		try {
-			cancelStaging(model);
-		}
-		catch(RuntimeException e) {
-			getLog().warn(e);
-		}
-		finally {
-			// wrappend in try-finally to ensure we go to failed even if slice
-			// deletion goes wrong
-			killSlice(model);
-		}
-	}
+    @Override
+    protected void onFailed(@NotNull String wid, @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) throws Exception {
+        try {
+            cancelStaging();
+        }
+        finally {
+            killSlice();
+            super.onFailed(wid, state, isRestartedTask, altTaskState);
+        }
+    }
 
-
-	protected void cancelStaging(final AbstractTask model) {
+	protected void cancelStaging() {
 		final Slice slice;
 		final File sliceDir;
 
 		final EntityManager em = getEntityManager();
 		final TxFrame txf = new TxFrame(em);
 		try {
-			slice = findSlice(model);
+			slice = findSlice();
 			if (slice == null)
 				// MAYBE log this somewhere?
 				return;
@@ -196,7 +184,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 		finally { txf.finish(); }
 		// potentially unsafe but do not want to keep the transaction open
 		// we just dont change the slice dir after creation
-		callCancel(getOfferTypeConfig(), getOrq(), sliceDir);
+		callCancel(getOfferTypeConfig(), getORQ(), sliceDir);
 	}
 
 
@@ -207,11 +195,11 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 	}
 
 
-	private void killSlice(final AbstractTask model) {
+	private void killSlice() {
 		final EntityManager em = getEntityManager();
 		final TxFrame txf = new TxFrame(em);
 		try {
-			final Slice slice = findSlice(model);
+			final Slice slice = findSlice();
 			DeleteSliceAction.deleteSlice( slice, this );
 			em.remove(slice);
 			txf.commit();
@@ -229,7 +217,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 
 	protected ProcessBuilder createProcessBuilder(String name, File dir) {
        try {
-           MapConfig opts = new MapConfig(getOfferTypeId().getConfigMap());
+           MapConfig opts = new MapConfig(getOfferTypeConfigMapData());
 		   if (opts.getOption(name, "").trim().length() == 0)
 			   return null;
 		   final File fileOption = getScriptFileByParam(opts, name);
@@ -245,24 +233,45 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 
 	@Override
     @NotNull
-    protected Class<ProviderStageInORQ> getOrqClass() {
+    public Class<ProviderStageInORQ> getOrqClass() {
         return ProviderStageInORQ.class;
     }
 
 
-    protected @NotNull MapConfig getOfferTypeConfig() {
-        return new MapConfig(getOfferTypeId().getConfigMap());
+    protected @NotNull
+    MapConfig getOfferTypeConfig() {
+        return new MapConfig(getOfferTypeConfigMapData());
     }
 
 
 
     protected void setSliceId( String sliceId ) {
-        getOrq().setActSliceId(sliceId);
+        final NeoSession session = getDao().beginSession();
+        try {
+            final NeoTask task = getTask(session);
+            ProviderStageInORQ orq = (ProviderStageInORQ) task.getORQ();
+            orq.setActSliceId( sliceId );
+            task.setORQ( sliceId );
+            session.finish();
+        }
+        finally {
+            session.success();
+        }
     }
 
     
     protected String getSliceId( ) {
-        return getOrq().getActSliceId();
+        final NeoSession session = getDao().beginSession();
+        try {
+            final NeoTask task = getTask(session);
+            ProviderStageInORQ orq = (ProviderStageInORQ) task.getORQ();
+            final String ret = orq.getActSliceId();
+            session.finish();
+            return ret;
+        }
+        finally {
+            session.success();
+        }
     }
 
 	@SuppressWarnings({ "MethodWithMoreThanThreeNegations" })
@@ -271,5 +280,18 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 		return scriptFile != null &&
 			   scriptFile.exists() && scriptFile.canRead() && scriptFile.isFile();
 	}
+
+    public PersistentContract getContract() {
+        final NeoSession session = getDao().beginSession();
+        try {
+            final NeoTask task = getTask(session);
+            final PersistentContract ret = task.getContract();
+            session.finish();
+            return ret;
+        }
+        finally {
+            session.success();
+        }
+    }
 }
 

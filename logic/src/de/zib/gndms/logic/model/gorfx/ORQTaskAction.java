@@ -34,6 +34,7 @@ import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
+import java.util.Map;
 
 
 /**
@@ -91,6 +92,17 @@ public abstract class ORQTaskAction<K extends AbstractORQ> extends DefaultTaskAc
         return offerTypeId;
     }
 
+
+    public Map<String, String> getOfferTypeConfigMapData() {
+        final NeoSession session = getDao().beginSession();
+        try {
+            final NeoOfferType ot = session.findOfferType(getOfferTypeId());
+            final Map<String,String> configMapData = ot.getConfigMapData();
+            session.finish();
+            return configMapData;
+        }
+        finally { session.success(); }
+    }
 
     public void setFactory(@NotNull final KeyFactory<String, ORQTaskAction<? super K>> factoryParam) {
         factory = factoryParam;
