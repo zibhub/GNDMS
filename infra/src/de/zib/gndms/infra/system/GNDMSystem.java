@@ -33,8 +33,7 @@ import de.zib.gndms.logic.model.*;
 import de.zib.gndms.logic.model.gorfx.DefaultWrapper;
 import de.zib.gndms.logic.util.LogicTools;
 import de.zib.gndms.model.common.*;
-import de.zib.gndms.neomodel.common.NeoDao;
-import de.zib.gndms.neomodel.common.NodeGridResource;
+import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.apache.axis.components.uuid.UUIDGen;
 import org.apache.axis.components.uuid.UUIDGenFactory;
@@ -119,6 +118,7 @@ public final class GNDMSystem
 	private @NotNull EntityManagerFactory emf;
 	private @NotNull EntityManagerFactory restrictedEmf;
     private @NotNull GraphDatabaseService neo;
+    private @NotNull Dao dao;
 //	private NetworkAuxiliariesProvider netAux;
 
 
@@ -212,6 +212,7 @@ public final class GNDMSystem
 			prepareDbStorage();
 			emf = createEMF();
             neo = loadNeo();
+            dao = new Dao(getGridName(), neo);
 			restrictedEmf = emf;
 			tryTxExecution();
 			// initialization intentionally deferred to initialize
@@ -239,6 +240,7 @@ public final class GNDMSystem
 	}
 
     private GraphDatabaseService loadNeo() {
+        logger.info("Loading neo4j graph database");
         return new EmbeddedGraphDatabase(getNeoDir().getAbsolutePath());
     }
 
@@ -720,7 +722,7 @@ public final class GNDMSystem
 
 
     @NotNull
-    public <R> Future<R> submitDaoAction(@NotNull EntityManager em, @NotNull NeoDao dao, @NotNull ModelDaoAction<?, R> action, @NotNull Log log) {
+    public <R> Future<R> submitDaoAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull ModelDaoAction<?, R> action, @NotNull Log log) {
         return executionService.submitDaoAction(em, dao, action, log);
     }
 
@@ -817,7 +819,7 @@ public final class GNDMSystem
 
         public final @NotNull <R> Future<R> submitDaoAction(final @NotNull ModelDaoAction<?, R> action,
                                                             final @NotNull Log log) {
-            final NeoDao dao = action.getOwnDao();
+            final Dao dao = action.getOwnDao();
             if (dao != null)
                 return submitAction(action, log);
             else {
@@ -834,7 +836,7 @@ public final class GNDMSystem
         }
 
         public @NotNull <R> Future<R> submitDaoAction(final @NotNull EntityManager em,
-                                                      final @NotNull NeoDao dao,
+                                                      final @NotNull Dao dao,
                                                       final @NotNull ModelDaoAction<?, R> action,
                                                       final @NotNull Log log) {
             action.setOwnDao(getDao());
@@ -1091,7 +1093,8 @@ public final class GNDMSystem
     }
 
 
-    public @NotNull NeoDao getDao() {
+    public @NotNull
+    Dao getDao() {
         return dao;
     }
     /*

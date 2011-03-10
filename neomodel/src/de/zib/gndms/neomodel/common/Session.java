@@ -17,9 +17,8 @@ package de.zib.gndms.neomodel.common;
  */
 
 import de.zib.gndms.model.gorfx.types.TaskState;
-import de.zib.gndms.neomodel.gorfx.NeoOfferType;
-import de.zib.gndms.neomodel.gorfx.NeoTask;
-import de.zib.gndms.neomodel.gorfx.NeoTaskAccessor;
+import de.zib.gndms.neomodel.gorfx.OfferType;
+import de.zib.gndms.neomodel.gorfx.Task;
 import org.apache.lucene.search.NumericRangeQuery;
 import org.jetbrains.annotations.NotNull;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -34,81 +33,82 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * NeoSession
+ * Session
  *
  * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
  * User: stepn Date: 05.09.2008 Time: 14:48:36
  */
-public class NeoSession {
-    private static final String OFFER_TYPE_T = classNickName(NeoOfferType.class);
-    private static final String TASK_T = classNickName(NeoTask.class);
+public class Session {
+    private static final String OFFER_TYPE_T = classNickName(OfferType.class);
+    private static final String TASK_T = classNickName(Task.class);
 
     private final @NotNull GraphDatabaseService gdb;
     private final @NotNull Transaction tx;
     private final @NotNull String gridName;
-    private final @NotNull NeoReprSession reprSession;
+    private final @NotNull
+    ReprSession reprSession;
 
-    public NeoSession(@NotNull NeoDao dao, @NotNull String gridName, @NotNull GraphDatabaseService gdb) {
+    public Session(@NotNull Dao dao, @NotNull String gridName, @NotNull GraphDatabaseService gdb) {
         this.gdb          =    gdb;
         this.tx           = gdb.beginTx();
         this.gridName     = gridName;
-        this.reprSession  = new NeoReprSession(dao, this);
+        this.reprSession  = new ReprSession(dao, this);
     }
 
 
-    public NeoOfferType createOfferType() {
+    public OfferType createOfferType() {
         final Node node = gdb.createNode();
-        final NeoOfferType offerType = new NeoOfferType(reprSession, OFFER_TYPE_T, node);
+        final OfferType offerType = new OfferType(reprSession, OFFER_TYPE_T, node);
         offerType.onCreate(reprSession);
         return offerType;
     }
 
-    @NotNull public NeoOfferType findOfferType(@NotNull String offerTypeId) {
-        return new NeoOfferType(reprSession, OFFER_TYPE_T,
+    @NotNull public OfferType findOfferType(@NotNull String offerTypeId) {
+        return new OfferType(reprSession, OFFER_TYPE_T,
                 getTypeIndex(OFFER_TYPE_T).get(gridName, offerTypeId).getSingle());
     }
     
-    public NeoTask createTask() {
+    public Task createTask() {
         final Node node = gdb.createNode();
-        final NeoTask neoTask = new NeoTask(reprSession, TASK_T, node);
-        neoTask.onCreate(reprSession);
-        return neoTask;
+        final Task task = new Task(reprSession, TASK_T, node);
+        task.onCreate(reprSession);
+        return task;
     }
 
-    @NotNull public NeoTask findTask(@NotNull String taskId) {
-        return new NeoTask(reprSession, TASK_T,
+    @NotNull public Task findTask(@NotNull String taskId) {
+        return new Task(reprSession, TASK_T,
                 getTypeIndex(TASK_T).get(gridName, taskId).getSingle());
     }
 
 
-    public Iterable<NeoTask> listTasksByState(@NotNull TaskState state) {
-        final Index<Node> index = gdb.index().forNodes(typeIndexNickName(TASK_T, NeoTask.TASK_STATE_IDX));
+    public Iterable<Task> listTasksByState(@NotNull TaskState state) {
+        final Index<Node> index = gdb.index().forNodes(typeIndexNickName(TASK_T, Task.TASK_STATE_IDX));
         final IndexHits<Node> query = index.get(getGridName(), state.name());
-        final List<NeoTask> list = new LinkedList<NeoTask>();
+        final List<Task> list = new LinkedList<Task>();
         for (Node node: query)
-            list.add(new NeoTask(reprSession, getGridName(), node));
+            list.add(new Task(reprSession, getGridName(), node));
         return list;
     }
 
-    public Iterable<NeoTask> listTasks() {
+    public Iterable<Task> listTasks() {
         final Index<Node> index = gdb.index().forNodes(ModelNode.TYPE_INDEX_IDX);
-        final IndexHits<Node> query = index.get(getGridName(), classNickName(NeoTask.class));
-        final List<NeoTask> list = new LinkedList<NeoTask>();
+        final IndexHits<Node> query = index.get(getGridName(), classNickName(Task.class));
+        final List<Task> list = new LinkedList<Task>();
         for (Node node: query)
-            list.add(new NeoTask(reprSession, getGridName(), node));
+            list.add(new Task(reprSession, getGridName(), node));
         return list;
     }
 
     @SuppressWarnings({"UnnecessaryLocalVariable"})
-    public Iterable<NeoTask> listTasksDeadBeforeTimeout(@NotNull Calendar timeout) {
-        final Index<Node> index = gdb.index().forNodes(typeIndexNickName(TASK_T, NeoTask.TERMINATION_TIME_IDX));
+    public Iterable<Task> listTasksDeadBeforeTimeout(@NotNull Calendar timeout) {
+        final Index<Node> index = gdb.index().forNodes(typeIndexNickName(TASK_T, Task.TERMINATION_TIME_IDX));
         final IndexHits<Node> query =
                 index.query(NumericRangeQuery.newLongRange(getGridName(), 0L, timeout.getTimeInMillis(), true, false));
-        final List<NeoTask> list = new LinkedList<NeoTask>();
+        final List<Task> list = new LinkedList<Task>();
         for (Node node: query)
-            list.add(new NeoTask(reprSession, getGridName(), node));
+            list.add(new Task(reprSession, getGridName(), node));
         return list;
     }
 
@@ -137,7 +137,7 @@ public class NeoSession {
     }
 
     @NotNull protected static String typeIndexNickName(String typeNick, String... names) {
-        return ModelGraphElement.getTypeNickIndexName(typeNick, names);
+        return ModelElement.getTypeNickIndexName(typeNick, names);
     }
 
     public <U extends PropertyContainer> void setSingleIndex(@NotNull Index<U> index, @NotNull U repr,

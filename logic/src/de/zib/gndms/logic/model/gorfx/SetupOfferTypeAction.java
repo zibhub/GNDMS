@@ -25,7 +25,8 @@ import de.zib.gndms.logic.model.config.ConfigActionResult;
 import de.zib.gndms.logic.model.config.ConfigOption;
 import de.zib.gndms.logic.model.config.SetupAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
-import de.zib.gndms.model.gorfx.OfferType;
+import de.zib.gndms.neomodel.common.Session;
+import de.zib.gndms.neomodel.gorfx.OfferType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -75,13 +76,13 @@ public class SetupOfferTypeAction extends SetupAction<ConfigActionResult> {
     //private Class<? extends AbstractORQCalculator<?, ?>> calcClass;
 
     @ConfigOption(descr="FQN of AbstractORQCalculator factory class")
-    private Class<KeyFactory<OfferType, AbstractORQCalculator<?, ?>>> calcFactory;
+    private Class<KeyFactory<String, AbstractORQCalculator<?, ?>>> calcFactory;
 
     //@ConfigOption(altName = "class", descr="FQN of TaskAction class for this OfferType")
     //private Class<? extends TaskAction<?>> taskActionClass;
 
     @ConfigOption(descr="FQN of TaskAction factory class")
-    private Class<KeyFactory<OfferType, ORQTaskAction<?>>> taskActionFactory;
+    private Class<KeyFactory<String, ORQTaskAction<?>>> taskActionFactory;
 
     @ConfigOption(descr = "File from which the initial config should be read; UPDATE will overwrite!")
     private String configFile;
@@ -224,15 +225,14 @@ public class SetupOfferTypeAction extends SetupAction<ConfigActionResult> {
      * @param em the EntityManager, 
      */
     @SuppressWarnings({ "FeatureEnvy" })
-    private void executeCreate(final EntityManager em) {
-        final OfferType type = new OfferType();
+    private void executeCreate(final Session session) {
+        final OfferType type = session.createOfferType();
         type.setOfferTypeKey(getOfferType());
         type.setCalculatorFactoryClassName(getCalcFactory().getCanonicalName());
         type.setTaskActionFactoryClassName(getTaskActionFactory().getCanonicalName());
         type.setOfferArgumentType(orqType);
         type.setOfferResultType(resType);
         pushConfigProps(type);
-        em.persist(type);
     }
 
 
@@ -264,7 +264,7 @@ public class SetupOfferTypeAction extends SetupAction<ConfigActionResult> {
     private void pushConfigProps(final OfferType typeParam) {
         Map<String, String> map = new HashMap<String, String>(configProps.size());
         configProps.putAll(map);
-        typeParam.setConfigMap(map);
+        typeParam.setConfigMapData(map);
     }
 
 
@@ -298,24 +298,24 @@ public class SetupOfferTypeAction extends SetupAction<ConfigActionResult> {
     }
 
 
-    public Class<KeyFactory<OfferType, AbstractORQCalculator<?, ?>>> getCalcFactory() {
+    public Class<KeyFactory<String, AbstractORQCalculator<?, ?>>> getCalcFactory() {
         return calcFactory;
     }
 
 
     public void setCalcFactory(
-            final Class<KeyFactory<OfferType, AbstractORQCalculator<?, ?>>> calcFactoryParam) {
+            final Class<KeyFactory<String, AbstractORQCalculator<?, ?>>> calcFactoryParam) {
         calcFactory = calcFactoryParam;
     }
 
 
-    public Class<KeyFactory<OfferType, ORQTaskAction<?>>> getTaskActionFactory() {
+    public Class<KeyFactory<String, ORQTaskAction<?>>> getTaskActionFactory() {
         return taskActionFactory;
     }
 
 
     public void setTaskActionFactory(
-            final Class<KeyFactory<OfferType, ORQTaskAction<?>>> taskActionFactoryParam) {
+            final Class<KeyFactory<String, ORQTaskAction<?>>> taskActionFactoryParam) {
         taskActionFactory = taskActionFactoryParam;
     }
 }

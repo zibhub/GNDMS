@@ -27,7 +27,7 @@ import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.model.dspace.Slice;
-import de.zib.gndms.neomodel.common.NeoDao;
+import de.zib.gndms.neomodel.common.Dao;
 import org.apache.axis.message.addressing.AttributedURI;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI;
@@ -186,7 +186,7 @@ public final class ExtSliceResourceHome extends SliceResourceHome
 		return ref;
     }
 
-    @NotNull public NeoDao getDao() {
+    @NotNull public Dao getDao() {
         return system.getDao();
     }
 }

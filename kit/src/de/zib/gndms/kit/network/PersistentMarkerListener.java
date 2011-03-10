@@ -19,16 +19,11 @@ package de.zib.gndms.kit.network;
 
 
 import de.zib.gndms.model.gorfx.FTPTransferState;
-import de.zib.gndms.model.util.TxFrame;
-import de.zib.gndms.neomodel.common.NeoDao;
-import de.zib.gndms.neomodel.common.NeoSession;
+import de.zib.gndms.neomodel.common.*;
+import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.globus.ftp.*;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
-
-import javax.persistence.EntityManager;
 
 /**
  * A persistent marker listener for grid ftp file transfers.
@@ -47,7 +42,7 @@ import javax.persistence.EntityManager;
 public class PersistentMarkerListener implements MarkerListener {
     private static Logger logger = Logger.getLogger( PersistentMarkerListener.class );
     private ByteRangeList byteRanges;
-    private NeoDao dao;
+    private Dao dao;
     private FTPTransferState transferState;
     private Taskling taskling;
 
@@ -74,7 +69,7 @@ public class PersistentMarkerListener implements MarkerListener {
         byteRanges.merge( marker.toVector() );
         String args = byteRanges.toFtpCmdArgument();
         logger.debug( "Transfer " + transferState.getTransferId() + " markers: " + args );
-        final NeoSession session = dao.beginSession();
+        final Session session = dao.beginSession();
         try {
             transferState.setFtpArgs( args );
             taskling.getTask(session).setPayload(transferState);
@@ -100,7 +95,7 @@ public class PersistentMarkerListener implements MarkerListener {
         this.transferState = transferState;
         byteRanges = new ByteRangeList();
 
-        final NeoSession session = dao.beginSession();
+        final Session session = dao.beginSession();
         try {
             taskling.getTask(session).setPayload(transferState);
             if (transferState.getFtpArgs() != null) {
@@ -131,10 +126,10 @@ public class PersistentMarkerListener implements MarkerListener {
      * The new state is written to the database immediately.
      */
     public void setCurrentFile( String currentFile ) {
-        final NeoSession session = dao.beginSession();
+        final de.zib.gndms.neomodel.common.Session session = dao.beginSession();
         try {
             transferState.setCurrentFile( currentFile );
-            transferState.setFtpArgs( "0-0" );
+            transferState.setFtpArgs("0-0");
             taskling.getTask(session).setPayload(transferState);
             session.success();
         }
@@ -149,11 +144,11 @@ public class PersistentMarkerListener implements MarkerListener {
         this.taskling = taskling;
     }
 
-    public NeoDao getDao() {
+    public Dao getDao() {
         return dao;
     }
 
-    public void setDao(NeoDao dao) {
+    public void setDao(Dao dao) {
         this.dao = dao;
     }
 }

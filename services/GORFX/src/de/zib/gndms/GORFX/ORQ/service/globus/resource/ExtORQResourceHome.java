@@ -25,7 +25,7 @@ import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.model.common.ModelUUIDGen;
-import de.zib.gndms.neomodel.common.NeoDao;
+import de.zib.gndms.neomodel.common.Dao;
 import org.apache.axis.message.addressing.AttributedURI;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.commons.logging.Log;
@@ -169,7 +169,7 @@ public final class ExtORQResourceHome extends ORQResourceHome implements GNDMSer
 		return ref;
     }
 
-    @NotNull public NeoDao getDao() {
+    @NotNull public Dao getDao() {
         return system.getDao();
     }
 }

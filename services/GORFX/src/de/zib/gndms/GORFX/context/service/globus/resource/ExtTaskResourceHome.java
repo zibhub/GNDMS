@@ -25,10 +25,9 @@ import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.model.gorfx.Task;
-import de.zib.gndms.model.gorfx.types.TaskState;
-import de.zib.gndms.neomodel.common.NeoDao;
-import de.zib.gndms.neomodel.common.NeoSession;
-import de.zib.gndms.neomodel.gorfx.NeoTask;
+import de.zib.gndms.neomodel.common.Dao;
+import de.zib.gndms.neomodel.common.Session;
+import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.apache.axis.message.addressing.AttributedURI;
 import org.apache.axis.message.addressing.EndpointReferenceType;
@@ -107,11 +106,11 @@ public final class ExtTaskResourceHome extends TaskResourceHome implements GNDMP
     private void resumeTasks() throws Exception {
 
         logger.debug("Checking for aborted tasks.");
-        NeoDao dao = system.getDao();
-        NeoSession session = dao.beginSession();
+        Dao dao = system.getDao();
+        Session session = dao.beginSession();
         List<Taskling> rs = new LinkedList<Taskling>();
         try {
-            for (NeoTask task: session.listTasks())
+            for (Task task: session.listTasks())
                 if (! task.isDone())
                         rs.add(task.getTaskling());
             session.success();
@@ -222,7 +221,7 @@ public final class ExtTaskResourceHome extends TaskResourceHome implements GNDMP
 		return ref;
     }
 
-    @NotNull public NeoDao getDao() {
+    @NotNull public Dao getDao() {
         return system.getDao();
     }
 }

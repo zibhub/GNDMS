@@ -17,7 +17,6 @@ package de.zib.gndms.neomodel.common;
  */
 
 import org.jetbrains.annotations.NotNull;
-import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.index.Index;
 
@@ -29,9 +28,9 @@ import org.neo4j.graphdb.index.Index;
  *
  * User: stepn Date: 05.09.2008 Time: 14:48:36
  */
-public class ModelRelationship extends ModelGraphElement<Relationship> {
+public class ModelRelationship extends ModelElement<Relationship> {
 
-    protected ModelRelationship(@NotNull NeoReprSession session, @NotNull String typeNick,
+    protected ModelRelationship(@NotNull ReprSession session, @NotNull String typeNick,
                                 @NotNull Relationship underlying) {
         super(session, typeNick, underlying);
     }

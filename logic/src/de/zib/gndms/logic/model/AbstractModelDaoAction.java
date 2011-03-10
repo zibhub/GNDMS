@@ -2,11 +2,8 @@ package de.zib.gndms.logic.model;
 
 import de.zib.gndms.model.ModelEntity;
 import de.zib.gndms.model.common.GridResourceItf;
-import de.zib.gndms.neomodel.common.NeoDao;
-import de.zib.gndms.neomodel.common.NodeGridResource;
+import de.zib.gndms.neomodel.common.Dao;
 import org.jetbrains.annotations.NotNull;
-
-import javax.persistence.EntityManager;
 
 /**
  * AbstractModelDaoAction
@@ -17,9 +14,9 @@ import javax.persistence.EntityManager;
  */
 public abstract class AbstractModelDaoAction<M extends ModelEntity & GridResourceItf, R>
         extends AbstractModelEntityAction<M, R> implements ModelDaoAction<M, R> {
-    private NeoDao dao;
+    private Dao dao;
     
-    public NeoDao getDao() {
+    public Dao getDao() {
         if (dao == null) {
             final DaoAction<?> daoAction = nextParentOfType(DaoAction.class);
             if (daoAction != null)
@@ -30,12 +27,12 @@ public abstract class AbstractModelDaoAction<M extends ModelEntity & GridResourc
     }
 
     
-    public NeoDao getOwnDao() {
+    public Dao getOwnDao() {
         return dao;
     }
 
 
-    public void setOwnDao(final @NotNull NeoDao daoParam) {
+    public void setOwnDao(final @NotNull Dao daoParam) {
         dao = daoParam;
     }
 

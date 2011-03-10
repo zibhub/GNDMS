@@ -29,10 +29,10 @@ import de.zib.gndms.logic.model.gorfx.permissions.PermissionConfiglet;
 import de.zib.gndms.model.common.types.FilePermissions;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.model.gorfx.types.TaskState;
-import de.zib.gndms.neomodel.common.NeoDao;
-import de.zib.gndms.neomodel.common.NeoSession;
-import de.zib.gndms.neomodel.gorfx.NeoTask;
-import de.zib.gndms.neomodel.gorfx.NeoTaskAccessor;
+import de.zib.gndms.neomodel.common.Dao;
+import de.zib.gndms.neomodel.common.Session;
+import de.zib.gndms.neomodel.gorfx.Task;
+import de.zib.gndms.neomodel.gorfx.TaskAccessor;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,7 +45,7 @@ import java.util.GregorianCalendar;
 
 
 /**
- * A TaskAction is used to execute a model of type {@link Taskling} with an underlying model of {@link NeoTask}
+ * A TaskAction is used to execute a model of type {@link Taskling} with an underlying model of {@link de.zib.gndms.neomodel.gorfx.Task}
  *
  *
  * @author  try ste fan pla nti kow zib
@@ -99,7 +99,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
      * @param dao the dao for storing task nodes in the graph database
      * @param model an AbstractTask to be stored as model of {@code this} and to be stored in the database
      */
-    public TaskAction(final @NotNull EntityManager em, final @NotNull NeoDao dao, final @NotNull Taskling model) {
+    public TaskAction(final @NotNull EntityManager em, final @NotNull Dao dao, final @NotNull Taskling model) {
         super();
         setOwnDao(dao);
         setOwnEntityManager(em);
@@ -117,10 +117,10 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
     public Taskling call() throws RuntimeException {
         final Taskling result;
         try {
-            final NeoSession session = getDao().beginSession();
+            final Session session = getDao().beginSession();
             try {
                 final Taskling ling = getModel();
-                final NeoTask task = ling.getTask(session);
+                final Task task = ling.getTask(session);
                 WidAux.initWid(task.getWID());
                 if( task.getORQ() != null )
                     WidAux.initGORFXid( ( (AbstractORQ) task.getORQ()).getActId() );
@@ -155,7 +155,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
 
         while ( ! afterLastStep ) {
             // In-Loop state
-            NeoSession session;
+            Session session;
             boolean isRestartedTask;
             TaskState state;
             boolean altTaskState;
@@ -164,7 +164,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
             // Capture state snapshot from Task and prep in-loop state
             session = getDao().beginSession();
             try {
-                final NeoTask task = getTask(session);
+                final Task task = getTask(session);
                 state              = task.getAltTaskState();
                 altTaskState       = state != null;
                 if (! altTaskState)
@@ -228,17 +228,19 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
         return getModel();
     }
 
-    protected @NotNull NeoTaskAccessor getTaskSnapshot(@NotNull NeoDao dao) {
-        final NeoSession session = dao.beginSession();
+    protected @NotNull
+    TaskAccessor getTaskSnapshot(@NotNull Dao dao) {
+        final Session session = dao.beginSession();
         try {
-            final NeoTaskAccessor snapshot = getTask(session).getSnapshot();
+            final TaskAccessor snapshot = getTask(session).getSnapshot();
             session.success();
             return snapshot;
         }
         finally { session.finish(); }
     }
 
-    protected @NotNull NeoTask getTask(@NotNull NeoSession session) {
+    protected @NotNull
+    Task getTask(@NotNull Session session) {
         Taskling model = getModel();
         if (model == null)
             throw new NullPointerException("Task action without model (Taskling)");
@@ -472,9 +474,9 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
 
 
     protected void transitWithPayload(@NotNull Serializable payload, @NotNull TaskState taskState) {
-        final @NotNull NeoSession session = getDao().beginSession();
+        final @NotNull Session session = getDao().beginSession();
         try {
-            final NeoTask task = session.findTask(getModel().getId());
+            final Task task = session.findTask(getModel().getId());
             task.setTaskState(task.getTaskState().transit(taskState));
             task.setPayload(payload);
             if (TaskState.FINISHED.equals(taskState))
@@ -485,9 +487,9 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
     }
 
     protected void transit(@NotNull TaskState taskState) {
-        final @NotNull NeoSession session = getDao().beginSession();
+        final @NotNull Session session = getDao().beginSession();
         try {
-            final NeoTask task = session.findTask(getModel().getId());
+            final Task task = session.findTask(getModel().getId());
             task.setTaskState(task.getTaskState().transit(taskState));
             if (TaskState.FINISHED.equals(taskState))
                 task.setProgress(task.getMaxProgress());
@@ -497,9 +499,9 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
     }
 
     protected void autoTransitWithPayload(Serializable payload) {
-        final @NotNull NeoSession session = getDao().beginSession();
+        final @NotNull Session session = getDao().beginSession();
         try {
-            final NeoTask task = getTask(session);
+            final Task task = getTask(session);
             final TaskState taskState = task.getTaskState().getCanonicalState();
             final TaskState nextState;
             switch(taskState) {
@@ -519,9 +521,9 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
     }
 
     protected void autoTransit() {
-        final @NotNull NeoSession session = getDao().beginSession();
+        final @NotNull Session session = getDao().beginSession();
         try {
-            final NeoTask task = getTask(session);
+            final Task task = getTask(session);
             final TaskState taskState = task.getTaskState();
             final TaskState nextState;
             switch(taskState.getCanonicalState()) {
@@ -540,9 +542,9 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
     }
 
     protected void failWithPayload(Serializable payload, @NotNull RuntimeException... exceptions) {
-        final NeoSession session = getDao().beginSession();
+        final Session session = getDao().beginSession();
         try {
-            final NeoTask task = getTask(session);
+            final Task task = getTask(session);
             task.setTaskState(TaskState.FAILED);
             task.setPayload(payload);
             for (RuntimeException e: exceptions)
@@ -553,9 +555,9 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
     }
 
     protected void fail(@NotNull Exception... exceptions) {
-        final NeoSession session = getDao().beginSession();
+        final Session session = getDao().beginSession();
         try {
-            final NeoTask task = getTask(session);
+            final Task task = getTask(session);
             task.setTaskState(TaskState.FAILED);
             for (Exception e: exceptions)
                 task.addCause(e);
@@ -577,9 +579,9 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
         if (model == null)
             msg = userMsg;
         else {
-            NeoSession session = getDao().beginSession();
+            Session session = getDao().beginSession();
             try {
-                final NeoTask task = model.getTask(session);
+                final Task task = model.getTask(session);
                 final TaskState state = task.getTaskState();
                 final String descr = task.getDescription();
                 msg = "TA of AbstractTask " + model.getId()
@@ -606,7 +608,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
 
     @Override
     public void setModel(final @NotNull Taskling ling) {
-        final NeoSession session = getDao().beginSession();
+        final Session session = getDao().beginSession();
         final String newWID;
         try {
             newWID = ling.getTask(session).getWID();
@@ -667,9 +669,9 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
      */
     private void checkTimeout( @NotNull Taskling ling ) {
 
-        NeoSession session = getDao().beginSession();
+        Session session = getDao().beginSession();
         try {
-            NeoTask model = ling.getTask(session);
+            Task model = ling.getTask(session);
 
             // check the task lifetime
             if(new GregorianCalendar().compareTo(model.getTerminationTime()) >= 1 ) {
@@ -748,9 +750,9 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
      * @return the actual permissions
      */
     public FilePermissions actualPermissions( ) {
-        NeoSession session = getDao().beginSession();
+        Session session = getDao().beginSession();
         try {
-            NeoTask task = getTask(session);
+            Task task = getTask(session);
             FilePermissions filePermissions = null;
             PermissionConfiglet pc = configletProvider.getConfiglet( PermissionConfiglet.class,
                     task.getPermissionInfo().getPermissionConfigletName() );

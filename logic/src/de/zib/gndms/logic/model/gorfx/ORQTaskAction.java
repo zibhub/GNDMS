@@ -25,11 +25,10 @@ import de.zib.gndms.model.common.types.factory.KeyFactory;
 import de.zib.gndms.model.common.types.factory.KeyFactoryInstance;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.model.gorfx.types.TaskState;
-import de.zib.gndms.model.gorfx.types.io.ORQConverter;
-import de.zib.gndms.neomodel.common.NeoDao;
-import de.zib.gndms.neomodel.common.NeoSession;
-import de.zib.gndms.neomodel.gorfx.NeoOfferType;
-import de.zib.gndms.neomodel.gorfx.NeoTask;
+import de.zib.gndms.neomodel.common.Dao;
+import de.zib.gndms.neomodel.common.Session;
+import de.zib.gndms.neomodel.gorfx.OfferType;
+import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,9 +45,9 @@ import java.util.Map;
  *          User: stepn Date: 02.10.2008 Time: 13:00:56
  */
 public abstract class ORQTaskAction<K extends AbstractORQ> extends DefaultTaskAction
-    implements KeyFactoryInstance<String, ORQTaskAction<? super K>>, RequiresCredentialProvider
+    implements KeyFactoryInstance<String, ORQTaskAction<?>>, RequiresCredentialProvider
 {
-    private KeyFactory<String, ORQTaskAction<? super K>> factory;
+    private KeyFactory<String, ORQTaskAction<?>> factory;
     private String offerTypeId;
     private CredentialProvider credentialProvider;
     private K orq;
@@ -59,7 +58,7 @@ public abstract class ORQTaskAction<K extends AbstractORQ> extends DefaultTaskAc
     }
 
 
-    public ORQTaskAction(@NotNull EntityManager em, @NotNull NeoDao dao, @NotNull Taskling model) {
+    public ORQTaskAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model) {
         super(em, dao, model);
     }
 
@@ -68,10 +67,10 @@ public abstract class ORQTaskAction<K extends AbstractORQ> extends DefaultTaskAc
     protected void onCreated(@NotNull String wid,
                              @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) throws Exception {
         if (! isRestartedTask) {
-            final NeoSession session = getDao().beginSession();
+            final Session session = getDao().beginSession();
             try {
-                final NeoOfferType ot = session.findOfferType(offerTypeId);
-                final NeoTask task = getModel().getTask(session);
+                final OfferType ot = session.findOfferType(offerTypeId);
+                final Task task = getModel().getTask(session);
                 task.setOfferType(ot);
                 task.setWID(wid);
                 task.setORQ(orq);
@@ -83,7 +82,7 @@ public abstract class ORQTaskAction<K extends AbstractORQ> extends DefaultTaskAc
     }
 
 
-    public KeyFactory<String, ORQTaskAction<? super K>> getFactory() {
+    public KeyFactory<String, ORQTaskAction<?>> getFactory() {
         return factory;
     }
 
@@ -94,9 +93,9 @@ public abstract class ORQTaskAction<K extends AbstractORQ> extends DefaultTaskAc
 
 
     public Map<String, String> getOfferTypeConfigMapData() {
-        final NeoSession session = getDao().beginSession();
+        final Session session = getDao().beginSession();
         try {
-            final NeoOfferType ot = session.findOfferType(getOfferTypeId());
+            final OfferType ot = session.findOfferType(getOfferTypeId());
             final Map<String,String> configMapData = ot.getConfigMapData();
             session.finish();
             return configMapData;
@@ -104,7 +103,7 @@ public abstract class ORQTaskAction<K extends AbstractORQ> extends DefaultTaskAc
         finally { session.success(); }
     }
 
-    public void setFactory(@NotNull final KeyFactory<String, ORQTaskAction<? super K>> factoryParam) {
+    public void setFactory(@NotNull final KeyFactory<String, ORQTaskAction<?>> factoryParam) {
         factory = factoryParam;
     }
 

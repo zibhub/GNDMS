@@ -16,31 +16,32 @@ package de.zib.gndms.neomodel.common;
  * limitations under the License.
  */
 
-import de.zib.gndms.neomodel.common.NeoSession;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * NeoReprSession
+ * ReprSession
  *
  * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
  * User: stepn Date: 05.09.2008 Time: 14:48:36
  */
-public class NeoReprSession {
-    private final @NotNull NeoSession session;
-    private final @NotNull NeoDao dao;
+public class ReprSession {
+    private final @NotNull
+    Session session;
+    private final @NotNull
+    Dao dao;
 
-    NeoReprSession(@NotNull NeoDao dao, @NotNull NeoSession session) {
+    ReprSession(@NotNull Dao dao, @NotNull Session session) {
         this.dao     = dao;
         this.session = session;
     }
 
-    @NotNull public NeoSession getSession() {
+    @NotNull public Session getSession() {
         return session;
     }
 
-    @NotNull public NeoDao getDao() {
+    @NotNull public Dao getDao() {
         return dao;
     }
 }

@@ -30,31 +30,22 @@ import de.zib.gndms.logic.model.dspace.TransformSliceAction;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.common.PersistentContract;
-import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
-<<<<<<< HEAD
-import de.zib.gndms.model.gorfx.types.ProviderStageInResult;
-import de.zib.gndms.model.util.TxFrame;
-import de.zib.gndms.stuff.Sleeper;
-=======
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.model.util.TxFrame;
-import de.zib.gndms.neomodel.common.NeoDao;
-import de.zib.gndms.neomodel.common.NeoSession;
-import de.zib.gndms.neomodel.gorfx.NeoTask;
-import de.zib.gndms.neomodel.gorfx.NeoTaskAccessor;
+import de.zib.gndms.neomodel.common.Dao;
+import de.zib.gndms.neomodel.common.Session;
+import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.Taskling;
->>>>>>> [CHANGES] Further refactoring of actions
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
 import java.io.File;
-import java.util.Map;
 
 
 /**
@@ -77,7 +68,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
     }
 
 
-    public AbstractProviderStageInAction(@NotNull EntityManager em, @NotNull NeoDao dao, @NotNull Taskling model) {
+    public AbstractProviderStageInAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model) {
         super(em, dao, model);
     }
 
@@ -105,7 +96,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 
 		final @NotNull File scriptFile = configParam.getFileOption(scriptParam);
 		if (! isValidScriptFile(scriptFile))
-		    failFrom(new IllegalArgumentException("Invalid " + scriptParam + " script: " + scriptFile.getPath()));
+		    throw new IllegalArgumentException("Invalid " + scriptParam + " script: " + scriptFile.getPath());
 		return scriptFile;
 	}
 
@@ -114,7 +105,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
     protected void onInProgress(@NotNull String wid, @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) throws Exception {
         final Slice slice = findSlice();
         setSliceId( slice.getId() );
-        doStaging(getOfferTypeConfig(), getOrq(), slice);
+        doStaging(getOfferTypeConfig(), getORQ(), slice);
         changeSliceOwner( slice ) ;
 		super.onInProgress(wid, state, isRestartedTask, altTaskState);
     }
@@ -127,10 +118,11 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
         if( csc == null )
             throw new IllegalStateException( "chown configlet is null!");
 
-        String dn = getOrq().getActContext().get( "DN" );
+        final AbstractORQ orq = getORQ();
+        String dn = orq.getActContext().get( "DN" );
         getLog().debug( "cso DN: "+ dn );
-        getLog().debug( "changing owner of " + slice.getId() + " to " + getOrq().getLocalUser() );
-        ProcessBuilderAction chownAct = csc.createChownSliceAction( getOrq().getLocalUser(),
+        getLog().debug("changing owner of " + slice.getId() + " to " + orq.getLocalUser());
+        ProcessBuilderAction chownAct = csc.createChownSliceAction( orq.getLocalUser(),
             slice.getSubspace().getPath() + File.separator + slice.getKind().getSliceDirectory(),
             slice.getDirectoryId() );
         chownAct.call();
@@ -148,7 +140,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 
             TransformSliceAction tsa =  new TransformSliceAction(
                 getUUIDGen().nextUUID(),
-                getOrq().getLocalUser(),
+                getORQ().getLocalUser(),
                 slice.getTerminationTime(),
                 kind,
                 slice.getSubspace(),
@@ -323,9 +315,9 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 
 
     protected void setSliceId( String sliceId ) {
-        final NeoSession session = getDao().beginSession();
+        final Session session = getDao().beginSession();
         try {
-            final NeoTask task = getTask(session);
+            final Task task = getTask(session);
             ProviderStageInORQ orq = (ProviderStageInORQ) task.getORQ();
             orq.setActSliceId( sliceId );
             task.setORQ( sliceId );
@@ -338,9 +330,9 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 
     
     protected String getSliceId( ) {
-        final NeoSession session = getDao().beginSession();
+        final Session session = getDao().beginSession();
         try {
-            final NeoTask task = getTask(session);
+            final Task task = getTask(session);
             ProviderStageInORQ orq = (ProviderStageInORQ) task.getORQ();
             final String ret = orq.getActSliceId();
             session.finish();
@@ -359,9 +351,9 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 	}
 
     public PersistentContract getContract() {
-        final NeoSession session = getDao().beginSession();
+        final Session session = getDao().beginSession();
         try {
-            final NeoTask task = getTask(session);
+            final Task task = getTask(session);
             final PersistentContract ret = task.getContract();
             session.finish();
             return ret;

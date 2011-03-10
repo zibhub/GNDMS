@@ -17,11 +17,7 @@ package de.zib.gndms.neomodel.gorfx.tests;
  */
 
 import de.zib.gndms.model.common.ImmutableScopedName;
-import de.zib.gndms.neomodel.common.NeoDao;
-import de.zib.gndms.neomodel.common.NeoSession;
-import de.zib.gndms.neomodel.gorfx.NeoOfferType;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.kernel.EmbeddedGraphDatabase;
+import de.zib.gndms.neomodel.gorfx.OfferType;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 
@@ -39,7 +35,7 @@ public class NeoOfferTypeTest extends NeoTest {
 
     @Test( groups = { "neo" } )
     public void createOfferType() {
-        NeoOfferType ot = session.createOfferType();
+        OfferType ot = session.createOfferType();
 
         ot.setId("offerTypeNr1");
         ot.setCalculatorFactoryClassName("cfn");
@@ -53,7 +49,7 @@ public class NeoOfferTypeTest extends NeoTest {
 
     @Test( groups = { "neo" }, dependsOnMethods = { "createOfferType" } )
     public void findOfferType() {
-        NeoOfferType ot = session.findOfferType("offerTypeNr1");
+        OfferType ot = session.findOfferType("offerTypeNr1");
 
         assertEquals(ot.getId(), "offerTypeNr1");
         assertEquals(ot.getCalculatorFactoryClassName(), "cfn");

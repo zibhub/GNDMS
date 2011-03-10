@@ -17,7 +17,6 @@ package de.zib.gndms.neomodel.common;
  */
 
 import de.zib.gndms.model.ModelEntity;
-import de.zib.gndms.model.ModelObject;
 import org.apache.commons.lang.SerializationUtils;
 import org.jetbrains.annotations.NotNull;
 import org.neo4j.graphdb.PropertyContainer;
@@ -26,22 +25,23 @@ import org.neo4j.graphdb.index.Index;
 import java.io.Serializable;
 
 /**
- * ModelGraphElement
+ * ModelElement
  *
  * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
  * User: stepn Date: 05.09.2008 Time: 14:48:36
  */
-public abstract class ModelGraphElement<U extends PropertyContainer> extends ModelEntity {
+public abstract class ModelElement<U extends PropertyContainer> extends ModelEntity {
     public static final String INDEX_SEPARATOR = "@@";
     public static final String TYPE_P = "TYPE_P";
 
     final @NotNull U representation;
-    final @NotNull NeoReprSession reprSession;
+    final @NotNull
+    ReprSession reprSession;
     final @NotNull private String typeNick;
 
-    protected ModelGraphElement(@NotNull NeoReprSession session, @NotNull String typeNick, @NotNull U underlying) {
+    protected ModelElement(@NotNull ReprSession session, @NotNull String typeNick, @NotNull U underlying) {
         if (typeNick.contains(INDEX_SEPARATOR))
             throw new IllegalArgumentException("typeNick must not contain " + INDEX_SEPARATOR);
         this.reprSession = session;
@@ -58,11 +58,11 @@ public abstract class ModelGraphElement<U extends PropertyContainer> extends Mod
 
     final @NotNull protected U repr() { return getRepresentation(); }
 
-    @NotNull protected NeoSession getSession() {
+    @NotNull protected Session getSession() {
         return reprSession.getSession();
     }
 
-    final @NotNull protected NeoSession session() { return getSession(); }
+    final @NotNull protected Session session() { return getSession(); }
 
     protected @NotNull String getTypeNick() {
         return typeNick;
@@ -112,7 +112,7 @@ public abstract class ModelGraphElement<U extends PropertyContainer> extends Mod
         repr().setProperty(key, SerializationUtils.serialize(value));
     }
 
-    public final void delete(@NotNull NeoSession session) {
+    public final void delete(@NotNull Session session) {
         if (session != session())
             throw new IllegalArgumentException("Attempt to delete domain object from another session");
         else
@@ -124,11 +124,11 @@ public abstract class ModelGraphElement<U extends PropertyContainer> extends Mod
     }
 
 
-    @NotNull protected NeoReprSession getReprSession() {
+    @NotNull protected ReprSession getReprSession() {
         return reprSession;
     }
 
-    @NotNull final protected NeoReprSession reprSession() {
+    @NotNull final protected ReprSession reprSession() {
         return getReprSession();
     }
 
@@ -145,7 +145,7 @@ public abstract class ModelGraphElement<U extends PropertyContainer> extends Mod
         if (o == this) return true;
         if (! getClass().equals(o.getClass())) return false;
 
-        final ModelGraphElement other = getClass().cast(o);
+        final ModelElement other = getClass().cast(o);
         return other.reprSession == other.reprSession &&
                repr().getClass().equals(other.repr().getClass()) &&
                 getReprId() == other.getReprId();

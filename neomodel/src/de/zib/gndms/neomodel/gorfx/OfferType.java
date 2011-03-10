@@ -39,27 +39,27 @@ import java.util.Map;
 
 
 
-import de.zib.gndms.neomodel.common.NeoReprSession;
+import de.zib.gndms.neomodel.common.ReprSession;
 import de.zib.gndms.neomodel.common.NodeGridResource;
 import org.jetbrains.annotations.NotNull;
 import org.neo4j.graphdb.Node;
 
 /**
- * NeoOfferType
+ * OfferType
  *
  * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
  * User: stepn Date: 05.09.2008 Time: 14:48:36
  */
-public class NeoOfferType extends NodeGridResource<NeoOfferTypeAccessor> implements NeoOfferTypeAccessor {
+public class OfferType extends NodeGridResource<OfferTypeAccessor> implements OfferTypeAccessor {
     public static final String TASK_ACTION_FACTORY_CLASS_NAME_P = "TASK_ACTION_FACTORY_CLASS_NAME_P";
     public static final String CALCULATOR_FACTORY_CLASS_NAME_P = "CALCULATOR_FACTORY_CLASS_NAME_P";
     public static final String CONFIG_MAP_DATA_P = "CONFIG_MAP_DATA_P";
     public static final String OFFER_ARGUMENT_TYPE_P = "OFFER_ARGUMENT_TYPE_P";
     public static final String OFFER_RESULT_TYPE_P = "OFFER_RESULT_TYPE_P";
 
-    public NeoOfferType(@NotNull NeoReprSession session, @NotNull String typeNick, @NotNull Node underlying) {
+    public OfferType(@NotNull ReprSession session, @NotNull String typeNick, @NotNull Node underlying) {
         super(session, typeNick, underlying);
     }
 

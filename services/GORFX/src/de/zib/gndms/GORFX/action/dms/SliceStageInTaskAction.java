@@ -34,8 +34,8 @@ import de.zib.gndms.gritserv.typecon.types.ContractXSDTypeWriter;
 import de.zib.gndms.stuff.threading.Forkable;
 import org.apache.axis.AxisFault;
 import de.zib.gndms.model.gorfx.types.TaskState;
-import de.zib.gndms.neomodel.common.NeoSession;
-import de.zib.gndms.neomodel.gorfx.NeoTask;
+import de.zib.gndms.neomodel.common.Session;
+import de.zib.gndms.neomodel.gorfx.Task;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.globus.gsi.GlobusCredential;
 import org.jetbrains.annotations.NotNull;
@@ -82,7 +82,7 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
     protected void onInProgress(@NotNull String wid, @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) throws Exception {
 
         EndpointReferenceType taskEPR = null;
-        final NeoSession session = getDao().beginSession();
+        final Session session = getDao().beginSession();
         try {
             GlobusCredential gc = GlobusCredentialProvider.class.cast( getCredentialProvider() ).getCredential();
             final NeoTask model = getTask(session);
@@ -107,15 +107,14 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
                             msg += "No info available";
                         }
                         getLog( ).debug( msg );
-						// todo check transitToFail
-                        fail( new IllegalStateException( msg ) );
+                        new IllegalStateException( msg );
                     }
                     model.setPayload( taskEPR );
  					// transitWithPayload( epr, TaskState.IN_PROGRESS );
                 }
             }
 
-            taskEPR = (EndpointReferenceType) model.getData( );
+            taskEPR = (EndpointReferenceType) model.getPayload( );
 
             if( taskEPR == null )
                 fail( new IllegalStateException( "commonTaskPrep return ed null epr" ) );
@@ -140,7 +139,7 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
                 finished = future.get();
             } catch( InterruptedException e ) {
                 Thread.interrupted();
-                fail( new RuntimeException( e ) );
+                new RuntimeException( e );
             }
 
             if (finished) {

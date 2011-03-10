@@ -19,8 +19,8 @@ package de.zib.gndms.neomodel.gorfx;
 import de.zib.gndms.model.common.PermissionInfo;
 import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.gorfx.types.TaskState;
-import de.zib.gndms.neomodel.common.NeoReprSession;
-import de.zib.gndms.neomodel.common.NeoSession;
+import de.zib.gndms.neomodel.common.ReprSession;
+import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.common.NodeGridResource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,13 +37,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * NeoTask
+ * Task
  *
  * @author  try ste fan pla nti kow zib
  *
  * User: stepn Date: 05.09.2008 Time: 14:48:36
  */
-public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTaskAccessor {
+public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor {
     public static final String WID_P = "WID_P";
     public static final String DESCRIPTION_P = "DESCRIPTION_P";
     public static final String TERMINATION_TIME_P = "TERMINATION_TIME_P";
@@ -70,13 +70,13 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
 
 
 
-    public NeoTask(@NotNull NeoReprSession session, @NotNull String typeNick, @NotNull Node underlying) {
+    public Task(@NotNull ReprSession session, @NotNull String typeNick, @NotNull Node underlying) {
         super(session, typeNick, underlying);
     }
 
 
     @Override
-    public void onCreate(NeoReprSession reprSession) {
+    public void onCreate(ReprSession reprSession) {
         super.onCreate(reprSession);
         if (getProperty(TASK_STATE_P, null) == null)   {
             final @NotNull String newTaskStateName = TaskState.INITIALIZED.name();
@@ -113,15 +113,15 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
         setProperty(DESCRIPTION_P, description);
     }
 
-    public NeoOfferType getOfferType() {
+    public OfferType getOfferType() {
         final Relationship rel = repr().getSingleRelationship(TaskRelationships.OFFER_TYPE_REL, Direction.OUTGOING);
         if (rel == null)
             return null;
         else
-            return new NeoOfferType(reprSession(), session().getGridName(), rel.getEndNode());
+            return new OfferType(reprSession(), session().getGridName(), rel.getEndNode());
     }
 
-    public void setOfferType(@Nullable NeoOfferType offerType) {
+    public void setOfferType(@Nullable OfferType offerType) {
         final Relationship rel = repr().getSingleRelationship(TaskRelationships.OFFER_TYPE_REL, Direction.OUTGOING);
         if (rel != null)
             rel.delete();
@@ -209,8 +209,9 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
             setProperty(PROGRESS_P, progress);
     }
 
-    public @NotNull NeoTask getRootTask() {
-        final @Nullable NeoTask parent = getParent();
+    public @NotNull
+    Task getRootTask() {
+        final @Nullable Task parent = getParent();
         if (parent == null) return this; else return parent.getRootTask();
     }
 
@@ -219,15 +220,16 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
     }
 
 
-    public @Nullable NeoTask getParent() {
+    public @Nullable
+    Task getParent() {
         final Relationship rel = repr().getSingleRelationship(TaskRelationships.PARENT_REL, Direction.OUTGOING);
         if (rel == null)
             return null;
         else
-            return new NeoTask(getReprSession(), getTypeNick(), rel.getEndNode());
+            return new Task(getReprSession(), getTypeNick(), rel.getEndNode());
     }
 
-    public void setParent(@Nullable NeoTask parent) {
+    public void setParent(@Nullable Task parent) {
         if (parent != null && parent.isBelowTask(this))
             throw new IllegalArgumentException("New parent may not be a parent-chain child of this parent");
         final Relationship rel = repr().getSingleRelationship(TaskRelationships.PARENT_REL, Direction.OUTGOING);
@@ -246,8 +248,8 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
     }
 
 
-    public boolean isBelowTask(@NotNull NeoTask task) {
-        NeoTaskAccessor parent = this;
+    public boolean isBelowTask(@NotNull Task task) {
+        TaskAccessor parent = this;
         while (parent != null) {
             if (task.equals(parent))
                 return true;
@@ -259,26 +261,26 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
     }
 
 
-    public @NotNull Iterable<NeoTask> getSubTasks() {
-        final List<NeoTask> subTasks = new LinkedList<NeoTask>();
+    public @NotNull Iterable<Task> getSubTasks() {
+        final List<Task> subTasks = new LinkedList<Task>();
         for (Relationship rel : repr().getRelationships(TaskRelationships.PARENT_REL, Direction.INCOMING))
-            subTasks.add( new NeoTask(getReprSession(), getTypeNick(), rel.getStartNode()) );
+            subTasks.add( new Task(getReprSession(), getTypeNick(), rel.getStartNode()) );
         return subTasks;
     }
 
-    public @NotNull Iterable<NeoTask> getSubTasks(final NeoOfferType ot) {
-        final List<NeoTask> subTasks = new LinkedList<NeoTask>();
+    public @NotNull Iterable<Task> getSubTasks(final OfferType ot) {
+        final List<Task> subTasks = new LinkedList<Task>();
         for (Relationship rel : repr().getRelationships(TaskRelationships.PARENT_REL, Direction.INCOMING)) {
-            final NeoTask task        = new NeoTask(getReprSession(), getTypeNick(), rel.getStartNode());
-            final NeoOfferType taskOT = task.getOfferType();
+            final Task task        = new Task(getReprSession(), getTypeNick(), rel.getStartNode());
+            final OfferType taskOT = task.getOfferType();
             if ((ot == null) ? taskOT == null : ot.equals(taskOT))
                 subTasks.add(task);
         }
         return subTasks;
     }
 
-    public NeoTask createSubTask() {
-        NeoTask subTask = session().createTask();
+    public Task createSubTask() {
+        Task subTask = session().createTask();
         Relationship rel = subTask.repr(session()).createRelationshipTo(repr(), TaskRelationships.PARENT_REL);
         subTask.setOfferType(getOfferType());
         setContract(getContract());
@@ -396,8 +398,8 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
         return new Taskling(reprSession().getDao(), getId());
     }
     
-    public NeoTaskAccessor getSnapshot() {
-        final NeoSession session = session();
+    public TaskAccessor getSnapshot() {
+        final Session session = session();
         try {
             final String id = this.getId();
             final String WID = this.getWID();
@@ -418,7 +420,7 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
             final String faultString = this.getFaultString();
             final Serializable payload = this.getPayload();
             final LinkedList<Exception> causes = this.getCause();
-            final NeoTaskAccessor snapshot = new NeoTaskAccessor() {
+            final TaskAccessor snapshot = new TaskAccessor() {
                 @NotNull
                 public String getId() {
                     return id;
@@ -434,7 +436,7 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
                     return descr;
                 }
 
-                public NeoOfferType getOfferType() throws UnsupportedOperationException {
+                public OfferType getOfferType() throws UnsupportedOperationException {
                     throw new UnsupportedOperationException();
                 }
 
@@ -456,7 +458,7 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
                 }
 
                 @NotNull
-                public NeoTaskAccessor getRootTask() throws UnsupportedOperationException  {
+                public TaskAccessor getRootTask() throws UnsupportedOperationException  {
                     throw new UnsupportedOperationException();
                 }
 
@@ -464,7 +466,7 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
                     return hasParent;
                 }
 
-                public NeoTaskAccessor getParent() throws UnsupportedOperationException  {
+                public TaskAccessor getParent() throws UnsupportedOperationException  {
                     throw new UnsupportedOperationException();
                 }
 
@@ -477,12 +479,12 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
                 }
 
                 @NotNull
-                public Iterable<? extends NeoTaskAccessor> getSubTasks() {
+                public Iterable<? extends TaskAccessor> getSubTasks() {
                     throw new UnsupportedOperationException();
                 }
 
                 @NotNull
-                public Iterable<? extends NeoTaskAccessor> getSubTasks(NeoOfferType ot) {
+                public Iterable<? extends TaskAccessor> getSubTasks(OfferType ot) {
                     throw new UnsupportedOperationException();
                 }
 
