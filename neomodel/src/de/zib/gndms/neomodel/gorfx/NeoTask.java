@@ -277,6 +277,22 @@ public class NeoTask extends NodeGridResource<NeoTaskAccessor> implements NeoTas
         return subTasks;
     }
 
+    public NeoTask createSubTask() {
+        NeoTask subTask = session().createTask();
+        Relationship rel = subTask.repr(session()).createRelationshipTo(repr(), TaskRelationships.PARENT_REL);
+        subTask.setOfferType(getOfferType());
+        setContract(getContract());
+        setDescription(getDescription());
+        setPayload(getPayload());
+        setFaultString(getFaultString());
+        setMaxProgress(getMaxProgress());
+        setORQ(getORQ());
+        setWID(getWID());
+        setPermissionInfo(getPermissionInfo());
+        return subTask;
+    }
+
+
     public Serializable getORQ() {
         return getProperty(Serializable.class, ORQ_P);
     }
