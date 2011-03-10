@@ -23,9 +23,7 @@ import de.zib.gndms.logic.action.ProcessBuilderAction;
 import static de.zib.gndms.logic.model.gorfx.c3grid.ExternalProviderStageInORQCalculator.GLOBUS_DEATH_DURATION;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
-import de.zib.gndms.model.gorfx.types.ProviderStageInResult;
-import de.zib.gndms.model.gorfx.types.TaskState;
-import de.zib.gndms.neomodel.common.NeoDao;
+import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import de.zib.gndms.stuff.Sleeper;
 import org.jetbrains.annotations.NotNull;
@@ -53,7 +51,7 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
     }
 
 
-    public ExternalProviderStageInAction(@NotNull EntityManager em, @NotNull NeoDao dao, @NotNull Taskling model) {
+    public ExternalProviderStageInAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model) {
         super(em, dao, model);
         parmAux = new ParmFormatAux();
     }

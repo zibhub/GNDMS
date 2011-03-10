@@ -7,14 +7,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 
 /**
- * NeoOfferTypeAccessor
+ * OfferTypeAccessor
  *
  * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
  * User: stepn Date: 05.09.2008 Time: 14:48:36
  */
-public interface NeoOfferTypeAccessor extends GridResourceItf {
+public interface OfferTypeAccessor extends GridResourceItf {
     @NotNull String getId();
 
     @NotNull String getOfferTypeKey();

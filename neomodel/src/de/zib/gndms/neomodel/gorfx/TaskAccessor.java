@@ -26,18 +26,16 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.Calendar;
-import java.util.Iterator;
-import java.util.LinkedList;
 
 /**
- * NeoTaskAccessor
+ * TaskAccessor
  *
  * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
  * User: stepn Date: 05.09.2008 Time: 14:48:36
  */
-public interface NeoTaskAccessor extends GridResourceItf, TimedGridResourceItf {
+public interface TaskAccessor extends GridResourceItf, TimedGridResourceItf {
 
     @NotNull String getId();
 
@@ -45,7 +43,8 @@ public interface NeoTaskAccessor extends GridResourceItf, TimedGridResourceItf {
 
     @NotNull String getDescription();
 
-    @Nullable NeoOfferType getOfferType();
+    @Nullable
+    OfferType getOfferType();
 
     @Nullable Calendar getTerminationTime();
 
@@ -55,19 +54,21 @@ public interface NeoTaskAccessor extends GridResourceItf, TimedGridResourceItf {
 
     int getProgress();
 
-    @NotNull NeoTaskAccessor getRootTask();
+    @NotNull
+    TaskAccessor getRootTask();
 
     boolean hasParent();
 
-    @Nullable NeoTaskAccessor getParent();
+    @Nullable
+    TaskAccessor getParent();
 
     boolean isRootTask();
 
     boolean isSubTask();
 
-    @NotNull Iterable<? extends NeoTaskAccessor> getSubTasks();
+    @NotNull Iterable<? extends TaskAccessor> getSubTasks();
 
-    @NotNull Iterable<? extends NeoTaskAccessor> getSubTasks(NeoOfferType ot);
+    @NotNull Iterable<? extends TaskAccessor> getSubTasks(OfferType ot);
 
     Serializable getORQ();
 

@@ -21,7 +21,6 @@ package de.zib.gndms.logic.model.gorfx.c3grid;
 import de.zib.gndms.kit.config.ConfigProvider;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.config.MapConfig;
-import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.logic.model.dspace.ChownSliceConfiglet;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
@@ -30,7 +29,6 @@ import de.zib.gndms.logic.model.dspace.TransformSliceAction;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.common.PersistentContract;
-import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
@@ -39,19 +37,14 @@ import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.model.util.TxFrame;
-import de.zib.gndms.neomodel.common.NeoDao;
-import de.zib.gndms.neomodel.common.NeoSession;
-import de.zib.gndms.neomodel.gorfx.NeoTask;
-import de.zib.gndms.neomodel.gorfx.NeoTaskAccessor;
+import de.zib.gndms.neomodel.common.Dao;
+import de.zib.gndms.neomodel.common.Session;
+import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.Taskling;
-import de.zib.gndms.model.gorfx.types.ProviderStageInResult;
-import de.zib.gndms.model.util.TxFrame;
-import de.zib.gndms.stuff.Sleeper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
 import java.io.File;
-import java.util.Map;
 
 
 /**
@@ -72,7 +65,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
     }
 
 
-    public AbstractProviderStageInAction(@NotNull EntityManager em, @NotNull NeoDao dao, @NotNull Taskling model) {
+    public AbstractProviderStageInAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model) {
         super(em, dao, model);
     }
 
@@ -310,9 +303,9 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 
 
     protected void setSliceId( String sliceId ) {
-        final NeoSession session = getDao().beginSession();
+        final Session session = getDao().beginSession();
         try {
-            final NeoTask task = getTask(session);
+            final Task task = getTask(session);
             ProviderStageInORQ orq = (ProviderStageInORQ) task.getORQ();
             orq.setActSliceId( sliceId );
             task.setORQ( sliceId );
@@ -325,9 +318,9 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 
     
     protected String getSliceId( ) {
-        final NeoSession session = getDao().beginSession();
+        final Session session = getDao().beginSession();
         try {
-            final NeoTask task = getTask(session);
+            final Task task = getTask(session);
             ProviderStageInORQ orq = (ProviderStageInORQ) task.getORQ();
             final String ret = orq.getActSliceId();
             session.finish();
@@ -346,9 +339,9 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 	}
 
     public PersistentContract getContract() {
-        final NeoSession session = getDao().beginSession();
+        final Session session = getDao().beginSession();
         try {
-            final NeoTask task = getTask(session);
+            final Task task = getTask(session);
             final PersistentContract ret = task.getContract();
             session.finish();
             return ret;

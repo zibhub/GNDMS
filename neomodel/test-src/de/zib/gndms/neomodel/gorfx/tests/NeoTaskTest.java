@@ -20,9 +20,8 @@ import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.common.PermissionInfo;
 import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.gorfx.types.TaskState;
-import de.zib.gndms.neomodel.gorfx.NeoOfferType;
-import de.zib.gndms.neomodel.gorfx.NeoTask;
-import org.neo4j.graphdb.Node;
+import de.zib.gndms.neomodel.gorfx.OfferType;
+import de.zib.gndms.neomodel.gorfx.Task;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 
@@ -43,7 +42,7 @@ public class NeoTaskTest extends NeoTest {
 
     @Test( groups = { "neo" } )
     public void createTask() {
-        NeoOfferType ot = session.createOfferType();
+        OfferType ot = session.createOfferType();
         ot.setId("offerTypeNr1");
         ot.setCalculatorFactoryClassName("cfn");
         ot.setTaskActionFactoryClassName("tfn");
@@ -56,8 +55,8 @@ public class NeoTaskTest extends NeoTest {
         session.success();
     }
 
-    private NeoTask newTask(NeoOfferType ot, String id) {
-        NeoTask task = session.createTask();
+    private Task newTask(OfferType ot, String id) {
+        Task task = session.createTask();
         task.setBroken(true);
         task.setDone(true);
         task.setFaultString("Faulty Towers");
@@ -83,7 +82,7 @@ public class NeoTaskTest extends NeoTest {
 
     @Test( groups = { "neo" }, dependsOnMethods = { "createTask" } )
     public void checkTask() {
-        NeoTask task = session.findTask(TASK_ID);
+        Task task = session.findTask(TASK_ID);
         assertEquals(task.getId(), TASK_ID);
         assertEquals(task.isBroken(), true);
         assertEquals(task.isDone(), true);
@@ -96,7 +95,7 @@ public class NeoTaskTest extends NeoTest {
         assertEquals(task.getCause().getLast().getMessage(), "LOL");
 
 
-        NeoOfferType ot = session.findOfferType("offerTypeNr1");
+        OfferType ot = session.findOfferType("offerTypeNr1");
         assertEquals(task.getOfferType().getId(), ot.getId());
         assertEquals(task.getOfferType().getOfferResultType().getLocalName(), "z");
         assertEquals((long) task.getContract().getExpectedSize(), 15L);
@@ -109,14 +108,14 @@ public class NeoTaskTest extends NeoTest {
 
     @Test( groups = { "neo" }, dependsOnMethods = { "checkTask" } )
     public void createSubTasks() {
-        NeoOfferType ot = session.findOfferType("offerTypeNr1");
+        OfferType ot = session.findOfferType("offerTypeNr1");
 
-        NeoTask t1 = newTask(ot, "t1");
-        NeoTask t2 = newTask(ot, "t2");
-        NeoTask t3 = newTask(ot, "t3");
-        NeoTask t4 = newTask(ot, "t4");
-        NeoTask t5 = newTask(ot, "t5");
-        NeoTask t6 = newTask(ot, "t6");
+        Task t1 = newTask(ot, "t1");
+        Task t2 = newTask(ot, "t2");
+        Task t3 = newTask(ot, "t3");
+        Task t4 = newTask(ot, "t4");
+        Task t5 = newTask(ot, "t5");
+        Task t6 = newTask(ot, "t6");
 
         t2.setParent(t1);
         t3.setParent(t4);
@@ -128,12 +127,12 @@ public class NeoTaskTest extends NeoTest {
 
     @Test( groups = { "neo" }, dependsOnMethods = { "createSubTasks" } )
     public void verifySubTasks() {
-        NeoTask t1 = session.findTask("t1");
-        NeoTask t2 = session.findTask("t2");
-        NeoTask t3 = session.findTask("t3");
-        NeoTask t4 = session.findTask("t4");
-        NeoTask t5 = session.findTask("t5");
-        NeoTask t6 = session.findTask("t6");
+        Task t1 = session.findTask("t1");
+        Task t2 = session.findTask("t2");
+        Task t3 = session.findTask("t3");
+        Task t4 = session.findTask("t4");
+        Task t5 = session.findTask("t5");
+        Task t6 = session.findTask("t6");
 
         assertEquals(t2.getParent(), t1);
         assertEquals(t3.getParent(), t4);
@@ -154,8 +153,8 @@ public class NeoTaskTest extends NeoTest {
         catch (IllegalArgumentException iae) {}
         assert(! t6.isBelowTask(t3));
 
-        final List<NeoTask> subTasks = new ArrayList<NeoTask>();
-        for (NeoTask task : t2.getSubTasks())
+        final List<Task> subTasks = new ArrayList<Task>();
+        for (Task task : t2.getSubTasks())
             subTasks.add(task);
 
         assertEquals(subTasks.size(), 2);
@@ -167,36 +166,36 @@ public class NeoTaskTest extends NeoTest {
 
     @Test( groups = { "neo" }, dependsOnMethods = { "verifySubTasks" } )
     public void deleteAndListSubTasks() {
-        NeoTask t1 = session.findTask("t1");
-        NeoTask t2 = session.findTask("t2");
-        NeoTask t3 = session.findTask("t3");
-        NeoTask t4 = session.findTask("t4");
-        NeoTask t5 = session.findTask("t5");
-        NeoTask t6 = session.findTask("t6");
+        Task t1 = session.findTask("t1");
+        Task t2 = session.findTask("t2");
+        Task t3 = session.findTask("t3");
+        Task t4 = session.findTask("t4");
+        Task t5 = session.findTask("t5");
+        Task t6 = session.findTask("t6");
 
         {
             Calendar instance = Calendar.getInstance();
             instance.setTimeInMillis(System.currentTimeMillis());
-            final Iterable<NeoTask> iterable = session.listTasksDeadBeforeTimeout(instance);
-            final List<NeoTask> list = new LinkedList<NeoTask>();
-            for (NeoTask neoTask: iterable)
-                list.add(neoTask);
+            final Iterable<Task> iterable = session.listTasksDeadBeforeTimeout(instance);
+            final List<Task> list = new LinkedList<Task>();
+            for (Task task : iterable)
+                list.add(task);
             assertEquals(list.size(), 6);
         }
 
         {
-            final Iterable<NeoTask> iterable = session.listTasksByState(TaskState.FAILED);
-            final List<NeoTask> list = new LinkedList<NeoTask>();
-            for (NeoTask neoTask: iterable)
-                list.add(neoTask);
+            final Iterable<Task> iterable = session.listTasksByState(TaskState.FAILED);
+            final List<Task> list = new LinkedList<Task>();
+            for (Task task : iterable)
+                list.add(task);
             assertEquals(list.size(), 6);
         }
 
         {
-            final Iterable<NeoTask> iterable = session.listTasks();
-            final List<NeoTask> list = new LinkedList<NeoTask>();
-            for (NeoTask neoTask: iterable)
-                list.add(neoTask);
+            final Iterable<Task> iterable = session.listTasks();
+            final List<Task> list = new LinkedList<Task>();
+            for (Task task : iterable)
+                list.add(task);
             assertEquals(list.size(), 6);
         }
 
@@ -212,10 +211,10 @@ public class NeoTaskTest extends NeoTest {
 
     @Test( groups = { "neo" }, dependsOnMethods = { "checkTask" } )
     public void deleteTask() {
-        NeoTask task = session.findTask(TASK_ID);
+        Task task = session.findTask(TASK_ID);
         task.delete();
 
-        NeoOfferType ot = session.findOfferType("offerTypeNr1");
+        OfferType ot = session.findOfferType("offerTypeNr1");
         ot.delete();
         session.success();
     }

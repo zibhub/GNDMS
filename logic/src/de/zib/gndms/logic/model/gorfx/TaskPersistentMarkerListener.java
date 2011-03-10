@@ -20,8 +20,8 @@ package de.zib.gndms.logic.model.gorfx;
 
 import de.zib.gndms.kit.network.PersistentMarkerListener;
 import de.zib.gndms.kit.util.WidAux;
-import de.zib.gndms.neomodel.common.NeoSession;
-import de.zib.gndms.neomodel.gorfx.NeoTask;
+import de.zib.gndms.neomodel.common.Session;
+import de.zib.gndms.neomodel.gorfx.Task;
 import org.globus.ftp.Marker;
 
 /**
@@ -55,9 +55,9 @@ public class TaskPersistentMarkerListener extends PersistentMarkerListener {
 
     public void setCurrentFile( String currentFile ) {
         super.setCurrentFile( currentFile );
-        final NeoSession session = getDao().beginSession();
+        final Session session = getDao().beginSession();
         try {
-            NeoTask task = getTaskling().getTask(session);
+            Task task = getTaskling().getTask(session);
             task.setProgress(task.getProgress() + 1);
             session.success();
         }

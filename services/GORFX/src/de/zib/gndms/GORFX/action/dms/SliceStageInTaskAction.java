@@ -31,8 +31,8 @@ import de.zib.gndms.gritserv.typecon.types.SliceRefXSDReader;
 import de.zib.gndms.gritserv.typecon.types.ContextXSDTypeWriter;
 import de.zib.gndms.gritserv.typecon.types.ContractXSDTypeWriter;
 import de.zib.gndms.model.gorfx.types.TaskState;
-import de.zib.gndms.neomodel.common.NeoSession;
-import de.zib.gndms.neomodel.gorfx.NeoTask;
+import de.zib.gndms.neomodel.common.Session;
+import de.zib.gndms.neomodel.gorfx.Task;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.globus.gsi.GlobusCredential;
 import org.jetbrains.annotations.NotNull;
@@ -72,9 +72,9 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
     protected void onInProgress(@NotNull String wid, @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) throws Exception {
         EndpointReferenceType epr;
         GlobusCredential gc = GlobusCredentialProvider.class.cast(getCredentialProvider()).getCredential();
-        final NeoSession session = getDao().beginSession();
+        final Session session = getDao().beginSession();
         try {
-            final NeoTask model = getTask(session);
+            final Task model = getTask(session);
 
             if( model.getPayload( ) == null ) {
                 SliceStageInORQ orq = (SliceStageInORQ) getORQ();
@@ -86,7 +86,7 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
                     ContextT ctx = ContextXSDTypeWriter.writeContext( orq.getActContext() );
                     OfferExecutionContractT con = ContractXSDTypeWriter.write( model.getContract().toTransientContract() );
                     epr = GORFXClientUtils.commonTaskPreparation( uri, p_orq, ctx, con, gc );
-                    NeoTask task = getTask(session);
+                    Task task = getTask(session);
                     task.setPayload(epr);
                     task.setTaskState(TaskState.FINISHED);
                     if (altTaskState)
@@ -107,7 +107,7 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
                     SliceReference sk = (SliceReference) res.get_any()[0].getObjectValue( SliceReference.class );
                     SliceRef sr = SliceRefXSDReader.read( sk );
                     trace( "Remote staging finished. SliceId: " + sr.getResourceKeyValue() + "@"  + sr.getGridSiteId() , null );
-                    NeoTask task = getTask(session);
+                    Task task = getTask(session);
                     task.setPayload(new SliceStageInResult(sr));
                     task.setTaskState(TaskState.FINISHED);
                     if (altTaskState)

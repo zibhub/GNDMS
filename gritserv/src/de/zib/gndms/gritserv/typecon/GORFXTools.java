@@ -19,13 +19,12 @@ package de.zib.gndms.gritserv.typecon;
 
 
 import de.zib.gndms.model.common.ImmutableScopedName;
-import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.gritserv.typecon.types.FileTransferORQXSDReader;
 import de.zib.gndms.gritserv.typecon.types.InterSliceTransferORQXSDReader;
 import de.zib.gndms.gritserv.typecon.types.ProviderStageInORQXSDReader;
 import de.zib.gndms.gritserv.typecon.types.SliceStageInORQXSDReader;
-import de.zib.gndms.neomodel.gorfx.NeoTask;
+import de.zib.gndms.neomodel.gorfx.Task;
 import org.apache.axis.types.NormalizedString;
 import org.apache.axis.types.URI;
 import org.apache.axis.types.Token;
@@ -141,7 +140,7 @@ public class GORFXTools {
     /**
      * Extracts a task state form a given Task object.
      */
-    public static TaskExecutionState getStateOfTask( NeoTask tsk ) {
+    public static TaskExecutionState getStateOfTask( Task tsk ) {
 
         TaskExecutionState stat = new TaskExecutionState( );
         stat.setDescription( new NormalizedString( tsk.getDescription() ) );

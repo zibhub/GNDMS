@@ -16,8 +16,8 @@ package de.zib.gndms.neomodel.gorfx.tests;
  * limitations under the License.
  */
 
-import de.zib.gndms.neomodel.common.NeoDao;
-import de.zib.gndms.neomodel.common.NeoSession;
+import de.zib.gndms.neomodel.common.Dao;
+import de.zib.gndms.neomodel.common.Session;
 import org.apache.commons.io.FileUtils;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
@@ -38,8 +38,8 @@ import java.io.IOException;
  */
 public abstract class NeoTest {
     protected GraphDatabaseService gdb = null;
-    protected NeoDao dao = null;
-    protected NeoSession session = null;
+    protected Dao dao = null;
+    protected Session session = null;
     protected String dbDirName = "/tmp/neo";
     protected File dbDir = new File(dbDirName);
 
@@ -54,7 +54,7 @@ public abstract class NeoTest {
         assert gdb == null;
         gdb = new EmbeddedGraphDatabase(dbDirName);
         assert dao == null;
-        dao = new NeoDao("gndms", gdb);
+        dao = new Dao("gndms", gdb);
         assert session == null;
         session = dao.beginSession();
 

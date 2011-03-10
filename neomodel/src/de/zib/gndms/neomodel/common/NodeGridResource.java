@@ -31,7 +31,7 @@ import org.neo4j.graphdb.Node;
 public class NodeGridResource<I> extends ModelNode implements GridResourceItf, ROType<I> {
     private static final String GRID_RESOURCE_ID_P = "ID_P";
 
-    protected NodeGridResource(@NotNull NeoReprSession session, @NotNull String typeNick, @NotNull Node underlying) {
+    protected NodeGridResource(@NotNull ReprSession session, @NotNull String typeNick, @NotNull Node underlying) {
         super(session, typeNick, underlying);
     }
 

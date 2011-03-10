@@ -28,7 +28,7 @@ import de.zib.gndms.infra.service.GNDMSingletonServiceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.model.dspace.DSpace;
-import de.zib.gndms.neomodel.common.NeoDao;
+import de.zib.gndms.neomodel.common.Dao;
 import org.apache.axis.message.addressing.AttributedURI;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -235,7 +235,7 @@ public final class ExtDSpaceResourceHome  extends DSpaceResourceHome
         return ((ReloadablePersistentResource<DSpace, ExtDSpaceResourceHome>)find(null)).getID();
     }
 
-    @NotNull public NeoDao getDao() {
+    @NotNull public Dao getDao() {
         return system.getDao();
     }
 }

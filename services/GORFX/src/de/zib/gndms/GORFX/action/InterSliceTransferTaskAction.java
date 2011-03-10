@@ -20,12 +20,11 @@ package de.zib.gndms.GORFX.action;
 
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.logic.model.gorfx.FileTransferTaskAction;
-import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.model.gorfx.types.InterSliceTransferORQ;
 import de.zib.gndms.model.gorfx.types.TaskState;
-import de.zib.gndms.neomodel.common.NeoDao;
-import de.zib.gndms.neomodel.common.NeoSession;
-import de.zib.gndms.neomodel.gorfx.NeoTask;
+import de.zib.gndms.neomodel.common.Dao;
+import de.zib.gndms.neomodel.common.Session;
+import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,7 +42,7 @@ public class InterSliceTransferTaskAction extends ORQTaskAction<InterSliceTransf
     public InterSliceTransferTaskAction() {
     }
 
-    public InterSliceTransferTaskAction(@NotNull EntityManager em, @NotNull NeoDao dao, @NotNull Taskling model) {
+    public InterSliceTransferTaskAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model) {
         super(em, dao, model);
     }
 
@@ -51,16 +50,16 @@ public class InterSliceTransferTaskAction extends ORQTaskAction<InterSliceTransf
     protected void onInProgress(@NotNull String wid, @NotNull TaskState state,
                                 boolean isRestartedTask, boolean altTaskState) throws Exception {
 
-        final NeoSession session = getDao().beginSession();
+        final Session session = getDao().beginSession();
         try {
-            final NeoTask task = getTask(session);
+            final Task task = getTask(session);
             InterSliceTransferORQ orq = (InterSliceTransferORQ) task.getORQ();
             InterSliceTransferORQCalculator.checkURIs( orq );
 
 
-            final NeoTask st = task.createSubTask();
+            final Task st = task.createSubTask();
 	        final EntityManager em = getEmf().createEntityManager();
-            st.setId( getUUIDGen().nextUUID() );
+            st.setId(getUUIDGen().nextUUID());
 
             st.setTerminationTime( task.getTerminationTime() );
 

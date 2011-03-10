@@ -20,9 +20,8 @@ package de.zib.gndms.GORFX.action;
 
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.model.gorfx.types.RePublishSliceORQ;
-import de.zib.gndms.model.gorfx.types.RePublishSliceResult;
 import de.zib.gndms.model.gorfx.types.TaskState;
-import de.zib.gndms.neomodel.common.NeoDao;
+import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,7 +39,7 @@ public class RePublishSliceTaskAction extends ORQTaskAction<RePublishSliceORQ> {
     public RePublishSliceTaskAction() {
     }
 
-    public RePublishSliceTaskAction(@NotNull EntityManager em, @NotNull NeoDao dao, @NotNull Taskling model) {
+    public RePublishSliceTaskAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model) {
         super(em, dao, model);
     }
 

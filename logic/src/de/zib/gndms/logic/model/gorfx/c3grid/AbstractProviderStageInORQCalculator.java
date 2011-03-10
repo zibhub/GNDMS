@@ -31,7 +31,8 @@ import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
  * User: bzcjorra Date: Sep 5, 2008 4:12:20 PM
  *
  */
-public abstract class AbstractProviderStageInORQCalculator extends AbstractORQCalculator<ProviderStageInORQ, AbstractProviderStageInORQCalculator> {
+public abstract class AbstractProviderStageInORQCalculator
+        extends AbstractORQCalculator<ProviderStageInORQ, AbstractProviderStageInORQCalculator> {
     public AbstractProviderStageInORQCalculator() {
         super( );
         super.setORQModelClass( ProviderStageInORQ.class );

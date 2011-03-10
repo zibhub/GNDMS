@@ -36,9 +36,9 @@ import de.zib.gndms.gritserv.typecon.types.FileTransferResultXSDTypeWriter;
 import de.zib.gndms.gritserv.typecon.types.ProviderStageInResultXSDTypeWriter;
 import de.zib.gndms.gritserv.typecon.types.*;
 import de.zib.gndms.gritserv.typecon.types.SliceStageInResultXSDTypeWriter;
-import de.zib.gndms.neomodel.common.NeoDao;
-import de.zib.gndms.neomodel.common.NeoSession;
-import de.zib.gndms.neomodel.gorfx.NeoTask;
+import de.zib.gndms.neomodel.common.Dao;
+import de.zib.gndms.neomodel.common.Session;
+import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.apache.commons.logging.Log;
 import org.apache.log4j.Logger;
@@ -79,9 +79,9 @@ public class TaskResource extends TaskResourceBase
      */
     public void executeTask() {
         Taskling ling = (Taskling) (Object) taskAction.getModel( );
-        NeoSession session = home.getDao().beginSession();
+        Session session = home.getDao().beginSession();
         try {
-            final NeoTask tsk = ling.getTask(session);
+            final Task tsk = ling.getTask(session);
             if (! tsk.isDone() )
                 future = home.getSystem( ).submitAction( taskAction, getResourceHome().getLog() );
             else
@@ -93,7 +93,7 @@ public class TaskResource extends TaskResourceBase
 
 
     public TaskExecutionState getTaskExecutionState() {
-        NeoSession session = home.getDao().beginSession();
+        Session session = home.getDao().beginSession();
         try {
             TaskExecutionState stateOfTask =
                     GORFXTools.getStateOfTask(((Taskling) (Object) taskAction.getModel()).getTask(session));
@@ -105,10 +105,10 @@ public class TaskResource extends TaskResourceBase
 
 
     public TaskExecutionFailure getTaskExecutionFailure() {
-        NeoSession session = home.getDao().beginSession();
+        Session session = home.getDao().beginSession();
         try {
             TaskExecutionFailure fail = new TaskExecutionFailure( );
-            NeoTask task = ((Taskling) (Object) taskAction.getModel()).getTask(session);
+            Task task = ((Taskling) (Object) taskAction.getModel()).getTask(session);
             if( task.getTaskState().equals( TaskState.FAILED ) ) {
                 Serializable payload = task.getPayload();
                 if( payload != null )
@@ -252,12 +252,12 @@ public class TaskResource extends TaskResourceBase
         if( taskAction != null )
             throw new ResourceException( "task action already loaded" );
 
-        NeoDao dao = home.getDao();
-        NeoSession session = dao.beginSession();
+        Dao dao = home.getDao();
+        Session session = dao.beginSession();
         Taskling tsk;
         byte[] bcred;
         try {
-            NeoTask task = session.findTask(id);
+            Task task = session.findTask(id);
             tsk = task.getTaskling();
             bcred = task.getSerializedCredential();
             session.success();
@@ -295,10 +295,10 @@ public class TaskResource extends TaskResourceBase
 
 
     public void loadFromModel( @NotNull Taskling model ) throws ResourceException {
-        NeoDao dao = home.getDao();
-        NeoSession session = dao.beginSession();
+        Dao dao = home.getDao();
+        Session session = dao.beginSession();
         try {
-            NeoTask task = model.getTask(session);
+            Task task = model.getTask(session);
             // Not required here cause we override the getters.
             // getter overriding isn't enough
             setTaskExecutionState( getTaskExecutionState() );

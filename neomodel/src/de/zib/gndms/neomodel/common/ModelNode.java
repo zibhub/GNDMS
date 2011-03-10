@@ -29,14 +29,14 @@ import org.neo4j.graphdb.index.Index;
  *
  * User: stepn Date: 05.09.2008 Time: 14:48:36
  */
-public class ModelNode extends ModelGraphElement<Node> {
+public class ModelNode extends ModelElement<Node> {
     public static final String TYPE_INDEX_IDX = INDEX_SEPARATOR + TYPE_P;
 
-    protected ModelNode(@NotNull NeoReprSession session, @NotNull String typeNick, @NotNull Node underlying) {
+    protected ModelNode(@NotNull ReprSession session, @NotNull String typeNick, @NotNull Node underlying) {
         super(session, typeNick, underlying);
     }
 
-    public void onCreate(NeoReprSession reprSession) {
+    public void onCreate(ReprSession reprSession) {
         assert reprSession() == reprSession;
         final Index<Node> index = repr().getGraphDatabase().index().forNodes(TYPE_INDEX_IDX);
         index.add(repr(), session().getGridName(), getTypeNick());

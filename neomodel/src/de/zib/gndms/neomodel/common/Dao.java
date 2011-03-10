@@ -16,31 +16,31 @@ package de.zib.gndms.neomodel.common;
  * limitations under the License.
  */
 
-import de.zib.gndms.neomodel.gorfx.NeoOfferType;
-import de.zib.gndms.neomodel.gorfx.NeoTask;
+import de.zib.gndms.neomodel.gorfx.Task;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.neo4j.graphdb.GraphDatabaseService;
 
+import java.util.Map;
+
 /**
- * NeoDao
+ * Dao
  *
  * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
  * User: stepn Date: 05.09.2008 Time: 14:48:36
  */
-public class NeoDao {
+public class Dao {
     @NotNull private GraphDatabaseService gdb;
     @NotNull private String gridName;
 
-    public NeoDao(@NotNull String gridName, @NotNull GraphDatabaseService gdb) {
+    public Dao(@NotNull String gridName, @NotNull GraphDatabaseService gdb) {
         this.gridName = gridName;
         this.gdb      = gdb;
     }
 
-    public NeoSession beginSession() {
-        return new NeoSession(this, gridName, gdb);
+    public Session beginSession() {
+        return new Session(this, gridName, gdb);
     }
 
     @NotNull
@@ -49,9 +49,9 @@ public class NeoDao {
     }
 
     public void createTask(final String id) {
-        final NeoSession session = beginSession();
+        final Session session = beginSession();
         try {
-            final NeoTask task = session.createTask();
+            final Task task = session.createTask();
             task.setId(id);
             session.success();
         }
@@ -61,10 +61,40 @@ public class NeoDao {
     }
 
     public void removeAltTaskState(final String taskId) {
-        final NeoSession session = beginSession();
+        final Session session = beginSession();
         try {
             session.findTask(taskId).setAltTaskState(null);
             session.finish();
+        }
+        finally { session.success(); }
+    }
+
+    public Map<String, String> getOfferTypeConfig(String key) {
+        final Session session = beginSession();
+        try {
+            final Map<String, String> ret = session.findOfferType(key).getConfigMapData();
+            session.finish();
+            return ret;
+        }
+        finally { session.success(); }
+    }
+
+    public String getOfferTypeCalculatorFactoryClassName(String key) {
+        final Session session = beginSession();
+        try {
+            final String ret = session.findOfferType(key).getCalculatorFactoryClassName();
+            session.finish();
+            return ret;
+        }
+        finally { session.success(); }
+    }
+
+    public String getOfferTypeTaskActionFactoryClassName(String key) {
+        final Session session = beginSession();
+        try {
+            final String ret = session.findOfferType(key).getTaskActionFactoryClassName();
+            session.finish();
+            return ret;
         }
         finally { session.success(); }
     }

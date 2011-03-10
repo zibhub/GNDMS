@@ -21,7 +21,8 @@ package de.zib.gndms.logic.model.gorfx.c3grid;
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
 import de.zib.gndms.model.common.types.factory.InjectingRecursiveKeyFactory;
-import de.zib.gndms.model.gorfx.OfferType;
+import de.zib.gndms.neomodel.common.Dao;
+import de.zib.gndms.neomodel.gorfx.OfferType;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -34,13 +35,15 @@ import org.jetbrains.annotations.NotNull;
  *          User: stepn Date: 08.10.2008 Time: 13:54:07
  */
 public class ProviderStageInORQFactory
-	  extends InjectingRecursiveKeyFactory<OfferType, AbstractORQCalculator<?,?>> {
+	  extends InjectingRecursiveKeyFactory<String, AbstractORQCalculator<?,?>> {
+
+    private Dao dao;
 
     @Override
     @NotNull
-    public AbstractProviderStageInORQCalculator newInstance(@NotNull final OfferType keyParam)
+    public AbstractProviderStageInORQCalculator newInstance(@NotNull final String offerType)
             throws IllegalAccessException, InstantiationException, ClassNotFoundException {
-        final @NotNull MapConfig config = new MapConfig(keyParam.getConfigMap());
+        final @NotNull MapConfig config = new MapConfig(getDao().getOfferTypeConfig(offerType));
 	    final Class<? extends AbstractProviderStageInORQCalculator> orqCalculatorClass =
 		      config.getClassOption(
 				    AbstractProviderStageInORQCalculator.class, "estimationClass",
@@ -50,5 +53,11 @@ public class ProviderStageInORQFactory
 	    return instance;
     }
 
+    public Dao getDao() {
+        return dao;
+    }
 
+    public void setDao(Dao dao) {
+        this.dao = dao;
+    }
 }

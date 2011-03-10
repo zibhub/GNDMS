@@ -18,7 +18,7 @@ package de.zib.gndms.logic.model;
 
 
 
-import de.zib.gndms.neomodel.common.NeoDao;
+import de.zib.gndms.neomodel.common.Dao;
 import org.apache.commons.logging.Log;
 import org.jetbrains.annotations.NotNull;
 
@@ -74,7 +74,7 @@ public interface TaskExecutionService {
      * @see {@link #submitAction(javax.persistence.EntityManager, EntityAction, org.apache.commons.logging.Log)}
      */
     public @NotNull <R> Future<R> submitDaoAction(final @NotNull EntityManager em,
-                                                  final @NotNull NeoDao dao,
+                                                  final @NotNull Dao dao,
                                                   final @NotNull ModelDaoAction<?, R> action,
                                                   final @NotNull Log log);
 
