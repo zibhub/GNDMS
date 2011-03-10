@@ -30,6 +30,9 @@ import de.zib.gndms.gritserv.typecon.types.ProviderStageInORQXSDTypeWriter;
 import de.zib.gndms.gritserv.typecon.types.SliceRefXSDReader;
 import de.zib.gndms.gritserv.typecon.types.ContextXSDTypeWriter;
 import de.zib.gndms.gritserv.typecon.types.ContractXSDTypeWriter;
+import de.zib.gndms.model.gorfx.types.TaskState;
+import de.zib.gndms.neomodel.common.NeoSession;
+import de.zib.gndms.neomodel.gorfx.NeoTask;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.jetbrains.annotations.NotNull;
 import types.*;
@@ -59,62 +62,58 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
 
     @Override
     @NotNull
-    protected Class<SliceStageInORQ> getOrqClass() {
+    public Class<SliceStageInORQ> getOrqClass() {
         return SliceStageInORQ.class;
     }
 
 
-    @SuppressWarnings( { "ThrowableInstanceNeverThrown" } )
     @Override
-    protected void onInProgress( @NotNull AbstractTask model ) {
-
+    protected void onInProgress(@NotNull String wid, @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) throws Exception {
+        EndpointReferenceType epr;
+        final NeoSession session = getDao().beginSession();
         try {
-            EndpointReferenceType epr;
-            if( model.getData( ) == null ) {
-                String uri = ( (SliceStageInORQ) model.getOrq()).getActGridSiteURI();
+            final NeoTask model = getTask(session);
+
+            if( model.getPayload( ) == null ) {
+                SliceStageInORQ orq = (SliceStageInORQ) getORQ();
+                String uri = orq.getActGridSiteURI();
                 if( uri == null )
-                    fail ( new RuntimeException( "GORFX uri is null" ) );
+                    throw new RuntimeException( "GORFX uri is null" );
                 else {
-                    ProviderStageInORQT p_orq = ProviderStageInORQXSDTypeWriter.write( getOrq() );
-                    ContextT ctx = ContextXSDTypeWriter.writeContext( getOrq().getActContext() );
+                    ProviderStageInORQT p_orq = ProviderStageInORQXSDTypeWriter.write( orq);
+                    ContextT ctx = ContextXSDTypeWriter.writeContext( orq.getActContext() );
                     OfferExecutionContractT con = ContractXSDTypeWriter.write( model.getContract().toTransientContract() );
-                    
+
                     epr = GORFXClientUtils.commonTaskPreparation( uri, p_orq, ctx, con  );
-                    model.setData( epr );
-     //               transitToState( TaskState.IN_PROGRESS );
+                    transitWithPayload( epr, TaskState.IN_PROGRESS );
+                    session.success();
+                    return;
                 }
             }
+            else {
+                epr = (EndpointReferenceType) model.getPayload( );
 
-            epr = (EndpointReferenceType) model.getData( );
+                TaskClient cnt = new TaskClient( epr );
+                trace( "Starting remote staging.", null );
+                boolean finished = GORFXClientUtils.waitForFinish( cnt, 1000 );
 
-            TaskClient cnt = new TaskClient( epr );
-            trace( "Starting remote staging.", null );
-            boolean finished = GORFXClientUtils.waitForFinish( cnt, 1000 );
-
-            if (finished) {
-                trace( "Remote staging finished.", null );
-                ProviderStageInResultT res =  cnt.getExecutionResult( ProviderStageInResultT.class );
-                SliceReference sk = (SliceReference) res.get_any()[0].getObjectValue( SliceReference.class );
-                SliceRef sr = SliceRefXSDReader.read( sk );
-                trace( "Remote staging finished. SliceId: " + sr.getResourceKeyValue() + "@"  + sr.getGridSiteId() , null );
-                finish( new SliceStageInResult( sr ) );
-            } else {
-                TaskExecutionFailure f = cnt.getExecutionFailure();
-                trace( "Remote staging failed with: \n"
-                    +  GORFXClientUtils.taskExecutionFailureToString( f ), null );
-                failFrom( new RuntimeException( f.toString() ) );
+                if (finished) {
+                    trace( "Remote staging finished.", null );
+                    ProviderStageInResultT res =  cnt.getExecutionResult( ProviderStageInResultT.class );
+                    SliceReference sk = (SliceReference) res.get_any()[0].getObjectValue( SliceReference.class );
+                    SliceRef sr = SliceRefXSDReader.read( sk );
+                    trace( "Remote staging finished. SliceId: " + sr.getResourceKeyValue() + "@"  + sr.getGridSiteId() , null );
+                    transitWithPayload(new SliceStageInResult(sr), TaskState.FINISHED);
+                    return;
+                } else {
+                    TaskExecutionFailure f = cnt.getExecutionFailure();
+                    trace( "Remote staging failed with: \n"
+                        +  GORFXClientUtils.taskExecutionFailureToString( f ), null );
+                    throw new RuntimeException( f.toString() );
+                }
             }
-        } catch( RuntimeException e ) {
-            honorOngoingTransit( e );
-            boxException( e );
-        } catch ( Exception e ) {
-            boxException( e );
         }
-    }
-
-
-    @SuppressWarnings( { "ThrowableInstanceNeverThrown" } )
-    private void boxException( Exception e ) {
-        failFrom( new RuntimeException( e.getMessage(), e ) );
+        finally { session.success(); }
+        super.onInProgress(wid, state, isRestartedTask, altTaskState);
     }
 }
