@@ -69,7 +69,7 @@ public class GORFXServiceImpl implements GORFXService {
 
     @PostConstruct
     public void init( ) {
-        taskFlowClient = new TaskFlowClient( baseUrl );
+        taskFlowClient.setServiceURL( baseUrl );
         uriFactory = new UriFactory( baseUrl );
     }
 
@@ -193,6 +193,10 @@ public class GORFXServiceImpl implements GORFXService {
 
     @RequestMapping( value = "/taskflows/", method = RequestMethod.GET )
     public ResponseEntity<List<String>> listTaskFlows( @RequestHeader( "DN" ) String dn ) {
+
+        if( taskFlowProvider == null )
+            throw new IllegalStateException( "provider is null" );
+
         GNDMSResponseHeader responseHeaders = new GNDMSResponseHeader();
         responseHeaders.setResourceURL( baseUrl + "/gorfx/" );
         responseHeaders.setFacetURL( gorfxFacets.findFacet( "taskflows" ).getUrl() );
@@ -203,7 +207,7 @@ public class GORFXServiceImpl implements GORFXService {
     }
 
 
-    @RequestMapping( value = "/taskflows/_{type}", method = RequestMethod.GET )
+    @RequestMapping( value = "/_{type}", method = RequestMethod.GET )
     public ResponseEntity<TaskFlowInfo> getTaskFlowInfo( @PathVariable String type, @RequestHeader( "DN" ) String dn ) {
 
         GNDMSResponseHeader headers = new GNDMSResponseHeader(
@@ -219,8 +223,8 @@ public class GORFXServiceImpl implements GORFXService {
     }
 
 
-    @RequestMapping( value = "/taskflows/_{type}", method = RequestMethod.POST )
-    public ResponseEntity<Specifier<Facets>> createTaskFlow( @PathVariable String type, AbstractTF order,
+    @RequestMapping( value = "/_{type}", method = RequestMethod.POST )
+    public ResponseEntity<Specifier<Facets>> createTaskFlow( @PathVariable String type, @RequestBody AbstractTF order,
                                                   @RequestHeader( "DN" ) String dn,
                                                   @RequestHeader( "WId" ) String wid ) {
 
@@ -241,7 +245,7 @@ public class GORFXServiceImpl implements GORFXService {
         ResponseEntity<Facets> re = taskFlowClient.getFacets( type, tf.getId(), dn );
         spec.setPayload( re.getBody() );
 
-        return new ResponseEntity<Specifier<Facets>>( spec, headers, HttpStatus.OK );
+        return new ResponseEntity<Specifier<Facets>>( spec, headers, HttpStatus.CREATED );
     }
 
 
@@ -278,7 +282,14 @@ public class GORFXServiceImpl implements GORFXService {
 
     @Autowired
     public void setTaskFlowProvider( TaskFlowProvider taskFlowProvider ) {
+        logger.debug( "Taskflow provider injected: " + taskFlowProvider.getClass().getName() );
         this.taskFlowProvider = taskFlowProvider;
+    }
+
+
+    @Autowired
+    public void setTaskFlowClient( TaskFlowClient taskFlowClient ) {
+        this.taskFlowClient = taskFlowClient;
     }
 }
 

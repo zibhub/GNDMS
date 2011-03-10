@@ -16,6 +16,9 @@ package de.zib.gndms.gndmc;
  * limitations under the License.
  */
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -31,14 +34,20 @@ import de.zib.gndms.rest.GNDMSResponseHeader;
  */
 public abstract class AbstractClient {
 
+    // le logger
+    protected Logger logger = LoggerFactory.getLogger( this.getClass() );
+
+
 	/**
 	 * A rest template for internal use.
 	 */
-	protected RestTemplate restTemplate;
+	private RestTemplate restTemplate;
+
+
 	/**
 	 * The service url like <code>http://www.barz.org/gndms/<gridname></code>.
 	 */
-	protected String serviceURL;
+	private String serviceURL;
 
 
     protected AbstractClient() {
@@ -103,6 +112,7 @@ public abstract class AbstractClient {
 		return restTemplate;
 	}
 
+    @Autowired
 	public void setRestTemplate(RestTemplate restTemplate) {
 		this.restTemplate = restTemplate;
 	}

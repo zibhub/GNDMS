@@ -297,10 +297,13 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                     t.setModel( tf.getOrder() );
                     TaskAction ta = tff.createAction( t );
                     executorService.submit( ta );
+                    ResponseEntity<Specifier<Facets>> res = getTask( type, id, dn, wid );
+                    if( HttpStatus.OK.equals( res.getStatusCode() ) )
+                        return new ResponseEntity<Specifier<Facets>>( res.getBody(), res.getHeaders(), HttpStatus.CREATED );
                 }
             }
         }
-        return null;
+        return new ResponseEntity<Specifier<Facets>>( null, getHeader( type, id, "task", dn, wid), hs );
     }
 
 
@@ -342,7 +345,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
             spec = createTaskSpecifier( TaskResult.class, type, id, "result" );
 
             ResponseEntity<TaskResult> res = taskClient.getResult( spec.getUrlMap().get( "taskId" ), dn, wid );
-            if ( res.getStatusCode() == HttpStatus.OK ) {
+            if ( HttpStatus.OK.equals( res.getStatusCode() ) ) {
                 spec.setPayload( res.getBody() );
                 hs = HttpStatus.OK;
             } else spec = null;
@@ -438,5 +441,11 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
     public void setServiceUrl( String serviceUrl ) {
         this.serviceUrl = serviceUrl;
+    }
+
+
+    @Autowired
+    public void setTaskFlowProvider( TaskFlowProvider taskFlowProvider ) {
+        this.taskFlowProvider = taskFlowProvider;
     }
 }

@@ -88,7 +88,7 @@ public class GORFXClientMain extends AbstractApplication {
 		// set dft attributes
 		dft.setMessage("Test task flow");
 		dft.setFailIntentionally(false);
-		executeTaskFlow(gorfxClient, "test", dft);
+		executeTaskFlow(gorfxClient, dft.getTaskFlowType(), dft);
 	}
 
 	private void executeTaskFlow(FullGORFXClient gorfxClient, String type, AbstractTF order) {
@@ -109,7 +109,7 @@ public class GORFXClientMain extends AbstractApplication {
 			System.out.println("Taskflow type " + type + " not found");
 			return;
 		}
-		System.out.println("Taskflow type " + type + "exists");
+		System.out.println("Taskflow type " + type + " exists");
 
 		System.out.println("Step 3: creating task flow");
 		ResponseEntity<Specifier<Facets>> res2 = gorfxClient.createTaskFlow( type, order, dn, wid );
@@ -117,7 +117,6 @@ public class GORFXClientMain extends AbstractApplication {
 		// optionally: change order, select quote?
 		
 		// define with res2.getBody().getUrlMap() ??
-		String wid = null;
 		String id = null;
 		getTaskFlowStatus(id, type, wid);
 
