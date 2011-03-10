@@ -20,10 +20,13 @@ package de.zib.gndms.GORFX.action;
 
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.logic.model.gorfx.FileTransferTaskAction;
+import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import de.zib.gndms.model.gorfx.types.InterSliceTransferORQ;
 import de.zib.gndms.model.gorfx.types.TaskState;
-import de.zib.gndms.model.gorfx.AbstractTask;
-import de.zib.gndms.model.gorfx.SubTask;
+import de.zib.gndms.neomodel.common.NeoDao;
+import de.zib.gndms.neomodel.common.NeoSession;
+import de.zib.gndms.neomodel.gorfx.NeoTask;
+import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -40,61 +43,48 @@ public class InterSliceTransferTaskAction extends ORQTaskAction<InterSliceTransf
     public InterSliceTransferTaskAction() {
     }
 
-
-    public InterSliceTransferTaskAction( @NotNull EntityManager em, @NotNull AbstractTask model ) {
-        super( em, model );
+    public InterSliceTransferTaskAction(@NotNull EntityManager em, @NotNull NeoDao dao, @NotNull Taskling model) {
+        super(em, dao, model);
     }
 
+    @Override
+    protected void onInProgress(@NotNull String wid, @NotNull TaskState state,
+                                boolean isRestartedTask, boolean altTaskState) throws Exception {
 
-    public InterSliceTransferTaskAction( @NotNull EntityManager em, @NotNull String pk ) {
-        super( em, pk );
-    }
-
-
-    @SuppressWarnings( { "ThrowableInstanceNeverThrown" } )
-    protected void onInProgress( @NotNull AbstractTask model ) {
-
+        final NeoSession session = getDao().beginSession();
         try {
-            InterSliceTransferORQCalculator.checkURIs( getOrq( ) );
-        } catch ( Exception e ) {
-            fail( new RuntimeException( e.getMessage( ), e ) );
-        }
+            final NeoTask task = getTask(session);
+            InterSliceTransferORQ orq = (InterSliceTransferORQ) task.getORQ();
+            InterSliceTransferORQCalculator.checkURIs( orq );
 
-        SubTask st = new SubTask( model );
-        try {
+
+            final NeoTask st = task.createSubTask();
 	        final EntityManager em = getEmf().createEntityManager();
-
             st.setId( getUUIDGen().nextUUID() );
-            st.fromTask( em, model );
-            st.setTerminationTime( model.getTerminationTime() );
 
-	        FileTransferTaskAction fta = new FileTransferTaskAction(em, st );
+            st.setTerminationTime( task.getTerminationTime() );
+
+	        FileTransferTaskAction fta = new FileTransferTaskAction(em, getDao(), new Taskling(getDao(), st.getId()));
             fta.setClosingEntityManagerOnCleanup( true );
 
             fta.setLog( getLog() );
             fta.call( );
-            if( st.getState().equals( TaskState.FINISHED ) )
-                finish( st.getData( ) );
+            if( st.getTaskState().equals( TaskState.FINISHED ) ){
+                task.setPayload( st.getPayload() );
+                task.setTaskState(TaskState.FINISHED);
+                if (altTaskState)
+                    task.setAltTaskState(null);
+            }
             else
-                failFrom( (RuntimeException) st.getData() );
-
-        } catch ( RuntimeException e ) {
-            honorOngoingTransit( e );
-        } catch ( Exception e ) {
-            /*
-            if( isFinishedException( e ) )
-                finish( st.getData( ) );
-            else if( isFailedTransition( e ) )
-                fail( (RuntimeException) st.getData() );
-            else
-            */
-            failFrom( e );
+                throw (RuntimeException) st.getPayload();
+            session.finish();
         }
+        finally { session.success(); }
     }
 
 
     @NotNull
-    protected Class<InterSliceTransferORQ> getOrqClass() {
+    public Class<InterSliceTransferORQ> getOrqClass() {
         return InterSliceTransferORQ.class;
     }
 }

@@ -64,26 +64,6 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
      * Used for logging during task execution
      */
     private Log log;
-
-<<<<<<< HEAD
-    /***
-     * Workflow id
-=======
-    /**
-     * A TransitException is used to store a new desired {@code TaskState}, the model (an AbstractTask) shall use.
-     * Its state can be changed using {@link AbstractTask#transit(TaskState)}.
-     * Note that there is a predefined order in which state a TaskState can be changed.
-     *
-     * There a some special subclasses used to stop an AbstractTask in special situations.
-     *
-     * To stop an AbstractTask use the subclass {@link StopException}.
-     * If the model has finished its computation, throw a {@link FinishedException}
-     * If something went wrong, throw a {@link FailedException}
-     *
-     * @see TaskState
-     * @see AbstractTask
->>>>>>> master
-     */
     private String wid;
 
     /**
