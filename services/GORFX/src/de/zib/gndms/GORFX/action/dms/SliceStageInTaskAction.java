@@ -32,9 +32,11 @@ import de.zib.gndms.gritserv.typecon.types.ProviderStageInORQXSDTypeWriter;
 import de.zib.gndms.gritserv.typecon.types.SliceRefXSDReader;
 import de.zib.gndms.gritserv.typecon.types.ContextXSDTypeWriter;
 import de.zib.gndms.gritserv.typecon.types.ContractXSDTypeWriter;
-
 import de.zib.gndms.stuff.threading.Forkable;
 import org.apache.axis.AxisFault;
+import de.zib.gndms.model.gorfx.types.TaskState;
+import de.zib.gndms.neomodel.common.NeoSession;
+import de.zib.gndms.neomodel.gorfx.NeoTask;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.globus.gsi.GlobusCredential;
 import org.jetbrains.annotations.NotNull;
@@ -72,25 +74,28 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
 
     @Override
     @NotNull
-    protected Class<SliceStageInORQ> getOrqClass() {
+    public Class<SliceStageInORQ> getOrqClass() {
         return SliceStageInORQ.class;
     }
 
 
-    @SuppressWarnings( { "ThrowableInstanceNeverThrown" } )
     @Override
-    protected void onInProgress( @NotNull AbstractTask model ) {
+    protected void onInProgress(@NotNull String wid, @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) throws Exception {
 
         EndpointReferenceType taskEPR = null;
+        final NeoSession session = getDao().beginSession();
         try {
             GlobusCredential gc = GlobusCredentialProvider.class.cast( getCredentialProvider() ).getCredential();
-            if( model.getData( ) == null ) {
-                String uri = ( (SliceStageInORQ) model.getOrq()).getActGridSiteURI();
+            final NeoTask model = getTask(session);
+
+            if( model.getPayload( ) == null ) {
+                SliceStageInORQ orq = (SliceStageInORQ) getORQ();
+                String uri = orq.getActGridSiteURI();
                 if( uri == null )
-                    fail ( new RuntimeException( "GORFX uri is null" ) );
+                    throw new RuntimeException( "GORFX uri is null" );
                 else {
-                    ProviderStageInORQT p_orq = ProviderStageInORQXSDTypeWriter.write( getOrq() );
-                    ContextT ctx = ContextXSDTypeWriter.writeContext( getOrq().getActContext() );
+                    ProviderStageInORQT p_orq = ProviderStageInORQXSDTypeWriter.write( orq );
+                    ContextT ctx = ContextXSDTypeWriter.writeContext( orq.getActContext() );
                     OfferExecutionContractT con = ContractXSDTypeWriter.write( model.getContract().toTransientContract() );
 
                     try {
@@ -103,10 +108,11 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
                             msg += "No info available";
                         }
                         getLog( ).debug( msg );
+						// todo check transitToFail
                         fail( new IllegalStateException( msg ) );
                     }
-                    model.setData( taskEPR );
-     //               transitToState( TaskState.IN_PROGRESS );
+                    model.setPayload( taskEPR );
+ 					// transitWithPayload( epr, TaskState.IN_PROGRESS );
                 }
             }
 
@@ -146,7 +152,8 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
                 trace( "Remote staging finished. SliceId: " + sr.getResourceKeyValue() + "@"  + sr.getGridSiteId() , null );
                 taskClient.destroy( );
                 taskClient = null;
-                finish( new SliceStageInResult( sr ) );
+                transitWithPayload(new SliceStageInResult(sr), TaskState.FINISHED);
+				return;
             } else {
                 TaskExecutionFailure f = taskClient.getExecutionFailure();
                 try{
@@ -157,18 +164,16 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
                 taskClient = null;
                 String failure = GORFXClientUtils.taskExecutionFailureToString( f );
                 trace( "Remote staging failed with: \n"
-                    + failure , null );
-                fail( new RuntimeException( failure ) );
+                    +  GORFXClientUtils.taskExecutionFailureToString( f ), null );
+                throw new RuntimeException( f.toString() );
             }
-        } catch( RuntimeException e ) {
-            honorOngoingTransit( e );
-            fail( e );
-        } catch ( Exception e ) {
-            boxException( e );
-        }
+        } 
+		finally { session.success(); }
+    	super.onInProgress(wid, state, isRestartedTask, altTaskState);
     }
 
 
+	// todo check if this is still called
     @Override
     public void cleanUpOnFail( @NotNull AbstractTask model ) {
         super.cleanUpOnFail( model );
@@ -179,11 +184,5 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
             } catch ( RemoteException e ) {
                 getLog( ).warn( "Exception on cleanup", e );
             }
-    }
-
-
-    @SuppressWarnings( { "ThrowableInstanceNeverThrown" } )
-    private void boxException( Exception e ) {
-        failFrom( e );
     }
 }
