@@ -1,4 +1,4 @@
-package de.zib.gndms.infra.configlet;
+package de.zib.gndms.logic.model.dspace;
 
 /*
  * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
@@ -21,7 +21,7 @@ package de.zib.gndms.infra.configlet;
 /**
  * ScriptKind
  *
- * @see de.zib.gndms.infra.configlet.ChownSliceConfiglet
+ * @see de.zib.gndms.logic.model.dspace.ChownSliceConfiglet
  *
  * @author  try ste fan pla nti kow zib
 */

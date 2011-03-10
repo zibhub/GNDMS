@@ -1,7 +1,7 @@
 package de.zib.gndms.kit.network;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -93,7 +93,7 @@ public class GridFTPClientCreator implements Callable<GridFTPClient>  {
             log.debug( "successful validated" );
         } finally {
             if( d == false ) {
-                log.debug( "validaton failed, discarding client" );
+                log.debug( "validation failed, discarding client" );
                 cnt.close();
                 log.debug( "done" ); 
             }

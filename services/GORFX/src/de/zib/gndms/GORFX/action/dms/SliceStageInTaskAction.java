@@ -1,7 +1,7 @@
 package de.zib.gndms.GORFX.action.dms;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package de.zib.gndms.GORFX.action.dms;
 
 
 import de.zib.gndms.GORFX.context.client.TaskClient;
+import de.zib.gndms.gritserv.util.GlobusCredentialProvider;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.system.SystemHolder;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
@@ -34,6 +35,7 @@ import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.NeoSession;
 import de.zib.gndms.neomodel.gorfx.NeoTask;
 import org.apache.axis.message.addressing.EndpointReferenceType;
+import org.globus.gsi.GlobusCredential;
 import org.jetbrains.annotations.NotNull;
 import types.*;
 
@@ -70,6 +72,7 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
     @Override
     protected void onInProgress(@NotNull String wid, @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) throws Exception {
         EndpointReferenceType epr;
+        GlobusCredential gc = GlobusCredentialProvider.class.cast(getCredentialProvider()).getCredential();
         final NeoSession session = getDao().beginSession();
         try {
             final NeoTask model = getTask(session);
@@ -83,11 +86,13 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
                     ProviderStageInORQT p_orq = ProviderStageInORQXSDTypeWriter.write( orq);
                     ContextT ctx = ContextXSDTypeWriter.writeContext( orq.getActContext() );
                     OfferExecutionContractT con = ContractXSDTypeWriter.write( model.getContract().toTransientContract() );
-
-                    epr = GORFXClientUtils.commonTaskPreparation( uri, p_orq, ctx, con  );
-                    transitWithPayload( epr, TaskState.IN_PROGRESS );
-                    session.success();
-                    return;
+                    epr = GORFXClientUtils.commonTaskPreparation( uri, p_orq, ctx, con, gc );
+                    NeoTask task = getTask(session);
+                    task.setPayload(epr);
+                    task.setTaskState(TaskState.FINISHED);
+                    if (altTaskState)
+                        task.setAltTaskState(null);
+                    session.finish();
                 }
             }
             else {
@@ -103,8 +108,12 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
                     SliceReference sk = (SliceReference) res.get_any()[0].getObjectValue( SliceReference.class );
                     SliceRef sr = SliceRefXSDReader.read( sk );
                     trace( "Remote staging finished. SliceId: " + sr.getResourceKeyValue() + "@"  + sr.getGridSiteId() , null );
-                    transitWithPayload(new SliceStageInResult(sr), TaskState.FINISHED);
-                    return;
+                    NeoTask task = getTask(session);
+                    task.setPayload(new SliceStageInResult(sr));
+                    task.setTaskState(TaskState.FINISHED);
+                    if (altTaskState)
+                        task.setAltTaskState(null);
+                    session.finish();
                 } else {
                     TaskExecutionFailure f = cnt.getExecutionFailure();
                     trace( "Remote staging failed with: \n"
@@ -114,6 +123,5 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
             }
         }
         finally { session.success(); }
-        super.onInProgress(wid, state, isRestartedTask, altTaskState);
     }
 }

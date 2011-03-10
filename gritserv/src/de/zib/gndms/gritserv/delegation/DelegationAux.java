@@ -1,7 +1,7 @@
 package de.zib.gndms.gritserv.delegation;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,7 @@ import java.io.*;
 import java.rmi.RemoteException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * @author  try ma ik jo rr a zib
@@ -74,6 +75,13 @@ public class DelegationAux {
     }
     
 
+    /// @brief Creates a delegation proxy.
+    /// 
+    /// @param uri URI of the delegation service.
+    /// @param credential The user credential, of which the proxy
+    ///     delegation proxy should be created.
+    /// 
+    /// @return  The end-point of the delegation resource.
     public static EndpointReferenceType createProxy( String uri, GlobusCredential credential ) throws Exception {
 
         // acquire cert chain
@@ -99,7 +107,7 @@ public class DelegationAux {
 
         if( logger.isDebugEnabled() ) {
             int len = certs.length;
-            logger.debug( "Cerfiicate chain length: " + len );
+            logger.debug( "Certificate chain length: " + len );
             if( len > 0 )
                 logger.debug( "Chain head: " + certs[0] );
         }
@@ -112,6 +120,11 @@ public class DelegationAux {
     }
 
 
+    /// @brief Extracts the delegation epr from a context-type.
+    /// 
+    /// @param con The context
+    /// 
+    /// @return The delegation epr.
     public static EndpointReferenceType extractDelegationEPR( ContextT con ) throws Exception {
 
         ContextTEntry[] entries = con.getEntry();
@@ -150,7 +163,7 @@ public class DelegationAux {
         try {
             return new GlobusCredential( bo );
         } catch ( GlobusCredentialException e ) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();  
             throw new RuntimeException( e );
         }
     }
@@ -163,12 +176,20 @@ public class DelegationAux {
             cred.save( bo );
             return bo.toByteArray();
         } catch ( IOException e ) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace(); 
             throw new RuntimeException( e );
         }
     }
 
 
+    /// @brief Adds a delegation epr to a context-type.
+    /// 
+    /// A base64 encoder is used to normalize the epr.
+    ///
+    /// @param con The context-type object.
+    /// @param epr The delegation epr.
+    /// 
+    /// @return Nothing, the \c con argument serves as io-parameter.
     public static void addDelegationEPR( ContextT con, EndpointReferenceType epr ) throws IOException, SerializationException {
 
         ContextTEntry[] entries = con.getEntry();
@@ -183,18 +204,36 @@ public class DelegationAux {
 
         ContextTEntry ct = new ContextTEntry( );
 
+        ct.set_value( encodeDelegationEPR( epr ) );
+        ct.setKey( new Token( DELEGATION_EPR_KEY ) );
+        al.add( ct );
+
+        con.setEntry( al.toArray( new ContextTEntry[al.size()] ) );
+    }
+
+
+    /// @brief Adds a delegation epr to a hash map.
+    ///
+    /// A base64 encoder is used to normalize the epr.
+    ///
+    /// @param con The context-type object.
+    /// @param epr The delegation epr.
+    ///
+    /// @return Nothing, the \c con argument serves as io-parameter.
+    public static void addDelegationEPR( HashMap<String,String> con, EndpointReferenceType epr ) throws SerializationException, IOException {
+        con.put( DELEGATION_EPR_KEY, encodeDelegationEPR( epr ).toString() );
+    }
+
+
+    public static NormalizedString encodeDelegationEPR( EndpointReferenceType epr )  throws IOException, SerializationException {
+
         ByteArrayOutputStream bse = new ByteArrayOutputStream( );
         ObjectOutputStream oos = new ObjectOutputStream( bse );
         oos.writeObject( ObjectSerializer.toString( epr , QNAME ) );
 
         final Base64 b64   = new Base64(4000, new byte[] { }, true);
         final String uuepr = b64.encodeToString(bse.toByteArray());
-        logger.debug( "base64 encoded uepr: \"" + uuepr+ "\"" );
-        ct.set_value( new NormalizedString( uuepr ) );
-        ct.setKey( new Token( DELEGATION_EPR_KEY ) );
-        al.add( ct );
-
-        con.setEntry( al.toArray( new ContextTEntry[al.size()] ) );
+        return new NormalizedString( uuepr );
     }
 
 
@@ -215,12 +254,10 @@ public class DelegationAux {
     }
 
 
-    public static String inlineUUString( String s ) {
-        // remove all newlines
-        return s.replace( "\n", "" );
-    }
-
-
+    /// @brief Unregisters an delegate from the delegation service.
+    /// 
+    /// @param epr The epr of the delegate.
+    /// 
     public static void destroyDelegationEPR ( EndpointReferenceType epr ) throws ServiceException, RemoteException {
 
         WSResourceLifetimeServiceAddressingLocator ll = new WSResourceLifetimeServiceAddressingLocator();
@@ -228,4 +265,6 @@ public class DelegationAux {
         ImmediateResourceTermination term = ll.getImmediateResourceTerminationPort( epr );
         term.destroy( new Destroy() );
     }
+
+
 }

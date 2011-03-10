@@ -1,7 +1,7 @@
 package de.zib.gndms.kit.configlet;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,19 +78,16 @@ public abstract class RegularlyRunnableConfiglet extends RunnableConfiglet {
      */
     @Override
 	public void run_() {
-		try { Thread.sleep(initDelay); }
+		try { Thread.sleep(getInitDelay()); }
 		catch (InterruptedException e) { /* intentional */ }
 		while (! stop) {
-			threadRun_();
-			try { Thread.sleep(delay); }
+			threadRun();
+			try { Thread.sleep(getDelay()); }
 			catch (InterruptedException e) { /* intentional */ }
 		}
 
 	}
 
-	private synchronized void threadRun_() { threadRun(); }
-
-	
     /**
      *  This method is invoked by {@link RegularlyRunnableConfiglet#run_()}'s loop, will be executed concurrently  
      */

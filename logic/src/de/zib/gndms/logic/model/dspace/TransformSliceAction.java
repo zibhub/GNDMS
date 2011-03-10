@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model.dspace;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,6 +101,11 @@ public class TransformSliceAction extends AbstractModelEntityAction<Slice, Slice
     }
     
 
+    /**
+     * Executes the slice transformation.
+     *
+     * NOTE: Since this method uses DirectoryAux.copyDir the obeys the restriction of this method.
+     */
     @Override
     public Slice execute(@NotNull EntityManager em) {
 
@@ -115,7 +120,7 @@ public class TransformSliceAction extends AbstractModelEntityAction<Slice, Slice
             return null;
 
         // create an new slice of the given kind
-        Slice nsl = createSliceAction.call( );
+        Slice nsl = createSliceAction.execute( em );
         if ( nsl == null )
              throw new RuntimeException( "Can't create slice" );
 
@@ -145,6 +150,7 @@ public class TransformSliceAction extends AbstractModelEntityAction<Slice, Slice
                     );
         }
         */
+
         directoryAux.copyDir( nsl.getOwner(), src_pth, tgt_pth );
 
         // restore slice path settings

@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model.gorfx.c3grid;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,12 @@ package de.zib.gndms.logic.model.gorfx.c3grid;
 import de.zib.gndms.kit.config.ConfigProvider;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.config.MapConfig;
+import de.zib.gndms.kit.util.DirectoryAux;
+import de.zib.gndms.logic.action.ProcessBuilderAction;
+import de.zib.gndms.logic.model.dspace.ChownSliceConfiglet;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
 import de.zib.gndms.logic.model.dspace.DeleteSliceAction;
+import de.zib.gndms.logic.model.dspace.TransformSliceAction;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.common.PersistentContract;
@@ -40,6 +44,9 @@ import de.zib.gndms.neomodel.common.NeoSession;
 import de.zib.gndms.neomodel.gorfx.NeoTask;
 import de.zib.gndms.neomodel.gorfx.NeoTaskAccessor;
 import de.zib.gndms.neomodel.gorfx.Taskling;
+import de.zib.gndms.model.gorfx.types.ProviderStageInResult;
+import de.zib.gndms.model.util.TxFrame;
+import de.zib.gndms.stuff.Sleeper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -95,13 +102,69 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
         final Slice slice = findSlice();
         setSliceId(slice.getId());
         doStaging(getOfferTypeConfig(), getORQ(), slice);
+        changeSliceOwner( slice ) ;
         super.onInProgress(wid, state, isRestartedTask, altTaskState);
+    }
+
+    protected  void changeSliceOwner( Slice slice ) {
+
+        ChownSliceConfiglet csc = getConfigletProvider().getConfiglet( ChownSliceConfiglet.class, "sliceChown" );
+
+        if( csc == null )
+            throw new IllegalStateException( "chown configlet is null!");
+
+        final AbstractORQ orq = getORQ();
+        String dn = orq.getActContext().get( "DN" );
+        getLog().debug( "cso DN: "+ dn );
+        getLog().debug("changing owner of " + slice.getId() + " to " + orq.getLocalUser());
+        ProcessBuilderAction chownAct = csc.createChownSliceAction( orq.getLocalUser(),
+            slice.getSubspace().getPath() + File.separator + slice.getKind().getSliceDirectory(),
+            slice.getDirectoryId() );
+        chownAct.call();
+    }
+
+
+
+    protected void transformToResultSlice( Slice slice ) {
+
+        final EntityManager em = getEntityManager();
+        final TxFrame txf = new TxFrame(em);
+        try {
+            String slicekindKey = "http://www.c3grid.de/G2/SliceKind/Result";
+            SliceKind kind = getEntityManager().find(SliceKind.class, slicekindKey);
+
+            TransformSliceAction tsa =  new TransformSliceAction(
+                getUUIDGen().nextUUID(),
+                getORQ().getLocalUser(),
+                slice.getTerminationTime(),
+                kind,
+                slice.getSubspace(),
+                slice.getTotalStorageSize(),
+                getUUIDGen()
+            );
+
+            tsa.setParent( this );
+            tsa.setModel( slice );
+            tsa.initialize();
+            tsa.setClosingEntityManagerOnCleanup( false );
+            final Slice tgt_slice = tsa.execute( em );
+
+            setSliceId( tgt_slice.getId() );
+
+            DeleteSliceAction dsa = new DeleteSliceAction( slice );
+            dsa.setParent( this );
+            dsa.setClosingEntityManagerOnCleanup( false );
+            dsa.setModel( slice.getSubspace() );
+            dsa.execute( em );
+            txf.commit();
+        }
+        finally { txf.finish();  }
     }
 
 
     protected abstract void doStaging(
-            final MapConfig offerTypeConfigParam, final ProviderStageInORQ orqParam,
-            final Slice sliceParam);
+        final MapConfig offerTypeConfigParam, final ProviderStageInORQ orqParam,
+        final Slice sliceParam );
 
 
     private void createNewSlice() throws MandatoryOptionMissingException {
@@ -122,6 +185,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
             CreateSliceAction csa = new CreateSliceAction();
             csa.setParent(this);
             csa.setTerminationTime(getContract().getResultValidity());
+            // uid should be the id of hte container
             csa.setClosingEntityManagerOnCleanup(false);
             csa.setUUIDGen(getUUIDGen());
             csa.setId(getUUIDGen().nextUUID());

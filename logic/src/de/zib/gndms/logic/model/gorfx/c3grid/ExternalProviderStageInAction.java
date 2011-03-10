@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model.gorfx.c3grid;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,15 +73,16 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
 
         final StringBuilder outRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
         final StringBuilder errRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
+
         final ProcessBuilderAction action = parmAux.createPBAction(orqParam, null, actualPermissions() );
         action.setProcessBuilder(procBuilder);
         action.setOutputReceiver(outRecv);
         action.setErrorReceiver(errRecv);
+
         int result = action.call();
         switch (result) {
             case 0:
                 getLog().debug("Staging completed: " + outRecv.toString());
-                transitWithPayload(new ProviderStageInResult(sliceParam.getId()), TaskState.FINISHED);
                 /* unreachable: */
                 break;
             default:
