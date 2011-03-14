@@ -84,6 +84,10 @@
         <property name="restTemplate" ref="restTemplate" />
     </bean>
 
+    <bean id="taskClient" class="de.zib.gndms.gndmc.gorfx.TaskClient" >
+        <property name="restTemplate" ref="restTemplate" />
+    </bean>
+
     <import resource="classpath:/META-INF/gorfx-mockups.xml"/>
     <import resource="classpath:/META-INF/client-context.xml"/>
 

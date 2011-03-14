@@ -42,6 +42,7 @@ public class DummyTFAction extends AbstractTaskAction<DummyTF> {
         stat.setMaxProgress( getTask().getModel().getTimes() );
         stat.setProgress( 0 );
         stat.setStatus( TaskStatus.Status.WAITING );
+        getTask().setStatus( stat );
     }
 
 
@@ -52,7 +53,6 @@ public class DummyTFAction extends AbstractTaskAction<DummyTF> {
 
         StringBuffer sb = new StringBuffer();
         DummyTF tf = (DummyTF) getTask().getModel();
-        stat.setMaxProgress( tf.getTimes() );
         for( int i = 0; i < tf.getTimes(); ++i ) {
             sb.append( tf.getMessage() );
             sb.append( '\n' );
@@ -62,6 +62,7 @@ public class DummyTFAction extends AbstractTaskAction<DummyTF> {
                 throw new RuntimeException( "Halp -- I'm failing intentionally" );
             updateProgress( stat, i );
         }
+        getTask().setResult( new DummyTFResult( sb.toString() ) );
         updateStatus( stat,  TaskStatus.Status.FINISHED  );
     }
 

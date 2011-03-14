@@ -235,6 +235,7 @@ public class GORFXServiceImpl implements GORFXService {
             return new ResponseEntity<Specifier<Facets>>( null, headers, HttpStatus.NOT_FOUND );
 
         TaskFlow tf = taskFlowProvider.getFactoryForTaskFlow( type ).create();
+        tf.setOrder( order );
         Specifier<Facets> spec = new Specifier<Facets>();
         spec.addMapping( "id", tf.getId() );
         spec.addMapping( "type", type );

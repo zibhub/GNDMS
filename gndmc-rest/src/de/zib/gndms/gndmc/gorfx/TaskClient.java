@@ -16,10 +16,14 @@ package de.zib.gndms.gndmc.gorfx;
  */
 
 import de.zib.gndms.GORFX.service.TaskService;
+import de.zib.gndms.devel.NotYetImplementedException;
 import de.zib.gndms.gndmc.AbstractClient;
 import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.rest.Facets;
+import de.zib.gndms.rest.UriFactory;
 import org.springframework.http.ResponseEntity;
+
+import java.util.HashMap;
 
 /**
  * @author try ma ik jo rr a zib
@@ -28,56 +32,93 @@ import org.springframework.http.ResponseEntity;
  */
 public class TaskClient extends AbstractClient implements TaskService {
 
+   private UriFactory uriFactory;
+
+
     public TaskClient() {
     }
 
 
     public TaskClient( String serviceURL ) {
         super( serviceURL );
+        uriFactory = new UriFactory( serviceURL );
     }
 
 
     public ResponseEntity<TaskServiceInfo> getServiceInfo() {
-        return null;  // not required here
+        return unifiedGet( TaskServiceInfo.class,
+            uriFactory.taskServiceUri( new HashMap<String,String> () {{put( "service", "gorfx" );}} ), null );
     }
 
 
     public ResponseEntity<TaskServiceConfig> getServiceConfig( String dn ) {
-        return null;  // not required here
+        return unifiedGet( TaskServiceConfig.class,
+            uriFactory.taskServiceUri( new HashMap<String,String> () {{put( "service", "gorfx" );}} ), null );
     }
 
 
     public ResponseEntity<String> setServiceConfig( TaskServiceConfig cfg, String dn ) {
-        return null;  // not required here
+        throw new NotYetImplementedException();
     }
 
 
-    public ResponseEntity<Facets> getTaskFacets( String id, String dn ) {
-        return null;  // not required here
+    public ResponseEntity<Facets> getTaskFacets( final String id, String dn ) {
+        return unifiedGet( Facets.class,
+            uriFactory.taskUri( new HashMap<String, String>() {{
+                put( "service", "gorfx" );
+                put( "taskId", id );
+            }}, null ), dn );
     }
 
 
-    public ResponseEntity<Void> deleteTask( String id, String dn, String wid ) {
-        return null;  // not required here
+    public ResponseEntity<Void> deleteTask( final String id, String dn, String wid ) {
+        return unifiedDelete(
+            uriFactory.taskUri( new HashMap<String, String>() {{
+                put( "service", "gorfx" );
+                put( "taskId", id );
+            }}, null ), dn, wid );
     }
 
 
-    public ResponseEntity<TaskStatus> getStatus( String id, String dn, String wid ) {
-        return null;  // not required here
+    public ResponseEntity<TaskStatus> getStatus( final String id, String dn, String wid ) {
+        return unifiedGet( TaskStatus.class,
+            uriFactory.taskUri( new HashMap<String, String>() {{
+                put( "service", "gorfx" );
+                put( "taskId", id );
+            }}, "status" ), dn, wid );
     }
 
 
-    public ResponseEntity<Void> changeStatus( String id, TaskControl status, String dn, String wid ) {
-        return null;  // not required here
+    public ResponseEntity<Void> changeStatus( final String id, TaskControl status, String dn, String wid ) {
+        return unifiedPost( Void.class,
+            uriFactory.taskUri( new HashMap<String, String>() {{
+                put( "service", "gorfx" );
+                put( "taskId", id );
+            }}, "status" ), dn, wid );
     }
 
 
-    public ResponseEntity<TaskResult> getResult( String id, String dn, String wid ) {
-        return null;  // not required here
+    public ResponseEntity<TaskResult> getResult( final String id, String dn, String wid ) {
+        return unifiedGet( TaskResult.class,
+            uriFactory.taskUri( new HashMap<String,String> () {{
+                put( "service", "gorfx" );
+                put( "taskId", id );
+            }}, "result" ), dn, wid );
     }
 
 
-    public ResponseEntity<TaskFailure> getErrors( String id, String dn, String wid ) {
-        return null;  // not required here
+    public ResponseEntity<TaskFailure> getErrors( final String id, String dn, String wid ) {
+        return unifiedGet( TaskFailure.class,
+            uriFactory.taskUri( new HashMap<String,String> () {{
+                put( "service", "gorfx" );
+                put( "taskId", id );
+            }}, "errors" ), dn, wid );
+    }
+
+
+    @Override
+    public void setServiceURL( String serviceURL ) {
+        uriFactory = new UriFactory( serviceURL );
+        super.setServiceURL( serviceURL );
     }
 }

@@ -29,12 +29,12 @@ import java.util.List;
  * @date 14.02.11  16:56
  * @brief
  */
-public class DummyQuoteCalculator implements AbstractQuoteCalculator {
+public class DummyQuoteCalculator implements AbstractQuoteCalculator<DummyTF> {
 
     private DummyTF order;
 
-    public void setOrder( AbstractTF order ) {
-        this.order = DummyTF.class.cast( order );
+    public void setOrder( DummyTF order ) {
+        this.order = order;
     }
 
 

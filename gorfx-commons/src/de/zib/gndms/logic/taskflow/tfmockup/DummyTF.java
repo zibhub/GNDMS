@@ -89,4 +89,16 @@ public class DummyTF implements AbstractTF {
     public void setFailIntentionally( boolean failIntentionally ) {
         this.failIntentionally = failIntentionally;
     }
+
+
+    @Override
+    public String toString() {
+        return "DummyTF{" +
+            "justEstimate=" + justEstimate +
+            ", message='" + message + '\'' +
+            ", times=" + times +
+            ", delay=" + delay +
+            ", failIntentionally=" + failIntentionally +
+            '}';
+    }
 }

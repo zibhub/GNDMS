@@ -17,6 +17,7 @@ package de.zib.gndms.rest;
 
 import org.springframework.web.util.UriTemplate;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,12 +56,12 @@ public class UriFactory {
 
 
     public String taskFlowUri( Map<String, String> vars, String facet ) {
-        return taskFlowTemplate.expand( vars ).toString() + "/" +facet;
+        return addFacet ( taskFlowTemplate.expand( vars ), facet );
     }
 
 
     public String taskFlowTypeUri( Map<String, String> vars, String facet ) {
-        return taskFlowTypeTemplate.expand( vars ).toString() + "/" +facet;
+        return addFacet ( taskFlowTypeTemplate.expand( vars ), facet );
     }
 
 
@@ -70,12 +71,24 @@ public class UriFactory {
 
 
     public String taskUri( Map<String,String> urimap, String facet ) {
-        return taskTemplate.expand( urimap ).toString() + "/" + facet;
+        return addFacet( taskTemplate.expand( urimap ), facet );
     }
 
     public String taskServiceUri( Map<String,String> urimap ) {
         return taskServiceTemplate.expand( urimap ).toString();
     }
+
+    public String taskServiceUri( Map<String,String> urimap, String facet ) {
+        return addFacet( taskServiceTemplate.expand( urimap ), facet );
+    }
+
+    private String addFacet( URI uri, String facet ) {
+        if( facet != null )
+            return uri.toString() + "/" + facet;
+        else
+            return uri.toString();
+    }
+
 
     public String getBaseUrl() {
         return baseUrl;

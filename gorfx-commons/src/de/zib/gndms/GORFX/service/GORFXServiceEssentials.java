@@ -81,7 +81,7 @@ public interface GORFXServiceEssentials {
      * @param order The order consists parameters for the taskflow.
      * @param dn The dn of the user invoking the method.
      * @param wid The workflow id.
-     * @return The specifier of the newly created task.
+     * @return The specifier of the newly created task, with HTTPStatus created.
      */
     ResponseEntity<Specifier<Facets>> createTaskFlow( String type, AbstractTF order, String dn, String wid );
 }
