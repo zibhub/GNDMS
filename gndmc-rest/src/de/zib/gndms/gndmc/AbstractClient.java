@@ -62,10 +62,12 @@ public abstract class AbstractClient {
     private <T,P> ResponseEntity<T> unifiedX(HttpMethod x, final Class<T> clazz, final P parm,
 			final String url, final String dn, final String wid){
 		GNDMSResponseHeader requestHeaders = new GNDMSResponseHeader();
-		requestHeaders.setDN(dn);
-		if (wid != null) {
+        if (dn != null)
+            requestHeaders.setDN(dn);
+
+		if (wid != null)
 			requestHeaders.setWId(wid);
-		}
+
 		HttpEntity<P> requestEntity = new HttpEntity<P>(parm, requestHeaders);
 		return restTemplate.exchange(url, x, requestEntity, clazz);
 	}

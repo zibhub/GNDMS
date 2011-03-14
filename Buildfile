@@ -515,6 +515,20 @@ define 'gndms' do
             ]
             Commands.java('de.zib.gndms.gndmc.gorfx.GORFXClientMain',  args, { :classpath => jars } )
         end
+
+        task 'run2' do
+
+            testEnv('GORFX_URL', 'http://<yourhost>:<and-port>/gndms/<grid-name>')
+            testEnv('GNDMS_DN', 'your grid DN')
+            #testEnv('GNDMS_WID', 'your whatever fuuuu')
+            jars = compile.dependencies.map(&:to_s)
+            jars << project('gndms:gndmc-rest')
+            args = [ '-uri', ENV['GORFX_URL'], 
+                '-dn', ENV['GNDMS_DN']
+                #'-wid', ENV['GNDMS_WID']
+            ]
+            Commands.java('de.zib.gndms.gndmc.gorfx.GORFXTaskFlowExample',  args, { :classpath => jars } )
+        end
     end
 
     desc 'GORFX rest service'

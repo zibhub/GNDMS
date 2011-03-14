@@ -1,13 +1,15 @@
 package de.zib.gndms.GORFX.service;
 
+import de.zib.gndms.GORFX.service.util.WidAux;
 import de.zib.gndms.devel.NotYetImplementedException;
 import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.logic.taskflow.*;
 import de.zib.gndms.logic.taskflow.executor.TFExecutor;
 import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.rest.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -56,6 +58,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     private UriFactory uriFactory;
     private TaskClient taskClient;
     private TFExecutor executorService;
+    private Logger logger = LoggerFactory.getLogger( this.getClass() );
 
 
     @PostConstruct
@@ -67,7 +70,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
         facetsNames.add( "status" );
         facetsNames.add( "errors" );
         uriFactory = new UriFactory( serviceUrl );
-        taskClient = new TaskClient( serviceUrl );
+        taskClient.setServiceURL( serviceUrl );
 
     }
 
@@ -158,10 +161,12 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     }
 
 
-    @RequestMapping( value = "/_{type}/_{id}/quotes", method = RequestMethod.GET )
+    @RequestMapping( value = "/_{type}/_{id}/quote", method = RequestMethod.GET )
     public ResponseEntity<List<Specifier<Quote>>> getQuotes( @PathVariable String type, @PathVariable String id,
                                                   @RequestHeader( "DN" ) String dn,
                                                   @RequestHeader( "WId" ) String wid ) {
+        WidAux.initWid( wid );
+        logger.debug( "quote called" );
         HttpStatus hs = HttpStatus.NOT_FOUND;
         List<Specifier<Quote>> res = null;
         if( taskFlowProvider.exists( type ) ) {
@@ -180,6 +185,9 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                     res = new ArrayList<Specifier<Quote>>( lc.size() );
                     tf.setQuotes( lc );
                     HashMap<String, String> urimap = new HashMap<String, String>( 3 );
+                    urimap.put( "service", "gorfx" );
+                    urimap.put( "id", id );
+                    urimap.put( "type", type );
                     for( int i=0; i < lc.size(); ++i ) {
                         urimap.put( "idx", String.valueOf( i ) );
                         Specifier<Quote> sq = new Specifier<Quote>();
@@ -188,19 +196,22 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                         sq.setPayload( lc.get( i ) );
                         res.add( sq );
                     }
-
+                    hs = HttpStatus.OK;
                 } catch ( UnsatisfiableOrderException e ) {
+                    AbstractTF o = tf.getOrder();
+                    logger.debug( "Unsatisfiable order: " + o );
                     tf.setUnfulfillableOrder( true );
                     hs = HttpStatus.BAD_REQUEST;
                 }
             }
         }
 
-        return new ResponseEntity<List<Specifier<Quote>>>( res, getHeader( type, id, "quotes", dn, wid ), hs );
+        WidAux.removeWid();
+        return new ResponseEntity<List<Specifier<Quote>>>( res, getHeader( type, id, "quote", dn, wid ), hs );
     }
 
 
-    @RequestMapping( value = "/_{type}/_{id}/quotes", method = RequestMethod.POST )
+    @RequestMapping( value = "/_{type}/_{id}/quote", method = RequestMethod.POST )
     public ResponseEntity<Void> setQuote( @PathVariable String type, @PathVariable String id,
                                           @RequestBody Quote cont, @RequestHeader( "DN" ) String dn,
                                           @RequestHeader( "WId" ) String wid ) {
@@ -215,11 +226,11 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
         }
 
-        return new ResponseEntity<Void>( null, getHeader( type, id, "quotes", dn, wid ), hs );
+        return new ResponseEntity<Void>( null, getHeader( type, id, "quote", dn, wid ), hs );
     }
 
 
-    @RequestMapping( value = "/_{type}/_{id}/quotes/_{idx}", method = RequestMethod.GET )
+    @RequestMapping( value = "/_{type}/_{id}/quote/_{idx}", method = RequestMethod.GET )
     public ResponseEntity<Quote> getQuote( @PathVariable String type, @PathVariable String id, @PathVariable int idx,
                                            @RequestHeader( "DN" ) String dn, @RequestHeader( "WId" ) String wid ) {
 
@@ -237,11 +248,11 @@ public class TaskFlowServiceImpl implements TaskFlowService {
             // intentionally
         }
 
-        return new ResponseEntity<Quote>( quote, getHeader( type, id, "quotes", dn, wid ), hs );
+        return new ResponseEntity<Quote>( quote, getHeader( type, id, "quote", dn, wid ), hs );
     }
 
 
-    @RequestMapping( value = "/_{type}/_{id}/quotes/_{idx}", method = RequestMethod.DELETE )
+    @RequestMapping( value = "/_{type}/_{id}/quote/_{idx}", method = RequestMethod.DELETE )
     public ResponseEntity<Void> deleteQuotes( @PathVariable String type, @PathVariable String id,
                                               @PathVariable int idx, @RequestHeader( "DN" ) String dn,
                                               @RequestHeader( "WId" ) String wid ) {
@@ -254,6 +265,8 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     public ResponseEntity<Specifier<Facets>> getTask( @PathVariable String type, @PathVariable String id,
                                            @RequestHeader( "DN" ) String dn, @RequestHeader( "WId" ) String wid ) {
 
+        WidAux.initWid( wid );
+        logger.debug( "getTask task called" );
         HttpStatus hs = HttpStatus.NOT_FOUND;
         Specifier<Facets> spec = null;
         try {
@@ -267,12 +280,22 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                 spec.setUriMap( urimap );
 
                 ResponseEntity<Facets> res = taskClient.getTaskFacets( t.getId(), dn );
-                spec.setPayload( res.getBody() );
-                hs = HttpStatus.OK;
+                if( res != null )
+                    if( HttpStatus.OK.equals( res.getStatusCode() ) ) {
+                        spec.setPayload( res.getBody() );
+                        hs = HttpStatus.OK;
+
+                    } else {
+                        logger.debug( "unexpected status: " + res.getStatusCode().name() );
+                    }
+                else
+                    logger.debug( "getTaskFacets returned null" );
             }
         } catch ( NoSuchResourceException e ) {
             // intentionally
         }
+        logger.debug( "returning with " + hs.name() );
+        WidAux.removeWid();
         return new ResponseEntity<Specifier<Facets>>( spec, getHeader( type, id, "task", dn, wid ), hs );
     }
 
@@ -284,6 +307,8 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
         HttpStatus hs = HttpStatus.NOT_FOUND;
 
+        WidAux.initWid( wid );
+        logger.debug( "create task called" );
         if( taskFlowProvider.exists( type ) ) {
             TaskFlowFactory tff = taskFlowProvider.getFactoryForTaskFlow( type );
             TaskFlow tf = tff.find( id );
@@ -296,13 +321,22 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                     t.setId( UUID.randomUUID().toString() );
                     t.setModel( tf.getOrder() );
                     TaskAction ta = tff.createAction( t );
+                    tf.setTask( t );
                     executorService.submit( ta );
+                    logger.debug( "Done, requesting facets" );
                     ResponseEntity<Specifier<Facets>> res = getTask( type, id, dn, wid );
-                    if( HttpStatus.OK.equals( res.getStatusCode() ) )
+                    if( HttpStatus.OK.equals( res.getStatusCode() ) ) {
+                        logger.debug( "OK, returning CREATED" );
+                        WidAux.removeWid();
                         return new ResponseEntity<Specifier<Facets>>( res.getBody(), res.getHeaders(), HttpStatus.CREATED );
+                    } else {
+                      logger.debug( "unexpected status: " + res.getStatusCode().name() );
+                    }
                 }
             }
         }
+        logger.debug( "Problem, returning " + hs.name() );
+        WidAux.removeWid();
         return new ResponseEntity<Specifier<Facets>>( null, getHeader( type, id, "task", dn, wid), hs );
     }
 
@@ -447,5 +481,11 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     @Autowired
     public void setTaskFlowProvider( TaskFlowProvider taskFlowProvider ) {
         this.taskFlowProvider = taskFlowProvider;
+    }
+
+
+    @Autowired
+    public void setTaskClient( TaskClient taskClient ) {
+        this.taskClient = taskClient;
     }
 }

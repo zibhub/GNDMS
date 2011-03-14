@@ -83,6 +83,7 @@ public class TaskServiceImpl implements TaskService {
     @RequestMapping( value = "/_{id}", method = RequestMethod.GET )
     public ResponseEntity<Facets> getTaskFacets( @PathVariable String id, @RequestHeader( "DN" ) String dn ) {
 
+        logger.debug( "get task called with id " + id );
         findTask( id ); // ensures that id is valid
 
         Map<String,String> uriargs = new HashMap<String, String>( 2 );
@@ -91,7 +92,7 @@ public class TaskServiceImpl implements TaskService {
 
         List<Facet> fl = new ArrayList<Facet>( facets.size() );
         for( String f : facets ) {
-            String fn = uriFactory.taskFlowUri( uriargs, f );
+            String fn = uriFactory.taskUri( uriargs, f );
             fl.add( new Facet( f, fn ) );
         }
         return new ResponseEntity<Facets>( new Facets( fl ), getHeader( id, null, dn, null ), HttpStatus.OK );
