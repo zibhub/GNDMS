@@ -163,49 +163,57 @@ public class SetupOfferTypeAction extends SetupAction<ConfigActionResult> {
      */
     @Override
     public ConfigActionResult execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer) {
-        switch(getMode()) {
-            case CREATE:
-                executeCreate(em);
-                break;
+        final Session session = getDao().beginSession();
 
-            case UPDATE:
-                executeUpdate(em);
-                break;
+        try {
+            switch(getMode()) {
+                case CREATE:
+                    executeCreate(session);
+                    session.success();
+                    break;
 
-            case DELETE:
-                executeDelete(em);
-                break;
+                case UPDATE:
+                    executeUpdate(session);
+                    session.success();
+                    break;
 
-            default:
-                throw new IllegalStateException("Unreachable location");
+                case DELETE:
+                    executeDelete(session);
+                    session.success();
+                    break;
+
+                default:
+                    session.failure();
+                    throw new IllegalStateException("Unreachable location");
+
+            }
 
         }
-
+        finally { session.finish(); }
         return ok();
     }
 
     /**
      * Removes the entity with the primary key {@code getOfferType()} and the entityclass {@code OfferType.class} from the EntityManager.
      *
-     * @param em the EnityManager, containing an entity instance for the entityClass {@code OfferType} and
+     * @param session the EnityManager, containing an entity instance for the entityClass {@code OfferType} and
      *      the primary key {@code getOfferType()}
      */
-    private void executeDelete(final EntityManager em) {
-        final OfferType type = em.find(OfferType.class, getOfferType());
-        em.remove(type);
+    private void executeDelete(final Session session) {
+        session.findOfferType(getOfferType()).delete();
     }
 
 
     /**
      * Retrieves the entity instance with the primary key {@code getOfferType()} from the entityclass {@code OfferType.class}
      * and sets its fields using the getter method of this class.
-     * 
-     * @param em the EnityManager, containing an entity instance for the entityClass {@code OfferType} and
+     *
+     * @param session the EnityManager, containing an entity instance for the entityClass {@code OfferType} and
      *      the primary key {@code getOfferType()}
      */
     @SuppressWarnings({ "MethodWithMoreThanThreeNegations", "FeatureEnvy" })
-    private void executeUpdate(final EntityManager em) {
-        final @NotNull OfferType type = em.find(OfferType.class, getOfferType());
+    private void executeUpdate(final Session session) {
+        final @NotNull OfferType type = session.findOfferType(getOfferType());
         if (calcFactory != null)
             type.setCalculatorFactoryClassName(calcFactory.getCanonicalName());
         if (taskActionFactory != null)
@@ -222,7 +230,7 @@ public class SetupOfferTypeAction extends SetupAction<ConfigActionResult> {
      * Creates a new {@code OfferType} ,sets its fields using the getter method of this
      * class and makes it managed and persistent by the EntityManager.
      *
-     * @param em the EntityManager, 
+     * @param session the EntityManager,
      */
     @SuppressWarnings({ "FeatureEnvy" })
     private void executeCreate(final Session session) {

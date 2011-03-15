@@ -101,8 +101,11 @@ public class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceH
             public B apply(@com.google.common.base.Nullable @NotNull EntityManager em) {
                 if (listener != null)
                     postponedActions.setListener(listener);
-               theAction.setOwnPostponedActions(postponedActions);
-               theAction.setOwnEntityManager( em );
+               if (theAction instanceof EntityAction) {
+                   final EntityAction entityAction = (EntityAction) theAction;
+                   entityAction.setOwnEntityManager(em);
+                   entityAction.setOwnPostponedEntityActions(postponedActions);
+               }
                theAction.setModel(theModel);
                return theAction.call();
             }

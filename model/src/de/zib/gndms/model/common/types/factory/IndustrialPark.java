@@ -149,12 +149,12 @@ public abstract class IndustrialPark<K, I, T extends KeyFactoryInstance<K, T>>
     }
 
 
-    public K getOfferTypeId() {
+    public K getKey() {
         return factoryKey;
     }
 
 
-    public void setOfferTypeId(final @NotNull K keyParam) {
+    public void setKey(final @NotNull K keyParam) {
         factoryKey = keyParam;
     }
 
