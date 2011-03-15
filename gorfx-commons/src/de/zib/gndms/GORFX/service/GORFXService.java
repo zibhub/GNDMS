@@ -71,7 +71,7 @@ public interface GORFXService extends GORFXServiceEssentials {
     /**
      * Executes a config action with the given arguments.
      *
-     * @note At time beeing the config actions are designed for interactive operation with human beings. This has two
+     * @note At time being the config actions are designed for interactive operation with human beings. This has two
      * consequences for this method signature.
      * <ul>
      *  <li> Currently action arguments are provided as a key:vales in string format, it is highly possible that this
