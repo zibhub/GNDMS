@@ -19,7 +19,10 @@ package de.zib.gndms.infra.system;
 
 
 import com.google.common.collect.Maps;
-import com.google.inject.*;
+import com.google.inject.Binder;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
 import de.zib.gndms.infra.access.ServiceHomeProvider;
 import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
 import de.zib.gndms.infra.service.GNDMServiceHome;
@@ -34,12 +37,12 @@ import de.zib.gndms.logic.model.gorfx.*;
 import de.zib.gndms.kit.access.InstanceProvider;
 import de.zib.gndms.model.common.ConfigletState;
 import de.zib.gndms.model.common.GridResource;
+import de.zib.gndms.model.common.GridResourceItf;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.model.common.types.factory.IndustrialPark;
 import de.zib.gndms.model.common.types.factory.KeyFactory;
 import de.zib.gndms.model.common.types.factory.KeyFactoryInstance;
 import de.zib.gndms.model.common.types.factory.RecursiveKeyFactory;
-import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.stuff.BoundInjector;
 import de.zib.gndms.kit.configlet.ConfigletProvider;
 import de.zib.gndms.kit.configlet.Configlet;
@@ -85,16 +88,16 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
     private final @NotNull Map<String, Object> instances;
 
 
-    private final @NotNull Map<Class<? extends GridResource>, GNDMPersistentServiceHome<?>> homes;
+    private final @NotNull Map<Class<? extends GridResourceItf>, GNDMPersistentServiceHome<?>> homes;
 
 
 	private final Map<String, Configlet> configlets = Maps.newConcurrentHashMap();
 
     @SuppressWarnings({ "RawUseOfParameterizedType" })
-    private final @NotNull IndustrialPark<OfferType, String, AbstractORQCalculator<?, ?>> orqPark;
+    private final @NotNull IndustrialPark<String, String, AbstractORQCalculator<?, ?>> orqPark;
 
     @SuppressWarnings({ "RawUseOfParameterizedType" })
-    private final @NotNull IndustrialPark<OfferType, String, ORQTaskAction<?>> taskActionPark;
+    private final @NotNull IndustrialPark<String, String, ORQTaskAction<?>> taskActionPark;
 
 	@SuppressWarnings({ "FieldCanBeLocal" })
 	private final Wrapper<Object> sysHolderWrapper;
@@ -113,7 +116,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 	      final Wrapper<Object> systemHolderWrapParam,
 	      final @NotNull Module sysModule) {
         instances = new HashMap<String, Object>(INITIAL_CAPACITY);
-        homes = new HashMap<Class<? extends GridResource>, GNDMPersistentServiceHome<?>>(INITIAL_CAPACITY);
+        homes = new HashMap<Class<? extends GridResourceItf>, GNDMPersistentServiceHome<?>>(INITIAL_CAPACITY);
         systemName = sysNameParam;
 		uuidGen = uuidGenParam;
 	    sysHolderWrapper = systemHolderWrapParam;
@@ -156,10 +159,9 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
         NoSuchMethodException, InvocationTargetException {
         EntityManager em = emf.createEntityManager();
         try {
-            OfferType type = em.find(OfferType.class, offerTypeKey);
-            if (type == null)
+            if (offerTypeKey == null)
                 throw new IllegalArgumentException("Unknow offer type: " + offerTypeKey);
-            AbstractORQCalculator<?,?> orqc = orqPark.getInstance(type);
+            AbstractORQCalculator<?,?> orqc = orqPark.getInstance(offerTypeKey);
             orqc.setConfigletProvider( this );
             return orqc;
         }
@@ -194,8 +196,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 	public TaskAction newTaskAction(
 		  final EntityManager emParam, final String offerTypeKey)
 		  throws IllegalAccessException, InstantiationException, ClassNotFoundException {
-		OfferType type = emParam.find(OfferType.class, offerTypeKey);
-		TaskAction ta = taskActionPark.getInstance(type);
+		TaskAction ta = taskActionPark.getInstance(offerTypeKey);
 		ta.setUUIDGen( uuidGen );
 		return ta;
 	}
@@ -239,7 +240,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
      * @throws ResourceException if the corresponding ressource could not be found
      */
     @SuppressWarnings({ "HardcodedFileSeparator", "RawUseOfParameterizedType" })
-    public synchronized <K extends GridResource> void addHome(
+    public synchronized <K extends GridResourceItf> void addHome(
             final Class<K> modelClazz, final @NotNull GNDMServiceHome home)
             throws ResourceException {
         if (homes.containsKey(modelClazz))
@@ -614,20 +615,20 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 
     }
 
-    private static class OfferTypeIndustrialPark<T extends KeyFactoryInstance<OfferType, T>>
-            extends IndustrialPark<OfferType, String, T> {
+    private static class OfferTypeIndustrialPark<T extends KeyFactoryInstance<String, T>>
+            extends IndustrialPark<String, String, T> {
 
         private OfferTypeIndustrialPark(
                 final @NotNull
-                KeyFactory<OfferType, RecursiveKeyFactory<OfferType, T>> factoryParam) {
+                KeyFactory<String, RecursiveKeyFactory<String, T>> factoryParam) {
             super(factoryParam);
         }
 
 
         @NotNull
         @Override
-        public String mapKey(final @NotNull OfferType keyParam) {
-            return keyParam.getOfferTypeKey();
+        public String mapKey(final @NotNull String keyParam) {
+            return keyParam;
         }
     }
 
