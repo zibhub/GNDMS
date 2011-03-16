@@ -1,1 +1,20 @@
-Please consult the HTML documentation in doc/web/_site/index.html which contains the installation guide
+
+
+This branch contains ad-hoc implementation of the GORFX rest
+specification.  It can be used by developers of GNDMS client services
+to test the integration and the basic setup.
+
+The interface is stable with the exception that new methods might be
+added and some types may be refined. 
+
+The branch has three imported folders:
+
+gndmc-rest     Contains the code of client side.
+gorfx          Holds the restified GORFX service code.
+gndms-commons  Contains code shared by the client and service, e.g.
+               types used for exchange and the interfaces describing
+               the service.
+
+Please consult the HTML documentation in 
+    http://gndms.zib.de/developer-guide/rest/
+which contains additional infos along with the installation guide

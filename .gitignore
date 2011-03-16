@@ -48,7 +48,7 @@ gndmc/gndms-gndmc/production/**
 gndmc/gndms-gndmc/test/**
 gndmc-rest/gndms-gndmc-rest/production/**
 gorfx/gndms-gorfx-rest/production/**
-gorfx-commons/gndms-gorfx-commons/production/**
+gndms-commons/gndms-gndms-commons/production/**
 .classpath
 .project
 test-output/**
