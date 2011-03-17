@@ -21,7 +21,7 @@ import de.zib.gndms.kit.config.ConfigAction;
 /**
  * @author try ma ik jo rr a zib
  * @date 16.02.11  12:45
- * @brief
+ * @brief Mock-up implementation.
  */
 public abstract class ActionMetaMockUp<A extends Action> implements ActionMeta<A>{
 

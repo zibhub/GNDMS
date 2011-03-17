@@ -17,11 +17,30 @@ package de.zib.gndms.model.gorfx.types;
 
 /**
  * @author try ma ik jo rr a zib
- *         Date: 09.02.11, Time: 15:39
+ * @date 09.02.11 15:39
+ *
+ * @brief The interface for taskflow orders.
+ *
+ * An order serves as input for the taskflow, and steers the task execution.
  */
-public interface AbstractTF {
+public interface Order {
 
+    /**
+     * Delivers the type of the task flow.
+     *
+     * Useful to query the taskflow and its quote calculator from the TaskFlowProvider.
+     * @return The task flow type id.
+     */
     String getTaskFlowType();
+
+
+    /**
+     * Marker: that the task flow shouldn't be executed.
+     *
+     * This is a relict from the old ORQ schema. It isn't really usful anymore.
+     *
+     * @return If the values should only be estimated.
+     */
     boolean isJustEstimate();
 
 }

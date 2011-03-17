@@ -30,6 +30,10 @@ import java.util.List;
  * @version $Id$
  *          <p/>
  *          Date: 08.02.11, Time: 12:10
+ * @brief  Complete client for the gorfx service.
+ *
+ * @see de.zib.gndms.GORFX.service.GORFXService for details.
+ * @see de.zib.gndms.gndmc.gorfx.GORFXClient for a "smaller" client.
  */
 public class FullGORFXClient extends GORFXClient implements GORFXService {
 

@@ -15,17 +15,17 @@ package de.zib.gndms.logic.taskflow.tfmockup;
  * limitations under the License.
  */
 
-import de.zib.gndms.model.gorfx.types.AbstractTF;
+import de.zib.gndms.model.gorfx.types.Order;
 
 /**
  * @author try ma ik jo rr a zib
  * @date 14.02.11  14:58
- * @brief The data class for a dummy taskflow.
+ * @brief The order class for a dummy taskflow.
  *
  * The dummy taskflow echos a given message a given number of times ^^ with some delay.
  * It can also fail on demand;
  */
-public class DummyTF implements AbstractTF {
+public class DummyOrder implements Order {
 
     private static final String TASK_FLOW_TYPE = "dummyTaskFlow";
     private boolean justEstimate = false;
@@ -93,7 +93,7 @@ public class DummyTF implements AbstractTF {
 
     @Override
     public String toString() {
-        return "DummyTF{" +
+        return "DummyOrder{" +
             "justEstimate=" + justEstimate +
             ", message='" + message + '\'' +
             ", times=" + times +

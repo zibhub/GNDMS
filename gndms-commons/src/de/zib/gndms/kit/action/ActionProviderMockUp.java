@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * @author try ma ik jo rr a zib
  * @date 16.02.11  12:33
- * @brief
+ * @brief Mockup-implementation
  */
 public class ActionProviderMockUp<M extends ActionMeta<A>, A extends Action > implements ActionProvider<M,A> {
 

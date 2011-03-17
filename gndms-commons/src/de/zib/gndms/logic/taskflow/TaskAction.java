@@ -20,9 +20,10 @@ import de.zib.gndms.model.gorfx.types.*;
 /**
  * @author try ma ik jo rr a zib
  * @date 14.02.11  17:40
- * @brief
+ *
+ * @brief Provisional interface for TaskActions (old GNDMS already has them)
  */
-public interface TaskAction<T extends AbstractTF> {
+public interface TaskAction<T extends Order> {
 
     void setTask( Task<T> t );
     Task getTask( );

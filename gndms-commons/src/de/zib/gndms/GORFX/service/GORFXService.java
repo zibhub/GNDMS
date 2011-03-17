@@ -27,7 +27,7 @@ import java.util.List;
  * @author try ma ik jo rr a zib
  *         Date: 08.02.11, Time: 12:14
  *
- * The FULL interface of the GORFX service.
+ * @brief The FULL interface of the GORFX service.
  *
  * Clients and resources which should provide the full feature catalog of the gorfx service should implement this
  * interface.

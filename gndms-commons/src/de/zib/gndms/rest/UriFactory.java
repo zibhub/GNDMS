@@ -24,7 +24,9 @@ import java.util.Map;
 /**
  * @author try ma ik jo rr a zib
  * @date 03.03.11  18:23
- * @brief
+ * @brief A factory GNDMS-resource URIs.
+ *
+ * Methods of this class require a map for the path variables and are generating
  */
 public class UriFactory {
 

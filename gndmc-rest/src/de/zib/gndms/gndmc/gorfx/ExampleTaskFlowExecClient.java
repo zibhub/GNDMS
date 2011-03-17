@@ -20,20 +20,23 @@ import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.rest.Facet;
 import de.zib.gndms.rest.Facets;
 import de.zib.gndms.rest.Specifier;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
  * @author try ma ik jo rr a zib
  * @date 10.03.11  16:37
- * @brief
+ * @brief An example implementation of AbstractTaskFlowExecClient.
+ *
+ * This on executes DummyOrder taskflows.
  */
 public class ExampleTaskFlowExecClient extends AbstractTaskFlowExecClient {
 
 
+    /**
+     * @brief Prints the failure to stdout.
+     * @param fail The failure object.
+     */
     @Override
     protected void handleFailure( TaskFailure fail ) {
         showFailure( fail );
@@ -44,6 +47,10 @@ public class ExampleTaskFlowExecClient extends AbstractTaskFlowExecClient {
     }
 
 
+    /**
+     * @brief Helper for handleFailure.
+     * @param fail The failure object.
+     */
     protected void showFailure( TaskFailure fail ) {
         System.out.println( "Failed with: " + fail.getFaultClass() );
         System.out.println( "    message: " + fail.getMessage() );
@@ -52,32 +59,55 @@ public class ExampleTaskFlowExecClient extends AbstractTaskFlowExecClient {
     }
 
 
+    /**
+     * @brief Prints the result to stdout.
+     * @param res The result object.
+     */
     @Override
     protected void handleResult( TaskResult res ) {
 
         DummyTFResult dr = DummyTFResult.class.cast( res );
-        System.out.println( "result: " + dr.getMessage() );
+        System.out.println( "result: " + dr.getResult() );
     }
 
 
+    /**
+     * @brief Prints the progress to stdout.
+     * @param stat The current task status.
+     */
     @Override
     protected void handleStatus( TaskStatus stat ){
         System.out.println( "Task is " + stat.getStatus() + " progress: " + stat.getProgress() + " / " + stat.getMaxProgress() );
     }
 
+
+    /**
+     * @brief Shows the facets of \c ts.
+     * @param ts The task specifier.
+     */
     @Override
     protected void handleTaskSpecifier( Specifier<Facets> ts ) {
         showFacets( ts.getPayload() );
     }
 
 
-    private void showFacets( Facets payload ) {
+    /**
+     * @brief Helper for handleTaskSpecifier
+     * @param facets ...
+     */
+    private void showFacets( Facets facets ) {
 
-        for( Facet f : payload.getFacets() )
+        for( Facet f : facets.getFacets() )
             System.out.println( f.getName() +": " + f.getUrl() );
     }
 
 
+    /**
+     * @brief Shows available quotes.
+     * @param quotes All available quotes.
+     *
+     * @return Always selects the 0th.
+     */
     @Override
     protected Integer selectQuote( List<Specifier<Quote>> quotes ) {
         for ( Specifier<Quote> sq : quotes ) {
@@ -88,6 +118,10 @@ public class ExampleTaskFlowExecClient extends AbstractTaskFlowExecClient {
     }
 
 
+    /**
+     * @brief Helper which prints a quote to stdout.
+     * @param payload The quote.
+     */
     private void showQuote( Quote payload ) {
         System.out.println( "accepted: " +  payload.getAccepted() );
         System.out.println( "deadline: " + payload.getDeadline() );

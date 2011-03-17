@@ -22,6 +22,8 @@ import de.zib.gndms.kit.action.ActionProviderMockUp;
  * @version $Id$
  *          <p/>
  *          Date: 08.02.11, Time: 16:16
+ *
+ * @brief Yet another mock-up.
  */
 public class ConfigActionProviderMockUp extends ActionProviderMockUp<ConfigMeta, ConfigAction> {
 

@@ -25,7 +25,7 @@ import java.util.List;
  *          <p/>
  *          Date: 26.01.11, Time: 14:25
  *
- * A class for the generic Http response-header specified for GNDMS.
+ * @brief A class for the generic Http response-header specified for GNDMS.
  */
 public class GNDMSResponseHeader extends HttpHeaders {
 

@@ -18,7 +18,7 @@ package de.zib.gndms.model.gorfx.types;
 /**
  * @author try ma ik jo rr a zib
  * @date 02.03.11  12:11
- * @brief
+ * @brief Placeholder for possible task service config.
  */
 public interface TaskServiceConfig {
 

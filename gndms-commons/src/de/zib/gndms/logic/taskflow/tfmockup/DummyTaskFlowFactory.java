@@ -29,16 +29,16 @@ import java.util.UUID;
 /**
  * @author try ma ik jo rr a zib
  * @date 14.02.11  16:10
- * @brief
+ * @brief Provider of dummy taskflows things.
  */
-public class DummyTaskFlowFactory implements TaskFlowFactory<TaskFlow<DummyTF>> {
+public class DummyTaskFlowFactory implements TaskFlowFactory<TaskFlow<DummyOrder>> {
 
-    private HashMap<String, TaskFlow<DummyTF>> taskFlows = new HashMap<String, TaskFlow<DummyTF>>( 10 );
+    private HashMap<String, TaskFlow<DummyOrder>> taskFlows = new HashMap<String, TaskFlow<DummyOrder>>( 10 );
     private TaskStatistics stats = new TaskStatistics();
 
 
     public DummyTaskFlowFactory() {
-        stats.setType( "DummyTF" );
+        stats.setType( "DummyOrder" );
     }
 
 
@@ -62,8 +62,8 @@ public class DummyTaskFlowFactory implements TaskFlowFactory<TaskFlow<DummyTF>> 
     }
 
 
-    public TaskFlow<DummyTF> create() {
-        TaskFlow<DummyTF> tf = new TaskFlow<DummyTF>();
+    public TaskFlow<DummyOrder> create() {
+        TaskFlow<DummyOrder> tf = new TaskFlow<DummyOrder>();
         String uuid = UUID.randomUUID().toString();
         taskFlows.put( uuid, tf );
         tf.setId( uuid );
@@ -72,7 +72,7 @@ public class DummyTaskFlowFactory implements TaskFlowFactory<TaskFlow<DummyTF>> 
     }
 
 
-    public TaskFlow<DummyTF> find( String id ) {
+    public TaskFlow<DummyOrder> find( String id ) {
         return taskFlows.get( id );
     }
 
@@ -100,7 +100,7 @@ public class DummyTaskFlowFactory implements TaskFlowFactory<TaskFlow<DummyTF>> 
 
 
     public Class getOrderClass() {
-        return DummyTF.class;
+        return DummyOrder.class;
     }
 
 

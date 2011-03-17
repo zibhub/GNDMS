@@ -17,7 +17,9 @@ package de.zib.gndms.model.gorfx.types;
 
 /**
  * @author try ma ik jo rr a zib
- *         Date: 09.02.11, Time: 17:44
+ * @date: 09.02.11, Time: 17:44
+ *
+ * @brief Interface for task status.
  */
 public interface TaskStatus {
 

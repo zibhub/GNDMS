@@ -17,7 +17,9 @@ package de.zib.gndms.kit.action;
 
 /**
  * @author try ma ik jo rr a zib
- *         Date: 09.02.11, Time: 11:42
+ * @date 09.02.11, 11:42
+ *
+ * @brief Interface for meta information about actions.
  */
 public interface ActionMeta<A extends Action> {
 

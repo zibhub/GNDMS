@@ -19,5 +19,5 @@
     <bean id="marshaller" class="org.springframework.oxm.xstream.XStreamMarshaller">
         <property name="autodetectAnnotations" value="true"/>
     </bean>
-<!-- foo-->
+
 </beans>

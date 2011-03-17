@@ -23,7 +23,7 @@ import java.util.List;
  *          <p/>
  *          Date: 26.01.11, Time: 14:15
  *
- * Class for a list of facets.
+ * @brief Class for a list of facets.
  */
 public class Facets {
 

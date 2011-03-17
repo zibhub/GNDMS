@@ -19,9 +19,9 @@ import java.util.List;
 
 /**
  * @author try ma ik jo rr a zib
- * @version $Id$
- *          <p/>
- *          Date: 08.02.11, Time: 16:12
+ * @date: 08.02.11 16:12
+ *
+ * @brief Something that provides actions by name.
  */
 public interface ActionProvider<M extends ActionMeta, A extends Action> {
 

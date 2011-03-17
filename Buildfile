@@ -663,16 +663,16 @@ define 'gndms' do
 
     end
 
-    desc 'Common gorfx classes'
-    define 'gorfx-commons', :layout => dmsLayout('gorfx-commons', 'gndms-gorfx-commons') do
+    desc 'Common gndms service classes'
+    define 'gndms-commons', :layout => dmsLayout('gndms-commons', 'gndms-commons') do
         compile.with SPRING, ARGS4J, JODA_TIME
         compile
         package :jar
     end
 
-    desc 'Common gorfx classes'
+    desc 'Gorfx client classes'
     define 'gndmc-rest', :layout => dmsLayout('gndmc-rest', 'gndms-gndmc-rest') do
-        compile.with project('gorfx-commons'), SPRING, ARGS4J, JODA_TIME, SLF4J, COMMONS_LOGGING, XSTREAM, XSTREAM_DEPS
+        compile.with project('gndms-commons'), SPRING, ARGS4J, JODA_TIME, SLF4J, COMMONS_LOGGING, XSTREAM, XSTREAM_DEPS
         meta_inf << file(_('src/META-INF/client-context.xml'))
         package(:jar).with :manifest=>manifest.merge( 'Main-Class'=>'de.zib.gndms.gndmc.gorfx.GORFXClientMain' )
 
@@ -687,7 +687,7 @@ define 'gndms' do
                 '-dn', ENV['GNDMS_DN']
                 #'-wid', ENV['GNDMS_WID']
             ]
-            Commands.java('de.zib.gndms.gndmc.gorfx.GORFXClientMain',  args, { :classpath => jars } )
+            Commands.java('de.zib.gndms.gndmc.gorfx.GORFXTaskFlowExample',  args, { :classpath => jars } )
         end
 
         task 'run2' do
@@ -701,13 +701,14 @@ define 'gndms' do
                 '-dn', ENV['GNDMS_DN']
                 #'-wid', ENV['GNDMS_WID']
             ]
-            Commands.java('de.zib.gndms.gndmc.gorfx.GORFXTaskFlowExample',  args, { :classpath => jars } )
+            Commands.java('de.zib.gndms.gndmc.gorfx.GORFXClientMain',  args, { :classpath => jars } )
         end
+
     end
 
     desc 'GORFX rest service'
     define 'gorfx-rest', :layout => dmsLayout('gorfx', 'gndms-gorfx-rest') do
-        compile.with project('gorfx-commons'), project('gndmc-rest'), SPRING, SLF4J, XSTREAM, COMMONS_LOGGING, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME
+        compile.with project('gndms-commons'), project('gndmc-rest'), SPRING, SLF4J, XSTREAM, COMMONS_LOGGING, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME
         compile
 
        # web_inf << file(_('../gorfx/src/META-INF/gorfx.xml'))

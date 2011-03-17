@@ -22,7 +22,7 @@ import java.util.concurrent.Callable;
 /**
  * @author try ma ik jo rr a zib
  * @date 08.03.11  15:09
- * @brief
+ * @brief Wraps a task action for running, (ol' GNDMS provides the same only better)
  */
 public class TaskActionRunner implements Runnable {
 
