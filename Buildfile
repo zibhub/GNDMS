@@ -127,6 +127,9 @@ JDOM='org.jdom:jdom:jar:1.1'
 XOM='xom:xom:jar:1.1'
 XPP='xpp3:xpp3_min:jar:1.1.4c'
 # together with STAX JODA_TIME
+# JSON/Jackson
+JSON=['org.codehaus.jackson:jackson-core-lgpl:jar:1.6.4', 
+      'org.codehaus.jackson:jackson-mapper-lgpl:jar:1.6.4']
 
 # logging
 SLF4J = transitive( ['org.slf4j:slf4j-log4j12:jar:1.5.8'])
