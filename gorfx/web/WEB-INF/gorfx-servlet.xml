@@ -21,6 +21,8 @@
 		<constructor-arg ref="marshaller" />
 	</bean>
 
+    <!--bean id="jsonconverter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"/-->
+
      <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
 		<property name="messageConverters">
 			<list>

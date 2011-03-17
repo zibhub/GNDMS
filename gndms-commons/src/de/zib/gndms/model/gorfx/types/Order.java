@@ -15,6 +15,8 @@ package de.zib.gndms.model.gorfx.types;
  * limitations under the License.
  */
 
+import org.codehaus.jackson.annotate.JsonTypeInfo;
+
 /**
  * @author try ma ik jo rr a zib
  * @date 09.02.11 15:39
