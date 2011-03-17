@@ -37,7 +37,7 @@ import java.util.*;
  * @author try ma ik jo rr a zib
  * @date 13.01.2011 15:17:47
  *
- * @biref A controller for a REST taskflow resource which implements the
+ * @brief A controller for a REST taskflow resource which implements the
  * TaskFlowService interface.
  *
  * The taskflow service acts as interface to instantiated taskflow
@@ -121,11 +121,11 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
 
     @RequestMapping( value = "/_{type}/_{id}/order", method = RequestMethod.GET )
-    public ResponseEntity<AbstractTF> getOrder( @PathVariable String type, @PathVariable String id,
+    public ResponseEntity<Order> getOrder( @PathVariable String type, @PathVariable String id,
                                                 @RequestHeader( "DN" ) String dn,
                                                 @RequestHeader( "WId" ) String wid ) {
         HttpStatus hs = HttpStatus.NOT_FOUND;
-        AbstractTF order = null;
+        Order order = null;
         try {
             TaskFlow tf = findTF( type, id );
             order = tf.getOrder();
@@ -133,13 +133,13 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                 hs = HttpStatus.OK;
         } catch ( NoSuchResourceException e ) { /* intentionally */ }
 
-        return new ResponseEntity<AbstractTF>( order, getHeader( type, id, "order", dn, wid ), hs );
+        return new ResponseEntity<Order>( order, getHeader( type, id, "order", dn, wid ), hs );
     }
 
 
     @RequestMapping( value = "/_{type}/_{id}/order", method = RequestMethod.POST )
     public ResponseEntity<Void> setOrder( @PathVariable String type, @PathVariable String id,
-                                          @RequestBody AbstractTF orq, @RequestHeader( "DN" ) String dn,
+                                          @RequestBody Order orq, @RequestHeader( "DN" ) String dn,
                                           @RequestHeader( "WId" ) String wid ) {
 
         HttpStatus hs = HttpStatus.NOT_FOUND;
@@ -198,7 +198,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                     }
                     hs = HttpStatus.OK;
                 } catch ( UnsatisfiableOrderException e ) {
-                    AbstractTF o = tf.getOrder();
+                    Order o = tf.getOrder();
                     logger.debug( "Unsatisfiable order: " + o );
                     tf.setUnfulfillableOrder( true );
                     hs = HttpStatus.BAD_REQUEST;

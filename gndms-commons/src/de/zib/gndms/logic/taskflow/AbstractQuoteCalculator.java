@@ -15,7 +15,7 @@ package de.zib.gndms.logic.taskflow;
  * limitations under the License.
  */
 
-import de.zib.gndms.model.gorfx.types.AbstractTF;
+import de.zib.gndms.model.gorfx.types.Order;
 import de.zib.gndms.model.gorfx.types.Quote;
 
 import java.util.List;
@@ -25,11 +25,11 @@ import java.util.List;
  * @date 14.02.11  16:43
  * @brief A task flow calculator interface.
  *
- * This will be merged with the orq calculator.
+ * This will be merged with the orq calculator of the old GNDMS.
  *
  * It computes quotes and checks the satisfiability of of a order.
  */
-public interface AbstractQuoteCalculator<T extends AbstractTF> {
+public interface AbstractQuoteCalculator<T extends Order> {
 
     /** 
      * @brief Sets the order 

@@ -16,10 +16,11 @@ package de.zib.gndms.model.gorfx.types;
  */
 
 /**
- * @author try ma ik jo rr a zib
- *         Date: 09.02.11, Time: 12:47
- *
  * Implementors of this interface should provide information about a task flow.
+ *
+ * @author try ma ik jo rr a zib
+ * @date: 09.02.11, Time: 12:47
+ *
  */
 public interface TaskFlowInfo extends TaskFlowMeta{
 

@@ -26,7 +26,8 @@ import java.util.Map;
 /**
  * @author try ma ik jo rr a zib
  * @date 16.02.11  12:02
- * @brief
+ *
+ * @brief Mock-up implementation of a a taskflow provider.
  */
 public class TaskFlowProviderImpl implements TaskFlowProvider {
 

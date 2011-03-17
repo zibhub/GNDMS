@@ -23,9 +23,9 @@ import java.io.StringWriter;
 /**
  * @author try ma ik jo rr a zib
  * @date 14.02.11  17:44
- * @brief
+ * @brief Provisional base class for TaskActions (old GNDMS already has them)
  */
-public abstract class AbstractTaskAction<T extends AbstractTF> implements TaskAction<T> {
+public abstract class AbstractTaskAction<T extends Order> implements TaskAction<T> {
 
     private Task<T> task;
 

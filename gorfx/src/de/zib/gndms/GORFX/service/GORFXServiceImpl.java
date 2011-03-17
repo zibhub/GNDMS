@@ -22,7 +22,7 @@ import de.zib.gndms.kit.action.Action;
 import de.zib.gndms.kit.action.ActionMeta;
 import de.zib.gndms.kit.action.ActionProvider;
 import de.zib.gndms.logic.taskflow.TaskFlowProvider;
-import de.zib.gndms.model.gorfx.types.AbstractTF;
+import de.zib.gndms.model.gorfx.types.Order;
 import de.zib.gndms.model.gorfx.types.TaskFlow;
 import de.zib.gndms.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.rest.Facets;
@@ -46,11 +46,9 @@ import java.util.List;
 
 /**
  * @author try ma ik jo rr a zib
- * @version $Id$
+ * @date: 26.01.11, 12:29
  *
- *          Date: 26.01.11, Time: 12:29
- *
- * Controller class for the gorfx service.
+ * @brief Controller class for the gorfx service.
  *
  * For detailed method documentation @see GORFXService.
  */
@@ -224,7 +222,7 @@ public class GORFXServiceImpl implements GORFXService {
 
 
     @RequestMapping( value = "/_{type}", method = RequestMethod.POST )
-    public ResponseEntity<Specifier<Facets>> createTaskFlow( @PathVariable String type, @RequestBody AbstractTF order,
+    public ResponseEntity<Specifier<Facets>> createTaskFlow( @PathVariable String type, @RequestBody Order order,
                                                   @RequestHeader( "DN" ) String dn,
                                                   @RequestHeader( "WId" ) String wid ) {
 

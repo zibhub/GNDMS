@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * @author try ma ik jo rr a zib
  * @date 14.02.11  14:20
- * @brief
+ * @brief Maps taskflow type ids, to their type factories.
  */
 public interface TaskFlowProvider {
 

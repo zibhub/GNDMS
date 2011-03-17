@@ -40,7 +40,7 @@ import java.util.Map;
 /**
  * @author try ma ik jo rr a zib
  * @date 01.03.11  12:06
- * @brief
+ * @brief Controller for the TaskService.
  */
 @Controller
 @RequestMapping( "/gorfx/tasks" )

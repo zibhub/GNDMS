@@ -18,7 +18,7 @@ package de.zib.gndms.gndmc.gorfx;
 
 import de.zib.gndms.GORFX.service.GORFXServiceEssentials;
 import de.zib.gndms.gndmc.AbstractClient;
-import de.zib.gndms.model.gorfx.types.AbstractTF;
+import de.zib.gndms.model.gorfx.types.Order;
 import de.zib.gndms.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.rest.Facets;
 import de.zib.gndms.rest.Specifier;
@@ -26,13 +26,15 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * @author try ma ik jo rr a zib
  * 
- * @brief
+ * @brief Client for the taskflow part of the gorfx service.
+ *
+ * This client doesn't provide methods for batch execution and service configuration
+ * only the methods necessary for taskflow execution are exposed.
+ *
+ * @see de.zib.gndms.GORFX.service.GORFXServiceEssentials for details.
  */
 public class GORFXClient extends AbstractClient implements GORFXServiceEssentials {
 
@@ -70,7 +72,7 @@ public class GORFXClient extends AbstractClient implements GORFXServiceEssential
 
 
     @SuppressWarnings("unchecked")
-	public final ResponseEntity<Specifier<Facets>> createTaskFlow( final String type, final AbstractTF order,
+	public final ResponseEntity<Specifier<Facets>> createTaskFlow( final String type, final Order order,
                                                                    final String dn, final String wid ) {
 		return ( ResponseEntity<Specifier<Facets>> ) (Object) unifiedPost(Specifier.class, order, getServiceURL()
 				+ "/gorfx/_" + type, wid, dn);

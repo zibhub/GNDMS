@@ -20,7 +20,7 @@ import de.zib.gndms.kit.action.ActionMockUp;
 /**
  * @author try ma ik jo rr a zib
  * @date 16.02.11  12:43
- * @brief
+ * @brief  Mockup-implementation
  */
 public class ConfigActionMockUp extends ActionMockUp implements ConfigAction {
 

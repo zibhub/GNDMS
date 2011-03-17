@@ -20,9 +20,11 @@ import de.zib.gndms.model.gorfx.types.TaskResult;
 /**
  * @author try ma ik jo rr a zib
  * @date 14.03.11  11:12
- * @brief
+ * @brief The result of the dummy task flow.
+ *
+ * Since the dummy taskflow only writes stuff, a string is enough here.
  */
-public class DummyTFResult implements TaskResult {
+public class DummyTFResult implements TaskResult<String> {
 
     private String message;
 
@@ -32,7 +34,7 @@ public class DummyTFResult implements TaskResult {
     }
 
 
-    public String getMessage() {
+    public String getResult() {
         return message;
     }
 

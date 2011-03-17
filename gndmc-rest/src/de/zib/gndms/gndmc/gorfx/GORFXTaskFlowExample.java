@@ -16,27 +16,13 @@ package de.zib.gndms.gndmc.gorfx;
  * limitations under the License.
  */
 
-import de.zib.gndms.kit.action.ActionMeta;
 import de.zib.gndms.kit.application.AbstractApplication;
-import de.zib.gndms.kit.config.ConfigMeta;
-import de.zib.gndms.logic.taskflow.tfmockup.DummyTF;
-import de.zib.gndms.model.gorfx.types.AbstractTF;
-import de.zib.gndms.model.gorfx.types.TaskFailure;
-import de.zib.gndms.model.gorfx.types.TaskFlowStatus;
-import de.zib.gndms.model.gorfx.types.TaskResult;
-import de.zib.gndms.rest.Facet;
-import de.zib.gndms.rest.Facets;
-import de.zib.gndms.rest.GNDMSResponseHeader;
-import de.zib.gndms.rest.Specifier;
+import de.zib.gndms.logic.taskflow.tfmockup.DummyOrder;
 import org.kohsuke.args4j.Option;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -103,7 +89,7 @@ public class GORFXTaskFlowExample extends AbstractApplication {
     private void normalRun( )  {
 
         System.out.println( "Performing normal run!!" );
-        DummyTF dft = new DummyTF();
+        DummyOrder dft = new DummyOrder();
         dft.setMessage( "Test task flow is flowing" );
         dft.setTimes( 20 );
         dft.setDelay( 1000 );
@@ -116,7 +102,7 @@ public class GORFXTaskFlowExample extends AbstractApplication {
 
 
         System.out.println( "Performing task which will fail!" );
-        DummyTF dft = new DummyTF();
+        DummyOrder dft = new DummyOrder();
         dft.setMessage( "I'm going to fail" );
         dft.setTimes( 30 );
         dft.setDelay( 1000 );

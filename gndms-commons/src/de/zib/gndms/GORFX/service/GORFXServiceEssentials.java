@@ -15,7 +15,7 @@ package de.zib.gndms.GORFX.service;
  * limitations under the License.
  */
 
-import de.zib.gndms.model.gorfx.types.AbstractTF;
+import de.zib.gndms.model.gorfx.types.Order;
 import de.zib.gndms.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.rest.Facets;
 import de.zib.gndms.rest.Specifier;
@@ -27,7 +27,8 @@ import java.util.List;
  * @author try ma ik jo rr a zib
  *         Date: 09.02.11, Time: 11:35
  *
- * This is the essential interface of the GORFX service. Since its the services responsibility to create and manage
+ * @brief This is the essential interface of the GORFX service.
+ * Since its the services responsibility to create and manage
  * complex tasks ( hence called taskflows ) this interface only provides methods necessary for this job.
  *
  * The interface should be implemented by clients which aren't required to perform tasks like system configuration
@@ -83,5 +84,5 @@ public interface GORFXServiceEssentials {
      * @param wid The workflow id.
      * @return The specifier of the newly created task, with HTTPStatus created.
      */
-    ResponseEntity<Specifier<Facets>> createTaskFlow( String type, AbstractTF order, String dn, String wid );
+    ResponseEntity<Specifier<Facets>> createTaskFlow( String type, Order order, String dn, String wid );
 }

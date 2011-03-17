@@ -18,7 +18,9 @@ package de.zib.gndms.logic.taskflow;
 /**
  * @author try ma ik jo rr a zib
  * @date 14.02.11  16:48
- * @brief
+ * @brief An exception which signals an order which can't be satisfied.
+ *
+ * @note This is only used on the server side.
  */
 public class UnsatisfiableOrderException extends Exception {
 

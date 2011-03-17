@@ -18,7 +18,7 @@ package de.zib.gndms.model.gorfx.types;
 /**
  * @author try ma ik jo rr a zib
  * @date 02.03.11  11:22
- * @brief
+ * @brief Default implementation of a the task flow failure.
  */
 public class TaskFlowFailureImpl implements TaskFlowFailure {
 

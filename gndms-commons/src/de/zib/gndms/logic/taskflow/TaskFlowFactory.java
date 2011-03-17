@@ -20,7 +20,7 @@ import de.zib.gndms.model.gorfx.types.*;
 /**
  * @author try ma ik jo rr a zib
  * @date 14.02.11  14:27
- * @brief An interface for taskflow factories,
+ * @brief An interface for taskflow factories.
  *
  * Implementations of this interface should be able to compute quotes, and generate task instances.
  *

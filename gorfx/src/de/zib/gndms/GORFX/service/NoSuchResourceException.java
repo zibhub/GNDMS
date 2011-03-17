@@ -20,7 +20,7 @@ import java.util.HashMap;
 /**
  * @author try ma ik jo rr a zib
  * @date 04.03.11  18:36
- * @brief
+ * @brief If there is no such resource, this exception might be thrown.
  */
 public class NoSuchResourceException extends RuntimeException {
 

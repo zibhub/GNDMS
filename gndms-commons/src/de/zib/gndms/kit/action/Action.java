@@ -18,7 +18,7 @@ package de.zib.gndms.kit.action;
 /**
  * @author try ma ik jo rr a zib
  * @date 16.02.11  11:00
- * @brief
+ * @brief Provisional interface for Actions (old GNDMS already has them)
  */
 public interface Action<T> {
 

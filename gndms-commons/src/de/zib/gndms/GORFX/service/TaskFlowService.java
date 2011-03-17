@@ -76,7 +76,7 @@ public interface TaskFlowService {
      * @return The order details of the task flow and HttpStatus.Ok, or
      *      404 if there isn't any order.
      */
-    ResponseEntity<AbstractTF> getOrder( String type, String id, String dn, String wid );
+    ResponseEntity<Order> getOrder( String type, String id, String dn, String wid );
 
     /** 
      * @brief Changes the order of a task flow.
@@ -93,7 +93,7 @@ public interface TaskFlowService {
      *      - 400 if it wasn't successfully  validated
      *      - 404 if type or id are not valid.
      */
-    ResponseEntity<Void> setOrder( String type, String id, AbstractTF orq, String dn, String wid );
+    ResponseEntity<Void> setOrder( String type, String id, Order orq, String dn, String wid );
 
     /** 
      * @brief Delivers all quotes for the order.

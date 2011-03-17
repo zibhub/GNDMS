@@ -23,7 +23,7 @@ import de.zib.gndms.kit.action.ActionMeta;
  *          <p/>
  *          Date: 26.01.11, Time: 15:10
  *
- * Should provided meta information about a configuration like, description, help and parameter detail.
+ * @brief Should provided meta information about a configuration like, description, help and parameter detail.
  */
 public interface ConfigMeta extends ActionMeta<ConfigAction> {
 

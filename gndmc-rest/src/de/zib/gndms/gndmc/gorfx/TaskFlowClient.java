@@ -29,6 +29,8 @@ import java.util.List;
  * The task flow client implementing the task flow service.
  * 
  * @author Ulrike Golas
+ *
+ * @see de.zib.gndms.GORFX.service.TaskFlowService for details.
  */
 public class TaskFlowClient extends AbstractClient implements TaskFlowService {
 
@@ -60,14 +62,14 @@ public class TaskFlowClient extends AbstractClient implements TaskFlowService {
 	}
 
 
-	public final ResponseEntity<AbstractTF> getOrder(final String type, final String id, final String dn, final String wid) {
-		return unifiedGet(AbstractTF.class, getServiceURL() + "/gorfx/_" + type + "/_"
+	public final ResponseEntity<Order> getOrder(final String type, final String id, final String dn, final String wid) {
+		return unifiedGet(Order.class, getServiceURL() + "/gorfx/_" + type + "/_"
 				+ id + "/order", dn, wid);
 	}
 
 
 	public final ResponseEntity<Void> setOrder(final String type, final String id,
-			final AbstractTF orq, final String dn, final String wid) {
+			final Order orq, final String dn, final String wid) {
 		return unifiedPut(Void.class, orq, getServiceURL() + "/gorfx/_" + type + "/_"
 				+ id + "/order", dn, wid);
 	}

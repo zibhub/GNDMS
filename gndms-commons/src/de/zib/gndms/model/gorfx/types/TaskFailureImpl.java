@@ -21,7 +21,9 @@ import java.io.StringWriter;
 /**
  * @author try ma ik jo rr a zib
  * @date 14.02.11  18:14
- * @brief
+ * @brief Default implementation of TaskFailure.
+ *
+ * @see de.zib.gndms.model.gorfx.types.TaskFailure
  */
 public class TaskFailureImpl implements TaskFailure {
 

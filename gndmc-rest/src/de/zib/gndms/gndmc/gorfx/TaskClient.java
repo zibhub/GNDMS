@@ -28,7 +28,9 @@ import java.util.HashMap;
 /**
  * @author try ma ik jo rr a zib
  * @date 07.03.11  18:35
- * @brief
+ * @brief Client for TaskService.
+ *
+ * @see de.zib.gndms.GORFX.service.TaskService for details.
  */
 public class TaskClient extends AbstractClient implements TaskService {
 

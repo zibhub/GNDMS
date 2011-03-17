@@ -16,9 +16,12 @@ package de.zib.gndms.model.gorfx.types;
  */
 
 /**
+ * Something with tasks and there results.
+ *
  * @author try ma ik jo rr a zib
  *         Date: 09.02.11, Time: 18:44
  */
-public interface TaskResult {
+public interface TaskResult<T> {
 
+    T getResult();
 }

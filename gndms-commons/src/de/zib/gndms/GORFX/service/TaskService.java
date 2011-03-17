@@ -25,16 +25,16 @@ import org.springframework.web.bind.annotation.*;
  * @date 02.03.11  17:38
  * @brief Interface for the task services.
  *
- * The task service is used to executed abitrary tasks. This taks can
+ * The task service is used to executed arbitrary tasks. This task can
  * but mustn't belong to an taskflow or a batch.
  */
 public interface TaskService {
 
     /** 
-     * @brief Delviers infos about the service.
+     * @brief Delivers infos about the service.
      * 
      * This information contain available task-types, together with
-     * usage statistics on thes types.
+     * usage statistics on these types.
      *
      * @return An info object.
      */

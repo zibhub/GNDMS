@@ -19,7 +19,7 @@ package de.zib.gndms.gndmc.gorfx;
 import de.zib.gndms.kit.action.ActionMeta;
 import de.zib.gndms.kit.application.AbstractApplication;
 import de.zib.gndms.kit.config.ConfigMeta;
-import de.zib.gndms.logic.taskflow.tfmockup.DummyTF;
+import de.zib.gndms.logic.taskflow.tfmockup.DummyOrder;
 import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.rest.Facet;
 import de.zib.gndms.rest.Facets;
@@ -34,7 +34,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -84,14 +83,14 @@ public class GORFXClientMain extends AbstractApplication {
 			System.out.println(fa.getName() + " " + fa.getUrl());
 		}
 		
-		DummyTF dft = new DummyTF();
+		DummyOrder dft = new DummyOrder();
 		// set dft attributes
 		dft.setMessage("Test task flow");
 		dft.setFailIntentionally(false);
 		executeTaskFlow(gorfxClient, dft.getTaskFlowType(), dft);
 	}
 
-	private void executeTaskFlow(FullGORFXClient gorfxClient, String type, AbstractTF order) {
+	private void executeTaskFlow(FullGORFXClient gorfxClient, String type, Order order) {
 		System.out.println("Testing workflow: Execute Task Flow of type " + type);
 		System.out.println("Step 1: requesting facets and find facet config");
 		ResponseEntity<Facets> res = gorfxClient.listAvailableFacets(dn);

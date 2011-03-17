@@ -23,15 +23,17 @@ import de.zib.gndms.model.gorfx.types.TaskStatus;
 /**
  * @author try ma ik jo rr a zib
  * @date 14.02.11  17:53
- * @brief
+ * @brief The action of the dummy task flow.
+ *
+ * @see DummyOrder
  */
-public class DummyTFAction extends AbstractTaskAction<DummyTF> {
+public class DummyTFAction extends AbstractTaskAction<DummyOrder> {
 
     public DummyTFAction() {
     }
 
 
-    public DummyTFAction( Task<DummyTF> t ) {
+    public DummyTFAction( Task<DummyOrder> t ) {
         super( t );
     }
 
@@ -52,7 +54,7 @@ public class DummyTFAction extends AbstractTaskAction<DummyTF> {
         updateStatus( stat,  TaskStatus.Status.RUNNING  );
 
         StringBuffer sb = new StringBuffer();
-        DummyTF tf = (DummyTF) getTask().getModel();
+        DummyOrder tf = (DummyOrder ) getTask().getModel();
         for( int i = 0; i < tf.getTimes(); ++i ) {
             sb.append( tf.getMessage() );
             sb.append( '\n' );

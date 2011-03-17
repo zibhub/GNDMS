@@ -20,7 +20,9 @@ import de.zib.gndms.kit.action.Action;
 /**
  * @author try ma ik jo rr a zib
  * @date 16.02.11  10:59
- * @brief
+ * @brief Marks a special type of action, the config action.
+ *
+ * This type of action will be used to configure the GNDMS system through the rest interface.
  */
 public interface ConfigAction extends Action<String> {
 

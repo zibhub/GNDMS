@@ -22,6 +22,7 @@ import de.zib.gndms.kit.action.ActionMetaMockUp;
  * @version $Id$
  *          <p/>
  *          Date: 08.02.11, Time: 17:06
+ * @brief A mock-up implementation.
  */
 public class ConfigMetaMockUp extends ActionMetaMockUp<ConfigAction> implements ConfigMeta {
 

@@ -17,7 +17,6 @@ package de.zib.gndms.logic.taskflow.tfmockup;
 
 import de.zib.gndms.logic.taskflow.AbstractQuoteCalculator;
 import de.zib.gndms.logic.taskflow.UnsatisfiableOrderException;
-import de.zib.gndms.model.gorfx.types.AbstractTF;
 import de.zib.gndms.model.gorfx.types.Quote;
 import org.joda.time.DateTime;
 
@@ -27,13 +26,13 @@ import java.util.List;
 /**
  * @author try ma ik jo rr a zib
  * @date 14.02.11  16:56
- * @brief
+ * @brief Dummy quote calculator.
  */
-public class DummyQuoteCalculator implements AbstractQuoteCalculator<DummyTF> {
+public class DummyQuoteCalculator implements AbstractQuoteCalculator<DummyOrder> {
 
-    private DummyTF order;
+    private DummyOrder order;
 
-    public void setOrder( DummyTF order ) {
+    public void setOrder( DummyOrder order ) {
         this.order = order;
     }
 

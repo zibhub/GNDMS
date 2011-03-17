@@ -25,7 +25,7 @@ import java.util.concurrent.*;
 /**
  * @author try ma ik jo rr a zib
  * @date 08.03.11  15:08
- * @brief
+ * @brief A thread pool executor which accepts TaskActions.
  */
 public class TFExecutor {
 
