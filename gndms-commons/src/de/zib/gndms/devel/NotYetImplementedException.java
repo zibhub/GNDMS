@@ -20,7 +20,7 @@ package de.zib.gndms.devel;
  * @date 04.03.11  12:50
  * @brief NotYetImplementedException.
  *
- * You new when things are not implemented ... yet.
+ * You know when things are not implemented ... yet.
  */
 public class NotYetImplementedException extends RuntimeException {
 

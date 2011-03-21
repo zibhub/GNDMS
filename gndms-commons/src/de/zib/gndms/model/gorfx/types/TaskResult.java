@@ -16,7 +16,7 @@ package de.zib.gndms.model.gorfx.types;
  */
 
 /**
- * Something with tasks and there results.
+ * Something with tasks and their results.
  *
  * @author try ma ik jo rr a zib
  *         Date: 09.02.11, Time: 18:44
