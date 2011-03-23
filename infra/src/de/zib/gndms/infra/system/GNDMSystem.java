@@ -114,8 +114,7 @@ public final class GNDMSystem
 	private @NotNull EntityManagerFactory emf;
 	private @NotNull EntityManagerFactory restrictedEmf;
     private @NotNull GraphDatabaseService neo;
-    private @NotNull
-    Dao dao;
+    private @NotNull Dao dao;
 //	private NetworkAuxiliariesProvider netAux;
 
 
@@ -421,10 +420,8 @@ public final class GNDMSystem
 	private synchronized void shutdown() throws Exception {
         if (! shutdown) {
             shutdown = true;
-            if (executionService != null) {
-                executionService.shutdown();
-            }
-	        instanceDir.shutdownConfiglets();
+            executionService.shutdown();
+            instanceDir.shutdownConfiglets();
             final GroovyMoniServer moniServer = getMonitor();
             if (moniServer != null)
                 moniServer.stopServer();
@@ -440,8 +437,6 @@ public final class GNDMSystem
      * @return the TaskExecutionService instance, which is uses by this system.
      */
     private synchronized @NotNull TaskExecutionService getExecutionService() {
-        if (executionService == null)
-            executionService = new SysTaskExecutionService();
         return executionService;
     }
 
