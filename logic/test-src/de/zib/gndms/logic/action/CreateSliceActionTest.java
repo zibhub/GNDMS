@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.action;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -134,7 +134,7 @@ public class CreateSliceActionTest extends ModelEntityTestBase {
         boa.setActions( new Vector<Action<Void>>() );
         boa.setListener( new FakeEntityUpdateListener() );
         Action = validator.createCreateSliceAction(  );
-        Action.setOwnPostponedActions( boa );
+        Action.setOwnPostponedEntityActions(boa);
         //getEntityManager( ).getTransaction().begin( );
         Action.setOwnEntityManager( getEntityManager( ) );
         Action.setClosingEntityManagerOnCleanup( false );

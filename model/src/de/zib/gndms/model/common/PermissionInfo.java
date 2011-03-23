@@ -1,7 +1,7 @@
 package de.zib.gndms.model.common;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package de.zib.gndms.model.common;
 
 
 import de.zib.gndms.stuff.copy.Copyable;
-import de.zib.gndms.stuff.copy.CopyMode;
+import de.zib.gndms.stuff.copy.Copyable.CopyMode;
 
 import javax.persistence.Embeddable;
 import javax.persistence.Column;
@@ -39,7 +39,8 @@ import java.io.Serializable;
  */
 @Embeddable
 @Copyable( CopyMode.CONSTRUCT )
-public class PermissionInfo {
+public class PermissionInfo implements Serializable {
+    private static final long serialVersionUID = -5056270282074831436L;
 
     private String userName; // Name of the user who is creating the task.
                              // If this one is null it means that the configlet should be queried.

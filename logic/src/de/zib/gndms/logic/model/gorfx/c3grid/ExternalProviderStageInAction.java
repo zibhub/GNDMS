@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model.gorfx.c3grid;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,9 @@ import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
 import static de.zib.gndms.logic.model.gorfx.c3grid.ExternalProviderStageInORQCalculator.GLOBUS_DEATH_DURATION;
 import de.zib.gndms.model.dspace.Slice;
-import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
-import de.zib.gndms.model.gorfx.types.ProviderStageInResult;
+import de.zib.gndms.neomodel.common.Dao;
+import de.zib.gndms.neomodel.gorfx.Taskling;
 import de.zib.gndms.stuff.Sleeper;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,17 +51,10 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
     }
 
 
-    public ExternalProviderStageInAction(final @NotNull EntityManager em, final @NotNull AbstractTask model) {
-        super(em, model);
-	    parmAux = new ParmFormatAux();
+    public ExternalProviderStageInAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model) {
+        super(em, dao, model);
+        parmAux = new ParmFormatAux();
     }
-
-
-    public ExternalProviderStageInAction(final @NotNull EntityManager em, final @NotNull String pk) {
-        super(em, pk);
-	    parmAux = new ParmFormatAux();
-    }
-
 
     @SuppressWarnings({ "HardcodedLineSeparator", "MagicNumber" })
     @Override
@@ -83,7 +76,8 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
         action.setProcessBuilder(procBuilder);
         action.setOutputReceiver(outRecv);
         action.setErrorReceiver(errRecv);
-        int result =  action.call();
+
+        int result = action.call();
         switch (result) {
             case 0:
                 getLog().debug("Staging completed: " + outRecv.toString());
@@ -92,13 +86,13 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
             default:
                 if (result > 127) {
                     getLog().debug("Waiting for potential death of container...");
-                    Sleeper.sleepUninterruptible( GLOBUS_DEATH_DURATION );
+                    Sleeper.sleepUninterruptible(GLOBUS_DEATH_DURATION);
                 }
                 String log = "Staging failed! Staging script returned unexpected exit code: " + result +
-                    "\nScript output was:\n" + errRecv.toString();
+                        "\nScript output was:\n" + errRecv.toString();
 
                 trace( log, null ) ;
-                failFrom( new IllegalStateException( log ) );
+                throw new IllegalStateException( log );
         }
     }
 

@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.model.gorfx;
+package de.zib.gndms.logic.model.dspace;
 
 /*
  * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
@@ -18,20 +18,13 @@ package de.zib.gndms.logic.model.gorfx;
 
 
 
-import de.zib.gndms.model.gorfx.OfferType;
-
-
 /**
- * ThingAMagic.
+ * ScriptKind
+ *
+ * @see de.zib.gndms.logic.model.dspace.ChownSliceConfiglet
  *
  * @author  try ste fan pla nti kow zib
- * @version $Id$
- *
- *          User: stepn Date: 08.10.2008 Time: 17:35:27
- */
-public class ORQTypeFactory extends OfferTypeMetaFactory<AbstractORQCalculator<?,?>> {
-    @Override
-    public String getFactoryClassName(final OfferType key) {
-        return key.getCalculatorFactoryClassName();
-    }
+*/
+enum ScriptKind {
+    EXEC
 }

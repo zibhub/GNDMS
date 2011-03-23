@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.action;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package de.zib.gndms.logic.action;
 
 
 
-import de.zib.gndms.logic.model.EntityUpdateListener;
+import de.zib.gndms.logic.model.ModelUpdateListener;
 import de.zib.gndms.model.common.GridResource;
 
 /**
@@ -27,7 +27,7 @@ import de.zib.gndms.model.common.GridResource;
  * <p/>
  * User: mjorra, Date: 22.10.2008, Time: 14:56:09
  */
-public class FakeEntityUpdateListener<M extends GridResource> implements EntityUpdateListener<M> {
+public class FakeEntityUpdateListener<M extends GridResource> implements ModelUpdateListener<M> {
 
     public void onModelChange( M model ) {
         System.out.println( "onModelChange called with model id: "+ model.getId() );

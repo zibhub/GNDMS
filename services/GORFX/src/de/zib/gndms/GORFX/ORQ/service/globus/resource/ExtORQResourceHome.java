@@ -1,7 +1,7 @@
 package de.zib.gndms.GORFX.ORQ.service.globus.resource;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.model.common.ModelUUIDGen;
+import de.zib.gndms.neomodel.common.Dao;
 import org.apache.axis.message.addressing.AttributedURI;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.commons.logging.Log;
@@ -168,4 +169,7 @@ public final class ExtORQResourceHome extends ORQResourceHome implements GNDMSer
 		return ref;
     }
 
+    @NotNull public Dao getDao() {
+        return system.getDao();
+    }
 }

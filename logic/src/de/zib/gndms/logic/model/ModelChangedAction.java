@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ public class ModelChangedAction extends AbstractAction<Void> {
     /**
      * the listener who will be informed about a model change.
      */
-    private EntityUpdateListener<GridResource> listener;
+    private ModelUpdateListener<GridResource> listener;
 
 
 	public ModelChangedAction( final GridResource modelParam ) {
@@ -74,7 +74,7 @@ public class ModelChangedAction extends AbstractAction<Void> {
      */
 	@Override
 	public Void execute() {
-		listener.onModelChange( model );
+		listener.onModelChange(model);
 		return null;
 	}
 
@@ -93,12 +93,12 @@ public class ModelChangedAction extends AbstractAction<Void> {
 	}
 
 
-	public EntityUpdateListener<GridResource> getListener() {
+	public ModelUpdateListener<GridResource> getListener() {
 		return listener;
 	}
 
 
-	public void setListener(final EntityUpdateListener<GridResource> listenerParam) {
+	public void setListener(final ModelUpdateListener<GridResource> listenerParam) {
 		listener = listenerParam;
 	}
 }

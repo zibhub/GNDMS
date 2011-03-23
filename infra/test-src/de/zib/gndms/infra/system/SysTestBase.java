@@ -1,7 +1,7 @@
 package de.zib.gndms.infra.system;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -106,7 +106,7 @@ public abstract class SysTestBase {
 
     public void setupEntityAction(EntityAction<?> etA) {
         etA.setOwnEntityManager(sys.getEntityManagerFactory().createEntityManager());
-        etA.setOwnPostponedActions(new DefaultBatchUpdateAction());
+        etA.setOwnPostponedEntityActions(new DefaultBatchUpdateAction());
     }
 
 

@@ -38,4 +38,5 @@ STAGING_AREA_GSI_FTP_URL="gsiftp://$GRIDHOST""$STAGING_AREA_PATH"
 c3grid_generic
 enable_providerstagein
 enable_permissions
+enable_sliceChown
 refresh_system

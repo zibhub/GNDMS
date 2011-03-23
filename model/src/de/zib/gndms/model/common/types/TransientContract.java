@@ -1,7 +1,7 @@
 package de.zib.gndms.model.common.types;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ package de.zib.gndms.model.common.types;
 
 import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.stuff.copy.Copyable;
-import de.zib.gndms.stuff.copy.CopyMode;
+import de.zib.gndms.stuff.copy.Copyable.CopyMode;
 import org.joda.time.DateTime;
 
 import java.util.Collections;

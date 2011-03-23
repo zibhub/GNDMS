@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model.gorfx;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.config.ConfigAction;
 import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigOption;
-import de.zib.gndms.model.gorfx.OfferType;
+import de.zib.gndms.neomodel.gorfx.OfferType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -107,13 +107,13 @@ public class ConfigOfferTypeAction extends ConfigAction<String> {
         boolean update = false;
         switch (cfgUpdateMode) {
             case DELKEYS:
-                configMap = offerType_.getConfigMap();
+                configMap = offerType_.getConfigMapData();
                 for (String opt : getAllOptionNames())
                     if (isValidConfigOptionName(opt)) configMap.remove(opt);
                 break;
 
             case UPDATE:
-                configMap = offerType_.getConfigMap();
+                configMap = offerType_.getConfigMapData();
                 update = true;
                 break;
             default:

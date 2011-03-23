@@ -1,7 +1,9 @@
 package de.zib.gndms.logic.model.config;
 
+import de.zib.gndms.neomodel.common.Dao;
+
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,6 +57,8 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
         implements CommandAction<R> {
 
     public static final Pattern OPTION_NAME_PATTERN = Pattern.compile("[a-zA-Z][a-zA-Z0-9-_]*");
+
+    private Dao dao;
 
     /**
      * A configuration map. It maps an option name to its configuration value.
@@ -502,5 +506,13 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
     @SuppressWarnings({ "MethodMayBeStatic" })
     protected FailedResult failed(final @NotNull String details) {
         return new FailedResult(details);
+    }
+
+    public Dao getDao() {
+        return dao;
+    }
+
+    public void setDao(Dao dao) {
+        this.dao = dao;
     }
 }

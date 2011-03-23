@@ -1,7 +1,7 @@
 package de.zib.gndms.model.gorfx.types;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package de.zib.gndms.model.gorfx.types;
 
 
 
-import de.zib.gndms.stuff.copy.CopyMode;
+import de.zib.gndms.stuff.copy.Copyable.CopyMode;
 import de.zib.gndms.stuff.copy.Copyable;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,7 +42,7 @@ public abstract class AbstractORQ implements Serializable {
 	private transient boolean justEstimate; ///< Flag for the contract calculation
 
     private String actId; ///< A unique id inherited from the ORQResource
-    private HashMap<String,String> actContext; ///< The contex of the ORQResource
+    private HashMap<String,String> actContext; ///< The context of the ORQResource
                                                /// Contains stuff like, delegation epr, and workflow id
 	private static final int INITIAL_STRING_BUILDER_CAPACITY = 256;
     private String localUser; ///< The user name map to the credential of the request.

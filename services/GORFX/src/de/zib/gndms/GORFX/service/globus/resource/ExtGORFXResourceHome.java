@@ -1,7 +1,7 @@
 package de.zib.gndms.GORFX.service.globus.resource;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.model.gorfx.types.io.xml.ProviderStageInXML;
 import de.zib.gndms.gritserv.typecon.util.ProviderStageInXMLImpl;
 import de.zib.gndms.logic.model.gorfx.c3grid.ParmFormatAux;
+import de.zib.gndms.neomodel.common.Dao;
 import org.apache.axis.message.addressing.AttributedURI;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -184,5 +185,9 @@ public final class ExtGORFXResourceHome extends GORFXResourceHome
     @NotNull
     public EntityManagerFactory getEntityManagerFactory() {
        return getSystem().getEntityManagerFactory();
+    }
+
+    @NotNull public Dao getDao() {
+        return system.getDao();
     }
 }

@@ -1,7 +1,7 @@
 package de.zib.gndms.dspace.service;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -206,7 +206,7 @@ public class DSpaceImpl extends DSpaceImplBase {
             csa.setClosingEntityManagerOnCleanup( false );
             Slice ns = (Slice) mh.callModelAction( em, system.getEntityUpdateListener(), ma, sp );
 
-            csa.getPostponedActions().call( );
+            csa.getPostponedEntityActions().call( );
 
             thisResource.loadFromModel( ns );
 

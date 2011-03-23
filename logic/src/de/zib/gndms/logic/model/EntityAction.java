@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,13 +68,13 @@ public interface EntityAction<R> extends Action<R>, ModelUUIDGen {
      *
      * @return the postponend actions
      */
-    BatchUpdateAction<GridResource, ?> getPostponedActions();
+    BatchUpdateAction<GridResource, ?> getPostponedEntityActions();
 
     /**
      * Define actions that will be executed on {@code this.cleanup()}
      * 
      * @param postponedActionsParam a BatchUpdateAction containg actions, that will be executed on cleanup
      */
-    void setOwnPostponedActions(final @NotNull BatchUpdateAction<GridResource, ?> postponedActionsParam);
+    void setOwnPostponedEntityActions(final @NotNull BatchUpdateAction<GridResource, ?> postponedActionsParam);
 
 }

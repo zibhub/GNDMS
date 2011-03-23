@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model.gorfx.c3grid;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,7 +66,8 @@ public class ExternalProviderStageInORQCalculator extends AbstractProviderStageI
         final @NotNull TransientContract cont = getPreferredOfferExecution();
         final @NotNull TransientContract result;
 
-        MapConfig config = new MapConfig(getKey().getConfigMap());
+
+        MapConfig config = new MapConfig(getDao().getOfferTypeConfig(getKey()));
         
         parmAux.formatFromMap( config );
 

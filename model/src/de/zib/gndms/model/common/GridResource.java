@@ -1,7 +1,7 @@
 package de.zib.gndms.model.common;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import javax.persistence.Id;
  *
  **/
 @MappedSuperclass
-public abstract class GridResource extends GridEntity {
+public abstract class GridResource extends GridEntity implements GridResourceItf {
     
     private String id;
 

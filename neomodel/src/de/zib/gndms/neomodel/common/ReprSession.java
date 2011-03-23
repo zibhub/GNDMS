@@ -1,7 +1,7 @@
-package de.zib.gndms.stuff.copy;
+package de.zib.gndms.neomodel.common;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,34 @@ package de.zib.gndms.stuff.copy;
  * limitations under the License.
  */
 
-
+import org.jetbrains.annotations.NotNull;
 
 /**
- * An enum holding all implemented possibilities to copy an instance.
+ * ReprSession
  *
- * @see Copier
  * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
- *          User: stepn Date: 27.11.2008 Time: 17:21:01
+ * User: stepn Date: 05.09.2008 Time: 14:48:36
  */
-public enum CopyMode {
-	/** copies an instance using its clone method */ CLONE,
-    /** copies an instance using its mold method */ MOLD,
-    /** copies an instance using plain java (de)serialization */ SERIALIZE,
-    /** copies an instance using its class' constructor*/ CONSTRUCT,
-    /** instance must not be copied */ DONT
+public class ReprSession {
+    private final @NotNull
+    Session session;
+    private final @NotNull
+    Dao dao;
+
+    ReprSession(@NotNull Dao dao, @NotNull Session session) {
+        this.dao     = dao;
+        this.session = session;
+    }
+
+    @NotNull public Session getSession() {
+        return session;
+    }
+
+    @NotNull public Dao getDao() {
+        return dao;
+    }
 }
+
+

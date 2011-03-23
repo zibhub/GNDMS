@@ -1,7 +1,7 @@
 package de.zib.gndms.model.common;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import java.util.Calendar;
  * GridResource + terminationTime
  **/
 @MappedSuperclass
-public abstract class TimedGridResource extends GridResource {
+public abstract class TimedGridResource extends GridResource implements TimedGridResourceItf {
 
     private Calendar terminationTime;
 

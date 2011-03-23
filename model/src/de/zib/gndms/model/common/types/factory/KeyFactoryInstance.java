@@ -1,7 +1,7 @@
 package de.zib.gndms.model.common.types.factory;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,8 +58,8 @@ public interface KeyFactoryInstance<K, T extends KeyFactoryInstance<K, T>> {
 
     /**
      * Sets the key, which is needed to return {@code this} when calling {@code getFactory().getInstance(key)}
-     * 
-     * @param keyParam the key, which is needed to return {@code this} when calling {@code getFactory().getInstance(key)} 
+     *
+     * @param keyParam the key, which is needed to return {@code this} when calling {@code getFactory().getInstance(key)}
      */
     void setKey(final @NotNull K keyParam);
 }

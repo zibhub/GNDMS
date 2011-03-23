@@ -1,7 +1,7 @@
 package de.zib.gndms.dspace.subspace.service;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -123,18 +123,20 @@ public class SubspaceImpl extends SubspaceImplBase {
             csa.setModel( msp.getInstance( ) );
             DefaultBatchUpdateAction bua = new DefaultBatchUpdateAction<GridResource>();
             bua.setListener( system );
-            csa.setOwnPostponedActions( bua );
+            csa.setOwnPostponedEntityActions(bua);
 
             final Slice ns = csa.call();
 
-            csa.getPostponedActions().call( );
+            csa.getPostponedEntityActions().call( );
 
             sr.loadFromModel( ns );
             sref = srh.getResourceReference( rk );
             tx.commit( );
         } catch ( OutOfSpace e ) {
+            logger.debug(e);
             throw e;
         } catch ( Exception e ) {
+            logger.debug(e);
             if( srh != null && rk != null )
                 srh.remove( rk );
             throw new RemoteException( e.toString(), e );

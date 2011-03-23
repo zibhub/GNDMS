@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package de.zib.gndms.logic.model;
 
 
 
+import de.zib.gndms.logic.action.Action;
+import de.zib.gndms.model.ModelEntity;
 import de.zib.gndms.model.common.GridEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,11 +36,9 @@ import org.jetbrains.annotations.NotNull;
  *
  * User: mjorra, Date: 12.08.2008, Time: 16:24:56
  */
-public interface ModelAction<M extends GridEntity, R> extends EntityAction<R> {
+public interface ModelAction<M extends ModelEntity, R> extends Action<R> {
 
 	M getModel( );
 
     void setModel( final @NotNull M mdl );
-
-
 }

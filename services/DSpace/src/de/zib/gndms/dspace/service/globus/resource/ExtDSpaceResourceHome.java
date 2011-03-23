@@ -1,7 +1,7 @@
 package de.zib.gndms.dspace.service.globus.resource;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import de.zib.gndms.infra.service.GNDMSingletonServiceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.model.dspace.DSpace;
+import de.zib.gndms.neomodel.common.Dao;
 import org.apache.axis.message.addressing.AttributedURI;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -232,5 +233,9 @@ public final class ExtDSpaceResourceHome  extends DSpaceResourceHome
     @SuppressWarnings({ "unchecked" })
     public String getSingletonID() throws ResourceException {
         return ((ReloadablePersistentResource<DSpace, ExtDSpaceResourceHome>)find(null)).getID();
+    }
+
+    @NotNull public Dao getDao() {
+        return system.getDao();
     }
 }

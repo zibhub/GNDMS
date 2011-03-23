@@ -1,7 +1,7 @@
 package de.zib.gndms.infra.action;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigOption;
 import de.zib.gndms.model.common.GridResource;
+import de.zib.gndms.model.common.GridResourceItf;
 import org.apache.axis.types.URI;
 import org.jetbrains.annotations.NotNull;
 import org.globus.wsrf.ResourceException;
@@ -107,7 +108,7 @@ public class GetHomeInfoAction extends SystemAction<String> {
 
         if (instance instanceof GNDMPersistentServiceHome) {
             buffer.append("modelClass: '");
-            final Class<? extends GridResource> modelClass =
+            final Class<? extends GridResourceItf> modelClass =
                     ((GNDMPersistentServiceHome<?>) instance).getModelClass();
             buffer.append(modelClass.getName());
             buffer.append("'; ");

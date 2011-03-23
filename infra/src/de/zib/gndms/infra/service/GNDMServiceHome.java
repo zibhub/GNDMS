@@ -1,7 +1,7 @@
 package de.zib.gndms.infra.service;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package de.zib.gndms.infra.service;
 
 import de.zib.gndms.infra.system.SystemHolder;
 import de.zib.gndms.kit.access.EMFactoryProvider;
+import de.zib.gndms.neomodel.common.Dao;
 import org.apache.axis.types.URI;
 import org.globus.wsrf.ResourceHome;
 import org.globus.wsrf.ResourceKey;
@@ -37,6 +38,9 @@ import org.jetbrains.annotations.NotNull;
 public interface GNDMServiceHome
         extends EMFactoryProvider, SystemHolder, ResourceHome {
 
+
+    @NotNull
+    Dao getDao();
 
     @NotNull String getNickName();
 

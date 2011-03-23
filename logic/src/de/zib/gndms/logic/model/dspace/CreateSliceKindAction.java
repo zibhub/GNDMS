@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model.dspace;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package de.zib.gndms.logic.model.dspace;
 
 
 
-import de.zib.gndms.logic.model.AbstractModelAction;
+import de.zib.gndms.logic.model.AbstractModelEntityAction;
 import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.common.AccessMask;
@@ -38,7 +38,7 @@ import java.util.Set;
  *
  * User: mjorra, Date: 18.08.2008, Time: 13:44:55
  */
-public class CreateSliceKindAction extends AbstractModelAction<SliceKind, SliceKind> {
+public class CreateSliceKindAction extends AbstractModelEntityAction<SliceKind, SliceKind> {
 
     private String  URI; // must be unique
     private AccessMask permission; // must not be null

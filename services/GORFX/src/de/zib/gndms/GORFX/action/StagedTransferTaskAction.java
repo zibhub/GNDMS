@@ -1,7 +1,7 @@
 package de.zib.gndms.GORFX.action;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -130,7 +130,7 @@ public class StagedTransferTaskAction extends ORQTaskAction<SliceStageInORQ> {
 
             // perform transfer
             InterSliceTransferTaskAction ista = new InterSliceTransferTaskAction( );
-            ista.initFromModel( getEmf().createEntityManager(), interSliceTransfer );
+            ista.initFromModel( getEmf().createEntityManager(), dao, interSliceTransfer );
             ista.setClosingEntityManagerOnCleanup( true );
             ista.call( );
 

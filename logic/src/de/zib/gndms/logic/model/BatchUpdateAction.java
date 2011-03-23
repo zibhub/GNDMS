@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,15 @@ package de.zib.gndms.logic.model;
 
 
 import de.zib.gndms.logic.action.CompositeAction;
-import de.zib.gndms.model.common.GridResource;
+import de.zib.gndms.model.ModelEntity;
+import de.zib.gndms.model.common.GridEntity;
+import de.zib.gndms.model.common.GridResourceItf;
 import org.jetbrains.annotations.NotNull;
 
 
 /**
  *
- * A BatchUpdateAction will executed several actions and can inform an EntityUpdateListener about a change on the model.
+ * A BatchUpdateAction will executed several actions and can inform an ModelUpdateListener about a change on the model.
  * 
  * 
  * @author  try ste fan pla nti kow zib
@@ -33,10 +35,10 @@ import org.jetbrains.annotations.NotNull;
  *
  *          User: stepn Date: 13.08.2008 Time: 10:35:07
  */
-public interface BatchUpdateAction<M extends GridResource, R> extends CompositeAction<R, Void> {
+public interface BatchUpdateAction<M extends ModelEntity & GridResourceItf, R> extends CompositeAction<R, Void> {
 
-    EntityUpdateListener<M> getListener();
+    ModelUpdateListener<M> getListener();
 
-    void setListener(final @NotNull EntityUpdateListener<M> listenerParam);
+    void setListener(final @NotNull ModelUpdateListener<M> listenerParam);
 
 }

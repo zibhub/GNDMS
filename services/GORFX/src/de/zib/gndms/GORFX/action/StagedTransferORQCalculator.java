@@ -1,7 +1,7 @@
 package de.zib.gndms.GORFX.action;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ public class StagedTransferORQCalculator extends
         AbstractProviderStageInORQCalculator psi_calc = AbstractProviderStageInORQCalculator.class.cast(
             getSystem().getInstanceDir().newORQCalculator( getSystem().getEntityManagerFactory(), GORFXConstantURIs.PROVIDER_STAGE_IN_URI ));
         
-        psi_calc.setKey( getKey() );
+        psi_calc.setKey(getKey());
         psi_calc.setORQArguments( getORQArguments() );
 
         TransientContract c = psi_calc.createOffer();

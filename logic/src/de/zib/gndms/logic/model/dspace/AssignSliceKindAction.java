@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model.dspace;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -126,7 +126,7 @@ public class AssignSliceKindAction extends ConfigAction<ConfigActionResult> {
         }
 
         // Register resources that require refreshing
-        getPostponedActions().addAction(new ModelChangedAction(space.getInstance()));
+        getPostponedEntityActions().addAction(new ModelChangedAction(space.getInstance()));
 
         return ok();
     }

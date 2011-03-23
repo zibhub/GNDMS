@@ -1,7 +1,7 @@
 package de.zib.gndms.model.common;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.xml.namespace.QName;
+import java.io.Serializable;
 
 /**
  * Model-class for a QName
@@ -34,10 +35,10 @@ import javax.xml.namespace.QName;
  * User: stepn Date: 02.08.2008 Time: 00:41:09
  */
 @Embeddable
-public class ImmutableScopedName extends ModelId {
+public class ImmutableScopedName extends ModelId implements Serializable {
+    private static final long serialVersionUID = -6103950854302940210L;
 
     private String nameScope;
-
     private String localName;
 
     public ImmutableScopedName () { super(); }
@@ -56,9 +57,9 @@ public class ImmutableScopedName extends ModelId {
         this(qname.getNamespaceURI(), qname.getLocalPart() );
     }
 
-    protected boolean equalFields(@NotNull Object obj) {
+    public boolean equalFields(@NotNull Object obj) {
         ImmutableScopedName other = (ImmutableScopedName) obj;
-        return getNameScope() == other.getNameScope() && getLocalName() == other.getLocalName();
+        return getNameScope().equals(other.getNameScope()) && getLocalName().equals(other.getLocalName());
     }
 
     @Override
@@ -79,7 +80,6 @@ public class ImmutableScopedName extends ModelId {
     protected void setNameScope( String nameScope ) {
         this.nameScope = nameScope;
     }
-
 
     @Column(name="local", columnDefinition="VARCHAR", nullable=false, updatable=false)
     public String getLocalName() {

@@ -1,7 +1,7 @@
 package de.zib.gndms.infra.access;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package de.zib.gndms.infra.access;
 
 
 
+import de.zib.gndms.model.common.GridResourceItf;
 import org.jetbrains.annotations.NotNull;
 import org.globus.wsrf.ResourceException;
 import de.zib.gndms.infra.service.GNDMServiceHome;
@@ -44,7 +45,7 @@ public interface ServiceHomeProvider {
 	GNDMServiceHome lookupServiceHome(@NotNull String instancePrefix);
 
 	@SuppressWarnings({ "HardcodedFileSeparator", "RawUseOfParameterizedType" })
-	<K extends GridResource> void addHome(
+	<K extends GridResourceItf> void addHome(
 	        Class<K> modelClazz, @NotNull GNDMServiceHome home)
 	        throws ResourceException;
 }

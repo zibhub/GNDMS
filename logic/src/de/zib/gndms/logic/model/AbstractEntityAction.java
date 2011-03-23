@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -160,24 +160,23 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
 
 
     public void setOwnEntityManager(final @NotNull EntityManager entityManagerParam) {
-        //doNotOverwrite("entityManager", entityManager);
         entityManager = entityManagerParam;
     }
 
 
-    public final BatchUpdateAction<GridResource, ?> getPostponedActions() {
+    public final BatchUpdateAction<GridResource, ?> getPostponedEntityActions() {
         if (postponedActions == null) {
             final EntityAction<?> entityAction = nextParentOfType(EntityAction.class);
             if (entityAction != null)
-                return entityAction.getPostponedActions();
+                return entityAction.getPostponedEntityActions();
         }
 
         return postponedActions;
     }
 
 
-    public final void setOwnPostponedActions(
-          @NotNull final BatchUpdateAction<GridResource, ?> postponedActionsParam) {
+    public final void setOwnPostponedEntityActions(
+            @NotNull final BatchUpdateAction<GridResource, ?> postponedActionsParam) {
         doNotOverwrite("postponedActions", postponedActions);
         postponedActions = postponedActionsParam;
     }
@@ -214,7 +213,7 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
      * @param model the model which has been changed
      */
     public void addChangedModel( GridResource model  ) {
-        getPostponedActions( ).addAction( new ModelChangedAction( model ) );
+        getPostponedEntityActions().addAction( new ModelChangedAction( model ) );
     }
 
 
@@ -249,7 +248,7 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
      */
     @Override
     public void cleanUp() {
-        final BatchUpdateAction<GridResource, ?> batched = getPostponedActions();
+        final BatchUpdateAction<GridResource, ?> batched = getPostponedEntityActions();
         if (hasOwnPostponedActions() && isRunningOwnPostponedActions())
             postponedActions.call();
         if (isClosingEntityManagerOnCleanup() && getEntityManager() != null)

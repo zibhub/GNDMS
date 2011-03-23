@@ -1,7 +1,7 @@
 package de.zib.gndms.model.common;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ package de.zib.gndms.model.common;
 import de.zib.gndms.model.common.types.FutureTime;
 import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.stuff.copy.Copier;
-import de.zib.gndms.stuff.copy.CopyMode;
+import de.zib.gndms.stuff.copy.Copyable.CopyMode;
 import de.zib.gndms.stuff.copy.Copyable;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
@@ -31,6 +31,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import java.io.Serializable;
 import java.util.Calendar;
 
 
@@ -48,8 +49,10 @@ import java.util.Calendar;
  *          User: stepn Date: 24.11.2008 Time: 15:22:43
  */
 @Embeddable @Copyable(CopyMode.MOLD)
-public class PersistentContract {
-	private Calendar accepted;
+public class PersistentContract implements Serializable {
+    private static final long serialVersionUID = -7695057432890400329L;
+
+    private Calendar accepted;
 	private Calendar deadline;
 	private Calendar resultValidity;
 

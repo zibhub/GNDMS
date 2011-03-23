@@ -1,7 +1,7 @@
 package de.zib.gndms.stuff.copy;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ public final class Copier {
 			return null;
 		else {
 			final @NotNull Class<T> clazz = (Class<T>) instance.getClass();
-			final CopyMode mode = selectMode(fallbackToClone, instance, clazz);
+			final Copyable.CopyMode mode = selectMode(fallbackToClone, instance, clazz);
             if (mode == null)
                 throw new IllegalArgumentException("Don't know how to copy instances of class: " + clazz.getName());
             switch (mode) {
@@ -108,17 +108,17 @@ public final class Copier {
      * @return the proper copy mode for an instance depeding on {@link Copyable}'s {@code annotations} or it's superclasses.
      */
 	@SuppressWarnings({ "unchecked" })
-	private static <T> CopyMode selectMode(
+	private static <T> Copyable.CopyMode selectMode(
 		  final boolean fallbackToClone, final T instance, final Class<T> clazz) {
 		final Copyable via = clazz.getAnnotation( Copyable.class);
-		final CopyMode mode;
+		final Copyable.CopyMode mode;
 		if (via == null) {
 			if (instance instanceof Molding)
-				mode = CopyMode.MOLD;
+				mode = Copyable.CopyMode.MOLD;
 			else if (fallbackToClone && instance instanceof Cloneable)
-				mode = CopyMode.CLONE;
+				mode = Copyable.CopyMode.CLONE;
             else if (instance instanceof Serializable)
-                mode = CopyMode.SERIALIZE;
+                mode = Copyable.CopyMode.SERIALIZE;
 			else
 				mode = null;
 		}

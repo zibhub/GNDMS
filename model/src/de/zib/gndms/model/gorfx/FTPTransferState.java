@@ -1,7 +1,7 @@
 package de.zib.gndms.model.gorfx;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ package de.zib.gndms.model.gorfx;
 import de.zib.gndms.model.common.GridEntity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 
 /**
@@ -29,48 +30,39 @@ import javax.persistence.*;
  * <p/>
  * User: mjorra, Date: 30.09.2008, Time: 17:24:14
  */
-@Entity(name="FTPTransferState")
-@Table(name="ftp_transfer_state", schema="gorfx")
-public class FTPTransferState extends GridEntity {
-
-
+public final class FTPTransferState implements Serializable {
     // maybe use fc constraint here
     private String transferId;
-
     private String ftpArgs;
-    
     private String currentFile;
 
-
-    @Id
-    @Column(name="transfer_id", nullable=false, length=36, columnDefinition="CHAR", updatable=false)
-    public String getTransferId() {
-        return transferId;
-    }
-
-
-    @Column(name="ftp_arguments", columnDefinition="VARCHAR")
-    public String getFtpArgs() {
-        return ftpArgs;
-    }
-
-
-    @Column(name="current_file", columnDefinition="VARCHAR")
-    public String getCurrentFile() {
-        return currentFile;
-    }
 
     /**
      * Returns the ready to use version of the ftpArgs argument.
      *
      * The normal getFtpArgs method only returns the pure data,
      * which isn't suited to construct a restart marker.
+     * @return ftpArgsString
      */
     @Transient
     public String getFtpArgsString( ) {
         return "Range Marker " + ftpArgs;
     }
 
+
+    public String getTransferId() {
+        return transferId;
+    }
+
+
+    public String getFtpArgs() {
+        return ftpArgs;
+    }
+
+
+    public String getCurrentFile() {
+        return currentFile;
+    }
 
     public void setTransferId( String transferId ) {
         this.transferId = transferId;

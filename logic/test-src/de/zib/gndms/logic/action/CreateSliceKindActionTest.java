@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.action;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,7 +78,7 @@ public class CreateSliceKindActionTest extends ModelEntityTestBase {
         val.setPermission( AccessMask.fromString( "550" ) );
         CreateSliceKindAction action =  val.createCreateSliceAction();
         action.setOwnEntityManager( em );
-        action.setOwnPostponedActions( boa );
+        action.setOwnPostponedEntityActions(boa);
         action.setUUIDGen( uuidgen );
         SliceKind sl = action.call();
         val.validate(  sl  );

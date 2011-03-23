@@ -1,7 +1,7 @@
 package de.zib.gndms.infra.grams;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -121,6 +121,7 @@ public class LinuxDirectoryAux implements DirectoryAux {
 
     public boolean changeOwner( String dn, String path) {
         logger.debug( "changing owner of Slice " + path +" to " + dn );
+        return false;
     }
 
 
