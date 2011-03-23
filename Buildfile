@@ -46,8 +46,8 @@ JAVA_HOME = ENV['JAVA_HOME']
 SOURCE = '1.5'
 TARGET = '1.5'
 testEnv('GNDMS_SOURCE', 'the root directory of GNDMS source distribution (i.e. the toplevel directory in which the Buildfile resides)')
-testEnv('GNDMS_SHARED', '$GLOBUS_LOCATION/etc/gndms_shared')
-testEnv('GNDMS_MONI_CONFIG', '$GNDMS_SHARED/monitor.properties')
+#testEnv('GNDMS_SHARED', '$GLOBUS_LOCATION/etc/gndms_shared')
+#testEnv('GNDMS_MONI_CONFIG', '$GNDMS_SHARED/monitor.properties')
 testEnv('USER', 'your user\'s login (your UNIX is weird)')
 testTool('rsync')
 testTool('curl')
@@ -394,9 +394,10 @@ define 'gndms' do
     end
 
     define 'gndmc', :layout => dmsTestLayout('gndmc', 'gndms-gndmc') do
-      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gndms:gritserv'), project('gndms:kit'), project('gndms:stuff'), project('gndms:model'), ARGS4J, SERVICE_STUBS, GORFX_CLIENT, DSPACE_CLIENT, GORFX_COMMON, DSPACE_COMMON, COMMONS_COLLECTIONS, GT4_COMMONS, JODA_TIME, GT4_GRAM, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, EXTRA_JARS, GT4_MDS, TestNG.dependencies
+      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gndms:gritserv'), project('gndms:kit'), project('gndms:stuff'), project('gndms:model'), ARGS4J, SERVICE_STUBS, GORFX_CLIENT, DSPACE_CLIENT, GORFX_COMMON, DSPACE_COMMON, COMMONS_CODEC, COMMONS_COLLECTIONS, GT4_COMMONS, JODA_TIME, GT4_GRAM, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, EXTRA_JARS, GT4_MDS, TestNG.dependencies
       compile
       test.compile
+      test.exclude '*'
       package :jar
 
       task 'show-log' do
@@ -419,6 +420,19 @@ define 'gndms' do
         jars << compile.target.to_s
         args = [ '-p', ENV['GNDMS_SOURCE']+'/etc/sliceInOutClient.properties' ]
         Commands.java('de.zib.gndmc.SliceInOutClient',  args, 
+                      { :classpath => jars, :properties => 
+                          { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" } } )
+      end
+
+      task 'run-staging-test' do
+        jars = compile.dependencies.map(&:to_s)
+        jars << compile.target.to_s
+        args = [ '-props', ENV['GNDMS_SOURCE']+'/test-data/test-properties/g2_stage_del_local.properties', 
+                 '-con-props', ENV['GNDMS_SOURCE']+'/test-data/test-properties/contract.properties', 
+                 '-uri', 'https://130.73.78.15:8443/wsrf/services/gndms/GORFX',
+	             '-dn', '/C=DE/O=GridGermany/OU=Konrad-Zuse-Zentrum fuer Informationstechnik Berlin (ZIB)/OU=CSR/CN=Maik Jorra'
+        ]
+        Commands.java('de.zib.gndmc.GORFX.c3grid.SliceStageInClient',  args, 
                       { :classpath => jars, :properties => 
                           { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" } } )
       end

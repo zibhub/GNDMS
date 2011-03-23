@@ -101,6 +101,11 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
     }
     
 
+    /**
+     * Executes the slice transformation.
+     *
+     * NOTE: Since this method uses DirectoryAux.copyDir the obeys the restriction of this method.
+     */
     @Override
     public Slice execute(@NotNull EntityManager em) {
 
@@ -115,7 +120,7 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
             return null;
 
         // create an new slice of the given kind
-        Slice nsl = createSliceAction.call( );
+        Slice nsl = createSliceAction.execute( em );
         if ( nsl == null )
              throw new RuntimeException( "Can't create slice" );
 
@@ -145,6 +150,7 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
                     );
         }
         */
+
         directoryAux.copyDir( nsl.getOwner(), src_pth, tgt_pth );
 
         // restore slice path settings

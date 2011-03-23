@@ -62,7 +62,6 @@ public class DelClient extends AbstractApplication {
         // aquire cert chain
         ClientSecurityDescriptor desc = new ClientSecurityDescriptor();
 
-//        desc.setGSITransport( (Integer) Constants.ENCRYPTION );
 
         System.out.println( "connecting to service: " + uri );
         EndpointReferenceType delegEpr = AddressingUtils.createEndpointReference( uri, null);

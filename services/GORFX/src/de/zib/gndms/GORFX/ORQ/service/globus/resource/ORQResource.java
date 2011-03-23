@@ -25,6 +25,7 @@ import de.zib.gndms.gritserv.typecon.GORFXTools;
 import de.zib.gndms.gritserv.typecon.types.ContractXSDReader;
 import de.zib.gndms.gritserv.typecon.util.ContextTAux;
 import de.zib.gndms.gritserv.util.GlobusCredentialProviderImpl;
+import de.zib.gndms.gritserv.util.LogAux;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
 import de.zib.gndms.model.common.types.TransientContract;
@@ -70,6 +71,7 @@ public class ORQResource extends ORQResourceBase implements GNDMSCredibleResourc
             ORQCalculator = sys.getInstanceDir().newORQCalculator( sys.getEntityManagerFactory(), offerTypeUri.toString());
             AbstractORQ orq =  GORFXTools.convertFromORQT( offerRequestArguments, ctx );
             orq.setActId( ( String ) getID() );
+            orq.setLocalUser( LogAux.getLocalName() );
             ORQCalculator.setORQArguments( orq );
             //ORQCalculator.setNetAux( home.getSystem().getNetAux() );
         }
