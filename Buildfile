@@ -93,8 +93,14 @@ SPRING = [
            "org.springframework:spring-context:jar:#{SPRING_VERSION}",
            "org.springframework:spring-expression:jar:#{SPRING_VERSION}",
            "org.springframework:spring-oxm:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-orm:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-jdbc:jar:#{SPRING_VERSION}",
            "org.springframework:spring-web:jar:#{SPRING_VERSION}",
            "org.springframework:spring-webmvc:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-expression:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-asm:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-aop:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-instrument:jar:#{SPRING_VERSION}",
          ] 
 SERVLET = 'javax.servlet:servlet-api:jar:2.5'
 XSTREAM = 'com.thoughtworks.xstream:xstream:jar:1.3.1'
@@ -259,6 +265,20 @@ define 'gndms' do
     task 'update-release-info' do updateReleaseInfo() end
 
     meta_inf << file(_('GNDMS-BUILD-INFO'))
+
+    desc 'GNDMS rewrite based on Spring'
+    define 'spring', :layout => dmsLayout('spring', 'gndms-spring') do
+       compile.with SPRING, JETBRAINS_ANNOTATIONS, COMMONS_LOGGING
+       meta_inf << file(_('src/META-INF/gndms.xml'))
+       package :jar
+      
+       task 'standup' do
+          jars = compile.dependencies.map(&:to_s)
+          jars << project('gndms:spring')
+	  full_args = [] 
+          Commands.java('de.zib.gndms.spring.GNDMSpring',  full_args, { :classpath => jars, :verbose => true } )
+       end
+    end
 
     desc 'GT4-independent utility classes for GNDMS'
     define 'stuff', :layout => dmsLayout('stuff', 'gndms-stuff') do
