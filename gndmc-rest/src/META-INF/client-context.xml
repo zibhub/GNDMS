@@ -8,13 +8,19 @@
     <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
         <property name="messageConverters">
             <list>
-                <bean  class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
+                <!--bean  class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
                     <constructor-arg ref="marshaller" />
-                </bean>
+                </bean-->
+                <ref bean="jsonconv"/>
             </list>
         </property>
     </bean>
-    <!--bean  id="jsonconv" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"/-->
+
+    <bean  id="jsonconv" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+        <property name="objectMapper" ref="objectMapper"/>
+    </bean>
+
+    <bean id="objectMapper" class="de.zib.gndms.rest.GNDMSJacksonObjectMapper" />
 
     <!-- this is the marshaller -->
     <bean id="marshaller" class="org.springframework.oxm.xstream.XStreamMarshaller">

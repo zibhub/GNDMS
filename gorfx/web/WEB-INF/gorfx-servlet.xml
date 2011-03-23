@@ -11,22 +11,26 @@
     <bean class="org.springframework.web.servlet.view.BeanNameViewResolver"/>
 
     <!-- this is the marshaller -->
-    <bean id="marshaller" class="org.springframework.oxm.xstream.XStreamMarshaller">
+    <!--bean id="marshaller" class="org.springframework.oxm.xstream.XStreamMarshaller">
         <property name="autodetectAnnotations" value="true"/>
-    </bean>
+    </bean-->
 
     <!-- this is the converter for POST -->
-    <bean id="converter"
+    <!--bean id="converter"
 		class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
 		<constructor-arg ref="marshaller" />
-	</bean>
+	</bean-->
 
-    <!--bean id="jsonconverter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"/-->
+    <bean id="jsonconverter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+        <property name="objectMapper" ref="objectMapper"/>
+    </bean>
+
+    <bean id="objectMapper" class="de.zib.gndms.rest.GNDMSJacksonObjectMapper" />
 
      <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
 		<property name="messageConverters">
 			<list>
-				<ref bean="converter" />
+				<ref bean="jsonconverter" />
 			</list>
 		</property>
      </bean>

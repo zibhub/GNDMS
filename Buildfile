@@ -451,6 +451,22 @@ define 'gndms' do
         Commands.java('de.zib.gndmc.MaintenanceClient',  full_args, { :classpath => jars, :verbose => true } )
       end
 
+
+      task 'show-version' do
+        jars = compile.dependencies.map(&:to_s)
+        jars << compile.target.to_s
+        uri  = ENV['URI']
+        if (uri == nil) then
+          puts 'Call with env URI="GORFX or DSpace EPR" ARGS="Arguments to .sys.ReadGNDMSVersion'
+          exit 1
+        end
+        args = ENV['ARGS']
+        if (args == nil) then args = "" end
+        full_args = [ '-uri', uri, '.sys.ReadGNDMSVersion' ]
+        full_args << args  
+        Commands.java('de.zib.gndmc.MaintenanceClient',  full_args, { :classpath => jars, :verbose => true } )
+      end
+
       task 'run-test' do
         jars = compile.dependencies.map(&:to_s)
         jars << compile.target.to_s
@@ -494,14 +510,14 @@ define 'gndms' do
 
     desc 'Common gndms service classes'
     define 'gndms-commons', :layout => dmsLayout('gndms-commons', 'gndms-commons') do
-        compile.with SPRING, ARGS4J, JODA_TIME
+        compile.with SPRING, ARGS4J, JODA_TIME, JSON
         compile
         package :jar
     end
 
     desc 'Gorfx client classes'
     define 'gndmc-rest', :layout => dmsLayout('gndmc-rest', 'gndms-gndmc-rest') do
-        compile.with project('gndms-commons'), SPRING, ARGS4J, JODA_TIME, SLF4J, COMMONS_LOGGING, XSTREAM, XSTREAM_DEPS
+        compile.with project('gndms-commons'), SPRING, ARGS4J, JODA_TIME, SLF4J, COMMONS_LOGGING, XSTREAM, XSTREAM_DEPS, JSON
         meta_inf << file(_('src/META-INF/client-context.xml'))
         package(:jar).with :manifest=>manifest.merge( 'Main-Class'=>'de.zib.gndms.gndmc.gorfx.GORFXClientMain' )
 
@@ -533,11 +549,18 @@ define 'gndms' do
             Commands.java('de.zib.gndms.gndmc.gorfx.GORFXClientMain',  args, { :classpath => jars } )
         end
 
+        task 'run3' do
+
+            jars = compile.dependencies.map(&:to_s)
+            jars << project('gndms:gndmc-rest')
+            args = []
+            Commands.java('de.zib.gndms.gndmc.offline.JsonTest',  args, { :classpath => jars } )
+        end
     end
 
     desc 'GORFX rest service'
     define 'gorfx-rest', :layout => dmsLayout('gorfx', 'gndms-gorfx-rest') do
-        compile.with project('gndms-commons'), project('gndmc-rest'), SPRING, SLF4J, XSTREAM, COMMONS_LOGGING, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME
+        compile.with project('gndms-commons'), project('gndmc-rest'), SPRING, SLF4J, XSTREAM, COMMONS_LOGGING, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME, JSON
         compile
 
        # web_inf << file(_('../gorfx/src/META-INF/gorfx.xml'))
