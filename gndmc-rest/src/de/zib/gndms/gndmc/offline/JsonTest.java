@@ -17,6 +17,7 @@ package de.zib.gndms.gndmc.offline;
 
 import de.zib.gndms.logic.taskflow.tfmockup.DummyOrder;
 import de.zib.gndms.model.gorfx.types.Order;
+import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import javax.naming.spi.ObjectFactory;
@@ -33,7 +34,7 @@ public class JsonTest {
 
     public static void main( String[] args ) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        mapper.enableDefaultTyping( ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE );
+        mapper.enableDefaultTyping( ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY );
 
         DummyOrder dft = new DummyOrder();
         dft.setMessage( "Test task flow is flowing" );
