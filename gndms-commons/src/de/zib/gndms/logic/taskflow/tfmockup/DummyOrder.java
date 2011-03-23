@@ -16,6 +16,7 @@ package de.zib.gndms.logic.taskflow.tfmockup;
  */
 
 import de.zib.gndms.model.gorfx.types.Order;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  * @author try ma ik jo rr a zib
@@ -36,7 +37,8 @@ public class DummyOrder implements Order {
     private int delay;     ///< the delay in ms for each round;
     private boolean failIntentionally;///< Denotes if the task execution should fail.
 
-    public String getTaskFlowType() {
+
+    public String taskFlowType() {
         return TASK_FLOW_TYPE;
     }
 
