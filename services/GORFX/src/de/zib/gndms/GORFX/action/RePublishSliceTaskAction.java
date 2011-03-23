@@ -1,7 +1,7 @@
 package de.zib.gndms.GORFX.action;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,12 +65,12 @@ public class RePublishSliceTaskAction extends ORQTaskAction<RePublishSliceORQ> {
             if( st.getState().equals( TaskState.FINISHED ) )
                 finish( new RePublishSliceResult( getOrq().getDestinationSlice() ) );
             else
-                fail( (RuntimeException) st.getData() );
+                failFrom( (RuntimeException) st.getData() );
 
         } catch ( RuntimeException e ) {
             honorOngoingTransit( e );
         } catch ( Exception e ) {
-            fail( new RuntimeException( e ) );
+            failFrom( new RuntimeException( e ) );
         }
     }
 

@@ -1,7 +1,6 @@
-package de.zib.gndms.infra.configlet;
-
+package de.zib.gndms.devel;
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +15,14 @@ package de.zib.gndms.infra.configlet;
  * limitations under the License.
  */
 
-
-
 /**
- * ScriptKind
+ * @author try ma ik jo rr a zib
+ * @date 04.03.11  12:50
+ * @brief NotYetImplementedException.
  *
- * @see de.zib.gndms.infra.configlet.ChownSliceConfiglet
- *
- * @author  try ste fan pla nti kow zib
-*/
-enum ScriptKind {
-    EXEC
+ * You know when things are not implemented ... yet.
+ */
+public class NotYetImplementedException extends RuntimeException {
+
+    private static final long serialVersionUID = 8566379615719291478L;
 }

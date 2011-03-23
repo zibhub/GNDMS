@@ -1,5 +1,14 @@
 syntax:glob
 
+lib/apache-ant-current
+lib/jruby-current
+lib/apache-ant-1.7.1
+doc/api
+doc/text-markdown
+doc/text-html
+gndmc/gndms-gndmc/
+gndmc/target/
+Buildfile~
 services/*/build/**
 services/*/out/**
 services/*/production/**
@@ -36,6 +45,10 @@ ws-common/gndms-ws-common/test/**
 gritserv/gndms-gritserv/production/**
 gritserv/gndms-gritserv/test/**
 gndmc/gndms-gndmc/production/**
+gndmc/gndms-gndmc/test/**
+gndmc-rest/gndms-gndmc-rest/production/**
+gorfx/gndms-gorfx-rest/production/**
+gndms-commons/gndms-gndms-commons/production/**
 .classpath
 .project
 test-output/**
@@ -49,6 +62,7 @@ types/WHORFX
 types/ws
 types/wsrf
 etc/sliceInOutClient.properties
+bkp*
 
 syntax:regexp
 .*\.swp
@@ -63,6 +77,10 @@ lib/kit/*
 lib/gndmc/*
 lib/infra/*
 lib/logic/*
+lib/gorfx/*
+lib/rest/*
+lib/gorfx-commons/*
+lib/gndmc-rest/*
 */resources/META-INF/GNDMS-RELEASE
 */resources/META-INF/GNDMS-BUILD-INFO
 */resources/META-INF/LICENSE

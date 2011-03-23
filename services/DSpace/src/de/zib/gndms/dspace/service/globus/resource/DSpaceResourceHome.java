@@ -1,7 +1,7 @@
 package de.zib.gndms.dspace.service.globus.resource;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,7 +75,7 @@ public class DSpaceResourceHome extends SingletonResourceHomeImpl implements Ini
 
 
 	/**
-	 * Initialze the singleton resource, when the home is initialized.
+	 * Initialize the singleton resource, when the home is initialized.
 	 */
 	public void initialize() throws Exception {
 		logger.info("Attempting to initialize resource.");
@@ -88,7 +88,7 @@ public class DSpaceResourceHome extends SingletonResourceHomeImpl implements Ini
 	}
 	
     /**
-     * Get the resouce that is being addressed in this current context
+     * Get the resource that is being addressed in this current context
      */
     public DSpaceResource getAddressedResource() throws Exception {
         DSpaceResource thisResource;

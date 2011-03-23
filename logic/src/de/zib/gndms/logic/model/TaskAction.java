@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -92,7 +92,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     /**
      * A TransitException is used to store a new desired {@code TaskState}, the model (an AbstractTask) shall use.
      * Its state can be changed using {@link AbstractTask#transit(TaskState)}.
-     * Note that there is a predefined order in wich state a TaskState can be changed. 
+     * Note that there is a predefined order in which state a TaskState can be changed.
      *
      * There a some special subclasses used to stop an AbstractTask in special situations.
      *

@@ -27,4 +27,4 @@ moni call -v .gorfx.ConfigOfferType "offerType: 'http://www.c3grid.de/ORQTypes/P
 	cancelCommand: '$CANCEL_COMMAND'; \
 	scriptIoFormat: '$SCRIPT_IO_FORMAT'"
 }
-
+# vim:tw=0

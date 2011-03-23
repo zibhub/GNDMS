@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model.gorfx;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -147,5 +147,13 @@ public abstract class ORQTaskAction<K extends AbstractORQ> extends TaskAction
 
     public void setCredentialProvider( CredentialProvider credentialProvider ) {
         this.credentialProvider = credentialProvider;
+    }
+
+    protected void failFrom( Exception e ) {
+        fail( new IllegalStateException( getModel().getDescription() + " failure " +  e.getMessage(), e ) );
+    }
+
+    protected void traceFrom( Exception e ) {
+        trace( getModel().getDescription() + " failure " +  e.getMessage(), e );
     }
 }

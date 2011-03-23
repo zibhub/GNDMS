@@ -1,7 +1,7 @@
 package de.zib.gndms.GORFX.action.dms;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import de.zib.gndms.GORFX.client.GORFXClient;
 import de.zib.gndms.GORFX.context.client.TaskClient;
 import de.zib.gndms.GORFX.offer.client.OfferClient;
 import org.apache.axis.message.addressing.EndpointReferenceType;
+import org.globus.gsi.GlobusCredential;
 import org.globus.wsrf.encoding.DeserializationException;
 import org.joda.time.DateTime;
 import types.*;
@@ -86,20 +87,24 @@ public class GORFXClientUtils {
         EndpointReferenceType commonTaskPreparation( String uri,
                                DynamicOfferDataSeqT orq,
                                ContextT ctx,
-                               OfferExecutionContractT con
+                               OfferExecutionContractT con,
+                               GlobusCredential proxy
                                ) throws Exception
     {
 
         // create gorfx client and retrieve orq
         final GORFXClient gcnt = new GORFXClient( uri );
+        if( proxy != null ) gcnt.setProxy( proxy );
         EndpointReferenceType epr = gcnt.createOfferRequest( orq, ctx );
 
         // create orq client and request offer
         final ORQClient orqcnt = new ORQClient( epr );
+        if( proxy != null ) orqcnt.setProxy( proxy );
         epr = orqcnt.getOfferAndDestroyRequest( con , ctx );
 
         // create offer client and accept it
         final OfferClient ofcnt = new OfferClient( epr );
+        if( proxy != null ) ofcnt.setProxy( proxy );
         return ofcnt.accept( );
     }
     

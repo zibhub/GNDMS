@@ -1,4 +1,4 @@
-package de.zib.gndms.infra.configlet;
+package de.zib.gndms.logic.model.dspace;
 
 /*
  * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
@@ -85,11 +85,12 @@ public class ChownSliceConfiglet extends DefaultConfiglet {
     }
 
     private String[] getChownSliceCommand(String uid, String path, String sliceId) {
-        String[] cmd = new String[4];
-        cmd[0] = getChownScript();
-        cmd[1] = uid;
-        cmd[2] = path;
-        cmd[3] = sliceId;
+        String[] cmd = new String[5];
+        cmd[0] = "sudo";
+        cmd[1] = getChownScript();
+        cmd[2] = uid;
+        cmd[3] = path;
+        cmd[4] = sliceId;
         return cmd;
     }
 

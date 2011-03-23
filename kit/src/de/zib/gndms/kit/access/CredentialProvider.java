@@ -1,7 +1,7 @@
 package de.zib.gndms.kit.access;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ package de.zib.gndms.kit.access;
 import java.util.List;
 
 /**
- * Interface that hides the gredential mechanism.
+ * Interface that hides the credential mechanism.
  *
  * Implementations of this interface should provided the ability to install credentials in a specific object.
  *

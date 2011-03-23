@@ -1,5 +1,6 @@
 package de.zib.firstrest.service;
 
+import java.util.ArrayList;
 import de.zib.firstrest.domain.Foo;
 import de.zib.firstrest.repository.FooDao;
 import org.apache.commons.logging.Log;
@@ -54,12 +55,19 @@ public class FooService implements ServletContextAware {
         logger.info(  servletContext.getServerInfo( ) );
     }
 
-    @RequestMapping( value = "/foo/{id}" )
-    public ModelAndView findFoo( @PathVariable String id ) {
-        Foo foo = dao.getFoo( id );
+    @RequestMapping( value = "/foo/{fid}" )
+    public ModelAndView findFoo( @PathVariable String fid ) {
+
+    /*
+     * Note: This method together with the dispacher-context.xml
+     * contains changes to test content-type dispatching which aren't
+     * currently working, however futher testing is delayed due to
+     * other tasks.
+     */
+        final Foo foo = dao.getFoo( fid );
         ModelAndView mv;
         if( foo != null )
-            mv = new ModelAndView( "testXmlView", BindingResult.MODEL_KEY_PREFIX + "foo", foo );
+            mv = new ModelAndView( "foos", "foo", foo );
         else {
             RedirectView rv = new RedirectView( );
             rv.setStatusCode( HttpStatus.NOT_FOUND );

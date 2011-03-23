@@ -1,7 +1,7 @@
 package de.zib.gndms.GORFX.action.dms;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,10 +88,11 @@ public class SliceStageInORQCalculator extends
         EndpointReferenceType epr = DelegationAux.createProxy( delfac, credential );
         logger.debug( "createOffer creds: " + credential );
 
+        DelegationAux.addDelegationEPR(  getORQArguments().getActContext(), epr );
+
         ProviderStageInORQT p_orq = ProviderStageInORQXSDTypeWriter.write( getORQArguments() );
         ContextT ctx = ContextXSDTypeWriter.writeContext( getORQArguments().getActContext() );
 
-        DelegationAux.addDelegationEPR( ctx, epr );
         cnt.setProxy( credential );
 
         logger.debug( "calling createORQ" );
@@ -112,7 +113,7 @@ public class SliceStageInORQCalculator extends
 
         String[] olist = getORQArguments().getDataDescriptor().getObjectList();
 
-        logger.debug( "with oipPrfix: " + loggalbeStringArray( olist ) );
+        logger.debug( "with oipPrefix: " + loggalbeStringArray( olist ) );
         Set<Workspace.Archive> a = cfg.getCatalog().getArchivesByOids( gs, olist  );
 
         String uri = ((Workspace.Archive) a.toArray()[0]).getBaseUrl().trim();

@@ -1,0 +1,81 @@
+package de.zib.gndms.gndmc.gorfx;
+
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import de.zib.gndms.GORFX.service.GORFXServiceEssentials;
+import de.zib.gndms.gndmc.AbstractClient;
+import de.zib.gndms.model.gorfx.types.Order;
+import de.zib.gndms.model.gorfx.types.TaskFlowInfo;
+import de.zib.gndms.rest.Facets;
+import de.zib.gndms.rest.Specifier;
+import org.springframework.http.ResponseEntity;
+
+import java.util.List;
+
+/**
+ * @author try ma ik jo rr a zib
+ * 
+ * @brief Client for the taskflow part of the gorfx service.
+ *
+ * This client doesn't provide methods for batch execution and service configuration
+ * only the methods necessary for taskflow execution are exposed.
+ *
+ * @see de.zib.gndms.GORFX.service.GORFXServiceEssentials for details.
+ */
+public class GORFXClient extends AbstractClient implements GORFXServiceEssentials {
+
+
+	/**
+	 * The constructor.
+	 */
+	public GORFXClient() {
+	}
+
+	/**
+	 * The constructor.
+	 * 
+	 * @param serviceURL
+	 *            The base url of the grid.
+	 */
+	public GORFXClient(final String serviceURL) {
+		this.setServiceURL( serviceURL );
+	}
+
+	public final ResponseEntity<Facets> listAvailableFacets(final String dn) {
+		return unifiedGet(Facets.class, getServiceURL() + "/gorfx/", dn);
+	}
+
+
+	@SuppressWarnings("unchecked")
+	public final ResponseEntity<List<String>> listTaskFlows(final String dn) {
+		return (ResponseEntity<List<String>>) (Object) unifiedGet(List.class,
+				getServiceURL() + "/gorfx/taskflows/", dn);
+	}
+
+	public final ResponseEntity<TaskFlowInfo> getTaskFlowInfo(final String type, final String dn) {
+		return unifiedGet(TaskFlowInfo.class, getServiceURL() + "/gorfx/_" + type, dn);
+	}
+
+
+    @SuppressWarnings("unchecked")
+	public final ResponseEntity<Specifier<Facets>> createTaskFlow( final String type, final Order order,
+                                                                   final String dn, final String wid ) {
+		return ( ResponseEntity<Specifier<Facets>> ) (Object) unifiedPost(Specifier.class, order, getServiceURL()
+				+ "/gorfx/_" + type, wid, dn);
+	}
+
+}

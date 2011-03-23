@@ -1,4 +1,3 @@
-
 module GNDMS
 
   def dmsLayout(prj, out)
@@ -7,8 +6,26 @@ module GNDMS
     l[:source, :main, :java] = _(prj, 'src')
     l[:source, :main, :groovy] = _(prj, 'groovy')
     l[:source, :main, :resources] = _(prj, 'resources')
+    l[:source, :main, :webapp] = _(prj, 'web')
     l[:target, :main, :classes] = _(prjOut, 'production')
     l[:target, :main, :resources] = _(prjOut, 'production-resources')
+    l[:target, :doc] = _('doc', 'api')
+    l[:target] = _('lib', prj)
+    return l
+  end
+
+  def dmsTestLayout(prj, out)
+    prjOut = prj + '/' + out
+    l = Layout.new
+    l[:source, :main, :java] = _(prj, 'src')
+    l[:source, :main, :groovy] = _(prj, 'groovy')
+    l[:source, :main, :resources] = _(prj, 'resources')
+    l[:target, :main, :classes] = _(prjOut, 'production')
+    l[:target, :main, :resources] = _(prjOut, 'production-resources')
+    l[:source, :test, :java] = _(prj, 'test-src')
+    l[:source, :test, :resources] = _(prj, 'resources')
+    l[:target, :test, :classes] = _(prjOut, 'test')
+    l[:target, :test, :resources] = _(prjOut, 'test-resources')
     l[:target, :doc] = _('doc', 'api')
     l[:target] = _('lib', prj)
     return l

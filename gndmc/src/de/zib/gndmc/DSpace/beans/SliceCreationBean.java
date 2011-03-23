@@ -1,7 +1,7 @@
 package de.zib.gndmc.DSpace.beans;
 
 /*
- * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import java.util.Properties;
  */
 public class SliceCreationBean extends SubSpaceBean {
 
-    public final static String SLICE_KIND_URI_KEY = "DSpace.Slice.creation.sliceKindeURI";
+    public final static String SLICE_KIND_URI_KEY = "DSpace.Slice.creation.sliceKindURI";
     public final static String SIZE_KEY = "DSpace.Slice.creation.size";
     public final static String LIFE_SPAN_KEY = "DSpace.Slice.creation.lifeSpan";
 
