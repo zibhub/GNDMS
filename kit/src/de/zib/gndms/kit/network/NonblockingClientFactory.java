@@ -76,10 +76,14 @@ public class NonblockingClientFactory extends AbstractGridFTPClientFactory{
          //   System.err.println( "done" );
         } catch ( InterruptedException e ) {
             e.printStackTrace(  );
-            throw new RuntimeException( "GridFTPClient create exceeded timeout" );
+            throw new RuntimeException( "GridFTPClient create exceeded timeout", e );
         } catch ( ExecutionException e ) {
             // this mustn't happen here due to the blocked wait op
             e.printStackTrace();
+            if( e.getCause() instanceof ServerException )
+                throw ServerException.class.cast( e.getCause() );
+
+            throw new RuntimeException( e );
         }
         return null;
     }
