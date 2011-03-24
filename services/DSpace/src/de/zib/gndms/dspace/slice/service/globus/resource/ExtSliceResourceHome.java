@@ -1,5 +1,23 @@
 package de.zib.gndms.dspace.slice.service.globus.resource;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
 import de.zib.gndms.dspace.common.DSpaceTools;
 import de.zib.gndms.dspace.service.globus.resource.ExtDSpaceResourceHome;
 import de.zib.gndms.dspace.slice.stubs.types.SliceReference;
@@ -36,7 +54,7 @@ import javax.xml.namespace.QName;
  * of the web service container that notifies succesfull initialization of the extended resource
  * home.
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 16.07.2008 Time: 12:35:27
@@ -54,7 +72,7 @@ public final class ExtSliceResourceHome extends SliceResourceHome
 	@NotNull
 	private GNDMSystem system;
 
-	// Serbice Address: set during initialization
+	// Service Address: set during initialization
 	@SuppressWarnings({"FieldAccessedSynchronizedAndUnsynchronized"})
 	private AttributedURI serviceAddress;
 

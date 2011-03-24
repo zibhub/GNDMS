@@ -1,7 +1,26 @@
 package de.zib.gndms.kit.config;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
 import de.zib.gndms.kit.logging.LDPHolder;
 import de.zib.gndms.kit.logging.LoggingDecisionPoint;
+import de.zib.gndms.stuff.config.InfiniteEnumeration;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,7 +29,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
 
@@ -21,13 +39,12 @@ import java.util.Properties;
  * first place (than a default one is written to disk) or if it has changed since the last time
  * it was read.
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 17.07.2008 Time: 23:05:39
  */
-public class PropertiesFromFile extends InfiniteEnumeration<Map<Object, Object>>
-implements LoggingDecisionPoint, LDPHolder {
+public class PropertiesFromFile extends InfiniteEnumeration<Map<Object, Object>> implements LoggingDecisionPoint, LDPHolder {
 	@NotNull
 	private final File configFile;
 
@@ -58,9 +75,8 @@ implements LoggingDecisionPoint, LDPHolder {
 		logger = aLogger;
 	}
 
-
-	@Override
-	synchronized Map<Object, Object> tryNextElement() {
+	@Override @Nullable
+	synchronized protected Map<Object, Object> tryNextElement() {
 		try {
 			return tryLoadProperties();
 		}
@@ -72,9 +88,13 @@ implements LoggingDecisionPoint, LDPHolder {
 
 	@Override
 	@NotNull
-	synchronized Map<Object, Object> createInitialDefaultElement() {
+	synchronized protected Map<Object, Object> createInitialDefaultElement() {
 		try {
-			return tryLoadProperties();
+            final Map<Object, Object> map = tryLoadProperties();
+            if (map == null)
+                throw new NullPointerException("Could not create initial default element");
+            else
+                return map;
 		}
 		catch (IOException e) {
 			logger.warn("Failure while attempting to initialize " + desciptiveName, e);
@@ -82,21 +102,21 @@ implements LoggingDecisionPoint, LDPHolder {
 		}
 	}
 
-	@NotNull
+	@Nullable
 	private Map<Object, Object> tryLoadProperties() throws IOException {
 		Properties props;
 		FileInputStream in = null;
 		if (shouldLog("load"))
 			logger.debug("Loading " + desciptiveName);
 		try {
-			if (!configFile.exists())
-				return createDefaultElement();
-			else {
-				in = new FileInputStream(configFile);
-				props = new Properties();
-				props.load(in);
-				return props;
-			}
+			if (! configFile.exists() || (configFile.length() == 0)) {
+				tryWriteDefaults();
+                return null;
+            }
+            in = new FileInputStream(configFile);
+            props = new Properties();
+            props.load(in);
+            return props;
 		}
 		finally {
 			if (in != null)
@@ -107,12 +127,6 @@ implements LoggingDecisionPoint, LDPHolder {
 					// intentionally left empty
 				}
 		}
-	}
-
-	@NotNull
-	private Map<Object, Object> createDefaultElement() throws IOException {
-		tryWriteDefaults();
-		return Collections.unmodifiableMap(defaults);
 	}
 
 	private  void tryWriteDefaults() throws IOException {

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+$(dirname $0)/gndms-jruby -S buildr $@
+

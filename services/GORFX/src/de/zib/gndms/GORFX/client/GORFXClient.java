@@ -1,11 +1,28 @@
 package de.zib.gndms.GORFX.client;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
 import de.zib.gndms.GORFX.common.GORFXI;
 import org.apache.axis.client.Stub;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
 import org.globus.gsi.GlobusCredential;
-import org.globus.wsrf.impl.security.authentication.Constants;
 
 import java.rmi.RemoteException;
 import java.util.Iterator;
@@ -97,8 +114,8 @@ public class GORFXClient extends GORFXClientBase implements GORFXI {
   public org.apache.axis.message.addressing.EndpointReferenceType createOfferRequest(types.DynamicOfferDataSeqT offerRequestArguments,types.ContextT context) throws RemoteException, de.zib.gndms.GORFX.stubs.types.UnsupportedOfferType {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"createOfferRequest");
-        System.out.println( "Stub properties (after configureStubSecurity): ");
-        showStubProps();
+    //    System.out.println( "Stub properties (after configureStubSecurity): ");
+    //    showStubProps();
     //    ( (Stub)portType )._setProperty( Constants.GSI_SEC_CONV, Constants.ENCRYPTION );
     //    System.out.println( "Stub properties (after manual propset): ");
     //    showStubProps();

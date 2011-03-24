@@ -15,7 +15,9 @@
 	<import file="../../gndms-service-dev-build.xml" />
 
 
-	<property name="jar.prefix" value="c3grid-gorfx" />
+	<property name="jar.prefix" value="gndms-gorfx" />
+  <property name="ant.build.javac.source" value="1.5" />
+  <property name="ant.build.javac.target" value="1.5" />
 
 	<!-- ============================================================== -->
 	<!-- Create any extended Classpaths here                            -->
@@ -24,15 +26,18 @@
 	
 	<!-- Loading of the following properties doesnt work, if they are place outside a target as they seem to overwrite properties needed to build the gar-file -->
 
-	<!-- Basedir of c3grid. -->
-	<property name="c3grid.basedir" value="../.."/>
+	<!-- Basedir of gndms. -->
+	<property name="gndms.basedir" value="../.."/>
 	
 	<!-- Loading global project-settings -->
-	<property file="${c3grid.basedir}/c3grid.properties"/>
+	<property file="${gndms.basedir}/gndms.properties"/>
 	
 	<!-- Loading global project-dependencies-->
-	<property file="${c3grid.basedir}/c3grid.deps"/>
+	<property file="${gndms.basedir}/gndms.deps"/>
 		<path id="base.extended.classpath">
+         <fileset dir="${lib.dir}/../../../extra">
+             <include name="*.jar" />
+         </fileset>
 		</path>
 		<path id="service.build.extended.classpath">
 			<pathelement path="${dspace.stubs}"/>			
@@ -52,6 +57,9 @@
 		<path id="run.extended.classpath">
 		</path>
 		<path id="tasks.run.extended.classpath">
+         <fileset dir="${lib.dir}/../../../extra">
+             <include name="*.jar" />
+         </fileset>
 		</path>
 	</target>
 

@@ -1,8 +1,26 @@
 package de.zib.gndms.GORFX.action;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
 import de.zib.gndms.dspace.slice.client.SliceClient;
 import de.zib.gndms.model.dspace.types.SliceRef;
-import de.zib.gndms.typecon.common.type.SliceRefXSDTypeWriter;
+import de.zib.gndms.gritserv.typecon.types.SliceRefXSDTypeWriter;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI;
 
@@ -11,8 +29,8 @@ import java.util.GregorianCalendar;
 
 /**
  * This class provides methods which are clients of the DSpace service.
- * @author: Maik Jorra <jorra@zib.de>
- * @version: $Id$
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  * <p/>
  * User: mjorra, Date: 04.11.2008, Time: 17:02:53
  */

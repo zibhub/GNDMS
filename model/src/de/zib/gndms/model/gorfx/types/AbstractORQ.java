@@ -1,5 +1,23 @@
 package de.zib.gndms.model.gorfx.types;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
 import de.zib.gndms.stuff.copy.CopyMode;
 import de.zib.gndms.stuff.copy.Copyable;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +30,7 @@ import java.util.Map;
 /**
  * An base class for model classes representing ORQ's.
  *
- * @author Maik Jorra <jorra@zib.de>
+ * @author  try ma ik jo rr a zib
  * @verson \$id$
  * <p/>
  * User: bzcjorra Date: Sep 5, 2008 3:38:17 PM
@@ -20,15 +38,17 @@ import java.util.Map;
 @Copyable(CopyMode.SERIALIZE)
 public abstract class AbstractORQ implements Serializable {
     private static final long serialVersionUID = 5782532835559987893L;
-    private String offerType;
-	private transient boolean justEstimate;
+    private String offerType;  ///< Type of the requested task.
+	private transient boolean justEstimate; ///< Flag for the contract calculation
 
-    private String actId;
-    private HashMap<String,String> actContext;
+    private String actId; ///< A unique id inherited from the ORQResource
+    private HashMap<String,String> actContext; ///< The context of the ORQResource
+                                               /// Contains stuff like, delegation epr, and workflow id
 	private static final int INITIAL_STRING_BUILDER_CAPACITY = 256;
+    private String localUser; ///< The user name map to the credential of the request.
 
 
-	protected AbstractORQ() {
+    protected AbstractORQ() {
     }
 
 
@@ -133,4 +153,14 @@ public abstract class AbstractORQ implements Serializable {
 		}
 		return result.toString();
 	}
+
+
+   public void setLocalUser( String localUser ) {
+        this.localUser = localUser;
+    }
+
+
+    public String getLocalUser() {
+        return localUser;
+    }
 }

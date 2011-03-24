@@ -1,5 +1,23 @@
 package de.zib.gndms.GORFX.action;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
 import de.zib.gndms.c3resource.jaxb.Workspace;
 import de.zib.gndms.infra.configlet.C3MDSConfiglet;
 import de.zib.gndms.infra.system.GNDMSystem;
@@ -17,8 +35,8 @@ import org.joda.time.Duration;
 import java.util.Set;
 
 /**
- * @author: Maik Jorra <jorra@zib.de>
- * @version: $Id$
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  * <p/>
  * User: mjorra, Date: 11.11.2008, Time: 14:57:06
  */
@@ -54,7 +72,7 @@ public class StagedTransferORQCalculator extends
             String src = ServiceHost.getBaseURL( ).getHost();
             URI dst_uri = destinationURI( getORQArguments().getGridSite() );
             String dst = dst_uri.getHost( );
-            Float ebw = getNetAux().getBandWidthEstimater().estimateBandWidthFromTo( src, dst );
+            Float ebw = NetworkAuxiliariesProvider.getBandWidthEstimater().estimateBandWidthFromTo( src, dst );
 
             if( ebw == null )
                 throw new RuntimeException( "No connection beween" + src +  " and " + dst );

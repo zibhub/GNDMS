@@ -1,5 +1,23 @@
 package de.zib.gndms.model.common.types;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
 import de.zib.gndms.stuff.propertytree.PropertyTree;
 import de.zib.gndms.stuff.propertytree.PropertyTreeFactory;
 
@@ -9,9 +27,15 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 /**
- * The setting here are considered as recommendation an will applied only if possible.
  *
- * @author Maik Jorra <jorra@zib.de>
+ * A class to configure {@link FilePermission}s per user.
+ * Configuration can be set either manually or loaded from {@code properties}.
+ * The setting here are considered as recommendation and will applied only if possible.
+ *
+ * The configuration of all permissions can be done using a file or a properties variable.
+ * See the description of {@link #fromPropertyFile(java.io.File)} for the configuration syntax.
+ *
+ * @author  try ma ik jo rr a zib
  * @version $Id$
  * <p/>
  * User: mjorra, Date: 23.12.2008, Time: 12:40:13
@@ -21,9 +45,9 @@ public class PermissionConfigData implements Serializable {
 
 
     public enum UserMode {
-        DEFAULT, // the owner of the container
-        SINGLE,  // use a single user which is different for the containers owner
-        CALLER   // the caller of the service i.e. the cert owner (intended for later use)
+        DEFAULT, // the subspace of the container
+        SINGLE,  // use a single user which is different for the containers subspace
+        CALLER   // the caller of the service i.e. the cert subspace (intended for later use)
     }
 
     private UserMode mode; // The mode for permission handling.
@@ -80,7 +104,12 @@ public class PermissionConfigData implements Serializable {
         this.perUserPermissions = perUserPermissions;
     }
 
-    
+    /**
+     * Assigns the FilePermission {@code perm} to the user with the name {@code usr}.
+     *
+     * @param usr the name of the user
+     * @param perm the corresponding file permission
+     */
     public void addUserPermissions( String usr, FilePermissions perm ) {
         if( perUserPermissions == null )
             perUserPermissions = new HashMap<String, FilePermissions>( );
@@ -91,6 +120,8 @@ public class PermissionConfigData implements Serializable {
 
     /**
      * Loads properties from File.
+     * Calls {@link #fromPropertyTree(de.zib.gndms.stuff.propertytree.PropertyTree)} to set all fields of this class
+     * as denoted in the file.
      *
      * Properties are required to start with PermissionConfig. The following properties are supported
      * <pre>
@@ -106,7 +137,7 @@ public class PermissionConfigData implements Serializable {
      *              ( with i in [0;n] )
      *
      * USR_NAME := [a-z_][a-z0-9_]*
-     * GRP_NAME := ([a-z_][a-z0-9_]*){,16}
+     * GRP_NAME := ([a-z_][a-z0-9_]*){1,16}
      * UGO      := [0-7]{3}
      * USR_NAME_i := USR_NAME
      * </pre>
@@ -120,14 +151,24 @@ public class PermissionConfigData implements Serializable {
         fromPropertyTree( props );
     }
 
-
+    /**
+     * Calls {@link #fromPropertyTree(de.zib.gndms.stuff.propertytree.PropertyTree)} to set all fields of this class
+     * as denoted in the properties.
+     * 
+     * @param properties the properties to read from.
+     * @see de.zib.gndms.model.common.types.PermissionConfigData#fromPropertyFile(java.io.File) 
+     */
     public void fromProperties( Properties properties ) {
 
         PropertyTree props = PropertyTreeFactory.createPropertyTree( properties );
         fromPropertyTree( props );
     }
 
-
+    /**
+     * Reads all fields of an instance of this class from the PropertyTree {@code props}.
+     * 
+     * @param props The ProperteryTree containing the values of all fields of this class
+     */
     public void fromPropertyTree( PropertyTree props ) {
 
         mode = UserMode.valueOf( props.getProperty( "PermissionConfig.userMode", "DEFAULT" ).trim() );
@@ -166,6 +207,9 @@ public class PermissionConfigData implements Serializable {
 
 
     /**
+     * Creates a new {@code FilePermissions} instance by reading the needed values from the PropertyTree.
+     * If nothing denoting in the {@code pt} a default value will be used.
+     *
      * @param pt property tree with file permissions.
      * @param un Default value for user name.
      * @param gn Default value for group name.
@@ -192,7 +236,12 @@ public class PermissionConfigData implements Serializable {
         return new FilePermissions( usr, grp, perm );
     }
 
-
+    /**
+     * Checks if the user name {@code usr} is valid.
+     * It must match the regular expression <pre> [a-z_][a-z0-9_]* </pre>
+     *
+     * @param usr a user name
+     */
     private void checkUserName( String usr ) {
 
         final Pattern pat_usr = Pattern.compile( "[a-z_][a-z0-9_]*" );
@@ -201,7 +250,12 @@ public class PermissionConfigData implements Serializable {
             throw new IllegalArgumentException( usr + " is not a vaild user name" );
     }
 
-
+    /**
+     * Checks if the group name {@code grp} is valid.
+     * It must match the regular expression <pre> ([a-z_][a-z0-9_]*){1,16} </pre>
+     *
+     * @param grp a group name
+     */
     private void checkGroupName( String grp ) {
         final Pattern pat_grp = Pattern.compile( "([a-z_][a-z0-9_]*){1,16}" );
 

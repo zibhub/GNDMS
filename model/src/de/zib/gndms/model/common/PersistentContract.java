@@ -1,10 +1,28 @@
 package de.zib.gndms.model.common;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
 import de.zib.gndms.model.common.types.FutureTime;
 import de.zib.gndms.model.common.types.TransientContract;
+import de.zib.gndms.stuff.copy.Copier;
 import de.zib.gndms.stuff.copy.CopyMode;
 import de.zib.gndms.stuff.copy.Copyable;
-import de.zib.gndms.stuff.copy.Copier;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
@@ -18,9 +36,13 @@ import java.util.Calendar;
 
 
 /**
- * ThingAMagic.
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * A PersistenContract can be transformed to an TransientContract
+ *
+ *
+ * @see de.zib.gndms.model.common.types.TransientContract
+ *
+ * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 24.11.2008 Time: 15:22:43
@@ -34,6 +56,9 @@ public class PersistentContract {
     // expected size of task in case of a transfer or staging
     private Long expectedSize;
 
+    /**
+     * @see de.zib.gndms.stuff.mold.Molder
+     */
     public void mold(final @NotNull PersistentContract instance) {
         instance.accepted = Copier.copy(true, accepted);
         instance.deadline = Copier.copy(true, deadline);
@@ -41,6 +66,13 @@ public class PersistentContract {
         setExpectedSize(Copier.copy(true, getExpectedSize()));
     }
 
+    /**
+     * Transforms {@code this} to a {@code TransientContract} and returns the newly created instance.
+     * Transformation is done by setting all fields of the {@code TransientContract} instance
+     * to the field values of {@code this}.
+     *
+     * @return a corresponding TransientContract object out of {@code this}.
+     */
     @SuppressWarnings({ "FeatureEnvy" })
 	public @NotNull TransientContract toTransientContract() {
 		final TransientContract tc = new TransientContract();
@@ -53,41 +85,72 @@ public class PersistentContract {
 		return tc;
 	}
 
+    /**
+     * Compares {@link #deadline} and {@link #resultValidity} and returns the lastest of both times.
+     *
+     * @return the latest time, when comparing {@link #deadline} and {@link #resultValidity}
+     */
 	@Transient
 	public Calendar getCurrentTerminationTime() {
 		final Calendar curDeadline = getDeadline();
 		final Calendar curRV = getResultValidity();
 		return curDeadline.compareTo(curRV) > 0 ? curDeadline : curRV; 
 	}
-	
+
+    /**
+     * Returns a clone of {@link #accepted}
+     *
+     * @return a clone of {@link #accepted}
+     */
     @Temporal(value = TemporalType.TIMESTAMP )
     public Calendar getAccepted() {
 		return nullSafeClone(accepted);
 	}
 
-
+   /**
+     * Sets {@link #accepted}. Note that a clone of {@code acceptedParam} will be stored
+     *
+     * @param acceptedParam a chosen value for {@link #accepted}
+     */
 	public void setAccepted(final Calendar acceptedParam) {
 		accepted = nullSafeClone(acceptedParam);
 	}
 
-
+   /**
+     * Returns a clone of {@link #deadline}
+     *
+     * @return a clone of {@link #deadline}
+     */
     @Temporal(value = TemporalType.TIMESTAMP)
 	public Calendar getDeadline() {
 		return nullSafeClone(deadline);
 	}
 
 
+    /**
+     * Sets {@link #deadline}. Note that a clone of {@code deadlineParam} will be stored
+     *
+     * @param deadlineParam a chosen value for {@link #deadline}
+     */
 	public void setDeadline(final Calendar deadlineParam) {
 		deadline = nullSafeClone(deadlineParam);
 	}
 
-
+   /**
+     * Returns a clone of {@link #resultValidity}
+     *
+     * @return a clone of {@link #resultValidity}
+     */
     @Temporal(value = TemporalType.TIMESTAMP)
 	public Calendar getResultValidity() {
 		return nullSafeClone(resultValidity);
 	}
 
-
+    /**
+     * Sets {@link #resultValidity}. Note that a clone of {@code resultValidityParam} will be stored
+     *
+     * @param resultValidityParam a chosen value for {@link #resultValidity}
+     */
 	public void setResultValidity(final Calendar resultValidityParam) {
 		resultValidity = nullSafeClone(resultValidityParam);
 	}
@@ -149,11 +212,23 @@ public class PersistentContract {
     }
 
 
+    /**
+     * Returns either {@code null} if {@code cal} is null or if not, a clone of {@code cal}
+     * 
+     * @param cal a Calendar which may be cloned.
+     * @return
+     */
     private static Calendar nullSafeClone(Calendar cal) {
 		return cal == null ? null : (Calendar) cal.clone();
 	}
 
-
+    /**
+     * Returns a String representation of {@code cal}, using {@link org.joda.time.format.ISODateTimeFormat},
+     * or "null" if {@code cal==null} is {@code true}.
+     * 
+     * @param cal a Calendar to be printed as a String, in ISO format 
+     * @return
+     */
     private static String isoForCalendar( Calendar cal ) {
 
         if( cal == null )

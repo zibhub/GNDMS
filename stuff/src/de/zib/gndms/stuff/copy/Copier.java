@@ -1,5 +1,23 @@
 package de.zib.gndms.stuff.copy;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
 import de.zib.gndms.stuff.mold.Mold;
 import de.zib.gndms.stuff.mold.Molding;
 import org.jetbrains.annotations.NotNull;
@@ -10,9 +28,24 @@ import java.lang.reflect.Method;
 
 
 /**
- * ThingAMagic.
+ * This class provides several ways to copy an instance.
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * Using {@link Copier#copy(boolean, Object)} an instance will be copied either as defined in
+ *  {@link Copyable}'s annotation or according to its belonging to its superclasses.
+ *
+ * By now, an instance can be copied by
+ *  <ul>
+     *      <li>  molding
+     *      </li>
+     *      <li>  (de)serialization
+     *      </li>
+     *      <li>  cloning
+     *      </li>
+     *      <li>  using the class' constructor
+     *      </li>
+     * </ul> 
+ *
+ * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 27.11.2008 Time: 16:47:00
@@ -24,7 +57,16 @@ public final class Copier {
 		super();
 	}
 
-                                                                                                                    
+    /**
+     * Returns a copy of an instance. 
+     *
+     * Selection of the copy mode is done using {@link Copier#selectMode(boolean, Object, Class)}}
+     * 
+     * @param fallbackToClone if true the instance will be copied using the {@code clone()} method,
+     *        if it implements {@code Cloneable} but not {@code Molding}.
+     * @param instance the instance to be copied
+     * @return a copy of the instance
+     */
 	@SuppressWarnings({ "unchecked", "RawUseOfParameterizedType" })
 	public static <T> T copy(final boolean fallbackToClone, final T instance) {
 		if (instance == null)
@@ -52,7 +94,19 @@ public final class Copier {
 		}
 	}
 
-
+    /**
+     * Selects a proper copy mode for an instance.
+     *
+     * The copymode will be chosen by {@link Copyable}'s annotation.
+     * If nothing denoted, the copy mode will be select by checking if {@code instance} belongs to {@code Molding, Clonable or Serializable}
+     * in the given order. The first match will be used.
+     *
+     * @param fallbackToClone if true the instance will be copied using the {@code clone()} method,
+     * if it implements {@code Cloneable} but not {@code Molding}.
+     * @param instance the instance to be copied
+     * @param clazz the class the instance belongs to
+     * @return the proper copy mode for an instance depeding on {@link Copyable}'s {@code annotations} or it's superclasses.
+     */
 	@SuppressWarnings({ "unchecked" })
 	private static <T> CopyMode selectMode(
 		  final boolean fallbackToClone, final T instance, final Class<T> clazz) {
@@ -73,7 +127,12 @@ public final class Copier {
 		return mode;
 	}
 
-
+    
+    /**
+     * Like {@code copyInstanceByCloning} but returns {@code null} if {@code instance} is {@code null}
+     * 
+     * @see de.zib.gndms.stuff.copy.Copier#copyInstanceByCloning(Cloneable)
+     */
 	public static <T extends Cloneable> T copyCloneable(final T instance) {
 		if (instance == null)
 			return null;
@@ -82,7 +141,11 @@ public final class Copier {
 		}
 	}
 
-
+    /**
+     * Copies an instance by cloning
+     * @param instance the Object to be copied
+     * @return A copy of a Instance by using it's clone method
+     */
 	@SuppressWarnings({ "unchecked" })
 	private static <T extends Cloneable> T copyInstanceByCloning(final @NotNull T instance) {
 		final @NotNull Class<T> clazz = (Class<T>) instance.getClass();
@@ -101,23 +164,41 @@ public final class Copier {
 		}
 	}
 
-    
+    /**
+     * Returns the clone method of a class
+     *
+     * @param clazzParam a Class implementing {@code Cloneable}
+     * @return  the clone method of the class
+     * @throws NoSuchMethodException if the class does not override  {@code Object}'s {@code clone} method
+     */
 	private static <T extends Cloneable> Method cloneMethod(final Class<T> clazzParam)
 		  throws NoSuchMethodException {
-		return clazzParam.getMethod("clone");
+        return clazzParam.getMethod("clone");
 	}
 
-
+    /**
+     * Copies an object using {@code copyInstanceByMolding((Class<T>) instance.getClass(), instance)}, if {@code instance} is not {@code null}
+     *
+     * @param instance the instance to be copied
+     * @return {@code copyInstanceByMolding((Class<T>) instance.getClass(), instance)} or {@code null} if {@code instance} is {@code null}
+     */
 	@SuppressWarnings({ "unchecked", "RawUseOfParameterizedType" })
 	public static <T extends Molding> T copyMolding(final T instance) {
-		if (instance == null)
+        if (instance == null)
 			return null;
 		else {
 			return copyInstanceByMolding((Class<T>) instance.getClass(), instance);
 		}
 	}
 
-
+    /**
+     * Copies an instance by molding.
+     *
+     * @see Mold
+     * @param clazz the class the instance belongs to
+     * @param instance the instance to be copied
+     * @return a copy of the instance, created by using molding
+     */
 	@SuppressWarnings({ "unchecked" })
 	private static
 	<T> T copyInstanceByMolding(final @NotNull Class<T> clazz, final @NotNull T instance) {
@@ -134,7 +215,11 @@ public final class Copier {
 		}
 	}
 
-
+    /**
+     * Like {@code copyInstanceBySerialization} but returns {@code null} if {@code instance} is {@code null}
+     *
+     * @see de.zib.gndms.stuff.copy.Copier#copyInstanceBySerialization(java.io.Serializable) 
+     */
 	public static <T extends Serializable> T copySerializable(final T instance) {
 		if (instance == null)
 			return null;
@@ -142,7 +227,13 @@ public final class Copier {
 			return copyInstanceBySerialization(instance);
 	}
 
-
+     /**
+     * Copies an instance by serialization. <br>
+     * The Object will be deserialized and serialized again.
+      *
+     * @param instance the Object to be copied
+     * @return A copy of a Instance by serialization
+     */
 	@SuppressWarnings({ "unchecked" })
 	private static <T extends Serializable> T copyInstanceBySerialization(final @NotNull T instance)
 	{
@@ -179,7 +270,14 @@ public final class Copier {
 	    }
 	}
 
-	@SuppressWarnings({ "unchecked" })
+
+   /**
+     * Like {@code copyInstanceViaConstructor} but returns {@code null} if {@code instance} is {@code null}
+     *
+     * @see de.zib.gndms.stuff.copy.Copier#copyInstanceViaConstructor(Class, Object) 
+     */
+
+    @SuppressWarnings({ "unchecked" })
 	public static <T> T copyViaConstructor(final T instance) {
 		if (instance == null)
 			return null;
@@ -189,12 +287,19 @@ public final class Copier {
 		}
 	}
 
-
+     /**
+     * Copies an instance by the Object's Constructor to create a new instance.<br>
+      * If {@code oldObj} is a instance belonging to class {@code T} this method will invoke
+      * {@code T newObj=new T(oldObj); }
+      *
+     * @param instance the Object to be copied
+     * @return A copy of a Instance by serialization
+     */
 	private static <T> T copyInstanceViaConstructor(final @NotNull Class<T> clazz,
 	                                                final @NotNull T instance)
 	{
 		try {
-			return clazz.getConstructor(clazz).newInstance(instance);
+            return clazz.getConstructor(clazz).newInstance(instance);
 		}
 		catch (InstantiationException e) {
 			throw new IllegalArgumentException(e);

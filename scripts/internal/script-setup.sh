@@ -15,5 +15,4 @@ ADDMODE=ADD
 source "$SCRIPTDIR"internal/all-functions.sh
 
 [ ! -z "$GRIDHOST" ] || GRIDHOST=`echo_hostname`
-setup_generic
 

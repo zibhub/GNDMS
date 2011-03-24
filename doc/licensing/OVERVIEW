@@ -1,0 +1,41 @@
+Third-Party components used by GNDMS (without relicensed transitive dependencies)
+
+Package             License                      Files
+=======             =======                      =====
+OpenJPA             Apache License 2.0           LICENSE.apl2; NOTICE file from base distribution (see jar)
+Derby               Apache License 2.0           LICENSE.apl2; NOTICE file from base distribution (see jar)
+ApacheCommons       Apache License 2.0           LICENSE.apl2; NOTICE file from base distribution (see jars / NOTICE.commons)
+Jetty               Apache License 2.0           LICENSE.apl2; NOTICE file from base distribution (see NOTICE.jetty)
+TestNG              Apache License 2.0           LICENSE.apl2; NOTICE file from base distribution (see NOTES.testng)
+ServletAPI          Binary Code License          LICENSE.servlet-api
+Google-Collections  Apache License 2.0           LICENSE.apl2; No NOTICE file
+Guice               Apache License 2.0           LICENSE.apl2; No NOTICE file
+httpcore            Apache License 2.0           LICENSE.apl2; NOTICE file from base distribution (see jar)
+joda-time           Apache License 2.0           LICENSE.apl2; NOTICE file from base distribution (see jar)
+jaxb                CDDL                         LICENSE.CDDL
+                    GPLv2 w. classpath exception LICENSE.gpl2 + LICENSE.cpex
+                    cf. https://jaxb.dev.java.net/faq/index.html#jaxb20Licensing
+args4j              MIT-License                  LICENSE.args4j
+CXF                 Apache License 2.0           LICENSE.apl2; NOTICE file from base distribution (see jar)
+annotations         Apache License 2.0           LICENSE.apl2; No NOTICE file
+javamail            Javamail License             LICENSE.javamail
+JSR 173             JSR 173 License              LICENSE.jsr173
+Woodstox            Apache License 2.0           LICENSE.apl2; NOTICE file from base distribution (see jar)
+Saxon               MPL und AElfred License      LICENSE.MPL + LICENSE.AElfred
+Activation          CDDL                         LICENSE.acti
+serp                BSD-Style                    LICENSE.serp
+groovy              Apache License 2.0           LICENSE.apl2; NOTICE file from base distribution (see jar)
+cagrid introduce    Apache License 2.0           LICENSE.introduce; NOTES.introduce
+
+
+Not included but used in deployment therefore indirectly licensed by you
+------------------------------------------------------------------------
+Globus Toolkit      Apache License 2.0           LICENSE.apl2
+
+
+Build System (*not* a part of GNDMS, but nevertheless used to *build* it, provided for your convenience only)
+-------------------------------------------------------------------------------------------------------------
+Ruby                GPL / Ruby License           LICENSE.RUBY
+Apache Buildr       Apache License 2.0           LICENSE.apl2; NOTICE file from base distribution
+Jekyll              MIT LICENSE                  LICENSE.JEKYLL
+Maruku              GPL

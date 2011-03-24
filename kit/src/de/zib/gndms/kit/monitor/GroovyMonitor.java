@@ -1,14 +1,33 @@
 package de.zib.gndms.kit.monitor;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import com.oreilly.servlet.Base64Decoder;
-import com.oreilly.servlet.multipart.FilePart;
-import com.oreilly.servlet.multipart.MultipartParser;
-import com.oreilly.servlet.multipart.ParamPart;
-import com.oreilly.servlet.multipart.Part;
+
+
+
+import org.apache.commons.codec.binary.Base64InputStream;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,6 +35,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.servlet.http.*;
 import java.io.*;
 import java.security.Principal;
+import java.util.List;
 
 /**
  * Instances represent a multi-way connection point between an output stream (get-request) and
@@ -27,7 +47,7 @@ import java.security.Principal;
  *
  * @see GroovyMoniServlet
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 19.07.2008 Time: 13:08:00
@@ -309,10 +329,21 @@ final class GroovyMonitor implements HttpSessionBindingListener, HttpSessionActi
 		  throws IOException {
 		try {
 			if (isRemainingOpen()) {
-				MultipartParser parser =
-					  new MultipartParser(servletRequest, getMoniServer().getMaxScriptSizeInBytes());
-				for (Part part = parser.readNextPart(); part != null; part = parser.readNextPart())
-					handlePart(b64, args, part);
+                boolean isMultipart = ServletFileUpload.isMultipartContent(servletRequest);
+                if (isMultipart) {
+                    FileItemFactory factory = new DiskFileItemFactory();
+                    ServletFileUpload upload = new ServletFileUpload(factory);
+                    try {
+                        List<FileItem> items = upload.parseRequest(servletRequest);
+                        for (FileItem fi : items)
+                            handlePart(b64, args, fi);
+                    }
+                    catch (FileUploadException fue) {
+                        throw new RuntimeException(fue);
+                    }
+                }
+                else
+                    throw new RuntimeException("Non-multipart content received");
 			}
 			else {
 				throw new RuntimeException("Processing of multiple requests on a monitor in "
@@ -332,19 +363,19 @@ final class GroovyMonitor implements HttpSessionBindingListener, HttpSessionActi
 	 *
 	 * Converts non-file parts into string streams and handles base64 decoding.
 	 *
-	 * @param b64 if true, the content is asumed to be encoded in base64
-	 * @param args args to the part/script
-	 *@param part @throws IOException
-	 */
-	private synchronized void handlePart(boolean b64, @NotNull String args, @NotNull Part part)
+     * @param b64 if true, the content is asumed to be encoded in base64
+     * @param args args to the part/script
+     * @param part @throws IOException
+     */
+	private synchronized void handlePart(boolean b64, @NotNull String args, @NotNull FileItem part)
 		  throws IOException {
-		if (part.isFile()) {
-			InputStream in = ((FilePart)part).getInputStream();
+		if (! part.isFormField()) {
+			InputStream in = part.getInputStream();
 			handleStream(b64, args, in);
 		}
-		else if (part.isParam())
+		else
 		{
-			final String val = ((ParamPart)part).getStringValue();
+			final String val = part.getString();
             final InputStream valStream = new ByteArrayInputStream(val.getBytes("utf8"));
 			try {
 				handleStream(b64, args, valStream);
@@ -379,7 +410,7 @@ final class GroovyMonitor implements HttpSessionBindingListener, HttpSessionActi
 		  throws IOException {
 		final @NotNull InputStream val1;
 		if (b64) {
-			val1 = new Base64Decoder(val);
+			val1 = new Base64InputStream(val);
 		}
 		else
 			val1 = val;

@@ -1,5 +1,23 @@
 package de.zib.gndms.kit.configlet;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
 import org.apache.commons.logging.Log;
 import org.apache.log4j.NDC;
 import org.jetbrains.annotations.NotNull;
@@ -8,12 +26,14 @@ import java.io.Serializable;
 
 
 /**
- * This abstract class stores a configuration in a map and will run concurrently.
+ * This abstract class stores a configuration in a map and provides a method which runs concurrently.
  *
- * A {@code RunnbaleConfiglet} will run concurrently after it's {@code init} method has been invoked.
- * Implement the {@code run_()} method to define what it supposed to do concurrently.
+ * A method of an implementing subclass, which should run concurrently must be either {@code run_()} or a method,
+ * which is invoked by {@code run_().
+ * Concurrent execution is done automatically,
+ * as soon as {@link #init(org.apache.commons.logging.Log, String, java.io.Serializable)} is invoked.
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 06.11.2008 Time: 18:26:42
@@ -26,7 +46,8 @@ public abstract class RunnableConfiglet extends DefaultConfiglet implements Runn
     private Thread thread;
     
     /**
-     *  Initializes Configlet with a logger, a start-configuration, a name and starts a new Thread
+     *  Initializes Configlet with a logger, a start-configuration, a name and starts a new Thread, executing {@code run()}
+     * concurrently.
      *
      * @param loggerParam
      * @param name the name of the configuration

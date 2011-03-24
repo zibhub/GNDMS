@@ -1,5 +1,23 @@
 package de.zib.gndms.logic.model.dspace;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigActionResult;
@@ -14,11 +32,39 @@ import javax.persistence.EntityManager;
 import java.io.PrintWriter;
 import java.util.Set;
 
+
 /**
- * Action to create a new slice kind object from scratch.
  *
- * @author: Maik Jorra <jorra@zib.de>
- * @version: $Id$
+ * An Action to create a new slice kind object from scratch.
+ *
+ * <p>An instance of this class manages entities, being an instance of {@code SliceKind}.
+ *
+ * <p>When this action is started, the configuration map must have the options {@link #sliceKind 'sliceKind'}, {@link #theSliceKindMode 'sliceKindMode'}
+ * and {@link #uniqueDirName 'uniqueDirName'} set, if not already denoted.
+ * Otherwise an <tt>IllegalStateException</tt> will be thrown.
+ *
+ * <p>If the SetupMode field is set to
+ * <ul>
+ *  <li>
+ *      create, a new SliceKind instance will be created and its fields are set 
+ *      using the corresponding getter methods of this class.
+ *  </li>
+ *  <li>
+ *      update, the SliceKind instance will be retrieved from the EntityManager, using <tt>getSliceKind()</tt>
+     * as primary key and {@code SliceKind.class} as entityclass. Then the permissions and slice directory will be
+     * updated.
+    </li>
+ *  </ul>
+ *
+ * <p> Note: other setup modes are not supported.
+ *
+ * <p>An instance of this class returns a {@code ConfigActionResult} informing about the success of its execution, when
+ * the <tt>execute()</tt> method is called.
+/**
+ *
+ *
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  *
  * User: mjorra, Date: 18.08.2008, Time: 13:44:55
  *
@@ -61,6 +107,12 @@ public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
     }
 
 
+
+  /**
+    * Calls <tt>super.initialize()</tt> and retrieves several field values from the configuration map,
+    * if SetupMode is <tt>create</tt>.
+    * The options 'sliceKind', 'sliceKindMode' and 'uniqueDirName' must be set anyway.
+    */
     @Override
     public void initialize( ) {
 
@@ -86,6 +138,19 @@ public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
     }
 
 
+    /**
+     *
+     * If SetupMode is <tt>create</tt>, this method creates a new <tt>SliceKind</tt> instance and sets its fields 
+     * using the corrisponding getter methods of this class.
+     *
+     * <p>On <tt>update</tt> the SliceKind instance will be retrieved from the EntityManager, using <tt>getSliceKind()</tt>
+     * as primary key and {@code SliceKind.class} as entityclass. Then the permissions and slice directory will be
+     * updated.
+     *
+     * @param em an EntityManager managing SliceKind entities.
+     * @param writer
+     * @return An {@code OKResult} instance, if no problem occurred. Otherwise a {@code FailedResult} instance.
+     */
     public ConfigActionResult execute( @NotNull EntityManager em, @NotNull PrintWriter writer ) {
 
         SliceKind r;
@@ -112,7 +177,12 @@ public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
         return ok();
     }
 
-
+    /**
+     * Returns true only if {@code modeParam} is either <tt>create</tt> or <tt>update</tt>
+     *
+     * @param modeParam 
+     * @return true only if {@code modeParam} is either <tt>create</tt> or <tt>update</tt>
+     */
 	@Override
 	public boolean isSupportedMode(final SetupMode modeParam) {
 		if (SetupMode.CREATE.equals(modeParam)) return true;

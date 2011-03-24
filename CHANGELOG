@@ -1,10 +1,74 @@
+0.3.2: "Shigeru"
+
+@Everybody
+* [FIX] Build now uses included distirbution of apache-ant 1.7.1
+  (avoids problems with ant 1.8 and introduce)
+* [CHANGED] Updated documentation
+* [CHANGED] Now uses sudo in order to change slice ownership
+
+@DMS
+* [NEW] Proper handling of connection timeouts 
+* [NEW] Made task messages more verbose
+
+@C3Grid
+* [NEW] Certificate delegation for stage-in tasks
+* [CHANGED] Updated stage-in test client
+
+
+
+
+0.3.0: "Rob"
+
+@Everybody
+* [NEW] Released GNDMS under Apache License 2.0
+* [NEW] Automated and simplified installation process
+* [NEW] Added lots of documentation
+* [NEW] Added and verified licensing information for third-party components
+* [CHANGED] User-authentication is now mandatory (previously optional)
+* [NEW] Added notion of community grid admin
+* [CHANGED] Now requires java 1.6 (previously 1.5)
+* [CHANGED] Tested against globus-4.0.8 (previously 4.0.7)
+* [CHANGED] Update and integration testing of many third party dependencies 
+* [NEW] The container log can be accessed through the WS interface
+* [NEW] Added notion of community grid name (subgrid name)
+* [FIX] Monitor glitch
+
+@DMS:
+* [NEW] Slices are now owned by the grid user who triggered the creation
+* [NEW] Slices are now created using the GRAMS backend
+* [CHANGE] Slices are now deleted by a standalone action
+* [NEW] Added new setup scripts for the PT-Grid community
+* [NEW] Test client for DMS functionality
+
+
+@Developers
+* [CHANGED] Replaced ant-build with buildr
+* [CHANGED] Rewrote all groovy code in java
+* [NEW] Infrastructure for credential delegation below WS-layer
+* [NEW] Improved infrastructure for Guice usage in the action framework
+* [NEW] Module for client packages
+* [CHANGED] The typecon module is now a package of the newly created gritserv module
+
+
+
+
+INTERNAL 0.2.9 beta: "Kylie"
+
+@DMS:
+* [NEW] Added a configurable delay for gridftp client creation 
+* [NEW] Added a configurable timeout to kill defective clients after creation
+* [CHANGED] Made transaction handling for file transfers more solid
+* [FIX] Made file transfer client closeing more fault tolerant
+
+@Everybody
+* [NEW] Maintenance infrastructure for the services
+* [FIX] Possible Exception on transaction rollback in task action
+* [CHANGED] Changed database field of task.faultString to VARCHAR(5000) due to an issue with the current jpa version
 
 
 
 
 0.2.8 beta: "Kyle"
-
-
 
 @Everybody:
 * [NEW] Explicitely nameable directories for SliceKinds
@@ -45,7 +109,7 @@
 * [CHANGED] Changed exit codes of estimation scripts to be more in line with UNIX conventions
     public static final int EXIT_CODE_UNFULFILLABLE = 127;
     public static final int EXIT_CODE_PERMISSION_DENIED = 126;
-* [CHANGED] Shutdown behaviour; exit code > 127 willl cause a delay of 60s before marking a staging task as failed.  This became necessary
+* [CHANGED] Shutdown behaviour; exit code > 127 will cause a delay of 60s before marking a staging task as failed.  This became necessary
   to deal with globus shutdown behaviour which may cause spurious script exit codes and thus broke restarting old tasks upon restart
   of Globus...
 * [FIX] Lots of many small bugs have been squished making this release much more stable

@@ -1,32 +1,52 @@
 package de.zib.gndms.logic.model.gorfx;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
+import de.zib.gndms.kit.access.CredentialProvider;
+import de.zib.gndms.kit.access.RequiresCredentialProvider;
 import de.zib.gndms.kit.configlet.ConfigletProvider;
+import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.common.types.factory.KeyFactory;
 import de.zib.gndms.model.common.types.factory.KeyFactoryInstance;
-import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
-import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import org.jetbrains.annotations.NotNull;
 
 
 /**
- * @author Maik Jorra <jorra@zib.de>
+ * @author  try ma ik jo rr a zib
  * @verson \$id$
  * <p/>
  * User: bzcjorra Date: Sep 5, 2008 1:43:46 PM
  */
 public abstract class AbstractORQCalculator<M extends AbstractORQ, C extends AbstractORQCalculator<M, C>>
-    implements KeyFactoryInstance<OfferType, AbstractORQCalculator<?, ?>> {
+    implements KeyFactoryInstance<OfferType, AbstractORQCalculator<?, ?>>, RequiresCredentialProvider {
 
     private ConfigletProvider configletProvider;
     private TransientContract perferredOfferExecution;
     private Class<M> orqModelClass;
     private M orqArguments;
-    private NetworkAuxiliariesProvider netAux;
+    //private NetworkAuxiliariesProvider netAux;
 
     private KeyFactory<OfferType, AbstractORQCalculator<?,?>> factory;
     private OfferType offerType;
+    private CredentialProvider credentialProvider;
 
 
     public AbstractORQCalculator() {
@@ -85,14 +105,14 @@ public abstract class AbstractORQCalculator<M extends AbstractORQ, C extends Abs
     }
 
 
-    public NetworkAuxiliariesProvider getNetAux() {
-        return netAux;
-    }
+    //public NetworkAuxiliariesProvider getNetAux() {
+    //    return netAux;
+    //}
 
 
-    public void setNetAux( NetworkAuxiliariesProvider networkAuxiliariesProvider ) {
-        this.netAux = networkAuxiliariesProvider;
-    }
+    //public void setNetAux( NetworkAuxiliariesProvider networkAuxiliariesProvider ) {
+    //    this.netAux = networkAuxiliariesProvider;
+    //}
 
 
     public KeyFactory<OfferType, AbstractORQCalculator<?, ?>> getFactory() {
@@ -123,5 +143,15 @@ public abstract class AbstractORQCalculator<M extends AbstractORQ, C extends Abs
 
     public void setConfigletProvider( ConfigletProvider configletProvider ) {
         this.configletProvider = configletProvider;
+    }
+
+
+    public void setCredentialProvider( CredentialProvider cp ) {
+        credentialProvider = cp;
+    }
+
+
+    public CredentialProvider getCredentialProvider() {
+        return credentialProvider;
     }
 }

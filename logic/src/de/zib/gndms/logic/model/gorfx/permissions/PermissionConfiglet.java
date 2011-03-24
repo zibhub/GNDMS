@@ -1,5 +1,23 @@
 package de.zib.gndms.logic.model.gorfx.permissions;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
 import de.zib.gndms.kit.configlet.Configlet;
 import de.zib.gndms.model.common.types.FilePermissions;
 import de.zib.gndms.model.common.types.PermissionConfigData;
@@ -10,10 +28,11 @@ import java.io.Serializable;
 import java.util.Properties;
 
 /**
- * A class to configure the permissions of files created by the GORFX service.
+ * A class to configure permissions of files created by the GORFX service.
  *
- * @author: Maik Jorra <jorra@zib.de>
- * @version: $Id$
+ * 
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  * <p/>
  * User: mjorra, Date: 23.12.2008, Time: 11:00:25
  */
@@ -35,6 +54,13 @@ public class PermissionConfiglet implements Configlet {
     }
 
 
+
+   /**
+   *  Tries to deserialzies {@code data} by casting it as a {@code PermissionConfigData}.
+    * If this is not possible, it will be casted as {@code Properties}.
+    *
+    * Then {@link #config} will be filled with the data.
+    */
     private void deserializeConfig(  @NotNull Serializable data ) {
 
         try{
@@ -60,10 +86,10 @@ public class PermissionConfiglet implements Configlet {
     }
 
 
-    /** This method always returns vaild permissions which respect the current user mode.
+    /** This method always returns vaild permissions with respect to the current user mode.
      *
-     * @param un The username to request the permissoin for. The username is only taken in account
-     *          iff the mode is Caller, in any other cases it can be null.
+     * @param un The username to request the permission for. The username is only taken in account
+     *          if the mode is Caller, in any other cases it can be null.
      */
     public FilePermissions permissionsFor( String un ) {
 

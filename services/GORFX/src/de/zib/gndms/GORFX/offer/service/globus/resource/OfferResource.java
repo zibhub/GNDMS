@@ -1,16 +1,41 @@
 package de.zib.gndms.GORFX.offer.service.globus.resource;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
+import de.zib.gndms.gritserv.delegation.DelegationAux;
+import de.zib.gndms.gritserv.delegation.GNDMSCredibleResource;
+import de.zib.gndms.gritserv.delegation.GNDMSDelegationListener;
+import de.zib.gndms.infra.wsrf.WSConstants;
 import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
 import de.zib.gndms.logic.model.gorfx.permissions.PermissionConfiglet;
-import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.common.PermissionInfo;
+import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.common.types.InvalidContractException;
 import de.zib.gndms.model.common.types.PermissionConfigData;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
-import de.zib.gndms.typecon.common.type.ContractXSDReader;
-import de.zib.gndms.infra.wsrf.WSConstants;
+import de.zib.gndms.gritserv.typecon.types.ContractXSDReader;
+import org.apache.axis.message.addressing.EndpointReferenceType;
+import org.globus.delegation.DelegationException;
+import org.globus.delegation.DelegationUtil;
+import org.globus.gsi.GlobusCredential;
 import org.globus.wsrf.ResourceException;
 import org.jetbrains.annotations.NotNull;
 import types.DynamicOfferDataSeqT;
@@ -23,13 +48,15 @@ import types.OfferExecutionContractT;
  * @created by Introduce Toolkit version 1.2
  * 
  */
-public class OfferResource extends OfferResourceBase {
+public class OfferResource extends OfferResourceBase implements GNDMSCredibleResource {
 
     private ExtOfferResourceHome home;
     
     private AbstractORQCalculator<?,?> orqCalc;
 
     private String cachedWid;
+
+    GlobusCredential credential;
 
     @Override
     public void setOfferExecutionContract( OfferExecutionContractT offerExecutionContract ) throws ResourceException {
@@ -87,6 +114,9 @@ public class OfferResource extends OfferResourceBase {
         task.setOfferType(getOrqCalc().getKey());
         task.setTerminationTime( contract.getCurrentTerminationTime() );
         task.setWid(WidAux.getWid());
+        task.setSerializedCredential(
+            DelegationAux.toByteArray( credential )
+        );
         addPermissions( task );
         return task;
     }
@@ -110,7 +140,6 @@ public class OfferResource extends OfferResourceBase {
     
     private void addPermissions( Task tsk ) {
 
-
         String cn = null;
         PermissionConfiglet config = home.getSystem().getInstanceDir().getConfiglet( PermissionConfiglet.class, WSConstants.GORFX_PERMISSION_CONFIGLET);
         if( config.getMode().equals( PermissionConfigData.UserMode.CALLER ) ) {
@@ -126,4 +155,26 @@ public class OfferResource extends OfferResourceBase {
         tsk.setPermissions( new PermissionInfo( config.actualUserName( cn ), WSConstants.GORFX_PERMISSION_CONFIGLET ) );
     }
 
+
+    public void setCredential( final GlobusCredential cred ) {
+        credential = cred;
+    }
+
+
+    public GlobusCredential getCredential() {
+        return credential;
+    }
+
+
+    public void setDelegateEPR( final EndpointReferenceType epr ) {
+
+        String servicePath =  org.apache.axis.MessageContext.getCurrentContext().getTargetService();
+        String homeName = org.globus.wsrf.Constants.JNDI_SERVICES_BASE_NAME + servicePath + "/" + "offerHome";
+        GNDMSDelegationListener list = new GNDMSDelegationListener( getResourceKey(), homeName );
+        try {
+            DelegationUtil.registerDelegationListener(epr, list);
+        } catch ( DelegationException e ) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
 }

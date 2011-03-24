@@ -1,8 +1,26 @@
 package de.zib.gndms.kit.network;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
 /**
- * @author: Maik Jorra <jorra@zib.de>
- * @version: $Id$
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  * <p/>
  * User: mjorra, Date: 01.10.2008, Time: 10:51:58
  *
@@ -31,17 +49,20 @@ package de.zib.gndms.kit.network;
  */
 public class NetworkAuxiliariesProvider {
 
-    private final GridFTPClientFactory gridFTPClientFactory = new SimpleGridFTPClientFactory();
+    private NetworkAuxiliariesProvider( )  { }
+
+    // private final GridFTPClientFactory gridFTPClientFactory = new SimpleGridFTPClientFactory();
    // private final GridFTPClientFactory gridFTPClientFactory = new CertGridFTPClientFactory();
-    private final BandWidthEstimater bandWidthEstimater = new StaticBandWidthEstimater();
+    private final static GridFTPClientFactory gridFTPClientFactory = new NonblockingClientFactory();
+    private final static BandWidthEstimater bandWidthEstimater = new StaticBandWidthEstimater();
 
 
-    public GridFTPClientFactory getGridFTPClientFactory() {
+    public static GridFTPClientFactory getGridFTPClientFactory() {
         return gridFTPClientFactory;
     }
 
 
-    public BandWidthEstimater getBandWidthEstimater() {
+    public static BandWidthEstimater getBandWidthEstimater() {
         return bandWidthEstimater;
     }
 

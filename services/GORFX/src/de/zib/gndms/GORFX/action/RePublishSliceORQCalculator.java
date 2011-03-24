@@ -1,13 +1,32 @@
 package de.zib.gndms.GORFX.action;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
 import de.zib.gndms.dspace.slice.client.SliceClient;
 import de.zib.gndms.dspace.subspace.client.SubspaceClient;
 import de.zib.gndms.kit.configlet.PublishConfiglet;
+import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
 import de.zib.gndms.logic.model.gorfx.AbstractTransferORQCalculator;
 import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
 import de.zib.gndms.model.gorfx.types.RePublishSliceORQ;
-import de.zib.gndms.typecon.common.type.SliceRefXSDReader;
+import de.zib.gndms.gritserv.typecon.types.SliceRefXSDReader;
 import de.zib.gndms.infra.wsrf.WSConstants;
 import org.globus.ftp.exception.ClientException;
 import org.globus.ftp.exception.ServerException;
@@ -20,8 +39,8 @@ import java.util.Random;
 import java.util.Vector;
 
 /**
- * @author: Maik Jorra <jorra@zib.de>
- * @version: $Id$
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  * <p/>
  * User: mjorra, Date: 11.11.2008, Time: 14:57:06
  */
@@ -58,7 +77,7 @@ public class RePublishSliceORQCalculator extends
         String sp = DSpaceBindingUtils.getFtpPathForSlice( getORQArguments().getSourceSlice() );
         String dp = tgt.getSliceLocation();
 
-        Float bw = getNetAux().getBandWidthEstimater().estimateBandWidthFromTo( sp, dp );
+        Float bw = NetworkAuxiliariesProvider.getBandWidthEstimater().estimateBandWidthFromTo( sp, dp );
         setEstimatedBandWidth( bw );
 
         // create offer

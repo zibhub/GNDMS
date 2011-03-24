@@ -1,9 +1,29 @@
 package de.zib.gndms.kit.network;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
 import de.zib.gndms.model.gorfx.FTPTransferState;
+import de.zib.gndms.model.util.TxFrame;
 import org.globus.ftp.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import javax.persistence.EntityManager;
 
@@ -16,15 +36,16 @@ import javax.persistence.EntityManager;
  * Note even after a successful transfer the data base entry isn't deleted
  * you have to do this manually using derby's ij tool.
  * 
- * @author: Maik Jorra <jorra@zib.de>
- * @version: $Id$
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  * <p/>
  * User: mjorra, Date: 01.10.2008, Time: 13:27:12
  */
 public class PersistentMarkerListener implements MarkerListener {
 
     private FTPTransferState transferState;
-    private static Log logger = LogFactory.getLog( PersistentMarkerListener.class );
+    //private static Log logger = LogFactory.getLog( PersistentMarkerListener.class );
+    private static Logger logger = Logger.getLogger( PersistentMarkerListener.class );
     private ByteRangeList byteRanges;
     private EntityManager entityManager;
 
@@ -78,11 +99,11 @@ public class PersistentMarkerListener implements MarkerListener {
         this.transferState = transferState;
         byteRanges = new ByteRangeList();
 
+        TxFrame tx = new TxFrame( entityManager );
         try {
-            entityManager.getTransaction().begin();
             if (! entityManager.contains( transferState ) )
                 entityManager.persist( transferState );
-            entityManager.getTransaction().commit();
+            tx.commit();
 
             if( transferState.getFtpArgs() != null ) {
                 GridFTPRestartMarker rm = new GridFTPRestartMarker( transferState.getFtpArgsString() );
@@ -90,8 +111,7 @@ public class PersistentMarkerListener implements MarkerListener {
             }
         }
         finally {
-            if ( entityManager.getTransaction().isActive() )
-                entityManager.getTransaction().rollback();
+            tx.finish();
         }
     }
 
@@ -114,15 +134,14 @@ public class PersistentMarkerListener implements MarkerListener {
      */
     public void setCurrentFile( String currentFile ) {
 
+        TxFrame tx = new TxFrame( entityManager );
         try {
-            entityManager.getTransaction().begin();
             transferState.setCurrentFile( currentFile );
             transferState.setFtpArgs( "0-0" );
-            entityManager.getTransaction().commit();
+            tx.commit();
         }
         finally {
-            if ( entityManager.getTransaction().isActive() )
-                entityManager.getTransaction().rollback();
+            tx.finish();
         }
     }
 

@@ -1,11 +1,30 @@
 package de.zib.gndms.GORFX.action.dms;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
 import de.zib.gndms.GORFX.ORQ.client.ORQClient;
 import de.zib.gndms.GORFX.client.GORFXClient;
 import de.zib.gndms.GORFX.context.client.TaskClient;
 import de.zib.gndms.GORFX.offer.client.OfferClient;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.log4j.Logger;
+import org.globus.gsi.GlobusCredential;
 import org.globus.wsrf.encoding.DeserializationException;
 import org.joda.time.DateTime;
 import types.*;
@@ -18,8 +37,8 @@ import java.util.Calendar;
 /**
  * Some helper methods for common tasks at testing.
  *
- * @author: Maik Jorra <jorra@zib.de>
- * @version: $Id$
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  * <p/>
  * User: mjorra, Date: 06.11.2008, Time: 17:08:37
  */
@@ -100,20 +119,24 @@ public class GORFXClientUtils {
         EndpointReferenceType commonTaskPreparation( String uri,
                                DynamicOfferDataSeqT orq,
                                ContextT ctx,
-                               OfferExecutionContractT con
+                               OfferExecutionContractT con,
+                               GlobusCredential proxy
                                ) throws Exception
     {
 
         // create gorfx client and retrieve orq
         final GORFXClient gcnt = new GORFXClient( uri );
+        if( proxy != null ) gcnt.setProxy( proxy );
         EndpointReferenceType epr = gcnt.createOfferRequest( orq, ctx );
 
         // create orq client and request offer
         final ORQClient orqcnt = new ORQClient( epr );
+        if( proxy != null ) orqcnt.setProxy( proxy );
         epr = orqcnt.getOfferAndDestroyRequest( con , ctx );
 
         // create offer client and accept it
         final OfferClient ofcnt = new OfferClient( epr );
+        if( proxy != null ) ofcnt.setProxy( proxy );
         return ofcnt.accept( );
     }
     

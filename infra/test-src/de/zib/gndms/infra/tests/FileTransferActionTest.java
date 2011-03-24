@@ -1,5 +1,23 @@
 package de.zib.gndms.infra.tests;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
 import de.zib.gndms.infra.system.SysTestBase;
 import de.zib.gndms.kit.network.test.LittleTransferData;
 import de.zib.gndms.kit.network.test.TransferTestMetaData;
@@ -34,8 +52,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 /**
- * @author: Maik Jorra <jorra@zib.de>
- * @version: $Id$
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  * <p/>
  * User: mjorra, Date: 14.10.2008, Time: 17:30:57
  */
@@ -70,7 +88,7 @@ public class FileTransferActionTest extends SysTestBase {
         // create orq-calc
         FileTransferORQCalculator calc = new FileTransferORQCalculator();
         calc.setORQArguments( orq );
-        calc.setNetAux( getSys().getNetAux() );
+       // calc.setNetAux( getSys().getNetAux() );
 
         TransientContract con = calc.createOffer();
         PersistentContract pcon = con.acceptAt( new DateTime() );
@@ -81,7 +99,7 @@ public class FileTransferActionTest extends SysTestBase {
         EntityManager em = null;
         try{
             em = getSys().getEntityManagerFactory().createEntityManager();
-            ot = em.find( OfferType.class, "http://www.c3grid.de/ORQTypes/FileTransfer" );
+            ot = em.find( OfferType.class, "http://gndms.zib.de/ORQTypes/FileTransfer" );
             if( ot == null ) {
                 ot = createFTOfferType();
                 em.getTransaction().begin( );
@@ -134,7 +152,7 @@ public class FileTransferActionTest extends SysTestBase {
 
     public static OfferType createFTOfferType( ) {
         OfferType ot = new OfferType( );
-        ot.setOfferTypeKey( "http://www.c3grid.de/ORQTypes/FileTransfer" );
+        ot.setOfferTypeKey( "http://gndms.zib.de/ORQTypes/FileTransfer" );
         ot.setOfferResultType( new ImmutableScopedName( "http://gndms.zib.de/c3grid/types", "FileTransferORQT" ) );
         ot.setOfferResultType( new ImmutableScopedName( "http://gndms.zib.de/c3grid/types", "FileTransferResultT" ) );
         ot.setCalculatorFactoryClassName( FileTransferORQFactory.class.getName() );

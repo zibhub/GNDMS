@@ -13,6 +13,7 @@
 	<property name="introduce.ns.excludes" value="" />
 	<property name="service.name" value="${introduce.skeleton.service.name}" />
 	<property name="schema.path" value="${introduce.skeleton.service.name}" />
+	<property name="schema.path.add" value="LOFIS" />
 
 	<!-- Important directories and files -->
 	<property name="src.dir" value="src" />

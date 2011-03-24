@@ -1,5 +1,23 @@
 package de.zib.gndms.logic.action;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
@@ -7,8 +25,6 @@ import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
 import static org.testng.AssertJUnit.*;
 
-import javax.persistence.NamedQuery;
-import javax.persistence.NamedQueries;
 import javax.persistence.Query;
 import javax.persistence.EntityManager;
 import java.util.Calendar;
@@ -17,8 +33,8 @@ import java.util.GregorianCalendar;
 import java.io.File;
 
 /**
- * @author: Maik Jorra <jorra@zib.de>
- * @version: $Id$
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  * 
  * User: mjorra, Date: 14.08.2008, Time: 14:03:31
  */
@@ -30,6 +46,7 @@ public class SliceCreationValidator {
     Subspace subspace;
     SliceKind Kind;
     long storageSize;
+    String uid;
     CreateSliceAction Action;
 
     public SliceCreationValidator( ) {
@@ -41,7 +58,7 @@ public class SliceCreationValidator {
      */
     CreateSliceAction createCreateSliceAction( ) {
 
-        Action = new CreateSliceAction( gId, terminationTime, uuidgen, Kind, storageSize );
+        Action = new CreateSliceAction( gId, uid, terminationTime, uuidgen, Kind, storageSize );
         Action.setModel( subspace );
         return Action;
     }
@@ -51,7 +68,8 @@ public class SliceCreationValidator {
 
         assertEquals( gId, sl.getId( ) );
         assertEquals( terminationTime, sl.getTerminationTime() );
-        assertSame( subspace, sl.getOwner( ) );
+        assertEquals( uid, sl.getOwner() );
+        assertSame( subspace, sl.getSubspace( ) );
         assertSame( Kind , sl.getKind( ) );
         File f = new File( subspace.getPathForSlice( sl ) );
         try{
@@ -75,7 +93,7 @@ public class SliceCreationValidator {
         q = em.createQuery( "SELECT x.directoryId FROM Slices x WHERE x.id = :idParam" );
         q.setParameter( "idParam", sl.getId() );
         String did = (String) q.getSingleResult();
-        assertEquals( sl.getAssociatedPath(), did );
+        assertEquals( sl.getDirectoryId(), did );
 
         q = em.createQuery( "SELECT x.terminationTime FROM Slices x WHERE x.id = :idParam" );
         q.setParameter( "idParam", sl.getId() );
@@ -85,7 +103,7 @@ public class SliceCreationValidator {
         q = em.createNativeQuery( "SELECT SUBSPACE_ID FROM dspace.slices WHERE ID = ?1" );
         q.setParameter( 1, sl.getId() );
         String sid = (String) q.getSingleResult();
-        assertEquals( sl.getOwner().getId( ), sid );
+        assertEquals( sl.getSubspace().getId( ), sid );
 
         q = em.createNativeQuery( "SELECT KIND_URI FROM dspace.slices WHERE ID = ?1" );
         q.setParameter( 1, sl.getId() );

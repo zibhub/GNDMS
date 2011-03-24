@@ -1,11 +1,30 @@
 package de.zib.gndms.logic.model.gorfx;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
 import de.zib.gndms.kit.network.GNDMSFileTransfer;
 import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
 import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.FTPTransferState;
 import de.zib.gndms.model.gorfx.types.FileTransferORQ;
 import de.zib.gndms.model.gorfx.types.FileTransferResult;
+import de.zib.gndms.model.util.TxFrame;
 import org.apache.axis.types.URI;
 import org.globus.ftp.GridFTPClient;
 import org.jetbrains.annotations.NotNull;
@@ -15,8 +34,8 @@ import java.util.ArrayList;
 import java.util.TreeMap;
 
 /**
- * @author: Maik Jorra <jorra@zib.de>
- * @version: $Id$
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  * <p/>
  * User: mjorra, Date: 01.10.2008, Time: 17:57:57
  */
@@ -53,8 +72,10 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
         GridFTPClient src = null;
         GridFTPClient dest = null;
 
+        EntityManager em = getEmf().createEntityManager(  );
+        // EntityManager em = getEntityManager(  );
+        TxFrame tx = new TxFrame( em );
         try {
-            EntityManager em = getEntityManager();
             transferState = em.find( FTPTransferState.class, getModel( ).getId() );
 
             TreeMap<String,String> files =  getOrq().getFileMap();
@@ -68,6 +89,9 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
                 }
             }
 
+            tx.commit();
+
+
             TaskPersistentMarkerListener pml = new TaskPersistentMarkerListener( );
             pml.setEntityManager( em );
             pml.setTransferState( transferState );
@@ -77,9 +101,8 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
             URI duri = new URI ( getOrq().getTargetURI() );
 
             // obtain clients
-            NetworkAuxiliariesProvider prov = new NetworkAuxiliariesProvider( );
-            src = prov.getGridFTPClientFactory().createClient( suri );
-            dest = prov.getGridFTPClientFactory().createClient( duri );
+            src = NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( suri, getCredentialProvider() );
+            dest = NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( duri, getCredentialProvider() );
 
             // setup transfer handler
             GNDMSFileTransfer transfer = new GNDMSFileTransfer();
@@ -98,9 +121,9 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
 
             transfer.performPersistentTransfer( pml );
 
-            em.getTransaction().begin();
+            tx.begin();
             em.remove( transferState );
-            em.getTransaction().commit();
+            tx.commit();
 
             FileTransferResult ftr = new FileTransferResult();
 
@@ -112,16 +135,28 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
         } catch ( TransitException e ) {
             throw e;
         } catch ( Exception e ) {
-                failWith( e );
+                failFrom( e );
         } finally {
-     //       getEntityManager().close();
+
+            try {
+                tx.finish();
+                em.close();
+            } catch ( Exception e ) {
+                trace( "Exception while closing entityManager client.", e );
+            }
+
             try {
                 if( src != null )
                     src.close();
+            } catch ( Exception e ) {
+                trace( "Exception while closing src client.", e );
+            }
+
+            try {
                 if( dest != null )
                     dest.close();
             } catch ( Exception e ) {
-                failWith( e );
+                trace( "Exception while closing dest client.", e );
             }
         }
 
@@ -134,7 +169,4 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
     }
 
     
-    private void failWith( Exception e ) {
-        fail( new IllegalStateException( getModel().getDescription() + " failure " +  e.getMessage(), e ) );
-    }
 }

@@ -1,29 +1,45 @@
 package de.zib.gndms.dspace.slice.service.globus.resource;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
+import de.zib.gndms.dspace.common.DSpaceTools;
+import de.zib.gndms.dspace.slice.common.SliceConstants;
+import de.zib.gndms.dspace.slice.stubs.SliceResourceProperties;
+import de.zib.gndms.dspace.subspace.service.globus.resource.ExtSubspaceResourceHome;
+import de.zib.gndms.dspace.subspace.stubs.types.SubspaceReference;
+import de.zib.gndms.infra.model.GridResourceModelHandler;
+import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
+import de.zib.gndms.logic.model.dspace.DeleteSliceAction;
+import de.zib.gndms.model.dspace.Slice;
+import de.zib.gndms.model.dspace.Subspace;
+import org.apache.axis.types.URI;
+import org.apache.axis.types.UnsignedLong;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.globus.wsrf.InvalidResourceKeyException;
 import org.globus.wsrf.NoSuchResourceException;
 import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.ResourceKey;
 import org.jetbrains.annotations.NotNull;
-import org.apache.axis.types.URI;
-import org.apache.axis.types.UnsignedLong;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import de.zib.gndms.model.dspace.Slice;
-import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.model.util.TxFrame;
-import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
-import de.zib.gndms.infra.model.GridEntityModelHandler;
-import de.zib.gndms.infra.model.GridResourceModelHandler;
-import de.zib.gndms.infra.system.GNDMSystem;
-import de.zib.gndms.dspace.common.DSpaceTools;
-import de.zib.gndms.dspace.slice.stubs.SliceResourceProperties;
-import de.zib.gndms.dspace.slice.common.SliceConstants;
-import de.zib.gndms.dspace.subspace.service.globus.resource.ExtSubspaceResourceHome;
-import de.zib.gndms.dspace.subspace.stubs.types.SubspaceReference;
 
 import javax.persistence.EntityManager;
-import java.rmi.RemoteException;
 
 
 /** 
@@ -90,7 +106,7 @@ public class SliceResource extends SliceResourceBase
         ExtSubspaceResourceHome srh = (ExtSubspaceResourceHome) sys.getInstanceDir().getHome( Subspace.class );
         SubspaceReference subref;
         try {
-            Subspace sp =  model.getOwner( );
+            Subspace sp =  model.getSubspace( );
             subref = srh.getReferenceForSubspace( sp );
             bean.setSubspaceReference( subref );
             bean.setSliceLocation( new URI( sp.getGsiFtpPathForSlice( model ) ) );
@@ -152,24 +168,10 @@ public class SliceResource extends SliceResourceBase
     public void remove( ) {
 
         logger.debug( "removing slice resource: " + getID() );
-        EntityManager em = null;
-        TxFrame tx = new TxFrame( em );
-        em = resourceHome.getEntityManagerFactory().createEntityManager(  );
-        try {
-            // em.getTransaction().begin();
-            Slice sl = em.find( Slice.class, getID() );
-            Subspace sp = sl.getOwner();
-            logger.debug( "removing slice directory: " + sl.getAssociatedPath() );
-            sp.destroySlice( sl );
-            em.remove( sl );
-            // em.getTransaction().commit( );
-            tx.commit();
-        } catch ( Exception e) { // for debugg'n
-            e.printStackTrace(  );
-        } finally {
-            tx.finish();
-            if( em != null && em.isOpen() )
-                em.close( );
-        }
+        EntityManager em = resourceHome.getEntityManagerFactory().createEntityManager();
+        Slice sl = em.find( Slice.class, getID() );
+        logger.debug( "removing slice directory: " + sl.getDirectoryId() );
+        // the action takes care of the EntityManager from now on
+        /*Future f =*/ resourceHome.getSystem().submitAction( em, new DeleteSliceAction( sl ), logger );
     }
 }

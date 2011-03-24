@@ -1,8 +1,25 @@
 package de.zib.gndms.logic.action;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
 import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
 import de.zib.gndms.logic.model.LookupAction;
-import de.zib.gndms.kit.util.LinuxDirectoryAux;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
 import de.zib.gndms.logic.util.SimpleModelUUIDGen;
 import de.zib.gndms.model.common.ImmutableScopedName;
@@ -24,8 +41,8 @@ import java.util.TreeSet;
 import java.util.Vector;
 
 /**
- * @author: Maik Jorra <jorra@zib.de>
- * @version: $Id$
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  * 
  * User: mjorra, Date: 14.08.2008, Time: 11:02:24
  */
@@ -86,9 +103,9 @@ public class CreateSliceActionTest extends ModelEntityTestBase {
 
         Subspace sp = new Subspace( );
         sp.setId( ug.nextUUID() );
-        LinuxDirectoryAux lda = new LinuxDirectoryAux();
-        String spd = MY_PATH + "/subspace";
-        lda.createSubspaceDirectory( spd );
+      //  LinuxDirectoryAux lda = new LinuxDirectoryAux();
+      //  String spd = MY_PATH + "/subspace";
+      //  lda.createSubspaceDirectory( spd );
       //  sp.setPath( spd );
         sp.setMetaSubspace( msp );
         GregorianCalendar cal = new GregorianCalendar( );

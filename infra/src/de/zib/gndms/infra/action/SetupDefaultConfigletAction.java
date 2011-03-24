@@ -1,5 +1,23 @@
 package de.zib.gndms.infra.action;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
 import com.google.common.collect.Maps;
 import de.zib.gndms.kit.config.ParameterTools;
 import de.zib.gndms.logic.model.config.*;
@@ -13,9 +31,23 @@ import java.util.Map;
 
 
 /**
- * ThingAMagic.
+ * This class provides a default implementation of {@code SetupConfigletAction}, intended to manage
+ * all option names and their chosen values,stored in a <tt>ConfigletState</tt> entity.
  *
- * @author Stefan Plantikow<plantikow@zib.de>
+ * <p>If {@link #mode} ist set to <tt>create</tt> or <tt>update</tt>,
+ * the state of the <tt>ConfigletState</tt> entity will be overwritten by a new map,
+ * containing all options and their chosen values of the current configuration.
+ *
+ * <p>When this action is started with <tt>create</tt> as chosen SetupMode, the configuration map must
+ * have an option {@link #className 'className'} set. Otherwise an <tt>IllegalStateException</tt> will be thrown.
+ * The option {@link #name 'name'} must be set in any case.
+ * 
+ * <p>The current configuration will be written to a given <tt>PrintWriter</tt>, if {@code mode} is set to <tt>read</tt>.
+ *
+ * <p>An instance of this class returns a {@code ConfigActionResult} informing about the success of its execution, when
+ * the <tt>execute()</tt> method is called.
+ * 
+ * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 07.11.2008 Time: 15:06:35
@@ -34,6 +66,15 @@ public class SetupDefaultConfigletAction extends SetupConfigletAction {
 	}
 
 
+    /**                                      
+     * Prints all option names and their chosen values of the Configlet entity using the PrintWriter {@code writerParam}
+     * and the syntax as described in {@link de.zib.gndms.kit.config.ParameterTools#asString(java.util.Map, java.util.regex.Pattern, boolean)}
+     *
+     * @param state a ConfigletState containing the option names and their corresponding values
+     * @param emParam the EnityManager, containing the entity instance {@code state}.
+     * @param writerParam the printwriter the state will be written to.
+     * @return An {@code OKResult} instance
+     */
     @Override
     @SuppressWarnings({ "unchecked" })
 	protected ConfigActionResult read( final ConfigletState state, final EntityManager emParam, final PrintWriter writerParam) {
@@ -43,20 +84,42 @@ public class SetupDefaultConfigletAction extends SetupConfigletAction {
 	}
 
 
+    /**
+     * Creates a new Map containing all option names and their corresponding value set in the current configuration
+     *  and sets the state of {@code stateParam} to the map.
+     *
+     * @param state the ConfigletState to be created
+     * @param emParam the EnityManager, containing the entity instance {@code state}.
+     * @param writerParam
+     * @return An {@code OKResult} instance
+     */
     @Override
 	protected ConfigActionResult create( ConfigletState state, final EntityManager emParam, final PrintWriter writerParam) {
 		update_(state);
         return ok();
 	}
 
-
+    /**
+     *  Creates a new Map containing all global option names and their corresponding value set in the current configuration
+     *  and sets the state of {@code stateParam} to the map.
+     * 
+     * @param state the ConfigletState to be updated
+     * @param emParam the EnityManager, containing the entity instance {@code state}.
+     * @param writerParam
+     * @return An {@code OKResult} instance,
+     */
     @Override
 	protected ConfigActionResult update( ConfigletState state, final EntityManager emParam, final PrintWriter writerParam) {
 		update_(state);
         return ok();
 	}
 
-
+    /**
+     * Creates a new Map containing all option names and their corresponding value set in the current configuration
+     *  and sets the state of {@code stateParam} to the created map.
+     *
+     * @param stateParam the ConfigletState to be updated
+     */
 	private void update_(final ConfigletState stateParam) {
 		final @NotNull HashMap<String, String> configMap = Maps.newHashMap();
 		for (String optName : getAllOptionNames())

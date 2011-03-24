@@ -14,6 +14,7 @@
 	<!-- Schema files (WSDL, XSD, etc.) to be included in the GAR file -->
 	<fileset dir="${schema.dest}" id="garschema">
 		<include name="${schema.path}/**/*" />
+		<include name="${schema.path.add}/**/*" />
 	</fileset>
 	<property name="garschema.id" value="garschema" />
 

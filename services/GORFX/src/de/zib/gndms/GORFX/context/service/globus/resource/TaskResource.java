@@ -1,25 +1,45 @@
 package de.zib.gndms.GORFX.context.service.globus.resource;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
 import de.zib.gndms.GORFX.context.common.TaskConstants;
 import de.zib.gndms.GORFX.context.stubs.TaskResourceProperties;
+import de.zib.gndms.gritserv.delegation.DelegationAux;
+import de.zib.gndms.gritserv.util.GlobusCredentialProviderImpl;
 import de.zib.gndms.infra.model.GridResourceModelHandler;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.logic.model.TaskAction;
+import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.model.util.TxFrame;
-import de.zib.gndms.typecon.common.GORFXClientTools;
-import de.zib.gndms.typecon.common.GORFXTools;
-import de.zib.gndms.typecon.common.type.FileTransferResultXSDTypeWriter;
-import de.zib.gndms.typecon.common.type.ProviderStageInResultXSDTypeWriter;
-import de.zib.gndms.typecon.common.type.RePublishSliceResultXSDTypeWriter;
-import de.zib.gndms.typecon.common.type.SliceStageInResultXSDTypeWriter;
-import de.zib.gndms.typecon.util.AxisTypeFromToXML;
-import de.zib.gndms.shared.ContextTAux;
-import de.zib.gndms.kit.util.WidAux;
+import de.zib.gndms.gritserv.typecon.GORFXClientTools;
+import de.zib.gndms.gritserv.typecon.GORFXTools;
+import de.zib.gndms.gritserv.typecon.util.AxisTypeFromToXML;
+import de.zib.gndms.gritserv.typecon.types.FileTransferResultXSDTypeWriter;
+import de.zib.gndms.gritserv.typecon.types.ProviderStageInResultXSDTypeWriter;
+import de.zib.gndms.gritserv.typecon.types.*;
+import de.zib.gndms.gritserv.typecon.types.SliceStageInResultXSDTypeWriter;
 import org.apache.commons.logging.Log;
 import org.apache.log4j.Logger;
+import org.globus.gsi.GlobusCredential;
 import org.globus.wsrf.InvalidResourceKeyException;
 import org.globus.wsrf.NoSuchResourceException;
 import org.globus.wsrf.ResourceException;
@@ -32,7 +52,6 @@ import javax.persistence.EntityTransaction;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.concurrent.Future;
-import java.rmi.RemoteException;
 
 
 /**
@@ -49,7 +68,6 @@ public class TaskResource extends TaskResourceBase
     private TaskAction taskAction;
     private GridResourceModelHandler<Task, ExtTaskResourceHome, TaskResource> mH;
     private Future<?> future;
-
 
 
     /**
@@ -215,16 +233,23 @@ public class TaskResource extends TaskResourceBase
 
         EntityManager em = home.getEntityManagerFactory().createEntityManager(  );
         Task tsk = (Task) mH.loadModelById( em, id );
-        
+
         if( tsk.isPostMortem() ) {
             em.close();
             throw new NoSuchResourceException( );
         }
 
+        byte[] bcred = tsk.getSerializedCredential();
+        GlobusCredential gcred = null;
+        if( bcred.length > 0 )
+            gcred = DelegationAux.fromByteArray( bcred );
+
         try {
             taskAction = getResourceHome().getSystem().getInstanceDir().newTaskAction( em, tsk.getOfferType().getOfferTypeKey() );
             taskAction.initFromModel(em, tsk);
             taskAction.setClosingEntityManagerOnCleanup(true);
+            taskAction.setCredentialProvider( new GlobusCredentialProviderImpl(
+                ( ( ORQTaskAction ) taskAction).getOrq().getOfferType(), gcred ) );
         }
         catch (IllegalAccessException e) {
             throw new ResourceException(e);
@@ -377,4 +402,6 @@ public class TaskResource extends TaskResourceBase
             }
         }
     }
+
+
 }

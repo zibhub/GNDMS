@@ -1,6 +1,26 @@
 package de.zib.gndms.GORFX.action.dms;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
 import de.zib.gndms.GORFX.context.client.TaskClient;
+import de.zib.gndms.gritserv.util.GlobusCredentialProvider;
+
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.system.SystemHolder;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
@@ -8,18 +28,19 @@ import de.zib.gndms.model.dspace.types.SliceRef;
 import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.SliceStageInORQ;
 import de.zib.gndms.model.gorfx.types.SliceStageInResult;
-import de.zib.gndms.model.gorfx.types.TaskState;
-import de.zib.gndms.typecon.common.type.ContextXSDTypeWriter;
-import de.zib.gndms.typecon.common.type.ContractXSDTypeWriter;
-import de.zib.gndms.typecon.common.type.ProviderStageInORQXSDTypeWriter;
-import de.zib.gndms.typecon.common.type.SliceRefXSDReader;
+import de.zib.gndms.gritserv.typecon.types.ProviderStageInORQXSDTypeWriter;
+import de.zib.gndms.gritserv.typecon.types.SliceRefXSDReader;
+import de.zib.gndms.gritserv.typecon.types.ContextXSDTypeWriter;
+import de.zib.gndms.gritserv.typecon.types.ContractXSDTypeWriter;
+
 import org.apache.axis.message.addressing.EndpointReferenceType;
+import org.globus.gsi.GlobusCredential;
 import org.jetbrains.annotations.NotNull;
 import types.*;
 
 /**
- * @author: Maik Jorra <jorra@zib.de>
- * @version: $Id$
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  * <p/>
  * User: mjorra, Date: 11.11.2008, Time: 13:49:57
  */
@@ -53,6 +74,7 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
 
         try {
             EndpointReferenceType epr;
+            GlobusCredential gc = GlobusCredentialProvider.class.cast( getCredentialProvider() ).getCredential();
             if( model.getData( ) == null ) {
                 String uri = ( (SliceStageInORQ) model.getOrq()).getActGridSiteURI();
                 if( uri == null )
@@ -62,7 +84,7 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
                     ContextT ctx = ContextXSDTypeWriter.writeContext( getOrq().getActContext() );
                     OfferExecutionContractT con = ContractXSDTypeWriter.write( model.getContract().toTransientContract() );
                     
-                    epr = GORFXClientUtils.commonTaskPreparation( uri, p_orq, ctx, con  );
+                    epr = GORFXClientUtils.commonTaskPreparation( uri, p_orq, ctx, con, gc );
                     model.setData( epr );
      //               transitToState( TaskState.IN_PROGRESS );
                 }
@@ -71,6 +93,8 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
             epr = (EndpointReferenceType) model.getData( );
 
             TaskClient cnt = new TaskClient( epr );
+            cnt.setProxy( gc );
+
             trace( "Starting remote staging.", null );
             // poll every 15 seconds
             boolean finished = GORFXClientUtils.waitForFinish( cnt, 15000 );
@@ -86,7 +110,7 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
                 TaskExecutionFailure f = cnt.getExecutionFailure();
                 trace( "Remote staging failed with: \n"
                     +  GORFXClientUtils.taskExecutionFailureToString( f ), null );
-                fail( new RuntimeException( f.toString() ) );
+                failFrom( new RuntimeException( f.toString() ) );
             }
         } catch( RuntimeException e ) {
             honorOngoingTransit( e );
@@ -99,6 +123,6 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
 
     @SuppressWarnings( { "ThrowableInstanceNeverThrown" } )
     private void boxException( Exception e ) {
-        fail( new RuntimeException( e.getMessage(), e ) );
+        failFrom( new RuntimeException( e.getMessage(), e ) );
     }
 }

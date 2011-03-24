@@ -1,6 +1,24 @@
 package de.zib.gndms.kit.monitor;
 
-import com.oreilly.servlet.Base64Decoder;
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
+import org.apache.commons.codec.binary.Base64;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,7 +31,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.security.Principal;
 import java.util.Enumeration;
-
 
 /**
  * This servlet is run from GroovyMonitorServer to provide access to GroovyMonitors via
@@ -48,7 +65,7 @@ import java.util.Enumeration;
  * @see de.zib.gndms.kit.monitor.GroovyMonitor
  * @see de.zib.gndms.kit.monitor.GroovyBindingFactory
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 18.07.2008 Time: 02:20:30
@@ -301,12 +318,14 @@ public class GroovyMoniServlet extends HttpServlet {
 
     private static String parseAction(HttpServletRequestWrapper requestWrapper) {
         final String monitorArgs = requestWrapper.getParameter("action");
-        return monitorArgs == null ? "" : Base64Decoder.decode(monitorArgs);
+        final Base64 b64 = new Base64();
+        return monitorArgs == null ? "" : new String(b64.decode(monitorArgs));
     }
 
 	private static String parseArgs(HttpServletRequestWrapper requestWrapper) {
 		final String monitorArgs = requestWrapper.getParameter("args");
-		return monitorArgs == null ? "" : Base64Decoder.decode(monitorArgs);
+        final Base64 b64 = new Base64();
+		return monitorArgs == null ? "" : new String(b64.decode(monitorArgs));
 	}
 
 	// Im scared about this one: Didnt know thats not allowed

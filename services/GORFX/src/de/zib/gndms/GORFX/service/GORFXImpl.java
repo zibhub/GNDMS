@@ -1,17 +1,37 @@
 package de.zib.gndms.GORFX.service;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
 import de.zib.gndms.GORFX.ORQ.service.globus.resource.ExtORQResourceHome;
 import de.zib.gndms.GORFX.ORQ.service.globus.resource.ORQResource;
 import de.zib.gndms.GORFX.context.service.globus.resource.ExtTaskResourceHome;
 import de.zib.gndms.GORFX.offer.service.globus.resource.ExtOfferResourceHome;
-import de.zib.gndms.GORFX.service.globus.GORFXAuthorization;
 import de.zib.gndms.GORFX.service.globus.resource.ExtGORFXResourceHome;
+import de.zib.gndms.gritserv.delegation.DelegationAux;
+import de.zib.gndms.gritserv.typecon.util.AxisTypeFromToXML;
+import de.zib.gndms.gritserv.typecon.util.ContextTAux;
+import de.zib.gndms.gritserv.util.LogAux;
 import de.zib.gndms.infra.access.ServiceHomeProvider;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.system.WSMaintenance;
 import de.zib.gndms.kit.util.WidAux;
-import de.zib.gndms.shared.ContextTAux;
-import de.zib.gndms.typecon.util.AxisTypeFromToXML;
+import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.log4j.Logger;
 import org.globus.wsrf.ResourceKey;
 import org.jetbrains.annotations.NotNull;
@@ -64,12 +84,15 @@ public class GORFXImpl extends GORFXImplBase {
 
         try{
             ContextTAux.initWid(getSystem().getModelUUIDGen(), context);
-            logSecInfo( "createOfferRequest" );
+            LogAux.logSecInfo( logger, "createOfferRequest" );
 
             @NotNull ExtORQResourceHome home = getORQResourceHome();
             @NotNull ResourceKey key = home.createResource();            
             ORQResource orqr = (ORQResource) home.find( key );
             orqr.setCachedWid(WidAux.getWid());
+
+            EndpointReferenceType et = DelegationAux.extractDelegationEPR( context );
+            orqr.setDelegateEPR( et );
             orqr.setOfferRequestArguments( offerRequestArguments, context);
 
 	        StringWriter wr = new StringWriter();
@@ -85,17 +108,6 @@ public class GORFXImpl extends GORFXImplBase {
         finally {
             WidAux.removeWid();
         }
-    }
-
-
-    private void logSecInfo( String s ) throws org.globus.wsrf.security.SecurityException {
-
-        logger.debug( "Method " +s + " called by: " + GORFXAuthorization.getCallerIdentity() );
-        String[] l = org.globus.wsrf.security.SecurityManager.getManager(  ).getLocalUsernames();
-        if( l == null )
-            logger.debug( "No mappings found" );
-        else
-            logger.debug( "Mapped to" + ( l.length > 0 ? l[0] : "none" ) );
     }
 
 

@@ -1,28 +1,45 @@
 package de.zib.gndms.dspace.slice.service;
 
-import de.zib.gndms.dspace.slice.stubs.types.SliceReference;
-import de.zib.gndms.dspace.slice.service.globus.resource.SliceResource;
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
+import de.zib.gndms.gritserv.util.LogAux;
 import de.zib.gndms.dspace.slice.service.globus.resource.ExtSliceResourceHome;
-import de.zib.gndms.dspace.stubs.types.UnknownSubspace;
+import de.zib.gndms.dspace.slice.service.globus.resource.SliceResource;
 import de.zib.gndms.dspace.stubs.types.InternalFailure;
+import de.zib.gndms.dspace.stubs.types.UnknownSubspace;
 import de.zib.gndms.dspace.subspace.stubs.types.OutOfSpace;
 import de.zib.gndms.dspace.subspace.stubs.types.UnknownOrInvalidSliceKind;
-import de.zib.gndms.model.dspace.Slice;
-import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.model.dspace.SliceKind;
-import de.zib.gndms.model.dspace.MetaSubspace;
-import de.zib.gndms.model.common.ImmutableScopedName;
-import de.zib.gndms.logic.model.dspace.TransformSliceAction;
 import de.zib.gndms.infra.model.GridResourceModelHandler;
 import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.logic.model.dspace.TransformSliceAction;
+import de.zib.gndms.model.common.ImmutableScopedName;
+import de.zib.gndms.model.dspace.MetaSubspace;
+import de.zib.gndms.model.dspace.Slice;
+import de.zib.gndms.model.dspace.SliceKind;
+import de.zib.gndms.model.dspace.Subspace;
+import org.apache.log4j.Logger;
+import org.globus.wsrf.ResourceKey;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.rmi.RemoteException;
 import java.util.GregorianCalendar;
-
-import org.globus.wsrf.ResourceKey;
-import org.apache.axis.types.URI;
 
 /** 
  * TODO:I am the service side implementation class.  IMPLEMENT AND DOCUMENT ME
@@ -32,6 +49,7 @@ import org.apache.axis.types.URI;
  */
 public class SliceImpl extends SliceImplBase {
 
+    protected Logger logger = Logger.getLogger( this.getClass() );
 
     private static final String querySupportedSliceKind =
             "SELECT sk FROM MetaSubspaces x INNER JOIN x.creatableSliceKinds sk WHERE sk.URI = :uriParam AND" +
@@ -44,6 +62,8 @@ public class SliceImpl extends SliceImplBase {
 	
 
     public de.zib.gndms.dspace.slice.stubs.types.SliceReference transformSliceTo(types.SliceTransformSpecifierT sliceTransformSpecifier,types.ContextT context) throws RemoteException, UnknownSubspace, OutOfSpace, UnknownOrInvalidSliceKind, InternalFailure {
+
+        LogAux.logSecInfo( logger, "transformSliceTo" );
 
         ExtSliceResourceHome esr;
         SliceResource sr;
@@ -69,7 +89,7 @@ public class SliceImpl extends SliceImplBase {
                 sk = osl.getKind( );
             } else if( sliceTransformSpecifier.getSliceKind( ) != null ) {
                 String uri = sliceTransformSpecifier.getSliceKind( ).toString( );
-                sp = osl.getOwner( );
+                sp = osl.getSubspace( );
                 sk = findSliceKind( uri, sp.getId( ), em );
             } else { // must be both
                 sp = findSubspace(
@@ -90,7 +110,7 @@ public class SliceImpl extends SliceImplBase {
             SliceResource nsr = esr.getResource( rk );
 
             TransformSliceAction tsa =
-                    new TransformSliceAction( nsr.getID(), osl.getTerminationTime( ), sk, sp, osl.getTotalStorageSize(), system.getModelUUIDGen() );
+                    new TransformSliceAction( nsr.getID(), LogAux.getLocalName(), osl.getTerminationTime( ), sk, sp, osl.getTotalStorageSize(), system.getModelUUIDGen() );
 
             tsa.setClosingEntityManagerOnCleanup( false );
 

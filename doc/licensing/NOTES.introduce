@@ -1,0 +1,655 @@
+
+NOTES:
+
+Exceptions will now be in the <serviceNamespace>.stubs.types package and no the <serviceNamespace>.stubs packages
+
+assumption is made that when a method is imported from a wsdl that all the messages for that method are of that wsdl's namespace....
+
+================================================================================================
+
+wish list:
+
+refactoring support
+
+new extensions architecture to support callbacks for different areas of editing.
+
+
+====================================================================================================
+
+1.1 bugs fixed in head that need to be rolled into 1.1 branch for patches:
+
+synchelper 438 needs to support package name being empty
+syncmethods needs to support finding upper case methods for addition and removal.  currently it just compares to the method
+name entered which may be upper case, however, no upper case code is written so it needs to lowecase the first letter
+of the method in the introduce.xml when it compares it to the list of methods.
+
+
+==============================================================================================================================
+
+To Do:  
+
+create new icons for the secure methods in the methods tree
+
+finish persistent notification test (need to figure how to manage the container from two different client invocations)
+
+add documentation for he types of resources that introduce provides by default
+
+service props can be different from duece to command line
+
+bug in security panels not adhering to pdp based policies
+
+invalid introduce xml threw null pointer stop refreshing screen with no error.....
+
+need to validate schemas when importing them into introduce
+
+when using CSM and not setting the context then it throws up error dialogs at random times as well as it lets you close the method mod viewer
+even though it is wrong ang then pops up an error dialog.  It should be validating on the close or done buttons.
+
+make gui work one service at a time
+
+make deployer deploy remotely
+
+need to validate that namespace exist policy on the discovery tools is working. (Globus one does not do anything curently and not sure if scotts cadsr one has been moved forward)
+
+reload preferences from defaults
+
+(related to above)... when a method isn't found for modification, it should be re-added (in case they deleted it)
+
+when adding a serviceContext and then adding a method that returns its referece
+before you hit save, then when you hit save the reference type is not yet in the
+namespaceType list and therefore cant be refered to yet
+
+
+add tests to system tests for (coverage report shows no coverage):
+- (DONE) SystemProperties
+-CustomBeans and Serialization (STILL NEED TESTS THAT SHOW NEED FOR SOAP BINDING STUB FIX)
+-Security
+- (DONE) simple types (boolean, string, etc) as input and output
+- (DONE) extensions
+-deployment
+- (DONE) multiple faults on a method
+- (DONE) methods returning arrays
+- (DONE) servicename ending in Service
+
+
+
+============================ D O N E ================================================================
+software update does not seem to be showing if something is already installed
+
+in the types file importer check the support for includes, and imports and check on whether it works when importing and including from ../ (does not work from ../ and not supporting now)
+
+fatal error message on modification save should just say click ok to roll back
+
+Add notification support to any resource
+
+if you use globus dir in the classpath for the runtarget, then the client-config.wsdd for globus is used and not the one that contains your custom mappings
+
+make sure that the validators on package names show error if invalid and warn if just bad practice
+
+need to validate soapfix
+
+check the upgrade framework, make sure it is giving enough information
+
+upgrading is not really done until sync is ran, so in modification gui make sure the user
+is notified that it is not complete until they hit save.
+
+resource refactoring needs to be done completely (first pass done still need to combine into one)
+
+fix bug in validation of custom beans being shown when the panel is not visible
+
+undeploy while introduce is running.
+
+undeploy gui
+
+componentized resource building by selecting features or interfaces to implement. 
+
+support for ws-notification
+
+moved to newer version of jaxmejs 0.5.2 and patched it with JAXME-77 patch
+
+need to remove providers if a provided method is removed
+
+Upgraded to 1.1 services
+EVS
+caDSR
+FQP
+Dorian
+Authentication
+GridGrouper
+GTS
+SyncGTS
+
+support registration on resources
+
+add a .cvsignore file to generated skeletons that includes the gar.  my right mouse button is slowly wearing out... and i am lazy...
+
+Introduce Portal (or something it uses) is leaving file handles open
+  - when i create a service, then close the mod viewer, and try to create it again, it can't delete the creation dir
+
+jaxmejs is leaving file handles laying around somewhere. (update.. System.gc call is owrking for now, might have to patch jaxmejs)
+
+should add a service creation test which creates a service context of every variation of resource type
+
+need to make namespace exist policy a dropdown in the config so user knows what the options are
+
+on some smaller resolution screen when the "do you want to upgrade" pop up comes up, you can not see some of the buttons.....
+
+when adding a service context, if there is an error the screen is already gone and not fixable before the service is added and than not modifyable
+
+Fix the caDSR var name in the extensions, i have a typo
+
+need to clean up config params and deploy params to have "display" names
+
+need to not build service after an upgrade and let the user know that the service build files may need to be altered.  
+
+look at new build files and make sure they are being called correctly......
+
+add tests for returning client handle reference arrays....
+
+may need to have a model upgrader that runs before the upgrader that enables hte model to be moved forwared
+so that the beans will actually work....
+
+need to use a different dir besides ext/lib for jars that don't need deployed with service, such as the soapFix jar.
+
+solve timing problems in the addComplexTypeTest.....
+
+on save etc i have seen unable to delete namespace2package.mappings.
+
+if provider is checked then authorization needs to be disable.
+
+need to create upgrader additions for new PDP style, or need to make sure it calls sync.
+
+need to add javadoc to interface of services using hte descriptions (almost done, methods are finished, but class could be done)
+
+need to fix the method mod viewer tomake sure that it has the slider in the right place
+
+need to disable the custom serialzation when a namespacetypenode is selected in the modification
+view
+
+add tools for autocreating resource and wrapping epr into client handle type for implementation on server side (ResourceCreator.javajet)
+
+i am not sure that service/method security on service contexts is right on priority and overides.
+
+need to fix the mem and stackoverflow issue on the mac.  
+
+Test the lifetime resource
+
+(done)fix documentation link in installer and make sure relavent documentation is in there
+
+look at the upper case vs lower case methods issues.....
+
+set package name better in import window....use wsdl namespaces
+
+expose getResourceProperties through the generated clients.
+
+when people add introduce.jars to the extensions dir they get ran instead.
+
+make sure if someone says it is provided that they provide a class for it inthe method viewer.....
+
+do not let imported methods be modified in the service contexts
+
+finish wsdl based method import screen....wsdl file locator is not working right...
+
+dont let imported method be modified
+
+tool that writes the method signature for the gui to show should do something different if it is an imported from WSDL method
+
+put add remove etc button service contexts
+
+refresh button in gme to view uploaded schemas without closing and opening
+
+//in the securityoperationprovider
+//should i set the messages to not be generated again....
+//if so add the ns to the excludes list...
+
+make global preferences
+GUI needs a way to group common preferences that extensions can use (such as GME URL), intead of each having to define/use their own
+
+
+Null Pointer...go to Metadata, add ServiceSecurityMetadata, then add CommunicationMechanism,
+	then remove ServiceSecurityMetadata, then add ServiceSecurityMetadata
+
+make introduce portal conf in the users .cagrid space....
+
+need to have the X button in the method viewer implement what the getDoneButton listener implements 
+
+file imports are not correctly done (replaced with ./ )
+
+editable tables have the "focus issue" where the changes don't take effect unless you click off of what you are editing.
+This is extremely counter-intuitive and will be the source of many user problems.  An example is edit a parameter name and click done (the change will not take effect).
+
+cannot remove from service properties table
+
+getResourceHome helper methods need to be created in the serviceimpl for easier use and take advantage of the generic method i have
+
+when adding a service context with a custom resource we have seen error in the service wsdl for the new service.
+
+refactor reload button in the types modifyier to not be stupid
+
+when i renamed a parameter name, the serviceImpl's signature didn't get updated (but the interface did) 
+
+when i renamed a parameter name, the serviceImpl's signature didn't get updated (but the interface did)
+  -printout complained it couldn't find the method (executeAsynchronously)
+  -the method returns a "reference"... is the sync code looking for an EPR instead?
+  
+duce generated faults should create both a gobal element and complexType (currently an inner complextype is created) so faults can be extended
+
+(A NEW GUI FOR IMPORTING WILL HANDLE THIS) When importing a method.  if methods names dont match bad stuff happens.
+
+(RAFACTORED) I was adding faults to a method, and when I hit done, an error dialog poped up with method "java.util.Vector" and removed my faults
+
+(CANNOT BE DONE)the implbase constructor throws RemoteException.  this means that the impl constructor MUST throw RemoteException, which means that you can't have a default constructor.  Can you remove the throw from the implbase?
+
+Tif a namespace is imported by another schema but is also added to the NT list, which package name will be used?
+
+namespace to package map for an imported service MUST be the same package map as the namespace as imported
+if it is in the types list....
+
+here is a bug when making method "newMethod" and then making another method named "newMethod"
+
+Generalized way to get resource properties from inside your service.
+
+Add ETC_PATH as a service property
+
+(GUI DOES NOT ALLOW THIS) metadata code doesn't compile if you select an element that is xsd:type an XML schema type (e.g. string)
+
+gme browser doesn't seem to use preferences->gme location
+
+Need to add support importing methods from other wsdl which does not use our common message names....
+
+(HACK had to set prefered sixe on scroll panel container )When modification view starts up it is not layed out right.
+
+make sure that when introduce calls into the services build in CommonTools that you fork.
+
+Need to add "resourceLink" for each sub service to each other service so that they can look them up and create instances....
+
+look into whether we should have services return EPR-wrappers instead of EPRs themselves
+  -this is keeping with the strongly-typed aspect
+  -if i know an operation returns a pointer to one of my contexts... i should specify that explicitly instead of returning a generic EPR
+  
+i added a new method, hit cancel on the method viewer, and saved.  I then removed the new method and saved.
+  - the method still exists but isnt in the operationstable
+  
+(ALL CODE IS ASSUMED TO KNOW THIS FOR NOW) introduce shouldn't require itself to be launched from the introduce directory (some code does... such as extension loader)
+
+need to handle faults better
+(DONE)  -bare minimum:  need an editible dropdown containing the currently used fault types that people can select from (dynamically populated from current types
+ (MAYBE POST 1.0) -ideal: also allow user to select a fault from the type selection component (verify it extends from base fault, etc)
+
+
+
+service contexts backend for service properties need to have resourceLinks to the main serviceconfiguration instead of own entry in jndi, and share the same serviceconfiguration class
+
+service contexts need a way to edit service security
+
+If a schema element type is in use by a method, the namespace type for the schema element cannot be removed.  Makes it 'impossible' to update schemas.
+
+(WONT DO... COULD BE DONE WITH EXTENSIONS) Add an option to have all method implementations call a generic method.  Something like: Object performMethod(String methodName, Object[] params, String[] paramNames).  This will simplify grid implementations that call into an existing implementation object.  It is similar to Java proxy - see java.lang.reflect.InvocationHandler.
+
+type browser issues:
+-(DONE)Try to create a new service on the desktop and throws an error
+-(DONE)you can and shouldn't be able to remove the XML schema schema
+- (DONE)it shouldn't let you remove schema types that are being used by inputs,outputs,or metadata
+-(DONE)it lets you set the package name for XML schema schema, and shouldn't
+-(DONE)it lets you set the location for XML schema schema, and shouldn't
+-(DONE)it lets you set the class name for XML schema types; does that work?
+-(DONE)does it really support editing the location of a schema? if it does, it needs to move the file that was pulled down from the gme (otherwise it wont exist)
+
+- Fix Package conflict problem.
+- Remove non required reference to globus jar files in generated eclipse classpath.  For example the sample jars, these are not ALWAYS there.
+
+
+
+
+From BMI Tutorial:
+6) Adding a resource property to a service context, doesn't refresh the JTree
+
+(DONT LIKE THIS) should generated two different interfaces in common..  (what is the use.  The server only implements non "provided" methods.  Has nothing to do with "importing")
+  - one, for all the non-imported operations that the service implements
+  - one, that extends that interface, that adds the imported methods, that only the client implements 
+
+
+metadata tab should have a "create value" (or something) button for each metadata value that is populateFromFile
+  - should launch a specialized graphical editor (based on QName), or a generic XSD-based editor if no custom renderer is present 
+  - introduce needs a new extension type (metadata populator) to register QName->Classname (of panel editor)
+
+Modification viewer: any tabs with the namespaces tree need to use a JSplitPane.
+
+(added validation) if add a new service with same namespace i get funny gui error.
+
+fix the CommonTools ant calls to uniformly handle things like path issues
+
+(DONE) when modifying a service, conneciton to GME needs to happen in the background, and fail gracefully
+
+security operationprovider needs to be hooked into build properly...
+ - have copies of schema and jars... needs to get from artifacts
+ 
+(DONE i am leaving this for now) eclipse launch files dont need to be in the top directory to work... move them somewhere else so they don't clutter the services root dir
+
+Modification Viewer's Methods table needs to manage the backend model, not create new Method objects 
+
+introduce created clients should not call getPortType() for each method invocation (its very inefficient), getPortType should be called once in the contructor, and each method should just use it
+  - this has security ramifciations as currently security is configured assuming a fresh port type... it needs to set all the options appropriately for each method call
+
+create preferences window to support extension configuration etc.....
+
+duce gui needs to rember last selection for deploy (GT or tomcat)
+
+(TESTED WOKRING FINE) IMPORTANT: introduce needs to handle globus schemas being in the GME
+  (they can't just be imported from the Globus browser, as anyone wanting to make
+   XSDs that import Globus schemas need them there so they can upload theres)   
+   
+(DONE it is required to have both) Service properties with a key but no value causes NPE on ServicePropertiesTable when rendering.
+
+
+I had to move a gui base componenet for preferences to extensions.  need to look into moving this back to portal.
+
+Need to make Configuration Menu work... should be able to set appropriate services URLs, etc
+
+add scroll pain in deployer for service properties
+
+need to make introduce-portal-config.xml.example and generate the real one from the example
+
+refactor to not be creating hte service.wsdd everytime.....
+
+From BMI Tutorial
+1) (DONE) Add Fault needs to check the fault name is is valid java identifier
+  - if you put spaces or something in it, it completely screws up the service (because sync source can't read the created file)
+2) (DONE this is fine) Generated fault doesn't appear to take a message
+3) (DONE) We should genterate a client launcher
+5) (DONE) Service Contexts.. create Service Context needs defaults for the values (namespace, package, etc..)
+4) (DONE) Service Property key needs to make sure its a valid java identifier
+7) (DONE) Right-clicking the modify service context, removed the service and through a NPE
+8) (DONE) when we write the .classpath, we should "hard code" globus location instead of using the classpath variable
+  - core cagrid services using introduce can search and replace the hard code with the variable before commiting to CVS
+
+add automatic client handle generation if a method is returning an EPR
+
+(make sure that there is a passive fail for globus discovery tool
+
+NO YOU SHOULD NOT) you should be able to open up an empty introduce.xml document (with no elements), currently null pointers happen in methods and types
+
+need to set the correct location to globus imported schemas .....
+
+need to make sure to add ALL the globus used namespaces to the IntroduceConstants
+
+the generated service's ServiceConfiguration needs to be moved to the service package instead of the service.globus package
+  - it currently creates cyclic packages
+  
+sync should create a properties file for service properties and ant deploy should use it as default
+
+clean up and add icons to the service contexts tree
+
+generated client needs to be able to take an EPR in its constructor 
+ 
+make sure to remove dependecies to metadata project...
+
+portal lets you add the same method name several times
+
+gme://common.example.com/version/2.5 namespace style is causing problems....
+
+adding an inner service with a "-" in the name causes a sync error (HelloWorld-Instance)
+line 11:28: unexpected token: -
+gov.nih.nci.cagrid.introduce.codegen.common.SynchronizationException
+	at gov.nih.nci.cagrid.introduce.codegen.services.SyncServices.sync(SyncServices.java:83)
+	...
+Caused by: java.util.NoSuchElementException
+	at java.util.HashMap$HashIterator.nextEntry(HashMap.java:790)
+	at java.util.HashMap$ValueIterator.next(HashMap.java:817)
+	at gov.nih.nci.cagrid.introduce.codegen.methods.SyncMethods.lookForUpdates(SyncMethods.java:84)
+	at gov.nih.nci.cagrid.introduce.codegen.methods.SyncMethods.sync(SyncMethods.java:50)
+	...
+	
+(Not a big deal as only used as "default" in GUI) Need to fix commontools to read some preference to set the rule to use for namespace mapping, right now its hardcoded as below:
+	//TODO: where should this mapperClassname preference be set
+	String mapperClassname = "gov.nih.nci.cagrid.common.CaBIGNames2paceToPackageMapper";
+
+(DONE) make sure that every panel that uses a namespaces jtree has a on focus to restore from the model
+(DONE) Type browser tools are all messed up... filesystem is showing GME stuff
+(DONE) introduce created an invalid client when you make a method that returns a boolean.
+(DONE) introduce created an invalid impl when you make a method that takes in a boolean.
+ 
+(DONE) we could support definition of "service properties" in introduce
+-serviceimpl would have gettters for them (pull them out of service context for them)
+-we would could write them into the wsdd
+
+(DONE this is checked when you click done...) parameter names and not being made unique when you add them... double click "string" twice as an input param 
+
+(DONE) theres no way to change a method to void once you've set a return type
+
+(DONE you can set properties through the interface now) need to make jndi edited, not replaced everytime.
+
+(DONE) introduce build needs to make more granular jars (for linking), how about:
+	-caGrid-introduce-core-1.0.jar  		(everything in src/java/Introduce) 
+	-caGrid-introduce-core-tests-1.0.jar  	(everything in test/src/java/Introduce)
+	-caGrid-introduce-portal-1.0.jar  		(everything in src/java/Portal)
+	-caGrid-introduce-portal-tests-1.0.jar 	(everything in test/src/java/Portal)
+
+(DONE) introduce lets you select an XSD simpletype as metadata... that doesnt work.
+
+(DONE only needed for params)need "Up" and "Down" buttons for the order of the tables (operations, method params, etc)
+
+(DONE) need a way to generate XSD and beanmappers for existing object models that want to use default de/serialization
+
+(DONE - still need to add tests.. and GUI - Scott) sync serializer/deserializer
+
+	SchemaElement needs to have location and type always and have a choice between:
+	complex type with nothing
+	and one with className serializer and deserializer
+	
+	
+	can be used to build:
+	<typeMapping qname="(from Namespace namespace, and SchemaElement type)"
+	languageSpecificType="java:(from Namespace packageName+.+SchemaElement className)"
+	serializer="(from SchemaElement serializer)"
+	deserializer="(from SchemaElement deserializer)" encodingStyle=""/>
+	
+	editors will look for:
+	<!-- START INTRODUCE TYPEMAPPINGS -->
+	if it exists, it dump the type mappings from its start, replacing evertying in the file until finding:
+	<!-- END INTRODUCE TYPEMAPPINGS -->
+	
+	if the tag isn't found, the tags (and type mappings) will be added to the end of the file (in appropriate location for server and client)
+	
+==========
+
+(DONE) added all xsd types to skeleton
+
+(DONE) Shannon, did your refactor break the functionality of synchronizeMetadataFramework in the MetadataListType?
+
+(DONE) BaseResource bug that Mike and Steve found.  Make new service with secure conv. and keep the initial
+settings.  Use a proxy created from Dorian in the credentials section.  Stand up globus without security.
+--seems the AuthenticationService intercepts the intial call, then rewrites the resourcecontext targetService to be itself... this causes the resourcehome to break
+  --need to see why it does this, and if there is a work around
+  
+(DONE) need to put a validator on the param name, it must be java valid......
+
+Need to make better use of org.apache.axis.utils.JavaUtils
+ -(DONE) checking for primatives
+ -(DONE) checking for reserved keywords for things like method and param names
+
+(DONE)probably need to separate out the namespacetopackage mapping definitions from each output/input/metadata as it is now, as its really a service level thing
+	-we need a separate tab to define the mappings; this will probably be needed for custom serialization too
+
+(DONE - its fine, as we need to write to it for type mappings) is client-config.wsdd really needed in the root dir?  can't you just add GLOBUS_LOCATION to your classpath
+
+(DONE) Method modification window needs an overhaul....
+
+(DONE) The GME Browser screen does not scroll correctly.
+
+(DONE) when using a non-bean response object, the wsdl writter is broken.  It assumes the element name is "response".  It should assume it is the className
+
+(DONE) if introduce.jar and the like is removed from the service and expected to be run from elsewhere, introduce will need to check that it supports the version of 
+introduce.xml that the service uses.  We need to either have a "version" attribute in the document, or use the xmlns to decide the version.
+(probably should add a version attribute as the behavior could change without the dcoument structure changing).
+
+(DONE) Need to be able to roll back "created" version 0.
+
+(DONE) When creating a new service be sure to remove all the old zips from teh resource directory....
+
+(DONE) If it could not delete the dir prior to creation then warn and exit.
+
+(DONE I think this was an overall issue) Code generation is broken for custom class definition when isArray is true (doesn't add array def in all places)
+
+(DONE- fixed with streamgobbler) Make a method, save, add code to client and impl, modify name of input parameter, save, build error when trying to remove method and then unable to delete directory.
+
+(DONE) When introduce adds new methods it shouldn't add a "return null;" it should add the following (even if its a void method):
+	throw new RemoteException("Not yet implemented");
+
+(DONE) How about changing this "@created by caGrid toolkit version 0.5"
+
+(DONE) MUST FIX THE WHITESPACE SENSTIVE CODE FINDER!!!
+
+(DONE ++++   NEEDS TESTED  ++++++++) when you download a schema that has dependencies, the dependant schemas are not added to the namespace to package mappings... you need to parse every schema (and imported schema), looking for imports, and make sure each imported schema has a mapping
+- the namespaceExclude code needs to be updated when this is supported too.
+- there no "good" way to do it, but the process should be to exclude any namespace that is imported from a schema that is excluded
+  - basically just exclude any namespace that is included from a schema for a namespace that is being excluded (recursively)
+
+(DONE) Last Saved in service properties should display as a normal looking Date/Time
+
+(DONE) Operations list should display as a standard looking method: e.g.  void foo(A a, B b)
+ 
+
+(DONE) need to NOT generate stubs for schemas that the user specifies the class to use... this is important as it will/could generate classes with exact same name and cause the service to break
+-- still need to handle imported schemas, but so do the rest of the code (package mappings, etc)
+
+(DONE) Click Modifiy Service, Click Save, Click Cancel or No, Save Progress comes up.
+
+(DONE) Create service needs to check that the directory they select is empty.  If not, should prompt and ask if it is ok to delete the dir and recreate it.
+
+(DONE)Click Modify Service Click Cancel, Null pointer.
+
+(DONE) Make sure that skeleton names entered in the GUI are acceptable.
+	i.e. No Service in the name (fixed 12/7/05)
+		 No non-acceptable characters for java class names
+
+(DONE) Enable service to back up old service skeleton before altering and then provide rollback capabilities.
+	i.e. Enable "undo" in the gui.
+
+(DONE) Map the ext/NStoPkg.mappings with those in the skeleton (right now they are copied into the skeleton's file)
+
+(DONE) namespace to package mappings should be jettemplated at sync time
+
+(DONE) Metadata and registration configuration
+
+
+==================================================================================================
+Upgrade Manager:
+
+Prerequisite:
+Older versions of the introduce model will be packeged in a new package and will be passed into 
+older version upgraders
+
+Upgrade Cycle
+1. run the model upgrader to bring the model to the next minor version of introduce version so that the model can be used
+2. run the introduce upgrader for that next version so that introduce managed service files can be brought up to the intermediate version of introduce
+   a. for each minor version increment call any available extension upgraders that can upgrade
+       an extension for the current version of introduce.  The current versions model will be
+       passed into the extension upgrader.
+   b. rinse and repeat.
+
+
+================================================================================
+Need to verify we can achieve literal mapping between caDSR definition, XML serialization, and generated bean model
+(we need to create a simple one of these, and add it to the specification document)
+
+Example Model:
+org.foo.A
+  -org.foo.B b;
+  -org.foo.C c;
+
+XML (with appropriate namespaces of course):
+<A>
+  <B/>
+  <C/>
+<A>
+
+Java Model:
+org.foo
+  -A {B b; C c;}
+  -B
+  -C
+================================================================================
+
+
+
+
+(*STARTED*  need to add more)Add gui testing (requires a HEAD to run)
+
+Make notes on how to add a new template.
+
+Need to validate the model before we begin to do code gen
+	-- will reduce bugs and bug checking
+	-- validate that the package names and classnames are being set correctly
+	--VALIDATION:
+		-unique method names
+		-unique metadata qnames
+		-run schema validation?
+		-others?
+	
+(DONE)Need to support "MODIFIED" methods.
+	-- support for changing of 
+		-- output type
+		-- number and type of parameters
+		-- number and types of faults
+	
+	
+(DONE) GMEMetadataConfigurationComponent needs to set proper view on viewing an existing one from "modify"
+
+(DONE) add packageName as a seperate parameter so that we can handle the funny mappings that we will use for caDSR->GME schemas.....
+
+(DONE) Because we are now using axis to generate the class names we will not be able to use synctool to always find out which methods are different.  We will need a better method.
+		-- we do not need to know them upfront because we dont need to analyze the signatures, only look at the method names.
+
+(DONE using sync tools to populate empty classnames) Need to be able to not only use Axis for the classnames but also use the users classnames if they provide there own beans or api.
+
+(DONE Need to fix the browse screen so that it can work with paths that have spaces in them.
+
+(DONE) Need to make sure that the id's used to created archives are good from date through time.
+
+(DONE) Need to pull the namespace to mappings code out of the gui and into the template.
+
+(DONE) moved the sync tools over to use beans instead of using DOM.  Much cleaner an easier to maintain.
+
+FUTURE WORK PROPOSED:
+	-Graphically and programatically add state variables to RP (3 weeks)
+	-Create templates for services who wish to use GRAM (1 week)
+	-Graphically and programatically wrap an existing java API(interface) into a service(4 weeks)
+	-Look into multi-language binding support etc (1 week)
+	-Add grid test cases to test created service deployment nightly (2 days)
+	-Add Robot test cases to test the GUI nightly(4 days)
+	-integrate with caDSR for interface design (2 weeks)
+
+
+
+
+=======================================================
+ SECURITY STUFF
+=======================================================
+
+
+1) Client Side Authorization
+
+	A) Add Support for Identity Authorization
+	B) Add Support for Custom Authorization
+	C) Add Input for host and Identity Authorization
+
+2) Server Side Authorization, Add Support for the following authorization mechanisms
+
+	A) None
+	B) Self
+	C) GridMap
+	D) Identity Authorization
+	E) Host Authorization
+	F) SAML Callout Authorization
+		
+3) Add Client side support for delegation
+
+4) Add Service Credential Support
+
+5) Add Service Run As Support
+
+6) Add Service Side Support for Rejecting Limited Proxies.
+
+icons from here: http://www.famfamfam.com/lab/icons/
+and http://tango-project.org/Tango_Icon_Gallery

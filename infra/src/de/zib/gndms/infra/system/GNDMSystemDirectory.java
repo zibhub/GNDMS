@@ -1,5 +1,23 @@
 package de.zib.gndms.infra.system;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
 import com.google.common.collect.Maps;
 import com.google.inject.Binder;
 import com.google.inject.Guice;
@@ -9,6 +27,8 @@ import de.zib.gndms.infra.access.ServiceHomeProvider;
 import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.service.GNDMSingletonServiceHome;
+import de.zib.gndms.kit.access.GNDMSBinding;
+import de.zib.gndms.kit.configlet.DefaultConfiglet;
 import de.zib.gndms.kit.monitor.GroovyBindingFactory;
 import de.zib.gndms.kit.monitor.GroovyMoniServer;
 import de.zib.gndms.logic.model.TaskAction;
@@ -48,7 +68,8 @@ import java.util.Set;
 /**
  * ThingAMagic.
 *
-* @author Stefan Plantikow<plantikow@zib.de>
+* @see GNDMSystem
+* @author  try ste fan pla nti kow zib
 * @version $Id$
 *
 *          User: stepn Date: 03.09.2008 Time: 16:50:06
@@ -61,8 +82,14 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 
     private final @NotNull String systemName;
 
+    /**
+     * stores several instances needed for the <tt>GNDMSystem</tt>
+     */
     private final @NotNull Map<String, Object> instances;
+
+
     private final @NotNull Map<Class<? extends GridResource>, GNDMPersistentServiceHome<?>> homes;
+
 
 	private final Map<String, Configlet> configlets = Maps.newConcurrentHashMap();
 
@@ -95,6 +122,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 	    sysHolderWrapper = systemHolderWrapParam;
 		final Injector injector = Guice.createInjector(sysModule, this);
 		boundInjector.setInjector(injector);
+        GNDMSBinding.setDefaultInjector(injector);
 
 	    final ORQCalculatorMetaFactory calcMF = new ORQCalculatorMetaFactory();
 		calcMF.setInjector(injector);
@@ -107,7 +135,12 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 	    taskActionPark = new OfferTypeIndustrialPark<ORQTaskAction<?>>(taskMF);
     }
 
-
+    /**
+     * Adds the <tt>GNDMServiceHome</tt> and the corresponding <tt>org.globus.wsrf.Resource</tt> to the {@link #instances} map
+     *
+     * @param home a GNDMS Service resource home instance
+     * @throws ResourceException if the corresponding ressource could not be found
+     */
 	public synchronized void addHome(final @NotNull GNDMServiceHome home)
             throws ResourceException {
         if (home instanceof GNDMPersistentServiceHome<?>)
@@ -140,6 +173,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
     }
 
 
+
     @SuppressWarnings(
 	      { "MethodWithTooExceptionsDeclared", "OverloadedMethodsWithSameNumberOfParameters" })
     public TaskAction newTaskAction(
@@ -158,6 +192,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
     }
 
 
+
 	@SuppressWarnings({ "OverloadedMethodsWithSameNumberOfParameters" })
 	public TaskAction newTaskAction(
 		  final EntityManager emParam, final String offerTypeKey)
@@ -169,6 +204,14 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 	}
 
 
+    /**
+     * Waits until an instance on {@link #instances} with the key <tt>name</tt>, has been registered and returns it.
+     *  
+     * @param clazz the class the instance belongs to
+     * @param name the name of the instance as denoted on the map {@link #instances}
+     * @param <T> the class the instance will be casted to
+     * @return an instance from the <tt>instances</tt> map
+     */
 	public @NotNull  <T> T waitForInstance(@NotNull Class<T> clazz, @NotNull String name) {
         T instance;
         try { instance = getInstance(clazz, name); }
@@ -186,7 +229,18 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
         return instance;
     }
 
-
+    /**
+     * Adds the <tt>GNDMServiceHome</tt> and the corresponding <tt>org.globus.wsrf.Resource</tt> to the {@link #instances} map
+     * and stores the key <tt>modelClazz</tt> with the value <tt>home</tt> to {@link #homes}.
+     *
+     * <p>The key for the <tt>GNDMServiceHome</tt> is the nickname of <tt>home</tt> appended by "HOME", whereas
+     * the key for the Resource is the nickname of <tt>home</tt> appended by "Resource".
+     *
+     * @param modelClazz the class instance of the model
+     * @param home a GNDMS Service resource home instance
+     * @param <K> the specific subclass of the model instance 
+     * @throws ResourceException if the corresponding ressource could not be found
+     */
     @SuppressWarnings({ "HardcodedFileSeparator", "RawUseOfParameterizedType" })
     public synchronized <K extends GridResource> void addHome(
             final Class<K> modelClazz, final @NotNull GNDMServiceHome home)
@@ -221,6 +275,13 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
         logger.debug(getSystemName() + " addHome: '" + home + '\'');
     }
 
+    /**
+     * Returns the GNDMPersistentServiceHome which is mapped by the key <tt>modelClazz</tt> in the map {@link #homes}. 
+     *
+     * @param modelClazz the class of the model
+     * @param <M> the specific class the model belongs to
+     * @return
+     */
     @SuppressWarnings({ "unchecked" })
     public synchronized <M extends GridResource> GNDMPersistentServiceHome<M>
     getHome(Class<M> modelClazz) {
@@ -231,6 +292,16 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
         return home;
     }
 
+    /* Adds an instance to the {@link #instances} map.
+     * The name which will be mapped to the instance must not end with the keywords "HOME","Resource" or "ORQC".
+     *
+     * <p> Except them, there are more keywords which are not allowed.
+     * See {@link #addInstance_ }, as this method will be invoked
+
+     *
+     * @param name the name which is to be mapped to the specified instance
+     * @param obj the instance to be associated with the specified name
+     */
     public synchronized void addInstance(@NotNull String name, @NotNull Object obj) {
         if (name.endsWith("Home") || name.endsWith("Resource") || name.endsWith("ORQC"))
             throw new IllegalArgumentException("Reserved instance name");
@@ -239,7 +310,14 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 
     }
 
-
+    
+    /**
+     * Adds an instance to the {@link #instances} map.
+     * The name which will be mapped to the instance must not be equal to the keywords "out","err","args","em" or "emg".
+     *
+     * @param name the name which is to be mapped to the specified instance
+     * @param obj the instance to be associated with the specified name
+     */
     private void addInstance_(final String name, final Object obj) {
         if ("out".equals(name) || "err".equals(name) || "args".equals(name) || "em".equals(name)
             || "emg".equals(name))
@@ -254,6 +332,15 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
     }
 
 
+    /**
+     * Returns the instance, which has been registered on {@link #instances} with the name <tt>name</tt>.
+     * The instace will be casted to the parameter <tt>T</tt> of <tt>clazz</tt>.
+     *
+     * @param clazz the class the instance belongs to
+     * @param name the name of the instance as denoted on the map {@link #instances}
+     * @param <T> the class the instance will be casted to
+     * @return an instance from the <tt>instances</tt> map
+     */
     public synchronized @NotNull <T> T getInstance(@NotNull Class<? extends T> clazz,
                                                    @NotNull String name)
     {
@@ -264,7 +351,16 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
         return clazz.cast(obj);
     }
 
-
+    /**
+     * Creates a new EntityManager using <tt>emf</tt>.
+     *
+     * <p>Calls {@link #loadConfigletStates(javax.persistence.EntityManager)} and
+     * {@link #createOrUpdateConfiglets(de.zib.gndms.model.common.ConfigletState[])} to load all configlets managed by
+     * this EntityManager and update the {@link #configlets} map.
+     * Old Configlets will be removed and shutted down using {@link #shutdownConfiglets()} 
+     *
+     * @param emf the factory the EntityManager will be created of
+     */
 	public synchronized void reloadConfiglets(final EntityManagerFactory emf) {
 		ConfigletState[] states;
 		EntityManager em = emf.createEntityManager();
@@ -276,7 +372,14 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 		finally { if (em.isOpen()) em.close(); }
 	}
 
-
+    /**
+     * Loads all <tt>ConfigletStates</tt> managed by a specific <tt>EntityManager</tt> into an array.
+     *
+     * <p>Performs the query "listAllConfiglets" on the database and returns an array containing the result.
+     *
+     * @param emParam an EntityManager managing ConfigletStates
+     * @return an array containing all ConfigletStates of the database
+     */
 	@SuppressWarnings({ "unchecked", "JpaQueryApiInspection", "MethodMayBeStatic" })
 	private synchronized ConfigletState[] loadConfigletStates(final EntityManager emParam) {
 		final ConfigletState[] states;
@@ -296,7 +399,14 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 		}
 	}
 
-
+    /**
+     * Iterates through the <tt>ConfigletState</tt> array and either
+     * updates the <tt>state</tt> of the corresponding <tt>Configlet</tt>, if already stored in the {@link #configlets} map,
+     * or creates a new <tt>Configlet</tt> using {@link #createConfiglet(de.zib.gndms.model.common.ConfigletState)}
+     * and stores it together with the name of the Configlet in the map.
+     *
+     * @param statesParam an array containing several ConfigletStates to be stored in the <tt>configlets</tt> map
+     */
 	private synchronized void createOrUpdateConfiglets(final ConfigletState[] statesParam) {
 		for (ConfigletState configletState : statesParam) {
 			final String name = configletState.getName();
@@ -310,7 +420,16 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 		}
 	}
 
-    
+    /**
+     * Creates a <tt>Configlet</tt> out of a ConfigletState.
+     *
+     * <p>The created instance uses {@link #logger} as its <tt>Log</tt> object.
+     * The name and state of the new Configlet is taken from <tt>configParam</tt>. 
+     *
+     * @param configParam A ConfigletState to be converted to a Configlet
+     *
+     * @return a Configlet out of a ConfigletState
+     */
 	@SuppressWarnings({ "FeatureEnvy" })
 	private synchronized Configlet createConfiglet(final ConfigletState configParam) {
 		try {
@@ -331,7 +450,14 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 	}
 
 
-
+    /**
+     * Removes old configlets from the {@link #configlets} map.
+     *
+     * Checks for every <tt>Configlet</tt> in the map, if still exists in the database.
+     * If not, the map entry will be removed and <tt>shutdown()</tt> invoked on the old configlet entry. 
+     *
+     * @param emParam an EntityManager managing <tt>Configlet</tt>s
+     */
 	@SuppressWarnings({ "SuspiciousMethodCalls" })
 	private synchronized void shutdownOldConfiglets(final EntityManager emParam) {
 		Set<String> set = configlets.keySet();
@@ -355,7 +481,9 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 		}
 	}
 
-
+    /**
+     * Shuts down all configlets stored in the {@link #configlets} map
+     */
 	synchronized void shutdownConfiglets() {
 		for (Configlet configlet : configlets.values())
 		    try {
@@ -366,11 +494,25 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 		    }		
 	}
 
+    /**
+     * Retrieves the configlet stored with the key <tt>name</tt> from {@link #configlets} map, casts it to a <tt>T</tt> class
+     * and returns it.
+     *
+     * @param clazz the class the Configlet belongs to
+     * @param name the name of the Configlet
+     * @param <T> the class the instance will be casted to 
+     * @return a casted configlet from the <tt>configlets</tt> map
+     */
 	public <T extends Configlet> T getConfiglet(final @NotNull Class<T> clazz, final @NotNull String name) {
 		return clazz.cast(configlets.get(name));
 	}
 
-
+    /**
+     * Returns a <tt>GNDMServiceHome</tt> stored with a specif name in the {@link #instances} map.
+     *
+     * @param instancePrefix the prefix for the lookup key, which will be appended by "HOME"
+     * @return
+     */
     public synchronized GNDMServiceHome lookupServiceHome(@NotNull String instancePrefix) {
         return getInstance(GNDMServiceHome.class, instancePrefix+"Home");
     }
@@ -386,7 +528,13 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
         return systemName;
     }
 
-
+    /**
+     * Returns the value set for the environment variable <tt>GNDMS_TMP</tt>. If nothing denoted,
+     * it will return the value of the enviroment variable <tt>TMPDIR</tt> instead.
+     * If also not denoted, "/tmp" will be returned.
+     *
+     * @return the temp directory of the GNDMSystem according to enviroment variables
+     */
 	@NotNull
 	@SuppressWarnings({ "HardcodedFileSeparator" })
 	public String getSystemTempDirName() {
@@ -403,6 +551,11 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 	}
 
 
+   /**
+     * Binds certain classes to {@code this} or other corresponding instances
+     *
+     * @param binder binds several classe with certain fields.
+     */
 	public void configure(final @NotNull Binder binder) {
 		// binder.bind(EntityManagerFactory.class).toInstance();
 		binder.bind(BoundInjector.class).toInstance(boundInjector);
@@ -416,8 +569,20 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 		binder.bind(ModelUUIDGen.class).toInstance(uuidGen);
 	}
 
+    public final String DEFAULT_SUBGRID_NAME="gndms";
 
-	private final class GNDMSBindingFactory implements GroovyBindingFactory {
+    @NotNull
+    public String getSubGridName() {
+        final DefaultConfiglet defaultConfiglet = getConfiglet(DefaultConfiglet.class, "gridconfig");
+        if (defaultConfiglet == null)
+            return DEFAULT_SUBGRID_NAME;
+        else
+            return defaultConfiglet.getMapConfig().getOption("subGridName", DEFAULT_SUBGRID_NAME);
+    }
+
+
+    private final class GNDMSBindingFactory implements GroovyBindingFactory {
+
 
         public @NotNull
         Binding createBinding(
@@ -428,6 +593,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
                 binding.setProperty(entry.getKey(), entry.getValue());
             return binding;
         }
+
 
         @SuppressWarnings({"StringBufferWithoutInitialCapacity"})
         public void initShell(@NotNull GroovyShell shell, @NotNull Binding binding) {

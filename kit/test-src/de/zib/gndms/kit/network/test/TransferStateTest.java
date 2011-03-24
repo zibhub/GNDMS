@@ -1,5 +1,23 @@
 package de.zib.gndms.kit.network.test;
 import de.zib.gndms.kit.network.GNDMSFileTransfer;
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
 import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
 import de.zib.gndms.kit.network.PersistentMarkerListener;
 import de.zib.gndms.model.gorfx.FTPTransferState;
@@ -18,8 +36,8 @@ import javax.persistence.EntityManager;
 import java.io.IOException;
 
 /**
- * @author: Maik Jorra <jorra@zib.de>
- * @version: $Id$
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  * <p/>
  * User: mjorra, Date: 06.10.2008, Time: 11:05:48
  *
@@ -100,9 +118,8 @@ public class TransferStateTest extends ModelEntityTestBase {
             URI duri = new URI ( transferData.getDestinationURI( ) );
 
             // obtain clients
-            NetworkAuxiliariesProvider prov = new NetworkAuxiliariesProvider( );
-            src = prov.getGridFTPClientFactory().createClient( suri );
-            dest = prov.getGridFTPClientFactory().createClient( duri );
+            src = NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( suri, null );
+            dest = NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( duri, null );
 
 
             // setup transfer handler
@@ -120,7 +137,7 @@ public class TransferStateTest extends ModelEntityTestBase {
             Assert.assertEquals( ets, transferData.expectedTransferSize( ), "Transfer size mismatch" );
 
             DateTime dat = new DateTime( );
-            Float tt = prov.getBandWidthEstimater().estimateBandWidthFromTo( suri.getHost( ), duri.getHost( ) );
+            Float tt = NetworkAuxiliariesProvider.getBandWidthEstimater().estimateBandWidthFromTo( suri.getHost( ), duri.getHost( ) );
             Assert.assertNotNull ( tt, "estimated band width" );
             System.out.println( "Estimated transfer time in sec.: "
                 + NetworkAuxiliariesProvider.calculateTransferTime( ets, tt.floatValue(), -1 ) );

@@ -1,5 +1,23 @@
 package de.zib.gndms.logic.model.config;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
 import de.zib.gndms.logic.action.CommandAction;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.config.ConfigProvider;
@@ -20,23 +38,41 @@ import java.util.regex.Pattern;
 
 
 /**
- * Default implementation of command actions for database manipulations.
+ * Default implementation of {@link CommandAction} using a database (See {@link AbstractEntityAction)).
  *
  * Takes care of command parsing and handles the associated print writer.
  *
- * @author Stefan Plantikow <plantikow@zib.de>
+ * The template parameter is the return type.
+ *
+ * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 14.08.2008 Time: 14:53:21
  */
 @SuppressWarnings({ "StaticMethodOnlyUsedInOneClass", "ClassWithTooManyMethods" })
+
 public abstract class ConfigAction<R> extends AbstractEntityAction<R>
         implements CommandAction<R> {
 
     public static final Pattern OPTION_NAME_PATTERN = Pattern.compile("[a-zA-Z][a-zA-Z0-9-_]*");
 
+    /**
+     * A configuration map. It maps an option name to its configuration value.
+     */
     private Map<String, String> cmdParams;
+
+    /**
+     * The PrintWriter is used by a ConfigAction to print a help about the usage or the result of an action.
+     *
+     * An implementing subclass can either print its result directly to the PrintWriter, as {@code printWriter} is
+     * delegated to subclasses,
+     * or it makes sure that {@link #isWriteResult()} and {@link #hasPrintWriter()} return {@code true}.
+     * The result of the action will then automatically be printed using {@code printWriter}.
+     */
     private PrintWriter printWriter;
+    /**
+     * Decides whether the results of {@link #execute(javax.persistence.EntityManager)} should be written to a PrintWriter or not.
+     */
     private boolean writeResult;
     private boolean closingWriterOnCleanUp;
 
@@ -44,6 +80,11 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
     private final ConfigProvider config = new DelegatingConfig(this);
 
 
+    /**
+     *  Prints some help about the usage to the {@code printWriter}.
+     *  Calls {@code super.initialize()} if the configuration does not have an option 'help'.
+     *
+     */
     @Override
     public void initialize() {
         if (hasOption("help")) {
@@ -65,6 +106,13 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
     }
 
 
+    /**
+     * Calls {@link #execute(javax.persistence.EntityManager, java.io.PrintWriter)} and returns the Result.
+     * Writes the result to <tt>getPrintWriter()</tt>if a PrintWriter is available and if <tt>isWriteResult()</tt> is true.
+     *
+     * @param em the EntityManager  being executed on its persistence context.
+     * @return the result of {@code execute(EntityManager, PrintWriter)},
+     */
     @Override
     public final R execute(final @NotNull EntityManager em) {
         final R retVal = execute(em, getPrintWriter());
@@ -97,11 +145,24 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
             return val;
     }
 
+    /**
+     * Returns a Map containg all fields of this and their corresponding {@code ConfigOption} object,
+     * holding a description about the field.
+     *
+     * @return a Map containg all fields of this and their corresponding {@code ConfigOption} object.
+     */
     @SuppressWarnings({ "unchecked" })
     public Map<String, ConfigOption> getParamMap() {
         return ConfigTools.getParamMap((Class<? extends ConfigAction<?>>) getClass());
     }
 
+    /**
+     * Will be invoked when the action is started, using the EntityManager and PrintWriter of <tt>this</tt> instance.
+     * 
+     * @param em
+     * @param writer
+     * @return the result of a the computation
+     */
     public abstract R execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer);
 
 
@@ -150,7 +211,13 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
         cmdParams = Collections.unmodifiableMap(cfgParams);
     }
 
-
+    /**
+     * Prints all local option as one large string.
+     * See {@link de.zib.gndms.kit.config.ParameterTools#asString(java.util.Map, java.util.regex.Pattern)}
+     * 
+     * @param withNewlines
+     * @return
+     */
     public final @NotNull String localOptionsToString(boolean withNewlines) {
         return ParameterTools.asString(getLocalOptions(), OPTION_NAME_PATTERN,
                                                      withNewlines);
@@ -233,7 +300,16 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
         return allOptions;
     }
 
-
+    /**
+     * Returns a String, listing all option keys and their corresponding values.
+     * Note the returned String will is not based only on the local configuration map,
+     * but also from all configuration maps in the parent chain.
+     * A key must start a letter to be listed.
+     * 
+     * @param withNewLines if true, a new line follows after every key value String pair.
+     * @return a String, listing all option keys and their corresponding values of all configurations map starting
+     * from this, in the parent chain.
+     */
     public final @NotNull String allOptionsToString(boolean withNewLines)
     {
         return ParameterTools.asString(getAllOptions(), OPTION_NAME_PATTERN,

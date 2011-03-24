@@ -1,5 +1,23 @@
 package de.zib.gndms.GORFX.action;
 
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
 import de.zib.gndms.dspace.client.DSpaceClient;
 import de.zib.gndms.dspace.slice.client.SliceClient;
 import de.zib.gndms.dspace.subspace.client.SubspaceClient;
@@ -12,8 +30,8 @@ import de.zib.gndms.model.gorfx.OfferType;
 import de.zib.gndms.model.gorfx.SubTask;
 import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.model.util.TxFrame;
-import de.zib.gndms.typecon.common.type.ProviderStageInResultXSDTypeWriter;
-import de.zib.gndms.typecon.common.type.SliceRefXSDReader;
+import de.zib.gndms.gritserv.typecon.types.ProviderStageInResultXSDTypeWriter;
+import de.zib.gndms.gritserv.typecon.types.SliceRefXSDReader;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -22,8 +40,8 @@ import javax.xml.namespace.QName;
 import java.util.List;
 
 /**
- * @author: Maik Jorra <jorra@zib.de>
- * @version: $Id$
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
  * <p/>
  * User: mjorra, Date: 11.11.2008, Time: 13:49:57
  */
@@ -56,7 +74,7 @@ public class StagedTransferTaskAction extends ORQTaskAction<SliceStageInORQ> {
             else if( st.size() > 2 )
                 restoreSubTask( st.get( 1 ) );
             else if( st.size( ) > 3 )
-                fail( new RuntimeException( "to much subtasks" ) );
+                failFrom( new RuntimeException( "to much subtasks" ) );
             tx.commit( );
         } finally{
             tx.finish();
@@ -183,7 +201,7 @@ public class StagedTransferTaskAction extends ORQTaskAction<SliceStageInORQ> {
 
     @SuppressWarnings( { "ThrowableInstanceNeverThrown" } )
     private void boxException( Exception e ) {
-        fail( new RuntimeException( e.getMessage(), e ) );
+        failFrom( e );
     }
 
 
@@ -212,7 +230,7 @@ public class StagedTransferTaskAction extends ORQTaskAction<SliceStageInORQ> {
         else if( st.getOfferType().getOfferTypeKey().equals( GORFXConstantURIs.INTER_SLICE_TRANSFER_URI ) )
             interSliceTransfer = checkedAssignment( interSliceTransfer, st );
         else
-            fail( new RuntimeException( "Unexpected sub-task occurred") );
+            failFrom( new RuntimeException( "Unexpected sub-task occurred") );
     }
 
 
@@ -221,7 +239,7 @@ public class StagedTransferTaskAction extends ORQTaskAction<SliceStageInORQ> {
         if( tgt == null )
             return src;
         else
-            fail( new RuntimeException( "Sub-task occurres multiple times" ) );
+            failFrom( new RuntimeException( "Sub-task occurres multiple times" ) );
 
         return null;
     }
@@ -229,6 +247,6 @@ public class StagedTransferTaskAction extends ORQTaskAction<SliceStageInORQ> {
 
     private void checkFailed( SubTask st ) {
         if( st.getState().equals( TaskState.FAILED ) )
-            fail( ( RuntimeException) st.getData() );
+            failFrom( ( RuntimeException) st.getData() );
     }
 }
