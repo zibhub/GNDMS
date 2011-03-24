@@ -62,7 +62,7 @@ public abstract class AbstractTaskFlowExecClient {
             throw new RuntimeException( "createTaskFlow failed " + res.getStatusCode().name() );
 
         // the taskflow id is stored under "id" in the urlmap
-        String tid = res.getBody().getUrlMap().get( "id" );
+        String tid = res.getBody().getUriMap().get( "id" );
 
         // queries the quotes for the task flow
         ResponseEntity<List<Specifier<Quote>>> res2 = tfClient.getQuotes( order.taskFlowType(), tid, dn, wid );
@@ -88,7 +88,7 @@ public abstract class AbstractTaskFlowExecClient {
         handleTaskSpecifier( res3.getBody() );
         
         // the task id is stored under "taskId" in the specifiers urlmap
-        String taskId = res3.getBody().getUrlMap().get( "taskId" );
+        String taskId = res3.getBody().getUriMap().get( "taskId" );
 
         ResponseEntity<TaskStatus> stat;
         TaskStatus ts;

@@ -237,7 +237,7 @@ public class GORFXServiceImpl implements GORFXService {
         Specifier<Facets> spec = new Specifier<Facets>();
         spec.addMapping( "id", tf.getId() );
         spec.addMapping( "type", type );
-        HashMap<String,String> hm = new HashMap<String, String>( spec.getUrlMap() );
+        HashMap<String,String> hm = new HashMap<String, String>( spec.getUriMap() );
         hm.put( "service", "gorfx" );
         spec.setURL( uriFactory.taskFlowUri( hm, null )  );
 

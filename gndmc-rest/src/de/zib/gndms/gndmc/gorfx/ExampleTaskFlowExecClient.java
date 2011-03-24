@@ -111,7 +111,7 @@ public class ExampleTaskFlowExecClient extends AbstractTaskFlowExecClient {
     @Override
     protected Integer selectQuote( List<Specifier<Quote>> quotes ) {
         for ( Specifier<Quote> sq : quotes ) {
-            System.out.println( "showing quote " + sq.getUrlMap().get( "idx" ) );
+            System.out.println( "showing quote " + sq.getUriMap().get( "idx" ) );
             showQuote( sq.getPayload() );
         }
         return 0;

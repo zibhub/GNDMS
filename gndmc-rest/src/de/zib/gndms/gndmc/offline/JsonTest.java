@@ -19,6 +19,7 @@ import de.zib.gndms.logic.taskflow.tfmockup.DummyOrder;
 import de.zib.gndms.model.gorfx.types.Order;
 import de.zib.gndms.rest.Facet;
 import de.zib.gndms.rest.Facets;
+import de.zib.gndms.rest.Specifier;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -37,7 +38,7 @@ public class JsonTest {
 
     public static void main( String[] args ) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        mapper.enableDefaultTyping( ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY );
+        mapper.enableDefaultTyping( ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.WRAPPER_ARRAY );
 
         DummyOrder dft = new DummyOrder();
         dft.setMessage( "Test task flow is flowing" );
@@ -53,9 +54,14 @@ public class JsonTest {
         al.add(f2);
         fs.setFacets( al );
 
+        Specifier<Facets> spec = new Specifier<Facets>();
+        spec.setURL( "helloWorld" );
+        spec.addMapping( "Hello", "World" );
+        spec.setPayload( fs );
+
         System.out.println( "writing json object" );
         ByteArrayOutputStream bo = new ByteArrayOutputStream( 1000*1024 );
-        mapper.writeValue( bo, fs );
+        mapper.writeValue( bo, spec );
         bo.close();
         byte[] buf = bo.toByteArray();
         System.out.println( new String( buf ) );
@@ -63,7 +69,7 @@ public class JsonTest {
         System.out.println( "reading back json object" );
         ByteArrayInputStream bi = new ByteArrayInputStream( buf );
         //DummyOrder do2 = (DummyOrder) mapper.readValue( bi, Order.class );
-        Facets do2 = mapper.readValue( bi, Facets.class );
+        Specifier<Facets> do2 = (Specifier)  mapper.readValue( bi, Specifier.class );
         System.out.println( do2.toString() );
 
         System.exit( 0 );

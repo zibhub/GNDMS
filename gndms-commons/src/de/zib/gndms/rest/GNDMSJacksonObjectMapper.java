@@ -15,6 +15,7 @@ package de.zib.gndms.rest;
  * limitations under the License.
  */
 
+import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.map.ObjectMapper;
 
 /**
@@ -22,11 +23,11 @@ import org.codehaus.jackson.map.ObjectMapper;
  * @date 23.03.11  11:31
  * @brief Custom config of jacksons object mapper.
  *
- * Required since Sping doesn't let you configure the ObjectMapper.
+ * Required since Spring doesn't let you configure the ObjectMapper.
  */
 public class GNDMSJacksonObjectMapper extends ObjectMapper {
 
     public GNDMSJacksonObjectMapper() {
-        enableDefaultTyping();
+        enableDefaultTyping( ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.WRAPPER_ARRAY );
     }
 }
