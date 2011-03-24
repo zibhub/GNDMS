@@ -16,7 +16,6 @@ package de.zib.gndms.logic.taskflow.tfmockup;
  */
 
 import de.zib.gndms.model.gorfx.types.Order;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  * @author try ma ik jo rr a zib
