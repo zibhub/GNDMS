@@ -329,6 +329,7 @@ define 'gndms' do
        task( 'update-release-info' )
        compile.with GUICE, GOOGLE_COLLECTIONS, JETBRAINS_ANNOTATIONS, JSON, SPRING, SLF4J
        compile { project('gndms').updateBuildInfo() }
+       test.using :testng
        package :jar
     end
 
