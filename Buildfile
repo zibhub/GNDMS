@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # -*- mode: ruby -*-
 # Large amounts of memory ensure a fast build
 ENV['JAVA_OPTS'] ||= '-Xms512m -Xmx768m'
@@ -343,7 +344,7 @@ define 'gndms' do
            if (copy)
              puts 'cp: \'' + file + '\' to: \'' + newname + '\''
              cp(file, newname)
-	     puts 'yay'
+             puts 'yay'
              chmod 0644, newname
            else
              puts 'ln_sf: \'' + file + '\' to: \'' + newname + '\''
