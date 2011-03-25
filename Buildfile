@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # -*- mode: ruby -*-
+# -*- coding: utf-8 -*-
 # Large amounts of memory ensure a fast build
 ENV['JAVA_OPTS'] ||= '-Xms512m -Xmx768m'
 
@@ -283,7 +284,7 @@ define 'gndms' do
 
     desc 'GT4-independent utility classes for GNDMS'
     define 'stuff', :layout => dmsLayout('stuff', 'gndms-stuff') do
-       compile.with GUICE, GOOGLE_COLLECTIONS, JETBRAINS_ANNOTATIONS
+       compile.with GUICE, GOOGLE_COLLECTIONS, JETBRAINS_ANNOTATIONS, JSON, SPRING
        compile { project('gndms').updateBuildInfo() }
        package :jar
     end
