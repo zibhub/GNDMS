@@ -36,7 +36,8 @@ public class DummyOrder implements Order {
     private int delay;     ///< the delay in ms for each round;
     private boolean failIntentionally;///< Denotes if the task execution should fail.
 
-    public String getTaskFlowType() {
+
+    public String taskFlowType() {
         return TASK_FLOW_TYPE;
     }
 

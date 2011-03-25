@@ -17,12 +17,17 @@ package de.zib.gndms.gndmc.offline;
 
 import de.zib.gndms.logic.taskflow.tfmockup.DummyOrder;
 import de.zib.gndms.model.gorfx.types.Order;
+import de.zib.gndms.rest.Facet;
+import de.zib.gndms.rest.Facets;
+import de.zib.gndms.rest.Specifier;
+import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import javax.naming.spi.ObjectFactory;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 
 /**
  * @author try ma ik jo rr a zib
@@ -33,7 +38,7 @@ public class JsonTest {
 
     public static void main( String[] args ) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        mapper.enableDefaultTyping( ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE );
+        mapper.enableDefaultTyping( ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.WRAPPER_ARRAY );
 
         DummyOrder dft = new DummyOrder();
         dft.setMessage( "Test task flow is flowing" );
@@ -41,16 +46,30 @@ public class JsonTest {
         dft.setDelay( 1000 );
         dft.setFailIntentionally( false );
 
+        final Facet f = new Facet( "foo", "http://fuuu" );
+        final Facet f2 = new Facet( "bar", "http://barz.org" );
+        Facets fs = new Facets();
+        ArrayList<Facet> al =  new ArrayList<Facet>( 2 );
+        al.add(f);
+        al.add(f2);
+        fs.setFacets( al );
+
+        Specifier<Facets> spec = new Specifier<Facets>();
+        spec.setURL( "helloWorld" );
+        spec.addMapping( "Hello", "World" );
+        spec.setPayload( fs );
+
         System.out.println( "writing json object" );
         ByteArrayOutputStream bo = new ByteArrayOutputStream( 1000*1024 );
-        mapper.writeValue( bo, dft );
+        mapper.writeValue( bo, spec );
         bo.close();
         byte[] buf = bo.toByteArray();
         System.out.println( new String( buf ) );
 
         System.out.println( "reading back json object" );
         ByteArrayInputStream bi = new ByteArrayInputStream( buf );
-        DummyOrder do2 = (DummyOrder) mapper.readValue( bi, Order.class );
+        //DummyOrder do2 = (DummyOrder) mapper.readValue( bi, Order.class );
+        Specifier<Facets> do2 = (Specifier)  mapper.readValue( bi, Specifier.class );
         System.out.println( do2.toString() );
 
         System.exit( 0 );

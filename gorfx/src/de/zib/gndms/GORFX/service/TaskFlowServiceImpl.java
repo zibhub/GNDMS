@@ -378,7 +378,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
         try {
             spec = createTaskSpecifier( TaskResult.class, type, id, "result" );
 
-            ResponseEntity<TaskResult> res = taskClient.getResult( spec.getUrlMap().get( "taskId" ), dn, wid );
+            ResponseEntity<TaskResult> res = taskClient.getResult( spec.getUriMap().get( "taskId" ), dn, wid );
             if ( HttpStatus.OK.equals( res.getStatusCode() ) ) {
                 spec.setPayload( res.getBody() );
                 hs = HttpStatus.OK;
@@ -399,7 +399,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
         Specifier<TaskFailure> spec = null;
         try {
             spec = createTaskSpecifier( TaskFailure.class, type, id, "errors" );
-            ResponseEntity<TaskFailure> res = taskClient.getErrors( spec.getUrlMap().get( "taskId" ), dn, wid );
+            ResponseEntity<TaskFailure> res = taskClient.getErrors( spec.getUriMap().get( "taskId" ), dn, wid );
             if ( res.getStatusCode() == HttpStatus.OK ) {
                 spec.setPayload( res.getBody() );
                 hs = HttpStatus.OK;

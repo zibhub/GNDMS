@@ -5,12 +5,14 @@ ENV['JAVA_OPTS'] ||= '-Xms512m -Xmx768m'
 
 # Additional maven repositories 
 repositories.remote << 'http://www.ibiblio.org/maven2'
-repositories.remote << 'http://people.apache.org/repo/m2-incubating-repository'
+repositories.remote << 'http://repository.codehaus.org'
+repositories.remote << 'http://google-gson.googlecode.com/svn/mavenrepo'
 repositories.remote << 'http://guiceyfruit.googlecode.com/svn/repo/releases'
 repositories.remote << 'http://download.java.net/maven/2'
 repositories.remote << 'http://static.appfuse.org/repository'
 repositories.remote << 'http://repository.jboss.org/maven2'
 repositories.remote << 'http://google-maven-repository.googlecode.com/svn/repository'
+repositories.remote << 'http://people.apache.org/repo/m2-incubating-repository'
 
 
 # Don't touch below unless you know what you are doing
@@ -114,8 +116,9 @@ XOM='xom:xom:jar:1.1'
 XPP='xpp3:xpp3_min:jar:1.1.4c'
 # together with STAX JODA_TIME
 # JSON/Jackson
-JSON=['org.codehaus.jackson:jackson-core-lgpl:jar:1.6.4', 
-      'org.codehaus.jackson:jackson-mapper-lgpl:jar:1.6.4']
+JSON=['org.codehaus.jackson:jackson-core-lgpl:jar:1.7.4', 
+      'org.codehaus.jackson:jackson-mapper-lgpl:jar:1.7.4']
+GSON='com.google.code.gson:gson:jar:1.6'
 
 # logging
 SLF4J = transitive( ['org.slf4j:slf4j-log4j12:jar:1.5.8'])
@@ -531,8 +534,9 @@ define 'gndms' do
 
     desc 'Common gndms service classes'
     define 'gndms-commons', :layout => dmsLayout('gndms-commons', 'gndms-commons') do
-        compile.with SPRING, ARGS4J, JODA_TIME, JSON
+        compile.with SPRING, ARGS4J, JODA_TIME, SLF4J, JSON
         compile
+        meta_inf << file(_('src/META-INF/converter-setup.xml'))
         package :jar
     end
 
@@ -784,6 +788,14 @@ def cleanRev( version )
     }
 end 
 
+desc 'checks if the list of repositories is up to date'
+task 'check-repos' do
+    for x in repositories.remote do
+        puts "\ncurl #{x}"
+
+        system "curl --write-out %{http_code} --silent --output /dev/null #{x}/"
+    end 
+end
 
 
 def nope()

@@ -23,6 +23,7 @@ package de.zib.gndms.model.gorfx.types;
  *
  * An order serves as input for the taskflow, and steers the task execution.
  */
+//@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY, property="@class")
 public interface Order {
 
     /**
@@ -31,7 +32,7 @@ public interface Order {
      * Useful to query the taskflow and its quote calculator from the TaskFlowProvider.
      * @return The task flow type id.
      */
-    String getTaskFlowType();
+    String taskFlowType();
 
 
     /**

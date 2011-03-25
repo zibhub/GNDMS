@@ -56,16 +56,16 @@ public abstract class AbstractTaskFlowExecClient {
         String wid = UUID.randomUUID().toString();
 
         // sends the order and creates the task flow
-        ResponseEntity<Specifier<Facets>> res = gorfxClient.createTaskFlow( order.getTaskFlowType(), order, dn, wid );
+        ResponseEntity<Specifier<Facets>> res = gorfxClient.createTaskFlow( order.taskFlowType(), order, dn, wid );
 
         if(! HttpStatus.CREATED.equals( res.getStatusCode() ) )
             throw new RuntimeException( "createTaskFlow failed " + res.getStatusCode().name() );
 
         // the taskflow id is stored under "id" in the urlmap
-        String tid = res.getBody().getUrlMap().get( "id" );
+        String tid = res.getBody().getUriMap().get( "id" );
 
         // queries the quotes for the task flow
-        ResponseEntity<List<Specifier<Quote>>> res2 = tfClient.getQuotes( order.getTaskFlowType(), tid, dn, wid );
+        ResponseEntity<List<Specifier<Quote>>> res2 = tfClient.getQuotes( order.taskFlowType(), tid, dn, wid );
 
         if(! HttpStatus.OK.equals( res2.getStatusCode() ) )
             throw new RuntimeException( "getQuotes failed " + res2.getStatusCode().name() );
@@ -78,7 +78,7 @@ public abstract class AbstractTaskFlowExecClient {
         // 
         
         // accepts quote q and triggers task creation
-        ResponseEntity<Specifier<Facets>> res3 = tfClient.createTask( order.getTaskFlowType(), tid,
+        ResponseEntity<Specifier<Facets>> res3 = tfClient.createTask( order.taskFlowType(), tid,
             q != null ? q.toString() : null, dn, wid );
 
         if(! HttpStatus.CREATED.equals( res3.getStatusCode() ) )
@@ -88,7 +88,7 @@ public abstract class AbstractTaskFlowExecClient {
         handleTaskSpecifier( res3.getBody() );
         
         // the task id is stored under "taskId" in the specifiers urlmap
-        String taskId = res3.getBody().getUrlMap().get( "taskId" );
+        String taskId = res3.getBody().getUriMap().get( "taskId" );
 
         ResponseEntity<TaskStatus> stat;
         TaskStatus ts;

@@ -28,7 +28,7 @@ import java.util.HashMap;
 public class Specifier<T> {
 
     private String URL; ///< The whole url of the resource.
-    private HashMap<String,String> urlMap; ///< An id map for the resource. Useful to fill url templates.
+    private HashMap<String,String> uriMap; ///< An id map for the resource. Useful to fill url templates.
     private T payload; ///< Some additional data for the resource. Usually the results of a GET request.
     private Specifier specifier; ///< Specifiers might be nested.
 
@@ -43,22 +43,22 @@ public class Specifier<T> {
     }
 
 
-    public HashMap<String, String> getUrlMap() {
-        return urlMap;
+    public HashMap<String, String> getUriMap() {
+        return uriMap;
     }
 
 
     public void setUriMap( HashMap<String, String> urlMap ) {
-        this.urlMap = urlMap;
+        this.uriMap = urlMap;
     }
 
 
     public void addMapping( String key, String value ) {
 
-        if ( urlMap == null )
-            urlMap = new HashMap<String, String>( 1 );
+        if ( uriMap == null )
+            uriMap = new HashMap<String, String>( 1 );
 
-        urlMap.put( key, value );
+        uriMap.put( key, value );
     }
 
 

@@ -87,7 +87,7 @@ public class GORFXClientMain extends AbstractApplication {
 		// set dft attributes
 		dft.setMessage("Test task flow");
 		dft.setFailIntentionally(false);
-		executeTaskFlow(gorfxClient, dft.getTaskFlowType(), dft);
+		executeTaskFlow(gorfxClient, dft.taskFlowType(), dft);
 	}
 
 	private void executeTaskFlow(FullGORFXClient gorfxClient, String type, Order order) {
@@ -115,7 +115,7 @@ public class GORFXClientMain extends AbstractApplication {
 		
 		// optionally: change order, select quote?
 		
-		// define with res2.getBody().getUrlMap() ??
+		// define with res2.getBody().getUriMap() ??
 		String id = null;
 		getTaskFlowStatus(id, type, wid);
 
@@ -192,7 +192,7 @@ public class GORFXClientMain extends AbstractApplication {
 		ResponseEntity<Specifier<Facets>> res5 = gorfxClient.getBatchAction(
 				action, batchId, dn);
 		System.out.println("Task URL" + res5.getBody().getURL());
-		// define with res5.getBody().getUrlMap() ??
+		// define with res5.getBody().getUriMap() ??
 		String type = null;
 		String wid = null;
 		String id = null;
