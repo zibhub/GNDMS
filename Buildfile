@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-# -*- mode: ruby -*-
-# -*- coding: utf-8 -*-
+# -*- mode: ruby; coding: utf-8 -*-
 # Large amounts of memory ensure a fast build
 ENV['JAVA_OPTS'] ||= '-Xms512m -Xmx768m'
 
@@ -286,6 +284,7 @@ define 'gndms' do
     define 'stuff', :layout => dmsLayout('stuff', 'gndms-stuff') do
        compile.with GUICE, GOOGLE_COLLECTIONS, JETBRAINS_ANNOTATIONS, JSON, SPRING
        compile { project('gndms').updateBuildInfo() }
+       test.using :testng
        package :jar
     end
 
