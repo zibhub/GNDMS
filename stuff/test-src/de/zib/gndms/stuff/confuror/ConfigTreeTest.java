@@ -8,6 +8,7 @@ import org.testng.Assert;
 import org.testng.annotations.*;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class ConfigTreeTest {
     private volatile ConfigTree tree;
@@ -216,6 +217,31 @@ public class ConfigTreeTest {
         final JsonNode snapshot = tree.getSnapshotAsNode();
         Assert.assertTrue(snapshot.isObject());
         Assert.assertTrue(snapshot.equals(parseSingle("{ 'a': 12, 'b': [ 2, 5, 7 ] }")));
+    }
+
+    @Test
+    public void pathTest() throws IOException, ConfigEditor.UpdateRejectedException {
+        ConfigEditor editor = tree.newUpdater(visitor);
+        JsonNode init = parseSingle("{ 'a': 12, 'b': { 'x': { 'c' : 4 } } }");
+        tree.update(editor, init);
+        final AtomicReference<Object[]> ref = new AtomicReference<Object[]>(null);
+        ConfigEditor reportingEditor = tree.newUpdater(new ConfigEditor.Visitor() {
+
+            public ObjectMapper getObjectMapper() {
+                return objectMapper;
+            }
+
+            public void updateNode(@NotNull ConfigEditor.Update updater) {
+                ref.getAndSet(updater.getPath());
+                updater.accept();
+            }
+        });
+        tree.update(reportingEditor, parseSingle("{ '+b': { '+x': { 'q': 5 } } }"));
+        final Object[] result = ref.get();
+        Assert.assertTrue(result.length == 3);
+        Assert.assertTrue(result[0].equals("b"));
+        Assert.assertTrue(result[1].equals("x"));
+        Assert.assertTrue(result[2].equals("q"));
     }
 
 }
