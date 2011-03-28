@@ -28,6 +28,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 public class GNDMSJacksonObjectMapper extends ObjectMapper {
 
     public GNDMSJacksonObjectMapper() {
-        enableDefaultTyping( ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.WRAPPER_ARRAY );
+        enableDefaultTyping( ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY );
     }
 }

@@ -578,7 +578,19 @@ define 'gndms' do
             jars = compile.dependencies.map(&:to_s)
             jars << project('gndms:gndmc-rest')
             args = []
-            Commands.java('de.zib.gndms.gndmc.offline.JsonTest',  args, { :classpath => jars } )
+            jargs = [
+                "-Xdebug", "-Xrunjdwp:transport=dt_socket,server=n,suspend=n,address=localhost:5005"
+            ]
+            Commands.java('de.zib.gndms.gndmc.offline.JsonTest',  args, { :classpath => jars, :java_args => jargs } )
+        end
+
+        task 'run3-nodbg' do
+
+            jars = compile.dependencies.map(&:to_s)
+            jars << project('gndms:gndmc-rest')
+            args = []
+            jargs = []
+            Commands.java('de.zib.gndms.gndmc.offline.JsonTest',  args, { :classpath => jars, :java_args => jargs } )
         end
     end
 

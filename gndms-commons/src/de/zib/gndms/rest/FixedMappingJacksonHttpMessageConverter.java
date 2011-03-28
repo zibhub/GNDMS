@@ -15,24 +15,28 @@ package de.zib.gndms.rest;
  * limitations under the License.
  */
 
+import de.zib.gndms.devel.StreamConsumer;
+import de.zib.gndms.devel.StreamCopyNIO;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
+import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
  * @author try ma ik jo rr a zib
  * @date 24.03.11  11:06
- * @brief
+ * @brief Custom jackson message converter, workes around some jackson bugs.
  */
-public class TestMappingJacksonHttpMessageConverter extends MappingJacksonHttpMessageConverter {
+public class FixedMappingJacksonHttpMessageConverter extends MappingJacksonHttpMessageConverter {
 
     private ObjectMapper om = null;
     protected Logger logger = LoggerFactory.getLogger( this.getClass() );
@@ -52,10 +56,38 @@ public class TestMappingJacksonHttpMessageConverter extends MappingJacksonHttpMe
     }
 
 
+    /**
+     * This one messes up the jackson context.
+     * @param clazz
+     * @param mediaType
+     * @return Always \c true;
+     */
+    @Override
+    public boolean canRead( Class<?> clazz, MediaType mediaType ) {
+        //return super.canRead( clazz, mediaType );    // overriden method implementation
+        return true;
+    }
+
+
+    /**
+     * This one messes up the jackson context, too.
+     * @param clazz
+     * @param mediaType
+     * @return Always \c true;
+     */
+    @Override
+    public boolean canWrite( Class<?> clazz, MediaType mediaType ) {
+        // return super.canWrite( clazz, mediaType );    // overriden method implementation
+        return true;
+    }
+
+
     @Override
     protected Object readInternal( Class<?> clazz, HttpInputMessage inputMessage ) throws IOException, HttpMessageNotReadableException {
-        byte[] ba = new byte[512+1024];
-        inputMessage.getBody().read( ba );
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream( 512*1024 );
+        StreamCopyNIO.copyStream( inputMessage.getBody(), bos );
+        byte[] ba = bos.toByteArray();
         logger.debug( "called with "+ new String( ba ) );
         ByteArrayInputStream bin = new ByteArrayInputStream( ba );
         return om.readValue( bin, clazz );
@@ -65,6 +97,12 @@ public class TestMappingJacksonHttpMessageConverter extends MappingJacksonHttpMe
     @Override
     protected void writeInternal( Object o, HttpOutputMessage outputMessage ) throws IOException, HttpMessageNotWritableException {
         logger.debug( "called with "+ o.toString() );
-        super.writeInternal( o, outputMessage );    // overriden method implementation
+        ByteArrayOutputStream bout = new ByteArrayOutputStream( 512*1024 );
+        om.writeValue( bout, o );
+        byte[] ba = bout.toByteArray();
+        logger.debug( "generated JSON "+ new String( ba ) );
+        ByteArrayInputStream bin = new ByteArrayInputStream( ba );
+        StreamCopyNIO.copyStream( bin, outputMessage.getBody() );
+        // super.writeInternal( o, outputMessage );    // overriden method implementation
     }
 }

@@ -19,6 +19,7 @@ import de.zib.gndms.logic.taskflow.tfmockup.DummyOrder;
 import de.zib.gndms.model.gorfx.types.Order;
 import de.zib.gndms.rest.Facet;
 import de.zib.gndms.rest.Facets;
+import de.zib.gndms.rest.GNDMSJacksonObjectMapper;
 import de.zib.gndms.rest.Specifier;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -28,6 +29,7 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author try ma ik jo rr a zib
@@ -36,9 +38,19 @@ import java.util.ArrayList;
  */
 public class JsonTest {
 
+    private ObjectMapper mapper;
+
+
     public static void main( String[] args ) throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enableDefaultTyping( ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.WRAPPER_ARRAY );
+
+        (new JsonTest()).run();
+    }
+
+
+    private void run() throws Exception {
+
+        mapper = new GNDMSJacksonObjectMapper();
+        //mapper.enableDefaultTyping( ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.WRAPPER_ARRAY );
 
         DummyOrder dft = new DummyOrder();
         dft.setMessage( "Test task flow is flowing" );
@@ -57,22 +69,37 @@ public class JsonTest {
         Specifier<Facets> spec = new Specifier<Facets>();
         spec.setURL( "helloWorld" );
         spec.addMapping( "Hello", "World" );
-        spec.setPayload( fs );
+    //    spec.setPayload( fs );
+
+        List<Specifier<Facets>> l = new ArrayList( 1 );
+        l.add( spec );
+
+        //toJSON( fs, Facets.class );
+        toJSON( l , List.class );
+
+        System.exit( 0 );
+    }
+
+
+    public <T> void toJSON( T in, Class<T> clazz ) throws Exception {
+
+        // this causes pain
+      //  System.out.print( "Can serialize? " );
+      //  if( mapper.canSerialize( clazz ) )
+      //      System.out.println( "Yap." );
+      //  else
+      //      System.out.println( "No." );
 
         System.out.println( "writing json object" );
         ByteArrayOutputStream bo = new ByteArrayOutputStream( 1000*1024 );
-        mapper.writeValue( bo, spec );
+        mapper.writeValue( bo, in );
         bo.close();
         byte[] buf = bo.toByteArray();
         System.out.println( new String( buf ) );
 
         System.out.println( "reading back json object" );
         ByteArrayInputStream bi = new ByteArrayInputStream( buf );
-        //DummyOrder do2 = (DummyOrder) mapper.readValue( bi, Order.class );
-        Specifier<Facets> do2 = (Specifier)  mapper.readValue( bi, Specifier.class );
-        System.out.println( do2.toString() );
-
-        System.exit( 0 );
+        T out = clazz.cast( mapper.readValue( bi, clazz ) );
+        System.out.println( out.toString() );
     }
-
 }

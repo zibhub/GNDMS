@@ -90,7 +90,7 @@ public class TaskServiceImpl implements TaskService {
         uriargs.put( "service", "gorfx" );
         uriargs.put( "taskId", id );
 
-        List<Facet> fl = new ArrayList<Facet>( facets.size() );
+        ArrayList<Facet> fl = new ArrayList<Facet>( facets.size() );
         for( String f : facets ) {
             String fn = uriFactory.taskUri( uriargs, f );
             fl.add( new Facet( f, fn ) );

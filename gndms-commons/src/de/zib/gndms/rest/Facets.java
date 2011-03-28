@@ -15,6 +15,7 @@ package de.zib.gndms.rest;
  * limitations under the License.
  */
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,7 +35,7 @@ public class Facets {
     }
 
 
-    public Facets( List<Facet> facets ) {
+    public Facets( ArrayList<Facet> facets ) {
         this.facets = facets;
     }
 

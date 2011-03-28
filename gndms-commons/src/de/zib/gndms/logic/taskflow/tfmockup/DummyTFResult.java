@@ -26,20 +26,24 @@ import de.zib.gndms.model.gorfx.types.TaskResult;
  */
 public class DummyTFResult implements TaskResult<String> {
 
-    private String message;
+    private String result;
+
+
+    public DummyTFResult() {
+    }
 
 
     public DummyTFResult( String s ) {
-        message = s;
+        result = s;
     }
 
 
     public String getResult() {
-        return message;
+        return result;
     }
 
 
-    public void setMessage( String message ) {
-        this.message = message;
+    public void setResult( String result ) {
+        this.result = result;
     }
 }

@@ -21,6 +21,7 @@ package de.zib.gndms.model.gorfx.types;
 import org.joda.time.DateTime;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -39,7 +40,7 @@ public final class Quote implements Cloneable {
 
     private Long expectedSize; ///< Expected size of task in case of a transfer or staging.
 
-    private Map<String,String> additionalNotes; ///< Map for additional notes, e.g. a warning if the result will be huge.
+    private Map<String,String> additionalNotes = new HashMap<String, String>(); ///< Map for additional notes, e.g. a warning if the result will be huge.
 
 
     /**
