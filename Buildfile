@@ -329,6 +329,7 @@ define 'gndms' do
        task( 'update-release-info' )
        compile.with GUICE, GOOGLE_COLLECTIONS, JETBRAINS_ANNOTATIONS, JSON, SPRING, SLF4J
        compile { project('gndms').updateBuildInfo() }
+       test.compile
        test.using :testng
        package :jar
     end
@@ -356,8 +357,10 @@ define 'gndms' do
 
     desc 'GT4-dependent utility classes for GNDMS'
     define 'kit', :layout => dmsLayout('kit', 'gndms-kit') do
-      compile.with JETTY, GROOVY, GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('stuff'), project('model'), project('neomodel'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_AXIS, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, GUICE, GT4_SERVLET, COMMONS_LANG, OPENJPA, JNA
+      compile.with JETTY, GROOVY, GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('stuff'), project('model'), project('neomodel'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_AXIS, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, GUICE, GT4_SERVLET, COMMONS_LANG, OPENJPA, JSON, SPRING, JNA
       compile
+      test.compile
+      test.using :testng
       package :jar
     end
 

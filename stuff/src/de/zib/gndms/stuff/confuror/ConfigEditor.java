@@ -107,7 +107,7 @@ public final class ConfigEditor {
             throw new IllegalArgumentException("Toplevel node is neither an object nor an array nor null");
 
         final Stack<Record> records = new Stack<Record>();
-        final Record topRecord = new Record(node, update, null, null, 0, Update.Mode.APPEND);
+        final Record topRecord = new Record(node, update, null, null, Update.Mode.APPEND);
         records.push(topRecord);
 
         try { while (! records.empty()) {
@@ -137,7 +137,7 @@ public final class ConfigEditor {
                 else {
                     // update all childs
                     for (int i = 0; i < rec.update.size(); i++)
-                        records.push(new Record(rec.snapshot.get(i), rec.update.get(i), rec, i, rec.depth+1,
+                        records.push(new Record(rec.snapshot.get(i), rec.update.get(i), rec, i,
                                                 Update.Mode.OVERWRITE));
                 }
                 continue;
@@ -159,7 +159,7 @@ public final class ConfigEditor {
                             final JsonNode snapshot        = rec.snapshot.get(snapshotFieldName);
                             if (snapshot != null && snapshot.isObject())
                                 records.push(new Record(snapshot, rec.update.get(fieldName),
-                                                        rec, snapshotFieldName, rec.depth+1, Update.Mode.APPEND));
+                                                        rec, snapshotFieldName, Update.Mode.APPEND));
                             else
                                 throw new IllegalArgumentException("No updatable hash found");
                             }
@@ -167,12 +167,12 @@ public final class ConfigEditor {
                         case '-': {
                             final String snapshotFieldName = fieldName.substring(1);
                             new Record(rec.snapshot.get(snapshotFieldName), null,
-                                       rec, snapshotFieldName, rec.depth+1, Update.Mode.DELETE).visit(records, visitor);
+                                       rec, snapshotFieldName, Update.Mode.DELETE).visit(records, visitor);
                             }
                             break;
                         default:
                         records.push(new Record(rec.snapshot.get(fieldName), rec.update.get(fieldName),
-                                                rec, fieldName, rec.depth+1, Update.Mode.OVERWRITE));
+                                                rec, fieldName, Update.Mode.OVERWRITE));
                         }
                     }
                 }
@@ -197,15 +197,16 @@ public final class ConfigEditor {
         private JsonNode update;
         private Record parent;
         private Object cursor;
-        private int depth;
+        private int depth = 0;
         private Update.Mode mode = Update.Mode.OVERWRITE;
 
-        Record(JsonNode snapshot, JsonNode update, Record parent, Object cursor, int depth, Update.Mode mode) {
+        Record(JsonNode snapshot, JsonNode update, Record parent, Object cursor, Update.Mode mode) {
             this.snapshot = snapshot;
             this.update = update;
             this.parent = parent;
             this.cursor = cursor;
-            this.depth = depth;
+            if (parent != null)
+                this.depth = parent.depth + 1;
             this.mode  = mode;
         }
 
@@ -225,12 +226,12 @@ public final class ConfigEditor {
                 if (parent == null)
                     // toplevel neeeds special handling to create null node or replace
                     snapshot = Update.Mode.DELETE.equals(updater.getMode()) ?
-                                    ConfigTree.newNullNode(visitor.getObjectMapper()) : updater.getUpdate();
+                                    ConfigHolder.newNullNode(visitor.getObjectMapper()) : updater.getUpdate();
                 else {
                     if (parent.snapshot.isArray())
                         ((ArrayNode)parent.snapshot).set((Integer)cursor,
                                     (Update.Mode.DELETE.equals(updater.getMode()) ?
-                                          ConfigTree.newNullNode(visitor.getObjectMapper()) : updater.getUpdate()));
+                                          ConfigHolder.newNullNode(visitor.getObjectMapper()) : updater.getUpdate()));
                     else {
                         if (parent.snapshot.isObject()) {
                             switch(updater.getMode()) {
@@ -243,7 +244,7 @@ public final class ConfigEditor {
                                     ObjectNode objSnapshot = ((ObjectNode)snapshot);
                                     records.push(
                                             new Record(objSnapshot.get(fieldName), update.get(fieldName), this,
-                                                       fieldName, depth+1, Update.Mode.OVERWRITE));
+                                                       fieldName, Update.Mode.OVERWRITE));
                                 }
                                 break;
                             case DELETE:
