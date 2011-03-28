@@ -1,5 +1,9 @@
 syntax:glob
 
+lib/spring
+*/target
+*/gndms-*
+GNDMS-BUILD-INFO
 lib/apache-ant-current
 lib/jruby-current
 lib/apache-ant-1.7.1
