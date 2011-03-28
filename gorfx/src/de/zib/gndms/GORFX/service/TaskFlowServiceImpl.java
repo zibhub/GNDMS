@@ -87,7 +87,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
         if( taskFlowProvider.exists( type ) ) {
             TaskFlow tf = taskFlowProvider.getFactoryForTaskFlow( type ).find( id );
             if ( tf != null ) {
-                List<Facet> fl = new ArrayList<Facet>( 6 );
+                ArrayList<Facet> fl = new ArrayList<Facet>( 6 );
                 for( String f : facetsNames ) {
                     String fn = uriFactory.taskFlowUri( uriargs, f );
                     fl.add( new Facet( f, fn ) );

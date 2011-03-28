@@ -50,14 +50,19 @@
     <bean id="executorService" class="de.zib.gndms.logic.taskflow.executor.TFExecutor" />
 
     <bean id="gorfxFacets" class="de.zib.gndms.rest.Facets">
-        <property name="facets">
+        <property name="facets" ref="myList">
+        </property>
+    </bean>
+
+    <bean id="myList" class="java.util.ArrayList">
+        <constructor-arg>
             <list>
                 <ref bean="config"/>
                 <ref bean="batch"/>
                 <ref bean="taskflows"/>
                 <ref bean="tasks"/>
             </list>
-        </property>
+        </constructor-arg>
     </bean>
 
     <bean id="config" class="de.zib.gndms.rest.Facet">
