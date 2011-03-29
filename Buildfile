@@ -448,6 +448,26 @@ define 'gndms' do
                       { :classpath => jars, :properties => 
                           { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" } } )
       end
+
+      task 'run-stress-test' do
+        jars = compile.dependencies.map(&:to_s)
+        jars << compile.target.to_s
+        host = `hostname`.chomp
+        dn = `grid-proxy-info -identity`
+        dn = dn.chomp
+        if (ENV['GNDMS_PROPS'] == nil)
+            prop = 'test-data/test-properties/multi_file_transfer_awi.properties'
+        else 
+            prop = ENV['GNDMS_SFR']
+        end
+        args = [ '-props', prop, 
+                 '-uri', 'https://' + host + ':8443/wsrf/services/gndms/GORFX',
+	             '-dn', dn
+        ]
+        Commands.java('de.zib.gndmc.GORFX.tests.MultiRequestClient',  args, 
+                      { :classpath => jars, :properties => 
+                          { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" } } )
+      end
     end
 end
 
