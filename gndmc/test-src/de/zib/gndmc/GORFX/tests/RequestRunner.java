@@ -22,6 +22,7 @@ import de.zib.gndms.GORFX.ORQ.client.ORQClient;
 import de.zib.gndms.GORFX.client.GORFXClient;
 import de.zib.gndms.GORFX.context.client.TaskClient;
 import de.zib.gndms.GORFX.offer.client.OfferClient;
+import de.zib.gndms.gritserv.delegation.DelegationAux;
 import de.zib.gndms.gritserv.typecon.types.AbstractXSDTypeWriter;
 import de.zib.gndms.gritserv.typecon.types.ContextXSDTypeWriter;
 import de.zib.gndms.gritserv.typecon.types.ContractXSDTypeWriter;
@@ -56,7 +57,8 @@ public abstract class RequestRunner implements Runnable{
     private String gorfxUri;
 
     private AbstractORQ orq;
-    
+    private String proxy;
+
 
     static {
         logger = Logger.getLogger( StagingRunner.class );
@@ -134,7 +136,15 @@ public abstract class RequestRunner implements Runnable{
         NDC.push( getUuid() );
 
         try{
+
             RequestRunner.logger.debug( "Starting" );
+
+            EndpointReferenceType delegatEPR = null;
+            if ( proxy != null && ! proxy.trim().equals( "" ) ) {
+                RequestRunner.logger.debug( "Setting up delegation" );
+                delegatEPR = GORFXClientUtils.setupDelegation( ctxt, gorfxUri, proxy );
+            }
+
             // create gorfx client and retrieve orq
             final GORFXClient gcnt = new GORFXClient( gorfxUri );
             EndpointReferenceType epr = gcnt.createOfferRequest( orqt, ctxt );
@@ -179,6 +189,9 @@ public abstract class RequestRunner implements Runnable{
                 RequestRunner.logger.error( "faultTrace:    " + tefif.getFaultTrace( ) );
                 RequestRunner.logger.error( "faultLocation: " + tefif.getFaultLocation( ) );
             }
+
+            if( delegatEPR != null)
+                DelegationAux.destroyDelegationEPR( delegatEPR );
         } catch (Exception e ) {
             RequestRunner.logger.error( e );
         } finally{
@@ -204,6 +217,7 @@ public abstract class RequestRunner implements Runnable{
 
     public void setCtx( final HashMap<String, String> ctx ) {
         this.ctx = ctx;
+        ctx.put( "Workflow.Id", uuid );
     }
 
 
@@ -244,5 +258,10 @@ public abstract class RequestRunner implements Runnable{
 
     public void setConverter( final ORQConverter converter ) {
         this.converter = converter;
+    }
+
+
+    public void setProxy( String proxy ) {
+        this.proxy = proxy;
     }
 }

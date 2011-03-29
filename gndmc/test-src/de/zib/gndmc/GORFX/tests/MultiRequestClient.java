@@ -53,7 +53,10 @@ public class MultiRequestClient extends AbstractApplication {
     @Option( name="-w", usage="Delay between thread starts in ms" )
     protected int dl=0;
 
-    
+
+    private String proxy;
+
+
     public static void main(String[] args) throws Exception {
         MultiRequestClient cnt = new MultiRequestClient();
         cnt.run( args );
@@ -74,13 +77,7 @@ public class MultiRequestClient extends AbstractApplication {
             throw e;
         }
 
-        EndpointReferenceType delegatEPR = null;
-        ContextT ctx = new ContextT( );
-        String proxy = pt.getProperty( "Proxy", null );
-        if ( proxy != null && ! proxy.trim().equals( "" ) ) {
-            System.out.println( "Setting up delegation" );
-            delegatEPR = GORFXClientUtils.setupDelegation( ctx, gorfxEpUrl, proxy );
-        }
+        proxy = pt.getProperty( "Proxy", null );
 
         List<Properties> pl = new ArrayList<Properties>( );
 
@@ -93,7 +90,7 @@ public class MultiRequestClient extends AbstractApplication {
 
         System.out.println( "Creating " + pl.size() + " staging threads" );
 
-        List<RequestRunner> runners = createRequestRunners( runner, pl, ctx  );
+        List<RequestRunner> runners = createRequestRunners( runner, pl );
 
         ExecutorService exec = Executors.newFixedThreadPool( runners.size() );
 
@@ -111,20 +108,19 @@ public class MultiRequestClient extends AbstractApplication {
             Thread.sleep( 10000 );
         }
 
-        if( delegatEPR != null)
-            DelegationAux.destroyDelegationEPR( delegatEPR );
     }
 
 
-    private <M extends RequestRunner> List<RequestRunner> createRequestRunners( Class<M> r,  List<Properties> pts, ContextT ctx ) throws IllegalAccessException, InstantiationException {
+    private <M extends RequestRunner> List<RequestRunner> createRequestRunners( Class<M> r,
+                            List<Properties> pts ) throws IllegalAccessException, InstantiationException {
 
-        HashMap<String,String> mctx = prepareCtx( ctx );
+        //HashMap<String,String> mctx = prepareCtx( ctx );
 
         List<RequestRunner> res = new ArrayList<RequestRunner>( );
         for( Properties prop : pts ) {
             RequestRunner sr =  r.newInstance( );
             sr.setGorfxUri( gorfxEpUrl );
-            sr.setCtx( mctx );
+            sr.setProxy( proxy );
             sr.fromProps( prop );
             sr.prepare();
             res.add( sr );
