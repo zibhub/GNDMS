@@ -84,11 +84,11 @@ public class JsonTest {
     public <T> void toJSON( T in, Class<T> clazz ) throws Exception {
 
         // this causes pain
-      //  System.out.print( "Can serialize? " );
-      //  if( mapper.canSerialize( clazz ) )
-      //      System.out.println( "Yap." );
-      //  else
-      //      System.out.println( "No." );
+        System.out.print( "Can serialize? " );
+        if( mapper.canSerialize( clazz ) )
+            System.out.println( "Yap." );
+        else
+            System.out.println( "No." );
 
         System.out.println( "writing json object" );
         ByteArrayOutputStream bo = new ByteArrayOutputStream( 1000*1024 );
