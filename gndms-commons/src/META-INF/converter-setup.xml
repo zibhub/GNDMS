@@ -15,7 +15,7 @@
 	</bean-->
 
 
-    <bean id="converter" class="de.zib.gndms.rest.TestMappingJacksonHttpMessageConverter">
+    <bean id="converter" class="de.zib.gndms.rest.FixedMappingJacksonHttpMessageConverter">
     <!--bean id="jsonconverter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"-->
         <property name="objectMapper" ref="objectMapper"/>
     </bean>

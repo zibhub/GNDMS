@@ -121,17 +121,6 @@ public abstract class AbstractClient {
     @Autowired
 	public void setRestTemplate(RestTemplate restTemplate) {
 		this.restTemplate = restTemplate;
-        logger.debug( "resttemplate injected. Provided converters: " );
-        for ( HttpMessageConverter mc : restTemplate.getMessageConverters() ) {
-            logger.debug( mc.getClass().getName() );
-
-            if ( mc.getClass().equals( TestMappingJacksonHttpMessageConverter.class ) ) {
-                TestMappingJacksonHttpMessageConverter conv = TestMappingJacksonHttpMessageConverter.class.cast( mc ) ;
-                ObjectMapper om = conv.getObjectMapper();
-                logger.debug( "om name: " + om.getClass().getName() );
-            } else
-                throw new IllegalStateException( "unexpected converter" );
-        }
 	}
 
 	public String getServiceURL() {
