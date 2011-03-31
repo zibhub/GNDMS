@@ -42,6 +42,7 @@ public final class ConfigEditor {
         @NotNull JsonNode getOriginal();
 
         /**
+         * Returns an Update! (i.e. field names may contain +, -)
          *
          * @return Replacement node
          */
@@ -178,7 +179,7 @@ public final class ConfigEditor {
                 }
                 continue;
             }
-            // Ignore anything else
+            throw new IllegalArgumentException("Unknown node type encountered");
         } }
         catch (IllegalArgumentException iae) { throw new UpdateRejectedException(iae); }
         catch (IOException ioe) { throw new UpdateRejectedException(ioe);}
