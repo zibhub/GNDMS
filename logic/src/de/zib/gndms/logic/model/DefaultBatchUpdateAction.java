@@ -20,7 +20,9 @@ package de.zib.gndms.logic.model;
 
 import de.zib.gndms.logic.action.DefaultCompositeAction;
 import de.zib.gndms.logic.action.Action;
-import de.zib.gndms.model.common.GridResource;
+import de.zib.gndms.model.ModelEntity;
+import de.zib.gndms.model.common.GridEntity;
+import de.zib.gndms.model.common.GridResourceItf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
@@ -38,10 +40,10 @@ import java.util.Collection;
  *
  *          User: stepn Date: 12.08.2008 Time: 18:54:38
  */
-public class DefaultBatchUpdateAction<M extends GridResource> extends DefaultCompositeAction<Void, Void>
+public class DefaultBatchUpdateAction<M extends ModelEntity & GridResourceItf> extends DefaultCompositeAction<Void, Void>
 	implements BatchUpdateAction<M, Void> {
 
-	private EntityUpdateListener<M> listener;
+	private ModelUpdateListener<M> listener;
 
 
     @Override
@@ -52,12 +54,12 @@ public class DefaultBatchUpdateAction<M extends GridResource> extends DefaultCom
     }
 
 
-    public EntityUpdateListener<M> getListener() {
+    public ModelUpdateListener<M> getListener() {
 		return listener;
 	}
 
 
-	public void setListener(final @NotNull EntityUpdateListener<M> listenerParam) {
+	public void setListener(final @NotNull ModelUpdateListener<M> listenerParam) {
 		listener = listenerParam;
 	}
 

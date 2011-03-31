@@ -18,7 +18,8 @@ package de.zib.gndms.logic.model.gorfx;
 
 
 
-import de.zib.gndms.model.gorfx.OfferType;
+import de.zib.gndms.neomodel.common.Dao;
+import de.zib.gndms.neomodel.gorfx.OfferType;
 
 
 /**
@@ -30,9 +31,19 @@ import de.zib.gndms.model.gorfx.OfferType;
  *          User: stepn Date: 09.10.2008 Time: 11:04:52
  */
 public class ORQTaskActionMetaFactory extends OfferTypeMetaFactory<ORQTaskAction<?>> {
-    
+    private Dao dao;
+
     @Override
-    public String getFactoryClassName(final OfferType key) {
-        return key.getTaskActionFactoryClassName();
+    public String getFactoryClassName(final String key) {
+        return getDao().getOfferTypeTaskActionFactoryClassName(key);
+    }
+
+
+    public Dao getDao() {
+        return dao;
+    }
+
+    public void setDao(Dao dao) {
+        this.dao = dao;
     }
 }

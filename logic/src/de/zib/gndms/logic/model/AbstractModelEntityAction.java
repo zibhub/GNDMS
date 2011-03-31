@@ -1,7 +1,7 @@
 package de.zib.gndms.logic.model;
 
 /*
- * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package de.zib.gndms.logic.model;
 
 
 
+import de.zib.gndms.logic.action.AbstractAction;
+import de.zib.gndms.model.ModelEntity;
 import de.zib.gndms.model.common.GridEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
  * 
  * User: mjorra, Date: 12.08.2008, Time: 16:36:20
  */
-public abstract class AbstractModelAction<M extends GridEntity, R> extends AbstractEntityAction<R>
+public abstract class AbstractModelEntityAction<M extends ModelEntity, R> extends AbstractEntityAction<R>
 	  implements ModelAction<M, R> {
 
     private volatile M model;

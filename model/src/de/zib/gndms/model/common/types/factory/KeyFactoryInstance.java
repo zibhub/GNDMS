@@ -58,8 +58,8 @@ public interface KeyFactoryInstance<K, T extends KeyFactoryInstance<K, T>> {
 
     /**
      * Sets the key, which is needed to return {@code this} when calling {@code getFactory().getInstance(key)}
-     * 
-     * @param keyParam the key, which is needed to return {@code this} when calling {@code getFactory().getInstance(key)} 
+     *
+     * @param keyParam the key, which is needed to return {@code this} when calling {@code getFactory().getInstance(key)}
      */
     void setKey(final @NotNull K keyParam);
 }

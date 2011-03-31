@@ -24,7 +24,8 @@ import de.zib.gndms.kit.configlet.ConfigletProvider;
 import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.common.types.factory.KeyFactory;
 import de.zib.gndms.model.common.types.factory.KeyFactoryInstance;
-import de.zib.gndms.model.gorfx.OfferType;
+import de.zib.gndms.neomodel.common.Dao;
+import de.zib.gndms.neomodel.gorfx.OfferType;
 import de.zib.gndms.model.gorfx.types.AbstractORQ;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +37,7 @@ import org.jetbrains.annotations.NotNull;
  * User: bzcjorra Date: Sep 5, 2008 1:43:46 PM
  */
 public abstract class AbstractORQCalculator<M extends AbstractORQ, C extends AbstractORQCalculator<M, C>>
-    implements KeyFactoryInstance<OfferType, AbstractORQCalculator<?, ?>>, RequiresCredentialProvider {
+    implements KeyFactoryInstance<String,AbstractORQCalculator<?,?>>, RequiresCredentialProvider {
 
     private ConfigletProvider configletProvider;
     private TransientContract perferredOfferExecution;
@@ -44,9 +45,10 @@ public abstract class AbstractORQCalculator<M extends AbstractORQ, C extends Abs
     private M orqArguments;
     //private NetworkAuxiliariesProvider netAux;
 
-    private KeyFactory<OfferType, AbstractORQCalculator<?,?>> factory;
-    private OfferType offerType;
+    private KeyFactory<String, AbstractORQCalculator<?, ?>> factory;
+    private String offerType;
     private CredentialProvider credentialProvider;
+    private Dao dao;
 
 
     public AbstractORQCalculator() {
@@ -115,23 +117,23 @@ public abstract class AbstractORQCalculator<M extends AbstractORQ, C extends Abs
     //}
 
 
-    public KeyFactory<OfferType, AbstractORQCalculator<?, ?>> getFactory() {
+    public KeyFactory<String, AbstractORQCalculator<?, ?>> getFactory() {
         return factory;
     }
 
 
     public void setFactory(
-            final @NotNull KeyFactory<OfferType, AbstractORQCalculator<?, ?>> factoryParam) {
+            final @NotNull KeyFactory<String, AbstractORQCalculator<?, ?>> factoryParam) {
         factory = factoryParam;
     }
 
 
-    public OfferType getKey() {
+    public String getKey() {
         return offerType;
     }
 
 
-    public void setKey(final @NotNull OfferType keyParam) {
+    public void setKey(final String keyParam) {
         offerType = keyParam;
     }
 
@@ -153,5 +155,13 @@ public abstract class AbstractORQCalculator<M extends AbstractORQ, C extends Abs
 
     public CredentialProvider getCredentialProvider() {
         return credentialProvider;
+    }
+
+    public Dao getDao() {
+        return dao;
+    }
+
+    public void setDao(Dao dao) {
+        this.dao = dao;
     }
 }

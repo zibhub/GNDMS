@@ -27,7 +27,8 @@ module GNDMS
     l[:target, :test, :classes] = _(prjOut, 'test')
     l[:target, :test, :resources] = _(prjOut, 'test-resources')
     l[:target, :doc] = _('doc', 'api')
-    l[:target] = _('lib', prj)
+    l[:target, :test] = _('lib/test', prj)
+    l[:target, :main] = _('lib', prj)
     return l
   end
 

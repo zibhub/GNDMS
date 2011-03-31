@@ -5,7 +5,6 @@ if [ -z "$GNDMS_SOURCE" ] || [ ! -d "$GNDMS_SOURCE" ] || [ ! -x "$GNDMS_SOURCE" 
 	exit 1
 fi
 
-
 if [ ! -f "$GNDMS_SOURCE/lib/apache-ant-current/bin/ant" ] ; then
   echo "Unpacking apache-ant-1.7.1"
   ( cd "$GNDMS_SOURCE/lib" && tar -zxf apache-ant-1.7.1.tgz )

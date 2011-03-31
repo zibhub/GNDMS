@@ -18,7 +18,6 @@ package de.zib.gndms.model.gorfx.types;
 
 
 
-import de.zib.gndms.model.gorfx.AbstractTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
@@ -45,16 +44,17 @@ import java.io.Serializable;
  *
  */
 public enum TaskState implements Serializable {
-    CREATED(false),
-    CREATED_UNKNOWN(true),
-    INITIALIZED(false),
-    INITIALIZED_UNKNOWN(true),
-    IN_PROGRESS(false),
-    IN_PROGRESS_UNKNOWN(true),
-    FAILED(false),
-    FINISHED(false);
+    CREATED(false, false),
+    CREATED_UNKNOWN(true, false),
+    INITIALIZED(false, false),
+    INITIALIZED_UNKNOWN(true, false),
+    IN_PROGRESS(false, false),
+    IN_PROGRESS_UNKNOWN(true, false),
+    FAILED(false, true),
+    FINISHED(false, true);
 
     final boolean unknownState;
+    final boolean doneState;
 
 
 
@@ -100,12 +100,27 @@ public enum TaskState implements Serializable {
     }
 
     
-    TaskState(final boolean unknownStateParam) {
+    TaskState(final boolean unknownStateParam, final boolean doneStateParam) {
         unknownState = unknownStateParam;
+        doneState    = doneStateParam;
     }
 
 
-    public boolean isUnknownState() {
+    public boolean isRestartedState() {
         return unknownState;
+    }
+
+    public boolean isDoneState() {
+        return unknownState;
+    }
+
+    public TaskState getCanonicalState() {
+        switch (this) {
+            case CREATED_UNKNOWN: return CREATED;
+            case INITIALIZED_UNKNOWN: return INITIALIZED;
+            case IN_PROGRESS_UNKNOWN: return IN_PROGRESS;
+            default:
+                return this;
+        }
     }
 }

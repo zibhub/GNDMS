@@ -24,6 +24,7 @@ import de.zib.gndms.infra.GNDMSTools;
 import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.model.common.ModelUUIDGen;
+import de.zib.gndms.neomodel.common.Dao;
 import org.apache.axis.message.addressing.AttributedURI;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.commons.logging.Log;
@@ -155,4 +156,7 @@ public final class ExtOfferResourceHome extends OfferResourceHome implements GND
 		return ref;
     }    
 
+    @NotNull public Dao getDao() {
+        return system.getDao();
+    }
 }

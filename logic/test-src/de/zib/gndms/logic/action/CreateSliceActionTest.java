@@ -134,7 +134,7 @@ public class CreateSliceActionTest extends ModelEntityTestBase {
         boa.setActions( new Vector<Action<Void>>() );
         boa.setListener( new FakeEntityUpdateListener() );
         Action = validator.createCreateSliceAction(  );
-        Action.setOwnPostponedActions( boa );
+        Action.setOwnPostponedEntityActions(boa);
         //getEntityManager( ).getTransaction().begin( );
         Action.setOwnEntityManager( getEntityManager( ) );
         Action.setClosingEntityManagerOnCleanup( false );

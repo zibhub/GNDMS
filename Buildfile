@@ -13,7 +13,8 @@ repositories.remote << 'http://static.appfuse.org/repository'
 repositories.remote << 'http://repository.jboss.org/maven2'
 repositories.remote << 'http://google-maven-repository.googlecode.com/svn/repository'
 repositories.remote << 'http://people.apache.org/repo/m2-incubating-repository'
-
+repositories.remote << 'http://repository.jboss.org/nexus/content/groups/public'
+repositories.remote << 'http://repo.marketcetera.org/maven'
 
 # Don't touch below unless you know what you are doing
 # --------------------------------------------------------------------------------------------------
@@ -83,6 +84,7 @@ def skipDeps(deps)
   deps = deps.select { |ding| !ding.include?("/commons-logging") }
   deps = deps.select { |ding| !ding.include?("/commons-lang-2.1") }
   deps = deps.select { |ding| !ding.include?("/commons-pool") }
+  deps = deps.select { |ding| !ding.include?("/commons-io") }
   return deps
 end
 
@@ -136,10 +138,10 @@ COMMONS_CODEC = 'commons-codec:commons-codec:jar:1.4'
 COMMONS_LANG = 'commons-lang:commons-lang:jar:2.1'
 COMMONS_LOGGING = 'commons-logging:commons-logging:jar:1.1.1'
 COMMONS_FILEUPLOAD = transitive(['commons-fileupload:commons-fileupload:jar:1.2.1'])
+COMMONS_IO = transitive(['commons-io:commons-io:jar:2.0.1'])
 JETTY = ['org.mortbay.jetty:jetty:jar:6.1.11', 'org.mortbay.jetty:jetty-util:jar:6.1.11']
 GROOVY = ['org.codehaus.groovy:groovy:jar:1.6.9']
 ARGS4J = 'args4j:args4j:jar:2.0.14'
-# TESTNG = download(artifact('org.testng:testng:jar:5.1-jdk15') => 'http://static.appfuse.org/repository/org/testng/testng/5.1/testng-5.1-jdk15.jar')
 DB_DERBY = ['org.apache.derby:derby:jar:10.5.3.0', 'org.apache.derby:derbytools:jar:10.5.3.0']
 
 HTTP_CORE = ['org.apache.httpcomponents:httpcore:jar:4.0', 'org.apache.httpcomponents:httpcore-nio:jar:4.0', 'org.apache.httpcomponents:httpclient:jar:4.0.1']
@@ -189,6 +191,8 @@ XSTREAM_DEPS= [ CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME ]
 # OpenJPA is required by gndms:model
 OPENJPA = [ COMMONS_LANG, 'org.apache.openjpa:openjpa-all:jar:2.0.0']
 
+# NEODATAGRAPH = transitive('org.springframework.data:spring-data-neo4j:jar:1.0.0.M2')
+
 require 'buildr/openjpa2'
 include Buildr::OpenJPA2
 
@@ -237,6 +241,22 @@ define 'gndms' do
                    _('extra/castor-0.9.9.jar'),
                    _('extra/jdom-1.0.jar')]
 
+NEODATAGRAPH = [_('lib/neo4j-1.2/geronimo-jta_1.1_spec-1.1.1.jar'),
+                _('lib/neo4j-1.2/neo4j-examples-1.2.jar'),
+                _('lib/neo4j-1.2/neo4j-graph-algo-0.7-1.2.jar'),
+                _('lib/neo4j-1.2/neo4j-ha-0.5-1.2.jar'),
+                _('lib/neo4j-1.2/neo4j-index-1.2-1.2.jar'),
+                _('lib/neo4j-1.2/neo4j-kernel-1.2-1.2.jar'),
+                _('lib/neo4j-1.2/neo4j-lucene-index-0.2-1.2.jar'),
+                _('lib/neo4j-1.2/neo4j-management-1.2-1.2.jar'),
+                _('lib/neo4j-1.2/neo4j-online-backup-0.7-1.2.jar'),
+                _('lib/neo4j-1.2/neo4j-remote-graphdb-0.8-1.2.jar'),
+                _('lib/neo4j-1.2/neo4j-shell-1.2-1.2.jar'),
+                _('lib/neo4j-1.2/neo4j-udc-0.1-1.2-neo4j.jar'),
+                _('lib/neo4j-1.2/netty-3.2.1.Final.jar'),
+                _('lib/neo4j-1.2/org.apache.servicemix.bundles.jline-0.9.94_1.jar'),
+                _('lib/neo4j-1.2/org.apache.servicemix.bundles.lucene-3.0.1_2.jar'),
+                _('lib/neo4j-1.2/protobuf-java-2.3.0.jar')]
 
     def updateBuildInfo()
       if (@buildInfo == nil) then
@@ -292,6 +312,19 @@ define 'gndms' do
        package :jar
     end
 
+    desc 'Shared graph database model classes'
+    define 'neomodel', :layout => dmsTestLayout('neomodel', 'gndms-neomodel') do
+      compile.with project('model'), project('stuff'), JETBRAINS_ANNOTATIONS, NEODATAGRAPH, OPENJPA, COMMONS_LANG
+      
+      test.with COMMONS_IO
+      test.compile
+
+      test.include 'de.zib.gndms.neomodel.gorfx.tests.NeoOfferTypeTest'
+      test.include 'de.zib.gndms.neomodel.gorfx.tests.NeoTaskTest'
+      
+      package :jar      
+    end
+
     desc 'Shared database model classes'
     define 'model', :layout => dmsLayout('model', 'gndms-model') do
       # TODO: Better XML
@@ -311,14 +344,14 @@ define 'gndms' do
 
     desc 'GNDMS logic classes (actions for manipulating resources)'
     define 'logic', :layout => dmsLayout('logic', 'gndms-logic') do
-       compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('stuff'), project('model'), JODA_TIME, GOOGLE_COLLECTIONS, GUICE, DB_DERBY, GT4_LOG, GT4_AXIS, GT4_COG, GT4_SEC, GT4_XML, COMMONS_LANG, OPENJPA
+       compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('stuff'), project('model'), project('neomodel'), JODA_TIME, GOOGLE_COLLECTIONS, GUICE, DB_DERBY, GT4_LOG, GT4_AXIS, GT4_COG, GT4_SEC, GT4_XML, COMMONS_LANG, OPENJPA
        compile
        package :jar
     end
 
     desc 'GNDMS classes for dealing with wsrf and xsd types'
     define 'gritserv', :layout => dmsLayout('gritserv', 'gndms-gritserv') do
-      compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('stuff'), project('model'), ARGS4J, JODA_TIME, GORFX_STUBS, OPENJPA, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, GT4_COMMONS, COMMONS_LANG, COMMONS_COLLECTIONS, COMMONS_CODEC
+      compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('stuff'), project('model'), project('neomodel'), ARGS4J, JODA_TIME, GORFX_STUBS, OPENJPA, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, GT4_COMMONS, COMMONS_LANG, COMMONS_COLLECTIONS, COMMONS_CODEC
       compile
       package :jar
     end
@@ -326,7 +359,7 @@ define 'gndms' do
     desc 'GNDMS core infrastructure classes'
     define 'infra', :layout => dmsLayout('infra', 'gndms-infra') do
       # Infra *must* have all dependencies since we use this list in copy/link-deps
-      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gritserv'), project('logic'), project('kit'), project('stuff'), project('model'), ARGS4J, JODA_TIME, JAXB, GT4_SERVLET, JETTY, CXF, GROOVY, GOOGLE_COLLECTIONS, GUICE, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies, COMMONS_FILEUPLOAD
+      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gritserv'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), ARGS4J, JODA_TIME, JAXB, GT4_SERVLET, JETTY, CXF, GROOVY, GOOGLE_COLLECTIONS, GUICE, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies, COMMONS_FILEUPLOAD, NEODATAGRAPH
       compile
       package :jar
       doc projects('gndms:stuff', 'gndms:model', 'gndms:gritserv', 'gndms:kit', 'gndms:logic')

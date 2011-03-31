@@ -20,10 +20,9 @@ package de.zib.gndms.GORFX.action;
 
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.model.gorfx.types.RePublishSliceORQ;
-import de.zib.gndms.model.gorfx.types.RePublishSliceResult;
 import de.zib.gndms.model.gorfx.types.TaskState;
-import de.zib.gndms.model.gorfx.AbstractTask;
-import de.zib.gndms.model.gorfx.SubTask;
+import de.zib.gndms.neomodel.common.Dao;
+import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -37,16 +36,24 @@ import javax.persistence.EntityManager;
  */
 public class RePublishSliceTaskAction extends ORQTaskAction<RePublishSliceORQ> {
 
+    public RePublishSliceTaskAction() {
+    }
+
+    public RePublishSliceTaskAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model) {
+        super(em, dao, model);
+    }
+
     @NotNull
-    protected Class<RePublishSliceORQ> getOrqClass() {
+    public Class<RePublishSliceORQ> getOrqClass() {
         return RePublishSliceORQ.class;
     }
 
 
-    @SuppressWarnings( { "ThrowableInstanceNeverThrown" } )
     @Override
-    protected void onInProgress( @NotNull AbstractTask model ) {
-
+    protected void onInProgress(@NotNull String wid, @NotNull TaskState state,
+                                boolean isRestartedTask, boolean altTaskState) throws Exception {
+        throw new UnsupportedOperationException();
+        /*
         SubTask st = new SubTask( model );
         try {
             st.setId( getUUIDGen().nextUUID() );
@@ -72,17 +79,14 @@ public class RePublishSliceTaskAction extends ORQTaskAction<RePublishSliceORQ> {
         } catch ( Exception e ) {
             failFrom( new RuntimeException( e ) );
         }
+        */
     }
 
 
     @Override
-    public void cleanUpOnFail( @NotNull AbstractTask model ) {
-        try{
-            DSpaceBindingUtils.destroySlice( getOrq().getDestinationSlice() );
-        } catch( Exception e ) {
-            // todo do something usefull with this exception
-            e.printStackTrace( );
-        }
-        super.cleanUpOnFail( model );
+    protected void onFailed(@NotNull String wid, @NotNull TaskState state,
+                            boolean isRestartedTask, boolean altTaskState) throws Exception {
+        DSpaceBindingUtils.destroySlice( getORQ().getDestinationSlice() );
+        super.onFailed(wid, state, isRestartedTask, altTaskState);
     }
 }

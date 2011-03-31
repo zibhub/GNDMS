@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.model;
+package de.zib.gndms.neomodel.common;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -16,27 +16,14 @@ package de.zib.gndms.logic.model;
  * limitations under the License.
  */
 
-
-
-import de.zib.gndms.model.common.GridResource;
-
-
 /**
- * An EntityUpdateListener will be informed by an <tt>BatchUpdateAction</tt> on a model.
+ * ROType
  *
- * @see BatchUpdateAction
  * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
- *          User: stepn Date: 12.08.2008 Time: 18:33:47
+ * User: stepn Date: 05.09.2008 Time: 14:48:36
  */
-public interface EntityUpdateListener<M extends GridResource> {
-
-    /**
-     * A class waiting for changes on the model must implement this method.
-     * It will be notified about a change, using this method with the new model.
-     *
-     * @param model the new model
-     */
-    void onModelChange( M model );
+public interface ROType<I> {
+    public I getReadOnly();
 }

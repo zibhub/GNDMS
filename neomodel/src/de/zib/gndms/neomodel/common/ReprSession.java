@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.model.gorfx;
+package de.zib.gndms.neomodel.common;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -16,22 +16,32 @@ package de.zib.gndms.logic.model.gorfx;
  * limitations under the License.
  */
 
-
-
-import de.zib.gndms.model.gorfx.OfferType;
-
+import org.jetbrains.annotations.NotNull;
 
 /**
- * ThingAMagic.
+ * ReprSession
  *
  * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
- *          User: stepn Date: 08.10.2008 Time: 17:35:27
+ * User: stepn Date: 05.09.2008 Time: 14:48:36
  */
-public class ORQTypeFactory extends OfferTypeMetaFactory<AbstractORQCalculator<?,?>> {
-    @Override
-    public String getFactoryClassName(final OfferType key) {
-        return key.getCalculatorFactoryClassName();
+public class ReprSession {
+    private final @NotNull Session session;
+    private final @NotNull Dao dao;
+
+    ReprSession(@NotNull Dao dao, @NotNull Session session) {
+        this.dao     = dao;
+        this.session = session;
+    }
+
+    @NotNull public Session getSession() {
+        return session;
+    }
+
+    @NotNull public Dao getDao() {
+        return dao;
     }
 }
+
+

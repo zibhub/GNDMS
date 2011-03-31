@@ -24,13 +24,15 @@ import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.system.SystemHolder;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.model.dspace.types.SliceRef;
-import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.SliceStageInORQ;
 import de.zib.gndms.model.gorfx.types.SliceStageInResult;
 import de.zib.gndms.gritserv.typecon.types.ProviderStageInORQXSDTypeWriter;
 import de.zib.gndms.gritserv.typecon.types.SliceRefXSDReader;
 import de.zib.gndms.gritserv.typecon.types.ContextXSDTypeWriter;
 import de.zib.gndms.gritserv.typecon.types.ContractXSDTypeWriter;
+import de.zib.gndms.model.gorfx.types.TaskState;
+import de.zib.gndms.neomodel.common.Session;
+import de.zib.gndms.neomodel.gorfx.Task;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.globus.gsi.GlobusCredential;
 import org.jetbrains.annotations.NotNull;
@@ -61,66 +63,64 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
 
     @Override
     @NotNull
-    protected Class<SliceStageInORQ> getOrqClass() {
+    public Class<SliceStageInORQ> getOrqClass() {
         return SliceStageInORQ.class;
     }
 
 
-    @SuppressWarnings( { "ThrowableInstanceNeverThrown" } )
     @Override
-    protected void onInProgress( @NotNull AbstractTask model ) {
-
+    protected void onInProgress(@NotNull String wid, @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) throws Exception {
+        EndpointReferenceType epr;
+        GlobusCredential gc = GlobusCredentialProvider.class.cast(getCredentialProvider()).getCredential();
+        final Session session = getDao().beginSession();
         try {
-            EndpointReferenceType epr;
-            GlobusCredential gc = GlobusCredentialProvider.class.cast( getCredentialProvider() ).getCredential();
-            if( model.getData( ) == null ) {
-                String uri = ( (SliceStageInORQ) model.getOrq()).getActGridSiteURI();
+            final Task model = getTask(session);
+
+            if( model.getPayload( ) == null ) {
+                SliceStageInORQ orq = (SliceStageInORQ) getORQ();
+                String uri = orq.getActGridSiteURI();
                 if( uri == null )
-                    fail ( new RuntimeException( "GORFX uri is null" ) );
+                    throw new RuntimeException( "GORFX uri is null" );
                 else {
-                    ProviderStageInORQT p_orq = ProviderStageInORQXSDTypeWriter.write( getOrq() );
-                    ContextT ctx = ContextXSDTypeWriter.writeContext( getOrq().getActContext() );
+                    ProviderStageInORQT p_orq = ProviderStageInORQXSDTypeWriter.write( orq);
+                    ContextT ctx = ContextXSDTypeWriter.writeContext( orq.getActContext() );
                     OfferExecutionContractT con = ContractXSDTypeWriter.write( model.getContract().toTransientContract() );
-                    
                     epr = GORFXClientUtils.commonTaskPreparation( uri, p_orq, ctx, con, gc );
-                    model.setData( epr );
-     //               transitToState( TaskState.IN_PROGRESS );
+                    Task task = getTask(session);
+                    task.setPayload(epr);
+                    task.setTaskState(TaskState.FINISHED);
+                    if (altTaskState)
+                        task.setAltTaskState(null);
+                    session.finish();
                 }
             }
+            else {
+                epr = (EndpointReferenceType) model.getPayload( );
 
-            epr = (EndpointReferenceType) model.getData( );
+                TaskClient cnt = new TaskClient( epr );
+                trace( "Starting remote staging.", null );
+                boolean finished = GORFXClientUtils.waitForFinish( cnt, 1000 );
 
-            TaskClient cnt = new TaskClient( epr );
-            cnt.setProxy( gc );
-
-            trace( "Starting remote staging.", null );
-            // poll every 15 seconds
-            boolean finished = GORFXClientUtils.waitForFinish( cnt, 15000 );
-
-            if (finished) {
-                trace( "Remote staging finished.", null );
-                ProviderStageInResultT res =  cnt.getExecutionResult( ProviderStageInResultT.class );
-                SliceReference sk = (SliceReference) res.get_any()[0].getObjectValue( SliceReference.class );
-                SliceRef sr = SliceRefXSDReader.read( sk );
-                trace( "Remote staging finished. SliceId: " + sr.getResourceKeyValue() + "@"  + sr.getGridSiteId() , null );
-                finish( new SliceStageInResult( sr ) );
-            } else {
-                TaskExecutionFailure f = cnt.getExecutionFailure();
-                trace( "Remote staging failed with: \n"
-                    +  GORFXClientUtils.taskExecutionFailureToString( f ), null );
-                failFrom( new RuntimeException( f.toString() ) );
+                if (finished) {
+                    trace( "Remote staging finished.", null );
+                    ProviderStageInResultT res =  cnt.getExecutionResult( ProviderStageInResultT.class );
+                    SliceReference sk = (SliceReference) res.get_any()[0].getObjectValue( SliceReference.class );
+                    SliceRef sr = SliceRefXSDReader.read( sk );
+                    trace( "Remote staging finished. SliceId: " + sr.getResourceKeyValue() + "@"  + sr.getGridSiteId() , null );
+                    Task task = getTask(session);
+                    task.setPayload(new SliceStageInResult(sr));
+                    task.setTaskState(TaskState.FINISHED);
+                    if (altTaskState)
+                        task.setAltTaskState(null);
+                    session.finish();
+                } else {
+                    TaskExecutionFailure f = cnt.getExecutionFailure();
+                    trace( "Remote staging failed with: \n"
+                        +  GORFXClientUtils.taskExecutionFailureToString( f ), null );
+                    throw new RuntimeException( f.toString() );
+                }
             }
-        } catch( RuntimeException e ) {
-            honorOngoingTransit( e );
-            boxException( e );
-        } catch ( Exception e ) {
-            boxException( e );
         }
-    }
-
-
-    @SuppressWarnings( { "ThrowableInstanceNeverThrown" } )
-    private void boxException( Exception e ) {
-        failFrom( new RuntimeException( e.getMessage(), e ) );
+        finally { session.success(); }
     }
 }

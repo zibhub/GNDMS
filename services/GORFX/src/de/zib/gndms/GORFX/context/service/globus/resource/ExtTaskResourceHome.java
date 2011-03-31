@@ -25,6 +25,10 @@ import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.model.gorfx.Task;
+import de.zib.gndms.neomodel.common.Dao;
+import de.zib.gndms.neomodel.common.Session;
+import de.zib.gndms.neomodel.gorfx.Task;
+import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.apache.axis.message.addressing.AttributedURI;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI;
@@ -41,6 +45,7 @@ import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -56,7 +61,7 @@ import java.util.List;
  *
  *          User: stepn Date: 16.07.2008 Time: 12:35:27
  */
-public final class ExtTaskResourceHome extends TaskResourceHome implements GNDMPersistentServiceHome<Task> {
+public final class ExtTaskResourceHome extends TaskResourceHome implements GNDMPersistentServiceHome<Taskling> {
 
 	// logger can be an instance field since resource home classes are instantiated at most once
 	@NotNull
@@ -101,25 +106,25 @@ public final class ExtTaskResourceHome extends TaskResourceHome implements GNDMP
     private void resumeTasks() throws Exception {
 
         logger.debug("Checking for aborted tasks.");
-        EntityManager em = null;
-        List<String> rs = null;
-        try{
-            em = system.getEntityManagerFactory().createEntityManager(  );
-            Query q = em.createNamedQuery( "unfinishedTaskIds" );
-            rs = q.getResultList();
-            if( rs.size( ) == 0 ) {
-                logger.debug("No tasks found :-)");
-                return;
-            }
-        } finally {
-            if( em != null && em.isOpen( ) )
-                em.close( );
-        }
+        Dao dao = system.getDao();
+        Session session = dao.beginSession();
+        List<Taskling> rs = new LinkedList<Taskling>();
+        try {
+            for (Task task: session.listTasks())
+                if (! task.isDone())
+                        rs.add(task.getTaskling());
+            session.success();
+        } finally { session.finish(); }
 
-        logger.debug("Try to resume " + rs.size( ) + " tasks");
-        for( String id : rs ) {
-            logger.debug("Resuming " + id );
-            Resource k = find( getKeyForId( id ) );
+        if( rs.size( ) == 0)
+            logger.debug("No tasks found :-)");
+        else {
+            logger.debug("Try to resume " + rs.size( ) + " tasks");
+            for( Taskling ling : rs ) {
+                final String id = ling.getId();
+                logger.debug("Resuming " + id );
+                Resource k = find( getKeyForId( id ) );
+            }
         }
     }
 
@@ -136,11 +141,11 @@ public final class ExtTaskResourceHome extends TaskResourceHome implements GNDMP
 
     @NotNull
     public Query getListAllQuery( @NotNull EntityManager em ) {
-        return em.createNamedQuery( "listAllTaskIds" );
+        throw new UnsupportedOperationException();
     }
 
 
-    public void refresh( @NotNull Task resourceModel ) throws ResourceException {
+    public void refresh( @NotNull Taskling resourceModel ) throws ResourceException {
 
         ResourceKey key = getKeyForResourceModel( resourceModel );
         TaskResource  tres = (TaskResource) find( key );
@@ -156,12 +161,12 @@ public final class ExtTaskResourceHome extends TaskResourceHome implements GNDMP
 
 
     @NotNull
-    public Class<Task> getModelClass() {
-        return Task.class;
+    public Class<Taskling> getModelClass() {
+        return Taskling.class;
     }
 
 
-    public ResourceKey getKeyForResourceModel(@NotNull final Task model) {
+    public ResourceKey getKeyForResourceModel(@NotNull final Taskling model) {
         return getKeyForId(model.getId());
     }
 
@@ -214,5 +219,9 @@ public final class ExtTaskResourceHome extends TaskResourceHome implements GNDMP
 		TaskReference ref = new TaskReference();
 		ref.setEndpointReference(epr);
 		return ref;
+    }
+
+    @NotNull public Dao getDao() {
+        return system.getDao();
     }
 }

@@ -29,7 +29,7 @@ import java.util.Calendar;
  * GridResource + terminationTime
  **/
 @MappedSuperclass
-public abstract class TimedGridResource extends GridResource {
+public abstract class TimedGridResource extends GridResource implements TimedGridResourceItf {
 
     private Calendar terminationTime;
 

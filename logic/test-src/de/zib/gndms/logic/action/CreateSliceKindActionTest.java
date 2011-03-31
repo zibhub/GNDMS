@@ -78,7 +78,7 @@ public class CreateSliceKindActionTest extends ModelEntityTestBase {
         val.setPermission( AccessMask.fromString( "550" ) );
         CreateSliceKindAction action =  val.createCreateSliceAction();
         action.setOwnEntityManager( em );
-        action.setOwnPostponedActions( boa );
+        action.setOwnPostponedEntityActions(boa);
         action.setUUIDGen( uuidgen );
         SliceKind sl = action.call();
         val.validate(  sl  );

@@ -18,7 +18,7 @@ package de.zib.gndms.logic.model.gorfx;
 
 
 
-import de.zib.gndms.model.gorfx.OfferType;
+import de.zib.gndms.neomodel.common.Dao;
 
 
 /**
@@ -30,9 +30,18 @@ import de.zib.gndms.model.gorfx.OfferType;
  *          User: stepn Date: 08.10.2008 Time: 17:35:27
  */
 public class ORQCalculatorMetaFactory extends OfferTypeMetaFactory<AbstractORQCalculator<?,?>> {
+    private Dao dao;
+
     @Override
-    public String getFactoryClassName(final OfferType key) {
-        return key.getCalculatorFactoryClassName();
+    public String getFactoryClassName(final String key) {
+        return dao.getOfferTypeCalculatorFactoryClassName(key);
     }
 
+    public Dao getDao() {
+        return dao;
+    }
+
+    public void setDao(Dao dao) {
+        this.dao = dao;
+    }
 }

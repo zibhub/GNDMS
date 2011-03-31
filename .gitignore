@@ -4,6 +4,8 @@ lib/spring
 */target
 */gndms-*
 GNDMS-BUILD-INFO
+*~
+neomodel/target/**
 lib/apache-ant-current
 lib/jruby-current
 lib/apache-ant-1.7.1
@@ -30,6 +32,9 @@ services/**/derby.log
 *.eml
 *.iml
 *.gar
+gndmc/gndms-gndmc
+gndmc/target
+doc/api
 gritserv/gndms-gritserv/**
 infra/gndms-infra/**
 model/gndms-model/**
@@ -38,6 +43,7 @@ stuff/gndms-stuff/**
 typecon/gndms-typecon/**
 tmp/**
 model/derby.log
+neomodel/gndms-neomodel/**
 logic/gndms-logic/**
 logic/out/**
 logic/test/**
@@ -83,8 +89,9 @@ lib/infra/*
 lib/logic/*
 lib/gorfx/*
 lib/rest/*
-lib/gorfx-commons/*
+lib/gndms-commons/*
 lib/gndmc-rest/*
+lib/neomodel/*
 */resources/META-INF/GNDMS-RELEASE
 */resources/META-INF/GNDMS-BUILD-INFO
 */resources/META-INF/LICENSE

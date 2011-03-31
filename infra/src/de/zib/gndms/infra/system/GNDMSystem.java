@@ -21,6 +21,7 @@ package de.zib.gndms.infra.system;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import de.zib.gndms.GNDMSVerInfo;
+import de.zib.gndms.c3resource.jaxb.Modules;
 import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.grams.LinuxDirectoryAux;
 import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
@@ -32,9 +33,9 @@ import de.zib.gndms.logic.action.LogAction;
 import de.zib.gndms.logic.model.*;
 import de.zib.gndms.logic.model.gorfx.DefaultWrapper;
 import de.zib.gndms.logic.util.LogicTools;
-import de.zib.gndms.model.common.GridResource;
-import de.zib.gndms.model.common.ModelUUIDGen;
-import de.zib.gndms.model.common.VEPRef;
+import de.zib.gndms.model.common.*;
+import de.zib.gndms.neomodel.common.Dao;
+import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.apache.axis.components.uuid.UUIDGen;
 import org.apache.axis.components.uuid.UUIDGenFactory;
 import org.apache.axis.message.MessageElement;
@@ -50,6 +51,8 @@ import org.globus.wsrf.jndi.Initializable;
 import org.globus.wsrf.utils.AddressingUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.kernel.EmbeddedGraphDatabase;
 
 import javax.naming.Context;
 import javax.naming.Name;
@@ -84,11 +87,11 @@ import java.util.concurrent.*;
         "OverloadedMethodsWithSameNumberOfParameters", "NestedAssignment",
         "ClassWithTooManyMethods" })
 public final class GNDMSystem
-	  implements Initializable, SystemHolder, EMFactoryProvider, Module,
-        EntityUpdateListener<GridResource> {
+	  implements Initializable, SystemHolder, EMFactoryProvider, Modules.Module,
+        ModelUpdateListener<GridResource> {
     private static final long EXECUTOR_SHUTDOWN_TIME = 5000L;
 
-	private static @NotNull Log createLogger() { return LogFactory.getLog(GNDMSystem.class); }
+    private static @NotNull Log createLogger() { return LogFactory.getLog(GNDMSystem.class); }
 
     private boolean shutdown;
 
@@ -105,11 +108,14 @@ public final class GNDMSystem
 	private @NotNull final GridConfig sharedConfig;
 	private @NotNull File sharedDir;
     private @NotNull File dbDir;
+    private @NotNull File neoDir;
     private @NotNull File logDir;
 	private @NotNull File dbLogFile;
     private @NotNull File containerHome;
 	private @NotNull EntityManagerFactory emf;
 	private @NotNull EntityManagerFactory restrictedEmf;
+    private @NotNull GraphDatabaseService neo;
+    private @NotNull Dao dao;
 //	private NetworkAuxiliariesProvider netAux;
 
 
@@ -202,6 +208,8 @@ public final class GNDMSystem
 			createDirectories();
 			prepareDbStorage();
 			emf = createEMF();
+            neo = loadNeo();
+            dao = new Dao(getGridName(), neo);
 			restrictedEmf = emf;
 			tryTxExecution();
 			// initialization intentionally deferred to initialize
@@ -227,6 +235,11 @@ public final class GNDMSystem
 			throw new RuntimeException(e);
 		}
 	}
+
+    private GraphDatabaseService loadNeo() {
+        logger.info("Loading neo4j graph database");
+        return new EmbeddedGraphDatabase(getNeoDir().getAbsolutePath());
+    }
 
 
     /**
@@ -259,7 +272,7 @@ public final class GNDMSystem
        binder.bind(EMFactoryProvider.class).toInstance(this);
        binder.bind(GridConfig.class).toInstance(sharedConfig);
        //binder.bind(NetworkAuxiliariesProvider.class).toInstance(getNetAux());
-       binder.bind(EntityUpdateListener.class).toInstance(this);
+       binder.bind(ModelUpdateListener.class).toInstance(this);
        binder.bind(BatchUpdateAction.class).to(DefaultBatchUpdateAction.class);
        binder.bind(UUIDGen.class).toInstance(uuidGen);
        binder.bind(GNDMSVerInfo.class).toInstance(verInfo);
@@ -306,6 +319,7 @@ public final class GNDMSystem
     private void prepareDbStorage() throws IOException {
         File curSharedDir = getSharedDir();
 		dbDir = new File(curSharedDir, "db");
+        neoDir = new File(curSharedDir, "neo");
 		doCheckOrCreateDir(dbDir);
 
 		System.setProperty("derby.system.home", dbDir.getCanonicalPath());
@@ -407,14 +421,13 @@ public final class GNDMSystem
 	private synchronized void shutdown() throws Exception {
         if (! shutdown) {
             shutdown = true;
-            if (executionService != null) {
-                executionService.shutdown();
-            }
-	        instanceDir.shutdownConfiglets();
+            executionService.shutdown();
+            instanceDir.shutdownConfiglets();
             final GroovyMoniServer moniServer = getMonitor();
             if (moniServer != null)
                 moniServer.stopServer();
             emf.close();
+            neo.shutdown();
         }
 	}
 
@@ -425,8 +438,6 @@ public final class GNDMSystem
      * @return the TaskExecutionService instance, which is uses by this system.
      */
     private synchronized @NotNull TaskExecutionService getExecutionService() {
-        if (executionService == null)
-            executionService = new SysTaskExecutionService();
         return executionService;
     }
 
@@ -456,8 +467,7 @@ public final class GNDMSystem
     }
 
 
-    public @NotNull
-    GNDMSystemDirectory getInstanceDir() {
+    public @NotNull GNDMSystemDirectory getInstanceDir() {
         return instanceDir;
     }
 
@@ -475,6 +485,10 @@ public final class GNDMSystem
 		return logDir;
 	}
 
+
+    public @NotNull File getNeoDir() {
+        return neoDir;
+    }
 
 	public @NotNull File getDbDir() {
 		return dbDir;
@@ -551,7 +565,7 @@ public final class GNDMSystem
 	}
 
 
-    public void onModelChange( GridResource model ) {
+    public void onModelChange(GridResource model) {
         try {
             onModelChange_(model);
         } catch ( ResourceException e ) {
@@ -663,7 +677,7 @@ public final class GNDMSystem
      * @return {@code this}
      */
     @SuppressWarnings({ "ReturnOfThis" })
-    public EntityUpdateListener<GridResource> getEntityUpdateListener() {
+    public ModelUpdateListener<GridResource> getEntityUpdateListener() {
         return this;
     }
 
@@ -700,7 +714,17 @@ public final class GNDMSystem
     }
 
 
-	public void reloadConfiglets() {
+    @NotNull
+    public <R> Future<R> submitDaoAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull ModelDaoAction<?, R> action, @NotNull Log log) {
+        return executionService.submitDaoAction(em, dao, action, log);
+    }
+
+    @NotNull
+    public <R> Future<R> submitDaoAction(@NotNull ModelDaoAction<?, R> action, @NotNull Log log) {
+        return executionService.submitDaoAction(action, log);
+    }
+
+    public void reloadConfiglets() {
 		instanceDir.reloadConfiglets(getEntityManagerFactory());
 	}
 
@@ -783,13 +807,32 @@ public final class GNDMSystem
             }
         }
 
+        public final @NotNull <R> Future<R> submitDaoAction(final @NotNull ModelDaoAction<?, R> action,
+                                                            final @NotNull Log log) {
+            final Dao dao = action.getOwnDao();
+            if (dao != null)
+                return submitAction(action, log);
+            else {
+                action.setOwnDao(getDao());
+                return submitAction(action, log);
+            }
+        }
+
         @SuppressWarnings({ "FeatureEnvy" })
         public @NotNull <R> Future<R> submitAction(final @NotNull EntityManager em,
                                                    final @NotNull EntityAction<R> action,
                                                    final @NotNull Log log) {
-            action.setOwnEntityManager(em);
             return submit_(action, log);
         }
+
+        public @NotNull <R> Future<R> submitDaoAction(final @NotNull EntityManager em,
+                                                      final @NotNull Dao dao,
+                                                      final @NotNull ModelDaoAction<?, R> action,
+                                                      final @NotNull Log log) {
+            action.setOwnDao(getDao());
+            return submitAction(em, action, log);
+        }
+
 
         /**
          * Prepares {@code action} using certain setters, before it is submitted to the Executor.
@@ -819,10 +862,12 @@ public final class GNDMSystem
                 ((LogAction)action).setLog(log);
             if (action instanceof SystemHolder)
                 ((SystemHolder)action).setSystem(GNDMSystem.this);
-            if (action.getPostponedActions() == null)
-                action.setOwnPostponedActions(new DefaultBatchUpdateAction<GridResource>());
-            if (action.getPostponedActions().getListener() == null)
-                action.getPostponedActions().setListener(getEntityUpdateListener());
+            if (action.getPostponedEntityActions() == null)
+                action.setOwnPostponedEntityActions(new DefaultBatchUpdateAction<GridResource>());
+            if (action.getPostponedEntityActions().getListener() == null)
+                action.getPostponedEntityActions().setListener(getEntityUpdateListener());
+            if (action instanceof ModelDaoAction)
+                ((ModelDaoAction) action).setOwnDao(getDao());
             if (action instanceof AbstractEntityAction)
                 ((AbstractEntityAction<?>)action).setUUIDGen(uuidGenDelegate);
             if (action instanceof TaskAction) {
@@ -1010,6 +1055,17 @@ public final class GNDMSystem
 
         return false;
     }
+
+    @NotNull
+    public GraphDatabaseService getNeo() {
+        return neo;
+    }
+
+
+    public @NotNull
+    Dao getDao() {
+        return dao;
+    }
     /*
     public NetworkAuxiliariesProvider getNetAux( ) {
 
@@ -1019,4 +1075,10 @@ public final class GNDMSystem
         return netAux;
     }
     */
+
+    private final ModelUpdateListener<Taskling> tasklingUpdater = new ModelUpdateListener<Taskling>() {
+        public void onModelChange(Taskling model) {
+            // TODO IMPLEMENT
+        }
+    };
 }
