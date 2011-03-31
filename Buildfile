@@ -1,4 +1,4 @@
-# -*- mode: ruby -*-
+# -*- mode: ruby; coding: utf-8 -*-
 # Large amounts of memory ensure a fast build
 ENV['JAVA_OPTS'] ||= '-Xms512m -Xmx768m'
 
@@ -285,8 +285,10 @@ define 'gndms' do
 
     desc 'GT4-independent utility classes for GNDMS'
     define 'stuff', :layout => dmsLayout('stuff', 'gndms-stuff') do
-       compile.with GUICE, GOOGLE_COLLECTIONS, JETBRAINS_ANNOTATIONS
+       compile.with GUICE, GOOGLE_COLLECTIONS, JETBRAINS_ANNOTATIONS, JSON, SPRING
        compile { project('gndms').updateBuildInfo() }
+       test.compile
+       test.using :testng
        package :jar
     end
 
@@ -300,8 +302,10 @@ define 'gndms' do
 
     desc 'GT4-dependent utility classes for GNDMS'
     define 'kit', :layout => dmsLayout('kit', 'gndms-kit') do
-      compile.with JETTY, GROOVY, GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('stuff'), project('model'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_AXIS, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, GUICE, GT4_SERVLET, COMMONS_LANG, OPENJPA
+      compile.with JETTY, GROOVY, GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('stuff'), project('model'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_AXIS, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, GUICE, GT4_SERVLET, COMMONS_LANG, OPENJPA, JSON, SPRING
       compile
+      test.compile
+      test.using :testng
       package :jar
     end
 
@@ -346,7 +350,7 @@ define 'gndms' do
            if (copy)
              puts 'cp: \'' + file + '\' to: \'' + newname + '\''
              cp(file, newname)
-	     puts 'yay'
+             puts 'yay'
              chmod 0644, newname
            else
              puts 'ln_sf: \'' + file + '\' to: \'' + newname + '\''

@@ -38,6 +38,10 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 
 /**
@@ -66,34 +70,49 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
      */
 	private String mdsUrl;
 	private String requiredPrefix;
-
 	private C3Catalog catalog;
 
-	@Override
-	protected synchronized void threadInit() {
-		super.threadInit();
-		configProperties();
-	}
+    private ReentrantReadWriteLock stateLock = new ReentrantReadWriteLock(true);
+    private Condition newState = stateLock.writeLock().newCondition();
 
-
+    private ReentrantLock runLock = new ReentrantLock(true);
 
 	@Override
-	public synchronized void update(@NotNull final Serializable data) {
-		super.update(data);    // Overridden method
-		configProperties();
+	protected void threadInit() {
+        stateLock.writeLock().lock();
+        try {
+		    super.threadInit();
+		    configProperties();
+        }
+        finally {
+            newState.signalAll();
+            stateLock.writeLock().unlock();
+        }
 	}
 
-    /*
+	@Override
+	public void update(@NotNull final Serializable data) {
+        stateLock.writeLock().lock();
+        try {
+            super.update(data);    // Overridden method
+            configProperties();
+        }
+        finally {
+            newState.signalAll();
+            stateLock.writeLock().unlock();
+        }
+	}
 
-     */
-	private synchronized void configProperties() {
+	private void configProperties() {
+        if (! stateLock.writeLock().isHeldByCurrentThread())
+            throw new IllegalStateException("Must be called withe stateLock.wrLock held!");
 		try {
 			mdsUrl = getMapConfig().getOption("mdsUrl");
 			requiredPrefix = getMapConfig().getOption("requiredPrefix", "");
 		}
 		catch ( MandatoryOptionMissingException e) {
 			getLog().warn(e);
-		}
+        }
 	}
 
     /**
@@ -102,38 +121,51 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
      * @see super#threadRun()  
      */
 	@Override
-	protected synchronized void threadRun() {
-		try {
-			getLog().info("Refreshing C3MDSCatalog...");
-			final C3ResourceReader reader = new C3ResourceReader();
-			final String curRequiredPrefix = getRequiredPrefix();
-			final InputStream inputStream = openMdsInputStream();
-			C3Catalog newCatalog = null;
-			// pointless since MDS includes dynamically generated timestamps...
-			//final MD5InputStream checkedStream = new MD5InputStream(inputStream);
-			try {
-				final Iterator<Site> sites = reader.readXmlSites(curRequiredPrefix, inputStream);
-				newCatalog = new C3Catalog(curRequiredPrefix, sites);
-			}
-			finally {
-				try {
-					inputStream.close();
-					if (newCatalog == null)
-						getLog().warn("No new C3MDSCatalog was created (unknown reason)");
-					setCatalog(newCatalog);
-				}
-				catch (IOException e)
-					{ getLog().warn("Error closing MDS stream; new catalog *not* set"); }
-			}
-			getLog().debug("Finished Refreshing C3MDSCatalog");
-		}
-		catch (RuntimeException e) {
-			getLog().warn(e);
-		}
-		catch (IOException e) {
-			getLog().warn(e);
-		}
-	}
+	protected void threadRun() {
+       getLog().info("Refreshing C3MDSCatalog...");
+        try {
+            if (runLock.tryLock(0, TimeUnit.SECONDS))
+                 try {
+                     final C3ResourceReader reader = new C3ResourceReader();
+                     final String curRequiredPrefix = getRequiredPrefix();
+                     final InputStream inputStream = openMdsInputStream();
+                     C3Catalog newCatalog = null;
+                     // pointless since MDS includes dynamically generated timestamps...
+                     //final MD5InputStream checkedStream = new MD5InputStream(inputStream);
+                     try {
+                         final Iterator<Site> sites = reader.readXmlSites(curRequiredPrefix, inputStream);
+                         newCatalog = new C3Catalog(curRequiredPrefix, sites);
+                     }
+                     finally {
+                         try {
+                             inputStream.close();
+                             if (newCatalog == null)
+                                 getLog().warn("No new C3MDSCatalog was created (unknown reason)");
+                             setCatalog(newCatalog);
+                         }
+                         catch (IOException e)
+                             { getLog().warn("Error closing MDS stream; new catalog *not* set"); }
+                     }
+                     getLog().debug("Finished Refreshing C3MDSCatalog");
+                 }
+                 catch (Exception e) {
+                     getLog().warn(e);
+                 }
+                 finally { runLock.unlock();}
+            else {
+                try {
+                    // This fills in the stacktrace
+                    throw new RuntimeException(
+                            "Couldnt acquire log for reading C3MDSCatalog... Please increment delay time! ");
+                } catch (RuntimeException e) {
+                    getLog().warn(e);
+                    getLog().debug("Aborted Refreshing C3MDSCatalog");
+                }
+            }
+        } catch (InterruptedException e) {
+            getLog().warn(e);
+        }
+    }
 
     /**
      * Returns an InputStream, connected to the mds.
@@ -170,21 +202,33 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
      *
      * @return the C3Catalog of the Configlet
      */
-	public synchronized C3Catalog getCatalog() {
-		while ( catalog == null )
-			try {
-				wait();
-			}
-			catch (InterruptedException e) {
-				/* ignored */
-			}
-		return catalog;
+	public C3Catalog getCatalog() {
+        boolean first = true;
+        C3Catalog snapshot;
+        do {
+            if (first)
+                first = false;
+            else
+                try { newState.await(); }
+                catch (InterruptedException ignored) {}
+            stateLock.readLock().lock();
+            try {
+                snapshot = catalog;
+            }
+            finally { stateLock.readLock().unlock(); }
+        }
+        while (snapshot == null);
+        return snapshot;
 	}
 
 
-	private synchronized void setCatalog(final C3Catalog newCatalogParam) {
-		catalog = newCatalogParam;
-		notifyAll();
+	private void setCatalog(final C3Catalog newCatalogParam) {
+        stateLock.writeLock().lock();
+        try {
+            catalog = newCatalogParam;
+            newState.signalAll();
+        }
+        finally { stateLock.writeLock().unlock(); }
 	}
 
 
@@ -194,13 +238,21 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 	}
 
 
-	public synchronized String getMdsUrl() {
-		return mdsUrl;
+	public String getMdsUrl() {
+        stateLock.readLock().lock();
+        try {
+		    return mdsUrl;
+        }
+        finally { stateLock.readLock().unlock(); }
 	}
 
 
-	public synchronized String getRequiredPrefix() {
-		return requiredPrefix;
+	public String getRequiredPrefix() {
+        stateLock.readLock().lock();
+        try {
+            return requiredPrefix;
+        }
+        finally { stateLock.readLock().unlock(); }
 	}
 
 
@@ -459,7 +511,5 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 			}
 			return smaller;
 		}
-
-
 	}
 }
