@@ -21,6 +21,7 @@ package de.zib.gndms.infra.system;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import de.zib.gndms.GNDMSVerInfo;
+import de.zib.gndms.c3resource.jaxb.Modules;
 import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.grams.LinuxDirectoryAux;
 import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
@@ -86,7 +87,7 @@ import java.util.concurrent.*;
         "OverloadedMethodsWithSameNumberOfParameters", "NestedAssignment",
         "ClassWithTooManyMethods" })
 public final class GNDMSystem
-	  implements Initializable, SystemHolder, EMFactoryProvider, Module,
+	  implements Initializable, SystemHolder, EMFactoryProvider, Modules.Module,
         ModelUpdateListener<GridResource> {
     private static final long EXECUTOR_SHUTDOWN_TIME = 5000L;
 

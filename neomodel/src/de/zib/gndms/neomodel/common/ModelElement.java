@@ -37,8 +37,7 @@ public abstract class ModelElement<U extends PropertyContainer> extends ModelEnt
     public static final String TYPE_P = "TYPE_P";
 
     final @NotNull U representation;
-    final @NotNull
-    ReprSession reprSession;
+    final @NotNull ReprSession reprSession;
     final @NotNull private String typeNick;
 
     protected ModelElement(@NotNull ReprSession session, @NotNull String typeNick, @NotNull U underlying) {
@@ -50,6 +49,7 @@ public abstract class ModelElement<U extends PropertyContainer> extends ModelEnt
         if (! underlying.hasProperty(TYPE_P))
             underlying.setProperty(TYPE_P, getTypeNick());
         repr().setProperty(TYPE_P, getTypeNick());
+        // todo throw exception if type_p exists and not equal
     }
 
     @NotNull protected U getRepresentation() {

@@ -27,10 +27,8 @@ import org.jetbrains.annotations.NotNull;
  * User: stepn Date: 05.09.2008 Time: 14:48:36
  */
 public class ReprSession {
-    private final @NotNull
-    Session session;
-    private final @NotNull
-    Dao dao;
+    private final @NotNull Session session;
+    private final @NotNull Dao dao;
 
     ReprSession(@NotNull Dao dao, @NotNull Session session) {
         this.dao     = dao;

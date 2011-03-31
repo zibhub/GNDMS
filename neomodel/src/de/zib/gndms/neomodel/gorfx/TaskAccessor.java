@@ -43,8 +43,7 @@ public interface TaskAccessor extends GridResourceItf, TimedGridResourceItf {
 
     @NotNull String getDescription();
 
-    @Nullable
-    OfferType getOfferType();
+    @Nullable OfferType getOfferType();
 
     @Nullable Calendar getTerminationTime();
 
@@ -54,13 +53,11 @@ public interface TaskAccessor extends GridResourceItf, TimedGridResourceItf {
 
     int getProgress();
 
-    @NotNull
-    TaskAccessor getRootTask();
+    @NotNull TaskAccessor getRootTask();
 
     boolean hasParent();
 
-    @Nullable
-    TaskAccessor getParent();
+    @Nullable TaskAccessor getParent();
 
     boolean isRootTask();
 

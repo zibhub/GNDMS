@@ -51,7 +51,7 @@ public class Session {
     ReprSession reprSession;
 
     public Session(@NotNull Dao dao, @NotNull String gridName, @NotNull GraphDatabaseService gdb) {
-        this.gdb          =    gdb;
+        this.gdb          = gdb;
         this.tx           = gdb.beginTx();
         this.gridName     = gridName;
         this.reprSession  = new ReprSession(dao, this);
