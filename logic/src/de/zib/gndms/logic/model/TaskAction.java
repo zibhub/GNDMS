@@ -228,8 +228,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
         return getModel();
     }
 
-    protected @NotNull
-    TaskAccessor getTaskSnapshot(@NotNull Dao dao) {
+    protected @NotNull TaskAccessor getTaskSnapshot(@NotNull Dao dao) {
         final Session session = dao.beginSession();
         try {
             final TaskAccessor snapshot = getTask(session).getSnapshot();
@@ -239,8 +238,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
         finally { session.finish(); }
     }
 
-    protected @NotNull
-    Task getTask(@NotNull Session session) {
+    protected @NotNull Task getTask(@NotNull Session session) {
         Taskling model = getModel();
         if (model == null)
             throw new NullPointerException("Task action without model (Taskling)");

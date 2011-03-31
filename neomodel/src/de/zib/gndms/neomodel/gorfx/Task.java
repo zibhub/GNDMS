@@ -209,8 +209,7 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
             setProperty(PROGRESS_P, progress);
     }
 
-    public @NotNull
-    Task getRootTask() {
+    public @NotNull Task getRootTask() {
         final @Nullable Task parent = getParent();
         if (parent == null) return this; else return parent.getRootTask();
     }
@@ -220,8 +219,7 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
     }
 
 
-    public @Nullable
-    Task getParent() {
+    public @Nullable Task getParent() {
         final Relationship rel = repr().getSingleRelationship(TaskRelationships.PARENT_REL, Direction.OUTGOING);
         if (rel == null)
             return null;
@@ -303,8 +301,7 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
         setProperty(Serializable.class, ORQ_P, orq);
     }
 
-    public @NotNull
-    PersistentContract getContract() {
+    public @NotNull PersistentContract getContract() {
         return getProperty(PersistentContract.class, CONTRACT_P);
     }
 

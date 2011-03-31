@@ -31,8 +31,7 @@ import org.jetbrains.annotations.NotNull;
  * User: stepn Date: 05.09.2008 Time: 14:48:36
  */
 public class Taskling extends GridEntity implements GridResourceItf {
-    final @NotNull
-    Dao dao;
+    final @NotNull Dao dao;
     @NotNull String id;
 
     public Taskling(@NotNull Dao dao, @NotNull String taskId) {
@@ -49,13 +48,13 @@ public class Taskling extends GridEntity implements GridResourceItf {
         this.id = id;
     }
 
-    @NotNull
-    Dao getDao() {
+    @NotNull Dao getDao() {
         return dao;
     }
 
     @NotNull
     public Task getTask(@NotNull Session neoSession) {
+        // maybe check that session is from dao TODO
         return neoSession.findTask(getId());
     }
 }
