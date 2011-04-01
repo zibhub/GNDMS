@@ -30,6 +30,11 @@ import java.util.Map;
  */
 public class UriFactory {
 
+    final public static String SERVICE       = "service";
+    final public static String TASKFLOW_TYPE = "type";
+    final public static String TASKFLOW_ID   = "id";
+    final public static String TASK_ID       = "taskId";
+
     private String baseUrl;
     private UriTemplate taskFlowTemplate;
     private UriTemplate taskFlowTypeTemplate;

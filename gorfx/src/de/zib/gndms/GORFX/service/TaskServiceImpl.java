@@ -19,10 +19,14 @@ import de.zib.gndms.devel.NotYetImplementedException;
 import de.zib.gndms.logic.taskflow.TaskFlowFactory;
 import de.zib.gndms.logic.taskflow.executor.TFExecutor;
 import de.zib.gndms.model.gorfx.types.*;
+import de.zib.gndms.neomodel.common.Dao;
+import de.zib.gndms.neomodel.common.Session;
+import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.rest.Facet;
 import de.zib.gndms.rest.Facets;
 import de.zib.gndms.rest.GNDMSResponseHeader;
 import de.zib.gndms.rest.UriFactory;
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +56,7 @@ public class TaskServiceImpl implements TaskService {
     private String serviceUrl;
     private UriFactory uriFactory;
     private List<String> facets;
+    private Dao dao;
 
     @PostConstruct
     void init( ) {
@@ -84,11 +89,17 @@ public class TaskServiceImpl implements TaskService {
     public ResponseEntity<Facets> getTaskFacets( @PathVariable String id, @RequestHeader( "DN" ) String dn ) {
 
         logger.debug( "get task called with id " + id );
-        findTask( id ); // ensures that id is valid
+        Session session = dao.beginSession();
+        try {
+            findTask( id, session ); // ensures that id is valid
+            session.success();
+        } finally {
+            session.finish();
+        }
 
         Map<String,String> uriargs = new HashMap<String, String>( 2 );
-        uriargs.put( "service", "gorfx" );
-        uriargs.put( "taskId", id );
+        uriargs.put( UriFactory.SERVICE, "gorfx" );
+        uriargs.put( UriFactory.TASK_ID, id );
 
         ArrayList<Facet> fl = new ArrayList<Facet>( facets.size() );
         for( String f : facets ) {
@@ -103,8 +114,15 @@ public class TaskServiceImpl implements TaskService {
     public ResponseEntity<Void> deleteTask( @PathVariable String id, @RequestHeader( "DN" ) String dn,
                                               @RequestHeader( "WId" ) String wid ) {
 
-        findTask( id );
-        executor.remove( id );
+        logger.debug( "delete task called with id " + id );
+        Session session = dao.beginSession();
+        try {
+            Task t = findTask( id, session ); // ensures that id is valid
+            Task.fullDelete( t, session );
+            session.success();
+        } finally {
+            session.finish();
+        }
 
         return new ResponseEntity<Void>( null, getHeader( id, null, dn, wid  ), HttpStatus.OK );
     }
@@ -114,9 +132,42 @@ public class TaskServiceImpl implements TaskService {
     public ResponseEntity<TaskStatus> getStatus( @PathVariable String id, @RequestHeader( "DN" ) String dn,
                                                  @RequestHeader( "WId" ) String wid ) {
 
-        Task t = findTask( id );
-        return new ResponseEntity<TaskStatus>( t.getStatus(), getHeader( id, "status", dn, wid  ), HttpStatus.OK );
+        Session session = dao.beginSession();
+        try {
+            Task t = findTask( id, session );
+            TaskStatus status = createStatus( t.getTaskState(), t.getProgress(), t.getMaxProgress() );
+            session.success();
+            return new ResponseEntity<TaskStatus>( status, getHeader( id, "status", dn, wid  ), HttpStatus.OK );
+        } finally {
+            session.finish();
+        }
     }
+
+
+    private TaskStatus createStatus( TaskState taskState, int progress, int maxProgress ) {
+        DefaultTaskStatus status = new DefaultTaskStatus( );
+        switch ( taskState ) {
+            case CREATED:
+            case CREATED_UNKNOWN:
+            case INITIALIZED:
+            case INITIALIZED_UNKNOWN:
+            case IN_PROGRESS:
+            case IN_PROGRESS_UNKNOWN:
+                // todo check executor if task is currently executed
+                status.setStatus( TaskStatus.Status.RUNNING );
+            case FAILED:
+                status.setStatus( TaskStatus.Status.FAILED );
+                break;
+            case FINISHED:
+                status.setStatus( TaskStatus.Status.FINISHED );
+                break;
+        }
+        status.setProgress( progress );
+        status.setProgress( maxProgress );
+
+        return status;
+    }
+
 
     @RequestMapping( value = "/_{id}/status", method = RequestMethod.POST )
     public ResponseEntity<Void> changeStatus( @PathVariable String id, @RequestBody TaskControl status,
@@ -132,15 +183,21 @@ public class TaskServiceImpl implements TaskService {
     public ResponseEntity<TaskResult> getResult( @PathVariable String id, @RequestHeader( "DN" ) String dn,
                                                  @RequestHeader( "WId" ) String wid ) {
 
-        Task t = findTask( id );
-        TaskResult res = null;
-        HttpStatus hs = HttpStatus.NOT_FOUND;
-        if( t.hasResult() ) {
-            res = t.getResult();
-            hs = HttpStatus.OK;
-        }
+        Session session = dao.beginSession();
+        try {
+            Task t = findTask( id, session );
+            TaskResult res = null;
+            HttpStatus hs = HttpStatus.NOT_FOUND;
+            t.
+            if( t.hasResult() ) {
+                res = t.getResult();
+                hs = HttpStatus.OK;
+            }
 
-        return new ResponseEntity<TaskResult>( res, getHeader( id, "result", dn, wid  ), hs );
+            return new ResponseEntity<TaskResult>( res, getHeader( id, "result", dn, wid  ), hs );
+        } finally {
+            session.finish();
+        }
     }
 
 
@@ -161,7 +218,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
 
-    protected Task findTask( String id ) throws NoSuchResourceException {
+    protected Task findTask( String id, Session session ) throws NoSuchResourceException {
 
         if( executor.exists( id ) ) {
             return executor.find( id ).getTask();
@@ -174,8 +231,8 @@ public class TaskServiceImpl implements TaskService {
     protected GNDMSResponseHeader getHeader( String id, String facet, String dn, String wid ) {
 
         Map<String,String> uriargs = new HashMap<String, String>( 2 );
-        uriargs.put( "taskId", id );
-        uriargs.put( "service", "gorfx" );
+        uriargs.put( UriFactory.TASK_ID, id );
+        uriargs.put( UriFactory.SERVICE, "gorfx" );
 
         return new GNDMSResponseHeader( uriFactory.taskServiceUri( uriargs ),
             uriFactory.taskUri( uriargs, facet ), serviceUrl, dn, wid );
@@ -197,5 +254,8 @@ public class TaskServiceImpl implements TaskService {
         this.executor = executor;
     }
 
-
+    @Autowired
+    public void setDao( Dao dao ) {
+        this.dao = dao;
+    }
 }

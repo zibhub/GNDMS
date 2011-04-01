@@ -87,7 +87,7 @@ public class NonblockingClientFactory extends AbstractGridFTPClientFactory{
 
     public void shutdown() {
 
-        log.info( "shuting down executors" );
+        log.info( "shutting down executors" );
         for( String hn: hostExecutors.keySet() ) {
             hostExecutors.get( hn ).shutdown();
         }
