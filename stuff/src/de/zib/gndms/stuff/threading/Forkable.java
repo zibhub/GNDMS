@@ -1,6 +1,7 @@
 package de.zib.gndms.stuff.threading;
 
-import com.sun.istack.internal.NotNull;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.locks.Condition;
@@ -25,6 +26,7 @@ import java.util.concurrent.locks.ReentrantLock;
  *         User stepn Date: 01.04.11 TIME: 11:55
  */
 public class Forkable<T> implements Callable<T> {
+
     private final @NotNull Callable<T> callable;
 
     private final @NotNull Lock stopLock = new ReentrantLock();
