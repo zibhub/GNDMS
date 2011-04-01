@@ -3,328 +3,159 @@ package de.zib.gndms.stuff.threading;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * DV is a very flexible implementation of a data flow variable.
- *
- * A dataflow variable is a thread-safe variable that can be set once to a value of type V or a Throwable of type T
+ * A dataflow variable~(DV) is a variable that can be set once to a value of type V or a Throwable of type T
  * (called cause).
- *
- * Multiple attempts to either set a value of set a cause usually result in an IllegalStateException. However this
- * behavior may be changed by overriding replaceValue or replaceCause in subclasses (potentially subject to weather the
- * DV value has been wasRetrieved by calling get).
- *
- * Additionally an invalid value may be converted to an exception and an exception may be converted to sensible
- * default value by overriding validateCause or toCause in subclasses.
- *
+ * <p/>
+ * Implementations typically are thread-safe and instances may be used multiple times by "emptying" the DV
+ * again by calling setEmpty()
+ * <p/>
+ * Multiple attempts to either set a value or set a cause will usually trigger an IllegalStateException
+ * <p/>
+ * Implementations may choose to provide two sets of calls for retrieving a DV's content.
+ * <p/>
+ * peekValue() calls retrieve the content without any side effect. Not all implementations may support this.
+ * <p/>
+ * getValue() calls retrieve the content and may take notice of this insofar as that the implementation
+ * may be behave differently afterwards regarding future calls to a setter (i.e. reject further set attempts).
+ * <p/>
+ * In any case, multiple calls to getValue() or peekValue() without any interleaving calls to a setter are guaranteed
+ * to always produce the same value.
  *
  * @author try ste fan pla nti kow zib
  *         <p/>
  *         User stepn Date: 01.04.11 TIME: 17:05
  */
 @SuppressWarnings({"UnusedDeclaration"})
-public final class DV<V, T extends Throwable> implements Iterable<V> {
+public interface DV<V, T extends Throwable> extends Iterable<V> {
+
     /**
-     * State of a DV
+     * @return true, if the DV does not contain a value or a cause
      */
-    public static enum State {
+    public boolean isEmpty();
+
+
+    /**
+     * @return true, if the DV currently contains a value
+     */
+    public boolean hasValue();
+
+
+    /**
+     * @return true, if the DV currently contains a cause
+     */
+    public boolean hasCause();
+
+    /**
+     * Sets this DV to be empty again
+     *
+     * @throws UnsupportedOperationException if implementations choose to not provide this behavior
+     */
+    public void setEmpty() throws UnsupportedOperationException;
+
+    /**
+     * If possible, set this DV to contain a value and construct this value using newValue
+     *
+     * @param newValue the value to be used for setting the DV
+     * @throws IllegalStateException    if the DV does not allow to be set at this point
+     * @throws IllegalArgumentException if the DV does not allow to be set using newValue at this point
+     */
+    void setValue(V newValue) throws IllegalStateException, IllegalArgumentException;
+
+    /**
+     * If possible, set this DV to contain a cause and construct this cause using newCause
+     *
+     * @param newCause the cause to be used for setting the DV
+     * @throws IllegalStateException    if the DV does not allow to be set to a value at this point
+     * @throws IllegalArgumentException if the DV does not allow to be set to a cause using newCause at this point
+     */
+    void setCause(T newCause) throws IllegalStateException, IllegalArgumentException;
+
+    /**
+     * @return the current value to which this DV has been set
+     *         <p/>
+     *         This method may block indefinitely
+     *         <p/>
+     *         The DV may notice that the value has been retrieved and behave differently afterwards
+     *         (i.e. not accept further calls to set).
+     * @throws T if this DV does not contain a value but a cause of type T
+     */
+    V getValue() throws T;
+
+    /**
+     * @return the current value to which this DV has been set
+     *         <p/>
+     *         This method may block indefinitely
+     * @throws T                             if this DV does not contain a value but a cause of type T
+     * @throws UnsupportedOperationException if the DV implementation does not support peeking
+     */
+    V peekValue() throws T, UnsupportedOperationException;
+
+    /**
+     * @param timeunit number of unit units to be waited at most before a timeout occurs
+     * @param unit     basic time unit used for specifying the timeout
+     *                 <p/>
+     *                 This method may block until timeunit units of unit have passed
+     * @return the current value to which this DV has been set
+     * @throws T                             if this DV does not contain a value but a cause of type T
+     * @throws InterruptedException          if the method was interrupted while waiting for the DV to be set
+     * @throws TimeoutException              if the method hit the timeout while waiting for the DV to be set
+     * @throws UnsupportedOperationException if the DV implementation does not support peeking
+     */
+    V peekValue(long timeunit, TimeUnit unit)
+            throws T, InterruptedException, TimeoutException, UnsupportedOperationException;
+
+
+    /**
+     * @param timeunit number of unit units to be waited at most before a timeout occurs
+     * @param unit     basic time unit used for specifying the timeout
+     *                 <p/>
+     *                 This method may block until timeunit units of unit have passed
+     *                 <p/>
+     *                 The DV may notice that the value has been retrieved and behave differently afterwards
+     *                 (i.e. not accept further calls to set).
+     * @return the current value to which this DV has been set
+     * @throws T                    if this DV does not contain a value but a cause of type T
+     * @throws InterruptedException if the method was interrupted while waiting for the DV to be set
+     * @throws TimeoutException     if the method hit the timeout while waiting for the DV to be set
+     */
+    V getValue(long timeunit, TimeUnit unit) throws T, InterruptedException, TimeoutException;
+
+
+    /**
+     * Constructs either an empty or a single value iterator for the DV value.  If the DV contains
+     * a cause, this cause is thrown on the first call to Iterator.next() as a wrapped RuntimeException
+     *
+     * @return an iterator for the DV
+     */
+    Iterator<V> iterator();
+
+    /**
+     * A factory for DV instances
+     *
+     * @author try ste fan pla nti kow zib
+     *         <p/>
+     *         User stepn Date: 01.04.11 TIME: 21:44
+     * @see de.zib.gndms.stuff.threading.DV
+     */
+    public static interface Factory {
         /**
-         * Used to indicate that a DV has not been set to either a cause or a value
+         * @return new DV instance that is empty
          */
-        UNSET,
+        <V, T extends Throwable> DV<V, T> newEmpty();
 
         /**
-         * Used to indicate that a DV has been set to a valued
+         * @param value the value to be put inside the returned DV
+         * @return new DV instance that contains value as its value
          */
-        VALUE,
+        <V, T extends Throwable> DV<V, T> newValue(V value);
 
         /**
-         * Used to indicate that a DV has been set to a cause
+         * @param cause the cause to be put inside the returned DV
+         * @return new DV instance that contains cause as its cause
          */
-        CAUSE;
+        <V, T extends Throwable> DV<V, T> newCause(T cause);
 
-        /**
-         * @return true if this state equals UNSET
-         */
-        public boolean isSet() { return ! UNSET.equals(this); }
-    }
-
-    // lock for protecting all DV state
-    private final Lock lock = new ReentrantLock();
-
-    // condition used to signal whenever a value or cause is set
-    private final Condition wasSetCond = lock.newCondition();
-
-    /* actual DV state */
-
-    private State state = State.UNSET;
-    // if true, a DV cause or value was retrieved by a getXXX call
-    private boolean wasRetrieved = false;
-    private V value;
-    private T cause;
-
-
-    /**
-     * Attempts to set this DV to newValue.
-     *
-     * If DV is already set to another value, tries to merge the two values by calling replaceValue.
-     *
-     * @param newValue the candidate value for this DV
-     *
-     * @throws IllegalStateException if DV is already set to some cause
-     */
-    public void setValue(final V newValue) {
-        lock.lock();
-        try {
-            if (state.isSet()) {
-                if (State.VALUE.equals(state))
-                    value = replaceValue(wasRetrieved, value, newValue);
-                else
-                    throw mkDVAlreadySet(wasRetrieved);
-            }
-            else {
-                state  = State.VALUE;
-                value  = newValue;
-                wasSetCond.signalAll();
-            }
-        }
-        finally { lock.unlock(); }
-    }
-
-
-    /**
-     * Try to merge oldValue and newValue into a final value for this DV.
-     *
-     * @param retrieved true if oldValue has already been seen by some client via a getXXX call
-     * @param oldValue the old value of this DV
-     * @param newValue the new candidate value of this DV
-     *
-     * @return the replacement value for this DV
-     *
-     * @throws IllegalStateException if the values cannot be merged
-     */
-    protected V replaceValue(boolean retrieved, final V oldValue, final V newValue) {
-        throw mkDVAlreadySet(retrieved);
-    }
-
-
-    /**
-     * Attempts to set this DV to newCause.
-     *
-     * If DV is already set to another cause, tries to merge the two causes by calling replaceCause.
-     *
-     * @param newCause the candidate cause for this DV
-     *
-     * @throws IllegalStateException if DV is already set to some value
-     */
-    public void setCause(final T newCause) {
-        lock.lock();
-        try {
-            if (state.isSet()) {
-                if (State.CAUSE.equals(state)) {
-                    cause = replaceCause(wasRetrieved, cause, newCause);
-                }
-                else
-                    throw mkDVAlreadySet(wasRetrieved);
-            }
-            else {
-                state  = State.CAUSE;
-                cause  = newCause;
-                wasSetCond.signalAll();
-            }
-        }
-        finally { lock.unlock(); }
-    }
-
-    
-    /**
-     * Try to merge oldCause and newCause into a final cause for this DV.
-     *
-     * @param retrieved true if oldCause has already been seen by some client via a getXXX call
-     * @param oldCause the old Cause of this DV
-     * @param newCause the new candidate cause of this DV
-     *
-     * @return the replacement cause for this DV
-     *
-     * @throws IllegalStateException if the causes cannot be merged
-     */
-    protected T replaceCause(boolean retrieved, final T oldCause, final T newCause) {
-        throw mkDVAlreadySet(retrieved);
-    }
-
-    /**
-     * @return cause, if one is set (Does not change the wasRetrieved state)
-     */
-    public T peekCause() {
-        lock.lock();
-        try {
-            if (State.CAUSE.equals(state))
-                return cause;
-            else
-                throw new IllegalStateException("DV cause has not been set");
-        }
-        finally { lock.unlock(); }
-    }
-
-
-    /**
-     * @return state, if one is set (Does not change the wasRetrieved state)
-     */
-    public State peekState() {
-        lock.lock();
-        try {
-            return state;
-        }
-        finally { lock.unlock(); }
-    }
-
-    /**
-     * @return value, if a cause is set (Sets wasRetrieved state)
-     *
-     * @throws T, if a cause is set (Sets wasRetrieved state)
-     */
-    public V getValue() throws T {
-        return getOrPeekValue(false);
-    }
-
-    /**
-     * @return value, if a cause is set (Does not change the wasRetrieved state)
-     *
-     * @throws T, if a cause is set (Does not change the wasRetrieved state)
-     */
-    public V peekValue() throws T {
-        return getOrPeekValue(true);
-    }
-
-    /**
-     * @param timeunit amount of unit timeunits to wait
-     * @param unit timeunit used by timeunit
-     *
-     * @return value, if a cause is set (Sets wasRetrieved state)
-     *
-     * @throws T, if a cause is set (Sets wasRetrieved state)
-     * @throws InterruptedException if the thread was interrupted
-     * @throws TimeoutException if the result could not be determined with the given timeout
-     */
-    public V getValue(long timeunit, TimeUnit unit) throws T, InterruptedException, TimeoutException {
-        return getOrPeekValue(false, timeunit, unit);
-    }
-
-    /**
-     * @param timeunit amount of unit timeunits to wait
-     * @param unit timeunit used by timeunit
-     *
-     * @return value, if a cause is set (Does not change the wasRetrieved state)
-     *
-     * @throws T, if a cause is set (Does not change the wasRetrieved state)
-     * @throws InterruptedException if the thread was interrupted
-     * @throws TimeoutException if the result could not be determined with the given timeout
-     */
-    public V peekValue(long timeunit, TimeUnit unit) throws T, InterruptedException, TimeoutException {
-        return getOrPeekValue(true, timeunit, unit);
-    }
-
-    private V getOrPeekValue(boolean peekOnly) throws T {
-        lock.lock();
-        try {
-            while (true) {
-                if (state.isSet())
-                    return fetchValue(peekOnly);
-                else
-                    wasSetCond.awaitUninterruptibly();
-            }
-        }
-        finally { lock.unlock(); }
-    }
-
-    private V getOrPeekValue(boolean peekOnly, long timeunit, TimeUnit unit)
-            throws T, InterruptedException, TimeoutException {
-        lock.lock();
-        try {
-            if (! state.isSet())
-                wasSetCond.await(timeunit, unit);
-
-            if (state.isSet())
-                return fetchValue(peekOnly);
-            else
-                throw new TimeoutException();
-        }
-        finally { lock.unlock(); }
-    }
-
-    private V fetchValue(boolean peekOnly) throws T {
-        switch (state) {
-            case VALUE:
-                wasRetrieved |= !peekOnly;
-                return validateValue(value);
-            case CAUSE:
-                wasRetrieved |= !peekOnly;
-                return validateCause(cause);
-             default:
-                 throw new IllegalStateException("Unsupported DV state encountered");
-        }
-    }
-
-    /**
-     * Validation callback
-     *
-     *
-     * @param value the value to which this DV has been set
-     *
-     * @return a final result value returned to the user
-     *
-     * @throws T a cause thrown if validation fails
-     */
-    protected V validateValue(final V value) throws T {
-        return value;
-    }
-
-    /**
-     * Default value callback
-     *
-     * @param cause to which this DV has been set
-     *
-     * @return a default value to be used instead
-     *
-     * @throws T an actual cause to be thrown instead of cause
-     */
-    protected V validateCause(final T cause) throws T {
-        throw cause;
-    }
-
-    private IllegalStateException mkDVAlreadySet(boolean retrieved) {
-        return new IllegalStateException(retrieved ?  "DV already set and wasRetrieved" : "DV already set");
-    }
-
-
-    /**
-     * @return an empty or a single element iterator for this DV
-     *
-     * RuntimeException with boxed cause is thrown on iterator().next() if DV is set to one
-     */
-    public Iterator<V> iterator() {
-        return new Iterator<V>() {
-            boolean hasNext = true;
-
-            public boolean hasNext() {
-                return hasNext && (peekState().isSet());
-            }
-
-            public V next() {
-                hasNext = false;
-                try {
-                    return getValue();
-                } catch (Throwable t) {
-                    throw new RuntimeException(t);
-                }
-            }
-
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
-        };
     }
 }

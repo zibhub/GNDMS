@@ -16,8 +16,6 @@ package de.zib.gndms.stuff.threading;
  * limitations under the License.
  */
 
-
-
 import org.jetbrains.annotations.NotNull;
 
 /**
