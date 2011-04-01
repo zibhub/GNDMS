@@ -25,6 +25,7 @@ import java.util.concurrent.locks.ReentrantLock;
  *         User stepn Date: 01.04.11 TIME: 11:55
  */
 public class Forkable<T> implements Callable<T> {
+
     private final @NotNull Callable<T> callable;
 
     private final @NotNull Lock stopLock = new ReentrantLock();

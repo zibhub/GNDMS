@@ -53,7 +53,8 @@ public class NetworkAuxiliariesProvider {
 
     // private final GridFTPClientFactory gridFTPClientFactory = new SimpleGridFTPClientFactory();
    // private final GridFTPClientFactory gridFTPClientFactory = new CertGridFTPClientFactory();
-    private final static GridFTPClientFactory gridFTPClientFactory = new NonblockingClientFactory();
+    //private final static GridFTPClientFactory gridFTPClientFactory = new NonblockingClientFactory();
+    private final static GridFTPClientFactory gridFTPClientFactory = new StrictNonblockingClientFactory();
     private final static BandWidthEstimater bandWidthEstimater = new StaticBandWidthEstimater();
 
 
