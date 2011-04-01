@@ -78,9 +78,9 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     public ResponseEntity<Facets> getFacets( @PathVariable String type, @PathVariable String id, @RequestHeader( "DN" ) String dn ) {
 
         Map<String,String> uriargs = new HashMap<String, String>( 2 );
-        uriargs.put( "id", id );
-        uriargs.put( "type", type );
-        uriargs.put( "service", "gorfx" );
+        uriargs.put( UriFactory.TASKFLOW_ID, id );
+        uriargs.put( UriFactory.TASKFLOW_TYPE, type );
+        uriargs.put( UriFactory.SERVICE, "gorfx" );
 
         GNDMSResponseHeader header = new GNDMSResponseHeader( uriFactory.taskFlowTypeUri( uriargs, null ), null, serviceUrl, dn, null );
 
@@ -186,7 +186,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                     tf.setQuotes( lc );
                     HashMap<String, String> urimap = new HashMap<String, String>( 3 );
                     urimap.put( "service", "gorfx" );
-                    urimap.put( "id", id );
+                    urimap.put( TASKFLOW_ID, id );
                     urimap.put( "type", type );
                     for( int i=0; i < lc.size(); ++i ) {
                         urimap.put( "idx", String.valueOf( i ) );
@@ -414,9 +414,9 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     protected GNDMSResponseHeader getHeader( String type, String id, String facet, String dn, String wid ) {
 
         Map<String,String> uriargs = new HashMap<String, String>( 2 );
-        uriargs.put( "id", id );
-        uriargs.put( "type", type );
-        uriargs.put( "service", "gorfx" );
+        uriargs.put( UriFactory.TASKFLOW_ID, id );
+        uriargs.put( UriFactory.TASKFLOW_TYPE, type );
+        uriargs.put( UriFactory.SERVICE, "gorfx" );
 
         return new GNDMSResponseHeader( uriFactory.taskFlowTypeUri( uriargs, facet ), facet, serviceUrl, dn, wid );
     }
@@ -424,10 +424,10 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
     private HashMap<String, String> taskUriMap( String type, String id, Task t ) {
         HashMap<String,String> urimap = new HashMap<String, String>( 4 );
-        urimap.put( "service", "gorfx" );
-        urimap.put( "type", type );
-        urimap.put( "id", id );
-        urimap.put( "taskId", t.getId() );
+        urimap.put( UriFactory.SERVICE, "gorfx" );
+        urimap.put( UriFactory.TASKFLOW_TYPE, type );
+        urimap.put( UriFactory.TASKFLOW_ID, id );
+        urimap.put( UriFactory.TASK_ID, t.getId() );
         return urimap;
     }
 

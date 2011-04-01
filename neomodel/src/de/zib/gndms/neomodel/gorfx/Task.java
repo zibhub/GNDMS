@@ -32,6 +32,7 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.index.impl.lucene.ValueContext;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -536,6 +537,33 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
             return snapshot;
         }
         finally { session.success(); }
+    }
+
+
+    /**
+     * Deletes a task and all of his sub tasks
+     * @param task
+     * @param session
+     */
+    public static void fullDelete( Task task, Session session ) {
+
+        ArrayList<Task> subtasks = new ArrayList<Task>( 10 );
+        collectTasks( subtasks, task,  session );
+        for ( Task subtask : subtasks )
+            subtask.delete( session );
+
+        task.delete( session );
+    }
+
+
+    private static void collectTasks( List<Task> subtasks, Task task, Session session ) {
+
+        for ( Task subtask : task.getSubTasks() )  {
+            if ( subtasks.contains( subtask ) )
+                continue;
+            subtasks.add( subtask );
+            collectTasks( subtasks, subtask, session );
+        }
     }
 }
 

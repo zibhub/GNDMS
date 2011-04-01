@@ -31,8 +31,8 @@ import java.util.Map;
  * User: stepn Date: 05.09.2008 Time: 14:48:36
  */
 public class Dao {
-    @NotNull private GraphDatabaseService gdb;
-    @NotNull private String gridName;
+    final @NotNull private GraphDatabaseService gdb;
+    final @NotNull private String gridName;
 
     public Dao(@NotNull String gridName, @NotNull GraphDatabaseService gdb) {
         this.gridName = gridName;
