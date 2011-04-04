@@ -37,9 +37,13 @@ import org.apache.axis.components.uuid.UUIDGenFactory;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.log4j.*;
 import types.*;
+import types.ContextT;
+import types.ContextTEntry;
+import de.zib.gndms.gritserv.delegation.DelegationAux;
 
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Properties;
 
 public abstract class RequestRunner implements Runnable{
@@ -113,10 +117,23 @@ public abstract class RequestRunner implements Runnable{
         converter.convert();
         orqt = w.getProduct();
         ctxt = ContextXSDTypeWriter.writeContext( ctx );
+        // for debugging
+        //showCtx( ctxt );
         if( con == null )
             cont = GORFXClientUtils.newContract();
         else
             cont = ContractXSDTypeWriter.write( con );
+    }
+
+    protected void showCtx( ContextT con ) {
+        ContextTEntry[] entries = con.getEntry();
+        ArrayList<ContextTEntry> al = new ArrayList<ContextTEntry>( entries.length );
+        EndpointReferenceType epr = null;
+
+        HashMap<String,String> res = new HashMap<String, String>( 1 );
+        for( ContextTEntry e : entries )
+            if( e.getKey().equals( DelegationAux.DELEGATION_EPR_KEY ) )
+                logger.debug( e.getKey().toString() +": " +  e.get_value().toString( ) );
     }
 
 

@@ -26,4 +26,5 @@ enable_interslicetransfer
 enable_mdscatalog
 enable_permissions
 enable_sliceChown
+enable_gsiftpDeadlockPrevention
 refresh_system
