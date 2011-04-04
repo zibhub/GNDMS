@@ -30,7 +30,7 @@ import java.util.ArrayList;
  *          <p/>
  *          User: mjorra, Date: 18.06.2010, Time: 10:42:22
  */
-public abstract class GlobusCredentialProvider implements CredentialProvider {
+public abstract class GlobusCredentialProvider implements CredentialProvider<GlobusCredential> {
 
     private GlobusCredential credential;
 

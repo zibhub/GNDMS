@@ -36,7 +36,7 @@ import java.util.List;
  *          <p/>
  *          User: mjorra, Date: 22.06.2010, Time: 10:13:24
  */
-public class ContainerCredentialProvider implements CredentialProvider {
+public class ContainerCredentialProvider implements CredentialProvider<GlobusCredential> {
 
     private static GlobusCredential cred;
     static {
@@ -64,7 +64,12 @@ public class ContainerCredentialProvider implements CredentialProvider {
     }
 
 
-    public List getCredentials() {
-        return new ArrayList( 1 )  {{ add( cred ); }};
+    public List<GlobusCredential> getCredentials() {
+        return new ArrayList<GlobusCredential>( 1 )  {{ add( cred ); }};
+    }
+
+
+    public GlobusCredential getCredential() {
+        return cred;
     }
 }

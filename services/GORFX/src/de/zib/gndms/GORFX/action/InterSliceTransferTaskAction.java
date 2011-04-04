@@ -24,6 +24,7 @@ import de.zib.gndms.model.gorfx.types.InterSliceTransferORQ;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.SubTask;
+import org.globus.gsi.GlobusCredential;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -55,7 +56,8 @@ public class InterSliceTransferTaskAction extends ORQTaskAction<InterSliceTransf
     protected void onInProgress( @NotNull AbstractTask model ) {
 
         try {
-            InterSliceTransferORQCalculator.checkURIs( getOrq( ) );
+            InterSliceTransferORQCalculator.checkURIs( getOrq( ), (GlobusCredential)
+                getCredentialProvider().getCredential() );
         } catch ( Exception e ) {
             fail( new RuntimeException( e.getMessage( ), e ) );
         }
@@ -69,6 +71,7 @@ public class InterSliceTransferTaskAction extends ORQTaskAction<InterSliceTransf
             st.setTerminationTime( model.getTerminationTime() );
 
 	        FileTransferTaskAction fta = new FileTransferTaskAction(em, st );
+            fta.setCredentialProvider( getCredentialProvider() );
             fta.setClosingEntityManagerOnCleanup( true );
 
             fta.setLog( getLog() );

@@ -468,7 +468,40 @@ define 'gndms' do
                       { :classpath => jars, :properties => 
                           { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" } } )
       end
-    end
+
+      desc 'runs the interSliceTransfer test'
+      task 'run-ist' do 
+
+        jars = compile.dependencies.map(&:to_s)
+        jars << compile.target.to_s
+        if (ENV['gorfx_host'] == nil)
+            gorfx_host = `hostname`.chomp
+        else 
+            gorfx_host = ENV['gorfx_host']
+        end
+        if (ENV['dspace_host'] == nil)
+            dspace_host = `hostname`.chomp
+        else 
+            dspace_host = ENV['dspace_host']
+        end
+        dn = `grid-proxy-info -identity`
+        dn = dn.chomp
+        if (ENV['GNDMS_PROPS'] == nil)
+            prop = 'test-data/test-properties/multi_file_transfer_awi.properties'
+        else 
+            prop = ENV['GNDMS_SFR']
+        end
+        args = [ '-props', prop, 
+                 '-uri', 'https://' + gorfx_host + ':8443/wsrf/services/gndms/GORFX',
+                 '-duri', 'https://' + dspace_host + ':8443/wsrf/services/gndms/DSpace',
+	             '-dn', dn
+        ]
+        puts args
+        Commands.java('de.zib.gndmc.GORFX.tests.MultiRequestClient',  args, 
+                      { :classpath => jars, :properties => 
+                          { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" } } )
+      end
+end
 end
 
 
