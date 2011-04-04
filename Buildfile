@@ -517,7 +517,7 @@ define 'gndms' do
 	             '-dn', dn
         ]
         puts args
-        Commands.java('de.zib.gndmc.GORFX.tests.MultiRequestClient',  args, 
+        Commands.java('de.zib.gndmc.GORFX.tests.InterSliceTransferClient',  args, 
                       { :classpath => jars, :properties => 
                           { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" } } )
       end
