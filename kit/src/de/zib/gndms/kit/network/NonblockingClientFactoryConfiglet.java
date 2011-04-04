@@ -55,8 +55,8 @@ public class NonblockingClientFactoryConfiglet extends DefaultConfiglet {
     private void refreshFactory() {
         final MapConfig mapConfig = getMapConfig();
         try{
-            NonblockingClientFactory fac =
-                NonblockingClientFactory.class.cast( NetworkAuxiliariesProvider.getGridFTPClientFactory() );
+            StrictNonblockingClientFactory fac =
+                StrictNonblockingClientFactory.class.cast( NetworkAuxiliariesProvider.getGridFTPClientFactory() );
             if( mapConfig.hasOption( DELAY ) ) {
                 fac.setDelay( mapConfig.getIntOption( DELAY ) );
             }

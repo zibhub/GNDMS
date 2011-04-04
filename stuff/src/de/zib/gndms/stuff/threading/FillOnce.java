@@ -16,8 +16,6 @@ package de.zib.gndms.stuff.threading;
  * limitations under the License.
  */
 
-
-
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -27,6 +25,8 @@ import org.jetbrains.annotations.NotNull;
  * When retrieving its value {@code get()} will wait, if no value has been set yet.
  *
  * @param <T> the class type of the one value, a FillOnce instance contains.
+ *
+ * @deprecated Use DV, it's way more cool
  */
 public final class FillOnce<T> {
     private final boolean ignoreConflicts;
