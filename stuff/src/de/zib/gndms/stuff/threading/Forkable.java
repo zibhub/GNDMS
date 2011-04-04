@@ -1,6 +1,5 @@
 package de.zib.gndms.stuff.threading;
 
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.Callable;
@@ -86,6 +85,7 @@ public class Forkable<T> implements Callable<T> {
                 resultCond.await();
                 loop = ! done;
             } catch (InterruptedException e) {
+                Thread.interrupted();
                 if (shouldStop()) {
                     loop = false;
                     stopped = true;
