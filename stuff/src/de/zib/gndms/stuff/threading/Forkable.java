@@ -1,7 +1,6 @@
 package de.zib.gndms.stuff.threading;
 
-import com.sun.istack.internal.NotNull;
-
+import  org.jetbrains.annotations.NotNull;
 import java.util.concurrent.Callable;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;

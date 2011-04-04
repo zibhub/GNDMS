@@ -420,6 +420,21 @@ define 'gndms' do
         Commands.java('de.zib.gndmc.MaintenanceClient',  full_args, { :classpath => jars, :verbose => true } )
       end
 
+      task 'show-version' do
+        jars = compile.dependencies.map(&:to_s)
+        jars << compile.target.to_s
+        uri  = ENV['URI']
+        if (uri == nil) then
+          puts 'Call with env URI="GORFX or DSpace EPR" ARGS="Arguments to .sys.ReadGNDMSVersion'
+          exit 1
+        end
+        args = ENV['ARGS']
+        if (args == nil) then args = "" end
+        full_args = [ '-uri', uri, '.sys.ReadGNDMSVersion' ]
+        full_args << args  
+        Commands.java('de.zib.gndmc.MaintenanceClient',  full_args, { :classpath => jars, :verbose => true } )
+      end
+
       task 'run-test' do
         jars = compile.dependencies.map(&:to_s)
         jars << compile.target.to_s
@@ -452,13 +467,18 @@ define 'gndms' do
       task 'run-stress-test' do
         jars = compile.dependencies.map(&:to_s)
         jars << compile.target.to_s
-        host = `hostname`.chomp
+        if (ENV['GORFX_URI'] == nil)
+            host = `hostname`.chomp
+        else 
+            host = ENV['GORFX_URI']
+            puts "using", host
+        end
         dn = `grid-proxy-info -identity`
         dn = dn.chomp
         if (ENV['GNDMS_PROPS'] == nil)
             prop = 'test-data/test-properties/multi_file_transfer_awi.properties'
         else 
-            prop = ENV['GNDMS_SFR']
+            prop = ENV['GNDMS_PROPS']
         end
         args = [ '-props', prop, 
                  '-uri', 'https://' + host + ':8443/wsrf/services/gndms/GORFX',

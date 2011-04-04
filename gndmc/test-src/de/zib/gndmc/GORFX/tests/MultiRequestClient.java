@@ -115,6 +115,10 @@ public class MultiRequestClient extends AbstractApplication {
                             List<Properties> pts ) throws IllegalAccessException, InstantiationException {
 
         //HashMap<String,String> mctx = prepareCtx( ctx );
+//        HashMap<String,String> mctx = prepareCtx( ctx );
+//	System.out.println( "context:" );
+//	for( String s: mctx.keySet( ) )
+//		System.out.println( s + ": " + mctx.get( s ) );
 
         List<RequestRunner> res = new ArrayList<RequestRunner>( );
         for( Properties prop : pts ) {
