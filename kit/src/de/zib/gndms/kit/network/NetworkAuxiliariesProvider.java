@@ -54,9 +54,23 @@ public class NetworkAuxiliariesProvider {
     // private final GridFTPClientFactory gridFTPClientFactory = new SimpleGridFTPClientFactory();
    // private final GridFTPClientFactory gridFTPClientFactory = new CertGridFTPClientFactory();
     //private final static GridFTPClientFactory gridFTPClientFactory = new NonblockingClientFactory();
-    private final static GridFTPClientFactory gridFTPClientFactory = new StrictNonblockingClientFactory();
+    private final static Class<StrictNonblockingClientFactory> gridFTPClientFactoryClass = StrictNonblockingClientFactory.class;
+    private final static GridFTPClientFactory gridFTPClientFactory;
     private final static BandWidthEstimater bandWidthEstimater = new StaticBandWidthEstimater();
 
+    static {
+        GridFTPClientFactory gridFTPClientFactory1;
+        try {
+            gridFTPClientFactory1 = gridFTPClientFactoryClass.newInstance();
+        } catch ( InstantiationException e ) {
+            gridFTPClientFactory1 = new NonblockingClientFactory(); // fallback
+            e.printStackTrace();
+        } catch ( IllegalAccessException e ) {
+            gridFTPClientFactory1 = new NonblockingClientFactory(); // fallback
+            e.printStackTrace();
+        }
+        gridFTPClientFactory = gridFTPClientFactory1;
+    }
 
     public static GridFTPClientFactory getGridFTPClientFactory() {
         return gridFTPClientFactory;
