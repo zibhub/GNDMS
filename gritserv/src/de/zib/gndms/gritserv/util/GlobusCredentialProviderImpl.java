@@ -42,7 +42,9 @@ public class GlobusCredentialProviderImpl extends GlobusCredentialProvider {
 
     static {
         installers = new HashMap<String, CredentialInstaller >();
-        installers.put( GORFXConstantURIs.FILE_TRANSFER_URI, new GridFTPCredentialInstaller() );
+	CredentialInstaller ci = new GridFTPCredentialInstaller();
+        installers.put( GORFXConstantURIs.FILE_TRANSFER_URI, ci );
+        installers.put( GORFXConstantURIs.INTER_SLICE_TRANSFER_URI, ci );
     }
 
 

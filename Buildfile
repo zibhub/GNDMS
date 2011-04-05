@@ -509,7 +509,7 @@ define 'gndms' do
         if (ENV['GNDMS_PROPS'] == nil)
             prop = 'test-data/test-properties/multi_file_transfer_awi.properties'
         else 
-            prop = ENV['GNDMS_SFR']
+            prop = ENV['GNDMS_PROPS']
         end
         args = [ '-props', prop, 
                  '-uri', 'https://' + gorfx_host + ':8443/wsrf/services/gndms/GORFX',
@@ -517,7 +517,7 @@ define 'gndms' do
 	             '-dn', dn
         ]
         puts args
-        Commands.java('de.zib.gndmc.GORFX.tests.MultiRequestClient',  args, 
+        Commands.java('de.zib.gndmc.GORFX.InterSliceTransferClient',  args, 
                       { :classpath => jars, :properties => 
                           { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" } } )
       end

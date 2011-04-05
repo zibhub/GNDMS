@@ -75,9 +75,8 @@ public class Forkable<T> implements Callable<T> {
             }
         };
 
-        thread.start();
-
-        boolean loop = true;
+        boolean start = true;
+        boolean loop  = true;
 
         while (loop) {
             resultLock.lock();

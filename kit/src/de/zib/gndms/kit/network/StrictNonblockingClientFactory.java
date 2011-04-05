@@ -52,6 +52,7 @@ public class StrictNonblockingClientFactory extends AbstractNonblockingClientFac
         log.info( "submitting creator " +creator.getHost() +" " + creator.getSeq() );
         synchronized ( exec ) {
             f = exec.submit( fork );
+            //f = exec.submit( creator );
         }
 
         try {

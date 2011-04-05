@@ -1,6 +1,6 @@
 package de.zib.gndms.stuff.threading;
 
-import com.sun.istack.internal.NotNull;
+import org.jetbrains.annotations.NotNull;
 import de.zib.gndms.stuff.threading.impl.DefaultDV;
 
 import java.util.concurrent.*;
