@@ -64,7 +64,7 @@ public class InterSliceTransferTaskAction extends ORQTaskAction<InterSliceTransf
 
         SubTask st = new SubTask( model );
         try {
-	        final EntityManager em = getEmf().createEntityManager();
+		final EntityManager em = getEntityManager();
 
             st.setId( getUUIDGen().nextUUID() );
             st.fromTask( em, model );
@@ -72,7 +72,8 @@ public class InterSliceTransferTaskAction extends ORQTaskAction<InterSliceTransf
 
 	        FileTransferTaskAction fta = new FileTransferTaskAction(em, st );
             fta.setCredentialProvider( getCredentialProvider() );
-            fta.setClosingEntityManagerOnCleanup( true );
+            fta.setClosingEntityManagerOnCleanup( false );
+		fta.setEmf( getEmf( ) );
 
             fta.setLog( getLog() );
             fta.call( );
@@ -81,7 +82,7 @@ public class InterSliceTransferTaskAction extends ORQTaskAction<InterSliceTransf
             else
                 failFrom( (RuntimeException) st.getData() );
 
-        } catch ( RuntimeException e ) {
+        } catch ( TransitException e ) {
             honorOngoingTransit( e );
         } catch ( Exception e ) {
             /*

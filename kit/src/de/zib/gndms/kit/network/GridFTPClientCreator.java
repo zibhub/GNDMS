@@ -57,8 +57,6 @@ public class GridFTPClientCreator implements Callable<GridFTPClient>  {
         this.port = port;
         this.credProvider = cp;
         ctx = NDC.cloneStack();
-        ctx.push( "host:" + host );
-        ctx.push( "seq:" + seq );
         this.seq = seq;
     }
 
@@ -66,6 +64,8 @@ public class GridFTPClientCreator implements Callable<GridFTPClient>  {
     public GridFTPClient call() throws ServerException, IOException, InterruptedException, ClientException {
 
         NDC.inherit( ctx );
+        NDC.push( "host:" + host );
+        NDC.push( "seq:" + seq );
         /*
         int stacksize = ctx.size();
         while (! ctx.empty() ) {
