@@ -155,7 +155,7 @@ public class LinuxDirectoryAux implements DirectoryAux {
                 ++ret;
             }
         } while ( ret <= 3 );
-        return false;
+        throw new RuntimeException( "failed to create slice dir " + pth + " for user " +uid+ " with " + perm );
     }
 
 
