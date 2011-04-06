@@ -42,6 +42,7 @@ public class LinuxDirectoryAux implements DirectoryAux {
     final static String RW = "700";
     final static String EXECUTABLE = "executable";
     final static String ARGS = "arguments";
+    final static int DELAY = 1000;
 
     public boolean setDirectoryReadWrite( String uid, String pth ) {
         return setMode( uid, RW, pth );
@@ -135,15 +136,28 @@ public class LinuxDirectoryAux implements DirectoryAux {
     }
 
 
-
     public boolean mkdir( String uid, String pth, AccessMask perm ) {
 
         HashMap<String, Object> jd = new HashMap<String, Object>( 2 );
         jd.put( EXECUTABLE, "/bin/mkdir" );
         jd.put( ARGS, new String[] { "-p", pth, "-m", perm.toString() } );
 
-        return executeGramsJob( uid, jd );
+        int ret = 1;
+        do  {
+            logger.debug( ret +". attempt to create slice dir" + pth );
+            executeGramsJob( uid, jd );
+            File f = new File( pth );
+            if( f.exists() ) {
+                logger.debug( "creation successful" );
+                return true;
+            } else {
+                logger.debug( "failed retying after " + DELAY + "ms" );
+                ++ret;
+            }
+        } while ( ret <= 3 );
+        return false;
     }
+
 
     public boolean copyDir( String uid, String src_pth, String tgt_pth ) {
 
