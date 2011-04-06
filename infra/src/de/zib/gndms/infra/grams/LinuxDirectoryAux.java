@@ -42,7 +42,9 @@ public class LinuxDirectoryAux implements DirectoryAux {
     final static String RW = "700";
     final static String EXECUTABLE = "executable";
     final static String ARGS = "arguments";
-    final static int DELAY = 1000;
+    final static int DELAY = 10000;
+    private static final int NUM_RETRYS = 5;
+
 
     public boolean setDirectoryReadWrite( String uid, String pth ) {
         return setMode( uid, RW, pth );
@@ -128,11 +130,19 @@ public class LinuxDirectoryAux implements DirectoryAux {
 
     public boolean deleteDirectory(String uid, String pth) {
 
+        File f = new File( pth );
+        if(! f.exists() )
+            throw new RuntimeException( "failed to delete dir " + pth + ": doesn't exists" );
+
         HashMap<String, Object> jd = new HashMap<String, Object>( 2 );
         jd.put( EXECUTABLE, "/bin/rm" );
         jd.put( ARGS, new String[] { "-rf", pth } );
 
-        return executeGramsJob( uid, jd );
+        executeGramsJob( uid, jd );
+        if( f.exists() )
+            throw new RuntimeException( "failed to delete dir " + pth + " as user " +uid );
+
+        return true;
     }
 
 
@@ -154,7 +164,7 @@ public class LinuxDirectoryAux implements DirectoryAux {
                 logger.debug( "failed retying after " + DELAY + "ms" );
                 ++ret;
             }
-        } while ( ret <= 3 );
+        } while ( ret <= NUM_RETRYS );
         throw new RuntimeException( "failed to create slice dir " + pth + " for user " +uid+ " with " + perm );
     }
 
