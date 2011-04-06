@@ -161,7 +161,12 @@ public class LinuxDirectoryAux implements DirectoryAux {
                 logger.debug( "creation successful" );
                 return true;
             } else {
-                logger.debug( "failed retying after " + DELAY + "ms" );
+                logger.debug( "failed retrying after " + DELAY + "ms" );
+                try {
+                    Thread.sleep( DELAY );
+                } catch ( InterruptedException e ) {
+                    logger.debug( "retry delay interrupted" );
+                }
                 ++ret;
             }
         } while ( ret <= NUM_RETRYS );
