@@ -30,6 +30,7 @@ public interface TaskStatus {
                  FAILED, ///< Some exception has occurred and the task is failed
                  RUNNING, ///< Task is still running
                  WAITING, ///< Task hasn't been started yet.
+                 KILLED, ///< Task exceeded its ttl and was removed.
                  PAUSED ///< Task execution was paused.
         }
 

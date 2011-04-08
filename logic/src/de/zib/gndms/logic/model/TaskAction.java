@@ -220,6 +220,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
             }
 
             if (altTaskState) {
+                // todo handle altTaskState
             }
             inFirstStep = false;
         }

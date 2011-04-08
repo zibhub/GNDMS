@@ -15,9 +15,9 @@ package de.zib.gndms.GORFX.service;
  * limitations under the License.
  */
 
+import de.zib.gndms.GORFX.service.util.TaskTypeConverter;
 import de.zib.gndms.devel.NotYetImplementedException;
-import de.zib.gndms.logic.taskflow.TaskFlowFactory;
-import de.zib.gndms.logic.taskflow.executor.TFExecutor;
+import de.zib.gndms.logic.model.TaskExecutionService;
 import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
@@ -26,7 +26,6 @@ import de.zib.gndms.rest.Facet;
 import de.zib.gndms.rest.Facets;
 import de.zib.gndms.rest.GNDMSResponseHeader;
 import de.zib.gndms.rest.UriFactory;
-import org.neo4j.graphdb.GraphDatabaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +37,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -52,7 +52,7 @@ public class TaskServiceImpl implements TaskService {
 
     protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
-    private TFExecutor executor;
+    private TaskExecutionService executor;
     private String serviceUrl;
     private UriFactory uriFactory;
     private List<String> facets;
@@ -135,7 +135,8 @@ public class TaskServiceImpl implements TaskService {
         Session session = dao.beginSession();
         try {
             Task t = findTask( id, session );
-            TaskStatus status = createStatus( t.getTaskState(), t.getProgress(), t.getMaxProgress() );
+            t.getTerminationTime();
+            TaskStatus status = TaskTypeConverter.statusFormTask( t );
             session.success();
             return new ResponseEntity<TaskStatus>( status, getHeader( id, "status", dn, wid  ), HttpStatus.OK );
         } finally {
@@ -144,37 +145,13 @@ public class TaskServiceImpl implements TaskService {
     }
 
 
-    private TaskStatus createStatus( TaskState taskState, int progress, int maxProgress ) {
-        DefaultTaskStatus status = new DefaultTaskStatus( );
-        switch ( taskState ) {
-            case CREATED:
-            case CREATED_UNKNOWN:
-            case INITIALIZED:
-            case INITIALIZED_UNKNOWN:
-            case IN_PROGRESS:
-            case IN_PROGRESS_UNKNOWN:
-                // todo check executor if task is currently executed
-                status.setStatus( TaskStatus.Status.RUNNING );
-            case FAILED:
-                status.setStatus( TaskStatus.Status.FAILED );
-                break;
-            case FINISHED:
-                status.setStatus( TaskStatus.Status.FINISHED );
-                break;
-        }
-        status.setProgress( progress );
-        status.setProgress( maxProgress );
-
-        return status;
-    }
-
 
     @RequestMapping( value = "/_{id}/status", method = RequestMethod.POST )
     public ResponseEntity<Void> changeStatus( @PathVariable String id, @RequestBody TaskControl status,
                                               @RequestHeader( "DN" ) String dn,
                                               @RequestHeader( "WId" ) String wid ) {
 
-        // Actual Task Error URL (Maybe as Redirect)
+        // todo set alt status to task
         return null;
     }
 
@@ -185,14 +162,17 @@ public class TaskServiceImpl implements TaskService {
 
         Session session = dao.beginSession();
         try {
+            HttpStatus hs = HttpStatus.NOT_FOUND;
             Task t = findTask( id, session );
             TaskResult res = null;
-            HttpStatus hs = HttpStatus.NOT_FOUND;
-            t.
-            if( t.hasResult() ) {
-                res = t.getResult();
-                hs = HttpStatus.OK;
+            if( TaskState.FINISHED.equals( t.getTaskState() ) ) {
+                Object pl = t.getPayload();
+                if( pl != null ) {
+                    res = TaskResult.class.cast( res );
+                    hs = HttpStatus.OK;
+                }
             }
+            session.success();
 
             return new ResponseEntity<TaskResult>( res, getHeader( id, "result", dn, wid  ), hs );
         } finally {
@@ -206,22 +186,32 @@ public class TaskServiceImpl implements TaskService {
                                                   @RequestHeader( "DN" ) String dn,
                                                   @RequestHeader( "WId" ) String wid ) {
 
-        Task t = findTask( id );
-        TaskFailure res = null;
-        HttpStatus hs = HttpStatus.NOT_FOUND;
-        if( t.hasError() ) {
-            res = t.getError();
-            hs = HttpStatus.OK;
-        }
+        Session session = dao.beginSession();
+        try {
+            HttpStatus hs = HttpStatus.NOT_FOUND;
+            Task t = findTask( id, session );
+            TaskFailure fail = null;
+            if( TaskState.FAILED.equals( t.getTaskState() ) ) {
+                LinkedList<Exception> pl = t.getCause();
+                if( pl != null ) {
+                    hs = HttpStatus.OK;
+                    fail = TaskTypeConverter.failStackToList( pl );
+                }
+            }
+            session.success();
 
-        return new ResponseEntity<TaskFailure>( res, getHeader( id, "result", dn, wid  ), hs );
+            return new ResponseEntity<TaskFailure>( fail, getHeader( id, "errors", dn, wid  ), hs );
+        } finally {
+            session.finish();
+        }
     }
 
 
     protected Task findTask( String id, Session session ) throws NoSuchResourceException {
 
-        if( executor.exists( id ) ) {
-            return executor.find( id ).getTask();
+        Task t = session.findTask( id );
+        if( t != null ) {
+            return t;
         }
 
         throw new NoSuchResourceException( id );
@@ -250,7 +240,7 @@ public class TaskServiceImpl implements TaskService {
 
 
     @Autowired
-    public void setExecutor( TFExecutor executor ) {
+    public void setExecutor( TaskExecutionService executor ) {
         this.executor = executor;
     }
 
