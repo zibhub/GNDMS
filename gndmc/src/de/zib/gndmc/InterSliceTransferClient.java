@@ -68,14 +68,15 @@ public class InterSliceTransferClient extends AbstractApplication {
     public void run() throws Exception {
 
         // Create reusable context with pseudo DN
-        final ContextT xsdContext = new ContextT();
         final ContextTEntry entry =
             GORFXTools.createContextEntry("Auth.DN", dn );
         xsdContext.setEntry(new ContextTEntry[] { entry });
 
+        // setup delegation
         GORFXClientUtils.setupDelegation( xsdContext, uri, null );
 
 
+        // perform staging
         SliceReference sr =
             GORFXClientUtils.doStageIn( uri, props, xsdContext, GORFXClientUtils.newContract(), MILLIS );
 
@@ -86,7 +87,7 @@ public class InterSliceTransferClient extends AbstractApplication {
                 dcnt.getSubspace( new QName( "http://www.c3grid.de/G2/Subspace", "TransferSpace" ) ).getEndpointReference() );
 
         Calendar tt = new GregorianCalendar( );
-        tt.add( Calendar.MINUTE, 20 );
+        tt.add( Calendar.DAY, 1 );
         long ssize = (long) (20 * 1024 * Math.pow( 10, 3 ));
         SliceClient slice = subc.createSlice( skuri, tt, ssize );
         System.out.println( "DestSlice location: " + slice.getSliceLocation() );
@@ -95,10 +96,12 @@ public class InterSliceTransferClient extends AbstractApplication {
         InterSliceTransferORQT istorq =
             GORFXClientTools.createInterSliceTransferORQT( sr, new SliceReference( slice.getEndpointReference() ) );
 
+        // fire up IST task
         InterSliceTransferResultT isrt =
             GORFXClientUtils.commonTaskExecution( "slice transfer", uri, istorq, xsdContext,
                 GORFXClientUtils.newContract(), MILLIS, InterSliceTransferResultT.class );
 
+        // show result
         MessageElement[] mes = isrt.get_any( );
         ArrayList<String> al = new ArrayList( mes.length );
         for( int i=0; i < mes.length; ++i )

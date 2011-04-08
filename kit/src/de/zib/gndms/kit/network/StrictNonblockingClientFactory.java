@@ -36,16 +36,10 @@ import java.util.concurrent.*;
  *          <p/>
  *          User: mjorra, Date: 20.02.2009, Time: 17:37:59
  */
-public class StrictNonblockingClientFactory extends AbstractGridFTPClientFactory{
-    private static final Logger log = Logger.getLogger( StrictNonblockingClientFactory.class );
+public class StrictNonblockingClientFactory extends AbstractNonblockingClientFactory {
 
-    private int timeout = 20;
     private final TimeUnit unit = TimeUnit.SECONDS;
-    private long delay = 500; // in ms
-   //private final ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool( 1 );
-   //private final Map<String, QueuedExecutor> hostExecutors = new HashMap<String, QueuedExecutor>( );
     private ExecutorService exec = Executors.newFixedThreadPool( 1 );
-    private int count=0;
 
 
     public GridFTPClient createClient( String host, int port, CredentialProvider cp ) throws ServerException, IOException {
@@ -58,6 +52,7 @@ public class StrictNonblockingClientFactory extends AbstractGridFTPClientFactory
         log.info( "submitting creator " +creator.getHost() +" " + creator.getSeq() );
         synchronized ( exec ) {
             f = exec.submit( fork );
+            //f = exec.submit( creator );
         }
 
         try {
@@ -80,62 +75,5 @@ public class StrictNonblockingClientFactory extends AbstractGridFTPClientFactory
             throw new RuntimeException( e );
         }
         return null;
-    }
-
-
-    private synchronized int inc() {
-        return ++count;
-    }
-
-
-    public void shutdown() {
-
-      //  log.info( "shuting down executors" );
-      //  for( String hn: hostExecutors.keySet() ) {
-      //      hostExecutors.get( hn ).shutdown();
-      //  }
-
-        /*
-        log.debug( "awaiting termination" );
-        for( String hn: hostExecutors.keySet() ) {
-            try {
-                hostExecutors.get( hn ).awaitTermination( timeout, TimeUnit.SECONDS );
-            } catch ( InterruptedException e ) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-        }
-        */
-    }
-
-
-    public int getTimeout() {
-        return timeout;
-    }
-
-
-    public void setTimeout( int timeout ) {
-        
-        if( timeout < 0 )
-            throw new IllegalArgumentException( "Timeout must be greater or equal 0" );
-        
-        this.timeout = timeout;
-    }
-
-
-    public long getDelay() {
-        return delay;
-    }
-
-
-    public void setDelay( int delay ) {
-
-        if( delay < 0 )
-            throw new IllegalArgumentException( "Delay must be greater or equal 0" );
-
-        this.delay = delay;
-
-       // for( String hn: hostExecutors.keySet() ) {
-       //     hostExecutors.get( hn ).setDefaultDelay( delay );
-       // }
     }
 }

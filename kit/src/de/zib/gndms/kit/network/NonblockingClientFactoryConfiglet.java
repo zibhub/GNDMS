@@ -55,19 +55,19 @@ public class NonblockingClientFactoryConfiglet extends DefaultConfiglet {
     private void refreshFactory() {
         final MapConfig mapConfig = getMapConfig();
         try{
-            StrictNonblockingClientFactory fac =
-                StrictNonblockingClientFactory.class.cast( NetworkAuxiliariesProvider.getGridFTPClientFactory() );
+            Schedulable sed =
+                Schedulable.class.cast( NetworkAuxiliariesProvider.getGridFTPClientFactory() );
             if( mapConfig.hasOption( DELAY ) ) {
-                fac.setDelay( mapConfig.getIntOption( DELAY ) );
+                sed.setDelay( mapConfig.getIntOption( DELAY ) );
             }
 
             if( mapConfig.hasOption( TIMEOUT ) ) {
-                fac.setTimeout( mapConfig.getIntOption( TIMEOUT ) );
+                sed.setTimeout( mapConfig.getIntOption( TIMEOUT ) );
             }
         } catch ( ClassCastException e ) {
-            e.printStackTrace( );
+            getLog( ).warn( e );
         } catch ( MandatoryOptionMissingException e ) {
-            e.printStackTrace();  // may not occur
+            getLog( ).warn( e );
         }
     }
 }

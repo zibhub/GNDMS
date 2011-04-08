@@ -38,6 +38,7 @@ public class Forkable<T> implements Callable<T> {
     private final @NotNull Lock resultLock = new ReentrantLock();
     private final @NotNull Condition resultCond = resultLock.newCondition();
     private @NotNull T result;
+    private boolean start = true;
     private boolean done = false;
     private boolean stopped = false;
     private Exception exception;
@@ -137,6 +138,7 @@ public class Forkable<T> implements Callable<T> {
                 thread.start();
                 start = false;
             }
+
             try {
                 if (unlimitedDuration)
                     resultCond.await();

@@ -36,7 +36,7 @@ import java.util.concurrent.*;
  *          <p/>
  *          User: mjorra, Date: 20.02.2009, Time: 17:37:59
  */
-public class NonblockingClientFactory extends AbstractGridFTPClientFactory{
+public class NonblockingClientFactory extends AbstractNonblockingClientFactory {
     private static final Logger log = Logger.getLogger( NonblockingClientFactory.class );
 
     private int timeout = 20;
@@ -61,7 +61,7 @@ public class NonblockingClientFactory extends AbstractGridFTPClientFactory{
             }
         }
 
-        final GridFTPClientCreator c = new GridFTPClientCreator( host, port, cp, 0 );
+        final GridFTPClientCreator c = new GridFTPClientCreator( host, port, cp, inc() );
         final Future<GridFTPClient> f = exec.submit( c );
         try {
             try{
@@ -70,15 +70,10 @@ public class NonblockingClientFactory extends AbstractGridFTPClientFactory{
                 log.info( "GridFTPClient get() create exceeded timeout" );
                 f.cancel( true );
             }
-         //   System.err.println( "awaiting termination" );
-         //   exec.shutdown();
-         //   exec.awaitTermination( timeout, TimeUnit.SECONDS );
-         //   System.err.println( "done" );
         } catch ( InterruptedException e ) {
             e.printStackTrace(  );
             throw new RuntimeException( "GridFTPClient create exceeded timeout", e );
         } catch ( ExecutionException e ) {
-            // this mustn't happen here due to the blocked wait op
             e.printStackTrace();
             if( e.getCause() instanceof ServerException )
                 throw ServerException.class.cast( e.getCause() );
@@ -91,7 +86,7 @@ public class NonblockingClientFactory extends AbstractGridFTPClientFactory{
 
     public void shutdown() {
 
-        log.info( "shuting down executors" );
+        log.info( "shutting down executors" );
         for( String hn: hostExecutors.keySet() ) {
             hostExecutors.get( hn ).shutdown();
         }
@@ -106,37 +101,5 @@ public class NonblockingClientFactory extends AbstractGridFTPClientFactory{
             }
         }
         */
-    }
-
-
-    public int getTimeout() {
-        return timeout;
-    }
-
-
-    public void setTimeout( int timeout ) {
-        
-        if( timeout < 0 )
-            throw new IllegalArgumentException( "Timeout must be greater or equal 0" );
-        
-        this.timeout = timeout;
-    }
-
-
-    public long getDelay() {
-        return delay;
-    }
-
-
-    public void setDelay( int delay ) {
-
-        if( delay < 0 )
-            throw new IllegalArgumentException( "Delay must be greater or equal 0" );
-
-        this.delay = delay;
-
-        for( String hn: hostExecutors.keySet() ) {
-            hostExecutors.get( hn ).setDefaultDelay( delay );
-        }
     }
 }

@@ -42,6 +42,9 @@ public class LinuxDirectoryAux implements DirectoryAux {
     final static String RW = "700";
     final static String EXECUTABLE = "executable";
     final static String ARGS = "arguments";
+    final static int DELAY = 10000;
+    private static final int NUM_RETRYS = 5;
+
 
     public boolean setDirectoryReadWrite( String uid, String pth ) {
         return setMode( uid, RW, pth );
@@ -127,13 +130,20 @@ public class LinuxDirectoryAux implements DirectoryAux {
 
     public boolean deleteDirectory(String uid, String pth) {
 
+        File f = new File( pth );
+        if(! f.exists() )
+            throw new RuntimeException( "failed to delete dir " + pth + ": doesn't exists" );
+
         HashMap<String, Object> jd = new HashMap<String, Object>( 2 );
         jd.put( EXECUTABLE, "/bin/rm" );
         jd.put( ARGS, new String[] { "-rf", pth } );
 
-        return executeGramsJob( uid, jd );
-    }
+        executeGramsJob( uid, jd );
+        if( f.exists() )
+            throw new RuntimeException( "failed to delete dir " + pth + " as user " +uid );
 
+        return true;
+    }
 
 
     public boolean mkdir( String uid, String pth, AccessMask perm ) {
@@ -142,8 +152,27 @@ public class LinuxDirectoryAux implements DirectoryAux {
         jd.put( EXECUTABLE, "/bin/mkdir" );
         jd.put( ARGS, new String[] { "-p", pth, "-m", perm.toString() } );
 
-        return executeGramsJob( uid, jd );
+        int ret = 1;
+        do  {
+            logger.debug( ret +". attempt to create slice dir" + pth );
+            executeGramsJob( uid, jd );
+            File f = new File( pth );
+            if( f.exists() ) {
+                logger.debug( "creation successful" );
+                return true;
+            } else {
+                logger.debug( "failed retrying after " + DELAY + "ms" );
+                try {
+                    Thread.sleep( DELAY );
+                } catch ( InterruptedException e ) {
+                    logger.debug( "retry delay interrupted" );
+                }
+                ++ret;
+            }
+        } while ( ret <= NUM_RETRYS );
+        throw new RuntimeException( "failed to create slice dir " + pth + " for user " +uid+ " with " + perm );
     }
+
 
     public boolean copyDir( String uid, String src_pth, String tgt_pth ) {
 
