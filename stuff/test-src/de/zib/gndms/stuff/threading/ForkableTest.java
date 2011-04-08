@@ -91,4 +91,38 @@ public class ForkableTest {
             threwUp = true;
         }
         Assert.assertEquals(threwUp, true);
-    }}
+   }
+
+    @Test
+     public void forkeverYoung() throws Throwable, InterruptedException {
+         Forkable<Integer> forkable = new Forkable<Integer>(new Callable<Integer>() {
+             public Integer call() throws Exception {
+                 while (true) {
+                     try {
+                        Thread.sleep(100L);
+                     }
+                     catch (InterruptedException ie) {
+                        Thread.interrupted();
+                     }
+                 }
+             }
+         }, System.currentTimeMillis() + 1000L, 500, TimeUnit.MILLISECONDS);
+
+         ExecutorService executorService = Executors.newFixedThreadPool(1);
+         Future<Integer> integerFuture = executorService.submit(forkable);
+
+        boolean threwUpProperly = false;
+         try {
+             integerFuture.get();
+         }
+         catch (ExecutionException e) {
+            try {
+                throw e.getCause();
+            }
+            catch (TimeoutException t) {
+                threwUpProperly = true;
+            }
+         }
+         Assert.assertTrue(threwUpProperly);
+     }
+}
