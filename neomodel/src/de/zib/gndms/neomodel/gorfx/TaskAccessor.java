@@ -39,6 +39,8 @@ public interface TaskAccessor extends GridResourceItf, TimedGridResourceItf {
 
     @NotNull String getId();
 
+    String getResourceId();
+
     @NotNull String getWID();
 
     @NotNull String getDescription();

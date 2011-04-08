@@ -10,7 +10,7 @@
 
 
     <import resource="classpath:/META-INF/converter-setup.xml"/>
-    <import resource="classpath:/META-INF/model-setup.xml"/>
+    <import resource="classpath:/META-INF/system.xml"/>
     <import resource="classpath:/META-INF/gorfx.xml"/>
 
     <bean class="org.springframework.web.servlet.view.BeanNameViewResolver"/>

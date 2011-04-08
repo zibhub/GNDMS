@@ -45,6 +45,8 @@ import java.util.List;
  * User: stepn Date: 05.09.2008 Time: 14:48:36
  */
 public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor {
+
+    public static final String RESOURCE_ID_P = "RESOURCE_ID_P";
     public static final String WID_P = "WID_P";
     public static final String DESCRIPTION_P = "DESCRIPTION_P";
     public static final String TERMINATION_TIME_P = "TERMINATION_TIME_P";
@@ -63,6 +65,7 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
     public static final String FAULT_STRING_P = "FAULT_STRING_P";
     public static final String TASK_STATE_IDX = "taskStateIdx";
     public static final String TERMINATION_TIME_IDX = "terminationTimeIdx";
+    public static final String RESOURCE_ID_IDX = "ResourceIdIdx" ;
 
     public static enum TaskRelationships implements RelationshipType {
         OFFER_TYPE_REL,
@@ -93,8 +96,22 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
 
     @Override
     final public void setId(@NotNull String id) {
-        super.setId(id);
-        session().setSingleIndex(getTypeNickIndex(), repr(), session().getGridName(), getId(), id);
+        super.setId( id );
+        session().setSingleIndex( getTypeNickIndex(), repr(), session().getGridName(), getId(), id );
+    }
+
+    public String getResourceId() {
+        return (String) repr().getProperty( RESOURCE_ID_P, null);
+    }
+
+    public void setResourceId(String id) {
+
+        final @NotNull Index<Node> typeNickIndex = getTypeNickIndex(RESOURCE_ID_IDX);
+        if( getResourceId() != null )
+            typeNickIndex.remove(repr(), session().getGridName(), getResourceId() );
+        typeNickIndex.add( repr(), session().getGridName(), id );
+
+        repr().setProperty( RESOURCE_ID_P, id);
     }
 
     public @NotNull String getWID() {
@@ -400,6 +417,7 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
         final Session session = session();
         try {
             final String id = this.getId();
+            final String taskFlowId = this.getTaskFlowId();
             final String WID = this.getWID();
             final String descr = this.getDescription();
             final Calendar terminationTime = this.getTerminationTime();
