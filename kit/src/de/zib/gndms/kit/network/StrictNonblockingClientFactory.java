@@ -57,7 +57,7 @@ public class StrictNonblockingClientFactory extends AbstractNonblockingClientFac
 
         try {
             try{
-                return f.get( timeout, unit );
+                return f.get( getTimeout(), unit );
             } catch ( TimeoutException e ) {
                 creator.getLog().info( "GridFTPClient get() create exceeded timeout", e );
                 fork.setShouldStop( true );
