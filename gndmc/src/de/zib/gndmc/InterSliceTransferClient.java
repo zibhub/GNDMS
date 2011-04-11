@@ -87,7 +87,7 @@ public class InterSliceTransferClient extends AbstractApplication {
                 dcnt.getSubspace( new QName( "http://www.c3grid.de/G2/Subspace", "TransferSpace" ) ).getEndpointReference() );
 
         Calendar tt = new GregorianCalendar( );
-        tt.add( Calendar.DAY, 1 );
+        tt.add( Calendar.MINUTE, 1440 );
         long ssize = (long) (20 * 1024 * Math.pow( 10, 3 ));
         SliceClient slice = subc.createSlice( skuri, tt, ssize );
         System.out.println( "DestSlice location: " + slice.getSliceLocation() );
