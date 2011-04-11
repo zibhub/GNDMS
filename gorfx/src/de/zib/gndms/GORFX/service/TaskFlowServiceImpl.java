@@ -186,7 +186,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                     tf.setQuotes( lc );
                     HashMap<String, String> urimap = new HashMap<String, String>( 3 );
                     urimap.put( "service", "gorfx" );
-                    urimap.put( TASKFLOW_ID, id );
+                    urimap.put( UriFactory.TASKFLOW_ID, id );
                     urimap.put( "type", type );
                     for( int i=0; i < lc.size(); ++i ) {
                         urimap.put( "idx", String.valueOf( i ) );
