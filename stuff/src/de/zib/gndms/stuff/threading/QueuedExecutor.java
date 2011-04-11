@@ -207,18 +207,18 @@ public class QueuedExecutor implements ExecutorService {
 
     
     private long actualDelay( final long delay ) {
-        final long ct = System.currentTimeMillis();
-        final long cd = ct - lastTimeStamp;
+        final long currentTime = System.currentTimeMillis();
+        final long currentDelay = currentTime - lastTimeStamp;
 
-        final long nd;
-        if( cd <= 0 )
-            nd = StrictMath.abs( cd ) + delay;
-        else if( cd < delay )
-            nd = delay - cd;
+        final long newDelay;
+        if( currentDelay <= 0 )
+            newDelay = StrictMath.abs( currentDelay ) + delay;
+        else if( currentDelay < delay )
+            newDelay = delay - currentDelay;
         else
-            nd = 0;
+            newDelay = 0;
 
-        lastTimeStamp = ct + nd;
-        return nd;
+        lastTimeStamp = currentTime + newDelay;
+        return newDelay;
     }
 }
