@@ -17,6 +17,8 @@ package de.zib.gndms.kit.network;
 
 import org.apache.log4j.Logger;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * @author try ma ik jo rr a zib
  * @date 05.04.11  12:35
@@ -28,6 +30,7 @@ public abstract class AbstractNonblockingClientFactory extends AbstractGridFTPCl
     private int timeout = 20;
     private long delay = 500; // in ms
     private int count=0;
+    private final TimeUnit unit = TimeUnit.SECONDS;
 
 
     protected synchronized int inc() {
@@ -69,4 +72,9 @@ public abstract class AbstractNonblockingClientFactory extends AbstractGridFTPCl
         this.delay = delay;
         log.info( "updated delay to: "+ delay );
     }
+
+
+    public TimeUnit getUnit() {
+         return unit;
+     }
 }

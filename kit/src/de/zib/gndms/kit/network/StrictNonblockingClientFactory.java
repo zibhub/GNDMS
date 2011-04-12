@@ -38,7 +38,6 @@ import java.util.concurrent.*;
  */
 public class StrictNonblockingClientFactory extends AbstractNonblockingClientFactory {
 
-    private final TimeUnit unit = TimeUnit.SECONDS;
     private ExecutorService exec = Executors.newFixedThreadPool( 1 );
 
 
@@ -57,7 +56,7 @@ public class StrictNonblockingClientFactory extends AbstractNonblockingClientFac
 
         try {
             try{
-                return f.get( timeout, unit );
+                return f.get( getTimeout(), getUnit() );
             } catch ( TimeoutException e ) {
                 creator.getLog().info( "GridFTPClient get() create exceeded timeout", e );
                 fork.setShouldStop( true );

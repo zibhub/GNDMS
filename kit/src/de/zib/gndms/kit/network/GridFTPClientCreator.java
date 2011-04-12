@@ -19,6 +19,7 @@ package de.zib.gndms.kit.network;
 
 
 import de.zib.gndms.kit.access.CredentialProvider;
+import de.zib.gndms.stuff.misc.LogProvider;
 import org.apache.log4j.Logger;
 import org.apache.log4j.NDC;
 import org.globus.ftp.GridFTPClient;
@@ -35,7 +36,7 @@ import java.util.concurrent.Callable;
  *          <p/>
  *          User: mjorra, Date: 20.02.2009, Time: 17:40:03
  */
-public class GridFTPClientCreator implements Callable<GridFTPClient>  {
+public class GridFTPClientCreator implements Callable<GridFTPClient>,LogProvider {
     private static final Logger log = Logger.getLogger( GridFTPClientCreator.class );
 
     private String host;
@@ -48,8 +49,6 @@ public class GridFTPClientCreator implements Callable<GridFTPClient>  {
     public GridFTPClientCreator() {
         ctx = NDC.cloneStack();
     }
-
-
 
 
     public GridFTPClientCreator( String host, int port, CredentialProvider cp, int seq ) {
@@ -66,12 +65,7 @@ public class GridFTPClientCreator implements Callable<GridFTPClient>  {
         NDC.inherit( ctx );
         NDC.push( "host:" + host );
         NDC.push( "seq:" + seq );
-        /*
-        int stacksize = ctx.size();
-        while (! ctx.empty() ) {
-            NDC.push( (String) ctx.pop() );
-        }
-        */
+
         try {
             log.info( "creating client" );
             final GridFTPClient cnt = new GridFTPClient( host, port );
@@ -80,8 +74,6 @@ public class GridFTPClientCreator implements Callable<GridFTPClient>  {
             return cnt;
         } finally {
             NDC.remove();
-//            for( int i=0; i < stacksize; ++i )
-//                ctx.push( NDC.pop() );
         }
     }
 
@@ -134,5 +126,5 @@ public class GridFTPClientCreator implements Callable<GridFTPClient>  {
         this.seq = seq;
     }
 
-    public Logger getLog( ) { return log; }
+    public Logger getLog() { return log; }
 }

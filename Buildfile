@@ -100,6 +100,7 @@ COMMONS_FILEUPLOAD = transitive(['commons-fileupload:commons-fileupload:jar:1.2.
 JETTY = ['org.mortbay.jetty:jetty:jar:6.1.11', 'org.mortbay.jetty:jetty-util:jar:6.1.11']
 GROOVY = ['org.codehaus.groovy:groovy:jar:1.6.9']
 ARGS4J = 'args4j:args4j:jar:2.0.14'
+SLF4J = transitive( ['org.slf4j:slf4j-log4j12:jar:1.5.8'])
 # TESTNG = download(artifact('org.testng:testng:jar:5.1-jdk15') => 'http://static.appfuse.org/repository/org/testng/testng/5.1/testng-5.1-jdk15.jar')
 DB_DERBY = ['org.apache.derby:derby:jar:10.5.3.0', 'org.apache.derby:derbytools:jar:10.5.3.0']
 
@@ -231,7 +232,7 @@ define 'gndms' do
 
     desc 'GT4-independent utility classes for GNDMS'
     define 'stuff', :layout => dmsLayout('stuff', 'gndms-stuff') do
-       compile.with GUICE, GOOGLE_COLLECTIONS, JETBRAINS_ANNOTATIONS
+       compile.with GUICE, GOOGLE_COLLECTIONS, JETBRAINS_ANNOTATIONS, SLF4J
        compile { project('gndms').updateBuildInfo() }
        package :jar
     end
@@ -246,7 +247,7 @@ define 'gndms' do
 
     desc 'GT4-dependent utility classes for GNDMS'
     define 'kit', :layout => dmsLayout('kit', 'gndms-kit') do
-      compile.with JETTY, GROOVY, GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('stuff'), project('model'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_AXIS, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, GUICE, GT4_SERVLET, COMMONS_LANG, OPENJPA
+      compile.with JETTY, GROOVY, GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('stuff'), project('model'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_AXIS, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, GUICE, GT4_SERVLET, COMMONS_LANG, OPENJPA, SLF4J
       compile
       package :jar
     end
