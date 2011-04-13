@@ -1,6 +1,6 @@
 #!/bin/sh
 enable_gsiftpDeadlockPrevention() {
-moni call -v .sys.SetupDefaultConfiglet "\
+moni call -v .sys.SetupUpdatingConfiglet "\
   mode: '$MODE'; \
   name: 'nbcf'; \
   className: 'de.zib.gndms.kit.network.NonblockingClientFactoryConfiglet'; \

@@ -121,6 +121,7 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
         configActions.add(AssignSliceKindAction.class);
         configActions.add(RefreshSystemAction.class);
         configActions.add(SetupDefaultConfigletAction.class);
+        configActions.add(SetupUpdatingConfigletAction.class);
         configActions.add(ReadC3CatalogAction.class);
         configActions.add(ReadContainerLogAction.class);
         configActions.add(ReadGNDMSVersionAction.class);
