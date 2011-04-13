@@ -19,6 +19,7 @@ repositories.remote << 'http://google-maven-repository.googlecode.com/svn/reposi
 
 VERSION_NUMBER = '0.3.2'
 VERSION_NAME = 'Shigeru'
+VERSION_TAG = `git describe --tags`
 GROUP_NAME = 'de.zib.gndms'
 MF_COPYRIGHT = 'Copyright 2008-2011 Zuse Institute Berlin (ZIB)'
 LICENSE ='This software has been licensed to you under the terms and conditions of the Apache License 2.0 (APL 2.0) only.'
@@ -55,7 +56,7 @@ testTool('openssl')
 testTool('hostname')
 HOSTNAME = `hostname`.split[0]
 
-puts "GNDMS #{VERSION_NUMBER} \”#{VERSION_NAME}\""
+puts "GNDMS #{VERSION_NUMBER} \”#{VERSION_NAME}\" #{VERSION_TAG}"
 puts MF_COPYRIGHT
 puts "#{LICENSE}  Please consult doc/licensing about licensing conditions of downloaded 3rd party software."
 if ENV['GNDMS_DEPS']=='skip' then 
@@ -216,7 +217,7 @@ define 'gndms' do
 
     def updateReleaseInfo()
       if (@releaseInfo == nil) then
-        @releaseInfo = 'Generation N Data Management System VERSION: ' + VERSION_NUMBER + ' "' + VERSION_NAME + '"'
+        @releaseInfo = "Generation N Data Management System VERSION: #{VERSION_NUMBER} \"#{VERSION_NAME}\" #{VERSION_TAG}"
         relFile = File.new(_('GNDMS-RELEASE'), 'w')
         relFile.syswrite(@releaseInfo)
         relFile.close
@@ -658,6 +659,7 @@ task 'auto-clean' do
     elsif( hasPath?( "#{path}gndms-model-0.3.2.jar" ) )
         puts 'GNDMS 0.3.2 detected.'
         cleanRev( '0.3.2' )
+	# adde infra-hotfix1
     else
         puts 'No previously installed version detected.'
     end
