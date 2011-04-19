@@ -16,7 +16,6 @@ package de.zib.gndms.gndmc;
  * limitations under the License.
  */
 
-import de.zib.gndms.rest.TestMappingJacksonHttpMessageConverter;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,6 +107,10 @@ public abstract class AbstractClient {
 
 	protected final ResponseEntity<Void> unifiedDelete(final String url, final String dn) {
 		return unifiedX(HttpMethod.DELETE, Void.class, null, url, dn, null);
+	}
+
+	protected final <T> ResponseEntity<T> unifiedDelete(final Class<T> clazz, final String url, final String dn) {
+		return unifiedX(HttpMethod.DELETE, clazz, null, url, dn, null);
 	}
 
 	protected final ResponseEntity<Void> unifiedDelete(final String url, final String dn, final String wid) {
