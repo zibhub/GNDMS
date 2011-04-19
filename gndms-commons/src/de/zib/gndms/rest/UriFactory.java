@@ -34,6 +34,9 @@ public class UriFactory {
     final public static String TASKFLOW_TYPE = "type";
     final public static String TASKFLOW_ID   = "id";
     final public static String TASK_ID       = "taskId";
+    final public static String SUBSPACE       = "subspace";
+    final public static String SLICEKIND       = "slicekind";
+    final public static String SLICE       = "slice";
 
     private String baseUrl;
     private UriTemplate taskFlowTemplate;
@@ -41,6 +44,7 @@ public class UriFactory {
     private UriTemplate quoteTemplate;
     private UriTemplate taskTemplate;
     private UriTemplate taskServiceTemplate;
+    private UriTemplate subspaceTemplate;
 
 
     public UriFactory() {
@@ -59,6 +63,7 @@ public class UriFactory {
         quoteTemplate = new UriTemplate ( baseUrl +"/{service}/_{type}/_{id}/quotes/{idx}" );
         taskTemplate = new UriTemplate ( baseUrl +"/{service}/tasks/_{taskId}" );
         taskServiceTemplate = new UriTemplate ( baseUrl +"/{service}/tasks" );
+        subspaceTemplate = new UriTemplate(baseUrl + "/{service}/_{subspace}");
     }
 
 
@@ -87,6 +92,10 @@ public class UriFactory {
 
     public String taskServiceUri( Map<String,String> urimap, String facet ) {
         return addFacet( taskServiceTemplate.expand( urimap ), facet );
+    }
+
+    public String subspaceUri(Map<String, String> vars, String facet) {
+        return addFacet(subspaceTemplate.expand(vars), facet);
     }
 
     private String addFacet( URI uri, String facet ) {
