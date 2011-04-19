@@ -74,9 +74,9 @@ public class DSpaceServiceImpl implements DSpaceService {
 	 */
 	private UriFactory uriFactory;
 	/**
-	 * Facet names of a subspace.
+	 * The facets of a subspace.
 	 */
-	private List<String> dspaceFacets = new ArrayList<String>(2);
+	private Facets dspaceFacets;
 
 	/**
 	 * Initialization of the dspace service.
@@ -123,8 +123,7 @@ public class DSpaceServiceImpl implements DSpaceService {
 		GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
 
 		if (subspaces.exists(subspace)) {
-			Facets facets = listSubspaceFacets(subspace);
-			return new ResponseEntity<Facets>(facets, headers, HttpStatus.OK);
+			return new ResponseEntity<Facets>(dspaceFacets, headers, HttpStatus.OK);
 		}
 		return new ResponseEntity<Facets>(null, headers, HttpStatus.NOT_FOUND);
 	}
@@ -150,8 +149,7 @@ public class DSpaceServiceImpl implements DSpaceService {
 		}
 
 		// TODO: create subspace according to subConfig, add to provider
-		Facets facets = listSubspaceFacets(subspace);
-		return new ResponseEntity<Facets>(facets, headers, HttpStatus.CREATED);
+		return new ResponseEntity<Facets>(dspaceFacets, headers, HttpStatus.CREATED);
 	}
 
 	@Override
@@ -258,23 +256,4 @@ public class DSpaceServiceImpl implements DSpaceService {
 		}
 		return headers;
 	}
-
-	/**
-	 * Returns the facets of a subspace.
-	 * @param subspace the subspace id.
-	 * @return The facets for this subspace.
-	 */
-	private Facets listSubspaceFacets(final String subspace) {
-		Map<String, String> uriargs = new HashMap<String, String>(2);
-		uriargs.put(UriFactory.SUBSPACE, subspace);
-		uriargs.put(UriFactory.SERVICE, "dspace");
-
-		ArrayList<Facet> fl = new ArrayList<Facet>(dspaceFacets.size());
-		for (String f : dspaceFacets) {
-			String fn = uriFactory.subspaceUri(uriargs, f);
-			fl.add(new Facet(f, fn));
-		}
-		return new Facets(fl);
-	}
-
 }

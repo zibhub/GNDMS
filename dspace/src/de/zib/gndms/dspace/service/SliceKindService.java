@@ -16,21 +16,16 @@ package de.zib.gndms.dspace.service;
  * limitations under the License.
  */
 
-import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 
 import de.zib.gndms.model.dspace.SliceKind;
-import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.model.gorfx.types.Task;
-import de.zib.gndms.rest.Facets;
 import de.zib.gndms.rest.Specifier;
 import de.zib.gndms.stuff.confuror.ConfigHolder;
 
 /**
- * The interface of the DSpace service.
+ * The interface of the SliceKind service.
  * 
- * Clients and resources which should provide the DSpace service should
+ * Clients and resources which should provide the SliceKind service should
  * implement this interface.
  * 
  * Some general remarks on the parameters:
@@ -44,88 +39,64 @@ import de.zib.gndms.stuff.confuror.ConfigHolder;
  * 
  * @author Ulrike Golas
  */
-public interface DSpaceService {
+public interface SliceKindService {
 
 	/**
-	 * Lists all subspaces of the dspace.
-	 * 
-	 * @param dn
-	 *            The dn of the user invoking the method.
-	 * @return List of subspaces.
-	 */
-	ResponseEntity<List<Specifier<Subspace>>> listSubspaceSpecifiers(String dn);
-
-	/**
-	 * Lists all facets of the subspace.
+	 * Lists the slice kind representation.
 	 * 
 	 * @param subspace
 	 *            The subspace identifier.
+	 * @param sliceKind
+	 *            The slice kind identifier.
 	 * @param dn
 	 *            The dn of the user invoking the method.
-	 * @return The available facets.
+	 * @return The representation of the slice kind.
 	 */
-	ResponseEntity<Facets> listAvailableFacets(String subspace, String dn);
+	ResponseEntity<ConfigHolder> getSliceKindInfo(String subspace,
+			String sliceKind, String dn);
 
 	/**
-	 * Creates a subspace with the given configuration.
+	 * Sets the configuration of the slice kind.
 	 * 
 	 * @param subspace
 	 *            The subspace identifier.
-	 * @param config
-	 *            The subspace configuration.
+	 * @param sliceKind
+	 *            The slice kind identifier.
+	 * @param config The configuration of the slice kind.
 	 * @param dn
 	 *            The dn of the user invoking the method.
-	 * @return The facets of the created subspace.
+	 * @return The representation of the slice kind.
 	 */
-	ResponseEntity<Facets> createSubspace(String subspace,
-			ConfigHolder config, String dn);
+	ResponseEntity<Specifier<SliceKind>> setSliceKindConfig(String subspace,
+			String sliceKind, ConfigHolder config, String dn);
 
 	/**
-	 * Deletes a subspace.
+	 * Deletes a slice kind.
 	 * 
 	 * @param subspace
 	 *            The subspace identifier.
+	 * @param sliceKind
+	 *            The slice kind identifier.
+	 * @param config The configuration of the slice kind.
 	 * @param dn
 	 *            The dn of the user invoking the method.
 	 * @return A confirmation.
 	 */
-	ResponseEntity<Specifier<Task>> deleteSubspace(String subspace, String dn);
-
-	/**
-	 * Lists a subspace configuration.
-	 * 
-	 * @param subspace
-	 *            The subspace identifier.
-	 * @param dn
-	 *            The dn of the user invoking the method.
-	 * @return The subspace configuration.
-	 */
-	ResponseEntity<ConfigHolder> listSubspaceConfiguration(
-			String subspace, String dn);
-
-	/**
-	 * Changes a subspace configuration.
-	 * 
-	 * @param subspace
-	 *            The subspace identifier.
-	 * @param config
-	 *            The subspace configuration.
-	 * @param dn
-	 *            The dn of the user invoking the method.
-	 * @return ??.
-	 */
-	ResponseEntity<Void> setSubspaceConfiguration(String subspace,
+	ResponseEntity<Void> createSliceKind(String subspace, String sliceKind,
 			ConfigHolder config, String dn);
 
 	/**
-	 * Lists all available slice kinds.
+	 * Deletes a slice kind.
 	 * 
 	 * @param subspace
 	 *            The subspace identifier.
+	 * @param sliceKind
+	 *            The slice kind identifier.
 	 * @param dn
 	 *            The dn of the user invoking the method.
-	 * @return The list of slice kinds.
+	 * @return A confirmation.
 	 */
-	ResponseEntity<List<Specifier<SliceKind>>> listSliceKinds(String subspace, String dn);
+	ResponseEntity<Void> deleteSliceKind(String subspace, String sliceKind,
+			String dn);
 
 }
