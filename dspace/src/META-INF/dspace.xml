@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+            http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
+            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+
+    <context:annotation-config/>
+    <!-- load possible custom properties -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="ignoreResourceNotFound" value="true"/>
+        <property name="locations">
+            <list>
+                <value>classpath:/META-INF/dspace.properties</value>
+                <value>classpath:dspace.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="subspaceProvider" class="de.zib.gndms.logic.dspace.SubspaceProviderImpl" >
+        <property name="factories">
+            <map>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="dspaceService" class="de.zib.gndms.dspace.service.DSpaceServiceImpl">
+        <property name="baseUrl" value="${dspaceBaseURL}"/>
+         <property name="dspaceFacets" ref="dspaceFacets" />
+    </bean>
+
+    <bean id="dspaceFacets" class="de.zib.gndms.gritserv.rest.Facets">
+        <property name="facets">
+            <list>
+                <ref bean="config"/>
+                <ref bean="slicekinds"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="config" class="de.zib.gndms.gritserv.rest.Facet">
+        <property name="config" value="${dspaceBaseURL}/dspace/${subspaceId}/config"/>
+    </bean>
+
+    <bean id="slicekinds" class="de.zib.gndms.gritserv.rest.Facet">
+        <property name="slicekinds" value="${dspaceBaseURL}/dspace/${subspaceId}/slicekinds"/>
+    </bean>
+
+    <bean id="sliceKindService" class="de.zib.gndms.dspace.service.SliceKindServiceImpl">
+        <property name="baseUrl" value="${dspaceBaseURL}"/>
+    </bean>
+ 
+    <bean id="sliceService" class="de.zib.gndms.dspace.service.SliceServiceImpl">
+        <property name="baseUrl" value="${dspaceBaseURL}"/>
+         <property name="sliceFacets" ref="sliceFacets" />
+    </bean>
+ 
+    <bean id="sliceFacets" class="de.zib.gndms.gritserv.rest.Facets">
+        <property name="facets">
+            <list>
+                <ref bean="files"/>
+                <ref bean="gsiftp"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="files" class="de.zib.gndms.gritserv.rest.Facet">
+        <property name="config" value="${dspaceBaseURL}/dspace/${subspaceId}/config"/>
+    </bean>
+
+    <bean id="gsiftp" class="de.zib.gndms.gritserv.rest.Facet">
+        <property name="config" value="${dspaceBaseURL}/dspace/${subspaceId}/config"/>
+    </bean>
+</beans>
