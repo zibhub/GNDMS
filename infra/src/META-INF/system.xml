@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+
+    <!-- this is the marshaller -->
+    <!--bean id="marshaller" class="org.springframework.oxm.xstream.XStreamMarshaller">
+        <property name="autodetectAnnotations" value="true"/>
+    </bean-->
+
+    <!-- this is the converter for POST -->
+    <!--bean id="converter"
+		class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
+		<constructor-arg ref="marshaller" />
+	</bean-->
+    <bean id="taskExecutionService" class="de.zib.gndms.infra.system.SysTaskExecutionService"/>
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="ignoreResourceNotFound" value="true"/>
+        <property name="locations">
+            <list>
+                <value>classpath:/META-INF/grid.properties</value>
+                <value>classpath:grid.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="taskDao" class="de.zib.gndms.neomodel.common.Dao">
+        <constructor-arg name="gridName" value="${gridName}" />
+        <constructor-arg name="gdb" ref="dataBase" />
+    </bean>
+
+    <!-- the graph database -->
+    <bean id="dataBase" class="org.neo4j.kernel.EmbeddedGraphDatabase" destroy-method="shutdown" >
+        <constructor-arg value="${dataBaseDir}"/>
+    </bean>
+
+    <!-- setup ORM -->
+
+    <bean id="emf" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="derby"/>
+        <property name="persistenceXmlLocation" value="classpath:/META-INF/persistence.xml" />
+        <!--property name="loadTimeWeaver">
+            <bean class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver"/>
+        </property-->
+    </bean>
+
+    <jdbc:embedded-database id="derby"  type="DERBY" >
+        <!--jdbc:script location="classpath:schema.sql"/-->
+    </jdbc:embedded-database>
+</beans>
