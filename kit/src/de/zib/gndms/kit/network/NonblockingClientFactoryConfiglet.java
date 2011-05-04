@@ -36,7 +36,7 @@ public class NonblockingClientFactoryConfiglet extends DefaultConfiglet {
 
     private final static String DELAY="delay"; // in ms
     private final static String TIMEOUT="timeout"; // in s
-
+    private final static String BUFFERSIZE="buffersize"; // in byte
 
     @Override
     public void init( @NotNull Log loggerParam, @NotNull String aName, Serializable data ) {
@@ -63,6 +63,14 @@ public class NonblockingClientFactoryConfiglet extends DefaultConfiglet {
 
             if( mapConfig.hasOption( TIMEOUT ) ) {
                 sed.setTimeout( mapConfig.getIntOption( TIMEOUT ) );
+            }
+
+            if (mapConfig.hasOption( BUFFERSIZE )) {
+                if (mapConfig.getOption( BUFFERSIZE ).trim().equals( "null" )) {
+                       NetworkAuxiliariesProvider.setBufferSize( null );
+                } else {
+                 NetworkAuxiliariesProvider.setBufferSize( mapConfig.getIntOption( BUFFERSIZE ) );
+                }
             }
         } catch ( ClassCastException e ) {
             getLog( ).warn( e );

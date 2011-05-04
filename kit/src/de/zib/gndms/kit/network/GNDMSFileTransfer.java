@@ -47,6 +47,19 @@ public class GNDMSFileTransfer {
     private String destinationPath;
 
 
+    public Integer getBufferSize() {
+        return bufferSize;
+    }
+
+
+    public void setBufferSize( Integer bufferSize ) {
+        this.bufferSize = bufferSize;
+    }
+
+
+    private Integer bufferSize;
+
+
     /**
      * Prepares the transfer of a list of files.
      *
@@ -210,6 +223,10 @@ public class GNDMSFileTransfer {
     protected void setupClient( GridFTPClient cnt ) throws ServerException, IOException {
         cnt.setType( GridFTPSession.TYPE_IMAGE );
         cnt.setMode( GridFTPSession.MODE_EBLOCK );
+
+        if (bufferSize!=null) {
+            cnt.setTCPBufferSize( bufferSize );
+        }
     }
 
 

@@ -67,7 +67,7 @@ public abstract class AbstractTransferORQCalculator<M extends FileTransferORQ, C
         try {
             URI suri =  new URI( getORQArguments().getSourceURI() );
             clnt =  NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( suri, getCredentialProvider() );
-            GNDMSFileTransfer ft = new GNDMSFileTransfer();
+            GNDMSFileTransfer ft = NetworkAuxiliariesProvider.newGNDMSFileTransfer();
             ft.setSourceClient( clnt );
             ft.setSourcePath( suri.getPath( ) );
             ft.setFiles( getORQArguments().getFileMap() );
