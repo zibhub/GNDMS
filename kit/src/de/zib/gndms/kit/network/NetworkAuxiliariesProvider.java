@@ -58,6 +58,9 @@ public class NetworkAuxiliariesProvider {
     private final static GridFTPClientFactory gridFTPClientFactory;
     private final static BandWidthEstimater bandWidthEstimater = new StaticBandWidthEstimater();
 
+
+    private static Integer bufferSize = null;
+
     static {
         GridFTPClientFactory gridFTPClientFactory1;
         try {
@@ -81,6 +84,11 @@ public class NetworkAuxiliariesProvider {
         return bandWidthEstimater;
     }
 
+    public static GNDMSFileTransfer newGNDMSFileTransfer() {
+        GNDMSFileTransfer ft = new GNDMSFileTransfer();
+        ft.setBufferSize( bufferSize );
+
+    }
 
     /**
      * Calculated the transfertime in milli-seconds.
@@ -90,7 +98,7 @@ public class NetworkAuxiliariesProvider {
      *
      * @param size The transfer file size in byte.
      * @param bandWidth The bandwidth in byte/s
-     * @param min The minimum time which is retured if the calculated time is smaller.
+     * @param min The minimum time which is returned if the calculated time is smaller.
      *            If min is < 1 it will be ignored.
      *
      * @return The transfer-time in ms.
@@ -103,5 +111,15 @@ public class NetworkAuxiliariesProvider {
             tt = min;
 
         return tt;
+    }
+
+
+    public static Integer getBufferSize() {
+        return bufferSize;
+    }
+
+
+    public static void setBufferSize( Integer bufferSize ) {
+        NetworkAuxiliariesProvider.bufferSize = bufferSize;
     }
 }

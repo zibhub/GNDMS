@@ -123,7 +123,7 @@ public class TransferStateTest extends ModelEntityTestBase {
 
 
             // setup transfer handler
-            GNDMSFileTransfer transfer = new GNDMSFileTransfer();
+            GNDMSFileTransfer transfer = NetworkAuxiliariesProvider.newGNDMSFileTransfer();
             transfer.setSourceClient( src );
             transfer.setSourcePath( suri.getPath() );
 
