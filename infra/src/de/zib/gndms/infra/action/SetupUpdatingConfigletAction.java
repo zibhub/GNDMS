@@ -42,6 +42,7 @@ public class SetupUpdatingConfigletAction extends SetupDefaultConfigletAction {
         try {
             Class clazz = Class.forName( state.getClassName() );
             Configlet conf = Configlet.class.cast( clazz.newInstance() ); // todo find class from system dict
+            conf.init( logger, state.getName(), state.getState() );
             conf.update( state.getState() );
         } catch ( ClassNotFoundException e ) {
             logger.warn( e );
