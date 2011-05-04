@@ -53,6 +53,7 @@ public class NonblockingClientFactoryConfiglet extends DefaultConfiglet {
 
 
     private void refreshFactory() {
+        getLog().debug( "refresh called" );
         final MapConfig mapConfig = getMapConfig();
         try{
             Schedulable sed =
