@@ -38,7 +38,7 @@ package de.zib.gndms.kit.network;
  * used to predict the duration of a transfer, using the calculateTransferTime method of this class.
  *
  * To make your transfer reliable you should instantiate the persistentMarkerListener, supply it with a fresh instance of
- * a FTPTransferState, which must have a unique transferId. Then use the performPersistenFileTransfer method of your
+ * a FTPTransferState, which must have a unique transferId. Then use the performPersistentFileTransfer method of your
  * GNDMSFileTransfer instance to trigger the transfer.
  *
  * An aborted transfer can be easily resumed, by setting the same GNDMSFileTransfer up again,
