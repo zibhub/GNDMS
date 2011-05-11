@@ -54,7 +54,7 @@ public class NetworkAuxiliariesProvider {
     // private final GridFTPClientFactory gridFTPClientFactory = new SimpleGridFTPClientFactory();
    // private final GridFTPClientFactory gridFTPClientFactory = new CertGridFTPClientFactory();
     //private final static GridFTPClientFactory gridFTPClientFactory = new NonblockingClientFactory();
-    private final static Class<StrictNonblockingClientFactory> gridFTPClientFactoryClass = StrictNonblockingClientFactory.class;
+    private final static Class<NonblockingClientFactory> gridFTPClientFactoryClass = NonblockingClientFactory.class;
     private final static GridFTPClientFactory gridFTPClientFactory;
     private final static BandWidthEstimater bandWidthEstimater = new StaticBandWidthEstimater();
 
@@ -87,7 +87,7 @@ public class NetworkAuxiliariesProvider {
     public static GNDMSFileTransfer newGNDMSFileTransfer() {
         GNDMSFileTransfer ft = new GNDMSFileTransfer();
         ft.setBufferSize( bufferSize );
-
+        return ft;
     }
 
     /**
