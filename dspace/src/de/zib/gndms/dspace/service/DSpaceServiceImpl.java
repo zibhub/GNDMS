@@ -16,10 +16,10 @@ package de.zib.gndms.dspace.service;
  * limitations under the License.
  */
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -41,11 +41,11 @@ import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.dspace.SubspaceConfiguration;
 import de.zib.gndms.model.gorfx.types.Task;
-import de.zib.gndms.rest.Facet;
 import de.zib.gndms.rest.Facets;
 import de.zib.gndms.rest.GNDMSResponseHeader;
 import de.zib.gndms.rest.Specifier;
 import de.zib.gndms.rest.UriFactory;
+import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
 import de.zib.gndms.stuff.confuror.ConfigHolder;
 
 /**
@@ -141,14 +141,13 @@ public class DSpaceServiceImpl implements DSpaceService {
 			return new ResponseEntity<Facets>(null, headers,
 					HttpStatus.FORBIDDEN);
 		}
-		try {
-			SubspaceConfiguration subConfig = new SubspaceConfiguration(config);
-		} catch (WrongConfigurationException e) {
+		
+		if (!SubspaceConfiguration.checkSubspaceConfiguration(config)) {
 			return new ResponseEntity<Facets>(null, headers,
 					HttpStatus.BAD_REQUEST);
 		}
 
-		// TODO: create subspace according to subConfig, add to provider
+		// TODO: create subspace according to config, add to provider
 		return new ResponseEntity<Facets>(dspaceFacets, headers, HttpStatus.CREATED);
 	}
 
@@ -181,9 +180,18 @@ public class DSpaceServiceImpl implements DSpaceService {
 		}
 
 		Subspace sub = subspaces.getSubspace(subspace);
-		ConfigHolder config = new SubspaceConfiguration(sub);
-		return new ResponseEntity<ConfigHolder>(
-				config, headers, HttpStatus.OK);
+		ConfigHolder config;
+		try {
+			config = SubspaceConfiguration.getSubspaceConfiguration(sub);
+			return new ResponseEntity<ConfigHolder>(
+					config, headers, HttpStatus.OK);
+		} catch (IOException e) {
+			return new ResponseEntity<ConfigHolder>(null, headers,
+					HttpStatus.BAD_REQUEST);
+		} catch (UpdateRejectedException e) {
+			return new ResponseEntity<ConfigHolder>(null, headers,
+					HttpStatus.BAD_REQUEST);
+		}
 	}
 
 	@Override
@@ -198,13 +206,18 @@ public class DSpaceServiceImpl implements DSpaceService {
 			return new ResponseEntity<Void>(null, headers, HttpStatus.NOT_FOUND);
 		}
 
-		try {
-			SubspaceConfiguration subConfig = new SubspaceConfiguration(config);
-
+		if (SubspaceConfiguration.checkSubspaceConfiguration(config)) {
 			Subspace sub = subspaces.getSubspace(subspace);
-			// TODO: sub.setSubspaceConfiguration(subConfig);
-			return new ResponseEntity<Void>(null, headers, HttpStatus.OK);
-		} catch (WrongConfigurationException e) {
+			try {
+				sub.setPath(SubspaceConfiguration.getPath(config));
+			sub.setGsiFtpPath(SubspaceConfiguration.getGsiFtpPath(config));
+			sub.getMetaSubspace().setVisibleToPublic(SubspaceConfiguration.getVisibility(config));
+			sub.setTotalSize(SubspaceConfiguration.getSize(config));
+			return new ResponseEntity<Void>(null, headers, HttpStatus.OK);			
+			} catch (WrongConfigurationException e) {
+				return new ResponseEntity<Void>(null, headers, HttpStatus.BAD_REQUEST);			
+			}
+		} else {		
 			return new ResponseEntity<Void>(null, headers,
 					HttpStatus.BAD_REQUEST);
 		}
