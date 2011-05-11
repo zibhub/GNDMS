@@ -1,0 +1,216 @@
+package de.zib.gndmx.model.dspace;
+
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import java.io.IOException;
+
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
+
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+
+import de.zib.gndms.logic.dspace.WrongConfigurationException;
+import de.zib.gndms.model.dspace.SubspaceConfiguration;
+import de.zib.gndms.stuff.confuror.ConfigEditor;
+import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
+import de.zib.gndms.stuff.confuror.ConfigHolder;
+
+/**
+ * Tests the SubspaceConfiguration.
+ * @author Ulrike Golas
+ *
+ */
+public class SubspaceConfigurationTest {
+	
+	/**
+	 * Tests the method checkSubspaceConfiguration(ConfigHolder) with a valid configuration
+	 * and the access to the subspace configuration fields.
+	 * @throws IOException 
+	 * @throws UpdateRejectedException 
+	 * @throws WrongConfigurationException 
+	 */
+	@Test
+    public final void testCheckAndGet1() throws IOException, UpdateRejectedException, WrongConfigurationException {
+		ConfigHolder testConfig = new ConfigHolder();
+		ObjectMapper objectMapper = new ObjectMapper();
+		JsonFactory factory = objectMapper.getJsonFactory();
+		ConfigEditor.Visitor visitor = new ConfigEditor.DefaultVisitor();
+		ConfigEditor editor = testConfig.newEditor(visitor);
+		testConfig.setObjectMapper(objectMapper);
+		
+		// Construct a valid vonfiguration
+		String path = "testpath";
+		String gsiftp = "gsiftp";
+		boolean visible = true;
+		final long value = 6000;
+		String mode = "update";
+		JsonNode pn = ConfigHolder.parseSingle(factory, "{ 'path': '" + path + "' }");
+		JsonNode gn = ConfigHolder.parseSingle(factory, "{ 'gsiFtpPath': '" + gsiftp + "' }");
+		JsonNode vn = ConfigHolder.parseSingle(factory, "{ 'visible': " + visible + " }");
+		JsonNode sn = ConfigHolder.parseSingle(factory, "{ 'size': " + value + " }");
+		JsonNode mn = ConfigHolder.parseSingle(factory, "{ 'mode': '" + mode + "' }");
+		testConfig.update(editor, pn);
+		testConfig.update(editor, gn);
+		testConfig.update(editor, vn);
+		testConfig.update(editor, sn);
+		testConfig.update(editor, mn);
+
+       	AssertJUnit.assertEquals(true, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
+       	
+       	String testPath = SubspaceConfiguration.getPath(testConfig);
+       	String testGsiftp = SubspaceConfiguration.getGsiFtpPath(testConfig);
+       	boolean testVisible = SubspaceConfiguration.getVisibility(testConfig);
+       	long testValue = SubspaceConfiguration.getSize(testConfig);
+       	String testMode = SubspaceConfiguration.getMode(testConfig);
+
+       	AssertJUnit.assertEquals(path, testPath);
+       	AssertJUnit.assertEquals(gsiftp, testGsiftp);
+       	AssertJUnit.assertEquals(visible, testVisible);
+       	AssertJUnit.assertEquals(value, testValue);
+       	AssertJUnit.assertEquals(mode, testMode);
+
+	}
+
+	/**
+	 * Tests the method checkSubspaceConfiguration(ConfigHolder) with invalid configurations.
+	 * @throws IOException 
+	 * @throws UpdateRejectedException 
+	 */
+	@Test
+    public final void testCheckAndGet2() throws IOException, UpdateRejectedException {
+		ConfigHolder testConfig = new ConfigHolder();
+		ObjectMapper objectMapper = new ObjectMapper();
+		JsonFactory factory = objectMapper.getJsonFactory();
+		ConfigEditor.Visitor visitor = new ConfigEditor.DefaultVisitor();
+		ConfigEditor editor = testConfig.newEditor(visitor);
+		testConfig.setObjectMapper(objectMapper);
+		
+		final long testValue = 6000;
+		
+		// empty node
+       	AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
+       	try {
+			SubspaceConfiguration.getPath(testConfig);
+			AssertJUnit.fail();
+		} catch (WrongConfigurationException e) {
+		}
+       	
+       	// only path set - gsi ftp path is missing
+		JsonNode node = ConfigHolder.parseSingle(factory, "{ 'path': 'testpath' }");
+		testConfig.update(editor, node);
+
+       	AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
+       	try {
+			SubspaceConfiguration.getGsiFtpPath(testConfig);
+			AssertJUnit.fail();
+		} catch (WrongConfigurationException e) {
+		}
+
+       	// only path and gsi ftp path set - visibility is missing
+       	node = ConfigHolder.parseSingle(factory, "{ 'gsiFtpPath': 'gsiftp' }");
+		testConfig.update(editor, node);
+
+       	AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
+       	try {
+			SubspaceConfiguration.getVisibility(testConfig);
+			AssertJUnit.fail();
+		} catch (WrongConfigurationException e) {
+		}
+
+       	// only path, gsi ftp path and visibility set - size is missing
+		node = ConfigHolder.parseSingle(factory, "{ 'visible': true }");
+		testConfig.update(editor, node);
+       	try {
+			SubspaceConfiguration.getSize(testConfig);
+			AssertJUnit.fail();
+		} catch (WrongConfigurationException e) {
+		}
+
+       	AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
+
+       	// only path, gsi ftp path, visibility, and size set - mode is missing
+		node = ConfigHolder.parseSingle(factory, "{ 'size': " + testValue + " }");
+		testConfig.update(editor, node);
+       	try {
+			SubspaceConfiguration.getMode(testConfig);
+			AssertJUnit.fail();
+		} catch (WrongConfigurationException e) {
+		}
+
+       	AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
+
+       	// wrong type of path value - number instead of string
+		node = ConfigHolder.parseSingle(factory, "{ 'path': " + testValue + " }");
+		testConfig.update(editor, node);
+
+		AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
+       	try {
+			SubspaceConfiguration.getPath(testConfig);
+			AssertJUnit.fail();
+		} catch (WrongConfigurationException e) {
+		}
+
+       	// wrong type of gsi ftp path value - number instead of string
+		node = ConfigHolder.parseSingle(factory, "{ 'gsiFtpPath': " + testValue + " }");
+		testConfig.update(editor, node);
+
+		AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
+       	try {
+			SubspaceConfiguration.getGsiFtpPath(testConfig);
+			AssertJUnit.fail();
+		} catch (WrongConfigurationException e) {
+		}
+
+
+       	// wrong type of visibility value - number instead of boolean
+		node = ConfigHolder.parseSingle(factory, "{ 'visible': " + testValue + " }");
+		testConfig.update(editor, node);
+
+		AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
+       	try {
+			SubspaceConfiguration.getVisibility(testConfig);
+			AssertJUnit.fail();
+		} catch (WrongConfigurationException e) {
+		}
+
+
+       	// wrong type of size value - string instead of number
+		node = ConfigHolder.parseSingle(factory, "{ 'size': 'testpath' }");
+		testConfig.update(editor, node);
+
+		AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
+       	try {
+			SubspaceConfiguration.getSize(testConfig);
+			AssertJUnit.fail();
+		} catch (WrongConfigurationException e) {
+		}
+
+       	// wrong type of mode value - number instead of string
+		node = ConfigHolder.parseSingle(factory, "{ 'mode': " + testValue + " }");
+		testConfig.update(editor, node);
+
+		AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
+       	try {
+			SubspaceConfiguration.getMode(testConfig);
+			AssertJUnit.fail();
+		} catch (WrongConfigurationException e) {
+		}
+
+	}
+}
