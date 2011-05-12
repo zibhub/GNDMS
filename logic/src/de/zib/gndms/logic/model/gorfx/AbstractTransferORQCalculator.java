@@ -28,7 +28,7 @@ import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.exception.ClientException;
 import org.globus.ftp.exception.ServerException;
 import org.joda.time.Duration;
-
+import java.util.concurrent.TimeoutException;
 import java.io.IOException;
 
 
@@ -72,6 +72,8 @@ public abstract class AbstractTransferORQCalculator<M extends FileTransferORQ, C
             ft.setSourcePath( suri.getPath( ) );
             ft.setFiles( getORQArguments().getFileMap() );
             estimatedTransferSize = ft.estimateTransferSize(  );
+	} catch( TimeoutException e ) {
+		throw new RuntimeException( e );
         } finally {
             if ( clnt != null )
                 clnt.close( true ); // none blocking close op

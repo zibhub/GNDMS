@@ -18,8 +18,10 @@ package de.zib.gndms.kit.network;
 
 
 
+import de.zib.gndms.stuff.threading.DV;
 import de.zib.gndms.stuff.threading.QueuedExecutor;
 import de.zib.gndms.kit.access.CredentialProvider;
+import de.zib.gndms.stuff.threading.TimedForkable;
 import org.apache.log4j.Logger;
 import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.exception.ServerException;
@@ -39,14 +41,11 @@ import java.util.concurrent.*;
 public class NonblockingClientFactory extends AbstractNonblockingClientFactory {
     private static final Logger log = Logger.getLogger( NonblockingClientFactory.class );
 
-    private int timeout = 20;
     private final TimeUnit unit = TimeUnit.SECONDS;
-    private long delay = 500; // in ms
-    private final ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool( 1 );
     private final Map<String, QueuedExecutor> hostExecutors = new HashMap<String, QueuedExecutor>( );
 
 
-    public GridFTPClient createClient( String host, int port, CredentialProvider cp ) throws ServerException, IOException {
+    public GridFTPClient createClient( String host, int port, CredentialProvider cp ) throws TimeoutException, ServerException, IOException {
 
         final QueuedExecutor exec;
         synchronized( hostExecutors ) {
@@ -55,32 +54,32 @@ public class NonblockingClientFactory extends AbstractNonblockingClientFactory {
                 exec = hostExecutors.get( host ) ;
             } else {
                 log.debug( "Creating executor for host: " + host );
-                exec = new QueuedExecutor( scheduledExecutor );
-                exec.setDefaultDelay( delay );
+                exec = new QueuedExecutor( );
+                exec.setDefaultDelay( getDelay() );
                 hostExecutors.put( host, exec );
             }
         }
 
-        final GridFTPClientCreator c = new GridFTPClientCreator( host, port, cp, inc() );
-        final Future<GridFTPClient> f = exec.submit( c );
+        final GridFTPClientCreator creator = new GridFTPClientCreator( host, port, cp, inc() );
+        final TimedForkable<GridFTPClient> fork = new TimedForkable<GridFTPClient>( creator, getTimeout() * 1000, creator );
         try {
-            try{
-                return f.get( exec.actualTimeout( f, timeout, unit ), unit );
-            } catch ( TimeoutException e ) {
-                log.info( "GridFTPClient get() create exceeded timeout" );
-                f.cancel( true );
-            }
+            final DV<GridFTPClient,Exception> f = exec.submit( fork );
+            return f.getValue();
+        } catch ( TimeoutException e ) {
+            creator.getLog().debug( e );
+            throw e;
         } catch ( InterruptedException e ) {
-            e.printStackTrace(  );
-            throw new RuntimeException( "GridFTPClient create exceeded timeout", e );
+            Thread.interrupted();
+            creator.getLog().debug( e );
+            throw new RuntimeException( "GridFTPClient create interrupted", e );
         } catch ( ExecutionException e ) {
-            e.printStackTrace();
+            creator.getLog().debug( e );
             if( e.getCause() instanceof ServerException )
                 throw ServerException.class.cast( e.getCause() );
-
             throw new RuntimeException( e );
+        } catch ( Exception e ) {
+            throw new RuntimeException( "Unexpected exception in GridFTPClient creation.", e );
         }
-        return null;
     }
 
 
@@ -101,5 +100,18 @@ public class NonblockingClientFactory extends AbstractNonblockingClientFactory {
             }
         }
         */
+    }
+
+
+    @Override
+    public void setDelay( int delay ) {
+        super.setDelay( delay );
+        updateDelay( );
+    }
+
+
+    private void updateDelay() {
+        for( String k : hostExecutors.keySet() )
+            hostExecutors.get( k ).setDefaultDelay( getDelay() );
     }
 }
