@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.dspace;
+package de.zib.gndms.model.dspace;
 
 public class WrongConfigurationException extends Exception {
 

@@ -16,6 +16,7 @@ package de.zib.gndms.dspace.service;
  * limitations under the License.
  */
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -35,17 +36,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import de.zib.gndms.logic.dspace.NoSuchElementException;
 import de.zib.gndms.logic.dspace.SliceKindProvider;
 import de.zib.gndms.logic.dspace.SubspaceProvider;
-import de.zib.gndms.logic.dspace.WrongConfigurationException;
-import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.SliceKindConfiguration;
 import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.model.dspace.SubspaceConfiguration;
-import de.zib.gndms.rest.Facets;
 import de.zib.gndms.rest.GNDMSResponseHeader;
 import de.zib.gndms.rest.Specifier;
 import de.zib.gndms.rest.UriFactory;
 import de.zib.gndms.stuff.confuror.ConfigHolder;
+import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
 
 /**
  * The slice kind service implementation.
@@ -94,12 +92,18 @@ public class SliceKindServiceImpl implements SliceKindService {
 
 		try {
 			SliceKind sliceK = findSliceKind(subspace, sliceKind);
-			SliceKindConfiguration config = new SliceKindConfiguration(sliceK);
+			ConfigHolder config = SliceKindConfiguration.getSliceKindConfiguration(sliceK);
 			return new ResponseEntity<ConfigHolder>(config, headers,
 					HttpStatus.OK);
 		} catch (NoSuchElementException ne) {
 			return new ResponseEntity<ConfigHolder>(null, headers,
 					HttpStatus.NOT_FOUND);
+		} catch (IOException e) {
+			return new ResponseEntity<ConfigHolder>(null, headers,
+					HttpStatus.BAD_REQUEST);
+		} catch (UpdateRejectedException e) {
+			return new ResponseEntity<ConfigHolder>(null, headers,
+					HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -114,10 +118,13 @@ public class SliceKindServiceImpl implements SliceKindService {
 
 		try {
 			SliceKind sliceK = findSliceKind(subspace, sliceKind);
-			SliceKindConfiguration sliceConfig = new SliceKindConfiguration(
-					config);
+			
+			if (!SliceKindConfiguration.checkSliceKindConfiguration(config)) {
+				return new ResponseEntity<Specifier<SliceKind>>(null, headers,
+						HttpStatus.BAD_REQUEST);				
+			}
 
-			// TODO: sliceK.setSliceKindConfiguration
+			// TODO: sliceK.setSliceKindConfiguration(config)
 
 			Specifier<SliceKind> spec = new Specifier<SliceKind>();
 
@@ -130,9 +137,6 @@ public class SliceKindServiceImpl implements SliceKindService {
 
 			return new ResponseEntity<Specifier<SliceKind>>(spec, headers,
 					HttpStatus.OK);
-		} catch (WrongConfigurationException e) {
-			return new ResponseEntity<Specifier<SliceKind>>(null, headers,
-					HttpStatus.BAD_REQUEST);
 		} catch (NoSuchElementException ne) {
 			return new ResponseEntity<Specifier<SliceKind>>(null, headers,
 					HttpStatus.NOT_FOUND);
@@ -145,17 +149,15 @@ public class SliceKindServiceImpl implements SliceKindService {
 			final String sliceKind, final ConfigHolder config, final String dn) {
 		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, dn);
 
-		try {
-			SliceKindConfiguration sliceConfig = new SliceKindConfiguration(
-					config);
-		// TODO: create slice kind
+			if (!SliceKindConfiguration.checkSliceKindConfiguration(config)) {
+				return new ResponseEntity<Void>(null, headers,
+						HttpStatus.BAD_REQUEST);				
+			}
+
+			// TODO: create slice kind
 			return new ResponseEntity<Void>(null, headers,
 					HttpStatus.OK);
 			
-		} catch (WrongConfigurationException e) {
-			return new ResponseEntity<Void>(null, headers,
-					HttpStatus.BAD_REQUEST);
-		}
 	}
 
 	@Override

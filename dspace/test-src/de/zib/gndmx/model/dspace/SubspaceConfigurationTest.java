@@ -25,8 +25,8 @@ import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import de.zib.gndms.logic.dspace.WrongConfigurationException;
 import de.zib.gndms.model.dspace.SubspaceConfiguration;
+import de.zib.gndms.model.dspace.WrongConfigurationException;
 import de.zib.gndms.stuff.confuror.ConfigEditor;
 import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
 import de.zib.gndms.stuff.confuror.ConfigHolder;
