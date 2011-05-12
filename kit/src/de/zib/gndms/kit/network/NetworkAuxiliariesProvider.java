@@ -88,6 +88,7 @@ public class NetworkAuxiliariesProvider {
         GNDMSFileTransfer ft = new GNDMSFileTransfer();
         ft.setBufferSize( bufferSize );
 
+	return ft;
     }
 
     /**
