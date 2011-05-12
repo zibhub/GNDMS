@@ -16,6 +16,7 @@ package de.zib.gndms.dspace.service;
  * limitations under the License.
  */
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -40,7 +41,6 @@ import de.zib.gndms.logic.dspace.NoSuchElementException;
 import de.zib.gndms.logic.dspace.SliceKindProvider;
 import de.zib.gndms.logic.dspace.SliceProvider;
 import de.zib.gndms.logic.dspace.SubspaceProvider;
-import de.zib.gndms.logic.dspace.WrongConfigurationException;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceConfiguration;
 import de.zib.gndms.model.dspace.SliceKind;
@@ -49,6 +49,7 @@ import de.zib.gndms.rest.Specifier;
 import de.zib.gndms.rest.UriFactory;
 import de.zib.gndms.rest.Facets;
 import de.zib.gndms.rest.GNDMSResponseHeader;
+import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
 import de.zib.gndms.stuff.confuror.ConfigHolder;
 
 /**
@@ -108,11 +109,17 @@ public class SliceServiceImpl implements SliceService {
 		
 		try {
 			Slice slic = findSliceOfKind(subspace, sliceKind, slice);
-    		SliceConfiguration config = new SliceConfiguration(slic);
+    		ConfigHolder config = SliceConfiguration.getSliceConfiguration(slic);
     		Product<ConfigHolder, Facets> prod2 = new Product<ConfigHolder, Facets>(config, sliceFacets);
     		return new ResponseEntity<Product<ConfigHolder, Facets>>(prod2, headers, HttpStatus.OK);
  		} catch (NoSuchElementException ne) {
 			return new ResponseEntity<Product<ConfigHolder, Facets>>(null, headers, HttpStatus.NOT_FOUND);
+		} catch (IOException e) {
+			return new ResponseEntity<Product<ConfigHolder, Facets>>(null, headers,
+					HttpStatus.BAD_REQUEST);
+		} catch (UpdateRejectedException e) {
+			return new ResponseEntity<Product<ConfigHolder, Facets>>(null, headers,
+					HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -128,15 +135,17 @@ public class SliceServiceImpl implements SliceService {
 		
 		try {
 			Slice slic = findSliceOfKind(subspace, sliceKind, slice);
-			SliceConfiguration sliceConfig = new SliceConfiguration(config);
 
+			if (!SliceConfiguration.checkSliceConfiguration(config)) {
+				return new ResponseEntity<Void>(null, headers,
+						HttpStatus.BAD_REQUEST);				
+			}
+			
 			// TODO: slic.setSliceConfiguration(sliceConfig);
-    		return new ResponseEntity<Void>(null, headers, HttpStatus.OK);
+
+			return new ResponseEntity<Void>(null, headers, HttpStatus.OK);
  		} catch (NoSuchElementException ne) {
 			return new ResponseEntity<Void>(null, headers, HttpStatus.NOT_FOUND);
-		} catch (WrongConfigurationException e) {
-			return new ResponseEntity<Void>(null, headers,
-					HttpStatus.BAD_REQUEST);
 		}
 	}
 

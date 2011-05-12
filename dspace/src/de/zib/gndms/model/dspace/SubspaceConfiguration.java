@@ -22,7 +22,6 @@ import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import de.zib.gndms.logic.dspace.WrongConfigurationException;
 import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
 import de.zib.gndms.stuff.confuror.ConfigHolder;
 import de.zib.gndms.stuff.confuror.ConfigEditor;
@@ -45,7 +44,6 @@ public final class SubspaceConfiguration {
 	 * Do not use this constructor.
 	 */
 	private SubspaceConfiguration() {
-		
 	}
 	
 	/**
