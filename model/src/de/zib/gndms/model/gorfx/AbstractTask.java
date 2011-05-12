@@ -157,7 +157,7 @@ public abstract class AbstractTask extends TimedGridResource {
     }
 
 
-    @Column(name="descr", nullable=false, updatable=false, columnDefinition="VARCHAR")
+    @Column(name="descr", nullable=false, updatable=false, columnDefinition="VARCHAR", length=5000)
     public String getDescription() {
         return description;
     }
