@@ -17,6 +17,8 @@ package de.zib.gndms.kit.network;
  */
 
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @author  try ma ik jo rr a zib
@@ -58,6 +60,7 @@ public class NetworkAuxiliariesProvider {
     private final static Class<NonblockingClientFactory> gridFTPClientFactoryClass = NonblockingClientFactory.class;
     private final static GridFTPClientFactory gridFTPClientFactory;
     private final static BandWidthEstimater bandWidthEstimater = new StaticBandWidthEstimater();
+    protected static Log logger = LogFactory.getLog( NetworkAuxiliariesProvider.class );
 
 
     private static Integer bufferSize = null;
@@ -85,11 +88,12 @@ public class NetworkAuxiliariesProvider {
         return bandWidthEstimater;
     }
 
+
     public static GNDMSFileTransfer newGNDMSFileTransfer() {
         GNDMSFileTransfer ft = new GNDMSFileTransfer();
         ft.setBufferSize( bufferSize );
 
-	return ft;
+        return ft;
     }
 
     /**
@@ -122,6 +126,8 @@ public class NetworkAuxiliariesProvider {
 
 
     public static void setBufferSize( Integer bufferSize ) {
+
+        logger.info( "received buffersize: "+ bufferSize );
         NetworkAuxiliariesProvider.bufferSize = bufferSize;
     }
 }
