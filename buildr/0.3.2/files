@@ -30,6 +30,7 @@
 #{ENV['GLOBUS_LOCATION']}/lib/servlet-api-2.4.jar
 #{ENV['GLOBUS_LOCATION']}/lib/portlet-api-1.0.jar
 #{ENV['GLOBUS_LOCATION']}/lib/gndms-infra-0.3.2.jar
+#{ENV['GLOBUS_LOCATION']}/lib/gndms-infra-0.3.2-hotfix1.jar
 #{ENV['GLOBUS_LOCATION']}/lib/caGrid-Introduce-serviceTools-1.2.jar
 #{ENV['GLOBUS_LOCATION']}/lib/caGrid-ServiceSecurityProvider-client-1.2.jar
 #{ENV['GLOBUS_LOCATION']}/lib/caGrid-ServiceSecurityProvider-common-1.2.jar
@@ -40,3 +41,13 @@
 #{ENV['GLOBUS_LOCATION']}/lib/caGrid-metadata-security-1.2.jar
 #{ENV['GLOBUS_LOCATION']}/lib/castor-0.9.9.jar
 #{ENV['GLOBUS_LOCATION']}/lib/jdom-1.0.jar
+#{ENV['GLOBUS_LOCATION']}/lib/gndms-dspace-client.jar
+#{ENV['GLOBUS_LOCATION']}/lib/gndms-dspace-common.jar
+#{ENV['GLOBUS_LOCATION']}/lib/gndms-dspace-service.jar
+#{ENV['GLOBUS_LOCATION']}/lib/gndms-dspace-stubs.jar
+#{ENV['GLOBUS_LOCATION']}/lib/gndms-dspace-tests.jar
+#{ENV['GLOBUS_LOCATION']}/lib/gndms-gorfx-client.jar
+#{ENV['GLOBUS_LOCATION']}/lib/gndms-gorfx-common.jar
+#{ENV['GLOBUS_LOCATION']}/lib/gndms-gorfx-service.jar
+#{ENV['GLOBUS_LOCATION']}/lib/gndms-gorfx-stubs.jar
+#{ENV['GLOBUS_LOCATION']}/lib/gndms-gorfx-tests.jar
