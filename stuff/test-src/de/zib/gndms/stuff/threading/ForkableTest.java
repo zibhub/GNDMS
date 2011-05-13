@@ -49,4 +49,80 @@ public class ForkableTest {
         }
         Assert.assertEquals(forkable.wasStopped(), true);
     }
+
+
+   @Test
+    public void forkAndThrow() throws ExecutionException, InterruptedException {
+        Forkable<Integer> forkable = new Forkable<Integer>(new Callable<Integer>() {
+            public Integer call() throws Exception {
+                int i = 0;
+                while (true) {
+                    try {
+                        if (i == 2)
+                            throw new ClassCastException("Whatever");
+                        Thread.sleep(100L);
+                        i = i + 1;
+                    }
+                    catch (InterruptedException ie) {
+                        // deliberately ignored
+                    }
+                }
+            }
+        });
+
+        ExecutorService executorService = Executors.newFixedThreadPool(1);
+        Future<Integer> integerFuture = executorService.submit(forkable);
+
+        try {
+            Thread.sleep(1000L);
+        }
+        catch (InterruptedException ie) {
+
+        }
+
+        boolean threwUp = false;
+        try {
+            integerFuture.get();
+        }
+        catch (InterruptedException ie) {
+
+        }
+        catch (ExecutionException cce) {
+            threwUp = true;
+        }
+        Assert.assertEquals(threwUp, true);
+   }
+
+    @Test
+     public void forkeverYoung() throws Throwable, InterruptedException {
+         Forkable<Integer> forkable = new Forkable<Integer>(new Callable<Integer>() {
+             public Integer call() throws Exception {
+                 while (true) {
+                     try {
+                        Thread.sleep(100L);
+                     }
+                     catch (InterruptedException ie) {
+                        Thread.interrupted();
+                     }
+                 }
+             }
+         }, System.currentTimeMillis() + 1000L, 500, TimeUnit.MILLISECONDS);
+
+         ExecutorService executorService = Executors.newFixedThreadPool(1);
+         Future<Integer> integerFuture = executorService.submit(forkable);
+
+        boolean threwUpProperly = false;
+         try {
+             integerFuture.get();
+         }
+         catch (ExecutionException e) {
+            try {
+                throw e.getCause();
+            }
+            catch (TimeoutException t) {
+                threwUpProperly = true;
+            }
+         }
+         Assert.assertTrue(threwUpProperly);
+     }
 }

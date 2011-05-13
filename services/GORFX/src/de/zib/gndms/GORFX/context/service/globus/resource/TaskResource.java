@@ -77,6 +77,7 @@ public class TaskResource extends TaskResourceBase
     public void executeTask() {
         
         Task tsk = (Task) taskAction.getModel( );
+        logger.debug( "submitting task: " + tsk.getId() );
         if(! tsk.getState().equals( TaskState.FINISHED ) || ! tsk.getState().equals( TaskState.FAILED ) )
             future = home.getSystem( ).submitAction( taskAction, getResourceHome().getLog() );
         else
@@ -228,6 +229,9 @@ public class TaskResource extends TaskResourceBase
      */
     @NotNull
     public Task loadModelById( @NotNull String id ) throws ResourceException {
+
+        logger.debug( "task resource for: " + id );
+
         if( taskAction != null )
             throw new ResourceException( "task action already loaded" );
 

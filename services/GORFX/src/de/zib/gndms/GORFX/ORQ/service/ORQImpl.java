@@ -72,18 +72,18 @@ public class ORQImpl extends ORQImplBase {
             logger.debug(impl.getResourceKey());
             logger.debug( "Context: " + LogAux.loggableXSDT( context ) );
             ORQResource orq = home.getAddressedResource();
-            WidAux.initWid(orq.getCachedWid());
-            WidAux.initGORFXid( orq.getORQCalculator().getORQArguments().getActId() );
-            LogAux.logSecInfo( logger, "getOfferAndDestroyRequest" );
           //  logger.debug( "Default creds: " + GlobusCredential.getDefaultCredential() );
             try {
+                WidAux.initWid(orq.getCachedWid());
+                WidAux.initGORFXid( orq.getORQCalculator().getORQArguments().getActId() );
+                LogAux.logSecInfo( logger, "getOfferAndDestroyRequest" );
                 final TransientContract contract = orq.getOfferExecutionContract(offerExecutionContract);
                 OfferExecutionContractT oec =
                     ContractXSDTypeWriter.write( contract );
 
                 // log contract
                 logger.debug( "Calculated contract: " + LogAux.loggableXSDT( oec ) );
-                logger.debug( "Creating offer resouce" );
+                logger.debug( "Creating offer resource" );
 
 
                 ExtOfferResourceHome ohome = ( ExtOfferResourceHome) getOfferResourceHome();
@@ -99,9 +99,6 @@ public class ORQImpl extends ORQImplBase {
 
                 home.remove( orq.getResourceKey() );
                 
-                // log contract
-                logger.debug( "Calculated contract: " + LogAux.loggableXSDT( oec ) );
-
                 return ohome.getResourceReference( key ).getEndpointReference();
             }
             catch (UnfulfillableORQException e) {
@@ -143,7 +140,7 @@ public class ORQImpl extends ORQImplBase {
 
             // log contract
             logger.debug( "Estimated contract: " + LogAux.loggableXSDT( oec ) );
-
+            home.remove( res.getResourceKey() );
             return oec;
         }
         catch (UnfulfillableORQException e) {

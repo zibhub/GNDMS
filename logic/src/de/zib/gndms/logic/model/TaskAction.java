@@ -33,6 +33,7 @@ import de.zib.gndms.model.util.EntityManagerAux;
 import de.zib.gndms.model.util.TxFrame;
 import de.zib.gndms.stuff.copy.Copier;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityExistsException;
@@ -63,7 +64,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
      * the ExecutionService on which this TaskAction runs
      */
     private TaskExecutionService service;
-    private Log log;
+    protected Log log = LogFactory.getLog( this.getClass() );
     private String wid;
     private Class<? extends AbstractTask> taskClass;
     /**
@@ -380,6 +381,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     @SuppressWarnings({ "ThrowableInstanceNeverThrown", "ObjectAllocationInLoop" })
     @Override
     public AbstractTask execute(final @NotNull EntityManager em) {
+
         boolean first = true;
         TransitException curEx = null;
         do {
@@ -391,7 +393,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
                     if (first) {
                         try {
 	                        final AbstractORQ orq = AbstractORQ.class.cast(getModel().getOrq());
-	                        trace("execute() with " + orq.getLoggableDescription(), null);
+	                        trace( "execute() with " + orq.getLoggableDescription(), null );
                             trace("transit(null)", null);
                             transit(null);
                         }
@@ -544,34 +546,39 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
             em.getTransaction().begin();
             if (newState != null) {
                 if (! em.contains(model)) {
+                    log.debug( "model not in EntityManager" );
                     try {
                         try {
                             em.persist(model);
                         }
                         catch (EntityExistsException e) {
+                            log.debug( "persisting failed merging", e );
                             rewindTransaction(em.getTransaction());
                             em.merge(model);
                         }
                     }
                     catch (RuntimeException e2) {
-                            rewindTransaction(em.getTransaction());
-                            final @NotNull AbstractTask newModel = em.find(AbstractTask.class, model.getId());
-                            model.mold(newModel);
-	                        newModel.refresh(em);
-                            setModel(newModel);
-                            model = getModel();
-                        }
+                        log.debug( "probably persisting and merging failed", e2 );
+                        rewindTransaction(em.getTransaction());
+                        final @NotNull AbstractTask newModel = em.find(AbstractTask.class, model.getId());
+                        model.mold(newModel);
+                        newModel.refresh(em);
+                        setModel( newModel );
+                        model = getModel();
+                        log.debug( "completed renewing of model" );
                     }
                 }
+            }
 
             model.transit(newState);
 
-            boolean commited = false;
+            boolean committed = false;
             try {
                 em.getTransaction().commit();
 //                em.flush( );
-                commited = true;
+                committed = true;
             } catch ( Exception e ) {
+                log.debug( "commit of transit (" + newState.name() +") model failed ", e );
                 try {
                     rewindTransaction(em.getTransaction());
                     // if this point is reached s.th. is terribly foobared
@@ -582,11 +589,18 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
                     model.fail( e );
                     em.getTransaction().commit();
                 } catch ( Exception e2 ) {
-                    // refresh em for final commit
-                    EntityManagerAux.rollbackAndClose( em );
+                    log.debug( "restoring previous version failed", e2 );
+                    try {
+                        // refresh em for final commit
+                        EntityManagerAux.rollbackAndClose( em );
+                    } catch( RuntimeException e3 ) {
+                        log.debug( "rollback old em failed", e3 );
+                    }
+
                     EntityManager nem = emf.createEntityManager();
                     TxFrame tx = new TxFrame( nem );
                     try {
+                        log.debug( "loading fresh model" );
                         model = nem.find( model.getClass( ), backup.getId() );
                         boolean unkown = ( model == null );
                         model = Copier.copy( false, backup );
@@ -598,6 +612,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
                         tx.commit();
                         setModel( model );
                     } catch ( RuntimeException e3 ) {
+                        log.debug( "exception during refresh: ", e3 );
                         throw e3;
                     } finally {
                         tx.finish();
@@ -609,7 +624,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
 
             // if model could be commited it has a clean state
             // refresh backup
-            if( commited )
+            if( committed )
                 setBackup( Copier.copy( false, model ) );
 
             final TaskState modelState = model.getState();
@@ -623,10 +638,16 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
             throw e;
         }
         finally {
-            // for debuggin'
-            boolean ta = em.getTransaction().isActive();
-            if ( ta )
-                em.getTransaction().rollback();
+            try {
+                // for debuggin'
+                boolean ta = em.getTransaction().isActive();
+                if ( ta ) {
+                    log.debug( "final rollback" );
+                    em.getTransaction().rollback();
+                }
+            } catch ( Exception e ) {
+                log.debug( "final rollback failed", e );
+            }
         }
     }
 
@@ -871,7 +892,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
 
 
     public void setLog(final Log logParam) {
-        log = logParam;
+        //log = logParam;
     }
 
     

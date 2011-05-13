@@ -49,17 +49,21 @@ public class OfferImpl extends OfferImplBase {
 
     public org.apache.axis.message.addressing.EndpointReferenceType accept() throws RemoteException, de.zib.gndms.GORFX.ORQ.stubs.types.PermissionDenied {
 
+        EntityManager em = null;
         try {
-            // Create task object
             @NotNull final ExtOfferResourceHome home = (ExtOfferResourceHome) getResourceHome( );
             @NotNull final OfferResource ores = home.getAddressedResource();
             WidAux.initWid(ores.getCachedWid());
             WidAux.initGORFXid( ores.getOrqCalc().getORQArguments().getActId() );
-            @NotNull final Task task = ores.accept( );
-            @NotNull final ExtTaskResourceHome thome = ( ExtTaskResourceHome) getTaskResourceHome();
-            @NotNull final EntityManager em = thome.getEntityManagerFactory().createEntityManager();
-            logger.debug( "accepted" );
 
+            // Create task object
+            @NotNull final Task task = ores.accept( );
+            logger.debug( "accepted" );
+            // remove offer resource
+            home.remove( ores.getResourceKey() );
+
+            @NotNull final ExtTaskResourceHome thome = ( ExtTaskResourceHome) getTaskResourceHome();
+            em = thome.getEntityManagerFactory().createEntityManager();
 
             // Persist task object
             persistTask(task, em);
@@ -68,7 +72,7 @@ public class OfferImpl extends OfferImplBase {
             EndpointReferenceType epr;
             try {
                 final ResourceKey key = thome.getKeyForId(task.getId());
-                TaskResource tres = (TaskResource) thome.find(key);
+                TaskResource tres = (TaskResource) thome.find(key); // this triggers task execution!!
                 epr = thome.getResourceReference(key).getEndpointReference();
                 return epr;
             }
@@ -76,6 +80,8 @@ public class OfferImpl extends OfferImplBase {
                 try {
                     logger.error( "Runtime Exception, removing task", e);
                     removeTask(task, em);
+                } catch( Exception e2 ) {
+                    logger.warn( "Exception on task removal", e2 );
                 }
                 finally {
                     // but keep causing exception if even that fails
@@ -83,12 +89,14 @@ public class OfferImpl extends OfferImplBase {
                 }
             }
         } catch ( Exception e ) {
-            logger.error( "Exception occured", e);
+            logger.error( "Exception occurred", e);
             throw new RemoteException(e.getMessage(), e);
         }
         finally {
-            WidAux.removeGORFXid(); 
+            WidAux.removeGORFXid();
             WidAux.removeWid();
+            if ( em != null && em.isOpen() )
+                em.close();
         }
     }
 

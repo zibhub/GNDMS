@@ -201,7 +201,7 @@ public abstract class AbstractTask extends TimedGridResource {
     }
 
 
-    @Column(name = "done", nullable=false, updatable=true)
+    @Column(name = "progress", nullable=false, updatable=true)
     public int getProgress() {
         return progress;
     }

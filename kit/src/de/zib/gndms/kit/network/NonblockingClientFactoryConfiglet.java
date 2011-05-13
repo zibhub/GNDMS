@@ -36,7 +36,7 @@ public class NonblockingClientFactoryConfiglet extends DefaultConfiglet {
 
     private final static String DELAY="delay"; // in ms
     private final static String TIMEOUT="timeout"; // in s
-
+    private final static String BUFFERSIZE="buffersize"; // in byte
 
     @Override
     public void init( @NotNull Log loggerParam, @NotNull String aName, Serializable data ) {
@@ -55,19 +55,27 @@ public class NonblockingClientFactoryConfiglet extends DefaultConfiglet {
     private void refreshFactory() {
         final MapConfig mapConfig = getMapConfig();
         try{
-            StrictNonblockingClientFactory fac =
-                StrictNonblockingClientFactory.class.cast( NetworkAuxiliariesProvider.getGridFTPClientFactory() );
+            Schedulable sed =
+                Schedulable.class.cast( NetworkAuxiliariesProvider.getGridFTPClientFactory() );
             if( mapConfig.hasOption( DELAY ) ) {
-                fac.setDelay( mapConfig.getIntOption( DELAY ) );
+                sed.setDelay( mapConfig.getIntOption( DELAY ) );
             }
 
             if( mapConfig.hasOption( TIMEOUT ) ) {
-                fac.setTimeout( mapConfig.getIntOption( TIMEOUT ) );
+                sed.setTimeout( mapConfig.getIntOption( TIMEOUT ) );
+            }
+
+            if (mapConfig.hasOption( BUFFERSIZE )) {
+                if (mapConfig.getOption( BUFFERSIZE ).trim().equals( "null" )) {
+                       NetworkAuxiliariesProvider.setBufferSize( null );
+                } else {
+                 NetworkAuxiliariesProvider.setBufferSize( mapConfig.getIntOption( BUFFERSIZE ) );
+                }
             }
         } catch ( ClassCastException e ) {
-            e.printStackTrace( );
+            getLog( ).warn( e );
         } catch ( MandatoryOptionMissingException e ) {
-            e.printStackTrace();  // may not occur
+            getLog( ).warn( e );
         }
     }
 }

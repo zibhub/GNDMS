@@ -24,6 +24,7 @@ import de.zib.gndms.model.gorfx.types.InterSliceTransferORQ;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.SubTask;
+import org.globus.gsi.GlobusCredential;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -55,21 +56,24 @@ public class InterSliceTransferTaskAction extends ORQTaskAction<InterSliceTransf
     protected void onInProgress( @NotNull AbstractTask model ) {
 
         try {
-            InterSliceTransferORQCalculator.checkURIs( getOrq( ) );
+            InterSliceTransferORQCalculator.checkURIs( getOrq( ), (GlobusCredential)
+                getCredentialProvider().getCredential() );
         } catch ( Exception e ) {
             fail( new RuntimeException( e.getMessage( ), e ) );
         }
 
         SubTask st = new SubTask( model );
         try {
-	        final EntityManager em = getEmf().createEntityManager();
+            final EntityManager em = getEntityManager();
 
             st.setId( getUUIDGen().nextUUID() );
             st.fromTask( em, model );
             st.setTerminationTime( model.getTerminationTime() );
 
 	        FileTransferTaskAction fta = new FileTransferTaskAction(em, st );
-            fta.setClosingEntityManagerOnCleanup( true );
+            fta.setCredentialProvider( getCredentialProvider() );
+            fta.setClosingEntityManagerOnCleanup( false );
+            fta.setEmf( getEmf( ) );
 
             fta.setLog( getLog() );
             fta.call( );
@@ -78,7 +82,7 @@ public class InterSliceTransferTaskAction extends ORQTaskAction<InterSliceTransf
             else
                 failFrom( (RuntimeException) st.getData() );
 
-        } catch ( RuntimeException e ) {
+        } catch ( TransitException e ) {
             honorOngoingTransit( e );
         } catch ( Exception e ) {
             /*

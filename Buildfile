@@ -17,8 +17,9 @@ repositories.remote << 'http://google-maven-repository.googlecode.com/svn/reposi
 # Don't touch below unless you know what you are doing
 # --------------------------------------------------------------------------------------------------
 
-VERSION_NUMBER = '0.3.2'
+VERSION_NUMBER = '0.3.3'
 VERSION_NAME = 'Shigeru'
+VERSION_TAG = `git describe --tags`
 GROUP_NAME = 'de.zib.gndms'
 MF_COPYRIGHT = 'Copyright 2008-2011 Zuse Institute Berlin (ZIB)'
 LICENSE ='This software has been licensed to you under the terms and conditions of the Apache License 2.0 (APL 2.0) only.'
@@ -55,7 +56,7 @@ testTool('openssl')
 testTool('hostname')
 HOSTNAME = `hostname`.split[0]
 
-puts "GNDMS #{VERSION_NUMBER} \”#{VERSION_NAME}\""
+puts "GNDMS #{VERSION_NUMBER} \”#{VERSION_NAME}\" #{VERSION_TAG}"
 puts MF_COPYRIGHT
 puts "#{LICENSE}  Please consult doc/licensing about licensing conditions of downloaded 3rd party software."
 if ENV['GNDMS_DEPS']=='skip' then 
@@ -100,6 +101,7 @@ COMMONS_FILEUPLOAD = transitive(['commons-fileupload:commons-fileupload:jar:1.2.
 JETTY = ['org.mortbay.jetty:jetty:jar:6.1.11', 'org.mortbay.jetty:jetty-util:jar:6.1.11']
 GROOVY = ['org.codehaus.groovy:groovy:jar:1.6.9']
 ARGS4J = 'args4j:args4j:jar:2.0.14'
+SLF4J = transitive( ['org.slf4j:slf4j-log4j12:jar:1.5.8'])
 # TESTNG = download(artifact('org.testng:testng:jar:5.1-jdk15') => 'http://static.appfuse.org/repository/org/testng/testng/5.1/testng-5.1-jdk15.jar')
 DB_DERBY = ['org.apache.derby:derby:jar:10.5.3.0', 'org.apache.derby:derbytools:jar:10.5.3.0']
 
@@ -215,7 +217,7 @@ define 'gndms' do
 
     def updateReleaseInfo()
       if (@releaseInfo == nil) then
-        @releaseInfo = 'Generation N Data Management System VERSION: ' + VERSION_NUMBER + ' "' + VERSION_NAME + '"'
+        @releaseInfo = "Generation N Data Management System VERSION: #{VERSION_NUMBER} \"#{VERSION_NAME}\" #{VERSION_TAG}"
         relFile = File.new(_('GNDMS-RELEASE'), 'w')
         relFile.syswrite(@releaseInfo)
         relFile.close
@@ -231,7 +233,7 @@ define 'gndms' do
 
     desc 'GT4-independent utility classes for GNDMS'
     define 'stuff', :layout => dmsLayout('stuff', 'gndms-stuff') do
-       compile.with GUICE, GOOGLE_COLLECTIONS, JETBRAINS_ANNOTATIONS
+       compile.with GUICE, GOOGLE_COLLECTIONS, JETBRAINS_ANNOTATIONS, SLF4J
        compile { project('gndms').updateBuildInfo() }
        package :jar
     end
@@ -246,7 +248,7 @@ define 'gndms' do
 
     desc 'GT4-dependent utility classes for GNDMS'
     define 'kit', :layout => dmsLayout('kit', 'gndms-kit') do
-      compile.with JETTY, GROOVY, GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('stuff'), project('model'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_AXIS, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, GUICE, GT4_SERVLET, COMMONS_LANG, OPENJPA
+      compile.with JETTY, GROOVY, GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('stuff'), project('model'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_AXIS, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, GUICE, GT4_SERVLET, COMMONS_LANG, OPENJPA, SLF4J
       compile
       package :jar
     end
@@ -488,7 +490,40 @@ define 'gndms' do
                       { :classpath => jars, :properties => 
                           { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" } } )
       end
-    end
+
+      desc 'runs the interSliceTransfer test'
+      task 'run-ist' do 
+
+        jars = compile.dependencies.map(&:to_s)
+        jars << compile.target.to_s
+        if (ENV['gorfx_host'] == nil)
+            gorfx_host = `hostname`.chomp
+        else 
+            gorfx_host = ENV['gorfx_host']
+        end
+        if (ENV['dspace_host'] == nil)
+            dspace_host = `hostname`.chomp
+        else 
+            dspace_host = ENV['dspace_host']
+        end
+        dn = `grid-proxy-info -identity`
+        dn = dn.chomp
+        if (ENV['GNDMS_PROPS'] == nil)
+            prop = 'test-data/test-properties/multi_file_transfer_awi.properties'
+        else 
+            prop = ENV['GNDMS_PROPS']
+        end
+        args = [ '-props', prop, 
+                 '-uri', 'https://' + gorfx_host + ':8443/wsrf/services/gndms/GORFX',
+                 '-duri', 'https://' + dspace_host + ':8443/wsrf/services/gndms/DSpace',
+	             '-dn', dn
+        ]
+        puts args
+        Commands.java('de.zib.gndmc.GORFX.InterSliceTransferClient',  args, 
+                      { :classpath => jars, :properties => 
+                          { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" } } )
+      end
+end
 end
 
 
@@ -624,6 +659,7 @@ task 'auto-clean' do
     elsif( hasPath?( "#{path}gndms-model-0.3.2.jar" ) )
         puts 'GNDMS 0.3.2 detected.'
         cleanRev( '0.3.2' )
+	# adde infra-hotfix1
     else
         puts 'No previously installed version detected.'
     end

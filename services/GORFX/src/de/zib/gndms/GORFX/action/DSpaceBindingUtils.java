@@ -23,6 +23,7 @@ import de.zib.gndms.model.dspace.types.SliceRef;
 import de.zib.gndms.gritserv.typecon.types.SliceRefXSDTypeWriter;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI;
+import org.globus.gsi.GlobusCredential;
 
 import java.rmi.RemoteException;
 import java.util.GregorianCalendar;
@@ -39,13 +40,16 @@ public class DSpaceBindingUtils {
     
     /**
      * Use dspace client calls
+     *
      * @param epr A endpoint reference which must reference a slice resource.
      *
+     * @param globusCredential
      * @return A string containing the gsi ftp path to the slice.
      */
-    public static String getFtpPathForSlice( EndpointReferenceType epr ) throws URI.MalformedURIException, RemoteException {
+    public static String getFtpPathForSlice( EndpointReferenceType epr, GlobusCredential globusCredential ) throws URI.MalformedURIException, RemoteException {
 
         SliceClient sc = new SliceClient( epr );
+        sc.setProxy( globusCredential );
         return sc.getSliceLocation();
     }
 
@@ -53,8 +57,8 @@ public class DSpaceBindingUtils {
     /**
      * Provided for convenience and behaves just like the above method.
      */
-    public static String getFtpPathForSlice( SliceRef sr ) throws URI.MalformedURIException, RemoteException {
-        return getFtpPathForSlice( SliceRefXSDTypeWriter.write( sr ).getEndpointReference() );
+    public static String getFtpPathForSlice( SliceRef sr, GlobusCredential globusCredential ) throws URI.MalformedURIException, RemoteException {
+        return getFtpPathForSlice( SliceRefXSDTypeWriter.write( sr ).getEndpointReference(), globusCredential);
     }
 
 
