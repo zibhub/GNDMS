@@ -100,7 +100,7 @@ public class NetworkAuxiliariesProvider {
      * Calculated the transfertime in milli-seconds.
      *
      * To catch possible rounding errors, which may occur when the transfer size is to small and the connection is
-     * very fast. A minimal value for the transfer time can be provieded (see the <EM>min</EM> parameter).
+     * very fast. A minimal value for the transfer time can be provided (see the <EM>min</EM> parameter).
      *
      * @param size The transfer file size in byte.
      * @param bandWidth The bandwidth in byte/s
