@@ -108,9 +108,10 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
                 finish( new SliceStageInResult( sr ) );
             } else {
                 TaskExecutionFailure f = cnt.getExecutionFailure();
+                String failure = GORFXClientUtils.taskExecutionFailureToString( f );
                 trace( "Remote staging failed with: \n"
-                    +  GORFXClientUtils.taskExecutionFailureToString( f ), null );
-                failFrom( new RuntimeException( f.toString() ) );
+                    + failure , null );
+                failFrom( new RuntimeException( failure ) );
             }
         } catch( RuntimeException e ) {
             honorOngoingTransit( e );

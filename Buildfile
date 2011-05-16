@@ -17,7 +17,7 @@ repositories.remote << 'http://google-maven-repository.googlecode.com/svn/reposi
 # Don't touch below unless you know what you are doing
 # --------------------------------------------------------------------------------------------------
 
-VERSION_NUMBER = '0.3.2'
+VERSION_NUMBER = '0.3.3'
 VERSION_NAME = 'Shigeru'
 VERSION_TAG = `git describe --tags`
 GROUP_NAME = 'de.zib.gndms'
