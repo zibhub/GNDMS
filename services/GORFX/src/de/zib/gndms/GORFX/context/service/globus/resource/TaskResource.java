@@ -105,7 +105,7 @@ public class TaskResource extends TaskResourceBase
 
 
     /**
-     * Delivers the result of a successfully execudted task.
+     * Delivers the result of a successfully executed task.
      *
      * If the task wasn't executed successfully an empty result object is returned.
      */

@@ -935,7 +935,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
             } catch ( Exception e ) {
                 // exception here  doesn't really matter
                 // task is doomed anyway
-                e.printStackTrace(  );
+                getLog().warn( e );
             } finally {
                 tx.finish();
             }

@@ -111,10 +111,6 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
         try {
             doStaging(getOfferTypeConfig(), getOrq(), slice);
             changeSliceOwner( slice ) ;
-            try{
-            } catch ( Exception e ) {
-                failFrom( new RuntimeException( "Failed while creating result slice." ,e ) );
-            }
             finish( new ProviderStageInResult( getSliceId()) );
         }
         catch (RuntimeException e) {

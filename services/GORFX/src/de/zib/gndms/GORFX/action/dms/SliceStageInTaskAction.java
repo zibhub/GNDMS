@@ -73,7 +73,7 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
     protected void onInProgress( @NotNull AbstractTask model ) {
 
         try {
-            EndpointReferenceType epr;
+            EndpointReferenceType epr = null;
             GlobusCredential gc = GlobusCredentialProvider.class.cast( getCredentialProvider() ).getCredential();
             if( model.getData( ) == null ) {
                 String uri = ( (SliceStageInORQ) model.getOrq()).getActGridSiteURI();
@@ -83,14 +83,21 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
                     ProviderStageInORQT p_orq = ProviderStageInORQXSDTypeWriter.write( getOrq() );
                     ContextT ctx = ContextXSDTypeWriter.writeContext( getOrq().getActContext() );
                     OfferExecutionContractT con = ContractXSDTypeWriter.write( model.getContract().toTransientContract() );
-                    
-                    epr = GORFXClientUtils.commonTaskPreparation( uri, p_orq, ctx, con, gc );
+
+                    try {
+                        epr = GORFXClientUtils.commonTaskPreparation( uri, p_orq, ctx, con, gc );
+                    } catch ( RuntimeException e ) {
+                        getLog().debug( "Exception con commonTaskPreparation", e );
+                    }
                     model.setData( epr );
      //               transitToState( TaskState.IN_PROGRESS );
                 }
             }
 
             epr = (EndpointReferenceType) model.getData( );
+
+            if( epr == null )
+                fail( new IllegalStateException( "commonTaskPrep return ed null epr" ) );
 
             TaskClient cnt = new TaskClient( epr );
             cnt.setProxy( gc );
@@ -111,11 +118,11 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
                 String failure = GORFXClientUtils.taskExecutionFailureToString( f );
                 trace( "Remote staging failed with: \n"
                     + failure , null );
-                failFrom( new RuntimeException( failure ) );
+                fail( new RuntimeException( failure ) );
             }
         } catch( RuntimeException e ) {
             honorOngoingTransit( e );
-            boxException( e );
+            fail( e );
         } catch ( Exception e ) {
             boxException( e );
         }
@@ -124,6 +131,6 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
 
     @SuppressWarnings( { "ThrowableInstanceNeverThrown" } )
     private void boxException( Exception e ) {
-        failFrom( new RuntimeException( e.getMessage(), e ) );
+        failFrom( e );
     }
 }
