@@ -23,8 +23,12 @@ import org.apache.log4j.Logger;
 import org.globus.ftp.GridFTPClient;
 import org.globus.gsi.GlobusCredential;
 import org.globus.gsi.gssapi.GlobusGSSCredentialImpl;
+import org.gridforum.jgss.ExtendedGSSCredential;
 import org.ietf.jgss.GSSCredential;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 
 /**
@@ -42,9 +46,12 @@ public class GlobusCredentialProviderImpl extends GlobusCredentialProvider {
 
     static {
         installers = new HashMap<String, CredentialInstaller >();
-	CredentialInstaller ci = new GridFTPCredentialInstaller();
+        CredentialInstaller ci = new GridFTPCredentialInstaller();
         installers.put( GORFXConstantURIs.FILE_TRANSFER_URI, ci );
         installers.put( GORFXConstantURIs.INTER_SLICE_TRANSFER_URI, ci );
+
+        CredentialInstaller fw = new AsFileCredentialInstaller( );
+        installers.put( GORFXConstantURIs.PROVIDER_STAGE_IN_URI, fw );
     }
 
 
@@ -89,8 +96,35 @@ public class GlobusCredentialProviderImpl extends GlobusCredentialProvider {
             try {
                 cnt.authenticate(  new GlobusGSSCredentialImpl( cred, GSSCredential.DEFAULT_LIFETIME) );
             } catch ( Exception e ) {
-                e.printStackTrace(); 
                 throw new RuntimeException( e );
+            }
+        }
+    }
+
+
+    static class AsFileCredentialInstaller implements CredentialInstaller {
+
+        private Logger logger = Logger.getLogger( this.getClass() );
+
+        public void installCredentials( Object o, GlobusCredential cred ) {
+
+            File destFile = File.class.cast( o );
+            FileOutputStream fos = null;
+            // not required here
+            // not required here
+            try {
+                fos = new FileOutputStream( destFile );
+                GlobusGSSCredentialImpl crd = new GlobusGSSCredentialImpl( cred, GSSCredential.DEFAULT_LIFETIME );
+                fos.write( crd.export( ExtendedGSSCredential.IMPEXP_OPAQUE ) );
+            } catch( Exception e ) {
+                throw new RuntimeException( e );
+            } finally {
+                try {
+                if ( fos != null )
+                    fos.close();
+                } catch ( IOException e ) {
+                    logger.warn( e );
+                }
             }
         }
     }

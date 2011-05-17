@@ -131,9 +131,7 @@ public class ORQResource extends ORQResourceBase implements GNDMSCredibleResourc
 
         try {
             return ORQCalculator.createOffer();
-        }
-        catch (RuntimeException e) {
-            logger.info(e);
+        } catch (RuntimeException e) {
             throw e;
         }
     }
@@ -168,7 +166,7 @@ public class ORQResource extends ORQResourceBase implements GNDMSCredibleResourc
             FileOutputStream fos = new FileOutputStream( f );
            // ObjectOutputStream oos = new ObjectOutputStream( fos );
            // credential.save( oos );
-            GlobusGSSCredentialImpl crd = new GlobusGSSCredentialImpl( credential, GSSCredential.ACCEPT_ONLY );
+            GlobusGSSCredentialImpl crd = new GlobusGSSCredentialImpl( credential, GSSCredential.ACCEPT_ONLY);
             fos.write( crd.export( ExtendedGSSCredential.IMPEXP_OPAQUE  ) );
             fos.close();
         } catch( Exception e ) {

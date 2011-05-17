@@ -63,9 +63,10 @@ public class ORQImpl extends ORQImplBase {
     {
 
         ORQResource orq = null;
+        ExtORQResourceHome home = null;
         try {
             logger.warn("ORQImpl");
-            ExtORQResourceHome home = (ExtORQResourceHome ) getResourceHome();
+            home = (ExtORQResourceHome ) getResourceHome();
             ResourceContextImpl impl = (ResourceContextImpl) ResourceContext.getResourceContext();
             logger.debug(impl.getServiceURL());
             logger.debug(impl.getResourceKeyHeader());
@@ -117,7 +118,7 @@ public class ORQImpl extends ORQImplBase {
 
         } catch ( Exception e ) {
             logger.error( e );
-            throw new RemoteException(e.getMessage(), e);
+            throw new RemoteException( "from getOfferAndDestroyRequest", e);
         }
         finally {
             WidAux.removeGORFXid();
@@ -154,7 +155,7 @@ public class ORQImpl extends ORQImplBase {
         }
         catch ( Exception e ) {
             logger.error( "Exception: " + e.getMessage(), e );
-            throw new RemoteException(e.getMessage(), e);
+            throw new RemoteException( "from permitEstimateAndDestroyRequest", e);
         }
         finally {
             WidAux.removeGORFXid();
