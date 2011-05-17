@@ -233,6 +233,7 @@ define 'gndms' do
 
     desc 'GT4-independent utility classes for GNDMS'
     define 'stuff', :layout => dmsLayout('stuff', 'gndms-stuff') do
+       task( 'update-release-info' )
        compile.with GUICE, GOOGLE_COLLECTIONS, JETBRAINS_ANNOTATIONS, SLF4J
        compile { project('gndms').updateBuildInfo() }
        package :jar
