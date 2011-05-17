@@ -86,7 +86,7 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
 
                     try {
                         epr = GORFXClientUtils.commonTaskPreparation( uri, p_orq, ctx, con, gc );
-                    } catch ( RuntimeException e ) {
+                    } catch ( Exception e ) {
                         getLog().debug( "Exception con commonTaskPreparation", e );
                     }
                     model.setData( epr );
@@ -97,7 +97,7 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
             epr = (EndpointReferenceType) model.getData( );
 
             if( epr == null )
-                fail( new IllegalStateException( "commonTaskPrep return ed null epr" ) );
+                fail( new IllegalStateException( "commonTaskPrep returned null epr" ) );
 
             TaskClient cnt = new TaskClient( epr );
             cnt.setProxy( gc );

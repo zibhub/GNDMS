@@ -821,7 +821,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
      */
     protected void fail(final @NotNull RuntimeException e) {
         getModel().fail(e);
-		e.fillInStackTrace();
+//	e.fillInStackTrace();
 	    // getLog().info("About to transit(FAIL) due to:", e);
         throw new FailedException(e);
     }
