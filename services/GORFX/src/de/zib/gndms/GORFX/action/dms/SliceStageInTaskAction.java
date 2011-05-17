@@ -87,7 +87,7 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
                     try {
                         epr = GORFXClientUtils.commonTaskPreparation( uri, p_orq, ctx, con, gc );
                     } catch ( Exception e ) {
-                        getLog().debug( "Exception con commonTaskPreparation", e );
+                        getLog().debug( "Exception on commonTaskPreparation", e );
                     }
                     model.setData( epr );
      //               transitToState( TaskState.IN_PROGRESS );
