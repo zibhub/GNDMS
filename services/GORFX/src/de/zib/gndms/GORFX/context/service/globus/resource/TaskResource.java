@@ -365,8 +365,7 @@ public class TaskResource extends TaskResourceBase
                         }
                     } catch( Exception e ) {
                         // don't bother with exceptions
-                        log.debug( "Exception on task future cancel: " + e.toString() );
-                        e.printStackTrace(  );
+                        log.debug( "Exception on task future cancel: " + e.toString(), e );
                     }
                 }
 

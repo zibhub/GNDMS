@@ -18,6 +18,8 @@ package de.zib.gndms.gritserv.util;
 
 
 
+import de.zib.gndms.kit.access.GNDMSBinding;
+import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
 import org.apache.log4j.Logger;
 import org.globus.ftp.GridFTPClient;
@@ -105,6 +107,7 @@ public class GlobusCredentialProviderImpl extends GlobusCredentialProvider {
     static class AsFileCredentialInstaller implements CredentialInstaller {
 
         private Logger logger = Logger.getLogger( this.getClass() );
+        private DirectoryAux directoryAux = GNDMSBinding.getInjector().getInstance( DirectoryAux.class );
 
         public void installCredentials( Object o, GlobusCredential cred ) {
 
@@ -116,15 +119,11 @@ public class GlobusCredentialProviderImpl extends GlobusCredentialProvider {
                 fos = new FileOutputStream( destFile );
                 GlobusGSSCredentialImpl crd = new GlobusGSSCredentialImpl( cred, GSSCredential.DEFAULT_LIFETIME );
                 fos.write( crd.export( ExtendedGSSCredential.IMPEXP_OPAQUE ) );
+                fos.close();
+                directoryAux.chmod( 0600, destFile );
             } catch( Exception e ) {
                 throw new RuntimeException( e );
             } finally {
-                try {
-                if ( fos != null )
-                    fos.close();
-                } catch ( IOException e ) {
-                    logger.warn( e );
-                }
             }
         }
     }

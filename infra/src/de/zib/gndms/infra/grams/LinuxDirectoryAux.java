@@ -27,6 +27,8 @@ import org.globus.exec.service.exec.PerlJobDescription;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import com.sun.jna.Library;
+import com.sun.jna.Native;
 
 /**
  * Implementation of the directory helpers for a linux system.
@@ -44,7 +46,21 @@ public class LinuxDirectoryAux implements DirectoryAux {
     final static String ARGS = "arguments";
     final static int DELAY = 10000;
     private static final int NUM_RETRYS = 5;
+    private static CLibrary libc = (CLibrary) Native.loadLibrary("c", CLibrary.class);
 
+
+
+    public void chmod( int mask, File file ) {
+        try {
+            libc.chmod( file.getCanonicalPath(), mask);
+        } catch ( IOException e ) {
+            throw new RuntimeException( e );
+        }
+    }
+
+    interface CLibrary extends Library {
+        public int chmod(String path, int mode);
+    };
 
     public boolean setDirectoryReadWrite( String uid, String pth ) {
         return setMode( uid, RW, pth );
