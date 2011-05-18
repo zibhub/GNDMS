@@ -31,6 +31,7 @@ import de.zib.gndms.logic.model.gorfx.PermissionDeniedORQException;
 import de.zib.gndms.logic.model.gorfx.UnfulfillableORQException;
 import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.gritserv.typecon.types.ContractXSDTypeWriter;
+import org.apache.axis.AxisFault;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.log4j.Logger;
 import org.globus.wsrf.ResourceContext;
@@ -116,8 +117,18 @@ public class ORQImpl extends ORQImplBase {
             logger.error( e );
             throw new PermissionDenied();
 
+        } catch ( RuntimeException e )  {
+            logger.error( "p1", e );
+            throw e;
+        } catch ( AxisFault af ) {
+        /*    logger.error( "faulttype"+ af.getFaultCode() );
+            logger.error( "cause", af.getCause() );
+            logger.error( "detail", af.detail );
+            logger.error( "as stirng: " + af.toString() );*/
+            logger.error( af.dumpToString() );
+            throw af;
         } catch ( Exception e ) {
-            logger.error( e );
+            logger.error( "p2", e );
             throw new RemoteException( "from getOfferAndDestroyRequest", e);
         }
         finally {
@@ -146,15 +157,18 @@ public class ORQImpl extends ORQImplBase {
             return oec;
         }
         catch (UnfulfillableORQException e) {
-            logger.error( "UnfulfillableORQException: " + e.getMessage(), e );
+            logger.error( e );
             throw new UnfullfillableRequest();
         }
         catch (PermissionDeniedORQException e) {
-            logger.error( "PermissionDeniedORQException: " + e.getMessage(),  e );
+            logger.error( e );
             throw new PermissionDenied();
+        } catch ( RuntimeException e )  {
+            logger.error( "p1", e );
+            throw e;
         }
         catch ( Exception e ) {
-            logger.error( "Exception: " + e.getMessage(), e );
+            logger.error( "p2", e );
             throw new RemoteException( "from permitEstimateAndDestroyRequest", e);
         }
         finally {

@@ -113,8 +113,6 @@ public class GlobusCredentialProviderImpl extends GlobusCredentialProvider {
 
             File destFile = File.class.cast( o );
             FileOutputStream fos = null;
-            // not required here
-            // not required here
             try {
                 fos = new FileOutputStream( destFile );
                 GlobusGSSCredentialImpl crd = new GlobusGSSCredentialImpl( cred, GSSCredential.DEFAULT_LIFETIME );

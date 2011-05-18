@@ -33,9 +33,11 @@ import de.zib.gndms.gritserv.typecon.types.SliceRefXSDReader;
 import de.zib.gndms.gritserv.typecon.types.ContextXSDTypeWriter;
 import de.zib.gndms.gritserv.typecon.types.ContractXSDTypeWriter;
 
+import org.apache.axis.AxisFault;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.globus.gsi.GlobusCredential;
 import org.jetbrains.annotations.NotNull;
+import sun.security.util.Debug;
 import types.*;
 
 /**
@@ -86,8 +88,15 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
 
                     try {
                         epr = GORFXClientUtils.commonTaskPreparation( uri, p_orq, ctx, con, gc );
-                    } catch ( RuntimeException e ) {
-                        getLog().debug( "Exception on commonTaskPreparation", e );
+                    } catch ( AxisFault e ) {
+                        String msg = "AxisFault on task preparation\n" ;
+                        try {
+                            msg += e.dumpToString();
+                        } catch ( Exception e2 ) {
+                            msg += "No info available";
+                        }
+                        getLog( ).debug( msg );
+                        fail( new IllegalStateException( msg ) );
                     }
                     model.setData( epr );
      //               transitToState( TaskState.IN_PROGRESS );

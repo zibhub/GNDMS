@@ -129,11 +129,7 @@ public class ORQResource extends ORQResourceBase implements GNDMSCredibleResourc
             ( (SliceStageInORQCalculator) ORQCalculator ).setCredential ( credential );
         }
 
-        try {
-            return ORQCalculator.createOffer();
-        } catch (RuntimeException e) {
-            throw e;
-        }
+        return ORQCalculator.createOffer();
     }
 
 
