@@ -29,17 +29,23 @@ import de.zib.gndms.stuff.confuror.ConfigEditor;
 /**
  * The subspace configuration checks and accesses a ConfigHolder for a subspace,
  * which has to consist (at least) of the following fields: <br> 
- * path - the path of the subspace <br>
- * gsiFtpPath - the path for gsiFtp access <br>
- * visible - whether the subspaces meta <br>
- * subspace is visible size - the maximal size of the subspace <br>
- * mode - whether in create or update mode.
+ * path - the path of the subspace as text <br>
+ * gsiFtpPath - the path for gsiFtp access as text <br>
+ * visible - whether the subspaces meta subspace is visible as boolean<br>
+ * size - the maximal size of the subspace as number<br>
+ * mode - whether in "create" or "update" mode as text.
  * 
  * @author Ulrike Golas
  * 
  */
 public final class SubspaceConfiguration {
 
+	public static String PATH = "path";
+	public static String GSIFTPPATH = "gsiFtpPath";
+	public static String VISIBLE = "visible";
+	public static String SIZE = "size";
+	public static String MODE = "mode";
+	
 	/**
 	 * Do not use this constructor.
 	 */
@@ -56,11 +62,11 @@ public final class SubspaceConfiguration {
 	public static boolean checkSubspaceConfiguration(final ConfigHolder config) {
 		JsonNode node = config.getNode();
 		try {
-			if (!node.findValue("path").isTextual()
-					|| !node.findValue("gsiFtpPath").isTextual()
-					|| !node.findValue("visible").isBoolean()
-					|| !node.findValue("size").isNumber()
-					|| !isValidMode(node.findValue("mode"))) {
+			if (!node.findValue(PATH).isTextual()
+					|| !node.findValue(GSIFTPPATH).isTextual()
+					|| !node.findValue(VISIBLE).isBoolean()
+					|| !node.findValue(SIZE).isNumber()
+					|| !isValidMode(node.findValue(MODE))) {
 				return false;
 			}
 		} catch (NullPointerException e) {
@@ -91,12 +97,12 @@ public final class SubspaceConfiguration {
 		ConfigEditor editor = config.newEditor(visitor);
 		config.setObjectMapper(objectMapper);
 
-		JsonNode pn = ConfigHolder.parseSingle(factory, "{ 'path': '" + path + "' }");
-		JsonNode gn = ConfigHolder.parseSingle(factory, "{ 'gsiFtpPath': '" + gsiftp
+		JsonNode pn = ConfigHolder.parseSingle(factory, "{ '" + PATH + "': '" + path + "' }");
+		JsonNode gn = ConfigHolder.parseSingle(factory, "{ '" + GSIFTPPATH + "': '" + gsiftp
 					+ "' }");
-		JsonNode vn = ConfigHolder.parseSingle(factory, "{ 'visible': " + visible + " }");
-		JsonNode sn = ConfigHolder.parseSingle(factory, "{ 'size': " + size + " }");
-		JsonNode mn = ConfigHolder.parseSingle(factory, "{ 'mode': 'update' }");
+		JsonNode vn = ConfigHolder.parseSingle(factory, "{ '" + VISIBLE + "': " + visible + " }");
+		JsonNode sn = ConfigHolder.parseSingle(factory, "{ '" + SIZE + "': " + size + " }");
+		JsonNode mn = ConfigHolder.parseSingle(factory, "{ '" + MODE +"': 'update' }");
 		config.update(editor, pn);
 		config.update(editor, gn);
 		config.update(editor, vn);
@@ -114,8 +120,8 @@ public final class SubspaceConfiguration {
 	 */
 	public static String getPath(final ConfigHolder config) throws WrongConfigurationException {
 		try {
-			if (config.getNode().findValue("path").isTextual()) {
-				return config.getNode().findValue("path").getTextValue();
+			if (config.getNode().findValue(PATH).isTextual()) {
+				return config.getNode().findValue(PATH).getTextValue();
 			} else {
 				throw new WrongConfigurationException();
 			}
@@ -132,8 +138,8 @@ public final class SubspaceConfiguration {
 	 */
 	public static String getGsiFtpPath(final ConfigHolder config) throws WrongConfigurationException {
 		try {
-			if (config.getNode().findValue("gsiFtpPath").isTextual()) {
-				return config.getNode().findValue("gsiFtpPath").getTextValue();
+			if (config.getNode().findValue(GSIFTPPATH).isTextual()) {
+				return config.getNode().findValue(GSIFTPPATH).getTextValue();
 			} else {
 				throw new WrongConfigurationException();
 			}
@@ -150,8 +156,8 @@ public final class SubspaceConfiguration {
 	 */
 	public static boolean getVisibility(final ConfigHolder config) throws WrongConfigurationException {
 		try {
-			if (config.getNode().findValue("visible").isBoolean()) {
-				return config.getNode().findValue("visible").getBooleanValue();
+			if (config.getNode().findValue(VISIBLE).isBoolean()) {
+				return config.getNode().findValue(VISIBLE).getBooleanValue();
 			} else {
 				throw new WrongConfigurationException();
 			}
@@ -168,8 +174,8 @@ public final class SubspaceConfiguration {
 	 */
 	public static long getSize(final ConfigHolder config) throws WrongConfigurationException {
 		try {
-			if (config.getNode().findValue("size").isNumber()) {
-				return config.getNode().findValue("size").getLongValue();
+			if (config.getNode().findValue(SIZE).isNumber()) {
+				return config.getNode().findValue(SIZE).getLongValue();
 			} else {
 				throw new WrongConfigurationException();
 			}
@@ -186,8 +192,8 @@ public final class SubspaceConfiguration {
 	 */
 	public static String getMode(final ConfigHolder config) throws WrongConfigurationException {
 		try {
-			if (isValidMode(config.getNode().findValue("mode"))) {
-				return config.getNode().findValue("mode").getTextValue();
+			if (isValidMode(config.getNode().findValue(MODE))) {
+				return config.getNode().findValue(MODE).getTextValue();
 			} else {
 				throw new WrongConfigurationException();
 			}
@@ -197,7 +203,7 @@ public final class SubspaceConfiguration {
 	}
 
 	/**
-	 * Test if the given Json node haas a valid mode value, i.e. "create" or "update".
+	 * Tests if the given Json node has a valid mode value, i.e. "create" or "update".
 	 * @param node The node.
 	 * @return true, if it is valid.
 	 */

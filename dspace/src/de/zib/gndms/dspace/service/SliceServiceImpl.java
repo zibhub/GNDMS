@@ -45,6 +45,7 @@ import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceConfiguration;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
+import de.zib.gndms.model.dspace.WrongConfigurationException;
 import de.zib.gndms.rest.Specifier;
 import de.zib.gndms.rest.UriFactory;
 import de.zib.gndms.rest.Facets;
@@ -136,14 +137,19 @@ public class SliceServiceImpl implements SliceService {
 		try {
 			Slice slic = findSliceOfKind(subspace, sliceKind, slice);
 
-			if (!SliceConfiguration.checkSliceConfiguration(config)) {
+			if (SliceConfiguration.checkSliceConfiguration(config)) {
+				try {
+					slic.setDirectoryId(SliceConfiguration.getDirectory(config));
+					slic.setOwner(SliceConfiguration.getOwner(config));
+					slic.setTerminationTime(SliceConfiguration.getTerminationTime(config));
+					return new ResponseEntity<Void>(null, headers, HttpStatus.OK);			
+				} catch (WrongConfigurationException e) {
+					return new ResponseEntity<Void>(null, headers, HttpStatus.BAD_REQUEST);			
+				}
+			} else {		
 				return new ResponseEntity<Void>(null, headers,
-						HttpStatus.BAD_REQUEST);				
+						HttpStatus.BAD_REQUEST);
 			}
-			
-			// TODO: slic.setSliceConfiguration(sliceConfig);
-
-			return new ResponseEntity<Void>(null, headers, HttpStatus.OK);
  		} catch (NoSuchElementException ne) {
 			return new ResponseEntity<Void>(null, headers, HttpStatus.NOT_FOUND);
 		}
