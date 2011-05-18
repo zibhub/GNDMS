@@ -17,7 +17,6 @@ package de.zib.gndms.dspace.service;
  */
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import de.zib.gndms.logic.dspace.SubspaceProvider;
+import de.zib.gndms.logic.model.config.SetupAction.SetupMode;
 import de.zib.gndms.logic.model.dspace.SetupSubspaceAction;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
@@ -139,24 +139,25 @@ public class DSpaceServiceImpl implements DSpaceService {
 
 		GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
 
-		if (subspaces.exists(subspace)) {
-			return new ResponseEntity<Facets>(null, headers,
-					HttpStatus.FORBIDDEN);
-		}
 		
 		if (!SubspaceConfiguration.checkSubspaceConfiguration(config)) {
 			return new ResponseEntity<Facets>(null, headers,
 					HttpStatus.BAD_REQUEST);
 		}
 
+		if (subspaces.exists(subspace) || SubspaceConfiguration.getMode(config)!=SetupMode.CREATE) {
+			return new ResponseEntity<Facets>(null, headers,
+					HttpStatus.FORBIDDEN);
+		}
+
         SetupSubspaceAction action = new SetupSubspaceAction();
         action.setPath(SubspaceConfiguration.getPath(config));
         action.setIsVisibleToPublic(SubspaceConfiguration.getVisibility(config));
         action.setGsiFtpPath(SubspaceConfiguration.getGsiFtpPath(config));
-        action.setMode(null);
+        action.setMode(SubspaceConfiguration.getMode(config));
         action.setSize(SubspaceConfiguration.getSize(config));
 
-     	// TODO what else to do with action?
+     	// TODO what else to do with the action? what about the EntityManager?
         action.call();
 		return new ResponseEntity<Facets>(dspaceFacets, headers, HttpStatus.CREATED);
 	}
@@ -173,7 +174,13 @@ public class DSpaceServiceImpl implements DSpaceService {
 					HttpStatus.NOT_FOUND);
 		}
 
-		// TODO delete subspace, create deletion task
+        SetupSubspaceAction action = new SetupSubspaceAction();
+        // TODO: path ok?
+        action.setPath(subspace);
+        action.setMode(SetupMode.DELETE);
+
+     	// TODO what else to do with the action? what about the EntityManager?
+        action.call();
 		return new ResponseEntity<Specifier<Task>>(null, headers, HttpStatus.OK);
 	}
 

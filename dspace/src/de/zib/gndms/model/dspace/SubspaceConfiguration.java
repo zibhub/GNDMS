@@ -34,7 +34,7 @@ import de.zib.gndms.stuff.confuror.ConfigEditor;
  * gsiFtpPath - the path for gsiFtp access as text <br>
  * visible - whether the subspaces meta subspace is visible as boolean<br>
  * size - the maximal size of the subspace as number<br>
- * mode - whether in "create" or "update" mode as text.
+ * mode - an entry in {@link SetupMode}.
  * 
  * @author Ulrike Golas
  * 
@@ -103,7 +103,9 @@ public final class SubspaceConfiguration {
 					+ "' }");
 		JsonNode vn = ConfigHolder.parseSingle(factory, "{ '" + VISIBLE + "': " + visible + " }");
 		JsonNode sn = ConfigHolder.parseSingle(factory, "{ '" + SIZE + "': " + size + " }");
-		JsonNode mn = ConfigHolder.parseSingle(factory, "{ '" + MODE +"': 'update' }");
+		
+		// TODO: to get a valid configuration: assume that subspace is in update mode???
+		JsonNode mn = ConfigHolder.parseSingle(factory, "{ '" + MODE +"': 'UPDATE' }");
 		config.update(editor, pn);
 		config.update(editor, gn);
 		config.update(editor, vn);
