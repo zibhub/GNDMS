@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.model;
+package de.zib.gndms.logic.model.gorfx;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -19,6 +19,7 @@ package de.zib.gndms.logic.model;
 
 
 import de.zib.gndms.logic.action.AbstractAction;
+import de.zib.gndms.logic.model.ModelAction;
 import de.zib.gndms.model.ModelEntity;
 import de.zib.gndms.model.common.GridEntity;
 import org.jetbrains.annotations.NotNull;

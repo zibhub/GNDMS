@@ -1,4 +1,4 @@
-package de.zib.gndmx.model.dspace;
+package de.zib.gndms.model.dspace;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -36,7 +36,7 @@ import de.zib.gndms.stuff.confuror.ConfigHolder;
  * @author Ulrike Golas
  *
  */
-public class SubspaceConfigurationTest {
+public class SubspaceConfigurationTest{
 	
 	/**
 	 * Tests the method checkSubspaceConfiguration(ConfigHolder) with a valid configuration
@@ -60,11 +60,11 @@ public class SubspaceConfigurationTest {
 		boolean visible = true;
 		final long value = 6000;
 		String mode = "update";
-		JsonNode pn = ConfigHolder.parseSingle(factory, "{ 'path': '" + path + "' }");
-		JsonNode gn = ConfigHolder.parseSingle(factory, "{ 'gsiFtpPath': '" + gsiftp + "' }");
-		JsonNode vn = ConfigHolder.parseSingle(factory, "{ 'visible': " + visible + " }");
-		JsonNode sn = ConfigHolder.parseSingle(factory, "{ 'size': " + value + " }");
-		JsonNode mn = ConfigHolder.parseSingle(factory, "{ 'mode': '" + mode + "' }");
+		JsonNode pn = ConfigHolder.parseSingle(factory, "{ '" + SubspaceConfiguration.PATH + "': '" + path + "' }");
+		JsonNode gn = ConfigHolder.parseSingle(factory, "{ '" + SubspaceConfiguration.GSIFTPPATH + "': '" + gsiftp + "' }");
+		JsonNode vn = ConfigHolder.parseSingle(factory, "{ '" + SubspaceConfiguration.VISIBLE +"': " + visible + " }");
+		JsonNode sn = ConfigHolder.parseSingle(factory, "{ '" + SubspaceConfiguration.SIZE + "': " + value + " }");
+		JsonNode mn = ConfigHolder.parseSingle(factory, "{ '" + SubspaceConfiguration.MODE +"': '" + mode + "' }");
 		testConfig.update(editor, pn);
 		testConfig.update(editor, gn);
 		testConfig.update(editor, vn);
@@ -112,7 +112,7 @@ public class SubspaceConfigurationTest {
 		}
        	
        	// only path set - gsi ftp path is missing
-		JsonNode node = ConfigHolder.parseSingle(factory, "{ 'path': 'testpath' }");
+		JsonNode node = ConfigHolder.parseSingle(factory, "{ '" + SubspaceConfiguration.PATH + "': 'testpath' }");
 		testConfig.update(editor, node);
 
        	AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
@@ -123,7 +123,7 @@ public class SubspaceConfigurationTest {
 		}
 
        	// only path and gsi ftp path set - visibility is missing
-       	node = ConfigHolder.parseSingle(factory, "{ 'gsiFtpPath': 'gsiftp' }");
+       	node = ConfigHolder.parseSingle(factory, "{ '" + SubspaceConfiguration.GSIFTPPATH + "': 'gsiftp' }");
 		testConfig.update(editor, node);
 
        	AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
@@ -134,7 +134,7 @@ public class SubspaceConfigurationTest {
 		}
 
        	// only path, gsi ftp path and visibility set - size is missing
-		node = ConfigHolder.parseSingle(factory, "{ 'visible': true }");
+		node = ConfigHolder.parseSingle(factory, "{ '" + SubspaceConfiguration.VISIBLE +"': true }");
 		testConfig.update(editor, node);
        	try {
 			SubspaceConfiguration.getSize(testConfig);
@@ -145,7 +145,7 @@ public class SubspaceConfigurationTest {
        	AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
 
        	// only path, gsi ftp path, visibility, and size set - mode is missing
-		node = ConfigHolder.parseSingle(factory, "{ 'size': " + testValue + " }");
+		node = ConfigHolder.parseSingle(factory, "{ '" + SubspaceConfiguration.SIZE + "': " + testValue + " }");
 		testConfig.update(editor, node);
        	try {
 			SubspaceConfiguration.getMode(testConfig);
@@ -156,7 +156,7 @@ public class SubspaceConfigurationTest {
        	AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
 
        	// wrong type of path value - number instead of string
-		node = ConfigHolder.parseSingle(factory, "{ 'path': " + testValue + " }");
+		node = ConfigHolder.parseSingle(factory, "{ '" + SubspaceConfiguration.PATH + "': " + testValue + " }");
 		testConfig.update(editor, node);
 
 		AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
@@ -167,7 +167,7 @@ public class SubspaceConfigurationTest {
 		}
 
        	// wrong type of gsi ftp path value - number instead of string
-		node = ConfigHolder.parseSingle(factory, "{ 'gsiFtpPath': " + testValue + " }");
+		node = ConfigHolder.parseSingle(factory, "{ '" + SubspaceConfiguration.GSIFTPPATH + "': " + testValue + " }");
 		testConfig.update(editor, node);
 
 		AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
@@ -179,7 +179,7 @@ public class SubspaceConfigurationTest {
 
 
        	// wrong type of visibility value - number instead of boolean
-		node = ConfigHolder.parseSingle(factory, "{ 'visible': " + testValue + " }");
+		node = ConfigHolder.parseSingle(factory, "{ '" + SubspaceConfiguration.VISIBLE + "': " + testValue + " }");
 		testConfig.update(editor, node);
 
 		AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
@@ -191,7 +191,7 @@ public class SubspaceConfigurationTest {
 
 
        	// wrong type of size value - string instead of number
-		node = ConfigHolder.parseSingle(factory, "{ 'size': 'testpath' }");
+		node = ConfigHolder.parseSingle(factory, "{ '" + SubspaceConfiguration.SIZE + "': 'testpath' }");
 		testConfig.update(editor, node);
 
 		AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
@@ -202,7 +202,7 @@ public class SubspaceConfigurationTest {
 		}
 
        	// wrong type of mode value - number instead of string
-		node = ConfigHolder.parseSingle(factory, "{ 'mode': " + testValue + " }");
+		node = ConfigHolder.parseSingle(factory, "{ '" + SubspaceConfiguration.MODE + "': " + testValue + " }");
 		testConfig.update(editor, node);
 
 		AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
