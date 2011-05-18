@@ -22,6 +22,7 @@ import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import de.zib.gndms.logic.model.config.SetupAction.SetupMode;
 import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
 import de.zib.gndms.stuff.confuror.ConfigHolder;
 import de.zib.gndms.stuff.confuror.ConfigEditor;
@@ -190,10 +191,10 @@ public final class SubspaceConfiguration {
 	 * @return The size.
 	 * @throws WrongConfigurationException if the configuration does not contain a size.
 	 */
-	public static String getMode(final ConfigHolder config) throws WrongConfigurationException {
+	public static SetupMode getMode(final ConfigHolder config) throws WrongConfigurationException {
 		try {
 			if (isValidMode(config.getNode().findValue(MODE))) {
-				return config.getNode().findValue(MODE).getTextValue();
+				return SetupMode.valueOf(config.getNode().findValue(MODE).getTextValue());
 			} else {
 				throw new WrongConfigurationException("The key " + MODE + " exists but is no text value.");
 			}
@@ -208,10 +209,12 @@ public final class SubspaceConfiguration {
 	 * @return true, if it is valid.
 	 */
 	private static boolean isValidMode(final JsonNode node) {
-		if ("create".equals(node.getTextValue()) || "update".equals(node.getTextValue())) {
+		
+		try {
+			SetupMode.valueOf(node.getTextValue());
 			return true;
-		} else {
+		} catch(IllegalArgumentException e) {
 			return false;
-		} 
-	}
+		}
+			}
 }
