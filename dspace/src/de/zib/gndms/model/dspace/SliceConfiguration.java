@@ -124,10 +124,10 @@ public class SliceConfiguration extends ConfigHolder {
 			if (config.getNode().findValue(DIRECTORY).isTextual()) {
 				return config.getNode().findValue(DIRECTORY).getTextValue();
 			} else {
-				throw new WrongConfigurationException();
+				throw new WrongConfigurationException("The key " + DIRECTORY + " exists but is no text value.");
 			}
 		} catch (NullPointerException e) {
-			throw new WrongConfigurationException();
+			throw new WrongConfigurationException("The key " + DIRECTORY + " does not exist.");
 		}
 	}
 
@@ -147,10 +147,10 @@ public class SliceConfiguration extends ConfigHolder {
 			if (config.getNode().findValue(OWNER).isTextual()) {
 				return config.getNode().findValue(OWNER).getTextValue();
 			} else {
-				throw new WrongConfigurationException();
+				throw new WrongConfigurationException("The key " + OWNER + " exists but is no text value.");
 			}
 		} catch (NullPointerException e) {
-			throw new WrongConfigurationException();
+			throw new WrongConfigurationException("The key " + OWNER + " does not exist.");
 		}
 	}
 
@@ -172,10 +172,10 @@ public class SliceConfiguration extends ConfigHolder {
 				cal.setTimeInMillis(config.getNode().findValue(TERMINATION).getLongValue());
 				return cal;
 			} else {
-				throw new WrongConfigurationException();
+				throw new WrongConfigurationException("The key " + TERMINATION + " exists but is no number.");
 			}
 		} catch (NullPointerException e) {
-			throw new WrongConfigurationException();
+			throw new WrongConfigurationException("The key " + TERMINATION + " does not exist.");
 		}
 	}
 }

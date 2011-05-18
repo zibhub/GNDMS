@@ -4,6 +4,8 @@ import java.util.List;
 
 import de.zib.gndms.model.dspace.Slice;
 
+// TODO documentation, implementation
+
 public interface SliceProvider {
     boolean exists(String slice);
     List<String> listSlices();

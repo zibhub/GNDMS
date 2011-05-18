@@ -1,5 +1,7 @@
 package de.zib.gndms.kit.dspace;
 
+// TODO documentation
+
 public class Product<A, B> {
 	private A a;
 	private B b;

@@ -123,10 +123,10 @@ public final class SubspaceConfiguration {
 			if (config.getNode().findValue(PATH).isTextual()) {
 				return config.getNode().findValue(PATH).getTextValue();
 			} else {
-				throw new WrongConfigurationException();
+				throw new WrongConfigurationException("The key " + PATH + " exists but is no text value.");
 			}
 		} catch (NullPointerException e) {
-			throw new WrongConfigurationException();
+			throw new WrongConfigurationException("The key " + PATH + " does not exist.");
 		}
 	}
 	
@@ -141,10 +141,10 @@ public final class SubspaceConfiguration {
 			if (config.getNode().findValue(GSIFTPPATH).isTextual()) {
 				return config.getNode().findValue(GSIFTPPATH).getTextValue();
 			} else {
-				throw new WrongConfigurationException();
+				throw new WrongConfigurationException("The key " + GSIFTPPATH + " exists but is no text value.");
 			}
 		} catch (NullPointerException e) {
-			throw new WrongConfigurationException();
+			throw new WrongConfigurationException("The key " + GSIFTPPATH + " does not exist.");
 		}
 	}
 
@@ -159,10 +159,10 @@ public final class SubspaceConfiguration {
 			if (config.getNode().findValue(VISIBLE).isBoolean()) {
 				return config.getNode().findValue(VISIBLE).getBooleanValue();
 			} else {
-				throw new WrongConfigurationException();
+				throw new WrongConfigurationException("The key " + VISIBLE + " exists but is no boolean.");
 			}
 		} catch (NullPointerException e) {
-			throw new WrongConfigurationException();
+			throw new WrongConfigurationException("The key " + VISIBLE + " does not exist.");
 		}
 	}
 
@@ -177,10 +177,10 @@ public final class SubspaceConfiguration {
 			if (config.getNode().findValue(SIZE).isNumber()) {
 				return config.getNode().findValue(SIZE).getLongValue();
 			} else {
-				throw new WrongConfigurationException();
+				throw new WrongConfigurationException("The key " + SIZE + " exists but is no numer.");
 			}
 		} catch (NullPointerException e) {
-			throw new WrongConfigurationException();
+			throw new WrongConfigurationException("The key " + SIZE + " does not exist.");
 		}
 	}
 
@@ -195,10 +195,10 @@ public final class SubspaceConfiguration {
 			if (isValidMode(config.getNode().findValue(MODE))) {
 				return config.getNode().findValue(MODE).getTextValue();
 			} else {
-				throw new WrongConfigurationException();
+				throw new WrongConfigurationException("The key " + MODE + " exists but is no text value.");
 			}
 		} catch (NullPointerException e) {
-			throw new WrongConfigurationException();
+			throw new WrongConfigurationException("The key " + MODE + " does not exist.");
 		}
 	}
 
