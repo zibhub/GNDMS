@@ -25,6 +25,7 @@ import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import de.zib.gndms.logic.model.config.SetupAction.SetupMode;
 import de.zib.gndms.model.dspace.SubspaceConfiguration;
 import de.zib.gndms.model.dspace.WrongConfigurationException;
 import de.zib.gndms.stuff.confuror.ConfigEditor;
@@ -59,7 +60,7 @@ public class SubspaceConfigurationTest{
 		String gsiftp = "gsiftp";
 		boolean visible = true;
 		final long value = 6000;
-		String mode = "update";
+		SetupMode mode = SetupMode.valueOf("UPDATE");
 		JsonNode pn = ConfigHolder.parseSingle(factory, "{ '" + SubspaceConfiguration.PATH + "': '" + path + "' }");
 		JsonNode gn = ConfigHolder.parseSingle(factory, "{ '" + SubspaceConfiguration.GSIFTPPATH + "': '" + gsiftp + "' }");
 		JsonNode vn = ConfigHolder.parseSingle(factory, "{ '" + SubspaceConfiguration.VISIBLE +"': " + visible + " }");
@@ -77,7 +78,7 @@ public class SubspaceConfigurationTest{
        	String testGsiftp = SubspaceConfiguration.getGsiFtpPath(testConfig);
        	boolean testVisible = SubspaceConfiguration.getVisibility(testConfig);
        	long testValue = SubspaceConfiguration.getSize(testConfig);
-       	String testMode = SubspaceConfiguration.getMode(testConfig);
+       	SetupMode testMode = SubspaceConfiguration.getMode(testConfig);
 
        	AssertJUnit.assertEquals(path, testPath);
        	AssertJUnit.assertEquals(gsiftp, testGsiftp);

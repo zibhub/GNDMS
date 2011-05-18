@@ -17,6 +17,7 @@ package de.zib.gndms.dspace.service;
  */
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import de.zib.gndms.logic.dspace.SubspaceProvider;
+import de.zib.gndms.logic.model.dspace.SetupSubspaceAction;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.dspace.SubspaceConfiguration;
@@ -147,7 +149,15 @@ public class DSpaceServiceImpl implements DSpaceService {
 					HttpStatus.BAD_REQUEST);
 		}
 
-		// TODO: create subspace according to config, add to provider
+        SetupSubspaceAction action = new SetupSubspaceAction();
+        action.setPath(SubspaceConfiguration.getPath(config));
+        action.setIsVisibleToPublic(SubspaceConfiguration.getVisibility(config));
+        action.setGsiFtpPath(SubspaceConfiguration.getGsiFtpPath(config));
+        action.setMode(null);
+        action.setSize(SubspaceConfiguration.getSize(config));
+
+     	// TODO what else to do with action?
+        action.call();
 		return new ResponseEntity<Facets>(dspaceFacets, headers, HttpStatus.CREATED);
 	}
 
