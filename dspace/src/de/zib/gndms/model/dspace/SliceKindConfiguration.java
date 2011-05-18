@@ -29,7 +29,7 @@ import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
 /**
  * The slice kind configuration checks and accesses a ConfigHolder for a slice kind,
  * which has to consist (at least) of the following fields: <br> 
- * ToDo
+ * TODO
  * 
  * @author Ulrike Golas
  * 

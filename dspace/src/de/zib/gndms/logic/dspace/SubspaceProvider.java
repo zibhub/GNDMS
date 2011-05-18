@@ -25,7 +25,7 @@ import de.zib.gndms.model.dspace.Subspace;
  * @author Ulrike Golas
  */
 
-
+// TODO documenation, implementation
 public interface SubspaceProvider {
     boolean exists(String subspace);
     List<String> listSubspaces();

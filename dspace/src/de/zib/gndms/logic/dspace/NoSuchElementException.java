@@ -1,5 +1,7 @@
 package de.zib.gndms.logic.dspace;
 
+// TODO documentation
+
 public class NoSuchElementException extends Exception {
 
 	/**

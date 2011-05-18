@@ -1,5 +1,7 @@
 package de.zib.gndms.logic.dspace;
 
+// TODO documentation, implementation
+
 import java.util.List;
 
 import de.zib.gndms.model.dspace.SliceKind;
