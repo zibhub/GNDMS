@@ -66,6 +66,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import static java.lang.Thread.sleep;
+
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.*;
@@ -719,6 +722,8 @@ public final class GNDMSystem
 	public final class SysTaskExecutionService implements TaskExecutionService, ThreadFactory {
         private final ThreadPoolExecutor executorService;
         private volatile boolean terminating;
+        private List<String> submittedTaskIds;
+        private static final int SUBMITTED_TASK_LIMIT = 10000;
 
 
         /**
@@ -727,6 +732,7 @@ public final class GNDMSystem
          */
         public SysTaskExecutionService() {
             super();
+            submittedTaskIds = Collections.synchronizedList( new ArrayList<String>( SUBMITTED_TASK_LIMIT ) );
             executorService = (ThreadPoolExecutor) Executors.newCachedThreadPool();
             executorService.prestartCoreThread();
         }
@@ -812,6 +818,8 @@ public final class GNDMSystem
          * @param log A logger, which can be added to the action, if it's a LogAction
          * @param <R> the return type of the action
          * @return A Future Object holding the result of action's computation
+         *
+         * @throws TaskDuplicationException if a task with the same id is submitted twice.
          */
         @SuppressWarnings({ "FeatureEnvy" })
         private <R> Future<R> submit_(final EntityAction<R> action, final @NotNull Log log) {
@@ -827,9 +835,28 @@ public final class GNDMSystem
                 ((AbstractEntityAction<?>)action).setUUIDGen(uuidGenDelegate);
             if (action instanceof TaskAction) {
                 final TaskAction taskAction = (TaskAction) action;
+                String id = taskAction.getModel().getId();
+
+                if ( taskAreadySubmitted( id ) )
+                    throw new TaskDuplicationException( id );
+
                 taskAction.setService(this);
             }
             return getExecutorService().submit(action);
+        }
+
+
+        private boolean taskAreadySubmitted( String id ) {
+
+            if ( submittedTaskIds.contains( id ) )
+                return true;
+
+            if ( submittedTaskIds.size() == SUBMITTED_TASK_LIMIT - 1 )
+                submittedTaskIds.subList( 0, 1000 ).clear();
+
+            submittedTaskIds.add( id );
+
+            return false;
         }
 
 

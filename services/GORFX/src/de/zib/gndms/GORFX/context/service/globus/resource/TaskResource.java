@@ -23,6 +23,7 @@ import de.zib.gndms.GORFX.context.stubs.TaskResourceProperties;
 import de.zib.gndms.gritserv.delegation.DelegationAux;
 import de.zib.gndms.gritserv.util.GlobusCredentialProviderImpl;
 import de.zib.gndms.infra.model.GridResourceModelHandler;
+import de.zib.gndms.infra.system.TaskDuplicationException;
 import de.zib.gndms.infra.wsrf.ReloadablePersistentResource;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
@@ -79,7 +80,12 @@ public class TaskResource extends TaskResourceBase
         Task tsk = (Task) taskAction.getModel( );
         logger.debug( "submitting task: " + tsk.getId() );
         if(! tsk.getState().equals( TaskState.FINISHED ) || ! tsk.getState().equals( TaskState.FAILED ) )
-            future = home.getSystem( ).submitAction( taskAction, getResourceHome().getLog() );
+            try {
+                future = home.getSystem( ).submitAction( taskAction, getResourceHome().getLog() );
+            } catch ( TaskDuplicationException e ) {
+                log.debug( e );
+                taskAction.getEntityManager().close();
+            }
         else
             taskAction.getEntityManager().close();
     }
@@ -351,7 +357,8 @@ public class TaskResource extends TaskResourceBase
                     // task is still running cancel it and cleanup entity manager
                     log.debug( "cancel task " + tsk.getWid() );
                     cleanUp = true;
-                    future.cancel( true );
+                    if( future != null )
+                        future.cancel( true );
                     try {
                         EntityManager em = taskAction.getEntityManager();
                         if( em != null &&  em.isOpen() ) {
