@@ -84,6 +84,7 @@ public class TaskResource extends TaskResourceBase
                 future = home.getSystem( ).submitAction( taskAction, getResourceHome().getLog() );
             } catch ( TaskDuplicationException e ) {
                 log.debug( e );
+                taskAction.setDetached( true );
                 taskAction.getEntityManager().close();
             }
         else
@@ -92,6 +93,7 @@ public class TaskResource extends TaskResourceBase
 
 
     public TaskExecutionState getTaskExecutionState() {
+
         return GORFXTools.getStateOfTask( (Task) taskAction.getModel( ) );
     }
 
@@ -284,6 +286,8 @@ public class TaskResource extends TaskResourceBase
 
         // Not required here cause we override the getters.
         // getter overriding isn't enough
+        if( taskAction.isDetached() )
+            taskAction.setModel( model );
         setTaskExecutionState( getTaskExecutionState() );
         setTerminationTime( taskAction.getModel().getTerminationTime() );
         setTaskExecutionFailure( getTaskExecutionFailure() );

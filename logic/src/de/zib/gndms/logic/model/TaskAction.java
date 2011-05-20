@@ -77,6 +77,18 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
 	private EntityManagerFactory emf;
     private ConfigletProvider configletProvider;
     private CredentialProvider credentialProvider;
+    private boolean detached = false; ///< A detached taskAction only wraps a task which is executed within another taskAction.
+                                      /// It doesn't update the task itself only represents the latest state of the task.
+
+
+    public boolean isDetached() {
+        return detached;
+    }
+
+
+    public void setDetached( boolean detached ) {
+        this.detached = detached;
+    }
 
 
     /**
