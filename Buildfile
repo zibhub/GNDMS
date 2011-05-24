@@ -600,7 +600,7 @@ task 'c3grid-dp-post-deploy-test' do
     dn = `grid-proxy-info -identity`
     dn = dn.chomp
     if (ENV['GNDMS_SFR'] == nil)
-      prop = 'test-data/sfr/dummy-sfr.properties'
+      prop = 'etc/sfr/dummy-sfr.properties'
     else 
       prop = ENV['GNDMS_SFR']
     end
@@ -661,7 +661,12 @@ task 'auto-clean' do
     elsif( hasPath?( "#{path}gndms-model-0.3.2.jar" ) )
         puts 'GNDMS 0.3.2 detected.'
         cleanRev( '0.3.2' )
-	# adde infra-hotfix1
+    elsif( hasPath?( "#{path}gndms-model-0.3.3.jar" ) )
+        puts 'GNDMS 0.3.3 detected.'
+        cleanRev( '0.3.3' )
+    elsif( hasPath?( "#{path}gndms-model-0.3.4.jar" ) )
+        puts 'GNDMS 0.3.4 detected.'
+        cleanRev( '0.3.4' )
     else
         puts 'No previously installed version detected.'
    end
@@ -692,6 +697,14 @@ end
 
 task 'clean-0.3.2' do
     cleanRev( '0.3.2' )
+end
+
+task 'clean-0.3.3' do
+    cleanRev( '0.3.3' )
+end
+
+task 'clean-0.3.4' do
+    cleanRev( '0.3.4' )
 end
 
 
