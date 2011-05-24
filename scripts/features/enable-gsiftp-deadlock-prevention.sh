@@ -5,5 +5,6 @@ moni call -v .sys.SetupUpdatingConfiglet "\
   name: 'nbcf'; \
   className: 'de.zib.gndms.kit.network.NonblockingClientFactoryConfiglet'; \
   delay: '2000'; \
-  timeout: '10';"
+  timeout: '120'; \
+  buffersize: '2097152';"
   }

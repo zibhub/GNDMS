@@ -33,9 +33,11 @@ import de.zib.gndms.gritserv.typecon.types.SliceRefXSDReader;
 import de.zib.gndms.gritserv.typecon.types.ContextXSDTypeWriter;
 import de.zib.gndms.gritserv.typecon.types.ContractXSDTypeWriter;
 
+import org.apache.axis.AxisFault;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.globus.gsi.GlobusCredential;
 import org.jetbrains.annotations.NotNull;
+import sun.security.util.Debug;
 import types.*;
 
 /**
@@ -73,7 +75,7 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
     protected void onInProgress( @NotNull AbstractTask model ) {
 
         try {
-            EndpointReferenceType epr;
+            EndpointReferenceType epr = null;
             GlobusCredential gc = GlobusCredentialProvider.class.cast( getCredentialProvider() ).getCredential();
             if( model.getData( ) == null ) {
                 String uri = ( (SliceStageInORQ) model.getOrq()).getActGridSiteURI();
@@ -83,14 +85,28 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
                     ProviderStageInORQT p_orq = ProviderStageInORQXSDTypeWriter.write( getOrq() );
                     ContextT ctx = ContextXSDTypeWriter.writeContext( getOrq().getActContext() );
                     OfferExecutionContractT con = ContractXSDTypeWriter.write( model.getContract().toTransientContract() );
-                    
-                    epr = GORFXClientUtils.commonTaskPreparation( uri, p_orq, ctx, con, gc );
+
+                    try {
+                        epr = GORFXClientUtils.commonTaskPreparation( uri, p_orq, ctx, con, gc );
+                    } catch ( AxisFault e ) {
+                        String msg = "AxisFault on task preparation\n" ;
+                        try {
+                            msg += e.dumpToString();
+                        } catch ( Exception e2 ) {
+                            msg += "No info available";
+                        }
+                        getLog( ).debug( msg );
+                        fail( new IllegalStateException( msg ) );
+                    }
                     model.setData( epr );
      //               transitToState( TaskState.IN_PROGRESS );
                 }
             }
 
             epr = (EndpointReferenceType) model.getData( );
+
+            if( epr == null )
+                fail( new IllegalStateException( "commonTaskPrep return ed null epr" ) );
 
             TaskClient cnt = new TaskClient( epr );
             cnt.setProxy( gc );
@@ -108,13 +124,14 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
                 finish( new SliceStageInResult( sr ) );
             } else {
                 TaskExecutionFailure f = cnt.getExecutionFailure();
+                String failure = GORFXClientUtils.taskExecutionFailureToString( f );
                 trace( "Remote staging failed with: \n"
-                    +  GORFXClientUtils.taskExecutionFailureToString( f ), null );
-                failFrom( new RuntimeException( f.toString() ) );
+                    + failure , null );
+                fail( new RuntimeException( failure ) );
             }
         } catch( RuntimeException e ) {
             honorOngoingTransit( e );
-            boxException( e );
+            fail( e );
         } catch ( Exception e ) {
             boxException( e );
         }
@@ -123,6 +140,6 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
 
     @SuppressWarnings( { "ThrowableInstanceNeverThrown" } )
     private void boxException( Exception e ) {
-        failFrom( new RuntimeException( e.getMessage(), e ) );
+        failFrom( e );
     }
 }

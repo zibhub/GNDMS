@@ -55,6 +55,8 @@ import java.io.File;
 @SuppressWarnings({ "FeatureEnvy" })
 public abstract class AbstractProviderStageInAction extends ORQTaskAction<ProviderStageInORQ> {
 
+    public static final String PROXY_FILE_NAME = "/x509_proxy.pem";
+
 	protected ParmFormatAux parmAux = new ParmFormatAux();
 
     public AbstractProviderStageInAction() {
@@ -84,7 +86,8 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
             try {
                 MapConfig config = getOfferTypeConfig();
 	            getScriptFileByParam(config, "stagingCommand");
-                createNewSlice(model);
+                createNewSlice( model );
+                prepareProxy( model );
             }
             catch (MandatoryOptionMissingException e1) {
                 failFrom(e1);
@@ -94,7 +97,14 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
     }
 
 
-	@SuppressWarnings({ "ThrowableInstanceNeverThrown" })
+    protected void prepareProxy( AbstractTask model ) {
+        final Slice slice = findSlice(model);
+        File sd = new File( slice.getSubspace().getPathForSlice( slice ) + PROXY_FILE_NAME );
+        getCredentialProvider().installCredentials( sd );
+    }
+
+
+    @SuppressWarnings({ "ThrowableInstanceNeverThrown" })
 	protected @NotNull File getScriptFileByParam(final MapConfig configParam, String scriptParam) throws MandatoryOptionMissingException {
 		final @NotNull File scriptFile = configParam.getFileOption(scriptParam);
 		if (! isValidScriptFile(scriptFile))
@@ -111,10 +121,6 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
         try {
             doStaging(getOfferTypeConfig(), getOrq(), slice);
             changeSliceOwner( slice ) ;
-            try{
-            } catch ( Exception e ) {
-                failFrom( new RuntimeException( "Failed while creating result slice." ,e ) );
-            }
             finish( new ProviderStageInResult( getSliceId()) );
         }
         catch (RuntimeException e) {

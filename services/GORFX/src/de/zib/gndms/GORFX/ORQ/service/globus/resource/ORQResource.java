@@ -129,13 +129,7 @@ public class ORQResource extends ORQResourceBase implements GNDMSCredibleResourc
             ( (SliceStageInORQCalculator) ORQCalculator ).setCredential ( credential );
         }
 
-        try {
-            return ORQCalculator.createOffer();
-        }
-        catch (RuntimeException e) {
-            logger.info(e);
-            throw e;
-        }
+        return ORQCalculator.createOffer();
     }
 
 
@@ -168,7 +162,7 @@ public class ORQResource extends ORQResourceBase implements GNDMSCredibleResourc
             FileOutputStream fos = new FileOutputStream( f );
            // ObjectOutputStream oos = new ObjectOutputStream( fos );
            // credential.save( oos );
-            GlobusGSSCredentialImpl crd = new GlobusGSSCredentialImpl( credential, GSSCredential.ACCEPT_ONLY );
+            GlobusGSSCredentialImpl crd = new GlobusGSSCredentialImpl( credential, GSSCredential.ACCEPT_ONLY);
             fos.write( crd.export( ExtendedGSSCredential.IMPEXP_OPAQUE  ) );
             fos.close();
         } catch( Exception e ) {
@@ -184,7 +178,7 @@ public class ORQResource extends ORQResourceBase implements GNDMSCredibleResourc
 
     public void setDelegateEPR( final EndpointReferenceType epr ) {
 
-        // this gives wron gorfx path
+        // this gives wrong gorfx path
         //String servicePath =  org.apache.axis.MessageContext.getCurrentContext().getTargetService();
         String servicePath = "gndms/ORQ/home";
         String homeName = org.globus.wsrf.Constants.JNDI_SERVICES_BASE_NAME + servicePath;
@@ -192,7 +186,7 @@ public class ORQResource extends ORQResourceBase implements GNDMSCredibleResourc
         try {
             DelegationUtil.registerDelegationListener(epr, list);
         } catch ( DelegationException e ) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            logger.warn( e );
         }
     }
 }

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RELEASE="0.3.2"
+RELEASE="0.3.3"
 
 varcheck() {
 

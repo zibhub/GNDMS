@@ -108,7 +108,7 @@ public abstract class ORQTaskAction<K extends AbstractORQ> extends TaskAction
         if (getModel().getOrq() != null)
             getModel().setOrq(orq);
         else
-            throw new IllegalStateException("Illgeal attempt to overwrite Task ORQ");
+            throw new IllegalStateException("Illegal attempt to overwrite Task ORQ");
     }
 
 
