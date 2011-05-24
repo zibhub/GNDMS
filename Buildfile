@@ -17,8 +17,8 @@ repositories.remote << 'http://google-maven-repository.googlecode.com/svn/reposi
 # Don't touch below unless you know what you are doing
 # --------------------------------------------------------------------------------------------------
 
-VERSION_NUMBER = '0.3.3'
-VERSION_NAME = 'Shigeru'
+VERSION_NUMBER = '0.3.4'
+VERSION_NAME = 'Richard'
 VERSION_TAG = `git describe --tags`
 GROUP_NAME = 'de.zib.gndms'
 MF_COPYRIGHT = 'Copyright 2008-2011 Zuse Institute Berlin (ZIB)'
@@ -664,7 +664,7 @@ task 'auto-clean' do
 	# adde infra-hotfix1
     else
         puts 'No previously installed version detected.'
-    end
+   end
     puts 'About to remove old c3grid service directories (if existing)'
     rm_rf( "#{ENV['GLOBUS_LOCATION']}/lib/c3grid_DSpace" )
     rm_rf( "#{ENV['GLOBUS_LOCATION']}/etc/gpt/packages/c3grid_DSpace" )
