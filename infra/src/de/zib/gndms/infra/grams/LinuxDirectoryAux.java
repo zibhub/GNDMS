@@ -50,9 +50,9 @@ public class LinuxDirectoryAux implements DirectoryAux {
 
 
 
-    public void chmod( int mask, File file ) {
+    public int chmod( int mask, File file ) {
         try {
-            libc.chmod( file.getCanonicalPath(), mask);
+            return libc.chmod( file.getCanonicalPath(), mask);
         } catch ( IOException e ) {
             throw new RuntimeException( e );
         }
@@ -166,7 +166,7 @@ public class LinuxDirectoryAux implements DirectoryAux {
 
         HashMap<String, Object> jd = new HashMap<String, Object>( 2 );
         jd.put( EXECUTABLE, "/bin/mkdir" );
-        jd.put( ARGS, new String[] { "-p", pth, "-m", perm.toString() } );
+        jd.put( ARGS, new String[] { "-p", "-m", perm.toString(), pth } );
 
         int ret = 1;
         do  {
