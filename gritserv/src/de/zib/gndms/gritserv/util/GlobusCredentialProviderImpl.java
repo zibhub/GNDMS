@@ -119,7 +119,8 @@ public class GlobusCredentialProviderImpl extends GlobusCredentialProvider {
                 fos.write( crd.export( ExtendedGSSCredential.IMPEXP_OPAQUE ) );
                 fos.close();
                 int ret = directoryAux.chmod( 0600, destFile );
-                throw new IllegalStateException( "chmod returned "+ ret );
+                if( ret != 0 )
+                    throw new IllegalStateException( "chmod returned "+ ret );
             } catch( Exception e ) {
                 throw new RuntimeException( e );
             } finally {
