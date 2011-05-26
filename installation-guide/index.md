@@ -182,6 +182,10 @@ enter `$GNDMS_SOURCE`, and execute
   irregular version number, you have to delete all jars that were
   installed before manually.  Newer versions of GNDMS write a list of
   these installed jars to `$GLOBUS_LOCATION/lib/gndms-dependencies`.*
+
+**Note for updating form a release < 0.3.4:** *There were two minor
+changes in the database layout, so you want to reset the GNDMS
+database as described below.*
  
 **Note for data-provider:** *If you come from a release < 0.3.0 please
 remember two things:*
@@ -211,10 +215,10 @@ remember two things:*
  enabled additional logging as described in the previous section, the
  output should contain output like
 
-      ===============================================================================
-      GNDMS RELEASE: Generation N Data Management System VERSION: 0.3.2 "Shigeru"
-      GNDMS BUILD: built-at: Wed Feb 16 15:04:23 +0100 2011 built-by: globus@csr-pc35
-      ===============================================================================
+      ===========================================================================================
+      GNDMS RELEASE: Generation N Data Management System VERSION: 0.3.4 "Richard" release-Richard
+      GNDMS BUILD: built-at: Thu May 26 15:21:19 +0200 2011 built-by: mjorra@csr-pc35
+      ===========================================================================================
       Container home directory is '/opt/gt-current'
 
  (In the case of an error, you may want to compare with a
@@ -652,7 +656,7 @@ In case you want do distribute your own spin-of GNDMS, we suggest you
 follow the procedure described below when making a release:
 
     cd $GNDMS_SOURCE
-    vi Buildfile # Set VERSION_NUMBER and optionally VERSION_NAME
+    vi Buildfile # Set VERSION_NUMBER and optionally VERSION_NAME *)
     gndms-buildr release-build
     git commit -m "Made a Release"
     git tag gndms-release-ver
@@ -676,6 +680,8 @@ follow the procedure described below when making a release:
 
 Now, please upload the tarball and let the world know about it.
 
+\*) *Please note: Every time you change the VERSION_NUMBER you have to
+call `install-deps` or building the services will not succeed.*
 
 #### Problem Shooting Tips for Development Builds
 
