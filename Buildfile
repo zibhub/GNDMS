@@ -27,13 +27,12 @@ MF_COPYRIGHT = 'Copyright 2008-2011 Zuse Institute Berlin (ZIB)'
 LICENSE ='This software has been licensed to you under the terms and conditions of the Apache License 2.0 (APL 2.0) only.'
 MF_LICENSE="#{LICENSE}  See META-INF/LICENSE for detailed terms and conditions."
 USERNAME = ENV['USER'].to_s
-VERSION_TAG = ""
 Open3.popen3( "git describe --tags" ) do |stdin,stdout,stderr|
-    VERSION_TAG = stdout.gets
-    if ( VERSION_TAG.nil? )
-        VERSION_TAG = "release-Richard"
+    commit_id = stdout.gets
+    if ( commit_id.nil? )
+        VERSION_TAG = FALLBACK_VERSION_TAG 
     else 
-        VERSION_TAG = VERSION_TAG.chomp
+        VERSION_TAG = commit_id.chomp
     end
 end
 
