@@ -16,15 +16,26 @@ repositories.remote << 'http://google-maven-repository.googlecode.com/svn/reposi
 
 # Don't touch below unless you know what you are doing
 # --------------------------------------------------------------------------------------------------
+#
+require "open3"
 
 VERSION_NUMBER = '0.3.4'
 VERSION_NAME = 'Richard'
-VERSION_TAG = `git describe --tags`
+FALLBACK_VERSION_TAG = 'release-Richard'
 GROUP_NAME = 'de.zib.gndms'
 MF_COPYRIGHT = 'Copyright 2008-2011 Zuse Institute Berlin (ZIB)'
 LICENSE ='This software has been licensed to you under the terms and conditions of the Apache License 2.0 (APL 2.0) only.'
 MF_LICENSE="#{LICENSE}  See META-INF/LICENSE for detailed terms and conditions."
 USERNAME = ENV['USER'].to_s
+VERSION_TAG = ""
+Open3.popen3( "git describe --tags" ) do |stdin,stdout,stderr|
+    VERSION_TAG = stdout.gets
+    if ( VERSION_TAG.nil? )
+        VERSION_TAG = "release-Richard"
+    else 
+        VERSION_TAG = VERSION_TAG.chomp
+    end
+end
 
 # Yes, this project uses java
 require 'buildr/java'

@@ -10,7 +10,6 @@
 #{ENV['GLOBUS_LOCATION']}/lib/caGrid-ServiceSecurityProvider-stubs-1.2.jar
 #{ENV['GLOBUS_LOCATION']}/lib/castor-0.9.9.jar
 #{ENV['GLOBUS_LOCATION']}/lib/commons-codec-1.4.jar
-#{ENV['GLOBUS_LOCATION']}/lib/commons-collections-3.2.jar
 #{ENV['GLOBUS_LOCATION']}/lib/commons-fileupload-1.2.1.jar
 #{ENV['GLOBUS_LOCATION']}/lib/cxf-bundle-2.1.4.jar
 #{ENV['GLOBUS_LOCATION']}/lib/derby-10.5.3.0.jar
