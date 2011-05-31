@@ -57,7 +57,6 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     private List<String> facetsNames = new ArrayList<String>( 7 );
     private UriFactory uriFactory;
     private TaskClient taskClient;
-    private TFExecutor executorService;
     private Logger logger = LoggerFactory.getLogger( this.getClass() );
 
 
@@ -313,25 +312,14 @@ public class TaskFlowServiceImpl implements TaskFlowService {
             TaskFlowFactory tff = taskFlowProvider.getFactoryForTaskFlow( type );
             TaskFlow tf = tff.find( id );
             if ( tf != null ) {
-                Task t = tf.getTask();
-                if( t != null )
+                if( tf.getTask() != null )
                     hs = HttpStatus.CONFLICT;
                 else {
-                    t = new Task();
-                    t.setId( UUID.randomUUID().toString() );
-                    t.setModel( tf.getOrder() );
-                    TaskAction ta = tff.createAction( t );
-                    tf.setTask( t );
-                    executorService.submit( ta );
-                    logger.debug( "Done, requesting facets" );
-                    ResponseEntity<Specifier<Facets>> res = getTask( type, id, dn, wid );
-                    if( HttpStatus.OK.equals( res.getStatusCode() ) ) {
-                        logger.debug( "OK, returning CREATED" );
-                        WidAux.removeWid();
+                    TaskAction ta = tff.createAction( );
+                    TaskServiceAux taskServiceAux = new TaskServiceAux( type, id, dn, wid, ta ).invoke();
+                    tf.setTask( taskServiceAux.getTask( ) );
+                    if ( taskServiceAux.is() )
                         return new ResponseEntity<Specifier<Facets>>( res.getBody(), res.getHeaders(), HttpStatus.CREATED );
-                    } else {
-                      logger.debug( "unexpected status: " + res.getStatusCode().name() );
-                    }
                 }
             }
         }

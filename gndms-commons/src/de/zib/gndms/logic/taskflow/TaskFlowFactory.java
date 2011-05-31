@@ -79,9 +79,8 @@ public interface TaskFlowFactory<T extends TaskFlow > {
     /**
      * @brief Creates a task action.
      *
-     * @param t The task the action is created for.
      *
      * @return The newly created action.
      */
-    TaskAction createAction( Task t );
+    TaskAction createAction( );
 }

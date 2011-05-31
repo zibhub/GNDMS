@@ -20,7 +20,6 @@ import de.zib.gndms.logic.model.*;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.neomodel.common.Dao;
-import org.apache.commons.logging.Log;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 
