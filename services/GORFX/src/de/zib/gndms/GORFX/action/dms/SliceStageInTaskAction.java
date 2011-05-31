@@ -40,6 +40,8 @@ import org.jetbrains.annotations.NotNull;
 import sun.security.util.Debug;
 import types.*;
 
+import java.rmi.RemoteException;
+
 /**
  * @author  try ma ik jo rr a zib
  * @version  $Id$
@@ -49,10 +51,11 @@ import types.*;
 public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
 	implements SystemHolder {
 
-	private GNDMSystem system;
+    private GNDMSystem system;
+    private TaskClient taskClient = null;
 
 
-	@NotNull
+    @NotNull
 	public GNDMSystem getSystem() {
 		return system;
 	}
@@ -74,8 +77,8 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
     @Override
     protected void onInProgress( @NotNull AbstractTask model ) {
 
+        EndpointReferenceType taskEPR = null;
         try {
-            EndpointReferenceType epr = null;
             GlobusCredential gc = GlobusCredentialProvider.class.cast( getCredentialProvider() ).getCredential();
             if( model.getData( ) == null ) {
                 String uri = ( (SliceStageInORQ) model.getOrq()).getActGridSiteURI();
@@ -87,7 +90,7 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
                     OfferExecutionContractT con = ContractXSDTypeWriter.write( model.getContract().toTransientContract() );
 
                     try {
-                        epr = GORFXClientUtils.commonTaskPreparation( uri, p_orq, ctx, con, gc );
+                        taskEPR = GORFXClientUtils.commonTaskPreparation( uri, p_orq, ctx, con, gc );
                     } catch ( AxisFault e ) {
                         String msg = "AxisFault on task preparation\n" ;
                         try {
@@ -98,32 +101,32 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
                         getLog( ).debug( msg );
                         fail( new IllegalStateException( msg ) );
                     }
-                    model.setData( epr );
+                    model.setData( taskEPR );
      //               transitToState( TaskState.IN_PROGRESS );
                 }
             }
 
-            epr = (EndpointReferenceType) model.getData( );
+            taskEPR = (EndpointReferenceType) model.getData( );
 
-            if( epr == null )
+            if( taskEPR == null )
                 fail( new IllegalStateException( "commonTaskPrep return ed null epr" ) );
 
-            TaskClient cnt = new TaskClient( epr );
-            cnt.setProxy( gc );
+            taskClient = new TaskClient( taskEPR );
+            taskClient.setProxy( gc );
 
             trace( "Starting remote staging.", null );
             // poll every 15 seconds
-            boolean finished = GORFXClientUtils.waitForFinish( cnt, 15000 );
+            boolean finished = GORFXClientUtils.waitForFinish( taskClient, 15000 );
 
             if (finished) {
                 trace( "Remote staging finished.", null );
-                ProviderStageInResultT res =  cnt.getExecutionResult( ProviderStageInResultT.class );
+                ProviderStageInResultT res =  taskClient.getExecutionResult( ProviderStageInResultT.class );
                 SliceReference sk = (SliceReference) res.get_any()[0].getObjectValue( SliceReference.class );
                 SliceRef sr = SliceRefXSDReader.read( sk );
                 trace( "Remote staging finished. SliceId: " + sr.getResourceKeyValue() + "@"  + sr.getGridSiteId() , null );
                 finish( new SliceStageInResult( sr ) );
             } else {
-                TaskExecutionFailure f = cnt.getExecutionFailure();
+                TaskExecutionFailure f = taskClient.getExecutionFailure();
                 String failure = GORFXClientUtils.taskExecutionFailureToString( f );
                 trace( "Remote staging failed with: \n"
                     + failure , null );
@@ -135,6 +138,18 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
         } catch ( Exception e ) {
             boxException( e );
         }
+    }
+
+
+    @Override
+    public void cleanUpOnFail( @NotNull AbstractTask model ) {
+        super.cleanUpOnFail( model );
+        if( taskClient != null )
+            try {
+                taskClient.destroy( );
+            } catch ( RemoteException e ) {
+                getLog( ).warn( "Exception on cleanup", e );
+            }
     }
 
 
