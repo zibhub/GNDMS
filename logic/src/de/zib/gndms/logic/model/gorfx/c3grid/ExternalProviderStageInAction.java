@@ -29,6 +29,7 @@ import de.zib.gndms.stuff.Sleeper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
+import javax.rmi.PortableRemoteObject;
 import java.io.File;
 
 
@@ -75,6 +76,8 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
         final ProcessBuilder procBuilder = createProcessBuilder("stagingCommand", sliceDir);
 	    if (procBuilder == null)
 	        fail(new IllegalStateException("No stagingCommand configured"));
+
+        procBuilder.environment().put( "X509_USER_PROXY", sliceDir + PROXY_FILE_NAME );
 
         final StringBuilder outRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
         final StringBuilder errRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
