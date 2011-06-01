@@ -28,8 +28,8 @@ import de.zib.gndms.kit.access.GNDMSBinding;
 import de.zib.gndms.logic.model.*;
 import de.zib.gndms.model.common.GridEntity;
 import de.zib.gndms.model.common.GridResource;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.globus.wsrf.NoSuchResourceException;
 import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.ResourceIdentifier;
@@ -49,7 +49,7 @@ import javax.persistence.EntityManagerFactory;
  */
 public class GridEntityModelHandler<M extends GridEntity, H extends GNDMServiceHome, R extends ReloadablePersistentResource<M, H>> implements EMFactoryProvider {
 
-	final private Log logger = LogFactory.getLog(GridEntityModelHandler.class);
+	final private Logger logger = LoggerFactory.getLogger(GridEntityModelHandler.class);
 
 	private @NotNull Class<M> modelClass;
 

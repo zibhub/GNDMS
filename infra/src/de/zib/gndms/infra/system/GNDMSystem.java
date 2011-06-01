@@ -42,8 +42,8 @@ import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.message.addressing.ReferencePropertiesType;
 import org.apache.axis.types.URI;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.log4j.NDC;
 import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.impl.SimpleResourceKey;
@@ -95,7 +95,7 @@ public final class GNDMSystem
         ModelUpdateListener<GridResource> {
     private static final long EXECUTOR_SHUTDOWN_TIME = 5000L;
 
-    private static @NotNull Log createLogger() { return LogFactory.getLog(GNDMSystem.class); }
+    private static @NotNull Logger createLogger() { return LoggerFactory.getLogger(GNDMSystem.class); }
 
     private boolean shutdown;
 
@@ -103,7 +103,7 @@ public final class GNDMSystem
 
     private @NotNull final UUIDGen uuidGen = UUIDGenFactory.getUUIDGen();
     private @NotNull final ModelUUIDGen uuidGenDelegate;
-	private @NotNull final Log logger = createLogger();
+	private @NotNull final Logger logger = createLogger();
 	private @NotNull final GNDMSVerInfo verInfo = new GNDMSVerInfo();
     /**
      * the GNDMSystemDirectory connected with this GNDMSystem
@@ -114,7 +114,7 @@ public final class GNDMSystem
     private @NotNull File dbDir;
     private @NotNull File neoDir;
     private @NotNull File logDir;
-	private @NotNull File dbLogFile;
+	private @NotNull File dbLoggerFile;
     private @NotNull File containerHome;
 	private @NotNull EntityManagerFactory emf;
 	private @NotNull EntityManagerFactory restrictedEmf;
@@ -280,7 +280,7 @@ public final class GNDMSystem
        binder.bind(BatchUpdateAction.class).to(DefaultBatchUpdateAction.class);
        binder.bind(UUIDGen.class).toInstance(uuidGen);
        binder.bind(GNDMSVerInfo.class).toInstance(verInfo);
-       binder.bind(Log.class).toInstance(logger);
+       binder.bind(Logger.class).toInstance(logger);
        binder.bind( DirectoryAux.class).toInstance( new LinuxDirectoryAux() );
        // TODO later: binder.bind(TxFrame.class).to(TxFrame.class);
    }
@@ -314,7 +314,7 @@ public final class GNDMSystem
 	}
 
     /**
-     * Create the files {@link #dbDir} and {@link #dbLogFile} on the file system and stores the paths
+     * Create the files {@link #dbDir} and {@link #dbLoggerFile} on the file system and stores the paths
      * in the system property "derby.system.home" respectively "derby.stream.error.file".
      *
      * @throws IOException if an error occurs while accessing the file system
@@ -332,11 +332,11 @@ public final class GNDMSystem
             LogicTools.setDerbyToDebugMode();
         }
 
-		dbLogFile = new File(logDir, "derby.log");
-		if (!dbLogFile.exists())
-			dbLogFile.createNewFile();
+		dbLoggerFile = new File(logDir, "derby.log");
+		if (!dbLoggerFile.exists())
+			dbLoggerFile.createNewFile();
 		System.setProperty("derby.stream.error.file",
-				  dbLogFile.getCanonicalPath());
+				  dbLoggerFile.getCanonicalPath());
 	}
 
     /**
@@ -354,10 +354,10 @@ public final class GNDMSystem
 		map.put("openjpa.ConnectionURL", "jdbc:derby:" + gridName+";create=true");
 
         if (isDebugging()) {
-            File jpaLogFile = new File(getLogDir(), "jpa.log");
-            if (! jpaLogFile.exists())
-                jpaLogFile.createNewFile();
-            map.put("openjpa.Log", "File=" + jpaLogFile +
+            File jpaLoggerFile = new File(getLogDir(), "jpa.log");
+            if (! jpaLoggerFile.exists())
+                jpaLoggerFile.createNewFile();
+            map.put("openjpa.Logger", "File=" + jpaLoggerFile +
                     ", DefaultLevel=INFO, Runtime=TRACE, Tool=INFO");
         }
 		logger.info("Opening JPA Store: " + map.toString());
@@ -499,8 +499,8 @@ public final class GNDMSystem
 	}
 
 
-	public @NotNull File getDbLogFile() {
-		return dbLogFile;
+	public @NotNull File getDbLoggerFile() {
+		return dbLoggerFile;
 	}
 
 
@@ -699,32 +699,32 @@ public final class GNDMSystem
     /**
      * Calls {@code sumitAction(action,logParam)} on {@code getExecutionService()}.
      *
-     * @see SysTaskExecutionService#submitAction(de.zib.gndms.logic.model.EntityAction, org.apache.commons.logging.Log)
+     * @see SysTaskExecutionService#submitAction(de.zib.gndms.logic.model.EntityAction, org.slf4j.Logger)
      */
-    public @NotNull <R> Future<R> submitAction(final @NotNull EntityAction<R> action, final @NotNull Log logParam) {
+    public @NotNull <R> Future<R> submitAction(final @NotNull EntityAction<R> action, final @NotNull Logger logParam) {
         return getExecutionService().submitAction(action, logParam);
     }
 
     /**
      * Calls {@code sumitAction(em,action,logParam)} on {@code getExecutionService()}
      * 
-     * @see SysTaskExecutionService#submitAction(javax.persistence.EntityManager, de.zib.gndms.logic.model.EntityAction, org.apache.commons.logging.Log) 
+     * @see SysTaskExecutionService#submitAction(javax.persistence.EntityManager, de.zib.gndms.logic.model.EntityAction, org.slf4j.Logger) 
      *
      */
     public @NotNull <R> Future<R> submitAction(final @NotNull EntityManager em,
                                                final @NotNull EntityAction<R> action,
-                                               final @NotNull Log logParam) {
+                                               final @NotNull Logger logParam) {
         return getExecutionService().submitAction(em, action, logParam);
     }
 
 
     @NotNull
-    public <R> Future<R> submitDaoAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull ModelDaoAction<?, R> action, @NotNull Log log) {
+    public <R> Future<R> submitDaoAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull ModelDaoAction<?, R> action, @NotNull Logger log) {
         return executionService.submitDaoAction(em, dao, action, log);
     }
 
     @NotNull
-    public <R> Future<R> submitDaoAction(@NotNull ModelDaoAction<?, R> action, @NotNull Log log) {
+    public <R> Future<R> submitDaoAction(@NotNull ModelDaoAction<?, R> action, @NotNull Logger log) {
         return executionService.submitDaoAction(action, log);
     }
 
@@ -742,7 +742,7 @@ public final class GNDMSystem
      * @see de.zib.gndms.infra.system.GNDMSystem
      */
     public static final class SysFactory {
-		private final Log logger;
+		private final Logger logger;
 
 		private GNDMSystem instance;
 		private RuntimeException cachedException;
@@ -750,7 +750,7 @@ public final class GNDMSystem
         private boolean debugMode;
 
 		public SysFactory(
-                @NotNull Log theLogger, @NotNull GridConfig anySharedConfig,
+                @NotNull Logger theLogger, @NotNull GridConfig anySharedConfig,
                 final boolean debugModeParam) {
 			logger = theLogger;
 			sharedConfig = anySharedConfig;

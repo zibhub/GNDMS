@@ -73,6 +73,7 @@ types/ws
 types/wsrf
 etc/sliceInOutClient.properties
 bkp*
+lib/javax*
 
 syntax:regexp
 .*\.swp

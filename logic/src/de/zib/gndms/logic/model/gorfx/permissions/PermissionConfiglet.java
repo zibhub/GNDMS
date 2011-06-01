@@ -22,7 +22,7 @@ import de.zib.gndms.kit.configlet.Configlet;
 import de.zib.gndms.model.common.types.FilePermissions;
 import de.zib.gndms.model.common.types.PermissionConfigData;
 import org.jetbrains.annotations.NotNull;
-import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
 
 import java.io.Serializable;
 import java.util.Properties;
@@ -38,11 +38,11 @@ import java.util.Properties;
  */
 public class PermissionConfiglet implements Configlet {
 
-    private Log logger;
+    private Logger logger;
     private String name;
     private PermissionConfigData config;
 
-    public void init( @NotNull Log loggerParam, @NotNull String name, Serializable data ) {
+    public void init( @NotNull Logger loggerParam, @NotNull String name, Serializable data ) {
         logger = loggerParam;
         this.name = name;
         deserializeConfig( data );

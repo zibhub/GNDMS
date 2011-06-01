@@ -21,7 +21,7 @@ package de.zib.gndms.kit.network;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.kit.configlet.DefaultConfiglet;
-import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
@@ -39,7 +39,7 @@ public class NonblockingClientFactoryConfiglet extends DefaultConfiglet {
     private final static String BUFFERSIZE="buffersize"; // in byte
 
     @Override
-    public void init( @NotNull Log loggerParam, @NotNull String aName, Serializable data ) {
+    public void init( @NotNull Logger loggerParam, @NotNull String aName, Serializable data ) {
         super.init( loggerParam, aName, data );
         refreshFactory();
     }

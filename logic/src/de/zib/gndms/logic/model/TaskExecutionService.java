@@ -19,7 +19,7 @@ package de.zib.gndms.logic.model;
 
 
 import de.zib.gndms.neomodel.common.Dao;
-import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -49,7 +49,7 @@ public interface TaskExecutionService {
      * @return A Future Object holding the result of action's computation
      * @see Future
      */
-    @NotNull <R> Future<R> submitAction(final @NotNull EntityAction<R> action, final @NotNull Log logger);
+    @NotNull <R> Future<R> submitAction(final @NotNull EntityAction<R> action, final @NotNull Logger logger);
 
     /**
      * Submits an EntityAction to an {@code ExecutorService}.
@@ -65,20 +65,20 @@ public interface TaskExecutionService {
      */
     @NotNull <R> Future<R> submitAction(final @NotNull EntityManager em,
                                         final @NotNull EntityAction<R> action,
-                                        final @NotNull Log logger);
+                                        final @NotNull Logger logger);
 
 
     /**
-     * Sets action's dao before calling {@link #submitAction(javax.persistence.EntityManager, EntityAction, org.apache.commons.logging.Log)}
+     * Sets action's dao before calling {@link #submitAction(javax.persistence.EntityManager, EntityAction, org.slf4j.Logger)}
      *
-     * @see {@link #submitAction(javax.persistence.EntityManager, EntityAction, org.apache.commons.logging.Log)}
+     * @see {@link #submitAction(javax.persistence.EntityManager, EntityAction, org.slf4j.Logger)}
      */
     public @NotNull <R> Future<R> submitDaoAction(final @NotNull EntityManager em,
                                                   final @NotNull Dao dao,
                                                   final @NotNull ModelDaoAction<?, R> action,
-                                                  final @NotNull Log log);
+                                                  final @NotNull Logger log);
 
-    public @NotNull <R> Future<R> submitDaoAction(final @NotNull ModelDaoAction<?, R> action, final @NotNull Log log);
+    public @NotNull <R> Future<R> submitDaoAction(final @NotNull ModelDaoAction<?, R> action, final @NotNull Logger log);
 
     /**
      * Returns true if this is terminating or already terminated.

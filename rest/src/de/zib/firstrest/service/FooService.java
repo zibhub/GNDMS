@@ -3,8 +3,8 @@ package de.zib.firstrest.service;
 import java.util.ArrayList;
 import de.zib.firstrest.domain.Foo;
 import de.zib.firstrest.repository.FooDao;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -47,7 +47,7 @@ public class FooService implements ServletContextAware {
 
     private FooDao dao;
     private ServletContext servletContext;
-    private Log logger = LogFactory.getLog( this.getClass() );
+    private Logger logger = LoggerFactory.getLogger( this.getClass() );
 
     @PostConstruct
     public void init( ) {

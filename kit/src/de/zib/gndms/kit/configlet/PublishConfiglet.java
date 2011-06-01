@@ -20,7 +20,7 @@ package de.zib.gndms.kit.configlet;
 
 import de.zib.gndms.kit.config.ConfigProvider;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
-import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
@@ -49,7 +49,7 @@ public class PublishConfiglet extends DefaultConfiglet {
     
     @Override
 	public void init(
-		  final @NotNull Log loggerParam, @NotNull final String aName, final Serializable data) {
+		  final @NotNull Logger loggerParam, @NotNull final String aName, final Serializable data) {
 		super.init(loggerParam, aName, data);    // Overridden method
 		configPublishingSites();
 	}
@@ -82,10 +82,10 @@ public class PublishConfiglet extends DefaultConfiglet {
 			};
 		}
 		catch (ParseException e) {
-			getLog().warn(e);
+			getLogger().warn(e);
 		}
 		catch ( MandatoryOptionMissingException e) {
-			getLog().warn(e);
+			getLogger().warn(e);
 		}
 	}
 
