@@ -170,13 +170,16 @@ Installation and Deployment from Distribution Package
 
 **Attention:** *Please backup your `$GLOBUS_LOCATION/lib` before proceeding*
 
-If there is an existing installation of GNDMS in
-your globus toolkit container, it must be properly
-removed before continuing. To do so, please shutdown
-your container using `globus-stop-container-detached`,
+If there is an existing installation of GNDMS in your globus toolkit
+container, it must be properly removed before continuing. To do so,
+please shutdown your container using `globus-stop-container-detached`,
 enter `$GNDMS_SOURCE`, and execute 
 
   gndms-buildr auto-clean
+
+This removes all jar files installed by the current GNDMS
+installation. However *it don't reset the database*, this can be done
+with [kill-db](#resetting_the_database).
 
 **Note:** *Only if you installed a source snapshot of GNDMS with an
   irregular version number, you have to delete all jars that were
