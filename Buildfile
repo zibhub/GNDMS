@@ -310,19 +310,19 @@ define 'gndms' do
 
     meta_inf << file(_('GNDMS-BUILD-INFO'))
 
-    desc 'GNDMS rewrite based on Spring'
-    define 'spring', :layout => dmsLayout('spring', 'gndms-spring') do
-       compile.with SPRING, JETBRAINS_ANNOTATIONS, COMMONS_LOGGING
-       meta_inf << file(_('src/META-INF/gndms.xml'))
-       package :jar
-      
-       task 'standup' do
-          jars = compile.dependencies.map(&:to_s)
-          jars << project('gndms:spring')
-	  full_args = [] 
-          Commands.java('de.zib.gndms.spring.GNDMSpring',  full_args, { :classpath => jars, :verbose => true } )
-       end
-    end
+  #  desc 'GNDMS rewrite based on Spring'
+  #  define 'spring', :layout => dmsLayout('spring', 'gndms-spring') do
+  #     compile.with SPRING, JETBRAINS_ANNOTATIONS, COMMONS_LOGGING
+  #     meta_inf << file(_('src/META-INF/gndms.xml'))
+  #     package :jar
+  #    
+  #     task 'standup' do
+  #        jars = compile.dependencies.map(&:to_s)
+  #        jars << project('gndms:spring')
+  #    full_args = [] 
+  #        Commands.java('de.zib.gndms.spring.GNDMSpring',  full_args, { :classpath => jars, :verbose => true } )
+  #     end
+  #  end
 
     desc 'GT4-independent utility classes for GNDMS'
     define 'stuff', :layout => dmsLayout('stuff', 'gndms-stuff') do
@@ -739,7 +739,7 @@ define 'gndms' do
     end
 
     desc 'GORFX rest service'
-    define 'gorfx-rest', :layout => dmsLayout('gorfx', 'gndms-gorfx-rest') do
+    define 'gorfx', :layout => dmsLayout('gorfx', 'gndms-gorfx-rest') do
         compile.with project('gndms-commons'), project('gndmc-rest'), SPRING, SLF4J, XSTREAM, COMMONS_LOGGING, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME, JSON
         compile
 
