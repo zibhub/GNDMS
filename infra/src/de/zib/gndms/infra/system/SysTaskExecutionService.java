@@ -33,7 +33,7 @@ import java.util.concurrent.*;
  * A SysTaskExecutionService submits {@link EntityAction}s to an {@link ExecutorService}.
  *
  * Before the action is submitted to the executor, using a suitable {@code submitAction(..)} method,
- * {@link #submit_(de.zib.gndms.logic.model.EntityAction, org.apache.commons.logging.Log)} will automatically
+ * {@link #submit_(de.zib.gndms.logic.model.EntityAction, org.slf4j.Logger)} will automatically
  * prepare the action using certain setters.
  *
  * When the executor is shutted down, using {@link #shutdown()},
@@ -103,7 +103,7 @@ public final class SysTaskExecutionService implements TaskExecutionService, Thre
     }
 
 
-    public final @NotNull <R> Future<R> submitAction(final @NotNull EntityAction<R> action, final @NotNull Log log) {
+    public final @NotNull <R> Future<R> submitAction(final @NotNull EntityAction<R> action, final @NotNull Logger log) {
         final EntityManager ownEm = action.getOwnEntityManager();
         if (ownEm != null)
             return submit_(action, log);
@@ -114,7 +114,7 @@ public final class SysTaskExecutionService implements TaskExecutionService, Thre
     }
 
     public final @NotNull <R> Future<R> submitDaoAction(final @NotNull ModelDaoAction<?, R> action,
-                                                        final @NotNull Log log) {
+                                                        final @NotNull Logger log) {
         final Dao dao = action.getOwnDao();
         if (dao != null)
             return submitAction(action, log);
@@ -127,14 +127,14 @@ public final class SysTaskExecutionService implements TaskExecutionService, Thre
     @SuppressWarnings({ "FeatureEnvy" })
     public @NotNull <R> Future<R> submitAction(final @NotNull EntityManager em,
                                                final @NotNull EntityAction<R> action,
-                                               final @NotNull Log log) {
+                                               final @NotNull Logger log) {
         return submit_(action, log);
     }
 
     public @NotNull <R> Future<R> submitDaoAction(final @NotNull EntityManager em,
                                                   final @NotNull Dao dao,
                                                   final @NotNull ModelDaoAction<?, R> action,
-                                                  final @NotNull Log log) {
+                                                  final @NotNull Logger log) {
         action.setOwnDao( dao );
         return submitAction(em, action, log);
     }
@@ -163,9 +163,9 @@ public final class SysTaskExecutionService implements TaskExecutionService, Thre
      * @return A Future Object holding the result of action's computation
      */
     @SuppressWarnings({ "FeatureEnvy" })
-    private <R> Future<R> submit_(final EntityAction<R> action, final @NotNull Log log) {
+    private <R> Future<R> submit_(final EntityAction<R> action, final @NotNull Logger log) {
         if (action instanceof LogAction )
-            ((LogAction)action).setLog(log);
+            ((LogAction)action).setLogger(log);
         if (action instanceof SystemHolder)
             ((SystemHolder)action).setSystem( null );
         if (action.getPostponedEntityActions() == null)

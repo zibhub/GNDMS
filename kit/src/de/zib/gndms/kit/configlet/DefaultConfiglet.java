@@ -19,7 +19,7 @@ package de.zib.gndms.kit.configlet;
 
 
 import de.zib.gndms.kit.config.MapConfig;
-import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
@@ -41,10 +41,10 @@ public class DefaultConfiglet implements Configlet {
      * Holds the data of the current configuration
      */
     private MapConfig mapConfig;
-    private Log log;
+    private Logger log;
     private String name;
 
-	public void init(final @NotNull Log loggerParam,  @NotNull final String aName, final Serializable data) {
+	public void init(final @NotNull Logger loggerParam,  @NotNull final String aName, final Serializable data) {
 		configConfig(data);
 		log = loggerParam;
 		name = aName;
@@ -74,7 +74,7 @@ public class DefaultConfiglet implements Configlet {
      *
      * @return the used logger
      */
-	public Log getLog() {
+	public Logger getLogger() {
 		return log;
 	}
 

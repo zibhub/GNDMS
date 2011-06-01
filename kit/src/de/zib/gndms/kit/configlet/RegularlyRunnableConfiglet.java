@@ -27,7 +27,7 @@ import java.io.Serializable;
  * This abstract class extends the <tt>RunnableConfiglet</tt> class by a loop, which calls {@link #threadRun_()} concurrently.
  * An initial delay before the first execution and a delay after every execution can be denoted.
  *
- * Loop starts as soon as {@link #init(org.apache.commons.logging.Log, String, java.io.Serializable)} } is invoked.
+ * Loop starts as soon as {@link #init(org.slf4j.Logger, String, java.io.Serializable)} } is invoked.
  *
  *
  * @author  try ste fan pla nti kow zib

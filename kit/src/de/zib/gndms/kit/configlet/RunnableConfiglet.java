@@ -18,7 +18,7 @@ package de.zib.gndms.kit.configlet;
 
 
 
-import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
 import org.apache.log4j.NDC;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,7 +31,7 @@ import java.io.Serializable;
  * A method of an implementing subclass, which should run concurrently must be either {@code run_()} or a method,
  * which is invoked by {@code run_().
  * Concurrent execution is done automatically,
- * as soon as {@link #init(org.apache.commons.logging.Log, String, java.io.Serializable)} is invoked.
+ * as soon as {@link #init(org.slf4j.Logger, String, java.io.Serializable)} is invoked.
  *
  * @author  try ste fan pla nti kow zib
  * @version $Id$
@@ -54,7 +54,7 @@ public abstract class RunnableConfiglet extends DefaultConfiglet implements Runn
      * @param data the configuration, expected to be a {@code Map<String, String>}
      */
     @Override
-	public final synchronized void init(@NotNull final Log loggerParam,
+	public final synchronized void init(@NotNull final Logger loggerParam,
 	                                 @NotNull String name, final Serializable data) {
 		super.init(loggerParam, name, data);    // Overridden method
 		threadInit();

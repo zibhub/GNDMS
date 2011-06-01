@@ -34,8 +34,8 @@ import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.FileTransferORQ;
 import de.zib.gndms.model.gorfx.types.FileTransferResult;
 import de.zib.gndms.model.gorfx.types.TaskState;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.log4j.PropertyConfigurator;
 import org.globus.ftp.exception.ClientException;
 import org.globus.ftp.exception.ServerException;
@@ -59,7 +59,7 @@ import java.util.concurrent.Future;
  */
 public class FileTransferActionTest extends SysTestBase {
 
-    Log log = LogFactory.getLog(FileTransferActionTest.class);
+    Logger log = LoggerFactory.getLogger(FileTransferActionTest.class);
     TransferTestMetaData transferData;
     String  logFileConfig;
     Task task;

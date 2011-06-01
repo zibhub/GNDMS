@@ -49,8 +49,8 @@ import de.zib.gndms.kit.configlet.Configlet;
 import de.zib.gndms.kit.system.SystemInfo;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.globus.wsrf.ResourceException;
 import org.jetbrains.annotations.NotNull;
 
@@ -76,7 +76,7 @@ import java.util.Set;
 */
 public class GNDMSystemDirectory implements SystemDirectory, Module {
 
-    private @NotNull final Log logger = LogFactory.getLog(GNDMSystemDirectory.class);
+    private @NotNull final Logger logger = LoggerFactory.getLogger(GNDMSystemDirectory.class);
     private static final int INITIAL_CAPACITY = 32;
     private static final long INSTANCE_RETRIEVAL_INTERVAL = 250L;
 
@@ -421,7 +421,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
     /**
      * Creates a <tt>Configlet</tt> out of a ConfigletState.
      *
-     * <p>The created instance uses {@link #logger} as its <tt>Log</tt> object.
+     * <p>The created instance uses {@link #logger} as its <tt>Logger</tt> object.
      * The name and state of the new Configlet is taken from <tt>configParam</tt>. 
      *
      * @param configParam A ConfigletState to be converted to a Configlet

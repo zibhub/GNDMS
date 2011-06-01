@@ -18,7 +18,7 @@ package de.zib.gndms.logic.action;
 
 
 
-import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -32,8 +32,8 @@ import org.jetbrains.annotations.NotNull;
  *          User: stepn Date: 22.10.2008 Time: 11:18:28
  */
 public interface LogAction {
-    void setLog(@NotNull Log log);
+    void setLogger(@NotNull Logger log);
     
-    @NotNull Log getLog();
+    @NotNull Logger getLogger();
 
 }

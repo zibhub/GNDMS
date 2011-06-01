@@ -19,8 +19,8 @@ package de.zib.gndms.kit.access;
 
 
 import com.google.inject.Injector;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @auhtor Stefan Plantikow <plantikow@zib.de>
  */
 public final class GNDMSBinding {
-    private static final @NotNull Log LOGGER = LogFactory.getLog(GNDMSBinding.class);
+    private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(GNDMSBinding.class);
 
     public static final InjectorProvider PROVIDER = new GNDMSInjectorProvider();
 

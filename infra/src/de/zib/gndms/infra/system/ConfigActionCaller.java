@@ -44,8 +44,8 @@ import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import org.apache.axis.components.uuid.UUIDGen;
 import org.apache.axis.components.uuid.UUIDGenFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -70,7 +70,7 @@ import java.util.Map;
 *          User: stepn Date: 03.09.2008 Time: 16:43:46
 */
 public final class ConfigActionCaller implements WSActionCaller, Module {
-    private @NotNull final Log logger = LogFactory.getLog(ConfigActionCaller.class);
+    private @NotNull final Logger logger = LoggerFactory.getLogger(ConfigActionCaller.class);
 
     private @NotNull final UUIDGen uuidGen = UUIDGenFactory.getUUIDGen();
     private final @NotNull ModelUUIDGen actionUUIDGen = new ModelUUIDGen() {

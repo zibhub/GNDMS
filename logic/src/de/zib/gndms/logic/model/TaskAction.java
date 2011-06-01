@@ -34,7 +34,7 @@ import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.TaskAccessor;
 import de.zib.gndms.neomodel.gorfx.Taskling;
-import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -63,7 +63,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
     /**
      * Used for logging during task execution
      */
-    private Log log;
+    private Logger log;
     private String wid;
 
     /**
@@ -566,7 +566,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
 
     @SuppressWarnings({ "HardcodedFileSeparator" })
     protected void trace(final @NotNull String userMsg, final Throwable cause) {
-        final Log log1 = getLog();
+        final Logger log1 = getLogger();
         final Taskling model = getModel();
         final String msg;
         if (model == null)
@@ -641,12 +641,12 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
            throw new IllegalStateException("Can't overwrite service");
     }
 
-    @NotNull public Log getLog() {
+    @NotNull public Logger getLogger() {
         return log;
     }
 
 
-    public void setLog(@NotNull final Log logParam) {
+    public void setLogger(@NotNull final Logger logParam) {
         log = logParam;
     }
 
@@ -668,7 +668,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
 
             // check the task lifetime
             if(new GregorianCalendar().compareTo(model.getTerminationTime()) >= 1 ) {
-                getLog().debug(  "Task lifetime exceeded" );
+                getLogger().debug(  "Task lifetime exceeded" );
                 throw new LifetimeExceededException();
 //                boolean containt = false;
 //                try {
@@ -676,7 +676,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
 //                    containt = em.contains( model );
 //                    if( containt ) {
 //                        model.fail( new RuntimeException( "Task lifetime exceeded" ) );
-//                        getLog().debug(  "Try to persist task" );
+//                        getLogger().debug(  "Try to persist task" );
 //                    }
 //                    tx.commit( );
 //                } catch ( Exception e ) {
@@ -687,7 +687,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
 //                    tx.finish();
 //                }
 //                // interrupt this thread
-//                getLog().debug(  "Stopping task thread" );
+//                getLogger().debug(  "Stopping task thread" );
 //                //Thread.currentThread().interrupt();
 //                if( containt ) refreshTaskResource();
 //                fail( new RuntimeException( "Task lifetime exceeded" ) );
@@ -926,7 +926,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
 //    protected void fail(final @NotNull RuntimeException e) {
 //        getModel().fail(e);
 //		e.fillInStackTrace();
-//	    // getLog().info("About to transit(FAIL) due to:", e);
+//	    // getLogger().info("About to transit(FAIL) due to:", e);
 //        throw new FailedException(e);
 //    }
 //
@@ -1002,7 +1002,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
 //            cleanUpOnFail( model );
 //        } catch ( Exception e ) {
 //            // don' throw them again
-//            getLog().debug( "Exception on task cleanup: " + e.toString() );
+//            getLogger().debug( "Exception on task cleanup: " + e.toString() );
 //        }
 //    }
 //

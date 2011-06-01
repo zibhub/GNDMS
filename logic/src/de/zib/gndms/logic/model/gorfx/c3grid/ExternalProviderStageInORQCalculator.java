@@ -27,8 +27,8 @@ import de.zib.gndms.logic.model.gorfx.UnfulfillableORQException;
 import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.stuff.Sleeper;
 import org.jetbrains.annotations.NotNull;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,7 +49,7 @@ public class ExternalProviderStageInORQCalculator extends AbstractProviderStageI
 
 	private static final int INITIAL_STRING_BUILDER_CAPACITY = 4096;
 
-	private @NotNull final Log logger = LogFactory.getLog(ExternalProviderStageInORQCalculator.class);
+	private @NotNull final Logger logger = LoggerFactory.getLogger(ExternalProviderStageInORQCalculator.class);
 
 	private ParmFormatAux parmAux;
 	private SystemInfo sysInfo;
