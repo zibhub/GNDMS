@@ -72,8 +72,8 @@ public abstract class AbstractTransferORQCalculator<M extends FileTransferORQ, C
             ft.setSourcePath( suri.getPath( ) );
             ft.setFiles( getORQArguments().getFileMap() );
             estimatedTransferSize = ft.estimateTransferSize(  );
-	} catch( TimeoutException e ) {
-		throw new RuntimeException( e );
+        } catch( TimeoutException e ) {
+            throw new RuntimeException( e );
         } finally {
             if ( clnt != null )
                 clnt.close( true ); // none blocking close op

@@ -465,7 +465,7 @@ define 'gndms' do
         dn = `grid-proxy-info -identity`
         dn = dn.chomp
         if (ENV['GNDMS_SFR'] == nil)
-            prop = 'test-data/sfr/dummy-sfr.properties'
+            prop = 'etc/sfr/dummy-sfr.properties'
         else 
             prop = ENV['GNDMS_SFR']
         end
@@ -594,6 +594,7 @@ task 'ptgrid-test' do
     system "#{ENV['GNDMS_SOURCE']}/scripts/ptgrid/test-resource.sh"
 end
 
+desc 'Sets up the c3 data-provider database'
 task 'c3grid-dp-setupdb' do
     system "#{ENV['GNDMS_SOURCE']}/scripts/c3grid/setup-dataprovider.sh CREATE"
 end
@@ -602,7 +603,8 @@ task 'install-chown-script' do
     system "install -o 0 -g 0 -m 700 #{ENV['GNDMS_SOURCE']}/dev-bin/chownSlice.sh #{ENV['GNDMS_SHARED']}"
 end
 
-task 'c3grid-dp-test' => task('gndms:gndmc:run-staging-test') 
+desc 'Test the c3 data-provider setup'
+task 'c3grid-dp-test' => ['gndms:gndmc:run-staging-test']
 
   
 task 'c3grid-dp-post-deploy-test' do
