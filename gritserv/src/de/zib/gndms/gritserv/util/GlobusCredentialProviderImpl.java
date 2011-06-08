@@ -113,14 +113,14 @@ public class GlobusCredentialProviderImpl extends GlobusCredentialProvider {
 
             File destFile = File.class.cast( o );
             FileOutputStream fos = null;
-            // not required here
-            // not required here
             try {
                 fos = new FileOutputStream( destFile );
                 GlobusGSSCredentialImpl crd = new GlobusGSSCredentialImpl( cred, GSSCredential.DEFAULT_LIFETIME );
                 fos.write( crd.export( ExtendedGSSCredential.IMPEXP_OPAQUE ) );
                 fos.close();
-                directoryAux.chmod( 0600, destFile );
+                int ret = directoryAux.chmod( 0600, destFile );
+                if( ret != 0 )
+                    throw new IllegalStateException( "chmod returned "+ ret );
             } catch( Exception e ) {
                 throw new RuntimeException( e );
             } finally {

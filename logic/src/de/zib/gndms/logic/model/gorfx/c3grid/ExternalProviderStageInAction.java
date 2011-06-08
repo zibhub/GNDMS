@@ -102,7 +102,6 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
 
               //  trace( log, null ) ;
                 fail( new IllegalStateException( log ) );
-                failFrom( new RuntimeException(  ) );
         }
     }
 

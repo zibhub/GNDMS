@@ -16,15 +16,25 @@ repositories.remote << 'http://google-maven-repository.googlecode.com/svn/reposi
 
 # Don't touch below unless you know what you are doing
 # --------------------------------------------------------------------------------------------------
+#
+require "open3"
 
-VERSION_NUMBER = '0.3.3'
-VERSION_NAME = 'Shigeru'
-VERSION_TAG = `git describe --tags`
+VERSION_NUMBER = '0.3.4'
+VERSION_NAME = 'Richard'
+FALLBACK_VERSION_TAG = 'release-Richard'
 GROUP_NAME = 'de.zib.gndms'
 MF_COPYRIGHT = 'Copyright 2008-2011 Zuse Institute Berlin (ZIB)'
 LICENSE ='This software has been licensed to you under the terms and conditions of the Apache License 2.0 (APL 2.0) only.'
 MF_LICENSE="#{LICENSE}  See META-INF/LICENSE for detailed terms and conditions."
 USERNAME = ENV['USER'].to_s
+Open3.popen3( "git describe --tags" ) do |stdin,stdout,stderr|
+    commit_id = stdout.gets
+    if ( commit_id.nil? )
+        VERSION_TAG = FALLBACK_VERSION_TAG 
+    else 
+        VERSION_TAG = commit_id.chomp
+    end
+end
 
 # Yes, this project uses java
 require 'buildr/java'
@@ -600,7 +610,7 @@ task 'c3grid-dp-post-deploy-test' do
     dn = `grid-proxy-info -identity`
     dn = dn.chomp
     if (ENV['GNDMS_SFR'] == nil)
-      prop = 'test-data/sfr/dummy-sfr.properties'
+      prop = 'etc/sfr/dummy-sfr.properties'
     else 
       prop = ENV['GNDMS_SFR']
     end
@@ -661,10 +671,15 @@ task 'auto-clean' do
     elsif( hasPath?( "#{path}gndms-model-0.3.2.jar" ) )
         puts 'GNDMS 0.3.2 detected.'
         cleanRev( '0.3.2' )
-	# adde infra-hotfix1
+    elsif( hasPath?( "#{path}gndms-model-0.3.3.jar" ) )
+        puts 'GNDMS 0.3.3 detected.'
+        cleanRev( '0.3.3' )
+    elsif( hasPath?( "#{path}gndms-model-0.3.4.jar" ) )
+        puts 'GNDMS 0.3.4 detected.'
+        cleanRev( '0.3.4' )
     else
         puts 'No previously installed version detected.'
-    end
+   end
     puts 'About to remove old c3grid service directories (if existing)'
     rm_rf( "#{ENV['GLOBUS_LOCATION']}/lib/c3grid_DSpace" )
     rm_rf( "#{ENV['GLOBUS_LOCATION']}/etc/gpt/packages/c3grid_DSpace" )
@@ -692,6 +707,14 @@ end
 
 task 'clean-0.3.2' do
     cleanRev( '0.3.2' )
+end
+
+task 'clean-0.3.3' do
+    cleanRev( '0.3.3' )
+end
+
+task 'clean-0.3.4' do
+    cleanRev( '0.3.4' )
 end
 
 

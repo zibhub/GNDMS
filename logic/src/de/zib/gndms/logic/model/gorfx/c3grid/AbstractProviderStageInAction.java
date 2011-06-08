@@ -87,7 +87,11 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
                 MapConfig config = getOfferTypeConfig();
 	            getScriptFileByParam(config, "stagingCommand");
                 createNewSlice( model );
-                prepareProxy( model );
+                try {
+                    prepareProxy( model );
+                } catch( RuntimeException re ) {
+                    getLog().warn( re );
+                }
             }
             catch (MandatoryOptionMissingException e1) {
                 failFrom(e1);
