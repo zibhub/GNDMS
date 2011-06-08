@@ -150,10 +150,18 @@ public abstract class ORQTaskAction<K extends AbstractORQ> extends TaskAction
     }
 
     protected void failFrom( Exception e ) {
-        fail( new IllegalStateException( getModel().getDescription() + " failure " +  e.getMessage(), e ) );
+    	fail( new IllegalStateException( getFailString( e ), e ) );
     }
 
     protected void traceFrom( Exception e ) {
-        trace( getModel().getDescription() + " failure " +  e.getMessage(), e );
+        trace( getFailString( e ), e );
+    }
+
+
+    protected String getFailString( Exception e )  {
+        if( e != null )
+            return getModel().getDescription() + " failure " +  e.getMessage();
+        else
+            return getModel().getDescription() + " failure (no Exception provided)";
     }
 }

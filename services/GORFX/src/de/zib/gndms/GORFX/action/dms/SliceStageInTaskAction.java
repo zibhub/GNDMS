@@ -124,9 +124,11 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
                 SliceReference sk = (SliceReference) res.get_any()[0].getObjectValue( SliceReference.class );
                 SliceRef sr = SliceRefXSDReader.read( sk );
                 trace( "Remote staging finished. SliceId: " + sr.getResourceKeyValue() + "@"  + sr.getGridSiteId() , null );
+		taskClient = null;
                 finish( new SliceStageInResult( sr ) );
             } else {
                 TaskExecutionFailure f = taskClient.getExecutionFailure();
+		taskClient = null;
                 String failure = GORFXClientUtils.taskExecutionFailureToString( f );
                 trace( "Remote staging failed with: \n"
                     + failure , null );
