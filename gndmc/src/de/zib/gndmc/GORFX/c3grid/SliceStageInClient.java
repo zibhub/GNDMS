@@ -25,6 +25,7 @@ import de.zib.gndms.model.gorfx.types.io.SliceStageInORQPropertyReader;
 import de.zib.gndms.model.gorfx.types.io.SliceStageInORQWriter;
 import de.zib.gndms.gritserv.typecon.types.SliceStageInORQXSDTypeWriter;
 import org.jetbrains.annotations.NotNull;
+import org.kohsuke.args4j.Option;
 import types.DynamicOfferDataSeqT;
 
 import java.io.IOException;
@@ -40,6 +41,7 @@ import java.util.Properties;
  *          User: stepn Date: 17.12.2008 Time: 18:10:04
  */
 public class SliceStageInClient extends AbstractStageInClient {
+
 	@SuppressWarnings({ "UseOfSystemOutOrSystemErr" })
     public static void main(String[] args) throws Exception {
 		// System.out.println(System.getProperties().toString());

@@ -33,14 +33,18 @@ import de.zib.gndms.gritserv.typecon.types.SliceRefXSDReader;
 import de.zib.gndms.gritserv.typecon.types.ContextXSDTypeWriter;
 import de.zib.gndms.gritserv.typecon.types.ContractXSDTypeWriter;
 
+import de.zib.gndms.stuff.threading.Forkable;
 import org.apache.axis.AxisFault;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.globus.gsi.GlobusCredential;
 import org.jetbrains.annotations.NotNull;
-import sun.security.util.Debug;
 import types.*;
 
 import java.rmi.RemoteException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * @author  try ma ik jo rr a zib
@@ -116,7 +120,23 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
 
             trace( "Starting remote staging.", null );
             // poll every 15 seconds
-            boolean finished = GORFXClientUtils.waitForFinish( taskClient, 15000 );
+
+            Forkable<Boolean> forkable = new Forkable<Boolean>(new Callable<Boolean>() {
+                public Boolean call() throws Exception {
+                    return GORFXClientUtils.waitForFinish( taskClient, 15000 );
+                }
+            });
+            forkable.setShouldStop( true );
+
+            boolean finished = false;
+            ExecutorService executorService = Executors.newFixedThreadPool( 1 );
+            try {
+                Future<Boolean> future = executorService.submit(forkable);
+                finished = future.get();
+            } catch( InterruptedException e ) {
+                Thread.interrupted();
+                fail( new RuntimeException( e ) );
+            }
 
             if (finished) {
                 trace( "Remote staging finished.", null );
@@ -124,11 +144,11 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
                 SliceReference sk = (SliceReference) res.get_any()[0].getObjectValue( SliceReference.class );
                 SliceRef sr = SliceRefXSDReader.read( sk );
                 trace( "Remote staging finished. SliceId: " + sr.getResourceKeyValue() + "@"  + sr.getGridSiteId() , null );
-		taskClient = null;
+                taskClient = null;
                 finish( new SliceStageInResult( sr ) );
             } else {
                 TaskExecutionFailure f = taskClient.getExecutionFailure();
-		taskClient = null;
+                taskClient = null;
                 String failure = GORFXClientUtils.taskExecutionFailureToString( f );
                 trace( "Remote staging failed with: \n"
                     + failure , null );
@@ -148,6 +168,7 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
         super.cleanUpOnFail( model );
         if( taskClient != null )
             try {
+                getLog( ).warn( "Destroying client" );
                 taskClient.destroy( );
             } catch ( RemoteException e ) {
                 getLog( ).warn( "Exception on cleanup", e );

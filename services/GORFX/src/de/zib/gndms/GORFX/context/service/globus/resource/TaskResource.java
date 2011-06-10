@@ -361,8 +361,16 @@ public class TaskResource extends TaskResourceBase
                     // task is still running cancel it and cleanup entity manager
                     log.debug( "cancel task " + tsk.getWid() );
                     cleanUp = true;
-                    if( future != null )
+                    if( future != null ) {
                         future.cancel( true );
+                        try {
+                            // give cancel some time
+                            Thread.sleep( 2000L );
+                        } catch ( InterruptedException e ) {
+                            logger.debug(  e );
+                        }
+                    }
+
                     try {
                         EntityManager em = taskAction.getEntityManager();
                         if( em != null &&  em.isOpen() ) {
