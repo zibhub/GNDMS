@@ -48,6 +48,7 @@ import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.impl.SimpleResourceKey;
 import org.globus.wsrf.jndi.Initializable;
 import org.globus.wsrf.utils.AddressingUtils;
+import org.ietf.jgss.GSSCredential;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

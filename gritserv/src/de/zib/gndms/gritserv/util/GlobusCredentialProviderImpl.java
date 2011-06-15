@@ -96,7 +96,7 @@ public class GlobusCredentialProviderImpl extends GlobusCredentialProvider {
         public void installCredentials( Object o, GlobusCredential cred ) {
             GridFTPClient cnt = GridFTPClient.class.cast( o );
             try {
-                cnt.authenticate(  new GlobusGSSCredentialImpl( cred, GSSCredential.DEFAULT_LIFETIME) );
+                cnt.authenticate(  new GlobusGSSCredentialImpl( cred, GSSCredential.INITIATE_AND_ACCEPT ) );
             } catch ( Exception e ) {
                 throw new RuntimeException( e );
             }
@@ -115,7 +115,7 @@ public class GlobusCredentialProviderImpl extends GlobusCredentialProvider {
             FileOutputStream fos = null;
             try {
                 fos = new FileOutputStream( destFile );
-                GlobusGSSCredentialImpl crd = new GlobusGSSCredentialImpl( cred, GSSCredential.DEFAULT_LIFETIME );
+                GlobusGSSCredentialImpl crd = new GlobusGSSCredentialImpl( cred, GSSCredential.INITIATE_AND_ACCEPT );
                 fos.write( crd.export( ExtendedGSSCredential.IMPEXP_OPAQUE ) );
                 fos.close();
                 int ret = directoryAux.chmod( 0600, destFile );

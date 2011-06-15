@@ -20,6 +20,7 @@ import org.globus.ftp.FileInfo;
 import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.GridFTPSession;
 import org.globus.ftp.Session;
+import org.ietf.jgss.GSSCredential;
 
 import java.util.Map;
 import java.util.Set;
@@ -43,6 +44,7 @@ public class SizeTest extends TestBase {
     @Override
     public void run() throws Exception {
 
+        System.out.println( GSSCredential.DEFAULT_LIFETIME );
         super.run();
         System.out.println( "configuring client" );
 

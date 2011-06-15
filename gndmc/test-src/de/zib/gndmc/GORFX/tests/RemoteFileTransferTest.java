@@ -88,7 +88,7 @@ public class RemoteFileTransferTest {
         GORFXClient gc = new GORFXClient( gorfxEpUrlParam );
 
         // with delegation
-        String delfac = DelegationAux.createDelationAddress( gorfxEpUrlParam );
+        String delfac = DelegationAux.createDelegationAddress( gorfxEpUrlParam );
         GlobusCredential credential = DelegationAux.findCredential( proxyFile );
         EndpointReferenceType epr = DelegationAux.createProxy( delfac, credential );
         DelegationAux.addDelegationEPR( ctx, epr );

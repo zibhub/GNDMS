@@ -350,7 +350,7 @@ public abstract class AbstractStageInClient extends AbstractApplication {
 
         GORFXClient gorfx = new GORFXClient(gorfxEpUrlParam);
 
-        String delfac = DelegationAux.createDelationAddress( gorfxEpUrlParam );
+        String delfac = DelegationAux.createDelegationAddress( gorfxEpUrlParam );
 
         credential = DelegationAux.findCredential( proxyFile );
         EndpointReferenceType epr = DelegationAux.createProxy( delfac, credential );

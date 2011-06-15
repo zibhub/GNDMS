@@ -60,7 +60,8 @@ public class DelegationAux {
 
     public static final String DELEGATION_EPR_KEY = "DelegationEPR";
     public static final QName QNAME = new QName("", "DelegatedEPR");
-    public static Logger logger = Logger.getLogger( DelegationAux.class ); 
+    public static Logger logger = Logger.getLogger( DelegationAux.class );
+    public static final int PROXY_LIFETIME = 60*120; // lifetime of the delegation proxy in s
 
     private DelegationAux() {
     }
@@ -69,7 +70,7 @@ public class DelegationAux {
         return "/tmp/x509up_u" +uid;
     }
 
-    public static String createDelationAddress( String addr ) throws URI.MalformedURIException {
+    public static String createDelegationAddress( String addr ) throws URI.MalformedURIException {
         URI uri = new URI( addr );
         return uri.getScheme()  + "://" + uri.getHost( ) + ":" + uri.getPort() +  "/wsrf/services/DelegationFactoryService";
     }
@@ -114,8 +115,7 @@ public class DelegationAux {
 
 
         // get delegate:
-        int tt = 600;
-        return  DelegationUtil.delegate( uri, credential, certs[0], tt, true, desc);
+        return  DelegationUtil.delegate( uri, credential, certs[0], PROXY_LIFETIME, true, desc);
 
     }
 

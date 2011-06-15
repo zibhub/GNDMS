@@ -83,7 +83,7 @@ public class SliceStageInORQCalculator extends
         GORFXClient cnt = new GORFXClient( sid );
 
 
-        String delfac = DelegationAux.createDelationAddress( sid );
+        String delfac = DelegationAux.createDelegationAddress( sid );
 
         EndpointReferenceType epr = DelegationAux.createProxy( delfac, credential );
         logger.debug( "createOffer creds: " + credential );

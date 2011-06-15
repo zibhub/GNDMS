@@ -9,7 +9,7 @@ metafile=$(echo "$sfr" | grep c3grid.StageFileRequest.TargetMetaDataFile | cut -
 
 
 # fake execution: seconds to wait
-sleep 15
+sleep 5
 
 
 echo "$sfr" > $datafile
