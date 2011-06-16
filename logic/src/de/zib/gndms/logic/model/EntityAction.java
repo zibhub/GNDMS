@@ -45,7 +45,7 @@ public interface EntityAction<R> extends Action<R>, ModelUUIDGen {
      * If not set, the first EntityManger of the parents of this action, being not {@code null}, will be returned.
      * If no parent has an EntityManager, {@code null} will be returned.
      *
-     * @return the first appereance of an EntityManager in the parent chain of this action
+     * @return the first appearance of an EntityManager in the parent chain of this action
      */
     EntityManager getEntityManager();
 
@@ -64,16 +64,16 @@ public interface EntityAction<R> extends Action<R>, ModelUUIDGen {
 
 
     /**
-     * Returns the postponend actions.
+     * Returns the postponed actions.
      *
-     * @return the postponend actions
+     * @return the postponed actions
      */
     BatchUpdateAction<GridResource, ?> getPostponedEntityActions();
 
     /**
      * Define actions that will be executed on {@code this.cleanup()}
      * 
-     * @param postponedActionsParam a BatchUpdateAction containg actions, that will be executed on cleanup
+     * @param postponedActionsParam a BatchUpdateAction containing actions, that will be executed on cleanup
      */
     void setOwnPostponedEntityActions(final @NotNull BatchUpdateAction<GridResource, ?> postponedActionsParam);
 

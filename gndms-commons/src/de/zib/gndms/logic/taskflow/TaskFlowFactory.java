@@ -15,7 +15,9 @@ package de.zib.gndms.logic.taskflow;
  * limitations under the License.
  */
 
-import de.zib.gndms.model.gorfx.types.*;
+import de.zib.gndms.logic.model.TaskAction;
+import de.zib.gndms.model.gorfx.types.TaskFlow;
+import de.zib.gndms.model.gorfx.types.TaskFlowInfo;
 
 /**
  * @author try ma ik jo rr a zib

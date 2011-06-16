@@ -1,6 +1,8 @@
 package de.zib.gndms.model.gorfx.types;
 
 
+import de.zib.gndms.neomodel.gorfx.Taskling;
+
 import java.util.ArrayList;
 import java.util.List;
 /*
@@ -31,7 +33,7 @@ public class TaskFlow<T extends Order> {
     private T order;  ///< The order
     private List<Quote> quotes; ///< The quotes, if computed.
     private Quote preferredQuote; ///< A quote provided by the client.
-    private Task<T> task; ///< The task object, if created.
+    private Taskling taskling; ///< The taskling object, if created.
     private boolean unfulfillableOrder = false; ///< Remembers if the order was unfulfillable.
 
 
@@ -125,32 +127,32 @@ public class TaskFlow<T extends Order> {
 
 
     /**
-     * @brief Delivers the value of ::task.
+     * @brief Delivers the value of ::taskling.
      * 
-     * @return The value of ::task.
+     * @return The value of ::taskling.
      */
-    public Task<T> getTask() {
-        return task;
+    public Taskling getTaskling() {
+        return taskling;
     }
 
 
     /**
-     * @brief Sets the value of ::task to \e task.
+     * @brief Sets the value of ::taskling to \e taskling.
      * 
-     * @param task The new value of ::task.
+     * @param taskling The new value of ::taskling.
      */
-    public void setTask( Task<T> task ) {
-        this.task = task;
+    public void setTaskling( Taskling taskling ) {
+        this.taskling = taskling;
     }
 
 
     /**
-     * @brief Delivers the value of ::task.
+     * @brief Delivers the value of ::taskling.
      * 
-     * @return The value of ::task.
+     * @return The value of ::taskling.
      */
-    public boolean hasTask( ) {
-        return task != null;
+    public boolean hasTaskling( ) {
+        return taskling != null;
     }
 
 

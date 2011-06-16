@@ -16,19 +16,24 @@ package de.zib.gndms.GORFX.service;
  */
 
 import de.zib.gndms.GORFX.service.util.WidAux;
-import de.zib.gndms.infra.system.SysTaskExecutionService;
+import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.logic.model.TaskAction;
+import de.zib.gndms.logic.model.TaskExecutionService;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
+import de.zib.gndms.neomodel.gorfx.Taskling;
 import de.zib.gndms.rest.Facets;
 import de.zib.gndms.rest.Specifier;
+import de.zib.gndms.rest.UriFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -36,62 +41,75 @@ import java.util.UUID;
 * @date 30.05.11  16:38
 * @brief
 */
-public class TaskServiceAux<T extends Serializable> {
+public class TaskServiceAux {
 
-    private boolean myResult;
-    private String type;
-    private String id;
-    private String dn;
-    private String wid;
-    private T taskModel;
-    private Task task;
-    private TaskAction taskAction;
-    private ResponseEntity<Specifier<Facets>> res;
-    private SysTaskExecutionService executorService;
-    private Dao dao;
+    private TaskExecutionService executorService;
     private Logger logger = LoggerFactory.getLogger( this.getClass() );
 
 
-    public TaskServiceAux( String type, String id, TaskAction taskAction, T model, String dn, String wid ) {
-        this.type = type;
-        this.id = id;
-        this.taskAction = taskAction;
-        this.taskModel = taskModel;
-        this.dn = dn;
-        this.wid = wid;
+    public TaskServiceAux( TaskExecutionService executorService ) {
+
+        this.executorService = executorService;
     }
 
 
-    boolean is() {
-        return myResult;
-    }
 
-
-    public ResponseEntity<Specifier<Facets>> getRes() {
-        return res;
-    }
-
-
-    public TaskServiceAux invoke() {
+    public Taskling submitTaskAction( Dao dao, TaskAction taskAction, Serializable taskModel, String wid ) {
 
         String id = UUID.randomUUID().toString();
+        Taskling taskling = null;
         dao.createTask( id );
         Session ses = dao.beginSession();
-        task = ses.findTask( id );
-        task.setPayload( taskModel );
-        taskAction.setModel( task.getTaskling() );
-        executorService.submitDaoAction( taskAction, dao );
-        logger.debug( "Done, requesting facets" );
-        res = getTask( type, id, dn, wid );
-        if( HttpStatus.OK.equals( res.getStatusCode() ) ) {
-            logger.debug( "OK, returning CREATED" );
-            WidAux.removeWid();
-            myResult = true;
-            return this;
-        } else {
-          logger.debug( "unexpected status: " + res.getStatusCode().name() );
+        try {
+            Task task = ses.findTask( id );
+            task.setWID( wid );
+            task.setPayload( taskModel );
+            taskling = task.getTaskling();
+            ses.success();
+        } finally {
+            ses.finish();
         }
-        myResult = false;
-        return this;
+
+        taskAction.setModel( taskling );
+        taskAction.setOwnDao( dao );
+        executorService.submitDaoAction( taskAction, null );
+
+        return taskling;
+    }
+
+
+    public Specifier<Facets> getTaskSpecifier( TaskClient taskClient, Taskling taskling, UriFactory uriFactory, Map<String,String> urimap, String dn ) {
+
+        Specifier<Facets> spec = new Specifier<Facets>();
+
+        Map<String, String> taskurimap = taskUriMap( taskling, urimap );
+
+        spec.setURL( uriFactory.taskUri( urimap, null ) );
+        spec.setUriMap( urimap );
+
+        ResponseEntity<Facets> res = taskClient.getTaskFacets( taskling.getId(), dn );
+        if( res != null )
+            if( HttpStatus.OK.equals( res.getStatusCode() ) ) {
+                spec.setPayload( res.getBody() );
+            } else {
+                throw new IllegalStateException( "unexpected status: " + res.getStatusCode().name() );
+            }
+        else
+            logger.debug( "getTaskFacets returned null" );
+
+        return spec;
+    }
+
+
+    public static Map<String, String> taskUriMap( Taskling t, Map<String,String> urimap ) {
+
+        HashMap<String,String> newUrimap = new HashMap<String, String>( 2 );
+        newUrimap.put( UriFactory.SERVICE, "gorfx" );
+        newUrimap.put( UriFactory.TASK_ID, t.getId() );
+
+        if ( urimap != null )
+            newUrimap.putAll( urimap ); // this might overwrite TASK_ID and SERVICE
+
+        return newUrimap;
     }
 }
