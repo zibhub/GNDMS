@@ -15,7 +15,7 @@ package de.zib.gndms.GORFX.service;
  * limitations under the License.
  */
 
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author try ma ik jo rr a zib
@@ -24,7 +24,7 @@ import java.util.HashMap;
  */
 public class NoSuchResourceException extends RuntimeException {
 
-    private HashMap<String,String> uriMap;
+    private Map<String,String> uriMap;
 
 
     public NoSuchResourceException() {
@@ -36,18 +36,18 @@ public class NoSuchResourceException extends RuntimeException {
     }
 
 
-    public NoSuchResourceException( String id, HashMap<String, String> uriMap ) {
+    public NoSuchResourceException( String id, Map<String, String> uriMap ) {
         super( id );
         this.uriMap = uriMap;
     }
 
 
-    public HashMap<String, String> getUriMap() {
+    public Map<String, String> getUriMap() {
         return uriMap;
     }
 
 
-    public void setUriMap( HashMap<String, String> uriMap ) {
+    public void setUriMap( Map<String, String> uriMap ) {
         this.uriMap = uriMap;
     }
 }

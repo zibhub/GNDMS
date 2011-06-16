@@ -16,6 +16,7 @@ package de.zib.gndms.rest;
  */
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author try ma ik jo rr a zib
@@ -28,7 +29,7 @@ import java.util.HashMap;
 public class Specifier<T> {
 
     private String URL; ///< The whole url of the resource.
-    private HashMap<String,String> uriMap; ///< An id map for the resource. Useful to fill url templates.
+    private Map<String, String> uriMap; ///< An id map for the resource. Useful to fill url templates.
     private T payload; ///< Some additional data for the resource. Usually the results of a GET request.
     private Specifier specifier; ///< Specifiers might be nested.
 
@@ -43,12 +44,12 @@ public class Specifier<T> {
     }
 
 
-    public HashMap<String, String> getUriMap() {
+    public Map<String, String> getUriMap() {
         return uriMap;
     }
 
 
-    public void setUriMap( HashMap<String, String> urlMap ) {
+    public void setUriMap( Map<String, String> urlMap ) {
         this.uriMap = urlMap;
     }
 

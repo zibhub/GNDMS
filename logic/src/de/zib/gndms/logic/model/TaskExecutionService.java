@@ -49,7 +49,7 @@ public interface TaskExecutionService {
      * @return A Future Object holding the result of action's computation
      * @see Future
      */
-    @NotNull <R> Future<R> submitAction(final @NotNull EntityAction<R> action, final @NotNull Logger logger);
+    @NotNull <R> Future<R> submitAction(final @NotNull EntityAction<R> action, final Logger logger);
 
     /**
      * Submits an EntityAction to an {@code ExecutorService}.
@@ -65,7 +65,7 @@ public interface TaskExecutionService {
      */
     @NotNull <R> Future<R> submitAction(final @NotNull EntityManager em,
                                         final @NotNull EntityAction<R> action,
-                                        final @NotNull Logger logger);
+                                        final Logger logger);
 
 
     /**
@@ -76,9 +76,9 @@ public interface TaskExecutionService {
     public @NotNull <R> Future<R> submitDaoAction(final @NotNull EntityManager em,
                                                   final @NotNull Dao dao,
                                                   final @NotNull ModelDaoAction<?, R> action,
-                                                  final @NotNull Logger log);
+                                                  final Logger log);
 
-    public @NotNull <R> Future<R> submitDaoAction(final @NotNull ModelDaoAction<?, R> action, final @NotNull Logger log);
+    public @NotNull <R> Future<R> submitDaoAction(final @NotNull ModelDaoAction<?, R> action, final Logger log);
 
     /**
      * Returns true if this is terminating or already terminated.

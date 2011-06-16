@@ -18,7 +18,6 @@ package de.zib.gndms.logic.model;
 
 
 
-import com.google.inject.Inject;
 import de.zib.gndms.kit.access.RequiresCredentialProvider;
 import de.zib.gndms.kit.access.CredentialProvider;
 import de.zib.gndms.kit.configlet.ConfigletProvider;
@@ -714,7 +713,6 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
 	}
 
 
-	@Inject
 	public void setEmf(final @NotNull EntityManagerFactory emfParam) {
 		emf = emfParam;
 	}
@@ -724,7 +722,6 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
     }
 
 
-    @Inject
     public void setConfigletProvider( ConfigletProvider configletProvider ) {
         this.configletProvider = configletProvider;
     }

@@ -65,7 +65,9 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
     public static final String FAULT_STRING_P = "FAULT_STRING_P";
     public static final String TASK_STATE_IDX = "taskStateIdx";
     public static final String TERMINATION_TIME_IDX = "terminationTimeIdx";
-    public static final String RESOURCE_ID_IDX = "ResourceIdIdx" ;
+    public static final String RESOURCE_ID_IDX = "resourceIdIdx" ;
+
+
 
     public static enum TaskRelationships implements RelationshipType {
         OFFER_TYPE_REL,
@@ -417,7 +419,7 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
         final Session session = session();
         try {
             final String id = this.getId();
-            final String taskFlowId = this.getTaskFlowId();
+            final String resourceId = this.getResourceId();
             final String WID = this.getWID();
             final String descr = this.getDescription();
             final Calendar terminationTime = this.getTerminationTime();
@@ -441,6 +443,12 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
                 public String getId() {
                     return id;
                 }
+
+
+                public String getResourceId() {
+                    return resourceId;
+                }
+
 
                 @NotNull
                 public String getWID() {

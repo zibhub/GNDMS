@@ -21,7 +21,9 @@ import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.neomodel.common.Dao;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -103,7 +105,7 @@ public final class SysTaskExecutionService implements TaskExecutionService, Thre
     }
 
 
-    public final @NotNull <R> Future<R> submitAction(final @NotNull EntityAction<R> action, final @NotNull Logger log) {
+    public final @NotNull <R> Future<R> submitAction(final @NotNull EntityAction<R> action, final Logger log) {
         final EntityManager ownEm = action.getOwnEntityManager();
         if (ownEm != null)
             return submit_(action, log);
@@ -114,7 +116,7 @@ public final class SysTaskExecutionService implements TaskExecutionService, Thre
     }
 
     public final @NotNull <R> Future<R> submitDaoAction(final @NotNull ModelDaoAction<?, R> action,
-                                                        final @NotNull Logger log) {
+                                                        final Logger log) {
         final Dao dao = action.getOwnDao();
         if (dao != null)
             return submitAction(action, log);
@@ -127,14 +129,14 @@ public final class SysTaskExecutionService implements TaskExecutionService, Thre
     @SuppressWarnings({ "FeatureEnvy" })
     public @NotNull <R> Future<R> submitAction(final @NotNull EntityManager em,
                                                final @NotNull EntityAction<R> action,
-                                               final @NotNull Logger log) {
+                                               final Logger log) {
         return submit_(action, log);
     }
 
     public @NotNull <R> Future<R> submitDaoAction(final @NotNull EntityManager em,
                                                   final @NotNull Dao dao,
                                                   final @NotNull ModelDaoAction<?, R> action,
-                                                  final @NotNull Logger log) {
+                                                  final Logger log) {
         action.setOwnDao( dao );
         return submitAction(em, action, log);
     }
@@ -163,9 +165,13 @@ public final class SysTaskExecutionService implements TaskExecutionService, Thre
      * @return A Future Object holding the result of action's computation
      */
     @SuppressWarnings({ "FeatureEnvy" })
-    private <R> Future<R> submit_(final EntityAction<R> action, final @NotNull Logger log) {
+    private <R> Future<R> submit_(final EntityAction<R> action, final Logger log) {
         if (action instanceof LogAction )
-            ((LogAction)action).setLogger(log);
+            if ( log != null )
+                ((LogAction)action).setLogger(log);
+            else
+                ((LogAction)action).setLogger( LoggerFactory.getLogger( action.getClass() ) );
+
         if (action instanceof SystemHolder)
             ((SystemHolder)action).setSystem( null );
         if (action.getPostponedEntityActions() == null)
