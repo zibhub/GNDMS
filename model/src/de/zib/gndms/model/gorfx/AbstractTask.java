@@ -220,7 +220,7 @@ public abstract class AbstractTask extends TimedGridResource {
     }
 
 
-    @Column(name="fault", nullable=true, updatable=true, columnDefinition="VARCHAR", length=5000 )
+    @Column( name="fault", nullable=true, updatable=true, columnDefinition="CLOB" )
     @Basic
     public String getFaultString() {
         return faultString;
