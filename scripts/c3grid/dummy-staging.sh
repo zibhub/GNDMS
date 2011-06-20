@@ -18,6 +18,8 @@ echo "$sfr" > $metafile
 
 # Uncomment to test dummy-cancel.sh
 #echo "NAY!" >&2
+
+#cat $(dirname $0)/errormesg.txt
 #exit 1
 
 # example of proxy usage

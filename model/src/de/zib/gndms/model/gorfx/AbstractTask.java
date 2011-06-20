@@ -193,12 +193,7 @@ public abstract class AbstractTask extends TimedGridResource {
     public TaskState getState() {
         return state;
     }
-
-
-    @Column(name = "done", nullable=false, updatable=true)
-    public boolean isDone() {
-        return done;
-    }
+@Column(name = "done", nullable=false, updatable=true) public boolean isDone() { return done; }
 
 
     @Column(name = "progress", nullable=false, updatable=true)
@@ -220,8 +215,8 @@ public abstract class AbstractTask extends TimedGridResource {
     }
 
 
-    @Column( name="fault", nullable=true, updatable=true, columnDefinition="CLOB" )
-    @Basic
+    @Column( name="fault", nullable=true, updatable=true )
+    @Lob
     public String getFaultString() {
         return faultString;
     }
