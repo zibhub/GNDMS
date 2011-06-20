@@ -102,7 +102,7 @@ public class Yatc {
 
         if( useDelegation ) {
             // with delegation
-            String delfac = DelegationAux.createDelationAddress( dspaceURI );
+            String delfac = DelegationAux.createDelegationAddress( dspaceURI );
             GlobusCredential credential = DelegationAux.findCredential( DelegationAux.defaultProxyFileName( "1000" ) );
             EndpointReferenceType epr = DelegationAux.createProxy( delfac, credential );
             DelegationAux.addDelegationEPR( new ContextT(), epr );
