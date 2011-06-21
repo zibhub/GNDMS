@@ -16,7 +16,7 @@ package de.zib.gndms.gndmc.gorfx;
  */
 
 import de.zib.gndms.GORFX.service.TaskService;
-import de.zib.gndms.devel.NotYetImplementedException;
+import de.zib.gndms.stuff.devel.NotYetImplementedException;
 import de.zib.gndms.gndmc.AbstractClient;
 import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.rest.Facets;

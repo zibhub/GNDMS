@@ -15,8 +15,8 @@ package de.zib.gndms.GORFX.service;
  * limitations under the License.
  */
 
-import de.zib.gndms.kit.action.ActionMeta;
-import de.zib.gndms.kit.config.ConfigMeta;
+import de.zib.gndms.logic.action.ActionMeta;
+import de.zib.gndms.logic.config.ConfigMeta;
 import de.zib.gndms.rest.Facets;
 import de.zib.gndms.rest.Specifier;
 import org.springframework.http.ResponseEntity;

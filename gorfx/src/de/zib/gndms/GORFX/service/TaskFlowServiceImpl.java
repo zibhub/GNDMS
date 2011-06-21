@@ -1,14 +1,15 @@
 package de.zib.gndms.GORFX.service;
 
 import de.zib.gndms.GORFX.service.util.WidAux;
-import de.zib.gndms.devel.NotYetImplementedException;
+import de.zib.gndms.model.gorfx.types.TaskFlow;
+import de.zib.gndms.stuff.devel.NotYetImplementedException;
 import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.model.TaskExecutionService;
-import de.zib.gndms.logic.taskflow.AbstractQuoteCalculator;
-import de.zib.gndms.logic.taskflow.TaskFlowFactory;
-import de.zib.gndms.logic.taskflow.TaskFlowProvider;
-import de.zib.gndms.logic.taskflow.UnsatisfiableOrderException;
+import de.zib.gndms.logic.model.gorfx.taskflow.AbstractQuoteCalculator;
+import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowFactory;
+import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowProvider;
+import de.zib.gndms.logic.model.gorfx.taskflow.UnsatisfiableOrderException;
 import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.neomodel.common.Dao;
@@ -31,8 +32,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *

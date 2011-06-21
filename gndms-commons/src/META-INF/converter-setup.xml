@@ -15,11 +15,11 @@
 	</bean-->
 
 
-    <bean id="converter" class="de.zib.gndms.rest.FixedMappingJacksonHttpMessageConverter">
+    <bean id="converter" class="de.zib.gndms.gritserv.rest.FixedMappingJacksonHttpMessageConverter">
     <!--bean id="jsonconverter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"-->
         <property name="objectMapper" ref="objectMapper"/>
     </bean>
 
-    <bean id="objectMapper" class="de.zib.gndms.rest.GNDMSJacksonObjectMapper" />
+    <bean id="objectMapper" class="de.zib.gndms.gritserv.rest.GNDMSJacksonObjectMapper" />
 </beans>
 

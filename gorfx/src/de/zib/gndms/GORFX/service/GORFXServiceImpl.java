@@ -18,16 +18,16 @@ package de.zib.gndms.GORFX.service;
 
 
 import de.zib.gndms.gndmc.gorfx.TaskFlowClient;
-import de.zib.gndms.kit.action.Action;
-import de.zib.gndms.kit.action.ActionMeta;
-import de.zib.gndms.kit.action.ActionProvider;
-import de.zib.gndms.logic.taskflow.TaskFlowProvider;
-import de.zib.gndms.model.gorfx.types.Order;
+import de.zib.gndms.logic.action.Action;
+import de.zib.gndms.logic.action.ActionMeta;
+import de.zib.gndms.logic.action.ActionProvider;
+import de.zib.gndms.logic.config.ConfigMeta;
+import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowProvider;
 import de.zib.gndms.model.gorfx.types.TaskFlow;
+import de.zib.gndms.model.gorfx.types.Order;
 import de.zib.gndms.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.rest.Facets;
 import de.zib.gndms.rest.GNDMSResponseHeader;
-import de.zib.gndms.kit.config.ConfigMeta;
 import de.zib.gndms.rest.Specifier;
 import de.zib.gndms.rest.UriFactory;
 import org.slf4j.Logger;

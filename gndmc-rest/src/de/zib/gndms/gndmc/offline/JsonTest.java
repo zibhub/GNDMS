@@ -16,7 +16,6 @@ package de.zib.gndms.gndmc.offline;
  */
 
 import de.zib.gndms.logic.taskflow.tfmockup.DummyOrder;
-import de.zib.gndms.model.gorfx.types.Order;
 import de.zib.gndms.rest.Facet;
 import de.zib.gndms.rest.Facets;
 import de.zib.gndms.rest.GNDMSJacksonObjectMapper;
@@ -24,8 +23,6 @@ import de.zib.gndms.rest.Specifier;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import javax.naming.spi.ObjectFactory;
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;

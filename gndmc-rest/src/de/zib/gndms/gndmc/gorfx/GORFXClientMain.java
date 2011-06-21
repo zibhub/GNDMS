@@ -16,9 +16,9 @@ package de.zib.gndms.gndmc.gorfx;
  * limitations under the License.
  */
 
-import de.zib.gndms.kit.action.ActionMeta;
+import de.zib.gndms.logic.action.ActionMeta;
 import de.zib.gndms.kit.application.AbstractApplication;
-import de.zib.gndms.kit.config.ConfigMeta;
+import de.zib.gndms.logic.config.ConfigMeta;
 import de.zib.gndms.logic.taskflow.tfmockup.DummyOrder;
 import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.rest.Facet;
