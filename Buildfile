@@ -498,7 +498,7 @@ define 'gndms' do
                  '-uri', 'https://' + host + ':8443/wsrf/services/gndms/GORFX',
 	             '-dn', dn
         ]
-        Commands.java('de.zib.gndmc.GORFX.tests.MultiRequestClient',  args, 
+        Commands.java('de.zib.gndmc.GORFX.diag.MultiRequestClient',  args, 
                       { :classpath => jars, :properties => 
                           { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" } } )
       end
