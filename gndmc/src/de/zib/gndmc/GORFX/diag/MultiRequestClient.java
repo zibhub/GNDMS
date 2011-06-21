@@ -1,4 +1,4 @@
-package de.zib.gndmc.GORFX.tests;
+package de.zib.gndmc.GORFX.diag;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -69,7 +69,7 @@ public class MultiRequestClient extends AbstractApplication {
         PropertyTree pt = PropertyTreeFactory.createPropertyTree( new File( propFile ) );
         String rc = pt.getProperty( "RunnerClass" );
 
-        Class<? extends RequestRunner> runner;
+        Class<? extends de.zib.gndmc.GORFX.diag.RequestRunner> runner;
         try {
             runner = (Class<? extends RequestRunner>) Class.forName( rc );
         } catch ( Exception e ) {
