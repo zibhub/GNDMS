@@ -117,6 +117,7 @@ public class TaskServiceImpl implements TaskService {
         logger.debug( "delete task called with id " + id );
         Session session = dao.beginSession();
         try {
+            // todo check if task for taskling is running
             Task t = findTask( id, session ); // ensures that id is valid
             Task.fullDelete( t, session );
             session.success();
