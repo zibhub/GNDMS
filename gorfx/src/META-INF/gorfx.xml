@@ -24,7 +24,7 @@
         </property>
     </bean>
 
-    <bean id="taskFlowProvider" class="de.zib.gndms.logic.taskflow.TaskFlowProviderImpl" >
+    <bean id="taskFlowProvider" class="de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowProviderImpl" >
         <property name="factories">
             <map>
                 <entry key="dummyTaskFlow" value-ref="dummyFactory"/>

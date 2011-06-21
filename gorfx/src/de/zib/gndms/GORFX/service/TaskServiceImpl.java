@@ -16,7 +16,7 @@ package de.zib.gndms.GORFX.service;
  */
 
 import de.zib.gndms.GORFX.service.util.TaskTypeConverter;
-import de.zib.gndms.devel.NotYetImplementedException;
+import de.zib.gndms.stuff.devel.NotYetImplementedException;
 import de.zib.gndms.logic.model.TaskExecutionService;
 import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.neomodel.common.Dao;
