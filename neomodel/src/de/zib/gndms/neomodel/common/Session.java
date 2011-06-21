@@ -82,6 +82,11 @@ public class Session {
                 getTypeIndex(TASK_T).get(gridName, taskId).getSingle());
     }
 
+    public Task findTaskForResource ( @NotNull String resourceId ) {
+        Index<Node> idx = getTypeIndex( typeIndexNickName( TASK_T, Task.RESOURCE_ID_IDX ) );
+        return new Task( reprSession, TASK_T, idx.get( gridName, resourceId ).getSingle() );
+    }
+
 
     public Iterable<Task> listTasksByState(@NotNull TaskState state) {
         final Index<Node> index = gdb.index().forNodes(typeIndexNickName(TASK_T, Task.TASK_STATE_IDX));

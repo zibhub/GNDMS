@@ -15,6 +15,8 @@ package de.zib.gndms.model.gorfx.types;
  * limitations under the License.
  */
 
+import java.io.Serializable;
+
 /**
  * @author try ma ik jo rr a zib
  * @date 09.02.11 15:39
@@ -24,7 +26,7 @@ package de.zib.gndms.model.gorfx.types;
  * An order serves as input for the taskflow, and steers the task execution.
  */
 //@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY, property="@class")
-public interface Order {
+public interface Order extends Serializable{
 
     /**
      * Delivers the type of the task flow.

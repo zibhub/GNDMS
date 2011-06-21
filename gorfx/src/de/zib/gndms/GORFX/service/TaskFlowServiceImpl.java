@@ -9,8 +9,11 @@ import de.zib.gndms.logic.taskflow.AbstractQuoteCalculator;
 import de.zib.gndms.logic.taskflow.TaskFlowFactory;
 import de.zib.gndms.logic.taskflow.TaskFlowProvider;
 import de.zib.gndms.logic.taskflow.UnsatisfiableOrderException;
+import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.neomodel.common.Dao;
+import de.zib.gndms.neomodel.common.Session;
+import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import de.zib.gndms.rest.Facet;
 import de.zib.gndms.rest.Facets;
@@ -88,8 +91,8 @@ public class TaskFlowServiceImpl implements TaskFlowService {
         taskClient.setServiceURL( serviceUrl );
 
         taskServiceAux = new TaskServiceAux( executorService );
-
     }
+
 
     @RequestMapping( value = "/_{type}/_{id}", method = RequestMethod.GET )
     public ResponseEntity<Facets> getFacets( @PathVariable String type, @PathVariable String id, @RequestHeader( "DN" ) String dn ) {
@@ -123,11 +126,14 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                                                 @RequestHeader( "DN" ) String dn,
                                                 @RequestHeader( "WId" ) String wid ) {
 
+        logger.debug( "removing " + type + " taskflow: " + id );
         HttpStatus hs = HttpStatus.NOT_FOUND;
         if( taskFlowProvider.exists( type ) ) {
             TaskFlowFactory tff = taskFlowProvider.getFactoryForTaskFlow( type );
             TaskFlow tf = tff.find( id );
             if ( tf != null ) {
+                if ( tf.hasTaskling() )
+                    taskClient.deleteTask( tf.getTaskling().getId(), dn, wid );
                 tff.delete( id );
                 hs = HttpStatus.OK;
             }
@@ -463,6 +469,25 @@ public class TaskFlowServiceImpl implements TaskFlowService {
         }
 
         throw new NoSuchResourceException( );
+    }
+
+
+    protected TaskFlow fromTask( String id )  {
+
+        Session ses = dao.beginSession();
+        Task t = ses.findTaskForResource( id );
+        TaskFlowFactory tff = taskFlowProvider.getFactoryForTaskFlow( type );
+        TaskFlow tf = tff.create();
+        tf.setId( t.getResourceId() );
+        tf.setOrder( (Order) t.getPayload() );
+        tf.addQuote( quoteFromContract( t.getContract() ) );
+        tf.setTaskling( t.getTaskling());
+
+    }
+
+
+    private Quote quoteFromContract( PersistentContract contract ) {
+        return null;  // Implement Me. Pretty Please!!!
     }
 
 
