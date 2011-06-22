@@ -43,7 +43,7 @@ import java.io.PrintWriter;
 @ConfigActionHelp(shortHelp = "Prints the version of GNDMS", longHelp = "The version can be either print in human readable or as a uuid string.")
 public class ReadGNDMSVersionAction extends ConfigAction<ConfigActionResult> implements PublicAccessible {
 
-    public enum VersionFormat { HUMAN, UUID };
+    public enum VersionFormat { HUMAN, UUID }
 
     private GNDMSVerInfo verInfo;
     private SystemDirectory sysDri;

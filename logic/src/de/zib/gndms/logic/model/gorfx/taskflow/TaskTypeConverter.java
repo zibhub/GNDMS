@@ -1,4 +1,4 @@
-package de.zib.gndms.GORFX.service.util;
+package de.zib.gndms.logic.model.gorfx.taskflow;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *

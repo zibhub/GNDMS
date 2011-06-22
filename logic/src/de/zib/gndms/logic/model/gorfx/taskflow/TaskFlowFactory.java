@@ -16,8 +16,15 @@ package de.zib.gndms.logic.model.gorfx.taskflow;
  */
 
 import de.zib.gndms.logic.model.TaskAction;
+import de.zib.gndms.model.common.PersistentContract;
+import de.zib.gndms.model.gorfx.types.Order;
+import de.zib.gndms.model.gorfx.types.Quote;
 import de.zib.gndms.model.gorfx.types.TaskFlow;
 import de.zib.gndms.model.gorfx.types.TaskFlowInfo;
+import de.zib.gndms.neomodel.common.Dao;
+import de.zib.gndms.neomodel.common.Session;
+import de.zib.gndms.neomodel.gorfx.Task;
+import org.joda.time.DateTime;
 
 /**
  * @author try ma ik jo rr a zib
@@ -57,6 +64,24 @@ public interface TaskFlowFactory<T extends TaskFlow> {
     T create( );
 
     /**
+     * @brief Creates a new taskflow instance.
+     *
+     * The created task flow \bnot is registered in its factory.
+     *
+     * @return A taskflow object.
+     */
+    T createOrphan( );
+
+    /**
+     * @brief Adds an orphan task flow to the facotry.
+     *
+     * @param taskflow The taskflow to add. Note the taskflow must have a unique id.
+     *
+     * @return \c true if the taskflow was successfully added. If the task is already registered this will fail.
+     */
+    boolean adopt( T taskflow );
+
+    /**
      * @brief Finds an existing taskflow.
      *
      * @param id The id of the taskflow.
@@ -85,4 +110,43 @@ public interface TaskFlowFactory<T extends TaskFlow> {
      * @return The newly created action.
      */
     TaskAction createAction( );
+
+
+    public static class Aux {
+
+        public static TaskFlow fromTask( Dao dao, TaskFlowProvider provider, String type, String id )  {
+
+            Session ses = dao.beginSession();
+            try {
+                Task t = ses.findTaskForResource( id );
+                if ( t == null )
+                    return null;
+                TaskFlowFactory tff = provider.getFactoryForTaskFlow( type );
+                TaskFlow tf = tff.createOrphan();
+                tf.setId( t.getResourceId() );
+                tf.setOrder( (Order ) t.getPayload() );
+                tf.addQuote( quoteFromContract( t.getContract() ) );
+                tf.setTaskling( t.getTaskling());
+                tff.adopt( tf );
+                ses.success( );
+                return tf;
+            } finally {
+                ses.finish();
+            }
+        }
+
+
+
+        public static Quote quoteFromContract( PersistentContract contract ) {
+
+            Quote quote = new Quote();
+
+            quote.setAccepted( new DateTime( contract.getAccepted() ) );
+            quote.setDeadline( new DateTime( contract.getDeadline() ) );
+            quote.setResultValidity( new DateTime( contract.getResultValidity() ) );
+            quote.setExpectedSize( contract.getExpectedSize() );
+
+            return quote;
+        }
+    }
 }

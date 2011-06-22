@@ -204,6 +204,6 @@ public interface DirectoryAux {
             return true;
         }
         */
-    };
+    }
 }
 

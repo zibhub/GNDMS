@@ -171,4 +171,14 @@ public class PermissionConfiglet implements Configlet {
             return config.getDefaultPermissions();
         }
     }
+
+
+    public String getName() {
+        return name;
+    }
+
+
+    public void setName( String name ) {
+        this.name = name;
+    }
 }

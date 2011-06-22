@@ -1,15 +1,12 @@
 package de.zib.gndms.GORFX.service;
 
 import de.zib.gndms.GORFX.service.util.WidAux;
+import de.zib.gndms.logic.model.gorfx.taskflow.*;
 import de.zib.gndms.model.gorfx.types.TaskFlow;
 import de.zib.gndms.stuff.devel.NotYetImplementedException;
 import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.model.TaskExecutionService;
-import de.zib.gndms.logic.model.gorfx.taskflow.AbstractQuoteCalculator;
-import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowFactory;
-import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowProvider;
-import de.zib.gndms.logic.model.gorfx.taskflow.UnsatisfiableOrderException;
 import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.neomodel.common.Dao;
@@ -21,6 +18,7 @@ import de.zib.gndms.rest.Facets;
 import de.zib.gndms.rest.GNDMSResponseHeader;
 import de.zib.gndms.rest.Specifier;
 import de.zib.gndms.rest.UriFactory;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +29,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -354,7 +355,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
         TaskFlowStatus tfs = null;
         try {
             TaskFlow tf = findTF( type, id );
-            tfs = TaskFlowStatus.fromTaskFlow( tf );
+            tfs = TaskFlowAux.statusFromTaskFlow( dao, tf );
             Taskling t = tf.getTaskling();
             if( t != null ) {
                 Specifier<Void> spec = new Specifier<Void>();
@@ -465,28 +466,11 @@ public class TaskFlowServiceImpl implements TaskFlowService {
             TaskFlow tf = tff.find( id );
             if ( tf != null )
                 return tf;
+            else
+                return TaskFlowFactory.Aux.fromTask( dao, taskFlowProvider, type, id );
         }
 
         throw new NoSuchResourceException( );
-    }
-
-
-    protected TaskFlow fromTask( String id )  {
-
-        Session ses = dao.beginSession();
-        Task t = ses.findTaskForResource( id );
-        TaskFlowFactory tff = taskFlowProvider.getFactoryForTaskFlow( type );
-        TaskFlow tf = tff.create();
-        tf.setId( t.getResourceId() );
-        tf.setOrder( (Order) t.getPayload() );
-        tf.addQuote( quoteFromContract( t.getContract() ) );
-        tf.setTaskling( t.getTaskling());
-
-    }
-
-
-    private Quote quoteFromContract( PersistentContract contract ) {
-        return null;  // Implement Me. Pretty Please!!!
     }
 
 

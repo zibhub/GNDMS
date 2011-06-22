@@ -15,7 +15,7 @@ package de.zib.gndms.GORFX.service;
  * limitations under the License.
  */
 
-import de.zib.gndms.GORFX.service.util.TaskTypeConverter;
+import de.zib.gndms.logic.model.gorfx.taskflow.TaskTypeConverter;
 import de.zib.gndms.stuff.devel.NotYetImplementedException;
 import de.zib.gndms.logic.model.TaskExecutionService;
 import de.zib.gndms.model.gorfx.types.*;
