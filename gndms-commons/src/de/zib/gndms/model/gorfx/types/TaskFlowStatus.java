@@ -30,15 +30,15 @@ public class TaskFlowStatus {
     /**
      * The state enumerator for the taskflow. NOT the task!
      */
-    enum State {
+    public enum State {
         NO_ORDER, ///< Taskflow without order.
         NO_QUOTES, ///< Taskflow without order.
-        TASK_STARTED, ///< Taskflow has a running taskSpecifier.
+        TASK_RUNNING, ///< Taskflow has a running taskSpecifier.
         TASK_PREPARED, ///< Taskflow's taskSpecifier can be executed.
         TASK_PAUSED, ///< Taskflow's taskSpecifier can be executed.
         TASK_DONE, ///< Taskflow's taskSpecifier has finished or failed.
         ORDER_UNFULFILLABLE ///< Task order is unfulfillable
-    };
+    }
 
     private State state; ///< The state of the taskflow itself;
     private TaskStatus taskStatus; ///< The status of the taskSpecifier associated with the taskSpecifier flow.
@@ -102,50 +102,5 @@ public class TaskFlowStatus {
      */
     public void setTaskSpecifier( Specifier<Void> taskSpecifier ) {
         this.taskSpecifier = taskSpecifier;
-    }
-
-
-    /**
-     * Constructs a taskflow status object from a task flow.
-     *
-     * @param tf The taskflow.
-     * @return The newly created status object.
-     *
-     * \note this one never sets the TaskSpecifier.
-     */
-    public static TaskFlowStatus fromTaskFlow( TaskFlow tf ) {
-
-        TaskFlowStatus state = new TaskFlowStatus();
-
-        if( tf.getOrder() == null )
-            state.setState( State.NO_ORDER );
-        else if( tf.isUnfulfillableOrder() )
-            state.setState( State.ORDER_UNFULFILLABLE );
-        else if( tf.getQuotes() == null )
-            state.setState( State.NO_QUOTES );
-        else if ( tf.getTask() == null )
-            state.setState( State.TASK_PREPARED );
-        else {
-            Task t = tf.getTask( );
-            TaskStatus ts = t.getStatus();
-            switch ( ts.getStatus() ) {
-                case FINISHED:
-                case FAILED:
-                    state.setState( TaskFlowStatus.State.TASK_DONE );
-                    break;
-                case RUNNING:
-                    state.setState( TaskFlowStatus.State.TASK_STARTED );
-                    break;
-                case WAITING:
-                    state.setState( State.TASK_PREPARED );
-                    break;
-                case PAUSED:
-                    state.setState( State.TASK_PAUSED );
-                    break;
-            }
-            state.setTaskStatus( ts );
-        }
-
-        return state;
     }
 }

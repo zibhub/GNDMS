@@ -19,7 +19,9 @@ package de.zib.gndms.model.gorfx.types;
  * @author try ma ik jo rr a zib
  * @date: 09.02.11, Time: 17:44
  *
- * @brief Interface for task status.
+ * @brief Interface for a transferable task status.
+ *
+ * This status is normally extracted from the task itself and can be send to the client w/o any dependencies.
  */
 public interface TaskStatus {
 
