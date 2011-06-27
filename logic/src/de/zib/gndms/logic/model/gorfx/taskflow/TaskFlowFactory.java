@@ -37,6 +37,11 @@ import org.joda.time.DateTime;
  */
 public interface TaskFlowFactory<T extends TaskFlow> {
 
+    String getTaskFlowKey( );
+
+    int getVersion();
+
+
     /** 
      * @brief Delivers a calculator for quotes of the taskflow.
      * 
@@ -110,6 +115,8 @@ public interface TaskFlowFactory<T extends TaskFlow> {
      * @return The newly created action.
      */
     TaskAction createAction( );
+
+    Iterable<String> depends();
 
 
     public static class Aux {

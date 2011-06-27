@@ -55,4 +55,9 @@ public class TaskFlowProviderImpl implements TaskFlowProvider {
     public void setFactories( Map<String, TaskFlowFactory> factories ) {
         this.factories = factories;
     }
+
+
+    public Map<String, TaskFlowFactory> getFactories() {
+        return factories;
+    }
 }
