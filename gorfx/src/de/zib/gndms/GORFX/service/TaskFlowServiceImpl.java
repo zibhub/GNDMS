@@ -358,6 +358,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
             tfs = TaskFlowAux.statusFromTaskFlow( dao, tf );
             Taskling t = tf.getTaskling();
             if( t != null ) {
+                // maybe call task client
                 Specifier<Void> spec = new Specifier<Void>();
                 Map<String, String> urimap = taskUriMap( type, id, t );
                 spec.setURL( uriFactory.taskUri( urimap, "status" ) );

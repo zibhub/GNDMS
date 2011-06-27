@@ -664,16 +664,6 @@ define 'gndms' do
 
     end
 
-    desc 'Test REST setup'
-    define 'rest', :layout => dmsLayout('rest', 'test-rest') do
-        compile.with SPRING, SLF4J, XSTREAM, COMMONS_LOGGING, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME
-        compile
-
-        # workaround for builder dependence bug
-        package(:war).enhance FileList[_(:web,  '**/*')]
-        package :war
-
-    end
 
     desc 'Common gndms service classes'
     define 'gndms-commons', :layout => dmsLayout('gndms-commons', 'gndms-commons') do
@@ -682,6 +672,8 @@ define 'gndms' do
         meta_inf << file(_('src/META-INF/converter-setup.xml'))
         package :jar
     end
+
+    eval IO.read( 'rest/buildfile' )
 
     desc 'Gorfx client classes'
     define 'gndmc-rest', :layout => dmsLayout('gndmc-rest', 'gndms-gndmc-rest') do
