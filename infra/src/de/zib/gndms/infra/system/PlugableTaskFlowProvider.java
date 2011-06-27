@@ -37,16 +37,32 @@ public class PlugableTaskFlowProvider extends TaskFlowProviderImpl {
     boolean hasFactories = false;
     protected Logger logger = LoggerFactory.getLogger( this.getClass() );
 
-    public static void register( TaskFlowFactory tff ) {
 
-        System.out.println( "register called" );
+    public void loadPlugins( boolean checkDeps ) {
 
         Map<String, TaskFlowFactory> plugins = new HashMap<String, TaskFlowFactory>( 10 );
 
-        if( plugins.containsKey( tff.getTaskFlowKey() ) )
-            throw new IllegalStateException( "plugin " + tff.getTaskFlowKey() +" already exists" );
+        ServiceLoader<TaskFlowFactory> sl = ServiceLoader.load( TaskFlowFactory.class );
+        for( TaskFlowFactory bp : sl ) {
+            try {
+                register( bp, plugins );
+            } catch ( IllegalStateException e ) {
+                logger.warn( e.getMessage() );
+            }
+        }
 
-        plugins.put( tff.getTaskFlowKey(), tff );
+        if( checkDeps )
+            checkDeps();
+    }
+
+
+    public void loadPlugins( ) {
+        loadPlugins( true );
+    }
+
+
+    public int pluginCount( ) {
+        return getFactories().size();
     }
 
 
@@ -57,26 +73,13 @@ public class PlugableTaskFlowProvider extends TaskFlowProviderImpl {
         }
     }
 
+    
+    public void register( TaskFlowFactory tff, Map<String, TaskFlowFactory> plugins ) {
 
-    public int pluginCount( ) {
-        return getFactories().size();
-    }
+        if( plugins.containsKey( tff.getTaskFlowKey() ) )
+            throw new IllegalStateException( "plugin " + tff.getTaskFlowKey() +" already exists" );
 
-
-    public void loadPlugins( ) {
-        loadPlugins( true );
-    }
-
-
-    public void loadPlugins( boolean checkDeps ) {
-
-        ServiceLoader<TaskFlowFactory> sl = ServiceLoader.load( TaskFlowFactory.class );
-        for( TaskFlowFactory bp : sl ) {
-            register( bp );
-        }
-
-        if( checkDeps )
-            checkDeps();
+        plugins.put( tff.getTaskFlowKey(), tff );
     }
 
 
