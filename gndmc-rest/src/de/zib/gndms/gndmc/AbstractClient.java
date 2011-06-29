@@ -16,16 +16,13 @@ package de.zib.gndms.gndmc;
  * limitations under the License.
  */
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestOperations;
 
 import de.zib.gndms.rest.GNDMSResponseHeader;
 
@@ -44,7 +41,7 @@ public abstract class AbstractClient {
 	/**
 	 * A rest template for internal use.
 	 */
-	private RestTemplate restTemplate;
+	private RestOperations restTemplate;
 
 
 	/**
@@ -117,12 +114,12 @@ public abstract class AbstractClient {
 		return unifiedX(HttpMethod.DELETE, Void.class, null, url, dn, wid);
 	}
 	
-	public RestTemplate getRestTemplate() {
+	public RestOperations getRestTemplate() {
 		return restTemplate;
 	}
 
     @Autowired
-	public void setRestTemplate(RestTemplate restTemplate) {
+	public void setRestTemplate(RestOperations restTemplate) {
 		this.restTemplate = restTemplate;
 	}
 

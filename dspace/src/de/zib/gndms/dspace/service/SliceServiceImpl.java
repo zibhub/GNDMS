@@ -16,6 +16,7 @@ package de.zib.gndms.dspace.service;
  * limitations under the License.
  */
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +36,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import de.zib.gndms.kit.dspace.File;
 import de.zib.gndms.kit.dspace.Product;
 import de.zib.gndms.logic.dspace.NoSuchElementException;
 import de.zib.gndms.logic.dspace.SliceKindProvider;

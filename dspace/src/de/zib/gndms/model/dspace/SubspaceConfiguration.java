@@ -39,19 +39,13 @@ import de.zib.gndms.stuff.confuror.ConfigEditor;
  * @author Ulrike Golas
  * 
  */
-public final class SubspaceConfiguration {
+public final class SubspaceConfiguration extends ConfigHolder {
 
 	public static String PATH = "path";
 	public static String GSIFTPPATH = "gsiFtpPath";
 	public static String VISIBLE = "visible";
 	public static String SIZE = "size";
 	public static String MODE = "mode";
-	
-	/**
-	 * Do not use this constructor.
-	 */
-	private SubspaceConfiguration() {
-	}
 	
 	/**
 	 * Checks if a given config holder is a valid subspace configuration.
@@ -98,14 +92,13 @@ public final class SubspaceConfiguration {
 		ConfigEditor editor = config.newEditor(visitor);
 		config.setObjectMapper(objectMapper);
 
-		JsonNode pn = ConfigHolder.parseSingle(factory, "{ '" + PATH + "': '" + path + "' }");
-		JsonNode gn = ConfigHolder.parseSingle(factory, "{ '" + GSIFTPPATH + "': '" + gsiftp
-					+ "' }");
-		JsonNode vn = ConfigHolder.parseSingle(factory, "{ '" + VISIBLE + "': " + visible + " }");
-		JsonNode sn = ConfigHolder.parseSingle(factory, "{ '" + SIZE + "': " + size + " }");
+		JsonNode pn = ConfigHolder.parseSingle(factory, createSingleEntry(PATH, path));
+		JsonNode gn = ConfigHolder.parseSingle(factory, createSingleEntry(GSIFTPPATH, gsiftp));
+		JsonNode vn = ConfigHolder.parseSingle(factory, createSingleEntry(VISIBLE, visible));
+		JsonNode sn = ConfigHolder.parseSingle(factory, createSingleEntry(SIZE, size));
 		
 		// TODO: to get a valid configuration: assume that subspace is in update mode???
-		JsonNode mn = ConfigHolder.parseSingle(factory, "{ '" + MODE +"': 'UPDATE' }");
+		JsonNode mn = ConfigHolder.parseSingle(factory, createSingleEntry(MODE, "UPDATE"));
 		config.update(editor, pn);
 		config.update(editor, gn);
 		config.update(editor, vn);
@@ -194,15 +187,15 @@ public final class SubspaceConfiguration {
 	 * @throws WrongConfigurationException if the configuration does not contain a size.
 	 */
 	public static SetupMode getMode(final ConfigHolder config) throws WrongConfigurationException {
-		try {
-			if (isValidMode(config.getNode().findValue(MODE))) {
-				return SetupMode.valueOf(config.getNode().findValue(MODE).getTextValue());
-			} else {
-				throw new WrongConfigurationException("The key " + MODE + " exists but is no text value.");
+			JsonNode node = config.getNode().findValue(MODE);
+			if (node == null) {
+				throw new WrongConfigurationException("The key " + MODE + " does not exist.");
 			}
-		} catch (NullPointerException e) {
-			throw new WrongConfigurationException("The key " + MODE + " does not exist.");
-		}
+			if (isValidMode(node)) {
+				return SetupMode.valueOf(node.getTextValue());
+			} else {
+				throw new WrongConfigurationException("The key " + MODE + " exists but is no valid mode.");
+			}
 	}
 
 	/**
@@ -217,6 +210,8 @@ public final class SubspaceConfiguration {
 			return true;
 		} catch(IllegalArgumentException e) {
 			return false;
+		} catch(NullPointerException e) {
+			return false;
 		}
-			}
+	}
 }

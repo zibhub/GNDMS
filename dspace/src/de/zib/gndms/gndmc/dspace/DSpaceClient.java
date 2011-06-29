@@ -24,7 +24,7 @@ import de.zib.gndms.dspace.service.DSpaceService;
 import de.zib.gndms.gndmc.AbstractClient;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.model.gorfx.types.Task;
+import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.rest.Facets;
 import de.zib.gndms.rest.Specifier;
 import de.zib.gndms.stuff.confuror.ConfigHolder;

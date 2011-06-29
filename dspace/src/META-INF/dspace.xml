@@ -53,6 +53,8 @@
         <property name="slicekinds" value="${dspaceBaseURL}/dspace/${subspaceId}/slicekinds"/>
     </bean>
 
+    <bean id="executor" class="de.zib.gndms.logic.model.TaskExecutionService" />
+
     <bean id="sliceKindService" class="de.zib.gndms.dspace.service.SliceKindServiceImpl">
         <property name="baseUrl" value="${dspaceBaseURL}"/>
     </bean>

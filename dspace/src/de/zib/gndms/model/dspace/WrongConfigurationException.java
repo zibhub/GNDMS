@@ -17,7 +17,7 @@ package de.zib.gndms.model.dspace;
  */
 
 /**
- * The wrong configuration exception, which is thrown when a given configuration tries to access a n invalid configuration parameter.
+ * The wrong configuration exception, which is thrown when a given configuration tries to access an invalid configuration parameter.
  * 
  * @author Ulrike Golas
  */

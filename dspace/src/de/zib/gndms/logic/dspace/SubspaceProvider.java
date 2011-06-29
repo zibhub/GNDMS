@@ -25,9 +25,27 @@ import de.zib.gndms.model.dspace.Subspace;
  * @author Ulrike Golas
  */
 
-// TODO documenation, implementation
+// TODO implementation
+
 public interface SubspaceProvider {
-    boolean exists(String subspace);
-    List<String> listSubspaces();
-    Subspace getSubspace(String subspace);
+    
+	/**
+	 * Checks whether a given subspace id exists.
+	 * @param subspace The subspace id.
+	 * @return true, if this subspace exists, otherwise false.
+	 */
+	boolean exists(String subspace);
+
+	/**
+	 * Returns a list containing all existing subspace ids.
+	 * @return The list.
+	 */
+	List<String> listSubspaces();
+
+    /**
+     * Returns the subspace for a given subspace id.
+     * @param sliceKind The requested subspace id.
+     * @return The corresponding subspace.
+     */
+	Subspace getSubspace(String subspace);
 }
