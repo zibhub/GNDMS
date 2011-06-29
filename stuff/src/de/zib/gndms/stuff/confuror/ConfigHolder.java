@@ -88,7 +88,13 @@ public class ConfigHolder {
         return parseDouble(factory, toDouble(single));
     }
 
-
+	public static String createSingleEntry(String key, Object value) {
+		if (value instanceof java.lang.String ||  value instanceof java.lang.Enum) {
+			return "{ '" + key +"': '" + value + "' }";
+		} else {
+			return "{ '" + key +"': " + value + " }";
+		}
+	}
 
     @SuppressWarnings({"UnusedDeclaration"})
     public @Nullable JsonNode getNode() {

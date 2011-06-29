@@ -17,11 +17,14 @@ package de.zib.gndms.model.dspace;
  */
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import de.zib.gndms.model.common.AccessMask;
 import de.zib.gndms.stuff.confuror.ConfigEditor;
 import de.zib.gndms.stuff.confuror.ConfigHolder;
 import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
@@ -29,19 +32,21 @@ import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
 /**
  * The slice kind configuration checks and accesses a ConfigHolder for a slice kind,
  * which has to consist (at least) of the following fields: <br> 
- * TODO
+ * uri - the uri for the slice kind as text<br>
+ * permission - the permissions of the slice kind as text according to an {@link AccessMask}<br>
+ * and may also contain: <br>
+ * metasubspaces - the meta-subspaces of the slice kind as text 
  * 
  * @author Ulrike Golas
  * 
  */
+// TODO does that make sense, how to get the meta-subspaces from the string?
 
 public class SliceKindConfiguration extends ConfigHolder {
 
-	/**
-	 * Do not use this constructor.
-	 */
-	private SliceKindConfiguration() {
-	}
+	public static String URI = "uri";
+	public static String PERMISSION = "permission";
+	public static String METASUBSPACES = "metasubspaces";
 
 	/**
 	 * Checks if a given config holder is a valid slice kind configuration.
@@ -53,14 +58,15 @@ public class SliceKindConfiguration extends ConfigHolder {
 	public static boolean checkSliceKindConfiguration(final ConfigHolder config) {
 		JsonNode node = config.getNode();
 		try {
-			// TODO anpassen
-			if (!node.findValue("xxx").isTextual()) {
-				return false;
+			if (node.findValue(URI).isTextual()
+					&& node.findValue(PERMISSION).isNumber()
+				    && isValidPermission(node.findValue(PERMISSION))) {
+				return true;
 			}
 		} catch (NullPointerException e) {
 			return false;
 		}
-		return true;
+		return false;
 	}
 
 	/**
@@ -73,8 +79,9 @@ public class SliceKindConfiguration extends ConfigHolder {
 	 * @throws UpdateRejectedException 
 	 */
 	public static ConfigHolder getSliceKindConfiguration(final SliceKind slicekind) throws IOException, UpdateRejectedException {
-		// TODO auslesen
-		String xxx = "";
+		String uri = slicekind.getURI();
+		AccessMask permission = slicekind.getPermission();
+		Set<MetaSubspace> metaSubspaces = slicekind.getMetaSubspaces();
 		
 		ConfigHolder config = new ConfigHolder();
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -83,24 +90,27 @@ public class SliceKindConfiguration extends ConfigHolder {
 		ConfigEditor editor = config.newEditor(visitor);
 		config.setObjectMapper(objectMapper);
 
-		// TODO anpassen
-		JsonNode pn = ConfigHolder.parseSingle(factory, "{ 'xxx': '" + xxx + "' }");
+		JsonNode un = ConfigHolder.parseSingle(factory, createSingleEntry(URI, uri));
+		JsonNode pn = ConfigHolder.parseSingle(factory, createSingleEntry(PERMISSION, permission));
+		// TODO: how to store meta-subspaces
+		JsonNode mn = ConfigHolder.parseSingle(factory, createSingleEntry(METASUBSPACES, metaSubspaces.toString()));
+		config.update(editor, un);
 		config.update(editor, pn);
+		config.update(editor, mn);
 			
 		return config;
 	}
 	
-	// TODO getter der Einträge
 	/**
-	 * Returns the xxx of a slice kind configuration.
+	 * Returns the uri of a slice kind configuration.
 	 * @param config The config holder, which has to be a valid slice kind configuration.
-	 * @return The xxx.
-	 * @throws WrongConfigurationException if the configuration does not contain a path.
+	 * @return The uri.
+	 * @throws WrongConfigurationException if the configuration does not contain a uri.
 	 */
-	public static String getXxx(final ConfigHolder config) throws WrongConfigurationException {
+	public static String getUri(final ConfigHolder config) throws WrongConfigurationException {
 		try {
-			if (config.getNode().findValue("xxx").isTextual()) {
-				return config.getNode().findValue("xxx").getTextValue();
+			if (config.getNode().findValue(URI).isTextual()) {
+				return config.getNode().findValue(URI).getTextValue();
 			} else {
 				throw new WrongConfigurationException();
 			}
@@ -108,4 +118,59 @@ public class SliceKindConfiguration extends ConfigHolder {
 			throw new WrongConfigurationException();
 		}
 	}
+	
+	/**
+	 * Returns the permissions of a slice kind configuration.
+	 * @param config The config holder, which has to be a valid slice kind configuration.
+	 * @return The permissions.
+	 * @throws WrongConfigurationException if the configuration does not contain a valid permission.
+	 */
+	public static AccessMask getPermission(final ConfigHolder config) throws WrongConfigurationException {
+		JsonNode node = config.getNode().findValue(PERMISSION);
+		if (node == null) {
+			throw new WrongConfigurationException("The key " + PERMISSION + " does not exist.");
+		}
+			if (node.isNumber() && isValidPermission(node)) {
+				long nr = node.getLongValue();
+				return AccessMask.fromString(Long.toString(nr));
+			} else {
+				throw new WrongConfigurationException();
+			}
+	}
+
+	/**
+	 * Returns the meta-subspaces of a slice kind configuration or null, if it is not specified.
+	 * @param config The config holder, which has to be a valid slice kind configuration.
+	 * @return The set of meta-subspaces.
+	 * @throws WrongConfigurationException if the configuration does not contain a path.
+	 */
+	public static Set<MetaSubspace> getMetaSubspaces(final ConfigHolder config) throws WrongConfigurationException {
+		try {
+		if (config.getNode().findValue(METASUBSPACES).isTextual()) {
+			// TODO get meta-subspaces
+			return new HashSet<MetaSubspace>();
+			} else {
+				throw new WrongConfigurationException();
+			}
+		} catch (NullPointerException e) {
+			return null;
+		}
+	}
+
+	/**
+	 * Tests if the given Json node has a valid permission value.
+	 * @param node The node.
+	 * @return true, if it is valid.
+	 */
+	private static boolean isValidPermission(final JsonNode node) {
+		
+		try {
+			long nr = node.getLongValue();
+			AccessMask.fromString(Long.toString(nr));
+			return true;
+		} catch(IllegalArgumentException e) {
+			return false;
+		}
+	}
+
 }

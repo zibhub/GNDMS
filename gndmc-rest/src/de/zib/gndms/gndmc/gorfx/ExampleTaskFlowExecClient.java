@@ -15,7 +15,6 @@ package de.zib.gndms.gndmc.gorfx;
  * limitations under the License.
  */
 
-import de.zib.gndms.logic.taskflow.tfmockup.DummyTFResult;
 import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.rest.Facet;
 import de.zib.gndms.rest.Facets;
