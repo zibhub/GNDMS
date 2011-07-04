@@ -16,11 +16,11 @@ package de.zib.gndms.dspace.service;
  * limitations under the License.
  */
 
+import java.io.File;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
-import de.zib.gndms.kit.dspace.File;
 import de.zib.gndms.kit.dspace.Product;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;

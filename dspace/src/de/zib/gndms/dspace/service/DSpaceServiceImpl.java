@@ -35,14 +35,16 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import de.zib.gndms.GORFX.service.TaskServiceAux;
 import de.zib.gndms.logic.dspace.SubspaceProvider;
+import de.zib.gndms.logic.model.TaskExecutionService;
 import de.zib.gndms.logic.model.config.SetupAction.SetupMode;
 import de.zib.gndms.logic.model.dspace.SetupSubspaceAction;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.dspace.SubspaceConfiguration;
 import de.zib.gndms.model.dspace.WrongConfigurationException;
-import de.zib.gndms.model.gorfx.types.Task;
+import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.rest.Facets;
 import de.zib.gndms.rest.GNDMSResponseHeader;
 import de.zib.gndms.rest.Specifier;
@@ -79,6 +81,15 @@ public class DSpaceServiceImpl implements DSpaceService {
 	 * The facets of a subspace.
 	 */
 	private Facets dspaceFacets;
+	/**
+	 * The task execution service.
+	 */
+	private TaskExecutionService executor;
+	/**
+	 * The auxiliary for task services.
+	 */
+    private TaskServiceAux taskServiceAux;
+
 
 	/**
 	 * Initialization of the dspace service.
@@ -86,6 +97,9 @@ public class DSpaceServiceImpl implements DSpaceService {
 	@PostConstruct
 	public final void init() {
 		uriFactory = new UriFactory(baseUrl);
+
+        taskServiceAux = new TaskServiceAux(executor);
+
 	}
 
 	@Override
@@ -93,7 +107,7 @@ public class DSpaceServiceImpl implements DSpaceService {
 	public final ResponseEntity<List<Specifier<Subspace>>> listSubspaceSpecifiers(
 			@RequestHeader("DN") final String dn) {
 		if (subspaces == null) {
-			throw new IllegalStateException("Provider is null");
+            logger.warn("Subspace provider not initialized");
 		}
 		GNDMSResponseHeader headers = new GNDMSResponseHeader();
 		headers.setResourceURL(baseUrl + "/dspace/");
@@ -138,7 +152,6 @@ public class DSpaceServiceImpl implements DSpaceService {
 			@RequestHeader("DN") final String dn) {
 
 		GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
-
 		
 		if (!SubspaceConfiguration.checkSubspaceConfiguration(config)) {
 			return new ResponseEntity<Facets>(null, headers,

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Configurations" parallel="none">
+  <test name="ConfigurationsTest" preserve-order="false">
+    <classes>
+      <class name="de.zib.gndms.model.dspace.SliceConfigurationTest"/>
+      <class name="de.zib.gndms.model.dspace.SubspaceConfigurationTest"/>
+      <class name="de.zib.gndms.model.dspace.SliceKindConfigurationTest"/>
+    </classes>
+  </test>
+  <test name="DSpaceKitTest" preserve-order="false">
+    <classes>
+      <class name="de.zib.gndms.kit.dspace.ProductTest"/>
+    </classes>
+  </test>
+  <test name="ClientsTest" preserve-order="false">
+    <classes>
+      <class name="de.zib.gndms.gndmc.dspace.DSpaceClientTest"/>
+      <class name="de.zib.gndms.gndmc.dspace.SliceClientTest"/>
+      <class name="de.zib.gndms.gndmc.dspace.SliceKindClientTest"/>
+    </classes>
+  </test>
+</suite>

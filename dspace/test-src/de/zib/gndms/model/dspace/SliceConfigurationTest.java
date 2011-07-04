@@ -49,24 +49,12 @@ public class SliceConfigurationTest{
 	 */
 	@Test
     public final void testCheckAndGet1() throws IOException, UpdateRejectedException, WrongConfigurationException {
-		ConfigHolder testConfig = new ConfigHolder();
-		ObjectMapper objectMapper = new ObjectMapper();
-		JsonFactory factory = objectMapper.getJsonFactory();
-		ConfigEditor.Visitor visitor = new ConfigEditor.DefaultVisitor();
-		ConfigEditor editor = testConfig.newEditor(visitor);
-		testConfig.setObjectMapper(objectMapper);
-		
-		// Construct a valid vonfiguration
 		String directory = "slice";
 		String owner = "me";
 		GregorianCalendar cal = new GregorianCalendar();
 		final long value = cal.getTimeInMillis();
-		JsonNode dn = ConfigHolder.parseSingle(factory, "{ '" + SliceConfiguration.DIRECTORY + "': '" + directory + "' }");
-		JsonNode on = ConfigHolder.parseSingle(factory, "{ '" + SliceConfiguration.OWNER + "': '" + owner + "' }");
-		JsonNode tn = ConfigHolder.parseSingle(factory, "{ '" + SliceConfiguration.TERMINATION +"': " + value + " }");
-		testConfig.update(editor, dn);
-		testConfig.update(editor, on);
-		testConfig.update(editor, tn);
+
+		ConfigHolder testConfig = new MockSliceConfiguration(directory, owner, value);
 
        	AssertJUnit.assertEquals(true, SliceConfiguration.checkSliceConfiguration(testConfig));
        	
@@ -108,7 +96,7 @@ public class SliceConfigurationTest{
 		}
        	
        	// only directory set - owner path is missing
-		JsonNode node = ConfigHolder.parseSingle(factory, "{ '" + SliceConfiguration.DIRECTORY + "': 'slice' }");
+		JsonNode node = ConfigHolder.parseSingle(factory, SliceConfiguration.createSingleEntry(SliceConfiguration.DIRECTORY, "slice"));
 		testConfig.update(editor, node);
 
        	AssertJUnit.assertEquals(false, SliceConfiguration.checkSliceConfiguration(testConfig));
@@ -119,7 +107,7 @@ public class SliceConfigurationTest{
 		}
 
        	// only directory and owner set - termination time is missing
-       	node = ConfigHolder.parseSingle(factory, "{ '" + SliceConfiguration.OWNER + "': 'me' }");
+       	node = ConfigHolder.parseSingle(factory, SliceConfiguration.createSingleEntry(SliceConfiguration.OWNER, "me"));
 		testConfig.update(editor, node);
 
        	AssertJUnit.assertEquals(false, SliceConfiguration.checkSliceConfiguration(testConfig));
@@ -130,7 +118,7 @@ public class SliceConfigurationTest{
 		}
 
        	// wrong type of directory value - number instead of string
-		node = ConfigHolder.parseSingle(factory, "{ '" + SliceConfiguration.DIRECTORY + "': " + testValue + " }");
+		node = ConfigHolder.parseSingle(factory, SliceConfiguration.createSingleEntry(SliceConfiguration.DIRECTORY, testValue));
 		testConfig.update(editor, node);
 
 		AssertJUnit.assertEquals(false, SliceConfiguration.checkSliceConfiguration(testConfig));
@@ -141,7 +129,7 @@ public class SliceConfigurationTest{
 		}
 
        	// wrong type of owner value - number instead of string
-		node = ConfigHolder.parseSingle(factory, "{ '" + SliceConfiguration.OWNER + "': " + testValue + " }");
+		node = ConfigHolder.parseSingle(factory, SliceConfiguration.createSingleEntry(SliceConfiguration.OWNER, testValue));
 		testConfig.update(editor, node);
 
 		AssertJUnit.assertEquals(false, SliceConfiguration.checkSliceConfiguration(testConfig));
@@ -152,7 +140,7 @@ public class SliceConfigurationTest{
 		}
 
        	// wrong type of termination time value - string instead of number
-		node = ConfigHolder.parseSingle(factory, "{ '" + SliceConfiguration.TERMINATION + "': 'test' }");
+		node = ConfigHolder.parseSingle(factory, SliceConfiguration.createSingleEntry(SliceConfiguration.TERMINATION, "test"));
 		testConfig.update(editor, node);
 
 		AssertJUnit.assertEquals(false, SliceConfiguration.checkSliceConfiguration(testConfig));
@@ -163,4 +151,29 @@ public class SliceConfigurationTest{
 		}
 
 	}
+	
+	/**
+	 * Tests the method getSliceConfiguration.
+	 */
+	@Test
+    public final void testGetSliceConfiguration() throws IOException, UpdateRejectedException {
+		Slice dummy = new Slice();
+		
+		String directory = "testdir";
+		dummy.setDirectoryId(directory);
+		String owner = "me";
+		dummy.setOwner(owner);
+		long termination = 20000;
+		GregorianCalendar cal = new GregorianCalendar();
+		cal.setTimeInMillis(termination);
+		dummy.setTerminationTime(cal);
+				
+		ConfigHolder config = SliceConfiguration.getSliceConfiguration(dummy);
+
+		AssertJUnit.assertEquals(true, SliceConfiguration.checkSliceConfiguration(config));
+		AssertJUnit.assertEquals(directory, SliceConfiguration.getDirectory(config));
+		AssertJUnit.assertEquals(owner, SliceConfiguration.getOwner(config));
+		AssertJUnit.assertEquals(cal, SliceConfiguration.getTerminationTime(config));
+	}
+
 }

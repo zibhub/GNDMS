@@ -47,12 +47,6 @@ public class SliceConfiguration extends ConfigHolder {
 	public static String TERMINATION = "termination";
 
 	/**
-	 * Do not use this constructor.
-	 */
-	private SliceConfiguration() {
-	}
-
-	/**
 	 * Checks if a given config holder is a valid slice configuration.
 	 * 
 	 * @param config
@@ -95,12 +89,9 @@ public class SliceConfiguration extends ConfigHolder {
 		ConfigEditor editor = config.newEditor(visitor);
 		config.setObjectMapper(objectMapper);
 
-		JsonNode dn = ConfigHolder.parseSingle(factory, "{ '"+ DIRECTORY + "': '" + directory
-				+ "' }");
-		JsonNode on = ConfigHolder.parseSingle(factory, "{ '"+ OWNER + "': '" + owner
-				+ "' }");
-		JsonNode tn = ConfigHolder.parseSingle(factory, "{ '"+ TERMINATION + "': '" + termination
-				+ "' }");
+		JsonNode dn = ConfigHolder.parseSingle(factory, createSingleEntry(DIRECTORY, directory));
+		JsonNode on = ConfigHolder.parseSingle(factory, createSingleEntry(OWNER, owner));
+		JsonNode tn = ConfigHolder.parseSingle(factory, createSingleEntry(TERMINATION, termination));
 		config.update(editor, dn);
 		config.update(editor, on);
 		config.update(editor, tn);
