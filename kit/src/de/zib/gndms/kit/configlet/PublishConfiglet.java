@@ -82,10 +82,10 @@ public class PublishConfiglet extends DefaultConfiglet {
 			};
 		}
 		catch (ParseException e) {
-			getLogger().warn(e);
+			getLogger().warn("", e);
 		}
 		catch ( MandatoryOptionMissingException e) {
-			getLogger().warn(e);
+			getLogger().warn("", e);
 		}
 	}
 

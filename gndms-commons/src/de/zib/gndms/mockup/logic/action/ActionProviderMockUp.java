@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.action;
+package de.zib.gndms.mockup.logic.action;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -15,6 +15,8 @@ package de.zib.gndms.logic.action;
  * limitations under the License.
  */
 
+import de.zib.gndms.logic.action.ActionMeta;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,8 +25,10 @@ import java.util.List;
  * @author try ma ik jo rr a zib
  * @date 16.02.11  12:33
  * @brief Mockup-implementation
+ *
+ * @deprecated
  */
-public class ActionProviderMockUp<M extends ActionMeta<A>, A extends Action> implements ActionProvider<M,A> {
+public class ActionProviderMockUp<M extends ActionMeta, A extends Action> implements ActionProvider<M,A> {
 
     private HashMap<String,M> actions;
 
@@ -50,6 +54,6 @@ public class ActionProviderMockUp<M extends ActionMeta<A>, A extends Action> imp
 
 
     public A getAction( String actionName ) {
-        return actions.get( actionName ).getAction();
+        return null;
     }
 }

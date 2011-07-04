@@ -19,11 +19,12 @@ package de.zib.gndms.gritserv.util;
 
 
 import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.globus.ftp.GridFTPClient;
 import org.globus.gsi.GlobusCredential;
 import org.globus.gsi.gssapi.GlobusGSSCredentialImpl;
 import org.ietf.jgss.GSSCredential;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 
@@ -37,7 +38,7 @@ public class GlobusCredentialProviderImpl extends GlobusCredentialProvider {
 
     private static java.util.HashMap<String, CredentialInstaller> installers;
     private String key;
-    private Logger logger = Logger.getLogger( this.getClass() );
+    private Logger logger = LoggerFactory.getLogger( this.getClass() );
 
 
     static {

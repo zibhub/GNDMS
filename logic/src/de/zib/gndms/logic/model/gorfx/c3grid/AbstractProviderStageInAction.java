@@ -108,8 +108,8 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 
         final AbstractORQ orq = getORQ();
         String dn = orq.getActContext().get( "DN" );
-        getLog().debug( "cso DN: "+ dn );
-        getLog().debug("changing owner of " + slice.getId() + " to " + orq.getLocalUser());
+        getLogger().debug( "cso DN: " + dn );
+        getLogger().debug( "changing owner of " + slice.getId() + " to " + orq.getLocalUser() );
         ProcessBuilderAction chownAct = csc.createChownSliceAction( orq.getLocalUser(),
             slice.getSubspace().getPath() + File.separator + slice.getKind().getSliceDirectory(),
             slice.getDirectoryId() );
@@ -191,13 +191,13 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
             txf.commit();
         }
         finally { txf.finish();  }
-	    getLog().info("createNewSlice() = " + getSliceId());
+	    getLogger().info( "createNewSlice() = " + getSliceId() );
     }
 
 
     private Slice findSlice() {
 	    final String sliceId = getSliceId();
-	    getLog().info("findSlice(" + (sliceId == null ? "null" : '"' + sliceId + '"') + ')');
+	    getLogger().info( "findSlice(" + ( sliceId == null ? "null" : '"' + sliceId + '"' ) + ')' );
 	    if (sliceId == null)
 		    return null;
 
@@ -261,7 +261,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 			em.remove(slice);
 			txf.commit();
 		}
-		catch (RuntimeException e) { getLog().warn(e); throw e; }
+		catch (RuntimeException e) { getLogger().warn( "", e ); throw e; }
 		finally {
             try{
                 txf.finish();

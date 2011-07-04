@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.config;
+package de.zib.gndms.mockup.logic.action;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -15,16 +15,28 @@ package de.zib.gndms.logic.config;
  * limitations under the License.
  */
 
-import de.zib.gndms.logic.action.Action;
-
 /**
  * @author try ma ik jo rr a zib
- * @date 16.02.11  10:59
- * @brief Marks a special type of action, the config action.
- *
- * This type of action will be used to configure the GNDMS system through the rest interface.
+ * @date 16.02.11  11:56
+ * @brief Mock-up implementation.
  * @deprecated
  */
-public interface ConfigAction extends Action<String> {
+public class ActionMockUp implements Action<String> {
 
+    private String message;
+
+
+    public ActionMockUp() {
+    }
+
+
+    public ActionMockUp( String msg ) {
+
+        message = msg;
+    }
+
+
+    public String call() {
+        return message;
+    }
 }

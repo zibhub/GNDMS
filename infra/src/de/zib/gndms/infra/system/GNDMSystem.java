@@ -21,7 +21,6 @@ package de.zib.gndms.infra.system;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import de.zib.gndms.GNDMSVerInfo;
-import de.zib.gndms.c3resource.jaxb.Modules;
 import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.grams.LinuxDirectoryAux;
 import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
@@ -44,7 +43,6 @@ import org.apache.axis.message.addressing.ReferencePropertiesType;
 import org.apache.axis.types.URI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.log4j.NDC;
 import org.globus.wsrf.ResourceException;
 import org.globus.wsrf.impl.SimpleResourceKey;
 import org.globus.wsrf.jndi.Initializable;
@@ -53,6 +51,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
+import org.slf4j.MDC;
 
 import javax.naming.Context;
 import javax.naming.Name;
@@ -87,7 +86,7 @@ import java.util.concurrent.*;
         "OverloadedMethodsWithSameNumberOfParameters", "NestedAssignment",
         "ClassWithTooManyMethods" })
 public final class GNDMSystem
-	  implements Initializable, SystemHolder, EMFactoryProvider, Modules.Module,
+	  implements Initializable, SystemHolder, EMFactoryProvider, Module,
         ModelUpdateListener<GridResource> {
     private static final long EXECUTOR_SHUTDOWN_TIME = 5000L;
 
@@ -569,7 +568,7 @@ public final class GNDMSystem
         try {
             onModelChange_(model);
         } catch ( ResourceException e ) {
-            logger.warn(e);
+            logger.warn( "", e );
         }
     }
 
@@ -654,7 +653,7 @@ public final class GNDMSystem
                         home.find(home.getKeyForId(id));
                     }
                     catch (ResourceException e) {
-                        logger.warn(e);
+                        logger.warn( "", e );
                     }
                 }
                 manager.getTransaction().commit();
@@ -792,7 +791,7 @@ public final class GNDMSystem
 						throw new RuntimeException(e);
 					}
 					try { logger.info(sharedConfig.getGridName() + " initialized"); }
-					catch (Exception e) { logger.error(e); }
+					catch (Exception e) { logger.error( "", e ); }
 					instance = newInstance;
 				}
 				catch (RuntimeException e) {
@@ -848,7 +847,7 @@ public final class GNDMSystem
 
     public boolean isGridAdmin(final String tag, final String dn) {
         final boolean ret = isGridAdmin_(dn == null ? "null" : dn);
-        NDC.push(tag);
+        MDC.put( tag, "" );
         try {
             if (ret)
                 logger.info("Authenticated Grid Admin " + dn);
@@ -857,7 +856,7 @@ public final class GNDMSystem
 
             return ret;
         }
-        finally { NDC.pop(); }
+        finally { MDC.remove( tag ); }
     }
 
     private boolean isGridAdmin_(final String dn) {
