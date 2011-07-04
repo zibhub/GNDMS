@@ -1,7 +1,9 @@
-package de.zib.gndms.model.gorfx.types;
+package de.zib.gndms.neomodel.gorfx;
 
 
-import de.zib.gndms.neomodel.gorfx.Taskling;
+import de.zib.gndms.model.gorfx.types.Order;
+import de.zib.gndms.model.gorfx.types.Quote;
+import org.neo4j.graphdb.Traverser;
 
 import java.util.ArrayList;
 import java.util.List;

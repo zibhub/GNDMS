@@ -1,5 +1,4 @@
-package de.zib.gndms.gritserv.typecon.types;
-
+package de.zib.gndms.mockup.logic.config;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -16,29 +15,16 @@ package de.zib.gndms.gritserv.typecon.types;
  * limitations under the License.
  */
 
-
+import de.zib.gndms.mockup.logic.action.Action;
 
 /**
- * An AbstractXSDTypeWriter is used to convert a gndms class to the corresponding axis type.
- * It should be used in conjunction with {@link de.zib.gndms.model.gorfx.types.io.ORQWriter}
- * It contains the created axis type.
- * 
- * @author  try ma ik jo rr a zib
- * @version  $Id$
- * <p/>
- * User: mjorra, Date: 13.10.2008, Time: 13:10:31
+ * @author try ma ik jo rr a zib
+ * @date 16.02.11  10:59
+ * @brief Marks a special type of action, the config action.
+ *
+ * This type of action will be used to configure the GNDMS system through the rest interface.
+ * @deprecated
  */
-public abstract class AbstractXSDTypeWriter<M> {
+public interface ConfigAction extends Action<String> {
 
-    private M product;
-
-
-    public M getProduct ( ) {
-        return product;
-    }
-
-
-    protected void setProduct( M p ) {
-        product = p;
-    }
 }

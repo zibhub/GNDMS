@@ -21,7 +21,7 @@ package de.zib.gndms.logic.action;
  *
  * @brief Interface for meta information about actions.
  */
-public interface ActionMeta<A extends Action> {
+public interface ActionMeta {
 
     String getName();
 

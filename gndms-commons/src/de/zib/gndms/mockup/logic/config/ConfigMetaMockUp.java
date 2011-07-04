@@ -1,5 +1,4 @@
-package de.zib.gndms.gritserv.typecon.types;
-
+package de.zib.gndms.mockup.logic.config;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -16,34 +15,21 @@ package de.zib.gndms.gritserv.typecon.types;
  * limitations under the License.
  */
 
-
-
-import de.zib.gndms.model.common.types.FutureTime;
-import org.joda.time.DateTime;
-import org.joda.time.Duration;
-import types.FutureTimeT;
-
+import de.zib.gndms.logic.config.ConfigMeta;
+import de.zib.gndms.mockup.logic.action.ActionMetaMockUp;
 
 /**
- * ThingAMagic.
- *
- * @author  try ste fan pla nti kow zib
+ * @author try ma ik jo rr a zib
  * @version $Id$
- *
- *          User: stepn Date: 24.11.2008 Time: 18:04:31
+ *          <p/>
+ *          Date: 08.02.11, Time: 17:06
+ * @brief A mock-up implementation.
+ * @deprecated
  */
-public class FutureTimeXSDReader {
-	private FutureTimeXSDReader() {}
+public class ConfigMetaMockUp extends ActionMetaMockUp implements ConfigMeta {
 
 
-	public static FutureTime read(FutureTimeT ft) {
-		if (ft == null)
-			return null;
-		if (ft.getTime() == null) {
-			return FutureTime.atOffset( new Duration( ft.getOffset() ) );
-		}
-		else
-			return FutureTime.atTime(new DateTime(ft.getTime()));
-	}
-
+    public ConfigActionMockUp getAction() {
+        return new ConfigActionMockUp( getName() + " called" );
+    }
 }

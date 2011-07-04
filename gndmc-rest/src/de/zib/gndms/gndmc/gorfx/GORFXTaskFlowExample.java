@@ -17,7 +17,7 @@ package de.zib.gndms.gndmc.gorfx;
  */
 
 import de.zib.gndms.kit.application.AbstractApplication;
-import de.zib.gndms.logic.taskflow.tfmockup.DummyOrder;
+//import de.zib.gndms.logic.taskflow.tfmockup.DummyOrder;
 import org.kohsuke.args4j.Option;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -89,12 +89,13 @@ public class GORFXTaskFlowExample extends AbstractApplication {
     private void normalRun( )  {
 
         System.out.println( "Performing normal run!!" );
-        DummyOrder dft = new DummyOrder();
+     /*   DummyOrder dft = new DummyOrder();
         dft.setMessage( "Test task flow is flowing" );
         dft.setTimes( 20 );
         dft.setDelay( 1000 );
-        dft.setFailIntentionally( false );
-        etfc.execTF( dft, dn );
+        dft.setFailIntentionally( false ); */
+        // create an order instance...
+        // etfc.execTF( dft, dn );
         System.out.println( "DONE\n" );
     }
 
@@ -102,12 +103,15 @@ public class GORFXTaskFlowExample extends AbstractApplication {
 
 
         System.out.println( "Performing task which will fail!" );
+        /*
         DummyOrder dft = new DummyOrder();
         dft.setMessage( "I'm going to fail" );
         dft.setTimes( 30 );
         dft.setDelay( 1000 );
         dft.setFailIntentionally( true );
-        etfc.execTF( dft, dn );
+        */
+        // create an order instance...
+        //etfc.execTF( dft, dn );
         System.out.println( "DONE\n" );
     }
 }

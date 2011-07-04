@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.config;
+package de.zib.gndms.mockup.logic.config;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -15,20 +15,19 @@ package de.zib.gndms.logic.config;
  * limitations under the License.
  */
 
-import de.zib.gndms.logic.action.ActionMetaMockUp;
+import de.zib.gndms.mockup.logic.action.ActionProviderMockUp;
+import de.zib.gndms.logic.config.ConfigMeta;
 
 /**
  * @author try ma ik jo rr a zib
  * @version $Id$
  *          <p/>
- *          Date: 08.02.11, Time: 17:06
- * @brief A mock-up implementation.
+ *          Date: 08.02.11, Time: 16:16
+ *
+ * @brief Yet another mock-up.
  * @deprecated
  */
-public class ConfigMetaMockUp extends ActionMetaMockUp<ConfigAction> implements ConfigMeta {
+public class ConfigActionProviderMockUp extends ActionProviderMockUp<ConfigMeta, ConfigAction> {
 
 
-    public ConfigActionMockUp getAction() {
-        return new ConfigActionMockUp( getName() + " called" );
-    }
 }

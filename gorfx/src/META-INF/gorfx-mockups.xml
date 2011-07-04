@@ -3,7 +3,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="configActions" class="de.zib.gndms.logic.config.ConfigActionProviderMockUp">
+    <bean id="configActions" class="de.zib.gndms.mockup.logic.config.ConfigActionProviderMockUp">
         <property name="actions">
             <list>
                 <ref bean="SliceKindConfigMeta"/>
@@ -13,7 +13,7 @@
         </property>
     </bean>
 
-    <bean id="SliceKindConfigMeta" class="de.zib.gndms.logic.config.ConfigMetaMockUp">
+    <bean id="SliceKindConfigMeta" class="de.zib.gndms.mockup.logic.config.ConfigMetaMockUp">
     <property name="configDescription" value="Setup a slice kind"/>
     <property name="configHelp" value="
 * mode: Action mode; one of create, read, update, or delete
@@ -24,7 +24,7 @@
     <property name="configName" value=".dspace.SetupSliceKind"/>
     </bean>
 
-    <bean id="SetupSubspaceConfigMeta"  class="de.zib.gndms.logic.config.ConfigMetaMockUp">
+    <bean id="SetupSubspaceConfigMeta"  class="de.zib.gndms.mockup.logic.config.ConfigMetaMockUp">
         <property name="configName" value=".dspace.SetupSubspace"/>
         <property name="configDescription" value="Saetup a subspace"/>
         <property name="configHelp" value="
@@ -37,7 +37,7 @@
         "/>
     </bean>
 
-    <bean id="SetupOfferTypeConfigMeta" class="de.zib.gndms.logic.config.ConfigMetaMockUp">
+    <bean id="SetupOfferTypeConfigMeta" class="de.zib.gndms.mockup.logic.config.ConfigMetaMockUp">
         <property name="configName" value=".gorfx.SetupOfferType"/>
         <property name="configDescription" value="Sets up supported OfferTypes"/>
         <property name="configHelp" value="

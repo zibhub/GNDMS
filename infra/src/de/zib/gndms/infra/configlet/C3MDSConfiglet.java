@@ -111,7 +111,7 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 			requiredPrefix = getMapConfig().getOption("requiredPrefix", "");
 		}
 		catch ( MandatoryOptionMissingException e) {
-			getLogger().warn(e);
+			getLogger().warn( "", e);
         }
 	}
 
@@ -149,7 +149,7 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
                      getLogger().debug("Finished Refreshing C3MDSCatalog");
                  }
                  catch (Exception e) {
-                     getLogger().warn(e);
+                     getLogger().warn( "", e);
                  }
                  finally { runLock.unlock();}
             else {
@@ -158,12 +158,12 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
                     throw new RuntimeException(
                             "Couldnt acquire log for reading C3MDSCatalog... Please increment delay time! ");
                 } catch (RuntimeException e) {
-                    getLogger().warn(e);
+                    getLogger().warn( "", e);
                     getLogger().debug("Aborted Refreshing C3MDSCatalog");
                 }
             }
         } catch (InterruptedException e) {
-            getLogger().warn(e);
+            getLogger().warn( "", e);
         }
     }
 

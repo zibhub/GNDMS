@@ -470,7 +470,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 				}
 			}
 			catch (RuntimeException e) {
-				logger.warn(e);
+				logger.warn( "", e);
 			}
 			finally {
 				if (emParam.getTransaction().isActive())
@@ -488,7 +488,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 			    configlet.shutdown();
 		    }
 		    catch (RuntimeException e) {
-			    logger.warn(e);
+			    logger.warn( "", e);
 		    }		
 	}
 

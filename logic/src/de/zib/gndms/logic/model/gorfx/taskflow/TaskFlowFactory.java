@@ -19,7 +19,7 @@ import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.gorfx.types.Order;
 import de.zib.gndms.model.gorfx.types.Quote;
-import de.zib.gndms.model.gorfx.types.TaskFlow;
+import de.zib.gndms.neomodel.gorfx.TaskFlow;
 import de.zib.gndms.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
@@ -33,14 +33,23 @@ import org.joda.time.DateTime;
  *
  * Implementations of this interface should be able to compute quotes, and generate task instances.
  *
- * \note maybe switch this interface to use generics instead of polymorphism, if you know what I mean...
  */
-public interface TaskFlowFactory<T extends TaskFlow> {
+public interface TaskFlowFactory {
 
+
+    /**
+     * @brief Delivers the key of this task flow.
+     *
+     * @return The taskflow key.
+     */
     String getTaskFlowKey( );
 
+    /**
+     * @brief Delivers the version of the plugin.
+     *
+     * @return An integer representing the version.
+     */
     int getVersion();
-
 
     /** 
      * @brief Delivers a calculator for quotes of the taskflow.
@@ -66,7 +75,7 @@ public interface TaskFlowFactory<T extends TaskFlow> {
      *
      * @return A taskflow object.
      */
-    T create( );
+    TaskFlow create();
 
     /**
      * @brief Creates a new taskflow instance.
@@ -75,7 +84,7 @@ public interface TaskFlowFactory<T extends TaskFlow> {
      *
      * @return A taskflow object.
      */
-    T createOrphan( );
+    TaskFlow createOrphan();
 
     /**
      * @brief Adds an orphan task flow to the facotry.
@@ -84,7 +93,7 @@ public interface TaskFlowFactory<T extends TaskFlow> {
      *
      * @return \c true if the taskflow was successfully added. If the task is already registered this will fail.
      */
-    boolean adopt( T taskflow );
+    boolean adopt( TaskFlow taskflow );
 
     /**
      * @brief Finds an existing taskflow.
@@ -92,7 +101,7 @@ public interface TaskFlowFactory<T extends TaskFlow> {
      * @param id The id of the taskflow.
      * @return The taskflow or null if it doesn't exist.
      */
-    T find( String id );
+    TaskFlow find( String id );
 
     /**
      * @brief Removes a taskflow.
@@ -116,6 +125,11 @@ public interface TaskFlowFactory<T extends TaskFlow> {
      */
     TaskAction createAction( );
 
+    /**
+     * @brief Delivers a list of keys of taskflows, this taskflow depends on.
+     *
+     * @return A list of taskflow keys or an empty list if it has no dependencies. Note it \b must \b not return null.
+     */
     Iterable<String> depends();
 
 

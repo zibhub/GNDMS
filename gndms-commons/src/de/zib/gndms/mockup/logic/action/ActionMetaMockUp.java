@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.action;
+package de.zib.gndms.mockup.logic.action;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -15,14 +15,15 @@ package de.zib.gndms.logic.action;
  * limitations under the License.
  */
 
-import de.zib.gndms.kit.action.ActionMockUp;
+import de.zib.gndms.logic.action.ActionMeta;
 
 /**
  * @author try ma ik jo rr a zib
  * @date 16.02.11  12:45
  * @brief Mock-up implementation.
+ * @deprecated
  */
-public abstract class ActionMetaMockUp<A extends Action> implements ActionMeta<A>{
+public abstract class ActionMetaMockUp implements ActionMeta {
 
     private String configName;
     private String configHelp;

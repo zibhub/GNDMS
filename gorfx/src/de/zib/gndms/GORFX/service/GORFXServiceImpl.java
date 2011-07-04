@@ -23,7 +23,7 @@ import de.zib.gndms.logic.action.ActionMeta;
 import de.zib.gndms.logic.action.ActionProvider;
 import de.zib.gndms.logic.config.ConfigMeta;
 import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowProvider;
-import de.zib.gndms.model.gorfx.types.TaskFlow;
+import de.zib.gndms.neomodel.gorfx.TaskFlow;
 import de.zib.gndms.model.gorfx.types.Order;
 import de.zib.gndms.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.rest.Facets;

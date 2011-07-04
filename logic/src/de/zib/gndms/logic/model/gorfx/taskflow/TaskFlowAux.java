@@ -16,9 +16,8 @@ package de.zib.gndms.logic.model.gorfx.taskflow;
  *  limitations under the License.
  */
 
-import de.zib.gndms.model.gorfx.types.TaskFlow;
+import de.zib.gndms.neomodel.gorfx.TaskFlow;
 import de.zib.gndms.model.gorfx.types.TaskFlowStatus;
-import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.model.gorfx.types.TaskStatus;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;

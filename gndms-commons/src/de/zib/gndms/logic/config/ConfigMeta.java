@@ -16,6 +16,7 @@ package de.zib.gndms.logic.config;
  */
 
 import de.zib.gndms.logic.action.ActionMeta;
+import de.zib.gndms.mockup.logic.config.ConfigAction;
 
 /**
  * @author try ma ik jo rr a zib
@@ -25,6 +26,6 @@ import de.zib.gndms.logic.action.ActionMeta;
  *
  * @brief Should provide meta information about a configuration like, description, help and parameter detail.
  */
-public interface ConfigMeta extends ActionMeta<ConfigAction> {
+public interface ConfigMeta extends ActionMeta {
 
 }

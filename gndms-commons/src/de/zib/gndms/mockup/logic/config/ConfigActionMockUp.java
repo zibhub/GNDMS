@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.config;
+package de.zib.gndms.mockup.logic.config;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -15,18 +15,21 @@ package de.zib.gndms.logic.config;
  * limitations under the License.
  */
 
-import de.zib.gndms.kit.action.ActionProviderMockUp;
+import de.zib.gndms.mockup.logic.action.ActionMockUp;
 
 /**
  * @author try ma ik jo rr a zib
- * @version $Id$
- *          <p/>
- *          Date: 08.02.11, Time: 16:16
- *
- * @brief Yet another mock-up.
+ * @date 16.02.11  12:43
+ * @brief  Mockup-implementation
  * @deprecated
  */
-public class ConfigActionProviderMockUp extends ActionProviderMockUp<ConfigMeta, ConfigAction> {
+public class ConfigActionMockUp extends ActionMockUp implements ConfigAction {
+
+    public ConfigActionMockUp() {
+    }
 
 
+    public ConfigActionMockUp( String msg ) {
+        super( msg );
+    }
 }

@@ -29,7 +29,6 @@ import de.zib.gndms.stuff.Sleeper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
-import javax.rmi.PortableRemoteObject;
 import java.io.File;
 
 
@@ -82,13 +81,12 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
         int result = action.call();
         switch (result) {
             case 0:
-                getLog().debug("Staging completed: " + outRecv.toString());
+                getLogger().debug("Staging completed: " + outRecv.toString());
                 transitWithPayload(new ProviderStageInResult(sliceParam.getId()), TaskState.FINISHED);
-                /* unreachable: */
                 break;
             default:
                 if (result > 127) {
-                    getLog().debug("Waiting for potential death of container...");
+                    getLogger().debug( "Waiting for potential death of container..." );
                     Sleeper.sleepUninterruptible(GLOBUS_DEATH_DURATION);
                 }
                 String log = "Staging failed! Staging script returned unexpected exit code: " + result +
@@ -118,10 +116,10 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
 		int result = action.call();
 		switch (result) {
 			case 0:
-				getLog().debug("Finished calling cancel: " + outRecv.toString());
+				getLogger().debug( "Finished calling cancel: " + outRecv.toString() );
 				break;
 			default:
-				getLog().info("Failure during cancel: " + errRecv.toString());
+				getLogger().info( "Failure during cancel: " + errRecv.toString() );
 		}
     }
 }
