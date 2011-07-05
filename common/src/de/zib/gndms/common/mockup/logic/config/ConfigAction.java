@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.action;
+package de.zib.gndms.common.mockup.logic.config;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -15,19 +15,16 @@ package de.zib.gndms.logic.action;
  * limitations under the License.
  */
 
-import java.util.List;
-import de.zib.gndms.common.logic.action.ActionMeta;
+import de.zib.gndms.common.mockup.logic.action.Action;
 
 /**
  * @author try ma ik jo rr a zib
- * @date: 08.02.11 16:12
+ * @date 16.02.11  10:59
+ * @brief Marks a special type of action, the config action.
  *
- * @brief Something that provides actions by name.
+ * This type of action will be used to configure the GNDMS system through the rest interface.
+ * @deprecated
  */
-public interface ActionProvider<M extends ActionMeta, A extends Action> {
+public interface ConfigAction extends Action<String> {
 
-    List<String> listAvailableActions();
-    M getMeta( String config );
-
-    A getAction( String actionName );
 }

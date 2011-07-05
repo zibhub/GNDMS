@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.action;
+package de.zib.gndms.common.mockup.logic.config;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -15,19 +15,19 @@ package de.zib.gndms.logic.action;
  * limitations under the License.
  */
 
-import java.util.List;
-import de.zib.gndms.common.logic.action.ActionMeta;
+import de.zib.gndms.common.logic.config.ConfigMeta;
+import de.zib.gndms.common.mockup.logic.action.ActionProviderMockUp;
 
 /**
  * @author try ma ik jo rr a zib
- * @date: 08.02.11 16:12
+ * @version $Id$
+ *          <p/>
+ *          Date: 08.02.11, Time: 16:16
  *
- * @brief Something that provides actions by name.
+ * @brief Yet another mock-up.
+ * @deprecated
  */
-public interface ActionProvider<M extends ActionMeta, A extends Action> {
+public class ConfigActionProviderMockUp extends ActionProviderMockUp<ConfigMeta, ConfigAction> {
 
-    List<String> listAvailableActions();
-    M getMeta( String config );
 
-    A getAction( String actionName );
 }
