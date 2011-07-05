@@ -15,17 +15,19 @@ package de.zib.gndms.GORFX.service;
  * limitations under the License.
  */
 
+import de.zib.gndms.common.GORFX.service.TaskService;
+import de.zib.gndms.common.model.gorfx.types.*;
+import de.zib.gndms.common.rest.Facet;
+import de.zib.gndms.common.rest.Facets;
+import de.zib.gndms.common.rest.GNDMSResponseHeader;
+import de.zib.gndms.common.rest.UriFactory;
+import de.zib.gndms.common.stuff.devel.NotYetImplementedException;
 import de.zib.gndms.logic.model.gorfx.taskflow.TaskTypeConverter;
-import de.zib.gndms.stuff.devel.NotYetImplementedException;
 import de.zib.gndms.logic.model.TaskExecutionService;
-import de.zib.gndms.model.gorfx.types.*;
+import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
-import de.zib.gndms.rest.Facet;
-import de.zib.gndms.rest.Facets;
-import de.zib.gndms.rest.GNDMSResponseHeader;
-import de.zib.gndms.rest.UriFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

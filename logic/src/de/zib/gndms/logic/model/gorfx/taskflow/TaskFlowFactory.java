@@ -15,12 +15,12 @@ package de.zib.gndms.logic.model.gorfx.taskflow;
  * limitations under the License.
  */
 
+import de.zib.gndms.common.model.gorfx.types.Order;
+import de.zib.gndms.common.model.gorfx.types.Quote;
+import de.zib.gndms.common.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.model.common.PersistentContract;
-import de.zib.gndms.model.gorfx.types.Order;
-import de.zib.gndms.model.gorfx.types.Quote;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
-import de.zib.gndms.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;

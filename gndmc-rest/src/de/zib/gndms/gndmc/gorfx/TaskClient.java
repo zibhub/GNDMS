@@ -15,12 +15,12 @@ package de.zib.gndms.gndmc.gorfx;
  * limitations under the License.
  */
 
-import de.zib.gndms.GORFX.service.TaskService;
-import de.zib.gndms.stuff.devel.NotYetImplementedException;
+import de.zib.gndms.common.GORFX.service.TaskService;
+import de.zib.gndms.common.model.gorfx.types.*;
+import de.zib.gndms.common.rest.Facets;
+import de.zib.gndms.common.rest.UriFactory;
+import de.zib.gndms.common.stuff.devel.NotYetImplementedException;
 import de.zib.gndms.gndmc.AbstractClient;
-import de.zib.gndms.model.gorfx.types.*;
-import de.zib.gndms.rest.Facets;
-import de.zib.gndms.rest.UriFactory;
 import org.springframework.http.ResponseEntity;
 
 import java.util.HashMap;
@@ -30,7 +30,7 @@ import java.util.HashMap;
  * @date 07.03.11  18:35
  * @brief Client for TaskService.
  *
- * @see de.zib.gndms.GORFX.service.TaskService for details.
+ * @see de.zib.gndms.common.GORFX.service.TaskService for details.
  */
 public class TaskClient extends AbstractClient implements TaskService {
 

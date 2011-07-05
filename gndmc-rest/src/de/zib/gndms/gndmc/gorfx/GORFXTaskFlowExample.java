@@ -16,7 +16,7 @@ package de.zib.gndms.gndmc.gorfx;
  * limitations under the License.
  */
 
-import de.zib.gndms.kit.application.AbstractApplication;
+import de.zib.gndms.common.kit.application.AbstractApplication;
 //import de.zib.gndms.logic.taskflow.tfmockup.DummyOrder;
 import org.kohsuke.args4j.Option;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;

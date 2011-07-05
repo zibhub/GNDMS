@@ -36,6 +36,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import de.zib.gndms.GORFX.service.TaskServiceAux;
+import de.zib.gndms.common.rest.Facets;
+import de.zib.gndms.common.rest.GNDMSResponseHeader;
+import de.zib.gndms.common.rest.Specifier;
+import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.logic.dspace.SubspaceProvider;
 import de.zib.gndms.logic.model.TaskExecutionService;
 import de.zib.gndms.logic.model.config.SetupAction.SetupMode;
@@ -45,10 +49,6 @@ import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.dspace.SubspaceConfiguration;
 import de.zib.gndms.model.dspace.WrongConfigurationException;
 import de.zib.gndms.neomodel.gorfx.Task;
-import de.zib.gndms.rest.Facets;
-import de.zib.gndms.rest.GNDMSResponseHeader;
-import de.zib.gndms.rest.Specifier;
-import de.zib.gndms.rest.UriFactory;
 import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
 import de.zib.gndms.stuff.confuror.ConfigHolder;
 

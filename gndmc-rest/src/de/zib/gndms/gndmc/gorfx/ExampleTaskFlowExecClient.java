@@ -16,10 +16,10 @@ package de.zib.gndms.gndmc.gorfx;
  */
 
 // import de.zib.gndms.logic.taskflow.tfmockup.DummyTFResult;
-import de.zib.gndms.model.gorfx.types.*;
-import de.zib.gndms.rest.Facet;
-import de.zib.gndms.rest.Facets;
-import de.zib.gndms.rest.Specifier;
+import de.zib.gndms.common.model.gorfx.types.*;
+import de.zib.gndms.common.rest.Facet;
+import de.zib.gndms.common.rest.Facets;
+import de.zib.gndms.common.rest.Specifier;
 
 import java.util.List;
 

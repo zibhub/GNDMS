@@ -17,8 +17,8 @@ package de.zib.gndms.logic.model.gorfx.taskflow;
  */
 
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
-import de.zib.gndms.model.gorfx.types.TaskFlowStatus;
-import de.zib.gndms.model.gorfx.types.TaskStatus;
+import de.zib.gndms.common.model.gorfx.types.TaskFlowStatus;
+import de.zib.gndms.common.model.gorfx.types.TaskStatus;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
