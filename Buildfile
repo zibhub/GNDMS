@@ -336,7 +336,7 @@ define 'gndms' do
 
     desc 'Shared graph database model classes'
     define 'neomodel', :layout => dmsTestLayout('neomodel', 'gndms-neomodel') do
-      compile.with project('gndms-commons'), project('model'), project('stuff'), JETBRAINS_ANNOTATIONS, NEODATAGRAPH, JODA_TIME, OPENJPA, COMMONS_LANG
+      compile.with project('common'), project('model'), project('stuff'), JETBRAINS_ANNOTATIONS, NEODATAGRAPH, JODA_TIME, OPENJPA, COMMONS_LANG
       
       test.with COMMONS_IO
       test.compile
@@ -350,7 +350,7 @@ define 'gndms' do
     desc 'Shared database model classes'
     define 'model', :layout => dmsLayout('model', 'gndms-model') do
       # TODO: Better XML
-      compile.with project('gndms-commons'), project('stuff'), COMMONS_COLLECTIONS, COMMONS_LANG, GOOGLE_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS, GUICE, CXF, OPENJPA, JAXB, STAX_API
+      compile.with project('common'), project('stuff'), COMMONS_COLLECTIONS, COMMONS_LANG, GOOGLE_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS, GUICE, CXF, OPENJPA, JAXB, STAX_API
       compile { open_jpa_enhance }
       package :jar
     end
@@ -366,7 +366,7 @@ define 'gndms' do
 
     desc 'GNDMS logic classes (actions for manipulating resources)'
     define 'logic', :layout => dmsLayout('logic', 'gndms-logic') do
-       compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('gndms-commons'), project('stuff'), project('model'), project('neomodel'), JODA_TIME, GOOGLE_COLLECTIONS, GUICE, DB_DERBY, GT4_LOG, GT4_AXIS, GT4_COG, GT4_SEC, GT4_XML, COMMONS_LANG, OPENJPA, SLF4J
+       compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('common'), project('stuff'), project('model'), project('neomodel'), JODA_TIME, GOOGLE_COLLECTIONS, GUICE, DB_DERBY, GT4_LOG, GT4_AXIS, GT4_COG, GT4_SEC, GT4_XML, COMMONS_LANG, OPENJPA, SLF4J
        compile
        package :jar
     end
@@ -665,7 +665,7 @@ define 'gndms' do
 
 
     desc 'Common gndms service classes'
-    define 'gndms-commons', :layout => dmsLayout('gndms-commons', 'gndms-commons') do
+    define 'common', :layout => dmsLayout('common', 'gndms-common') do
         compile.with SPRING, ARGS4J, JODA_TIME, SLF4J, JSON
         compile
         meta_inf << file(_('src/META-INF/converter-setup.xml'))
@@ -676,7 +676,7 @@ define 'gndms' do
 
     desc 'Gorfx client classes'
     define 'gndmc-rest', :layout => dmsLayout('gndmc-rest', 'gndms-gndmc-rest') do
-        compile.with project('gndms-commons'), SPRING, ARGS4J, JODA_TIME, SLF4J, COMMONS_LOGGING, XSTREAM, XSTREAM_DEPS, JSON
+        compile.with project('common'), SPRING, ARGS4J, JODA_TIME, SLF4J, COMMONS_LOGGING, XSTREAM, XSTREAM_DEPS, JSON
         meta_inf << file(_('src/META-INF/client-context.xml'))
         package(:jar).with :manifest=>manifest.merge( 'Main-Class'=>'de.zib.gndms.gndmc.gorfx.GORFXClientMain' )
 
@@ -731,7 +731,7 @@ define 'gndms' do
 
     desc 'GORFX rest service'
     define 'gorfx', :layout => dmsLayout('gorfx', 'gndms-gorfx-rest') do
-        compile.with project('infra'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), project('gndmc-rest'), project('gndms-commons'), SPRING, SLF4J, XSTREAM, COMMONS_LOGGING, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME, JSON, OPENJPA
+        compile.with project('infra'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), project('gndmc-rest'), project('common'), SPRING, SLF4J, XSTREAM, COMMONS_LOGGING, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME, JSON, OPENJPA
         compile
 
        # web_inf << file(_('../gorfx/src/META-INF/gorfx.xml'))

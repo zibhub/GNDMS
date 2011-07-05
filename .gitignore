@@ -13,7 +13,7 @@ doc/text-html
 gndmc/gndms-gndmc/
 gndmc/target/
 Buildfile~
-
+*~
 neomodel/target/**
 services/*/build/**
 services/*/out/**
@@ -58,7 +58,7 @@ gndmc/gndms-gndmc/production/**
 gndmc/gndms-gndmc/test/**
 gndmc-rest/gndms-gndmc-rest/production/**
 gorfx/gndms-gorfx-rest/production/**
-gndms-commons/gndms-gndms-commons/production/**
+common/gndms-common/production/**
 .classpath
 .project
 test-output/**
@@ -91,7 +91,7 @@ lib/logic/*
 lib/neomodel/*
 lib/gorfx/*
 lib/rest/*
-lib/gorfx-commons/*
+lib/common/*
 lib/gndmc-rest/*
 */resources/META-INF/GNDMS-RELEASE
 */resources/META-INF/GNDMS-BUILD-INFO
