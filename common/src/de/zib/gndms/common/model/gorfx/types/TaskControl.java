@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.action;
+package de.zib.gndms.common.model.gorfx.types;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -15,19 +15,18 @@ package de.zib.gndms.logic.action;
  * limitations under the License.
  */
 
-import java.util.List;
-import de.zib.gndms.common.logic.action.ActionMeta;
-
 /**
  * @author try ma ik jo rr a zib
- * @date: 08.02.11 16:12
+ * @date 02.03.11  12:32
+ * @brief Enum type for control options of a task.
  *
- * @brief Something that provides actions by name.
+ * If an option is valid depends on the features of the task and its current state.
  */
-public interface ActionProvider<M extends ActionMeta, A extends Action> {
-
-    List<String> listAvailableActions();
-    M getMeta( String config );
-
-    A getAction( String actionName );
+public enum TaskControl {
+    PAUSE,   ///< Pauses the task execution
+    RESUME,  ///< Resumes the task execution
+    RESTART, ///< Restarts the current task
+    ABORT    ///< Requests abort of the task execution
 }
+
+

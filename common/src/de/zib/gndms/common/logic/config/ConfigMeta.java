@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.action;
+package de.zib.gndms.common.logic.config;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -15,19 +15,17 @@ package de.zib.gndms.logic.action;
  * limitations under the License.
  */
 
-import java.util.List;
 import de.zib.gndms.common.logic.action.ActionMeta;
+import de.zib.gndms.common.mockup.logic.config.ConfigAction;
 
 /**
  * @author try ma ik jo rr a zib
- * @date: 08.02.11 16:12
+ * @version $Id$
+ *          <p/>
+ *          Date: 26.01.11, Time: 15:10
  *
- * @brief Something that provides actions by name.
+ * @brief Should provide meta information about a configuration like, description, help and parameter detail.
  */
-public interface ActionProvider<M extends ActionMeta, A extends Action> {
+public interface ConfigMeta extends ActionMeta {
 
-    List<String> listAvailableActions();
-    M getMeta( String config );
-
-    A getAction( String actionName );
 }

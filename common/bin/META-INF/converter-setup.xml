@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- this is the marshaller -->
+    <!--bean id="marshaller" class="org.springframework.oxm.xstream.XStreamMarshaller">
+        <property name="autodetectAnnotations" value="true"/>
+    </bean-->
+
+    <!-- this is the converter for POST -->
+    <!--bean id="converter"
+		class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
+		<constructor-arg ref="marshaller" />
+	</bean-->
+
+
+    <bean id="converter" class="de.zib.gndms.gritserv.rest.FixedMappingJacksonHttpMessageConverter">
+    <!--bean id="jsonconverter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"-->
+        <property name="objectMapper" ref="objectMapper"/>
+    </bean>
+
+    <bean id="objectMapper" class="de.zib.gndms.gritserv.rest.GNDMSJacksonObjectMapper" />
+</beans>
+

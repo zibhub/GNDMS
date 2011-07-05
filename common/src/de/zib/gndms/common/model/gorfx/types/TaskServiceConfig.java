@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.action;
+package de.zib.gndms.common.model.gorfx.types;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -15,19 +15,11 @@ package de.zib.gndms.logic.action;
  * limitations under the License.
  */
 
-import java.util.List;
-import de.zib.gndms.common.logic.action.ActionMeta;
-
 /**
  * @author try ma ik jo rr a zib
- * @date: 08.02.11 16:12
- *
- * @brief Something that provides actions by name.
+ * @date 02.03.11  12:11
+ * @brief Placeholder for possible task service config.
  */
-public interface ActionProvider<M extends ActionMeta, A extends Action> {
+public interface TaskServiceConfig {
 
-    List<String> listAvailableActions();
-    M getMeta( String config );
-
-    A getAction( String actionName );
 }

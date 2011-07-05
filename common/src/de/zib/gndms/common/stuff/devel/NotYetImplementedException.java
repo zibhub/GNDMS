@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.action;
+package de.zib.gndms.common.stuff.devel;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -15,19 +15,14 @@ package de.zib.gndms.logic.action;
  * limitations under the License.
  */
 
-import java.util.List;
-import de.zib.gndms.common.logic.action.ActionMeta;
-
 /**
  * @author try ma ik jo rr a zib
- * @date: 08.02.11 16:12
+ * @date 04.03.11  12:50
+ * @brief NotYetImplementedException.
  *
- * @brief Something that provides actions by name.
+ * You know when things are not implemented ... yet.
  */
-public interface ActionProvider<M extends ActionMeta, A extends Action> {
+public class NotYetImplementedException extends RuntimeException {
 
-    List<String> listAvailableActions();
-    M getMeta( String config );
-
-    A getAction( String actionName );
+    private static final long serialVersionUID = 8566379615719291478L;
 }
