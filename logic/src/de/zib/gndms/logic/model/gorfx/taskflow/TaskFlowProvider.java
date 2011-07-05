@@ -15,7 +15,7 @@ package de.zib.gndms.logic.model.gorfx.taskflow;
  * limitations under the License.
  */
 
-import de.zib.gndms.model.gorfx.types.TaskFlowInfo;
+import de.zib.gndms.common.model.gorfx.types.TaskFlowInfo;
 
 import java.util.List;
 

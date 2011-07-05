@@ -33,15 +33,15 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import de.zib.gndms.common.rest.GNDMSResponseHeader;
+import de.zib.gndms.common.rest.Specifier;
+import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.logic.dspace.NoSuchElementException;
 import de.zib.gndms.logic.dspace.SliceKindProvider;
 import de.zib.gndms.logic.dspace.SubspaceProvider;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.SliceKindConfiguration;
 import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.rest.GNDMSResponseHeader;
-import de.zib.gndms.rest.Specifier;
-import de.zib.gndms.rest.UriFactory;
 import de.zib.gndms.stuff.confuror.ConfigHolder;
 import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
 

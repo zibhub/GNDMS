@@ -20,11 +20,11 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
+import de.zib.gndms.common.rest.Facets;
+import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.neomodel.gorfx.Task;
-import de.zib.gndms.rest.Facets;
-import de.zib.gndms.rest.Specifier;
 import de.zib.gndms.stuff.confuror.ConfigHolder;
 
 /**

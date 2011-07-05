@@ -15,10 +15,10 @@ package de.zib.gndms.logic.model.gorfx.taskflow;
  * limitations under the License.
  */
 
-import de.zib.gndms.model.gorfx.types.DefaultTaskStatus;
-import de.zib.gndms.model.gorfx.types.TaskFailure;
-import de.zib.gndms.model.gorfx.types.TaskFailureImpl;
-import de.zib.gndms.model.gorfx.types.TaskStatus;
+import de.zib.gndms.common.model.gorfx.types.DefaultTaskStatus;
+import de.zib.gndms.common.model.gorfx.types.TaskFailure;
+import de.zib.gndms.common.model.gorfx.types.TaskFailureImpl;
+import de.zib.gndms.common.model.gorfx.types.TaskStatus;
 import de.zib.gndms.neomodel.gorfx.Task;
 
 import java.util.Calendar;

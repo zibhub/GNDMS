@@ -17,19 +17,20 @@ package de.zib.gndms.GORFX.service;
  */
 
 
+import de.zib.gndms.common.GORFX.service.GORFXService;
+import de.zib.gndms.common.logic.action.ActionMeta;
+import de.zib.gndms.common.logic.config.ConfigMeta;
+import de.zib.gndms.common.model.gorfx.types.Order;
+import de.zib.gndms.common.model.gorfx.types.TaskFlowInfo;
+import de.zib.gndms.common.rest.Facets;
+import de.zib.gndms.common.rest.GNDMSResponseHeader;
+import de.zib.gndms.common.rest.Specifier;
+import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.gndmc.gorfx.TaskFlowClient;
 import de.zib.gndms.logic.action.Action;
-import de.zib.gndms.logic.action.ActionMeta;
 import de.zib.gndms.logic.action.ActionProvider;
-import de.zib.gndms.logic.config.ConfigMeta;
 import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowProvider;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
-import de.zib.gndms.model.gorfx.types.Order;
-import de.zib.gndms.model.gorfx.types.TaskFlowInfo;
-import de.zib.gndms.rest.Facets;
-import de.zib.gndms.rest.GNDMSResponseHeader;
-import de.zib.gndms.rest.Specifier;
-import de.zib.gndms.rest.UriFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

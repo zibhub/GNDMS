@@ -18,9 +18,9 @@ package de.zib.gndms.kit.network;
 
 
 
+import de.zib.gndms.model.common.repository.Dao;
 import de.zib.gndms.model.gorfx.FTPTransferState;
 import de.zib.gndms.neomodel.common.*;
-import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.globus.ftp.*;
 import org.apache.log4j.Logger;

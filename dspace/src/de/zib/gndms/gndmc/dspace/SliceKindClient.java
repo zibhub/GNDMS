@@ -18,10 +18,10 @@ package de.zib.gndms.gndmc.dspace;
 
 import org.springframework.http.ResponseEntity;
 
+import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.dspace.service.SliceKindService;
 import de.zib.gndms.gndmc.AbstractClient;
 import de.zib.gndms.model.dspace.SliceKind;
-import de.zib.gndms.rest.Specifier;
 import de.zib.gndms.stuff.confuror.ConfigHolder;
 
 /**

@@ -18,8 +18,8 @@ package de.zib.gndms.dspace.service;
 
 import org.springframework.http.ResponseEntity;
 
+import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.model.dspace.SliceKind;
-import de.zib.gndms.rest.Specifier;
 import de.zib.gndms.stuff.confuror.ConfigHolder;
 
 /**

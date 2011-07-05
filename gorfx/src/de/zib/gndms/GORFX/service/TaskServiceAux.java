@@ -16,6 +16,9 @@ package de.zib.gndms.GORFX.service;
  */
 
 import de.zib.gndms.GORFX.service.util.WidAux;
+import de.zib.gndms.common.rest.Facets;
+import de.zib.gndms.common.rest.Specifier;
+import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.model.TaskExecutionService;
@@ -23,9 +26,6 @@ import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.Taskling;
-import de.zib.gndms.rest.Facets;
-import de.zib.gndms.rest.Specifier;
-import de.zib.gndms.rest.UriFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

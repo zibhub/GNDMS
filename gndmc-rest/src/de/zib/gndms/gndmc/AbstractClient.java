@@ -24,7 +24,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestOperations;
 
-import de.zib.gndms.rest.GNDMSResponseHeader;
+import de.zib.gndms.common.rest.GNDMSResponseHeader;
 
 /**
  * An abstract client which implements the HTTP requests.

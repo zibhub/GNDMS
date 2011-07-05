@@ -16,11 +16,12 @@ package de.zib.gndms.gndmc.gorfx;
  * limitations under the License.
  */
 
-import de.zib.gndms.GORFX.service.GORFXService;
-import de.zib.gndms.logic.action.ActionMeta;
-import de.zib.gndms.logic.config.ConfigMeta;
-import de.zib.gndms.rest.Facets;
-import de.zib.gndms.rest.Specifier;
+import de.zib.gndms.common.GORFX.service.GORFXService;
+import de.zib.gndms.common.logic.action.ActionMeta;
+import de.zib.gndms.common.logic.config.ConfigMeta;
+import de.zib.gndms.common.rest.Facets;
+import de.zib.gndms.common.rest.Specifier;
+
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -32,7 +33,7 @@ import java.util.List;
  *          Date: 08.02.11, Time: 12:10
  * @brief  Complete client for the gorfx service.
  *
- * @see de.zib.gndms.GORFX.service.GORFXService for details.
+ * @see de.zib.gndms.common.GORFX.service.GORFXService for details.
  * @see de.zib.gndms.gndmc.gorfx.GORFXClient for a "smaller" client.
  */
 public class FullGORFXClient extends GORFXClient implements GORFXService {
