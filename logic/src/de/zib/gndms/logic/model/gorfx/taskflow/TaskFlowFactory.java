@@ -56,7 +56,7 @@ public interface TaskFlowFactory {
      * 
      * @return A quote calculator.
      */
-    AbstractQuoteCalculator getQuoteCalculator(  );
+    AbstractQuoteCalculator<?> getQuoteCalculator(  );
 
     /** 
      * @brief Delivers information about the taskflow in general. 

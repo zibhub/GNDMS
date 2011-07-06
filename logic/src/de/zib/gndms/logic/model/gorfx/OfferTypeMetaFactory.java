@@ -18,7 +18,7 @@ package de.zib.gndms.logic.model.gorfx;
 
 
 
-import com.google.inject.Injector;
+import de.zib.gndms.stuff.GNDMSInjector;
 import de.zib.gndms.model.common.types.factory.AbstractRecursiveKeyFactory;
 import de.zib.gndms.model.common.types.factory.KeyFactoryInstance;
 import de.zib.gndms.model.common.types.factory.RecursiveKeyFactory;
@@ -39,7 +39,7 @@ public abstract class OfferTypeMetaFactory<T extends KeyFactoryInstance<String, 
 	implements Wrapper<RecursiveKeyFactory<String, T>>
 {
 	private Wrapper<? super RecursiveKeyFactory<String, T>> wrap;
-	private Injector injector;
+	private GNDMSInjector injector;
 
     @Override
     @SuppressWarnings({ "unchecked" })
@@ -99,12 +99,12 @@ public abstract class OfferTypeMetaFactory<T extends KeyFactoryInstance<String, 
 	}
 
 
-	public Injector getInjector() {
+	public GNDMSInjector getInjector() {
 		return injector;
 	}
 
 
-	public void setInjector(final Injector injectorParam) {
+	public void setInjector(final GNDMSInjector injectorParam) {
 		injector = injectorParam;
 	}
 }

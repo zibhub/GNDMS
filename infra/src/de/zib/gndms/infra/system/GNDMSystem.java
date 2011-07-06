@@ -18,8 +18,6 @@ package de.zib.gndms.infra.system;
 
 
 
-import com.google.inject.Binder;
-import com.google.inject.Module;
 import de.zib.gndms.GNDMSVerInfo;
 import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.grams.LinuxDirectoryAux;
@@ -35,12 +33,6 @@ import de.zib.gndms.logic.util.LogicTools;
 import de.zib.gndms.model.common.*;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.gorfx.Taskling;
-import org.apache.axis.components.uuid.UUIDGen;
-import org.apache.axis.components.uuid.UUIDGenFactory;
-import org.apache.axis.message.MessageElement;
-import org.apache.axis.message.addressing.EndpointReferenceType;
-import org.apache.axis.message.addressing.ReferencePropertiesType;
-import org.apache.axis.types.URI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.globus.wsrf.ResourceException;
@@ -74,7 +66,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.*;
+
+import org.apache.axis.components.uuid.UUIDGen;
+import org.apache.axis.components.uuid.UUIDGenFactory;
+import org.apache.axis.message.MessageElement;
+import org.apache.axis.message.addressing.EndpointReferenceType;
+import org.apache.axis.message.addressing.ReferencePropertiesType;
+import org.apache.axis.types.URI;
+import org.globus.wsrf.ResourceException;
+import org.globus.wsrf.impl.SimpleResourceKey;
+import org.globus.wsrf.jndi.Initializable;
+import org.globus.wsrf.utils.AddressingUtils;
+
+
 
 
 /**
@@ -90,7 +96,7 @@ import java.util.concurrent.*;
         "OverloadedMethodsWithSameNumberOfParameters", "NestedAssignment",
         "ClassWithTooManyMethods" })
 public final class GNDMSystem
-	  implements Initializable, SystemHolder, EMFactoryProvider, Module,
+	  implements SystemHolder, EMFactoryProvider,
         ModelUpdateListener<GridResource> {
     private static final long EXECUTOR_SHUTDOWN_TIME = 5000L;
 
@@ -100,7 +106,6 @@ public final class GNDMSystem
 
     private final boolean debugMode;
 
-    private @NotNull final UUIDGen uuidGen = UUIDGenFactory.getUUIDGen();
     private @NotNull final ModelUUIDGen uuidGenDelegate;
 	private @NotNull final Logger logger = createLogger();
 	private @NotNull final GNDMSVerInfo verInfo = new GNDMSVerInfo();
@@ -225,7 +230,7 @@ public final class GNDMSystem
 			        wrappedParam.setSystem(GNDMSystem.this);
 			        return wrapClass.cast(wrappedParam);
 		        }
-	        }, this);
+	        } );
 	        instanceDir.addInstance("sys", this);
 			instanceDir.reloadConfiglets(restrictedEmf);
 			// Bad style, usually would be an inner class but
@@ -264,25 +269,25 @@ public final class GNDMSystem
 	}
 
 
-   /**
-     * Binds several classes with {@code this} or other corresponding fields
-     *
-     * @param binder binds several classe with certain fields.
-     */
-   public void configure(final @NotNull Binder binder) {
-       binder.bind(GNDMSystem.class).toInstance(this);
-       binder.bind(EntityManagerFactory.class).toInstance(restrictedEmf);
-       binder.bind(EMFactoryProvider.class).toInstance(this);
-       binder.bind(GridConfig.class).toInstance(sharedConfig);
-       //binder.bind(NetworkAuxiliariesProvider.class).toInstance(getNetAux());
-       binder.bind(ModelUpdateListener.class).toInstance(this);
-       binder.bind(BatchUpdateAction.class).to(DefaultBatchUpdateAction.class);
-       binder.bind(UUIDGen.class).toInstance(uuidGen);
-       binder.bind(GNDMSVerInfo.class).toInstance(verInfo);
-       binder.bind(Logger.class).toInstance(logger);
-       binder.bind( DirectoryAux.class).toInstance( new LinuxDirectoryAux() );
-       // TODO later: binder.bind(TxFrame.class).to(TxFrame.class);
-   }
+//  todo remove when spring injection is sufficent..
+//   /**
+//     * Binds several classes with {@code this} or other corresponding fields
+//     *
+//     * @param binder binds several classe with certain fields.
+//     */
+//   public void configure(final @NotNull Binder binder) {
+//       binder.bind(GNDMSystem.class).toInstance(this);
+//       binder.bind(EntityManagerFactory.class).toInstance(restrictedEmf);
+//       binder.bind(EMFactoryProvider.class).toInstance(this);
+//       binder.bind(GridConfig.class).toInstance(sharedConfig);
+//       //binder.bind(NetworkAuxiliariesProvider.class).toInstance(getNetAux());
+//       binder.bind(ModelUpdateListener.class).toInstance( this );
+//       binder.bind(BatchUpdateAction.class).to( DefaultBatchUpdateAction.class );
+//       binder.bind(GNDMSVerInfo.class).toInstance(verInfo);
+//       binder.bind(Logger.class).toInstance(logger);
+//       binder.bind( DirectoryAux.class).toInstance( new LinuxDirectoryAux() );
+//       // TODO later: binder.bind(TxFrame.class).to(TxFrame.class);
+//   }
 
     /**
      * Retrieves the grid path using {@code sharedConfig} and stores the corresponding file in {@code sharedDir}.
@@ -490,7 +495,7 @@ public final class GNDMSystem
 
 
     public @NotNull File getNeoDir() {
-        return dbDir;
+        return neoDir;
     }
 
 	public @NotNull File getDbDir() {
@@ -522,7 +527,7 @@ public final class GNDMSystem
      * @return the next UUID
      */
 	public @NotNull String nextUUID() {
-		return uuidGen.nextUUID();
+		return UUID.randomUUID().toString();
 	}
 
 

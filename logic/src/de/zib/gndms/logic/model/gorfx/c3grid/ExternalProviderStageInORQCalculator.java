@@ -18,7 +18,6 @@ package de.zib.gndms.logic.model.gorfx.c3grid;
 
 
 
-import com.google.inject.Inject;
 import de.zib.gndms.kit.system.SystemInfo;
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
@@ -29,6 +28,7 @@ import de.zib.gndms.stuff.Sleeper;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.io.IOException;
@@ -140,7 +140,7 @@ public class ExternalProviderStageInORQCalculator extends AbstractProviderStageI
 	}
 
 
-	@Inject
+	@Autowired
 	public void setSysInfo(final @NotNull SystemInfo sysInfoParam) {
 		sysInfo = sysInfoParam;
 	}

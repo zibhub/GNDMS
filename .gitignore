@@ -74,6 +74,7 @@ types/wsrf
 etc/sliceInOutClient.properties
 bkp*
 lib/javax*
+commit.log
 
 syntax:regexp
 .*\.swp

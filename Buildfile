@@ -326,8 +326,8 @@ define 'gndms' do
 
     desc 'GT4-independent utility classes for GNDMS'
     define 'stuff', :layout => dmsLayout('stuff', 'gndms-stuff') do
-       task( 'update-release-info' )
-       compile.with GUICE, GOOGLE_COLLECTIONS, JETBRAINS_ANNOTATIONS, JSON, SPRING, SLF4J
+       task( 'update-release-info' )       
+       compile.with  GOOGLE_COLLECTIONS, JETBRAINS_ANNOTATIONS, JSON, SPRING, SLF4J
        compile { project('gndms').updateBuildInfo() }
        test.compile
        test.using :testng
@@ -350,14 +350,14 @@ define 'gndms' do
     desc 'Shared database model classes'
     define 'model', :layout => dmsLayout('model', 'gndms-model') do
       # TODO: Better XML
-      compile.with project('common'), project('stuff'), COMMONS_COLLECTIONS, COMMONS_LANG, GOOGLE_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS, GUICE, CXF, OPENJPA, JAXB, STAX_API
+      compile.with project('common'), project('stuff'), COMMONS_COLLECTIONS, COMMONS_LANG, GOOGLE_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS,  CXF, OPENJPA, JAXB, STAX_API, SPRING
       compile { open_jpa_enhance }
       package :jar
     end
 
     desc 'GT4-dependent utility classes for GNDMS'
     define 'kit', :layout => dmsLayout('kit', 'gndms-kit') do
-      compile.with JETTY, GROOVY, GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('stuff'), project('model'), project('neomodel'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_AXIS, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, GUICE, GT4_SERVLET, COMMONS_LANG, OPENJPA, JSON, SPRING, JNA
+      compile.with JETTY, GROOVY, GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('stuff'), project('model'), project('neomodel'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_AXIS, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J,  GT4_SERVLET, COMMONS_LANG, OPENJPA, SLF4J, JSON, SPRING, JNA
       compile
       test.compile
       test.using :testng
@@ -366,7 +366,7 @@ define 'gndms' do
 
     desc 'GNDMS logic classes (actions for manipulating resources)'
     define 'logic', :layout => dmsLayout('logic', 'gndms-logic') do
-       compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('common'), project('stuff'), project('model'), project('neomodel'), JODA_TIME, GOOGLE_COLLECTIONS, GUICE, DB_DERBY, GT4_LOG, GT4_AXIS, GT4_COG, GT4_SEC, GT4_XML, COMMONS_LANG, OPENJPA, SLF4J
+       compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('common'), project('stuff'), project('model'), project('neomodel'), JODA_TIME, GOOGLE_COLLECTIONS,  DB_DERBY, GT4_LOG, GT4_AXIS, GT4_COG, GT4_SEC, GT4_XML, COMMONS_LANG, OPENJPA, SLF4J, SPRING
        compile
        package :jar
     end
@@ -381,7 +381,7 @@ define 'gndms' do
     desc 'GNDMS core infrastructure classes'
     define 'infra', :layout => dmsLayout('infra', 'gndms-infra') do
       # Infra *must* have all dependencies since we use this list in copy/link-deps
-      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gritserv'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), ARGS4J, JODA_TIME, JAXB, GT4_SERVLET, JETTY, CXF, GROOVY, GOOGLE_COLLECTIONS, GUICE, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies, COMMONS_FILEUPLOAD, NEODATAGRAPH, SLF4J, SPRING
+      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gritserv'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), ARGS4J, JODA_TIME, JAXB, GT4_SERVLET, JETTY, CXF, GROOVY, GOOGLE_COLLECTIONS,  DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies, COMMONS_FILEUPLOAD, NEODATAGRAPH, SLF4J, SPRING
       compile
       package :jar
       doc projects('gndms:stuff', 'gndms:model', 'gndms:gritserv', 'gndms:kit', 'gndms:logic')

@@ -18,7 +18,7 @@ package de.zib.gndms.GORFX.action.dms;
 
 
 
-import com.google.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.system.SystemHolder;
 import de.zib.gndms.logic.model.gorfx.AbstractORQCalculator;
@@ -46,7 +46,7 @@ public class SliceStageInORQFactory
 	}
 
 
-	@Inject
+	@Autowired
 	public void setSystem(@NotNull final GNDMSystem systemParam) {
 		system = systemParam;
 	}

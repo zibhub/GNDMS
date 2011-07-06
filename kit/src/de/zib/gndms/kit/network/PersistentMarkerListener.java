@@ -17,13 +17,13 @@ package de.zib.gndms.kit.network;
  */
 
 
-
 import de.zib.gndms.model.gorfx.FTPTransferState;
-import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.common.Dao;
+import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.globus.ftp.*;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A persistent marker listener for grid ftp file transfers.
@@ -40,7 +40,7 @@ import org.apache.log4j.Logger;
  * User: mjorra, Date: 01.10.2008, Time: 13:27:12
  */
 public class PersistentMarkerListener implements MarkerListener {
-    private static Logger logger = Logger.getLogger( PersistentMarkerListener.class );
+    private static Logger logger = LoggerFactory.getLogger( PersistentMarkerListener.class );
     private ByteRangeList byteRanges;
     private Dao dao;
     private FTPTransferState transferState;

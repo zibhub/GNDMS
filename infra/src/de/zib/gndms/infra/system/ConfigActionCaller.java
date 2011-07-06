@@ -21,17 +21,12 @@ package de.zib.gndms.infra.system;
 import com.google.common.base.Function;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Maps;
-import com.google.inject.Binder;
-import com.google.inject.Injector;
-import com.google.inject.Module;
 import de.zib.gndms.infra.action.*;
 import de.zib.gndms.kit.config.ParameterTools;
 import de.zib.gndms.logic.action.Action;
 import de.zib.gndms.logic.action.SkipActionInitializationException;
 import de.zib.gndms.logic.model.BatchUpdateAction;
 import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
-import de.zib.gndms.logic.model.DelegatingModelUpdateListener;
-import de.zib.gndms.logic.model.ModelUpdateListener;
 import de.zib.gndms.logic.model.config.ConfigAction;
 import de.zib.gndms.logic.model.config.EchoOptionsAction;
 import de.zib.gndms.logic.model.config.HelpOverviewAction;
@@ -42,10 +37,11 @@ import de.zib.gndms.logic.model.gorfx.ConfigOfferTypeAction;
 import de.zib.gndms.logic.model.gorfx.SetupOfferTypeAction;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
+import de.zib.gndms.stuff.GNDMSInjector;
 import org.apache.axis.components.uuid.UUIDGen;
 import org.apache.axis.components.uuid.UUIDGenFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -69,8 +65,8 @@ import java.util.Map;
 *
 *          User: stepn Date: 03.09.2008 Time: 16:43:46
 */
-public final class ConfigActionCaller implements WSActionCaller, Module {
-    private @NotNull final Logger logger = LoggerFactory.getLogger(ConfigActionCaller.class);
+public final class ConfigActionCaller implements WSActionCaller {
+    private @NotNull final Log logger = LogFactory.getLog(ConfigActionCaller.class);
 
     private @NotNull final UUIDGen uuidGen = UUIDGenFactory.getUUIDGen();
     private final @NotNull ModelUUIDGen actionUUIDGen = new ModelUUIDGen() {
@@ -79,7 +75,7 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
             }
     };
 
-	  private final Map<Class<? extends ConfigAction<?>>, Boolean> configActionMap = Maps.newConcurrentHashMap();
+    private final Map<Class<? extends ConfigAction<?>>, Boolean> configActionMap = Maps.newConcurrentHashMap();
     /**
      * A set of ConfigAction.{@link HelpOverviewAction} is excluded, as this set used in the {@code HelpOverviewAction}
      * to print help about all available ConfigActions.
@@ -100,7 +96,7 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
 
     private final GNDMSystem system;
 
-	private final Injector injector;
+	private final GNDMSInjector injector;
 
 
     /**
@@ -126,7 +122,7 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
         configActions.add(ReadContainerLogAction.class);
         configActions.add(ReadGNDMSVersionAction.class);
 
-		injector = system.getInstanceDir().getSystemAccessInjector().createChildInjector(this);
+		injector = system.getInstanceDir().getSystemAccessInjector();
     }
 
     /**
@@ -271,10 +267,8 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
         action.setClosingWriterOnCleanUp(false);
         action.setWriteResult(true);
         action.setUUIDGen(actionUUIDGen);
-        action.setOwnPostponedEntityActions(new DefaultBatchUpdateAction<GridResource>());
-        final DelegatingModelUpdateListener<GridResource> updateListener =
-            DelegatingModelUpdateListener.getInstance(system);
-        action.getPostponedEntityActions().setListener(updateListener);
+        action.setOwnPostponedEntityActions( new DefaultBatchUpdateAction<GridResource>() );
+
         if (action instanceof SystemAction)
             ((SystemAction<?>)action).setSystem(system);
         // Help Action required dynamic casting due to compiler bug in older 1.5 javac
@@ -304,13 +298,13 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
     }
 
 
-    public void configure(final @NotNull Binder binder) {
-		binder.skipSources(GNDMSystem.class,
-		                   EntityManager.class,
-		                   ModelUUIDGen.class,
-		                   UUIDGen.class,
-		                   ModelUpdateListener.class,
-		                   BatchUpdateAction.class);
-		binder.bind(ConfigActionCaller.class).toInstance(this);
-	}
+//    public void configure(final @NotNull Binder binder) {
+//		binder.skipSources(GNDMSystem.class,
+//		                   EntityManager.class,
+//		                   ModelUUIDGen.class,
+//		                   UUIDGen.class,
+//		                   EntityUpdateListener.class,
+//		                   BatchUpdateAction.class);
+//		binder.bind(ConfigActionCaller.class).toInstance(this);
+//	}
 }

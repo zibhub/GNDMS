@@ -60,8 +60,8 @@ public class GORFXServiceImpl implements GORFXService {
     protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
     private Facets gorfxFacets; ///< List of facets under /gorfx/
     private String baseUrl; ///< The base url something like: \c http://my.host.org/gndms/grid_id
-    private ActionProvider configProvider; ///< List of config actions, todo uncertain who provided these.
-    private TaskFlowProvider taskFlowProvider; ///< List of config actions, todo uncertain who provided these.
+    private ActionProvider configProvider; ///< List of config actions
+    private TaskFlowProvider taskFlowProvider; ///< List of config actions, registered through plug-in mech
     private TaskFlowClient taskFlowClient;
     private UriFactory uriFactory;
 
@@ -153,11 +153,6 @@ public class GORFXServiceImpl implements GORFXService {
                 }
                 public String getDescription() {
                     return "I just mock you";
-                }
-
-
-                public Action getAction() {
-                    return null;  // not required here
                 }
             }, headers, HttpStatus.OK );
     }
