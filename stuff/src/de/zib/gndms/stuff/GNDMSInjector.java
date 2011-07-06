@@ -1,5 +1,4 @@
-package de.zib.gndms.kit.access;
-
+package de.zib.gndms.stuff;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -16,16 +15,13 @@ package de.zib.gndms.kit.access;
  * limitations under the License.
  */
 
-
-
-import de.zib.gndms.stuff.GNDMSInjector;
-import org.jetbrains.annotations.NotNull;
-
-/**
- * Provides a guice injector
- *
- * @author  try ste fan pla nti kow zib
+import java.lang.Object; /**
+ * @author try ma ik jo rr a zib
+ * @date 06.07.11  15:20
+ * @brief
  */
-public interface InjectorProvider {
-    @NotNull GNDMSInjector getInjector();
+public interface GNDMSInjector {
+
+    void injectMembers( Object existingBean );
+    <T> T getInstance( Class<T> clazz);
 }

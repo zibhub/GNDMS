@@ -74,7 +74,7 @@ import java.util.Map;
 public class TaskFlowServiceImpl implements TaskFlowService {
 
     // private ORQDao orqDao;
-    private String serviceUrl; // inject or read from properties TODO CHECK IF THIS INCLUDES GORFX POSTFIX
+    private String serviceUrl; // inject or read from properties, doesn't contain gorfx postfix
     private TaskFlowProvider taskFlowProvider;
     private List<String> facetsNames = new ArrayList<String>( 7 );
     private UriFactory uriFactory;
@@ -200,7 +200,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
         List<Specifier<Quote>> res = null;
         if( taskFlowProvider.exists( type ) ) {
             TaskFlowFactory tff = taskFlowProvider.getFactoryForTaskFlow( type );
-            TaskFlow tf = tff.find( id );
+            TaskFlow<?> tf = tff.find( id );
             if( tf != null ) {
                 AbstractQuoteCalculator qc = tff.getQuoteCalculator();
                 qc.setOrder( tf.getOrder() );

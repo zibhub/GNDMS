@@ -18,7 +18,7 @@ package de.zib.gndms.kit.access;
 
 
 
-import com.google.inject.Injector;
+import de.zib.gndms.stuff.GNDMSInjector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Provides a GUICE Injector to everybody
+ * Provides a GUICE GNDMSInjector to everybody
  *
  * @auhtor Stefan Plantikow <plantikow@zib.de>
  */
@@ -35,18 +35,18 @@ public final class GNDMSBinding {
 
     public static final InjectorProvider PROVIDER = new GNDMSInjectorProvider();
 
-    public static final InheritableThreadLocal<Injector> THREAD_LOCAL = new InheritableThreadLocal<Injector>() {
+    public static final InheritableThreadLocal<GNDMSInjector> THREAD_LOCAL = new InheritableThreadLocal<GNDMSInjector>() {
         @Override
-        protected @NotNull Injector initialValue() {
-            final Injector aInjectorInstance = DEFAULT.get();
+        protected @NotNull GNDMSInjector initialValue() {
+            final GNDMSInjector aInjectorInstance = DEFAULT.get();
             if (aInjectorInstance == null)
-                throw new IllegalStateException("Default Injector not set");
+                throw new IllegalStateException("Default GNDMSInjector not set");
             return aInjectorInstance;
         }
     };
 
     @SuppressWarnings({"FieldHasSetterButNoGetter"})
-    private static final AtomicReference<Injector> DEFAULT = new AtomicReference<Injector>();
+    private static final AtomicReference<GNDMSInjector> DEFAULT = new AtomicReference<GNDMSInjector>();
 
 
     private GNDMSBinding() {
@@ -60,18 +60,18 @@ public final class GNDMSBinding {
      * @param aInjector
      */
     @SuppressWarnings({"StaticMethodOnlyUsedInOneClass"})
-    public static void setDefaultInjector(final @NotNull Injector aInjector) {
+    public static void setDefaultInjector(final @NotNull GNDMSInjector aInjector) {
         if (! DEFAULT.compareAndSet(null, aInjector))
             throw new IllegalStateException("Default Injector already set");
         LOGGER.info("Default Injector set as a fallback for GNDMSBinding");
     }
 
     private static class GNDMSInjectorProvider implements InjectorProvider {
-        public @NotNull Injector getInjector() {
+        public @NotNull GNDMSInjector getInjector() {
             return THREAD_LOCAL.get();
         }
     }
 
 
-    public static @NotNull Injector getInjector() { return PROVIDER.getInjector(); }
+    public static @NotNull GNDMSInjector getInjector() { return PROVIDER.getInjector(); }
 }

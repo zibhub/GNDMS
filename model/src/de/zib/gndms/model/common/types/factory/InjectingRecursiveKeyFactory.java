@@ -20,7 +20,7 @@ package de.zib.gndms.model.common.types.factory;
 
 import de.zib.gndms.stuff.BoundInjector;
 import org.jetbrains.annotations.NotNull;
-import com.google.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 /**
@@ -76,7 +76,7 @@ public abstract class InjectingRecursiveKeyFactory<K, T extends KeyFactoryInstan
 			return boundInjector;
 	}
 
-	@Inject
+	@Autowired
 	public synchronized void setBoundInjector(final @NotNull BoundInjector boundInjectorParam) {
 		if (boundInjector == null)
 			boundInjector = boundInjectorParam;

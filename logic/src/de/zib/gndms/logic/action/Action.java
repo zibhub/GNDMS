@@ -18,8 +18,8 @@ package de.zib.gndms.logic.action;
 
 
 
-import com.google.inject.Injector;
 import de.zib.gndms.kit.access.InjectorProvider;
+import de.zib.gndms.stuff.GNDMSInjector;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
 
@@ -92,5 +92,5 @@ public interface Action<R> extends Callable<R>, InjectorProvider {
 
     @NotNull <V extends Action<?>> List<V> getParentChain(final @NotNull Class<V> interfaceClass);
 
-    void setInjector(Injector anInjector);
+    void setInjector(GNDMSInjector anInjector);
 }
