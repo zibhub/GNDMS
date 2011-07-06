@@ -1,4 +1,4 @@
-package de.zib.gndms.kit.dspace;
+package de.zib.gndms.common.kit.dspace;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -19,22 +19,29 @@ package de.zib.gndms.kit.dspace;
 /**
  * A simple implementation of a product type AxB.
  * 
+ * @param <A> The type of the first entry
+ * @param <B> The type of the second entry 
+ * 
  * @author Ulrike Golas
  */
 
 public class Product<A, B> {
 
-	// The first entry
+	/**
+	 *  The first entry.
+	 */
 	private A a;
-	// The second entry
+	/**
+	 *  The second entry.
+	 */
 	private B b;
 	
 	/**
 	 * Constructs a product element (a,b) in AxB.
-	 * @param a The first entry.
-	 * @param b The second entry.
+	 * @param first The first entry.
+	 * @param second The second entry.
 	 */
-	public Product(A first, B second) {
+	public Product(final A first, final B second) {
 		this.a = first;
 		this.b = second;
 	}
@@ -43,7 +50,7 @@ public class Product<A, B> {
 	 * Returns the first element of a product.
 	 * @return The first entry.
 	 */
-	public A getFirst() {
+	public final A getFirst() {
 	   return a;
 	}
    
@@ -51,23 +58,24 @@ public class Product<A, B> {
 	 * Returns the second element of a product.
 	 * @return The second entry.
 	 */
-	public B getSecond() {
+	public final B getSecond() {
 	   return b;
 	}
 	
 	/**
-	 * Sets the first element of a product
-	 * @param a The first entry.
+	 * Sets the first element of a product.
+	 * @param first
+	 *  The first entry.
 	 */
-	public void setFirst(A first) {
+	public final void setFirst(final A first) {
 		this.a = first;
 	}
 	
 	/**
 	 * Sets the second element of a product.
-	 * @param b The second entry.
+	 * @param second The second entry.
 	 */
-	public void setSecond(B second) {
+	public final void setSecond(final B second) {
 		this.b = second;
 	}
 }

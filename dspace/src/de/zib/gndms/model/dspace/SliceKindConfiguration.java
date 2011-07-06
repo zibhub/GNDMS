@@ -35,7 +35,7 @@ import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
  * uri - the uri for the slice kind as text<br>
  * permission - the permissions of the slice kind as text according to an {@link AccessMask}<br>
  * and may also contain: <br>
- * metasubspaces - the meta-subspaces of the slice kind as text 
+ * metasubspaces - the meta-subspaces of the slice kind as text.
  * 
  * @author Ulrike Golas
  * 
@@ -44,9 +44,18 @@ import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
 
 public class SliceKindConfiguration extends ConfigHolder {
 
-	public static String URI = "uri";
-	public static String PERMISSION = "permission";
-	public static String METASUBSPACES = "metasubspaces";
+	/**
+	 * The key for the slice kind's uri.
+	 */
+	public static final String URI = "uri";
+	/**
+	 * The key for the slice kind's permission.
+	 */
+	public static final String PERMISSION = "permission";
+	/**
+	 * The key for the slice kind's meta-subspaces.
+	 */
+	public static final String METASUBSPACES = "metasubspaces";
 
 	/**
 	 * Checks if a given config holder is a valid slice kind configuration.
@@ -78,7 +87,8 @@ public class SliceKindConfiguration extends ConfigHolder {
 	 * @throws IOException 
 	 * @throws UpdateRejectedException 
 	 */
-	public static ConfigHolder getSliceKindConfiguration(final SliceKind slicekind) throws IOException, UpdateRejectedException {
+	public static ConfigHolder getSliceKindConfiguration(final SliceKind slicekind) 
+			throws IOException, UpdateRejectedException {
 		String uri = slicekind.getURI();
 		AccessMask permission = slicekind.getPermission();
 		Set<MetaSubspace> metaSubspaces = slicekind.getMetaSubspaces();
@@ -105,9 +115,8 @@ public class SliceKindConfiguration extends ConfigHolder {
 	 * Returns the uri of a slice kind configuration.
 	 * @param config The config holder, which has to be a valid slice kind configuration.
 	 * @return The uri.
-	 * @throws WrongConfigurationException if the configuration does not contain a uri.
 	 */
-	public static String getUri(final ConfigHolder config) throws WrongConfigurationException {
+	public static String getUri(final ConfigHolder config) {
 		try {
 			if (config.getNode().findValue(URI).isTextual()) {
 				return config.getNode().findValue(URI).getTextValue();
@@ -123,9 +132,8 @@ public class SliceKindConfiguration extends ConfigHolder {
 	 * Returns the permissions of a slice kind configuration.
 	 * @param config The config holder, which has to be a valid slice kind configuration.
 	 * @return The permissions.
-	 * @throws WrongConfigurationException if the configuration does not contain a valid permission.
 	 */
-	public static AccessMask getPermission(final ConfigHolder config) throws WrongConfigurationException {
+	public static AccessMask getPermission(final ConfigHolder config) {
 		JsonNode node = config.getNode().findValue(PERMISSION);
 		if (node == null) {
 			throw new WrongConfigurationException("The key " + PERMISSION + " does not exist.");
@@ -142,9 +150,8 @@ public class SliceKindConfiguration extends ConfigHolder {
 	 * Returns the meta-subspaces of a slice kind configuration or null, if it is not specified.
 	 * @param config The config holder, which has to be a valid slice kind configuration.
 	 * @return The set of meta-subspaces.
-	 * @throws WrongConfigurationException if the configuration does not contain a path.
 	 */
-	public static Set<MetaSubspace> getMetaSubspaces(final ConfigHolder config) throws WrongConfigurationException {
+	public static Set<MetaSubspace> getMetaSubspaces(final ConfigHolder config) {
 		try {
 		if (config.getNode().findValue(METASUBSPACES).isTextual()) {
 			// TODO get meta-subspaces
@@ -168,7 +175,7 @@ public class SliceKindConfiguration extends ConfigHolder {
 			long nr = node.getLongValue();
 			AccessMask.fromString(Long.toString(nr));
 			return true;
-		} catch(IllegalArgumentException e) {
+		} catch (IllegalArgumentException e) {
 			return false;
 		}
 	}

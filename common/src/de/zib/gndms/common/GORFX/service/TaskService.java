@@ -15,11 +15,15 @@ package de.zib.gndms.common.GORFX.service;
  * limitations under the License.
  */
 
-import de.zib.gndms.common.model.gorfx.types.*;
+import de.zib.gndms.common.model.gorfx.types.TaskControl;
+import de.zib.gndms.common.model.gorfx.types.TaskFailure;
+import de.zib.gndms.common.model.gorfx.types.TaskResult;
+import de.zib.gndms.common.model.gorfx.types.TaskServiceConfig;
+import de.zib.gndms.common.model.gorfx.types.TaskServiceInfo;
+import de.zib.gndms.common.model.gorfx.types.TaskStatus;
 import de.zib.gndms.common.rest.Facets;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 /**
  * @author try ma ik jo rr a zib

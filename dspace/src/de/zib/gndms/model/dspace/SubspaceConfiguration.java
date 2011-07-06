@@ -41,11 +41,26 @@ import de.zib.gndms.stuff.confuror.ConfigEditor;
  */
 public final class SubspaceConfiguration extends ConfigHolder {
 
-	public static String PATH = "path";
-	public static String GSIFTPPATH = "gsiFtpPath";
-	public static String VISIBLE = "visible";
-	public static String SIZE = "size";
-	public static String MODE = "mode";
+	/**
+	 * The key for the subspace's path.
+	 */
+	public static final String PATH = "path";
+	/**
+	 * The key for the subspace's gsiftp-path.
+	 */
+	public static final String GSIFTPPATH = "gsiFtpPath";
+	/**
+	 * The key for the subspace's visibility.
+	 */
+	public static final String VISIBLE = "visible";
+	/**
+	 * The key for the subspace's size.
+	 */
+	public static final String SIZE = "size";
+	/**
+	 * The key for the subspace's mode.
+	 */
+	public static final String MODE = "mode";
 	
 	/**
 	 * Checks if a given config holder is a valid subspace configuration.
@@ -79,7 +94,8 @@ public final class SubspaceConfiguration extends ConfigHolder {
 	 * @throws IOException 
 	 * @throws UpdateRejectedException 
 	 */
-	public static ConfigHolder getSubspaceConfiguration(final Subspace sub) throws IOException, UpdateRejectedException {
+	public static ConfigHolder getSubspaceConfiguration(final Subspace sub) 
+			throws IOException, UpdateRejectedException {
 		String path = sub.getPath();
 		String gsiftp = sub.getGsiFtpPath();
 		boolean visible = sub.getMetaSubspace().isVisibleToPublic();
@@ -112,9 +128,8 @@ public final class SubspaceConfiguration extends ConfigHolder {
 	 * Returns the path of a subspace configuration.
 	 * @param config The config holder, which has to be a valid subspace configuration.
 	 * @return The path.
-	 * @throws WrongConfigurationException if the configuration does not contain a path.
 	 */
-	public static String getPath(final ConfigHolder config) throws WrongConfigurationException {
+	public static String getPath(final ConfigHolder config) {
 		try {
 			if (config.getNode().findValue(PATH).isTextual()) {
 				return config.getNode().findValue(PATH).getTextValue();
@@ -130,9 +145,8 @@ public final class SubspaceConfiguration extends ConfigHolder {
 	 * Returns the gsi ftp path of a subspace configuration.
 	 * @param config The config holder, which has to be a valid subspace configuration.
 	 * @return The gsiFtp path.
-	 * @throws WrongConfigurationException if the configuration does not contain a gsi ftp path.
 	 */
-	public static String getGsiFtpPath(final ConfigHolder config) throws WrongConfigurationException {
+	public static String getGsiFtpPath(final ConfigHolder config) {
 		try {
 			if (config.getNode().findValue(GSIFTPPATH).isTextual()) {
 				return config.getNode().findValue(GSIFTPPATH).getTextValue();
@@ -148,9 +162,8 @@ public final class SubspaceConfiguration extends ConfigHolder {
 	 * Returns the visibility of a subspace configuration.
 	 * @param config The config holder, which has to be a valid subspace configuration.
 	 * @return The visibility.
-	 * @throws WrongConfigurationException if the configuration does not contain a visibility.
 	 */
-	public static boolean getVisibility(final ConfigHolder config) throws WrongConfigurationException {
+	public static boolean getVisibility(final ConfigHolder config) {
 		try {
 			if (config.getNode().findValue(VISIBLE).isBoolean()) {
 				return config.getNode().findValue(VISIBLE).getBooleanValue();
@@ -166,9 +179,8 @@ public final class SubspaceConfiguration extends ConfigHolder {
 	 * Returns the size of a subspace configuration.
 	 * @param config The config holder, which has to be a valid subspace configuration.
 	 * @return The size.
-	 * @throws WrongConfigurationException if the configuration does not contain a size.
 	 */
-	public static long getSize(final ConfigHolder config) throws WrongConfigurationException {
+	public static long getSize(final ConfigHolder config) {
 		try {
 			if (config.getNode().findValue(SIZE).isNumber()) {
 				return config.getNode().findValue(SIZE).getLongValue();
@@ -184,9 +196,8 @@ public final class SubspaceConfiguration extends ConfigHolder {
 	 * Returns the mode of a subspace configuration.
 	 * @param config The config holder, which has to be a valid subspace configuration.
 	 * @return The size.
-	 * @throws WrongConfigurationException if the configuration does not contain a size.
 	 */
-	public static SetupMode getMode(final ConfigHolder config) throws WrongConfigurationException {
+	public static SetupMode getMode(final ConfigHolder config) {
 			JsonNode node = config.getNode().findValue(MODE);
 			if (node == null) {
 				throw new WrongConfigurationException("The key " + MODE + " does not exist.");
@@ -208,9 +219,9 @@ public final class SubspaceConfiguration extends ConfigHolder {
 		try {
 			SetupMode.valueOf(node.getTextValue());
 			return true;
-		} catch(IllegalArgumentException e) {
+		} catch (IllegalArgumentException e) {
 			return false;
-		} catch(NullPointerException e) {
+		} catch (NullPointerException e) {
 			return false;
 		}
 	}

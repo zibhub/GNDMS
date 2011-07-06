@@ -15,7 +15,11 @@ package de.zib.gndms.common.GORFX.service;
  * limitations under the License.
  */
 
-import de.zib.gndms.common.model.gorfx.types.*;
+import de.zib.gndms.common.model.gorfx.types.Order;
+import de.zib.gndms.common.model.gorfx.types.Quote;
+import de.zib.gndms.common.model.gorfx.types.TaskFailure;
+import de.zib.gndms.common.model.gorfx.types.TaskFlowStatus;
+import de.zib.gndms.common.model.gorfx.types.TaskResult;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
 
@@ -33,7 +37,8 @@ import java.util.List;
  * resources. The instantiation or creation happens through the GORFX
  * service itself.
  *
- * @Note Regarding the return values if not documented differently the HttpStatus is 200 (OK) if the call was successful,
+ * @Note Regarding the return values if not documented differently the HttpStatus is 
+ *  200 (OK) if the call was successful,
  *  404 if the resource wasn't found
  *  or 403 (Forbidden) if the user hasn't the necessary credentials to access the resource.
  */

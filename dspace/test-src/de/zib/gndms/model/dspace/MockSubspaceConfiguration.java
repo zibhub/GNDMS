@@ -21,6 +21,8 @@ import java.io.IOException;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.zib.gndms.logic.model.config.SetupAction.SetupMode;
 import de.zib.gndms.stuff.confuror.ConfigEditor;
@@ -35,7 +37,19 @@ import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
 
 public class MockSubspaceConfiguration extends ConfigHolder {
 
-	public MockSubspaceConfiguration(String path, String gsiftp, boolean visible, long value, SetupMode mode) {
+	/**
+	 * Constructs a mock config holder for a subspace configuration.
+	 * 
+	 * @param path The subspace's path.
+	 * @param gsiftp The subspace's gsiftp path.
+	 * @param visible The subspace's visibility.
+	 * @param value The subspace's size.
+	 * @param mode The subspace's mode.
+	 */
+	public MockSubspaceConfiguration(final String path, final String gsiftp, final boolean visible, 
+			final long value, final SetupMode mode) {
+		Logger logger = LoggerFactory.getLogger(this.getClass());
+
 		ObjectMapper objectMapper = new ObjectMapper();
 		JsonFactory factory = objectMapper.getJsonFactory();
 		ConfigEditor.Visitor visitor = new ConfigEditor.DefaultVisitor();
@@ -43,18 +57,25 @@ public class MockSubspaceConfiguration extends ConfigHolder {
 		setObjectMapper(objectMapper);
 		
 		try {
-			JsonNode pn = ConfigHolder.parseSingle(factory, SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.PATH, path));
-			JsonNode gn = ConfigHolder.parseSingle(factory, SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.GSIFTPPATH, gsiftp));
-			JsonNode vn = ConfigHolder.parseSingle(factory, SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.VISIBLE, visible));
-			JsonNode sn = ConfigHolder.parseSingle(factory, SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.SIZE, value));
-			JsonNode mn = ConfigHolder.parseSingle(factory, SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.MODE, mode));
+			JsonNode pn = ConfigHolder.parseSingle(factory, 
+					SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.PATH, path));
+			JsonNode gn = ConfigHolder.parseSingle(factory, 
+					SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.GSIFTPPATH, gsiftp));
+			JsonNode vn = ConfigHolder.parseSingle(factory, 
+					SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.VISIBLE, visible));
+			JsonNode sn = ConfigHolder.parseSingle(factory, 
+					SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.SIZE, value));
+			JsonNode mn = ConfigHolder.parseSingle(factory, 
+					SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.MODE, mode));
 			update(editor, pn);
 			update(editor, gn);
 			update(editor, vn);
 			update(editor, sn);
 			update(editor, mn);
 		} catch (IOException e) {
+			logger.warn("Mock subspace configuration could not be established.");
 		} catch (UpdateRejectedException e) {
+			logger.warn("Mock subspace configuration could not be established.");
 		}
 	}
 

@@ -43,200 +43,183 @@ public class MockRestTemplate implements RestOperations {
 	private String serviceURL;
 
 	@Override
-	public <T> T getForObject(String url, Class<T> responseType,
-			Object... uriVariables) throws RestClientException {
+	public final <T> T getForObject(final String url, final Class<T> responseType,
+			final Object... uriVariables) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public <T> T getForObject(String url, Class<T> responseType,
-			Map<String, ?> uriVariables) throws RestClientException {
+	public final <T> T getForObject(final String url, final Class<T> responseType,
+			final Map<String, ?> uriVariables) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public <T> T getForObject(URI url, Class<T> responseType)
-			throws RestClientException {
+	public final <T> T getForObject(final URI url, final Class<T> responseType) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public <T> ResponseEntity<T> getForEntity(String url,
-			Class<T> responseType, Object... uriVariables)
-			throws RestClientException {
+	public final <T> ResponseEntity<T> getForEntity(final String url,
+			final Class<T> responseType, final Object... uriVariables) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public <T> ResponseEntity<T> getForEntity(String url,
-			Class<T> responseType, Map<String, ?> uriVariables)
-			throws RestClientException {
+	public final <T> ResponseEntity<T> getForEntity(final String url,
+			final Class<T> responseType, final Map<String, ?> uriVariables) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public <T> ResponseEntity<T> getForEntity(URI url, Class<T> responseType)
-			throws RestClientException {
+	public final <T> ResponseEntity<T> getForEntity(final URI url, final Class<T> responseType) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public HttpHeaders headForHeaders(String url, Object... uriVariables)
-			throws RestClientException {
+	public final HttpHeaders headForHeaders(final String url, final Object... uriVariables) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public HttpHeaders headForHeaders(String url, Map<String, ?> uriVariables)
-			throws RestClientException {
+	public final HttpHeaders headForHeaders(final String url, final Map<String, ?> uriVariables) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public HttpHeaders headForHeaders(URI url) throws RestClientException {
+	public final HttpHeaders headForHeaders(final URI url) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public URI postForLocation(String url, Object request,
-			Object... uriVariables) throws RestClientException {
+	public final URI postForLocation(final String url, final Object request,
+			final Object... uriVariables) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public URI postForLocation(String url, Object request,
-			Map<String, ?> uriVariables) throws RestClientException {
+	public final URI postForLocation(final String url, final Object request,
+			final Map<String, ?> uriVariables) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public URI postForLocation(URI url, Object request)
-			throws RestClientException {
+	public final URI postForLocation(final URI url, final Object request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public <T> T postForObject(String url, Object request,
-			Class<T> responseType, Object... uriVariables)
-			throws RestClientException {
+	public final <T> T postForObject(final String url, final Object request,
+			final Class<T> responseType, final Object... uriVariables) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public <T> T postForObject(String url, Object request,
-			Class<T> responseType, Map<String, ?> uriVariables)
-			throws RestClientException {
+	public final <T> T postForObject(final String url, final Object request,
+			final Class<T> responseType, final Map<String, ?> uriVariables) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public <T> T postForObject(URI url, Object request, Class<T> responseType)
-			throws RestClientException {
+	public final <T> T postForObject(final URI url, final Object request, final Class<T> responseType) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public <T> ResponseEntity<T> postForEntity(String url, Object request,
-			Class<T> responseType, Object... uriVariables)
-			throws RestClientException {
+	public final <T> ResponseEntity<T> postForEntity(final String url, final Object request,
+			final Class<T> responseType, final Object... uriVariables) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public <T> ResponseEntity<T> postForEntity(String url, Object request,
-			Class<T> responseType, Map<String, ?> uriVariables)
-			throws RestClientException {
+	public final <T> ResponseEntity<T> postForEntity(final String url, final Object request,
+			final Class<T> responseType, final Map<String, ?> uriVariables) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public <T> ResponseEntity<T> postForEntity(URI url, Object request,
-			Class<T> responseType) throws RestClientException {
+	public final <T> ResponseEntity<T> postForEntity(final URI url, final Object request,
+			final Class<T> responseType) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void put(String url, Object request, Object... uriVariables)
-			throws RestClientException {
+	public void put(final String url, final Object request, final Object... uriVariables) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void put(String url, Object request, Map<String, ?> uriVariables)
-			throws RestClientException {
+	public void put(final String url, final Object request, final Map<String, ?> uriVariables) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void put(URI url, Object request) throws RestClientException {
+	public void put(final URI url, final Object request) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void delete(String url, Object... uriVariables)
-			throws RestClientException {
+	public void delete(final String url, final Object... uriVariables) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void delete(String url, Map<String, ?> uriVariables)
-			throws RestClientException {
+	public void delete(final String url, final Map<String, ?> uriVariables) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void delete(URI url) throws RestClientException {
+	public void delete(final URI url) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public Set<HttpMethod> optionsForAllow(String url, Object... uriVariables)
-			throws RestClientException {
+	public final Set<HttpMethod> optionsForAllow(final String url, final Object... uriVariables) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Set<HttpMethod> optionsForAllow(String url,
-			Map<String, ?> uriVariables) throws RestClientException {
+	public final Set<HttpMethod> optionsForAllow(final String url,
+			final Map<String, ?> uriVariables) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Set<HttpMethod> optionsForAllow(URI url) throws RestClientException {
+	public final Set<HttpMethod> optionsForAllow(final URI url) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public <T> ResponseEntity<T> exchange(String url, HttpMethod method,
-			HttpEntity<?> requestEntity, Class<T> responseType,
-			Object... uriVariables) throws RestClientException {
+	public final <T> ResponseEntity<T> exchange(final String url, final HttpMethod method,
+			final HttpEntity<?> requestEntity, final Class<T> responseType,
+			final Object... uriVariables) {
 		
 		if (!validUrlMethod(url, method)) {
 			throw new RestClientException("Invalid http request for this url");
@@ -246,56 +229,70 @@ public class MockRestTemplate implements RestOperations {
 	}
 
 	@Override
-	public <T> ResponseEntity<T> exchange(String url, HttpMethod method,
-			HttpEntity<?> requestEntity, Class<T> responseType,
-			Map<String, ?> uriVariables) throws RestClientException {
+	public final <T> ResponseEntity<T> exchange(final String url, final HttpMethod method,
+			final HttpEntity<?> requestEntity, final Class<T> responseType,
+			final Map<String, ?> uriVariables) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public <T> ResponseEntity<T> exchange(URI url, HttpMethod method,
-			HttpEntity<?> requestEntity, Class<T> responseType)
-			throws RestClientException {
+	public final <T> ResponseEntity<T> exchange(final URI url, final HttpMethod method,
+			final HttpEntity<?> requestEntity, final Class<T> responseType) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public <T> T execute(String url, HttpMethod method,
-			RequestCallback requestCallback,
-			ResponseExtractor<T> responseExtractor, Object... uriVariables)
-			throws RestClientException {
+	public final <T> T execute(final String url, final HttpMethod method,
+			final RequestCallback requestCallback,
+			final ResponseExtractor<T> responseExtractor, final Object... uriVariables) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public <T> T execute(String url, HttpMethod method,
-			RequestCallback requestCallback,
-			ResponseExtractor<T> responseExtractor, Map<String, ?> uriVariables)
-			throws RestClientException {
+	public final <T> T execute(final String url, final HttpMethod method,
+			final RequestCallback requestCallback,
+			final ResponseExtractor<T> responseExtractor, final Map<String, ?> uriVariables) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public <T> T execute(URI url, HttpMethod method,
-			RequestCallback requestCallback,
-			ResponseExtractor<T> responseExtractor) throws RestClientException {
+	public final <T> T execute(final URI url, final HttpMethod method,
+			final RequestCallback requestCallback,
+			final ResponseExtractor<T> responseExtractor) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public String getServiceURL() {
+	/**
+	 * Gets the service url.
+	 * 
+	 * @return The service url.
+	 */
+	public final String getServiceURL() {
 		return serviceURL;
 	}
 
-	public void setServiceURL(String serviceURL) {
+	/**
+	 * Sets the service URL.
+	 * 
+	 * @param serviceURL The service url.
+	 */
+	public final void setServiceURL(final String serviceURL) {
 		this.serviceURL = serviceURL;
 	}
 
-	private boolean validUrlMethod(String url, HttpMethod method) {
+	/**
+	 * Checks if the given HTTP method is allowed to be executed on the given url.
+	 * 
+	 * @param url The url the method shall be executed.
+	 * @param method The HTTP method.
+	 * @return true, if the method can be executed on the url, else false.
+	 */
+	private boolean validUrlMethod(final String url, final HttpMethod method) {
 		if (url.matches(serviceURL + "/dspace")) {
 			if (method.equals(HttpMethod.GET)) {
 				return true;
@@ -321,13 +318,15 @@ public class MockRestTemplate implements RestOperations {
 		}
 
 		if (url.matches(serviceURL + "/dspace/_\\w+/_\\w+")) {
-			if (method.equals(HttpMethod.GET) || method.equals(HttpMethod.PUT) || method.equals(HttpMethod.DELETE) || method.equals(HttpMethod.POST)) {
+			if (method.equals(HttpMethod.GET) || method.equals(HttpMethod.PUT) 
+					|| method.equals(HttpMethod.DELETE) || method.equals(HttpMethod.POST)) {
 				return true;
 			}
 		}
 		
 		if (url.matches(serviceURL + "/dspace/_\\w+/_\\w+/_\\w+")) {
-			if (method.equals(HttpMethod.GET) || method.equals(HttpMethod.PUT) || method.equals(HttpMethod.DELETE) || method.equals(HttpMethod.POST)) {
+			if (method.equals(HttpMethod.GET) || method.equals(HttpMethod.PUT) 
+					|| method.equals(HttpMethod.DELETE) || method.equals(HttpMethod.POST)) {
 				return true;
 			}
 		}
