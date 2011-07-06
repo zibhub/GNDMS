@@ -17,19 +17,30 @@ package de.zib.gndms.model.dspace;
  */
 
 /**
- * The wrong configuration exception, which is thrown when a given configuration tries to access an invalid configuration parameter.
+ * The wrong configuration exception, which is thrown when a given configuration tries to access an 
+ * invalid configuration parameter.
  * 
  * @author Ulrike Golas
  */
 
 public class WrongConfigurationException extends RuntimeException {
 
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = -6277152854505420912L;
 
+	/**
+	 * The constructor.
+	 */
     public WrongConfigurationException() {
     }
 
-    public WrongConfigurationException(String message) {
+    /**
+     * The constructor.
+     * @param message The exception message.
+     */
+    public WrongConfigurationException(final String message) {
         super(message);
     }
 

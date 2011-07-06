@@ -26,8 +26,6 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import de.zib.gndms.logic.model.config.SetupAction.SetupMode;
-import de.zib.gndms.model.dspace.SubspaceConfiguration;
-import de.zib.gndms.model.dspace.WrongConfigurationException;
 import de.zib.gndms.stuff.confuror.ConfigEditor;
 import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
 import de.zib.gndms.stuff.confuror.ConfigHolder;
@@ -37,17 +35,16 @@ import de.zib.gndms.stuff.confuror.ConfigHolder;
  * @author Ulrike Golas
  *
  */
-public class SubspaceConfigurationTest{
+public class SubspaceConfigurationTest {
 	
 	/**
 	 * Tests the method checkSubspaceConfiguration(ConfigHolder) with a valid configuration
 	 * and the access to the subspace configuration fields.
 	 * @throws IOException 
 	 * @throws UpdateRejectedException 
-	 * @throws WrongConfigurationException 
 	 */
 	@Test
-    public final void testCheckAndGet1() throws IOException, UpdateRejectedException, WrongConfigurationException {
+    public final void testCheckAndGet1() throws IOException, UpdateRejectedException {
 		String path = "testpath";
 		String gsiftp = "gsiftp";
 		boolean visible = true;
@@ -93,10 +90,12 @@ public class SubspaceConfigurationTest{
 			SubspaceConfiguration.getPath(testConfig);
 			AssertJUnit.fail();
 		} catch (WrongConfigurationException e) {
+			AssertJUnit.assertNotNull(e);
 		}
        	
        	// only path set - gsi ftp path is missing
-		JsonNode node = ConfigHolder.parseSingle(factory, SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.PATH,"testpath"));
+		JsonNode node = ConfigHolder.parseSingle(factory, 
+				SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.PATH, "testpath"));
 		testConfig.update(editor, node);
 
        	AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
@@ -104,10 +103,12 @@ public class SubspaceConfigurationTest{
 			SubspaceConfiguration.getGsiFtpPath(testConfig);
 			AssertJUnit.fail();
 		} catch (WrongConfigurationException e) {
+			AssertJUnit.assertNotNull(e);
 		}
 
        	// only path and gsi ftp path set - visibility is missing
-       	node = ConfigHolder.parseSingle(factory, SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.GSIFTPPATH, "gsiftp"));
+       	node = ConfigHolder.parseSingle(factory, 
+       			SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.GSIFTPPATH, "gsiftp"));
 		testConfig.update(editor, node);
 
        	AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
@@ -115,32 +116,38 @@ public class SubspaceConfigurationTest{
 			SubspaceConfiguration.getVisibility(testConfig);
 			AssertJUnit.fail();
 		} catch (WrongConfigurationException e) {
+			AssertJUnit.assertNotNull(e);
 		}
 
        	// only path, gsi ftp path and visibility set - size is missing
-		node = ConfigHolder.parseSingle(factory, SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.VISIBLE, "true"));
+		node = ConfigHolder.parseSingle(factory, 
+				SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.VISIBLE, "true"));
 		testConfig.update(editor, node);
        	try {
 			SubspaceConfiguration.getSize(testConfig);
 			AssertJUnit.fail();
 		} catch (WrongConfigurationException e) {
+			AssertJUnit.assertNotNull(e);
 		}
 
        	AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
 
        	// only path, gsi ftp path, visibility, and size set - mode is missing
-		node = ConfigHolder.parseSingle(factory, SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.SIZE, testValue));
+		node = ConfigHolder.parseSingle(factory, 
+				SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.SIZE, testValue));
 		testConfig.update(editor, node);
        	try {
 			SubspaceConfiguration.getMode(testConfig);
 			AssertJUnit.fail();
 		} catch (WrongConfigurationException e) {
+			AssertJUnit.assertNotNull(e);
 		}
 
        	AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
 
        	// wrong type of path value - number instead of string
-		node = ConfigHolder.parseSingle(factory, SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.PATH, testValue));
+		node = ConfigHolder.parseSingle(factory, 
+				SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.PATH, testValue));
 		testConfig.update(editor, node);
 
 		AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
@@ -148,10 +155,12 @@ public class SubspaceConfigurationTest{
 			SubspaceConfiguration.getPath(testConfig);
 			AssertJUnit.fail();
 		} catch (WrongConfigurationException e) {
+			AssertJUnit.assertNotNull(e);
 		}
 
        	// wrong type of gsi ftp path value - number instead of string
-		node = ConfigHolder.parseSingle(factory, SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.GSIFTPPATH, testValue));
+		node = ConfigHolder.parseSingle(factory, 
+				SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.GSIFTPPATH, testValue));
 		testConfig.update(editor, node);
 
 		AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
@@ -159,11 +168,12 @@ public class SubspaceConfigurationTest{
 			SubspaceConfiguration.getGsiFtpPath(testConfig);
 			AssertJUnit.fail();
 		} catch (WrongConfigurationException e) {
+			AssertJUnit.assertNotNull(e);
 		}
 
-
        	// wrong type of visibility value - number instead of boolean
-		node = ConfigHolder.parseSingle(factory, SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.VISIBLE, testValue));
+		node = ConfigHolder.parseSingle(factory, 
+				SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.VISIBLE, testValue));
 		testConfig.update(editor, node);
 
 		AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
@@ -171,11 +181,13 @@ public class SubspaceConfigurationTest{
 			SubspaceConfiguration.getVisibility(testConfig);
 			AssertJUnit.fail();
 		} catch (WrongConfigurationException e) {
+			AssertJUnit.assertNotNull(e);
 		}
 
 
        	// wrong type of size value - string instead of number
-		node = ConfigHolder.parseSingle(factory, SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.SIZE, "testpath"));
+		node = ConfigHolder.parseSingle(factory, 
+				SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.SIZE, "testpath"));
 		testConfig.update(editor, node);
 
 		AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
@@ -183,10 +195,12 @@ public class SubspaceConfigurationTest{
 			SubspaceConfiguration.getSize(testConfig);
 			AssertJUnit.fail();
 		} catch (WrongConfigurationException e) {
+			AssertJUnit.assertNotNull(e);
 		}
 
        	// wrong type of mode value - number instead of string
-		node = ConfigHolder.parseSingle(factory, SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.MODE, testValue));
+		node = ConfigHolder.parseSingle(factory, 
+				SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.MODE, testValue));
 		testConfig.update(editor, node);
 
 		AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
@@ -194,10 +208,12 @@ public class SubspaceConfigurationTest{
 			SubspaceConfiguration.getMode(testConfig);
 			AssertJUnit.fail();
 		} catch (WrongConfigurationException e) {
+			AssertJUnit.assertNotNull(e);
 		}
 
        	// invalid mode value
-		node = ConfigHolder.parseSingle(factory, SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.MODE, "WRONG"));
+		node = ConfigHolder.parseSingle(factory, 
+				SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.MODE, "WRONG"));
 		testConfig.update(editor, node);
 
 		AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
@@ -205,11 +221,15 @@ public class SubspaceConfigurationTest{
 			SubspaceConfiguration.getMode(testConfig);
 			AssertJUnit.fail();
 		} catch (WrongConfigurationException e) {
+			AssertJUnit.assertNotNull(e);
 		}
 }
 	
 	/**
 	 * Tests the method getSubspaceConfiguration.
+	 * 
+	 * @throws IOException 
+	 * @throws UpdateRejectedException 
 	 */
 	@Test
     public final void testGetSubspaceConfiguration() throws IOException, UpdateRejectedException {
@@ -223,7 +243,7 @@ public class SubspaceConfigurationTest{
 		dummy.setGsiFtpPath(gsiftp);
 		boolean visible = true;
 		dummyMeta.setVisibleToPublic(visible);
-		long size = 2000;
+		final long size = 2000;
 		dummy.setAvailableSize(size);
 		SetupMode mode = SetupMode.valueOf("UPDATE");		
 				

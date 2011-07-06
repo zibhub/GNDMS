@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import de.zib.gndms.common.dspace.service.SliceKindService;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
@@ -96,12 +97,15 @@ public class SliceKindServiceImpl implements SliceKindService {
 			return new ResponseEntity<ConfigHolder>(config, headers,
 					HttpStatus.OK);
 		} catch (NoSuchElementException ne) {
+			logger.warn("The slice kind " + sliceKind + "does not exist within the subspace" + subspace + ".");
 			return new ResponseEntity<ConfigHolder>(null, headers,
 					HttpStatus.NOT_FOUND);
 		} catch (IOException e) {
+			logger.warn("The slice kind configuration of " + sliceKind + "could not be computed.");
 			return new ResponseEntity<ConfigHolder>(null, headers,
 					HttpStatus.BAD_REQUEST);
 		} catch (UpdateRejectedException e) {
+			logger.warn("The slice kind configuration of " + sliceKind + "could not be computed.");
 			return new ResponseEntity<ConfigHolder>(null, headers,
 					HttpStatus.BAD_REQUEST);
 		}
@@ -109,7 +113,7 @@ public class SliceKindServiceImpl implements SliceKindService {
 
 	@Override
 	@RequestMapping(value = "/_{subspace}/_{sliceKind}", method = RequestMethod.POST)
-	public final ResponseEntity<Specifier<SliceKind>> setSliceKindConfig(
+	public final ResponseEntity<Specifier<Void>> setSliceKindConfig(
 			@PathVariable final String subspace,
 			@PathVariable final String sliceKind,
 			@RequestBody final ConfigHolder config,
@@ -120,13 +124,13 @@ public class SliceKindServiceImpl implements SliceKindService {
 			SliceKind sliceK = findSliceKind(subspace, sliceKind);
 			
 			if (!SliceKindConfiguration.checkSliceKindConfiguration(config)) {
-				return new ResponseEntity<Specifier<SliceKind>>(null, headers,
+				return new ResponseEntity<Specifier<Void>>(null, headers,
 						HttpStatus.BAD_REQUEST);				
 			}
 
 			// TODO: sliceK.setSliceKindConfiguration(config)
 
-			Specifier<SliceKind> spec = new Specifier<SliceKind>();
+			Specifier<Void> spec = new Specifier<Void>();
 
 			HashMap<String, String> urimap = new HashMap<String, String>(2);
 			urimap.put("service", "dspace");
@@ -135,10 +139,11 @@ public class SliceKindServiceImpl implements SliceKindService {
 			spec.setUriMap(new HashMap<String, String>(urimap));
 			spec.setURL(uriFactory.quoteUri(urimap));
 
-			return new ResponseEntity<Specifier<SliceKind>>(spec, headers,
+			return new ResponseEntity<Specifier<Void>>(spec, headers,
 					HttpStatus.OK);
 		} catch (NoSuchElementException ne) {
-			return new ResponseEntity<Specifier<SliceKind>>(null, headers,
+			logger.warn("The slice kind " + sliceKind + "does not exist within the subspace" + subspace);
+  			return new ResponseEntity<Specifier<Void>>(null, headers,
 					HttpStatus.NOT_FOUND);
 		}
 	}

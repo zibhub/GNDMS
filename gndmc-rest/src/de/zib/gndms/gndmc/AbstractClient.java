@@ -30,104 +30,251 @@ import de.zib.gndms.common.rest.GNDMSResponseHeader;
  * An abstract client which implements the HTTP requests.
  * 
  * @author Ulrike Golas
- *
+ * 
  */
 public abstract class AbstractClient {
 
-    // le logger
-    protected Logger logger = LoggerFactory.getLogger( this.getClass() );
-
+	/**
+	 * The logger.
+	 */
+	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	/**
 	 * A rest template for internal use.
 	 */
 	private RestOperations restTemplate;
 
-
 	/**
 	 * The service url like <code>http://www.barz.org/gndms/<gridname></code>.
 	 */
 	private String serviceURL;
 
+	/**
+	 * The constructor.
+	 */
+	protected AbstractClient() {
+	}
 
-    protected AbstractClient() {
-    }
+	/**
+	 * The constructor.
+	 * 
+	 * @param serviceURL
+	 *            The base url of the grid.
+	 */
+	public AbstractClient(final String serviceURL) {
+		this.serviceURL = serviceURL;
+	}
 
-
-    public AbstractClient( String serviceURL ) {
-        this.serviceURL = serviceURL;
-    }
-
-
-    private <T,P> ResponseEntity<T> unifiedX(HttpMethod x, final Class<T> clazz, final P parm,
-			final String url, final String dn, final String wid){
+	/**
+	 * Executes a given HTTP method on a url.
+	 * 
+	 * The request header contains a given user name and workflow id, the body of the request contains 
+	 * a given object of type P.
+	 * 
+	 * @param <T> The body type of the response.
+	 * @param <P> The body type of the request.
+	 * @param x The kind of HTTP method to be executed.
+	 * @param clazz ??? TODO
+	 * @param parm The body of the request.
+	 * @param url The url of the request.
+	 * @param dn The user name.
+	 * @param wid The workflow id.
+	 * @return The response as entity.
+	 */
+	private <T, P> ResponseEntity<T> unifiedX(final HttpMethod x,
+			final Class<T> clazz, final P parm, final String url,
+			final String dn, final String wid) {
 		GNDMSResponseHeader requestHeaders = new GNDMSResponseHeader();
-        if (dn != null)
-            requestHeaders.setDN(dn);
-
-		if (wid != null)
+		if (dn != null) {
+			requestHeaders.setDN(dn);
+		}
+		if (wid != null) {
 			requestHeaders.setWId(wid);
-
+		}
 		HttpEntity<P> requestEntity = new HttpEntity<P>(parm, requestHeaders);
 		return restTemplate.exchange(url, x, requestEntity, clazz);
 	}
-	
-	protected final <T> ResponseEntity<T> unifiedGet(final Class<T> clazz, final String url,
-			final String dn) {
+
+	/**
+	 * Executes a GET on a url, where the request header contains a given user name.
+	 * 
+	 * @param <T> The body type of the response.
+	 * @param clazz ??? TODO
+	 * @param url The url of the request.
+	 * @param dn The user name.
+	 * @return The response as entity.
+	 */
+	protected final <T> ResponseEntity<T> unifiedGet(final Class<T> clazz,
+			final String url, final String dn) {
 		return unifiedX(HttpMethod.GET, clazz, null, url, dn, null);
 	}
 
-	protected final <T> ResponseEntity<T> unifiedGet(final Class<T> clazz, final String url,
-			final String dn, final String wid) {
+	/**
+	 * Executes a GET on a url, where the request header contains a given user name and workflow id.
+	 * 
+	 * @param <T> The body type of the response.
+	 * @param clazz ??? TODO
+	 * @param url The url of the request.
+	 * @param dn The user name.
+	 * @param wid The workflow id.
+	 * @return The response as entity.
+	 */
+	protected final <T> ResponseEntity<T> unifiedGet(final Class<T> clazz,
+			final String url, final String dn, final String wid) {
 		return unifiedX(HttpMethod.GET, clazz, null, url, dn, wid);
 	}
 
-	protected final <T, P> ResponseEntity<T> unifiedPost(final Class<T> clazz, final P parm,
-			final String url, final String dn) {
+	/**
+	 * Executes a POST on a url.
+	 * 
+	 * The request header contains a given user name, the body of the request contains 
+	 * a given object of type P.
+	 * 
+	 * @param <T> The body type of the response.
+	 * @param <P> The body type of the request.
+	 * @param clazz ??? TODO
+	 * @param parm The body of the request.
+	 * @param url The url of the request.
+	 * @param dn The user name.
+	 * @return The response as entity.
+	 */
+	protected final <T, P> ResponseEntity<T> unifiedPost(final Class<T> clazz,
+			final P parm, final String url, final String dn) {
 		return unifiedX(HttpMethod.POST, clazz, parm, url, dn, null);
 	}
 
-	protected final <T, P> ResponseEntity<T> unifiedPost(final Class<T> clazz, final P parm,
-			final String url, final String wid, final String dn) {
+	/**
+	 * Executes a POST on a url.
+	 * 
+	 * The request header contains a given user name and workflow id, the body of the request contains 
+	 * a given object of type P.
+	 * 
+	 * @param <T> The body type of the response.
+	 * @param <P> The body type of the request.
+	 * @param clazz ??? TODO
+	 * @param parm The body of the request.
+	 * @param url The url of the request.
+	 * @param dn The user name.
+	 * @param wid The workflow id.
+	 * @return The response as entity.
+	 */
+	protected final <T, P> ResponseEntity<T> unifiedPost(final Class<T> clazz,
+			final P parm, final String url, final String dn, final String wid) {
 		return unifiedX(HttpMethod.POST, clazz, parm, url, dn, wid);
 	}
 
-	protected final <T, P> ResponseEntity<T> unifiedPut(final Class<T> clazz, final P parm,
-			final String url, final String dn) {
+	/**
+	 * Executes a PUT on a url.
+	 * 
+	 * The request header contains a given user name, the body of the request contains 
+	 * a given object of type P.
+	 * 
+	 * @param <T> The body type of the response.
+	 * @param <P> The body type of the request.
+	 * @param clazz ??? TODO
+	 * @param parm The body of the request.
+	 * @param url The url of the request.
+	 * @param dn The user name.
+	 * @return The response as entity.
+	 */
+	protected final <T, P> ResponseEntity<T> unifiedPut(final Class<T> clazz,
+			final P parm, final String url, final String dn) {
 		return unifiedX(HttpMethod.PUT, clazz, parm, url, dn, null);
 	}
 
-	protected final <T, P> ResponseEntity<T> unifiedPut(final Class<T> clazz, final P parm,
-			final String url, final String dn, final String wid) {
+	/**
+	 * Executes a PUT on a url.
+	 * 
+	 * The request header contains a given user name and workflow id, the body of the request contains 
+	 * a given object of type P.
+	 * 
+	 * @param <T> The body type of the response.
+	 * @param <P> The body type of the request.
+	 * @param clazz ??? TODO
+	 * @param parm The body of the request.
+	 * @param url The url of the request.
+	 * @param dn The user name.
+	 * @param wid The workflow id.
+	 * @return The response as entity.
+	 */
+	protected final <T, P> ResponseEntity<T> unifiedPut(final Class<T> clazz,
+			final P parm, final String url, final String dn, final String wid) {
 		return unifiedX(HttpMethod.PUT, clazz, parm, url, dn, wid);
 	}
 
-	protected final ResponseEntity<Void> unifiedDelete(final String url, final String dn) {
+	/**
+	 * Executes a DELETE on a url, where the request header contains a given user name.
+	 * 
+	 * @param url The url of the request.
+	 * @param dn The user name.
+	 * @return The response as entity with Void body.
+	 */
+	protected final ResponseEntity<Void> unifiedDelete(final String url,
+			final String dn) {
 		return unifiedX(HttpMethod.DELETE, Void.class, null, url, dn, null);
 	}
 
-	protected final <T> ResponseEntity<T> unifiedDelete(final Class<T> clazz, final String url, final String dn) {
+	/**
+	 * Executes a DELETE on a url, where the request header contains a given user name.
+	 * 
+	 * @param <T> The body type of the response.
+	 * @param clazz ??? TODO
+	 * @param url The url of the request.
+	 * @param dn The user name.
+	 * @return The response as entity.
+	 */
+	protected final <T> ResponseEntity<T> unifiedDelete(final Class<T> clazz,
+			final String url, final String dn) {
 		return unifiedX(HttpMethod.DELETE, clazz, null, url, dn, null);
 	}
 
-	protected final ResponseEntity<Void> unifiedDelete(final String url, final String dn, final String wid) {
+	/**
+	 * Executes a DELETE on a url, where the request header contains a given user name and workflow id.
+	 * 
+	 * @param url The url of the request.
+	 * @param dn The user name.
+	 * @param wid The workflow id.
+	 * @return The response as entity with Void body.
+	 */
+	protected final ResponseEntity<Void> unifiedDelete(final String url,
+			final String dn, final String wid) {
 		return unifiedX(HttpMethod.DELETE, Void.class, null, url, dn, wid);
 	}
-	
-	public RestOperations getRestTemplate() {
+
+	/**
+	 * Gets the rest template.
+	 * 
+	 * @return The rest template.
+	 */
+	public final RestOperations getRestTemplate() {
 		return restTemplate;
 	}
 
-    @Autowired
-	public void setRestTemplate(RestOperations restTemplate) {
+	/**
+	 * Sets the rest template.
+	 * 
+	 * @param restTemplate The rest template.
+	 */
+	@Autowired
+	public final void setRestTemplate(final RestOperations restTemplate) {
 		this.restTemplate = restTemplate;
 	}
 
-	public String getServiceURL() {
+	/**
+	 * Gets the service url.
+	 * 
+	 * @return The service url.
+	 */
+	public final String getServiceURL() {
 		return serviceURL;
 	}
 
-	public void setServiceURL(String serviceURL) {
+	/**
+	 * Sets the service url.
+	 * 
+	 * @param serviceURL The service url.
+	 */
+	public void setServiceURL(final String serviceURL) {
 		this.serviceURL = serviceURL;
 	}
 

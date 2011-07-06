@@ -1,4 +1,12 @@
-package de.zib.gndms.dspace.service;
+package de.zib.gndms.common.dspace.service;
+
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+
+import de.zib.gndms.common.rest.Facets;
+import de.zib.gndms.common.rest.Specifier;
+import de.zib.gndms.stuff.confuror.ConfigHolder;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -16,21 +24,10 @@ package de.zib.gndms.dspace.service;
  * limitations under the License.
  */
 
-import java.util.List;
-
-import org.springframework.http.ResponseEntity;
-
-import de.zib.gndms.common.rest.Facets;
-import de.zib.gndms.common.rest.Specifier;
-import de.zib.gndms.model.dspace.SliceKind;
-import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.neomodel.gorfx.Task;
-import de.zib.gndms.stuff.confuror.ConfigHolder;
-
 /**
- * The interface of the DSpace service.
+ * The interface of the Subspace service.
  * 
- * Clients and resources which should provide the DSpace service should
+ * Clients and resources which should provide the Subpace service should
  * implement this interface.
  * 
  * Some general remarks on the parameters:
@@ -44,16 +41,32 @@ import de.zib.gndms.stuff.confuror.ConfigHolder;
  * 
  * @author Ulrike Golas
  */
-public interface DSpaceService {
+public interface SubspaceService {
 
 	/**
-	 * Lists all subspaces of the dspace.
+	 * Creates a subspace with the given configuration.
 	 * 
+	 * @param subspace
+	 *            The subspace identifier.
+	 * @param config
+	 *            The subspace configuration.
 	 * @param dn
 	 *            The dn of the user invoking the method.
-	 * @return List of subspaces.
+	 * @return The facets of the created subspace.
 	 */
-	ResponseEntity<List<Specifier<Subspace>>> listSubspaceSpecifiers(String dn);
+	ResponseEntity<Facets> createSubspace(String subspace, ConfigHolder config,
+			String dn);
+
+	/**
+	 * Deletes a subspace.
+	 * 
+	 * @param subspace
+	 *            The subspace identifier.
+	 * @param dn
+	 *            The dn of the user invoking the method.
+	 * @return A confirmation.
+	 */
+	ResponseEntity<Specifier<Void>> deleteSubspace(String subspace, String dn);
 
 	/**
 	 * Lists all facets of the subspace.
@@ -67,29 +80,16 @@ public interface DSpaceService {
 	ResponseEntity<Facets> listAvailableFacets(String subspace, String dn);
 
 	/**
-	 * Creates a subspace with the given configuration.
-	 * 
-	 * @param subspace
-	 *            The subspace identifier.
-	 * @param config
-	 *            The subspace configuration.
-	 * @param dn
-	 *            The dn of the user invoking the method.
-	 * @return The facets of the created subspace.
-	 */
-	ResponseEntity<Facets> createSubspace(String subspace,
-			ConfigHolder config, String dn);
-
-	/**
-	 * Deletes a subspace.
+	 * Lists all available slice kinds.
 	 * 
 	 * @param subspace
 	 *            The subspace identifier.
 	 * @param dn
 	 *            The dn of the user invoking the method.
-	 * @return A confirmation.
+	 * @return The list of slice kinds.
 	 */
-	ResponseEntity<Specifier<Task>> deleteSubspace(String subspace, String dn);
+	ResponseEntity<List<Specifier<Void>>> listSliceKinds(String subspace,
+			String dn);
 
 	/**
 	 * Lists a subspace configuration.
@@ -100,8 +100,8 @@ public interface DSpaceService {
 	 *            The dn of the user invoking the method.
 	 * @return The subspace configuration.
 	 */
-	ResponseEntity<ConfigHolder> listSubspaceConfiguration(
-			String subspace, String dn);
+	ResponseEntity<ConfigHolder> listSubspaceConfiguration(String subspace,
+			String dn);
 
 	/**
 	 * Changes a subspace configuration.
@@ -116,16 +116,4 @@ public interface DSpaceService {
 	 */
 	ResponseEntity<Void> setSubspaceConfiguration(String subspace,
 			ConfigHolder config, String dn);
-
-	/**
-	 * Lists all available slice kinds.
-	 * 
-	 * @param subspace
-	 *            The subspace identifier.
-	 * @param dn
-	 *            The dn of the user invoking the method.
-	 * @return The list of slice kinds.
-	 */
-	ResponseEntity<List<Specifier<SliceKind>>> listSliceKinds(String subspace, String dn);
-
 }
