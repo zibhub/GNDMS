@@ -34,17 +34,25 @@ import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
  * directory - the (relative) path of the slice as text<br>
  * owner - the owner of the slice as text<br>
  * termination - the termination time of the slice as number representing
- * standard base time
+ * standard base time.
  * 
  * @author Ulrike Golas
  * 
  */
 
 public class SliceConfiguration extends ConfigHolder {
-
-	public static String DIRECTORY = "directory";
-	public static String OWNER = "owner";
-	public static String TERMINATION = "termination";
+	/**
+	 * The key for the slice's directory.
+	 */
+	public static final String DIRECTORY = "directory";
+	/**
+	 * The key for the slice's owner.
+	 */
+	public static final String OWNER = "owner";
+	/**
+	 * The key for the slice's termination time.
+	 */
+	public static final String TERMINATION = "termination";
 
 	/**
 	 * Checks if a given config holder is a valid slice configuration.
@@ -73,8 +81,8 @@ public class SliceConfiguration extends ConfigHolder {
 	 * @param slice
 	 *            The slice.
 	 * @return The config holder.
-	 * @throws IOException
-	 * @throws UpdateRejectedException
+	 * @throws IOException 
+	 * @throws UpdateRejectedException 
 	 */
 	public static ConfigHolder getSliceConfiguration(final Slice slice)
 			throws IOException, UpdateRejectedException {
@@ -106,11 +114,8 @@ public class SliceConfiguration extends ConfigHolder {
 	 *            The config holder, which has to be a valid slice
 	 *            configuration.
 	 * @return The directory.
-	 * @throws WrongConfigurationException
-	 *             if the configuration does not contain a path.
 	 */
-	public static String getDirectory(final ConfigHolder config)
-			throws WrongConfigurationException {
+	public static String getDirectory(final ConfigHolder config) {
 		try {
 			if (config.getNode().findValue(DIRECTORY).isTextual()) {
 				return config.getNode().findValue(DIRECTORY).getTextValue();
@@ -129,11 +134,8 @@ public class SliceConfiguration extends ConfigHolder {
 	 *            The config holder, which has to be a valid slice
 	 *            configuration.
 	 * @return The owner.
-	 * @throws WrongConfigurationException
-	 *             if the configuration does not contain a path.
 	 */
-	public static String getOwner(final ConfigHolder config)
-			throws WrongConfigurationException {
+	public static String getOwner(final ConfigHolder config) {
 		try {
 			if (config.getNode().findValue(OWNER).isTextual()) {
 				return config.getNode().findValue(OWNER).getTextValue();
@@ -152,11 +154,8 @@ public class SliceConfiguration extends ConfigHolder {
 	 *            The config holder, which has to be a valid slice
 	 *            configuration.
 	 * @return The directory.
-	 * @throws WrongConfigurationException
-	 *             if the configuration does not contain a path.
 	 */
-	public static Calendar getTerminationTime(final ConfigHolder config)
-			throws WrongConfigurationException {
+	public static Calendar getTerminationTime(final ConfigHolder config) {
 		try {
 			if (config.getNode().findValue(TERMINATION).isNumber()) {
 				GregorianCalendar cal = new GregorianCalendar();

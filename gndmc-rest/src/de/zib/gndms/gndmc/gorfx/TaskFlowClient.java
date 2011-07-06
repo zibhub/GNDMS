@@ -17,7 +17,11 @@ package de.zib.gndms.gndmc.gorfx;
  */
 
 import de.zib.gndms.common.GORFX.service.TaskFlowService;
-import de.zib.gndms.common.model.gorfx.types.*;
+import de.zib.gndms.common.model.gorfx.types.Order;
+import de.zib.gndms.common.model.gorfx.types.Quote;
+import de.zib.gndms.common.model.gorfx.types.TaskFailure;
+import de.zib.gndms.common.model.gorfx.types.TaskFlowStatus;
+import de.zib.gndms.common.model.gorfx.types.TaskResult;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.gndmc.AbstractClient;
@@ -87,7 +91,7 @@ public class TaskFlowClient extends AbstractClient implements TaskFlowService {
 	public final ResponseEntity<Void> setQuote(final String type, final String id, final Quote cont,
 			final String dn, final String wid) {
 		return unifiedPost(Void.class, cont, getServiceURL() + "/gorfx/_" + type + "/_"
-				+ id + "/quote", dn, wid);
+				+ id + "/quote", wid, dn);
 	}
 
 

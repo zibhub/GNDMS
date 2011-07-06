@@ -36,11 +36,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import de.zib.gndms.common.dspace.service.SliceService;
+import de.zib.gndms.common.kit.dspace.Product;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
-import de.zib.gndms.kit.dspace.Product;
 import de.zib.gndms.logic.dspace.NoSuchElementException;
 import de.zib.gndms.logic.dspace.SliceKindProvider;
 import de.zib.gndms.logic.dspace.SliceProvider;
@@ -157,11 +158,11 @@ public class SliceServiceImpl implements SliceService {
 
 	@Override
 	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}", method = RequestMethod.POST)
-	public final ResponseEntity<Specifier<Slice>> transformSlice(
+	public final ResponseEntity<Specifier<Void>> transformSlice(
 			@PathVariable final String subspace,
 			@PathVariable final String sliceKind,
 			@PathVariable final String slice,
-			@RequestBody final Specifier<SliceKind> newSliceKind,
+			@RequestBody final Specifier<Void> newSliceKind,
 			@RequestHeader("DN") final String dn) {
 		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, slice, dn);
 		
@@ -171,7 +172,7 @@ public class SliceServiceImpl implements SliceService {
 			// TODO: check this!
 			SliceKind newSliceK = sliceKinds.getSliceKind(newSliceKind.getURL());
 	        slic.setKind(newSliceK);
-			Specifier<Slice> spec = new Specifier<Slice>();
+			Specifier<Void> spec = new Specifier<Void>();
 			
 			HashMap<String, String> urimap = new HashMap<String, String>(2);
 			urimap.put("service", "dspace");
@@ -181,9 +182,9 @@ public class SliceServiceImpl implements SliceService {
 			spec.setUriMap(new HashMap<String, String>(urimap));
 			spec.setURL(uriFactory.quoteUri(urimap));
 	        
-	        return new ResponseEntity<Specifier<Slice>>(spec, headers, HttpStatus.OK);
+	        return new ResponseEntity<Specifier<Void>>(spec, headers, HttpStatus.OK);
  		} catch (NoSuchElementException ne) {
-			return new ResponseEntity<Specifier<Slice>>(null, headers, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Specifier<Void>>(null, headers, HttpStatus.NOT_FOUND);
 		}
 	}
 

@@ -21,13 +21,11 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
+import de.zib.gndms.common.dspace.service.SliceService;
+import de.zib.gndms.common.kit.dspace.Product;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
-import de.zib.gndms.dspace.service.SliceService;
 import de.zib.gndms.gndmc.AbstractClient;
-import de.zib.gndms.kit.dspace.Product;
-import de.zib.gndms.model.dspace.Slice;
-import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.stuff.confuror.ConfigHolder;
 
 /**
@@ -56,7 +54,8 @@ public class SliceClient extends AbstractClient implements SliceService {
 	@Override
 	public final ResponseEntity<Product<ConfigHolder, Facets>> listSliceFacets(final String subspace,
 			final String sliceKind, final String slice, final String dn) {
-		return (ResponseEntity<Product<ConfigHolder, Facets>>) (Object) unifiedGet(Product.class, getServiceURL() + "/dspace/_" + subspace
+		return (ResponseEntity<Product<ConfigHolder, Facets>>) (Object) unifiedGet(Product.class, getServiceURL() 
+				+ "/dspace/_" + subspace
 				+ "/_" + sliceKind + "/_" + slice, dn);
 	}
 
@@ -69,9 +68,10 @@ public class SliceClient extends AbstractClient implements SliceService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public final ResponseEntity<Specifier<Slice>> transformSlice(final String subspace, final String sliceKind,
-			final String slice, final Specifier<SliceKind> newSliceKind, final String dn) {
-		return (ResponseEntity<Specifier<Slice>>) (Object) unifiedPost(Specifier.class, newSliceKind, getServiceURL() + "/dspace/_" + subspace + "/_"
+	public final ResponseEntity<Specifier<Void>> transformSlice(final String subspace, final String sliceKind,
+			final String slice, final Specifier<Void> newSliceKind, final String dn) {
+		return (ResponseEntity<Specifier<Void>>) (Object) unifiedPost(Specifier.class, newSliceKind, getServiceURL() 
+				+ "/dspace/_" + subspace + "/_"
 				+ sliceKind + "/_" + slice, dn);
 	}
 
@@ -87,7 +87,8 @@ public class SliceClient extends AbstractClient implements SliceService {
 	public final ResponseEntity<List<File>> listFiles(
 			final String subspace, final String sliceKind, final String slice, final List<String> attr,
 			final String dn) {
-		return (ResponseEntity<List<File>>) (Object) unifiedGet(List.class, getServiceURL() + "/dspace/_" + subspace + "/_"
+		return (ResponseEntity<List<File>>) (Object) unifiedGet(List.class, getServiceURL() 
+				+ "/dspace/_" + subspace + "/_"
 				+ sliceKind + "/_" + slice + "/files", dn);
 	}
 

@@ -20,10 +20,6 @@ import org.springframework.http.ResponseEntity;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
-import de.zib.gndms.logic.model.config.SetupAction.SetupMode;
-import de.zib.gndms.model.dspace.MockSubspaceConfiguration;
-import de.zib.gndms.stuff.confuror.ConfigHolder;
-
 /**
  * Tests the DSpaceClient.
  * 
@@ -59,34 +55,10 @@ public class DSpaceClientTest {
 		dcl.setRestTemplate(mockTemplate);
 		
 		String dn = "me";
-		String subspace = "testSubspace";
 		ResponseEntity<?> res;
 
-		res = dcl.listSubspaceSpecifiers("me");
+		res = dcl.listSubspaceSpecifiers(dn);
        	AssertJUnit.assertNotNull(res);
-       	
-		res = dcl.listAvailableFacets(subspace, dn);
-       	AssertJUnit.assertNotNull(res);
-       	
-		String path = "testpath";
-		String gsiftp = "gsiftp";
-		boolean visible = true;
-		final long value = 6000;
-		SetupMode mode = SetupMode.valueOf("UPDATE");
-       	ConfigHolder config = new MockSubspaceConfiguration(path, gsiftp, visible, value, mode);
-		res = dcl.createSubspace(subspace, config, dn);
-       	AssertJUnit.assertNotNull(res);
-
-		res = dcl.deleteSubspace(subspace, dn);
-       	AssertJUnit.assertNotNull(res);
-
-		res = dcl.listSubspaceConfiguration(subspace, dn);
-       	AssertJUnit.assertNotNull(res);
-
-		res = dcl.setSubspaceConfiguration(subspace, config, dn);
-       	AssertJUnit.assertNotNull(res);
-
-		res = dcl.listSliceKinds(subspace, dn);
-       	AssertJUnit.assertNotNull(res);
-   	}
+       	   	
+	}
 }

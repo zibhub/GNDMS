@@ -1,4 +1,4 @@
-package de.zib.gndms.dspace.service;
+package de.zib.gndms.common.dspace.service;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -19,7 +19,6 @@ package de.zib.gndms.dspace.service;
 import org.springframework.http.ResponseEntity;
 
 import de.zib.gndms.common.rest.Specifier;
-import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.stuff.confuror.ConfigHolder;
 
 /**
@@ -67,7 +66,7 @@ public interface SliceKindService {
 	 *            The dn of the user invoking the method.
 	 * @return The representation of the slice kind.
 	 */
-	ResponseEntity<Specifier<SliceKind>> setSliceKindConfig(String subspace,
+	ResponseEntity<Specifier<Void>> setSliceKindConfig(String subspace,
 			String sliceKind, ConfigHolder config, String dn);
 
 	/**

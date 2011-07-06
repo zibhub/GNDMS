@@ -16,16 +16,12 @@ package de.zib.gndms.gndmc.dspace;
  * limitations under the License.
  */
 
-import java.io.File;
-import java.util.GregorianCalendar;
-import java.util.Vector;
-
 import org.springframework.http.ResponseEntity;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
-import de.zib.gndms.common.rest.Specifier;
-import de.zib.gndms.model.dspace.MockSliceConfiguration;
+import de.zib.gndms.logic.model.config.SetupAction.SetupMode;
+import de.zib.gndms.model.dspace.MockSubspaceConfiguration;
 import de.zib.gndms.stuff.confuror.ConfigHolder;
 
 /**
@@ -34,18 +30,18 @@ import de.zib.gndms.stuff.confuror.ConfigHolder;
  * @author Ulrike Golas
  */
 
-public class SliceClientTest {
+public class SubspaceClientTest {
 	/**
 	 * Tests the constructors.
 	 */
 	@Test
     public final void testConstructor() {		
 		
-		SliceClient scl = new SliceClient();
+		SubspaceClient scl = new SubspaceClient();
        	AssertJUnit.assertNotNull(scl);
 		
 		String a = "test";
-		scl = new SliceClient(a);
+		scl = new SubspaceClient(a);
 		
        	AssertJUnit.assertEquals(a, scl.getServiceURL());
    	}
@@ -56,7 +52,7 @@ public class SliceClientTest {
 	@Test
     public final void testBehavior() {				
 		String a = "test";
-		SliceClient scl = new SliceClient(a);
+		SubspaceClient scl = new SubspaceClient(a);
 		
 		MockRestTemplate mockTemplate = new MockRestTemplate();
 		mockTemplate.setServiceURL(a);
@@ -64,48 +60,30 @@ public class SliceClientTest {
 		
 		String dn = "me";
 		String subspace = "testSubspace";
-		String sliceKind = "testSliceKind";
-		String slice = "testSlice";
-		String fileName = "testFile";
 		ResponseEntity<?> res;
-
-		res = scl.listSliceFacets(subspace, sliceKind, slice, dn);
+       	
+		res = scl.listAvailableFacets(subspace, dn);
        	AssertJUnit.assertNotNull(res);
-       	       	
-		String directory = "slice";
-		String owner = "me";
-		GregorianCalendar cal = new GregorianCalendar();
-		final long value = cal.getTimeInMillis();
-       	ConfigHolder config = new MockSliceConfiguration(directory, owner, value);
-		res = scl.setSliceConfiguration(subspace, sliceKind, slice, config, dn);
-       	AssertJUnit.assertNotNull(res);
-
-       	Specifier<Void> spec = new Specifier<Void>();
-		res = scl.transformSlice(subspace, sliceKind, slice, spec, dn);
+       	
+		String path = "testpath";
+		String gsiftp = "gsiftp";
+		boolean visible = true;
+		final long value = 6000;
+		SetupMode mode = SetupMode.valueOf("UPDATE");
+       	ConfigHolder config = new MockSubspaceConfiguration(path, gsiftp, visible, value, mode);
+		res = scl.createSubspace(subspace, config, dn);
        	AssertJUnit.assertNotNull(res);
 
-		res = scl.deleteSlice(subspace, sliceKind, slice, dn);
+		res = scl.deleteSubspace(subspace, dn);
        	AssertJUnit.assertNotNull(res);
 
-       	Vector<String> attr = new Vector<String>();
-       	attr.add("filename");
-		res = scl.listFiles(subspace, sliceKind, slice, attr, dn);
+		res = scl.listSubspaceConfiguration(subspace, dn);
        	AssertJUnit.assertNotNull(res);
 
-		res = scl.deleteFiles(subspace, sliceKind, slice, dn);
+		res = scl.setSubspaceConfiguration(subspace, config, dn);
        	AssertJUnit.assertNotNull(res);
 
-		res = scl.getGridFtpUrl(subspace, sliceKind, slice, dn);
-       	AssertJUnit.assertNotNull(res);
-
-		res = scl.listFileContent(subspace, sliceKind, slice, fileName, dn);
-       	AssertJUnit.assertNotNull(res);
-
-		File file = new File("testPath");
-       	res = scl.setFileContent(subspace, sliceKind, slice, fileName, file, dn);
-       	AssertJUnit.assertNotNull(res);
-
-		res = scl.deleteFile(subspace, sliceKind, slice, fileName, dn);
+		res = scl.listSliceKinds(subspace, dn);
        	AssertJUnit.assertNotNull(res);
    	}
 }
