@@ -167,7 +167,7 @@ public class SliceKindServiceImpl implements SliceKindService {
 
 	@Override
 	@RequestMapping(value = "/_{subspace}/_{sliceKind}", method = RequestMethod.DELETE)
-	public final ResponseEntity<Void> deleteSliceKind(
+	public final ResponseEntity<Specifier<Void>> deleteSliceKind(
 			@PathVariable final String subspace,
 			@PathVariable final String sliceKind,
 			@RequestHeader("DN") final String dn) {
@@ -176,7 +176,7 @@ public class SliceKindServiceImpl implements SliceKindService {
 			Subspace sub = subspaces.getSubspace(subspace);
 
 			// TODO: sub.deleteSliceKind(sliceKind);
-			return new ResponseEntity<Void>(null, headers, HttpStatus.OK);
+			return new ResponseEntity<Specifier<Void>>(null, headers, HttpStatus.OK);
 	}
 
 	/**

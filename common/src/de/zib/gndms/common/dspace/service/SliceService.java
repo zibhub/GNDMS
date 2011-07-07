@@ -107,9 +107,9 @@ public interface SliceService {
 	 *            The slice identifier.
 	 * @param dn
 	 *            The dn of the user invoking the method.
-	 * @return A confirmation.
+	 * @return A task specifier.
 	 */
-	ResponseEntity<Void> deleteSlice(String subspace, String sliceKind,
+	ResponseEntity<Specifier<Void>> deleteSlice(String subspace, String sliceKind,
 			String slice, String dn);
 
 	/**

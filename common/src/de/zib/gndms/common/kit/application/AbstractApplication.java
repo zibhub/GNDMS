@@ -41,7 +41,7 @@ public abstract class AbstractApplication {
      *
      * @throws Exception if an error occures, while parsing the input String list.
      */
-    public void run( String[] args ) throws Exception {
+    public final void run( final String[] args ) throws Exception {
 
         CmdLineParser pars = new CmdLineParser( this );
         try{

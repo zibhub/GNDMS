@@ -190,7 +190,7 @@ public class SliceServiceImpl implements SliceService {
 
 	@Override
 	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}", method = RequestMethod.DELETE)
-	public final ResponseEntity<Void> deleteSlice(
+	public final ResponseEntity<Specifier<Void>> deleteSlice(
 			@PathVariable final String subspace,
 			@PathVariable final String sliceKind,
 			@PathVariable final String slice,
@@ -201,9 +201,9 @@ public class SliceServiceImpl implements SliceService {
 			Slice slic = findSliceOfKind(subspace, sliceKind, slice);
 
 			// TODO: delete slice
-	        return new ResponseEntity<Void>(null, headers, HttpStatus.OK);
+	        return new ResponseEntity<Specifier<Void>>(null, headers, HttpStatus.OK);
  		} catch (NoSuchElementException ne) {
-			return new ResponseEntity<Void>(null, headers, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Specifier<Void>>(null, headers, HttpStatus.NOT_FOUND);
 		}
 	}
 

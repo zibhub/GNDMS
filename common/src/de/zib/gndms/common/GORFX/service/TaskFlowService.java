@@ -66,7 +66,7 @@ public interface TaskFlowService {
      *     - 404 if the taskflow doesn't exist.
      *     - 403 if the caller isn't allowed to remove the task.
      */
-    ResponseEntity<Void> deleteTaskflow ( String type, String id, String dn, String wid );
+    ResponseEntity<Void> deleteTaskflow( String type, String id, String dn, String wid );
     
     /** @brief Delivers the order of the task flow.
      * 
@@ -132,7 +132,8 @@ public interface TaskFlowService {
      * @param cont The preferred quote.
      * @param dn The dn of the user invoking the method.
      * @param wid The id of the workflow, for logging purpose.
-     *
+     * @return a confirmation
+     * 
      * \note Only one preferred quote can be provided and will overwrite previously provided quotes.
      */
     ResponseEntity<Void> setQuote( String type, String id, Quote cont, String dn, String wid );
@@ -154,13 +155,12 @@ public interface TaskFlowService {
     /** 
      * @brief Removes a quote form the list, ^
      * 
-     * @param type
-     * @param id
-     * @param idx
+     * @param type The type of the task flow.
+     * @param id The id of the task flow.
+     * @param idx The index of the quote.
      * @param dn The dn of the user invoking the method.
      * @param wid The id of the workflow, for logging purpose.
-     * 
-     * @return 
+     * @return a confirmation
      *
      * \note I think this is required.
      */
