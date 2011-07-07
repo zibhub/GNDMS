@@ -40,14 +40,15 @@ import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.stuff.GNDMSInjector;
 import org.apache.axis.components.uuid.UUIDGen;
 import org.apache.axis.components.uuid.UUIDGenFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
 import java.io.PrintWriter;
 import java.util.Set;
 import java.util.Map;
+import java.util.UUID;
 
 
 /**
@@ -68,10 +69,9 @@ import java.util.Map;
 public final class ConfigActionCaller implements WSActionCaller {
     private @NotNull final Log logger = LogFactory.getLog(ConfigActionCaller.class);
 
-    private @NotNull final UUIDGen uuidGen = UUIDGenFactory.getUUIDGen();
     private final @NotNull ModelUUIDGen actionUUIDGen = new ModelUUIDGen() {
             public @NotNull String nextUUID() {
-                return uuidGen.nextUUID();
+                return UUID.randomUUID().toString();
             }
     };
 
@@ -110,7 +110,6 @@ public final class ConfigActionCaller implements WSActionCaller {
         system = systemParam;
         configActions.add(SetupSubspaceAction.class);
         configActions.add(EchoOptionsAction.class);
-        configActions.add(GetHomeInfoAction.class);
         configActions.add(SetupOfferTypeAction.class);
         configActions.add(ConfigOfferTypeAction.class);
         configActions.add(SetupSliceKindAction.class);

@@ -19,7 +19,8 @@ package de.zib.gndms.kit.network;
 
 
 import de.zib.gndms.model.gorfx.FTPTransferState;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.globus.ftp.ByteRangeList;
 import org.globus.ftp.FileInfo;
 import org.globus.ftp.GridFTPClient;
@@ -49,7 +50,7 @@ import java.util.regex.Pattern;
  */
 public class GNDMSFileTransfer {
 
-    protected final Logger logger = Logger.getLogger( this.getClass() );
+    protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
     public static final String ELLIPSE = Pattern.quote( "..." );
     protected final Pattern ellipse = Pattern.compile( "(.*)"+ ELLIPSE + "$" );

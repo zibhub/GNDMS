@@ -20,7 +20,6 @@ package de.zib.gndms.infra.system;
 
 import com.google.common.base.Function;
 import de.zib.gndms.stuff.exception.FinallyException;
-import org.globus.wsrf.ResourceException;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -111,20 +110,5 @@ final public class EMTools {
         if( ex != null )
             throw ex;
         throw new IllegalStateException("Supposedly Unreachable");
-    }
-
-    // TODO: Integrate this with GridEntityModelHandler, requires better exception handling in AbstractEntityModelAction
-    public static <T> T txResRun(final @NotNull EntityManager em, boolean closeEM,
-                              final @NotNull Function<EntityManager, T> block) throws ResourceException {
-        try {
-            return txRun(em, closeEM, block);
-        }
-        catch (RuntimeException e) {
-            final Throwable cause = e.getCause();
-            if (e == null || !(cause instanceof ResourceException))
-                throw e;
-            else
-                throw (ResourceException) cause;
-        }
     }
 }

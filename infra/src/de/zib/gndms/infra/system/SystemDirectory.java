@@ -19,7 +19,6 @@ package de.zib.gndms.infra.system;
 
 
 import de.zib.gndms.kit.access.InstanceProvider;
-import de.zib.gndms.infra.access.ServiceHomeProvider;
 import de.zib.gndms.logic.access.TaskActionProvider;
 import de.zib.gndms.kit.configlet.ConfigletProvider;
 import de.zib.gndms.kit.system.SystemInfo;
@@ -36,5 +35,5 @@ import de.zib.gndms.logic.model.gorfx.ORQCalculatorProvider;
  */
 public interface SystemDirectory
 	  extends ConfigletProvider, ORQCalculatorProvider, TaskActionProvider, InstanceProvider,
-	  ServiceHomeProvider, SystemInfo {
+	  SystemInfo {
 }
