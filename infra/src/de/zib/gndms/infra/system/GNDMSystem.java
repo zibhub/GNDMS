@@ -22,8 +22,7 @@ import de.zib.gndms.GNDMSVerInfo;
 import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.grams.LinuxDirectoryAux;
 import de.zib.gndms.kit.access.EMFactoryProvider;
-import de.zib.gndms.kit.monitor.ActionCaller;
-import de.zib.gndms.kit.monitor.GroovyMoniServer;
+import de.zib.gndms.logic.action.ActionCaller;
 import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.logic.model.*;
 import de.zib.gndms.logic.model.gorfx.DefaultWrapper;
@@ -34,7 +33,6 @@ import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.slf4j.MDC;
@@ -42,32 +40,16 @@ import org.slf4j.MDC;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import static javax.persistence.Persistence.createEntityManagerFactory;
-import javax.persistence.Query;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import static java.lang.Thread.sleep;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.*;
-
-import org.apache.axis.components.uuid.UUIDGen;
-import org.apache.axis.components.uuid.UUIDGenFactory;
-import org.apache.axis.message.MessageElement;
-import org.apache.axis.message.addressing.EndpointReferenceType;
-import org.apache.axis.message.addressing.ReferencePropertiesType;
-import org.apache.axis.types.URI;
-import org.globus.wsrf.ResourceException;
-import org.globus.wsrf.impl.SimpleResourceKey;
-import org.globus.wsrf.jndi.Initializable;
-import org.globus.wsrf.utils.AddressingUtils;
-
-
 
 
 /**
@@ -117,7 +99,6 @@ public final class GNDMSystem
 
 
 	// Outside injector
-	private @NotNull GroovyMoniServer groovyMonitor; // shouldnt be accessed by anyone but system
     private @NotNull TaskExecutionService executionService; // accessible only via system
 
 
@@ -319,16 +300,6 @@ public final class GNDMSystem
 	}
 
     
-	@SuppressWarnings({ "MethodOnlyUsedFromInnerClass" })
-	private synchronized void setupShellService() throws Exception {
-		final File monitorConfig = new File(sharedDir, "monitor.properties");
-		groovyMonitor = new GroovyMoniServer(getGridName(), monitorConfig,
-                                             getInstanceDir().createBindingFactory(),
-                                             getActionCaller());
-		groovyMonitor.startConfigRefreshThread(true);
-	}
-
-
     /**
      * Checks if the path denoted by <tt>mainDir</tt> exists and may create the path on the filesystem,
      * if not already done.
@@ -348,7 +319,7 @@ public final class GNDMSystem
 
     /**
      * Invokes a shutdown on the ExecutorService {@link #executionService}, on the configlets of the <tt>GNDMSystemDirectory</tt>,
-     * stops the <tt>GroovyMoniServer</tt> and closes the EntityManagerFactory {@link #emf}.
+     * and closes the EntityManagerFactory {@link #emf}.
      *
      * @throws Exception if an error occurs while stopping the monitorserver
      */
@@ -356,13 +327,11 @@ public final class GNDMSystem
             "MethodOnlyUsedFromInnerClass", "SleepWhileHoldingLock",
             "CallToNativeMethodWhileLocked" })
 	private synchronized void shutdown() throws Exception {
+        // todo put this in spring context
         if (! shutdown) {
             shutdown = true;
             executionService.shutdown();
             instanceDir.shutdownConfiglets();
-            final GroovyMoniServer moniServer = getMonitor();
-            if (moniServer != null)
-                moniServer.stopServer();
             emf.close();
             neo.shutdown();
         }
@@ -408,7 +377,8 @@ public final class GNDMSystem
         return instanceDir;
     }
 
-    public @NotNull ActionCaller getActionCaller() {
+    public @NotNull
+    ActionCaller getActionCaller() {
         return actionCaller;
     }
 
@@ -436,10 +406,6 @@ public final class GNDMSystem
 		return dbLoggerFile;
 	}
 
-
-	public synchronized @Nullable GroovyMoniServer getMonitor() {
-		return groovyMonitor;
-	}
 
 	@SuppressWarnings({"ReturnOfThis"})
 	public @NotNull GNDMSystem getSystem() {
@@ -578,16 +544,6 @@ public final class GNDMSystem
 				try {
 					GNDMSystem newInstance = new GNDMSystem(sharedConfig, debugMode);
 					newInstance.initialize();
-					try {
-						if (setupShellService)
-							newInstance.setupShellService();
-                        logger.debug("GNDMS_DEBUG "
-                                + (sharedConfig.isDebugMode() ? "true" : "false"));
-					}
-
-					catch (Exception e) {
-						throw new RuntimeException(e);
-					}
 					try { logger.info(sharedConfig.getGridName() + " initialized"); }
 					catch (Exception e) { logger.error( "", e ); }
 					instance = newInstance;

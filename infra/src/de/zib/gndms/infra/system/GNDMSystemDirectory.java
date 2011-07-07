@@ -30,8 +30,6 @@ import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.service.GNDMSingletonServiceHome;
 import de.zib.gndms.kit.access.GNDMSBinding;
 import de.zib.gndms.kit.configlet.DefaultConfiglet;
-import de.zib.gndms.kit.monitor.GroovyBindingFactory;
-import de.zib.gndms.kit.monitor.GroovyMoniServer;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.access.TaskActionProvider;
 import de.zib.gndms.logic.model.gorfx.*;
@@ -434,12 +432,6 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
 	}
 
 
-    public GroovyBindingFactory createBindingFactory() {
-        return new GNDMSBindingFactory();
-    }
-
-
-
     public @NotNull String getSystemName() {
         return systemName;
     }
@@ -497,48 +489,6 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
             return defaultConfiglet.getMapConfig().getOption("subGridName", DEFAULT_SUBGRID_NAME);
     }
 
-
-    @Override
-    public void setBeanFactory( BeanFactory beanFactory ) throws BeansException {
-        Injector = new GNDMSInjectorSpring( beanFactory );
-    }
-
-
-    private final class GNDMSBindingFactory implements GroovyBindingFactory {
-
-
-        public @NotNull
-        Binding createBinding(
-              final @NotNull GroovyMoniServer moniServer,
-              final @NotNull Principal principal, final @NotNull String args) {
-            final Binding binding = new Binding();
-            for (Map.Entry<String, Object> entry : instances.entrySet())
-                binding.setProperty(entry.getKey(), entry.getValue());
-            return binding;
-        }
-
-
-        @SuppressWarnings({"StringBufferWithoutInitialCapacity"})
-        public void initShell(@NotNull GroovyShell shell, @NotNull Binding binding) {
-            StringBuilder builder = new StringBuilder();
-            for (Map.Entry<String, Object> entry : instances.entrySet()) {
-                final String key = entry.getKey();
-                builder.append("Object.metaClass.");
-                builder.append(key);
-                builder.append('=');
-                builder.append(key);
-                builder.append(';');
-            }
-            shell.evaluate(builder.toString());
-        }
-
-
-        public void destroyBinding(final @NotNull GroovyMoniServer moniServer,
-                                   final @NotNull Binding binding) {
-            // intended
-        }
-
-    }
 
     private static class OfferTypeIndustrialPark<T extends KeyFactoryInstance<String, T>>
             extends IndustrialPark<String, String, T> {
