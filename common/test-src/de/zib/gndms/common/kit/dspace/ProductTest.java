@@ -1,4 +1,4 @@
-package de.zib.gndms.kit.dspace;
+package de.zib.gndms.common.kit.dspace;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -19,8 +19,6 @@ package de.zib.gndms.kit.dspace;
 
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
-
-import de.zib.gndms.common.kit.dspace.Product;
 
 /**
  * Tests the Product.

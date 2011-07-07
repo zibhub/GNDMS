@@ -95,7 +95,7 @@ public interface SliceKindService {
 	 *            The dn of the user invoking the method.
 	 * @return A confirmation.
 	 */
-	ResponseEntity<Void> deleteSliceKind(String subspace, String sliceKind,
+	ResponseEntity<Specifier<Void>> deleteSliceKind(String subspace, String sliceKind,
 			String dn);
 
 }
