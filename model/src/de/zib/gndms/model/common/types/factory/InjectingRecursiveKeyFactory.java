@@ -20,7 +20,7 @@ package de.zib.gndms.model.common.types.factory;
 
 import de.zib.gndms.stuff.BoundInjector;
 import org.jetbrains.annotations.NotNull;
-import com.google.inject.Inject;
+import javax.inject.Inject;
 
 
 /**

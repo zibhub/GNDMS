@@ -18,7 +18,7 @@ package de.zib.gndms.GORFX.action.dms;
 
 
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.system.SystemHolder;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
