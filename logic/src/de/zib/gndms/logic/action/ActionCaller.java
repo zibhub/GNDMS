@@ -1,4 +1,4 @@
-package de.zib.gndms.kit.monitor;
+package de.zib.gndms.logic.action;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
