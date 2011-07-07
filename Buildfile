@@ -148,44 +148,53 @@ DB_DERBY = ['org.apache.derby:derby:jar:10.5.3.0', 'org.apache.derby:derbytools:
 HTTP_CORE = ['org.apache.httpcomponents:httpcore:jar:4.0', 'org.apache.httpcomponents:httpcore-nio:jar:4.0', 'org.apache.httpcomponents:httpclient:jar:4.0.1']
 
 # Grouped GT4 dependencies
-GT4_COMMONS = gt4jars(['commons-beanutils.jar', 
-                       'commons-digester.jar',
-                       'commons-discovery.jar',
-                       'commons-pool.jar'])
-GT4_LOG = gt4jars(['commons-logging.jar', 'log4j-1.2.15.jar'])
+#GT4_COMMONS = gt4jars(['commons-beanutils.jar', 
+#                       'commons-digester.jar',
+#                       'commons-discovery.jar',
+#                       'commons-pool.jar'])
+#GT4_LOG = gt4jars(['commons-logging.jar', 'log4j-1.2.15.jar'])
 GT4_COG = gt4jars(['cog-axis.jar', 'cog-jglobus.jar', 'cog-url.jar'])
-GT4_AXIS = gt4jars(['axis.jar', 'axis-url.jar', 'saaj.jar'])
-GT4_WSRF = gt4jars(['addressing-1.0.jar',
-                    'axis-url.jar',
-                    'axis.jar',
-                    'commonj.jar',
-                    'concurrent.jar',
-                    # 'globus_wsrf_rft_stubs.jar',
-                    'naming-common.jar',
-                    'wsdl4j.jar',
-                    'saaj.jar',
-                    'wsrf_common.jar',
-                    'wsrf_core.jar',
-                    'wsrf_core_stubs.jar',
-                    'wsrf_tools.jar'])
-GT4_SERVLET = gt4jars(['servlet.jar'])
+#GT4_AXIS = gt4jars(['axis.jar', 'axis-url.jar', 'saaj.jar'])
+#GT4_WSRF = gt4jars(['addressing-1.0.jar',
+#                    'axis-url.jar',
+#                    'axis.jar',
+#                    'commonj.jar',
+#                    'concurrent.jar',
+#                    # 'globus_wsrf_rft_stubs.jar',
+#                    'naming-common.jar',
+#                    'wsdl4j.jar',
+#                    'saaj.jar',
+#                    'wsrf_common.jar',
+#                    'wsrf_core.jar',
+#                    'wsrf_core_stubs.jar',
+#                    'wsrf_tools.jar'])
+#GT4_SERVLET = gt4jars(['servlet.jar'])
 GT4_SEC = gt4jars(['puretls.jar', 'opensaml.jar', 
                    'cryptix-asn1.jar', 'cryptix.jar', 'cryptix32.jar', 
                    'jce-jdk13-125.jar', 'wss4j.jar', 'jgss.jar', 
                    'globus_delegation_service.jar',
                    'globus_delegation_stubs.jar'])
-GT4_XML = gt4jars(['xalan-2.6.jar', 'xercesImpl-2.7.1.jar', 'xml-apis.jar', 'xmlsec.jar', 'jaxrpc.jar'])
+#GT4_XML = gt4jars(['xalan-2.6.jar', 'xercesImpl-2.7.1.jar', 'xml-apis.jar', 'xmlsec.jar', 'jaxrpc.jar'])
 GT4_GRAM = gt4jars(['gram-monitoring.jar', 'gram-service.jar', 'gram-stubs.jar', 'gram-utils.jar'])
-GT4_USEAGE = gt4jars([ 'globus-usage-core.java' ])
-GT4_MDS = gt4jars(['globus_wsrf_mds_aggregator.jar',
-                   'globus_wsrf_mds_aggregator_stubs.jar',
-                   'webmds-0.1-dev.jar',
-                   'wsrf_mds_index.jar',
-                   'wsrf_mds_index_stubs.jar',
-                   'wsrf_mds_trigger.jar',
-                   'wsrf_mds_trigger_stubs.jar',
-                   'wsrf_mds_usefulrp.jar',
-                   'wsrf_mds_usefulrp_schema_stubs.jar'])
+#GT4_USEAGE = gt4jars([ 'globus-usage-core.java' ])
+#GT4_MDS = gt4jars(['globus_wsrf_mds_aggregator.jar',
+#                   'globus_wsrf_mds_aggregator_stubs.jar',
+#                   'webmds-0.1-dev.jar',
+#                   'wsrf_mds_index.jar',
+#                   'wsrf_mds_index_stubs.jar',
+#                   'wsrf_mds_trigger.jar',
+#                   'wsrf_mds_trigger_stubs.jar',
+#                   'wsrf_mds_usefulrp.jar',
+#                   'wsrf_mds_usefulrp_schema_stubs.jar'])
+
+GT4_COMMONS = []
+GT4_LOG     = []
+GT4_AXIS = gt4jars(['axis.jar', 'axis-url.jar', 'saaj.jar'])
+GT4_WSRF    = gt4jars(['addressing-1.0.jar', 'axis-url.jar', 'axis.jar' ])
+GT4_SERVLET = []
+GT4_XML     = []
+GT4_USEAGE  = []
+GT4_MDS     = []
 
 
 XSTREAM_DEPS= [ CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME ]
@@ -561,7 +570,7 @@ NEODATAGRAPH = [_('lib/neo4j-1.2/geronimo-jta_1.1_spec-1.1.1.jar'),
 
     desc 'Common gndms service classes'
     define 'common', :layout => dmsLayout('common', 'gndms-common') do
-        compile.with SPRING, ARGS4J, JODA_TIME, SLF4J, JSON
+        compile.with project( 'stuff' ), SPRING, ARGS4J, JODA_TIME, SLF4J, JSON
         compile
         meta_inf << file(_('src/META-INF/converter-setup.xml'))
         package :jar
@@ -571,7 +580,7 @@ NEODATAGRAPH = [_('lib/neo4j-1.2/geronimo-jta_1.1_spec-1.1.1.jar'),
 
     desc 'Gorfx client classes'
     define 'gndmc-rest', :layout => dmsLayout('gndmc-rest', 'gndms-gndmc-rest') do
-        compile.with project('common'), SPRING, ARGS4J, JODA_TIME, SLF4J, COMMONS_LOGGING, XSTREAM, XSTREAM_DEPS, JSON
+        compile.with project('stuff'), project('common'), SPRING, ARGS4J, JODA_TIME, SLF4J, COMMONS_LOGGING, XSTREAM, XSTREAM_DEPS, JSON
         meta_inf << file(_('src/META-INF/client-context.xml'))
         package(:jar).with :manifest=>manifest.merge( 'Main-Class'=>'de.zib.gndms.gndmc.gorfx.GORFXClientMain' )
 

@@ -19,7 +19,13 @@ package de.zib.gndms.kit.network;
 
 
 import de.zib.gndms.model.gorfx.FTPTransferState;
-import org.globus.ftp.*;
+import org.globus.ftp.ByteRangeList;
+import org.globus.ftp.FileInfo;
+import org.globus.ftp.GridFTPClient;
+import org.globus.ftp.GridFTPRestartMarker;
+import org.globus.ftp.GridFTPSession;
+import org.globus.ftp.MarkerListener;
+import org.globus.ftp.Session;
 import org.globus.ftp.exception.ClientException;
 import org.globus.ftp.exception.ServerException;
 import org.jetbrains.annotations.NotNull;

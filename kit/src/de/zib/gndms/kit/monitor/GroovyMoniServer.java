@@ -22,7 +22,6 @@ import de.zib.gndms.stuff.config.InfiniteEnumeration;
 import de.zib.gndms.kit.config.PropertiesFromFile;
 import de.zib.gndms.kit.logging.LDPHolder;
 import de.zib.gndms.kit.logging.LoggingDecisionPoint;
-import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,6 +37,8 @@ import org.mortbay.jetty.security.HashUserRealm;
 import org.mortbay.jetty.security.SecurityHandler;
 import org.mortbay.jetty.servlet.*;
 import org.mortbay.thread.BoundedThreadPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -96,7 +97,7 @@ public class GroovyMoniServer implements Runnable, LoggingDecisionPoint, ActionC
 	public static final String ATTR_MONITOR_SERVER = "monitorServer";
 
 	static {
-		logger = Logger.getLogger(GroovyMoniServer.class);
+		logger = LoggerFactory.getLogger( GroovyMoniServer.class );
 
 		DEFAULT_COMMENT = " Default properties for monitoring console. "
 	   +"Set monitor.enabled=true to access via "

@@ -42,8 +42,6 @@ import de.zib.gndms.logic.model.gorfx.ConfigOfferTypeAction;
 import de.zib.gndms.logic.model.gorfx.SetupOfferTypeAction;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
-import org.apache.axis.components.uuid.UUIDGen;
-import org.apache.axis.components.uuid.UUIDGenFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.jetbrains.annotations.NotNull;
@@ -52,6 +50,7 @@ import javax.persistence.EntityManager;
 import java.io.PrintWriter;
 import java.util.Set;
 import java.util.Map;
+import java.util.UUID;
 
 
 /**
@@ -72,10 +71,9 @@ import java.util.Map;
 public final class ConfigActionCaller implements WSActionCaller, Module {
     private @NotNull final Logger logger = LoggerFactory.getLogger(ConfigActionCaller.class);
 
-    private @NotNull final UUIDGen uuidGen = UUIDGenFactory.getUUIDGen();
     private final @NotNull ModelUUIDGen actionUUIDGen = new ModelUUIDGen() {
             public @NotNull String nextUUID() {
-                return uuidGen.nextUUID();
+                return UUID.randomUUID().toString();
             }
     };
 
@@ -114,7 +112,6 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
         system = systemParam;
         configActions.add(SetupSubspaceAction.class);
         configActions.add(EchoOptionsAction.class);
-        configActions.add(GetHomeInfoAction.class);
         configActions.add(SetupOfferTypeAction.class);
         configActions.add(ConfigOfferTypeAction.class);
         configActions.add(SetupSliceKindAction.class);
@@ -307,7 +304,6 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
 		binder.skipSources(GNDMSystem.class,
 		                   EntityManager.class,
 		                   ModelUUIDGen.class,
-		                   UUIDGen.class,
 		                   ModelUpdateListener.class,
 		                   BatchUpdateAction.class);
 		binder.bind(ConfigActionCaller.class).toInstance(this);

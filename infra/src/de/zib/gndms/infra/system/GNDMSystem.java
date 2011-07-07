@@ -23,46 +23,28 @@ import com.google.inject.Module;
 import de.zib.gndms.GNDMSVerInfo;
 import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.grams.LinuxDirectoryAux;
-import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
 import de.zib.gndms.kit.access.EMFactoryProvider;
 import de.zib.gndms.kit.monitor.ActionCaller;
 import de.zib.gndms.kit.monitor.GroovyMoniServer;
 import de.zib.gndms.kit.util.DirectoryAux;
-import de.zib.gndms.logic.action.LogAction;
 import de.zib.gndms.logic.model.*;
 import de.zib.gndms.logic.model.gorfx.DefaultWrapper;
 import de.zib.gndms.logic.util.LogicTools;
 import de.zib.gndms.model.common.*;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.gorfx.Taskling;
-import org.apache.axis.components.uuid.UUIDGen;
-import org.apache.axis.components.uuid.UUIDGenFactory;
-import org.apache.axis.message.MessageElement;
-import org.apache.axis.message.addressing.EndpointReferenceType;
-import org.apache.axis.message.addressing.ReferencePropertiesType;
-import org.apache.axis.types.URI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.globus.wsrf.ResourceException;
-import org.globus.wsrf.impl.SimpleResourceKey;
-import org.globus.wsrf.jndi.Initializable;
-import org.globus.wsrf.utils.AddressingUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.slf4j.MDC;
 
-import javax.naming.Context;
-import javax.naming.Name;
-import javax.naming.NameAlreadyBoundException;
-import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import static javax.persistence.Persistence.createEntityManagerFactory;
 import javax.persistence.Query;
-import javax.transaction.NotSupportedException;
-import javax.xml.namespace.QName;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -70,6 +52,7 @@ import java.io.IOException;
 import static java.lang.Thread.sleep;
 import java.util.List;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.*;
 
 
@@ -86,9 +69,11 @@ import java.util.concurrent.*;
         "OverloadedMethodsWithSameNumberOfParameters", "NestedAssignment",
         "ClassWithTooManyMethods" })
 public final class GNDMSystem
-	  implements Initializable, SystemHolder, EMFactoryProvider, Module,
+	  implements SystemHolder, EMFactoryProvider, Module,
         ModelUpdateListener<GridResource> {
     private static final long EXECUTOR_SHUTDOWN_TIME = 5000L;
+    private ConfigActionCaller actionCaller;
+
 
     private static @NotNull Logger createLogger() { return LoggerFactory.getLogger(GNDMSystem.class); }
 
@@ -96,7 +81,6 @@ public final class GNDMSystem
 
     private final boolean debugMode;
 
-    private @NotNull final UUIDGen uuidGen = UUIDGenFactory.getUUIDGen();
     private @NotNull final ModelUUIDGen uuidGenDelegate;
 	private @NotNull final Logger logger = createLogger();
 	private @NotNull final GNDMSVerInfo verInfo = new GNDMSVerInfo();
@@ -121,70 +105,10 @@ public final class GNDMSystem
 	// Outside injector
 	private @NotNull GroovyMoniServer groovyMonitor; // shouldnt be accessed by anyone but system
     private @NotNull TaskExecutionService executionService; // accessible only via system
-	private @NotNull ConfigActionCaller actionCaller; // injected by itself
 
 
 
 
-
-    /**
-	 * Retrieves a GNDMSSystem using context.lookup(name).
-	 *
-	 * A lightweight factory facade is either atomically retrieved from context or bound under name
-	 * if name is unbound in context. The factory acts as an intermediary and ensures that at most
-	 * one DbSetupFacade ever gets instantiated and initialized.
-	 *
-	 * This instance is returned by this call from the factory facade.
-	 *
-	 * @param sharedContext
-	 * @param facadeName
-	 * @return GNDMSSystem singleton
-	 * @throws NamingException
-	 */
-	@NotNull
-	public static GNDMSystem lookupSystem(@NotNull Context sharedContext,
-	                                      @NotNull Name facadeName,
-	                                      @NotNull GridConfig anySharedConfig,
-                                          boolean debugModeParam)
-		  throws NamingException {
-		try {
-			final SysFactory theFactory =
-                    new SysFactory(createLogger(), anySharedConfig, debugModeParam);
-			sharedContext.bind(facadeName, theFactory);
-			return theFactory.getInstance();
-		}
-		catch (NameAlreadyBoundException ne) {
-			return ((SysFactory) sharedContext.lookup(facadeName)).getInstance();
-		}
-	}
-
-    /**
-     * @see #lookupSystem(javax.naming.Context, javax.naming.Name, de.zib.gndms.infra.GridConfig, boolean)
-     *
-     * @param sharedContext
-     * @param facadeName
-     * @param anySharedConfig
-     * @param debugModeParam
-     * @return
-     * @throws NamingException
-     */
-	@SuppressWarnings({"StaticMethodOnlyUsedInOneClass"})
-	@NotNull
-	public static GNDMSystem lookupSystem(
-		  @NotNull Context sharedContext, @NotNull String facadeName,
-		  @NotNull GridConfig anySharedConfig,
-          boolean debugModeParam)
-		  throws NamingException {
-		try {
-			final SysFactory theFactory =
-                    new SysFactory(createLogger(), anySharedConfig, debugModeParam);
-			sharedContext.bind(facadeName, theFactory);
-			return theFactory.getInstance();
-		}
-		catch (NameAlreadyBoundException ne) {
-			return ((SysFactory) sharedContext.lookup(facadeName)).getInstance();
-		}
-	}
 
 	@SuppressWarnings({ "ThisEscapedInObjectConstruction" })
     private GNDMSystem(@NotNull GridConfig anySharedConfig, boolean debugModeParam)  {
@@ -273,7 +197,6 @@ public final class GNDMSystem
        //binder.bind(NetworkAuxiliariesProvider.class).toInstance(getNetAux());
        binder.bind(ModelUpdateListener.class).toInstance(this);
        binder.bind(BatchUpdateAction.class).to(DefaultBatchUpdateAction.class);
-       binder.bind(UUIDGen.class).toInstance(uuidGen);
        binder.bind(GNDMSVerInfo.class).toInstance(verInfo);
        binder.bind(Logger.class).toInstance(logger);
        binder.bind( DirectoryAux.class).toInstance( new LinuxDirectoryAux() );
@@ -513,161 +436,21 @@ public final class GNDMSystem
 	}
 
     /**
-     * Returns the next UUID using {@link #uuidGen}
+     * Returns the next UUID using
      * 
      * @return the next UUID
      */
 	public @NotNull String nextUUID() {
-		return uuidGen.nextUUID();
+		return UUID.randomUUID().toString();
 	}
 
 
-	public static @NotNull EndpointReferenceType serviceEPRType(@NotNull URI defAddr, @NotNull VEPRef dSpaceRef)
-		  throws URI.MalformedURIException {
-		if (dSpaceRef.getGridSiteId() != null)
-			throw new IllegalArgumentException("Non-local EPRTs currently unsupported");
-
-		try {
-			return AddressingUtils.createEndpointReference(
-				  defAddr.toString(), null);
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-
-	public @NotNull EndpointReferenceType serviceEPRType(@NotNull String instPrefix,
-	                                           @NotNull VEPRef dSpaceRef)
-		  throws URI.MalformedURIException {
-		return serviceEPRType(
-                getInstanceDir().lookupServiceHome(instPrefix).getServiceAddress(), dSpaceRef);
-	}
-
-
-	public static @NotNull VEPRef modelEPRT(@NotNull QName keyTypeName,
-                                            @NotNull EndpointReferenceType epr) throws NotSupportedException{
-		@NotNull ReferencePropertiesType props = epr.getProperties();
-		@NotNull MessageElement msgElem = props.get(keyTypeName);
-		SimpleResourceKey key = new SimpleResourceKey(keyTypeName, msgElem.getObjectValue());
-
-		// theVEPREF.setSite("");
-		// theVEPREF.setRk(key);
-        throw new NotSupportedException();
-		// return new DSpaceRef();
-	}
-
-
-	public @NotNull VEPRef modelEPRT(@NotNull String instPrefix,
-                                     @NotNull EndpointReferenceType epr) throws NotSupportedException{
-		return modelEPRT(getInstanceDir().lookupServiceHome(instPrefix).getKeyTypeName(), epr);
-	}
 
 
     public void onModelChange(GridResource model) {
-        try {
-            onModelChange_(model);
-        } catch ( ResourceException e ) {
-            logger.warn( "", e );
-        }
+        // implement if required
     }
 
-    /**
-     * Invokes <tt>refresh(model)</tt> on the <tt>GNDMPersistentServiceHome</tt> corresponding to the model class.
-     * (see {@link de.zib.gndms.infra.system.GNDMSystemDirectory#addHome(Class, de.zib.gndms.infra.service.GNDMServiceHome)} )
-     *
-     * @param model the new model
-     * @param <M> the class of the model
-     * @throws ResourceException
-     */
-    @SuppressWarnings({ "unchecked" })
-    private <M extends GridResource> void onModelChange_(final M model) throws ResourceException {
-        final Class<M> modelClazz = (Class<M>) model.getClass();
-        GNDMPersistentServiceHome<M> home = getInstanceDir().getHome(modelClazz);
-        home.refresh(model);
-    }
-
-    /**
-     * Returns a list of all {@code home}'s {@link org.globus.wsrf.Resource}s, managed by {@code em}.
-     *
-     * @param home a {@link org.globus.wsrf.ResourceHome} managing {@code Resources}
-     * @param em the entityManager, on which the query will be done
-     * @param <M> the model type
-     * @return a list of all {@code home}'s {@link org.globus.wsrf.Resource}s, managed by {@code em}.
-     */
-    @SuppressWarnings({ "unchecked", "MethodMayBeStatic" })
-    public @NotNull <M extends GridResource> List<String> listAllResources(
-            final @NotNull GNDMPersistentServiceHome<M> home, final @NotNull EntityManager em) {
-        Query query = home.getListAllQuery(em);
-        return query.getResultList();
-    }
-
-    /**
-     * Returns a list of all {@link org.globus.wsrf.Resource}s, which are managed by an EntityManager, corresponding to
-     * the given EntityManagerFactory and
-     * which are managed by the {@code GNDMPersistentServiceHome} {@link de.zib.gndms.infra.system.GNDMSystemDirectory#getHome(Class)}    
-     *
-     * @param emg the factory to create the EntityManager, used for the {@code list all} query
-     * @param clazz the class, whose corresponding GNDMPersistentServiceHome will be used for the query.(See {@link de.zib.gndms.infra.system.GNDMSystemDirectory#homes})
-     * @param <M> the model type
-     * @return  a list of all {@code Resources}, corresponding to a specific EntityManager and GNDMPersistentServiceHome.
-     */
-    public final @NotNull  <M extends GridResource> List<String> listAllResources(
-            final @NotNull EntityManagerFactory emg, final @NotNull Class<M> clazz) {
-        final EntityManager manager = emg.createEntityManager();
-        List<String> retList = null;
-        try {
-            try {
-                manager.getTransaction().begin();
-                retList = listAllResources(getInstanceDir().getHome(clazz), manager);
-                manager.getTransaction().commit();
-            }
-            finally {
-                if (manager.getTransaction().isActive())
-                    manager.getTransaction().rollback();
-            }
-        }
-        finally {
-            if (manager.isOpen())
-                manager.close();
-        }
-        return retList;
-    }
-
-    /**
-     * Refreshes all resources corresponding to a specific GNDMPersistentServiceHome
-     * @param home the GNDMPersistentServiceHome,whose Resource will be refreshed
-     * @param <M>  the model type
-     */
-    @SuppressWarnings({ "ConstantConditions" })
-    public final <M extends GridResource> void refreshAllResources(
-            final @NotNull GNDMPersistentServiceHome<M> home) {
-        final EntityManager manager = home.getEntityManagerFactory().createEntityManager();
-        try {
-            try {
-                manager.getTransaction().begin();
-                for (String id : listAllResources(home, manager)) {
-                    try {
-                        if (isDebugging())
-                            logger.debug("Restoring " + home.getNickName() + ':' + id);
-                        home.find(home.getKeyForId(id));
-                    }
-                    catch (ResourceException e) {
-                        logger.warn( "", e );
-                    }
-                }
-                manager.getTransaction().commit();
-            }
-            finally {
-                if (manager.getTransaction().isActive())
-                    manager.getTransaction().rollback();
-            }
-        }
-        finally {
-            if (manager.isOpen())
-                manager.close();
-        }
-    }
 
 
     /**

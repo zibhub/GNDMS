@@ -37,14 +37,17 @@ public class ConfigHolder {
         setNode(node);
     }
 
-    public ConfigEditor newEditor(ConfigEditor.Visitor visitor) {
+
+    public ConfigEditor newEditor( ConfigEditor.Visitor visitor ) {
         return new ConfigEditor(visitor);
     }
 
-    public void update(ConfigEditor editor, JsonNode nodeUpdate)
+
+    public void update( ConfigEditor editor, JsonNode nodeUpdate )
             throws ConfigEditor.UpdateRejectedException, IOException {
         this.node = editor.update(getSnapshotAsNode(), nodeUpdate);
     }
+
 
     public JsonNode getSnapshotAsNode() throws IOException {
         return getObjectMapper().readTree(getSnapshotAsParser());
@@ -57,11 +60,13 @@ public class ConfigHolder {
     }
 
 
+
     public @NotNull ObjectMapper getObjectMapper() {
         return objectMapper;
     }
 
-    public void setObjectMapper(@NotNull ObjectMapper objectMapper) {
+
+    public void setObjectMapper( @NotNull ObjectMapper objectMapper ) {
         this.objectMapper = objectMapper;
     }
 
@@ -96,13 +101,15 @@ public class ConfigHolder {
 		}
 	}
 
+
     @SuppressWarnings({"UnusedDeclaration"})
     public @Nullable JsonNode getNode() {
         return node;
     }
 
+
     @SuppressWarnings({"UnusedDeclaration"})
-    public void setNode(@Nullable JsonNode node) {
+    public void setNode( @Nullable JsonNode node ) {
         this.node = node;
     }
 }

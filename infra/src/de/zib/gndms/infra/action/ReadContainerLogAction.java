@@ -22,7 +22,6 @@ import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigActionResult;
 import de.zib.gndms.logic.model.config.ConfigOption;
 import org.jetbrains.annotations.NotNull;
-import org.globus.wsrf.security.SecurityManager;
 
 import javax.persistence.EntityManager;
 import java.io.*;
@@ -67,7 +66,8 @@ public class ReadContainerLogAction extends SystemAction<ConfigActionResult> imp
     public ConfigActionResult execute(@NotNull EntityManager em, @NotNull PrintWriter writer) {
         final File logFile = getLogFile();
 
-        final String dn = SecurityManager.getManager().getCaller();
+        // todo provide dn from ws interface
+        final String dn = "";
         if (! getSystem().isGridAdmin("ReadContainerLogAction", dn))
             throw new SecurityException("Authenticated user not allowed to access log files. DN was '" + dn + '\'');
 
