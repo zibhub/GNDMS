@@ -18,7 +18,7 @@ package de.zib.gndms.infra.action;
 
 
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import de.zib.gndms.GNDMSVerInfo;
 import de.zib.gndms.infra.system.SystemDirectory;
 import de.zib.gndms.logic.model.config.ConfigAction;
@@ -71,7 +71,7 @@ public class ReadGNDMSVersionAction extends ConfigAction<ConfigActionResult> imp
     }
 
 
-    @Autowired
+    @Inject
     public void setVerInfo( final GNDMSVerInfo verInfo ) {
         this.verInfo = verInfo;
     }

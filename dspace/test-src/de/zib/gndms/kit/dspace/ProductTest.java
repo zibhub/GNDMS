@@ -20,6 +20,8 @@ package de.zib.gndms.kit.dspace;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
+import de.zib.gndms.common.kit.dspace.Product;
+
 /**
  * Tests the Product.
  * 
@@ -34,15 +36,15 @@ public class ProductTest {
 	@Test
     public final void testProduct() {		
 		String a = "test";
-		long b = 2000;
+		final long b = 2000;
 		
-		Product<String, Long> prod = new Product<String,Long>(a,b);
+		Product<String, Long> prod = new Product<String, Long>(a, b);
 		
        	AssertJUnit.assertEquals(a, prod.getFirst());
        	AssertJUnit.assertEquals(b, prod.getSecond().longValue());
        	
        	String aa = "another";
-       	long bb = 3;
+       	final long bb = 3;
        	
        	prod.setFirst(aa);
        	prod.setSecond(bb);

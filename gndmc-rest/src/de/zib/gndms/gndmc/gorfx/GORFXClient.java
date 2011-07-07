@@ -75,7 +75,7 @@ public class GORFXClient extends AbstractClient implements GORFXServiceEssential
 	public final ResponseEntity<Specifier<Facets>> createTaskFlow( final String type, final Order order,
                                                                    final String dn, final String wid ) {
 		return ( ResponseEntity<Specifier<Facets>> ) (Object) unifiedPost(Specifier.class, order, getServiceURL()
-				+ "/gorfx/_" + type, wid, dn);
+				+ "/gorfx/_" + type, dn, wid);
 	}
 
 }

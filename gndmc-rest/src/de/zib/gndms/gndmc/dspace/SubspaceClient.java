@@ -20,49 +20,34 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
+import de.zib.gndms.common.dspace.service.SubspaceService;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
-import de.zib.gndms.dspace.service.DSpaceService;
 import de.zib.gndms.gndmc.AbstractClient;
-import de.zib.gndms.model.dspace.SliceKind;
-import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.stuff.confuror.ConfigHolder;
 
 /**
- * The dspace client implementing the dspace service.
+ * The subspace client implementing the subspace service.
  * 
  * @author Ulrike Golas
  */
-public class DSpaceClient extends AbstractClient implements DSpaceService {
+
+public class SubspaceClient extends AbstractClient implements SubspaceService {
 
 	/**
 	 * The constructor.
 	 */
-	public DSpaceClient() {
+	public SubspaceClient() {
 	}
+
 
     /**
 	 * The constructor.
 	 * 
 	 * @param serviceURL The base url of the grid.
 	 */
-	public DSpaceClient(final String serviceURL) {
+	public SubspaceClient(final String serviceURL) {
 		this.setServiceURL(serviceURL);
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public final ResponseEntity<List<Specifier<Subspace>>> listSubspaceSpecifiers(
-			final String dn) {
-		return (ResponseEntity<List<Specifier<Subspace>>>) (Object) unifiedGet(List.class,
-				getServiceURL() + "/dspace", dn);
-	}
-
-	@Override
-	public final ResponseEntity<Facets> listAvailableFacets(
-			final String subspace, final String dn) {
-		return unifiedGet(Facets.class, getServiceURL() + "/dspace/_" + subspace, dn);
 	}
 
 	@Override
@@ -74,9 +59,25 @@ public class DSpaceClient extends AbstractClient implements DSpaceService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public final ResponseEntity<Specifier<Task>> deleteSubspace(final String subspace,
+	public final ResponseEntity<Specifier<Void>> deleteSubspace(final String subspace,
 			final String dn) {
-		return (ResponseEntity<Specifier<Task>>) (Object) unifiedDelete(Specifier.class, getServiceURL() + "/dspace/_" + subspace, dn);
+		return (ResponseEntity<Specifier<Void>>) (Object) unifiedDelete(Specifier.class, getServiceURL() 
+				+ "/dspace/_" + subspace, dn);
+	}
+
+	@Override
+	public final ResponseEntity<Facets> listAvailableFacets(
+			final String subspace, final String dn) {
+		return unifiedGet(Facets.class, getServiceURL() + "/dspace/_" + subspace, dn);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public final ResponseEntity<List<Specifier<Void>>> listSliceKinds(final String subspace,
+			final String dn) {
+		return (ResponseEntity<List<Specifier<Void>>>) (Object) unifiedGet(
+				List.class, getServiceURL() + "/dspace/_" + subspace + "/slicekinds",
+				dn);
 	}
 
 	@Override
@@ -92,15 +93,6 @@ public class DSpaceClient extends AbstractClient implements DSpaceService {
 			final String dn) {
 		return unifiedPut(Void.class, config, getServiceURL() + "/dspace/_"
 				+ subspace + "/config", dn);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public final ResponseEntity<List<Specifier<SliceKind>>> listSliceKinds(final String subspace,
-			final String dn) {
-		return (ResponseEntity<List<Specifier<SliceKind>>>) (Object) unifiedGet(
-				List.class, getServiceURL() + "/dspace/_" + subspace + "/slicekinds",
-				dn);
 	}
 
 }

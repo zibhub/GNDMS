@@ -17,9 +17,10 @@ package de.zib.gndms.kit.network;
  */
 
 
+
 import de.zib.gndms.model.gorfx.FTPTransferState;
-import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
+import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.globus.ftp.*;
 import org.slf4j.Logger;
@@ -126,7 +127,7 @@ public class PersistentMarkerListener implements MarkerListener {
      * The new state is written to the database immediately.
      */
     public void setCurrentFile( String currentFile ) {
-        final de.zib.gndms.neomodel.common.Session session = dao.beginSession();
+        final Session session = dao.beginSession();
         try {
             transferState.setCurrentFile( currentFile );
             transferState.setFtpArgs("0-0");

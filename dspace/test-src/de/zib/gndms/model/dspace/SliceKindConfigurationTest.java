@@ -28,7 +28,6 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import de.zib.gndms.model.common.AccessMask;
-import de.zib.gndms.model.dspace.WrongConfigurationException;
 import de.zib.gndms.stuff.confuror.ConfigEditor;
 import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
 import de.zib.gndms.stuff.confuror.ConfigHolder;
@@ -38,17 +37,16 @@ import de.zib.gndms.stuff.confuror.ConfigHolder;
  * @author Ulrike Golas
  *
  */
-public class SliceKindConfigurationTest{
+public class SliceKindConfigurationTest {
 	
 	/**
 	 * Tests the method checkSliceKindConfiguration(ConfigHolder) with a valid configuration
 	 * and the access to the slice kind configuration fields.
 	 * @throws IOException 
 	 * @throws UpdateRejectedException 
-	 * @throws WrongConfigurationException 
 	 */
 	@Test
-    public final void testCheckAndGet1() throws IOException, UpdateRejectedException, WrongConfigurationException {
+    public final void testCheckAndGet1() throws IOException, UpdateRejectedException {
 		String uri = "testuri";
 		final long permission = 345;
       	// TODO add metasubspaces and test for it
@@ -96,10 +94,12 @@ public class SliceKindConfigurationTest{
 			SliceKindConfiguration.getUri(testConfig);
 			AssertJUnit.fail();
 		} catch (WrongConfigurationException e) {
+			AssertJUnit.assertNotNull(e);
 		}
        	
        	// only uri set - permission is missing
-		JsonNode node = ConfigHolder.parseSingle(factory, SliceKindConfiguration.createSingleEntry(SliceKindConfiguration.URI,"testUri"));
+		JsonNode node = ConfigHolder.parseSingle(factory, 
+				SliceKindConfiguration.createSingleEntry(SliceKindConfiguration.URI, "testUri"));
 		testConfig.update(editor, node);
 
        	AssertJUnit.assertEquals(false, SliceKindConfiguration.checkSliceKindConfiguration(testConfig));
@@ -107,11 +107,13 @@ public class SliceKindConfigurationTest{
        		SliceKindConfiguration.getPermission(testConfig);
 			AssertJUnit.fail();
 		} catch (WrongConfigurationException e) {
+			AssertJUnit.assertNotNull(e);
 		}
 
        	// uri and permission set - but invalid permission (text)
-		node = ConfigHolder.parseSingle(factory, "{ '" + SliceKindConfiguration.PERMISSION +"': 'test' }");
-      	// node = ConfigHolder.parseSingle(factory, SliceKindConfiguration.createSingleEntry(SliceKindConfiguration.PERMISSION, "test"));
+		node = ConfigHolder.parseSingle(factory, "{ '" + SliceKindConfiguration.PERMISSION + "': 'test' }");
+      	// node = ConfigHolder.parseSingle(factory, 
+			// SliceKindConfiguration.createSingleEntry(SliceKindConfiguration.PERMISSION, "test"));
 		testConfig.update(editor, node);
 
        	AssertJUnit.assertEquals(false, SliceKindConfiguration.checkSliceKindConfiguration(testConfig));
@@ -119,10 +121,13 @@ public class SliceKindConfigurationTest{
        		SliceKindConfiguration.getPermission(testConfig);
 			AssertJUnit.fail();
 		} catch (WrongConfigurationException e) {
+			AssertJUnit.assertNotNull(e);
 		}
 
        	// uri and permission set - but invalid permission (too long)
-       	node = ConfigHolder.parseSingle(factory, SliceKindConfiguration.createSingleEntry(SliceKindConfiguration.PERMISSION, 23456));
+		final long perm1 = 23456;
+		node = ConfigHolder.parseSingle(factory, 
+       			SliceKindConfiguration.createSingleEntry(SliceKindConfiguration.PERMISSION, perm1));
 		testConfig.update(editor, node);
 
        	AssertJUnit.assertEquals(false, SliceKindConfiguration.checkSliceKindConfiguration(testConfig));
@@ -130,10 +135,13 @@ public class SliceKindConfigurationTest{
        		SliceKindConfiguration.getPermission(testConfig);
 			AssertJUnit.fail();
 		} catch (WrongConfigurationException e) {
+			AssertJUnit.assertNotNull(e);
 		}
 
        	// uri and permission set - but invalid permission (wrong number)
-       	node = ConfigHolder.parseSingle(factory, SliceKindConfiguration.createSingleEntry(SliceKindConfiguration.PERMISSION, 914));
+		final long perm2 = 914;
+      	node = ConfigHolder.parseSingle(factory, 
+       			SliceKindConfiguration.createSingleEntry(SliceKindConfiguration.PERMISSION, perm2));
 		testConfig.update(editor, node);
 
        	AssertJUnit.assertEquals(false, SliceKindConfiguration.checkSliceKindConfiguration(testConfig));
@@ -141,10 +149,12 @@ public class SliceKindConfigurationTest{
        		SliceKindConfiguration.getPermission(testConfig);
 			AssertJUnit.fail();
 		} catch (WrongConfigurationException e) {
+			AssertJUnit.assertNotNull(e);
 		}
 
        	// wrong type of uri value - number instead of string
-		node = ConfigHolder.parseSingle(factory, SliceKindConfiguration.createSingleEntry(SliceKindConfiguration.URI, testValue));
+		node = ConfigHolder.parseSingle(factory, 
+				SliceKindConfiguration.createSingleEntry(SliceKindConfiguration.URI, testValue));
 		testConfig.update(editor, node);
 
 		AssertJUnit.assertEquals(false, SliceKindConfiguration.checkSliceKindConfiguration(testConfig));
@@ -152,6 +162,7 @@ public class SliceKindConfigurationTest{
        		SliceKindConfiguration.getUri(testConfig);
 			AssertJUnit.fail();
 		} catch (WrongConfigurationException e) {
+			AssertJUnit.assertNotNull(e);
 		}
 
        	// TODO test for wrong meta-subspace
@@ -159,6 +170,9 @@ public class SliceKindConfigurationTest{
 	
 	/**
 	 * Tests the method getSliceKindConfiguration.
+	 * 
+	 * @throws IOException 
+	 * @throws UpdateRejectedException 
 	 */
 	@Test
     public final void testGetSliceKindConfiguration() throws IOException, UpdateRejectedException {
@@ -166,7 +180,7 @@ public class SliceKindConfigurationTest{
 		
 		String uri = "testuri";
 		dummy.setURI(uri);
-		long nr = 345;
+		final long nr = 345;
 		AccessMask permission = AccessMask.fromString(Long.toString(nr));
 		dummy.setPermission(permission);
 		MetaSubspace dummyMeta = new MetaSubspace();
