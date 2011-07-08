@@ -16,7 +16,6 @@ package de.zib.gndms.common.logic.config;
  */
 
 import de.zib.gndms.common.logic.action.ActionMeta;
-import de.zib.gndms.common.mockup.logic.config.ConfigAction;
 
 /**
  * @author try ma ik jo rr a zib

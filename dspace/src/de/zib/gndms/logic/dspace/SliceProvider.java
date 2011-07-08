@@ -45,7 +45,7 @@ public interface SliceProvider {
 
     /**
      * Returns the slice for a given slice id.
-     * @param sliceKind The requested slice id.
+     * @param slice The requested slice id.
      * @return The corresponding slice.
      */
     Slice getSlice(String slice);

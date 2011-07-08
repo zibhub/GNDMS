@@ -26,7 +26,7 @@ package de.zib.gndms.model.dspace;
 public class WrongConfigurationException extends RuntimeException {
 
 	/**
-	 * 
+	 * The serialization id.
 	 */
 	private static final long serialVersionUID = -6277152854505420912L;
 

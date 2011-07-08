@@ -44,7 +44,7 @@ public interface SubspaceProvider {
 
     /**
      * Returns the subspace for a given subspace id.
-     * @param sliceKind The requested subspace id.
+     * @param subspace The requested subspace id.
      * @return The corresponding subspace.
      */
 	Subspace getSubspace(String subspace);
