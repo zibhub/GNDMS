@@ -31,7 +31,6 @@ package de.zib.gndms.infra.grams;
 
 
 
-import org.apache.log4j.Logger;
 import org.globus.common.ChainedIOException;
 import org.globus.exec.generated.FilePairType;
 import org.globus.exec.generated.ScriptCommandEnumeration;
@@ -40,6 +39,8 @@ import org.globus.exec.utils.Resources;
 import org.globus.gram.internal.GRAMConstants;
 import org.globus.util.I18n;
 import org.globus.util.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.LinkedList;
@@ -500,11 +501,7 @@ public class GNDMSJobManagerScript {
                "done = " + (this.done ? "true" : "false") + "\n";
     }
 
-    static Logger logger;
-    static {
-         logger = Logger.getLogger(GNDMSJobManagerScript.class);
-        //logger = LogAux.stdSetupLogger(GNDMSJobManagerScript.class);
-    }
+    static Logger logger = LoggerFactory.getLogger( GNDMSJobManagerScript.class );;
 
     private static I18n i18n = I18n.getI18n(Resources.class.getName());
 }

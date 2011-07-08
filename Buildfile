@@ -137,7 +137,7 @@ JSON=['org.codehaus.jackson:jackson-core-lgpl:jar:1.7.4',
 GSON='com.google.code.gson:gson:jar:1.6'
 
 # logging
-SLF4J = transitive( ['org.slf4j:slf4j-log4j12:jar:1.5.8'])
+SLF4J = transitive( ['org.slf4j:slf4j-log4j12:jar:1.6.1', 'org.slf4j:slf4j-ext:jar:1.6.1'])
 
 GUICE = 'com.google.code.guice:guice:jar:2.0'
 GOOGLE_COLLECTIONS = 'com.google.code.google-collections:google-collect:jar:snapshot-20080530'

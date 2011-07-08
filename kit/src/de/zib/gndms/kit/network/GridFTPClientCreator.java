@@ -19,14 +19,16 @@ package de.zib.gndms.kit.network;
 
 
 import de.zib.gndms.kit.access.CredentialProvider;
-import de.zib.gndms.stuff.misc.LogProvider;
-import org.apache.log4j.Logger;
-import org.apache.log4j.NDC;
 import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.exception.ClientException;
 import org.globus.ftp.exception.ServerException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
+import org.slf4j.NDC;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.Callable;
 
@@ -36,18 +38,18 @@ import java.util.concurrent.Callable;
  *          <p/>
  *          User: mjorra, Date: 20.02.2009, Time: 17:40:03
  */
-public class GridFTPClientCreator implements Callable<GridFTPClient>,LogProvider {
-    private static final Logger log = Logger.getLogger( GridFTPClientCreator.class );
+public class GridFTPClientCreator implements Callable<GridFTPClient>  {
+    private static final Logger log = LoggerFactory.getLogger( GridFTPClientCreator.class );
 
     private String host;
     private int port;
-    private Stack ctx;
+    private Map ctx;
     private CredentialProvider credProvider;
     private int seq;
 
 
     public GridFTPClientCreator() {
-        ctx = NDC.cloneStack();
+        ctx = MDC.getCopyOfContextMap();
     }
 
 
@@ -55,17 +57,22 @@ public class GridFTPClientCreator implements Callable<GridFTPClient>,LogProvider
         this.host = host;
         this.port = port;
         this.credProvider = cp;
-        ctx = NDC.cloneStack();
-        this.seq = seq;
+        ctx = MDC.getCopyOfContextMap();
     }
 
 
     public GridFTPClient call() throws ServerException, IOException, InterruptedException, ClientException {
 
-        NDC.inherit( ctx );
-        NDC.push( "host:" + host );
-        NDC.push( "seq:" + seq );
-
+        MDC.setContextMap( ctx );
+        MDC.put( "host", host );
+        // todo merge with ws-devel ...
+       // MDC.put( "seq") );
+        /*
+        int stacksize = ctx.size();
+        while (! ctx.empty() ) {
+            NDC.push( (String) ctx.pop() );
+        }
+        */
         try {
             log.info( "creating client" );
             final GridFTPClient cnt = new GridFTPClient( host, port );
@@ -73,8 +80,9 @@ public class GridFTPClientCreator implements Callable<GridFTPClient>,LogProvider
             validateClient( cnt );
             return cnt;
         } finally {
-            NDC.remove();
-            NDC.remove();
+            MDC.remove( "host" );
+//            for( int i=0; i < stacksize; ++i )
+//                ctx.push( NDC.pop() );
         }
     }
 

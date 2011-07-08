@@ -22,9 +22,10 @@ import de.zib.gndms.stuff.threading.DV;
 import de.zib.gndms.stuff.threading.QueuedExecutor;
 import de.zib.gndms.kit.access.CredentialProvider;
 import de.zib.gndms.stuff.threading.TimedForkable;
-import org.apache.log4j.Logger;
 import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.exception.ServerException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -38,8 +39,8 @@ import java.util.concurrent.*;
  *          <p/>
  *          User: mjorra, Date: 20.02.2009, Time: 17:37:59
  */
-public class NonblockingClientFactory extends AbstractNonblockingClientFactory {
-    private static final Logger log = Logger.getLogger( NonblockingClientFactory.class );
+public class NonblockingClientFactory extends AbstractNonblockingClientFactory{
+    private static final Logger log = LoggerFactory.getLogger( NonblockingClientFactory.class );
 
     private final TimeUnit unit = TimeUnit.SECONDS;
     private final Map<String, QueuedExecutor> hostExecutors = new HashMap<String, QueuedExecutor>( );

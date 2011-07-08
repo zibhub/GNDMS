@@ -23,13 +23,15 @@ import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
 import de.zib.gndms.model.common.types.FutureTime;
 import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.gorfx.types.FileTransferORQ;
-import org.apache.axis.types.URI;
 import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.exception.ClientException;
 import org.globus.ftp.exception.ServerException;
 import org.joda.time.Duration;
 import java.util.concurrent.TimeoutException;
+import org.slf4j.Logger;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 
 /**
@@ -52,7 +54,7 @@ public abstract class AbstractTransferORQCalculator<M extends FileTransferORQ, C
 
 
     @Override
-    public TransientContract createOffer() throws ServerException, IOException, ClientException {
+    public TransientContract createOffer() throws ServerException, IOException, ClientException, URISyntaxException {
 
         estimateTransferSize();
         estimateBandWidth();
@@ -61,7 +63,7 @@ public abstract class AbstractTransferORQCalculator<M extends FileTransferORQ, C
 
 
     @SuppressWarnings({ "FeatureEnvy" })
-    protected Long estimateTransferSize( ) throws ServerException, IOException, ClientException {
+    protected Long estimateTransferSize( ) throws ServerException, IOException, ClientException, URISyntaxException {
 
         GridFTPClient clnt = null;
         try {
