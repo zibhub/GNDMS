@@ -20,9 +20,10 @@ package de.zib.gndms.kit.network;
 
 import de.zib.gndms.stuff.threading.QueuedExecutor;
 import de.zib.gndms.kit.access.CredentialProvider;
-import org.apache.log4j.Logger;
 import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.exception.ServerException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -37,7 +38,7 @@ import java.util.concurrent.*;
  *          User: mjorra, Date: 20.02.2009, Time: 17:37:59
  */
 public class NonblockingClientFactory extends AbstractGridFTPClientFactory{
-    private static final Logger log = Logger.getLogger( NonblockingClientFactory.class );
+    private static final Logger log = LoggerFactory.getLogger( NonblockingClientFactory.class );
 
     private int timeout = 20;
     private final TimeUnit unit = TimeUnit.SECONDS;

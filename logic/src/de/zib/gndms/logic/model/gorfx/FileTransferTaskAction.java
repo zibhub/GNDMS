@@ -28,11 +28,11 @@ import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.Taskling;
-import org.apache.axis.types.URI;
 import org.globus.ftp.GridFTPClient;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.TreeMap;
 

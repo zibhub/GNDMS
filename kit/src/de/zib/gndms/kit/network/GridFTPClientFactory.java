@@ -19,11 +19,11 @@ package de.zib.gndms.kit.network;
 
 
 import de.zib.gndms.kit.access.CredentialProvider;
-import org.apache.axis.types.URI;
 import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.exception.ServerException;
 
 import java.io.IOException;
+import java.net.URI;
 
 /**
  * A Factory for a GridFTPClient.
