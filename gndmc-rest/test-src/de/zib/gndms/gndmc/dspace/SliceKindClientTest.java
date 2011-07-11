@@ -20,7 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
-import de.zib.gndms.model.dspace.MockSliceKindConfiguration;
+import de.zib.gndms.common.model.dspace.MockSliceKindConfiguration;
 import de.zib.gndms.stuff.confuror.ConfigHolder;
 
 /**

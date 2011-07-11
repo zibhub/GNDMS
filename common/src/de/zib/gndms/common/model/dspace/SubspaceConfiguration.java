@@ -1,4 +1,4 @@
-package de.zib.gndms.model.dspace;
+package de.zib.gndms.common.model.dspace;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -16,16 +16,12 @@ package de.zib.gndms.model.dspace;
  * limitations under the License.
  */
 
-import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 
-import de.zib.gndms.logic.model.config.SetupAction.SetupMode;
-import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
 import de.zib.gndms.stuff.confuror.ConfigHolder;
-import de.zib.gndms.stuff.confuror.ConfigEditor;
 
 /**
  * The subspace configuration checks and accesses a ConfigHolder for a subspace,
@@ -83,45 +79,6 @@ public final class SubspaceConfiguration extends ConfigHolder {
 			return false;
 		}
 		return true;
-	}
-
-	/**
-	 * Constructs the subspace configuration of a given subspace.
-	 * 
-	 * @param sub
-	 *            The subspace.
-	 * @return The config holder.
-	 * @throws IOException 
-	 * @throws UpdateRejectedException 
-	 */
-	public static ConfigHolder getSubspaceConfiguration(final Subspace sub) 
-			throws IOException, UpdateRejectedException {
-		String path = sub.getPath();
-		String gsiftp = sub.getGsiFtpPath();
-		boolean visible = sub.getMetaSubspace().isVisibleToPublic();
-		long size = sub.getAvailableSize();
-
-		ConfigHolder config = new ConfigHolder();
-		ObjectMapper objectMapper = new ObjectMapper();
-		JsonFactory factory = objectMapper.getJsonFactory();
-		ConfigEditor.Visitor visitor = new ConfigEditor.DefaultVisitor();
-		ConfigEditor editor = config.newEditor(visitor);
-		config.setObjectMapper(objectMapper);
-
-		JsonNode pn = ConfigHolder.parseSingle(factory, createSingleEntry(PATH, path));
-		JsonNode gn = ConfigHolder.parseSingle(factory, createSingleEntry(GSIFTPPATH, gsiftp));
-		JsonNode vn = ConfigHolder.parseSingle(factory, createSingleEntry(VISIBLE, visible));
-		JsonNode sn = ConfigHolder.parseSingle(factory, createSingleEntry(SIZE, size));
-		
-		// TODO: to get a valid configuration: assume that subspace is in update mode???
-		JsonNode mn = ConfigHolder.parseSingle(factory, createSingleEntry(MODE, "UPDATE"));
-		config.update(editor, pn);
-		config.update(editor, gn);
-		config.update(editor, vn);
-		config.update(editor, sn);
-		config.update(editor, mn);
-			
-		return config;
 	}
 
 	/**
@@ -197,13 +154,13 @@ public final class SubspaceConfiguration extends ConfigHolder {
 	 * @param config The config holder, which has to be a valid subspace configuration.
 	 * @return The size.
 	 */
-	public static SetupMode getMode(final ConfigHolder config) {
+	public static String getMode(final ConfigHolder config) {
 			JsonNode node = config.getNode().findValue(MODE);
 			if (node == null) {
 				throw new WrongConfigurationException("The key " + MODE + " does not exist.");
 			}
 			if (isValidMode(node)) {
-				return SetupMode.valueOf(node.getTextValue());
+				return node.getTextValue();
 			} else {
 				throw new WrongConfigurationException("The key " + MODE + " exists but is no valid mode.");
 			}
@@ -217,7 +174,19 @@ public final class SubspaceConfiguration extends ConfigHolder {
 	private static boolean isValidMode(final JsonNode node) {
 		
 		try {
-			SetupMode.valueOf(node.getTextValue());
+			// TODO
+			// should be SetupMode.valueOf(node.getTextValue());
+			// but wrong package
+			String s = node.getTextValue();
+			Set<String> valid = new HashSet<String>();
+			valid.add("CREATE");
+			valid.add("READ");
+			valid.add("UPDATE");
+			valid.add("DELETE");
+			if (!valid.contains(s)) {
+				throw new IllegalArgumentException();				
+			}
+			
 			return true;
 		} catch (IllegalArgumentException e) {
 			return false;

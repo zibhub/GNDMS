@@ -1,4 +1,4 @@
-package de.zib.gndms.model.dspace;
+package de.zib.gndms.common.model.dspace;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -24,30 +24,26 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.zib.gndms.logic.model.config.SetupAction.SetupMode;
 import de.zib.gndms.stuff.confuror.ConfigEditor;
 import de.zib.gndms.stuff.confuror.ConfigHolder;
 import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
 
 /**
- * A mockup for a subspace configuration.
+ * A mockup for a slice kind configuration.
  * 
  * @author Ulrike Golas
  */
 
-public class MockSubspaceConfiguration extends ConfigHolder {
+public class MockSliceKindConfiguration extends ConfigHolder {
 
 	/**
-	 * Constructs a mock config holder for a subspace configuration.
-	 * 
-	 * @param path The subspace's path.
-	 * @param gsiftp The subspace's gsiftp path.
-	 * @param visible The subspace's visibility.
-	 * @param value The subspace's size.
-	 * @param mode The subspace's mode.
+	 * Constructs a mock config holder for a slice kind configuration.
+	 *
+	 * @param uri The slice kind's uri.
+	 * @param permission The slice kind's permission.
+	 * @param meta The slice kind's meta-subspace.
 	 */
-	public MockSubspaceConfiguration(final String path, final String gsiftp, final boolean visible, 
-			final long value, final SetupMode mode) {
+	public MockSliceKindConfiguration(final String uri, final long permission, final String meta) {
 		Logger logger = LoggerFactory.getLogger(this.getClass());
 
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -57,25 +53,22 @@ public class MockSubspaceConfiguration extends ConfigHolder {
 		setObjectMapper(objectMapper);
 		
 		try {
+			JsonNode un = ConfigHolder.parseSingle(factory, 
+					SliceKindConfiguration.createSingleEntry(SliceKindConfiguration.URI, uri));
 			JsonNode pn = ConfigHolder.parseSingle(factory, 
-					SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.PATH, path));
-			JsonNode gn = ConfigHolder.parseSingle(factory, 
-					SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.GSIFTPPATH, gsiftp));
-			JsonNode vn = ConfigHolder.parseSingle(factory, 
-					SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.VISIBLE, visible));
-			JsonNode sn = ConfigHolder.parseSingle(factory, 
-					SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.SIZE, value));
-			JsonNode mn = ConfigHolder.parseSingle(factory, 
-					SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.MODE, mode));
+					SliceKindConfiguration.createSingleEntry(SliceKindConfiguration.PERMISSION, permission));
+			update(editor, un);
 			update(editor, pn);
-			update(editor, gn);
-			update(editor, vn);
-			update(editor, sn);
-			update(editor, mn);
+	      	// TODO add metasubspaces and test for it
+	 		if (meta != null) {
+	 			JsonNode mn = ConfigHolder.parseSingle(factory, 
+	 					SliceKindConfiguration.createSingleEntry(SliceKindConfiguration.METASUBSPACES, meta));
+	 			update(editor, mn);
+	 		}
 		} catch (IOException e) {
-			logger.warn("Mock subspace configuration could not be established.");
+			logger.warn("Mock slice kind configuration could not be established.");
 		} catch (UpdateRejectedException e) {
-			logger.warn("Mock subspace configuration could not be established.");
+			logger.warn("Mock slice kind configuration could not be established.");
 		}
 	}
 
