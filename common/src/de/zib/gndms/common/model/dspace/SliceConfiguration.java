@@ -1,4 +1,4 @@
-package de.zib.gndms.model.dspace;
+package de.zib.gndms.common.model.dspace;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -16,17 +16,12 @@ package de.zib.gndms.model.dspace;
  * limitations under the License.
  */
 
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 
-import de.zib.gndms.stuff.confuror.ConfigEditor;
 import de.zib.gndms.stuff.confuror.ConfigHolder;
-import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
 
 /**
  * The slice configuration checks and accesses a ConfigHolder for a slice, which
@@ -73,38 +68,6 @@ public class SliceConfiguration extends ConfigHolder {
 			return false;
 		}
 		return true;
-	}
-
-	/**
-	 * Constructs the slice configuration of a given slice.
-	 * 
-	 * @param slice
-	 *            The slice.
-	 * @return The config holder.
-	 * @throws IOException 
-	 * @throws UpdateRejectedException 
-	 */
-	public static ConfigHolder getSliceConfiguration(final Slice slice)
-			throws IOException, UpdateRejectedException {
-		String directory = slice.getDirectoryId();
-		String owner = slice.getOwner();
-		Long termination = slice.getTerminationTime().getTimeInMillis();
-		
-		ConfigHolder config = new ConfigHolder();
-		ObjectMapper objectMapper = new ObjectMapper();
-		JsonFactory factory = objectMapper.getJsonFactory();
-		ConfigEditor.Visitor visitor = new ConfigEditor.DefaultVisitor();
-		ConfigEditor editor = config.newEditor(visitor);
-		config.setObjectMapper(objectMapper);
-
-		JsonNode dn = ConfigHolder.parseSingle(factory, createSingleEntry(DIRECTORY, directory));
-		JsonNode on = ConfigHolder.parseSingle(factory, createSingleEntry(OWNER, owner));
-		JsonNode tn = ConfigHolder.parseSingle(factory, createSingleEntry(TERMINATION, termination));
-		config.update(editor, dn);
-		config.update(editor, on);
-		config.update(editor, tn);
-
-		return config;
 	}
 
 	/**

@@ -36,6 +36,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import de.zib.gndms.GORFX.service.TaskServiceAux;
 import de.zib.gndms.common.dspace.service.SubspaceService;
+import de.zib.gndms.common.model.dspace.SubspaceConfiguration;
+import de.zib.gndms.common.model.dspace.WrongConfigurationException;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
@@ -46,8 +48,6 @@ import de.zib.gndms.logic.model.config.SetupAction.SetupMode;
 import de.zib.gndms.logic.model.dspace.SetupSubspaceAction;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.model.dspace.SubspaceConfiguration;
-import de.zib.gndms.model.dspace.WrongConfigurationException;
 import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
 import de.zib.gndms.stuff.confuror.ConfigHolder;
 
@@ -112,7 +112,8 @@ public class SubspaceServiceImpl implements SubspaceService {
 					HttpStatus.BAD_REQUEST);
 		}
 	
-		if (subspaces.exists(subspace) || SubspaceConfiguration.getMode(config) != SetupMode.CREATE) {
+		if (subspaces.exists(subspace) 
+				|| SetupMode.valueOf(SubspaceConfiguration.getMode(config)) != SetupMode.CREATE) {
             logger.warn("Subspace " + subspace + " cannot be created");
 			return new ResponseEntity<Facets>(null, headers,
 					HttpStatus.FORBIDDEN);
@@ -122,7 +123,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 	    action.setPath(SubspaceConfiguration.getPath(config));
 	    action.setIsVisibleToPublic(SubspaceConfiguration.getVisibility(config));
 	    action.setGsiFtpPath(SubspaceConfiguration.getGsiFtpPath(config));
-	    action.setMode(SubspaceConfiguration.getMode(config));
+	    action.setMode(SetupMode.valueOf(SubspaceConfiguration.getMode(config)));
 	    action.setSize(SubspaceConfiguration.getSize(config));
 	
         logger.info("Calling action for setting up the supspace " + subspace + ".");
@@ -216,7 +217,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 		Subspace sub = subspaces.getSubspace(subspace);
 		ConfigHolder config;
 		try {
-			config = SubspaceConfiguration.getSubspaceConfiguration(sub);
+			config = Subspace.getSubspaceConfiguration(sub);
 			return new ResponseEntity<ConfigHolder>(
 					config, headers, HttpStatus.OK);
 		} catch (IOException e) {

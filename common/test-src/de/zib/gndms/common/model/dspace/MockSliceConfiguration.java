@@ -1,4 +1,4 @@
-package de.zib.gndms.model.dspace;
+package de.zib.gndms.common.model.dspace;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -29,21 +29,21 @@ import de.zib.gndms.stuff.confuror.ConfigHolder;
 import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
 
 /**
- * A mockup for a slice kind configuration.
+ * A mockup for a slice configuration.
  * 
  * @author Ulrike Golas
  */
 
-public class MockSliceKindConfiguration extends ConfigHolder {
+public class MockSliceConfiguration extends ConfigHolder {
 
 	/**
-	 * Constructs a mock config holder for a slice kind configuration.
-	 *
-	 * @param uri The slice kind's uri.
-	 * @param permission The slice kind's permission.
-	 * @param meta The slice kind's meta-subspace.
+	 * Constructs a mock config holder for a slice configuration.
+	 * 
+	 * @param directory The slice's directory.
+	 * @param owner The slice's owner.
+	 * @param value The slice's termination date.
 	 */
-	public MockSliceKindConfiguration(final String uri, final long permission, final String meta) {
+	public MockSliceConfiguration(final String directory, final String owner, final long value) {
 		Logger logger = LoggerFactory.getLogger(this.getClass());
 
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -53,22 +53,19 @@ public class MockSliceKindConfiguration extends ConfigHolder {
 		setObjectMapper(objectMapper);
 		
 		try {
-			JsonNode un = ConfigHolder.parseSingle(factory, 
-					SliceKindConfiguration.createSingleEntry(SliceKindConfiguration.URI, uri));
-			JsonNode pn = ConfigHolder.parseSingle(factory, 
-					SliceKindConfiguration.createSingleEntry(SliceKindConfiguration.PERMISSION, permission));
-			update(editor, un);
-			update(editor, pn);
-	      	// TODO add metasubspaces and test for it
-	 		if (meta != null) {
-	 			JsonNode mn = ConfigHolder.parseSingle(factory, 
-	 					SliceKindConfiguration.createSingleEntry(SliceKindConfiguration.METASUBSPACES, meta));
-	 			update(editor, mn);
-	 		}
+			JsonNode dn = ConfigHolder.parseSingle(factory, 
+					SliceConfiguration.createSingleEntry(SliceConfiguration.DIRECTORY, directory));
+			JsonNode on = ConfigHolder.parseSingle(factory, 
+					SliceConfiguration.createSingleEntry(SliceConfiguration.OWNER, owner));
+			JsonNode tn = ConfigHolder.parseSingle(factory, 
+					SliceConfiguration.createSingleEntry(SliceConfiguration.TERMINATION, value));
+			update(editor, dn);
+			update(editor, on);
+			update(editor, tn);
 		} catch (IOException e) {
-			logger.warn("Mock slice kind configuration could not be established.");
+			logger.warn("Mock slice configuration could not be established.");
 		} catch (UpdateRejectedException e) {
-			logger.warn("Mock slice kind configuration could not be established.");
+			logger.warn("Mock slice configuration could not be established.");
 		}
 	}
 
