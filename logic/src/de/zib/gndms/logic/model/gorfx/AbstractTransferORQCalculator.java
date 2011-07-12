@@ -127,8 +127,6 @@ public abstract class AbstractTransferORQCalculator<M extends FileTransferORQ, C
 
         TransientContract ct = new TransientContract( );
         ct.setDeadline( FutureTime.atOffset( new Duration( ms ) )  );
-        // none means forever
-        // ct.setResultValidity( FutureTime.atTime(dat.plusHours( ContractConstants.FILE_TRANSFER_RESULT_VALIDITY )) );
 
         return ct;
     }
