@@ -120,47 +120,6 @@ public interface DirectoryAux {
 
 
     public static class Utils {
-        /**
-         *
-         * Copies file src to tgt
-         *
-         * @return true if everything went fine.
-         */
-        public static boolean copyFile( String src, String tgt )  {
-
-            throw new IllegalStateException( "nocando ask someone else" );
-
-            /*
-            File sf = new File( src );
-            File tf = new File( tgt );
-
-            FileChannel inc = null;
-            FileChannel outc = null;
-            try {
-                inc = new FileInputStream( sf ).getChannel( );
-                outc = new FileOutputStream( tf ).getChannel( );
-                inc.transferTo( 0, inc.size(), outc );
-            } catch ( IOException e) {
-                return false;
-            } finally {
-                if ( inc != null )
-                    try {
-                        inc.close( );
-                    } catch ( IOException e ) {
-                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                    }
-                if ( outc != null )
-                    try {
-                        outc.close( );
-                    } catch ( IOException e ) {
-                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                    }
-            }
-
-            return true;
-            */
-        }
-
 
 
         /**
@@ -189,23 +148,6 @@ public interface DirectoryAux {
             }
         }
 
-        /*
-        public boolean createSubspaceDirectory( String pth ) {
-
-            File f = new File( pth );
-
-            try {
-                // this also creats the dir for the subspace if it
-                // doesn't exist yet.
-                f.mkdirs( );
-                setSubspacePermissions( f.getAbsolutePath( ) );
-            } catch (SecurityException e) {
-                return false;
-            }
-
-            return true;
-        }
-        */
     }
 }
 

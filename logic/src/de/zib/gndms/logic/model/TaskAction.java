@@ -354,7 +354,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
 //                    em.getTransaction().commit();
 //                } catch ( Exception e2 ) {
 //                    // refresh em for final commit
-//                    EntityManagerAux.rollbackAndClose( em );
+//                    EntityManagerAux.cleanClose( em );
 //                    EntityManager nem = emf.createEntityManager();
 //                    TxFrame tx = new TxFrame( nem );
 //                    try {
