@@ -58,7 +58,7 @@ public class DataConstraintsConverter extends GORFXConverterBase<DataConstraints
         if( getModel().hasTimeConstraint() )
             getWriter().writeTimeConstraint( getModel().getTimeConstraint() );
 
-        getWriter().writeCFList( NotNullStringArray( getModel().getCFList() ) );
+        getWriter().writeCFList( NotNullStringList( getModel().getCFList() ) );
 
         if( getModel().hasConstraintList() )
             getWriter().writeConstraintList( getModel().getConstraintList() );

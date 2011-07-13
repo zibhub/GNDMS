@@ -54,7 +54,7 @@ public class FileTransferOrder extends AbstractOrder {
 
     public FileTransferOrder() {
         super( );
-        super.setOfferType( GORFXConstantURIs.FILE_TRANSFER_URI );
+        super.setTaskFlowType( GORFXConstantURIs.FILE_TRANSFER_URI );
     }
 
 
@@ -94,7 +94,7 @@ public class FileTransferOrder extends AbstractOrder {
     }
 
 
-    public void setFileMap( TreeMap<String, String> fileMap ) {
+    public void setFileMap( Map<String, String> fileMap ) {
         this.fileMap = fileMap;
     }
 }

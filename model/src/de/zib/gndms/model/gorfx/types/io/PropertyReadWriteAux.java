@@ -49,7 +49,7 @@ public class PropertyReadWriteAux {
     }
 
 
-    public static String[] readList( @NotNull Properties prop, @ NotNull String key, char sep ) {
+    public static List<String> readList( @NotNull Properties prop, @NotNull String key, char sep ) {
 
         String s = prop.getProperty ( key );
         if( s != null )
@@ -69,19 +69,19 @@ public class PropertyReadWriteAux {
     }
 
 
-    public static String[] readListMultiLine( @NotNull Properties prop, @NotNull String key ) {
+    public static List<String> readListMultiLine( @NotNull Properties prop, @NotNull String key ) {
 
         String s = prop.getProperty( key +".Count" );
         if( s == null )
             return null;
 
         int l = Integer.parseInt( s );
-        ArrayList<String> al = new ArrayList( l );
+        ArrayList<String> al = new ArrayList<String>( l );
         key = key + '.';
         for ( int i=0 ; i < l; ++i )
             al.add( prop.getProperty(  key + i ) );
 
-        return al.toArray( new String[0] );
+        return al;
     }
 
 
@@ -99,8 +99,8 @@ public class PropertyReadWriteAux {
 
     public static HashMap<String, String> readMap( @NotNull Properties prop, @NotNull String key ) {
 
-        String[] keys = readList( prop, key, ' ' );
-        if( key == null )
+        List<String> keys = readList( prop, key, ' ' );
+        if( key.trim().equals( "" ) )
             return null;
 
         HashMap<String, String> hm = new HashMap<String, String>( );

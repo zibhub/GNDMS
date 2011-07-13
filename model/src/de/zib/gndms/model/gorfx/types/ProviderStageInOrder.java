@@ -42,7 +42,7 @@ public class ProviderStageInOrder extends AbstractOrder {
 
 	public ProviderStageInOrder() {
         super( );
-        super.setOfferType( GORFXConstantURIs.PROVIDER_STAGE_IN_URI );
+        super.setTaskFlowType( GORFXConstantURIs.PROVIDER_STAGE_IN_URI );
     }
 
 

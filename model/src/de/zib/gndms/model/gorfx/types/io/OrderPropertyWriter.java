@@ -20,8 +20,8 @@ package de.zib.gndms.model.gorfx.types.io;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
 import java.util.Properties;
-import java.util.HashMap;
 
 /**
  * Writes an ORQ as a Properties instance.
@@ -55,7 +55,7 @@ public abstract class OrderPropertyWriter extends AbstractPropertyIO implements 
     }
 
 
-    public void writeContext( @NotNull HashMap<String, String> ctx ) {
+    public void writeContext( @NotNull Map<String, String> ctx ) {
         PropertyReadWriteAux.writeMap( getProperties(), SfrProperty.CONTEXT.key,  ctx );
     }
 

@@ -17,6 +17,8 @@ package de.zib.gndms.model.gorfx.types.io;
  */
 
 
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A GORFXConverterBase uses a writer to convert a gndms class to a desired type, which can be the corresponding
@@ -88,10 +90,10 @@ public abstract class GORFXConverterBase<W,M> {
 
 
     public static String NotNullString( String s ) {
-        return ( s == null ) ? new String( ) : s;
+        return ( s == null ) ?  "" : s;
     }
 
-    public static String[] NotNullStringArray( String[] sa ) {
-        return ( sa == null ) ? new String[0] : sa;
+    public static List<String> NotNullStringList( List<String> list ) {
+        return ( list == null ) ? new ArrayList<String>( 0 ) : list;
     }
 }

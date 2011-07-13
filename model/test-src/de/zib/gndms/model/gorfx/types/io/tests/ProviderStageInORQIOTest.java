@@ -24,6 +24,7 @@ import org.joda.time.DateTime;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -38,8 +39,8 @@ public class ProviderStageInORQIOTest {
 
         DataDescriptor ddt = new DataDescriptor();
         DataConstraints dc = new DataConstraints();
-        String[] ol = { "hello", "world" };
-        String[] cfl = { "foo", "bar", "foobar", "blubber", };
+        List<String> ol = { "hello", "world" };
+        List<String> cfl = { "foo", "bar", "foobar", "blubber", };
         HashMap<String,String> cl = new HashMap<String,String>( );
         cl.put( "gibson", "les-paul");
         cl.put( "fender", "Stratocaster" );
@@ -135,7 +136,7 @@ public class ProviderStageInORQIOTest {
 
         // example for just download
         DataDescriptor ddt2 = new DataDescriptor();
-        String[] objs = { "no", "download" };
+        List<String> objs = { "no", "download" };
 
         dff = "plain";
         dfaf = "zip";
