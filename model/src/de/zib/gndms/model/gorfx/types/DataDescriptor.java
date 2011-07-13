@@ -19,6 +19,7 @@ package de.zib.gndms.model.gorfx.types;
 
 
 import java.io.Serializable;
+import java.util.List;
 
 
 /**
@@ -39,7 +40,7 @@ import java.io.Serializable;
 public class DataDescriptor implements Serializable {
 
     // todo maybe use a real object list here
-    private String[] objectList; // required
+    private List<String> objectList; // required
     private DataConstraints constrains; // not required 
     private String dataFormat; // required
     private String dataArchiveFormat; // not required
@@ -53,12 +54,12 @@ public class DataDescriptor implements Serializable {
     }
 
 
-    public String[] getObjectList() {
+    public List<String> getObjectList() {
         return objectList;
     }
 
 
-    public void setObjectList( String[] objectList ) {
+    public void setObjectList( List<String> objectList ) {
         this.objectList = objectList;
     }
 

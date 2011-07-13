@@ -38,6 +38,6 @@ public class RePublishSliceOrder extends InterSliceTransferOrder {
 
     public RePublishSliceOrder() {
         super( );
-        super.setOfferType( GORFXConstantURIs.RE_PUBLISH_SLICE_URI );
+        super.setTaskFlowType( GORFXConstantURIs.RE_PUBLISH_SLICE_URI );
     }
 }

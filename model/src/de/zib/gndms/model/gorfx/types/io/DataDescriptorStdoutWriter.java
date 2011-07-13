@@ -21,6 +21,8 @@ package de.zib.gndms.model.gorfx.types.io;
 import de.zib.gndms.model.gorfx.types.io.DataConstraintsWriter;
 import de.zib.gndms.model.gorfx.types.io.DataDescriptorWriter;
 
+import java.util.List;
+
 /**
  * @author  try ma ik jo rr a zib
  * @version  $Id$
@@ -29,7 +31,7 @@ import de.zib.gndms.model.gorfx.types.io.DataDescriptorWriter;
  */
 public class DataDescriptorStdoutWriter implements DataDescriptorWriter {
 
-    public void writeObjectList( String[] objectList ) {
+    public void writeObjectList( List<String> objectList ) {
         System.out.println( "ObjectList: " );
         showStringList( objectList, "    " );
     }
@@ -83,10 +85,10 @@ public class DataDescriptorStdoutWriter implements DataDescriptorWriter {
         System.out.println( "******************** EODataDescriptor ********************" );
     }
 
-    private void showStringList( String[] sl, String ind ) {
+    private void showStringList( List<String> sl, String ind ) {
         if( sl == null )
             System.out.println( ind + "null" );
-        for( int i=0; i < sl.length; ++i )
-            System.out.println( ind + sl[i] );
+        for( int i=0; i < sl.size(); ++i )
+            System.out.println( ind + sl.get( i ) );
     }
 }

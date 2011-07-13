@@ -20,6 +20,7 @@ package de.zib.gndms.model.gorfx.types;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -35,7 +36,7 @@ public class DataConstraints implements Serializable {
     private TimeConstraint timeConstraint; // not required
     
     @SuppressWarnings({ "InstanceVariableNamingConvention" })
-    private String[] CFList; // required
+    private List<String> CFList; // required
     private Map<String, String> constraintList; // required
 
     
@@ -68,12 +69,12 @@ public class DataConstraints implements Serializable {
 
 
 
-    public String[] getCFList() {
+    public List<String> getCFList() {
         return CFList;
     }
 
 
-    public void setCFList( String[] CFList ) {
+    public void setCFList( List<String> CFList ) {
         this.CFList = CFList;
     }
 

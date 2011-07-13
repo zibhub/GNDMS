@@ -38,11 +38,11 @@ import java.util.Map;
 @Copyable(CopyMode.SERIALIZE)
 public abstract class AbstractOrder implements Serializable {
     private static final long serialVersionUID = 5782532835559987893L;
-    private String offerType;  ///< Type of the requested task.
+    private String taskFlowType;  ///< Type of the requested task.
 	private transient boolean justEstimate; ///< Flag for the contract calculation
 
     private String actId; ///< A unique id inherited from the ORQResource
-    private HashMap<String,String> actContext; ///< The context of the ORQResource
+    private Map<String, String> actContext; ///< The context of the ORQResource
                                                /// Contains stuff like, delegation epr, and workflow id
 	private static final int INITIAL_STRING_BUILDER_CAPACITY = 256;
     private String localUser; ///< The user name map to the credential of the request.
@@ -52,18 +52,18 @@ public abstract class AbstractOrder implements Serializable {
     }
 
 
-    protected AbstractOrder( String offerTypeParam ) {
-	    offerType = offerTypeParam;
+    protected AbstractOrder( String taskFlowType ) {
+	    this.taskFlowType = taskFlowType;
     }
 
 
-    public String getOfferType() {
-        return offerType;
+    public String getTaskFlowType() {
+        return taskFlowType;
     }
 
 
-    protected void setOfferType( String URI ) {
-	    offerType = URI;
+    protected void setTaskFlowType( String URI ) {
+	    taskFlowType = URI;
     }
 
 
@@ -96,12 +96,12 @@ public abstract class AbstractOrder implements Serializable {
 
 
     @SuppressWarnings({ "ReturnOfCollectionOrArrayField" })
-    public HashMap<String, String> getActContext() {
+    public Map<String, String> getActContext() {
         return actContext;
     }
 
 
-    public void setActContext( HashMap<String, String> context ) {
+    public void setActContext( Map<String, String> context ) {
 	    actContext = context;
     }
 
@@ -121,7 +121,7 @@ public abstract class AbstractOrder implements Serializable {
 		result.append("'; ");
 		result.append("OFFER_TYPE: ");
 		result.append('\'');
-		result.append(getOfferType());
+		result.append( getTaskFlowType());
 		result.append("'; ");
 		result.append("CLASS: ");
 		result.append('\'');

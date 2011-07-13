@@ -24,7 +24,6 @@ import de.zib.gndms.model.gorfx.types.SliceStageInOrder;
  * User: roberto
  * Date: 13.10.2008
  * Time: 11:15:19
- * To change this template use File | Settings | File Templates.
  */
 public class SliceStageInOrderConverter extends OrderConverter<SliceStageInOrderWriter, SliceStageInOrder> {
 

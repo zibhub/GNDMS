@@ -41,7 +41,7 @@ public class InterSliceTransferOrder extends FileTransferOrder {
 
     public InterSliceTransferOrder() {
         super( );
-        super.setOfferType( GORFXConstantURIs.INTER_SLICE_TRANSFER_URI );
+        super.setTaskFlowType( GORFXConstantURIs.INTER_SLICE_TRANSFER_URI );
     }
 
     @NotNull

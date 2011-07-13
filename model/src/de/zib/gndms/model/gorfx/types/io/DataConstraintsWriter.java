@@ -20,6 +20,7 @@ package de.zib.gndms.model.gorfx.types.io;
 
 import de.zib.gndms.model.gorfx.types.TimeConstraint;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,7 +33,7 @@ public interface DataConstraintsWriter extends GORFXWriterBase {
 
     //no writeSpaceConstraint see below
     public void writeTimeConstraint ( TimeConstraint timeConstraint );
-    public void writeCFList( String[] CFList );
+    public void writeCFList( List<String> CFList );
     public void writeConstraintList( Map<String, String> constraintList );
 
     

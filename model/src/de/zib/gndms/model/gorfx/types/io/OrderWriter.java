@@ -18,7 +18,7 @@ package de.zib.gndms.model.gorfx.types.io;
 
 
 
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * An GORFXWriter for ORQs.
@@ -38,7 +38,7 @@ public interface OrderWriter extends GORFXWriterBase {
 
     public void writeJustEstimate( boolean je );
 
-    public void writeContext( HashMap<String,String> ctx );
+    public void writeContext( Map<String, String> ctx );
 
     public void writeId( String id );
 }

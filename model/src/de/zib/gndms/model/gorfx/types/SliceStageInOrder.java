@@ -38,7 +38,7 @@ public class SliceStageInOrder extends ProviderStageInOrder {
 
 	public SliceStageInOrder(){
         super();
-        super.setOfferType( GORFXConstantURIs.SLICE_STAGE_IN_URI );
+        super.setTaskFlowType( GORFXConstantURIs.SLICE_STAGE_IN_URI );
     }
 
     @Override

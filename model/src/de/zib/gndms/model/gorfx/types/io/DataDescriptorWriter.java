@@ -22,6 +22,7 @@ import de.zib.gndms.model.gorfx.types.SpaceConstraint;
 import de.zib.gndms.model.gorfx.types.TimeConstraint;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * So called builder interface for a data descriptor.
@@ -37,7 +38,7 @@ import java.util.HashMap;
  */
 public interface DataDescriptorWriter extends GORFXWriterBase {
 
-    public void writeObjectList( String[] objectList );
+    public void writeObjectList( List<String> objectList );
     public void writeDataFormat( String dataFormat );
     public void writeDataArchiveFormat( String dataArchiveFormat );
     public void writeMetaDataFormat( String metaDataFormat );
