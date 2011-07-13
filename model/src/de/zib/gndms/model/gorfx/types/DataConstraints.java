@@ -20,6 +20,7 @@ package de.zib.gndms.model.gorfx.types;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -35,7 +36,7 @@ public class DataConstraints implements Serializable {
     
     @SuppressWarnings({ "InstanceVariableNamingConvention" })
     private String[] CFList; // required
-    private HashMap<String,String> constraintList; // required
+    private Map<String, String> constraintList; // required
 
     
     private static final long serialVersionUID = 3332239957438316526L;
@@ -82,12 +83,12 @@ public class DataConstraints implements Serializable {
     }
 
 
-    public HashMap<String, String> getConstraintList() {
+    public Map<String, String> getConstraintList() {
         return constraintList;
     }
 
 
-    public void setConstraintList( HashMap<String, String> constraintList ) {
+    public void setConstraintList( Map<String, String> constraintList ) {
         this.constraintList = constraintList;
     }
 }

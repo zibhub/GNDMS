@@ -18,7 +18,7 @@ package de.zib.gndms.model.gorfx.types.io;
 
 
 
-import de.zib.gndms.model.gorfx.types.InterSliceTransferORQ;
+import de.zib.gndms.model.gorfx.types.InterSliceTransferOrder;
 
 /**
  * @author  try ma ik jo rr a zib
@@ -26,13 +26,13 @@ import de.zib.gndms.model.gorfx.types.InterSliceTransferORQ;
  * <p/>
  * User: mjorra, Date: 14.10.2008, Time: 14:48:27
  */
-public class InterSliceTransferORQConverter extends ORQConverter<InterSliceTransferORQWriter, InterSliceTransferORQ> {
+public class InterSliceTransferORQConverter extends OrderConverter<InterSliceTransferORQWriter, InterSliceTransferOrder> {
 
     public InterSliceTransferORQConverter() {
     }
 
 
-    public InterSliceTransferORQConverter( InterSliceTransferORQWriter writer, InterSliceTransferORQ model ) {
+    public InterSliceTransferORQConverter( InterSliceTransferORQWriter writer, InterSliceTransferOrder model ) {
         super( writer, model );
     }
 

@@ -23,7 +23,7 @@ import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.model.common.types.FilePermissions;
 import de.zib.gndms.model.common.types.TransientContract;
-import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
+import de.zib.gndms.model.gorfx.types.ProviderStageInOrder;
 import de.zib.gndms.model.gorfx.types.io.ContractConverter;
 import de.zib.gndms.model.gorfx.types.io.ContractPropertyReader;
 import de.zib.gndms.model.gorfx.types.io.ContractPropertyWriter;
@@ -61,12 +61,12 @@ public class ParmFormatAux {
     }
 
     
-    public ProcessBuilderAction createPBAction( ProviderStageInORQ orq, TransientContract contParam, FilePermissions fp ) {
+    public ProcessBuilderAction createPBAction( ProviderStageInOrder order, TransientContract contParam, FilePermissions fp ) {
 
         if( format.equals( FORMAT_XML ) )
-            return  createXMLParmPBAction( orq, contParam, fp );
+            return  createXMLParmPBAction( order, contParam, fp );
         else
-            return  createDefaultPBAction( orq, contParam, fp );
+            return  createDefaultPBAction( order, contParam, fp );
     }
 
 
@@ -98,7 +98,7 @@ public class ParmFormatAux {
     }
 
 
-    private ProcessBuilderAction createDefaultPBAction( ProviderStageInORQ orq, TransientContract contParam, FilePermissions fp ) {
+    private ProcessBuilderAction createDefaultPBAction( ProviderStageInOrder order, TransientContract contParam, FilePermissions fp ) {
 
         Properties moreProps = null;
         if( contParam != null ) {
@@ -115,24 +115,24 @@ public class ParmFormatAux {
         }
 
         if( moreProps != null )
-            return ProviderStageInTools.createPBAction( orq, moreProps);
+            return ProviderStageInTools.createPBAction( order, moreProps);
         
-        return ProviderStageInTools.createPBAction( orq, null );
+        return ProviderStageInTools.createPBAction( order, null );
     }
 
 
-    private ProcessBuilderAction createXMLParmPBAction( ProviderStageInORQ orq, TransientContract contParam, FilePermissions fp ) {
+    private ProcessBuilderAction createXMLParmPBAction( ProviderStageInOrder order, TransientContract contParam, FilePermissions fp ) {
 
         try{
             if( fp != null ) {
-                orq.getActContext().put( "user", fp.getUser( ) );
-                orq.getActContext().put( "group", fp.getGroup( ) );
-                orq.getActContext().put( "mask", fp.getAccessMask( ).toString() );
+                order.getActContext().put( "user", fp.getUser( ) );
+                order.getActContext().put( "group", fp.getGroup( ) );
+                order.getActContext().put( "mask", fp.getAccessMask( ).toString() );
             }
             return ProviderStageInTools.createPBActionForXML(
-                xmlWriter.toDocument( orq, contParam ) );
+                xmlWriter.toDocument( order, contParam ) );
         } catch ( IOException e ) {
-            throw new RuntimeException( "Error while converting orq to xml document", e );
+            throw new RuntimeException( "Error while converting order to xml document", e );
         }
     }
 

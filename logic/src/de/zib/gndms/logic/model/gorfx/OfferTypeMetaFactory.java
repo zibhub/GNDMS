@@ -22,7 +22,7 @@ import com.google.inject.Injector;
 import de.zib.gndms.model.common.types.factory.AbstractRecursiveKeyFactory;
 import de.zib.gndms.model.common.types.factory.KeyFactoryInstance;
 import de.zib.gndms.model.common.types.factory.RecursiveKeyFactory;
-import de.zib.gndms.neomodel.gorfx.OfferType;
+import de.zib.gndms.neomodel.gorfx.TaskFlowType;
 import org.jetbrains.annotations.NotNull;
 
 

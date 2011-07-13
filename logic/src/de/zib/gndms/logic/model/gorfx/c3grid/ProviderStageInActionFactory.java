@@ -19,11 +19,10 @@ package de.zib.gndms.logic.model.gorfx.c3grid;
 
 
 import de.zib.gndms.kit.config.MapConfig;
-import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
+import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.model.common.types.factory.InjectingRecursiveKeyFactory;
-import de.zib.gndms.model.gorfx.types.AbstractORQ;
+import de.zib.gndms.model.gorfx.types.AbstractOrder;
 import de.zib.gndms.neomodel.common.Dao;
-import de.zib.gndms.neomodel.gorfx.OfferType;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -36,12 +35,12 @@ import org.jetbrains.annotations.NotNull;
  *          User: stepn Date: 09.10.2008 Time: 12:30:22
  */
 public class ProviderStageInActionFactory
-	  extends InjectingRecursiveKeyFactory<String, ORQTaskAction<? extends AbstractORQ>> {
+	  extends InjectingRecursiveKeyFactory<String, TaskFlowAction<? extends AbstractOrder>> {
 
     private Dao dao;
 
     @Override
-    public ORQTaskAction<?> newInstance(final String offerType)
+    public TaskFlowAction<?> newInstance(final String offerType)
             throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         final @NotNull MapConfig config = new MapConfig(getDao().getOfferTypeConfig(offerType));
 	    final Class<? extends AbstractProviderStageInAction> instanceClass = config.getClassOption(

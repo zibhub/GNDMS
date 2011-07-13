@@ -45,7 +45,8 @@ public interface TaskAccessor extends GridResourceItf, TimedGridResourceItf {
 
     @NotNull String getDescription();
 
-    @Nullable OfferType getOfferType();
+    @Nullable
+    TaskFlowType getOfferType();
 
     @Nullable Calendar getTerminationTime();
 
@@ -67,7 +68,7 @@ public interface TaskAccessor extends GridResourceItf, TimedGridResourceItf {
 
     @NotNull Iterable<? extends TaskAccessor> getSubTasks();
 
-    @NotNull Iterable<? extends TaskAccessor> getSubTasks(OfferType ot);
+    @NotNull Iterable<? extends TaskAccessor> getSubTasks(TaskFlowType ot);
 
     Serializable getORQ();
 

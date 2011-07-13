@@ -28,7 +28,7 @@ import java.util.Map;
  * <p/>
  * User: mjorra, Date: 01.10.2008, Time: 16:43:40
  */
-public interface InterSliceTransferORQWriter extends ORQWriter {
+public interface InterSliceTransferORQWriter extends OrderWriter {
 
     public void writeSourceSlice( SliceRef sr );
     public void writeDestinationSlice( SliceRef sr );

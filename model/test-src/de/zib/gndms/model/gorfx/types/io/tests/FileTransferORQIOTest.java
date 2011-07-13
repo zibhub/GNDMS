@@ -18,11 +18,11 @@ package de.zib.gndms.model.gorfx.types.io.tests;
 
 
 
-import de.zib.gndms.model.gorfx.types.FileTransferORQ;
-import de.zib.gndms.model.gorfx.types.io.FileTransferORQPropertyWriter;
-import de.zib.gndms.model.gorfx.types.io.FileTransferORQConverter;
-import de.zib.gndms.model.gorfx.types.io.FileTransferORQPropertyReader;
-import de.zib.gndms.model.gorfx.types.io.FileTransferORQStdoutWriter;
+import de.zib.gndms.model.gorfx.types.FileTransferOrder;
+import de.zib.gndms.model.gorfx.types.io.FileTransferOrderPropertyWriter;
+import de.zib.gndms.model.gorfx.types.io.FileTransferOrderConverter;
+import de.zib.gndms.model.gorfx.types.io.FileTransferOrderPropertyReader;
+import de.zib.gndms.model.gorfx.types.io.FileTransferOrderStdoutWriter;
 
 import java.util.TreeMap;
 import java.util.Properties;
@@ -41,29 +41,29 @@ import java.io.FileOutputStream;
 public class FileTransferORQIOTest {
 
     public static void main( String[] args ) {
-        FileTransferORQ orq = new FileTransferORQ( );
-        orq.setSourceURI( "gsiftp://csr-priv5/home/mjorra/tmp/C3GridTests/dataTransferTestSource" );
-        orq.setTargetURI( "gsiftp://csr-priv5/home/mjorra/C3GridTests/dataTransferTestTarget" );
+        FileTransferOrder order = new FileTransferOrder( );
+        order.setSourceURI( "gsiftp://csr-priv5/home/mjorra/tmp/C3GridTests/dataTransferTestSource" );
+        order.setTargetURI( "gsiftp://csr-priv5/home/mjorra/C3GridTests/dataTransferTestTarget" );
 
         TreeMap<String, String> fileMap = new TreeMap<String, String>( );
         fileMap.put( "a_1KB_file", null );
         fileMap.put( "b_1MB_file", "b_1000KB_file" );
         fileMap.put( "c_1GB_file", "c_largeFile" );
-        orq.setFileMap( fileMap );
+        order.setFileMap( fileMap );
 
         HashMap<String, String> ctx = new HashMap<String, String>( );
         ctx.put( "k1", "v1" );
         ctx.put( "k2", "v2" );
         ctx.put( "k3", "v3" );
         ctx.put( "k4", "v4" );
-        orq.setActContext( ctx );
+        order.setActContext( ctx );
 
-        FileTransferORQStdoutWriter cout = new FileTransferORQStdoutWriter( );
-        FileTransferORQConverter conv = new FileTransferORQConverter( cout, orq );
+        FileTransferOrderStdoutWriter cout = new FileTransferOrderStdoutWriter( );
+        FileTransferOrderConverter conv = new FileTransferOrderConverter( cout, order );
         conv.convert( );
 
         Properties prop = new Properties( );
-        FileTransferORQPropertyWriter propw = new FileTransferORQPropertyWriter( prop );
+        FileTransferOrderPropertyWriter propw = new FileTransferOrderPropertyWriter( prop );
         conv.setWriter( propw );
         conv.convert( );
         showProps( prop );
@@ -79,12 +79,12 @@ public class FileTransferORQIOTest {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
-        FileTransferORQPropertyReader propr = new FileTransferORQPropertyReader( prop );
+        FileTransferOrderPropertyReader propr = new FileTransferOrderPropertyReader( prop );
         propr.performReading();
 
-        FileTransferORQ orq2 = propr.getProduct();
-        System.out.println( "\nRead orq: " );
-        conv.setModel( orq2 );
+        FileTransferOrder order2 = propr.getProduct();
+        System.out.println( "\nRead order: " );
+        conv.setModel( order2 );
         conv.setWriter( cout );
         conv.convert( );
 

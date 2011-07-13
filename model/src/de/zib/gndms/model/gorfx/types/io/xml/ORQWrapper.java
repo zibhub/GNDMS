@@ -19,7 +19,7 @@ package de.zib.gndms.model.gorfx.types.io.xml;
 
 
 import de.zib.gndms.model.common.types.TransientContract;
-import de.zib.gndms.model.gorfx.types.AbstractORQ;
+import de.zib.gndms.model.gorfx.types.AbstractOrder;
 
 
 /**
@@ -28,7 +28,7 @@ import de.zib.gndms.model.gorfx.types.AbstractORQ;
  * Bundles an Offerrequest with its corresponding TransientContract.
  *
  *
- * @see AbstractORQ
+ * @see de.zib.gndms.model.gorfx.types.AbstractOrder
  * @see TransientContract
  * @author  try ma ik jo rr a zib
  * @version  $Id$
@@ -37,7 +37,7 @@ import de.zib.gndms.model.gorfx.types.AbstractORQ;
  */
 public class ORQWrapper {
 
-    private AbstractORQ orq;
+    private AbstractOrder order;
     private TransientContract contract;
 
 
@@ -46,19 +46,19 @@ public class ORQWrapper {
     }
 
 
-    public ORQWrapper( AbstractORQ orq, TransientContract contract ) {
-        this.orq = orq;
+    public ORQWrapper( AbstractOrder order, TransientContract contract ) {
+        this.order = order;
         this.contract = contract;
     }
 
 
-    public AbstractORQ getOrq() {
-        return orq;
+    public AbstractOrder getOrder() {
+        return order;
     }
 
 
-    public void setOrq( AbstractORQ orq ) {
-        this.orq = orq;
+    public void setOrder( AbstractOrder order ) {
+        this.order = order;
     }
 
 
