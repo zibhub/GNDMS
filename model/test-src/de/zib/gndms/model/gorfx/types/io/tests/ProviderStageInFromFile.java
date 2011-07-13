@@ -26,10 +26,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Properties;
 
-import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyReader;
-import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQConverter;
-import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyWriter;
-import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
+import de.zib.gndms.model.gorfx.types.io.ProviderStageInOrderQPropertyReader;
+import de.zib.gndms.model.gorfx.types.io.ProviderStageInOrderConverter;
+import de.zib.gndms.model.gorfx.types.io.ProviderStageInOrderPropertyWriter;
+import de.zib.gndms.model.gorfx.types.ProviderStageInOrder;
 
 /**
  * @author  try ma ik jo rr a zib
@@ -51,15 +51,15 @@ public class ProviderStageInFromFile {
             Properties prop = new Properties( );
             prop.load( is );
             is.close( );
-            ProviderStageInORQPropertyReader reader = new ProviderStageInORQPropertyReader( prop );
+            ProviderStageInOrderQPropertyReader reader = new ProviderStageInOrderQPropertyReader( prop );
             reader.performReading( );
-            ProviderStageInORQ orq =  reader.getProduct();
-            ProviderStageInORQIOTest.showORQ( orq );
+            ProviderStageInOrder order =  reader.getProduct();
+            ProviderStageInORQIOTest.showORQ( order );
             System.out.println( "\nOrq output test: ");
             System.out.println( "-----------------");
             Properties np = new Properties( );
-            ProviderStageInORQPropertyWriter writer = new ProviderStageInORQPropertyWriter( np );
-            ProviderStageInORQConverter conv = new ProviderStageInORQConverter( writer, orq );
+            ProviderStageInOrderPropertyWriter writer = new ProviderStageInOrderPropertyWriter( np );
+            ProviderStageInOrderConverter conv = new ProviderStageInOrderConverter( writer, order );
             conv.convert();
 
             np.store( System.out, "some props" );

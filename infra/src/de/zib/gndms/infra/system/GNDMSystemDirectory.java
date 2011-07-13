@@ -44,8 +44,6 @@ import de.zib.gndms.stuff.BoundInjector;
 import de.zib.gndms.kit.configlet.ConfigletProvider;
 import de.zib.gndms.kit.configlet.Configlet;
 import de.zib.gndms.kit.system.SystemInfo;
-import groovy.lang.Binding;
-import groovy.lang.GroovyShell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.jetbrains.annotations.NotNull;
@@ -55,7 +53,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import java.lang.reflect.InvocationTargetException;
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -88,10 +85,10 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
 	private final Map<String, Configlet> configlets = Maps.newConcurrentHashMap();
 
     @SuppressWarnings({ "RawUseOfParameterizedType" })
-    private @NotNull IndustrialPark<String, String, AbstractORQCalculator<?, ?>> orqPark;
+    private final @NotNull IndustrialPark<String, String, AbstractQuoteCalculator<?, ?>> orqPark;
 
     @SuppressWarnings({ "RawUseOfParameterizedType" })
-    private @NotNull IndustrialPark<String, String, ORQTaskAction<?>> taskActionPark;
+    private final @NotNull IndustrialPark<String, String, TaskFlowAction<?>> taskActionPark;
 
 	@SuppressWarnings({ "FieldCanBeLocal" })
 	private final Wrapper<Object> sysHolderWrapper;
@@ -115,7 +112,6 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
 		uuidGen = uuidGenParam;
 	    sysHolderWrapper = systemHolderWrapParam;
 
-
     }
 
 
@@ -125,22 +121,21 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
         boundInjector.setInjector(Injector);
         GNDMSBinding.setDefaultInjector(Injector);
 
-        final ORQCalculatorMetaFactory calcMF = new ORQCalculatorMetaFactory();
-        calcMF.setWrap(sysHolderWrapper);
-        calcMF.setInjector(Injector);
-        orqPark = new OfferTypeIndustrialPark<AbstractORQCalculator<?,?>>(calcMF);
+	    final QuoteCalculatorMetaFactory calcMF = new QuoteCalculatorMetaFactory();
+		calcMF.setInjector(injector);
+	    calcMF.setWrap(sysHolderWrapper);
+	    orqPark = new OfferTypeIndustrialPark<AbstractQuoteCalculator<?,?>>(calcMF);
 
-
-        final ORQTaskActionMetaFactory taskMF = new ORQTaskActionMetaFactory();
-        taskMF.setWrap( sysHolderWrapper );
-        taskMF.setInjector(Injector);
-        taskActionPark = new OfferTypeIndustrialPark<ORQTaskAction<?>>(taskMF);
+	    final TaskFlowActionMetaFactory taskFlowMF = new TaskFlowActionMetaFactory();
+	    taskFlowMF.setWrap(sysHolderWrapper);
+		taskFlowMF.setInjector(injector);
+	    taskActionPark = new OfferTypeIndustrialPark<TaskFlowAction<?>>( taskFlowMF );
     }
 
 
     @SuppressWarnings({ "MethodWithTooExceptionsDeclared" })
     @NotNull
-    public AbstractORQCalculator<?,?> newORQCalculator(
+    public AbstractQuoteCalculator<?,?> newORQCalculator(
         final @NotNull EntityManagerFactory emf,
         final @NotNull String offerTypeKey)
         throws ClassNotFoundException, IllegalAccessException, InstantiationException,
@@ -149,7 +144,7 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
         try {
             if (offerTypeKey == null)
                 throw new IllegalArgumentException("Unknow offer type: " + offerTypeKey);
-            AbstractORQCalculator<?,?> orqc = orqPark.getInstance(offerTypeKey);
+            AbstractQuoteCalculator<?,?> orqc = orqPark.getInstance(offerTypeKey);
             orqc.setConfigletProvider( this );
             return orqc;
         }

@@ -21,7 +21,7 @@ package de.zib.gndms.logic.model.gorfx;
 import de.zib.gndms.kit.network.GNDMSFileTransfer;
 import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
 import de.zib.gndms.model.gorfx.FTPTransferState;
-import de.zib.gndms.model.gorfx.types.FileTransferORQ;
+import de.zib.gndms.model.gorfx.types.FileTransferOrder;
 import de.zib.gndms.model.gorfx.types.FileTransferResult;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.Dao;
@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.persistence.EntityManager;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.TreeMap;
+import java.util.Map;
 
 /**
  * @author  try ma ik jo rr a zib
@@ -42,10 +42,10 @@ import java.util.TreeMap;
  * <p/>
  * User: mjorra, Date: 01.10.2008, Time: 17:57:57
  */
-public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
+public class FileTransferTaskAction extends TaskFlowAction<FileTransferOrder> {
 
     private FTPTransferState transferState;
-    private FileTransferORQ orq;
+    private FileTransferOrder order;
 
 
     public FileTransferTaskAction() {
@@ -58,8 +58,8 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
 
     @Override
     @NotNull
-    public Class<FileTransferORQ> getOrqClass() {
-        return FileTransferORQ.class;
+    public Class<FileTransferOrder> getOrqClass() {
+        return FileTransferOrder.class;
     }
 
 
@@ -67,7 +67,7 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
     protected void onInProgress(@NotNull String wid,
                                 @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState)
             throws Exception {
-        TreeMap<String,String> files;
+        Map<String, String> files;
         GridFTPClient src;
         GridFTPClient dest;
 
@@ -76,8 +76,8 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
         try {
             Task task  = getTask(session);
             transferState = (FTPTransferState) task.getPayload();
-            orq           = ((FileTransferORQ)task.getORQ());
-            files         = orq.getFileMap();
+            order = ((FileTransferOrder )task.getORQ());
+            files         = order.getFileMap();
             if( transferState == null )
                 newTransfer( task );
             else {
@@ -97,10 +97,10 @@ public class FileTransferTaskAction extends ORQTaskAction<FileTransferORQ> {
         pml.setTransferState( transferState );
         pml.setTaskling(getModel());
         pml.setWid(wid);
-        pml.setGORFXId(orq.getActId());
+        pml.setGORFXId( order.getActId());
 
-        URI suri = new URI ( orq.getSourceURI() );
-        URI duri = new URI ( orq.getTargetURI() );
+        URI suri = new URI ( order.getSourceURI() );
+        URI duri = new URI ( order.getTargetURI() );
 
         // obtain clients
         src = NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( suri, getCredentialProvider() );

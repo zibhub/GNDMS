@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -57,7 +57,7 @@ public class GNDMSFileTransfer {
 
     private GridFTPClient sourceClient;
     private GridFTPClient destinationClient;
-    private TreeMap<String,String> files;
+    private Map<String, String> files;
 
     private String sourcePath;
     private String destinationPath;
@@ -85,7 +85,7 @@ public class GNDMSFileTransfer {
      *
      * This resets any previously prepared download stats.
      */
-    public void setFiles( TreeMap<String,String> fm ) {
+    public void setFiles( Map<String, String> fm ) {
         files = fm;
     }
 
@@ -94,12 +94,12 @@ public class GNDMSFileTransfer {
      * This method is provided for convenience and behaves like the above method.
      */
     public void setFiles( String sfn, String tfn ) {
-        files = new TreeMap<String,String>( );
+        files = new TreeMap<String, String>( );
         files.put( sfn, tfn );
     }
 
 
-    public TreeMap<String, String> getFiles() {
+    public Map<String, String> getFiles() {
         return files;
     }
 

@@ -28,7 +28,7 @@ import java.lang.reflect.InvocationTargetException;
 
 /**
  *
- * A TaskActionProvider is used to return TaskActions, which correspond to OfferType objects using KeyFactories.
+ * A TaskActionProvider is used to return TaskActions, which correspond to TaskFlowType objects using KeyFactories.
  *
  *
  * @see TaskAction
@@ -69,11 +69,11 @@ public interface TaskActionProvider {
      * Retrieves the {@link de.zib.gndms.model.gorfx.OfferType} object, which has {@code offerTypeKey} as its key
      * in the database and is managed by the EntityManager {@code em}.
      *
-     * A TaskAction is then returned which corresponds to the OfferType key object. 
+     * A TaskAction is then returned which corresponds to the TaskFlowType key object.
      *
      *
-     * @param emParam ane EntityManager which manages OfferType objects
-     * @param offerTypeKey the primary key for a specific OfferType object
+     * @param emParam ane EntityManager which manages TaskFlowType objects
+     * @param offerTypeKey the primary key for a specific TaskFlowType object
      * @return a TaskAction corresponding to the OfferTypeKey
      * @throws IllegalAccessException
      * @throws InstantiationException

@@ -17,8 +17,9 @@ package de.zib.gndms.neomodel.common;
  */
 
 import de.zib.gndms.model.gorfx.types.TaskState;
-import de.zib.gndms.neomodel.gorfx.OfferType;
+import de.zib.gndms.neomodel.gorfx.TaskFlowType;
 import de.zib.gndms.neomodel.gorfx.Task;
+import de.zib.gndms.neomodel.gorfx.TaskFlowType;
 import org.apache.lucene.search.NumericRangeQuery;
 import org.jetbrains.annotations.NotNull;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -41,7 +42,7 @@ import java.util.List;
  * User: stepn Date: 05.09.2008 Time: 14:48:36
  */
 public class Session {
-    private static final String OFFER_TYPE_T = classNickName(OfferType.class);
+    private static final String OFFER_TYPE_T = classNickName(TaskFlowType.class);
     private static final String TASK_T = classNickName(Task.class);
 
     private final @NotNull GraphDatabaseService gdb;
@@ -58,15 +59,15 @@ public class Session {
     }
 
 
-    public OfferType createOfferType() {
+    public TaskFlowType createOfferType() {
         final Node node = gdb.createNode();
-        final OfferType offerType = new OfferType(reprSession, OFFER_TYPE_T, node);
+        final TaskFlowType offerType = new TaskFlowType(reprSession, OFFER_TYPE_T, node);
         offerType.onCreate(reprSession);
         return offerType;
     }
 
-    @NotNull public OfferType findOfferType(@NotNull String offerTypeId) {
-        return new OfferType(reprSession, OFFER_TYPE_T,
+    @NotNull public TaskFlowType findOfferType(@NotNull String offerTypeId) {
+        return new TaskFlowType(reprSession, OFFER_TYPE_T,
                 getTypeIndex(OFFER_TYPE_T).get(gridName, offerTypeId).getSingle());
     }
     

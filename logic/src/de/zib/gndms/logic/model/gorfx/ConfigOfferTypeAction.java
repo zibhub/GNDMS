@@ -22,7 +22,8 @@ import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.config.ConfigAction;
 import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigOption;
-import de.zib.gndms.neomodel.gorfx.OfferType;
+import de.zib.gndms.neomodel.gorfx.TaskFlowType;
+import de.zib.gndms.neomodel.gorfx.TaskFlowType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -34,7 +35,7 @@ import java.util.Properties;
 
 
 /**
- * An Action to manage the configuration map of an <tt>OfferType</tt> entity.
+ * An Action to manage the configuration map of an <tt>TaskFlowType</tt> entity.
  *
  * <p>Depending on the chosen <tt>UpdateMode</tt>, it will either delete, just update or completly overwrite
  * all keys and their corresponding values of the entity's configuration map, being a valid config option (see {@link #isValidConfigOptionName(String)}).
@@ -44,7 +45,7 @@ import java.util.Properties;
  * If not already denoted, {@link #offerType 'offerType'} must also be set in the map.
  * Otherwise an <tt>IllegalStateException</tt> will be thrown.
  *
- * @see OfferType
+ * @see de.zib.gndms.neomodel.gorfx.TaskFlowType
  * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
@@ -83,8 +84,8 @@ public class ConfigOfferTypeAction extends ConfigAction<String> {
 
 
     /**
-     * Retrieves the <tt>OfferType</tt> entity with the primary key <tt>getOfferType()</tt>
-     * and the entityclass <tt>OfferType.class</tt>, which is managed by <tt>em</tt>.
+     * Retrieves the <tt>TaskFlowType</tt> entity with the primary key <tt>getOfferType()</tt>
+     * and the entityclass <tt>TaskFlowType.class</tt>, which is managed by <tt>em</tt>.
      *
      * <p> Depending on the <tt>UpdateMode</tt> it will manipulate the entity's configuration map.
      *   If the mode is set to 'DELKEYS', all options from entity's configuration map are deleted, which have a valid config option name
@@ -101,7 +102,7 @@ public class ConfigOfferTypeAction extends ConfigAction<String> {
      */
     @Override
     public String execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer) {
-        final @NotNull OfferType offerType_ = em.find(OfferType.class, getOfferType());
+        final @NotNull TaskFlowType offerType_ = em.find(TaskFlowType.class, getOfferType());
         final @NotNull Map<String, String> configMap;
 
         boolean update = false;

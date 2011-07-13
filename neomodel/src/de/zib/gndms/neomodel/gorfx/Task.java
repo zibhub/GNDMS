@@ -133,15 +133,15 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
         setProperty(DESCRIPTION_P, description);
     }
 
-    public OfferType getOfferType() {
+    public TaskFlowType getOfferType() {
         final Relationship rel = repr().getSingleRelationship(TaskRelationships.OFFER_TYPE_REL, Direction.OUTGOING);
         if (rel == null)
             return null;
         else
-            return new OfferType(reprSession(), session().getGridName(), rel.getEndNode());
+            return new TaskFlowType(reprSession(), session().getGridName(), rel.getEndNode());
     }
 
-    public void setOfferType(@Nullable OfferType offerType) {
+    public void setOfferType(@Nullable TaskFlowType offerType) {
         final Relationship rel = repr().getSingleRelationship(TaskRelationships.OFFER_TYPE_REL, Direction.OUTGOING);
         if (rel != null)
             rel.delete();
@@ -286,11 +286,11 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
         return subTasks;
     }
 
-    public @NotNull Iterable<Task> getSubTasks(final OfferType ot) {
+    public @NotNull Iterable<Task> getSubTasks(final TaskFlowType ot) {
         final List<Task> subTasks = new LinkedList<Task>();
         for (Relationship rel : repr().getRelationships(TaskRelationships.PARENT_REL, Direction.INCOMING)) {
             final Task task        = new Task(getReprSession(), getTypeNick(), rel.getStartNode());
-            final OfferType taskOT = task.getOfferType();
+            final TaskFlowType taskOT = task.getOfferType();
             if ((ot == null) ? taskOT == null : ot.equals(taskOT))
                 subTasks.add(task);
         }
@@ -460,7 +460,7 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
                     return descr;
                 }
 
-                public OfferType getOfferType() throws UnsupportedOperationException {
+                public TaskFlowType getOfferType() throws UnsupportedOperationException {
                     throw new UnsupportedOperationException();
                 }
 
@@ -508,7 +508,7 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
                 }
 
                 @NotNull
-                public Iterable<? extends TaskAccessor> getSubTasks(OfferType ot) {
+                public Iterable<? extends TaskAccessor> getSubTasks(TaskFlowType ot) {
                     throw new UnsupportedOperationException();
                 }
 

@@ -21,8 +21,6 @@ package de.zib.gndms.model.gorfx.types.io;
 import de.zib.gndms.model.gorfx.types.DataConstraints;
 import de.zib.gndms.model.gorfx.types.SpaceConstraint;
 
-import java.util.HashMap;
-
 /**
  * @author  try ma ik jo rr a zib
  * @version  $Id$

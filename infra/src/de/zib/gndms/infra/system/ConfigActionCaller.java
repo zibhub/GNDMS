@@ -34,7 +34,7 @@ import de.zib.gndms.logic.model.dspace.AssignSliceKindAction;
 import de.zib.gndms.logic.model.dspace.SetupSliceKindAction;
 import de.zib.gndms.logic.model.dspace.SetupSubspaceAction;
 import de.zib.gndms.logic.model.gorfx.ConfigOfferTypeAction;
-import de.zib.gndms.logic.model.gorfx.SetupOfferTypeAction;
+import de.zib.gndms.logic.model.gorfx.SetupTaskFlowAction;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.stuff.GNDMSInjector;
@@ -110,7 +110,7 @@ public final class ConfigActionCaller implements WSActionCaller {
         system = systemParam;
         configActions.add(SetupSubspaceAction.class);
         configActions.add(EchoOptionsAction.class);
-        configActions.add(SetupOfferTypeAction.class);
+        configActions.add(SetupTaskFlowAction.class);
         configActions.add(ConfigOfferTypeAction.class);
         configActions.add(SetupSliceKindAction.class);
         configActions.add(AssignSliceKindAction.class);
