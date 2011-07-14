@@ -17,6 +17,7 @@ package de.zib.gndms.logic.model.gorfx.taskflow;
 
 import de.zib.gndms.common.model.gorfx.types.Order;
 import de.zib.gndms.common.model.gorfx.types.Quote;
+import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 
 import java.util.List;
 
@@ -36,12 +37,12 @@ public interface AbstractQuoteCalculator<T extends Order> {
      * 
      * @param order The order of the task flow.
      */
-    void setOrder( T order );
+    void setOrder( DelegatingOrder<T> order );
 
     /** 
      * @brief Validates if a order is satisfiable.
      *
-     * @return \c true if thats the case.
+     * @return \c true if that's the case.
      */
     boolean validate( );
 

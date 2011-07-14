@@ -24,7 +24,7 @@ package de.zib.gndms.model.gorfx.types;
  * <p/>
  * User: mjorra, Date: 13.10.2008, Time: 14:10:06
  */
-public class ProviderStageInResult extends AbstractTaskResult {
+public class ProviderStageInResult extends AbstractTaskFlowResult {
 
     private static final long serialVersionUID = -3003504928510518008L;
 

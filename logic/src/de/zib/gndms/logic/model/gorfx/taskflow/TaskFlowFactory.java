@@ -20,6 +20,7 @@ import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.common.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.model.common.PersistentContract;
+import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
@@ -32,9 +33,8 @@ import org.joda.time.DateTime;
  * @brief An interface for taskflow factories.
  *
  * Implementations of this interface should be able to compute quotes, and generate task instances.
- *
  */
-public interface TaskFlowFactory {
+public interface TaskFlowFactory<O extends Order, C extends AbstractQuoteCalculator<O>> {
 
 
     /**
@@ -42,7 +42,7 @@ public interface TaskFlowFactory {
      *
      * @return The taskflow key.
      */
-    String getTaskFlowKey( );
+    String getTaskFlowKey();
 
     /**
      * @brief Delivers the version of the plugin.
@@ -56,7 +56,7 @@ public interface TaskFlowFactory {
      * 
      * @return A quote calculator.
      */
-    AbstractQuoteCalculator<?> getQuoteCalculator(  );
+    C getQuoteCalculator();
 
     /** 
      * @brief Delivers information about the taskflow in general. 
@@ -66,7 +66,7 @@ public interface TaskFlowFactory {
      *
      * @return A task info object.
      */
-    TaskFlowInfo getInfo( );
+    TaskFlowInfo getInfo();
 
     /**
      * @brief Creates a new taskflow instance.
@@ -115,7 +115,7 @@ public interface TaskFlowFactory {
      *
      * @return The class of the taskflows order type.
      */
-    Class getOrderClass( );
+    Class<O> getOrderClass();
 
     /**
      * @brief Creates a task action.
@@ -123,7 +123,7 @@ public interface TaskFlowFactory {
      *
      * @return The newly created action.
      */
-    TaskAction createAction( );
+    TaskAction createAction();
 
     /**
      * @brief Delivers a list of keys of taskflows, this taskflow depends on.
@@ -132,30 +132,31 @@ public interface TaskFlowFactory {
      */
     Iterable<String> depends();
 
+    DelegatingOrder<O> getOrderDelegate( O orq );
 
     public static class Aux {
 
-        public static TaskFlow fromTask( Dao dao, TaskFlowProvider provider, String type, String id )  {
+        public static TaskFlow fromTask( final Dao dao, final TaskFlowProvider provider, final String type,
+                                         final String id ) {
 
-            Session ses = dao.beginSession();
+            final Session ses = dao.beginSession();
             try {
-                Task t = ses.findTaskForResource( id );
+                final Task t = ses.findTaskForResource( id );
                 if ( t == null )
                     return null;
-                TaskFlowFactory tff = provider.getFactoryForTaskFlow( type );
-                TaskFlow tf = tff.createOrphan();
+                final TaskFlowFactory tff = provider.getFactoryForTaskFlow( type );
+                final TaskFlow tf = tff.createOrphan();
                 tf.setId( t.getResourceId() );
-                tf.setOrder( (Order ) t.getPayload() );
+                tf.setOrder( ( DelegatingOrder<?> ) t.getPayload() );
                 tf.addQuote( quoteFromContract( t.getContract() ) );
-                tf.setTaskling( t.getTaskling());
+                tf.setTaskling( t.getTaskling() );
                 tff.adopt( tf );
-                ses.success( );
+                ses.success();
                 return tf;
             } finally {
                 ses.finish();
             }
         }
-
 
 
         public static Quote quoteFromContract( PersistentContract contract ) {
