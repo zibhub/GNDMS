@@ -1,4 +1,4 @@
-package de.zib.gndms.model.dspace;
+package de.zib.gndms.common.model.dspace;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -27,6 +27,8 @@ import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import de.zib.gndms.common.model.dspace.SliceConfiguration;
+import de.zib.gndms.common.model.dspace.WrongConfigurationException;
 import de.zib.gndms.stuff.confuror.ConfigEditor;
 import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
 import de.zib.gndms.stuff.confuror.ConfigHolder;
@@ -158,32 +160,4 @@ public class SliceConfigurationTest {
 		}
 
 	}
-	
-	/**
-	 * Tests the method getSliceConfiguration.
-	 * 
-	 * @throws IOException 
-	 * @throws UpdateRejectedException 
-	 */
-	@Test
-    public final void testGetSliceConfiguration() throws IOException, UpdateRejectedException {
-		Slice dummy = new Slice();
-		
-		String directory = "testdir";
-		dummy.setDirectoryId(directory);
-		String owner = "me";
-		dummy.setOwner(owner);
-		final long termination = 20000;
-		GregorianCalendar cal = new GregorianCalendar();
-		cal.setTimeInMillis(termination);
-		dummy.setTerminationTime(cal);
-				
-		ConfigHolder config = SliceConfiguration.getSliceConfiguration(dummy);
-
-		AssertJUnit.assertEquals(true, SliceConfiguration.checkSliceConfiguration(config));
-		AssertJUnit.assertEquals(directory, SliceConfiguration.getDirectory(config));
-		AssertJUnit.assertEquals(owner, SliceConfiguration.getOwner(config));
-		AssertJUnit.assertEquals(cal, SliceConfiguration.getTerminationTime(config));
-	}
-
 }

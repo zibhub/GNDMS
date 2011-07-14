@@ -38,6 +38,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import de.zib.gndms.common.dspace.service.SliceService;
 import de.zib.gndms.common.kit.dspace.Product;
+import de.zib.gndms.common.model.dspace.SliceConfiguration;
+import de.zib.gndms.common.model.dspace.WrongConfigurationException;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
@@ -47,10 +49,8 @@ import de.zib.gndms.logic.dspace.SliceKindProvider;
 import de.zib.gndms.logic.dspace.SliceProvider;
 import de.zib.gndms.logic.dspace.SubspaceProvider;
 import de.zib.gndms.model.dspace.Slice;
-import de.zib.gndms.model.dspace.SliceConfiguration;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.model.dspace.WrongConfigurationException;
 import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
 import de.zib.gndms.stuff.confuror.ConfigHolder;
 
@@ -111,7 +111,7 @@ public class SliceServiceImpl implements SliceService {
 		
 		try {
 			Slice slic = findSliceOfKind(subspace, sliceKind, slice);
-    		ConfigHolder config = SliceConfiguration.getSliceConfiguration(slic);
+    		ConfigHolder config = Slice.getSliceConfiguration(slic);
     		Product<ConfigHolder, Facets> prod2 = new Product<ConfigHolder, Facets>(config, sliceFacets);
     		return new ResponseEntity<Product<ConfigHolder, Facets>>(prod2, headers, HttpStatus.OK);
  		} catch (NoSuchElementException ne) {

@@ -20,8 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
-import de.zib.gndms.logic.model.config.SetupAction.SetupMode;
-import de.zib.gndms.model.dspace.MockSubspaceConfiguration;
+import de.zib.gndms.common.model.dspace.MockSubspaceConfiguration;
 import de.zib.gndms.stuff.confuror.ConfigHolder;
 
 /**
@@ -69,7 +68,7 @@ public class SubspaceClientTest {
 		String gsiftp = "gsiftp";
 		boolean visible = true;
 		final long value = 6000;
-		SetupMode mode = SetupMode.valueOf("UPDATE");
+		String mode = "UPDATE";
        	ConfigHolder config = new MockSubspaceConfiguration(path, gsiftp, visible, value, mode);
 		res = scl.createSubspace(subspace, config, dn);
        	AssertJUnit.assertNotNull(res);

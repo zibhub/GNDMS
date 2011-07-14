@@ -1,4 +1,4 @@
-package de.zib.gndms.model.dspace;
+package de.zib.gndms.common.model.dspace;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -16,18 +16,12 @@ package de.zib.gndms.model.dspace;
  * limitations under the License.
  */
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 
-import de.zib.gndms.model.common.AccessMask;
-import de.zib.gndms.stuff.confuror.ConfigEditor;
 import de.zib.gndms.stuff.confuror.ConfigHolder;
-import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
 
 /**
  * The slice kind configuration checks and accesses a ConfigHolder for a slice kind,
@@ -78,38 +72,6 @@ public class SliceKindConfiguration extends ConfigHolder {
 		return false;
 	}
 
-	/**
-	 * Constructs the slice kind configuration of a given slice kind.
-	 * 
-	 * @param slicekind
-	 *            The slice kind.
-	 * @return The config holder.
-	 * @throws IOException 
-	 * @throws UpdateRejectedException 
-	 */
-	public static ConfigHolder getSliceKindConfiguration(final SliceKind slicekind) 
-			throws IOException, UpdateRejectedException {
-		String uri = slicekind.getURI();
-		AccessMask permission = slicekind.getPermission();
-		Set<MetaSubspace> metaSubspaces = slicekind.getMetaSubspaces();
-		
-		ConfigHolder config = new ConfigHolder();
-		ObjectMapper objectMapper = new ObjectMapper();
-		JsonFactory factory = objectMapper.getJsonFactory();
-		ConfigEditor.Visitor visitor = new ConfigEditor.DefaultVisitor();
-		ConfigEditor editor = config.newEditor(visitor);
-		config.setObjectMapper(objectMapper);
-
-		JsonNode un = ConfigHolder.parseSingle(factory, createSingleEntry(URI, uri));
-		JsonNode pn = ConfigHolder.parseSingle(factory, createSingleEntry(PERMISSION, permission));
-		// TODO: how to store meta-subspaces
-		JsonNode mn = ConfigHolder.parseSingle(factory, createSingleEntry(METASUBSPACES, metaSubspaces.toString()));
-		config.update(editor, un);
-		config.update(editor, pn);
-		config.update(editor, mn);
-			
-		return config;
-	}
 	
 	/**
 	 * Returns the uri of a slice kind configuration.
@@ -133,29 +95,28 @@ public class SliceKindConfiguration extends ConfigHolder {
 	 * @param config The config holder, which has to be a valid slice kind configuration.
 	 * @return The permissions.
 	 */
-	public static AccessMask getPermission(final ConfigHolder config) {
+	public static long getPermission(final ConfigHolder config) {
 		JsonNode node = config.getNode().findValue(PERMISSION);
 		if (node == null) {
 			throw new WrongConfigurationException("The key " + PERMISSION + " does not exist.");
 		}
 			if (node.isNumber() && isValidPermission(node)) {
-				long nr = node.getLongValue();
-				return AccessMask.fromString(Long.toString(nr));
+				return node.getLongValue();
 			} else {
 				throw new WrongConfigurationException();
 			}
 	}
 
 	/**
-	 * Returns the meta-subspaces of a slice kind configuration or null, if it is not specified.
+	 * Returns the identifiers of the meta-subspaces of a slice kind configuration or null, if it is not specified.
 	 * @param config The config holder, which has to be a valid slice kind configuration.
 	 * @return The set of meta-subspaces.
 	 */
-	public static Set<MetaSubspace> getMetaSubspaces(final ConfigHolder config) {
+	public static Set<String> getMetaSubspaces(final ConfigHolder config) {
 		try {
 		if (config.getNode().findValue(METASUBSPACES).isTextual()) {
 			// TODO get meta-subspaces
-			return new HashSet<MetaSubspace>();
+			return new HashSet<String>();
 			} else {
 				throw new WrongConfigurationException();
 			}
@@ -173,7 +134,21 @@ public class SliceKindConfiguration extends ConfigHolder {
 		
 		try {
 			long nr = node.getLongValue();
-			AccessMask.fromString(Long.toString(nr));
+
+			// TODO
+			// should be AccessMask.fromString(Long.toString(nr));
+			// but wrong package
+	        if (nr < 99 || nr > 9999) {
+	            throw new IllegalArgumentException();
+	        }
+	        long l;
+			for (int i=0; i<3; i++) {
+		        l = nr % 10;
+				if (l > 7) {
+		            throw new IllegalArgumentException();
+		        }
+				nr = nr / 10;
+			}
 			return true;
 		} catch (IllegalArgumentException e) {
 			return false;

@@ -18,10 +18,20 @@ package de.zib.gndms.model.dspace;
 
 
 
+import de.zib.gndms.common.model.dspace.SliceKindConfiguration;
 import de.zib.gndms.model.common.AccessMask;
 import de.zib.gndms.model.common.GridEntity;
+import de.zib.gndms.stuff.confuror.ConfigEditor;
+import de.zib.gndms.stuff.confuror.ConfigHolder;
+import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
 
 import javax.persistence.*;
+
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -85,6 +95,11 @@ public class SliceKind extends GridEntity {
         this.permission = permission;
     }
 
+    public void setPermission( long permission ) {
+        this.permission = AccessMask.fromString(Long.toString(permission));
+
+    }
+
 
     public void setSliceDirectory( String sliceDirectory ) {
         this.sliceDirectory = sliceDirectory;
@@ -94,4 +109,38 @@ public class SliceKind extends GridEntity {
     public void setMetaSubspaces( Set<MetaSubspace> metaSubspaces ) {
         this.metaSubspaces = metaSubspaces;
     }
+    
+	/**
+	 * Constructs the slice kind configuration of a given slice kind.
+	 * 
+	 * @param slicekind
+	 *            The slice kind.
+	 * @return The config holder.
+	 * @throws IOException 
+	 * @throws UpdateRejectedException 
+	 */
+	public static ConfigHolder getSliceKindConfiguration(final SliceKind slicekind) 
+			throws IOException, UpdateRejectedException {
+		String uri = slicekind.getURI();
+		AccessMask permission = slicekind.getPermission();
+		Set<MetaSubspace> metaSubspaces = slicekind.getMetaSubspaces();
+		
+		ConfigHolder config = new ConfigHolder();
+		ObjectMapper objectMapper = new ObjectMapper();
+		JsonFactory factory = objectMapper.getJsonFactory();
+		ConfigEditor.Visitor visitor = new ConfigEditor.DefaultVisitor();
+		ConfigEditor editor = config.newEditor(visitor);
+		config.setObjectMapper(objectMapper);
+
+		JsonNode un = ConfigHolder.parseSingle(factory, ConfigHolder.createSingleEntry(SliceKindConfiguration.URI, uri));
+		JsonNode pn = ConfigHolder.parseSingle(factory, ConfigHolder.createSingleEntry(SliceKindConfiguration.PERMISSION, permission));
+		// TODO: how to store meta-subspaces
+		JsonNode mn = ConfigHolder.parseSingle(factory, ConfigHolder.createSingleEntry(SliceKindConfiguration.METASUBSPACES, metaSubspaces.toString()));
+		config.update(editor, un);
+		config.update(editor, pn);
+		config.update(editor, mn);
+			
+		return config;
+	}
+
 }

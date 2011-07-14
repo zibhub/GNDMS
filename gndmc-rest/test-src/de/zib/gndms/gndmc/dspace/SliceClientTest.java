@@ -25,7 +25,7 @@ import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
 import de.zib.gndms.common.rest.Specifier;
-import de.zib.gndms.model.dspace.MockSliceConfiguration;
+import de.zib.gndms.common.model.dspace.MockSliceConfiguration;
 import de.zib.gndms.stuff.confuror.ConfigHolder;
 
 /**
