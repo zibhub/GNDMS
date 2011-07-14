@@ -4,7 +4,7 @@ package de.zib.gndms.neomodel.gorfx;
 import de.zib.gndms.common.model.gorfx.types.Order;
 import de.zib.gndms.common.model.gorfx.types.Quote;
 
-import org.neo4j.graphdb.Traverser;
+import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,14 +26,14 @@ import java.util.List;
 
 /**
  * @author try ma ik jo rr a zib
- * @ate: 17.01.2011 10:33:40
+ * @date: 17.01.2011 10:33:40
  *
  * @brief A class which aggregates all objects which belong to a single task flow.
  */
 public class TaskFlow<T extends Order> {
 
     private String id; ///< Taskflow id
-    private T order;  ///< The order
+    private DelegatingOrder<T> order;  ///< The order
     private List<Quote> quotes; ///< The quotes, if computed.
     private Quote preferredQuote; ///< A quote provided by the client.
     private Taskling taskling; ///< The taskling object, if created.
@@ -55,7 +55,7 @@ public class TaskFlow<T extends Order> {
      * 
      * @param id The new value of ::id.
      */
-    public void setId( String id ) {
+    public void setId( final String id ) {
         this.id = id;
     }
 
@@ -65,7 +65,7 @@ public class TaskFlow<T extends Order> {
      * 
      * @return The value of ::order.
      */
-    public T getOrder() {
+    public DelegatingOrder<T> getOrder() {
         return order;
     }
 
@@ -75,7 +75,7 @@ public class TaskFlow<T extends Order> {
      * 
      * @param order The new value of ::order.
      */
-    public void setOrder( T order ) {
+    public void setOrder( final DelegatingOrder<T> order ) {
         this.order = order;
     }
 
@@ -105,7 +105,7 @@ public class TaskFlow<T extends Order> {
      * 
      * @param quotes The new value of ::quotes.
      */
-    public void setQuotes( List<Quote> quotes ) {
+    public void setQuotes( final List<Quote> quotes ) {
         this.quotes = quotes;
     }
 
@@ -120,7 +120,7 @@ public class TaskFlow<T extends Order> {
     }
 
 
-    public TaskFlow addQuote( Quote quote ) {
+    public TaskFlow addQuote( final Quote quote ) {
         if( quotes == null )
             quotes = new ArrayList<Quote>( 1 );
 
@@ -144,7 +144,7 @@ public class TaskFlow<T extends Order> {
      * 
      * @param taskling The new value of ::taskling.
      */
-    public void setTaskling( Taskling taskling ) {
+    public void setTaskling( final Taskling taskling ) {
         this.taskling = taskling;
     }
 
@@ -184,7 +184,7 @@ public class TaskFlow<T extends Order> {
      * 
      * @param preferredQuote The new value of ::preferredQuote.
      */
-    public void setPreferredQuote( Quote preferredQuote ) {
+    public void setPreferredQuote( final Quote preferredQuote ) {
         this.preferredQuote = preferredQuote;
     }
 
@@ -192,10 +192,10 @@ public class TaskFlow<T extends Order> {
     /**
      * @brief Sets the value of ::unfulfillableOrder to \e b.
      * 
-     * @param b The new value of ::unfulfillableOrder.
+     * @param isUnfulfillable The new value of ::unfulfillableOrder.
      */
-    public void setUnfulfillableOrder( boolean b ) {
-        unfulfillableOrder = b;
+    public void setUnfulfillableOrder( final boolean isUnfulfillable ) {
+        unfulfillableOrder = isUnfulfillable;
     }
 
 

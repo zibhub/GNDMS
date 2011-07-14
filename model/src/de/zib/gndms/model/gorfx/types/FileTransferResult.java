@@ -17,6 +17,7 @@ package de.zib.gndms.model.gorfx.types;
  */
 
 
+import java.util.List;
 
 /**
  * @author  try ma ik jo rr a zib
@@ -24,21 +25,22 @@ package de.zib.gndms.model.gorfx.types;
  * <p/>
  * User: mjorra, Date: 13.10.2008, Time: 12:38:01
  */
-public class FileTransferResult extends AbstractTaskResult {
+public class FileTransferResult extends AbstractTaskFlowResult {
 
-    private String[] files; 
+    private static final long serialVersionUID = -1282729323012008244L;
+    private List<String> files;
 
     public FileTransferResult( ) {
         super( );
-        super.setOfferType( GORFXConstantURIs.FILE_TRANSFER_URI );
+        super.setTaskFlowType( GORFXConstantURIs.FILE_TRANSFER_URI );
     }
 
-    public String[] getFiles() {
+    public List<String> getFiles() {
         return files;
     }
 
 
-    public void setFiles( String[] files ) {
+    public void setFiles( List<String> files ) {
         this.files = files;
     }
 }

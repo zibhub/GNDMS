@@ -135,7 +135,7 @@ public class FileTransferTaskAction extends TaskFlowAction<FileTransferOrder> {
                 FileTransferResult ftr = new FileTransferResult();
 
                 ArrayList<String> al = new ArrayList<String>( transfer.getFiles( ).keySet( ) );
-                ftr.setFiles( al.toArray( new String[al.size( )] ));
+                ftr.setFiles( al );
 
                 transitWithPayload(ftr, TaskState.FINISHED);
                 if (altTaskState)

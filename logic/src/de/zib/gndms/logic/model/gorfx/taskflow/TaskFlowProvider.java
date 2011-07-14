@@ -29,6 +29,6 @@ public interface TaskFlowProvider {
     boolean exists( String taskFlow );
     List<String> listTaskFlows( );
     TaskFlowInfo getTaskFlowInfo( String taskFlow );
-    TaskFlowFactory getFactoryForTaskFlow( String taskFlow );
+    TaskFlowFactory<?,?> getFactoryForTaskFlow( String taskFlow );
 
 }

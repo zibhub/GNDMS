@@ -26,29 +26,29 @@ import java.io.Serializable;
  * <p/>
  * User: mjorra, Date: 13.10.2008, Time: 12:35:03
  */
-public class AbstractTaskResult implements Serializable {
+public class AbstractTaskFlowResult implements Serializable {
 
-    private String offerType;
+    private String taskFlowType;
     
     private static final long serialVersionUID = 8410587166706272881L;
 
     
-    protected AbstractTaskResult() {
+    protected AbstractTaskFlowResult() {
     }
 
 
-    protected AbstractTaskResult( String offerType ) {
-        this.offerType = offerType;
+    protected AbstractTaskFlowResult( String taskFlowType ) {
+        this.taskFlowType = taskFlowType;
     }
 
 
-    public String getOfferType() {
-        return offerType;
+    public String getTaskFlowType() {
+        return taskFlowType;
     }
 
 
-    protected void setOfferType( String uri ) {
-        this.offerType = uri;
+    protected void setTaskFlowType( String uri ) {
+        this.taskFlowType = uri;
     }
 
  }
