@@ -29,7 +29,7 @@ import de.zib.gndms.neomodel.common.Dao;
  *
  *          User: stepn Date: 08.10.2008 Time: 17:35:27
  */
-public class QuoteCalculatorMetaFactory extends OfferTypeMetaFactory<AbstractQuoteCalculator<?,?>> {
+public class QuoteCalculatorMetaFactory extends OfferTypeMetaFactory<AbstractQuoteCalculator<?>> {
     private Dao dao;
 
     @Override

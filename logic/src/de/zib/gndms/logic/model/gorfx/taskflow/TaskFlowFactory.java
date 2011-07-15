@@ -25,7 +25,7 @@ import de.zib.gndms.neomodel.gorfx.TaskFlow;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
-import org.joda.time.DateTime;
+import e.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
 
 /**
  * @author try ma ik jo rr a zib
@@ -147,14 +147,7 @@ public interface TaskFlowFactory<O extends Order, C extends AbstractQuoteCalcula
 
         public static Quote quoteFromContract( PersistentContract contract ) {
 
-            Quote quote = new Quote();
-
-            quote.setAccepted( new DateTime( contract.getAccepted() ) );
-            quote.setDeadline( new DateTime( contract.getDeadline() ) );
-            quote.setResultValidity( new DateTime( contract.getResultValidity() ) );
-            quote.setExpectedSize( contract.getExpectedSize() );
-
-            return quote;
+            return contract.toTransientContract();
         }
     }
 }

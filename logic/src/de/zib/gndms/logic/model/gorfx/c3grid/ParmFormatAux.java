@@ -18,11 +18,11 @@ package de.zib.gndms.logic.model.gorfx.c3grid;
 
 
 
+import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.model.common.types.FilePermissions;
-import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.gorfx.types.ProviderStageInOrder;
 import de.zib.gndms.model.gorfx.types.io.ContractConverter;
 import de.zib.gndms.model.gorfx.types.io.ContractPropertyReader;
@@ -52,7 +52,7 @@ public class ParmFormatAux {
     private String format=FORMAT_PROPS;
 
 
-    public TransientContract getResult( StringBuilder res ) throws Exception {
+    public Quote getResult( StringBuilder res ) throws Exception {
 
         if( format.equals( FORMAT_XML) )
             return xmlToResult( res );
@@ -61,7 +61,7 @@ public class ParmFormatAux {
     }
 
     
-    public ProcessBuilderAction createPBAction( ProviderStageInOrder order, TransientContract contParam, FilePermissions fp ) {
+    public ProcessBuilderAction createPBAction( ProviderStageInOrder order, Quote contParam, FilePermissions fp ) {
 
         if( format.equals( FORMAT_XML ) )
             return  createXMLParmPBAction( order, contParam, fp );
@@ -80,7 +80,7 @@ public class ParmFormatAux {
             }
     }
 
-    private TransientContract propsToResult( StringBuilder sb ) throws Exception {
+    private Quote propsToResult( StringBuilder sb ) throws Exception {
 
         Properties props = new Properties();
         props.load(new ByteArrayInputStream(sb.toString().getBytes()));
@@ -91,14 +91,14 @@ public class ParmFormatAux {
     }
 
 
-    private TransientContract xmlToResult( StringBuilder sb ) throws Exception {
+    private Quote xmlToResult( StringBuilder sb ) throws Exception {
 
         ORQWrapper wrp = xmlWriter.fromDocument( sb.toString( ) );
         return wrp.getContract();
     }
 
 
-    private ProcessBuilderAction createDefaultPBAction( ProviderStageInOrder order, TransientContract contParam, FilePermissions fp ) {
+    private ProcessBuilderAction createDefaultPBAction( ProviderStageInOrder order, Quote contParam, FilePermissions fp ) {
 
         Properties moreProps = null;
         if( contParam != null ) {
@@ -121,7 +121,7 @@ public class ParmFormatAux {
     }
 
 
-    private ProcessBuilderAction createXMLParmPBAction( ProviderStageInOrder order, TransientContract contParam, FilePermissions fp ) {
+    private ProcessBuilderAction createXMLParmPBAction( ProviderStageInOrder order, Quote contParam, FilePermissions fp ) {
 
         try{
             if( fp != null ) {

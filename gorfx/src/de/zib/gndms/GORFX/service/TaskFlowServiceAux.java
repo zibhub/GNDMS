@@ -18,7 +18,8 @@ package de.zib.gndms.GORFX.service;
 
 import de.zib.gndms.common.model.gorfx.types.Order;
 import de.zib.gndms.common.model.gorfx.types.Quote;
-import de.zib.gndms.logic.model.gorfx.taskflow.AbstractQuoteCalculator;
+import de.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
+import e.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
 import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowFactory;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
@@ -47,7 +48,7 @@ public final class TaskFlowServiceAux {
 
     public static <T extends Order> HttpStatus validateOrder( TaskFlowFactory<T, ?> factory, DelegatingOrder<T> delegate ) {
         final AbstractQuoteCalculator<T> qc = factory.getQuoteCalculator();
-        qc.setOrder( delegate );
+        qc.setOrderArguments( delegate );
 
         if ( qc.validate() )
             return HttpStatus.OK;
@@ -56,10 +57,10 @@ public final class TaskFlowServiceAux {
     }
 
 
-    public static <T extends Order> List<Quote> createQuotes( TaskFlowFactory<T,?> tff, TaskFlow<T> tf ) {
+    public static <T extends Order> List<Quote> createQuotes( TaskFlowFactory<T,?> tff, TaskFlow<T> tf ) throws Exception {
 
         AbstractQuoteCalculator<T> qc = tff.getQuoteCalculator();
-        qc.setOrder( tf.getOrder() );
+        qc.setOrderArguments( tf.getOrder() );
         List<Quote> quoteList;
         if ( tf.hasPreferredQuote() )
             quoteList = qc.createQuotes( tf.getPreferredQuote() );

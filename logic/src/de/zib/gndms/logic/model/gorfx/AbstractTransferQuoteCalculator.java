@@ -18,19 +18,23 @@ package de.zib.gndms.logic.model.gorfx;
 
 
 
+import de.zib.gndms.common.model.gorfx.types.FutureTime;
+import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.kit.network.GNDMSFileTransfer;
 import de.zib.gndms.kit.network.NetworkAuxiliariesProvider;
-import de.zib.gndms.model.common.types.FutureTime;
-import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.gorfx.types.FileTransferOrder;
 import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.exception.ClientException;
 import org.globus.ftp.exception.ServerException;
 import org.joda.time.Duration;
 
+import javax.persistence.QueryTimeoutException;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -39,25 +43,24 @@ import java.net.URISyntaxException;
  * <p/>
  * User: mjorra, Date: 30.09.2008, Time: 10:51:38
  */
-public abstract class AbstractTransferQuoteCalculator<M extends FileTransferOrder, C extends AbstractQuoteCalculator<M, C>>
-    extends AbstractQuoteCalculator<M,C> {
+public abstract class AbstractTransferQuoteCalculator<M extends FileTransferOrder, C extends AbstractQuoteCalculator<M>>
+    extends AbstractQuoteCalculator<M> {
 
     private Long estimatedTransferSize; // estimatedTransferSize
     private Float estimatedBandWidth;
 
 
-    protected AbstractTransferQuoteCalculator( Class<M> cls ) {
+    protected AbstractTransferQuoteCalculator( ) {
         super();
-        super.setORQModelClass( cls );
     }
 
 
     @Override
-    public TransientContract createOffer() throws ServerException, IOException, ClientException, URISyntaxException {
+    public List<Quote> createQuotes() throws ServerException, IOException, ClientException, URISyntaxException {
 
         estimateTransferSize();
         estimateBandWidth();
-        return calculateOffer( );
+        return Arrays.asList( calculateOffer( ) ) ;
     }
 
 
@@ -66,12 +69,12 @@ public abstract class AbstractTransferQuoteCalculator<M extends FileTransferOrde
 
         GridFTPClient clnt = null;
         try {
-            URI suri =  new URI( getORQArguments().getSourceURI() );
+            URI suri =  new URI( getOrderBean().getSourceURI() );
             clnt =  NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( suri, getCredentialProvider() );
             GNDMSFileTransfer ft = new GNDMSFileTransfer();
             ft.setSourceClient( clnt );
             ft.setSourcePath( suri.getPath( ) );
-            ft.setFiles( getORQArguments().getFileMap() );
+            ft.setFiles( getOrderBean().getFileMap() );
             estimatedTransferSize = ft.estimateTransferSize(  );
         } finally {
             if ( clnt != null )
@@ -95,7 +98,7 @@ public abstract class AbstractTransferQuoteCalculator<M extends FileTransferOrde
      */
     protected Float estimateBandWidth( ) throws IOException {
         estimatedBandWidth = NetworkAuxiliariesProvider.getBandWidthEstimater().estimateBandWidthFromTo(
-            getORQArguments( ).getSourceURI(), getORQArguments( ).getTargetURI() );
+            getOrderBean().getSourceURI(), getOrderBean().getTargetURI() );
 
         if( estimatedBandWidth == null )
             throw new IOException( "Couldn't estimate bandwidth." );
@@ -118,13 +121,13 @@ public abstract class AbstractTransferQuoteCalculator<M extends FileTransferOrde
      *              must have been called before.
      * @return The band width NULL if it wasn't estimated yet.
      */
-    protected TransientContract calculateOffer( ) {
+    protected Quote calculateOffer( ) {
 
         // may at least take 10 s to cover comunication overhead.
         long ms = NetworkAuxiliariesProvider.calculateTransferTime( estimatedTransferSize, estimatedBandWidth, 10000 );
 
 
-        TransientContract ct = new TransientContract( );
+        Quote ct = new Quote( );
         ct.setDeadline( FutureTime.atOffset( new Duration( ms ) )  );
 
         return ct;

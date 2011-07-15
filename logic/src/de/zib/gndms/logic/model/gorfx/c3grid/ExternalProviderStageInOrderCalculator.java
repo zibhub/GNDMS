@@ -19,12 +19,13 @@ package de.zib.gndms.logic.model.gorfx.c3grid;
 
 
 import javax.inject.Inject;
+
+import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.kit.system.SystemInfo;
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.logic.model.gorfx.PermissionDeniedTaskFlowException;
 import de.zib.gndms.logic.model.gorfx.taskflow.UnsatisfiableOrderException;
-import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.stuff.Sleeper;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -32,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 
 /**
@@ -62,9 +64,9 @@ public class ExternalProviderStageInOrderCalculator extends AbstractProviderStag
 
 
     @Override
-    public TransientContract createOffer() throws Exception {
-        final @NotNull TransientContract cont = getPreferredOfferExecution();
-        final @NotNull TransientContract result;
+    public List<Quote> createQuotes() throws Exception {
+        final @NotNull Quote cont = getPreferredQuote();
+        final @NotNull Quote result;
 
 
         MapConfig config = new MapConfig(getDao().getOfferTypeConfig(getKey()));
@@ -85,8 +87,8 @@ public class ExternalProviderStageInOrderCalculator extends AbstractProviderStag
 
 
     @SuppressWarnings({ "HardcodedLineSeparator", "MagicNumber" })
-    private TransientContract createOfferViaEstScript(
-            final File estCommandFileParam, final TransientContract contParam) {
+    private Quote createOfferViaEstScript(
+            final File estCommandFileParam, final Quote contParam) {
         ProcessBuilderAction action = createEstAction(estCommandFileParam, contParam);
         StringBuilder outRecv = action.getOutputReceiver();
         StringBuilder errRecv = action.getErrorReceiver();
@@ -115,7 +117,7 @@ public class ExternalProviderStageInOrderCalculator extends AbstractProviderStag
     }
 
 
-    private ProcessBuilderAction createEstAction(final File estCommandFileParam, final TransientContract contParam) {
+    private ProcessBuilderAction createEstAction(final File estCommandFileParam, final Quote contParam) {
         final @NotNull ProcessBuilder pb = new ProcessBuilder();
         try {
             pb.command(estCommandFileParam.getCanonicalPath());
@@ -127,7 +129,7 @@ public class ExternalProviderStageInOrderCalculator extends AbstractProviderStag
 
         ProcessBuilderAction action;
         // todo add permissions here when delegation is implemented
-        action = parmAux.createPBAction( getORQArguments(), contParam, null );
+        action = parmAux.createPBAction( getOrderBean(), contParam, null );
         action.setProcessBuilder(pb);
         action.setOutputReceiver(new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY));
         action.setErrorReceiver(new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY));

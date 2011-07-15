@@ -18,7 +18,7 @@ package de.zib.gndms.model.gorfx.types.io;
 
 
 
-import de.zib.gndms.model.common.types.FutureTime;
+import de.zib.gndms.common.model.gorfx.types.FutureTime;
 import de.zib.gndms.model.gorfx.types.MinMaxPair;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
@@ -176,7 +176,7 @@ public class PropertyReadWriteAux {
 			return FutureTime.atOffset(new Duration(offsetInMs));
 		}
 		catch (NumberFormatException nfe) {
-            return FutureTime.atTime(new DateTime( s ));
+            return FutureTime.atTime( new DateTime( s ) );
 		}
     }
 

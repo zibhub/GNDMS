@@ -29,9 +29,9 @@ import de.zib.gndms.model.common.types.factory.InjectingRecursiveKeyFactory;
  *
  *          User: stepn Date: 09.10.2008 Time: 12:49:54
  */
-public class FileTransferTaskFlowFactory extends InjectingRecursiveKeyFactory<String, AbstractQuoteCalculator<?,?>> {
+public class FileTransferTaskFlowFactory extends InjectingRecursiveKeyFactory<String, AbstractQuoteCalculator<?>> {
     @Override
-    public AbstractQuoteCalculator<?, ?> newInstance(final String offerType)
+    public AbstractQuoteCalculator<?> newInstance(final String offerType)
             throws IllegalAccessException, InstantiationException, ClassNotFoundException {
 	    final FileTransferQuoteCalculator quoteCalculator = new FileTransferQuoteCalculator();
 	    injectMembers( quoteCalculator );

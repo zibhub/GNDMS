@@ -29,6 +29,6 @@ import de.zib.gndms.model.gorfx.types.FileTransferOrder;
 public class FileTransferQuoteCalculator extends AbstractTransferQuoteCalculator<FileTransferOrder, FileTransferQuoteCalculator> {
 
     public FileTransferQuoteCalculator() {
-        super( FileTransferOrder.class );
+        super( );
     }
 }

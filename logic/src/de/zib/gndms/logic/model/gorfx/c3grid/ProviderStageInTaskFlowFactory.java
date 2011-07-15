@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
  *          User: stepn Date: 08.10.2008 Time: 13:54:07
  */
 public class ProviderStageInTaskFlowFactory
-	  extends InjectingRecursiveKeyFactory<String, AbstractQuoteCalculator<?,?>> {
+	  extends InjectingRecursiveKeyFactory<String, AbstractQuoteCalculator<?>> {
 
     private Dao dao;
 

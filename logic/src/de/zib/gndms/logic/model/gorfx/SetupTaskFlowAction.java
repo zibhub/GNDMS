@@ -27,7 +27,6 @@ import de.zib.gndms.logic.model.config.SetupAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.TaskFlowType;
-import de.zib.gndms.neomodel.gorfx.TaskFlowType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -73,11 +72,11 @@ public class SetupTaskFlowAction extends SetupAction<ConfigActionResult> {
     @ConfigOption(descr="QName of xsd type for results of this TaskFlowType")
     private ImmutableScopedName resType;
 
-    //@ConfigOption(altName = "class", descr="FQN of AbstractQuoteCalculator class for this TaskFlowType")
-    //private Class<? extends AbstractQuoteCalculator<?, ?>> calcClass;
+    //@ConfigOption(altName = "class", descr="FQN of QuoteCalculator class for this TaskFlowType")
+    //private Class<? extends QuoteCalculator<?, ?>> calcClass;
 
-    @ConfigOption(descr="FQN of AbstractQuoteCalculator factory class")
-    private Class<KeyFactory<String, AbstractQuoteCalculator<?, ?>>> calcFactory;
+    @ConfigOption(descr="FQN of QuoteCalculator factory class")
+    private Class<KeyFactory<String, AbstractQuoteCalculator<?>>> calcFactory;
 
     //@ConfigOption(altName = "class", descr="FQN of TaskAction class for this TaskFlowType")
     //private Class<? extends TaskAction<?>> taskActionClass;
@@ -307,13 +306,13 @@ public class SetupTaskFlowAction extends SetupAction<ConfigActionResult> {
     }
 
 
-    public Class<KeyFactory<String, AbstractQuoteCalculator<?, ?>>> getCalcFactory() {
+    public Class<KeyFactory<String, AbstractQuoteCalculator<?>>> getCalcFactory() {
         return calcFactory;
     }
 
 
     public void setCalcFactory(
-            final Class<KeyFactory<String, AbstractQuoteCalculator<?, ?>>> calcFactoryParam) {
+            final Class<KeyFactory<String, AbstractQuoteCalculator<?>>> calcFactoryParam) {
         calcFactory = calcFactoryParam;
     }
 
