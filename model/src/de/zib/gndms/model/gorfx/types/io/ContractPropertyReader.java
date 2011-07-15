@@ -18,7 +18,7 @@ package de.zib.gndms.model.gorfx.types.io;
 
 
 
-import de.zib.gndms.model.common.types.TransientContract;
+import de.zib.gndms.common.model.gorfx.types.Quote;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 
@@ -36,22 +36,22 @@ import java.util.Properties;
  *
  *          User: stepn Date: 27.10.2008 Time: 12:29:27
  */
-public class ContractPropertyReader extends AbstractPropertyReader<TransientContract> {
+public class ContractPropertyReader extends AbstractPropertyReader<Quote> {
 
     public ContractPropertyReader() {
-        super(TransientContract.class);
+        super(Quote.class);
     }
 
 
     public ContractPropertyReader(final Properties properties) {
-        super(TransientContract.class, properties);
+        super(Quote.class, properties);
     }
 
 
     @SuppressWarnings({ "FeatureEnvy" })
     @Override
     public void read() {
-        final @NotNull TransientContract con = getProduct();
+        final @NotNull Quote con = getProduct();
 
         String s;
         if( getProperties().containsKey( SfrProperty.EST_IF_DECISION_BEFORE.key ) ) {
@@ -82,7 +82,7 @@ public class ContractPropertyReader extends AbstractPropertyReader<TransientCont
     }
 
 
-    public static TransientContract readFromFile( final String fileName ) throws IOException {
+    public static Quote readFromFile( final String fileName ) throws IOException {
 
         InputStream is = null;
         try {

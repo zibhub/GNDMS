@@ -32,12 +32,8 @@ import de.zib.gndms.model.gorfx.types.ProviderStageInOrder;
  *
  */
 public abstract class AbstractProviderStageInQuoteCalculator
-        extends AbstractQuoteCalculator<ProviderStageInOrder, AbstractProviderStageInQuoteCalculator> {
+        extends AbstractQuoteCalculator<ProviderStageInOrder> {
     public AbstractProviderStageInQuoteCalculator() {
         super( );
-        super.setORQModelClass( ProviderStageInOrder.class );
     }
-
-
-
 }

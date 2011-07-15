@@ -18,7 +18,7 @@ package de.zib.gndms.model.gorfx.types.io.xml;
 
 
 
-import de.zib.gndms.model.common.types.TransientContract;
+import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.model.gorfx.types.AbstractOrder;
 
 import java.io.IOException;
@@ -40,14 +40,14 @@ public interface ProviderStageInXML {
      *
      * @return An XML representation of the in parameters.
      */
-    String toDocument( AbstractOrder order,  TransientContract con ) throws IOException;
+    String toDocument( AbstractOrder order,  Quote con ) throws IOException;
 
     /**
      * Writes XML document using the provided writer.
      *
      * The order must allways be provided, the contract can be null
      */
-    void toDocument( Writer w, AbstractOrder order, TransientContract con ) throws IOException;
+    void toDocument( Writer w, AbstractOrder order, Quote con ) throws IOException;
 
 
     /**

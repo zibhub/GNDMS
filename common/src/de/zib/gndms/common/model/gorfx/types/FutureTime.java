@@ -1,4 +1,4 @@
-package de.zib.gndms.model.common.types;
+package de.zib.gndms.common.model.gorfx.types;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -58,7 +58,7 @@ public abstract class FutureTime implements Serializable, Cloneable {
 	private static final long serialVersionUID = -8564712372634917528L;
 
     /**
-     * holds the fixed dateTime, i.e. the lastest of the reference time and the preset time / duration+time. 
+     * holds the fixed dateTime, i.e. the latest of the reference time and the preset time / duration+time.
      * (See description above)
      */
 	private DateTime fixed;
@@ -102,7 +102,7 @@ public abstract class FutureTime implements Serializable, Cloneable {
     /**
      * Computes the fixed {@code DateTime} and returns itself.
      *
-     * @see de.zib.gndms.model.common.types.FutureTime#fix(org.joda.time.DateTime) ;
+     * @see FutureTime#fix(org.joda.time.DateTime) ;
      */
 	@SuppressWarnings({ "ReturnOfThis" })
 	public final FutureTime fixedWith(@NotNull DateTime referenceDate) {
@@ -117,8 +117,8 @@ public abstract class FutureTime implements Serializable, Cloneable {
      *
      * Otherwise it will just return a String representation of the preset values.
      * @return A String representation of a {@code DateTime} or a {@code Duration}.
-     * @see de.zib.gndms.model.common.types.FutureTime.AbsoluteFutureTime#toStringIfUnfixed()
-     * @see de.zib.gndms.model.common.types.FutureTime.RelativeFutureTime#toStringIfUnfixed() 
+     * @see FutureTime.AbsoluteFutureTime#toStringIfUnfixed()
+     * @see FutureTime.RelativeFutureTime#toStringIfUnfixed()
      */
     @Override
 	public String toString() {

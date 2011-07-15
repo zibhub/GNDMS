@@ -33,7 +33,7 @@ public interface QuoteCalculatorProvider {
 
     @SuppressWarnings({ "MethodWithTooExceptionsDeclared" })
     @NotNull
-    AbstractQuoteCalculator<?,?> newORQCalculator(
+    AbstractQuoteCalculator<?> newORQCalculator(
         @NotNull EntityManagerFactory emf,
         @NotNull String offerTypeKey)
         throws ClassNotFoundException, IllegalAccessException, InstantiationException,

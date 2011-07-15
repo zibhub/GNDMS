@@ -85,7 +85,7 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
 	private final Map<String, Configlet> configlets = Maps.newConcurrentHashMap();
 
     @SuppressWarnings({ "RawUseOfParameterizedType" })
-    private final @NotNull IndustrialPark<String, String, AbstractQuoteCalculator<?, ?>> orqPark;
+    private final @NotNull IndustrialPark<String, String, AbstractQuoteCalculator<?>> orqPark;
 
     @SuppressWarnings({ "RawUseOfParameterizedType" })
     private final @NotNull IndustrialPark<String, String, TaskFlowAction<?>> taskActionPark;
@@ -124,7 +124,7 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
 	    final QuoteCalculatorMetaFactory calcMF = new QuoteCalculatorMetaFactory();
 		calcMF.setInjector(injector);
 	    calcMF.setWrap(sysHolderWrapper);
-	    orqPark = new OfferTypeIndustrialPark<AbstractQuoteCalculator<?,?>>(calcMF);
+	    orqPark = new OfferTypeIndustrialPark<AbstractQuoteCalculator<?>>(calcMF);
 
 	    final TaskFlowActionMetaFactory taskFlowMF = new TaskFlowActionMetaFactory();
 	    taskFlowMF.setWrap(sysHolderWrapper);
@@ -135,7 +135,7 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
 
     @SuppressWarnings({ "MethodWithTooExceptionsDeclared" })
     @NotNull
-    public AbstractQuoteCalculator<?,?> newORQCalculator(
+    public AbstractQuoteCalculator<?> newORQCalculator(
         final @NotNull EntityManagerFactory emf,
         final @NotNull String offerTypeKey)
         throws ClassNotFoundException, IllegalAccessException, InstantiationException,
@@ -144,7 +144,7 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
         try {
             if (offerTypeKey == null)
                 throw new IllegalArgumentException("Unknow offer type: " + offerTypeKey);
-            AbstractQuoteCalculator<?,?> orqc = orqPark.getInstance(offerTypeKey);
+            AbstractQuoteCalculator<?> orqc = orqPark.getInstance(offerTypeKey);
             orqc.setConfigletProvider( this );
             return orqc;
         }

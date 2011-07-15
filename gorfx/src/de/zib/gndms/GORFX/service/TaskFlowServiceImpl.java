@@ -1,7 +1,6 @@
 package de.zib.gndms.GORFX.service;
 
 import de.zib.gndms.GORFX.service.util.WidAux;
-import de.zib.gndms.logic.model.gorfx.taskflow.AbstractQuoteCalculator;
 import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowAux;
 import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowFactory;
 import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowProvider;
@@ -427,10 +426,6 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
 
     private Map<String, String> taskUriMap( String type, String id, Taskling t ) {
-        HashMap<String, String> urimap = new HashMap<String, String>( 4 );
-        urimap.put( UriFactory.SERVICE, "gorfx" );
-        urimap.put( UriFactory.TASKFLOW_TYPE, type );
-        urimap.put( UriFactory.TASKFLOW_ID, id );
         return TaskServiceAux.taskUriMap( t, taskFlowUriMap( type, id ) );
     }
 
