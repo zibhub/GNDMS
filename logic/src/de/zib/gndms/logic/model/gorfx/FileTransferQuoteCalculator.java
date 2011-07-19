@@ -26,9 +26,28 @@ import de.zib.gndms.model.gorfx.types.FileTransferOrder;
  * <p/>
  * User: mjorra, Date: 04.11.2008, Time: 16:30:22
  */
-public class FileTransferQuoteCalculator extends AbstractTransferQuoteCalculator<FileTransferOrder, FileTransferQuoteCalculator> {
+public class FileTransferQuoteCalculator extends AbstractTransferQuoteCalculator<FileTransferOrder> {
+
 
     public FileTransferQuoteCalculator() {
         super( );
+        setScheme( "gsiftp" );
+    }
+
+
+    /**
+     * Weak order validation.
+     *
+     * Just checks if source and destination URI are provided and are valid URI's. but NOT if the resources exist.
+     *
+     * @return true if the parameters are set.
+     */
+    @Override
+    public boolean validate() {
+        FileTransferOrder order = getOrderBean();
+        if( order == null )
+            throw new IllegalStateException( "No order provided" );
+
+        return uriCheck( order.getSourceURI() ) && uriCheck( order.getDestinationURI() );
     }
 }

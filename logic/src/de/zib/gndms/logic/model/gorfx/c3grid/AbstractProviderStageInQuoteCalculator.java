@@ -36,4 +36,12 @@ public abstract class AbstractProviderStageInQuoteCalculator
     public AbstractProviderStageInQuoteCalculator() {
         super( );
     }
+
+
+    @Override
+    public boolean validate() {
+        // staging orders can't be validated at this stage
+        // it's the task of the data-provider.
+        return true;
+    }
 }

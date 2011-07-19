@@ -21,7 +21,6 @@ package de.zib.gndms.model.gorfx.types;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * An ORQ for file transfer.
@@ -44,7 +43,7 @@ public class FileTransferOrder extends AbstractOrder {
     /**
      * URI of the target files
      */
-    private String targetURI;
+    private String destinationURI;
 
     /**
      * The map consists of pairs of source and target file names.
@@ -60,7 +59,7 @@ public class FileTransferOrder extends AbstractOrder {
 
     @Override
     public @NotNull String getDescription() {
-        return "File transfer from " + sourceURI + " to " + targetURI;
+        return "File transfer from " + sourceURI + " to " + destinationURI;
     }
 
 
@@ -74,13 +73,13 @@ public class FileTransferOrder extends AbstractOrder {
     }
 
 
-    public String getTargetURI() {
-        return targetURI;
+    public String getDestinationURI() {
+        return destinationURI;
     }
 
 
-    public void setTargetURI( String targetURI ) {
-        this.targetURI = targetURI;
+    public void setDestinationURI( String destinationURI ) {
+        this.destinationURI = destinationURI;
     }
 
 

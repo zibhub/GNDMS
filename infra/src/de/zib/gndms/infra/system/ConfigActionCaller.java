@@ -27,11 +27,13 @@ import com.google.inject.Module;
 import de.zib.gndms.infra.action.*;
 import de.zib.gndms.kit.config.ParameterTools;
 import de.zib.gndms.logic.action.Action;
+import de.zib.gndms.logic.action.NoSuchActionException;
 import de.zib.gndms.logic.action.SkipActionInitializationException;
 import de.zib.gndms.logic.model.BatchUpdateAction;
 import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
 import de.zib.gndms.logic.model.DelegatingModelUpdateListener;
 import de.zib.gndms.logic.model.ModelUpdateListener;
+import de.zib.gndms.logic.model.config.AvailableActionsAction;
 import de.zib.gndms.logic.model.config.ConfigAction;
 import de.zib.gndms.logic.model.config.EchoOptionsAction;
 import de.zib.gndms.logic.model.config.HelpOverviewAction;
@@ -165,7 +167,7 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
             return configAction;
         }
         else
-            throw new IllegalArgumentException("Not a ConfigAction");
+            throw new NoSuchActionException( name );
     }
 
     /**
@@ -193,11 +195,11 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
             final @NotNull String name) throws ClassNotFoundException
     {
         if (name.length() > 0) {
-            final String nameToLower = name.toLowerCase();
-            if ("help".equals(nameToLower) || "-help".equals(nameToLower)
-                    || "--help".equals(nameToLower)) {
-                return toConfigActionClass(HelpOverviewAction.class);
-            }
+
+            if ( matchParam( "help", name )) return toConfigActionClass(HelpOverviewAction.class);
+
+            if ( matchParam( "list", name ) ) return toConfigActionClass(AvailableActionsAction.class);
+
             try {
                 if (name.startsWith(".sys"))
                     return toConfigActionClass(Class.forName(
@@ -212,6 +214,16 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
         }
         return toConfigActionClass(Class.forName(name));
     }
+
+
+    private boolean matchParam( String expected, String actual ) {
+        final String nameToLower = actual.toLowerCase();
+        return expected.equals(nameToLower)
+            || ("-" + expected).equals(nameToLower)
+            || ("--" + expected).equals(nameToLower);
+    }
+
+
 
     /**
      * Checks if <tt>helpOverviewActionClassParam</tt> is a <tt>ConfigAction</tt> class or a subclass of it.

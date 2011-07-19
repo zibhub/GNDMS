@@ -100,7 +100,7 @@ public class FileTransferTaskAction extends TaskFlowAction<FileTransferOrder> {
         pml.setGORFXId( order.getActId());
 
         URI suri = new URI ( order.getSourceURI() );
-        URI duri = new URI ( order.getTargetURI() );
+        URI duri = new URI ( order.getDestinationURI() );
 
         // obtain clients
         src = NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( suri, getCredentialProvider() );

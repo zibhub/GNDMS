@@ -62,7 +62,7 @@ public abstract class AbstractQuoteCalculator<M extends Order>
      */
     public abstract List<Quote> createQuotes() throws Exception;
 
-                               /**
+    /**
      * @brief Computes Quotes for an order, pays respect to a
      * preferred taskflow execution.
      *
