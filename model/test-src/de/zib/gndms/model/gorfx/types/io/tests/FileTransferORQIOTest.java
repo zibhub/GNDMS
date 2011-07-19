@@ -43,7 +43,7 @@ public class FileTransferORQIOTest {
     public static void main( String[] args ) {
         FileTransferOrder order = new FileTransferOrder( );
         order.setSourceURI( "gsiftp://csr-priv5/home/mjorra/tmp/C3GridTests/dataTransferTestSource" );
-        order.setTargetURI( "gsiftp://csr-priv5/home/mjorra/C3GridTests/dataTransferTestTarget" );
+        order.setDestinationURI( "gsiftp://csr-priv5/home/mjorra/C3GridTests/dataTransferTestTarget" );
 
         TreeMap<String, String> fileMap = new TreeMap<String, String>( );
         fileMap.put( "a_1KB_file", null );

@@ -24,6 +24,7 @@ import com.google.common.collect.Maps;
 import de.zib.gndms.infra.action.*;
 import de.zib.gndms.kit.config.ParameterTools;
 import de.zib.gndms.logic.action.Action;
+import de.zib.gndms.logic.action.NoSuchActionException;
 import de.zib.gndms.logic.action.SkipActionInitializationException;
 import de.zib.gndms.logic.model.BatchUpdateAction;
 import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
@@ -67,7 +68,7 @@ import java.util.UUID;
 *          User: stepn Date: 03.09.2008 Time: 16:43:46
 */
 public final class ConfigActionCaller implements WSActionCaller {
-    private @NotNull final Log logger = LogFactory.getLog(ConfigActionCaller.class);
+    private @NotNull final Logger logger = LoggerFactory.getLogger(ConfigActionCaller.class);
 
     private final @NotNull ModelUUIDGen actionUUIDGen = new ModelUUIDGen() {
             public @NotNull String nextUUID() {
@@ -164,7 +165,7 @@ public final class ConfigActionCaller implements WSActionCaller {
             return configAction;
         }
         else
-            throw new IllegalArgumentException("Not a ConfigAction");
+            throw new NoSuchActionException( name );
     }
 
     /**
@@ -192,11 +193,11 @@ public final class ConfigActionCaller implements WSActionCaller {
             final @NotNull String name) throws ClassNotFoundException
     {
         if (name.length() > 0) {
-            final String nameToLower = name.toLowerCase();
-            if ("help".equals(nameToLower) || "-help".equals(nameToLower)
-                    || "--help".equals(nameToLower)) {
-                return toConfigActionClass(HelpOverviewAction.class);
-            }
+
+            if ( matchParam( "help", name )) return toConfigActionClass(HelpOverviewAction.class);
+
+            if ( matchParam( "list", name ) ) return toConfigActionClass(AvailableActionsAction.class);
+
             try {
                 if (name.startsWith(".sys"))
                     return toConfigActionClass(Class.forName(
@@ -211,6 +212,16 @@ public final class ConfigActionCaller implements WSActionCaller {
         }
         return toConfigActionClass(Class.forName(name));
     }
+
+
+    private boolean matchParam( String expected, String actual ) {
+        final String nameToLower = actual.toLowerCase();
+        return expected.equals(nameToLower)
+            || ("-" + expected).equals(nameToLower)
+            || ("--" + expected).equals(nameToLower);
+    }
+
+
 
     /**
      * Checks if <tt>helpOverviewActionClassParam</tt> is a <tt>ConfigAction</tt> class or a subclass of it.

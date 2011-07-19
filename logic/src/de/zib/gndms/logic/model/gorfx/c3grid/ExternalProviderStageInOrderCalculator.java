@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -69,7 +70,7 @@ public class ExternalProviderStageInOrderCalculator extends AbstractProviderStag
         final @NotNull Quote result;
 
 
-        MapConfig config = new MapConfig(getDao().getOfferTypeConfig(getKey()));
+        MapConfig config = new MapConfig( getDao().getOfferTypeConfig( getOrderBean().getTaskFlowType() ) );
         
         parmAux.formatFromMap( config );
 
@@ -77,12 +78,12 @@ public class ExternalProviderStageInOrderCalculator extends AbstractProviderStag
             File estCommandFile = config.getFileOption("estimationCommand");
             if (! AbstractProviderStageInAction.isValidScriptFile(estCommandFile))
                 throw new IllegalArgumentException("Invalid estimationCommand script: " + estCommandFile.getPath());
-			return createOfferViaEstScript(estCommandFile, cont);
+			result = createOfferViaEstScript(estCommandFile, cont);
         }
         else
             /* Use plain copy if no estimation script has been specified */ 
             result = cont.clone();
-        return result;
+        return Arrays.asList( result );
     }
 
 

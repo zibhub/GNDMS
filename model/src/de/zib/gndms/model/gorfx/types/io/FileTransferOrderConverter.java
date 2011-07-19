@@ -46,7 +46,7 @@ public class FileTransferOrderConverter extends OrderConverter<FileTransferOrder
     public void convert() {
         super.convert();    //To change body of overridden methods use File | Settings | File Templates.
         getWriter( ).writeSourceURI( getModel().getSourceURI() );
-        getWriter( ).writeDestinationURI( getModel().getTargetURI() );
+        getWriter( ).writeDestinationURI( getModel().getDestinationURI() );
         if( getModel( ).hasFileMap( ) )
             getWriter( ).writeFileMap( getModel().getFileMap() );
 

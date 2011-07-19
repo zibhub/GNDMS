@@ -47,7 +47,7 @@ public class FileTransferOrderPropertyReader extends OrderPropertyReader<FileTra
         super.read( );
         getProduct().setSourceURI( getProperties().getProperty(
             SfrProperty.FILE_TRANSFER_SOURCE_URI.key ) );
-        getProduct().setTargetURI( getProperties().getProperty(
+        getProduct().setDestinationURI( getProperties().getProperty(
             SfrProperty.FILE_TRANSFER_DESTINATION_URI.key ) );
 
         if( getProperties().containsKey( SfrProperty.FILE_TRANSFER_FILE_MAPPING.key ) )

@@ -29,9 +29,7 @@ import org.globus.ftp.exception.ServerException;
 import org.joda.time.Duration;
 import java.util.concurrent.TimeoutException;
 
-import javax.persistence.QueryTimeoutException;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
@@ -44,11 +42,12 @@ import java.util.List;
  * <p/>
  * User: mjorra, Date: 30.09.2008, Time: 10:51:38
  */
-public abstract class AbstractTransferQuoteCalculator<M extends FileTransferOrder, C extends AbstractQuoteCalculator<M>>
+public abstract class AbstractTransferQuoteCalculator<M extends FileTransferOrder>
     extends AbstractQuoteCalculator<M> {
 
     private Long estimatedTransferSize; // estimatedTransferSize
     private Float estimatedBandWidth;
+    private String scheme;
 
 
     protected AbstractTransferQuoteCalculator( ) {
@@ -101,7 +100,7 @@ public abstract class AbstractTransferQuoteCalculator<M extends FileTransferOrde
      */
     protected Float estimateBandWidth( ) throws IOException {
         estimatedBandWidth = NetworkAuxiliariesProvider.getBandWidthEstimater().estimateBandWidthFromTo(
-            getOrderBean().getSourceURI(), getOrderBean().getTargetURI() );
+            getOrderBean().getSourceURI(), getOrderBean().getDestinationURI() );
 
         if( estimatedBandWidth == null )
             throw new IOException( "Couldn't estimate bandwidth." );
@@ -158,5 +157,30 @@ public abstract class AbstractTransferQuoteCalculator<M extends FileTransferOrde
      */
     protected void setEstimatedBandWidth( float estimatedBandWidth ) {
         this.estimatedBandWidth = estimatedBandWidth;
+    }
+
+
+    // todo if required return enum for finer error message.
+    public boolean uriCheck( String address ) {
+        try {
+            URI uri = new URI( address );
+            if ( scheme != null )
+                return uri.getScheme().equals( scheme );
+        } catch ( URISyntaxException e ) {
+            return false;
+        } catch ( NullPointerException e ) {
+            return false;
+        }
+        return true;
+    }
+
+
+    public void setScheme( String scheme ) {
+         this.scheme = scheme;
+     }
+
+
+    public String getScheme() {
+        return scheme;
     }
 }
