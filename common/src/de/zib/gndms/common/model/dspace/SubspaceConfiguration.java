@@ -16,12 +16,7 @@ package de.zib.gndms.common.model.dspace;
  * limitations under the License.
  */
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.codehaus.jackson.JsonNode;
-
-import de.zib.gndms.stuff.confuror.ConfigHolder;
+import de.zib.gndms.common.logic.config.SetupMode;
 
 /**
  * The subspace configuration checks and accesses a ConfigHolder for a subspace,
@@ -35,7 +30,7 @@ import de.zib.gndms.stuff.confuror.ConfigHolder;
  * @author Ulrike Golas
  * 
  */
-public final class SubspaceConfiguration extends ConfigHolder {
+public class SubspaceConfiguration implements Configuration {
 
 	/**
 	 * The key for the subspace's path.
@@ -44,7 +39,7 @@ public final class SubspaceConfiguration extends ConfigHolder {
 	/**
 	 * The key for the subspace's gsiftp-path.
 	 */
-	public static final String GSIFTPPATH = "gsiFtpPath";
+	public static final String GSIFTPPATH = "gsiftppath";
 	/**
 	 * The key for the subspace's visibility.
 	 */
@@ -57,141 +52,226 @@ public final class SubspaceConfiguration extends ConfigHolder {
 	 * The key for the subspace's mode.
 	 */
 	public static final String MODE = "mode";
+
+	/**
+	 * The path of the subspace.
+	 */
+	private String path;
+	/**
+	 * The gsi ftp path of the subspace.
+	 */
+	private String gsiFtpPath;
+	/**
+	 * The visibility of the subspace.
+	 */
+	private boolean visible;
+	/**
+	 * The size of the subspace.
+	 */
+	private long size;
+	/**
+	 * The setup mode of the subspace.
+	 */
+	private SetupMode mode;
 	
 	/**
-	 * Checks if a given config holder is a valid subspace configuration.
-	 * 
-	 * @param config
-	 *            The config holder.
-	 * @return true, if it is a valid subspace configuration; otherwise false.
+	 * Constructs a SubspaceConfiguration.
+	 * @param path The path.
+	 * @param gsiFtpPath The gsi ftp path.
+	 * @param visible The visibility.
+	 * @param size the size.
+	 * @param mode The setup mode.
 	 */
-	public static boolean checkSubspaceConfiguration(final ConfigHolder config) {
-		JsonNode node = config.getNode();
-		try {
-			if (!node.findValue(PATH).isTextual()
-					|| !node.findValue(GSIFTPPATH).isTextual()
-					|| !node.findValue(VISIBLE).isBoolean()
-					|| !node.findValue(SIZE).isNumber()
-					|| !isValidMode(node.findValue(MODE))) {
-				return false;
-			}
-		} catch (NullPointerException e) {
-			return false;
-		}
-		return true;
+	public SubspaceConfiguration(final String path, final String gsiFtpPath, 
+			final boolean visible, final long size, final SetupMode mode) {
+		this.path = path;
+		this.gsiFtpPath = gsiFtpPath;
+		this.visible = visible;
+		this.size = size;
+		this.mode = mode;
+	}
+
+	/**
+	 * Constructs a SubspaceConfiguration.
+	 * @param path The path.
+	 * @param gsiFtpPath The gsi ftp path.
+	 * @param visible The visibility.
+	 * @param size the size.
+	 * @param mode The setup mode.
+	 */
+	public SubspaceConfiguration(final String path, final String gsiFtpPath, 
+			final boolean visible, final long size, final String mode) {
+		this.path = path;
+		this.gsiFtpPath = gsiFtpPath;
+		this.visible = visible;
+		this.size = size;
+		setMode(mode);
+	}
+	
+	@Override
+	public final boolean isValid() {
+		return (path != null && gsiFtpPath != null);
+	}
+
+	@Override
+	public final String displayConfiguration() {
+		String s = "";
+		s = s.concat(PATH + " : '" + path + "'; ");
+		s = s.concat(GSIFTPPATH + " : '" + gsiFtpPath + "'; ");
+		s = s.concat(VISIBLE + " : '" + visible + "'; ");
+		s = s.concat(SIZE + " : '" + size + "'; ");
+		s = s.concat(MODE + " : '" + mode + "'; ");
+		return s;
 	}
 
 	/**
 	 * Returns the path of a subspace configuration.
-	 * @param config The config holder, which has to be a valid subspace configuration.
-	 * @return The path.
+	 * @return the path
 	 */
-	public static String getPath(final ConfigHolder config) {
-		try {
-			if (config.getNode().findValue(PATH).isTextual()) {
-				return config.getNode().findValue(PATH).getTextValue();
-			} else {
-				throw new WrongConfigurationException("The key " + PATH + " exists but is no text value.");
-			}
-		} catch (NullPointerException e) {
-			throw new WrongConfigurationException("The key " + PATH + " does not exist.");
-		}
+	public final String getPath() {
+		return path;
 	}
-	
+
+	/**
+	 * Sets the path of a subspace configuration.
+	 * @param path the path to set
+	 */
+	public final void setPath(final String path) {
+		this.path = path;
+	}
+
 	/**
 	 * Returns the gsi ftp path of a subspace configuration.
-	 * @param config The config holder, which has to be a valid subspace configuration.
-	 * @return The gsiFtp path.
+	 * @return the gsiFtpPath
 	 */
-	public static String getGsiFtpPath(final ConfigHolder config) {
-		try {
-			if (config.getNode().findValue(GSIFTPPATH).isTextual()) {
-				return config.getNode().findValue(GSIFTPPATH).getTextValue();
-			} else {
-				throw new WrongConfigurationException("The key " + GSIFTPPATH + " exists but is no text value.");
-			}
-		} catch (NullPointerException e) {
-			throw new WrongConfigurationException("The key " + GSIFTPPATH + " does not exist.");
-		}
+	public final String getGsiFtpPath() {
+		return gsiFtpPath;
+	}
+
+	/**
+	 * Sets the gsi ftp path of a subspace configuration.
+	 * @param gsiFtpPath the gsiFtpPath to set
+	 */
+	public final void setGsiFtpPath(final String gsiFtpPath) {
+		this.gsiFtpPath = gsiFtpPath;
 	}
 
 	/**
 	 * Returns the visibility of a subspace configuration.
-	 * @param config The config holder, which has to be a valid subspace configuration.
-	 * @return The visibility.
+	 * @return the visible
 	 */
-	public static boolean getVisibility(final ConfigHolder config) {
-		try {
-			if (config.getNode().findValue(VISIBLE).isBoolean()) {
-				return config.getNode().findValue(VISIBLE).getBooleanValue();
-			} else {
-				throw new WrongConfigurationException("The key " + VISIBLE + " exists but is no boolean.");
-			}
-		} catch (NullPointerException e) {
-			throw new WrongConfigurationException("The key " + VISIBLE + " does not exist.");
-		}
+	public final boolean isVisible() {
+		return visible;
+	}
+
+	/**
+	 * Sets the visibility of a subspace configuration.
+	 * @param visible the visible to set
+	 */
+	public final void setVisible(final boolean visible) {
+		this.visible = visible;
 	}
 
 	/**
 	 * Returns the size of a subspace configuration.
-	 * @param config The config holder, which has to be a valid subspace configuration.
-	 * @return The size.
+	 * @return the size
 	 */
-	public static long getSize(final ConfigHolder config) {
-		try {
-			if (config.getNode().findValue(SIZE).isNumber()) {
-				return config.getNode().findValue(SIZE).getLongValue();
-			} else {
-				throw new WrongConfigurationException("The key " + SIZE + " exists but is no numer.");
-			}
-		} catch (NullPointerException e) {
-			throw new WrongConfigurationException("The key " + SIZE + " does not exist.");
-		}
+	public final long getSize() {
+		return size;
+	}
+
+	/**
+	 * Sets the size of a subspace configuration.
+	 * @param size the size to set
+	 */
+	public final void setSize(final long size) {
+		this.size = size;
 	}
 
 	/**
 	 * Returns the mode of a subspace configuration.
-	 * @param config The config holder, which has to be a valid subspace configuration.
-	 * @return The size.
+	 * @return the mode
 	 */
-	public static String getMode(final ConfigHolder config) {
-			JsonNode node = config.getNode().findValue(MODE);
-			if (node == null) {
-				throw new WrongConfigurationException("The key " + MODE + " does not exist.");
-			}
-			if (isValidMode(node)) {
-				return node.getTextValue();
-			} else {
-				throw new WrongConfigurationException("The key " + MODE + " exists but is no valid mode.");
-			}
+	public final SetupMode getMode() {
+		return mode;
 	}
 
 	/**
-	 * Tests if the given Json node has a valid mode value, i.e. "create" or "update".
-	 * @param node The node.
-	 * @return true, if it is valid.
+	 * Sets the mode of a subspace configuration.
+	 * @param mode the mode to set
 	 */
-	private static boolean isValidMode(final JsonNode node) {
-		
+	public final void setMode(final SetupMode mode) {
+		this.mode = mode;
+	}
+
+	/**
+	 * Sets the mode of a subspace configuration as String.
+	 * @param mode the mode to set
+	 */
+	public final void setMode(final String mode) {
 		try {
-			// TODO
-			// should be SetupMode.valueOf(node.getTextValue());
-			// but wrong package
-			String s = node.getTextValue();
-			Set<String> valid = new HashSet<String>();
-			valid.add("CREATE");
-			valid.add("READ");
-			valid.add("UPDATE");
-			valid.add("DELETE");
-			if (!valid.contains(s)) {
-				throw new IllegalArgumentException();				
-			}
-			
-			return true;
+			this.mode = SetupMode.valueOf(mode);
 		} catch (IllegalArgumentException e) {
-			return false;
+			throw new WrongConfigurationException(mode + " is no valid setup mode.");
 		} catch (NullPointerException e) {
+			throw new WrongConfigurationException("Mode is null.");
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public final String toString() {
+		return displayConfiguration();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public final boolean equals(final Object obj) {
+		if (obj == null) {
 			return false;
 		}
+		if (obj == this) {
+			return true;
+		}
+		if (obj.getClass() == getClass()) {
+			SubspaceConfiguration config = (SubspaceConfiguration) obj;
+			return (config.getPath().equals(path)
+					&& config.getGsiFtpPath().equals(gsiFtpPath) 
+					&& config.isVisible() == visible 
+					&& config.getSize() == size 
+					&& config.getMode().equals(mode));
+		} else {
+			return false;
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public final int hashCode() {
+		final int start = 15;
+		final int multi = 23;
+		int hashCode = start;
+		hashCode = hashCode * multi + path.hashCode();
+		hashCode = hashCode * multi + gsiFtpPath.hashCode();
+		if (visible) {
+			hashCode = hashCode * multi + 1;
+		}
+		final int length = 32;
+		hashCode = hashCode * multi + (int) (size ^ (size >>> length));
+		hashCode = hashCode * multi + mode.hashCode();
+		return hashCode;
+
 	}
 }

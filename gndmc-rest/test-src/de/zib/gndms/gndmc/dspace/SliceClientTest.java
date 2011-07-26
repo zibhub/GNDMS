@@ -24,9 +24,8 @@ import org.springframework.http.ResponseEntity;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
+import de.zib.gndms.common.model.dspace.SliceConfiguration;
 import de.zib.gndms.common.rest.Specifier;
-import de.zib.gndms.common.model.dspace.MockSliceConfiguration;
-import de.zib.gndms.stuff.confuror.ConfigHolder;
 
 /**
  * Tests the DSpaceClient.
@@ -76,7 +75,7 @@ public class SliceClientTest {
 		String owner = "me";
 		GregorianCalendar cal = new GregorianCalendar();
 		final long value = cal.getTimeInMillis();
-       	ConfigHolder config = new MockSliceConfiguration(directory, owner, value);
+       	SliceConfiguration config = new SliceConfiguration(directory, owner, value);
 		res = scl.setSliceConfiguration(subspace, sliceKind, slice, config, dn);
        	AssertJUnit.assertNotNull(res);
 

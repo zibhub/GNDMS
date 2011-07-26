@@ -28,18 +28,11 @@ package de.zib.gndms.model.dspace;
 
 import de.zib.gndms.common.model.dspace.SubspaceConfiguration;
 import de.zib.gndms.model.common.GridResource;
-import de.zib.gndms.stuff.confuror.ConfigEditor;
-import de.zib.gndms.stuff.confuror.ConfigHolder;
-import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
 
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
 import java.io.File;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -80,8 +73,9 @@ public class Subspace extends GridResource {
      * Sets the path of the Subspace to pth.
      *
      * If pth must exists and be a valid directory with read/write access.
+     * @param pth  The path.
      *
-     * @note The read permission will be removed form pth.
+     * @note The read permission will be removed from pth.
      */
     public void setPath( String pth ) {
 
@@ -114,6 +108,7 @@ public class Subspace extends GridResource {
      * Remove a slice from the slice set.
      *
      * The slice itself isn't destroy, and the fold stil exists.
+     * @param sl The slice to be removed.
      */
     public void removeSlice( @NotNull Slice sl ) {
 
@@ -123,6 +118,9 @@ public class Subspace extends GridResource {
 
     /** 
      * @brief Delivers the absolute path to a slice sl.
+     * 
+     * @param sl The slice. 
+     * @return The path.
      */
     public String getPathForSlice( Slice sl )  {
         return getPath() + File.separator + sl.getKind( ).getSliceDirectory() + File.separator + sl.getDirectoryId( );
@@ -196,42 +194,30 @@ public class Subspace extends GridResource {
     }
     
 	/**
-	 * Constructs the subspace configuration of a given subspace.
+	 * Constructs the subspace configuration of a subspace.
 	 * 
-	 * @param sub
-	 *            The subspace.
-	 * @return The config holder.
-	 * @throws IOException 
-	 * @throws UpdateRejectedException 
+	 * @return The configuration.
 	 */
-	public static ConfigHolder getSubspaceConfiguration(final Subspace sub) 
-			throws IOException, UpdateRejectedException {
-		String path = sub.getPath();
-		String gsiftp = sub.getGsiFtpPath();
-		boolean visible = sub.getMetaSubspace().isVisibleToPublic();
-		long size = sub.getAvailableSize();
+	public SubspaceConfiguration getSubspaceConfiguration() {
+		String path = getPath();
+		String gsiftp = getGsiFtpPath();
+		boolean visible = getMetaSubspace().isVisibleToPublic();
+		long size = getAvailableSize();
 
-		ConfigHolder config = new ConfigHolder();
-		ObjectMapper objectMapper = new ObjectMapper();
-		JsonFactory factory = objectMapper.getJsonFactory();
-		ConfigEditor.Visitor visitor = new ConfigEditor.DefaultVisitor();
-		ConfigEditor editor = config.newEditor(visitor);
-		config.setObjectMapper(objectMapper);
+		return new SubspaceConfiguration(path, gsiftp, visible, size, "UPDATE");
+	}
+	
+	/**
+	 * Updates a subspace according to a subspace configuration.
+	 * @param config
+	 */
+	public void updateWithConfiguration(SubspaceConfiguration config) {
+		// TODO test for mode
+		setPath(config.getPath());
+		setGsiFtpPath(config.getGsiFtpPath());
+		getMetaSubspace().setVisibleToPublic(config.isVisible());
+		setTotalSize(config.getSize());
 
-		JsonNode pn = ConfigHolder.parseSingle(factory, ConfigHolder.createSingleEntry(SubspaceConfiguration.PATH, path));
-		JsonNode gn = ConfigHolder.parseSingle(factory, ConfigHolder.createSingleEntry(SubspaceConfiguration.GSIFTPPATH, gsiftp));
-		JsonNode vn = ConfigHolder.parseSingle(factory, ConfigHolder.createSingleEntry(SubspaceConfiguration.VISIBLE, visible));
-		JsonNode sn = ConfigHolder.parseSingle(factory, ConfigHolder.createSingleEntry(SubspaceConfiguration.SIZE, size));
-		
-		// TODO: to get a valid configuration: assume that subspace is in update mode???
-		JsonNode mn = ConfigHolder.parseSingle(factory, ConfigHolder.createSingleEntry(SubspaceConfiguration.MODE, "UPDATE"));
-		config.update(editor, pn);
-		config.update(editor, gn);
-		config.update(editor, vn);
-		config.update(editor, sn);
-		config.update(editor, mn);
-			
-		return config;
 	}
 
 }

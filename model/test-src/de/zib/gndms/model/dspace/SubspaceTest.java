@@ -16,14 +16,10 @@ package de.zib.gndms.model.dspace;
  * limitations under the License.
  */
 
-import java.io.IOException;
-
 import org.testng.annotations.Test;
 import org.testng.AssertJUnit;
 
 import de.zib.gndms.common.model.dspace.SubspaceConfiguration;
-import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
-import de.zib.gndms.stuff.confuror.ConfigHolder;
 
 /**
  * Tests the SubspaceConfiguration.
@@ -34,12 +30,9 @@ public class SubspaceTest {
 	
 	/**
 	 * Tests the method getSubspaceConfiguration.
-	 * 
-	 * @throws IOException 
-	 * @throws UpdateRejectedException 
 	 */
 	@Test
-    public final void testGetSubspaceConfiguration() throws IOException, UpdateRejectedException {
+    public final void testGetSubspaceConfiguration()  {
 		Subspace dummy = new Subspace();
 		MetaSubspace dummyMeta = new MetaSubspace();
 		dummy.setMetaSubspace(dummyMeta);
@@ -54,14 +47,14 @@ public class SubspaceTest {
 		dummy.setAvailableSize(size);
 		String mode = "UPDATE";		
 				
-		ConfigHolder config = Subspace.getSubspaceConfiguration(dummy);
+		SubspaceConfiguration config = dummy.getSubspaceConfiguration();
 
-		AssertJUnit.assertEquals(true, SubspaceConfiguration.checkSubspaceConfiguration(config));
-		AssertJUnit.assertEquals(path, SubspaceConfiguration.getPath(config));
-		AssertJUnit.assertEquals(gsiftp, SubspaceConfiguration.getGsiFtpPath(config));
-		AssertJUnit.assertEquals(visible, SubspaceConfiguration.getVisibility(config));
-		AssertJUnit.assertEquals(size, SubspaceConfiguration.getSize(config));
-		AssertJUnit.assertEquals(mode, SubspaceConfiguration.getMode(config));
+		AssertJUnit.assertEquals(true, config.isValid());
+		AssertJUnit.assertEquals(path, config.getPath());
+		AssertJUnit.assertEquals(gsiftp, config.getGsiFtpPath());
+		AssertJUnit.assertEquals(visible, config.isVisible());
+		AssertJUnit.assertEquals(size, config.getSize());
+		AssertJUnit.assertEquals(mode, config.getMode().name());
 
 	}
 

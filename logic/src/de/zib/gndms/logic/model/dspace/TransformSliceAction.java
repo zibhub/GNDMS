@@ -18,9 +18,9 @@ package de.zib.gndms.logic.model.dspace;
 
 
 
+import de.zib.gndms.common.model.common.AccessMask;
 import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.logic.model.AbstractModelEntityAction;
-import de.zib.gndms.model.common.AccessMask;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;

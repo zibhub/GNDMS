@@ -16,12 +16,7 @@ package de.zib.gndms.common.model.dspace;
  * limitations under the License.
  */
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.codehaus.jackson.JsonNode;
-
-import de.zib.gndms.stuff.confuror.ConfigHolder;
+import de.zib.gndms.common.model.common.AccessMask;
 
 /**
  * The slice kind configuration checks and accesses a ConfigHolder for a slice kind,
@@ -36,7 +31,7 @@ import de.zib.gndms.stuff.confuror.ConfigHolder;
  */
 // TODO does that make sense, how to get the meta-subspaces from the string?
 
-public class SliceKindConfiguration extends ConfigHolder {
+public class SliceKindConfiguration implements Configuration {
 
 	/**
 	 * The key for the slice kind's uri.
@@ -52,107 +47,174 @@ public class SliceKindConfiguration extends ConfigHolder {
 	public static final String METASUBSPACES = "metasubspaces";
 
 	/**
-	 * Checks if a given config holder is a valid slice kind configuration.
-	 * 
-	 * @param config
-	 *            The config holder.
-	 * @return true, if it is a valid slice kind configuration; otherwise false.
+	 * The uri of the slice kind.
 	 */
-	public static boolean checkSliceKindConfiguration(final ConfigHolder config) {
-		JsonNode node = config.getNode();
-		try {
-			if (node.findValue(URI).isTextual()
-					&& node.findValue(PERMISSION).isNumber()
-				    && isValidPermission(node.findValue(PERMISSION))) {
-				return true;
-			}
-		} catch (NullPointerException e) {
-			return false;
-		}
-		return false;
+	private String uri;
+	/**
+	 * The permission of the slice kind.
+	 */
+	private AccessMask permission;
+	/**
+	 * The meta subspace of the slice kind.
+	 */
+	private String metasubspaces;
+
+	/**
+	 * Constructs a SliceKindConfiguration.
+	 * @param uri The uri.
+	 * @param permission The permission as long value.
+	 * @param metasubspaces The metasubspaces.
+	 */
+	public SliceKindConfiguration(final String uri, final String permission, final String metasubspaces) {
+		this.uri = uri;
+		setPermission(permission);
+		this.metasubspaces = metasubspaces;
 	}
 
-	
+	/**
+	 * Constructs a SliceKindConfiguration.
+	 * @param uri The uri.
+	 * @param permission The permission as long value.
+	 * @param metasubspaces The metasubspaces.
+	 */
+	public SliceKindConfiguration(final String uri, final AccessMask permission, final String metasubspaces) {
+		this.uri = uri;
+		this.permission = permission;
+		this.metasubspaces = metasubspaces;
+	}
+
+	@Override
+	public final boolean isValid() {
+		return (uri != null && permission != null);
+	}
+
+
+	@Override
+	public final String displayConfiguration() {
+		String s = "";
+		s = s.concat(URI + " : '" + uri + "'; ");
+		s = s.concat(PERMISSION + " : '" + permission.getAsString() + "'; ");
+		if (metasubspaces != null) {
+			s = s.concat(METASUBSPACES + " : '" + metasubspaces + "'; ");
+		}
+		return s;
+	}
+
 	/**
 	 * Returns the uri of a slice kind configuration.
-	 * @param config The config holder, which has to be a valid slice kind configuration.
-	 * @return The uri.
+	 * @return the uri
 	 */
-	public static String getUri(final ConfigHolder config) {
-		try {
-			if (config.getNode().findValue(URI).isTextual()) {
-				return config.getNode().findValue(URI).getTextValue();
-			} else {
-				throw new WrongConfigurationException();
-			}
-		} catch (NullPointerException e) {
-			throw new WrongConfigurationException();
-		}
-	}
-	
-	/**
-	 * Returns the permissions of a slice kind configuration.
-	 * @param config The config holder, which has to be a valid slice kind configuration.
-	 * @return The permissions.
-	 */
-	public static long getPermission(final ConfigHolder config) {
-		JsonNode node = config.getNode().findValue(PERMISSION);
-		if (node == null) {
-			throw new WrongConfigurationException("The key " + PERMISSION + " does not exist.");
-		}
-			if (node.isNumber() && isValidPermission(node)) {
-				return node.getLongValue();
-			} else {
-				throw new WrongConfigurationException();
-			}
+	public final String getUri() {
+		return uri;
 	}
 
 	/**
-	 * Returns the identifiers of the meta-subspaces of a slice kind configuration or null, if it is not specified.
-	 * @param config The config holder, which has to be a valid slice kind configuration.
-	 * @return The set of meta-subspaces.
+	 * Sets the uri of a slice kind configuration.
+	 * @param uri the uri to set
 	 */
-	public static Set<String> getMetaSubspaces(final ConfigHolder config) {
-		try {
-		if (config.getNode().findValue(METASUBSPACES).isTextual()) {
-			// TODO get meta-subspaces
-			return new HashSet<String>();
-			} else {
-				throw new WrongConfigurationException();
-			}
-		} catch (NullPointerException e) {
-			return null;
-		}
+	public final void setUri(final String uri) {
+		this.uri = uri;
 	}
 
 	/**
-	 * Tests if the given Json node has a valid permission value.
-	 * @param node The node.
-	 * @return true, if it is valid.
+	 * Returns the permission of a slice kind configuration.
+	 * @return the permission
 	 */
-	private static boolean isValidPermission(final JsonNode node) {
-		
-		try {
-			long nr = node.getLongValue();
+	public final AccessMask getPermission() {
+		return permission;
+	}
 
-			// TODO
-			// should be AccessMask.fromString(Long.toString(nr));
-			// but wrong package
-	        if (nr < 99 || nr > 9999) {
-	            throw new IllegalArgumentException();
-	        }
-	        long l;
-			for (int i=0; i<3; i++) {
-		        l = nr % 10;
-				if (l > 7) {
-		            throw new IllegalArgumentException();
-		        }
-				nr = nr / 10;
-			}
-			return true;
+	/**
+	 * Sets the permission of a slice kind configuration.
+	 * @param permission the permission to set
+	 */
+	public final void setPermission(final AccessMask permission) {
+		this.permission = permission;
+	}
+
+	/**
+	 * Returns the permission of a slice kind configuration.
+	 * @return the permission
+	 */
+	public final String getPermissionAsString() {
+		return permission.getAsString();
+	}
+
+	/**
+	 * Sets the permission of a slice kind configuration.
+	 * @param permission the permission to set
+	 */
+	public final void setPermission(final String permission) {
+		try {
+			this.permission = AccessMask.fromString(permission);
 		} catch (IllegalArgumentException e) {
+			throw new WrongConfigurationException(permission + " is no valid acces mask value.");
+		} catch (NullPointerException e) {
+		throw new WrongConfigurationException("Permission is null.");
+	}
+	}
+	
+	/**
+	 * Returns the meta subspaces of a slice kind configuration.
+	 * @return the metasubspaces
+	 */
+	public final String getMetasubspaces() {
+		return metasubspaces;
+	}
+
+	/**
+	 * Sets the meta subspaces of a slice kind configuration.
+	 * @param metasubspaces the metasubspaces to set
+	 */
+	public final void setMetasubspaces(final String metasubspaces) {
+		this.metasubspaces = metasubspaces;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public final String toString() {
+		return displayConfiguration();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public final boolean equals(final Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (obj == this) {
+			return true;
+		}
+		if (obj.getClass() == getClass()) {
+			SliceKindConfiguration config = (SliceKindConfiguration) obj;
+			return (config.getUri().equals(uri)
+					&& config.getPermission().equals(permission) 
+					&& config.getMetasubspaces().equals(metasubspaces));
+		} else {
 			return false;
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public final int hashCode() {
+		final int start = 35;
+		final int multi = 17;
+		int hashCode = start;
+		hashCode = hashCode * multi + uri.hashCode();
+		hashCode = hashCode * multi + permission.hashCode();
+		hashCode = hashCode * multi + metasubspaces.hashCode();
+		return hashCode;
+
+	}
 }

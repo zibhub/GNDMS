@@ -18,7 +18,7 @@ package de.zib.gndms.kit.util;
 
 
 
-import de.zib.gndms.model.common.AccessMask;
+import de.zib.gndms.common.model.common.AccessMask;
 
 import java.io.File;
 

@@ -20,15 +20,9 @@ package de.zib.gndms.model.dspace;
 
 import de.zib.gndms.common.model.dspace.SliceConfiguration;
 import de.zib.gndms.model.common.TimedGridResource;
-import de.zib.gndms.stuff.confuror.ConfigEditor;
-import de.zib.gndms.stuff.confuror.ConfigHolder;
 import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
 
 import javax.persistence.*;
-
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -83,6 +77,7 @@ public class Slice extends TimedGridResource {
      * This path is relative to the path of the Owner.
      *
      * To obtain the absolute path use Subspace.getPathForSlice .
+     * @return The path.
      */ 
     @Column( name="directory_id", nullable=false, updatable=false, columnDefinition="CHAR", length=36 )
     public String getDirectoryId() {
@@ -149,27 +144,12 @@ public class Slice extends TimedGridResource {
 	 * @throws IOException 
 	 * @throws UpdateRejectedException 
 	 */
-	public static ConfigHolder getSliceConfiguration(final Slice slice)
-			throws IOException, UpdateRejectedException {
-		String directory = slice.getDirectoryId();
-		String owner = slice.getOwner();
-		Long termination = slice.getTerminationTime().getTimeInMillis();
+	public SliceConfiguration getSliceConfiguration() {
+		String directory = getDirectoryId();
+		String owner = getOwner();
+		Long termination = getTerminationTime().getTimeInMillis();
 		
-		ConfigHolder config = new ConfigHolder();
-		ObjectMapper objectMapper = new ObjectMapper();
-		JsonFactory factory = objectMapper.getJsonFactory();
-		ConfigEditor.Visitor visitor = new ConfigEditor.DefaultVisitor();
-		ConfigEditor editor = config.newEditor(visitor);
-		config.setObjectMapper(objectMapper);
-
-		JsonNode dn = ConfigHolder.parseSingle(factory, ConfigHolder.createSingleEntry(SliceConfiguration.DIRECTORY, directory));
-		JsonNode on = ConfigHolder.parseSingle(factory, ConfigHolder.createSingleEntry(SliceConfiguration.OWNER, owner));
-		JsonNode tn = ConfigHolder.parseSingle(factory, ConfigHolder.createSingleEntry(SliceConfiguration.TERMINATION, termination));
-		config.update(editor, dn);
-		config.update(editor, on);
-		config.update(editor, tn);
-
-		return config;
+		return new SliceConfiguration(directory, owner, termination);
 	}
 
 

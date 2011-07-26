@@ -21,10 +21,10 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
-import de.zib.gndms.common.kit.dspace.Product;
+import de.zib.gndms.common.model.dspace.Configuration;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
-import de.zib.gndms.stuff.confuror.ConfigHolder;
+import de.zib.gndms.common.stuff.util.Product;
 
 /**
  * The interface of the Slice service.
@@ -58,7 +58,7 @@ public interface SliceService {
 	 *            The dn of the user invoking the method.
 	 * @return The slice configuration and the available facets.
 	 */
-	ResponseEntity<Product<ConfigHolder, Facets>> listSliceFacets(String subspace, String sliceKind,
+	ResponseEntity<Product<Configuration, Facets>> listSliceFacets(String subspace, String sliceKind,
 			String slice, String dn);
 
 	/**
@@ -76,7 +76,7 @@ public interface SliceService {
 	 * @return A confirmation.
 	 */
 	ResponseEntity<Void> setSliceConfiguration(String subspace, String sliceKind,
-			String slice, ConfigHolder config, String dn);
+			String slice, Configuration config, String dn);
 
 	/**
 	 * Changes the slice kind of a slice.

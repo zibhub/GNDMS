@@ -18,12 +18,12 @@ package de.zib.gndms.logic.action;
 
 
 
+import de.zib.gndms.common.model.common.AccessMask;
 import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
 import de.zib.gndms.logic.model.LookupAction;
 import de.zib.gndms.logic.model.dspace.CreateSliceKindAction;
 import de.zib.gndms.logic.util.SimpleModelUUIDGen;
 import de.zib.gndms.model.common.ModelUUIDGen;
-import de.zib.gndms.model.common.AccessMask;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.test.ModelEntityTestBase;
 import org.testng.annotations.AfterTest;
