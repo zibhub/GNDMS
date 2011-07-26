@@ -1,4 +1,4 @@
-package de.zib.gndms.common.kit.dspace;
+package de.zib.gndms.common.stuff.util;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)

@@ -16,20 +16,11 @@ package de.zib.gndms.common.model.dspace;
  * limitations under the License.
  */
 
-import java.io.IOException;
-
 import org.testng.annotations.Test;
 import org.testng.AssertJUnit;
 
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import de.zib.gndms.common.logic.config.SetupMode;
 
-import de.zib.gndms.common.model.dspace.SubspaceConfiguration;
-import de.zib.gndms.common.model.dspace.WrongConfigurationException;
-import de.zib.gndms.stuff.confuror.ConfigEditor;
-import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
-import de.zib.gndms.stuff.confuror.ConfigHolder;
 
 /**
  * Tests the SubspaceConfiguration.
@@ -39,191 +30,160 @@ import de.zib.gndms.stuff.confuror.ConfigHolder;
 public class SubspaceConfigurationTest {
 	
 	/**
-	 * Tests the method checkSubspaceConfiguration(ConfigHolder) with a valid configuration
-	 * and the access to the subspace configuration fields.
-	 * @throws IOException 
-	 * @throws UpdateRejectedException 
+	 * Tests equals() and hashcode().
 	 */
 	@Test
-    public final void testCheckAndGet1() throws IOException, UpdateRejectedException {
+    public final void testEquals() {
 		String path = "testpath";
 		String gsiftp = "gsiftp";
 		boolean visible = true;
-		final long value = 6000;
+		final long size = 6000;
 		String mode = "UPDATE";
-		ConfigHolder testConfig = new MockSubspaceConfiguration(path, gsiftp, visible, value, mode);
+
+		SubspaceConfiguration suconfig = new SubspaceConfiguration(path, gsiftp, visible, size, mode);
+		SubspaceConfiguration suconfig2 = new SubspaceConfiguration(path, gsiftp, visible, size, mode);
 		
-       	AssertJUnit.assertEquals(true, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
-       	
-       	String testPath = SubspaceConfiguration.getPath(testConfig);
-       	String testGsiftp = SubspaceConfiguration.getGsiFtpPath(testConfig);
-       	boolean testVisible = SubspaceConfiguration.getVisibility(testConfig);
-       	long testValue = SubspaceConfiguration.getSize(testConfig);
-       	String testMode = SubspaceConfiguration.getMode(testConfig);
+       	AssertJUnit.assertEquals(false, suconfig == suconfig2);
+       	AssertJUnit.assertEquals(true, suconfig.equals(suconfig2));
+       	AssertJUnit.assertEquals(true, suconfig.equals(suconfig));
+       	AssertJUnit.assertEquals(true, suconfig2.equals(suconfig));
+       	AssertJUnit.assertEquals(suconfig.hashCode(), suconfig2.hashCode());
 
-       	AssertJUnit.assertEquals(path, testPath);
-       	AssertJUnit.assertEquals(gsiftp, testGsiftp);
-       	AssertJUnit.assertEquals(visible, testVisible);
-       	AssertJUnit.assertEquals(value, testValue);
-       	AssertJUnit.assertEquals(mode, testMode);
+		visible = false;
+		suconfig2 = new SubspaceConfiguration(path, gsiftp, visible, size, mode);
 
+       	AssertJUnit.assertEquals(false, suconfig.equals(suconfig2));
+       	AssertJUnit.assertEquals(false, suconfig2.equals(suconfig));
+       	AssertJUnit.assertEquals(false, suconfig.equals(null));
+       	AssertJUnit.assertEquals(false, suconfig.equals(path));
 	}
 
 	/**
-	 * Tests the method checkSubspaceConfiguration(ConfigHolder) with invalid configurations.
-	 * @throws IOException 
-	 * @throws UpdateRejectedException 
+	 * Tests the constructor and getters, setters, and isValid() with valid arguments.
 	 */
 	@Test
-    public final void testCheckAndGet2() throws IOException, UpdateRejectedException {
-		ConfigHolder testConfig = new ConfigHolder();
-		ObjectMapper objectMapper = new ObjectMapper();
-		JsonFactory factory = objectMapper.getJsonFactory();
-		ConfigEditor.Visitor visitor = new ConfigEditor.DefaultVisitor();
-		ConfigEditor editor = testConfig.newEditor(visitor);
-		testConfig.setObjectMapper(objectMapper);
+    public final void testConstructors() {
+		String path = "testpath";
+		String gsiftp = "gsiftp";
+		boolean visible = true;
+		final long size = 6000;
+		String mode = "UPDATE";
+		SetupMode setup = SetupMode.UPDATE;
 		
-		final long testValue = 6000;
-		
-		// empty node
-       	AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
-       	try {
-			SubspaceConfiguration.getPath(testConfig);
-			AssertJUnit.fail();
-		} catch (WrongConfigurationException e) {
-			AssertJUnit.assertNotNull(e);
-		}
+		SubspaceConfiguration suconfig = new SubspaceConfiguration(path, gsiftp, visible, size, setup);
+		       	
+       	String testPath = suconfig.getPath();
+       	String testGsiftp = suconfig.getGsiFtpPath();
+       	boolean testVisible = suconfig.isVisible();
+       	long testSize = suconfig.getSize();
+       	SetupMode testSetup = suconfig.getMode();
+       	boolean valid = suconfig.isValid();
        	
-       	// only path set - gsi ftp path is missing
-		JsonNode node = ConfigHolder.parseSingle(factory, 
-				SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.PATH, "testpath"));
-		testConfig.update(editor, node);
+       	AssertJUnit.assertEquals(path, testPath);
+       	AssertJUnit.assertEquals(gsiftp, testGsiftp);
+       	AssertJUnit.assertEquals(visible, testVisible);
+       	AssertJUnit.assertEquals(size, testSize);
+       	AssertJUnit.assertEquals(setup, testSetup);
+       	AssertJUnit.assertEquals(true, valid);
 
-       	AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
-       	try {
-			SubspaceConfiguration.getGsiFtpPath(testConfig);
-			AssertJUnit.fail();
-		} catch (WrongConfigurationException e) {
-			AssertJUnit.assertNotNull(e);
-		}
+		SubspaceConfiguration suconfig2 = new SubspaceConfiguration(path, gsiftp, visible, size, mode);
+       	testSetup = suconfig2.getMode();
+       	valid = suconfig2.isValid();
+		
+       	AssertJUnit.assertEquals(suconfig.displayConfiguration(), suconfig2.displayConfiguration());
+       	AssertJUnit.assertEquals(setup, testSetup);
 
-       	// only path and gsi ftp path set - visibility is missing
-       	node = ConfigHolder.parseSingle(factory, 
-       			SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.GSIFTPPATH, "gsiftp"));
-		testConfig.update(editor, node);
+		String path2 = "pathtest";
+		String gsiftp2 = "testgsiftp";
+		boolean visible2 = false;
+		final long size2 = 8000;
+		SetupMode setup2 = SetupMode.CREATE;
 
-       	AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
-       	try {
-			SubspaceConfiguration.getVisibility(testConfig);
-			AssertJUnit.fail();
-		} catch (WrongConfigurationException e) {
-			AssertJUnit.assertNotNull(e);
-		}
+		suconfig2.setPath(path2);
+		suconfig2.setGsiFtpPath(gsiftp2);
+		suconfig2.setVisible(visible2);
+		suconfig2.setSize(size2);
+		suconfig2.setMode(setup2);
 
-       	// only path, gsi ftp path and visibility set - size is missing
-		node = ConfigHolder.parseSingle(factory, 
-				SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.VISIBLE, "true"));
-		testConfig.update(editor, node);
-       	try {
-			SubspaceConfiguration.getSize(testConfig);
-			AssertJUnit.fail();
-		} catch (WrongConfigurationException e) {
-			AssertJUnit.assertNotNull(e);
-		}
+       	String testPath2 = suconfig2.getPath();
+       	String testGsiftp2 = suconfig2.getGsiFtpPath();
+       	boolean testVisible2 = suconfig2.isVisible();
+       	long testSize2 = suconfig2.getSize();
+       	SetupMode testSetup2 = suconfig2.getMode();
+       	boolean valid2 = suconfig2.isValid();
 
-       	AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
+       	AssertJUnit.assertEquals(path2, testPath2);
+       	AssertJUnit.assertEquals(gsiftp2, testGsiftp2);
+       	AssertJUnit.assertEquals(visible2, testVisible2);
+       	AssertJUnit.assertEquals(size2, testSize2);
+       	AssertJUnit.assertEquals(setup2, testSetup2);
+       	AssertJUnit.assertEquals(true, valid2);
 
-       	// only path, gsi ftp path, visibility, and size set - mode is missing
-		node = ConfigHolder.parseSingle(factory, 
-				SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.SIZE, testValue));
-		testConfig.update(editor, node);
-       	try {
-			SubspaceConfiguration.getMode(testConfig);
-			AssertJUnit.fail();
-		} catch (WrongConfigurationException e) {
-			AssertJUnit.assertNotNull(e);
-		}
+		String mode3 = "DELETE";
 
-       	AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
+		suconfig2.setMode(mode3);
+		
+       	SetupMode testSetup3 = suconfig2.getMode();
 
-       	// wrong type of path value - number instead of string
-		node = ConfigHolder.parseSingle(factory, 
-				SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.PATH, testValue));
-		testConfig.update(editor, node);
-
-		AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
-       	try {
-			SubspaceConfiguration.getPath(testConfig);
-			AssertJUnit.fail();
-		} catch (WrongConfigurationException e) {
-			AssertJUnit.assertNotNull(e);
-		}
-
-       	// wrong type of gsi ftp path value - number instead of string
-		node = ConfigHolder.parseSingle(factory, 
-				SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.GSIFTPPATH, testValue));
-		testConfig.update(editor, node);
-
-		AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
-       	try {
-			SubspaceConfiguration.getGsiFtpPath(testConfig);
-			AssertJUnit.fail();
-		} catch (WrongConfigurationException e) {
-			AssertJUnit.assertNotNull(e);
-		}
-
-       	// wrong type of visibility value - number instead of boolean
-		node = ConfigHolder.parseSingle(factory, 
-				SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.VISIBLE, testValue));
-		testConfig.update(editor, node);
-
-		AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
-       	try {
-			SubspaceConfiguration.getVisibility(testConfig);
-			AssertJUnit.fail();
-		} catch (WrongConfigurationException e) {
-			AssertJUnit.assertNotNull(e);
-		}
-
-
-       	// wrong type of size value - string instead of number
-		node = ConfigHolder.parseSingle(factory, 
-				SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.SIZE, "testpath"));
-		testConfig.update(editor, node);
-
-		AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
-       	try {
-			SubspaceConfiguration.getSize(testConfig);
-			AssertJUnit.fail();
-		} catch (WrongConfigurationException e) {
-			AssertJUnit.assertNotNull(e);
-		}
-
-       	// wrong type of mode value - number instead of string
-		node = ConfigHolder.parseSingle(factory, 
-				SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.MODE, testValue));
-		testConfig.update(editor, node);
-
-		AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
-       	try {
-			SubspaceConfiguration.getMode(testConfig);
-			AssertJUnit.fail();
-		} catch (WrongConfigurationException e) {
-			AssertJUnit.assertNotNull(e);
-		}
-
-       	// invalid mode value
-		node = ConfigHolder.parseSingle(factory, 
-				SubspaceConfiguration.createSingleEntry(SubspaceConfiguration.MODE, "WRONG"));
-		testConfig.update(editor, node);
-
-		AssertJUnit.assertEquals(false, SubspaceConfiguration.checkSubspaceConfiguration(testConfig));
-       	try {
-			SubspaceConfiguration.getMode(testConfig);
-			AssertJUnit.fail();
-		} catch (WrongConfigurationException e) {
-			AssertJUnit.assertNotNull(e);
-		}
+       	AssertJUnit.assertEquals(SetupMode.DELETE, testSetup3);
 	}
+
+	/**
+	 * Tests the setters and isValid with invalid configurations.
+	 */
+	@Test
+    public final void testSetters() {
+		SubspaceConfiguration suconfig = new SubspaceConfiguration(null, null, true, 0, SetupMode.CREATE);
+
+		// path and gsiftp missing
+		boolean valid = suconfig.isValid();
+       	AssertJUnit.assertEquals(false, valid);
+
+		String path = "testpath";
+		String gsiftp = "gsiftp";
+
+		// gsiftp missing
+       	suconfig.setPath(path);
+		
+		valid = suconfig.isValid();
+       	AssertJUnit.assertEquals(false, valid);
+		       	
+       	// complete
+       	suconfig.setGsiFtpPath(gsiftp);
+		
+		valid = suconfig.isValid();
+       	AssertJUnit.assertEquals(true, valid);
+
+       	try {
+       		suconfig.setMode("test");
+		} catch (WrongConfigurationException e) {
+			AssertJUnit.assertNotNull(e);
+		}
+       	try {
+       		String nn = null;
+       		suconfig.setMode(nn);
+		} catch (WrongConfigurationException e) {
+			AssertJUnit.assertNotNull(e);
+		}
+}
 	
+	/**
+	 * Tests displayConfiguration().
+	 */
+	@Test
+    public final void testDisplayConfiguration() {
+		String path = "testpath";
+		String gsiftp = "gsiftp";
+		boolean visible = true;
+		final long size = 6000;
+		SetupMode setup = SetupMode.UPDATE;
+
+		SubspaceConfiguration suconfig = new SubspaceConfiguration(path, gsiftp, visible, size, setup);
+
+		String s = "path : '" + path + "'; gsiftppath : '" + gsiftp 
+			+ "'; visible : '" + visible + "'; size : '" + size + "'; mode : '" + setup + "'; ";
+		
+       	AssertJUnit.assertEquals(s, suconfig.displayConfiguration());		
+       	AssertJUnit.assertEquals(s, suconfig.toString());		
+	}
 }

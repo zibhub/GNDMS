@@ -34,7 +34,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import de.zib.gndms.common.dspace.service.SliceKindService;
+import de.zib.gndms.common.model.dspace.Configuration;
 import de.zib.gndms.common.model.dspace.SliceKindConfiguration;
+import de.zib.gndms.common.model.dspace.SubspaceConfiguration;
+import de.zib.gndms.common.model.dspace.WrongConfigurationException;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
@@ -85,7 +88,7 @@ public class SliceKindServiceImpl implements SliceKindService {
 
 	@Override
 	@RequestMapping(value = "/_{subspace}/_{sliceKind}", method = RequestMethod.GET)
-	public final ResponseEntity<ConfigHolder> getSliceKindInfo(
+	public final ResponseEntity<Configuration> getSliceKindInfo(
 			@PathVariable final String subspace,
 			@PathVariable final String sliceKind,
 			@RequestHeader("DN") final String dn) {
@@ -93,21 +96,13 @@ public class SliceKindServiceImpl implements SliceKindService {
 
 		try {
 			SliceKind sliceK = findSliceKind(subspace, sliceKind);
-			ConfigHolder config = SliceKind.getSliceKindConfiguration(sliceK);
-			return new ResponseEntity<ConfigHolder>(config, headers,
+			SliceKindConfiguration config = sliceK.getSliceKindConfiguration();
+			return new ResponseEntity<Configuration>(config, headers,
 					HttpStatus.OK);
 		} catch (NoSuchElementException ne) {
 			logger.warn("The slice kind " + sliceKind + "does not exist within the subspace" + subspace + ".");
-			return new ResponseEntity<ConfigHolder>(null, headers,
+			return new ResponseEntity<Configuration>(null, headers,
 					HttpStatus.NOT_FOUND);
-		} catch (IOException e) {
-			logger.warn("The slice kind configuration of " + sliceKind + "could not be computed.");
-			return new ResponseEntity<ConfigHolder>(null, headers,
-					HttpStatus.BAD_REQUEST);
-		} catch (UpdateRejectedException e) {
-			logger.warn("The slice kind configuration of " + sliceKind + "could not be computed.");
-			return new ResponseEntity<ConfigHolder>(null, headers,
-					HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -116,19 +111,16 @@ public class SliceKindServiceImpl implements SliceKindService {
 	public final ResponseEntity<Specifier<Void>> setSliceKindConfig(
 			@PathVariable final String subspace,
 			@PathVariable final String sliceKind,
-			@RequestBody final ConfigHolder config,
+			@RequestBody final Configuration config,
 			@RequestHeader("DN") final String dn) {
 		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, dn);
 
 		try {
 			SliceKind sliceK = findSliceKind(subspace, sliceKind);
 			
-			if (!SliceKindConfiguration.checkSliceKindConfiguration(config)) {
-				return new ResponseEntity<Specifier<Void>>(null, headers,
-						HttpStatus.BAD_REQUEST);				
-			}
+			SliceKindConfiguration sliceKindConfig = checkSliceKindConfig(config);
 
-			// TODO: sliceK.setSliceKindConfiguration(config)
+			// TODO: sliceK.setSliceKindConfiguration(sliceKindConfig)
 
 			Specifier<Void> spec = new Specifier<Void>();
 
@@ -145,24 +137,32 @@ public class SliceKindServiceImpl implements SliceKindService {
 			logger.warn("The slice kind " + sliceKind + "does not exist within the subspace" + subspace);
   			return new ResponseEntity<Specifier<Void>>(null, headers,
 					HttpStatus.NOT_FOUND);
+		} catch (WrongConfigurationException e) {
+			logger.warn("Wrong slice kind configuration");
+  			return new ResponseEntity<Specifier<Void>>(null, headers,
+					HttpStatus.BAD_REQUEST);
 		}
 	}
 
 	@Override
 	@RequestMapping(value = "/_{subspace}/_{sliceKind}", method = RequestMethod.PUT)
 	public final ResponseEntity<Void> createSliceKind(final String subspace,
-			final String sliceKind, final ConfigHolder config, final String dn) {
+			final String sliceKind, final Configuration config, final String dn) {
 		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, dn);
+		
+		try {
+			SliceKindConfiguration sliceKindConfig = checkSliceKindConfig(config);
 
-			if (!SliceKindConfiguration.checkSliceKindConfiguration(config)) {
-				return new ResponseEntity<Void>(null, headers,
-						HttpStatus.BAD_REQUEST);				
-			}
 
 			// TODO: create slice kind
 			return new ResponseEntity<Void>(null, headers,
 					HttpStatus.OK);
 			
+		} catch (WrongConfigurationException e) {
+			logger.warn("Wrong slice kind configuration");
+  			return new ResponseEntity<Void>(null, headers,
+					HttpStatus.BAD_REQUEST);
+		}
 	}
 
 	@Override
@@ -232,6 +232,30 @@ public class SliceKindServiceImpl implements SliceKindService {
 		} else {
 			return sliceK;
 		}
+	}
+
+	/**
+	 * Converts a Configuration into a SliceKindConfiguration, if possible, and
+	 * returns it, if valid.
+	 * 
+	 * @param config
+	 *            The given configuration.
+	 * @return The valid SliceKindConfiguration.
+	 */
+	private SliceKindConfiguration checkSliceKindConfig(final Configuration config) {
+		try {
+			SliceKindConfiguration sliceKindConfig = (SliceKindConfiguration) config;
+			if (sliceKindConfig.isValid()) {
+				return sliceKindConfig;
+			} else {
+				throw new WrongConfigurationException(
+						"Wrong slice kind configuration");
+			}
+		} catch (ClassCastException e) {
+			throw new WrongConfigurationException(
+					"Wrong slice kind configuration");
+		}
+
 	}
 
 }

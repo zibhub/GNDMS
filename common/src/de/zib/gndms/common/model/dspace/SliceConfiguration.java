@@ -19,10 +19,6 @@ package de.zib.gndms.common.model.dspace;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import org.codehaus.jackson.JsonNode;
-
-import de.zib.gndms.stuff.confuror.ConfigHolder;
-
 /**
  * The slice configuration checks and accesses a ConfigHolder for a slice, which
  * has to consist (at least) of the following fields: <br>
@@ -35,7 +31,7 @@ import de.zib.gndms.stuff.confuror.ConfigHolder;
  * 
  */
 
-public class SliceConfiguration extends ConfigHolder {
+public class SliceConfiguration implements Configuration {
 	/**
 	 * The key for the slice's directory.
 	 */
@@ -50,85 +46,192 @@ public class SliceConfiguration extends ConfigHolder {
 	public static final String TERMINATION = "termination";
 
 	/**
-	 * Checks if a given config holder is a valid slice configuration.
-	 * 
-	 * @param config
-	 *            The config holder.
-	 * @return true, if it is a valid slice configuration; otherwise false.
+	 * The directory of the slice.
 	 */
-	public static boolean checkSliceConfiguration(final ConfigHolder config) {
-		JsonNode node = config.getNode();
-		try {
-			if (!node.findValue(DIRECTORY).isTextual()
-					|| !node.findValue(OWNER).isTextual()
-					|| !node.findValue(TERMINATION).isNumber()) {
-				return false;
-			}
-		} catch (NullPointerException e) {
-			return false;
-		}
-		return true;
+	private String directory;
+	/**
+	 * The owner of the slice.
+	 */
+	private String owner;
+	/**
+	 * The termination time of the slice.
+	 */
+	private Calendar terminationTime;
+
+	/**
+	 * Constructs a SliceConfiguration.
+	 * 
+	 * @param directory
+	 *            The directory.
+	 * @param owner
+	 *            The owner.
+	 * @param termination
+	 *            The termination time.
+	 */
+	public SliceConfiguration(final String directory, final String owner,
+			final long termination) {
+		this.directory = directory;
+		this.owner = owner;
+		setTerminationTime(termination);
+	}
+
+	/**
+	 * Constructs a SliceConfiguration.
+	 * 
+	 * @param directory
+	 *            The directory.
+	 * @param owner
+	 *            The owner.
+	 * @param termination
+	 *            The termination time.
+	 */
+	public SliceConfiguration(final String directory, final String owner,
+			final Calendar termination) {
+		this.directory = directory;
+		this.owner = owner;
+		this.terminationTime = termination;
+	}
+
+	@Override
+	public final boolean isValid() {
+		return (directory != null && owner != null && terminationTime != null);
 	}
 
 	/**
 	 * Returns the directory of a slice configuration.
 	 * 
-	 * @param config
-	 *            The config holder, which has to be a valid slice
-	 *            configuration.
 	 * @return The directory.
 	 */
-	public static String getDirectory(final ConfigHolder config) {
-		try {
-			if (config.getNode().findValue(DIRECTORY).isTextual()) {
-				return config.getNode().findValue(DIRECTORY).getTextValue();
-			} else {
-				throw new WrongConfigurationException("The key " + DIRECTORY + " exists but is no text value.");
-			}
-		} catch (NullPointerException e) {
-			throw new WrongConfigurationException("The key " + DIRECTORY + " does not exist.");
-		}
+	public final String getDirectory() {
+		return directory;
+	}
+
+	/**
+	 * Sets the directory of a slice configuration.
+	 * 
+	 * @param directory
+	 *            The directory.
+	 */
+	public final void setDirectory(final String directory) {
+		this.directory = directory;
 	}
 
 	/**
 	 * Returns the owner of a slice configuration.
 	 * 
-	 * @param config
-	 *            The config holder, which has to be a valid slice
-	 *            configuration.
 	 * @return The owner.
 	 */
-	public static String getOwner(final ConfigHolder config) {
-		try {
-			if (config.getNode().findValue(OWNER).isTextual()) {
-				return config.getNode().findValue(OWNER).getTextValue();
-			} else {
-				throw new WrongConfigurationException("The key " + OWNER + " exists but is no text value.");
-			}
-		} catch (NullPointerException e) {
-			throw new WrongConfigurationException("The key " + OWNER + " does not exist.");
-		}
+	public final String getOwner() {
+		return owner;
 	}
 
 	/**
-	 * Returns the termination time of a slice configuration.
+	 * Sets the owner of a slice configuration.
 	 * 
-	 * @param config
-	 *            The config holder, which has to be a valid slice
-	 *            configuration.
-	 * @return The directory.
+	 * @param owner
+	 *            The owner.
 	 */
-	public static Calendar getTerminationTime(final ConfigHolder config) {
-		try {
-			if (config.getNode().findValue(TERMINATION).isNumber()) {
-				GregorianCalendar cal = new GregorianCalendar();
-				cal.setTimeInMillis(config.getNode().findValue(TERMINATION).getLongValue());
-				return cal;
-			} else {
-				throw new WrongConfigurationException("The key " + TERMINATION + " exists but is no number.");
-			}
-		} catch (NullPointerException e) {
-			throw new WrongConfigurationException("The key " + TERMINATION + " does not exist.");
+	public final void setOwner(final String owner) {
+		this.owner = owner;
+	}
+
+	/**
+	 * Returns the termination time of a slice configuration as Calendar.
+	 * 
+	 * @return The termination time.
+	 */
+	public final Calendar getTerminationTime() {
+		return terminationTime;
+	}
+
+	/**
+	 * Returns the termination time of a slice configuration as long value.
+	 * 
+	 * @return The termination time.
+	 */
+	public final long getTerminationTimeAsLong() {
+		return terminationTime.getTimeInMillis();
+	}
+
+	/**
+	 * Sets the termination time of a slice configuration as Calendar.
+	 * 
+	 * @param terminationTime
+	 *            The termination time.
+	 */
+	public final void setTerminationTime(final Calendar terminationTime) {
+		this.terminationTime = terminationTime;
+	}
+
+	/**
+	 * Sets the termination time of a slice configuration as long value.
+	 * 
+	 * @param termination
+	 *            The termination time.
+	 */
+	public final void setTerminationTime(final long termination) {
+		GregorianCalendar cal = new GregorianCalendar();
+		cal.setTimeInMillis(termination);
+		this.terminationTime = cal;
+	}
+
+	@Override
+	public final String displayConfiguration() {
+		String s = "";
+		s = s.concat(DIRECTORY + " : '" + directory + "'; ");
+		s = s.concat(OWNER + " : '" + owner + "'; ");
+		s = s.concat(TERMINATION + " : '" + terminationTime.getTimeInMillis()
+				+ "'; ");
+		return s;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public final String toString() {
+		return displayConfiguration();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public final boolean equals(final Object obj) {
+		if (obj == null) {
+			return false;
 		}
+		if (obj == this) {
+			return true;
+		}
+		if (obj.getClass() == getClass()) {
+			SliceConfiguration config = (SliceConfiguration) obj;
+			return (config.getDirectory().equals(directory)
+					&& config.getOwner().equals(owner) 
+					&& config.getTerminationTime().equals(terminationTime));
+		} else {
+			return false;
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public final int hashCode() {
+		final int start = 28;
+		final int multi = 29;
+		int hashCode = start;
+		hashCode = hashCode * multi + directory.hashCode();
+		hashCode = hashCode * multi + owner.hashCode();
+		hashCode = hashCode * multi + terminationTime.hashCode();
+		return hashCode;
+
 	}
 }

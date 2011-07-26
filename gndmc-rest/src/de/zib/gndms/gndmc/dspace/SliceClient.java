@@ -22,11 +22,11 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 
 import de.zib.gndms.common.dspace.service.SliceService;
-import de.zib.gndms.common.kit.dspace.Product;
+import de.zib.gndms.common.model.dspace.Configuration;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
+import de.zib.gndms.common.stuff.util.Product;
 import de.zib.gndms.gndmc.AbstractClient;
-import de.zib.gndms.stuff.confuror.ConfigHolder;
 
 /**
  * The slice client implementing the slice service.
@@ -52,16 +52,16 @@ public class SliceClient extends AbstractClient implements SliceService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public final ResponseEntity<Product<ConfigHolder, Facets>> listSliceFacets(final String subspace,
+	public final ResponseEntity<Product<Configuration, Facets>> listSliceFacets(final String subspace,
 			final String sliceKind, final String slice, final String dn) {
-		return (ResponseEntity<Product<ConfigHolder, Facets>>) (Object) unifiedGet(Product.class, getServiceURL() 
+		return (ResponseEntity<Product<Configuration, Facets>>) (Object) unifiedGet(Product.class, getServiceURL() 
 				+ "/dspace/_" + subspace
 				+ "/_" + sliceKind + "/_" + slice, dn);
 	}
 
 	@Override
 	public final ResponseEntity<Void> setSliceConfiguration(final String subspace,
-			final String sliceKind, final String slice, final ConfigHolder config, final String dn) {
+			final String sliceKind, final String slice, final Configuration config, final String dn) {
 		return unifiedPut(Void.class, config, getServiceURL() + "/dspace/_"
 				+ subspace + "/_" + sliceKind + "/_" + slice, dn);
 	}

@@ -18,7 +18,7 @@ package de.zib.gndms.model.common.types;
 
 
 
-import de.zib.gndms.model.common.AccessMask;
+import de.zib.gndms.common.model.common.AccessMask;
 
 import java.io.Serializable;
 import java.util.Properties;

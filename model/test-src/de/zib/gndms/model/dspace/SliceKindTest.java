@@ -16,16 +16,14 @@ package de.zib.gndms.model.dspace;
  * limitations under the License.
  */
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.testng.annotations.Test;
 import org.testng.AssertJUnit;
 
+import de.zib.gndms.common.model.common.AccessMask;
 import de.zib.gndms.common.model.dspace.SliceKindConfiguration;
-import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
-import de.zib.gndms.stuff.confuror.ConfigHolder;
 
 /**
  * Tests the SubspaceConfiguration.
@@ -36,28 +34,26 @@ public class SliceKindTest {
 		
 	/**
 	 * Tests the method getSliceKindConfiguration.
-	 * 
-	 * @throws IOException 
-	 * @throws UpdateRejectedException 
 	 */
 	@Test
-    public final void testGetSliceKindConfiguration() throws IOException, UpdateRejectedException {
+    public final void testGetSliceKindConfiguration() {
 		SliceKind dummy = new SliceKind();
 		
 		String uri = "testuri";
 		dummy.setURI(uri);
 		final long permission = 345;
+		AccessMask perm = AccessMask.fromString((new Long(permission)).toString());
 		dummy.setPermission(permission);
 		MetaSubspace dummyMeta = new MetaSubspace();
 		Set<MetaSubspace> metaSubspaces = new HashSet<MetaSubspace>();
 		metaSubspaces.add(dummyMeta);		
 		dummy.setMetaSubspaces(metaSubspaces);
 						
-		ConfigHolder config = SliceKind.getSliceKindConfiguration(dummy);
+		SliceKindConfiguration config = dummy.getSliceKindConfiguration();
 
-		AssertJUnit.assertEquals(true, SliceKindConfiguration.checkSliceKindConfiguration(config));
-		AssertJUnit.assertEquals(uri, SliceKindConfiguration.getUri(config));
-		AssertJUnit.assertEquals(permission, SliceKindConfiguration.getPermission(config));
+		AssertJUnit.assertEquals(true, config.isValid());
+		AssertJUnit.assertEquals(uri, config.getUri());
+		AssertJUnit.assertEquals(perm, config.getPermission());
 		
 		// TODO test for meta-subspaces
 		// AssertJUnit.assertEquals(metaSubspaces, SliceKindConfiguration.getMetaSubspaces(config));

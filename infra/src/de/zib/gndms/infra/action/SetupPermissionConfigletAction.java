@@ -23,6 +23,7 @@ import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigOption;
 import de.zib.gndms.logic.model.gorfx.permissions.PermissionConfiglet;
 import de.zib.gndms.model.common.ConfigletState;
+import de.zib.gndms.common.logic.config.SetupMode;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 
 import javax.persistence.EntityManager;

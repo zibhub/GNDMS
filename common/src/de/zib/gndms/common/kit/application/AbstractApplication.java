@@ -16,8 +16,6 @@ package de.zib.gndms.common.kit.application;
  * limitations under the License.
  */
 
-
-
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.CmdLineException;
 
@@ -44,7 +42,7 @@ public abstract class AbstractApplication {
     public final void run( final String[] args ) throws Exception {
 
         CmdLineParser pars = new CmdLineParser( this );
-        try{
+        try {
             pars.parseArgument( args );
             this.run();
         } catch ( CmdLineException e ) {
@@ -55,7 +53,7 @@ public abstract class AbstractApplication {
 
     /**
      * This method will be called after the fields of the class have been set.
-     * @throws Exception
+     * @throws Exception 
      */
     public abstract void run( ) throws Exception;
 }

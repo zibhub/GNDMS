@@ -18,8 +18,8 @@ package de.zib.gndms.infra.grams;
 
 
 
+import de.zib.gndms.common.model.common.AccessMask;
 import de.zib.gndms.kit.util.DirectoryAux;
-import de.zib.gndms.model.common.AccessMask;
 import org.globus.exec.generated.ScriptCommandEnumeration;
 import org.globus.exec.service.exec.PerlJobDescription;
 import org.slf4j.Logger;
