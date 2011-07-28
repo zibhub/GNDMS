@@ -18,13 +18,13 @@ package de.zib.gndms.logic.action;
 
 
 
+import de.zib.gndms.common.model.common.AccessMask;
 import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
 import de.zib.gndms.logic.model.LookupAction;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
 import de.zib.gndms.logic.util.SimpleModelUUIDGen;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.common.ModelUUIDGen;
-import de.zib.gndms.model.common.AccessMask;
 import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;

@@ -16,15 +16,12 @@ package de.zib.gndms.model.dspace;
  * limitations under the License.
  */
 
-import java.io.IOException;
 import java.util.GregorianCalendar;
 
 import org.testng.annotations.Test;
 import org.testng.AssertJUnit;
 
 import de.zib.gndms.common.model.dspace.SliceConfiguration;
-import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
-import de.zib.gndms.stuff.confuror.ConfigHolder;
 
 /**
  * Tests the SliceConfiguration.
@@ -35,12 +32,9 @@ public class SliceTest {
 	
 	/**
 	 * Tests the method getSliceConfiguration.
-	 * 
-	 * @throws IOException 
-	 * @throws UpdateRejectedException 
 	 */
 	@Test
-    public final void testGetSliceConfiguration() throws IOException, UpdateRejectedException {
+    public final void testGetSliceConfiguration() {
 		Slice dummy = new Slice();
 		
 		String directory = "testdir";
@@ -52,12 +46,12 @@ public class SliceTest {
 		cal.setTimeInMillis(termination);
 		dummy.setTerminationTime(cal);
 				
-		ConfigHolder config = Slice.getSliceConfiguration(dummy);
+		SliceConfiguration config = dummy.getSliceConfiguration();
 
-		AssertJUnit.assertEquals(true, SliceConfiguration.checkSliceConfiguration(config));
-		AssertJUnit.assertEquals(directory, SliceConfiguration.getDirectory(config));
-		AssertJUnit.assertEquals(owner, SliceConfiguration.getOwner(config));
-		AssertJUnit.assertEquals(cal, SliceConfiguration.getTerminationTime(config));
+		AssertJUnit.assertEquals(true, config.isValid());
+		AssertJUnit.assertEquals(directory, config.getDirectory());
+		AssertJUnit.assertEquals(owner, config.getOwner());
+		AssertJUnit.assertEquals(cal, config.getTerminationTime());
 	}
 
 }

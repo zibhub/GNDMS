@@ -19,9 +19,9 @@ package de.zib.gndms.gndmc.dspace;
 import org.springframework.http.ResponseEntity;
 
 import de.zib.gndms.common.dspace.service.SliceKindService;
+import de.zib.gndms.common.model.dspace.Configuration;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.gndmc.AbstractClient;
-import de.zib.gndms.stuff.confuror.ConfigHolder;
 
 /**
  * The slice kind client implementing the slice kind service.
@@ -47,16 +47,16 @@ public class SliceKindClient extends AbstractClient implements SliceKindService 
 	}
 
 	@Override
-	public final ResponseEntity<ConfigHolder> getSliceKindInfo(final String subspace,
+	public final ResponseEntity<Configuration> getSliceKindInfo(final String subspace,
 			final String sliceKind, final String dn) {
-		return unifiedGet(ConfigHolder.class, getServiceURL() + "/dspace/_" + subspace
+		return unifiedGet(Configuration.class, getServiceURL() + "/dspace/_" + subspace
 				+ "/_" + sliceKind, dn);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public final ResponseEntity<Specifier<Void>> setSliceKindConfig(final String subspace,
-			final String sliceKind, final ConfigHolder config, final String dn) {
+			final String sliceKind, final Configuration config, final String dn) {
 		return (ResponseEntity<Specifier<Void>>) (Object) unifiedPost(Specifier.class, config, getServiceURL() 
 				+ "/dspace/_" + subspace + "/_"
 				+ sliceKind, dn);
@@ -64,7 +64,7 @@ public class SliceKindClient extends AbstractClient implements SliceKindService 
 
 	@Override
 	public final ResponseEntity<Void> createSliceKind(final String subspace,
-			final String sliceKind, final ConfigHolder config, final String dn) {
+			final String sliceKind, final Configuration config, final String dn) {
 		return unifiedPut(Void.class, config, getServiceURL() + "/dspace/_" + subspace + "/_"
 				+ sliceKind, dn);
 	}

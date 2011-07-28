@@ -1,4 +1,5 @@
-package de.zib.gndms.common.logic.action;
+package de.zib.gndms.common.model.dspace;
+
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -16,27 +17,23 @@ package de.zib.gndms.common.logic.action;
  */
 
 /**
- * @author try ma ik jo rr a zib
- * @date 09.02.11, 11:42
+ * A configuration, which provides the necessary properties for some entity.
+ * 
+ * @author Ulrike Golas
  *
- * @brief Interface for meta information about actions.
  */
-public interface ActionMeta {
-	/**
-	 * Returns the name of the action.
-	 * @return the name.
-	 */
-    String getName();
+public interface Configuration {
 
-    /**
-     * Returns some helpful information on the action.
-     * @return The help.
-     */
-    String getHelp();
-    
-    /**
-     * Returns a description of the action.
-     * @return The description.
-     */
-    String getDescription();
+	/**
+	 * Test, if this configuration is valid, i.e. satisfies all its requirements.
+	 * @return true, if this configuration is valid, else false.
+	 */
+	boolean isValid();
+	
+	/**
+	 * The String representation of a configuration, which should display key-value pairs as:
+	 * key1 : value1 ; key2 : value2 ; ...
+	 * @return The String representation.
+	 */
+	String displayConfiguration();
 }

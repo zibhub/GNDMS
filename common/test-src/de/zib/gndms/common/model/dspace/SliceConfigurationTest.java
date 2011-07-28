@@ -16,22 +16,11 @@ package de.zib.gndms.common.model.dspace;
  * limitations under the License.
  */
 
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import org.testng.annotations.Test;
 import org.testng.AssertJUnit;
-
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-
-import de.zib.gndms.common.model.dspace.SliceConfiguration;
-import de.zib.gndms.common.model.dspace.WrongConfigurationException;
-import de.zib.gndms.stuff.confuror.ConfigEditor;
-import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
-import de.zib.gndms.stuff.confuror.ConfigHolder;
 
 /**
  * Tests the SliceConfiguration.
@@ -39,125 +28,149 @@ import de.zib.gndms.stuff.confuror.ConfigHolder;
  *
  */
 public class SliceConfigurationTest {
-	
+
 	/**
-	 * Tests the method checkSliceConfiguration(ConfigHolder) with a valid configuration
-	 * and the access to the slice configuration fields.
-	 * @throws IOException 
-	 * @throws UpdateRejectedException 
+	 * Tests equals() and hashcode().
 	 */
 	@Test
-    public final void testCheckAndGet1() throws IOException, UpdateRejectedException {
+    public final void testEquals() {
+		String directory = "slice";
+		String owner = "me";
+		GregorianCalendar cal = new GregorianCalendar();
+
+		SliceConfiguration slconfig = new SliceConfiguration(directory, owner, cal);
+		SliceConfiguration slconfig2 = new SliceConfiguration(directory, owner, cal);
+		
+       	AssertJUnit.assertEquals(false, slconfig == slconfig2);
+       	AssertJUnit.assertEquals(true, slconfig.equals(slconfig2));
+       	AssertJUnit.assertEquals(true, slconfig.equals(slconfig));
+       	AssertJUnit.assertEquals(true, slconfig2.equals(slconfig));
+       	AssertJUnit.assertEquals(slconfig.hashCode(), slconfig2.hashCode());
+
+		directory = "slice2";
+		slconfig2 = new SliceConfiguration(directory, owner, cal);
+
+       	AssertJUnit.assertEquals(false, slconfig.equals(slconfig2));
+       	AssertJUnit.assertEquals(false, slconfig2.equals(slconfig));
+       	AssertJUnit.assertEquals(false, slconfig.equals(null));
+       	AssertJUnit.assertEquals(false, slconfig.equals(cal));
+	}
+       	
+	/**
+	 * Tests the constructor and getters, setters, and isValid() with valid arguments.
+	 */
+	@Test
+    public final void testConstructors() {
 		String directory = "slice";
 		String owner = "me";
 		GregorianCalendar cal = new GregorianCalendar();
 		final long value = cal.getTimeInMillis();
 
-		ConfigHolder testConfig = new MockSliceConfiguration(directory, owner, value);
-
-       	AssertJUnit.assertEquals(true, SliceConfiguration.checkSliceConfiguration(testConfig));
+		SliceConfiguration slconfig = new SliceConfiguration(directory, owner, cal);
+		       	
+       	String testDirectory = slconfig.getDirectory();
+       	String testOwner = slconfig.getOwner();
+       	Calendar testTime = slconfig.getTerminationTime();
+       	long testValue = slconfig.getTerminationTimeAsLong();
+       	boolean valid = slconfig.isValid();
        	
-       	String testDirectory = SliceConfiguration.getDirectory(testConfig);
-       	String testOwner = SliceConfiguration.getOwner(testConfig);
-       	Calendar testTime = SliceConfiguration.getTerminationTime(testConfig);
-       	long testValue = testTime.getTimeInMillis();
-
        	AssertJUnit.assertEquals(directory, testDirectory);
        	AssertJUnit.assertEquals(owner, testOwner);
        	AssertJUnit.assertEquals(value, testValue);
        	AssertJUnit.assertEquals(cal, testTime);
+       	AssertJUnit.assertEquals(true, valid);
 
+		SliceConfiguration slconfig2 = new SliceConfiguration(directory, owner, value);
+       	testTime = slconfig2.getTerminationTime();
+       	valid = slconfig2.isValid();
+		
+       	AssertJUnit.assertEquals(slconfig.displayConfiguration(), slconfig2.displayConfiguration());
+       	AssertJUnit.assertEquals(cal, testTime);
+       	AssertJUnit.assertEquals(true, valid);
+
+		String directory2 = "sliceslice";
+		String owner2 = "notme";
+		GregorianCalendar cal2 = new GregorianCalendar();
+		final long value2 = cal2.getTimeInMillis();
+
+		slconfig2.setDirectory(directory2);
+		slconfig2.setOwner(owner2);
+		slconfig2.setTerminationTime(cal2);
+
+       	String testDirectory2 = slconfig2.getDirectory();
+       	String testOwner2 = slconfig2.getOwner();
+       	Calendar testTime2 = slconfig2.getTerminationTime();
+       	long testValue2 = slconfig2.getTerminationTimeAsLong();
+       	boolean valid2 = slconfig2.isValid();
+
+       	AssertJUnit.assertEquals(directory2, testDirectory2);
+       	AssertJUnit.assertEquals(owner2, testOwner2);
+       	AssertJUnit.assertEquals(value2, testValue2);
+       	AssertJUnit.assertEquals(cal2, testTime2);
+       	AssertJUnit.assertEquals(true, valid2);
+
+		GregorianCalendar cal3 = new GregorianCalendar();
+		final long value3 = cal3.getTimeInMillis();
+
+		slconfig2.setTerminationTime(value3);
+		
+       	Calendar testTime3 = slconfig2.getTerminationTime();
+       	long testValue3 = slconfig2.getTerminationTimeAsLong();
+
+       	AssertJUnit.assertEquals(value3, testValue3);
+       	AssertJUnit.assertEquals(cal3, testTime3);
 	}
 
 	/**
-	 * Tests the method checkSliceConfiguration(ConfigHolder) with invalid configurations.
-	 * @throws IOException 
-	 * @throws UpdateRejectedException 
+	 * Tests the setters and isValid with invalid configurations.
 	 */
 	@Test
-    public final void testCheckAndGet2() throws IOException, UpdateRejectedException {
-		ConfigHolder testConfig = new ConfigHolder();
-		ObjectMapper objectMapper = new ObjectMapper();
-		JsonFactory factory = objectMapper.getJsonFactory();
-		ConfigEditor.Visitor visitor = new ConfigEditor.DefaultVisitor();
-		ConfigEditor editor = testConfig.newEditor(visitor);
-		testConfig.setObjectMapper(objectMapper);
-		
+    public final void testSetters() {
+		SliceConfiguration slconfig = new SliceConfiguration(null, null, null);
+
+		// all properties missing
+		boolean valid = slconfig.isValid();
+       	AssertJUnit.assertEquals(false, valid);
+
+		String directory = "slice";
+		String owner = "me";
 		GregorianCalendar cal = new GregorianCalendar();
-		final long testValue = cal.getTimeInMillis();
+
+		// owner, termination missing
+       	slconfig.setDirectory(directory);
 		
-		// empty node
-       	AssertJUnit.assertEquals(false, SliceConfiguration.checkSliceConfiguration(testConfig));
-       	try {
-			SliceConfiguration.getDirectory(testConfig);
-			AssertJUnit.fail();
-		} catch (WrongConfigurationException e) {
-			AssertJUnit.assertNotNull(e);
-		}
+		valid = slconfig.isValid();
+       	AssertJUnit.assertEquals(false, valid);
+		
+       	// termination still missing
+       	slconfig.setOwner(owner);
+		
+		valid = slconfig.isValid();
+       	AssertJUnit.assertEquals(false, valid);
        	
-       	// only directory set - owner path is missing
-		JsonNode node = ConfigHolder.parseSingle(factory, 
-				SliceConfiguration.createSingleEntry(SliceConfiguration.DIRECTORY, "slice"));
-		testConfig.update(editor, node);
+       	// complete
+       	slconfig.setTerminationTime(cal);
+		
+		valid = slconfig.isValid();
+       	AssertJUnit.assertEquals(true, valid);
 
-       	AssertJUnit.assertEquals(false, SliceConfiguration.checkSliceConfiguration(testConfig));
-       	try {
-			SliceConfiguration.getOwner(testConfig);
-			AssertJUnit.fail();
-		} catch (WrongConfigurationException e) {
-			AssertJUnit.assertNotNull(e);
-		}
+	}
+	
+	/**
+	 * Tests displayConfiguration().
+	 */
+	@Test
+    public final void testDisplayConfiguration() {
+		String directory = "slice";
+		String owner = "me";
+		GregorianCalendar cal = new GregorianCalendar();
+		final long value = cal.getTimeInMillis();
 
-       	// only directory and owner set - termination time is missing
-       	node = ConfigHolder.parseSingle(factory, SliceConfiguration.createSingleEntry(SliceConfiguration.OWNER, "me"));
-		testConfig.update(editor, node);
+		SliceConfiguration slconfig = new SliceConfiguration(directory, owner, cal);
 
-       	AssertJUnit.assertEquals(false, SliceConfiguration.checkSliceConfiguration(testConfig));
-       	try {
-			SliceConfiguration.getTerminationTime(testConfig);
-			AssertJUnit.fail();
-		} catch (WrongConfigurationException e) {
-			AssertJUnit.assertNotNull(e);
-		}
-
-       	// wrong type of directory value - number instead of string
-		node = ConfigHolder.parseSingle(factory, 
-				SliceConfiguration.createSingleEntry(SliceConfiguration.DIRECTORY, testValue));
-		testConfig.update(editor, node);
-
-		AssertJUnit.assertEquals(false, SliceConfiguration.checkSliceConfiguration(testConfig));
-       	try {
-			SliceConfiguration.getDirectory(testConfig);
-			AssertJUnit.fail();
-		} catch (WrongConfigurationException e) {
-			AssertJUnit.assertNotNull(e);
-		}
-
-       	// wrong type of owner value - number instead of string
-		node = ConfigHolder.parseSingle(factory, 
-				SliceConfiguration.createSingleEntry(SliceConfiguration.OWNER, testValue));
-		testConfig.update(editor, node);
-
-		AssertJUnit.assertEquals(false, SliceConfiguration.checkSliceConfiguration(testConfig));
-       	try {
-			SliceConfiguration.getOwner(testConfig);
-			AssertJUnit.fail();
-		} catch (WrongConfigurationException e) {
-			AssertJUnit.assertNotNull(e);
-		}
-
-       	// wrong type of termination time value - string instead of number
-		node = ConfigHolder.parseSingle(factory, 
-				SliceConfiguration.createSingleEntry(SliceConfiguration.TERMINATION, "test"));
-		testConfig.update(editor, node);
-
-		AssertJUnit.assertEquals(false, SliceConfiguration.checkSliceConfiguration(testConfig));
-       	try {
-			SliceConfiguration.getTerminationTime(testConfig);
-			AssertJUnit.fail();
-		} catch (WrongConfigurationException e) {
-			AssertJUnit.assertNotNull(e);
-		}
-
+		String s = "directory : '" + directory + "'; owner : '" + owner + "'; termination : '" + value + "'; ";
+		
+       	AssertJUnit.assertEquals(s, slconfig.displayConfiguration());		
+       	AssertJUnit.assertEquals(s, slconfig.toString());		
 	}
 }

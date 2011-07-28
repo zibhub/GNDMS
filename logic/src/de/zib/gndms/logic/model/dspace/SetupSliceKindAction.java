@@ -18,6 +18,8 @@ package de.zib.gndms.logic.model.dspace;
 
 
 
+import de.zib.gndms.common.logic.config.SetupMode;
+import de.zib.gndms.common.model.common.AccessMask;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigActionResult;
@@ -25,7 +27,6 @@ import de.zib.gndms.logic.model.config.ConfigOption;
 import de.zib.gndms.logic.model.config.SetupAction;
 import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.SliceKind;
-import de.zib.gndms.model.common.AccessMask;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;

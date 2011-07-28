@@ -18,10 +18,10 @@ package de.zib.gndms.logic.model.dspace;
 
 
 
+import de.zib.gndms.common.model.common.AccessMask;
 import de.zib.gndms.logic.model.AbstractModelEntityAction;
 import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.SliceKind;
-import de.zib.gndms.model.common.AccessMask;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
