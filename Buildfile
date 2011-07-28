@@ -117,8 +117,14 @@ SPRING = [
            "org.springframework:spring-expression:jar:#{SPRING_VERSION}",
            "org.springframework:spring-asm:jar:#{SPRING_VERSION}",
            "org.springframework:spring-aop:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-aspects:jar:#{SPRING_VERSION}",
            "org.springframework:spring-instrument:jar:#{SPRING_VERSION}",
          ] 
+ASPECTJ = [
+        'org.aspectj:aspectjrt:jar:1.6.11',
+        'org.aspectj:aspectjweaver:jar:1.6.11',
+        'aopalliance:aopalliance:jar:1.0'
+]
 SERVLET = 'javax.servlet:servlet-api:jar:2.5'
 INJECT  =  'javax.inject:javax.inject:jar:1'
 XSTREAM = 'com.thoughtworks.xstream:xstream:jar:1.3.1'
@@ -360,7 +366,7 @@ define 'gndms' do
     desc 'Shared database model classes'
     define 'model', :layout => dmsLayout('model', 'gndms-model') do
       # TODO: Better XML
-      compile.with project('common'), project('stuff'), COMMONS_COLLECTIONS, COMMONS_LANG, GOOGLE_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS,  CXF, OPENJPA, JAXB, STAX_API, SPRING
+      compile.with project('common'), project('stuff'), COMMONS_COLLECTIONS, COMMONS_LANG, GOOGLE_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS, INJECT, GUICE, CXF, OPENJPA, JAXB, STAX_API, JSON
       compile { open_jpa_enhance }
       package :jar
     end
@@ -676,7 +682,7 @@ define 'gndms' do
 
     desc 'Common gndms service classes'
     define 'common', :layout => dmsLayout('common', 'gndms-common') do
-        compile.with project( 'stuff' ), SPRING, ARGS4J, JODA_TIME, SLF4J, JSON
+        compile.with project( 'stuff' ), JETBRAINS_ANNOTATIONS, SPRING, ARGS4J, JODA_TIME, SLF4J, JSON
         compile
         meta_inf << file(_('src/META-INF/converter-setup.xml'))
         package :jar
@@ -686,7 +692,7 @@ define 'gndms' do
 
     desc 'Gorfx client classes'
     define 'gndmc-rest', :layout => dmsLayout('gndmc-rest', 'gndms-gndmc-rest') do
-        compile.with project('stuff'), project('common'), SPRING, ARGS4J, JODA_TIME, SLF4J, COMMONS_LOGGING, XSTREAM, XSTREAM_DEPS, JSON
+        compile.with project('stuff'), project('common'), SPRING, ARGS4J, JODA_TIME, SLF4J, COMMONS_LOGGING, XSTREAM, XSTREAM_DEPS, JSON, ASPECTJ
         meta_inf << file(_('src/META-INF/client-context.xml'))
         package(:jar).with :manifest=>manifest.merge( 'Main-Class'=>'de.zib.gndms.gndmc.gorfx.GORFXClientMain' )
 

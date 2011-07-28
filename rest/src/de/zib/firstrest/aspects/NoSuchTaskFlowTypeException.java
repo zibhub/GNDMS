@@ -14,31 +14,20 @@
  *  limitations under the License.
  */
 
-package de.zib.gndms.common.logic.config;
+package de.zib.firstrest.aspects;
 
 /**
- * The enumeration of setup modes, which can be of the values create, read, update, or delete.
- *
- * @author Ulrike Golas
- *
+ * @author Maik Jorra
+ * @email jorra@zib.de
+ * @date 28.07.11  16:54
+ * @brief
  */
+public class NoSuchTaskFlowTypeException extends RuntimeException {
 
-public enum SetupMode { 
-	/**
-	 * The mode for creation.
-	 */
-	CREATE, 
-	/**
-	 * The mode for reading.
-	 */
-	READ, 
-	/**
-	 * The mode for updating.
-	 */
-	UPDATE, 
-	/**
-	 * The mode for deletion.
-	 */
-	DELETE 
+    private static final long serialVersionUID = -741878763343427342L;
+
+
+    public NoSuchTaskFlowTypeException( String message ) {
+        super( "no fid: " + message );
+    }
 }
-

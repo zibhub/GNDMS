@@ -14,31 +14,25 @@
  *  limitations under the License.
  */
 
-package de.zib.gndms.common.logic.config;
+package de.zib.firstrest.aspects;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 
 /**
- * The enumeration of setup modes, which can be of the values create, read, update, or delete.
- *
- * @author Ulrike Golas
- *
+ * @author Maik Jorra
+ * @email jorra@zib.de
+ * @date 26.07.11  14:56
+ * @brief
  */
+@Aspect
+public class SomePointcuts {
 
-public enum SetupMode { 
-	/**
-	 * The mode for creation.
-	 */
-	CREATE, 
-	/**
-	 * The mode for reading.
-	 */
-	READ, 
-	/**
-	 * The mode for updating.
-	 */
-	UPDATE, 
-	/**
-	 * The mode for deletion.
-	 */
-	DELETE 
+    @Pointcut( "target( de.zib.firstrest.service.FooService )" )
+    public void serviceMethod( ){}
+
+    @Pointcut( "execution( public * de.zib.firstrest.service.FooService.*(..) )" )
+    public void serviceImplPublicMethod( ){}
+
+//    @Pointcut( "args(fid)" )
+//    public void hasType( ) {};
 }
-
