@@ -31,11 +31,4 @@ import java.lang.reflect.InvocationTargetException;
  */
 public interface QuoteCalculatorProvider {
 
-    @SuppressWarnings({ "MethodWithTooExceptionsDeclared" })
-    @NotNull
-    AbstractQuoteCalculator<?> newORQCalculator(
-        @NotNull EntityManagerFactory emf,
-        @NotNull String offerTypeKey)
-        throws ClassNotFoundException, IllegalAccessException, InstantiationException,
-        NoSuchMethodException, InvocationTargetException;
 }

@@ -27,6 +27,7 @@ import de.zib.gndms.logic.model.gorfx.LifetimeExceededException;
 import de.zib.gndms.logic.model.gorfx.permissions.PermissionConfiglet;
 import de.zib.gndms.model.common.types.FilePermissions;
 import de.zib.gndms.model.gorfx.types.AbstractOrder;
+import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
@@ -121,7 +122,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
                 final Task task = ling.getTask(session);
                 WidAux.initWid(task.getWID());
                 if( task.getORQ() != null )
-                    WidAux.initGORFXid( ( (AbstractOrder ) task.getORQ()).getActId() );
+                    WidAux.initGORFXid( ( (DelegatingOrder ) task.getORQ()).getActId() );
                 session.finish();
             }
             finally { session.success(); }

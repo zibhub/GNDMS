@@ -1,6 +1,7 @@
 package de.zib.gndms.model.common.repository;
 
 import java.util.Map;
+import java.util.NoSuchElementException;
 /*
  * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
@@ -23,11 +24,11 @@ import java.util.Map;
  *          <p/>
  *          Date: 23.12.2010, Time: 12:32:07
  *
- * Transient dao uses a hashmap to store key model asscoiations.
+ * Transient dao uses a hashmap to store key model associations.
  */
 public abstract class TransientDao<K,M,D> implements Dao<K, M, D> {
 
-    Map<K,M> models;
+    private Map<K,M> models;
 
     public K create( D descriptor ) {
         return create( );
@@ -39,19 +40,17 @@ public abstract class TransientDao<K,M,D> implements Dao<K, M, D> {
     }
 
 
-    public M get( K key ) {
+    public M get( K key ) throws NoSuchElementException {
 
         if( models.containsKey( key ) )
             return models.get( key );
 
-        M model = newModel( key );
-        add( model, key );
-        return model;
+        throw new NoSuchElementException( key.toString() );
     }
 
 
     /**
-     * This method is used to retreave new instances of M.
+     * This method is used to retrieve new instances of M.
      * @param key
      * @return
      */

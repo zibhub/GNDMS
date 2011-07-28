@@ -53,7 +53,7 @@ public class PropertyReadWriteAux {
 
         String s = prop.getProperty ( key );
         if( s != null )
-            return s.split( ""+sep );
+            return Arrays.asList( s.split( ""+sep ) );
 
         return null;
     }

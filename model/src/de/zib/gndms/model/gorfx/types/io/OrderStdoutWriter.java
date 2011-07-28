@@ -40,7 +40,7 @@ public abstract class OrderStdoutWriter implements OrderWriter {
     }
 
 
-    public void writeContext( HashMap<String, String> ctx ) {
+    public void writeContext( Map<String, String> ctx ) {
         System.out.println( "Context" );
         showMap( ctx );
     }

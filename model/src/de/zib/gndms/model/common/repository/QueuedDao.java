@@ -1,5 +1,6 @@
 package de.zib.gndms.model.common.repository;
 
+import java.util.NoSuchElementException;
 import java.util.Queue;
 /*
  * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
@@ -31,7 +32,7 @@ public abstract class QueuedDao<K, M, D> implements Dao<K,M,D> {
     private Queue<K> queue;
 
 
-    public M get( K key ) {
+    public M get( K key ) throws NoSuchElementException {
 
         if( queue.size() == limit )
             queue.remove();

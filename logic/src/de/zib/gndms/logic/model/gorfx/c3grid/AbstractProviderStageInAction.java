@@ -35,6 +35,7 @@ import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.gorfx.types.AbstractOrder;
+import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.model.gorfx.types.ProviderStageInOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.model.util.TxFrame;
@@ -104,8 +105,8 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
     @Override
     protected void onInProgress(@NotNull String wid, @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) throws Exception {
         final Slice slice = findSlice();
-        setSliceId( slice.getId() );
-        doStaging(getOfferTypeConfig(), getORQ(), slice);
+        setSliceId(slice.getId());
+        doStaging(getOfferTypeConfig(), getOrderBean(), slice);
         changeSliceOwner( slice ) ;
 		super.onInProgress(wid, state, isRestartedTask, altTaskState);
     }
@@ -118,7 +119,7 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
         if( csc == null )
             throw new IllegalStateException( "chown configlet is null!");
 
-        final AbstractOrder order = getORQ();
+        final DelegatingOrder<?> order = getOrder();
         String dn = order.getActContext().get( "DN" );
         getLogger().debug( "cso DN: " + dn );
         getLogger().debug( "changing owner of " + slice.getId() + " to " + order.getLocalUser() );
@@ -140,7 +141,7 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
 
             TransformSliceAction tsa =  new TransformSliceAction(
                 getUUIDGen().nextUUID(),
-                getORQ().getLocalUser(),
+                getOrder().getLocalUser(),
                 slice.getTerminationTime(),
                 kind,
                 slice.getSubspace(),
@@ -253,7 +254,7 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
 		finally { txf.finish(); }
 		// potentially unsafe but do not want to keep the transaction open
 		// we just dont change the slice dir after creation
-		callCancel(getOfferTypeConfig(), getORQ(), sliceDir);
+		callCancel(getOfferTypeConfig(), getOrderBean(), sliceDir);
 	}
 
 

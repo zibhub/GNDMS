@@ -54,10 +54,12 @@ public abstract class OrderConverter<W extends OrderWriter, M extends AbstractOr
 
         getWriter().begin();
         getWriter().writeJustEstimate( getModel().isJustEstimate() );
+        /*
         if( getModel( ).hasContext( ) ) 
             getWriter().writeContext( getModel().getActContext( ) );
 
         if( getModel( ).hasId( ) )
             getWriter().writeId( getModel().getActId( ) );
+            */
     }
 }

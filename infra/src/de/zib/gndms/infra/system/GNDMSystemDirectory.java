@@ -30,7 +30,6 @@ import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.service.GNDMSingletonServiceHome;
 import de.zib.gndms.kit.access.GNDMSBinding;
 import de.zib.gndms.kit.configlet.DefaultConfiglet;
-import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.access.TaskActionProvider;
 import de.zib.gndms.logic.model.gorfx.*;
 import de.zib.gndms.kit.access.InstanceProvider;
@@ -52,7 +51,6 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,12 +82,6 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
 
 	private final Map<String, Configlet> configlets = Maps.newConcurrentHashMap();
 
-    @SuppressWarnings({ "RawUseOfParameterizedType" })
-    private final @NotNull IndustrialPark<String, String, AbstractQuoteCalculator<?>> orqPark;
-
-    @SuppressWarnings({ "RawUseOfParameterizedType" })
-    private final @NotNull IndustrialPark<String, String, TaskFlowAction<?>> taskActionPark;
-
 	@SuppressWarnings({ "FieldCanBeLocal" })
 	private final Wrapper<Object> sysHolderWrapper;
 
@@ -111,7 +103,6 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
         systemName = sysNameParam;
 		uuidGen = uuidGenParam;
 	    sysHolderWrapper = systemHolderWrapParam;
-
     }
 
 
@@ -153,36 +144,6 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
                 em.close();
         }
     }
-
-
-
-    @SuppressWarnings(
-	      { "MethodWithTooExceptionsDeclared", "OverloadedMethodsWithSameNumberOfParameters" })
-    public TaskAction newTaskAction(
-            final @NotNull EntityManagerFactory emf,
-            final @NotNull String offerTypeKey)
-            throws ClassNotFoundException, IllegalAccessException, InstantiationException,
-            NoSuchMethodException, InvocationTargetException {
-        EntityManager em = emf.createEntityManager();
-        try {
-	        return newTaskAction(em, offerTypeKey);
-        }
-        finally {
-            if (! em.isOpen())
-                em.close();
-        }
-    }
-
-
-
-	@SuppressWarnings({ "OverloadedMethodsWithSameNumberOfParameters" })
-	public TaskAction newTaskAction(
-		  final EntityManager emParam, final String offerTypeKey)
-		  throws IllegalAccessException, InstantiationException, ClassNotFoundException {
-		TaskAction ta = taskActionPark.getInstance(offerTypeKey);
-		ta.setUUIDGen( uuidGen );
-		return ta;
-	}
 
 
     /**

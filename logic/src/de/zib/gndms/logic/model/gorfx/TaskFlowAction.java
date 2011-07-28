@@ -24,12 +24,12 @@ import de.zib.gndms.logic.model.DefaultTaskAction;
 import de.zib.gndms.model.common.types.factory.KeyFactory;
 import de.zib.gndms.model.common.types.factory.KeyFactoryInstance;
 import de.zib.gndms.model.gorfx.types.AbstractOrder;
+import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.TaskFlowType;
 import de.zib.gndms.neomodel.gorfx.Task;
-import de.zib.gndms.neomodel.gorfx.TaskFlowType;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,7 +51,7 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends DefaultTas
     private KeyFactory<String, TaskFlowAction<?>> factory;
     private String offerTypeId;
     private CredentialProvider credentialProvider;
-    private K orq;
+    private DelegatingOrder<K> order;
 
 
     protected TaskFlowAction() {
@@ -74,7 +74,7 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends DefaultTas
                 final Task task = getModel().getTask(session);
                 task.setOfferType(ot);
                 task.setWID(wid);
-                task.setORQ(orq);
+                task.setORQ( order );
                 session.success();
             }
             finally { session.finish(); }
@@ -132,18 +132,25 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends DefaultTas
         setOfferTypeId(keyParam);
     }
 
-    public K getORQ() {
-        return orq;
+    public K getOrderBean() {
+        return order.getOrderBean();
     }
 
-    public void setORQ(K newORQ) {
-        orq = newORQ;
+
+    public DelegatingOrder<K> getOrder() {
+        return order;
     }
+
+
+    public void setOrder( DelegatingOrder<K> order ) {
+        this.order = order;
+    }
+
 
     public abstract Class<K> getORQClass();
 
     protected void failFrom( Exception e ) {
-    	fail( new IllegalStateException( getFailString( e ), e ) );
+    	new IllegalStateException( getFailString( e ), e );
     }
 
     protected void traceFrom( Exception e ) {
