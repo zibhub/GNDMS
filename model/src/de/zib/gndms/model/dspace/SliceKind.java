@@ -19,7 +19,6 @@ package de.zib.gndms.model.dspace;
 
 
 import de.zib.gndms.common.model.common.AccessMask;
-import de.zib.gndms.common.model.dspace.SliceKindConfiguration;
 import de.zib.gndms.model.common.GridEntity;
 
 import javax.persistence.*;
@@ -101,18 +100,4 @@ public class SliceKind extends GridEntity {
     public void setMetaSubspaces( Set<MetaSubspace> metaSubspaces ) {
         this.metaSubspaces = metaSubspaces;
     }
-    
-	/**
-	 * Constructs the slice kind configuration of a slice kind.
-	 * 
-	 * @return The config holder.
-	 */
-	public SliceKindConfiguration getSliceKindConfiguration() {
-		String uri = getURI();
-		AccessMask permission = getPermission();
-		Set<MetaSubspace> metaSubspaces = getMetaSubspaces();
-		
-		return new SliceKindConfiguration(uri, permission, metaSubspaces.toString());
-	}
-
 }

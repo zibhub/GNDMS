@@ -20,7 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
-import de.zib.gndms.common.model.dspace.SliceKindConfiguration;
+import de.zib.gndms.logic.model.dspace.SliceKindConfiguration;
 
 /**
  * Tests the DSpaceClient.

@@ -16,28 +16,20 @@ package de.zib.gndms.common.model.common;
  * limitations under the License.
  */
 
-import javax.persistence.Embeddable;
-import javax.persistence.Transient;
-import javax.persistence.Column;
-
 import java.io.Serializable;
 import java.util.Map;
 import java.util.HashMap;
 
 /**
- *
  * An AccessMask is used to handle access rights for the access types user, group and other.
  *
  * Read, write and execute rights can be set or unset by using a bit mask.
- *
- *
  *
  * @author  try ma ik jo rr a zib
  * @version $Id$
  * @see AccessFlags for the representation of a bit mask.
  * User: mjorra, Date: 22.12.2008, Time: 13:13:43
  */
-@Embeddable
 public class AccessMask implements Serializable {
 
 	/**
@@ -58,8 +50,6 @@ public class AccessMask implements Serializable {
      *        x2 = Writable
      *        x1 = Readable
      * </pre>
-     *
-     *
      *
      */
     public enum AccessFlags {
@@ -116,7 +106,6 @@ public class AccessMask implements Serializable {
          */
         private static boolean uninitialized = true;
 
-
         /**
          * Sets the access flags according to the flags encoded by {@code msk}.
          * 
@@ -131,7 +120,6 @@ public class AccessMask implements Serializable {
          * 
          * @return The access mask.
          */
-        @Transient
         public int getMask( ) {
             return mask;    
         }
@@ -185,7 +173,6 @@ public class AccessMask implements Serializable {
             return valueForFlag.get( mask );
         }
 
-
         /**
          * {@code s} must be a single character, matching an int in [0;7].
          * 
@@ -197,8 +184,6 @@ public class AccessMask implements Serializable {
         public static AccessFlags fromString( final String s ) {
             return flagsForMask( Integer.valueOf( s ) );
         }
-
-
 
         /**
          * An {@code AccessFlags} type will be returned, set as intended by the bit mask of the
@@ -249,7 +234,6 @@ public class AccessMask implements Serializable {
             index = idx;
         }
     }
-
     
     /**
      * This array holds the access-rights for the different groups.
@@ -269,7 +253,6 @@ public class AccessMask implements Serializable {
      *
      * @return The access rights.
      */
-    @Transient
     public final AccessFlags getUserAccess() {
         return getAccess()[ Ugo.USER.index ];
     }
@@ -295,7 +278,6 @@ public class AccessMask implements Serializable {
      *
      * @return The access rights..
      */
-   @Transient
     public final AccessFlags getGroupAccess() {
         return getAccess()[ Ugo.GROUP.index ];
     }
@@ -321,7 +303,6 @@ public class AccessMask implements Serializable {
      *
      * @return The access rights.
      */
-    @Transient
     public final AccessFlags getOtherAccess() {
         return getAccess()[ Ugo.OTHER.index ];
     }
@@ -406,7 +387,6 @@ public class AccessMask implements Serializable {
     	return s + getUserAccess().toString() + getGroupAccess().toString() + getOtherAccess().toString();
     }
 
-
     /**
      * Returns an {@code AccessMask} from a String containing the bitmasks for
      * all three access groups.
@@ -442,7 +422,6 @@ public class AccessMask implements Serializable {
     * Returns the special attribute.
     * @return The special value.
     */
-    @Transient
     public final Integer getSpecial() {
         return special;
     }
@@ -452,7 +431,6 @@ public class AccessMask implements Serializable {
      * Returns the access flags belonging to user, group and other.
      * @return The access flags.
      */
-    @Transient
     public final AccessFlags[] getAccess() {
         return access;
     }
@@ -469,7 +447,6 @@ public class AccessMask implements Serializable {
      * Returns the access mask as String.
      * @return The String value.
      */
-    @Column( name = "mask", nullable = false)
     public final  String getAsString( ) {
         return toString();
     }
@@ -531,5 +508,4 @@ public class AccessMask implements Serializable {
 		return hashCode;
 
 	}
-
 }
