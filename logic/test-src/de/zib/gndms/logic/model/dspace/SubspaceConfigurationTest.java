@@ -1,4 +1,4 @@
-package de.zib.gndms.common.model.dspace;
+package de.zib.gndms.logic.model.dspace;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -20,6 +20,10 @@ import org.testng.annotations.Test;
 import org.testng.AssertJUnit;
 
 import de.zib.gndms.common.logic.config.SetupMode;
+import de.zib.gndms.common.logic.config.WrongConfigurationException;
+import de.zib.gndms.logic.model.dspace.SubspaceConfiguration;
+import de.zib.gndms.model.dspace.MetaSubspace;
+import de.zib.gndms.model.dspace.Subspace;
 
 
 /**
@@ -90,7 +94,7 @@ public class SubspaceConfigurationTest {
        	testSetup = suconfig2.getMode();
        	valid = suconfig2.isValid();
 		
-       	AssertJUnit.assertEquals(suconfig.displayConfiguration(), suconfig2.displayConfiguration());
+       	AssertJUnit.assertEquals(suconfig.getStringRepresentation(), suconfig2.getStringRepresentation());
        	AssertJUnit.assertEquals(setup, testSetup);
 
 		String path2 = "pathtest";
@@ -154,6 +158,13 @@ public class SubspaceConfigurationTest {
 		valid = suconfig.isValid();
        	AssertJUnit.assertEquals(true, valid);
 
+		// size negative
+        final long size = -3000;
+       	suconfig.setSize(size);
+		
+		valid = suconfig.isValid();
+       	AssertJUnit.assertEquals(false, valid);
+
        	try {
        		suconfig.setMode("test");
 		} catch (WrongConfigurationException e) {
@@ -180,10 +191,44 @@ public class SubspaceConfigurationTest {
 
 		SubspaceConfiguration suconfig = new SubspaceConfiguration(path, gsiftp, visible, size, setup);
 
-		String s = "path : '" + path + "'; gsiftppath : '" + gsiftp 
-			+ "'; visible : '" + visible + "'; size : '" + size + "'; mode : '" + setup + "'; ";
+		String s = SubspaceConfiguration.PATH + " : '" + path + "'; " 
+			+ SubspaceConfiguration.GSIFTPPATH + " : '" + gsiftp + "'; " 
+			+ SubspaceConfiguration.VISIBLE + " : '" + visible + "'; " 
+			+ SubspaceConfiguration.SIZE + " : '" + size + "'; " 
+			+ SubspaceConfiguration.MODE + " : '" + setup + "'; ";
 		
-       	AssertJUnit.assertEquals(s, suconfig.displayConfiguration());		
+       	AssertJUnit.assertEquals(s, suconfig.getStringRepresentation());		
        	AssertJUnit.assertEquals(s, suconfig.toString());		
 	}
+	
+	/**
+	 * Tests the method getSubspaceConfiguration.
+	 */
+	@Test
+    public final void testGetSubspaceConfiguration()  {
+		Subspace dummy = new Subspace();
+		MetaSubspace dummyMeta = new MetaSubspace();
+		dummy.setMetaSubspace(dummyMeta);
+		
+		String path = "testpath";
+		dummy.setPath(path);
+		String gsiftp = "testgsiftp";
+		dummy.setGsiFtpPath(gsiftp);
+		boolean visible = true;
+		dummyMeta.setVisibleToPublic(visible);
+		final long size = 2000;
+		dummy.setAvailableSize(size);
+		String mode = "UPDATE";		
+				
+		SubspaceConfiguration config = SubspaceConfiguration.getSubspaceConfiguration(dummy);
+
+		AssertJUnit.assertEquals(true, config.isValid());
+		AssertJUnit.assertEquals(path, config.getPath());
+		AssertJUnit.assertEquals(gsiftp, config.getGsiFtpPath());
+		AssertJUnit.assertEquals(visible, config.isVisible());
+		AssertJUnit.assertEquals(size, config.getSize());
+		AssertJUnit.assertEquals(mode, config.getMode().name());
+
+	}
+
 }

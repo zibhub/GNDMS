@@ -20,7 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
-import de.zib.gndms.common.model.dspace.SubspaceConfiguration;
+import de.zib.gndms.logic.model.dspace.SubspaceConfiguration;
 
 /**
  * Tests the DSpaceClient.

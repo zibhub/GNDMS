@@ -17,11 +17,14 @@ package de.zib.gndms.common.dspace.service;
  */
 
 import java.io.File;
+import java.io.OutputStream;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
-import de.zib.gndms.common.model.dspace.Configuration;
+import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.stuff.util.Product;
@@ -128,7 +131,7 @@ public interface SliceService {
 	 * @return The list of files.
 	 */
 	ResponseEntity<List<File>> listFiles(String subspace, String sliceKind,
-			String slice, List<String> attr, String dn);
+			String slice, Map<String, String> attr, String dn);
 
 	/**
 	 * Deletes all files of a slice.
@@ -173,12 +176,17 @@ public interface SliceService {
 	 *            The slice identifier.
 	 * @param fileName
 	 *            The file name.
+	 * @param attrs
+	 * 			  The attributed to be shown.
 	 * @param dn
 	 *            The dn of the user invoking the method.
+	 * @param out
+	 * 			  The outputstream the file information shall be written to.
 	 * @return The file.
 	 */
-	ResponseEntity<File> listFileContent(String subspace, String sliceKind,
-			String slice, String fileName, String dn);
+	// TODO: GNDMSFile ?
+	ResponseEntity<OutputStream> listFileContent(String subspace, String sliceKind,
+			String slice, String fileName, List<String> attrs, String dn, OutputStream out);
 
 	/**
 	 * Selects a specific file.
@@ -198,7 +206,7 @@ public interface SliceService {
 	 * @return A confirmation.
 	 */
 	ResponseEntity<Void> setFileContent(String subspace, String sliceKind,
-			String slice, String fileName, File file, String dn);
+			String slice, String fileName, MultipartFile file, String dn);
 
 	/**
 	 * Deletes a specific file.

@@ -1,4 +1,4 @@
-package de.zib.gndms.common.model.dspace;
+package de.zib.gndms.logic.model.dspace;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -19,11 +19,13 @@ package de.zib.gndms.common.model.dspace;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import de.zib.gndms.common.logic.config.Configuration;
+import de.zib.gndms.model.dspace.Slice;
+
 /**
  * The slice configuration checks and accesses a ConfigHolder for a slice, which
  * has to consist (at least) of the following fields: <br>
- * directory - the (relative) path of the slice as text<br>
- * owner - the owner of the slice as text<br>
+ * size - the maximal size of the slice<br>
  * termination - the termination time of the slice as number representing
  * standard base time.
  * 
@@ -33,26 +35,18 @@ import java.util.GregorianCalendar;
 
 public class SliceConfiguration implements Configuration {
 	/**
-	 * The key for the slice's directory.
+	 * The key for the slice's size.
 	 */
-	public static final String DIRECTORY = "directory";
-	/**
-	 * The key for the slice's owner.
-	 */
-	public static final String OWNER = "owner";
+	public static final String SIZE = "size";
 	/**
 	 * The key for the slice's termination time.
 	 */
 	public static final String TERMINATION = "termination";
 
 	/**
-	 * The directory of the slice.
+	 * The maximum size of the slice.
 	 */
-	private String directory;
-	/**
-	 * The owner of the slice.
-	 */
-	private String owner;
+	private long size;
 	/**
 	 * The termination time of the slice.
 	 */
@@ -61,78 +55,53 @@ public class SliceConfiguration implements Configuration {
 	/**
 	 * Constructs a SliceConfiguration.
 	 * 
-	 * @param directory
-	 *            The directory.
-	 * @param owner
-	 *            The owner.
+	 * @param size
+	 *            The maximum size.
 	 * @param termination
 	 *            The termination time.
 	 */
-	public SliceConfiguration(final String directory, final String owner,
+	public SliceConfiguration(final long size,
 			final long termination) {
-		this.directory = directory;
-		this.owner = owner;
+		this.size = size;
 		setTerminationTime(termination);
 	}
 
 	/**
 	 * Constructs a SliceConfiguration.
 	 * 
-	 * @param directory
-	 *            The directory.
-	 * @param owner
-	 *            The owner.
+	 * @param size
+	 *            The maximum size.
 	 * @param termination
 	 *            The termination time.
 	 */
-	public SliceConfiguration(final String directory, final String owner,
+	public SliceConfiguration(final long size,
 			final Calendar termination) {
-		this.directory = directory;
-		this.owner = owner;
+		this.size = size;
 		this.terminationTime = termination;
 	}
 
 	@Override
 	public final boolean isValid() {
-		return (directory != null && owner != null && terminationTime != null);
+		return (size >= 0 && terminationTime != null);
 	}
 
 	/**
-	 * Returns the directory of a slice configuration.
+	 * Returns the size of a slice configuration.
 	 * 
-	 * @return The directory.
+	 * @return The size.
 	 */
-	public final String getDirectory() {
-		return directory;
+	public final long getSize() {
+		return size;
 	}
 
 	/**
-	 * Sets the directory of a slice configuration.
+	 * Sets the size of a slice configuration.
 	 * 
-	 * @param directory
-	 *            The directory.
+	 * @param size
+	 *            The size.
 	 */
-	public final void setDirectory(final String directory) {
-		this.directory = directory;
-	}
-
-	/**
-	 * Returns the owner of a slice configuration.
-	 * 
-	 * @return The owner.
-	 */
-	public final String getOwner() {
-		return owner;
-	}
-
-	/**
-	 * Sets the owner of a slice configuration.
-	 * 
-	 * @param owner
-	 *            The owner.
-	 */
-	public final void setOwner(final String owner) {
-		this.owner = owner;
+	public final void setSize(final long size) {
+		this.size = size;
 	}
 
 	/**
@@ -176,13 +145,23 @@ public class SliceConfiguration implements Configuration {
 	}
 
 	@Override
-	public final String displayConfiguration() {
-		String s = "";
-		s = s.concat(DIRECTORY + " : '" + directory + "'; ");
-		s = s.concat(OWNER + " : '" + owner + "'; ");
-		s = s.concat(TERMINATION + " : '" + terminationTime.getTimeInMillis()
+	public final String getStringRepresentation() {
+		StringBuffer s = new StringBuffer();
+		s.append(SIZE + " : '" + size + "'; ");
+		s.append(TERMINATION + " : '" + terminationTime.getTimeInMillis()
 				+ "'; ");
-		return s;
+		return s.toString();
+	}
+
+	/**
+	 * Returns the slice configuration of a given slice.
+	 * 
+	 * @param slice
+	 *            The slice.
+	 * @return The slice configuration.
+	 */
+	public static final SliceConfiguration getSliceConfiguration(Slice slice) {
+		return new SliceConfiguration(slice.getTotalStorageSize(), slice.getTerminationTime().getTimeInMillis());
 	}
 
 	/*
@@ -192,7 +171,7 @@ public class SliceConfiguration implements Configuration {
 	 */
 	@Override
 	public final String toString() {
-		return displayConfiguration();
+		return getStringRepresentation();
 	}
 
 	/*
@@ -210,8 +189,7 @@ public class SliceConfiguration implements Configuration {
 		}
 		if (obj.getClass() == getClass()) {
 			SliceConfiguration config = (SliceConfiguration) obj;
-			return (config.getDirectory().equals(directory)
-					&& config.getOwner().equals(owner) 
+			return (config.getSize() == size
 					&& config.getTerminationTime().equals(terminationTime));
 		} else {
 			return false;
@@ -228,8 +206,8 @@ public class SliceConfiguration implements Configuration {
 		final int start = 28;
 		final int multi = 29;
 		int hashCode = start;
-		hashCode = hashCode * multi + directory.hashCode();
-		hashCode = hashCode * multi + owner.hashCode();
+		final int length = 32;
+		hashCode = hashCode * multi + (int) (size ^ (size >>> length));
 		hashCode = hashCode * multi + terminationTime.hashCode();
 		return hashCode;
 

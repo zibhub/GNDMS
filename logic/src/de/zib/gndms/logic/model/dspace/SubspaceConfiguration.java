@@ -1,4 +1,4 @@
-package de.zib.gndms.common.model.dspace;
+package de.zib.gndms.logic.model.dspace;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -16,7 +16,10 @@ package de.zib.gndms.common.model.dspace;
  * limitations under the License.
  */
 
+import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.logic.config.SetupMode;
+import de.zib.gndms.common.logic.config.WrongConfigurationException;
+import de.zib.gndms.model.dspace.Subspace;
 
 /**
  * The subspace configuration checks and accesses a ConfigHolder for a subspace,
@@ -39,7 +42,7 @@ public class SubspaceConfiguration implements Configuration {
 	/**
 	 * The key for the subspace's gsiftp-path.
 	 */
-	public static final String GSIFTPPATH = "gsiftppath";
+	public static final String GSIFTPPATH = "gsiFtpPath";
 	/**
 	 * The key for the subspace's visibility.
 	 */
@@ -110,18 +113,18 @@ public class SubspaceConfiguration implements Configuration {
 	
 	@Override
 	public final boolean isValid() {
-		return (path != null && gsiFtpPath != null);
+		return (path != null && gsiFtpPath != null && size >= 0);
 	}
 
 	@Override
-	public final String displayConfiguration() {
-		String s = "";
-		s = s.concat(PATH + " : '" + path + "'; ");
-		s = s.concat(GSIFTPPATH + " : '" + gsiFtpPath + "'; ");
-		s = s.concat(VISIBLE + " : '" + visible + "'; ");
-		s = s.concat(SIZE + " : '" + size + "'; ");
-		s = s.concat(MODE + " : '" + mode + "'; ");
-		return s;
+	public final String getStringRepresentation() {
+		StringBuffer s = new StringBuffer();
+		s.append(PATH + " : '" + path + "'; ");
+		s.append(GSIFTPPATH + " : '" + gsiFtpPath + "'; ");
+		s.append(VISIBLE + " : '" + visible + "'; ");
+		s.append(SIZE + " : '" + size + "'; ");
+		s.append(MODE + " : '" + mode + "'; ");
+		return s.toString();
 	}
 
 	/**
@@ -225,7 +228,17 @@ public class SubspaceConfiguration implements Configuration {
 	 */
 	@Override
 	public final String toString() {
-		return displayConfiguration();
+		return getStringRepresentation();
+	}
+
+	/**
+	 * Constructs the subspace configuration of a subspace.
+	 * 
+	 * @param subspace The subspace.
+	 * @return The configuration.
+	 */
+    public static final SubspaceConfiguration getSubspaceConfiguration(Subspace subspace) {
+		return new SubspaceConfiguration(subspace.getPath(), subspace.getGsiFtpPath(), subspace.getMetaSubspace().isVisibleToPublic(), subspace.getAvailableSize(), "READ");
 	}
 
 	/*
@@ -272,6 +285,5 @@ public class SubspaceConfiguration implements Configuration {
 		hashCode = hashCode * multi + (int) (size ^ (size >>> length));
 		hashCode = hashCode * multi + mode.hashCode();
 		return hashCode;
-
 	}
 }
