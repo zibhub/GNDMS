@@ -70,7 +70,7 @@ public interface TaskFlowFactory<O extends Order, C extends AbstractQuoteCalcula
      * <p/>
      * The created task is registered in its factory.
      */
-    TaskFlow create();
+    TaskFlow<O> create();
 
     /**
      * @return A taskflow object.
@@ -78,21 +78,21 @@ public interface TaskFlowFactory<O extends Order, C extends AbstractQuoteCalcula
      * <p/>
      * The created task flow \bnot is registered in its factory.
      */
-    TaskFlow createOrphan();
+    TaskFlow<O> createOrphan();
 
     /**
      * @param taskflow The taskflow to add. Note the taskflow must have a unique id.
      * @return \c true if the taskflow was successfully added. If the task is already registered this will fail.
-     * @brief Adds an orphan task flow to the facotry.
+     * @brief Adds an orphan task flow to the factory.
      */
-    boolean adopt( TaskFlow taskflow );
+    boolean adopt( TaskFlow<O> taskflow );
 
     /**
      * @param id The id of the taskflow.
      * @return The taskflow or null if it doesn't exist.
      * @brief Finds an existing taskflow.
      */
-    TaskFlow find( String id );
+    TaskFlow<O> find( String id );
 
     /**
      * @param id The id of the taskflow.
@@ -119,35 +119,4 @@ public interface TaskFlowFactory<O extends Order, C extends AbstractQuoteCalcula
     Iterable<String> depends();
 
     DelegatingOrder<O> getOrderDelegate( O orq );
-
-    public static class Aux {
-
-        public static TaskFlow fromTask( final Dao dao, final TaskFlowProvider provider, final String type,
-                                         final String id ) {
-
-            final Session ses = dao.beginSession();
-            try {
-                final Task t = ses.findTaskForResource( id );
-                if ( t == null )
-                    return null;
-                final TaskFlowFactory tff = provider.getFactoryForTaskFlow( type );
-                final TaskFlow tf = tff.createOrphan();
-                tf.setId( t.getResourceId() );
-                tf.setOrder( ( DelegatingOrder<?> ) t.getPayload() );
-                tf.addQuote( quoteFromContract( t.getContract() ) );
-                tf.setTaskling( t.getTaskling() );
-                tff.adopt( tf );
-                ses.success();
-                return tf;
-            } finally {
-                ses.finish();
-            }
-        }
-
-
-        public static Quote quoteFromContract( PersistentContract contract ) {
-
-            return contract.toTransientContract();
-        }
-    }
 }

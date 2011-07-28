@@ -1,6 +1,8 @@
 package de.zib.gndms.GORFX.service;
 
 import de.zib.gndms.GORFX.service.util.WidAux;
+import de.zib.gndms.logic.model.gorfx.c3grid.ProviderStageInTaskFlowFactory;
+import de.zib.gndms.logic.model.gorfx.taskflow.DefaultTaskFlowFactory;
 import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowAux;
 import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowFactory;
 import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowProvider;
@@ -457,7 +459,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
             if ( tf != null )
                 return tf;
             else
-                return TaskFlowFactory.Aux.fromTask( dao, taskFlowProvider, type, id );
+                return TaskFlowServiceAux.fromTask( dao, taskFlowProvider, type, id );
         }
 
         throw new NoSuchResourceException();

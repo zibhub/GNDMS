@@ -28,5 +28,5 @@ import de.zib.gndms.logic.model.config.ConfigAction;
  */
 public interface ConfigActionProvider extends ActionProvider<ConfigMeta, ConfigAction> {
 
-    String callConfigConfigAction( String actionClassName, String args ) throws Exception;
+    String callConfigAction( String actionClassName, String args ) throws Exception;
 }

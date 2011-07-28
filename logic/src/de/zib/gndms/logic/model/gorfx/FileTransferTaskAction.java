@@ -97,7 +97,7 @@ public class FileTransferTaskAction extends TaskFlowAction<FileTransferOrder> {
         pml.setTransferState( transferState );
         pml.setTaskling(getModel());
         pml.setWid(wid);
-        pml.setGORFXId( order.getActId());
+        pml.setGORFXId( getOrder().getActId());
 
         URI suri = new URI ( order.getSourceURI() );
         URI duri = new URI ( order.getDestinationURI() );

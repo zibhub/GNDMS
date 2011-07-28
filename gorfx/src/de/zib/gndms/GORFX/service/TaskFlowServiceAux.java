@@ -20,7 +20,11 @@ import de.zib.gndms.common.model.gorfx.types.Order;
 import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
 import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowFactory;
+import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowProvider;
+import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
+import de.zib.gndms.neomodel.common.Session;
+import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
 import org.springframework.http.HttpStatus;
 
@@ -72,4 +76,33 @@ public final class TaskFlowServiceAux {
 
 
     private TaskFlowServiceAux(){ }
+
+
+    public static TaskFlow fromTask( final de.zib.gndms.neomodel.common.Dao dao, final TaskFlowProvider provider, final String type,
+                                     final String id ) {
+
+        final Session ses = dao.beginSession();
+        try {
+            final Task t = ses.findTaskForResource( id );
+            if ( t == null )
+                return null;
+            final TaskFlowFactory tff = provider.getFactoryForTaskFlow( type );
+            final TaskFlow tf = tff.createOrphan();
+          //  tf.setId( t.getResourceId() );
+            tf.setOrder( ( DelegatingOrder<?> ) t.getPayload() );
+            tf.addQuote( quoteFromContract( t.getContract() ) );
+            tf.setTaskling( t.getTaskling() );
+            tff.adopt( tf );
+            ses.success();
+            return tf;
+        } finally {
+            ses.finish();
+        }
+    }
+
+
+    public static Quote quoteFromContract( PersistentContract contract ) {
+
+        return contract.toTransientContract();
+    }
 }

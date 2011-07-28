@@ -30,7 +30,7 @@ import java.util.List;
  *
  * @brief A class which aggregates all objects which belong to a single task flow.
  */
-public class TaskFlow<T extends Order> {
+public abstract class TaskFlow<T extends Order> {
 
     private String id; ///< Taskflow id
     private DelegatingOrder<T> order;  ///< The order
@@ -38,6 +38,21 @@ public class TaskFlow<T extends Order> {
     private Quote preferredQuote; ///< A quote provided by the client.
     private Taskling taskling; ///< The taskling object, if created.
     private boolean unfulfillableOrder = false; ///< Remembers if the order was unfulfillable.
+
+
+    /**
+     * No, you are not allowed to instantiate this. Go and ask a factory.
+     */
+    protected TaskFlow( ) { }
+
+
+    /**
+     * Sets the tf id on creation.
+     * @param id the id of the task flow
+     */
+    protected TaskFlow( final String id ) {
+        this.id = id;
+    }
 
 
     /**
@@ -55,7 +70,7 @@ public class TaskFlow<T extends Order> {
      * 
      * @param id The new value of ::id.
      */
-    public void setId( final String id ) {
+    protected void setId( final String id ) {
         this.id = id;
     }
 

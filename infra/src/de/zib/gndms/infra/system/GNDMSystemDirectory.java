@@ -25,7 +25,6 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import de.zib.gndms.kit.access.GNDMSBinding;
 import de.zib.gndms.kit.configlet.DefaultConfiglet;
-import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.access.TaskActionProvider;
 import de.zib.gndms.logic.model.gorfx.*;
 import de.zib.gndms.kit.access.InstanceProvider;
@@ -46,7 +45,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,12 +76,6 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 
 	private final Map<String, Configlet> configlets = Maps.newConcurrentHashMap();
 
-    @SuppressWarnings({ "RawUseOfParameterizedType" })
-    private final @NotNull IndustrialPark<String, String, AbstractQuoteCalculator<?>> orqPark;
-
-    @SuppressWarnings({ "RawUseOfParameterizedType" })
-    private final @NotNull IndustrialPark<String, String, TaskFlowAction<?>> taskActionPark;
-
 	@SuppressWarnings({ "FieldCanBeLocal" })
 	private final Wrapper<Object> sysHolderWrapper;
 
@@ -107,69 +99,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 		final Injector injector = Guice.createInjector(sysModule, this);
 		boundInjector.setInjector(injector);
         GNDMSBinding.setDefaultInjector(injector);
-
-	    final QuoteCalculatorMetaFactory calcMF = new QuoteCalculatorMetaFactory();
-		calcMF.setInjector(injector);
-	    calcMF.setWrap(sysHolderWrapper);
-	    orqPark = new OfferTypeIndustrialPark<AbstractQuoteCalculator<?>>(calcMF);
-
-	    final TaskFlowActionMetaFactory taskFlowMF = new TaskFlowActionMetaFactory();
-	    taskFlowMF.setWrap(sysHolderWrapper);
-		taskFlowMF.setInjector(injector);
-	    taskActionPark = new OfferTypeIndustrialPark<TaskFlowAction<?>>( taskFlowMF );
     }
-
-
-    @SuppressWarnings({ "MethodWithTooExceptionsDeclared" })
-    @NotNull
-    public AbstractQuoteCalculator<?> newORQCalculator(
-        final @NotNull EntityManagerFactory emf,
-        final @NotNull String offerTypeKey)
-        throws ClassNotFoundException, IllegalAccessException, InstantiationException,
-        NoSuchMethodException, InvocationTargetException {
-        EntityManager em = emf.createEntityManager();
-        try {
-            if (offerTypeKey == null)
-                throw new IllegalArgumentException("Unknow offer type: " + offerTypeKey);
-            AbstractQuoteCalculator<?> orqc = orqPark.getInstance(offerTypeKey);
-            orqc.setConfigletProvider( this );
-            return orqc;
-        }
-        finally {
-            if (! em.isOpen())
-                em.close();
-        }
-    }
-
-
-
-    @SuppressWarnings(
-	      { "MethodWithTooExceptionsDeclared", "OverloadedMethodsWithSameNumberOfParameters" })
-    public TaskAction newTaskAction(
-            final @NotNull EntityManagerFactory emf,
-            final @NotNull String offerTypeKey)
-            throws ClassNotFoundException, IllegalAccessException, InstantiationException,
-            NoSuchMethodException, InvocationTargetException {
-        EntityManager em = emf.createEntityManager();
-        try {
-	        return newTaskAction(em, offerTypeKey);
-        }
-        finally {
-            if (! em.isOpen())
-                em.close();
-        }
-    }
-
-
-
-	@SuppressWarnings({ "OverloadedMethodsWithSameNumberOfParameters" })
-	public TaskAction newTaskAction(
-		  final EntityManager emParam, final String offerTypeKey)
-		  throws IllegalAccessException, InstantiationException, ClassNotFoundException {
-		TaskAction ta = taskActionPark.getInstance(offerTypeKey);
-		ta.setUUIDGen( uuidGen );
-		return ta;
-	}
 
 
     /**

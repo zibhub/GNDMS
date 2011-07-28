@@ -97,8 +97,8 @@ public class LegacyConfigActionProvider implements ConfigActionProvider {
      * @throws Exception An arbitrary thrown the config action itself.
      */
     @Override
-    public String callConfigConfigAction( String actionClassName, String args ) throws Exception {
-        return (String) legacyActionCaller.callAction( actionClassName, args );
+    public String callConfigAction( String actionClassName, String args ) throws Exception {
+        return legacyActionCaller.callAction( actionClassName, args );
     }
 
 

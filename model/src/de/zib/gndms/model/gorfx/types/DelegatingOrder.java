@@ -19,7 +19,6 @@ package de.zib.gndms.model.gorfx.types;
 
 import de.zib.gndms.common.model.gorfx.types.Order;
 import org.jetbrains.annotations.NotNull;
-import sun.swing.plaf.windows.ClassicSortArrowIcon;
 
 import java.util.Map;
 
@@ -30,8 +29,8 @@ import java.util.Map;
  */
 public class DelegatingOrder<T extends Order> implements Order {
 	private static final int INITIAL_STRING_BUILDER_CAPACITY = 256;
+    private static final long serialVersionUID = -4963712675181368456L;
 
-    private Class<T> orderClazz;
     private T orderBean;
     private String actId; ///< A unique id inherited from the ORQResource
     private Map<String, String> actContext; ///< The context of the ORQResource
@@ -43,9 +42,8 @@ public class DelegatingOrder<T extends Order> implements Order {
     }
 
 
-    public DelegatingOrder( T orderBean, Class<T> clazz ) {
+    public DelegatingOrder( T orderBean ) {
         this.orderBean = orderBean;
-        this.orderClazz = clazz;
     }
 
 

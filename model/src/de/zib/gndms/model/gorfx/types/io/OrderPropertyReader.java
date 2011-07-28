@@ -45,10 +45,12 @@ public abstract class OrderPropertyReader<M extends AbstractOrder> extends Abstr
         if( s != null  )
             getProduct().setJustEstimate( Boolean.parseBoolean( s ));
 
+        /*
         if( getProperties().containsKey( SfrProperty.CONTEXT.key ) )
             getProduct().setActContext(
                 PropertyReadWriteAux.readMap( getProperties(), SfrProperty.CONTEXT.key ) );
 
         getProduct().setActId( getProperties().getProperty( SfrProperty.GORFX_ID.key ) );
+        */
     }
 }

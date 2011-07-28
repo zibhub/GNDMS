@@ -18,7 +18,11 @@ package de.zib.gndms.logic.model.gorfx;
 
 
 
+import de.zib.gndms.logic.model.TaskAction;
+import de.zib.gndms.logic.model.gorfx.taskflow.DefaultTaskFlowFactory;
 import de.zib.gndms.model.common.types.factory.InjectingRecursiveKeyFactory;
+import de.zib.gndms.model.gorfx.types.FileTransferOrder;
+import de.zib.gndms.neomodel.gorfx.TaskFlow;
 
 
 /**
@@ -29,12 +33,26 @@ import de.zib.gndms.model.common.types.factory.InjectingRecursiveKeyFactory;
  *
  *          User: stepn Date: 09.10.2008 Time: 12:49:54
  */
-public class FileTransferTaskFlowFactory extends InjectingRecursiveKeyFactory<String, AbstractQuoteCalculator<?>> {
+public class FileTransferTaskFlowFactory
+    extends DefaultTaskFlowFactory<FileTransferOrder, FileTransferQuoteCalculator> {
+
     @Override
     public AbstractQuoteCalculator<?> newInstance(final String offerType)
             throws IllegalAccessException, InstantiationException, ClassNotFoundException {
 	    final FileTransferQuoteCalculator quoteCalculator = new FileTransferQuoteCalculator();
 	    injectMembers( quoteCalculator );
 	    return quoteCalculator;
+    }
+
+
+    @Override
+    protected TaskFlow<FileTransferOrder> prepare( TaskFlow<FileTransferOrder> fileTransferOrderTaskFlow ) {
+        return null;  // not required here
+    }
+
+
+    @Override
+    public TaskAction createAction() {
+        return null;  // not required here
     }
 }
