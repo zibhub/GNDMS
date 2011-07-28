@@ -1,7 +1,7 @@
 
 desc 'Test REST setup'
 define 'rest', :layout => dmsLayout('rest', 'test-rest') do
-    compile.with SPRING, SLF4J, XSTREAM, COMMONS_LOGGING, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME
+    compile.with SPRING, SLF4J, XSTREAM, COMMONS_LOGGING, SERVLET, CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME, ASPECTJ
     compile
 
     # workaround for builder dependence bug
