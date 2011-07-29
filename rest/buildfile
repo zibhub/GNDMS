@@ -8,4 +8,16 @@ define 'rest', :layout => dmsLayout('rest', 'test-rest') do
     package(:war).enhance FileList[_(:web,  '**/*')]
     package :war
 
+   #run.using :main => "de.zib.firstrest.client.FooClient",
+   #          :java_args => [ "1" ]
+            
+    task 'cp' do
+        deps =  compile.dependencies.to_a  
+        tgt =  compile.target.to_s 
+        deps +=  [ tgt ]
+        cp = deps * ":"
+        puts "#{cp}"
+    end
 end
+
+# vim: ft=ruby
