@@ -19,12 +19,14 @@ import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.servlet.view.xml.MarshallingView;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
+import java.io.IOException;
+import java.util.List;
 /*
  * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
@@ -62,7 +64,7 @@ public class FooServiceImpl implements ServletContextAware, FooService {
 
     @Override
     @RequestMapping( value = "/foo/{fid}" )
-    public ModelAndView findFoo( @PathVariable String fid ) {
+    public ResponseEntity<Foo> findFoo( @PathVariable String fid ) {
 
     /*
      * Note: This method together with the dispacher-context.xml
@@ -71,22 +73,22 @@ public class FooServiceImpl implements ServletContextAware, FooService {
      * other tasks.
      */
         final Foo foo = dao.getFoo( fid );
-        ModelAndView mv;
-        if( foo != null )
-            mv = new ModelAndView( "xmlMarshall", "foo", foo );
-        else {
-            RedirectView rv = new RedirectView( );
-            rv.setStatusCode( HttpStatus.NOT_FOUND );
-            mv = new ModelAndView( rv );
-        }
-
-        return mv;
+        return new ResponseEntity<Foo>( foo, HttpStatus.OK );
+//        if( foo != null )
+//            mv = new ModelAndView( "xmlMarshall", "foo", foo );
+//        else {
+//            RedirectView rv = new RedirectView( );
+//            rv.setStatusCode( HttpStatus.NOT_FOUND );
+//            mv = new ModelAndView( rv );
+//        }
+//
+//        return mv;
     }
 
     @Override
     @RequestMapping( value = "/allfoo" )
-    public ModelAndView allFoo() {
-        return  new ModelAndView( "xmlMarshall", BindingResult.MODEL_KEY_PREFIX + "foos", dao.getAllFoo()  );
+    public ResponseEntity<List<Foo>> allFoo() {
+        return new ResponseEntity<List<Foo>>( dao.getAllFoo(), HttpStatus.OK  );
     }
     
 
@@ -117,9 +119,15 @@ public class FooServiceImpl implements ServletContextAware, FooService {
 
 
     @ExceptionHandler( NoSuchTaskFlowTypeException.class )
-    public ModelAndView handleNoSuchTaskFlowTypeException( NoSuchTaskFlowTypeException ex, HttpServletRequest request ) {
+    public void handleNoSuchTaskFlowTypeException( NoSuchTaskFlowTypeException ex, HttpServletResponse response ) {
 
-        logger.warn( "exception handler for ", ex );
-        return new ModelAndView( "xmlMarshall", "message" , ex.getMessage() );
+        logger.warn( "exception handler for " + ex.getMessage() );
+        try {
+            //response.setStatus( HttpStatus.INTERNAL_SERVER_ERROR.value() );
+            //response.getOutputStream().print( ex.getMessage() );
+            response.sendError( HttpStatus.NOT_FOUND.value(), ex.getMessage() );
+        } catch ( IOException e ) {
+            response.setStatus( HttpStatus.INTERNAL_SERVER_ERROR.value() );
+        }
     }
 }

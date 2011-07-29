@@ -17,8 +17,11 @@
 package de.zib.firstrest.service;
 
 import de.zib.firstrest.domain.Foo;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
+
+import java.util.List;
 
 /**
  * @author Maik Jorra
@@ -28,9 +31,9 @@ import org.springframework.web.servlet.View;
  */
 public interface FooService {
 
-    ModelAndView findFoo( String fid );
+    ResponseEntity<Foo> findFoo( String fid );
 
-    ModelAndView allFoo();
+    ResponseEntity<List<Foo>> allFoo();
 
     View savePerson( Foo foo );
 }
