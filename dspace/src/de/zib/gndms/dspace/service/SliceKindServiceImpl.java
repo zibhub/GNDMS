@@ -16,7 +16,6 @@ package de.zib.gndms.dspace.service;
  * limitations under the License.
  */
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -34,20 +33,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import de.zib.gndms.common.dspace.service.SliceKindService;
-import de.zib.gndms.common.model.dspace.Configuration;
-import de.zib.gndms.common.model.dspace.SliceKindConfiguration;
-import de.zib.gndms.common.model.dspace.SubspaceConfiguration;
-import de.zib.gndms.common.model.dspace.WrongConfigurationException;
+import de.zib.gndms.common.logic.config.Configuration;
+import de.zib.gndms.common.logic.config.WrongConfigurationException;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.logic.dspace.NoSuchElementException;
 import de.zib.gndms.logic.dspace.SliceKindProvider;
 import de.zib.gndms.logic.dspace.SubspaceProvider;
+import de.zib.gndms.logic.model.dspace.SliceKindConfiguration;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.stuff.confuror.ConfigHolder;
-import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
 
 /**
  * The slice kind service implementation.
@@ -96,7 +92,7 @@ public class SliceKindServiceImpl implements SliceKindService {
 
 		try {
 			SliceKind sliceK = findSliceKind(subspace, sliceKind);
-			SliceKindConfiguration config = sliceK.getSliceKindConfiguration();
+			SliceKindConfiguration config = SliceKindConfiguration.getSliceKindConfiguration(sliceK);
 			return new ResponseEntity<Configuration>(config, headers,
 					HttpStatus.OK);
 		} catch (NoSuchElementException ne) {

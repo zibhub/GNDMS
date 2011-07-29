@@ -1,4 +1,4 @@
-package de.zib.gndms.common.model.dspace;
+package de.zib.gndms.common.logic.config;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -17,23 +17,25 @@ package de.zib.gndms.common.model.dspace;
  */
 
 /**
- * A configuration, which provides the necessary properties for some entity.
+ * The wrong configuration exception, which is thrown when a given configuration tries to access an 
+ * invalid configuration parameter.
  * 
  * @author Ulrike Golas
- *
  */
-public interface Configuration {
+
+public class WrongConfigurationException extends RuntimeException {
 
 	/**
-	 * Test, if this configuration is valid, i.e. satisfies all its requirements.
-	 * @return true, if this configuration is valid, else false.
+	 * The serialization id.
 	 */
-	boolean isValid();
-	
-	/**
-	 * The String representation of a configuration, which should display key-value pairs as:
-	 * key1 : value1 ; key2 : value2 ; ...
-	 * @return The String representation.
-	 */
-	String displayConfiguration();
+	private static final long serialVersionUID = -6277152854505420912L;
+
+    /**
+     * The constructor.
+     * @param message The exception message.
+     */
+    public WrongConfigurationException(final String message) {
+        super(message);
+    }
+
 }

@@ -1,4 +1,4 @@
-package de.zib.gndms.common.model.dspace;
+package de.zib.gndms.logic.model.dspace;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -22,6 +22,9 @@ import java.util.GregorianCalendar;
 import org.testng.annotations.Test;
 import org.testng.AssertJUnit;
 
+import de.zib.gndms.logic.model.dspace.SliceConfiguration;
+import de.zib.gndms.model.dspace.Slice;
+
 /**
  * Tests the SliceConfiguration.
  * @author Ulrike Golas
@@ -34,12 +37,11 @@ public class SliceConfigurationTest {
 	 */
 	@Test
     public final void testEquals() {
-		String directory = "slice";
-		String owner = "me";
+		final long size = 4000;
 		GregorianCalendar cal = new GregorianCalendar();
 
-		SliceConfiguration slconfig = new SliceConfiguration(directory, owner, cal);
-		SliceConfiguration slconfig2 = new SliceConfiguration(directory, owner, cal);
+		SliceConfiguration slconfig = new SliceConfiguration(size, cal);
+		SliceConfiguration slconfig2 = new SliceConfiguration(size, cal);
 		
        	AssertJUnit.assertEquals(false, slconfig == slconfig2);
        	AssertJUnit.assertEquals(true, slconfig.equals(slconfig2));
@@ -47,8 +49,8 @@ public class SliceConfigurationTest {
        	AssertJUnit.assertEquals(true, slconfig2.equals(slconfig));
        	AssertJUnit.assertEquals(slconfig.hashCode(), slconfig2.hashCode());
 
-		directory = "slice2";
-		slconfig2 = new SliceConfiguration(directory, owner, cal);
+		final long size2 = 6000;
+		slconfig2 = new SliceConfiguration(size2, cal);
 
        	AssertJUnit.assertEquals(false, slconfig.equals(slconfig2));
        	AssertJUnit.assertEquals(false, slconfig2.equals(slconfig));
@@ -61,50 +63,43 @@ public class SliceConfigurationTest {
 	 */
 	@Test
     public final void testConstructors() {
-		String directory = "slice";
-		String owner = "me";
+		final long size = 4000;
 		GregorianCalendar cal = new GregorianCalendar();
 		final long value = cal.getTimeInMillis();
 
-		SliceConfiguration slconfig = new SliceConfiguration(directory, owner, cal);
+		SliceConfiguration slconfig = new SliceConfiguration(size, cal);
 		       	
-       	String testDirectory = slconfig.getDirectory();
-       	String testOwner = slconfig.getOwner();
+       	long testSize = slconfig.getSize();
        	Calendar testTime = slconfig.getTerminationTime();
        	long testValue = slconfig.getTerminationTimeAsLong();
        	boolean valid = slconfig.isValid();
        	
-       	AssertJUnit.assertEquals(directory, testDirectory);
-       	AssertJUnit.assertEquals(owner, testOwner);
+       	AssertJUnit.assertEquals(size, testSize);
        	AssertJUnit.assertEquals(value, testValue);
        	AssertJUnit.assertEquals(cal, testTime);
        	AssertJUnit.assertEquals(true, valid);
 
-		SliceConfiguration slconfig2 = new SliceConfiguration(directory, owner, value);
+		SliceConfiguration slconfig2 = new SliceConfiguration(size, value);
        	testTime = slconfig2.getTerminationTime();
        	valid = slconfig2.isValid();
 		
-       	AssertJUnit.assertEquals(slconfig.displayConfiguration(), slconfig2.displayConfiguration());
+       	AssertJUnit.assertEquals(slconfig.getStringRepresentation(), slconfig2.getStringRepresentation());
        	AssertJUnit.assertEquals(cal, testTime);
        	AssertJUnit.assertEquals(true, valid);
 
-		String directory2 = "sliceslice";
-		String owner2 = "notme";
+		final long size2 = 8000;
 		GregorianCalendar cal2 = new GregorianCalendar();
 		final long value2 = cal2.getTimeInMillis();
 
-		slconfig2.setDirectory(directory2);
-		slconfig2.setOwner(owner2);
+		slconfig2.setSize(size2);
 		slconfig2.setTerminationTime(cal2);
 
-       	String testDirectory2 = slconfig2.getDirectory();
-       	String testOwner2 = slconfig2.getOwner();
+       	long testSize2 = slconfig2.getSize();
        	Calendar testTime2 = slconfig2.getTerminationTime();
        	long testValue2 = slconfig2.getTerminationTimeAsLong();
        	boolean valid2 = slconfig2.isValid();
 
-       	AssertJUnit.assertEquals(directory2, testDirectory2);
-       	AssertJUnit.assertEquals(owner2, testOwner2);
+       	AssertJUnit.assertEquals(size2, testSize2);
        	AssertJUnit.assertEquals(value2, testValue2);
        	AssertJUnit.assertEquals(cal2, testTime2);
        	AssertJUnit.assertEquals(true, valid2);
@@ -126,34 +121,26 @@ public class SliceConfigurationTest {
 	 */
 	@Test
     public final void testSetters() {
-		SliceConfiguration slconfig = new SliceConfiguration(null, null, null);
+		SliceConfiguration slconfig = new SliceConfiguration(0, null);
 
-		// all properties missing
+		// termination missing
 		boolean valid = slconfig.isValid();
        	AssertJUnit.assertEquals(false, valid);
 
-		String directory = "slice";
-		String owner = "me";
 		GregorianCalendar cal = new GregorianCalendar();
 
-		// owner, termination missing
-       	slconfig.setDirectory(directory);
-		
-		valid = slconfig.isValid();
-       	AssertJUnit.assertEquals(false, valid);
-		
-       	// termination still missing
-       	slconfig.setOwner(owner);
-		
-		valid = slconfig.isValid();
-       	AssertJUnit.assertEquals(false, valid);
-       	
        	// complete
        	slconfig.setTerminationTime(cal);
 		
 		valid = slconfig.isValid();
        	AssertJUnit.assertEquals(true, valid);
 
+		// size negative
+        final long size = -3000;
+       	slconfig.setSize(size);
+		
+		valid = slconfig.isValid();
+       	AssertJUnit.assertEquals(false, valid);
 	}
 	
 	/**
@@ -161,16 +148,37 @@ public class SliceConfigurationTest {
 	 */
 	@Test
     public final void testDisplayConfiguration() {
-		String directory = "slice";
-		String owner = "me";
+        final long size = 4000;
 		GregorianCalendar cal = new GregorianCalendar();
 		final long value = cal.getTimeInMillis();
 
-		SliceConfiguration slconfig = new SliceConfiguration(directory, owner, cal);
+		SliceConfiguration slconfig = new SliceConfiguration(size, cal);
 
-		String s = "directory : '" + directory + "'; owner : '" + owner + "'; termination : '" + value + "'; ";
+		String s = "size : '" + size + "'; termination : '" + value + "'; ";
 		
-       	AssertJUnit.assertEquals(s, slconfig.displayConfiguration());		
+       	AssertJUnit.assertEquals(s, slconfig.getStringRepresentation());		
        	AssertJUnit.assertEquals(s, slconfig.toString());		
 	}
+	
+	/**
+	 * Tests the method getSliceConfiguration.
+	 */
+	@Test
+    public final void testGetSliceConfiguration() {
+		Slice dummy = new Slice(null, null, null, null);
+		
+		long size = 4000;
+		dummy.setTotalStorageSize(size);
+		final long termination = 20000;
+		GregorianCalendar cal = new GregorianCalendar();
+		cal.setTimeInMillis(termination);
+		dummy.setTerminationTime(cal);
+				
+		SliceConfiguration config = SliceConfiguration.getSliceConfiguration(dummy);
+
+		AssertJUnit.assertEquals(true, config.isValid());
+		AssertJUnit.assertEquals(size, config.getSize());
+		AssertJUnit.assertEquals(cal, config.getTerminationTime());
+	}
+
 }

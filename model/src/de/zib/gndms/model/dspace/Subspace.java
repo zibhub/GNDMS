@@ -26,7 +26,6 @@ package de.zib.gndms.model.dspace;
  * User: stepn Date: 24.07.2008 Time: 11:17:22
  */
 
-import de.zib.gndms.common.model.dspace.SubspaceConfiguration;
 import de.zib.gndms.model.common.GridResource;
 
 import org.jetbrains.annotations.NotNull;
@@ -191,33 +190,5 @@ public class Subspace extends GridResource {
 
     public void setGsiFtpPath( String gsiFtpPath ) {
         this.gsiFtpPath = gsiFtpPath;
-    }
-    
-	/**
-	 * Constructs the subspace configuration of a subspace.
-	 * 
-	 * @return The configuration.
-	 */
-	public SubspaceConfiguration getSubspaceConfiguration() {
-		String path = getPath();
-		String gsiftp = getGsiFtpPath();
-		boolean visible = getMetaSubspace().isVisibleToPublic();
-		long size = getAvailableSize();
-
-		return new SubspaceConfiguration(path, gsiftp, visible, size, "UPDATE");
-	}
-	
-	/**
-	 * Updates a subspace according to a subspace configuration.
-	 * @param config
-	 */
-	public void updateWithConfiguration(SubspaceConfiguration config) {
-		// TODO test for mode
-		setPath(config.getPath());
-		setGsiFtpPath(config.getGsiFtpPath());
-		getMetaSubspace().setVisibleToPublic(config.isVisible());
-		setTotalSize(config.getSize());
-
-	}
-
+    }	
 }

@@ -35,10 +35,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import de.zib.gndms.GORFX.service.TaskServiceAux;
 import de.zib.gndms.common.dspace.service.SubspaceService;
+import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.logic.config.SetupMode;
-import de.zib.gndms.common.model.dspace.Configuration;
-import de.zib.gndms.common.model.dspace.SubspaceConfiguration;
-import de.zib.gndms.common.model.dspace.WrongConfigurationException;
+import de.zib.gndms.common.logic.config.WrongConfigurationException;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
@@ -46,6 +45,7 @@ import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.logic.dspace.SubspaceProvider;
 import de.zib.gndms.logic.model.TaskExecutionService;
 import de.zib.gndms.logic.model.dspace.SetupSubspaceAction;
+import de.zib.gndms.logic.model.dspace.SubspaceConfiguration;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 
@@ -225,7 +225,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 
 		Subspace sub = subspaces.getSubspace(subspace);
 		SubspaceConfiguration config;
-		config = sub.getSubspaceConfiguration();
+		config = SubspaceConfiguration.getSubspaceConfiguration(sub);
 		return new ResponseEntity<Configuration>(config, headers, HttpStatus.OK);
 	}
 
@@ -246,7 +246,8 @@ public class SubspaceServiceImpl implements SubspaceService {
 			SubspaceConfiguration subspaceConfig = checkSubspaceConfig(config);
 			Subspace sub = subspaces.getSubspace(subspace);
 
-			sub.updateWithConfiguration(subspaceConfig);
+			// TODO something like sub.updateWithConfiguration(subspaceConfig);
+			
 			return new ResponseEntity<Void>(null, headers, HttpStatus.OK);
 		} catch (WrongConfigurationException e) {
 			logger.warn("Wrong subspace configuration");

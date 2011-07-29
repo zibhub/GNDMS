@@ -1,4 +1,4 @@
-package de.zib.gndms.common.model.dspace;
+package de.zib.gndms.logic.model.dspace;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -16,10 +16,17 @@ package de.zib.gndms.common.model.dspace;
  * limitations under the License.
  */
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.testng.annotations.Test;
 import org.testng.AssertJUnit;
 
+import de.zib.gndms.common.logic.config.WrongConfigurationException;
 import de.zib.gndms.common.model.common.AccessMask;
+import de.zib.gndms.logic.model.dspace.SliceKindConfiguration;
+import de.zib.gndms.model.dspace.MetaSubspace;
+import de.zib.gndms.model.dspace.SliceKind;
 
 /**
  * Tests the SliceKindConfiguration.
@@ -84,7 +91,7 @@ public class SliceKindConfigurationTest {
        	testPermission = slconfig2.getPermission();
        	valid = slconfig2.isValid();
 		
-       	AssertJUnit.assertEquals(slconfig.displayConfiguration(), slconfig2.displayConfiguration());
+       	AssertJUnit.assertEquals(slconfig.getStringRepresentation(), slconfig2.getStringRepresentation());
        	AssertJUnit.assertEquals(permission, testPermission);
        	AssertJUnit.assertEquals(true, valid);
 
@@ -197,10 +204,38 @@ public class SliceKindConfigurationTest {
 
 		SliceKindConfiguration slconfig = new SliceKindConfiguration(uri, permission, meta);
 
-		String s = "uri : '" + uri + "'; permission : '" + perm + "'; metasubspaces : '" + meta + "'; ";
+		String s = "uri : '" + uri + "'; permission : '" + perm + "'; metaSubspaces : '" + meta + "'; ";
 		
-       	AssertJUnit.assertEquals(s, slconfig.displayConfiguration());		
+       	AssertJUnit.assertEquals(s, slconfig.getStringRepresentation());		
        	AssertJUnit.assertEquals(s, slconfig.toString());		
 	}
 	
+	/**
+	 * Tests the method getSliceKindConfiguration.
+	 */
+	@Test
+    public final void testGetSliceKindConfiguration() {
+		SliceKind dummy = new SliceKind();
+		
+		String uri = "testuri";
+		dummy.setURI(uri);
+		final long permission = 345;
+		AccessMask perm = AccessMask.fromString((new Long(permission)).toString());
+		dummy.setPermission(permission);
+		MetaSubspace dummyMeta = new MetaSubspace();
+		Set<MetaSubspace> metaSubspaces = new HashSet<MetaSubspace>();
+		metaSubspaces.add(dummyMeta);		
+		dummy.setMetaSubspaces(metaSubspaces);
+						
+		SliceKindConfiguration config = SliceKindConfiguration.getSliceKindConfiguration(dummy);
+
+		AssertJUnit.assertEquals(true, config.isValid());
+		AssertJUnit.assertEquals(uri, config.getUri());
+		AssertJUnit.assertEquals(perm, config.getPermission());
+		
+		// TODO test for meta-subspaces
+		// AssertJUnit.assertEquals(metaSubspaces, SliceKindConfiguration.getMetaSubspaces(config));
+
+	}
+
 }

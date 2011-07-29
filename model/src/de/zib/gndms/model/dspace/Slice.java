@@ -18,13 +18,10 @@ package de.zib.gndms.model.dspace;
 
 
 
-import de.zib.gndms.common.model.dspace.SliceConfiguration;
 import de.zib.gndms.model.common.TimedGridResource;
-import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
 
 import javax.persistence.*;
 
-import java.io.IOException;
 import java.util.Calendar;
 
 /**
@@ -134,23 +131,4 @@ public class Slice extends TimedGridResource {
     public void setTotalStorageSize( long totalStorageSize ) {
         this.totalStorageSize = totalStorageSize;
     }
-    
-	/**
-	 * Constructs the slice configuration of a given slice.
-	 * 
-	 * @param slice
-	 *            The slice.
-	 * @return The config holder.
-	 * @throws IOException 
-	 * @throws UpdateRejectedException 
-	 */
-	public SliceConfiguration getSliceConfiguration() {
-		String directory = getDirectoryId();
-		String owner = getOwner();
-		Long termination = getTerminationTime().getTimeInMillis();
-		
-		return new SliceConfiguration(directory, owner, termination);
-	}
-
-
 }
