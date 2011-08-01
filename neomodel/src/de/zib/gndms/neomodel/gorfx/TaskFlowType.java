@@ -72,11 +72,11 @@ public class TaskFlowType extends NodeGridResource<TaskFlowTypeAccessor> impleme
         session().setSingleIndex(getTypeNickIndex(), repr(), session().getGridName(), getId(), id);
     }
 
-    public final @NotNull String getOfferTypeKey() {
+    public final @NotNull String getTaskFlowTypeKey() {
         return getId();
     }
 
-    public void setOfferTypeKey(@NotNull String offerTypeKey) {
+    public void setTaskFlowTypeKey( @NotNull String offerTypeKey ) {
         setId(offerTypeKey);
     }
 
@@ -105,19 +105,19 @@ public class TaskFlowType extends NodeGridResource<TaskFlowTypeAccessor> impleme
         setProperty(Serializable.class, CONFIG_MAP_DATA_P, (Serializable) configMapData);
     }
 
-    public ImmutableScopedName getOfferArgumentType() {
+    public ImmutableScopedName getTaskFlowArgumentType() {
         return getProperty(ImmutableScopedName.class, OFFER_ARGUMENT_TYPE_P);
     }
 
-    public void setOfferArgumentType(ImmutableScopedName offerArgumentType) {
+    public void setTaskFlowArgumentType( ImmutableScopedName offerArgumentType ) {
         setProperty(ImmutableScopedName.class, OFFER_ARGUMENT_TYPE_P, offerArgumentType);
     }
 
-    public ImmutableScopedName getOfferResultType() {
+    public ImmutableScopedName getTaskFlowResultType() {
         return getProperty(ImmutableScopedName.class, OFFER_RESULT_TYPE_P);
     }
 
-    public void setOfferResultType(ImmutableScopedName offerResultType) {
+    public void setTaskFlowResultType( ImmutableScopedName offerResultType ) {
         setProperty(ImmutableScopedName.class, OFFER_RESULT_TYPE_P, offerResultType);
     }
 

@@ -125,9 +125,9 @@ public class ParmFormatAux {
 
         try{
             if( fp != null ) {
-                order.getActContext().put( "user", fp.getUser( ) );
+      /*          order.getActContext().put( "user", fp.getUser( ) );
                 order.getActContext().put( "group", fp.getGroup( ) );
-                order.getActContext().put( "mask", fp.getAccessMask( ).toString() );
+                order.getActContext().put( "mask", fp.getAccessMask( ).toString() );*/
             }
             return ProviderStageInTools.createPBActionForXML(
                 xmlWriter.toDocument( order, contParam ) );

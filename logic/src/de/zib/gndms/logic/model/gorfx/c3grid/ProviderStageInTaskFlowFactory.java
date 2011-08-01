@@ -18,18 +18,16 @@ package de.zib.gndms.logic.model.gorfx.c3grid;
 
 
 
-import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.kit.config.MapConfig;
-import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowFactory;
-import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowProvider;
-import de.zib.gndms.model.common.PersistentContract;
-import de.zib.gndms.model.gorfx.types.DelegatingOrder;
+import de.zib.gndms.logic.model.TaskAction;
+import de.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
+import de.zib.gndms.logic.model.gorfx.taskflow.DefaultTaskFlowFactory;
 import de.zib.gndms.model.gorfx.types.ProviderStageInOrder;
 import de.zib.gndms.neomodel.common.Dao;
-import de.zib.gndms.neomodel.common.Session;
-import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
 import org.jetbrains.annotations.NotNull;
+
+import java.nio.channels.NonReadableChannelException;
 
 
 /**
@@ -41,23 +39,36 @@ import org.jetbrains.annotations.NotNull;
  *          User: stepn Date: 08.10.2008 Time: 13:54:07
  */
 public class ProviderStageInTaskFlowFactory
-	  implements TaskFlowFactory<ProviderStageInOrder, AbstractProviderStageInAction> {
+	  extends DefaultTaskFlowFactory<ProviderStageInOrder, ExternalProviderStageInQuoteCalculator> {
 
     private Dao dao;
+    private String taskFlowType; // todo initialise
+
+
+    public ProviderStageInTaskFlowFactory( ) {
+        // todo problem ExternalProvider.. is to concrete AbstractProvider.. would be better
+        setCalculatorClass( ExternalProviderStageInQuoteCalculator.class );
+        setOrderClass( ProviderStageInOrder.class );
+    }
 
     @Override
-    @NotNull
-    public AbstractProviderStageInQuoteCalculator newInstance(@NotNull final String offerType)
-            throws IllegalAccessException, InstantiationException, ClassNotFoundException {
-        final @NotNull MapConfig config = new MapConfig(getDao().getOfferTypeConfig(offerType));
-	    final Class<? extends AbstractProviderStageInQuoteCalculator> orqCalculatorClass =
-		      config.getClassOption(
-				    AbstractProviderStageInQuoteCalculator.class, "estimationClass",
-				    ExternalProviderStageInOrderCalculator.class);
-	    final AbstractProviderStageInQuoteCalculator instance = orqCalculatorClass.newInstance();
-	    injectMembers(instance);
-	    return instance;
+    public ExternalProviderStageInQuoteCalculator getQuoteCalculator() {
+
+        ExternalProviderStageInQuoteCalculator calculon = super.getQuoteCalculator();    // overriden method implementation
+
+        final @NotNull MapConfig config = new MapConfig(getDao().getTaskFlowTypeConfig( taskFlowType ));
+        try {
+            final Class<? extends AbstractProviderStageInQuoteCalculator> orqCalculatorClass =
+                config.getClassOption(
+                    AbstractProviderStageInQuoteCalculator.class, "estimationClass",
+                    ExternalProviderStageInQuoteCalculator.class );
+        } catch ( ClassNotFoundException e ) {
+            throw new RuntimeException( e );
+        }
+        // injectMembers(instance);
+        return calculon;
     }
+
 
     public Dao getDao() {
         return dao;
@@ -68,34 +79,14 @@ public class ProviderStageInTaskFlowFactory
     }
 
 
-    public static class Aux {
-
-        public static TaskFlow fromTask( final Dao dao, final TaskFlowProvider provider, final String type,
-                                         final String id ) {
-
-            final Session ses = dao.beginSession();
-            try {
-                final Task t = ses.findTaskForResource( id );
-                if ( t == null )
-                    return null;
-                final TaskFlowFactory tff = provider.getFactoryForTaskFlow( type );
-                final TaskFlow tf = tff.createOrphan();
-                tf.setId( t.getResourceId() );
-                tf.setOrder( ( DelegatingOrder<?> ) t.getPayload() );
-                tf.addQuote( quoteFromContract( t.getContract() ) );
-                tf.setTaskling( t.getTaskling() );
-                tff.adopt( tf );
-                ses.success();
-                return tf;
-            } finally {
-                ses.finish();
-            }
-        }
+    @Override
+    protected TaskFlow<ProviderStageInOrder> prepare( TaskFlow<ProviderStageInOrder> providerStageInOrderTaskFlow ) {
+        return providerStageInOrderTaskFlow;
+    }
 
 
-        public static Quote quoteFromContract( PersistentContract contract ) {
-
-            return contract.toTransientContract();
-        }
+    @Override
+    public TaskAction createAction() {
+        return null;  // todo check which action to create
     }
 }

@@ -46,7 +46,7 @@ public interface TaskAccessor extends GridResourceItf, TimedGridResourceItf {
     @NotNull String getDescription();
 
     @Nullable
-    TaskFlowType getOfferType();
+    TaskFlowType getTaskFlowType();
 
     @Nullable Calendar getTerminationTime();
 

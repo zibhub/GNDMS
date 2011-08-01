@@ -133,7 +133,7 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
         setProperty(DESCRIPTION_P, description);
     }
 
-    public TaskFlowType getOfferType() {
+    public TaskFlowType getTaskFlowType() {
         final Relationship rel = repr().getSingleRelationship(TaskRelationships.OFFER_TYPE_REL, Direction.OUTGOING);
         if (rel == null)
             return null;
@@ -141,12 +141,12 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
             return new TaskFlowType(reprSession(), session().getGridName(), rel.getEndNode());
     }
 
-    public void setOfferType(@Nullable TaskFlowType offerType) {
+    public void setTaskFlowType( @Nullable TaskFlowType taskFlowType ) {
         final Relationship rel = repr().getSingleRelationship(TaskRelationships.OFFER_TYPE_REL, Direction.OUTGOING);
         if (rel != null)
             rel.delete();
-        if (offerType != null)
-            repr().createRelationshipTo(offerType.repr(getReprSession()), TaskRelationships.OFFER_TYPE_REL);
+        if ( taskFlowType != null)
+            repr().createRelationshipTo( taskFlowType.repr(getReprSession()), TaskRelationships.OFFER_TYPE_REL);
     }
 
     public @Nullable
@@ -290,7 +290,7 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
         final List<Task> subTasks = new LinkedList<Task>();
         for (Relationship rel : repr().getRelationships(TaskRelationships.PARENT_REL, Direction.INCOMING)) {
             final Task task        = new Task(getReprSession(), getTypeNick(), rel.getStartNode());
-            final TaskFlowType taskOT = task.getOfferType();
+            final TaskFlowType taskOT = task.getTaskFlowType();
             if ((ot == null) ? taskOT == null : ot.equals(taskOT))
                 subTasks.add(task);
         }
@@ -300,7 +300,7 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
     public Task createSubTask() {
         Task subTask = session().createTask();
         Relationship rel = subTask.repr(session()).createRelationshipTo(repr(), TaskRelationships.PARENT_REL);
-        subTask.setOfferType(getOfferType());
+        subTask.setTaskFlowType( getTaskFlowType() );
         setContract(getContract());
         setDescription(getDescription());
         setPayload(getPayload());
@@ -460,7 +460,7 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
                     return descr;
                 }
 
-                public TaskFlowType getOfferType() throws UnsupportedOperationException {
+                public TaskFlowType getTaskFlowType() throws UnsupportedOperationException {
                     throw new UnsupportedOperationException();
                 }
 

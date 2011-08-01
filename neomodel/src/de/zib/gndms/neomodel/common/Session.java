@@ -59,14 +59,14 @@ public class Session {
     }
 
 
-    public TaskFlowType createOfferType() {
+    public TaskFlowType createTaskFlowType() {
         final Node node = gdb.createNode();
         final TaskFlowType offerType = new TaskFlowType(reprSession, OFFER_TYPE_T, node);
         offerType.onCreate(reprSession);
         return offerType;
     }
 
-    @NotNull public TaskFlowType findOfferType(@NotNull String offerTypeId) {
+    @NotNull public TaskFlowType findTaskFlowType( @NotNull String offerTypeId ) {
         return new TaskFlowType(reprSession, OFFER_TYPE_T,
                 getTypeIndex(OFFER_TYPE_T).get(gridName, offerTypeId).getSingle());
     }

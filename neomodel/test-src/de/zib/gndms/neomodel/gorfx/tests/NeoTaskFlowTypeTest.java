@@ -17,46 +17,46 @@ package de.zib.gndms.neomodel.gorfx.tests;
  */
 
 import de.zib.gndms.model.common.ImmutableScopedName;
-import de.zib.gndms.neomodel.gorfx.OfferType;
+import de.zib.gndms.neomodel.gorfx.TaskFlowType;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 
 import java.util.HashMap;
 
 /**
- * NeoOfferTypeTest
+ * NeoTaskFlowTypeTest
  *
  * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
  * User: stepn Date: 05.09.2008 Time: 14:48:36
  */
-public class NeoOfferTypeTest extends NeoTest {
+public class NeoTaskFlowTypeTest extends NeoTest {
 
     @Test( groups = { "neo" } )
-    public void createOfferType() {
-        OfferType ot = session.createOfferType();
+    public void createTaskFlowType() {
+        TaskFlowType ot = session.createTaskFlowType();
 
         ot.setId("offerTypeNr1");
         ot.setCalculatorFactoryClassName("cfn");
         ot.setTaskActionFactoryClassName("tfn");
         ot.setConfigMapData(new HashMap<String,String>());
-        ot.setOfferArgumentType(new ImmutableScopedName("a", "b"));
-        ot.setOfferResultType(new ImmutableScopedName("x", "z"));
+        ot.setTaskFlowArgumentType( new ImmutableScopedName( "a", "b" ) );
+        ot.setTaskFlowResultType( new ImmutableScopedName( "x", "z" ) );
 
         session.success();
     }
 
-    @Test( groups = { "neo" }, dependsOnMethods = { "createOfferType" } )
-    public void findOfferType() {
-        OfferType ot = session.findOfferType("offerTypeNr1");
+    @Test( groups = { "neo" }, dependsOnMethods = { "createTaskFlowType" } )
+    public void findTaskFlowType() {
+        TaskFlowType ot = session.findTaskFlowType("offerTypeNr1");
 
         assertEquals(ot.getId(), "offerTypeNr1");
         assertEquals(ot.getCalculatorFactoryClassName(), "cfn");
         assertEquals(ot.getTaskActionFactoryClassName(), "tfn");
         assertEquals(ot.getConfigMapData(), new HashMap<String, String>());
-        assertTrue(ot.getOfferArgumentType().equalFields(new ImmutableScopedName("a", "b")));
-        assertTrue(ot.getOfferResultType().equalFields(new ImmutableScopedName("x", "z")));
+        assertTrue(ot.getTaskFlowArgumentType().equalFields(new ImmutableScopedName("a", "b")));
+        assertTrue(ot.getTaskFlowResultType().equalFields(new ImmutableScopedName("x", "z")));
 
         ot.delete(session);
 

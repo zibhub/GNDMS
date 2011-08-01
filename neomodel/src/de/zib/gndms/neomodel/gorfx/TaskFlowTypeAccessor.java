@@ -17,7 +17,7 @@ import java.util.Map;
 public interface TaskFlowTypeAccessor extends GridResourceItf {
     @NotNull String getId();
 
-    @NotNull String getOfferTypeKey();
+    @NotNull String getTaskFlowTypeKey();
 
     String getTaskActionFactoryClassName();
 
@@ -25,8 +25,8 @@ public interface TaskFlowTypeAccessor extends GridResourceItf {
 
     Map<String, String> getConfigMapData();
 
-    ImmutableScopedName getOfferArgumentType();
+    ImmutableScopedName getTaskFlowArgumentType();
 
-    ImmutableScopedName getOfferResultType();
+    ImmutableScopedName getTaskFlowResultType();
 
 }

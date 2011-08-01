@@ -84,7 +84,7 @@ public class ConfigOfferTypeAction extends ConfigAction<String> {
 
 
     /**
-     * Retrieves the <tt>TaskFlowType</tt> entity with the primary key <tt>getOfferType()</tt>
+     * Retrieves the <tt>TaskFlowType</tt> entity with the primary key <tt>getTaskFlowType()</tt>
      * and the entityclass <tt>TaskFlowType.class</tt>, which is managed by <tt>em</tt>.
      *
      * <p> Depending on the <tt>UpdateMode</tt> it will manipulate the entity's configuration map.

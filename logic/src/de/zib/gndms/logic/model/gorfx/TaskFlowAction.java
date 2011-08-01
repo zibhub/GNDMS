@@ -70,9 +70,9 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends DefaultTas
         if (! isRestartedTask) {
             final Session session = getDao().beginSession();
             try {
-                final TaskFlowType ot = session.findOfferType(offerTypeId);
+                final TaskFlowType ot = session.findTaskFlowType( offerTypeId );
                 final Task task = getModel().getTask(session);
-                task.setOfferType(ot);
+                task.setTaskFlowType( ot );
                 task.setWID(wid);
                 task.setORQ( order );
                 session.success();
@@ -96,7 +96,7 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends DefaultTas
     public Map<String, String> getOfferTypeConfigMapData() {
         final Session session = getDao().beginSession();
         try {
-            final TaskFlowType ot = session.findOfferType(getOfferTypeId());
+            final TaskFlowType ot = session.findTaskFlowType( getOfferTypeId() );
             final Map<String,String> configMapData = ot.getConfigMapData();
             session.finish();
             return configMapData;

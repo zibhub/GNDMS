@@ -75,8 +75,8 @@ public class SetupTaskFlowAction extends SetupAction<ConfigActionResult> {
     //@ConfigOption(altName = "class", descr="FQN of QuoteCalculator class for this TaskFlowType")
     //private Class<? extends QuoteCalculator<?, ?>> calcClass;
 
-    @ConfigOption(descr="FQN of QuoteCalculator factory class")
-    private Class<KeyFactory<String, AbstractQuoteCalculator<?>>> calcFactory;
+    @ConfigOption(descr="FQN of QuoteCalculator class")
+    private Class<AbstractQuoteCalculator<?>> calcFactory;
 
     //@ConfigOption(altName = "class", descr="FQN of TaskAction class for this TaskFlowType")
     //private Class<? extends TaskAction<?>> taskActionClass;
@@ -200,7 +200,7 @@ public class SetupTaskFlowAction extends SetupAction<ConfigActionResult> {
      *      the primary key {@code getOfferType()}
      */
     private void executeDelete(final Session session) {
-        session.findOfferType(getOfferType()).delete();
+        session.findTaskFlowType( getOfferType() ).delete();
     }
 
 
@@ -213,15 +213,15 @@ public class SetupTaskFlowAction extends SetupAction<ConfigActionResult> {
      */
     @SuppressWarnings({ "MethodWithMoreThanThreeNegations", "FeatureEnvy" })
     private void executeUpdate(final Session session) {
-        final @NotNull TaskFlowType type = session.findOfferType(getOfferType());
+        final @NotNull TaskFlowType type = session.findTaskFlowType( getOfferType() );
         if (calcFactory != null)
             type.setCalculatorFactoryClassName(calcFactory.getCanonicalName());
         if (taskActionFactory != null)
             type.setTaskActionFactoryClassName(taskActionFactory.getCanonicalName());
         if (orqType != null)
-            type.setOfferArgumentType(orqType);
+            type.setTaskFlowArgumentType( orqType );
         if (resType != null)
-            type.setOfferResultType(resType);
+            type.setTaskFlowResultType( resType );
         pushConfigProps(type);        
     }
 
@@ -234,12 +234,12 @@ public class SetupTaskFlowAction extends SetupAction<ConfigActionResult> {
      */
     @SuppressWarnings({ "FeatureEnvy" })
     private void executeCreate(final Session session) {
-        final TaskFlowType type = session.createOfferType();
-        type.setOfferTypeKey(getOfferType());
+        final TaskFlowType type = session.createTaskFlowType();
+        type.setTaskFlowTypeKey( getOfferType() );
         type.setCalculatorFactoryClassName(getCalcFactory().getCanonicalName());
         type.setTaskActionFactoryClassName(getTaskActionFactory().getCanonicalName());
-        type.setOfferArgumentType(orqType);
-        type.setOfferResultType(resType);
+        type.setTaskFlowArgumentType( orqType );
+        type.setTaskFlowResultType( resType );
         pushConfigProps(type);
     }
 
@@ -306,14 +306,13 @@ public class SetupTaskFlowAction extends SetupAction<ConfigActionResult> {
     }
 
 
-    public Class<KeyFactory<String, AbstractQuoteCalculator<?>>> getCalcFactory() {
+    public Class<AbstractQuoteCalculator<?>> getCalcFactory() {
         return calcFactory;
     }
 
 
-    public void setCalcFactory(
-            final Class<KeyFactory<String, AbstractQuoteCalculator<?>>> calcFactoryParam) {
-        calcFactory = calcFactoryParam;
+    public void setCalcFactory( Class<AbstractQuoteCalculator<?>> calcFactory ) {
+        this.calcFactory = calcFactory;
     }
 
 

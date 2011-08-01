@@ -36,18 +36,23 @@ import de.zib.gndms.neomodel.gorfx.TaskFlow;
 public class FileTransferTaskFlowFactory
     extends DefaultTaskFlowFactory<FileTransferOrder, FileTransferQuoteCalculator> {
 
+
     @Override
-    public AbstractQuoteCalculator<?> newInstance(final String offerType)
-            throws IllegalAccessException, InstantiationException, ClassNotFoundException {
-	    final FileTransferQuoteCalculator quoteCalculator = new FileTransferQuoteCalculator();
-	    injectMembers( quoteCalculator );
-	    return quoteCalculator;
+    public FileTransferQuoteCalculator getQuoteCalculator() {
+        final FileTransferQuoteCalculator quoteCalculator = super.getQuoteCalculator();
+        injectMembers( quoteCalculator );
+        return quoteCalculator;
+    }
+
+
+    private void injectMembers( FileTransferQuoteCalculator quoteCalculator ) {
+        // Implement Me. Pretty Please!!!
     }
 
 
     @Override
     protected TaskFlow<FileTransferOrder> prepare( TaskFlow<FileTransferOrder> fileTransferOrderTaskFlow ) {
-        return null;  // not required here
+        return fileTransferOrderTaskFlow;
     }
 
 
