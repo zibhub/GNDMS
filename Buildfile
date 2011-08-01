@@ -358,7 +358,7 @@ define 'gndms' do
       test.with COMMONS_IO
       test.compile
 
-      test.include 'de.zib.gndms.neomodel.gorfx.tests.NeoOfferTypeTest'
+      test.include 'de.zib.gndms.neomodel.gorfx.tests.NeoTaskFlowTypeTest'
       test.include 'de.zib.gndms.neomodel.gorfx.tests.NeoTaskTest'
       
       package :jar      
@@ -374,7 +374,7 @@ define 'gndms' do
 
     desc 'GT4-dependent utility classes for GNDMS'
     define 'kit', :layout => dmsLayout('kit', 'gndms-kit') do
-      compile.with JETTY, GROOVY, GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('stuff'), project('model'), project('neomodel'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_AXIS, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, INJECT, GT4_SERVLET, COMMONS_LANG, OPENJPA, SLF4J, JSON, SPRING, JNA
+      compile.with JETTY, GROOVY, GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('common'), project('stuff'), project('model'), project('neomodel'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_AXIS, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, INJECT, GT4_SERVLET, COMMONS_LANG, OPENJPA, SLF4J, JSON, SPRING, JNA
       compile
       test.compile
       test.using :testng
@@ -398,7 +398,7 @@ define 'gndms' do
     desc 'GNDMS core infrastructure classes'
     define 'infra', :layout => dmsLayout('infra', 'gndms-infra') do
       # Infra *must* have all dependencies since we use this list in copy/link-deps
-      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gritserv'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), ARGS4J, JODA_TIME, JAXB, GT4_SERVLET, JETTY, CXF, GROOVY, GOOGLE_COLLECTIONS, INJECT, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies, COMMONS_FILEUPLOAD, NEODATAGRAPH, SLF4J, SPRING
+      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('common'), project('gritserv'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), ARGS4J, JODA_TIME, JAXB, GT4_SERVLET, JETTY, CXF, GROOVY, GOOGLE_COLLECTIONS, INJECT, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies, COMMONS_FILEUPLOAD, NEODATAGRAPH, SLF4J, SPRING
       compile
       package :jar
       doc projects('gndms:stuff', 'gndms:model', 'gndms:gritserv', 'gndms:kit', 'gndms:logic')

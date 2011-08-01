@@ -34,7 +34,7 @@ public class TaskFlowActionMetaFactory extends OfferTypeMetaFactory<TaskFlowActi
 
     @Override
     public String getFactoryClassName(final String key) {
-        return getDao().getOfferTypeTaskActionFactoryClassName(key);
+        return getDao().getTaskFlowTypeTaskActionFactoryClassName( key );
     }
 
 

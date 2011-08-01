@@ -45,20 +45,21 @@ import java.util.List;
  *
  *          User: stepn Date: 27.10.2008 Time: 13:29:13
  */
-public class ExternalProviderStageInOrderCalculator extends AbstractProviderStageInQuoteCalculator {
+public class ExternalProviderStageInQuoteCalculator extends
+    AbstractProviderStageInQuoteCalculator {
 	public static final long GLOBUS_DEATH_DURATION = 60000L;
     public static final int EXIT_CODE_UNFULFILLABLE = 127;
     public static final int EXIT_CODE_PERMISSION_DENIED = 126;
 
 	private static final int INITIAL_STRING_BUILDER_CAPACITY = 4096;
 
-	private @NotNull final Logger logger = LoggerFactory.getLogger(ExternalProviderStageInOrderCalculator.class);
+	private @NotNull final Logger logger = LoggerFactory.getLogger(ExternalProviderStageInQuoteCalculator.class);
 
 	private ParmFormatAux parmAux;
 	private SystemInfo sysInfo;
 
 
-	public ExternalProviderStageInOrderCalculator() {
+	public ExternalProviderStageInQuoteCalculator() {
         super( );
 		parmAux = new ParmFormatAux();
     }
@@ -70,7 +71,7 @@ public class ExternalProviderStageInOrderCalculator extends AbstractProviderStag
         final @NotNull Quote result;
 
 
-        MapConfig config = new MapConfig( getDao().getOfferTypeConfig( getOrderBean().getTaskFlowType() ) );
+        MapConfig config = new MapConfig( getDao().getTaskFlowTypeConfig( getOrderBean().getTaskFlowType() ) );
         
         parmAux.formatFromMap( config );
 

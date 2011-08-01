@@ -20,7 +20,7 @@ import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.common.PermissionInfo;
 import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.gorfx.types.TaskState;
-import de.zib.gndms.neomodel.gorfx.OfferType;
+import de.zib.gndms.neomodel.gorfx.TaskFlowType;
 import de.zib.gndms.neomodel.gorfx.Task;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
@@ -42,20 +42,20 @@ public class NeoTaskTest extends NeoTest {
 
     @Test( groups = { "neo" } )
     public void createTask() {
-        OfferType ot = session.createOfferType();
+        TaskFlowType ot = session.createTaskFlowType();
         ot.setId("offerTypeNr1");
         ot.setCalculatorFactoryClassName("cfn");
         ot.setTaskActionFactoryClassName("tfn");
         ot.setConfigMapData(new HashMap<String,String>());
-        ot.setOfferArgumentType(new ImmutableScopedName("a", "b"));
-        ot.setOfferResultType(new ImmutableScopedName("x", "z"));
+        ot.setTaskFlowArgumentType(new ImmutableScopedName("a", "b"));
+        ot.setTaskFlowResultType(new ImmutableScopedName("x", "z"));
 
         newTask(ot, TASK_ID);
 
         session.success();
     }
 
-    private Task newTask(OfferType ot, String id) {
+    private Task newTask(TaskFlowType ot, String id) {
         Task task = session.createTask();
         task.setBroken(true);
         task.setDone(true);
@@ -65,7 +65,7 @@ public class NeoTaskTest extends NeoTest {
         task.setTaskState(TaskState.FAILED);
         task.setDescription("Will #fail");
         task.setId(id);
-        task.setOfferType(ot);
+        task.setTaskFlowType(ot);
         task.setPayload(1);
         task.addCause(new RuntimeException("LOL"));
         task.setTerminationTime(CLASS_STARTUP_TIME);
@@ -95,9 +95,9 @@ public class NeoTaskTest extends NeoTest {
         assertEquals(task.getCause().getLast().getMessage(), "LOL");
 
 
-        OfferType ot = session.findOfferType("offerTypeNr1");
-        assertEquals(task.getOfferType().getId(), ot.getId());
-        assertEquals(task.getOfferType().getOfferResultType().getLocalName(), "z");
+        TaskFlowType ot = session.findTaskFlowType("offerTypeNr1");
+        assertEquals(task.getTaskFlowType().getId(), ot.getId());
+        assertEquals(task.getTaskFlowType().getTaskFlowResultType().getLocalName(), "z");
         assertEquals((long) task.getContract().getExpectedSize(), 15L);
         assertEquals(task.getORQ(), "fufu");
         assertEquals(task.getPermissionInfo().getUserName(), "fonzi");
@@ -108,7 +108,7 @@ public class NeoTaskTest extends NeoTest {
 
     @Test( groups = { "neo" }, dependsOnMethods = { "checkTask" } )
     public void createSubTasks() {
-        OfferType ot = session.findOfferType("offerTypeNr1");
+        TaskFlowType ot = session.findTaskFlowType("offerTypeNr1");
 
         Task t1 = newTask(ot, "t1");
         Task t2 = newTask(ot, "t2");
@@ -214,7 +214,7 @@ public class NeoTaskTest extends NeoTest {
         Task task = session.findTask(TASK_ID);
         task.delete();
 
-        OfferType ot = session.findOfferType("offerTypeNr1");
+        TaskFlowType ot = session.findTaskFlowType("offerTypeNr1");
         ot.delete();
         session.success();
     }

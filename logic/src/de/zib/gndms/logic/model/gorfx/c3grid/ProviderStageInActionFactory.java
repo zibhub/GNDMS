@@ -42,7 +42,7 @@ public class ProviderStageInActionFactory
     @Override
     public TaskFlowAction<?> newInstance(final String offerType)
             throws IllegalAccessException, InstantiationException, ClassNotFoundException {
-        final @NotNull MapConfig config = new MapConfig(getDao().getOfferTypeConfig(offerType));
+        final @NotNull MapConfig config = new MapConfig(getDao().getTaskFlowTypeConfig( offerType ));
 	    final Class<? extends AbstractProviderStageInAction> instanceClass = config.getClassOption(
 		      AbstractProviderStageInAction.class, "stagingClass",
 		      ExternalProviderStageInAction.class);
