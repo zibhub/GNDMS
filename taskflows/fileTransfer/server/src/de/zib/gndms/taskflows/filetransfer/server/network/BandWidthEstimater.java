@@ -1,4 +1,5 @@
-package de.zib.gndms.taskflows.dummy;
+package de.zib.gndms.taskflows.filetransfer.server.network;
+
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -15,35 +16,24 @@ package de.zib.gndms.taskflows.dummy;
  * limitations under the License.
  */
 
-import de.zib.gndms.common.model.gorfx.types.TaskResult;
+
 
 /**
- * @author try ma ik jo rr a zib
- * @date 14.03.11  11:12
- * @brief The result of the dummy task flow.
  *
- * Since the dummy taskflow only writes stuff, a string is enough here.
+ * An Interface for an Bandwith estimator.
+ * 
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
+ * <p/>
+ * User: mjorra, Date: 30.09.2008, Time: 11:33:40
  */
-public class DummyTaskFlowResult implements TaskResult<String> {
+public interface BandWidthEstimater {
 
-    private String result;
-
-
-    public DummyTaskFlowResult() {
-    }
-
-
-    public DummyTaskFlowResult( String s ) {
-        result = s;
-    }
-
-
-    public String getResult() {
-        return result;
-    }
-
-
-    public void setResult( String result ) {
-        this.result = result;
-    }
+    /**
+     * Estimates the bandwidth between to given hosts.
+     *
+     * @return Returns the estimaed speed in byte/s or NULL if there is
+     *         they are not connected. (Maybe because one of the hosts doesn't exist)
+     */
+    public Float estimateBandWidthFromTo( String src, String tgt );
 }

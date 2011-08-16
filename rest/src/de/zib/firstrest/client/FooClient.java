@@ -23,8 +23,6 @@ import org.springframework.oxm.xstream.XStreamMarshaller;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
-import javax.xml.ws.http.HTTPException;
 import java.util.ArrayList;
 
 /**

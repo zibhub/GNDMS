@@ -1,4 +1,5 @@
-package de.zib.gndms.taskflows.dummy;
+package de.zib.gndms.taskflows.filetransfer.client.model.tools;
+
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -15,35 +16,16 @@ package de.zib.gndms.taskflows.dummy;
  * limitations under the License.
  */
 
-import de.zib.gndms.common.model.gorfx.types.TaskResult;
+
+import de.zib.gndms.model.gorfx.types.io.TaskResultWriter;
 
 /**
- * @author try ma ik jo rr a zib
- * @date 14.03.11  11:12
- * @brief The result of the dummy task flow.
- *
- * Since the dummy taskflow only writes stuff, a string is enough here.
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
+ * <p/>
+ * User: mjorra, Date: 13.10.2008, Time: 13:06:29
  */
-public class DummyTaskFlowResult implements TaskResult<String> {
+public interface FileTransferResultWriter extends TaskResultWriter {
 
-    private String result;
-
-
-    public DummyTaskFlowResult() {
-    }
-
-
-    public DummyTaskFlowResult( String s ) {
-        result = s;
-    }
-
-
-    public String getResult() {
-        return result;
-    }
-
-
-    public void setResult( String result ) {
-        this.result = result;
-    }
+    public void writeFiles( String[] files );
 }
