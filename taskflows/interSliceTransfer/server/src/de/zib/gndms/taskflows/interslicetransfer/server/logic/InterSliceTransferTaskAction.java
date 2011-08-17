@@ -18,9 +18,9 @@ package de.zib.gndms.GORFX.action;
 
 
 
-import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
+import de.zib.gndms.logic.model.gorfx.OrderTaskAction;
 import de.zib.gndms.logic.model.gorfx.FileTransferTaskAction;
-import de.zib.gndms.model.gorfx.types.InterSliceTransferORQ;
+import de.zib.gndms.model.gorfx.types.InterSliceTransferOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
@@ -36,7 +36,7 @@ import javax.persistence.EntityManager;
  * <p/>
  * User: mjorra, Date: 04.11.2008, Time: 17:45:47
  */
-public class InterSliceTransferTaskAction extends ORQTaskAction<InterSliceTransferORQ> {
+public class InterSliceTransferTaskAction extends OrderTaskAction<InterSliceTransferORQ> {
 
 
     public InterSliceTransferTaskAction() {
@@ -53,8 +53,8 @@ public class InterSliceTransferTaskAction extends ORQTaskAction<InterSliceTransf
         final Session session = getDao().beginSession();
         try {
             final Task task = getTask(session);
-            InterSliceTransferORQ orq = (InterSliceTransferORQ) task.getORQ();
-            InterSliceTransferORQCalculator.checkURIs( orq );
+            InterSliceTransferOrder orq = (InterSliceTransferORQ) task.getORQ();
+            InterSliceTransferOrderCalculator.checkURIs( orq );
 
 
             final Task st = task.createSubTask();
@@ -86,7 +86,7 @@ public class InterSliceTransferTaskAction extends ORQTaskAction<InterSliceTransf
 
 
     @NotNull
-    public Class<InterSliceTransferORQ> getOrqClass() {
-        return InterSliceTransferORQ.class;
+    public Class<InterSliceTransferOrder> getOrqClass() {
+        return InterSliceTransferOrder.class;
     }
 }

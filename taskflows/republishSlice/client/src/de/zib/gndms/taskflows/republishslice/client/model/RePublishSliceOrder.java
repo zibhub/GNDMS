@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types;
+package de.zib.gndms.taskflows.republishslice.client.model;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -17,6 +17,7 @@ package de.zib.gndms.model.gorfx.types;
  */
 
 
+import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
 
 /**
  * ORQ for a slice publishing.

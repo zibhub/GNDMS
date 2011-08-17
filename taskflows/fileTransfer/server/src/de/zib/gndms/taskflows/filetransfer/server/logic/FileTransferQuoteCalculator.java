@@ -18,7 +18,7 @@ package de.zib.gndms.taskflows.filetransfer.server.logic;
 
 
 
-import de.zib.gndms.model.gorfx.types.FileTransferOrder;
+import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferOrder;
 
 /**
  * @author  try ma ik jo rr a zib
@@ -32,22 +32,5 @@ public class FileTransferQuoteCalculator extends AbstractTransferQuoteCalculator
     public FileTransferQuoteCalculator() {
         super( );
         setScheme( "gsiftp" );
-    }
-
-
-    /**
-     * Weak order validation.
-     *
-     * Just checks if source and destination URI are provided and are valid URI's. but NOT if the resources exist.
-     *
-     * @return true if the parameters are set.
-     */
-    @Override
-    public boolean validate() {
-        FileTransferOrder order = getOrderBean();
-        if( order == null )
-            throw new IllegalStateException( "No order provided" );
-
-        return uriCheck( order.getSourceURI() ) && uriCheck( order.getDestinationURI() );
     }
 }

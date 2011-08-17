@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types;
+package de.zib.gndms.GORFX.action;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -18,23 +18,26 @@ package de.zib.gndms.model.gorfx.types;
 
 
 
-import de.zib.gndms.model.dspace.types.SliceRef;
+import de.zib.gndms.logic.model.gorfx.OrderTaskAction;
+import de.zib.gndms.model.common.types.factory.InjectingRecursiveKeyFactory;
+import de.zib.gndms.model.gorfx.OfferType;
+
 
 /**
  * @author  try ma ik jo rr a zib
  * @version  $Id$
  * <p/>
- * User: mjorra, Date: 11.11.2008, Time: 13:16:04
+ * User: mjorra, Date: 04.11.2008, Time: 17:44:10
  */
-public class RePublishSliceResult extends CommonSliceResult {
+public class InterSliceTransferActionFactory
+	  extends InjectingRecursiveKeyFactory<OfferType, OrderTaskAction<?>> {
 
-    public RePublishSliceResult( ) {
-        super( GORFXConstantURIs.RE_PUBLISH_SLICE_URI );
+    @Override
+    public OrderTaskAction<?> newInstance(final OfferType keyParam)
+            throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+	    final InterSliceTransferTaskAction action = new InterSliceTransferTaskAction();
+	    injectMembers(action);
+	    return action;
     }
 
-
-    public RePublishSliceResult( SliceRef destinationSlice ) {
-        super( GORFXConstantURIs.RE_PUBLISH_SLICE_URI );
-        setSliceRef( destinationSlice );
-    }
 }

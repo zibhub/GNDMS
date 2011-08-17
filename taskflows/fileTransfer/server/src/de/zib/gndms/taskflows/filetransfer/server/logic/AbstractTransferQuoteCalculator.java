@@ -21,9 +21,9 @@ package de.zib.gndms.taskflows.filetransfer.server.logic;
 import de.zib.gndms.common.model.gorfx.types.FutureTime;
 import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
+import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferOrder;
 import de.zib.gndms.taskflows.filetransfer.server.network.GNDMSFileTransfer;
 import de.zib.gndms.taskflows.filetransfer.server.network.NetworkAuxiliariesProvider;
-import de.zib.gndms.model.gorfx.types.FileTransferOrder;
 import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.exception.ClientException;
 import org.globus.ftp.exception.ServerException;
@@ -61,6 +61,23 @@ public abstract class AbstractTransferQuoteCalculator<M extends FileTransferOrde
         estimateTransferSize();
         estimateBandWidth();
         return Arrays.asList( calculateOffer( ) ) ;
+    }
+
+
+    /**
+     * Weak order validation.
+     *
+     * Just checks if source and destination URI are provided and are valid URI's. but NOT if the resources exist.
+     *
+     * @return true if the parameters are set.
+     */
+    @Override
+    public boolean validate() {
+        FileTransferOrder order = getOrderBean();
+        if( order == null )
+            throw new IllegalStateException( "No order provided" );
+
+        return uriCheck( order.getSourceURI() ) && uriCheck( order.getDestinationURI() );
     }
 
 
