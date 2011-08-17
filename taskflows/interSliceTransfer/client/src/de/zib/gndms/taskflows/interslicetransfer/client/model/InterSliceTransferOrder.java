@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types;
+package de.zib.gndms.taskflows.interslicetransfer.client.model;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -19,6 +19,8 @@ package de.zib.gndms.model.gorfx.types;
 
 
 import de.zib.gndms.model.dspace.types.SliceRef;
+import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
+import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferOrder;
 import org.jetbrains.annotations.NotNull;
 
 /**

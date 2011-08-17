@@ -1,4 +1,4 @@
-package de.zib.gndms.taskflows.filetransfer.client.model.tools;
+package de.zib.gndms.taskflows.filetransfer.client.tools;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -17,15 +17,22 @@ package de.zib.gndms.taskflows.filetransfer.client.model.tools;
  */
 
 
-import de.zib.gndms.model.gorfx.types.io.TaskResultWriter;
+
+import de.zib.gndms.model.gorfx.types.io.OrderWriter;
+
+import java.util.Map;
 
 /**
+ *
  * @author  try ma ik jo rr a zib
  * @version  $Id$
  * <p/>
- * User: mjorra, Date: 13.10.2008, Time: 13:06:29
+ * User: mjorra, Date: 01.10.2008, Time: 16:43:40
  */
-public interface FileTransferResultWriter extends TaskResultWriter {
+public interface FileTransferOrderWriter extends OrderWriter {
 
-    public void writeFiles( String[] files );
+    public void writeSourceURI( String uri );
+    public void writeDestinationURI( String uri );
+
+    public void writeFileMap( Map<String,String> fm );
 }

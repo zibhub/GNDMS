@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types.io;
+package de.zib.gndms.GORFX.action;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -18,30 +18,26 @@ package de.zib.gndms.model.gorfx.types.io;
 
 
 
-import de.zib.gndms.model.gorfx.types.RePublishSliceResult;
+import de.zib.gndms.logic.model.gorfx.OrderTaskAction;
+import de.zib.gndms.model.common.types.factory.InjectingRecursiveKeyFactory;
+import de.zib.gndms.model.gorfx.OfferType;
+
 
 /**
  * @author  try ma ik jo rr a zib
  * @version  $Id$
  * <p/>
- * User: mjorra, Date: 17.11.2008, Time: 12:32:02
+ * User: mjorra, Date: 04.11.2008, Time: 17:44:10
  */
-public class RePublishSliceResultConverter extends
-    CommonSliceResultConverter<CommonSliceResultWriter, RePublishSliceResult> {
+public class InterSliceTransferActionFactory
+	  extends InjectingRecursiveKeyFactory<OfferType, OrderTaskAction<?>> {
 
-    public RePublishSliceResultConverter( ) {
-
+    @Override
+    public OrderTaskAction<?> newInstance(final OfferType keyParam)
+            throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+	    final InterSliceTransferTaskAction action = new InterSliceTransferTaskAction();
+	    injectMembers(action);
+	    return action;
     }
 
-    public RePublishSliceResultConverter( CommonSliceResultWriter writer, RePublishSliceResult model ) {
-        super( writer, model );
-    }
-
-    public void convert() {
-
-        checkedConvert();
-        super.convert();    //To change body of overridden methods use File | Settings | File Templates.
-        
-        getWriter().done();
-    }
 }

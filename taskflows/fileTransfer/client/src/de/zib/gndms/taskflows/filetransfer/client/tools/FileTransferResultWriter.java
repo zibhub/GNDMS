@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types;
+package de.zib.gndms.taskflows.filetransfer.client.tools;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -17,24 +17,15 @@ package de.zib.gndms.model.gorfx.types;
  */
 
 
-
-import de.zib.gndms.model.dspace.types.SliceRef;
+import de.zib.gndms.model.gorfx.types.io.TaskResultWriter;
 
 /**
  * @author  try ma ik jo rr a zib
  * @version  $Id$
  * <p/>
- * User: mjorra, Date: 11.11.2008, Time: 13:16:04
+ * User: mjorra, Date: 13.10.2008, Time: 13:06:29
  */
-public class RePublishSliceResult extends CommonSliceResult {
+public interface FileTransferResultWriter extends TaskResultWriter {
 
-    public RePublishSliceResult( ) {
-        super( GORFXConstantURIs.RE_PUBLISH_SLICE_URI );
-    }
-
-
-    public RePublishSliceResult( SliceRef destinationSlice ) {
-        super( GORFXConstantURIs.RE_PUBLISH_SLICE_URI );
-        setSliceRef( destinationSlice );
-    }
+    public void writeFiles( String[] files );
 }

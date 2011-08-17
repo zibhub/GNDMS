@@ -1,4 +1,4 @@
-package de.zib.gndms.taskflows.filetransfer.client.model.tools;
+package de.zib.gndms.taskflows.republishslice.client.tools;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -18,21 +18,19 @@ package de.zib.gndms.taskflows.filetransfer.client.model.tools;
 
 
 
+import de.zib.gndms.model.dspace.types.SliceRef;
 import de.zib.gndms.model.gorfx.types.io.OrderWriter;
 
 import java.util.Map;
 
 /**
- *
  * @author  try ma ik jo rr a zib
  * @version  $Id$
  * <p/>
- * User: mjorra, Date: 01.10.2008, Time: 16:43:40
+ * User: mjorra, Date: 12.11.2008, Time: 10:31:26
  */
-public interface FileTransferOrderWriter extends OrderWriter {
+public interface RePublishSliceOrderWriter extends OrderWriter {
 
-    public void writeSourceURI( String uri );
-    public void writeDestinationURI( String uri );
-
-    public void writeFileMap( Map<String,String> fm );
+    void writeSourceSlice( SliceRef sr );
+    void writeFileMap( Map<String, String> tm );
 }

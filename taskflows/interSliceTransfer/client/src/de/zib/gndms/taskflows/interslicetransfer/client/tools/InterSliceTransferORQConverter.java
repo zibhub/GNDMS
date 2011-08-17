@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types.io;
+package de.zib.gndms.taskflows.interslicetransfer.client.tools;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -18,26 +18,22 @@ package de.zib.gndms.model.gorfx.types.io;
 
 
 
-import de.zib.gndms.model.gorfx.types.RePublishSliceOrder;
+import de.zib.gndms.model.gorfx.types.InterSliceTransferOrder;
+import de.zib.gndms.model.gorfx.types.io.OrderConverter;
 
 /**
- * Converter for publish slice orqs.
- *
- * Pretty much the same as the InterSliceTransfer converter, but doesn't write the destination slice,
- * cause it isn't part of the initial request.
- * 
  * @author  try ma ik jo rr a zib
  * @version  $Id$
  * <p/>
  * User: mjorra, Date: 14.10.2008, Time: 14:48:27
  */
-public class RePublishSliceOrderConverter extends OrderConverter<RePublishSliceOrderWriter, RePublishSliceOrder> {
+public class InterSliceTransferORQConverter extends OrderConverter<InterSliceTransferORQWriter, InterSliceTransferOrder> {
 
-    public RePublishSliceOrderConverter() {
+    public InterSliceTransferORQConverter() {
     }
 
 
-    public RePublishSliceOrderConverter( RePublishSliceOrderWriter writer, RePublishSliceOrder model ) {
+    public InterSliceTransferORQConverter( InterSliceTransferORQWriter writer, InterSliceTransferOrder model ) {
         super( writer, model );
     }
 
@@ -45,6 +41,7 @@ public class RePublishSliceOrderConverter extends OrderConverter<RePublishSliceO
     public void convert() {
         super.convert();
         getWriter( ).writeSourceSlice( getModel().getSourceSlice() );
+        getWriter( ).writeDestinationSlice( getModel().getDestinationSlice() );
         if( getModel( ).hasFileMap( ) )
             getWriter( ).writeFileMap( getModel().getFileMap() );
 
