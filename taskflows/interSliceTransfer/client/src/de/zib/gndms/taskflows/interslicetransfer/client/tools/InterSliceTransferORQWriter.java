@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types.io;
+package de.zib.gndms.taskflows.interslicetransfer.client.tools;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -19,6 +19,7 @@ package de.zib.gndms.model.gorfx.types.io;
 
 
 import de.zib.gndms.model.dspace.types.SliceRef;
+import de.zib.gndms.model.gorfx.types.io.OrderWriter;
 
 import java.util.Map;
 
