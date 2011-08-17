@@ -1,4 +1,4 @@
-package de.zib.gndms.taskflows.filetransfer.client.model.tools;
+package de.zib.gndms.taskflows.filetransfer.client.tools;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)

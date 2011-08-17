@@ -60,13 +60,12 @@ public class InterSliceTransferTaskAction extends ORQTaskAction<InterSliceTransf
                 getCredentialProvider().getCredential() );
             InterSliceTransferORQCalculator.checkURIs( orq );
 
-	        final EntityManager em = getEmf().createEntityManager();
-            final NeoTask st = task.createSubTask();
+            final Task st = task.createSubTask();
 
             st.setId( getUUIDGen().nextUUID() );
             st.setTerminationTime( task.getTerminationTime() );
 
-
+	        final EntityManager em = getEmf().createEntityManager();
 	        FileTransferTaskAction fta = new FileTransferTaskAction(em, getDao(), new Taskling(getDao(), st.getId()));
             fta.setCredentialProvider( getCredentialProvider() );
 			// todo verify closing
