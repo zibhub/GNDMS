@@ -1024,3 +1024,35 @@ Rake::Task[:install].clear
 task :default do nope() end
 task :release do nope() end
 task :install do nope() end
+
+desc 'try some features of buildr'
+task 'sandbox' do 
+
+    puts "generates the projects atom name"
+    puts project( 'gndms' ).project('common').inspect
+    puts
+
+    puts "lists all packages from a project"
+    puts project('gndms').project('gorfx').packages.first
+    puts
+
+    puts "echos the full path to the jar created by given project"
+    puts project('gndms').project('common').packages.select { |pkg| pkg.type == :jar }
+    puts
+
+    puts "lists all sub-projects"
+    puts project( 'gndms' ).projects
+    puts
+
+    puts "lists all sub-projects base dirs"
+    puts project( 'gndms' ).projects.map( &:base_dir ) 
+    puts
+    
+    puts "lists all sub-projects name in uppercase "
+    list = project( 'gndms' ).projects.map( &:name ).each { |name| puts name.split(":")[1].upcase.tr( "-", "_") }
+    puts
+
+    puts "the parent package name"
+    puts project('gndms:stuff').parent.name
+    puts
+end
