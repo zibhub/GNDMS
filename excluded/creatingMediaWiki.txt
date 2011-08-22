@@ -1,0 +1,25 @@
+Use Pandoc to convert the md files:
+
+Either:
+
+pandoc --from=markdown --to=mediawiki installation-guide/index.md \
+architecture-primer/index.md developer-guide/index.md \
+glossary/index.md imprint/index.md index.md moni-guide/index.md \
+license/index.md -o all_raw.wiki
+
+Or the detour over html:
+
+pandoc --from=markdown --to=htmli installation-guide/index.md \
+architecture-primer/index.md developer-guide/index.md \
+glossary/index.md imprint/index.md index.md moni-guide/index.md \
+license/index.md -o all.html
+
+pandoc --from=html --to=mediawiki all.html -o all_raw.wiki
+
+Check wich of the two is closer to an error-free mediawiki file.
+
+Use sed script do beautify the result: 
+
+sed -file conv.sed all_raw.wiki > all.wiki
+
+Links must be fixed manually.

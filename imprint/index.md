@@ -20,7 +20,7 @@ layout: wikistyle
 
 ### Rechtliche Grundlagen
 
-[Gesetz ueber das Zentrum fuer Informationstechnik (ZInfG)](http://www.zib.de/General/Organization/gesetz/index.en.html)
+[Gesetz ueber das Zentrum fuer Informationstechnik (ZInfG)](http://www.zib.de/de/institut/struktur/gesetz.html)
 
 Trotz sorgfaeltiger inhaltlicher Kontrolle uebernehmen wir keine
 Haftung fuer die Inhalte.
@@ -47,7 +47,7 @@ seitens des Nutzers auf ausdruecklich freiwilliger Basis.
 
 ### Legal Grounds
 
-[Gesetz ueber das Zentrum fuer Informationstechnik (ZInfG)](http://www.zib.de/General/Organization/gesetz/index.en.html)
+[Gesetz ueber das Zentrum fuer Informationstechnik (ZInfG)](http://www.zib.de/en/institute/structure/law.html)
 
 Although we carefully revise all texts we assume no liability for the contents of external links for which solely the external provider is responsible.
 
