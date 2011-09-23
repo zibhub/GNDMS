@@ -139,18 +139,6 @@ public class TransformSliceAction extends AbstractModelEntityAction<Slice, Slice
         }
 
 
-        /*
-        boolean suc = true;
-        String[] ls = sl.getFileListing( );
-        for( int i=0; i < ls.length; ++i ) {
-            // todo maybe use gridftp for this crap, NEEDS CERT 
-            suc = suc &&
-                    DirectoryAux.Utils.copyFile(
-                            src_pth + File.separator + ls[i], tgt_pth + File.separator + ls[i]
-                    );
-        }
-        */
-
         directoryAux.copyDir( nsl.getOwner(), src_pth, tgt_pth );
 
         // restore slice path settings

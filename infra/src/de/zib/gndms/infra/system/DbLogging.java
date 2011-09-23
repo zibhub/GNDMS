@@ -18,6 +18,8 @@ package de.zib.gndms.infra.system;
 
 
 
+import de.zib.gndms.logic.util.LogicTools;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -31,9 +33,7 @@ public class DbLogging {
 
     public static void activate( String pathToLogFile  ) throws IOException {
 
-        System.setProperty("derby.infolog.append", "true");
-        System.setProperty("derby.language.logStatementText", "true");
-        System.setProperty("derby.stream.error.logSeverityLevel", "20000");
+        LogicTools.setDerbyToDebugMode();
 
 		File dbLogFile = new File( pathToLogFile, "derby.log");
 		if (!dbLogFile.exists())

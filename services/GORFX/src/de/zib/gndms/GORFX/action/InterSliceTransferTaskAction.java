@@ -64,7 +64,10 @@ public class InterSliceTransferTaskAction extends ORQTaskAction<InterSliceTransf
             st.setTerminationTime( task.getTerminationTime() );
 
 	        FileTransferTaskAction fta = new FileTransferTaskAction(em, getDao(), new Taskling(getDao(), st.getId()));
-            fta.setClosingEntityManagerOnCleanup( true );
+            fta.setCredentialProvider( getCredentialProvider() );
+            fta.setClosingEntityManagerOnCleanup( false );
+            fta.setEmf( getEmf( ) );
+
 
             fta.setLog( getLog() );
             fta.call( );

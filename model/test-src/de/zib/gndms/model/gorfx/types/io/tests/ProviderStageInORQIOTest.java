@@ -24,6 +24,7 @@ import org.joda.time.DateTime;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -38,8 +39,8 @@ public class ProviderStageInORQIOTest {
 
         DataDescriptor ddt = new DataDescriptor();
         DataConstraints dc = new DataConstraints();
-        String[] ol = { "hello", "world" };
-        String[] cfl = { "foo", "bar", "foobar", "blubber", };
+        List<String> ol = { "hello", "world" };
+        List<String> cfl = { "foo", "bar", "foobar", "blubber", };
         HashMap<String,String> cl = new HashMap<String,String>( );
         cl.put( "gibson", "les-paul");
         cl.put( "fender", "Stratocaster" );
@@ -74,15 +75,15 @@ public class ProviderStageInORQIOTest {
         ddt.setMetaDataFormat( mff );
         ddt.setMetaDataArchiveFormat( mfaf );
 
-        ProviderStageInORQ orq = new ProviderStageInORQ();
-        orq.setDataDescriptor( ddt );
-        orq.setActDataFile( "data_file" );
-        orq.setActMetadataFile( "meta_data_file" );
-        orq.setActId( "asdfjkl" );
+        ProviderStageInOrder order = new ProviderStageInOrder();
+        order.setDataDescriptor( ddt );
+        order.setActDataFile( "data_file" );
+        order.setActMetadataFile( "meta_data_file" );
+        order.setActId( "asdfjkl" );
 
         Properties prop = new Properties( );
-        ProviderStageInORQPropertyWriter wrt = new ProviderStageInORQPropertyWriter( prop );
-        ProviderStageInORQConverter conv = new ProviderStageInORQConverter( wrt, orq );
+        ProviderStageInOrderPropertyWriter wrt = new ProviderStageInOrderPropertyWriter( prop );
+        ProviderStageInOrderConverter conv = new ProviderStageInOrderConverter( wrt, order );
         conv.convert();
         try {
             prop.store( System.out, "hallo welt" );
@@ -90,10 +91,10 @@ public class ProviderStageInORQIOTest {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
-        ProviderStageInORQPropertyReader reader = new ProviderStageInORQPropertyReader( prop );
+        ProviderStageInOrderQPropertyReader reader = new ProviderStageInOrderQPropertyReader( prop );
         reader.begin( );
         reader.read();
-        ProviderStageInORQ rorq = reader.getProduct();
+        ProviderStageInOrder rorq = reader.getProduct();
 
         String fn = "StageIn_io_test_props.properties";
         try {
@@ -107,7 +108,7 @@ public class ProviderStageInORQIOTest {
         }
 
         // example of converter reusage
-        ProviderStageInORQStdoutWriter stdwrt = new ProviderStageInORQStdoutWriter( );
+        ProviderStageInOrderStdoutWriter stdwrt = new ProviderStageInOrderStdoutWriter( );
         conv.setWriter( stdwrt );
         conv.setModel( rorq );
         conv.convert( );
@@ -135,7 +136,7 @@ public class ProviderStageInORQIOTest {
 
         // example for just download
         DataDescriptor ddt2 = new DataDescriptor();
-        String[] objs = { "no", "download" };
+        List<String> objs = { "no", "download" };
 
         dff = "plain";
         dfaf = "zip";
@@ -181,10 +182,10 @@ public class ProviderStageInORQIOTest {
 
     }
 
-    public static void showORQ( ProviderStageInORQ orq ) {
+    public static void showORQ( ProviderStageInOrder order ) {
 
-        ProviderStageInORQStdoutWriter stdwrt = new ProviderStageInORQStdoutWriter( );
-        ProviderStageInORQConverter conv = new ProviderStageInORQConverter( stdwrt, orq );
+        ProviderStageInOrderStdoutWriter stdwrt = new ProviderStageInOrderStdoutWriter( );
+        ProviderStageInOrderConverter conv = new ProviderStageInOrderConverter( stdwrt, order );
         conv.convert( );
     }
 

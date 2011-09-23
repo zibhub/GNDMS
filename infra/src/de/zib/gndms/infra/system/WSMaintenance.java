@@ -19,7 +19,8 @@ package de.zib.gndms.infra.system;
 
 
 import de.zib.gndms.infra.action.WSActionCaller;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
@@ -30,11 +31,13 @@ import java.io.PrintWriter;
  * @version $Id$
  *          <p/>
  *          User: mjorra, Date: 27.01.2009, Time: 10:24:56
+ *
+ * Despite its name this class may still be useful in an non WS environment
  */
 public class WSMaintenance {
 
     private GNDMSystem system;
-    private final static Logger log = Logger.getLogger( WSMaintenance.class );
+    private final static Logger log = LoggerFactory.getLogger( WSMaintenance.class );
 
 
     public WSMaintenance( ) {

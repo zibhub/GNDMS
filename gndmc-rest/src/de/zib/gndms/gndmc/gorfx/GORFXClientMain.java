@@ -87,7 +87,7 @@ public class GORFXClientMain extends AbstractApplication {
 		// set dft attributes
 		dft.setMessage("Test task flow");
 		dft.setFailIntentionally(false);
-		executeTaskFlow(gorfxClient, dft.taskFlowType(), dft);
+		executeTaskFlow(gorfxClient, dft.getTaskFlowType(), dft);
 		*/
 	}
 

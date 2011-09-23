@@ -18,7 +18,7 @@ package de.zib.gndms.infra.action;
 
 
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import de.zib.gndms.c3resource.jaxb.Site;
 import de.zib.gndms.c3resource.jaxb.Workspace;
 import de.zib.gndms.infra.configlet.C3MDSConfiglet;

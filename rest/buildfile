@@ -1,11 +1,23 @@
 
 desc 'Test REST setup'
 define 'rest', :layout => dmsLayout('rest', 'test-rest') do
-    compile.with SPRING, SLF4J, XSTREAM, COMMONS_LOGGING, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME
+    compile.with SPRING, SLF4J, XSTREAM, COMMONS_LOGGING, SERVLET, CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME, ASPECTJ
     compile
 
     # workaround for builder dependence bug
     package(:war).enhance FileList[_(:web,  '**/*')]
     package :war
 
+   #run.using :main => "de.zib.firstrest.client.FooClient",
+   #          :java_args => [ "1" ]
+            
+    task 'cp' do
+        deps =  compile.dependencies.to_a  
+        tgt =  compile.target.to_s 
+        deps +=  [ tgt ]
+        cp = deps * ":"
+        puts "#{cp}"
+    end
 end
+
+# vim: ft=ruby

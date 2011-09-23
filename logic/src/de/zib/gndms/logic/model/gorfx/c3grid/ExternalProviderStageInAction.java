@@ -20,9 +20,9 @@ package de.zib.gndms.logic.model.gorfx.c3grid;
 
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
-import static de.zib.gndms.logic.model.gorfx.c3grid.ExternalProviderStageInORQCalculator.GLOBUS_DEATH_DURATION;
+import static de.zib.gndms.logic.model.gorfx.c3grid.ExternalProviderStageInQuoteCalculator.GLOBUS_DEATH_DURATION;
 import de.zib.gndms.model.dspace.Slice;
-import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
+import de.zib.gndms.model.gorfx.types.ProviderStageInOrder;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import de.zib.gndms.stuff.Sleeper;
@@ -59,7 +59,7 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
     @SuppressWarnings({ "HardcodedLineSeparator", "MagicNumber" })
     @Override
     protected void doStaging(
-            final MapConfig offerTypeConfigParam, final ProviderStageInORQ orqParam,
+            final MapConfig offerTypeConfigParam, final ProviderStageInOrder orderParam,
             final Slice sliceParam) {
 
         parmAux.formatFromMap( getOfferTypeConfig() );
@@ -72,7 +72,7 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
         final StringBuilder outRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
         final StringBuilder errRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
 
-        final ProcessBuilderAction action = parmAux.createPBAction(orqParam, null, actualPermissions() );
+        final ProcessBuilderAction action = parmAux.createPBAction( orderParam, null, actualPermissions() );
         action.setProcessBuilder(procBuilder);
         action.setOutputReceiver(outRecv);
         action.setErrorReceiver(errRecv);
@@ -99,7 +99,7 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
 	
 	@Override
 	protected void callCancel(final MapConfig offerTypeConfigParam,
-	                          final ProviderStageInORQ orqParam,
+	                          final ProviderStageInOrder orderParam,
                               final File sliceDir) {
 		final ProcessBuilder procBuilder = createProcessBuilder("cancelCommand", sliceDir);
 		if (procBuilder == null)
@@ -108,7 +108,7 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
 
 		final StringBuilder outRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
 		final StringBuilder errRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
-		final ProcessBuilderAction action = parmAux.createPBAction( orqParam, null, actualPermissions() );
+		final ProcessBuilderAction action = parmAux.createPBAction( orderParam, null, actualPermissions() );
 		action.setProcessBuilder(procBuilder);
 		action.setOutputReceiver(outRecv);
 		action.setErrorReceiver(errRecv);

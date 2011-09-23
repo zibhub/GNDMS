@@ -58,4 +58,13 @@ public class Foo {
     public void setValue( String value ) {
         this.value = value;
     }
+
+
+    @Override
+    public String toString() {
+        return "Foo{" +
+            "id='" + id + '\'' +
+            ", value='" + value + '\'' +
+            '}';
+    }
 }

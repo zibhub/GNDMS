@@ -18,7 +18,7 @@ package de.zib.gndms.model.gorfx.types.io;
 
 
 
-import de.zib.gndms.model.gorfx.types.AbstractTaskResult;
+import de.zib.gndms.model.gorfx.types.AbstractTaskFlowResult;
 
 /**
  * @author  try ma ik jo rr a zib
@@ -26,7 +26,7 @@ import de.zib.gndms.model.gorfx.types.AbstractTaskResult;
  * <p/>
  * User: mjorra, Date: 13.10.2008, Time: 12:42:34
  */
-public abstract class TaskResultConverter<W extends TaskResultWriter, M extends AbstractTaskResult> extends GORFXConverterBase<W,M>{
+public abstract class TaskResultConverter<W extends TaskResultWriter, M extends AbstractTaskFlowResult> extends GORFXConverterBase<W,M>{
 
     protected TaskResultConverter() {
     }

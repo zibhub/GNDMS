@@ -18,18 +18,18 @@ package de.zib.gndms.model.gorfx.types.io.xml;
 
 
 
-import de.zib.gndms.model.common.types.TransientContract;
-import de.zib.gndms.model.gorfx.types.AbstractORQ;
+import de.zib.gndms.common.model.gorfx.types.Quote;
+import de.zib.gndms.model.gorfx.types.AbstractOrder;
 
 
 /**
  * An ORQWrapper wrapper.
  *
- * Bundles an Offerrequest with its corresponding TransientContract.
+ * Bundles an Offerrequest with its corresponding Quote.
  *
  *
- * @see AbstractORQ
- * @see TransientContract
+ * @see de.zib.gndms.model.gorfx.types.AbstractOrder
+ * @see Quote
  * @author  try ma ik jo rr a zib
  * @version  $Id$
  * <p/>
@@ -37,8 +37,8 @@ import de.zib.gndms.model.gorfx.types.AbstractORQ;
  */
 public class ORQWrapper {
 
-    private AbstractORQ orq;
-    private TransientContract contract;
+    private AbstractOrder order;
+    private Quote contract;
 
 
     public ORQWrapper( ) {
@@ -46,28 +46,28 @@ public class ORQWrapper {
     }
 
 
-    public ORQWrapper( AbstractORQ orq, TransientContract contract ) {
-        this.orq = orq;
+    public ORQWrapper( AbstractOrder order, Quote contract ) {
+        this.order = order;
         this.contract = contract;
     }
 
 
-    public AbstractORQ getOrq() {
-        return orq;
+    public AbstractOrder getOrder() {
+        return order;
     }
 
 
-    public void setOrq( AbstractORQ orq ) {
-        this.orq = orq;
+    public void setOrder( AbstractOrder order ) {
+        this.order = order;
     }
 
 
-    public TransientContract getContract() {
+    public Quote getContract() {
         return contract;
     }
 
 
-    public void setContract( TransientContract contract ) {
+    public void setContract( Quote contract ) {
         this.contract = contract;
     }
 }

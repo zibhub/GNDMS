@@ -19,155 +19,104 @@ import de.zib.gndms.common.model.gorfx.types.Order;
 import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.common.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.logic.model.TaskAction;
+import de.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
 import de.zib.gndms.model.common.PersistentContract;
+import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
-import org.joda.time.DateTime;
 
 /**
  * @author try ma ik jo rr a zib
  * @date 14.02.11  14:27
  * @brief An interface for taskflow factories.
- *
+ * <p/>
  * Implementations of this interface should be able to compute quotes, and generate task instances.
- *
  */
-public interface TaskFlowFactory {
+public interface TaskFlowFactory<O extends Order, C extends AbstractQuoteCalculator<O>> {
 
 
     /**
-     * @brief Delivers the key of this task flow.
-     *
      * @return The taskflow key.
+     * @brief Delivers the key of this task flow.
      */
-    String getTaskFlowKey( );
+    String getTaskFlowKey();
 
     /**
-     * @brief Delivers the version of the plugin.
-     *
      * @return An integer representing the version.
+     * @brief Delivers the version of the plugin.
      */
     int getVersion();
 
-    /** 
-     * @brief Delivers a calculator for quotes of the taskflow.
-     * 
+    /**
      * @return A quote calculator.
+     * @brief Delivers a calculator for quotes of the taskflow.
      */
-    AbstractQuoteCalculator getQuoteCalculator(  );
+    C getQuoteCalculator();
 
-    /** 
-     * @brief Delivers information about the taskflow in general. 
-     * 
+    /**
+     * @return A task info object.
+     * @brief Delivers information about the taskflow in general.
+     * <p/>
      * The information should contain at least a description of the
      * task.
-     *
-     * @return A task info object.
      */
-    TaskFlowInfo getInfo( );
+    TaskFlowInfo getInfo();
 
     /**
+     * @return A taskflow object.
      * @brief Creates a new taskflow instance.
-     *
+     * <p/>
      * The created task is registered in its factory.
-     *
-     * @return A taskflow object.
      */
-    TaskFlow create();
+    TaskFlow<O> create();
 
     /**
+     * @return A taskflow object.
      * @brief Creates a new taskflow instance.
-     *
+     * <p/>
      * The created task flow \bnot is registered in its factory.
-     *
-     * @return A taskflow object.
      */
-    TaskFlow createOrphan();
+    TaskFlow<O> createOrphan();
 
     /**
-     * @brief Adds an orphan task flow to the facotry.
-     *
      * @param taskflow The taskflow to add. Note the taskflow must have a unique id.
-     *
      * @return \c true if the taskflow was successfully added. If the task is already registered this will fail.
+     * @brief Adds an orphan task flow to the factory.
      */
-    boolean adopt( TaskFlow taskflow );
+    boolean adopt( TaskFlow<O> taskflow );
 
     /**
-     * @brief Finds an existing taskflow.
-     *
      * @param id The id of the taskflow.
      * @return The taskflow or null if it doesn't exist.
+     * @brief Finds an existing taskflow.
      */
-    TaskFlow find( String id );
+    TaskFlow<O> find( String id );
 
     /**
-     * @brief Removes a taskflow.
-     *
      * @param id The id of the taskflow.
+     * @brief Removes a taskflow.
      */
     void delete( String id );
 
     /**
-     * @brief Delivers the class of the order type.
-     *
      * @return The class of the taskflows order type.
+     * @brief Delivers the class of the order type.
      */
-    Class getOrderClass( );
+    Class<O> getOrderClass();
 
     /**
-     * @brief Creates a task action.
-     *
-     *
      * @return The newly created action.
+     * @brief Creates a task action.
      */
-    TaskAction createAction( );
+    TaskAction createAction();
 
     /**
-     * @brief Delivers a list of keys of taskflows, this taskflow depends on.
-     *
      * @return A list of taskflow keys or an empty list if it has no dependencies. Note it \b must \b not return null.
+     * @brief Delivers a list of keys of taskflows, this taskflow depends on.
      */
     Iterable<String> depends();
 
-
-    public static class Aux {
-
-        public static TaskFlow fromTask( Dao dao, TaskFlowProvider provider, String type, String id )  {
-
-            Session ses = dao.beginSession();
-            try {
-                Task t = ses.findTaskForResource( id );
-                if ( t == null )
-                    return null;
-                TaskFlowFactory tff = provider.getFactoryForTaskFlow( type );
-                TaskFlow tf = tff.createOrphan();
-                tf.setId( t.getResourceId() );
-                tf.setOrder( (Order ) t.getPayload() );
-                tf.addQuote( quoteFromContract( t.getContract() ) );
-                tf.setTaskling( t.getTaskling());
-                tff.adopt( tf );
-                ses.success( );
-                return tf;
-            } finally {
-                ses.finish();
-            }
-        }
-
-
-
-        public static Quote quoteFromContract( PersistentContract contract ) {
-
-            Quote quote = new Quote();
-
-            quote.setAccepted( new DateTime( contract.getAccepted() ) );
-            quote.setDeadline( new DateTime( contract.getDeadline() ) );
-            quote.setResultValidity( new DateTime( contract.getResultValidity() ) );
-            quote.setExpectedSize( contract.getExpectedSize() );
-
-            return quote;
-        }
-    }
+    DelegatingOrder<O> getOrderDelegate( O orq );
 }

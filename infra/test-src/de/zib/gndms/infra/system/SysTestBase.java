@@ -18,9 +18,6 @@ package de.zib.gndms.infra.system;
 
 
 
-import de.zib.gndms.infra.service.GNDMServiceHome;
-import de.zib.gndms.infra.service.GNDMServiceHomeMockup;
-import de.zib.gndms.infra.service.GridConfigMockup;
 import de.zib.gndms.infra.system.GNDMSystem.SysFactory;
 import de.zib.gndms.model.test.ModelEntityTestBase;
 import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
@@ -51,7 +48,6 @@ public abstract class SysTestBase {
 
 	private GNDMSystem sys;
 	private Runnable sysDestructor;
-	protected GNDMServiceHome home;
 
     @Parameters({"gridName"})
     public SysTestBase(@Optional("c3grid") String gridName) {
@@ -79,7 +75,6 @@ public abstract class SysTestBase {
 		SysFactory factory = new SysFactory(logger, mockupConfig, true);
 		sys = factory.getInstance(false);
 		sysDestructor = factory.createShutdownAction();
-		home = new GNDMServiceHomeMockup(sys);
 	}
 
 
@@ -90,7 +85,6 @@ public abstract class SysTestBase {
 		finally {
 			sys = null;
 			sysDestructor = null;
-			home = null;
 		}
 	}
 
@@ -117,10 +111,5 @@ public abstract class SysTestBase {
 
     public GNDMSystem getSys() {
         return sys;
-    }
-
-
-    public GNDMServiceHome getHome() {
-        return home;
     }
 }

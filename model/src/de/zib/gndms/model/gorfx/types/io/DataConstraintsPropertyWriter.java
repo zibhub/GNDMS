@@ -21,10 +21,7 @@ package de.zib.gndms.model.gorfx.types.io;
 import de.zib.gndms.model.gorfx.types.TimeConstraint;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * @author  try ma ik jo rr a zib
@@ -54,14 +51,14 @@ public class DataConstraintsPropertyWriter extends AbstractPropertyIO implements
     }
 
 
-    public void writeCFList( @NotNull String[] cflist ) {
-        List<String> cfl = Arrays.asList( cflist );
+    public void writeCFList( @NotNull List<String> cflist ) {
+        List<String> cfl = cflist;
         PropertyReadWriteAux.writeListMultiLine( getProperties(), SfrProperty.CFLIST_ITEMS.key, cfl );
         PropertyReadWriteAux.writeList( getProperties(), SfrProperty.CFLIST_OLD.key, ' ', cfl );
     }
 
 
-    public void writeConstraintList( @NotNull HashMap<String, String> constraintList ) {
+    public void writeConstraintList( @NotNull Map<String, String> constraintList ) {
         PropertyReadWriteAux.writeMap( getProperties(), SfrProperty.CONSTRAINT_LIST.key, constraintList );
     }
 

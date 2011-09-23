@@ -27,7 +27,7 @@ import de.zib.gndms.common.logic.action.ActionMeta;
 public interface ActionProvider<M extends ActionMeta, A extends Action> {
 
     List<String> listAvailableActions();
-    M getMeta( String config );
+    M getMeta( String config ) throws NoSuchActionException;
 
-    A getAction( String actionName );
+    A getAction( String actionName ) throws NoSuchActionException;
 }

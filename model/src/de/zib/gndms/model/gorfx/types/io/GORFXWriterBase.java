@@ -32,12 +32,12 @@ package de.zib.gndms.model.gorfx.types.io;
 public interface GORFXWriterBase {
 
     /**
-     * Defines the writer's action, before the convertion starts.
+     * Defines the writer's action, before the converting starts.
      */
     public void begin ( );
 
     /**
-     * Defines the writer's action, after the convertion has finished.
+     * Defines the writer's action, after the converting has finished.
      */
     public void done ( );
 }

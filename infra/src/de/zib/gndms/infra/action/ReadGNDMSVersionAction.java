@@ -18,7 +18,7 @@ package de.zib.gndms.infra.action;
 
 
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import de.zib.gndms.GNDMSVerInfo;
 import de.zib.gndms.infra.system.SystemDirectory;
 import de.zib.gndms.logic.model.config.ConfigAction;
