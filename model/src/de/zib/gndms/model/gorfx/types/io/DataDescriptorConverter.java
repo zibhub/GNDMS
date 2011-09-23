@@ -51,7 +51,7 @@ public class DataDescriptorConverter extends GORFXConverterBase<DataDescriptorWr
             throw new IllegalStateException( );
 
         getWriter().begin();
-        getWriter().writeObjectList( NotNullStringArray( getModel().getObjectList() ) );
+        getWriter().writeObjectList( NotNullStringList( getModel().getObjectList() ) );
 
         
         if( getModel().hasConstraints() ) {

@@ -22,6 +22,8 @@ import de.zib.gndms.model.gorfx.types.io.DataConstraintsWriter;
 import de.zib.gndms.model.gorfx.types.io.SpaceConstraintWriter;
 import de.zib.gndms.model.gorfx.types.TimeConstraint;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.HashMap;
 
@@ -40,13 +42,14 @@ public class DataConstraintsStdoutWriter implements DataConstraintsWriter {
     }
 
 
-    public void writeCFList( String[] CFList ) {
+    @Override
+    public void writeCFList( List<String> CFList ) {
         System.out.println( "CFList: " );
         showStringList( CFList, "    " );
     }
 
 
-    public void writeConstraintList( HashMap<String, String> constraintList ) {
+    public void writeConstraintList( Map<String, String> constraintList ) {
         System.out.println( "Constraint list: " );
         Set<String> ks = constraintList.keySet();
         for( String k : ks )
@@ -80,10 +83,11 @@ public class DataConstraintsStdoutWriter implements DataConstraintsWriter {
     }
 
 
-    private void showStringList( String[] sl, String ind ) {
+    private void showStringList( List<String> sl, String ind ) {
         if( sl == null )
             System.out.println( ind + "null" );
-        for( int i=0; i < sl.length; ++i )
-            System.out.println( ind + sl[i] );
+        else
+            for( String s : sl )
+                System.out.println( ind + s );
     }
 }

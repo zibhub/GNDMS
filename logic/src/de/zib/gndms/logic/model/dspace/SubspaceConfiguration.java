@@ -286,4 +286,6 @@ public class SubspaceConfiguration implements Configuration {
 		hashCode = hashCode * multi + mode.hashCode();
 		return hashCode;
 	}
+
+
 }

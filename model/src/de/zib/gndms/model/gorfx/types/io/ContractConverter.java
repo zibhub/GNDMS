@@ -18,8 +18,8 @@ package de.zib.gndms.model.gorfx.types.io;
 
 
 
-import de.zib.gndms.model.common.types.FutureTime;
-import de.zib.gndms.model.common.types.TransientContract;
+import de.zib.gndms.common.model.gorfx.types.FutureTime;
+import de.zib.gndms.common.model.gorfx.types.Quote;
 import org.joda.time.DateTime;
 
 
@@ -32,7 +32,7 @@ import org.joda.time.DateTime;
  * User: mjorra, Date: 25.09.2008, Time: 13:16:37
  */
 @SuppressWarnings({ "FeatureEnvy" })
-public class ContractConverter extends GORFXConverterBase<ContractWriter, TransientContract> {
+public class ContractConverter extends GORFXConverterBase<ContractWriter, Quote> {
 
     
     public ContractConverter() {
@@ -40,7 +40,7 @@ public class ContractConverter extends GORFXConverterBase<ContractWriter, Transi
     }
 
 
-    public ContractConverter( ContractWriter writer, TransientContract model ) {
+    public ContractConverter( ContractWriter writer, Quote model ) {
         super( writer, model );
     }
 

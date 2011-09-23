@@ -26,15 +26,16 @@ import de.zib.gndms.logic.model.dspace.ChownSliceConfiglet;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
 import de.zib.gndms.logic.model.dspace.DeleteSliceAction;
 import de.zib.gndms.logic.model.dspace.TransformSliceAction;
-import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
+import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.model.gorfx.types.AbstractORQ;
-import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
+import de.zib.gndms.model.gorfx.types.AbstractOrder;
+import de.zib.gndms.model.gorfx.types.DelegatingOrder;
+import de.zib.gndms.model.gorfx.types.ProviderStageInOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.model.util.TxFrame;
 import de.zib.gndms.neomodel.common.Dao;
@@ -56,7 +57,7 @@ import java.io.File;
  *          User: stepn Date: 02.10.2008 Time: 15:04:39
  */
 @SuppressWarnings({ "FeatureEnvy" })
-public abstract class AbstractProviderStageInAction extends ORQTaskAction<ProviderStageInORQ> {
+public abstract class AbstractProviderStageInAction extends TaskFlowAction<ProviderStageInOrder> {
 
 	protected ParmFormatAux parmAux = new ParmFormatAux();
 
@@ -94,7 +95,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
     protected void onInProgress(@NotNull String wid, @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) throws Exception {
         final Slice slice = findSlice();
         setSliceId(slice.getId());
-        doStaging(getOfferTypeConfig(), getORQ(), slice);
+        doStaging(getOfferTypeConfig(), getOrderBean(), slice);
         changeSliceOwner( slice ) ;
         super.onInProgress(wid, state, isRestartedTask, altTaskState);
     }
@@ -106,11 +107,11 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
         if( csc == null )
             throw new IllegalStateException( "chown configlet is null!");
 
-        final AbstractORQ orq = getORQ();
-        String dn = orq.getActContext().get( "DN" );
+        final DelegatingOrder<?> order = getOrder();
+        String dn = order.getActContext().get( "DN" );
         getLogger().debug( "cso DN: " + dn );
-        getLogger().debug( "changing owner of " + slice.getId() + " to " + orq.getLocalUser() );
-        ProcessBuilderAction chownAct = csc.createChownSliceAction( orq.getLocalUser(),
+        getLogger().debug( "changing owner of " + slice.getId() + " to " + order.getLocalUser() );
+        ProcessBuilderAction chownAct = csc.createChownSliceAction( order.getLocalUser(),
             slice.getSubspace().getPath() + File.separator + slice.getKind().getSliceDirectory(),
             slice.getDirectoryId() );
         chownAct.call();
@@ -128,7 +129,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 
             TransformSliceAction tsa =  new TransformSliceAction(
                 getUUIDGen().nextUUID(),
-                getORQ().getLocalUser(),
+                getOrder().getLocalUser(),
                 slice.getTerminationTime(),
                 kind,
                 slice.getSubspace(),
@@ -156,7 +157,7 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 
 
     protected abstract void doStaging(
-        final MapConfig offerTypeConfigParam, final ProviderStageInORQ orqParam,
+        final MapConfig offerTypeConfigParam, final ProviderStageInOrder orderParam,
         final Slice sliceParam );
 
 
@@ -241,12 +242,12 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 		finally { txf.finish(); }
 		// potentially unsafe but do not want to keep the transaction open
 		// we just dont change the slice dir after creation
-		callCancel(getOfferTypeConfig(), getORQ(), sliceDir);
+		callCancel(getOfferTypeConfig(), getOrderBean(), sliceDir);
 	}
 
 
 	@SuppressWarnings({ "NoopMethodInAbstractClass" })
-	protected void callCancel(final MapConfig offerTypeConfigParam, final ProviderStageInORQ orqParam,
+	protected void callCancel(final MapConfig offerTypeConfigParam, final ProviderStageInOrder orderParam,
             final File sliceParam) {
 		// Implement in subclass
 	}
@@ -290,8 +291,8 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
 
 	@Override
     @NotNull
-    public Class<ProviderStageInORQ> getOrqClass() {
-        return ProviderStageInORQ.class;
+    public Class<ProviderStageInOrder> getOrqClass() {
+        return ProviderStageInOrder.class;
     }
 
 
@@ -306,8 +307,8 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
         final Session session = getDao().beginSession();
         try {
             final Task task = getTask(session);
-            ProviderStageInORQ orq = (ProviderStageInORQ) task.getORQ();
-            orq.setActSliceId( sliceId );
+            ProviderStageInOrder order = (ProviderStageInOrder ) task.getORQ();
+            order.setActSliceId( sliceId );
             task.setORQ( sliceId );
             session.finish();
         }
@@ -321,8 +322,8 @@ public abstract class AbstractProviderStageInAction extends ORQTaskAction<Provid
         final Session session = getDao().beginSession();
         try {
             final Task task = getTask(session);
-            ProviderStageInORQ orq = (ProviderStageInORQ) task.getORQ();
-            final String ret = orq.getActSliceId();
+            ProviderStageInOrder order = (ProviderStageInOrder ) task.getORQ();
+            final String ret = order.getActSliceId();
             session.finish();
             return ret;
         }

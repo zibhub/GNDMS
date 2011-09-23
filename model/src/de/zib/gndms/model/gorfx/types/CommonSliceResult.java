@@ -26,7 +26,7 @@ import de.zib.gndms.model.dspace.types.SliceRef;
  * <p/>
  * User: mjorra, Date: 31.10.2008, Time: 17:23:52
  */
-public abstract class CommonSliceResult extends AbstractTaskResult {
+public abstract class CommonSliceResult extends AbstractTaskFlowResult {
 
     public SliceRef sliceRef;
 

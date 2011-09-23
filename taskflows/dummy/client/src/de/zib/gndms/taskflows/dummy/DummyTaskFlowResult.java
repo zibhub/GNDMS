@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.taskflow.tfmockup;
+package de.zib.gndms.taskflows.dummy;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -15,7 +15,7 @@ package de.zib.gndms.logic.taskflow.tfmockup;
  * limitations under the License.
  */
 
-import de.zib.gndms.model.gorfx.types.TaskResult;
+import de.zib.gndms.common.model.gorfx.types.TaskResult;
 
 /**
  * @author try ma ik jo rr a zib
@@ -24,16 +24,16 @@ import de.zib.gndms.model.gorfx.types.TaskResult;
  *
  * Since the dummy taskflow only writes stuff, a string is enough here.
  */
-public class DummyTFResult implements TaskResult<String> {
+public class DummyTaskFlowResult implements TaskResult<String> {
 
     private String result;
 
 
-    public DummyTFResult() {
+    public DummyTaskFlowResult() {
     }
 
 
-    public DummyTFResult( String s ) {
+    public DummyTaskFlowResult( String s ) {
         result = s;
     }
 

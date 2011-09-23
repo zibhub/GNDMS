@@ -1,7 +1,7 @@
 package de.zib.gndms.model.gorfx.repository;
 
 import de.zib.gndms.model.common.repository.QueuedTransientDao;
-import de.zib.gndms.model.gorfx.types.AbstractORQ;
+import de.zib.gndms.model.gorfx.types.AbstractOrder;
 /*
  * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
@@ -24,7 +24,7 @@ import de.zib.gndms.model.gorfx.types.AbstractORQ;
  *          <p/>
  *          Date: 05.01.2011, Time: 18:25:49
  */
-public class ORQDao<M extends AbstractORQ> extends QueuedTransientDao<TypedUUId, M, String> {
+public class ORQDao<M extends AbstractOrder> extends QueuedTransientDao<TypedUUId, M, String> {
 
 
     protected M newModel( TypedUUId key ) {

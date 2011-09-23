@@ -21,8 +21,6 @@ package de.zib.gndms.model.gorfx.types.io;
 import de.zib.gndms.model.gorfx.types.DataConstraints;
 import de.zib.gndms.model.gorfx.types.SpaceConstraint;
 
-import java.util.HashMap;
-
 /**
  * @author  try ma ik jo rr a zib
  * @version  $Id$
@@ -60,7 +58,7 @@ public class DataConstraintsConverter extends GORFXConverterBase<DataConstraints
         if( getModel().hasTimeConstraint() )
             getWriter().writeTimeConstraint( getModel().getTimeConstraint() );
 
-        getWriter().writeCFList( NotNullStringArray( getModel().getCFList() ) );
+        getWriter().writeCFList( NotNullStringList( getModel().getCFList() ) );
 
         if( getModel().hasConstraintList() )
             getWriter().writeConstraintList( getModel().getConstraintList() );

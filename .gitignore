@@ -58,7 +58,7 @@ gndmc/gndms-gndmc/production/**
 gndmc/gndms-gndmc/test/**
 gndmc-rest/gndms-gndmc-rest/production/**
 gorfx/gndms-gorfx-rest/production/**
-gndms-commons/gndms-gndms-commons/production/**
+common/gndms-common/production/**
 .classpath
 .project
 test-output/**
@@ -90,7 +90,7 @@ lib/infra/*
 lib/logic/*
 lib/gorfx/*
 lib/rest/*
-lib/gndms-commons/*
+lib/common/*
 lib/gndmc-rest/*
 lib/neomodel/*
 */resources/META-INF/GNDMS-RELEASE

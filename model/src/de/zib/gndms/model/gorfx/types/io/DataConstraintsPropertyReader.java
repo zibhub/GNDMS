@@ -20,6 +20,7 @@ package de.zib.gndms.model.gorfx.types.io;
 
 import de.zib.gndms.model.gorfx.types.DataConstraints;
 
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -48,7 +49,7 @@ public class DataConstraintsPropertyReader extends AbstractPropertyReader<DataCo
         getProduct( ).setTimeConstraint( TimeConstraintPropertyReader.readTimeConstraint( getProperties() ) );
 
         // read cfl
-        String [] cfl =  PropertyReadWriteAux.readListMultiLine( getProperties(), SfrProperty.CFLIST_ITEMS.key );
+        List<String> cfl =  PropertyReadWriteAux.readListMultiLine( getProperties(), SfrProperty.CFLIST_ITEMS.key );
         if( cfl == null )
             cfl = PropertyReadWriteAux.readList( getProperties(), SfrProperty.CFLIST_OLD.key, ' ' );
         getProduct( ).setCFList( cfl );

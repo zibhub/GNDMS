@@ -22,7 +22,7 @@ package de.zib.gndms.logic.model.gorfx.taskflow;
  *
  * @note This is only used on the server side.
  */
-public class UnsatisfiableOrderException extends Exception {
+public class UnsatisfiableOrderException extends RuntimeException {
 
     private static final long serialVersionUID = -3285859503083289382L;
 

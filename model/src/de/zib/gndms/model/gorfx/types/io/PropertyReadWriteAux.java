@@ -18,7 +18,7 @@ package de.zib.gndms.model.gorfx.types.io;
 
 
 
-import de.zib.gndms.model.common.types.FutureTime;
+import de.zib.gndms.common.model.gorfx.types.FutureTime;
 import de.zib.gndms.model.gorfx.types.MinMaxPair;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
@@ -49,11 +49,11 @@ public class PropertyReadWriteAux {
     }
 
 
-    public static String[] readList( @NotNull Properties prop, @ NotNull String key, char sep ) {
+    public static List<String> readList( @NotNull Properties prop, @NotNull String key, char sep ) {
 
         String s = prop.getProperty ( key );
         if( s != null )
-            return s.split( ""+sep );
+            return Arrays.asList( s.split( ""+sep ) );
 
         return null;
     }
@@ -69,19 +69,19 @@ public class PropertyReadWriteAux {
     }
 
 
-    public static String[] readListMultiLine( @NotNull Properties prop, @NotNull String key ) {
+    public static List<String> readListMultiLine( @NotNull Properties prop, @NotNull String key ) {
 
         String s = prop.getProperty( key +".Count" );
         if( s == null )
             return null;
 
         int l = Integer.parseInt( s );
-        ArrayList<String> al = new ArrayList( l );
+        ArrayList<String> al = new ArrayList<String>( l );
         key = key + '.';
         for ( int i=0 ; i < l; ++i )
             al.add( prop.getProperty(  key + i ) );
 
-        return al.toArray( new String[0] );
+        return al;
     }
 
 
@@ -99,8 +99,8 @@ public class PropertyReadWriteAux {
 
     public static HashMap<String, String> readMap( @NotNull Properties prop, @NotNull String key ) {
 
-        String[] keys = readList( prop, key, ' ' );
-        if( key == null )
+        List<String> keys = readList( prop, key, ' ' );
+        if( key.trim().equals( "" ) )
             return null;
 
         HashMap<String, String> hm = new HashMap<String, String>( );
@@ -176,7 +176,7 @@ public class PropertyReadWriteAux {
 			return FutureTime.atOffset(new Duration(offsetInMs));
 		}
 		catch (NumberFormatException nfe) {
-            return FutureTime.atTime(new DateTime( s ));
+            return FutureTime.atTime( new DateTime( s ) );
 		}
     }
 

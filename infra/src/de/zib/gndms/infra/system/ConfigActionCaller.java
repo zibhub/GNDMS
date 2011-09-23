@@ -27,11 +27,13 @@ import com.google.inject.Module;
 import de.zib.gndms.infra.action.*;
 import de.zib.gndms.kit.config.ParameterTools;
 import de.zib.gndms.logic.action.Action;
+import de.zib.gndms.logic.action.NoSuchActionException;
 import de.zib.gndms.logic.action.SkipActionInitializationException;
 import de.zib.gndms.logic.model.BatchUpdateAction;
 import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
 import de.zib.gndms.logic.model.DelegatingModelUpdateListener;
 import de.zib.gndms.logic.model.ModelUpdateListener;
+import de.zib.gndms.logic.model.config.AvailableActionsAction;
 import de.zib.gndms.logic.model.config.ConfigAction;
 import de.zib.gndms.logic.model.config.EchoOptionsAction;
 import de.zib.gndms.logic.model.config.HelpOverviewAction;
@@ -39,11 +41,9 @@ import de.zib.gndms.logic.model.dspace.AssignSliceKindAction;
 import de.zib.gndms.logic.model.dspace.SetupSliceKindAction;
 import de.zib.gndms.logic.model.dspace.SetupSubspaceAction;
 import de.zib.gndms.logic.model.gorfx.ConfigOfferTypeAction;
-import de.zib.gndms.logic.model.gorfx.SetupOfferTypeAction;
+import de.zib.gndms.logic.model.gorfx.SetupTaskFlowAction;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
-import org.apache.axis.components.uuid.UUIDGen;
-import org.apache.axis.components.uuid.UUIDGenFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.jetbrains.annotations.NotNull;
@@ -52,6 +52,7 @@ import javax.persistence.EntityManager;
 import java.io.PrintWriter;
 import java.util.Set;
 import java.util.Map;
+import java.util.UUID;
 
 
 /**
@@ -72,10 +73,9 @@ import java.util.Map;
 public final class ConfigActionCaller implements WSActionCaller, Module {
     private @NotNull final Logger logger = LoggerFactory.getLogger(ConfigActionCaller.class);
 
-    private @NotNull final UUIDGen uuidGen = UUIDGenFactory.getUUIDGen();
     private final @NotNull ModelUUIDGen actionUUIDGen = new ModelUUIDGen() {
             public @NotNull String nextUUID() {
-                return uuidGen.nextUUID();
+                return UUID.randomUUID().toString();
             }
     };
 
@@ -114,8 +114,7 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
         system = systemParam;
         configActions.add(SetupSubspaceAction.class);
         configActions.add(EchoOptionsAction.class);
-        configActions.add(GetHomeInfoAction.class);
-        configActions.add(SetupOfferTypeAction.class);
+        configActions.add(SetupTaskFlowAction.class);
         configActions.add(ConfigOfferTypeAction.class);
         configActions.add(SetupSliceKindAction.class);
         configActions.add(AssignSliceKindAction.class);
@@ -168,7 +167,7 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
             return configAction;
         }
         else
-            throw new IllegalArgumentException("Not a ConfigAction");
+            throw new NoSuchActionException( name );
     }
 
     /**
@@ -196,11 +195,11 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
             final @NotNull String name) throws ClassNotFoundException
     {
         if (name.length() > 0) {
-            final String nameToLower = name.toLowerCase();
-            if ("help".equals(nameToLower) || "-help".equals(nameToLower)
-                    || "--help".equals(nameToLower)) {
-                return toConfigActionClass(HelpOverviewAction.class);
-            }
+
+            if ( matchParam( "help", name )) return toConfigActionClass(HelpOverviewAction.class);
+
+            if ( matchParam( "list", name ) ) return toConfigActionClass(AvailableActionsAction.class);
+
             try {
                 if (name.startsWith(".sys"))
                     return toConfigActionClass(Class.forName(
@@ -215,6 +214,16 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
         }
         return toConfigActionClass(Class.forName(name));
     }
+
+
+    private boolean matchParam( String expected, String actual ) {
+        final String nameToLower = actual.toLowerCase();
+        return expected.equals(nameToLower)
+            || ("-" + expected).equals(nameToLower)
+            || ("--" + expected).equals(nameToLower);
+    }
+
+
 
     /**
      * Checks if <tt>helpOverviewActionClassParam</tt> is a <tt>ConfigAction</tt> class or a subclass of it.
@@ -307,7 +316,6 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
 		binder.skipSources(GNDMSystem.class,
 		                   EntityManager.class,
 		                   ModelUUIDGen.class,
-		                   UUIDGen.class,
 		                   ModelUpdateListener.class,
 		                   BatchUpdateAction.class);
 		binder.bind(ConfigActionCaller.class).toInstance(this);
