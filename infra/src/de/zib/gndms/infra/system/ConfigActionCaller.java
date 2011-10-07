@@ -69,7 +69,7 @@ import java.util.UUID;
 *          User: stepn Date: 03.09.2008 Time: 16:43:46
 */
 public final class ConfigActionCaller implements WSActionCaller {
-    private @NotNull final Log logger = LogFactory.getLog(ConfigActionCaller.class);
+    private @NotNull final Logger logger = LoggerFactory.getLogger(ConfigActionCaller.class);
 
     private final @NotNull ModelUUIDGen actionUUIDGen = new ModelUUIDGen() {
             public @NotNull String nextUUID() {
