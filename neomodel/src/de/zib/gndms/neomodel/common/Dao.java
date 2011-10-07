@@ -69,30 +69,30 @@ public class Dao {
         finally { session.success(); }
     }
 
-    public Map<String, String> getOfferTypeConfig(String key) {
+    public Map<String, String> getTaskFlowTypeConfig( String key ) {
         final Session session = beginSession();
         try {
-            final Map<String, String> ret = session.findOfferType(key).getConfigMapData();
+            final Map<String, String> ret = session.findTaskFlowType( key ).getConfigMapData();
             session.finish();
             return ret;
         }
         finally { session.success(); }
     }
 
-    public String getOfferTypeCalculatorFactoryClassName(String key) {
+    public String getTaskFlowTypeCalculatorFactoryClassName( String key ) {
         final Session session = beginSession();
         try {
-            final String ret = session.findOfferType(key).getCalculatorFactoryClassName();
+            final String ret = session.findTaskFlowType( key ).getCalculatorFactoryClassName();
             session.finish();
             return ret;
         }
         finally { session.success(); }
     }
 
-    public String getOfferTypeTaskActionFactoryClassName(String key) {
+    public String getTaskFlowTypeTaskActionFactoryClassName( String key ) {
         final Session session = beginSession();
         try {
-            final String ret = session.findOfferType(key).getTaskActionFactoryClassName();
+            final String ret = session.findTaskFlowType( key ).getTaskActionFactoryClassName();
             session.finish();
             return ret;
         }

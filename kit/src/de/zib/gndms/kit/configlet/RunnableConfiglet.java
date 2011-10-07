@@ -19,8 +19,8 @@ package de.zib.gndms.kit.configlet;
 
 
 import org.slf4j.Logger;
-import org.apache.log4j.NDC;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.MDC;
 
 import java.io.Serializable;
 
@@ -69,12 +69,12 @@ public abstract class RunnableConfiglet extends DefaultConfiglet implements Runn
      * (required for sensible semantics of thread.interrupt during update)
      */
 	public final void run() {
-		NDC.push(getName());
+		MDC.put( "name", getName() );
 		try {
 			run_();
 		}
 		finally {
-			NDC.pop();
+            MDC.remove( "name" );
 		}
 	}
 

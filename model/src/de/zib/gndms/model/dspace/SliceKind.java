@@ -18,10 +18,11 @@ package de.zib.gndms.model.dspace;
 
 
 
-import de.zib.gndms.model.common.AccessMask;
+import de.zib.gndms.common.model.common.AccessMask;
 import de.zib.gndms.model.common.GridEntity;
 
 import javax.persistence.*;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -83,6 +84,11 @@ public class SliceKind extends GridEntity {
 
     public void setPermission( AccessMask permission ) {
         this.permission = permission;
+    }
+
+    public void setPermission( long permission ) {
+        this.permission = AccessMask.fromString(Long.toString(permission));
+
     }
 
 

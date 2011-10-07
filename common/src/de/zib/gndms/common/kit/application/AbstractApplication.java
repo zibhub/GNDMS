@@ -16,8 +16,6 @@ package de.zib.gndms.common.kit.application;
  * limitations under the License.
  */
 
-
-
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.CmdLineException;
 
@@ -39,23 +37,23 @@ public abstract class AbstractApplication {
      * @see org.kohsuke.args4j.CmdLineParser#parseArgument(String[])
      * @param args a list of fields and their corresponding values, which will be set before {@code run()} is called
      *
-     * @throws Exception if an error occures, while parsing the input String list.
+     * @throws Exception if an error occurs, while parsing the input String list.
      */
-    public void run( String[] args ) throws Exception {
+    public final void run( final String[] args ) throws Exception {
 
         CmdLineParser pars = new CmdLineParser( this );
-        try{
+        try {
             pars.parseArgument( args );
             this.run();
         } catch ( CmdLineException e ) {
-            System.out.println( e.getMessage( ) );
-            pars.printUsage( System.out );
+            System.err.println( e.getMessage( ) );
+            pars.printUsage( System.err );
         }
     }
 
     /**
      * This method will be called after the fields of the class have been set.
-     * @throws Exception
+     * @throws Exception 
      */
     public abstract void run( ) throws Exception;
 }

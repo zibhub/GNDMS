@@ -18,8 +18,8 @@ package de.zib.gndms.model.common;
 
 
 
-import de.zib.gndms.model.common.types.FutureTime;
-import de.zib.gndms.model.common.types.TransientContract;
+import de.zib.gndms.common.model.gorfx.types.FutureTime;
+import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.stuff.copy.Copier;
 import de.zib.gndms.stuff.copy.Copyable.CopyMode;
 import de.zib.gndms.stuff.copy.Copyable;
@@ -38,10 +38,10 @@ import java.util.Calendar;
 
 /**
  *
- * A PersistenContract can be transformed to an TransientContract
+ * A PersistenContract can be transformed to an Quote
  *
  *
- * @see de.zib.gndms.model.common.types.TransientContract
+ * @see de.zib.gndms.common.model.gorfx.types.Quote
  *
  * @author  try ste fan pla nti kow zib
  * @version $Id$
@@ -59,6 +59,55 @@ public class PersistentContract implements Serializable {
     // expected size of task in case of a transfer or staging
     private Long expectedSize;
 
+
+    public static PersistentContract acceptQuoteAt( DateTime dt, Quote quote ) {
+        quote.setAccepted( dt );
+        return acceptQuoteAsIs( quote );
+    }
+
+
+    public static PersistentContract acceptQuoteNow( Quote quote ) {
+        return acceptQuoteAt( new DateTime(), quote );
+    }
+
+
+    /**
+     * Creates a persistent-contract form this contract by fixing future time using the accepted time stamp.
+     *
+     * @return A persistent-contract representing this contract.
+     *         <p/>
+     *         todo maybe set fixed values here
+     * @note The created contract may be invalid wrt its jpa constraints.
+     * @param quote
+     */
+    @SuppressWarnings( { "FeatureEnvy" } )
+    protected static PersistentContract acceptQuoteAsIs( Quote quote ) {
+
+        PersistentContract pc = new PersistentContract();
+        pc.setAccepted( quote.getAccepted().toGregorianCalendar() );
+
+        DateTime fixedDeadline = null;
+        if ( quote.hasDeadline() ) {
+            fixedDeadline = quote.getDeadline().fixedWith( quote.getAccepted() ).getFixedTime();
+            pc.setDeadline( fixedDeadline.toGregorianCalendar() );
+        }
+
+        if ( quote.hasResultValidity() ) {
+            DateTime fixedResultValidity;
+            if ( fixedDeadline != null )
+                fixedResultValidity = quote.getResultValidity().fixedWith( fixedDeadline ).getFixedTime();
+            else {
+                fixedResultValidity = quote.getResultValidity().fixedWith( quote.getAccepted() ).getFixedTime();
+            }
+            pc.setResultValidity( fixedResultValidity.toGregorianCalendar() );
+        }
+
+        if ( quote.hasExpectedSize() )
+            pc.setExpectedSize( quote.getExpectedSize() );
+        return pc;
+    }
+
+
     /**
      * @see de.zib.gndms.stuff.mold.Molder
      */
@@ -74,15 +123,16 @@ public class PersistentContract implements Serializable {
      * Transformation is done by setting all fields of the {@code TransientContract} instance
      * to the field values of {@code this}.
      *
-     * @return a corresponding TransientContract object out of {@code this}.
+     * @return a corresponding Quote object out of {@code this}.
      */
     @SuppressWarnings({ "FeatureEnvy" })
-	public @NotNull TransientContract toTransientContract() {
-		final TransientContract tc = new TransientContract();
+	public @NotNull
+    Quote toTransientContract() {
+		final Quote tc = new Quote();
 		final DateTime acceptedDt = new DateTime(getAccepted());
 		tc.setAccepted(acceptedDt);
 		tc.setDeadline(FutureTime.atFixedTime(getDeadline()));
-		tc.setResultValidity(FutureTime.atFixedTime(resultValidity));
+		tc.setResultValidity( FutureTime.atFixedTime( resultValidity ));
 		if (hasExpectedSize())
 			tc.setExpectedSize(getExpectedSize());
 		return tc;

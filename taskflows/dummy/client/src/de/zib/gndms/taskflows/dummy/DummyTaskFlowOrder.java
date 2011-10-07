@@ -15,7 +15,7 @@ package de.zib.gndms.logic.taskflow.tfmockup;
  * limitations under the License.
  */
 
-import de.zib.gndms.model.gorfx.types.Order;
+import de.zib.gndms.common.model.gorfx.types.Order;
 
 /**
  * @author try ma ik jo rr a zib
@@ -25,7 +25,7 @@ import de.zib.gndms.model.gorfx.types.Order;
  * The dummy taskflow echos a given message a given number of times ^^ with some delay.
  * It can also fail on demand;
  */
-public class DummyOrder implements Order {
+public class DummyTaskFlowOrder implements Order {
 
     private static final String TASK_FLOW_TYPE = "dummyTaskFlow";
     private boolean justEstimate = false;
@@ -37,7 +37,9 @@ public class DummyOrder implements Order {
     private boolean failIntentionally;///< Denotes if the task execution should fail.
 
 
-    public String taskFlowType() {
+
+    @Override
+    public String getTaskFlowType() {
         return TASK_FLOW_TYPE;
     }
 

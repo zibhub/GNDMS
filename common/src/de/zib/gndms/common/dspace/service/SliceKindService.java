@@ -18,8 +18,8 @@ package de.zib.gndms.common.dspace.service;
 
 import org.springframework.http.ResponseEntity;
 
+import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.rest.Specifier;
-import de.zib.gndms.stuff.confuror.ConfigHolder;
 
 /**
  * The interface of the SliceKind service.
@@ -51,7 +51,7 @@ public interface SliceKindService {
 	 *            The dn of the user invoking the method.
 	 * @return The representation of the slice kind.
 	 */
-	ResponseEntity<ConfigHolder> getSliceKindInfo(String subspace,
+	ResponseEntity<Configuration> getSliceKindInfo(String subspace,
 			String sliceKind, String dn);
 
 	/**
@@ -67,7 +67,7 @@ public interface SliceKindService {
 	 * @return The representation of the slice kind.
 	 */
 	ResponseEntity<Specifier<Void>> setSliceKindConfig(String subspace,
-			String sliceKind, ConfigHolder config, String dn);
+			String sliceKind, Configuration config, String dn);
 
 	/**
 	 * Deletes a slice kind.
@@ -82,7 +82,7 @@ public interface SliceKindService {
 	 * @return A confirmation.
 	 */
 	ResponseEntity<Void> createSliceKind(String subspace, String sliceKind,
-			ConfigHolder config, String dn);
+			Configuration config, String dn);
 
 	/**
 	 * Deletes a slice kind.
@@ -95,7 +95,7 @@ public interface SliceKindService {
 	 *            The dn of the user invoking the method.
 	 * @return A confirmation.
 	 */
-	ResponseEntity<Void> deleteSliceKind(String subspace, String sliceKind,
+	ResponseEntity<Specifier<Void>> deleteSliceKind(String subspace, String sliceKind,
 			String dn);
 
 }

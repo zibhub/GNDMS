@@ -22,6 +22,7 @@ import de.zib.gndms.logic.model.config.ConfigActionResult;
 import de.zib.gndms.logic.model.config.SetupAction;
 import de.zib.gndms.logic.model.config.ConfigAction;
 import de.zib.gndms.logic.model.config.ConfigOption;
+import de.zib.gndms.common.logic.config.SetupMode;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.model.common.ConfigletState;
 import org.jetbrains.annotations.NotNull;

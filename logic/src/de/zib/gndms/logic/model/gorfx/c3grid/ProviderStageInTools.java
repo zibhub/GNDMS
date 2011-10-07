@@ -20,10 +20,10 @@ package de.zib.gndms.logic.model.gorfx.c3grid;
 
 import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
-import de.zib.gndms.model.gorfx.types.ProviderStageInORQ;
-import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQConverter;
-import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQPropertyWriter;
-import de.zib.gndms.model.gorfx.types.io.ProviderStageInORQWriter;
+import de.zib.gndms.model.gorfx.types.ProviderStageInOrder;
+import de.zib.gndms.model.gorfx.types.io.ProviderStageInOrderConverter;
+import de.zib.gndms.model.gorfx.types.io.ProviderStageInOrderPropertyWriter;
+import de.zib.gndms.model.gorfx.types.io.ProviderStageInOrderWriter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedOutputStream;
@@ -45,19 +45,19 @@ public final class ProviderStageInTools {
 
 
     public static Properties getSFRProps(
-            final @NotNull ProviderStageInORQ orq, final Properties moreProps) {
+            final @NotNull ProviderStageInOrder order, final Properties moreProps) {
         final Properties props = moreProps == null ? new Properties() : moreProps;
-        final ProviderStageInORQWriter writer = new ProviderStageInORQPropertyWriter(props);
-        final ProviderStageInORQConverter converter = new ProviderStageInORQConverter(writer, orq);
+        final ProviderStageInOrderWriter writer = new ProviderStageInOrderPropertyWriter(props);
+        final ProviderStageInOrderConverter converter = new ProviderStageInOrderConverter(writer, order );
         converter.convert();
         props.put("c3grid.CommonRequest.Context.Workflow.Id", WidAux.getWid());
         return props;
     }
 
 
-    public static ProcessBuilderAction createPBAction(final @NotNull ProviderStageInORQ orqParam,
+    public static ProcessBuilderAction createPBAction(final @NotNull ProviderStageInOrder orderParam,
                                                       final Properties moreProps) {
-        final Properties props = getSFRProps(orqParam, moreProps);
+        final Properties props = getSFRProps( orderParam, moreProps);
         return new ProcessBuilderAction() {
             protected @Override void writeProcessStdIn(final @NotNull BufferedOutputStream stream)
                     throws IOException {

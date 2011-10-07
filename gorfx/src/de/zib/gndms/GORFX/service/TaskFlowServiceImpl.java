@@ -1,11 +1,13 @@
 package de.zib.gndms.GORFX.service;
 
 import de.zib.gndms.GORFX.service.util.WidAux;
-import de.zib.gndms.logic.model.gorfx.taskflow.AbstractQuoteCalculator;
+import de.zib.gndms.logic.model.gorfx.c3grid.ProviderStageInTaskFlowFactory;
+import de.zib.gndms.logic.model.gorfx.taskflow.DefaultTaskFlowFactory;
 import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowAux;
 import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowFactory;
 import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowProvider;
 import de.zib.gndms.logic.model.gorfx.taskflow.UnsatisfiableOrderException;
+import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
 import de.zib.gndms.common.GORFX.service.TaskFlowService;
 import de.zib.gndms.common.model.gorfx.types.*;
@@ -61,11 +63,11 @@ import java.util.Map;
  *
  * @brief A controller for a REST taskflow resource which implements the
  * TaskFlowService interface.
- *
+ * <p/>
  * The taskflow service acts as interface to instantiated taskflow
  * resources. The instantiation or creation happens through the GORFX
  * service itself.
- *
+ * <p/>
  * This implicates that all method invocation concern a single
  * taskflow, not the service as a whole.
  */
@@ -74,7 +76,7 @@ import java.util.Map;
 public class TaskFlowServiceImpl implements TaskFlowService {
 
     // private ORQDao orqDao;
-    private String serviceUrl; // inject or read from properties, doesn't contain gorfx postfix
+    private String serviceUrl; // inject or read from properties, this doesn't includes gorfx element
     private TaskFlowProvider taskFlowProvider;
     private List<String> facetsNames = new ArrayList<String>( 7 );
     private UriFactory uriFactory;
@@ -86,7 +88,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
 
     @PostConstruct
-    public void init( ) {
+    public void init() {
         facetsNames.add( "order" );
         facetsNames.add( "quote" );
         facetsNames.add( "task" );
@@ -103,18 +105,18 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     @RequestMapping( value = "/_{type}/_{id}", method = RequestMethod.GET )
     public ResponseEntity<Facets> getFacets( @PathVariable String type, @PathVariable String id, @RequestHeader( "DN" ) String dn ) {
 
-        Map<String,String> uriargs = new HashMap<String, String>( 2 );
+        Map<String, String> uriargs = new HashMap<String, String>( 2 );
         uriargs.put( UriFactory.TASKFLOW_ID, id );
         uriargs.put( UriFactory.TASKFLOW_TYPE, type );
         uriargs.put( UriFactory.SERVICE, "gorfx" );
 
         GNDMSResponseHeader header = new GNDMSResponseHeader( uriFactory.taskFlowTypeUri( uriargs, null ), null, serviceUrl, dn, null );
 
-        if( taskFlowProvider.exists( type ) ) {
+        if ( taskFlowProvider.exists( type ) ) {
             TaskFlow tf = taskFlowProvider.getFactoryForTaskFlow( type ).find( id );
             if ( tf != null ) {
                 ArrayList<Facet> fl = new ArrayList<Facet>( 6 );
-                for( String f : facetsNames ) {
+                for ( String f : facetsNames ) {
                     String fn = uriFactory.taskFlowUri( uriargs, f );
                     fl.add( new Facet( f, fn ) );
                 }
@@ -134,7 +136,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
         logger.debug( "removing " + type + " taskflow: " + id );
         HttpStatus hs = HttpStatus.NOT_FOUND;
-        if( taskFlowProvider.exists( type ) ) {
+        if ( taskFlowProvider.exists( type ) ) {
             TaskFlowFactory tff = taskFlowProvider.getFactoryForTaskFlow( type );
             TaskFlow tf = tff.find( id );
             if ( tf != null ) {
@@ -151,10 +153,10 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
     @RequestMapping( value = "/_{type}/_{id}/order", method = RequestMethod.GET )
     public ResponseEntity<Order> getOrder( @PathVariable String type, @PathVariable String id,
-                                                @RequestHeader( "DN" ) String dn,
-                                                @RequestHeader( "WId" ) String wid ) {
+                                           @RequestHeader( "DN" ) String dn,
+                                           @RequestHeader( "WId" ) String wid ) {
         HttpStatus hs = HttpStatus.NOT_FOUND;
-        Order order = null;
+        DelegatingOrder<?> order = null;
         try {
             TaskFlow tf = findTF( type, id );
             order = tf.getOrder();
@@ -162,7 +164,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                 hs = HttpStatus.OK;
         } catch ( NoSuchResourceException e ) { /* intentionally */ }
 
-        return new ResponseEntity<Order>( order, getHeader( type, id, "order", dn, wid ), hs );
+        return new ResponseEntity<Order>( order.getOrderBean(), getHeader( type, id, "order", dn, wid ), hs );
     }
 
 
@@ -172,65 +174,54 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                                           @RequestHeader( "WId" ) String wid ) {
 
         HttpStatus hs = HttpStatus.NOT_FOUND;
-        if( taskFlowProvider.exists( type ) ) {
-            TaskFlowFactory tff = taskFlowProvider.getFactoryForTaskFlow( type );
-            TaskFlow tf = tff.find( id );
-            if( tf != null ) {
-                AbstractQuoteCalculator qc = tff.getQuoteCalculator();
-                qc.setOrder( orq );
-                if( qc.validate() )
-                    hs = HttpStatus.OK;
-                else
-                    hs = HttpStatus.BAD_REQUEST;
-            }
+        if ( taskFlowProvider.exists( type ) ) {
+            final TaskFlowFactory tff = taskFlowProvider.getFactoryForTaskFlow( type );
+            final TaskFlow tf = tff.find( id );
+            if ( tf != null )
+                hs = TaskFlowServiceAux.setAndValidateOrder( orq, tf, tff );
         }
 
         return new ResponseEntity<Void>( null, getHeader( type, id, "order", dn, wid ), hs );
-
     }
 
 
     @RequestMapping( value = "/_{type}/_{id}/quote", method = RequestMethod.GET )
     public ResponseEntity<List<Specifier<Quote>>> getQuotes( @PathVariable String type, @PathVariable String id,
-                                                  @RequestHeader( "DN" ) String dn,
-                                                  @RequestHeader( "WId" ) String wid ) {
+                                                             @RequestHeader( "DN" ) String dn,
+                                                             @RequestHeader( "WId" ) String wid ) {
         WidAux.initWid( wid );
         logger.debug( "quote called" );
         HttpStatus hs = HttpStatus.NOT_FOUND;
         List<Specifier<Quote>> res = null;
-        if( taskFlowProvider.exists( type ) ) {
+        if ( taskFlowProvider.exists( type ) ) {
             TaskFlowFactory tff = taskFlowProvider.getFactoryForTaskFlow( type );
-            TaskFlow<?> tf = tff.find( id );
-            if( tf != null ) {
-                AbstractQuoteCalculator qc = tff.getQuoteCalculator();
-                qc.setOrder( tf.getOrder() );
+            TaskFlow tf = tff.find( id );
+            if ( tf != null ) {
                 try {
-                    List<Quote> lc;
-                    if( tf.hasPreferredQuote( ) )
-                        lc = qc.createQuotes( tf.getPreferredQuote() );
-                    else
-                        lc = qc.createQuotes( );
+                    List<Quote> quoteList = TaskFlowServiceAux.createQuotes( tff, tf );
 
-                    res = new ArrayList<Specifier<Quote>>( lc.size() );
-                    tf.setQuotes( lc );
+                    res = new ArrayList<Specifier<Quote>>( quoteList.size() );
                     HashMap<String, String> urimap = new HashMap<String, String>( 3 );
                     urimap.put( "service", "gorfx" );
                     urimap.put( UriFactory.TASKFLOW_ID, id );
                     urimap.put( "type", type );
-                    for( int i=0; i < lc.size(); ++i ) {
+                    for ( int i = 0; i < quoteList.size(); ++i ) {
                         urimap.put( "idx", String.valueOf( i ) );
                         Specifier<Quote> sq = new Specifier<Quote>();
                         sq.setUriMap( new HashMap<String, String>( urimap ) );
                         sq.setURL( uriFactory.quoteUri( urimap ) );
-                        sq.setPayload( lc.get( i ) );
+                        sq.setPayload( quoteList.get( i ) );
                         res.add( sq );
                     }
                     hs = HttpStatus.OK;
                 } catch ( UnsatisfiableOrderException e ) {
-                    Order o = tf.getOrder();
-                    logger.debug( "Unsatisfiable order: " + o );
+                    DelegatingOrder o = tf.getOrder();
+                    logger.debug( "Unsatisfiable order: " + o.getLoggableDescription() );
                     tf.setUnfulfillableOrder( true );
                     hs = HttpStatus.BAD_REQUEST;
+                } catch ( Exception e ) {
+                    logger.warn( "Exception on order calculation for " + tf.getOrder().getLoggableDescription() );
+                    hs = HttpStatus.INTERNAL_SERVER_ERROR;
                 }
             }
         }
@@ -238,6 +229,8 @@ public class TaskFlowServiceImpl implements TaskFlowService {
         WidAux.removeWid();
         return new ResponseEntity<List<Specifier<Quote>>>( res, getHeader( type, id, "quote", dn, wid ), hs );
     }
+
+
 
 
     @RequestMapping( value = "/_{type}/_{id}/quote", method = RequestMethod.POST )
@@ -250,7 +243,6 @@ public class TaskFlowServiceImpl implements TaskFlowService {
             TaskFlow tf = findTF( type, id );
             tf.setPreferredQuote( cont );
             hs = HttpStatus.OK;
-
         } catch ( NoSuchResourceException e ) {
 
         }
@@ -267,12 +259,11 @@ public class TaskFlowServiceImpl implements TaskFlowService {
         Quote quote = null;
         try {
             TaskFlow tf = findTF( type, id );
-            List<Quote> lq = tf.getQuotes();
-            if( lq != null && idx >= 0 && idx < lq.size() ) {
-                quote = lq.get( idx );
+            List<Quote> quoteList = tf.getQuotes();
+            if ( quoteList != null && idx >= 0 && idx < quoteList.size() ) {
+                quote = quoteList.get( idx );
                 hs = HttpStatus.OK;
             }
-
         } catch ( NoSuchResourceException e ) {
             // intentionally
         }
@@ -286,13 +277,13 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                                               @PathVariable int idx, @RequestHeader( "DN" ) String dn,
                                               @RequestHeader( "WId" ) String wid ) {
 
-       throw new NotYetImplementedException(); // together with the ProperlyNeverWillBeException
+        throw new NotYetImplementedException(); // together with the ProperlyNeverWillBeException
     }
 
 
     @RequestMapping( value = "/_{type}/_{id}/task", method = RequestMethod.GET )
     public ResponseEntity<Specifier<Facets>> getTask( @PathVariable String type, @PathVariable String id,
-                                           @RequestHeader( "DN" ) String dn, @RequestHeader( "WId" ) String wid ) {
+                                                      @RequestHeader( "DN" ) String dn, @RequestHeader( "WId" ) String wid ) {
 
         HttpStatus hs = HttpStatus.NOT_FOUND;
         Specifier<Facets> spec = null;
@@ -300,7 +291,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
         try {
             TaskFlow tf = findTF( type, id );
             Taskling t = tf.getTaskling();
-            if( t != null ) {
+            if ( t != null ) {
                 logger.debug( "getTask task called" );
                 spec = taskServiceAux.getTaskSpecifier( taskClient, t, uriFactory, taskFlowUriMap( type, id ), dn );
                 hs = HttpStatus.OK;
@@ -315,22 +306,21 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     }
 
 
-
     @RequestMapping( value = "/_{type}/_{id}/task", method = RequestMethod.PUT )
     public ResponseEntity<Specifier<Facets>> createTask( @PathVariable String type, @PathVariable String id,
-                                              @RequestParam( value = "quote", required = false ) String quoteId,
-                                              @RequestHeader( "DN" ) String dn, @RequestHeader( "WId" ) String wid ) {
+                                                         @RequestParam( value = "quote", required = false ) String quoteId,
+                                                         @RequestHeader( "DN" ) String dn, @RequestHeader( "WId" ) String wid ) {
 
         HttpStatus hs = HttpStatus.NOT_FOUND;
 
         WidAux.initWid( wid );
         logger.debug( "create task called" );
-        HttpHeaders headers = getHeader( type, id, "task", dn, wid);
-        if( taskFlowProvider.exists( type ) ) {
+        HttpHeaders headers = getHeader( type, id, "task", dn, wid );
+        if ( taskFlowProvider.exists( type ) ) {
             TaskFlowFactory tff = taskFlowProvider.getFactoryForTaskFlow( type );
             TaskFlow tf = tff.find( id );
             if ( tf != null ) {
-                if( tf.getTaskling() != null )
+                if ( tf.getTaskling() != null )
                     hs = HttpStatus.CONFLICT;
                 else {
                     TaskAction ta = tff.createAction();
@@ -363,7 +353,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
             TaskFlow tf = findTF( type, id );
             tfs = TaskFlowAux.statusFromTaskFlow( dao, tf );
             Taskling t = tf.getTaskling();
-            if( t != null ) {
+            if ( t != null ) {
                 // maybe call task client
                 Specifier<Void> spec = new Specifier<Void>();
                 Map<String, String> urimap = taskUriMap( type, id, t );
@@ -382,8 +372,8 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
     @RequestMapping( value = "/_{type}/_{id}/result", method = RequestMethod.GET )
     public ResponseEntity<Specifier<TaskResult>> getResult( @PathVariable String type, @PathVariable String id,
-                                                     @RequestHeader( "DN" ) String dn,
-                                                     @RequestHeader( "WId" ) String wid ) {
+                                                            @RequestHeader( "DN" ) String dn,
+                                                            @RequestHeader( "WId" ) String wid ) {
 
         HttpStatus hs = HttpStatus.NOT_FOUND;
         Specifier<TaskResult> spec = null;
@@ -425,14 +415,14 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
     protected GNDMSResponseHeader getHeader( String type, String id, String facet, String dn, String wid ) {
 
-        Map<String,String> uriargs = taskFlowUriMap( type, id );
+        Map<String, String> uriargs = taskFlowUriMap( type, id );
         return new GNDMSResponseHeader( uriFactory.taskFlowTypeUri( uriargs, facet ), facet, serviceUrl, dn, wid );
     }
 
 
     private Map<String, String> taskFlowUriMap( String type, String id ) {
 
-        HashMap<String,String> urimap = new HashMap<String, String>( 3 );
+        HashMap<String, String> urimap = new HashMap<String, String>( 3 );
         urimap.put( UriFactory.SERVICE, "gorfx" );
         urimap.put( UriFactory.TASKFLOW_TYPE, type );
         urimap.put( UriFactory.TASKFLOW_ID, id );
@@ -441,21 +431,17 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
 
     private Map<String, String> taskUriMap( String type, String id, Taskling t ) {
-        HashMap<String,String> urimap = new HashMap<String, String>( 4 );
-        urimap.put( UriFactory.SERVICE, "gorfx" );
-        urimap.put( UriFactory.TASKFLOW_TYPE, type );
-        urimap.put( UriFactory.TASKFLOW_ID, id );
-        return TaskServiceAux.taskUriMap( t, taskFlowUriMap( type, id ) ) ;
+        return TaskServiceAux.taskUriMap( t, taskFlowUriMap( type, id ) );
     }
 
 
-    private <T> Specifier<T> createTaskSpecifier( Class<T> resClass,  String type, String id, String facet ) throws NoSuchResourceException {
+    private <T> Specifier<T> createTaskSpecifier( Class<T> resClass, String type, String id, String facet ) throws NoSuchResourceException {
 
-        TaskFlow tf = findTF( type, id );
-        Taskling t = tf.getTaskling();
-        Map<String, String> urimap = taskUriMap( type, id, t );
-        Specifier<T> spec;
-        if( t != null ) {
+        final TaskFlow tf = findTF( type, id );
+        final Taskling t = tf.getTaskling();
+        final Map<String, String> urimap = taskUriMap( type, id, t );
+        final Specifier<T> spec;
+        if ( t != null ) {
             spec = new Specifier<T>();
             spec.setURL( uriFactory.taskUri( urimap, facet ) );
             spec.setUriMap( urimap );
@@ -468,16 +454,16 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
     protected TaskFlow findTF( String type, String id ) throws NoSuchResourceException {
 
-        if( taskFlowProvider.exists( type ) ) {
+        if ( taskFlowProvider.exists( type ) ) {
             TaskFlowFactory tff = taskFlowProvider.getFactoryForTaskFlow( type );
             TaskFlow tf = tff.find( id );
             if ( tf != null )
                 return tf;
             else
-                return TaskFlowFactory.Aux.fromTask( dao, taskFlowProvider, type, id );
+                return TaskFlowServiceAux.fromTask( dao, taskFlowProvider, type, id );
         }
 
-        throw new NoSuchResourceException( );
+        throw new NoSuchResourceException();
     }
 
 

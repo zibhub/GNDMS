@@ -24,5 +24,8 @@ package de.zib.gndms.common.stuff.devel;
  */
 public class NotYetImplementedException extends RuntimeException {
 
+	/**
+	 * The serialization id.
+	 */
     private static final long serialVersionUID = 8566379615719291478L;
 }

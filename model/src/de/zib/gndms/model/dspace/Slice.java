@@ -21,6 +21,7 @@ package de.zib.gndms.model.dspace;
 import de.zib.gndms.model.common.TimedGridResource;
 
 import javax.persistence.*;
+
 import java.util.Calendar;
 
 /**
@@ -73,6 +74,7 @@ public class Slice extends TimedGridResource {
      * This path is relative to the path of the Owner.
      *
      * To obtain the absolute path use Subspace.getPathForSlice .
+     * @return The path.
      */ 
     @Column( name="directory_id", nullable=false, updatable=false, columnDefinition="CHAR", length=36 )
     public String getDirectoryId() {

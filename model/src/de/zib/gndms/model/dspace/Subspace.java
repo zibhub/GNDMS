@@ -27,6 +27,7 @@ package de.zib.gndms.model.dspace;
  */
 
 import de.zib.gndms.model.common.GridResource;
+
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
@@ -71,8 +72,9 @@ public class Subspace extends GridResource {
      * Sets the path of the Subspace to pth.
      *
      * If pth must exists and be a valid directory with read/write access.
+     * @param pth  The path.
      *
-     * @note The read permission will be removed form pth.
+     * @note The read permission will be removed from pth.
      */
     public void setPath( String pth ) {
 
@@ -105,6 +107,7 @@ public class Subspace extends GridResource {
      * Remove a slice from the slice set.
      *
      * The slice itself isn't destroy, and the fold stil exists.
+     * @param sl The slice to be removed.
      */
     public void removeSlice( @NotNull Slice sl ) {
 
@@ -114,6 +117,9 @@ public class Subspace extends GridResource {
 
     /** 
      * @brief Delivers the absolute path to a slice sl.
+     * 
+     * @param sl The slice. 
+     * @return The path.
      */
     public String getPathForSlice( Slice sl )  {
         return getPath() + File.separator + sl.getKind( ).getSliceDirectory() + File.separator + sl.getDirectoryId( );
@@ -184,5 +190,5 @@ public class Subspace extends GridResource {
 
     public void setGsiFtpPath( String gsiFtpPath ) {
         this.gsiFtpPath = gsiFtpPath;
-    }
+    }	
 }

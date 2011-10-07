@@ -32,7 +32,7 @@ public interface SliceKindProvider {
 
 	/**
 	 * Checks whether a given slice kind id exists.
-	 * @param subspace The slice kind id.
+	 * @param sliceKind The slice kind id.
 	 * @return true, if this slice kind exists, otherwise false.
 	 */
 	boolean exists(String sliceKind);

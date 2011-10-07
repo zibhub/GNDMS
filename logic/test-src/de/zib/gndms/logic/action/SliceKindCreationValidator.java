@@ -20,7 +20,7 @@ package de.zib.gndms.logic.action;
 
 import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.SliceKind;
-import de.zib.gndms.model.common.AccessMask;
+import de.zib.gndms.common.model.common.AccessMask;
 import de.zib.gndms.logic.model.dspace.CreateSliceKindAction;
 import static org.testng.AssertJUnit.*;
 

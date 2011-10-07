@@ -16,17 +16,19 @@ package de.zib.gndms.gndmc.dspace;
  * limitations under the License.
  */
 
-import java.io.File;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Vector;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
 import de.zib.gndms.common.rest.Specifier;
-import de.zib.gndms.model.dspace.MockSliceConfiguration;
-import de.zib.gndms.stuff.confuror.ConfigHolder;
+import de.zib.gndms.logic.model.dspace.SliceConfiguration;
 
 /**
  * Tests the DSpaceClient.
@@ -72,11 +74,10 @@ public class SliceClientTest {
 		res = scl.listSliceFacets(subspace, sliceKind, slice, dn);
        	AssertJUnit.assertNotNull(res);
        	       	
-		String directory = "slice";
-		String owner = "me";
+		final long size = 4000;
 		GregorianCalendar cal = new GregorianCalendar();
 		final long value = cal.getTimeInMillis();
-       	ConfigHolder config = new MockSliceConfiguration(directory, owner, value);
+       	SliceConfiguration config = new SliceConfiguration(size, value);
 		res = scl.setSliceConfiguration(subspace, sliceKind, slice, config, dn);
        	AssertJUnit.assertNotNull(res);
 
@@ -87,9 +88,9 @@ public class SliceClientTest {
 		res = scl.deleteSlice(subspace, sliceKind, slice, dn);
        	AssertJUnit.assertNotNull(res);
 
-       	Vector<String> attr = new Vector<String>();
-       	attr.add("filename");
-		res = scl.listFiles(subspace, sliceKind, slice, attr, dn);
+       	HashMap<String, String> attrs = new HashMap<String, String>();
+       	attrs.put("filename", "g*");
+		res = scl.listFiles(subspace, sliceKind, slice, attrs, dn);
        	AssertJUnit.assertNotNull(res);
 
 		res = scl.deleteFiles(subspace, sliceKind, slice, dn);
@@ -98,10 +99,13 @@ public class SliceClientTest {
 		res = scl.getGridFtpUrl(subspace, sliceKind, slice, dn);
        	AssertJUnit.assertNotNull(res);
 
-		res = scl.listFileContent(subspace, sliceKind, slice, fileName, dn);
+       	Vector<String> attr = new Vector<String>();
+       	attr.add("filename");
+       	OutputStream out = new ByteArrayOutputStream();
+		res = scl.listFileContent(subspace, sliceKind, slice, fileName, attr, dn, out);
        	AssertJUnit.assertNotNull(res);
 
-		File file = new File("testPath");
+		MultipartFile file = null;
        	res = scl.setFileContent(subspace, sliceKind, slice, fileName, file, dn);
        	AssertJUnit.assertNotNull(res);
 

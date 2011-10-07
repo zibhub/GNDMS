@@ -46,53 +46,62 @@ public class DataDescriptorPropertyWriter extends AbstractPropertyIO implements 
         super( properties );
     }
 
-
-    public void writeObjectList( @NotNull String[] objectList ) {
-        PropertyReadWriteAux.writeListMultiLine( getProperties(), SfrProperty.OBJECT_ITEMS.key, Arrays.asList( objectList ) );
+    @Override
+    public void writeObjectList( @NotNull List<String> objectList ) {
+        PropertyReadWriteAux.writeListMultiLine( getProperties(), SfrProperty.OBJECT_ITEMS.key, objectList );
     }
 
 
 
+    @Override
     public void writeDataFormat( @NotNull String dataFormat ) {
         getProperties().setProperty( SfrProperty.FILE_FORMAT.key, dataFormat );
     }
 
 
+    @Override
     public void writeDataArchiveFormat( String dataArchiveFormat ) {
         getProperties().setProperty( SfrProperty.FILE_ARCHIVE_FORMAT.key, dataArchiveFormat );
     }
 
 
+    @Override
     public void writeMetaDataFormat( @NotNull String metaDataFormat ) {
         getProperties().setProperty( SfrProperty.META_FILE_FORMAT.key, metaDataFormat );
     }
 
 
+    @Override
     public void writeMetaDataArchiveFormat( String metaDataArchiveFormat ) {
         getProperties().setProperty( SfrProperty.META_FILE_ARCHIVE_FORMAT.key, metaDataArchiveFormat );
     }
 
 
+    @Override
     public void writeJustDownload() {
         getProperties().setProperty( SfrProperty.JUST_DOWNLOAD.key, "true" );
     }
 
 
+    @Override
     public DataConstraintsWriter getDataConstraintsWriter() {
         return new DataConstraintsPropertyWriter( getProperties() );
     }
 
-    
+
+    @Override
     public void beginWritingDataConstraints() {
         // Not required here
     }
 
 
+    @Override
     public void doneWritingDataConstraints() {
         // Not required here
     }
 
 
+    @Override
     public void done() {
         // Not required here
     }

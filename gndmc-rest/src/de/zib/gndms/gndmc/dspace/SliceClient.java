@@ -17,16 +17,19 @@ package de.zib.gndms.gndmc.dspace;
  */
 
 import java.io.File;
+import java.io.OutputStream;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 import de.zib.gndms.common.dspace.service.SliceService;
-import de.zib.gndms.common.kit.dspace.Product;
+import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
+import de.zib.gndms.common.stuff.util.Product;
 import de.zib.gndms.gndmc.AbstractClient;
-import de.zib.gndms.stuff.confuror.ConfigHolder;
 
 /**
  * The slice client implementing the slice service.
@@ -52,16 +55,16 @@ public class SliceClient extends AbstractClient implements SliceService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public final ResponseEntity<Product<ConfigHolder, Facets>> listSliceFacets(final String subspace,
+	public final ResponseEntity<Product<Configuration, Facets>> listSliceFacets(final String subspace,
 			final String sliceKind, final String slice, final String dn) {
-		return (ResponseEntity<Product<ConfigHolder, Facets>>) (Object) unifiedGet(Product.class, getServiceURL() 
+		return (ResponseEntity<Product<Configuration, Facets>>) (Object) unifiedGet(Product.class, getServiceURL() 
 				+ "/dspace/_" + subspace
 				+ "/_" + sliceKind + "/_" + slice, dn);
 	}
 
 	@Override
 	public final ResponseEntity<Void> setSliceConfiguration(final String subspace,
-			final String sliceKind, final String slice, final ConfigHolder config, final String dn) {
+			final String sliceKind, final String slice, final Configuration config, final String dn) {
 		return unifiedPut(Void.class, config, getServiceURL() + "/dspace/_"
 				+ subspace + "/_" + sliceKind + "/_" + slice, dn);
 	}
@@ -75,17 +78,19 @@ public class SliceClient extends AbstractClient implements SliceService {
 				+ sliceKind + "/_" + slice, dn);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public final ResponseEntity<Void> deleteSlice(final String subspace, final String sliceKind,
+	public final ResponseEntity<Specifier<Void>> deleteSlice(final String subspace, final String sliceKind,
 			final String slice, final String dn) {
-		return unifiedDelete(getServiceURL() + "/dspace/_" + subspace + "/_"
+		return (ResponseEntity<Specifier<Void>>) (Object) unifiedDelete(Specifier.class, 
+				getServiceURL() + "/dspace/_" + subspace + "/_"
 				+ sliceKind + "/_" + slice, dn);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public final ResponseEntity<List<File>> listFiles(
-			final String subspace, final String sliceKind, final String slice, final List<String> attr,
+			final String subspace, final String sliceKind, final String slice, final Map<String, String> attr,
 			final String dn) {
 		return (ResponseEntity<List<File>>) (Object) unifiedGet(List.class, getServiceURL() 
 				+ "/dspace/_" + subspace + "/_"
@@ -107,15 +112,17 @@ public class SliceClient extends AbstractClient implements SliceService {
 	}
 
 	@Override
-	public final ResponseEntity<File> listFileContent(final String subspace,
-			final String sliceKind, final String slice, final String fileName, final String dn) {
-		return unifiedGet(File.class, getServiceURL() + "/dspace/_" + subspace
+	public final ResponseEntity<OutputStream> listFileContent(final String subspace,
+			final String sliceKind, final String slice, final String fileName, 
+			final List<String> attrs, final String dn, final OutputStream out) {
+		return unifiedGet(OutputStream.class, getServiceURL() + "/dspace/_" + subspace
 				+ "/_" + sliceKind + "/_" + slice + "/_" + fileName, dn);
 	}
 
 	@Override
 	public final ResponseEntity<Void> setFileContent(final String subspace,
-			final String sliceKind, final String slice, final String fileName, final File file, final String dn) {
+			final String sliceKind, final String slice, final String fileName, 
+			final MultipartFile file, final String dn) {
 		return unifiedPut(Void.class, file, getServiceURL() + "/dspace/_" + subspace
 				+ "/_" + sliceKind + "/_" + slice + "/_" + fileName, dn);
 	}

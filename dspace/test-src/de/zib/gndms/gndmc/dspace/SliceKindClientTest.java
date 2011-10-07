@@ -20,8 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
-import de.zib.gndms.model.dspace.MockSliceKindConfiguration;
-import de.zib.gndms.stuff.confuror.ConfigHolder;
+import de.zib.gndms.logic.model.dspace.SliceKindConfiguration;
 
 /**
  * Tests the DSpaceClient.
@@ -66,8 +65,8 @@ public class SliceKindClientTest {
        	AssertJUnit.assertNotNull(res);
        	       	
 		String uri = "testuri";
-		final long permission = 345;
-       	ConfigHolder config = new MockSliceKindConfiguration(uri, permission, null);
+		String permission = "345";
+       	SliceKindConfiguration config = new SliceKindConfiguration(uri, permission, null);
 		res = scl.setSliceKindConfig(subspace, sliceKind, config, dn);
        	AssertJUnit.assertNotNull(res);
 

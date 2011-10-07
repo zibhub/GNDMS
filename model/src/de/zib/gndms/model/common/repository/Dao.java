@@ -15,6 +15,8 @@ package de.zib.gndms.model.common.repository;
  * limitations under the License.
  */
 
+import java.util.NoSuchElementException;
+
 /**
  * @author try ma ik jo rr a zib
  * @version $Id$
@@ -36,9 +38,9 @@ public interface Dao<K,M,D> {
     K create( );
 
     /**
-     * Creates a fresh instance of M matching descirptor.
+     * Creates a fresh instance of M matching descriptor.
      *
-     * This can be used fine graind construction, i.e. if M is a base class.
+     * This can be used fine grained construction, i.e. if M is a base class.
      *
      * @param descriptor The descriptor of the object, i.e. class.
      * @return The key of the new instance.
@@ -54,10 +56,11 @@ public interface Dao<K,M,D> {
     /**
      * Used to retrive an model object form the dao.
      *
+     *
      * @param key The key of the object.
      * @return
      */
-    M get( K key );
+    M get( K key ) throws NoSuchElementException;
 
     /**
      * Deletes a model matching the given key.

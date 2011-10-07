@@ -16,7 +16,6 @@ package de.zib.gndms.dspace.service;
  * limitations under the License.
  */
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,20 +35,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import de.zib.gndms.GORFX.service.TaskServiceAux;
 import de.zib.gndms.common.dspace.service.SubspaceService;
+import de.zib.gndms.common.logic.config.Configuration;
+import de.zib.gndms.common.logic.config.SetupMode;
+import de.zib.gndms.common.logic.config.WrongConfigurationException;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.logic.dspace.SubspaceProvider;
 import de.zib.gndms.logic.model.TaskExecutionService;
-import de.zib.gndms.logic.model.config.SetupAction.SetupMode;
 import de.zib.gndms.logic.model.dspace.SetupSubspaceAction;
+import de.zib.gndms.logic.model.dspace.SubspaceConfiguration;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.model.dspace.SubspaceConfiguration;
-import de.zib.gndms.model.dspace.WrongConfigurationException;
-import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
-import de.zib.gndms.stuff.confuror.ConfigHolder;
 
 /**
  * The subspace service implementation.
@@ -59,9 +57,9 @@ import de.zib.gndms.stuff.confuror.ConfigHolder;
 
 public class SubspaceServiceImpl implements SubspaceService {
 
-    /**
-     * The logger.
-     */
+	/**
+	 * The logger.
+	 */
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	/**
 	 * The base url, something like \c http://my.host.org/gndms/grid_id.
@@ -86,37 +84,56 @@ public class SubspaceServiceImpl implements SubspaceService {
 	/**
 	 * The auxiliary for task services.
 	 */
-    private TaskServiceAux taskServiceAux;
+	private TaskServiceAux taskServiceAux;
+
+	/**
+	 * Initialization of the dspace service.
+	 */
+	@PostConstruct
+	public final void init() {
+		uriFactory = new UriFactory(baseUrl);
+		taskServiceAux = new TaskServiceAux(executor);
+	}
 
 	@Override
 	@RequestMapping(value = "/_{subspace}", method = RequestMethod.PUT)
 	public final ResponseEntity<Facets> createSubspace(
 			@PathVariable final String subspace,
-			@RequestBody final ConfigHolder config,
+			@RequestBody final Configuration config,
 			@RequestHeader("DN") final String dn) {
-	
+
 		GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
-		
-		if (!SubspaceConfiguration.checkSubspaceConfiguration(config)) {
+
+		try {
+			SubspaceConfiguration subspaceConfig = checkSubspaceConfig(config);
+
+			if (subspaces.exists(subspace)
+					|| subspaceConfig.getMode() != SetupMode.CREATE) {
+				logger.warn("Subspace " + subspace + " cannot be created");
+				return new ResponseEntity<Facets>(null, headers,
+						HttpStatus.FORBIDDEN);
+			}
+
+			SetupSubspaceAction action = new SetupSubspaceAction();
+			action.setPath(subspaceConfig.getPath());
+			action.setIsVisibleToPublic(subspaceConfig.isVisible());
+			action.setGsiFtpPath(subspaceConfig.getGsiFtpPath());
+			action.setMode(subspaceConfig.getMode());
+			action.setSize(subspaceConfig.getSize());
+
+			logger.info("Calling action for setting up the supspace "
+					+ subspace + ".");
+
+			// TODO what else to do with the action? what about the
+			// EntityManager?
+			action.call();
+			return new ResponseEntity<Facets>(dspaceFacets, headers,
+					HttpStatus.CREATED);
+		} catch (WrongConfigurationException e) {
+			logger.warn("Wrong subspace configuration");
 			return new ResponseEntity<Facets>(null, headers,
 					HttpStatus.BAD_REQUEST);
 		}
-	
-		if (subspaces.exists(subspace) || SubspaceConfiguration.getMode(config) != SetupMode.CREATE) {
-			return new ResponseEntity<Facets>(null, headers,
-					HttpStatus.FORBIDDEN);
-		}
-	
-	    SetupSubspaceAction action = new SetupSubspaceAction();
-	    action.setPath(SubspaceConfiguration.getPath(config));
-	    action.setIsVisibleToPublic(SubspaceConfiguration.getVisibility(config));
-	    action.setGsiFtpPath(SubspaceConfiguration.getGsiFtpPath(config));
-	    action.setMode(SubspaceConfiguration.getMode(config));
-	    action.setSize(SubspaceConfiguration.getSize(config));
-	
-	 	// TODO what else to do with the action? what about the EntityManager?
-	    action.call();
-		return new ResponseEntity<Facets>(dspaceFacets, headers, HttpStatus.CREATED);
 	}
 
 	@Override
@@ -125,31 +142,23 @@ public class SubspaceServiceImpl implements SubspaceService {
 			@PathVariable final String subspace,
 			@RequestHeader("DN") final String dn) {
 		GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
-	
+
 		if (!subspaces.exists(subspace)) {
+			logger.warn("Subspace " + subspace + " not found");
 			return new ResponseEntity<Specifier<Void>>(null, headers,
 					HttpStatus.NOT_FOUND);
 		}
-	
-	    SetupSubspaceAction action = new SetupSubspaceAction();
-	    // TODO: path ok?
-	    action.setPath(subspace);
-	    action.setMode(SetupMode.DELETE);
-	
-	 	// TODO what else to do with the action? what about the EntityManager?
-	    action.call();
-		return new ResponseEntity<Specifier<Void>>(null, headers, HttpStatus.OK);
-	}
 
-	/**
-	 * Initialization of the dspace service.
-	 */
-	@PostConstruct
-	public final void init() {
-		uriFactory = new UriFactory(baseUrl);
-	
-	    taskServiceAux = new TaskServiceAux(executor);
-	
+		SetupSubspaceAction action = new SetupSubspaceAction();
+		// TODO: path ok?
+		action.setPath(subspace);
+		action.setMode(SetupMode.DELETE);
+
+		logger.info("Calling action for deleting the supspace " + subspace
+				+ ".");
+		// TODO what else to do with the action? what about the EntityManager?
+		action.call();
+		return new ResponseEntity<Specifier<Void>>(null, headers, HttpStatus.OK);
 	}
 
 	@Override
@@ -157,12 +166,14 @@ public class SubspaceServiceImpl implements SubspaceService {
 	public final ResponseEntity<Facets> listAvailableFacets(
 			@PathVariable final String subspace,
 			@RequestHeader("DN") final String dn) {
-	
+
 		GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
-	
+
 		if (subspaces.exists(subspace)) {
-			return new ResponseEntity<Facets>(dspaceFacets, headers, HttpStatus.OK);
+			return new ResponseEntity<Facets>(dspaceFacets, headers,
+					HttpStatus.OK);
 		}
+		logger.warn("Subspace " + subspace + " not found");
 		return new ResponseEntity<Facets>(null, headers, HttpStatus.NOT_FOUND);
 	}
 
@@ -172,90 +183,88 @@ public class SubspaceServiceImpl implements SubspaceService {
 			@PathVariable final String subspace,
 			@RequestHeader("DN") final String dn) {
 		GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
-	
+
 		if (!subspaces.exists(subspace)) {
+			logger.warn("Subspace " + subspace + " not found");
 			return new ResponseEntity<List<Specifier<Void>>>(null, headers,
 					HttpStatus.NOT_FOUND);
 		}
 		Subspace sub = subspaces.getSubspace(subspace);
-		Set<SliceKind> sliceKinds = sub.getMetaSubspace().getCreatableSliceKinds();
-		
-		List<Specifier<Void>> list = new ArrayList<Specifier<Void>>(sliceKinds.size());
+		Set<SliceKind> sliceKinds = sub.getMetaSubspace()
+				.getCreatableSliceKinds();
+
+		List<Specifier<Void>> list = new ArrayList<Specifier<Void>>(
+				sliceKinds.size());
 		HashMap<String, String> urimap = new HashMap<String, String>(2);
 		urimap.put("service", "dspace");
 		for (String s : subspaces.listSubspaces()) {
 			Specifier<Void> spec = new Specifier<Void>();
-			
+
 			spec.setUriMap(new HashMap<String, String>(urimap));
 			spec.addMapping(UriFactory.SUBSPACE, s);
 			spec.setURL(uriFactory.quoteUri(urimap));
 			list.add(spec);
 		}
-		
-		return new ResponseEntity<List<Specifier<Void>>>(list, headers, HttpStatus.OK);
+
+		return new ResponseEntity<List<Specifier<Void>>>(list, headers,
+				HttpStatus.OK);
 	}
 
 	@Override
 	@RequestMapping(value = "/_{subspace}/config", method = RequestMethod.GET)
-	public final ResponseEntity<ConfigHolder> listSubspaceConfiguration(
+	public final ResponseEntity<Configuration> listSubspaceConfiguration(
 			@PathVariable final String subspace,
 			@RequestHeader("DN") final String dn) {
 		GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
-	
+
 		if (!subspaces.exists(subspace)) {
-			return new ResponseEntity<ConfigHolder>(null, headers,
+			logger.warn("Subspace " + subspace + " not found");
+			return new ResponseEntity<Configuration>(null, headers,
 					HttpStatus.NOT_FOUND);
 		}
-	
+
 		Subspace sub = subspaces.getSubspace(subspace);
-		ConfigHolder config;
-		try {
-			config = SubspaceConfiguration.getSubspaceConfiguration(sub);
-			return new ResponseEntity<ConfigHolder>(
-					config, headers, HttpStatus.OK);
-		} catch (IOException e) {
-			return new ResponseEntity<ConfigHolder>(null, headers,
-					HttpStatus.BAD_REQUEST);
-		} catch (UpdateRejectedException e) {
-			return new ResponseEntity<ConfigHolder>(null, headers,
-					HttpStatus.BAD_REQUEST);
-		}
+		SubspaceConfiguration config;
+		config = SubspaceConfiguration.getSubspaceConfiguration(sub);
+		return new ResponseEntity<Configuration>(config, headers, HttpStatus.OK);
 	}
 
 	@Override
 	@RequestMapping(value = "/_{subspace}/config", method = RequestMethod.PUT)
 	public final ResponseEntity<Void> setSubspaceConfiguration(
 			@PathVariable final String subspace,
-			@RequestBody final ConfigHolder config,
+			@RequestBody final Configuration config,
 			@RequestHeader("DN") final String dn) {
 		GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
-	
+
 		if (!subspaces.exists(subspace)) {
+			logger.warn("Subspace " + subspace + " not found");
 			return new ResponseEntity<Void>(null, headers, HttpStatus.NOT_FOUND);
 		}
-	
-		if (SubspaceConfiguration.checkSubspaceConfiguration(config)) {
+
+		try {
+			SubspaceConfiguration subspaceConfig = checkSubspaceConfig(config);
 			Subspace sub = subspaces.getSubspace(subspace);
-			try {
-				sub.setPath(SubspaceConfiguration.getPath(config));
-			sub.setGsiFtpPath(SubspaceConfiguration.getGsiFtpPath(config));
-			sub.getMetaSubspace().setVisibleToPublic(SubspaceConfiguration.getVisibility(config));
-			sub.setTotalSize(SubspaceConfiguration.getSize(config));
-			return new ResponseEntity<Void>(null, headers, HttpStatus.OK);			
-			} catch (WrongConfigurationException e) {
-				return new ResponseEntity<Void>(null, headers, HttpStatus.BAD_REQUEST);			
-			}
-		} else {		
+
+			// TODO something like sub.updateWithConfiguration(subspaceConfig);
+			
+			return new ResponseEntity<Void>(null, headers, HttpStatus.OK);
+		} catch (WrongConfigurationException e) {
+			logger.warn("Wrong subspace configuration");
 			return new ResponseEntity<Void>(null, headers,
 					HttpStatus.BAD_REQUEST);
 		}
+
 	}
 
 	/**
-	 * Sets the GNDMS response header for a given subspace and dn using the base URL.
+	 * Sets the GNDMS response header for a given subspace and dn using the base
+	 * URL.
 	 * 
-	 * @param subspace The subspace id.
-	 * @param dn The dn.
+	 * @param subspace
+	 *            The subspace id.
+	 * @param dn
+	 *            The dn.
 	 * @return The response header for this subspace.
 	 */
 	private GNDMSResponseHeader setSubspaceHeaders(final String subspace,
@@ -269,4 +278,27 @@ public class SubspaceServiceImpl implements SubspaceService {
 		return headers;
 	}
 
+	/**
+	 * Converts a Configuration into a SubspaceConfiguration, if possible, and
+	 * returns it, if valid.
+	 * 
+	 * @param config
+	 *            The given configuration.
+	 * @return The valid SubspaceConfiguration.
+	 */
+	private SubspaceConfiguration checkSubspaceConfig(final Configuration config) {
+		try {
+			SubspaceConfiguration subspaceConfig = (SubspaceConfiguration) config;
+			if (subspaceConfig.isValid()) {
+				return subspaceConfig;
+			} else {
+				throw new WrongConfigurationException(
+						"Wrong subspace configuration");
+			}
+		} catch (ClassCastException e) {
+			throw new WrongConfigurationException(
+					"Wrong subspace configuration");
+		}
+
+	}
 }

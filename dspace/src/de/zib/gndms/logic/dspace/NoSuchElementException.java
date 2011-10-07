@@ -17,19 +17,30 @@ package de.zib.gndms.logic.dspace;
  */
 
 /**
- * The wrong configuration exception, which is thrown when a given configuration tries to access an invalid configuration parameter.
+ * The no such element exception, which is thrown when a collection does not contain 
+ * a requested element.
  * 
  * @author Ulrike Golas
  */
 
 public class NoSuchElementException extends Exception {
 
+	/**
+	 * The serialization id.
+	 */
 	private static final long serialVersionUID = 6714125977083001944L;
 
+	/**
+	 * The constructor.
+	 */
     public NoSuchElementException() {
     }
 
-    public NoSuchElementException(String message) {
+    /**
+     * The constructor.
+     * @param message The exception message.
+     */
+    public NoSuchElementException(final String message) {
         super(message);
     }
 

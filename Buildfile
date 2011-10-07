@@ -32,6 +32,7 @@ require 'buildr/java'
 include Java
 include Commands
 
+
 # Helper to create non-standard GNDMS sub-project layouts
 require 'buildr/gndms'
 include GNDMS
@@ -104,8 +105,14 @@ SPRING = [
            "org.springframework:spring-expression:jar:#{SPRING_VERSION}",
            "org.springframework:spring-asm:jar:#{SPRING_VERSION}",
            "org.springframework:spring-aop:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-aspects:jar:#{SPRING_VERSION}",
            "org.springframework:spring-instrument:jar:#{SPRING_VERSION}",
          ] 
+ASPECTJ = [
+        'org.aspectj:aspectjrt:jar:1.6.11',
+        'org.aspectj:aspectjweaver:jar:1.6.11',
+        'aopalliance:aopalliance:jar:1.0'
+]
 SERVLET = 'javax.servlet:servlet-api:jar:2.5'
 INJECT  =  'javax.inject:javax.inject:jar:1'
 XSTREAM = 'com.thoughtworks.xstream:xstream:jar:1.3.1'
@@ -124,7 +131,7 @@ JSON=['org.codehaus.jackson:jackson-core-lgpl:jar:1.7.4',
 GSON='com.google.code.gson:gson:jar:1.6'
 
 # logging
-SLF4J = transitive( ['org.slf4j:slf4j-log4j12:jar:1.5.8'])
+SLF4J = transitive( ['org.slf4j:slf4j-log4j12:jar:1.6.1', 'org.slf4j:slf4j-ext:jar:1.6.1'])
 
 GUICE = 'com.google.code.guice:guice:jar:2.0'
 GOOGLE_COLLECTIONS = 'com.google.code.google-collections:google-collect:jar:snapshot-20080530'
@@ -148,44 +155,53 @@ DB_DERBY = ['org.apache.derby:derby:jar:10.5.3.0', 'org.apache.derby:derbytools:
 HTTP_CORE = ['org.apache.httpcomponents:httpcore:jar:4.0', 'org.apache.httpcomponents:httpcore-nio:jar:4.0', 'org.apache.httpcomponents:httpclient:jar:4.0.1']
 
 # Grouped GT4 dependencies
-GT4_COMMONS = gt4jars(['commons-beanutils.jar', 
-                       'commons-digester.jar',
-                       'commons-discovery.jar',
-                       'commons-pool.jar'])
-GT4_LOG = gt4jars(['commons-logging.jar', 'log4j-1.2.15.jar'])
+#GT4_COMMONS = gt4jars(['commons-beanutils.jar', 
+#                       'commons-digester.jar',
+#                       'commons-discovery.jar',
+#                       'commons-pool.jar'])
+#GT4_LOG = gt4jars(['commons-logging.jar', 'log4j-1.2.15.jar'])
 GT4_COG = gt4jars(['cog-axis.jar', 'cog-jglobus.jar', 'cog-url.jar'])
-GT4_AXIS = gt4jars(['axis.jar', 'axis-url.jar', 'saaj.jar'])
-GT4_WSRF = gt4jars(['addressing-1.0.jar',
-                    'axis-url.jar',
-                    'axis.jar',
-                    'commonj.jar',
-                    'concurrent.jar',
-                    # 'globus_wsrf_rft_stubs.jar',
-                    'naming-common.jar',
-                    'wsdl4j.jar',
-                    'saaj.jar',
-                    'wsrf_common.jar',
-                    'wsrf_core.jar',
-                    'wsrf_core_stubs.jar',
-                    'wsrf_tools.jar'])
-GT4_SERVLET = gt4jars(['servlet.jar'])
+#GT4_AXIS = gt4jars(['axis.jar', 'axis-url.jar', 'saaj.jar'])
+#GT4_WSRF = gt4jars(['addressing-1.0.jar',
+#                    'axis-url.jar',
+#                    'axis.jar',
+#                    'commonj.jar',
+#                    'concurrent.jar',
+#                    # 'globus_wsrf_rft_stubs.jar',
+#                    'naming-common.jar',
+#                    'wsdl4j.jar',
+#                    'saaj.jar',
+#                    'wsrf_common.jar',
+#                    'wsrf_core.jar',
+#                    'wsrf_core_stubs.jar',
+#                    'wsrf_tools.jar'])
+#GT4_SERVLET = gt4jars(['servlet.jar'])
 GT4_SEC = gt4jars(['puretls.jar', 'opensaml.jar', 
                    'cryptix-asn1.jar', 'cryptix.jar', 'cryptix32.jar', 
                    'jce-jdk13-125.jar', 'wss4j.jar', 'jgss.jar', 
                    'globus_delegation_service.jar',
                    'globus_delegation_stubs.jar'])
-GT4_XML = gt4jars(['xalan-2.6.jar', 'xercesImpl-2.7.1.jar', 'xml-apis.jar', 'xmlsec.jar', 'jaxrpc.jar'])
+#GT4_XML = gt4jars(['xalan-2.6.jar', 'xercesImpl-2.7.1.jar', 'xml-apis.jar', 'xmlsec.jar', 'jaxrpc.jar'])
 GT4_GRAM = gt4jars(['gram-monitoring.jar', 'gram-service.jar', 'gram-stubs.jar', 'gram-utils.jar'])
-GT4_USEAGE = gt4jars([ 'globus-usage-core.java' ])
-GT4_MDS = gt4jars(['globus_wsrf_mds_aggregator.jar',
-                   'globus_wsrf_mds_aggregator_stubs.jar',
-                   'webmds-0.1-dev.jar',
-                   'wsrf_mds_index.jar',
-                   'wsrf_mds_index_stubs.jar',
-                   'wsrf_mds_trigger.jar',
-                   'wsrf_mds_trigger_stubs.jar',
-                   'wsrf_mds_usefulrp.jar',
-                   'wsrf_mds_usefulrp_schema_stubs.jar'])
+#GT4_USEAGE = gt4jars([ 'globus-usage-core.java' ])
+#GT4_MDS = gt4jars(['globus_wsrf_mds_aggregator.jar',
+#                   'globus_wsrf_mds_aggregator_stubs.jar',
+#                   'webmds-0.1-dev.jar',
+#                   'wsrf_mds_index.jar',
+#                   'wsrf_mds_index_stubs.jar',
+#                   'wsrf_mds_trigger.jar',
+#                   'wsrf_mds_trigger_stubs.jar',
+#                   'wsrf_mds_usefulrp.jar',
+#                   'wsrf_mds_usefulrp_schema_stubs.jar'])
+
+GT4_COMMONS = []
+GT4_LOG     = []
+GT4_AXIS = gt4jars(['axis.jar', 'axis-url.jar', 'saaj.jar'])
+GT4_WSRF    = gt4jars(['addressing-1.0.jar', 'axis-url.jar', 'axis.jar' ])
+GT4_SERVLET = []
+GT4_XML     = []
+GT4_USEAGE  = []
+GT4_MDS     = []
 
 
 XSTREAM_DEPS= [ CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME ]
@@ -320,7 +336,7 @@ NEODATAGRAPH = [_('lib/neo4j-1.2/geronimo-jta_1.1_spec-1.1.1.jar'),
       test.with COMMONS_IO
       test.compile
 
-      test.include 'de.zib.gndms.neomodel.gorfx.tests.NeoOfferTypeTest'
+      test.include 'de.zib.gndms.neomodel.gorfx.tests.NeoTaskFlowTypeTest'
       test.include 'de.zib.gndms.neomodel.gorfx.tests.NeoTaskTest'
       
       package :jar      
@@ -329,14 +345,14 @@ NEODATAGRAPH = [_('lib/neo4j-1.2/geronimo-jta_1.1_spec-1.1.1.jar'),
     desc 'Shared database model classes'
     define 'model', :layout => dmsLayout('model', 'gndms-model') do
       # TODO: Better XML
-      compile.with project('common'), project('stuff'), COMMONS_COLLECTIONS, COMMONS_LANG, GOOGLE_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS, INJECT, GUICE, CXF, OPENJPA, JAXB, STAX_API
+      compile.with project('common'), project('stuff'), COMMONS_COLLECTIONS, COMMONS_LANG, GOOGLE_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS, INJECT, GUICE, CXF, OPENJPA, JAXB, STAX_API, JSON
       compile { open_jpa_enhance }
       package :jar
     end
 
     desc 'GT4-dependent utility classes for GNDMS'
     define 'kit', :layout => dmsLayout('kit', 'gndms-kit') do
-      compile.with JETTY, GROOVY, GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('stuff'), project('model'), project('neomodel'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_AXIS, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, INJECT, GUICE, GT4_SERVLET, COMMONS_LANG, OPENJPA, SLF4J, JSON, SPRING
+      compile.with JETTY, GROOVY, GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('common'), project('stuff'), project('model'), project('neomodel'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_AXIS, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, INJECT, GUICE, GT4_SERVLET, COMMONS_LANG, OPENJPA, SLF4J, JSON, SPRING
       compile
       test.compile
       test.using :testng
@@ -360,7 +376,7 @@ NEODATAGRAPH = [_('lib/neo4j-1.2/geronimo-jta_1.1_spec-1.1.1.jar'),
     desc 'GNDMS core infrastructure classes'
     define 'infra', :layout => dmsLayout('infra', 'gndms-infra') do
       # Infra *must* have all dependencies since we use this list in copy/link-deps
-      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gritserv'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), ARGS4J, JODA_TIME, JAXB, GT4_SERVLET, JETTY, CXF, GROOVY, GOOGLE_COLLECTIONS, INJECT, GUICE, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies, COMMONS_FILEUPLOAD, NEODATAGRAPH, SLF4J, SPRING
+      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('common'), project('gritserv'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), ARGS4J, JODA_TIME, JAXB, GT4_SERVLET, JETTY, CXF, GROOVY, GOOGLE_COLLECTIONS, INJECT, GUICE, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies, COMMONS_FILEUPLOAD, NEODATAGRAPH, SLF4J, SPRING
       compile
       package :jar
       doc projects('gndms:stuff', 'gndms:model', 'gndms:gritserv', 'gndms:kit', 'gndms:logic')
@@ -561,7 +577,7 @@ NEODATAGRAPH = [_('lib/neo4j-1.2/geronimo-jta_1.1_spec-1.1.1.jar'),
 
     desc 'Common gndms service classes'
     define 'common', :layout => dmsLayout('common', 'gndms-common') do
-        compile.with SPRING, ARGS4J, JODA_TIME, SLF4J, JSON
+        compile.with project( 'stuff' ), JETBRAINS_ANNOTATIONS, SPRING, ARGS4J, JODA_TIME, SLF4J, JSON
         compile
         meta_inf << file(_('src/META-INF/converter-setup.xml'))
         package :jar
@@ -571,7 +587,7 @@ NEODATAGRAPH = [_('lib/neo4j-1.2/geronimo-jta_1.1_spec-1.1.1.jar'),
 
     desc 'Gorfx client classes'
     define 'gndmc-rest', :layout => dmsLayout('gndmc-rest', 'gndms-gndmc-rest') do
-        compile.with project('common'), SPRING, ARGS4J, JODA_TIME, SLF4J, COMMONS_LOGGING, XSTREAM, XSTREAM_DEPS, JSON
+        compile.with project('stuff'), project('common'), SPRING, ARGS4J, JODA_TIME, SLF4J, COMMONS_LOGGING, XSTREAM, XSTREAM_DEPS, JSON, ASPECTJ
         meta_inf << file(_('src/META-INF/client-context.xml'))
         package(:jar).with :manifest=>manifest.merge( 'Main-Class'=>'de.zib.gndms.gndmc.gorfx.GORFXClientMain' )
 
@@ -856,5 +872,34 @@ task :default do nope() end
 task :release do nope() end
 task :install do nope() end
 
+desc 'try some features of buildr'
+task 'sandbox' do 
 
+    puts "generates the projects atom name"
+    puts project( 'gndms' ).project('common').inspect
+    puts
 
+    puts "lists all packages from a project"
+    puts project('gndms').project('gorfx').packages.first
+    puts
+
+    puts "echos the full path to the jar created by given project"
+    puts project('gndms').project('common').packages.select { |pkg| pkg.type == :jar }
+    puts
+
+    puts "lists all sub-projects"
+    puts project( 'gndms' ).projects
+    puts
+
+    puts "lists all sub-projects base dirs"
+    puts project( 'gndms' ).projects.map( &:base_dir ) 
+    puts
+    
+    puts "lists all sub-projects name in uppercase "
+    list = project( 'gndms' ).projects.map( &:name ).each { |name| puts name.split(":")[1].upcase.tr( "-", "_") }
+    puts
+
+    puts "the parent package name"
+    puts project('gndms:stuff').parent.name
+    puts
+end

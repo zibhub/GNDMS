@@ -30,15 +30,10 @@ import de.zib.gndms.infra.service.GNDMServiceHome;
 import de.zib.gndms.infra.service.GNDMSingletonServiceHome;
 import de.zib.gndms.kit.access.GNDMSBinding;
 import de.zib.gndms.kit.configlet.DefaultConfiglet;
-import de.zib.gndms.kit.monitor.GroovyBindingFactory;
-import de.zib.gndms.kit.monitor.GroovyMoniServer;
-import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.access.TaskActionProvider;
 import de.zib.gndms.logic.model.gorfx.*;
 import de.zib.gndms.kit.access.InstanceProvider;
 import de.zib.gndms.model.common.ConfigletState;
-import de.zib.gndms.model.common.GridResource;
-import de.zib.gndms.model.common.GridResourceItf;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.model.common.types.factory.IndustrialPark;
 import de.zib.gndms.model.common.types.factory.KeyFactory;
@@ -48,19 +43,14 @@ import de.zib.gndms.stuff.BoundInjector;
 import de.zib.gndms.kit.configlet.ConfigletProvider;
 import de.zib.gndms.kit.configlet.Configlet;
 import de.zib.gndms.kit.system.SystemInfo;
-import groovy.lang.Binding;
-import groovy.lang.GroovyShell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.globus.wsrf.ResourceException;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
-import java.lang.reflect.InvocationTargetException;
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,16 +80,7 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
     private final @NotNull Map<String, Object> instances;
 
 
-    private final @NotNull Map<Class<? extends GridResourceItf>, GNDMPersistentServiceHome<?>> homes;
-
-
 	private final Map<String, Configlet> configlets = Maps.newConcurrentHashMap();
-
-    @SuppressWarnings({ "RawUseOfParameterizedType" })
-    private @NotNull IndustrialPark<String, String, AbstractORQCalculator<?, ?>> orqPark;
-
-    @SuppressWarnings({ "RawUseOfParameterizedType" })
-    private @NotNull IndustrialPark<String, String, ORQTaskAction<?>> taskActionPark;
 
 	@SuppressWarnings({ "FieldCanBeLocal" })
 	private final Wrapper<Object> sysHolderWrapper;
@@ -119,7 +100,6 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
 	      final Wrapper<Object> systemHolderWrapParam )
     {
         instances = new HashMap<String, Object>(INITIAL_CAPACITY);
-        homes = new HashMap<Class<? extends GridResourceItf>, GNDMPersistentServiceHome<?>>(INITIAL_CAPACITY);
         systemName = sysNameParam;
 		uuidGen = uuidGenParam;
 	    sysHolderWrapper = systemHolderWrapParam;
@@ -134,83 +114,7 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
         boundInjector.setInjector(Injector);
         GNDMSBinding.setDefaultInjector(Injector);
 
-        final ORQCalculatorMetaFactory calcMF = new ORQCalculatorMetaFactory();
-        calcMF.setWrap(sysHolderWrapper);
-        calcMF.setInjector(Injector);
-        orqPark = new OfferTypeIndustrialPark<AbstractORQCalculator<?,?>>(calcMF);
-
-
-        final ORQTaskActionMetaFactory taskMF = new ORQTaskActionMetaFactory();
-        taskMF.setWrap( sysHolderWrapper );
-        taskMF.setInjector(Injector);
-        taskActionPark = new OfferTypeIndustrialPark<ORQTaskAction<?>>(taskMF);
     }
-
-    /**
-     * Adds the <tt>GNDMServiceHome</tt> and the corresponding <tt>org.globus.wsrf.Resource</tt> to the {@link #instances} map
-     *
-     * @param home a GNDMS Service resource home instance
-     * @throws ResourceException if the corresponding ressource could not be found
-     */
-	public synchronized void addHome(final @NotNull GNDMServiceHome home)
-            throws ResourceException {
-        if (home instanceof GNDMPersistentServiceHome<?>)
-            addHome(((GNDMPersistentServiceHome<?>) home).getModelClass(), home);
-        else
-            addHome(null, home);
-    }
-
-
-    @SuppressWarnings({ "MethodWithTooExceptionsDeclared" })
-    @NotNull
-    public AbstractORQCalculator<?,?> newORQCalculator(
-        final @NotNull EntityManagerFactory emf,
-        final @NotNull String offerTypeKey)
-        throws ClassNotFoundException, IllegalAccessException, InstantiationException,
-        NoSuchMethodException, InvocationTargetException {
-        EntityManager em = emf.createEntityManager();
-        try {
-            if (offerTypeKey == null)
-                throw new IllegalArgumentException("Unknow offer type: " + offerTypeKey);
-            AbstractORQCalculator<?,?> orqc = orqPark.getInstance(offerTypeKey);
-            orqc.setConfigletProvider( this );
-            return orqc;
-        }
-        finally {
-            if (! em.isOpen())
-                em.close();
-        }
-    }
-
-
-
-    @SuppressWarnings(
-	      { "MethodWithTooExceptionsDeclared", "OverloadedMethodsWithSameNumberOfParameters" })
-    public TaskAction newTaskAction(
-            final @NotNull EntityManagerFactory emf,
-            final @NotNull String offerTypeKey)
-            throws ClassNotFoundException, IllegalAccessException, InstantiationException,
-            NoSuchMethodException, InvocationTargetException {
-        EntityManager em = emf.createEntityManager();
-        try {
-	        return newTaskAction(em, offerTypeKey);
-        }
-        finally {
-            if (! em.isOpen())
-                em.close();
-        }
-    }
-
-
-
-	@SuppressWarnings({ "OverloadedMethodsWithSameNumberOfParameters" })
-	public TaskAction newTaskAction(
-		  final EntityManager emParam, final String offerTypeKey)
-		  throws IllegalAccessException, InstantiationException, ClassNotFoundException {
-		TaskAction ta = taskActionPark.getInstance(offerTypeKey);
-		ta.setUUIDGen( uuidGen );
-		return ta;
-	}
 
 
     /**
@@ -238,68 +142,6 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
         return instance;
     }
 
-    /**
-     * Adds the <tt>GNDMServiceHome</tt> and the corresponding <tt>org.globus.wsrf.Resource</tt> to the {@link #instances} map
-     * and stores the key <tt>modelClazz</tt> with the value <tt>home</tt> to {@link #homes}.
-     *
-     * <p>The key for the <tt>GNDMServiceHome</tt> is the nickname of <tt>home</tt> appended by "HOME", whereas
-     * the key for the Resource is the nickname of <tt>home</tt> appended by "Resource".
-     *
-     * @param modelClazz the class instance of the model
-     * @param home a GNDMS Service resource home instance
-     * @param <K> the specific subclass of the model instance 
-     * @throws ResourceException if the corresponding ressource could not be found
-     */
-    @SuppressWarnings({ "HardcodedFileSeparator", "RawUseOfParameterizedType" })
-    public synchronized <K extends GridResourceItf> void addHome(
-            final Class<K> modelClazz, final @NotNull GNDMServiceHome home)
-            throws ResourceException {
-        if (homes.containsKey(modelClazz))
-            throw new IllegalStateException("Name clash in home registration");
-        else {
-            final String homeName = home.getNickName() + "Home";
-            addInstance_(homeName, home);
-            try {
-                if (home instanceof GNDMSingletonServiceHome) {
-                    Object instance = home.find(null);
-                    final String resourceName = home.getNickName() + "Resource";
-                    addInstance_(resourceName, instance);
-                    logger.debug(getSystemName() + " addSingletonResource: '"
-                            + resourceName + "' = '" + (modelClazz == null ? "(no model class)" : modelClazz.getName()) + '/'
-                            + ((GNDMSingletonServiceHome)home).getSingletonID() + '\'');
-                }
-            }
-            catch (RuntimeException e) {
-                instances.remove(homeName);
-                throw e;
-            }
-            catch (ResourceException e) {
-                instances.remove(homeName);
-                throw e;
-            }
-            if (modelClazz != null)
-                homes.put(modelClazz, (GNDMPersistentServiceHome<?>) home);
-        }
-
-        logger.debug(getSystemName() + " addHome: '" + home + '\'');
-    }
-
-    /**
-     * Returns the GNDMPersistentServiceHome which is mapped by the key <tt>modelClazz</tt> in the map {@link #homes}. 
-     *
-     * @param modelClazz the class of the model
-     * @param <M> the specific class the model belongs to
-     * @return
-     */
-    @SuppressWarnings({ "unchecked" })
-    public synchronized <M extends GridResource> GNDMPersistentServiceHome<M>
-    getHome(Class<M> modelClazz) {
-        final GNDMPersistentServiceHome<M> home =
-                (GNDMPersistentServiceHome<M>) homes.get(modelClazz);
-        if (home == null)
-            throw new IllegalStateException("Unknown home");
-        return home;
-    }
 
     /* Adds an instance to the {@link #instances} map.
      * The name which will be mapped to the instance must not end with the keywords "HOME","Resource" or "ORQC".
@@ -516,22 +358,6 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
 		return clazz.cast(configlets.get(name));
 	}
 
-    /**
-     * Returns a <tt>GNDMServiceHome</tt> stored with a specif name in the {@link #instances} map.
-     *
-     * @param instancePrefix the prefix for the lookup key, which will be appended by "HOME"
-     * @return
-     */
-    public synchronized GNDMServiceHome lookupServiceHome(@NotNull String instancePrefix) {
-        return getInstance(GNDMServiceHome.class, instancePrefix+"Home");
-    }
-
-
-    public GroovyBindingFactory createBindingFactory() {
-        return new GNDMSBindingFactory();
-    }
-
-
 
     public @NotNull String getSystemName() {
         return systemName;
@@ -542,7 +368,7 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
      * it will return the value of the enviroment variable <tt>TMPDIR</tt> instead.
      * If also not denoted, "/tmp" will be returned.
      *
-     * @return the temp directory of the GNDMSystem according to enviroment variables
+     * @return the temp directory of the GNDMSystem according to environment variables
      */
 	@NotNull
 	@SuppressWarnings({ "HardcodedFileSeparator" })
@@ -597,58 +423,6 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
     }
 
 
-    private final class GNDMSBindingFactory implements GroovyBindingFactory {
-
-
-        public @NotNull
-        Binding createBinding(
-              final @NotNull GroovyMoniServer moniServer,
-              final @NotNull Principal principal, final @NotNull String args) {
-            final Binding binding = new Binding();
-            for (Map.Entry<String, Object> entry : instances.entrySet())
-                binding.setProperty(entry.getKey(), entry.getValue());
-            return binding;
-        }
-
-
-        @SuppressWarnings({"StringBufferWithoutInitialCapacity"})
-        public void initShell(@NotNull GroovyShell shell, @NotNull Binding binding) {
-            StringBuilder builder = new StringBuilder();
-            for (Map.Entry<String, Object> entry : instances.entrySet()) {
-                final String key = entry.getKey();
-                builder.append("Object.metaClass.");
-                builder.append(key);
-                builder.append('=');
-                builder.append(key);
-                builder.append(';');
-            }
-            shell.evaluate(builder.toString());
-        }
-
-
-        public void destroyBinding(final @NotNull GroovyMoniServer moniServer,
-                                   final @NotNull Binding binding) {
-            // intended
-        }
-
-    }
-
-    private static class OfferTypeIndustrialPark<T extends KeyFactoryInstance<String, T>>
-            extends IndustrialPark<String, String, T> {
-
-        private OfferTypeIndustrialPark(
-                final @NotNull
-                KeyFactory<String, RecursiveKeyFactory<String, T>> factoryParam) {
-            super(factoryParam);
-        }
-
-
-        @NotNull
-        @Override
-        public String mapKey(final @NotNull String keyParam) {
-            return keyParam;
-        }
-    }
 
 	public @NotNull
     GNDMSInjector getSystemAccessInjector() {

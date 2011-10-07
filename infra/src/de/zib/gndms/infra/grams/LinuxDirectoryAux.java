@@ -18,11 +18,12 @@ package de.zib.gndms.infra.grams;
 
 
 
+import de.zib.gndms.common.model.common.AccessMask;
 import de.zib.gndms.kit.util.DirectoryAux;
-import de.zib.gndms.model.common.AccessMask;
-import org.apache.log4j.Logger;
 import org.globus.exec.generated.ScriptCommandEnumeration;
 import org.globus.exec.service.exec.PerlJobDescription;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +36,7 @@ import java.util.HashMap;
  */
 public class LinuxDirectoryAux implements DirectoryAux {
 
-    protected Logger logger = Logger.getLogger( this.getClass() );
+    protected Logger logger = LoggerFactory.getLogger( this.getClass() );
 
     final static String WX = "300";
     final static String RO = "500";
@@ -111,7 +112,7 @@ public class LinuxDirectoryAux implements DirectoryAux {
             } else
                logger.debug( "Job successful" );
         } catch ( IOException e ) {
-            logger.error( e );
+            logger.error( "", e );
             return false;
         }
 

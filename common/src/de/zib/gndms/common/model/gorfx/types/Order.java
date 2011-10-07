@@ -34,7 +34,7 @@ public interface Order extends Serializable{
      * Useful to query the taskflow and its quote calculator from the TaskFlowProvider.
      * @return The task flow type id.
      */
-    String taskFlowType();
+    String getTaskFlowType();
 
 
     /**

@@ -17,9 +17,10 @@ package de.zib.gndms.dspace.service;
  */
 
 import java.io.File;
-import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -35,24 +36,23 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import de.zib.gndms.common.dspace.service.SliceService;
-import de.zib.gndms.common.kit.dspace.Product;
+import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
+import de.zib.gndms.common.stuff.util.Product;
 import de.zib.gndms.logic.dspace.NoSuchElementException;
 import de.zib.gndms.logic.dspace.SliceKindProvider;
 import de.zib.gndms.logic.dspace.SliceProvider;
 import de.zib.gndms.logic.dspace.SubspaceProvider;
+import de.zib.gndms.logic.model.dspace.SliceConfiguration;
 import de.zib.gndms.model.dspace.Slice;
-import de.zib.gndms.model.dspace.SliceConfiguration;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.model.dspace.WrongConfigurationException;
-import de.zib.gndms.stuff.confuror.ConfigEditor.UpdateRejectedException;
-import de.zib.gndms.stuff.confuror.ConfigHolder;
 
 /**
  * The slice service implementation.
@@ -102,7 +102,7 @@ public class SliceServiceImpl implements SliceService {
 
 	@Override
 	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}", method = RequestMethod.GET)
-	public final ResponseEntity<Product<ConfigHolder, Facets>> listSliceFacets(
+	public final ResponseEntity<Product<Configuration, Facets>> listSliceFacets(
 			@PathVariable final String subspace,
 			@PathVariable final String sliceKind,
 			@PathVariable final String slice,
@@ -111,19 +111,13 @@ public class SliceServiceImpl implements SliceService {
 		
 		try {
 			Slice slic = findSliceOfKind(subspace, sliceKind, slice);
-    		ConfigHolder config = SliceConfiguration.getSliceConfiguration(slic);
-    		Product<ConfigHolder, Facets> prod2 = new Product<ConfigHolder, Facets>(config, sliceFacets);
-    		return new ResponseEntity<Product<ConfigHolder, Facets>>(prod2, headers, HttpStatus.OK);
+    		SliceConfiguration config = SliceConfiguration.getSliceConfiguration(slic);
+    		Product<Configuration, Facets> prod2 = new Product<Configuration, Facets>(config, sliceFacets);
+    		return new ResponseEntity<Product<Configuration, Facets>>(prod2, headers, HttpStatus.OK);
  		} catch (NoSuchElementException ne) {
-			return new ResponseEntity<Product<ConfigHolder, Facets>>(null, headers, HttpStatus.NOT_FOUND);
-		} catch (IOException e) {
-			return new ResponseEntity<Product<ConfigHolder, Facets>>(null, headers,
-					HttpStatus.BAD_REQUEST);
-		} catch (UpdateRejectedException e) {
-			return new ResponseEntity<Product<ConfigHolder, Facets>>(null, headers,
-					HttpStatus.BAD_REQUEST);
-		}
-	}
+			return new ResponseEntity<Product<Configuration, Facets>>(null, headers, HttpStatus.NOT_FOUND);
+ 		}
+	}	
 
 	@Override
 	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}", method = RequestMethod.PUT)
@@ -131,28 +125,29 @@ public class SliceServiceImpl implements SliceService {
 			@PathVariable final String subspace,
 			@PathVariable final String sliceKind,
 			@PathVariable final String slice,
-			@RequestBody final ConfigHolder config,
+			@RequestBody final Configuration config,
 			@RequestHeader("DN") final String dn) {
 		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, slice, dn);
 		
 		try {
 			Slice slic = findSliceOfKind(subspace, sliceKind, slice);
 
-			if (SliceConfiguration.checkSliceConfiguration(config)) {
-				try {
-					slic.setDirectoryId(SliceConfiguration.getDirectory(config));
-					slic.setOwner(SliceConfiguration.getOwner(config));
-					slic.setTerminationTime(SliceConfiguration.getTerminationTime(config));
+			SliceConfiguration slconfig = (SliceConfiguration) config;
+			if (slconfig.isValid()) {
+
+					// slic.setDirectoryId(slconfig.getDirectory());
+					// slic.setOwner(slconfig.getOwner());
+					// TODO slic.setSize(slconfig.getSize());
+					slic.setTerminationTime(slconfig.getTerminationTime());
 					return new ResponseEntity<Void>(null, headers, HttpStatus.OK);			
-				} catch (WrongConfigurationException e) {
-					return new ResponseEntity<Void>(null, headers, HttpStatus.BAD_REQUEST);			
-				}
 			} else {		
 				return new ResponseEntity<Void>(null, headers,
 						HttpStatus.BAD_REQUEST);
 			}
  		} catch (NoSuchElementException ne) {
 			return new ResponseEntity<Void>(null, headers, HttpStatus.NOT_FOUND);
+ 		} catch (ClassCastException e) {
+			return new ResponseEntity<Void>(null, headers, HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -190,7 +185,7 @@ public class SliceServiceImpl implements SliceService {
 
 	@Override
 	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}", method = RequestMethod.DELETE)
-	public final ResponseEntity<Void> deleteSlice(
+	public final ResponseEntity<Specifier<Void>> deleteSlice(
 			@PathVariable final String subspace,
 			@PathVariable final String sliceKind,
 			@PathVariable final String slice,
@@ -201,9 +196,9 @@ public class SliceServiceImpl implements SliceService {
 			Slice slic = findSliceOfKind(subspace, sliceKind, slice);
 
 			// TODO: delete slice
-	        return new ResponseEntity<Void>(null, headers, HttpStatus.OK);
+	        return new ResponseEntity<Specifier<Void>>(null, headers, HttpStatus.OK);
  		} catch (NoSuchElementException ne) {
-			return new ResponseEntity<Void>(null, headers, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Specifier<Void>>(null, headers, HttpStatus.NOT_FOUND);
 		}
 	}
 
@@ -213,7 +208,7 @@ public class SliceServiceImpl implements SliceService {
 			@PathVariable final String subspace,
 			@PathVariable final String sliceKind,
 			@PathVariable final String slice,
-			@RequestParam(value = "attr", required = false) final List<String> attr,
+			@RequestParam(value = "attr", required = false) final Map<String, String> attr,
 			@RequestHeader("DN") final String dn) {
 		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, slice, dn);
 		
@@ -262,22 +257,26 @@ public class SliceServiceImpl implements SliceService {
 
 	@Override
 	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}/_{fileName}", method = RequestMethod.GET)
-	public final ResponseEntity<File> listFileContent(
+	public final ResponseEntity<OutputStream> listFileContent(
 			@PathVariable final String subspace,
 			@PathVariable final String sliceKind,
 			@PathVariable final String slice,
 			@PathVariable final String fileName,
-			@RequestHeader("DN") final String dn) {
+			@RequestHeader("ATTRS") final List<String> attrs, 
+			@RequestHeader("DN") final String dn, 
+			final OutputStream out) {
+		// TODO where does the output stream come from?
+		
 		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, slice, dn);
 		
 		try {
 			Slice slic = findSliceOfKind(subspace, sliceKind, slice);
-	        File file = null;
+			OutputStream file = null;
 	        // TODO get file
 	        
-	        return new ResponseEntity<File>(file, headers, HttpStatus.OK);
+	        return new ResponseEntity<OutputStream>(file, headers, HttpStatus.OK);
  		} catch (NoSuchElementException ne) {
-			return new ResponseEntity<File>(null, headers, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<OutputStream>(null, headers, HttpStatus.NOT_FOUND);
 		}
 	}
 
@@ -287,7 +286,7 @@ public class SliceServiceImpl implements SliceService {
 			@PathVariable final String subspace,
 			@PathVariable final String sliceKind,
 			@PathVariable final String slice,
-			@PathVariable final String fileName, @RequestBody final File file,
+			@PathVariable final String fileName, @RequestBody final MultipartFile file,
 			@RequestHeader("DN") final String dn) {
 		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, slice, dn);
 		
@@ -349,7 +348,8 @@ public class SliceServiceImpl implements SliceService {
 	 * @return The slice.
 	 * @throws NoSuchElementException If no such slice exists.
 	 */
-	private Slice findSliceOfKind(final String subspace, final String sliceKind, final String slice) throws NoSuchElementException {
+	private Slice findSliceOfKind(final String subspace, final String sliceKind, 
+			final String slice) throws NoSuchElementException {
 		Subspace sub = subspaces.getSubspace(subspace);
 		SliceKind sliceK = sliceKinds.getSliceKind(sliceKind);
 		Set<Slice> allSlices = sub.getSlices();

@@ -22,10 +22,21 @@ package de.zib.gndms.common.logic.action;
  * @brief Interface for meta information about actions.
  */
 public interface ActionMeta {
-
+	/**
+	 * Returns the name of the action.
+	 * @return the name.
+	 */
     String getName();
 
+    /**
+     * Returns some helpful information on the action.
+     * @return The help.
+     */
     String getHelp();
-
+    
+    /**
+     * Returns a description of the action.
+     * @return The description.
+     */
     String getDescription();
 }

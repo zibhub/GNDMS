@@ -89,7 +89,7 @@ public class PlugableTaskFlowProvider extends TaskFlowProviderImpl {
         List<String> missing = new ArrayList<String>();
 
         for( String k : plugins.keySet() ) {
-            TaskFlowFactory tff = plugins.get( k );
+            TaskFlowFactory<?,?> tff = plugins.get( k );
             for( String dep : tff.depends( ) ) {
                 if(! plugins.containsKey( dep ) )
                     missing.add( dep );

@@ -18,9 +18,9 @@ package de.zib.gndms.logic.model.dspace;
 
 
 
+import de.zib.gndms.common.model.common.AccessMask;
 import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.logic.model.AbstractModelEntityAction;
-import de.zib.gndms.model.common.AccessMask;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
@@ -138,18 +138,6 @@ public class TransformSliceAction extends AbstractModelEntityAction<Slice, Slice
             directoryAux.setPermissions( nsl.getOwner(), msk, tgt_pth );
         }
 
-
-        /*
-        boolean suc = true;
-        String[] ls = sl.getFileListing( );
-        for( int i=0; i < ls.length; ++i ) {
-            // todo maybe use gridftp for this crap, NEEDS CERT 
-            suc = suc &&
-                    DirectoryAux.Utils.copyFile(
-                            src_pth + File.separator + ls[i], tgt_pth + File.separator + ls[i]
-                    );
-        }
-        */
 
         directoryAux.copyDir( nsl.getOwner(), src_pth, tgt_pth );
 

@@ -21,9 +21,9 @@ package de.zib.gndms.kit.config;
 import de.zib.gndms.kit.logging.LDPHolder;
 import de.zib.gndms.kit.logging.LoggingDecisionPoint;
 import de.zib.gndms.stuff.config.InfiniteEnumeration;
-import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;

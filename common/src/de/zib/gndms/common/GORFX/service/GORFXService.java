@@ -97,7 +97,7 @@ public interface GORFXService extends GORFXServiceEssentials {
      * system maintenance.
      *
      * @return A list of action names.
-     * @param dn
+     * @param dn The dn of the user invoking the method.
      */
     ResponseEntity<List<String>> listBatchActions( String dn );
 

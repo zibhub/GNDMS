@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
+import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
-import de.zib.gndms.stuff.confuror.ConfigHolder;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -54,7 +54,7 @@ public interface SubspaceService {
 	 *            The dn of the user invoking the method.
 	 * @return The facets of the created subspace.
 	 */
-	ResponseEntity<Facets> createSubspace(String subspace, ConfigHolder config,
+	ResponseEntity<Facets> createSubspace(String subspace, Configuration config,
 			String dn);
 
 	/**
@@ -100,7 +100,7 @@ public interface SubspaceService {
 	 *            The dn of the user invoking the method.
 	 * @return The subspace configuration.
 	 */
-	ResponseEntity<ConfigHolder> listSubspaceConfiguration(String subspace,
+	ResponseEntity<Configuration> listSubspaceConfiguration(String subspace,
 			String dn);
 
 	/**
@@ -115,5 +115,5 @@ public interface SubspaceService {
 	 * @return ??.
 	 */
 	ResponseEntity<Void> setSubspaceConfiguration(String subspace,
-			ConfigHolder config, String dn);
+			Configuration config, String dn);
 }

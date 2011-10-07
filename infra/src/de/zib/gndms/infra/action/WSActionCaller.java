@@ -18,7 +18,7 @@ package de.zib.gndms.infra.action;
 
 
 
-import de.zib.gndms.kit.monitor.ActionCaller;
+import de.zib.gndms.logic.action.ActionCaller;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.PrintWriter;
