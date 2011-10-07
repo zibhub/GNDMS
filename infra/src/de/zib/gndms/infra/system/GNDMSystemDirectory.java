@@ -397,7 +397,7 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
      * it will return the value of the enviroment variable <tt>TMPDIR</tt> instead.
      * If also not denoted, "/tmp" will be returned.
      *
-     * @return the temp directory of the GNDMSystem according to enviroment variables
+     * @return the temp directory of the GNDMSystem according to environment variables
      */
 	@NotNull
 	@SuppressWarnings({ "HardcodedFileSeparator" })
