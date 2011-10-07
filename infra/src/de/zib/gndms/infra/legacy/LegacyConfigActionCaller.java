@@ -20,6 +20,7 @@ import de.zib.gndms.infra.system.ConfigActionCaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -55,4 +56,9 @@ public class LegacyConfigActionCaller  {
         }
     }
 
+
+    @Inject
+    public void setActionCaller( ConfigActionCaller actionCaller ) {
+        this.actionCaller = actionCaller;
+    }
 }

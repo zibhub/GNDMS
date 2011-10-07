@@ -23,6 +23,7 @@ import de.zib.gndms.logic.model.config.ConfigAction;
 import de.zib.gndms.logic.model.config.ConfigActionProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -56,7 +57,7 @@ public class LegacyConfigActionProvider implements ConfigActionProvider {
     }
 
 
-    @Autowired
+    @Inject
     public void setLegacyConfigMeta( SettableConfigMeta legacyConfigMeta ) {
         this.legacyConfigMeta = legacyConfigMeta;
     }
