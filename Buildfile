@@ -344,7 +344,7 @@ define 'gndms' do
     desc 'GT4-independent utility classes for GNDMS'
     define 'stuff', :layout => dmsLayout('stuff', 'gndms-stuff') do
        task( 'update-release-info' )       
-       compile.with  GOOGLE_COLLECTIONS, JETBRAINS_ANNOTATIONS, JSON, SPRING, SLF4J
+       compile.with INJECT, GOOGLE_COLLECTIONS, JETBRAINS_ANNOTATIONS, JSON, SPRING, SLF4J
        compile { project('gndms').updateBuildInfo() }
        test.compile
        test.using :testng
@@ -367,7 +367,7 @@ define 'gndms' do
     desc 'Shared database model classes'
     define 'model', :layout => dmsLayout('model', 'gndms-model') do
       # TODO: Better XML
-      compile.with project('common'), project('stuff'), COMMONS_COLLECTIONS, COMMONS_LANG, GOOGLE_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS, INJECT, GUICE, CXF, OPENJPA, JAXB, STAX_API, JSON
+      compile.with project('common'), project('stuff'), COMMONS_COLLECTIONS, COMMONS_LANG, GOOGLE_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS, INJECT, CXF, OPENJPA, JAXB, STAX_API, JSON
       compile { open_jpa_enhance }
       package :jar
     end
