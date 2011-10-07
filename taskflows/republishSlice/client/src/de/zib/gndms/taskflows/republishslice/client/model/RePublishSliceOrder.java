@@ -18,6 +18,7 @@ package de.zib.gndms.taskflows.republishslice.client.model;
 
 
 import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
+import de.zib.gndms.taskflows.interslicetransfer.client.model.InterSliceTransferOrder;
 
 /**
  * ORQ for a slice publishing.
