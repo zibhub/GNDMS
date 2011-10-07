@@ -26,19 +26,11 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import de.zib.gndms.kit.access.GNDMSBinding;
 import de.zib.gndms.kit.configlet.DefaultConfiglet;
-import de.zib.gndms.logic.access.TaskActionProvider;
 import de.zib.gndms.logic.model.gorfx.*;
-import de.zib.gndms.kit.access.InstanceProvider;
 import de.zib.gndms.model.common.ConfigletState;
 import de.zib.gndms.model.common.ModelUUIDGen;
-import de.zib.gndms.model.common.types.factory.IndustrialPark;
-import de.zib.gndms.model.common.types.factory.KeyFactory;
-import de.zib.gndms.model.common.types.factory.KeyFactoryInstance;
-import de.zib.gndms.model.common.types.factory.RecursiveKeyFactory;
 import de.zib.gndms.stuff.BoundInjector;
-import de.zib.gndms.kit.configlet.ConfigletProvider;
 import de.zib.gndms.kit.configlet.Configlet;
-import de.zib.gndms.kit.system.SystemInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.jetbrains.annotations.NotNull;
@@ -85,7 +77,7 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
 
 	private final @NotNull BoundInjector boundInjector = new BoundInjector();
 
-    private GNDMSInjector Injector;
+    private GNDMSInjector injector;
 
 
 
@@ -107,8 +99,8 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
     @PostConstruct
     void init () {
 
-        boundInjector.setInjector(Injector);
-        GNDMSBinding.setDefaultInjector(Injector);
+        boundInjector.setInjector( injector );
+        GNDMSBinding.setDefaultInjector( injector );
 
     }
 
@@ -415,13 +407,12 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
 
     @Override
     public void setBeanFactory( BeanFactory beanFactory ) throws BeansException {
-        Injector = new GNDMSInjectorSpring( beanFactory );
+        injector = new GNDMSInjectorSpring( beanFactory );
     }
 
 
 
-	public @NotNull
-    GNDMSInjector getSystemAccessInjector() {
+	public @NotNull GNDMSInjector getSystemAccessInjector() {
 		return boundInjector.getInjector();
 	}
 }

@@ -13,8 +13,8 @@
 		class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
 		<constructor-arg ref="marshaller" />
 	</bean-->
-    <bean id="taskExecutionService" class="de.zib.gndms.infra.system.SysTaskExecutionService"/>
 
+    <!-- Setup Property config -->
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="ignoreResourceNotFound" value="true"/>
         <property name="locations">
@@ -25,6 +25,24 @@
         </property>
     </bean>
 
+    <!-- Start of the bean definition -->
+
+    <bean id="gridConfig" class="de.zib.gndms.infra.SettableGridConfig">
+        <property name="gridName" value="${gridName}"/>
+        <property name="gridPath" value="${gridPath}"/>
+    </bean>
+
+    <!-- most import the system class, which glue all components together -->
+    <bean id="systemFactory" class="de.zib.gndms.infra.system.GNDMSystem$SysFactory">
+        <constructor-arg name="anySharedConfig" ref="gridConfig"/>
+        <constructor-arg name="debugModeParam" value="${debugMode}"/>
+    </bean>
+
+    <bean id="system" class="de.zib.gndms.infra.system.GNDMSystem"
+          factory-bean="systemFactory"
+          factory-method="getInstance" />
+
+    <bean id="taskExecutionService" class="de.zib.gndms.infra.system.SysTaskExecutionService"/>
     <bean id="taskDao" class="de.zib.gndms.neomodel.common.Dao">
         <constructor-arg name="gridName" value="${gridName}" />
         <constructor-arg name="gdb" ref="dataBase" />

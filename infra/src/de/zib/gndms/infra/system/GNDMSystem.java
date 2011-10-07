@@ -36,7 +36,12 @@ import org.jetbrains.annotations.NotNull;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.slf4j.MDC;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import static javax.persistence.Persistence.createEntityManagerFactory;
@@ -67,10 +72,11 @@ import java.util.concurrent.*;
         "OverloadedMethodsWithSameNumberOfParameters", "NestedAssignment",
         "ClassWithTooManyMethods" })
 public final class GNDMSystem
-	  implements SystemHolder, EMFactoryProvider,
+	  implements SystemHolder, EMFactoryProvider, BeanFactoryAware,
         ModelUpdateListener<GridResource> {
     private static final long EXECUTOR_SHUTDOWN_TIME = 5000L;
     private ConfigActionCaller actionCaller;
+    private AutowireCapableBeanFactory beanFactory;
 
 
     private static @NotNull Logger createLogger() { return LoggerFactory.getLogger(GNDMSystem.class); }
@@ -119,6 +125,7 @@ public final class GNDMSystem
 	}
 
 
+    @PostConstruct
 	public void initialize() throws RuntimeException {
 		try {
 			printVersion();
@@ -133,7 +140,8 @@ public final class GNDMSystem
 			restrictedEmf = emf;
 			tryTxExecution();
 			// initialization intentionally deferred to initialize
-	        instanceDir = new GNDMSystemDirectory(getSystemName(),
+	        instanceDir = ( GNDMSystemDirectory ) beanFactory.configureBean(
+                new GNDMSystemDirectory(getSystemName(),
 	                                              uuidGenDelegate,
 	                                              new DefaultWrapper<SystemHolder, Object>(SystemHolder.class) {
 
@@ -142,11 +150,13 @@ public final class GNDMSystem
 			        wrappedParam.setSystem(GNDMSystem.this);
 			        return wrapClass.cast(wrappedParam);
 		        }
-	        } );
+	        } ), "instanceDir" );
 	        instanceDir.addInstance("sys", this);
 			instanceDir.reloadConfiglets(restrictedEmf);
 			// Bad style, usually would be an inner class but
 			// removed it from this source file to reduce source file size
+            // todo continue here  figure out a way to construct ConfigActionCaller, maybe rewrite the constructor
+            //beanFactory.
 			actionCaller = new ConfigActionCaller(this);
             logger.info("getSubGridName() /* gridconfig subGridName */ is '" + getInstanceDir().getSubGridName() + '\'');
 		}
@@ -493,6 +503,11 @@ public final class GNDMSystem
 	}
 
 
+    @Override
+    public void setBeanFactory( BeanFactory beanFactory ) throws BeansException {
+        this.beanFactory = ( AutowireCapableBeanFactory ) beanFactory;
+    }
+
 
     /**
      * A factory class for the <tt>GNDMSystem</tt>.
@@ -502,7 +517,7 @@ public final class GNDMSystem
      * @see de.zib.gndms.infra.system.GNDMSystem
      */
     public static final class SysFactory {
-		private final Logger logger;
+		protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
 		private GNDMSystem instance;
 		private RuntimeException cachedException;
@@ -510,21 +525,12 @@ public final class GNDMSystem
         private boolean debugMode;
 
 		public SysFactory(
-                @NotNull Logger theLogger, @NotNull GridConfig anySharedConfig,
+                @NotNull GridConfig anySharedConfig,
                 final boolean debugModeParam) {
-			logger = theLogger;
 			sharedConfig = anySharedConfig;
             debugMode = debugModeParam;
 		}
 
-        /**
-         * Calls {@code getInstance(true)}
-         * 
-         * @return
-         */
-		public synchronized GNDMSystem getInstance() {
-			return getInstance(true);
-		}
 
         /**
          * Returns the current GNDMSystem if it has already been created.
@@ -534,11 +540,9 @@ public final class GNDMSystem
          * If <tt>setupShellService</tt> is set to <tt>true</tt>, {@code setupShellService()} will be invoked on the new
          * system. The new created system will be stored at {@link #instance}.
          *
-         * @param setupShellService a boolean to decide whether setupShellService() is invoked on a new GNDM System or not
-         *
-         * @return the current used GNDM system
+         * @return the current used GNDMS system
          */
-		public synchronized GNDMSystem getInstance(boolean setupShellService) {
+		public synchronized GNDMSystem getInstance() {
 			if (cachedException != null)
 				throw cachedException;
 			if (instance == null) {
