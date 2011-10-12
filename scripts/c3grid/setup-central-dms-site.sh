@@ -16,7 +16,6 @@ DMS_AREA_SIZE="10000" # Unused
 
 DMS_AREA_GSI_FTP_URL="gsiftp://$GRIDHOST""$DMS_AREA_PATH"
 
-
 # Do not edit below this line unless very sure ------------------------------------------------------------------------------------------------------------
 
 c3grid_generic
