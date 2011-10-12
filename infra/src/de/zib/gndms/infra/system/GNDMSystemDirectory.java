@@ -19,10 +19,7 @@ package de.zib.gndms.infra.system;
 
 
 import com.google.common.collect.Maps;
-import com.google.inject.Binder;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Module;
+import com.google.inject.*;
 import de.zib.gndms.infra.access.ServiceHomeProvider;
 import de.zib.gndms.infra.service.GNDMPersistentServiceHome;
 import de.zib.gndms.infra.service.GNDMServiceHome;
@@ -629,7 +626,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 
         @NotNull
         @Override
-            public String mapKey(final @NotNull OfferType keyParam) {
+        public String mapKey(final @NotNull OfferType keyParam) {
             return keyParam.getOfferTypeKey();
         }
     }

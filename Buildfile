@@ -97,7 +97,8 @@ def skipDeps(deps)
 end
 
 # Non-GT4 dependencies
-GUICE = 'com.google.code.guice:guice:jar:2.0'
+#GUICE = 'com.google.code.guice:guice:jar:2.0'
+GUICE = 'com.google.inject:guice:jar:2.0'
 GOOGLE_COLLECTIONS = 'com.google.code.google-collections:google-collect:jar:snapshot-20080530'
 JETBRAINS_ANNOTATIONS = 'com.intellij:annotations:jar:7.0.3'
 JODA_TIME = transitive('joda-time:joda-time:jar:1.6')
@@ -461,7 +462,8 @@ define 'gndms' do
       task 'run-staging-test' do
         jars = compile.dependencies.map(&:to_s)
         jars << compile.target.to_s
-        host = `hostname`.chomp
+        #host = `hostname`.chomp
+        host = 'csr-pc25.zib.de'
         dn = `grid-proxy-info -identity`
         dn = dn.chomp
         if (ENV['GNDMS_SFR'] == nil)
@@ -535,6 +537,27 @@ define 'gndms' do
                       { :classpath => jars, :properties => 
                           { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" } } )
       end
+
+      desc 'runs the interSliceTransfer test'
+      task 'run-rft' do 
+
+        jars = compile.dependencies.map(&:to_s)
+        jars << compile.target.to_s
+        if (ENV['GNDMS_PROPS'] == nil)
+            prop = 'test-data/simple-rft.properties'
+        else 
+            prop = ENV['GNDMS_PROPS']
+        end
+        args = [ '-props', prop, 
+                 '-uri', 'https://csr-pc35.zib.de:8443/wsrf/services/gndms/GORFX', #'https://' + gorfx_host + ':8443/wsrf/services/gndms/GORFX',
+                 '-uid', `id -u`.chomp
+        ]
+        puts args
+        Commands.java('de.zib.gndmc.GORFX.diag.RemoteFileTransferTest',  args, 
+                      { :classpath => jars, :properties => 
+                          { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" } } )
+      end
+
 end
 end
 

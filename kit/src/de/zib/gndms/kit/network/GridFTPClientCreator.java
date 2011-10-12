@@ -74,6 +74,7 @@ public class GridFTPClientCreator implements Callable<GridFTPClient>,LogProvider
             return cnt;
         } finally {
             NDC.remove();
+            NDC.remove();
         }
     }
 
