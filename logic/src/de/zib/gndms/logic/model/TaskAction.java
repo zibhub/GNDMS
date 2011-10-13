@@ -79,6 +79,8 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
     private CredentialProvider credentialProvider;
     private boolean detached = false; ///< A detached taskAction only wraps a task which is executed within another taskAction.
                                       /// It doesn't update the task itself only represents the latest state of the task.
+    private volatile boolean cancelled = false; ///< set to true if the action should be destroyed from the outside.
+                                      /// If the action enters transit is stops.
 
 
     public boolean isDetached() {
@@ -88,6 +90,15 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
 
     public void setDetached( boolean detached ) {
         this.detached = detached;
+    }
+
+
+   public synchronized boolean getCancelled() {
+        return cancelled;
+    }
+
+    public synchronized boolean setCancelled( boolean cancel ) {
+        return cancelled;
     }
 
 
@@ -505,7 +516,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
      */
     private void markAsDone() {
         final @NotNull AbstractTask model = getModel();
-        if (! model.isDone()) {
+        if ( getCancelled() && !model.isDone() ) {
             final EntityManager em = getEntityManager();
             try {
                 em.getTransaction().begin();
@@ -546,6 +557,11 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
      */
     @SuppressWarnings( { "CaughtExceptionImmediatelyRethrown", "ThrowableInstanceNeverThrown" } )
     private void transit(final TaskState newState) {
+
+        if ( getCancelled() ) {
+            log.debug( "cancelled" );
+            throw new StopException( TaskState.IN_PROGRESS_UNKNOWN );
+        }
 
         EntityManager em = getEntityManager();
         @NotNull AbstractTask model = getModel();
