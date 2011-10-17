@@ -4,7 +4,8 @@ SCRIPTDIR="$(dirname $0)/../" ; source "$SCRIPTDIR"internal/script-setup.sh
 
 # %{} is shell variable substitution at container runtime
 
-MDS_URL="http://c3grid.it.irf.tu-dortmund.de:8080/webmds/webmds?info=indexinfo"
+#MDS_URL="http://c3grid.it.irf.tu-dortmund.de:8080/webmds/webmds?info=indexinfo"
+MDS_URL="http://csr-pc25.zib.de/~bzcjorra/mds/webmds.xml"
 # old: MDS_URL="http://c3grid-gt.e-technik.uni-dortmund.de:8080/webmds/webmds?info=indexinfo"
 MDS_PREFIX="g2."
 DMS_AREA_PATH="/tmp"

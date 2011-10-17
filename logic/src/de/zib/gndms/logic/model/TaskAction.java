@@ -97,8 +97,8 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
         return cancelled;
     }
 
-    public synchronized boolean setCancelled( boolean cancel ) {
-        return cancelled;
+    public synchronized void setCancelled( boolean cancel ) {
+        cancelled = cancel;
     }
 
 
@@ -516,7 +516,7 @@ public abstract class TaskAction extends AbstractModelAction<AbstractTask, Abstr
      */
     private void markAsDone() {
         final @NotNull AbstractTask model = getModel();
-        if ( getCancelled() && !model.isDone() ) {
+        if ( ! ( getCancelled() || model.isDone() ) ) {
             final EntityManager em = getEntityManager();
             try {
                 em.getTransaction().begin();
