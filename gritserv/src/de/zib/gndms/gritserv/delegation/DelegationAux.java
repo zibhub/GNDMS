@@ -61,7 +61,7 @@ public class DelegationAux {
     public static final String DELEGATION_EPR_KEY = "DelegationEPR";
     public static final QName QNAME = new QName("", "DelegatedEPR");
     public static Logger logger = Logger.getLogger( DelegationAux.class );
-    public static final int PROXY_LIFETIME = 60*120; // lifetime of the delegation proxy in s
+    public static final int PROXY_LIFETIME = 24*60*60; // lifetime of the delegation proxy in s
 
     private DelegationAux() {
     }
