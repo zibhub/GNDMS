@@ -84,8 +84,8 @@ public abstract class AbstractStageInClient extends AbstractApplication {
 	protected String dn;
     @Option( name="-proxyfile", usage="grid-proxy-file to lead", metaVar="proxy-file" )
     protected String proxyFile = null;
-    @Option( name="-cancel", required = false, usage = "# of pollings befor the cancel")
-    protected int cancel = -1;
+    @Option( name="-cancel", required = false, usage = "ms to wait before destroying taskClient.")
+    protected Long cancel = null;
 
 
 	protected TransientContract contract;
@@ -167,7 +167,7 @@ public abstract class AbstractStageInClient extends AbstractApplication {
 				state = (TaskExecutionState) ObjectDeserializer.toObject( rpResponse.get_any()[0], TaskExecutionState.class );
 				failed = TaskStatusT.failed.equals(state.getStatus());
 				finished = TaskStatusT.finished.equals(state.getStatus());
-                if( cnt == cancel ) {
+                if( cancel != null &&  cancel < cnt * MILLIS ) {
                     taskClient.destroy( );
                     taskClient = null;
                     break;
