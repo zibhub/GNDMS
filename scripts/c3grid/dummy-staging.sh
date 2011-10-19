@@ -32,7 +32,7 @@ echo "$sfr" > $metafile
 #    exit 1
 #fi
 
-gird-proxy-info
+grid-proxy-info
 
 rm -f .GARBAGE
 

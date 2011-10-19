@@ -549,8 +549,9 @@ define 'gndms' do
             prop = ENV['GNDMS_PROPS']
         end
         args = [ '-props', prop, 
-                 '-uri', 'https://csr-pc35.zib.de:8443/wsrf/services/gndms/GORFX', #'https://' + gorfx_host + ':8443/wsrf/services/gndms/GORFX',
-                 '-uid', `id -u`.chomp
+                 '-uri', 'https://csr-pc25.zib.de:8443/wsrf/services/gndms/GORFX', #'https://' + gorfx_host + ':8443/wsrf/services/gndms/GORFX',
+                 '-uid', `id -u`.chomp,
+                 '-cancel', 30000
         ]
         puts args
         Commands.java('de.zib.gndmc.GORFX.diag.RemoteFileTransferTest',  args, 

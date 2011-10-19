@@ -359,6 +359,7 @@ public class TaskResource extends TaskResourceBase
             if( tsk != null ) {
                 if ( ! tsk.isDone() ) {
                     // task is still running cancel it and cleanup entity manager
+                    taskAction.setCancelled( true );
                     log.debug( "cancel task " + tsk.getWid() );
                     cleanUp = true;
                     if( future != null ) {
