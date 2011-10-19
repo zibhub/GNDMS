@@ -137,7 +137,7 @@ for i in ${jars[@]}; do
     cp=$GLOBUS_LOCATION/lib/$i:$cp
 done
 
-uri="https://csr-pc25.zib.de:8443/wsrf/services/gndms/GORFX"
+uri="https://mardschana2.zib.de:8443/wsrf/services/gndms/GORFX"
 dn="$( grid-proxy-info -identity )"
 
 cmd=( "java" "-cp" "$client_jar:$cp" \
