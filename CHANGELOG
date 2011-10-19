@@ -1,3 +1,18 @@
+
+
+0.3.5: "Richie" (internal Version)
+
+@DMS
+
+* [CHANGE] Increased staging proxy lifetime to 24h.
+* [CHANGE] SliceStaging cancel is delegated to providers.
+* [FIX] Overeager Exception throwing in GlobusCredentialProvider
+
+@Developer
+* [NEW] SliceStaging and RemoteFileTransferClients now have cancel option, which
+        can be used to test the destroy behaviour of the task-resources.
+
+
 0.3.4: "Richard"
 
 @Everybody

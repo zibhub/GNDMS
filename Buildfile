@@ -19,9 +19,9 @@ repositories.remote << 'http://google-maven-repository.googlecode.com/svn/reposi
 #
 require "open3"
 
-VERSION_NUMBER = '0.3.4'
-VERSION_NAME = 'Richard'
-FALLBACK_VERSION_TAG = 'release-Richard'
+VERSION_NUMBER = '0.3.5'
+VERSION_NAME = 'Richie'
+FALLBACK_VERSION_TAG = 'release-Richie'
 GROUP_NAME = 'de.zib.gndms'
 MF_COPYRIGHT = 'Copyright 2008-2011 Zuse Institute Berlin (ZIB)'
 LICENSE ='This software has been licensed to you under the terms and conditions of the Apache License 2.0 (APL 2.0) only.'
