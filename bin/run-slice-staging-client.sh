@@ -1,6 +1,7 @@
 #!/bin/bash
 
 RELEASE="0.3.4"
+GORFX_URI="https://mardschana2.zib.de:8443/wsrf/services/gndms/GORFX"
 
 usage() {
 
@@ -137,14 +138,13 @@ for i in ${jars[@]}; do
     cp=$GLOBUS_LOCATION/lib/$i:$cp
 done
 
-uri="https://mardschana2.zib.de:8443/wsrf/services/gndms/GORFX"
 dn="$( grid-proxy-info -identity )"
 
 cmd=( "java" "-cp" "$client_jar:$cp" \
     "-Daxis.ClientConfigFile=$GLOBUS_LOCATION/client-config.wsdd" \
     "de.zib.gndmc.GORFX.c3grid.SliceStageInClient" \
     "-props" "\"$props\"" \
-    "-uri" "\"$uri\""
+    "-uri" "\"$GORFX_URI\""
     "-dn" "\"$dn\"" )
 
 if [ "x$cancel" != "x" ]; then
