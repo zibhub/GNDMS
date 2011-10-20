@@ -3,7 +3,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="configActions" class="de.zib.gndms.mockup.logic.config.ConfigActionProviderMockUp">
+    <!--bean id="configActions" class="de.zib.gndms.mockup.logic.config.ConfigActionProviderMockUp">
         <property name="actions">
             <list>
                 <ref bean="SliceKindConfigMeta"/>
@@ -49,6 +49,6 @@
  * resType: QName of xsd type for results of this OfferType
  * taskActionFactory: FQN of TaskAction factory class
 "/>
-    </bean>
+    </bean-->
 
 </beans>

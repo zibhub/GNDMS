@@ -78,10 +78,10 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     // private ORQDao orqDao;
     private String serviceUrl; // inject or read from properties, this doesn't includes gorfx element
     private TaskFlowProvider taskFlowProvider;
-    private List<String> facetsNames = new ArrayList<String>( 7 );
+    private final List<String> facetsNames = new ArrayList<String>( 7 );
     private UriFactory uriFactory;
     private TaskClient taskClient;
-    private Logger logger = LoggerFactory.getLogger( this.getClass() );
+    private final Logger logger = LoggerFactory.getLogger( this.getClass() );
     private TaskExecutionService executorService;
     private TaskServiceAux taskServiceAux;
     private Dao dao;

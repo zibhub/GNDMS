@@ -1,5 +1,4 @@
-package de.zib.gndms.GORFX.action;
-
+package de.zib.gndms.taskflows.interslicetransfer.server.logic;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -18,9 +17,8 @@ package de.zib.gndms.GORFX.action;
 
 
 
-import de.zib.gndms.logic.model.gorfx.OrderTaskAction;
+import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.model.common.types.factory.InjectingRecursiveKeyFactory;
-import de.zib.gndms.model.gorfx.OfferType;
 
 
 /**
@@ -30,10 +28,10 @@ import de.zib.gndms.model.gorfx.OfferType;
  * User: mjorra, Date: 04.11.2008, Time: 17:44:10
  */
 public class InterSliceTransferActionFactory
-	  extends InjectingRecursiveKeyFactory<OfferType, OrderTaskAction<?>> {
+	  extends InjectingRecursiveKeyFactory<String, TaskFlowAction<?>> {
 
     @Override
-    public OrderTaskAction<?> newInstance(final OfferType keyParam)
+    public TaskFlowAction<?> newInstance(final String keyParam)
             throws IllegalAccessException, InstantiationException, ClassNotFoundException {
 	    final InterSliceTransferTaskAction action = new InterSliceTransferTaskAction();
 	    injectMembers(action);

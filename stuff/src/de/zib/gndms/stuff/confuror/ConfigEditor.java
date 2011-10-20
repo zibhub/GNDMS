@@ -374,6 +374,9 @@ public final class ConfigEditor {
     @SuppressWarnings({"UnusedDeclaration"})
     public static class UpdateRejectedException extends Exception {
 
+        private static final long serialVersionUID = 6028588409754411491L;
+
+
         public UpdateRejectedException() {
         }
 

@@ -40,7 +40,11 @@ public class DSpaceRef extends SimpleRKRef {
     private static final QName RESOURCE_KEY_NAME =
         new QName("http://dspace.gndms.zib.de/DSpace", "DSpaceKey");
     private static final List<String> RESOURCE_NAMES =
-        new ArrayList( 1 ) {{ add( "DSpace" ); }};
+        new ArrayList( 1 ) {{ add( "DSpace" ); }
+
+
+            private static final long serialVersionUID = -5571067078112828097L;
+        };
 
     private String gridSiteId;
     private String resourceKeyValue;

@@ -25,6 +25,7 @@
         </property>
     </bean>
 
+    <!-- #################################################################################################### -->
     <!-- Start of the bean definition -->
 
     <bean id="gridConfig" class="de.zib.gndms.infra.SettableGridConfig">
@@ -38,6 +39,15 @@
         <constructor-arg name="debugModeParam" value="${debugMode}"/>
     </bean>
 
+    <bean id="configActionCaller" class="de.zib.gndms.infra.system.ConfigActionCaller">
+        <!-- possible enhancement configure actions here, like:
+        property name="configActions">
+            <set>
+                <value>de.zib.gndms.logic.model.dspace.SetupSliceKindAction</value>
+            </set>
+        </property-->
+    </bean>
+
     <bean id="system" class="de.zib.gndms.infra.system.GNDMSystem"
           factory-bean="systemFactory"
           factory-method="getInstance" />
@@ -48,16 +58,34 @@
         <constructor-arg name="gdb" ref="dataBase" />
     </bean>
 
+    <bean id="taskFlowProvider" class="de.zib.gndms.infra.system.PlugableTaskFlowProvider"/>
+
+
+
+    <!-- #################################################################################################### -->
+    <!-- create some auxiliary classes -->
+    <bean id="directoryAux" class="de.zib.gndms.infra.grams.LinuxDirectoryAux"/>
+    <bean id="gndmsVersionInfo" class="de.zib.gndms.GNDMSVerInfo"/>
+    <bean id="batchUpdateAction" class="de.zib.gndms.logic.model.DefaultBatchUpdateAction" scope="prototype"/>
+
+    <!-- #################################################################################################### -->
+    <!-- setup ORM and DBs -->
     <!-- the graph database -->
     <bean id="dataBase" class="org.neo4j.kernel.EmbeddedGraphDatabase" destroy-method="shutdown" >
         <constructor-arg value="${dataBaseDir}"/>
     </bean>
 
-    <!-- setup ORM -->
-
+    <!-- orm -->
     <bean id="emf" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="derby"/>
         <property name="persistenceXmlLocation" value="classpath:/META-INF/persistence.xml" />
+        <property name="jpaPropertyMap">
+            <map>
+                <entry key="openjpa.Id" value="${gridName}"/>
+                <entry key="openjpa.ConnectionURL" value="jdbc:derby:${gridName};create=true"/>
+                <entry key="openjpa.Logger" value="File=${jpaLoggerFile}, DefaultLevel=INFO, Runtime=TRACE, Tool=INFO"/>
+            </map>
+        </property>
         <!--property name="loadTimeWeaver">
             <bean class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver"/>
         </property-->

@@ -43,7 +43,8 @@ public class CheckingAspect {
 
         logger.debug( "*** looking up "+ fid );
         if ( dao.getFoo( fid ) == null )
-            throw new NoSuchTaskFlowTypeException( fid );
+            logger.debug( "*** "+ fid +" not found" );
+        //    throw new NoSuchTaskFlowTypeException( fid );
     }
 
 

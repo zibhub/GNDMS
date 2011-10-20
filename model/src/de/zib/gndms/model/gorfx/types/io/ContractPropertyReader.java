@@ -53,7 +53,6 @@ public class ContractPropertyReader extends AbstractPropertyReader<Quote> {
     public void read() {
         final @NotNull Quote con = getProduct();
 
-        String s;
         if( getProperties().containsKey( SfrProperty.EST_IF_DECISION_BEFORE.key ) ) {
             DateTime dt =  PropertyReadWriteAux.readISODateTime( getProperties(), SfrProperty.EST_IF_DECISION_BEFORE.key );
             if( dt != null )

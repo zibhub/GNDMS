@@ -52,7 +52,7 @@ public class GORFXTaskFlowExample extends AbstractApplication {
 	}
 
 	@Override
-	public void run() throws Exception {
+    public void run() throws Exception {
         System.out.println( "Running dummy taskFlow test with: " );
         System.out.println("connection to: \"" + gorfxEpUrl + "\"");
 

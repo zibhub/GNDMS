@@ -8,6 +8,10 @@ package de.zib.gndms.logic.model.gorfx;
  * User stepn Date: 21.02.11 TIME: 11:01
  */
 public class LifetimeExceededException extends RuntimeException {
+
+    private static final long serialVersionUID = -4857945260723470696L;
+
+
     public LifetimeExceededException() {
         super();
     }

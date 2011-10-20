@@ -28,6 +28,7 @@ import de.zib.gndms.model.dspace.types.SliceRef;
  */
 public abstract class CommonSliceResult extends AbstractTaskFlowResult {
 
+    private static final long serialVersionUID = -2235864812049517909L;
     public SliceRef sliceRef;
 
     

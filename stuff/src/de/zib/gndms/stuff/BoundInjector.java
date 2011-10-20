@@ -34,16 +34,8 @@ public final class BoundInjector {
 
 	private GNDMSInjector injector;
 
-    /**
-     * Returns the currently used {@code Injector}.If not set, {@code null} is returned
-     * 
-     * @return the currently used {@code Injector}.If not set, {@code null} is returned
-     */
-	public synchronized GNDMSInjector optionallyGetInjector() {
-        return injector;
-	}
 
-	public synchronized @NotNull GNDMSInjector getInjector() {
+    public synchronized @NotNull GNDMSInjector getInjector() {
 		if (injector == null)
 			throw new IllegalStateException("Injector not yet set");
 		else

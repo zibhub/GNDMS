@@ -195,7 +195,7 @@ public class GORFXServiceImpl implements GORFXService {
         res.setURL( baseUrl + "/batch/_" + actionName );
         res.setPayload( "Feeling lucky?" );
 
-        return (ResponseEntity<Specifier>) (Object) new ResponseEntity<Specifier<String>>( res, headers, HttpStatus.OK );
+        return (ResponseEntity<Specifier>) new ResponseEntity<Specifier<String>>( res, headers, HttpStatus.OK );
     }
 
 

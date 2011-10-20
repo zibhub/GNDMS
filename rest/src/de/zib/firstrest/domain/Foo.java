@@ -1,6 +1,5 @@
 package de.zib.firstrest.domain;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 /*
  * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
@@ -16,6 +15,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
  * @author try ma ik jo rr a zib

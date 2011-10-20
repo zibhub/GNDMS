@@ -29,6 +29,7 @@ import de.zib.gndms.model.gorfx.types.io.ContractPropertyReader;
 import de.zib.gndms.model.gorfx.types.io.ContractPropertyWriter;
 import de.zib.gndms.model.gorfx.types.io.xml.ORQWrapper;
 import de.zib.gndms.model.gorfx.types.io.xml.ProviderStageInXML;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -76,7 +77,7 @@ public class ParmFormatAux {
             try {
                 format = config.getOption( "scriptIoFormat" );
             } catch ( MandatoryOptionMissingException e ) { // this may not happen. really!
-                e.printStackTrace();
+                LoggerFactory.getLogger( this.getClass() ).debug( "", e );
             }
     }
 

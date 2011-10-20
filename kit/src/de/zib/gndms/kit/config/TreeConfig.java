@@ -218,9 +218,9 @@ public class TreeConfig extends AbstractConfig {
      * @see TreeConfig#iterator
      */
     private static class StackElement {
-        private StackElement parent;
-        private JsonNode node;
-        private String cursor;
+        private final StackElement parent;
+        private final JsonNode node;
+        private final String cursor;
 
         private StackElement(StackElement parent, JsonNode node, String cursor) {
             this.parent = parent;
@@ -260,6 +260,10 @@ public class TreeConfig extends AbstractConfig {
      */
     @SuppressWarnings({"UnusedDeclaration"})
     public static class InvalidKeyException extends IllegalArgumentException {
+
+        private static final long serialVersionUID = -7284371834707166127L;
+
+
         public InvalidKeyException() {
         }
 
@@ -287,6 +291,9 @@ public class TreeConfig extends AbstractConfig {
      */
     @SuppressWarnings({"UnusedDeclaration"})
     public static class KeyNotFoundException extends IllegalArgumentException {
+
+        private static final long serialVersionUID = 1800296879967391598L;
+
 
         public KeyNotFoundException() {
         }

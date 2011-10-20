@@ -15,13 +15,15 @@ package de.zib.gndms.common.model.gorfx.types;
  * limitations under the License.
  */
 
+import java.io.Serializable;
+
 /**
  * Something with tasks and their results.
  *
  * @author try ma ik jo rr a zib
  *         Date: 09.02.11, Time: 18:44
  */
-public interface TaskResult<T> {
+public interface TaskResult<T> extends Serializable {
 
     T getResult();
 }

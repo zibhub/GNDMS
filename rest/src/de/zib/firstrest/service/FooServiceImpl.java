@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
@@ -65,7 +66,6 @@ public class FooServiceImpl implements ServletContextAware, FooService {
     @Override
     @RequestMapping( value = "/foo/{fid}" )
     public ResponseEntity<Foo> findFoo( @PathVariable String fid ) {
-
     /*
      * Note: This method together with the dispacher-context.xml
      * contains changes to test content-type dispatching which aren't
@@ -99,6 +99,14 @@ public class FooServiceImpl implements ServletContextAware, FooService {
         dao.putFoo( foo );
         
         return new RedirectView("/foo/" + foo.getId());
+    }
+
+    @Override
+    @RequestMapping( value = "/param", method = RequestMethod.GET)
+    public ResponseEntity<String> postParam( @RequestParam String bar ) {
+        logger.info( "GET /param: " + bar ) ;
+
+        return new ResponseEntity<String>( bar, HttpStatus.OK );
     }
 
     

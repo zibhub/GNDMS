@@ -18,6 +18,8 @@ package de.zib.gndms.stuff.threading;
 
 
 
+import org.slf4j.LoggerFactory;
+
 import java.util.concurrent.*;
 import java.util.List;
 import java.util.Collection;
@@ -103,7 +105,7 @@ public class QueuedExecutor implements ExecutorService {
             try {
                 f.get();
             } catch ( ExecutionException e ) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                LoggerFactory.getLogger( this.getClass() ).debug( "Exception on invocation", e );
             }
         }
 
@@ -135,7 +137,7 @@ public class QueuedExecutor implements ExecutorService {
 	            Future f = (Future) o;
                 res = f.get();
             } catch ( ExecutionException e ) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                LoggerFactory.getLogger( this.getClass() ).debug( "Exception on invocation", e );
             }
         }
 

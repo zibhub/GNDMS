@@ -71,7 +71,7 @@ public interface Action<R> extends Callable<R>, InjectorProvider {
      * @throws ActionInitializationException
      * @throws RuntimeException
      */
-    R call( ) throws ActionInitializationException, RuntimeException;
+    R call( ) throws ActionInitializationException;
 
     /**
      * Declare what needs to be done after the action has been finished

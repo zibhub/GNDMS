@@ -121,7 +121,7 @@ public interface DirectoryAux {
 
 
         /**
-         * Little helper which delets a direcotry and its contents.
+         * Little helper which deletes a directory and its contents.
          *
          * @param pth The complete Path to the directory.
          * @return The success of the operation.

@@ -39,7 +39,7 @@ public abstract class DefaultTaskFlowFactory<O extends Order, C extends Abstract
     private String taskFlowKey;
     private Class<C> calculatorClass;
     private Class<O> orderClass;
-    private Dao<String, TaskFlow<O>, Object> taskFlows = new TransientDao<String, TaskFlow<O>, Object>() {
+    private final Dao<String, TaskFlow<O>, Object> taskFlows = new TransientDao<String, TaskFlow<O>, Object>() {
 
         @Override
         protected TaskFlow<O> newModel( String key ) {

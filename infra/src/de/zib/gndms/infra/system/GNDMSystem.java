@@ -20,10 +20,8 @@ package de.zib.gndms.infra.system;
 
 import de.zib.gndms.GNDMSVerInfo;
 import de.zib.gndms.infra.GridConfig;
-import de.zib.gndms.infra.grams.LinuxDirectoryAux;
 import de.zib.gndms.kit.access.EMFactoryProvider;
 import de.zib.gndms.logic.action.ActionCaller;
-import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.logic.model.*;
 import de.zib.gndms.logic.model.gorfx.DefaultWrapper;
 import de.zib.gndms.logic.util.LogicTools;
@@ -42,8 +40,11 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
+
 import static javax.persistence.Persistence.createEntityManagerFactory;
 
 import java.io.BufferedReader;
@@ -52,7 +53,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import static java.lang.Thread.sleep;
 
-import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.*;
 
@@ -100,7 +100,6 @@ public final class GNDMSystem
 	private @NotNull File dbLoggerFile;
     private @NotNull File containerHome;
 	private @NotNull EntityManagerFactory emf;
-	private @NotNull EntityManagerFactory restrictedEmf;
     private @NotNull GraphDatabaseService neo;
     private @NotNull Dao dao;
 //	private NetworkAuxiliariesProvider netAux;
@@ -134,16 +133,13 @@ public final class GNDMSystem
             initSharedDir();
 			createDirectories();
 			prepareDbStorage();
-			emf = createEMF();
             neo = loadNeo();
             dao = new Dao(getGridName(), neo);
-			restrictedEmf = emf;
 			tryTxExecution();
 			// initialization intentionally deferred to initialize
 	        instanceDir = ( GNDMSystemDirectory ) beanFactory.configureBean(
                 new GNDMSystemDirectory(getSystemName(),
-	                                              uuidGenDelegate,
-	                                              new DefaultWrapper<SystemHolder, Object>(SystemHolder.class) {
+                    new DefaultWrapper<SystemHolder, Object>(SystemHolder.class) {
 
 		        @Override
 		        protected <Y> Y wrapInterfaceInstance(final Class<Y> wrapClass, @NotNull final SystemHolder wrappedParam) {
@@ -152,12 +148,10 @@ public final class GNDMSystem
 		        }
 	        } ), "instanceDir" );
 	        instanceDir.addInstance("sys", this);
-			instanceDir.reloadConfiglets(restrictedEmf);
+			instanceDir.reloadConfiglets(emf);
 			// Bad style, usually would be an inner class but
 			// removed it from this source file to reduce source file size
-            // todo continue here  figure out a way to construct ConfigActionCaller, maybe rewrite the constructor
-            //beanFactory.
-			actionCaller = new ConfigActionCaller(this);
+			actionCaller.init( this );
             logger.info("getSubGridName() /* gridconfig subGridName */ is '" + getInstanceDir().getSubGridName() + '\'');
 		}
 		catch (Exception e) {
@@ -195,13 +189,13 @@ public final class GNDMSystem
 //   /**
 //     * Binds several classes with {@code this} or other corresponding fields
 //     *
-//     * @param binder binds several classe with certain fields.
+//     * @param binder binds several class with certain fields.
 //     */
 //   public void configure(final @NotNull Binder binder) {
-//       binder.bind(GNDMSystem.class).toInstance(this);
-//       binder.bind(EntityManagerFactory.class).toInstance(restrictedEmf);
-//       binder.bind(EMFactoryProvider.class).toInstance(this);
-//       binder.bind(GridConfig.class).toInstance(sharedConfig);
+//       //binder.bind(GNDMSystem.class).toInstance(this);
+//       //binder.bind(EntityManagerFactory.class).toInstance(emf);
+//       //binder.bind(EMFactoryProvider.class).toInstance(this);
+//       //binder.bind(GridConfig.class).toInstance(sharedConfig);
 //       //binder.bind(NetworkAuxiliariesProvider.class).toInstance(getNetAux());
 //       binder.bind(ModelUpdateListener.class).toInstance( this );
 //       binder.bind(BatchUpdateAction.class).to( DefaultBatchUpdateAction.class );
@@ -227,10 +221,8 @@ public final class GNDMSystem
 
     /**
      * Creates the path {@link #sharedDir} and the file {@link #logDir} on the file system.
-     *
-     * @throws IOException if an error occurs while accessing the file system
      */
-	private void createDirectories() throws IOException {
+	private void createDirectories() {
         File curSharedDir = getSharedDir();
 
 		doCheckOrCreateDir(curSharedDir);
@@ -265,31 +257,34 @@ public final class GNDMSystem
 				  dbLoggerFile.getCanonicalPath());
 	}
 
-    /**
-     * Creates an EntityManagerFactory.
-     * 
-     * @return an EntityManagerFactory
-     * @throws Exception
-     */
-	@SuppressWarnings({ "ResultOfMethodCallIgnored" })
-    public @NotNull EntityManagerFactory createEMF() throws Exception {
-		final String gridName = sharedConfig.getGridName();
-		final Properties map = new Properties();
-
-		map.put("openjpa.Id", gridName);
-		map.put("openjpa.ConnectionURL", "jdbc:derby:" + gridName+";create=true");
-
-        if (isDebugging()) {
-            File jpaLoggerFile = new File(getLogDir(), "jpa.log");
-            if (! jpaLoggerFile.exists())
-                jpaLoggerFile.createNewFile();
-            map.put("openjpa.Logger", "File=" + jpaLoggerFile +
-                    ", DefaultLevel=INFO, Runtime=TRACE, Tool=INFO");
-        }
-		logger.info("Opening JPA Store: " + map.toString());
-
-		return createEntityManagerFactory(gridName, map);
-	}
+// Moved to system.xml
+//    /**
+//     * Creates an EntityManagerFactory.
+//     *
+//     * @return an EntityManagerFactory
+//     * @throws Exception
+//     */
+//	@SuppressWarnings({ "ResultOfMethodCallIgnored" })
+//    public @NotNull EntityManagerFactory createEMF() throws Exception {
+//
+//
+//		final String gridName = sharedConfig.getGridName();
+//		final Properties map = new Properties();
+//
+//		map.put("openjpa.Id", gridName);
+//		map.put("openjpa.ConnectionURL", "jdbc:derby:" + gridName+";create=true");
+//
+//        if (isDebugging()) {
+//            File jpaLoggerFile = new File(getLogDir(), "jpa.log");
+//            if (! jpaLoggerFile.exists())
+//                jpaLoggerFile.createNewFile();
+//            map.put("openjpa.Logger", "File=" + jpaLoggerFile +
+//                    ", DefaultLevel=INFO, Runtime=TRACE, Tool=INFO");
+//        }
+//		logger.info("Opening JPA Store: " + map.toString());
+//
+//		return createEntityManagerFactory(gridName, map);
+//	}
 
     /**
      * Checks if a commit can be done on the database
@@ -381,7 +376,7 @@ public final class GNDMSystem
 
 
     public @NotNull EntityManagerFactory getEntityManagerFactory() {
-        return restrictedEmf;
+        return emf;
     }
 
 
@@ -441,6 +436,12 @@ public final class GNDMSystem
 
     public void onModelChange(GridResource model) {
         // implement if required
+    }
+
+
+    @Inject
+    public void setActionCaller( ConfigActionCaller actionCaller ) {
+        this.actionCaller = actionCaller;
     }
 
 
@@ -509,6 +510,12 @@ public final class GNDMSystem
     }
 
 
+    @Inject
+    public void setExecutionService( @NotNull TaskExecutionService executionService ) {
+        this.executionService = executionService;
+    }
+
+
     /**
      * A factory class for the <tt>GNDMSystem</tt>.
      *
@@ -522,7 +529,7 @@ public final class GNDMSystem
 		private GNDMSystem instance;
 		private RuntimeException cachedException;
 		private GridConfig sharedConfig;
-        private boolean debugMode;
+        private final boolean debugMode;
 
 		public SysFactory(
                 @NotNull GridConfig anySharedConfig,
@@ -572,9 +579,7 @@ public final class GNDMSystem
          */
 		@SuppressWarnings({ "MethodOnlyUsedFromInnerClass" })
 		private synchronized void shutdown() throws Exception {
-			if (instance == null)
-				return;
-			else
+			if (instance != null)
 				getInstance().shutdown();
 		}
 
@@ -686,4 +691,10 @@ public final class GNDMSystem
             // TODO IMPLEMENT
         }
     };
+
+
+    @PersistenceContext
+    public void setEmf( @NotNull EntityManagerFactory emf ) {
+        this.emf = emf;
+    }
 }

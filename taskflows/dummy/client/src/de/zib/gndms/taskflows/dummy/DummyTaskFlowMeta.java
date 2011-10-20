@@ -15,7 +15,8 @@ package de.zib.gndms.logic.taskflow.tfmockup;
  * limitations under the License.
  */
 
-import de.zib.gndms.model.gorfx.types.TaskFlowMeta;
+
+import de.zib.gndms.common.model.gorfx.types.TaskFlowMeta;
 
 /**
  * @author try ma ik jo rr a zib

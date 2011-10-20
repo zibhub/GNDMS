@@ -33,7 +33,7 @@ import java.io.StringWriter;
 public class LegacyConfigActionCaller  {
 
     private ConfigActionCaller actionCaller;
-    protected Logger logger = LoggerFactory.getLogger( this.getClass() );
+    protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
 
     public String callAction( String className, String args ) throws Exception {

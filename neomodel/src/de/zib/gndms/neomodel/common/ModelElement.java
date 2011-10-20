@@ -159,7 +159,7 @@ public abstract class ModelElement<U extends PropertyContainer> extends ModelEnt
     }
 
     public static String getTypeNickIndexName(String typeNick, String... names) {
-        final StringBuffer indexName = new StringBuffer(typeNick);
+        final StringBuilder indexName = new StringBuilder( typeNick );
         for (final String name : names)
             if (name == null)
                 throw new IllegalArgumentException("(null) index name component");

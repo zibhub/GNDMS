@@ -39,7 +39,7 @@ public class PropertyReadWriteAux {
 
     public static void writeList( @NotNull Properties prop, @NotNull String key, char sep, @NotNull Iterable it  ) {
 
-        StringBuffer out = new StringBuffer( );
+        StringBuilder out = new StringBuilder();
         for( Object o : it )
             out.append( o.toString( ) ).append( sep );
 

@@ -28,6 +28,9 @@ import de.zib.gndms.model.dspace.types.SliceRef;
  */
 public class SliceStageInResult extends CommonSliceResult {
 
+    private static final long serialVersionUID = 1563758463267173946L;
+
+
     public SliceStageInResult( ) {
         super( GORFXConstantURIs.SLICE_STAGE_IN_URI );
     }

@@ -1,5 +1,4 @@
-package de.zib.gndms.logic.taskflow.tfmockup;
-/*
+package de.zib.gndms.taskflows.dummy;/*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,10 +14,13 @@ package de.zib.gndms.logic.taskflow.tfmockup;
  * limitations under the License.
  */
 
-import de.zib.gndms.logic.taskflow.AbstractQuoteCalculator;
-import de.zib.gndms.logic.taskflow.UnsatisfiableOrderException;
-import de.zib.gndms.model.gorfx.types.Quote;
+import de.zib.gndms.common.model.gorfx.types.FutureTime;
+import de.zib.gndms.common.model.gorfx.types.Quote;
+import de.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
+import de.zib.gndms.logic.model.gorfx.taskflow.UnsatisfiableOrderException;
+import de.zib.gndms.taskflows.dummy.DummyOrder;
 import org.joda.time.DateTime;
+import org.joda.time.Duration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +30,7 @@ import java.util.List;
  * @date 14.02.11  16:56
  * @brief Dummy quote calculator.
  */
-public class DummyQuoteCalculator implements AbstractQuoteCalculator<DummyOrder> {
+public class DummyQuoteCalculator extends AbstractQuoteCalculator<DummyOrder> {
 
     private DummyOrder order;
 
@@ -52,11 +54,9 @@ public class DummyQuoteCalculator implements AbstractQuoteCalculator<DummyOrder>
             throw new UnsatisfiableOrderException( );
 
         final Quote q = new Quote();
-        DateTime dt = new DateTime();
-        dt.plusMillis( order.getTimes() * order.getDelay() );
-        q.setDeadline( dt );
-        DateTime rv = new DateTime( dt );
-        rv.plusMinutes( 10 );
+        Duration d = new Duration( order.getTimes() * order.getDelay() );
+        q.setDeadline( FutureTime.atOffset( d ) );
+        FutureTime rv = FutureTime.atOffset( d.plus( 10 * 1000 * 60 ) );
         q.setResultValidity( rv );
         q.setExpectedSize( (long) 0 );
 

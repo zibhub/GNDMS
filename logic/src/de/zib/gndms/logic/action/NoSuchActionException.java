@@ -24,6 +24,9 @@ package de.zib.gndms.logic.action;
  */
 public class NoSuchActionException extends IllegalArgumentException {
 
+    private static final long serialVersionUID = -3233268902144500877L;
+
+
     public NoSuchActionException( String actionName ) {
         super( "No action named " + actionName );
     }
