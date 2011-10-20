@@ -1,4 +1,6 @@
-package de.zib.gndms.logic.taskflow.tfmockup;
+package de.zib.gndms.taskflows.dummy;
+
+
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -15,10 +17,18 @@ package de.zib.gndms.logic.taskflow.tfmockup;
  * limitations under the License.
  */
 
-import de.zib.gndms.model.gorfx.types.AbstractTaskAction;
-import de.zib.gndms.model.gorfx.types.DefaultTaskStatus;
-import de.zib.gndms.model.gorfx.types.Task;
-import de.zib.gndms.model.gorfx.types.TaskStatus;
+
+import de.zib.gndms.common.model.gorfx.types.DefaultTaskStatus;
+import de.zib.gndms.common.model.gorfx.types.TaskStatus;
+import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
+import de.zib.gndms.model.gorfx.types.TaskState;
+import de.zib.gndms.neomodel.common.Dao;
+import de.zib.gndms.neomodel.common.Session;
+import de.zib.gndms.neomodel.gorfx.Task;
+import de.zib.gndms.neomodel.gorfx.Taskling;
+import org.jetbrains.annotations.NotNull;
+
+import javax.persistence.EntityManager;
 
 /**
  * @author try ma ik jo rr a zib
@@ -27,34 +37,49 @@ import de.zib.gndms.model.gorfx.types.TaskStatus;
  *
  * @see DummyOrder
  */
-public class DummyTFAction extends AbstractTaskAction<DummyOrder> {
+public class DummyTFAction extends TaskFlowAction<DummyOrder> {
+
+
+    @Override
+    public Class<DummyOrder> getOrqClass() {
+        return DummyOrder.class;
+    }
+
 
     public DummyTFAction() {
     }
 
 
-    public DummyTFAction( Task<DummyOrder> t ) {
-        super( t );
+    public DummyTFAction( @NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model ) {
+        super( em, dao, model );
     }
 
 
     public void onInit( ) throws Exception {
 
-        DefaultTaskStatus stat = new DefaultTaskStatus();
-        stat.setMaxProgress( getTask().getModel().getTimes() );
-        stat.setProgress( 0 );
-        stat.setStatus( TaskStatus.Status.WAITING );
-        getTask().setStatus( stat );
+            final Session session = getDao().beginSession();
+            try {
+
+                Task task = getTask( session );
+                DefaultTaskStatus stat = new DefaultTaskStatus();
+                stat.setMaxProgress( getOrderBean().getTimes() );
+                stat.setProgress( 0 );
+                stat.setStatus( TaskStatus.Status.WAITING );
+                getTask().setTaskState( TaskState.IN_PROGRESS );
+            }
+            finally { session.finish(); }
+            // super.onCreated(wid, state, isRestartedTask, altTaskState);
     }
+
 
 
     public void onProgress( ) throws Exception {
 
-        DefaultTaskStatus stat = DefaultTaskStatus.class.cast(  getTask().getStatus() );
+        DefaultTaskStatus stat = DefaultTaskStatus.class.cast(  getTask().getTaskState() );
         updateStatus( stat,  TaskStatus.Status.RUNNING  );
 
         StringBuffer sb = new StringBuffer();
-        DummyOrder tf = (DummyOrder ) getTask().getModel();
+        DummyOrder tf = (DummyOrder ) null; getTask().getORQ();
         for( int i = 0; i < tf.getTimes(); ++i ) {
             sb.append( tf.getMessage() );
             sb.append( '\n' );
@@ -64,27 +89,37 @@ public class DummyTFAction extends AbstractTaskAction<DummyOrder> {
                 throw new RuntimeException( "Halp -- I'm failing intentionally" );
             updateProgress( stat, i );
         }
-        getTask().setResult( new DummyTFResult( sb.toString() ) );
+        final Session session = getDao().beginSession();
+        try {
+            getTask( session ).setPayload( new DummyTaskFlowResult( sb.toString() ) );
+        }
+        finally { session.finish(); }
+
         updateStatus( stat,  TaskStatus.Status.FINISHED  );
     }
 
 
     public void onFailed( Exception e )  {
-        super.onFailed( e );
-        DefaultTaskStatus stat = DefaultTaskStatus.class.cast(  getTask().getStatus() );
-        stat.setStatus( TaskStatus.Status.FAILED );
-        getTask().setStatus( stat );
+       // super.onFailed( e );
+       // DefaultTaskStatus stat = DefaultTaskStatus.class.cast(  getTask().getStatus() );
+       // stat.setStatus( TaskStatus.Status.FAILED );
+       // getTask().setStatus( stat );
     }
 
 
     private void updateStatus( DefaultTaskStatus stat, TaskStatus.Status s ) {
         stat.setStatus( s );
-        getTask().setStatus( stat );
+       // getTask().setStatus( stat );
     }
 
 
     private void updateProgress( DefaultTaskStatus stat, int i ) {
         stat.setProgress( i );
-        getTask().setStatus( stat );
+        getTask().setTaskState( TaskState.IN_PROGRESS_UNKNOWN );
+    }
+
+
+    private Task getTask() {
+        return null;  // Implement Me. Pretty Please!!!
     }
 }

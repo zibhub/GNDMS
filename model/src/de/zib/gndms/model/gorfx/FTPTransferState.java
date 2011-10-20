@@ -31,6 +31,8 @@ import java.io.Serializable;
  * User: mjorra, Date: 30.09.2008, Time: 17:24:14
  */
 public final class FTPTransferState implements Serializable {
+
+    private static final long serialVersionUID = 2714855051629668967L;
     // maybe use fc constraint here
     private String transferId;
     private String ftpArgs;

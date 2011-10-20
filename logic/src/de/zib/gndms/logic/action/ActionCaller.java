@@ -18,6 +18,7 @@ package de.zib.gndms.logic.action;
 
 
 
+import de.zib.gndms.logic.model.config.ConfigAction;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -30,7 +31,7 @@ import java.io.PrintWriter;
  * A class implementing the ActionCaller interface must provide a method to created specified ConfigActions
  * and return the result of the ConfigAction's {@code call()} invokation.
  * 
- * @see de.zib.gndms.logic.model.config.ConfigAction
+ * @see ConfigAction
  * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
@@ -40,7 +41,7 @@ public interface ActionCaller {
 
   /**
      * Creates a new ConfigAction object of the specified class {@code className}, sets its options according to
-     * {@code opts} (see {@link de.zib.gndms.logic.model.config.ConfigAction#parseLocalOptions(String)})
+     * {@code opts} (see {@link ConfigAction#parseLocalOptions(String)})
      * and returns the result of the action's {@code call()} invokation.
      * All outputs are written to the PrintWriter. The postponed actions of the created action must
      * also be invoked.

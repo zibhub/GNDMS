@@ -1,7 +1,10 @@
 package de.zib.firstrest.repository;
 
 import de.zib.firstrest.domain.Foo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +33,14 @@ import java.util.List;
 public class FooDaoMockup implements FooDao {
 
     private HashMap<String, Foo> muchFoo;
+    private Class<? extends Foo> fooClass;
+    protected Logger logger = LoggerFactory.getLogger( this.getClass() );
 
+    @PostConstruct
+    public void init( ) {
+        logger.debug(  "FOO_CLASS: " + fooClass.getName()  );
+
+    }
 
     public Foo getFoo( String id ) {
         return muchFoo.get( id );
@@ -48,5 +58,10 @@ public class FooDaoMockup implements FooDao {
 
     public void setMuchFoo( HashMap<String, Foo> muchFoo ) {
         this.muchFoo = muchFoo;
+    }
+
+
+    public void setFooClass( Class<? extends Foo> fooClass ) {
+        this.fooClass = fooClass;
     }
 }

@@ -67,7 +67,7 @@ public class DelegatingBatchUpdateAction<M extends ModelEntity & GridResourceItf
     public void initialize() {delegate.initialize();}
 
 
-    public R call() throws ActionInitializationException, RuntimeException {return delegate.call();}
+    public R call() throws ActionInitializationException {return delegate.call();}
 
 
     public void cleanUp() {delegate.cleanUp();}

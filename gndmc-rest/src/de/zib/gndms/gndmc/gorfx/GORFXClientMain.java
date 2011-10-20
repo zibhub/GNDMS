@@ -48,7 +48,7 @@ public class GORFXClientMain extends AbstractApplication {
 	protected String gorfxEpUrl;
 	@Option(name = "-dn", required = true, usage = "DN")
 	protected String dn;
-	protected String wid = UUID.randomUUID().toString();
+	protected final String wid = UUID.randomUUID().toString();
 
 	public static void main(String[] args) throws Exception {
 
@@ -58,7 +58,7 @@ public class GORFXClientMain extends AbstractApplication {
 	}
 
 	@Override
-	public void run() throws Exception {
+    public void run() throws Exception {
 
 		ApplicationContext context = new ClassPathXmlApplicationContext(
 				"classpath:META-INF/client-context.xml");
@@ -267,9 +267,9 @@ public class GORFXClientMain extends AbstractApplication {
 
 	public static void showList(String name, List<String> list) {
 
-		StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
-		sb.append(name + ": ");
+        sb.append( name ).append( ": " );
 		if (list == null || list.size() == 0) {
 			sb.append("NIL\n");
 			return;

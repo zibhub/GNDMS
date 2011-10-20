@@ -29,6 +29,9 @@ import de.zib.gndms.model.common.PersistentContract;
  */
 public class InvalidContractException extends Exception {
 
+    private static final long serialVersionUID = 3062513035873359381L;
+
+
     public InvalidContractException( ) {
         super( );
     }

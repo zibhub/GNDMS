@@ -1,5 +1,4 @@
-package de.zib.gndms.logic.taskflow.tfmockup;
-/*
+package de.zib.gndms.taskflows.dummy;/*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,13 +14,16 @@ package de.zib.gndms.logic.taskflow.tfmockup;
  * limitations under the License.
  */
 
-import de.zib.gndms.logic.taskflow.AbstractQuoteCalculator;
-import de.zib.gndms.logic.taskflow.TaskAction;
-import de.zib.gndms.logic.taskflow.TaskFlowFactory;
-import de.zib.gndms.model.gorfx.types.Task;
-import de.zib.gndms.model.gorfx.types.TaskFlow;
-import de.zib.gndms.model.gorfx.types.TaskFlowInfo;
-import de.zib.gndms.model.gorfx.types.TaskStatistics;
+
+import de.zib.gndms.common.model.gorfx.types.TaskFlowInfo;
+import de.zib.gndms.common.model.gorfx.types.TaskStatistics;
+import de.zib.gndms.logic.model.TaskAction;
+import de.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
+import de.zib.gndms.logic.model.gorfx.taskflow.DefaultTaskFlowFactory;
+import de.zib.gndms.model.gorfx.types.DelegatingOrder;
+import de.zib.gndms.neomodel.gorfx.Task;
+import de.zib.gndms.neomodel.gorfx.TaskFlow;
+import de.zib.gndms.taskflows.dummy.DummyOrder;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -31,7 +33,7 @@ import java.util.UUID;
  * @date 14.02.11  16:10
  * @brief Provider of dummy taskflows things.
  */
-public class DummyTaskFlowFactory implements TaskFlowFactory<TaskFlow<DummyOrder>> {
+public class DummyTaskFlowFactory extends DefaultTaskFlowFactory<DummyOrder,DummyQuoteCalculator> {
 
     private HashMap<String, TaskFlow<DummyOrder>> taskFlows = new HashMap<String, TaskFlow<DummyOrder>>( 10 );
     private TaskStatistics stats = new TaskStatistics();
@@ -42,7 +44,19 @@ public class DummyTaskFlowFactory implements TaskFlowFactory<TaskFlow<DummyOrder
     }
 
 
-    public AbstractQuoteCalculator getQuoteCalculator() {
+    @Override
+    public String getTaskFlowKey() {
+        return null;  // not required here
+    }
+
+
+    @Override
+    public int getVersion() {
+        return 0;  // not required here
+    }
+
+
+    public DummyQuoteCalculator getQuoteCalculator() {
         return new DummyQuoteCalculator( );
     }
 
@@ -63,12 +77,29 @@ public class DummyTaskFlowFactory implements TaskFlowFactory<TaskFlow<DummyOrder
 
 
     public TaskFlow<DummyOrder> create() {
-        TaskFlow<DummyOrder> tf = new TaskFlow<DummyOrder>();
+        TaskFlow<DummyOrder> tf = new CreatableTaskFlow<DummyOrder>();
         String uuid = UUID.randomUUID().toString();
         taskFlows.put( uuid, tf );
-        tf.setId( uuid );
+       // tf.setId( uuid );
         stats.setActive( stats.getActive() + 1 );
         return tf;
+    }
+
+
+    @Override
+    public TaskFlow<DummyOrder> createOrphan() {
+        return null;  // not required here
+    }
+
+
+    @Override
+    protected TaskFlow<DummyOrder> prepare( TaskFlow<DummyOrder> dummyOrderTaskFlow ) {
+        return null;  // not required here
+    }
+
+
+    public boolean adopt( TaskFlow<DummyOrder> taskflow ) {
+        return false;  // not required here
     }
 
 
@@ -79,6 +110,7 @@ public class DummyTaskFlowFactory implements TaskFlowFactory<TaskFlow<DummyOrder
 
     public void delete( String id ) {
         TaskFlow tf = taskFlows.remove( id );
+        /*
         Task t = tf.getTask();
         if( t != null )
             switch ( t.getStatus().getStatus() ) {
@@ -94,6 +126,7 @@ public class DummyTaskFlowFactory implements TaskFlowFactory<TaskFlow<DummyOrder
                 case PAUSED:
                     break;
             }
+            */
 
         stats.setActive( stats.getActive() - 1 );
     }
@@ -104,7 +137,27 @@ public class DummyTaskFlowFactory implements TaskFlowFactory<TaskFlow<DummyOrder
     }
 
 
-    public TaskAction createAction( Task t ) {
-        return new DummyTFAction( t );
+    @Override
+    public TaskAction createAction() {
+        return null;  // not required here
     }
+
+
+    @Override
+    public Iterable<String> depends() {
+        return null;  // not required here
+    }
+
+
+    @Override
+    public DelegatingOrder<DummyOrder> getOrderDelegate( DummyOrder orq ) {
+        return null;  // not required here
+    }
+
+
+    public DelegatingOrder<DummyOrder> getOrderDelegate( TaskFlow<DummyOrder> orq ) {
+        return null;  // not required here
+    }
+
+
 }

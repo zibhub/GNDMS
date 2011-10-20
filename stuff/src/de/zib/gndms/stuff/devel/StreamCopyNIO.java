@@ -16,7 +16,7 @@ import java.nio.channels.WritableByteChannel;
  */
 public class StreamCopyNIO {
 
-    static int BUFFER_SIZE = 4096;
+    static final int BUFFER_SIZE = 4096;
 
 
 
@@ -37,7 +37,7 @@ public class StreamCopyNIO {
         ReadableByteChannel sc = Channels.newChannel( is );
         WritableByteChannel oc = Channels.newChannel( os );
         ByteBuffer buf = ByteBuffer.allocate( bs );
-        int bc = 0;
+        int bc;
         int tbc = 0;
 
         // fill the buffer

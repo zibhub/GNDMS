@@ -81,7 +81,7 @@ public final class ConfigActionCaller implements WSActionCaller {
      * A set of ConfigAction.{@link HelpOverviewAction} is excluded, as this set used in the {@code HelpOverviewAction}
      * to print help about all available ConfigActions.
      */
-    private final Set<Class<? extends ConfigAction<?>>> configActions =
+    private  Set<Class<? extends ConfigAction<?>>> configActions =
             Sets.newSetFromMap(configActionMap);
 
     private final Function<String, String> classToActionNameMapper =
@@ -95,19 +95,41 @@ public final class ConfigActionCaller implements WSActionCaller {
             }
         };
 
-    private final GNDMSystem system;
+    private GNDMSystem system;
 
-	private final GNDMSInjector injector;
+	private GNDMSInjector injector;
 
 
     /**
+     * Constructs a new instance of the configActionCaller.
+     *
+     * @Note {@link #init} must be called to have a usable instance of this class.
+     */
+    public ConfigActionCaller( ) {
+
+    }
+
+    /**
+     * Constructs and initializes the configActionCaller.
+     *
+     * @see ConfigActionCaller.init()
+     * @param systemParam the GNDMSystem
+     */
+	@SuppressWarnings({ "ThisEscapedInObjectConstruction", "OverlyCoupledMethod" })
+	public ConfigActionCaller(final @NotNull GNDMSystem systemParam) {
+        init( systemParam );
+    }
+
+
+    /**
+     * Initializes this action
+     *
      * Fills {@link #configActions} with all implemented {@link ConfigAction}s, except the {@link HelpOverviewAction}.
      * Load the GNDMSystem's injector into {@link #injector} as a new {@code ChildInjector} of this.
      *
      * @param systemParam the GNDMSystem
      */
-	@SuppressWarnings({ "ThisEscapedInObjectConstruction", "OverlyCoupledMethod" })
-	public ConfigActionCaller(final @NotNull GNDMSystem systemParam) {
+    public void init( final @NotNull GNDMSystem systemParam ) {
         system = systemParam;
         configActions.add(SetupSubspaceAction.class);
         configActions.add(EchoOptionsAction.class);
@@ -122,8 +144,20 @@ public final class ConfigActionCaller implements WSActionCaller {
         configActions.add(ReadContainerLogAction.class);
         configActions.add(ReadGNDMSVersionAction.class);
 
-		injector = system.getInstanceDir().getSystemAccessInjector();
+        injector = system.getInstanceDir().getSystemAccessInjector();
     }
+
+
+//    public void configure(final @NotNull Binder binder) {
+//		binder.skipSources(GNDMSystem.class,
+//		                   EntityManager.class,
+//		                   ModelUUIDGen.class,
+//		                   UUIDGen.class,
+//		                   EntityUpdateListener.class,
+//		                   BatchUpdateAction.class);
+//		binder.bind(ConfigActionCaller.class).toInstance(this);
+//	}
+
 
     /**
      * Instantiates a new config action or a specific subclass of it according to the String <tt>name</tt>,
@@ -308,13 +342,7 @@ public final class ConfigActionCaller implements WSActionCaller {
     }
 
 
-//    public void configure(final @NotNull Binder binder) {
-//		binder.skipSources(GNDMSystem.class,
-//		                   EntityManager.class,
-//		                   ModelUUIDGen.class,
-//		                   UUIDGen.class,
-//		                   EntityUpdateListener.class,
-//		                   BatchUpdateAction.class);
-//		binder.bind(ConfigActionCaller.class).toInstance(this);
-//	}
+    public void setConfigActions( Set<Class<? extends ConfigAction<?>>> configActions ) {
+        this.configActions = configActions;
+    }
 }

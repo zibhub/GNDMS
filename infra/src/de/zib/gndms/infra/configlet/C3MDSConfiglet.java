@@ -72,10 +72,10 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 	private String requiredPrefix;
 	private C3Catalog catalog;
 
-    private ReentrantReadWriteLock stateLock = new ReentrantReadWriteLock(true);
-    private Condition newState = stateLock.writeLock().newCondition();
+    private final ReentrantReadWriteLock stateLock = new ReentrantReadWriteLock(true);
+    private final Condition newState = stateLock.writeLock().newCondition();
 
-    private ReentrantLock runLock = new ReentrantLock(true);
+    private final ReentrantLock runLock = new ReentrantLock(true);
 
 	@Override
 	protected void threadInit() {

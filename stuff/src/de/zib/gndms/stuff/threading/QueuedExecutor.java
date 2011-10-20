@@ -18,6 +18,8 @@ package de.zib.gndms.stuff.threading;
 
 
 
+import org.slf4j.LoggerFactory;
+
 import java.util.concurrent.*;
 import java.util.List;
 import java.util.Collection;

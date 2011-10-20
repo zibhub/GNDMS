@@ -36,7 +36,7 @@
          <property name="dspaceFacets" ref="dspaceFacets" />
     </bean>
 
-    <bean id="dspaceFacets" class="de.zib.gndms.gritserv.rest.Facets">
+    <bean id="dspaceFacets" class="de.zib.gndms.common.rest.Facets">
         <property name="facets">
             <list>
                 <ref bean="config"/>
@@ -45,15 +45,16 @@
         </property>
     </bean>
 
-    <bean id="config" class="de.zib.gndms.gritserv.rest.Facet">
+    <bean id="config" class="de.zib.gndms.common.rest.Facet">
         <property name="config" value="${dspaceBaseURL}/dspace/${subspaceId}/config"/>
     </bean>
 
-    <bean id="slicekinds" class="de.zib.gndms.gritserv.rest.Facet">
+    <bean id="slicekinds" class="de.zib.gndms.common.rest.Facet">
         <property name="slicekinds" value="${dspaceBaseURL}/dspace/${subspaceId}/slicekinds"/>
     </bean>
 
-    <bean id="executor" class="de.zib.gndms.logic.model.TaskExecutionService" />
+    <!-- this will be defined in system
+    <bean id="executor" class="de.zib.gndms.logic.model.TaskExecutionService" /-->
 
     <bean id="sliceKindService" class="de.zib.gndms.dspace.service.SliceKindServiceImpl">
         <property name="baseUrl" value="${dspaceBaseURL}"/>
@@ -64,7 +65,7 @@
          <property name="sliceFacets" ref="sliceFacets" />
     </bean>
  
-    <bean id="sliceFacets" class="de.zib.gndms.gritserv.rest.Facets">
+    <bean id="sliceFacets" class="de.zib.gndms.common.rest.Facets">
         <property name="facets">
             <list>
                 <ref bean="files"/>
@@ -73,11 +74,13 @@
         </property>
     </bean>
 
-    <bean id="files" class="de.zib.gndms.gritserv.rest.Facet">
-        <property name="config" value="${dspaceBaseURL}/dspace/${subspaceId}/config"/>
+    <bean id="files" class="de.zib.gndms.common.rest.Facet">
+        <property name="name" value="config"/>
+        <property name="url" value="${dspaceBaseURL}/dspace/${subspaceId}/config"/>
     </bean>
 
-    <bean id="gsiftp" class="de.zib.gndms.gritserv.rest.Facet">
-        <property name="config" value="${dspaceBaseURL}/dspace/${subspaceId}/config"/>
+    <bean id="gsiftp" class="de.zib.gndms.common.rest.Facet">
+        <property name="name" value="config"/>
+        <property name="url" value="${dspaceBaseURL}/dspace/${subspaceId}/config"/>
     </bean>
 </beans>

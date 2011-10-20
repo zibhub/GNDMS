@@ -55,5 +55,5 @@ public abstract class AbstractApplication {
      * This method will be called after the fields of the class have been set.
      * @throws Exception 
      */
-    public abstract void run( ) throws Exception;
+    protected abstract void run() throws Exception;
 }

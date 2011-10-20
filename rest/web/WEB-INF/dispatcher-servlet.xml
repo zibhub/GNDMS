@@ -33,6 +33,7 @@
                <entry key="42" value-ref="foo42" />
            </map>
         </property>
+        <property name="fooClass" value="de.zib.firstrest.domain.Bar"/>
     </bean>
 
     <!-- this is the marshaller -->

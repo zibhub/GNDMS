@@ -55,7 +55,7 @@ public class ExternalProviderStageInQuoteCalculator extends
 
 	private @NotNull final Logger logger = LoggerFactory.getLogger(ExternalProviderStageInQuoteCalculator.class);
 
-	private ParmFormatAux parmAux;
+	private final ParmFormatAux parmAux;
 	private SystemInfo sysInfo;
 
 

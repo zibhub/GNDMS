@@ -20,8 +20,9 @@ package de.zib.gndms.taskflows.filetransfer.server;
 
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.model.gorfx.taskflow.DefaultTaskFlowFactory;
-import de.zib.gndms.model.gorfx.types.FileTransferOrder;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
+import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferOrder;
+import de.zib.gndms.taskflows.filetransfer.server.logic.FileTransferQuoteCalculator;
 
 
 /**

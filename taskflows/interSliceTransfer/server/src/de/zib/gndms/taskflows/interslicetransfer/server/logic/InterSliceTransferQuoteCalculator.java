@@ -1,4 +1,4 @@
-/*
+package de.zib.gndms.taskflows.interslicetransfer.server.logic;/*
  * Copyright 2008-${YEAR} Zuse Institute Berlin (ZIB)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,6 @@
  *  limitations under the License.
  */
 
-package de.zib.gndms.GORFX.action;
 
 import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.dspace.service.DSpaceBindingUtils;

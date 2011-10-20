@@ -67,7 +67,7 @@ public class GNDMSVerInfo {
 			finally { in.close(); }
 		}
 		catch (NullPointerException npe) {
-			return "<none";
+			return "<none>";
 		}
 		catch (IOException e) {
 			return "<none>";
@@ -75,18 +75,18 @@ public class GNDMSVerInfo {
 	}
 
     /**
-     * Returns the content of the {@code GNDMS-BUILD-INFO} file, containg informations about the build version.
-     * 
-     * @return the content of the {@code GNDMS-BUILD-INFO} file, containg informations about the build version.
+     * Returns the content of the {@code GNDMS-BUILD-INFO} file, containing information about the build version.
+     *
+     * @return the content of the {@code GNDMS-BUILD-INFO} file, containing information about the build version.
      */
 	public String readBuildInfo() {
 		return readInfo("BUILD-INFO");
 	}
 
     /**
-     * Returns the content of the {@code GNDMS-RELEASE} file, containg informations about the release version.
+     * Returns the content of the {@code GNDMS-RELEASE} file, containing information about the release version.
      *
-     * @return the content of the {@code GNDMS-RELEASE} file, containg informations about the release version.
+     * @return the content of the {@code GNDMS-RELEASE} file, containing information about the release version.
      */
 	public String readRelease() {
 		return readInfo("RELEASE");

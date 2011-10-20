@@ -36,14 +36,14 @@ import javax.persistence.EntityManager;
 public class LookupAction<M extends GridEntity, K> extends AbstractEntityAction<M> {
 
     private K primaryKey;
-    private Class<?> returnClass;
+    private final Class<M> returnClass;
 
 
-    public LookupAction( Class<? extends GridEntity> returnClass ) {
+    public LookupAction( Class<M> returnClass ) {
         this.returnClass = returnClass;
     }
 
-    public LookupAction( Class<? extends GridEntity> returnClass,  K primaryKey ) {
+    public LookupAction( Class<M> returnClass,  K primaryKey ) {
         this.returnClass = returnClass;
         this.primaryKey = primaryKey;
     }
@@ -56,7 +56,7 @@ public class LookupAction<M extends GridEntity, K> extends AbstractEntityAction<
 
     public M execute( @NotNull EntityManager em ) {
 
-        return ( M ) em.find( returnClass, primaryKey );
+        return em.find( returnClass, primaryKey );
     }
 
     public K getPrimaryKey() {

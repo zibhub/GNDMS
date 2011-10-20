@@ -213,11 +213,11 @@ public class TaskServiceImpl implements TaskService {
     protected Task findTask( String id, Session session ) throws NoSuchResourceException {
 
         Task t = session.findTask( id );
-        if( t != null ) {
-            return t;
-        }
 
-        throw new NoSuchResourceException( id );
+        if( t == null )
+            throw new NoSuchResourceException( id );
+
+        return t;
     }
 
 

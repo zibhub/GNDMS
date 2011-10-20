@@ -86,9 +86,9 @@ public class DataDescriptorStdoutWriter implements DataDescriptorWriter {
     }
 
     private void showStringList( List<String> sl, String ind ) {
-        if( sl == null )
+        if( sl != null )
+            for ( String aSl : sl ) System.out.println( ind + aSl );
+        else
             System.out.println( ind + "null" );
-        for( int i=0; i < sl.size(); ++i )
-            System.out.println( ind + sl.get( i ) );
     }
 }

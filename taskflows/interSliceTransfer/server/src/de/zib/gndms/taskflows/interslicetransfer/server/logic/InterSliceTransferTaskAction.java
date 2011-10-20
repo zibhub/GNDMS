@@ -1,5 +1,4 @@
-package de.zib.gndms.GORFX.action;
-
+package de.zib.gndms.taskflows.interslicetransfer.server.logic;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -18,14 +17,14 @@ package de.zib.gndms.GORFX.action;
 
 
 
-import de.zib.gndms.logic.model.gorfx.OrderTaskAction;
-import de.zib.gndms.logic.model.gorfx.FileTransferTaskAction;
-import de.zib.gndms.model.gorfx.types.InterSliceTransferOrder;
+import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.Taskling;
+import de.zib.gndms.taskflows.filetransfer.server.logic.FileTransferTaskAction;
+import de.zib.gndms.taskflows.interslicetransfer.client.model.InterSliceTransferOrder;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -36,7 +35,7 @@ import javax.persistence.EntityManager;
  * <p/>
  * User: mjorra, Date: 04.11.2008, Time: 17:45:47
  */
-public class InterSliceTransferTaskAction extends OrderTaskAction<InterSliceTransferORQ> {
+public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTransferOrder> {
 
 
     public InterSliceTransferTaskAction() {
@@ -53,8 +52,8 @@ public class InterSliceTransferTaskAction extends OrderTaskAction<InterSliceTran
         final Session session = getDao().beginSession();
         try {
             final Task task = getTask(session);
-            InterSliceTransferOrder orq = (InterSliceTransferORQ) task.getORQ();
-            InterSliceTransferOrderCalculator.checkURIs( orq );
+            InterSliceTransferOrder orq = (InterSliceTransferOrder) task.getORQ();
+            InterSliceTransferQuoteCalculator.checkURIs( orq );
 
 
             final Task st = task.createSubTask();
@@ -69,7 +68,7 @@ public class InterSliceTransferTaskAction extends OrderTaskAction<InterSliceTran
             fta.setEmf( getEmf( ) );
 
 
-            fta.setLog( getLog() );
+            //fta.setLog( getLog() );
             fta.call( );
             if( st.getTaskState().equals( TaskState.FINISHED ) ){
                 task.setPayload( st.getPayload() );

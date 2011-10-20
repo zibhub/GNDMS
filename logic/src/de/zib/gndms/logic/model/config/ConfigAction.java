@@ -242,7 +242,6 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
 
 
     public final @NotNull String getOption(final @NotNull String name, final @NotNull String def) {
-        final String val;
         try {
             return getOption(name);
         }

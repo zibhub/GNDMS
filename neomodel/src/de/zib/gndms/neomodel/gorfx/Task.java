@@ -168,15 +168,15 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
             index.remove(repr(), session().getGridName(),
                     new ValueContext( oldTerminationTime.getTimeInMillis() ).indexNumeric());
         }
+
         if (terminationTime == null && hasProperty(TERMINATION_TIME_P)) {
             removeProperty(TERMINATION_TIME_P);
         }
-        else {
+        else if ( terminationTime != null ) {
             setProperty(TERMINATION_TIME_P, terminationTime.getTimeInMillis());
             final Index<Node> index = getTypeNickIndex(TERMINATION_TIME_IDX);
             index.add(repr(), session().getGridName(),
                     new ValueContext( terminationTime.getTimeInMillis() ).indexNumeric());
-
         }
     }
 

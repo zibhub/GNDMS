@@ -88,9 +88,7 @@ public class WSMaintenance {
         WSActionCaller ac = (WSActionCaller) system.getActionCaller();
         ac.callPublicAction( cn, parms, printer );
         printer.close();
-        String res = os.toString();
-        // log.debug( "returning " + res );
-        return res;
+        return os.toString();
     }
 
     /**

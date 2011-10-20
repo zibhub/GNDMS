@@ -18,9 +18,9 @@ package de.zib.gndms.taskflows.republishslice.client.tools;
 
 
 
-import de.zib.gndms.model.gorfx.types.RePublishSliceResult;
 import de.zib.gndms.model.gorfx.types.io.CommonSliceResultConverter;
 import de.zib.gndms.model.gorfx.types.io.CommonSliceResultWriter;
+import de.zib.gndms.taskflows.republishslice.client.model.RePublishSliceResult;
 
 /**
  * @author  try ma ik jo rr a zib

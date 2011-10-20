@@ -56,7 +56,7 @@ public class CreateSliceKindAction extends AbstractModelEntityAction<SliceKind, 
 
     public CreateSliceKindAction( @NotNull String URI, @NotNull AccessMask perm, Set<MetaSubspace> metaSubspaces ) {
         this.URI = URI;
-        this.permission = permission;
+        this.permission = perm;
         this.metaSubspaces = metaSubspaces;
     }
 

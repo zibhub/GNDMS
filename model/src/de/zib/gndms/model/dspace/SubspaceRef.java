@@ -38,7 +38,7 @@ import java.util.List;
 @Embeddable
 public class SubspaceRef extends SimpleRKRef {
 
-    private static QName RESOURCE_KEY_NAME =
+    private static final QName RESOURCE_KEY_NAME =
         new QName("http://dspace.gndms.zib.de/DSpace/Subspace", "SubspaceKey");
 
     private static final List<String> RESOURCE_NAMES = new ArrayList<String>(2) {{

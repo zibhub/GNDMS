@@ -73,9 +73,7 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
 	@SuppressWarnings({ "FieldCanBeLocal" })
 	private final Wrapper<Object> sysHolderWrapper;
 
-	private final @NotNull ModelUUIDGen uuidGen;
-
-	private final @NotNull BoundInjector boundInjector = new BoundInjector();
+    private final @NotNull BoundInjector boundInjector = new BoundInjector();
 
     private GNDMSInjector injector;
 
@@ -83,14 +81,14 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
 
 	@SuppressWarnings({ "ThisEscapedInObjectConstruction" })
 	GNDMSystemDirectory(
-	      final @NotNull String sysNameParam,
-	      final @NotNull ModelUUIDGen uuidGenParam,
-	      final Wrapper<Object> systemHolderWrapParam )
+        final @NotNull String sysNameParam,
+        final Wrapper<Object> systemHolderWrapParam )
     {
         instances = new HashMap<String, Object>(INITIAL_CAPACITY);
         systemName = sysNameParam;
-		uuidGen = uuidGenParam;
-	    sysHolderWrapper = systemHolderWrapParam;
+        sysHolderWrapper = systemHolderWrapParam;
+
+
     }
 
 

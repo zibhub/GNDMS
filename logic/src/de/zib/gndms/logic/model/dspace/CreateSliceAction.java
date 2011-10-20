@@ -149,13 +149,13 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
             throw new IllegalStateException("SliceKind not assigned to Subspace");
 
         String lp = sp.getPath( ) +  File.separator + sliceKind.getSliceDirectory() + File.separator;
-        File f = null;
-        String did = new String( );
 
-        while ( !( f != null && !f.exists() ) ) {
+        File f;
+        String did;
+        do {
             did = nextUUID();
             f = new File( lp + did );
-        }
+        } while ( !( f != null && !f.exists() ) );
 
         try {
             // check if slice kind dir exists

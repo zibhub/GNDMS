@@ -25,8 +25,8 @@ import java.util.UUID;
  */
 public class TypedUUId {
 
-    private String typeSpecifier;
-    private UUID id;
+    private final String typeSpecifier;
+    private final UUID id;
 
 
     public TypedUUId( String typeSpecifier ) {

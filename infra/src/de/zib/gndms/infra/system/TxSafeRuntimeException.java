@@ -24,8 +24,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Wrapper for RuntimeExceptions that should not cause a transaction rollback when caught.
  *
- * @see EMTools
- * 
+ *
  * @author  try ste fan pla nti kow zib
  * @version $Id$
  *

@@ -37,7 +37,7 @@ public abstract class AbstractClient {
 	/**
 	 * The logger.
 	 */
-	protected Logger logger = LoggerFactory.getLogger(this.getClass());
+	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	/**
 	 * A rest template for internal use.

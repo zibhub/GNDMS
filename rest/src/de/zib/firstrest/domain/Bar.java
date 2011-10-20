@@ -14,25 +14,28 @@
  *  limitations under the License.
  */
 
-package de.zib.gndms.dspace.service;
-
-import de.zib.gndms.model.dspace.types.SliceRef;
-
+package de.zib.firstrest.domain;
 /**
  * @author Maik Jorra
  * @email jorra@zib.de
- * @date 17.08.11  14:57
+ * @date 10.10.11  16:46
  * @brief
  */
-public class DSpaceBindingUtils {
+public class Bar extends Foo {
 
-    public static String getFtpPathForSlice( SliceRef sourceSlice ) {
-        // todo use a slice client to acquire the path
-        return null;  // Implement Me. Pretty Please!!!
+    public Bar() {
+        super( "default", "123" );
     }
 
 
-    public static void destroySlice( SliceRef destinationSlice ) {
-        // Implement Me. Pretty Please!!!
+    @Override
+    public void setId( String id ) {
+        throw new IllegalStateException( "id not settable" );
+    }
+
+
+    @Override
+    public void setValue( String value ) {
+        throw new IllegalStateException( "value not settable" );
     }
 }

@@ -18,8 +18,8 @@ package de.zib.gndms.taskflows.republishslice.client.tools;
 
 
 
-import de.zib.gndms.model.gorfx.types.RePublishSliceOrder;
 import de.zib.gndms.model.gorfx.types.io.OrderConverter;
+import de.zib.gndms.taskflows.republishslice.client.model.RePublishSliceOrder;
 
 /**
  * Converter for publish slice orqs.

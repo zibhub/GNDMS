@@ -1,5 +1,4 @@
-package de.zib.gndms.GORFX.action;
-
+package de.zib.gndms.taskflows.republishslice.server.logic;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -18,11 +17,12 @@ package de.zib.gndms.GORFX.action;
 
 
 
-import de.zib.gndms.logic.model.gorfx.OrderTaskAction;
-import de.zib.gndms.model.gorfx.types.RePublishSliceOrder;
+import de.zib.gndms.dspace.service.DSpaceBindingUtils;
+import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.gorfx.Taskling;
+import de.zib.gndms.taskflows.republishslice.client.model.RePublishSliceOrder;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -34,13 +34,19 @@ import javax.persistence.EntityManager;
  * <p/>
  * User: mjorra, Date: 11.11.2008, Time: 13:49:57
  */
-public class RePublishSliceTaskAction extends OrderTaskAction<RePublishSliceORQ> {
+public class RePublishSliceTaskAction extends TaskFlowAction<RePublishSliceOrder> {
 
     public RePublishSliceTaskAction() {
     }
 
     public RePublishSliceTaskAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model) {
         super(em, dao, model);
+    }
+
+
+    @Override
+    public Class<RePublishSliceOrder> getOrqClass() {
+        return null;  // not required here
     }
 
 
@@ -81,7 +87,7 @@ public class RePublishSliceTaskAction extends OrderTaskAction<RePublishSliceORQ>
     @Override
     protected void onFailed(@NotNull String wid, @NotNull TaskState state,
                             boolean isRestartedTask, boolean altTaskState) throws Exception {
-        DSpaceBindingUtils.destroySlice( getOrder().getDestinationSlice() );
+        DSpaceBindingUtils.destroySlice( getOrderBean().getDestinationSlice() );
         super.onFailed(wid, state, isRestartedTask, altTaskState);
     }
 }

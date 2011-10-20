@@ -19,6 +19,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+    <bean id="legacyConfigActionCaller" class="de.zib.gndms.infra.legacy.LegacyConfigActionCaller"/>
     <bean id="configActionProvider" class="de.zib.gndms.infra.legacy.LegacyConfigActionProvider"/>
 
     <bean id="legacyConfigMeta" class="de.zib.gndms.infra.legacy.SettableConfigMeta">

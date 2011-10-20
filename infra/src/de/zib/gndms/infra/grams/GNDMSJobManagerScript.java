@@ -137,18 +137,7 @@ public class GNDMSJobManagerScript {
 
         String gridMapAndExecute = new File(
             globusLocation + GLOBUS_GRIDMAP_AND_EXECUTE).toString();
-        String gridMapFile = null;
-        try
-        {
-            gridMapFile = "/etc/grid-security/grid-mapfile";
-                // = ContainerSecurityConfig.getConfig().getSecurityDescriptor()
-                // .getGridMapFile();
-        }
-        catch (Exception e)
-        {
-            throw new ChainedIOException(i18n.getMessage(
-                Resources.GRIDMAP_CONFIGURATION_ERROR), e);
-        }
+        String  gridMapFile = "/etc/grid-security/grid-mapfile";
         // boolean authzGridmap = AuthorizationHelper.isAuthorizationGridmap();
         boolean authzGridmap = true;
 
@@ -501,7 +490,7 @@ public class GNDMSJobManagerScript {
                "done = " + (this.done ? "true" : "false") + "\n";
     }
 
-    static Logger logger = LoggerFactory.getLogger( GNDMSJobManagerScript.class );;
+    static Logger logger = LoggerFactory.getLogger( GNDMSJobManagerScript.class );
 
     private static I18n i18n = I18n.getI18n(Resources.class.getName());
 }
