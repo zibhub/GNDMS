@@ -38,10 +38,10 @@ import de.zib.gndms.common.logic.config.WrongConfigurationException;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
-import de.zib.gndms.logic.dspace.NoSuchElementException;
-import de.zib.gndms.logic.dspace.SliceKindProvider;
-import de.zib.gndms.logic.dspace.SubspaceProvider;
+import de.zib.gndms.logic.model.dspace.NoSuchElementException;
 import de.zib.gndms.logic.model.dspace.SliceKindConfiguration;
+import de.zib.gndms.logic.model.dspace.SliceKindProvider;
+import de.zib.gndms.logic.model.dspace.SubspaceProvider;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 
@@ -58,6 +58,7 @@ public class SliceKindServiceImpl implements SliceKindService {
 	 * The logger.
 	 */
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
 	/**
 	 * The base url, something like \c http://my.host.org/gndms/grid_id.
 	 */
@@ -65,21 +66,23 @@ public class SliceKindServiceImpl implements SliceKindService {
 	/**
 	 * All available subspaces.
 	 */
-	private SubspaceProvider subspaces;
+	private SubspaceProvider subspaceProvider;
 	/**
 	 * All available slice kinds.
 	 */
-	private SliceKindProvider sliceKinds;
+	private SliceKindProvider sliceKindProvider;
 	/**
 	 * The uri factory.
 	 */
 	private UriFactory uriFactory;
 
+	// TODO: initialization of subspaceProvider and sliceKindProvider
 	/**
 	 * Initialization of the slice kind service.
 	 */
 	@PostConstruct
 	public final void init() {
+		uriFactory = new UriFactory(baseUrl);
 	}
 
 	@Override
@@ -113,7 +116,6 @@ public class SliceKindServiceImpl implements SliceKindService {
 
 		try {
 			SliceKind sliceK = findSliceKind(subspace, sliceKind);
-			
 			SliceKindConfiguration sliceKindConfig = checkSliceKindConfig(config);
 
 			// TODO: sliceK.setSliceKindConfiguration(sliceKindConfig)
@@ -169,7 +171,7 @@ public class SliceKindServiceImpl implements SliceKindService {
 			@RequestHeader("DN") final String dn) {
 		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, dn);
 
-			Subspace sub = subspaces.getSubspace(subspace);
+			Subspace sub = subspaceProvider.getSubspace(subspace);
 
 			// TODO: sub.deleteSliceKind(sliceKind);
 			return new ResponseEntity<Specifier<Void>>(null, headers, HttpStatus.OK);
@@ -212,13 +214,13 @@ public class SliceKindServiceImpl implements SliceKindService {
 	 */
 	private SliceKind findSliceKind(final String subspace,
 			final String sliceKind) throws NoSuchElementException {
-		Subspace sub = subspaces.getSubspace(subspace);
+		Subspace sub = subspaceProvider.getSubspace(subspace);
 		Set<SliceKind> allSliceKinds = sub.getMetaSubspace()
 				.getCreatableSliceKinds();
 
 		SliceKind sliceK = null;
 		for (SliceKind s : allSliceKinds) {
-			if (s.equals(sliceKinds.getSliceKind(sliceKind))) {
+			if (s.equals(sliceKindProvider.getSliceKind(sliceKind))) {
 				sliceK = s;
 				break;
 			}
@@ -252,6 +254,48 @@ public class SliceKindServiceImpl implements SliceKindService {
 					"Wrong slice kind configuration");
 		}
 
+	}
+
+	/**
+	 * @return the baseUrl
+	 */
+	public final String getBaseUrl() {
+		return baseUrl;
+	}
+
+	/**
+	 * @param baseUrl the baseUrl to set
+	 */
+	public final void setBaseUrl(String baseUrl) {
+		this.baseUrl = baseUrl;
+	}
+
+	/**
+	 * @return the subspaceProvider
+	 */
+	public final SubspaceProvider getSubspaceProvider() {
+		return subspaceProvider;
+	}
+
+	/**
+	 * @param subspaceProvider the subspaceProvider to set
+	 */
+	public final void setSubspaceProvider(SubspaceProvider subspaceProvider) {
+		this.subspaceProvider = subspaceProvider;
+	}
+
+	/**
+	 * @return the sliceKindProvider
+	 */
+	public final SliceKindProvider getSliceKindProvider() {
+		return sliceKindProvider;
+	}
+
+	/**
+	 * @param sliceKindProvider the sliceKindProvider to set
+	 */
+	public final void setSliceKindProvider(SliceKindProvider sliceKindProvider) {
+		this.sliceKindProvider = sliceKindProvider;
 	}
 
 }

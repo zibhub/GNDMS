@@ -17,9 +17,11 @@
 package de.zib.gndms.common.mockup.logic.action;
 /**
  * @author try ma ik jo rr a zib
+ * @param <T> 
  * @date 29.06.11  11:41
  * @deprecated
  */
+@Deprecated
 public interface Action<T> {
 
     T call();

@@ -25,8 +25,6 @@ import de.zib.gndms.logic.model.config.ConfigActionResult;
 import de.zib.gndms.logic.model.config.ConfigOption;
 import de.zib.gndms.logic.model.config.SetupAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
-import de.zib.gndms.model.dspace.DSpace;
-import de.zib.gndms.model.dspace.DSpaceRef;
 import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.Subspace;
 import org.jetbrains.annotations.NotNull;
@@ -36,17 +34,9 @@ import java.io.PrintWriter;
 
 
 /**
- * An Action to manage Subspaces with their corresponding MetaSubspaces in the database.
- *
- * <p>An instance contains an <tt>ImmutableScopedName</tt> {@link #subspace} for the
- *  key of the subspace (QName).It must be set in the configuration map and
- *  will be retrieved during the initialization.
- *
- * <p>When this action is started with <tt>create</tt> or <tt>update</tt> as SetupMode, it will retrieve
- * the MetaSubspace entity and the linked Subspace instance and (re)sets their fields using the getter methods of this class.
- * If necessary, it may create a new MetaSubspace or Subspace instance and link them on <tt>create</tt> mode.
- *
- * <p>Note: <tt>read</tt> mode is not supported.
+ * An Action to delete a Subspace with the corresponding MetaSubspace in the database.
+ * *
+ * <p>Note: only <tt>delete</tt> mode is not supported.
  *
  * <p>An instance of this class returns a {@code ConfigActionResult} informing about the success of its execution, when
  * the <tt>execute()</tt> method is called.
@@ -55,38 +45,15 @@ import java.io.PrintWriter;
  * @see MetaSubspace
  * @see Subspace
  * @see ImmutableScopedName
- * @author  try ste fan pla nti kow zib
- * @version $Id$
- *
- *          User: stepn Date: 14.08.2008 Time: 17:37:51
+ * @author  Ulrike Golas
  */
 @ConfigActionHelp(shortHelp = "Setup a subspace", longHelp = "Used to prepare the database schema for GNDMS by creating, updating, and deleting subspaces")
-public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
+public class DeleteSubspaceAction extends SetupAction<ConfigActionResult> {
     @ConfigOption(descr="The key of the subspace (QName)")
     private ImmutableScopedName subspace;
 
     @ConfigOption(descr="Local filesystem root path for all slices stored in this subspace")
     private String path;
-
-    @ConfigOption(descr="GridFTP path for all slices stored under path")
-    private String gsiFtpPath;
-
-    @ConfigOption(descr="If set, this subspace is included in the public service listing")
-    private Boolean visible;
-
-    @ConfigOption(descr="Maximum storage size available in this subspace")
-    private Long size;
-
-
-  public SetupSubspaceAction(SubspaceConfiguration subspaceConfig) {
-		super();
-		setPath(subspaceConfig.getPath());
-		setIsVisibleToPublic(subspaceConfig.isVisible());
-		setGsiFtpPath(subspaceConfig.getGsiFtpPath());
-		setMode(subspaceConfig.getMode());
-		setSize(subspaceConfig.getSize());
-	}
-
 
 /**
     * Calls <tt>super.initialize()</tt> and retrieves several field values from the configuration map,
@@ -98,18 +65,8 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
     public void initialize() {
         super.initialize();    // Overridden method
         try {
-            if (subspace == null && (isCreating() || hasOption("subspace")))
-                setSubspace(getISNOption("subspace"));
-            if (visible == null && (isCreating() || hasOption("visible")))
-                setIsVisibleToPublic(isBooleanOptionSet("visible", true));
-            if (size == null && (isCreating() || hasOption("size"))) {
-                size = new Long( getIntOption("size") );
-            }
-            if (path == null && (isCreating() || hasOption("path"))) {
+            if (path == null && hasOption("path")) {
                 setPath(getOption("path"));
-            }
-            if (gsiFtpPath== null && (isCreating() || hasOption("gsiFtpPath"))) {
-                setGsiFtpPath(getOption("gsiFtpPath"));
             }
         }
         catch ( MandatoryOptionMissingException e) {
@@ -145,46 +102,9 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
         Subspace subspace = prepareSubspace(meta);
 
         try {
-        switch (getMode()) {
-            case CREATE:
-            case UPDATE:
-                if (isVisibleToPublic() != null)
-                    meta.setVisibleToPublic(isVisibleToPublic());
 
-                if (size != null)
-                    subspace.setTotalSize(getSize());
-
-                if (path != null)
-                    subspace.setPath(getPath());
-
-                if (gsiFtpPath != null)
-                    subspace.setGsiFtpPath(getGsiFtpPath());
-
-                if (subspace.getDSpaceRef() == null) {
-                    DSpaceRef ref = new DSpaceRef();
-
-                    // HACK: There should be a better way than this...
-                    DSpace dspace =
-                        (DSpace) em.createNamedQuery("findDSpaceInstances").getSingleResult();
-
-                    ref.setGridSiteId(null);
-                    ref.setResourceKeyValue(dspace.getId());
-                    subspace.setDSpaceRef(ref);
-                }
-
-                if (! em.contains(subspace))
-                    em.persist(subspace);
-
-                if (! em.contains(meta))
-                    em.persist(meta);
-                break;
-            case DELETE:
-                throw new UnsupportedOperationException("Use DeleteSubspaceAction instead of SetupSubspaceAction for deleting subspaces");
-            	// em.remove(meta);
-                // em.remove(subspace);
-                // break;
-        }
-
+                em.remove(meta);
+                em.remove(subspace);
         } catch ( Exception e ) {
            throw new RuntimeException( e ); 
         }
@@ -226,23 +146,7 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
     @SuppressWarnings({ "FeatureEnvy" })
     private Subspace prepareSubspace(final MetaSubspace metaParam) {
         Subspace subspace;
-        if (isCreating()) {
-            if (metaParam.getInstance() != null)
-                throw new IllegalStateException("Cant overwrite metasubspace's subspace");
-            subspace = new Subspace();
-            subspace.setId(nextUUID());
-            subspace.setMetaSubspace(metaParam);
-            metaParam.setInstance(subspace);
-
-            //final StorageSize avail = new StorageSize();
-            //avail.setAmount(getSize().getAmount());
-            //avail.setUnit(getSize().getUnit());
-            //subspace.setAvailableSize(avail);
-            final long avail = getSize( );
-            subspace.setAvailableSize(avail);
-        }
-        else
-            subspace = metaParam.getInstance();
+        subspace = metaParam.getInstance();
         return subspace;
     }
 
@@ -257,41 +161,11 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
     }
 
 
-    @SuppressWarnings({ "NonBooleanMethodNameMayNotStartWithQuestion" })
-    public Boolean isVisibleToPublic() {
-        return visible;
-    }
-
-    public long getSize() {
-        return size;
-    }
-
-
-    public void setIsVisibleToPublic(final Boolean visibleToPublicParam) {
-        visible = visibleToPublicParam;
-    }
-
-
-    public void setSize(final long sizeParam) {
-        size = sizeParam;
-    }
-
-
     public String getPath() {
         return path;
     }
 
     public void setPath(final String pathParam) {
         path = pathParam;
-    }
-
-
-    public String getGsiFtpPath() {
-        return gsiFtpPath;
-    }
-
-
-    public void setGsiFtpPath(final String gsiFtpPathParam) {
-        gsiFtpPath = gsiFtpPathParam;
     }
 }

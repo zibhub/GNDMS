@@ -18,7 +18,6 @@ package de.zib.gndms.common.rest;
 import org.springframework.web.util.UriTemplate;
 
 import java.net.URI;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -30,15 +29,16 @@ import java.util.Map;
  */
 public class UriFactory {
 
-    final public static String SERVICE       = "service";
-    final public static String TASKFLOW_TYPE = "type";
-    final public static String TASKFLOW_ID   = "id";
-    final public static String TASK_ID       = "taskId";
-    final public static String SUBSPACE       = "subspace";
-    final public static String SLICEKIND       = "slicekind";
-    final public static String SLICE       = "slice";
+    public static final String SERVICE       = "service";
+    public static final String TASKFLOW_TYPE = "type";
+    public static final String TASKFLOW_ID   = "id";
+    public static final String TASK_ID       = "taskId";
+    public static final String SUBSPACE       = "subspace";
+    public static final String SLICEKIND       = "slicekind";
+    public static final String SLICE       = "slice";
 
     private String baseUrl;
+    private UriTemplate serviceTemplate;
     private UriTemplate taskFlowTemplate;
     private UriTemplate taskFlowTypeTemplate;
     private UriTemplate quoteTemplate;
@@ -58,6 +58,7 @@ public class UriFactory {
 
 
     private void init( ) {
+        serviceTemplate = new UriTemplate(baseUrl + "/{service}");
         taskFlowTemplate = new UriTemplate ( baseUrl +"/{service}/_{type}/_{id}" );
         taskFlowTypeTemplate = new UriTemplate( baseUrl +"/{service}/_{type}" );
         quoteTemplate = new UriTemplate ( baseUrl +"/{service}/_{type}/_{id}/quotes/{idx}" );
@@ -66,7 +67,10 @@ public class UriFactory {
         subspaceTemplate = new UriTemplate(baseUrl + "/{service}/_{subspace}");
     }
 
-
+    public String serviceUri(Map<String, String> vars) {
+        return serviceTemplate.expand(vars).toString();
+    }
+    
     public String taskFlowUri( Map<String, String> vars, String facet ) {
         return addFacet ( taskFlowTemplate.expand( vars ), facet );
     }
