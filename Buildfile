@@ -541,6 +541,7 @@ define 'gndms' do
       desc 'runs the interSliceTransfer test'
       task 'run-rft' do 
 
+        runner = 'de.zib.gndmc.GORFX.diag.RemoteFileTransferTest'
         jars = compile.dependencies.map(&:to_s)
         jars << compile.target.to_s
         if (ENV['GNDMS_PROPS'] == nil)
@@ -553,10 +554,18 @@ define 'gndms' do
                  '-uid', `id -u`.chomp,
                  '-cancel', 30000
         ]
+        props = { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" }
+
+
+
         puts args
-        Commands.java('de.zib.gndmc.GORFX.diag.RemoteFileTransferTest',  args, 
-                      { :classpath => jars, :properties => 
-                          { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" } } )
+        unless ENV["GEN_SCRIPT"] == "1"
+            Commands.java( runner,  args, 
+                          { :classpath => jars, :properties => 
+                              props } )
+        else
+            genScript( 'run-rft', runner, args, jars, props )
+        end
       end
 
 end
@@ -759,6 +768,23 @@ def nope()
      puts 'Please read the documentation on how to build, install, and deploy this software (doc/html or doc/md).'
      puts 'The installation of GNDMS is considerably easy, but not straightforward.'
      puts ''
+end
+
+
+def genScript( scriptName, runClass, args, jars, props )
+    script = File.new(_( scriptName ), 'w')
+    script.write( "#!/bin/bash\n\n" )
+    script.write( "args=( " );
+    args.each { |x| script.write( "\"#{x}\" " ) }
+    script.write( ")\n\n")
+    jars.each { |x| script.write( "cp=\"#{x}:$cp\"\n") } 
+    script.write( "\n" )
+    script.write( "props=( " )
+    props.each { |k, v| script.write( "\"-D#{k}=#{v}\" " ) }
+    script.write( ")\n\n" )
+    script.write( "exec java -cp=$cp ${props[@]} #{runClass} ${args[@]}\n" )
+
+    script.close
 end
 
 Rake::Task[:default].prerequisites.clear
