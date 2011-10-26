@@ -44,6 +44,17 @@ import de.zib.gndms.common.rest.Specifier;
 public interface SubspaceService {
 
 	/**
+	 * Lists all facets of the subspace.
+	 * 
+	 * @param subspace
+	 *            The subspace identifier.
+	 * @param dn
+	 *            The dn of the user invoking the method.
+	 * @return The available facets.
+	 */
+	ResponseEntity<Facets> listAvailableFacets(String subspace, String dn);
+
+	/**
 	 * Creates a subspace with the given configuration.
 	 * 
 	 * @param subspace
@@ -67,17 +78,6 @@ public interface SubspaceService {
 	 * @return A confirmation.
 	 */
 	ResponseEntity<Specifier<Void>> deleteSubspace(String subspace, String dn);
-
-	/**
-	 * Lists all facets of the subspace.
-	 * 
-	 * @param subspace
-	 *            The subspace identifier.
-	 * @param dn
-	 *            The dn of the user invoking the method.
-	 * @return The available facets.
-	 */
-	ResponseEntity<Facets> listAvailableFacets(String subspace, String dn);
 
 	/**
 	 * Lists all available slice kinds.

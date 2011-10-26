@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.dspace;
+package de.zib.gndms.logic.model.dspace;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -24,8 +24,6 @@ import de.zib.gndms.model.dspace.Subspace;
  * 
  * @author Ulrike Golas
  */
-
-// TODO implementation
 
 public interface SubspaceProvider {
     

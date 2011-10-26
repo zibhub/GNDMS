@@ -74,7 +74,7 @@ public abstract class AbstractClient {
 	 * @param <T> The body type of the response.
 	 * @param <P> The body type of the request.
 	 * @param x The kind of HTTP method to be executed.
-	 * @param clazz ??? TODO
+	 * @param clazz The type of the return value.
 	 * @param parm The body of the request.
 	 * @param url The url of the request.
 	 * @param dn The user name.
@@ -99,7 +99,7 @@ public abstract class AbstractClient {
 	 * Executes a GET on a url, where the request header contains a given user name.
 	 * 
 	 * @param <T> The body type of the response.
-	 * @param clazz ??? TODO
+	 * @param clazz The type of the return value.
 	 * @param url The url of the request.
 	 * @param dn The user name.
 	 * @return The response as entity.
@@ -113,7 +113,7 @@ public abstract class AbstractClient {
 	 * Executes a GET on a url, where the request header contains a given user name and workflow id.
 	 * 
 	 * @param <T> The body type of the response.
-	 * @param clazz ??? TODO
+	 * @param clazz The type of the return value.
 	 * @param url The url of the request.
 	 * @param dn The user name.
 	 * @param wid The workflow id.
@@ -132,7 +132,7 @@ public abstract class AbstractClient {
 	 * 
 	 * @param <T> The body type of the response.
 	 * @param <P> The body type of the request.
-	 * @param clazz ??? TODO
+	 * @param clazz The type of the return value.
 	 * @param parm The body of the request.
 	 * @param url The url of the request.
 	 * @param dn The user name.
@@ -151,7 +151,7 @@ public abstract class AbstractClient {
 	 * 
 	 * @param <T> The body type of the response.
 	 * @param <P> The body type of the request.
-	 * @param clazz ??? TODO
+	 * @param clazz The type of the return value.
 	 * @param parm The body of the request.
 	 * @param url The url of the request.
 	 * @param dn The user name.
@@ -171,7 +171,7 @@ public abstract class AbstractClient {
 	 * 
 	 * @param <T> The body type of the response.
 	 * @param <P> The body type of the request.
-	 * @param clazz ??? TODO
+	 * @param clazz The type of the return value.
 	 * @param parm The body of the request.
 	 * @param url The url of the request.
 	 * @param dn The user name.
@@ -190,7 +190,7 @@ public abstract class AbstractClient {
 	 * 
 	 * @param <T> The body type of the response.
 	 * @param <P> The body type of the request.
-	 * @param clazz ??? TODO
+	 * @param clazz The type of the return value.
 	 * @param parm The body of the request.
 	 * @param url The url of the request.
 	 * @param dn The user name.
@@ -218,7 +218,7 @@ public abstract class AbstractClient {
 	 * Executes a DELETE on a url, where the request header contains a given user name.
 	 * 
 	 * @param <T> The body type of the response.
-	 * @param clazz ??? TODO
+	 * @param clazz The type of the return value.
 	 * @param url The url of the request.
 	 * @param dn The user name.
 	 * @return The response as entity.

@@ -20,7 +20,7 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.CmdLineException;
 
 /**
- * Abstract base class for a application with args4j support.
+ * Abstract base class for an application with args4j support.
  *
  * @author  try ma ik jo rr a zib
  * @version  $Id$
