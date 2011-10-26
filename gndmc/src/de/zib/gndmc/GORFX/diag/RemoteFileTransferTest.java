@@ -60,7 +60,7 @@ public class RemoteFileTransferTest extends AbstractApplication {
 
     @Option( name="-uri", required=true, usage="URL of GORFX-Endpoint", metaVar="URI" )
     protected String gorfxEpUrl;
-    @Option( name="-props", required=true, usage="The property file with the file transfer request properties." )
+    @Option( name="-props", required=true, usage="The property file with the file transfer request properties. - To read from STDIN" )
     protected String props;
     @Option( name="-cancel", required=false, usage="Call cancel on the task resource after N millis" )
     protected Long cancelDelay = null; // cancel delay in ms
@@ -86,10 +86,16 @@ public class RemoteFileTransferTest extends AbstractApplication {
 
 
         // read property file
-        InputStream f = new FileInputStream( props );
+        InputStream is;
+        if ( props.trim().equals( "-" ) ) {
+            System.out.println( "Reading props von stdin" );
+            is = System.in;
+            System.out.println( "done" );
+        } else
+            is = new FileInputStream( props );
         Properties prop = new Properties( );
-        prop.load( f );
-        f.close( );
+        prop.load( is );
+        is.close( );
 
         // create orq from properties
         FileTransferORQPropertyReader pr = new FileTransferORQPropertyReader( prop );
