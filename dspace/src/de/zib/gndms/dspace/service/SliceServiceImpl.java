@@ -21,7 +21,6 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
@@ -48,11 +47,12 @@ import de.zib.gndms.common.stuff.util.Product;
 import de.zib.gndms.logic.model.dspace.NoSuchElementException;
 import de.zib.gndms.logic.model.dspace.SliceConfiguration;
 import de.zib.gndms.logic.model.dspace.SliceKindProvider;
+import de.zib.gndms.logic.model.dspace.SliceKindProviderImpl;
 import de.zib.gndms.logic.model.dspace.SliceProvider;
+import de.zib.gndms.logic.model.dspace.SliceProviderImpl;
 import de.zib.gndms.logic.model.dspace.SubspaceProvider;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
-import de.zib.gndms.model.dspace.Subspace;
 
 /**
  * The slice service implementation.
@@ -75,15 +75,15 @@ public class SliceServiceImpl implements SliceService {
 	/**
 	 * All available subspaces.
 	 */
-	private SubspaceProvider subspaces;
+	private SubspaceProvider subspaceProvider;
 	/**
 	 * All available slice kinds.
 	 */
-	private SliceKindProvider sliceKinds;
+	private SliceKindProvider sliceKindProvider;
 	/**
 	 * All available slices.
 	 */
-	private SliceProvider slices;
+	private SliceProvider sliceProvider;
 	/**
 	 * The facets of a slice.
 	 */
@@ -93,11 +93,17 @@ public class SliceServiceImpl implements SliceService {
 	 */
 	private UriFactory uriFactory;
 
+	// TODO: initialization of subspaceProvider
 	/**
 	 * Initialization of the slice service.
 	 */
 	@PostConstruct
 	public final void init() {
+		uriFactory = new UriFactory(baseUrl);
+		sliceKindProvider = new SliceKindProviderImpl();
+		sliceKindProvider.init(subspaceProvider);
+		sliceProvider = new SliceProviderImpl();
+		sliceProvider.init(subspaceProvider);
 	}
 
 	@Override
@@ -115,6 +121,8 @@ public class SliceServiceImpl implements SliceService {
     		Product<Configuration, Facets> prod2 = new Product<Configuration, Facets>(config, sliceFacets);
     		return new ResponseEntity<Product<Configuration, Facets>>(prod2, headers, HttpStatus.OK);
  		} catch (NoSuchElementException ne) {
+			logger.warn("The slice " + slice + " of slice kind " + sliceKind 
+					+ "does not exist within the subspace" + subspace + ".");
 			return new ResponseEntity<Product<Configuration, Facets>>(null, headers, HttpStatus.NOT_FOUND);
  		}
 	}	
@@ -132,18 +140,12 @@ public class SliceServiceImpl implements SliceService {
 		try {
 			Slice slic = findSliceOfKind(subspace, sliceKind, slice);
 
-			SliceConfiguration slconfig = (SliceConfiguration) config;
-			if (slconfig.isValid()) {
-
-					// slic.setDirectoryId(slconfig.getDirectory());
-					// slic.setOwner(slconfig.getOwner());
-					// TODO slic.setSize(slconfig.getSize());
-					slic.setTerminationTime(slconfig.getTerminationTime());
-					return new ResponseEntity<Void>(null, headers, HttpStatus.OK);			
-			} else {		
-				return new ResponseEntity<Void>(null, headers,
-						HttpStatus.BAD_REQUEST);
-			}
+			SliceConfiguration slConfig = SliceConfiguration.checkSliceConfig(config);
+				// slic.setDirectoryId(slconfig.getDirectory());
+				// slic.setOwner(slconfig.getOwner());
+				// TODO slic.setSize(slconfig.getSize());
+				// slic.setTerminationTime(slConfig.getTerminationTime());
+				return new ResponseEntity<Void>(null, headers, HttpStatus.OK);			
  		} catch (NoSuchElementException ne) {
 			return new ResponseEntity<Void>(null, headers, HttpStatus.NOT_FOUND);
  		} catch (ClassCastException e) {
@@ -165,8 +167,8 @@ public class SliceServiceImpl implements SliceService {
 			Slice slic = findSliceOfKind(subspace, sliceKind, slice);
 			
 			// TODO: check this!
-			SliceKind newSliceK = sliceKinds.getSliceKind(newSliceKind.getURL());
-	        slic.setKind(newSliceK);
+			// SliceKind newSliceK = sliceKindProvider.getSliceKind(newSliceKind.getURL());
+	        //slic.setKind(newSliceK);
 			Specifier<Void> spec = new Specifier<Void>();
 			
 			HashMap<String, String> urimap = new HashMap<String, String>(2);
@@ -350,20 +352,44 @@ public class SliceServiceImpl implements SliceService {
 	 */
 	private Slice findSliceOfKind(final String subspace, final String sliceKind, 
 			final String slice) throws NoSuchElementException {
-		Subspace sub = subspaces.getSubspace(subspace);
-		SliceKind sliceK = sliceKinds.getSliceKind(sliceKind);
-		Set<Slice> allSlices = sub.getSlices();
-		Slice slic = null;
-		for (Slice s : allSlices) {
-			if (s.equals(slices.getSlice(slice))) {
-				slic = s;
-				break;
-			}
-		}
-		if (slic == null || slic.getKind() != sliceK) {
+		Slice slic = sliceProvider.getSlice(subspace, slice);
+		SliceKind sliceK = sliceKindProvider.getSliceKind(subspace, sliceKind);
+		
+		if (slic.getKind() != sliceK) {
 			throw new NoSuchElementException();
-		} else {
-			return slic;
 		}
+		return slic;
+	}
+
+	/**
+	 * Returns the base url of this slice service.
+	 * @return the baseUrl
+	 */
+	public final String getBaseUrl() {
+		return baseUrl;
+	}
+
+	/**
+	 * Sets the base url of this slice service.
+	 * @param baseUrl the baseUrl to set
+	 */
+	public final void setBaseUrl(final String baseUrl) {
+		this.baseUrl = baseUrl;
+	}
+
+	/**
+	 * Returns the facets of this slice service.
+	 * @return the sliceFacets
+	 */
+	public final Facets getSliceFacets() {
+		return sliceFacets;
+	}
+
+	/**
+	 * Sets the facets of this slice service.
+	 * @param sliceFacets the sliceFacets to set
+	 */
+	public final void setSliceFacets(final Facets sliceFacets) {
+		this.sliceFacets = sliceFacets;
 	}
 }

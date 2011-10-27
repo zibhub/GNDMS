@@ -21,33 +21,42 @@ import java.util.List;
 import de.zib.gndms.model.dspace.SliceKind;
 
 /**
- * Provides a mapping of slice kind ids and slice kinds.
+ * Provides a mapping of subspaces to slice kind ids and slice kinds.
  * 
  * @author Ulrike Golas
  */
 
-// TODO implementation
-
 public interface SliceKindProvider {
 
 	/**
-	 * Checks whether a given slice kind id exists.
+	 * Initialization of the slice kind provider.
+	 * @param provider Provider of all subspaces.
+	 */
+	void init(SubspaceProvider provider);
+
+		/**
+	 * Checks whether a given slice kind id exists for the subspace.
+	 * @param subspace The considered subspace.
 	 * @param sliceKind The slice kind id.
 	 * @return true, if this slice kind exists, otherwise false.
 	 */
-	boolean exists(String sliceKind);
+	boolean exists(String subspace, String sliceKind);
 	
 	/**
-	 * Returns a list containing all existing slice kind ids.
+	 * Returns a list containing all existing slice kind ids for a subspace.
+	 * @param subspace The considered subspace.
 	 * @return The list.
+	 * @throws NoSuchElementException if the subspace does not exist.
 	 */
-    List<String> listSliceKinds();
-    
+    List<String> listSliceKindIds(String subspace) throws NoSuchElementException;
+
     /**
-     * Returns the slice kind for a given slice kind id.
+     * Returns the slice kind for a given slice kind id in a subspace.
+	 * @param subspace The considered subspace.
      * @param sliceKind The requested slice kind id.
      * @return The corresponding slice kind.
+	 * @throws NoSuchElementException if the subspace does not exist. 
      */
-    SliceKind getSliceKind(String sliceKind);
+    SliceKind getSliceKind(String subspace, String sliceKind) throws NoSuchElementException;
 
 }

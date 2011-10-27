@@ -20,6 +20,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import de.zib.gndms.common.logic.config.Configuration;
+import de.zib.gndms.common.logic.config.WrongConfigurationException;
 import de.zib.gndms.model.dspace.Slice;
 
 /**
@@ -78,6 +79,29 @@ public class SliceConfiguration implements Configuration {
 			final Calendar termination) {
 		this.size = size;
 		this.terminationTime = termination;
+	}
+
+	/**
+	 * Converts a Configuration into a SliceConfiguration, if possible, and
+	 * returns it, if valid.
+	 * 
+	 * @param config
+	 *            The given configuration.
+	 * @return The valid SliceConfiguration.
+	 */
+	public static SliceConfiguration checkSliceConfig(final Configuration config) {
+		try {
+			SliceConfiguration sliceConfig = (SliceConfiguration) config;
+			if (sliceConfig.isValid()) {
+				return sliceConfig;
+			} else {
+				throw new WrongConfigurationException(
+						"Wrong slice configuration");
+			}
+		} catch (ClassCastException e) {
+			throw new WrongConfigurationException(
+					"Wrong slice configuration");
+		}
 	}
 
 	@Override
