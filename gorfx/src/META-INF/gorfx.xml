@@ -13,7 +13,7 @@
 
     <context:annotation-config/>
     <!-- load possible custom properties -->
-    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <bean name='gorfxConf' class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="ignoreResourceNotFound" value="true"/>
         <property name="locations">
             <list>
