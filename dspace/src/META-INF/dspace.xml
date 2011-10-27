@@ -82,7 +82,8 @@
  
     <bean id="sliceService" class="de.zib.gndms.dspace.service.SliceServiceImpl">
         <property name="baseUrl" value="${dspaceBaseURL}"/>
-         <property name="sliceFacets" ref="sliceFacets" />
+        <property name="sliceFacets" ref="sliceFacets" />
+        <property name="subspaceProvider" ref="subspaceProvider"/>
     </bean>
  
     <bean id="sliceFacets" class="de.zib.gndms.gritserv.rest.Facets">

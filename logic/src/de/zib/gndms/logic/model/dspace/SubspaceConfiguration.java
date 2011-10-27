@@ -110,7 +110,30 @@ public class SubspaceConfiguration implements Configuration {
 		this.size = size;
 		setMode(mode);
 	}
-	
+
+	/**
+	 * Converts a Configuration into a SubspaceConfiguration, if possible, and
+	 * returns it, if valid.
+	 * 
+	 * @param config
+	 *            The given configuration.
+	 * @return The valid SubspaceConfiguration.
+	 */
+	public static SubspaceConfiguration checkSubspaceConfig(final Configuration config) {
+		try {
+			SubspaceConfiguration subspaceConfig = (SubspaceConfiguration) config;
+			if (subspaceConfig.isValid()) {
+				return subspaceConfig;
+			} else {
+				throw new WrongConfigurationException(
+						"Wrong subspace configuration");
+			}
+		} catch (ClassCastException e) {
+			throw new WrongConfigurationException(
+					"Wrong subspace configuration");
+		}
+	}
+
 	@Override
 	public final boolean isValid() {
 		return (path != null && gsiFtpPath != null && size >= 0);

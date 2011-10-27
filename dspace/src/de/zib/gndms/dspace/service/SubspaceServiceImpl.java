@@ -19,7 +19,6 @@ package de.zib.gndms.dspace.service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
@@ -44,10 +43,12 @@ import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.logic.model.TaskExecutionService;
 import de.zib.gndms.logic.model.dspace.DeleteSubspaceAction;
+import de.zib.gndms.logic.model.dspace.NoSuchElementException;
 import de.zib.gndms.logic.model.dspace.SetupSubspaceAction;
+import de.zib.gndms.logic.model.dspace.SliceKindProvider;
+import de.zib.gndms.logic.model.dspace.SliceKindProviderImpl;
 import de.zib.gndms.logic.model.dspace.SubspaceConfiguration;
 import de.zib.gndms.logic.model.dspace.SubspaceProvider;
-import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 
 /**
@@ -122,7 +123,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 		GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
 
 		try {
-			SubspaceConfiguration subspaceConfig = checkSubspaceConfig(config);
+			SubspaceConfiguration subspaceConfig = SubspaceConfiguration.checkSubspaceConfig(config);
 
 			if (subspaceProvider.exists(subspace)
 					|| subspaceConfig.getMode() != SetupMode.CREATE) {
@@ -183,19 +184,19 @@ public class SubspaceServiceImpl implements SubspaceService {
 			return new ResponseEntity<List<Specifier<Void>>>(null, headers,
 					HttpStatus.NOT_FOUND);
 		}
-		Subspace sub = subspaceProvider.getSubspace(subspace);
-		Set<SliceKind> sliceKinds = sub.getMetaSubspace()
-				.getCreatableSliceKinds();
+		SliceKindProvider sliceKindProvider = new SliceKindProviderImpl();
+		sliceKindProvider.init(subspaceProvider);
+		try {
+		List<String> sliceKinds = sliceKindProvider.listSliceKindIds(subspace);
 
 		List<Specifier<Void>> list = new ArrayList<Specifier<Void>>(
 				sliceKinds.size());
 		HashMap<String, String> urimap = new HashMap<String, String>(2);
 		urimap.put("service", "dspace");
-		for (SliceKind sk : sliceKinds) {
+		for (String sk : sliceKinds) {
 			Specifier<Void> spec = new Specifier<Void>();
 			spec.setUriMap(new HashMap<String, String>(urimap));
-			// TODO is there something better than sk.toString?
-			spec.addMapping(UriFactory.SLICEKIND, sk.toString());
+			spec.addMapping(UriFactory.SLICEKIND, sk);
 			// TODO does the String has to be hard-coded?
 			spec.setURL(uriFactory.subspaceUri(urimap, "slicekinds"));
 			list.add(spec);
@@ -203,6 +204,12 @@ public class SubspaceServiceImpl implements SubspaceService {
 
 		return new ResponseEntity<List<Specifier<Void>>>(list, headers,
 				HttpStatus.OK);
+		} catch (NoSuchElementException e) {
+			logger.warn("Subspace " + subspace + " not found");
+			return new ResponseEntity<List<Specifier<Void>>>(null, headers,
+						HttpStatus.NOT_FOUND);
+			
+		}
 	}
 
 	@Override
@@ -233,7 +240,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 		GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
 
 		try {
-			SubspaceConfiguration subspaceConfig = checkSubspaceConfig(config);
+			SubspaceConfiguration subspaceConfig = SubspaceConfiguration.checkSubspaceConfig(config);
 
 			if (subspaceProvider.exists(subspace)
 					|| subspaceConfig.getMode() != SetupMode.UPDATE) {
@@ -280,31 +287,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 	}
 
 	/**
-	 * Converts a Configuration into a SubspaceConfiguration, if possible, and
-	 * returns it, if valid.
-	 * 
-	 * @param config
-	 *            The given configuration.
-	 * @return The valid SubspaceConfiguration.
-	 */
-	private SubspaceConfiguration checkSubspaceConfig(final Configuration config) {
-		try {
-			SubspaceConfiguration subspaceConfig = (SubspaceConfiguration) config;
-			if (subspaceConfig.isValid()) {
-				return subspaceConfig;
-			} else {
-				throw new WrongConfigurationException(
-						"Wrong subspace configuration");
-			}
-		} catch (ClassCastException e) {
-			throw new WrongConfigurationException(
-					"Wrong subspace configuration");
-		}
-
-	}
-
-	/**
-	 * Returns the base url of this subspace.
+	 * Returns the base url of this subspace service.
 	 * @return the baseUrl
 	 */
 	public final String getBaseUrl() {
@@ -312,7 +295,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 	}
 
 	/**
-	 * Sets the base url of this subspace.
+	 * Sets the base url of this subspace service.
 	 * @param baseUrl the baseUrl to set
 	 */
 	public final void setBaseUrl(final String baseUrl) {
@@ -320,7 +303,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 	}
 
 	/**
-	 * Returns the subspace provider of this subspace.
+	 * Returns the subspace provider of this subspace service.
 	 * @return the subspaceProvider
 	 */
 	public final SubspaceProvider getSubspaceProvider() {
@@ -328,7 +311,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 	}
 
 	/**
-	 * Sets the subspace provider of this subspace.
+	 * Sets the subspace provider of this subspace service.
 	 * @param subspaceProvider the subspaceProvider to set
 	 */
 	public final void setSubspaceProvider(final SubspaceProvider subspaceProvider) {
@@ -336,7 +319,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 	}
 
 	/**
-	 * Returns the facets of this subspace.
+	 * Returns the facets of this subspace service.
 	 * @return the dspaceFacets
 	 */
 	public final Facets getSubspaceFacets() {
@@ -344,7 +327,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 	}
 
 	/**
-	 * Sets the facets of this subspace.
+	 * Sets the facets of this subspace service.
 	 * @param subspaceFacets the subspaceFacets to set
 	 */
 	public final void setSubspaceFacets(final Facets subspaceFacets) {
@@ -352,7 +335,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 	}
 
 	/**
-	 * Returns the task executor of this subspace.
+	 * Returns the task executor of this subspace service.
 	 * @return the executor
 	 */
 	public final TaskExecutionService getExecutor() {
@@ -360,7 +343,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 	}
 
 	/**
-	 * Sets the task executor of this subspace.
+	 * Sets the task executor of this subspace service.
 	 * @param executor the executor to set
 	 */
 	public final void setExecutor(final TaskExecutionService executor) {

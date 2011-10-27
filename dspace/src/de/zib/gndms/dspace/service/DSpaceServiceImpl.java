@@ -101,7 +101,7 @@ public class DSpaceServiceImpl implements DSpaceService {
 	}
 
 	/**
-	 * Returns the base url of this dspace.
+	 * Returns the base url of this dspace service.
 	 * @return the baseUrl
 	 */
 	public final String getBaseUrl() {
@@ -109,7 +109,7 @@ public class DSpaceServiceImpl implements DSpaceService {
 	}
 
 	/**
-	 * Sets the base url of this dspace.
+	 * Sets the base url of this dspace service.
 	 * @param baseUrl the baseUrl to set
 	 */
 	public final void setBaseUrl(final String baseUrl) {
@@ -117,7 +117,7 @@ public class DSpaceServiceImpl implements DSpaceService {
 	}
 
 	/**
-	 * Returns the subspace provider of this dspace.
+	 * Returns the subspace provider of this dspace service.
 	 * @return the subspaceProvider
 	 */
 	public final SubspaceProvider getSubspaceProvider() {
@@ -125,7 +125,7 @@ public class DSpaceServiceImpl implements DSpaceService {
 	}
 
 	/**
-	 * Sets the subspace provider of this dspace.
+	 * Sets the subspace provider of this dspace service.
 	 * @param subspaceProvider the subspaceProvider to set
 	 */
 	public final void setSubspaceProvider(final SubspaceProvider subspaceProvider) {
