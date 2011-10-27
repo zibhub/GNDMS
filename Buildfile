@@ -450,16 +450,17 @@ define 'gndms' do
         Commands.java('de.zib.gndmc.MaintenanceClient',  full_args, { :classpath => jars, :verbose => true } )
       end
 
-      task 'run-test' do
+      desc 'Runs the sliceInOut test client'
+      task 'run-sliceIO' do |t|
         jars = compile.dependencies.map(&:to_s)
         jars << compile.target.to_s
         args = [ '-p', ENV['GNDMS_SOURCE']+'/etc/sliceInOutClient.properties' ]
-        Commands.java('de.zib.gndmc.SliceInOutClient',  args, 
-                      { :classpath => jars, :properties => 
-                          { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" } } )
+        props = { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" }
+        runner = 'de.zib.gndmc.SliceInOutClient'
+        runJava( t.to_s, args, jars, props )
       end
 
-      task 'run-staging-test' do
+      task 'run-staging-test' do |t|
         jars = compile.dependencies.map(&:to_s)
         jars << compile.target.to_s
         #host = `hostname`.chomp
@@ -475,12 +476,12 @@ define 'gndms' do
                  '-uri', 'https://' + host + ':8443/wsrf/services/gndms/GORFX',
 	             '-dn', dn
         ]
-        Commands.java('de.zib.gndmc.GORFX.c3grid.ProviderStageInClient',  args, 
-                      { :classpath => jars, :properties => 
-                          { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" } } )
+        props = { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" }
+        runner = 'de.zib.gndmc.GORFX.c3grid.ProviderStageInClient'
+        runJava( t.to_s, args, jars, props )
       end
 
-      task 'run-stress-test' do
+      task 'run-stress-test' do |t|
         jars = compile.dependencies.map(&:to_s)
         jars << compile.target.to_s
         if (ENV['GORFX_URI'] == nil)
@@ -500,13 +501,13 @@ define 'gndms' do
                  '-uri', 'https://' + host + ':8443/wsrf/services/gndms/GORFX',
 	             '-dn', dn
         ]
-        Commands.java('de.zib.gndmc.GORFX.diag.MultiRequestClient',  args, 
-                      { :classpath => jars, :properties => 
-                          { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" } } )
+        props = { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" }
+        runner = 'de.zib.gndmc.GORFX.diag.MultiRequestClient'
+        runJava( t.to_s, args, jars, props )
       end
 
       desc 'runs the interSliceTransfer test'
-      task 'run-ist' do 
+      task 'run-ist' do |t|
 
         jars = compile.dependencies.map(&:to_s)
         jars << compile.target.to_s
@@ -533,9 +534,10 @@ define 'gndms' do
 	             '-dn', dn
         ]
         puts args
-        Commands.java('de.zib.gndmc.GORFX.InterSliceTransferClient',  args, 
-                      { :classpath => jars, :properties => 
-                          { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" } } )
+        runner = 'de.zib.gndmc.GORFX.InterSliceTransferClient'
+        props ={ "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" }
+
+        runJava( t.to_s, args, jars, props )
       end
 
       desc 'runs the interSliceTransfer test'
@@ -556,21 +558,11 @@ define 'gndms' do
         ]
         props = { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" }
 
-
-
         puts args
-        unless ENV["GEN_SCRIPT"] == "1"
-            Commands.java( runner,  args, 
-                          { :classpath => jars, :properties => 
-                              props } )
-        else
-            genScript( 'run-rft', runner, args, jars, props )
-        end
+        runJava( 'run-rft', runner, args, jars, props )
       end
-
+    end
 end
-end
-
 
 # Utility stuff
 
@@ -578,6 +570,10 @@ task 'show-log' => task('gndms:gndmc:show-log')
 
 
 # Database stuff
+
+task 'foo-barz' do |t|
+    puts t.to_s
+end
 
 task 'kill-db' do
     rm_rf GNDMS_DB
@@ -785,6 +781,16 @@ def genScript( scriptName, runClass, args, jars, props )
     script.write( "exec java -cp=$cp ${props[@]} #{runClass} ${args[@]}\n" )
 
     script.close
+end
+
+def runJava( scriptName, runner, args, jars, props={} ) 
+    unless ENV["GEN_SCRIPT"] == "1"
+        Commands.java( runner,  args, 
+                      { :classpath => jars, :properties => props } )
+    else
+        raise Exception.new( "#{_( scriptName )} already exists. Please remove an try again." ) if File.exists?( _( scriptName ) )
+        genScript( scriptName, runner, args, jars, props )
+    end
 end
 
 Rake::Task[:default].prerequisites.clear
