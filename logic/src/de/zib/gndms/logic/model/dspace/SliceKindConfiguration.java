@@ -86,6 +86,29 @@ public class SliceKindConfiguration implements Configuration {
 		this.metasubspaces = metasubspaces;
 	}
 
+	/**
+	 * Converts a Configuration into a SliceKindConfiguration, if possible, and
+	 * returns it, if valid.
+	 * 
+	 * @param config
+	 *            The given configuration.
+	 * @return The valid SliceKindConfiguration.
+	 */
+	public static SliceKindConfiguration checkSliceKindConfig(final Configuration config) {
+		try {
+			SliceKindConfiguration sliceKindConfig = (SliceKindConfiguration) config;
+			if (sliceKindConfig.isValid()) {
+				return sliceKindConfig;
+			} else {
+				throw new WrongConfigurationException(
+						"Wrong slice kind configuration");
+			}
+		} catch (ClassCastException e) {
+			throw new WrongConfigurationException(
+					"Wrong slice kind configuration");
+		}
+	}
+
 	@Override
 	public final boolean isValid() {
 		return (uri != null && permission != null);

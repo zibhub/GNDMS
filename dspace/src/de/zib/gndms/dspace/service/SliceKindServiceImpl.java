@@ -17,7 +17,6 @@ package de.zib.gndms.dspace.service;
  */
 
 import java.util.HashMap;
-import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
@@ -38,10 +37,11 @@ import de.zib.gndms.common.logic.config.WrongConfigurationException;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
-import de.zib.gndms.logic.dspace.NoSuchElementException;
-import de.zib.gndms.logic.dspace.SliceKindProvider;
-import de.zib.gndms.logic.dspace.SubspaceProvider;
+import de.zib.gndms.logic.model.dspace.NoSuchElementException;
 import de.zib.gndms.logic.model.dspace.SliceKindConfiguration;
+import de.zib.gndms.logic.model.dspace.SliceKindProvider;
+import de.zib.gndms.logic.model.dspace.SliceKindProviderImpl;
+import de.zib.gndms.logic.model.dspace.SubspaceProvider;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 
@@ -58,6 +58,7 @@ public class SliceKindServiceImpl implements SliceKindService {
 	 * The logger.
 	 */
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
 	/**
 	 * The base url, something like \c http://my.host.org/gndms/grid_id.
 	 */
@@ -65,21 +66,25 @@ public class SliceKindServiceImpl implements SliceKindService {
 	/**
 	 * All available subspaces.
 	 */
-	private SubspaceProvider subspaces;
+	private SubspaceProvider subspaceProvider;
 	/**
 	 * All available slice kinds.
 	 */
-	private SliceKindProvider sliceKinds;
+	private SliceKindProvider sliceKindProvider;
 	/**
 	 * The uri factory.
 	 */
 	private UriFactory uriFactory;
 
+	// TODO: initialization of subspaceProvider
 	/**
 	 * Initialization of the slice kind service.
 	 */
 	@PostConstruct
 	public final void init() {
+		uriFactory = new UriFactory(baseUrl);
+		sliceKindProvider = new SliceKindProviderImpl();
+		sliceKindProvider.init(subspaceProvider);
 	}
 
 	@Override
@@ -91,7 +96,7 @@ public class SliceKindServiceImpl implements SliceKindService {
 		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, dn);
 
 		try {
-			SliceKind sliceK = findSliceKind(subspace, sliceKind);
+			SliceKind sliceK = sliceKindProvider.getSliceKind(subspace, sliceKind);
 			SliceKindConfiguration config = SliceKindConfiguration.getSliceKindConfiguration(sliceK);
 			return new ResponseEntity<Configuration>(config, headers,
 					HttpStatus.OK);
@@ -112,9 +117,8 @@ public class SliceKindServiceImpl implements SliceKindService {
 		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, dn);
 
 		try {
-			SliceKind sliceK = findSliceKind(subspace, sliceKind);
-			
-			SliceKindConfiguration sliceKindConfig = checkSliceKindConfig(config);
+			SliceKind sliceK = sliceKindProvider.getSliceKind(subspace, sliceKind);
+			SliceKindConfiguration sliceKindConfig = SliceKindConfiguration.checkSliceKindConfig(config);
 
 			// TODO: sliceK.setSliceKindConfiguration(sliceKindConfig)
 
@@ -147,8 +151,13 @@ public class SliceKindServiceImpl implements SliceKindService {
 		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, dn);
 		
 		try {
-			SliceKindConfiguration sliceKindConfig = checkSliceKindConfig(config);
-
+			if (sliceKindProvider.exists(subspace, sliceKind)) {
+				logger.warn("Slice kind " + sliceKind + " in subspace " + subspace + " already exists");
+				return new ResponseEntity<Void>(null, headers,
+						HttpStatus.FORBIDDEN);
+			}
+			
+			SliceKindConfiguration sliceKindConfig = SliceKindConfiguration.checkSliceKindConfig(config);
 
 			// TODO: create slice kind
 			return new ResponseEntity<Void>(null, headers,
@@ -168,11 +177,17 @@ public class SliceKindServiceImpl implements SliceKindService {
 			@PathVariable final String sliceKind,
 			@RequestHeader("DN") final String dn) {
 		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, dn);
+		try {
+			SliceKind sliceK = sliceKindProvider.getSliceKind(subspace, sliceKind);
+			Subspace sub = subspaceProvider.getSubspace(subspace);
 
-			Subspace sub = subspaces.getSubspace(subspace);
-
-			// TODO: sub.deleteSliceKind(sliceKind);
+			// TODO: sub.deleteSliceKind(sliceK);
 			return new ResponseEntity<Specifier<Void>>(null, headers, HttpStatus.OK);
+		} catch (NoSuchElementException ne) {
+			logger.warn("The slice kind " + sliceKind + "does not exist within the subspace" + subspace);
+				return new ResponseEntity<Specifier<Void>>(null, headers,
+						HttpStatus.NOT_FOUND);
+		}
 	}
 
 	/**
@@ -200,58 +215,34 @@ public class SliceKindServiceImpl implements SliceKindService {
 	}
 
 	/**
-	 * Returns a specific slice kind, if it exists in the subspace.
-	 * 
-	 * @param subspace
-	 *            The subspace id.
-	 * @param sliceKind
-	 *            The slice kind id.
-	 * @return The slice kind.
-	 * @throws NoSuchElementException
-	 *             If no such slice exists.
+	 * Returns the base url of this slice kind service.
+	 * @return the baseUrl
 	 */
-	private SliceKind findSliceKind(final String subspace,
-			final String sliceKind) throws NoSuchElementException {
-		Subspace sub = subspaces.getSubspace(subspace);
-		Set<SliceKind> allSliceKinds = sub.getMetaSubspace()
-				.getCreatableSliceKinds();
-
-		SliceKind sliceK = null;
-		for (SliceKind s : allSliceKinds) {
-			if (s.equals(sliceKinds.getSliceKind(sliceKind))) {
-				sliceK = s;
-				break;
-			}
-		}
-		if (sliceK == null) {
-			throw new NoSuchElementException();
-		} else {
-			return sliceK;
-		}
+	public final String getBaseUrl() {
+		return baseUrl;
 	}
 
 	/**
-	 * Converts a Configuration into a SliceKindConfiguration, if possible, and
-	 * returns it, if valid.
-	 * 
-	 * @param config
-	 *            The given configuration.
-	 * @return The valid SliceKindConfiguration.
+	 * Sets the base url of this slice kind service.
+	 * @param baseUrl the baseUrl to set
 	 */
-	private SliceKindConfiguration checkSliceKindConfig(final Configuration config) {
-		try {
-			SliceKindConfiguration sliceKindConfig = (SliceKindConfiguration) config;
-			if (sliceKindConfig.isValid()) {
-				return sliceKindConfig;
-			} else {
-				throw new WrongConfigurationException(
-						"Wrong slice kind configuration");
-			}
-		} catch (ClassCastException e) {
-			throw new WrongConfigurationException(
-					"Wrong slice kind configuration");
-		}
-
+	public final void setBaseUrl(final String baseUrl) {
+		this.baseUrl = baseUrl;
 	}
 
+	/**
+	 * Returns the subspace provider of this slice kind service.
+	 * @return the subspaceProvider
+	 */
+	public final SubspaceProvider getSubspaceProvider() {
+		return subspaceProvider;
+	}
+
+	/**
+	 * Sets the subspace provider of this slice kind service.
+	 * @param subspaceProvider the subspaceProvider to set
+	 */
+	public final void setSubspaceProvider(final SubspaceProvider subspaceProvider) {
+		this.subspaceProvider = subspaceProvider;
+	}
 }

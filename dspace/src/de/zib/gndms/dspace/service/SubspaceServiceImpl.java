@@ -19,7 +19,6 @@ package de.zib.gndms.dspace.service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
@@ -42,11 +41,14 @@ import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
-import de.zib.gndms.logic.dspace.SubspaceProvider;
 import de.zib.gndms.logic.model.TaskExecutionService;
+import de.zib.gndms.logic.model.dspace.DeleteSubspaceAction;
+import de.zib.gndms.logic.model.dspace.NoSuchElementException;
 import de.zib.gndms.logic.model.dspace.SetupSubspaceAction;
+import de.zib.gndms.logic.model.dspace.SliceKindProvider;
+import de.zib.gndms.logic.model.dspace.SliceKindProviderImpl;
 import de.zib.gndms.logic.model.dspace.SubspaceConfiguration;
-import de.zib.gndms.model.dspace.SliceKind;
+import de.zib.gndms.logic.model.dspace.SubspaceProvider;
 import de.zib.gndms.model.dspace.Subspace;
 
 /**
@@ -56,7 +58,6 @@ import de.zib.gndms.model.dspace.Subspace;
  */
 
 public class SubspaceServiceImpl implements SubspaceService {
-
 	/**
 	 * The logger.
 	 */
@@ -68,7 +69,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 	/**
 	 * Provider of available subspaces.
 	 */
-	private SubspaceProvider subspaces;
+	private SubspaceProvider subspaceProvider;
 	/**
 	 * The uri factory.
 	 */
@@ -76,7 +77,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 	/**
 	 * The facets of a subspace.
 	 */
-	private Facets dspaceFacets;
+	private Facets subspaceFacets;
 	/**
 	 * The task execution service.
 	 */
@@ -86,6 +87,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 	 */
 	private TaskServiceAux taskServiceAux;
 
+	// TODO: initialization of subspaceProvider and executor
 	/**
 	 * Initialization of the dspace service.
 	 */
@@ -93,6 +95,22 @@ public class SubspaceServiceImpl implements SubspaceService {
 	public final void init() {
 		uriFactory = new UriFactory(baseUrl);
 		taskServiceAux = new TaskServiceAux(executor);
+	}
+
+	@Override
+	@RequestMapping(value = "/_{subspace}", method = RequestMethod.GET)
+	public final ResponseEntity<Facets> listAvailableFacets(
+			@PathVariable final String subspace,
+			@RequestHeader("DN") final String dn) {
+
+		GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
+
+		if (subspaceProvider.exists(subspace)) {
+			return new ResponseEntity<Facets>(subspaceFacets, headers,
+					HttpStatus.OK);
+		}
+		logger.warn("Subspace " + subspace + " not found");
+		return new ResponseEntity<Facets>(null, headers, HttpStatus.NOT_FOUND);
 	}
 
 	@Override
@@ -105,32 +123,26 @@ public class SubspaceServiceImpl implements SubspaceService {
 		GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
 
 		try {
-			SubspaceConfiguration subspaceConfig = checkSubspaceConfig(config);
+			SubspaceConfiguration subspaceConfig = SubspaceConfiguration.checkSubspaceConfig(config);
 
-			if (subspaces.exists(subspace)
+			if (subspaceProvider.exists(subspace)
 					|| subspaceConfig.getMode() != SetupMode.CREATE) {
 				logger.warn("Subspace " + subspace + " cannot be created");
 				return new ResponseEntity<Facets>(null, headers,
 						HttpStatus.FORBIDDEN);
 			}
 
-			SetupSubspaceAction action = new SetupSubspaceAction();
-			action.setPath(subspaceConfig.getPath());
-			action.setIsVisibleToPublic(subspaceConfig.isVisible());
-			action.setGsiFtpPath(subspaceConfig.getGsiFtpPath());
-			action.setMode(subspaceConfig.getMode());
-			action.setSize(subspaceConfig.getSize());
+			SetupSubspaceAction action = new SetupSubspaceAction(subspaceConfig);
 
 			logger.info("Calling action for setting up the supspace "
 					+ subspace + ".");
 
-			// TODO what else to do with the action? what about the
-			// EntityManager?
+			// TODO  Do I need the EntityManager (which is already in the action ...)
 			action.call();
-			return new ResponseEntity<Facets>(dspaceFacets, headers,
+			return new ResponseEntity<Facets>(subspaceFacets, headers,
 					HttpStatus.CREATED);
 		} catch (WrongConfigurationException e) {
-			logger.warn("Wrong subspace configuration");
+			logger.warn(e.getMessage());
 			return new ResponseEntity<Facets>(null, headers,
 					HttpStatus.BAD_REQUEST);
 		}
@@ -143,38 +155,21 @@ public class SubspaceServiceImpl implements SubspaceService {
 			@RequestHeader("DN") final String dn) {
 		GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
 
-		if (!subspaces.exists(subspace)) {
+		if (!subspaceProvider.exists(subspace)) {
 			logger.warn("Subspace " + subspace + " not found");
 			return new ResponseEntity<Specifier<Void>>(null, headers,
 					HttpStatus.NOT_FOUND);
 		}
 
-		SetupSubspaceAction action = new SetupSubspaceAction();
-		// TODO: path ok?
-		action.setPath(subspace);
+		DeleteSubspaceAction action = new DeleteSubspaceAction();
+		action.setPath(subspaceProvider.getSubspace(subspace).getPath());
 		action.setMode(SetupMode.DELETE);
 
 		logger.info("Calling action for deleting the supspace " + subspace
 				+ ".");
-		// TODO what else to do with the action? what about the EntityManager?
+		// TODO as above: EntityManager?
 		action.call();
 		return new ResponseEntity<Specifier<Void>>(null, headers, HttpStatus.OK);
-	}
-
-	@Override
-	@RequestMapping(value = "/_{subspace}", method = RequestMethod.GET)
-	public final ResponseEntity<Facets> listAvailableFacets(
-			@PathVariable final String subspace,
-			@RequestHeader("DN") final String dn) {
-
-		GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
-
-		if (subspaces.exists(subspace)) {
-			return new ResponseEntity<Facets>(dspaceFacets, headers,
-					HttpStatus.OK);
-		}
-		logger.warn("Subspace " + subspace + " not found");
-		return new ResponseEntity<Facets>(null, headers, HttpStatus.NOT_FOUND);
 	}
 
 	@Override
@@ -184,30 +179,37 @@ public class SubspaceServiceImpl implements SubspaceService {
 			@RequestHeader("DN") final String dn) {
 		GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
 
-		if (!subspaces.exists(subspace)) {
+		if (!subspaceProvider.exists(subspace)) {
 			logger.warn("Subspace " + subspace + " not found");
 			return new ResponseEntity<List<Specifier<Void>>>(null, headers,
 					HttpStatus.NOT_FOUND);
 		}
-		Subspace sub = subspaces.getSubspace(subspace);
-		Set<SliceKind> sliceKinds = sub.getMetaSubspace()
-				.getCreatableSliceKinds();
+		SliceKindProvider sliceKindProvider = new SliceKindProviderImpl();
+		sliceKindProvider.init(subspaceProvider);
+		try {
+		List<String> sliceKinds = sliceKindProvider.listSliceKindIds(subspace);
 
 		List<Specifier<Void>> list = new ArrayList<Specifier<Void>>(
 				sliceKinds.size());
 		HashMap<String, String> urimap = new HashMap<String, String>(2);
 		urimap.put("service", "dspace");
-		for (String s : subspaces.listSubspaces()) {
+		for (String sk : sliceKinds) {
 			Specifier<Void> spec = new Specifier<Void>();
-
 			spec.setUriMap(new HashMap<String, String>(urimap));
-			spec.addMapping(UriFactory.SUBSPACE, s);
-			spec.setURL(uriFactory.quoteUri(urimap));
+			spec.addMapping(UriFactory.SLICEKIND, sk);
+			// TODO does the String has to be hard-coded?
+			spec.setURL(uriFactory.subspaceUri(urimap, "slicekinds"));
 			list.add(spec);
 		}
 
 		return new ResponseEntity<List<Specifier<Void>>>(list, headers,
 				HttpStatus.OK);
+		} catch (NoSuchElementException e) {
+			logger.warn("Subspace " + subspace + " not found");
+			return new ResponseEntity<List<Specifier<Void>>>(null, headers,
+						HttpStatus.NOT_FOUND);
+			
+		}
 	}
 
 	@Override
@@ -217,15 +219,14 @@ public class SubspaceServiceImpl implements SubspaceService {
 			@RequestHeader("DN") final String dn) {
 		GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
 
-		if (!subspaces.exists(subspace)) {
+		if (!subspaceProvider.exists(subspace)) {
 			logger.warn("Subspace " + subspace + " not found");
 			return new ResponseEntity<Configuration>(null, headers,
 					HttpStatus.NOT_FOUND);
 		}
 
-		Subspace sub = subspaces.getSubspace(subspace);
-		SubspaceConfiguration config;
-		config = SubspaceConfiguration.getSubspaceConfiguration(sub);
+		Subspace sub = subspaceProvider.getSubspace(subspace);
+    	SubspaceConfiguration config = SubspaceConfiguration.getSubspaceConfiguration(sub);
 		return new ResponseEntity<Configuration>(config, headers, HttpStatus.OK);
 	}
 
@@ -235,26 +236,33 @@ public class SubspaceServiceImpl implements SubspaceService {
 			@PathVariable final String subspace,
 			@RequestBody final Configuration config,
 			@RequestHeader("DN") final String dn) {
+
 		GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
 
-		if (!subspaces.exists(subspace)) {
-			logger.warn("Subspace " + subspace + " not found");
-			return new ResponseEntity<Void>(null, headers, HttpStatus.NOT_FOUND);
-		}
-
 		try {
-			SubspaceConfiguration subspaceConfig = checkSubspaceConfig(config);
-			Subspace sub = subspaces.getSubspace(subspace);
+			SubspaceConfiguration subspaceConfig = SubspaceConfiguration.checkSubspaceConfig(config);
 
-			// TODO something like sub.updateWithConfiguration(subspaceConfig);
-			
-			return new ResponseEntity<Void>(null, headers, HttpStatus.OK);
+			if (subspaceProvider.exists(subspace)
+					|| subspaceConfig.getMode() != SetupMode.UPDATE) {
+				logger.warn("Subspace " + subspace + " cannot be updated");
+				return new ResponseEntity<Void>(null, headers,
+						HttpStatus.FORBIDDEN);
+			}
+
+			SetupSubspaceAction action = new SetupSubspaceAction(subspaceConfig);
+
+			logger.info("Calling action for updating the supspace "
+					+ subspace + ".");
+
+			// TODO  Do I need the EntityManager (which is already in the action ...)
+			action.call();
+			return new ResponseEntity<Void>(null, headers,
+					HttpStatus.CREATED);
 		} catch (WrongConfigurationException e) {
-			logger.warn("Wrong subspace configuration");
+			logger.warn(e.getMessage());
 			return new ResponseEntity<Void>(null, headers,
 					HttpStatus.BAD_REQUEST);
 		}
-
 	}
 
 	/**
@@ -279,26 +287,66 @@ public class SubspaceServiceImpl implements SubspaceService {
 	}
 
 	/**
-	 * Converts a Configuration into a SubspaceConfiguration, if possible, and
-	 * returns it, if valid.
-	 * 
-	 * @param config
-	 *            The given configuration.
-	 * @return The valid SubspaceConfiguration.
+	 * Returns the base url of this subspace service.
+	 * @return the baseUrl
 	 */
-	private SubspaceConfiguration checkSubspaceConfig(final Configuration config) {
-		try {
-			SubspaceConfiguration subspaceConfig = (SubspaceConfiguration) config;
-			if (subspaceConfig.isValid()) {
-				return subspaceConfig;
-			} else {
-				throw new WrongConfigurationException(
-						"Wrong subspace configuration");
-			}
-		} catch (ClassCastException e) {
-			throw new WrongConfigurationException(
-					"Wrong subspace configuration");
-		}
+	public final String getBaseUrl() {
+		return baseUrl;
+	}
 
+	/**
+	 * Sets the base url of this subspace service.
+	 * @param baseUrl the baseUrl to set
+	 */
+	public final void setBaseUrl(final String baseUrl) {
+		this.baseUrl = baseUrl;
+	}
+
+	/**
+	 * Returns the subspace provider of this subspace service.
+	 * @return the subspaceProvider
+	 */
+	public final SubspaceProvider getSubspaceProvider() {
+		return subspaceProvider;
+	}
+
+	/**
+	 * Sets the subspace provider of this subspace service.
+	 * @param subspaceProvider the subspaceProvider to set
+	 */
+	public final void setSubspaceProvider(final SubspaceProvider subspaceProvider) {
+		this.subspaceProvider = subspaceProvider;
+	}
+
+	/**
+	 * Returns the facets of this subspace service.
+	 * @return the dspaceFacets
+	 */
+	public final Facets getSubspaceFacets() {
+		return subspaceFacets;
+	}
+
+	/**
+	 * Sets the facets of this subspace service.
+	 * @param subspaceFacets the subspaceFacets to set
+	 */
+	public final void setSubspaceFacets(final Facets subspaceFacets) {
+		this.subspaceFacets = subspaceFacets;
+	}
+
+	/**
+	 * Returns the task executor of this subspace service.
+	 * @return the executor
+	 */
+	public final TaskExecutionService getExecutor() {
+		return executor;
+	}
+
+	/**
+	 * Sets the task executor of this subspace service.
+	 * @param executor the executor to set
+	 */
+	public final void setExecutor(final TaskExecutionService executor) {
+		this.executor = executor;
 	}
 }

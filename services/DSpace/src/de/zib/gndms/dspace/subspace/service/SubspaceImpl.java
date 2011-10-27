@@ -1,4 +1,4 @@
-package de.zib.gndms.dspace.subspace.service;
+ package de.zib.gndms.dspace.subspace.service;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)

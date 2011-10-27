@@ -99,7 +99,7 @@ public class AccessMask implements Serializable {
         /**
          * Maps a bit mask to its corresponding access flags.
          */
-        private static final Map<Integer, AccessFlags> valueForFlag = new HashMap<Integer, AccessFlags>();
+        private static final Map<Integer, AccessFlags> VALUEFORFLAG = new HashMap<Integer, AccessFlags>();
 
         /**
          * If true, the {@code valueForFlag} Map will be initialized with all enum values.
@@ -165,12 +165,12 @@ public class AccessMask implements Serializable {
             }
             if ( uninitialized ) {
                 for ( AccessFlags f : AccessFlags.values() ) {
-                    valueForFlag.put( f.getMask(), f );                    
+                    VALUEFORFLAG.put( f.getMask(), f );                    
                 }
                 uninitialized = false;
             }
 
-            return valueForFlag.get( mask );
+            return VALUEFORFLAG.get( mask );
         }
 
         /**
@@ -198,8 +198,8 @@ public class AccessMask implements Serializable {
     }
 
     /**
-     * An enum to distinguish rights for a {@code user}, a {@code group} and {@code other}.
-     * The enum provides an index for all three entries, starting from 0 with user and incrementing in the order
+     * An enumeration to distinguish rights for a {@code user}, a {@code group} and {@code other}.
+     * It provides an index for all three entries, starting from 0 with user and incrementing in the order
      * given above. 
      */
     public enum Ugo {

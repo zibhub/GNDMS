@@ -24,16 +24,30 @@
         </property>
     </bean>
 
+    <!-- --- DSpaceService --- -->
+    
+    <bean id="dspaceService" class="de.zib.gndms.dspace.service.DSpaceServiceImpl">
+        <property name="baseUrl" value="${dspaceBaseURL}"/>
+        <property name="subspaceProvider" ref="subspaceProvider"/>
+    </bean>
+
     <bean id="subspaceProvider" class="de.zib.gndms.logic.dspace.SubspaceProviderImpl" >
-        <property name="factories">
+        <property name="subspaces">
             <map>
+                <entry key="staging" value-ref="subspace"/>
             </map>
         </property>
     </bean>
 
-    <bean id="dspaceService" class="de.zib.gndms.dspace.service.DSpaceServiceImpl">
+    <bean id="subspace" class="de.zib.gndms.model.dspace.Subspace"/>
+
+	<!-- --- SubspaceService --- -->
+
+    <bean id="subspaceService" class="de.zib.gndms.dspace.service.SubspaceServiceImpl">
         <property name="baseUrl" value="${dspaceBaseURL}"/>
-         <property name="dspaceFacets" ref="dspaceFacets" />
+        <property name="subspaceFacets" ref="subspaceFacets" />
+        <property name="executor" ref="executor" />
+        <property name="subspaceProvider" ref="subspaceProvider"/>
     </bean>
 
     <bean id="dspaceFacets" class="de.zib.gndms.common.rest.Facets">
@@ -46,23 +60,31 @@
     </bean>
 
     <bean id="config" class="de.zib.gndms.common.rest.Facet">
-        <property name="config" value="${dspaceBaseURL}/dspace/${subspaceId}/config"/>
+        <property name="name" value="config"/> 
+        <property name="url" value="${dspaceBaseURL}/dspace/${subspaceId}/config"/>
     </bean>
 
     <bean id="slicekinds" class="de.zib.gndms.common.rest.Facet">
-        <property name="slicekinds" value="${dspaceBaseURL}/dspace/${subspaceId}/slicekinds"/>
+        <property name="name" value="slicekinds"/>
+        <property name="url" value="${dspaceBaseURL}/dspace/${subspaceId}/slicekinds"/>
     </bean>
 
     <!-- this will be defined in system
     <bean id="executor" class="de.zib.gndms.logic.model.TaskExecutionService" /-->
 
+	<!-- --- SliceKindService -->
+
     <bean id="sliceKindService" class="de.zib.gndms.dspace.service.SliceKindServiceImpl">
         <property name="baseUrl" value="${dspaceBaseURL}"/>
+        <property name="subspaceProvider" ref="subspaceProvider"/>
     </bean>
+ 
+ 	<!-- --- SliceService -->
  
     <bean id="sliceService" class="de.zib.gndms.dspace.service.SliceServiceImpl">
         <property name="baseUrl" value="${dspaceBaseURL}"/>
-         <property name="sliceFacets" ref="sliceFacets" />
+        <property name="sliceFacets" ref="sliceFacets" />
+        <property name="subspaceProvider" ref="subspaceProvider"/>
     </bean>
  
     <bean id="sliceFacets" class="de.zib.gndms.common.rest.Facets">
