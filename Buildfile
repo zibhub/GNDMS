@@ -105,21 +105,20 @@ end
 # Non-GT4 dependencies
 SPRING_VERSION = "3.0.5.RELEASE"
 SPRING = [ 
+           "org.springframework:spring-aop:jar:#{SPRING_VERSION}",
            "org.springframework:spring-asm:jar:#{SPRING_VERSION}",
-           "org.springframework:spring-core:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-aspects:jar:#{SPRING_VERSION}",
            "org.springframework:spring-beans:jar:#{SPRING_VERSION}",
            "org.springframework:spring-context:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-core:jar:#{SPRING_VERSION}",
            "org.springframework:spring-expression:jar:#{SPRING_VERSION}",
-           "org.springframework:spring-oxm:jar:#{SPRING_VERSION}",
-           "org.springframework:spring-orm:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-instrument:jar:#{SPRING_VERSION}",
            "org.springframework:spring-jdbc:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-orm:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-oxm:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-tx:jar:#{SPRING_VERSION}",
            "org.springframework:spring-web:jar:#{SPRING_VERSION}",
            "org.springframework:spring-webmvc:jar:#{SPRING_VERSION}",
-           "org.springframework:spring-expression:jar:#{SPRING_VERSION}",
-           "org.springframework:spring-asm:jar:#{SPRING_VERSION}",
-           "org.springframework:spring-aop:jar:#{SPRING_VERSION}",
-           "org.springframework:spring-aspects:jar:#{SPRING_VERSION}",
-           "org.springframework:spring-instrument:jar:#{SPRING_VERSION}",
          ] 
 ASPECTJ = [
         'org.aspectj:aspectjrt:jar:1.6.11',
@@ -147,7 +146,8 @@ GSON='com.google.code.gson:gson:jar:1.6'
 SLF4J = transitive( ['org.slf4j:slf4j-log4j12:jar:1.6.1', 'org.slf4j:slf4j-ext:jar:1.6.1'])
 
 GUICE = 'com.google.code.guice:guice:jar:2.0'
-GOOGLE_COLLECTIONS = 'com.google.code.google-collections:google-collect:jar:snapshot-20080530'
+#GOOGLE_COLLECTIONS = 'com.google.code.google-collections:google-collect:jar:snapshot-20080530'
+GOOGLE_COLLECTIONS = 'com.google.collections:google-collections:jar:1.0'
 JETBRAINS_ANNOTATIONS = 'com.intellij:annotations:jar:7.0.3'
 JODA_TIME = transitive('joda-time:joda-time:jar:1.6')
 CXF = 'org.apache.cxf:cxf-bundle:jar:2.1.4'
@@ -367,7 +367,7 @@ define 'gndms' do
     desc 'Shared database model classes'
     define 'model', :layout => dmsLayout('model', 'gndms-model') do
       # TODO: Better XML
-      compile.with project('common'), project('stuff'), COMMONS_COLLECTIONS, COMMONS_LANG, GOOGLE_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS, INJECT, CXF, OPENJPA, JAXB, STAX_API, JSON
+      compile.with project('common'), project('stuff'), COMMONS_COLLECTIONS, COMMONS_LANG, GOOGLE_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS, INJECT, CXF, OPENJPA, JAXB, STAX_API, JSON, SLF4J
       compile { open_jpa_enhance }
       package :jar
     end
@@ -400,6 +400,10 @@ define 'gndms' do
       # Infra *must* have all dependencies since we use this list in copy/link-deps
       compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('common'), project('gritserv'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), ARGS4J, JODA_TIME, JAXB, GT4_SERVLET, JETTY, CXF, GROOVY, GOOGLE_COLLECTIONS, INJECT, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies, COMMONS_FILEUPLOAD, NEODATAGRAPH, SLF4J, SPRING
       compile
+
+      meta_inf << file(_('src/META-INF/00_system.xml'))
+      meta_inf << file(_('src/META-INF/grid.properties'))
+      meta_inf << file(_('src/META-INF/legacyConfigMeta.xml'))
       package :jar
       doc projects('gndms:stuff', 'gndms:model', 'gndms:gritserv', 'gndms:kit', 'gndms:logic')
 
@@ -748,7 +752,7 @@ define 'gndms' do
 
     desc 'GORFX rest service'
     define 'gorfx', :layout => dmsLayout('gorfx', 'gndms-gorfx-rest') do
-        compile.with project('infra'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), project('gndmc-rest'), project('common'), SPRING, SLF4J, XSTREAM, COMMONS_LOGGING, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME, JSON, OPENJPA
+        compile.with project('infra'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), project('gndmc-rest'), project('common'), SPRING, SLF4J, XSTREAM, COMMONS_LOGGING, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME, JSON, OPENJPA, GOOGLE_COLLECTIONS
         compile
 
        # web_inf << file(_('../gorfx/src/META-INF/gorfx.xml'))

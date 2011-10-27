@@ -19,6 +19,7 @@ package de.zib.gndms.infra.system;
 
 
 import com.google.common.base.Function;
+import com.google.common.collect.MapMaker;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Maps;
 import de.zib.gndms.infra.action.*;
@@ -76,7 +77,8 @@ public final class ConfigActionCaller implements WSActionCaller {
             }
     };
 
-    private final Map<Class<? extends ConfigAction<?>>, Boolean> configActionMap = Maps.newConcurrentHashMap();
+    private final MapMaker mapMaker = new MapMaker();
+    private final Map<Class<? extends ConfigAction<?>>, Boolean> configActionMap = mapMaker.makeMap();
     /**
      * A set of ConfigAction.{@link HelpOverviewAction} is excluded, as this set used in the {@code HelpOverviewAction}
      * to print help about all available ConfigActions.

@@ -199,7 +199,6 @@ public class GORFXClientMain extends AbstractApplication {
 		String id = null;
 
 		getTaskFlowStatus(id, type, wid);
-
 	}
 
 	private void getTaskFlowStatus(String id, String type, String wid) {

@@ -18,6 +18,7 @@ package de.zib.gndms.infra.system;
 
 
 
+import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import de.zib.gndms.stuff.GNDMSInjector;
 import de.zib.gndms.stuff.GNDMSInjectorSpring;
@@ -68,7 +69,7 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
     private final @NotNull Map<String, Object> instances;
 
 
-	private final Map<String, Configlet> configlets = Maps.newConcurrentHashMap();
+	private final Map<String, Configlet> configlets = ( new MapMaker() ).makeMap();
 
 	@SuppressWarnings({ "FieldCanBeLocal" })
 	private final Wrapper<Object> sysHolderWrapper;
