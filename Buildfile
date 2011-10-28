@@ -752,25 +752,41 @@ define 'gndms' do
 
     desc 'GORFX rest service'
     define 'gorfx', :layout => dmsLayout('gorfx', 'gndms-gorfx-rest') do
-        compile.with project('infra'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), project('gndmc-rest'), project('common'), SPRING, SLF4J, XSTREAM, COMMONS_LOGGING, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME, JSON, OPENJPA, GOOGLE_COLLECTIONS
+        compile.with project('infra'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), project('gndmc-rest'), project('common'), SPRING, SLF4J, XSTREAM, COMMONS_LOGGING, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME, OPENJPA 
+
+        compile
+        meta_inf << file(_('src/META-INF/gorfx.xml'))
+        package :jar
+    end    
+          
+    desc 'Creating the gndms war'
+    define 'gndms', :layout => dmsLayout('gndms', 'gndms-rest') do
         compile
 
-       # web_inf << file(_('../gorfx/src/META-INF/gorfx.xml'))
-       # web_inf << file(_('../gorfx/src/META-INF/gorfx-mockups.xml'))
+        libs = []
+        [ 'gorfx', 'infra', 'logic', 'kit', 'stuff', 'neomodel', 'model', 'gndmc-rest', 'common' ].each { |mod| 
+            project( mod ).compile.dependencies.map( &:to_s ).each  { |lib| libs << lib }
+            libs << project( mod ).package(:jar).to_s
+        }
+
+        ulibs = libs.uniq
+        puts ulibs.join( ' ' )
+
         # workaround for builder dependence bug
         package(:war).enhance FileList[_(:web,  '**/*')]
-        package(:war).include _('../gorfx/src/META-INF/*'), :path=>"WEB-INF/classes/META-INF"
-        package :war
+        package(:war).libs += ulibs
     end
+
 end
 
 
 task 'deploy-gorfx-rest' do
-    src = project('gndms:gorfx-rest').package(:war).to_s
+    src = project('gndms:gndms').package(:war).to_s
     testEnv('JETTY_HOME', 'the root directory of your jetty installation')
-    tgt = "#{ENV['JETTY_HOME']}/webapps/gndms.war"
+    tgt = "#{ENV['JETTY_HOME']}/webapps/root"
     puts "deploying #{src} => #{tgt}"
-    cp( src, tgt ) 
+    `rm -r #{tgt}/*`
+    `unzip #{src} -d #{tgt}`
 end
 
 
@@ -1025,9 +1041,13 @@ Rake::Task[:release].clear
 Rake::Task[:install].prerequisites.clear
 Rake::Task[:install].clear
 
-task :default do nope() end
+task :default => task( 'gndms:gorfx:package' )
+task :install => task( 'deploy-gorfx-rest' )
+
+#todo for release use the following :default behaviour
+#task :default do nope end
+#task :install do nope() end
 task :release do nope() end
-task :install do nope() end
 
 desc 'try some features of buildr'
 task 'sandbox' do 

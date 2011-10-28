@@ -22,6 +22,15 @@ Set the environment variable GORFX_URL to
 Echo this to your grofx.properties
 echo gorfxBaseURL=$GORFX_URL > $JETTY_HOME/resources/gorfx.properties
 
+Create grid.properties in the same directory ($JETTY_HOME/resources/)
+by executing
+    echo gridName=C3Grid >> $JETTY_HOME/resources/grid.properties
+    echo gridPath=<Path-to-gridconfig>  >> $JETTY_HOME/resources/grid.properties
+
+Replace <Path-to-gridconfig> with the path where you like to store the
+settings of your grid, note this directory must be writable for the
+user running GNDMS.
+
 Start Jetty
 
 Running the client

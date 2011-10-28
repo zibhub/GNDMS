@@ -9,10 +9,6 @@
                http://www.springframework.org/schema/oxm/spring-oxm-3.0.xsd">
 
 
-    <import resource="classpath:/META-INF/converter-setup.xml"/>
-    <import resource="classpath:/META-INF/00_system.xml"/>
-    <import resource="classpath:/META-INF/gorfx.xml"/>
-
     <bean class="org.springframework.web.servlet.view.BeanNameViewResolver"/>
 
     <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">

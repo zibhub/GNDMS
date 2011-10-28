@@ -29,6 +29,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceUnit;
 import java.util.UUID;
 import java.util.concurrent.*;
 
@@ -197,7 +198,7 @@ public final class SysTaskExecutionService implements TaskExecutionService, Thre
     }
 
 
-    @PersistenceContext
+    @PersistenceUnit
     public void setEntityManagerFactory( EntityManagerFactory entityManagerFactory ) {
         this.entityManagerFactory = entityManagerFactory;
     }
@@ -213,7 +214,7 @@ public final class SysTaskExecutionService implements TaskExecutionService, Thre
     }
 
 
-    @Autowired
+    @Inject
     public void setDao( Dao dao ) {
         this.dao = dao;
     }
