@@ -1,19 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 
-    <!-- this is the marshaller -->
-    <!--bean id="marshaller" class="org.springframework.oxm.xstream.XStreamMarshaller">
-        <property name="autodetectAnnotations" value="true"/>
-    </bean-->
-
-    <!-- this is the converter for POST -->
-    <!--bean id="converter"
-		class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
-		<constructor-arg ref="marshaller" />
-	</bean-->
-
+    <context:annotation-config />
+    <import resource="classpath:/META-INF/legacyConfigMeta.xml"/>
 
     <!-- Setup Property config -->
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -39,24 +31,26 @@
     </bean>
 
     <!-- orm -->
+    <jdbc:embedded-database id="derby"  type="DERBY" >
+        <!--jdbc:script location="classpath:schema.sql"/-->
+    </jdbc:embedded-database>
+
     <bean id="emf" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="derby"/>
         <property name="persistenceXmlLocation" value="classpath:/META-INF/persistence.xml" />
         <property name="jpaPropertyMap">
             <map>
                 <entry key="openjpa.Id" value="${gridName}"/>
+                <entry key="openjpa.weaving" value="false"/>
                 <entry key="openjpa.ConnectionURL" value="jdbc:derby:${gridPath}/derby;create=true"/>
-                <entry key="openjpa.Logger" value="File=${jpaLoggerFile}, DefaultLevel=INFO, Runtime=TRACE, Tool=INFO"/>
+                <entry key="openjpa.Log" value="File=${jpaLoggerFile}, DefaultLevel=INFO, Runtime=${jpaLogRuntimeLevel}, Tool=INFO"/>
             </map>
         </property>
-        <!--property name="loadTimeWeaver">
+        <property name="loadTimeWeaver">
             <bean class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver"/>
-        </property-->
+        </property>
     </bean>
 
-    <jdbc:embedded-database id="derby"  type="DERBY" >
-        <!--jdbc:script location="classpath:schema.sql"/-->
-    </jdbc:embedded-database>
 
     <!-- #################################################################################################### -->
     <!-- Start of the bean definition -->
@@ -71,6 +65,7 @@
         <constructor-arg name="anySharedConfig" ref="gridConfig"/>
         <constructor-arg name="debugModeParam" value="${debugMode}"/>
     </bean>
+    <bean id="instanceDir" lazy-init="true" abstract="true" class="de.zib.gndms.infra.system.GNDMSystemDirectory"/>
 
     <bean id="configActionCaller" class="de.zib.gndms.infra.system.ConfigActionCaller">
         <!-- possible enhancement configure actions here, like:

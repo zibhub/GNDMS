@@ -37,7 +37,9 @@ import org.slf4j.MDC;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -70,6 +72,7 @@ import java.util.concurrent.*;
 @SuppressWarnings({
         "OverloadedMethodsWithSameNumberOfParameters", "NestedAssignment",
         "ClassWithTooManyMethods" })
+@Repository
 public final class GNDMSystem
 	  implements SystemHolder, EMFactoryProvider, BeanFactoryAware,
         ModelUpdateListener<GridResource> {
@@ -135,6 +138,8 @@ public final class GNDMSystem
             dao = new Dao(getGridName(), neo);
 			tryTxExecution();
 			// initialization intentionally deferred to initialize
+            if ( beanFactory == null )
+                throw new IllegalStateException( "beanfactory not provided" );
 	        instanceDir = ( GNDMSystemDirectory ) beanFactory.configureBean(
                 new GNDMSystemDirectory(getSystemName(),
                     new DefaultWrapper<SystemHolder, Object>(SystemHolder.class) {
@@ -505,6 +510,7 @@ public final class GNDMSystem
 
     @Override
     public void setBeanFactory( BeanFactory beanFactory ) throws BeansException {
+        logger.debug( "beanFactory received" );
         this.beanFactory = ( AutowireCapableBeanFactory ) beanFactory;
     }
 
@@ -554,7 +560,6 @@ public final class GNDMSystem
 			if (instance == null) {
 				try {
 					GNDMSystem newInstance = new GNDMSystem(sharedConfig, debugMode);
-					newInstance.initialize();
 					try { logger.info(sharedConfig.getGridName() + " initialized"); }
 					catch (Exception e) { logger.error( "", e ); }
 					instance = newInstance;
@@ -674,7 +679,7 @@ public final class GNDMSystem
     @Inject
     public void setNeo( @NotNull GraphDatabaseService neo ) {
 
-        if( neo != null )
+        if( this.neo != null )
             throw new IllegalStateException( "Graph DB already set" );
 
         this.neo = neo;

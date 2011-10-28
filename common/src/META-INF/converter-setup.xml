@@ -16,7 +16,7 @@
 
 
     <!--bean id="converter" class="de.zib.gndms.gritserv.rest.FixedMappingJacksonHttpMessageConverter"-->
-    <bean id="jsonconverter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+    <bean id="converter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
         <!--property name="objectMapper" ref="objectMapper"/-->
     </bean>
 

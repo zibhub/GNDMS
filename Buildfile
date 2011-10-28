@@ -761,7 +761,9 @@ define 'gndms' do
           
     desc 'Creating the gndms war'
     define 'gndms', :layout => dmsLayout('gndms', 'gndms-rest') do
-        compile
+
+        package(:war).include _('../LICENSE'), :path=>"WEB-INF/classes/META-INF"
+        package(:war).include _('../GNDMS-RELEASE'), :path=>"WEB-INF/classes/META-INF"
 
         libs = []
         [ 'gorfx', 'infra', 'logic', 'kit', 'stuff', 'neomodel', 'model', 'gndmc-rest', 'common' ].each { |mod| 
@@ -769,12 +771,9 @@ define 'gndms' do
             libs << project( mod ).package(:jar).to_s
         }
 
-        ulibs = libs.uniq
-        puts ulibs.join( ' ' )
-
         # workaround for builder dependence bug
-        package(:war).enhance FileList[_(:web,  '**/*')]
-        package(:war).libs += ulibs
+        package(:war).enhance FileList[_(:web,  '**/*'), _( '../lib', '**/gndms-*.jar' )]
+        package(:war).libs += libs.uniq
     end
 
 end
