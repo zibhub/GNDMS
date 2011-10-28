@@ -44,6 +44,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceUnit;
 
 import static javax.persistence.Persistence.createEntityManagerFactory;
 
@@ -100,7 +101,7 @@ public final class GNDMSystem
 	private @NotNull File dbLoggerFile;
     private @NotNull File containerHome;
 	private @NotNull EntityManagerFactory emf;
-    private @NotNull GraphDatabaseService neo;
+    private @NotNull GraphDatabaseService neo = null;
     private @NotNull Dao dao;
 //	private NetworkAuxiliariesProvider netAux;
 
@@ -133,7 +134,6 @@ public final class GNDMSystem
             initSharedDir();
 			createDirectories();
 			prepareDbStorage();
-            neo = loadNeo();
             dao = new Dao(getGridName(), neo);
 			tryTxExecution();
 			// initialization intentionally deferred to initialize
@@ -672,6 +672,16 @@ public final class GNDMSystem
     }
 
 
+    @Inject
+    public void setNeo( @NotNull GraphDatabaseService neo ) {
+
+        if( neo != null )
+            throw new IllegalStateException( "Graph DB already set" );
+
+        this.neo = neo;
+    }
+
+
     public @NotNull
     Dao getDao() {
         return dao;
@@ -693,8 +703,9 @@ public final class GNDMSystem
     };
 
 
-    @PersistenceContext
+    @PersistenceUnit
     public void setEmf( @NotNull EntityManagerFactory emf ) {
+        logger.debug( "setEmf called "  );
         this.emf = emf;
     }
 }
