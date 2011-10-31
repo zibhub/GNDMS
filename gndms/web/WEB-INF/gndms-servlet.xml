@@ -9,8 +9,6 @@
                http://www.springframework.org/schema/oxm/spring-oxm-3.0.xsd">
 
 
-    <bean class="org.springframework.web.servlet.view.BeanNameViewResolver"/>
-
     <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
         <property name="messageConverters">
             <list>
