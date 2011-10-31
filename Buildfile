@@ -352,7 +352,7 @@ NEODATAGRAPH = [_('lib/neo4j-1.2/geronimo-jta_1.1_spec-1.1.1.jar'),
 
     desc 'GT4-dependent utility classes for GNDMS'
     define 'kit', :layout => dmsLayout('kit', 'gndms-kit') do
-      compile.with JETTY, GROOVY, GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('common'), project('stuff'), project('model'), project('neomodel'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_AXIS, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, INJECT, GT4_SERVLET, COMMONS_LANG, OPENJPA, SLF4J, JSON, SPRING
+      compile.with GROOVY, GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('common'), project('stuff'), project('model'), project('neomodel'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_AXIS, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, INJECT, GT4_SERVLET, COMMONS_LANG, OPENJPA, SLF4J, JSON, SPRING
       compile
       test.compile
       test.using :testng
@@ -376,7 +376,7 @@ NEODATAGRAPH = [_('lib/neo4j-1.2/geronimo-jta_1.1_spec-1.1.1.jar'),
     desc 'GNDMS core infrastructure classes'
     define 'infra', :layout => dmsLayout('infra', 'gndms-infra') do
       # Infra *must* have all dependencies since we use this list in copy/link-deps
-      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('common'), project('gritserv'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), ARGS4J, JODA_TIME, JAXB, GT4_SERVLET, JETTY, CXF, GROOVY, GOOGLE_COLLECTIONS, INJECT, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies, COMMONS_FILEUPLOAD, NEODATAGRAPH, SLF4J, SPRING
+      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('common'), project('gritserv'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), ARGS4J, JODA_TIME, JAXB, GT4_SERVLET, GROOVY, GOOGLE_COLLECTIONS, INJECT, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies, COMMONS_FILEUPLOAD, NEODATAGRAPH, SLF4J, SPRING
       compile
 
       meta_inf << file(_('src/META-INF/00_system.xml'))
@@ -656,6 +656,7 @@ NEODATAGRAPH = [_('lib/neo4j-1.2/geronimo-jta_1.1_spec-1.1.1.jar'),
     desc 'Creating the gndms war'
     define 'gndms', :layout => dmsLayout('gndms', 'gndms-rest') do
 
+        package(:war).include _('src/log4j.properties'), :path=>"WEB-INF/classes"
         package(:war).include _('../LICENSE'), :path=>"WEB-INF/classes/META-INF"
         package(:war).include _('../GNDMS-RELEASE'), :path=>"WEB-INF/classes/META-INF"
 
@@ -673,7 +674,7 @@ NEODATAGRAPH = [_('lib/neo4j-1.2/geronimo-jta_1.1_spec-1.1.1.jar'),
 end
 
 
-task 'deploy-gorfx-rest' do
+task 'deploy-gndms-rest' do
     src = project('gndms:gndms').package(:war).to_s
     testEnv('JETTY_HOME', 'the root directory of your jetty installation')
     tgt = "#{ENV['JETTY_HOME']}/webapps/root"
@@ -886,9 +887,13 @@ Rake::Task[:release].prerequisites.clear
 Rake::Task[:release].clear
 Rake::Task[:install].prerequisites.clear
 Rake::Task[:install].clear
+Rake::Task[:package].prerequisites.clear
+Rake::Task[:package].clear
 
 task :default => task( 'gndms:gorfx:package' )
-task :install => task( 'deploy-gorfx-rest' )
+task :install => task( 'deploy-gndms-rest' )
+task :package => task( 'gndms:gndms:package' )
+
 
 #todo for release use the following :default behaviour
 #task :default do nope end

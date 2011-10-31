@@ -59,7 +59,7 @@ public abstract class DefaultTaskFlowFactory<O extends Order, C extends Abstract
 
     @Override
     public String getTaskFlowKey() {
-        return null;  // not required here
+        return taskFlowKey;  // not required here
     }
 
 
