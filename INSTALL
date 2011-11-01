@@ -1,29 +1,41 @@
-Please consult the HTML documentation in doc/web/_site/index.html which contains the installation guide
-
-Until 'devel' goes 'master' additional documentation is gathered here:
+Until 'rest-devel' goes 'master' additional documentation is gathered here:
 
 Setup rest example:
 -------------------
 
-buildr gndms:gorfx-rest:package
-    -> $GNDMS_SOURCE/lib/gorfx/gndms-gorfx-rest-0.3.0.war
+Compile and package everything.
 
-Download and install Jetty to $JETTY_HOME
-Copy 
-    $GNDMS_SOURCE/lib/gorfx/gndms-gorfx-rest-0.3.0.war
-to 
-    $JETTY_HOME/webapps/gndms.war
+    buildr package
+        -> $GNDMS_SOURCE/lib/gndms/gndms-gndms-0.6.0-pre.war
+
+Download and install Jetty version 6-8 are fine. Export  $JETTY_HOME
+as the base dir of your Jetty installation.
+
+
+*WARNING: THE NEXT STEP WILL ERASE THE CONTENTS OF
+`$JETTY_HOME/webapps/root`*
+
+Execute
+
+    buildr install
+
+which installs the exploded war into `$JETTY_HOME/webapps/root`.
 
 Setup the service config:
+
    Copy $GNDMS_SOURCE/gorfx/src/META-INF/gorfx.properties 
    to   $JETTY_HOME/resources/gorfx.properties
+
 Set the environment variable GORFX_URL to
+
     http://<yourhost>:<and-port>/gndms/<grid-name>
+
 Echo this to your grofx.properties
 echo gorfxBaseURL=$GORFX_URL > $JETTY_HOME/resources/gorfx.properties
 
 Create grid.properties in the same directory ($JETTY_HOME/resources/)
 by executing
+
     echo gridName=C3Grid >> $JETTY_HOME/resources/grid.properties
     echo gridPath=<Path-to-gridconfig>  >> $JETTY_HOME/resources/grid.properties
 

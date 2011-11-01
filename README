@@ -1,20 +1,27 @@
+This branch contains implementation of the REST-based GNDMS version.
+
+Appart from urgend bugfixes the GT4 based (i.e. the *master*-branch)
+version will not be subejct to further development. Thus the
+rest-devel branch will replace master as soon as it reaches RC state.
 
 
-This branch contains ad-hoc implementation of the GORFX rest
-specification.  It can be used by developers of GNDMS client services
-to test the integration and the basic setup.
-
-The interface is stable with the exception that new methods might be
+The REST-interface is stable with the exception that new methods might be
 added and some types may be refined. 
 
-The branch has three imported folders:
+A list of new and important folder:
 
-gndmc-rest     Contains the code of client side.
+gndms          Contains the servlet setup and the master application
+               context.
 gorfx          Holds the restified GORFX service code.
+dspace         Holds the restified DSpace service code.
 gndms-commons  Contains code shared by the client and service, e.g.
                types used for exchange and the interfaces describing
                the service.
+gndmc-rest     Contains the code of client side.
 
-Please consult the HTML documentation in 
+
+Please have a look at INSTALL for a short setup-guide.
+
+Feel free to consult the HTML documentation in 
     http://gndms.zib.de/developer-guide/rest/
-which contains additional infos along with the installation guide
+which contains additional infos.
