@@ -117,7 +117,7 @@ public class SliceKindConfiguration implements Configuration {
 
 	@Override
 	public final String getStringRepresentation() {
-		StringBuffer s = new StringBuffer();
+		StringBuilder s = new StringBuilder();
 		s.append(URI + " : '" + uri + "'; ");
 		s.append(PERMISSION + " : '" + permission.getAsString() + "'; ");
 		if (metasubspaces != null) {		

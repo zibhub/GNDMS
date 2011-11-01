@@ -141,7 +141,7 @@ public class SubspaceConfiguration implements Configuration {
 
 	@Override
 	public final String getStringRepresentation() {
-		StringBuffer s = new StringBuffer();
+		StringBuilder s = new StringBuilder();
 		s.append(PATH + " : '" + path + "'; ");
 		s.append(GSIFTPPATH + " : '" + gsiFtpPath + "'; ");
 		s.append(VISIBLE + " : '" + visible + "'; ");

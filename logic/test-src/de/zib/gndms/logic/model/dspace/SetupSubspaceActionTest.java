@@ -16,14 +16,11 @@ package de.zib.gndms.logic.model.dspace;
  * limitations under the License.
  */
 
-
-
 import de.zib.gndms.kit.config.ParameterTools;
 import de.zib.gndms.logic.model.config.ConfigActionTestBase;
 import org.testng.annotations.*;
 
 import java.io.PrintWriter;
-
 
 /**
  * ThingAMagic.
@@ -33,15 +30,12 @@ import java.io.PrintWriter;
  *
  *          User: stepn Date: 15.08.2008 Time: 16:11:02
  */
-@SuppressWarnings({
-        "IOResourceOpenedButNotSafelyClosed", "UseOfSystemOutOrSystemErr",
-        "HardcodedFileSeparator" })
+//@SuppressWarnings({ "IOResourceOpenedButNotSafelyClosed", "UseOfSystemOutOrSystemErr", "HardcodedFileSeparator" })
 public class SetupSubspaceActionTest extends ConfigActionTestBase {
     @Parameters({"dbPath", "dbName"})
     public SetupSubspaceActionTest(final String dbPath, @Optional("c3grid") final String Name) {
         super(dbPath, Name);
     }
-
 
     @BeforeClass(groups={"db", "action", "config"})
     public void init() {
