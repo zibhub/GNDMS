@@ -29,6 +29,7 @@ import de.zib.gndms.logic.model.config.ConfigActionResult;
 import de.zib.gndms.logic.model.config.ConfigOption;
 import org.jetbrains.annotations.NotNull;
 
+
 import javax.persistence.EntityManager;
 import java.io.PrintWriter;
 import java.util.Map;

@@ -20,6 +20,7 @@ import de.zib.gndms.infra.system.ConfigActionCaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -32,7 +33,7 @@ import java.io.StringWriter;
 public class LegacyConfigActionCaller  {
 
     private ConfigActionCaller actionCaller;
-    protected Logger logger = LoggerFactory.getLogger( this.getClass() );
+    protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
 
     public String callAction( String className, String args ) throws Exception {
@@ -55,4 +56,9 @@ public class LegacyConfigActionCaller  {
         }
     }
 
+
+    @Inject
+    public void setActionCaller( ConfigActionCaller actionCaller ) {
+        this.actionCaller = actionCaller;
+    }
 }

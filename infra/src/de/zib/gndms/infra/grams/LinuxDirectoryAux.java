@@ -36,7 +36,7 @@ import java.util.HashMap;
  */
 public class LinuxDirectoryAux implements DirectoryAux {
 
-    protected Logger logger = LoggerFactory.getLogger( this.getClass() );
+    protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
     final static String WX = "300";
     final static String RO = "500";
@@ -90,9 +90,8 @@ public class LinuxDirectoryAux implements DirectoryAux {
         String jds = pds.toPerlString();
         System.err.println( "perl job description: " + jds );
 
-        GNDMSJobManagerScript jms = null;
-        try {
-            jms = new GNDMSJobManagerScript(
+         try {
+             GNDMSJobManagerScript jms = new GNDMSJobManagerScript(
                 uid,
                 System.getenv( "GLOBUS_LOCATION" ),
                 "fork", // globus job manager type

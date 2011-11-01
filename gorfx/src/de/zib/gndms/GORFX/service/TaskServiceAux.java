@@ -43,8 +43,8 @@ import java.util.UUID;
 */
 public class TaskServiceAux {
 
-    private TaskExecutionService executorService;
-    private Logger logger = LoggerFactory.getLogger( this.getClass() );
+    private final TaskExecutionService executorService;
+    private final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
 
     public TaskServiceAux( TaskExecutionService executorService ) {

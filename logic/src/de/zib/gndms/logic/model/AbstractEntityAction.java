@@ -33,7 +33,7 @@ import javax.persistence.EntityTransaction;
  * <p>An <tt>AbstractEntityAction</tt> contains an EntityManager and list of Actions being executed on
  * cleanup ({@link #postponedActions}).
  *
- * <p> A subclass must implement {@link #execute(javax.persistence.EntityManager)} to define, what this action will do,
+ * <p> A subclass must implement {@link #execute(EntityManager)} to define, what this action will do,
  * when it is executed. The method will be invoked with the current EntityManager (see {@link #entityManager}).
  *
  * <p>The template parameter is the return type of this action.
@@ -76,9 +76,9 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
     /**
      * Executes the EntityManager on its persistence context.
      *
-     * <p>If the EnityManager is executing inside a transaction (see {@link #executeInsideTransaction(javax.persistence.EntityManager)} ),
-     * {@link #executeInsideTransaction(javax.persistence.EntityManager)} will be called to run the action.
-     * <p> Otherwise just {@link #execute(javax.persistence.EntityManager)} will be invoked.
+     * <p>If the EnityManager is executing inside a transaction (see {@link #executeInsideTransaction(EntityManager)} ),
+     * {@link #executeInsideTransaction(EntityManager)} will be called to run the action.
+     * <p> Otherwise just {@link #execute(EntityManager)} will be invoked.
      *
      * @return the result of the EntityManager being invoked on a its persistence context.
      */
@@ -105,7 +105,7 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
     /**
      * Tries to execute an EntityManager inside a transaction.
      *
-     * If the transaction is already active, it just calls {@link #execute(javax.persistence.EntityManager)}
+     * If the transaction is already active, it just calls {@link #execute(EntityManager)}
      * with the current EntityManager.
      * Otherwise it starts the transaction before calling the method.
      *
@@ -248,7 +248,9 @@ public abstract class AbstractEntityAction<R> extends AbstractAction<R> implemen
      */
     @Override
     public void cleanUp() {
-        final BatchUpdateAction<GridResource, ?> batched = getPostponedEntityActions();
+        // todo figure out what to do with the batched actions
+        // problem who is responsible for the execution of the actions?
+        // final BatchUpdateAction<GridResource, ?> batched = getPostponedEntityActions();
         if (hasOwnPostponedActions() && isRunningOwnPostponedActions())
             postponedActions.call();
         if (isClosingEntityManagerOnCleanup() && getEntityManager() != null)

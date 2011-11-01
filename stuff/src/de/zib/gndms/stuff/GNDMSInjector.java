@@ -1,4 +1,4 @@
-package de.zib.gndms.common.mockup.logic.action;
+package de.zib.gndms.stuff;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -15,28 +15,13 @@ package de.zib.gndms.common.mockup.logic.action;
  * limitations under the License.
  */
 
-/**
+import java.lang.Object; /**
  * @author try ma ik jo rr a zib
- * @date 16.02.11  11:56
- * @brief Mock-up implementation.
- * @deprecated
+ * @date 06.07.11  15:20
+ * @brief
  */
-public class ActionMockUp implements Action<String> {
+public interface GNDMSInjector {
 
-    private String message;
-
-
-    public ActionMockUp() {
-    }
-
-
-    public ActionMockUp( String msg ) {
-
-        message = msg;
-    }
-
-
-    public String call() {
-        return message;
-    }
+    void injectMembers( Object existingBean );
+    <T> T getInstance( Class<T> clazz);
 }

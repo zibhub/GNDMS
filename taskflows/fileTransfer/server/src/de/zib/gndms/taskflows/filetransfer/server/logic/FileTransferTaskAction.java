@@ -19,11 +19,11 @@ package de.zib.gndms.taskflows.filetransfer.server.logic;
 
 
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
+import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferOrder;
+import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferResult;
 import de.zib.gndms.taskflows.filetransfer.server.network.GNDMSFileTransfer;
 import de.zib.gndms.taskflows.filetransfer.server.network.NetworkAuxiliariesProvider;
 import de.zib.gndms.model.gorfx.FTPTransferState;
-import de.zib.gndms.model.gorfx.types.FileTransferOrder;
-import de.zib.gndms.model.gorfx.types.FileTransferResult;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;

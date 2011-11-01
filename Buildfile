@@ -92,21 +92,20 @@ end
 # Non-GT4 dependencies
 SPRING_VERSION = "3.0.5.RELEASE"
 SPRING = [ 
+           "org.springframework:spring-aop:jar:#{SPRING_VERSION}",
            "org.springframework:spring-asm:jar:#{SPRING_VERSION}",
-           "org.springframework:spring-core:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-aspects:jar:#{SPRING_VERSION}",
            "org.springframework:spring-beans:jar:#{SPRING_VERSION}",
            "org.springframework:spring-context:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-core:jar:#{SPRING_VERSION}",
            "org.springframework:spring-expression:jar:#{SPRING_VERSION}",
-           "org.springframework:spring-oxm:jar:#{SPRING_VERSION}",
-           "org.springframework:spring-orm:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-instrument:jar:#{SPRING_VERSION}",
            "org.springframework:spring-jdbc:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-orm:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-oxm:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-tx:jar:#{SPRING_VERSION}",
            "org.springframework:spring-web:jar:#{SPRING_VERSION}",
            "org.springframework:spring-webmvc:jar:#{SPRING_VERSION}",
-           "org.springframework:spring-expression:jar:#{SPRING_VERSION}",
-           "org.springframework:spring-asm:jar:#{SPRING_VERSION}",
-           "org.springframework:spring-aop:jar:#{SPRING_VERSION}",
-           "org.springframework:spring-aspects:jar:#{SPRING_VERSION}",
-           "org.springframework:spring-instrument:jar:#{SPRING_VERSION}",
          ] 
 ASPECTJ = [
         'org.aspectj:aspectjrt:jar:1.6.11',
@@ -134,7 +133,8 @@ GSON='com.google.code.gson:gson:jar:1.6'
 SLF4J = transitive( ['org.slf4j:slf4j-log4j12:jar:1.6.1', 'org.slf4j:slf4j-ext:jar:1.6.1'])
 
 GUICE = 'com.google.code.guice:guice:jar:2.0'
-GOOGLE_COLLECTIONS = 'com.google.code.google-collections:google-collect:jar:snapshot-20080530'
+#GOOGLE_COLLECTIONS = 'com.google.code.google-collections:google-collect:jar:snapshot-20080530'
+GOOGLE_COLLECTIONS = 'com.google.collections:google-collections:jar:1.0'
 JETBRAINS_ANNOTATIONS = 'com.intellij:annotations:jar:7.0.3'
 JODA_TIME = transitive('joda-time:joda-time:jar:1.6')
 CXF = 'org.apache.cxf:cxf-bundle:jar:2.1.4'
@@ -322,7 +322,7 @@ NEODATAGRAPH = [_('lib/neo4j-1.2/geronimo-jta_1.1_spec-1.1.1.jar'),
 
     desc 'GT4-independent utility classes for GNDMS'
     define 'stuff', :layout => dmsLayout('stuff', 'gndms-stuff') do
-       compile.with INJECT, GUICE, GOOGLE_COLLECTIONS, JETBRAINS_ANNOTATIONS, JSON, SPRING
+       compile.with INJECT, GOOGLE_COLLECTIONS, JETBRAINS_ANNOTATIONS, JSON, SPRING, SLF4J
        compile { project('gndms').updateBuildInfo() }
        test.compile
        test.using :testng
@@ -345,14 +345,14 @@ NEODATAGRAPH = [_('lib/neo4j-1.2/geronimo-jta_1.1_spec-1.1.1.jar'),
     desc 'Shared database model classes'
     define 'model', :layout => dmsLayout('model', 'gndms-model') do
       # TODO: Better XML
-      compile.with project('common'), project('stuff'), COMMONS_COLLECTIONS, COMMONS_LANG, GOOGLE_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS, INJECT, GUICE, CXF, OPENJPA, JAXB, STAX_API, JSON
+      compile.with project('common'), project('stuff'), COMMONS_COLLECTIONS, COMMONS_LANG, GOOGLE_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS, INJECT, CXF, OPENJPA, JAXB, STAX_API, JSON, SLF4J
       compile { open_jpa_enhance }
       package :jar
     end
 
     desc 'GT4-dependent utility classes for GNDMS'
     define 'kit', :layout => dmsLayout('kit', 'gndms-kit') do
-      compile.with JETTY, GROOVY, GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('common'), project('stuff'), project('model'), project('neomodel'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_AXIS, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, INJECT, GUICE, GT4_SERVLET, COMMONS_LANG, OPENJPA, SLF4J, JSON, SPRING
+      compile.with GROOVY, GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('common'), project('stuff'), project('model'), project('neomodel'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_AXIS, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, INJECT, GT4_SERVLET, COMMONS_LANG, OPENJPA, SLF4J, JSON, SPRING
       compile
       test.compile
       test.using :testng
@@ -361,7 +361,7 @@ NEODATAGRAPH = [_('lib/neo4j-1.2/geronimo-jta_1.1_spec-1.1.1.jar'),
 
     desc 'GNDMS logic classes (actions for manipulating resources)'
     define 'logic', :layout => dmsLayout('logic', 'gndms-logic') do
-       compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('common'), project('stuff'), project('model'), project('neomodel'), JODA_TIME, GOOGLE_COLLECTIONS, INJECT, GUICE, DB_DERBY, GT4_LOG, GT4_AXIS, GT4_COG, GT4_SEC, GT4_XML, COMMONS_LANG, OPENJPA, SLF4J
+       compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('common'), project('stuff'), project('model'), project('neomodel'), JODA_TIME, GOOGLE_COLLECTIONS, INJECT, DB_DERBY, GT4_LOG, GT4_AXIS, GT4_COG, GT4_SEC, GT4_XML, COMMONS_LANG, OPENJPA, SLF4J
        compile
        package :jar
     end
@@ -376,8 +376,12 @@ NEODATAGRAPH = [_('lib/neo4j-1.2/geronimo-jta_1.1_spec-1.1.1.jar'),
     desc 'GNDMS core infrastructure classes'
     define 'infra', :layout => dmsLayout('infra', 'gndms-infra') do
       # Infra *must* have all dependencies since we use this list in copy/link-deps
-      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('common'), project('gritserv'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), ARGS4J, JODA_TIME, JAXB, GT4_SERVLET, JETTY, CXF, GROOVY, GOOGLE_COLLECTIONS, INJECT, GUICE, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies, COMMONS_FILEUPLOAD, NEODATAGRAPH, SLF4J, SPRING
+      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('common'), project('gritserv'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), ARGS4J, JODA_TIME, JAXB, GT4_SERVLET, GROOVY, GOOGLE_COLLECTIONS, INJECT, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies, COMMONS_FILEUPLOAD, NEODATAGRAPH, SLF4J, SPRING
       compile
+
+      meta_inf << file(_('src/META-INF/00_system.xml'))
+      meta_inf << file(_('src/META-INF/grid.properties'))
+      meta_inf << file(_('src/META-INF/legacyConfigMeta.xml'))
       package :jar
       doc projects('gndms:stuff', 'gndms:model', 'gndms:gritserv', 'gndms:kit', 'gndms:logic')
 
@@ -642,25 +646,41 @@ NEODATAGRAPH = [_('lib/neo4j-1.2/geronimo-jta_1.1_spec-1.1.1.jar'),
 
     desc 'GORFX rest service'
     define 'gorfx', :layout => dmsLayout('gorfx', 'gndms-gorfx-rest') do
-        compile.with project('infra'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), project('gndmc-rest'), project('common'), SPRING, SLF4J, XSTREAM, COMMONS_LOGGING, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME, JSON, OPENJPA
-        compile
+        compile.with project('infra'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), project('gndmc-rest'), project('common'), SPRING, SLF4J, XSTREAM, COMMONS_LOGGING, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME, OPENJPA 
 
-       # web_inf << file(_('../gorfx/src/META-INF/gorfx.xml'))
-       # web_inf << file(_('../gorfx/src/META-INF/gorfx-mockups.xml'))
+        compile
+        meta_inf << file(_('src/META-INF/gorfx.xml'))
+        package :jar
+    end    
+          
+    desc 'Creating the gndms war'
+    define 'gndms', :layout => dmsLayout('gndms', 'gndms-rest') do
+
+        package(:war).include _('src/log4j.properties'), :path=>"WEB-INF/classes"
+        package(:war).include _('../LICENSE'), :path=>"WEB-INF/classes/META-INF"
+        package(:war).include _('../GNDMS-RELEASE'), :path=>"WEB-INF/classes/META-INF"
+
+        libs = []
+        [ 'gorfx', 'infra', 'logic', 'kit', 'stuff', 'neomodel', 'model', 'gndmc-rest', 'common' ].each { |mod| 
+            project( mod ).compile.dependencies.map( &:to_s ).each  { |lib| libs << lib }
+            libs << project( mod ).package(:jar).to_s
+        }
+
         # workaround for builder dependence bug
-        package(:war).enhance FileList[_(:web,  '**/*')]
-        package(:war).include _('../gorfx/src/META-INF/*'), :path=>"WEB-INF/classes/META-INF"
-        package :war
+        package(:war).enhance FileList[_(:web,  '**/*'), _( '../lib', '**/gndms-*.jar' )]
+        package(:war).libs += libs.uniq
     end
+
 end
 
 
-task 'deploy-gorfx-rest' do
-    src = project('gndms:gorfx-rest').package(:war).to_s
+task 'deploy-gndms-rest' do
+    src = project('gndms:gndms').package(:war).to_s
     testEnv('JETTY_HOME', 'the root directory of your jetty installation')
-    tgt = "#{ENV['JETTY_HOME']}/webapps/gndms.war"
+    tgt = "#{ENV['JETTY_HOME']}/webapps/root"
     puts "deploying #{src} => #{tgt}"
-    cp( src, tgt ) 
+    `rm -r #{tgt}/*`
+    `unzip #{src} -d #{tgt}`
 end
 
 
@@ -867,10 +887,18 @@ Rake::Task[:release].prerequisites.clear
 Rake::Task[:release].clear
 Rake::Task[:install].prerequisites.clear
 Rake::Task[:install].clear
+Rake::Task[:package].prerequisites.clear
+Rake::Task[:package].clear
 
-task :default do nope() end
+task :default => task( 'gndms:gorfx:package' )
+task :install => task( 'deploy-gndms-rest' )
+task :package => task( 'gndms:gndms:package' )
+
+
+#todo for release use the following :default behaviour
+#task :default do nope end
+#task :install do nope() end
 task :release do nope() end
-task :install do nope() end
 
 desc 'try some features of buildr'
 task 'sandbox' do 

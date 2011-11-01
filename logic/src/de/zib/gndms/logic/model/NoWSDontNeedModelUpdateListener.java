@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  */
 public class NoWSDontNeedModelUpdateListener implements ModelUpdateListener<GridResource> {
 
-    protected Logger logger = LoggerFactory.getLogger( this.getClass() );
+    protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
     public void onModelChange( GridResource model ) {
         logger.debug( "called for model " + model.getId() + " of " + model.getClass().getName() );

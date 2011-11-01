@@ -1,5 +1,4 @@
-package de.zib.gndms.logic.taskflow.tfmockup;
-/*
+package de.zib.gndms.taskflows.dummy;/*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +15,8 @@ package de.zib.gndms.logic.taskflow.tfmockup;
  */
 
 import de.zib.gndms.common.model.gorfx.types.Order;
+import de.zib.gndms.model.gorfx.types.AbstractOrder;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author try ma ik jo rr a zib
@@ -25,7 +26,7 @@ import de.zib.gndms.common.model.gorfx.types.Order;
  * The dummy taskflow echos a given message a given number of times ^^ with some delay.
  * It can also fail on demand;
  */
-public class DummyTaskFlowOrder implements Order {
+public class DummyOrder extends AbstractOrder {
 
     private static final String TASK_FLOW_TYPE = "dummyTaskFlow";
     private boolean justEstimate = false;
@@ -46,6 +47,13 @@ public class DummyTaskFlowOrder implements Order {
 
     public boolean isJustEstimate() {
         return justEstimate;
+    }
+
+
+    @NotNull
+    @Override
+    public String getDescription() {
+        return "A dummy for TaskFlow processing";
     }
 
 

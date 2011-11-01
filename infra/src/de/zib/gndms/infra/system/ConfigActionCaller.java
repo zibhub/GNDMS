@@ -19,11 +19,9 @@ package de.zib.gndms.infra.system;
 
 
 import com.google.common.base.Function;
+import com.google.common.collect.MapMaker;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Maps;
-import com.google.inject.Binder;
-import com.google.inject.Injector;
-import com.google.inject.Module;
 import de.zib.gndms.infra.action.*;
 import de.zib.gndms.kit.config.ParameterTools;
 import de.zib.gndms.logic.action.Action;
@@ -44,6 +42,7 @@ import de.zib.gndms.logic.model.gorfx.ConfigOfferTypeAction;
 import de.zib.gndms.logic.model.gorfx.SetupTaskFlowAction;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
+import de.zib.gndms.stuff.GNDMSInjector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.jetbrains.annotations.NotNull;
@@ -70,7 +69,7 @@ import java.util.UUID;
 *
 *          User: stepn Date: 03.09.2008 Time: 16:43:46
 */
-public final class ConfigActionCaller implements WSActionCaller, Module {
+public final class ConfigActionCaller implements WSActionCaller {
     private @NotNull final Logger logger = LoggerFactory.getLogger(ConfigActionCaller.class);
 
     private final @NotNull ModelUUIDGen actionUUIDGen = new ModelUUIDGen() {
@@ -79,12 +78,13 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
             }
     };
 
-	  private final Map<Class<? extends ConfigAction<?>>, Boolean> configActionMap = Maps.newConcurrentHashMap();
+    private final MapMaker mapMaker = new MapMaker();
+    private final Map<Class<? extends ConfigAction<?>>, Boolean> configActionMap = mapMaker.makeMap();
     /**
      * A set of ConfigAction.{@link HelpOverviewAction} is excluded, as this set used in the {@code HelpOverviewAction}
      * to print help about all available ConfigActions.
      */
-    private final Set<Class<? extends ConfigAction<?>>> configActions =
+    private  Set<Class<? extends ConfigAction<?>>> configActions =
             Sets.newSetFromMap(configActionMap);
 
     private final Function<String, String> classToActionNameMapper =
@@ -98,19 +98,41 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
             }
         };
 
-    private final GNDMSystem system;
+    private GNDMSystem system;
 
-	private final Injector injector;
+	private GNDMSInjector injector;
 
 
     /**
+     * Constructs a new instance of the configActionCaller.
+     *
+     * @Note {@link #init} must be called to have a usable instance of this class.
+     */
+    public ConfigActionCaller( ) {
+
+    }
+
+    /**
+     * Constructs and initializes the configActionCaller.
+     *
+     * @see ConfigActionCaller.init()
+     * @param systemParam the GNDMSystem
+     */
+	@SuppressWarnings({ "ThisEscapedInObjectConstruction", "OverlyCoupledMethod" })
+	public ConfigActionCaller(final @NotNull GNDMSystem systemParam) {
+        init( systemParam );
+    }
+
+
+    /**
+     * Initializes this action
+     *
      * Fills {@link #configActions} with all implemented {@link ConfigAction}s, except the {@link HelpOverviewAction}.
      * Load the GNDMSystem's injector into {@link #injector} as a new {@code ChildInjector} of this.
      *
      * @param systemParam the GNDMSystem
      */
-	@SuppressWarnings({ "ThisEscapedInObjectConstruction", "OverlyCoupledMethod" })
-	public ConfigActionCaller(final @NotNull GNDMSystem systemParam) {
+    public void init( final @NotNull GNDMSystem systemParam ) {
         system = systemParam;
         configActions.add(SetupSubspaceAction.class);
         configActions.add(EchoOptionsAction.class);
@@ -124,8 +146,20 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
         configActions.add(ReadContainerLogAction.class);
         configActions.add(ReadGNDMSVersionAction.class);
 
-		injector = system.getInstanceDir().getSystemAccessInjector().createChildInjector(this);
+        injector = system.getInstanceDir().getSystemAccessInjector();
     }
+
+
+//    public void configure(final @NotNull Binder binder) {
+//		binder.skipSources(GNDMSystem.class,
+//		                   EntityManager.class,
+//		                   ModelUUIDGen.class,
+//		                   UUIDGen.class,
+//		                   EntityUpdateListener.class,
+//		                   BatchUpdateAction.class);
+//		binder.bind(ConfigActionCaller.class).toInstance(this);
+//	}
+
 
     /**
      * Instantiates a new config action or a specific subclass of it according to the String <tt>name</tt>,
@@ -279,10 +313,8 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
         action.setClosingWriterOnCleanUp(false);
         action.setWriteResult(true);
         action.setUUIDGen(actionUUIDGen);
-        action.setOwnPostponedEntityActions(new DefaultBatchUpdateAction<GridResource>());
-        final DelegatingModelUpdateListener<GridResource> updateListener =
-            DelegatingModelUpdateListener.getInstance(system);
-        action.getPostponedEntityActions().setListener(updateListener);
+        action.setOwnPostponedEntityActions( new DefaultBatchUpdateAction<GridResource>() );
+
         if (action instanceof SystemAction)
             ((SystemAction<?>)action).setSystem(system);
         // Help Action required dynamic casting due to compiler bug in older 1.5 javac
@@ -312,12 +344,7 @@ public final class ConfigActionCaller implements WSActionCaller, Module {
     }
 
 
-    public void configure(final @NotNull Binder binder) {
-		binder.skipSources(GNDMSystem.class,
-		                   EntityManager.class,
-		                   ModelUUIDGen.class,
-		                   ModelUpdateListener.class,
-		                   BatchUpdateAction.class);
-		binder.bind(ConfigActionCaller.class).toInstance(this);
-	}
+    public void setConfigActions( Set<Class<? extends ConfigAction<?>>> configActions ) {
+        this.configActions = configActions;
+    }
 }

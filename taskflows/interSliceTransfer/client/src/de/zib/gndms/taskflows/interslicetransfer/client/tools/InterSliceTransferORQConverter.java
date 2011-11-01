@@ -18,8 +18,8 @@ package de.zib.gndms.taskflows.interslicetransfer.client.tools;
 
 
 
-import de.zib.gndms.model.gorfx.types.InterSliceTransferOrder;
 import de.zib.gndms.model.gorfx.types.io.OrderConverter;
+import de.zib.gndms.taskflows.interslicetransfer.client.model.InterSliceTransferOrder;
 
 /**
  * @author  try ma ik jo rr a zib

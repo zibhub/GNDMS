@@ -52,9 +52,8 @@ public class DataConstraintsPropertyWriter extends AbstractPropertyIO implements
 
 
     public void writeCFList( @NotNull List<String> cflist ) {
-        List<String> cfl = cflist;
-        PropertyReadWriteAux.writeListMultiLine( getProperties(), SfrProperty.CFLIST_ITEMS.key, cfl );
-        PropertyReadWriteAux.writeList( getProperties(), SfrProperty.CFLIST_OLD.key, ' ', cfl );
+        PropertyReadWriteAux.writeListMultiLine( getProperties(), SfrProperty.CFLIST_ITEMS.key, cflist );
+        PropertyReadWriteAux.writeList( getProperties(), SfrProperty.CFLIST_OLD.key, ' ', cflist );
     }
 
 

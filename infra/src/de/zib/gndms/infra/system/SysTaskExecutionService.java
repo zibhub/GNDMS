@@ -25,9 +25,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceUnit;
 import java.util.UUID;
 import java.util.concurrent.*;
 
@@ -48,9 +50,10 @@ public final class SysTaskExecutionService implements TaskExecutionService, Thre
     private volatile boolean terminating;
 
     private EntityManagerFactory entityManagerFactory;
-    private ModelUpdateListener<GridResource> entityUpdateListener = new NoWSDontNeedModelUpdateListener();
+    private final ModelUpdateListener<GridResource> entityUpdateListener = new NoWSDontNeedModelUpdateListener();
     private Dao dao;
     private static final long EXECUTOR_SHUTDOWN_TIME = 5000L;
+    private GNDMSystem system;
 
 
     /**
@@ -173,7 +176,7 @@ public final class SysTaskExecutionService implements TaskExecutionService, Thre
                 ((LogAction)action).setLogger( LoggerFactory.getLogger( action.getClass() ) );
 
         if (action instanceof SystemHolder)
-            ((SystemHolder)action).setSystem( null );
+            ((SystemHolder)action).setSystem( system );
         if (action.getPostponedEntityActions() == null)
             action.setOwnPostponedEntityActions(new DefaultBatchUpdateAction<GridResource>());
         if (action.getPostponedEntityActions().getListener() == null)
@@ -195,7 +198,7 @@ public final class SysTaskExecutionService implements TaskExecutionService, Thre
     }
 
 
-    @PersistenceContext
+    @PersistenceUnit
     public void setEntityManagerFactory( EntityManagerFactory entityManagerFactory ) {
         this.entityManagerFactory = entityManagerFactory;
     }
@@ -211,7 +214,7 @@ public final class SysTaskExecutionService implements TaskExecutionService, Thre
     }
 
 
-    @Autowired
+    @Inject
     public void setDao( Dao dao ) {
         this.dao = dao;
     }
@@ -220,6 +223,11 @@ public final class SysTaskExecutionService implements TaskExecutionService, Thre
     @NotNull
     public String nextUUID() {
         return UUID.randomUUID().toString();
+    }
+
+    @Inject
+    public void setSystem( GNDMSystem system ) {
+        this.system = system;
     }
 }
 

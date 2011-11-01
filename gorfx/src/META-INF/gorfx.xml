@@ -2,19 +2,19 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:aop="http://www.springframework.org/schema/aop"
-       xmlns:context="http://www.springframework.org/schema/context" xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:tx="http://www.springframework.org/schema/tx"
-       xsi:schemaLocation="
-            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+       xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
             http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
-            http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
+
             http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
 
     <context:annotation-config/>
+
     <!-- load possible custom properties -->
-    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <bean name='gorfxConf' class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="ignoreResourceNotFound" value="true"/>
         <property name="locations">
             <list>
@@ -24,14 +24,13 @@
         </property>
     </bean>
 
-    <bean id="taskFlowProvider" class="de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowProviderImpl" >
+    <!--bean id="taskFlowProvider" class="de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowProviderImpl" >
         <property name="factories">
             <map>
                 <entry key="dummyTaskFlow" value-ref="dummyFactory"/>
             </map>
         </property>
-    </bean>
-    <bean id="dummyFactory" class="de.zib.gndms.logic.taskflow.tfmockup.DummyTaskFlowFactory"/>
+    </bean!-->
 
 
     <bean id="gorfxService" class="de.zib.gndms.GORFX.service.GORFXServiceImpl">
@@ -47,9 +46,8 @@
         <property name="serviceUrl" value="${gorfxBaseURL}"/>
     </bean>
 
-    <bean id="executorService" class="de.zib.gndms.logic.taskflow.executor.TFExecutor" />
 
-    <bean id="gorfxFacets" class="de.zib.gndms.rest.Facets">
+    <bean id="gorfxFacets" class="de.zib.gndms.common.rest.Facets">
         <property name="facets" ref="myList">
         </property>
     </bean>
@@ -65,22 +63,22 @@
         </constructor-arg>
     </bean>
 
-    <bean id="config" class="de.zib.gndms.rest.Facet">
+    <bean id="config" class="de.zib.gndms.common.rest.Facet">
         <property name="name" value="config"/>
         <property name="url" value="${gorfxBaseURL}/gorfx/config"/>
     </bean>
 
-    <bean id="batch" class="de.zib.gndms.rest.Facet">
+    <bean id="batch" class="de.zib.gndms.common.rest.Facet">
         <property name="name" value="batch"/>
         <property name="url" value="${gorfxBaseURL}/gorfx/batch"/>
     </bean>
     
-    <bean id="taskflows" class="de.zib.gndms.rest.Facet">
+    <bean id="taskflows" class="de.zib.gndms.common.rest.Facet">
         <property name="name" value="taskflows"/>
         <property name="url" value="${gorfxBaseURL}/gorfx/taskflows"/>
     </bean>
 
-    <bean id="tasks" class="de.zib.gndms.rest.Facet">
+    <bean id="tasks" class="de.zib.gndms.common.rest.Facet">
         <property name="name" value="tasks"/>
         <property name="url" value="${gorfxBaseURL}/gorfx/tasks"/>
     </bean>
@@ -93,7 +91,7 @@
         <property name="restTemplate" ref="restTemplate" />
     </bean>
 
-    <import resource="classpath:/META-INF/gorfx-mockups.xml"/>
+    <!--import resource="classpath:/META-INF/gorfx-mockups.xml"/-->
     <import resource="classpath:/META-INF/client-context.xml"/>
 
 </beans>

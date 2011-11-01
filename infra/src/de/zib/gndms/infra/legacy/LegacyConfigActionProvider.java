@@ -23,6 +23,7 @@ import de.zib.gndms.logic.model.config.ConfigAction;
 import de.zib.gndms.logic.model.config.ConfigActionProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,7 +39,7 @@ public class LegacyConfigActionProvider implements ConfigActionProvider {
 
     private SettableConfigMeta legacyConfigMeta;
     private boolean legacyConfigMetaInitialized = false;
-    private LegacyConfigActionCaller legacyActionCaller; // TODO: create and inject this fellow
+    private LegacyConfigActionCaller legacyActionCaller;
 
 
     public LegacyConfigActionProvider()	{	}
@@ -48,17 +49,6 @@ public class LegacyConfigActionProvider implements ConfigActionProvider {
         String help = legacyActionCaller.getHelp();
         legacyConfigMeta.setHelp( help );
         legacyConfigMetaInitialized=true;
-    }
-
-
-    public ConfigMeta getLegacyConfigMeta() {
-        return legacyConfigMeta;
-    }
-
-
-    @Autowired
-    public void setLegacyConfigMeta( SettableConfigMeta legacyConfigMeta ) {
-        this.legacyConfigMeta = legacyConfigMeta;
     }
 
 
@@ -105,5 +95,27 @@ public class LegacyConfigActionProvider implements ConfigActionProvider {
     @Override
     public ConfigAction getAction( String actionName ) throws NoSuchActionException {
         throw new NoSuchActionException( actionName );
+    }
+
+
+    public ConfigMeta getLegacyConfigMeta() {
+        return legacyConfigMeta;
+    }
+
+
+    @Inject
+    public void setLegacyConfigMeta( SettableConfigMeta legacyConfigMeta ) {
+        this.legacyConfigMeta = legacyConfigMeta;
+    }
+
+
+    public LegacyConfigActionCaller getLegacyActionCaller() {
+        return legacyActionCaller;
+    }
+
+
+    @Inject
+    public void setLegacyActionCaller( LegacyConfigActionCaller legacyActionCaller ) {
+        this.legacyActionCaller = legacyActionCaller;
     }
 }

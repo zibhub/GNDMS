@@ -18,7 +18,7 @@ package de.zib.gndms.logic.model;
 
 
 
-import com.google.inject.Injector;
+import de.zib.gndms.stuff.GNDMSInjector;
 import de.zib.gndms.kit.access.GNDMSBinding;
 import de.zib.gndms.model.ModelEntity;
 import de.zib.gndms.model.common.GridEntity;
@@ -43,7 +43,7 @@ import java.util.List;
 public class DelegatingBatchUpdateAction<M extends ModelEntity & GridResourceItf, R>
         implements BatchUpdateAction<M, R> {
     private final BatchUpdateAction<M, R> delegate;
-    private Injector injector;
+    private GNDMSInjector injector;
 
 
     public DelegatingBatchUpdateAction(final BatchUpdateAction<M, R> delegateParam) {
@@ -67,7 +67,7 @@ public class DelegatingBatchUpdateAction<M extends ModelEntity & GridResourceItf
     public void initialize() {delegate.initialize();}
 
 
-    public R call() throws ActionInitializationException, RuntimeException {return delegate.call();}
+    public R call() throws ActionInitializationException {return delegate.call();}
 
 
     public void cleanUp() {delegate.cleanUp();}
@@ -90,12 +90,12 @@ public class DelegatingBatchUpdateAction<M extends ModelEntity & GridResourceItf
         return delegate.getParentChain(interfaceClass);
     }
 
-    public void setInjector(Injector anInjector) {
+    public void setInjector(GNDMSInjector anInjector) {
         injector = anInjector;
     }
 
     @NotNull
-    public Injector getInjector() {
+    public GNDMSInjector getInjector() {
         if (injector == null) {
             final Action<?> theParent = getParent();
             if (theParent == null)

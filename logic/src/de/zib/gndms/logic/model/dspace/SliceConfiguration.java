@@ -170,10 +170,9 @@ public class SliceConfiguration implements Configuration {
 
 	@Override
 	public final String getStringRepresentation() {
-		StringBuilder s = new StringBuilder();
-		s.append(SIZE + " : '" + size + "'; ");
-		s.append(TERMINATION + " : '" + terminationTime.getTimeInMillis()
-				+ "'; ");
+        StringBuilder s = new StringBuilder();
+        s.append( SIZE + " : '" ).append( size ).append( "'; " );
+        s.append( TERMINATION + " : '" ).append( terminationTime.getTimeInMillis() ).append( "'; " );
 		return s.toString();
 	}
 

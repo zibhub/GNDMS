@@ -46,7 +46,7 @@ public abstract class NeoTest {
 
     @BeforeSuite
     public void killDatabase() throws IOException {
-        FileUtils.deleteDirectory(dbDir);
+        FileUtils.deleteDirectory( dbDir );
     }
 
     @BeforeMethod(dependsOnGroups = "neo")

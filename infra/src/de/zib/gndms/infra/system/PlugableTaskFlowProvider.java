@@ -35,7 +35,7 @@ import java.util.ServiceLoader;
 public class PlugableTaskFlowProvider extends TaskFlowProviderImpl {
 
     boolean hasFactories = false;
-    protected Logger logger = LoggerFactory.getLogger( this.getClass() );
+    protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
 
     public void loadPlugins( boolean checkDeps ) {
@@ -98,7 +98,7 @@ public class PlugableTaskFlowProvider extends TaskFlowProviderImpl {
 
 
         if( missing.size() != 0 ) {
-            StringBuffer mes = new StringBuffer( );
+            StringBuilder mes = new StringBuilder();
             mes.append( "Missing plugin dependencies detected:" );
             for ( String k : missing ) {
                 mes.append( '\n' );

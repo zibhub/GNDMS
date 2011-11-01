@@ -18,6 +18,9 @@ package de.zib.firstrest.service;
 
 import de.zib.firstrest.domain.Foo;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 
@@ -36,4 +39,6 @@ public interface FooService {
     ResponseEntity<List<Foo>> allFoo();
 
     View savePerson( Foo foo );
+
+    ResponseEntity<String> postParam( @RequestParam String foo );
 }

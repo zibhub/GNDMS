@@ -49,7 +49,7 @@ import java.util.Calendar;
 public class TransformSliceAction extends AbstractModelEntityAction<Slice, Slice> {
 
 
-    private CreateSliceAction createSliceAction;
+    private final CreateSliceAction createSliceAction;
     private DirectoryAux directoryAux;
 
 

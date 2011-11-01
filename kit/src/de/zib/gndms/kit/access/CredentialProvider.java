@@ -42,5 +42,5 @@ public interface CredentialProvider {
      * Delivers the list of existing credentials.
      * @return A list of credentials which might be empty
      */
-    public List getCredentials( );
+    public List<?> getCredentials( );
 }

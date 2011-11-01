@@ -19,9 +19,11 @@ package de.zib.gndms.infra.system;
 
 
 import de.zib.gndms.infra.action.WSActionCaller;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 
@@ -34,7 +36,7 @@ import java.io.PrintWriter;
  *
  * Despite its name this class may still be useful in an non WS environment
  */
-public class WSMaintenance {
+public class WSMaintenance implements SystemHolder {
 
     private GNDMSystem system;
     private final static Logger log = LoggerFactory.getLogger( WSMaintenance.class );
@@ -88,9 +90,7 @@ public class WSMaintenance {
         WSActionCaller ac = (WSActionCaller) system.getActionCaller();
         ac.callPublicAction( cn, parms, printer );
         printer.close();
-        String res = os.toString();
-        // log.debug( "returning " + res );
-        return res;
+        return os.toString();
     }
 
     /**
@@ -98,12 +98,14 @@ public class WSMaintenance {
      * 
      * @return the GNDMSystem
      */
+    @NotNull
     public GNDMSystem getSystem() {
         return system;
     }
 
 
-    public void setSystem( final GNDMSystem system ) {
+    @Inject
+    public void setSystem( @NotNull final GNDMSystem system ) {
         this.system = system;
     }
 }

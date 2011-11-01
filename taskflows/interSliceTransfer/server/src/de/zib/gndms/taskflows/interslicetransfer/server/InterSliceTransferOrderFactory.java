@@ -18,6 +18,8 @@ package de.zib.gndms.taskflows.interslicetransfer.server;
 
 import de.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
 import de.zib.gndms.model.common.types.factory.InjectingRecursiveKeyFactory;
+import de.zib.gndms.taskflows.interslicetransfer.client.model.InterSliceTransferOrder;
+import de.zib.gndms.taskflows.interslicetransfer.server.logic.InterSliceTransferQuoteCalculator;
 
 
 /**
@@ -27,13 +29,17 @@ import de.zib.gndms.model.common.types.factory.InjectingRecursiveKeyFactory;
  * User: mjorra, Date: 04.11.2008, Time: 17:37:55
  */
 public class InterSliceTransferOrderFactory
-	  extends InjectingRecursiveKeyFactory<OfferType, AbstractOrderCalculator<?,?>> {
+	  // extends InjectingRecursiveKeyFactory<String, AbstractQuoteCalculator<InterSliceTransferOrder>> {
+{
 
-    @Override
-    public AbstractOrderCalculator<?, ?> newInstance(final OfferType keyParam)
+    public AbstractQuoteCalculator<InterSliceTransferOrder> newInstance(final String keyParam)
             throws IllegalAccessException, InstantiationException, ClassNotFoundException {
-	    final de.zib.gndms.GORFX.action.InterSliceTransferOrderCalculator orqCalculator = new InterSliceTransferORQCalculator();
+	    final InterSliceTransferQuoteCalculator orqCalculator = new InterSliceTransferQuoteCalculator();
 	    injectMembers(orqCalculator);
 	    return orqCalculator;
     }
+
+
+   private void injectMembers( InterSliceTransferQuoteCalculator orqCalculator ) {
+    } 
 }

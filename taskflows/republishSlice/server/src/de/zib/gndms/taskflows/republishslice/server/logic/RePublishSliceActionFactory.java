@@ -18,9 +18,9 @@ package de.zib.gndms.GORFX.action;
 
 
 
-import de.zib.gndms.logic.model.gorfx.OrderTaskAction;
+import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.model.common.types.factory.InjectingRecursiveKeyFactory;
-import de.zib.gndms.model.gorfx.OfferType;
+import de.zib.gndms.taskflows.republishslice.server.logic.RePublishSliceTaskAction;
 
 
 /**
@@ -30,9 +30,9 @@ import de.zib.gndms.model.gorfx.OfferType;
  * User: mjorra, Date: 04.11.2008, Time: 17:44:10
  */
 public class RePublishSliceActionFactory
-	  extends InjectingRecursiveKeyFactory<OfferType, OrderTaskAction<?>> {
+	  extends InjectingRecursiveKeyFactory<String, TaskFlowAction<?>> {
     @Override
-    public OrderTaskAction<?> newInstance(final OfferType keyParam)
+    public TaskFlowAction<?> newInstance(final String keyParam)
             throws IllegalAccessException, InstantiationException, ClassNotFoundException {
 	    final RePublishSliceTaskAction action = new RePublishSliceTaskAction();
 	    injectMembers(action);

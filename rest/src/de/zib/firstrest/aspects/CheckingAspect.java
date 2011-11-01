@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.DataOutput;
 
 /**
  * @author Maik Jorra
@@ -44,7 +43,8 @@ public class CheckingAspect {
 
         logger.debug( "*** looking up "+ fid );
         if ( dao.getFoo( fid ) == null )
-            throw new NoSuchTaskFlowTypeException( fid );
+            logger.debug( "*** "+ fid +" not found" );
+        //    throw new NoSuchTaskFlowTypeException( fid );
     }
 
 

@@ -64,9 +64,7 @@ public final class TxFrame {
      * {@code begin()} method on the transaction.
      */
 	public void begin() {
-		if (wasActive)
-			return;
-		else
+		if (! wasActive)
 			em.getTransaction().begin();
 	}
 

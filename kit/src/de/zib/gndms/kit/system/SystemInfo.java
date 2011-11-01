@@ -19,7 +19,7 @@ package de.zib.gndms.kit.system;
 
 
 import org.jetbrains.annotations.NotNull;
-import com.google.inject.Injector;
+import de.zib.gndms.stuff.GNDMSInjector;
 
 
 /**
@@ -51,5 +51,5 @@ public interface SystemInfo {
      *
      * @return the injector used with the GNDM System
      */
-	@NotNull Injector getSystemAccessInjector();
+	@NotNull GNDMSInjector getSystemAccessInjector();
 }

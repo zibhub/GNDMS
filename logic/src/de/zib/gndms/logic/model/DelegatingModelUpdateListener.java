@@ -75,7 +75,7 @@ public final class DelegatingModelUpdateListener<M extends ModelEntity & GridRes
         }
     }
 
-    private ModelUpdateListener<M> delegate;
+    private final ModelUpdateListener<M> delegate;
 
 
     /**

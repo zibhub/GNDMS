@@ -18,8 +18,8 @@ package de.zib.gndms.taskflows.filetransfer.client.tools;
 
 
 
-import de.zib.gndms.model.gorfx.types.FileTransferOrder;
 import de.zib.gndms.model.gorfx.types.io.OrderConverter;
+import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferOrder;
 
 /**
  * Implementation of OrderConverter to convert FileTransferOrder instances to a desired type,

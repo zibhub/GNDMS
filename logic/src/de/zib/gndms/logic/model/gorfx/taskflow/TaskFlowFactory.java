@@ -55,66 +55,76 @@ public interface TaskFlowFactory<O extends Order, C extends AbstractQuoteCalcula
      */
     C getQuoteCalculator();
 
-    /**
-     * @return A task info object.
-     * @brief Delivers information about the taskflow in general.
-     * <p/>
+    /** 
+     * @brief Delivers information about the taskflow in general. 
+     * 
      * The information should contain at least a description of the
      * task.
+     *
+     * @return A task info object.
      */
     TaskFlowInfo getInfo();
 
     /**
-     * @return A taskflow object.
      * @brief Creates a new taskflow instance.
-     * <p/>
+     *
      * The created task is registered in its factory.
+     *
+     * @return A taskflow object.
      */
     TaskFlow<O> create();
 
     /**
-     * @return A taskflow object.
      * @brief Creates a new taskflow instance.
-     * <p/>
+     *
      * The created task flow \bnot is registered in its factory.
+     *
+     * @return A taskflow object.
      */
     TaskFlow<O> createOrphan();
 
     /**
+     * @brief Adds an orphan task flow to the facotry.
+     *
      * @param taskflow The taskflow to add. Note the taskflow must have a unique id.
+     *
      * @return \c true if the taskflow was successfully added. If the task is already registered this will fail.
-     * @brief Adds an orphan task flow to the factory.
      */
     boolean adopt( TaskFlow<O> taskflow );
 
     /**
+     * @brief Finds an existing taskflow.
+     *
      * @param id The id of the taskflow.
      * @return The taskflow or null if it doesn't exist.
-     * @brief Finds an existing taskflow.
      */
     TaskFlow<O> find( String id );
 
     /**
-     * @param id The id of the taskflow.
      * @brief Removes a taskflow.
+     *
+     * @param id The id of the taskflow.
      */
     void delete( String id );
 
     /**
-     * @return The class of the taskflows order type.
      * @brief Delivers the class of the order type.
+     *
+     * @return The class of the taskflows order type.
      */
     Class<O> getOrderClass();
 
     /**
-     * @return The newly created action.
      * @brief Creates a task action.
+     *
+     * @return The newly created action.
      */
     TaskAction createAction();
 
     /**
-     * @return A list of taskflow keys or an empty list if it has no dependencies. Note it \b must \b not return null.
      * @brief Delivers a list of keys of taskflows, this taskflow depends on.
+     *
+     * @return A list of taskflow keys or an empty list if it has no dependencies. Note it \b must \b not return null.
      */
     Iterable<String> depends();
 

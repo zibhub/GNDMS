@@ -18,7 +18,7 @@ package de.zib.gndms.logic.action;
 
 
 
-import com.google.inject.Injector;
+import de.zib.gndms.stuff.GNDMSInjector;
 import de.zib.gndms.kit.access.GNDMSBinding;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,7 +48,7 @@ import java.util.concurrent.Executor;
 public abstract class AbstractAction<R> implements Action<R> {
 	private Action<?> parent;
 
-    private Injector injector;
+    private GNDMSInjector injector;
 
     /**
      * Will be invoked before {@code execute()} when this is submitted to an {@code Executor}.
@@ -191,12 +191,12 @@ public abstract class AbstractAction<R> implements Action<R> {
             throw new IllegalStateException("Overwriting the set parameter '\'" + parameterName + "' is not allowed");
     }
 
-    public void setInjector(Injector anInjector) {
+    public void setInjector(GNDMSInjector anInjector) {
         injector = anInjector;
     }
 
     @NotNull
-    public Injector getInjector() {
+    public GNDMSInjector getInjector() {
         if (injector == null) {
             final Action<?> theParent = getParent();
             if (theParent == null)

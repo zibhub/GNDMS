@@ -24,6 +24,7 @@ import java.util.Map;
  */
 public class NoSuchResourceException extends RuntimeException {
 
+    private static final long serialVersionUID = 8306742348320570202L;
     private Map<String,String> uriMap;
 
 

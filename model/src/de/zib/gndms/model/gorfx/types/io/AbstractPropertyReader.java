@@ -18,6 +18,9 @@ package de.zib.gndms.model.gorfx.types.io;
 
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Properties;
 
 /**
@@ -29,7 +32,8 @@ import java.util.Properties;
 public abstract class AbstractPropertyReader<M> extends AbstractPropertyIO {
 
     private M product;
-    private Class<? extends M> productClass;
+    private final Class<? extends M> productClass;
+    protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
     protected AbstractPropertyReader( Class<? extends M> productClass ) {
         this.productClass = productClass;
@@ -65,10 +69,8 @@ public abstract class AbstractPropertyReader<M> extends AbstractPropertyIO {
         try {
             return productClass.newInstance();
         } catch ( InstantiationException e ) {
-            e.printStackTrace();
 	        throw new RuntimeException(e);
         } catch ( IllegalAccessException e ) {
-            e.printStackTrace();
 	        throw new RuntimeException(e);
         }
     }

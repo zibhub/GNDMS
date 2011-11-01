@@ -117,11 +117,11 @@ public class SliceKindConfiguration implements Configuration {
 
 	@Override
 	public final String getStringRepresentation() {
-		StringBuilder s = new StringBuilder();
-		s.append(URI + " : '" + uri + "'; ");
-		s.append(PERMISSION + " : '" + permission.getAsString() + "'; ");
-		if (metasubspaces != null) {		
-			s.append(METASUBSPACES + " : '" + metasubspaces + "'; ");
+        StringBuilder s = new StringBuilder();
+        s.append( URI + " : '" ).append( uri ).append( "'; " );
+        s.append( PERMISSION + " : '" ).append( permission.getAsString() ).append( "'; " );
+		if (metasubspaces != null) {
+            s.append( METASUBSPACES + " : '" ).append( metasubspaces ).append( "'; " );
 		}
 		return s.toString();
 	}

@@ -18,30 +18,25 @@ package de.zib.gndms.infra.system;
 
 
 
+import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
-import com.google.inject.Binder;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Module;
+import de.zib.gndms.stuff.GNDMSInjector;
+import de.zib.gndms.stuff.GNDMSInjectorSpring;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import de.zib.gndms.kit.access.GNDMSBinding;
 import de.zib.gndms.kit.configlet.DefaultConfiglet;
-import de.zib.gndms.logic.access.TaskActionProvider;
 import de.zib.gndms.logic.model.gorfx.*;
-import de.zib.gndms.kit.access.InstanceProvider;
 import de.zib.gndms.model.common.ConfigletState;
 import de.zib.gndms.model.common.ModelUUIDGen;
-import de.zib.gndms.model.common.types.factory.IndustrialPark;
-import de.zib.gndms.model.common.types.factory.KeyFactory;
-import de.zib.gndms.model.common.types.factory.KeyFactoryInstance;
-import de.zib.gndms.model.common.types.factory.RecursiveKeyFactory;
 import de.zib.gndms.stuff.BoundInjector;
-import de.zib.gndms.kit.configlet.ConfigletProvider;
 import de.zib.gndms.kit.configlet.Configlet;
-import de.zib.gndms.kit.system.SystemInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
@@ -60,7 +55,7 @@ import java.util.Set;
 *
 *          User: stepn Date: 03.09.2008 Time: 16:50:06
 */
-public class GNDMSystemDirectory implements SystemDirectory, Module {
+public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
 
     private @NotNull final Logger logger = LoggerFactory.getLogger(GNDMSystemDirectory.class);
     private static final int INITIAL_CAPACITY = 32;
@@ -74,31 +69,36 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
     private final @NotNull Map<String, Object> instances;
 
 
-	private final Map<String, Configlet> configlets = Maps.newConcurrentHashMap();
+	private final Map<String, Configlet> configlets = ( new MapMaker() ).makeMap();
 
 	@SuppressWarnings({ "FieldCanBeLocal" })
 	private final Wrapper<Object> sysHolderWrapper;
 
-	private final @NotNull ModelUUIDGen uuidGen;
+    private final @NotNull BoundInjector boundInjector = new BoundInjector();
 
-
-	private final @NotNull BoundInjector boundInjector = new BoundInjector();
+    private GNDMSInjector injector;
 
 
 
 	@SuppressWarnings({ "ThisEscapedInObjectConstruction" })
 	GNDMSystemDirectory(
-	      final @NotNull String sysNameParam,
-	      final @NotNull ModelUUIDGen uuidGenParam,
-	      final Wrapper<Object> systemHolderWrapParam,
-	      final @NotNull Module sysModule) {
+        final @NotNull String sysNameParam,
+        final Wrapper<Object> systemHolderWrapParam )
+    {
         instances = new HashMap<String, Object>(INITIAL_CAPACITY);
         systemName = sysNameParam;
-		uuidGen = uuidGenParam;
-	    sysHolderWrapper = systemHolderWrapParam;
-		final Injector injector = Guice.createInjector(sysModule, this);
-		boundInjector.setInjector(injector);
-        GNDMSBinding.setDefaultInjector(injector);
+        sysHolderWrapper = systemHolderWrapParam;
+
+
+    }
+
+
+    @PostConstruct
+    void init () {
+
+        boundInjector.setInjector( injector );
+        GNDMSBinding.setDefaultInjector( injector );
+
     }
 
 
@@ -353,7 +353,7 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
      * it will return the value of the enviroment variable <tt>TMPDIR</tt> instead.
      * If also not denoted, "/tmp" will be returned.
      *
-     * @return the temp directory of the GNDMSystem according to enviroment variables
+     * @return the temp directory of the GNDMSystem according to environment variables
      */
 	@NotNull
 	@SuppressWarnings({ "HardcodedFileSeparator" })
@@ -371,22 +371,24 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
 	}
 
 
-   /**
-     * Binds certain classes to {@code this} or other corresponding instances
-     *
-     * @param binder binds several classe with certain fields.
-     */
-	public void configure(final @NotNull Binder binder) {
-		// binder.bind(EntityManagerFactory.class).toInstance();
-		binder.bind(BoundInjector.class).toInstance(boundInjector);
-		binder.bind(SystemDirectory.class).toInstance(this);
-		binder.bind( SystemInfo.class).toInstance(this);
-		binder.bind(InstanceProvider.class).toInstance(this);
-		binder.bind(TaskActionProvider.class).toInstance(this);
-		binder.bind(QuoteCalculatorProvider.class).toInstance(this);
-		binder.bind(ConfigletProvider.class).toInstance(this);
-		binder.bind(ModelUUIDGen.class).toInstance(uuidGen);
-	}
+// TODO test if this can be done with spring if yes remove
+//   /**
+//     * Binds certain classes to {@code this} or other corresponding instances
+//     *
+//     * @param binder binds several classe with certain fields.
+//     */
+//	public void configure(final @NotNull Binder binder) {
+//		// binder.bind(EntityManagerFactory.class).toInstance();
+//		binder.bind(BoundInjector.class).toInstance(boundInjector);
+//		binder.bind(SystemDirectory.class).toInstance(this);
+//		binder.bind( SystemInfo.class).toInstance(this);
+//		binder.bind(InstanceProvider.class).toInstance(this);
+//		binder.bind(ServiceHomeProvider.class).toInstance(this);
+//		binder.bind(TaskActionProvider.class).toInstance(this);
+//		binder.bind(ORQCalculatorProvider.class).toInstance(this);
+//		binder.bind(ConfigletProvider.class).toInstance(this);
+//		binder.bind(ModelUUIDGen.class).toInstance(uuidGen);
+//	}
 
     public final String DEFAULT_SUBGRID_NAME="gndms";
 
@@ -400,24 +402,14 @@ public class GNDMSystemDirectory implements SystemDirectory, Module {
     }
 
 
-    private static class OfferTypeIndustrialPark<T extends KeyFactoryInstance<String, T>>
-            extends IndustrialPark<String, String, T> {
-
-        private OfferTypeIndustrialPark(
-                final @NotNull
-                KeyFactory<String, RecursiveKeyFactory<String, T>> factoryParam) {
-            super(factoryParam);
-        }
-
-
-        @NotNull
-        @Override
-        public String mapKey(final @NotNull String keyParam) {
-            return keyParam;
-        }
+    @Override
+    public void setBeanFactory( BeanFactory beanFactory ) throws BeansException {
+        injector = new GNDMSInjectorSpring( beanFactory );
     }
 
-	public @NotNull Injector getSystemAccessInjector() {
+
+
+	public @NotNull GNDMSInjector getSystemAccessInjector() {
 		return boundInjector.getInjector();
 	}
 }

@@ -141,12 +141,12 @@ public class SubspaceConfiguration implements Configuration {
 
 	@Override
 	public final String getStringRepresentation() {
-		StringBuilder s = new StringBuilder();
-		s.append(PATH + " : '" + path + "'; ");
-		s.append(GSIFTPPATH + " : '" + gsiFtpPath + "'; ");
-		s.append(VISIBLE + " : '" + visible + "'; ");
-		s.append(SIZE + " : '" + size + "'; ");
-		s.append(MODE + " : '" + mode + "'; ");
+        StringBuilder s = new StringBuilder();
+        s.append( PATH + " : '" ).append( path ).append( "'; " );
+        s.append( GSIFTPPATH + " : '" ).append( gsiFtpPath ).append( "'; " );
+        s.append( VISIBLE + " : '" ).append( visible ).append( "'; " );
+        s.append( SIZE + " : '" ).append( size ).append( "'; " );
+        s.append( MODE + " : '" ).append( mode ).append( "'; " );
 		return s.toString();
 	}
 

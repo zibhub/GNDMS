@@ -60,6 +60,7 @@ import java.util.Map;
 /**
  * @author try ma ik jo rr a zib
  * @date 13.01.2011 15:17:47
+ *
  * @brief A controller for a REST taskflow resource which implements the
  * TaskFlowService interface.
  * <p/>
@@ -77,10 +78,10 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     // private ORQDao orqDao;
     private String serviceUrl; // inject or read from properties, this doesn't includes gorfx element
     private TaskFlowProvider taskFlowProvider;
-    private List<String> facetsNames = new ArrayList<String>( 7 );
+    private final List<String> facetsNames = new ArrayList<String>( 7 );
     private UriFactory uriFactory;
     private TaskClient taskClient;
-    private Logger logger = LoggerFactory.getLogger( this.getClass() );
+    private final Logger logger = LoggerFactory.getLogger( this.getClass() );
     private TaskExecutionService executorService;
     private TaskServiceAux taskServiceAux;
     private Dao dao;

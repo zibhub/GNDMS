@@ -146,8 +146,8 @@ public class SliceKindServiceImpl implements SliceKindService {
 
 	@Override
 	@RequestMapping(value = "/_{subspace}/_{sliceKind}", method = RequestMethod.PUT)
-	public final ResponseEntity<Void> createSliceKind(final String subspace,
-			final String sliceKind, final Configuration config, final String dn) {
+	public final ResponseEntity<Void> createSliceKind(final @PathVariable String subspace,
+			final @PathVariable String sliceKind, final Configuration config, final String dn) {
 		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, dn);
 		
 		try {

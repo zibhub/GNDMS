@@ -18,7 +18,9 @@ package de.zib.gndms.taskflows.republishslice.server;
 
 
 
+import de.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
 import de.zib.gndms.model.common.types.factory.InjectingRecursiveKeyFactory;
+import de.zib.gndms.taskflows.republishslice.server.logic.RePublishSliceQuoteCalculator;
 
 
 /**
@@ -28,13 +30,17 @@ import de.zib.gndms.model.common.types.factory.InjectingRecursiveKeyFactory;
  * User: mjorra, Date: 04.11.2008, Time: 17:37:55
  */
 public class RePublishSliceTaskFlowFactory
-	  extends InjectingRecursiveKeyFactory<OfferType, AbstractQuotealculator<?,?>> {
+{
+	  // extends InjectingRecursiveKeyFactory<OfferType, AbstractQuotealculator<?,?>> {
 
-    @Override
-    public AbstractQuotealculator<?, ?> newInstance(final OfferType keyParam)
+    public AbstractQuoteCalculator<?> newInstance(final String keyParam)
             throws IllegalAccessException, InstantiationException, ClassNotFoundException {
-	    final RePublishSliceQuotealculator sliceQuotealculator = new RePublishSliceQuotealculator();
+	    final RePublishSliceQuoteCalculator sliceQuotealculator = new RePublishSliceQuoteCalculator();
 	    injectMembers(sliceQuotealculator);
 	    return sliceQuotealculator;
     }
+
+
+   private void injectMembers( RePublishSliceQuoteCalculator sliceQuotealculator ) {
+    } 
 }

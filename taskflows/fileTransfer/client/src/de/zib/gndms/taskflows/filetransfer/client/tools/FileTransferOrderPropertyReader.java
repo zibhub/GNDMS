@@ -18,10 +18,10 @@ package de.zib.gndms.taskflows.filetransfer.client.tools;
 
 
 
-import de.zib.gndms.model.gorfx.types.FileTransferOrder;
 import de.zib.gndms.model.gorfx.types.io.OrderPropertyReader;
 import de.zib.gndms.model.gorfx.types.io.PropertyReadWriteAux;
 import de.zib.gndms.model.gorfx.types.io.SfrProperty;
+import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferOrder;
 
 import java.util.Properties;
 import java.util.TreeMap;

@@ -30,4 +30,9 @@ public class DSpaceBindingUtils {
         // todo use a slice client to acquire the path
         return null;  // Implement Me. Pretty Please!!!
     }
+
+
+    public static void destroySlice( SliceRef destinationSlice ) {
+        // Implement Me. Pretty Please!!!
+    }
 }
