@@ -77,6 +77,9 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
     @ConfigOption(descr="Maximum storage size available in this subspace")
     private Long size;
 
+    public SetupSubspaceAction() {
+		super();
+    }
 
   public SetupSubspaceAction(SubspaceConfiguration subspaceConfig) {
 		super();

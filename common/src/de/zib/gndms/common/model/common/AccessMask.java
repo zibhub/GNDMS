@@ -156,7 +156,7 @@ public class AccessMask implements Serializable {
         /**
          * Returns an {@code AccessFlags} with the flags set as intended by the bit {@code mask}.
          * 
-         * @param mask the bitmask containg the settings for the access configuration.
+         * @param mask the bit mask containing the settings for the access configuration.
          * @return an {@code AccessFlags} with the flags set as intended by the bit {@code mask}.
          */
         public static AccessFlags flagsForMask( final int mask ) {
@@ -324,11 +324,13 @@ public class AccessMask implements Serializable {
     }
 
     /**
-     * TODO.
+     * Checks whether at least one of the given access values is set by the corresponding ugo in the access mask.
+     * This method is especially useful for access flags read, write, or execute, then it returns true if the 
+     * corresponding access is granted by the flag.
      * 
      * @param ugo The ugo rights.
-     * @param flag The flags.
-     * @return .
+     * @param flag The access flag.
+     * @return true, if at least one access right of the flag is granted, otherwise false.
      */
     public final boolean queryFlagsOn( final Ugo ugo, final AccessFlags flag ) {
 
@@ -336,18 +338,19 @@ public class AccessMask implements Serializable {
     }
 
     /**
-     * TODO.
+    * Checks whether none of the given access values is set by the corresponding ugo in the access mask.
+     * @see queryFlagsOn
      * 
      * @param ugo The ugo rights.
-     * @param flag The flag.
-     * @return .
+     * @param flag The access flag.
+     * @return true, if no access right of the flag is granted, otherwise false.
      */
     public final boolean queryFlagsOff( final Ugo ugo, final AccessFlags flag ) {
         return !queryFlagsOn( ugo, flag );
     }
 
     /**
-     * TODO.
+     * Adds the access rights of the given flag to the corresponding ugo of the access mask.
      * 
      * @param ugo The ugo rights.
      * @param flag The flag.
@@ -360,7 +363,7 @@ public class AccessMask implements Serializable {
     }
 
     /**
-     * TODO.
+     * Deletes the access rights of the given flag to the corresponding ugo of the access mask.
      * 
      * @param ugo The ugo rights.
      * @param flag The flag.
