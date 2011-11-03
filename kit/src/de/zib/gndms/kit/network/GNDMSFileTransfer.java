@@ -19,16 +19,26 @@ package de.zib.gndms.kit.network;
 
 
 import de.zib.gndms.model.gorfx.FTPTransferState;
-import org.globus.ftp.*;
+import org.apache.log4j.Logger;
+import org.globus.ftp.ByteRangeList;
+import org.globus.ftp.FileInfo;
+import org.globus.ftp.GridFTPClient;
+import org.globus.ftp.GridFTPRestartMarker;
+import org.globus.ftp.GridFTPSession;
+import org.globus.ftp.MarkerListener;
+import org.globus.ftp.Session;
 import org.globus.ftp.exception.ClientException;
 import org.globus.ftp.exception.ServerException;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -38,6 +48,10 @@ import java.util.Vector;
  * User: mjorra, Date: 30.09.2008, Time: 13:02:37
  */
 public class GNDMSFileTransfer {
+
+    protected final Logger logger = Logger.getLogger( this.getClass() );
+
+    public static final String ELLIPSE = Pattern.quote( "..." );
 
     private GridFTPClient sourceClient;
     private GridFTPClient destinationClient;
@@ -105,8 +119,12 @@ public class GNDMSFileTransfer {
             if( sourcePath != null )
                 sourceClient.changeDir( sourcePath );
 
-            if( files == null || files.size( ) == 0  )
-                fetchFileListing();
+            if( files == null || files.size( ) == 0 )
+                files = fetchFileListing( null );
+            else if( hasEllipse( files ) ) {
+                logger.debug( "Ellipse detected, using awesome new feature." );
+                files = fetchFileListing( makeFileFilter() );
+            }
         } catch ( ServerException ex ) {
             ex.setCustomMessage( enrichExceptionMsg( ex.getMessage() ) );
             throw ex;
@@ -121,13 +139,49 @@ public class GNDMSFileTransfer {
     }
 
 
+    public Pattern makeFileFilter() {
+
+        StringBuilder sb = new StringBuilder( "^(" );
+        String endE = ELLIPSE + "$";
+        String last = null;
+
+        for ( String f : files.keySet() ) {
+
+            if( last != null ) {
+                sb.append( "|" );
+            }
+
+            if ( f.endsWith( ELLIPSE ) )
+                sb.append( f.replaceFirst( endE, ".*" ) );
+            else
+                sb.append( f );
+
+            last = f;
+        }
+
+        sb = new StringBuilder( "^)" );
+
+        return Pattern.compile( sb.toString() );
+    }
+
+
+    private boolean hasEllipse( TreeMap<String, String> files ) {
+
+        for( String f: files.keySet() )
+            if( f.endsWith( ELLIPSE ) )
+                return true;
+
+        return false;
+    }
+
+
     /**
      * Estimates the size of a prepared download or transfer.
      * @return The size in byte.
      */
     public long estimateTransferSize( ) throws IOException, ServerException, ClientException {
 
-        String nm = null;
+        String lastFileName = null; // required for nice exceptions names
         try {
             prepareTransfer( );
 
@@ -136,21 +190,21 @@ public class GNDMSFileTransfer {
             Set<String> src = files.keySet();
             long size = 0;
 
-            for( String s : src ) {
+            for ( String aSrc : src ) {
                 // todo evaluate usage of msld command
-                nm = s;
-                size += sourceClient.getSize( s );
+                lastFileName = aSrc;
+                size += sourceClient.getSize( lastFileName );
             }
 
             return size;
         } catch ( ServerException ex ) {
-            ex.setCustomMessage( enrichExceptionMsg( ex.getMessage(), nm ) );
+            ex.setCustomMessage( enrichExceptionMsg( ex.getMessage(), lastFileName ) );
             throw ex;
         } catch ( ClientException ex ) {
-            ex.setCustomMessage( enrichExceptionMsg( ex.getMessage(), nm ) );
+            ex.setCustomMessage( enrichExceptionMsg( ex.getMessage(), lastFileName ) );
             throw ex;
         } catch ( IOException ex ) {
-            IOException ioe = new IOException( enrichExceptionMsg( ex.getMessage(), nm ) );
+            IOException ioe = new IOException( enrichExceptionMsg( ex.getMessage(), lastFileName ) );
             ioe.setStackTrace( ex.getStackTrace() );
             throw ioe;
         }
@@ -174,7 +228,7 @@ public class GNDMSFileTransfer {
      */
     public void performPersistentTransfer( @NotNull PersistentMarkerListener plist ) throws ServerException, IOException, ClientException {
 
-        String nm = null;
+        String currentFile = null;
         try {
             prepareTransfer( );
 
@@ -190,30 +244,32 @@ public class GNDMSFileTransfer {
 
             // todo beautify the code below
             boolean resume = plist.hasCurrentFile();
-            String  rfn = plist.getCurrentFile();
+            String  resumeFile = plist.getCurrentFile();
 
-            Set<String> keys = files.keySet();
-            for( String fn : keys ) {
-                nm = fn;
-                if( resume && fn.equals( rfn ) ) {
+            for( String fn : files.keySet() ) {
+                currentFile = fn;
+
+                // if transfer is resumed skip files til last transferred file is found.
+                if( resume && currentFile.equals( resumeFile ) ) {
                     resume = false;
                     resumeSource( plist.getTransferState() );
                 }
 
                 if( !resume ) {
-                    plist.setCurrentFile( fn );
-                    String dfn = files.get( fn );
-                    sourceClient.extendedTransfer( fn, destinationClient, ( dfn == null ? fn : dfn ), plist );
+                    plist.setCurrentFile( currentFile );
+                    String destinationFile = files.get( currentFile );
+                    sourceClient.extendedTransfer( currentFile, destinationClient,
+                        ( destinationFile == null ? currentFile : destinationFile ), plist );
                 }
             }
         } catch ( ServerException ex ) {
-            ex.setCustomMessage( enrichExceptionMsg( ex.getMessage(), nm ) );
+            ex.setCustomMessage( enrichExceptionMsg( ex.getMessage(), currentFile ) );
             throw ex;
         } catch ( ClientException ex ) {
-            ex.setCustomMessage( enrichExceptionMsg( ex.getMessage(), nm ) );
+            ex.setCustomMessage( enrichExceptionMsg( ex.getMessage(), currentFile ) );
             throw ex;
         } catch ( IOException ex ) {
-            IOException ioe = new IOException( enrichExceptionMsg( ex.getMessage(), nm ) );
+            IOException ioe = new IOException( enrichExceptionMsg( ex.getMessage(), currentFile ) );
             ioe.setStackTrace( ex.getStackTrace() );
             throw ioe;
         }
@@ -299,15 +355,28 @@ public class GNDMSFileTransfer {
     }
 
     
-    private void fetchFileListing( ) throws ClientException, ServerException, IOException {
+    private TreeMap<String,String> fetchFileListing( Pattern pattern ) throws ClientException, ServerException, IOException {
 
-        files = new TreeMap<String,String>( );
+        if( pattern != null )
+            logger.debug( "with pattern: " + pattern.pattern() );
+
+        TreeMap<String,String> listing = new TreeMap<String,String>( );
         Vector<FileInfo> inf = sourceClient.list( );
         for( FileInfo fi: inf ) {
             if( fi.isFile() ) {
-                files.put( fi.getName(), null );
+
+                if( pattern != null ) {
+                    Matcher matcher = pattern.matcher( fi.getName() );
+                    if(! matcher.matches() )
+                        continue;
+                }
+
+                logger.debug( "adding file: " + fi.getName() );
+                listing.put( fi.getName(), null );
             }
         }
+
+        return listing;
     }
 
 

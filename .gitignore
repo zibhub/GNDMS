@@ -72,6 +72,11 @@ lib/kit/*
 lib/gndmc/*
 lib/infra/*
 lib/logic/*
+lib/common/*
+lib/gndmc-rest/*
+lib/gorfx/*
+lib/dspace/*
+lib/gndms/*
 */resources/META-INF/GNDMS-RELEASE
 */resources/META-INF/GNDMS-BUILD-INFO
 */resources/META-INF/LICENSE
