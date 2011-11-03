@@ -161,7 +161,7 @@ public class GNDMSFileTransfer {
             last = f;
         }
 
-        sb = new StringBuilder( ")" );
+        sb.append( ")" );
 
         return Pattern.compile( sb.toString() );
     }
