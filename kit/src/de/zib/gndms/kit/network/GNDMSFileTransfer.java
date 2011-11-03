@@ -52,6 +52,7 @@ public class GNDMSFileTransfer {
     protected final Logger logger = Logger.getLogger( this.getClass() );
 
     public static final String ELLIPSE = Pattern.quote( "..." );
+    protected final Pattern ellipse = Pattern.compile( "(.*)"+ ELLIPSE + "$" );
 
     private GridFTPClient sourceClient;
     private GridFTPClient destinationClient;
@@ -142,7 +143,6 @@ public class GNDMSFileTransfer {
     public Pattern makeFileFilter() {
 
         StringBuilder sb = new StringBuilder( "^(" );
-        String endE = ELLIPSE + "$";
         String last = null;
 
         for ( String f : files.keySet() ) {
@@ -151,15 +151,17 @@ public class GNDMSFileTransfer {
                 sb.append( "|" );
             }
 
-            if ( f.endsWith( ELLIPSE ) )
-                sb.append( f.replaceFirst( endE, ".*" ) );
-            else
+            Matcher matcher = ellipse.matcher( f );
+            if ( matcher.matches() ) {
+                sb.append( matcher.group( 1 ) );
+                sb.append( ".*" );
+            } else
                 sb.append( f );
 
             last = f;
         }
 
-        sb = new StringBuilder( "^)" );
+        sb = new StringBuilder( ")" );
 
         return Pattern.compile( sb.toString() );
     }
@@ -168,7 +170,7 @@ public class GNDMSFileTransfer {
     private boolean hasEllipse( TreeMap<String, String> files ) {
 
         for( String f: files.keySet() )
-            if( f.endsWith( ELLIPSE ) )
+            if( ellipse.matcher( f ).matches() )
                 return true;
 
         return false;
@@ -366,8 +368,7 @@ public class GNDMSFileTransfer {
             if( fi.isFile() ) {
 
                 if( pattern != null ) {
-                    Matcher matcher = pattern.matcher( fi.getName() );
-                    if(! matcher.matches() )
+                    if(! pattern.matcher( fi.getName() ).matches() )
                         continue;
                 }
 
@@ -388,7 +389,7 @@ public class GNDMSFileTransfer {
     private String enrichExceptionMsg( String msg, String fn ) {
 
         StringWriter nmsg = new StringWriter(  );
-        nmsg.write( "Tansfer" );
+        nmsg.write( "Transfer" );
         if( fn != null ) {
             nmsg.write( " with file " +fn );
         }
@@ -401,7 +402,7 @@ public class GNDMSFileTransfer {
             printWithNull( destinationClient )
                  + printWithNull( destinationPath ) );
 
-        nmsg.write( "\nan Exception occured: " + msg );
+        nmsg.write( "\nan Exception occurred: " + msg );
 
         return nmsg.toString( );
     }
