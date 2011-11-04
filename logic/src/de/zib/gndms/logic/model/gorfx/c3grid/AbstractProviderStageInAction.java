@@ -34,7 +34,6 @@ import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.model.gorfx.types.AbstractOrder;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.model.gorfx.types.ProviderStageInOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;
@@ -64,8 +63,8 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
 
 	protected ParmFormatAux parmAux = new ParmFormatAux();
 
-    public AbstractProviderStageInAction() {
-        super();
+    protected AbstractProviderStageInAction( String offerTypeId ) {
+        super( offerTypeId );
     }
 
 

@@ -18,12 +18,9 @@ package de.zib.gndms.logic.model.gorfx;
 
 
 
+import de.zib.gndms.common.model.gorfx.types.AbstractOrder;
 import de.zib.gndms.kit.access.CredentialProvider;
-import de.zib.gndms.kit.access.RequiresCredentialProvider;
 import de.zib.gndms.logic.model.DefaultTaskAction;
-import de.zib.gndms.model.common.types.factory.KeyFactory;
-import de.zib.gndms.model.common.types.factory.KeyFactoryInstance;
-import de.zib.gndms.model.gorfx.types.AbstractOrder;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.Dao;
@@ -45,17 +42,16 @@ import java.util.Map;
  *
  *          User: stepn Date: 02.10.2008 Time: 13:00:56
  */
-public abstract class TaskFlowAction<K extends AbstractOrder> extends DefaultTaskAction
-    implements KeyFactoryInstance<String, TaskFlowAction<?>>, RequiresCredentialProvider
-{
-    private KeyFactory<String, TaskFlowAction<?>> factory;
+public abstract class TaskFlowAction<K extends AbstractOrder> extends DefaultTaskAction {
+
     private String offerTypeId;
     private CredentialProvider credentialProvider;
     private DelegatingOrder<K> order;
 
 
-    protected TaskFlowAction() {
+    protected TaskFlowAction( String offerTypeId ) {
         super();
+        this.offerTypeId = offerTypeId;
     }
 
 
@@ -83,11 +79,6 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends DefaultTas
     }
 
 
-    public KeyFactory<String, TaskFlowAction<?>> getFactory() {
-        return factory;
-    }
-
-
     public String getOfferTypeId() {
         return offerTypeId;
     }
@@ -102,10 +93,6 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends DefaultTas
             return configMapData;
         }
         finally { session.success(); }
-    }
-
-    public void setFactory(@NotNull final KeyFactory<String, TaskFlowAction<?>> factoryParam) {
-        factory = factoryParam;
     }
 
 

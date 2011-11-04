@@ -47,8 +47,8 @@ public class ProviderStageInTaskFlowFactory
 
     public ProviderStageInTaskFlowFactory( ) {
         // todo problem ExternalProvider.. is to concrete AbstractProvider.. would be better
-        setCalculatorClass( ExternalProviderStageInQuoteCalculator.class );
-        setOrderClass( ProviderStageInOrder.class );
+        super( ProviderStageInMeta.PROVIDER_STAGING_KEY, ExternalProviderStageInQuoteCalculator.class,
+            ProviderStageInOrder.class );
     }
 
     @Override
@@ -87,6 +87,14 @@ public class ProviderStageInTaskFlowFactory
 
     @Override
     public TaskAction createAction() {
+        /*
+        final @NotNull MapConfig config = new MapConfig(getDao().getTaskFlowTypeConfig( offerType ));
+	    final Class<? extends AbstractProviderStageInAction> instanceClass = config.getClassOption(
+		      AbstractProviderStageInAction.class, "stagingClass",
+		      ExternalProviderStageInAction.class);
+	    final AbstractProviderStageInAction newInstance = instanceClass.newInstance();
+	    injectMembers(newInstance);
+	    */
         return null;  // todo check which action to create
     }
 }

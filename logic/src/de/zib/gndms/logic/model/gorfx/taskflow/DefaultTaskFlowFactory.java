@@ -19,6 +19,7 @@ package de.zib.gndms.logic.model.gorfx.taskflow;
 import de.zib.gndms.common.model.gorfx.types.Order;
 import de.zib.gndms.common.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
+import de.zib.gndms.logic.model.gorfx.c3grid.AbstractProviderStageInAction;
 import de.zib.gndms.model.common.repository.Dao;
 import de.zib.gndms.model.common.repository.TransientDao;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
@@ -55,6 +56,13 @@ public abstract class DefaultTaskFlowFactory<O extends Order, C extends Abstract
             return id;
         }
     };
+
+
+    protected DefaultTaskFlowFactory( String taskFlowKey, Class<C> calculatorClass, Class<O> orderClass ) {
+        this.taskFlowKey = taskFlowKey;
+        this.calculatorClass = calculatorClass;
+        this.orderClass = orderClass;
+    }
 
 
     @Override
@@ -163,6 +171,10 @@ public abstract class DefaultTaskFlowFactory<O extends Order, C extends Abstract
     }
 
 
+    protected void injectMembers( AbstractProviderStageInAction newInstance ) {
+    }
+
+
     // i'd love to put this class in the factories interface where it belongs,
     // but thanks to poor design of the java language this is not possible...
     protected static class CreatableTaskFlow<O extends Order> extends TaskFlow<O> {
@@ -179,20 +191,5 @@ public abstract class DefaultTaskFlowFactory<O extends Order, C extends Abstract
         public void setId( String id ) {
             super.setId( id );
         }
-    }
-
-
-    protected void setTaskFlowKey( String taskFlowKey ) {
-        this.taskFlowKey = taskFlowKey;
-    }
-
-
-    protected void setCalculatorClass( Class<C> calculatorClass ) {
-        this.calculatorClass = calculatorClass;
-    }
-
-
-    protected void setOrderClass( Class<O> orderClass ) {
-        this.orderClass = orderClass;
     }
 }

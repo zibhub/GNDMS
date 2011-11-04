@@ -32,14 +32,10 @@ import java.util.List;
  */
 public class DummyQuoteCalculator extends AbstractQuoteCalculator<DummyOrder> {
 
-    private DummyOrder order;
 
-    public void setOrder( DummyOrder order ) {
-        this.order = order;
-    }
-
-
+    @Override
     public boolean validate() {
+        DummyOrder order = getOrderBean();
         return order!= null
             && order.getDelay() > 0
             && order.getMessage() != null
@@ -48,13 +44,14 @@ public class DummyQuoteCalculator extends AbstractQuoteCalculator<DummyOrder> {
     }
 
 
+    @Override
     public List<Quote> createQuotes() throws UnsatisfiableOrderException {
 
         if(! validate() )
             throw new UnsatisfiableOrderException( );
 
         final Quote q = new Quote();
-        Duration d = new Duration( order.getTimes() * order.getDelay() );
+        Duration d = new Duration( getOrderBean().getTimes() * getOrderBean().getDelay() );
         q.setDeadline( FutureTime.atOffset( d ) );
         FutureTime rv = FutureTime.atOffset( d.plus( 10 * 1000 * 60 ) );
         q.setResultValidity( rv );
@@ -64,6 +61,7 @@ public class DummyQuoteCalculator extends AbstractQuoteCalculator<DummyOrder> {
     }
 
 
+    @Override
     public List<Quote> createQuotes( Quote preferred ) throws UnsatisfiableOrderException {
 
         List<Quote> rl = createQuotes();

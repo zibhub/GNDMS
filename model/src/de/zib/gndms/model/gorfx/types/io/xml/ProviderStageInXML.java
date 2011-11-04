@@ -18,8 +18,8 @@ package de.zib.gndms.model.gorfx.types.io.xml;
 
 
 
+import de.zib.gndms.common.model.gorfx.types.AbstractOrder;
 import de.zib.gndms.common.model.gorfx.types.Quote;
-import de.zib.gndms.model.gorfx.types.AbstractOrder;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -40,6 +40,7 @@ import java.util.Properties;
 
 
 /**
+ * @deprecated
  * <p>An Action to create new {@link de.zib.gndms.neomodel.gorfx.TaskFlowType} instances and store them in the database.
  *
  * <p>Depending on the chosen <tt>SetupMode</tt>, it will either create or update an {@code OfferType} entity by using the getter methods
@@ -81,8 +82,8 @@ public class SetupTaskFlowAction extends SetupAction<ConfigActionResult> {
     //@ConfigOption(altName = "class", descr="FQN of TaskAction class for this TaskFlowType")
     //private Class<? extends TaskAction<?>> taskActionClass;
 
-    @ConfigOption(descr="FQN of TaskAction factory class")
-    private Class<KeyFactory<String, TaskFlowAction<?>>> taskActionFactory;
+   // @ConfigOption(descr="FQN of TaskAction factory class")
+   // private Class<KeyFactory<String, TaskFlowAction<?>>> taskActionFactory;
 
     @ConfigOption(descr = "File from which the initial config should be read; UPDATE will overwrite!")
     private String configFile;
@@ -103,7 +104,7 @@ public class SetupTaskFlowAction extends SetupAction<ConfigActionResult> {
                     requireParameter("orqType", orqType);
                     requireParameter("resType", resType);
                     requireParameter("calcFactory", calcFactory);
-                    requireParameter("taskAction", taskActionFactory);
+ //                   requireParameter("taskAction", taskActionFactory);
                 default:
             }
         }
@@ -132,8 +133,8 @@ public class SetupTaskFlowAction extends SetupAction<ConfigActionResult> {
             setResType(getISNOption("resType"));
         if (calcFactory == null && hasOption("calcFactory"))
             setCalcFactory((Class)Class.forName(getOption("calcFactory")));
-        if (taskActionFactory == null && hasOption("taskActionFactory"))
-            setTaskActionFactory((Class)Class.forName(getOption("taskActionFactory")));
+       // if (taskActionFactory == null && hasOption("taskActionFactory"))
+       //     setTaskActionFactory((Class)Class.forName(getOption("taskActionFactory")));
     }
 
     /**
@@ -216,8 +217,8 @@ public class SetupTaskFlowAction extends SetupAction<ConfigActionResult> {
         final @NotNull TaskFlowType type = session.findTaskFlowType( getOfferType() );
         if (calcFactory != null)
             type.setCalculatorFactoryClassName(calcFactory.getCanonicalName());
-        if (taskActionFactory != null)
-            type.setTaskActionFactoryClassName(taskActionFactory.getCanonicalName());
+     //   if (taskActionFactory != null)
+     //       type.setTaskActionFactoryClassName(taskActionFactory.getCanonicalName());
         if (orqType != null)
             type.setTaskFlowArgumentType( orqType );
         if (resType != null)
@@ -237,7 +238,7 @@ public class SetupTaskFlowAction extends SetupAction<ConfigActionResult> {
         final TaskFlowType type = session.createTaskFlowType();
         type.setTaskFlowTypeKey( getOfferType() );
         type.setCalculatorFactoryClassName(getCalcFactory().getCanonicalName());
-        type.setTaskActionFactoryClassName(getTaskActionFactory().getCanonicalName());
+        //type.setTaskActionFactoryClassName(getTaskActionFactory().getCanonicalName());
         type.setTaskFlowArgumentType( orqType );
         type.setTaskFlowResultType( resType );
         pushConfigProps(type);
@@ -316,6 +317,7 @@ public class SetupTaskFlowAction extends SetupAction<ConfigActionResult> {
     }
 
 
+    /*
     public Class<KeyFactory<String, TaskFlowAction<?>>> getTaskActionFactory() {
         return taskActionFactory;
     }
@@ -325,4 +327,5 @@ public class SetupTaskFlowAction extends SetupAction<ConfigActionResult> {
             final Class<KeyFactory<String, TaskFlowAction<?>>> taskActionFactoryParam) {
         taskActionFactory = taskActionFactoryParam;
     }
+    */
 }

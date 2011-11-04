@@ -1,7 +1,7 @@
 package de.zib.gndms.model.gorfx.repository;
 
+import de.zib.gndms.common.model.gorfx.types.AbstractOrder;
 import de.zib.gndms.model.common.repository.QueuedTransientDao;
-import de.zib.gndms.model.gorfx.types.AbstractOrder;
 /*
  * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *

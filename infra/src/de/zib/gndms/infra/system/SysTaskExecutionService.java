@@ -15,20 +15,15 @@ package de.zib.gndms.infra.system;
  * limitations under the License.
  */
 
-import de.zib.gndms.logic.action.LogAction;
 import de.zib.gndms.logic.model.*;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.neomodel.common.Dao;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.slf4j.Logger;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceUnit;
 import java.util.UUID;
 import java.util.concurrent.*;
@@ -37,7 +32,7 @@ import java.util.concurrent.*;
  * A SysTaskExecutionService submits {@link EntityAction}s to an {@link ExecutorService}.
  *
  * Before the action is submitted to the executor, using a suitable {@code submitAction(..)} method,
- * {@link #submit_(de.zib.gndms.logic.model.EntityAction, org.slf4j.Logger)} will automatically
+ * {@link #submit_(de.zib.gndms.logic.model.EntityAction} will automatically
  * prepare the action using certain setters.
  *
  * When the executor is shutted down, using {@link #shutdown()},
@@ -108,40 +103,37 @@ public final class SysTaskExecutionService implements TaskExecutionService, Thre
     }
 
 
-    public final @NotNull <R> Future<R> submitAction(final @NotNull EntityAction<R> action, final Logger log) {
+    public final @NotNull <R> Future<R> submitAction( final @NotNull EntityAction<R> action ) {
         final EntityManager ownEm = action.getOwnEntityManager();
         if (ownEm != null)
-            return submit_(action, log);
+            return submit_(action );
         else {
             final @NotNull EntityManager em = entityManagerFactory.createEntityManager();
-            return submitAction(em, action, log);
+            return submitAction(em, action );
         }
     }
 
-    public final @NotNull <R> Future<R> submitDaoAction(final @NotNull ModelDaoAction<?, R> action,
-                                                        final Logger log) {
+    public final @NotNull <R> Future<R> submitDaoAction( final @NotNull ModelDaoAction<?, R> action ) {
         final Dao dao = action.getOwnDao();
         if (dao != null)
-            return submitAction(action, log);
+            return submitAction(action );
         else {
             action.setOwnDao( getDao() );
-            return submitAction(action, log);
+            return submitAction(action );
         }
     }
 
     @SuppressWarnings({ "FeatureEnvy" })
-    public @NotNull <R> Future<R> submitAction(final @NotNull EntityManager em,
-                                               final @NotNull EntityAction<R> action,
-                                               final Logger log) {
-        return submit_(action, log);
+    public @NotNull <R> Future<R> submitAction( final @NotNull EntityManager em,
+                                                final @NotNull EntityAction<R> action ) {
+        return submit_(action );
     }
 
-    public @NotNull <R> Future<R> submitDaoAction(final @NotNull EntityManager em,
-                                                  final @NotNull Dao dao,
-                                                  final @NotNull ModelDaoAction<?, R> action,
-                                                  final Logger log) {
+    public @NotNull <R> Future<R> submitDaoAction( final @NotNull EntityManager em,
+                                                   final @NotNull Dao dao,
+                                                   final @NotNull ModelDaoAction<?, R> action ) {
         action.setOwnDao( dao );
-        return submitAction(em, action, log);
+        return submitAction(em, action );
     }
 
 
@@ -151,7 +143,6 @@ public final class SysTaskExecutionService implements TaskExecutionService, Thre
      * <p>
      * If {@code action} is a
      * <ul>
-     *  <li>{@link LogAction}, its logger will be set to {@code log} </li>
      *  <li>{@link SystemHolder}, the GNDMSystem ({@code GNDMSystem.this}) will be stored</li>
      *  <li>{@link AbstractEntityAction}, its UUID generator will be set to {@link GNDMSystem#uuidGenDelegate}</li>
      *  <li>{@link TaskAction}, its service will be set to {@code this}.</li>
@@ -162,18 +153,12 @@ public final class SysTaskExecutionService implements TaskExecutionService, Thre
      * If {@code action} does not already have listerns for the postponed actions,
      * they are set to {@link GNDMSystem#getEntityUpdateListener()}.
      *
+     *
      * @param action the EntityAction which should be executed
-     * @param log A logger, which can be added to the action, if it's a LogAction
-     * @param <R> the return type of the action
      * @return A Future Object holding the result of action's computation
      */
     @SuppressWarnings({ "FeatureEnvy" })
-    private <R> Future<R> submit_(final EntityAction<R> action, final Logger log) {
-        if (action instanceof LogAction )
-            if ( log != null )
-                ((LogAction)action).setLogger(log);
-            else
-                ((LogAction)action).setLogger( LoggerFactory.getLogger( action.getClass() ) );
+    private <R> Future<R> submit_( final EntityAction<R> action ) {
 
         if (action instanceof SystemHolder)
             ((SystemHolder)action).setSystem( system );

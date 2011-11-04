@@ -18,8 +18,6 @@ package de.zib.gndms.taskflows.dummy;
  */
 
 
-import de.zib.gndms.common.model.gorfx.types.DefaultTaskStatus;
-import de.zib.gndms.common.model.gorfx.types.TaskStatus;
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.Dao;
@@ -47,79 +45,64 @@ public class DummyTFAction extends TaskFlowAction<DummyOrder> {
 
 
     public DummyTFAction() {
+        super( DummyTaskFlowMeta.TASK_FLOW_KEY );
     }
 
 
     public DummyTFAction( @NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model ) {
+
         super( em, dao, model );
+        setKey( DummyTaskFlowMeta.TASK_FLOW_KEY );
     }
 
 
-    public void onInit( ) throws Exception {
+    @Override
+    protected void onCreated( @NotNull String wid, @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState ) throws Exception {
 
+        if( !isRestartedTask ) {
             final Session session = getDao().beginSession();
             try {
 
                 Task task = getTask( session );
-                DefaultTaskStatus stat = new DefaultTaskStatus();
-                stat.setMaxProgress( getOrderBean().getTimes() );
-                stat.setProgress( 0 );
-                stat.setStatus( TaskStatus.Status.WAITING );
-                getTask().setTaskState( TaskState.IN_PROGRESS );
+                task.setMaxProgress( getOrderBean().getTimes() );
+                session.success();
             }
             finally { session.finish(); }
-            // super.onCreated(wid, state, isRestartedTask, altTaskState);
+            super.onCreated( wid, state, isRestartedTask, altTaskState );    // overridden method implementation
+        }
     }
 
 
+    @Override
+    protected void onInProgress( @NotNull String wid, @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState ) throws Exception {
 
-    public void onProgress( ) throws Exception {
-
-        DefaultTaskStatus stat = DefaultTaskStatus.class.cast(  getTask().getTaskState() );
-        updateStatus( stat,  TaskStatus.Status.RUNNING  );
-
-        StringBuffer sb = new StringBuffer();
-        DummyOrder tf = (DummyOrder ) null; getTask().getORQ();
-        for( int i = 0; i < tf.getTimes(); ++i ) {
-            sb.append( tf.getMessage() );
-            sb.append( '\n' );
-            Thread.sleep( tf.getDelay() );
-            if( tf.isFailIntentionally()
-                && i > tf.getTimes( ) / 2 )
+        StringBuilder out = new StringBuilder();
+        DummyOrder order = getOrder().getOrderBean();
+        for( int i = 0; i < order.getTimes(); ++i ) {
+            out.append( order.getMessage() );
+            out.append( '\n' );
+            updateProgress( i );
+            Thread.sleep( order.getDelay() );
+            if( order.isFailIntentionally()
+                && i > order.getTimes( ) / 2 )
                 throw new RuntimeException( "Halp -- I'm failing intentionally" );
-            updateProgress( stat, i );
         }
         final Session session = getDao().beginSession();
         try {
-            getTask( session ).setPayload( new DummyTaskFlowResult( sb.toString() ) );
+            getTask( session ).setPayload( new DummyTaskFlowResult( out.toString() ) );
+            session.success();
         }
         finally { session.finish(); }
 
-        updateStatus( stat,  TaskStatus.Status.FINISHED  );
+        super.onInProgress( wid, state, isRestartedTask, altTaskState );    // overridden method implementation
     }
 
 
-    public void onFailed( Exception e )  {
-       // super.onFailed( e );
-       // DefaultTaskStatus stat = DefaultTaskStatus.class.cast(  getTask().getStatus() );
-       // stat.setStatus( TaskStatus.Status.FAILED );
-       // getTask().setStatus( stat );
-    }
-
-
-    private void updateStatus( DefaultTaskStatus stat, TaskStatus.Status s ) {
-        stat.setStatus( s );
-       // getTask().setStatus( stat );
-    }
-
-
-    private void updateProgress( DefaultTaskStatus stat, int i ) {
-        stat.setProgress( i );
-        getTask().setTaskState( TaskState.IN_PROGRESS_UNKNOWN );
-    }
-
-
-    private Task getTask() {
-        return null;  // Implement Me. Pretty Please!!!
+    private void updateProgress( int i ) {
+        final Session session = getDao().beginSession();
+        try {
+            getTask( session ).setProgress( i );
+            session.success();
+        } finally { session.finish(); }
     }
 }

@@ -18,8 +18,8 @@ package de.zib.gndms.model.gorfx.types.io.xml;
 
 
 
+import de.zib.gndms.common.model.gorfx.types.AbstractOrder;
 import de.zib.gndms.common.model.gorfx.types.Quote;
-import de.zib.gndms.model.gorfx.types.AbstractOrder;
 
 
 /**
@@ -28,7 +28,7 @@ import de.zib.gndms.model.gorfx.types.AbstractOrder;
  * Bundles an Offerrequest with its corresponding Quote.
  *
  *
- * @see de.zib.gndms.model.gorfx.types.AbstractOrder
+ * @see de.zib.gndms.common.model.gorfx.types.AbstractOrder
  * @see Quote
  * @author  try ma ik jo rr a zib
  * @version  $Id$

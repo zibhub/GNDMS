@@ -18,7 +18,7 @@ package de.zib.gndms.taskflows.filetransfer.client.model;
 
 
 
-import de.zib.gndms.model.gorfx.types.AbstractOrder;
+import de.zib.gndms.common.model.gorfx.types.AbstractOrder;
 import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
 import org.jetbrains.annotations.NotNull;
 
