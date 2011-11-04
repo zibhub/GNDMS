@@ -21,6 +21,7 @@ import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowProviderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,13 +52,17 @@ public class PlugableTaskFlowProvider extends TaskFlowProviderImpl {
             }
         }
 
+        setFactories( plugins );
+
         if( checkDeps )
             checkDeps();
 
-        setFactories( plugins );
+        if ( getFactories().size() == 0 )
+            throw new IllegalStateException( "no plugs found" );
     }
 
 
+    @PostConstruct
     public void loadPlugins( ) {
         loadPlugins( true );
     }

@@ -1,0 +1,45 @@
+require "#{ENV['GNDMS_REST']}/buildr/gndms_modules"
+include GNDMS_MODULES
+
+PLUGIN_VERSION_NUMBER = '0.6.0-pre'
+# Don't touch below unless you know what you are doing
+# --------------------------------------------------------------------------------------------------
+
+
+setupGNDMSModules()
+
+desc 'Plug-in for the dummy task-flow'
+define 'dummy' do
+    project.version = PLUGIN_VERSION_NUMBER
+    manifest['Copyright'] = MF_COPYRIGHT
+    manifest['License'] = MF_LICENSE
+    compile.options.source = SOURCE
+    compile.options.target = TARGET
+
+
+    desc 'The client side of the plugin'
+    define 'client', :layout => dmsLayout('client', 'dummy-client') do
+        puts "compiling clientside"
+      compile.with  GNDMS_STUFF,GNDMS_COMMON, SLF4J, SPRING, JETBRAINS_ANNOTATIONS
+      compile
+      package :jar
+    end
+
+
+    desc 'The server side of the plugin'
+    define 'server', :layout => dmsLayout('server', 'dummy-server') do
+        puts "compiling serverside"
+        meta_inf << file ( _( 'src/META-INF/services' ) )
+      compile.with project('client'),  GNDMS_COMMON, GNDMS_STUFF, GNDMS_MODEL, GNDMS_NEOMODEL,  GNDMS_KIT, GNDMS_INFRA, GNDMS_LOGIC, JODA_TIME, ARGS4J, INJECT, GUICE, GT4_SERVLET, COMMONS_LANG, SLF4J, JSON, SPRING, JETBRAINS_ANNOTATIONS, OPENJPA
+
+      compile
+      package :jar
+
+
+      desc 'deploys the dummy server jar'
+      task 'deploy' do
+          cp package(:jar).to_s, "#{ENV['JETTY_HOME']}/resources"
+          cp project('client').package(:jar).to_s, "#{ENV['JETTY_HOME']}/resources"
+      end
+    end
+end
