@@ -18,9 +18,9 @@ package de.zib.gndms.taskflows.filetransfer.server.logic;
 
 
 
+import de.zib.gndms.common.model.gorfx.types.AbstractOrder;
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.model.common.types.factory.InjectingRecursiveKeyFactory;
-import de.zib.gndms.model.gorfx.types.AbstractOrder;
 
 
 /**

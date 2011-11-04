@@ -18,15 +18,8 @@ package de.zib.gndms.taskflows.dummy;/*
 import de.zib.gndms.common.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.common.model.gorfx.types.TaskStatistics;
 import de.zib.gndms.logic.model.TaskAction;
-import de.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
 import de.zib.gndms.logic.model.gorfx.taskflow.DefaultTaskFlowFactory;
-import de.zib.gndms.model.gorfx.types.DelegatingOrder;
-import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
-import de.zib.gndms.taskflows.dummy.DummyOrder;
-
-import java.util.HashMap;
-import java.util.UUID;
 
 /**
  * @author try ma ik jo rr a zib
@@ -35,18 +28,12 @@ import java.util.UUID;
  */
 public class DummyTaskFlowFactory extends DefaultTaskFlowFactory<DummyOrder,DummyQuoteCalculator> {
 
-    private HashMap<String, TaskFlow<DummyOrder>> taskFlows = new HashMap<String, TaskFlow<DummyOrder>>( 10 );
     private TaskStatistics stats = new TaskStatistics();
 
 
     public DummyTaskFlowFactory() {
-        stats.setType( "DummyOrder" );
-    }
 
-
-    @Override
-    public String getTaskFlowKey() {
-        return null;  // not required here
+        super( DummyTaskFlowMeta.TASK_FLOW_KEY, DummyQuoteCalculator.class, DummyOrder.class );
     }
 
 
@@ -77,87 +64,28 @@ public class DummyTaskFlowFactory extends DefaultTaskFlowFactory<DummyOrder,Dumm
 
 
     public TaskFlow<DummyOrder> create() {
-        TaskFlow<DummyOrder> tf = new CreatableTaskFlow<DummyOrder>();
-        String uuid = UUID.randomUUID().toString();
-        taskFlows.put( uuid, tf );
-       // tf.setId( uuid );
         stats.setActive( stats.getActive() + 1 );
-        return tf;
-    }
-
-
-    @Override
-    public TaskFlow<DummyOrder> createOrphan() {
-        return null;  // not required here
+        return super.create();
     }
 
 
     @Override
     protected TaskFlow<DummyOrder> prepare( TaskFlow<DummyOrder> dummyOrderTaskFlow ) {
-        return null;  // not required here
-    }
-
-
-    public boolean adopt( TaskFlow<DummyOrder> taskflow ) {
-        return false;  // not required here
-    }
-
-
-    public TaskFlow<DummyOrder> find( String id ) {
-        return taskFlows.get( id );
+        return dummyOrderTaskFlow;
     }
 
 
     public void delete( String id ) {
-        TaskFlow tf = taskFlows.remove( id );
-        /*
-        Task t = tf.getTask();
-        if( t != null )
-            switch ( t.getStatus().getStatus() ) {
-                case FINISHED:
-                    stats.setFinished( stats.getFinished() + 1 );
-                case FAILED:
-                    stats.setFailed( stats.getFailed() +1 );
-                    break;
-                case RUNNING:
-                    break;
-                case WAITING:
-                    break;
-                case PAUSED:
-                    break;
-            }
-            */
 
         stats.setActive( stats.getActive() - 1 );
+        super.delete( id );
     }
 
-
-    public Class getOrderClass() {
-        return DummyOrder.class;
-    }
 
 
     @Override
     public TaskAction createAction() {
-        return null;  // not required here
+        return new DummyTFAction(  );
     }
-
-
-    @Override
-    public Iterable<String> depends() {
-        return null;  // not required here
-    }
-
-
-    @Override
-    public DelegatingOrder<DummyOrder> getOrderDelegate( DummyOrder orq ) {
-        return null;  // not required here
-    }
-
-
-    public DelegatingOrder<DummyOrder> getOrderDelegate( TaskFlow<DummyOrder> orq ) {
-        return null;  // not required here
-    }
-
 
 }

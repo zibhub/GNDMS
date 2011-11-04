@@ -1,4 +1,5 @@
-package de.zib.gndms.logic.taskflow.tfmockup;
+package de.zib.gndms.taskflows.dummy;
+
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -25,6 +26,8 @@ import de.zib.gndms.common.model.gorfx.types.TaskFlowMeta;
  *
  */
 public class DummyTaskFlowMeta implements TaskFlowMeta {
+
+    public final static String TASK_FLOW_KEY ="DummyTaskFlow";
 
     private String description;
 

@@ -37,7 +37,6 @@ import org.slf4j.MDC;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Repository;
 
@@ -45,7 +44,6 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceUnit;
 
 import static javax.persistence.Persistence.createEntityManagerFactory;
@@ -475,33 +473,33 @@ public final class GNDMSystem
     /**
      * Calls {@code sumitAction(action,logParam)} on {@code getExecutionService()}.
      *
-     * @see SysTaskExecutionService#submitAction(de.zib.gndms.logic.model.EntityAction, org.slf4j.Logger)
+     * @see de.zib.gndms.logic.model.TaskExecutionService#submitAction(de.zib.gndms.logic.model.EntityAction
      */
     public @NotNull <R> Future<R> submitAction(final @NotNull EntityAction<R> action, final @NotNull Logger logParam) {
-        return getExecutionService().submitAction(action, logParam);
+        return getExecutionService().submitAction(action );
     }
 
     /**
      * Calls {@code sumitAction(em,action,logParam)} on {@code getExecutionService()}
      * 
-     * @see SysTaskExecutionService#submitAction(javax.persistence.EntityManager, de.zib.gndms.logic.model.EntityAction, org.slf4j.Logger) 
+     * @see de.zib.gndms.logic.model.TaskExecutionService#submitAction(javax.persistence.EntityManager, de.zib.gndms.logic.model.EntityAction
      *
      */
     public @NotNull <R> Future<R> submitAction(final @NotNull EntityManager em,
                                                final @NotNull EntityAction<R> action,
                                                final @NotNull Logger logParam) {
-        return getExecutionService().submitAction(em, action, logParam);
+        return getExecutionService().submitAction(em, action );
     }
 
 
     @NotNull
     public <R> Future<R> submitDaoAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull ModelDaoAction<?, R> action, @NotNull Logger log) {
-        return executionService.submitDaoAction(em, dao, action, log);
+        return executionService.submitDaoAction(em, dao, action );
     }
 
     @NotNull
     public <R> Future<R> submitDaoAction(@NotNull ModelDaoAction<?, R> action, @NotNull Logger log) {
-        return executionService.submitDaoAction(action, log);
+        return executionService.submitDaoAction(action );
     }
 
     public void reloadConfiglets() {

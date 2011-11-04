@@ -27,7 +27,7 @@ import java.util.Map;
  *
  * It should be used in conjunction with an OrderConverter.
  *
- * @see de.zib.gndms.model.gorfx.types.AbstractOrder
+ * @see de.zib.gndms.common.model.gorfx.types.AbstractOrder
  * @see OrderConverter
  * @author  try ma ik jo rr a zib
  * @version  $Id$

@@ -14,8 +14,7 @@ package de.zib.gndms.taskflows.dummy;/*
  * limitations under the License.
  */
 
-import de.zib.gndms.common.model.gorfx.types.Order;
-import de.zib.gndms.model.gorfx.types.AbstractOrder;
+import de.zib.gndms.common.model.gorfx.types.AbstractOrder;
 import org.jetbrains.annotations.NotNull;
 
 /**

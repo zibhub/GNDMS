@@ -53,6 +53,8 @@ public class PlugableTaskFlowProvider extends TaskFlowProviderImpl {
 
         if( checkDeps )
             checkDeps();
+
+        setFactories( plugins );
     }
 
 
@@ -111,7 +113,7 @@ public class PlugableTaskFlowProvider extends TaskFlowProviderImpl {
     public void setFactories( Map<String, TaskFlowFactory> factories ) {
 
         if ( hasFactories )
-            throw new IllegalStateException( "factories are allready set"  );
+            throw new IllegalStateException( "factories are already set"  );
 
         hasFactories = true;
         super.setFactories( factories );    // overriden method implementation

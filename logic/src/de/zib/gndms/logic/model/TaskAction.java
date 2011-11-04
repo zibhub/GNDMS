@@ -22,11 +22,9 @@ import de.zib.gndms.kit.access.RequiresCredentialProvider;
 import de.zib.gndms.kit.access.CredentialProvider;
 import de.zib.gndms.kit.configlet.ConfigletProvider;
 import de.zib.gndms.kit.util.WidAux;
-import de.zib.gndms.logic.action.LogAction;
 import de.zib.gndms.logic.model.gorfx.LifetimeExceededException;
 import de.zib.gndms.logic.model.gorfx.permissions.PermissionConfiglet;
 import de.zib.gndms.model.common.types.FilePermissions;
-import de.zib.gndms.model.gorfx.types.AbstractOrder;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.Dao;
@@ -34,8 +32,10 @@ import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.TaskAccessor;
 import de.zib.gndms.neomodel.gorfx.Taskling;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -53,7 +53,7 @@ import java.util.GregorianCalendar;
  */
 @SuppressWarnings({ "AbstractMethodCallInConstructor" })
 public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskling>
-        implements LogAction, RequiresCredentialProvider
+        implements RequiresCredentialProvider
 {
     /**
      * The ExecutionService on which this TaskAction runs
@@ -63,7 +63,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
     /**
      * Used for logging during task execution
      */
-    private Logger log;
+    protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
     private String wid;
 
     /**
@@ -159,8 +159,8 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
             session = getDao().beginSession();
             try {
                 final Task task = getTask(session);
-                state              = task.getAltTaskState();
-                altTaskState       = state != null;
+                state           = task.getAltTaskState();
+                altTaskState    = state != null;
                 if (! altTaskState)
                     state = task.getTaskState();
 
@@ -466,32 +466,38 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
     }
 
 
-    protected void transitWithPayload(@NotNull Serializable payload, @NotNull TaskState taskState) {
+    protected void _transitWithPayload( @NotNull TaskState taskState, @Nullable Serializable payload, boolean hasPayload ) {
         final @NotNull Session session = getDao().beginSession();
         try {
             final Task task = session.findTask(getModel().getId());
             task.setTaskState(task.getTaskState().transit(taskState));
-            task.setPayload(payload);
+            if( hasPayload )
+                task.setPayload(payload);
             if (TaskState.FINISHED.equals(taskState))
                 task.setProgress(task.getMaxProgress());
             session.success();
         }
         finally { session.finish(); }
+    }
+
+
+    protected void transitWithPayload( Serializable payload, @NotNull TaskState taskState) {
+        _transitWithPayload( taskState, payload, true );
     }
 
     protected void transit(@NotNull TaskState taskState) {
-        final @NotNull Session session = getDao().beginSession();
-        try {
-            final Task task = session.findTask(getModel().getId());
-            task.setTaskState(task.getTaskState().transit(taskState));
-            if (TaskState.FINISHED.equals(taskState))
-                task.setProgress(task.getMaxProgress());
-            session.success();
-        }
-        finally { session.finish(); }
+        _transitWithPayload( taskState, null, false );
     }
 
-    protected void autoTransitWithPayload(Serializable payload) {
+    protected void autoTransitWithPayload(Serializable payload ) {
+        _autoTransitWithPayload( payload, true );
+    }
+
+    protected void autoTransit() {
+        _autoTransitWithPayload( null, false );
+    }
+
+    protected void _autoTransitWithPayload(Serializable payload, boolean hasPayload ) {
         final @NotNull Session session = getDao().beginSession();
         try {
             final Task task = getTask(session);
@@ -505,7 +511,8 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
                 default: nextState = TaskState.FAILED; break;
             }
             task.setTaskState(taskState.transit(nextState));
-            task.setPayload(payload);
+            if( hasPayload )
+                task.setPayload(payload);
             if (TaskState.FINISHED.equals(taskState))
                 task.setProgress(task.getMaxProgress());
             session.success();
@@ -513,50 +520,27 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
         finally { session.finish(); }
     }
 
-    protected void autoTransit() {
-        final @NotNull Session session = getDao().beginSession();
-        try {
-            final Task task = getTask(session);
-            final TaskState taskState = task.getTaskState();
-            final TaskState nextState;
-            switch(taskState.getCanonicalState()) {
-                case CREATED: nextState = TaskState.INITIALIZED; break;
-                case INITIALIZED: nextState = TaskState.IN_PROGRESS; break;
-                case IN_PROGRESS: nextState = TaskState.FINISHED; break;
-                case FINISHED: nextState = TaskState.FINISHED; break;
-                default: nextState = TaskState.FAILED; break;
-            }
-            task.setTaskState(taskState.transit(nextState));
-            if (TaskState.FINISHED.equals(taskState))
-                task.setProgress(task.getMaxProgress());
-            session.success();
-        }
-        finally { session.finish(); }
-    }
 
-    protected void failWithPayload(Serializable payload, @NotNull RuntimeException... exceptions) {
+    protected void _failWithPayload( boolean hasPayload, Serializable payload, @NotNull Exception... exceptions) {
         final Session session = getDao().beginSession();
         try {
             final Task task = getTask(session);
             task.setTaskState(TaskState.FAILED);
-            task.setPayload(payload);
-            for (RuntimeException e: exceptions)
-                task.addCause(e);
-            session.success();
-        }
-        finally { session.finish(); }
-    }
-
-    protected void fail(@NotNull Exception... exceptions) {
-        final Session session = getDao().beginSession();
-        try {
-            final Task task = getTask(session);
-            task.setTaskState(TaskState.FAILED);
+            if( hasPayload )
+                task.setPayload(payload);
             for (Exception e: exceptions)
                 task.addCause(e);
             session.success();
         }
         finally { session.finish(); }
+    }
+
+    protected void failWithPayload(Serializable payload, @NotNull Exception... exceptions) {
+        _failWithPayload( true, payload, exceptions );
+    }
+
+    protected void fail(@NotNull Exception... exceptions) {
+        _failWithPayload( false, null, exceptions );
     }
 
     protected void removeAltTaskState() {
@@ -566,7 +550,6 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
 
     @SuppressWarnings({ "HardcodedFileSeparator" })
     protected void trace(final @NotNull String userMsg, final Throwable cause) {
-        final Logger log1 = getLogger();
         final Taskling model = getModel();
         final String msg;
         if (model == null)
@@ -586,9 +569,9 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
             finally { session.success(); }
         }
        if (cause == null)
-           log1.trace(msg);
+           logger.trace(msg);
         else
-           log1.trace(msg, cause);
+           logger.trace(msg, cause);
 
     }
 
@@ -641,16 +624,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
            throw new IllegalStateException("Can't overwrite service");
     }
 
-    @NotNull public Logger getLogger() {
-        return log;
-    }
 
-
-    public void setLogger(@NotNull final Logger logParam) {
-        log = logParam;
-    }
-
-    
     /**
      * Stopps this action if the associated task lifetime is already exceeded.
      *
@@ -668,7 +642,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
 
             // check the task lifetime
             if(new GregorianCalendar().compareTo(model.getTerminationTime()) >= 1 ) {
-                getLogger().debug(  "Task lifetime exceeded" );
+                logger.debug( "Task lifetime exceeded" );
                 throw new LifetimeExceededException();
 //                boolean containt = false;
 //                try {
@@ -708,6 +682,17 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
 		return emf;
 	}
 
+
+    /**
+     * Delivers the logger of this class.
+     *
+     * This is just for compatibility reasons.
+     *
+     * @return The logger.
+     */
+    protected Logger getLogger() {
+        return logger;
+    }
 
 	public void setEmf(final @NotNull EntityManagerFactory emfParam) {
 		emf = emfParam;

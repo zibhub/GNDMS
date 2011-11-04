@@ -15,7 +15,6 @@ package de.zib.gndms.GORFX.service;
  * limitations under the License.
  */
 
-import de.zib.gndms.GORFX.service.util.WidAux;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
@@ -72,7 +71,7 @@ public class TaskServiceAux {
 
         taskAction.setModel( taskling );
         taskAction.setOwnDao( dao );
-        executorService.submitDaoAction( taskAction, null );
+        executorService.submitDaoAction( taskAction );
 
         return taskling;
     }

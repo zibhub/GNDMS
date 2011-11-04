@@ -40,45 +40,39 @@ public interface TaskExecutionService {
 
     /**
      * Submits an EntityAction to an {@code ExecutorService}.
-     * If the action is a LogAction, its logger will be set as {@code logger}.
      * If the action does not have an EntityManager, a new one will be created.
      * 
+     *
      * @param action the EntityAction which should be executed
-     * @param logger A logger, which can be added to the action, if it's a LogAction
-     * @param <R>  the return type of the action
      * @return A Future Object holding the result of action's computation
      * @see Future
      */
-    @NotNull <R> Future<R> submitAction(final @NotNull EntityAction<R> action, final Logger logger);
+    @NotNull <R> Future<R> submitAction( final @NotNull EntityAction<R> action );
 
     /**
      * Submits an EntityAction to an {@code ExecutorService}.
-     * If the action is a LogAction, its logger will be set as {@code logger}
      * Sets the {@code action}'s EntityManager as {@code em}.
      * 
+     *
      * @param em an EntityManger for the EntityAction
      * @param action the EntityAction which should be executed
-     * @param logger A logger, which can be added to the action, if it's a LogAction
-     * @param <R> the return type of the action
      * @return A Future Object holding the result of action's computation
      * @see Future
      */
-    @NotNull <R> Future<R> submitAction(final @NotNull EntityManager em,
-                                        final @NotNull EntityAction<R> action,
-                                        final Logger logger);
+    @NotNull <R> Future<R> submitAction( final @NotNull EntityManager em,
+                                         final @NotNull EntityAction<R> action );
 
 
     /**
-     * Sets action's dao before calling {@link #submitAction(javax.persistence.EntityManager, EntityAction, org.slf4j.Logger)}
+     * Sets action's dao before calling {@link #submitAction(javax.persistence.EntityManager, EntityAction}
      *
-     * @see {@link #submitAction(javax.persistence.EntityManager, EntityAction, org.slf4j.Logger)}
+     * @see {@link #submitAction(javax.persistence.EntityManager, EntityAction}
      */
-    public @NotNull <R> Future<R> submitDaoAction(final @NotNull EntityManager em,
-                                                  final @NotNull Dao dao,
-                                                  final @NotNull ModelDaoAction<?, R> action,
-                                                  final Logger log);
+    public @NotNull <R> Future<R> submitDaoAction( final @NotNull EntityManager em,
+                                                   final @NotNull Dao dao,
+                                                   final @NotNull ModelDaoAction<?, R> action );
 
-    public @NotNull <R> Future<R> submitDaoAction(final @NotNull ModelDaoAction<?, R> action, final Logger log);
+    public @NotNull <R> Future<R> submitDaoAction( final @NotNull ModelDaoAction<?, R> action );
 
     /**
      * Returns true if this is terminating or already terminated.
