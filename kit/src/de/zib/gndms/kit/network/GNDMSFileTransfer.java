@@ -408,7 +408,7 @@ public class GNDMSFileTransfer {
     }
 
     static private String printWithNull( String o ) {
-        return o == null ? "<null>" : o.toString() ;
+        return o == null ? "<null>" : o ;
     }
 
     static private String printWithNull( GridFTPClient o ) {
