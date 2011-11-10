@@ -43,6 +43,7 @@ import java.util.concurrent.TimeUnit;
  */
 public abstract class DefaultTaskFlowFactory<O extends Order, C extends AbstractQuoteCalculator<O>> implements TaskFlowFactory<O, C> {
 
+    public final int MAX_CACHE_SIZE = 10000;
     private String taskFlowKey;
     private Class<C> calculatorClass;
     private Class<O> orderClass;
@@ -52,13 +53,12 @@ public abstract class DefaultTaskFlowFactory<O extends Order, C extends Abstract
             setModels(
                 (Cache<String,TaskFlow<O>>) (Object) CacheBuilder.newBuilder()
                     .expireAfterAccess( 12, TimeUnit.HOURS )
-                    .maximumSize( 10000 )
+                    .maximumSize( MAX_CACHE_SIZE )
                     .initialCapacity( 100 )
                     .build( new CacheLoader<String, TaskFlow<O>>() {
                         @Override
                         public TaskFlow<O> load( String key ) throws Exception {
                             DefaultTaskFlowFactory.this.logger.trace( "load: "+ key );
-                            System.err.println( "load: "+ key );
                             return new CreatableTaskFlow<O>( key );
                         }
                     } )
@@ -159,7 +159,7 @@ public abstract class DefaultTaskFlowFactory<O extends Order, C extends Abstract
     @Override
     public TaskFlow<O> find( String id ) {
         try {
-            taskFlows.get( id );
+            return taskFlows.get( id );
         } catch( NoSuchElementException e ) {
             // intentionally
         }
