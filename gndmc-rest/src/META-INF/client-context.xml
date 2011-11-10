@@ -7,6 +7,11 @@
     <import resource="classpath:/META-INF/converter-setup.xml"/>
 
    <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+       <constructor-arg>
+           <bean class="org.springframework.http.client.SimpleClientHttpRequestFactory">
+                   <property name="connectTimeout" value="10000"/>
+           </bean>
+       </constructor-arg>
        <property name="messageConverters">
            <list>
                <!--bean  class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">

@@ -115,6 +115,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
     @Override
     public Taskling call() throws RuntimeException {
         final Taskling result;
+        Thread.currentThread().setName( "taskaction" );
         try {
             final Session session = getDao().beginSession();
             try {
@@ -123,17 +124,20 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
                 WidAux.initWid(task.getWID());
                 if( task.getORQ() != null )
                     WidAux.initGORFXid( ( (DelegatingOrder ) task.getORQ()).getActId() );
-                session.finish();
+                session.success();
             }
-            finally { session.success(); }
+            finally { session.finish(); }
             result = super.call();
+        } catch ( RuntimeException e ) {
+            logger.debug( "", e );
+            throw e;
         }
         finally {
             WidAux.removeGORFXid();
             WidAux.removeWid();
         }
         return result;
-}
+    }
 
     /**
      * Invokes {@link #onTransit(String,TaskState,boolean,boolean)} in a loop which is expected to change the task state.
@@ -589,6 +593,10 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
 
     @Override
     public void setModel(final @NotNull Taskling ling) {
+
+        if(! hasDao( ) )
+            throw new IllegalStateException( "no dao provided" );
+
         final Session session = getDao().beginSession();
         final String newWID;
         try {
@@ -599,6 +607,12 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
         super.setModel(ling);    // Overridden method
         wid = newWID;
     }
+
+
+    private boolean hasDao() {
+        return getDao() != null;
+    }
+
 
     /**
      * Inform all listeners about the current model.
@@ -649,10 +663,10 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
             if(new GregorianCalendar().compareTo(model.getTerminationTime()) >= 1 ) {
                 logger.debug( "Task lifetime exceeded" );
                 throw new LifetimeExceededException();
-//                boolean containt = false;
+//                boolean contained = false;
 //                try {
 //                    // check if model is still there
-//                    containt = em.contains( model );
+//                    contained = em.contains( model );
 //                    if( containt ) {
 //                        model.fail( new RuntimeException( "Task lifetime exceeded" ) );
 //                        getLogger().debug(  "Try to persist task" );

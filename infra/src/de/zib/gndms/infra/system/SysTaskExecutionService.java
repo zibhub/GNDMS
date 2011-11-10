@@ -32,7 +32,7 @@ import java.util.concurrent.*;
  * A SysTaskExecutionService submits {@link EntityAction}s to an {@link ExecutorService}.
  *
  * Before the action is submitted to the executor, using a suitable {@code submitAction(..)} method,
- * {@link #submit_(de.zib.gndms.logic.model.EntityAction} will automatically
+ * {@link #submit_(de.zib.gndms.logic.model.EntityAction)} will automatically
  * prepare the action using certain setters.
  *
  * When the executor is shutted down, using {@link #shutdown()},
