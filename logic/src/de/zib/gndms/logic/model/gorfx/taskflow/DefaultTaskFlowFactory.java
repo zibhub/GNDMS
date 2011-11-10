@@ -16,6 +16,9 @@
 
 package de.zib.gndms.logic.model.gorfx.taskflow;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import de.zib.gndms.common.model.gorfx.types.Order;
 import de.zib.gndms.common.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
@@ -24,10 +27,13 @@ import de.zib.gndms.model.common.repository.Dao;
 import de.zib.gndms.model.common.repository.TransientDao;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Maik Jorra
@@ -40,22 +46,36 @@ public abstract class DefaultTaskFlowFactory<O extends Order, C extends Abstract
     private String taskFlowKey;
     private Class<C> calculatorClass;
     private Class<O> orderClass;
-    private final Dao<String, TaskFlow<O>, Object> taskFlows = new TransientDao<String, TaskFlow<O>, Object>() {
-
-        @Override
-        protected TaskFlow<O> newModel( String key ) {
-            return new CreatableTaskFlow<O>( key );
+    protected Logger logger = LoggerFactory.getLogger( this.getClass() );
+    private final Dao<String, TaskFlow<O>, Void> taskFlows = new TransientDao<String, TaskFlow<O>, Void>() {
+        {
+            setModels(
+                (Cache<String,TaskFlow<O>>) (Object) CacheBuilder.newBuilder()
+                    .expireAfterAccess( 12, TimeUnit.HOURS )
+                    .maximumSize( 10000 )
+                    .initialCapacity( 100 )
+                    .build( new CacheLoader<String, TaskFlow<O>>() {
+                        @Override
+                        public TaskFlow<O> load( String key ) throws Exception {
+                            DefaultTaskFlowFactory.this.logger.trace( "load: "+ key );
+                            System.err.println( "load: "+ key );
+                            return new CreatableTaskFlow<O>( key );
+                        }
+                    } )
+            );
         }
 
 
         @Override
         public String create() {
             String id = UUID.randomUUID().toString();
-            TaskFlow<O> tf = newModel( id );
-            add( tf, id );
+            cacheGet( id );
             return id;
         }
     };
+
+
+
 
 
     protected DefaultTaskFlowFactory( String taskFlowKey, Class<C> calculatorClass, Class<O> orderClass ) {

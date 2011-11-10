@@ -45,7 +45,7 @@ public abstract class AbstractTaskFlowExecClient {
 
 
     /** 
-     * @brief Executs a complete task flow.
+     * @brief Executes a complete task flow.
      * 
      * @param order The order of the taskflow.
      * @param dn The DN of the user calling the task flow.

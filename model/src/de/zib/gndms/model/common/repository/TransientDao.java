@@ -1,7 +1,10 @@
 package de.zib.gndms.model.common.repository;
 
+import com.google.common.cache.Cache;
+
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.concurrent.ExecutionException;
 /*
  * Copyright 2008-2010 Zuse Institute Berlin (ZIB)
  *
@@ -28,7 +31,7 @@ import java.util.NoSuchElementException;
  */
 public abstract class TransientDao<K,M,D> implements Dao<K, M, D> {
 
-    private Map<K,M> models;
+    private Cache<K,M> models;
 
     public K create( D descriptor ) {
         return create( );
@@ -36,29 +39,44 @@ public abstract class TransientDao<K,M,D> implements Dao<K, M, D> {
 
 
     public void add( M model, K key ) {
-        models.put( key, model );
+        models.asMap().put( key, model );
     }
 
 
     public M get( K key ) throws NoSuchElementException {
 
-        if( models.containsKey( key ) )
-            return models.get( key );
+        if( models.asMap().containsKey( key ) )
+            try {
+                return models.get( key );
+            } catch ( ExecutionException e ) {
+                throw new NoSuchElementException( key.toString() );
+            }
 
         throw new NoSuchElementException( key.toString() );
     }
 
 
-    /**
-     * This method is used to retrieve new instances of M.
-     * @param key
-     * @return
-     */
-    protected abstract M newModel( K key );
+    protected M cacheGet( K key ) {
+        try {
+            return models.get( key  );
+        } catch ( ExecutionException e ) {
+            throw new NoSuchElementException( key.toString() );
+        }
+    }
+
+
+    protected Map<K, M> getModels() {
+        return models.asMap();
+    }
+
+
+    protected void setModels( Cache<K, M> models ) {
+        this.models = models;
+    }
 
 
     public void deleteByKey( K key ) {
-        models.remove( key );
+        models.invalidate( key );
     }
 
 
@@ -68,10 +86,14 @@ public abstract class TransientDao<K,M,D> implements Dao<K, M, D> {
      * @param model The model to delete.
      */
     public void delete( M model ) {
-        for ( K key: models.keySet() ) {
-            if( models.get( key ).equals( model ) ) {
-                deleteByKey( key );
-                return;
+        for ( K key: models.asMap().keySet() ) {
+            try {
+                if( models.get( key ).equals( model ) ) {
+                    deleteByKey( key );
+                    return;
+                }
+            } catch ( ExecutionException e ) {
+                // intentionally
             }
         }
     }

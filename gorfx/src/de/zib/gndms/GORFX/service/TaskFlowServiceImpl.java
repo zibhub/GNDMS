@@ -105,10 +105,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     @RequestMapping( value = "/_{type}/_{id}", method = RequestMethod.GET )
     public ResponseEntity<Facets> getFacets( @PathVariable String type, @PathVariable String id, @RequestHeader( "DN" ) String dn ) {
 
-        Map<String, String> uriargs = new HashMap<String, String>( 2 );
-        uriargs.put( UriFactory.TASKFLOW_ID, id );
-        uriargs.put( UriFactory.TASKFLOW_TYPE, type );
-        uriargs.put( UriFactory.SERVICE, "gorfx" );
+        Map<String, String> uriargs = taskFlowUriMap( type, id );
 
         GNDMSResponseHeader header = new GNDMSResponseHeader( uriFactory.taskFlowTypeUri( uriargs, null ), null, serviceUrl, dn, null );
 
@@ -122,10 +119,12 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                 }
 
                 return new ResponseEntity<Facets>( new Facets( fl ), header, HttpStatus.OK );
-            }
-        }
+            } else
+                logger.debug( "request for non existing " + type + ": " + id );
+        } else
+            logger.debug( "request for non existing type: " + type + ": " + id );
 
-        return new ResponseEntity<Facets>( null, header, HttpStatus.NOT_FOUND );
+        return new ResponseEntity<Facets>( new Facets( ), header, HttpStatus.NOT_FOUND );
     }
 
 
@@ -156,15 +155,15 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                                            @RequestHeader( "DN" ) String dn,
                                            @RequestHeader( "WId" ) String wid ) {
         HttpStatus hs = HttpStatus.NOT_FOUND;
-        DelegatingOrder<?> order = null;
+        Order order = null;
         try {
             TaskFlow tf = findTF( type, id );
-            order = tf.getOrder();
+            order = tf.getOrder().getOrderBean();
             if ( order != null )
                 hs = HttpStatus.OK;
         } catch ( NoSuchResourceException e ) { /* intentionally */ }
 
-        return new ResponseEntity<Order>( order.getOrderBean(), getHeader( type, id, "order", dn, wid ), hs );
+        return new ResponseEntity<Order>( order, getHeader( type, id, "order", dn, wid ), hs );
     }
 
 

@@ -7,6 +7,7 @@ ENV['JAVA_OPTS'] ||= '-Xms512m -Xmx768m'
 
 # Additional maven repositories 
 repositories.remote << 'http://www.ibiblio.org/maven2'
+repositories.remote << 'http://repo1.maven.org/maven2'
 repositories.remote << 'http://repository.codehaus.org'
 repositories.remote << 'http://google-gson.googlecode.com/svn/mavenrepo'
 repositories.remote << 'http://guiceyfruit.googlecode.com/svn/repo/releases'
@@ -138,8 +139,8 @@ XOM='xom:xom:jar:1.1'
 XPP='xpp3:xpp3_min:jar:1.1.4c'
 # together with STAX JODA_TIME
 # JSON/Jackson
-JSON=['org.codehaus.jackson:jackson-core-lgpl:jar:1.7.4', 
-      'org.codehaus.jackson:jackson-mapper-lgpl:jar:1.7.4']
+JSON=['org.codehaus.jackson:jackson-core-lgpl:jar:1.9.2', 
+      'org.codehaus.jackson:jackson-mapper-lgpl:jar:1.9.2']
 GSON='com.google.code.gson:gson:jar:1.6'
 
 # logging
@@ -147,7 +148,8 @@ SLF4J = transitive( ['org.slf4j:slf4j-log4j12:jar:1.6.1', 'org.slf4j:slf4j-ext:j
 
 GUICE = 'com.google.code.guice:guice:jar:2.0'
 #GOOGLE_COLLECTIONS = 'com.google.code.google-collections:google-collect:jar:snapshot-20080530'
-GOOGLE_COLLECTIONS = 'com.google.collections:google-collections:jar:1.0'
+GUAVA = 'com.google.guava:guava:jar:10.0.1'
+GOOGLE_COLLECTIONS = GUAVA
 JETBRAINS_ANNOTATIONS = 'com.intellij:annotations:jar:7.0.3'
 JODA_TIME = transitive('joda-time:joda-time:jar:1.6')
 CXF = 'org.apache.cxf:cxf-bundle:jar:2.1.4'
@@ -157,7 +159,8 @@ STAX = 'stax:stax:jar:1.2.0'
 COMMONS_COLLECTIONS = transitive(['commons-collections:commons-collections:jar:3.2'])
 COMMONS_CODEC = 'commons-codec:commons-codec:jar:1.4'
 COMMONS_LANG = 'commons-lang:commons-lang:jar:2.1'
-COMMONS_LOGGING = 'commons-logging:commons-logging:jar:1.1.1'
+#COMMONS_LOGGING = 'commons-logging:commons-logging:jar:1.1.1'
+COMMONS_LOGGING = 'org.slf4j:jcl-over-slf4j:jar:1.6.3'
 COMMONS_FILEUPLOAD = transitive(['commons-fileupload:commons-fileupload:jar:1.2.1'])
 COMMONS_IO = transitive(['commons-io:commons-io:jar:2.0.1'])
 JETTY = ['org.mortbay.jetty:jetty:jar:6.1.11', 'org.mortbay.jetty:jetty-util:jar:6.1.11']
@@ -599,6 +602,7 @@ define 'gndms' do
         props = { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" }
         runner = 'de.zib.gndmc.GORFX.c3grid.ProviderStageInClient'
         runJava( t.to_s, args, jars, props )
+<<<<<<< HEAD
       end
 
       task 'run-stress-test' do |t|
@@ -624,6 +628,8 @@ define 'gndms' do
         props = { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" }
         runner = 'de.zib.gndmc.GORFX.diag.MultiRequestClient'
         runJava( t.to_s, args, jars, props )
+=======
+>>>>>>> Initial debugging and improvements
       end
 
       desc 'runs the interSliceTransfer test'
@@ -908,7 +914,6 @@ task 'build-docs' => ['apidocs']
 desc 'Install and deploy a release build'
 task 'install-distribution' => ['install-deps', 'deploy-DSpace', 'deploy-GORFX']
 
-
 task 'fix-permissions' do
     system "#{ENV['GNDMS_SOURCE']}/scripts/internal/fix-permissions.sh"
 end
@@ -1020,7 +1025,7 @@ def genScript( scriptName, runClass, args, jars, props )
     script.write( "props=( " )
     props.each { |k, v| script.write( "\"-D#{k}=#{v}\" " ) }
     script.write( ")\n\n" )
-    script.write( "exec java -cp=$cp ${props[@]} #{runClass} ${args[@]}\n" )
+    script.write( "exec java -cp $cp ${props[@]} #{runClass} ${args[@]}\n" )
 
     script.close
 end
@@ -1030,7 +1035,7 @@ def runJava( scriptName, runner, args, jars, props={} )
         Commands.java( runner,  args, 
                       { :classpath => jars, :properties => props } )
     else
-        raise Exception.new( "#{_( scriptName )} already exists. Please remove an try again." ) if File.exists?( _( scriptName ) )
+        raise Exception.new( "#{_( scriptName )} already exists. Please remove and try again." ) if File.exists?( _( scriptName ) )
         genScript( scriptName, runner, args, jars, props )
     end
 end
