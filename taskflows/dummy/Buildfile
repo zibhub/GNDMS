@@ -39,7 +39,7 @@ define 'dummy' do
 
     desc 'The server side of the plugin'
     define 'server', :layout => dmsTestLayout('server', 'dummy-server') do
-        meta_inf << file ( _( 'src/META-INF/services' ) )
+        meta_inf << file( _( 'src/META-INF/services' ) )
         compile.with project('client'),  GNDMS_COMMON, GNDMS_STUFF, GNDMS_MODEL, GNDMS_NEOMODEL,  GNDMS_KIT, GNDMS_INFRA, GNDMS_LOGIC, JODA_TIME, ARGS4J, INJECT, GUICE, GT4_SERVLET, COMMONS_LANG, SLF4J, JSON, SPRING, JETBRAINS_ANNOTATIONS, OPENJPA, GUAVA
 
         compile

@@ -69,8 +69,8 @@ public class TaskServiceAux {
             ses.finish();
         }
 
-        taskAction.setModel( taskling );
         taskAction.setOwnDao( dao );
+        taskAction.setModel( taskling );
         executorService.submitDaoAction( taskAction );
 
         return taskling;

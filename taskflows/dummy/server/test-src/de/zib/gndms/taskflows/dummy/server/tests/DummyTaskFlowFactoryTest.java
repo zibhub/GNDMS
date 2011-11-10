@@ -87,23 +87,24 @@ public class DummyTaskFlowFactoryTest {
     }
 
     @Test( groups = { "factory", "taskFlows" } )
-    public void maxCacheSizeBehaviour( )  {
+    public void maxCacheSizeBehaviour( ) throws InterruptedException {
 
-        DummyTaskFlowFactory localfactory = new DummyTaskFlowFactory();
-        int limit = localfactory.MAX_CACHE_SIZE + 1;
+        DummyTaskFlowFactory localFactory = new DummyTaskFlowFactory();
+        int limit = localFactory.MAX_CACHE_SIZE + 1;
         Queue<String> keys = new ArrayDeque<String>( limit );
         TaskFlow<?> tf;
         // insert 1 item to much
         for ( int i=0; i <= limit; ++i ) {
-            tf = localfactory.create();
+            tf = localFactory.create();
             keys.add( tf.getId() );
         }
+        Thread.sleep(  1000 ); // give the cache time to reorder
         // lockup first item:
-        tf = localfactory.find( keys.remove() );
-        Assert.assertNull( tf ); // must have been removed from the cache.
+        tf = localFactory.find( keys.remove() );
+        Assert.assertNull( tf, "first entry must have been removed from the cache." );
         // lockup second item:
-        tf = localfactory.find( keys.remove() );
-        Assert.assertNotNull( tf ); // must be available
+        tf = localFactory.find( keys.remove() );
+        Assert.assertNotNull( tf, "second key must be available" );
     }
 
 }
