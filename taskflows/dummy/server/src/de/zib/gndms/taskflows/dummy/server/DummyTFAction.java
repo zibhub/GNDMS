@@ -1,4 +1,4 @@
-package de.zib.gndms.taskflows.dummy;
+package de.zib.gndms.taskflows.dummy.server;
 
 
 /*
@@ -24,6 +24,9 @@ import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.Taskling;
+import de.zib.gndms.taskflows.dummy.client.DummyTaskFlowMeta;
+import de.zib.gndms.taskflows.dummy.client.model.DummyOrder;
+import de.zib.gndms.taskflows.dummy.client.model.DummyTaskFlowResult;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;

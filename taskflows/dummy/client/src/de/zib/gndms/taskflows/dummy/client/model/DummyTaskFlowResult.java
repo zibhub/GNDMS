@@ -1,4 +1,4 @@
-package de.zib.gndms.taskflows.dummy;
+package de.zib.gndms.taskflows.dummy.client.model;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *

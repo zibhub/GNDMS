@@ -5,6 +5,7 @@ ENV['JAVA_OPTS'] ||= '-Xms512m -Xmx768m'
 
 # Additional maven repositories 
 repositories.remote << 'http://www.ibiblio.org/maven2'
+repositories.remote << 'http://repo1.maven.org/maven2'
 repositories.remote << 'http://repository.codehaus.org'
 repositories.remote << 'http://google-gson.googlecode.com/svn/mavenrepo'
 repositories.remote << 'http://guiceyfruit.googlecode.com/svn/repo/releases'
@@ -18,6 +19,8 @@ repositories.remote << 'http://repo.marketcetera.org/maven'
 
 # Don't touch below unless you know what you are doing
 # --------------------------------------------------------------------------------------------------
+#
+require "open3"
 
 VERSION_NUMBER = '0.6.0-pre'
 VERSION_NAME = 'RESTIFY'
@@ -26,6 +29,14 @@ MF_COPYRIGHT = 'Copyright 2008-2011 Zuse Institute Berlin (ZIB)'
 LICENSE ='This software has been licensed to you under the terms and conditions of the Apache License 2.0 (APL 2.0) only.'
 MF_LICENSE="#{LICENSE}  See META-INF/LICENSE for detailed terms and conditions."
 USERNAME = ENV['USER'].to_s
+Open3.popen3( "git describe --tags" ) do |stdin,stdout,stderr|
+    commit_id = stdout.gets
+    if ( commit_id.nil? )
+        VERSION_TAG = FALLBACK_VERSION_TAG 
+    else 
+        VERSION_TAG = commit_id.chomp
+    end
+end
 
 # Yes, this project uses java
 require 'buildr/java'
@@ -58,7 +69,7 @@ testTool('openssl')
 testTool('hostname')
 HOSTNAME = `hostname`.split[0]
 
-puts "GNDMS #{VERSION_NUMBER} \”#{VERSION_NAME}\""
+puts "GNDMS #{VERSION_NUMBER} \”#{VERSION_NAME}\" #{VERSION_TAG}"
 puts MF_COPYRIGHT
 puts "#{LICENSE}  Please consult doc/licensing about licensing conditions of downloaded 3rd party software."
 if ENV['GNDMS_DEPS']=='skip' then 
@@ -125,8 +136,8 @@ XOM='xom:xom:jar:1.1'
 XPP='xpp3:xpp3_min:jar:1.1.4c'
 # together with STAX JODA_TIME
 # JSON/Jackson
-JSON=['org.codehaus.jackson:jackson-core-lgpl:jar:1.7.4', 
-      'org.codehaus.jackson:jackson-mapper-lgpl:jar:1.7.4']
+JSON=['org.codehaus.jackson:jackson-core-lgpl:jar:1.9.2', 
+      'org.codehaus.jackson:jackson-mapper-lgpl:jar:1.9.2']
 GSON='com.google.code.gson:gson:jar:1.6'
 
 # logging
@@ -134,7 +145,8 @@ SLF4J = transitive( ['org.slf4j:slf4j-log4j12:jar:1.6.1', 'org.slf4j:slf4j-ext:j
 
 GUICE = 'com.google.code.guice:guice:jar:2.0'
 #GOOGLE_COLLECTIONS = 'com.google.code.google-collections:google-collect:jar:snapshot-20080530'
-GOOGLE_COLLECTIONS = 'com.google.collections:google-collections:jar:1.0'
+GUAVA = 'com.google.guava:guava:jar:10.0.1'
+GOOGLE_COLLECTIONS = GUAVA
 JETBRAINS_ANNOTATIONS = 'com.intellij:annotations:jar:7.0.3'
 JODA_TIME = transitive('joda-time:joda-time:jar:1.6')
 CXF = 'org.apache.cxf:cxf-bundle:jar:2.1.4'
@@ -144,7 +156,8 @@ STAX = 'stax:stax:jar:1.2.0'
 COMMONS_COLLECTIONS = transitive(['commons-collections:commons-collections:jar:3.2'])
 COMMONS_CODEC = 'commons-codec:commons-codec:jar:1.4'
 COMMONS_LANG = 'commons-lang:commons-lang:jar:2.1'
-COMMONS_LOGGING = 'commons-logging:commons-logging:jar:1.1.1'
+#COMMONS_LOGGING = 'commons-logging:commons-logging:jar:1.1.1'
+COMMONS_LOGGING = 'org.slf4j:jcl-over-slf4j:jar:1.6.3'
 COMMONS_FILEUPLOAD = transitive(['commons-fileupload:commons-fileupload:jar:1.2.1'])
 COMMONS_IO = transitive(['commons-io:commons-io:jar:2.0.1'])
 JETTY = ['org.mortbay.jetty:jetty:jar:6.1.11', 'org.mortbay.jetty:jetty-util:jar:6.1.11']
@@ -548,16 +561,17 @@ NEODATAGRAPH = [_('lib/neo4j-1.2/geronimo-jta_1.1_spec-1.1.1.jar'),
         Commands.java('de.zib.gndmc.MaintenanceClient',  full_args, { :classpath => jars, :verbose => true } )
       end
 
-      task 'run-test' do
+      desc 'Runs the sliceInOut test client'
+      task 'run-sliceIO' do |t|
         jars = compile.dependencies.map(&:to_s)
         jars << compile.target.to_s
         args = [ '-p', ENV['GNDMS_SOURCE']+'/etc/sliceInOutClient.properties' ]
-        Commands.java('de.zib.gndmc.SliceInOutClient',  args, 
-                      { :classpath => jars, :properties => 
-                          { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" } } )
+        props = { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" }
+        runner = 'de.zib.gndmc.SliceInOutClient'
+        runJava( t.to_s, args, jars, props )
       end
 
-      task 'run-staging-test' do
+      task 'run-staging-test' do |t|
         jars = compile.dependencies.map(&:to_s)
         jars << compile.target.to_s
         host = `hostname`.chomp
@@ -572,9 +586,9 @@ NEODATAGRAPH = [_('lib/neo4j-1.2/geronimo-jta_1.1_spec-1.1.1.jar'),
                  '-uri', 'https://' + host + ':8443/wsrf/services/gndms/GORFX',
 	             '-dn', dn
         ]
-        Commands.java('de.zib.gndmc.GORFX.c3grid.ProviderStageInClient',  args, 
-                      { :classpath => jars, :properties => 
-                          { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" } } )
+        props = { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" }
+        runner = 'de.zib.gndmc.GORFX.c3grid.ProviderStageInClient'
+        runJava( t.to_s, args, jars, props )
       end
     end
 
@@ -742,6 +756,7 @@ task 'ptgrid-test' do
     system "#{ENV['GNDMS_SOURCE']}/scripts/ptgrid/test-resource.sh"
 end
 
+desc 'Sets up the c3 data-provider database'
 task 'c3grid-dp-setupdb' do
     system "#{ENV['GNDMS_SOURCE']}/scripts/c3grid/setup-dataprovider.sh CREATE"
 end
@@ -796,7 +811,6 @@ task 'build-docs' => ['apidocs']
 desc 'Install and deploy a release build'
 task 'install-distribution' => ['install-deps', 'deploy-DSpace', 'deploy-GORFX']
 
-
 task 'fix-permissions' do
     system "#{ENV['GNDMS_SOURCE']}/scripts/internal/fix-permissions.sh"
 end
@@ -824,6 +838,12 @@ task 'auto-clean' do
     elsif( hasPath?( "#{path}gndms-model-0.3.2.jar" ) )
         puts 'GNDMS 0.3.2 detected.'
         cleanRev( '0.3.2' )
+    elsif( hasPath?( "#{path}gndms-model-0.3.3.jar" ) )
+        puts 'GNDMS 0.3.3 detected.'
+        cleanRev( '0.3.3' )
+    elsif( hasPath?( "#{path}gndms-model-0.3.4.jar" ) )
+        puts 'GNDMS 0.3.4 detected.'
+        cleanRev( '0.3.4' )
     else
         puts 'No previously installed version detected.'
     end
@@ -856,6 +876,14 @@ task 'clean-0.3.2' do
     cleanRev( '0.3.2' )
 end
 
+task 'clean-0.3.3' do
+    cleanRev( '0.3.3' )
+end
+
+task 'clean-0.3.4' do
+    cleanRev( '0.3.4' )
+end
+
 
 def cleanRev( version )
     IO.foreach( "#{ENV['GNDMS_SOURCE']}/buildr/#{version}/files" )  { |block|
@@ -880,6 +908,33 @@ def nope()
      puts 'Please read the documentation on how to build, install, and deploy this software (doc/html or doc/md).'
      puts 'The installation of GNDMS is considerably easy, but not straightforward.'
      puts ''
+end
+
+
+def genScript( scriptName, runClass, args, jars, props )
+    script = File.new(_( scriptName ), 'w')
+    script.write( "#!/bin/bash\n\n" )
+    script.write( "args=( " );
+    args.each { |x| script.write( "\"#{x}\" " ) }
+    script.write( ")\n\n")
+    jars.each { |x| script.write( "cp=\"#{x}:$cp\"\n") } 
+    script.write( "\n" )
+    script.write( "props=( " )
+    props.each { |k, v| script.write( "\"-D#{k}=#{v}\" " ) }
+    script.write( ")\n\n" )
+    script.write( "exec java -cp $cp ${props[@]} #{runClass} ${args[@]}\n" )
+
+    script.close
+end
+
+def runJava( scriptName, runner, args, jars, props={} ) 
+    unless ENV["GEN_SCRIPT"] == "1"
+        Commands.java( runner,  args, 
+                      { :classpath => jars, :properties => props } )
+    else
+        raise Exception.new( "#{_( scriptName )} already exists. Please remove and try again." ) if File.exists?( _( scriptName ) )
+        genScript( scriptName, runner, args, jars, props )
+    end
 end
 
 Rake::Task[:default].prerequisites.clear

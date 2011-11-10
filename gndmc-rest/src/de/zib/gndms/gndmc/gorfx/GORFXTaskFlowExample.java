@@ -17,7 +17,6 @@ package de.zib.gndms.gndmc.gorfx;
  */
 
 import de.zib.gndms.common.kit.application.AbstractApplication;
-//import de.zib.gndms.logic.taskflow.tfmockup.DummyOrder;
 import org.kohsuke.args4j.Option;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -30,7 +29,7 @@ import java.util.UUID;
  * @date 14.03.11 11:46
  * @brief A test run for the gorfx taskflow execution.
  */
-public class GORFXTaskFlowExample extends AbstractApplication {
+public abstract class GORFXTaskFlowExample extends AbstractApplication {
 
 	@Option(name = "-uri", required = true, usage = "URL of GORFX-Endpoint", metaVar = "URI")
 	protected String gorfxEpUrl;
@@ -44,12 +43,6 @@ public class GORFXTaskFlowExample extends AbstractApplication {
     private AbstractTaskFlowExecClient etfc;
 
 
-    public static void main(String[] args) throws Exception {
-
-		GORFXTaskFlowExample cnt = new GORFXTaskFlowExample();
-		cnt.run(args);
-		System.exit(0);
-	}
 
 	@Override
     public void run() throws Exception {
@@ -60,8 +53,8 @@ public class GORFXTaskFlowExample extends AbstractApplication {
                 "classpath:META-INF/client-context.xml");
         gorfxClient = (FullGORFXClient ) context
                 .getAutowireCapableBeanFactory().createBean(
-                        FullGORFXClient.class,
-                        AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
+                FullGORFXClient.class,
+                AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
 		gorfxClient.setServiceURL(gorfxEpUrl);
 
         tfClient = (TaskFlowClient ) context
@@ -76,7 +69,7 @@ public class GORFXTaskFlowExample extends AbstractApplication {
                 AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
         taskClient.setServiceURL(gorfxEpUrl);
 
-        etfc = new ExampleTaskFlowExecClient();
+        etfc = provideTaskFlowClient();
         etfc.setGorfxClient( gorfxClient );
         etfc.setTfClient( tfClient );
         etfc.setTaskClient( taskClient );
@@ -85,33 +78,9 @@ public class GORFXTaskFlowExample extends AbstractApplication {
         failingRun();
 	}
 
+    protected abstract AbstractTaskFlowExecClient provideTaskFlowClient( );
 
-    private void normalRun( )  {
+    protected abstract void normalRun();
 
-        System.out.println( "Performing normal run!!" );
-     /*   DummyOrder dft = new DummyOrder();
-        dft.setMessage( "Test task flow is flowing" );
-        dft.setTimes( 20 );
-        dft.setDelay( 1000 );
-        dft.setFailIntentionally( false ); */
-        // create an order instance...
-        // etfc.execTF( dft, dn );
-        System.out.println( "DONE\n" );
-    }
-
-    private void failingRun( )  {
-
-
-        System.out.println( "Performing task which will fail!" );
-        /*
-        DummyOrder dft = new DummyOrder();
-        dft.setMessage( "I'm going to fail" );
-        dft.setTimes( 30 );
-        dft.setDelay( 1000 );
-        dft.setFailIntentionally( true );
-        */
-        // create an order instance...
-        //etfc.execTF( dft, dn );
-        System.out.println( "DONE\n" );
-    }
+    protected abstract void failingRun();
 }
