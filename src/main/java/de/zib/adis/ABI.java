@@ -3,7 +3,12 @@ package de.zib.adis;
 import java.util.Collection;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.Map;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.JCommander;
@@ -43,127 +48,115 @@ public class ABI
                 adis.setEnc( abi.enc );
                 adis.setGrid( abi.grid );
 
-                // process getter
+                // we need at least a methods name
+                if( abi.commands.size() < 1 )
                 {
-                        String resultstr = null;
-                        Collection< String > resultcol = null;
-                        Map< String, String > resultmap = null;
+                        System.exit( 0 );
+                }
 
-                        boolean wasgetter = true;
+                String cmd = abi.commands.remove( 0 );
 
-                        if( 1 == abi.commands.size() )
-                        {
-                                String cmd = abi.commands.get( 0 );
+                // use reflect to call adis method
+                {
+                        Class c = Adis.class;
+                        Method[] methods = c.getDeclaredMethods( );
+                        System.out.println( Modifier.PUBLIC );
 
-                                if( cmd.equals( "getdms" ) )
-                                        resultstr = adis.getDMS();
-                                else if( cmd.equals( "getwss" ) )
-                                        resultstr = adis.getWSS();
-                                else if( cmd.equals( "listoais" ) )
-                                        resultcol = adis.listOAIs();
-                                else if( cmd.equals( "listimportsites" ) )
-                                        resultcol = adis.listImportSites( );
-                                else if( cmd.equals( "listexportsites" ) )
-                                        resultmap = adis.listExportSites( );
-                                else if( cmd.equals( "listworkflows" ) )
-                                        resultcol = adis.listWorkflows();
-                                else if( cmd.equals( "listpublisher" ) )
-                                        resultmap = adis.listPublisher();
-                                else
-                                        wasgetter = false;
-                        }
-                        else if( 2 == abi.commands.size() )
+                        // search the right method
+                        for( Method m: methods )
                         {
-                                String cmd = abi.commands.get( 0 );
-                                String par = abi.commands.get( 1 );
+                                // search the right method
+                                if( Modifier.PUBLIC != m.getModifiers() )
+                                        continue;
+                                if( ! m.getName().equals( cmd ) )
+                                        continue;
 
-                                if( cmd.equals( "listgorfxbyoid" ) )
-                                        resultcol = adis.listGORFXbyOID( par );
-                                else if( cmd.equals( "getepbyworkflow" ) )
-                                        resultmap = adis.getEPbyWorkflow( par );
-                                else
-                                        wasgetter = false;
-                        }
+                                System.out.println( m.getName() );
+                                Class[] paramtypes = m.getParameterTypes();
 
-                        if( null != resultstr )
-                        {
-                                System.out.println( resultstr );
-                                System.exit( 0 );
-                        }
-                        else if( null != resultcol )
-                        {
-                                System.out.println( resultcol );
-                                System.exit( 0 );
-                        }
-                        else if( null != resultmap )
-                        {
-                                System.out.println( resultmap );
-                                System.exit( 0 );
-                        }
-                        else if( wasgetter )
-                        {
-                                commands();
-                                System.exit( -1 );
+                                // get parameters
+                                Object[] params = new Object[ paramtypes.length ];
+                                for( int i = 0; i < paramtypes.length; ++i )
+                                {
+                                        //if( paramtypes[i].isInstance( String.class ) )
+                                        if( String.class.isInstance( paramtypes[i] ) )
+                                        {
+                                                if( 0 == abi.commands.size() )
+                                                {
+                                                        throw new IllegalArgumentException( "The command " + cmd + " excepts at least one more argument!" );
+                                                }
+
+                                                params[ i ] = abi.commands.remove( 0 );
+                                        }
+                                        //else if( paramtypes[i].isInstance( Collection.class ) )
+                                        else if( Collection.class.isInstance( paramtypes[i] ) )
+                                        {
+                                                Set< String > s = new HashSet< String >();
+
+                                                while( 0 != abi.commands.size() )
+                                                {
+                                                        s.add( abi.commands.remove( 0 ) );
+                                                }
+
+                                                params[i] = s;
+                                        }
+                                        else
+                                        {
+                                                throw new IllegalStateException( "Internal Error: don't understand the parameter type of the API." );
+                                        }
+                                }
+
+                                // call and handle return value
+                                Object result;
+                                try
+                                {
+                                        result = m.invoke( adis, params );
+                                }
+                                catch( Exception e )
+                                {
+                                        e.printStackTrace();
+                                        break;
+                                }
+
+                                // handle results
+                                {
+                                        if( result instanceof String )
+                                        {
+                                                String r = ( String )result;
+                                                System.out.println( r );
+                                        }
+                                        else if ( result instanceof Collection< ? > )
+                                        {
+                                                Collection< String > r = ( Collection< String > )result;
+                                                printCollection( r );
+                                        }
+                                        else if( result instanceof Map< ?, ? > )
+                                        {
+                                                Map< String, String > r = ( Map< String, String > )result;
+                                                printMap( r );
+                                        }
+                                        else if( Boolean.TYPE.isInstance( result ) ) // boolean?
+                                        {
+                                        }
+                                }
                         }
                 }
 
-                // process setter
+        }
+
+        private static void printCollection( Collection< String > col )
+        {
+                for( String s: col )
                 {
-                        boolean success = false;
+                        System.out.println( s );
+                }
+        }
 
-                        if( 0 == abi.commands.size() )
-                                System.exit( 0 );
-                        
-                        String cmd = abi.commands.get( 0 );
-
-                        if( 2 == abi.commands.size() )
-                        {
-                                String par = abi.commands.get( 1 );
-
-                                if( cmd.equals( "setdms" ) )
-                                        success = adis.setDMS( par );
-                                else if( cmd.equals( "setwss" ) )
-                                        success = adis.setWSS( par );
-                                else if( cmd.equals( "oai" ) )
-                                        success = adis.setOAI( par );
-                        }
-                        else if( 3 == abi.commands.size() )
-                        {
-                                String par1 = abi.commands.get( 1 );
-                                String par2 = abi.commands.get( 2 );
-
-                                if( cmd.equals( "setexport" ) )
-                                        success = adis.setExport( par1, par2 );
-                                else if( cmd.equals( "setimport" ) )
-                                        success = adis.setImport( par1, par2 );
-                        }
-                        // perhaps it had dynamic number of parameters
-                        if( ! success )
-                        {
-                                if( cmd.equals( "setoidprefixe" ) )
-                                {
-                                        if( abi.commands.size() < 2 )
-                                        {
-                                                commands();
-                                                System.exit( -1 );
-                                        }
-
-                                        String gorfx = abi.commands.remove( 0 );
-                                        success = adis.setOIDPrefixe( gorfx, abi.commands );
-                                }
-                                else if( cmd.equals( "setworkflows" ) )
-                                {
-                                        if( abi.commands.size() < 3 )
-                                        {
-                                                commands();
-                                                System.exit( -1 );
-                                        }
-
-                                        String subspace = abi.commands.remove( 0 );
-                                        String gram = abi.commands.remove( 0 );
-                                        success = adis.setWorkflows( subspace, gram, abi.commands );
-                                }
-                        }
+        private static void printMap( Map< String, String > map )
+        {
+                for( Map.Entry< String, String > entry: map.entrySet() )
+                {
+                        System.out.println( entry.getKey() + ": " + entry.getValue() );
                 }
         }
 
