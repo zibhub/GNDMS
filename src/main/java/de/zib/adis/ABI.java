@@ -43,54 +43,127 @@ public class ABI
                 adis.setEnc( abi.enc );
                 adis.setGrid( abi.grid );
 
-                String resultstr = null;
-                Collection< String > resultcol = null;
-                Map< String, String > resultmap = null;
-
-                if( 1 == abi.commands.size() )
+                // process getter
                 {
-                        String cmd = abi.commands.get( 0 );
+                        String resultstr = null;
+                        Collection< String > resultcol = null;
+                        Map< String, String > resultmap = null;
 
-                        if( cmd.equals( "getdms" ) )
-                                resultstr = adis.getDMS();
-                        else if( cmd.equals( "getwss" ) )
-                                resultstr = adis.getWSS();
-                        else if( cmd.equals( "listoais" ) )
-                                resultcol = adis.listOAIs();
-                        else if( cmd.equals( "listimportsites" ) )
-                                resultcol = adis.listImportSites( );
-                        else if( cmd.equals( "listexportsites" ) )
-                                resultmap = adis.listExportSites( );
-                        else if( cmd.equals( "listworkflows" ) )
-                                resultcol = adis.listWorkflows();
-                        else if( cmd.equals( "listpublisher" ) )
-                                resultmap = adis.listPublisher();
-                        else
+                        boolean wasgetter = true;
+
+                        if( 1 == abi.commands.size() )
+                        {
+                                String cmd = abi.commands.get( 0 );
+
+                                if( cmd.equals( "getdms" ) )
+                                        resultstr = adis.getDMS();
+                                else if( cmd.equals( "getwss" ) )
+                                        resultstr = adis.getWSS();
+                                else if( cmd.equals( "listoais" ) )
+                                        resultcol = adis.listOAIs();
+                                else if( cmd.equals( "listimportsites" ) )
+                                        resultcol = adis.listImportSites( );
+                                else if( cmd.equals( "listexportsites" ) )
+                                        resultmap = adis.listExportSites( );
+                                else if( cmd.equals( "listworkflows" ) )
+                                        resultcol = adis.listWorkflows();
+                                else if( cmd.equals( "listpublisher" ) )
+                                        resultmap = adis.listPublisher();
+                                else
+                                        wasgetter = false;
+                        }
+                        else if( 2 == abi.commands.size() )
+                        {
+                                String cmd = abi.commands.get( 0 );
+                                String par = abi.commands.get( 1 );
+
+                                if( cmd.equals( "listgorfxbyoid" ) )
+                                        resultcol = adis.listGORFXbyOID( par );
+                                else if( cmd.equals( "getepbyworkflow" ) )
+                                        resultmap = adis.getEPbyWorkflow( par );
+                                else
+                                        wasgetter = false;
+                        }
+
+                        if( null != resultstr )
+                        {
+                                System.out.println( resultstr );
+                                System.exit( 0 );
+                        }
+                        else if( null != resultcol )
+                        {
+                                System.out.println( resultcol );
+                                System.exit( 0 );
+                        }
+                        else if( null != resultmap )
+                        {
+                                System.out.println( resultmap );
+                                System.exit( 0 );
+                        }
+                        else if( wasgetter )
+                        {
                                 commands();
+                                System.exit( -1 );
+                        }
                 }
-                else if( 2 == abi.commands.size() )
+
+                // process setter
                 {
+                        boolean success = false;
+
+                        if( 0 == abi.commands.size() )
+                                System.exit( 0 );
+                        
                         String cmd = abi.commands.get( 0 );
-                        String par = abi.commands.get( 1 );
 
-                        if( cmd.equals( "listgorfxbyoid" ) )
-                                resultcol = adis.listGORFXbyOID( par );
-                        else if( cmd.equals( "getepbyworkflow" ) )
-                                resultmap = adis.getEPbyWorkflow( par );
-                        else commands();
-                }
+                        if( 2 == abi.commands.size() )
+                        {
+                                String par = abi.commands.get( 1 );
 
-                if( null != resultstr )
-                {
-                        System.out.println( resultstr );
-                }
-                else if( null != resultcol )
-                {
-                        System.out.println( resultcol );
-                }
-                else if( null != resultmap )
-                {
-                        System.out.println( resultmap );
+                                if( cmd.equals( "setdms" ) )
+                                        success = adis.setDMS( par );
+                                else if( cmd.equals( "setwss" ) )
+                                        success = adis.setWSS( par );
+                                else if( cmd.equals( "oai" ) )
+                                        success = adis.setOAI( par );
+                        }
+                        else if( 3 == abi.commands.size() )
+                        {
+                                String par1 = abi.commands.get( 1 );
+                                String par2 = abi.commands.get( 2 );
+
+                                if( cmd.equals( "setexport" ) )
+                                        success = adis.setExport( par1, par2 );
+                                else if( cmd.equals( "setimport" ) )
+                                        success = adis.setImport( par1, par2 );
+                        }
+                        // perhaps it had dynamic number of parameters
+                        if( ! success )
+                        {
+                                if( cmd.equals( "setoidprefixe" ) )
+                                {
+                                        if( abi.commands.size() < 2 )
+                                        {
+                                                commands();
+                                                System.exit( -1 );
+                                        }
+
+                                        String gorfx = abi.commands.remove( 0 );
+                                        success = adis.setOIDPrefixe( gorfx, abi.commands );
+                                }
+                                else if( cmd.equals( "setworkflows" ) )
+                                {
+                                        if( abi.commands.size() < 3 )
+                                        {
+                                                commands();
+                                                System.exit( -1 );
+                                        }
+
+                                        String subspace = abi.commands.remove( 0 );
+                                        String gram = abi.commands.remove( 0 );
+                                        success = adis.setWorkflows( subspace, gram, abi.commands );
+                                }
+                        }
                 }
         }
 

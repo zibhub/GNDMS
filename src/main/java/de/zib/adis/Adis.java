@@ -1,7 +1,6 @@
 package de.zib.adis;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
@@ -52,143 +51,6 @@ public class Adis
         }
 
 
-        public Collection< String > listOAIs( )
-        {
-                // guard
-                {
-                        checkState();
-                }
-
-                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, "oai", "..." ) );
-
-                if( null == _result )
-                {
-                        return null;
-                }
-
-                return mergedValues( _result );
-        }
-
-        public Collection< String > listGORFXbyOID( String oidprefix )
-        {
-                // guard
-                {
-                        checkState();
-                }
-
-                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, "oidprefix", oidprefix ) );
-
-                if( null == _result )
-                {
-                        return null;
-                }
-
-                return mergedValues( _result );
-        }
-
-        public Map< String, String > listPublisher( )
-        {
-                // guard
-                {
-                        checkState();
-                }
-
-                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, "publisher", "..." ) );
-
-                if( null == _result )
-                {
-                        return null;
-                }
-
-                return flatmap( _result );
-        }
-
-        public Map< String, String > listExportSites( )
-        {
-                // guard
-                {
-                        checkState();
-                }
-
-                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, "export", "..." ) );
-
-                if( null == _result )
-                {
-                        return null;
-                }
-
-                return usualmap( _result );
-        }
-
-        public Collection< String > listImportSites( )
-        {
-                // guard
-                {
-                        checkState();
-                }
-
-                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, "import", "..." ) );
-
-                if( null == _result )
-                {
-                        return null;
-                }
-
-                return flatten( _result.values() );
-        }
-
-        public Collection< String > listWorkflows( )
-        {
-                // guard
-                {
-                        checkState();
-                }
-
-                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, "workflow", "..." ) );
-
-                if( null == _result )
-                {
-                        return null;
-                }
-
-                return usualset( _result.keySet() );
-        }
-
-        public Map< String, String > getEPbyWorkflow( String workflow )
-        {
-                // guard
-                {
-                        checkState();
-                }
-
-                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, "workflow", workflow ) );
-
-                if( null == _result )
-                {
-                        return null;
-                }
-
-                Map< String, String > result = new HashMap< String, String >();
-
-                // should be exactly one entry
-                for( Map.Entry< Key, Set< String > > entry: _result.entrySet() )
-                {
-                        for( String gram: entry.getValue() )
-                        {
-                                Map< Key, Set< String > > _gramres = voldi.lookup( new Key( grid, "gram", gram ) );
-
-                                if( null == _gramres )
-                                {
-                                        log.warn( "Workflow " + workflow + " had a GRAM EndPoint " + gram + " registered, which has neither a GridFTP nor a SubSpace endpoint." );
-                                        continue;
-                                }
-
-                                result.putAll( flatmap( _gramres ) );
-                        }
-                }
-
-                return result;
-        }
 
         public String getDMS( )
         {
@@ -262,6 +124,169 @@ public class Adis
                 return null;
         }
 
+        public Collection< String > listOAIs( )
+        {
+                // guard
+                {
+                        checkState();
+                }
+
+                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, "oai", "..." ) );
+
+                if( null == _result )
+                {
+                        return null;
+                }
+
+                return mergedValues( _result );
+        }
+
+        public Collection< String > listImportSites( )
+        {
+                // guard
+                {
+                        checkState();
+                }
+
+                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, "import", "..." ) );
+
+                if( null == _result )
+                {
+                        return null;
+                }
+
+                return flatten( _result.values() );
+        }
+
+        public Map< String, String > listExportSites( )
+        {
+                // guard
+                {
+                        checkState();
+                }
+
+                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, "export", "..." ) );
+
+                if( null == _result )
+                {
+                        return null;
+                }
+
+                return flatmap( _result );
+        }
+
+        public Collection< String > listWorkflows( )
+        {
+                // guard
+                {
+                        checkState();
+                }
+
+                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, "workflow", "..." ) );
+
+                if( null == _result )
+                {
+                        return null;
+                }
+
+                return usualset( _result.keySet() );
+        }
+
+        public Collection< String > listGORFXbyOID( String oidprefix )
+        {
+                // guard
+                {
+                        checkState();
+                }
+
+                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, "oidprefix", oidprefix ) );
+
+                if( null == _result )
+                {
+                        return null;
+                }
+
+                return mergedValues( _result );
+        }
+
+        public Map< String, String > listPublisher( )
+        {
+                // guard
+                {
+                        checkState();
+                }
+
+                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, "publisher", "..." ) );
+
+                if( null == _result )
+                {
+                        return null;
+                }
+
+                return flatmap( _result );
+        }
+
+        public Map< String, String > getEPbyWorkflow( String workflow )
+        {
+                // guard
+                {
+                        checkState();
+                }
+
+                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, "workflow", workflow ) );
+
+                if( null == _result )
+                {
+                        return null;
+                }
+
+                Map< String, String > result = new HashMap< String, String >();
+
+                // should be exactly one entry
+                for( Map.Entry< Key, Set< String > > entry: _result.entrySet() )
+                {
+                        for( String gram: entry.getValue() )
+                        {
+                                Map< Key, Set< String > > _gramres = voldi.lookup( new Key( grid, "gram", gram ) );
+
+                                if( null == _gramres )
+                                {
+                                        log.warn( "Workflow " + workflow + " had a GRAM EndPoint " + gram + " registered, which has neither a GridFTP nor a SubSpace endpoint." );
+                                        continue;
+                                }
+
+                                result.putAll( flatmap( _gramres ) );
+                        }
+                }
+
+                return result;
+        }
+
+
+
+        public boolean setDMS( String endpoint )
+        {
+                // guard
+                {
+                        checkState();
+                }
+
+                Map< String, String > _result = voldi.insert( null, simplemap( new Key( grid, "dms", "" ), endpoint ) );
+
+                return 0 == _result.size();
+        }
+
+        public boolean setWSS( String endpoint )
+        {
+                // guard
+                {
+                        checkState();
+                }
+
+                Map< String, String > _result = voldi.insert( null, simplemap( new Key( grid, "wss", "" ), endpoint ) );
+
+                return 0 == _result.size();
+        }
 
         public boolean setExport( String name, String subspace )
         {
@@ -297,7 +322,7 @@ public class Adis
                 return 0 == _result.size();
         }
 
-        public boolean setWorkflows( Collection< String > workflows, String gram, String subspace )
+        public boolean setWorkflows( String subspace, String gram, Collection< String > workflows )
         {
                 // guard
                 {
@@ -321,7 +346,7 @@ public class Adis
                 return 0 == _result.size();
         }
 
-        public boolean setOIDPrefix( Collection< String > oidprefixe, String gorfx )
+        public boolean setOIDPrefixe( String gorfx, Collection< String > oidprefixe )
         {
                 // guard
                 {
@@ -353,29 +378,6 @@ public class Adis
                 return 0 == _result.size();
         }
 
-        public boolean setCentralDMS( String endpoint )
-        {
-                // guard
-                {
-                        checkState();
-                }
-
-                Map< String, String > _result = voldi.insert( null, simplemap( new Key( grid, "dms", "" ), endpoint ) );
-
-                return 0 == _result.size();
-        }
-
-        public boolean setWSS( String endpoint )
-        {
-                // guard
-                {
-                        checkState();
-                }
-
-                Map< String, String > _result = voldi.insert( null, simplemap( new Key( grid, "wss", "" ), endpoint ) );
-
-                return 0 == _result.size();
-        }
 
 
         private Map< Key, Set< String > > simplemap( Key key, String value )
@@ -425,18 +427,6 @@ public class Adis
                         }
 
                         result.put( entry.getKey().get_keyname(), entry.getValue().iterator().next() );
-                }
-
-                return result;
-        }
-
-        private Map< String, Set< String > > usualmap( Map< Key, Set< String > > map )
-        {
-                Map< String, Set< String > > result = new HashMap< String, Set< String > >();
-
-                for( Map.Entry< Key, Set< String > > entry: map.entrySet() )
-                {
-                        result.put( entry.getKey().get_keyname(), entry.getValue() );
                 }
 
                 return result;
