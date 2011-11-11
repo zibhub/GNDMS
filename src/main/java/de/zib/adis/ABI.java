@@ -79,7 +79,7 @@ public class ABI
                                 for( int i = 0; i < paramtypes.length; ++i )
                                 {
                                         //if( paramtypes[i].isInstance( String.class ) )
-                                        if( String.class.isInstance( paramtypes[i] ) )
+                                        if( paramtypes[i].isAssignableFrom( String.class ) )
                                         {
                                                 if( 0 == abi.commands.size() )
                                                 {
@@ -89,7 +89,7 @@ public class ABI
                                                 params[ i ] = abi.commands.remove( 0 );
                                         }
                                         //else if( paramtypes[i].isInstance( Collection.class ) )
-                                        else if( Collection.class.isInstance( paramtypes[i] ) )
+                                        else if( paramtypes[i].isAssignableFrom( Collection.class ) )
                                         {
                                                 Set< String > s = new HashSet< String >();
 
@@ -135,7 +135,31 @@ public class ABI
                                                 Map< String, String > r = ( Map< String, String > )result;
                                                 printMap( r );
                                         }
-                                        else if( Boolean.TYPE.isInstance( result ) ) // boolean?
+                                        else if( Boolean.TYPE.isInstance( result ) )
+                                        {
+                                        }
+                                        else if( Character.TYPE.isInstance( result ) )
+                                        {
+                                        }
+                                        else if( Byte.TYPE.isInstance( result ) )
+                                        {
+                                        }
+                                        else if( Short.TYPE.isInstance( result ) )
+                                        {
+                                        }
+                                        else if( Integer.TYPE.isInstance( result ) )
+                                        {
+                                        }
+                                        else if( Long.TYPE.isInstance( result ) )
+                                        {
+                                        }
+                                        else if( Float.TYPE.isInstance( result ) )
+                                        {
+                                        }
+                                        else if( Double.TYPE.isInstance( result ) )
+                                        {
+                                        }
+                                        else if( Void.TYPE.isInstance( result ) )
                                         {
                                         }
                                 }
