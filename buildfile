@@ -26,21 +26,33 @@ repositories.remote << 'http://repository.jboss.org/nexus/content/groups/public'
 repositories.remote << 'http://repo.marketcetera.org/maven'
 
 SLF4J = transitive('org.slf4j:slf4j-log4j12:jar:1.5.8')
+JCMD = transitive('com.beust:jcommander:jar:1.19')
 
 desc "AdvancedDiscoveryService"
 define "adis" do
-  project.version = VERSION_NUMBER
-  project.group = GROUP
-  manifest["Implementation-Vendor"] = COPYRIGHT
+        project.version = VERSION_NUMBER
+        project.group = GROUP
+        manifest["Implementation-Vendor"] = COPYRIGHT
 
-  compile.with SLF4J
-#  mainClass='de.zib.vold.userInterface.ABI'
+        compile.with SLF4J, JCMD
+        mainClass='de.zib.adis.ABI'
 
-  package(:jar)
-  package(:jar).include _('etc/*'), :path => ''
+        package(:jar).with :manifest=>manifest.merge('Main-Class'=>mainClass)
+        package(:jar).include _('etc/*'), :path => ''
+        package(:jar).include _('src/main/java/META-INF/*'), :path => 'META-INF/'
 
-  package(:war).include _('etc/*'), :path => 'WEB-INF/classes/'
+        package(:war).with :manifest=>manifest.merge('Main-Class'=>mainClass)
+        package(:war).include _('etc/*'), :path => 'WEB-INF/classes/'
 
+        desc "Test runs"
+        task 'test1' do
+                jars = compile.dependencies.map(&:to_s)
+                jars += [project.package(:jar).to_s]
+                args = ['--baseurl', 'localhost:8080/vold/', "getwss"]
+
+                Commands.java(mainClass,
+                        args, { :classpath => jars, :verbose => true } )
+        end
 end
 
 # vim:ft=ruby
