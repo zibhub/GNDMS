@@ -60,7 +60,6 @@ public class ABI
                 {
                         Class c = Adis.class;
                         Method[] methods = c.getDeclaredMethods( );
-                        System.out.println( Modifier.PUBLIC );
 
                         // search the right method
                         for( Method m: methods )
@@ -71,7 +70,6 @@ public class ABI
                                 if( ! m.getName().equals( cmd ) )
                                         continue;
 
-                                System.out.println( m.getName() );
                                 Class[] paramtypes = m.getParameterTypes();
 
                                 // get parameters
@@ -83,7 +81,7 @@ public class ABI
                                         {
                                                 if( 0 == abi.commands.size() )
                                                 {
-                                                        throw new IllegalArgumentException( "The command " + cmd + " excepts at least one more argument!" );
+                                                        throw new IllegalArgumentException( "The command " + cmd + " excepts at least one more argument on method " + m.toGenericString() + "." );
                                                 }
 
                                                 params[ i ] = abi.commands.remove( 0 );
@@ -162,6 +160,17 @@ public class ABI
                                         else if( Void.TYPE.isInstance( result ) )
                                         {
                                         }
+                                }
+
+                                return;
+                        }
+
+                        // did not find it - put list of possible methods
+                        {
+                                System.out.println( "List of possible commands: " );
+                                for( Method m: methods )
+                                {
+                                        System.out.println( m.getName() + " |--> " + m.toGenericString() );
                                 }
                         }
                 }
