@@ -4,6 +4,10 @@ require 'buildr/java'
 include Java
 include Commands
 
+require 'buildr/adis_modules.rb'
+include ADIS_MODULES
+
+setupModules '../vold', 'vold'
 
 # Version number for this release
 VERSION_NUMBER = "0.1.0"
@@ -27,6 +31,28 @@ repositories.remote << 'http://repo.marketcetera.org/maven'
 
 SLF4J = transitive('org.slf4j:slf4j-log4j12:jar:1.5.8')
 JCMD = transitive('com.beust:jcommander:jar:1.19')
+SPRING_VERSION = "3.0.5.RELEASE"
+SPRING = [ 
+           "org.springframework:spring-asm:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-core:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-beans:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-context:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-expression:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-oxm:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-orm:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-jdbc:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-web:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-webmvc:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-expression:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-asm:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-aop:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-aspects:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-instrument:jar:#{SPRING_VERSION}",
+         ] 
+#COMMONS_LOGGING = 'org.slf4j:jcl-over-slf4j:jar:1.6.3'
+COMMONS_LOGGING = 'commons-logging:commons-logging:jar:1.1.1'
+XSTREAM = transitive('com.thoughtworks.xstream:xstream:jar:1.3.1')
+SERVLET = 'javax.servlet:servlet-api:jar:2.5'
 
 desc "AdvancedDiscoveryService"
 define "adis" do
@@ -34,7 +60,7 @@ define "adis" do
         project.group = GROUP
         manifest["Implementation-Vendor"] = COPYRIGHT
 
-        compile.with SLF4J, JCMD
+        compile.with SLF4J, JCMD, VOLD_COMMON, VOLD_CLIENT, SPRING, COMMONS_LOGGING, XSTREAM, SERVLET
         mainClass='de.zib.adis.ABI'
 
         package(:jar).with :manifest=>manifest.merge('Main-Class'=>mainClass)
@@ -48,7 +74,7 @@ define "adis" do
         task 'test1' do
                 jars = compile.dependencies.map(&:to_s)
                 jars += [project.package(:jar).to_s]
-                args = ['--baseurl', 'localhost:8080/vold/', "getwss"]
+                args = ['--baseurl', 'localhost:8080/vold/', "getWSS"]
 
                 Commands.java(mainClass,
                         args, { :classpath => jars, :verbose => true } )
