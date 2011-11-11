@@ -254,6 +254,133 @@ public class Adis
                 return null;
         }
 
+
+        public boolean setExport( String name, String subspace )
+        {
+                // guard
+                {
+                        checkState();
+
+                        if( null == name )
+                        {
+                                name = "";
+                        }
+                }
+
+                Map< String, String > _result = voldi.insert( null, simplemap( new Key( grid, "export", name ), subspace ) );
+
+                return 0 == _result.size();
+        }
+
+        public void setImport( String name, String subspace )
+        {
+                // guard
+                {
+                        checkState();
+
+                        if( null == name )
+                        {
+                                name = "";
+                        }
+                }
+
+                Map< String, String > _result = voldi.insert( null, simplemap( new Key( grid, "import", name ), subspace ) );
+
+                return 0 == _result.size();
+        }
+
+        public boolean setWorkflows( Collection< String > workflows, String gram, String subspace )
+        {
+                // guard
+                {
+                        checkState();
+                }
+
+                Map< Key, Set< String > > request = new HashMap< Key, Set< String > >();
+
+                // add workflow |--> gram
+                for( String workflow: workflows )
+                {
+                        request.put( new Key( grid, "workflow", workflow ), gram );
+                }
+
+                // add gram |--> subspace
+                request.put( new Key( grid, "gram", gram ), subspace );
+
+                Map< String, String > _result = voldi.insert( null, request );
+
+                return 0 == _result.size();
+        }
+
+        public void setOIDPrefix( Collection< String > oidprefixe, String gorfx )
+        {
+                // guard
+                {
+                        checkState();
+                }
+
+                Map< Key, Set< String > > request = new HashMap< Key, Set< String > >();
+
+                // add prefix |--> gorfx
+                for( String oidprefix: oidprefixe )
+                {
+                        request.put( new Key( grid, "oidprefix", oidprefix ), gorfx );
+                }
+
+                Map< String, String > _result = voldi.insert( null, request );
+
+                return 0 == _result.size();
+        }
+
+        public void setOAI( String endpoint )
+        {
+                // guard
+                {
+                        checkState();
+                }
+
+                Map< String, String > _result = voldi.insert( null, simplemap( new Key( grid, "oai", "" ), endpoint ) );
+
+                return 0 == _result.size();
+        }
+
+        public void setCentralDMS( String endpoint )
+        {
+                // guard
+                {
+                        checkState();
+                }
+
+                Map< String, String > _result = voldi.insert( null, simplemap( new Key( grid, "dms", "" ), endpoint ) );
+
+                return 0 == _result.size();
+        }
+
+        public void setWSS( String endpoint )
+        {
+                // guard
+                {
+                        checkState();
+                }
+
+                Map< String, String > _result = voldi.insert( null, simplemap( new Key( grid, "wss", "" ), endpoint ) );
+
+                return 0 == _result.size();
+        }
+
+
+        private Map< Key, Set< String > > simplemap( Key key, String value )
+        {
+                Map< Key, Set< String > > result = new HashMap< Key, Set< String > >();
+
+                Set< String > set = new HashSet< String >();
+                set.add( value );
+
+                result.put( key, set );
+
+                return result;
+        }
+
         private Collection< String > mergedValues( Map< Key, Set< String > > map )
         {
                 // merge all Sets
