@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 public class Adis
 {
+        // TODO: static code to check format contract
         protected final Logger log = LoggerFactory.getLogger( this.getClass() );
 
         private RESTClient voldi;
