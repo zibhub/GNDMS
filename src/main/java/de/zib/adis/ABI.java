@@ -113,7 +113,7 @@ public class ABI
                                 catch( Exception e )
                                 {
                                         e.printStackTrace();
-                                        break;
+                                        return;
                                 }
 
                                 // handle results

@@ -74,7 +74,7 @@ define "adis" do
         task 'test1' do
                 jars = compile.dependencies.map(&:to_s)
                 jars += [project.package(:jar).to_s]
-                args = ['--baseurl', 'localhost:8080/vold/', "getWSS"]
+                args = ['--baseurl', 'http://localhost:8080/vold', "setDMS", "test"]
 
                 Commands.java(mainClass,
                         args, { :classpath => jars, :verbose => true } )
