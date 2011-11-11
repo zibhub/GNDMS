@@ -7,17 +7,23 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
 
+import de.zib.vold.common.Key;
 import de.zib.vold.client.RESTClient;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Adis
 {
+        protected final Logger log = LoggerFactory.getLogger( this.getClass() );
+
         private RESTClient voldi;
         private String grid;
 
         public Adis( )
         {
                 this.voldi = new RESTClient();
-                this.grid = "c3grid"
+                this.grid = "c3grid";
         }
 
         public void setVoldURL( String voldURL )
@@ -128,7 +134,7 @@ public class Adis
                         return null;
                 }
 
-                return flatten( _result.valueSet() );
+                return flatten( _result.values() );
         }
 
         public Collection< String > listWorkflows( )
@@ -162,8 +168,10 @@ public class Adis
                         return null;
                 }
 
+                Map< String, String > result = new HashMap< String, String >();
+
                 // should be exactly one entry
-                for( Map.Entry< Key, Set< String > > entry: _result )
+                for( Map.Entry< Key, Set< String > > entry: _result.entrySet() )
                 {
                         for( String gram: entry.getValue() )
                         {
@@ -179,7 +187,7 @@ public class Adis
                         }
                 }
 
-                return usualset( _result.keySet() );
+                return result;
         }
 
         public String getDMS( )
@@ -201,7 +209,7 @@ public class Adis
                 {
                         log.warn( "More than one DMS endpoint registered!" );
                 }
-                for( Map.Entry< Key, Set< String > > entry: _result )
+                for( Map.Entry< Key, Set< String > > entry: _result.entrySet() )
                 {
                         if( 0 == entry.getValue().size() )
                         {
@@ -212,7 +220,7 @@ public class Adis
                                 log.warn( "More than one DMS endpoint registered!" );
                         }
 
-                        return entry.getVale().iterator().next();
+                        return entry.getValue().iterator().next();
                 }
 
                 return null;
@@ -237,7 +245,7 @@ public class Adis
                 {
                         log.warn( "More than one WSS endpoint registered!" );
                 }
-                for( Map.Entry< Key, Set< String > > entry: _result )
+                for( Map.Entry< Key, Set< String > > entry: _result.entrySet() )
                 {
                         if( 0 == entry.getValue().size() )
                         {
@@ -248,7 +256,7 @@ public class Adis
                                 log.warn( "More than one WSS endpoint registered!" );
                         }
 
-                        return entry.getVale().iterator().next();
+                        return entry.getValue().iterator().next();
                 }
 
                 return null;
@@ -272,7 +280,7 @@ public class Adis
                 return 0 == _result.size();
         }
 
-        public void setImport( String name, String subspace )
+        public boolean setImport( String name, String subspace )
         {
                 // guard
                 {
@@ -297,22 +305,23 @@ public class Adis
                 }
 
                 Map< Key, Set< String > > request = new HashMap< Key, Set< String > >();
+                Set< String > gramset = simpleset( gram );
 
                 // add workflow |--> gram
                 for( String workflow: workflows )
                 {
-                        request.put( new Key( grid, "workflow", workflow ), gram );
+                        request.put( new Key( grid, "workflow", workflow ), gramset );
                 }
 
                 // add gram |--> subspace
-                request.put( new Key( grid, "gram", gram ), subspace );
+                request.put( new Key( grid, "gram", gram ), simpleset( subspace ) );
 
                 Map< String, String > _result = voldi.insert( null, request );
 
                 return 0 == _result.size();
         }
 
-        public void setOIDPrefix( Collection< String > oidprefixe, String gorfx )
+        public boolean setOIDPrefix( Collection< String > oidprefixe, String gorfx )
         {
                 // guard
                 {
@@ -324,7 +333,7 @@ public class Adis
                 // add prefix |--> gorfx
                 for( String oidprefix: oidprefixe )
                 {
-                        request.put( new Key( grid, "oidprefix", oidprefix ), gorfx );
+                        request.put( new Key( grid, "oidprefix", oidprefix ), simpleset( gorfx ) );
                 }
 
                 Map< String, String > _result = voldi.insert( null, request );
@@ -332,7 +341,7 @@ public class Adis
                 return 0 == _result.size();
         }
 
-        public void setOAI( String endpoint )
+        public boolean setOAI( String endpoint )
         {
                 // guard
                 {
@@ -344,7 +353,7 @@ public class Adis
                 return 0 == _result.size();
         }
 
-        public void setCentralDMS( String endpoint )
+        public boolean setCentralDMS( String endpoint )
         {
                 // guard
                 {
@@ -356,7 +365,7 @@ public class Adis
                 return 0 == _result.size();
         }
 
-        public void setWSS( String endpoint )
+        public boolean setWSS( String endpoint )
         {
                 // guard
                 {
@@ -381,12 +390,21 @@ public class Adis
                 return result;
         }
 
+        private Set< String > simpleset( String s )
+        {
+                Set< String > set = new HashSet< String >();
+
+                set.add( s );
+
+                return set;
+        }
+
         private Collection< String > mergedValues( Map< Key, Set< String > > map )
         {
                 // merge all Sets
                 Set< String > result = new HashSet< String >();
 
-                for( Set< String > set: map.valueSet() )
+                for( Set< String > set: map.values() )
                 {
                         result.addAll( set );
                 }
@@ -398,7 +416,7 @@ public class Adis
         {
                 Map< String, String > result = new HashMap< String, String >();
 
-                for( Map.Entry< Key, Set< String > > entry: map )
+                for( Map.Entry< Key, Set< String > > entry: map.entrySet() )
                 {
                         if( 1 != entry.getValue().size() )
                         {
@@ -412,11 +430,11 @@ public class Adis
                 return result;
         }
 
-        private Map< String, String > usalmap( Map< Key, Set< String > > map )
+        private Map< String, Set< String > > usualmap( Map< Key, Set< String > > map )
         {
                 Map< String, Set< String > > result = new HashMap< String, Set< String > >();
 
-                for( Map.Entry< Key, Set< String > > entry: map )
+                for( Map.Entry< Key, Set< String > > entry: map.entrySet() )
                 {
                         result.put( entry.getKey().get_keyname(), entry.getValue() );
                 }
@@ -424,13 +442,13 @@ public class Adis
                 return result;
         }
 
-        private Set< String > flatten( Set< Set< String > > setset )
+        private Set< String > flatten( Collection< Set< String > > setset )
         {
                 Set< String > result = new HashSet< String >();
 
                 for( Set< String > set: setset )
                 {
-                        result.putAll( set );
+                        result.addAll( set );
                 }
 
                 return result;
