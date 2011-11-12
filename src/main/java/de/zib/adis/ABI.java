@@ -192,18 +192,4 @@ public class ABI
                         System.out.println( entry.getKey() + ": " + entry.getValue() );
                 }
         }
-
-        private static void commands( )
-        {
-                System.out.println( "valid commands are:" );
-                System.out.println( "   getwss" );
-                System.out.println( "   getdms" );
-                System.out.println( "   listoais" );
-                System.out.println( "   listimportsites" );
-                System.out.println( "   listexportsites" );
-                System.out.println( "   listworkfows" );
-                System.out.println( "   listpublisher" );
-                System.out.println( "   listgorfxbyoid OIDPREFIX" );
-                System.out.println( "   getepbyworkflow WORKFLOW" );
-        }
 }
