@@ -70,15 +70,6 @@ public class ABIi
                                         continue;
                         }
                 }
-
-                // did not find it - put list of possible methods
-                {
-                        System.out.println( "List of possible commands: " );
-                        for( Method m: methods )
-                        {
-                                System.out.println( m.getName() + " |--> " + m.toGenericString() );
-                        }
-                }
         }
 
         protected void printABICommands( )
