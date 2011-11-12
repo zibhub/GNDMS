@@ -58,7 +58,7 @@ public class ABI
 
                 // use reflect to call adis method
                 {
-                        Class c = Adis.class;
+                        Class<?> c = Adis.class;
                         Method[] methods = c.getDeclaredMethods( );
 
                         // search the right method
@@ -70,7 +70,7 @@ public class ABI
                                 if( ! m.getName().equals( cmd ) )
                                         continue;
 
-                                Class[] paramtypes = m.getParameterTypes();
+                                Class<?>[] paramtypes = m.getParameterTypes();
 
                                 // get parameters
                                 Object[] params = new Object[ paramtypes.length ];
@@ -164,15 +164,11 @@ public class ABI
 
                                 return;
                         }
+                }
 
-                        // did not find it - put list of possible methods
-                        {
-                                System.out.println( "List of possible commands: " );
-                                for( Method m: methods )
-                                {
-                                        System.out.println( m.getName() + " |--> " + m.toGenericString() );
-                                }
-                        }
+                // did not find it - put list of possible methods
+                {
+                        adis.printABICommands();
                 }
 
         }

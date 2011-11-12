@@ -12,9 +12,8 @@ import de.zib.vold.client.RESTClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Adis
+public class Adis extends ABIi
 {
-        // TODO: static code to check format contract
         protected final Logger log = LoggerFactory.getLogger( this.getClass() );
 
         private RESTClient voldi;
