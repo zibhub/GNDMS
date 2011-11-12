@@ -61,7 +61,7 @@ define "adis" do
         manifest["Implementation-Vendor"] = COPYRIGHT
 
         compile.with SLF4J, JCMD, VOLD_COMMON, VOLD_CLIENT, SPRING, COMMONS_LOGGING, XSTREAM, SERVLET
-        mainClass='de.zib.adis.ABI'
+        mainClass='de.zib.adis.Main'
 
         package(:jar).with :manifest=>manifest.merge('Main-Class'=>mainClass)
         package(:jar).include _('etc/*'), :path => ''

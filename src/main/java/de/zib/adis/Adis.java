@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
 
+import de.zib.adis.abi.ABIi;
+
 import de.zib.vold.common.Key;
 import de.zib.vold.client.RESTClient;
 
