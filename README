@@ -1,7 +1,7 @@
 This branch contains implementation of the REST-based GNDMS version.
 
-Appart from urgend bugfixes the GT4 based (i.e. the *master*-branch)
-version will not be subejct to further development. Thus the
+Apart from urgent bug-fixes the GT4 based (i.e. the *master*-branch)
+version will not be subject to further development. Thus the
 rest-devel branch will replace master as soon as it reaches RC state.
 
 

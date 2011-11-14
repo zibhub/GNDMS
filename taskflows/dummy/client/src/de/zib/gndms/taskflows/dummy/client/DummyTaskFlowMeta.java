@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.model.gorfx;
+package de.zib.gndms.taskflows.dummy.client;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -17,32 +17,32 @@ package de.zib.gndms.logic.model.gorfx;
  */
 
 
-
-import de.zib.gndms.neomodel.common.Dao;
-
+import de.zib.gndms.common.model.gorfx.types.TaskFlowMeta;
 
 /**
- * ThingAMagic.
+ * @author try ma ik jo rr a zib
+ * @date 14.02.11  14:54
+ * @brief An example implementation for the new taskflow api.
  *
- * @author  try ste fan pla nti kow zib
- * @version $Id$
- *
- *          User: stepn Date: 09.10.2008 Time: 11:04:52
  */
-public class TaskFlowActionMetaFactory extends OfferTypeMetaFactory<TaskFlowAction<?>> {
-    private Dao dao;
+public class DummyTaskFlowMeta implements TaskFlowMeta {
 
-    @Override
-    public String getFactoryClassName(final String key) {
-        return getDao().getTaskFlowTypeTaskActionFactoryClassName( key );
+    public final static String TASK_FLOW_KEY ="DummyTaskFlow";
+
+    private String description;
+
+
+    public DummyTaskFlowMeta( String description ) {
+        this.description = description;
     }
 
 
-    public Dao getDao() {
-        return dao;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDao(Dao dao) {
-        this.dao = dao;
+
+    public void setDescription( String description ) {
+        this.description = description;
     }
 }

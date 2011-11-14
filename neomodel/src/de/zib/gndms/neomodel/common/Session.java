@@ -73,19 +73,27 @@ public class Session {
     
     public Task createTask() {
         final Node node = gdb.createNode();
-        final Task task = new Task(reprSession, TASK_T, node);
+        final Task task = taskFromNode( node );
         task.onCreate(reprSession);
         return task;
     }
 
     @NotNull public Task findTask(@NotNull String taskId) {
-        return new Task(reprSession, TASK_T,
-                getTypeIndex(TASK_T).get(gridName, taskId).getSingle());
+        return taskFromNode( getTypeIndex(TASK_T).get(gridName, taskId).getSingle() );
     }
+
+
+    private Task taskFromNode( Node node ) {
+        if( node != null )
+            return new Task(reprSession, TASK_T, node );
+        else
+            return null;
+    }
+
 
     public Task findTaskForResource ( @NotNull String resourceId ) {
         Index<Node> idx = getTypeIndex( typeIndexNickName( TASK_T, Task.RESOURCE_ID_IDX ) );
-        return new Task( reprSession, TASK_T, idx.get( gridName, resourceId ).getSingle() );
+        return taskFromNode( idx.get( gridName, resourceId ).getSingle() );
     }
 
 

@@ -46,7 +46,7 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
 
 
 	public ExternalProviderStageInAction() {
-        super();
+        super( ProviderStageInMeta.PROVIDER_STAGING_KEY );
 	    parmAux = new ParmFormatAux();
     }
 

@@ -30,7 +30,7 @@ import java.util.List;
  *
  * This on executes DummyOrder taskflows.
  */
-public class ExampleTaskFlowExecClient extends AbstractTaskFlowExecClient {
+public abstract class ExampleTaskFlowExecClient extends AbstractTaskFlowExecClient {
 
 
     /**
@@ -64,12 +64,7 @@ public class ExampleTaskFlowExecClient extends AbstractTaskFlowExecClient {
      * @param res The result object.
      */
     @Override
-    protected void handleResult( TaskResult res ) {
-
-        // extract and move to plugin dir
-      //  DummyTFResult dr = DummyTFResult.class.cast( res );
-      //  System.out.println( "result: " + dr.getResult() );
-    }
+    protected abstract void handleResult( TaskResult res );
 
 
     /**

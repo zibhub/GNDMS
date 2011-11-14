@@ -16,17 +16,24 @@
 
 package de.zib.gndms.logic.model.gorfx.taskflow;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import de.zib.gndms.common.model.gorfx.types.Order;
 import de.zib.gndms.common.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
+import de.zib.gndms.logic.model.gorfx.c3grid.AbstractProviderStageInAction;
 import de.zib.gndms.model.common.repository.Dao;
 import de.zib.gndms.model.common.repository.TransientDao;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Maik Jorra
@@ -36,25 +43,46 @@ import java.util.UUID;
  */
 public abstract class DefaultTaskFlowFactory<O extends Order, C extends AbstractQuoteCalculator<O>> implements TaskFlowFactory<O, C> {
 
+    public final int MAX_CACHE_SIZE = 10000;
     private String taskFlowKey;
     private Class<C> calculatorClass;
     private Class<O> orderClass;
-    private final Dao<String, TaskFlow<O>, Object> taskFlows = new TransientDao<String, TaskFlow<O>, Object>() {
-
-        @Override
-        protected TaskFlow<O> newModel( String key ) {
-            return new CreatableTaskFlow<O>( key );
+    protected Logger logger = LoggerFactory.getLogger( this.getClass() );
+    private final Dao<String, TaskFlow<O>, Void> taskFlows = new TransientDao<String, TaskFlow<O>, Void>() {
+        {
+            setModels(
+                (Cache<String,TaskFlow<O>>) (Object) CacheBuilder.newBuilder()
+                    .expireAfterAccess( 12, TimeUnit.HOURS )
+                    .maximumSize( MAX_CACHE_SIZE )
+                    .initialCapacity( 100 )
+                    .build( new CacheLoader<String, TaskFlow<O>>() {
+                        @Override
+                        public TaskFlow<O> load( String key ) throws Exception {
+                            DefaultTaskFlowFactory.this.logger.trace( "load: "+ key );
+                            return new CreatableTaskFlow<O>( key );
+                        }
+                    } )
+            );
         }
 
 
         @Override
         public String create() {
             String id = UUID.randomUUID().toString();
-            TaskFlow<O> tf = newModel( id );
-            add( tf, id );
+            cacheGet( id );
             return id;
         }
     };
+
+
+
+
+
+    protected DefaultTaskFlowFactory( String taskFlowKey, Class<C> calculatorClass, Class<O> orderClass ) {
+        this.taskFlowKey = taskFlowKey;
+        this.calculatorClass = calculatorClass;
+        this.orderClass = orderClass;
+    }
 
 
     @Override
@@ -131,7 +159,7 @@ public abstract class DefaultTaskFlowFactory<O extends Order, C extends Abstract
     @Override
     public TaskFlow<O> find( String id ) {
         try {
-            taskFlows.get( id );
+            return taskFlows.get( id );
         } catch( NoSuchElementException e ) {
             // intentionally
         }
@@ -163,6 +191,10 @@ public abstract class DefaultTaskFlowFactory<O extends Order, C extends Abstract
     }
 
 
+    protected void injectMembers( AbstractProviderStageInAction newInstance ) {
+    }
+
+
     // i'd love to put this class in the factories interface where it belongs,
     // but thanks to poor design of the java language this is not possible...
     protected static class CreatableTaskFlow<O extends Order> extends TaskFlow<O> {
@@ -179,20 +211,5 @@ public abstract class DefaultTaskFlowFactory<O extends Order, C extends Abstract
         public void setId( String id ) {
             super.setId( id );
         }
-    }
-
-
-    protected void setTaskFlowKey( String taskFlowKey ) {
-        this.taskFlowKey = taskFlowKey;
-    }
-
-
-    protected void setCalculatorClass( Class<C> calculatorClass ) {
-        this.calculatorClass = calculatorClass;
-    }
-
-
-    protected void setOrderClass( Class<O> orderClass ) {
-        this.orderClass = orderClass;
     }
 }

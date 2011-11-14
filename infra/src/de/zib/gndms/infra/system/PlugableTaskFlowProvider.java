@@ -21,6 +21,7 @@ import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowProviderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,11 +52,17 @@ public class PlugableTaskFlowProvider extends TaskFlowProviderImpl {
             }
         }
 
+        setFactories( plugins );
+
         if( checkDeps )
             checkDeps();
+
+        if ( getFactories().size() == 0 )
+            throw new IllegalStateException( "no plugs found" );
     }
 
 
+    @PostConstruct
     public void loadPlugins( ) {
         loadPlugins( true );
     }
@@ -111,7 +118,7 @@ public class PlugableTaskFlowProvider extends TaskFlowProviderImpl {
     public void setFactories( Map<String, TaskFlowFactory> factories ) {
 
         if ( hasFactories )
-            throw new IllegalStateException( "factories are allready set"  );
+            throw new IllegalStateException( "factories are already set"  );
 
         hasFactories = true;
         super.setFactories( factories );    // overriden method implementation

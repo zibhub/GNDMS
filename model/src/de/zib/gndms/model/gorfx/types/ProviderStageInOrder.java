@@ -18,6 +18,7 @@ package de.zib.gndms.model.gorfx.types;
 
 
 
+import de.zib.gndms.common.model.gorfx.types.AbstractOrder;
 import org.jetbrains.annotations.NotNull;
 
 

@@ -18,10 +18,10 @@ package de.zib.gndms.model.gorfx.types.io;
 
 
 
-import de.zib.gndms.model.gorfx.types.AbstractOrder;
+import de.zib.gndms.common.model.gorfx.types.AbstractOrder;
 
 /**
- * An OrderConverter is used to convert {@link de.zib.gndms.model.gorfx.types.AbstractOrder}s to a desired type,
+ * An OrderConverter is used to convert {@link de.zib.gndms.common.model.gorfx.types.AbstractOrder}s to a desired type,
  * which can be their corresponding axis type, a convertion to a Properties instance, or it will be written to Stdout.
  *
  * It provices an implementation of {@link #convert()} which must be invoked to do the actuall convertion.
@@ -31,7 +31,7 @@ import de.zib.gndms.model.gorfx.types.AbstractOrder;
  * The template parameter W specifies the writer and M the model.
  *
  * @see OrderWriter
- * @see de.zib.gndms.model.gorfx.types.AbstractOrder
+ * @see de.zib.gndms.common.model.gorfx.types.AbstractOrder
  * @author  try ma ik jo rr a zib
  * @version  $Id$
  * <p/>

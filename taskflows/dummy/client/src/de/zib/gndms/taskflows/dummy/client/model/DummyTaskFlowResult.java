@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.taskflow.tfmockup;
+package de.zib.gndms.taskflows.dummy.client.model;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -15,31 +15,35 @@ package de.zib.gndms.logic.taskflow.tfmockup;
  * limitations under the License.
  */
 
-
-import de.zib.gndms.common.model.gorfx.types.TaskFlowMeta;
+import de.zib.gndms.common.model.gorfx.types.TaskResult;
 
 /**
  * @author try ma ik jo rr a zib
- * @date 14.02.11  14:54
- * @brief An example implementation for the new taskflow api.
+ * @date 14.03.11  11:12
+ * @brief The result of the dummy task flow.
  *
+ * Since the dummy taskflow only writes stuff, a string is enough here.
  */
-public class DummyTaskFlowMeta implements TaskFlowMeta {
+public class DummyTaskFlowResult implements TaskResult<String> {
 
-    private String description;
+    private String result;
 
 
-    public DummyTaskFlowMeta( String description ) {
-        this.description = description;
+    public DummyTaskFlowResult() {
     }
 
 
-    public String getDescription() {
-        return description;
+    public DummyTaskFlowResult( String s ) {
+        result = s;
     }
 
 
-    public void setDescription( String description ) {
-        this.description = description;
+    public String getResult() {
+        return result;
+    }
+
+
+    public void setResult( String result ) {
+        this.result = result;
     }
 }
