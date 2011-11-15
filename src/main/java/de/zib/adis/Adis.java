@@ -53,15 +53,14 @@ public class Adis extends ABIi
         }
 
 
-
-        public String getDMS( )
+        public String getRole( String role )
         {
                 // guard
                 {
                         checkState();
                 }
 
-                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, "dms", "..." ) );
+                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, role, "..." ) );
 
                 if( null == _result )
                 {
@@ -71,7 +70,7 @@ public class Adis extends ABIi
                 // should be exactly one entry!
                 if( 1 < _result.size() )
                 {
-                        log.warn( "More than one DMS endpoint registered!" );
+                        log.warn( "More than one " + role + " endpoint registered!" );
                 }
                 for( Map.Entry< Key, Set< String > > entry: _result.entrySet() )
                 {
@@ -81,7 +80,7 @@ public class Adis extends ABIi
                         }
                         if( 1 < entry.getValue().size() )
                         {
-                                log.warn( "More than one DMS endpoint registered!" );
+                                log.warn( "More than one " + role + " endpoint registered!" );
                         }
 
                         return entry.getValue().iterator().next();
@@ -90,40 +89,14 @@ public class Adis extends ABIi
                 return null;
         }
 
+        public String getDMS( )
+        {
+                return getRole( "DMS" );
+        }
+
         public String getWSS( )
         {
-                // guard
-                {
-                        checkState();
-                }
-
-                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, "wss", "..." ) );
-
-                if( null == _result )
-                {
-                        return null;
-                }
-
-                // should be exactly one entry!
-                if( 1 < _result.size() )
-                {
-                        log.warn( "More than one WSS endpoint registered!" );
-                }
-                for( Map.Entry< Key, Set< String > > entry: _result.entrySet() )
-                {
-                        if( 0 == entry.getValue().size() )
-                        {
-                                return null;
-                        }
-                        if( 1 < entry.getValue().size() )
-                        {
-                                log.warn( "More than one WSS endpoint registered!" );
-                        }
-
-                        return entry.getValue().iterator().next();
-                }
-
-                return null;
+                return getRole( "WSS" );
         }
 
         public Collection< String > listOAIs( )
@@ -266,28 +239,26 @@ public class Adis extends ABIi
 
 
 
-        public boolean setDMS( String endpoint )
+        public boolean setRole( String role, String endpoint )
         {
                 // guard
                 {
                         checkState();
                 }
 
-                Map< String, String > _result = voldi.insert( null, simplemap( new Key( grid, "dms", "" ), endpoint ) );
+                Map< String, String > _result = voldi.insert( null, simplemap( new Key( grid, role, "" ), endpoint ) );
 
                 return 0 == _result.size();
         }
 
+        public boolean setDMS( String endpoint )
+        {
+                return setRole( "DMS", endpoint );
+        }
+
         public boolean setWSS( String endpoint )
         {
-                // guard
-                {
-                        checkState();
-                }
-
-                Map< String, String > _result = voldi.insert( null, simplemap( new Key( grid, "wss", "" ), endpoint ) );
-
-                return 0 == _result.size();
+                return setRole( "WSS", endpoint );
         }
 
         public boolean setExport( String name, String subspace )
