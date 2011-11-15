@@ -155,7 +155,7 @@ public class Adis extends ABIi
 
         public Collection< String > listImportSites( )
         {
-                listValuesByType( Type.IMPORT.toString() );
+                return listValuesByType( Type.IMPORT.toString() );
         }
 
         public Map< String, String > listExportSites( )
