@@ -52,12 +52,37 @@ public class Adis extends ABIi
                 }
         }
 
+        private boolean checkRole( String role )
+        {
+                for( Role r: Role.values() )
+                {
+                        if( r.name().equals( role ) )
+                                return true;
+                }
+
+                return false;
+        }
+
+        private boolean checkType( String type )
+        {
+                for( Type t: Type.values() )
+                {
+                        if( t.name().equals( type ) )
+                                return true;
+                }
+
+                return false;
+        }
+
+
 
         public String getRole( String role )
         {
                 // guard
                 {
                         checkState();
+
+                        checkRole( role );
                 }
 
                 Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, role, "..." ) );
@@ -89,31 +114,43 @@ public class Adis extends ABIi
                 return null;
         }
 
-        public String getDMS( )
-        {
-                return getRole( "DMS" );
-        }
-
-        public String getWSS( )
-        {
-                return getRole( "WSS" );
-        }
-
-        public Collection< String > listOAIs( )
+        public Collection< String > listType( String type )
         {
                 // guard
                 {
                         checkState();
+
+                        checkType( type );
                 }
 
-                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, "oai", "..." ) );
+                // guard
+                {
+                        checkState();
+
+                        checkType( type );
+                }
+
+                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, type, "..." ) );
 
                 if( null == _result )
-                {
                         return null;
-                }
 
                 return mergedValues( _result );
+        }
+
+        public String getDMS( )
+        {
+                return getRole( Role.DMS.toString() );
+        }
+
+        public String getWSS( )
+        {
+                return getRole( Role.WSS.toString() );
+        }
+
+        public Collection< String > listOAIs( )
+        {
+                return listType( Type.OAI.toString() );
         }
 
         public Collection< String > listImportSites( )
@@ -123,7 +160,7 @@ public class Adis extends ABIi
                         checkState();
                 }
 
-                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, "import", "..." ) );
+                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, Type.IMPORT.toString(), "..." ) );
 
                 if( null == _result )
                 {
@@ -140,7 +177,7 @@ public class Adis extends ABIi
                         checkState();
                 }
 
-                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, "export", "..." ) );
+                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, Type.EXPORT.toString(), "..." ) );
 
                 if( null == _result )
                 {
@@ -157,7 +194,7 @@ public class Adis extends ABIi
                         checkState();
                 }
 
-                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, "workflow", "..." ) );
+                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, Type.WORKFLOW.toString(), "..." ) );
 
                 if( null == _result )
                 {
@@ -169,19 +206,7 @@ public class Adis extends ABIi
 
         public Collection< String > listGORFXbyOID( String oidprefix )
         {
-                // guard
-                {
-                        checkState();
-                }
-
-                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, "oidprefix", oidprefix ) );
-
-                if( null == _result )
-                {
-                        return null;
-                }
-
-                return mergedValues( _result );
+                return listType( Type.OID.toString() );
         }
 
         public Map< String, String > listPublisher( )
@@ -191,7 +216,7 @@ public class Adis extends ABIi
                         checkState();
                 }
 
-                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, "publisher", "..." ) );
+                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, Type.PUBLISHER.toString(), "..." ) );
 
                 if( null == _result )
                 {
@@ -208,7 +233,7 @@ public class Adis extends ABIi
                         checkState();
                 }
 
-                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, "workflow", workflow ) );
+                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, Type.WORKFLOW.toString(), workflow ) );
 
                 if( null == _result )
                 {
@@ -222,7 +247,7 @@ public class Adis extends ABIi
                 {
                         for( String gram: entry.getValue() )
                         {
-                                Map< Key, Set< String > > _gramres = voldi.lookup( new Key( grid, "gram", gram ) );
+                                Map< Key, Set< String > > _gramres = voldi.lookup( new Key( grid, Type.GRAM.toString(), gram ) );
 
                                 if( null == _gramres )
                                 {
@@ -244,55 +269,52 @@ public class Adis extends ABIi
                 // guard
                 {
                         checkState();
+
+                        checkRole( role );
                 }
 
-                Map< String, String > _result = voldi.insert( null, simplemap( new Key( grid, role, "" ), endpoint ) );
+                Map< String, String > _result = voldi.insert( null, simplemap( new Key( grid, role.toString(), "" ), endpoint ) );
+
+                return 0 == _result.size();
+        }
+
+        public boolean setType( String type, String name, String value )
+        {
+                // guard
+                {
+                        checkState();
+
+                        checkType( type );
+
+                        if( null == name )
+                        {
+                                name = "";
+                        }
+                }
+
+                Map< String, String > _result = voldi.insert( null, simplemap( new Key( grid, type, name ), value ) );
 
                 return 0 == _result.size();
         }
 
         public boolean setDMS( String endpoint )
         {
-                return setRole( "DMS", endpoint );
+                return setRole( Role.DMS.toString(), endpoint );
         }
 
         public boolean setWSS( String endpoint )
         {
-                return setRole( "WSS", endpoint );
+                return setRole( Role.WSS.toString(), endpoint );
         }
 
         public boolean setExport( String name, String subspace )
         {
-                // guard
-                {
-                        checkState();
-
-                        if( null == name )
-                        {
-                                name = "";
-                        }
-                }
-
-                Map< String, String > _result = voldi.insert( null, simplemap( new Key( grid, "export", name ), subspace ) );
-
-                return 0 == _result.size();
+                return setType( Type.EXPORT.toString(), name, subspace );
         }
 
         public boolean setImport( String name, String subspace )
         {
-                // guard
-                {
-                        checkState();
-
-                        if( null == name )
-                        {
-                                name = "";
-                        }
-                }
-
-                Map< String, String > _result = voldi.insert( null, simplemap( new Key( grid, "import", name ), subspace ) );
-
-                return 0 == _result.size();
+                return setType( Type.IMPORT.toString(), name, subspace );
         }
 
         public boolean setWorkflows( String subspace, String gram, Collection< String > workflows )
@@ -308,11 +330,11 @@ public class Adis extends ABIi
                 // add workflow |--> gram
                 for( String workflow: workflows )
                 {
-                        request.put( new Key( grid, "workflow", workflow ), gramset );
+                        request.put( new Key( grid, Type.WORKFLOW.toString(), workflow ), gramset );
                 }
 
                 // add gram |--> subspace
-                request.put( new Key( grid, "gram", gram ), simpleset( subspace ) );
+                request.put( new Key( grid, Type.GRAM.toString(), gram ), simpleset( subspace ) );
 
                 Map< String, String > _result = voldi.insert( null, request );
 
@@ -331,7 +353,7 @@ public class Adis extends ABIi
                 // add prefix |--> gorfx
                 for( String oidprefix: oidprefixe )
                 {
-                        request.put( new Key( grid, "oidprefix", oidprefix ), simpleset( gorfx ) );
+                        request.put( new Key( grid, Type.OID.toString(), oidprefix ), simpleset( gorfx ) );
                 }
 
                 Map< String, String > _result = voldi.insert( null, request );
@@ -341,14 +363,7 @@ public class Adis extends ABIi
 
         public boolean setOAI( String endpoint )
         {
-                // guard
-                {
-                        checkState();
-                }
-
-                Map< String, String > _result = voldi.insert( null, simplemap( new Key( grid, "oai", "" ), endpoint ) );
-
-                return 0 == _result.size();
+                return setType( Type.OAI.toString(), "", endpoint );
         }
 
 
