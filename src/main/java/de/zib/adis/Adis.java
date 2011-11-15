@@ -114,7 +114,7 @@ public class Adis extends ABIi
                 return null;
         }
 
-        public Collection< String > listType( String type )
+        public Collection< String > listValuesByType( String type )
         {
                 // guard
                 {
@@ -135,7 +135,7 @@ public class Adis extends ABIi
                 if( null == _result )
                         return null;
 
-                return mergedValues( _result );
+                return flatten( _result.values() );
         }
 
         public String getDMS( )
@@ -150,24 +150,12 @@ public class Adis extends ABIi
 
         public Collection< String > listOAIs( )
         {
-                return listType( Type.OAI.toString() );
+                return listValuesByType( Type.OAI.toString() );
         }
 
         public Collection< String > listImportSites( )
         {
-                // guard
-                {
-                        checkState();
-                }
-
-                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, Type.IMPORT.toString(), "..." ) );
-
-                if( null == _result )
-                {
-                        return null;
-                }
-
-                return flatten( _result.values() );
+                listValuesByType( Type.IMPORT.toString() );
         }
 
         public Map< String, String > listExportSites( )
@@ -206,7 +194,7 @@ public class Adis extends ABIi
 
         public Collection< String > listGORFXbyOID( String oidprefix )
         {
-                return listType( Type.OID.toString() );
+                return listValuesByType( Type.OID.toString() );
         }
 
         public Map< String, String > listPublisher( )
@@ -387,19 +375,6 @@ public class Adis extends ABIi
                 set.add( s );
 
                 return set;
-        }
-
-        private Collection< String > mergedValues( Map< Key, Set< String > > map )
-        {
-                // merge all Sets
-                Set< String > result = new HashSet< String >();
-
-                for( Set< String > set: map.values() )
-                {
-                        result.addAll( set );
-                }
-
-                return result;
         }
 
         private Map< String, String > flatmap( Map< Key, Set< String > > map )
