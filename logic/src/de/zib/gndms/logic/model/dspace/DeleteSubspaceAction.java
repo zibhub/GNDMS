@@ -25,7 +25,6 @@ import de.zib.gndms.logic.model.config.ConfigActionResult;
 import de.zib.gndms.logic.model.config.ConfigOption;
 import de.zib.gndms.logic.model.config.SetupAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
-import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.Subspace;
 import org.jetbrains.annotations.NotNull;
 
@@ -98,58 +97,39 @@ public class DeleteSubspaceAction extends SetupAction<ConfigActionResult> {
     @SuppressWarnings({ "FeatureEnvy", "MethodWithMoreThanThreeNegations" })
     @Override
     public ConfigActionResult execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer) {
-        MetaSubspace meta = prepareMeta(em, subspace);
-        Subspace subspace = prepareSubspace(meta);
+        Subspace space = prepareSubspace(em, subspace);
 
         try {
 
-                em.remove(meta);
-                em.remove(subspace);
+                em.remove(space);
         } catch ( Exception e ) {
            throw new RuntimeException( e ); 
         }
         // Register resources that require refreshing
-        getPostponedEntityActions().addAction(new ModelChangedAction(subspace));
+        getPostponedEntityActions().addAction(new ModelChangedAction(space));
 
         return ok();
     }
 
     /**
-     * Tries to retrieve the entity instance with the primary key {@code pkParam} from the entityclass {@code MetaSubspace.class}.
-     * If not <tt>null</tt> it will be returned. Otherwise a new <tt>MetaSubspace</tt> instance is created,
+     * Tries to retrieve the entity instance with the primary key {@code pkParam} from the entityclass {@code Subspace.class}.
+     * If not <tt>null</tt> it will be returned. Otherwise a new <tt>Subspace</tt> instance is created,
      * with <tt>pkParam</tt> as its ScopedName.
      *
      * @param em
      * @param pkParam
      * @return
      */
-    private MetaSubspace prepareMeta(final EntityManager em, final ImmutableScopedName pkParam) {
-        MetaSubspace meta= em.find(MetaSubspace.class, pkParam);
-        if (meta == null) {
+    private Subspace prepareSubspace(final EntityManager em, final ImmutableScopedName pkParam) {
+        Subspace subspace= em.find(Subspace.class, pkParam);
+        if (subspace == null) {
             if (! isCreating())
-                throw new IllegalStateException("No matching metasubspace found for update");
-            meta = new MetaSubspace();
-            meta.setScopedName(pkParam);
+                throw new IllegalStateException("No matching subspace found for update");
+            subspace = new Subspace();
+            subspace.setName(pkParam);
         }
-        return meta;
-    }
-
-
-    /**
-     * If SetupMode is not <tt>create</tt> the <tt>metaParam</tt>'s subspace is returned.
-     * Otherwise a new <tt>Subspace</tt> instance is created, linked with <tt>metaParam</tt> and returned.
-     *
-     * @param metaParam A <tt>MetaSubspace</tt> containing a <tt>Subspace</tt> if setupMode is not <tt>create</tt>.
-     *      Otherwise a new <tt>Subspace</tt> instance is created, linked with <tt>metaParam</tt>
-     * @return the subspace linked with <tt>metaParam</tt>
-     */
-    @SuppressWarnings({ "FeatureEnvy" })
-    private Subspace prepareSubspace(final MetaSubspace metaParam) {
-        Subspace subspace;
-        subspace = metaParam.getInstance();
         return subspace;
     }
-
 
     public ImmutableScopedName getSubspace() {
         return subspace;

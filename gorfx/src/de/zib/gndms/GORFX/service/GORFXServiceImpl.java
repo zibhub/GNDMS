@@ -192,7 +192,7 @@ public class GORFXServiceImpl implements GORFXService {
 
         Specifier<String> res = new Specifier<String>();
         res.addMapping( "actionName", actionName );
-        res.setURL( baseUrl + "/batch/_" + actionName );
+        res.setUrl( baseUrl + "/batch/_" + actionName );
         res.setPayload( "Feeling lucky?" );
 
         return (ResponseEntity<Specifier>) (Object) new ResponseEntity<Specifier<String>>( res, headers, HttpStatus.OK );
@@ -248,7 +248,7 @@ public class GORFXServiceImpl implements GORFXService {
         spec.addMapping( "type", type );
         HashMap<String,String> hm = new HashMap<String, String>( spec.getUriMap() );
         hm.put( "service", "gorfx" );
-        spec.setURL( uriFactory.taskFlowUri( hm, null )  );
+        spec.setUrl( uriFactory.taskFlowUri( hm, null )  );
 
         ResponseEntity<Facets> re = taskFlowClient.getFacets( type, tf.getId(), dn );
         spec.setPayload( re.getBody() );

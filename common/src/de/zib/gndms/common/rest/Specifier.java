@@ -19,71 +19,117 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * * A specifier describes a resource in different ways. It may contain a global url to the resource together with more
+ * abstract id attributes.
+ * 
  * @author try ma ik jo rr a zib
+ * @param <T> The result type of the specifier.
  * @date 02.03.11  17:17
  * @brief Specifier for a REST resource.
- *
- * A specifier describes a resource in different ways. It may contain a global url to the resource together with more
- * abstract id attributes.
  */
 public class Specifier<T> {
 
-    private String URL; ///< The whole url of the resource.
-    private Map<String, String> uriMap; ///< An id map for the resource. Useful to fill url templates.
-    private T payload; ///< Some additional data for the resource. Usually the results of a GET request.
-    private Specifier specifier; ///< Specifiers might be nested.
+	/**
+	 * The complete url of the resource.
+	 */
+	private String url;
+	/**
+	 * An id map for the resource, used to fill url templates.
+	 */
+    private Map<String, String> uriMap;
+    /**
+     * Some additional data for the resource, which is usually the result of a GET request.
+     */
+    private T payload;
+    /**
+     * Nesting of specifiers.
+     */
+    @SuppressWarnings("rawtypes")
+	private Specifier specifier;
 
-
-    public String getURL() {
-        return URL;
+    /**
+     * Returns the url of the specifier.
+     * @return The url.
+     */
+    public final String getUrl() {
+        return url;
     }
 
-
-    public void setURL( String URL ) {
-        this.URL = URL;
+    /**
+     * Sets the url of a specifier.
+     * @param url The url.
+     */
+    public final void setUrl( final String url ) {
+        this.url = url;
     }
 
-
-    public Map<String, String> getUriMap() {
+    /**
+     * Returns the id map.
+     * @return The map.
+     */
+    public final Map<String, String> getUriMap() {
         return uriMap;
     }
 
-
-    public void setUriMap( Map<String, String> urlMap ) {
-        this.uriMap = urlMap;
+    /**
+     * Sets the id map.
+     * @param uriMap The map.
+     */
+    public final void setUriMap( final Map<String, String> uriMap ) {
+        this.uriMap = uriMap;
     }
 
-
-    public void addMapping( String key, String value ) {
-
-        if ( uriMap == null )
+    /**
+     * Adds a key-value pair to the id map.
+     * @param key The key.
+     * @param value The value.
+     */
+    public final void addMapping( final String key, final String value ) {
+        if ( uriMap == null ) {
             uriMap = new HashMap<String, String>( 1 );
-
+        }
         uriMap.put( key, value );
     }
 
-
-    public boolean hasPayload() {
+    /**
+     * Checks, if the specifier has a payload.
+     * @return true, if the payload is not null.
+     */
+    public final boolean hasPayload() {
         return payload != null;
     }
 
-
-    public T getPayload() {
+    /**
+     * Returns the payload of the specifier.
+     * @return The payload.
+     */
+    public final T getPayload() {
         return payload;
     }
 
-
-    public void setPayload( T payload ) {
+    /**
+     * Sets the payload of the specifier.
+     * @param payload The payload.
+     */
+    public final void setPayload( final T payload ) {
         this.payload = payload;
     }
 
-
-    public Specifier getSpecifier() {
+    /**
+     * Returns the nested specifier of this specifier.
+     * @return The nested specifier.
+     */
+    @SuppressWarnings("rawtypes")
+	public final Specifier getSpecifier() {
         return specifier;
     }
 
-
-    public void setSpecifier( Specifier specifier ) {
+    /**
+     * Sets the nested specifier of this specifier.
+     * @param specifier The snested specifier.
+     */
+    @SuppressWarnings("rawtypes")
+	public final void setSpecifier( final Specifier specifier ) {
         this.specifier = specifier;
     }
 }

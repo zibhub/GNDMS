@@ -46,4 +46,5 @@ public interface SubspaceProvider {
      * @return The corresponding subspace.
      */
 	Subspace getSubspace(String subspace);
+
 }

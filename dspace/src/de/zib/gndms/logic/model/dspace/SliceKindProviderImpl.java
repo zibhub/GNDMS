@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.dspace.SliceKind;
 
 /**
@@ -41,7 +42,7 @@ public class SliceKindProviderImpl implements SliceKindProvider {
 	@Override
 	public final void init(final SubspaceProvider provider) {
 		for (String sub : provider.listSubspaces()) {
-				Set<SliceKind> subSliceKinds = provider.getSubspace(sub).getMetaSubspace().getCreatableSliceKinds();
+				Set<SliceKind> subSliceKinds = provider.getSubspace(sub).getCreatableSliceKinds();
 				Map<String, SliceKind> map = new HashMap<String, SliceKind>();
 				
 				// TODO: is this the right way to get the slice kind ids?
@@ -78,7 +79,5 @@ public class SliceKindProviderImpl implements SliceKindProvider {
 			throw new NoSuchElementException(e.getMessage());
 		}
 	}
-	
-	
 
 }

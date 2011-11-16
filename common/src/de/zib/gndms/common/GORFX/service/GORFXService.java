@@ -134,5 +134,6 @@ public interface GORFXService extends GORFXServiceEssentials {
      * @return A batch action specifier which might contain the result object, or if it triggers task a
      * specifier for the task.
      */
-    ResponseEntity<Specifier> callBatchAction( String actionName, String args, String dn );
+    @SuppressWarnings("rawtypes")
+	ResponseEntity<Specifier> callBatchAction( String actionName, String args, String dn );
 }

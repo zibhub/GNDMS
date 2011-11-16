@@ -50,7 +50,7 @@ public class SliceKind extends GridEntity {
 
     private String sliceDirectory;
 
-    private Set<MetaSubspace> metaSubspaces = new HashSet<MetaSubspace>();
+    private Set<Subspace> subspaces = new HashSet<Subspace>();
 
 
     @Id @Column(name="uri", nullable=false, updatable=false, columnDefinition="VARCHAR")
@@ -72,8 +72,8 @@ public class SliceKind extends GridEntity {
 
 
     @ManyToMany(mappedBy="creatableSliceKinds", cascade={CascadeType.REFRESH, CascadeType.MERGE, CascadeType.PERSIST}, fetch=FetchType.EAGER)
-    public Set<MetaSubspace> getMetaSubspaces() {
-        return metaSubspaces;
+    public Set<Subspace> getSubspaces() {
+        return subspaces;
     }
 
 
@@ -97,7 +97,7 @@ public class SliceKind extends GridEntity {
     }
 
 
-    public void setMetaSubspaces( Set<MetaSubspace> metaSubspaces ) {
-        this.metaSubspaces = metaSubspaces;
+    public void setSubspaces( Set<Subspace> subspaces ) {
+        this.subspaces = subspaces;
     }
 }

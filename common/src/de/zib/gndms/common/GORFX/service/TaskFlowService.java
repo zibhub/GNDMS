@@ -226,7 +226,8 @@ public interface TaskFlowService {
      * which might be HTTP-status 302 together with the URL of the task result or 404 if no result is
      * available.
      * */
-    ResponseEntity<Specifier<TaskResult>> getResult( String type, String id, String dn, String wid );
+    @SuppressWarnings("rawtypes")
+	ResponseEntity<Specifier<TaskResult>> getResult( String type, String id, String dn, String wid );
 
     /** 
      * @brief Delivers possible errors from the task(flow) execution. 

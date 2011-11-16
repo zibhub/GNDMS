@@ -36,6 +36,8 @@ import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.logic.model.dspace.SubspaceProvider;
+import de.zib.gndms.logic.model.dspace.SubspaceProviderImpl;
+import de.zib.gndms.model.common.ImmutableScopedName;
 
 /**
  * The dspace service implementation.
@@ -63,13 +65,13 @@ public class DSpaceServiceImpl implements DSpaceService {
 	 */
 	private UriFactory uriFactory;
 
-	// TODO: initialization of subspaceProvider
 	/**
 	 * Initialization of the dspace service.
 	 */
 	@PostConstruct
 	public final void init() {
 		uriFactory = new UriFactory(baseUrl);
+        subspaceProvider = new SubspaceProviderImpl();
 	}
 
 	@Override
@@ -92,8 +94,8 @@ public class DSpaceServiceImpl implements DSpaceService {
 			Specifier<Void> spec = new Specifier<Void>();
 			
 			spec.setUriMap(new HashMap<String, String>(urimap));
-			spec.addMapping(UriFactory.SUBSPACE, s);
-			spec.setURL(uriFactory.serviceUri(urimap));
+			spec.addMapping(UriFactory.SUBSPACE, s.toString());
+			spec.setUrl(uriFactory.serviceUri(urimap));
 			list.add(spec);
 		}
 		return new ResponseEntity<List<Specifier<Void>>>(

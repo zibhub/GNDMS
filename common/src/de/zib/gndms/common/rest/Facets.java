@@ -15,7 +15,6 @@ package de.zib.gndms.common.rest;
  * limitations under the License.
  */
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,27 +27,40 @@ import java.util.List;
  */
 public class Facets {
 
-    private List<Facet> facets; ///< The list of facets.
+	/**
+	 * The list of all facets.
+	 */
+    private List<Facet> facets; 
 
-
+    /**
+     * The constructor.
+     */
     public Facets() {
     }
 
-
-    public Facets( ArrayList<Facet> facets ) {
+    /**
+     * The constructor setting the given facets.
+     * @param facets The list of  facets.
+     */
+    public Facets( final List<Facet> facets ) {
         this.facets = facets;
     }
 
-
-    public List<Facet> getFacets() {
+    /**
+     * Returns all facets.
+     * @return The list of facets.
+     */
+    public final List<Facet> getFacets() {
         return facets;
     }
 
-
-    public void setFacets( List<Facet> facets ) {
+    /**
+     * Sets all facets.
+     * @param facets The list of facets.
+     */
+    public final void setFacets( final List<Facet> facets ) {
         this.facets = facets;
     }
-
 
     /**
      * Searches for the facet of a given facet name.
@@ -59,12 +71,13 @@ public class Facets {
      *
      * Note: this method is expensive on a large set of facets.
      */
-    public Facet findFacet( String fn ) {
+    public final Facet findFacet( final String fn ) {
 
-        for( Facet f : facets )
-            if ( f.getName().equals( fn ) )
-                return f;
-
+        for ( Facet f : facets ) {
+            if ( f.getName().equals( fn ) ) {
+                return f;       
+            }
+        }
         return null;
     }
 }
