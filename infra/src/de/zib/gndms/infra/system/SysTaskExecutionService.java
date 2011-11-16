@@ -126,6 +126,7 @@ public final class SysTaskExecutionService implements TaskExecutionService, Thre
     @SuppressWarnings({ "FeatureEnvy" })
     public @NotNull <R> Future<R> submitAction( final @NotNull EntityManager em,
                                                 final @NotNull EntityAction<R> action ) {
+        action.setOwnEntityManager( em );
         return submit_(action );
     }
 

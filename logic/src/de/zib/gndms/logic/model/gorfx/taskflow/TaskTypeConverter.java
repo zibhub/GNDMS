@@ -36,9 +36,9 @@ import java.util.LinkedList;
 public final class TaskTypeConverter {
 
 
-    public static TaskStatus statusFormTask( Task task ) {
+    public static TaskStatus statusFromTask( Task task ) {
 
-        boolean inTime = false;
+        boolean inTime = true;
         Calendar tt =  task.getTerminationTime();
         if( tt != null )
             inTime = new GregorianCalendar(  ).compareTo( tt ) != -1 ;
@@ -53,9 +53,10 @@ public final class TaskTypeConverter {
             case IN_PROGRESS_UNKNOWN:
                 // todo check executor if task is currently executed
                 if( inTime )
-                    status.setStatus( TaskStatus.Status.KILLED );
-                else
                     status.setStatus( TaskStatus.Status.RUNNING );
+                else
+                    status.setStatus( TaskStatus.Status.KILLED );
+                break;
             case FAILED:
                 status.setStatus( TaskStatus.Status.FAILED );
                 break;
@@ -64,7 +65,7 @@ public final class TaskTypeConverter {
                 break;
         }
         status.setProgress( task.getProgress() );
-        status.setProgress( task.getMaxProgress() );
+        status.setMaxProgress( task.getMaxProgress() );
 
         return status;
     }

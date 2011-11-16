@@ -19,6 +19,7 @@ package de.zib.gndms.taskflows.dummy.server;
 
 
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
+import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
@@ -65,8 +66,8 @@ public class DummyTFAction extends TaskFlowAction<DummyOrder> {
         if( !isRestartedTask ) {
             final Session session = getDao().beginSession();
             try {
-
                 Task task = getTask( session );
+                task.setProgress( 1 );
                 task.setMaxProgress( getOrderBean().getTimes() );
                 session.success();
             }
@@ -84,7 +85,8 @@ public class DummyTFAction extends TaskFlowAction<DummyOrder> {
         for( int i = 0; i < order.getTimes(); ++i ) {
             out.append( order.getMessage() );
             out.append( '\n' );
-            updateProgress( i );
+            //if( i % 5 == 0)
+                updateProgress( i );
             Thread.sleep( order.getDelay() );
             if( order.isFailIntentionally()
                 && i > order.getTimes( ) / 2 )
@@ -98,6 +100,22 @@ public class DummyTFAction extends TaskFlowAction<DummyOrder> {
         finally { session.finish(); }
 
         super.onInProgress( wid, state, isRestartedTask, altTaskState );    // overridden method implementation
+    }
+
+
+    @Override
+    public DelegatingOrder<DummyOrder> getOrder() {
+
+        DelegatingOrder<DummyOrder> order = null;
+
+        final Session session = getDao().beginSession();
+        try {
+            order = ( DelegatingOrder<DummyOrder> ) getTask( session ).getORQ();
+            session.success();
+        }
+        finally { session.finish(); }
+
+        return order;
     }
 
 
