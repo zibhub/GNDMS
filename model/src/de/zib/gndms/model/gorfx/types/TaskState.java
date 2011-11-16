@@ -111,7 +111,7 @@ public enum TaskState implements Serializable {
     }
 
     public boolean isDoneState() {
-        return unknownState;
+        return doneState;
     }
 
     public TaskState getCanonicalState() {

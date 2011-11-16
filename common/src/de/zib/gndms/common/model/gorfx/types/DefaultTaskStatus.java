@@ -26,7 +26,7 @@ public class DefaultTaskStatus implements TaskStatus {
 
     private TaskStatus.Status status = Status.WAITING; ///< The current status of the task.
     private int progress = 0;  ///< The current progress.
-    private int maxProgress = 100;  ///< The maximum progress.
+    private int maxProgress = 2341234;  ///< The maximum progress.
 
     /**
      * @brief Delivers the value of ::status.

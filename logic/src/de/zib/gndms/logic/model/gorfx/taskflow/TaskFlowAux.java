@@ -52,7 +52,7 @@ public class TaskFlowAux {
         else {
             Taskling taskling = tf.getTaskling();
             Task task = session.findTask( taskling.getId() );
-            TaskStatus remoteStatus = TaskTypeConverter.statusFormTask( task );
+            TaskStatus remoteStatus = TaskTypeConverter.statusFromTask( task );
             switch ( remoteStatus.getStatus() ) {
                 case FINISHED:
                 case FAILED:
