@@ -29,12 +29,14 @@ import de.zib.gndms.neomodel.gorfx.TaskFlow;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
+import java.util.UUID;
 
 public final class TaskFlowServiceAux {
 
     public static <T extends Order> HttpStatus setAndValidateOrder( Order order, TaskFlow<T> taskFlow, TaskFlowFactory<T, ?> factory ) {
 
         DelegatingOrder<T> delegate = setOrderAsDelegate( order, taskFlow, factory );
+        delegate.setActId( UUID.randomUUID().toString() );
 
         return validateOrder( factory, delegate );
     }

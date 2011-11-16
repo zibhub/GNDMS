@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 
@@ -474,14 +475,21 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
         final @NotNull Session session = getDao().beginSession();
         try {
             final Task task = session.findTask(getModel().getId());
-            task.setTaskState(task.getTaskState().transit(taskState));
-            if( hasPayload )
-                task.setPayload(payload);
-            if (TaskState.FINISHED.equals(taskState))
-                task.setProgress(task.getMaxProgress());
+            _doTransit( taskState, payload, hasPayload, task );
             session.success();
         }
         finally { session.finish(); }
+    }
+
+
+    protected void _doTransit( TaskState taskState, Serializable payload, boolean hasPayload, Task task ) {
+
+        logger.debug( "transit to: " + taskState.toString()  );
+        task.setTaskState(task.getTaskState().transit(taskState));
+        if( hasPayload )
+            task.setPayload(payload);
+        if (TaskState.FINISHED.equals(taskState))
+            task.setProgress(task.getMaxProgress());
     }
 
 
@@ -514,11 +522,7 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
                 case FINISHED: nextState = TaskState.FINISHED; break;
                 default: nextState = TaskState.FAILED; break;
             }
-            task.setTaskState(taskState.transit(nextState));
-            if( hasPayload )
-                task.setPayload(payload);
-            if (TaskState.FINISHED.equals(taskState))
-                task.setProgress(task.getMaxProgress());
+            _doTransit( nextState, payload, hasPayload, task );
             session.success();
         }
         finally { session.finish(); }
@@ -655,7 +659,12 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
             Task model = ling.getTask(session);
 
             // check the task lifetime
-            if(new GregorianCalendar().compareTo(model.getTerminationTime()) >= 1 ) {
+            Calendar terminationTime = model.getTerminationTime();
+
+            // todo provoke exception and check infinite looping
+            if( terminationTime != null
+                && new GregorianCalendar().compareTo( terminationTime ) >= 1 )
+            {
                 logger.debug( "Task lifetime exceeded" );
                 throw new LifetimeExceededException();
 //                boolean contained = false;

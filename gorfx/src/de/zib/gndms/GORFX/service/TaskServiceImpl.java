@@ -139,7 +139,7 @@ public class TaskServiceImpl implements TaskService {
         try {
             Task t = findTask( id, session );
             t.getTerminationTime();
-            TaskStatus status = TaskTypeConverter.statusFormTask( t );
+            TaskStatus status = TaskTypeConverter.statusFromTask( t );
             session.success();
             return new ResponseEntity<TaskStatus>( status, getHeader( id, "status", dn, wid  ), HttpStatus.OK );
         } finally {
@@ -171,7 +171,7 @@ public class TaskServiceImpl implements TaskService {
             if( TaskState.FINISHED.equals( t.getTaskState() ) ) {
                 Object pl = t.getPayload();
                 if( pl != null ) {
-                    res = TaskResult.class.cast( res );
+                    res = TaskResult.class.cast( pl );
                     hs = HttpStatus.OK;
                 }
             }

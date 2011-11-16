@@ -62,7 +62,7 @@ public class TaskServiceAux {
         try {
             Task task = ses.findTask( id );
             task.setWID( wid );
-            task.setPayload( taskModel );
+            task.setORQ( taskModel );
             taskling = task.getTaskling();
             ses.success();
         } finally {
@@ -71,7 +71,7 @@ public class TaskServiceAux {
 
         taskAction.setOwnDao( dao );
         taskAction.setModel( taskling );
-        executorService.submitDaoAction( taskAction );
+        executorService.submitAction( taskAction );
 
         return taskling;
     }

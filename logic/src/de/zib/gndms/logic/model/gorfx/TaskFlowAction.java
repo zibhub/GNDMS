@@ -70,7 +70,7 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends DefaultTas
                 final Task task = getModel().getTask(session);
                 task.setTaskFlowType( ot );
                 task.setWID(wid);
-                task.setORQ( order );
+                setOrder( (DelegatingOrder) task.getORQ() );
                 session.success();
             }
             finally { session.finish(); }
@@ -120,16 +120,20 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends DefaultTas
     }
 
     public K getOrderBean() {
-        return order.getOrderBean();
+        if( order != null )
+            return order.getOrderBean();
+
+        return null;
     }
 
 
+    // returns cached instance of order
     public DelegatingOrder<K> getOrder() {
         return order;
     }
 
 
-    public void setOrder( DelegatingOrder<K> order ) {
+    protected void setOrder( DelegatingOrder<K> order ) {
         this.order = order;
     }
 

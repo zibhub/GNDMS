@@ -26,6 +26,7 @@ import de.zib.gndms.common.model.gorfx.types.TaskResult;
  */
 public class DummyTaskFlowResult implements TaskResult<String> {
 
+    private static final long serialVersionUID = 6090538263029074698L;
     private String result;
 
 
