@@ -92,6 +92,7 @@ public class DummyTFAction extends TaskFlowAction<DummyOrder> {
                 && i > order.getTimes( ) / 2 )
                 throw new RuntimeException( "Halp -- I'm failing intentionally" );
         }
+        
         final Session session = getDao().beginSession();
         try {
             getTask( session ).setPayload( new DummyTaskFlowResult( out.toString() ) );

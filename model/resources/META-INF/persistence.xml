@@ -23,7 +23,6 @@ http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
 	    <class>de.zib.gndms.model.dspace.DSpace</class>
 	    <class>de.zib.gndms.model.dspace.SliceKind</class>
 	    <class>de.zib.gndms.model.dspace.Slice</class>
-	    <class>de.zib.gndms.model.dspace.MetaSubspace</class>
 	    <class>de.zib.gndms.model.dspace.Subspace</class>
 	    <class>de.zib.gndms.model.dspace.SubspaceRef</class>
 
