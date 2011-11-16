@@ -25,7 +25,7 @@ import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigActionResult;
 import de.zib.gndms.logic.model.config.ConfigOption;
 import de.zib.gndms.logic.model.config.SetupAction;
-import de.zib.gndms.model.dspace.MetaSubspace;
+import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.dspace.SliceKind;
 import org.jetbrains.annotations.NotNull;
 
@@ -87,7 +87,7 @@ public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
     @ConfigOption(descr="The directory to store the slices belonging to this kind (its a required attribute)")
     private String uniqueDirName;
 
-    private Set<MetaSubspace> metaSubspaces; // can be null
+    private Set<Subspace> subspaces; // can be null
     
     private SliceKind theSliceKind;
 
@@ -98,13 +98,13 @@ public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
     public SetupSliceKindAction( @NotNull String URI, @NotNull String sliceKindMode ) {
         this.sliceKind = URI;
         this.theSliceKindMode = sliceKindMode;
-        this.metaSubspaces = null;
+        this.subspaces = null;
     }
 
-    public SetupSliceKindAction( @NotNull String URI, @NotNull String sliceKindMode, Set<MetaSubspace> metaSubspaces ) {
+    public SetupSliceKindAction( @NotNull String URI, @NotNull String sliceKindMode, Set<Subspace> subspaces ) {
         this.sliceKind = URI;
         this.theSliceKindMode = sliceKindMode;
-        this.metaSubspaces = metaSubspaces;
+        this.subspaces = subspaces;
     }
 
 
@@ -208,12 +208,12 @@ public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
         this.theSliceKindMode = sliceKindMode;
     }
 
-    public Set<MetaSubspace> getMetaSubspaces() {
-        return metaSubspaces;
+    public Set<Subspace> getSubspaces() {
+        return subspaces;
     }
 
-    public void setMetaSubspaces( Set<MetaSubspace> metaSubspaces ) {
-        this.metaSubspaces = metaSubspaces;
+    public void setSubspaces( Set<Subspace> subspaces ) {
+        this.subspaces = subspaces;
     }
 
 

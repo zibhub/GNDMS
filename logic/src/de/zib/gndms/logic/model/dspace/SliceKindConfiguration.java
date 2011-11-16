@@ -203,7 +203,7 @@ public class SliceKindConfiguration implements Configuration {
 	 * @return The configuration.
 	 */
     public static final SliceKindConfiguration getSliceKindConfiguration(SliceKind slicekind) {
-		return new SliceKindConfiguration(slicekind.getURI(), slicekind.getPermission(), slicekind.getMetaSubspaces().toString());
+		return new SliceKindConfiguration(slicekind.getURI(), slicekind.getPermission(), slicekind.getSubspaces().toString());
 	}
 
 	/* (non-Javadoc)

@@ -24,15 +24,29 @@ import de.zib.gndms.model.dspace.types.SliceRef;
  * @date 17.08.11  14:57
  * @brief
  */
-public class DSpaceBindingUtils {
+public final class DSpaceBindingUtils {
 
-    public static String getFtpPathForSlice( SliceRef sourceSlice ) {
-        // todo use a slice client to acquire the path
+	/**
+	 * The private constructur (utility classes should not be instantiated).
+	 */
+	private DSpaceBindingUtils() {
+	}
+	
+    /**
+     * Returns the gridftp path for a slice. 
+     * @param sourceSlice A reference for a slice.
+     * @return The ftp path.
+     */
+	public static String getFtpPathForSlice( final SliceRef sourceSlice ) {
+        // TODO use a slice client to acquire the path
         return null;  // Implement Me. Pretty Please!!!
     }
 
-
-    public static void destroySlice( SliceRef destinationSlice ) {
-        // Implement Me. Pretty Please!!!
+	/**
+	 * Deletes a slice including all its content.
+	 * @param destinationSlice The reference to the slice to be destroyed.
+	 */
+    public static void destroySlice( final SliceRef destinationSlice ) {
+        // TODO Implement Me. Pretty Please!!!
     }
 }

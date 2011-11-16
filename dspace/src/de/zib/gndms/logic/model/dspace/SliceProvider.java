@@ -19,7 +19,6 @@ package de.zib.gndms.logic.model.dspace;
 import java.util.List;
 
 import de.zib.gndms.model.dspace.Slice;
-import de.zib.gndms.model.dspace.Subspace;
 
 /**
  * Provides a mapping of slice ids and slices.
@@ -59,6 +58,5 @@ public interface SliceProvider {
      * @throws NoSuchElementException 
      */
     Slice getSlice(String subspace, String slice) throws NoSuchElementException;
-
 
 }

@@ -42,6 +42,7 @@ import de.zib.gndms.logic.model.dspace.SliceKindConfiguration;
 import de.zib.gndms.logic.model.dspace.SliceKindProvider;
 import de.zib.gndms.logic.model.dspace.SliceKindProviderImpl;
 import de.zib.gndms.logic.model.dspace.SubspaceProvider;
+import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 
@@ -129,7 +130,7 @@ public class SliceKindServiceImpl implements SliceKindService {
 			urimap.put(UriFactory.SUBSPACE, subspace);
 			urimap.put(UriFactory.SLICEKIND, sliceKind);
 			spec.setUriMap(new HashMap<String, String>(urimap));
-			spec.setURL(uriFactory.quoteUri(urimap));
+			spec.setUrl(uriFactory.quoteUri(urimap));
 
 			return new ResponseEntity<Specifier<Void>>(spec, headers,
 					HttpStatus.OK);
@@ -146,8 +147,8 @@ public class SliceKindServiceImpl implements SliceKindService {
 
 	@Override
 	@RequestMapping(value = "/_{subspace}/_{sliceKind}", method = RequestMethod.PUT)
-	public final ResponseEntity<Void> createSliceKind(final @PathVariable String subspace,
-			final @PathVariable String sliceKind, final Configuration config, final String dn) {
+	public final ResponseEntity<Void> createSliceKind(@PathVariable final String subspace,
+			@PathVariable final String sliceKind, final Configuration config, final String dn) {
 		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, dn);
 		
 		try {

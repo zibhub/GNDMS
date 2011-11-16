@@ -137,7 +137,8 @@ public interface TaskService {
      *      - 403 if the user wasn't allowed to collect the result.
      *      - 404 if there wasn't any result yet.
      */
-    ResponseEntity<TaskResult> getResult( String id, String dn, String wid );
+    @SuppressWarnings("rawtypes")
+	ResponseEntity<TaskResult> getResult( String id, String dn, String wid );
 
     /** 
      * @brief Delivers possible error information if the task failed.

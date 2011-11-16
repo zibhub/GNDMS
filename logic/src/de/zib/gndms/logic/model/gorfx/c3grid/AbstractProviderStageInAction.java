@@ -29,7 +29,6 @@ import de.zib.gndms.logic.model.dspace.TransformSliceAction;
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.common.PersistentContract;
-import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
@@ -168,10 +167,9 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
         final TxFrame txf = new TxFrame(em);
         try {
             final ImmutableScopedName scopedName = config.getISNOption("subspace");
-            final MetaSubspace metaSubspace = getEntityManager().find(
-                    MetaSubspace.class,
+            final @NotNull Subspace subspace = getEntityManager().find(
+                    Subspace.class,
                     scopedName);
-            final @NotNull Subspace subspace = metaSubspace.getInstance();
             String slicekindKey = config.getOption("sliceKind");
             SliceKind kind = getEntityManager().find(SliceKind.class, slicekindKey);
 

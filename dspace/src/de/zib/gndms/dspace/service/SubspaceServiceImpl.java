@@ -49,6 +49,8 @@ import de.zib.gndms.logic.model.dspace.SliceKindProvider;
 import de.zib.gndms.logic.model.dspace.SliceKindProviderImpl;
 import de.zib.gndms.logic.model.dspace.SubspaceConfiguration;
 import de.zib.gndms.logic.model.dspace.SubspaceProvider;
+import de.zib.gndms.logic.model.dspace.SubspaceProviderImpl;
+import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.dspace.Subspace;
 
 /**
@@ -87,14 +89,16 @@ public class SubspaceServiceImpl implements SubspaceService {
 	 */
 	private TaskServiceAux taskServiceAux;
 
-	// TODO: initialization of subspaceProvider and executor
 	/**
 	 * Initialization of the dspace service.
 	 */
 	@PostConstruct
 	public final void init() {
 		uriFactory = new UriFactory(baseUrl);
+		// TODO: initialization of executor
+		// executor ? 
 		taskServiceAux = new TaskServiceAux(executor);
+		subspaceProvider = new SubspaceProviderImpl();
 	}
 
 	@Override
@@ -198,7 +202,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 			spec.setUriMap(new HashMap<String, String>(urimap));
 			spec.addMapping(UriFactory.SLICEKIND, sk);
 			// TODO does the String has to be hard-coded?
-			spec.setURL(uriFactory.subspaceUri(urimap, "slicekinds"));
+			spec.setUrl(uriFactory.subspaceUri(urimap, "slicekinds"));
 			list.add(spec);
 		}
 
@@ -218,7 +222,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 			@PathVariable final String subspace,
 			@RequestHeader("DN") final String dn) {
 		GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
-
+		
 		if (!subspaceProvider.exists(subspace)) {
 			logger.warn("Subspace " + subspace + " not found");
 			return new ResponseEntity<Configuration>(null, headers,

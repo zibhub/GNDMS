@@ -27,77 +27,165 @@ import java.util.List;
  *
  * @brief A class for the generic Http response-header specified for GNDMS.
  */
+// TODO: Does that really make sense, that all the fields may occur multiple times (since this is a list ...)?
+
 public class GNDMSResponseHeader extends HttpHeaders {
 
+	/**
+	 * The key for a resource url.
+	 */
+    public static final String RESOURCE_URL = "resourceURL";
+	/**
+	 * The key for a facet url.
+	 */
+    public static final String FACET_URL = "facetURL";
+	/**
+	 * The key for a parent url.
+	 */
+    public static final String PARENT_URL = "parentURL";
+	/**
+	 * The key for a dn.
+	 */
+    public static final String DN = "DN";
+	/**
+	 * The key for a wid.
+	 */
+    public static final String WID = "WId";
+
+    
+    /**
+	 * The constructor.
+	 */
     public GNDMSResponseHeader() {
     }
 
-    public GNDMSResponseHeader( String resourceURL, String facetURL, String parentURL, String dn, String wid ) {
-         if( resourceURL != null )
+    /**
+     * The constructor setting the given fields.
+     * @param resourceURL The resource url.
+     * @param facetURL The facet url.
+     * @param parentURL The parent url.
+     * @param dn The dn.
+     * @param wid The wid.
+     */
+    public GNDMSResponseHeader( final String resourceURL, final String facetURL, 
+    		final String parentURL, final String dn, final String wid ) {
+         if ( resourceURL != null ) {
              setResourceURL( resourceURL );
-         if( facetURL != null )
+         }
+         if ( facetURL != null ) {
              setFacetURL( facetURL );
-         if( parentURL != null )
+         }
+         if ( parentURL != null ) {
              setParentURL( parentURL );
-         if( dn != null )
+         }
+         if ( dn != null ) {
              setDN( dn );
-         if( wid != null )
+         }
+         if ( wid != null ) {
              setWId( wid );
-
+         }
     }
 
-    public GNDMSResponseHeader( HttpHeaders h ) {
+    /**
+     * The constructor, setting the given http headers.
+     * @param h The http headers.
+     */
+    public GNDMSResponseHeader( final HttpHeaders h ) {
         putAll( h );
     }
 
-
-    public List<String> getResourceURL() {
-        return get( "resourceURL" );
+    /**
+     * Returns the resource url.
+     * @return A list containing the resource url.
+     */
+    public final List<String> getResourceURL() {
+        return get(RESOURCE_URL);
     }
 
-
-    public void setResourceURL( String resourceURL ) {
-        this.add("resourceURL", resourceURL );
+    /**
+     * Sets a unique resource url.
+     * @param resourceURL The resource url.
+     */
+    public final void setResourceURL( final String resourceURL ) {
+        if (this.containsKey(RESOURCE_URL)) {
+        	this.remove(RESOURCE_URL);
+        }
+    	this.add(RESOURCE_URL, resourceURL );
     }
 
-
-    public List<String> getFacetURL() {
-        return get( "facetURL" );
+    /**
+     * Returns the facet url.
+     * @return A list containing the facet url.
+     */
+    public final List<String> getFacetURL() {
+        return get( FACET_URL );
     }
 
-
-    public void setFacetURL( String facetURL ) {
-        this.add( "facetURL", facetURL );
+    /**
+     * Sets a unique facet url.
+     * @param facetURL The facet url.
+     */
+    public final void setFacetURL( final String facetURL ) {
+        if (this.containsKey(FACET_URL)) {
+        	this.remove(FACET_URL);
+        }
+        this.add( FACET_URL, facetURL );
     }
 
-
-    public List<String> getParentURL() {
-        return get( "parentURL" );
+    /**
+     * Returns the parent url.
+     * @return A list containing the parent url.
+     */
+    public final List<String> getParentURL() {
+        return get( PARENT_URL );
     }
 
-
-    public void setParentURL( String parentURL ) {
-        this.add( "parentURL", parentURL );
+    /**
+     * Adds a unique parent url.
+     * @param parentURL The parent url.
+     */
+    public final void setParentURL( final String parentURL ) {
+        if (this.containsKey(PARENT_URL)) {
+        	this.remove(PARENT_URL);
+        }
+        this.add( PARENT_URL, parentURL );
     }
 
-
-    public List<String> getDN() {
-        return get( "DN" );
+    /**
+     * Returns the dn.
+     * @return A list containing the dn.
+     */
+    public final List<String> getDN() {
+        return get( DN );
     }
 
-
-    public void setDN( String DN ) {
-        this.add( "DN", DN );
+    /**
+     * Adds a unique dn.
+     * @param dn The dn.
+     */
+    public final void setDN( final String dn ) {
+        if (this.containsKey(DN)) {
+        	this.remove(DN);
+        }
+        this.add( DN, dn );
     }
 
-
-    public List<String> getWId() {
-
-        return get( "WId" );
+    /**
+     * Returns the wid.
+     * @return A list containing the wid.
+     */
+    public final List<String> getWId() {
+        return get( WID );
     }
 
-
-    public void setWId( String wid ) {
-        this.add( "WId", wid );
+    /**
+     * Adds a unique wid.
+     * @param wid The wid.
+     */
+    public final void setWId( final String wid ) {
+        if (this.containsKey(WID)) {
+        	this.remove(WID);
+        }
+        this.add( WID, wid );
     }
 }
