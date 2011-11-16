@@ -27,57 +27,95 @@ package de.zib.gndms.model.dspace;
  */
 
 import de.zib.gndms.model.common.GridResource;
+import de.zib.gndms.model.common.ImmutableScopedName;
 
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.persistence.*;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.JoinTable;
+import javax.persistence.JoinColumn;
+import javax.persistence.Column;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.UniqueConstraint;
+import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
+
 /**
  *
- * Instances represent concrete subspaces in the local DSpace
+ * Instances represent concrete subspaces in the local DSpace.
  *
  */
-@Entity(name="Subspaces")
-@Table(name="subspaces", schema="dspace")
+@Entity(name = "Subspaces")
+@Table(name = "subspaces", schema = "dspace")
 //@MappedSuperclass
 public class Subspace extends GridResource {
 
+	/**
+	 * The logger.
+	 */
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+	/**
+	 * The still available size in this subspace.
+	 */
     private long availableSize;
 
+    /**
+     * The total size of the subspace.
+     */
     private long totalSize;
 
-    private MetaSubspace metaSubspace;
-
-    private DSpaceRef dSpaceRef;
-
+    /**
+     * The set of slices of this subspace. 
+     */
     private Set<Slice> slices = new HashSet<Slice>();
 
+    /**
+     * The absolute path of this subspace.
+     */
     private String path;
 
+    /**
+     * The gsiftp path of this subspace.
+     */
     private String gsiFtpPath;
 
-
-    @Embedded
-    @AttributeOverrides({
-        @AttributeOverride(name="gridSiteId", column=@Column(name="dspace_site", nullable=true, updatable=false)),
-        @AttributeOverride(name="resourceKeyValue", column=@Column(name="dspace_uuid", nullable=false, updatable=false))
-        })
-    public DSpaceRef getDSpaceRef() { return dSpaceRef; }
-    public void setDSpaceRef( DSpaceRef newRef ) { dSpaceRef = newRef; }
+    /**
+     * The name / id of this subspace.
+     */
+    private ImmutableScopedName name;
 
     /**
-     * Sets the path of the Subspace to pth.
-     *
-     * If pth must exists and be a valid directory with read/write access.
-     * @param pth  The path.
-     *
-     * @note The read permission will be removed from pth.
+     * If this subspace is publicly visible.
      */
-    public void setPath( String pth ) {
+    private boolean visibleToPublic;
 
+    /**
+     * The set of slice kinds which are allowed in this subspace.
+     */
+    private Set<SliceKind> creatableSliceKinds = new HashSet<SliceKind>();
+
+    /**
+     * Sets the path of this subspace.
+     *
+     * path must exist and be a valid directory with read/write access.
+     * @param path  The path.
+     *
+     * @note The read permission will be removed from path.
+     */
+    public final void setPath(final String path) {
+    	// TODO this test seemed to be useful?
         /*
         File f = new File( pth );
 
@@ -90,105 +128,162 @@ public class Subspace extends GridResource {
 
 //        if( pth == null )
 //            throw new IllegalStateException( "path must not be null" );
-        path = pth;
+        this.path = path;
     }
-
-
-    public void addSlice( @NotNull Slice sl ) {
-
-        if( getSlices() == null )
-            throw new IllegalStateException( "No slices set provided" );
-
-        getSlices().add( sl );
-    }
-
 
     /**
-     * Remove a slice from the slice set.
-     *
-     * The slice itself isn't destroy, and the fold stil exists.
-     * @param sl The slice to be removed.
+     * Adds a slice to the subspace's slice set.
+     * @param sl The slice.
      */
-    public void removeSlice( @NotNull Slice sl ) {
-
-        getSlices().remove( sl );
+    public final void addSlice(@NotNull final Slice sl) {
+        if (slices == null) {
+            logger.warn( "No slice set provided for subspace " + name + ". It is newly created." );
+            slices = new HashSet<Slice>();
+        }
+        slices.add(sl);
     }
 
+    /**
+     * Removes a slice from the subspace's slice set.
+     *
+     * The slice itself isn't destroy, and the folder still exists.
+     * @param sl The slice to be removed.
+     */
+    public final void removeSlice(@NotNull final Slice sl) {
+        slices.remove(sl);
+    }
 
     /** 
-     * @brief Delivers the absolute path to a slice sl.
+     * @brief Returns the absolute path to a slice.
      * 
      * @param sl The slice. 
      * @return The path.
      */
-    public String getPathForSlice( Slice sl )  {
-        return getPath() + File.separator + sl.getKind( ).getSliceDirectory() + File.separator + sl.getDirectoryId( );
+    public final String getPathForSlice(final Slice sl)  {
+        return path + File.separator + sl.getKind( ).getSliceDirectory() + File.separator + sl.getDirectoryId();
     }
 
-
-    public String getGsiFtpPathForSlice( Slice sl )  {
-        return getGsiFtpPath() + "/" + sl.getKind( ).getSliceDirectory() + "/" + sl.getDirectoryId( );
+    /**
+     * Returns the gsi ftp path to a slice.
+     * @param sl The slice.
+     * @return The gsi ftp path.
+     */
+    public final String getGsiFtpPathForSlice(final Slice sl)  {
+        return gsiFtpPath + "/" + sl.getKind( ).getSliceDirectory() + "/" + sl.getDirectoryId( );
     }
 
-
-    @Column(name="avail_size", nullable=false, updatable=false)
-    public long getAvailableSize() {
+    /**
+     * Returns the available size of this subspace.
+     * @return The available size.
+     */
+    @Column(name = "avail_size", nullable = false, updatable = false)
+    public final long getAvailableSize() {
         return availableSize;
     }
 
-
-    @Column(name="total_size", nullable=false, updatable=false)
-    public long getTotalSize() {
+    /**
+     * Returns the total size of this subspace.
+     * @return The total size
+     */
+    @Column(name = "total_size", nullable = false, updatable = false)
+    public final long getTotalSize() {
         return totalSize;
     }
 
-
-    @OneToOne(targetEntity=MetaSubspace.class, optional=false, cascade={ CascadeType.REFRESH}, fetch=FetchType.EAGER)
-    @PrimaryKeyJoinColumns({@PrimaryKeyJoinColumn(name="schema_uri"),
-                            @PrimaryKeyJoinColumn(name="specifier")})
-    public MetaSubspace getMetaSubspace() {
-        return metaSubspace;
-    }
-
-
-    @OneToMany( targetEntity=Slice.class, mappedBy="subspace", cascade={CascadeType.REFRESH,CascadeType.PERSIST, CascadeType.REMOVE }, fetch=FetchType.EAGER )
-    public Set<Slice> getSlices() {
+    /**
+     * Returns the set of slices of this subspace.
+     * @return The set of slices.
+     */
+    @OneToMany(targetEntity = Slice.class, mappedBy = "subspace", 
+    		cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.REMOVE }, fetch = FetchType.EAGER)
+    public final Set<Slice> getSlices() {
         return slices;
     }
 
-
-    @Column(name="path", nullable=false, updatable=true)
-    public String getPath() {
+    /**
+     * Returns the absolute path of this subspace.
+     * @return The path.
+     */
+    @Column(name = "path", nullable = false, updatable = true)
+    public final String getPath() {
         return path;
     }
 
-
-    public String getGsiFtpPath() {
+    /**
+     * Returns the gsi ftp path of this subspace.
+     * @return The gsi ftp path.
+     */
+    public final String getGsiFtpPath() {
         return gsiFtpPath;
     }
 
-
-    public void setAvailableSize( long availableSize ) {
+    /**
+     * Sets the available size of this subspace.
+     * @param availableSize The size to set.
+     */
+    public final void setAvailableSize(final long availableSize) {
         this.availableSize = availableSize;
     }
 
-
-    public void setTotalSize( long totalSize ) {
+    /**
+     * Sets the total size of this subspace.
+     * @param totalSize The size to set.
+     */
+    public final void setTotalSize(final long totalSize) {
         this.totalSize = totalSize;
     }
 
-
-    public void setMetaSubspace( MetaSubspace metaSubspace ) {
-        this.metaSubspace = metaSubspace;
-    }
-
-
-    public void setSlices( Set<Slice> slices ) {
+    /**
+     * Sets the set of slices for this subspace.
+     * @param slices The slices.
+     */
+    public final void setSlices(final Set<Slice> slices) {
         this.slices = slices;
     }
-
-
-    public void setGsiFtpPath( String gsiFtpPath ) {
+    
+    /**
+     * Sets the gsi ftp path for this subspace.
+     * @param gsiFtpPath The path to set.
+     */
+    public final void setGsiFtpPath(final String gsiFtpPath) {
         this.gsiFtpPath = gsiFtpPath;
     }	
+    
+    @EmbeddedId
+    @AttributeOverrides({
+        @AttributeOverride(name="nameScope", column=@Column(name="schema_uri", nullable=false, updatable=false, columnDefinition="VARCHAR")),
+        @AttributeOverride(name="localName", column=@Column(name="specifier", nullable=false, updatable=false, columnDefinition="VARCHAR", length=64))
+        })
+    public ImmutableScopedName getName() {
+        return name;
+    }
+    
+    public void setName( ImmutableScopedName name ) {
+        this.name = name;
+    }
+
+    @Column(name="visible", nullable=false, updatable=false)
+    public boolean isVisibleToPublic() {
+        return visibleToPublic;
+    }
+
+    public void setVisibleToPublic( boolean visibleToPublic ) {
+        this.visibleToPublic = visibleToPublic;
+    }
+
+    @ManyToMany(targetEntity=SliceKind.class, cascade = {CascadeType.REFRESH, CascadeType.MERGE, CascadeType.PERSIST}, fetch=FetchType.EAGER)
+    @JoinTable(name = "creatable_slice_kinds", schema="dspace",
+        uniqueConstraints={@UniqueConstraint(columnNames = {"meta_subspace_schema_uri", "meta_subspace_specifier", "slice_kind_uri"})},
+        joinColumns={@JoinColumn(name="meta_subspace_schema_uri", referencedColumnName="schema_uri", columnDefinition="VARCHAR", nullable=false, updatable=true),
+            @JoinColumn(name="meta_subspace_specifier", referencedColumnName="specifier", columnDefinition="VARCHAR", nullable=false, updatable=true)},
+        inverseJoinColumns={@JoinColumn(name="slice_kind_uri", referencedColumnName="uri", columnDefinition="VARCHAR", nullable=false, updatable=true)})
+    public Set<SliceKind> getCreatableSliceKinds() {
+        return creatableSliceKinds;
+    }
+
+
+    public void setCreatableSliceKinds( Set<SliceKind> creatableSliceKinds ) {
+        this.creatableSliceKinds = creatableSliceKinds;
+    }
+
 }

@@ -25,8 +25,9 @@ import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigActionResult;
 import de.zib.gndms.logic.model.config.ConfigOption;
 import de.zib.gndms.model.common.ImmutableScopedName;
-import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.SliceKind;
+import de.zib.gndms.model.dspace.Subspace;
+
 import org.jetbrains.annotations.NotNull;
 import javax.persistence.EntityManager;
 import java.io.PrintWriter;
@@ -100,7 +101,7 @@ public class AssignSliceKindAction extends ConfigAction<ConfigActionResult> {
      */
     @Override
     public ConfigActionResult execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer) {
-        final MetaSubspace space = em.find(MetaSubspace.class, subspace);
+        final Subspace space = em.find(Subspace.class, subspace);
 	    if (space == null)
 	        throw new IllegalArgumentException("Space not found");
 	    final @NotNull Set<SliceKind> sliceKindSet = space.getCreatableSliceKinds();
@@ -108,7 +109,7 @@ public class AssignSliceKindAction extends ConfigAction<ConfigActionResult> {
         final SliceKind sk = em.find(SliceKind.class, sliceKind);
 	    if (sk == null)
 	        throw new IllegalArgumentException("SliceKind not found");
-	    final @NotNull Set<MetaSubspace> metas =  sk.getMetaSubspaces();
+	    final @NotNull Set<Subspace> metas =  sk.getSubspaces();
 
         switch (mode) {
             case ADD:
@@ -126,7 +127,7 @@ public class AssignSliceKindAction extends ConfigAction<ConfigActionResult> {
         }
 
         // Register resources that require refreshing
-        getPostponedEntityActions().addAction(new ModelChangedAction(space.getInstance()));
+        getPostponedEntityActions().addAction(new ModelChangedAction(space));
 
         return ok();
     }

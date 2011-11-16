@@ -83,7 +83,7 @@ public class TaskServiceAux {
 
         Map<String, String> taskurimap = taskUriMap( taskling, urimap );
 
-        spec.setURL( uriFactory.taskUri( taskurimap, null ) );
+        spec.setUrl( uriFactory.taskUri( taskurimap, null ) );
         spec.setUriMap( taskurimap );
 
         ResponseEntity<Facets> res = taskClient.getTaskFacets( taskling.getId(), dn );

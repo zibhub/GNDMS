@@ -208,7 +208,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                         urimap.put( "idx", String.valueOf( i ) );
                         Specifier<Quote> sq = new Specifier<Quote>();
                         sq.setUriMap( new HashMap<String, String>( urimap ) );
-                        sq.setURL( uriFactory.quoteUri( urimap ) );
+                        sq.setUrl( uriFactory.quoteUri( urimap ) );
                         sq.setPayload( quoteList.get( i ) );
                         res.add( sq );
                     }
@@ -356,7 +356,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                 // maybe call task client
                 Specifier<Void> spec = new Specifier<Void>();
                 Map<String, String> urimap = taskUriMap( type, id, t );
-                spec.setURL( uriFactory.taskUri( urimap, "status" ) );
+                spec.setUrl( uriFactory.taskUri( urimap, "status" ) );
                 spec.setUriMap( urimap );
                 tfs.setTaskSpecifier( spec );
 
@@ -442,7 +442,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
         final Specifier<T> spec;
         if ( t != null ) {
             spec = new Specifier<T>();
-            spec.setURL( uriFactory.taskUri( urimap, facet ) );
+            spec.setUrl( uriFactory.taskUri( urimap, facet ) );
             spec.setUriMap( urimap );
         } else
             throw new NoSuchResourceException( "task", urimap );

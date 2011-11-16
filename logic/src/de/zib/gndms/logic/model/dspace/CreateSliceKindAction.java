@@ -20,8 +20,9 @@ package de.zib.gndms.logic.model.dspace;
 
 import de.zib.gndms.common.model.common.AccessMask;
 import de.zib.gndms.logic.model.AbstractModelEntityAction;
-import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.SliceKind;
+import de.zib.gndms.model.dspace.Subspace;
+
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -42,7 +43,7 @@ public class CreateSliceKindAction extends AbstractModelEntityAction<SliceKind, 
 
     private String  URI; // must be unique
     private AccessMask permission; // must not be null
-    private Set<MetaSubspace> metaSubspaces; // can be null
+    private Set<Subspace> subspaces; // can be null
 
 
     public CreateSliceKindAction( ) {
@@ -51,13 +52,13 @@ public class CreateSliceKindAction extends AbstractModelEntityAction<SliceKind, 
     public CreateSliceKindAction( @NotNull String URI, @NotNull AccessMask perm ) {
         this.URI = URI;
         this.permission = perm;
-        this.metaSubspaces = null;
+        this.subspaces = null;
     }
 
-    public CreateSliceKindAction( @NotNull String URI, @NotNull AccessMask perm, Set<MetaSubspace> metaSubspaces ) {
+    public CreateSliceKindAction( @NotNull String URI, @NotNull AccessMask perm, Set<Subspace> subspaces ) {
         this.URI = URI;
         this.permission = perm;
-        this.metaSubspaces = metaSubspaces;
+        this.subspaces = subspaces;
     }
 
 
@@ -79,7 +80,7 @@ public class CreateSliceKindAction extends AbstractModelEntityAction<SliceKind, 
         SliceKind sl = new SliceKind( );
         sl.setURI( URI );
         sl.setPermission( permission );
-        sl.setMetaSubspaces( metaSubspaces );
+        sl.setSubspaces( subspaces );
 
         em.persist( sl );
         return sl;
@@ -102,12 +103,12 @@ public class CreateSliceKindAction extends AbstractModelEntityAction<SliceKind, 
         this.permission = permission;
     }
 
-    public Set<MetaSubspace> getMetaSubspaces() {
-        return metaSubspaces;
+    public Set<Subspace> getSubspaces() {
+        return subspaces;
     }
 
-    public void setMetaSubspaces( Set<MetaSubspace> metaSubspaces ) {
-        this.metaSubspaces = metaSubspaces;
+    public void setSubspaces( Set<Subspace> subspaces ) {
+        this.subspaces = subspaces;
     }
 
 

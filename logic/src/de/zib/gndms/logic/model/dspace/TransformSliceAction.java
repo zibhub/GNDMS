@@ -116,7 +116,7 @@ public class TransformSliceAction extends AbstractModelEntityAction<Slice, Slice
             directoryAux = getInjector().getInstance( DirectoryAux.class );
         }
 
-        if(! sp.getMetaSubspace( ).getCreatableSliceKinds( ).contains( createSliceAction.getSliceKind( ) ) )
+        if(! sp.getCreatableSliceKinds( ).contains( createSliceAction.getSliceKind( ) ) )
             return null;
 
         // create an new slice of the given kind

@@ -19,7 +19,7 @@ package de.zib.gndms.infra.configlet;
 
 
 import com.google.common.collect.Maps;
-import org.apache.axis.components.logger.LoggerFactory;
+import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
 

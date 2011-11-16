@@ -192,7 +192,7 @@ public class GORFXClientMain extends AbstractApplication {
 		String batchId = null;
 		ResponseEntity<Specifier<Facets>> res5 = gorfxClient.getBatchAction(
 				action, batchId, dn);
-		System.out.println("Task URL" + res5.getBody().getURL());
+		System.out.println("Task URL" + res5.getBody().getUrl());
 		// define with res5.getBody().getUriMap() ??
 		String type = null;
 		String wid = null;

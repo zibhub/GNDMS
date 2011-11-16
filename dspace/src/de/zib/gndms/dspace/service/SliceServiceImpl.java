@@ -177,7 +177,7 @@ public class SliceServiceImpl implements SliceService {
 			urimap.put(UriFactory.SLICEKIND, sliceKind);
 			urimap.put(UriFactory.SLICE, slice);
 			spec.setUriMap(new HashMap<String, String>(urimap));
-			spec.setURL(uriFactory.quoteUri(urimap));
+			spec.setUrl(uriFactory.quoteUri(urimap));
 	        
 	        return new ResponseEntity<Specifier<Void>>(spec, headers, HttpStatus.OK);
  		} catch (NoSuchElementException ne) {

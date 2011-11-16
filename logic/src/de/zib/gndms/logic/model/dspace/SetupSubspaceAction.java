@@ -27,7 +27,6 @@ import de.zib.gndms.logic.model.config.SetupAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.dspace.DSpace;
 import de.zib.gndms.model.dspace.DSpaceRef;
-import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.Subspace;
 import org.jetbrains.annotations.NotNull;
 
@@ -144,42 +143,29 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
     @SuppressWarnings({ "FeatureEnvy", "MethodWithMoreThanThreeNegations" })
     @Override
     public ConfigActionResult execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer) {
-        MetaSubspace meta = prepareMeta(em, subspace);
-        Subspace subspace = prepareSubspace(meta);
+        Subspace space = prepareSubspace(em, subspace);
 
         try {
         switch (getMode()) {
             case CREATE:
             case UPDATE:
                 if (isVisibleToPublic() != null)
-                    meta.setVisibleToPublic(isVisibleToPublic());
+                    space.setVisibleToPublic(isVisibleToPublic());
 
                 if (size != null)
-                    subspace.setTotalSize(getSize());
+                    space.setTotalSize(getSize());
 
                 if (path != null)
-                    subspace.setPath(getPath());
+                    space.setPath(getPath());
 
                 if (gsiFtpPath != null)
-                    subspace.setGsiFtpPath(getGsiFtpPath());
+                    space.setGsiFtpPath(getGsiFtpPath());
 
-                if (subspace.getDSpaceRef() == null) {
-                    DSpaceRef ref = new DSpaceRef();
+                if (! em.contains(space))
+                    em.persist(space);
 
-                    // HACK: There should be a better way than this...
-                    DSpace dspace =
-                        (DSpace) em.createNamedQuery("findDSpaceInstances").getSingleResult();
-
-                    ref.setGridSiteId(null);
-                    ref.setResourceKeyValue(dspace.getId());
-                    subspace.setDSpaceRef(ref);
-                }
-
-                if (! em.contains(subspace))
-                    em.persist(subspace);
-
-                if (! em.contains(meta))
-                    em.persist(meta);
+                if (! em.contains(space))
+                    em.persist(space);
                 break;
             case DELETE:
                 throw new UnsupportedOperationException("Use DeleteSubspaceAction instead of SetupSubspaceAction for deleting subspaces");
@@ -192,63 +178,45 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
            throw new RuntimeException( e ); 
         }
         // Register resources that require refreshing
-        getPostponedEntityActions().addAction(new ModelChangedAction(subspace));
+        getPostponedEntityActions().addAction(new ModelChangedAction(space));
 
         return ok();
     }
 
     /**
-     * Tries to retrieve the entity instance with the primary key {@code pkParam} from the entityclass {@code MetaSubspace.class}.
-     * If not <tt>null</tt> it will be returned. Otherwise a new <tt>MetaSubspace</tt> instance is created,
+     * Tries to retrieve the entity instance with the primary key {@code pkParam} from the entityclass {@code Subspace.class}.
+     * If not <tt>null</tt> it will be returned. Otherwise a new <tt>Subspace</tt> instance is created,
      * with <tt>pkParam</tt> as its ScopedName.
      *
      * @param em
      * @param pkParam
      * @return
      */
-    private MetaSubspace prepareMeta(final EntityManager em, final ImmutableScopedName pkParam) {
-        MetaSubspace meta= em.find(MetaSubspace.class, pkParam);
-        if (meta == null) {
+    private Subspace prepareSubspace(final EntityManager em, final ImmutableScopedName pkParam) {
+        Subspace space= em.find(Subspace.class, pkParam);
+        if (space == null) {
             if (! isCreating())
-                throw new IllegalStateException("No matching metasubspace found for update");
-            meta = new MetaSubspace();
-            meta.setScopedName(pkParam);
+                throw new IllegalStateException("No matching subspace found for update");
+            space = new Subspace();
+            space.setName(pkParam);
         }
-        return meta;
-    }
 
-
-    /**
-     * If SetupMode is not <tt>create</tt> the <tt>metaParam</tt>'s subspace is returned.
-     * Otherwise a new <tt>Subspace</tt> instance is created, linked with <tt>metaParam</tt> and returned.
-     *
-     * @param metaParam A <tt>MetaSubspace</tt> containing a <tt>Subspace</tt> if setupMode is not <tt>create</tt>.
-     *      Otherwise a new <tt>Subspace</tt> instance is created, linked with <tt>metaParam</tt>
-     * @return the subspace linked with <tt>metaParam</tt>
-     */
-    @SuppressWarnings({ "FeatureEnvy" })
-    private Subspace prepareSubspace(final MetaSubspace metaParam) {
-        Subspace subspace;
+        
         if (isCreating()) {
-            if (metaParam.getInstance() != null)
-                throw new IllegalStateException("Cant overwrite metasubspace's subspace");
-            subspace = new Subspace();
-            subspace.setId(nextUUID());
-            subspace.setMetaSubspace(metaParam);
-            metaParam.setInstance(subspace);
+            space = new Subspace();
+            space.setId(nextUUID());
 
             //final StorageSize avail = new StorageSize();
             //avail.setAmount(getSize().getAmount());
             //avail.setUnit(getSize().getUnit());
             //subspace.setAvailableSize(avail);
             final long avail = getSize( );
-            subspace.setAvailableSize(avail);
+            space.setAvailableSize(avail);
         }
-        else
-            subspace = metaParam.getInstance();
-        return subspace;
-    }
 
+        return space;
+
+    }
 
     public ImmutableScopedName getSubspace() {
         return subspace;

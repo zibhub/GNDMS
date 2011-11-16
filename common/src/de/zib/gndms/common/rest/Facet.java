@@ -25,36 +25,60 @@ package de.zib.gndms.common.rest;
  */
 public class Facet {
 
-    private String name; ///< The short name of the facet
-    private String url;  ///< the complete url
+    /**
+     * The short name of the facet.
+     */
+	private String name; 
+	/**
+	 * The complete url.
+	 */
+    private String url; 
 
-
+    /**
+     * The constructor.
+     */
     public Facet() {
     }
 
-
-    public Facet( String name, String url ) {
+    /**
+     * The constructor, setting name and url of the facet.
+     * @param name The name.
+     * @param url The url.
+     */
+    public Facet( final String name, final String url ) {
         this.name = name;
         this.url = url;
     }
 
-
-    public String getName() {
+    /**
+     * Returns the name of the facet.
+     * @return The name.
+     */
+    public final String getName() {
         return name;
     }
 
-
-    public void setName( String name ) {
+    /**
+     * Sets the name of the facet.
+     * @param name The name.
+     */
+    public final void setName( final String name ) {
         this.name = name;
     }
 
-
-    public String getUrl() {
+    /**
+     * Returns the url of the facet.
+     * @return The url.
+     */
+    public final String getUrl() {
         return url;
     }
 
-
-    public void setUrl( String url ) {
+    /**
+     * Sets the url of the facet.
+     * @param url The url.
+     */
+    public final void setUrl( final String url ) {
         this.url = url;
     }
 }
