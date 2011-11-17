@@ -28,6 +28,7 @@ import de.zib.gndms.neomodel.gorfx.TaskFlow;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.channels.NonReadableChannelException;
+import java.util.Map;
 
 
 /**
@@ -82,6 +83,12 @@ public class ProviderStageInTaskFlowFactory
     @Override
     protected TaskFlow<ProviderStageInOrder> prepare( TaskFlow<ProviderStageInOrder> providerStageInOrderTaskFlow ) {
         return providerStageInOrderTaskFlow;
+    }
+
+
+    @Override
+    protected Map<String, String> getDefaultConfig() {
+        return null;  // not required here
     }
 
 

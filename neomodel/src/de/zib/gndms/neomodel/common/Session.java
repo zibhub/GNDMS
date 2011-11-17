@@ -66,9 +66,12 @@ public class Session {
         return offerType;
     }
 
-    @NotNull public TaskFlowType findTaskFlowType( @NotNull String offerTypeId ) {
-        return new TaskFlowType(reprSession, OFFER_TYPE_T,
-                getTypeIndex(OFFER_TYPE_T).get(gridName, offerTypeId).getSingle());
+    public TaskFlowType findTaskFlowType( @NotNull String offerTypeId ) {
+        final Node node = getTypeIndex(OFFER_TYPE_T).get(gridName, offerTypeId).getSingle();
+        if( node != null )
+            return new TaskFlowType(reprSession, OFFER_TYPE_T, node );
+        else
+            return null;
     }
     
     public Task createTask() {
@@ -78,7 +81,7 @@ public class Session {
         return task;
     }
 
-    @NotNull public Task findTask(@NotNull String taskId) {
+    public Task findTask(@NotNull String taskId) {
         return taskFromNode( getTypeIndex(TASK_T).get(gridName, taskId).getSingle() );
     }
 

@@ -132,5 +132,14 @@ public interface TaskFlowFactory<O extends Order, C extends AbstractQuoteCalcula
      */
     Iterable<String> depends();
 
+    /**
+     * Registers the TaskFlowType object of this factory.
+     *
+     * The TaskFlowType object is used to provide a configuration of the TaskFlow.
+     *
+     * @param session The session object which is necessary to access the database.
+     */
+    void registerType( Session session );
+
     DelegatingOrder<O> getOrderDelegate( O orq );
 }
