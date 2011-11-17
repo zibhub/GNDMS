@@ -26,11 +26,14 @@ import de.zib.gndms.logic.model.gorfx.c3grid.AbstractProviderStageInAction;
 import de.zib.gndms.model.common.repository.Dao;
 import de.zib.gndms.model.common.repository.TransientDao;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
+import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
+import de.zib.gndms.neomodel.gorfx.TaskFlowType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -177,6 +180,59 @@ public abstract class DefaultTaskFlowFactory<O extends Order, C extends Abstract
     public Class<O> getOrderClass() {
         return orderClass;
     }
+
+
+    @Override
+    public void registerType( Session session ) {
+
+        TaskFlowType taskFlowType;
+        try {
+            taskFlowType = session.findTaskFlowType( getTaskFlowKey() );
+            if( taskFlowType != null ) { // this factory is known
+                if( taskFlowType.getVersion() == getVersion() ) { // and the version is ok, too
+                    session.success();
+                    return;
+                } else  { // version mismatch
+                    taskFlowType.delete(); // delete it
+                    taskFlowType = null; // and make new one
+                }
+            }
+            //  setup fresh this factory is new
+            taskFlowType = session.createTaskFlowType();
+            setupTaskFlowType( taskFlowType );
+
+        } finally { session.finish(); }
+    }
+
+
+    /**
+     * Initial configuration of the taskflowType
+     *
+     * Override this method to customize the taskflowType, default setup is fine in most cases.
+     *
+     * @param taskFlowType A newly created instance of the taskflowtype
+     *
+     * @note This method is only called when the factory is created for the first time, even after a shutdown it won't
+     * be called again. Except a change of the version number of this factory.
+     */
+    protected void setupTaskFlowType( TaskFlowType taskFlowType )  {
+
+        taskFlowType.setTaskFlowTypeKey( this.getTaskFlowKey() );
+        taskFlowType.setVersion( getVersion() );
+        taskFlowType.setCalculatorFactoryClassName( this.getClass().getName() );
+        taskFlowType.setTaskActionFactoryClassName( this.getClass().getName() );
+        taskFlowType.setConfigMapData( getDefaultConfig() );
+    }
+
+    /**
+     * Implementing classes should provide a useful default config.
+     *
+     * @return The default configuration of the map.
+     *
+     * @note This method is only called when the factory is created for the first time, even after a shutdown it won't
+     * be called again. Except a change of the version number of this factory.
+     */
+   protected abstract Map<String,String> getDefaultConfig();
 
 
     @Override

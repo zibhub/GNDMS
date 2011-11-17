@@ -85,7 +85,7 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
     public void onCreate(ReprSession reprSession) {
         super.onCreate(reprSession);
         if (getProperty(TASK_STATE_P, null) == null)   {
-            final @NotNull String newTaskStateName = TaskState.INITIALIZED.name();
+            final @NotNull String newTaskStateName = TaskState.CREATED.name();
             setProperty(TASK_STATE_P, newTaskStateName);
             final @NotNull Index<Node> typeNickIndex = getTypeNickIndex(TASK_STATE_IDX);
             typeNickIndex.add(repr(), session().getGridName(), newTaskStateName);
