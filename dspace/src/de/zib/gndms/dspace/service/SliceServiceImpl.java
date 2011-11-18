@@ -1,4 +1,4 @@
-package de.zib.gndms.dspace.service;
+ package de.zib.gndms.dspace.service;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -51,6 +51,7 @@ import de.zib.gndms.logic.model.dspace.SliceKindProviderImpl;
 import de.zib.gndms.logic.model.dspace.SliceProvider;
 import de.zib.gndms.logic.model.dspace.SliceProviderImpl;
 import de.zib.gndms.logic.model.dspace.SubspaceProvider;
+import de.zib.gndms.logic.model.dspace.SubspaceProviderImpl;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 
@@ -93,13 +94,13 @@ public class SliceServiceImpl implements SliceService {
 	 */
 	private UriFactory uriFactory;
 
-	// TODO: initialization of subspaceProvider
 	/**
 	 * Initialization of the slice service.
 	 */
 	@PostConstruct
 	public final void init() {
 		uriFactory = new UriFactory(baseUrl);
+		subspaceProvider = new SubspaceProviderImpl();
 		sliceKindProvider = new SliceKindProviderImpl();
 		sliceKindProvider.init(subspaceProvider);
 		sliceProvider = new SliceProviderImpl();

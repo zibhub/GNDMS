@@ -16,9 +16,13 @@ package de.zib.gndms.dspace.service;
  * limitations under the License.
  */
 
+import java.rmi.RemoteException;
 import java.util.HashMap;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,13 +42,14 @@ import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.logic.model.dspace.NoSuchElementException;
+import de.zib.gndms.logic.model.dspace.SliceConfiguration;
 import de.zib.gndms.logic.model.dspace.SliceKindConfiguration;
 import de.zib.gndms.logic.model.dspace.SliceKindProvider;
 import de.zib.gndms.logic.model.dspace.SliceKindProviderImpl;
 import de.zib.gndms.logic.model.dspace.SubspaceProvider;
-import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
+import de.zib.gndms.model.util.TxFrame;
 
 /**
  * The slice kind service implementation.
@@ -59,6 +64,14 @@ public class SliceKindServiceImpl implements SliceKindService {
 	 * The logger.
 	 */
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	/**
+	 * The entity manager factory.
+	 */
+	private EntityManagerFactory emf;
+	/**
+	 * The entity manager.
+	 */
+	private EntityManager em;
 
 	/**
 	 * The base url, something like \c http://my.host.org/gndms/grid_id.
@@ -110,11 +123,113 @@ public class SliceKindServiceImpl implements SliceKindService {
 
 	@Override
 	@RequestMapping(value = "/_{subspace}/_{sliceKind}", method = RequestMethod.POST)
-	public final ResponseEntity<Specifier<Void>> setSliceKindConfig(
+	public final ResponseEntity<Specifier<Void>> createSlice(
 			@PathVariable final String subspace,
 			@PathVariable final String sliceKind,
 			@RequestBody final Configuration config,
 			@RequestHeader("DN") final String dn) {
+		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, dn);
+
+		try {
+			if (!sliceKindProvider.exists(subspace, sliceKind)) {
+				logger.warn("Slice kind " + sliceKind + " in subspace " + subspace + " not available");
+				return new ResponseEntity<Specifier<Void>>(null, headers,
+						HttpStatus.FORBIDDEN);
+			}
+			
+			SliceConfiguration sliceConfig = SliceConfiguration.checkSliceConfig(config);
+
+			Subspace sub = subspaceProvider.getSubspace(subspace);
+		   	em = emf.createEntityManager();
+	       	TxFrame tx = new TxFrame(em);
+
+	        try {
+//	            Long ssize = null;
+//
+//	            if( sliceCreationSpecifier.getTotalStorageSize() != null )
+//	                ssize = sliceCreationSpecifier.getTotalStorageSize().longValue();
+//	            else
+//	                ssize = 0l;
+//
+//	            srh = getSliceResourceHome( );
+//	            rk = srh.createResource( );
+//	            SliceResource sr = srh.getResource( rk );
+//
+//	            GNDMSystem system = subref.getResourceHome( ).getSystem( );
+//
+//
+//
+//	            String id =  subref.getID();
+//
+//	            Query q = em.createNamedQuery( "getMetaSubspaceKey" );
+//	            q.setParameter( "idParam", id );
+//	            ImmutableScopedName isn = (ImmutableScopedName) q.getSingleResult();
+//
+//	            final MetaSubspace msp = em.find( MetaSubspace.class, isn );
+//
+//	            id = sliceCreationSpecifier.getSliceKind( ).toString( );
+//	            final SliceKind sk = em.find( SliceKind.class, id );
+//
+//	            if( sk == null )
+//	                throw new IllegalArgumentException( "Slice kind doesn't exist: " + id );
+//
+//
+//	            final CreateSliceAction csa =
+//	                    new CreateSliceAction( (String) sr.getID(),
+//	                            LogAux.getLocalName(),
+//	                            sliceCreationSpecifier.getTerminationTime(),
+//	                            system.getModelUUIDGen(),
+//	                            sk,
+//	                            ssize
+//	                    );
+//	            csa.setClosingEntityManagerOnCleanup( false );
+//	            csa.setOwnEntityManager( em );
+//	            csa.setModel( msp.getInstance( ) );
+//	            DefaultBatchUpdateAction bua = new DefaultBatchUpdateAction<GridResource>();
+//	            bua.setListener( system );
+//	            csa.setOwnPostponedEntityActions(bua);
+//
+//	            final Slice ns = csa.call();
+//
+//	            csa.getPostponedEntityActions().call( );
+//
+//	            sr.loadFromModel( ns );
+//	            sref = srh.getResourceReference( rk );
+//	            tx.commit( );
+//	        } catch ( OutOfSpace e ) {
+//	            logger.debug(e);
+//	            throw e;
+//	        } catch ( Exception e ) {
+//	            logger.debug(e);
+//	            if( srh != null && rk != null )
+//	                srh.remove( rk );
+//	            throw new RemoteException( e.toString(), e );
+	        } finally  {
+	            if (tx != null) {
+	                tx.finish();       
+	            }
+	            if (em != null && em.isOpen()) {
+	                em.close( );
+	            }
+	        }
+
+			// TODO: create slice kind
+			return new ResponseEntity<Specifier<Void>>(null, headers,
+					HttpStatus.OK);
+			
+			
+		} catch (WrongConfigurationException e) {
+			logger.warn("Wrong slice kind configuration");
+  			return new ResponseEntity<Specifier<Void>>(null, headers,
+					HttpStatus.BAD_REQUEST);
+		}
+
+	}
+
+	@Override
+	@RequestMapping(value = "/_{subspace}/_{sliceKind}", method = RequestMethod.PUT)
+	public final ResponseEntity<Void> setSliceKindConfig(@PathVariable final String subspace,
+			@PathVariable final String sliceKind, final Configuration config, final String dn) {
 		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, dn);
 
 		try {
@@ -132,43 +247,18 @@ public class SliceKindServiceImpl implements SliceKindService {
 			spec.setUriMap(new HashMap<String, String>(urimap));
 			spec.setUrl(uriFactory.quoteUri(urimap));
 
-			return new ResponseEntity<Specifier<Void>>(spec, headers,
+			return new ResponseEntity<Void>(null, headers,
 					HttpStatus.OK);
 		} catch (NoSuchElementException ne) {
 			logger.warn("The slice kind " + sliceKind + "does not exist within the subspace" + subspace);
-  			return new ResponseEntity<Specifier<Void>>(null, headers,
+  			return new ResponseEntity<Void>(null, headers,
 					HttpStatus.NOT_FOUND);
-		} catch (WrongConfigurationException e) {
-			logger.warn("Wrong slice kind configuration");
-  			return new ResponseEntity<Specifier<Void>>(null, headers,
-					HttpStatus.BAD_REQUEST);
-		}
-	}
-
-	@Override
-	@RequestMapping(value = "/_{subspace}/_{sliceKind}", method = RequestMethod.PUT)
-	public final ResponseEntity<Void> createSliceKind(@PathVariable final String subspace,
-			@PathVariable final String sliceKind, final Configuration config, final String dn) {
-		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, dn);
-		
-		try {
-			if (sliceKindProvider.exists(subspace, sliceKind)) {
-				logger.warn("Slice kind " + sliceKind + " in subspace " + subspace + " already exists");
-				return new ResponseEntity<Void>(null, headers,
-						HttpStatus.FORBIDDEN);
-			}
-			
-			SliceKindConfiguration sliceKindConfig = SliceKindConfiguration.checkSliceKindConfig(config);
-
-			// TODO: create slice kind
-			return new ResponseEntity<Void>(null, headers,
-					HttpStatus.OK);
-			
 		} catch (WrongConfigurationException e) {
 			logger.warn("Wrong slice kind configuration");
   			return new ResponseEntity<Void>(null, headers,
 					HttpStatus.BAD_REQUEST);
 		}
+
 	}
 
 	@Override
@@ -246,4 +336,21 @@ public class SliceKindServiceImpl implements SliceKindService {
 	public final void setSubspaceProvider(final SubspaceProvider subspaceProvider) {
 		this.subspaceProvider = subspaceProvider;
 	}
+	/**
+	 * Returns the entity manager factory.
+	 * @return the factory.
+	 */
+	public final EntityManagerFactory getEmf() {
+		return emf;
+	}
+
+	/**
+	 * Sets the entity manager factory.
+	 * @param emf the factory to set.
+	 */
+	@PersistenceUnit
+	public final void setEmf(final EntityManagerFactory emf) {
+		this.emf = emf;
+	}
+	
 }

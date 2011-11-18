@@ -66,11 +66,11 @@ public interface SliceKindService {
 	 *            The dn of the user invoking the method.
 	 * @return The representation of the slice kind.
 	 */
-	ResponseEntity<Specifier<Void>> setSliceKindConfig(String subspace,
+	ResponseEntity<Specifier<Void>> createSlice(String subspace,
 			String sliceKind, Configuration config, String dn);
 
 	/**
-	 * Deletes a slice kind.
+	 * Sets a slice kind configuration.
 	 * 
 	 * @param subspace
 	 *            The subspace identifier.
@@ -81,7 +81,7 @@ public interface SliceKindService {
 	 *            The dn of the user invoking the method.
 	 * @return A confirmation.
 	 */
-	ResponseEntity<Void> createSliceKind(String subspace, String sliceKind,
+	ResponseEntity<Void> setSliceKindConfig(String subspace, String sliceKind,
 			Configuration config, String dn);
 
 	/**
