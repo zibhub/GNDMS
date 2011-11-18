@@ -9,6 +9,9 @@ import de.zib.gndms.neomodel.gorfx.TaskFlow;
 import de.zib.gndms.taskflows.dummy.client.DummyTaskFlowMeta;
 import de.zib.gndms.taskflows.dummy.client.model.DummyOrder;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author try ma ik jo rr a zib
  * @date 14.02.11  16:10
@@ -69,6 +72,11 @@ public class DummyTaskFlowFactory extends DefaultTaskFlowFactory<DummyOrder,Dumm
         super.delete( id );
     }
 
+
+    @Override
+    protected Map<String, String> getDefaultConfig() {
+        return new HashMap<String, String>( 0 );
+    }
 
 
     @Override

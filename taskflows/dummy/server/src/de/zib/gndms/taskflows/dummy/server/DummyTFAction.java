@@ -63,12 +63,14 @@ public class DummyTFAction extends TaskFlowAction<DummyOrder> {
     @Override
     protected void onCreated( @NotNull String wid, @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState ) throws Exception {
 
+        logger.debug( "CALLED" );
         if( !isRestartedTask ) {
             final Session session = getDao().beginSession();
             try {
                 Task task = getTask( session );
                 task.setProgress( 1 );
-                task.setMaxProgress( getOrderBean().getTimes() );
+                task.setMaxProgress( (( DelegatingOrder<DummyOrder>) task.getORQ()).getOrderBean().getTimes() );
+                logger.debug( "maxprogess set to: " + task.getMaxProgress() );
                 session.success();
             }
             finally { session.finish(); }

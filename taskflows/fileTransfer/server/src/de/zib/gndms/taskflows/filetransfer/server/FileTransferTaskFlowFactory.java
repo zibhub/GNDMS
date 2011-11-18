@@ -37,6 +37,11 @@ public class FileTransferTaskFlowFactory
     extends DefaultTaskFlowFactory<FileTransferOrder, FileTransferQuoteCalculator> {
 
 
+    protected FileTransferTaskFlowFactory( String taskFlowKey, Class<FileTransferQuoteCalculator> calculatorClass, Class<FileTransferOrder> orderClass ) {
+        super( taskFlowKey, calculatorClass, orderClass );
+    }
+
+
     @Override
     public FileTransferQuoteCalculator getQuoteCalculator() {
         final FileTransferQuoteCalculator quoteCalculator = super.getQuoteCalculator();

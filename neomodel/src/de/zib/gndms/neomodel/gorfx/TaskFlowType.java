@@ -58,6 +58,7 @@ public class TaskFlowType extends NodeGridResource<TaskFlowTypeAccessor> impleme
     public static final String CONFIG_MAP_DATA_P = "CONFIG_MAP_DATA_P";
     public static final String OFFER_ARGUMENT_TYPE_P = "OFFER_ARGUMENT_TYPE_P";
     public static final String OFFER_RESULT_TYPE_P = "OFFER_RESULT_TYPE_P";
+    public static final String VERSION_P = "VERSION_P";
 
     public TaskFlowType( @NotNull ReprSession session, @NotNull String typeNick, @NotNull Node underlying ) {
         super(session, typeNick, underlying);
@@ -119,6 +120,15 @@ public class TaskFlowType extends NodeGridResource<TaskFlowTypeAccessor> impleme
 
     public void setTaskFlowResultType( ImmutableScopedName offerResultType ) {
         setProperty(ImmutableScopedName.class, OFFER_RESULT_TYPE_P, offerResultType);
+    }
+
+    public void setVersion( int version ) {
+
+        setProperty( VERSION_P, version );
+    }
+
+    public int getVersion() {
+        return (Integer) getProperty(VERSION_P);
     }
 
     @Override
