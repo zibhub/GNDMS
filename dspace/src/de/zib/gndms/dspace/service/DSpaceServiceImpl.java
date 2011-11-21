@@ -37,7 +37,6 @@ import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.logic.model.dspace.SubspaceProvider;
 import de.zib.gndms.logic.model.dspace.SubspaceProviderImpl;
-import de.zib.gndms.model.common.ImmutableScopedName;
 
 /**
  * The dspace service implementation.
@@ -89,7 +88,7 @@ public class DSpaceServiceImpl implements DSpaceService {
 		}
 		List<Specifier<Void>> list = new ArrayList<Specifier<Void>>();
 		HashMap<String, String> urimap = new HashMap<String, String>(2);
-		urimap.put("service", "dspace");
+		urimap.put(UriFactory.SERVICE, "dspace");
 		for (String s : subspaceProvider.listSubspaces()) {
 			Specifier<Void> spec = new Specifier<Void>();
 			

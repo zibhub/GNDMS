@@ -45,7 +45,6 @@ public class SliceKindProviderImpl implements SliceKindProvider {
 				Set<SliceKind> subSliceKinds = provider.getSubspace(sub).getCreatableSliceKinds();
 				Map<String, SliceKind> map = new HashMap<String, SliceKind>();
 				
-				// TODO: is this the right way to get the slice kind ids?
 				for (SliceKind sk : subSliceKinds)  {
 					map.put(sk.toString(), sk);
 				}

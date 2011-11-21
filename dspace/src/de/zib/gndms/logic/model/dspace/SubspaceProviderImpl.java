@@ -23,10 +23,8 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.Query;
-import javax.transaction.Transaction;
 
 import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.dspace.Subspace;
@@ -48,7 +46,6 @@ public class SubspaceProviderImpl implements SubspaceProvider {
 	 * The entity manager.
 	 */
 	private EntityManager em;
-
 	/**
 	 * List of subspace ids.
 	 */
@@ -72,7 +69,7 @@ public class SubspaceProviderImpl implements SubspaceProvider {
         tx.commit();
        	} finally {
        		tx.finish();
-       		if (em.isOpen()) {
+       		if (em != null && em.isOpen()) {
        			em.close();
        		}
        	}
@@ -95,14 +92,16 @@ public class SubspaceProviderImpl implements SubspaceProvider {
 	}
 
 	/**
-	 * @return the emf
+	 * Returns the entity manager factory.
+	 * @return the factory.
 	 */
 	public final EntityManagerFactory getEmf() {
 		return emf;
 	}
 
 	/**
-	 * @param emf the emf to set
+	 * Sets the entity manager factory.
+	 * @param emf the factory to set.
 	 */
 	@PersistenceUnit
 	public final void setEmf(final EntityManagerFactory emf) {

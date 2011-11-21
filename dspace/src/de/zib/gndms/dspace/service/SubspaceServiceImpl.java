@@ -21,6 +21,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +35,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import de.zib.gndms.GORFX.service.TaskServiceAux;
 import de.zib.gndms.common.dspace.service.SubspaceService;
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.logic.config.SetupMode;
@@ -41,7 +43,6 @@ import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
-import de.zib.gndms.logic.model.TaskExecutionService;
 import de.zib.gndms.logic.model.dspace.DeleteSubspaceAction;
 import de.zib.gndms.logic.model.dspace.NoSuchElementException;
 import de.zib.gndms.logic.model.dspace.SetupSubspaceAction;
@@ -50,8 +51,8 @@ import de.zib.gndms.logic.model.dspace.SliceKindProviderImpl;
 import de.zib.gndms.logic.model.dspace.SubspaceConfiguration;
 import de.zib.gndms.logic.model.dspace.SubspaceProvider;
 import de.zib.gndms.logic.model.dspace.SubspaceProviderImpl;
-import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.dspace.Subspace;
+import de.zib.gndms.model.util.TxFrame;
 
 /**
  * The subspace service implementation.
@@ -64,6 +65,14 @@ public class SubspaceServiceImpl implements SubspaceService {
 	 * The logger.
 	 */
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	/**
+	 * The entity manager factory.
+	 */
+	private EntityManagerFactory emf;
+	/**
+	 * The entity manager.
+	 */
+	private EntityManager em;
 	/**
 	 * The base url, something like \c http://my.host.org/gndms/grid_id.
 	 */
@@ -80,14 +89,6 @@ public class SubspaceServiceImpl implements SubspaceService {
 	 * The facets of a subspace.
 	 */
 	private Facets subspaceFacets;
-	/**
-	 * The task execution service.
-	 */
-	private TaskExecutionService executor;
-	/**
-	 * The auxiliary for task services.
-	 */
-	private TaskServiceAux taskServiceAux;
 
 	/**
 	 * Initialization of the dspace service.
@@ -95,9 +96,6 @@ public class SubspaceServiceImpl implements SubspaceService {
 	@PostConstruct
 	public final void init() {
 		uriFactory = new UriFactory(baseUrl);
-		// TODO: initialization of executor
-		// executor ? 
-		taskServiceAux = new TaskServiceAux(executor);
 		subspaceProvider = new SubspaceProviderImpl();
 	}
 
@@ -135,14 +133,22 @@ public class SubspaceServiceImpl implements SubspaceService {
 				return new ResponseEntity<Facets>(null, headers,
 						HttpStatus.FORBIDDEN);
 			}
-
-			SetupSubspaceAction action = new SetupSubspaceAction(subspaceConfig);
-
-			logger.info("Calling action for setting up the supspace "
+            
+		   	em = emf.createEntityManager();
+	       	TxFrame tx = new TxFrame(em);
+	       	try {
+	       		SetupSubspaceAction action = new SetupSubspaceAction(subspaceConfig);
+	       		action.setOwnEntityManager(em);
+	       		logger.info("Calling action for setting up the supspace "
 					+ subspace + ".");
-
-			// TODO  Do I need the EntityManager (which is already in the action ...)
-			action.call();
+	       		action.call();
+	       		tx.commit();
+	       	} finally {
+	       		tx.finish();
+	       		if (em != null && em.isOpen()) {
+	       			em.close();
+	       		}
+	       	}
 			return new ResponseEntity<Facets>(subspaceFacets, headers,
 					HttpStatus.CREATED);
 		} catch (WrongConfigurationException e) {
@@ -165,15 +171,30 @@ public class SubspaceServiceImpl implements SubspaceService {
 					HttpStatus.NOT_FOUND);
 		}
 
-		DeleteSubspaceAction action = new DeleteSubspaceAction();
-		action.setPath(subspaceProvider.getSubspace(subspace).getPath());
-		action.setMode(SetupMode.DELETE);
+	   	em = emf.createEntityManager();
+       	TxFrame tx = new TxFrame(em);
+       	try {
 
-		logger.info("Calling action for deleting the supspace " + subspace
-				+ ".");
-		// TODO as above: EntityManager?
-		action.call();
-		return new ResponseEntity<Specifier<Void>>(null, headers, HttpStatus.OK);
+       		DeleteSubspaceAction action = new DeleteSubspaceAction();
+       		action.setPath(subspaceProvider.getSubspace(subspace).getPath());
+       		action.setMode(SetupMode.DELETE);
+       		action.setOwnEntityManager(em);
+       		
+       		logger.info("Calling action for deleting the supspace " + subspace
+       				+ ".");
+       		action.call();
+       		tx.commit();
+
+       		// TODO get the specifier from the action
+			Specifier<Void> spec = new Specifier<Void>();
+
+       		return new ResponseEntity<Specifier<Void>>(spec, headers, HttpStatus.OK);
+       	} finally {
+       		tx.finish();
+       		if (em != null && em.isOpen()) {
+       			em.close();
+       		}
+       	}
 	}
 
 	@Override
@@ -196,12 +217,12 @@ public class SubspaceServiceImpl implements SubspaceService {
 		List<Specifier<Void>> list = new ArrayList<Specifier<Void>>(
 				sliceKinds.size());
 		HashMap<String, String> urimap = new HashMap<String, String>(2);
-		urimap.put("service", "dspace");
+		urimap.put(UriFactory.SERVICE, "dspace");
 		for (String sk : sliceKinds) {
 			Specifier<Void> spec = new Specifier<Void>();
 			spec.setUriMap(new HashMap<String, String>(urimap));
 			spec.addMapping(UriFactory.SLICEKIND, sk);
-			// TODO does the String has to be hard-coded?
+			// TODO does the String have to be hard-coded?
 			spec.setUrl(uriFactory.subspaceUri(urimap, "slicekinds"));
 			list.add(spec);
 		}
@@ -252,14 +273,23 @@ public class SubspaceServiceImpl implements SubspaceService {
 				return new ResponseEntity<Void>(null, headers,
 						HttpStatus.FORBIDDEN);
 			}
+		   	em = emf.createEntityManager();
+	       	TxFrame tx = new TxFrame(em);
 
-			SetupSubspaceAction action = new SetupSubspaceAction(subspaceConfig);
+	       	try {
 
-			logger.info("Calling action for updating the supspace "
+	       		SetupSubspaceAction action = new SetupSubspaceAction(subspaceConfig);
+	       		action.setOwnEntityManager(em);
+	       		logger.info("Calling action for updating the supspace "
 					+ subspace + ".");
 
-			// TODO  Do I need the EntityManager (which is already in the action ...)
-			action.call();
+	       		action.call();
+	      	} finally {
+	       		tx.finish();
+	       		if (em != null && em.isOpen()) {
+	       			em.close();
+	       		}
+	       	}
 			return new ResponseEntity<Void>(null, headers,
 					HttpStatus.CREATED);
 		} catch (WrongConfigurationException e) {
@@ -339,18 +369,20 @@ public class SubspaceServiceImpl implements SubspaceService {
 	}
 
 	/**
-	 * Returns the task executor of this subspace service.
-	 * @return the executor
+	 * Returns the entity manager factory.
+	 * @return the factory.
 	 */
-	public final TaskExecutionService getExecutor() {
-		return executor;
+	public final EntityManagerFactory getEmf() {
+		return emf;
 	}
 
 	/**
-	 * Sets the task executor of this subspace service.
-	 * @param executor the executor to set
+	 * Sets the entity manager factory.
+	 * @param emf the factory to set.
 	 */
-	public final void setExecutor(final TaskExecutionService executor) {
-		this.executor = executor;
+	@PersistenceUnit
+	public final void setEmf(final EntityManagerFactory emf) {
+		this.emf = emf;
 	}
+
 }
