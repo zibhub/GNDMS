@@ -23,6 +23,8 @@ import de.zib.gndms.logic.action.ProcessBuilderAction;
 import static de.zib.gndms.logic.model.gorfx.c3grid.ExternalProviderStageInQuoteCalculator.GLOBUS_DEATH_DURATION;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.gorfx.types.ProviderStageInOrder;
+import de.zib.gndms.model.gorfx.types.ProviderStageInResult;
+import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import de.zib.gndms.stuff.Sleeper;

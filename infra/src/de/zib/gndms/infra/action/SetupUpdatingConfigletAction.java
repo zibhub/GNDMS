@@ -18,9 +18,9 @@ package de.zib.gndms.infra.action;
 import de.zib.gndms.kit.configlet.Configlet;
 import de.zib.gndms.logic.model.config.ConfigActionResult;
 import de.zib.gndms.model.common.ConfigletState;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import java.io.PrintWriter;
@@ -33,7 +33,7 @@ import java.text.ParseException;
  */
 public class SetupUpdatingConfigletAction extends SetupDefaultConfigletAction {
 
-    protected Log logger = LogFactory.getLog( this.getClass() );
+    protected Logger logger = LoggerFactory.getLogger( this.getClass() );
 
 
     @Override
@@ -45,11 +45,11 @@ public class SetupUpdatingConfigletAction extends SetupDefaultConfigletAction {
             conf.init( logger, state.getName(), state.getState() );
             conf.update( state.getState() );
         } catch ( ClassNotFoundException e ) {
-            logger.warn( e );
+            logger.warn( "", e );
         } catch ( InstantiationException e ) {
-            logger.warn( e );
+            logger.warn( "", e );
         } catch ( IllegalAccessException e ) {
-            logger.warn( e );
+            logger.warn( "", e );
         }
         return res;
     }

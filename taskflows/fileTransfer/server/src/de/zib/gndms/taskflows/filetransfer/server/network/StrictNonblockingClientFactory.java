@@ -1,4 +1,4 @@
-package de.zib.gndms.kit.network;
+package de.zib.gndms.taskflows.filetransfer.server.network;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -19,14 +19,10 @@ package de.zib.gndms.kit.network;
 
 import de.zib.gndms.kit.access.CredentialProvider;
 import de.zib.gndms.stuff.threading.Forkable;
-import de.zib.gndms.stuff.threading.QueuedExecutor;
-import org.apache.log4j.Logger;
 import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.exception.ServerException;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.*;
 
 /**

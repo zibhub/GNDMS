@@ -82,8 +82,8 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
     }
 
 
-    protected void prepareProxy( AbstractTask model ) {
-        final Slice slice = findSlice(model);
+    protected void prepareProxy( ) {
+        final Slice slice = findSlice();
         File sd = new File( slice.getSubspace().getPathForSlice( slice ) + PROXY_FILE_NAME );
         getCredentialProvider().installCredentials( sd );
     }
@@ -300,7 +300,7 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
 
 	@Override
     @NotNull
-    public Class<ProviderStageInOrder> getOrqClass() {
+    public Class<ProviderStageInOrder> getORQClass() {
         return ProviderStageInOrder.class;
     }
 

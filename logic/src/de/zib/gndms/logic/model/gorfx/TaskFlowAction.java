@@ -152,8 +152,9 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends DefaultTas
 
     protected String getFailString( Exception e )  {
         if( e != null )
-            return getModel().getDescription() + " failure " +  e.getMessage();
+            // todo verify getTaskSnapshot doesn't case trouble on error
+            return getTaskSnapshot(getDao()).getDescription() + " failure " +  e.getMessage();
         else
-            return getModel().getDescription() + " failure (no Exception provided)";
+            return getTaskSnapshot(getDao()).getDescription() + " failure (no Exception provided)";
     }
 }

@@ -1,4 +1,4 @@
-package de.zib.gndms.kit.network;
+package de.zib.gndms.taskflows.filetransfer.server.network;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *

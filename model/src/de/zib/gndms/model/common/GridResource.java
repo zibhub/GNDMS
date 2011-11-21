@@ -28,7 +28,7 @@ import javax.persistence.Id;
  *
  **/
 @MappedSuperclass
-public abstract class GridResource extends GridEntity {
+public abstract class GridResource extends GridEntity implements GridResourceItf{
     
     private String id;
 

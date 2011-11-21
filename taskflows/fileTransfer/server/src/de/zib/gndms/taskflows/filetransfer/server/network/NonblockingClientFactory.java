@@ -67,14 +67,14 @@ public class NonblockingClientFactory extends AbstractNonblockingClientFactory{
             final DV<GridFTPClient,Exception> f = exec.submit( fork );
             return f.getValue();
         } catch ( TimeoutException e ) {
-            creator.getLog().debug( e );
+            creator.getLog().debug( "", e );
             throw e;
         } catch ( InterruptedException e ) {
             Thread.interrupted();
-            creator.getLog().debug( e );
+            creator.getLog().debug( "", e );
             throw new RuntimeException( "GridFTPClient create interrupted", e );
         } catch ( ExecutionException e ) {
-            creator.getLog().debug( e );
+            creator.getLog().debug( "", e );
             if( e.getCause() instanceof ServerException )
                 throw ServerException.class.cast( e.getCause() );
             throw new RuntimeException( e );

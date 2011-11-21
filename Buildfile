@@ -166,7 +166,6 @@ COMMONS_IO = transitive(['commons-io:commons-io:jar:2.0.1'])
 JETTY = ['org.mortbay.jetty:jetty:jar:6.1.11', 'org.mortbay.jetty:jetty-util:jar:6.1.11']
 GROOVY = ['org.codehaus.groovy:groovy:jar:1.6.9']
 ARGS4J = 'args4j:args4j:jar:2.0.14'
-SLF4J = transitive( ['org.slf4j:slf4j-log4j12:jar:1.5.8'])
 # TESTNG = download(artifact('org.testng:testng:jar:5.1-jdk15') => 'http://static.appfuse.org/repository/org/testng/testng/5.1/testng-5.1-jdk15.jar')
 DB_DERBY = ['org.apache.derby:derby:jar:10.5.3.0', 'org.apache.derby:derbytools:jar:10.5.3.0']
 
@@ -354,6 +353,14 @@ define 'gndms' do
        package :jar
     end
 
+    desc 'Shared database model classes'
+    define 'model', :layout => dmsLayout('model', 'gndms-model') do
+      # TODO: Better XML
+      compile.with project('common'), project('stuff'), COMMONS_COLLECTIONS, COMMONS_LANG, GOOGLE_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS, INJECT, CXF, OPENJPA, JAXB, STAX_API, JSON, SLF4J
+      compile { open_jpa_enhance }
+      package :jar
+    end
+
     desc 'Shared graph database model classes'
     define 'neomodel', :layout => dmsTestLayout('neomodel', 'gndms-neomodel') do
       compile.with project('common'), project('model'), project('stuff'), JETBRAINS_ANNOTATIONS, NEODATAGRAPH, JODA_TIME, OPENJPA, COMMONS_LANG
@@ -365,14 +372,6 @@ define 'gndms' do
       test.include 'de.zib.gndms.neomodel.gorfx.tests.NeoTaskTest'
       
       package :jar      
-    end
-
-    desc 'Shared database model classes'
-    define 'model', :layout => dmsLayout('model', 'gndms-model') do
-      # TODO: Better XML
-      compile.with project('common'), project('stuff'), COMMONS_COLLECTIONS, COMMONS_LANG, GOOGLE_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS, INJECT, CXF, OPENJPA, JAXB, STAX_API, JSON, SLF4J
-      compile { open_jpa_enhance }
-      package :jar
     end
 
     desc 'GT4-dependent utility classes for GNDMS'
@@ -401,7 +400,7 @@ define 'gndms' do
     desc 'GNDMS core infrastructure classes'
     define 'infra', :layout => dmsLayout('infra', 'gndms-infra') do
       # Infra *must* have all dependencies since we use this list in copy/link-deps
-      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('common'), project('gritserv'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), ARGS4J, JODA_TIME, JAXB, GT4_SERVLET, GROOVY, GOOGLE_COLLECTIONS, INJECT, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies, COMMONS_FILEUPLOAD, NEODATAGRAPH, SLF4J, SPRING
+      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('common'), project('gritserv'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), ARGS4J, JODA_TIME, JAXB, GT4_SERVLET, GROOVY, GOOGLE_COLLECTIONS, INJECT, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies, COMMONS_FILEUPLOAD, NEODATAGRAPH, SLF4J, SPRING, JNA
       compile
 
       meta_inf << file(_('src/META-INF/00_system.xml'))
@@ -602,7 +601,6 @@ define 'gndms' do
         props = { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" }
         runner = 'de.zib.gndmc.GORFX.c3grid.ProviderStageInClient'
         runJava( t.to_s, args, jars, props )
-<<<<<<< HEAD
       end
 
       task 'run-stress-test' do |t|
@@ -628,8 +626,6 @@ define 'gndms' do
         props = { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" }
         runner = 'de.zib.gndmc.GORFX.diag.MultiRequestClient'
         runJava( t.to_s, args, jars, props )
-=======
->>>>>>> Initial debugging and improvements
       end
 
       desc 'runs the interSliceTransfer test'

@@ -19,6 +19,7 @@ package de.zib.gndms.taskflows.filetransfer.server.network;
 
 
 import de.zib.gndms.kit.access.CredentialProvider;
+import de.zib.gndms.stuff.misc.LogProvider;
 import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.exception.ClientException;
 import org.globus.ftp.exception.ServerException;
@@ -37,7 +38,7 @@ import java.util.concurrent.Callable;
  *          <p/>
  *          User: mjorra, Date: 20.02.2009, Time: 17:40:03
  */
-public class GridFTPClientCreator implements Callable<GridFTPClient>  {
+public class GridFTPClientCreator implements Callable<GridFTPClient> , LogProvider {
     private static final Logger log = LoggerFactory.getLogger( GridFTPClientCreator.class );
 
     private String host;

@@ -107,7 +107,7 @@ public class GlobusCredentialProviderImpl extends GlobusCredentialProvider {
 
     static class AsFileCredentialInstaller implements CredentialInstaller {
 
-        private Logger logger = Logger.getLogger( this.getClass() );
+        private Logger logger = LoggerFactory.getLogger( this.getClass() );
         private DirectoryAux directoryAux = GNDMSBinding.getInjector().getInstance( DirectoryAux.class );
 
         public void installCredentials( Object o, GlobusCredential cred ) {
