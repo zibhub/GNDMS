@@ -110,10 +110,6 @@ public final class GNDMSystem
 	// Outside injector
     private @NotNull TaskExecutionService executionService; // accessible only via system
 
-
-
-
-
 	@SuppressWarnings({ "ThisEscapedInObjectConstruction" })
     private GNDMSystem(@NotNull GridConfig anySharedConfig, boolean debugModeParam)  {
 		sharedConfig = anySharedConfig;

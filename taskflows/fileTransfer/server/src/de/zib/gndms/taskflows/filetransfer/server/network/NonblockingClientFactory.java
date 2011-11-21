@@ -18,8 +18,10 @@ package de.zib.gndms.taskflows.filetransfer.server.network;
 
 
 
+import de.zib.gndms.stuff.threading.DV;
 import de.zib.gndms.stuff.threading.QueuedExecutor;
 import de.zib.gndms.kit.access.CredentialProvider;
+import de.zib.gndms.stuff.threading.TimedForkable;
 import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.exception.ServerException;
 import org.slf4j.Logger;
@@ -37,17 +39,14 @@ import java.util.concurrent.*;
  *          <p/>
  *          User: mjorra, Date: 20.02.2009, Time: 17:37:59
  */
-public class NonblockingClientFactory extends AbstractGridFTPClientFactory{
+public class NonblockingClientFactory extends AbstractNonblockingClientFactory{
     private static final Logger log = LoggerFactory.getLogger( NonblockingClientFactory.class );
 
-    private int timeout = 20;
     private final TimeUnit unit = TimeUnit.SECONDS;
-    private long delay = 500; // in ms
-    private final ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool( 1 );
     private final Map<String, QueuedExecutor> hostExecutors = new HashMap<String, QueuedExecutor>( );
 
 
-    public GridFTPClient createClient( String host, int port, CredentialProvider cp ) throws ServerException, IOException {
+    public GridFTPClient createClient( String host, int port, CredentialProvider cp ) throws TimeoutException, ServerException, IOException {
 
         final QueuedExecutor exec;
         synchronized( hostExecutors ) {
@@ -56,33 +55,32 @@ public class NonblockingClientFactory extends AbstractGridFTPClientFactory{
                 exec = hostExecutors.get( host ) ;
             } else {
                 log.debug( "Creating executor for host: " + host );
-                exec = new QueuedExecutor( scheduledExecutor );
-                exec.setDefaultDelay( delay );
+                exec = new QueuedExecutor( );
+                exec.setDefaultDelay( getDelay() );
                 hostExecutors.put( host, exec );
             }
         }
 
-        final GridFTPClientCreator c = new GridFTPClientCreator( host, port, cp );
-        final Future<GridFTPClient> f = exec.submit( c );
+        final GridFTPClientCreator creator = new GridFTPClientCreator( host, port, cp, inc() );
+        final TimedForkable<GridFTPClient> fork = new TimedForkable<GridFTPClient>( creator, getTimeout() * 1000, creator );
         try {
-            try{
-                return f.get( exec.actualTimeout( f, timeout, unit ), unit );
-            } catch ( TimeoutException e ) {
-                log.info( "GridFTPClient get() create exceeded timeout" );
-                f.cancel( true );
-            }
-         //   System.err.println( "awaiting termination" );
-         //   exec.shutdown();
-         //   exec.awaitTermination( timeout, TimeUnit.SECONDS );
-         //   System.err.println( "done" );
+            final DV<GridFTPClient,Exception> f = exec.submit( fork );
+            return f.getValue();
+        } catch ( TimeoutException e ) {
+            creator.getLog().debug( "", e );
+            throw e;
         } catch ( InterruptedException e ) {
-            e.printStackTrace(  );
-            throw new RuntimeException( "GridFTPClient create exceeded timeout" );
+            Thread.interrupted();
+            creator.getLog().debug( "", e );
+            throw new RuntimeException( "GridFTPClient create interrupted", e );
         } catch ( ExecutionException e ) {
-            // this mustn't happen here due to the blocked wait op
-            e.printStackTrace();
+            creator.getLog().debug( "", e );
+            if( e.getCause() instanceof ServerException )
+                throw ServerException.class.cast( e.getCause() );
+            throw new RuntimeException( e );
+        } catch ( Exception e ) {
+            throw new RuntimeException( "Unexpected exception in GridFTPClient creation.", e );
         }
-        return null;
     }
 
 
@@ -106,34 +104,15 @@ public class NonblockingClientFactory extends AbstractGridFTPClientFactory{
     }
 
 
-    public int getTimeout() {
-        return timeout;
-    }
-
-
-    public void setTimeout( int timeout ) {
-        
-        if( timeout < 0 )
-            throw new IllegalArgumentException( "Timeout must be greater or equal 0" );
-        
-        this.timeout = timeout;
-    }
-
-
-    public long getDelay() {
-        return delay;
-    }
-
-
+    @Override
     public void setDelay( int delay ) {
+        super.setDelay( delay );
+        updateDelay( );
+    }
 
-        if( delay < 0 )
-            throw new IllegalArgumentException( "Delay must be greater or equal 0" );
 
-        this.delay = delay;
-
-        for( String hn: hostExecutors.keySet() ) {
-            hostExecutors.get( hn ).setDefaultDelay( delay );
-        }
+    private void updateDelay() {
+        for( String k : hostExecutors.keySet() )
+            hostExecutors.get( k ).setDefaultDelay( getDelay() );
     }
 }

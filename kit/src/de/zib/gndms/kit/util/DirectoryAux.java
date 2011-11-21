@@ -116,6 +116,8 @@ public interface DirectoryAux {
      */
     public boolean copyDir( String uid, String src_pth, String tgt_pth );
 
+    int chmod( int mask, File file );
+
 
     public static class Utils {
 

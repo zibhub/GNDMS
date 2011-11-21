@@ -30,7 +30,7 @@ import java.util.List;
  *          <p/>
  *          User: mjorra, Date: 18.06.2010, Time: 10:12:35
  */
-public interface CredentialProvider {
+public interface CredentialProvider<T> {
 
     /**
      * installs the credentials in the given object o.
@@ -42,5 +42,11 @@ public interface CredentialProvider {
      * Delivers the list of existing credentials.
      * @return A list of credentials which might be empty
      */
-    public List<?> getCredentials( );
+    public List<T> getCredentials( );
+
+    /**
+     * Delivers a credential
+     * @return same as getCredentials().get( 0 );
+     */
+    public T getCredential( );
 }

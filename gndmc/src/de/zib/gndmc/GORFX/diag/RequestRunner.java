@@ -1,4 +1,4 @@
-package de.zib.gndmc.GORFX.tests;
+package de.zib.gndmc.GORFX.diag;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -22,6 +22,7 @@ import de.zib.gndms.GORFX.ORQ.client.ORQClient;
 import de.zib.gndms.GORFX.client.GORFXClient;
 import de.zib.gndms.GORFX.context.client.TaskClient;
 import de.zib.gndms.GORFX.offer.client.OfferClient;
+import de.zib.gndms.gritserv.delegation.DelegationAux;
 import de.zib.gndms.gritserv.typecon.types.AbstractXSDTypeWriter;
 import de.zib.gndms.gritserv.typecon.types.ContextXSDTypeWriter;
 import de.zib.gndms.gritserv.typecon.types.ContractXSDTypeWriter;
@@ -36,9 +37,13 @@ import org.apache.axis.components.uuid.UUIDGenFactory;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.log4j.*;
 import types.*;
+import types.ContextT;
+import types.ContextTEntry;
+import de.zib.gndms.gritserv.delegation.DelegationAux;
 
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Properties;
 
 public abstract class RequestRunner implements Runnable{
@@ -56,7 +61,8 @@ public abstract class RequestRunner implements Runnable{
     private String gorfxUri;
 
     private AbstractORQ orq;
-    
+    private String proxy;
+
 
     static {
         logger = Logger.getLogger( StagingRunner.class );
@@ -111,10 +117,23 @@ public abstract class RequestRunner implements Runnable{
         converter.convert();
         orqt = w.getProduct();
         ctxt = ContextXSDTypeWriter.writeContext( ctx );
+        // for debugging
+        //showCtx( ctxt );
         if( con == null )
             cont = GORFXClientUtils.newContract();
         else
             cont = ContractXSDTypeWriter.write( con );
+    }
+
+    protected void showCtx( ContextT con ) {
+        ContextTEntry[] entries = con.getEntry();
+        ArrayList<ContextTEntry> al = new ArrayList<ContextTEntry>( entries.length );
+        EndpointReferenceType epr = null;
+
+        HashMap<String,String> res = new HashMap<String, String>( 1 );
+        for( ContextTEntry e : entries )
+            if( e.getKey().equals( DelegationAux.DELEGATION_EPR_KEY ) )
+                logger.debug( e.getKey().toString() +": " +  e.get_value().toString( ) );
     }
 
 
@@ -134,7 +153,15 @@ public abstract class RequestRunner implements Runnable{
         NDC.push( getUuid() );
 
         try{
+
             RequestRunner.logger.debug( "Starting" );
+
+            EndpointReferenceType delegatEPR = null;
+            if ( proxy != null && ! proxy.trim().equals( "" ) ) {
+                RequestRunner.logger.debug( "Setting up delegation" );
+                delegatEPR = GORFXClientUtils.setupDelegation( ctxt, gorfxUri, proxy );
+            }
+
             // create gorfx client and retrieve orq
             final GORFXClient gcnt = new GORFXClient( gorfxUri );
             EndpointReferenceType epr = gcnt.createOfferRequest( orqt, ctxt );
@@ -179,6 +206,9 @@ public abstract class RequestRunner implements Runnable{
                 RequestRunner.logger.error( "faultTrace:    " + tefif.getFaultTrace( ) );
                 RequestRunner.logger.error( "faultLocation: " + tefif.getFaultLocation( ) );
             }
+
+            if( delegatEPR != null)
+                DelegationAux.destroyDelegationEPR( delegatEPR );
         } catch (Exception e ) {
             RequestRunner.logger.error( e );
         } finally{
@@ -204,6 +234,7 @@ public abstract class RequestRunner implements Runnable{
 
     public void setCtx( final HashMap<String, String> ctx ) {
         this.ctx = ctx;
+        ctx.put( "Workflow.Id", uuid );
     }
 
 
@@ -244,5 +275,10 @@ public abstract class RequestRunner implements Runnable{
 
     public void setConverter( final ORQConverter converter ) {
         this.converter = converter;
+    }
+
+
+    public void setProxy( String proxy ) {
+        this.proxy = proxy;
     }
 }

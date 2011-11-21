@@ -23,6 +23,7 @@ import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.exception.ServerException;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 import java.net.URI;
 
 /**
@@ -47,12 +48,12 @@ public abstract class AbstractGridFTPClientFactory implements GridFTPClientFacto
      * @throws ServerException
      * @throws IOException
      */
-    public GridFTPClient createClient( String host, CredentialProvider cp ) throws ServerException, IOException {
+    public GridFTPClient createClient( String host, CredentialProvider cp ) throws ServerException, IOException, TimeoutException {
         return createClient( host, 2811, cp );
     }
 
 
-    public GridFTPClient createClient( URI uri, CredentialProvider cp ) throws ServerException, IOException {
+    public GridFTPClient createClient( URI uri, CredentialProvider cp ) throws ServerException, IOException, TimeoutException {
         String host = uri.getHost();
         if( host == null )
             throw new IllegalStateException( "host name required" );

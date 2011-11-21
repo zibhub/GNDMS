@@ -1,4 +1,4 @@
-package de.zib.gndmc.GORFX.tests;
+package de.zib.gndmc.GORFX.diag;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -18,17 +18,21 @@ package de.zib.gndmc.GORFX.tests;
 
 
 
+import de.zib.gndmc.GORFX.GORFXClientUtils;
+import de.zib.gndms.gritserv.delegation.DelegationAux;
 import de.zib.gndms.kit.application.AbstractApplication;
 import de.zib.gndms.stuff.propertytree.PropertyTree;
 import de.zib.gndms.stuff.propertytree.PropertyTreeFactory;
+import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.kohsuke.args4j.Option;
+import types.ContextT;
+import types.ContextTEntry;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Handler;
 
 /**
  * This client reads multiple staging orqs from a file and sends them to a given site using mulitple threads
@@ -42,14 +46,17 @@ public class MultiRequestClient extends AbstractApplication {
 
     @Option( name="-uri", required=true, usage="URL of GORFX-Endpoint", metaVar="URI" )
     protected String gorfxEpUrl;
-    @Option( name="-props", required=true, usage="staging.properties" )
+    @Option( name="-props", required=true, usage="orq.properties" )
     protected String propFile;
     @Option( name="-dn", required=true, usage="DN" )
     protected String dn;
     @Option( name="-w", usage="Delay between thread starts in ms" )
     protected int dl=0;
 
-    
+
+    private String proxy;
+
+
     public static void main(String[] args) throws Exception {
         MultiRequestClient cnt = new MultiRequestClient();
         cnt.run( args );
@@ -62,13 +69,15 @@ public class MultiRequestClient extends AbstractApplication {
         PropertyTree pt = PropertyTreeFactory.createPropertyTree( new File( propFile ) );
         String rc = pt.getProperty( "RunnerClass" );
 
-        Class<? extends RequestRunner> runner;
+        Class<? extends de.zib.gndmc.GORFX.diag.RequestRunner> runner;
         try {
             runner = (Class<? extends RequestRunner>) Class.forName( rc );
         } catch ( Exception e ) {
             System.err.println( "Failed to load class " + e );
             throw e;
         }
+
+        proxy = pt.getProperty( "Proxy", null );
 
         List<Properties> pl = new ArrayList<Properties>( );
 
@@ -98,15 +107,24 @@ public class MultiRequestClient extends AbstractApplication {
             System.out.println( "Master: waiting for theads to finish");
             Thread.sleep( 10000 );
         }
+
     }
 
 
-    private <M extends RequestRunner> List<RequestRunner> createRequestRunners( Class<M> r,  List<Properties> pts ) throws IllegalAccessException, InstantiationException {
+    private <M extends RequestRunner> List<RequestRunner> createRequestRunners( Class<M> r,
+                            List<Properties> pts ) throws IllegalAccessException, InstantiationException {
+
+        //HashMap<String,String> mctx = prepareCtx( ctx );
+//        HashMap<String,String> mctx = prepareCtx( ctx );
+//	System.out.println( "context:" );
+//	for( String s: mctx.keySet( ) )
+//		System.out.println( s + ": " + mctx.get( s ) );
 
         List<RequestRunner> res = new ArrayList<RequestRunner>( );
         for( Properties prop : pts ) {
             RequestRunner sr =  r.newInstance( );
             sr.setGorfxUri( gorfxEpUrl );
+            sr.setProxy( proxy );
             sr.fromProps( prop );
             sr.prepare();
             res.add( sr );
@@ -114,5 +132,19 @@ public class MultiRequestClient extends AbstractApplication {
         return res;
     }
 
+
+    private HashMap<String,String> prepareCtx( ContextT con ) {
+
+        ContextTEntry[] entries = con.getEntry();
+        ArrayList<ContextTEntry> al = new ArrayList<ContextTEntry>( entries.length );
+        EndpointReferenceType epr = null;
+
+        HashMap<String,String> res = new HashMap<String, String>( 1 );
+        for( ContextTEntry e : entries )
+            if( e.getKey().equals( DelegationAux.DELEGATION_EPR_KEY ) )
+                res.put( e.getKey().toString(), e.get_value().toString( ) );
+
+        return res;
+    }
 }
 

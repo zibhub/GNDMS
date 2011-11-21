@@ -1,4 +1,4 @@
-package de.zib.gndmc.GORFX.tests;
+package de.zib.gndmc.GORFX.diag;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -18,11 +18,13 @@ package de.zib.gndmc.GORFX.tests;
 
 
 
+import de.zib.gndmc.GORFX.constants.OfferConstants;
 import de.zib.gndms.GORFX.ORQ.client.ORQClient;
 import de.zib.gndms.GORFX.client.GORFXClient;
 import de.zib.gndms.GORFX.context.client.TaskClient;
 import de.zib.gndms.GORFX.offer.client.OfferClient;
 import de.zib.gndms.gritserv.delegation.DelegationAux;
+import de.zib.gndms.kit.application.AbstractApplication;
 import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.gorfx.types.FileTransferORQ;
 import de.zib.gndms.model.gorfx.types.io.ContractConverter;
@@ -36,9 +38,11 @@ import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.globus.gsi.GlobusCredential;
 import org.globus.wsrf.encoding.ObjectDeserializer;
+import org.kohsuke.args4j.Option;
 import org.oasis.wsrf.properties.GetResourcePropertyResponse;
 import types.*;
 
+import javax.management.RuntimeMBeanException;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -52,22 +56,46 @@ import java.util.Properties;
  * <p/>
  * User: mjorra, Date: 24.10.2008, Time: 09:48:52
  */
-public class RemoteFileTransferTest {
+public class RemoteFileTransferTest extends AbstractApplication {
+
+    @Option( name="-uri", required=true, usage="URL of GORFX-Endpoint", metaVar="URI" )
+    protected String gorfxEpUrl;
+    @Option( name="-props", required=true, usage="The property file with the file transfer request properties. - To read from STDIN" )
+    protected String props;
+    @Option( name="-cancel", required=false, usage="Call cancel on the task resource after N millis" )
+    protected Long cancelDelay = null; // cancel delay in ms
+    @Option( name="-uid", required=true, usage="The user id, stupid java !$§@!*" )
+    protected String uid = null; // cancel delay in ms
+
+    private static final long POLLING_DELAY = 500;
+    private boolean cancel = false;
+
 
     public static void main( String[] args ) throws Exception {
 
-        String proxyFile = "/tmp/x509up_u1000";
-        if( args.length != 2 ) {
-            usage( );
-            System.exit( 1 );
-        }
+        RemoteFileTransferTest cnt = new RemoteFileTransferTest();
+        cnt.run( args );
+    }
+
+
+
+    @Override
+    public void run() throws Exception {
+
+        String proxyFile = "/tmp/x509up_u" + uid;
 
 
         // read property file
-        InputStream f = new FileInputStream( args[1] );
+        InputStream is;
+        if ( props.trim().equals( "-" ) ) {
+            System.out.println( "Reading props von stdin" );
+            is = System.in;
+            System.out.println( "done" );
+        } else
+            is = new FileInputStream( props );
         Properties prop = new Properties( );
-        prop.load( f );
-        f.close( );
+        prop.load( is );
+        is.close( );
 
         // create orq from properties
         FileTransferORQPropertyReader pr = new FileTransferORQPropertyReader( prop );
@@ -84,11 +112,10 @@ public class RemoteFileTransferTest {
         ContextT ctx = ContextXSDTypeWriter.writeContext( orq.getActContext() );
 
         // Create gorfx client and request offer request.
-        String gorfxEpUrlParam  = args[0];
-        GORFXClient gc = new GORFXClient( gorfxEpUrlParam );
+        GORFXClient gc = new GORFXClient( gorfxEpUrl );
 
         // with delegation
-        String delfac = DelegationAux.createDelationAddress( gorfxEpUrlParam );
+        String delfac = DelegationAux.createDelegationAddress( gorfxEpUrl );
         GlobusCredential credential = DelegationAux.findCredential( proxyFile );
         EndpointReferenceType epr = DelegationAux.createProxy( delfac, credential );
         DelegationAux.addDelegationEPR( ctx, epr );
@@ -103,7 +130,7 @@ public class RemoteFileTransferTest {
 
         // create offer client check offer and accept it.
         OfferClient oc = new OfferClient( oepr );
-        GetResourcePropertyResponse resp =  oc.getResourceProperty( de.zib.gndmc.GORFX.constants.OfferConstants.OFFEREXECUTIONCONTRACT );
+        GetResourcePropertyResponse resp =  oc.getResourceProperty( OfferConstants.OFFEREXECUTIONCONTRACT );
         OfferExecutionContractT con =
             (OfferExecutionContractT) ObjectDeserializer.toObject( resp.get_any( )[0], OfferExecutionContractT.class );
         showContract( con );
@@ -115,13 +142,22 @@ public class RemoteFileTransferTest {
         TaskStatusT stat;
         boolean finished;
         boolean failed;
+        cancel = cancelDelay != null;
+        int count = 0;
 
         do {
+            if ( cancel && ( count++ * POLLING_DELAY >  cancelDelay ) ) {
+                System.out.println( "destroying client" );
+                tc.destroy();
+                System.out.println( "done" );
+                throw new RuntimeException( "Task destroyed" );
+            }
+
             stat = tc.getTaskState();
             System.out.println( "task state: " + stat );
             failed = stat.equals( TaskStatusT.failed );
             finished = stat.equals( TaskStatusT.finished );
-            Thread.sleep( 500 );
+            Thread.sleep( POLLING_DELAY );
         }
         while (! (failed || finished));
 
@@ -170,4 +206,6 @@ public class RemoteFileTransferTest {
         ContractConverter conv = new ContractConverter( writer, c );
         conv.convert( );
     }
+
+
 }

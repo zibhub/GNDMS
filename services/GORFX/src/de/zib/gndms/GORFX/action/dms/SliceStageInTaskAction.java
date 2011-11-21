@@ -20,6 +20,7 @@ package de.zib.gndms.GORFX.action.dms;
 
 import de.zib.gndms.GORFX.context.client.TaskClient;
 import de.zib.gndms.gritserv.util.GlobusCredentialProvider;
+
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.infra.system.SystemHolder;
 import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
@@ -30,6 +31,8 @@ import de.zib.gndms.gritserv.typecon.types.ProviderStageInORQXSDTypeWriter;
 import de.zib.gndms.gritserv.typecon.types.SliceRefXSDReader;
 import de.zib.gndms.gritserv.typecon.types.ContextXSDTypeWriter;
 import de.zib.gndms.gritserv.typecon.types.ContractXSDTypeWriter;
+import de.zib.gndms.stuff.threading.Forkable;
+import org.apache.axis.AxisFault;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
@@ -37,6 +40,12 @@ import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.globus.gsi.GlobusCredential;
 import org.jetbrains.annotations.NotNull;
 import types.*;
+
+import java.rmi.RemoteException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * @author  try ma ik jo rr a zib
@@ -47,10 +56,11 @@ import types.*;
 public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
 	implements SystemHolder {
 
-	private GNDMSystem system;
+    private GNDMSystem system;
+    private TaskClient taskClient = null;
 
 
-	@NotNull
+    @NotNull
 	public GNDMSystem getSystem() {
 		return system;
 	}
@@ -70,11 +80,12 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
 
     @Override
     protected void onInProgress(@NotNull String wid, @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) throws Exception {
-        EndpointReferenceType epr;
-        GlobusCredential gc = GlobusCredentialProvider.class.cast(getCredentialProvider()).getCredential();
+
+        EndpointReferenceType taskEPR = null;
         final Session session = getDao().beginSession();
         try {
-            final Task model = getTask(session);
+            GlobusCredential gc = GlobusCredentialProvider.class.cast( getCredentialProvider() ).getCredential();
+            final NeoTask model = getTask(session);
 
             if( model.getPayload( ) == null ) {
                 SliceStageInORQ orq = (SliceStageInORQ) getORQ();
@@ -82,45 +93,94 @@ public class SliceStageInTaskAction extends ORQTaskAction<SliceStageInORQ>
                 if( uri == null )
                     throw new RuntimeException( "GORFX uri is null" );
                 else {
-                    ProviderStageInORQT p_orq = ProviderStageInORQXSDTypeWriter.write( orq);
+                    ProviderStageInORQT p_orq = ProviderStageInORQXSDTypeWriter.write( orq );
                     ContextT ctx = ContextXSDTypeWriter.writeContext( orq.getActContext() );
                     OfferExecutionContractT con = ContractXSDTypeWriter.write( model.getContract().toTransientContract() );
-                    epr = GORFXClientUtils.commonTaskPreparation( uri, p_orq, ctx, con, gc );
-                    Task task = getTask(session);
-                    task.setPayload(epr);
-                    task.setTaskState(TaskState.FINISHED);
-                    if (altTaskState)
-                        task.setAltTaskState(null);
-                    session.finish();
+
+                    try {
+                        taskEPR = GORFXClientUtils.commonTaskPreparation( uri, p_orq, ctx, con, gc );
+                    } catch ( AxisFault e ) {
+                        String msg = "AxisFault on task preparation\n" ;
+                        try {
+                            msg += e.dumpToString();
+                        } catch ( Exception e2 ) {
+                            msg += "No info available";
+                        }
+                        getLog( ).debug( msg );
+                        new IllegalStateException( msg );
+                    }
+                    model.setPayload( taskEPR );
+ 					// transitWithPayload( epr, TaskState.IN_PROGRESS );
                 }
             }
-            else {
-                epr = (EndpointReferenceType) model.getPayload( );
 
-                TaskClient cnt = new TaskClient( epr );
-                trace( "Starting remote staging.", null );
-                boolean finished = GORFXClientUtils.waitForFinish( cnt, 1000 );
+            taskEPR = (EndpointReferenceType) model.getPayload( );
 
-                if (finished) {
-                    trace( "Remote staging finished.", null );
-                    ProviderStageInResultT res =  cnt.getExecutionResult( ProviderStageInResultT.class );
-                    SliceReference sk = (SliceReference) res.get_any()[0].getObjectValue( SliceReference.class );
-                    SliceRef sr = SliceRefXSDReader.read( sk );
-                    trace( "Remote staging finished. SliceId: " + sr.getResourceKeyValue() + "@"  + sr.getGridSiteId() , null );
-                    Task task = getTask(session);
-                    task.setPayload(new SliceStageInResult(sr));
-                    task.setTaskState(TaskState.FINISHED);
-                    if (altTaskState)
-                        task.setAltTaskState(null);
-                    session.finish();
-                } else {
-                    TaskExecutionFailure f = cnt.getExecutionFailure();
-                    trace( "Remote staging failed with: \n"
-                        +  GORFXClientUtils.taskExecutionFailureToString( f ), null );
-                    throw new RuntimeException( f.toString() );
+            if( taskEPR == null )
+                fail( new IllegalStateException( "commonTaskPrep return ed null epr" ) );
+
+            taskClient = new TaskClient( taskEPR );
+            taskClient.setProxy( gc );
+
+            trace( "Starting remote staging.", null );
+            // poll every 15 seconds
+
+            Forkable<Boolean> forkable = new Forkable<Boolean>(new Callable<Boolean>() {
+                public Boolean call() throws Exception {
+                    return GORFXClientUtils.waitForFinish( taskClient, 15000 );
                 }
+            });
+            forkable.setShouldStop( true );
+
+            boolean finished = false;
+            ExecutorService executorService = Executors.newFixedThreadPool( 1 );
+            try {
+                Future<Boolean> future = executorService.submit(forkable);
+                finished = future.get();
+            } catch( InterruptedException e ) {
+                Thread.interrupted();
+                new RuntimeException( e );
             }
-        }
-        finally { session.success(); }
+
+            if (finished) {
+                trace( "Remote staging finished.", null );
+                ProviderStageInResultT res =  taskClient.getExecutionResult( ProviderStageInResultT.class );
+                SliceReference sk = (SliceReference) res.get_any()[0].getObjectValue( SliceReference.class );
+                SliceRef sr = SliceRefXSDReader.read( sk );
+                trace( "Remote staging finished. SliceId: " + sr.getResourceKeyValue() + "@"  + sr.getGridSiteId() , null );
+                taskClient.destroy( );
+                taskClient = null;
+                transitWithPayload(new SliceStageInResult(sr), TaskState.FINISHED);
+				return;
+            } else {
+                TaskExecutionFailure f = taskClient.getExecutionFailure();
+                try{
+                    taskClient.destroy( );
+                } catch ( Exception e ) {
+                    log.warn( "taskClient destroy throw exception", e );
+                }
+                taskClient = null;
+                String failure = GORFXClientUtils.taskExecutionFailureToString( f );
+                trace( "Remote staging failed with: \n"
+                    +  GORFXClientUtils.taskExecutionFailureToString( f ), null );
+                throw new RuntimeException( f.toString() );
+            }
+        } 
+		finally { session.success(); }
+    	super.onInProgress(wid, state, isRestartedTask, altTaskState);
+    }
+
+
+	// todo check if this is still called
+    @Override
+    public void cleanUpOnFail( @NotNull AbstractTask model ) {
+        super.cleanUpOnFail( model );
+        if( taskClient != null )
+            try {
+                getLog( ).warn( "Destroying client" );
+                taskClient.destroy( );
+            } catch ( RemoteException e ) {
+                getLog( ).warn( "Exception on cleanup", e );
+            }
     }
 }

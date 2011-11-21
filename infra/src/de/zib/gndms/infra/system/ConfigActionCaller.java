@@ -29,8 +29,6 @@ import de.zib.gndms.logic.action.NoSuchActionException;
 import de.zib.gndms.logic.action.SkipActionInitializationException;
 import de.zib.gndms.logic.model.BatchUpdateAction;
 import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
-import de.zib.gndms.logic.model.DelegatingModelUpdateListener;
-import de.zib.gndms.logic.model.ModelUpdateListener;
 import de.zib.gndms.logic.model.config.AvailableActionsAction;
 import de.zib.gndms.logic.model.config.ConfigAction;
 import de.zib.gndms.logic.model.config.EchoOptionsAction;
@@ -142,6 +140,7 @@ public final class ConfigActionCaller implements WSActionCaller {
         configActions.add(AssignSliceKindAction.class);
         configActions.add(RefreshSystemAction.class);
         configActions.add(SetupDefaultConfigletAction.class);
+        configActions.add(SetupUpdatingConfigletAction.class);
         configActions.add(ReadC3CatalogAction.class);
         configActions.add(ReadContainerLogAction.class);
         configActions.add(ReadGNDMSVersionAction.class);

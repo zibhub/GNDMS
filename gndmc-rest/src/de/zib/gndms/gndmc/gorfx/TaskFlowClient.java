@@ -53,25 +53,26 @@ public class TaskFlowClient extends AbstractClient implements TaskFlowService {
 		this.setServiceURL( serviceURL );
 	}
 
-
+	@Override
 	public final ResponseEntity<Facets> getFacets(final String type, final String id, final String dn) {
         logger.debug( "calling getFacets to: " + getServiceURL() + "/gorfx/_" + type + "/_" + id );
 		return unifiedGet(Facets.class, getServiceURL() + "/gorfx/_" + type + "/_"
 				+ id, dn);
 	}
 
-
+	@Override
 	public final ResponseEntity<Void> deleteTaskflow(final String type, final String id, final String dn, final String wid) {
 		return unifiedDelete( getServiceURL() + "/gorfx/_" + type + "/_" + id, dn, wid);
 	}
 
 
+	@Override
 	public final ResponseEntity<Order> getOrder(final String type, final String id, final String dn, final String wid) {
 		return unifiedGet(Order.class, getServiceURL() + "/gorfx/_" + type + "/_"
 				+ id + "/order", dn, wid);
 	}
 
-
+	@Override
 	public final ResponseEntity<Void> setOrder(final String type, final String id,
 			final Order orq, final String dn, final String wid) {
 		return unifiedPut(Void.class, orq, getServiceURL() + "/gorfx/_" + type + "/_"
@@ -79,13 +80,14 @@ public class TaskFlowClient extends AbstractClient implements TaskFlowService {
 	}
 
 	@SuppressWarnings("unchecked")
+	@Override
 	public final ResponseEntity<List<Specifier<Quote>>> getQuotes(final String type, final String id,
 			final String dn, final String wid) {
 		return ( ResponseEntity<List<Specifier<Quote>>> ) (Object) unifiedGet(List.class,
 				getServiceURL() + "/gorfx/_" + type + "/_" + id + "/quote", dn, wid);
 	}
 
-
+	@Override
 	public final ResponseEntity<Void> setQuote(final String type, final String id, final Quote cont,
 			final String dn, final String wid) {
 		return unifiedPost(Void.class, cont, getServiceURL() + "/gorfx/_" + type + "/_"

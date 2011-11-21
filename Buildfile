@@ -1,4 +1,6 @@
-# -*- mode: ruby; coding: utf-8 -*-
+# -*- coding: utf-8 -*-
+# -*- mode: ruby -*-
+
 # Large amounts of memory ensure a fast build
 ENV['JAVA_OPTS'] ||= '-Xms512m -Xmx768m'
 
@@ -13,9 +15,10 @@ repositories.remote << 'http://download.java.net/maven/2'
 repositories.remote << 'http://static.appfuse.org/repository'
 repositories.remote << 'http://repository.jboss.org/maven2'
 repositories.remote << 'http://google-maven-repository.googlecode.com/svn/repository'
-repositories.remote << 'http://people.apache.org/repo/m2-incubating-repository'
 repositories.remote << 'http://repository.jboss.org/nexus/content/groups/public'
 repositories.remote << 'http://repo.marketcetera.org/maven'
+repositories.remote << 'http://people.apache.org/repo/m2-incubating-repository'
+
 
 # Don't touch below unless you know what you are doing
 # --------------------------------------------------------------------------------------------------
@@ -166,6 +169,7 @@ ARGS4J = 'args4j:args4j:jar:2.0.14'
 DB_DERBY = ['org.apache.derby:derby:jar:10.5.3.0', 'org.apache.derby:derbytools:jar:10.5.3.0']
 
 HTTP_CORE = ['org.apache.httpcomponents:httpcore:jar:4.0', 'org.apache.httpcomponents:httpcore-nio:jar:4.0', 'org.apache.httpcomponents:httpclient:jar:4.0.1']
+JNA = [ 'com.sun.jna:jna:jar:3.0.9' ]
 
 # Grouped GT4 dependencies
 #GT4_COMMONS = gt4jars(['commons-beanutils.jar', 
@@ -223,6 +227,27 @@ OPENJPA = [ COMMONS_LANG, 'org.apache.openjpa:openjpa-all:jar:2.0.0']
 
 # NEODATAGRAPH = transitive('org.springframework.data:spring-data-neo4j:jar:1.0.0.M2')
 
+require 'buildr/neo4j' 
+include NEO4J
+
+NEODATAGRAPH = neo4jars(['geronimo-jta_1.1_spec-1.1.1.jar',
+                        'neo4j-examples-1.2.jar',
+                        'neo4j-graph-algo-0.7-1.2.jar',
+                        'neo4j-ha-0.5-1.2.jar',
+                        'neo4j-index-1.2-1.2.jar',
+                        'neo4j-kernel-1.2-1.2.jar',
+                        'neo4j-lucene-index-0.2-1.2.jar',
+                        'neo4j-management-1.2-1.2.jar',
+                        'neo4j-online-backup-0.7-1.2.jar',
+                        'neo4j-remote-graphdb-0.8-1.2.jar',
+                        'neo4j-shell-1.2-1.2.jar',
+                        'neo4j-udc-0.1-1.2-neo4j.jar',
+                        'netty-3.2.1.Final.jar',
+                        'org.apache.servicemix.bundles.jline-0.9.94_1.jar',
+                        'org.apache.servicemix.bundles.lucene-3.0.1_2.jar',
+                        'protobuf-java-2.3.0.jar'
+])
+
 require 'buildr/openjpa2'
 include Buildr::OpenJPA2
 
@@ -271,22 +296,6 @@ define 'gndms' do
                    _('extra/castor-0.9.9.jar'),
                    _('extra/jdom-1.0.jar')]
 
-NEODATAGRAPH = [_('lib/neo4j-1.2/geronimo-jta_1.1_spec-1.1.1.jar'),
-                _('lib/neo4j-1.2/neo4j-examples-1.2.jar'),
-                _('lib/neo4j-1.2/neo4j-graph-algo-0.7-1.2.jar'),
-                _('lib/neo4j-1.2/neo4j-ha-0.5-1.2.jar'),
-                _('lib/neo4j-1.2/neo4j-index-1.2-1.2.jar'),
-                _('lib/neo4j-1.2/neo4j-kernel-1.2-1.2.jar'),
-                _('lib/neo4j-1.2/neo4j-lucene-index-0.2-1.2.jar'),
-                _('lib/neo4j-1.2/neo4j-management-1.2-1.2.jar'),
-                _('lib/neo4j-1.2/neo4j-online-backup-0.7-1.2.jar'),
-                _('lib/neo4j-1.2/neo4j-remote-graphdb-0.8-1.2.jar'),
-                _('lib/neo4j-1.2/neo4j-shell-1.2-1.2.jar'),
-                _('lib/neo4j-1.2/neo4j-udc-0.1-1.2-neo4j.jar'),
-                _('lib/neo4j-1.2/netty-3.2.1.Final.jar'),
-                _('lib/neo4j-1.2/org.apache.servicemix.bundles.jline-0.9.94_1.jar'),
-                _('lib/neo4j-1.2/org.apache.servicemix.bundles.lucene-3.0.1_2.jar'),
-                _('lib/neo4j-1.2/protobuf-java-2.3.0.jar')]
 
     def updateBuildInfo()
       if (@buildInfo == nil) then
@@ -305,7 +314,7 @@ NEODATAGRAPH = [_('lib/neo4j-1.2/geronimo-jta_1.1_spec-1.1.1.jar'),
 
     def updateReleaseInfo()
       if (@releaseInfo == nil) then
-        @releaseInfo = 'Generation N Data Management System VERSION: ' + VERSION_NUMBER + ' "' + VERSION_NAME + '"'
+        @releaseInfo = "Generation N Data Management System VERSION: #{VERSION_NUMBER} \"#{VERSION_NAME}\" #{VERSION_TAG}"
         relFile = File.new(_('GNDMS-RELEASE'), 'w')
         relFile.syswrite(@releaseInfo)
         relFile.close
@@ -335,11 +344,20 @@ NEODATAGRAPH = [_('lib/neo4j-1.2/geronimo-jta_1.1_spec-1.1.1.jar'),
 
     desc 'GT4-independent utility classes for GNDMS'
     define 'stuff', :layout => dmsLayout('stuff', 'gndms-stuff') do
+       task( 'update-release-info' )       
        compile.with INJECT, GOOGLE_COLLECTIONS, JETBRAINS_ANNOTATIONS, JSON, SPRING, SLF4J
        compile { project('gndms').updateBuildInfo() }
        test.compile
        test.using :testng
        package :jar
+    end
+
+    desc 'Shared database model classes'
+    define 'model', :layout => dmsLayout('model', 'gndms-model') do
+      # TODO: Better XML
+      compile.with project('common'), project('stuff'), COMMONS_COLLECTIONS, COMMONS_LANG, GOOGLE_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS, INJECT, CXF, OPENJPA, JAXB, STAX_API, JSON, SLF4J
+      compile { open_jpa_enhance }
+      package :jar
     end
 
     desc 'Shared graph database model classes'
@@ -355,14 +373,6 @@ NEODATAGRAPH = [_('lib/neo4j-1.2/geronimo-jta_1.1_spec-1.1.1.jar'),
       package :jar      
     end
 
-    desc 'Shared database model classes'
-    define 'model', :layout => dmsLayout('model', 'gndms-model') do
-      # TODO: Better XML
-      compile.with project('common'), project('stuff'), COMMONS_COLLECTIONS, COMMONS_LANG, GOOGLE_COLLECTIONS, JODA_TIME, JETBRAINS_ANNOTATIONS, INJECT, CXF, OPENJPA, JAXB, STAX_API, JSON, SLF4J
-      compile { open_jpa_enhance }
-      package :jar
-    end
-
     desc 'GT4-dependent utility classes for GNDMS'
     define 'kit', :layout => dmsLayout('kit', 'gndms-kit') do
       compile.with GROOVY, GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('common'), project('stuff'), project('model'), project('neomodel'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_AXIS, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, INJECT, GT4_SERVLET, COMMONS_LANG, OPENJPA, SLF4J, JSON, SPRING
@@ -374,7 +384,7 @@ NEODATAGRAPH = [_('lib/neo4j-1.2/geronimo-jta_1.1_spec-1.1.1.jar'),
 
     desc 'GNDMS logic classes (actions for manipulating resources)'
     define 'logic', :layout => dmsLayout('logic', 'gndms-logic') do
-       compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('common'), project('stuff'), project('model'), project('neomodel'), JODA_TIME, GOOGLE_COLLECTIONS, INJECT, DB_DERBY, GT4_LOG, GT4_AXIS, GT4_COG, GT4_SEC, GT4_XML, COMMONS_LANG, OPENJPA, SLF4J
+       compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('common'), project('stuff'), project('model'), project('neomodel'), JODA_TIME, GOOGLE_COLLECTIONS, INJECT, DB_DERBY, GT4_LOG, GT4_AXIS, GT4_COG, GT4_SEC, GT4_XML, COMMONS_LANG, OPENJPA, SLF4J, SPRING
        compile
        package :jar
     end
@@ -389,7 +399,7 @@ NEODATAGRAPH = [_('lib/neo4j-1.2/geronimo-jta_1.1_spec-1.1.1.jar'),
     desc 'GNDMS core infrastructure classes'
     define 'infra', :layout => dmsLayout('infra', 'gndms-infra') do
       # Infra *must* have all dependencies since we use this list in copy/link-deps
-      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('common'), project('gritserv'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), ARGS4J, JODA_TIME, JAXB, GT4_SERVLET, GROOVY, GOOGLE_COLLECTIONS, INJECT, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies, COMMONS_FILEUPLOAD, NEODATAGRAPH, SLF4J, SPRING
+      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('common'), project('gritserv'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), ARGS4J, JODA_TIME, JAXB, GT4_SERVLET, GROOVY, GOOGLE_COLLECTIONS, INJECT, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies, COMMONS_FILEUPLOAD, NEODATAGRAPH, SLF4J, SPRING, JNA
       compile
 
       meta_inf << file(_('src/META-INF/00_system.xml'))
@@ -574,11 +584,12 @@ NEODATAGRAPH = [_('lib/neo4j-1.2/geronimo-jta_1.1_spec-1.1.1.jar'),
       task 'run-staging-test' do |t|
         jars = compile.dependencies.map(&:to_s)
         jars << compile.target.to_s
-        host = `hostname`.chomp
+        #host = `hostname`.chomp
+        host = 'csr-pc25.zib.de'
         dn = `grid-proxy-info -identity`
         dn = dn.chomp
         if (ENV['GNDMS_SFR'] == nil)
-            prop = 'test-data/sfr/dummy-sfr.properties'
+            prop = 'etc/sfr/dummy-sfr.properties'
         else 
             prop = ENV['GNDMS_SFR']
         end
@@ -590,6 +601,88 @@ NEODATAGRAPH = [_('lib/neo4j-1.2/geronimo-jta_1.1_spec-1.1.1.jar'),
         runner = 'de.zib.gndmc.GORFX.c3grid.ProviderStageInClient'
         runJava( t.to_s, args, jars, props )
       end
+
+      task 'run-stress-test' do |t|
+        jars = compile.dependencies.map(&:to_s)
+        jars << compile.target.to_s
+        if (ENV['GORFX_URI'] == nil)
+            host = `hostname`.chomp
+        else 
+            host = ENV['GORFX_URI']
+            puts "using", host
+        end
+        dn = `grid-proxy-info -identity`
+        dn = dn.chomp
+        if (ENV['GNDMS_PROPS'] == nil)
+            prop = 'test-data/test-properties/multi_file_transfer_awi.properties'
+        else 
+            prop = ENV['GNDMS_PROPS']
+        end
+        args = [ '-props', prop, 
+                 '-uri', 'https://' + host + ':8443/wsrf/services/gndms/GORFX',
+	             '-dn', dn
+        ]
+        props = { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" }
+        runner = 'de.zib.gndmc.GORFX.diag.MultiRequestClient'
+        runJava( t.to_s, args, jars, props )
+      end
+
+      desc 'runs the interSliceTransfer test'
+      task 'run-ist' do |t|
+
+        jars = compile.dependencies.map(&:to_s)
+        jars << compile.target.to_s
+        if (ENV['gorfx_host'] == nil)
+            gorfx_host = `hostname`.chomp
+        else 
+            gorfx_host = ENV['gorfx_host']
+        end
+        if (ENV['dspace_host'] == nil)
+            dspace_host = `hostname`.chomp
+        else 
+            dspace_host = ENV['dspace_host']
+        end
+        dn = `grid-proxy-info -identity`
+        dn = dn.chomp
+        if (ENV['GNDMS_PROPS'] == nil)
+            prop = 'test-data/test-properties/multi_file_transfer_awi.properties'
+        else 
+            prop = ENV['GNDMS_PROPS']
+        end
+        args = [ '-props', prop, 
+                 '-uri', 'https://' + gorfx_host + ':8443/wsrf/services/gndms/GORFX',
+                 '-duri', 'https://' + dspace_host + ':8443/wsrf/services/gndms/DSpace',
+	             '-dn', dn
+        ]
+        puts args
+        runner = 'de.zib.gndmc.GORFX.InterSliceTransferClient'
+        props ={ "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" }
+
+        runJava( t.to_s, args, jars, props )
+      end
+
+      desc 'runs the interSliceTransfer test'
+      task 'run-rft' do 
+
+        runner = 'de.zib.gndmc.GORFX.diag.RemoteFileTransferTest'
+        jars = compile.dependencies.map(&:to_s)
+        jars << compile.target.to_s
+        if (ENV['GNDMS_PROPS'] == nil)
+            prop = 'test-data/simple-rft.properties'
+        else 
+            prop = ENV['GNDMS_PROPS']
+        end
+        args = [ '-props', prop, 
+                 '-uri', 'https://csr-pc25.zib.de:8443/wsrf/services/gndms/GORFX', #'https://' + gorfx_host + ':8443/wsrf/services/gndms/GORFX',
+                 '-uid', `id -u`.chomp,
+                 '-cancel', 30000
+        ]
+        props = { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" }
+
+        puts args
+        runJava( 'run-rft', runner, args, jars, props )
+      end
+
     end
 
 
@@ -705,6 +798,10 @@ task 'show-log' => task('gndms:gndmc:show-log')
 
 # Database stuff
 
+task 'foo-barz' do |t|
+    puts t.to_s
+end
+
 task 'kill-db' do
     rm_rf GNDMS_DB
     puts 'ATTENTION Do not forget to call fix-permissions after you have recreated the database'
@@ -767,13 +864,16 @@ task 'install-chown-script' do
     system "install -o 0 -g 0 -m 700 #{ENV['GNDMS_SOURCE']}/dev-bin/chownSlice.sh #{ENV['GNDMS_SHARED']}"
 end
 
+desc 'Test the c3 data-provider setup'
+task 'c3grid-dp-test' => ['gndms:gndmc:run-staging-test']
+
   
 task 'c3grid-dp-post-deploy-test' do
     host = `hostname`.chomp
     dn = `grid-proxy-info -identity`
     dn = dn.chomp
     if (ENV['GNDMS_SFR'] == nil)
-      prop = 'test-data/sfr/dummy-sfr.properties'
+      prop = 'etc/sfr/dummy-sfr.properties'
     else 
       prop = ENV['GNDMS_SFR']
     end
@@ -846,7 +946,7 @@ task 'auto-clean' do
         cleanRev( '0.3.4' )
     else
         puts 'No previously installed version detected.'
-    end
+   end
     puts 'About to remove old c3grid service directories (if existing)'
     rm_rf( "#{ENV['GLOBUS_LOCATION']}/lib/c3grid_DSpace" )
     rm_rf( "#{ENV['GLOBUS_LOCATION']}/etc/gpt/packages/c3grid_DSpace" )
@@ -948,7 +1048,6 @@ Rake::Task[:package].clear
 task :default => task( 'gndms:gorfx:package' )
 task :install => task( 'deploy-gndms-rest' )
 task :package => task( 'gndms:gndms:package' )
-
 
 #todo for release use the following :default behaviour
 #task :default do nope end

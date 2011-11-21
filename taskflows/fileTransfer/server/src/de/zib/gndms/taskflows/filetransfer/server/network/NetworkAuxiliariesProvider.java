@@ -17,6 +17,8 @@ package de.zib.gndms.taskflows.filetransfer.server.network;
  */
 
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @author  try ma ik jo rr a zib
@@ -38,7 +40,7 @@ package de.zib.gndms.taskflows.filetransfer.server.network;
  * used to predict the duration of a transfer, using the calculateTransferTime method of this class.
  *
  * To make your transfer reliable you should instantiate the persistentMarkerListener, supply it with a fresh instance of
- * a FTPTransferState, which must have a unique transferId. Then use the performPersistenFileTransfer method of your
+ * a FTPTransferState, which must have a unique transferId. Then use the performPersistentFileTransfer method of your
  * GNDMSFileTransfer instance to trigger the transfer.
  *
  * An aborted transfer can be easily resumed, by setting the same GNDMSFileTransfer up again,
@@ -52,10 +54,30 @@ public class NetworkAuxiliariesProvider {
     private NetworkAuxiliariesProvider( )  { }
 
     // private final GridFTPClientFactory gridFTPClientFactory = new SimpleGridFTPClientFactory();
-   // private final GridFTPClientFactory gridFTPClientFactory = new CertGridFTPClientFactory();
-    private final static GridFTPClientFactory gridFTPClientFactory = new NonblockingClientFactory();
+    // private final GridFTPClientFactory gridFTPClientFactory = new CertGridFTPClientFactory();
+    // private final static GridFTPClientFactory gridFTPClientFactory = new NonblockingClientFactory();
+    // private final static Class<StrictNonblockingClientFactory> gridFTPClientFactoryClass = StrictNonblockingClientFactory.class;
+    private final static Class<NonblockingClientFactory> gridFTPClientFactoryClass = NonblockingClientFactory.class;
+    private final static GridFTPClientFactory gridFTPClientFactory;
     private final static BandWidthEstimater bandWidthEstimater = new StaticBandWidthEstimater();
+    protected static Log logger = LogFactory.getLog( NetworkAuxiliariesProvider.class );
 
+
+    private static Integer bufferSize = null;
+
+    static {
+        GridFTPClientFactory gridFTPClientFactory1;
+        try {
+            gridFTPClientFactory1 = gridFTPClientFactoryClass.newInstance();
+        } catch ( InstantiationException e ) {
+            gridFTPClientFactory1 = new NonblockingClientFactory(); // fallback
+            e.printStackTrace();
+        } catch ( IllegalAccessException e ) {
+            gridFTPClientFactory1 = new NonblockingClientFactory(); // fallback
+            e.printStackTrace();
+        }
+        gridFTPClientFactory = gridFTPClientFactory1;
+    }
 
     public static GridFTPClientFactory getGridFTPClientFactory() {
         return gridFTPClientFactory;
@@ -67,15 +89,22 @@ public class NetworkAuxiliariesProvider {
     }
 
 
+    public static GNDMSFileTransfer newGNDMSFileTransfer() {
+        GNDMSFileTransfer ft = new GNDMSFileTransfer();
+        ft.setBufferSize( bufferSize );
+
+        return ft;
+    }
+
     /**
      * Calculated the transfertime in milli-seconds.
      *
      * To catch possible rounding errors, which may occur when the transfer size is to small and the connection is
-     * very fast. A minimal value for the transfer time can be provieded (see the <EM>min</EM> parameter).
+     * very fast. A minimal value for the transfer time can be provided (see the <EM>min</EM> parameter).
      *
      * @param size The transfer file size in byte.
      * @param bandWidth The bandwidth in byte/s
-     * @param min The minimum time which is retured if the calculated time is smaller.
+     * @param min The minimum time which is returned if the calculated time is smaller.
      *            If min is < 1 it will be ignored.
      *
      * @return The transfer-time in ms.
@@ -88,5 +117,17 @@ public class NetworkAuxiliariesProvider {
             tt = min;
 
         return tt;
+    }
+
+
+    public static Integer getBufferSize() {
+        return bufferSize;
+    }
+
+
+    public static void setBufferSize( Integer bufferSize ) {
+
+        logger.info( "received buffersize: "+ bufferSize );
+        NetworkAuxiliariesProvider.bufferSize = bufferSize;
     }
 }

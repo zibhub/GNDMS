@@ -21,6 +21,7 @@ package de.zib.gndms.logic.model.gorfx.c3grid;
 import de.zib.gndms.kit.config.ConfigProvider;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.config.MapConfig;
+import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.logic.model.dspace.ChownSliceConfiglet;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
@@ -57,6 +58,8 @@ import java.io.File;
 @SuppressWarnings({ "FeatureEnvy" })
 public abstract class AbstractProviderStageInAction extends TaskFlowAction<ProviderStageInOrder> {
 
+    public static final String PROXY_FILE_NAME = "/x509_proxy.pem";
+
 	protected ParmFormatAux parmAux = new ParmFormatAux();
 
     protected AbstractProviderStageInAction( String offerTypeId ) {
@@ -79,9 +82,17 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
     }
 
 
+    protected void prepareProxy( ) {
+        final Slice slice = findSlice();
+        File sd = new File( slice.getSubspace().getPathForSlice( slice ) + PROXY_FILE_NAME );
+        getCredentialProvider().installCredentials( sd );
+    }
+
+
 	@SuppressWarnings({ "ThrowableInstanceNeverThrown" })
 	protected @NotNull File getScriptFileByParam(final MapConfig configParam, String scriptParam)
             throws MandatoryOptionMissingException {
+
 		final @NotNull File scriptFile = configParam.getFileOption(scriptParam);
 		if (! isValidScriptFile(scriptFile))
 		    throw new IllegalArgumentException("Invalid " + scriptParam + " script: " + scriptFile.getPath());
@@ -176,7 +187,6 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
             CreateSliceAction csa = new CreateSliceAction();
             csa.setParent(this);
             csa.setTerminationTime(getContract().getResultValidity());
-            // uid should be the id of hte container
             csa.setClosingEntityManagerOnCleanup(false);
             csa.setUUIDGen(getUUIDGen());
             csa.setId(getUUIDGen().nextUUID());
@@ -288,7 +298,7 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
 
 	@Override
     @NotNull
-    public Class<ProviderStageInOrder> getOrqClass() {
+    public Class<ProviderStageInOrder> getORQClass() {
         return ProviderStageInOrder.class;
     }
 

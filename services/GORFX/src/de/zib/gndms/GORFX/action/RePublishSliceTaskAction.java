@@ -72,12 +72,12 @@ public class RePublishSliceTaskAction extends ORQTaskAction<RePublishSliceORQ> {
             if( st.getState().equals( TaskState.FINISHED ) )
                 finish( new RePublishSliceResult( getOrq().getDestinationSlice() ) );
             else
-                failFrom( (RuntimeException) st.getData() );
+                fail( (RuntimeException) st.getData() );
 
         } catch ( RuntimeException e ) {
             honorOngoingTransit( e );
         } catch ( Exception e ) {
-            failFrom( new RuntimeException( e ) );
+            failFrom( e );
         }
         */
     }

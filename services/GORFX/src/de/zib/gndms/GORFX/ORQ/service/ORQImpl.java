@@ -31,6 +31,7 @@ import de.zib.gndms.logic.model.gorfx.PermissionDeniedORQException;
 import de.zib.gndms.logic.model.gorfx.UnfulfillableORQException;
 import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.gritserv.typecon.types.ContractXSDTypeWriter;
+import org.apache.axis.AxisFault;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.log4j.Logger;
 import org.globus.wsrf.ResourceContext;
@@ -62,68 +63,77 @@ public class ORQImpl extends ORQImplBase {
         throws RemoteException, UnfullfillableRequest, PermissionDenied
     {
 
+        ORQResource orq = null;
+        ExtORQResourceHome home = null;
         try {
             logger.warn("ORQImpl");
-            ExtORQResourceHome home = (ExtORQResourceHome ) getResourceHome();
+            home = (ExtORQResourceHome ) getResourceHome();
             ResourceContextImpl impl = (ResourceContextImpl) ResourceContext.getResourceContext();
             logger.debug(impl.getServiceURL());
             logger.debug(impl.getResourceKeyHeader());
             logger.debug(impl.getResourceHomeLocation());
             logger.debug(impl.getResourceKey());
             logger.debug( "Context: " + LogAux.loggableXSDT( context ) );
-            ORQResource orq = home.getAddressedResource();
+            orq = home.getAddressedResource();
+        } catch( Exception e ) {
+            logger.error( e );
+            throw new RemoteException(e.getMessage(), e);
+        }
+
+        //  logger.debug( "Default creds: " + GlobusCredential.getDefaultCredential() );
+        try {
             WidAux.initWid(orq.getCachedWid());
             WidAux.initGORFXid( orq.getORQCalculator().getORQArguments().getActId() );
             LogAux.logSecInfo( logger, "getOfferAndDestroyRequest" );
-          //  logger.debug( "Default creds: " + GlobusCredential.getDefaultCredential() );
-            try {
-                final TransientContract contract = orq.getOfferExecutionContract(offerExecutionContract);
-                OfferExecutionContractT oec =
-                    ContractXSDTypeWriter.write( contract );
+            final TransientContract contract = orq.getOfferExecutionContract(offerExecutionContract);
+            OfferExecutionContractT oec =
+                ContractXSDTypeWriter.write( contract );
 
-                // log contract
-                logger.debug( "Calculated contract: " + LogAux.loggableXSDT( oec ) );
-                logger.debug( "Creating offer resouce" );
+            // log contract
+            logger.debug( "Calculated contract: " + LogAux.loggableXSDT( oec ) );
+            logger.debug( "Creating offer resource" );
 
 
-                ExtOfferResourceHome ohome = ( ExtOfferResourceHome) getOfferResourceHome();
-                ResourceKey key = ohome.createResource();
-                OfferResource ores = ohome.getResource( key );
-                ores.setCachedWid(WidAux.getWid());
-                EndpointReferenceType et = DelegationAux.extractDelegationEPR( context );
-                ores.setDelegateEPR( et );
-                ores.setOfferRequestArguments( orq.getOfferRequestArguments() );
+            ExtOfferResourceHome ohome = ( ExtOfferResourceHome) getOfferResourceHome();
+            ResourceKey key = ohome.createResource();
+            OfferResource ores = ohome.getResource( key );
+            ores.setCachedWid(WidAux.getWid());
+            EndpointReferenceType et = DelegationAux.extractDelegationEPR( context );
+            ores.setDelegateEPR( et );
+            ores.setOfferRequestArguments( orq.getOfferRequestArguments() );
 
-                ores.setOfferExecutionContract( oec );
-                ores.setOrqCalc(orq.getORQCalculator());
+            ores.setOfferExecutionContract( oec );
+            ores.setOrqCalc(orq.getORQCalculator());
 
-                home.remove( orq.getResourceKey() );
-                
-                // log contract
-                logger.debug( "Calculated contract: " + LogAux.loggableXSDT( oec ) );
+            home.remove( orq.getResourceKey() );
 
-                return ohome.getResourceReference( key ).getEndpointReference();
-            }
-            catch (UnfulfillableORQException e) {
-                logger.error( e );
-                throw new UnfullfillableRequest();
-            }
-            catch (PermissionDeniedORQException e) {
-                logger.error( e );
-                throw new PermissionDenied();
-            }
-            catch ( Exception e ) {
-                logger.error( e );
-                throw new RemoteException(e.getMessage(), e);
-            }
-            finally {
-                WidAux.removeGORFXid();
-                WidAux.removeWid();
-            }
-        }
-        catch ( Exception e ) {
+            return ohome.getResourceReference( key ).getEndpointReference();
+
+        } catch (UnfulfillableORQException e) {
             logger.error( e );
-            throw new RemoteException(e.getMessage(), e);
+            throw new UnfullfillableRequest();
+
+        } catch (PermissionDeniedORQException e) {
+            logger.error( e );
+            throw new PermissionDenied();
+
+        } catch ( RuntimeException e )  {
+            logger.error( "p1", e );
+            throw e;
+        } catch ( AxisFault af ) {
+        /*    logger.error( "faulttype"+ af.getFaultCode() );
+            logger.error( "cause", af.getCause() );
+            logger.error( "detail", af.detail );
+            logger.error( "as stirng: " + af.toString() );*/
+            logger.error( af.dumpToString() );
+            throw af;
+        } catch ( Exception e ) {
+            logger.error( "p2", e );
+            throw new RemoteException( "from getOfferAndDestroyRequest", e);
+        }
+        finally {
+            WidAux.removeGORFXid();
+            WidAux.removeWid();
         }
     }
     
@@ -143,20 +153,23 @@ public class ORQImpl extends ORQImplBase {
 
             // log contract
             logger.debug( "Estimated contract: " + LogAux.loggableXSDT( oec ) );
-
+            home.remove( res.getResourceKey() );
             return oec;
         }
         catch (UnfulfillableORQException e) {
-            logger.error( "UnfulfillableORQException: " + e.getMessage(), e );
+            logger.error( e );
             throw new UnfullfillableRequest();
         }
         catch (PermissionDeniedORQException e) {
-            logger.error( "PermissionDeniedORQException: " + e.getMessage(),  e );
+            logger.error( e );
             throw new PermissionDenied();
+        } catch ( RuntimeException e )  {
+            logger.error( "p1", e );
+            throw e;
         }
         catch ( Exception e ) {
-            logger.error( "Exception: " + e.getMessage(), e );
-            throw new RemoteException(e.getMessage(), e);
+            logger.error( "p2", e );
+            throw new RemoteException( "from permitEstimateAndDestroyRequest", e);
         }
         finally {
             WidAux.removeGORFXid();

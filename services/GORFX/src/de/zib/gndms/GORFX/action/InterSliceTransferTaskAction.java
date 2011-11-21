@@ -22,6 +22,7 @@ import de.zib.gndms.logic.model.gorfx.ORQTaskAction;
 import de.zib.gndms.logic.model.gorfx.FileTransferTaskAction;
 import de.zib.gndms.model.gorfx.types.InterSliceTransferORQ;
 import de.zib.gndms.model.gorfx.types.TaskState;
+import org.globus.gsi.GlobusCredential;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
@@ -53,21 +54,21 @@ public class InterSliceTransferTaskAction extends ORQTaskAction<InterSliceTransf
         final Session session = getDao().beginSession();
         try {
             final Task task = getTask(session);
-            InterSliceTransferORQ orq = (InterSliceTransferORQ) task.getORQ();
+            InterSliceTransferORQCalculator.checkURIs( getOrderBean( ), (GlobusCredential)
+                getCredentialProvider().getCredential() );
             InterSliceTransferORQCalculator.checkURIs( orq );
 
-
             final Task st = task.createSubTask();
-	        final EntityManager em = getEmf().createEntityManager();
-            st.setId(getUUIDGen().nextUUID());
 
+            st.setId( getUUIDGen().nextUUID() );
             st.setTerminationTime( task.getTerminationTime() );
 
+	        final EntityManager em = getEmf().createEntityManager();
 	        FileTransferTaskAction fta = new FileTransferTaskAction(em, getDao(), new Taskling(getDao(), st.getId()));
             fta.setCredentialProvider( getCredentialProvider() );
-            fta.setClosingEntityManagerOnCleanup( false );
+			// todo verify closing
+            fta.setClosingEntityManagerOnCleanup( true );
             fta.setEmf( getEmf( ) );
-
 
             fta.setLog( getLog() );
             fta.call( );
@@ -76,12 +77,13 @@ public class InterSliceTransferTaskAction extends ORQTaskAction<InterSliceTransf
                 task.setTaskState(TaskState.FINISHED);
                 if (altTaskState)
                     task.setAltTaskState(null);
+				// todo maybe delete st?
             }
             else
                 throw (RuntimeException) st.getPayload();
-            session.finish();
+            session.success();
         }
-        finally { session.success(); }
+        finally { session.finish(); }
     }
 
 

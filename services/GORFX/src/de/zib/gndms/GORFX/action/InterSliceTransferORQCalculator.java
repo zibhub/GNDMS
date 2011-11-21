@@ -24,6 +24,7 @@ import de.zib.gndms.model.gorfx.types.InterSliceTransferORQ;
 import org.apache.axis.types.URI;
 import org.globus.ftp.exception.ClientException;
 import org.globus.ftp.exception.ServerException;
+import org.globus.gsi.GlobusCredential;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -52,20 +53,20 @@ public class InterSliceTransferORQCalculator extends
 
     protected void checkURIs( ) throws URI.MalformedURIException, RemoteException {
 
-        checkURIs( getORQArguments() );
+        checkURIs( getORQArguments(), ( GlobusCredential) this.getCredentialProvider().getCredentials().get( 0 ) );
     }
 
 
-    public static void checkURIs( InterSliceTransferORQ ist ) throws URI.MalformedURIException, RemoteException {
+    public static void checkURIs( InterSliceTransferORQ ist, GlobusCredential globusCredential ) throws URI.MalformedURIException, RemoteException {
 
         if( ist.getSourceURI() == null  )
             ist.setSourceURI(
                 DSpaceBindingUtils.getFtpPathForSlice(
-                    ist.getSourceSlice() ) );
+                    ist.getSourceSlice(), globusCredential ) );
 
         if( ist.getTargetURI() == null )
             ist.setTargetURI(
                 DSpaceBindingUtils.getFtpPathForSlice(
-                    ist.getDestinationSlice() ) );
+                    ist.getDestinationSlice(), globusCredential  ) );
     }
 }

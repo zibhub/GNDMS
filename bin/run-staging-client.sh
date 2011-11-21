@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RELEASE="0.3.2"
+RELEASE="0.3.4"
 
 varcheck() {
 
@@ -118,7 +118,7 @@ for i in ${jars[@]}; do
     cp=$GLOBUS_LOCATION/lib/$i:$cp
 done
 
-uri="https://$( hostname ):8443/wsrf/services/gndms/GORFX"
+uri="https://csr-pc25.zib.de:8443/wsrf/services/gndms/GORFX"
 dn="$( grid-proxy-info -identity )"
 
 java -cp "$client_jar:$cp" \

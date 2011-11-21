@@ -17,7 +17,6 @@ package de.zib.gndms.GORFX.context.client;
  */
 
 
-
 import de.zib.gndms.GORFX.context.common.TaskConstants;
 import de.zib.gndms.GORFX.context.common.TaskI;
 import org.apache.axis.client.Stub;

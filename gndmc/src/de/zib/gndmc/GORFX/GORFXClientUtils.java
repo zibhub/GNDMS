@@ -227,7 +227,7 @@ public class GORFXClientUtils {
      */
     public static EndpointReferenceType setupDelegation( ContextT ctx, String containerUri, String proxyFileName ) throws Exception {
 
-        String delfac = DelegationAux.createDelationAddress( containerUri );
+        String delfac = DelegationAux.createDelegationAddress( containerUri );
         GlobusCredential credential = DelegationAux.findCredential( proxyFileName );
         EndpointReferenceType epr = DelegationAux.createProxy( delfac, credential );
         DelegationAux.addDelegationEPR( ctx, epr );

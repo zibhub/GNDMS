@@ -17,7 +17,6 @@
 #{ENV['GLOBUS_LOCATION']}/lib/derby-10.5.3.0.jar
 #{ENV['GLOBUS_LOCATION']}/lib/derbytools-10.5.3.0.jar
 #{ENV['GLOBUS_LOCATION']}/lib/commons-codec-1.4.jar
-#{ENV['GLOBUS_LOCATION']}/lib/commons-collections-3.2.jar
 #{ENV['GLOBUS_LOCATION']}/lib/httpcore-4.0.jar
 #{ENV['GLOBUS_LOCATION']}/lib/httpcore-nio-4.0.jar
 #{ENV['GLOBUS_LOCATION']}/lib/httpclient-4.0.1.jar

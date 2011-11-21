@@ -19,6 +19,7 @@ package de.zib.gndms.taskflows.filetransfer.server.network;
 
 
 import de.zib.gndms.kit.access.CredentialProvider;
+import de.zib.gndms.stuff.misc.LogProvider;
 import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.exception.ClientException;
 import org.globus.ftp.exception.ServerException;
@@ -37,13 +38,14 @@ import java.util.concurrent.Callable;
  *          <p/>
  *          User: mjorra, Date: 20.02.2009, Time: 17:40:03
  */
-public class GridFTPClientCreator implements Callable<GridFTPClient>  {
+public class GridFTPClientCreator implements Callable<GridFTPClient> , LogProvider {
     private static final Logger log = LoggerFactory.getLogger( GridFTPClientCreator.class );
 
     private String host;
     private int port;
     private Map ctx;
     private CredentialProvider credProvider;
+    private int seq;
 
 
     public GridFTPClientCreator() {
@@ -51,9 +53,7 @@ public class GridFTPClientCreator implements Callable<GridFTPClient>  {
     }
 
 
-
-
-    public GridFTPClientCreator( String host, int port, CredentialProvider cp ) {
+    public GridFTPClientCreator( String host, int port, CredentialProvider cp, int seq ) {
         this.host = host;
         this.port = port;
         this.credProvider = cp;
@@ -90,7 +90,7 @@ public class GridFTPClientCreator implements Callable<GridFTPClient>  {
     private void validateClient( final GridFTPClient cnt ) throws ServerException, IOException, ClientException {
         boolean d = false;
         try {
-            log.debug( "validating client " + host + ":" + port );
+            log.debug( "validating client " );
             //cnt.getFeatureList();
          //   cnt.list();
             cnt.changeDir( "/" );
@@ -124,4 +124,16 @@ public class GridFTPClientCreator implements Callable<GridFTPClient>  {
     public void setPort( final int port ) {
         this.port = port;
     }
+
+
+    public int getSeq() {
+        return seq;
+    }
+
+
+    public void setSeq( int seq ) {
+        this.seq = seq;
+    }
+
+    public Logger getLog() { return log; }
 }

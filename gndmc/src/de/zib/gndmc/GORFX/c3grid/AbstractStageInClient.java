@@ -84,6 +84,9 @@ public abstract class AbstractStageInClient extends AbstractApplication {
 	protected String dn;
     @Option( name="-proxyfile", usage="grid-proxy-file to lead", metaVar="proxy-file" )
     protected String proxyFile = null;
+    @Option( name="-cancel", required = false, usage = "ms to wait before destroying taskClient.")
+    protected Long cancel = null;
+
 
 	protected TransientContract contract;
 	protected String dataFile;
@@ -153,6 +156,8 @@ public abstract class AbstractStageInClient extends AbstractApplication {
         boolean failed = false ;
 		TaskClient taskClient = null;
 
+        int cnt=0;
+
         do {
 	        try {
 		        if (taskClient == null)
@@ -162,6 +167,12 @@ public abstract class AbstractStageInClient extends AbstractApplication {
 				state = (TaskExecutionState) ObjectDeserializer.toObject( rpResponse.get_any()[0], TaskExecutionState.class );
 				failed = TaskStatusT.failed.equals(state.getStatus());
 				finished = TaskStatusT.finished.equals(state.getStatus());
+                if( cancel != null &&  cancel < cnt * MILLIS ) {
+                    taskClient.destroy( );
+                    taskClient = null;
+                    break;
+                }
+                ++cnt;
 	        }
 	        catch (NoSuchResourceException nre) {
 		        failed = true;
@@ -185,6 +196,10 @@ public abstract class AbstractStageInClient extends AbstractApplication {
             }
         }  while (! (failed || finished));
 
+        if( taskClient == null ) {
+            System.out.println( "client destroyed" );
+            System.exit( 1 );
+        }
 
         // Write results to console
         if (finished)
@@ -335,7 +350,7 @@ public abstract class AbstractStageInClient extends AbstractApplication {
 
         GORFXClient gorfx = new GORFXClient(gorfxEpUrlParam);
 
-        String delfac = DelegationAux.createDelationAddress( gorfxEpUrlParam );
+        String delfac = DelegationAux.createDelegationAddress( gorfxEpUrlParam );
 
         credential = DelegationAux.findCredential( proxyFile );
         EndpointReferenceType epr = DelegationAux.createProxy( delfac, credential );

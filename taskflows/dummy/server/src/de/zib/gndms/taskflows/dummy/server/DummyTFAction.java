@@ -43,7 +43,7 @@ public class DummyTFAction extends TaskFlowAction<DummyOrder> {
 
 
     @Override
-    public Class<DummyOrder> getOrqClass() {
+    public Class<DummyOrder> getORQClass() {
         return DummyOrder.class;
     }
 

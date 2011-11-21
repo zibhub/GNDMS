@@ -23,6 +23,7 @@ import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.exception.ServerException;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 import java.net.URI;
 
 /**
@@ -50,7 +51,7 @@ public interface GridFTPClientFactory {
      * @throws ServerException
      * @throws IOException
      */
-    public GridFTPClient createClient( String host, CredentialProvider cp ) throws ServerException, IOException;
+    public GridFTPClient createClient( String host, CredentialProvider cp ) throws ServerException, IOException, TimeoutException;
 
     /**
      * Returns a GridFTPClient, which is connected to a server with the given hostname using the denoted port value.
@@ -62,7 +63,7 @@ public interface GridFTPClientFactory {
      * @throws ServerException
      * @throws IOException
      */
-    public GridFTPClient createClient( String host, int port, CredentialProvider cp ) throws ServerException, IOException;
+    public GridFTPClient createClient( String host, int port, CredentialProvider cp ) throws ServerException, IOException, TimeoutException;
 
    /**
      * Returns a GridFTPClient, which is connected to a server corresponding to the given URI.
@@ -73,5 +74,5 @@ public interface GridFTPClientFactory {
      * @throws ServerException
      * @throws IOException
      */
-    public GridFTPClient createClient( URI uri, CredentialProvider cp ) throws ServerException, IOException;
+    public GridFTPClient createClient( URI uri, CredentialProvider cp ) throws ServerException, IOException, TimeoutException;
 }

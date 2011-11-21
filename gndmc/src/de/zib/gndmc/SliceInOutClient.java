@@ -35,6 +35,11 @@ import org.kohsuke.args4j.Option;
 import types.ContextT;
 import types.FileTransferResultT;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 import java.io.*;
 import java.rmi.RemoteException;
 import java.util.*;
@@ -54,6 +59,7 @@ public class SliceInOutClient {
     private SubspaceClient subSpaceClient;
     private DSpaceClient dspaceClient;
 
+    private DateFormat df = new SimpleDateFormat();
 
     public void run( ) throws Exception, RemoteException, GlobusCredentialException {
 
@@ -63,6 +69,9 @@ public class SliceInOutClient {
 
         System.out.println( "Creating slice" );
         SliceClient sc = createSlice();
+        Calendar cal = sc.getTerminationTime( );
+
+        System.out.println ( "\tSlice termination time: " + df.format( cal.getTime( ) ) );
 
         String loc = sc.getSliceLocation();
 
@@ -71,7 +80,7 @@ public class SliceInOutClient {
         EndpointReferenceType delegatEPR = null;
         if(! transferBean.isDisableDelegation() ) {
             System.out.println( "Setting up delegation" );
-            delegatEPR = GORFXClientUtils.setupDelegation( ctx, getDspaceURI(), transferBean.getProxyFile() );
+            delegatEPR = GORFXClientUtils.setupDelegation( ctx, getGorfxURI(), transferBean.getProxyFile() );
         }
 
         System.out.println( "Copy " + getSourcePath() + " -> " + loc );
@@ -79,6 +88,7 @@ public class SliceInOutClient {
         System.out.println( "File transfer passed" );
         showCopyResult( res );
 
+        Thread.sleep( 2000 );
 
 
         System.out.println( "\nNow the otherway round!" );

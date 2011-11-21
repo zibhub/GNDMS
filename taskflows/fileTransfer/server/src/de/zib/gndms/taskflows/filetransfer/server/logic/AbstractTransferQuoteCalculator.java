@@ -28,6 +28,7 @@ import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.exception.ClientException;
 import org.globus.ftp.exception.ServerException;
 import org.joda.time.Duration;
+import java.util.concurrent.TimeoutException;
 
 import java.io.IOException;
 import java.net.URI;
@@ -88,11 +89,13 @@ public abstract class AbstractTransferQuoteCalculator<M extends FileTransferOrde
         try {
             URI suri =  new URI( getOrderBean().getSourceURI() );
             clnt =  NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( suri, getCredentialProvider() );
-            GNDMSFileTransfer ft = new GNDMSFileTransfer();
+            GNDMSFileTransfer ft = NetworkAuxiliariesProvider.newGNDMSFileTransfer();
             ft.setSourceClient( clnt );
             ft.setSourcePath( suri.getPath( ) );
             ft.setFiles( getOrderBean().getFileMap() );
             estimatedTransferSize = ft.estimateTransferSize(  );
+        } catch( TimeoutException e ) {
+            throw new RuntimeException( e );
         } finally {
             if ( clnt != null )
                 clnt.close( true ); // none blocking close op

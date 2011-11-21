@@ -74,7 +74,7 @@ public class RePublishSliceORQCalculator extends
             ( new DateTime( ).plusHours( 2 ) ).toGregorianCalendar(),
             ts );
 
-        String sp = DSpaceBindingUtils.getFtpPathForSlice( getORQArguments().getSourceSlice() );
+        String sp = DSpaceBindingUtils.getFtpPathForSlice( getORQArguments().getSourceSlice(), null );
         String dp = tgt.getSliceLocation();
 
         Float bw = NetworkAuxiliariesProvider.getBandWidthEstimater().estimateBandWidthFromTo( sp, dp );

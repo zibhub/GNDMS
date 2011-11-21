@@ -139,5 +139,22 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends DefaultTas
     }
 
 
-    public abstract Class<K> getOrqClass();
+    public abstract Class<K> getORQClass();
+
+    protected void failFrom( Exception e ) {
+    	new IllegalStateException( getFailString( e ), e );
+    }
+
+    protected void traceFrom( Exception e ) {
+        trace( getFailString( e ), e );
+    }
+
+
+    protected String getFailString( Exception e )  {
+        if( e != null )
+            // todo verify getTaskSnapshot doesn't case trouble on error
+            return getTaskSnapshot(getDao()).getDescription() + " failure " +  e.getMessage();
+        else
+            return getTaskSnapshot(getDao()).getDescription() + " failure (no Exception provided)";
+    }
 }

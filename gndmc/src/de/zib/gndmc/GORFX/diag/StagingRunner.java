@@ -1,4 +1,4 @@
-package de.zib.gndmc.GORFX.tests;
+package de.zib.gndmc.GORFX.diag;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)

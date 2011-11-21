@@ -82,9 +82,9 @@ public class SliceCreationBean extends SubSpaceBean {
         super.setProperties( prop );
 
         sliceKindURI = prop.getProperty( SLICE_KIND_URI_KEY );
-        if( prop.contains( SIZE_KEY ) )
+        if( prop.containsKey( SIZE_KEY ) )
             size = Math.abs( Long.parseLong( prop.getProperty( SIZE_KEY ) ) );
-        if( prop.contains( LIFE_SPAN_KEY ) )
+        if( prop.containsKey( LIFE_SPAN_KEY ) )
             lifeSpan = Math.abs( Long.parseLong( prop.getProperty( LIFE_SPAN_KEY ) ) );
     }
 

@@ -125,7 +125,7 @@ public class TaskResource extends TaskResourceBase
 
 
     /**
-     * Delivers the result of a successfully execudted task.
+     * Delivers the result of a successfully executed task.
      *
      * If the task wasn't executed successfully an empty result object is returned.
      */
@@ -249,6 +249,9 @@ public class TaskResource extends TaskResourceBase
      */
     @NotNull
     public Taskling loadModelById( @NotNull String id ) throws ResourceException {
+
+        logger.debug( "task resource for: " + id );
+
         if( taskAction != null )
             throw new ResourceException( "task action already loaded" );
 
@@ -372,9 +375,19 @@ public class TaskResource extends TaskResourceBase
             if( tsk != null ) {
                 if ( ! tsk.isDone() ) {
                     // task is still running cancel it and cleanup entity manager
+                    taskAction.setCancelled( true );
                     log.debug( "cancel task " + tsk.getWid() );
                     cleanUp = true;
-                    future.cancel( true );
+                    if( future != null ) {
+                        future.cancel( true );
+                        try {
+                            // give cancel some time
+                            Thread.sleep( 2000L );
+                        } catch ( InterruptedException e ) {
+                            logger.debug(  e );
+                        }
+                    }
+
                     try {
                         EntityManager em = taskAction.getEntityManager();
                         if( em != null &&  em.isOpen() ) {
@@ -388,8 +401,7 @@ public class TaskResource extends TaskResourceBase
                         }
                     } catch( Exception e ) {
                         // don't bother with exceptions
-                        log.debug( "Exception on task future cancel: " + e.toString() );
-                        e.printStackTrace(  );
+                        log.debug( "Exception on task future cancel: " + e.toString(), e );
                     }
                 }
 

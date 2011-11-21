@@ -31,27 +31,30 @@ import de.zib.gndms.neomodel.gorfx.Task;
  * @author try ma ik jo rr a zib
  * @date 14.02.11  14:27
  * @brief An interface for taskflow factories.
- * <p/>
+ *
  * Implementations of this interface should be able to compute quotes, and generate task instances.
  */
 public interface TaskFlowFactory<O extends Order, C extends AbstractQuoteCalculator<O>> {
 
 
     /**
-     * @return The taskflow key.
      * @brief Delivers the key of this task flow.
+     *
+     * @return The taskflow key.
      */
     String getTaskFlowKey();
 
     /**
-     * @return An integer representing the version.
      * @brief Delivers the version of the plugin.
+     *
+     * @return An integer representing the version.
      */
     int getVersion();
 
-    /**
-     * @return A quote calculator.
+    /** 
      * @brief Delivers a calculator for quotes of the taskflow.
+     * 
+     * @return A quote calculator.
      */
     C getQuoteCalculator();
 

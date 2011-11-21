@@ -1,7 +1,70 @@
+
+0.3.5: "Richie" (internal Version)
+
+@DMS
+
+* [CHANGE] Increased staging proxy lifetime to 24h.
+* [CHANGE] SliceStaging cancel is delegated to providers.
+* [FIX] Overeager Exception throwing in GlobusCredentialProvider
+
+@Developer
+* [NEW] SliceStaging and RemoteFileTransferClients now have cancel option, which
+        can be used to test the destroy behaviour of the task-resources.
+
+
+0.3.4: "Richard"
+
+@Everybody
+* [CHANGE] Improved logging
+* [CHANGE]    Cleared logging in ORQImpl, removed multiple logging of the same exception
+* [CHANGE]    Reduced failFrom usage, prevents log cluttering
+* [CHANGE]    Remote staging errors are now delegated to the caller
+* [CHANGE]    Added logger to TaskAction and made it more verbose
+* [CHANGE]    Increased logging on TaskResource
+* [CHANGE]    Added logging for gsiftp buffersize, and other parameters
+* [CHANGE] Ported interSliceTransfer to gndms >= 0.3.2
+* [CHANGE]    Added delegation to interSliceTransfer
+* [CHANGE] Added check and retry to slice directory creation - mkdir throws exception on failure
+* [CHANGE] Added directory exists check to deleteDir
+* [CHANGE] Incremented version number 
+* [CHANGE] Updated buildr auto-clean task for version 0.3.2-hotfix1 0.3.3 and 0.3.4
+* [FIX] Fixes possible openJPA rollback due to AxisFault serialization errors
+    - SliceStagingAction now catches AxisFault
+    - Cleanup in exception handling of TaskAction and GORFX resources
+* [FIX] Added prevention for duplicate TaskAction execution
+* [FIX] Fixed resource cleanup in OfferService
+* [FIX] Removed possible memory leak in estimate offer
+* [FIX] Corrected ORM column name of progress, the current progress wasn't stored correctly
+* [FIX] Increased task comment SQL field size, could cause commit errors in rare cases
+
+@DMS
+* [CHANGE] Reimplemented NonblockingGSIFtpClientFactory, replaced ScheduledExcutor with custom thread-factory, which is able to remove blocking clients
+* [CHANGE] Added buffersize option to filetransfer
+* [CHANGE] Updated gsiftp config script, for life-updates and new buffer-size option
+* [FIX] Removed obsolete "synchronized" from getRequiredPrefix
+* [FIX] Activated GSIFtp deadlock prevention in central site setup
+
+@C3Grid
+* [NEW] Cert-proxy-file is written to slice directory for staging
+* [NEW] Use JNA to fix cert-proxy file permissions on staging
+* [FIX] Replaced synchronized with explicit locking in C3MDSConfiglet to examine spurious rc in central c3grid dms
+
+@Developers
+* [NEW] Added a configlet for life updates
+* [CHANGE] Buildfile added targets for misc clients
+* [CHANGE] Buildfile Added automatic release-info update to buildr file, which contains git commit id
+* [CHANGE] Added detached mode to taskAction action
+* [CHANGE] Deprecated FillOnce added new data-flow variable
+* [FIX] Fixed a lot of typos
+* [FIX] Misc changes in the test clients to work with gndms 0.3.x
+
+
+
+
 0.3.2: "Shigeru"
 
 @Everybody
-* [FIX] Build now uses included distirbution of apache-ant 1.7.1
+* [FIX] Build now uses included distribution of apache-ant 1.7.1
   (avoids problems with ant 1.8 and introduce)
 * [CHANGED] Updated documentation
 * [CHANGED] Now uses sudo in order to change slice ownership
@@ -58,7 +121,7 @@ INTERNAL 0.2.9 beta: "Kylie"
 * [NEW] Added a configurable delay for gridftp client creation 
 * [NEW] Added a configurable timeout to kill defective clients after creation
 * [CHANGED] Made transaction handling for file transfers more solid
-* [FIX] Made file transfer client closeing more fault tolerant
+* [FIX] Made file transfer client closing more fault tolerant
 
 @Everybody
 * [NEW] Maintenance infrastructure for the services
@@ -71,7 +134,7 @@ INTERNAL 0.2.9 beta: "Kylie"
 0.2.8 beta: "Kyle"
 
 @Everybody:
-* [NEW] Explicitely nameable directories for SliceKinds
+* [NEW] Explicitly nameable directories for SliceKinds
 * [NEW] Configurable UNIX permissions for slice directories (per SliceKind)
 * [CHANGED] Much better and more verbose logging messages
 * [FIX] Small fix concerning string escaping of moni call XXX arguments
@@ -103,7 +166,7 @@ INTERNAL 0.2.9 beta: "Kylie"
 @Providers:
 * [NEW] Support for calling external scripts with XML-formatted properties (ExternalProviderStageIn)
 * [NEW] (Optional) cancel-scripts are now supported by ExternalProviderStageIn.  The cancel-script is called when staging has failed
-* [CHANGED] ExternalProviderStaging now logs either StdOut (succesful script execution) or StdOut+StdErr (failed script execution)
+* [CHANGED] ExternalProviderStaging now logs either StdOut (succesfull script execution) or StdOut+StdErr (failed script execution)
 * [CHANGED] Contract-type with support for absolute and relative (duration/offset) values for executionLikelyBefore and resultValidUntil
 * [CHANGED] Enhanced error reporting via container.log and hopefully more verbose RemoteExceptions
 * [CHANGED] Changed exit codes of estimation scripts to be more in line with UNIX conventions

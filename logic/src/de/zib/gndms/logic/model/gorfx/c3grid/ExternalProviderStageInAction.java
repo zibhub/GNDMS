@@ -23,6 +23,8 @@ import de.zib.gndms.logic.action.ProcessBuilderAction;
 import static de.zib.gndms.logic.model.gorfx.c3grid.ExternalProviderStageInQuoteCalculator.GLOBUS_DEATH_DURATION;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.gorfx.types.ProviderStageInOrder;
+import de.zib.gndms.model.gorfx.types.ProviderStageInResult;
+import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import de.zib.gndms.stuff.Sleeper;
@@ -69,6 +71,8 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
 	    if (procBuilder == null)
 	        fail(new IllegalStateException("No stagingCommand configured"));
 
+        procBuilder.environment().put( "X509_USER_PROXY", sliceDir + PROXY_FILE_NAME );
+
         final StringBuilder outRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
         final StringBuilder errRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
 
@@ -80,8 +84,8 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
         int result = action.call();
         switch (result) {
             case 0:
-                getLogger().debug( "Staging completed: " + outRecv.toString() );
-                /* unreachable: */
+                getLogger().debug("Staging completed: " + outRecv.toString());
+                transitWithPayload(new ProviderStageInResult(sliceParam.getId()), TaskState.FINISHED);
                 break;
             default:
                 if (result > 127) {
@@ -91,7 +95,7 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
                 String log = "Staging failed! Staging script returned unexpected exit code: " + result +
                         "\nScript output was:\n" + errRecv.toString();
 
-                trace( log, null ) ;
+                // trace( log, null ) ;
                 throw new IllegalStateException( log );
         }
     }

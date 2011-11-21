@@ -63,11 +63,11 @@ import java.util.Map;
  *
  * @brief A controller for a REST taskflow resource which implements the
  * TaskFlowService interface.
- * <p/>
+ *
  * The taskflow service acts as interface to instantiated taskflow
  * resources. The instantiation or creation happens through the GORFX
  * service itself.
- * <p/>
+ *
  * This implicates that all method invocation concern a single
  * taskflow, not the service as a whole.
  */
@@ -76,7 +76,7 @@ import java.util.Map;
 public class TaskFlowServiceImpl implements TaskFlowService {
 
     // private ORQDao orqDao;
-    private String serviceUrl; // inject or read from properties, this doesn't includes gorfx element
+    private String serviceUrl; // inject or read from properties, doesn't contain gorfx postfix
     private TaskFlowProvider taskFlowProvider;
     private final List<String> facetsNames = new ArrayList<String>( 7 );
     private UriFactory uriFactory;

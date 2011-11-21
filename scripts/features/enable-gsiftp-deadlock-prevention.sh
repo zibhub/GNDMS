@@ -1,9 +1,10 @@
 #!/bin/sh
 enable_gsiftpDeadlockPrevention() {
-moni call -v .sys.SetupDefaultConfiglet "\
+moni call -v .sys.SetupUpdatingConfiglet "\
   mode: '$MODE'; \
   name: 'nbcf'; \
   className: 'de.zib.gndms.kit.network.NonblockingClientFactoryConfiglet'; \
-  delay: '1000'; \
-  timeout: '10';"
+  delay: '2000'; \
+  timeout: '120'; \
+  buffersize: '2097152';"
   }
