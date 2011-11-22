@@ -97,11 +97,13 @@ public class Adis extends ABIi
                 {
                         log.warn( "More than one " + role + " endpoint registered!" );
                 }
+
+                // search first valid entry
                 for( Map.Entry< Key, Set< String > > entry: _result.entrySet() )
                 {
                         if( 0 == entry.getValue().size() )
                         {
-                                return null;
+                                continue;
                         }
                         if( 1 < entry.getValue().size() )
                         {
