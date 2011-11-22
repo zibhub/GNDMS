@@ -18,7 +18,7 @@ package de.zib.gndms.taskflows.filetransfer.server.network;
 
 
 
-import de.zib.gndms.kit.access.CredentialProvider;
+import de.zib.gndms.kit.security.CredentialProvider;
 import de.zib.gndms.stuff.misc.LogProvider;
 import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.exception.ClientException;
@@ -26,7 +26,6 @@ import org.globus.ftp.exception.ServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-import org.slf4j.NDC;
 
 import java.io.IOException;
 import java.util.Map;

@@ -18,9 +18,9 @@ package de.zib.gndms.taskflows.filetransfer.server.network;
 
 
 
+import de.zib.gndms.kit.security.CredentialProvider;
 import de.zib.gndms.stuff.threading.DV;
 import de.zib.gndms.stuff.threading.QueuedExecutor;
-import de.zib.gndms.kit.access.CredentialProvider;
 import de.zib.gndms.stuff.threading.TimedForkable;
 import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.exception.ServerException;

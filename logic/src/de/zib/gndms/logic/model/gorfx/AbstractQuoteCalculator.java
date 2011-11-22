@@ -19,8 +19,8 @@ package de.zib.gndms.logic.model.gorfx;
 
 import de.zib.gndms.common.model.gorfx.types.Order;
 import de.zib.gndms.common.model.gorfx.types.Quote;
-import de.zib.gndms.kit.access.CredentialProvider;
-import de.zib.gndms.kit.access.RequiresCredentialProvider;
+import de.zib.gndms.kit.security.CredentialProvider;
+import de.zib.gndms.kit.security.RequiresCredentialProvider;
 import de.zib.gndms.kit.configlet.ConfigletProvider;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.neomodel.common.Dao;

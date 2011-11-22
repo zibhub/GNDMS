@@ -57,7 +57,7 @@ public abstract class AbstractTaskFlowExecClient {
         String wid = UUID.randomUUID().toString();
 
         // sends the order and creates the task flow
-        ResponseEntity<Specifier<Facets>> res = gorfxClient.createTaskFlow( order.getTaskFlowType(), order, dn, wid );
+        ResponseEntity<Specifier<Facets>> res = gorfxClient.createTaskFlow( order.getTaskFlowType(), order, dn, wid, new HashMap<String, String>( 0 ) );
 
         if(! HttpStatus.CREATED.equals( res.getStatusCode() ) )
             throw new RuntimeException( "createTaskFlow failed " + res.getStatusCode().name() );

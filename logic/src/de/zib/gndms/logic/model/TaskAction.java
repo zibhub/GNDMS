@@ -18,8 +18,8 @@ package de.zib.gndms.logic.model;
 
 
 
-import de.zib.gndms.kit.access.RequiresCredentialProvider;
-import de.zib.gndms.kit.access.CredentialProvider;
+import de.zib.gndms.kit.security.RequiresCredentialProvider;
+import de.zib.gndms.kit.security.CredentialProvider;
 import de.zib.gndms.kit.configlet.ConfigletProvider;
 import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.logic.model.gorfx.LifetimeExceededException;

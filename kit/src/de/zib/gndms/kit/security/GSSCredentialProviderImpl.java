@@ -1,4 +1,4 @@
-package de.zib.gndms.gritserv.util;
+package de.zib.gndms.kit.security;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -23,15 +23,12 @@ import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
 import org.slf4j.Logger;
 import org.globus.ftp.GridFTPClient;
-import org.globus.gsi.GlobusCredential;
-import org.globus.gsi.gssapi.GlobusGSSCredentialImpl;
 import org.gridforum.jgss.ExtendedGSSCredential;
 import org.ietf.jgss.GSSCredential;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.HashMap;
 
 /**
@@ -40,7 +37,7 @@ import java.util.HashMap;
  *          <p/>
  *          User: mjorra, Date: 18.06.2010, Time: 10:43:34
  */
-public class GlobusCredentialProviderImpl extends GlobusCredentialProvider {
+public class GSSCredentialProviderImpl extends GSSCredentialProvider {
 
     private static java.util.HashMap<String, CredentialInstaller> installers;
     private String key;
@@ -58,11 +55,11 @@ public class GlobusCredentialProviderImpl extends GlobusCredentialProvider {
     }
 
 
-    public GlobusCredentialProviderImpl() {
+    public GSSCredentialProviderImpl() {
     }
 
 
-    public GlobusCredentialProviderImpl( String tgt, GlobusCredential cred ) {
+    public GSSCredentialProviderImpl( String tgt, GSSCredential cred ) {
         setCredential( cred );
         key = tgt;
     }
@@ -90,14 +87,14 @@ public class GlobusCredentialProviderImpl extends GlobusCredentialProvider {
 
 
     public interface CredentialInstaller {
-        public void installCredentials( Object o, GlobusCredential cred  );
+        public void installCredentials( Object o, GSSCredential cred  );
     }
 
     static class GridFTPCredentialInstaller implements CredentialInstaller {
-        public void installCredentials( Object o, GlobusCredential cred ) {
+        public void installCredentials( Object o, GSSCredential cred ) {
             GridFTPClient cnt = GridFTPClient.class.cast( o );
             try {
-                cnt.authenticate(  new GlobusGSSCredentialImpl( cred, GSSCredential.INITIATE_AND_ACCEPT ) );
+                cnt.authenticate( cred );
             } catch ( Exception e ) {
                 throw new RuntimeException( e );
             }
@@ -110,14 +107,13 @@ public class GlobusCredentialProviderImpl extends GlobusCredentialProvider {
         private Logger logger = LoggerFactory.getLogger( this.getClass() );
         private DirectoryAux directoryAux = GNDMSBinding.getInjector().getInstance( DirectoryAux.class );
 
-        public void installCredentials( Object o, GlobusCredential cred ) {
+        public void installCredentials( Object o, GSSCredential cred ) {
 
             File destFile = File.class.cast( o );
             FileOutputStream fos = null;
             try {
                 fos = new FileOutputStream( destFile );
-                GlobusGSSCredentialImpl crd = new GlobusGSSCredentialImpl( cred, GSSCredential.INITIATE_AND_ACCEPT );
-                fos.write( crd.export( ExtendedGSSCredential.IMPEXP_OPAQUE ) );
+                fos.write( ( ( ExtendedGSSCredential ) cred ).export( ExtendedGSSCredential.IMPEXP_OPAQUE ) );
                 fos.close();
                 int ret = directoryAux.chmod( 0600, destFile );
                 if( ret != 0 )

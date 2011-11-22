@@ -19,7 +19,7 @@ package de.zib.gndms.logic.model.gorfx;
 
 
 import de.zib.gndms.common.model.gorfx.types.AbstractOrder;
-import de.zib.gndms.kit.access.CredentialProvider;
+import de.zib.gndms.kit.security.CredentialProvider;
 import de.zib.gndms.logic.model.DefaultTaskAction;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;

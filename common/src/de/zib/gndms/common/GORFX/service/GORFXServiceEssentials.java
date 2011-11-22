@@ -23,6 +23,7 @@ import de.zib.gndms.common.rest.Specifier;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author try ma ik jo rr a zib
@@ -80,11 +81,13 @@ public interface GORFXServiceEssentials {
     /**
      * Instantiates  a taskflow.
      *
+     *
      * @param type Type name of the taskflow.
      * @param order The order consists parameters for the taskflow.
      * @param dn The dn of the user invoking the method.
      * @param wid The workflow id.
+     * @param context
      * @return The specifier of the newly created task, with HTTPStatus created.
      */
-    ResponseEntity<Specifier<Facets>> createTaskFlow( String type, Order order, String dn, String wid );
+    ResponseEntity<Specifier<Facets>> createTaskFlow( String type, Order order, String dn, String wid, Map<String, String> context );
 }

@@ -1,4 +1,4 @@
-package de.zib.gndms.kit.access;
+package de.zib.gndms.kit.security;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)

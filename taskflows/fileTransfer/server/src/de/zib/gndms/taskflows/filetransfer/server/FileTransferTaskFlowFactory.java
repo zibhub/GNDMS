@@ -24,6 +24,8 @@ import de.zib.gndms.neomodel.gorfx.TaskFlow;
 import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferOrder;
 import de.zib.gndms.taskflows.filetransfer.server.logic.FileTransferQuoteCalculator;
 
+import java.util.Map;
+
 
 /**
  * ThingAMagic.
@@ -58,6 +60,12 @@ public class FileTransferTaskFlowFactory
     @Override
     protected TaskFlow<FileTransferOrder> prepare( TaskFlow<FileTransferOrder> fileTransferOrderTaskFlow ) {
         return fileTransferOrderTaskFlow;
+    }
+
+
+    @Override
+    protected Map<String, String> getDefaultConfig() {
+        return null;  // not required here
     }
 
 

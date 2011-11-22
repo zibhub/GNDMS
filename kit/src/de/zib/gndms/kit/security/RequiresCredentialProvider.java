@@ -1,4 +1,4 @@
-package de.zib.gndms.kit.access;
+package de.zib.gndms.kit.security;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -17,6 +17,7 @@ package de.zib.gndms.kit.access;
  */
 
 
+import de.zib.gndms.kit.security.CredentialProvider;
 
 /**
  * @author  try ma ik jo rr a zib

@@ -27,9 +27,9 @@ import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.gndmc.gorfx.TaskFlowClient;
-import de.zib.gndms.infra.legacy.LegacyConfigActionProvider;
-import de.zib.gndms.infra.legacy.SettableConfigMeta;
-import de.zib.gndms.logic.action.Action;
+import de.zib.gndms.kit.access.MyProxyProvider;
+import de.zib.gndms.kit.access.MyProxyProviderProvider;
+import de.zib.gndms.kit.security.MyProxyCredentialProvider;
 import de.zib.gndms.logic.action.ActionProvider;
 import de.zib.gndms.logic.action.NoSuchActionException;
 import de.zib.gndms.logic.model.config.ConfigActionProvider;
@@ -45,9 +45,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -70,6 +72,7 @@ public class GORFXServiceImpl implements GORFXService {
     private TaskFlowClient taskFlowClient;
     private UriFactory uriFactory;
     private ConfigActionProvider configActionProvider;
+    private MyProxyProviderProvider myProxyProviderProvider;
 
 
     @PostConstruct
@@ -231,14 +234,22 @@ public class GORFXServiceImpl implements GORFXService {
 
     @RequestMapping( value = "/_{type}", method = RequestMethod.POST )
     public ResponseEntity<Specifier<Facets>> createTaskFlow( @PathVariable String type, @RequestBody Order order,
-                                                  @RequestHeader( "DN" ) String dn,
-                                                  @RequestHeader( "WId" ) String wid ) {
+                                                             @RequestHeader( "DN" ) String dn,
+                                                             @RequestHeader( "WId" ) String wid,
+                                                             @RequestHeader Map<String, String> context ) {
 
         GNDMSResponseHeader headers = new GNDMSResponseHeader(
             gorfxFacets.findFacet( "taskflows" ).getUrl(), null, baseUrl + "/gorfx/", dn, wid );
 
         if(! taskFlowProvider.exists( type  ) )
             return new ResponseEntity<Specifier<Facets>>( null, headers, HttpStatus.NOT_FOUND );
+
+        if( context.containsKey( "c3pass" ) ) {
+            MyProxyProvider provider = myProxyProviderProvider.getProvider( "c3grid" );
+            MyProxyCredentialProvider credentialProvider = new MyProxyCredentialProvider( provider );
+            // todo set this to the taskflow better as list
+            // todo let getProvider throw exception if provider doesn't exist
+        }
 
         TaskFlowFactory tff = taskFlowProvider.getFactoryForTaskFlow( type );
         TaskFlow tf = tff.create();
@@ -282,22 +293,33 @@ public class GORFXServiceImpl implements GORFXService {
     }
 
 
-    @Autowired
+    @Inject
     public void setConfigProvider( ConfigActionProvider configProvider ) {
         this.configProvider = configProvider;
     }
 
 
-    @Autowired
+    @Inject
     public void setTaskFlowProvider( TaskFlowProvider taskFlowProvider ) {
         logger.debug( "Taskflow provider injected: " + taskFlowProvider.getClass().getName() );
         this.taskFlowProvider = taskFlowProvider;
     }
 
 
-    @Autowired
+    @Inject
     public void setTaskFlowClient( TaskFlowClient taskFlowClient ) {
         this.taskFlowClient = taskFlowClient;
+    }
+
+
+    public MyProxyProviderProvider getMyProxyProviderProvider() {
+        return myProxyProviderProvider;
+    }
+
+
+    @Inject
+    public void setMyProxyProviderProvider( MyProxyProviderProvider myProxyProviderProvider ) {
+        this.myProxyProviderProvider = myProxyProviderProvider;
     }
 }
 

@@ -55,6 +55,30 @@
 
     <bean id="taskFlowProvider" class="de.zib.gndms.infra.system.PlugableTaskFlowProvider"/>
 
+    <!-- #################################################################################################### -->
+    <!-- myproxy setup -->
+    <bean id="myproxyProviderProvider" class="de.zib.gndms.kit.access.MyProxyProviderProvider" factory-method="fromList">
+            <constructor-arg name="providers" >
+                <list>
+                    <ref bean="defaultMyProxyProvider"/>
+                </list>
+
+            </constructor-arg>
+    </bean>
+
+    <bean id="defaultMyProxyProvider" class="de.zib.gndms.kit.access.MyProxyProvider">
+        <constructor-arg name="nickname" value="c3grid"/>
+        <property name="myProxyServer" value="localhost"/>
+        <property name="port" value="7512"/>
+        <property name="noPasswd" value="false"/>
+        <!-- this is just an example for credentialHolder usage -->
+        <property name="connectionCredentialHolder">
+           <bean class="de.zib.gndms.kit.access.HostCredentialHolder" >
+                   <constructor-arg name="base" value="/etc/grid-security"/>
+           </bean>
+        </property>
+    </bean>
+
 
 
     <!-- #################################################################################################### -->
@@ -94,7 +118,5 @@
             <bean class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver"/>
         </property>
     </bean>
-
-
 
 </beans>

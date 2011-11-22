@@ -112,7 +112,7 @@ public class GORFXClientMain extends AbstractApplication {
 		System.out.println("Taskflow type " + type + " exists");
 
 		System.out.println("Step 3: creating task flow");
-		ResponseEntity<Specifier<Facets>> res2 = gorfxClient.createTaskFlow( type, order, dn, wid );
+		ResponseEntity<Specifier<Facets>> res2 = gorfxClient.createTaskFlow( type, order, dn, wid, new HashMap<String, String>( 0 ) );
 		
 		// optionally: change order, select quote?
 		

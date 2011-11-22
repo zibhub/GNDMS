@@ -1,4 +1,4 @@
-package de.zib.gndms.gritserv.util;
+package de.zib.gndms.kit.security;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -18,8 +18,8 @@ package de.zib.gndms.gritserv.util;
 
 
 
-import de.zib.gndms.kit.access.CredentialProvider;
-import org.globus.gsi.GlobusCredential;
+import de.zib.gndms.kit.security.CredentialProvider;
+import org.ietf.jgss.GSSCredential;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -30,22 +30,22 @@ import java.util.ArrayList;
  *          <p/>
  *          User: mjorra, Date: 18.06.2010, Time: 10:42:22
  */
-public abstract class GlobusCredentialProvider implements CredentialProvider<GlobusCredential> {
+public abstract class GSSCredentialProvider implements CredentialProvider<GSSCredential> {
 
-    private GlobusCredential credential;
+    private GSSCredential credential;
 
 
-    public GlobusCredential getCredential() {
+    public GSSCredential getCredential() {
         return credential;
     }
 
 
-    public void setCredential( GlobusCredential credential ) {
+    public void setCredential( GSSCredential credential ) {
         this.credential = credential;
     }
 
 
-    public List getCredentials() {
-        return new ArrayList<GlobusCredential>() {{ add( getCredential() ); }};
+    public List<GSSCredential> getCredentials() {
+        return new ArrayList<GSSCredential>( 0 ) {{ add( getCredential() ); }};
     }
 }
