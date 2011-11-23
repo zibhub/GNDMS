@@ -15,9 +15,14 @@ package de.zib.gndms.common.rest;
  * limitations under the License.
  */
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpHeaders;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author try ma ik jo rr a zib
@@ -27,9 +32,11 @@ import java.util.List;
  *
  * @brief A class for the generic Http response-header specified for GNDMS.
  */
-// TODO: Does that really make sense, that all the fields may occur multiple times (since this is a list ...)?
-
 public class GNDMSResponseHeader extends HttpHeaders {
+
+    public final static String MY_PROXY_TOKEN_PREFIX = "myproxytoken-";
+    public final static String MY_PROXY_LOGIN_PREFIX = MY_PROXY_TOKEN_PREFIX + "-login-";
+    public final static String MY_PROXY_PASSWORD_PREFIX = MY_PROXY_TOKEN_PREFIX + "-passwd-";
 
 	/**
 	 * The key for a resource url.
@@ -107,10 +114,7 @@ public class GNDMSResponseHeader extends HttpHeaders {
      * @param resourceURL The resource url.
      */
     public final void setResourceURL( final String resourceURL ) {
-        if (this.containsKey(RESOURCE_URL)) {
-        	this.remove(RESOURCE_URL);
-        }
-    	this.add(RESOURCE_URL, resourceURL );
+        setOnce( RESOURCE_URL, resourceURL );
     }
 
     /**
@@ -126,10 +130,7 @@ public class GNDMSResponseHeader extends HttpHeaders {
      * @param facetURL The facet url.
      */
     public final void setFacetURL( final String facetURL ) {
-        if (this.containsKey(FACET_URL)) {
-        	this.remove(FACET_URL);
-        }
-        this.add( FACET_URL, facetURL );
+        setOnce( FACET_URL, facetURL );
     }
 
     /**
@@ -145,10 +146,7 @@ public class GNDMSResponseHeader extends HttpHeaders {
      * @param parentURL The parent url.
      */
     public final void setParentURL( final String parentURL ) {
-        if (this.containsKey(PARENT_URL)) {
-        	this.remove(PARENT_URL);
-        }
-        this.add( PARENT_URL, parentURL );
+        setOnce( PARENT_URL, parentURL );
     }
 
     /**
@@ -164,11 +162,17 @@ public class GNDMSResponseHeader extends HttpHeaders {
      * @param dn The dn.
      */
     public final void setDN( final String dn ) {
-        if (this.containsKey(DN)) {
-        	this.remove(DN);
-        }
-        this.add( DN, dn );
+        setOnce( DN, dn );
     }
+
+
+    private void setOnce( String key, String val ) {
+        if (this.containsKey(key)) {
+        	this.remove(key);
+        }
+        this.add( key, val );
+    }
+
 
     /**
      * Returns the wid.
@@ -183,9 +187,50 @@ public class GNDMSResponseHeader extends HttpHeaders {
      * @param wid The wid.
      */
     public final void setWId( final String wid ) {
-        if (this.containsKey(WID)) {
-        	this.remove(WID);
+        setOnce( WID, wid );
+    }
+
+
+    /**
+     * Adds a MyProxy access token to the request header.
+     *
+     * @param purpose A keyword describing what this token is required for, e.g. C3GRID or ESGF...
+     * @param login The login string for the MyProxy server.
+     * @param passwd A password for the MyProxy server, might be omitted for passwordless access.
+     */
+    public final void addMyProxyToken( @NotNull String purpose, @NotNull String login, String passwd ) {
+
+        if( login.trim().equals( "" ) )
+            throw new IllegalArgumentException( "login must not be empty" );
+
+        StringBuilder key = new StringBuilder( MY_PROXY_LOGIN_PREFIX ).append( purpose );
+        setOnce( key.toString(), login );
+
+        if( passwd != null ) {
+            key = new StringBuilder( MY_PROXY_PASSWORD_PREFIX ).append( purpose );
+            setOnce( key.toString(), passwd );
         }
-        this.add( WID, wid );
+    }
+
+    public final void addMyProxyToken( @NotNull CertificatePurpose purpose, @NotNull String login, String passwd ) {
+        addMyProxyToken( purpose.toString(), login, passwd );
+    }
+
+
+    public final Map<String,List<String>> getMyProxyToken( ) {
+
+        Map<String,List<String>> result = new HashMap<String, List<String>>( 1 );
+        for( String s : keySet() ) {
+            if ( s.startsWith( MY_PROXY_LOGIN_PREFIX ) ) {
+                String purpose = s.substring( MY_PROXY_LOGIN_PREFIX.length(), s.length() );
+                List<String> token = new ArrayList<String>( 2 );
+                token.add( get( s ).get( 0 ) );
+                if( containsKey( MY_PROXY_PASSWORD_PREFIX + purpose ) )
+                    token.add(  get( MY_PROXY_PASSWORD_PREFIX + purpose ).get( 0 ) );
+
+                result.put( purpose, Collections.unmodifiableList( token ) );
+            }
+        }
+        return Collections.unmodifiableMap( result );
     }
 }

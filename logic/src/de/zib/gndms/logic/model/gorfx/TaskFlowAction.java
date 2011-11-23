@@ -45,7 +45,6 @@ import java.util.Map;
 public abstract class TaskFlowAction<K extends AbstractOrder> extends DefaultTaskAction {
 
     private String offerTypeId;
-    private CredentialProvider credentialProvider;
     private DelegatingOrder<K> order;
 
 
@@ -99,16 +98,6 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends DefaultTas
 
     public void setOfferTypeId(@NotNull final String keyParam) {
         offerTypeId = keyParam;
-    }
-
-
-    public CredentialProvider getCredentialProvider() {
-        return credentialProvider;
-    }
-
-
-    public void setCredentialProvider( CredentialProvider credentialProvider ) {
-        this.credentialProvider = credentialProvider;
     }
 
 

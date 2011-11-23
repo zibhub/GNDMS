@@ -17,6 +17,7 @@ package de.zib.gndms.common.rest;
  */
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpHeaders;
 import org.testng.AssertJUnit;
@@ -96,7 +97,53 @@ public class GNDMSResponseHeaderTest {
 		AssertJUnit.assertEquals(1, respHeader.getWId().size());
 		list = respHeader.getWId();
 		AssertJUnit.assertTrue(list.contains(wid2));
-}
+    }
+
+
+     @Test
+    public final void testNormalMyProxyToken() {
+
+         GNDMSResponseHeader head = new GNDMSResponseHeader(  );
+         head.addMyProxyToken( "bar", "gibson", "lesPaul" );
+         head.addMyProxyToken( "foo", "hello", "world" );
+         head.addMyProxyToken( "baz", "ibanez", null );
+         head.addMyProxyToken( "foo", "fender", "strat" );
+
+         Map<String, List<String>> myProxyToken = head.getMyProxyToken();
+         AssertJUnit.assertEquals( myProxyToken.size(), 3 );
+
+         AssertJUnit.assertTrue( myProxyToken.containsKey( "bar" ) );
+         List<String> barVal = myProxyToken.get( "bar" );
+         AssertJUnit.assertEquals( barVal.size(), 2 );
+         AssertJUnit.assertEquals( barVal.get(0), "gibson" );
+         AssertJUnit.assertEquals( barVal.get(1), "lesPaul" );
+
+         AssertJUnit.assertTrue( myProxyToken.containsKey( "baz" ) );
+         List<String> bazVal = myProxyToken.get( "baz" );
+         AssertJUnit.assertEquals( bazVal.size(), 1 );
+         AssertJUnit.assertEquals( bazVal.get(0), "ibanez" );
+
+         AssertJUnit.assertTrue( myProxyToken.containsKey( "foo" ) );
+         List<String> fooVal = myProxyToken.get( "foo" );
+         AssertJUnit.assertEquals( fooVal.size(), 2 );
+         AssertJUnit.assertEquals( fooVal.get(0), "fender" );
+         AssertJUnit.assertEquals( fooVal.get(1), "strat" );
+    }
+
+
+    @Test
+    public final void testEmptyMyProxyToken() {
+        GNDMSResponseHeader head = new GNDMSResponseHeader(  );
+        Map<String, List<String>> myProxyToken = head.getMyProxyToken();
+        AssertJUnit.assertEquals( myProxyToken.size(), 0 );
+    }
+
+    @Test( expectedExceptions = IllegalArgumentException.class )
+    public final void testExcMyProxyToken() {
+        GNDMSResponseHeader head = new GNDMSResponseHeader(  );
+        head.addMyProxyToken( "bar", "   ", "" );
+    }
+
 	/**
 	 * Tests the constructors.
 	 */

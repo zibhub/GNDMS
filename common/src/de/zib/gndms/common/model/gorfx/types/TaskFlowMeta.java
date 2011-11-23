@@ -15,6 +15,8 @@ package de.zib.gndms.common.model.gorfx.types;
  * limitations under the License.
  */
 
+import java.util.List;
+
 /**
  * @author try ma ik jo rr a zib
  * @date 14.02.11  14:23
@@ -25,5 +27,6 @@ package de.zib.gndms.common.model.gorfx.types;
 public interface TaskFlowMeta {
 
     String getDescription();
+    List<String> requiredAuthorization( );
 
 }

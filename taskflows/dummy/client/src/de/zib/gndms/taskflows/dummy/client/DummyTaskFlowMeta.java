@@ -18,6 +18,10 @@ package de.zib.gndms.taskflows.dummy.client;
 
 
 import de.zib.gndms.common.model.gorfx.types.TaskFlowMeta;
+import de.zib.gndms.common.rest.CertificatePurpose;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author try ma ik jo rr a zib
@@ -28,6 +32,7 @@ import de.zib.gndms.common.model.gorfx.types.TaskFlowMeta;
 public class DummyTaskFlowMeta implements TaskFlowMeta {
 
     public final static String TASK_FLOW_KEY ="DummyTaskFlow";
+    public final static List<String> REQUIRED_AUTHORIZATION = Collections.singletonList( CertificatePurpose.NONE.toString() );
 
     private String description;
 
@@ -39,6 +44,12 @@ public class DummyTaskFlowMeta implements TaskFlowMeta {
 
     public String getDescription() {
         return description;
+    }
+
+
+    @Override
+    public List<String> requiredAuthorization() {
+        return REQUIRED_AUTHORIZATION;
     }
 
 

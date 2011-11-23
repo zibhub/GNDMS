@@ -21,7 +21,6 @@ package de.zib.gndms.logic.model.gorfx.c3grid;
 import de.zib.gndms.kit.config.ConfigProvider;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.config.MapConfig;
-import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.logic.model.dspace.ChownSliceConfiglet;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
