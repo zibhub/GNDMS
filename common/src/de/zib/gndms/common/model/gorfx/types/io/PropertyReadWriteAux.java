@@ -19,7 +19,7 @@ package de.zib.gndms.common.model.gorfx.types.io;
 
 
 import de.zib.gndms.common.model.gorfx.types.FutureTime;
-import de.zib.gndms.model.gorfx.types.MinMaxPair;
+import de.zib.gndms.common.model.gorfx.types.MinMaxPair;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;

@@ -26,35 +26,35 @@ import java.util.Map;
  * @date 22.11.11  18:43
  * @brief Provides MyProxyProviders.
  */
-public class MyProxyProviderProvider {
+public class MyProxyFactoryProvider {
 
-    private Map<String, MyProxyProvider> providers;
+    private Map<String, MyProxyFactory> factories;
 
 
-    public Map<String, MyProxyProvider> getProviders() {
-        return providers;
+    public Map<String, MyProxyFactory> getFactories( ) {
+        return factories;
     }
 
 
-    public void setProviders( Map<String, MyProxyProvider> providers ) {
-        this.providers = providers;
+    public void setFactories( Map<String, MyProxyFactory> factories ) {
+        this.factories = factories;
     }
 
 
-    public static MyProxyProviderProvider fromList( List <MyProxyProvider> providers ) {
-        MyProxyProviderProvider providerProvider = new MyProxyProviderProvider();
-        HashMap<String, MyProxyProvider> providerMap = new HashMap<String, MyProxyProvider>( providers.size() );
+    public static MyProxyFactoryProvider fromList( List <MyProxyFactory> factories ) {
+        MyProxyFactoryProvider factoryProvider = new MyProxyFactoryProvider();
+        HashMap<String, MyProxyFactory> providerMap = new HashMap<String, MyProxyFactory>( factories.size() );
 
-        for( MyProxyProvider mpp : providers )
+        for( MyProxyFactory mpp : factories )
             providerMap.put( mpp.getNickname(), mpp );
 
-        providerProvider.setProviders( providerMap );
+        factoryProvider.setFactories( providerMap );
 
-        return providerProvider;
+        return factoryProvider;
     }
 
 
-    public MyProxyProvider getProvider( String c3grid ) {
-        return providers.get( c3grid );
+    public MyProxyFactory getFactory( String factoryPurpose ) {
+        return factories.get( factoryPurpose );
     }
 }
