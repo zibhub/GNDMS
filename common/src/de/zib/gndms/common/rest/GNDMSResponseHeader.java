@@ -212,23 +212,23 @@ public class GNDMSResponseHeader extends HttpHeaders {
         }
     }
 
-    public final void addMyProxyToken( @NotNull CertificatePurpose purpose, @NotNull String login, String passwd ) {
-        addMyProxyToken( purpose.toString(), login, passwd );
+
+    public final void addMyProxyToken( @NotNull String purpose, @NotNull MyProxyToken token ) {
+        addMyProxyToken( purpose, token.getLogin(), token.getPassword() );
     }
+  
+    
+    public final Map<String, MyProxyToken> getMyProxyToken( ) {
 
-
-    public final Map<String,List<String>> getMyProxyToken( ) {
-
-        Map<String,List<String>> result = new HashMap<String, List<String>>( 1 );
+        Map<String, MyProxyToken> result = new HashMap<String, MyProxyToken>( 1 );
         for( String s : keySet() ) {
             if ( s.startsWith( MY_PROXY_LOGIN_PREFIX ) ) {
                 String purpose = s.substring( MY_PROXY_LOGIN_PREFIX.length(), s.length() );
-                List<String> token = new ArrayList<String>( 2 );
-                token.add( get( s ).get( 0 ) );
+                MyProxyToken token = new MyProxyToken( get( s ).get( 0 ) );
                 if( containsKey( MY_PROXY_PASSWORD_PREFIX + purpose ) )
-                    token.add(  get( MY_PROXY_PASSWORD_PREFIX + purpose ).get( 0 ) );
+                    token.setPassword( get( MY_PROXY_PASSWORD_PREFIX + purpose ).get( 0 ) );
 
-                result.put( purpose, Collections.unmodifiableList( token ) );
+                result.put( purpose, token );
             }
         }
         return Collections.unmodifiableMap( result );

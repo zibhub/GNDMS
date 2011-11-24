@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class DummyTaskFlowMeta implements TaskFlowMeta {
 
-    public final static String TASK_FLOW_KEY ="DummyTaskFlow";
+    public final static String TASK_FLOW_TYPE_KEY ="DummyTaskFlow";
     public final static List<String> REQUIRED_AUTHORIZATION = Collections.singletonList( CertificatePurpose.NONE.toString() );
 
     private String description;

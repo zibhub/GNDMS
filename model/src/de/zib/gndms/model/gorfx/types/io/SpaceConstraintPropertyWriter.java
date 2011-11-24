@@ -18,7 +18,9 @@ package de.zib.gndms.model.gorfx.types.io;
 
 
 
-import de.zib.gndms.model.gorfx.types.MinMaxPair;
+import de.zib.gndms.common.model.gorfx.types.MinMaxPair;
+import de.zib.gndms.common.model.gorfx.types.io.AbstractPropertyIO;
+import de.zib.gndms.common.model.gorfx.types.io.SfrProperty;
 
 import java.util.Properties;
 

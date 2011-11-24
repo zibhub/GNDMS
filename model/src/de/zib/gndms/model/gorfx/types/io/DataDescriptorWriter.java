@@ -18,10 +18,8 @@ package de.zib.gndms.model.gorfx.types.io;
 
 
 
-import de.zib.gndms.model.gorfx.types.SpaceConstraint;
-import de.zib.gndms.model.gorfx.types.TimeConstraint;
+import de.zib.gndms.common.model.gorfx.types.io.GORFXWriterBase;
 
-import java.util.HashMap;
 import java.util.List;
 
 /**

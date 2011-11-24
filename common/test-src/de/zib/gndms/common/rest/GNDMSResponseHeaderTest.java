@@ -109,22 +109,22 @@ public class GNDMSResponseHeaderTest {
          head.addMyProxyToken( "baz", "ibanez", null );
          head.addMyProxyToken( "foo", "fender", "strat" );
 
-         Map<String, List<String>> myProxyToken = head.getMyProxyToken();
+         Map<String, MyProxyToken> myProxyToken = head.getMyProxyToken( );
          AssertJUnit.assertEquals( myProxyToken.size(), 3 );
 
          AssertJUnit.assertTrue( myProxyToken.containsKey( "bar" ) );
-         List<String> barVal = myProxyToken.get( "bar" );
+         MyProxyToken barVal = myProxyToken.get( "bar" );
          AssertJUnit.assertEquals( barVal.size(), 2 );
          AssertJUnit.assertEquals( barVal.get(0), "gibson" );
          AssertJUnit.assertEquals( barVal.get(1), "lesPaul" );
 
          AssertJUnit.assertTrue( myProxyToken.containsKey( "baz" ) );
-         List<String> bazVal = myProxyToken.get( "baz" );
+         MyProxyToken bazVal = myProxyToken.get( "baz" );
          AssertJUnit.assertEquals( bazVal.size(), 1 );
          AssertJUnit.assertEquals( bazVal.get(0), "ibanez" );
 
          AssertJUnit.assertTrue( myProxyToken.containsKey( "foo" ) );
-         List<String> fooVal = myProxyToken.get( "foo" );
+         MyProxyToken fooVal = myProxyToken.get( "foo" );
          AssertJUnit.assertEquals( fooVal.size(), 2 );
          AssertJUnit.assertEquals( fooVal.get(0), "fender" );
          AssertJUnit.assertEquals( fooVal.get(1), "strat" );
@@ -134,7 +134,7 @@ public class GNDMSResponseHeaderTest {
     @Test
     public final void testEmptyMyProxyToken() {
         GNDMSResponseHeader head = new GNDMSResponseHeader(  );
-        Map<String, List<String>> myProxyToken = head.getMyProxyToken();
+        Map<String, MyProxyToken> myProxyToken = head.getMyProxyToken( );
         AssertJUnit.assertEquals( myProxyToken.size(), 0 );
     }
 

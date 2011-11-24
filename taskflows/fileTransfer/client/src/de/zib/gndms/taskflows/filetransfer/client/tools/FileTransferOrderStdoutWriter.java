@@ -18,7 +18,7 @@ package de.zib.gndms.taskflows.filetransfer.client.tools;
 
 
 
-import de.zib.gndms.model.gorfx.types.io.OrderStdoutWriter;
+import de.zib.gndms.common.model.gorfx.types.io.OrderStdoutWriter;
 
 import java.util.Map;
 

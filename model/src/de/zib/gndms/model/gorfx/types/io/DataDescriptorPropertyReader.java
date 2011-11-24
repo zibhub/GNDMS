@@ -18,6 +18,9 @@ package de.zib.gndms.model.gorfx.types.io;
 
 
 
+import de.zib.gndms.common.model.gorfx.types.io.AbstractPropertyReader;
+import de.zib.gndms.common.model.gorfx.types.io.PropertyReadWriteAux;
+import de.zib.gndms.common.model.gorfx.types.io.SfrProperty;
 import de.zib.gndms.model.gorfx.types.DataDescriptor;
 
 import java.util.Properties;
@@ -51,7 +54,7 @@ public class DataDescriptorPropertyReader extends AbstractPropertyReader<DataDes
     public void read( ) {
 
         getProduct( ).setObjectList(
-            PropertyReadWriteAux.readListMultiLine( getProperties(), SfrProperty.OBJECT_ITEMS.key ) );
+            PropertyReadWriteAux.readListMultiLine( getProperties( ), SfrProperty.OBJECT_ITEMS.key ) );
 
         if(! getProperties().containsKey( SfrProperty.JUST_DOWNLOAD.key ) )
             getProduct().setConstrains( DataConstraintsPropertyReader.readDataConstraints( getProperties() ) );

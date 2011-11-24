@@ -19,7 +19,6 @@ package de.zib.gndms.logic.model.gorfx;
 
 
 import de.zib.gndms.common.model.gorfx.types.AbstractOrder;
-import de.zib.gndms.kit.security.CredentialProvider;
 import de.zib.gndms.logic.model.DefaultTaskAction;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;
@@ -69,7 +68,7 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends DefaultTas
                 final Task task = getModel().getTask(session);
                 task.setTaskFlowType( ot );
                 task.setWID(wid);
-                setOrder( (DelegatingOrder) task.getORQ() );
+                setOrder( (DelegatingOrder) task.getOrder( ) );
                 session.success();
             }
             finally { session.finish(); }
@@ -128,7 +127,7 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends DefaultTas
     }
 
 
-    public abstract Class<K> getORQClass();
+    public abstract Class<K> getOrderBeanClass( );
 
     protected void failFrom( Exception e ) {
     	new IllegalStateException( getFailString( e ), e );

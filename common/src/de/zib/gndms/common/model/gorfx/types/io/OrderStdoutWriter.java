@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types.io;
+package de.zib.gndms.common.model.gorfx.types.io;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -18,49 +18,43 @@ package de.zib.gndms.model.gorfx.types.io;
 
 
 
-import org.jetbrains.annotations.NotNull;
+import de.zib.gndms.common.model.gorfx.types.io.OrderWriter;
 
 import java.util.Map;
-import java.util.Properties;
+import java.util.Set;
 
 /**
- * Writes an ORQ as a Properties instance.
+ * Writes an ORQ to Stdout.
  * It should be used in conjunction with an OrderConverter.
  *
- * @see OrderConverter
+ *
+ * @see de.zib.gndms.common.model.gorfx.types.io.OrderConverter
  * @author  try ma ik jo rr a zib
  * @version  $Id$
  * <p/>
- * User: mjorra, Date: 25.09.2008, Time: 17:23:58
+ * User: mjorra, Date: 25.09.2008, Time: 17:57:12
  */
-public abstract class OrderPropertyWriter extends AbstractPropertyIO implements OrderWriter {
-
-    protected OrderPropertyWriter() {
-    }
-
-
-    protected OrderPropertyWriter( Properties properties ) {
-        super( properties );
-    }
-
+public abstract class OrderStdoutWriter implements OrderWriter {
 
     public void writeJustEstimate( boolean je ) {
-
-        getProperties( ).setProperty( SfrProperty.JUST_ASK.key, Boolean.toString( je ) );
+        System.out.println( "Just estimate: " + Boolean.toString( je ) );
     }
 
 
-    public void read() {
-        
+    public void writeContext( Map<String, String> ctx ) {
+        System.out.println( "Context" );
+        showMap( ctx );
     }
 
 
-    public void writeContext( @NotNull Map<String, String> ctx ) {
-        PropertyReadWriteAux.writeMap( getProperties(), SfrProperty.CONTEXT.key,  ctx );
+    public static void showMap( Map<String, String> map ) {
+        Set<String> ks = map.keySet();
+        for( String k : ks )
+            System.out.println( "    " + k + " ; " + map.get( k ) );
     }
 
 
     public void writeId( String id ) {
-        getProperties( ).setProperty( SfrProperty.GORFX_ID.key, id );
+        System.out.println( "GORFXId: " + id);
     }
 }

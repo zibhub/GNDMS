@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types;
+package de.zib.gndms.common.model.gorfx.types;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -33,33 +33,50 @@ import java.io.Serializable;
  */
 public class MinMaxPair implements Serializable {
 
-    private double minValue;
-    private double maxValue;
-    
     private static final long serialVersionUID = 3626614300502324191L;
 
+    private double minValue;
+    private double maxValue;
 
-    public MinMaxPair() {
+
+    public MinMaxPair( ) {
+
     }
 
+
     public MinMaxPair( double minValue, double maxValue ) {
+
         this.minValue = minValue;
         this.maxValue = maxValue;
     }
 
-    public double getMinValue() {
+
+    public double getMinValue( ) {
+
         return minValue;
     }
 
+
     public void setMinValue( double minValue ) {
+
         this.minValue = minValue;
     }
 
-    public double getMaxValue() {
+
+    public double getMaxValue( ) {
+
         return maxValue;
     }
 
+
     public void setMaxValue( double maxValue ) {
+
         this.maxValue = maxValue;
+    }
+
+
+    public boolean inMonotonicRange( double val ) {
+
+        return minValue < val && val < maxValue;
     }
 }

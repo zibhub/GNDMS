@@ -18,7 +18,7 @@ package de.zib.gndms.taskflows.filetransfer.client.tools;
 
 
 
-import de.zib.gndms.model.gorfx.types.io.OrderConverter;
+import de.zib.gndms.common.model.gorfx.types.io.OrderConverter;
 import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferOrder;
 
 /**
@@ -26,8 +26,8 @@ import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferOrder;
  * which can be their corresponding axis type, a convertion to a Properties instance, or it will be written to Stdout.
  *
  * @see FileTransferOrderWriter
- * @see de.zib.gndms.model.gorfx.types.io.OrderConverter
- * @see de.zib.gndms.model.gorfx.types.io.OrderWriter
+ * @see de.zib.gndms.common.model.gorfx.types.io.OrderConverter
+ * @see de.zib.gndms.common.model.gorfx.types.io.OrderWriter
  * @author  try ma ik jo rr a zib
  * @version  $Id$
  * <p/>

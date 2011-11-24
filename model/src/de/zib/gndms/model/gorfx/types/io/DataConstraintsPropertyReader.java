@@ -18,6 +18,9 @@ package de.zib.gndms.model.gorfx.types.io;
 
 
 
+import de.zib.gndms.common.model.gorfx.types.io.AbstractPropertyReader;
+import de.zib.gndms.common.model.gorfx.types.io.PropertyReadWriteAux;
+import de.zib.gndms.common.model.gorfx.types.io.SfrProperty;
 import de.zib.gndms.model.gorfx.types.DataConstraints;
 
 import java.util.List;
@@ -56,7 +59,7 @@ public class DataConstraintsPropertyReader extends AbstractPropertyReader<DataCo
 
         if( getProperties().containsKey( SfrProperty.CONSTRAINT_LIST.key ) )
             getProduct( ).setConstraintList(
-                PropertyReadWriteAux.readMap( getProperties(), SfrProperty.CONSTRAINT_LIST.key ) );
+                PropertyReadWriteAux.readMap( getProperties( ), SfrProperty.CONSTRAINT_LIST.key ) );
     }
 
 

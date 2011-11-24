@@ -24,7 +24,7 @@ public class DummyTaskFlowFactory extends DefaultTaskFlowFactory<DummyOrder,Dumm
 
     public DummyTaskFlowFactory() {
 
-        super( DummyTaskFlowMeta.TASK_FLOW_KEY, DummyQuoteCalculator.class, DummyOrder.class );
+        super( DummyTaskFlowMeta.TASK_FLOW_TYPE_KEY, DummyQuoteCalculator.class, DummyOrder.class );
     }
 
 

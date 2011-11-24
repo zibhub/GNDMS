@@ -19,6 +19,8 @@ package de.zib.gndms.model.gorfx.types.io;
 
 
 import de.zib.gndms.common.model.gorfx.types.FutureTime;
+import de.zib.gndms.common.model.gorfx.types.io.AbstractPropertyIO;
+import de.zib.gndms.common.model.gorfx.types.io.PropertyReadWriteAux;
 
 import java.util.Properties;
 
@@ -69,7 +71,7 @@ public class FutureTimePropertyWriter extends AbstractPropertyIO implements Futu
 
 
 	public void writeRelativeFutureTime(final FutureTime.RelativeFutureTime t) {
-		PropertyReadWriteAux.writeFutureTime(getProperties(), getKey(), t);
+		PropertyReadWriteAux.writeFutureTime( getProperties( ), getKey( ), t );
 	}
 
 	public void done() {

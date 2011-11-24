@@ -17,7 +17,7 @@ package de.zib.gndms.taskflows.filetransfer.client.tools;
  */
 
 
-import de.zib.gndms.model.gorfx.types.io.TaskResultWriter;
+import de.zib.gndms.common.model.gorfx.types.io.TaskResultWriter;
 
 /**
  * @author  try ma ik jo rr a zib

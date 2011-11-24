@@ -19,13 +19,9 @@ package de.zib.gndms.taskflows.dummy.server.tests;
 import de.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
 import de.zib.gndms.taskflows.dummy.client.DummyTaskFlowMeta;
-import de.zib.gndms.taskflows.dummy.client.model.DummyOrder;
 import de.zib.gndms.taskflows.dummy.server.DummyTaskFlowFactory;
 import org.testng.annotations.Test;
 import org.testng.Assert;
-
-import java.util.ArrayDeque;
-import java.util.Queue;
 
 /**
  * @author Maik Jorra
@@ -42,7 +38,7 @@ public class DummyTaskFlowFactoryTest {
     @Test( groups = { "factory", "taskFlows" } )
     public void taskFlowKeyTest( ) {
         String key = factory.getTaskFlowKey();
-        Assert.assertEquals ( key, DummyTaskFlowMeta.TASK_FLOW_KEY );
+        Assert.assertEquals ( key, DummyTaskFlowMeta.TASK_FLOW_TYPE_KEY );
     }
 
 

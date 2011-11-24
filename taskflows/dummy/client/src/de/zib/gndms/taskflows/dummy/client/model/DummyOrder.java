@@ -27,7 +27,7 @@ public class DummyOrder extends AbstractOrder {
 
     @Override
     public String getTaskFlowType() {
-        return DummyTaskFlowMeta.TASK_FLOW_KEY;
+        return DummyTaskFlowMeta.TASK_FLOW_TYPE_KEY;
     }
 
 

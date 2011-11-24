@@ -18,9 +18,9 @@ package de.zib.gndms.taskflows.filetransfer.client.tools;
 
 
 
-import de.zib.gndms.model.gorfx.types.io.OrderPropertyReader;
-import de.zib.gndms.model.gorfx.types.io.PropertyReadWriteAux;
-import de.zib.gndms.model.gorfx.types.io.SfrProperty;
+import de.zib.gndms.common.model.gorfx.types.io.PropertyReadWriteAux;
+import de.zib.gndms.common.model.gorfx.types.io.OrderPropertyReader;
+import de.zib.gndms.common.model.gorfx.types.io.SfrProperty;
 import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferOrder;
 
 import java.util.Properties;
@@ -56,7 +56,7 @@ public class FileTransferOrderPropertyReader extends OrderPropertyReader<FileTra
         if( getProperties().containsKey( SfrProperty.FILE_TRANSFER_FILE_MAPPING.key ) )
             getProduct().setFileMap(
                 new TreeMap<String, String> (
-                    PropertyReadWriteAux.readMap( getProperties(), SfrProperty.FILE_TRANSFER_FILE_MAPPING.key )
+                    PropertyReadWriteAux.readMap( getProperties( ), SfrProperty.FILE_TRANSFER_FILE_MAPPING.key )
                 )
             );
     }

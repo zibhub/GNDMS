@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types.io;
+package de.zib.gndms.common.model.gorfx.types.io;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -15,8 +15,6 @@ package de.zib.gndms.model.gorfx.types.io;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-
 
 import de.zib.gndms.common.model.gorfx.types.AbstractOrder;
 

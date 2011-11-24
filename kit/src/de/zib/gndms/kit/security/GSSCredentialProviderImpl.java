@@ -47,11 +47,11 @@ public class GSSCredentialProviderImpl extends GSSCredentialProvider {
     static {
         installers = new HashMap<String, CredentialInstaller >();
         CredentialInstaller ci = new GridFTPCredentialInstaller();
-        installers.put( GORFXConstantURIs.FILE_TRANSFER_URI, ci );
-        installers.put( GORFXConstantURIs.INTER_SLICE_TRANSFER_URI, ci );
+        registerInstaller( GORFXConstantURIs.FILE_TRANSFER_URI, ci );
+        registerInstaller( GORFXConstantURIs.INTER_SLICE_TRANSFER_URI, ci );
 
         CredentialInstaller fw = new AsFileCredentialInstaller( );
-        installers.put( GORFXConstantURIs.PROVIDER_STAGE_IN_URI, fw );
+        registerInstaller( GORFXConstantURIs.PROVIDER_STAGE_IN_URI, fw );
     }
 
 
@@ -90,6 +90,7 @@ public class GSSCredentialProviderImpl extends GSSCredentialProvider {
         public void installCredentials( Object o, GSSCredential cred  );
     }
 
+
     static class GridFTPCredentialInstaller implements CredentialInstaller {
         public void installCredentials( Object o, GSSCredential cred ) {
             GridFTPClient cnt = GridFTPClient.class.cast( o );
@@ -104,7 +105,7 @@ public class GSSCredentialProviderImpl extends GSSCredentialProvider {
 
     static class AsFileCredentialInstaller implements CredentialInstaller {
 
-        private Logger logger = LoggerFactory.getLogger( this.getClass() );
+        private final Logger logger = LoggerFactory.getLogger( this.getClass() );
         private DirectoryAux directoryAux = GNDMSBinding.getInjector().getInstance( DirectoryAux.class );
 
         public void installCredentials( Object o, GSSCredential cred ) {

@@ -43,20 +43,20 @@ public class DummyTFAction extends TaskFlowAction<DummyOrder> {
 
 
     @Override
-    public Class<DummyOrder> getORQClass() {
+    public Class<DummyOrder> getOrderBeanClass( ) {
         return DummyOrder.class;
     }
 
 
     public DummyTFAction() {
-        super( DummyTaskFlowMeta.TASK_FLOW_KEY );
+        super( DummyTaskFlowMeta.TASK_FLOW_TYPE_KEY );
     }
 
 
     public DummyTFAction( @NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model ) {
 
         super( em, dao, model );
-        setKey( DummyTaskFlowMeta.TASK_FLOW_KEY );
+        setKey( DummyTaskFlowMeta.TASK_FLOW_TYPE_KEY );
     }
 
 
@@ -69,7 +69,7 @@ public class DummyTFAction extends TaskFlowAction<DummyOrder> {
             try {
                 Task task = getTask( session );
                 task.setProgress( 1 );
-                task.setMaxProgress( (( DelegatingOrder<DummyOrder>) task.getORQ()).getOrderBean().getTimes() );
+                task.setMaxProgress( (( DelegatingOrder<DummyOrder>) task.getOrder( )).getOrderBean().getTimes() );
                 logger.debug( "maxprogess set to: " + task.getMaxProgress() );
                 session.success();
             }
@@ -113,7 +113,7 @@ public class DummyTFAction extends TaskFlowAction<DummyOrder> {
 
         final Session session = getDao().beginSession();
         try {
-            order = ( DelegatingOrder<DummyOrder> ) getTask( session ).getORQ();
+            order = ( DelegatingOrder<DummyOrder> ) getTask( session ).getOrder( );
             session.success();
         }
         finally { session.finish(); }

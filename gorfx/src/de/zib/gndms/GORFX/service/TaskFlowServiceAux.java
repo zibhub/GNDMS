@@ -91,7 +91,7 @@ public final class TaskFlowServiceAux {
             final TaskFlowFactory tff = provider.getFactoryForTaskFlow( type );
             final TaskFlow tf = tff.createOrphan();
           //  tf.setId( t.getResourceId() );
-            tf.setOrder( ( DelegatingOrder<?> ) t.getORQ() );
+            tf.setOrder( ( DelegatingOrder<?> ) t.getOrder( ) );
             tf.addQuote( quoteFromContract( t.getContract() ) );
             tf.setTaskling( t.getTaskling() );
             tff.adopt( tf );

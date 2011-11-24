@@ -244,12 +244,7 @@ public class GORFXServiceImpl implements GORFXService {
         if(! taskFlowProvider.exists( type  ) )
             return new ResponseEntity<Specifier<Facets>>( null, headers, HttpStatus.NOT_FOUND );
 
-        if( context.containsKey( "c3pass" ) ) {
-            MyProxyProvider provider = myProxyProviderProvider.getProvider( "c3grid" );
-            MyProxyCredentialProvider credentialProvider = new MyProxyCredentialProvider( provider );
-            // todo set this to the taskflow better as list
-            // todo let getProvider throw exception if provider doesn't exist
-        }
+
 
         TaskFlowFactory tff = taskFlowProvider.getFactoryForTaskFlow( type );
         TaskFlow tf = tff.create();

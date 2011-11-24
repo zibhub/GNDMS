@@ -18,6 +18,8 @@ package de.zib.gndms.model.gorfx.types.io;
 
 
 
+import de.zib.gndms.common.model.gorfx.types.io.OrderPropertyWriter;
+import de.zib.gndms.common.model.gorfx.types.io.SfrProperty;
 import de.zib.gndms.model.gorfx.types.DataDescriptor;
 
 import java.util.Properties;

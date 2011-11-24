@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types.io;
+package de.zib.gndms.common.model.gorfx.types.io;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *

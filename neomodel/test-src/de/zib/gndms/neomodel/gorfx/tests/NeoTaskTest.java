@@ -99,7 +99,7 @@ public class NeoTaskTest extends NeoTest {
         assertEquals(task.getTaskFlowType().getId(), ot.getId());
         assertEquals(task.getTaskFlowType().getTaskFlowResultType().getLocalName(), "z");
         assertEquals((long) task.getContract().getExpectedSize(), 15L);
-        assertEquals(task.getORQ(), "fufu");
+        assertEquals(task.getOrder( ), "fufu");
         assertEquals(task.getPermissionInfo().getUserName(), "fonzi");
         assert(task.getTerminationTime().getTimeInMillis() <= System.currentTimeMillis());
 

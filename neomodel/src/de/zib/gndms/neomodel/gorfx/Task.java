@@ -306,14 +306,14 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
         setPayload(getPayload());
         setFaultString(getFaultString());
         setMaxProgress(getMaxProgress());
-        setORQ(getORQ());
+        setORQ( getOrder( ));
         setWID(getWID());
         setPermissionInfo(getPermissionInfo());
         return subTask;
     }
 
 
-    public Serializable getORQ() {
+    public Serializable getOrder( ) {
         return getProperty(Serializable.class, ORQ_P);
     }
 
@@ -431,7 +431,7 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
             final boolean isRootTask = this.isRootTask();
             final boolean isSubTask = this.isSubTask();
             final boolean isDone = this.isDone();
-            final Serializable orq = this.getORQ();
+            final Serializable orq = this.getOrder( );
             final PermissionInfo permInfo = this.getPermissionInfo();
             final PersistentContract contract = this.getContract();
             final byte[] cred = this.getSerializedCredential();
@@ -512,7 +512,7 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
                     throw new UnsupportedOperationException();
                 }
 
-                public Serializable getORQ() {
+                public Serializable getOrder( ) {
                     return orq;
                 }
 
