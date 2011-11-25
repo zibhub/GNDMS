@@ -8,6 +8,7 @@ import de.zib.gndms.taskflows.dummy.client.model.DummyOrder;
 import org.joda.time.Duration;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -42,7 +43,7 @@ public class DummyQuoteCalculator extends AbstractQuoteCalculator<DummyOrder> {
         q.setResultValidity( rv );
         q.setExpectedSize( (long) 0 );
 
-        return new ArrayList<Quote>( 1 ) {{ add( q ); }};
+        return Collections.singletonList( q );
     }
 
 

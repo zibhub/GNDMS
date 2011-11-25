@@ -18,6 +18,9 @@ package de.zib.gndms.model.gorfx.types.io;
 
 
 
+import de.zib.gndms.common.model.gorfx.types.io.AbstractPropertyIO;
+import de.zib.gndms.common.model.gorfx.types.io.PropertyReadWriteAux;
+import de.zib.gndms.common.model.gorfx.types.io.SfrProperty;
 import de.zib.gndms.model.gorfx.types.TimeConstraint;
 import org.jetbrains.annotations.NotNull;
 
@@ -58,7 +61,7 @@ public class DataConstraintsPropertyWriter extends AbstractPropertyIO implements
 
 
     public void writeConstraintList( @NotNull Map<String, String> constraintList ) {
-        PropertyReadWriteAux.writeMap( getProperties(), SfrProperty.CONSTRAINT_LIST.key, constraintList );
+        PropertyReadWriteAux.writeMap( getProperties( ), SfrProperty.CONSTRAINT_LIST.key, constraintList );
     }
 
 

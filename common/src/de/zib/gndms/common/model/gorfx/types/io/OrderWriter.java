@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types.io;
+package de.zib.gndms.common.model.gorfx.types.io;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -18,26 +18,27 @@ package de.zib.gndms.model.gorfx.types.io;
 
 
 
+import java.util.Map;
+
 /**
- * Interface for writer classes of the gorfx model.
+ * An GORFXWriter for ORQs.
  *
- * A gndms class can be written to Stdout, it can be written as a Properties instance, or a their corresponding axis type.
+ * Provides the methods which are required to write an orq to a desired type.
  *
- * @see de.zib.gndms.model.gorfx.types.io.GORFXConverterBase
+ * It should be used in conjunction with an OrderConverter.
+ *
+ * @see de.zib.gndms.common.model.gorfx.types.AbstractOrder
+ * @see de.zib.gndms.common.model.gorfx.types.io.OrderConverter
  * @author  try ma ik jo rr a zib
  * @version  $Id$
  * <p/>
- * User: mjorra, Date: 17.09.2008, Time: 15:27:47
+ * User: mjorra, Date: 25.09.2008, Time: 17:02:56
  */
-public interface GORFXWriterBase {
+public interface OrderWriter extends GORFXWriterBase {
 
-    /**
-     * Defines the writer's action, before the converting starts.
-     */
-    public void begin ( );
+    public void writeJustEstimate( boolean je );
 
-    /**
-     * Defines the writer's action, after the converting has finished.
-     */
-    public void done ( );
+    public void writeContext( Map<String, String> ctx );
+
+    public void writeId( String id );
 }

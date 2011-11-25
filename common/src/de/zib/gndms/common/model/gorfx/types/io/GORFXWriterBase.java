@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types;
+package de.zib.gndms.common.model.gorfx.types.io;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -18,37 +18,26 @@ package de.zib.gndms.model.gorfx.types;
 
 
 
-import java.io.Serializable;
-
 /**
+ * Interface for writer classes of the gorfx model.
+ *
+ * A gndms class can be written to Stdout, it can be written as a Properties instance, or a their corresponding axis type.
+ *
+ * @see de.zib.gndms.common.model.gorfx.types.io.GORFXConverterBase
  * @author  try ma ik jo rr a zib
  * @version  $Id$
  * <p/>
- * User: mjorra, Date: 13.10.2008, Time: 12:35:03
+ * User: mjorra, Date: 17.09.2008, Time: 15:27:47
  */
-public class AbstractTaskFlowResult implements Serializable {
+public interface GORFXWriterBase {
 
-    private String taskFlowType;
-    
-    private static final long serialVersionUID = 8410587166706272881L;
+    /**
+     * Defines the writer's action, before the converting starts.
+     */
+    public void begin ( );
 
-    
-    protected AbstractTaskFlowResult() {
-    }
-
-
-    protected AbstractTaskFlowResult( String taskFlowType ) {
-        this.taskFlowType = taskFlowType;
-    }
-
-
-    public String getTaskFlowType() {
-        return taskFlowType;
-    }
-
-
-    protected void setTaskFlowType( String uri ) {
-        this.taskFlowType = uri;
-    }
-
- }
+    /**
+     * Defines the writer's action, after the converting has finished.
+     */
+    public void done ( );
+}

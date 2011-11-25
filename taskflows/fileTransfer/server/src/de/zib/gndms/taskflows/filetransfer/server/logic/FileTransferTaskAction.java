@@ -19,6 +19,8 @@ package de.zib.gndms.taskflows.filetransfer.server.logic;
 
 
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
+import de.zib.gndms.model.gorfx.types.DelegatingOrder;
+import de.zib.gndms.taskflows.filetransfer.client.FileTransferMeta;
 import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferOrder;
 import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferResult;
 import de.zib.gndms.taskflows.filetransfer.server.network.GNDMSFileTransfer;
@@ -46,11 +48,10 @@ import java.util.Map;
 public class FileTransferTaskAction extends TaskFlowAction<FileTransferOrder> {
 
     private FTPTransferState transferState;
-    private FileTransferOrder order;
 
 
     public FileTransferTaskAction() {
-        super();
+        super( FileTransferMeta.);
     }
 
     public FileTransferTaskAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model) {
@@ -59,7 +60,7 @@ public class FileTransferTaskAction extends TaskFlowAction<FileTransferOrder> {
 
     @Override
     @NotNull
-    public Class<FileTransferOrder> getOrqClass() {
+    public Class<FileTransferOrder> getOrderBeanClass( ) {
         return FileTransferOrder.class;
     }
 
@@ -74,11 +75,12 @@ public class FileTransferTaskAction extends TaskFlowAction<FileTransferOrder> {
 
 
         Session session = getDao().beginSession();
+        FileTransferOrder order;
         try {
             Task task  = getTask(session);
             transferState = (FTPTransferState) task.getPayload();
-            order = ((FileTransferOrder )task.getORQ());
-            files         = order.getFileMap();
+            order = ( FileTransferOrder ) ((DelegatingOrder)task.getOrder( )).getOrderBean();
+            files         = order.getFileMap( );
             if( transferState == null )
                 newTransfer( task );
             else {
@@ -100,8 +102,8 @@ public class FileTransferTaskAction extends TaskFlowAction<FileTransferOrder> {
         pml.setWid(wid);
         pml.setGORFXId( getOrder().getActId());
 
-        URI suri = new URI ( order.getSourceURI() );
-        URI duri = new URI ( order.getDestinationURI() );
+        URI suri = new URI ( order.getSourceURI( ) );
+        URI duri = new URI ( order.getDestinationURI( ) );
 
         // obtain clients
         src = NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( suri, getCredentialProvider() );

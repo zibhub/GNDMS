@@ -21,7 +21,6 @@ package de.zib.gndms.logic.model.gorfx.c3grid;
 import de.zib.gndms.kit.config.ConfigProvider;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.config.MapConfig;
-import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.logic.model.dspace.ChownSliceConfiglet;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
@@ -298,7 +297,7 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
 
 	@Override
     @NotNull
-    public Class<ProviderStageInOrder> getORQClass() {
+    public Class<ProviderStageInOrder> getOrderBeanClass( ) {
         return ProviderStageInOrder.class;
     }
 
@@ -314,7 +313,7 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
         final Session session = getDao().beginSession();
         try {
             final Task task = getTask(session);
-            ProviderStageInOrder order = (ProviderStageInOrder ) task.getORQ();
+            ProviderStageInOrder order = (ProviderStageInOrder ) task.getOrder( );
             order.setActSliceId( sliceId );
             task.setORQ( sliceId );
             session.finish();
@@ -329,7 +328,7 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
         final Session session = getDao().beginSession();
         try {
             final Task task = getTask(session);
-            ProviderStageInOrder order = (ProviderStageInOrder ) task.getORQ();
+            ProviderStageInOrder order = (ProviderStageInOrder ) task.getOrder( );
             final String ret = order.getActSliceId();
             session.finish();
             return ret;

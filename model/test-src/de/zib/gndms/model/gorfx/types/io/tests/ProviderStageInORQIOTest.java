@@ -18,6 +18,8 @@ package de.zib.gndms.model.gorfx.types.io.tests;
 
 
 
+import de.zib.gndms.common.model.gorfx.types.MinMaxPair;
+import de.zib.gndms.common.model.gorfx.types.io.SfrProperty;
 import de.zib.gndms.model.gorfx.types.*;
 import de.zib.gndms.model.gorfx.types.io.*;
 import org.joda.time.DateTime;

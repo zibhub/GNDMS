@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types.io;
+package de.zib.gndms.common.model.gorfx.types;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -18,27 +18,37 @@ package de.zib.gndms.model.gorfx.types.io;
 
 
 
-import java.util.Map;
+import java.io.Serializable;
 
 /**
- * An GORFXWriter for ORQs.
- *
- * Provides the methods which are required to write an orq to a desired type.
- *
- * It should be used in conjunction with an OrderConverter.
- *
- * @see de.zib.gndms.common.model.gorfx.types.AbstractOrder
- * @see OrderConverter
  * @author  try ma ik jo rr a zib
  * @version  $Id$
  * <p/>
- * User: mjorra, Date: 25.09.2008, Time: 17:02:56
+ * User: mjorra, Date: 13.10.2008, Time: 12:35:03
  */
-public interface OrderWriter extends GORFXWriterBase {
+public abstract class AbstractTaskFlowResult implements Serializable {
 
-    public void writeJustEstimate( boolean je );
+    private String taskFlowType;
+    
+    private static final long serialVersionUID = 8410587166706272881L;
 
-    public void writeContext( Map<String, String> ctx );
+    
+    protected AbstractTaskFlowResult() {
+    }
 
-    public void writeId( String id );
-}
+
+    protected AbstractTaskFlowResult( String taskFlowType ) {
+        this.taskFlowType = taskFlowType;
+    }
+
+
+    public String getTaskFlowType() {
+        return taskFlowType;
+    }
+
+
+    protected void setTaskFlowType( String uri ) {
+        this.taskFlowType = uri;
+    }
+
+ }

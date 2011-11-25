@@ -18,6 +18,7 @@ package de.zib.gndms.model.gorfx.types;
 
 
 import de.zib.gndms.common.model.gorfx.types.Order;
+import de.zib.gndms.common.rest.MyProxyToken;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -35,6 +36,9 @@ public class DelegatingOrder<T extends Order> implements Order {
     private String actId; ///< A unique id inherited from the ORQResource
     private Map<String, String> actContext; ///< The context of the ORQResource
                                             /// Contains stuff like, delegation epr, and workflow id
+    private Map<String,MyProxyToken> myProxyToken; ///< Map between purpose and myProxyToken
+                                                   /// this enables the Task action to query GSSCerts from registered
+                                                   /// myproxy servers.
     private String localUser; ///< The user name map to the credential of the request.
 
 
@@ -158,4 +162,16 @@ public class DelegatingOrder<T extends Order> implements Order {
 		}
 		return result.toString();
 	}
+
+
+    public Map<String, MyProxyToken> getMyProxyToken( ) {
+
+        return myProxyToken;
+    }
+
+
+    public void setMyProxyToken( final Map<String, MyProxyToken> myProxyToken ) {
+
+        this.myProxyToken = myProxyToken;
+    }
 }

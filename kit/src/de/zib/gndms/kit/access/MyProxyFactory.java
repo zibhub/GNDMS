@@ -40,7 +40,7 @@ import java.io.OutputStream;
  * @date 22.11.11  17:29
  * @brief
  */
-public class MyProxyProvider {
+public class MyProxyFactory {
 
     private final String nickname; ///< Nickname of this provider should have something to do with its purpose.
 
@@ -54,7 +54,7 @@ public class MyProxyProvider {
     private CredentialHolder connectionCredentialHolder; // holds credentials for connections
 
 
-    public MyProxyProvider( String nickname ) {
+    public MyProxyFactory( String nickname ) {
         this.nickname = nickname;
     }
 

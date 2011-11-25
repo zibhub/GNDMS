@@ -123,8 +123,8 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
                 final Taskling ling = getModel();
                 final Task task = ling.getTask(session);
                 WidAux.initWid(task.getWID());
-                if( task.getORQ() != null )
-                    WidAux.initGORFXid( ( (DelegatingOrder ) task.getORQ()).getActId() );
+                if( task.getOrder( ) != null )
+                    WidAux.initGORFXid( ( (DelegatingOrder ) task.getOrder( )).getActId() );
                 session.success();
             }
             finally { session.finish(); }

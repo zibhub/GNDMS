@@ -70,7 +70,7 @@ public interface TaskAccessor extends GridResourceItf, TimedGridResourceItf {
 
     @NotNull Iterable<? extends TaskAccessor> getSubTasks(TaskFlowType ot);
 
-    Serializable getORQ();
+    Serializable getOrder( );
 
     @NotNull PersistentContract getContract();
 

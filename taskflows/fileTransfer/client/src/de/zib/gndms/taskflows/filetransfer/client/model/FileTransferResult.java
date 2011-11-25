@@ -17,8 +17,8 @@ package de.zib.gndms.taskflows.filetransfer.client.model;
  */
 
 
-import de.zib.gndms.model.gorfx.types.AbstractTaskFlowResult;
-import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
+import de.zib.gndms.common.model.gorfx.types.AbstractTaskFlowResult;
+import de.zib.gndms.taskflows.filetransfer.client.FileTransferMeta;
 
 import java.util.List;
 
@@ -35,7 +35,7 @@ public class FileTransferResult extends AbstractTaskFlowResult {
 
     public FileTransferResult( ) {
         super( );
-        super.setTaskFlowType( GORFXConstantURIs.FILE_TRANSFER_URI );
+        super.setTaskFlowType( FileTransferMeta.FILE_TRANSFER_TYPE_KEY );
     }
 
     public List<String> getFiles() {

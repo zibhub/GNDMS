@@ -18,8 +18,9 @@ package de.zib.gndms.model.gorfx.types.io;
 
 
 
+import de.zib.gndms.common.model.gorfx.types.io.AbstractPropertyReader;
+import de.zib.gndms.common.model.gorfx.types.io.SfrProperty;
 import de.zib.gndms.model.gorfx.types.TimeConstraint;
-import org.joda.time.DateTime;
 
 import java.util.Properties;
 

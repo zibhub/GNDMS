@@ -19,6 +19,8 @@ package de.zib.gndms.model.gorfx.types.io;
 
 
 import de.zib.gndms.common.model.gorfx.types.FutureTime;
+import de.zib.gndms.common.model.gorfx.types.io.AbstractPropertyReader;
+import de.zib.gndms.common.model.gorfx.types.io.PropertyReadWriteAux;
 
 import java.util.Properties;
 
@@ -56,7 +58,7 @@ public class FutureTimePropertyReader extends AbstractPropertyReader<FutureTime>
 
 	@Override
 	public FutureTime makeNewProduct() {
-		return PropertyReadWriteAux.readFutureTime(getProperties(), key);
+		return PropertyReadWriteAux.readFutureTime( getProperties( ), key );
 	}
 
 

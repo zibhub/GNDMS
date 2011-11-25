@@ -34,7 +34,7 @@ import java.util.concurrent.*;
  */
 public class StrictNonblockingClientFactory extends AbstractNonblockingClientFactory {
 
-    private ExecutorService exec = Executors.newFixedThreadPool( 1 );
+    final private ExecutorService exec = Executors.newFixedThreadPool( 1 );
 
 
     public GridFTPClient createClient( String host, int port, CredentialProvider cp ) throws ServerException, IOException {
@@ -59,11 +59,11 @@ public class StrictNonblockingClientFactory extends AbstractNonblockingClientFac
                 f.cancel( true );
             }
         } catch ( InterruptedException e ) {
-            creator.getLog().debug( e );
+            creator.getLog().debug( "GridFTPClient create interrupted", e );
             throw new RuntimeException( "GridFTPClient create interrupted", e );
         } catch ( ExecutionException e ) {
             // this mustn't happen here due to the blocked wait op
-            creator.getLog().debug( e );
+            creator.getLog().debug( "", e );
             if( e.getCause() instanceof ServerException )
                 throw ServerException.class.cast( e.getCause() );
 

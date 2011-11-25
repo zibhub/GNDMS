@@ -17,9 +17,8 @@ package de.zib.gndms.taskflows.filetransfer.client.model;
  */
 
 
-
 import de.zib.gndms.common.model.gorfx.types.AbstractOrder;
-import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
+import de.zib.gndms.taskflows.filetransfer.client.FileTransferMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -55,7 +54,7 @@ public class FileTransferOrder extends AbstractOrder {
 
     public FileTransferOrder() {
         super( );
-        super.setTaskFlowType( GORFXConstantURIs.FILE_TRANSFER_URI );
+        super.setTaskFlowType( FileTransferMeta.FILE_TRANSFER_TYPE_KEY );
     }
 
 

@@ -27,9 +27,7 @@ import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.gndmc.gorfx.TaskFlowClient;
-import de.zib.gndms.kit.access.MyProxyProvider;
-import de.zib.gndms.kit.access.MyProxyProviderProvider;
-import de.zib.gndms.kit.security.MyProxyCredentialProvider;
+import de.zib.gndms.kit.access.MyProxyFactoryProvider;
 import de.zib.gndms.logic.action.ActionProvider;
 import de.zib.gndms.logic.action.NoSuchActionException;
 import de.zib.gndms.logic.model.config.ConfigActionProvider;
@@ -38,7 +36,6 @@ import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowProvider;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -46,10 +43,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -72,7 +66,7 @@ public class GORFXServiceImpl implements GORFXService {
     private TaskFlowClient taskFlowClient;
     private UriFactory uriFactory;
     private ConfigActionProvider configActionProvider;
-    private MyProxyProviderProvider myProxyProviderProvider;
+    private MyProxyFactoryProvider myProxyFactoryProvider;
 
 
     @PostConstruct
@@ -144,8 +138,8 @@ public class GORFXServiceImpl implements GORFXService {
         responseHeaders.setResourceURL( baseUrl + "/gorfx/" );
         responseHeaders.setFacetURL( gorfxFacets.findFacet( "batch" ).getUrl() );
         responseHeaders.setParentURL( baseUrl );
-        return new ResponseEntity<List<String>>( new ArrayList<String>( 1 ) {{ add( "mockup" ); }},
-            responseHeaders, HttpStatus.OK );
+        return new ResponseEntity<List<String>>( Collections.singletonList( "mockup" ),
+                responseHeaders, HttpStatus.OK );
     }
 
 
@@ -244,12 +238,7 @@ public class GORFXServiceImpl implements GORFXService {
         if(! taskFlowProvider.exists( type  ) )
             return new ResponseEntity<Specifier<Facets>>( null, headers, HttpStatus.NOT_FOUND );
 
-        if( context.containsKey( "c3pass" ) ) {
-            MyProxyProvider provider = myProxyProviderProvider.getProvider( "c3grid" );
-            MyProxyCredentialProvider credentialProvider = new MyProxyCredentialProvider( provider );
-            // todo set this to the taskflow better as list
-            // todo let getProvider throw exception if provider doesn't exist
-        }
+
 
         TaskFlowFactory tff = taskFlowProvider.getFactoryForTaskFlow( type );
         TaskFlow tf = tff.create();
@@ -312,14 +301,14 @@ public class GORFXServiceImpl implements GORFXService {
     }
 
 
-    public MyProxyProviderProvider getMyProxyProviderProvider() {
-        return myProxyProviderProvider;
+    public MyProxyFactoryProvider getMyProxyFactoryProvider( ) {
+        return myProxyFactoryProvider;
     }
 
 
     @Inject
-    public void setMyProxyProviderProvider( MyProxyProviderProvider myProxyProviderProvider ) {
-        this.myProxyProviderProvider = myProxyProviderProvider;
+    public void setMyProxyFactoryProvider( MyProxyFactoryProvider myProxyFactoryProvider ) {
+        this.myProxyFactoryProvider = myProxyFactoryProvider;
     }
 }
 

@@ -168,7 +168,7 @@ public class GNDMSFileTransfer {
     }
 
 
-    private boolean hasEllipse( TreeMap<String, String> files ) {
+    private boolean hasEllipse( Map<String, String> files ) {
 
         for( String f: files.keySet() )
             if( ellipse.matcher( f ).matches() )
@@ -358,7 +358,7 @@ public class GNDMSFileTransfer {
     }
 
     
-    private TreeMap<String,String> fetchFileListing( Pattern pattern ) throws ClientException, ServerException, IOException {
+    private Map<String,String> fetchFileListing( Pattern pattern ) throws ClientException, ServerException, IOException {
 
         if( pattern != null )
             logger.debug( "with pattern: " + pattern.pattern() );

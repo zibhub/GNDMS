@@ -18,6 +18,7 @@ package de.zib.gndms.model.gorfx.types;
 
 
 
+import de.zib.gndms.common.model.gorfx.types.AbstractTaskFlowResult;
 import de.zib.gndms.model.dspace.types.SliceRef;
 
 /**

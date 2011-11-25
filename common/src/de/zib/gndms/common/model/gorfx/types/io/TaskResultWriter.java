@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types.io;
+package de.zib.gndms.common.model.gorfx.types.io;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -17,22 +17,15 @@ package de.zib.gndms.model.gorfx.types.io;
  */
 
 
+import de.zib.gndms.common.model.gorfx.types.io.GORFXWriterBase;
 
 /**
  * @author  try ma ik jo rr a zib
  * @version  $Id$
  * <p/>
- * User: mjorra, Date: 27.11.2008, Time: 15:17:35
+ * User: mjorra, Date: 13.10.2008, Time: 12:54:54
  */
-public class MandatoryPropertyMissingException extends IllegalStateException {
-    private static final long serialVersionUID = 5871807791313619391L;
+public interface TaskResultWriter extends GORFXWriterBase {
 
-
-    public MandatoryPropertyMissingException( String s ) {
-        super( s );
-    }
-
-
-    public MandatoryPropertyMissingException() {
-    }
+    // nothing here yet
 }

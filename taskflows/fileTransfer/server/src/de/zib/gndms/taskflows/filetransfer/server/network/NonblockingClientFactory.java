@@ -40,9 +40,8 @@ import java.util.concurrent.*;
  *          User: mjorra, Date: 20.02.2009, Time: 17:37:59
  */
 public class NonblockingClientFactory extends AbstractNonblockingClientFactory{
-    private static final Logger log = LoggerFactory.getLogger( NonblockingClientFactory.class );
 
-    private final TimeUnit unit = TimeUnit.SECONDS;
+    private static final Logger log = LoggerFactory.getLogger( NonblockingClientFactory.class );
     private final Map<String, QueuedExecutor> hostExecutors = new HashMap<String, QueuedExecutor>( );
 
 

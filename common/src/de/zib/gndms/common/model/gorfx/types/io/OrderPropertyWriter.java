@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types.io;
+package de.zib.gndms.common.model.gorfx.types.io;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -18,42 +18,49 @@ package de.zib.gndms.model.gorfx.types.io;
 
 
 
-import java.util.HashMap;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Map;
-import java.util.Set;
+import java.util.Properties;
 
 /**
- * Writes an ORQ to Stdout.
+ * Writes an ORQ as a Properties instance.
  * It should be used in conjunction with an OrderConverter.
  *
- *
- * @see OrderConverter
+ * @see de.zib.gndms.common.model.gorfx.types.io.OrderConverter
  * @author  try ma ik jo rr a zib
  * @version  $Id$
  * <p/>
- * User: mjorra, Date: 25.09.2008, Time: 17:57:12
+ * User: mjorra, Date: 25.09.2008, Time: 17:23:58
  */
-public abstract class OrderStdoutWriter implements OrderWriter {
+public abstract class OrderPropertyWriter extends AbstractPropertyIO implements OrderWriter {
+
+    protected OrderPropertyWriter() {
+    }
+
+
+    protected OrderPropertyWriter( Properties properties ) {
+        super( properties );
+    }
+
 
     public void writeJustEstimate( boolean je ) {
-        System.out.println( "Just estimate: " + Boolean.toString( je ) );
+
+        getProperties( ).setProperty( SfrProperty.JUST_ASK.key, Boolean.toString( je ) );
     }
 
 
-    public void writeContext( Map<String, String> ctx ) {
-        System.out.println( "Context" );
-        showMap( ctx );
+    public void read() {
+        
     }
 
 
-    public static void showMap( Map<String, String> map ) {
-        Set<String> ks = map.keySet();
-        for( String k : ks )
-            System.out.println( "    " + k + " ; " + map.get( k ) );
+    public void writeContext( @NotNull Map<String, String> ctx ) {
+        PropertyReadWriteAux.writeMap( getProperties(), SfrProperty.CONTEXT.key,  ctx );
     }
 
 
     public void writeId( String id ) {
-        System.out.println( "GORFXId: " + id);
+        getProperties( ).setProperty( SfrProperty.GORFX_ID.key, id );
     }
 }
