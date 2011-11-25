@@ -47,7 +47,7 @@ public class SubspaceProviderImpl implements SubspaceProvider {
 	 */
 	private EntityManager em;
 	/**
-	 * List of subspace ids.
+	 * Map of subspace ids and subspaces.
 	 */
     private Map<String, Subspace> subspaceIds;
     

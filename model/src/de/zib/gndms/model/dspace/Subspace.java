@@ -29,10 +29,6 @@ package de.zib.gndms.model.dspace;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ImmutableScopedName;
 
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
@@ -46,7 +42,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.JoinColumn;
 import javax.persistence.Column;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.CascadeType;
 import javax.persistence.FetchType;
@@ -62,11 +57,6 @@ import javax.persistence.FetchType;
 public class Subspace extends GridResource {
 
 	/**
-	 * The logger.
-	 */
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-	/**
 	 * The still available size in this subspace.
 	 */
     private long availableSize;
@@ -75,11 +65,6 @@ public class Subspace extends GridResource {
      * The total size of the subspace.
      */
     private long totalSize;
-
-    /**
-     * The set of slices of this subspace. 
-     */
-    private Set<Slice> slices = new HashSet<Slice>();
 
     /**
      * The absolute path of this subspace.
@@ -131,28 +116,6 @@ public class Subspace extends GridResource {
         this.path = path;
     }
 
-    /**
-     * Adds a slice to the subspace's slice set.
-     * @param sl The slice.
-     */
-    public final void addSlice(@NotNull final Slice sl) {
-        if (slices == null) {
-            logger.warn( "No slice set provided for subspace " + name + ". It is newly created." );
-            slices = new HashSet<Slice>();
-        }
-        slices.add(sl);
-    }
-
-    /**
-     * Removes a slice from the subspace's slice set.
-     *
-     * The slice itself isn't destroy, and the folder still exists.
-     * @param sl The slice to be removed.
-     */
-    public final void removeSlice(@NotNull final Slice sl) {
-        slices.remove(sl);
-    }
-
     /** 
      * @brief Returns the absolute path to a slice.
      * 
@@ -191,16 +154,6 @@ public class Subspace extends GridResource {
     }
 
     /**
-     * Returns the set of slices of this subspace.
-     * @return The set of slices.
-     */
-    @OneToMany(targetEntity = Slice.class, mappedBy = "subspace", 
-    		cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.REMOVE }, fetch = FetchType.EAGER)
-    public final Set<Slice> getSlices() {
-        return slices;
-    }
-
-    /**
      * Returns the absolute path of this subspace.
      * @return The path.
      */
@@ -232,14 +185,6 @@ public class Subspace extends GridResource {
     public final void setTotalSize(final long totalSize) {
         this.totalSize = totalSize;
     }
-
-    /**
-     * Sets the set of slices for this subspace.
-     * @param slices The slices.
-     */
-    public final void setSlices(final Set<Slice> slices) {
-        this.slices = slices;
-    }
     
     /**
      * Sets the gsi ftp path for this subspace.
@@ -249,16 +194,26 @@ public class Subspace extends GridResource {
         this.gsiFtpPath = gsiFtpPath;
     }	
     
+    /**
+     * Returns the name / id of this subspace.
+     * @return The name.
+     */
     @EmbeddedId
     @AttributeOverrides({
-        @AttributeOverride(name="nameScope", column=@Column(name="schema_uri", nullable=false, updatable=false, columnDefinition="VARCHAR")),
-        @AttributeOverride(name="localName", column=@Column(name="specifier", nullable=false, updatable=false, columnDefinition="VARCHAR", length=64))
+        @AttributeOverride(name = "nameScope", column = @Column(name = "schema_uri", nullable = false, 
+        		updatable = false, columnDefinition = "VARCHAR")),
+        @AttributeOverride(name = "localName", column = @Column(name = "specifier", nullable = false, 
+        		updatable = false, columnDefinition = "VARCHAR", length = 64))
         })
-    public ImmutableScopedName getName() {
+    public final ImmutableScopedName getName() {
         return name;
     }
     
-    public void setName( ImmutableScopedName name ) {
+    /**
+     * Sets the name / id of this subspace.
+     * @param name The name.
+     */
+    public final void setName(final ImmutableScopedName name) {
         this.name = name;
     }
 
@@ -281,7 +236,6 @@ public class Subspace extends GridResource {
     public Set<SliceKind> getCreatableSliceKinds() {
         return creatableSliceKinds;
     }
-
 
     public void setCreatableSliceKinds( Set<SliceKind> creatableSliceKinds ) {
         this.creatableSliceKinds = creatableSliceKinds;

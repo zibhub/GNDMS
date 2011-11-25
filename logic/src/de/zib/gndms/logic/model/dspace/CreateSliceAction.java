@@ -180,7 +180,6 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
         sl.setId( getId( ) );
         sl.setTerminationTime( getTerminationTime( ) );
         sl.setTotalStorageSize( storageSize );
-        sp.addSlice( sl );
 
         addChangedModel( sl );
 

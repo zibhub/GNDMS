@@ -20,9 +20,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
 
 import de.zib.gndms.model.dspace.Slice;
+import de.zib.gndms.model.util.TxFrame;
 
 /**
  * The slice provider which handles the available subspaces providing 
@@ -32,24 +35,44 @@ import de.zib.gndms.model.dspace.Slice;
  */
 
 public class SliceProviderImpl implements SliceProvider {
-
+	/**
+	 * The entity manager factory.
+	 */
+	private EntityManagerFactory emf;
+	/**
+	 * The entity manager.
+	 */
+	private EntityManager em;
 	/**
 	 * Map of subspace ids, slice ids and slices.
 	 */
     private Map<String, Map<String, Slice>> slices;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public final void init(final SubspaceProvider provider) {		
-		for (String sub : provider.listSubspaces()) {
-				Set<Slice> allSlices = provider.getSubspace(sub).getSlices();
+    	em = emf.createEntityManager();
+       	TxFrame tx = new TxFrame(em);
+    	try {
+    		for (String sub : provider.listSubspaces()) {
 				Map<String, Slice> map = new HashMap<String, Slice>();
-				
-				// TODO: is this the right way to get the slice ids?
-				for (Slice s : allSlices)  {
-					map.put(s.toString(), s);
-				}
+           		Query query = em.createNamedQuery("listSlicesOfSubspace");
+                query.setParameter("subspace", sub);
+           		List<String> list = query.getResultList();
+           		slices = new HashMap<String, Map<String, Slice>>();
+           		for (String name : list) {
+           			Slice slice = em.find(Slice.class, name);
+           			map.put(name, slice);
+           		}
 				slices.put(sub, map);
 			}
+        tx.commit();
+       	} finally {
+       		tx.finish();
+       		if (em != null && em.isOpen()) {
+       			em.close();
+       		}
+       	}
 	}
 
 	@Override

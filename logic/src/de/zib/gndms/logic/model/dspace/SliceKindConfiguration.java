@@ -58,7 +58,7 @@ public class SliceKindConfiguration implements Configuration {
 	 */
 	private AccessMask permission;
 	/**
-	 * The subspace of the slice kind.
+	 * The subspaces of the slice kind.
 	 */
 	private String subspaces;
 

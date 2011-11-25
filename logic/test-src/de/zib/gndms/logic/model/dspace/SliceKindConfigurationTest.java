@@ -25,8 +25,8 @@ import org.testng.AssertJUnit;
 import de.zib.gndms.common.logic.config.WrongConfigurationException;
 import de.zib.gndms.common.model.common.AccessMask;
 import de.zib.gndms.logic.model.dspace.SliceKindConfiguration;
-import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.SliceKind;
+import de.zib.gndms.model.dspace.Subspace;
 
 /**
  * Tests the SliceKindConfiguration.
@@ -42,11 +42,10 @@ public class SliceKindConfigurationTest {
     public final void testEquals() {
 		String uri = "testuri";
 		final String permission = "345";
-      	// TODO add metasubspaces and test for it
-       	String meta = "testMetaSubspace";
+       	String sub = "testSubspace";
 
-		SliceKindConfiguration slconfig = new SliceKindConfiguration(uri, permission, meta);
-		SliceKindConfiguration slconfig2 = new SliceKindConfiguration(uri, permission, meta);
+		SliceKindConfiguration slconfig = new SliceKindConfiguration(uri, permission, sub);
+		SliceKindConfiguration slconfig2 = new SliceKindConfiguration(uri, permission, sub);
 		
        	AssertJUnit.assertEquals(true, slconfig.equals(slconfig2));
        	AssertJUnit.assertEquals(true, slconfig.equals(slconfig));
@@ -54,7 +53,7 @@ public class SliceKindConfigurationTest {
        	AssertJUnit.assertEquals(slconfig.hashCode(), slconfig2.hashCode());
 
 		uri = "test22";
-		slconfig2 = new SliceKindConfiguration(uri, permission, meta);
+		slconfig2 = new SliceKindConfiguration(uri, permission, sub);
 
        	AssertJUnit.assertEquals(false, slconfig.equals(slconfig2));
        	AssertJUnit.assertEquals(false, slconfig2.equals(slconfig));
@@ -70,24 +69,23 @@ public class SliceKindConfigurationTest {
 		String uri = "testuri";
 		final String perm = "345";
 		AccessMask permission = AccessMask.fromString(perm);
-      	// TODO add metasubspaces and test for it
-       	String meta = "testMetaSubspace";
+       	String sub = "testSubspace";
 
-		SliceKindConfiguration slconfig = new SliceKindConfiguration(uri, permission, meta);
+		SliceKindConfiguration slconfig = new SliceKindConfiguration(uri, permission, sub);
 		       	
        	String testUri = slconfig.getUri();
        	AccessMask testPermission = slconfig.getPermission();
        	String testPerm = slconfig.getPermissionAsString();
-       	String testMeta = slconfig.getMetasubspaces();
+       	String testSub = slconfig.getSubspaces();
        	boolean valid = slconfig.isValid();
        	
        	AssertJUnit.assertEquals(uri, testUri);
        	AssertJUnit.assertEquals(permission, testPermission);
        	AssertJUnit.assertEquals(perm, testPerm);
-       	AssertJUnit.assertEquals(meta, testMeta);
+       	AssertJUnit.assertEquals(sub, testSub);
        	AssertJUnit.assertEquals(true, valid);
 
-		SliceKindConfiguration slconfig2 = new SliceKindConfiguration(uri, perm, meta);
+		SliceKindConfiguration slconfig2 = new SliceKindConfiguration(uri, perm, sub);
        	testPermission = slconfig2.getPermission();
        	valid = slconfig2.isValid();
 		
@@ -98,20 +96,20 @@ public class SliceKindConfigurationTest {
 		String uri2 = "uritest";
 		String perm2 = "116";
 		AccessMask permission2 = AccessMask.fromString(perm2);
-      	String meta2 = "testMetaSubspace2";
+      	String sub2 = "testSubspace2";
 
 		slconfig2.setUri(uri2);
 		slconfig2.setPermission(permission2);
-		slconfig2.setMetasubspaces(meta2);
+		slconfig2.setSubspaces(sub2);
 
        	String testUri2 = slconfig2.getUri();
-       	String testMeta2 = slconfig2.getMetasubspaces();
+       	String testSub2 = slconfig2.getSubspaces();
        	AccessMask testPermission2 = slconfig2.getPermission();
        	String testPerm2 = slconfig2.getPermissionAsString();
        	boolean valid2 = slconfig2.isValid();
 
        	AssertJUnit.assertEquals(uri2, testUri2);
-       	AssertJUnit.assertEquals(meta2, testMeta2);
+       	AssertJUnit.assertEquals(sub2, testSub2);
        	AssertJUnit.assertEquals(perm2, testPerm2);
        	AssertJUnit.assertEquals(permission2, testPermission2);
        	AssertJUnit.assertEquals(true, valid2);
@@ -143,23 +141,22 @@ public class SliceKindConfigurationTest {
 		String uri = "testuri";
 		final String perm = "345";
 		AccessMask permission = AccessMask.fromString(perm);
-      	// TODO add metasubspaces and test for it
-       	String meta = "testMeta";
+       	String sub = "testSub";
 
-		// permission, metasubspaces missing
+		// permission, subspaces missing
        	slconfig.setUri(uri);
 		
 		valid = slconfig.isValid();
        	AssertJUnit.assertEquals(false, valid);
 		
-       	// metasubspaces missing, but mandatory
+       	// ubspaces missing, but mandatory
        	slconfig.setPermission(permission);
 		
 		valid = slconfig.isValid();
        	AssertJUnit.assertEquals(true, valid);
        	
        	// complete
-       	slconfig.setMetasubspaces(meta);
+       	slconfig.setSubspaces(sub);
 		
 		valid = slconfig.isValid();
        	AssertJUnit.assertEquals(true, valid);
@@ -200,11 +197,11 @@ public class SliceKindConfigurationTest {
 		final String perm = "345";
 		AccessMask permission = AccessMask.fromString(perm);
       	// TODO add metasubspaces and test for it
-       	String meta = "testMeta";
+       	String meta = "testSub";
 
 		SliceKindConfiguration slconfig = new SliceKindConfiguration(uri, permission, meta);
 
-		String s = "uri : '" + uri + "'; permission : '" + perm + "'; metaSubspaces : '" + meta + "'; ";
+		String s = "uri : '" + uri + "'; permission : '" + perm + "'; subspaces : '" + meta + "'; ";
 		
        	AssertJUnit.assertEquals(s, slconfig.getStringRepresentation());		
        	AssertJUnit.assertEquals(s, slconfig.toString());		
@@ -222,19 +219,17 @@ public class SliceKindConfigurationTest {
 		final long permission = 345;
 		AccessMask perm = AccessMask.fromString((new Long(permission)).toString());
 		dummy.setPermission(permission);
-		MetaSubspace dummyMeta = new MetaSubspace();
-		Set<MetaSubspace> metaSubspaces = new HashSet<MetaSubspace>();
-		metaSubspaces.add(dummyMeta);		
-		dummy.setMetaSubspaces(metaSubspaces);
+		Subspace dummySub = new Subspace();
+		Set<Subspace> subspaces = new HashSet<Subspace>();
+		subspaces.add(dummySub);		
+		dummy.setSubspaces(subspaces);
 						
 		SliceKindConfiguration config = SliceKindConfiguration.getSliceKindConfiguration(dummy);
 
 		AssertJUnit.assertEquals(true, config.isValid());
 		AssertJUnit.assertEquals(uri, config.getUri());
 		AssertJUnit.assertEquals(perm, config.getPermission());
-		
-		// TODO test for meta-subspaces
-		// AssertJUnit.assertEquals(metaSubspaces, SliceKindConfiguration.getMetaSubspaces(config));
+		AssertJUnit.assertEquals(subspaces.toString(), config.getSubspaces());
 
 	}
 
