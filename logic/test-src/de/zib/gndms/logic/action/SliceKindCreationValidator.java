@@ -18,7 +18,7 @@ package de.zib.gndms.logic.action;
 
 
 
-import de.zib.gndms.model.dspace.MetaSubspace;
+import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.common.model.common.AccessMask;
 import de.zib.gndms.logic.model.dspace.CreateSliceKindAction;
@@ -39,7 +39,7 @@ public class SliceKindCreationValidator {
 
     private String  URI; // must be unique
     private AccessMask mode; // must not be null
-    private Set<MetaSubspace> metaSubspaces; // can be null
+    private Set<Subspace> subspaces; // can be null
 
     private CreateSliceKindAction Action;
     private SliceKind sliceKind;
@@ -105,12 +105,12 @@ public class SliceKindCreationValidator {
         this.mode = perm;
     }
 
-    public Set<MetaSubspace> getMetaSubspaces() {
-        return metaSubspaces;
+    public Set<Subspace> getSubspaces() {
+        return subspaces;
     }
 
-    public void setMetaSubspaces( Set<MetaSubspace> metaSubspaces ) {
-        this.metaSubspaces = metaSubspaces;
+    public void setSubspaces( Set<Subspace> subspaces ) {
+        this.subspaces = subspaces;
     }
 
     public CreateSliceKindAction getAction() {

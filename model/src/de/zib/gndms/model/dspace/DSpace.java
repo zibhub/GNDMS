@@ -36,6 +36,7 @@ import javax.persistence.Table;
 @NamedQuery(name="findDSpaceInstances", query="SELECT instance FROM DSpaces instance"),
 @NamedQuery(name="listAllSubspaceIds", query="SELECT instance.id FROM Subspaces instance"),
 @NamedQuery(name="listAllSliceIds", query="SELECT instance.id FROM Slices instance"),
+@NamedQuery(name="listSlicesOfSubspace", query="SELECT instance.id FROM Slices instance WHERE instance.subspaceId = :subspace"),
 @NamedQuery(name="getSubspace", query="SELECT x FROM Subspaces x WHERE x.name.nameScope = :uriScopeParam " +
     "AND x.name.localName = :uriLocalParam"),
 @NamedQuery(name="getSubspaceKey", query="SELECT x.name FROM Subspaces x WHERE x.id = :idParam"),

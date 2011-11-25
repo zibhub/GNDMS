@@ -45,9 +45,9 @@ public class SliceKindConfiguration implements Configuration {
 	 */
 	public static final String PERMISSION = "permission";
 	/**
-	 * The key for the slice kind's meta-subspaces.
+	 * The key for the slice kind's subspaces.
 	 */
-	public static final String METASUBSPACES = "metaSubspaces";
+	public static final String SUBSPACES = "subspaces";
 
 	/**
 	 * The uri of the slice kind.
@@ -58,32 +58,32 @@ public class SliceKindConfiguration implements Configuration {
 	 */
 	private AccessMask permission;
 	/**
-	 * The meta subspace of the slice kind.
+	 * The subspaces of the slice kind.
 	 */
-	private String metasubspaces;
+	private String subspaces;
 
 	/**
 	 * Constructs a SliceKindConfiguration.
 	 * @param uri The uri.
 	 * @param permission The permission as long value.
-	 * @param metasubspaces The metasubspaces.
+	 * @param subspaces The subspaces.
 	 */
-	public SliceKindConfiguration(final String uri, final String permission, final String metasubspaces) {
+	public SliceKindConfiguration(final String uri, final String permission, final String subspaces) {
 		this.uri = uri;
 		setPermission(permission);
-		this.metasubspaces = metasubspaces;
+		this.subspaces = subspaces;
 	}
 
 	/**
 	 * Constructs a SliceKindConfiguration.
 	 * @param uri The uri.
 	 * @param permission The permission as long value.
-	 * @param metasubspaces The metasubspaces.
+	 * @param subspaces The subspaces.
 	 */
-	public SliceKindConfiguration(final String uri, final AccessMask permission, final String metasubspaces) {
+	public SliceKindConfiguration(final String uri, final AccessMask permission, final String subspaces) {
 		this.uri = uri;
 		this.permission = permission;
-		this.metasubspaces = metasubspaces;
+		this.subspaces = subspaces;
 	}
 
 	/**
@@ -120,8 +120,8 @@ public class SliceKindConfiguration implements Configuration {
         StringBuilder s = new StringBuilder();
         s.append( URI + " : '" ).append( uri ).append( "'; " );
         s.append( PERMISSION + " : '" ).append( permission.getAsString() ).append( "'; " );
-		if (metasubspaces != null) {
-            s.append( METASUBSPACES + " : '" ).append( metasubspaces ).append( "'; " );
+		if (subspaces != null) {
+            s.append( SUBSPACES + " : '" ).append( subspaces ).append( "'; " );
 		}
 		return s.toString();
 	}
@@ -181,19 +181,19 @@ public class SliceKindConfiguration implements Configuration {
 	}
 	
 	/**
-	 * Returns the meta subspaces of a slice kind configuration.
-	 * @return the metasubspaces
+	 * Returns the subspaces of a slice kind configuration.
+	 * @return the subspaces
 	 */
-	public final String getMetasubspaces() {
-		return metasubspaces;
+	public final String getSubspaces() {
+		return subspaces;
 	}
 
 	/**
-	 * Sets the meta subspaces of a slice kind configuration.
-	 * @param metasubspaces the metasubspaces to set
+	 * Sets the subspaces of a slice kind configuration.
+	 * @param subspaces the subspaces to set
 	 */
-	public final void setMetasubspaces(final String metasubspaces) {
-		this.metasubspaces = metasubspaces;
+	public final void setSubspaces(final String subspaces) {
+		this.subspaces = subspaces;
 	}
 
 	/**
@@ -231,7 +231,7 @@ public class SliceKindConfiguration implements Configuration {
 			SliceKindConfiguration config = (SliceKindConfiguration) obj;
 			return (config.getUri().equals(uri)
 					&& config.getPermission().equals(permission) 
-					&& config.getMetasubspaces().equals(metasubspaces));
+					&& config.getSubspaces().equals(subspaces));
 		} else {
 			return false;
 		}
@@ -249,7 +249,7 @@ public class SliceKindConfiguration implements Configuration {
 		int hashCode = start;
 		hashCode = hashCode * multi + uri.hashCode();
 		hashCode = hashCode * multi + permission.hashCode();
-		hashCode = hashCode * multi + metasubspaces.hashCode();
+		hashCode = hashCode * multi + subspaces.hashCode();
 		return hashCode;
 
 	}

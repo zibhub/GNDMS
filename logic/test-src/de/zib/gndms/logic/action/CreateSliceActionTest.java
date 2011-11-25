@@ -25,7 +25,6 @@ import de.zib.gndms.logic.model.dspace.CreateSliceAction;
 import de.zib.gndms.logic.util.SimpleModelUUIDGen;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.common.ModelUUIDGen;
-import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
@@ -97,17 +96,15 @@ public class CreateSliceActionTest extends ModelEntityTestBase {
         TreeSet ts = new TreeSet( );
         ts.add( knd );
 
-        MetaSubspace msp = new MetaSubspace( );
-        msp.setScopedName( new ImmutableScopedName( ug.nextUUID(), "welt" ) );
-        msp.setCreatableSliceKinds( ts );
 
         Subspace sp = new Subspace( );
+        sp.setName( new ImmutableScopedName( ug.nextUUID(), "welt" ) );
+        sp.setCreatableSliceKinds( ts );
         sp.setId( ug.nextUUID() );
       //  LinuxDirectoryAux lda = new LinuxDirectoryAux();
       //  String spd = MY_PATH + "/subspace";
       //  lda.createSubspaceDirectory( spd );
       //  sp.setPath( spd );
-        sp.setMetaSubspace( msp );
         GregorianCalendar cal = new GregorianCalendar( );
         cal.add( Calendar.DAY_OF_YEAR, 20 );
 //        sp.setTerminationTime( cal );
@@ -118,9 +115,6 @@ public class CreateSliceActionTest extends ModelEntityTestBase {
         //getEntityManager( ).getTransaction().begin( );
         //getEntityManager( ).persist( knd );
         //getEntityManager( ).getTransaction().commit( );
-        getEntityManager( ).getTransaction().begin( );
-        getEntityManager( ).persist( msp );
-        getEntityManager( ).getTransaction().commit( );
         getEntityManager( ).getTransaction().begin( );
         getEntityManager( ).persist( sp );
         getEntityManager( ).getTransaction().commit( );

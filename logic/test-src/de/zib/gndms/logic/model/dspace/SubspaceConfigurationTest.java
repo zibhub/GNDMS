@@ -22,7 +22,6 @@ import org.testng.AssertJUnit;
 import de.zib.gndms.common.logic.config.SetupMode;
 import de.zib.gndms.common.logic.config.WrongConfigurationException;
 import de.zib.gndms.logic.model.dspace.SubspaceConfiguration;
-import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.Subspace;
 
 
@@ -207,18 +206,16 @@ public class SubspaceConfigurationTest {
 	@Test
     public final void testGetSubspaceConfiguration()  {
 		Subspace dummy = new Subspace();
-		MetaSubspace dummyMeta = new MetaSubspace();
-		dummy.setMetaSubspace(dummyMeta);
 		
 		String path = "testpath";
 		dummy.setPath(path);
 		String gsiftp = "testgsiftp";
 		dummy.setGsiFtpPath(gsiftp);
 		boolean visible = true;
-		dummyMeta.setVisibleToPublic(visible);
+		dummy.setVisibleToPublic(visible);
 		final long size = 2000;
 		dummy.setAvailableSize(size);
-		String mode = "UPDATE";		
+		String mode = "READ";		
 				
 		SubspaceConfiguration config = SubspaceConfiguration.getSubspaceConfiguration(dummy);
 
