@@ -26,6 +26,7 @@ import de.zib.gndms.neomodel.gorfx.TaskFlow;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
+import de.zib.gndms.stuff.GNDMSInjector;
 
 /**
  * @author try ma ik jo rr a zib
@@ -141,4 +142,11 @@ public interface TaskFlowFactory<O extends Order, C extends AbstractQuoteCalcula
     void registerType( Session session );
 
     DelegatingOrder<O> getOrderDelegate( O orq );
+
+    /**
+     * Addes an injector to a task factory.
+     *
+     * @param injector An injector which offers access to all members of the system-dictionary.
+     */
+    void setInjector( GNDMSInjector injector );
 }

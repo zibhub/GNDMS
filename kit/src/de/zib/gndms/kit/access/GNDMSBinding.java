@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Provides a GUICE GNDMSInjector to everybody
+ * Provides a GNDMSInjector to everybody
  *
  * @auhtor Stefan Plantikow <plantikow@zib.de>
  */

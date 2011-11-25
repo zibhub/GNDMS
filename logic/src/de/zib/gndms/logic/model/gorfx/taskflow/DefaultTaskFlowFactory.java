@@ -22,13 +22,13 @@ import com.google.common.cache.CacheLoader;
 import de.zib.gndms.common.model.gorfx.types.Order;
 import de.zib.gndms.common.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
-import de.zib.gndms.logic.model.gorfx.c3grid.AbstractProviderStageInAction;
 import de.zib.gndms.model.common.repository.Dao;
 import de.zib.gndms.model.common.repository.TransientDao;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
 import de.zib.gndms.neomodel.gorfx.TaskFlowType;
+import de.zib.gndms.stuff.GNDMSInjector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,10 +47,11 @@ import java.util.concurrent.TimeUnit;
 public abstract class DefaultTaskFlowFactory<O extends Order, C extends AbstractQuoteCalculator<O>> implements TaskFlowFactory<O, C> {
 
     public final int MAX_CACHE_SIZE = 10000;
+    protected Logger logger = LoggerFactory.getLogger( this.getClass() );
     private String taskFlowKey;
+    private GNDMSInjector injector;
     private Class<C> calculatorClass;
     private Class<O> orderClass;
-    protected Logger logger = LoggerFactory.getLogger( this.getClass() );
     private final Dao<String, TaskFlow<O>, Void> taskFlows = new TransientDao<String, TaskFlow<O>, Void>() {
         {
             setModels(
@@ -247,7 +248,20 @@ public abstract class DefaultTaskFlowFactory<O extends Order, C extends Abstract
     }
 
 
-    protected void injectMembers( AbstractProviderStageInAction newInstance ) {
+    protected void injectMembers( C newInstance ) {
+        getInjector().injectMembers( newInstance );
+    }
+
+
+    public GNDMSInjector getInjector() {
+
+        return injector;
+    }
+
+
+    public void setInjector( final GNDMSInjector injector ) {
+
+        this.injector = injector;
     }
 
 

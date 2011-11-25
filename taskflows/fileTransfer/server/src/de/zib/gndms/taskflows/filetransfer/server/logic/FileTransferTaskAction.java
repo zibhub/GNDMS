@@ -18,6 +18,11 @@ package de.zib.gndms.taskflows.filetransfer.server.logic;
 
 
 
+import de.zib.gndms.common.rest.MyProxyToken;
+import de.zib.gndms.kit.access.MyProxyFactory;
+import de.zib.gndms.kit.access.MyProxyFactoryProvider;
+import de.zib.gndms.kit.security.CredentialProvider;
+import de.zib.gndms.kit.security.MyProxyCredentialProvider;
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.taskflows.filetransfer.client.FileTransferMeta;
@@ -34,6 +39,7 @@ import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.globus.ftp.GridFTPClient;
 import org.jetbrains.annotations.NotNull;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import java.net.URI;
 import java.util.ArrayList;
@@ -48,10 +54,11 @@ import java.util.Map;
 public class FileTransferTaskAction extends TaskFlowAction<FileTransferOrder> {
 
     private FTPTransferState transferState;
+    private MyProxyFactoryProvider myProxyFactoryProvider;
 
 
     public FileTransferTaskAction() {
-        super( FileTransferMeta.);
+        super( FileTransferMeta.FILE_TRANSFER_TYPE_KEY );
     }
 
     public FileTransferTaskAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model) {
@@ -153,5 +160,30 @@ public class FileTransferTaskAction extends TaskFlowAction<FileTransferOrder> {
         transferState = new FTPTransferState();
         transferState.setTransferId( getModel().getId() );
         task.setPayload( transferState );
+    }
+
+
+    @Override
+    public CredentialProvider getCredentialProvider() {
+
+        // todo make generic and pull it up
+        String requiredCredentialName = FileTransferMeta.REQUIRED_AUTHORIZATION.get( 0 );
+        MyProxyToken token = getOrder().getMyProxyToken().get(  requiredCredentialName );
+        MyProxyFactory myProxyFactory = getMyProxyFactoryProvider().getFactory( requiredCredentialName );
+
+        return new MyProxyCredentialProvider( myProxyFactory, token.getLogin(), token.getPassword() );
+    }
+
+
+    public MyProxyFactoryProvider getMyProxyFactoryProvider() {
+
+        return myProxyFactoryProvider;
+    }
+    
+
+    @Inject
+    public void setMyProxyFactoryProvider( final MyProxyFactoryProvider myProxyFactoryProvider ) {
+
+        this.myProxyFactoryProvider = myProxyFactoryProvider;
     }
 }

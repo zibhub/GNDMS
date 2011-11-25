@@ -23,9 +23,9 @@ import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.gndmc.AbstractClient;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author try ma ik jo rr a zib
@@ -74,7 +74,7 @@ public class GORFXClient extends AbstractClient implements GORFXServiceEssential
 
     @SuppressWarnings("unchecked")
 	public final ResponseEntity<Specifier<Facets>> createTaskFlow( final String type, final Order order,
-                                                                   final String dn, final String wid, Map<String, String> context ) {
+                                                                   final String dn, final String wid, MultiValueMap<String, String> context ) {
 		return ( ResponseEntity<Specifier<Facets>> ) (Object) unifiedPost(Specifier.class, order, getServiceURL()
 				+ "/gorfx/_" + type, dn, wid);
 	}

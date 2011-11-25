@@ -35,8 +35,9 @@ import java.util.ServiceLoader;
  */
 public class PlugableTaskFlowProvider extends TaskFlowProviderImpl {
 
-    boolean hasFactories = false;
     protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
+    private boolean hasFactories = false;
+    private GNDMSystem system;
 
 
     public void loadPlugins( boolean checkDeps ) {
@@ -57,6 +58,7 @@ public class PlugableTaskFlowProvider extends TaskFlowProviderImpl {
         if( checkDeps )
             checkDeps();
 
+        // todo this is just for development change this for releases:
         if ( getFactories().size() == 0 )
             throw new IllegalStateException( "no plugs found" );
     }
@@ -87,6 +89,7 @@ public class PlugableTaskFlowProvider extends TaskFlowProviderImpl {
             throw new IllegalStateException( "plugin " + tff.getTaskFlowKey() +" already exists" );
 
         plugins.put( tff.getTaskFlowKey(), tff );
+        tff.setInjector( system.getInstanceDir().getSystemAccessInjector() );
     }
 
 
@@ -122,5 +125,17 @@ public class PlugableTaskFlowProvider extends TaskFlowProviderImpl {
 
         hasFactories = true;
         super.setFactories( factories );    // overriden method implementation
+    }
+
+
+    public GNDMSystem getSystem() {
+
+        return system;
+    }
+
+
+    public void setSystem( final GNDMSystem system )  {
+
+        this.system = system;
     }
 }

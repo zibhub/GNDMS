@@ -34,7 +34,7 @@
 
 
     <bean id="gorfxService" class="de.zib.gndms.GORFX.service.GORFXServiceImpl">
-        <property name="baseUrl" value="${gorfxBaseURL}"/>
+        <constructor-arg value="${gorfxBaseURL}"/>
         <property name="gorfxFacets" ref="gorfxFacets" />
     </bean>
 

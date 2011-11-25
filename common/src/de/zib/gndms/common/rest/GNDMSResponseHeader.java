@@ -17,8 +17,8 @@ package de.zib.gndms.common.rest;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpHeaders;
+import org.springframework.util.MultiValueMap;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -220,17 +220,55 @@ public class GNDMSResponseHeader extends HttpHeaders {
     
     public final Map<String, MyProxyToken> getMyProxyToken( ) {
 
+        return extractTokenFromMap( this );
+    }
+
+
+    // lets try some clean-coding ...
+    public static Map<String, MyProxyToken> extractTokenFromMap( final MultiValueMap<String, String> context ) {
+
         Map<String, MyProxyToken> result = new HashMap<String, MyProxyToken>( 1 );
-        for( String s : keySet() ) {
-            if ( s.startsWith( MY_PROXY_LOGIN_PREFIX ) ) {
-                String purpose = s.substring( MY_PROXY_LOGIN_PREFIX.length(), s.length() );
-                MyProxyToken token = new MyProxyToken( get( s ).get( 0 ) );
-                if( containsKey( MY_PROXY_PASSWORD_PREFIX + purpose ) )
-                    token.setPassword( get( MY_PROXY_PASSWORD_PREFIX + purpose ).get( 0 ) );
+        for( String key : context.keySet() ) {
+            if ( isMyProxyLoginEntryKey( key ) ) {
+                String purpose = extractPurposeFromLoginKey( key );
+                MyProxyToken token = new MyProxyToken( extractLoginName( context, key ) );
+                if( hasPasswordKeyForPurpose( context, purpose ) )
+                    token.setPassword( extractPasswordForPurpose( context, purpose ) );
 
                 result.put( purpose, token );
             }
         }
         return Collections.unmodifiableMap( result );
     }
+
+
+    private static String extractPasswordForPurpose( final MultiValueMap<String, String> context, final String purpose ) {
+
+        return context.get( MY_PROXY_PASSWORD_PREFIX + purpose ).get( 0 );
+    }
+
+
+    private static String extractLoginName( final MultiValueMap<String, String> context, final String key ) {
+
+        return context.get( key ).get( 0 );
+    }
+
+
+    private static boolean hasPasswordKeyForPurpose( final MultiValueMap<String, String> context, final String purpose ) {
+
+        return context.containsKey( MY_PROXY_PASSWORD_PREFIX + purpose );
+    }
+
+
+    private static String extractPurposeFromLoginKey( final String key ) {
+
+        return key.substring( MY_PROXY_LOGIN_PREFIX.length(), key.length() );
+    }
+
+
+    private static boolean isMyProxyLoginEntryKey( final String key ) {
+
+        return key.startsWith( MY_PROXY_LOGIN_PREFIX );
+    }
+    // hmpf, is this really better?
 }

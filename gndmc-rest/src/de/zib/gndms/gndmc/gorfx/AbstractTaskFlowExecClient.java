@@ -17,6 +17,7 @@ package de.zib.gndms.gndmc.gorfx;
 
 import de.zib.gndms.common.model.gorfx.types.*;
 import de.zib.gndms.common.rest.Facets;
+import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 
 import org.springframework.http.HttpStatus;
@@ -57,8 +58,12 @@ public abstract class AbstractTaskFlowExecClient {
 
         String wid = UUID.randomUUID().toString();
 
+        // todo setup credentials in gndmsheader  like
+        GNDMSResponseHeader context = new GNDMSResponseHeader();
+        context.addMyProxyToken( "c3grid", "foo", "bar" );
+
         // sends the order and creates the task flow
-        ResponseEntity<Specifier<Facets>> res = gorfxClient.createTaskFlow( order.getTaskFlowType(), order, dn, wid, new HashMap<String, String>( 0 ) );
+        ResponseEntity<Specifier<Facets>> res = gorfxClient.createTaskFlow( order.getTaskFlowType(), order, dn, wid, context );
 
         if(! HttpStatus.CREATED.equals( res.getStatusCode() ) )
             throw new RuntimeException( "createTaskFlow failed " + res.getStatusCode().name() );

@@ -21,6 +21,7 @@ import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 
 import java.util.List;
 import java.util.Map;
@@ -82,6 +83,7 @@ public interface GORFXServiceEssentials {
      * Instantiates  a taskflow.
      *
      *
+     *
      * @param type Type name of the taskflow.
      * @param order The order consists parameters for the taskflow.
      * @param dn The dn of the user invoking the method.
@@ -89,5 +91,5 @@ public interface GORFXServiceEssentials {
      * @param context
      * @return The specifier of the newly created task, with HTTPStatus created.
      */
-    ResponseEntity<Specifier<Facets>> createTaskFlow( String type, Order order, String dn, String wid, Map<String, String> context );
+    ResponseEntity<Specifier<Facets>> createTaskFlow( String type, Order order, String dn, String wid, MultiValueMap<String, String> context );
 }

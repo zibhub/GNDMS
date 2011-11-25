@@ -17,8 +17,7 @@ package de.zib.gndms.stuff;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;import java.lang.Object;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 /**
  * @author try ma ik jo rr a zib
@@ -27,7 +26,7 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;impor
  */
 public class GNDMSInjectorSpring implements GNDMSInjector {
 
-    AutowireCapableBeanFactory factory;
+    private AutowireCapableBeanFactory factory;
 
 
     public GNDMSInjectorSpring( BeanFactory factory ) {

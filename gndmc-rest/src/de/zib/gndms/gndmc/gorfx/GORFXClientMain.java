@@ -24,7 +24,6 @@ import de.zib.gndms.common.rest.Facet;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
-//import de.zib.gndms.logic.taskflow.tfmockup.DummyOrder;
 
 import org.kohsuke.args4j.Option;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -84,12 +83,7 @@ public class GORFXClientMain extends AbstractApplication {
 			System.out.println(fa.getName() + " " + fa.getUrl());
 		}
 		
-	/*	DummyOrder dft = new DummyOrder();
-		// set dft attributes
-		dft.setMessage("Test task flow");
-		dft.setFailIntentionally(false);
-		executeTaskFlow(gorfxClient, dft.getTaskFlowType(), dft);
-		*/
+
 	}
 
 	private void executeTaskFlow(FullGORFXClient gorfxClient, String type, Order order) {
@@ -113,7 +107,7 @@ public class GORFXClientMain extends AbstractApplication {
 		System.out.println("Taskflow type " + type + " exists");
 
 		System.out.println("Step 3: creating task flow");
-		ResponseEntity<Specifier<Facets>> res2 = gorfxClient.createTaskFlow( type, order, dn, wid, new HashMap<String, String>( 0 ) );
+		ResponseEntity<Specifier<Facets>> res2 = gorfxClient.createTaskFlow( type, order, dn, wid, new GNDMSResponseHeader() );
 		
 		// optionally: change order, select quote?
 		

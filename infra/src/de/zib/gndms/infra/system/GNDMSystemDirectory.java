@@ -29,7 +29,6 @@ import de.zib.gndms.kit.access.GNDMSBinding;
 import de.zib.gndms.kit.configlet.DefaultConfiglet;
 import de.zib.gndms.logic.model.gorfx.*;
 import de.zib.gndms.model.common.ConfigletState;
-import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.stuff.BoundInjector;
 import de.zib.gndms.kit.configlet.Configlet;
 import org.slf4j.Logger;
@@ -98,7 +97,6 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
 
         boundInjector.setInjector( injector );
         GNDMSBinding.setDefaultInjector( injector );
-
     }
 
 

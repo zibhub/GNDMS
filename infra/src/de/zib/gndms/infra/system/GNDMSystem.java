@@ -470,6 +470,7 @@ public final class GNDMSystem
      * Calls {@code sumitAction(action,logParam)} on {@code getExecutionService()}.
      *
      * @see de.zib.gndms.logic.model.TaskExecutionService#submitAction(de.zib.gndms.logic.model.EntityAction
+     * @deprecated will be removed before next release
      */
     public @NotNull <R> Future<R> submitAction(final @NotNull EntityAction<R> action, final @NotNull Logger logParam) {
         return getExecutionService().submitAction(action );
@@ -479,7 +480,7 @@ public final class GNDMSystem
      * Calls {@code sumitAction(em,action,logParam)} on {@code getExecutionService()}
      * 
      * @see de.zib.gndms.logic.model.TaskExecutionService#submitAction(javax.persistence.EntityManager, de.zib.gndms.logic.model.EntityAction
-     *
+     * @deprecated will be removed before next release
      */
     public @NotNull <R> Future<R> submitAction(final @NotNull EntityManager em,
                                                final @NotNull EntityAction<R> action,
@@ -704,7 +705,6 @@ public final class GNDMSystem
 
     @PersistenceUnit
     public void setEmf( @NotNull EntityManagerFactory emf ) {
-        logger.debug( "setEmf called "  );
         this.emf = emf;
     }
 }

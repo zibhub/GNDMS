@@ -19,7 +19,7 @@ define 'fileTransfer' do
 
     desc 'The client side of the plugin'
     define 'client', :layout => dmsLayout('client', 'fileTransfer-client') do
-      compile.with GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, GNDMS_COMMON, JETBRAINS_ANNOTATIONS, JODA_TIME, ARGS4J, INJECT, GUICE, GT4_SERVLET, COMMONS_LANG, OPENJPA, SLF4J, JSON, SPRING
+      compile.with GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, GNDMS_STUFF, GNDMS_COMMON, JETBRAINS_ANNOTATIONS, JODA_TIME, ARGS4J, INJECT, GUICE, GT4_SERVLET, COMMONS_LANG, OPENJPA, SLF4J, JSON, SPRING
       compile
       package :jar
     end

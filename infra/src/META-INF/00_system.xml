@@ -48,16 +48,19 @@
           factory-method="getInstance" />
 
     <bean id="taskExecutionService" class="de.zib.gndms.infra.system.SysTaskExecutionService"/>
+
     <bean id="taskDao" class="de.zib.gndms.neomodel.common.Dao">
         <constructor-arg name="gridName" value="${gridName}" />
         <constructor-arg name="gdb" ref="dataBase" />
     </bean>
 
-    <bean id="taskFlowProvider" class="de.zib.gndms.infra.system.PlugableTaskFlowProvider"/>
+    <bean id="taskFlowProvider" class="de.zib.gndms.infra.system.PlugableTaskFlowProvider">
+        <property name="system" ref="system"/>
+    </bean>
 
     <!-- #################################################################################################### -->
     <!-- myproxy setup -->
-    <bean id="myproxyProviderProvider" class="de.zib.gndms.kit.access.MyProxyFactoryProvider" factory-method="fromList">
+    <bean id="myProxyFactoryProvider" class="de.zib.gndms.kit.access.MyProxyFactoryProvider" factory-method="fromList">
             <constructor-arg name="factories" >
                 <list>
                     <ref bean="defaultMyProxyProvider"/>

@@ -21,8 +21,10 @@ package de.zib.gndms.taskflows.filetransfer.server;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.model.gorfx.taskflow.DefaultTaskFlowFactory;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
+import de.zib.gndms.taskflows.filetransfer.client.FileTransferMeta;
 import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferOrder;
 import de.zib.gndms.taskflows.filetransfer.server.logic.FileTransferQuoteCalculator;
+import de.zib.gndms.taskflows.filetransfer.server.logic.FileTransferTaskAction;
 
 import java.util.Map;
 
@@ -39,8 +41,9 @@ public class FileTransferTaskFlowFactory
     extends DefaultTaskFlowFactory<FileTransferOrder, FileTransferQuoteCalculator> {
 
 
-    protected FileTransferTaskFlowFactory( String taskFlowKey, Class<FileTransferQuoteCalculator> calculatorClass, Class<FileTransferOrder> orderClass ) {
-        super( taskFlowKey, calculatorClass, orderClass );
+    public FileTransferTaskFlowFactory( ) {
+
+        super( FileTransferMeta.FILE_TRANSFER_TYPE_KEY, FileTransferQuoteCalculator.class, FileTransferOrder.class );
     }
 
 
@@ -49,11 +52,6 @@ public class FileTransferTaskFlowFactory
         final FileTransferQuoteCalculator quoteCalculator = super.getQuoteCalculator();
         injectMembers( quoteCalculator );
         return quoteCalculator;
-    }
-
-
-    private void injectMembers( FileTransferQuoteCalculator quoteCalculator ) {
-        // Implement Me. Pretty Please!!!
     }
 
 
@@ -71,6 +69,8 @@ public class FileTransferTaskFlowFactory
 
     @Override
     public TaskAction createAction() {
-        return null;  // not required here
+        FileTransferTaskAction action = new FileTransferTaskAction();  // not required here
+        getInjector().injectMembers( action );
+        return action;
     }
 }
