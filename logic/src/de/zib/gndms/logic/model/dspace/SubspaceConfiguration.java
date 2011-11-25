@@ -48,11 +48,11 @@ public class SubspaceConfiguration implements Configuration {
 	 */
 	public static final String VISIBLE = "visible";
 	/**
-	 * The key for the subspace's size.
+	 * The key for the subspace's total size.
 	 */
 	public static final String SIZE = "size";
 	/**
-	 * The key for the subspace's mode.
+	 * The key for the configuration's mode.
 	 */
 	public static final String MODE = "mode";
 
@@ -261,7 +261,7 @@ public class SubspaceConfiguration implements Configuration {
 	 * @return The configuration.
 	 */
     public static final SubspaceConfiguration getSubspaceConfiguration(Subspace subspace) {
-		return new SubspaceConfiguration(subspace.getPath(), subspace.getGsiFtpPath(), subspace.isVisibleToPublic(), subspace.getAvailableSize(), "READ");
+		return new SubspaceConfiguration(subspace.getPath(), subspace.getGsiFtpPath(), subspace.isVisibleToPublic(), subspace.getTotalSize(), "READ");
 	}
 
 	/*

@@ -123,7 +123,7 @@ public class Subspace extends GridResource {
      * @return The path.
      */
     public final String getPathForSlice(final Slice sl)  {
-        return path + File.separator + sl.getKind( ).getSliceDirectory() + File.separator + sl.getDirectoryId();
+        return getPath() + File.separator + sl.getKind( ).getSliceDirectory() + File.separator + sl.getDirectoryId();
     }
 
     /**
@@ -132,7 +132,7 @@ public class Subspace extends GridResource {
      * @return The gsi ftp path.
      */
     public final String getGsiFtpPathForSlice(final Slice sl)  {
-        return gsiFtpPath + "/" + sl.getKind( ).getSliceDirectory() + "/" + sl.getDirectoryId( );
+        return getGsiFtpPath() + "/" + sl.getKind( ).getSliceDirectory() + "/" + sl.getDirectoryId( );
     }
 
     /**
@@ -141,7 +141,7 @@ public class Subspace extends GridResource {
      */
     @Column(name = "avail_size", nullable = false, updatable = false)
     public final long getAvailableSize() {
-        return availableSize;
+        return getAvailableSize();
     }
 
     /**
@@ -217,27 +217,47 @@ public class Subspace extends GridResource {
         this.name = name;
     }
 
-    @Column(name="visible", nullable=false, updatable=false)
-    public boolean isVisibleToPublic() {
+	/**
+	 * Returns the visibility of this subspace.
+	 * @return The visibility.
+	 */
+    @Column(name = "visible", nullable = false, updatable = false)
+    public final boolean isVisibleToPublic() {
         return visibleToPublic;
     }
 
-    public void setVisibleToPublic( boolean visibleToPublic ) {
+	/**
+	 * Sets the visibility of this subspace.
+	 * @param visibleToPublic The visibility.
+	 */
+    public final void setVisibleToPublic(final boolean visibleToPublic) {
         this.visibleToPublic = visibleToPublic;
     }
 
-    @ManyToMany(targetEntity=SliceKind.class, cascade = {CascadeType.REFRESH, CascadeType.MERGE, CascadeType.PERSIST}, fetch=FetchType.EAGER)
-   @JoinTable(name = "creatable_slice_kinds", schema="dspace",
-        uniqueConstraints={@UniqueConstraint(columnNames = {"subspace_schema_uri", "subspace_specifier", "slice_kind_uri"})},
-        joinColumns={@JoinColumn(name="subspace_schema_uri", referencedColumnName="schema_uri", columnDefinition="VARCHAR", nullable=false, updatable=true),
-            @JoinColumn(name="subspace_specifier", referencedColumnName="specifier", columnDefinition="VARCHAR", nullable=false, updatable=true)},
-        inverseJoinColumns={@JoinColumn(name="slice_kind_uri", referencedColumnName="uri", columnDefinition="VARCHAR", nullable=false, updatable=true)})
-    
-    public Set<SliceKind> getCreatableSliceKinds() {
+    /**
+     * Returns the slice kinds of this subspace.
+     * @return The slice kinds.
+     */
+    @ManyToMany(targetEntity = SliceKind.class, cascade = {CascadeType.REFRESH, 
+    	CascadeType.MERGE, CascadeType.PERSIST }, fetch = FetchType.EAGER)
+    @JoinTable(name = "creatable_slice_kinds", schema = "dspace",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"subspace_schema_uri", 
+        		"subspace_specifier", "slice_kind_uri" }) },
+        joinColumns = {@JoinColumn(name = "subspace_schema_uri", 
+        		referencedColumnName = "schema_uri", columnDefinition = "VARCHAR", nullable = false, updatable = true),
+    @JoinColumn(name = "subspace_specifier", referencedColumnName = "specifier", 
+    			columnDefinition = "VARCHAR", nullable = false, updatable = true) },
+        		inverseJoinColumns = {@JoinColumn(name = "slice_kind_uri", 
+        		referencedColumnName = "uri", columnDefinition = "VARCHAR", nullable = false, updatable = true) })
+    public final Set<SliceKind> getCreatableSliceKinds() {
         return creatableSliceKinds;
     }
 
-    public void setCreatableSliceKinds( Set<SliceKind> creatableSliceKinds ) {
+    /**
+     * Sets the slice kinds of this subspace.
+     * @param creatableSliceKinds The slice kinds.
+     */
+    public final void setCreatableSliceKinds(final Set<SliceKind> creatableSliceKinds) {
         this.creatableSliceKinds = creatableSliceKinds;
     }
 
