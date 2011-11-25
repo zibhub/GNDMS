@@ -46,7 +46,7 @@ import java.io.PrintWriter;
  * @see ImmutableScopedName
  * @author  Ulrike Golas
  */
-@ConfigActionHelp(shortHelp = "Setup a subspace", longHelp = "Used to prepare the database schema for GNDMS by creating, updating, and deleting subspaces")
+@ConfigActionHelp(shortHelp = "Delete a subspace", longHelp = "Used to prepare the database schema for GNDMS by deleting subspaces")
 public class DeleteSubspaceAction extends SetupAction<ConfigActionResult> {
     @ConfigOption(descr="The key of the subspace (QName)")
     private ImmutableScopedName subspace;

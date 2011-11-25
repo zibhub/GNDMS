@@ -16,7 +16,6 @@ package de.zib.gndms.dspace.service;
  * limitations under the License.
  */
 
-import java.rmi.RemoteException;
 import java.util.HashMap;
 
 import javax.annotation.PostConstruct;
@@ -41,6 +40,7 @@ import de.zib.gndms.common.logic.config.WrongConfigurationException;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
+import de.zib.gndms.logic.model.dspace.CreateSliceAction;
 import de.zib.gndms.logic.model.dspace.NoSuchElementException;
 import de.zib.gndms.logic.model.dspace.SliceConfiguration;
 import de.zib.gndms.logic.model.dspace.SliceKindConfiguration;
@@ -138,72 +138,24 @@ public class SliceKindServiceImpl implements SliceKindService {
 			}
 			
 			SliceConfiguration sliceConfig = SliceConfiguration.checkSliceConfig(config);
+			SliceKind kind = sliceKindProvider.getSliceKind(subspace, sliceKind);
 
-			Subspace sub = subspaceProvider.getSubspace(subspace);
+            // TODO: how to get a new slice name, what else to do?
+            String slice = new String();
+            
 		   	em = emf.createEntityManager();
 	       	TxFrame tx = new TxFrame(em);
 
 	        try {
-//	            Long ssize = null;
-//
-//	            if( sliceCreationSpecifier.getTotalStorageSize() != null )
-//	                ssize = sliceCreationSpecifier.getTotalStorageSize().longValue();
-//	            else
-//	                ssize = 0l;
-//
-//	            srh = getSliceResourceHome( );
-//	            rk = srh.createResource( );
-//	            SliceResource sr = srh.getResource( rk );
-//
-//	            GNDMSystem system = subref.getResourceHome( ).getSystem( );
-//
-//
-//
-//	            String id =  subref.getID();
-//
-//	            Query q = em.createNamedQuery( "getMetaSubspaceKey" );
-//	            q.setParameter( "idParam", id );
-//	            ImmutableScopedName isn = (ImmutableScopedName) q.getSingleResult();
-//
-//	            final MetaSubspace msp = em.find( MetaSubspace.class, isn );
-//
-//	            id = sliceCreationSpecifier.getSliceKind( ).toString( );
-//	            final SliceKind sk = em.find( SliceKind.class, id );
-//
-//	            if( sk == null )
-//	                throw new IllegalArgumentException( "Slice kind doesn't exist: " + id );
-//
-//
-//	            final CreateSliceAction csa =
-//	                    new CreateSliceAction( (String) sr.getID(),
-//	                            LogAux.getLocalName(),
-//	                            sliceCreationSpecifier.getTerminationTime(),
-//	                            system.getModelUUIDGen(),
-//	                            sk,
-//	                            ssize
-//	                    );
-//	            csa.setClosingEntityManagerOnCleanup( false );
-//	            csa.setOwnEntityManager( em );
-//	            csa.setModel( msp.getInstance( ) );
-//	            DefaultBatchUpdateAction bua = new DefaultBatchUpdateAction<GridResource>();
-//	            bua.setListener( system );
-//	            csa.setOwnPostponedEntityActions(bua);
-//
-//	            final Slice ns = csa.call();
-//
-//	            csa.getPostponedEntityActions().call( );
-//
-//	            sr.loadFromModel( ns );
-//	            sref = srh.getResourceReference( rk );
-//	            tx.commit( );
-//	        } catch ( OutOfSpace e ) {
-//	            logger.debug(e);
-//	            throw e;
-//	        } catch ( Exception e ) {
-//	            logger.debug(e);
-//	            if( srh != null && rk != null )
-//	                srh.remove( rk );
-//	            throw new RemoteException( e.toString(), e );
+				// TODO is this right? what is this uuid generator (forth entry)?            
+	        	CreateSliceAction action = new CreateSliceAction(slice, dn, 
+	        			sliceConfig.getTerminationTime(), null, kind, sliceConfig.getSize());
+				action.setOwnEntityManager(em);
+				logger.info("Calling action for creating slice in " + sliceKind
+						+ ".");
+				action.call();
+				tx.commit();
+				
 	        } finally  {
 	            if (tx != null) {
 	                tx.finish();       
@@ -213,15 +165,27 @@ public class SliceKindServiceImpl implements SliceKindService {
 	            }
 	        }
 
-			// TODO: create slice kind
-			return new ResponseEntity<Specifier<Void>>(null, headers,
+			Specifier<Void> spec = new Specifier<Void>();
+
+			HashMap<String, String> urimap = new HashMap<String, String>(2);
+			urimap.put("service", "dspace");
+			urimap.put(UriFactory.SUBSPACE, subspace);
+			urimap.put(UriFactory.SLICEKIND, sliceKind);
+			urimap.put(UriFactory.SLICE, slice);
+			spec.setUriMap(new HashMap<String, String>(urimap));
+			spec.setUrl(uriFactory.quoteUri(urimap));
+
+			return new ResponseEntity<Specifier<Void>>(spec, headers,
 					HttpStatus.OK);
-			
-			
+				
 		} catch (WrongConfigurationException e) {
-			logger.warn("Wrong slice kind configuration");
+			logger.warn(e.getMessage());
   			return new ResponseEntity<Specifier<Void>>(null, headers,
 					HttpStatus.BAD_REQUEST);
+		} catch (NoSuchElementException e) {
+			logger.warn(e.getMessage());
+  			return new ResponseEntity<Specifier<Void>>(null, headers,
+					HttpStatus.NOT_FOUND);
 		}
 
 	}
@@ -236,6 +200,8 @@ public class SliceKindServiceImpl implements SliceKindService {
 			SliceKind sliceK = sliceKindProvider.getSliceKind(subspace, sliceKind);
 			SliceKindConfiguration sliceKindConfig = SliceKindConfiguration.checkSliceKindConfig(config);
 
+			sliceK.setPermission(sliceKindConfig.getPermission());
+			
 			// TODO: sliceK.setSliceKindConfiguration(sliceKindConfig)
 
 			Specifier<Void> spec = new Specifier<Void>();
@@ -272,7 +238,7 @@ public class SliceKindServiceImpl implements SliceKindService {
 			SliceKind sliceK = sliceKindProvider.getSliceKind(subspace, sliceKind);
 			Subspace sub = subspaceProvider.getSubspace(subspace);
 
-			// TODO: sub.deleteSliceKind(sliceK);
+			// TODO: AssignSliceKindAction zum lšschen
 			return new ResponseEntity<Specifier<Void>>(null, headers, HttpStatus.OK);
 		} catch (NoSuchElementException ne) {
 			logger.warn("The slice kind " + sliceKind + "does not exist within the subspace" + subspace);

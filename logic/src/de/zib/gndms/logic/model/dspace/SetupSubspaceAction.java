@@ -25,8 +25,6 @@ import de.zib.gndms.logic.model.config.ConfigActionResult;
 import de.zib.gndms.logic.model.config.ConfigOption;
 import de.zib.gndms.logic.model.config.SetupAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
-import de.zib.gndms.model.dspace.DSpace;
-import de.zib.gndms.model.dspace.DSpaceRef;
 import de.zib.gndms.model.dspace.Subspace;
 import org.jetbrains.annotations.NotNull;
 
@@ -59,7 +57,7 @@ import java.io.PrintWriter;
  *
  *          User: stepn Date: 14.08.2008 Time: 17:37:51
  */
-@ConfigActionHelp(shortHelp = "Setup a subspace", longHelp = "Used to prepare the database schema for GNDMS by creating, updating, and deleting subspaces")
+@ConfigActionHelp(shortHelp = "Setup a subspace", longHelp = "Used to prepare the database schema for GNDMS by creating and updating subspaces")
 public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
     @ConfigOption(descr="The key of the subspace (QName)")
     private ImmutableScopedName subspace;

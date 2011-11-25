@@ -53,6 +53,7 @@ import de.zib.gndms.logic.model.dspace.SubspaceProvider;
 import de.zib.gndms.logic.model.dspace.SubspaceProviderImpl;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.util.TxFrame;
+// import de.zib.gndms.neomodel.gorfx.Taskling;
 
 /**
  * The subspace service implementation.
@@ -185,10 +186,15 @@ public class SubspaceServiceImpl implements SubspaceService {
        		action.call();
        		tx.commit();
 
-       		// TODO get the specifier from the action
 			Specifier<Void> spec = new Specifier<Void>();
-
-       		return new ResponseEntity<Specifier<Void>>(spec, headers, HttpStatus.OK);
+       		// TODO get the task specifier from the action - something like this:
+//			Taskling task = new Taskling(action.getDao(), action.nextUUID());
+//			HashMap<String, String> urimap = new HashMap<String, String>(2);
+//			urimap.put(UriFactory.SERVICE, "dspace");
+//			urimap.put(UriFactory.TASK_ID, task.getId());
+//			spec.setUriMap(new HashMap<String, String>(urimap));
+     		
+			return new ResponseEntity<Specifier<Void>>(spec, headers, HttpStatus.OK);
        	} finally {
        		tx.finish();
        		if (em != null && em.isOpen()) {
