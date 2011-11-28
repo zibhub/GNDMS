@@ -53,7 +53,7 @@ public class NonblockingClientFactoryConfiglet extends DefaultConfiglet {
 
 
     private void refreshFactory() {
-        getLog().debug( "refresh called" );
+        getLogger().debug( "refresh called" );
         final MapConfig mapConfig = getMapConfig();
         try{
             Schedulable sed =
@@ -74,9 +74,9 @@ public class NonblockingClientFactoryConfiglet extends DefaultConfiglet {
                 }
             }
         } catch ( ClassCastException e ) {
-            getLog( ).warn( e );
+            getLogger().warn( "", e );
         } catch ( MandatoryOptionMissingException e ) {
-            getLog( ).warn( e );
+            getLogger().warn( "", e );
         }
     }
 }
