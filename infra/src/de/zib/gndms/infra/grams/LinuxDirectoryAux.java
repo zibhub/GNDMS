@@ -20,14 +20,14 @@ package de.zib.gndms.infra.grams;
 
 import de.zib.gndms.common.model.common.AccessMask;
 import de.zib.gndms.kit.util.DirectoryAux;
-import org.globus.exec.generated.ScriptCommandEnumeration;
-import org.globus.exec.service.exec.PerlJobDescription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
+
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 
@@ -95,7 +95,7 @@ public class LinuxDirectoryAux implements DirectoryAux {
 
     private boolean executeGramsJob( String uid, HashMap<String, Object> jd ) {
 
-        PerlJobDescription pds = new PerlJobDescription( );
+        Map<String,Object> pds = new HashMap<String, Object>(5);
         // create from job description
         pds.putAll( jd );
 
@@ -106,20 +106,17 @@ public class LinuxDirectoryAux implements DirectoryAux {
         pds.put(  "stdout", "/dev/stdout" );
         pds.put(  "stderr", "/dev/stderr" );
 
-        String jds = pds.toPerlString();
+        String jds = pds.toString();
         System.err.println( "perl job description: " + jds );
 
          try {
-             GNDMSJobManagerScript jms = new GNDMSJobManagerScript(
-                uid,
-                System.getenv( "GLOBUS_LOCATION" ),
-                "fork", // globus job manager type
-                ScriptCommandEnumeration.submit,
-                jds,
-                new String[]  {} // this is a possible context, lets see if it might be empty...
-            );
+             GNDMSJobManagerScript jms = new GNDMSJobManagerScriptBuilder().setUsername( uid )
+                     .setGlobusLocation( System.getenv( "GLOBUS_LOCATION" ) ).setType( "fork" )
+                     .setPerlJobDescription( jds ).setEnvironment( new String[]{} )
+                     .createGNDMSJobManagerScript();
 
-            jms.run(); // run globus run
+
+             jms.run(); // run globus run
             int ec = jms.getError();
             if ( ec != 0 ) {
                 logger.debug( "script exited with :" + ec );
@@ -129,7 +126,7 @@ public class LinuxDirectoryAux implements DirectoryAux {
                 return false;
             } else
                logger.debug( "Job successful" );
-        } catch ( IOException e ) {
+        } catch ( Exception e ) {
             logger.error( "", e );
             return false;
         }
