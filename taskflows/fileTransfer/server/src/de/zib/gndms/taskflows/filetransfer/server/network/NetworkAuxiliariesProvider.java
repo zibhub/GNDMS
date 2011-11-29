@@ -17,8 +17,8 @@ package de.zib.gndms.taskflows.filetransfer.server.network;
  */
 
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author  try ma ik jo rr a zib
@@ -60,7 +60,7 @@ public class NetworkAuxiliariesProvider {
     private final static Class<NonblockingClientFactory> gridFTPClientFactoryClass = NonblockingClientFactory.class;
     private final static GridFTPClientFactory gridFTPClientFactory;
     private final static BandWidthEstimater bandWidthEstimater = new StaticBandWidthEstimater();
-    protected static Log logger = LogFactory.getLog( NetworkAuxiliariesProvider.class );
+    protected static Logger logger = LoggerFactory.getLogger( NetworkAuxiliariesProvider.class );
 
 
     private static Integer bufferSize = null;
@@ -71,10 +71,10 @@ public class NetworkAuxiliariesProvider {
             gridFTPClientFactory1 = gridFTPClientFactoryClass.newInstance();
         } catch ( InstantiationException e ) {
             gridFTPClientFactory1 = new NonblockingClientFactory(); // fallback
-            e.printStackTrace();
+            logger.warn( "using fallback", e );
         } catch ( IllegalAccessException e ) {
             gridFTPClientFactory1 = new NonblockingClientFactory(); // fallback
-            e.printStackTrace();
+            logger.warn( "using fallback", e );
         }
         gridFTPClientFactory = gridFTPClientFactory1;
     }
@@ -97,7 +97,7 @@ public class NetworkAuxiliariesProvider {
     }
 
     /**
-     * Calculated the transfertime in milli-seconds.
+     * Calculated the transfer-time in milli-seconds.
      *
      * To catch possible rounding errors, which may occur when the transfer size is to small and the connection is
      * very fast. A minimal value for the transfer time can be provided (see the <EM>min</EM> parameter).

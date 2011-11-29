@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class AbstractNonblockingClientFactory extends AbstractGridFTPClientFactory implements Schedulable{
 
     protected final Logger log = Logger.getLogger( this.getClass() );
-    private int timeout = 20;
+    private int timeout = 20;   // in TimeUnits @see unit below
     private long delay = 500; // in ms
     private int count=0;
     private final TimeUnit unit = TimeUnit.SECONDS;

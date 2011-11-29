@@ -238,7 +238,7 @@ public class SliceKindServiceImpl implements SliceKindService {
 			SliceKind sliceK = sliceKindProvider.getSliceKind(subspace, sliceKind);
 			Subspace sub = subspaceProvider.getSubspace(subspace);
 
-			// TODO: AssignSliceKindAction zum lšschen
+			// TODO: AssignSliceKindAction zum lschen
 			return new ResponseEntity<Specifier<Void>>(null, headers, HttpStatus.OK);
 		} catch (NoSuchElementException ne) {
 			logger.warn("The slice kind " + sliceKind + "does not exist within the subspace" + subspace);

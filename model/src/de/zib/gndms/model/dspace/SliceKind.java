@@ -23,6 +23,7 @@ import de.zib.gndms.model.common.GridEntity;
 
 import javax.persistence.*;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -71,9 +72,16 @@ public class SliceKind extends GridEntity {
     }
 
 
-    @ManyToMany(mappedBy="creatableSliceKinds", cascade={CascadeType.REFRESH, CascadeType.MERGE, CascadeType.PERSIST}, fetch=FetchType.EAGER)
+    @ManyToMany( cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},
+            mappedBy = "creatableSliceKinds" )
     public Set<Subspace> getSubspaces() {
         return subspaces;
+    }
+
+
+    public void setSubspaces( final Set<Subspace> subspaces ) {
+
+        this.subspaces = subspaces;
     }
 
 
@@ -94,10 +102,5 @@ public class SliceKind extends GridEntity {
 
     public void setSliceDirectory( String sliceDirectory ) {
         this.sliceDirectory = sliceDirectory;
-    }
-
-
-    public void setSubspaces( Set<Subspace> subspaces ) {
-        this.subspaces = subspaces;
     }
 }

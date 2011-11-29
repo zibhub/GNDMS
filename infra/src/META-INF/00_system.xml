@@ -71,13 +71,13 @@
 
     <bean id="defaultMyProxyProvider" class="de.zib.gndms.kit.access.MyProxyFactory">
         <constructor-arg name="nickname" value="c3grid"/>
-        <property name="myProxyServer" value="localhost"/>
+        <property name="myProxyServer" value="${myProxyServer}"/>
         <property name="port" value="7512"/>
         <property name="noPasswd" value="false"/>
         <!-- this is just an example for credentialHolder usage -->
         <property name="connectionCredentialHolder">
            <bean class="de.zib.gndms.kit.access.HostCredentialHolder" >
-                   <constructor-arg name="base" value="/etc/grid-security"/>
+                   <constructor-arg name="base" value="${myProxyConnectionCredentialFolder}"/>
            </bean>
         </property>
     </bean>

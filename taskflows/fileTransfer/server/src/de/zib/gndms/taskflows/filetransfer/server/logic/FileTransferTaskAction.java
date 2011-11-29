@@ -18,11 +18,8 @@ package de.zib.gndms.taskflows.filetransfer.server.logic;
 
 
 
-import de.zib.gndms.common.rest.MyProxyToken;
-import de.zib.gndms.kit.access.MyProxyFactory;
 import de.zib.gndms.kit.access.MyProxyFactoryProvider;
 import de.zib.gndms.kit.security.CredentialProvider;
-import de.zib.gndms.kit.security.MyProxyCredentialProvider;
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.taskflows.filetransfer.client.FileTransferMeta;
@@ -104,8 +101,8 @@ public class FileTransferTaskAction extends TaskFlowAction<FileTransferOrder> {
 
         TaskPersistentMarkerListener pml = new TaskPersistentMarkerListener( );
         pml.setDao( getDao() );
+        pml.setTaskling( getModel() );
         pml.setTransferState( transferState );
-        pml.setTaskling(getModel());
         pml.setWid(wid);
         pml.setGORFXId( getOrder().getActId());
 
@@ -156,6 +153,7 @@ public class FileTransferTaskAction extends TaskFlowAction<FileTransferOrder> {
         finally { src.close(); }
     }
 
+
     private void newTransfer( @NotNull Task task ) {
         transferState = new FTPTransferState();
         transferState.setTransferId( getModel().getId() );
@@ -165,13 +163,23 @@ public class FileTransferTaskAction extends TaskFlowAction<FileTransferOrder> {
 
     @Override
     public CredentialProvider getCredentialProvider() {
-
+     /*
         // todo make generic and pull it up
         String requiredCredentialName = FileTransferMeta.REQUIRED_AUTHORIZATION.get( 0 );
-        MyProxyToken token = getOrder().getMyProxyToken().get(  requiredCredentialName );
+
+        final Map<String, MyProxyToken> myProxyToken = getOrder().getMyProxyToken();
+        MyProxyToken token;
+        if ( myProxyToken.containsKey( requiredCredentialName ) )
+            token = myProxyToken.get( requiredCredentialName );
+        else
+            throw new IllegalStateException( "no security token for: " + requiredCredentialName );
+
         MyProxyFactory myProxyFactory = getMyProxyFactoryProvider().getFactory( requiredCredentialName );
 
+        // myProxyCredentialProvider.setKey( "http://gndms.zib.de/ORQTypes/FileTransfer" );
         return new MyProxyCredentialProvider( myProxyFactory, token.getLogin(), token.getPassword() );
+        */
+        return null;
     }
 
 
