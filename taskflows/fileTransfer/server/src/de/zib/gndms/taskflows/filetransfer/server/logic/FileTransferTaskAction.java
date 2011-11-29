@@ -18,8 +18,11 @@ package de.zib.gndms.taskflows.filetransfer.server.logic;
 
 
 
+import de.zib.gndms.common.rest.MyProxyToken;
+import de.zib.gndms.kit.access.MyProxyFactory;
 import de.zib.gndms.kit.access.MyProxyFactoryProvider;
 import de.zib.gndms.kit.security.CredentialProvider;
+import de.zib.gndms.kit.security.MyProxyCredentialProvider;
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.taskflows.filetransfer.client.FileTransferMeta;
@@ -163,7 +166,7 @@ public class FileTransferTaskAction extends TaskFlowAction<FileTransferOrder> {
 
     @Override
     public CredentialProvider getCredentialProvider() {
-     /*
+
         // todo make generic and pull it up
         String requiredCredentialName = FileTransferMeta.REQUIRED_AUTHORIZATION.get( 0 );
 
@@ -176,10 +179,9 @@ public class FileTransferTaskAction extends TaskFlowAction<FileTransferOrder> {
 
         MyProxyFactory myProxyFactory = getMyProxyFactoryProvider().getFactory( requiredCredentialName );
 
-        // myProxyCredentialProvider.setKey( "http://gndms.zib.de/ORQTypes/FileTransfer" );
-        return new MyProxyCredentialProvider( myProxyFactory, token.getLogin(), token.getPassword() );
-        */
-        return null;
+        final MyProxyCredentialProvider myProxyCredentialProvider = new MyProxyCredentialProvider( myProxyFactory, token.getLogin(), token.getPassword() );
+        myProxyCredentialProvider.setKey( "http://gndms.zib.de/ORQTypes/FileTransfer" );
+        return myProxyCredentialProvider;
     }
 
 

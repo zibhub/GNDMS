@@ -28,7 +28,7 @@ import java.util.List;
  * <p/>
  * User: mjorra, Date: 13.10.2008, Time: 12:38:01
  */
-public class FileTransferResult extends AbstractTaskFlowResult {
+public class FileTransferResult extends AbstractTaskFlowResult<List<String>> {
 
     private static final long serialVersionUID = -1282729323012008244L;
     private List<String> files;
@@ -38,6 +38,7 @@ public class FileTransferResult extends AbstractTaskFlowResult {
         super.setTaskFlowType( FileTransferMeta.FILE_TRANSFER_TYPE_KEY );
     }
 
+
     public List<String> getFiles() {
         return files;
     }
@@ -45,5 +46,12 @@ public class FileTransferResult extends AbstractTaskFlowResult {
 
     public void setFiles( List<String> files ) {
         this.files = files;
+    }
+
+
+    @Override
+    public List<String> getResult() {
+
+        return getFiles();
     }
 }

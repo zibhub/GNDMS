@@ -70,7 +70,7 @@
     </bean>
 
     <bean id="defaultMyProxyProvider" class="de.zib.gndms.kit.access.MyProxyFactory">
-        <constructor-arg name="nickname" value="c3grid"/>
+        <constructor-arg name="nickname" value="C3GRID"/>
         <property name="myProxyServer" value="${myProxyServer}"/>
         <property name="port" value="7512"/>
         <property name="noPasswd" value="false"/>

@@ -39,4 +39,11 @@ public class SliceStageInResult extends CommonSliceResult {
         super( GORFXConstantURIs.SLICE_STAGE_IN_URI );
         setSliceRef( sr );
     }
+
+
+    @Override
+    public Object getResult() {
+
+        return null;  // not required here
+    }
 }
