@@ -1,4 +1,4 @@
-module GT4
+module COG
 
   COGLIB = ENV['COG_LOCATION'] + '/lib'
 
@@ -7,7 +7,7 @@ module GT4
   end
 
   def deployedJars()    
-    return Dir.glob("#{GT4LIB}/*.jar")
+    return Dir.glob("#{COGLIB}/*.jar")
   end
 
 end

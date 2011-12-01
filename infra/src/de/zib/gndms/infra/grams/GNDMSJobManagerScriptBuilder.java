@@ -65,9 +65,10 @@ public class GNDMSJobManagerScriptBuilder {
     public GNDMSJobManagerScript createGNDMSJobManagerScript() {
 
         try {
-            return new GNDMSJobManagerScriptImpl( username, globusLocation, type,
-                    perlJobDescription, environment );
-        } catch ( IOException e ) {
+            //return new GNDMSJobManagerScriptImpl( username, globusLocation, type,
+            //        perlJobDescription, environment );
+            return null;
+        } catch ( Exception e ) {
             throw new RuntimeException(e);
         }
     }
