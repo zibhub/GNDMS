@@ -26,7 +26,7 @@ import java.io.Serializable;
  * <p/>
  * User: mjorra, Date: 13.10.2008, Time: 12:35:03
  */
-public abstract class AbstractTaskFlowResult implements Serializable {
+public abstract class AbstractTaskFlowResult<R> implements TaskResult<R> {
 
     private String taskFlowType;
     

@@ -25,7 +25,7 @@ import de.zib.gndms.common.model.gorfx.types.AbstractTaskFlowResult;
  * <p/>
  * User: mjorra, Date: 13.10.2008, Time: 14:10:06
  */
-public class ProviderStageInResult extends AbstractTaskFlowResult {
+public class ProviderStageInResult extends AbstractTaskFlowResult<String> {
 
     private static final long serialVersionUID = -3003504928510518008L;
 
@@ -48,5 +48,12 @@ public class ProviderStageInResult extends AbstractTaskFlowResult {
 
     public void setSliceKey( String sk ) {
         this.sliceKey = sk;
+    }
+
+
+    @Override
+    public String getResult() {
+
+        return getSliceKey();
     }
 }

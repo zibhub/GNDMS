@@ -30,6 +30,7 @@ import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ImmutableScopedName;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -99,7 +100,7 @@ public class Subspace extends GridResource {
      *
      * @note The read permission will be removed from path.
      */
-    public final void setPath(final String path) {
+    public void setPath(final String path) {
     	// TODO this test seemed to be useful?
         /*
         File f = new File( pth );
@@ -122,7 +123,7 @@ public class Subspace extends GridResource {
      * @param sl The slice. 
      * @return The path.
      */
-    public final String getPathForSlice(final Slice sl)  {
+    public String getPathForSlice(final Slice sl)  {
         return getPath() + File.separator + sl.getKind( ).getSliceDirectory() + File.separator + sl.getDirectoryId();
     }
 
@@ -131,7 +132,7 @@ public class Subspace extends GridResource {
      * @param sl The slice.
      * @return The gsi ftp path.
      */
-    public final String getGsiFtpPathForSlice(final Slice sl)  {
+    public String getGsiFtpPathForSlice(final Slice sl)  {
         return getGsiFtpPath() + "/" + sl.getKind( ).getSliceDirectory() + "/" + sl.getDirectoryId( );
     }
 
@@ -140,7 +141,7 @@ public class Subspace extends GridResource {
      * @return The available size.
      */
     @Column(name = "avail_size", nullable = false, updatable = false)
-    public final long getAvailableSize() {
+    public long getAvailableSize() {
         return getAvailableSize();
     }
 
@@ -149,7 +150,7 @@ public class Subspace extends GridResource {
      * @return The total size
      */
     @Column(name = "total_size", nullable = false, updatable = false)
-    public final long getTotalSize() {
+    public long getTotalSize() {
         return totalSize;
     }
 
@@ -158,7 +159,7 @@ public class Subspace extends GridResource {
      * @return The path.
      */
     @Column(name = "path", nullable = false, updatable = true)
-    public final String getPath() {
+    public String getPath() {
         return path;
     }
 
@@ -166,7 +167,7 @@ public class Subspace extends GridResource {
      * Returns the gsi ftp path of this subspace.
      * @return The gsi ftp path.
      */
-    public final String getGsiFtpPath() {
+    public String getGsiFtpPath() {
         return gsiFtpPath;
     }
 
@@ -174,7 +175,7 @@ public class Subspace extends GridResource {
      * Sets the available size of this subspace.
      * @param availableSize The size to set.
      */
-    public final void setAvailableSize(final long availableSize) {
+    public void setAvailableSize(final long availableSize) {
         this.availableSize = availableSize;
     }
 
@@ -182,7 +183,7 @@ public class Subspace extends GridResource {
      * Sets the total size of this subspace.
      * @param totalSize The size to set.
      */
-    public final void setTotalSize(final long totalSize) {
+    public void setTotalSize(final long totalSize) {
         this.totalSize = totalSize;
     }
     
@@ -190,7 +191,7 @@ public class Subspace extends GridResource {
      * Sets the gsi ftp path for this subspace.
      * @param gsiFtpPath The path to set.
      */
-    public final void setGsiFtpPath(final String gsiFtpPath) {
+    public void setGsiFtpPath(final String gsiFtpPath) {
         this.gsiFtpPath = gsiFtpPath;
     }	
     
@@ -205,7 +206,7 @@ public class Subspace extends GridResource {
         @AttributeOverride(name = "localName", column = @Column(name = "specifier", nullable = false, 
         		updatable = false, columnDefinition = "VARCHAR", length = 64))
         })
-    public final ImmutableScopedName getName() {
+    public ImmutableScopedName getName() {
         return name;
     }
     
@@ -213,7 +214,7 @@ public class Subspace extends GridResource {
      * Sets the name / id of this subspace.
      * @param name The name.
      */
-    public final void setName(final ImmutableScopedName name) {
+    public void setName(final ImmutableScopedName name) {
         this.name = name;
     }
 
@@ -222,7 +223,7 @@ public class Subspace extends GridResource {
 	 * @return The visibility.
 	 */
     @Column(name = "visible", nullable = false, updatable = false)
-    public final boolean isVisibleToPublic() {
+    public boolean isVisibleToPublic() {
         return visibleToPublic;
     }
 
@@ -230,7 +231,7 @@ public class Subspace extends GridResource {
 	 * Sets the visibility of this subspace.
 	 * @param visibleToPublic The visibility.
 	 */
-    public final void setVisibleToPublic(final boolean visibleToPublic) {
+    public void setVisibleToPublic(final boolean visibleToPublic) {
         this.visibleToPublic = visibleToPublic;
     }
 
@@ -238,9 +239,8 @@ public class Subspace extends GridResource {
      * Returns the slice kinds of this subspace.
      * @return The slice kinds.
      */
-    @ManyToMany(targetEntity = SliceKind.class, cascade = {CascadeType.REFRESH, 
-    	CascadeType.MERGE, CascadeType.PERSIST }, fetch = FetchType.EAGER)
-    @JoinTable(name = "creatable_slice_kinds", schema = "dspace",
+    @ManyToMany( cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH} )
+  /*  @JoinTable(name = "creatable_slice_kinds", schema = "dspace",
         uniqueConstraints = {@UniqueConstraint(columnNames = {"subspace_schema_uri", 
         		"subspace_specifier", "slice_kind_uri" }) },
         joinColumns = {@JoinColumn(name = "subspace_schema_uri", 
@@ -248,16 +248,18 @@ public class Subspace extends GridResource {
     @JoinColumn(name = "subspace_specifier", referencedColumnName = "specifier", 
     			columnDefinition = "VARCHAR", nullable = false, updatable = true) },
         		inverseJoinColumns = {@JoinColumn(name = "slice_kind_uri", 
-        		referencedColumnName = "uri", columnDefinition = "VARCHAR", nullable = false, updatable = true) })
-    public final Set<SliceKind> getCreatableSliceKinds() {
+        		referencedColumnName = "uri", columnDefinition = "VARCHAR", nullable = false,
+        		updatable = true) }) */
+    public Set<SliceKind> getCreatableSliceKinds() {
         return creatableSliceKinds;
     }
+
 
     /**
      * Sets the slice kinds of this subspace.
      * @param creatableSliceKinds The slice kinds.
      */
-    public final void setCreatableSliceKinds(final Set<SliceKind> creatableSliceKinds) {
+    public void setCreatableSliceKinds(final Set<SliceKind> creatableSliceKinds) {
         this.creatableSliceKinds = creatableSliceKinds;
     }
 

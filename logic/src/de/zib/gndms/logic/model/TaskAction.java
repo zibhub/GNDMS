@@ -535,6 +535,8 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
 
 
     protected void _failWithPayload( boolean hasPayload, Serializable payload, @NotNull Exception... exceptions) {
+        
+        trace( "latest exception", exceptions[0] );
         final Session session = getDao().beginSession();
         try {
             final Task task = getTask(session);

@@ -19,6 +19,7 @@ def setupModules( baseDir, prj )
             project( prj ).projects.map( &:name ).each { |name| 
                 varname = "#{prj.upcase}_#{name.split(":")[1].upcase.tr( "-", "_")}"
                 package = project( name ).packages.select { |pkg| pkg.type == :jar } 
+                #puts package
                 eval "#{varname} = [\"#{package}\"]" unless package.empty?
             } 
         end

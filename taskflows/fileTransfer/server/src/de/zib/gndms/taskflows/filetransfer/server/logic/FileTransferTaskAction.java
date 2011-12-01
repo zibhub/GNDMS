@@ -104,8 +104,8 @@ public class FileTransferTaskAction extends TaskFlowAction<FileTransferOrder> {
 
         TaskPersistentMarkerListener pml = new TaskPersistentMarkerListener( );
         pml.setDao( getDao() );
+        pml.setTaskling( getModel() );
         pml.setTransferState( transferState );
-        pml.setTaskling(getModel());
         pml.setWid(wid);
         pml.setGORFXId( getOrder().getActId());
 
@@ -156,6 +156,7 @@ public class FileTransferTaskAction extends TaskFlowAction<FileTransferOrder> {
         finally { src.close(); }
     }
 
+
     private void newTransfer( @NotNull Task task ) {
         transferState = new FTPTransferState();
         transferState.setTransferId( getModel().getId() );
@@ -168,10 +169,19 @@ public class FileTransferTaskAction extends TaskFlowAction<FileTransferOrder> {
 
         // todo make generic and pull it up
         String requiredCredentialName = FileTransferMeta.REQUIRED_AUTHORIZATION.get( 0 );
-        MyProxyToken token = getOrder().getMyProxyToken().get(  requiredCredentialName );
+
+        final Map<String, MyProxyToken> myProxyToken = getOrder().getMyProxyToken();
+        MyProxyToken token;
+        if ( myProxyToken.containsKey( requiredCredentialName ) )
+            token = myProxyToken.get( requiredCredentialName );
+        else
+            throw new IllegalStateException( "no security token for: " + requiredCredentialName );
+
         MyProxyFactory myProxyFactory = getMyProxyFactoryProvider().getFactory( requiredCredentialName );
 
-        return new MyProxyCredentialProvider( myProxyFactory, token.getLogin(), token.getPassword() );
+        final MyProxyCredentialProvider myProxyCredentialProvider = new MyProxyCredentialProvider( myProxyFactory, token.getLogin(), token.getPassword() );
+        myProxyCredentialProvider.setKey( "http://gndms.zib.de/ORQTypes/FileTransfer" );
+        return myProxyCredentialProvider;
     }
 
 

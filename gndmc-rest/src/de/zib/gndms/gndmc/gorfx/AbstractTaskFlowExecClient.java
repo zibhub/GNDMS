@@ -46,39 +46,46 @@ public abstract class AbstractTaskFlowExecClient {
     private long pollingDelay = 1000; ///< delay in ms to poll the task status, once the task is running.
 
 
-    /** 
-     * @brief Executes a complete task flow.
-     * 
+    /**
      * @param order The order of the taskflow.
-     * @param dn The DN of the user calling the task flow.
-     *
-     * \note for now the workflow id is generated on the fly.
+     * @param dn    The DN of the user calling the task flow.
+     *              <p/>
+     *              \note for now the workflow id is generated on the fly.
+     * @brief Executes a complete task flow.
      */
     public void execTF( Order order, String dn ) {
 
+        execTF( order, dn, true );
+    }
+
+
+    public void execTF( Order order, String dn, boolean withQuote ) {
+
         String wid = UUID.randomUUID().toString();
 
-        // todo setup credentials in gndmsheader  like
-        GNDMSResponseHeader context = new GNDMSResponseHeader();
-        context.addMyProxyToken( "c3grid", "foo", "bar" );
+        GNDMSResponseHeader context = setupContext( new GNDMSResponseHeader() );
+
 
         // sends the order and creates the task flow
         ResponseEntity<Specifier<Facets>> res = gorfxClient.createTaskFlow( order.getTaskFlowType(), order, dn, wid, context );
 
-        if(! HttpStatus.CREATED.equals( res.getStatusCode() ) )
+        if ( !HttpStatus.CREATED.equals( res.getStatusCode() ) )
             throw new RuntimeException( "createTaskFlow failed " + res.getStatusCode().name() );
 
         // the taskflow id is stored under "id" in the urlmap
         String tid = res.getBody().getUriMap().get( "id" );
 
-        // queries the quotes for the task flow
-        ResponseEntity<List<Specifier<Quote>>> res2 = tfClient.getQuotes( order.getTaskFlowType(), tid, dn, wid );
+        Integer q = null;
+        if( withQuote ) {
+            // queries the quotes for the task flow
+            ResponseEntity<List<Specifier<Quote>>> res2 = tfClient.getQuotes( order.getTaskFlowType(), tid, dn, wid );
 
-        if(! HttpStatus.OK.equals( res2.getStatusCode() ) )
-            throw new RuntimeException( "getQuotes failed " + res2.getStatusCode().name() );
+            if ( !HttpStatus.OK.equals( res2.getStatusCode() ) )
+                throw new RuntimeException( "getQuotes failed " + res2.getStatusCode().name() );
 
-        // lets the implementors of this class choose a quote
-        Integer q = selectQuote( res2.getBody() );
+            // lets the implementors of this class choose a quote
+            q = selectQuote( res2.getBody() );
+        }
 
         //
         // 'til here it is valid to change the order and request new quotes
@@ -134,6 +141,22 @@ public abstract class AbstractTaskFlowExecClient {
             // handle the failure
             handleFailure( tf.getBody() );
         }
+    }
+
+
+    /**
+     * Offers implementing clients the possibility to add values to the request context.
+     *
+     * The request context is used to create taskflows and the right place to provide
+     * myProxyTokens.
+     *
+     * @param context The create request context.
+     * @return The augmented context
+     */
+    protected GNDMSResponseHeader setupContext( final GNDMSResponseHeader context ) {
+
+        // example: context.addMyProxyToken( "c3grid", "foo", "bar" );
+        return context;
     }
 
 
@@ -289,4 +312,6 @@ public abstract class AbstractTaskFlowExecClient {
     public void setPollingDelay( long pollingDelay ) {
         this.pollingDelay = pollingDelay;
     }
+
+
 }

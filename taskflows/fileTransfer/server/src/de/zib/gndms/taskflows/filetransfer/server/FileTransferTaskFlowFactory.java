@@ -26,6 +26,7 @@ import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferOrder;
 import de.zib.gndms.taskflows.filetransfer.server.logic.FileTransferQuoteCalculator;
 import de.zib.gndms.taskflows.filetransfer.server.logic.FileTransferTaskAction;
 
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -43,7 +44,8 @@ public class FileTransferTaskFlowFactory
 
     public FileTransferTaskFlowFactory( ) {
 
-        super( FileTransferMeta.FILE_TRANSFER_TYPE_KEY, FileTransferQuoteCalculator.class, FileTransferOrder.class );
+        super( FileTransferMeta.FILE_TRANSFER_TYPE_KEY, FileTransferQuoteCalculator.class,
+                FileTransferOrder.class );
     }
 
 
@@ -56,14 +58,15 @@ public class FileTransferTaskFlowFactory
 
 
     @Override
-    protected TaskFlow<FileTransferOrder> prepare( TaskFlow<FileTransferOrder> fileTransferOrderTaskFlow ) {
+    protected TaskFlow<FileTransferOrder> prepare( TaskFlow<FileTransferOrder>
+                                                               fileTransferOrderTaskFlow ) {
         return fileTransferOrderTaskFlow;
     }
 
 
     @Override
     protected Map<String, String> getDefaultConfig() {
-        return null;  // not required here
+        return new HashMap<String, String>(0);
     }
 
 
