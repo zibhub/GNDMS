@@ -36,17 +36,17 @@ public interface CredentialProvider<T> {
      * installs the credentials in the given object o.
      * @param o The object which accepts credentials, e.g. an instance of some client.
      */
-    public void installCredentials( Object o );
-
-    /**
-     * Delivers the list of existing credentials.
-     * @return A list of credentials which might be empty
-     */
-    public List<T> getCredentials( );
+    void installCredentials( Object o );
 
     /**
      * Delivers a credential
      * @return same as getCredentials().get( 0 );
      */
-    public T getCredential( );
+    T getCredential( );
+
+    /**
+     * Allows setting of a credential installer if required.
+     * @param credentialInstaller  An installer instance.
+     */
+    void setInstaller( CredentialInstaller credentialInstaller );
 }

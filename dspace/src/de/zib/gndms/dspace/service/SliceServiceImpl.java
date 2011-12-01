@@ -25,10 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
@@ -307,10 +304,7 @@ public class SliceServiceImpl implements SliceService {
 			if (dir.exists() && dir.canRead() && dir.isDirectory()) {
 				File[] all = dir.listFiles();
 				List<File> files = new ArrayList<File>();
-				for (File file : all) {
-					// TODO check for requested attributes
-					files.add(file);
-				}
+                Collections.addAll( files, all );
 				return new ResponseEntity<List<File>>(files, headers,
 						HttpStatus.OK);
 			} else {
@@ -404,8 +398,12 @@ public class SliceServiceImpl implements SliceService {
 			File file = new File(path + File.pathSeparator + fileName);
 
 			if (out == null) {
-				logger.warn("OutputStream not defined.");
+                final IllegalStateException illegalStateException =
+                        new IllegalStateException( "OutputStream not defined." );
+                logger.warn( illegalStateException.getMessage() );
+                throw illegalStateException;
 			}
+
 			if (file.exists() && file.canRead() && file.isFile()) {
 				// TODO get requested file attributes
 
@@ -466,13 +464,13 @@ public class SliceServiceImpl implements SliceService {
 			dos.close();
 			return new ResponseEntity<Void>(null, headers, HttpStatus.OK);
 		} catch (NoSuchElementException ne) {
-			logger.warn(ne.getMessage());
+			logger.warn(ne.getMessage(), ne);
 			return new ResponseEntity<Void>(null, headers, HttpStatus.NOT_FOUND);
 		} catch (FileNotFoundException e) {
-			logger.warn(e.getMessage());
+			logger.warn(e.getMessage(), e);
 			return new ResponseEntity<Void>(null, headers, HttpStatus.FORBIDDEN);
 		} catch (IOException e) {
-			logger.warn(e.getMessage());
+			logger.warn(e.getMessage(), e);
 			return new ResponseEntity<Void>(null, headers, HttpStatus.FORBIDDEN);
 		}
 	}
@@ -508,7 +506,7 @@ public class SliceServiceImpl implements SliceService {
 						HttpStatus.FORBIDDEN);				
 			}
 		} catch (NoSuchElementException ne) {
-			logger.warn(ne.getMessage());
+			logger.warn(ne.getMessage(), ne);
 			return new ResponseEntity<Void>(null, headers, HttpStatus.NOT_FOUND);
 		}
 	}

@@ -18,16 +18,13 @@ package de.zib.gndms.taskflows.filetransfer.server.logic;
 
 
 
-import de.zib.gndms.common.rest.MyProxyToken;
-import de.zib.gndms.kit.access.MyProxyFactory;
-import de.zib.gndms.kit.access.MyProxyFactoryProvider;
 import de.zib.gndms.kit.security.CredentialProvider;
-import de.zib.gndms.kit.security.MyProxyCredentialProvider;
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.taskflows.filetransfer.client.FileTransferMeta;
 import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferOrder;
 import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferResult;
+import de.zib.gndms.taskflows.filetransfer.server.kit.security.GridFTPCredentialInstaller;
 import de.zib.gndms.taskflows.filetransfer.server.network.GNDMSFileTransfer;
 import de.zib.gndms.taskflows.filetransfer.server.network.NetworkAuxiliariesProvider;
 import de.zib.gndms.model.gorfx.FTPTransferState;
@@ -37,10 +34,12 @@ import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.globus.ftp.GridFTPClient;
+import org.globus.ftp.exception.ClientException;
+import org.globus.ftp.exception.ServerException;
 import org.jetbrains.annotations.NotNull;
 
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Map;
@@ -52,9 +51,6 @@ import java.util.Map;
  * User: mjorra, Date: 01.10.2008, Time: 17:57:57
  */
 public class FileTransferTaskAction extends TaskFlowAction<FileTransferOrder> {
-
-    private FTPTransferState transferState;
-    private MyProxyFactoryProvider myProxyFactoryProvider;
 
 
     public FileTransferTaskAction() {
@@ -71,6 +67,28 @@ public class FileTransferTaskAction extends TaskFlowAction<FileTransferOrder> {
         return FileTransferOrder.class;
     }
 
+    @Override
+    protected void onCreated( @NotNull String wid, @NotNull TaskState state,
+                              boolean isRestartedTask, boolean altTaskState ) throws Exception
+    {
+
+        if ( !isRestartedTask ) {
+            final Session session = getDao().beginSession();
+            try {
+                Task task = getTask( session );
+                task.setProgress( 0 );
+                final FileTransferOrder order = getOrderBean( task );
+                if( order.hasFileMap() )
+                    task.setMaxProgress( order.getFileMap().size() );
+                else
+                    task.setMaxProgress( 1 ); // well we don't now it yet...
+                session.success();
+            } finally {
+                session.finish();
+            }
+            super.onCreated( wid, state, isRestartedTask, altTaskState );    // overridden method implementation
+        }
+    }
 
     @Override
     protected void onInProgress(@NotNull String wid,
@@ -80,56 +98,35 @@ public class FileTransferTaskAction extends TaskFlowAction<FileTransferOrder> {
         GridFTPClient src;
         GridFTPClient dest;
 
-
+        // todo progress isn't setup correctly
         Session session = getDao().beginSession();
         FileTransferOrder order;
+        FTPTransferState transferState;
         try {
             Task task  = getTask(session);
-            transferState = (FTPTransferState) task.getPayload();
-            order = ( FileTransferOrder ) ((DelegatingOrder)task.getOrder( )).getOrderBean();
-            files         = order.getFileMap( );
-            if( transferState == null )
-                newTransfer( task );
-            else {
-                String s = transferState.getCurrentFile();
-                if( s != null ) {
-                    int p =  new ArrayList<String>( files.keySet() ).indexOf( s );
-                    task.setProgress( p );
-                }
-            }
+            order = getOrderBean( task );
+            SetupOrInitTransferState setupOrInitTransferState =
+                    new SetupOrInitTransferState( order, task ).invoke();
+            transferState = setupOrInitTransferState.getTransferState();
+            files = setupOrInitTransferState.getFiles();
             session.success();
         }
         finally { session.finish(); }
 
-
-        TaskPersistentMarkerListener pml = new TaskPersistentMarkerListener( );
-        pml.setDao( getDao() );
-        pml.setTaskling( getModel() );
-        pml.setTransferState( transferState );
-        pml.setWid(wid);
-        pml.setGORFXId( getOrder().getActId());
+        TaskPersistentMarkerListener pml = setupPersistentMarkerListener( transferState, wid );
 
         URI suri = new URI ( order.getSourceURI( ) );
         URI duri = new URI ( order.getDestinationURI( ) );
 
         // obtain clients
         src = NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( suri, getCredentialProvider() );
-
         try {
             dest = NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( duri, getCredentialProvider() );
 
             try {
                 // setup transfer handler
-                GNDMSFileTransfer transfer = new GNDMSFileTransfer();
-                transfer.setSourceClient( src );
-                transfer.setSourcePath( suri.getPath() );
-
-                transfer.setDestinationClient( dest );
-                transfer.setDestinationPath( duri.getPath() );
-
-                transfer.setFiles( files );
-
-                transfer.prepareTransfer();
+                GNDMSFileTransfer transfer = setupFileTransfer( src, suri.getPath(), dest, 
+                        duri.getPath(), files );
 
                 int fc = transfer.getFiles( ).size( );
 
@@ -157,43 +154,108 @@ public class FileTransferTaskAction extends TaskFlowAction<FileTransferOrder> {
     }
 
 
-    private void newTransfer( @NotNull Task task ) {
-        transferState = new FTPTransferState();
-        transferState.setTransferId( getModel().getId() );
-        task.setPayload( transferState );
+    private FileTransferOrder getOrderBean( final Task task ) {
+
+        return ( FileTransferOrder ) ((DelegatingOrder )task.getOrder( )).getOrderBean();
+    }
+
+
+    private GNDMSFileTransfer setupFileTransfer( final GridFTPClient srcClient, final String srcDir,
+                                                 final GridFTPClient destClient,
+                                                 final String destDir,
+                                                 final Map<String, String> files ) throws
+            ServerException, IOException, ClientException
+    {
+
+        GNDMSFileTransfer transfer = new GNDMSFileTransfer();
+        transfer.setSourceClient( srcClient );
+        transfer.setSourcePath( srcDir );
+
+        transfer.setDestinationClient( destClient );
+        transfer.setDestinationPath( destDir );
+
+        transfer.setFiles( files );
+
+        transfer.prepareTransfer();
+        return transfer;
+    }
+
+
+    protected TaskPersistentMarkerListener setupPersistentMarkerListener( final FTPTransferState transferState, final String wid ) {
+
+        TaskPersistentMarkerListener pml = new TaskPersistentMarkerListener( );
+        pml.setDao( getDao() );
+        pml.setTaskling( getModel() );
+        pml.setTransferState( transferState );
+        pml.setWid(wid);
+        pml.setGORFXId( getOrder().getActId());
+        return pml;
     }
 
 
     @Override
     public CredentialProvider getCredentialProvider() {
 
-        // todo make generic and pull it up
+        // todo string based factory and credential names are error prone
+        // todo credential installer framework isn't nice anymore
         String requiredCredentialName = FileTransferMeta.REQUIRED_AUTHORIZATION.get( 0 );
 
-        final Map<String, MyProxyToken> myProxyToken = getOrder().getMyProxyToken();
-        MyProxyToken token;
-        if ( myProxyToken.containsKey( requiredCredentialName ) )
-            token = myProxyToken.get( requiredCredentialName );
-        else
-            throw new IllegalStateException( "no security token for: " + requiredCredentialName );
+        final CredentialProvider credentialProvider =
+                getCredentialProviderFor( requiredCredentialName );
+        credentialProvider.setInstaller( new GridFTPCredentialInstaller() );
 
-        MyProxyFactory myProxyFactory = getMyProxyFactoryProvider().getFactory( requiredCredentialName );
-
-        final MyProxyCredentialProvider myProxyCredentialProvider = new MyProxyCredentialProvider( myProxyFactory, token.getLogin(), token.getPassword() );
-        myProxyCredentialProvider.setKey( "http://gndms.zib.de/ORQTypes/FileTransfer" );
-        return myProxyCredentialProvider;
+        return credentialProvider;
     }
 
 
-    public MyProxyFactoryProvider getMyProxyFactoryProvider() {
+    private class SetupOrInitTransferState {
 
-        return myProxyFactoryProvider;
+        private final FileTransferOrder order;
+        private final Task task;
+        private Map<String, String> files;
+        private FTPTransferState transferState;
+
+
+        public SetupOrInitTransferState( final FileTransferOrder order, final Task task ) {
+
+            this.order = order;
+            this.task = task;
+        }
+
+
+        public Map<String, String> getFiles() {
+
+            return files;
+        }
+
+
+        public FTPTransferState getTransferState() {
+
+            return transferState;
+        }
+
+
+        public SetupOrInitTransferState invoke() {
+
+            transferState = ( FTPTransferState ) task.getPayload();
+            files = order.getFileMap( );
+            if( transferState == null )
+                transferState = initTransferState( task );
+            else {
+                String s = transferState.getCurrentFile();
+                if( s != null ) {
+                    int p =  new ArrayList<String>( files.keySet() ).indexOf( s );
+                    task.setProgress( p );
+                }
+            }
+            return this;
+        }
+    private FTPTransferState initTransferState( @NotNull Task task ) {
+
+        FTPTransferState transferState = new FTPTransferState();
+        transferState.setTransferId( getModel().getId() );
+        task.setPayload( transferState );
+        return transferState;
     }
-    
-
-    @Inject
-    public void setMyProxyFactoryProvider( final MyProxyFactoryProvider myProxyFactoryProvider ) {
-
-        this.myProxyFactoryProvider = myProxyFactoryProvider;
     }
 }

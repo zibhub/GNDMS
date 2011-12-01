@@ -68,7 +68,7 @@ public class DummyTFAction extends TaskFlowAction<DummyOrder> {
             final Session session = getDao().beginSession();
             try {
                 Task task = getTask( session );
-                task.setProgress( 1 );
+                task.setProgress( 0 );
                 task.setMaxProgress( (( DelegatingOrder<DummyOrder>) task.getOrder( )).getOrderBean().getTimes() );
                 logger.debug( "maxprogess set to: " + task.getMaxProgress() );
                 session.success();

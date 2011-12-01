@@ -19,6 +19,11 @@ package de.zib.gndms.logic.model.gorfx;
 
 
 import de.zib.gndms.common.model.gorfx.types.AbstractOrder;
+import de.zib.gndms.common.rest.MyProxyToken;
+import de.zib.gndms.kit.access.MyProxyFactory;
+import de.zib.gndms.kit.access.MyProxyFactoryProvider;
+import de.zib.gndms.kit.security.CredentialProvider;
+import de.zib.gndms.kit.security.MyProxyCredentialProvider;
 import de.zib.gndms.logic.model.DefaultTaskAction;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;
@@ -29,6 +34,7 @@ import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.jetbrains.annotations.NotNull;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import java.util.Map;
 
@@ -45,6 +51,7 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends DefaultTas
 
     private String offerTypeId;
     private DelegatingOrder<K> order;
+    private MyProxyFactoryProvider myProxyFactoryProvider;
 
 
     protected TaskFlowAction( String offerTypeId ) {
@@ -144,5 +151,37 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends DefaultTas
             return getTaskSnapshot(getDao()).getDescription() + " failure " +  e.getMessage();
         else
             return getTaskSnapshot(getDao()).getDescription() + " failure (no Exception provided)";
+    }
+
+
+    public MyProxyFactoryProvider getMyProxyFactoryProvider() {
+
+        return myProxyFactoryProvider;
+    }
+
+
+    @Inject
+    public void setMyProxyFactoryProvider( final MyProxyFactoryProvider myProxyFactoryProvider ) {
+
+        this.myProxyFactoryProvider = myProxyFactoryProvider;
+    }
+
+
+    protected CredentialProvider getCredentialProviderFor( final String requiredCredentialName ) {
+
+        final Map<String, MyProxyToken> myProxyToken = getOrder().getMyProxyToken();
+        MyProxyToken token;
+        if ( myProxyToken.containsKey( requiredCredentialName ) )
+            token = myProxyToken.get( requiredCredentialName );
+        else
+            throw new IllegalStateException( "no security token for: " + requiredCredentialName );
+
+        MyProxyFactory myProxyFactory = getMyProxyFactoryProvider().getFactory( requiredCredentialName );
+        if( myProxyFactory == null )
+            throw new IllegalStateException( "no MyProxy-Server registered for "  +
+                    requiredCredentialName );
+
+        return new MyProxyCredentialProvider( myProxyFactory, token.getLogin(),
+                token.getPassword() );
     }
 }

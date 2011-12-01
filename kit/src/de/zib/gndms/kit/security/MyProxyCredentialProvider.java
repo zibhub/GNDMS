@@ -25,11 +25,12 @@ import org.ietf.jgss.GSSCredential;
  * @date 22.11.11  17:21
  * @brief
  */
-public class MyProxyCredentialProvider extends GSSCredentialProviderImpl {
+public class MyProxyCredentialProvider extends GSSCredentialProvider {
 
     private String user;
     private String passwd;
     private final MyProxyFactory factory;
+    private CredentialInstaller credentialInstaller;
 
 
     public MyProxyCredentialProvider( MyProxyFactory factory ) {
@@ -61,6 +62,12 @@ public class MyProxyCredentialProvider extends GSSCredentialProviderImpl {
     }
 
 
+    @Override
+    public void setInstaller( final CredentialInstaller credentialInstaller ) {
+        this.credentialInstaller = credentialInstaller;
+    }
+
+
     public String getUser() {
         return user;
     }
@@ -68,5 +75,12 @@ public class MyProxyCredentialProvider extends GSSCredentialProviderImpl {
 
     public void setUser( String user ) {
         this.user = user;
+    }
+
+
+    public void installCredentials( Object o ) {
+        credentialInstaller.installCredentials(
+                credentialInstaller.getReceiverClass().cast( o )
+                , getCredential() );
     }
 }

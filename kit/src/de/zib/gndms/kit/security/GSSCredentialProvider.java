@@ -18,11 +18,7 @@ package de.zib.gndms.kit.security;
 
 
 
-import de.zib.gndms.kit.security.CredentialProvider;
 import org.ietf.jgss.GSSCredential;
-
-import java.util.List;
-import java.util.ArrayList;
 
 /**
  * @author  try ma ik jo rr a zib
@@ -45,7 +41,4 @@ public abstract class GSSCredentialProvider implements CredentialProvider<GSSCre
     }
 
 
-    public List<GSSCredential> getCredentials() {
-        return new ArrayList<GSSCredential>( 0 ) {{ add( getCredential() ); }};
-    }
 }
