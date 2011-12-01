@@ -48,15 +48,16 @@ include Commands
 
 
 # Helper to create non-standard GNDMS sub-project layouts
-require 'buildr/gndms'
+require './buildr/gndms'
 include GNDMS
 
 
 # Test environment
-testEnv('GLOBUS_LOCATION', 'the root directory of Globus Toolkit 4.0.8')
-GNDMS_DB=[ ENV['GLOBUS_LOCATION'], 'etc', 'gndms_shared', 'db', 'gndms' ].join(File::SEPARATOR)
-DEPLOY_GAR=[ ENV['GLOBUS_LOCATION'], 'bin', 'globus-deploy-gar' ].join(File::SEPARATOR)
-testEnv('ANT_HOME', 'the root directory of Apache Ant')
+testEnv('COG_LOCATION', 'the root directory of COG 1.8.0')
+#testEnv('GLOBUS_LOCATION', 'the root directory of Globus Toolkit 4.0.8')
+#GNDMS_DB=[ ENV['GLOBUS_LOCATION'], 'etc', 'gndms_shared', 'db', 'gndms' ].join(File::SEPARATOR)
+#DEPLOY_GAR=[ ENV['GLOBUS_LOCATION'], 'bin', 'globus-deploy-gar' ].join(File::SEPARATOR)
+#testEnv('ANT_HOME', 'the root directory of Apache Ant')
 testEnv('JAVA_HOME', 'the root directory of J2SE')
 JAVA_HOME = ENV['JAVA_HOME']
 # ENV['PATH'] = File.join([ENV['JAVA_HOME'], 'bin']) + File::PATH_SEPARATOR + ENV['PATH']
@@ -72,7 +73,7 @@ testTool('openssl')
 testTool('hostname')
 HOSTNAME = `hostname`.split[0]
 
-puts "GNDMS #{VERSION_NUMBER} \”#{VERSION_NAME}\" #{VERSION_TAG}"
+puts "GNDMS #{VERSION_NUMBER} \"#{VERSION_NAME}\" #{VERSION_TAG}"
 puts MF_COPYRIGHT
 puts "#{LICENSE}  Please consult doc/licensing about licensing conditions of downloaded 3rd party software."
 if ENV['GNDMS_DEPS']=='skip' then 
@@ -89,7 +90,7 @@ end
 gndms_ant = ENV['GNDMS_SOURCE'] + '/bin/gndms-ant'
 
 # Helper to construct GT4 jar pathes
-require 'buildr/gt4'
+require './buildr/gt4'
 include GT4
 
 # Essentially GT4 package management is classloading unaware crap
@@ -172,14 +173,14 @@ HTTP_CORE = ['org.apache.httpcomponents:httpcore:jar:4.0', 'org.apache.httpcompo
 JNA = [ 'com.sun.jna:jna:jar:3.0.9' ]
 
 # Grouped GT4 dependencies
-#GT4_COMMONS = gt4jars(['commons-beanutils.jar', 
+#GT4_COMMONS = cogjars(['commons-beanutils.jar', 
 #                       'commons-digester.jar',
 #                       'commons-discovery.jar',
 #                       'commons-pool.jar'])
-#GT4_LOG = gt4jars(['commons-logging.jar', 'log4j-1.2.15.jar'])
-GT4_COG = gt4jars(['cog-axis.jar', 'cog-jglobus.jar', 'cog-url.jar'])
-#GT4_AXIS = gt4jars(['axis.jar', 'axis-url.jar', 'saaj.jar'])
-#GT4_WSRF = gt4jars(['addressing-1.0.jar',
+#GT4_LOG = cogjars(['commons-logging.jar', 'log4j-1.2.15.jar'])
+GT4_COG = cogjars([ 'cog-jglobus-1.8.0.jar', 'cog-url-1.8.0.jar'])
+#GT4_AXIS = cogjars(['axis.jar', 'axis-url.jar', 'saaj.jar'])
+#GT4_WSRF = cogjars(['addressing-1.0.jar',
 #                    'axis-url.jar',
 #                    'axis.jar',
 #                    'commonj.jar',
@@ -192,16 +193,16 @@ GT4_COG = gt4jars(['cog-axis.jar', 'cog-jglobus.jar', 'cog-url.jar'])
 #                    'wsrf_core.jar',
 #                    'wsrf_core_stubs.jar',
 #                    'wsrf_tools.jar'])
-#GT4_SERVLET = gt4jars(['servlet.jar'])
-GT4_SEC = gt4jars(['puretls.jar', 'opensaml.jar', 
+#GT4_SERVLET = cogjars(['servlet.jar'])
+GT4_SEC = cogjars(['puretls.jar', 
                    'cryptix-asn1.jar', 'cryptix.jar', 'cryptix32.jar', 
-                   'jce-jdk13-125.jar', 'wss4j.jar', 'jgss.jar', 
-                   'globus_delegation_service.jar',
-                   'globus_delegation_stubs.jar'])
-#GT4_XML = gt4jars(['xalan-2.6.jar', 'xercesImpl-2.7.1.jar', 'xml-apis.jar', 'xmlsec.jar', 'jaxrpc.jar'])
-GT4_GRAM = gt4jars(['gram-monitoring.jar', 'gram-service.jar', 'gram-stubs.jar', 'gram-utils.jar'])
-#GT4_USEAGE = gt4jars([ 'globus-usage-core.java' ])
-#GT4_MDS = gt4jars(['globus_wsrf_mds_aggregator.jar',
+                   'jgss.jar' 
+                   ])
+#GT4_XML = cogjars(['xalan-2.6.jar', 'xercesImpl-2.7.1.jar', 'xml-apis.jar', 'xmlsec.jar', 'jaxrpc.jar'])
+#GT4_GRAM = cogjars(['gram-monitoring.jar', 'gram-service.jar', 'gram-stubs.jar', 'gram-utils.jar'])
+GT4_GRAM = cogjars([ 'cog-jobmanager-1.8.0.jar' ])
+#GT4_USEAGE = cogjars([ 'globus-usage-core.java' ])
+#GT4_MDS = cogjars(['globus_wsrf_mds_aggregator.jar',
 #                   'globus_wsrf_mds_aggregator_stubs.jar',
 #                   'webmds-0.1-dev.jar',
 #                   'wsrf_mds_index.jar',
@@ -213,8 +214,8 @@ GT4_GRAM = gt4jars(['gram-monitoring.jar', 'gram-service.jar', 'gram-stubs.jar',
 
 GT4_COMMONS = []
 GT4_LOG     = []
-GT4_AXIS = gt4jars(['axis.jar', 'axis-url.jar', 'saaj.jar'])
-GT4_WSRF    = gt4jars(['addressing-1.0.jar', 'axis-url.jar', 'axis.jar' ])
+#GT4_AXIS = cogjars(['axis.jar', 'axis-url.jar', 'saaj.jar'])
+#GT4_WSRF    = cogjars(['addressing-1.0.jar', 'axis-url.jar', 'axis.jar' ])
 GT4_SERVLET = []
 GT4_XML     = []
 GT4_USEAGE  = []
@@ -227,7 +228,7 @@ OPENJPA = [ COMMONS_LANG, 'org.apache.openjpa:openjpa-all:jar:2.0.0']
 
 # NEODATAGRAPH = transitive('org.springframework.data:spring-data-neo4j:jar:1.0.0.M2')
 
-require 'buildr/neo4j' 
+require './buildr/neo4j' 
 include NEO4J
 
 NEODATAGRAPH = neo4jars(['geronimo-jta_1.1_spec-1.1.1.jar',
@@ -248,11 +249,11 @@ NEODATAGRAPH = neo4jars(['geronimo-jta_1.1_spec-1.1.1.jar',
                         'protobuf-java-2.3.0.jar'
 ])
 
-require 'buildr/openjpa2'
+require './buildr/openjpa2'
 include Buildr::OpenJPA2
 
 # helper for derby ij
-require 'buildr/derbyij'
+require './buildr/derbyij'
 include DERBYIJ
 
 
@@ -375,7 +376,7 @@ define 'gndms' do
 
     desc 'GT4-dependent utility classes for GNDMS'
     define 'kit', :layout => dmsLayout('kit', 'gndms-kit') do
-      compile.with GROOVY, GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('common'), project('stuff'), project('model'), project('neomodel'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_AXIS, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, INJECT, GT4_SERVLET, COMMONS_LANG, OPENJPA, SLF4J, JSON, SPRING
+      compile.with GROOVY, GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('common'), project('stuff'), project('model'), project('neomodel'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, INJECT, GT4_SERVLET, COMMONS_LANG, OPENJPA, SLF4J, JSON, SPRING
       compile
       test.compile
       test.using :testng
@@ -384,14 +385,14 @@ define 'gndms' do
 
     desc 'GNDMS logic classes (actions for manipulating resources)'
     define 'logic', :layout => dmsLayout('logic', 'gndms-logic') do
-       compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('common'), project('stuff'), project('model'), project('neomodel'), JODA_TIME, GOOGLE_COLLECTIONS, INJECT, DB_DERBY, GT4_LOG, GT4_AXIS, GT4_COG, GT4_SEC, GT4_XML, COMMONS_LANG, OPENJPA, SLF4J, SPRING
+       compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('common'), project('stuff'), project('model'), project('neomodel'), JODA_TIME, GOOGLE_COLLECTIONS, INJECT, DB_DERBY, GT4_LOG, GT4_COG, GT4_SEC, GT4_XML, COMMONS_LANG, OPENJPA, SLF4J, SPRING
        compile
        package :jar
     end
 
     desc 'GNDMS classes for dealing with wsrf and xsd types'
     define 'gritserv', :layout => dmsLayout('gritserv', 'gndms-gritserv') do
-      compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('stuff'), project('model'), project('neomodel'), ARGS4J, JODA_TIME, OPENJPA, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, GT4_COMMONS, COMMONS_LANG, COMMONS_COLLECTIONS, COMMONS_CODEC, SLF4J, SPRING, JSON
+      compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('stuff'), project('model'), project('neomodel'), ARGS4J, JODA_TIME, OPENJPA, GT4_LOG, GT4_COG, GT4_SEC, GT4_XML, GT4_COMMONS, COMMONS_LANG, COMMONS_COLLECTIONS, COMMONS_CODEC, SLF4J, SPRING, JSON
       compile
       package :jar
     end
@@ -399,7 +400,7 @@ define 'gndms' do
     desc 'GNDMS core infrastructure classes'
     define 'infra', :layout => dmsLayout('infra', 'gndms-infra') do
       # Infra *must* have all dependencies since we use this list in copy/link-deps
-      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('common'), project('gritserv'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), ARGS4J, JODA_TIME, JAXB, GT4_SERVLET, GROOVY, GOOGLE_COLLECTIONS, INJECT, DB_DERBY, GT4_LOG, GT4_WSRF, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies, COMMONS_FILEUPLOAD, NEODATAGRAPH, SLF4J, SPRING, JNA
+      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('common'), project('gritserv'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), ARGS4J, JODA_TIME, JAXB, GT4_SERVLET, GROOVY, GOOGLE_COLLECTIONS, INJECT, DB_DERBY, GT4_LOG, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies, COMMONS_FILEUPLOAD, NEODATAGRAPH, SLF4J, SPRING, JNA
       compile
 
       meta_inf << file(_('src/META-INF/00_system.xml'))
@@ -534,7 +535,7 @@ define 'gndms' do
     end
 
     define 'gndmc', :layout => dmsTestLayout('gndmc', 'gndms-gndmc') do
-      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gndms:gritserv'), project('gndms:kit'), project('gndms:stuff'), project('gndms:model'), ARGS4J, SERVICE_STUBS, GORFX_CLIENT, DSPACE_CLIENT, GORFX_COMMON, DSPACE_COMMON, COMMONS_CODEC, COMMONS_COLLECTIONS, GT4_COMMONS, JODA_TIME, GT4_GRAM, GT4_LOG, GT4_WSRF, GT4_COG, GT4_SEC, GT4_XML, EXTRA_JARS, GT4_MDS, TestNG.dependencies
+      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gndms:gritserv'), project('gndms:kit'), project('gndms:stuff'), project('gndms:model'), ARGS4J, SERVICE_STUBS, GORFX_CLIENT, DSPACE_CLIENT, GORFX_COMMON, DSPACE_COMMON, COMMONS_CODEC, COMMONS_COLLECTIONS, GT4_COMMONS, JODA_TIME, GT4_GRAM, GT4_LOG, GT4_COG, GT4_SEC, GT4_XML, EXTRA_JARS, GT4_MDS, TestNG.dependencies
       compile
       test.compile
       test.exclude '*'
