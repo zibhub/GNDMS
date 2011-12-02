@@ -10,6 +10,7 @@ thank our sponsor: JetBrains.
 Approx nine month ago we applied for an IntelliJ Open Source Project License for the GNDMS project and received free keys for the IntelliJ Ultimate Java IDE version 10. 
 
 Using IntelliJ in this stage of our project turned out to be a major advantage. Since we had to refactor zillion lines of old code, the awesome inspection and refactoring features saved us from a lot of grieve and pain. My favorite inspections so far turned out to be 
+
    - _Illegal package dependency_, which lets you define scopes in which packages are or are not allowed to be used, and
    - _Unused declaration_, which is helpful to eliminate unused classes or to find missing calls to classes, which might have gotten under the wheels during rewriting and moving around classes.
 
