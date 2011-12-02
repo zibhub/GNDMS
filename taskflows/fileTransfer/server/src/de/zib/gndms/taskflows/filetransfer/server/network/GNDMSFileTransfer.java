@@ -229,7 +229,7 @@ public class GNDMSFileTransfer {
      * If the listener has a state, i.e. a currentFile and a range, then the transfer will uses this state to continue
      * the transfer.
      */
-    public void performPersistentTransfer( @NotNull PersistentMarkerListener plist ) throws ServerException, IOException, ClientException {
+    public void performPersistentTransfer( @NotNull PersistentMarkerListener markerListener ) throws ServerException, IOException, ClientException {
 
         String currentFile = null;
         try {
@@ -245,9 +245,8 @@ public class GNDMSFileTransfer {
 
             sourceClient.setActive( destinationClient.setPassive() );
 
-            // todo beautify the code below
-            boolean resume = plist.hasCurrentFile();
-            String  resumeFile = plist.getCurrentFile();
+            boolean resume = markerListener.hasCurrentFile();
+            String  resumeFile = markerListener.getCurrentFile();
 
             for( String fn : files.keySet() ) {
                 currentFile = fn;
@@ -255,14 +254,14 @@ public class GNDMSFileTransfer {
                 // if transfer is resumed skip files til last transferred file is found.
                 if( resume && currentFile.equals( resumeFile ) ) {
                     resume = false;
-                    resumeSource( plist.getTransferState() );
+                    resumeSource( markerListener.getTransferState() );
                 }
 
                 if( !resume ) {
-                    plist.setCurrentFile( currentFile );
+                    markerListener.setCurrentFile( currentFile );
                     String destinationFile = files.get( currentFile );
                     sourceClient.extendedTransfer( currentFile, destinationClient,
-                        ( destinationFile == null ? currentFile : destinationFile ), plist );
+                        ( destinationFile == null ? currentFile : destinationFile ), markerListener );
                 }
             }
         } catch ( ServerException ex ) {

@@ -44,7 +44,7 @@ public class TaskPersistentMarkerListener extends PersistentMarkerListener {
     public void markerArrived( final Marker marker ) {
         try{
             WidAux.initWid( wid );
-            WidAux.initGORFXid( wid );
+            WidAux.initGORFXid( gorfxId );
             super.markerArrived( marker );
         } finally{
             WidAux.removeGORFXid( );

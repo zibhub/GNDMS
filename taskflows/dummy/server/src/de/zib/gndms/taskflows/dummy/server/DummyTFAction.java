@@ -83,7 +83,7 @@ public class DummyTFAction extends TaskFlowAction<DummyOrder> {
     protected void onInProgress( @NotNull String wid, @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState ) throws Exception {
 
         StringBuilder out = new StringBuilder();
-        DummyOrder order = getOrder().getOrderBean();
+        DummyOrder order = getOrderBean();
         for( int i = 0; i < order.getTimes(); ++i ) {
             out.append( order.getMessage() );
             out.append( '\n' );

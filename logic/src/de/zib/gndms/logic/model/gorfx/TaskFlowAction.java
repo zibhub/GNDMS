@@ -25,6 +25,7 @@ import de.zib.gndms.kit.access.MyProxyFactoryProvider;
 import de.zib.gndms.kit.security.CredentialProvider;
 import de.zib.gndms.kit.security.MyProxyCredentialProvider;
 import de.zib.gndms.logic.model.DefaultTaskAction;
+import de.zib.gndms.model.gorfx.FTPTransferState;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.Dao;
@@ -147,7 +148,7 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends DefaultTas
 
     protected String getFailString( Exception e )  {
         if( e != null )
-            // todo verify getTaskSnapshot doesn't case trouble on error
+            // todo verify getTaskSnapshot doesn't cause trouble on error
             return getTaskSnapshot(getDao()).getDescription() + " failure " +  e.getMessage();
         else
             return getTaskSnapshot(getDao()).getDescription() + " failure (no Exception provided)";
@@ -183,5 +184,24 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends DefaultTas
 
         return new MyProxyCredentialProvider( myProxyFactory, token.getLogin(),
                 token.getPassword() );
+    }
+
+
+    /**
+     * This should be called in every In_State_ method, cause after a restart order might have
+     * not been initialized.
+     */
+    protected void ensureOrder() {
+
+        if ( getOrder() == null ) {
+            Session session = getDao().beginSession();
+            try {
+                Task task = getTask( session );
+                setOrder( ( DelegatingOrder ) task.getOrder() );
+                session.success();
+            } finally {
+                session.finish();
+            }
+        }
     }
 }

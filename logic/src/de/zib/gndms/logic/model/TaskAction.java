@@ -502,17 +502,21 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
         _transitWithPayload( taskState, payload, true );
     }
 
+
     protected void transit(@NotNull TaskState taskState) {
         _transitWithPayload( taskState, null, false );
     }
+
 
     protected void autoTransitWithPayload(Serializable payload ) {
         _autoTransitWithPayload( payload, true );
     }
 
+
     protected void autoTransit() {
         _autoTransitWithPayload( null, false );
     }
+
 
     protected void _autoTransitWithPayload(Serializable payload, boolean hasPayload ) {
         final @NotNull Session session = getDao().beginSession();
@@ -1140,5 +1144,16 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
 
     protected void setModelUpdateListener(@NotNull ModelUpdateListener<Taskling> listener) {
         modelUpdateListener = listener;
+    }
+
+
+    protected void updateMaxProgress( final int max ) {
+        Session session = getDao().beginSession();
+        try{
+            getModel().getTask( session ).setMaxProgress( max );
+            session.success();
+        }finally {
+            session.finish();
+        }
     }
 }
