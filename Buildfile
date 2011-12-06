@@ -58,7 +58,8 @@ include GNDMS
 testEnv('COG_LOCATION', 'the root directory of COG 1.8.0')
 #testEnv('GLOBUS_LOCATION', 'the root directory of Globus Toolkit 4.0.8')
 #GNDMS_DB=[ ENV['GLOBUS_LOCATION'], 'etc', 'gndms_shared', 'db', 'gndms' ].join(File::SEPARATOR)
-GNDMS_DB=[ '', 'var', 'tmp', 'gndms', 'TESTDB' ].join(File::SEPARATOR)
+GNDMS_DB=[ '', 'tmp', 'c3grid', 'TESTDB' ].join(File::SEPARATOR)
+#GNDMS_DB=[ '', 'tmp', 'c3grid', 'c3db' ].join(File::SEPARATOR)
 #DEPLOY_GAR=[ ENV['GLOBUS_LOCATION'], 'bin', 'globus-deploy-gar' ].join(File::SEPARATOR)
 #testEnv('ANT_HOME', 'the root directory of Apache Ant')
 testEnv('JAVA_HOME', 'the root directory of J2SE')
@@ -534,7 +535,13 @@ define 'gndms' do
 
     desc 'Peek into the gndms derby database'
     task 'derby-ij' do
-        callIJ( GNDMS_DB, DB_DERBY )
+        if( ENV["dbDir"] == nil ) then
+            dbDir=GNDMS_DB 
+        else 
+            dbDir = ENV["dbDir"]
+        end 
+        puts "DB dir: #{dbDir}"
+        callIJ( dbDir, DB_DERBY )
     end
 
     define 'gndmc', :layout => dmsTestLayout('gndmc', 'gndms-gndmc') do
