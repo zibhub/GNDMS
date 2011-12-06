@@ -78,7 +78,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     // private ORQDao orqDao;
     private String serviceUrl; // inject or read from properties, doesn't contain gorfx postfix
     private TaskFlowProvider taskFlowProvider;
-    private final List<String> facetsNames = new ArrayList<String>( 7 );
+    private final List<String> facetsNames = new ArrayList<String>( 6 );
     private UriFactory uriFactory;
     private TaskClient taskClient;
     private final Logger logger = LoggerFactory.getLogger( this.getClass() );
@@ -122,7 +122,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
             } else
                 logger.debug( "request for non existing " + type + ": " + id );
         } else
-            logger.debug( "request for non existing type: " + type + ": " + id );
+            logger.debug( "request for non existing type " + type + ": " + id );
 
         return new ResponseEntity<Facets>( new Facets( ), header, HttpStatus.NOT_FOUND );
     }

@@ -26,6 +26,7 @@ import de.zib.gndms.logic.model.*;
 import de.zib.gndms.logic.model.gorfx.DefaultWrapper;
 import de.zib.gndms.logic.util.LogicTools;
 import de.zib.gndms.model.common.*;
+import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.slf4j.Logger;
@@ -126,6 +127,7 @@ public final class GNDMSystem
 	public void initialize() throws RuntimeException {
 		try {
 			printVersion();
+            // todo remove GLOBUS_LOCATION
             containerHome = new File(System.getenv("GLOBUS_LOCATION")).getAbsoluteFile();
             logger.info("Container home directory is '" + containerHome.toString() + '\'');
             initSharedDir();
@@ -133,6 +135,7 @@ public final class GNDMSystem
 			prepareDbStorage();
             dao = new Dao(getGridName(), neo);
 			tryTxExecution();
+            logger.warn( emf.getProperties().toString() );
 			// initialization intentionally deferred to initialize
             if ( beanFactory == null )
                 throw new IllegalStateException( "beanfactory not provided" );
@@ -243,7 +246,7 @@ public final class GNDMSystem
         neoDir = new File(curSharedDir, "neo");
 		doCheckOrCreateDir(dbDir);
 
-		System.setProperty("derby.system.home", dbDir.getCanonicalPath());
+	//	System.setProperty("derby.system.home", dbDir.getCanonicalPath());
 
         if (isDebugging()) {
             LogicTools.setDerbyToDebugMode();
@@ -294,6 +297,14 @@ public final class GNDMSystem
 		final EntityManager em = emf.createEntityManager();
 		try {
 			em.getTransaction().begin();
+//            Subspace ss = new Subspace();
+//            ss.setAvailableSize( 100 );
+//            ss.setGsiFtpPath( "hallo" );                                     c
+//            ss.setId( "foo" );
+//            ss.setTotalSize( 2000 );
+//            ss.setName( new ImmutableScopedName( "foo", "bar" ) );
+//                     em.persist( ss );
+            
 			em.getTransaction().commit();
 		}
 		catch (RuntimeException re)

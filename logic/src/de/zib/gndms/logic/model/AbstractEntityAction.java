@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import java.util.UUID;
 
 
 /**

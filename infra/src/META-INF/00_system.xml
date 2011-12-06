@@ -102,18 +102,14 @@
     </bean>
 
     <!-- orm -->
-    <jdbc:embedded-database id="derby"  type="DERBY" >
-        <!--jdbc:script location="classpath:schema.sql"/-->
-    </jdbc:embedded-database>
-
     <bean id="emf" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-        <property name="dataSource" ref="derby"/>
         <property name="persistenceXmlLocation" value="classpath:/META-INF/persistence.xml" />
         <property name="jpaPropertyMap">
             <map>
                 <entry key="openjpa.Id" value="${gridName}"/>
                 <entry key="openjpa.weaving" value="false"/>
-                <entry key="openjpa.ConnectionURL" value="jdbc:derby:${gridPath}/derby;create=true"/>
+                <entry key="openjpa.ConnectionURL"
+                       value="jdbc:derby:/tmp/c3grid/c3db;create=true"/>
                 <entry key="openjpa.Log" value="File=${jpaLoggerFile}, DefaultLevel=INFO, Runtime=${jpaLogRuntimeLevel}, Tool=INFO"/>
             </map>
         </property>

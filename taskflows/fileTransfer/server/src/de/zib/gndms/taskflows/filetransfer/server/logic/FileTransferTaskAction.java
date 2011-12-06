@@ -73,6 +73,7 @@ public class FileTransferTaskAction extends TaskFlowAction<FileTransferOrder> {
     {
 
         if ( !isRestartedTask ) {
+            super.onCreated( wid, state, isRestartedTask, altTaskState );    // overridden method implementation
             final Session session = getDao().beginSession();
             try {
                 Task task = getTask( session );
@@ -86,7 +87,6 @@ public class FileTransferTaskAction extends TaskFlowAction<FileTransferOrder> {
             } finally {
                 session.finish();
             }
-            super.onCreated( wid, state, isRestartedTask, altTaskState );    // overridden method implementation
         }
     }
 

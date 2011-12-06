@@ -70,6 +70,7 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends DefaultTas
     protected void onCreated(@NotNull String wid,
                              @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) throws Exception {
         if (! isRestartedTask) {
+            super.onCreated(wid, state, isRestartedTask, altTaskState);
             final Session session = getDao().beginSession();
             try {
                 final TaskFlowType ot = session.findTaskFlowType( offerTypeId );
@@ -80,7 +81,6 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends DefaultTas
                 session.success();
             }
             finally { session.finish(); }
-            super.onCreated(wid, state, isRestartedTask, altTaskState);
         }
     }
 

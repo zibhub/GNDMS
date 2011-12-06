@@ -9,6 +9,7 @@ import de.zib.gndms.neomodel.gorfx.TaskFlow;
 import de.zib.gndms.taskflows.dummy.client.DummyTaskFlowMeta;
 import de.zib.gndms.taskflows.dummy.client.model.DummyOrder;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +57,7 @@ public class DummyTaskFlowFactory extends DefaultTaskFlowFactory<DummyOrder,Dumm
             @Override
             public List<String> requiredAuthorization() {
 
-                return null;  // not required here
+                return DummyTaskFlowMeta.REQUIRED_AUTHORIZATION;
             }
         };
     }
