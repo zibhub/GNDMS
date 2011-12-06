@@ -70,7 +70,7 @@ public class SubspaceClientTest {
 		boolean visible = true;
 		final long value = 6000;
 		String mode = "CREATE";
-       	SubspaceConfiguration config = new SubspaceConfiguration(path, gsiftp, visible, value, mode);
+       	SubspaceConfiguration config = new SubspaceConfiguration(path, gsiftp, visible, value, mode, subspace);
         config.setSubspace( new ImmutableScopedName( "scope", subspace ));
 
         subspaceClient.createSubspace(subspace, config, dn);

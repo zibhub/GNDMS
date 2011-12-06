@@ -88,12 +88,13 @@ public class SubspaceConfiguration implements Configuration {
 	 * @param mode The setup mode.
 	 */
 	public SubspaceConfiguration(final String path, final String gsiFtpPath, 
-			final boolean visible, final long size, final SetupMode mode) {
+			final boolean visible, final long size, final SetupMode mode, final String subspace) {
 		this.path = path;
 		this.gsiFtpPath = gsiFtpPath;
 		this.visible = visible;
 		this.size = size;
 		this.mode = mode;
+        this.subspace = subspace;
 	}
 
 	/**
@@ -105,12 +106,13 @@ public class SubspaceConfiguration implements Configuration {
 	 * @param mode The setup mode.
 	 */
 	public SubspaceConfiguration(final String path, final String gsiFtpPath, 
-			final boolean visible, final long size, final String mode) {
+			final boolean visible, final long size, final String mode, final String subspace) {
 		this.path = path;
 		this.gsiFtpPath = gsiFtpPath;
 		this.visible = visible;
 		this.size = size;
 		setMode(mode);
+        setSubspace( subspace );
 	}
 
 	/**
@@ -263,7 +265,7 @@ public class SubspaceConfiguration implements Configuration {
 	 * @return The configuration.
 	 */
     public static final SubspaceConfiguration getSubspaceConfiguration(Subspace subspace) {
-		return new SubspaceConfiguration(subspace.getPath(), subspace.getGsiFtpPath(), subspace.isVisibleToPublic(), subspace.getTotalSize(), "READ");
+		return new SubspaceConfiguration(subspace.getPath(), subspace.getGsiFtpPath(), subspace.isVisibleToPublic(), subspace.getTotalSize(), "READ", subspace.getName().toQName().toString());
 	}
 
 	/*

@@ -21,7 +21,7 @@ import static javax.persistence.Persistence.createEntityManagerFactory;
  * To change this template use File | Settings | File Templates.
  */
 public abstract class JPATest {
-    protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
+    protected final Logger log = LoggerFactory.getLogger( this.getClass() );
     protected EntityManagerFactory emf;
     //private String gridPath;
 
@@ -34,7 +34,7 @@ public abstract class JPATest {
                 deleteDirectory( new File( gridPath ) );
             }
             catch( Exception e ) {
-                logger.error( "Could not delete " + gridPath + ". " + e.getMessage() );
+                log.error( "Could not delete " + gridPath + ". " + e.getMessage() );
             }
         }
 
@@ -47,7 +47,7 @@ public abstract class JPATest {
             map.put( "openjpa.Id", "testid" );
             map.put( "openjpa.ConnectionURL", "jdbc:derby:TESTDB;create=true" );
 
-            logger.info( "Opening JPA Store: " + map.toString() );
+            log.info( "Opening JPA Store: " + map.toString() );
 
             emf = createEntityManagerFactory( "testdbunit", map );
         }

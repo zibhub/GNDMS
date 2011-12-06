@@ -58,7 +58,7 @@ include GNDMS
 testEnv('COG_LOCATION', 'the root directory of COG 1.8.0')
 #testEnv('GLOBUS_LOCATION', 'the root directory of Globus Toolkit 4.0.8')
 #GNDMS_DB=[ ENV['GLOBUS_LOCATION'], 'etc', 'gndms_shared', 'db', 'gndms' ].join(File::SEPARATOR)
-GNDMS_DB=[ '', 'var', 'tmp', 'gndms' ].join(File::SEPARATOR)
+GNDMS_DB=[ '', 'var', 'tmp', 'gndms', 'TESTDB' ].join(File::SEPARATOR)
 #DEPLOY_GAR=[ ENV['GLOBUS_LOCATION'], 'bin', 'globus-deploy-gar' ].join(File::SEPARATOR)
 #testEnv('ANT_HOME', 'the root directory of Apache Ant')
 testEnv('JAVA_HOME', 'the root directory of J2SE')

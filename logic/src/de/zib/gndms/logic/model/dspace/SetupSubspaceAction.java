@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import java.io.PrintWriter;
+import java.util.UUID;
 
 
 /**
@@ -165,9 +166,6 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
 
                 if (! em.contains(space))
                     em.persist(space);
-
-                if (! em.contains(space))
-                    em.persist(space);
                 break;
             case DELETE:
                 throw new UnsupportedOperationException("Use DeleteSubspaceAction instead of SetupSubspaceAction for deleting subspaces");
@@ -196,18 +194,18 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
      */
     private Subspace prepareSubspace(final EntityManager em, final ImmutableScopedName pkParam) {
         log.error( pkParam.toQName().toString() );
-        Subspace space = em.find(Subspace.class, pkParam);
+        Subspace space = null;//em.find(Subspace.class, pkParam);
         if (space == null) {
             if (! isCreating())
                 throw new IllegalStateException("No matching subspace found for update");
             space = new Subspace();
-            space.setName(pkParam);
         }
 
         
         if (isCreating()) {
             space = new Subspace();
-            space.setId(nextUUID());
+            space.setName( pkParam );
+            space.setId( UUID.randomUUID().toString() );
 
             //final StorageSize avail = new StorageSize();
             //avail.setAmount(getSize().getAmount());

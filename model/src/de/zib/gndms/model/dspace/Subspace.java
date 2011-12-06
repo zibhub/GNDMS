@@ -34,18 +34,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.JoinTable;
-import javax.persistence.JoinColumn;
-import javax.persistence.Column;
-import javax.persistence.ManyToMany;
-import javax.persistence.UniqueConstraint;
-import javax.persistence.CascadeType;
-import javax.persistence.FetchType;
+import javax.persistence.*;
 
 /**
  *
@@ -90,7 +79,7 @@ public class Subspace extends GridResource {
     /**
      * The set of slice kinds which are allowed in this subspace.
      */
-    private Set<SliceKind> creatableSliceKinds = new HashSet<SliceKind>();
+    private Set< SliceKind > creatableSliceKinds = new HashSet<SliceKind>();
 
     /**
      * Sets the path of this subspace.
@@ -142,7 +131,7 @@ public class Subspace extends GridResource {
      */
     @Column(name = "avail_size", nullable = false, updatable = false)
     public long getAvailableSize() {
-        return getAvailableSize();
+        return availableSize;
     }
 
     /**
@@ -201,11 +190,12 @@ public class Subspace extends GridResource {
      */
     @EmbeddedId
     @AttributeOverrides({
-        @AttributeOverride(name = "nameScope", column = @Column(name = "schema_uri", nullable = false, 
+        @AttributeOverride(name = "nameScope", column = @Column(name = "schema_uri", nullable = false,
         		updatable = false, columnDefinition = "VARCHAR")),
-        @AttributeOverride(name = "localName", column = @Column(name = "specifier", nullable = false, 
+        @AttributeOverride(name = "localName", column = @Column(name = "specifier", nullable = false,
         		updatable = false, columnDefinition = "VARCHAR", length = 64))
         })
+    @Transient
     public ImmutableScopedName getName() {
         return name;
     }
