@@ -64,11 +64,11 @@ public class SubspaceProviderImpl implements SubspaceProvider {
         TxFrame tx = new TxFrame(em);
         try {
                Query query = em.createNamedQuery("listAllSubspaceIds");
-               List<ImmutableScopedName> list = query.getResultList();
+               List<String> list = query.getResultList();
                subspaceIds = new HashMap<String, Subspace>();
-               for (ImmutableScopedName name : list) {
+               for (String name : list) {
                    Subspace sub = em.find(Subspace.class, name);
-                   subspaceIds.put(name.toString(), sub);
+                   subspaceIds.put( name, sub);
                }
                tx.commit();
            } finally {
