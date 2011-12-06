@@ -25,6 +25,8 @@ import java.util.Set;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.dspace.SliceKind;
 
+import javax.inject.Inject;
+
 /**
  * The slice kind provider which handles the available subspaces providing 
  * a mapping of slice kind ids and slice kinds.
@@ -39,9 +41,16 @@ public class SliceKindProviderImpl implements SliceKindProvider {
 	 */
     private Map<String, Map<String, SliceKind>> sliceKinds;
 
-	@Override
-	public final void init(final SubspaceProvider provider) {
-		for (String sub : provider.listSubspaces()) {
+    @Inject
+    public void setProvider(SubspaceProvider provider) {
+        this.provider = provider;
+    }
+
+    private SubspaceProvider provider;
+
+    @Override
+	public final void init( ) {
+        for (String sub : provider.listSubspaces()) {
 				Set<SliceKind> subSliceKinds = provider.getSubspace(sub).getCreatableSliceKinds();
 				Map<String, SliceKind> map = new HashMap<String, SliceKind>();
 				

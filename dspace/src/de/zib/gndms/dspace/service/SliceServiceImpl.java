@@ -28,6 +28,7 @@ import java.io.OutputStream;
 import java.util.*;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
@@ -115,17 +116,26 @@ public class SliceServiceImpl implements SliceService {
 	 */
 	private UriFactory uriFactory;
 
-	/**
+    @Inject
+    public void setSliceKindProvider(SliceKindProvider sliceKindProvider) {
+        this.sliceKindProvider = sliceKindProvider;
+    }
+
+    @Inject
+    public void setSliceProvider(SliceProvider sliceProvider) {
+        this.sliceProvider = sliceProvider;
+    }
+
+    public void setUriFactory(UriFactory uriFactory) {
+        this.uriFactory = uriFactory;
+    }
+
+    /**
 	 * Initialization of the slice service.
 	 */
 	@PostConstruct
 	public final void init() {
-		uriFactory = new UriFactory(baseUrl);
-		subspaceProvider = new SubspaceProviderImpl();
-		sliceKindProvider = new SliceKindProviderImpl();
-		sliceKindProvider.init(subspaceProvider);
-		sliceProvider = new SliceProviderImpl();
-		sliceProvider.init(subspaceProvider);
+        setUriFactory( new UriFactory() );
 	}
 
 	@Override
@@ -601,4 +611,10 @@ public class SliceServiceImpl implements SliceService {
 	public final void setSliceFacets(final Facets sliceFacets) {
 		this.sliceFacets = sliceFacets;
 	}
+
+    @Inject
+    public final void setSubspaceProvider( SubspaceProvider subspaceProvider )
+    {
+        this.subspaceProvider = subspaceProvider;
+    }
 }

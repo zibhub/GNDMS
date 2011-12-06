@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
@@ -29,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -61,6 +63,8 @@ import de.zib.gndms.model.util.TxFrame;
  * @author Ulrike Golas
  */
 
+@Controller
+@RequestMapping(value = "/dspace")
 public class SubspaceServiceImpl implements SubspaceService {
 	/**
 	 * The logger.
@@ -82,7 +86,12 @@ public class SubspaceServiceImpl implements SubspaceService {
 	 * Provider of available subspaces.
 	 */
 	private SubspaceProvider subspaceProvider;
-	/**
+
+    public void setUriFactory(UriFactory uriFactory) {
+        this.uriFactory = uriFactory;
+    }
+
+    /**
 	 * The uri factory.
 	 */
 	private UriFactory uriFactory;
@@ -96,8 +105,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 	 */
 	@PostConstruct
 	public final void init() {
-		uriFactory = new UriFactory(baseUrl);
-		subspaceProvider = new SubspaceProviderImpl();
+        setUriFactory( new UriFactory() );
 	}
 
 	@Override
@@ -139,6 +147,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 	       	TxFrame tx = new TxFrame(em);
 	       	try {
 	       		SetupSubspaceAction action = new SetupSubspaceAction(subspaceConfig);
+                action.setClosingEntityManagerOnCleanup( false );
 	       		action.setOwnEntityManager(em);
 	       		logger.info("Calling action for setting up the supspace "
 					+ subspace + ".");
@@ -216,7 +225,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 					HttpStatus.NOT_FOUND);
 		}
 		SliceKindProvider sliceKindProvider = new SliceKindProviderImpl();
-		sliceKindProvider.init(subspaceProvider);
+		sliceKindProvider.init();
 		try {
 		List<String> sliceKinds = sliceKindProvider.listSliceKindIds(subspace);
 
@@ -354,6 +363,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 	 * Sets the subspace provider of this subspace service.
 	 * @param subspaceProvider the subspaceProvider to set
 	 */
+    @Inject
 	public final void setSubspaceProvider(final SubspaceProvider subspaceProvider) {
 		this.subspaceProvider = subspaceProvider;
 	}

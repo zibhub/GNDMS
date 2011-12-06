@@ -59,8 +59,8 @@ public class PlugableTaskFlowProvider extends TaskFlowProviderImpl {
             checkDeps();
 
         // todo this is just for development change this for releases:
-        if ( getFactories().size() == 0 )
-            throw new IllegalStateException( "no plugs found" );
+//        if ( getFactories().size() == 0 )
+//            throw new IllegalStateException( "no plugs found" );
     }
 
 

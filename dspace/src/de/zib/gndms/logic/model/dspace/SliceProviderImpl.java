@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
@@ -48,10 +49,17 @@ public class SliceProviderImpl implements SliceProvider {
 	 */
     private Map<String, Map<String, Slice>> slices;
 
-	@SuppressWarnings("unchecked")
+    @Inject
+    public void setProvider(SubspaceProvider provider) {
+        this.provider = provider;
+    }
+
+    private SubspaceProvider provider;
+
+    @SuppressWarnings("unchecked")
 	@Override
-	public final void init(final SubspaceProvider provider) {		
-    	em = emf.createEntityManager();
+	public final void init( ) {
+        em = emf.createEntityManager();
        	TxFrame tx = new TxFrame(em);
     	try {
     		for (String sub : provider.listSubspaces()) {

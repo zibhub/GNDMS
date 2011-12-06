@@ -30,9 +30,8 @@ public interface SliceProvider {
 
 	/**
 	 * Initialization of the slice provider.
-	 * @param provider Provider of all subspaces.
 	 */
-	void init(SubspaceProvider provider);
+	void init( );
 
 	/**
 	 * Checks whether a given slice id exists for the subspace.

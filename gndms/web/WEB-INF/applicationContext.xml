@@ -9,6 +9,7 @@
 
     <import resource="classpath:META-INF/00_system.xml"/>
     <import resource="classpath:META-INF/converter-setup.xml"/>
+    <import resource="classpath:META-INF/dspace.xml"/>
     <import resource="classpath:META-INF/gorfx.xml"/>
 
 </beans>

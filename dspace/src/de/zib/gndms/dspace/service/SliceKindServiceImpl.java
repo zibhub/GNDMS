@@ -19,6 +19,7 @@ package de.zib.gndms.dspace.service;
 import java.util.HashMap;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
@@ -81,11 +82,22 @@ public class SliceKindServiceImpl implements SliceKindService {
 	 * All available subspaces.
 	 */
 	private SubspaceProvider subspaceProvider;
-	/**
+
+    @Inject
+    public void setSliceKindProvider(SliceKindProvider sliceKindProvider) {
+        this.sliceKindProvider = sliceKindProvider;
+    }
+
+    /**
 	 * All available slice kinds.
 	 */
 	private SliceKindProvider sliceKindProvider;
-	/**
+
+    public void setUriFactory(UriFactory uriFactory) {
+        this.uriFactory = uriFactory;
+    }
+
+    /**
 	 * The uri factory.
 	 */
 	private UriFactory uriFactory;
@@ -96,9 +108,7 @@ public class SliceKindServiceImpl implements SliceKindService {
 	 */
 	@PostConstruct
 	public final void init() {
-		uriFactory = new UriFactory(baseUrl);
-		sliceKindProvider = new SliceKindProviderImpl();
-		sliceKindProvider.init(subspaceProvider);
+        setUriFactory( new UriFactory() );
 	}
 
 	@Override

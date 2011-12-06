@@ -16,6 +16,7 @@
     <!-- load possible custom properties -->
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="ignoreResourceNotFound" value="true"/>
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
         <property name="locations">
             <list>
                 <value>classpath:/META-INF/dspace.properties</value>
@@ -24,33 +25,24 @@
         </property>
     </bean>
 
-    <!-- --- DSpaceService --- -->
+    <!-- DSpaceService -->
     
     <bean id="dspaceService" class="de.zib.gndms.dspace.service.DSpaceServiceImpl">
         <property name="baseUrl" value="${dspaceBaseURL}"/>
         <property name="subspaceProvider" ref="subspaceProvider"/>
     </bean>
 
-    <bean id="subspaceProvider" class="de.zib.gndms.logic.dspace.SubspaceProviderImpl" >
-        <property name="subspaces">
-            <map>
-                <entry key="staging" value-ref="subspace"/>
-            </map>
-        </property>
-    </bean>
+    <bean id="subspaceProvider" class="de.zib.gndms.logic.model.dspace.SubspaceProviderImpl" />
 
-    <bean id="subspace" class="de.zib.gndms.model.dspace.Subspace"/>
-
-	<!-- --- SubspaceService --- -->
+	<!-- SubspaceService -->
 
     <bean id="subspaceService" class="de.zib.gndms.dspace.service.SubspaceServiceImpl">
         <property name="baseUrl" value="${dspaceBaseURL}"/>
         <property name="subspaceFacets" ref="subspaceFacets" />
-        <property name="executor" ref="executor" />
         <property name="subspaceProvider" ref="subspaceProvider"/>
     </bean>
 
-    <bean id="dspaceFacets" class="de.zib.gndms.common.rest.Facets">
+    <bean id="subspaceFacets" class="de.zib.gndms.common.rest.Facets">
         <property name="facets">
             <list>
                 <ref bean="config"/>
@@ -61,25 +53,29 @@
 
     <bean id="config" class="de.zib.gndms.common.rest.Facet">
         <property name="name" value="config"/> 
-        <property name="url" value="${dspaceBaseURL}/dspace/${subspaceId}/config"/>
+        <property name="url" value="${dspaceBaseURL}/dspace/"/>
     </bean>
 
     <bean id="slicekinds" class="de.zib.gndms.common.rest.Facet">
         <property name="name" value="slicekinds"/>
-        <property name="url" value="${dspaceBaseURL}/dspace/${subspaceId}/slicekinds"/>
+        <property name="url" value="${dspaceBaseURL}/dspace/"/>
     </bean>
 
     <!-- this will be defined in system
     <bean id="executor" class="de.zib.gndms.logic.model.TaskExecutionService" /-->
 
-	<!-- --- SliceKindService -->
+	<!-- SliceKindService -->
+
+    <bean id="sliceKindProvider" class="de.zib.gndms.logic.model.dspace.SliceKindProviderImpl" />
 
     <bean id="sliceKindService" class="de.zib.gndms.dspace.service.SliceKindServiceImpl">
         <property name="baseUrl" value="${dspaceBaseURL}"/>
         <property name="subspaceProvider" ref="subspaceProvider"/>
     </bean>
  
- 	<!-- --- SliceService -->
+ 	<!-- SliceService -->
+
+    <bean id="sliceProvider" class="de.zib.gndms.logic.model.dspace.SliceProviderImpl" />
  
     <bean id="sliceService" class="de.zib.gndms.dspace.service.SliceServiceImpl">
         <property name="baseUrl" value="${dspaceBaseURL}"/>
@@ -98,11 +94,11 @@
 
     <bean id="files" class="de.zib.gndms.common.rest.Facet">
         <property name="name" value="config"/>
-        <property name="url" value="${dspaceBaseURL}/dspace/${subspaceId}/config"/>
+        <property name="url" value="${dspaceBaseURL}/dspace/"/>
     </bean>
 
     <bean id="gsiftp" class="de.zib.gndms.common.rest.Facet">
         <property name="name" value="config"/>
-        <property name="url" value="${dspaceBaseURL}/dspace/${subspaceId}/config"/>
+        <property name="url" value="${dspaceBaseURL}/dspace/"/>
     </bean>
 </beans>

@@ -16,11 +16,9 @@ package de.zib.gndms.logic.model.dspace;
  * limitations under the License.
  */
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
@@ -29,6 +27,8 @@ import javax.persistence.Query;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.util.TxFrame;
+
+import static javax.persistence.Persistence.createEntityManagerFactory;
 
 /**
  * The subspace provider which handles the available subspaces providing 
@@ -56,26 +56,30 @@ public class SubspaceProviderImpl implements SubspaceProvider {
      */
     @SuppressWarnings("unchecked")
 	public SubspaceProviderImpl() {
-    	em = emf.createEntityManager();
-       	TxFrame tx = new TxFrame(em);
-    	try {
-       		Query query = em.createNamedQuery("listAllSubspaceIds");
-       		List<ImmutableScopedName> list = query.getResultList();
-       		subspaceIds = new HashMap<String, Subspace>();
-       		for (ImmutableScopedName name : list) {
-       			Subspace sub = em.find(Subspace.class, name);
-       			subspaceIds.put(name.toString(), sub);
-       		}
-        tx.commit();
-       	} finally {
-       		tx.finish();
-       		if (em != null && em.isOpen()) {
-       			em.close();
-       		}
-       	}
     }
-    
-	@Override
+
+    @PostConstruct
+    public void init() {
+        em = emf.createEntityManager();
+        TxFrame tx = new TxFrame(em);
+        try {
+               Query query = em.createNamedQuery("listAllSubspaceIds");
+               List<ImmutableScopedName> list = query.getResultList();
+               subspaceIds = new HashMap<String, Subspace>();
+               for (ImmutableScopedName name : list) {
+                   Subspace sub = em.find(Subspace.class, name);
+                   subspaceIds.put(name.toString(), sub);
+               }
+               tx.commit();
+           } finally {
+               tx.finish();
+               if (em != null && em.isOpen()) {
+                   em.close();
+               }
+           }
+    }
+
+    @Override
 	public final boolean exists(final String subspace) {
         return subspaceIds.containsKey(subspace);
 	}

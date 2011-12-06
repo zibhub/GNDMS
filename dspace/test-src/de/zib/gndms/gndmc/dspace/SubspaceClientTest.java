@@ -16,6 +16,11 @@ package de.zib.gndms.gndmc.dspace;
  * limitations under the License.
  */
 
+import de.zib.gndms.gndmc.gorfx.FullGORFXClient;
+import de.zib.gndms.model.common.ImmutableScopedName;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.http.ResponseEntity;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
@@ -48,40 +53,39 @@ public class SubspaceClientTest {
 	 * Tests the request methods.
 	 */
 	@Test
-    public final void testBehavior() {				
-		String a = "test";
-		SubspaceClient scl = new SubspaceClient(a);
-		
-		MockRestTemplate mockTemplate = new MockRestTemplate();
-		mockTemplate.setServiceURL(a);
-		scl.setRestTemplate(mockTemplate);
-		
-		String dn = "me";
-		String subspace = "testSubspace";
-		ResponseEntity<?> res;
-       	
-		res = scl.listAvailableFacets(subspace, dn);
-       	AssertJUnit.assertNotNull(res);
-       	
-		String path = "testpath";
+    public final void testBehavior() {
+        final String serviceUrl = "http://localhost:8082/c3grid";
+
+        ApplicationContext context = new ClassPathXmlApplicationContext( "classpath:META-INF/client-context.xml" );
+        SubspaceClient subspaceClient = ( SubspaceClient )context.getAutowireCapableBeanFactory().createBean(
+                        SubspaceClient.class,
+                        AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
+        subspaceClient.setServiceURL( serviceUrl );
+
+		String dn = "dn";
+		String subspace = "sub";
+
+		String path = "/var/tmp/GNDMS/dspace/";
 		String gsiftp = "gsiftp";
 		boolean visible = true;
 		final long value = 6000;
-		String mode = "UPDATE";
+		String mode = "CREATE";
        	SubspaceConfiguration config = new SubspaceConfiguration(path, gsiftp, visible, value, mode);
-		res = scl.createSubspace(subspace, config, dn);
-       	AssertJUnit.assertNotNull(res);
+        config.setSubspace( new ImmutableScopedName( "scope", subspace ));
 
-		res = scl.deleteSubspace(subspace, dn);
-       	AssertJUnit.assertNotNull(res);
+        subspaceClient.createSubspace(subspace, config, dn);
+       	//AssertJUnit.assertNotNull(res);
 
-		res = scl.listSubspaceConfiguration(subspace, dn);
-       	AssertJUnit.assertNotNull(res);
+		//res = scl.deleteSubspace(subspace, dn);
+        //AssertJUnit.assertNotNull(res);
 
-		res = scl.setSubspaceConfiguration(subspace, config, dn);
-       	AssertJUnit.assertNotNull(res);
+		//res = scl.listSubspaceConfiguration(subspace, dn);
+       	//AssertJUnit.assertNotNull(res);
 
-		res = scl.listSliceKinds(subspace, dn);
-       	AssertJUnit.assertNotNull(res);
+		//res = scl.setSubspaceConfiguration(subspace, config, dn);
+       	//AssertJUnit.assertNotNull(res);
+
+		//res = scl.listSliceKinds(subspace, dn);
+       	//AssertJUnit.assertNotNull(res);
    	}
 }

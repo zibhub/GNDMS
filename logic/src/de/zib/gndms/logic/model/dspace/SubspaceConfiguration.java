@@ -19,6 +19,7 @@ package de.zib.gndms.logic.model.dspace;
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.logic.config.SetupMode;
 import de.zib.gndms.common.logic.config.WrongConfigurationException;
+import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.dspace.Subspace;
 
 /**
@@ -33,9 +34,9 @@ import de.zib.gndms.model.dspace.Subspace;
  * @author Ulrike Golas
  * 
  */
-public class SubspaceConfiguration implements Configuration {
 
-	/**
+public class SubspaceConfiguration implements Configuration {
+    /**
 	 * The key for the subspace's path.
 	 */
 	public static final String PATH = "path";
@@ -76,8 +77,9 @@ public class SubspaceConfiguration implements Configuration {
 	 * The setup mode of the subspace.
 	 */
 	private SetupMode mode;
-	
-	/**
+    private String subspace;
+
+    /**
 	 * Constructs a SubspaceConfiguration.
 	 * @param path The path.
 	 * @param gsiFtpPath The gsi ftp path.
@@ -311,4 +313,15 @@ public class SubspaceConfiguration implements Configuration {
 	}
 
 
+    public void setSubspace(String subspace) {
+        this.subspace = subspace;
+    }
+
+    public void setSubspace(ImmutableScopedName subspace) {
+        this.subspace = subspace.toQName().toString();
+    }
+
+    public String getSubspace() {
+        return subspace;
+    }
 }

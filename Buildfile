@@ -58,6 +58,7 @@ include GNDMS
 testEnv('COG_LOCATION', 'the root directory of COG 1.8.0')
 #testEnv('GLOBUS_LOCATION', 'the root directory of Globus Toolkit 4.0.8')
 #GNDMS_DB=[ ENV['GLOBUS_LOCATION'], 'etc', 'gndms_shared', 'db', 'gndms' ].join(File::SEPARATOR)
+GNDMS_DB=[ '', 'var', 'tmp', 'gndms' ].join(File::SEPARATOR)
 #DEPLOY_GAR=[ ENV['GLOBUS_LOCATION'], 'bin', 'globus-deploy-gar' ].join(File::SEPARATOR)
 #testEnv('ANT_HOME', 'the root directory of Apache Ant')
 testEnv('JAVA_HOME', 'the root directory of J2SE')
@@ -763,6 +764,15 @@ define 'gndms' do
         package :jar
     end    
           
+    desc 'DSpace rest service'
+    define 'dspace', :layout => dmsLayout('dspace', 'gndms-dspace-rest') do
+        compile.with project('infra'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), project('gndmc-rest'), project('common'), SPRING, SLF4J, XSTREAM, COMMONS_LOGGING, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME, OPENJPA, INJECT 
+
+        compile
+        meta_inf << file(_('src/META-INF/dspace.xml'))
+        package :jar
+    end    
+          
     desc 'Creating the gndms war'
     define 'gndms', :layout => dmsLayout('gndms', 'gndms-rest') do
 
@@ -771,7 +781,7 @@ define 'gndms' do
         package(:war).include _('../GNDMS-RELEASE'), :path=>"WEB-INF/classes/META-INF"
 
         libs = []
-        [ 'gorfx', 'infra', 'logic', 'kit', 'stuff', 'neomodel', 'model', 'gndmc-rest', 'common' ].each { |mod| 
+        [ 'gorfx', 'dspace', 'infra', 'logic', 'kit', 'stuff', 'neomodel', 'model', 'gndmc-rest', 'common' ].each { |mod| 
             project( mod ).compile.dependencies.map( &:to_s ).each  { |lib| libs << lib }
             libs << project( mod ).package(:jar)
         }

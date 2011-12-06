@@ -27,6 +27,8 @@ import de.zib.gndms.logic.model.config.SetupAction;
 import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.dspace.Subspace;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import java.io.PrintWriter;
@@ -49,7 +51,6 @@ import java.io.PrintWriter;
  * the <tt>execute()</tt> method is called.
  *
 
- * @see MetaSubspace
  * @see Subspace
  * @see ImmutableScopedName
  * @author  try ste fan pla nti kow zib
@@ -59,6 +60,8 @@ import java.io.PrintWriter;
  */
 @ConfigActionHelp(shortHelp = "Setup a subspace", longHelp = "Used to prepare the database schema for GNDMS by creating and updating subspaces")
 public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
+    private final Logger log = LoggerFactory.getLogger( this.getClass() );
+
     @ConfigOption(descr="The key of the subspace (QName)")
     private ImmutableScopedName subspace;
 
@@ -85,6 +88,7 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
 		setGsiFtpPath(subspaceConfig.getGsiFtpPath());
 		setMode(subspaceConfig.getMode());
 		setSize(subspaceConfig.getSize());
+        setSubspace( new ImmutableScopedName( subspaceConfig.getSubspace() ) );
 	}
 
 
@@ -191,7 +195,8 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
      * @return
      */
     private Subspace prepareSubspace(final EntityManager em, final ImmutableScopedName pkParam) {
-        Subspace space= em.find(Subspace.class, pkParam);
+        log.error( pkParam.toQName().toString() );
+        Subspace space = em.find(Subspace.class, pkParam);
         if (space == null) {
             if (! isCreating())
                 throw new IllegalStateException("No matching subspace found for update");
