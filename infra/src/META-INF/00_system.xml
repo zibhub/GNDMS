@@ -103,19 +103,19 @@
 
     <!-- orm -->
     <bean id="emf" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="persistenceUnitName" value="gndms" />
         <property name="persistenceXmlLocation" value="classpath:/META-INF/persistence.xml" />
         <property name="jpaPropertyMap">
             <map>
-                <entry key="openjpa.Id" value="${gridName}"/>
+                <entry key="openjpa.Id" value="gndms"/>
                 <entry key="openjpa.weaving" value="false"/>
-                <entry key="openjpa.ConnectionURL"
-                       value="jdbc:derby:/tmp/c3grid/c3db;create=true"/>
+                <entry key="openjpa.ConnectionURL" value="jdbc:derby:/tmp/c3grid/c3db;create=true"/>
                 <entry key="openjpa.Log" value="File=${jpaLoggerFile}, DefaultLevel=INFO, Runtime=${jpaLogRuntimeLevel}, Tool=INFO"/>
             </map>
         </property>
-        <property name="loadTimeWeaver">
+        <!-- property name="loadTimeWeaver">
             <bean class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver"/>
-        </property>
+        </property -->
     </bean>
 
 </beans>

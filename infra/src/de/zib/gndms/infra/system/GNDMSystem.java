@@ -46,6 +46,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
+import javax.persistence.metamodel.EntityType;
 
 import static javax.persistence.Persistence.createEntityManagerFactory;
 
@@ -134,8 +135,8 @@ public final class GNDMSystem
 			createDirectories();
 			prepareDbStorage();
             dao = new Dao(getGridName(), neo);
+            listEntities( emf );
 			tryTxExecution();
-            logger.warn( emf.getProperties().toString() );
 			// initialization intentionally deferred to initialize
             if ( beanFactory == null )
                 throw new IllegalStateException( "beanfactory not provided" );
@@ -291,25 +292,16 @@ public final class GNDMSystem
     /**
      * Checks if a commit can be done on the database
      *
-     * @throws RuntimeException if an error occured while commiting on the database
+     * @throws RuntimeException if an error occurred while commiting on the database
      */
 	private void tryTxExecution() throws RuntimeException{
 		final EntityManager em = emf.createEntityManager();
 		try {
 			em.getTransaction().begin();
-//            Subspace ss = new Subspace();
-//            ss.setAvailableSize( 100 );
-//            ss.setGsiFtpPath( "hallo" );                                     c
-//            ss.setId( "foo" );
-//            ss.setTotalSize( 2000 );
-//            ss.setName( new ImmutableScopedName( "foo", "bar" ) );
-//                     em.persist( ss );
-            
 			em.getTransaction().commit();
 		}
 		catch (RuntimeException re)
 			{ em.getTransaction().rollback();
-              em.close();
               throw re;
         }
 		finally
@@ -717,5 +709,13 @@ public final class GNDMSystem
     @PersistenceUnit
     public void setEmf( @NotNull EntityManagerFactory emf ) {
         this.emf = emf;
+    }
+
+    public void listEntities( EntityManagerFactory emf  )  {
+
+        logger.debug( "enitites in emf " +emf.toString()  );
+        for ( EntityType<?> e : emf.getMetamodel().getEntities() )
+            logger.debug( e.getName() );
+
     }
 }
