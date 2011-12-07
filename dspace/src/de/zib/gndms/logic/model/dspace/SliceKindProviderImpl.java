@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.dspace.SliceKind;
 
 import javax.inject.Inject;

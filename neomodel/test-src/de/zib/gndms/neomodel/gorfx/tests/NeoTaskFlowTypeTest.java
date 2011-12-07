@@ -16,7 +16,6 @@ package de.zib.gndms.neomodel.gorfx.tests;
  * limitations under the License.
  */
 
-import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.neomodel.gorfx.TaskFlowType;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
@@ -41,8 +40,6 @@ public class NeoTaskFlowTypeTest extends NeoTest {
         ot.setCalculatorFactoryClassName("cfn");
         ot.setTaskActionFactoryClassName("tfn");
         ot.setConfigMapData(new HashMap<String,String>());
-        ot.setTaskFlowArgumentType( new ImmutableScopedName( "a", "b" ) );
-        ot.setTaskFlowResultType( new ImmutableScopedName( "x", "z" ) );
 
         session.success();
     }
@@ -55,8 +52,6 @@ public class NeoTaskFlowTypeTest extends NeoTest {
         assertEquals(ot.getCalculatorFactoryClassName(), "cfn");
         assertEquals(ot.getTaskActionFactoryClassName(), "tfn");
         assertEquals(ot.getConfigMapData(), new HashMap<String, String>());
-        assertTrue(ot.getTaskFlowArgumentType().equalFields(new ImmutableScopedName("a", "b")));
-        assertTrue(ot.getTaskFlowResultType().equalFields(new ImmutableScopedName("x", "z")));
 
         ot.delete(session);
 

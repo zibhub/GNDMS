@@ -27,7 +27,6 @@ package de.zib.gndms.model.dspace;
  */
 
 import de.zib.gndms.model.common.GridResource;
-import de.zib.gndms.model.common.ImmutableScopedName;
 
 import java.io.File;
 import java.util.Collection;
@@ -69,7 +68,7 @@ public class Subspace extends GridResource {
     /**
      * The name / id of this subspace.
      */
-    private ImmutableScopedName name;
+    private String name;
 
     /**
      * If this subspace is publicly visible.
@@ -185,26 +184,10 @@ public class Subspace extends GridResource {
     }	
     
     /**
-     * Returns the name / id of this subspace.
-     * @return The name.
-     */
-    @EmbeddedId
-    @AttributeOverrides({
-        @AttributeOverride(name = "nameScope", column = @Column(name = "schema_uri", nullable = false,
-        		updatable = false, columnDefinition = "VARCHAR")),
-        @AttributeOverride(name = "localName", column = @Column(name = "specifier", nullable = false,
-        		updatable = false, columnDefinition = "VARCHAR", length = 64))
-        })
-    @Transient
-    public ImmutableScopedName getName() {
-        return name;
-    }
-    
-    /**
      * Sets the name / id of this subspace.
      * @param name The name.
      */
-    public void setName(final ImmutableScopedName name) {
+    public void setName(final String name) {
         this.name = name;
     }
 

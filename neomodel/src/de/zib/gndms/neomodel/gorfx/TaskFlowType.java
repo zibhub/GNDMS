@@ -16,8 +16,6 @@ package de.zib.gndms.neomodel.gorfx;
  * limitations under the License.
  */
 
-import de.zib.gndms.model.common.ImmutableScopedName;
-
 import java.io.Serializable;
 import java.util.Map;
 
@@ -38,8 +36,6 @@ public class TaskFlowType extends NodeGridResource<TaskFlowTypeAccessor> impleme
     public static final String TASK_ACTION_FACTORY_CLASS_NAME_P = "TASK_ACTION_FACTORY_CLASS_NAME_P";
     public static final String CALCULATOR_FACTORY_CLASS_NAME_P = "CALCULATOR_FACTORY_CLASS_NAME_P";
     public static final String CONFIG_MAP_DATA_P = "CONFIG_MAP_DATA_P";
-    public static final String OFFER_ARGUMENT_TYPE_P = "OFFER_ARGUMENT_TYPE_P";
-    public static final String OFFER_RESULT_TYPE_P = "OFFER_RESULT_TYPE_P";
     public static final String VERSION_P = "VERSION_P";
 
     public TaskFlowType( @NotNull ReprSession session, @NotNull String typeNick, @NotNull Node underlying ) {
@@ -86,22 +82,6 @@ public class TaskFlowType extends NodeGridResource<TaskFlowTypeAccessor> impleme
 
     public void setConfigMapData(Map<String, String> configMapData) {
         setProperty(Serializable.class, CONFIG_MAP_DATA_P, (Serializable) configMapData);
-    }
-
-    public ImmutableScopedName getTaskFlowArgumentType() {
-        return getProperty(ImmutableScopedName.class, OFFER_ARGUMENT_TYPE_P);
-    }
-
-    public void setTaskFlowArgumentType( ImmutableScopedName offerArgumentType ) {
-        setProperty(ImmutableScopedName.class, OFFER_ARGUMENT_TYPE_P, offerArgumentType);
-    }
-
-    public ImmutableScopedName getTaskFlowResultType() {
-        return getProperty(ImmutableScopedName.class, OFFER_RESULT_TYPE_P);
-    }
-
-    public void setTaskFlowResultType( ImmutableScopedName offerResultType ) {
-        setProperty(ImmutableScopedName.class, OFFER_RESULT_TYPE_P, offerResultType);
     }
 
     public void setVersion( int version ) {

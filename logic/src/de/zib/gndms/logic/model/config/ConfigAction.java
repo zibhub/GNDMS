@@ -27,7 +27,6 @@ import de.zib.gndms.kit.config.DelegatingConfig;
 import de.zib.gndms.kit.config.ParameterTools;
 import de.zib.gndms.logic.action.SkipActionInitializationException;
 import de.zib.gndms.logic.model.AbstractEntityAction;
-import de.zib.gndms.model.common.ImmutableScopedName;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 
@@ -436,15 +435,6 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
             throws ParseException {
         return config.getISO8601Option(name, def);
     }
-
-
-    public @NotNull ImmutableScopedName getISNOption(@NotNull final String name, @NotNull final ImmutableScopedName def) {
-        return config.getISNOption(name, def);
-    }
-
-
-    public @NotNull ImmutableScopedName getISNOption(@NotNull final String name)
-            throws MandatoryOptionMissingException {return config.getISNOption(name);}
 
 
     @NotNull

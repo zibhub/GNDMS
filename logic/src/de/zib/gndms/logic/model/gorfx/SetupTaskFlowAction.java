@@ -24,7 +24,6 @@ import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigActionResult;
 import de.zib.gndms.logic.model.config.ConfigOption;
 import de.zib.gndms.logic.model.config.SetupAction;
-import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.TaskFlowType;
 import org.jetbrains.annotations.NotNull;
@@ -49,7 +48,7 @@ import java.util.Properties;
  * use {@link de.zib.gndms.logic.model.gorfx.ConfigOfferTypeAction} instead, after the entity has been created once.
  *
  * <p>The following parameters are required for a new entity creation:
- * {@link #orqType 'orqType'},{@link #resType 'resType'}. {@link #calcFactory 'calcFactory'},{@link #taskActionFactory 'taskAction'}.
+ * {@link #calcFactory 'calcFactory'},{@link #TaskActionFactory 'taskAction'}.
  * They must be set in the configuration map before this action is started on <tt>create</tt> modus.
  * Otherwise an <tt>IllegalStateException</tt> will be thrown.
  * <tt>orqType</tt> must be set in every mode.
@@ -66,12 +65,6 @@ import java.util.Properties;
 public class SetupTaskFlowAction extends SetupAction<ConfigActionResult> {
     @ConfigOption(descr="Unique URI identifying this offerType; must match entries in given arg and result xsd types")
     private String offerType;
-
-    @ConfigOption(descr="QName of xsd type for ORQs of this TaskFlowType")
-    private ImmutableScopedName orqType;
-
-    @ConfigOption(descr="QName of xsd type for results of this TaskFlowType")
-    private ImmutableScopedName resType;
 
     //@ConfigOption(altName = "class", descr="FQN of QuoteCalculator class for this TaskFlowType")
     //private Class<? extends QuoteCalculator<?, ?>> calcClass;
@@ -101,8 +94,6 @@ public class SetupTaskFlowAction extends SetupAction<ConfigActionResult> {
 
             switch (getMode()) {
                 case CREATE:
-                    requireParameter("orqType", orqType);
-                    requireParameter("resType", resType);
                     requireParameter("calcFactory", calcFactory);
  //                   requireParameter("taskAction", taskActionFactory);
                 default:
@@ -127,10 +118,6 @@ public class SetupTaskFlowAction extends SetupAction<ConfigActionResult> {
     private void initOptions() throws MandatoryOptionMissingException, ClassNotFoundException {
         if (offerType == null)
             setOfferType(getOption("offerType"));
-        if (orqType == null && hasOption("orqType"))
-            setOrqType(getISNOption("orqType"));
-        if (resType == null && hasOption("resType"))
-            setResType(getISNOption("resType"));
         if (calcFactory == null && hasOption("calcFactory"))
             setCalcFactory((Class)Class.forName(getOption("calcFactory")));
        // if (taskActionFactory == null && hasOption("taskActionFactory"))
@@ -219,11 +206,7 @@ public class SetupTaskFlowAction extends SetupAction<ConfigActionResult> {
             type.setCalculatorFactoryClassName(calcFactory.getCanonicalName());
      //   if (taskActionFactory != null)
      //       type.setTaskActionFactoryClassName(taskActionFactory.getCanonicalName());
-        if (orqType != null)
-            type.setTaskFlowArgumentType( orqType );
-        if (resType != null)
-            type.setTaskFlowResultType( resType );
-        pushConfigProps(type);        
+        pushConfigProps(type);
     }
 
 
@@ -239,8 +222,6 @@ public class SetupTaskFlowAction extends SetupAction<ConfigActionResult> {
         type.setTaskFlowTypeKey( getOfferType() );
         type.setCalculatorFactoryClassName(getCalcFactory().getCanonicalName());
         //type.setTaskActionFactoryClassName(getTaskActionFactory().getCanonicalName());
-        type.setTaskFlowArgumentType( orqType );
-        type.setTaskFlowResultType( resType );
         pushConfigProps(type);
     }
 
@@ -284,26 +265,6 @@ public class SetupTaskFlowAction extends SetupAction<ConfigActionResult> {
 
     public void setOfferType(final String offerTypeParam) {
         offerType = offerTypeParam;
-    }
-
-
-    public ImmutableScopedName getOrqType() {
-        return orqType;
-    }
-
-
-    public void setOrqType(final ImmutableScopedName orqTypeParam) {
-        orqType = orqTypeParam;
-    }
-
-
-    public ImmutableScopedName getResType() {
-        return resType;
-    }
-
-
-    public void setResType(final ImmutableScopedName resTypeParam) {
-        resType = resTypeParam;
     }
 
 

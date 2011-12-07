@@ -24,7 +24,6 @@ import de.zib.gndms.logic.model.config.ConfigAction;
 import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigActionResult;
 import de.zib.gndms.logic.model.config.ConfigOption;
-import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 
@@ -46,7 +45,7 @@ import java.util.Set;
      * the <tt>execute()</tt> method is called.
      *
      * @see de.zib.gndms.model.dspace.SliceKind
-     * @see de.zib.gndms.model.dspace.MetaSubspace
+     * @see de.zib.gndms.model.dspace.Subspace
      * @author  try ste fan pla nti kow zib
      * @version $Id$
      *
@@ -59,8 +58,8 @@ public class AssignSliceKindAction extends ConfigAction<ConfigActionResult> {
     @SuppressWarnings({ "EnumeratedClassNamingConvention" })
     enum Mode { ADD, REMOVE }
 
-    @ConfigOption(descr="Subspace QNname")
-    ImmutableScopedName subspace;
+    @ConfigOption(descr="Subspace name")
+    String subspace;
 
     @ConfigOption(descr="URI of the SliceKind")
     String sliceKind;
@@ -76,7 +75,7 @@ public class AssignSliceKindAction extends ConfigAction<ConfigActionResult> {
     public void initialize() {
         super.initialize();
         try {
-            subspace = getISNOption("subspace");
+            subspace = getOption("subspace");
             sliceKind = getOption("sliceKind");
             mode = getEnumOption(Mode.class, "mode", true, Mode.ADD);
         }

@@ -25,7 +25,6 @@ import de.zib.gndms.logic.model.gorfx.FileTransferActionFactory;
 import de.zib.gndms.logic.model.gorfx.FileTransferORQCalculator;
 import de.zib.gndms.logic.model.gorfx.FileTransferORQFactory;
 import de.zib.gndms.logic.model.gorfx.FileTransferTaskAction;
-import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.gorfx.AbstractTask;
@@ -153,8 +152,6 @@ public class FileTransferActionTest extends SysTestBase {
     public static OfferType createFTOfferType( ) {
         OfferType ot = new OfferType( );
         ot.setOfferTypeKey( "http://gndms.zib.de/ORQTypes/FileTransfer" );
-        ot.setOfferResultType( new ImmutableScopedName( "http://gndms.zib.de/c3grid/types", "FileTransferORQT" ) );
-        ot.setOfferResultType( new ImmutableScopedName( "http://gndms.zib.de/c3grid/types", "FileTransferResultT" ) );
         ot.setCalculatorFactoryClassName( FileTransferORQFactory.class.getName() );
         ot.setTaskActionFactoryClassName( FileTransferActionFactory.class.getName( ) );
         ot.setConfigMap( new HashMap<String,String>( ) );

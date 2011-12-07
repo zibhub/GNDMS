@@ -19,7 +19,6 @@ package de.zib.gndms.logic.model.dspace;
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.logic.config.SetupMode;
 import de.zib.gndms.common.logic.config.WrongConfigurationException;
-import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.dspace.Subspace;
 
 /**
@@ -265,7 +264,7 @@ public class SubspaceConfiguration implements Configuration {
 	 * @return The configuration.
 	 */
     public static final SubspaceConfiguration getSubspaceConfiguration(Subspace subspace) {
-		return new SubspaceConfiguration(subspace.getPath(), subspace.getGsiFtpPath(), subspace.isVisibleToPublic(), subspace.getTotalSize(), "READ", subspace.getName().toQName().toString());
+		return new SubspaceConfiguration(subspace.getPath(), subspace.getGsiFtpPath(), subspace.isVisibleToPublic(), subspace.getTotalSize(), "READ", subspace.getId());
 	}
 
 	/*
@@ -317,10 +316,6 @@ public class SubspaceConfiguration implements Configuration {
 
     public void setSubspace(String subspace) {
         this.subspace = subspace;
-    }
-
-    public void setSubspace(ImmutableScopedName subspace) {
-        this.subspace = subspace.toQName().toString();
     }
 
     public String getSubspace() {

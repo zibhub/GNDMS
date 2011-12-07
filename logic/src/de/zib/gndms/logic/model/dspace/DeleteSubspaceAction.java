@@ -24,7 +24,6 @@ import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigActionResult;
 import de.zib.gndms.logic.model.config.ConfigOption;
 import de.zib.gndms.logic.model.config.SetupAction;
-import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.dspace.Subspace;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,13 +42,12 @@ import java.io.PrintWriter;
 
  * @see MetaSubspace
  * @see Subspace
- * @see ImmutableScopedName
  * @author  Ulrike Golas
  */
 @ConfigActionHelp(shortHelp = "Delete a subspace", longHelp = "Used to prepare the database schema for GNDMS by deleting subspaces")
 public class DeleteSubspaceAction extends SetupAction<ConfigActionResult> {
-    @ConfigOption(descr="The key of the subspace (QName)")
-    private ImmutableScopedName subspace;
+    @ConfigOption(descr="The name/key of the subspace")
+    private String subspace;
 
     @ConfigOption(descr="Local filesystem root path for all slices stored in this subspace")
     private String path;
@@ -120,8 +118,8 @@ public class DeleteSubspaceAction extends SetupAction<ConfigActionResult> {
      * @param pkParam
      * @return
      */
-    private Subspace prepareSubspace(final EntityManager em, final ImmutableScopedName pkParam) {
-        Subspace subspace= em.find(Subspace.class, pkParam);
+    private Subspace prepareSubspace(final EntityManager em, final String pkParam) {
+        Subspace subspace = em.find(Subspace.class, pkParam);
         if (subspace == null) {
             if (! isCreating())
                 throw new IllegalStateException("No matching subspace found for update");
@@ -131,12 +129,12 @@ public class DeleteSubspaceAction extends SetupAction<ConfigActionResult> {
         return subspace;
     }
 
-    public ImmutableScopedName getSubspace() {
+    public String getSubspace() {
         return subspace;
     }
 
 
-    public void setSubspace(final ImmutableScopedName subspaceParam) {
+    public void setSubspace(final String subspaceParam) {
         subspace = subspaceParam;
     }
 

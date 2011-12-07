@@ -25,7 +25,6 @@ import org.testng.annotations.Test;import static org.testng.Assert.assertNull;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.dspace.Subspace;
 
 /**
@@ -51,7 +50,7 @@ public class QueryTest extends ModelEntityTestBase {
 
         EntityManager em = getEntityManager();
         Query q = em.createQuery( getSubspaceQuery );
-        q.setParameter( "uriParam", new ImmutableScopedName( "http://www.c3grid.de/G2/Subspace/", "ProviderStageIn" ) );
+        q.setParameter( "uriParam", "http://www.c3grid.de/G2/Subspace/" + "ProviderStageIn" ); // TODO: hab' ich hier was zerstört?!
         Subspace s = ( Subspace ) q.getSingleResult();
         assertNull( s, "subspace not found" );
     }

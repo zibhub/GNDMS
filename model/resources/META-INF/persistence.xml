@@ -8,7 +8,6 @@ http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
 	    <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
 	    <mapping-file>META-INF/orm.xml</mapping-file>
 
-	    <class>de.zib.gndms.model.common.ImmutableScopedName</class>
 	    <class>de.zib.gndms.model.common.GridEntity</class>
 	    <class>de.zib.gndms.model.common.GridResource</class>
 	    <class>de.zib.gndms.model.common.SingletonGridResource</class>

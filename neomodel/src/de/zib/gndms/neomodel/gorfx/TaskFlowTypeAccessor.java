@@ -1,7 +1,6 @@
 package de.zib.gndms.neomodel.gorfx;
 
 import de.zib.gndms.model.common.GridResourceItf;
-import de.zib.gndms.model.common.ImmutableScopedName;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -24,9 +23,4 @@ public interface TaskFlowTypeAccessor extends GridResourceItf {
     String getCalculatorFactoryClassName();
 
     Map<String, String> getConfigMapData();
-
-    ImmutableScopedName getTaskFlowArgumentType();
-
-    ImmutableScopedName getTaskFlowResultType();
-
 }

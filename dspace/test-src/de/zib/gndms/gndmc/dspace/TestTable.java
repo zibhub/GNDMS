@@ -16,10 +16,7 @@
 
 package de.zib.gndms.gndmc.dspace;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Version;
+import javax.persistence.*;
 
 /**
 * Created by IntelliJ IDEA.
@@ -36,21 +33,13 @@ public class TestTable {
 
     private int version;
 
-    @Id
+    @Id @Column( length=10, columnDefinition="CHAR" )
     public void setA(String a) {
         this.a = a;
     }
 
     public String getA( ) {
         return a;
-    }
-
-    public void setB(String b) {
-        this.b = b;
-    }
-
-    public String getB() {
-        return b;
     }
 
     public void setVersion( int v ) {

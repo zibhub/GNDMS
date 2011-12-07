@@ -24,7 +24,6 @@ import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigActionResult;
 import de.zib.gndms.logic.model.config.ConfigOption;
 import de.zib.gndms.logic.model.config.SetupAction;
-import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.dspace.Subspace;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -38,8 +37,7 @@ import java.util.UUID;
 /**
  * An Action to manage Subspaces with their corresponding MetaSubspaces in the database.
  *
- * <p>An instance contains an <tt>ImmutableScopedName</tt> {@link #subspace} for the
- *  key of the subspace (QName).It must be set in the configuration map and
+ * The id (defined in GridResource) represents the name of the subspace. It must be set in the configuration map and
  *  will be retrieved during the initialization.
  *
  * <p>When this action is started with <tt>create</tt> or <tt>update</tt> as SetupMode, it will retrieve
@@ -53,7 +51,6 @@ import java.util.UUID;
  *
 
  * @see Subspace
- * @see ImmutableScopedName
  * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
@@ -63,8 +60,8 @@ import java.util.UUID;
 public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
     private final Logger log = LoggerFactory.getLogger( this.getClass() );
 
-    @ConfigOption(descr="The key of the subspace (QName)")
-    private ImmutableScopedName subspace;
+    @ConfigOption(descr="The name/key of the subspace")
+    private String subspace;
 
     @ConfigOption(descr="Local filesystem root path for all slices stored in this subspace")
     private String path;
@@ -89,7 +86,7 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
 		setGsiFtpPath(subspaceConfig.getGsiFtpPath());
 		setMode(subspaceConfig.getMode());
 		setSize(subspaceConfig.getSize());
-        setSubspace( new ImmutableScopedName( subspaceConfig.getSubspace() ) );
+        setSubspace( subspaceConfig.getSubspace() );
 	}
 
 
@@ -104,7 +101,7 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
         super.initialize();    // Overridden method
         try {
             if (subspace == null && (isCreating() || hasOption("subspace")))
-                setSubspace(getISNOption("subspace"));
+                setSubspace(getOption("subspace"));
             if (visible == null && (isCreating() || hasOption("visible")))
                 setIsVisibleToPublic(isBooleanOptionSet("visible", true));
             if (size == null && (isCreating() || hasOption("size"))) {
@@ -192,8 +189,7 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
      * @param pkParam
      * @return
      */
-    private Subspace prepareSubspace(final EntityManager em, final ImmutableScopedName pkParam) {
-        log.error( pkParam.toQName().toString() );
+    private Subspace prepareSubspace(final EntityManager em, final String pkParam) {
         Subspace space = null;//em.find(Subspace.class, pkParam);
         if (space == null) {
             if (! isCreating())
@@ -219,12 +215,12 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
 
     }
 
-    public ImmutableScopedName getSubspace() {
+    public String getSubspace() {
         return subspace;
     }
 
 
-    public void setSubspace(final ImmutableScopedName subspaceParam) {
+    public void setSubspace(final String subspaceParam) {
         subspace = subspaceParam;
     }
 

@@ -23,7 +23,6 @@ import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
 import de.zib.gndms.logic.model.LookupAction;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
 import de.zib.gndms.logic.util.SimpleModelUUIDGen;
-import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
@@ -98,9 +97,8 @@ public class CreateSliceActionTest extends ModelEntityTestBase {
 
 
         Subspace sp = new Subspace( );
-        sp.setName( new ImmutableScopedName( ug.nextUUID(), "welt" ) );
         sp.setCreatableSliceKinds( ts );
-        sp.setId( ug.nextUUID() );
+        sp.setId( "welt" );
       //  LinuxDirectoryAux lda = new LinuxDirectoryAux();
       //  String spd = MY_PATH + "/subspace";
       //  lda.createSubspaceDirectory( spd );

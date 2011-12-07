@@ -40,8 +40,8 @@ public abstract class JPATest {
     //private String gridPath;
 
     @BeforeClass( dependsOnGroups = "jpa" )
-    @Parameters( { "gridPath" } )
-    public void init( String gridPath ) {
+    @Parameters( { "gridPath", "persistenceUnit" } )
+    public void init(String gridPath, String persistenceUnit) {
         // cleanup first
         {
             try {
@@ -63,7 +63,7 @@ public abstract class JPATest {
 
             log.info( "Opening JPA Store: " + map.toString() );
 
-            emf = createEntityManagerFactory( "gndms", map );
+            emf = createEntityManagerFactory( persistenceUnit, map );
         }
     }
 

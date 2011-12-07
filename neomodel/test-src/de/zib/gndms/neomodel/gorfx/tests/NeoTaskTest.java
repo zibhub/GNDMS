@@ -16,7 +16,6 @@ package de.zib.gndms.neomodel.gorfx.tests;
  * limitations under the License.
  */
 
-import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.common.PermissionInfo;
 import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.gorfx.types.TaskState;
@@ -47,8 +46,6 @@ public class NeoTaskTest extends NeoTest {
         ot.setCalculatorFactoryClassName("cfn");
         ot.setTaskActionFactoryClassName("tfn");
         ot.setConfigMapData(new HashMap<String,String>());
-        ot.setTaskFlowArgumentType(new ImmutableScopedName("a", "b"));
-        ot.setTaskFlowResultType(new ImmutableScopedName("x", "z"));
 
         newTask(ot, TASK_ID);
 
@@ -97,7 +94,6 @@ public class NeoTaskTest extends NeoTest {
 
         TaskFlowType ot = session.findTaskFlowType("offerTypeNr1");
         assertEquals(task.getTaskFlowType().getId(), ot.getId());
-        assertEquals(task.getTaskFlowType().getTaskFlowResultType().getLocalName(), "z");
         assertEquals((long) task.getContract().getExpectedSize(), 15L);
         assertEquals(task.getOrder( ), "fufu");
         assertEquals(task.getPermissionInfo().getUserName(), "fonzi");

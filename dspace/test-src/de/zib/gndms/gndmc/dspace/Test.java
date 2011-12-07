@@ -23,7 +23,6 @@ import de.zib.gndms.logic.model.NoWSDontNeedModelUpdateListener;
 import de.zib.gndms.logic.model.dspace.SetupSubspaceAction;
 import de.zib.gndms.logic.model.dspace.SubspaceConfiguration;
 import de.zib.gndms.model.common.GridResource;
-import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.dspace.Subspace;
 import org.testng.Assert;
 
@@ -44,8 +43,38 @@ import static org.testng.Assert.assertEquals;
  */
 public class Test extends JPATest {
     
-    
-    
+    @org.testng.annotations.Test( groups = { "jpa" } )
+    public void test0() {
+        EntityManager em = emf.createEntityManager();
+
+        String subspace = "sub";
+
+        final EntityTransaction transaction = em.getTransaction();
+        try {
+            transaction.begin();
+
+            for( long i = 0; i < 2<<16; ++i )
+            {
+                TestTable t = new TestTable();
+                t.setA( String.valueOf( i ) );
+                em.persist(t);
+            }
+
+            transaction.commit();
+        }
+        finally {
+            try {
+                if( transaction.isActive() )
+                    transaction.rollback();
+                em.close();
+            } catch ( Exception e ) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+
     @org.testng.annotations.Test( groups = { "jpa" } )
     public void test1() {
         EntityManager em = emf.createEntityManager();
@@ -54,7 +83,6 @@ public class Test extends JPATest {
         TestTable t = new TestTable();
 
         t.setA( "blub A" );
-        t.setB( "laber B" );
 
         final EntityTransaction transaction = em.getTransaction();
         try {

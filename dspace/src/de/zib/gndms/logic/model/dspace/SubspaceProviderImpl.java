@@ -24,7 +24,6 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.Query;
 
-import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.util.TxFrame;
 
@@ -91,8 +90,7 @@ public class SubspaceProviderImpl implements SubspaceProvider {
 
 	@Override
 	public final Subspace getSubspace(final String subspace) {
-		ImmutableScopedName name = new ImmutableScopedName(subspace);
-		return em.find(Subspace.class, name);
+		return em.find(Subspace.class, subspace);
 	}
 
 	/**

@@ -17,7 +17,6 @@ package de.zib.gndms.gndmc.dspace;
  */
 
 import de.zib.gndms.gndmc.gorfx.FullGORFXClient;
-import de.zib.gndms.model.common.ImmutableScopedName;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -71,7 +70,7 @@ public class SubspaceClientTest {
 		final long value = 6000;
 		String mode = "CREATE";
        	SubspaceConfiguration config = new SubspaceConfiguration(path, gsiftp, visible, value, mode, subspace);
-        config.setSubspace( new ImmutableScopedName( "scope", subspace ));
+        config.setSubspace( subspace );
 
         subspaceClient.createSubspace(subspace, config, dn);
        	//AssertJUnit.assertNotNull(res);

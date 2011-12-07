@@ -32,7 +32,7 @@ public abstract class GridResource extends GridEntity implements GridResourceItf
     
     private String id;
 
-    @Id @Column(name="id", nullable=false, length=36, columnDefinition="CHAR", updatable=false)
+    @Id @Column(name="id", nullable=false, length=255, columnDefinition="CHAR", updatable=false)
     public String getId() {
         return id;
     }
