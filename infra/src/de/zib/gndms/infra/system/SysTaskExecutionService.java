@@ -104,37 +104,30 @@ public final class SysTaskExecutionService implements TaskExecutionService, Thre
 
 
     public final @NotNull <R> Future<R> submitAction( final @NotNull EntityAction<R> action ) {
-        final EntityManager ownEm = action.getOwnEntityManager();
-        if (ownEm != null)
-            return submit_(action );
-        else {
-            final @NotNull EntityManager em = entityManagerFactory.createEntityManager();
-            return submitAction(em, action );
-        }
+
+        return  submit_( configureAction( action ) );
     }
 
+
     public final @NotNull <R> Future<R> submitDaoAction( final @NotNull ModelDaoAction<?, R> action ) {
-        final Dao dao = action.getOwnDao();
-        if (dao != null)
-            return submitAction(action );
-        else {
-            action.setOwnDao( getDao() );
-            return submitAction(action );
-        }
+
+        return submit_( configureDaoAction( action ) );
     }
+
 
     @SuppressWarnings({ "FeatureEnvy" })
     public @NotNull <R> Future<R> submitAction( final @NotNull EntityManager em,
                                                 final @NotNull EntityAction<R> action ) {
-        action.setOwnEntityManager( em );
-        return submit_(action );
+
+        return submit_( configureAction( em, action ) );
     }
+
 
     public @NotNull <R> Future<R> submitDaoAction( final @NotNull EntityManager em,
                                                    final @NotNull Dao dao,
                                                    final @NotNull ModelDaoAction<?, R> action ) {
-        action.setOwnDao( dao );
-        return submitAction(em, action );
+
+        return submit_( configureDaoAction( em, dao, action ) );
     }
 
 
@@ -161,21 +154,68 @@ public final class SysTaskExecutionService implements TaskExecutionService, Thre
     @SuppressWarnings({ "FeatureEnvy" })
     private <R> Future<R> submit_( final EntityAction<R> action ) {
 
-        if (action instanceof SystemHolder)
+         return getExecutorService().submit(action);
+    }
+
+
+    public <R> EntityAction<R> configureAction( final EntityAction<R> action ) {
+
+        final EntityManager ownEm = action.getOwnEntityManager();
+        if (ownEm != null)
+            return configure_( action );
+        else {
+            final @NotNull EntityManager em = entityManagerFactory.createEntityManager();
+            return configureAction( em, action );
+        }
+    }
+
+
+    public <R> ModelDaoAction<?,R> configureDaoAction( final ModelDaoAction<?, R> action ) {
+
+        final Dao dao = action.getOwnDao();
+        if (dao != null)
+            return ( ModelDaoAction<?, R> ) configureAction( action );
+        else {
+            action.setOwnDao( getDao() );
+            return ( ModelDaoAction<?, R> ) configureAction( action );
+        }
+    }
+
+
+    public <R> EntityAction<R> configureAction( final EntityManager em, final EntityAction<R> action ) {
+
+        action.setOwnEntityManager( em );
+        // todo EntityAction interface has no close on cleanup  flag
+        return configure_( action );
+    }
+
+
+    public <R> ModelDaoAction<?,R> configureDaoAction( final EntityManager em, final Dao dao,
+                                              final ModelDaoAction<?, R> action )
+    {
+        action.setOwnDao( dao );
+        return ( ModelDaoAction<?, R> ) configureAction( em, action );
+    }
+
+
+    protected <R> EntityAction<R> configure_( final EntityAction<R> action ) {
+
+        if (action instanceof SystemHolder )
             ((SystemHolder)action).setSystem( system );
         if (action.getPostponedEntityActions() == null)
             action.setOwnPostponedEntityActions(new DefaultBatchUpdateAction<GridResource>());
         if (action.getPostponedEntityActions().getListener() == null)
             action.getPostponedEntityActions().setListener(getEntityUpdateListener());
-        if (action instanceof ModelDaoAction)
+        if (action instanceof ModelDaoAction )
             ((ModelDaoAction ) action).setOwnDao( getDao() );
-        if (action instanceof AbstractEntityAction)
+        if (action instanceof AbstractEntityAction )
             ((AbstractEntityAction<?> )action).setUUIDGen( this );
-        if (action instanceof TaskAction) {
+        if (action instanceof TaskAction ) {
             final TaskAction taskAction = (TaskAction) action;
             taskAction.setService(this);
         }
-        return getExecutorService().submit(action);
+
+        return action;
     }
 
 

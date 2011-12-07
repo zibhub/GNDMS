@@ -36,11 +36,11 @@ import javax.persistence.Table;
 @NamedQuery(name="findDSpaceInstances", query="SELECT instance FROM DSpaces instance"),
 @NamedQuery(name="listAllSubspaceIds", query="SELECT instance.id FROM Subspaces instance"),
 @NamedQuery(name="listAllSliceIds", query="SELECT instance.id FROM Slices instance"),
-@NamedQuery(name="listSlicesOfSubspace", query="SELECT instance.id FROM Slices instance WHERE instance.subspaceId = :subspace"),
+@NamedQuery(name="listSlicesOfSubspace", query="SELECT instance.id FROM Slices instance WHERE instance.id = :subspace"),
+@NamedQuery(name="listAllSubspaces", query="SELECT DISTINCT x FROM Subspaces x"),
 @NamedQuery(name="getSubspace", query="SELECT x FROM Subspaces x WHERE x.name.nameScope = :uriScopeParam " +
     "AND x.name.localName = :uriLocalParam"),
 @NamedQuery(name="getSubspaceKey", query="SELECT x.name FROM Subspaces x WHERE x.id = :idParam"),
-@NamedQuery(name="listPublicSubspaces", query="SELECT DISTINCT x FROM Subspaces x WHERE x.name.nameScope = :uriParam"),
 @NamedQuery(name="listSupportedSchemas", query="SELECT DISTINCT x.name.nameScope FROM Subspaces x" ),
 @NamedQuery(name="listCreatableSliceKinds", query="SELECT sk FROM Subspaces x INNER JOIN x.creatableSliceKinds sk WHERE x.name.nameScope = (SELECT y.name.nameScope FROM Subspaces y WHERE y.id = :idParam) AND x.name.localName = (SELECT y.name.localName FROM Subspaces y WHERE y.id = :idParam)")
 })
