@@ -292,7 +292,7 @@ public final class GNDMSystem
     /**
      * Checks if a commit can be done on the database
      *
-     * @throws RuntimeException if an error occurred while commiting on the database
+     * @throws RuntimeException if an error occurred while committing on the database
      */
 	private void tryTxExecution() throws RuntimeException{
 		final EntityManager em = emf.createEntityManager();
