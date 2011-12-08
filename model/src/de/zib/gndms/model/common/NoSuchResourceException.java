@@ -1,4 +1,4 @@
-package de.zib.gndms.GORFX.service;
+package de.zib.gndms.model.common;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -25,7 +25,7 @@ import java.util.Map;
 public class NoSuchResourceException extends RuntimeException {
 
     private static final long serialVersionUID = 8306742348320570202L;
-    private Map<String,String> uriMap;
+    private Map<String,String> context;
 
 
     public NoSuchResourceException() {
@@ -37,18 +37,18 @@ public class NoSuchResourceException extends RuntimeException {
     }
 
 
-    public NoSuchResourceException( String id, Map<String, String> uriMap ) {
+    public NoSuchResourceException( String id, Map<String, String> context) {
         super( id );
-        this.uriMap = uriMap;
+        this.context = context;
     }
 
 
-    public Map<String, String> getUriMap() {
-        return uriMap;
+    public Map<String, String> getContext() {
+        return context;
     }
 
 
-    public void setUriMap( Map<String, String> uriMap ) {
-        this.uriMap = uriMap;
+    public void setContext(Map<String, String> context) {
+        this.context = context;
     }
 }
