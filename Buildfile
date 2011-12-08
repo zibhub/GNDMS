@@ -200,7 +200,8 @@ GT4_COG = cogjars([ 'cog-jglobus-1.8.0.jar', 'cog-url-1.8.0.jar'])
 #GT4_SERVLET = cogjars(['servlet.jar'])
 GT4_SEC = cogjars(['puretls.jar', 
                    'cryptix-asn1.jar', 'cryptix.jar', 'cryptix32.jar', 
-                   'jgss.jar' 
+                   'jgss.jar',
+                   'jce-jdk13-131.jar'
                    ])
 #GT4_XML = cogjars(['xalan-2.6.jar', 'xercesImpl-2.7.1.jar', 'xml-apis.jar', 'xmlsec.jar', 'jaxrpc.jar'])
 #GT4_GRAM = cogjars(['gram-monitoring.jar', 'gram-service.jar', 'gram-stubs.jar', 'gram-utils.jar'])
