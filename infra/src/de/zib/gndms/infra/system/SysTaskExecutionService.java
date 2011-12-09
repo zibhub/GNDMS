@@ -15,6 +15,7 @@ package de.zib.gndms.infra.system;
  * limitations under the License.
  */
 
+import de.zib.gndms.logic.action.ActionConfiguerer;
 import de.zib.gndms.logic.model.*;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
@@ -39,14 +40,11 @@ import java.util.concurrent.*;
  * the system will wait {@link de.zib.gndms.infra.system.GNDMSystem#EXECUTOR_SHUTDOWN_TIME} milliseconds.
  *
  */
-public final class SysTaskExecutionService implements TaskExecutionService, ThreadFactory, ModelUUIDGen {
+public final class SysTaskExecutionService extends ActionConfiguerer implements TaskExecutionService, ThreadFactory, ModelUUIDGen {
 
     private final ThreadPoolExecutor executorService;
     private volatile boolean terminating;
 
-    private EntityManagerFactory entityManagerFactory;
-    private final ModelUpdateListener<GridResource> entityUpdateListener = new NoWSDontNeedModelUpdateListener();
-    private Dao dao;
     private static final long EXECUTOR_SHUTDOWN_TIME = 5000L;
     private GNDMSystem system;
 
@@ -158,91 +156,21 @@ public final class SysTaskExecutionService implements TaskExecutionService, Thre
     }
 
 
-    public <R> EntityAction<R> configureAction( final EntityAction<R> action ) {
-
-        final EntityManager ownEm = action.getOwnEntityManager();
-        if (ownEm != null)
-            return configure_( action );
-        else {
-            final @NotNull EntityManager em = entityManagerFactory.createEntityManager();
-            return configureAction( em, action );
-        }
-    }
-
-
-    public <R> ModelDaoAction<?,R> configureDaoAction( final ModelDaoAction<?, R> action ) {
-
-        final Dao dao = action.getOwnDao();
-        if (dao != null)
-            return ( ModelDaoAction<?, R> ) configureAction( action );
-        else {
-            action.setOwnDao( getDao() );
-            return ( ModelDaoAction<?, R> ) configureAction( action );
-        }
-    }
-
-
-    public <R> EntityAction<R> configureAction( final EntityManager em, final EntityAction<R> action ) {
-
-        action.setOwnEntityManager( em );
-        // todo EntityAction interface has no close on cleanup  flag
-        return configure_( action );
-    }
-
-
-    public <R> ModelDaoAction<?,R> configureDaoAction( final EntityManager em, final Dao dao,
-                                              final ModelDaoAction<?, R> action )
-    {
-        action.setOwnDao( dao );
-        return ( ModelDaoAction<?, R> ) configureAction( em, action );
-    }
-
-
+    @Override
     protected <R> EntityAction<R> configure_( final EntityAction<R> action ) {
 
         if (action instanceof SystemHolder )
             ((SystemHolder)action).setSystem( system );
-        if (action.getPostponedEntityActions() == null)
-            action.setOwnPostponedEntityActions(new DefaultBatchUpdateAction<GridResource>());
-        if (action.getPostponedEntityActions().getListener() == null)
-            action.getPostponedEntityActions().setListener(getEntityUpdateListener());
-        if (action instanceof ModelDaoAction )
-            ((ModelDaoAction ) action).setOwnDao( getDao() );
-        if (action instanceof AbstractEntityAction )
-            ((AbstractEntityAction<?> )action).setUUIDGen( this );
         if (action instanceof TaskAction ) {
             final TaskAction taskAction = (TaskAction) action;
             taskAction.setService(this);
         }
-
-        return action;
+        return super.configure_( action );
     }
 
 
     public Thread newThread(final Runnable r) {
         return Executors.defaultThreadFactory().newThread(r);
-    }
-
-
-    @PersistenceUnit
-    public void setEntityManagerFactory( EntityManagerFactory entityManagerFactory ) {
-        this.entityManagerFactory = entityManagerFactory;
-    }
-
-
-   public ModelUpdateListener<GridResource> getEntityUpdateListener() {
-        return entityUpdateListener;
-    }
-
-
-    public Dao getDao() {
-        return dao;
-    }
-
-
-    @Inject
-    public void setDao( Dao dao ) {
-        this.dao = dao;
     }
 
 
