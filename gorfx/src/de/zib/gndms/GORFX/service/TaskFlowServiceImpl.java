@@ -37,10 +37,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -207,7 +204,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                     for ( int i = 0; i < quoteList.size(); ++i ) {
                         urimap.put( "idx", String.valueOf( i ) );
                         Specifier<Quote> sq = new Specifier<Quote>();
-                        sq.setUriMap( new HashMap<String, String>( urimap ) );
+                        sq.setUriMap( Collections.unmodifiableMap( urimap ) );
                         sq.setUrl( uriFactory.quoteUri( urimap ) );
                         sq.setPayload( quoteList.get( i ) );
                         res.add( sq );

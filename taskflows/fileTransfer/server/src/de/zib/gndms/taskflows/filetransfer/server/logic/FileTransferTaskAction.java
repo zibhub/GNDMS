@@ -19,11 +19,11 @@ package de.zib.gndms.taskflows.filetransfer.server.logic;
 
 
 import de.zib.gndms.kit.security.CredentialProvider;
+import de.zib.gndms.kit.security.GetCredentialProviderForGridFTP;
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.taskflows.filetransfer.client.FileTransferMeta;
 import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferOrder;
 import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferResult;
-import de.zib.gndms.taskflows.filetransfer.server.kit.security.GridFTPCredentialInstaller;
 import de.zib.gndms.taskflows.filetransfer.server.network.GNDMSFileTransfer;
 import de.zib.gndms.taskflows.filetransfer.server.network.NetworkAuxiliariesProvider;
 import de.zib.gndms.model.gorfx.FTPTransferState;
@@ -179,15 +179,11 @@ public class FileTransferTaskAction extends TaskFlowAction<FileTransferOrder> {
     public CredentialProvider getCredentialProvider() {
 
         // todo string based factory and credential names are error prone
-        String requiredCredentialName = FileTransferMeta.REQUIRED_AUTHORIZATION.get( 0 );
 
-        final CredentialProvider credentialProvider =
-                getCredentialProviderFor( requiredCredentialName );
-        credentialProvider.setInstaller( new GridFTPCredentialInstaller() );
-
-        return credentialProvider;
+        return new GetCredentialProviderForGridFTP( getOrder(),
+                FileTransferMeta.REQUIRED_AUTHORIZATION.get( 0 ),
+                getMyProxyFactoryProvider() ).invoke();
     }
-
 
 
     public FTPTransferState resumeOrInitTransferState( final Map<String, String> files ) {

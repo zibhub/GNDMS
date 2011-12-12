@@ -63,7 +63,7 @@ public class GORFXServiceImpl implements GORFXService {
     private final String baseUrl; ///< The base url something like: \c http://my.host.org/gndms/grid_id
     private final String gorfxBaseUrl; ///< Base url of the GORFX service endpoint
     private ActionProvider configProvider; ///< List of config actions
-    private TaskFlowProvider taskFlowProvider; ///< List of config actions, registered through plug-in mech
+    private TaskFlowProvider taskFlowProvider; ///< List of task factories, registered through plug-in mech
     private TaskFlowClient taskFlowClient;
     private UriFactory uriFactory;
     private ConfigActionProvider configActionProvider;

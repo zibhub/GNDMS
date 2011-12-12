@@ -20,7 +20,11 @@ package de.zib.gndms.taskflows.filetransfer.server.logic;
 
 import de.zib.gndms.common.model.gorfx.types.FutureTime;
 import de.zib.gndms.common.model.gorfx.types.Quote;
+import de.zib.gndms.kit.access.MyProxyFactoryProvider;
+import de.zib.gndms.kit.security.CredentialProvider;
+import de.zib.gndms.kit.security.GetCredentialProviderForGridFTP;
 import de.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
+import de.zib.gndms.taskflows.filetransfer.client.FileTransferMeta;
 import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferOrder;
 import de.zib.gndms.taskflows.filetransfer.server.network.GNDMSFileTransfer;
 import de.zib.gndms.taskflows.filetransfer.server.network.NetworkAuxiliariesProvider;
@@ -28,6 +32,8 @@ import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.exception.ClientException;
 import org.globus.ftp.exception.ServerException;
 import org.joda.time.Duration;
+
+import javax.inject.Inject;
 import java.util.concurrent.TimeoutException;
 
 import java.io.IOException;
@@ -49,6 +55,7 @@ public abstract class AbstractTransferQuoteCalculator<M extends FileTransferOrde
     private Long estimatedTransferSize; // estimatedTransferSize
     private Float estimatedBandWidth;
     private String scheme;
+    private MyProxyFactoryProvider myProxyFactoryProvider;
 
 
     protected AbstractTransferQuoteCalculator( ) {
@@ -178,7 +185,7 @@ public abstract class AbstractTransferQuoteCalculator<M extends FileTransferOrde
     }
 
 
-    // todo if required return enum for finer error message.
+    // todo if required: return enum for finer error message.
     public boolean uriCheck( String address ) {
         try {
             URI uri = new URI( address );
@@ -193,6 +200,15 @@ public abstract class AbstractTransferQuoteCalculator<M extends FileTransferOrde
     }
 
 
+    @Override
+    public CredentialProvider getCredentialProvider() {
+
+        return new GetCredentialProviderForGridFTP( getOrder(),
+                FileTransferMeta.REQUIRED_AUTHORIZATION.get( 0 ),
+                getMyProxyFactoryProvider() ).invoke();
+    }
+
+
     public void setScheme( String scheme ) {
          this.scheme = scheme;
      }
@@ -200,5 +216,18 @@ public abstract class AbstractTransferQuoteCalculator<M extends FileTransferOrde
 
     public String getScheme() {
         return scheme;
+    }
+
+
+    public MyProxyFactoryProvider getMyProxyFactoryProvider() {
+
+        return myProxyFactoryProvider;
+    }
+
+
+    @Inject
+    public void setMyProxyFactoryProvider( final MyProxyFactoryProvider myProxyFactoryProvider ) {
+
+        this.myProxyFactoryProvider = myProxyFactoryProvider;
     }
 }
