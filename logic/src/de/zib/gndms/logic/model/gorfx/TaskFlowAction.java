@@ -25,7 +25,6 @@ import de.zib.gndms.kit.access.MyProxyFactoryProvider;
 import de.zib.gndms.kit.security.CredentialProvider;
 import de.zib.gndms.kit.security.MyProxyCredentialProvider;
 import de.zib.gndms.logic.model.DefaultTaskAction;
-import de.zib.gndms.model.gorfx.FTPTransferState;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.Dao;
@@ -165,25 +164,7 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends DefaultTas
     public void setMyProxyFactoryProvider( final MyProxyFactoryProvider myProxyFactoryProvider ) {
 
         this.myProxyFactoryProvider = myProxyFactoryProvider;
-    }
 
-
-    protected CredentialProvider getCredentialProviderFor( final String requiredCredentialName ) {
-
-        final Map<String, MyProxyToken> myProxyToken = getOrder().getMyProxyToken();
-        MyProxyToken token;
-        if ( myProxyToken.containsKey( requiredCredentialName ) )
-            token = myProxyToken.get( requiredCredentialName );
-        else
-            throw new IllegalStateException( "no security token for: " + requiredCredentialName );
-
-        MyProxyFactory myProxyFactory = getMyProxyFactoryProvider().getFactory( requiredCredentialName );
-        if( myProxyFactory == null )
-            throw new IllegalStateException( "no MyProxy-Server registered for "  +
-                    requiredCredentialName );
-
-        return new MyProxyCredentialProvider( myProxyFactory, token.getLogin(),
-                token.getPassword() );
     }
 
 

@@ -25,6 +25,7 @@ import de.zib.gndms.kit.configlet.ConfigletProvider;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.neomodel.common.Dao;
 
+import javax.inject.Inject;
 import java.util.List;
 
 
@@ -42,7 +43,7 @@ public abstract class AbstractQuoteCalculator<M extends Order>
 
     private ConfigletProvider configletProvider;
     private Quote preferredOfferExecution;
-    private DelegatingOrder<M> orderArguments;
+    private DelegatingOrder<M> order;
 
     private String offerType;
     private CredentialProvider credentialProvider;
@@ -98,12 +99,12 @@ public abstract class AbstractQuoteCalculator<M extends Order>
     public abstract boolean validate( );
 
     public M getOrderBean() {
-        return orderArguments.getOrderBean();
+        return order.getOrderBean();
     }
 
 
-    public DelegatingOrder<M> getOrderArguments() {
-        return orderArguments;
+    public DelegatingOrder<M> getOrder() {
+        return order;
     }
 
 
@@ -116,7 +117,7 @@ public abstract class AbstractQuoteCalculator<M extends Order>
         this.configletProvider = configletProvider;
     }
 
-
+    @Inject
     public void setCredentialProvider( CredentialProvider cp ) {
         credentialProvider = cp;
     }
@@ -137,7 +138,7 @@ public abstract class AbstractQuoteCalculator<M extends Order>
     }
 
 
-    public void setOrderArguments( DelegatingOrder<M> orderArguments ) {
-        this.orderArguments = orderArguments;
+    public void setOrder( DelegatingOrder<M> order ) {
+        this.order = order;
     }
 }

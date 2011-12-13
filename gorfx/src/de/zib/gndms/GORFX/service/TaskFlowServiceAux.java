@@ -53,7 +53,7 @@ public final class TaskFlowServiceAux {
 
     public static <T extends Order> HttpStatus validateOrder( TaskFlowFactory<T, ?> factory, DelegatingOrder<T> delegate ) {
         final AbstractQuoteCalculator<T> qc = factory.getQuoteCalculator();
-        qc.setOrderArguments( delegate );
+        qc.setOrder( delegate );
 
         if ( qc.validate() )
             return HttpStatus.OK;
@@ -65,7 +65,7 @@ public final class TaskFlowServiceAux {
     public static <T extends Order> List<Quote> createQuotes( TaskFlowFactory<T,?> tff, TaskFlow<T> tf ) throws Exception {
 
         AbstractQuoteCalculator<T> qc = tff.getQuoteCalculator();
-        qc.setOrderArguments( tf.getOrder() );
+        qc.setOrder( tf.getOrder() );
         List<Quote> quoteList;
         if ( tf.hasPreferredQuote() )
             quoteList = qc.createQuotes( tf.getPreferredQuote() );

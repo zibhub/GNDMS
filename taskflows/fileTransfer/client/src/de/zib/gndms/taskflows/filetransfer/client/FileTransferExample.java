@@ -82,7 +82,7 @@ public class FileTransferExample extends GORFXTaskFlowExample {
         fileMap.put( "transferTest.dat", "transferDest.dat" );
         fileTransferOrder.setFileMap( fileMap );
 
-        etfc.execTF( fileTransferOrder, dn, false );
+        etfc.execTF( fileTransferOrder, dn, true );
         System.out.println( "DONE\n" );
     }
 
