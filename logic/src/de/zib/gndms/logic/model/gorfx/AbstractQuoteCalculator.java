@@ -19,6 +19,7 @@ package de.zib.gndms.logic.model.gorfx;
 
 import de.zib.gndms.common.model.gorfx.types.Order;
 import de.zib.gndms.common.model.gorfx.types.Quote;
+import de.zib.gndms.kit.access.MyProxyFactoryProvider;
 import de.zib.gndms.kit.security.CredentialProvider;
 import de.zib.gndms.kit.security.RequiresCredentialProvider;
 import de.zib.gndms.kit.configlet.ConfigletProvider;
@@ -48,6 +49,7 @@ public abstract class AbstractQuoteCalculator<M extends Order>
     private String offerType;
     private CredentialProvider credentialProvider;
     private Dao dao;
+    private MyProxyFactoryProvider myProxyFactoryProvider;
 
 
     public AbstractQuoteCalculator() {
@@ -114,10 +116,24 @@ public abstract class AbstractQuoteCalculator<M extends Order>
 
 
     public void setConfigletProvider( ConfigletProvider configletProvider ) {
+
         this.configletProvider = configletProvider;
     }
 
+
+    public MyProxyFactoryProvider getMyProxyFactoryProvider() {
+
+        return myProxyFactoryProvider;
+    }
+
+
     @Inject
+    public void setMyProxyFactoryProvider( final MyProxyFactoryProvider myProxyFactoryProvider ) {
+
+        this.myProxyFactoryProvider = myProxyFactoryProvider;
+    }
+
+
     public void setCredentialProvider( CredentialProvider cp ) {
         credentialProvider = cp;
     }

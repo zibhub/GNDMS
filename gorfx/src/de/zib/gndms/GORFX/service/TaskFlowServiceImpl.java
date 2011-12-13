@@ -215,7 +215,8 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                     tf.setUnfulfillableOrder( true );
                     hs = HttpStatus.BAD_REQUEST;
                 } catch ( Exception e ) {
-                    logger.warn( "Exception on order calculation for " + tf.getOrder().getLoggableDescription() );
+                    logger.warn( "Exception on order calculation for " + tf.getOrder()
+                            .getLoggableDescription(), e );
                     hs = HttpStatus.INTERNAL_SERVER_ERROR;
                 }
             }
