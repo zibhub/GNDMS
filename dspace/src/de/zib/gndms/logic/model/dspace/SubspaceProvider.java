@@ -15,14 +15,14 @@ package de.zib.gndms.logic.model.dspace;
  * limitations under the License.
  */
 
-import java.util.List;
-
 import de.zib.gndms.model.dspace.Subspace;
+
+import java.util.List;
 
 /**
  * Provides a mapping of subspace ids and subspaces.
  * 
- * @author Ulrike Golas
+ * @author Ulrike Golas, Jörg Bachmann
  */
 
 public interface SubspaceProvider {
@@ -32,19 +32,20 @@ public interface SubspaceProvider {
 	 * @param subspace The subspace id.
 	 * @return true, if this subspace exists, otherwise false.
 	 */
-	boolean exists(String subspace);
+	boolean exists( String subspace );
 
 	/**
 	 * Returns a list containing all existing subspace ids.
 	 * @return The list.
 	 */
-	List<String> listSubspaces();
+	List< Subspace > list();
 
     /**
      * Returns the subspace for a given subspace id.
      * @param subspace The requested subspace id.
      * @return The corresponding subspace.
      */
-	Subspace getSubspace(String subspace);
+	Subspace get( String subspace );
 
+    void create(String subspace, String config);
 }

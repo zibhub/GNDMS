@@ -66,11 +66,6 @@ public class Subspace extends GridResource {
     private String gsiFtpPath;
 
     /**
-     * The name / id of this subspace.
-     */
-    private String name;
-
-    /**
      * If this subspace is publicly visible.
      */
     private boolean visibleToPublic;
@@ -183,14 +178,6 @@ public class Subspace extends GridResource {
         this.gsiFtpPath = gsiFtpPath;
     }	
     
-    /**
-     * Sets the name / id of this subspace.
-     * @param name The name.
-     */
-    public void setName(final String name) {
-        this.name = name;
-    }
-
 	/**
 	 * Returns the visibility of this subspace.
 	 * @return The visibility.

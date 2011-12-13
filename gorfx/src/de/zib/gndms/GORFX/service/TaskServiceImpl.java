@@ -24,6 +24,7 @@ import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.common.stuff.devel.NotYetImplementedException;
 import de.zib.gndms.logic.model.gorfx.taskflow.TaskTypeConverter;
 import de.zib.gndms.logic.model.TaskExecutionService;
+import de.zib.gndms.model.common.NoSuchResourceException;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;

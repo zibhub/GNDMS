@@ -16,35 +16,6 @@ package de.zib.gndms.dspace.service;
  * limitations under the License.
  */
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.util.*;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-
 import de.zib.gndms.common.dspace.service.SliceService;
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.rest.Facets;
@@ -52,20 +23,26 @@ import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.common.stuff.util.Product;
-import de.zib.gndms.logic.model.dspace.DeleteSliceAction;
+import de.zib.gndms.logic.model.dspace.*;
 import de.zib.gndms.logic.model.dspace.NoSuchElementException;
-import de.zib.gndms.logic.model.dspace.SliceConfiguration;
-import de.zib.gndms.logic.model.dspace.SliceKindProvider;
-import de.zib.gndms.logic.model.dspace.SliceKindProviderImpl;
-import de.zib.gndms.logic.model.dspace.SliceProvider;
-import de.zib.gndms.logic.model.dspace.SliceProviderImpl;
-import de.zib.gndms.logic.model.dspace.SubspaceProvider;
-import de.zib.gndms.logic.model.dspace.SubspaceProviderImpl;
-import de.zib.gndms.logic.model.dspace.TransformSliceAction;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.util.TxFrame;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import java.io.*;
+import java.util.*;
 
 // import de.zib.gndms.neomodel.gorfx.Taskling;
 
@@ -79,41 +56,14 @@ import de.zib.gndms.model.util.TxFrame;
 @RequestMapping(value = "/dspace")
 public class SliceServiceImpl implements SliceService {
 
-	/**
-	 * The logger.
-	 */
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
-	/**
-	 * The entity manager factory.
-	 */
+	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	private EntityManagerFactory emf;
-	/**
-	 * The entity manager.
-	 */
 	private EntityManager em;
-	/**
-	 * The base url, something like \c http://my.host.org/gndms/grid_id.
-	 */
 	private String baseUrl;
-	/**
-	 * All available subspaces.
-	 */
 	private SubspaceProvider subspaceProvider;
-	/**
-	 * All available slice kinds.
-	 */
 	private SliceKindProvider sliceKindProvider;
-	/**
-	 * All available slices.
-	 */
 	private SliceProvider sliceProvider;
-	/**
-	 * The facets of a slice.
-	 */
 	private Facets sliceFacets;
-	/**
-	 * The uri factory.
-	 */
 	private UriFactory uriFactory;
 
     @Inject
@@ -139,28 +89,28 @@ public class SliceServiceImpl implements SliceService {
 	}
 
 	@Override
-	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}", method = RequestMethod.GET)
-	public final ResponseEntity<Product<Configuration, Facets>> listSliceFacets(
-			@PathVariable final String subspace,
-			@PathVariable final String sliceKind,
-			@PathVariable final String slice,
-			@RequestHeader("DN") final String dn) {
-		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, slice, dn);
+	@RequestMapping( value = "/_{subspace}/_{sliceKind}/_{slice}", method = RequestMethod.GET )
+	public final ResponseEntity< Product< Configuration, Facets > > listSliceFacets(
+			@PathVariable final String subspaceId,
+			@PathVariable final String sliceKindId,
+			@PathVariable final String sliceId,
+			@RequestHeader( "DN" ) final String dn ) {
+		GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKindId, sliceId, dn );
 
-		try {
-			Slice slic = findSliceOfKind(subspace, sliceKind, slice);
-			SliceConfiguration config = SliceConfiguration
-					.getSliceConfiguration(slic);
-			Product<Configuration, Facets> prod2 = new Product<Configuration, Facets>(
-					config, sliceFacets);
-			return new ResponseEntity<Product<Configuration, Facets>>(prod2,
-					headers, HttpStatus.OK);
-		} catch (NoSuchElementException ne) {
-			logger.warn("The slice " + slice + " of slice kind " + sliceKind
-					+ "does not exist within the subspace" + subspace + ".");
-			return new ResponseEntity<Product<Configuration, Facets>>(null,
-					headers, HttpStatus.NOT_FOUND);
-		}
+        try {
+            Slice slice = findSliceOfKind( subspaceId, sliceKindId, sliceId );
+            SliceConfiguration config = SliceConfiguration
+                    .getSliceConfiguration( slice );
+            Product< Configuration, Facets > prod2 = new Product< Configuration, Facets >(
+                    config, sliceFacets );
+            return new ResponseEntity< Product< Configuration, Facets > >( prod2,
+                    headers, HttpStatus.OK );
+        } catch ( NoSuchElementException ne ) {
+            logger.warn( "The slice " + sliceId + " of slice kind " + sliceKindId
+                    + "does not exist within the subspace" + subspaceId + "." );
+            return new ResponseEntity< Product< Configuration, Facets > >( null,
+                    headers, HttpStatus.NOT_FOUND );
+        }
 	}
 
 	@Override
@@ -207,16 +157,16 @@ public class SliceServiceImpl implements SliceService {
 
 		try {
 			Slice slic = findSliceOfKind(subspace, sliceKind, slice);
-			SliceKind newSliceK = sliceKindProvider.getSliceKind(subspace,
+			SliceKind newSliceK = sliceKindProvider.get(subspace,
 					newSliceKind.getUrl());
-			Subspace space = subspaceProvider.getSubspace(subspace);
+			Subspace space = subspaceProvider.get(subspace);
 
 			em = emf.createEntityManager();
 			TxFrame tx = new TxFrame(em);
 			try {
 				// TODO is this right? what is this uuid generator (last entry)?
 				TransformSliceAction action = new TransformSliceAction(
-						newSliceK.getURI(), dn, slic.getTerminationTime(),
+						newSliceK.getId(), dn, slic.getTerminationTime(),
 						newSliceK, space, slic.getTotalStorageSize(), null);
 				action.setOwnEntityManager(em);
 				logger.info("Calling action for transforming slice " + slice
@@ -307,7 +257,7 @@ public class SliceServiceImpl implements SliceService {
 		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, slice, dn);
 
 		try {
-			Subspace space = subspaceProvider.getSubspace(subspace);
+			Subspace space = subspaceProvider.get(subspace);
 			Slice slic = findSliceOfKind(subspace, sliceKind, slice);
 			String path = space.getPathForSlice(slic);
 			File dir = new File(path);
@@ -338,7 +288,7 @@ public class SliceServiceImpl implements SliceService {
 		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, slice, dn);
 
 		try {
-			Subspace space = subspaceProvider.getSubspace(subspace);
+			Subspace space = subspaceProvider.get(subspace);
 			Slice slic = findSliceOfKind(subspace, sliceKind, slice);
 			String path = space.getPathForSlice(slic);
 			File dir = new File(path);
@@ -380,7 +330,7 @@ public class SliceServiceImpl implements SliceService {
 			@RequestHeader("DN") final String dn) {
 		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, slice, dn);
 		try {
-			Subspace space = subspaceProvider.getSubspace(subspace);
+			Subspace space = subspaceProvider.get(subspace);
 			Slice slic = findSliceOfKind(subspace, sliceKind, slice);
 			return new ResponseEntity<String>(
 					space.getGsiFtpPathForSlice(slic), headers, HttpStatus.OK);
@@ -402,7 +352,7 @@ public class SliceServiceImpl implements SliceService {
 			@RequestHeader("DN") final String dn, final OutputStream out) {
 		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, slice, dn);
 		try {
-			Subspace space = subspaceProvider.getSubspace(subspace);
+			Subspace space = subspaceProvider.get(subspace);
 			Slice slic = findSliceOfKind(subspace, sliceKind, slice);
 			String path = space.getPathForSlice(slic);
 			File file = new File(path + File.pathSeparator + fileName);
@@ -459,7 +409,7 @@ public class SliceServiceImpl implements SliceService {
 		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, slice, dn);
 
 		try {
-			Subspace space = subspaceProvider.getSubspace(subspace);
+			Subspace space = subspaceProvider.get(subspace);
 			Slice slic = findSliceOfKind(subspace, sliceKind, slice);
 			String path = space.getPathForSlice(slic);
 			File newFile = new File(path + File.pathSeparator + fileName);
@@ -496,7 +446,7 @@ public class SliceServiceImpl implements SliceService {
 		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, slice, dn);
 
 		try {
-			Subspace space = subspaceProvider.getSubspace(subspace);
+			Subspace space = subspaceProvider.get(subspace);
 			Slice slic = findSliceOfKind(subspace, sliceKind, slice);
 			String path = space.getPathForSlice(slic);
 			File file = new File(path + File.pathSeparator + fileName);
@@ -566,7 +516,7 @@ public class SliceServiceImpl implements SliceService {
 			final String sliceKind, final String slice)
 			throws NoSuchElementException {
 		Slice slic = sliceProvider.getSlice(subspace, slice);
-		SliceKind sliceK = sliceKindProvider.getSliceKind(subspace, sliceKind);
+		SliceKind sliceK = sliceKindProvider.get(subspace, sliceKind);
 
 		if (slic.getKind() != sliceK) {
 			throw new NoSuchElementException();

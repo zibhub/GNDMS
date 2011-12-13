@@ -1,5 +1,3 @@
-package de.zib.gndms.logic.model.dspace;
-
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -16,98 +14,38 @@ package de.zib.gndms.logic.model.dspace;
  * limitations under the License.
  */
 
-import java.util.*;
-
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
-import javax.persistence.Query;
+package de.zib.gndms.logic.model.dspace;
 
 import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.model.util.TxFrame;
+import de.zib.gndms.model.util.GridResourceCache;
 
-import static javax.persistence.Persistence.createEntityManagerFactory;
+import javax.persistence.EntityManagerFactory;
+import java.util.List;
 
-/**
- * The subspace provider which handles the available subspaces providing 
- * a mapping of subspace ids and subspaces.
- * 
- * @author Ulrike Golas
- */
-public class SubspaceProviderImpl implements SubspaceProvider {
+public class SubspaceProviderImpl extends GridResourceDAO< Subspace > implements SubspaceProvider {
 
-	/**
-	 * The entity manager factory.
-	 */
-	private EntityManagerFactory emf;
-	/**
-	 * The entity manager.
-	 */
-	private EntityManager em;
-	/**
-	 * Map of subspace ids and subspaces.
-	 */
-    private Map<String, Subspace> subspaceIds;
-    
-    /**
-     * The constructor initializing the entity manager and querying all subspaces.
-     */
-    @SuppressWarnings("unchecked")
-	public SubspaceProviderImpl() {
+	public SubspaceProviderImpl( final EntityManagerFactory emf ) {
+        super(
+                emf,
+                new GridResourceCache< Subspace >(
+                        Subspace.class,
+                        emf
+                ),
+                SetupSubspaceAction.class
+        );
     }
 
-    @PostConstruct
-    public void init() {
-        em = emf.createEntityManager();
-        TxFrame tx = new TxFrame(em);
-        try {
-               Query query = em.createNamedQuery("listAllSubspaceIds");
-               List<String> list = query.getResultList();
-               subspaceIds = new HashMap<String, Subspace>();
-               for (String name : list) {
-                   Subspace sub = em.find(Subspace.class, name);
-                   subspaceIds.put( name, sub);
-               }
-               tx.commit();
-           } finally {
-               tx.finish();
-               if (em != null && em.isOpen()) {
-                   em.close();
-               }
-           }
+    protected String getListQuery( ) {
+        return "listAllSubspaceIds";
     }
 
     @Override
-	public final boolean exists(final String subspace) {
-        return subspaceIds.containsKey(subspace);
-	}
+    public boolean exists(String subspace) {
+        return false;
+    }
 
-	@Override
-	public final List<String> listSubspaces() {
-        return new ArrayList<String>(subspaceIds.keySet());
-	}
-
-	@Override
-	public final Subspace getSubspace(final String subspace) {
-		return em.find(Subspace.class, subspace);
-	}
-
-	/**
-	 * Returns the entity manager factory.
-	 * @return the factory.
-	 */
-	public final EntityManagerFactory getEmf() {
-		return emf;
-	}
-
-	/**
-	 * Sets the entity manager factory.
-	 * @param emf the factory to set.
-	 */
-	@PersistenceUnit
-	public final void setEmf(final EntityManagerFactory emf) {
-		this.emf = emf;
-	}
-
+    @Override
+    public List<Subspace> list() {
+        return null;
+    }
 }

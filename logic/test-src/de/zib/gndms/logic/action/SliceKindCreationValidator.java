@@ -63,7 +63,7 @@ public class SliceKindCreationValidator {
 
 
     void validate( SliceKind sk ) {
-        assertEquals( URI, sk.getURI( ) );
+        assertEquals( URI, sk.getId( ) );
         assertEquals( mode, sk.getPermission( ) );
      //   assertSame( null, sk.getMetaSubspaces( ) );
     }

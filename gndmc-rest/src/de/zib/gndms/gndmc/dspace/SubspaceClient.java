@@ -16,15 +16,14 @@ package de.zib.gndms.gndmc.dspace;
  * limitations under the License.
  */
 
-import java.util.List;
-
-import org.springframework.http.ResponseEntity;
-
 import de.zib.gndms.common.dspace.service.SubspaceService;
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.gndmc.AbstractClient;
+import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 /**
  * The subspace client implementing the subspace service.
@@ -50,7 +49,6 @@ public class SubspaceClient extends AbstractClient implements SubspaceService {
 		this.setServiceURL(serviceURL);
 	}
 
-	@Override
 	public final ResponseEntity<Facets> createSubspace(final String subspace,
 			final Configuration config, final String dn) {
 		return unifiedPut(Facets.class, config, getServiceURL() + "/dspace/_"
@@ -71,7 +69,12 @@ public class SubspaceClient extends AbstractClient implements SubspaceService {
 		return unifiedGet(Facets.class, getServiceURL() + "/dspace/_" + subspace, dn);
 	}
 
-	@SuppressWarnings("unchecked")
+    @Override
+    public ResponseEntity<Facets> createSubspace( String subspace, String config, String dn ) {
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
 	@Override
 	public final ResponseEntity<List<Specifier<Void>>> listSliceKinds(final String subspace,
 			final String dn) {

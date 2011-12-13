@@ -53,7 +53,7 @@ public class Test extends JPATest {
         try {
             transaction.begin();
 
-            for( long i = 0; i < 2<<16; ++i )
+            for( long i = 0; i < 2<<12; ++i )
             {
                 TestTable t = new TestTable();
                 t.setA( String.valueOf( i ) );
@@ -96,7 +96,7 @@ public class Test extends JPATest {
             space.setId( subspace );
             em.persist( space );
 
-            SubspaceConfiguration subspaceConfig = new SubspaceConfiguration( "/var/tmp/gndms/subpath", "gridftppath", true, 100, SetupMode.CREATE, "sub" );
+            SubspaceConfiguration subspaceConfig = new SubspaceConfiguration( "/var/tmp/gndms/subpath", "gridftppath", true, 100, SetupMode.CREATE, "subrest" );
             SetupSubspaceAction action = new SetupSubspaceAction( subspaceConfig );
 
             StringWriter sw = new StringWriter();

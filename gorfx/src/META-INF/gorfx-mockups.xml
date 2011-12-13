@@ -17,7 +17,7 @@
     <property name="configDescription" value="Setup a slice kind"/>
     <property name="configHelp" value="
 * mode: Action mode; one of create, read, update, or delete
-* sliceKind: The URI of the slice kind (the PK for the db record)
+* sliceKind: The id of the slice kind (the PK for the db record)
 * theSliceKindMode: The write mode of the slice kind (its a required attribute)
 * uniqueDirName: The directory to store the slices belonging to this kind (its a required attribute)
     "/>
@@ -44,7 +44,7 @@
  * calcFactory: FQN of AbstractORQCalculator factory class
  * configFile: File from which the initial config should be read; UPDATE will overwrite!
  * mode: Action mode; one of create, read, update, or delete
- * offerType: Unique URI identifying this offerType; must match entries in given arg and result xsd types
+ * offerType: Unique id identifying this offerType; must match entries in given arg and result xsd types
  * orqType: QName of xsd type for ORQs of this OfferType
  * resType: QName of xsd type for results of this OfferType
  * taskActionFactory: FQN of TaskAction factory class

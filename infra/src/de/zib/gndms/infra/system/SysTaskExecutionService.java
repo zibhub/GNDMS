@@ -15,17 +15,14 @@ package de.zib.gndms.infra.system;
  * limitations under the License.
  */
 
-import de.zib.gndms.logic.action.ActionConfiguerer;
+import de.zib.gndms.logic.action.ActionConfigurer;
 import de.zib.gndms.logic.model.*;
-import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.neomodel.common.Dao;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
 import java.util.UUID;
 import java.util.concurrent.*;
 
@@ -40,7 +37,7 @@ import java.util.concurrent.*;
  * the system will wait {@link de.zib.gndms.infra.system.GNDMSystem#EXECUTOR_SHUTDOWN_TIME} milliseconds.
  *
  */
-public final class SysTaskExecutionService extends ActionConfiguerer implements TaskExecutionService, ThreadFactory, ModelUUIDGen {
+public final class SysTaskExecutionService extends ActionConfigurer implements TaskExecutionService, ThreadFactory, ModelUUIDGen {
 
     private final ThreadPoolExecutor executorService;
     private volatile boolean terminating;

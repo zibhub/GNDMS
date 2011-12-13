@@ -26,6 +26,7 @@ import de.zib.gndms.model.common.NoSuchResourceException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import java.util.NoSuchElementException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -34,24 +35,50 @@ import java.util.concurrent.TimeUnit;
  * @author: Jörg Bachmann
  * @email:  bachmann@zib.de
  */
-public class GridResourceProvider< G extends GridResource> {
+public class GridResourceCache< G extends GridResource > {
     final EntityManagerFactory emf;
     final Class< G > clazz;
     final Cache< String, G > cache;
 
     public static int MAX_CACHE_SIZE = 1000;
 
-    GridResourceProvider( Class< G > clazz, final EntityManagerFactory emf) {
+    public GridResourceCache( final Class< G > clazz, final EntityManagerFactory emf ) {
         this.emf = emf;
         this.clazz = clazz;
         this.cache = CacheBuilder.newBuilder()
                 .expireAfterAccess(12, TimeUnit.HOURS)
                 .maximumSize( MAX_CACHE_SIZE )
                 .initialCapacity( 0 )
-                .build( new GridResourceLoader<G>() );
+                .build( new GridResourceLoader< G >() );
     }
 
-    void invalidate( String id ) {
+    public boolean exists( String id ) {
+        try {
+            get( id );
+        }
+        catch( NoSuchResourceException e ) {
+            return false;
+        }
+        return true;
+    }
+
+    public G get( String id ) throws NoSuchResourceException {
+        try {
+            return cache.get( id );
+        }
+        catch( ExecutionException e ) {
+            Throwable nested = e.getCause();
+
+            if( nested instanceof NoSuchResourceException )
+            {
+                throw NoSuchResourceException.class.cast( nested );
+            }
+
+            throw new IllegalStateException( "Serious problem while load resource with id " + id + ".", nested );
+        }
+    }
+
+    public void invalidate( String id ) {
         cache.invalidate( id );
     }
 

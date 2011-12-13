@@ -20,10 +20,10 @@ package de.zib.gndms.model.dspace;
 
 import de.zib.gndms.common.model.common.AccessMask;
 import de.zib.gndms.model.common.GridEntity;
+import de.zib.gndms.model.common.GridResource;
 
 import javax.persistence.*;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -41,36 +41,22 @@ import java.util.Set;
 // @DiscriminatorValue("PLAIN")
 @Table(name="slice_kinds", schema="dspace")
 //@MappedSuperclass
-public class SliceKind extends GridEntity {
-    private String URI;
-
-//    @Column(name="permission", nullable=false, updatable=false, columnDefinition="VARCHAR", length=15)
+public class SliceKind extends GridResource {
     private AccessMask permission;
-
-    //de.zib.gndms.model.dspace.types.SliceKindMode mode
 
     private String sliceDirectory;
 
     private Set<Subspace> subspaces = new HashSet<Subspace>();
-
-
-    @Id @Column(name="uri", nullable=false, updatable=false, columnDefinition="VARCHAR")
-    public String getURI() {
-        return URI;
-    }
-
 
     @Column(name="permission", nullable=false, updatable=false )
     public AccessMask getPermission() {
         return permission;
     }
 
-
     @Column( name="slice_directory", nullable=false, columnDefinition="VARCHAR" )
     public String getSliceDirectory() {
         return sliceDirectory;
     }
-
 
     @ManyToMany( cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},
             mappedBy = "creatableSliceKinds" )
@@ -78,17 +64,10 @@ public class SliceKind extends GridEntity {
         return subspaces;
     }
 
-
     public void setSubspaces( final Set<Subspace> subspaces ) {
 
         this.subspaces = subspaces;
     }
-
-
-    public void setURI( String URI ) {
-        this.URI = URI;
-    }
-
 
     public void setPermission( AccessMask permission ) {
         this.permission = permission;
@@ -98,7 +77,6 @@ public class SliceKind extends GridEntity {
         this.permission = AccessMask.fromString(Long.toString(permission));
 
     }
-
 
     public void setSliceDirectory( String sliceDirectory ) {
         this.sliceDirectory = sliceDirectory;

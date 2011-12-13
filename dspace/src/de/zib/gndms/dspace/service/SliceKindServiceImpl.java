@@ -16,41 +16,29 @@ package de.zib.gndms.dspace.service;
  * limitations under the License.
  */
 
-import java.util.HashMap;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-
 import de.zib.gndms.common.dspace.service.SliceKindService;
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.logic.config.WrongConfigurationException;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
-import de.zib.gndms.logic.model.dspace.CreateSliceAction;
-import de.zib.gndms.logic.model.dspace.NoSuchElementException;
-import de.zib.gndms.logic.model.dspace.SliceConfiguration;
-import de.zib.gndms.logic.model.dspace.SliceKindConfiguration;
-import de.zib.gndms.logic.model.dspace.SliceKindProvider;
-import de.zib.gndms.logic.model.dspace.SliceKindProviderImpl;
-import de.zib.gndms.logic.model.dspace.SubspaceProvider;
+import de.zib.gndms.logic.model.dspace.*;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.util.TxFrame;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
+import java.util.HashMap;
 
 /**
  * The slice kind service implementation.
@@ -120,7 +108,7 @@ public class SliceKindServiceImpl implements SliceKindService {
 		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, dn);
 
 		try {
-			SliceKind sliceK = sliceKindProvider.getSliceKind(subspace, sliceKind);
+			SliceKind sliceK = sliceKindProvider.get(subspace, sliceKind);
 			SliceKindConfiguration config = SliceKindConfiguration.getSliceKindConfiguration(sliceK);
 			return new ResponseEntity<Configuration>(config, headers,
 					HttpStatus.OK);
@@ -148,7 +136,7 @@ public class SliceKindServiceImpl implements SliceKindService {
 			}
 			
 			SliceConfiguration sliceConfig = SliceConfiguration.checkSliceConfig(config);
-			SliceKind kind = sliceKindProvider.getSliceKind(subspace, sliceKind);
+			SliceKind kind = sliceKindProvider.get(subspace, sliceKind);
 
             // TODO: how to get a new slice name, what else to do?
             String slice = new String();
@@ -207,7 +195,7 @@ public class SliceKindServiceImpl implements SliceKindService {
 		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, dn);
 
 		try {
-			SliceKind sliceK = sliceKindProvider.getSliceKind(subspace, sliceKind);
+			SliceKind sliceK = sliceKindProvider.get(subspace, sliceKind);
 			SliceKindConfiguration sliceKindConfig = SliceKindConfiguration.checkSliceKindConfig(config);
 
 			sliceK.setPermission(sliceKindConfig.getPermission());
@@ -245,8 +233,8 @@ public class SliceKindServiceImpl implements SliceKindService {
 			@RequestHeader("DN") final String dn) {
 		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, dn);
 		try {
-			SliceKind sliceK = sliceKindProvider.getSliceKind(subspace, sliceKind);
-			Subspace sub = subspaceProvider.getSubspace(subspace);
+			SliceKind sliceK = sliceKindProvider.get(subspace, sliceKind);
+			Subspace sub = subspaceProvider.get(subspace);
 
 			// TODO: AssignSliceKindAction zum lschen
 			return new ResponseEntity<Specifier<Void>>(null, headers, HttpStatus.OK);

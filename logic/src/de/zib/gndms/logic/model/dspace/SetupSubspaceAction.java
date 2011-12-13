@@ -79,7 +79,7 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
 		super();
     }
 
-  public SetupSubspaceAction(SubspaceConfiguration subspaceConfig) {
+    public SetupSubspaceAction(SubspaceConfiguration subspaceConfig) {
 		super();
 		setPath(subspaceConfig.getPath());
 		setIsVisibleToPublic(subspaceConfig.isVisible());
@@ -200,8 +200,7 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
         
         if (isCreating()) {
             space = new Subspace();
-            space.setName( pkParam );
-            space.setId( UUID.randomUUID().toString() );
+            space.setId( pkParam );
 
             //final StorageSize avail = new StorageSize();
             //avail.setAmount(getSize().getAmount());

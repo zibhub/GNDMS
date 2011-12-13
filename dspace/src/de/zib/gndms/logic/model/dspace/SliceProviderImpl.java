@@ -26,6 +26,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 
 import de.zib.gndms.model.dspace.Slice;
+import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.util.TxFrame;
 
 /**
@@ -36,17 +37,8 @@ import de.zib.gndms.model.util.TxFrame;
  */
 
 public class SliceProviderImpl implements SliceProvider {
-	/**
-	 * The entity manager factory.
-	 */
 	private EntityManagerFactory emf;
-	/**
-	 * The entity manager.
-	 */
 	private EntityManager em;
-	/**
-	 * Map of subspace ids, slice ids and slices.
-	 */
     private Map<String, Map<String, Slice>> slices;
 
     @Inject
@@ -62,9 +54,9 @@ public class SliceProviderImpl implements SliceProvider {
         em = emf.createEntityManager();
        	TxFrame tx = new TxFrame(em);
     	try {
-    		for (String sub : provider.listSubspaces()) {
+    		for (Subspace sub : provider.list()) {
 				Map<String, Slice> map = new HashMap<String, Slice>();
-           		Query query = em.createNamedQuery("listSlicesOfSubspace");
+           		Query query = em.createNamedQuery( "listSlicesOfSubspace" );
                 query.setParameter("subspace", sub);
            		List<String> list = query.getResultList();
            		slices = new HashMap<String, Map<String, Slice>>();
@@ -72,7 +64,7 @@ public class SliceProviderImpl implements SliceProvider {
            			Slice slice = em.find(Slice.class, name);
            			map.put(name, slice);
            		}
-				slices.put(sub, map);
+				slices.put( sub.getId(), map );
 			}
         tx.commit();
        	} finally {

@@ -80,7 +80,7 @@ public class CreateSliceActionTest extends ModelEntityTestBase {
         validator.setTerminationTime( new GregorianCalendar( ) );
 
         SliceKind knd = new SliceKind( );
-        knd.setURI( sliceKindTestKey );
+        knd.setId(sliceKindTestKey);
         knd.setPermission( AccessMask.fromString( "750" ) );
         validator.setKind(  knd );
 
@@ -91,7 +91,7 @@ public class CreateSliceActionTest extends ModelEntityTestBase {
 
         //knd = new SliceKind( );
         //knd.setPermission( SliceKindMode.RW );
-        //knd.setURI( "maiks-test-slice-kind" );
+        //knd.setId( "maiks-test-slice-kind" );
         TreeSet ts = new TreeSet( );
         ts.add( knd );
 

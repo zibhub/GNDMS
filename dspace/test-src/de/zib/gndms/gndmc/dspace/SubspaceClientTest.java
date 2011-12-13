@@ -64,7 +64,7 @@ public class SubspaceClientTest {
 		String dn = "dn";
 		String subspace = "sub";
 
-		String path = "/var/tmp/GNDMS/dspace/";
+		String path = "/var/tmp/gndms/dspace/";
 		String gsiftp = "gsiftp";
 		boolean visible = true;
 		final long value = 6000;

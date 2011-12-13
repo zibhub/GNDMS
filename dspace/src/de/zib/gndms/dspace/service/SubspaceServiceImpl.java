@@ -1,5 +1,3 @@
-package de.zib.gndms.dspace.service;
-
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -16,6 +14,8 @@ package de.zib.gndms.dspace.service;
  * limitations under the License.
  */
 
+package de.zib.gndms.dspace.service;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +26,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 
+import de.zib.gndms.logic.model.dspace.*;
+import de.zib.gndms.model.dspace.SliceKind;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -45,132 +47,72 @@ import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
-import de.zib.gndms.logic.model.dspace.DeleteSubspaceAction;
-import de.zib.gndms.logic.model.dspace.NoSuchElementException;
-import de.zib.gndms.logic.model.dspace.SetupSubspaceAction;
-import de.zib.gndms.logic.model.dspace.SliceKindProvider;
-import de.zib.gndms.logic.model.dspace.SliceKindProviderImpl;
-import de.zib.gndms.logic.model.dspace.SubspaceConfiguration;
-import de.zib.gndms.logic.model.dspace.SubspaceProvider;
-import de.zib.gndms.logic.model.dspace.SubspaceProviderImpl;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.util.TxFrame;
-// import de.zib.gndms.neomodel.gorfx.Taskling;
-
-/**
- * The subspace service implementation.
- * 
- * @author Ulrike Golas
- */
 
 @Controller
 @RequestMapping(value = "/dspace")
 public class SubspaceServiceImpl implements SubspaceService {
-	/**
-	 * The logger.
-	 */
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
-	/**
-	 * The entity manager factory.
-	 */
 	private EntityManagerFactory emf;
-	/**
-	 * The entity manager.
-	 */
 	private EntityManager em;
-	/**
-	 * The base url, something like \c http://my.host.org/gndms/grid_id.
-	 */
 	private String baseUrl;
-	/**
-	 * Provider of available subspaces.
-	 */
 	private SubspaceProvider subspaceProvider;
+    private SliceKindProvider slicekindProvider;
 
-    public void setUriFactory(UriFactory uriFactory) {
-        this.uriFactory = uriFactory;
-    }
-
-    /**
-	 * The uri factory.
-	 */
 	private UriFactory uriFactory;
-	/**
-	 * The facets of a subspace.
-	 */
 	private Facets subspaceFacets;
 
-	/**
-	 * Initialization of the dspace service.
-	 */
+
+
 	@PostConstruct
 	public final void init() {
         setUriFactory( new UriFactory() );
 	}
 
+    public void setUriFactory(UriFactory uriFactory) {
+        this.uriFactory = uriFactory;
+    }
+
 	@Override
-	@RequestMapping(value = "/_{subspace}", method = RequestMethod.GET)
+	@RequestMapping( value = "/_{subspace}", method = RequestMethod.GET )
 	public final ResponseEntity<Facets> listAvailableFacets(
 			@PathVariable final String subspace,
-			@RequestHeader("DN") final String dn) {
+			@RequestHeader( "DN" ) final String dn ) {
 
 		GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
 
-		if (subspaceProvider.exists(subspace)) {
-			return new ResponseEntity<Facets>(subspaceFacets, headers,
-					HttpStatus.OK);
+		if( subspaceProvider.exists( subspace ) ) {
+			return new ResponseEntity< Facets >( subspaceFacets, headers, HttpStatus.OK );
 		}
-		logger.warn("Subspace " + subspace + " not found");
-		return new ResponseEntity<Facets>(null, headers, HttpStatus.NOT_FOUND);
+		logger.info("Illegal Access: subspace " + subspace + " not found");
+		return new ResponseEntity< Facets >(null, headers, HttpStatus.NOT_FOUND);
 	}
 
 	@Override
-	@RequestMapping(value = "/_{subspace}", method = RequestMethod.PUT)
-	public final ResponseEntity<Facets> createSubspace(
-			@PathVariable final String subspace,
-			@RequestBody final Configuration config,
-			@RequestHeader("DN") final String dn) {
+	@RequestMapping( value = "/_{subspace}", method = RequestMethod.PUT )
+    public final ResponseEntity< Facets > createSubspace(
+            @PathVariable final String subspace,
+            @RequestBody final String config,
+            @RequestHeader( "DN" ) final String dn) {
 
-		GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
+        GNDMSResponseHeader headers = setSubspaceHeaders( subspace, dn );
 
-		try {
-			SubspaceConfiguration subspaceConfig = SubspaceConfiguration.checkSubspaceConfig(config);
+        if( subspaceProvider.exists( subspace ) ) {
+            logger.info("Subspace " + subspace + " cannot be created because it already exists.");
+            return new ResponseEntity< Facets >( null, headers, HttpStatus.FORBIDDEN );
+        }
 
-			if (subspaceProvider.exists(subspace)
-					|| subspaceConfig.getMode() != SetupMode.CREATE) {
-				logger.warn("Subspace " + subspace + " cannot be created");
-				return new ResponseEntity<Facets>(null, headers,
-						HttpStatus.FORBIDDEN);
-			}
-            
-		   	em = emf.createEntityManager();
-	       	TxFrame tx = new TxFrame(em);
-	       	try {
-	       		SetupSubspaceAction action = new SetupSubspaceAction(subspaceConfig);
-                action.setClosingEntityManagerOnCleanup( false );
-	       		action.setOwnEntityManager(em);
-	       		logger.info("Calling action for setting up the supspace "
-					+ subspace + ".");
-	       		action.call();
-	       		tx.commit();
-	       	} finally {
-	       		tx.finish();
-	       		if (em != null && em.isOpen()) {
-	       			em.close();
-	       		}
-	       	}
-			return new ResponseEntity<Facets>(subspaceFacets, headers,
-					HttpStatus.CREATED);
-		} catch (WrongConfigurationException e) {
-			logger.warn(e.getMessage());
-			return new ResponseEntity<Facets>(null, headers,
-					HttpStatus.BAD_REQUEST);
-		}
+        // TODO: catch creation errors and return appropriate HttpStatus
+        logger.info( "Creating supspace " + subspace + "." );
+        subspaceProvider.create( subspace, config );
+
+        return new ResponseEntity< Facets >( subspaceFacets, headers, HttpStatus.CREATED );
 	}
 
 	@Override
-	@RequestMapping(value = "/_{subspace}", method = RequestMethod.DELETE)
-	public final ResponseEntity<Specifier<Void>> deleteSubspace(
+	@RequestMapping( value = "/_{subspace}", method = RequestMethod.DELETE )
+	public final ResponseEntity< Specifier< Void > > deleteSubspace(
 			@PathVariable final String subspace,
 			@RequestHeader("DN") final String dn) {
 		GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
@@ -186,9 +128,9 @@ public class SubspaceServiceImpl implements SubspaceService {
        	try {
 
        		DeleteSubspaceAction action = new DeleteSubspaceAction();
-       		action.setPath(subspaceProvider.getSubspace(subspace).getPath());
-       		action.setMode(SetupMode.DELETE);
-       		action.setOwnEntityManager(em);
+       		action.setPath(subspaceProvider.get(subspace).getPath() );
+       		action.setMode( SetupMode.DELETE );
+       		action.setOwnEntityManager( em );
        		
        		logger.info("Calling action for deleting the supspace " + subspace
        				+ ".");
@@ -213,46 +155,43 @@ public class SubspaceServiceImpl implements SubspaceService {
 	}
 
 	@Override
-	@RequestMapping(value = "/_{subspace}/slicekinds", method = RequestMethod.GET)
+	@RequestMapping( value = "/_{subspace}/slicekinds", method = RequestMethod.GET )
 	public final ResponseEntity<List<Specifier<Void>>> listSliceKinds(
 			@PathVariable final String subspace,
 			@RequestHeader("DN") final String dn) {
 		GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
 
-		if (!subspaceProvider.exists(subspace)) {
-			logger.warn("Subspace " + subspace + " not found");
+		if ( !subspaceProvider.exists( subspace ) ) {
+			logger.info("Illegal Access: subspace " + subspace + " not found");
 			return new ResponseEntity<List<Specifier<Void>>>(null, headers,
 					HttpStatus.NOT_FOUND);
 		}
-		SliceKindProvider sliceKindProvider = new SliceKindProviderImpl();
-		sliceKindProvider.init();
+
 		try {
-		List<String> sliceKinds = sliceKindProvider.listSliceKindIds(subspace);
+            List< SliceKind > sliceKinds = this.slicekindProvider.list( subspace );
+            List<Specifier<Void>> list = new ArrayList<Specifier<Void>>( sliceKinds.size() );
+            HashMap<String, String> urimap = new HashMap<String, String>(2);
+            urimap.put(UriFactory.SERVICE, "dspace");
+            for( SliceKind sk : sliceKinds ) {
+                Specifier<Void> spec = new Specifier<Void>();
+                spec.setUriMap(new HashMap<String, String>(urimap));
+                spec.addMapping( UriFactory.SLICEKIND, sk.getId() );
+                // TODO does the String have to be hard-coded?
+                spec.setUrl(uriFactory.subspaceUri(urimap, "slicekinds"));
+                list.add(spec);
+            }
 
-		List<Specifier<Void>> list = new ArrayList<Specifier<Void>>(
-				sliceKinds.size());
-		HashMap<String, String> urimap = new HashMap<String, String>(2);
-		urimap.put(UriFactory.SERVICE, "dspace");
-		for (String sk : sliceKinds) {
-			Specifier<Void> spec = new Specifier<Void>();
-			spec.setUriMap(new HashMap<String, String>(urimap));
-			spec.addMapping(UriFactory.SLICEKIND, sk);
-			// TODO does the String have to be hard-coded?
-			spec.setUrl(uriFactory.subspaceUri(urimap, "slicekinds"));
-			list.add(spec);
-		}
+            return new ResponseEntity<List<Specifier<Void>>>(list, headers,
+                    HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            logger.warn("Subspace " + subspace + " not found");
+            return new ResponseEntity<List<Specifier<Void>>>(null, headers,
+                    HttpStatus.NOT_FOUND);
 
-		return new ResponseEntity<List<Specifier<Void>>>(list, headers,
-				HttpStatus.OK);
-		} catch (NoSuchElementException e) {
-			logger.warn("Subspace " + subspace + " not found");
-			return new ResponseEntity<List<Specifier<Void>>>(null, headers,
-						HttpStatus.NOT_FOUND);
-			
-		}
+        }
 	}
 
-	@Override
+    @Override
 	@RequestMapping(value = "/_{subspace}/config", method = RequestMethod.GET)
 	public final ResponseEntity<Configuration> listSubspaceConfiguration(
 			@PathVariable final String subspace,
@@ -265,7 +204,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 					HttpStatus.NOT_FOUND);
 		}
 
-		Subspace sub = subspaceProvider.getSubspace(subspace);
+		Subspace sub = subspaceProvider.get( subspace );
     	SubspaceConfiguration config = SubspaceConfiguration.getSubspaceConfiguration(sub);
 		return new ResponseEntity<Configuration>(config, headers, HttpStatus.OK);
 	}

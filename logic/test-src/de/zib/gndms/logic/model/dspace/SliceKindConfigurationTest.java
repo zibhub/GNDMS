@@ -215,7 +215,7 @@ public class SliceKindConfigurationTest {
 		SliceKind dummy = new SliceKind();
 		
 		String uri = "testuri";
-		dummy.setURI(uri);
+		dummy.getId(uri);
 		final long permission = 345;
 		AccessMask perm = AccessMask.fromString((new Long(permission)).toString());
 		dummy.setPermission(permission);

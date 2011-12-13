@@ -158,7 +158,7 @@ public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
         AccessMask msk = AccessMask.fromString( getTheSliceKindMode() );
         if( isCreating() ) {
             r = new SliceKind( );
-            r.setURI( getSliceKind( ) );
+            r.setId( getSliceKind( ) );
             r.setPermission( msk );
             r.setSliceDirectory( uniqueDirName );
             em.persist( r );

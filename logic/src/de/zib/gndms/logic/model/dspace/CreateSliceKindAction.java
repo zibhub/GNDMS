@@ -78,7 +78,7 @@ public class CreateSliceKindAction extends AbstractModelEntityAction<SliceKind, 
     public SliceKind execute( @NotNull EntityManager em ) {
 
         SliceKind sl = new SliceKind( );
-        sl.setURI( URI );
+        sl.setId( URI );
         sl.setPermission( permission );
         sl.setSubspaces( subspaces );
 

@@ -16,46 +16,40 @@ package de.zib.gndms.logic.model.dspace;
  * limitations under the License.
  */
 
-import java.util.List;
-
 import de.zib.gndms.model.dspace.SliceKind;
+
+import java.util.List;
 
 /**
  * Provides a mapping of subspaces to slice kind ids and slice kinds.
  * 
- * @author Ulrike Golas
+ * @author Ulrike Golas, Jörg Bachmann
  */
 
 public interface SliceKindProvider {
+    /**
+     * Checks whether a given slice kind id exists for the subspace.
+     * @param subspace The considered subspace.
+     * @param sliceKind The slice kind id.
+     * @return true, if this slice kind exists, otherwise false.
+     */
+    boolean exists( String subspace, String sliceKind );
 
-	/**
-	 * Initialization of the slice kind provider.
-	 */
-	void init( );
-
-		/**
-	 * Checks whether a given slice kind id exists for the subspace.
-	 * @param subspace The considered subspace.
-	 * @param sliceKind The slice kind id.
-	 * @return true, if this slice kind exists, otherwise false.
-	 */
-	boolean exists(String subspace, String sliceKind);
-	
-	/**
-	 * Returns a list containing all existing slice kind ids for a subspace.
-	 * @param subspace The considered subspace.
-	 * @return The list.
-	 * @throws NoSuchElementException if the subspace does not exist.
-	 */
-    List<String> listSliceKindIds(String subspace) throws NoSuchElementException;
+    /**
+     * Returns a list containing all existing slice kind ids for a subspace.
+     * @param subspace The considered subspace.
+     * @return The list.
+     * @throws NoSuchElementException if the subspace does not exist.
+     */
+    List< SliceKind > list( String subspace ) throws NoSuchElementException;
 
     /**
      * Returns the slice kind for a given slice kind id in a subspace.
-	 * @param subspace The considered subspace.
+     * @param subspace The considered subspace.
      * @param sliceKind The requested slice kind id.
      * @return The corresponding slice kind.
-	 * @throws NoSuchElementException if the subspace does not exist. 
+     * @throws NoSuchElementException if the subspace does not exist.
      */
-    SliceKind getSliceKind(String subspace, String sliceKind) throws NoSuchElementException;
+    SliceKind get( String subspace, String sliceKind ) throws NoSuchElementException;
 
 }

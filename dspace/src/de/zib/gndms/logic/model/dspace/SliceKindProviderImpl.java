@@ -1,5 +1,3 @@
-package de.zib.gndms.logic.model.dspace;
-
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -16,75 +14,49 @@ package de.zib.gndms.logic.model.dspace;
  * limitations under the License.
  */
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+package de.zib.gndms.logic.model.dspace;
 
 import de.zib.gndms.model.dspace.SliceKind;
+import de.zib.gndms.model.util.GridResourceCache;
 
-import javax.inject.Inject;
+import javax.persistence.EntityManagerFactory;
+import java.util.List;
 
 /**
  * The slice kind provider which handles the available subspaces providing 
  * a mapping of slice kind ids and slice kinds.
  * 
- * @author Ulrike Golas
+ * @author Jörg Bachmann
  */
+public class SliceKindProviderImpl extends GridResourceDAO< SliceKind > implements SliceKindProvider {
 
-public class SliceKindProviderImpl implements SliceKindProvider {
-
-	/**
-	 * Map of subspace ids, slice kind ids and slice kinds.
-	 */
-    private Map<String, Map<String, SliceKind>> sliceKinds;
-
-    @Inject
-    public void setProvider(SubspaceProvider provider) {
-        this.provider = provider;
+    public SliceKindProviderImpl( final EntityManagerFactory emf ) {
+        super(
+                emf,
+                new GridResourceCache< SliceKind >(
+                        SliceKind.class,
+                        emf
+                ),
+                SetupSubspaceAction.class
+        );
     }
 
-    private SubspaceProvider provider;
+    protected String getListQuery( ) {
+        return "listCreatableSliceKinds";
+    }
 
     @Override
-	public final void init( ) {
-        for (String sub : provider.listSubspaces()) {
-				Set<SliceKind> subSliceKinds = provider.getSubspace(sub).getCreatableSliceKinds();
-				Map<String, SliceKind> map = new HashMap<String, SliceKind>();
-				
-				for (SliceKind sk : subSliceKinds)  {
-					map.put(sk.toString(), sk);
-				}
-				sliceKinds.put(sub, map);
-			}
-	}
+    public boolean exists( String subspace, String sliceKind ) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 
-	@Override
-	public final boolean exists(final String subspace, final String sliceKind) {
-		try {
-			return sliceKinds.get(subspace).containsKey(sliceKind);
-		} catch (NullPointerException e) {
-			return false;
-		}
-	}
+    @Override
+    public List<SliceKind> list( String subspace ) throws NoSuchElementException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 
-	@Override
-	public final List<String> listSliceKindIds(final String subspace) throws NoSuchElementException {
-		try {
-	        return new ArrayList<String>(sliceKinds.get(subspace).keySet());
-		} catch (NullPointerException e) {
-			throw new NoSuchElementException(e.getMessage());
-		}
-	}
-
-	@Override
-	public final SliceKind getSliceKind(final String subspace, final String sliceKind) throws NoSuchElementException {
-		try {
-			return sliceKinds.get(subspace).get(sliceKind);
-		} catch (NullPointerException e) {
-			throw new NoSuchElementException(e.getMessage());
-		}
-	}
-
+    @Override
+    public SliceKind get( String subspace, String sliceKind ) throws NoSuchElementException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 }

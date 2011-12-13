@@ -22,11 +22,6 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Column;
 import javax.persistence.Id;
 
-/**
- *
- * UUID-as-36-char-String identified grid resource
- *
- **/
 @MappedSuperclass
 public abstract class GridResource extends GridEntity implements GridResourceItf {
     

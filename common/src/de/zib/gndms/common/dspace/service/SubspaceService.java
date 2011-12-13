@@ -65,8 +65,7 @@ public interface SubspaceService {
 	 *            The dn of the user invoking the method.
 	 * @return The facets of the created subspace.
 	 */
-	ResponseEntity<Facets> createSubspace(String subspace, Configuration config,
-			String dn);
+	ResponseEntity<Facets> createSubspace(String subspace, String config, String dn);
 
 	/**
 	 * Deletes a subspace.

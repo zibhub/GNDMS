@@ -36,13 +36,18 @@ import java.util.UUID;
 public class ActionConfigurer implements ModelUUIDGen {
 
     private EntityManagerFactory entityManagerFactory;
-    private final ModelUpdateListener<GridResource> entityUpdateListener = new NoWSDontNeedModelUpdateListener();
+
+    private ModelUpdateListener<GridResource> entityUpdateListener = new NoWSDontNeedModelUpdateListener();
     private Dao dao;
 
 
     public ActionConfigurer() {
 
         super();
+    }
+
+    public ActionConfigurer(EntityManagerFactory emf) {
+        setEntityManagerFactory( emf );
     }
 
 
@@ -111,6 +116,10 @@ public class ActionConfigurer implements ModelUUIDGen {
 
     public ModelUpdateListener<GridResource> getEntityUpdateListener() {
         return entityUpdateListener;
+    }
+
+    public void setEntityUpdateListener(ModelUpdateListener<GridResource> entityUpdateListener) {
+        this.entityUpdateListener = entityUpdateListener;
     }
 
 

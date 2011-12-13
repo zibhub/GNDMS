@@ -16,13 +16,12 @@ package de.zib.gndms.dspace.service;
  * limitations under the License.
  */
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
+import de.zib.gndms.common.dspace.service.DSpaceService;
+import de.zib.gndms.common.rest.GNDMSResponseHeader;
+import de.zib.gndms.common.rest.Specifier;
+import de.zib.gndms.common.rest.UriFactory;
+import de.zib.gndms.logic.model.dspace.SubspaceProvider;
+import de.zib.gndms.model.dspace.Subspace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -32,12 +31,11 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import de.zib.gndms.common.dspace.service.DSpaceService;
-import de.zib.gndms.common.rest.GNDMSResponseHeader;
-import de.zib.gndms.common.rest.Specifier;
-import de.zib.gndms.common.rest.UriFactory;
-import de.zib.gndms.logic.model.dspace.SubspaceProvider;
-import de.zib.gndms.logic.model.dspace.SubspaceProviderImpl;
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * The dspace service implementation.
@@ -89,7 +87,7 @@ public class DSpaceServiceImpl implements DSpaceService {
         List<Specifier<Void>> list = new ArrayList<Specifier<Void>>();
         HashMap<String, String> urimap = new HashMap<String, String>(2);
         urimap.put(UriFactory.SERVICE, "dspace");
-        for (String s : subspaceProvider.listSubspaces()) {
+        for (Subspace s : subspaceProvider.list()) {
             Specifier<Void> spec = new Specifier<Void>();
             
             spec.setUriMap(new HashMap<String, String>(urimap));

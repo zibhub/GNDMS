@@ -124,7 +124,7 @@ public class DeleteSubspaceAction extends SetupAction<ConfigActionResult> {
             if (! isCreating())
                 throw new IllegalStateException("No matching subspace found for update");
             subspace = new Subspace();
-            subspace.setName(pkParam);
+            subspace.setId(pkParam);
         }
         return subspace;
     }
