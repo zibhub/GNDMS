@@ -32,7 +32,9 @@
         <property name="subspaceProvider" ref="subspaceProvider"/>
     </bean>
 
-    <bean id="subspaceProvider" class="de.zib.gndms.logic.model.dspace.SubspaceProviderImpl" />
+    <bean id="subspaceProvider" class="de.zib.gndms.logic.model.dspace.SubspaceProviderImpl" >
+        <constructor-arg ref="emf"/>
+    </bean>
 
 	<!-- SubspaceService -->
 
@@ -66,7 +68,9 @@
 
 	<!-- SliceKindService -->
 
-    <bean id="sliceKindProvider" class="de.zib.gndms.logic.model.dspace.SliceKindProviderImpl" />
+    <bean id="sliceKindProvider" class="de.zib.gndms.logic.model.dspace.SliceKindProviderImpl" >
+        <constructor-arg ref="emf"/>
+    </bean>
 
     <bean id="sliceKindService" class="de.zib.gndms.dspace.service.SliceKindServiceImpl">
         <property name="baseUrl" value="${dspaceBaseURL}"/>

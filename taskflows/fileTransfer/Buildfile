@@ -47,8 +47,8 @@ define 'transfer' do
         desc 'deploys the transfer server jar'
         task 'deploy' do
             deploy_target = "#{ENV['JETTY_HOME']}/webapps/root/WEB-INF/lib"
-            cp package(:jar).to_s, deploy_target
-            cp project('client').package(:jar), deploy_target
+            cp project('transfer:server').package(:jar).to_s, deploy_target
+            cp project('transfer:client').package(:jar).to_s, deploy_target
         end
     end
 end

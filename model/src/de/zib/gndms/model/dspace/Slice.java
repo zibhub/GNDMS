@@ -88,7 +88,7 @@ public class Slice extends TimedGridResource {
 
 
     @ManyToOne( targetEntity=SliceKind.class, cascade={CascadeType.REFRESH}, fetch=FetchType.EAGER )
-    @JoinColumn( name="kind_uri", nullable=false, referencedColumnName="uri", updatable=false )
+ //   @JoinColumn( name="kind_uri", nullable=false, referencedColumnName="uri", updatable=false )
     public SliceKind getKind() {
         return kind;
     }
@@ -100,7 +100,7 @@ public class Slice extends TimedGridResource {
 
 
     @ManyToOne( targetEntity=Subspace.class, cascade={CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE}, fetch=FetchType.EAGER )
-    @JoinColumn( name="subspace_id", nullable=false, referencedColumnName="id", updatable=false )
+   // @JoinColumn( name="subspace_id", nullable=false, referencedColumnName="id", updatable=false )
     public Subspace getSubspace() {
         return subspace;
     }

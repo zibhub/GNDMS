@@ -55,7 +55,8 @@ include GNDMS
 # Test environment
 # if you dont have cog installed yet, download it from:
 # http://dev.globus.org/wiki/CoG_JGlobus_1.8.0
-testEnv('COG_LOCATION', 'the root directory of COG 1.8.0')
+#testEnv('COG_LOCATION', 'the root directory of COG 1.8.0')
+COG_LOCATION=[ ENV['GNDMS_SOURCE'], 'lib', 'cog-jglobus' ].join( File::SEPARATOR )
 #testEnv('GLOBUS_LOCATION', 'the root directory of Globus Toolkit 4.0.8')
 #GNDMS_DB=[ ENV['GLOBUS_LOCATION'], 'etc', 'gndms_shared', 'db', 'gndms' ].join(File::SEPARATOR)
 GNDMS_DB=[ '', 'tmp', 'c3grid', 'TESTDB' ].join(File::SEPARATOR)
@@ -94,7 +95,7 @@ end
 gndms_ant = ENV['GNDMS_SOURCE'] + '/bin/gndms-ant'
 
 # Helper to construct GT4 jar pathes
-require './buildr/cog'
+require 'buildr/cog'
 include COG
 
 # Essentially GT4 package management is classloading unaware crap
