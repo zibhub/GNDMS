@@ -15,424 +15,468 @@
 
 package de.zib.adis;
 
-import java.util.Collection;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.HashMap;
-
 import de.zib.adis.abi.ABIi;
-
-import de.zib.vold.common.Key;
 import de.zib.vold.client.RESTClient;
-
+import de.zib.vold.common.Key;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Adis extends ABIi
-{
-        protected final Logger log = LoggerFactory.getLogger( this.getClass() );
+import java.util.*;
 
-        private RESTClient voldi;
-        private String grid;
+/**
+ * This is the C3-Grid VolD Client.
+ *
+ * VolD will be used as the MDS replacement in the new C3-Grid. This class is
+ * the client used to store and get data from the VolD storage.
+ */
+public class Adis extends ABIi {
+    protected final Logger log = LoggerFactory.getLogger( this.getClass() );
 
-        public Adis( )
-        {
-                this.voldi = new RESTClient();
-                this.grid = "c3grid";
+    private RESTClient voldi;
+    private String grid;
+
+    public Adis() {
+        this.voldi = new RESTClient();
+        this.voldi.setEnc( "utf-8" );
+        this.grid = "c3grid";
+    }
+
+    /**
+     * Set the URL to the VolD service.
+     * @param voldURL This string should look like http://ip.address.de/VolD/master
+     */
+    public void setVoldURL( String voldURL ) {
+        voldi.setBaseURL( voldURL );
+    }
+
+    /**
+     * Set the encoding used to store data.
+     * @param enc utf-8 should be a good choice here.
+     */
+    public void setEnc( String enc ) {
+        voldi.setEnc( enc );
+    }
+
+    /**
+     * Set the name of the grid in which the GNDMS is used.
+     * @param grid For C3-Grid this should be c3grid
+     */
+    public void setGrid( String grid ) {
+        this.grid = grid;
+    }
+
+    public void checkState() {
+        voldi.checkState();
+
+        if( null == grid ) {
+            throw new IllegalStateException( "Tried to operate on ADiS while it had not been initialized yet. Set proper gridname before!" );
+        }
+    }
+
+    private boolean checkRole( String role ) {
+        for( Role r : Role.values() ) {
+            if( r.name().equals( role ) )
+                return true;
         }
 
-        public void setVoldURL( String voldURL )
-        {
-                voldi.setBaseURL( voldURL );
+        return false;
+    }
+
+    private boolean checkType( String type ) {
+        for( Type t : Type.values() ) {
+            if( t.name().equals( type ) )
+                return true;
         }
 
-        public void setEnc( String enc )
+        return false;
+    }
+
+
+    public String getRole( String role ) {
+        // guard
         {
-                voldi.setEnc( enc );
+            checkState();
+
+            checkRole( role );
         }
 
-        public void setGrid( String grid )
-        {
-                this.grid = grid;
+        Map<Key, Set<String>> _result = voldi.lookup( new Key( grid, role, "..." ) );
+
+        if( null == _result ) {
+            return null;
         }
 
-        public void checkState( )
-        {
-                voldi.checkState();
-
-                if( null == grid )
-                {
-                        throw new IllegalStateException( "Tried to operate on ADiS while it had not been initialized yet. Set proper gridname before!" );
-                }
+        // should be exactly one entry!
+        if( 1 < _result.size() ) {
+            log.warn( "More than one " + role + " endpoint registered!" );
         }
 
-        private boolean checkRole( String role )
-        {
-                for( Role r: Role.values() )
-                {
-                        if( r.name().equals( role ) )
-                                return true;
-                }
+        // search first valid entry
+        for( Map.Entry<Key, Set<String>> entry : _result.entrySet() ) {
+            if( 0 == entry.getValue().size() ) {
+                continue;
+            }
+            if( 1 < entry.getValue().size() ) {
+                log.warn( "More than one " + role + " endpoint registered!" );
+            }
 
-                return false;
+            return entry.getValue().iterator().next();
         }
 
-        private boolean checkType( String type )
-        {
-                for( Type t: Type.values() )
-                {
-                        if( t.name().equals( type ) )
-                                return true;
-                }
+        return null;
+    }
 
-                return false;
+    public Collection<String> listValuesByType( String type ) {
+        // guard
+        {
+            checkState();
+
+            checkType( type );
         }
 
+        Map<Key, Set<String>> _result = voldi.lookup( new Key( grid, type, "..." ) );
 
+        if( null == _result )
+            return null;
 
-        public String getRole( String role )
+        return flatten( _result.values() );
+    }
+
+    /**
+     * Get the URL of the central data management system.
+     * @return Endpoint to DMS.
+     */
+    public String getDMS() {
+        return getRole( Role.DMS.toString() );
+    }
+
+    /**
+     * Get the URL of the workflow scheduler system.
+     * @return Endpoint to WSS.
+     */
+    public String getWSS() {
+        return getRole( Role.WSS.toString() );
+    }
+
+    /**
+     * List available Harvester URLs.
+     *
+     * This method can be used by the portal to get all harvesters.
+     *
+     * @return Harvester endpoints.
+     */
+    public Collection<String> listOAIs() {
+        return listValuesByType( Type.OAI.toString() );
+    }
+
+    /**
+     * List all available import sites.
+     * @return All import site URLs.
+     */
+    public Collection<String> listImportSites() {
+        return listValuesByType( Type.IMPORT.toString() );
+    }
+
+    /**
+     * List all available export sites.
+     * @return All export site URLs.
+     */
+    public Map<String, String> listExportSites() {
+        // guard
         {
-                // guard
-                {
-                        checkState();
-
-                        checkRole( role );
-                }
-
-                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, role, "..." ) );
-
-                if( null == _result )
-                {
-                        return null;
-                }
-
-                // should be exactly one entry!
-                if( 1 < _result.size() )
-                {
-                        log.warn( "More than one " + role + " endpoint registered!" );
-                }
-
-                // search first valid entry
-                for( Map.Entry< Key, Set< String > > entry: _result.entrySet() )
-                {
-                        if( 0 == entry.getValue().size() )
-                        {
-                                continue;
-                        }
-                        if( 1 < entry.getValue().size() )
-                        {
-                                log.warn( "More than one " + role + " endpoint registered!" );
-                        }
-
-                        return entry.getValue().iterator().next();
-                }
-
-                return null;
+            checkState();
         }
 
-        public Collection< String > listValuesByType( String type )
-        {
-                // guard
-                {
-                        checkState();
+        Map<Key, Set<String>> _result = voldi.lookup( new Key( grid, Type.EXPORT.toString(), "..." ) );
 
-                        checkType( type );
-                }
-
-                // guard
-                {
-                        checkState();
-
-                        checkType( type );
-                }
-
-                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, type, "..." ) );
-
-                if( null == _result )
-                        return null;
-
-                return flatten( _result.values() );
+        if( null == _result ) {
+            return null;
         }
 
-        public String getDMS( )
+        return flatmap( _result );
+    }
+
+    /**
+     * List all available workflows.
+     * @return All available workflows.
+     */
+    public Collection<String> listWorkflows() {
+        // guard
         {
-                return getRole( Role.DMS.toString() );
+            checkState();
         }
 
-        public String getWSS( )
-        {
-                return getRole( Role.WSS.toString() );
+        Map<Key, Set<String>> _result = voldi.lookup( new Key( grid, Type.WORKFLOW.toString(), "..." ) );
+
+        if( null == _result ) {
+            return null;
         }
 
-        public Collection< String > listOAIs( )
+        return usualset( _result.keySet() );
+    }
+
+    /**
+     * List all Dataprovider URLs hosting data with an OID prefix.
+     * @param oidprefix
+     * @return All URLs of the data providers hosting the data with the OID prefix oidprefix.
+     */
+    public Collection<String> listGORFXbyOID( String oidprefix ) {
+        return listValuesByType( Type.OID.toString() );
+    }
+
+    /**
+     * List all publisher sites.
+     * @return All publisher sites.
+     */
+    public Map<String, String> listPublisher() {
+        // guard
         {
-                return listValuesByType( Type.OAI.toString() );
+            checkState();
         }
 
-        public Collection< String > listImportSites( )
-        {
-                return listValuesByType( Type.IMPORT.toString() );
+        Map<Key, Set<String>> _result = voldi.lookup( new Key( grid, Type.PUBLISHER.toString(), "..." ) );
+
+        if( null == _result ) {
+            return null;
         }
 
-        public Map< String, String > listExportSites( )
+        return flatmap( _result );
+    }
+
+    /**
+     * Get all GRAM endpoints supporting the given workflow.
+     * @param workflow
+     * @return According GRAM endpoints.
+     */
+    public Map<String, String> getEPbyWorkflow( String workflow ) {
+        // guard
         {
-                // guard
-                {
-                        checkState();
-                }
-
-                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, Type.EXPORT.toString(), "..." ) );
-
-                if( null == _result )
-                {
-                        return null;
-                }
-
-                return flatmap( _result );
+            checkState();
         }
 
-        public Collection< String > listWorkflows( )
-        {
-                // guard
-                {
-                        checkState();
-                }
+        Map<Key, Set<String>> _result = voldi.lookup( new Key( grid, Type.WORKFLOW.toString(), workflow ) );
 
-                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, Type.WORKFLOW.toString(), "..." ) );
-
-                if( null == _result )
-                {
-                        return null;
-                }
-
-                return usualset( _result.keySet() );
+        if( null == _result ) {
+            return null;
         }
 
-        public Collection< String > listGORFXbyOID( String oidprefix )
-        {
-                return listValuesByType( Type.OID.toString() );
-        }
+        Map<String, String> result = new HashMap<String, String>();
 
-        public Map< String, String > listPublisher( )
-        {
-                // guard
-                {
-                        checkState();
-                }
+        // should be exactly one entry
+        for( Map.Entry<Key, Set<String>> entry : _result.entrySet() ) {
+            for( String gram : entry.getValue() ) {
+                Map<Key, Set<String>> _gramres = voldi.lookup( new Key( grid, Type.GRAM.toString(), gram ) );
 
-                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, Type.PUBLISHER.toString(), "..." ) );
-
-                if( null == _result )
-                {
-                        return null;
-                }
-
-                return flatmap( _result );
-        }
-
-        public Map< String, String > getEPbyWorkflow( String workflow )
-        {
-                // guard
-                {
-                        checkState();
-                }
-
-                Map< Key, Set< String > > _result = voldi.lookup( new Key( grid, Type.WORKFLOW.toString(), workflow ) );
-
-                if( null == _result )
-                {
-                        return null;
-                }
-
-                Map< String, String > result = new HashMap< String, String >();
-
-                // should be exactly one entry
-                for( Map.Entry< Key, Set< String > > entry: _result.entrySet() )
-                {
-                        for( String gram: entry.getValue() )
-                        {
-                                Map< Key, Set< String > > _gramres = voldi.lookup( new Key( grid, Type.GRAM.toString(), gram ) );
-
-                                if( null == _gramres )
-                                {
-                                        log.warn( "Workflow " + workflow + " had a GRAM EndPoint " + gram + " registered, which has neither a GridFTP nor a SubSpace endpoint." );
-                                        continue;
-                                }
-
-                                result.putAll( flatmap( _gramres ) );
-                        }
-                }
-
-                return result;
-        }
-
-
-
-        public boolean setRole( String role, String endpoint )
-        {
-                // guard
-                {
-                        checkState();
-
-                        checkRole( role );
-                }
-
-                Map< String, String > _result = voldi.insert( null, simplemap( new Key( grid, role.toString(), "" ), endpoint ) );
-
-                return 0 == _result.size();
-        }
-
-        public boolean setType( String type, String name, String value )
-        {
-                // guard
-                {
-                        checkState();
-
-                        checkType( type );
-
-                        if( null == name )
-                        {
-                                name = "";
-                        }
+                if( null == _gramres ) {
+                    log.warn( "Workflow " + workflow + " had a GRAM EndPoint " + gram + " registered, which has neither a GridFTP nor a SubSpace endpoint." );
+                    continue;
                 }
 
-                Map< String, String > _result = voldi.insert( null, simplemap( new Key( grid, type, name ), value ) );
-
-                return 0 == _result.size();
+                result.putAll( flatmap( _gramres ) );
+            }
         }
 
-        public boolean setDMS( String endpoint )
+        return result;
+    }
+
+
+    public boolean setRole( String role, String endpoint ) {
+        // guard
         {
-                return setRole( Role.DMS.toString(), endpoint );
+            checkState();
+
+            checkRole( role );
         }
 
-        public boolean setWSS( String endpoint )
+        Map<String, String> _result = voldi.insert( null, simplemap( new Key( grid, role.toString(), "" ), endpoint ) );
+
+        return 0 == _result.size();
+    }
+
+    public boolean setType( String type, String name, String value ) {
+        // guard
         {
-                return setRole( Role.WSS.toString(), endpoint );
+            checkState();
+
+            checkType( type );
+
+            if( null == name ) {
+                name = "";
+            }
         }
 
-        public boolean setExport( String name, String subspace )
+        Map<String, String> _result = voldi.insert( null, simplemap( new Key( grid, type, name ), value ) );
+
+        return 0 == _result.size();
+    }
+
+    /**
+     * Set the central data management system endpoint.
+     * @param endpoint
+     * @return true on success.
+     */
+    public boolean setDMS( String endpoint ) {
+        return setRole( Role.DMS.toString(), endpoint );
+    }
+
+    /**
+     * Set the workflow scheduler system endpoint.
+     * @param endpoint
+     * @return true on success.
+     */
+    public boolean setWSS( String endpoint ) {
+        return setRole( Role.WSS.toString(), endpoint );
+    }
+
+    /**
+     * Register an export site.
+     *
+     * This method should be called by a host running this export site.
+     *
+     * @param   name      Human readable name.
+     * @param   subspace  Endpoint URL.
+     * @return  true on success.
+     */
+    public boolean setExport( String name, String subspace ) {
+        return setType( Type.EXPORT.toString(), name, subspace );
+    }
+
+    /**
+     * Register an import site.
+     *
+     * This method should be called by the host running the import site.
+     *
+     * @param name          Human readable name.
+     * @param subspace      Endpoint URL.
+     * @return              true on success.
+     */
+    public boolean setImport( String name, String subspace ) {
+        return setType( Type.IMPORT.toString(), name, subspace );
+    }
+
+    /**
+     * Register a workflow.
+     *
+     * This method should be called by all compute providers supporting this workflow.
+     *
+     * @param subspace  Endpoint for all incoming and outgoing data.
+     * @param gram
+     * @param workflows The set of all workflows supported by this compute provider.
+     * @return true on success.
+     */
+    public boolean setWorkflows( String subspace, String gram, Collection<String> workflows ) {
+        // guard
         {
-                return setType( Type.EXPORT.toString(), name, subspace );
+            checkState();
         }
 
-        public boolean setImport( String name, String subspace )
+        Map<Key, Set<String>> request = new HashMap<Key, Set<String>>();
+        Set<String> gramset = simpleset( gram );
+
+        // add workflow |--> gram
+        for( String workflow : workflows ) {
+            request.put( new Key( grid, Type.WORKFLOW.toString(), workflow ), gramset );
+        }
+
+        // add gram |--> subspace
+        request.put( new Key( grid, Type.GRAM.toString(), gram ), simpleset( subspace ) );
+
+        Map<String, String> _result = voldi.insert( null, request );
+
+        return 0 == _result.size();
+    }
+
+    /**
+     * Register a set of OID prefixes on a data provider.
+     *
+     * This method should be called by the data provider hosting the oid prefixes.
+     *
+     * @param gorfx Endpoint of the data provider.
+     * @param oidprefixe
+     * @return true on success.
+     */
+    public boolean setOIDPrefixe( String gorfx, Collection<String> oidprefixe ) {
+        // guard
         {
-                return setType( Type.IMPORT.toString(), name, subspace );
+            checkState();
         }
 
-        public boolean setWorkflows( String subspace, String gram, Collection< String > workflows )
-        {
-                // guard
-                {
-                        checkState();
-                }
+        Map<Key, Set<String>> request = new HashMap<Key, Set<String>>();
 
-                Map< Key, Set< String > > request = new HashMap< Key, Set< String > >();
-                Set< String > gramset = simpleset( gram );
-
-                // add workflow |--> gram
-                for( String workflow: workflows )
-                {
-                        request.put( new Key( grid, Type.WORKFLOW.toString(), workflow ), gramset );
-                }
-
-                // add gram |--> subspace
-                request.put( new Key( grid, Type.GRAM.toString(), gram ), simpleset( subspace ) );
-
-                Map< String, String > _result = voldi.insert( null, request );
-
-                return 0 == _result.size();
+        // add prefix |--> gorfx
+        for( String oidprefix : oidprefixe ) {
+            request.put( new Key( grid, Type.OID.toString(), oidprefix ), simpleset( gorfx ) );
         }
 
-        public boolean setOIDPrefixe( String gorfx, Collection< String > oidprefixe )
-        {
-                // guard
-                {
-                        checkState();
-                }
+        Map<String, String> _result = voldi.insert( null, request );
 
-                Map< Key, Set< String > > request = new HashMap< Key, Set< String > >();
+        return 0 == _result.size();
+    }
 
-                // add prefix |--> gorfx
-                for( String oidprefix: oidprefixe )
-                {
-                        request.put( new Key( grid, Type.OID.toString(), oidprefix ), simpleset( gorfx ) );
-                }
+    /**
+     * Register an OAI harvester.
+     *
+     * This method should be called by the data provider or portal running the harvester.
+     *
+     * @param endpoint
+     * @return true on success.
+     */
+    public boolean setOAI( String endpoint ) {
+        return setType( Type.OAI.toString(), "", endpoint );
+    }
 
-                Map< String, String > _result = voldi.insert( null, request );
 
-                return 0 == _result.size();
+    private Map<Key, Set<String>> simplemap( Key key, String value ) {
+        Map<Key, Set<String>> result = new HashMap<Key, Set<String>>();
+
+        Set<String> set = new HashSet<String>();
+        set.add( value );
+
+        result.put( key, set );
+
+        return result;
+    }
+
+    private Set<String> simpleset( String s ) {
+        Set<String> set = new HashSet<String>();
+
+        set.add( s );
+
+        return set;
+    }
+
+    private Map<String, String> flatmap( Map<Key, Set<String>> map ) {
+        Map<String, String> result = new HashMap<String, String>();
+
+        for( Map.Entry<Key, Set<String>> entry : map.entrySet() ) {
+            if( 1 != entry.getValue().size() ) {
+                log.warn( "Unexpected state in database: got " + entry.getValue().size() + " values for " + entry.getKey().toString() + "." );
+                continue;
+            }
+
+            result.put( entry.getKey().get_keyname(), entry.getValue().iterator().next() );
         }
 
-        public boolean setOAI( String endpoint )
-        {
-                return setType( Type.OAI.toString(), "", endpoint );
+        return result;
+    }
+
+    private Set<String> flatten( Collection<Set<String>> setset ) {
+        Set<String> result = new HashSet<String>();
+
+        for( Set<String> set : setset ) {
+            result.addAll( set );
         }
 
+        return result;
+    }
 
+    private Set<String> usualset( Set<Key> set ) {
+        Set<String> result = new HashSet<String>();
 
-        private Map< Key, Set< String > > simplemap( Key key, String value )
-        {
-                Map< Key, Set< String > > result = new HashMap< Key, Set< String > >();
-
-                Set< String > set = new HashSet< String >();
-                set.add( value );
-
-                result.put( key, set );
-
-                return result;
+        for( Key k : set ) {
+            result.add( k.get_keyname() );
         }
 
-        private Set< String > simpleset( String s )
-        {
-                Set< String > set = new HashSet< String >();
-
-                set.add( s );
-
-                return set;
-        }
-
-        private Map< String, String > flatmap( Map< Key, Set< String > > map )
-        {
-                Map< String, String > result = new HashMap< String, String >();
-
-                for( Map.Entry< Key, Set< String > > entry: map.entrySet() )
-                {
-                        if( 1 != entry.getValue().size() )
-                        {
-                                log.warn( "Unexpected state in database: got " + entry.getValue().size() + " values for " + entry.getKey().toString() + "." );
-                                continue;
-                        }
-
-                        result.put( entry.getKey().get_keyname(), entry.getValue().iterator().next() );
-                }
-
-                return result;
-        }
-
-        private Set< String > flatten( Collection< Set< String > > setset )
-        {
-                Set< String > result = new HashSet< String >();
-
-                for( Set< String > set: setset )
-                {
-                        result.addAll( set );
-                }
-
-                return result;
-        }
-
-        private Set< String > usualset( Set< Key > set )
-        {
-                Set< String > result = new HashSet< String >();
-
-                for( Key k: set )
-                {
-                        result.add( k.get_keyname() );
-                }
-
-                return result;
-        }
+        return result;
+    }
 }
