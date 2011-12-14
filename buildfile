@@ -79,6 +79,14 @@ define "adis" do
                 Commands.java(mainClass,
                         args, { :classpath => jars, :verbose => true } )
         end
+
+        desc "Print dependencies"
+        task 'deps' do
+                jars = compile.dependencies.map(&:to_s)
+                jars += [project.package(:jar).to_s]
+
+		puts jars
+        end
 end
 
 # vim:ft=ruby
