@@ -20,10 +20,22 @@
  *
  * To compile the project, run \verbatim buildr package \endverbatim
  *
- * \section Command Line Interface
+ * All necessary dependencies will be downloaded from the internat automatically. The only dependency,
+ * which cannot be downloaded is vold. The project structure assumes the vold project directory to be
+ * in the same (root) directory as the adis project directory, i.e. there should be the two directories
+ * projects/vold and projects/ADiS. If you like to change that, adjust the path to the vold directory
+ * in the buildfile.
+ *
+ * \section CLI Command Line Interface
  *
  * To run the CLI tool, set the correct URL in the buildfile and run
  * \verbatim buildr run \endverbatim
+ *
+ * \section ClientLib Client Library
+ *
+ * After compiling, the jar can be found in the target directory. To see all dependencies, run the command
+ * \verbatim buildr adis:deps \endverbatim
+ *
  */
 
 package de.zib.adis;
