@@ -13,6 +13,19 @@
  * limitations under the License.
  */
 
+/**
+ * \mainpage ADiS - Advanced Discovery Service
+ *
+ * \section Compiling
+ *
+ * To compile the project, run \verbatim buildr package \endverbatim
+ *
+ * \section Command Line Interface
+ *
+ * To run the CLI tool, set the correct URL in the buildfile and run
+ * \verbatim buildr run \endverbatim
+ */
+
 package de.zib.adis;
 
 import com.beust.jcommander.Parameter;
