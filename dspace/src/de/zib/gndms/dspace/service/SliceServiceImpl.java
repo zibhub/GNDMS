@@ -22,7 +22,6 @@ import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
-import de.zib.gndms.common.stuff.util.Product;
 import de.zib.gndms.logic.model.dspace.*;
 import de.zib.gndms.logic.model.dspace.NoSuchElementException;
 import de.zib.gndms.model.dspace.Slice;
@@ -90,7 +89,7 @@ public class SliceServiceImpl implements SliceService {
 
 	@Override
 	@RequestMapping( value = "/_{subspace}/_{sliceKind}/_{slice}", method = RequestMethod.GET )
-	public final ResponseEntity< Product< Configuration, Facets > > listSliceFacets(
+	public final ResponseEntity< Facets > listSliceFacets(
 			@PathVariable final String subspaceId,
 			@PathVariable final String sliceKindId,
 			@PathVariable final String sliceId,
@@ -101,20 +100,17 @@ public class SliceServiceImpl implements SliceService {
             Slice slice = findSliceOfKind( subspaceId, sliceKindId, sliceId );
             SliceConfiguration config = SliceConfiguration
                     .getSliceConfiguration( slice );
-            Product< Configuration, Facets > prod2 = new Product< Configuration, Facets >(
-                    config, sliceFacets );
-            return new ResponseEntity< Product< Configuration, Facets > >( prod2,
-                    headers, HttpStatus.OK );
+            return new ResponseEntity< Facets >( sliceFacets, headers, HttpStatus.OK );
         } catch ( NoSuchElementException ne ) {
             logger.warn( "The slice " + sliceId + " of slice kind " + sliceKindId
                     + "does not exist within the subspace" + subspaceId + "." );
-            return new ResponseEntity< Product< Configuration, Facets > >( null,
+            return new ResponseEntity< Facets >( null,
                     headers, HttpStatus.NOT_FOUND );
         }
 	}
 
 	@Override
-	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}/config", method = RequestMethod.PUT)
 	public final ResponseEntity<Void> setSliceConfiguration(
 			@PathVariable final String subspace,
 			@PathVariable final String sliceKind,
@@ -166,7 +162,7 @@ public class SliceServiceImpl implements SliceService {
 			try {
 				// TODO is this right? what is this uuid generator (last entry)?
 				TransformSliceAction action = new TransformSliceAction(
-						newSliceK.getId(), dn, slic.getTerminationTime(),
+						dn, slic.getTerminationTime(),
 						newSliceK, space, slic.getTotalStorageSize(), null);
 				action.setOwnEntityManager(em);
 				logger.info("Calling action for transforming slice " + slice

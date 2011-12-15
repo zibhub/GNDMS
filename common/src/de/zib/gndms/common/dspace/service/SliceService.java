@@ -61,7 +61,7 @@ public interface SliceService {
 	 *            The dn of the user invoking the method.
 	 * @return The slice configuration and the available facets.
 	 */
-	ResponseEntity<Product<Configuration, Facets>> listSliceFacets(String subspace, String sliceKind,
+	ResponseEntity< Facets > listSliceFacets(String subspace, String sliceKind,
 			String slice, String dn);
 
 	/**

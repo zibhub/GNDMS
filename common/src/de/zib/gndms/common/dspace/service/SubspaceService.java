@@ -1,12 +1,11 @@
 package de.zib.gndms.common.dspace.service;
 
-import java.util.List;
-
-import org.springframework.http.ResponseEntity;
-
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
+import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -115,4 +114,8 @@ public interface SubspaceService {
 	 */
 	ResponseEntity<Void> setSubspaceConfiguration(String subspace,
 			Configuration config, String dn);
+
+    ResponseEntity< Specifier< Void > > createSlice(
+            String subspace, String sliceKind,
+            String config, String dn );
 }

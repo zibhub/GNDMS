@@ -16,18 +16,20 @@ package de.zib.gndms.logic.model.dspace;
  * limitations under the License.
  */
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
-
+import de.zib.gndms.logic.action.ActionConfigurer;
+import de.zib.gndms.logic.model.ModelUpdateListener;
+import de.zib.gndms.model.common.GridResource;
+import de.zib.gndms.model.common.NoSuchResourceException;
 import de.zib.gndms.model.dspace.Slice;
-import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.model.util.TxFrame;
+import de.zib.gndms.model.dspace.SliceKind;
+import de.zib.gndms.model.util.GridResourceCache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManagerFactory;
+import java.util.Calendar;
+import java.util.List;
 
 /**
  * The slice provider which handles the available subspaces providing 
@@ -37,69 +39,87 @@ import de.zib.gndms.model.util.TxFrame;
  */
 
 public class SliceProviderImpl implements SliceProvider {
+    private final Logger logger = LoggerFactory.getLogger( this.getClass() );
+
+    private SubspaceProvider provider;
+    private SliceKindProvider sliceKindProvider;
+
+    final private ActionConfigurer actionConfigurer;
+
 	private EntityManagerFactory emf;
-	private EntityManager em;
-    private Map<String, Map<String, Slice>> slices;
+    final private GridResourceCache< Slice > cache;
+
+    SliceProviderImpl( EntityManagerFactory emf ) {
+        this.emf = emf;
+        this.actionConfigurer = new ActionConfigurer( emf );
+        this.actionConfigurer.setEntityUpdateListener( new Invalidator() );
+        this.cache = new GridResourceCache<Slice>( Slice.class, emf );
+    }
 
     @Inject
-    public void setProvider(SubspaceProvider provider) {
+    public void setSubspaceProvider( SubspaceProvider provider ) {
         this.provider = provider;
     }
 
-    private SubspaceProvider provider;
-
-    @SuppressWarnings("unchecked")
-	@Override
-	public final void init( ) {
-        em = emf.createEntityManager();
-       	TxFrame tx = new TxFrame(em);
-    	try {
-    		for (Subspace sub : provider.list()) {
-				Map<String, Slice> map = new HashMap<String, Slice>();
-           		Query query = em.createNamedQuery( "listSlicesOfSubspace" );
-                query.setParameter("subspace", sub);
-           		List<String> list = query.getResultList();
-           		slices = new HashMap<String, Map<String, Slice>>();
-           		for (String name : list) {
-           			Slice slice = em.find(Slice.class, name);
-           			map.put(name, slice);
-           		}
-				slices.put( sub.getId(), map );
-			}
-        tx.commit();
-       	} finally {
-       		tx.finish();
-       		if (em != null && em.isOpen()) {
-       			em.close();
-       		}
-       	}
-	}
+    @Inject
+    public void setSliceKindProvider( SliceKindProvider sliceKindProvider ) {
+        this.sliceKindProvider = sliceKindProvider;
+    }
 
 	@Override
 	public final boolean exists(final String subspace, final String slice) {
-		try {
-			return slices.get(subspace).containsKey(slice);
-		} catch (NullPointerException e) {
-			return false;
-		}
+        try{
+            cache.get( subspace );
+        }
+        catch( NoSuchResourceException e )
+        {
+            return false;
+        }
+        return true;
 	}
 
-	@Override
-	public final List<String> listSlices(final String subspace) throws NoSuchElementException {
-		try {
-	        return new ArrayList<String>(slices.get(subspace).keySet());
-		} catch (NullPointerException e) {
-			throw new NoSuchElementException(e.getMessage());
-		}
-	}
+    @Override
+    public final List<String> listSlices( final String subspace ) throws NoSuchElementException {
+        // TODO: query for all slices
+        return null;
+    }
 
-	@Override
-	public final Slice getSlice(final String subspace, final String slice) throws NoSuchElementException {
-		try {
-			return slices.get(subspace).get(slice);
-		} catch (NullPointerException e) {
-			throw new NoSuchElementException(e.getMessage());
-		}
-	}
+    @Override
+    public final Slice getSlice( final String subspace, final String sliceId ) throws NoSuchElementException {
+        try {
+            return cache.get( sliceId );
+        }
+        catch( NullPointerException e ) {
+            throw new NoSuchElementException( e.getMessage() );
+        }
+    }
 
+    @Override
+    public String createSlice(
+            final String subspaceId,
+            final String sliceKindId,
+            final String dn,
+            final Calendar ttm,
+            final long sliceSize ) throws NoSuchElementException {
+
+        if( !sliceKindProvider.exists( subspaceId, sliceKindId ) ) {
+            logger.info( "Illegal Access: slicekind " + sliceKindId + " in subspace " + subspaceId + " not available." );
+            throw new NoSuchElementException( "SliceKind " + sliceKindId + " does not exist in subspace " + subspaceId + "." );
+        }
+
+        SliceKind sliceKind = sliceKindProvider.get( subspaceId, sliceKindId );
+
+        final CreateSliceAction createSliceAction = new CreateSliceAction( dn, ttm, sliceKind, sliceSize );
+        final Slice slice = createSliceAction.call();
+
+        // TODO: could cache the slice here
+
+        return slice.getId();
+    }
+
+    private class Invalidator implements ModelUpdateListener< GridResource > {
+        public void onModelChange( GridResource model ) {
+            SliceProviderImpl.this.cache.invalidate( model.getId() );
+        }
+    }
 }

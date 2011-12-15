@@ -23,6 +23,7 @@ import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.logic.model.dspace.*;
+import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.util.TxFrame;
@@ -42,279 +43,219 @@ import java.util.HashMap;
 
 /**
  * The slice kind service implementation.
- * 
+ *
  * @author Ulrike Golas
  */
 
 @Controller
-@RequestMapping(value = "/dspace")
+@RequestMapping( value = "/dspace" )
 public class SliceKindServiceImpl implements SliceKindService {
-	/**
-	 * The logger.
-	 */
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
-	/**
-	 * The entity manager factory.
-	 */
-	private EntityManagerFactory emf;
-	/**
-	 * The entity manager.
-	 */
-	private EntityManager em;
+    /**
+     * The logger.
+     */
+    private final Logger logger = LoggerFactory.getLogger( this.getClass() );
+    /**
+     * The entity manager factory.
+     */
+    private EntityManagerFactory emf;
+    /**
+     * The entity manager.
+     */
+    private EntityManager em;
 
-	/**
-	 * The base url, something like \c http://my.host.org/gndms/grid_id.
-	 */
-	private String baseUrl;
-	/**
-	 * All available subspaces.
-	 */
-	private SubspaceProvider subspaceProvider;
+    /**
+     * The base url, something like \c http://my.host.org/gndms/grid_id.
+     */
+    private String baseUrl;
+    /**
+     * All available subspaces.
+     */
+    private SubspaceProvider subspaceProvider;
 
     @Inject
-    public void setSliceKindProvider(SliceKindProvider sliceKindProvider) {
+    public void setSliceKindProvider( SliceKindProvider sliceKindProvider ) {
         this.sliceKindProvider = sliceKindProvider;
     }
 
     /**
-	 * All available slice kinds.
-	 */
-	private SliceKindProvider sliceKindProvider;
+     * All available slice kinds.
+     */
+    private SliceKindProvider sliceKindProvider;
 
-    public void setUriFactory(UriFactory uriFactory) {
+    public void setUriFactory( UriFactory uriFactory ) {
         this.uriFactory = uriFactory;
     }
 
     /**
-	 * The uri factory.
-	 */
-	private UriFactory uriFactory;
+     * The uri factory.
+     */
+    private UriFactory uriFactory;
 
-	// TODO: initialization of subspaceProvider
-	/**
-	 * Initialization of the slice kind service.
-	 */
-	@PostConstruct
-	public final void init() {
+    // TODO: initialization of subspaceProvider
+
+    /**
+     * Initialization of the slice kind service.
+     */
+    @PostConstruct
+    public final void init() {
         setUriFactory( new UriFactory() );
-	}
+    }
 
-	@Override
-	@RequestMapping(value = "/_{subspace}/_{sliceKind}", method = RequestMethod.GET)
-	public final ResponseEntity<Configuration> getSliceKindInfo(
-			@PathVariable final String subspace,
-			@PathVariable final String sliceKind,
-			@RequestHeader("DN") final String dn) {
-		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, dn);
+    @Override
+    @RequestMapping( value = "/_{subspace}/_{sliceKind}", method = RequestMethod.GET )
+    public final ResponseEntity<Configuration> getSliceKindInfo(
+            @PathVariable final String subspace,
+            @PathVariable final String sliceKind,
+            @RequestHeader( "DN" ) final String dn ) {
+        GNDMSResponseHeader headers = setHeaders( subspace, sliceKind, dn );
 
-		try {
-			SliceKind sliceK = sliceKindProvider.get(subspace, sliceKind);
-			SliceKindConfiguration config = SliceKindConfiguration.getSliceKindConfiguration(sliceK);
-			return new ResponseEntity<Configuration>(config, headers,
-					HttpStatus.OK);
-		} catch (NoSuchElementException ne) {
-			logger.warn("The slice kind " + sliceKind + "does not exist within the subspace" + subspace + ".");
-			return new ResponseEntity<Configuration>(null, headers,
-					HttpStatus.NOT_FOUND);
-		}
-	}
+        try {
+            SliceKind sliceK = sliceKindProvider.get( subspace, sliceKind );
+            SliceKindConfiguration config = SliceKindConfiguration.getSliceKindConfiguration( sliceK );
+            return new ResponseEntity<Configuration>( config, headers,
+                                                      HttpStatus.OK );
+        }
+        catch( NoSuchElementException ne ) {
+            logger.warn( "The slice kind " + sliceKind + "does not exist within the subspace" + subspace + "." );
+            return new ResponseEntity<Configuration>( null, headers,
+                                                      HttpStatus.NOT_FOUND );
+        }
+    }
 
-	@Override
-	@RequestMapping(value = "/_{subspace}/_{sliceKind}", method = RequestMethod.POST)
-	public final ResponseEntity<Specifier<Void>> createSlice(
-			@PathVariable final String subspace,
-			@PathVariable final String sliceKind,
-			@RequestBody final Configuration config,
-			@RequestHeader("DN") final String dn) {
-		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, dn);
+    @Override
+    @RequestMapping( value = "/_{subspace}/_{sliceKind}", method = RequestMethod.PUT )
+    public final ResponseEntity<Void> setSliceKindConfig( @PathVariable final String subspace,
+                                                          @PathVariable final String sliceKind, final Configuration config, final String dn ) {
+        GNDMSResponseHeader headers = setHeaders( subspace, sliceKind, dn );
 
-		try {
-			if (!sliceKindProvider.exists(subspace, sliceKind)) {
-				logger.warn("Slice kind " + sliceKind + " in subspace " + subspace + " not available");
-				return new ResponseEntity<Specifier<Void>>(null, headers,
-						HttpStatus.FORBIDDEN);
-			}
-			
-			SliceConfiguration sliceConfig = SliceConfiguration.checkSliceConfig(config);
-			SliceKind kind = sliceKindProvider.get(subspace, sliceKind);
+        try {
+            SliceKind sliceK = sliceKindProvider.get( subspace, sliceKind );
+            SliceKindConfiguration sliceKindConfig = SliceKindConfiguration.checkSliceKindConfig( config );
 
-            // TODO: how to get a new slice name, what else to do?
-            String slice = new String();
-            
-		   	em = emf.createEntityManager();
-	       	TxFrame tx = new TxFrame(em);
+            sliceK.setPermission( sliceKindConfig.getPermission() );
 
-	        try {
-				// TODO is this right? what is this uuid generator (forth entry)?            
-	        	CreateSliceAction action = new CreateSliceAction(slice, dn, 
-	        			sliceConfig.getTerminationTime(), null, kind, sliceConfig.getSize());
-				action.setOwnEntityManager(em);
-				logger.info("Calling action for creating slice in " + sliceKind
-						+ ".");
-				action.call();
-				tx.commit();
-				
-	        } finally  {
-	            if (tx != null) {
-	                tx.finish();       
-	            }
-	            if (em != null && em.isOpen()) {
-	                em.close( );
-	            }
-	        }
+            // TODO: sliceK.setSliceKindConfiguration(sliceKindConfig)
 
-			Specifier<Void> spec = new Specifier<Void>();
+            Specifier<Void> spec = new Specifier<Void>();
 
-			HashMap<String, String> urimap = new HashMap<String, String>(2);
-			urimap.put("service", "dspace");
-			urimap.put(UriFactory.SUBSPACE, subspace);
-			urimap.put(UriFactory.SLICEKIND, sliceKind);
-			urimap.put(UriFactory.SLICE, slice);
-			spec.setUriMap(new HashMap<String, String>(urimap));
-			spec.setUrl(uriFactory.quoteUri(urimap));
+            HashMap<String, String> urimap = new HashMap<String, String>( 2 );
+            urimap.put( "service", "dspace" );
+            urimap.put( UriFactory.SUBSPACE, subspace );
+            urimap.put( UriFactory.SLICEKIND, sliceKind );
+            spec.setUriMap( new HashMap<String, String>( urimap ) );
+            spec.setUrl( uriFactory.quoteUri( urimap ) );
 
-			return new ResponseEntity<Specifier<Void>>(spec, headers,
-					HttpStatus.OK);
-				
-		} catch (WrongConfigurationException e) {
-			logger.warn(e.getMessage());
-  			return new ResponseEntity<Specifier<Void>>(null, headers,
-					HttpStatus.BAD_REQUEST);
-		} catch (NoSuchElementException e) {
-			logger.warn(e.getMessage());
-  			return new ResponseEntity<Specifier<Void>>(null, headers,
-					HttpStatus.NOT_FOUND);
-		}
+            return new ResponseEntity<Void>( null, headers,
+                                             HttpStatus.OK );
+        }
+        catch( NoSuchElementException ne ) {
+            logger.warn( "The slice kind " + sliceKind + "does not exist within the subspace" + subspace );
+            return new ResponseEntity<Void>( null, headers,
+                                             HttpStatus.NOT_FOUND );
+        }
+        catch( WrongConfigurationException e ) {
+            logger.warn( "Wrong slice kind configuration" );
+            return new ResponseEntity<Void>( null, headers,
+                                             HttpStatus.BAD_REQUEST );
+        }
 
-	}
+    }
 
-	@Override
-	@RequestMapping(value = "/_{subspace}/_{sliceKind}", method = RequestMethod.PUT)
-	public final ResponseEntity<Void> setSliceKindConfig(@PathVariable final String subspace,
-			@PathVariable final String sliceKind, final Configuration config, final String dn) {
-		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, dn);
+    @Override
+    @RequestMapping( value = "/_{subspace}/_{sliceKind}", method = RequestMethod.DELETE )
+    public final ResponseEntity<Specifier<Void>> deleteSliceKind(
+            @PathVariable final String subspace,
+            @PathVariable final String sliceKind,
+            @RequestHeader( "DN" ) final String dn ) {
+        GNDMSResponseHeader headers = setHeaders( subspace, sliceKind, dn );
+        try {
+            SliceKind sliceK = sliceKindProvider.get( subspace, sliceKind );
+            Subspace sub = subspaceProvider.get( subspace );
 
-		try {
-			SliceKind sliceK = sliceKindProvider.get(subspace, sliceKind);
-			SliceKindConfiguration sliceKindConfig = SliceKindConfiguration.checkSliceKindConfig(config);
+            // TODO: AssignSliceKindAction zum lschen
+            return new ResponseEntity<Specifier<Void>>( null, headers, HttpStatus.OK );
+        }
+        catch( NoSuchElementException ne ) {
+            logger.warn( "The slice kind " + sliceKind + "does not exist within the subspace" + subspace );
+            return new ResponseEntity<Specifier<Void>>( null, headers,
+                                                        HttpStatus.NOT_FOUND );
+        }
+    }
 
-			sliceK.setPermission(sliceKindConfig.getPermission());
-			
-			// TODO: sliceK.setSliceKindConfiguration(sliceKindConfig)
+    /**
+     * Sets the GNDMS response header for a given subspace, slice kind and dn
+     * using the base URL.
+     *
+     * @param subspace  The subspace id.
+     * @param sliceKind The slice kind id.
+     * @param dn        The dn.
+     * @return The response header for this subspace.
+     */
+    private GNDMSResponseHeader setHeaders( final String subspace,
+                                            final String sliceKind, final String dn ) {
+        GNDMSResponseHeader headers = new GNDMSResponseHeader();
+        headers.setResourceURL( baseUrl + "/dspace/_" + subspace + "/_"
+                                        + sliceKind );
+        headers.setParentURL( baseUrl + "/dspace/_" + subspace );
+        if( dn != null ) {
+            headers.setDN( dn );
+        }
+        return headers;
+    }
 
-			Specifier<Void> spec = new Specifier<Void>();
+    /**
+     * Returns the base url of this slice kind service.
+     *
+     * @return the baseUrl
+     */
+    public final String getBaseUrl() {
+        return baseUrl;
+    }
 
-			HashMap<String, String> urimap = new HashMap<String, String>(2);
-			urimap.put("service", "dspace");
-			urimap.put(UriFactory.SUBSPACE, subspace);
-			urimap.put(UriFactory.SLICEKIND, sliceKind);
-			spec.setUriMap(new HashMap<String, String>(urimap));
-			spec.setUrl(uriFactory.quoteUri(urimap));
+    /**
+     * Sets the base url of this slice kind service.
+     *
+     * @param baseUrl the baseUrl to set
+     */
+    public final void setBaseUrl( final String baseUrl ) {
+        this.baseUrl = baseUrl;
+    }
 
-			return new ResponseEntity<Void>(null, headers,
-					HttpStatus.OK);
-		} catch (NoSuchElementException ne) {
-			logger.warn("The slice kind " + sliceKind + "does not exist within the subspace" + subspace);
-  			return new ResponseEntity<Void>(null, headers,
-					HttpStatus.NOT_FOUND);
-		} catch (WrongConfigurationException e) {
-			logger.warn("Wrong slice kind configuration");
-  			return new ResponseEntity<Void>(null, headers,
-					HttpStatus.BAD_REQUEST);
-		}
+    /**
+     * Returns the subspace provider of this slice kind service.
+     *
+     * @return the subspaceProvider
+     */
+    public final SubspaceProvider getSubspaceProvider() {
+        return subspaceProvider;
+    }
 
-	}
+    /**
+     * Sets the subspace provider of this slice kind service.
+     *
+     * @param subspaceProvider the subspaceProvider to set
+     */
+    public final void setSubspaceProvider( final SubspaceProvider subspaceProvider ) {
+        this.subspaceProvider = subspaceProvider;
+    }
 
-	@Override
-	@RequestMapping(value = "/_{subspace}/_{sliceKind}", method = RequestMethod.DELETE)
-	public final ResponseEntity<Specifier<Void>> deleteSliceKind(
-			@PathVariable final String subspace,
-			@PathVariable final String sliceKind,
-			@RequestHeader("DN") final String dn) {
-		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, dn);
-		try {
-			SliceKind sliceK = sliceKindProvider.get(subspace, sliceKind);
-			Subspace sub = subspaceProvider.get(subspace);
+    /**
+     * Returns the entity manager factory.
+     *
+     * @return the factory.
+     */
+    public final EntityManagerFactory getEmf() {
+        return emf;
+    }
 
-			// TODO: AssignSliceKindAction zum lschen
-			return new ResponseEntity<Specifier<Void>>(null, headers, HttpStatus.OK);
-		} catch (NoSuchElementException ne) {
-			logger.warn("The slice kind " + sliceKind + "does not exist within the subspace" + subspace);
-				return new ResponseEntity<Specifier<Void>>(null, headers,
-						HttpStatus.NOT_FOUND);
-		}
-	}
+    /**
+     * Sets the entity manager factory.
+     *
+     * @param emf the factory to set.
+     */
+    @PersistenceUnit
+    public final void setEmf( final EntityManagerFactory emf ) {
+        this.emf = emf;
+    }
 
-	/**
-	 * Sets the GNDMS response header for a given subspace, slice kind and dn
-	 * using the base URL.
-	 * 
-	 * @param subspace
-	 *            The subspace id.
-	 * @param sliceKind
-	 *            The slice kind id.
-	 * @param dn
-	 *            The dn.
-	 * @return The response header for this subspace.
-	 */
-	private GNDMSResponseHeader setHeaders(final String subspace,
-			final String sliceKind, final String dn) {
-		GNDMSResponseHeader headers = new GNDMSResponseHeader();
-		headers.setResourceURL(baseUrl + "/dspace/_" + subspace + "/_"
-				+ sliceKind);
-		headers.setParentURL(baseUrl + "/dspace/_" + subspace);
-		if (dn != null) {
-			headers.setDN(dn);
-		}
-		return headers;
-	}
-
-	/**
-	 * Returns the base url of this slice kind service.
-	 * @return the baseUrl
-	 */
-	public final String getBaseUrl() {
-		return baseUrl;
-	}
-
-	/**
-	 * Sets the base url of this slice kind service.
-	 * @param baseUrl the baseUrl to set
-	 */
-	public final void setBaseUrl(final String baseUrl) {
-		this.baseUrl = baseUrl;
-	}
-
-	/**
-	 * Returns the subspace provider of this slice kind service.
-	 * @return the subspaceProvider
-	 */
-	public final SubspaceProvider getSubspaceProvider() {
-		return subspaceProvider;
-	}
-
-	/**
-	 * Sets the subspace provider of this slice kind service.
-	 * @param subspaceProvider the subspaceProvider to set
-	 */
-	public final void setSubspaceProvider(final SubspaceProvider subspaceProvider) {
-		this.subspaceProvider = subspaceProvider;
-	}
-	/**
-	 * Returns the entity manager factory.
-	 * @return the factory.
-	 */
-	public final EntityManagerFactory getEmf() {
-		return emf;
-	}
-
-	/**
-	 * Sets the entity manager factory.
-	 * @param emf the factory to set.
-	 */
-	@PersistenceUnit
-	public final void setEmf(final EntityManagerFactory emf) {
-		this.emf = emf;
-	}
-	
 }

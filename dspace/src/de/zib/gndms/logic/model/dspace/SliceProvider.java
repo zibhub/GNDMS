@@ -16,9 +16,10 @@ package de.zib.gndms.logic.model.dspace;
  * limitations under the License.
  */
 
-import java.util.List;
-
 import de.zib.gndms.model.dspace.Slice;
+
+import java.util.Calendar;
+import java.util.List;
 
 /**
  * Provides a mapping of slice ids and slices.
@@ -27,11 +28,6 @@ import de.zib.gndms.model.dspace.Slice;
  */
 
 public interface SliceProvider {
-
-	/**
-	 * Initialization of the slice provider.
-	 */
-	void init( );
 
 	/**
 	 * Checks whether a given slice id exists for the subspace.
@@ -58,4 +54,5 @@ public interface SliceProvider {
      */
     Slice getSlice(String subspace, String slice) throws NoSuchElementException;
 
+    String createSlice( String subspace, String sliceKind, String dn, Calendar ttm, long sliceSize ) throws NoSuchElementException;
 }

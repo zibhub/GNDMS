@@ -16,29 +16,6 @@
 
 package de.zib.gndms.dspace.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
-
-import de.zib.gndms.logic.model.dspace.*;
-import de.zib.gndms.model.dspace.SliceKind;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-
 import de.zib.gndms.common.dspace.service.SubspaceService;
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.logic.config.SetupMode;
@@ -47,18 +24,41 @@ import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
+import de.zib.gndms.kit.config.ParameterTools;
+import de.zib.gndms.logic.model.dspace.*;
+import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.util.TxFrame;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/dspace")
 public class SubspaceServiceImpl implements SubspaceService {
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger( this.getClass() );
 	private EntityManagerFactory emf;
 	private EntityManager em;
 	private String baseUrl;
 	private SubspaceProvider subspaceProvider;
     private SliceKindProvider slicekindProvider;
+    private SliceProvider sliceProvider;
 
 	private UriFactory uriFactory;
 	private Facets subspaceFacets;
@@ -252,6 +252,80 @@ public class SubspaceServiceImpl implements SubspaceService {
 					HttpStatus.BAD_REQUEST);
 		}
 	}
+
+    @Override
+    @RequestMapping( value = "/_{subspace}/_{sliceKind}", method = RequestMethod.POST )
+    public final ResponseEntity< Specifier< Void > > createSlice(
+            @PathVariable final String subspace,
+            @PathVariable final String sliceKind,
+            @RequestBody final String config,
+            @RequestHeader( "DN" ) final String dn ) {
+        GNDMSResponseHeader headers = setHeaders( subspace, sliceKind, dn );
+
+        try {
+            Map< String, String > parameters = new HashMap< String, String >( );
+            ParameterTools.parseParameters( parameters, config, null );
+            if( !parameters.containsKey( "deadline" ) )
+                throw new WrongConfigurationException( "Missing configuration option" );
+            if( !parameters.containsKey( "sliceSize" ) )
+                throw new WrongConfigurationException( "Missing configuration option" );
+
+            // use provider to create slice
+            DateTimeFormatter fmt = ISODateTimeFormat.dateTimeParser();
+            DateTime deadline = fmt.parseDateTime( parameters.get( "deadline" ) );
+            String slice = sliceProvider.createSlice( subspace, sliceKind, dn, deadline.toGregorianCalendar(), Long.parseLong( parameters.get( "sliceSize" ) ) );
+
+            // generate specifier and return it
+            Specifier<Void> spec = new Specifier<Void>();
+
+            HashMap<String, String> urimap = new HashMap<String, String>( 2 );
+            urimap.put( "service", "dspace" );
+            urimap.put( UriFactory.SUBSPACE, subspace );
+            urimap.put( UriFactory.SLICEKIND, sliceKind );
+            urimap.put( UriFactory.SLICE, slice );
+            spec.setUriMap( new HashMap<String, String>( urimap ) );
+            spec.setUrl( uriFactory.quoteUri( urimap ) );
+
+            return new ResponseEntity< Specifier< Void > >( spec, headers,
+                                                        HttpStatus.OK );
+        }
+        catch( WrongConfigurationException e ) {
+            logger.warn( e.getMessage() );
+            return new ResponseEntity<Specifier<Void>>( null, headers,
+                                                        HttpStatus.BAD_REQUEST );
+        }
+        catch( NoSuchElementException e ) {
+            logger.warn( e.getMessage() );
+            return new ResponseEntity<Specifier<Void>>( null, headers,
+                                                        HttpStatus.NOT_FOUND );
+        }
+        catch( ParameterTools.ParameterParseException e ) {
+            logger.info( "Illegal request: Could not parse paramter string \"" + ParameterTools.escape( config ) + "\". " + e.getMessage() );
+            return new ResponseEntity<Specifier<Void>>( null, headers,
+                                                        HttpStatus.BAD_REQUEST );
+        }
+    }
+
+    /**
+     * Sets the GNDMS response header for a given subspace, slice kind and dn
+     * using the base URL.
+     *
+     * @param subspace  The subspace id.
+     * @param sliceKind The slice kind id.
+     * @param dn        The dn.
+     * @return The response header for this subspace.
+     */
+    private GNDMSResponseHeader setHeaders( final String subspace,
+                                            final String sliceKind, final String dn ) {
+        GNDMSResponseHeader headers = new GNDMSResponseHeader();
+        headers.setResourceURL( baseUrl + "/dspace/_" + subspace + "/_"
+                                        + sliceKind );
+        headers.setParentURL( baseUrl + "/dspace/_" + subspace );
+        if( dn != null ) {
+            headers.setDN( dn );
+        }
+        return headers;
+    }
 
 	/**
 	 * Sets the GNDMS response header for a given subspace and dn using the base

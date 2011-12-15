@@ -55,21 +55,6 @@ public interface SliceKindService {
 			String sliceKind, String dn);
 
 	/**
-	 * Sets the configuration of the slice kind.
-	 * 
-	 * @param subspace
-	 *            The subspace identifier.
-	 * @param sliceKind
-	 *            The slice kind identifier.
-	 * @param config The configuration of the slice kind.
-	 * @param dn
-	 *            The dn of the user invoking the method.
-	 * @return The representation of the slice kind.
-	 */
-	ResponseEntity<Specifier<Void>> createSlice(String subspace,
-			String sliceKind, Configuration config, String dn);
-
-	/**
 	 * Sets a slice kind configuration.
 	 * 
 	 * @param subspace

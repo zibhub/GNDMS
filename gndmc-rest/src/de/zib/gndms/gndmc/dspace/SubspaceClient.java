@@ -98,4 +98,10 @@ public class SubspaceClient extends AbstractClient implements SubspaceService {
 				+ subspace + "/config", dn);
 	}
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public ResponseEntity< Specifier< Void > > createSlice( String subspace, String sliceKind, String config, String dn ) {
+        return ( ResponseEntity< Specifier< Void > > )( Object )unifiedPost( Specifier.class, config, getServiceURL() + "/dspace/_" + subspace + "/_" + sliceKind, dn );
+    }
+
 }

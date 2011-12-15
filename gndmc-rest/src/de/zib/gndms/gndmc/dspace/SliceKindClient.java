@@ -53,15 +53,6 @@ public class SliceKindClient extends AbstractClient implements SliceKindService 
 				+ "/_" + sliceKind, dn);
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public final ResponseEntity<Specifier<Void>> createSlice(final String subspace,
-			final String sliceKind, final Configuration config, final String dn) {
-		return (ResponseEntity<Specifier<Void>>) (Object) unifiedPost(Specifier.class, config, getServiceURL() 
-				+ "/dspace/_" + subspace + "/_"
-				+ sliceKind, dn);
-	}
-
 	@Override
 	public final ResponseEntity<Void> setSliceKindConfig(final String subspace,
 			final String sliceKind, final Configuration config, final String dn) {

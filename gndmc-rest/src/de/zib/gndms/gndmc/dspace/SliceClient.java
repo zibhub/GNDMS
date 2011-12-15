@@ -16,20 +16,19 @@ package de.zib.gndms.gndmc.dspace;
  * limitations under the License.
  */
 
-import java.io.File;
-import java.io.OutputStream;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.multipart.MultipartFile;
-
 import de.zib.gndms.common.dspace.service.SliceService;
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.stuff.util.Product;
 import de.zib.gndms.gndmc.AbstractClient;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.OutputStream;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The slice client implementing the slice service.
@@ -55,9 +54,9 @@ public class SliceClient extends AbstractClient implements SliceService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public final ResponseEntity<Product<Configuration, Facets>> listSliceFacets(final String subspace,
+	public final ResponseEntity< Facets > listSliceFacets(final String subspace,
 			final String sliceKind, final String slice, final String dn) {
-		return (ResponseEntity<Product<Configuration, Facets>>) (Object) unifiedGet(Product.class, getServiceURL() 
+		return (ResponseEntity< Facets >) (Object) unifiedGet(Product.class, getServiceURL()
 				+ "/dspace/_" + subspace
 				+ "/_" + sliceKind + "/_" + slice, dn);
 	}

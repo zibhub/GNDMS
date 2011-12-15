@@ -21,7 +21,6 @@ package de.zib.gndms.logic.model.dspace;
 import de.zib.gndms.common.model.common.AccessMask;
 import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.logic.model.CreateTimedGridResourceAction;
-import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
@@ -30,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.persistence.EntityManager;
 import java.io.File;
 import java.util.Calendar;
+import java.util.UUID;
 
 /**
  * An action which creates a new slice in a given workspace
@@ -65,17 +65,14 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
      * It creates and returns a new slice object, when this action is executed.
      *
      *
-     * @param uuid a uuid identifying the grid resource of the new slice instance
      * @param uid name of the owner of the new slice, can be null, then the current user will become the owner.
      * @param ttm the termination time of the slice object
-     * @param gen an uuid generator for the directory id of the new slice object
      * @param kind the sliceKind instance for the slice. (See {@link Slice}).
      * @param ssize total storage size for the slice instance
      */
-    public CreateSliceAction( String uuid, String uid, Calendar ttm, ModelUUIDGen gen, SliceKind kind, long ssize ) {
+    public CreateSliceAction( String uid, Calendar ttm, SliceKind kind, long ssize ) {
 
-        super( uuid, ttm );
-        setUUIDGen(gen);
+        super( UUID.randomUUID().toString(), ttm );
         if( uid != null )
             this.uid = uid;
         this.sliceKind = kind;
@@ -88,18 +85,15 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
      * It creates and returns a new slice object, when this action is executed.
      *
      *
-     * @param uuid a uuid identifying the grid resource of the new slice instance
      * @param uid name of the owner of the new slice, can be null, then the current user will become the owner.
      * @param ttm the termination time of the slice object
-     * @param gen an uuid generator for the directory id of the new slice object
      * @param kind the sliceKind instance for the slice. (See {@link Slice}).
      * @param ssize total storage size for the slice instance
      * @param da an helper object for directory access 
      */
-    public CreateSliceAction( String uuid, String uid, Calendar ttm, ModelUUIDGen gen, SliceKind kind, long ssize, DirectoryAux da ) {
+    public CreateSliceAction( String uid, Calendar ttm, SliceKind kind, long ssize, DirectoryAux da ) {
         
-        super( uuid, ttm );
-        setUUIDGen(gen);
+        super( UUID.randomUUID().toString(), ttm );
         if( uid != null )
             this.uid = uid;
         this.sliceKind = kind;

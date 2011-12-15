@@ -135,13 +135,11 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
             SliceKind kind = getEntityManager().find(SliceKind.class, slicekindKey);
 
             TransformSliceAction tsa =  new TransformSliceAction(
-                getUUIDGen().nextUUID(),
                 getOrder().getLocalUser(),
                 slice.getTerminationTime(),
                 kind,
                 slice.getSubspace(),
-                slice.getTotalStorageSize(),
-                getUUIDGen()
+                slice.getTotalStorageSize()
             );
 
             tsa.setParent( this );
