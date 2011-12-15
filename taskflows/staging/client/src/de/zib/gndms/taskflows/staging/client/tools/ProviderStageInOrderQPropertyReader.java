@@ -20,8 +20,7 @@ package de.zib.gndms.taskflows.staging.client.tools;
 
 import de.zib.gndms.common.model.gorfx.types.io.OrderPropertyReader;
 import de.zib.gndms.common.model.gorfx.types.io.SfrProperty;
-import de.zib.gndms.model.gorfx.types.ProviderStageInOrder;
-import de.zib.gndms.taskflows.staging.client.tools.DataDescriptorPropertyReader;
+import de.zib.gndms.taskflows.staging.client.model.ProviderStageInOrder;
 
 import java.util.Properties;
 import java.io.InputStream;

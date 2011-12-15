@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types.io.tests;
+package de.zib.gndms.taskflows.staging.client.tools.tests;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -18,6 +18,10 @@ package de.zib.gndms.model.gorfx.types.io.tests;
 
 
 
+import de.zib.gndms.taskflows.staging.client.model.ProviderStageInOrder;
+import de.zib.gndms.taskflows.staging.client.tools.ProviderStageInOrderConverter;
+import de.zib.gndms.taskflows.staging.client.tools.ProviderStageInOrderPropertyWriter;
+import de.zib.gndms.taskflows.staging.client.tools.ProviderStageInOrderQPropertyReader;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
@@ -26,10 +30,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Properties;
 
-import de.zib.gndms.model.gorfx.types.io.ProviderStageInOrderQPropertyReader;
-import de.zib.gndms.model.gorfx.types.io.ProviderStageInOrderConverter;
-import de.zib.gndms.model.gorfx.types.io.ProviderStageInOrderPropertyWriter;
-import de.zib.gndms.model.gorfx.types.ProviderStageInOrder;
 
 /**
  * @author  try ma ik jo rr a zib

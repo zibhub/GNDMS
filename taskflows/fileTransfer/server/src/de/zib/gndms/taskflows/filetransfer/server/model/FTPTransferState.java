@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx;
+package de.zib.gndms.taskflows.filetransfer.server.model;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)

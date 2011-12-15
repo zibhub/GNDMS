@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types.io.tests;
+package de.zib.gndms.taskflows.filetransfer.client.tools.tests;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -18,11 +18,13 @@ package de.zib.gndms.model.gorfx.types.io.tests;
 
 
 
-import de.zib.gndms.model.gorfx.types.FileTransferOrder;
-import de.zib.gndms.model.gorfx.types.io.FileTransferOrderPropertyWriter;
-import de.zib.gndms.model.gorfx.types.io.FileTransferOrderConverter;
-import de.zib.gndms.model.gorfx.types.io.FileTransferOrderPropertyReader;
-import de.zib.gndms.model.gorfx.types.io.FileTransferOrderStdoutWriter;
+
+
+import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferOrder;
+import de.zib.gndms.taskflows.filetransfer.client.tools.FileTransferOrderConverter;
+import de.zib.gndms.taskflows.filetransfer.client.tools.FileTransferOrderPropertyReader;
+import de.zib.gndms.taskflows.filetransfer.client.tools.FileTransferOrderPropertyWriter;
+import de.zib.gndms.taskflows.filetransfer.client.tools.FileTransferOrderStdoutWriter;
 
 import java.util.TreeMap;
 import java.util.Properties;
@@ -56,7 +58,7 @@ public class FileTransferORQIOTest {
         ctx.put( "k2", "v2" );
         ctx.put( "k3", "v3" );
         ctx.put( "k4", "v4" );
-        order.setActContext( ctx );
+      //  order.setActContext( ctx );
 
         FileTransferOrderStdoutWriter cout = new FileTransferOrderStdoutWriter( );
         FileTransferOrderConverter conv = new FileTransferOrderConverter( cout, order );

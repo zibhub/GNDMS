@@ -55,13 +55,13 @@ public class ExternalProviderStageInQuoteCalculator extends
 
 	private @NotNull final Logger logger = LoggerFactory.getLogger(ExternalProviderStageInQuoteCalculator.class);
 
-	private final ParmFormatAux parmAux;
+	private final StagingIOFormatHelper stagingIOHelper;
 	private SystemInfo sysInfo;
 
 
 	public ExternalProviderStageInQuoteCalculator() {
         super( );
-		parmAux = new ParmFormatAux();
+		stagingIOHelper = new StagingIOFormatHelper();
     }
 
 
@@ -73,7 +73,7 @@ public class ExternalProviderStageInQuoteCalculator extends
 
         MapConfig config = new MapConfig( getDao().getTaskFlowTypeConfig( getOrderBean().getTaskFlowType() ) );
         
-        parmAux.formatFromMap( config );
+        stagingIOHelper.formatFromMap( config );
 
         if (config.hasOption("estimationCommand")) {
             File estCommandFile = config.getFileOption("estimationCommand");
@@ -102,7 +102,7 @@ public class ExternalProviderStageInQuoteCalculator extends
                 throw new PermissionDeniedTaskFlowException("Estimation script failed (Permission Denied): " + errRecv.toString());
             case 0:
                 try {
-                    return parmAux.getResult( outRecv );
+                    return stagingIOHelper.getResult( outRecv );
                 } catch (Exception e) {
                     throw new IllegalStateException("Estimation script failed: " + errRecv.toString(),
                                                     e);
@@ -131,7 +131,7 @@ public class ExternalProviderStageInQuoteCalculator extends
 
         ProcessBuilderAction action;
         // todo add permissions here when delegation is implemented
-        action = parmAux.createPBAction( getOrderBean(), contParam, null );
+        action = stagingIOHelper.createPBAction( getOrderBean(), contParam, null );
         action.setProcessBuilder(pb);
         action.setOutputReceiver(new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY));
         action.setErrorReceiver(new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY));

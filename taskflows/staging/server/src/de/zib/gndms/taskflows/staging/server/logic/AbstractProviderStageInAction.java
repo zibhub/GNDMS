@@ -58,7 +58,7 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
 
     public static final String PROXY_FILE_NAME = "/x509_proxy.pem";
 
-	protected ParmFormatAux parmAux = new ParmFormatAux();
+	protected StagingIOFormatHelper stagingIOHelper = new StagingIOFormatHelper();
 
     protected AbstractProviderStageInAction( String offerTypeId ) {
         super( offerTypeId );

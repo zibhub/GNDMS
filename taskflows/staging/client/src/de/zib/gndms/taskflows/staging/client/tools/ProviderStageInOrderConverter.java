@@ -19,9 +19,8 @@ package de.zib.gndms.taskflows.staging.client.tools;
 
 
 import de.zib.gndms.common.model.gorfx.types.io.OrderConverter;
-import de.zib.gndms.model.gorfx.types.ProviderStageInOrder;
-import de.zib.gndms.taskflows.staging.client.tools.DataDescriptorConverter;
-import de.zib.gndms.taskflows.staging.client.tools.DataDescriptorWriter;
+import de.zib.gndms.taskflows.staging.client.model.ProviderStageInOrder;
+
 
 /**
  * @author  try ma ik jo rr a zib

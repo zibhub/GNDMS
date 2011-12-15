@@ -50,13 +50,13 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
 
 	public ExternalProviderStageInAction() {
         super( ProviderStageInMeta.PROVIDER_STAGING_KEY );
-	    parmAux = new ParmFormatAux();
+	    stagingIOHelper = new StagingIOFormatHelper();
     }
 
 
     public ExternalProviderStageInAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model) {
         super(em, dao, model);
-        parmAux = new ParmFormatAux();
+        stagingIOHelper = new StagingIOFormatHelper();
     }
 
 
@@ -66,7 +66,7 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
             final MapConfig offerTypeConfigParam, final ProviderStageInOrder orderParam,
             final Slice sliceParam) {
 
-        parmAux.formatFromMap( getOfferTypeConfig() );
+        stagingIOHelper.formatFromMap( getOfferTypeConfig() );
 
 	    final File sliceDir = new File(sliceParam.getSubspace().getPathForSlice(sliceParam));
         final ProcessBuilder procBuilder = createProcessBuilder("stagingCommand", sliceDir);
@@ -78,7 +78,7 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
         final StringBuilder outRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
         final StringBuilder errRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
 
-        final ProcessBuilderAction action = parmAux.createPBAction( orderParam, null, actualPermissions() );
+        final ProcessBuilderAction action = stagingIOHelper.createPBAction( orderParam, null, actualPermissions() );
         action.setProcessBuilder(procBuilder);
         action.setOutputReceiver(outRecv);
         action.setErrorReceiver(errRecv);
@@ -114,7 +114,7 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
 
 		final StringBuilder outRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
 		final StringBuilder errRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
-		final ProcessBuilderAction action = parmAux.createPBAction( orderParam, null, actualPermissions() );
+		final ProcessBuilderAction action = stagingIOHelper.createPBAction( orderParam, null, actualPermissions() );
 		action.setProcessBuilder(procBuilder);
 		action.setOutputReceiver(outRecv);
 		action.setErrorReceiver(errRecv);

@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types.io.tests;
+package de.zib.gndms.taskflows.staging.client.tools.tests;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -20,12 +20,12 @@ package de.zib.gndms.model.gorfx.types.io.tests;
 
 import de.zib.gndms.common.model.gorfx.types.MinMaxPair;
 import de.zib.gndms.common.model.gorfx.types.io.SfrProperty;
+import de.zib.gndms.taskflows.staging.client.model.*;
+import de.zib.gndms.taskflows.staging.client.tools.*;
 import org.joda.time.DateTime;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * @author  try ma ik jo rr a zib
@@ -39,21 +39,21 @@ public class ProviderStageInORQIOTest {
 
         DataDescriptor ddt = new DataDescriptor();
         DataConstraints dc = new DataConstraints();
-        List<String> ol = { "hello", "world" };
-        List<String> cfl = { "foo", "bar", "foobar", "blubber", };
-        HashMap<String,String> cl = new HashMap<String,String>( );
-        cl.put( "gibson", "les-paul");
+        List<String> ol = Arrays.asList( "hello", "world" );
+        List<String> cfl = Arrays.asList( "foo", "bar", "foobar", "blubber" );
+        HashMap<String, String> cl = new HashMap<String, String>();
+        cl.put( "gibson", "les-paul" );
         cl.put( "fender", "Stratocaster" );
         cl.put( "duesenberg", "double-cat" );
 
         SpaceConstraint sc = new SpaceConstraint();
         sc.setLatitude( new MinMaxPair( -1.3, 5.7 ) );
         sc.setLongitude( new MinMaxPair( 2.7, 42.0 ) );
-        sc.setAltitude(  new MinMaxPair( 1500., 3000.  ) );
+        sc.setAltitude( new MinMaxPair( 1500., 3000. ) );
         sc.setVerticalCRS( "some vertical crs" );
         sc.setAreaCRS( "the area crs" );
 
-        DateTime tm = new DateTime( );
+        DateTime tm = new DateTime();
         TimeConstraint tc = new TimeConstraint();
         tc.setMinTime( tm );
         tc.setMaxTime( tm.plusDays( 6 ) );
@@ -67,7 +67,7 @@ public class ProviderStageInORQIOTest {
         dc.setSpaceConstraint( sc );
         dc.setTimeConstraint( tc );
         dc.setConstraintList( cl );
-        
+
         ddt.setObjectList( ol );
         ddt.setConstrains( dc );
         ddt.setDataFormat( dff );
@@ -79,9 +79,9 @@ public class ProviderStageInORQIOTest {
         order.setDataDescriptor( ddt );
         order.setActDataFile( "data_file" );
         order.setActMetadataFile( "meta_data_file" );
-        order.setActId( "asdfjkl" );
+        //order.setActId( "asdfjkl" );
 
-        Properties prop = new Properties( );
+        Properties prop = new Properties();
         ProviderStageInOrderPropertyWriter wrt = new ProviderStageInOrderPropertyWriter( prop );
         ProviderStageInOrderConverter conv = new ProviderStageInOrderConverter( wrt, order );
         conv.convert();
@@ -91,15 +91,16 @@ public class ProviderStageInORQIOTest {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
-        ProviderStageInOrderQPropertyReader reader = new ProviderStageInOrderQPropertyReader( prop );
-        reader.begin( );
+        ProviderStageInOrderQPropertyReader reader =
+                new ProviderStageInOrderQPropertyReader( prop );
+        reader.begin();
         reader.read();
         ProviderStageInOrder rorq = reader.getProduct();
 
         String fn = "StageIn_io_test_props.properties";
         try {
             OutputStream os = new FileOutputStream( fn );
-            prop.store( os, "some test props for proivder stage in io" );
+            prop.store( os, "some test props for provider stage in io" );
             os.close();
         } catch ( FileNotFoundException e ) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -108,22 +109,22 @@ public class ProviderStageInORQIOTest {
         }
 
         // example of converter reusage
-        ProviderStageInOrderStdoutWriter stdwrt = new ProviderStageInOrderStdoutWriter( );
+        ProviderStageInOrderStdoutWriter stdwrt = new ProviderStageInOrderStdoutWriter();
         conv.setWriter( stdwrt );
         conv.setModel( rorq );
-        conv.convert( );
+        conv.convert();
 
         System.out.println( "Reading test prop from file" );
         fn = "prop_test_file.txt";
         try {
             InputStream is = new FileInputStream( fn );
-            Properties np = new Properties( );
+            Properties np = new Properties();
             np.load( is );
-            is.close( );
+            is.close();
             np.store( System.out, "test out" );
             reader.setProperties( np );
-            reader.begin( );
-            reader.read(); 
+            reader.begin();
+            reader.read();
             showORQ( reader.getProduct() );
         } catch ( FileNotFoundException e ) {
             System.out.println( "File not found make!" );
@@ -133,10 +134,9 @@ public class ProviderStageInORQIOTest {
         }
 
 
-
         // example for just download
         DataDescriptor ddt2 = new DataDescriptor();
-        List<String> objs = { "no", "download" };
+        List<String> objs = Arrays.asList( "no", "download" );
 
         dff = "plain";
         dfaf = "zip";
@@ -149,19 +149,19 @@ public class ProviderStageInORQIOTest {
         ddt2.setMetaDataFormat( mff );
         ddt2.setMetaDataArchiveFormat( mfaf );
 
-        Properties prop2 = new Properties( );
+        Properties prop2 = new Properties();
         DataDescriptorPropertyWriter ddw = new DataDescriptorPropertyWriter( prop2 );
         DataDescriptorConverter dcon = new DataDescriptorConverter( ddw, ddt2 );
-        dcon.convert( );
+        dcon.convert();
 
         try {
             prop2.store( System.out, "just downloading?" );
         } catch ( IOException e ) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-        
-        if( prop2.containsKey( SfrProperty.JUST_DOWNLOAD.key ) )
-            System.out.println( ">>>>>>>>>>> JUST_DOWNLOAD contained");
+
+        if ( prop2.containsKey( SfrProperty.JUST_DOWNLOAD.key ) )
+            System.out.println( ">>>>>>>>>>> JUST_DOWNLOAD contained" );
         else
             throw new IllegalStateException( "JUST_DOWNLOAD missing" );
 
@@ -169,16 +169,16 @@ public class ProviderStageInORQIOTest {
         ddpr.performReading();
         DataDescriptor ddt3 = ddpr.getProduct();
 
-        Properties prop3 = new Properties( );
+        Properties prop3 = new Properties();
         ddw = new DataDescriptorPropertyWriter( prop3 );
         dcon.setWriter( ddw );
         dcon.setModel( ddt3 );
-        dcon.convert( );
+        dcon.convert();
 
-        if( prop2.equals( prop3 ) )
+        if ( prop2.equals( prop3 ) )
             System.out.println( "Prop write read write: OKAY" );
         else
-            System.out.println( "Prop write read write: ERROR (different results)"  );
+            System.out.println( "Prop write read write: ERROR (different results)" );
 
     }
 

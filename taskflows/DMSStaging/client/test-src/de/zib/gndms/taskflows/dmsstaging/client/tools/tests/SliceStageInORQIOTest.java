@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types.io.tests;
+package de.zib.gndms.taskflows.dmsstaging.client.tools.tests;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)

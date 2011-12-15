@@ -27,27 +27,21 @@ import de.zib.gndms.taskflows.staging.client.model.ProviderStageInOrder;
 import de.zib.gndms.model.gorfx.types.io.ContractConverter;
 import de.zib.gndms.model.gorfx.types.io.ContractPropertyReader;
 import de.zib.gndms.model.gorfx.types.io.ContractPropertyWriter;
-import de.zib.gndms.model.gorfx.types.io.xml.ORQWrapper;
-import de.zib.gndms.model.gorfx.types.io.xml.ProviderStageInXML;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.Properties;
 
 /**
- *
+ * Use this class to define different io formats for staging scrips.
  *
  * @author  try ma ik jo rr a zib
  * @version  $Id$
  * <p/>
  * User: mjorra, Date: 17.11.2008, Time: 17:01:46
  */
-public class ParmFormatAux {
+public class StagingIOFormatHelper {
 
-    private static ProviderStageInXML xmlWriter;
-
-    public static final String FORMAT_XML = "XML";
     public static final String FORMAT_PROPS = "PROPS";
 
     private String format=FORMAT_PROPS;
@@ -55,19 +49,13 @@ public class ParmFormatAux {
 
     public Quote getResult( StringBuilder res ) throws Exception {
 
-        if( format.equals( FORMAT_XML) )
-            return xmlToResult( res );
-        else
-            return propsToResult( res );
+        return propsToResult( res );
     }
 
     
     public ProcessBuilderAction createPBAction( ProviderStageInOrder order, Quote contParam, FilePermissions fp ) {
 
-        if( format.equals( FORMAT_XML ) )
-            return  createXMLParmPBAction( order, contParam, fp );
-        else
-            return  createDefaultPBAction( order, contParam, fp );
+        return  createDefaultPBAction( order, contParam, fp );
     }
 
 
@@ -92,13 +80,6 @@ public class ParmFormatAux {
     }
 
 
-    private Quote xmlToResult( StringBuilder sb ) throws Exception {
-
-        ORQWrapper wrp = xmlWriter.fromDocument( sb.toString( ) );
-        return wrp.getContract();
-    }
-
-
     private ProcessBuilderAction createDefaultPBAction( ProviderStageInOrder order, Quote contParam, FilePermissions fp ) {
 
         Properties moreProps = null;
@@ -119,41 +100,5 @@ public class ParmFormatAux {
             return ProviderStageInTools.createPBAction( order, moreProps);
         
         return ProviderStageInTools.createPBAction( order, null );
-    }
-
-
-    private ProcessBuilderAction createXMLParmPBAction( ProviderStageInOrder order, Quote contParam, FilePermissions fp ) {
-
-        try{
-            if( fp != null ) {
-      /*          order.getActContext().put( "user", fp.getUser( ) );
-                order.getActContext().put( "group", fp.getGroup( ) );
-                order.getActContext().put( "mask", fp.getAccessMask( ).toString() );*/
-            }
-            return ProviderStageInTools.createPBActionForXML(
-                xmlWriter.toDocument( order, contParam ) );
-        } catch ( IOException e ) {
-            throw new RuntimeException( "Error while converting order to xml document", e );
-        }
-    }
-
-
-    public static ProviderStageInXML getXmlWriter() {
-        return xmlWriter;
-    }
-
-
-    public static void setXmlWriter( ProviderStageInXML xmlWriter ) {
-        ParmFormatAux.xmlWriter = xmlWriter;
-    }
-
-
-    public String getFormat() {
-        return format;
-    }
-
-
-    public void setFormat( String format ) {
-        this.format = format;
     }
 }
