@@ -122,6 +122,8 @@ public class TaskServiceImpl implements TaskService {
         try {
             // todo check if task for taskling is running
             Task t = findTask( id, session ); // ensures that id is valid
+            if ( ! t.getTaskState().isDoneState() )
+
             Task.fullDelete( t, session );
             session.success();
         } finally {
@@ -232,11 +234,13 @@ public class TaskServiceImpl implements TaskService {
             uriFactory.taskUri( uriargs, facet ), serviceUrl, dn, wid );
     }
 
+
     @ExceptionHandler( NoSuchResourceException.class )
     public ResponseEntity<Void> handleNoSuchResourceException( NoSuchResourceException ex ) {
         logger.debug( "handling exception for: " + ex.getMessage() );
         return new ResponseEntity<Void>( null, getHeader( ex.getMessage(), null, null, null ), HttpStatus.NOT_FOUND );
     }
+
 
     public void setServiceUrl( String serviceUrl ) {
         this.serviceUrl = serviceUrl;
