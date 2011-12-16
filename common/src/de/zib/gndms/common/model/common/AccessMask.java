@@ -340,7 +340,7 @@ public class AccessMask implements Serializable {
     /**
     * Checks whether none of the given access values is set by the corresponding ugo in the access mask.
      * @see queryFlagsOn
-     * 
+     *
      * @param ugo The ugo rights.
      * @param flag The access flag.
      * @return true, if no access right of the flag is granted, otherwise false.
@@ -388,6 +388,15 @@ public class AccessMask implements Serializable {
     		s = "";
     	}
     	return s + getUserAccess().toString() + getGroupAccess().toString() + getOtherAccess().toString();
+    }
+
+    public final Integer getIntValue( ) {
+        return (
+                getSpecial().intValue()*512 +
+                getUserAccess().getMask()*64 +
+                getGroupAccess().getMask()*8 +
+                getOtherAccess().getMask()
+                );
     }
 
     /**
