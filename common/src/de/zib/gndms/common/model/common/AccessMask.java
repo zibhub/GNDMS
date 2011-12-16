@@ -392,10 +392,11 @@ public class AccessMask implements Serializable {
 
     public final Integer getIntValue( ) {
         return (
-                getSpecial().intValue()*512 +
-                getUserAccess().getMask()*64 +
-                getGroupAccess().getMask()*8 +
-                getOtherAccess().getMask()
+                ( getSpecial() != null ?
+                        getSpecial() : 0 )  * 512
+                + getUserAccess().getMask() * 64
+                + getGroupAccess().getMask()* 8
+                + getOtherAccess().getMask()
                 );
     }
 
