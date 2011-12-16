@@ -134,7 +134,7 @@ public class TransformSliceAction extends AbstractModelEntityAction<Slice, Slice
         }
 
 
-        directoryAux.copyDir( nsl.getOwner(), src_pth, tgt_pth );
+        directoryAux.move( src_pth, tgt_pth );
 
         // restore slice path settings
         if ( ro ) {
