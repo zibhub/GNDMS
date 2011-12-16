@@ -142,6 +142,8 @@ public class TransformSliceAction extends AbstractModelEntityAction<Slice, Slice
             directoryAux.setPermissions( nsl.getOwner(), msk, tgt_pth );
         }
 
+        // TODO: update slice in database
+
         /*
         // sth went wrong destroy created slice
         if( ! suc ) {
