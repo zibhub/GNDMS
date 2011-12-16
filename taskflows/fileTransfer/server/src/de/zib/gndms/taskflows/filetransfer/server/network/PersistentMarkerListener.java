@@ -17,7 +17,7 @@ package de.zib.gndms.taskflows.filetransfer.server.network;
  */
 
 
-import de.zib.gndms.model.gorfx.FTPTransferState;
+import de.zib.gndms.taskflows.filetransfer.server.model.FTPTransferState;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.gorfx.Taskling;

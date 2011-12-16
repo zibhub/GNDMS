@@ -150,14 +150,14 @@ public abstract class AbstractTransferQuoteCalculator<M extends FileTransferOrde
      */
     protected Quote calculateOffer( ) {
 
-        // may at least take 10 s to cover comunication overhead.
+        // may at least take 10 s to cover communication overhead.
         long ms = NetworkAuxiliariesProvider.calculateTransferTime( estimatedTransferSize, estimatedBandWidth, 10000 );
 
+        Quote quote = new Quote( );
+        quote.setDeadline( FutureTime.atOffset( new Duration( ms ) ) );
+        quote.setExpectedSize( estimatedTransferSize );
 
-        Quote ct = new Quote( );
-        ct.setDeadline( FutureTime.atOffset( new Duration( ms ) )  );
-
-        return ct;
+        return quote;
     }
 
 
@@ -176,7 +176,7 @@ public abstract class AbstractTransferQuoteCalculator<M extends FileTransferOrde
     /**
      * Use this method to set the available band-width manually.
      *
-     * This is the alternativ to calling estimateBandWidth.
+     * This is the alternative to calling estimateBandWidth.
      *
      * @param estimatedBandWidth -- Guess what.
      */

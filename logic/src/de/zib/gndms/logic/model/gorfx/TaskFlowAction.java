@@ -92,7 +92,6 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends DefaultTas
     public Map<String, String> getOfferTypeConfigMapData() {
         final Session session = getDao().beginSession();
         try {
-            // todo add tft to database ...
             final TaskFlowType ot = session.findTaskFlowType( getOfferTypeId() );
             final Map<String,String> configMapData = ot.getConfigMapData();
             session.finish();

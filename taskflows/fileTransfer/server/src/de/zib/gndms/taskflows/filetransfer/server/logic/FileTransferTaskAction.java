@@ -24,9 +24,9 @@ import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.taskflows.filetransfer.client.FileTransferMeta;
 import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferOrder;
 import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferResult;
+import de.zib.gndms.taskflows.filetransfer.server.model.FTPTransferState;
 import de.zib.gndms.taskflows.filetransfer.server.network.GNDMSFileTransfer;
 import de.zib.gndms.taskflows.filetransfer.server.network.NetworkAuxiliariesProvider;
-import de.zib.gndms.model.gorfx.FTPTransferState;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
@@ -45,9 +45,9 @@ import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 /**
- * @author  try ma ik jo rr a zib
+ * @author  Maik Jorra
  * @version  $Id$
- * <p/>
+ *
  * User: mjorra, Date: 01.10.2008, Time: 17:57:57
  */
 public class FileTransferTaskAction extends TaskFlowAction<FileTransferOrder> {

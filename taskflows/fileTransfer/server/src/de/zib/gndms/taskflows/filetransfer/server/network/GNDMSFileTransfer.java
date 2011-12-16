@@ -18,7 +18,7 @@ package de.zib.gndms.taskflows.filetransfer.server.network;
 
 
 
-import de.zib.gndms.model.gorfx.FTPTransferState;
+import de.zib.gndms.taskflows.filetransfer.server.model.FTPTransferState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.globus.ftp.ByteRangeList;

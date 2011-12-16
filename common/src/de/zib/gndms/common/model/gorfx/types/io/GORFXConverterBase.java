@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * A GORFXConverterBase uses a writer to convert a gndms class to a desired type, which can be the corresponding
- * axis type, a convertion to a Properties instance, or it will be written to Stdout.
+ * axis type, a conversion to a Properties instance, or it will be written to Stdout.
  *
  *
  * The template parameter W specifies the writer and M the model, so a gndms class.
