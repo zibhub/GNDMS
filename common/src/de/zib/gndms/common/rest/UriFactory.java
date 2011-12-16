@@ -32,38 +32,38 @@ public class UriFactory {
 	/**
 	 * The key for a service.
 	 */
-    public static final String SERVICE       = "service";
+    public static final String SERVICE = "service";
     /**
-	 * The key for a taskflow type.
+     * The key for a taskflow type.
      */
     public static final String TASKFLOW_TYPE = "type";
     /**
-	 * The key for a taskflow id.
+     * The key for a taskflow id.
      */
-    public static final String TASKFLOW_ID   = "id";
+    public static final String TASKFLOW_ID = "id";
     /**
-	 * The key for a quote id.
+     * The key for a quote id.
      */
-    public static final String QUOTE_ID   = "idx";
+    public static final String QUOTE_ID = "idx";
     /**
-	 * The key for a task ide.
+     * The key for a task ide.
      */
-    public static final String TASK_ID       = "taskId";
+    public static final String TASK_ID = "taskId";
     /**
-	 * The key for a subspace.
+     * The key for a subspace.
      */
-    public static final String SUBSPACE      = "subspace";
+    public static final String SUBSPACE = "subspace";
     /**
-	 * The key for a slice kind.
+     * The key for a slice kind.
      */
-    public static final String SLICEKIND     = "slicekind";
+    public static final String SLICEKIND = "slicekind";
     /**
-	 * The key for a slice.
+     * The key for a slice.
      */
-    public static final String SLICE         = "slice";
+    public static final String SLICE = "slice";
 
     /**
-	 * The base url, something like \c http://my.host.org/gndms/grid_id..
+     * The base url, something like \c http://my.host.org/gndms/grid_id..
      */
     private String baseUrl;
     /**
@@ -99,6 +99,8 @@ public class UriFactory {
      * The constructor.
      */
     public UriFactory() {
+        this.baseUrl = "";
+        init();
     }
 
     /**
