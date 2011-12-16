@@ -52,4 +52,5 @@ public interface SliceKindProvider {
      */
     SliceKind get( String subspace, String sliceKind ) throws NoSuchElementException;
 
+    void create( String slicekindId, String config );
 }

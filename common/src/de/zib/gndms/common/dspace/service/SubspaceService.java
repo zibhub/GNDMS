@@ -89,6 +89,20 @@ public interface SubspaceService {
 	ResponseEntity<List<Specifier<Void>>> listSliceKinds(String subspace,
 			String dn);
 
+    /**
+     * Create a slice kind.
+     *
+     * @param subspace
+     *            The subspace identifier.
+     * @param sliceKind
+     *            The sliceKind identifier.
+     * @param dn
+     *            The dn of the user invoking the method.
+     * @return The list of slice kinds.
+     */
+    ResponseEntity<List<Specifier<Void>>> createSliceKind(String subspace,
+            String sliceKind, String config, String dn);
+
 	/**
 	 * Lists a subspace configuration.
 	 * 

@@ -40,8 +40,8 @@ public class SubspaceProviderImpl extends GridResourceDAO< Subspace > implements
     }
 
     @Override
-    public boolean exists(String subspace) {
-        return false;
+    public boolean exists( String subspace ) {
+        return super.exists( subspace );
     }
 
     @Override

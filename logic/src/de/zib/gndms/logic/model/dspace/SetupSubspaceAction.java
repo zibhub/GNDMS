@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import java.io.PrintWriter;
-import java.util.UUID;
 
 
 /**
@@ -110,6 +109,7 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
             if (path == null && (isCreating() || hasOption("path"))) {
                 setPath(getOption("path"));
             }
+            // TODO: gridftp is not required in future
             if (gsiFtpPath== null && (isCreating() || hasOption("gsiFtpPath"))) {
                 setGsiFtpPath(getOption("gsiFtpPath"));
             }

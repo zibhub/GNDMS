@@ -16,10 +16,15 @@
 
 package de.zib.gndms.logic.model.dspace;
 
+import de.zib.gndms.common.logic.config.SetupMode;
+import de.zib.gndms.kit.config.ParameterTools;
+import de.zib.gndms.logic.model.config.ConfigActionResult;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.util.GridResourceCache;
 
 import javax.persistence.EntityManagerFactory;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 
 /**
@@ -37,7 +42,7 @@ public class SliceKindProviderImpl extends GridResourceDAO< SliceKind > implemen
                         SliceKind.class,
                         emf
                 ),
-                SetupSubspaceAction.class
+                SetupSliceKindAction.class
         );
     }
 
@@ -47,16 +52,39 @@ public class SliceKindProviderImpl extends GridResourceDAO< SliceKind > implemen
 
     @Override
     public boolean exists( String subspace, String sliceKind ) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return super.exists( sliceKind );
     }
 
     @Override
     public List<SliceKind> list( String subspace ) throws NoSuchElementException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;  // TODO: implement slicekind listing
     }
 
     @Override
     public SliceKind get( String subspace, String sliceKind ) throws NoSuchElementException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return super.get( sliceKind );
+    }
+
+    public void create( final String sliceKindId, final String config ) {
+        try {
+            final StringWriter sw = new StringWriter();
+
+            final SetupSliceKindAction setup_action = new SetupSliceKindAction();
+            setup_action.setPrintWriter( new PrintWriter( sw ) );
+            setup_action.parseLocalOptions( "sliceKind:" + sliceKindId + "; " + config );
+            setup_action.setMode( SetupMode.CREATE );
+            actionConfigurer.configureAction( setup_action );
+
+            final AssignSliceKindAction assign_action = new AssignSliceKindAction();
+            assign_action.setPrintWriter( new PrintWriter( sw ) );
+            assign_action.parseLocalOptions( config );
+
+            ConfigActionResult result = setup_action.call();
+
+            logger.info( sw.toString() );
+        }
+        catch( ParameterTools.ParameterParseException e ) {
+            throw new IllegalStateException( "Error on parsing parameter string '" + config + "'.", e );
+        }
     }
 }

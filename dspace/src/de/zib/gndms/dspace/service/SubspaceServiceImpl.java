@@ -26,6 +26,7 @@ import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.kit.config.ParameterTools;
 import de.zib.gndms.logic.model.dspace.*;
+import de.zib.gndms.logic.model.dspace.NoSuchElementException;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.util.TxFrame;
@@ -44,10 +45,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping(value = "/dspace")
@@ -118,7 +116,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 		GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
 
 		if (!subspaceProvider.exists(subspace)) {
-			logger.warn("Subspace " + subspace + " not found");
+			logger.warn( "Subspace " + subspace + " not found" );
 			return new ResponseEntity<Specifier<Void>>(null, headers,
 					HttpStatus.NOT_FOUND);
 		}
@@ -162,7 +160,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 		GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
 
 		if ( !subspaceProvider.exists( subspace ) ) {
-			logger.info("Illegal Access: subspace " + subspace + " not found");
+			logger.info( "Illegal Access: subspace " + subspace + " not found" );
 			return new ResponseEntity<List<Specifier<Void>>>(null, headers,
 					HttpStatus.NOT_FOUND);
 		}
@@ -171,7 +169,7 @@ public class SubspaceServiceImpl implements SubspaceService {
             List< SliceKind > sliceKinds = this.slicekindProvider.list( subspace );
             List<Specifier<Void>> list = new ArrayList<Specifier<Void>>( sliceKinds.size() );
             HashMap<String, String> urimap = new HashMap<String, String>(2);
-            urimap.put(UriFactory.SERVICE, "dspace");
+            urimap.put( UriFactory.SERVICE, "dspace" );
             for( SliceKind sk : sliceKinds ) {
                 Specifier<Void> spec = new Specifier<Void>();
                 spec.setUriMap(new HashMap<String, String>(urimap));
@@ -190,6 +188,32 @@ public class SubspaceServiceImpl implements SubspaceService {
 
         }
 	}
+
+    @Override
+    @RequestMapping( value = "/_{subspace}/_{slicekind}", method = RequestMethod.PUT )
+    public final ResponseEntity<List<Specifier<Void>>> createSliceKind(
+            @PathVariable final String subspace,
+            @PathVariable final String slicekind,
+            final String config,
+            @RequestHeader("DN") final String dn) {
+        GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
+
+        if ( !subspaceProvider.exists( subspace ) ) {
+            logger.info("Illegal Access: subspace " + subspace + " not found");
+            return new ResponseEntity<List<Specifier<Void>>>(null, headers,
+                    HttpStatus.NOT_FOUND);
+        }
+        if( slicekindProvider.exists( subspace, slicekind ) ) {
+            logger.info("Illegal Access: slicekind " + slicekind + " could not be created because it already exists.");
+            return new ResponseEntity<List<Specifier<Void>>>(null, headers,
+                    HttpStatus.BAD_REQUEST);
+        }
+
+        slicekindProvider.create( slicekind, "subspace:" + subspace + "; " + config );
+
+        return new ResponseEntity<List<Specifier<Void>>>(null, headers,
+                                                         HttpStatus.OK);
+    }
 
     @Override
 	@RequestMapping(value = "/_{subspace}/config", method = RequestMethod.GET)
@@ -414,4 +438,11 @@ public class SubspaceServiceImpl implements SubspaceService {
 		this.emf = emf;
 	}
 
+    public void setSliceProvider( SliceProviderImpl sliceProvider ) {
+        this.sliceProvider = sliceProvider;
+    }
+
+    public void setSliceKindProvider( SliceKindProviderImpl sliceKindProvider ) {
+        this.slicekindProvider = sliceKindProvider;
+    }
 }

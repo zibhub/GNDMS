@@ -23,7 +23,6 @@ import de.zib.gndms.logic.model.ModelUpdateListener;
 import de.zib.gndms.logic.model.config.ConfigActionResult;
 import de.zib.gndms.logic.model.config.SetupAction;
 import de.zib.gndms.model.common.GridResource;
-import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.util.GridResourceCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +43,7 @@ import java.util.Map;
  */
 public abstract class GridResourceDAO< G extends GridResource > {
     final private EntityManagerFactory emf;
-    final private ActionConfigurer actionConfigurer;
+    final protected ActionConfigurer actionConfigurer;
     final private GridResourceCache< G > cache;
 
     final private Class< ? extends SetupAction< ConfigActionResult > > c;
@@ -62,7 +61,7 @@ public abstract class GridResourceDAO< G extends GridResource > {
         this.c = setupClazz;
     }
 
-    public boolean exists( String id, Map< String, String > params ) {
+    public boolean exists( String id ) {
         return cache.exists( id );
     }
 
@@ -90,10 +89,12 @@ public abstract class GridResourceDAO< G extends GridResource > {
         try {
             final StringWriter sw = new StringWriter();
 
-            final SetupAction< ? extends ConfigActionResult > setup_action = c.newInstance();
-            setup_action.setPrintWriter(new PrintWriter(sw));
-            setup_action.parseLocalOptions(config);
+            final SetupAction<? extends ConfigActionResult> setup_action = c.newInstance();
+            setup_action.setPrintWriter( new PrintWriter( sw ) );
+            setup_action.parseLocalOptions( config );
             setup_action.setMode( mode );
+
+            actionConfigurer.configureAction( setup_action );
 
             ConfigActionResult result = setup_action.call();
 
@@ -107,12 +108,12 @@ public abstract class GridResourceDAO< G extends GridResource > {
         catch( IllegalAccessException e ) {
             throw new IllegalStateException( "Cannot instantiate abstract class." + c.getCanonicalName() + ".", e );
         }
-        catch (ParameterTools.ParameterParseException e) {
+        catch( ParameterTools.ParameterParseException e ) {
             throw new IllegalStateException( "Error on parsing parameter string '" + config + "'.", e );
         }
     }
 
-    private class Invalidator implements ModelUpdateListener< GridResource > {
+    private class Invalidator implements ModelUpdateListener<GridResource> {
         public void onModelChange( GridResource model ) {
             GridResourceDAO.this.cache.invalidate( model.getId() );
         }

@@ -16,23 +16,19 @@
 
 package de.zib.gndms.gndmc.dspace;
 
-import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.logic.config.SetupMode;
+import de.zib.gndms.dspace.service.SubspaceServiceImpl;
 import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
 import de.zib.gndms.logic.model.NoWSDontNeedModelUpdateListener;
-import de.zib.gndms.logic.model.dspace.SetupSubspaceAction;
-import de.zib.gndms.logic.model.dspace.SubspaceConfiguration;
+import de.zib.gndms.logic.model.dspace.*;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.dspace.Subspace;
 import org.testng.Assert;
 
-import javax.persistence.*;
-
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.UUID;
-
-import static org.testng.Assert.assertEquals;
 
 /**
  * Created by IntelliJ IDEA.
@@ -141,5 +137,37 @@ public class Test extends JPATest {
                 e.printStackTrace();
             }
         }
+    }
+
+    @org.testng.annotations.Test( groups = { "jpa" }, dependsOnMethods = { "test2" } )
+    public void test_createSliceKind( ) {
+        SubspaceServiceImpl subspaceService = new SubspaceServiceImpl();
+
+        SubspaceProviderImpl subspaceProvider = new SubspaceProviderImpl( emf );
+        SliceKindProviderImpl sliceKindProvider = new SliceKindProviderImpl( emf );
+
+        subspaceService.setEmf( emf );
+        subspaceService.setSubspaceProvider( subspaceProvider );
+        subspaceService.setSliceKindProvider( sliceKindProvider );
+
+        subspaceService.createSliceKind( "sub", "kind", "sliceKindMode:700; uniqueDirName:kind", "root" );
+    }
+
+    @org.testng.annotations.Test( groups = { "jpa" }, dependsOnMethods = { "test_createSliceKind" } )
+    public void test_createSlice( ) {
+        SubspaceServiceImpl subspaceService = new SubspaceServiceImpl();
+
+        SubspaceProviderImpl subspaceProvider = new SubspaceProviderImpl( emf );
+        SliceKindProviderImpl sliceKindProvider = new SliceKindProviderImpl( emf );
+        SliceProviderImpl sliceProvider = new SliceProviderImpl( emf );
+
+        sliceProvider.setSubspaceProvider( subspaceProvider );
+        sliceProvider.setSliceKindProvider( sliceKindProvider );
+
+        subspaceService.setEmf( emf );
+        subspaceService.setSubspaceProvider( subspaceProvider );
+        subspaceService.setSliceProvider( sliceProvider );
+
+        subspaceService.createSlice( "sub", "kind", "deadline:2011-12-16; sliceSize:1024", "root" );
     }
 }
