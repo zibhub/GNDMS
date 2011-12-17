@@ -77,9 +77,12 @@ public class SliceKindProviderImpl extends GridResourceDAO< SliceKind > implemen
 
             final AssignSliceKindAction assign_action = new AssignSliceKindAction();
             assign_action.setPrintWriter( new PrintWriter( sw ) );
-            assign_action.parseLocalOptions( config );
+            assign_action.parseLocalOptions( "sliceKind:" + sliceKindId + "; " + config );
+            actionConfigurer.configureAction( assign_action );
 
+            // TODO: handle assign action as postponed action of setup_action
             ConfigActionResult result = setup_action.call();
+            assign_action.call();
 
             logger.info( sw.toString() );
         }

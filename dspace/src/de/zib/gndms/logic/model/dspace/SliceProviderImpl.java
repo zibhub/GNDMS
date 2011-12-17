@@ -48,11 +48,9 @@ public class SliceProviderImpl implements SliceProvider {
 
     final private ActionConfigurer actionConfigurer;
 
-	private EntityManagerFactory emf;
     final private GridResourceCache< Slice > cache;
 
     public SliceProviderImpl( EntityManagerFactory emf ) {
-        this.emf = emf;
         this.actionConfigurer = new ActionConfigurer( emf );
         this.actionConfigurer.setEntityUpdateListener( new Invalidator() );
         this.cache = new GridResourceCache<Slice>( Slice.class, emf );

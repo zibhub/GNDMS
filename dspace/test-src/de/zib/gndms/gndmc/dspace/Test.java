@@ -156,6 +156,7 @@ public class Test extends JPATest {
     @org.testng.annotations.Test( groups = { "jpa" }, dependsOnMethods = { "test_createSliceKind" } )
     public void test_createSlice( ) {
         SubspaceServiceImpl subspaceService = new SubspaceServiceImpl();
+        subspaceService.init();
 
         SubspaceProviderImpl subspaceProvider = new SubspaceProviderImpl( emf );
         SliceKindProviderImpl sliceKindProvider = new SliceKindProviderImpl( emf );

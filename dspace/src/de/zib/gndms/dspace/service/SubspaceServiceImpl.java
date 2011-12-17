@@ -308,7 +308,7 @@ public class SubspaceServiceImpl implements SubspaceService {
             urimap.put( UriFactory.SLICEKIND, sliceKind );
             urimap.put( UriFactory.SLICE, slice );
             spec.setUriMap( new HashMap<String, String>( urimap ) );
-            spec.setUrl( uriFactory.quoteUri( urimap ) );
+            spec.setUrl( uriFactory.sliceUri( urimap, null ) );
 
             return new ResponseEntity< Specifier< Void > >( spec, headers,
                                                         HttpStatus.OK );
