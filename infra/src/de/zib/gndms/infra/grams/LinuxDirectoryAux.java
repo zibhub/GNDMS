@@ -18,6 +18,8 @@ package de.zib.gndms.infra.grams;
 
 
 
+import com.sun.jna.Library;
+import com.sun.jna.Native;
 import de.zib.gndms.common.model.common.AccessMask;
 import de.zib.gndms.kit.util.DirectoryAux;
 import org.slf4j.Logger;
@@ -25,11 +27,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import com.sun.jna.Library;
-import com.sun.jna.Native;
 
 /**
  * Implementation of the directory helpers for a linux system.
@@ -59,8 +56,38 @@ public class LinuxDirectoryAux implements DirectoryAux {
         }
     }
 
+    public int mkdir( int mask, File file ) {
+        try {
+            return libc.mkdir( file.getCanonicalPath(), mask );
+        }
+        catch( IOException e ) {
+            throw new RuntimeException( e );
+        }
+    }
+
+    public int rmdir( File file ) {
+        try {
+            return libc.rmdir( file.getCanonicalPath() );
+        }
+        catch( IOException e ) {
+            throw new RuntimeException( e );
+        }
+    }
+
+    public int rename( File from, File to ) {
+        try {
+            return libc.rename( from.getCanonicalPath(), to.getCanonicalPath() );
+        }
+        catch( IOException e ) {
+            throw new RuntimeException( e );
+        }
+    }
+
     interface CLibrary extends Library {
         public int chmod(String path, int mode);
+        public int mkdir( String path, int mode );
+        public int rmdir( String path );
+        public int rename( String old_path, String new_path );
     };
 
     public boolean setDirectoryReadWrite( String uid, String pth ) {
@@ -83,57 +110,11 @@ public class LinuxDirectoryAux implements DirectoryAux {
     }
 
 
-    private boolean setMode( String uid, String md, String pth ) {
-
-        HashMap<String, Object> jd = new HashMap<String, Object>( 2 );
-        jd.put( EXECUTABLE, "/bin/chmod" );
-        jd.put( ARGS, new String[] { md, pth } );
-
-        return executeGramsJob( uid, jd );
+    private boolean setMode( String uid, String mode, String path ) {
+        AccessMask mask = AccessMask.fromString( mode );
+        int m = mask.getIntValue();
+        return ( 0 != chmod( m, new File( path ) ) );
     }
-
-
-    private boolean executeGramsJob( String uid, HashMap<String, Object> jd ) {
-
-        Map<String,Object> pds = new HashMap<String, Object>(5);
-        // create from job description
-        pds.putAll( jd );
-
-        // add additional magic
-        pds.put( "jobtype", "single" );
-        pds.put(  "directory", "/tmp" );
-        pds.put(  "stdin", "/dev/null" );
-        pds.put(  "stdout", "/dev/stdout" );
-        pds.put(  "stderr", "/dev/stderr" );
-
-        String jds = pds.toString();
-        System.err.println( "perl job description: " + jds );
-
-         try {
-             GNDMSJobManagerScript jms = new GNDMSJobManagerScriptBuilder().setUsername( uid )
-                     .setGlobusLocation( System.getenv( "GLOBUS_LOCATION" ) ).setType( "fork" )
-                     .setPerlJobDescription( jds ).setEnvironment( new String[]{} )
-                     .createGNDMSJobManagerScript();
-
-
-             jms.run(); // run globus run
-            int ec = jms.getError();
-            if ( ec != 0 ) {
-                logger.debug( "script exited with :" + ec );
-                logger.debug( "Message: "+ jms.getFailureMessage() );
-                logger.debug( "Destination: " + jms.getFailureDestination() );
-                logger.debug( "Source: " + jms.getFailureSource() );
-                return false;
-            } else
-               logger.debug( "Job successful" );
-        } catch ( Exception e ) {
-            logger.error( "", e );
-            return false;
-        }
-
-        return true;
-    }
-
 
     public boolean changeOwner( String dn, String path) {
         logger.debug( "changing owner of Slice " + path +" to " + dn );
@@ -147,29 +128,18 @@ public class LinuxDirectoryAux implements DirectoryAux {
         if(! f.exists() )
             throw new RuntimeException( "failed to delete dir " + pth + ": doesn't exists" );
 
-        HashMap<String, Object> jd = new HashMap<String, Object>( 2 );
-        jd.put( EXECUTABLE, "/bin/rm" );
-        jd.put( ARGS, new String[] { "-rf", pth } );
-
-        executeGramsJob( uid, jd );
-        if( f.exists() )
-            throw new RuntimeException( "failed to delete dir " + pth + " as user " +uid );
+        DirectoryAux.Utils.genericDeleteDirectory( pth );
 
         return true;
     }
 
 
-    public boolean mkdir( String uid, String pth, AccessMask perm ) {
-
-        HashMap<String, Object> jd = new HashMap<String, Object>( 2 );
-        jd.put( EXECUTABLE, "/bin/mkdir" );
-        jd.put( ARGS, new String[] { "-p", "-m", perm.toString(), pth } );
-
+    public boolean mkdir( String uid, String path, AccessMask perm ) {
         int ret = 1;
         do  {
-            logger.debug( ret +". attempt to create slice dir" + pth );
-            executeGramsJob( uid, jd );
-            File f = new File( pth );
+            logger.debug( ret + ". attempt to create slice dir" + path );
+            mkdir( perm.getIntValue(), new File( path ) );
+            File f = new File( path );
             if( f.exists() ) {
                 logger.debug( "creation successful" );
                 return true;
@@ -183,16 +153,14 @@ public class LinuxDirectoryAux implements DirectoryAux {
                 ++ret;
             }
         } while ( ret <= NUM_RETRYS );
-        throw new RuntimeException( "failed to create slice dir " + pth + " for user " +uid+ " with " + perm );
+        throw new RuntimeException( "failed to create slice dir " + path + " for user " +uid+ " with " + perm );
     }
 
+    public boolean move( String src_path, String target_path ) {
+        return 0 != rename( new File( src_path ), new File( target_path ) );
+    }
 
     public boolean copyDir( String uid, String src_pth, String tgt_pth ) {
-
-        HashMap<String, Object> jd = new HashMap<String, Object>( 2 );
-        jd.put( EXECUTABLE, "/bin/cp" );
-        jd.put( ARGS, new String[] { "-r", src_pth + File.separator + "parms", tgt_pth } );
-
-        return executeGramsJob( uid, jd );
+        throw new UnsupportedOperationException( "Please do that right now!" );
     }
 }

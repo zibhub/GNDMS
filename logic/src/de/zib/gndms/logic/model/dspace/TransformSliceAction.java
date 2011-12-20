@@ -134,13 +134,15 @@ public class TransformSliceAction extends AbstractModelEntityAction<Slice, Slice
         }
 
 
-        directoryAux.copyDir( nsl.getOwner(), src_pth, tgt_pth );
+        directoryAux.move( src_pth, tgt_pth );
 
         // restore slice path settings
         if ( ro ) {
             msk.removeFlag( AccessMask.Ugo.USER, AccessMask.AccessFlags.WRITABLE );
             directoryAux.setPermissions( nsl.getOwner(), msk, tgt_pth );
         }
+
+        // TODO: update slice in database
 
         /*
         // sth went wrong destroy created slice

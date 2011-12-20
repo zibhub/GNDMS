@@ -25,8 +25,6 @@ import de.zib.gndms.model.common.NoSuchResourceException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import java.util.NoSuchElementException;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -66,7 +64,7 @@ public class GridResourceCache< G extends GridResource > {
         try {
             return cache.get( id );
         }
-        catch( ExecutionException e ) {
+        catch( Throwable e ) {
             Throwable nested = e.getCause();
 
             if( nested instanceof NoSuchResourceException )
@@ -91,7 +89,7 @@ public class GridResourceCache< G extends GridResource > {
             G g = ( G )em.find( clazz, id );
 
             if( null == g )
-                throw new NoSuchElementException( "No " + clazz.getCanonicalName() + " with id " + id + "found." );
+                throw new NoSuchResourceException( "No " + clazz.getCanonicalName() + " with id " + id + " found." );
             return g;
         }
     }

@@ -67,11 +67,11 @@ public class SliceKindClientTest {
 		String uri = "testuri";
 		String permission = "345";
        	SliceKindConfiguration config = new SliceKindConfiguration(uri, permission, null);
-		res = scl.createSlice(subspace, sliceKind, config, dn);
-       	AssertJUnit.assertNotNull(res);
+		//res = scl.createSlice(subspace, sliceKind, config, dn);
+       	//AssertJUnit.assertNotNull(res);
 
-		res = scl.createSlice(subspace, sliceKind, config, dn);
-       	AssertJUnit.assertNotNull(res);
+		//res = scl.createSlice(subspace, sliceKind, config, dn);
+       	//AssertJUnit.assertNotNull(res);
 
 		res = scl.deleteSliceKind(subspace, sliceKind, dn);
        	AssertJUnit.assertNotNull(res);

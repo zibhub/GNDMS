@@ -87,10 +87,7 @@ public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
     @ConfigOption(descr="The directory to store the slices belonging to this kind (its a required attribute)")
     private String uniqueDirName;
 
-    private Set<Subspace> subspaces; // can be null
-    
     private SliceKind theSliceKind;
-
 
     public SetupSliceKindAction( ) {
     }
@@ -98,13 +95,11 @@ public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
     public SetupSliceKindAction( @NotNull String URI, @NotNull String sliceKindMode ) {
         this.sliceKind = URI;
         this.theSliceKindMode = sliceKindMode;
-        this.subspaces = null;
     }
 
     public SetupSliceKindAction( @NotNull String URI, @NotNull String sliceKindMode, Set<Subspace> subspaces ) {
         this.sliceKind = URI;
         this.theSliceKindMode = sliceKindMode;
-        this.subspaces = subspaces;
     }
 
 
@@ -206,14 +201,6 @@ public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
 
     public void setTheSliceKindMode( String sliceKindMode ) {
         this.theSliceKindMode = sliceKindMode;
-    }
-
-    public Set<Subspace> getSubspaces() {
-        return subspaces;
-    }
-
-    public void setSubspaces( Set<Subspace> subspaces ) {
-        this.subspaces = subspaces;
     }
 
 

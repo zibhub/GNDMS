@@ -16,12 +16,14 @@ package de.zib.gndms.logic.model.dspace;
  * limitations under the License.
  */
 
+import de.zib.gndms.infra.grams.LinuxDirectoryAux;
 import de.zib.gndms.logic.action.ActionConfigurer;
 import de.zib.gndms.logic.model.ModelUpdateListener;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.NoSuchResourceException;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
+import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.util.GridResourceCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,24 +43,22 @@ import java.util.List;
 public class SliceProviderImpl implements SliceProvider {
     private final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
-    private SubspaceProvider provider;
+    private SubspaceProvider subspaceProvider;
     private SliceKindProvider sliceKindProvider;
 
     final private ActionConfigurer actionConfigurer;
 
-	private EntityManagerFactory emf;
     final private GridResourceCache< Slice > cache;
 
-    SliceProviderImpl( EntityManagerFactory emf ) {
-        this.emf = emf;
+    public SliceProviderImpl( EntityManagerFactory emf ) {
         this.actionConfigurer = new ActionConfigurer( emf );
         this.actionConfigurer.setEntityUpdateListener( new Invalidator() );
         this.cache = new GridResourceCache<Slice>( Slice.class, emf );
     }
 
     @Inject
-    public void setSubspaceProvider( SubspaceProvider provider ) {
-        this.provider = provider;
+    public void setSubspaceProvider( SubspaceProvider subspaceProvider ) {
+        this.subspaceProvider = subspaceProvider;
     }
 
     @Inject
@@ -107,9 +107,14 @@ public class SliceProviderImpl implements SliceProvider {
             throw new NoSuchElementException( "SliceKind " + sliceKindId + " does not exist in subspace " + subspaceId + "." );
         }
 
+        Subspace subspace = subspaceProvider.get( subspaceId );
         SliceKind sliceKind = sliceKindProvider.get( subspaceId, sliceKindId );
 
         final CreateSliceAction createSliceAction = new CreateSliceAction( dn, ttm, sliceKind, sliceSize );
+        actionConfigurer.configureAction( createSliceAction );
+        createSliceAction.setModel( subspace );
+        createSliceAction.setDirectoryAux( new LinuxDirectoryAux() );
+
         final Slice slice = createSliceAction.call();
 
         // TODO: could cache the slice here

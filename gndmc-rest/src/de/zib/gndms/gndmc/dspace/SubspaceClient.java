@@ -83,7 +83,12 @@ public class SubspaceClient extends AbstractClient implements SubspaceService {
 				dn);
 	}
 
-	@Override
+    @Override
+    public ResponseEntity<List<Specifier<Void>>> createSliceKind( String subspace, String sliceKind, String config, String dn ) {
+        return null;  // TODO: implement create slice kind in SubspaceClient
+    }
+
+    @Override
 	public final ResponseEntity<Configuration> listSubspaceConfiguration(
 			final String subspace, final String dn) {
 		return unifiedGet(Configuration.class, getServiceURL() + "/dspace/_"

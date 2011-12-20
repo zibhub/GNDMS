@@ -116,6 +116,15 @@ public interface DirectoryAux {
      */
     public boolean copyDir( String uid, String src_pth, String tgt_pth );
 
+    /**
+     * Move a directory or file.
+     *
+     * @param src_path
+     * @param target_path
+     * @return true on success.
+     */
+    public boolean move( String src_path, String target_path );
+
     int chmod( int mask, File file );
 
 
