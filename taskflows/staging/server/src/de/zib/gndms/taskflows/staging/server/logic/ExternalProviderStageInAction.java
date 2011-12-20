@@ -70,8 +70,10 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
 
 	    final File sliceDir = new File(sliceParam.getSubspace().getPathForSlice(sliceParam));
         final ProcessBuilder procBuilder = createProcessBuilder("stagingCommand", sliceDir);
-	    if (procBuilder == null)
+	    if (procBuilder == null) {
 	        fail(new IllegalStateException("No stagingCommand configured"));
+            return;
+        }
 
         procBuilder.environment().put( "X509_USER_PROXY", sliceDir + PROXY_FILE_NAME );
 

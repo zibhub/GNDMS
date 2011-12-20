@@ -21,9 +21,14 @@ package de.zib.gndms.taskflows.staging.server;
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.model.gorfx.taskflow.DefaultTaskFlowFactory;
+import de.zib.gndms.taskflows.staging.client.ProviderStageInMeta;
 import de.zib.gndms.taskflows.staging.client.model.ProviderStageInOrder;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
+import de.zib.gndms.taskflows.staging.server.logic.AbstractProviderStageInAction;
+import de.zib.gndms.taskflows.staging.server.logic.AbstractProviderStageInQuoteCalculator;
+import de.zib.gndms.taskflows.staging.server.logic.ExternalProviderStageInAction;
+import de.zib.gndms.taskflows.staging.server.logic.ExternalProviderStageInQuoteCalculator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -38,34 +43,35 @@ import java.util.Map;
  *          User: stepn Date: 08.10.2008 Time: 13:54:07
  */
 public class ProviderStageInTaskFlowFactory
-	  extends DefaultTaskFlowFactory<ProviderStageInOrder, ExternalProviderStageInQuoteCalculator> {
+	  extends DefaultTaskFlowFactory<ProviderStageInOrder,
+        AbstractProviderStageInQuoteCalculator> {
 
     private Dao dao;
-    private String taskFlowType; // todo initialise
-
 
     public ProviderStageInTaskFlowFactory( ) {
         // todo problem ExternalProvider.. is to concrete AbstractProvider.. would be better
-        super( ProviderStageInMeta.PROVIDER_STAGING_KEY, ExternalProviderStageInQuoteCalculator.class,
-            ProviderStageInOrder.class );
+        super( ProviderStageInMeta.PROVIDER_STAGING_KEY,
+                AbstractProviderStageInQuoteCalculator.class,
+                ProviderStageInOrder.class );
     }
 
     @Override
-    public ExternalProviderStageInQuoteCalculator getQuoteCalculator() {
+    public AbstractProviderStageInQuoteCalculator getQuoteCalculator() {
 
-        ExternalProviderStageInQuoteCalculator calculon = super.getQuoteCalculator();    // overriden method implementation
+        AbstractProviderStageInQuoteCalculator calculon;
 
-        final @NotNull MapConfig config = new MapConfig(getDao().getTaskFlowTypeConfig( taskFlowType ));
+        final @NotNull MapConfig config = new MapConfig(getDao().getTaskFlowTypeConfig( getTaskFlowKey() ));
         try {
             final Class<? extends AbstractProviderStageInQuoteCalculator> orqCalculatorClass =
                 config.getClassOption(
                     AbstractProviderStageInQuoteCalculator.class, "estimationClass",
                     ExternalProviderStageInQuoteCalculator.class );
-        } catch ( ClassNotFoundException e ) {
+            calculon = orqCalculatorClass.newInstance();
+            injectMembers( calculon );
+            return calculon;
+        } catch ( Exception e ) {
             throw new RuntimeException( e );
         }
-        // injectMembers(instance);
-        return calculon;
     }
 
 
@@ -92,14 +98,18 @@ public class ProviderStageInTaskFlowFactory
 
     @Override
     public TaskAction createAction() {
-        /*
-        final @NotNull MapConfig config = new MapConfig(getDao().getTaskFlowTypeConfig( offerType ));
-	    final Class<? extends AbstractProviderStageInAction> instanceClass = config.getClassOption(
-		      AbstractProviderStageInAction.class, "stagingClass",
-		      ExternalProviderStageInAction.class);
-	    final AbstractProviderStageInAction newInstance = instanceClass.newInstance();
-	    injectMembers(newInstance);
-	    */
-        return null;  // todo check which action to create
+        
+        final @NotNull MapConfig config = new MapConfig(getDao().getTaskFlowTypeConfig( getTaskFlowKey() ));
+        final Class<? extends AbstractProviderStageInAction> instanceClass;
+        try {
+            instanceClass = config.getClassOption(
+                  AbstractProviderStageInAction.class, "stagingClass",
+                  ExternalProviderStageInAction.class);
+            final AbstractProviderStageInAction newInstance = instanceClass.newInstance();
+      	    injectMembers(newInstance);
+            return newInstance;
+        } catch ( Exception e ) {
+            throw new RuntimeException( e );
+        }
     }
 }

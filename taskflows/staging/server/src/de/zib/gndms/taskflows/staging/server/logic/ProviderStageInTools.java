@@ -68,17 +68,4 @@ public final class ProviderStageInTools {
     }
 
 
-    public static ProcessBuilderAction createPBActionForXML(final @NotNull String orq_parms ) {
-
-        return new ProcessBuilderAction() {
-            protected @Override void writeProcessStdIn(final @NotNull BufferedOutputStream stream)
-                throws IOException {
-
-                OutputStreamWriter os = new OutputStreamWriter( stream );
-                os.write( orq_parms );
-                os.flush( );
-                os.close( );
-            }
-        };
-    }
 }

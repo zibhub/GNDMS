@@ -248,7 +248,7 @@ public abstract class DefaultTaskFlowFactory<O extends Order, C extends Abstract
     }
 
 
-    protected void injectMembers( C newInstance ) {
+    protected void injectMembers( Object newInstance ) {
         getInjector().injectMembers( newInstance );
     }
 
@@ -265,8 +265,6 @@ public abstract class DefaultTaskFlowFactory<O extends Order, C extends Abstract
     }
 
 
-    // i'd love to put this class in the factories interface where it belongs,
-    // but thanks to poor design of the java language this is not possible...
     protected static class CreatableTaskFlow<O extends Order> extends TaskFlow<O> {
 
         public CreatableTaskFlow() {

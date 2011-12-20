@@ -39,7 +39,6 @@ import java.util.List;
  */
 public class DataDescriptor implements Serializable {
 
-    // todo maybe use a real object list here
     private List<String> objectList; // required
     private DataConstraints constrains; // not required 
     private String dataFormat; // required
