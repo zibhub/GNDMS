@@ -19,18 +19,14 @@ package de.zib.gndms.logic.model.gorfx;
 
 
 import de.zib.gndms.common.model.gorfx.types.AbstractOrder;
-import de.zib.gndms.common.rest.MyProxyToken;
-import de.zib.gndms.kit.access.MyProxyFactory;
 import de.zib.gndms.kit.access.MyProxyFactoryProvider;
-import de.zib.gndms.kit.security.CredentialProvider;
-import de.zib.gndms.kit.security.MyProxyCredentialProvider;
 import de.zib.gndms.logic.model.DefaultTaskAction;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
-import de.zib.gndms.neomodel.gorfx.TaskFlowType;
 import de.zib.gndms.neomodel.gorfx.Task;
+import de.zib.gndms.neomodel.gorfx.TaskFlowType;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,15 +43,15 @@ import java.util.Map;
  *
  *          User: stepn Date: 02.10.2008 Time: 13:00:56
  */
-public abstract class TaskFlowAction<K extends AbstractOrder> extends DefaultTaskAction {
+public abstract class TaskFlowAction<K extends AbstractOrder> extends
+        DefaultTaskAction<DelegatingOrder<K>> {
 
     private String offerTypeId;
-    private DelegatingOrder<K> order;
     private MyProxyFactoryProvider myProxyFactoryProvider;
 
 
     protected TaskFlowAction( String offerTypeId ) {
-        super();
+        super( ( Class<DelegatingOrder<K>>) (Object) DelegatingOrder.class );
         this.offerTypeId = offerTypeId;
     }
 
@@ -115,21 +111,10 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends DefaultTas
     }
 
     public K getOrderBean() {
-        if( order != null )
-            return order.getOrderBean();
+        if( getOrder() != null )
+            return getOrder().getOrderBean();
 
         return null;
-    }
-
-
-    // returns cached instance of order
-    public DelegatingOrder<K> getOrder() {
-        return order;
-    }
-
-
-    protected void setOrder( DelegatingOrder<K> order ) {
-        this.order = order;
     }
 
 
@@ -167,21 +152,4 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends DefaultTas
     }
 
 
-    /**
-     * This should be called in every In_State_ method, cause after a restart order might have
-     * not been initialized.
-     */
-    protected void ensureOrder() {
-
-        if ( getOrder() == null ) {
-            Session session = getDao().beginSession();
-            try {
-                Task task = getTask( session );
-                setOrder( ( DelegatingOrder ) task.getOrder() );
-                session.success();
-            } finally {
-                session.finish();
-            }
-        }
-    }
 }

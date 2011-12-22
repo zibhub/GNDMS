@@ -16,6 +16,7 @@ package de.zib.gndms.logic.model;
  * limitations under the License.
  */
 
+import de.zib.gndms.common.model.gorfx.types.Order;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.gorfx.Taskling;
@@ -34,12 +35,19 @@ import javax.persistence.EntityManager;
  *
  * User: stepn Date: 15.02.2011 Time: 14:11
  */
-public class DefaultTaskAction extends TaskAction {
+public class DefaultTaskAction<O extends Order> extends TaskAction<O> {
     private volatile boolean killAltTaskState = true;
 
     public DefaultTaskAction() {
         super();
     }
+
+
+    public DefaultTaskAction( final Class<O> orderClass ) {
+
+        super( orderClass );
+    }
+
 
     public DefaultTaskAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model) {
         super(em, dao, model);

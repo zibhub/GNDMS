@@ -17,7 +17,6 @@ package de.zib.gndms.logic.model;
 
 import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.model.dspace.Slice;
-import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.model.util.TxFrame;
 import de.zib.gndms.neomodel.common.Dao;
@@ -35,14 +34,14 @@ import javax.persistence.EntityManager;
  * @date 20.12.11  11:44
  * @brief
  */
-public class DeleteSliceTaskAction extends DefaultTaskAction {
+public class DeleteSliceTaskAction extends DefaultTaskAction<ModelIdHoldingOrder> {
 
     private DirectoryAux directoryAux;
 
 
     public DeleteSliceTaskAction() {
 
-        super();
+        super( ModelIdHoldingOrder.class );
     }
 
 
@@ -80,40 +79,90 @@ public class DeleteSliceTaskAction extends DefaultTaskAction {
                                  final boolean isRestartedTask, final boolean altTaskState )
             throws Exception
     {
-        Session session = getDao().beginSession();
-        ModelIdHoldingOrder order;
-        try{      
-            final Task task = getModel().getTask(session);
-            order = ( ModelIdHoldingOrder ) task.getOrder();
-            session.success();
-        } finally { session.finish(); }
-        
-        EntityManager em = getEmf().createEntityManager();
-        TxFrame tx = new TxFrame( em );
+        ensureOrder();
+
+        ModelIdHoldingOrder order = getOrder();
+
         Slice slice;
-        Subspace subspace;
-        try{
-            slice = em.find( Slice.class, order.getModelId() );
-            subspace = slice.getSubspace();
-            tx.commit();
-        } finally {
-            tx.finish();
-        }
+        slice = getModelEntity( Slice.class );
 
+        getDirectoryAux().deleteDirectory( slice.getOwner(),
+                slice.getSubspace().getPathForSlice( slice ) );
 
-        getDirectoryAux().deleteDirectory( slice.getOwner(), subspace.getPathForSlice( slice ) );
-
-        em = getEmf().createEntityManager();
-        tx = new TxFrame( em );
-        try{
-            slice = em.find( Slice.class, order.getModelId() );
-            getEntityManager().remove( slice );
-            tx.commit();
-        } finally {
-            tx.finish();
-        }
+        deleteModelEntity( Slice.class );
 
         autoTransitWithPayload( Boolean.TRUE );
+    }
+
+
+    /**
+     * Delivers the model for the id given in the order object.
+     *
+     * \PRECONDITION ensuredOrder must have been called.
+     *
+     * @param modelClass the model calls...
+     * @return The entity referenced by
+     */
+    protected <M> M getModelEntity( final Class<M> modelClass ) {
+
+        return getEntity( modelClass, getOrder().getModelId() );
+    }
+
+
+    /**
+     * Loades an entity from the database.
+     *
+     * @param modelClass The class of the entity.
+     * @param modelId The id, i.e. primary key, of the entity.
+     * @return The entity instance, in detached state.
+     */
+    protected <M> M getEntity( final Class<M> modelClass, final String modelId ) {
+
+        M model;
+        EntityManager em = getEmf().createEntityManager();
+        TxFrame tx = new TxFrame( em );
+        try{
+            model = em.find( modelClass, modelId );
+            tx.commit();
+        } finally {
+            tx.finish();
+        }
+        return model;
+    }
+
+
+    /**
+     * Deletes the model-entity, whose id given in the order.
+     *
+     * \PRECONDITION ensuredOrder must have been called.
+     *
+     * @param modelClass the model class...
+     * @return The entity referenced by
+     */
+    protected <M> void deleteModelEntity( final Class<M> modelClass ) {
+
+        deleteEntity( modelClass, getOrder().getModelId() );
+    }
+
+
+    /**
+     * Deletes an entity from the database.
+     *
+     * @param modelClass The class of the entity, required for the look-up
+     * @param modelId The id, i.e. primary key, of the entity.
+     */
+    protected <M> void deleteEntity( final Class<M> modelClass, final String modelId ) {
+
+        M model;
+        EntityManager em = getEmf().createEntityManager();
+        TxFrame tx = new TxFrame( em );
+        try{
+            model = em.find( modelClass, modelId );
+            getEntityManager().remove( model );
+            tx.commit();
+        } finally {
+            tx.finish();
+        }
     }
 
 

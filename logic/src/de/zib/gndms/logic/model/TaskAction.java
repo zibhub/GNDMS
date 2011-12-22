@@ -18,9 +18,9 @@ package de.zib.gndms.logic.model;
 
 
 
-import de.zib.gndms.kit.security.RequiresCredentialProvider;
-import de.zib.gndms.kit.security.CredentialProvider;
 import de.zib.gndms.kit.configlet.ConfigletProvider;
+import de.zib.gndms.kit.security.CredentialProvider;
+import de.zib.gndms.kit.security.RequiresCredentialProvider;
 import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.logic.model.gorfx.LifetimeExceededException;
 import de.zib.gndms.logic.model.gorfx.permissions.PermissionConfiglet;
@@ -32,9 +32,9 @@ import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.TaskAccessor;
 import de.zib.gndms.neomodel.gorfx.Taskling;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
@@ -51,10 +51,12 @@ import java.util.GregorianCalendar;
  * @author  try ste fan pla nti kow zib
  *
  * User: stepn Date: 15.09.2008 Time: 11:26:48
+ *
+ * @Parameter O ist the Order class
  */
 @SuppressWarnings({ "AbstractMethodCallInConstructor" })
-public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskling>
-        implements RequiresCredentialProvider
+public abstract class TaskAction<O extends Serializable> extends
+        AbstractModelDaoAction<Taskling, Taskling> implements RequiresCredentialProvider
 {
     /**
      * The ExecutionService on which this TaskAction runs
@@ -77,16 +79,33 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
      */
 	private EntityManagerFactory emf;
 
+    /**
+     * Unserialized version of the order
+     */
+    private O order;
+
+    /**
+     * Class of the order, required for casting.
+     */
+    private Class<O> orderClass;
+
     private ConfigletProvider configletProvider;
 
     private CredentialProvider credentialProvider;
     protected volatile ModelUpdateListener<Taskling> modelUpdateListener = null;
 
+
     public TaskAction() {
         super();
     }
 
-    
+
+    protected TaskAction( final Class<O> orderClass ) {
+
+        this.orderClass = orderClass;
+    }
+
+
     /**
      * Initializes a TaskAction from an EntityManager, a dao and a (shallow) model.
      *
@@ -584,5 +603,47 @@ public abstract class TaskAction extends AbstractModelDaoAction<Taskling, Taskli
         }finally {
             session.finish();
         }
+    }
+
+
+    // returns cached instance of order
+    public O getOrder() {
+        return order;
+    }
+
+
+    protected void setOrder( O order ) {
+        this.order = order;
+    }
+
+
+    /**
+     * This should be called in every In_State_ method, cause after a restart order might have
+     * not been initialized.
+     */
+    protected void ensureOrder() {
+
+        if ( getOrder() == null ) {
+            Session session = getDao().beginSession();
+            try {
+                Task task = getTask( session );
+                setOrder( orderClass.cast( task.getOrder() ) );
+                session.success();
+            } finally {
+                session.finish();
+            }
+        }
+    }
+
+
+    public Class<O> getOrderClass() {
+
+        return orderClass;
+    }
+
+
+    public void setOrderClass( final Class<O> orderClass ) {
+
+        this.orderClass = orderClass;
     }
 }
