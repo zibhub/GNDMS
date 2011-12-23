@@ -606,6 +606,16 @@ public abstract class TaskAction<O extends Serializable> extends
     }
 
 
+    protected void updateProgress( final int progress ) {
+        Session session = getDao().beginSession();
+        try{
+            getModel().getTask( session ).setProgress( progress );
+            session.success();
+        }finally {
+            session.finish();
+        }
+    }
+
     // returns cached instance of order
     public O getOrder() {
         return order;

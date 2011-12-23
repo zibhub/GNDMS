@@ -53,7 +53,7 @@ public class TaskServiceAux {
 
 
 
-    public Taskling submitTaskAction( Dao dao, TaskAction taskAction, Serializable taskModel, String wid ) {
+    public Taskling submitTaskAction( Dao dao, TaskAction taskAction, Serializable order, String wid ) {
 
         String id = UUID.randomUUID().toString();
         Taskling taskling = null;
@@ -62,7 +62,7 @@ public class TaskServiceAux {
         try {
             Task task = ses.findTask( id );
             task.setWID( wid );
-            task.setORQ( taskModel );
+            task.setORQ( order );
             taskling = task.getTaskling();
             ses.success();
         } finally {

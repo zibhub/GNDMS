@@ -122,10 +122,10 @@ public class DummyTFAction extends TaskFlowAction<DummyOrder> {
     }
 
 
-    private void updateProgress( int i ) {
+    private void updateProgress( int progress ) {
         final Session session = getDao().beginSession();
         try {
-            getTask( session ).setProgress( i );
+            getTask( session ).setProgress( progress );
             session.success();
         } finally { session.finish(); }
     }

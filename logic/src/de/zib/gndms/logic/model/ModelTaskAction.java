@@ -16,14 +16,7 @@ package de.zib.gndms.logic.model;
  */
 
 import de.zib.gndms.kit.util.DirectoryAux;
-import de.zib.gndms.model.dspace.Slice;
-import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.model.util.TxFrame;
-import de.zib.gndms.neomodel.common.Dao;
-import de.zib.gndms.neomodel.common.Session;
-import de.zib.gndms.neomodel.gorfx.Task;
-import de.zib.gndms.neomodel.gorfx.Taskling;
-import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -31,67 +24,18 @@ import javax.persistence.EntityManager;
 /**
  * @author Maik Jorra
  * @email jorra@zib.de
- * @date 20.12.11  11:44
+ * @date 22.12.11  16:57
  * @brief
  */
-public class DeleteSliceTaskAction extends DefaultTaskAction<ModelIdHoldingOrder> {
+public abstract class ModelTaskAction<O extends ModelIdHoldingOrder> extends DefaultTaskAction<O> {
+
 
     private DirectoryAux directoryAux;
 
 
-    public DeleteSliceTaskAction() {
+    public ModelTaskAction( final Class<O> orderClass ) {
 
-        super( ModelIdHoldingOrder.class );
-    }
-
-
-    public DeleteSliceTaskAction( @NotNull EntityManager em, @NotNull Dao dao,
-                                  @NotNull Taskling model )
-    {
-        super( em, dao, model );
-    }
-
-
-    @Override
-    protected void onCreated( @NotNull final String wid, @NotNull final TaskState state,
-                              final boolean isRestartedTask, final boolean altTaskState )
-            throws Exception
-    {
-
-        if (! isRestartedTask) {
-            super.onCreated(wid, state, isRestartedTask, altTaskState);
-            final Session session = getDao().beginSession();
-            try {
-                final Task task = getModel().getTask(session);
-                task.setWID(wid);
-                task.setMaxProgress( 1 );
-                task.setProgress( 0 );
-                session.success();
-            }
-            finally { session.finish(); }
-        }
-        super.onCreated( wid, state, isRestartedTask, altTaskState );
-    }
-
-
-    @Override
-    protected void onInProgress( @NotNull final String wid, @NotNull final TaskState state,
-                                 final boolean isRestartedTask, final boolean altTaskState )
-            throws Exception
-    {
-        ensureOrder();
-
-        ModelIdHoldingOrder order = getOrder();
-
-        Slice slice;
-        slice = getModelEntity( Slice.class );
-
-        getDirectoryAux().deleteDirectory( slice.getOwner(),
-                slice.getSubspace().getPathForSlice( slice ) );
-
-        deleteModelEntity( Slice.class );
-
-        autoTransitWithPayload( Boolean.TRUE );
+        super( orderClass );
     }
 
 
