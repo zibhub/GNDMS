@@ -74,11 +74,22 @@ define "adis" do
         task 'test1' do
                 jars = compile.dependencies.map(&:to_s)
                 jars += [project.package(:jar).to_s]
-                args = ['--baseurl', 'http://localhost:8080/vold', "setDMS", "test2"]
+                args = ['--baseurl', 'http://csr-pc28:6990/', "setDMS", "test2"]
 
                 Commands.java(mainClass,
                         args, { :classpath => jars, :verbose => true } )
         end
+
+	desc "run, voldi, run"
+	task 'run' do
+		jars = compile.dependencies.map(&:to_s)
+		jars += [project.package(:jar).to_s]
+		jars += ['etc']
+                args = ['--baseurl', 'http://csr-pc28:6990/', 'getDMS']
+
+		Commands.java(mainClass,
+			args, { :classpath => jars, :verbose => true } )
+	end
 
         desc "Print dependencies"
         task 'deps' do
