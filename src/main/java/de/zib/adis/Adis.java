@@ -288,9 +288,9 @@ public class Adis extends ABIi {
             checkRole( role );
         }
 
-        Map<String, String> _result = voldi.insert( null, simplemap( new Key( grid, role.toString(), "" ), endpoint ) );
+        voldi.insert( null, simplemap( new Key( grid, role.toString(), "" ), endpoint ) );
 
-        return 0 == _result.size();
+        return true;
     }
 
     public boolean setType( String type, String name, String value ) {
@@ -305,9 +305,9 @@ public class Adis extends ABIi {
             }
         }
 
-        Map<String, String> _result = voldi.insert( null, simplemap( new Key( grid, type, name ), value ) );
+        voldi.insert( null, simplemap( new Key( grid, type, name ), value ) );
 
-        return 0 == _result.size();
+        return true;
     }
 
     /**
@@ -381,9 +381,9 @@ public class Adis extends ABIi {
         // add gram |--> subspace
         request.put( new Key( grid, Type.GRAM.toString(), gram ), simpleset( subspace ) );
 
-        Map<String, String> _result = voldi.insert( null, request );
+        voldi.insert( null, request );
 
-        return 0 == _result.size();
+        return true;
     }
 
     /**
@@ -408,9 +408,9 @@ public class Adis extends ABIi {
             request.put( new Key( grid, Type.OID.toString(), oidprefix ), simpleset( gorfx ) );
         }
 
-        Map<String, String> _result = voldi.insert( null, request );
+        voldi.insert( null, request );
 
-        return 0 == _result.size();
+        return true;
     }
 
     /**
