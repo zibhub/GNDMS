@@ -44,8 +44,7 @@ public class DeleteSliceTaskAction extends ModelTaskAction<ModelIdHoldingOrder> 
             throws Exception
     {
 
-        if (! isRestartedTask) {
-            super.onCreated(wid, state, isRestartedTask, altTaskState);
+        if (! isRestartedTask ) {
             final Session session = getDao().beginSession();
             try {
                 final Task task = getModel().getTask(session);

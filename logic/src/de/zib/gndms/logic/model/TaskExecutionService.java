@@ -19,10 +19,11 @@ package de.zib.gndms.logic.model;
 
 
 import de.zib.gndms.neomodel.common.Dao;
-import org.slf4j.Logger;
+import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
+import java.io.Serializable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -68,11 +69,11 @@ public interface TaskExecutionService {
      *
      * @see {@link #submitAction(javax.persistence.EntityManager, EntityAction}
      */
-    public @NotNull <R> Future<R> submitDaoAction( final @NotNull EntityManager em,
+    @NotNull <R> Future<R> submitDaoAction( final @NotNull EntityManager em,
                                                    final @NotNull Dao dao,
                                                    final @NotNull ModelDaoAction<?, R> action );
 
-    public @NotNull <R> Future<R> submitDaoAction( final @NotNull ModelDaoAction<?, R> action );
+    @NotNull <R> Future<R> submitDaoAction( final @NotNull ModelDaoAction<?, R> action );
 
     /**
      * Returns true if this is terminating or already terminated.
@@ -88,4 +89,33 @@ public interface TaskExecutionService {
      * @see ExecutorService#shutdownNow() 
      */
     void shutdown();
+
+
+    /**
+     * Creates a task and taskling, initializes the task action and submits it.
+     *
+     * @param dao The dao under which the task ist submitted.
+     * @param taskAction The action which should be submitted.
+     * @param order The order, i.e. input for the task.
+     * @param wid The workflow id, used to keep trak of the logging massages of the task action.
+     *
+     * @return The taskling representing the newly created task.
+     */
+    Taskling submitTaskAction( Dao dao, TaskAction taskAction, Serializable order, String wid );
+
+
+    /**
+     * Creates a task and taskling, initializes the task action and submits it using the default
+     * dao.
+     *
+     * Convenience method. Behaves exactly like the above method, but ueses the system dao,
+     * instead of a custom one.
+     *
+     * @param taskAction The action which should be submitted.
+     * @param order The order, i.e. input for the task.
+     * @param wid The workflow id, used to keep trak of the logging massages of the task action.
+     *
+     * @return The taskling representing the newly created task.
+     */
+    Taskling submitTaskAction( TaskAction taskAction, Serializable order, String wid );
 }

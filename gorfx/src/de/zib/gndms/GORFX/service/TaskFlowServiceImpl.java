@@ -79,7 +79,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     private TaskClient taskClient;
     private final Logger logger = LoggerFactory.getLogger( this.getClass() );
     private TaskExecutionService executorService;
-    private TaskServiceAux taskServiceAux;
+    private TaskClient.TaskServiceAux taskServiceAux;
     private Dao dao;
 
 
@@ -93,8 +93,6 @@ public class TaskFlowServiceImpl implements TaskFlowService {
         facetsNames.add( "errors" );
         uriFactory = new UriFactory( serviceUrl );
         taskClient.setServiceURL( serviceUrl );
-
-        taskServiceAux = new TaskServiceAux( executorService );
     }
 
 
@@ -289,7 +287,9 @@ public class TaskFlowServiceImpl implements TaskFlowService {
             Taskling t = tf.getTaskling();
             if ( t != null ) {
                 logger.debug( "getTask task called" );
-                spec = taskServiceAux.getTaskSpecifier( taskClient, t, uriFactory, taskFlowUriMap( type, id ), dn );
+                spec = TaskClient.TaskServiceAux
+                        .getTaskSpecifier( taskClient, t.getId(), uriFactory,
+                                taskFlowUriMap( type, id ), dn );
                 hs = HttpStatus.OK;
             }
         } catch ( Exception e ) {
@@ -320,11 +320,14 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                     hs = HttpStatus.CONFLICT;
                 else {
                     TaskAction ta = tff.createAction();
-                    Taskling taskling = taskServiceAux.submitTaskAction( dao, ta, tf.getOrder(), wid );
+                    Taskling taskling = executorService
+                            .submitTaskAction( dao, ta, tf.getOrder(), wid );
                     hs = HttpStatus.CREATED;
                     Specifier<Facets> spec = null;
                     try {
-                        spec = taskServiceAux.getTaskSpecifier( taskClient, taskling, uriFactory, taskFlowUriMap( type, id ), dn );
+                        spec = TaskClient.TaskServiceAux
+                                .getTaskSpecifier( taskClient, taskling.getId(),
+                                        uriFactory, taskFlowUriMap( type, id ), dn );
                     } catch ( Exception e ) {
                         logger.warn( "Exception while getting task", e );
                     }
@@ -427,7 +430,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
 
     private Map<String, String> taskUriMap( String type, String id, Taskling t ) {
-        return TaskServiceAux.taskUriMap( t, taskFlowUriMap( type, id ) );
+        return TaskClient.TaskServiceAux.taskUriMap( t.getId(), taskFlowUriMap( type, id ) );
     }
 
 

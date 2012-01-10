@@ -19,10 +19,14 @@ import de.zib.gndms.logic.action.ActionConfigurer;
 import de.zib.gndms.logic.model.*;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.neomodel.common.Dao;
+import de.zib.gndms.neomodel.common.Session;
+import de.zib.gndms.neomodel.gorfx.Task;
+import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import java.io.Serializable;
 import java.util.UUID;
 import java.util.concurrent.*;
 
@@ -179,6 +183,39 @@ public final class SysTaskExecutionService extends ActionConfigurer implements T
     @Inject
     public void setSystem( GNDMSystem system ) {
         this.system = system;
+    }
+
+
+    public Taskling submitTaskAction( Dao dao, TaskAction taskAction, Serializable order,
+                                      String wid )
+    {
+        String id = UUID.randomUUID().toString();
+        Taskling taskling = null;
+        dao.createTask( id );
+        Session ses = dao.beginSession();
+        try {
+            Task task = ses.findTask( id );
+            task.setWID( wid );
+            task.setORQ( order );
+            taskling = task.getTaskling();
+            ses.success();
+        } finally {
+            ses.finish();
+        }
+
+        taskAction.setOwnDao( dao );
+        taskAction.setModel( taskling );
+        submitAction( taskAction );
+
+        return taskling;
+    }
+
+
+    @Override
+    public Taskling submitTaskAction( final TaskAction taskAction, final Serializable order,
+                                      final String wid )
+    {
+        return submitTaskAction( system.getDao(), taskAction, order, wid );
     }
 }
 

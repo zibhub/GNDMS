@@ -25,15 +25,15 @@ import de.zib.gndms.logic.action.ActionCaller;
 import de.zib.gndms.logic.model.*;
 import de.zib.gndms.logic.model.gorfx.DefaultWrapper;
 import de.zib.gndms.logic.util.LogicTools;
-import de.zib.gndms.model.common.*;
-import de.zib.gndms.model.dspace.Subspace;
+import de.zib.gndms.model.common.GridResource;
+import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.gorfx.Taskling;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.jetbrains.annotations.NotNull;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -47,17 +47,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.metamodel.EntityType;
-
-import static javax.persistence.Persistence.createEntityManagerFactory;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import static java.lang.Thread.sleep;
-
+import java.io.*;
 import java.util.UUID;
-import java.util.concurrent.*;
+import java.util.concurrent.Future;
 
 
 
@@ -106,10 +98,9 @@ public final class GNDMSystem
 	private @NotNull EntityManagerFactory emf;
     private @NotNull GraphDatabaseService neo = null;
     private @NotNull Dao dao;
-//	private NetworkAuxiliariesProvider netAux;
 
 
-	// Outside injector
+    // Outside injector
     private @NotNull TaskExecutionService executionService; // accessible only via system
 
 	@SuppressWarnings({ "ThisEscapedInObjectConstruction" })
@@ -476,7 +467,7 @@ public final class GNDMSystem
      * @deprecated will be removed before next release
      */
     public @NotNull <R> Future<R> submitAction(final @NotNull EntityAction<R> action, final @NotNull Logger logParam) {
-        return getExecutionService().submitAction(action );
+        return getExecutionService().submitAction( action );
     }
 
     /**
@@ -488,18 +479,27 @@ public final class GNDMSystem
     public @NotNull <R> Future<R> submitAction(final @NotNull EntityManager em,
                                                final @NotNull EntityAction<R> action,
                                                final @NotNull Logger logParam) {
-        return getExecutionService().submitAction(em, action );
+        return getExecutionService().submitAction( em, action );
     }
 
 
     @NotNull
     public <R> Future<R> submitDaoAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull ModelDaoAction<?, R> action, @NotNull Logger log) {
-        return executionService.submitDaoAction(em, dao, action );
+        return executionService.submitDaoAction( em, dao, action );
     }
 
     @NotNull
     public <R> Future<R> submitDaoAction(@NotNull ModelDaoAction<?, R> action, @NotNull Logger log) {
-        return executionService.submitDaoAction(action );
+        return executionService.submitDaoAction( action );
+    }
+//	private NetworkAuxiliariesProvider netAux;
+
+
+    public Taskling submitTaskAction( @NotNull final TaskAction taskAction,
+                                      @NotNull final Serializable order,
+                                      final String wid )
+    {
+        return executionService.submitTaskAction( taskAction, order, wid );
     }
 
     public void reloadConfiglets() {

@@ -18,12 +18,17 @@ package de.zib.gndms.gndmc.gorfx;
 import de.zib.gndms.common.GORFX.service.TaskService;
 import de.zib.gndms.common.model.gorfx.types.*;
 import de.zib.gndms.common.rest.Facets;
+import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.common.stuff.devel.NotYetImplementedException;
 import de.zib.gndms.gndmc.AbstractClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author try ma ik jo rr a zib
@@ -122,5 +127,57 @@ public class TaskClient extends AbstractClient implements TaskService {
     public void setServiceURL( String serviceURL ) {
         uriFactory = new UriFactory( serviceURL );
         super.setServiceURL( serviceURL );
+    }
+
+
+    /**
+     * Some convenience methods for task handling
+     * @author try ma ik jo rr a zib
+     * @date 30.05.11  16:38
+     * @brief
+     */
+    public static class TaskServiceAux {
+
+        private final static Logger logger = LoggerFactory.getLogger( TaskServiceAux.class );
+
+
+        public static Specifier<Facets> getTaskSpecifier( TaskClient taskClient, String taskId,
+                                                    UriFactory uriFactory, Map<String,String> urimap, String dn ) {
+
+            Specifier<Facets> spec = new Specifier<Facets>();
+
+            Map<String, String> taskurimap = taskUriMap( taskId, urimap );
+
+            spec.setUrl( uriFactory.taskUri( taskurimap, null ) );
+            spec.setUriMap( taskurimap );
+
+            ResponseEntity<Facets> res = taskClient.getTaskFacets( taskId, dn );
+            if( res != null )
+                if( HttpStatus.OK.equals( res.getStatusCode() ) ) {
+                    spec.setPayload( res.getBody() );
+                } else {
+                    throw new IllegalStateException( "unexpected status: " + res.getStatusCode().name() );
+                }
+            else
+                logger.debug( "getTaskFacets returned null" );
+
+            return spec;
+        }
+
+
+        public static Map<String, String> taskUriMap( String taskId, Map<String,String> urimap ) {
+
+            HashMap<String,String> newUrimap = new HashMap<String, String>( 2 );
+            newUrimap.put( UriFactory.SERVICE, "gorfx" );
+            newUrimap.put( UriFactory.TASK_ID, taskId );
+
+            if ( urimap != null )
+                newUrimap.putAll( urimap ); // this might overwrite TASK_ID and SERVICE
+
+            return newUrimap;
+        }
+
+
+        private TaskServiceAux( ) {}
     }
 }
