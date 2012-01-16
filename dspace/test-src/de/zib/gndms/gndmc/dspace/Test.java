@@ -17,13 +17,16 @@
 package de.zib.gndms.gndmc.dspace;
 
 import de.zib.gndms.common.logic.config.SetupMode;
-import de.zib.gndms.dspace.service.SliceServiceImpl;
+import de.zib.gndms.common.rest.Specifier;
+import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.dspace.service.SubspaceServiceImpl;
 import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
 import de.zib.gndms.logic.model.NoWSDontNeedModelUpdateListener;
 import de.zib.gndms.logic.model.dspace.*;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.dspace.Subspace;
+import de.zib.gndms.neomodel.gorfx.Taskling;
+import org.springframework.http.ResponseEntity;
 import org.testng.Assert;
 
 import javax.persistence.EntityManager;
@@ -38,39 +41,9 @@ import java.io.StringWriter;
  * Time: 15:31
  * To change this template use File | Settings | File Templates.
  */
-public class Test extends JPATest {
-    
-    @org.testng.annotations.Test( groups = { "jpa" } )
-    public void test0() {
-        EntityManager em = emf.createEntityManager();
-
-        String subspace = "sub";
-
-        final EntityTransaction transaction = em.getTransaction();
-        try {
-            transaction.begin();
-
-            for( long i = 0; i < 2<<12; ++i )
-            {
-                TestTable t = new TestTable();
-                t.setA( String.valueOf( i ) );
-                em.persist(t);
-            }
-
-            transaction.commit();
-        }
-        finally {
-            try {
-                if( transaction.isActive() )
-                    transaction.rollback();
-                em.close();
-            } catch ( Exception e ) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
+public class Test extends JPATest
+{
+    String sliceId;
 
     @org.testng.annotations.Test( groups = { "jpa" } )
     public void test1() {
@@ -120,7 +93,7 @@ public class Test extends JPATest {
     }
 
 
-    @org.testng.annotations.Test( groups = { "jpa" }, dependsOnMethods = { "test1" } )
+    @org.testng.annotations.Test( groups = { "jpa" } )
     public void test2() {
         EntityManager em = emf.createEntityManager();
         final EntityTransaction transaction = em.getTransaction();
@@ -170,23 +143,14 @@ public class Test extends JPATest {
         subspaceService.setSliceProvider( sliceProvider );
         subspaceService.setSubspaceProvider( subspaceProvider );
 
-        subspaceService.createSlice( "sub", "kind", "deadline:2011-12-16; sliceSize:1024", "root" );
+        ResponseEntity< Specifier< Void > > response = subspaceService.createSlice("sub", "kind", "deadline:2011-12-16; sliceSize:1024", "root");
+
+        sliceId = response.getBody().getUriMap().get( UriFactory.SLICE );
     }
 
-    public void test_deleteSlice( ) {
-        SliceServiceImpl sliceService = new SliceServiceImpl();
-        sliceService.init();
-
-        SubspaceProviderImpl subspaceProvider = new SubspaceProviderImpl( emf );
-        SliceKindProviderImpl sliceKindProvider = new SliceKindProviderImpl( emf );
-        SliceProviderImpl sliceProvider = new SliceProviderImpl( emf );
-
-        sliceProvider.setSubspaceProvider( subspaceProvider );
-        sliceProvider.setSliceKindProvider( sliceKindProvider );
-
-        sliceService.setSliceProvider( sliceProvider );
-        sliceService.setSubspaceProvider( subspaceProvider );
-
-        sliceService.deleteSlice( "sub", "kind", "deadline:2011-12-16; sliceSize:1024", "root" );
+    @org.testng.annotations.Test( groups = { "jpa" }, dependsOnMethods = { "test_createSlice" } )
+    public void test_deleteSlice( ) throws NoSuchElementException {
+        final SliceProvider sliceProvider = ( SliceProvider )context.getBean( "sliceProvider" );
+        final Taskling ling = sliceProvider.deleteSlice( "sub", sliceId );
     }
 }

@@ -16,16 +16,19 @@
 
 package de.zib.gndms.gndmc.dspace;
 
+import de.zib.gndms.logic.model.dspace.SliceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.annotations.*;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Parameters;
 
 import javax.persistence.EntityManagerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
-
-import static javax.persistence.Persistence.createEntityManagerFactory;
 
 /**
  * Created by IntelliJ IDEA.
@@ -36,6 +39,8 @@ import static javax.persistence.Persistence.createEntityManagerFactory;
  */
 public abstract class JPATest {
     protected final Logger log = LoggerFactory.getLogger( this.getClass() );
+    protected ApplicationContext context;
+    protected SliceProvider sliceProvider;
     protected EntityManagerFactory emf;
     //private String gridPath;
 
@@ -63,7 +68,9 @@ public abstract class JPATest {
 
             log.info( "Opening JPA Store: " + map.toString() );
 
-            emf = createEntityManagerFactory( persistenceUnit, map );
+            context = new ClassPathXmlApplicationContext( new String[]{ "classpath:META-INF/00_system.xml", "classpath:META-INF/dspace.xml", "classpath:META-INF/client-context.xml" }, true );
+            emf = ( EntityManagerFactory )context.getBean( "emf" );
+            //emf = createEntityManagerFactory( persistenceUnit, map );
         }
     }
 

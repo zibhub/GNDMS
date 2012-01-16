@@ -36,6 +36,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManagerFactory;
 import java.util.Calendar;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * The slice provider which handles the available subspaces providing 
@@ -62,9 +63,21 @@ public class SliceProviderImpl implements SliceProvider {
         this.cache = new GridResourceCache<Slice>( Slice.class, emf );
     }
 
+    public SliceProviderImpl( ) {
+        this.actionConfigurer = new ActionConfigurer( );
+        this.actionConfigurer.setEntityUpdateListener( new Invalidator() );
+        this.cache = new GridResourceCache<Slice>( Slice.class );
+    }
+
     @Inject
     public void setSystem(GNDMSystem system) {
         this.system = system;
+    }
+
+    @Inject
+    public void setEntityManagerFactory( final EntityManagerFactory emf ) {
+        actionConfigurer.setEntityManagerFactory( emf );
+        cache.setEmf( emf );
     }
 
     @Inject
@@ -150,7 +163,9 @@ public class SliceProviderImpl implements SliceProvider {
         deleteAction.setInjector(system.getInstanceDir().getSystemAccessInjector());
 
         final Order order = new ModelIdHoldingOrder( sliceId );
-        final Taskling ling = system.submitTaskAction( deleteAction, order, null );
+        final String wid = UUID.randomUUID().toString();
+        logger.info( "Delete sliceID (" + sliceId + ") with tracking number " + wid );
+        final Taskling ling = system.submitTaskAction( deleteAction, order, wid );
 
         cache.invalidate(sliceId);
 

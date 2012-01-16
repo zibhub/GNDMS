@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
  * @email:  bachmann@zib.de
  */
 public class GridResourceCache< G extends GridResource > {
-    final EntityManagerFactory emf;
+    EntityManagerFactory emf;
     final Class< G > clazz;
     final Cache< String, G > cache;
 
@@ -42,6 +42,16 @@ public class GridResourceCache< G extends GridResource > {
 
     public GridResourceCache( final Class< G > clazz, final EntityManagerFactory emf ) {
         this.emf = emf;
+        this.clazz = clazz;
+        this.cache = CacheBuilder.newBuilder()
+                .expireAfterAccess(12, TimeUnit.HOURS)
+                .maximumSize( MAX_CACHE_SIZE )
+                .initialCapacity( 0 )
+                .build( new GridResourceLoader< G >() );
+    }
+
+    public GridResourceCache( final Class< G > clazz ) {
+        this.emf = null;
         this.clazz = clazz;
         this.cache = CacheBuilder.newBuilder()
                 .expireAfterAccess(12, TimeUnit.HOURS)
@@ -92,5 +102,9 @@ public class GridResourceCache< G extends GridResource > {
                 throw new NoSuchResourceException( "No " + clazz.getCanonicalName() + " with id " + id + " found." );
             return g;
         }
+    }
+
+    public void setEmf(EntityManagerFactory emf) {
+        this.emf = emf;
     }
 }
