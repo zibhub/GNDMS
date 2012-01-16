@@ -16,7 +16,6 @@ package de.zib.gndms.logic.model.gorfx.taskflow;
  */
 
 import de.zib.gndms.common.model.gorfx.types.TaskFlowInfo;
-import de.zib.gndms.common.model.gorfx.types.TaskFlowMeta;
 
 import java.util.ArrayList;
 import java.util.List;

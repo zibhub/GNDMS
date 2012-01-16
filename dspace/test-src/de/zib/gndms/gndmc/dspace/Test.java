@@ -17,6 +17,7 @@
 package de.zib.gndms.gndmc.dspace;
 
 import de.zib.gndms.common.logic.config.SetupMode;
+import de.zib.gndms.dspace.service.SliceServiceImpl;
 import de.zib.gndms.dspace.service.SubspaceServiceImpl;
 import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
 import de.zib.gndms.logic.model.NoWSDontNeedModelUpdateListener;
@@ -166,9 +167,26 @@ public class Test extends JPATest {
         sliceProvider.setSliceKindProvider( sliceKindProvider );
 
         subspaceService.setEmf( emf );
-        subspaceService.setSubspaceProvider( subspaceProvider );
         subspaceService.setSliceProvider( sliceProvider );
+        subspaceService.setSubspaceProvider( subspaceProvider );
 
         subspaceService.createSlice( "sub", "kind", "deadline:2011-12-16; sliceSize:1024", "root" );
+    }
+
+    public void test_deleteSlice( ) {
+        SliceServiceImpl sliceService = new SliceServiceImpl();
+        sliceService.init();
+
+        SubspaceProviderImpl subspaceProvider = new SubspaceProviderImpl( emf );
+        SliceKindProviderImpl sliceKindProvider = new SliceKindProviderImpl( emf );
+        SliceProviderImpl sliceProvider = new SliceProviderImpl( emf );
+
+        sliceProvider.setSubspaceProvider( subspaceProvider );
+        sliceProvider.setSliceKindProvider( sliceKindProvider );
+
+        sliceService.setSliceProvider( sliceProvider );
+        sliceService.setSubspaceProvider( subspaceProvider );
+
+        sliceService.deleteSlice( "sub", "kind", "deadline:2011-12-16; sliceSize:1024", "root" );
     }
 }

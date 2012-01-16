@@ -16,18 +16,16 @@ package de.zib.gndms.common.dspace.service;
  * limitations under the License.
  */
 
+import de.zib.gndms.common.logic.config.Configuration;
+import de.zib.gndms.common.rest.Facets;
+import de.zib.gndms.common.rest.Specifier;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.File;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.multipart.MultipartFile;
-
-import de.zib.gndms.common.logic.config.Configuration;
-import de.zib.gndms.common.rest.Facets;
-import de.zib.gndms.common.rest.Specifier;
-import de.zib.gndms.common.stuff.util.Product;
 
 /**
  * The interface of the Slice service.
@@ -102,18 +100,19 @@ public interface SliceService {
 	/**
 	 * Deletes a whole slice.
 	 * 
-	 * @param subspace
-	 *            The subspace identifier.
-	 * @param sliceKind
-	 *            The slice kind identifier.
-	 * @param slice
-	 *            The slice identifier.
-	 * @param dn
-	 *            The dn of the user invoking the method.
-	 * @return A task specifier.
+	 *
+     * @param subspace
+     *            The subspace identifier.
+     * @param sliceKind
+     *            The slice kind identifier.
+     * @param slice
+     *            The slice identifier.
+     * @param dn
+     *            The dn of the user invoking the method.
+     * @return A task specifier.
 	 */
-	ResponseEntity<Specifier<Void>> deleteSlice(String subspace, String sliceKind,
-			String slice, String dn);
+	ResponseEntity<Specifier<Facets>> deleteSlice(String subspace, String sliceKind,
+                                                  String slice, String dn);
 
 	/**
 	 * Lists all files of a slice fulfilling the specified attributes.

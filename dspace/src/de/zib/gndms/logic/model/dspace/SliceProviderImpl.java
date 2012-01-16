@@ -16,21 +16,29 @@ package de.zib.gndms.logic.model.dspace;
  * limitations under the License.
  */
 
+import de.zib.gndms.common.model.gorfx.types.Order;
+import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.infra.grams.LinuxDirectoryAux;
+import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.logic.action.ActionConfigurer;
+import de.zib.gndms.logic.model.ModelIdHoldingOrder;
 import de.zib.gndms.logic.model.ModelUpdateListener;
+import de.zib.gndms.logic.model.TaskExecutionService;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.NoSuchResourceException;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.util.GridResourceCache;
+import de.zib.gndms.neomodel.common.Dao;
+import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManagerFactory;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -43,6 +51,10 @@ import java.util.List;
 public class SliceProviderImpl implements SliceProvider {
     private final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
+    private TaskExecutionService taskExecutionService;
+    private Dao dao;
+    private GNDMSystem system;
+
     private SubspaceProvider subspaceProvider;
     private SliceKindProvider sliceKindProvider;
 
@@ -54,6 +66,21 @@ public class SliceProviderImpl implements SliceProvider {
         this.actionConfigurer = new ActionConfigurer( emf );
         this.actionConfigurer.setEntityUpdateListener( new Invalidator() );
         this.cache = new GridResourceCache<Slice>( Slice.class, emf );
+    }
+
+    @Inject
+    public void setSystem(GNDMSystem system) {
+        this.system = system;
+    }
+
+    @Inject
+    public void setDao( Dao dao ) {
+        this.dao = dao;
+    }
+
+    @Inject
+    public void setTaskExecutionService( TaskExecutionService taskExecutionService ) {
+        this.taskExecutionService = taskExecutionService;
     }
 
     @Inject
@@ -120,6 +147,30 @@ public class SliceProviderImpl implements SliceProvider {
         // TODO: could cache the slice here
 
         return slice.getId();
+    }
+
+    public Taskling deleteSlice(
+            final String subspaceId,
+            final String sliceId ) throws NoSuchElementException {
+        if( !cache.exists( sliceId ) ) {
+            logger.info( "Illegal Access: slice " + sliceId + " in subspace " + subspaceId + " cannot be deleted because it is not available." );
+            throw new NoSuchElementException( "Slice " + sliceId + " does not exist in subspace " + subspaceId + "." );
+        }
+
+        final Subspace subspace = subspaceProvider.get( subspaceId );
+        final Slice slice = cache.get( sliceId );
+        
+        final DeleteSliceTaskAction deleteAction = new DeleteSliceTaskAction();
+        deleteAction.setDirectoryAux(new LinuxDirectoryAux());
+        actionConfigurer.configureAction(deleteAction);
+        deleteAction.setInjector( system.getInstanceDir().getSystemAccessInjector() );
+
+        final Order order = new ModelIdHoldingOrder( sliceId );
+        final Taskling ling = system.submitTaskAction( deleteAction, order, null );
+
+        cache.invalidate( sliceId );
+
+        return ling;
     }
 
     private class Invalidator implements ModelUpdateListener< GridResource > {

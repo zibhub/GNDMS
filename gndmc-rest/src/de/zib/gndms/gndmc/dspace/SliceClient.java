@@ -79,9 +79,9 @@ public class SliceClient extends AbstractClient implements SliceService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public final ResponseEntity<Specifier<Void>> deleteSlice(final String subspace, final String sliceKind,
-			final String slice, final String dn) {
-		return (ResponseEntity<Specifier<Void>>) (Object) unifiedDelete(Specifier.class, 
+	public final ResponseEntity<Specifier<Facets>> deleteSlice(final String subspace, final String sliceKind,
+                                                               final String slice, final String dn) {
+		return (ResponseEntity<Specifier<Facets>>) (Object) unifiedDelete(Specifier.class,
 				getServiceURL() + "/dspace/_" + subspace + "/_"
 				+ sliceKind + "/_" + slice, dn);
 	}

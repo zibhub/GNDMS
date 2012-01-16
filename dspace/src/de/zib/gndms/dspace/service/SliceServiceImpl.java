@@ -22,12 +22,17 @@ import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
-import de.zib.gndms.logic.model.dspace.*;
+import de.zib.gndms.gndmc.gorfx.TaskClient;
+import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.logic.model.TaskExecutionService;
 import de.zib.gndms.logic.model.dspace.NoSuchElementException;
+import de.zib.gndms.logic.model.dspace.*;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.util.TxFrame;
+import de.zib.gndms.neomodel.gorfx.Taskling;
+import de.zib.gndms.stuff.GNDMSInjector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -64,6 +69,9 @@ public class SliceServiceImpl implements SliceService {
 	private SliceProvider sliceProvider;
 	private Facets sliceFacets;
 	private UriFactory uriFactory;
+
+    private GNDMSystem system;
+    private TaskExecutionService executorService;
 
     @Inject
     public void setSliceKindProvider(SliceKindProvider sliceKindProvider) {
@@ -196,48 +204,26 @@ public class SliceServiceImpl implements SliceService {
 	}
 
 	@Override
-	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}", method = RequestMethod.DELETE)
-	public final ResponseEntity<Specifier<Void>> deleteSlice(
-			@PathVariable final String subspace,
-			@PathVariable final String sliceKind,
-			@PathVariable final String slice,
-			@RequestHeader("DN") final String dn) {
-		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, slice, dn);
+	@RequestMapping( value = "/_{subspaceId}/_{sliceKindId}/_{sliceId}", method = RequestMethod.DELETE )
+	public final ResponseEntity<Specifier<Facets>> deleteSlice(
+            @PathVariable final String subspaceId,
+            @PathVariable final String sliceKindId,
+            @PathVariable final String sliceId,
+            @RequestHeader("DN") final String dn) {
+		GNDMSResponseHeader headers = setHeaders(subspaceId, sliceKindId, sliceId, dn);
 
 		try {
-			Slice slic = findSliceOfKind(subspace, sliceKind, slice);
+            // submit action
+            final Taskling ling = sliceProvider.deleteSlice( subspaceId, sliceId );
 
-			em = emf.createEntityManager();
-			TxFrame tx = new TxFrame(em);
-			try {
-				// TODO is this right? what is this uuid generator?
-				DeleteSliceAction action = new DeleteSliceAction(slic);
-				action.setOwnEntityManager(em);
-				logger.info("Calling action for deleting slice " + slice + ".");
-				action.call();
-				tx.commit();
-			} finally {
-				tx.finish();
-				if (em != null && em.isOpen()) {
-					em.close();
-				}
-			}
+            // get service facets of task
+            final Specifier< Facets > spec = TaskClient.TaskServiceAux.getTaskSpecifier( new TaskClient(), ling.getId(), uriFactory, null, dn );
 
-			Specifier<Void> spec = new Specifier<Void>();
-			// TODO get the task specifier from the action - something like
-			// this:
-			// Taskling task = new Taskling(???, ???);
-			// HashMap<String, String> urimap = new HashMap<String, String>(2);
-			// urimap.put(UriFactory.SERVICE, "dspace");
-			// urimap.put(UriFactory.SLICEKIND, sliceKind);
-			// urimap.put(UriFactory.TASK_ID, task.getId());
-			// spec.setUriMap(new HashMap<String, String>(urimap));
-
-			return new ResponseEntity<Specifier<Void>>(spec, headers,
-					HttpStatus.OK);
+            // return specifier for service facets
+            return new ResponseEntity< Specifier< Facets > >( spec, headers, HttpStatus.OK );
 		} catch (NoSuchElementException ne) {
 			logger.warn(ne.getMessage());
-			return new ResponseEntity<Specifier<Void>>(null, headers,
+			return new ResponseEntity<Specifier<Facets>>(null, headers,
 					HttpStatus.NOT_FOUND);
 		}
 	}
@@ -562,5 +548,18 @@ public class SliceServiceImpl implements SliceService {
     public final void setSubspaceProvider( SubspaceProvider subspaceProvider )
     {
         this.subspaceProvider = subspaceProvider;
+    }
+
+    public TaskExecutionService getExecutorService() {
+        return executorService;
+    }
+
+    public GNDMSystem getSystem() {
+        return system;
+    }
+
+    @Inject
+    public void setSystem(GNDMSystem system) {
+        this.system = system;
     }
 }
