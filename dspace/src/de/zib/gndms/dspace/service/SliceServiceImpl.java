@@ -24,7 +24,6 @@ import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.infra.system.GNDMSystem;
-import de.zib.gndms.logic.model.TaskExecutionService;
 import de.zib.gndms.logic.model.dspace.NoSuchElementException;
 import de.zib.gndms.logic.model.dspace.*;
 import de.zib.gndms.model.dspace.Slice;
@@ -32,13 +31,13 @@ import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.util.TxFrame;
 import de.zib.gndms.neomodel.gorfx.Taskling;
-import de.zib.gndms.stuff.GNDMSInjector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
@@ -71,7 +70,8 @@ public class SliceServiceImpl implements SliceService {
 	private UriFactory uriFactory;
 
     private GNDMSystem system;
-    private TaskExecutionService executorService;
+
+    private RestTemplate restTemplate;
 
     @Inject
     public void setSliceKindProvider(SliceKindProvider sliceKindProvider) {
@@ -217,7 +217,9 @@ public class SliceServiceImpl implements SliceService {
             final Taskling ling = sliceProvider.deleteSlice( subspaceId, sliceId );
 
             // get service facets of task
-            final Specifier< Facets > spec = TaskClient.TaskServiceAux.getTaskSpecifier( new TaskClient(), ling.getId(), uriFactory, null, dn );
+            final TaskClient client = new TaskClient( "" );
+            client.setRestTemplate( restTemplate );
+            final Specifier< Facets > spec = TaskClient.TaskServiceAux.getTaskSpecifier( new TaskClient( "" ), ling.getId(), uriFactory, null, dn );
 
             // return specifier for service facets
             return new ResponseEntity< Specifier< Facets > >( spec, headers, HttpStatus.OK );
@@ -550,16 +552,17 @@ public class SliceServiceImpl implements SliceService {
         this.subspaceProvider = subspaceProvider;
     }
 
-    public TaskExecutionService getExecutorService() {
-        return executorService;
-    }
-
     public GNDMSystem getSystem() {
         return system;
     }
 
     @Inject
-    public void setSystem(GNDMSystem system) {
+    public void setSystem( GNDMSystem system ) {
         this.system = system;
+    }
+
+    @Inject
+    public void setRestTemplate( RestTemplate restTemplate ) {
+        this.restTemplate = restTemplate;
     }
 }
