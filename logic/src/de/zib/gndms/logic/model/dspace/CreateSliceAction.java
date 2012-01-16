@@ -137,7 +137,9 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
         if( directoryAux == null )
             directoryAux = getInjector().getInstance( DirectoryAux.class );
 
-        Subspace sp = getModel( );
+        // get nondetached objects
+        final Subspace sp = em.find( Subspace.class, getModel().getId() );
+        sliceKind = em.find( SliceKind.class, sliceKind.getId() );
 
         if( ! sp.getCreatableSliceKinds( ).contains( sliceKind ) )
             throw new IllegalStateException("SliceKind not assigned to Subspace");
@@ -162,7 +164,7 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
         } catch ( SecurityException e ) {
             throw new RuntimeException(e);
         }
-
+        
         /*
         // fix permissions
         directoryAux.setPermissions( uid, sliceKind.getPermission(), f.getAbsolutePath( ) );
@@ -179,7 +181,9 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
 
         // maybe this isn't of interest
         addChangedModel( sp );
-        
+
+        em.persist( sl );
+
         return  sl;
     }
 
