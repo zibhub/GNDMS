@@ -91,6 +91,13 @@
     <bean id="batchUpdateAction" class="de.zib.gndms.logic.model.DefaultBatchUpdateAction" scope="prototype"/>
 
     <!-- #################################################################################################### -->
+    <bean id="derbyPath" class="java.lang.String">
+       <constructor-arg value="${gridPath}/db/derby" />
+    </bean>
+    <bean id="neoPath" class="java.lang.String">
+        <constructor-arg value="${gridPath}/db/neo" />
+    </bean>
+
 
     <!-- setup ORM and DBs -->
     <!-- bean post-processor for JPA annotations -->
@@ -98,7 +105,7 @@
 
     <!-- the graph database -->
     <bean id="dataBase" class="org.neo4j.kernel.EmbeddedGraphDatabase" destroy-method="shutdown" >
-        <constructor-arg value="${gridPath}/neo"/>
+        <constructor-arg ref="neoPath"/>
     </bean>
 
     <!-- orm -->
@@ -109,7 +116,8 @@
             <map>
                 <entry key="openjpa.Id" value="gndms"/>
                 <entry key="openjpa.weaving" value="false"/>
-                <entry key="openjpa.ConnectionURL" value="jdbc:derby:${gridPath}/db;create=true"/>
+                <entry key="openjpa.ConnectionURL"
+                       value="jdbc:derby:${gridPath}/db/derby;create=true"/>
                 <entry key="openjpa.Log" value="File=${jpaLoggerFile}, DefaultLevel=INFO, Runtime=${jpaLogRuntimeLevel}, Tool=INFO"/>
             </map>
         </property>

@@ -73,7 +73,9 @@ public abstract class JPATest {
 
             log.info( "Opening JPA Store: " + map.toString() );
 
-            context = new ClassPathXmlApplicationContext( new String[]{ "classpath:META-INF/dspace.xml", "classpath:META-INF/client-context.xml", "classpath:META-INF/00_system.xml" }, true );
+            context = new ClassPathXmlApplicationContext( new String[]{
+                    "classpath:META-INF/00_system.xml", "classpath:META-INF/dspace.xml",
+                    "classpath:META-INF/client-context.xml" }, true );
             emf = ( EntityManagerFactory )context.getBean( "emf" );
             //emf = createEntityManagerFactory( persistenceUnit, map );
         }
