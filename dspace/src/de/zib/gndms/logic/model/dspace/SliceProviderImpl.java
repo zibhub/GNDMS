@@ -149,6 +149,7 @@ public class SliceProviderImpl implements SliceProvider {
     public Taskling deleteSlice(
             final String subspaceId,
             final String sliceId ) throws NoSuchElementException {
+
         if( !cache.exists( sliceId ) ) {
             logger.info( "Illegal Access: slice " + sliceId + " in subspace " + subspaceId + " cannot be deleted because it is not available." );
             throw new NoSuchElementException( "Slice " + sliceId + " does not exist in subspace " + subspaceId + "." );

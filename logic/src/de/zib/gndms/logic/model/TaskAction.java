@@ -17,7 +17,6 @@ package de.zib.gndms.logic.model;
  */
 
 
-
 import de.zib.gndms.kit.configlet.ConfigletProvider;
 import de.zib.gndms.kit.security.CredentialProvider;
 import de.zib.gndms.kit.security.RequiresCredentialProvider;
@@ -25,7 +24,6 @@ import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.logic.model.gorfx.LifetimeExceededException;
 import de.zib.gndms.logic.model.gorfx.permissions.PermissionConfiglet;
 import de.zib.gndms.model.common.types.FilePermissions;
-import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
@@ -39,6 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -143,7 +142,7 @@ public abstract class TaskAction<O extends Serializable> extends
                 final Task task = ling.getTask(session);
                 WidAux.initWid(task.getWID());
                 if( task.getOrder( ) != null )
-                    WidAux.initGORFXid( ( (DelegatingOrder ) task.getOrder( )).getActId() );
+                    WidAux.initGORFXid( task.getWID() );
                 session.success();
             }
             finally { session.finish(); }
@@ -539,6 +538,7 @@ public abstract class TaskAction<O extends Serializable> extends
         return logger;
     }
 
+    @PersistenceUnit
 	public void setEmf(final @NotNull EntityManagerFactory emfParam) {
 		emf = emfParam;
 	}
