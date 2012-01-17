@@ -117,8 +117,8 @@ public final class GNDMSystem
 		try {
 			printVersion();
             // todo remove GLOBUS_LOCATION
-            containerHome = new File(System.getenv("GLOBUS_LOCATION")).getAbsoluteFile();
-            logger.info("Container home directory is '" + containerHome.toString() + '\'');
+            //containerHome = new File(System.getenv("GLOBUS_LOCATION")).getAbsoluteFile();
+            //logger.info("Container home directory is '" + containerHome.toString() + '\'');
             initSharedDir();
 			createDirectories();
 			prepareDbStorage();

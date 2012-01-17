@@ -111,9 +111,9 @@ public class SliceClient extends AbstractClient implements SliceService {
 	}
 
 	@Override
-	public final ResponseEntity<OutputStream> listFileContent(final String subspace,
-			final String sliceKind, final String slice, final String fileName, 
-			final List<String> attrs, final String dn, final OutputStream out) {
+	public final ResponseEntity<void> listFileContent(final String subspace,
+                                                      final String sliceKind, final String slice, final String fileName,
+                                                      final List<String> attrs, final String dn, final OutputStream out) {
 		return unifiedGet(OutputStream.class, getServiceURL() + "/dspace/_" + subspace
 				+ "/_" + sliceKind + "/_" + slice + "/_" + fileName, dn);
 	}

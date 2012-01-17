@@ -167,25 +167,26 @@ public interface SliceService {
 	/**
 	 * Selects a specific file.
 	 * 
-	 * @param subspace
-	 *            The subspace identifier.
-	 * @param sliceKind
-	 *            The slice kind identifier.
-	 * @param slice
-	 *            The slice identifier.
-	 * @param fileName
-	 *            The file name.
-	 * @param attrs
-	 * 			  The attributed to be shown.
-	 * @param dn
-	 *            The dn of the user invoking the method.
-	 * @param out
-	 * 			  The outputstream the file information shall be written to.
-	 * @return The file.
+	 *
+     * @param subspace
+     *            The subspace identifier.
+     * @param sliceKind
+     *            The slice kind identifier.
+     * @param slice
+     *            The slice identifier.
+     * @param fileName
+     *            The file name.
+     * @param attrs
+     * 			  The attributed to be shown.
+     * @param dn
+     *            The dn of the user invoking the method.
+     * @param out
+     * 			  The outputstream the file information shall be written to.
+     * @return The file.
 	 */
 	// TODO: GNDMSFile ?
-	ResponseEntity<OutputStream> listFileContent(String subspace, String sliceKind,
-			String slice, String fileName, List<String> attrs, String dn, OutputStream out);
+	ResponseEntity<void> listFileContent(String subspace, String sliceKind,
+                                         String slice, String fileName, List<String> attrs, String dn, OutputStream out);
 
 	/**
 	 * Selects a specific file.
