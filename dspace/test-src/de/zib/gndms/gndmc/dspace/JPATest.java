@@ -16,7 +16,6 @@
 
 package de.zib.gndms.gndmc.dspace;
 
-import de.zib.gndms.logic.model.dspace.SliceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -28,6 +27,7 @@ import org.testng.annotations.Parameters;
 import javax.persistence.EntityManagerFactory;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 /**
@@ -40,13 +40,18 @@ import java.util.Properties;
 public abstract class JPATest {
     protected final Logger log = LoggerFactory.getLogger( this.getClass() );
     protected ApplicationContext context;
-    protected SliceProvider sliceProvider;
     protected EntityManagerFactory emf;
     //private String gridPath;
 
     @BeforeClass( dependsOnGroups = "jpa" )
-    @Parameters( { "gridPath", "persistenceUnit" } )
-    public void init(String gridPath, String persistenceUnit) {
+    @Parameters( { "persistenceUnit" } )
+    public void init( String persistenceUnit ) throws IOException {
+        final InputStream in = getClass().getClassLoader().getResourceAsStream( "grid.properties" );
+        final Properties properties = new Properties( );
+        properties.load( in );
+        in.close();
+        final String gridPath = ( String )properties.get( "gridPath");
+
         // cleanup first
         {
             try {
@@ -63,12 +68,12 @@ public abstract class JPATest {
 
             final Properties map = new Properties();
 
-            map.put( "openjpa.Id", "testid" );
-            map.put( "openjpa.ConnectionURL", "jdbc:derby:TESTDB;create=true" );
+            //map.put( "openjpa.Id", "testid" );
+            //map.put( "openjpa.ConnectionURL", "jdbc:derby:TESTDB;create=true" );
 
             log.info( "Opening JPA Store: " + map.toString() );
 
-            context = new ClassPathXmlApplicationContext( new String[]{ "classpath:META-INF/00_system.xml", "classpath:META-INF/dspace.xml", "classpath:META-INF/client-context.xml" }, true );
+            context = new ClassPathXmlApplicationContext( new String[]{ "classpath:META-INF/dspace.xml", "classpath:META-INF/client-context.xml", "classpath:META-INF/00_system.xml" }, true );
             emf = ( EntityManagerFactory )context.getBean( "emf" );
             //emf = createEntityManagerFactory( persistenceUnit, map );
         }
