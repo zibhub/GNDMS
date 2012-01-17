@@ -93,7 +93,7 @@ public class Test extends JPATest
     }
 
 
-    @org.testng.annotations.Test( groups = { "jpa" } )
+    @org.testng.annotations.Test( groups = { "jpa" }, dependsOnMethods = { "test1" })
     public void test2() {
         EntityManager em = emf.createEntityManager();
         final EntityTransaction transaction = em.getTransaction();
