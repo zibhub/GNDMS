@@ -150,6 +150,10 @@ public abstract class TaskAction<O extends Serializable> extends
             result = super.call();
         } catch ( RuntimeException e ) {
             logger.debug( "", e );
+
+            // set failed state
+            this.fail( e );
+
             throw e;
         }
         finally {
