@@ -21,13 +21,11 @@ package de.zib.gndms.infra.system;
 import com.google.common.base.Function;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Sets;
-import com.google.common.collect.Maps;
 import de.zib.gndms.infra.action.*;
 import de.zib.gndms.kit.config.ParameterTools;
 import de.zib.gndms.logic.action.Action;
 import de.zib.gndms.logic.action.NoSuchActionException;
 import de.zib.gndms.logic.action.SkipActionInitializationException;
-import de.zib.gndms.logic.model.BatchUpdateAction;
 import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
 import de.zib.gndms.logic.model.config.AvailableActionsAction;
 import de.zib.gndms.logic.model.config.ConfigAction;
@@ -36,19 +34,18 @@ import de.zib.gndms.logic.model.config.HelpOverviewAction;
 import de.zib.gndms.logic.model.dspace.AssignSliceKindAction;
 import de.zib.gndms.logic.model.dspace.SetupSliceKindAction;
 import de.zib.gndms.logic.model.dspace.SetupSubspaceAction;
-import de.zib.gndms.logic.model.gorfx.ConfigOfferTypeAction;
+import de.zib.gndms.logic.model.gorfx.ConfigTaskFlowTypeAction;
 import de.zib.gndms.logic.model.gorfx.SetupTaskFlowAction;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.stuff.GNDMSInjector;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.jetbrains.annotations.NotNull;
 
-import javax.persistence.EntityManager;
 import java.io.PrintWriter;
-import java.util.Set;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -113,7 +110,7 @@ public final class ConfigActionCaller implements WSActionCaller {
     /**
      * Constructs and initializes the configActionCaller.
      *
-     * @see ConfigActionCaller.init()
+     * @see ConfigActionCaller#init(GNDMSystem)  init
      * @param systemParam the GNDMSystem
      */
 	@SuppressWarnings({ "ThisEscapedInObjectConstruction", "OverlyCoupledMethod" })
@@ -135,7 +132,7 @@ public final class ConfigActionCaller implements WSActionCaller {
         configActions.add(SetupSubspaceAction.class);
         configActions.add(EchoOptionsAction.class);
         configActions.add(SetupTaskFlowAction.class);
-        configActions.add(ConfigOfferTypeAction.class);
+        configActions.add(ConfigTaskFlowTypeAction.class);
         configActions.add(SetupSliceKindAction.class);
         configActions.add(AssignSliceKindAction.class);
         configActions.add(RefreshSystemAction.class);

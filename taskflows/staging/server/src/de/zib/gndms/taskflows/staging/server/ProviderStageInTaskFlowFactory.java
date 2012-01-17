@@ -49,7 +49,6 @@ public class ProviderStageInTaskFlowFactory
     private Dao dao;
 
     public ProviderStageInTaskFlowFactory( ) {
-        // todo problem ExternalProvider.. is to concrete AbstractProvider.. would be better
         super( ProviderStageInMeta.PROVIDER_STAGING_KEY,
                 AbstractProviderStageInQuoteCalculator.class,
                 ProviderStageInOrder.class );
@@ -60,7 +59,8 @@ public class ProviderStageInTaskFlowFactory
 
         AbstractProviderStageInQuoteCalculator calculon;
 
-        final @NotNull MapConfig config = new MapConfig(getDao().getTaskFlowTypeConfig( getTaskFlowKey() ));
+        final @NotNull MapConfig config = new MapConfig( getDao().getTaskFlowTypeConfig(
+                getTaskFlowKey() ));
         try {
             final Class<? extends AbstractProviderStageInQuoteCalculator> orqCalculatorClass =
                 config.getClassOption(

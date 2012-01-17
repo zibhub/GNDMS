@@ -22,8 +22,8 @@ import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.common.stuff.devel.NotYetImplementedException;
-import de.zib.gndms.logic.model.gorfx.taskflow.TaskTypeConverter;
 import de.zib.gndms.logic.model.TaskExecutionService;
+import de.zib.gndms.logic.model.gorfx.taskflow.TaskTypeConverter;
 import de.zib.gndms.model.common.NoSuchResourceException;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.Dao;
@@ -38,11 +38,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author try ma ik jo rr a zib

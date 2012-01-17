@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -84,7 +85,7 @@ public class ExternalProviderStageInQuoteCalculator extends
         else
             /* Use plain copy if no estimation script has been specified */ 
             result = cont.clone();
-        return Arrays.asList( result );
+        return Collections.singletonList( result );
     }
 
 

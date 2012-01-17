@@ -1,6 +1,23 @@
 package de.zib.gndms.logic.model.config;
 
+import de.zib.gndms.kit.config.ConfigProvider;
+import de.zib.gndms.kit.config.DelegatingConfig;
+import de.zib.gndms.kit.config.MandatoryOptionMissingException;
+import de.zib.gndms.kit.config.ParameterTools;
+import de.zib.gndms.logic.action.CommandAction;
+import de.zib.gndms.logic.action.SkipActionInitializationException;
+import de.zib.gndms.logic.model.AbstractEntityAction;
 import de.zib.gndms.neomodel.common.Dao;
+import org.jetbrains.annotations.NotNull;
+import org.joda.time.DateTime;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import java.io.File;
+import java.io.PrintWriter;
+import java.text.ParseException;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -17,25 +34,6 @@ import de.zib.gndms.neomodel.common.Dao;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-
-
-import de.zib.gndms.logic.action.CommandAction;
-import de.zib.gndms.kit.config.MandatoryOptionMissingException;
-import de.zib.gndms.kit.config.ConfigProvider;
-import de.zib.gndms.kit.config.DelegatingConfig;
-import de.zib.gndms.kit.config.ParameterTools;
-import de.zib.gndms.logic.action.SkipActionInitializationException;
-import de.zib.gndms.logic.model.AbstractEntityAction;
-import org.jetbrains.annotations.NotNull;
-import org.joda.time.DateTime;
-
-import javax.persistence.EntityManager;
-import java.io.File;
-import java.io.PrintWriter;
-import java.text.ParseException;
-import java.util.*;
-import java.util.regex.Pattern;
 
 
 /**
@@ -501,6 +499,7 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
         return dao;
     }
 
+    @Inject
     public void setDao(Dao dao) {
         this.dao = dao;
     }

@@ -18,7 +18,6 @@ package de.zib.gndms.logic.model.gorfx;
 
 
 
-import de.zib.gndms.model.common.types.factory.KeyFactory;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigActionResult;
@@ -45,7 +44,7 @@ import java.util.Properties;
  * <p>Depending on the chosen <tt>SetupMode</tt>, it will either create or update an {@code OfferType} entity by using the getter methods
  * provided in this class.
  * On both modes, the entity is completly overwritten and stored in the database. If only the entity's configmap should be updated,
- * use {@link de.zib.gndms.logic.model.gorfx.ConfigOfferTypeAction} instead, after the entity has been created once.
+ * use {@link ConfigTaskFlowTypeAction} instead, after the entity has been created once.
  *
  * <p>The following parameters are required for a new entity creation:
  * {@link #calcFactory 'calcFactory'},{@link #TaskActionFactory 'taskAction'}.

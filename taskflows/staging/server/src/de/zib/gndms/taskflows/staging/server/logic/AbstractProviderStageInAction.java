@@ -17,28 +17,25 @@ package de.zib.gndms.taskflows.staging.server.logic;
  */
 
 
-
 import de.zib.gndms.kit.config.ConfigProvider;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
-import de.zib.gndms.logic.model.dspace.ChownSliceConfiglet;
-import de.zib.gndms.logic.model.dspace.CreateSliceAction;
-import de.zib.gndms.logic.model.dspace.DeleteSliceAction;
-import de.zib.gndms.logic.model.dspace.TransformSliceAction;
+import de.zib.gndms.logic.model.ModelIdHoldingOrder;
+import de.zib.gndms.logic.model.dspace.*;
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
-import de.zib.gndms.taskflows.staging.client.model.ProviderStageInOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.model.util.TxFrame;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.Taskling;
+import de.zib.gndms.taskflows.staging.client.model.ProviderStageInOrder;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -91,7 +88,7 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
 	protected @NotNull File getScriptFileByParam(final MapConfig configParam, String scriptParam)
             throws MandatoryOptionMissingException {
 
-		final @NotNull File scriptFile = configParam.getFileOption(scriptParam);
+		final @NotNull File scriptFile = configParam.getFileOption( scriptParam );
 		if (! isValidScriptFile(scriptFile))
 		    throw new IllegalArgumentException("Invalid " + scriptParam + " script: " + scriptFile.getPath());
 		return scriptFile;
@@ -106,6 +103,7 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
         changeSliceOwner( slice ) ;
         super.onInProgress(wid, state, isRestartedTask, altTaskState);
     }
+
 
     protected  void changeSliceOwner( Slice slice ) {
 
@@ -123,7 +121,6 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
             slice.getDirectoryId() );
         chownAct.call();
     }
-
 
 
     protected void transformToResultSlice( Slice slice ) {
@@ -150,14 +147,17 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
 
             setSliceId( tgt_slice.getId() );
 
-            DeleteSliceAction dsa = new DeleteSliceAction( slice );
-            dsa.setParent( this );
-            dsa.setClosingEntityManagerOnCleanup( false );
-            dsa.setModel( slice.getSubspace() );
-            dsa.execute( em );
+            deleteSlice( slice.getId() );
             txf.commit();
         }
         finally { txf.finish();  }
+    }
+
+
+    protected void deleteSlice( final String sliceId ) {
+
+        getService().submitTaskAction( new DeleteSliceTaskAction(),
+                new ModelIdHoldingOrder( sliceId ), getOrder().getActId() );
     }
 
 
@@ -257,22 +257,7 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
 
 
 	private void killSlice() {
-		final EntityManager em = getEntityManager();
-		final TxFrame txf = new TxFrame(em);
-		try {
-			final Slice slice = findSlice();
-			DeleteSliceAction.deleteSlice( slice, this );
-			em.remove(slice);
-			txf.commit();
-		}
-		catch (RuntimeException e) { getLogger().warn( "", e ); throw e; }
-		finally {
-            try{
-                txf.finish();
-            } catch ( Exception e ) { // no exception must leave this method
-                trace( "Exception on commit or rollback", e );
-            }
-        }
+        deleteSlice( getSliceId() );
 	}
 
 
@@ -322,17 +307,7 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
 
     
     protected String getSliceId( ) {
-        final Session session = getDao().beginSession();
-        try {
-            final Task task = getTask(session);
-            ProviderStageInOrder order = (ProviderStageInOrder ) task.getOrder( );
-            final String ret = order.getActSliceId();
-            session.finish();
-            return ret;
-        }
-        finally {
-            session.success();
-        }
+        return getOrderBean().getActSliceId();
     }
 
 	@SuppressWarnings({ "MethodWithMoreThanThreeNegations" })

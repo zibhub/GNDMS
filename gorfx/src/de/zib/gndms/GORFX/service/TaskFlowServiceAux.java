@@ -23,6 +23,7 @@ import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowFactory;
 import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowProvider;
 import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
+import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
@@ -80,7 +81,7 @@ public final class TaskFlowServiceAux {
     private TaskFlowServiceAux(){ }
 
 
-    public static TaskFlow fromTask( final de.zib.gndms.neomodel.common.Dao dao, final TaskFlowProvider provider, final String type,
+    public static TaskFlow fromTask( final Dao dao, final TaskFlowProvider provider, final String type,
                                      final String id ) {
 
         final Session ses = dao.beginSession();
@@ -90,7 +91,7 @@ public final class TaskFlowServiceAux {
                 return null;
             final TaskFlowFactory tff = provider.getFactoryForTaskFlow( type );
             final TaskFlow tf = tff.createOrphan();
-          //  tf.setId( t.getResourceId() );
+          //  todo tf.setId( t.getResourceId() );
             tf.setOrder( ( DelegatingOrder<?> ) t.getOrder( ) );
             tf.addQuote( quoteFromContract( t.getContract() ) );
             tf.setTaskling( t.getTaskling() );
