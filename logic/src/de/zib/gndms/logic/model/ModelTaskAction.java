@@ -102,7 +102,7 @@ public abstract class ModelTaskAction<O extends ModelIdHoldingOrder> extends Def
         TxFrame tx = new TxFrame( em );
         try{
             model = em.find( modelClass, modelId );
-            getEntityManager().remove( model );
+            em.remove( model );
             tx.commit();
         } finally {
             tx.finish();
