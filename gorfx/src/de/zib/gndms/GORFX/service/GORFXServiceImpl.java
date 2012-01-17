@@ -43,7 +43,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -62,11 +64,10 @@ public class GORFXServiceImpl implements GORFXService {
     private Facets gorfxFacets; ///< List of facets under /gorfx/
     private final String baseUrl; ///< The base url something like: \c http://my.host.org/gndms/grid_id
     private final String gorfxBaseUrl; ///< Base url of the GORFX service endpoint
-    private ActionProvider configProvider; ///< List of config actions
     private TaskFlowProvider taskFlowProvider; ///< List of task factories, registered through plug-in mech
     private TaskFlowClient taskFlowClient;
     private UriFactory uriFactory;
-    private ConfigActionProvider configActionProvider;
+    private ConfigActionProvider configActionProvider; ///< List of config actions
 
 
     public GORFXServiceImpl( final String baseUrl ) {
@@ -104,7 +105,7 @@ public class GORFXServiceImpl implements GORFXService {
         responseHeaders.setParentURL( baseUrl );
         if( dn != null ) responseHeaders.setDN( dn );
 
-        return new ResponseEntity<List<String>>( configProvider.listAvailableActions(), responseHeaders, HttpStatus.OK );
+        return new ResponseEntity<List<String>>( configActionProvider.listAvailableActions(), responseHeaders, HttpStatus.OK );
     }
 
 
@@ -133,8 +134,16 @@ public class GORFXServiceImpl implements GORFXService {
                                                     @RequestBody String args, @RequestHeader( "DN" ) String dn ) {
         GNDMSResponseHeader responseHeaders =
             new GNDMSResponseHeader( gorfxFacets.findFacet( "config" ).getUrl(), null, gorfxBaseUrl, dn, null );
-        configProvider.getAction( actionName );
-        return null;
+        HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+         String result = null;
+        try {
+            result = configActionProvider.callConfigAction( actionName, args );
+            httpStatus = HttpStatus.OK;
+        } catch ( Exception e ) {
+            logger.warn( "config action exception on: " + actionName + ": " + args, e );
+        }
+
+        return new ResponseEntity<String>( result, responseHeaders, httpStatus );
     }
 
 
@@ -279,14 +288,14 @@ public class GORFXServiceImpl implements GORFXService {
     }
 
 
-    public ActionProvider getConfigProvider() {
-        return configProvider;
+    public ActionProvider getConfigActionProvider() {
+        return configActionProvider;
     }
 
 
     @Inject
-    public void setConfigProvider( ConfigActionProvider configProvider ) {
-        this.configProvider = configProvider;
+    public void setConfigActionProvider( ConfigActionProvider configActionProvider ) {
+        this.configActionProvider = configActionProvider;
     }
 
 

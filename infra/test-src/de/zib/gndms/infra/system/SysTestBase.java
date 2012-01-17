@@ -17,14 +17,11 @@ package de.zib.gndms.infra.system;
  */
 
 
-
-import de.zib.gndms.infra.system.GNDMSystem.SysFactory;
-import de.zib.gndms.model.test.ModelEntityTestBase;
 import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
 import de.zib.gndms.logic.model.EntityAction;
+import de.zib.gndms.model.test.ModelEntityTestBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.globus.wsrf.ResourceException;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 
@@ -71,10 +68,11 @@ public abstract class SysTestBase {
         }
 	}
 
-	protected void runDatabase()  throws ResourceException {
-		SysFactory factory = new SysFactory(logger, mockupConfig, true);
-		sys = factory.getInstance(false);
-		sysDestructor = factory.createShutdownAction();
+	protected void runDatabase() {
+        throw new UnsupportedOperationException( "load it from context" );
+		//SysFactory factory = new SysFactory(logger, mockupConfig, true);
+		//sys = factory.getInstance(false);
+		//sysDestructor = factory.createShutdownAction();
 	}
 
 
@@ -111,5 +109,29 @@ public abstract class SysTestBase {
 
     public GNDMSystem getSys() {
         return sys;
+    }
+
+
+    private class GridConfigMockup {
+
+        private String gridPath;
+        private String gridName;
+
+
+        public GridConfigMockup( final String gridName ) {
+            // Implement Me. Pretty Please!!!
+        }
+
+
+        public String getGridPath() {
+
+            return gridPath;
+        }
+
+
+        public String getGridName() {
+
+            return gridName;
+        }
     }
 }

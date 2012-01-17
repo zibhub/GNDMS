@@ -17,12 +17,11 @@ package de.zib.gndms.logic.model.gorfx;
  */
 
 
-
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.config.ConfigAction;
 import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigOption;
-import de.zib.gndms.neomodel.gorfx.TaskFlowType;
+import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.TaskFlowType;
 import org.jetbrains.annotations.NotNull;
 
@@ -52,7 +51,7 @@ import java.util.Properties;
  *          User: stepn Date: 06.10.2008 Time: 11:50:03
  */
 @ConfigActionHelp(shortHelp="Configure already setup OfferTypes", longHelp="Configure already-setup OfferTypes of this GNDMS installation or print their current configuration")
-public class ConfigOfferTypeAction extends ConfigAction<String> {
+public class ConfigTaskFlowTypeAction extends ConfigAction<String> {
     public enum OutFormat { PROPS, OPTS, NONE, PRINT_OK }
 
     public enum UpdateMode { UPDATE, OVERWRITE, DELKEYS }
@@ -102,37 +101,43 @@ public class ConfigOfferTypeAction extends ConfigAction<String> {
      */
     @Override
     public String execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer) {
-        final @NotNull TaskFlowType offerType_ = em.find(TaskFlowType.class, getOfferType());
-        final @NotNull Map<String, String> configMap;
 
-        boolean update = false;
-        switch (cfgUpdateMode) {
-            case DELKEYS:
-                configMap = offerType_.getConfigMapData();
-                for (String opt : getAllOptionNames())
-                    if (isValidConfigOptionName(opt)) configMap.remove(opt);
-                break;
+        Session session = getDao().beginSession();
 
-            case UPDATE:
-                configMap = offerType_.getConfigMapData();
-                update = true;
-                break;
-            default:
-                configMap = new HashMap<String, String>(8);
-                update = true;
-        }
+        try {
+            final @NotNull TaskFlowType taskFlowType = session.findTaskFlowType(  getOfferType() );
+            final @NotNull Map<String, String> configMap;
 
-        if (update)
-            for (String name : getAllOptionNames())
-                try {
-                    if (isValidConfigOptionName(name)) configMap.put(name, getOption(name));
-                }
-                catch (MandatoryOptionMissingException e) {
-                    // shdouldnt happen
-                    throw new RuntimeException(e);
-                }
+            boolean update = false;
+            switch (cfgUpdateMode) {
+                case DELKEYS:
+                    configMap = taskFlowType.getConfigMapData();
+                    for (String opt : getAllOptionNames())
+                        if (isValidConfigOptionName(opt)) configMap.remove(opt);
+                    break;
 
-        return genOutput(configMap);
+                case UPDATE:
+                    configMap = taskFlowType.getConfigMapData();
+                    update = true;
+                    break;
+                default:
+                    configMap = new HashMap<String, String>(8);
+                    update = true;
+            }
+
+            if (update)
+                for (String name : getAllOptionNames())
+                    try {
+                        if (isValidConfigOptionName(name)) configMap.put(name, getOption(name));
+                    }
+                    catch (MandatoryOptionMissingException e) {
+                        // shdouldnt happen
+                        throw new RuntimeException(e);
+                    }
+
+            session.success();
+            return genOutput(configMap);
+        } finally { session.finish(); }
     }
 
 

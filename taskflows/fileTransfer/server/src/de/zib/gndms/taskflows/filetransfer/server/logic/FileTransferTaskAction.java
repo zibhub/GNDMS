@@ -19,7 +19,7 @@ package de.zib.gndms.taskflows.filetransfer.server.logic;
 
 
 import de.zib.gndms.kit.security.CredentialProvider;
-import de.zib.gndms.kit.security.GetCredentialProviderForGridFTP;
+import de.zib.gndms.taskflows.filetransfer.server.kit.security.GetCredentialProviderForGridFTP;
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.taskflows.filetransfer.client.FileTransferMeta;
 import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferOrder;

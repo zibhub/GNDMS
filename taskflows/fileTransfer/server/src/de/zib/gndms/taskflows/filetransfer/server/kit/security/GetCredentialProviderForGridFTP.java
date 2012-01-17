@@ -1,4 +1,4 @@
-package de.zib.gndms.kit.security;
+package de.zib.gndms.taskflows.filetransfer.server.kit.security;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -16,8 +16,9 @@ package de.zib.gndms.kit.security;
  */
 
 import de.zib.gndms.kit.access.MyProxyFactoryProvider;
+import de.zib.gndms.kit.security.CredentialProvider;
+import de.zib.gndms.kit.security.GetCredentialProviderFor;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
-import de.zib.gndms.taskflows.filetransfer.server.kit.security.GridFTPCredentialInstaller;
 
 /**
  * @author Maik Jorra

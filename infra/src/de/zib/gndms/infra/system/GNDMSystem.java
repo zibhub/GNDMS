@@ -31,7 +31,6 @@ import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.jetbrains.annotations.NotNull;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -90,8 +89,6 @@ public final class GNDMSystem
     private @NotNull GNDMSystemDirectory instanceDir;
 	private @NotNull final GridConfig sharedConfig;
 	private @NotNull File sharedDir;
-    private @NotNull File dbDir;
-    private @NotNull File neoDir;
     private @NotNull File logDir;
 	private @NotNull File dbLoggerFile;
     private @NotNull File containerHome;
@@ -153,11 +150,6 @@ public final class GNDMSystem
 			throw new RuntimeException(e);
 		}
 	}
-
-    private GraphDatabaseService loadNeo() {
-        logger.info("Loading neo4j graph database");
-        return new EmbeddedGraphDatabase(getNeoDir().getAbsolutePath());
-    }
 
 
     /**
@@ -226,7 +218,8 @@ public final class GNDMSystem
 	}
 
     /**
-     * Create the files {@link #dbDir} and {@link #dbLoggerFile} on the file system and stores the paths
+     * Create the files like {@link #dbLoggerFile} on the file system and stores the
+     * paths
      * in the system property "derby.system.home" respectively "derby.stream.error.file".
      *
      * @throws IOException if an error occurs while accessing the file system
@@ -234,11 +227,6 @@ public final class GNDMSystem
 	@SuppressWarnings({ "ResultOfMethodCallIgnored" })
     private void prepareDbStorage() throws IOException {
         File curSharedDir = getSharedDir();
-		dbDir = new File(curSharedDir, "db");
-        neoDir = new File(curSharedDir, "neo");
-		doCheckOrCreateDir(dbDir);
-
-	//	System.setProperty("derby.system.home", dbDir.getCanonicalPath());
 
         if (isDebugging()) {
             LogicTools.setDerbyToDebugMode();
@@ -392,16 +380,7 @@ public final class GNDMSystem
 	}
 
 
-    public @NotNull File getNeoDir() {
-        return neoDir;
-    }
-
-	public @NotNull File getDbDir() {
-		return dbDir;
-	}
-
-
-	public @NotNull File getDbLoggerFile() {
+    public @NotNull File getDbLoggerFile() {
 		return dbLoggerFile;
 	}
 

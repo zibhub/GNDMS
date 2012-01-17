@@ -22,7 +22,7 @@ import de.zib.gndms.common.model.gorfx.types.FutureTime;
 import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.kit.access.MyProxyFactoryProvider;
 import de.zib.gndms.kit.security.CredentialProvider;
-import de.zib.gndms.kit.security.GetCredentialProviderForGridFTP;
+import de.zib.gndms.taskflows.filetransfer.server.kit.security.GetCredentialProviderForGridFTP;
 import de.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
 import de.zib.gndms.taskflows.filetransfer.client.FileTransferMeta;
 import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferOrder;

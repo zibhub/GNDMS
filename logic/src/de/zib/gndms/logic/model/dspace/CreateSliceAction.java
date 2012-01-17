@@ -34,7 +34,7 @@ import java.util.UUID;
 /**
  * An action which creates a new slice in a given workspace
  *
- * It takes care of the hierarchic structur between {@link Subspace},{@link SliceKind} and {@link Slice}.
+ * It takes care of the hierarchic structure between {@link Subspace},{@link SliceKind} and {@link Slice}.
  * The new slice instance will be registered on the corresponding subspace object and the system will be notified about
  * the model change by calling {@code addChangedModel()}. See {@link #execute(javax.persistence.EntityManager)}
  *
@@ -121,7 +121,8 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
      * It will be created using the fields given with the constructor of this class and the subspace retrieved from
      * {@code getModel()}.
      *
-     * It arranges the hierarchic structor between {@link Subspace},{@link SliceKind} and {@link Slice}.
+     * It arranges the hierarchic structure between {@link Subspace},{@link SliceKind} and {@link
+     * Slice}.
      * At the moment this is done using subfolders. The permissions of the folder corresponding to the slice instance
      * are set as denoted in {@link #sliceKind}.
      * The new Slice instance will be registered on the corresponding Subspace.
