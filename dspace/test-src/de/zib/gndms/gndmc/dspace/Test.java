@@ -25,6 +25,9 @@ import de.zib.gndms.logic.model.NoWSDontNeedModelUpdateListener;
 import de.zib.gndms.logic.model.dspace.*;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.dspace.Subspace;
+import de.zib.gndms.model.gorfx.types.TaskState;
+import de.zib.gndms.neomodel.common.Session;
+import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.springframework.http.ResponseEntity;
 import org.testng.Assert;
@@ -74,7 +77,7 @@ public class Test extends JPATest
             action.setClosingEntityManagerOnCleanup( false );
             action.setOwnEntityManager(em);
             action.setPrintWriter(new PrintWriter(sw));
-            log.info("Calling action for setting up the supspace "
+            logger.info("Calling action for setting up the supspace "
                     + subspace + ".");
             action.setOwnPostponedEntityActions(new DefaultBatchUpdateAction<GridResource>());
             action.getPostponedEntityActions().setListener( new NoWSDontNeedModelUpdateListener() );
@@ -149,8 +152,36 @@ public class Test extends JPATest
     }
 
     @org.testng.annotations.Test( groups = { "jpa" }, dependsOnMethods = { "test_createSlice" } )
-    public void test_deleteSlice( ) throws NoSuchElementException {
+    public void test_deleteSlice( ) throws Exception, InterruptedException {
         final SliceProvider sliceProvider = ( SliceProvider )context.getBean( "sliceProvider" );
         final Taskling ling = sliceProvider.deleteSlice( "sub", sliceId );
+
+        while( true ) {
+            Thread.sleep( 100 );
+
+            TaskState taskState;
+            Session session = ling.getDao().beginSession();
+
+            try {
+                Task task = ling.getTask( session );
+                taskState = task.getTaskState();
+
+                if( TaskState.FAILED.equals( taskState ) ) {
+                    throw task.getCause().get( 0 );
+                }
+                if( taskState.isDoneState() ) {
+                    session.success();
+                    break;
+                }
+
+                logger.info( "TaskState: " + taskState.toString() );
+                System.out.println( "TaskState: " + taskState.toString() );
+
+                session.success();
+            }
+            finally {
+                session.finish();
+            }
+        }
     }
 }

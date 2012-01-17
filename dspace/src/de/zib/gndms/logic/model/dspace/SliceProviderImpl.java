@@ -159,8 +159,8 @@ public class SliceProviderImpl implements SliceProvider {
         
         final DeleteSliceTaskAction deleteAction = new DeleteSliceTaskAction();
         deleteAction.setDirectoryAux(new LinuxDirectoryAux());
-        actionConfigurer.configureAction(deleteAction);
-        deleteAction.setInjector(system.getInstanceDir().getSystemAccessInjector());
+        system.getInstanceDir().getSystemAccessInjector().injectMembers( deleteAction );
+        //actionConfigurer.configureAction(deleteAction);
 
         final Order order = new ModelIdHoldingOrder( sliceId );
         final String wid = UUID.randomUUID().toString();

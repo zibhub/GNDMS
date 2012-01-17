@@ -38,7 +38,7 @@ import java.util.Properties;
  * To change this template use File | Settings | File Templates.
  */
 public abstract class JPATest {
-    protected final Logger log = LoggerFactory.getLogger( this.getClass() );
+    protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
     protected ApplicationContext context;
     protected EntityManagerFactory emf;
     //private String gridPath;
@@ -58,7 +58,7 @@ public abstract class JPATest {
                 deleteDirectory( new File( gridPath ) );
             }
             catch( Exception e ) {
-                log.error( "Could not delete " + gridPath + ". " + e.getMessage() );
+                logger.error("Could not delete " + gridPath + ". " + e.getMessage());
             }
         }
 
@@ -71,7 +71,7 @@ public abstract class JPATest {
             //map.put( "openjpa.Id", "testid" );
             //map.put( "openjpa.ConnectionURL", "jdbc:derby:TESTDB;create=true" );
 
-            log.info( "Opening JPA Store: " + map.toString() );
+            logger.info("Opening JPA Store: " + map.toString());
 
             context = new ClassPathXmlApplicationContext( new String[]{ "classpath:META-INF/dspace.xml", "classpath:META-INF/client-context.xml", "classpath:META-INF/00_system.xml" }, true );
             emf = ( EntityManagerFactory )context.getBean( "emf" );
