@@ -22,17 +22,21 @@ import de.zib.gndms.common.logic.config.WrongConfigurationException;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
-import de.zib.gndms.logic.model.dspace.*;
-import de.zib.gndms.model.dspace.Slice;
+import de.zib.gndms.logic.model.dspace.NoSuchElementException;
+import de.zib.gndms.logic.model.dspace.SliceKindConfiguration;
+import de.zib.gndms.logic.model.dspace.SliceKindProvider;
+import de.zib.gndms.logic.model.dspace.SubspaceProvider;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.model.util.TxFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -102,12 +106,13 @@ public class SliceKindServiceImpl implements SliceKindService {
     }
 
     @Override
-    @RequestMapping( value = "/_{subspace}/_{sliceKind}", method = RequestMethod.GET )
+    // @RequestMapping( value = "/_{subspace}/_{sliceKind}", method = RequestMethod.GET )
+    // delegated by SubspaceService
     public final ResponseEntity<Configuration> getSliceKindInfo(
             @PathVariable final String subspace,
             @PathVariable final String sliceKind,
             @RequestHeader( "DN" ) final String dn ) {
-        GNDMSResponseHeader headers = setHeaders( subspace, sliceKind, dn );
+        GNDMSResponseHeader headers = getResponseHeaders( subspace, sliceKind, dn );
 
         try {
             SliceKind sliceK = sliceKindProvider.get( subspace, sliceKind );
@@ -122,11 +127,24 @@ public class SliceKindServiceImpl implements SliceKindService {
         }
     }
 
+
     @Override
-    @RequestMapping( value = "/_{subspace}/_{sliceKind}", method = RequestMethod.PUT )
+    @RequestMapping( value = "/_{subspace}/_{sliceKind}/config", method = RequestMethod.GET )
+    public final ResponseEntity<Configuration> getSliceKindConfig(  @PathVariable final String subspace,
+                                                                    @PathVariable final String sliceKind,
+                                                                    @RequestHeader( "DN" ) final String dn )
+    {
+        // todo implement me, pretty please!!!
+        return new ResponseEntity<Configuration>( null, new GNDMSResponseHeader(),
+                HttpStatus.NOT_IMPLEMENTED );
+    }
+
+
+    @Override
+    @RequestMapping( value = "/_{subspace}/_{sliceKind}/config", method = RequestMethod.POST )
     public final ResponseEntity<Void> setSliceKindConfig( @PathVariable final String subspace,
                                                           @PathVariable final String sliceKind, final Configuration config, final String dn ) {
-        GNDMSResponseHeader headers = setHeaders( subspace, sliceKind, dn );
+        GNDMSResponseHeader headers = getResponseHeaders( subspace, sliceKind, dn );
 
         try {
             SliceKind sliceK = sliceKindProvider.get( subspace, sliceKind );
@@ -162,12 +180,12 @@ public class SliceKindServiceImpl implements SliceKindService {
     }
 
     @Override
-    @RequestMapping( value = "/_{subspace}/_{sliceKind}", method = RequestMethod.DELETE )
+    // delegated by SubspaceService
     public final ResponseEntity<Specifier<Void>> deleteSliceKind(
             @PathVariable final String subspace,
             @PathVariable final String sliceKind,
             @RequestHeader( "DN" ) final String dn ) {
-        GNDMSResponseHeader headers = setHeaders( subspace, sliceKind, dn );
+        GNDMSResponseHeader headers = getResponseHeaders( subspace, sliceKind, dn );
         try {
             SliceKind sliceK = sliceKindProvider.get( subspace, sliceKind );
             Subspace sub = subspaceProvider.get( subspace );
@@ -182,6 +200,8 @@ public class SliceKindServiceImpl implements SliceKindService {
         }
     }
 
+
+
     /**
      * Sets the GNDMS response header for a given subspace, slice kind and dn
      * using the base URL.
@@ -191,8 +211,8 @@ public class SliceKindServiceImpl implements SliceKindService {
      * @param dn        The dn.
      * @return The response header for this subspace.
      */
-    private GNDMSResponseHeader setHeaders( final String subspace,
-                                            final String sliceKind, final String dn ) {
+    private GNDMSResponseHeader getResponseHeaders( final String subspace,
+                                                    final String sliceKind, final String dn ) {
         GNDMSResponseHeader headers = new GNDMSResponseHeader();
         headers.setResourceURL( baseUrl + "/dspace/_" + subspace + "/_"
                                         + sliceKind );

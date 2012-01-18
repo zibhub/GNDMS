@@ -16,12 +16,11 @@ package de.zib.gndms.gndmc.dspace;
  * limitations under the License.
  */
 
-import org.springframework.http.ResponseEntity;
-
 import de.zib.gndms.common.dspace.service.SliceKindService;
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.gndmc.AbstractClient;
+import org.springframework.http.ResponseEntity;
 
 /**
  * The slice kind client implementing the slice kind service.
@@ -52,6 +51,16 @@ public class SliceKindClient extends AbstractClient implements SliceKindService 
 		return unifiedGet(Configuration.class, getServiceURL() + "/dspace/_" + subspace
 				+ "/_" + sliceKind, dn);
 	}
+
+
+    @Override
+    public ResponseEntity<Configuration> getSliceKindConfig( final String subspace,
+                                                             final String sliceKind,
+                                                             final String dn )
+    {
+        // todo implement it, stupid.
+        throw new UnsupportedOperationException( "implement me" );
+    }
 
 	@Override
 	public final ResponseEntity<Void> setSliceKindConfig(final String subspace,

@@ -16,10 +16,9 @@ package de.zib.gndms.common.dspace.service;
  * limitations under the License.
  */
 
-import org.springframework.http.ResponseEntity;
-
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.rest.Specifier;
+import org.springframework.http.ResponseEntity;
 
 /**
  * The interface of the SliceKind service.
@@ -54,6 +53,17 @@ public interface SliceKindService {
 	ResponseEntity<Configuration> getSliceKindInfo(String subspace,
 			String sliceKind, String dn);
 
+
+    /**
+     * Same as the setter just the other way 'round.
+     *
+     * @param subspace What the name intends.
+     * @param sliceKind What the name intends.
+     * @param dn What the name ... ok it's the distinguished name.
+     * @return The current config.
+     */
+    ResponseEntity<Configuration> getSliceKindConfig( String subspace, String sliceKind, String dn );
+
 	/**
 	 * Sets a slice kind configuration.
 	 * 
@@ -82,5 +92,4 @@ public interface SliceKindService {
 	 */
 	ResponseEntity<Specifier<Void>> deleteSliceKind(String subspace, String sliceKind,
 			String dn);
-
 }

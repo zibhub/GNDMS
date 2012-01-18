@@ -16,6 +16,7 @@
 
 package de.zib.gndms.dspace.service;
 
+import de.zib.gndms.common.dspace.service.SliceKindService;
 import de.zib.gndms.common.dspace.service.SubspaceService;
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.logic.config.SetupMode;
@@ -26,7 +27,6 @@ import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.kit.config.ParameterTools;
 import de.zib.gndms.logic.model.dspace.*;
-import de.zib.gndms.logic.model.dspace.NoSuchElementException;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.util.TxFrame;
@@ -45,7 +45,10 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/dspace")
@@ -60,6 +63,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 
 	private UriFactory uriFactory;
 	private Facets subspaceFacets;
+    private SliceKindService sliceKindService;
 
 
 
@@ -78,7 +82,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 			@PathVariable final String subspace,
 			@RequestHeader( "DN" ) final String dn ) {
 
-		GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
+		GNDMSResponseHeader headers = getSubspaceHeaders( subspace, dn );
 
 		if( subspaceProvider.exists( subspace ) ) {
 			return new ResponseEntity< Facets >( subspaceFacets, headers, HttpStatus.OK );
@@ -94,7 +98,7 @@ public class SubspaceServiceImpl implements SubspaceService {
             @RequestBody final String config,
             @RequestHeader( "DN" ) final String dn) {
 
-        GNDMSResponseHeader headers = setSubspaceHeaders( subspace, dn );
+        GNDMSResponseHeader headers = getSubspaceHeaders( subspace, dn );
 
         if( subspaceProvider.exists( subspace ) ) {
             logger.info("Subspace " + subspace + " cannot be created because it already exists.");
@@ -113,7 +117,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 	public final ResponseEntity< Specifier< Void > > deleteSubspace(
 			@PathVariable final String subspace,
 			@RequestHeader("DN") final String dn) {
-		GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
+		GNDMSResponseHeader headers = getSubspaceHeaders( subspace, dn );
 
 		if (!subspaceProvider.exists(subspace)) {
 			logger.warn( "Subspace " + subspace + " not found" );
@@ -157,7 +161,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 	public final ResponseEntity<List<Specifier<Void>>> listSliceKinds(
 			@PathVariable final String subspace,
 			@RequestHeader("DN") final String dn) {
-		GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
+		GNDMSResponseHeader headers = getSubspaceHeaders( subspace, dn );
 
 		if ( !subspaceProvider.exists( subspace ) ) {
 			logger.info( "Illegal Access: subspace " + subspace + " not found" );
@@ -196,7 +200,7 @@ public class SubspaceServiceImpl implements SubspaceService {
             @PathVariable final String slicekind,
             final String config,
             @RequestHeader("DN") final String dn) {
-        GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
+        GNDMSResponseHeader headers = getSubspaceHeaders( subspace, dn );
 
         if ( !subspaceProvider.exists( subspace ) ) {
             logger.info("Illegal Access: subspace " + subspace + " not found");
@@ -220,7 +224,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 	public final ResponseEntity<Configuration> listSubspaceConfiguration(
 			@PathVariable final String subspace,
 			@RequestHeader("DN") final String dn) {
-		GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
+		GNDMSResponseHeader headers = getSubspaceHeaders( subspace, dn );
 		
 		if (!subspaceProvider.exists(subspace)) {
 			logger.warn("Subspace " + subspace + " not found");
@@ -240,7 +244,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 			@RequestBody final Configuration config,
 			@RequestHeader("DN") final String dn) {
 
-		GNDMSResponseHeader headers = setSubspaceHeaders(subspace, dn);
+		GNDMSResponseHeader headers = getSubspaceHeaders( subspace, dn );
 
 		try {
 			SubspaceConfiguration subspaceConfig = SubspaceConfiguration.checkSubspaceConfig(config);
@@ -284,7 +288,7 @@ public class SubspaceServiceImpl implements SubspaceService {
             @PathVariable final String sliceKind,
             @RequestBody final String config,
             @RequestHeader( "DN" ) final String dn ) {
-        GNDMSResponseHeader headers = setHeaders( subspace, sliceKind, dn );
+        GNDMSResponseHeader headers = getSliceKindHeaders( subspace, sliceKind, dn );
 
         try {
             Map< String, String > parameters = new HashMap< String, String >( );
@@ -330,6 +334,26 @@ public class SubspaceServiceImpl implements SubspaceService {
         }
     }
 
+    // delegated to SliceKindServiceImpl, due to mapping conflicts
+    @RequestMapping( value = "/_{subspace}/_{sliceKind}", method = RequestMethod.GET )
+    public ResponseEntity<Configuration> getSliceKindInfo( @PathVariable final String subspace,
+                                                           @PathVariable final String sliceKind,
+                                                           @RequestHeader( "DN" ) final String dn )
+    {
+        return sliceKindService.getSliceKindInfo( subspace, sliceKind, dn );
+    }
+
+    // delegated to SliceKindServiceImpl, due to mapping conflicts
+    @RequestMapping( value = "/_{subspace}/_{sliceKind}", method = RequestMethod.DELETE )
+    public ResponseEntity<Specifier<Void>> deleteSliceKind( @PathVariable final String subspace,
+                                                            @PathVariable final String sliceKind,
+                                                            @RequestHeader( "DN" ) final String dn )
+    {
+
+        return sliceKindService.deleteSliceKind( subspace, sliceKind, dn );
+    }
+
+
     /**
      * Sets the GNDMS response header for a given subspace, slice kind and dn
      * using the base URL.
@@ -339,8 +363,8 @@ public class SubspaceServiceImpl implements SubspaceService {
      * @param dn        The dn.
      * @return The response header for this subspace.
      */
-    private GNDMSResponseHeader setHeaders( final String subspace,
-                                            final String sliceKind, final String dn ) {
+    private GNDMSResponseHeader getSliceKindHeaders( final String subspace,
+                                                     final String sliceKind, final String dn ) {
         GNDMSResponseHeader headers = new GNDMSResponseHeader();
         headers.setResourceURL( baseUrl + "/dspace/_" + subspace + "/_"
                                         + sliceKind );
@@ -361,8 +385,8 @@ public class SubspaceServiceImpl implements SubspaceService {
 	 *            The dn.
 	 * @return The response header for this subspace.
 	 */
-	private GNDMSResponseHeader setSubspaceHeaders(final String subspace,
-			final String dn) {
+	private GNDMSResponseHeader getSubspaceHeaders( final String subspace,
+                                                    final String dn ) {
 		GNDMSResponseHeader headers = new GNDMSResponseHeader();
 		headers.setResourceURL(baseUrl + "/dspace/_" + subspace);
 		headers.setParentURL(baseUrl);
@@ -444,5 +468,18 @@ public class SubspaceServiceImpl implements SubspaceService {
 
     public void setSliceKindProvider( SliceKindProviderImpl sliceKindProvider ) {
         this.slicekindProvider = sliceKindProvider;
+    }
+
+
+    public SliceKindService getSliceKindService() {
+
+        return sliceKindService;
+    }
+
+
+    @Inject
+    public void setSliceKindService( final SliceKindService sliceKindService ) {
+
+        this.sliceKindService = sliceKindService;
     }
 }
