@@ -53,23 +53,12 @@ public class Test extends JPATest
         EntityManager em = emf.createEntityManager();
 
         String subspace = "sub";
-        TestTable t = new TestTable();
-
-        t.setA( "blub A" );
 
         final EntityTransaction transaction = em.getTransaction();
         try {
             transaction.begin();
-          //  em.persist(t);
 
-            Subspace space = new Subspace();
-            space.setAvailableSize(100);
-            space.setGsiFtpPath("gridftppath");
-            space.setPath("/tmp/gndms/sub");
-            space.setId( subspace );
-            em.persist( space );
-
-            SubspaceConfiguration subspaceConfig = new SubspaceConfiguration( "/var/tmp/gndms/subpath", "gridftppath", true, 100, SetupMode.CREATE, "subrest" );
+            SubspaceConfiguration subspaceConfig = new SubspaceConfiguration( "/tmp/gndms/sub", "gridftppath", true, 100, SetupMode.CREATE, subspace );
             SetupSubspaceAction action = new SetupSubspaceAction( subspaceConfig );
 
             StringWriter sw = new StringWriter();

@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
@@ -50,7 +51,7 @@ import java.util.*;
 // import de.zib.gndms.neomodel.gorfx.Taskling;
 
 /**
- * The slice service implementation.
+ * The sliceId service implementation.
  * 
  * @author Ulrike Golas
  */
@@ -88,7 +89,7 @@ public class SliceServiceImpl implements SliceService {
     }
 
     /**
-	 * Initialization of the slice service.
+	 * Initialization of the sliceId service.
 	 */
 	@PostConstruct
 	public final void init() {
@@ -110,7 +111,7 @@ public class SliceServiceImpl implements SliceService {
                     .getSliceConfiguration( slice );
             return new ResponseEntity< Facets >( sliceFacets, headers, HttpStatus.OK );
         } catch ( NoSuchElementException ne ) {
-            logger.warn( "The slice " + sliceId + " of slice kind " + sliceKindId
+            logger.warn( "The sliceId " + sliceId + " of sliceId kind " + sliceKindId
                     + "does not exist within the subspace" + subspaceId + "." );
             return new ResponseEntity< Facets >( null,
                     headers, HttpStatus.NOT_FOUND );
@@ -133,7 +134,7 @@ public class SliceServiceImpl implements SliceService {
 			SliceConfiguration slConfig = SliceConfiguration
 					.checkSliceConfig(config);
 
-			// TODO check if we handled all important slice parameters,
+			// TODO check if we handled all important sliceId parameters,
 			// otherwise SliceConfiguration has to be extended
 			slic.setTerminationTime(slConfig.getTerminationTime());
 			slic.setTotalStorageSize(slConfig.getSize());
@@ -173,7 +174,7 @@ public class SliceServiceImpl implements SliceService {
 						dn, slic.getTerminationTime(),
 						newSliceK, space, slic.getTotalStorageSize(), null);
 				action.setOwnEntityManager(em);
-				logger.info("Calling action for transforming slice " + slice
+				logger.info("Calling action for transforming sliceId " + slice
 						+ ".");
 				action.call();
 				tx.commit();
@@ -231,19 +232,19 @@ public class SliceServiceImpl implements SliceService {
 	}
 
 	@Override
-	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}/files", method = RequestMethod.GET)
+	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{sliceId}/files", method = RequestMethod.GET)
 	public final ResponseEntity<List<File>> listFiles(
 			@PathVariable final String subspace,
 			@PathVariable final String sliceKind,
-			@PathVariable final String slice,
+			@PathVariable final String sliceId,
 			@RequestParam(value = "attr", required = false) final Map<String, String> attr,
 			@RequestHeader("DN") final String dn) {
-		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, slice, dn);
+		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, sliceId, dn);
 
 		try {
 			Subspace space = subspaceProvider.get(subspace);
-			Slice slic = findSliceOfKind(subspace, sliceKind, slice);
-			String path = space.getPathForSlice(slic);
+			Slice slice = findSliceOfKind(subspace, sliceKind, sliceId);
+			String path = space.getPathForSlice(slice);
 			File dir = new File(path);
 			if (dir.exists() && dir.canRead() && dir.isDirectory()) {
 				File[] all = dir.listFiles();
@@ -326,19 +327,19 @@ public class SliceServiceImpl implements SliceService {
 	}
 
 	@Override
-	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}/_{fileName}", method = RequestMethod.GET)
-	public final ResponseEntity<OutputStream> listFileContent(
-			@PathVariable final String subspace,
-			@PathVariable final String sliceKind,
-			@PathVariable final String slice,
-			@PathVariable final String fileName,
-			@RequestHeader("ATTRS") final List<String> attrs,
-			@RequestHeader("DN") final String dn, final OutputStream out) {
-		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, slice, dn);
+	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{sliceId}/_{fileName}", method = RequestMethod.GET)
+	public final ResponseEntity<Void> listFileContent(
+            @PathVariable final String subspace,
+            @PathVariable final String sliceKind,
+            @PathVariable final String sliceId,
+            @PathVariable final String fileName,
+            @RequestHeader("ATTRS") final List<String> attrs,
+            @RequestHeader("DN") final String dn, final OutputStream out) {
+		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, sliceId, dn);
 		try {
 			Subspace space = subspaceProvider.get(subspace);
-			Slice slic = findSliceOfKind(subspace, sliceKind, slice);
-			String path = space.getPathForSlice(slic);
+			Slice slice = findSliceOfKind(subspace, sliceKind, sliceId);
+			String path = space.getPathForSlice(slice);
 			File file = new File(path + File.pathSeparator + fileName);
 
 			if (out == null) {
@@ -352,60 +353,58 @@ public class SliceServiceImpl implements SliceService {
 				// TODO get requested file attributes
 
 				if (attrs.contains("contents")) {
-					BufferedReader br = new BufferedReader(
-							new InputStreamReader(new FileInputStream(file)));
-					String content = br.readLine();
-					br.close();
-					out.write(content.getBytes());
+                    FileCopyUtils.copy( new FileInputStream( file ), out );
 				}
-				return new ResponseEntity<OutputStream>(out, headers,
+				return new ResponseEntity<Void>(null, headers,
 						HttpStatus.OK);
 			} else {
 				logger.warn("File " + file + "cannot be read or is no file.");
-				return new ResponseEntity<OutputStream>(null, headers,
+				return new ResponseEntity<Void>(null, headers,
 						HttpStatus.FORBIDDEN);
 			}
 
 		} catch (NoSuchElementException ne) {
 			logger.warn(ne.getMessage());
-			return new ResponseEntity<OutputStream>(null, headers,
+			return new ResponseEntity<Void>(null, headers,
 					HttpStatus.NOT_FOUND);
 		} catch (FileNotFoundException e) {
 			logger.warn(e.getMessage());
-			return new ResponseEntity<OutputStream>(null, headers,
+			return new ResponseEntity<Void>(null, headers,
 					HttpStatus.FORBIDDEN);
 		} catch (IOException e) {
 			logger.warn(e.getMessage());
-			return new ResponseEntity<OutputStream>(null, headers,
+			return new ResponseEntity<Void>(null, headers,
 					HttpStatus.FORBIDDEN);
 		}
 	}
 
 	@Override
-	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}/_{fileName}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{sliceId}/_{fileName}", method = RequestMethod.PUT)
 	public final ResponseEntity<Void> setFileContent(
 			@PathVariable final String subspace,
 			@PathVariable final String sliceKind,
-			@PathVariable final String slice,
+			@PathVariable final String sliceId,
 			@PathVariable final String fileName,
 			@RequestBody final MultipartFile file,
 			@RequestHeader("DN") final String dn) {
-		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, slice, dn);
+		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, sliceId, dn);
 
 		try {
 			Subspace space = subspaceProvider.get(subspace);
-			Slice slic = findSliceOfKind(subspace, sliceKind, slice);
-			String path = space.getPathForSlice(slic);
+			Slice slice = findSliceOfKind(subspace, sliceKind, sliceId);
+			String path = space.getPathForSlice(slice);
 			File newFile = new File(path + File.pathSeparator + fileName);
 
 			if (newFile.exists()) {
 				logger.warn("File " + newFile + "will be overwritten. ");			
 			}
+            
+            file.transferTo( newFile );
 			
-			DataOutputStream dos = new DataOutputStream(new FileOutputStream(newFile));
+			//DataOutputStream dos = new DataOutputStream(new FileOutputStream(newFile));
 
-			dos.write(file.getBytes());
-			dos.close();
+			//dos.write(file.getBytes());
+			//dos.close();
 			return new ResponseEntity<Void>(null, headers, HttpStatus.OK);
 		} catch (NoSuchElementException ne) {
 			logger.warn(ne.getMessage(), ne);
@@ -456,15 +455,15 @@ public class SliceServiceImpl implements SliceService {
 	}
 
 	/**
-	 * Sets the GNDMS response header for a given subspace, slice kind, slice
+	 * Sets the GNDMS response header for a given subspace, sliceId kind, sliceId
 	 * and dn using the base URL.
 	 * 
 	 * @param subspace
 	 *            The subspace id.
 	 * @param sliceKind
-	 *            The slice kind id.
+	 *            The sliceId kind id.
 	 * @param slice
-	 *            The slice id.
+	 *            The sliceId id.
 	 * @param dn
 	 *            The dn.
 	 * @return The response header for this subspace.
@@ -483,18 +482,18 @@ public class SliceServiceImpl implements SliceService {
 	}
 
 	/**
-	 * Returns a specific slice of a given slice kind id, if it exists in the
+	 * Returns a specific sliceId of a given sliceId kind id, if it exists in the
 	 * subspace.
 	 * 
 	 * @param subspace
 	 *            The subspace id.
 	 * @param sliceKind
-	 *            The slice kind id.
+	 *            The sliceId kind id.
 	 * @param slice
-	 *            The slice id.
-	 * @return The slice.
+	 *            The sliceId id.
+	 * @return The sliceId.
 	 * @throws NoSuchElementException
-	 *             If no such slice exists.
+	 *             If no such sliceId exists.
 	 */
 	private Slice findSliceOfKind(final String subspace,
 			final String sliceKind, final String slice)
@@ -509,7 +508,7 @@ public class SliceServiceImpl implements SliceService {
 	}
 
 	/**
-	 * Returns the base url of this slice service.
+	 * Returns the base url of this sliceId service.
 	 * 
 	 * @return the baseUrl
 	 */
@@ -518,7 +517,7 @@ public class SliceServiceImpl implements SliceService {
 	}
 
 	/**
-	 * Sets the base url of this slice service.
+	 * Sets the base url of this sliceId service.
 	 * 
 	 * @param baseUrl
 	 *            the baseUrl to set
@@ -528,7 +527,7 @@ public class SliceServiceImpl implements SliceService {
 	}
 
 	/**
-	 * Returns the facets of this slice service.
+	 * Returns the facets of this sliceId service.
 	 * 
 	 * @return the sliceFacets
 	 */
@@ -537,7 +536,7 @@ public class SliceServiceImpl implements SliceService {
 	}
 
 	/**
-	 * Sets the facets of this slice service.
+	 * Sets the facets of this sliceId service.
 	 * 
 	 * @param sliceFacets
 	 *            the sliceFacets to set
