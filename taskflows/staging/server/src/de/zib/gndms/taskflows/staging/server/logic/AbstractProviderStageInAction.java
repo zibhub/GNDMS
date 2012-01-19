@@ -17,17 +17,19 @@ package de.zib.gndms.taskflows.staging.server.logic;
  */
 
 
+import de.zib.gndms.gndmc.dspace.SliceClient;
 import de.zib.gndms.kit.config.ConfigProvider;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.logic.model.ModelIdHoldingOrder;
-import de.zib.gndms.logic.model.dspace.*;
+import de.zib.gndms.logic.model.dspace.ChownSliceConfiglet;
+import de.zib.gndms.logic.model.dspace.DeleteSliceTaskAction;
+import de.zib.gndms.logic.model.dspace.TransformSliceAction;
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
-import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.model.util.TxFrame;
@@ -37,7 +39,9 @@ import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import de.zib.gndms.taskflows.staging.client.model.ProviderStageInOrder;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.web.client.RestTemplate;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import java.io.File;
 
@@ -56,6 +60,8 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
     public static final String PROXY_FILE_NAME = "/x509_proxy.pem";
 
 	protected StagingIOFormatHelper stagingIOHelper = new StagingIOFormatHelper();
+    private RestTemplate restTemplate;
+
 
     protected AbstractProviderStageInAction( String offerTypeId ) {
         super( offerTypeId );
@@ -173,23 +179,13 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
         final EntityManager em = getEntityManager();
         final TxFrame txf = new TxFrame(em);
         try {
-            final String scopedName = config.getOption("subspace");
-            final @NotNull Subspace subspace = getEntityManager().find(
-                    Subspace.class,
-                    scopedName);
-            String slicekindKey = config.getOption("sliceKind");
-            SliceKind kind = getEntityManager().find(SliceKind.class, slicekindKey);
+            final String subspaceUrl = config.getOption("subspace");
+            SliceClient sc = new SliceClient();
+            sc.setRestTemplate( getRestTemplate() );
+            // todo continue here
 
-            CreateSliceAction csa = new CreateSliceAction();
-            csa.setParent(this);
-            csa.setTerminationTime(getContract().getResultValidity());
-            csa.setClosingEntityManagerOnCleanup(false);
-            csa.setUUIDGen(getUUIDGen());
-            csa.setId(getUUIDGen().nextUUID());
-            csa.setModel(subspace);
-            csa.setSliceKind(kind);
-            final Slice slice = csa.execute(getEntityManager());
-            setSliceId(slice.getId());
+            String slicekindKey = config.getOption( "sliceKind" );
+            //setSliceId(slice.getId());
             // to provoke nasty test condition uncomment the following line
             //throw new NullPointerException( );
             txf.commit();
@@ -329,5 +325,21 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
             session.success();
         }
     }
+
+
+    public RestTemplate getRestTemplate() {
+
+        return restTemplate;
+    }
+
+
+    @Inject
+    public void setRestTemplate( final RestTemplate restTemplate ) {
+
+        this.restTemplate = restTemplate;
+    }
+
+
+
 }
 

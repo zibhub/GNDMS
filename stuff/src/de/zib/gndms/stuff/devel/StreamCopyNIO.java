@@ -27,7 +27,7 @@ public class StreamCopyNIO {
      * automatically.
      *
      * @param is The source stream.
-     * @param os The destionation stream.
+     * @param os The destination stream.
      * @param bs The buffer size
      * @return The count of copied bytes.
      * @throws IOException

@@ -32,7 +32,7 @@ public class FileTransferMeta implements TaskFlowMeta {
 
     public final static List<String> REQUIRED_AUTHORIZATION = Collections.singletonList( CertificatePurpose.C3GRID.toString( ) );
     public final static String DESCRIPTION = "Transfers files using GridFTP";
-    public static final String FILE_TRANSFER_TYPE_KEY = "FILE_TRANSFER_TYPE";
+    public static final String FILE_TRANSFER_TYPE_KEY = "GridFTPFileTransfer";
 
 
     @Override

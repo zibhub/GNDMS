@@ -87,7 +87,8 @@ public class PlugableTaskFlowProvider extends TaskFlowProviderImpl {
 
         if( plugins.containsKey( tff.getTaskFlowKey() ) )
             throw new IllegalStateException( "plugin " + tff.getTaskFlowKey() +" already exists" );
-
+        
+        logger.debug( "registering factory: " + tff.getTaskFlowKey() );
         plugins.put( tff.getTaskFlowKey(), tff );
         tff.setInjector( system.getInstanceDir().getSystemAccessInjector() );
     }

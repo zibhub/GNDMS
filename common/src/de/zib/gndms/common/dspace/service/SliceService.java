@@ -185,7 +185,7 @@ public interface SliceService {
      * @return The file.
 	 */
 	// TODO: GNDMSFile ?
-	ResponseEntity<void> listFileContent(String subspace, String sliceKind,
+	ResponseEntity<Void> listFileContent(String subspace, String sliceKind,
                                          String slice, String fileName, List<String> attrs, String dn, OutputStream out);
 
 	/**
