@@ -22,7 +22,9 @@ import de.zib.gndms.logic.model.config.ConfigActionResult;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.util.GridResourceCache;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
@@ -47,7 +49,7 @@ public class SliceKindProviderImpl extends GridResourceDAO< SliceKind > implemen
     }
 
     protected String getListQuery( ) {
-        return "listCreatableSliceKinds";
+        return "listSlicekindsOfSubspace";
     }
 
     @Override
@@ -56,8 +58,11 @@ public class SliceKindProviderImpl extends GridResourceDAO< SliceKind > implemen
     }
 
     @Override
-    public List<SliceKind> list( String subspace ) throws NoSuchElementException {
-        return null;  // TODO: implement slicekind listing
+    public List< String > list( String subspace ) throws NoSuchElementException {
+        EntityManager em = emf.createEntityManager();
+        Query query = em.createNamedQuery( getListQuery() );
+        query.setParameter( "idParam", subspace );
+        return query.getResultList();
     }
 
     @Override
@@ -66,6 +71,7 @@ public class SliceKindProviderImpl extends GridResourceDAO< SliceKind > implemen
     }
 
     public void create( final String sliceKindId, final String config ) {
+        System.out.println( config );
         try {
             final StringWriter sw = new StringWriter();
 

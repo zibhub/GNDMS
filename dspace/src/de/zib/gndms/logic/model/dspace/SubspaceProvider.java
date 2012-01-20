@@ -38,7 +38,7 @@ public interface SubspaceProvider {
 	 * Returns a list containing all existing subspace ids.
 	 * @return The list.
 	 */
-	List< Subspace > list();
+	List< String > list();
 
     /**
      * Returns the subspace for a given subspace id.
@@ -47,5 +47,5 @@ public interface SubspaceProvider {
      */
 	Subspace get( String subspace );
 
-    void create(String subspace, String config);
+    void create( String config );
 }

@@ -94,6 +94,7 @@ public class UriFactory {
      * The template for a subspace.
      */
     private UriTemplate subspaceTemplate;
+    private UriTemplate sliceKindTemplate;
     private UriTemplate sliceTemplate;
 
     /**
@@ -124,6 +125,7 @@ public class UriFactory {
         taskTemplate = new UriTemplate( baseUrl + "/{service}/tasks/_{taskId}" );
         taskServiceTemplate = new UriTemplate( baseUrl + "/{service}/tasks" );
         subspaceTemplate = new UriTemplate(baseUrl + "/{service}/_{subspace}");
+        sliceKindTemplate = new UriTemplate(baseUrl + "/{service}/_{subspace}/_{sliceKind}");
         sliceTemplate = new UriTemplate( baseUrl + "/{service}/_{subspace}/_{sliceKind}/_{sliceId}" );
     }
 
@@ -202,6 +204,10 @@ public class UriFactory {
      */
     public final String subspaceUri(final Map<String, String> vars, final String facet) {
         return addFacet(subspaceTemplate.expand(vars), facet);
+    }
+
+    public final String sliceKindUri(final Map<String, String> vars, final String facet) {
+        return addFacet(sliceKindTemplate.expand(vars), facet);
     }
 
     public final String sliceUri( final Map< String, String > vars, final String facet ) {
