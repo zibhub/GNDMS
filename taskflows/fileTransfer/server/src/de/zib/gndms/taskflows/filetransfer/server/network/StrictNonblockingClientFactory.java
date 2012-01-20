@@ -40,7 +40,8 @@ public class StrictNonblockingClientFactory extends AbstractNonblockingClientFac
     public GridFTPClient createClient( String host, int port, CredentialProvider cp ) throws ServerException, IOException {
 
         final GridFTPClientCreator creator = new GridFTPClientCreator( host, port, cp, inc() );
-        final Forkable<GridFTPClient> fork = new Forkable<GridFTPClient>( creator );
+        final Forkable<GridFTPClient>
+                fork = new Forkable<GridFTPClient>( creator );
 
 
         final Future<GridFTPClient> f;

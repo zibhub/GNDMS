@@ -1,7 +1,4 @@
-package de.zib.gndms.stuff.threading.impl;
-
-import de.zib.gndms.stuff.threading.DV;
-import org.omg.DynamicAny.DynValueBox;
+package de.zib.gndms.stuff.threading;
 
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
@@ -361,7 +358,7 @@ public final class DefaultDV<V, T extends Throwable> implements DV<V, T> {
      * Factory for instances of class DefaultDV
      *
      * @author try ste fan pla nti kow zib
-     * @see de.zib.gndms.stuff.threading.impl.DefaultDV
+     * @see DefaultDV
      */
     public static class Factory implements DV.Factory {
 
