@@ -46,13 +46,13 @@ import java.util.Map;
 public abstract class TaskFlowAction<K extends AbstractOrder> extends
         DefaultTaskAction<DelegatingOrder<K>> {
 
-    private String offerTypeId;
+    private String taskFlowTypeId;
     private MyProxyFactoryProvider myProxyFactoryProvider;
 
 
-    protected TaskFlowAction( String offerTypeId ) {
+    protected TaskFlowAction( String taskFlowTypeId ) {
         super( ( Class<DelegatingOrder<K>>) (Object) DelegatingOrder.class );
-        this.offerTypeId = offerTypeId;
+        this.taskFlowTypeId = taskFlowTypeId;
     }
 
 
@@ -68,7 +68,7 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends
             super.onCreated(wid, state, isRestartedTask, altTaskState);
             final Session session = getDao().beginSession();
             try {
-                final TaskFlowType ot = session.findTaskFlowType( offerTypeId );
+                final TaskFlowType ot = session.findTaskFlowType( taskFlowTypeId );
                 final Task task = getModel().getTask(session);
                 task.setTaskFlowType( ot );
                 task.setWID(wid);
@@ -80,15 +80,15 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends
     }
 
 
-    public String getOfferTypeId() {
-        return offerTypeId;
+    public String getTaskFlowTypeId() {
+        return taskFlowTypeId;
     }
 
 
-    public Map<String, String> getOfferTypeConfigMapData() {
+    public Map<String, String> getTaskFlowTypeConfigMapData() {
         final Session session = getDao().beginSession();
         try {
-            final TaskFlowType ot = session.findTaskFlowType( getOfferTypeId() );
+            final TaskFlowType ot = session.findTaskFlowType( getTaskFlowTypeId() );
             final Map<String,String> configMapData = ot.getConfigMapData();
             session.finish();
             return configMapData;
@@ -97,17 +97,17 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends
     }
 
 
-    public void setOfferTypeId(@NotNull final String keyParam) {
-        offerTypeId = keyParam;
+    public void setTaskFlowTypeId( @NotNull final String keyParam ) {
+        taskFlowTypeId = keyParam;
     }
 
 
     public String getKey() {
-        return offerTypeId;
+        return taskFlowTypeId;
     }
 
     public void setKey(@NotNull String keyParam) {
-        setOfferTypeId(keyParam);
+        setTaskFlowTypeId( keyParam );
     }
 
     public K getOrderBean() {
@@ -121,7 +121,7 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends
     public abstract Class<K> getOrderBeanClass( );
 
     protected void failFrom( Exception e ) {
-    	new IllegalStateException( getFailString( e ), e );
+    	throw new IllegalStateException( getFailString( e ), e );
     }
 
     protected void traceFrom( Exception e ) {

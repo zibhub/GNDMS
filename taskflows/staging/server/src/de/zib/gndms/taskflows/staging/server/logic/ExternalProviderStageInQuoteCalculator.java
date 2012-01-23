@@ -131,7 +131,6 @@ public class ExternalProviderStageInQuoteCalculator extends
         }
 
         ProcessBuilderAction action;
-        // todo add permissions here when delegation is implemented
         action = stagingIOHelper.createPBAction( getOrderBean(), contParam, null );
         action.setProcessBuilder(pb);
         action.setOutputReceiver(new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY));
