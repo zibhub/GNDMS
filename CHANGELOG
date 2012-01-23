@@ -1,3 +1,11 @@
+0.6.0: NN (maybe Cecil)
+
+@Everybody
+* [CHANGE] Removed dependency to the Globus Toolkit Framewerk
+* [CHANGE] Compatible with GridFTP 3.33 (from GT 5.0.4)
+
+@DMS
+* [CHANGE] moved configuration of GSIFTPBl
 
 0.3.5: "Richie" (internal Version)
 

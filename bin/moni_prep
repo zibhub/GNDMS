@@ -1,2 +1,4 @@
 #!/bin/sh
-cat - | openssl base64 | tr -cd [:print:] | sed -e 's/+/%2B/; s/\//%2F/g; s/=/%3D/g'
+#cat - | openssl base64 | tr -cd [:print:] | sed -e 's/+/%2B/; s/\//%2F/g; s/=/%3D/g'
+requestBody=$( cat - )
+echo -n "<string>$requestBody</string>"

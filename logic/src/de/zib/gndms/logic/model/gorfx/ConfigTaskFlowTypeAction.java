@@ -130,7 +130,7 @@ public class ConfigTaskFlowTypeAction extends ConfigAction<String> {
                     update = true;
             }
 
-            if (update)
+            if (update) {
                 for (String name : getAllOptionNames())
                     try {
                         if (isValidConfigOptionName(name)) configMap.put(name, getOption(name));
@@ -139,6 +139,11 @@ public class ConfigTaskFlowTypeAction extends ConfigAction<String> {
                         // shdouldnt happen
                         throw new RuntimeException(e);
                     }
+            }
+
+            // write changed map back to the db, neo requires this
+            if( ! UpdateMode.READ.equals( cfgUpdateMode ) )
+                taskFlowType.setConfigMapData( configMap );
 
             session.success();
             return genOutput(configMap);

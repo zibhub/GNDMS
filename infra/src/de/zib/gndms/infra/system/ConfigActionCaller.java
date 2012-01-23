@@ -174,7 +174,7 @@ public final class ConfigActionCaller implements WSActionCaller {
      *
      * @return a ConfigAction instance with a given configuration
      *
-     * @throws ClassNotFoundException if the class given by <tt>name></tt> could not be found.
+     * @throws ClassNotFoundException if the class given by <tt>name</tt> could not be found.
      * @throws IllegalAccessException
      * @throws InstantiationException
      * @throws ParameterTools.ParameterParseException if <tt>params</tt> is not valid according to defined Syntax.
