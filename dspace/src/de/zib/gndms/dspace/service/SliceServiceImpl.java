@@ -18,10 +18,7 @@ package de.zib.gndms.dspace.service;
 
 import de.zib.gndms.common.dspace.service.SliceService;
 import de.zib.gndms.common.logic.config.Configuration;
-import de.zib.gndms.common.rest.Facets;
-import de.zib.gndms.common.rest.GNDMSResponseHeader;
-import de.zib.gndms.common.rest.Specifier;
-import de.zib.gndms.common.rest.UriFactory;
+import de.zib.gndms.common.rest.*;
 import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.logic.model.dspace.NoSuchElementException;
@@ -67,7 +64,7 @@ public class SliceServiceImpl implements SliceService {
 	private SubspaceProvider subspaceProvider;
 	private SliceKindProvider sliceKindProvider;
 	private SliceProvider sliceProvider;
-	private Facets sliceFacets;
+	private List< String > sliceFacetNames;
 	private UriFactory uriFactory;
 
     private GNDMSystem system;
@@ -106,8 +103,10 @@ public class SliceServiceImpl implements SliceService {
 		GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKindId, sliceId, dn );
 
         try {
-            Slice slice = findSliceOfKind( subspaceId, sliceKindId, sliceId );
-            return new ResponseEntity< Facets >( sliceFacets, headers, HttpStatus.OK );
+            // check for the existance of that slice
+            findSliceOfKind( subspaceId, sliceKindId, sliceId );
+            
+            return new ResponseEntity< Facets >( new Facets( listFacetsOfSlice( subspaceId, sliceKindId, sliceId ) ), headers, HttpStatus.OK );
         } catch ( NoSuchElementException ne ) {
             logger.warn( "The sliceId " + sliceId + " of sliceId kind " + sliceKindId
                     + "does not exist within the subspace " + subspaceId + "." );
@@ -452,6 +451,22 @@ public class SliceServiceImpl implements SliceService {
 		}
 	}
 
+    private List< Facet > listFacetsOfSlice( String subspaceId, String sliceKindId, String sliceId ) {
+        Map< String, String > vars = new HashMap< String, String >( );
+        vars.put( "service", "dspace" );
+        vars.put( "subspace", subspaceId );
+        vars.put( "sliceKind", sliceKindId );
+        vars.put( "sliceId", sliceId );
+
+        List< Facet > facets = new LinkedList< Facet >( );
+
+        for( String facetName: sliceFacetNames ) {
+            Facet facet = new Facet( facetName, uriFactory.sliceUri( vars, facetName ) );
+            facets.add( facet );
+        }
+        return facets;
+    }
+
 	/**
 	 * Sets the GNDMS response header for a given subspace, sliceId kind, sliceId
 	 * and dn using the base URL.
@@ -530,18 +545,18 @@ public class SliceServiceImpl implements SliceService {
 	 * 
 	 * @return the sliceFacets
 	 */
-	public final Facets getSliceFacets() {
-		return sliceFacets;
+	public final List< String > getSliceFacetNames() {
+		return sliceFacetNames;
 	}
 
 	/**
 	 * Sets the facets of this sliceId service.
 	 * 
-	 * @param sliceFacets
+	 * @param sliceFacetNames
 	 *            the sliceFacets to set
 	 */
-	public final void setSliceFacets(final Facets sliceFacets) {
-		this.sliceFacets = sliceFacets;
+	public final void setSliceFacetNames(final List< String > sliceFacetNames ) {
+		this.sliceFacetNames = sliceFacetNames;
 	}
 
     @Inject
