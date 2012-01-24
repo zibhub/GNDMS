@@ -21,13 +21,10 @@ import de.zib.gndms.common.dspace.service.SubspaceService;
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.logic.config.SetupMode;
 import de.zib.gndms.common.logic.config.WrongConfigurationException;
-import de.zib.gndms.common.rest.Facets;
-import de.zib.gndms.common.rest.GNDMSResponseHeader;
-import de.zib.gndms.common.rest.Specifier;
-import de.zib.gndms.common.rest.UriFactory;
+import de.zib.gndms.common.rest.*;
 import de.zib.gndms.kit.config.ParameterTools;
 import de.zib.gndms.logic.model.dspace.*;
-import de.zib.gndms.model.dspace.SliceKind;
+import de.zib.gndms.logic.model.dspace.NoSuchElementException;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.util.TxFrame;
 import org.joda.time.DateTime;
@@ -45,10 +42,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping(value = "/dspace")
@@ -62,14 +56,14 @@ public class SubspaceServiceImpl implements SubspaceService {
     private SliceProvider sliceProvider;
 
 	private UriFactory uriFactory;
-	private Facets subspaceFacets;
+	private List< String > subspaceFacetNames;
     private SliceKindService sliceKindService;
 
 
 
 	@PostConstruct
 	public final void init() {
-        setUriFactory( new UriFactory() );
+        setUriFactory( new UriFactory( baseUrl ) );
 	}
 
     public void setUriFactory(UriFactory uriFactory) {
@@ -82,16 +76,18 @@ public class SubspaceServiceImpl implements SubspaceService {
 			@PathVariable final String subspace,
 			@RequestHeader( "DN" ) final String dn ) {
 
-		GNDMSResponseHeader headers = getSubspaceHeaders( subspace, dn );
+        GNDMSResponseHeader headers = getSubspaceHeaders( subspace, dn );
 
-		if( subspaceProvider.exists( subspace ) ) {
-			return new ResponseEntity< Facets >( subspaceFacets, headers, HttpStatus.OK );
-		}
-		logger.info("Illegal Access: subspace " + subspace + " not found");
-		return new ResponseEntity< Facets >(null, headers, HttpStatus.NOT_FOUND);
+        if( !subspaceProvider.exists( subspace ) ) {
+            logger.warn( "Subspace " + subspace + " does not exist." );
+            return new ResponseEntity< Facets >(null, headers, HttpStatus.NOT_FOUND);
+        }
+
+        List<Facet> facets = listFacetsOfSubspace(subspace);
+        return new ResponseEntity< Facets >( new Facets( facets ), headers, HttpStatus.OK );
 	}
 
-	@Override
+    @Override
 	@RequestMapping( value = "/_{subspace}", method = RequestMethod.PUT )
     public final ResponseEntity< Facets > createSubspace(
             @PathVariable final String subspace,
@@ -107,9 +103,10 @@ public class SubspaceServiceImpl implements SubspaceService {
 
         // TODO: catch creation errors and return appropriate HttpStatus
         logger.info( "Creating supspace " + subspace + "." );
-        subspaceProvider.create( subspace, config );
+        subspaceProvider.create( "subspace: " + subspace + "; " + config );
 
-        return new ResponseEntity< Facets >( subspaceFacets, headers, HttpStatus.CREATED );
+        List<Facet> facets = listFacetsOfSubspace(subspace);
+        return new ResponseEntity< Facets >( new Facets( facets ), headers, HttpStatus.CREATED );
 	}
 
 	@Override
@@ -170,17 +167,19 @@ public class SubspaceServiceImpl implements SubspaceService {
 		}
 
 		try {
-            List< SliceKind > sliceKinds = this.slicekindProvider.list( subspace );
+            List< String > sliceKinds = slicekindProvider.list( subspace );
             List<Specifier<Void>> list = new ArrayList<Specifier<Void>>( sliceKinds.size() );
+
             HashMap<String, String> urimap = new HashMap<String, String>(2);
             urimap.put( UriFactory.SERVICE, "dspace" );
-            for( SliceKind sk : sliceKinds ) {
-                Specifier<Void> spec = new Specifier<Void>();
-                spec.setUriMap(new HashMap<String, String>(urimap));
-                spec.addMapping( UriFactory.SLICEKIND, sk.getId() );
-                // TODO does the String have to be hard-coded?
-                spec.setUrl(uriFactory.subspaceUri(urimap, "slicekinds"));
-                list.add(spec);
+            urimap.put( UriFactory.SUBSPACE, subspace );
+
+            for( String sk : sliceKinds ) {
+                Specifier< Void > spec = new Specifier< Void >();
+                spec.setUriMap( new HashMap< String, String >( urimap ) );
+                spec.addMapping( UriFactory.SLICEKIND, sk );
+                spec.setUrl( uriFactory.sliceKindUri( spec.getUriMap(), null ) );
+                list.add( spec );
             }
 
             return new ResponseEntity<List<Specifier<Void>>>(list, headers,
@@ -198,7 +197,7 @@ public class SubspaceServiceImpl implements SubspaceService {
     public final ResponseEntity<List<Specifier<Void>>> createSliceKind(
             @PathVariable final String subspace,
             @PathVariable final String slicekind,
-            final String config,
+            @RequestBody final String config,
             @RequestHeader("DN") final String dn) {
         GNDMSResponseHeader headers = getSubspaceHeaders( subspace, dn );
 
@@ -353,6 +352,19 @@ public class SubspaceServiceImpl implements SubspaceService {
         return sliceKindService.deleteSliceKind( subspace, sliceKind, dn );
     }
 
+    private List< Facet > listFacetsOfSubspace( String subspace ) {
+        Map< String, String > vars = new HashMap< String, String >( );
+        vars.put( "service", "dspace" );
+        vars.put( "subspace", subspace );
+
+        List< Facet > facets = new LinkedList< Facet >( );
+
+        for( String facetName: subspaceFacetNames ) {
+            Facet facet = new Facet( facetName, uriFactory.subspaceUri( vars, facetName ) );
+            facets.add( facet );
+        }
+        return facets;
+    }
 
     /**
      * Sets the GNDMS response header for a given subspace, slice kind and dn
@@ -433,16 +445,16 @@ public class SubspaceServiceImpl implements SubspaceService {
 	 * Returns the facets of this subspace service.
 	 * @return the dspaceFacets
 	 */
-	public final Facets getSubspaceFacets() {
-		return subspaceFacets;
+	public final List< String > getSubspaceFacetNames() {
+		return subspaceFacetNames;
 	}
 
 	/**
 	 * Sets the facets of this subspace service.
-	 * @param subspaceFacets the subspaceFacets to set
+	 * @param subspaceFacetNames the names of the subspaceFacets to set
 	 */
-	public final void setSubspaceFacets(final Facets subspaceFacets) {
-		this.subspaceFacets = subspaceFacets;
+	public final void setSubspaceFacetNames( final List< String > subspaceFacetNames ) {
+		this.subspaceFacetNames = subspaceFacetNames;
 	}
 
 	/**
@@ -462,6 +474,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 		this.emf = emf;
 	}
 
+    @Inject
     public void setSliceProvider( SliceProviderImpl sliceProvider ) {
         this.sliceProvider = sliceProvider;
     }

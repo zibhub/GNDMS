@@ -43,10 +43,8 @@ import javax.persistence.Table;
     "AND x.name.localName = :uriLocalParam"),
 @NamedQuery(name="getSubspaceKey", query="SELECT x.name FROM Subspaces x WHERE x.id = :idParam"),
 @NamedQuery(name="listSupportedSchemas", query="SELECT DISTINCT x.name.nameScope FROM Subspaces x" ),
-@NamedQuery(name="listCreatableSliceKinds",
-        query="SELECT sk FROM Subspaces x INNER JOIN x.creatableSliceKinds sk " +
-              "WHERE x.name.nameScope = (SELECT y.name.nameScope FROM Subspaces y WHERE y.id = :idParam) " +
-              "AND x.name.localName = (SELECT y.name.localName FROM Subspaces y WHERE y.id = :idParam)"),
+@NamedQuery(name="listSlicekindsOfSubspace",
+        query="SELECT sk.id FROM Subspaces x INNER JOIN x.creatableSliceKinds sk WHERE x.id = :idParam"),
 @NamedQuery(name="getSubspacesUsingSliceKind",
         query="SELECT x FROM Subspaces x INNER JOIN x.creatableSliceKinds sk WHERE sk.id = :idParam")
 })

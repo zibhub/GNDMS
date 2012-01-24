@@ -41,7 +41,7 @@ public interface SliceKindProvider {
      * @return The list.
      * @throws NoSuchElementException if the subspace does not exist.
      */
-    List< SliceKind > list( String subspace ) throws NoSuchElementException;
+    List< String > list( String subspace ) throws NoSuchElementException;
 
     /**
      * Returns the slice kind for a given slice kind id in a subspace.

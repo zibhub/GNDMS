@@ -21,7 +21,6 @@ import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.logic.model.dspace.SubspaceProvider;
-import de.zib.gndms.model.dspace.Subspace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -75,9 +74,11 @@ public class DSpaceServiceImpl implements DSpaceService {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public final ResponseEntity<List<Specifier<Void>>> listSubspaceSpecifiers(
             @RequestHeader("DN") final String dn) {
-        if (subspaceProvider == null) {
-            logger.warn("Subspace provider not initialized");
+        if( subspaceProvider == null ) {
+            logger.error( "Subspace provider not initialized" );
+            throw new IllegalStateException( "No Subspace provider set in DSpaceService" );
         }
+
         GNDMSResponseHeader headers = new GNDMSResponseHeader();
         headers.setResourceURL(baseUrl + "/dspace/");
         headers.setParentURL(baseUrl);
@@ -87,15 +88,16 @@ public class DSpaceServiceImpl implements DSpaceService {
         List<Specifier<Void>> list = new ArrayList<Specifier<Void>>();
         HashMap<String, String> urimap = new HashMap<String, String>(2);
         urimap.put(UriFactory.SERVICE, "dspace");
-        for (Subspace s : subspaceProvider.list()) {
-            Specifier<Void> spec = new Specifier<Void>();
+
+        for (String subspaceId : subspaceProvider.list()) {
+            Specifier< Void > spec = new Specifier<Void>();
             
-            spec.setUriMap(new HashMap<String, String>(urimap));
-            spec.addMapping(UriFactory.SUBSPACE, s.toString());
-            spec.setUrl(uriFactory.serviceUri(urimap));
-            list.add(spec);
+            spec.setUriMap( new HashMap< String, String >( urimap ) );
+            spec.addMapping( UriFactory.SUBSPACE, subspaceId );
+            spec.setUrl( uriFactory.subspaceUri( spec.getUriMap(), null ) );
+            list.add( spec );
         }
-        return new ResponseEntity<List<Specifier<Void>>>(
+        return new ResponseEntity< List< Specifier< Void > > >(
                 list, headers, HttpStatus.OK);
     }
 

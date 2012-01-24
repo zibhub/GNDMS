@@ -19,7 +19,9 @@ package de.zib.gndms.logic.model.dspace;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.util.GridResourceCache;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
 import java.util.List;
 
 public class SubspaceProviderImpl extends GridResourceDAO< Subspace > implements SubspaceProvider {
@@ -45,7 +47,9 @@ public class SubspaceProviderImpl extends GridResourceDAO< Subspace > implements
     }
 
     @Override
-    public List<Subspace> list() {
-        return null;
+    public List< String > list() {
+        EntityManager em = emf.createEntityManager();
+        Query query = em.createNamedQuery( getListQuery() );
+        return query.getResultList();
     }
 }

@@ -27,13 +27,9 @@ import de.zib.gndms.model.util.GridResourceCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @date: 09.12.11
@@ -42,7 +38,7 @@ import java.util.Map;
  * @email: bachmann@zib.de
  */
 public abstract class GridResourceDAO< G extends GridResource > {
-    final private EntityManagerFactory emf;
+    final protected EntityManagerFactory emf;
     final protected ActionConfigurer actionConfigurer;
     final private GridResourceCache< G > cache;
 
@@ -69,23 +65,17 @@ public abstract class GridResourceDAO< G extends GridResource > {
         return cache.get( id );
     }
 
-    public void create( final String id, final String config ) {
-        setup( id, config, SetupMode.CREATE );
+    public void create( final String config ) {
+        setup( config, SetupMode.CREATE );
     }
 
-    public void update( final String id, final String config ) {
-        setup( id, config, SetupMode.UPDATE );
-    }
-
-    public List< G > list( Map< String, String > params ) {
-        EntityManager em = emf.createEntityManager();
-        Query query = em.createNamedQuery( getListQuery() );
-        return query.getResultList();
+    public void update( final String config ) {
+        setup( config, SetupMode.UPDATE );
     }
 
     protected abstract String getListQuery( );
 
-    private String setup( final String id, final String config, final SetupMode mode ) {
+    private String setup( final String config, final SetupMode mode ) {
         try {
             final StringWriter sw = new StringWriter();
 
