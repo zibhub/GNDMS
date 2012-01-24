@@ -6,13 +6,17 @@ FILE="$1"
 HOST=`cat $FILE | grep ^monitor.host | cut -d= -f2-`
 PORT=`cat $FILE | grep ^monitor.port | cut -d= -f2-`
 USER=`cat $FILE | grep ^monitor.user | cut -d= -f2-`
-PASS=`cat $FILE | grep ^monitor.password | cut -d= -f2-`
-
-if [ ! -z "$PASS" ] ; then
-	PASS=":$PASS"
-fi
-
+PRFX=`cat $FILE | grep ^monitor.prefix | cut -d= -f2-`
+MIME=`cat $FILE | grep ^monitor.content-type | cut -d= -f2-`
+GRID=`cat $FILE | grep ^monitor.grid | cut -d= -f2-`
 shift
+
+if [ "x$PRFX" != "x" ] ; then
+    PRFX="$REFX/"
+fi
+if [ "x$GRID" != "x" ] ; then
+    GRID="$GRID/"
+fi
 
 PREP=`dirname $0`/moni_prep
 
@@ -33,7 +37,7 @@ if [ -z "$CLASSNAME" ]; then
 	exit 1
 fi
 
-PCLASSNAME=`echo "$CLASSNAME" | $PREP`
+PCLASSNAME="_$CLASSNAME"
 
 shift
 
@@ -41,13 +45,30 @@ REST="$*"
 
 if [ ! -z "$REST" ] ; then
 	PREST=`echo "$REST" | $PREP`
-	PREST="&args=$PREST"
 fi
 
-
+outfile=$( mktemp /tmp/moni_call.XXXXXX )
 [ -n "$verbose" ] && echo ">>>>>>>> Calling $CLASSNAME \"$REST\""
-curl -S -s -u "$USER""$PASS" http://"$HOST":"$PORT"/?"$MODE""&action=$PCLASSNAME""$PREST"
+
+# invoke curl an store the HTTPStatus in hstatus
+curlcmd="curl -X POST -H\"DN:$USER\" -H\"content-type:$MIME\" --data \"$PREST\"\
+    --write-out %{http_code} --silent --output $outfile \
+    http://"$HOST":"$PORT"/${PRFX}${GRID}gorfx/config/$PCLASSNAME"
+#echo $curlcmd
+hstatus=$( eval $curlcmd )
+
 [ -n "$verbose" ] && echo " "
-[ -n "$verbose" ] && echo "<<<<<<<< Done."
+[ -n "$verbose" ] && cat $outfile
+
+if [ "$hstatus" -ne "200" ]; then
+    retval=1
+    [ -n "$verbose" ] && echo "<<<<<<<< FAILED (Http-Status: $hstatus)"
+else 
+    retval=0
+    [ -n "$verbose" ] && echo "<<<<<<<< Done."
+fi
 [ -n "$verbose" ] && echo " "
 [ -n "$verbose" ] && echo " "
+
+rm $outfile
+exit $retval

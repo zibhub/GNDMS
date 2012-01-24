@@ -66,7 +66,10 @@ public class FileTransferTaskFlowFactory
 
     @Override
     protected Map<String, String> getDefaultConfig() {
-        return new HashMap<String, String>(0);
+
+        final HashMap<String, String> config = new HashMap<String, String>( 1 );
+        config.put( "hello", "world" );
+        return config;
     }
 
 

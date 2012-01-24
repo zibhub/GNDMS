@@ -17,17 +17,22 @@ package de.zib.gndms.taskflows.staging.server.logic;
  */
 
 
+import de.zib.gndms.common.dspace.service.SubspaceService;
+import de.zib.gndms.common.rest.Specifier;
+import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.kit.config.ConfigProvider;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.config.MapConfig;
+import de.zib.gndms.kit.security.AsFileCredentialInstaller;
+import de.zib.gndms.kit.security.CredentialProvider;
+import de.zib.gndms.kit.security.GetCredentialProviderFor;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.logic.model.ModelIdHoldingOrder;
-import de.zib.gndms.logic.model.dspace.*;
+import de.zib.gndms.logic.model.dspace.ChownSliceConfiglet;
+import de.zib.gndms.logic.model.dspace.DeleteSliceTaskAction;
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.dspace.Slice;
-import de.zib.gndms.model.dspace.SliceKind;
-import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.model.util.TxFrame;
@@ -35,9 +40,13 @@ import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.Taskling;
+import de.zib.gndms.taskflows.staging.client.ProviderStageInMeta;
 import de.zib.gndms.taskflows.staging.client.model.ProviderStageInOrder;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import java.io.File;
 
@@ -56,6 +65,8 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
     public static final String PROXY_FILE_NAME = "/x509_proxy.pem";
 
 	protected StagingIOFormatHelper stagingIOHelper = new StagingIOFormatHelper();
+    private SubspaceService subspaceService;
+
 
     protected AbstractProviderStageInAction( String offerTypeId ) {
         super( offerTypeId );
@@ -74,6 +85,17 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
 	    getScriptFileByParam(config, "stagingCommand");
         createNewSlice();
         super.onCreated(wid, state, isRestartedTask, altTaskState);
+    }
+
+
+    @Override
+    public CredentialProvider getCredentialProvider() {
+
+        CredentialProvider credentialProvider = new GetCredentialProviderFor( getOrder(),
+                ProviderStageInMeta.REQUIRED_AUTHORIZATION.get( 0 ), getMyProxyFactoryProvider()
+        ).invoke();
+        credentialProvider.setInstaller( new AsFileCredentialInstaller() );
+        return  credentialProvider;
     }
 
 
@@ -113,44 +135,13 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
             throw new IllegalStateException( "chown configlet is null!");
 
         final DelegatingOrder<?> order = getOrder();
-        String dn = order.getActContext().get( "DN" );
+        String dn = order.getDNFromContext();
         getLogger().debug( "cso DN: " + dn );
         getLogger().debug( "changing owner of " + slice.getId() + " to " + order.getLocalUser() );
         ProcessBuilderAction chownAct = csc.createChownSliceAction( order.getLocalUser(),
             slice.getSubspace().getPath() + File.separator + slice.getKind().getSliceDirectory(),
             slice.getDirectoryId() );
         chownAct.call();
-    }
-
-
-    protected void transformToResultSlice( Slice slice ) {
-
-        final EntityManager em = getEntityManager();
-        final TxFrame txf = new TxFrame(em);
-        try {
-            String slicekindKey = "http://www.c3grid.de/G2/SliceKind/Result";
-            SliceKind kind = getEntityManager().find(SliceKind.class, slicekindKey);
-
-            TransformSliceAction tsa =  new TransformSliceAction(
-                getOrder().getLocalUser(),
-                slice.getTerminationTime(),
-                kind,
-                slice.getSubspace(),
-                slice.getTotalStorageSize()
-            );
-
-            tsa.setParent( this );
-            tsa.setModel( slice );
-            tsa.initialize();
-            tsa.setClosingEntityManagerOnCleanup( false );
-            final Slice tgt_slice = tsa.execute( em );
-
-            setSliceId( tgt_slice.getId() );
-
-            deleteSlice( slice.getId() );
-            txf.commit();
-        }
-        finally { txf.finish();  }
     }
 
 
@@ -170,31 +161,19 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
 
         final ConfigProvider config = getOfferTypeConfig();
 
-        final EntityManager em = getEntityManager();
-        final TxFrame txf = new TxFrame(em);
-        try {
-            final String scopedName = config.getOption("subspace");
-            final @NotNull Subspace subspace = getEntityManager().find(
-                    Subspace.class,
-                    scopedName);
-            String slicekindKey = config.getOption("sliceKind");
-            SliceKind kind = getEntityManager().find(SliceKind.class, slicekindKey);
+        final String subspaceUrl = config.getOption( "subspace" );
+        String sliceKindKey = config.getOption( "sliceKind" );
+        // todo ask Joerg about emptiy config string
+        ResponseEntity<Specifier<Void>> sliceSpec =
+                subspaceService.createSlice( subspaceUrl, sliceKindKey, "", getOrder().getDNFromContext() );
 
-            CreateSliceAction csa = new CreateSliceAction();
-            csa.setParent(this);
-            csa.setTerminationTime(getContract().getResultValidity());
-            csa.setClosingEntityManagerOnCleanup(false);
-            csa.setUUIDGen(getUUIDGen());
-            csa.setId(getUUIDGen().nextUUID());
-            csa.setModel(subspace);
-            csa.setSliceKind(kind);
-            final Slice slice = csa.execute(getEntityManager());
-            setSliceId(slice.getId());
-            // to provoke nasty test condition uncomment the following line
-            //throw new NullPointerException( );
-            txf.commit();
-        }
-        finally { txf.finish();  }
+        if (! HttpStatus.CREATED.equals( sliceSpec.getStatusCode() ) )
+            throw new IllegalStateException( "Slice creation failed" );
+
+        setSliceId( sliceSpec.getBody().getUriMap().get( UriFactory.SLICE ) );
+
+        // to provoke nasty test condition uncomment the following line
+        //throw new NullPointerException( );
 	    getLogger().info( "createNewSlice() = " + getSliceId() );
     }
 
@@ -263,7 +242,7 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
 
 	protected ProcessBuilder createProcessBuilder(String name, File dir) {
        try {
-           MapConfig opts = new MapConfig(getOfferTypeConfigMapData());
+           MapConfig opts = new MapConfig( getTaskFlowTypeConfigMapData());
 		   if (opts.getOption(name, "").trim().length() == 0)
 			   return null;
 		   final File fileOption = getScriptFileByParam(opts, name);
@@ -286,7 +265,7 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
 
     protected @NotNull
     MapConfig getOfferTypeConfig() {
-        return new MapConfig(getOfferTypeConfigMapData());
+        return new MapConfig( getTaskFlowTypeConfigMapData());
     }
 
 
@@ -294,18 +273,24 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
     protected void setSliceId( String sliceId ) {
         final Session session = getDao().beginSession();
         try {
-            final Task task = getTask(session);
-            ProviderStageInOrder order = (ProviderStageInOrder ) task.getOrder( );
-            order.setActSliceId( sliceId );
-            task.setORQ( sliceId );
-            session.finish();
+            setSliceKind( sliceId, session );
+            session.success();
         }
         finally {
-            session.success();
+            session.finish();
         }
     }
 
-    
+
+    private void setSliceKind( final String sliceId, final Session session ) {
+
+        final Task task = getTask(session);
+        ProviderStageInOrder order = (ProviderStageInOrder ) task.getOrder( );
+        order.setActSliceId( sliceId );
+        task.setORQ( sliceId );
+    }
+
+
     protected String getSliceId( ) {
         return getOrderBean().getActSliceId();
     }
@@ -328,6 +313,19 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
         finally {
             session.success();
         }
+    }
+
+
+    public SubspaceService getSubspaceService() {
+
+        return subspaceService;
+    }
+
+
+    @Inject
+    public void setSubspaceService( final SubspaceService subspaceService ) {
+
+        this.subspaceService = subspaceService;
     }
 }
 

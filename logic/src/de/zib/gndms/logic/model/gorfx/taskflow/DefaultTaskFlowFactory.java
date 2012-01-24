@@ -187,22 +187,18 @@ public abstract class DefaultTaskFlowFactory<O extends Order, C extends Abstract
     public void registerType( Session session ) {
 
         TaskFlowType taskFlowType;
-        try {
-            taskFlowType = session.findTaskFlowType( getTaskFlowKey() );
-            if( taskFlowType != null ) { // this factory is known
-                if( taskFlowType.getVersion() == getVersion() ) { // and the version is ok, too
-                    session.success();
-                    return;
-                } else  { // version mismatch
-                    taskFlowType.delete(); // delete it
-                    taskFlowType = null; // and make new one
-                }
+        taskFlowType = session.findTaskFlowType( getTaskFlowKey() );
+        if( taskFlowType != null ) { // this factory is known
+            if( taskFlowType.getVersion() == getVersion() ) { // and the version is ok, too
+                return;
+            } else  { // version mismatch
+                taskFlowType.delete(); // delete it
+                taskFlowType = null; // and make new one
             }
-            //  setup fresh this factory is new
-            taskFlowType = session.createTaskFlowType();
-            setupTaskFlowType( taskFlowType );
-
-        } finally { session.finish(); }
+        }
+        //  setup fresh this factory is new
+        taskFlowType = session.createTaskFlowType();
+        setupTaskFlowType( taskFlowType );
     }
 
 

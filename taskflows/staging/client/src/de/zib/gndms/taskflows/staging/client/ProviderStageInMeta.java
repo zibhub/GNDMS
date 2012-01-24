@@ -15,13 +15,35 @@
  */
 
 package de.zib.gndms.taskflows.staging.client;
+
+import de.zib.gndms.common.model.gorfx.types.TaskFlowMeta;
+import de.zib.gndms.common.rest.CertificatePurpose;
+
+import java.util.Collections;
+import java.util.List;
+
 /**
  * @author Maik Jorra
  * @email jorra@zib.de
  * @date 04.11.11  16:27
  * @brief
  */
-public class ProviderStageInMeta {
+public class ProviderStageInMeta implements TaskFlowMeta {
 
     public static final String PROVIDER_STAGING_KEY = "ProviderStaging" ;
+
+    public final static List<String> REQUIRED_AUTHORIZATION = Collections
+            .singletonList( CertificatePurpose.C3GRID.toString() );
+    public final static String DESCRIPTION = "Stages data a provider site";
+
+
+    @Override
+    public String getDescription() {
+        return DESCRIPTION;
+    }
+
+    @Override
+    public List<String> requiredAuthorization() {
+        return REQUIRED_AUTHORIZATION;
+    }
 }

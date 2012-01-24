@@ -109,7 +109,7 @@ public class GORFXServiceImpl implements GORFXService {
     }
 
 
-    @RequestMapping( value = "/config/_{actionName}", method = RequestMethod.GET )
+    @RequestMapping( value = "/config/_{actionName:[a-zA-Z._0-9]+}", method = RequestMethod.GET )
     public ResponseEntity<ConfigMeta> getConfigActionInfo( @PathVariable String actionName,
                                                            @RequestHeader( value="DN", required=false ) String dn ) {
 
@@ -129,7 +129,7 @@ public class GORFXServiceImpl implements GORFXService {
     }
 
 
-    @RequestMapping( value = "/config/_{actionName}", method = RequestMethod.POST )
+    @RequestMapping( value = "/config/_{actionName:[a-zA-Z._0-9]+}", method = RequestMethod.POST )
     public ResponseEntity<String> callConfigAction( @PathVariable String actionName,
                                                     @RequestBody String args, @RequestHeader( "DN" ) String dn ) {
         GNDMSResponseHeader responseHeaders =

@@ -23,10 +23,15 @@ import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import java.util.Map;
 
 /**
-* @author Maik Jorra
-* @email jorra@zib.de
-* @date 12.12.11  18:52
-* @brief
+ * Creates an appropriate MyPorxy-based credential provider.
+ *
+ * Uses provided information to select and setup a MyProxy-client-factory which can be used to
+ * retrieve required credentials.
+ *
+ * @author Maik Jorra
+ * @email jorra@zib.de
+ * @date 12.12.11  18:52
+ * @brief
 */
 public class GetCredentialProviderFor {
 

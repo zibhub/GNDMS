@@ -16,14 +16,18 @@
 
 package de.zib.gndms.kit.security;
 
-import org.ietf.jgss.GSSCredential;
-
 /**
-* @author Maik Jorra
-* @email jorra@zib.de
-* @date 01.12.11  18:53
-* @brief installes gss credential to a given object
-*/
+ * Installs given (gss) credentials on a receiver.
+ *
+ * Implementors should offer a mechanism to install a concrete credential type on a specific
+ * object. Implementations of this class are usually managed by a {@link #CredentialProvdier} and
+ * used to install the credentials they provide in a special way (e.g. write them to disk) or
+ * in an object  (e.g. a client).
+ *
+ * @author Maik Jorra
+ * @email jorra@zib.de
+ * @date 01.12.11  18:53
+ */
 public interface CredentialInstaller<C,T> {
     public void installCredentials( T credentialReceiver, C cred );
 

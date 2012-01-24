@@ -90,6 +90,17 @@ public class DelegatingOrder<T extends Order> implements Order {
     }
 
 
+    public boolean contextHasDN( ) {
+        return actContext.containsKey( "DN" );
+    }
+
+
+    public String getDNFromContext( ) {
+
+        return actContext.get( "DN" );
+    }
+
+
     public void setActContext( Map<String, String> context ) {
 	    actContext = context;
     }

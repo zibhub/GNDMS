@@ -18,15 +18,12 @@ package de.zib.gndms.infra.system;
 
 import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowFactory;
 import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowProviderImpl;
+import de.zib.gndms.neomodel.common.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ServiceLoader;
+import java.util.*;
 
 /**
  * @author try ma ik jo rr a zib
@@ -87,9 +84,17 @@ public class PlugableTaskFlowProvider extends TaskFlowProviderImpl {
 
         if( plugins.containsKey( tff.getTaskFlowKey() ) )
             throw new IllegalStateException( "plugin " + tff.getTaskFlowKey() +" already exists" );
-
+        
+        logger.debug( "registering factory: " + tff.getTaskFlowKey() );
         plugins.put( tff.getTaskFlowKey(), tff );
         tff.setInjector( system.getInstanceDir().getSystemAccessInjector() );
+        Session session = system.getDao().beginSession();
+        try {
+            tff.registerType( session );
+            session.success();
+        } finally {
+            session.finish();
+        }
     }
 
 

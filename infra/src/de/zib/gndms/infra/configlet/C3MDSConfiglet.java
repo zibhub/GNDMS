@@ -26,11 +26,6 @@ import de.zib.gndms.c3resource.jaxb.Site;
 import de.zib.gndms.c3resource.jaxb.Workspace;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.configlet.RegularlyRunnableConfiglet;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicHeader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -181,14 +176,15 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 		final URL url = new URL(urlStr);
 		if (url.getProtocol().startsWith("http")) {
 			getLogger().debug("Loading C3MDSCatalog via http core...");
+            throw new UnsupportedOperationException( "port it to something new or don't" );
 			// if http use http client from apache commons
-			final HttpClient client = new DefaultHttpClient();
+			/*final HttpClient client = new DefaultHttpClient();
 			final HttpGet get = new HttpGet(urlStr);
 			get.addHeader(new BasicHeader("Pragma", "no-cache"));
 			get.addHeader(new BasicHeader("Cache-Control",
 			                              "private, no-store, no-cache, must-revalidate, max-age=0"));
 			final HttpResponse resp = client.execute(get);
-			return resp.getEntity().getContent();
+			return resp.getEntity().getContent(); */
 		}
 		else {
 			getLogger().debug("Loading C3MDSCatalog via java.net.URL.openStream...");

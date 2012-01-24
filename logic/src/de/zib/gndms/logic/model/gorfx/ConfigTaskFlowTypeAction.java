@@ -41,7 +41,7 @@ import java.util.Properties;
  *
  * <p>Before this action is started,
  *  the following parameters must be set in the configuration map: {@link #cfgOutFormat 'cfgOutFormat'}, {@link #cfgUpdateMode 'cfgUpdateMode'}.
- * If not already denoted, {@link #offerType 'offerType'} must also be set in the map.
+ * If not already denoted, {@link #taskFlowType 'offerType'} must also be set in the map.
  * Otherwise an <tt>IllegalStateException</tt> will be thrown.
  *
  * @see de.zib.gndms.neomodel.gorfx.TaskFlowType
@@ -54,10 +54,10 @@ import java.util.Properties;
 public class ConfigTaskFlowTypeAction extends ConfigAction<String> {
     public enum OutFormat { PROPS, OPTS, NONE, PRINT_OK }
 
-    public enum UpdateMode { UPDATE, OVERWRITE, DELKEYS }
+    public enum UpdateMode { READ, UPDATE, OVERWRITE, DELKEYS }
 
     @ConfigOption(descr="Unique URI identifying this offerType")
-    private String offerType;
+    private String taskFlowType;
 
     @ConfigOption(descr="How to update the config; one of UPDATE (default), OVERWRITE, or DELKEYS")
     private UpdateMode cfgUpdateMode;
@@ -69,14 +69,14 @@ public class ConfigTaskFlowTypeAction extends ConfigAction<String> {
     public void initialize() {
         super.initialize();    // Overridden method
         try {
-            if (offerType == null)
-                setOfferType(getOption("offerType"));
+            if ( taskFlowType == null)
+                setTaskFlowType( getOption( "taskFlowType" ) );
             cfgOutFormat = getEnumOption(OutFormat.class, "cfgOutFormat", true, OutFormat.PROPS);
             cfgUpdateMode =
                     getEnumOption(UpdateMode.class, "cfgUpdateMode", true, UpdateMode.UPDATE);
         }
         catch ( MandatoryOptionMissingException e) {
-            throw new IllegalArgumentException(offerType);
+            throw new IllegalArgumentException( taskFlowType );
         }
     }
 
@@ -105,7 +105,11 @@ public class ConfigTaskFlowTypeAction extends ConfigAction<String> {
         Session session = getDao().beginSession();
 
         try {
-            final @NotNull TaskFlowType taskFlowType = session.findTaskFlowType(  getOfferType() );
+            final TaskFlowType taskFlowType = session.findTaskFlowType(  getTaskFlowType() );
+
+            if ( taskFlowType == null )
+                throw new IllegalStateException( "No TaskFlow-type named " + getTaskFlowType() );
+
             final @NotNull Map<String, String> configMap;
 
             boolean update = false;
@@ -117,15 +121,16 @@ public class ConfigTaskFlowTypeAction extends ConfigAction<String> {
                     break;
 
                 case UPDATE:
-                    configMap = taskFlowType.getConfigMapData();
                     update = true;
+                case READ:
+                    configMap = taskFlowType.getConfigMapData();
                     break;
                 default:
                     configMap = new HashMap<String, String>(8);
                     update = true;
             }
 
-            if (update)
+            if (update) {
                 for (String name : getAllOptionNames())
                     try {
                         if (isValidConfigOptionName(name)) configMap.put(name, getOption(name));
@@ -134,6 +139,11 @@ public class ConfigTaskFlowTypeAction extends ConfigAction<String> {
                         // shdouldnt happen
                         throw new RuntimeException(e);
                     }
+            }
+
+            // write changed map back to the db, neo requires this
+            if( ! UpdateMode.READ.equals( cfgUpdateMode ) )
+                taskFlowType.setConfigMapData( configMap );
 
             session.success();
             return genOutput(configMap);
@@ -142,14 +152,14 @@ public class ConfigTaskFlowTypeAction extends ConfigAction<String> {
 
 
     /**
-     * Returns true if <tt>name</tt> does not start with 'cfg' and is not the String 'offerType'
+     * Returns true if <tt>name</tt> does not start with 'cfg' and is not the String 'taskFlowType'
      * 
      * @param name a name of an option
      * @return
      */
     @SuppressWarnings({ "MethodMayBeStatic" })
     private boolean isValidConfigOptionName(final String name) {
-        return ! name.startsWith("cfg") && ! "offerType".equals(name);
+        return ! name.startsWith("cfg") && ! "taskFlowType".equals(name);
     }
 
     /**
@@ -190,12 +200,12 @@ public class ConfigTaskFlowTypeAction extends ConfigAction<String> {
     }
 
 
-    public String getOfferType() {
-        return offerType;
+    public String getTaskFlowType() {
+        return taskFlowType;
     }
 
 
-    public void setOfferType(final String offerTypeParam) {
-        offerType = offerTypeParam;
+    public void setTaskFlowType( final String taskFlowTypeParam ) {
+        taskFlowType = taskFlowTypeParam;
     }
 }

@@ -23,7 +23,7 @@ import org.ietf.jgss.GSSCredential;
  * @author Maik Jorra
  * @email jorra@zib.de
  * @date 22.11.11  17:21
- * @brief
+ * @brief Obtains credentials from a myproxy server.
  */
 public class MyProxyCredentialProvider extends GSSCredentialProvider {
 

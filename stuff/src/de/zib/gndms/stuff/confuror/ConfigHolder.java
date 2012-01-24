@@ -6,8 +6,8 @@ import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.inject.Inject;
 import java.io.IOException;
 
 /**
@@ -18,7 +18,7 @@ import java.io.IOException;
  *         User stepn Date: 23.03.11 TIME: 16:17
  */
 public class ConfigHolder {
-    private @Autowired @NotNull ObjectMapper objectMapper;
+    private @NotNull ObjectMapper objectMapper;
     private @Nullable JsonNode node;
 
     public ConfigHolder() {
@@ -66,6 +66,7 @@ public class ConfigHolder {
     }
 
 
+    @Inject
     public void setObjectMapper( @NotNull ObjectMapper objectMapper ) {
         this.objectMapper = objectMapper;
     }
