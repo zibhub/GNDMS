@@ -22,6 +22,10 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 import java.util.UUID;
 
 /**
@@ -35,6 +39,15 @@ public abstract class GORFXTaskFlowExample extends AbstractApplication {
 	protected String gorfxEpUrl;
 	@Option(name = "-dn", required = true, usage = "DN")
 	protected String dn;
+    @Option( name="-props", required=true, usage="staging.properties" )
+    protected String orderPropFile;
+    @Option( name="-con-props", usage="contract.properties" )
+    protected String conPropFile;
+    @Option( name="-proxyfile", usage="grid-proxy-file to lead", metaVar="proxy-file" )
+    protected String proxyFile = null;
+    @Option( name="-cancel", required = false, usage = "ms to wait before destroying taskClient.")
+    protected Long cancel = null;
+
 	protected String wid = UUID.randomUUID().toString();
     private ApplicationContext context;
     private FullGORFXClient gorfxClient;
@@ -43,8 +56,7 @@ public abstract class GORFXTaskFlowExample extends AbstractApplication {
     private AbstractTaskFlowExecClient etfc;
 
 
-
-	@Override
+    @Override
     public void run() throws Exception {
         System.out.println( "Running dummy taskFlow test with: " );
         System.out.println("connection to: \"" + gorfxEpUrl + "\"");
@@ -83,4 +95,26 @@ public abstract class GORFXTaskFlowExample extends AbstractApplication {
     protected abstract void normalRun();
 
     protected abstract void failingRun();
+
+
+    // Load SFR property file
+    protected Properties loadOrderProps( final String orderPropsFilename ) throws IOException {
+
+        InputStream is;
+        if ( orderPropsFilename.trim().equals( "-" ) ) {
+            System.out.println( "Reading props von stdin" );
+            is = System.in;
+            System.out.println( "done" );
+        } else
+            is = new FileInputStream(  orderPropsFilename );
+
+        Properties orderProps = new Properties( );
+
+        try {
+            orderProps.load( is );
+        } finally {
+            is.close();
+        }
+        return orderProps;
+    }
 }

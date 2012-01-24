@@ -19,7 +19,7 @@ package de.zib.gndms.taskflows.staging.client.model;
 
 
 import de.zib.gndms.common.model.gorfx.types.AbstractOrder;
-import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
+import de.zib.gndms.taskflows.staging.client.ProviderStageInMeta;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -44,7 +44,7 @@ public class ProviderStageInOrder extends AbstractOrder {
 
 	public ProviderStageInOrder() {
         super( );
-        super.setTaskFlowType( GORFXConstantURIs.PROVIDER_STAGE_IN_URI );
+        super.setTaskFlowType( ProviderStageInMeta.PROVIDER_STAGING_KEY );
     }
 
 

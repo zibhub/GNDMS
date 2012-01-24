@@ -18,7 +18,7 @@ package de.zib.gndms.taskflows.staging.client.model;
 
 
 import de.zib.gndms.common.model.gorfx.types.AbstractTaskFlowResult;
-import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
+import de.zib.gndms.taskflows.staging.client.ProviderStageInMeta;
 
 /**
  * @author  try ma ik jo rr a zib
@@ -34,11 +34,11 @@ public class ProviderStageInResult extends AbstractTaskFlowResult<String> {
 
 
     public ProviderStageInResult() {
-        super( GORFXConstantURIs.PROVIDER_STAGE_IN_URI );
+        super( ProviderStageInMeta.PROVIDER_STAGING_KEY );
     }
 
     public ProviderStageInResult( String sk ) {
-        super( GORFXConstantURIs.PROVIDER_STAGE_IN_URI );
+        super(  ProviderStageInMeta.PROVIDER_STAGING_KEY );
         sliceKey = sk;
     }
 

@@ -216,7 +216,7 @@ public class GORFXServiceImpl implements GORFXService {
     @RequestMapping( value = "/taskflows/", method = RequestMethod.GET )
     public ResponseEntity<List<String>> listTaskFlows( @RequestHeader( "DN" ) String dn ) {
 
-        if( taskFlowProvider == null )
+        if ( taskFlowProvider == null )
             throw new IllegalStateException( "provider is null" );
 
         GNDMSResponseHeader responseHeaders =
@@ -232,7 +232,7 @@ public class GORFXServiceImpl implements GORFXService {
         GNDMSResponseHeader headers = new GNDMSResponseHeader(
             gorfxFacets.findFacet( "taskflows" ).getUrl(), null, gorfxBaseUrl, dn, null );
 
-        if(! taskFlowProvider.exists( type  ) )
+        if (! taskFlowProvider.exists( type  ) )
             return new ResponseEntity<TaskFlowInfo>( null, headers, HttpStatus.NOT_FOUND );
 
         taskFlowProvider.getTaskFlowInfo( type );
