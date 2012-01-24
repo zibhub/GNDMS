@@ -474,6 +474,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 		this.emf = emf;
 	}
 
+    @Inject
     public void setSliceProvider( SliceProviderImpl sliceProvider ) {
         this.sliceProvider = sliceProvider;
     }
