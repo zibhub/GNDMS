@@ -27,6 +27,7 @@ import de.zib.gndms.logic.action.Action;
 import de.zib.gndms.logic.action.NoSuchActionException;
 import de.zib.gndms.logic.action.SkipActionInitializationException;
 import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
+import de.zib.gndms.logic.model.NoWSDontNeedModelUpdateListener;
 import de.zib.gndms.logic.model.config.AvailableActionsAction;
 import de.zib.gndms.logic.model.config.ConfigAction;
 import de.zib.gndms.logic.model.config.EchoOptionsAction;
@@ -309,7 +310,8 @@ public final class ConfigActionCaller implements WSActionCaller {
         action.setClosingWriterOnCleanUp(false);
         action.setWriteResult(true);
         action.setUUIDGen(actionUUIDGen);
-        action.setOwnPostponedEntityActions( new DefaultBatchUpdateAction<GridResource>() );
+        action.setOwnPostponedEntityActions( new DefaultBatchUpdateAction<GridResource>(
+                new NoWSDontNeedModelUpdateListener() ) );
 
         if (action instanceof SystemAction)
             ((SystemAction<?>)action).setSystem(system);

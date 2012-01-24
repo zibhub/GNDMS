@@ -31,6 +31,7 @@ import de.zib.gndms.taskflows.staging.server.logic.ExternalProviderStageInAction
 import de.zib.gndms.taskflows.staging.server.logic.ExternalProviderStageInQuoteCalculator;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -90,9 +91,24 @@ public class ProviderStageInTaskFlowFactory
     }
 
 
+    /**
+     * Delivers the default config.
+     *
+     * The default config uses external provider stagin, i.e. script based staging.
+     * @return The default config as map.
+     */
     @Override
     protected Map<String, String> getDefaultConfig() {
-        return null;  // not required here
+
+        HashMap<String, String> config = new HashMap<String, String>( 2 );
+        config.put( "subspace", "providerStaging" );
+        config.put( "sliceKind", "staging" );
+        config.put( "stagingClass", "de.zib.gndms.logic.model.gorfx.c3grid" +
+                                    ".ExternalProviderStageInAction" );
+        config.put( "estimationClass", "de.zib.gndms.logic.model.gorfx.c3grid" +
+                                       ".ExternalProviderStageInORQCalculator" );
+
+        return config;
     }
 
 

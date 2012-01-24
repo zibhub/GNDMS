@@ -33,14 +33,14 @@ import java.io.IOException;
  * <p/>
  * User: mjorra, Date: 18.09.2008, Time: 15:21:09
  */
-public class ProviderStageInOrderQPropertyReader extends OrderPropertyReader<ProviderStageInOrder> {
+public class ProviderStageInOrderPropertyReader extends OrderPropertyReader<ProviderStageInOrder> {
 
-    public ProviderStageInOrderQPropertyReader() {
+    public ProviderStageInOrderPropertyReader() {
         super( ProviderStageInOrder.class );
     }
 
 
-    public ProviderStageInOrderQPropertyReader( Properties properties ) {
+    public ProviderStageInOrderPropertyReader( Properties properties ) {
         super( ProviderStageInOrder.class, properties );
     }
 
@@ -74,7 +74,7 @@ public class ProviderStageInOrderQPropertyReader extends OrderPropertyReader<Pro
             Properties prop = new Properties( );
             prop.load( is );
             is.close( );
-            ProviderStageInOrderQPropertyReader reader = new ProviderStageInOrderQPropertyReader( prop );
+            ProviderStageInOrderPropertyReader reader = new ProviderStageInOrderPropertyReader( prop );
             reader.performReading( );
             return  reader.getProduct();
         } finally {

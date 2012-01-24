@@ -11,15 +11,15 @@ moni call -v .dspace.SetupSubspace  "subspace:'ProviderStaging'; \
 	mode:'$MODE'"
 
 moni call -v .dspace.AssignSliceKind "subspace:'ProviderStaging'; sliceKind: Staging; mode:'$ADDMODE'"
-moni call -v .dspace.AssignSliceKind "subspace:'ProviderStaging'; sliceKind: DMS; mode:'$ADDMODE'"
-moni call -v .dspace.AssignSliceKind "subspace:'ProviderStaging'; sliceKind: DMS_RW; mode:'$ADDMODE'"
+#moni call -v .dspace.AssignSliceKind "subspace:'ProviderStaging'; sliceKind: DMS; mode:'$ADDMODE'"
+#moni call -v .dspace.AssignSliceKind "subspace:'ProviderStaging'; sliceKind: DMS_RW; mode:'$ADDMODE'"
 
 #moni call -v .gorfx.SetupOfferType "offerType: 'http://www.c3grid.de/ORQTypes/ProviderStageIn'; orqType: '{http://gndms.zib.de/c3grid/types}ProviderStageInORQT'; resType: '{http://gndms.zib.de/c3grid/types}ProviderStageInResultT'; calcFactory: de.zib.gndms.logic.model.gorfx.c3grid.ProviderStageInORQFactory; taskActionFactory: de.zib.gndms.logic.model.gorfx.c3grid.ProviderStageInActionFactory; mode:'$MODE'"
 
-moni call -v .gorfx.ConfigTaskFlowType "offerType: 'http://www.c3grid.de/ORQTypes/ProviderStageIn'; \
+moni call -v .gorfx.ConfigTaskFlowType "taskFlowType: 'ProviderStageIn'; \
 	cfgOutFormat: 'PRINT_OK'; \
-	subspace: '{http://www.c3grid.de/G2/Subspace}ProviderStaging'; \
-	sliceKind: 'http://www.c3grid.de/G2/SliceKind/Staging'; \
+	subspace: 'ProviderStaging'; \
+	sliceKind: 'SliceKind/Staging'; \
 	stagingClass: 'de.zib.gndms.logic.model.gorfx.c3grid.ExternalProviderStageInAction'; \
 	estimationClass: 'de.zib.gndms.logic.model.gorfx.c3grid.ExternalProviderStageInORQCalculator'; \
 	stagingCommand: '$STAGING_COMMAND'; \

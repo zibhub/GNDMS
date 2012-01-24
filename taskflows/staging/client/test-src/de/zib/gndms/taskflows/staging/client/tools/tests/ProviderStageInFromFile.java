@@ -21,7 +21,7 @@ package de.zib.gndms.taskflows.staging.client.tools.tests;
 import de.zib.gndms.taskflows.staging.client.model.ProviderStageInOrder;
 import de.zib.gndms.taskflows.staging.client.tools.ProviderStageInOrderConverter;
 import de.zib.gndms.taskflows.staging.client.tools.ProviderStageInOrderPropertyWriter;
-import de.zib.gndms.taskflows.staging.client.tools.ProviderStageInOrderQPropertyReader;
+import de.zib.gndms.taskflows.staging.client.tools.ProviderStageInOrderPropertyReader;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
@@ -51,7 +51,7 @@ public class ProviderStageInFromFile {
             Properties prop = new Properties( );
             prop.load( is );
             is.close( );
-            ProviderStageInOrderQPropertyReader reader = new ProviderStageInOrderQPropertyReader( prop );
+            ProviderStageInOrderPropertyReader reader = new ProviderStageInOrderPropertyReader( prop );
             reader.performReading( );
             ProviderStageInOrder order =  reader.getProduct();
             ProviderStageInORQIOTest.showORQ( order );

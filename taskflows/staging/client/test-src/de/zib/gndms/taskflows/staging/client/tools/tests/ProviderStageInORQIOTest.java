@@ -91,8 +91,8 @@ public class ProviderStageInORQIOTest {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
-        ProviderStageInOrderQPropertyReader reader =
-                new ProviderStageInOrderQPropertyReader( prop );
+        ProviderStageInOrderPropertyReader reader =
+                new ProviderStageInOrderPropertyReader( prop );
         reader.begin();
         reader.read();
         ProviderStageInOrder rorq = reader.getProduct();
