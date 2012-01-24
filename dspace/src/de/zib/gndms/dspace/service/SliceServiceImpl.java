@@ -97,7 +97,7 @@ public class SliceServiceImpl implements SliceService {
 	}
 
 	@Override
-	@RequestMapping( value = "/_{subspace}/_{sliceKind}/_{slice}", method = RequestMethod.GET )
+	@RequestMapping( value = "/_{subspaceId}/_{sliceKindId}/_{sliceId}", method = RequestMethod.GET )
 	public final ResponseEntity< Facets > listSliceFacets(
 			@PathVariable final String subspaceId,
 			@PathVariable final String sliceKindId,
@@ -107,12 +107,10 @@ public class SliceServiceImpl implements SliceService {
 
         try {
             Slice slice = findSliceOfKind( subspaceId, sliceKindId, sliceId );
-            SliceConfiguration config = SliceConfiguration
-                    .getSliceConfiguration( slice );
             return new ResponseEntity< Facets >( sliceFacets, headers, HttpStatus.OK );
         } catch ( NoSuchElementException ne ) {
             logger.warn( "The sliceId " + sliceId + " of sliceId kind " + sliceKindId
-                    + "does not exist within the subspace" + subspaceId + "." );
+                    + "does not exist within the subspace " + subspaceId + "." );
             return new ResponseEntity< Facets >( null,
                     headers, HttpStatus.NOT_FOUND );
         }
@@ -485,26 +483,27 @@ public class SliceServiceImpl implements SliceService {
 	 * Returns a specific sliceId of a given sliceId kind id, if it exists in the
 	 * subspace.
 	 * 
-	 * @param subspace
+	 * @param subspaceId
 	 *            The subspace id.
-	 * @param sliceKind
+	 * @param sliceKindId
 	 *            The sliceId kind id.
-	 * @param slice
+	 * @param sliceId
 	 *            The sliceId id.
 	 * @return The sliceId.
 	 * @throws NoSuchElementException
 	 *             If no such sliceId exists.
 	 */
-	private Slice findSliceOfKind(final String subspace,
-			final String sliceKind, final String slice)
+	private Slice findSliceOfKind( final String subspaceId,
+			final String sliceKindId, final String sliceId )
 			throws NoSuchElementException {
-		Slice slic = sliceProvider.getSlice(subspace, slice);
-		SliceKind sliceK = sliceKindProvider.get(subspace, sliceKind);
+		Slice slice = sliceProvider.getSlice( subspaceId, sliceId );
+		SliceKind sliceK = sliceKindProvider.get( subspaceId, sliceKindId );
 
-		if (slic.getKind() != sliceK) {
+		if( !slice.getKind().equals( sliceK ) ) {
+            logger.error( "Slice " + sliceId + " is of sliceKind " + slice.getKind().getId() + " instead of " + sliceKindId );
 			throw new NoSuchElementException();
 		}
-		return slic;
+		return slice;
 	}
 
 	/**
