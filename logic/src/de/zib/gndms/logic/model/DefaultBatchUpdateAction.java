@@ -18,15 +18,14 @@ package de.zib.gndms.logic.model;
 
 
 
-import de.zib.gndms.logic.action.DefaultCompositeAction;
 import de.zib.gndms.logic.action.Action;
+import de.zib.gndms.logic.action.DefaultCompositeAction;
 import de.zib.gndms.model.ModelEntity;
-import de.zib.gndms.model.common.GridEntity;
 import de.zib.gndms.model.common.GridResourceItf;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.LinkedList;
 import java.util.Collection;
+import java.util.LinkedList;
 
 
 /**
@@ -44,6 +43,17 @@ public class DefaultBatchUpdateAction<M extends ModelEntity & GridResourceItf> e
 	implements BatchUpdateAction<M, Void> {
 
 	private ModelUpdateListener<M> listener;
+
+
+    public DefaultBatchUpdateAction() {
+        super();
+    }
+
+
+    public DefaultBatchUpdateAction( final ModelUpdateListener<M> listener ) {
+
+        this.listener = listener;
+    }
 
 
     @Override

@@ -30,7 +30,7 @@ import java.util.List;
  */
 public class ProviderStageInMeta implements TaskFlowMeta {
 
-    public static final String PROVIDER_STAGING_KEY = "ProviderStaging" ;
+    public static final String PROVIDER_STAGING_KEY = "ProviderStageIn" ;
 
     public final static List<String> REQUIRED_AUTHORIZATION = Collections
             .singletonList( CertificatePurpose.C3GRID.toString() );

@@ -35,7 +35,7 @@ STAGING_AREA_GSI_FTP_URL="gsiftp://$GRIDHOST""$STAGING_AREA_PATH"
 
 # Do not edit below this line unless very sure ---------------------------------------------------------------------------------------------------------------------------------------------------
 
-c3grid_generic
+#c3grid_generic
 enable_providerstagein
 enable_permissions
 enable_sliceChown
