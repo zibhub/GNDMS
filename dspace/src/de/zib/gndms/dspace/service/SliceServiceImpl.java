@@ -215,7 +215,7 @@ public class SliceServiceImpl implements SliceService {
             final Taskling ling = sliceProvider.deleteSlice( subspaceId, sliceId );
 
             // get service facets of task
-            final TaskClient client = new TaskClient( "" );
+            final TaskClient client = new TaskClient( baseUrl );
             client.setRestTemplate( restTemplate );
             final Specifier< Facets > spec = TaskClient.TaskServiceAux.getTaskSpecifier( client, ling.getId(), uriFactory, null, dn );
 
