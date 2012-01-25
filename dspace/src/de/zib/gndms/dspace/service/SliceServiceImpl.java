@@ -363,7 +363,7 @@ public class SliceServiceImpl implements SliceService {
 			Subspace space = subspaceProvider.get(subspace);
 			Slice slice = findSliceOfKind(subspace, sliceKind, sliceId);
 			String path = space.getPathForSlice(slice);
-			File file = new File(path + File.pathSeparator + fileName);
+			File file = new File(path + File.separatorChar + fileName);
 
 			if (out == null) {
                 final IllegalStateException illegalStateException =
