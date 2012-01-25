@@ -8,6 +8,8 @@
                http://www.springframework.org/schema/oxm 
                http://www.springframework.org/schema/oxm/spring-oxm-3.0.xsd">
 
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
+
     <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
         <property name="messageConverters">
             <list>

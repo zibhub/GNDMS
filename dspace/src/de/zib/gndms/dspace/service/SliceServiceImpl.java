@@ -160,7 +160,7 @@ public class SliceServiceImpl implements SliceService {
 		try {
 			Slice slic = findSliceOfKind(subspace, sliceKind, slice);
 			SliceKind newSliceK = sliceKindProvider.get(subspace,
-					newSliceKind.getUrl());
+                    newSliceKind.getUrl());
 			Subspace space = subspaceProvider.get(subspace);
 
 			em = emf.createEntityManager();
@@ -212,7 +212,7 @@ public class SliceServiceImpl implements SliceService {
 
 		try {
             // submit action
-            final Taskling ling = sliceProvider.deleteSlice( subspaceId, sliceId );
+            final Taskling ling = sliceProvider.deleteSlice(subspaceId, sliceId);
 
             // get service facets of task
             final TaskClient client = new TaskClient( baseUrl );
@@ -259,6 +259,42 @@ public class SliceServiceImpl implements SliceService {
 					HttpStatus.NOT_FOUND);
 		}
 	}
+
+    @RequestMapping(value = "/_{subspace}/_{sliceKind}/_{sliceId}/files", method = RequestMethod.POST)
+    public final ResponseEntity<Void> setFileContents(
+            @PathVariable final String subspace,
+            @PathVariable final String sliceKind,
+            @PathVariable final String sliceId,
+            @RequestParam( "files" ) final List< MultipartFile > files,
+            @RequestHeader("DN") final String dn) {
+        GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, sliceId, dn);
+
+        try {
+            Subspace space = subspaceProvider.get(subspace);
+            Slice slice = findSliceOfKind(subspace, sliceKind, sliceId);
+            String path = space.getPathForSlice(slice);
+            
+            for( MultipartFile file: files ) {
+                File newFile = new File( path + File.separatorChar + file.getOriginalFilename() );
+
+                if( newFile.exists() ) {
+                    logger.warn( "File " + newFile + "will be overwritten." );
+                }
+
+                file.transferTo( newFile );
+            }
+            return new ResponseEntity<Void>(null, headers, HttpStatus.OK);
+        } catch (NoSuchElementException ne) {
+            logger.warn(ne.getMessage(), ne);
+            return new ResponseEntity<Void>(null, headers, HttpStatus.NOT_FOUND);
+        } catch (FileNotFoundException e) {
+            logger.warn(e.getMessage(), e);
+            return new ResponseEntity<Void>(null, headers, HttpStatus.FORBIDDEN);
+        } catch (IOException e) {
+            logger.warn(e.getMessage(), e);
+            return new ResponseEntity<Void>(null, headers, HttpStatus.FORBIDDEN);
+        }
+    }
 
 	@Override
 	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}/files", method = RequestMethod.DELETE)
@@ -376,13 +412,13 @@ public class SliceServiceImpl implements SliceService {
 	}
 
 	@Override
-	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{sliceId}/_{fileName}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{sliceId}/_{fileName}", method = RequestMethod.POST)
 	public final ResponseEntity<Void> setFileContent(
 			@PathVariable final String subspace,
 			@PathVariable final String sliceKind,
 			@PathVariable final String sliceId,
 			@PathVariable final String fileName,
-			@RequestBody final MultipartFile file,
+			@RequestParam( "file" ) final MultipartFile file,
 			@RequestHeader("DN") final String dn) {
 		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, sliceId, dn);
 
@@ -390,7 +426,7 @@ public class SliceServiceImpl implements SliceService {
 			Subspace space = subspaceProvider.get(subspace);
 			Slice slice = findSliceOfKind(subspace, sliceKind, sliceId);
 			String path = space.getPathForSlice(slice);
-			File newFile = new File(path + File.pathSeparator + fileName);
+			File newFile = new File(path + File.separatorChar + fileName);
 
 			if (newFile.exists()) {
 				logger.warn("File " + newFile + "will be overwritten. ");			
@@ -461,7 +497,7 @@ public class SliceServiceImpl implements SliceService {
         List< Facet > facets = new LinkedList< Facet >( );
 
         for( String facetName: sliceFacetNames ) {
-            Facet facet = new Facet( facetName, uriFactory.sliceUri( vars, facetName ) );
+            Facet facet = new Facet( facetName, uriFactory.sliceUri(vars, facetName) );
             facets.add( facet );
         }
         return facets;
