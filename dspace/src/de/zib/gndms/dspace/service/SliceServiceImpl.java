@@ -455,22 +455,13 @@ public class SliceServiceImpl implements SliceService {
 			Subspace space = subspaceProvider.get(subspace);
 			Slice slic = findSliceOfKind(subspace, sliceKind, slice);
 			String path = space.getPathForSlice(slic);
-			File file = new File(path + File.pathSeparator + fileName);
 
-			if (file.exists() && file.canWrite() && file.isFile()) {
-				if (file.delete()) {
-					return new ResponseEntity<Void>(null, headers,
-							HttpStatus.OK);
-				} else {
-					logger.warn("File " + file + "cannot be deleted.");
-					return new ResponseEntity<Void>(null, headers,
-							HttpStatus.FORBIDDEN);
-				}
-			} else {
-				logger.warn("File " + file + "cannot be written or is no file.");
-				return new ResponseEntity<Void>(null, headers,
-						HttpStatus.FORBIDDEN);				
-			}
+            if( directoryAux.deleteDirectory( dn, path ) ) {
+                return new ResponseEntity< Void >( null, headers, HttpStatus.OK );
+            } else {
+                logger.warn( "File " + path + " could not be deleted." );
+                return new ResponseEntity< Void >( null, headers, HttpStatus.FORBIDDEN );
+            }
 		} catch (NoSuchElementException ne) {
 			logger.warn(ne.getMessage(), ne);
 			return new ResponseEntity<Void>(null, headers, HttpStatus.NOT_FOUND);
