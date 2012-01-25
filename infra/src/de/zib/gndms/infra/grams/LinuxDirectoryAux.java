@@ -122,13 +122,13 @@ public class LinuxDirectoryAux implements DirectoryAux {
     }
 
 
-    public boolean deleteDirectory(String uid, String pth) {
+    public boolean deleteDirectory( String uid, String pth ) {
 
         File f = new File( pth );
         if(! f.exists() )
             throw new RuntimeException( "failed to delete dir " + pth + ": doesn't exists" );
 
-        DirectoryAux.Utils.genericDeleteDirectory( pth );
+        DirectoryAux.Utils.recursiveDelete( pth );
 
         return true;
     }

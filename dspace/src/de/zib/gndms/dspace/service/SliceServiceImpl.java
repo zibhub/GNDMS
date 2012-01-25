@@ -21,6 +21,7 @@ import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.rest.*;
 import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.logic.model.dspace.NoSuchElementException;
 import de.zib.gndms.logic.model.dspace.*;
 import de.zib.gndms.model.dspace.Slice;
@@ -66,6 +67,8 @@ public class SliceServiceImpl implements SliceService {
 	private SliceProvider sliceProvider;
 	private List< String > sliceFacetNames;
 	private UriFactory uriFactory;
+
+    private DirectoryAux directoryAux;
 
     private GNDMSystem system;
 
@@ -309,34 +312,21 @@ public class SliceServiceImpl implements SliceService {
 			Subspace space = subspaceProvider.get(subspace);
 			Slice slic = findSliceOfKind(subspace, sliceKind, slice);
 			String path = space.getPathForSlice(slic);
-			File dir = new File(path);
-			if (dir.exists() && dir.canRead() && dir.isDirectory()) {
-				File[] all = dir.listFiles();
-				boolean allDeleted = true;
-				for (File file : all) {
-					// TODO: this only works for direct files (no
-					// subdirectories)
-					allDeleted = allDeleted && file.delete();
-				}
-				if (allDeleted) {
-					return new ResponseEntity<Void>(null, headers,
-							HttpStatus.OK);
-				} else {
-					logger.warn("Some file in directory " + dir
-							+ "could not be deleted.");
-					return new ResponseEntity<Void>(null, headers,
-							HttpStatus.CONFLICT);
-				}
-			} else {
-				logger.warn("Directory " + dir
-						+ "cannot be read or is no directory.");
-				return new ResponseEntity<Void>(null, headers,
-						HttpStatus.FORBIDDEN);
-			}
+
+            File f = new File( path );
+            String[] fl = f.list( );
+            for( String s: fl ) {
+                String p = path + File.separatorChar + s;
+                if ( !directoryAux.deleteDirectory( dn, p ) ) {
+                    logger.warn("Some file in directory " + p + " could not be deleted.");
+                    return new ResponseEntity<Void>(null, headers, HttpStatus.CONFLICT);
+                }
+            }
 		} catch (NoSuchElementException ne) {
 			logger.warn(ne.getMessage());
 			return new ResponseEntity<Void>(null, headers, HttpStatus.NOT_FOUND);
 		}
+        return new ResponseEntity<Void>(null, headers, HttpStatus.OK);
 	}
 
 	@Override
@@ -613,5 +603,10 @@ public class SliceServiceImpl implements SliceService {
     @Inject
     public void setRestTemplate( RestTemplate restTemplate ) {
         this.restTemplate = restTemplate;
+    }
+
+    @Inject
+    public void setDirectoryAux(DirectoryAux directoryAux) {
+        this.directoryAux = directoryAux;
     }
 }
