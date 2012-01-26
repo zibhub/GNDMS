@@ -17,12 +17,13 @@ package de.zib.gndms.model.common;
  */
 
 
-
 import de.zib.gndms.common.model.gorfx.types.FutureTime;
 import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.stuff.copy.Copier;
-import de.zib.gndms.stuff.copy.Copyable.CopyMode;
 import de.zib.gndms.stuff.copy.Copyable;
+import de.zib.gndms.stuff.copy.Copyable.CopyMode;
+import org.apache.openjpa.persistence.Externalizer;
+import org.apache.openjpa.persistence.Factory;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
@@ -32,7 +33,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import java.io.Serializable;
-import java.util.Calendar;
 
 
 
@@ -52,9 +52,9 @@ import java.util.Calendar;
 public class PersistentContract implements Serializable {
     private static final long serialVersionUID = -7695057432890400329L;
 
-    private Calendar accepted;
-	private Calendar deadline;
-	private Calendar resultValidity;
+    private DateTime accepted;
+	private DateTime deadline;
+	private DateTime resultValidity;
 
     // expected size of task in case of a transfer or staging
     private Long expectedSize;
@@ -84,12 +84,12 @@ public class PersistentContract implements Serializable {
     protected static PersistentContract acceptQuoteAsIs( Quote quote ) {
 
         PersistentContract pc = new PersistentContract();
-        pc.setAccepted( quote.getAccepted().toGregorianCalendar() );
+        pc.setAccepted( quote.getAccepted() );
 
         DateTime fixedDeadline = null;
         if ( quote.hasDeadline() ) {
             fixedDeadline = quote.getDeadline().fixedWith( quote.getAccepted() ).getFixedTime();
-            pc.setDeadline( fixedDeadline.toGregorianCalendar() );
+            pc.setDeadline( fixedDeadline );
         }
 
         if ( quote.hasResultValidity() ) {
@@ -99,7 +99,7 @@ public class PersistentContract implements Serializable {
             else {
                 fixedResultValidity = quote.getResultValidity().fixedWith( quote.getAccepted() ).getFixedTime();
             }
-            pc.setResultValidity( fixedResultValidity.toGregorianCalendar() );
+            pc.setResultValidity( fixedResultValidity );
         }
 
         if ( quote.hasExpectedSize() )
@@ -144,9 +144,9 @@ public class PersistentContract implements Serializable {
      * @return the latest time, when comparing {@link #deadline} and {@link #resultValidity}
      */
 	@Transient
-	public Calendar getCurrentTerminationTime() {
-		final Calendar curDeadline = getDeadline();
-		final Calendar curRV = getResultValidity();
+	public DateTime getCurrentTerminationTime() {
+		final DateTime curDeadline = getDeadline();
+		final DateTime curRV = getResultValidity();
 		return curDeadline.compareTo(curRV) > 0 ? curDeadline : curRV; 
 	}
 
@@ -156,7 +156,9 @@ public class PersistentContract implements Serializable {
      * @return a clone of {@link #accepted}
      */
     @Temporal(value = TemporalType.TIMESTAMP )
-    public Calendar getAccepted() {
+    @Factory( "de.zib.gndms.model.util.JodaTimeForJPA.toDateTime" )
+    @Externalizer( "de.zib.gndms.model.util.JodaTimeForJPA.fromDateTime" )
+    public DateTime getAccepted() {
 		return nullSafeClone(accepted);
 	}
 
@@ -165,7 +167,7 @@ public class PersistentContract implements Serializable {
      *
      * @param acceptedParam a chosen value for {@link #accepted}
      */
-	public void setAccepted(final Calendar acceptedParam) {
+	public void setAccepted(final DateTime acceptedParam) {
 		accepted = nullSafeClone(acceptedParam);
 	}
 
@@ -175,7 +177,9 @@ public class PersistentContract implements Serializable {
      * @return a clone of {@link #deadline}
      */
     @Temporal(value = TemporalType.TIMESTAMP)
-	public Calendar getDeadline() {
+    @Factory( "de.zib.gndms.model.util.JodaTimeForJPA.toDateTime" )
+    @Externalizer( "de.zib.gndms.model.util.JodaTimeForJPA.fromDateTime" )
+	public DateTime getDeadline() {
 		return nullSafeClone(deadline);
 	}
 
@@ -185,7 +189,7 @@ public class PersistentContract implements Serializable {
      *
      * @param deadlineParam a chosen value for {@link #deadline}
      */
-	public void setDeadline(final Calendar deadlineParam) {
+	public void setDeadline(final DateTime deadlineParam) {
 		deadline = nullSafeClone(deadlineParam);
 	}
 
@@ -195,7 +199,9 @@ public class PersistentContract implements Serializable {
      * @return a clone of {@link #resultValidity}
      */
     @Temporal(value = TemporalType.TIMESTAMP)
-	public Calendar getResultValidity() {
+    @Factory( "de.zib.gndms.model.util.JodaTimeForJPA.toDateTime" )
+    @Externalizer( "de.zib.gndms.model.util.JodaTimeForJPA.fromDateTime" )
+	public DateTime getResultValidity() {
 		return nullSafeClone(resultValidity);
 	}
 
@@ -204,7 +210,7 @@ public class PersistentContract implements Serializable {
      *
      * @param resultValidityParam a chosen value for {@link #resultValidity}
      */
-	public void setResultValidity(final Calendar resultValidityParam) {
+	public void setResultValidity(final DateTime resultValidityParam) {
 		resultValidity = nullSafeClone(resultValidityParam);
 	}
 
@@ -257,9 +263,9 @@ public class PersistentContract implements Serializable {
     @Override
     public String toString( ) {
 	    final Long theExpectedSize = getExpectedSize();
-	    return "Accepted: " + isoForCalendar( accepted )
-            + "; Deadline: " + isoForCalendar( deadline )
-            + "; ResultValidity: " + isoForCalendar( resultValidity )
+	    return "Accepted: " + isoForDateTime( accepted )
+            + "; Deadline: " + isoForDateTime( deadline )
+            + "; ResultValidity: " + isoForDateTime( resultValidity )
             + "; ExpectedSize: "
             + ( theExpectedSize != null ? theExpectedSize.toString() : "null" );
     }
@@ -268,25 +274,25 @@ public class PersistentContract implements Serializable {
     /**
      * Returns either {@code null} if {@code cal} is null or if not, a clone of {@code cal}
      * 
-     * @param cal a Calendar which may be cloned.
+     * @param cal a DateTime which may be cloned.
      * @return
      */
-    private static Calendar nullSafeClone(Calendar cal) {
-		return cal == null ? null : (Calendar) cal.clone();
+    private static DateTime nullSafeClone(DateTime cal) {
+		return cal == null ? null : new DateTime( cal );
 	}
 
     /**
      * Returns a String representation of {@code cal}, using {@link org.joda.time.format.ISODateTimeFormat},
      * or "null" if {@code cal==null} is {@code true}.
      * 
-     * @param cal a Calendar to be printed as a String, in ISO format 
+     * @param cal a DateTime to be printed as a String, in ISO format 
      * @return
      */
-    private static String isoForCalendar( Calendar cal ) {
+    private static String isoForDateTime( DateTime cal ) {
 
         if( cal == null )
             return "null";
         
-        return ISODateTimeFormat.dateTime().print( new DateTime( cal ) );
+        return ISODateTimeFormat.dateTime().print( cal );
     }
 }

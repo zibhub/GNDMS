@@ -17,12 +17,10 @@ package de.zib.gndms.model.dspace;
  */
 
 
-
 import de.zib.gndms.model.common.TimedGridResource;
+import org.joda.time.DateTime;
 
 import javax.persistence.*;
-
-import java.util.Calendar;
 
 /**
  * @author  try ma ik jo rr a zib
@@ -47,7 +45,8 @@ public class Slice extends TimedGridResource {
 
     protected Slice( ) { }
 
-    public Slice ( String idParam, Calendar ttParam, String didParam, SliceKind kndParam, Subspace subsParam, String ownParam, long tssParam ) {
+    public Slice ( String idParam, DateTime ttParam, String didParam, SliceKind kndParam,
+                   Subspace subsParam, String ownParam, long tssParam ) {
         super( );
         setId( idParam );
         setTerminationTime ( ttParam );

@@ -1,6 +1,6 @@
 package de.zib.gndms.model.common;
 
-import java.util.Calendar;
+import org.joda.time.DateTime;
 
 /**
  * Created by IntelliJ IDEA.
@@ -10,6 +10,7 @@ import java.util.Calendar;
  * To change this template use File | Settings | File Templates.
  */
 public interface TimedGridResourceItf extends GridResourceItf {
-    public Calendar getTerminationTime();
-    public void setTerminationTime( Calendar terminationTime );
+
+    public DateTime getTerminationTime();
+    public void setTerminationTime( DateTime terminationTime );
 }

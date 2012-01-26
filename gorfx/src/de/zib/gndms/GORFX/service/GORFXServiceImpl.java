@@ -46,6 +46,7 @@ import javax.inject.Inject;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -251,14 +252,19 @@ public class GORFXServiceImpl implements GORFXService {
         GNDMSResponseHeader headers = new GNDMSResponseHeader(
             gorfxFacets.findFacet( "taskflows" ).getUrl(), null, gorfxBaseUrl, dn, wid );
 
-        if(! taskFlowProvider.exists( type  ) )
+        if(! taskFlowProvider.exists( type  ) ) {
+            logger.debug( "Request for not existing TaskFlow: " + type );
             return new ResponseEntity<Specifier<Facets>>( null, headers, HttpStatus.NOT_FOUND );
+        }
 
 
         TaskFlowFactory tff = taskFlowProvider.getFactoryForTaskFlow( type );
         TaskFlow tf = tff.create();
         TaskFlowServiceAux.setOrderAsDelegate( order, tf, tff );
         tf.getOrder().setMyProxyToken( GNDMSResponseHeader.extractTokenFromMap( context ) );
+        Map< String, String> ctx = new HashMap<String, String>( 2 );
+        ctx.put( "DN", dn );
+        tf.getOrder().setActContext( ctx );
         Specifier<Facets> spec = new Specifier<Facets>();
         spec.addMapping( "id", tf.getId() );
         spec.addMapping( "type", type );
@@ -267,7 +273,8 @@ public class GORFXServiceImpl implements GORFXService {
         spec.setUrl( uriFactory.taskFlowUri( hm, null )  );
 
         ResponseEntity<Facets> re = taskFlowClient.getFacets( type, tf.getId(), dn );
-        spec.setPayload( re.getBody() );
+        if( re.getStatusCode() == HttpStatus.OK )
+            spec.setPayload( re.getBody() );
 
         return new ResponseEntity<Specifier<Facets>>( spec, headers, HttpStatus.CREATED );
     }

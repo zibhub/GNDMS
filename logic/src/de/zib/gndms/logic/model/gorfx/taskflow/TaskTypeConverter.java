@@ -20,9 +20,8 @@ import de.zib.gndms.common.model.gorfx.types.TaskFailure;
 import de.zib.gndms.common.model.gorfx.types.TaskFailureImpl;
 import de.zib.gndms.common.model.gorfx.types.TaskStatus;
 import de.zib.gndms.neomodel.gorfx.Task;
+import org.joda.time.DateTime;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -39,9 +38,9 @@ public final class TaskTypeConverter {
     public static TaskStatus statusFromTask( Task task ) {
 
         boolean inTime = true;
-        Calendar tt =  task.getTerminationTime();
+        DateTime tt =  task.getTerminationTime();
         if( tt != null )
-            inTime = new GregorianCalendar(  ).compareTo( tt ) != -1 ;
+            inTime = (new DateTime()).compareTo( tt ) != -1 ;
 
         DefaultTaskStatus status = new DefaultTaskStatus( );
         switch ( task.getTaskState() ) {

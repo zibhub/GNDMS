@@ -60,8 +60,7 @@ public class SubspaceServiceImpl implements SubspaceService {
     private SliceKindService sliceKindService;
 
 
-
-	@PostConstruct
+    @PostConstruct
 	public final void init() {
         setUriFactory( new UriFactory( baseUrl ) );
 	}
@@ -292,15 +291,16 @@ public class SubspaceServiceImpl implements SubspaceService {
         try {
             Map< String, String > parameters = new HashMap< String, String >( );
             ParameterTools.parseParameters( parameters, config, null );
-            if( !parameters.containsKey( "deadline" ) )
+            if( !parameters.containsKey( SliceConfiguration.TERMINATION_TIME ) )
                 throw new WrongConfigurationException( "Missing configuration option" );
-            if( !parameters.containsKey( "sliceSize" ) )
+            if( !parameters.containsKey( SliceConfiguration.SLICE_SIZE ) )
                 throw new WrongConfigurationException( "Missing configuration option" );
 
             // use provider to create slice
             DateTimeFormatter fmt = ISODateTimeFormat.dateTimeParser();
-            DateTime deadline = fmt.parseDateTime( parameters.get( "deadline" ) );
-            String slice = sliceProvider.createSlice( subspace, sliceKind, dn, deadline.toGregorianCalendar(), Long.parseLong( parameters.get( "sliceSize" ) ) );
+            DateTime deadline = fmt.parseDateTime( parameters.get( SliceConfiguration.TERMINATION_TIME ) );
+            String slice = sliceProvider.createSlice( subspace, sliceKind, dn, deadline, Long.parseLong( parameters.get(
+                    SliceConfiguration.SLICE_SIZE ) ) );
 
             // generate specifier and return it
             Specifier<Void> spec = new Specifier<Void>();
@@ -314,7 +314,7 @@ public class SubspaceServiceImpl implements SubspaceService {
             spec.setUrl( uriFactory.sliceUri( urimap, null ) );
 
             return new ResponseEntity< Specifier< Void > >( spec, headers,
-                                                        HttpStatus.OK );
+                                                        HttpStatus.CREATED );
         }
         catch( WrongConfigurationException e ) {
             logger.warn( e.getMessage() );

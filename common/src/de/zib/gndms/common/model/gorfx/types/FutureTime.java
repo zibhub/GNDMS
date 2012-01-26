@@ -200,9 +200,22 @@ public abstract class FutureTime implements Serializable, Cloneable {
      * @return a FutureTime object with the date/time of {@code deadlineParam}. It cant be fixed to another time
      */
 	public static FutureTime atFixedTime(final Calendar deadlineParam) {
-		DateTime dt = new DateTime(deadlineParam);
-		return atTime(dt).fixedWith(dt);
+		return atFixedTime(new DateTime(deadlineParam));
 	}
+
+
+    /**
+     * Returns a {@code FutureTime} object, which will allready be fixed with the value of {@code deadlineParam}.
+     * This means the object cant be fixed again with another reference time, as the invokation of
+     * {@link #fix(org.joda.time.DateTime)} throws an exception in this case.
+     *
+     * @param deadlineParam a time to be fixed
+     *
+     * @return a FutureTime object with the date/time of {@code deadlineParam}. It cant be fixed to another time
+     */
+    public static FutureTime atFixedTime(final DateTime deadlineParam) {
+        return atTime(deadlineParam).fixedWith(deadlineParam);
+    }
 
 
     /**

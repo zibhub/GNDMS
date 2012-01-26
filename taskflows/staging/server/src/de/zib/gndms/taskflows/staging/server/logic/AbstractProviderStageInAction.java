@@ -30,6 +30,7 @@ import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.logic.model.ModelIdHoldingOrder;
 import de.zib.gndms.logic.model.dspace.ChownSliceConfiglet;
 import de.zib.gndms.logic.model.dspace.DeleteSliceTaskAction;
+import de.zib.gndms.logic.model.dspace.SliceConfiguration;
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.dspace.Slice;
@@ -81,6 +82,7 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
     @Override
     protected void onCreated(@NotNull String wid,
                              @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) throws Exception {
+        ensureOrder();
         MapConfig config = getOfferTypeConfig();
 	    getScriptFileByParam(config, "stagingCommand");
         createNewSlice();
@@ -119,6 +121,7 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
 
     @Override
     protected void onInProgress(@NotNull String wid, @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) throws Exception {
+        ensureOrder();
         final Slice slice = findSlice();
         setSliceId(slice.getId());
         doStaging(getOfferTypeConfig(), getOrderBean(), slice);
@@ -163,7 +166,11 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
 
         final String subspaceUrl = config.getOption( "subspace" );
         String sliceKindKey = config.getOption( "sliceKind" );
-        // todo ask Joerg about emptiy config string
+
+
+        SliceConfiguration sconf = new SliceConfiguration();
+        getContract().getResultValidity();
+
         ResponseEntity<Specifier<Void>> sliceSpec =
                 subspaceService.createSlice( subspaceUrl, sliceKindKey, "", getOrder().getDNFromContext() );
 

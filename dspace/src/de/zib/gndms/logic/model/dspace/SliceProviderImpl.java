@@ -29,12 +29,12 @@ import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.util.GridResourceCache;
 import de.zib.gndms.neomodel.gorfx.Taskling;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManagerFactory;
-import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 
@@ -123,7 +123,7 @@ public class SliceProviderImpl implements SliceProvider {
             final String subspaceId,
             final String sliceKindId,
             final String dn,
-            final Calendar ttm,
+            final DateTime ttm,
             final long sliceSize ) throws NoSuchElementException {
 
         if( !sliceKindProvider.exists( subspaceId, sliceKindId ) ) {

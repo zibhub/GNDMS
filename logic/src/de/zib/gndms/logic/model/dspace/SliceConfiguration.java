@@ -16,12 +16,11 @@ package de.zib.gndms.logic.model.dspace;
  * limitations under the License.
  */
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.logic.config.WrongConfigurationException;
 import de.zib.gndms.model.dspace.Slice;
+import org.joda.time.DateTime;
 
 /**
  * The slice configuration checks and accesses a ConfigHolder for a slice, which
@@ -38,22 +37,34 @@ public class SliceConfiguration implements Configuration {
 	/**
 	 * The key for the slice's size.
 	 */
-	public static final String SIZE = "size";
-	/**
-	 * The key for the slice's termination time.
-	 */
-	public static final String TERMINATION = "termination";
+    public final static String SLICE_SIZE = "sliceSize";
 
 	/**
+	 * The key for the slice's DEADLINE time.
+	 */
+    public final static String TERMINATION_TIME = "terminationTime";
+
+    /**
 	 * The maximum size of the slice.
 	 */
 	private long size;
 	/**
 	 * The termination time of the slice.
 	 */
-	private Calendar terminationTime;
+	private DateTime terminationTime;
 
-	/**
+
+    /**
+     * The standard constuructor.
+     *
+     * To construct standard instances.
+     */
+    public SliceConfiguration() {
+
+    }
+
+
+    /**
 	 * Constructs a SliceConfiguration.
 	 * 
 	 * @param size
@@ -75,8 +86,7 @@ public class SliceConfiguration implements Configuration {
 	 * @param termination
 	 *            The termination time.
 	 */
-	public SliceConfiguration(final long size,
-			final Calendar termination) {
+	public SliceConfiguration(final long size, final DateTime termination) {
 		this.size = size;
 		this.terminationTime = termination;
 	}
@@ -129,11 +139,11 @@ public class SliceConfiguration implements Configuration {
 	}
 
 	/**
-	 * Returns the termination time of a slice configuration as Calendar.
+	 * Returns the termination time of a slice configuration as DateTime.
 	 * 
 	 * @return The termination time.
 	 */
-	public final Calendar getTerminationTime() {
+	public final DateTime getTerminationTime() {
 		return terminationTime;
 	}
 
@@ -143,16 +153,16 @@ public class SliceConfiguration implements Configuration {
 	 * @return The termination time.
 	 */
 	public final long getTerminationTimeAsLong() {
-		return terminationTime.getTimeInMillis();
+		return terminationTime.getMillis();
 	}
 
 	/**
-	 * Sets the termination time of a slice configuration as Calendar.
+	 * Sets the termination time of a slice configuration as DateTime.
 	 * 
 	 * @param terminationTime
 	 *            The termination time.
 	 */
-	public final void setTerminationTime(final Calendar terminationTime) {
+	public final void setTerminationTime(final DateTime terminationTime) {
 		this.terminationTime = terminationTime;
 	}
 
@@ -163,16 +173,15 @@ public class SliceConfiguration implements Configuration {
 	 *            The termination time.
 	 */
 	public final void setTerminationTime(final long termination) {
-		GregorianCalendar cal = new GregorianCalendar();
-		cal.setTimeInMillis(termination);
-		this.terminationTime = cal;
+		terminationTime = new DateTime().plus( termination );
 	}
 
 	@Override
 	public final String getStringRepresentation() {
         StringBuilder s = new StringBuilder();
-        s.append( SIZE + " : '" ).append( size ).append( "'; " );
-        s.append( TERMINATION + " : '" ).append( terminationTime.getTimeInMillis() ).append( "'; " );
+        s.append( SLICE_SIZE + " : '" ).append( size ).append( "'; " );
+        s.append( TERMINATION_TIME + " : '" ).append(
+                terminationTime.getMillis() ).append( "'; " );
 		return s.toString();
 	}
 
@@ -183,8 +192,8 @@ public class SliceConfiguration implements Configuration {
 	 *            The slice.
 	 * @return The slice configuration.
 	 */
-	public static final SliceConfiguration getSliceConfiguration(Slice slice) {
-		return new SliceConfiguration(slice.getTotalStorageSize(), slice.getTerminationTime().getTimeInMillis());
+	public static SliceConfiguration getSliceConfiguration(Slice slice) {
+		return new SliceConfiguration(slice.getTotalStorageSize(), slice.getTerminationTime().getMillis());
 	}
 
 	/*

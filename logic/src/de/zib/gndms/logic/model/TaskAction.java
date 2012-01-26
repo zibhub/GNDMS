@@ -32,6 +32,7 @@ import de.zib.gndms.neomodel.gorfx.TaskAccessor;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,8 +40,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import java.io.Serializable;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 
 /**
@@ -480,11 +479,11 @@ public abstract class TaskAction<O extends Serializable> extends
             Task model = ling.getTask(session);
 
             // check the task lifetime
-            Calendar terminationTime = model.getTerminationTime();
+            DateTime terminationTime = model.getTerminationTime();
 
             // todo provoke exception and check infinite looping
             if( terminationTime != null
-                && new GregorianCalendar().compareTo( terminationTime ) >= 1 )
+                && new DateTime().compareTo( terminationTime ) >= 1 )
             {
                 logger.debug( "Task lifetime exceeded" );
                 throw new LifetimeExceededException();

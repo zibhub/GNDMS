@@ -23,9 +23,9 @@ import de.zib.gndms.model.common.TimedGridResourceItf;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joda.time.DateTime;
 
 import java.io.Serializable;
-import java.util.Calendar;
 
 /**
  * TaskAccessor
@@ -48,7 +48,8 @@ public interface TaskAccessor extends GridResourceItf, TimedGridResourceItf {
     @Nullable
     TaskFlowType getTaskFlowType();
 
-    @Nullable Calendar getTerminationTime();
+    @Nullable
+    DateTime getTerminationTime();
 
     @NotNull TaskState getTaskState();
 

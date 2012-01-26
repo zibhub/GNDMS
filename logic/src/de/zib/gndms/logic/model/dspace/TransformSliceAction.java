@@ -17,7 +17,6 @@ package de.zib.gndms.logic.model.dspace;
  */
 
 
-
 import de.zib.gndms.common.model.common.AccessMask;
 import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.logic.model.AbstractModelEntityAction;
@@ -25,9 +24,9 @@ import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import org.jetbrains.annotations.NotNull;
+import org.joda.time.DateTime;
 
 import javax.persistence.EntityManager;
-import java.util.Calendar;
 
 /**
  * A TransformSliceAction converts its slice to a new created slice (using {@link de.zib.gndms.logic.model.dspace.CreateSliceAction})
@@ -62,7 +61,8 @@ public class TransformSliceAction extends AbstractModelEntityAction<Slice, Slice
      * @param tgt a subspace the new created slice will be registered on
      * @param ssize total storage size for the slice instance
      */
-    public TransformSliceAction( String uid, Calendar ttm, SliceKind kind, Subspace tgt, long ssize ) {
+    public TransformSliceAction( String uid, DateTime ttm, SliceKind kind, Subspace tgt,
+                                 long ssize ) {
 
         createSliceAction = new CreateSliceAction( uid, ttm, kind, ssize );
         createSliceAction.setModel( tgt );
@@ -80,7 +80,7 @@ public class TransformSliceAction extends AbstractModelEntityAction<Slice, Slice
      * @param ssize total storage size for the slice instance
      * @param da an helper object for directory access
      */
-   public TransformSliceAction( String uid, Calendar ttm, SliceKind kind, Subspace tgt, long ssize, DirectoryAux da ) {
+   public TransformSliceAction( String uid, DateTime ttm, SliceKind kind, Subspace tgt, long ssize, DirectoryAux da ) {
 
        directoryAux = da;
        createSliceAction = new CreateSliceAction( uid, ttm, kind, ssize, da );

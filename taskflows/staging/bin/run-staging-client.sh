@@ -46,8 +46,8 @@ cp="/home/mjorra/.m2/repository/org/codehaus/woodstox/wstx-asl/3.2.7/wstx-asl-3.
 cp="/home/mjorra/.m2/repository/org/jdom/jdom/1.1/jdom-1.1.jar:$cp"
 cp="/home/mjorra/.m2/repository/xom/xom/1.1/xom-1.1.jar:$cp"
 cp="/home/mjorra/.m2/repository/xpp3/xpp3_min/1.1.4c/xpp3_min-1.1.4c.jar:$cp"
-cp="/home/mjorra/.m2/repository/stax/stax/1.2.0/stax-1.2.0.jar:$cp"
-cp="/home/mjorra/projects/C3Grid/impl/gndms-rest/taskflows/staging/client/staging-client/production:$cp"
+cp="/home/mjorra/projects/C3Grid/impl/gndms-rest/taskflows/staging/lib/client/staging-client-0.6.0-pre.jar:$cp"
+
 
 props=( )
 

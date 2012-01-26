@@ -135,7 +135,7 @@ public class Test extends JPATest
         subspaceService.setSliceProvider( sliceProvider );
         subspaceService.setSubspaceProvider( subspaceProvider );
 
-        ResponseEntity< Specifier< Void > > response = subspaceService.createSlice("sub", "kind", "deadline:2011-12-16; sliceSize:1024", "root");
+        ResponseEntity< Specifier< Void > > response = subspaceService.createSlice("sub", "kind", "terminationTime:2011-12-16; sliceSize:1024", "root");
 
         sliceId = response.getBody().getUriMap().get( UriFactory.SLICE );
     }

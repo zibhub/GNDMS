@@ -23,7 +23,6 @@ import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.kit.access.EMFactoryProvider;
 import de.zib.gndms.logic.action.ActionCaller;
 import de.zib.gndms.logic.model.*;
-import de.zib.gndms.logic.model.gorfx.DefaultWrapper;
 import de.zib.gndms.logic.util.LogicTools;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
@@ -128,16 +127,7 @@ public final class GNDMSystem
 			// initialization intentionally deferred to initialize
             if ( beanFactory == null )
                 throw new IllegalStateException( "beanfactory not provided" );
-	        instanceDir = ( GNDMSystemDirectory ) beanFactory.configureBean(
-                new GNDMSystemDirectory(getSystemName(),
-                    new DefaultWrapper<SystemHolder, Object>(SystemHolder.class) {
-
-		        @Override
-		        protected <Y> Y wrapInterfaceInstance(final Class<Y> wrapClass, @NotNull final SystemHolder wrappedParam) {
-			        wrappedParam.setSystem(GNDMSystem.this);
-			        return wrapClass.cast(wrappedParam);
-		        }
-	        } ), "instanceDir" );
+	        instanceDir = ( GNDMSystemDirectory ) beanFactory.getBean( "instanceDir" );
 	        instanceDir.addInstance("sys", this);
 			instanceDir.reloadConfiglets(emf);
 			// Bad style, usually would be an inner class but
@@ -345,10 +335,6 @@ public final class GNDMSystem
         return sharedDir;
     }
 
-	public @NotNull String getSystemName() {
-		try { return '\'' + sharedConfig.getGridName() + "' system"; }
-		catch (Exception e) { throw new RuntimeException(e); }
-	}
 
     public @NotNull String getGridName() {
         try { return sharedConfig.getGridName(); }

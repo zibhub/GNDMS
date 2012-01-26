@@ -19,12 +19,15 @@ package de.zib.gndms.neomodel.gorfx.tests;
 import de.zib.gndms.model.common.PermissionInfo;
 import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.gorfx.types.TaskState;
-import de.zib.gndms.neomodel.gorfx.TaskFlowType;
 import de.zib.gndms.neomodel.gorfx.Task;
+import de.zib.gndms.neomodel.gorfx.TaskFlowType;
+import org.joda.time.DateTime;
 import org.testng.annotations.Test;
-import static org.testng.Assert.*;
 
 import java.util.*;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /**
  * NeoTaskTest
@@ -37,7 +40,7 @@ import java.util.*;
 public class NeoTaskTest extends NeoTest {
 
     private static final String TASK_ID = "ca:fe:ba:be";
-    private static final Calendar CLASS_STARTUP_TIME = Calendar.getInstance();
+    private static final DateTime CLASS_STARTUP_TIME = new DateTime();
 
     @Test( groups = { "neo" } )
     public void createTask() {
@@ -97,7 +100,7 @@ public class NeoTaskTest extends NeoTest {
         assertEquals((long) task.getContract().getExpectedSize(), 15L);
         assertEquals(task.getOrder( ), "fufu");
         assertEquals(task.getPermissionInfo().getUserName(), "fonzi");
-        assert(task.getTerminationTime().getTimeInMillis() <= System.currentTimeMillis());
+        assert(task.getTerminationTime().getMillis() <= System.currentTimeMillis());
 
         session.success();
     }

@@ -17,20 +17,20 @@ package de.zib.gndms.taskflows.staging.server;
  */
 
 
-
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.model.gorfx.taskflow.DefaultTaskFlowFactory;
-import de.zib.gndms.taskflows.staging.client.ProviderStageInMeta;
-import de.zib.gndms.taskflows.staging.client.model.ProviderStageInOrder;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
+import de.zib.gndms.taskflows.staging.client.ProviderStageInMeta;
+import de.zib.gndms.taskflows.staging.client.model.ProviderStageInOrder;
 import de.zib.gndms.taskflows.staging.server.logic.AbstractProviderStageInAction;
 import de.zib.gndms.taskflows.staging.server.logic.AbstractProviderStageInQuoteCalculator;
 import de.zib.gndms.taskflows.staging.server.logic.ExternalProviderStageInAction;
 import de.zib.gndms.taskflows.staging.server.logic.ExternalProviderStageInQuoteCalculator;
 import org.jetbrains.annotations.NotNull;
 
+import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -80,6 +80,7 @@ public class ProviderStageInTaskFlowFactory
         return dao;
     }
 
+    @Inject
     public void setDao(Dao dao) {
         this.dao = dao;
     }

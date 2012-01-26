@@ -19,6 +19,7 @@ package de.zib.gndms.infra.system;
 import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowFactory;
 import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowProviderImpl;
 import de.zib.gndms.neomodel.common.Session;
+import de.zib.gndms.stuff.GNDMSInjector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,7 +88,11 @@ public class PlugableTaskFlowProvider extends TaskFlowProviderImpl {
         
         logger.debug( "registering factory: " + tff.getTaskFlowKey() );
         plugins.put( tff.getTaskFlowKey(), tff );
-        tff.setInjector( system.getInstanceDir().getSystemAccessInjector() );
+
+        final GNDMSInjector injector =
+                system.getInstanceDir().getSystemAccessInjector();
+        injector.injectMembers( tff );
+        tff.setInjector( injector );
         Session session = system.getDao().beginSession();
         try {
             tff.registerType( session );

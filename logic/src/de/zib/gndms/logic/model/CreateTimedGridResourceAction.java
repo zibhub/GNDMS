@@ -20,8 +20,7 @@ package de.zib.gndms.logic.model;
 
 import de.zib.gndms.model.common.GridResource;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Calendar;
+import org.joda.time.DateTime;
 
 /**
  * A CreateGridResourceAction with a termination time.
@@ -39,7 +38,7 @@ import java.util.Calendar;
 public abstract class CreateTimedGridResourceAction<M extends GridResource, R>
         extends CreateGridResourceAction<M, R> {
 
-    private Calendar terminationTime;
+    private DateTime terminationTime;
 
     protected CreateTimedGridResourceAction( ) {
 
@@ -47,7 +46,7 @@ public abstract class CreateTimedGridResourceAction<M extends GridResource, R>
 
     
     protected CreateTimedGridResourceAction( @NotNull String id,
-                                             @NotNull Calendar terminationTimeParam ) {
+                                             @NotNull DateTime terminationTimeParam ) {
         super( id );
         terminationTime = terminationTimeParam;
     }
@@ -60,12 +59,12 @@ public abstract class CreateTimedGridResourceAction<M extends GridResource, R>
     }
     
 
-    public Calendar getTerminationTime() {
+    public DateTime getTerminationTime() {
         return terminationTime;
     }
 
 
-    public void setTerminationTime( Calendar terminationTimeParam ) {
+    public void setTerminationTime( DateTime terminationTimeParam ) {
         terminationTime = terminationTimeParam;
     }
 }

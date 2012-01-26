@@ -149,6 +149,7 @@ public abstract class AbstractQuoteCalculator<M extends Order>
     }
 
 
+    @Inject
     public void setDao( Dao dao ) {
         this.dao = dao;
     }

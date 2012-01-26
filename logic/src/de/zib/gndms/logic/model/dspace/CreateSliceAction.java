@@ -17,7 +17,6 @@ package de.zib.gndms.logic.model.dspace;
  */
 
 
-
 import de.zib.gndms.common.model.common.AccessMask;
 import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.logic.model.CreateTimedGridResourceAction;
@@ -25,10 +24,10 @@ import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import org.jetbrains.annotations.NotNull;
+import org.joda.time.DateTime;
 
 import javax.persistence.EntityManager;
 import java.io.File;
-import java.util.Calendar;
 import java.util.UUID;
 
 /**
@@ -70,7 +69,7 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
      * @param kind the sliceKind instance for the slice. (See {@link Slice}).
      * @param ssize total storage size for the slice instance
      */
-    public CreateSliceAction( String uid, Calendar ttm, SliceKind kind, long ssize ) {
+    public CreateSliceAction( String uid, DateTime ttm, SliceKind kind, long ssize ) {
 
         super( UUID.randomUUID().toString(), ttm );
         if( uid != null )
@@ -91,7 +90,8 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
      * @param ssize total storage size for the slice instance
      * @param da an helper object for directory access 
      */
-    public CreateSliceAction( String uid, Calendar ttm, SliceKind kind, long ssize, DirectoryAux da ) {
+    public CreateSliceAction( String uid, DateTime ttm, SliceKind kind, long ssize,
+                              DirectoryAux da ) {
         
         super( UUID.randomUUID().toString(), ttm );
         if( uid != null )

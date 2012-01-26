@@ -19,21 +19,19 @@ package de.zib.gndms.infra.system;
 
 
 import com.google.common.collect.MapMaker;
-import com.google.common.collect.Maps;
+import de.zib.gndms.kit.access.GNDMSBinding;
+import de.zib.gndms.kit.configlet.Configlet;
+import de.zib.gndms.kit.configlet.DefaultConfiglet;
+import de.zib.gndms.model.common.ConfigletState;
+import de.zib.gndms.stuff.BoundInjector;
 import de.zib.gndms.stuff.GNDMSInjector;
 import de.zib.gndms.stuff.GNDMSInjectorSpring;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import de.zib.gndms.kit.access.GNDMSBinding;
-import de.zib.gndms.kit.configlet.DefaultConfiglet;
-import de.zib.gndms.logic.model.gorfx.*;
-import de.zib.gndms.model.common.ConfigletState;
-import de.zib.gndms.stuff.BoundInjector;
-import de.zib.gndms.kit.configlet.Configlet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
@@ -60,7 +58,7 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
     private static final int INITIAL_CAPACITY = 32;
     private static final long INSTANCE_RETRIEVAL_INTERVAL = 250L;
 
-    private final @NotNull String systemName;
+    private @NotNull String systemName;
 
     /**
      * stores several instances needed for the <tt>GNDMSystem</tt>
@@ -70,9 +68,6 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
 
 	private final Map<String, Configlet> configlets = ( new MapMaker() ).makeMap();
 
-	@SuppressWarnings({ "FieldCanBeLocal" })
-	private final Wrapper<Object> sysHolderWrapper;
-
     private final @NotNull BoundInjector boundInjector = new BoundInjector();
 
     private GNDMSInjector injector;
@@ -80,15 +75,9 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
 
 
 	@SuppressWarnings({ "ThisEscapedInObjectConstruction" })
-	GNDMSystemDirectory(
-        final @NotNull String sysNameParam,
-        final Wrapper<Object> systemHolderWrapParam )
+	GNDMSystemDirectory( )
     {
         instances = new HashMap<String, Object>(INITIAL_CAPACITY);
-        systemName = sysNameParam;
-        sysHolderWrapper = systemHolderWrapParam;
-
-
     }
 
 
@@ -162,7 +151,7 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
         else
             instances.put(name, obj);
 
-        logger.debug(getSystemName() + " addInstance: '" + name + '\'');        
+        logger.debug("adding: " + name + '\'');
     }
 
 

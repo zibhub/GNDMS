@@ -19,11 +19,12 @@ package de.zib.gndms.neomodel.gorfx;
 import de.zib.gndms.model.common.PermissionInfo;
 import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.gorfx.types.TaskState;
+import de.zib.gndms.neomodel.common.NodeGridResource;
 import de.zib.gndms.neomodel.common.ReprSession;
 import de.zib.gndms.neomodel.common.Session;
-import de.zib.gndms.neomodel.common.NodeGridResource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joda.time.DateTime;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -33,7 +34,6 @@ import org.neo4j.index.impl.lucene.ValueContext;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -150,33 +150,31 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
     }
 
     public @Nullable
-    Calendar getTerminationTime() {
+    DateTime getTerminationTime() {
         final Long terminationTime = (Long) getProperty(TERMINATION_TIME_P, null);
         if (terminationTime == null)
             return null;
         else {
-            final Calendar cal = Calendar.getInstance();
-            cal.setTimeInMillis(terminationTime);
-            return cal;
+            return new DateTime( terminationTime );
         }
     }
 
-    public void setTerminationTime(@Nullable Calendar terminationTime) {
-        final Calendar oldTerminationTime = getTerminationTime();
+    public void setTerminationTime(@Nullable DateTime terminationTime) {
+        final DateTime oldTerminationTime = getTerminationTime();
         if (oldTerminationTime != null) {
             final Index<Node> index = getTypeNickIndex(TERMINATION_TIME_IDX);
             index.remove(repr(), session().getGridName(),
-                    new ValueContext( oldTerminationTime.getTimeInMillis() ).indexNumeric());
+                    new ValueContext( oldTerminationTime.getMillis() ).indexNumeric());
         }
 
         if (terminationTime == null && hasProperty(TERMINATION_TIME_P)) {
             removeProperty(TERMINATION_TIME_P);
         }
         else if ( terminationTime != null ) {
-            setProperty(TERMINATION_TIME_P, terminationTime.getTimeInMillis());
+            setProperty(TERMINATION_TIME_P, terminationTime.getMillis());
             final Index<Node> index = getTypeNickIndex(TERMINATION_TIME_IDX);
             index.add(repr(), session().getGridName(),
-                    new ValueContext( terminationTime.getTimeInMillis() ).indexNumeric());
+                    new ValueContext( terminationTime.getMillis() ).indexNumeric());
         }
     }
 
@@ -422,7 +420,7 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
             final String resourceId = this.getResourceId();
             final String WID = this.getWID();
             final String descr = this.getDescription();
-            final Calendar terminationTime = this.getTerminationTime();
+            final DateTime terminationTime = this.getTerminationTime();
             final TaskState taskState = this.getTaskState();
             final int maxProgress = this.getMaxProgress();
             final int progress = this.getProgress();
@@ -464,7 +462,7 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
                     throw new UnsupportedOperationException();
                 }
 
-                public Calendar getTerminationTime() {
+                public DateTime getTerminationTime() {
                     return terminationTime;
                 }
 
@@ -551,7 +549,7 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
                     return faultString;
                 }
 
-                public void setTerminationTime(Calendar terminationTime) throws UnsupportedOperationException {
+                public void setTerminationTime( DateTime terminationTime) throws UnsupportedOperationException {
                     throw new UnsupportedOperationException();
                 }
 

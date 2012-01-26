@@ -32,7 +32,7 @@
         <constructor-arg name="anySharedConfig" ref="gridConfig"/>
         <constructor-arg name="debugModeParam" value="${debugMode}"/>
     </bean>
-    <bean id="instanceDir" lazy-init="true" abstract="true" class="de.zib.gndms.infra.system.GNDMSystemDirectory"/>
+    <bean id="instanceDir" class="de.zib.gndms.infra.system.GNDMSystemDirectory"/>
 
     <bean id="configActionCaller" class="de.zib.gndms.infra.system.ConfigActionCaller">
         <!-- possible enhancement configure actions here, like:
