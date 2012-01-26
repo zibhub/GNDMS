@@ -215,7 +215,7 @@ public class SubspaceServiceImpl implements SubspaceService {
         slicekindProvider.create( slicekind, "subspace:" + subspace + "; " + config );
 
         return new ResponseEntity<List<Specifier<Void>>>(null, headers,
-                                                         HttpStatus.OK);
+                                                         HttpStatus.CREATED);
     }
 
     @Override
@@ -271,12 +271,10 @@ public class SubspaceServiceImpl implements SubspaceService {
 	       			em.close();
 	       		}
 	       	}
-			return new ResponseEntity<Void>(null, headers,
-					HttpStatus.CREATED);
+			return new ResponseEntity< Void >( null, headers, HttpStatus.OK );
 		} catch (WrongConfigurationException e) {
 			logger.warn(e.getMessage());
-			return new ResponseEntity<Void>(null, headers,
-					HttpStatus.BAD_REQUEST);
+			return new ResponseEntity< Void >( null, headers, HttpStatus.BAD_REQUEST );
 		}
 	}
 
@@ -314,7 +312,7 @@ public class SubspaceServiceImpl implements SubspaceService {
             spec.setUrl( uriFactory.sliceUri( urimap, null ) );
 
             return new ResponseEntity< Specifier< Void > >( spec, headers,
-                                                        HttpStatus.OK );
+                                                        HttpStatus.CREATED );
         }
         catch( WrongConfigurationException e ) {
             logger.warn( e.getMessage() );
