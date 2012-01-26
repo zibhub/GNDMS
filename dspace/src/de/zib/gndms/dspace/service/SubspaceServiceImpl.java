@@ -214,7 +214,7 @@ public class SubspaceServiceImpl implements SubspaceService {
         slicekindProvider.create( slicekind, "subspace:" + subspace + "; " + config );
 
         return new ResponseEntity<List<Specifier<Void>>>(null, headers,
-                                                         HttpStatus.OK);
+                                                         HttpStatus.CREATED);
     }
 
     @Override
@@ -270,12 +270,10 @@ public class SubspaceServiceImpl implements SubspaceService {
 	       			em.close();
 	       		}
 	       	}
-			return new ResponseEntity<Void>(null, headers,
-					HttpStatus.CREATED);
+			return new ResponseEntity< Void >( null, headers, HttpStatus.OK );
 		} catch (WrongConfigurationException e) {
 			logger.warn(e.getMessage());
-			return new ResponseEntity<Void>(null, headers,
-					HttpStatus.BAD_REQUEST);
+			return new ResponseEntity< Void >( null, headers, HttpStatus.BAD_REQUEST );
 		}
 	}
 
@@ -292,9 +290,9 @@ public class SubspaceServiceImpl implements SubspaceService {
             Map< String, String > parameters = new HashMap< String, String >( );
             ParameterTools.parseParameters( parameters, config, null );
             if( !parameters.containsKey( SliceConfiguration.TERMINATION_TIME ) )
-                throw new WrongConfigurationException( "Missing configuration option" );
+                throw new WrongConfigurationException( "Missing configuration option deadline." );
             if( !parameters.containsKey( SliceConfiguration.SLICE_SIZE ) )
-                throw new WrongConfigurationException( "Missing configuration option" );
+                throw new WrongConfigurationException( "Missing configuration option sliceSize." );
 
             // use provider to create slice
             DateTimeFormatter fmt = ISODateTimeFormat.dateTimeParser();

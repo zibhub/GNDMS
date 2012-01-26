@@ -17,15 +17,14 @@ package de.zib.gndms.common.dspace.service;
  */
 
 import de.zib.gndms.common.logic.config.Configuration;
+import de.zib.gndms.common.model.FileStats;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.OutputStream;
 import java.util.List;
-import java.util.Map;
 
 /**
  * The interface of the Slice service.
@@ -129,8 +128,8 @@ public interface SliceService {
 	 *            The dn of the user invoking the method.
 	 * @return The list of files.
 	 */
-	ResponseEntity<List<File>> listFiles(String subspace, String sliceKind,
-			String slice, Map<String, String> attr, String dn);
+	ResponseEntity< List< FileStats > > listFiles(String subspace, String sliceKind,
+			String slice, String dn);
 
 	/**
 	 * Deletes all files of a slice.

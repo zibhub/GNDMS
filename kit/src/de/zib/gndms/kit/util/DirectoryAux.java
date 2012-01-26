@@ -17,10 +17,11 @@ package de.zib.gndms.kit.util;
  */
 
 
-
+import de.zib.gndms.common.model.FileStats;
 import de.zib.gndms.common.model.common.AccessMask;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * This abstract class provides usefull methods concerning directory access.
@@ -125,11 +126,42 @@ public interface DirectoryAux {
      */
     public boolean move( String src_path, String target_path );
 
-    int chmod( int mask, File file );
+    public FileStats stat( File file );
+    
+    public List< String > listContent( String path );
 
+    int chmod( int mask, File file );
 
     public static class Utils {
 
+
+        /**
+         * Little helper which deletes a path recursively.
+         *
+         * @param pth The complete Path to the directory/file to delete.
+         * @return The success of the operation.
+         */
+        public static boolean recursiveDelete( String pth ) {
+
+            File f = new File( pth );
+
+            if( !f.exists( ) )
+                return false;
+
+            try{
+                if( f.isDirectory() ) {
+                    String[] fl = f.list( );
+                    for( int i=0; i < fl.length; ++i )  {
+                        if( !recursiveDelete( pth + File.separatorChar + fl[i] ) )
+                            return false;
+                    }
+                }
+
+                return f.delete( );
+            } catch (SecurityException e) {
+                return false;
+            }
+        }
 
         /**
          * Little helper which deletes a directory and its contents.
@@ -158,5 +190,6 @@ public interface DirectoryAux {
         }
 
     }
+
 }
 
