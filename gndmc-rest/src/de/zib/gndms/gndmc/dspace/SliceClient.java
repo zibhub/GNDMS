@@ -18,6 +18,7 @@ package de.zib.gndms.gndmc.dspace;
 
 import de.zib.gndms.common.dspace.service.SliceService;
 import de.zib.gndms.common.logic.config.Configuration;
+import de.zib.gndms.common.model.FileStats;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.stuff.util.Product;
@@ -25,10 +26,8 @@ import de.zib.gndms.gndmc.AbstractClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.OutputStream;
 import java.util.List;
-import java.util.Map;
 
 /**
  * The slice client implementing the slice service.
@@ -88,10 +87,9 @@ public class SliceClient extends AbstractClient implements SliceService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public final ResponseEntity<List<File>> listFiles(
-			final String subspace, final String sliceKind, final String slice, final Map<String, String> attr,
-			final String dn) {
-		return (ResponseEntity<List<File>>) (Object) unifiedGet(List.class, getServiceURL() 
+	public final ResponseEntity< List< FileStats > > listFiles(
+			final String subspace, final String sliceKind, final String slice, final String dn) {
+		return (ResponseEntity< List< FileStats > >) (Object) unifiedGet(List.class, getServiceURL()
 				+ "/dspace/_" + subspace + "/_"
 				+ sliceKind + "/_" + slice + "/files", dn);
 	}

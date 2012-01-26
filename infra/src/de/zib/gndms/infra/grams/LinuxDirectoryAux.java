@@ -17,16 +17,19 @@ package de.zib.gndms.infra.grams;
  */
 
 
-
 import com.sun.jna.Library;
 import com.sun.jna.Native;
+import de.zib.gndms.common.model.FileStats;
 import de.zib.gndms.common.model.common.AccessMask;
 import de.zib.gndms.kit.util.DirectoryAux;
+import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Implementation of the directory helpers for a linux system.
@@ -82,9 +85,29 @@ public class LinuxDirectoryAux implements DirectoryAux {
             throw new RuntimeException( e );
         }
     }
+    
+    public List< String > listContent( String path ) {
+        final File dir = new File( path );
+        return Arrays.asList( dir.list() );
+    }
+    
+    public FileStats stat( File file ) {
+        final FileStats fileStats = new FileStats();
+        try {
+            fileStats.path = file.getCanonicalPath();
+            fileStats.size = new Long( file.length() );
+            fileStats.mtime = ISODateTimeFormat.basicDateTime().print( file.lastModified() );
+        }
+        catch (IOException e) {
+            logger.warn( "Could not get file stats of file " + file, e );
+            return null;
+        }
+
+        return fileStats;
+    }
 
     interface CLibrary extends Library {
-        public int chmod(String path, int mode);
+        public int chmod( String path, int mode );
         public int mkdir( String path, int mode );
         public int rmdir( String path );
         public int rename( String old_path, String new_path );
@@ -128,7 +151,7 @@ public class LinuxDirectoryAux implements DirectoryAux {
         if(! f.exists() )
             throw new RuntimeException( "failed to delete dir " + pth + ": doesn't exists" );
 
-        DirectoryAux.Utils.recursiveDelete( pth );
+        DirectoryAux.Utils.recursiveDelete(pth);
 
         return true;
     }

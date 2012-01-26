@@ -18,6 +18,7 @@ package de.zib.gndms.dspace.service;
 
 import de.zib.gndms.common.dspace.service.SliceService;
 import de.zib.gndms.common.logic.config.Configuration;
+import de.zib.gndms.common.model.FileStats;
 import de.zib.gndms.common.rest.*;
 import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.infra.system.GNDMSystem;
@@ -232,34 +233,30 @@ public class SliceServiceImpl implements SliceService {
 	}
 
 	@Override
-	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{sliceId}/files", method = RequestMethod.GET)
-	public final ResponseEntity<List<File>> listFiles(
-			@PathVariable final String subspace,
-			@PathVariable final String sliceKind,
+	@RequestMapping(value = "/_{subspaceId}/_{sliceKindId}/_{sliceId}/files", method = RequestMethod.GET)
+	public final ResponseEntity< List<FileStats> > listFiles(
+			@PathVariable final String subspaceId,
+			@PathVariable final String sliceKindId,
 			@PathVariable final String sliceId,
-			@RequestParam(value = "attr", required = false) final Map<String, String> attr,
-			@RequestHeader("DN") final String dn) {
-		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, sliceId, dn);
+			@RequestHeader( "DN" ) final String dn ) {
+		final GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKindId, sliceId, dn );
 
 		try {
-			Subspace space = subspaceProvider.get(subspace);
-			Slice slice = findSliceOfKind(subspace, sliceKind, sliceId);
-			String path = space.getPathForSlice(slice);
-			File dir = new File(path);
-			if (dir.exists() && dir.canRead() && dir.isDirectory()) {
-				File[] all = dir.listFiles();
-				List<File> files = new ArrayList<File>();
-                Collections.addAll( files, all );
-				return new ResponseEntity<List<File>>(files, headers,
-						HttpStatus.OK);
+			final Subspace space = subspaceProvider.get( subspaceId );
+			final Slice slice = findSliceOfKind( subspaceId, sliceKindId, sliceId );
+			final String path = space.getPathForSlice( slice );
+            
+			File dir = new File( path );
+			if( dir.exists() && dir.canRead() && dir.isDirectory() ) {
+                List<FileStats> files = new LinkedList<FileStats>();
+                recursiveListFiles( path, "", files );
+				return new ResponseEntity< List<FileStats> >( files, headers, HttpStatus.OK );
 			} else {
-				return new ResponseEntity<List<File>>(null, headers,
-						HttpStatus.FORBIDDEN);
+				return new ResponseEntity< List<FileStats> >( null, headers, HttpStatus.FORBIDDEN );
 			}
-		} catch (NoSuchElementException ne) {
-			logger.warn(ne.getMessage());
-			return new ResponseEntity<List<File>>(null, headers,
-					HttpStatus.NOT_FOUND);
+		} catch( NoSuchElementException ne ) {
+			logger.warn( ne.getMessage() );
+			return new ResponseEntity< List<FileStats> >( null, headers, HttpStatus.NOT_FOUND );
 		}
 	}
 
@@ -537,6 +534,27 @@ public class SliceServiceImpl implements SliceService {
 		}
 		return slice;
 	}
+
+    void recursiveListFiles( String path, String prefix, List<FileStats> list ) {
+        List< String > flatContents = directoryAux.listContent( path );
+        
+        for( String c: flatContents ) {
+            File f = new File( path + File.separatorChar + c );
+            
+            if( f.isDirectory() ) {
+                try {
+                    recursiveListFiles( f.getCanonicalPath(), prefix + File.separatorChar + c, list );
+                } catch (IOException e) {
+                    logger.error( "Could not get canonical path of " + f );
+                }
+            }
+            else {
+                FileStats stats = directoryAux.stat( f );
+                stats.path = prefix + File.separatorChar + c;
+                list.add( stats );
+            }
+        }
+    }
 
 	/**
 	 * Returns the base url of this sliceId service.

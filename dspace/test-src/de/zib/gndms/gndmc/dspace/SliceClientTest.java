@@ -16,19 +16,17 @@ package de.zib.gndms.gndmc.dspace;
  * limitations under the License.
  */
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Vector;
-
+import de.zib.gndms.common.rest.Specifier;
+import de.zib.gndms.logic.model.dspace.SliceConfiguration;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
-import de.zib.gndms.common.rest.Specifier;
-import de.zib.gndms.logic.model.dspace.SliceConfiguration;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.util.GregorianCalendar;
+import java.util.Vector;
 
 /**
  * Tests the DSpaceClient.
@@ -88,9 +86,7 @@ public class SliceClientTest {
 		res = scl.deleteSlice(subspace, sliceKind, slice, dn);
        	AssertJUnit.assertNotNull(res);
 
-       	HashMap<String, String> attrs = new HashMap<String, String>();
-       	attrs.put("filename", "g*");
-		res = scl.listFiles(subspace, sliceKind, slice, attrs, dn);
+		res = scl.listFiles(subspace, sliceKind, slice, dn);
        	AssertJUnit.assertNotNull(res);
 
 		res = scl.deleteFiles(subspace, sliceKind, slice, dn);

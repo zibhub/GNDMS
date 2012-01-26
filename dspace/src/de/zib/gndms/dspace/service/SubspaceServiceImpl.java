@@ -293,9 +293,9 @@ public class SubspaceServiceImpl implements SubspaceService {
             Map< String, String > parameters = new HashMap< String, String >( );
             ParameterTools.parseParameters( parameters, config, null );
             if( !parameters.containsKey( "deadline" ) )
-                throw new WrongConfigurationException( "Missing configuration option" );
+                throw new WrongConfigurationException( "Missing configuration option deadline." );
             if( !parameters.containsKey( "sliceSize" ) )
-                throw new WrongConfigurationException( "Missing configuration option" );
+                throw new WrongConfigurationException( "Missing configuration option sliceSize." );
 
             // use provider to create slice
             DateTimeFormatter fmt = ISODateTimeFormat.dateTimeParser();

@@ -17,10 +17,11 @@ package de.zib.gndms.kit.util;
  */
 
 
-
+import de.zib.gndms.common.model.FileStats;
 import de.zib.gndms.common.model.common.AccessMask;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * This abstract class provides usefull methods concerning directory access.
@@ -125,6 +126,10 @@ public interface DirectoryAux {
      */
     public boolean move( String src_path, String target_path );
 
+    public FileStats stat( File file );
+    
+    public List< String > listContent( String path );
+
     int chmod( int mask, File file );
 
     public static class Utils {
@@ -185,5 +190,6 @@ public interface DirectoryAux {
         }
 
     }
+
 }
 
