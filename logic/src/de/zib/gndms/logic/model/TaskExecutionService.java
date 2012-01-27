@@ -18,6 +18,8 @@ package de.zib.gndms.logic.model;
 
 
 
+import de.zib.gndms.common.model.gorfx.types.Quote;
+import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.jetbrains.annotations.NotNull;
@@ -118,4 +120,6 @@ public interface TaskExecutionService {
      * @return The taskling representing the newly created task.
      */
     Taskling submitTaskAction( TaskAction taskAction, Serializable order, String wid );
+
+    Taskling submitTaskAction( Dao dao, TaskAction taskAction, Serializable order, Quote quote, String wid );
 }

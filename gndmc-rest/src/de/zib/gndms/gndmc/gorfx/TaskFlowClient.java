@@ -17,11 +17,7 @@ package de.zib.gndms.gndmc.gorfx;
  */
 
 import de.zib.gndms.common.GORFX.service.TaskFlowService;
-import de.zib.gndms.common.model.gorfx.types.Order;
-import de.zib.gndms.common.model.gorfx.types.Quote;
-import de.zib.gndms.common.model.gorfx.types.TaskFailure;
-import de.zib.gndms.common.model.gorfx.types.TaskFlowStatus;
-import de.zib.gndms.common.model.gorfx.types.TaskResult;
+import de.zib.gndms.common.model.gorfx.types.*;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.gndmc.AbstractClient;
@@ -88,9 +84,11 @@ public class TaskFlowClient extends AbstractClient implements TaskFlowService {
 	}
 
 	@Override
-	public final ResponseEntity<Void> setQuote(final String type, final String id, final Quote cont,
-			final String dn, final String wid) {
-		return unifiedPost(Void.class, cont, getServiceURL() + "/gorfx/_" + type + "/_"
+	public final ResponseEntity<Integer> setQuote( final String type, final String id,
+                                                   final Quote cont,
+                                                   final String dn, final String wid ) {
+
+		return unifiedPost(Integer.class, cont, getServiceURL() + "/gorfx/_" + type + "/_"
 				+ id + "/quote", wid, dn);
 	}
 
@@ -118,7 +116,8 @@ public class TaskFlowClient extends AbstractClient implements TaskFlowService {
 
     @SuppressWarnings("unchecked")
 	public final ResponseEntity<Specifier<Facets>> createTask( final String type, final String id,
-                                                               final String quoteId, final String dn, final String wid ) {
+                                                               final Integer quoteId,
+                                                               final String dn, final String wid ) {
 		return ( ResponseEntity<Specifier<Facets>> ) (Object) unifiedPut(Specifier.class, quoteId, getServiceURL() + "/gorfx/_" + type
 				+ "/_" + id + "/task", dn, wid);
 	}

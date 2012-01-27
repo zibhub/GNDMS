@@ -110,7 +110,8 @@ def skipDeps(deps)
 end
 
 # Non-GT4 dependencies
-SPRING_VERSION = "3.0.6.RELEASE"
+#SPRING_VERSION = "3.0.6.RELEASE"
+SPRING_VERSION = "3.1.0.RELEASE"
 SPRING = [ 
            "org.springframework:spring-aop:jar:#{SPRING_VERSION}",
            "org.springframework:spring-asm:jar:#{SPRING_VERSION}",

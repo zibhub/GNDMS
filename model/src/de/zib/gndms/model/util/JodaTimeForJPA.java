@@ -16,24 +16,29 @@ package de.zib.gndms.model.util;
  */
 
 import org.joda.time.DateTime;
-
-import java.util.Calendar;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * @author Maik Jorra
  * @email jorra@zib.de
  * @date 26.01.12  11:50
  * @brief
+ *
+ *
+ * todo this doesn't work very well, openjpa converts calender to byte...
  */
 public final class JodaTimeForJPA {
-    
-    public static Calendar fromDateTime( final DateTime dateTime ) {
-        return dateTime.toGregorianCalendar();
+
+    private static final DateTimeFormatter FORMATTER = ISODateTimeFormat.dateTime();
+
+    public static String fromDateTime( final DateTime dateTime ) {
+        return FORMATTER.print( dateTime );
     }
     
     
-    public static DateTime toDateTime( final Calendar calendar ) {
-        return new DateTime( calendar );
+    public static DateTime toDateTime( final String dateTime ) {
+        return new DateTime( dateTime );
     }
 
 

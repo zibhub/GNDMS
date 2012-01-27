@@ -71,7 +71,7 @@ public class FileTransferExample extends GORFXTaskFlowExample {
     }
 
 
-    protected void normalRun() {
+    protected void normalRun() throws Exception {
 
         System.out.println( "Performing normal run!!" );
         // create an order instance...
@@ -82,7 +82,7 @@ public class FileTransferExample extends GORFXTaskFlowExample {
         fileMap.put( "transferTest.dat", "transferDest.dat" );
         fileTransferOrder.setFileMap( fileMap );
 
-        etfc.execTF( fileTransferOrder, dn, true );
+        etfc.execTF( fileTransferOrder, dn, true, null );
         System.out.println( "DONE\n" );
     }
 

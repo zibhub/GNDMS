@@ -24,9 +24,6 @@ import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.model.common.types.FilePermissions;
 import de.zib.gndms.taskflows.staging.client.model.ProviderStageInOrder;
-import de.zib.gndms.model.gorfx.types.io.ContractConverter;
-import de.zib.gndms.model.gorfx.types.io.ContractPropertyReader;
-import de.zib.gndms.model.gorfx.types.io.ContractPropertyWriter;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
@@ -74,7 +71,8 @@ public class StagingIOFormatHelper {
         Properties props = new Properties();
         props.load(new ByteArrayInputStream(sb.toString().getBytes()));
 
-        ContractPropertyReader reader = new ContractPropertyReader(props);
+        de.zib.gndms.common.model.gorfx.types.io.ContractPropertyReader
+                reader = new de.zib.gndms.common.model.gorfx.types.io.ContractPropertyReader(props);
         reader.performReading();
         return reader.getProduct();
     }
@@ -85,8 +83,10 @@ public class StagingIOFormatHelper {
         Properties moreProps = null;
         if( contParam != null ) {
             moreProps = new Properties();
-            ContractPropertyWriter writer = new ContractPropertyWriter(moreProps);
-            ContractConverter conv = new ContractConverter(writer, contParam);
+            de.zib.gndms.common.model.gorfx.types.io.ContractPropertyWriter
+                    writer = new de.zib.gndms.common.model.gorfx.types.io.ContractPropertyWriter(moreProps);
+            de.zib.gndms.common.model.gorfx.types.io.ContractConverter
+                    conv = new de.zib.gndms.common.model.gorfx.types.io.ContractConverter(writer, contParam);
             conv.convert();
         }
 
