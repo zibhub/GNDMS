@@ -25,6 +25,7 @@ import de.zib.gndms.common.rest.*;
 import de.zib.gndms.kit.config.ParameterTools;
 import de.zib.gndms.logic.model.dspace.*;
 import de.zib.gndms.logic.model.dspace.NoSuchElementException;
+import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.util.TxFrame;
 import org.joda.time.DateTime;
@@ -213,8 +214,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 
         slicekindProvider.create( slicekind, "subspace:" + subspace + "; " + config );
 
-        return new ResponseEntity<List<Specifier<Void>>>(null, headers,
-                                                         HttpStatus.CREATED);
+        return new ResponseEntity<List<Specifier<Void>>>(null, headers, HttpStatus.CREATED);
     }
 
     @Override
@@ -278,35 +278,52 @@ public class SubspaceServiceImpl implements SubspaceService {
 	}
 
     @Override
-    @RequestMapping( value = "/_{subspace}/_{sliceKind}", method = RequestMethod.POST )
+    @RequestMapping( value = "/_{subspaceId}/_{sliceKindId}", method = RequestMethod.POST )
     public final ResponseEntity< Specifier< Void > > createSlice(
-            @PathVariable final String subspace,
-            @PathVariable final String sliceKind,
+            @PathVariable final String subspaceId,
+            @PathVariable final String sliceKindId,
             @RequestBody final String config,
             @RequestHeader( "DN" ) final String dn ) {
-        GNDMSResponseHeader headers = getSliceKindHeaders( subspace, sliceKind, dn );
+        GNDMSResponseHeader headers = getSliceKindHeaders( subspaceId, sliceKindId, dn );
+
+        SliceKind sliceKind;
+        try {
+            sliceKind = slicekindProvider.get( subspaceId, sliceKindId );
+        }
+        catch( NoSuchElementException e ) {
+            logger.warn( "Tried to access non existing SliceKind " + subspaceId + "/" + sliceKindId, e );
+            return new ResponseEntity< Specifier< Void > >( null, headers, HttpStatus.NOT_FOUND );
+        }
 
         try {
             Map< String, String > parameters = new HashMap< String, String >( );
             ParameterTools.parseParameters( parameters, config, null );
-            if( !parameters.containsKey( SliceConfiguration.TERMINATION_TIME ) )
-                throw new WrongConfigurationException( "Missing configuration option deadline." );
-            if( !parameters.containsKey( SliceConfiguration.SLICE_SIZE ) )
-                throw new WrongConfigurationException( "Missing configuration option sliceSize." );
+
+            DateTimeFormatter fmt = ISODateTimeFormat.dateTimeParser();
+            DateTime terminationTime;
+            long sliceSize;
+
+            if( parameters.containsKey( "deadline" ) )
+                terminationTime = fmt.parseDateTime( parameters.get( "deadline" ) );
+            else
+                terminationTime = new DateTime().plus( sliceKind.getDefaultTimeToLive() );
+            
+            if( parameters.containsKey( "sliceSize" ) )
+                sliceSize = Long.parseLong( parameters.get( "sliceSize" ) );
+            else
+                sliceSize = sliceKind.getDefaultTimeToLive();
 
             // use provider to create slice
-            DateTimeFormatter fmt = ISODateTimeFormat.dateTimeParser();
-            DateTime deadline = fmt.parseDateTime( parameters.get( SliceConfiguration.TERMINATION_TIME ) );
-            String slice = sliceProvider.createSlice( subspace, sliceKind, dn, deadline, Long.parseLong( parameters.get(
-                    SliceConfiguration.SLICE_SIZE ) ) );
+            String slice = sliceProvider.createSlice( subspaceId, sliceKindId, dn,
+                    terminationTime, sliceSize );
 
             // generate specifier and return it
             Specifier<Void> spec = new Specifier<Void>();
 
             HashMap<String, String> urimap = new HashMap<String, String>( 2 );
             urimap.put( "service", "dspace" );
-            urimap.put( UriFactory.SUBSPACE, subspace );
-            urimap.put( UriFactory.SLICEKIND, sliceKind );
+            urimap.put( UriFactory.SUBSPACE, subspaceId );
+            urimap.put( UriFactory.SLICEKIND, sliceKindId );
             urimap.put( UriFactory.SLICE, slice );
             spec.setUriMap( new HashMap<String, String>( urimap ) );
             spec.setUrl( uriFactory.sliceUri( urimap, null ) );
@@ -316,18 +333,16 @@ public class SubspaceServiceImpl implements SubspaceService {
         }
         catch( WrongConfigurationException e ) {
             logger.warn( e.getMessage() );
-            return new ResponseEntity<Specifier<Void>>( null, headers,
-                                                        HttpStatus.BAD_REQUEST );
+            return new ResponseEntity<Specifier<Void>>( null, headers, HttpStatus.BAD_REQUEST );
         }
         catch( NoSuchElementException e ) {
             logger.warn( e.getMessage() );
-            return new ResponseEntity<Specifier<Void>>( null, headers,
-                                                        HttpStatus.NOT_FOUND );
+            return new ResponseEntity<Specifier<Void>>( null, headers, HttpStatus.NOT_FOUND );
         }
         catch( ParameterTools.ParameterParseException e ) {
-            logger.info( "Illegal request: Could not parse paramter string \"" + ParameterTools.escape( config ) + "\". " + e.getMessage() );
-            return new ResponseEntity<Specifier<Void>>( null, headers,
-                                                        HttpStatus.BAD_REQUEST );
+            logger.info( "Illegal request: Could not parse paramter string \""
+                    + ParameterTools.escape( config ) + "\". " + e.getMessage() );
+            return new ResponseEntity<Specifier<Void>>( null, headers, HttpStatus.BAD_REQUEST );
         }
     }
 

@@ -88,6 +88,9 @@ public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
     private String uniqueDirName;
 
     private SliceKind theSliceKind;
+    
+    private int defaultSliceSize = -1;
+    private long defaultTimeToLive = -1;
 
     public SetupSliceKindAction( ) {
     }
@@ -119,6 +122,11 @@ public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
                 setTheSliceKindMode( getOption("sliceKindMode") );
             if( uniqueDirName == null && (isCreating() || hasOption("uniqueDirName")))
                 setUniqueDirName( getOption("uniqueDirName") );
+            
+            if( hasOption( "timeToLive" ) )
+                setDefaultTimeToLive( Integer.parseInt( getOption( "timeToLive" ) ) );
+            if( hasOption( "sliceSize" ) )
+                setDefaultSliceSize( Integer.parseInt( getOption( "sliceSize" ) ) );
         } catch ( MandatoryOptionMissingException e) {
             throw new IllegalStateException(e);
         }
@@ -156,6 +164,12 @@ public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
             r.setId( getSliceKind( ) );
             r.setPermission( msk );
             r.setSliceDirectory( uniqueDirName );
+
+            if( defaultTimeToLive >= 0 )
+                r.setDefaultTimeToLive( defaultTimeToLive );
+            if( defaultSliceSize >= 0 )
+                r.setDefaultSliceSize( defaultSliceSize );
+
             em.persist( r );
         } else {
             r = em.find( SliceKind.class, getSliceKind( ) );
@@ -212,4 +226,13 @@ public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
     public void setUniqueDirName( String uniqueDirName ) {
         this.uniqueDirName = uniqueDirName;
     }
+
+    public void setDefaultSliceSize(int defaultSliceSize) {
+        this.defaultSliceSize = defaultSliceSize;
+    }
+
+    public void setDefaultTimeToLive(long defaultTimeToLive) {
+        this.defaultTimeToLive = defaultTimeToLive;
+    }
+
 }
