@@ -303,13 +303,13 @@ public class SubspaceServiceImpl implements SubspaceService {
             DateTime terminationTime;
             long sliceSize;
 
-            if( parameters.containsKey( "deadline" ) )
-                terminationTime = fmt.parseDateTime( parameters.get( "deadline" ) );
+            if( parameters.containsKey( SliceConfiguration.TERMINATION_TIME ) )
+                terminationTime = fmt.parseDateTime( parameters.get( SliceConfiguration.TERMINATION_TIME ) );
             else
                 terminationTime = new DateTime().plus( sliceKind.getDefaultTimeToLive() );
             
-            if( parameters.containsKey( "sliceSize" ) )
-                sliceSize = Long.parseLong( parameters.get( "sliceSize" ) );
+            if( parameters.containsKey( SliceConfiguration.SLICE_SIZE ) )
+                sliceSize = Long.parseLong( parameters.get( SliceConfiguration.SLICE_SIZE ) );
             else
                 sliceSize = sliceKind.getDefaultTimeToLive();
 
