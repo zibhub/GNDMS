@@ -19,11 +19,9 @@ package de.zib.gndms.model.dspace;
 
 
 import de.zib.gndms.common.model.common.AccessMask;
-import de.zib.gndms.model.common.GridEntity;
 import de.zib.gndms.model.common.GridResource;
 
 import javax.persistence.*;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -45,8 +43,14 @@ public class SliceKind extends GridResource {
     private AccessMask permission;
 
     private String sliceDirectory;
-
     private Set<Subspace> subspaces = new HashSet<Subspace>();
+
+    // default time to live of slice in milliseconds
+    // if not given on creation, one day is taken as default
+    private long defaultTimeToLive = 86400000;
+    // default size of slice in bytes
+    // if not given on creation, 10MB is taken as default
+    private int defaultSliceSize = 1024*1024*10;
 
     @Column(name="permission", nullable=false, updatable=false )
     public AccessMask getPermission() {
@@ -80,5 +84,21 @@ public class SliceKind extends GridResource {
 
     public void setSliceDirectory( String sliceDirectory ) {
         this.sliceDirectory = sliceDirectory;
+    }
+
+    public long getDefaultTimeToLive() {
+        return defaultTimeToLive;
+    }
+
+    public void setDefaultTimeToLive(long defaultTimeToLive) {
+        this.defaultTimeToLive = defaultTimeToLive;
+    }
+
+    public int getDefaultSliceSize() {
+        return defaultSliceSize;
+    }
+
+    public void setDefaultSliceSize(int defaultSliceSize) {
+        this.defaultSliceSize = defaultSliceSize;
     }
 }
