@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types.io;
+package de.zib.gndms.common.model.gorfx.types.io;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -19,22 +19,26 @@ package de.zib.gndms.model.gorfx.types.io;
 
 
 import de.zib.gndms.common.model.gorfx.types.FutureTime;
-import de.zib.gndms.common.model.gorfx.types.io.GORFXWriterBase;
-import org.joda.time.DateTime;
-
-import java.util.Map;
 
 
 /**
- * @author  try ma ik jo rr a zib
- * @version  $Id$
- * <p/>
- * User: mjorra, Date: 25.09.2008, Time: 13:17:43
+ * ThingAMagic.
+ *
+ * @author  try ste fan pla nti kow zib
+ * @version $Id$
+ *
+ *          User: stepn Date: 24.11.2008 Time: 17:05:29
  */
-public interface ContractWriter extends GORFXWriterBase {
-    void writeIfDecisionBefore( DateTime dat );
-    void writeExecutionLikelyUntil( FutureTime dat );
-    void writeExpectedSize( Long l );
-    void writeResultValidUntil( FutureTime dat );
-    void writeAdditionalNotes( Map<String, String> additionalNotes );
+public class FutureTimeConverter extends GORFXConverterBase<FutureTimeWriter, FutureTime> {
+
+	@Override
+	public void convert() {
+		getWriter().begin();
+		FutureTime time = getModel();
+		if (time.isAbsolute())
+			getWriter().writeAbsoluteFutureTime((FutureTime.AbsoluteFutureTime)time);
+		else
+			getWriter().writeRelativeFutureTime((FutureTime.RelativeFutureTime)time);
+		getWriter().done();
+	}
 }

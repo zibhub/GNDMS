@@ -17,6 +17,7 @@ package de.zib.gndms.taskflows.staging.client;
  */
 
 import de.zib.gndms.common.model.gorfx.types.Order;
+import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.common.model.gorfx.types.TaskResult;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.gndmc.gorfx.AbstractTaskFlowExecClient;
@@ -84,10 +85,11 @@ public class ProviderStageInExample extends GORFXTaskFlowExample {
     }
 
 
-    protected void normalRun() {
+    protected void normalRun() throws Exception {
 
+        Quote quote = loadAndPrintDesiredQuote();
         System.out.println( "Performing normal run!!" );
-        etfc.execTF( getNormalOrder(), dn, true );
+        etfc.execTF( getNormalOrder(), dn, true, quote );
         System.out.println( "DONE\n" );
     }
 

@@ -17,6 +17,10 @@ package de.zib.gndms.gndmc.gorfx;
  */
 
 import de.zib.gndms.common.kit.application.AbstractApplication;
+import de.zib.gndms.common.model.gorfx.types.Quote;
+import de.zib.gndms.common.model.gorfx.types.io.ContractConverter;
+import de.zib.gndms.common.model.gorfx.types.io.ContractPropertyReader;
+import de.zib.gndms.common.model.gorfx.types.io.ContractStdoutWriter;
 import org.kohsuke.args4j.Option;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -54,6 +58,7 @@ public abstract class GORFXTaskFlowExample extends AbstractApplication {
     private TaskFlowClient tfClient;
     private TaskClient taskClient;
     private AbstractTaskFlowExecClient etfc;
+    private Quote desiredQuote;
 
 
     @Override
@@ -92,7 +97,7 @@ public abstract class GORFXTaskFlowExample extends AbstractApplication {
 
     protected abstract AbstractTaskFlowExecClient provideTaskFlowClient( );
 
-    protected abstract void normalRun();
+    protected abstract void normalRun() throws Exception;
 
     protected abstract void failingRun();
 
@@ -117,4 +122,55 @@ public abstract class GORFXTaskFlowExample extends AbstractApplication {
         }
         return orderProps;
     }
+
+    protected Quote loadAndPrintDesiredQuote() throws IOException {
+        if( conPropFile !=  null ) {
+            desiredQuote = ContractPropertyReader.readFromFile( conPropFile );
+
+            // Print initial contract
+            System.out.println("# Requested contract");
+            ContractConverter contractConv = new ContractConverter(new ContractStdoutWriter(),
+                    desiredQuote );
+            contractConv.convert();
+        }
+        return desiredQuote;
+    }
+
+
+    public ApplicationContext getContext() {
+
+        return context;
+    }
+
+
+    public FullGORFXClient getGorfxClient() {
+
+        return gorfxClient;
+    }
+
+
+    public TaskFlowClient getTfClient() {
+
+        return tfClient;
+    }
+
+
+    public TaskClient getTaskClient() {
+
+        return taskClient;
+    }
+
+
+    public AbstractTaskFlowExecClient getEtfc() {
+
+        return etfc;
+    }
+
+
+    public Quote getDesiredQuote() {
+
+        return desiredQuote;
+    }
+
+
 }

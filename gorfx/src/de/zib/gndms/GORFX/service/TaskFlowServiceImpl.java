@@ -219,9 +219,10 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
 
     @RequestMapping( value = "/_{type}/_{id}/quote", method = RequestMethod.POST )
-    public ResponseEntity<Void> setQuote( @PathVariable String type, @PathVariable String id,
-                                          @RequestBody Quote cont, @RequestHeader( "DN" ) String dn,
-                                          @RequestHeader( "WId" ) String wid ) {
+    public ResponseEntity<Integer> setQuote( @PathVariable String type, @PathVariable String id,
+                                             @RequestBody Quote cont,
+                                             @RequestHeader( "DN" ) String dn,
+                                             @RequestHeader( "WId" ) String wid ) {
 
         HttpStatus hs = HttpStatus.NOT_FOUND;
         try {
@@ -232,7 +233,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
         }
 
-        return new ResponseEntity<Void>( null, getHeader( type, id, "quote", dn, wid ), hs );
+        return new ResponseEntity<Integer>( 37, getHeader( type, id, "quote", dn, wid ), hs );
     }
 
 
@@ -295,7 +296,8 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
     @RequestMapping( value = "/_{type}/_{id}/task", method = RequestMethod.PUT )
     public ResponseEntity<Specifier<Facets>> createTask( @PathVariable String type, @PathVariable String id,
-                                                         @RequestParam( value = "quote", required = false ) String quoteId,
+                                                         @RequestParam( value = "quote",
+                                                                 required = false ) Integer quoteId,
                                                          @RequestHeader( "DN" ) String dn, @RequestHeader( "WId" ) String wid ) {
 
         HttpStatus hs = HttpStatus.NOT_FOUND;
@@ -311,8 +313,15 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                     hs = HttpStatus.CONFLICT;
                 else {
                     TaskAction ta = tff.createAction();
-                    Taskling taskling = executorService
-                            .submitTaskAction( dao, ta, tf.getOrder(), wid );
+                    Taskling taskling;
+                    if ( tf.hasQuotes() ) {
+                        logger.debug( "submitting using quote: " + quoteId);
+                        List<Quote> quotes = tf.getQuotes();
+                        Quote quote = quoteId != null && quoteId >= 0 && quoteId < quotes.size()  
+                                  ? quotes.get( quoteId ) : quotes.get( 0 );
+                        taskling = executorService.submitTaskAction( dao, ta, tf.getOrder(), quote, wid );
+                    } else
+                        taskling = executorService.submitTaskAction( dao, ta, tf.getOrder(), wid );
                     hs = HttpStatus.CREATED;
                     Specifier<Facets> spec = null;
                     try {

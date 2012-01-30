@@ -64,6 +64,7 @@ import java.io.File;
 public abstract class AbstractProviderStageInAction extends TaskFlowAction<ProviderStageInOrder> {
 
     public static final String PROXY_FILE_NAME = "/x509_proxy.pem";
+    public static final long DEFAULT_SLICE_SIZE = 50*1000*1024;
 
 	protected StagingIOFormatHelper stagingIOHelper = new StagingIOFormatHelper();
     private SubspaceService subspaceService;
@@ -151,7 +152,18 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
     protected void deleteSlice( final String sliceId ) {
 
         getService().submitTaskAction( new DeleteSliceTaskAction(),
-                new ModelIdHoldingOrder( sliceId ), getOrder().getActId() );
+                new ModelIdHoldingOrder( sliceId ), getWid() );
+    }
+
+
+    private String getWid() {
+
+        Session session = getDao().beginSession();
+        try {
+            String wid = getTask( session ).getWID();
+            session.success();
+            return wid;
+        } finally {session.finish();}
     }
 
 
@@ -169,10 +181,12 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
 
 
         SliceConfiguration sconf = new SliceConfiguration();
-        getContract().getResultValidity();
+        sconf.setTerminationTime( getContract().getResultValidity() );
+        sconf.setSize( DEFAULT_SLICE_SIZE );
 
         ResponseEntity<Specifier<Void>> sliceSpec =
-                subspaceService.createSlice( subspaceUrl, sliceKindKey, "", getOrder().getDNFromContext() );
+                subspaceService.createSlice( subspaceUrl, sliceKindKey, sconf.getStringRepresentation(),
+                        getOrder().getDNFromContext() );
 
         if (! HttpStatus.CREATED.equals( sliceSpec.getStatusCode() ) )
             throw new IllegalStateException( "Slice creation failed" );
@@ -292,9 +306,9 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
     private void setSliceKind( final String sliceId, final Session session ) {
 
         final Task task = getTask(session);
-        ProviderStageInOrder order = (ProviderStageInOrder ) task.getOrder( );
+        ProviderStageInOrder order = getOrderBean();
         order.setActSliceId( sliceId );
-        task.setORQ( sliceId );
+        task.setORQ( getOrder() );
     }
 
 

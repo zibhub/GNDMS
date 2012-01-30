@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types.io;
+package de.zib.gndms.common.model.gorfx.types.io;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -19,9 +19,6 @@ package de.zib.gndms.model.gorfx.types.io;
 
 
 import de.zib.gndms.common.model.gorfx.types.FutureTime;
-import de.zib.gndms.common.model.gorfx.types.io.AbstractPropertyIO;
-import de.zib.gndms.common.model.gorfx.types.io.PropertyReadWriteAux;
-import de.zib.gndms.common.model.gorfx.types.io.SfrProperty;
 import org.joda.time.DateTime;
 
 import java.util.Properties;

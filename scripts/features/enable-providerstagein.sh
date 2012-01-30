@@ -19,9 +19,9 @@ moni call -v .dspace.AssignSliceKind "subspace:'ProviderStaging'; sliceKind: Sta
 moni call -v .gorfx.ConfigTaskFlowType "taskFlowType: 'ProviderStageIn'; \
 	cfgOutFormat: 'PRINT_OK'; \
 	subspace: 'ProviderStaging'; \
-	sliceKind: 'SliceKind/Staging'; \
-	stagingClass: 'de.zib.gndms.logic.model.gorfx.c3grid.ExternalProviderStageInAction'; \
-	estimationClass: 'de.zib.gndms.logic.model.gorfx.c3grid.ExternalProviderStageInORQCalculator'; \
+	sliceKind: 'Staging'; \
+	estimationClass: 'de.zib.gndms.taskflows.staging.server.logic.ExternalProviderStageInQuoteCalculator'; \
+	stagingClass: 'de.zib.gndms.taskflows.staging.server.logic.ExternalProviderStageInAction'; \
 	stagingCommand: '$STAGING_COMMAND'; \
 	estimationCommand: '$ESTIMATION_COMMAND'; \
 	cancelCommand: '$CANCEL_COMMAND'; \

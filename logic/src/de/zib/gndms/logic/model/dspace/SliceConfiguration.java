@@ -57,7 +57,7 @@ public class SliceConfiguration implements Configuration {
     /**
      * The standard constuructor.
      *
-     * To construct standard instances.
+     * To construct standard instances
      */
     public SliceConfiguration() {
 
@@ -179,8 +179,8 @@ public class SliceConfiguration implements Configuration {
 	@Override
 	public final String getStringRepresentation() {
         StringBuilder s = new StringBuilder();
-        s.append( SLICE_SIZE + " : '" ).append( size ).append( "'; " );
-        s.append( TERMINATION_TIME + " : '" ).append(
+        s.append( SLICE_SIZE ).append( ": '" ).append( size ).append( "'; " );
+        s.append( TERMINATION_TIME ).append( ": '" ).append(
                 terminationTime.getMillis() ).append( "'; " );
 		return s.toString();
 	}

@@ -19,11 +19,9 @@ import de.zib.gndms.common.model.gorfx.types.*;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -55,11 +53,11 @@ public abstract class AbstractTaskFlowExecClient {
      */
     public void execTF( Order order, String dn ) {
 
-        execTF( order, dn, true );
+        execTF( order, dn, true, null );
     }
 
 
-    public void execTF( Order order, String dn, boolean withQuote ) {
+    public void execTF( Order order, String dn, boolean withQuote, final Quote desiredQuote ) {
 
         String wid = UUID.randomUUID().toString();
 
@@ -77,6 +75,9 @@ public abstract class AbstractTaskFlowExecClient {
 
         Integer q = null;
         if( withQuote ) {
+            if( desiredQuote != null ) {
+                tfClient.setQuote( order.getTaskFlowType(), tid, desiredQuote, dn, wid );
+            }
             // queries the quotes for the task flow
             ResponseEntity<List<Specifier<Quote>>> res2 = tfClient.getQuotes( order.getTaskFlowType(), tid, dn, wid );
 
@@ -92,8 +93,7 @@ public abstract class AbstractTaskFlowExecClient {
         // 
         
         // accepts quote q and triggers task creation
-        ResponseEntity<Specifier<Facets>> res3 = tfClient.createTask( order.getTaskFlowType(), tid,
-            q != null ? q.toString() : null, dn, wid );
+        ResponseEntity<Specifier<Facets>> res3 = tfClient.createTask( order.getTaskFlowType(), tid, q, dn, wid );
 
         if(! HttpStatus.CREATED.equals( res3.getStatusCode() ) )
             throw new RuntimeException( "createTask failed " + res3.getStatusCode().name() );

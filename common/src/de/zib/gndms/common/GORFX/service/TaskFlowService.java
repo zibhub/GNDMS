@@ -136,7 +136,7 @@ public interface TaskFlowService {
      * 
      * \note Only one preferred quote can be provided and will overwrite previously provided quotes.
      */
-    ResponseEntity<Void> setQuote( String type, String id, Quote cont, String dn, String wid );
+    ResponseEntity<Integer> setQuote( String type, String id, Quote cont, String dn, String wid );
 
     /** 
      * @brief Delivers a single quote.
@@ -196,7 +196,7 @@ public interface TaskFlowService {
      * 409 if the task already exists.
      */
 	ResponseEntity<Specifier<Facets>> createTask(String type, String id,
-			String quoteId, String dn, String wid );
+			Integer quoteId, String dn, String wid );
 	
     /** 
      * @brief Delivers the status of the taskflow execution.
