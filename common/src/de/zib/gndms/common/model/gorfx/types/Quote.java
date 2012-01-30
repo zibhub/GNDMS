@@ -104,7 +104,10 @@ public class Quote implements Cloneable {
 
 
     public void setAdditionalNotes(final Map<String, String> additionalNotesParam) {
-		additionalNotes = Collections.unmodifiableMap( additionalNotesParam );
+        if( additionalNotesParam != null )
+            additionalNotes = Collections.unmodifiableMap( additionalNotesParam );
+        else
+            additionalNotes = null;
 	}
 
 
@@ -117,6 +120,6 @@ public class Quote implements Cloneable {
 		clone.setAdditionalNotes(getAdditionalNotes());
 		if (hasExpectedSize())
 			clone.setExpectedSize(getExpectedSize());
-		return clone;    // Overridden method
+		return clone;
 	}
 }

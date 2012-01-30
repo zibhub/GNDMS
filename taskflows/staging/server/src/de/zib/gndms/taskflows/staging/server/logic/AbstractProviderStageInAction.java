@@ -126,7 +126,7 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
         final Slice slice = findSlice();
         setSliceId(slice.getId());
         doStaging(getOfferTypeConfig(), getOrderBean(), slice);
-        changeSliceOwner( slice ) ;
+      //  changeSliceOwner( slice ) ;
         super.onInProgress(wid, state, isRestartedTask, altTaskState);
     }
 

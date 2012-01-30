@@ -13,8 +13,11 @@ import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowFactory;
 import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowProvider;
 import de.zib.gndms.logic.model.gorfx.taskflow.UnsatisfiableOrderException;
 import de.zib.gndms.model.common.NoSuchResourceException;
+import de.zib.gndms.model.common.PermissionInfo;
+import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.neomodel.common.Dao;
+import de.zib.gndms.neomodel.gorfx.TaskBuilder;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.slf4j.Logger;
@@ -319,7 +322,13 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                         List<Quote> quotes = tf.getQuotes();
                         Quote quote = quoteId != null && quoteId >= 0 && quoteId < quotes.size()  
                                   ? quotes.get( quoteId ) : quotes.get( 0 );
-                        taskling = executorService.submitTaskAction( dao, ta, tf.getOrder(), quote, wid );
+                        taskling = executorService.submitTaskAction( dao, ta, 
+                                new TaskBuilder().setOrder( tf.getOrder() )
+                                .setContract( PersistentContract.acceptQuoteNow( quote ) )
+                                .setPermissionInfo( new PermissionInfo( "default",
+                                                                        "PermissionConfiglet" ) )
+                                
+                                , wid );
                     } else
                         taskling = executorService.submitTaskAction( dao, ta, tf.getOrder(), wid );
                     hs = HttpStatus.CREATED;

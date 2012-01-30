@@ -21,6 +21,7 @@ import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.logic.config.WrongConfigurationException;
 import de.zib.gndms.model.dspace.Slice;
 import org.joda.time.DateTime;
+import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * The slice configuration checks and accesses a ConfigHolder for a slice, which
@@ -34,6 +35,7 @@ import org.joda.time.DateTime;
  */
 
 public class SliceConfiguration implements Configuration {
+
 	/**
 	 * The key for the slice's size.
 	 */
@@ -181,7 +183,8 @@ public class SliceConfiguration implements Configuration {
         StringBuilder s = new StringBuilder();
         s.append( SLICE_SIZE ).append( ": '" ).append( size ).append( "'; " );
         s.append( TERMINATION_TIME ).append( ": '" ).append(
-                terminationTime.getMillis() ).append( "'; " );
+                ISODateTimeFormat.dateTime().print( terminationTime ) ).append( "'; "
+        );
 		return s.toString();
 	}
 
@@ -193,7 +196,7 @@ public class SliceConfiguration implements Configuration {
 	 * @return The slice configuration.
 	 */
 	public static SliceConfiguration getSliceConfiguration(Slice slice) {
-		return new SliceConfiguration(slice.getTotalStorageSize(), slice.getTerminationTime().getMillis());
+		return new SliceConfiguration(slice.getTotalStorageSize(), slice.getTerminationTime());
 	}
 
 	/*
