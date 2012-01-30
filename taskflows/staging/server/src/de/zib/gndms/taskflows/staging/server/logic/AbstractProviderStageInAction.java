@@ -151,7 +151,9 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
 
     protected void deleteSlice( final String sliceId ) {
 
-        getService().submitTaskAction( new DeleteSliceTaskAction(),
+        final DeleteSliceTaskAction deleteSliceTaskAction = new DeleteSliceTaskAction();
+        getInjector().injectMembers( deleteSliceTaskAction );
+        getService().submitTaskAction( deleteSliceTaskAction,
                 new ModelIdHoldingOrder( sliceId ), getWid() );
     }
 
