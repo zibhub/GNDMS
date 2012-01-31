@@ -43,6 +43,7 @@ import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import de.zib.gndms.taskflows.staging.client.ProviderStageInMeta;
 import de.zib.gndms.taskflows.staging.client.model.ProviderStageInOrder;
+import de.zib.gndms.taskflows.staging.client.model.ProviderStageInResult;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +51,7 @@ import org.springframework.http.ResponseEntity;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import java.io.File;
+import java.io.Serializable;
 
 
 /**
@@ -63,7 +65,7 @@ import java.io.File;
 @SuppressWarnings({ "FeatureEnvy" })
 public abstract class AbstractProviderStageInAction extends TaskFlowAction<ProviderStageInOrder> {
 
-    public static final String PROXY_FILE_NAME = "/x509_proxy.pem";
+    public static final String PROXY_FILE_NAME = File.separator + "x509_proxy.pem";
     public static final long DEFAULT_SLICE_SIZE = 50*1000*1024;
 
 	protected StagingIOFormatHelper stagingIOHelper = new StagingIOFormatHelper();
@@ -92,42 +94,85 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
 
 
     @Override
-    public CredentialProvider getCredentialProvider() {
-
-        CredentialProvider credentialProvider = new GetCredentialProviderFor( getOrder(),
-                ProviderStageInMeta.REQUIRED_AUTHORIZATION.get( 0 ), getMyProxyFactoryProvider()
-        ).invoke();
-        credentialProvider.setInstaller( new AsFileCredentialInstaller() );
-        return  credentialProvider;
+    protected void onInProgress(@NotNull String wid, @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) throws Exception {
+        ensureOrder();
+        final Slice slice = findSlice();
+        doStaging(getOfferTypeConfig(), getOrderBean(), slice);
+      //  changeSliceOwner( slice ) ;
+        transitWithPayload( createResult(), TaskState.FINISHED );
+        //super.onInProgress(wid, state, isRestartedTask, altTaskState);
     }
 
 
-    protected void prepareProxy( ) {
-        final Slice slice = findSlice();
+    protected abstract void doStaging(
+        final MapConfig offerTypeConfigParam, final ProviderStageInOrder orderParam,
+        final Slice sliceParam );
+
+
+    private ProviderStageInResult createResult() {
+
+        Session session = getDao().beginSession();
+        Specifier<Void> sliceSpec;
+        try {
+            sliceSpec = ( Specifier<Void> ) getTask(session).getPayload();
+            session.success();
+        } finally {
+            session.finish();
+        }
+
+        return new ProviderStageInResult( sliceSpec );
+    }
+
+
+    @Override
+    protected void onFailed(@NotNull String wid, @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) throws Exception {
+        try {
+            cancelStaging();
+        }
+        finally {
+            killSlice();
+            super.onFailed(wid, state, isRestartedTask, altTaskState);
+        }
+    }
+
+
+	@SuppressWarnings({ "NoopMethodInAbstractClass" })
+	protected void callCancel(final MapConfig offerTypeConfigParam, final ProviderStageInOrder orderParam,
+            final File sliceParam) {
+		// Implement in subclass
+	}
+
+	protected void cancelStaging() {
+		final Slice slice;
+		final File sliceDir;
+
+		final EntityManager em = getEntityManager();
+		final TxFrame txf = new TxFrame(em);
+		try {
+			slice = findSlice();
+			if (slice == null)
+				// MAYBE log this somewhere?
+				return;
+			sliceDir = new File(slice.getSubspace().getPathForSlice(slice));
+			txf.commit();
+		}
+		finally { txf.finish(); }
+		// potentially unsafe but do not want to keep the transaction open
+		// we just dont change the slice dir after creation
+		callCancel(getOfferTypeConfig(), getOrderBean(), sliceDir);
+	}
+
+
+    protected void prepareProxy( Slice slice ) {
+        //final Slice slice = findSlice();
         File sd = new File( slice.getSubspace().getPathForSlice( slice ) + PROXY_FILE_NAME );
         getCredentialProvider().installCredentials( sd );
     }
 
 
-	@SuppressWarnings({ "ThrowableInstanceNeverThrown" })
-	protected @NotNull File getScriptFileByParam(final MapConfig configParam, String scriptParam)
-            throws MandatoryOptionMissingException {
-
-		final @NotNull File scriptFile = configParam.getFileOption( scriptParam );
-		if (! isValidScriptFile(scriptFile))
-		    throw new IllegalArgumentException("Invalid " + scriptParam + " script: " + scriptFile.getPath());
-		return scriptFile;
-	}
-
-
-    @Override
-    protected void onInProgress(@NotNull String wid, @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) throws Exception {
-        ensureOrder();
-        final Slice slice = findSlice();
-        setSliceId(slice.getId());
-        doStaging(getOfferTypeConfig(), getOrderBean(), slice);
-        changeSliceOwner( slice ) ;
-        super.onInProgress(wid, state, isRestartedTask, altTaskState);
+    protected boolean removeProxy( final String s ) {
+        File f = new File( s );
+        return f.exists() && f.delete();
     }
 
 
@@ -149,29 +194,6 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
     }
 
 
-    protected void deleteSlice( final String sliceId ) {
-
-        getService().submitTaskAction( new DeleteSliceTaskAction(),
-                new ModelIdHoldingOrder( sliceId ), getWid() );
-    }
-
-
-    private String getWid() {
-
-        Session session = getDao().beginSession();
-        try {
-            String wid = getTask( session ).getWID();
-            session.success();
-            return wid;
-        } finally {session.finish();}
-    }
-
-
-    protected abstract void doStaging(
-        final MapConfig offerTypeConfigParam, final ProviderStageInOrder orderParam,
-        final Slice sliceParam );
-
-
     private void createNewSlice() throws MandatoryOptionMissingException {
 
         final ConfigProvider config = getOfferTypeConfig();
@@ -191,7 +213,7 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
         if (! HttpStatus.CREATED.equals( sliceSpec.getStatusCode() ) )
             throw new IllegalStateException( "Slice creation failed" );
 
-        setSliceId( sliceSpec.getBody().getUriMap().get( UriFactory.SLICE ) );
+        setSliceSpecifier( sliceSpec.getBody() );
 
         // to provoke nasty test condition uncomment the following line
         //throw new NullPointerException( );
@@ -217,48 +239,29 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
     }
 
 
-    @Override
-    protected void onFailed(@NotNull String wid, @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) throws Exception {
-        try {
-            cancelStaging();
-        }
-        finally {
-            killSlice();
-            super.onFailed(wid, state, isRestartedTask, altTaskState);
-        }
+    protected void deleteSlice( final String sliceId ) {
+
+        final DeleteSliceTaskAction deleteSliceTaskAction = new DeleteSliceTaskAction();
+        getInjector().injectMembers( deleteSliceTaskAction );
+        getService().submitTaskAction( deleteSliceTaskAction,
+                new ModelIdHoldingOrder( sliceId ), getWid() );
     }
-
-	protected void cancelStaging() {
-		final Slice slice;
-		final File sliceDir;
-
-		final EntityManager em = getEntityManager();
-		final TxFrame txf = new TxFrame(em);
-		try {
-			slice = findSlice();
-			if (slice == null)
-				// MAYBE log this somewhere?
-				return;
-			sliceDir = new File(slice.getSubspace().getPathForSlice(slice));
-			txf.commit();
-		}
-		finally { txf.finish(); }
-		// potentially unsafe but do not want to keep the transaction open
-		// we just dont change the slice dir after creation
-		callCancel(getOfferTypeConfig(), getOrderBean(), sliceDir);
-	}
-
-
-	@SuppressWarnings({ "NoopMethodInAbstractClass" })
-	protected void callCancel(final MapConfig offerTypeConfigParam, final ProviderStageInOrder orderParam,
-            final File sliceParam) {
-		// Implement in subclass
-	}
 
 
 	private void killSlice() {
         deleteSlice( getSliceId() );
 	}
+
+
+    private String getWid() {
+
+        Session session = getDao().beginSession();
+        try {
+            String wid = getTask( session ).getWID();
+            session.success();
+            return wid;
+        } finally {session.finish();}
+    }
 
 
 	protected ProcessBuilder createProcessBuilder(String name, File dir) {
@@ -277,10 +280,32 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
        }
    }
 
+
+	@SuppressWarnings({ "ThrowableInstanceNeverThrown" })
+	protected @NotNull File getScriptFileByParam(final MapConfig configParam, String scriptParam)
+            throws MandatoryOptionMissingException {
+
+		final @NotNull File scriptFile = configParam.getFileOption( scriptParam );
+		if (! isValidScriptFile(scriptFile))
+		    throw new IllegalArgumentException("Invalid " + scriptParam + " script: " + scriptFile.getPath());
+		return scriptFile;
+	}
+
 	@Override
     @NotNull
     public Class<ProviderStageInOrder> getOrderBeanClass( ) {
         return ProviderStageInOrder.class;
+    }
+
+
+    @Override
+    public CredentialProvider getCredentialProvider() {
+
+        CredentialProvider credentialProvider = new GetCredentialProviderFor( getOrder(),
+                ProviderStageInMeta.REQUIRED_AUTHORIZATION.get( 0 ), getMyProxyFactoryProvider()
+        ).invoke();
+        credentialProvider.setInstaller( new AsFileCredentialInstaller() );
+        return  credentialProvider;
     }
 
 
@@ -291,10 +316,10 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
 
 
 
-    protected void setSliceId( String sliceId ) {
+    protected void setSliceSpecifier( Specifier<Void> sliceId ) {
         final Session session = getDao().beginSession();
         try {
-            setSliceKind( sliceId, session );
+            setSliceSpecifier( sliceId, session );
             session.success();
         }
         finally {
@@ -303,17 +328,29 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
     }
 
 
-    private void setSliceKind( final String sliceId, final Session session ) {
+    private void setSliceSpecifier( final Specifier<Void> sliceId, final Session session ) {
 
-        final Task task = getTask(session);
-        ProviderStageInOrder order = getOrderBean();
-        order.setActSliceId( sliceId );
-        task.setORQ( getOrder() );
+        final Task task = getTask( session );
+        task.setPayload( sliceId );
     }
 
 
     protected String getSliceId( ) {
-        return getOrderBean().getActSliceId();
+
+        // maybe cache the slice id
+        final Session session = getDao().beginSession();
+        String sliceId;
+        try {
+            final Task task = getTask(session);
+            Specifier<Void> sliceSpec = ( Specifier<Void> ) task.getPayload();
+            sliceId = sliceSpec.getUriMap().get( UriFactory.SLICE );
+            session.success();
+        }
+        finally {
+            session.finish();
+        }
+
+        return sliceId;
     }
 
 	@SuppressWarnings({ "MethodWithMoreThanThreeNegations" })

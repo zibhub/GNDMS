@@ -15,6 +15,7 @@ package de.zib.gndms.common.rest;
  * limitations under the License.
  */
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,9 +28,11 @@ import java.util.Map;
  * @date 02.03.11  17:17
  * @brief Specifier for a REST resource.
  */
-public class Specifier<T> {
+public class Specifier<T> implements Serializable {
 
-	/**
+    private static final long serialVersionUID = 4907609464488528768L;
+
+    /**
 	 * The complete url of the resource.
 	 */
 	private String url;

@@ -18,6 +18,7 @@ package de.zib.gndms.taskflows.staging.client.model;
 
 
 import de.zib.gndms.common.model.gorfx.types.AbstractTaskFlowResult;
+import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.taskflows.staging.client.ProviderStageInMeta;
 
 /**
@@ -26,34 +27,34 @@ import de.zib.gndms.taskflows.staging.client.ProviderStageInMeta;
  * <p/>
  * User: mjorra, Date: 13.10.2008, Time: 14:10:06
  */
-public class ProviderStageInResult extends AbstractTaskFlowResult<String> {
+public class ProviderStageInResult extends AbstractTaskFlowResult<Specifier<Void>> {
 
     private static final long serialVersionUID = -3003504928510518008L;
 
-    private String sliceKey;
+    private Specifier<Void> sliceKey;
 
 
     public ProviderStageInResult() {
         super( ProviderStageInMeta.PROVIDER_STAGING_KEY );
     }
 
-    public ProviderStageInResult( String sk ) {
+    public ProviderStageInResult( Specifier<Void> sk ) {
         super(  ProviderStageInMeta.PROVIDER_STAGING_KEY );
         sliceKey = sk;
     }
 
-    public String getSliceKey() {
+    public Specifier<Void> getSliceKey() {
         return sliceKey;
     }
 
 
-    public void setSliceKey( String sk ) {
+    public void setSliceKey( Specifier<Void> sk ) {
         this.sliceKey = sk;
     }
 
 
     @Override
-    public String getResult() {
+    public Specifier<Void> getResult() {
 
         return getSliceKey();
     }

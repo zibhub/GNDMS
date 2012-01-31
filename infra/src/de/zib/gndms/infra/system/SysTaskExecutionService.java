@@ -15,17 +15,15 @@ package de.zib.gndms.infra.system;
  * limitations under the License.
  */
 
-import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.logic.action.ActionConfigurer;
 import de.zib.gndms.logic.model.*;
 import de.zib.gndms.model.common.ModelUUIDGen;
-import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
+import de.zib.gndms.neomodel.gorfx.TaskBuilder;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.jetbrains.annotations.NotNull;
-import org.joda.time.DateTime;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -192,7 +190,7 @@ public final class SysTaskExecutionService extends ActionConfigurer implements T
     public Taskling submitTaskAction( Dao dao, TaskAction taskAction, Serializable order,
                                       String wid )
     {
-        return submitTaskAction( dao, taskAction, order, null, wid );
+        return submitTaskAction( dao, taskAction, new TaskBuilder().setOrder( order ), wid );
     }
 
 
@@ -206,8 +204,7 @@ public final class SysTaskExecutionService extends ActionConfigurer implements T
 
     @Override
     public Taskling submitTaskAction( final Dao dao, final TaskAction taskAction,
-                                      final Serializable order, final Quote quote,
-                                      final String wid )
+                                      final TaskBuilder builder, final String wid )
     {
         String id = UUID.randomUUID().toString();
         Taskling taskling = null;
@@ -216,11 +213,9 @@ public final class SysTaskExecutionService extends ActionConfigurer implements T
         try {
             Task task = ses.findTask( id );
 
-            if( quote != null )
-                task.setContract( PersistentContract.acceptQuoteAt( new DateTime(), quote ) );
             // todo call this with useful default quote
+            builder.applyToTask( task );
             task.setWID( wid );
-            task.setORQ( order );
             taskling = task.getTaskling();
             ses.success();
         } finally {

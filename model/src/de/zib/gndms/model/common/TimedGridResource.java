@@ -22,7 +22,10 @@ import org.apache.openjpa.persistence.Factory;
 import org.apache.openjpa.persistence.Persistent;
 import org.joda.time.DateTime;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 
 /**
@@ -39,7 +42,8 @@ public class TimedGridResource extends GridResource implements TimedGridResource
     }
 
     @Persistent
-    @Column(name="tod", nullable=false) @Temporal(value = TemporalType.TIMESTAMP)
+    @Column(name="tod", nullable=false)
+    @Temporal( TemporalType.TIMESTAMP)
     @Factory( "de.zib.gndms.model.util.JodaTimeForJPA.toDateTime" )
     @Externalizer( "de.zib.gndms.model.util.JodaTimeForJPA.fromDateTime" )
     public DateTime getTerminationTime() {

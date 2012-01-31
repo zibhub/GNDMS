@@ -45,7 +45,7 @@ public class PKCredentialHolder implements CredentialHolder {
 
         if( credential == null )
             credential  = new GlobusGSSCredentialImpl(
-                new GlobusCredential( keyFile, certFile ), GSSCredential.INITIATE_AND_ACCEPT );
+                    new GlobusCredential( keyFile, certFile ), GSSCredential.INITIATE_AND_ACCEPT );
 
         return credential;
     }

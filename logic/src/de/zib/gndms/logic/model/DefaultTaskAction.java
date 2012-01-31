@@ -68,8 +68,10 @@ public class DefaultTaskAction<O extends Order> extends TaskAction<O> {
                 break;
             case FINISHED:
                 onFinished(wid, state, isRestartedTask, altTaskState);
+                break;
             case FAILED:
                 onFailed(wid, state, isRestartedTask, altTaskState);
+                break;
         }
     }
 

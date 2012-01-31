@@ -32,11 +32,14 @@ public final class JodaTimeForJPA {
 
     private static final DateTimeFormatter FORMATTER = ISODateTimeFormat.dateTime();
 
+    //public static String fromDateTime( final DateTime dateTime ) {
+    //    return FORMATTER.print( dateTime );
+    //}
+
     public static Calendar fromDateTime( final DateTime dateTime ) {
         return dateTime.toGregorianCalendar();
     }
-    
-    
+
     public static DateTime toDateTime( final Calendar dateTime ) {
         return new DateTime( dateTime );
     }

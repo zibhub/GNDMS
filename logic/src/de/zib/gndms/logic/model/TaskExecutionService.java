@@ -18,9 +18,8 @@ package de.zib.gndms.logic.model;
 
 
 
-import de.zib.gndms.common.model.gorfx.types.Quote;
-import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.neomodel.common.Dao;
+import de.zib.gndms.neomodel.gorfx.TaskBuilder;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.jetbrains.annotations.NotNull;
 
@@ -121,5 +120,13 @@ public interface TaskExecutionService {
      */
     Taskling submitTaskAction( TaskAction taskAction, Serializable order, String wid );
 
-    Taskling submitTaskAction( Dao dao, TaskAction taskAction, Serializable order, Quote quote, String wid );
+    /**
+     * Creates a task and taskling, initializes the task action and submits it.
+     *
+     * @param dao The dao under which the task ist submitted.
+     * @param taskAction The action which should be submitted.
+     * @param builder Contains all possible parameters relevant for the task
+     * @param wid The workflow id, used to keep trak of the logging massages of the task action.
+     */
+    Taskling submitTaskAction( Dao dao, TaskAction taskAction, TaskBuilder builder , String wid );
 }

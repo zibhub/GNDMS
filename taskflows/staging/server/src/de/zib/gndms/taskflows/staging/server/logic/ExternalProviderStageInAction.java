@@ -20,19 +20,18 @@ package de.zib.gndms.taskflows.staging.server.logic;
 
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
-import static de.zib.gndms.taskflows.staging.server.logic.ExternalProviderStageInQuoteCalculator.GLOBUS_DEATH_DURATION;
 import de.zib.gndms.model.dspace.Slice;
-import de.zib.gndms.taskflows.staging.client.model.ProviderStageInOrder;
-import de.zib.gndms.taskflows.staging.client.model.ProviderStageInResult;
-import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import de.zib.gndms.stuff.Sleeper;
 import de.zib.gndms.taskflows.staging.client.ProviderStageInMeta;
+import de.zib.gndms.taskflows.staging.client.model.ProviderStageInOrder;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
 import java.io.File;
+
+import static de.zib.gndms.taskflows.staging.server.logic.ExternalProviderStageInQuoteCalculator.GLOBUS_DEATH_DURATION;
 
 
 /**
@@ -68,6 +67,7 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
 
         stagingIOHelper.formatFromMap( getOfferTypeConfig() );
 
+        prepareProxy( sliceParam );
 	    final File sliceDir = new File(sliceParam.getSubspace().getPathForSlice(sliceParam));
         final ProcessBuilder procBuilder = createProcessBuilder("stagingCommand", sliceDir);
 	    if (procBuilder == null) {
@@ -86,10 +86,13 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
         action.setErrorReceiver(errRecv);
 
         int result = action.call();
+        removeProxy( sliceDir + PROXY_FILE_NAME );
         switch (result) {
             case 0:
                 getLogger().debug("Staging completed: " + outRecv.toString());
-                transitWithPayload(new ProviderStageInResult(sliceParam.getId()), TaskState.FINISHED);
+            //  this is now done in super.inProgress
+            //    transitWithPayload(new ProviderStageInResult(sliceParam.getId()),
+            //        TaskState.FINISHED);
                 break;
             default:
                 if (result > 127) {
@@ -104,8 +107,8 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
         }
     }
 
-	
-	@Override
+
+    @Override
 	protected void callCancel(final MapConfig offerTypeConfigParam,
 	                          final ProviderStageInOrder orderParam,
                               final File sliceDir) {
