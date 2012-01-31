@@ -22,10 +22,7 @@ import org.apache.openjpa.persistence.Factory;
 import org.apache.openjpa.persistence.Persistent;
 import org.joda.time.DateTime;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 
 /**
