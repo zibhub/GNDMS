@@ -43,6 +43,7 @@ import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import de.zib.gndms.taskflows.staging.client.ProviderStageInMeta;
 import de.zib.gndms.taskflows.staging.client.model.ProviderStageInOrder;
+import de.zib.gndms.taskflows.staging.client.model.ProviderStageInResult;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +51,7 @@ import org.springframework.http.ResponseEntity;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import java.io.File;
+import java.io.Serializable;
 
 
 /**
@@ -124,10 +126,25 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
     protected void onInProgress(@NotNull String wid, @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) throws Exception {
         ensureOrder();
         final Slice slice = findSlice();
-        setSliceId(slice.getId());
         doStaging(getOfferTypeConfig(), getOrderBean(), slice);
       //  changeSliceOwner( slice ) ;
-        super.onInProgress(wid, state, isRestartedTask, altTaskState);
+        transitWithPayload( createResult(), TaskState.FINISHED );
+        //super.onInProgress(wid, state, isRestartedTask, altTaskState);
+    }
+
+
+    private ProviderStageInResult createResult() {
+
+        Session session = getDao().beginSession();
+        Specifier<Void> sliceSpec;
+        try {
+            sliceSpec = ( Specifier<Void> ) getTask(session).getPayload();
+            session.success();
+        } finally {
+            session.finish();
+        }
+
+        return new ProviderStageInResult( sliceSpec );
     }
 
 
@@ -193,7 +210,7 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
         if (! HttpStatus.CREATED.equals( sliceSpec.getStatusCode() ) )
             throw new IllegalStateException( "Slice creation failed" );
 
-        setSliceId( sliceSpec.getBody().getUriMap().get( UriFactory.SLICE ) );
+        setSliceSpecifier( sliceSpec.getBody() );
 
         // to provoke nasty test condition uncomment the following line
         //throw new NullPointerException( );
@@ -293,10 +310,10 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
 
 
 
-    protected void setSliceId( String sliceId ) {
+    protected void setSliceSpecifier( Specifier<Void> sliceId ) {
         final Session session = getDao().beginSession();
         try {
-            setSliceKind( sliceId, session );
+            setSliceSpecifier( sliceId, session );
             session.success();
         }
         finally {
@@ -305,17 +322,29 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
     }
 
 
-    private void setSliceKind( final String sliceId, final Session session ) {
+    private void setSliceSpecifier( final Specifier<Void> sliceId, final Session session ) {
 
-        final Task task = getTask(session);
-        ProviderStageInOrder order = getOrderBean();
-        order.setActSliceId( sliceId );
-        task.setORQ( getOrder() );
+        final Task task = getTask( session );
+        task.setPayload( sliceId );
     }
 
 
     protected String getSliceId( ) {
-        return getOrderBean().getActSliceId();
+
+        // maybe cache the slice id
+        final Session session = getDao().beginSession();
+        String sliceId;
+        try {
+            final Task task = getTask(session);
+            Specifier<Void> sliceSpec = ( Specifier<Void> ) task.getPayload();
+            sliceId = sliceSpec.getUriMap().get( UriFactory.SLICE );
+            session.success();
+        }
+        finally {
+            session.finish();
+        }
+
+        return sliceId;
     }
 
 	@SuppressWarnings({ "MethodWithMoreThanThreeNegations" })

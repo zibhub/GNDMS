@@ -70,7 +70,7 @@ public class ProviderStageInExample extends GORFXTaskFlowExample {
             protected void handleResult( TaskResult res ) {
 
                 ProviderStageInResult ftr = ProviderStageInResult.class.cast( res );
-                System.out.println( "Result slice id: "+ ftr.getResult() );
+                System.out.println( "Result slice id: "+ ftr.getResult().getUrl() );
             }
 
 
