@@ -378,7 +378,7 @@ public class SliceServiceImpl implements SliceService {
 				return new ResponseEntity<Void>(null, headers,
 						HttpStatus.OK);
 			} else {
-				logger.warn("File " + file + "cannot be read or is no file.");
+				logger.warn("File " + file + " cannot be read or is no file.");
 				return new ResponseEntity<Void>(null, headers,
 						HttpStatus.FORBIDDEN);
 			}

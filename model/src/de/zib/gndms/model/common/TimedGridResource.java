@@ -22,20 +22,21 @@ import org.apache.openjpa.persistence.Factory;
 import org.apache.openjpa.persistence.Persistent;
 import org.joda.time.DateTime;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 
 /**
  * GridResource + terminationTime
  **/
-@MappedSuperclass
-public abstract class TimedGridResource extends GridResource implements TimedGridResourceItf {
+@Entity( name="TimedGridResources" )
+@Table( name="TimedGridResources", schema="dspace" )
+public class TimedGridResource extends GridResource implements TimedGridResourceItf {
 
     private DateTime terminationTime;
 
+    protected TimedGridResource() {
+        super();
+    }
 
     @Persistent
     @Column(name="tod", nullable=false)

@@ -27,8 +27,6 @@ import java.util.Calendar;
  * @date 26.01.12  11:50
  * @brief
  *
- *
- * todo this doesn't work very well, openjpa converts calender to byte...
  */
 public final class JodaTimeForJPA {
 
