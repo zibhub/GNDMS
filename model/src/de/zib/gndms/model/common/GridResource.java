@@ -18,9 +18,7 @@ package de.zib.gndms.model.common;
 
 
 
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Column;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @MappedSuperclass
 public abstract class GridResource extends GridEntity implements GridResourceItf {

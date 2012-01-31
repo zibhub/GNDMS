@@ -51,8 +51,8 @@ public class Test extends JPATest
     public void inheritanceTest() {
         EntityManager em = emf.createEntityManager();
 
-        A a = new A();
-        a.setI( 0 );
+        //A a = new A();
+        //a.setI( 0 );
 
         //B b = new B();
         //ib.setI( 1 );
@@ -67,7 +67,7 @@ public class Test extends JPATest
         try {
             transaction.begin();
             
-            em.persist( a );
+            //em.persist( a );
             //em.persist( b );
             em.persist( c );
 

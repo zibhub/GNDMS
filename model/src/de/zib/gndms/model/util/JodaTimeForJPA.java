@@ -19,25 +19,25 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
+import java.util.Calendar;
+
 /**
  * @author Maik Jorra
  * @email jorra@zib.de
  * @date 26.01.12  11:50
  * @brief
  *
- *
- * todo this doesn't work very well, openjpa converts calender to byte...
  */
 public final class JodaTimeForJPA {
 
     private static final DateTimeFormatter FORMATTER = ISODateTimeFormat.dateTime();
 
-    public static String fromDateTime( final DateTime dateTime ) {
-        return FORMATTER.print( dateTime );
+    public static Calendar fromDateTime( final DateTime dateTime ) {
+        return dateTime.toGregorianCalendar();
     }
     
     
-    public static DateTime toDateTime( final String dateTime ) {
+    public static DateTime toDateTime( final Calendar dateTime ) {
         return new DateTime( dateTime );
     }
 
