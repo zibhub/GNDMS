@@ -86,6 +86,7 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
         action.setErrorReceiver(errRecv);
 
         int result = action.call();
+        removeProxy( sliceDir + PROXY_FILE_NAME );
         switch (result) {
             case 0:
                 getLogger().debug("Staging completed: " + outRecv.toString());
@@ -106,8 +107,8 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
         }
     }
 
-	
-	@Override
+
+    @Override
 	protected void callCancel(final MapConfig offerTypeConfigParam,
 	                          final ProviderStageInOrder orderParam,
                               final File sliceDir) {
