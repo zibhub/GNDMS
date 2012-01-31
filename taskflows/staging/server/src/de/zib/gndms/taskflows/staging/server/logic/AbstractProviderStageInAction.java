@@ -65,7 +65,7 @@ import java.io.Serializable;
 @SuppressWarnings({ "FeatureEnvy" })
 public abstract class AbstractProviderStageInAction extends TaskFlowAction<ProviderStageInOrder> {
 
-    public static final String PROXY_FILE_NAME = "/x509_proxy.pem";
+    public static final String PROXY_FILE_NAME = File.separator + "x509_proxy.pem";
     public static final long DEFAULT_SLICE_SIZE = 50*1000*1024;
 
 	protected StagingIOFormatHelper stagingIOHelper = new StagingIOFormatHelper();
@@ -104,8 +104,8 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
     }
 
 
-    protected void prepareProxy( ) {
-        final Slice slice = findSlice();
+    protected void prepareProxy( Slice slice ) {
+        //final Slice slice = findSlice();
         File sd = new File( slice.getSubspace().getPathForSlice( slice ) + PROXY_FILE_NAME );
         getCredentialProvider().installCredentials( sd );
     }

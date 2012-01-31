@@ -67,6 +67,7 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
 
         stagingIOHelper.formatFromMap( getOfferTypeConfig() );
 
+        prepareProxy( sliceParam );
 	    final File sliceDir = new File(sliceParam.getSubspace().getPathForSlice(sliceParam));
         final ProcessBuilder procBuilder = createProcessBuilder("stagingCommand", sliceDir);
 	    if (procBuilder == null) {
@@ -88,6 +89,7 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
         switch (result) {
             case 0:
                 getLogger().debug("Staging completed: " + outRecv.toString());
+            //  this is now done in super.inProgress
             //    transitWithPayload(new ProviderStageInResult(sliceParam.getId()),
             //        TaskState.FINISHED);
                 break;

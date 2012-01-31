@@ -15,6 +15,9 @@
  */
 
 package de.zib.gndms.kit.access;
+
+import java.io.File;
+
 /**
  * @author Maik Jorra
  * @email jorra@zib.de
@@ -24,7 +27,16 @@ package de.zib.gndms.kit.access;
 public class HostCredentialHolder extends PKCredentialHolder {
 
     // Below load host cert from for standard /etc/grid-security/host{key,cert}.pem
-    public HostCredentialHolder( String base ) {
-        super( base + "/hostcert.pem", base + "/hostkey.pem" );
+    public HostCredentialHolder( String base, String prefix ) {
+        super( credentialPrefix( base, prefix ) + "cert.pem",
+               credentialPrefix( base, prefix )  + "key.pem" );
+    }
+
+
+    private static String credentialPrefix( final String base, final String prefix ) {
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append( base ).append( File.separator ).append( prefix );
+        return stringBuilder.toString();
     }
 }

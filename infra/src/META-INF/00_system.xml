@@ -78,6 +78,7 @@
         <property name="connectionCredentialHolder">
            <bean class="de.zib.gndms.kit.access.HostCredentialHolder" >
                    <constructor-arg name="base" value="${myProxyConnectionCredentialFolder}"/>
+                   <constructor-arg name="prefix" value="${myProxyConnectionCredentialPrefix}"/>
            </bean>
         </property>
     </bean>
