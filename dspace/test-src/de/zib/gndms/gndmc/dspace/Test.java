@@ -32,8 +32,7 @@ import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.springframework.http.ResponseEntity;
 import org.testng.Assert;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
+import javax.persistence.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -49,6 +48,41 @@ public class Test extends JPATest
     String sliceId;
 
     @org.testng.annotations.Test( groups = { "jpa" } )
+    public void inheritanceTest() {
+        EntityManager em = emf.createEntityManager();
+
+        A a = new A();
+        a.setI( 0 );
+
+        //B b = new B();
+        //ib.setI( 1 );
+        //b.y = 17;
+
+        C c = new C();
+        c.setI( 2 );
+        c.y = 42;
+        c.z = 23;
+
+        final EntityTransaction transaction = em.getTransaction();
+        try {
+            transaction.begin();
+            
+            em.persist( a );
+            //em.persist( b );
+            em.persist( c );
+
+            transaction.commit();
+        }
+        finally {
+            try {
+                em.close();
+            } catch ( Exception e ) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @org.testng.annotations.Test( groups = { "jpa" }, dependsOnMethods = { "inheritanceTest" } )
     public void test1() {
         EntityManager em = emf.createEntityManager();
 
@@ -83,7 +117,6 @@ public class Test extends JPATest
             }
         }
     }
-
 
     @org.testng.annotations.Test( groups = { "jpa" }, dependsOnMethods = { "test1" })
     public void test2() {
