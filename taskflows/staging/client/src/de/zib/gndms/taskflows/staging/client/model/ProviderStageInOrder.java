@@ -39,10 +39,9 @@ public class ProviderStageInOrder extends AbstractOrder {
 
     private String actDataFile;
     private String actMetadataFile;
-	private String actSliceId;
 
 
-	public ProviderStageInOrder() {
+    public ProviderStageInOrder() {
         super( );
         super.setTaskFlowType( ProviderStageInMeta.PROVIDER_STAGING_KEY );
     }
@@ -89,12 +88,4 @@ public class ProviderStageInOrder extends AbstractOrder {
     }
 
 
-	public String getActSliceId() {
-		return actSliceId;
-	}
-
-
-	public void setActSliceId(final String actSliceIdParam) {
-		actSliceId = actSliceIdParam;
-	}
 }
