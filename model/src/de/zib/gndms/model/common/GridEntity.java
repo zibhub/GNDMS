@@ -25,7 +25,7 @@ import javax.persistence.*;
  * Super class of grid entities with a version field
  *
  **/
-@Inheritance( strategy = InheritanceType.TABLE_PER_CLASS )
+//@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 @MappedSuperclass
 public abstract class GridEntity extends ModelEntity {
     
