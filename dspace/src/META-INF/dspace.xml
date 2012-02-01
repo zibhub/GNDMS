@@ -25,6 +25,10 @@
         </property>
     </bean>
 
+    <bean class="de.zib.gndms.logic.model.dspace.SliceReaper">
+        <property name="intervall" value="5000" />
+    </bean>
+
     <!-- DSpaceService -->
     
     <bean id="dspaceService" class="de.zib.gndms.dspace.service.DSpaceServiceImpl">

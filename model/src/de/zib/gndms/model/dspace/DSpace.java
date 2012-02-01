@@ -36,6 +36,7 @@ import javax.persistence.Table;
 @NamedQuery(name="findDSpaceInstances", query="SELECT instance FROM DSpaces instance"),
 @NamedQuery(name="listAllSubspaceIds", query="SELECT instance.id FROM Subspaces instance"),
 @NamedQuery(name="listAllSliceIds", query="SELECT instance.id FROM Slices instance"),
+@NamedQuery(name="listAllSlices", query="SELECT instance FROM Slices instance"),
 @NamedQuery(name="listAllSlicesOfKind", query="SELECT instance FROM Slices instance WHERE instance.kind.id = :sliceKindId"),
 @NamedQuery(name="listSlicesOfSubspace", query="SELECT instance.id FROM Slices instance WHERE instance.id = :subspace"),
 @NamedQuery(name="listAllSubspaces", query="SELECT DISTINCT x FROM Subspaces x"),
