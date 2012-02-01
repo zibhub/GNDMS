@@ -347,7 +347,8 @@ public class SliceServiceImpl implements SliceService {
 	}
 
 	@Override
-	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{sliceId}/_{fileName}", method = RequestMethod.GET)
+	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{sliceId}/_{fileName:.*}",
+            method = RequestMethod.GET)
 	public final ResponseEntity<Void> listFileContent(
             @PathVariable final String subspace,
             @PathVariable final String sliceKind,
@@ -372,7 +373,7 @@ public class SliceServiceImpl implements SliceService {
 			if (file.exists() && file.canRead() && file.isFile()) {
 				// TODO get requested file attributes
 
-				if (attrs.contains("contents")) {
+				if ( attrs == null || attrs.contains("contents")) {
                     FileCopyUtils.copy( new FileInputStream( file ), out );
 				}
 				return new ResponseEntity<Void>(null, headers,

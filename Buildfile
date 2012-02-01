@@ -126,6 +126,7 @@ SPRING = [
            "org.springframework:spring-oxm:jar:#{SPRING_VERSION}",
            "org.springframework:spring-tx:jar:#{SPRING_VERSION}",
            "org.springframework:spring-web:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-web:jar:#{SPRING_VERSION}",
            "org.springframework:spring-webmvc:jar:#{SPRING_VERSION}",
          ] 
 ASPECTJ = [
