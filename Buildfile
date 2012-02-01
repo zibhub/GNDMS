@@ -777,7 +777,7 @@ define 'gndms' do
           
     desc 'DSpace rest service'
     define 'dspace', :layout => dmsLayout('dspace', 'gndms-dspace-rest') do
-        compile.with project('infra'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), project('gndmc-rest'), project('common'), SPRING, SLF4J, XSTREAM, COMMONS_LOGGING, COMMONS_IO, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME, OPENJPA, INJECT 
+        compile.with project('infra'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), project('gndmc-rest'), project('common'), SPRING, SLF4J, XSTREAM, COMMONS_LOGGING, COMMONS_IO, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME, OPENJPA, INJECT, JETBRAINS_ANNOTATIONS
 
         compile
         meta_inf << file(_('src/META-INF/dspace.xml'))
@@ -794,7 +794,7 @@ define 'gndms' do
         libs = []
         [ 'gorfx', 'dspace', 'infra', 'logic', 'kit', 'stuff', 'neomodel', 'model', 'gndmc-rest', 'common' ].each { |mod| 
             project( mod ).compile.dependencies.map( &:to_s ).each  { |lib| libs << lib }
-            libs << project( mod ).package(:jar)
+            libs << project( mod ).package(:jar).to_s
         }
 
         # workaround for builder dependence bug
