@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
- * Model class for a provider stage in orq.
+ * Model class for a provider stage in Order.
  *
  * @author  try ma ik jo rr a zib
  * @verson \$id$
@@ -35,9 +35,25 @@ public class ProviderStageInOrder extends AbstractOrder {
 
     private static final long serialVersionUID = -5318593349599919368L;
 
+    /**
+     * The data descriptor.
+     *
+     * Contains the constraints for stating.
+     */
     private DataDescriptor dataDescriptor;
 
+    /**
+     * The out-put file name for the stating.
+     *
+     * The file containing the staged data will have this name.
+     */
     private String actDataFile;
+
+    /**
+     * The out-put file name for the stating meta-data.
+     *
+     * The file containing the meta data will have this name.
+     */
     private String actMetadataFile;
 
 

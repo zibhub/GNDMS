@@ -23,6 +23,10 @@ import de.zib.gndms.taskflows.filetransfer.client.FileTransferMeta;
 import java.util.List;
 
 /**
+ * The result of a file transfer taskflow.
+ *
+ * The result consists of a list of successfully transfered files.
+ *
  * @author  try ma ik jo rr a zib
  * @version  $Id$
  * <p/>
@@ -31,6 +35,11 @@ import java.util.List;
 public class FileTransferResult extends AbstractTaskFlowResult<List<String>> {
 
     private static final long serialVersionUID = -1282729323012008244L;
+
+
+    /**
+     * The result consists of a list of successfully transfered files.
+     */
     private List<String> files;
 
     public FileTransferResult( ) {

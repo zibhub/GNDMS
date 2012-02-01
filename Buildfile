@@ -232,7 +232,7 @@ GT4_MDS     = []
 
 XSTREAM_DEPS= [ CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME ]
 # OpenJPA is required by gndms:model
-OPENJPA = [ COMMONS_LANG, 'org.apache.openjpa:openjpa-all:jar:2.2.0']
+OPENJPA = [ COMMONS_LANG, 'org.apache.openjpa:openjpa-all:jar:2.1.1']
 
 # NEODATAGRAPH = transitive('org.springframework.data:spring-data-neo4j:jar:1.0.0.M2')
 

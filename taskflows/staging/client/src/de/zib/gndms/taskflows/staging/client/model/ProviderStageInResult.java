@@ -21,7 +21,14 @@ import de.zib.gndms.common.model.gorfx.types.AbstractTaskFlowResult;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.taskflows.staging.client.ProviderStageInMeta;
 
+
 /**
+ * Class for the result of the staging taskflow.
+ *
+ * The result is a specifier for the slice containing the staged data. The specifier can be used
+ * to access the slice directly through the provided url, or to extract the url map and use it
+ * as input for the {@link #SliceClient}
+ *
  * @author  try ma ik jo rr a zib
  * @version  $Id$
  * <p/>
@@ -31,6 +38,11 @@ public class ProviderStageInResult extends AbstractTaskFlowResult<Specifier<Void
 
     private static final long serialVersionUID = -3003504928510518008L;
 
+    /**
+     * The resulting specifier.
+     *
+     * Describes the slice containing the staged files.
+     */
     private Specifier<Void> sliceKey;
 
 

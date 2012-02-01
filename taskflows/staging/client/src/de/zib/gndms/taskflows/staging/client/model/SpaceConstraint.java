@@ -34,25 +34,66 @@ import java.io.Serializable;
  */
 public class SpaceConstraint implements Serializable {
 
+    /**
+     * Pair for the latitude.
+     *
+     * This is required
+     */
     private MinMaxPair latitude; // required
+
+    /**
+     * Pair for the longitude.
+     *
+     * This is required
+     */
     private MinMaxPair longitude; // required
-    private String areaCRS; // optional
+
+    /**
+     * Pair for the altitude.
+     *
+     * This is optional
+     */
     private MinMaxPair altitude; // optional
+
+    /**
+     * Some area constraints.
+     *
+     * This are optional.
+     */
+    private String areaCRS; // optional
+
+    /**
+     * Some vertical constraints.
+     *
+     * This are optional.
+     */
     private String verticalCRS; // optional
 
     private static final long serialVersionUID = -6224923031075051128L;
 
 
+    /**
+     * Checks if the altitude constraint is present in this instance.
+     * @return True if thats the case.
+     */
     public boolean hasAltitude( ) {
         return altitude != null;
     }
 
 
+    /**
+     * Checks if the area constraints are present in this instance.
+     * @return True if thats the case.
+     */
     public boolean hasAreaCRS( ) {
         return areaCRS != null && areaCRS.length() != 0;
     }
 
 
+    /**
+     * Checks if the vertical constraints are present in this instance.
+     * @return True if thats the case.
+     */
     public boolean hasVerticalCRS( ) {
         return verticalCRS != null && verticalCRS.length() != 0;
     }

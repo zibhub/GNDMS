@@ -39,11 +39,52 @@ import java.util.List;
  */
 public class DataDescriptor implements Serializable {
 
-    private List<String> objectList; // required
-    private DataConstraints constrains; // not required 
+    /**
+     * Contains the object ids (oids) of the desired data objects.
+     *
+     * This attribute is required.
+     */
+    private List<String> objectList;
+
+    /**
+     * Contains additional constraints of the requested data.
+     *
+     * This attribute is optional.
+     */
+    private DataConstraints constrains; // not required
+
+    /**
+     * The format of the staged data file.
+     *
+     * Something like cdo, ncf ...
+     *
+     * This attribute is mandatory.
+     */
     private String dataFormat; // required
+
+    /**
+     * Possible archive format of the data file.
+     *
+     * Like tgz, zip ...
+     *
+     * This attribute is optional.
+     */
     private String dataArchiveFormat; // not required
+
+    /**
+     * Possible archive format of the meta data file.
+     *
+     * Normally this will be xml.
+     *
+     * This attribute is required.
+     */
     private String metaDataFormat; // required
+
+    /**
+     * Possible archive format of the data file.
+     *
+     * This attribute is optional.
+     */
     private String metaDataArchiveFormat; // not required
 
     private static final long serialVersionUID = -574650275362439122L;

@@ -34,7 +34,7 @@ public class ProviderStageInMeta implements TaskFlowMeta {
 
     public final static List<String> REQUIRED_AUTHORIZATION = Collections
             .singletonList( CertificatePurpose.C3GRID.toString() );
-    public final static String DESCRIPTION = "Stages data a provider site";
+    public final static String DESCRIPTION = "Stages data on a provider site";
 
 
     @Override
