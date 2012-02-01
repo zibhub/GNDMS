@@ -353,7 +353,7 @@ public class SliceServiceImpl implements SliceService {
             @PathVariable final String sliceKind,
             @PathVariable final String sliceId,
             @PathVariable final String fileName,
-            @RequestHeader("ATTRS") final List<String> attrs,
+            @RequestParam( value="attrs", required = false) final List<String> attrs,
             @RequestHeader("DN") final String dn, final OutputStream out) {
 		GNDMSResponseHeader headers = setHeaders(subspace, sliceKind, sliceId, dn);
 		try {
