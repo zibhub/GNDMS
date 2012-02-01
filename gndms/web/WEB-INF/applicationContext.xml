@@ -3,10 +3,6 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <!-- this two enable use of annotation controller config-->
-    <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
-    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
-
     <import resource="classpath:META-INF/00_system.xml"/>
     <import resource="classpath:META-INF/converter-setup.xml"/>
     <import resource="classpath:META-INF/dspace.xml"/>
