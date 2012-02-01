@@ -29,7 +29,7 @@ import javax.persistence.*;
  * GridResource + terminationTime
  **/
 @Entity( name="TimedGridResources" )
-@Table( name="TimedGridResources", schema="dspace" )
+@Table( name="Timed_Grid_Resources", schema="dspace" )
 public class TimedGridResource extends GridResource implements TimedGridResourceItf {
 
     private DateTime terminationTime;
