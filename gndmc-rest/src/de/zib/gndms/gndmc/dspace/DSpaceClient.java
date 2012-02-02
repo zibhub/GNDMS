@@ -16,13 +16,12 @@ package de.zib.gndms.gndmc.dspace;
  * limitations under the License.
  */
 
-import java.util.List;
-
-import org.springframework.http.ResponseEntity;
-
 import de.zib.gndms.common.dspace.service.DSpaceService;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.gndmc.AbstractClient;
+import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 /**
  * The dspace client implementing the dspace service.
@@ -51,7 +50,7 @@ public class DSpaceClient extends AbstractClient implements DSpaceService {
 	public final ResponseEntity<List<Specifier<Void>>> listSubspaceSpecifiers(
 			final String dn) {
 		return (ResponseEntity<List<Specifier<Void>>>) (Object) unifiedGet(List.class,
-				getServiceURL() + "/dspace", dn);
+				getServiceURL() + "/dspace/", dn);
 	}
 
 }
