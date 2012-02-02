@@ -794,7 +794,7 @@ define 'gndms' do
         libs = []
         [ 'gorfx', 'dspace', 'infra', 'logic', 'kit', 'stuff', 'neomodel', 'model', 'gndmc-rest', 'common' ].each { |mod| 
             project( mod ).compile.dependencies.map( &:to_s ).each  { |lib| libs << lib }
-            libs << project( mod ).package(:jar).to_s
+            libs << project( mod ).package(:jar)
         }
 
         # workaround for builder dependence bug

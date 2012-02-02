@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * The result of a file transfer taskflow.
  *
- * The result consists of a list of successfully transfered files.
+ * The result consists of a list of successfully transferred files.
  *
  * @author  try ma ik jo rr a zib
  * @version  $Id$
@@ -38,7 +38,7 @@ public class FileTransferResult extends AbstractTaskFlowResult<List<String>> {
 
 
     /**
-     * The result consists of a list of successfully transfered files.
+     * The result consists of a list of successfully transferred files.
      */
     private List<String> files;
 

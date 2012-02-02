@@ -32,6 +32,8 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.UUID;
 
+import static de.zib.gndms.stuff.misc.StringAux.isEmpty;
+
 /**
  * @author try ma ik jo rr a zib
  * @date 14.03.11 11:46
@@ -51,6 +53,11 @@ public abstract class GORFXTaskFlowExample extends AbstractApplication {
     protected String proxyFile = null;
     @Option( name="-cancel", required = false, usage = "ms to wait before destroying taskClient.")
     protected Long cancel = null;
+    @Option( name="-myProxyLogin", required = false, usage = "login name for the MyProxyServer." )
+    protected String myProxyLogin;
+    @Option( name="-myProxyPasswd", required = false, usage = "password name for the " +
+                                                              "MyProxyServer." )
+    protected String myProxyPasswd;
 
 	protected String wid = UUID.randomUUID().toString();
     private ApplicationContext context;
@@ -60,9 +67,26 @@ public abstract class GORFXTaskFlowExample extends AbstractApplication {
     private AbstractTaskFlowExecClient etfc;
     private Quote desiredQuote;
 
+    private final boolean requireMyProxy;
+
+
+    protected GORFXTaskFlowExample() {
+        requireMyProxy = false;
+    }
+
+
+    protected GORFXTaskFlowExample( final boolean requireMyProxy ) {
+
+        this.requireMyProxy = requireMyProxy;
+    }
+
 
     @Override
     public void run() throws Exception {
+
+        if ( requireMyProxy )
+            requiresMyProxy();
+
         System.out.println( "Running dummy taskFlow test with: " );
         System.out.println("connection to: \"" + gorfxEpUrl + "\"");
 
@@ -173,4 +197,17 @@ public abstract class GORFXTaskFlowExample extends AbstractApplication {
     }
 
 
+    /**
+     * Checks if the required myProxy inforamtion are given.
+     *
+     * Checks it the command line args for myProxy{Login,Passwd} are present and not empty.
+     * Exits with exit status 1, if they are missing.
+     */
+    protected void requiresMyProxy( ) {
+        if( isEmpty( myProxyLogin ) || isEmpty( myProxyPasswd ) ) {
+            System.out.println( "-myProxy{Login,Passwd} information required" );
+            getCmdLineParser().printUsage( System.out );
+            System.exit( 1 );
+        }
+    }
 }

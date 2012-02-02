@@ -62,6 +62,11 @@ public class ProviderStageInExample extends GORFXTaskFlowExample {
     }
 
 
+    public ProviderStageInExample() {
+        super( true );
+    }
+
+
     @Override
     protected AbstractTaskFlowExecClient provideTaskFlowClient() {
 

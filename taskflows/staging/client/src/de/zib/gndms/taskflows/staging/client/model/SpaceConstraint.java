@@ -24,7 +24,7 @@ import java.io.Serializable;
 
 
 /**
- * A space constrain is a selection criteria for data stagin.
+ * A space constrain is a selection criteria for data stage-in.
  * 
  * @author  try ma ik jo rr a zib
  * @verson \$id$

@@ -24,7 +24,7 @@ import java.util.Map;
  * abstract id attributes.
  * 
  * @author try ma ik jo rr a zib
- * @param <T> The result type of the specifier.
+ * @param <T> The result (payload) type of the specifier.
  * @date 02.03.11  17:17
  * @brief Specifier for a REST resource.
  */
