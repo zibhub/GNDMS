@@ -280,31 +280,6 @@ define 'gndms' do
     @buildInfo = nil
     @releaseInfo = nil
 
-    # WSRF GT4 services to be built
-    SERVICES = ['GORFX', 'DSpace']
-    # TODO: Replace with some ruby magic
-    DSPACE_STUBS   = file(_('services/DSpace/build/lib/gndms-dspace-stubs.jar').to_s)
-    DSPACE_CLIENT  = _('services/DSpace/build/lib/gndms-dspace-client.jar')
-    DSPACE_COMMON  = _('services/DSpace/build/lib/gndms-dspace-common.jar')
-    DSPACE_SERVICE = _('services/DSpace/build/lib/gndms-dspace-service.jar')
-    DSPACE_TESTS   = _('services/DSpace/build/lib/gndms-dspace-tests.jar')
-    GORFX_STUBS   = file(_('services/GORFX/build/lib/gndms-gorfx-stubs.jar').to_s)
-    GORFX_CLIENT  = _('services/GORFX/build/lib/gndms-gorfx-client.jar')
-    GORFX_COMMON  = _('services/GORFX/build/lib/gndms-gorfx-common.jar')
-    GORFX_SERVICE = _('services/GORFX/build/lib/gndms-gorfx-service.jar')
-    GORFX_TESTS   = _('services/GORFX/build/lib/gndms-gorfx-tests.jar')
-    SERVICE_STUBS = [GORFX_STUBS, DSPACE_STUBS]
-    EXTRA_JARS = [ _('extra/caGrid-Introduce-serviceTools-1.2.jar'),
-                   _('extra/caGrid-ServiceSecurityProvider-client-1.2.jar'),
-                   _('extra/caGrid-ServiceSecurityProvider-common-1.2.jar'),
-                   _('extra/caGrid-ServiceSecurityProvider-service-1.2.jar'),
-                   _('extra/caGrid-ServiceSecurityProvider-stubs-1.2.jar'),
-                   _('extra/caGrid-advertisement-1.2.jar'),
-                   _('extra/caGrid-core-1.2.jar'),
-                   _('extra/caGrid-metadata-security-1.2.jar'),
-                   _('extra/castor-0.9.9.jar'),
-                   _('extra/jdom-1.0.jar')]
-
 
     def updateBuildInfo()
       if (@buildInfo == nil) then
@@ -337,21 +312,8 @@ define 'gndms' do
 
     meta_inf << file(_('GNDMS-BUILD-INFO'))
 
-  #  desc 'GNDMS rewrite based on Spring'
-  #  define 'spring', :layout => dmsLayout('spring', 'gndms-spring') do
-  #     compile.with SPRING, JETBRAINS_ANNOTATIONS, COMMONS_LOGGING
-  #     meta_inf << file(_('src/META-INF/gndms.xml'))
-  #     package :jar
-  #    
-  #     task 'standup' do
-  #        jars = compile.dependencies.map(&:to_s)
-  #        jars << project('gndms:spring')
-  #    full_args = [] 
-  #        Commands.java('de.zib.gndms.spring.GNDMSpring',  full_args, { :classpath => jars, :verbose => true } )
-  #     end
-  #  end
 
-    desc 'GT4-independent utility classes for GNDMS'
+    desc 'independent utility classes for GNDMS'
     define 'stuff', :layout => dmsLayout('stuff', 'gndms-stuff') do
        task( 'update-release-info' )       
        compile.with INJECT, GOOGLE_COLLECTIONS, JETBRAINS_ANNOTATIONS, JSON, SPRING, SLF4J
@@ -398,144 +360,64 @@ define 'gndms' do
        package :jar
     end
 
-    desc 'GNDMS classes for dealing with wsrf and xsd types'
-    define 'gritserv', :layout => dmsLayout('gritserv', 'gndms-gritserv') do
-      compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('stuff'), project('model'), project('neomodel'), ARGS4J, JODA_TIME, OPENJPA, GT4_LOG, GT4_COG, GT4_SEC, GT4_XML, GT4_COMMONS, COMMONS_LANG, COMMONS_COLLECTIONS, COMMONS_CODEC, SLF4J, SPRING, JSON
-      compile
-      package :jar
-    end
 
     desc 'GNDMS core infrastructure classes'
     define 'infra', :layout => dmsLayout('infra', 'gndms-infra') do
-      # Infra *must* have all dependencies since we use this list in copy/link-deps
-      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('common'), project('gritserv'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), ARGS4J, JODA_TIME, JAXB, GT4_SERVLET, GROOVY, GOOGLE_COLLECTIONS, INJECT, DB_DERBY, GT4_LOG, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies, COMMONS_FILEUPLOAD, NEODATAGRAPH, SLF4J, SPRING, JNA
-      compile
+        # Infra *must* have all dependencies since we use this list in copy/link-deps
+        compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('common'), project('gritserv'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), ARGS4J, JODA_TIME, JAXB, GT4_SERVLET, GROOVY, GOOGLE_COLLECTIONS, INJECT, DB_DERBY, GT4_LOG, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies, COMMONS_FILEUPLOAD, NEODATAGRAPH, SLF4J, SPRING, JNA
+        compile
 
-      meta_inf << file(_('src/META-INF/00_system.xml'))
-      meta_inf << file(_('src/META-INF/grid.properties'))
-      meta_inf << file(_('src/META-INF/legacyConfigMeta.xml'))
-      package :jar
-      doc projects('gndms:stuff', 'gndms:model', 'gndms:gritserv', 'gndms:kit', 'gndms:logic')
+        meta_inf << file(_('src/META-INF/00_system.xml'))
+        meta_inf << file(_('src/META-INF/grid.properties'))
+        meta_inf << file(_('src/META-INF/legacyConfigMeta.xml'))
+        package :jar
+        doc projects('gndms:stuff', 'gndms:model', 'gndms:gritserv', 'gndms:kit', 'gndms:logic')
 
-      # Symlink or copy all dependencies of infra + the infra jar - whatever gets filtered by skipDeps to GT4LIB
-      # and log source jars used to lib/DEPENDENCIES and lib/dependencies.xml (both files are not further used by the build - FYI only)
-      def installDeps(copy)
-        deps = Buildr.artifacts(project('infra').compile.dependencies).map(&:to_s)
-        deps << project('infra').package.to_s
-		    EXTRA_JARS.each do |jar|
-					deps << jar
-				end
-        deps = skipDeps(deps)
+        # Symlink or copy all dependencies of infra + the infra jar - whatever gets filtered by skipDeps to GT4LIB
+        # and log source jars used to lib/DEPENDENCIES and lib/dependencies.xml (both files are not further used by the build - FYI only)
+        def installDeps(copy)
+            deps = Buildr.artifacts(project('infra').compile.dependencies).map(&:to_s)
+            deps << project('infra').package.to_s
+            deps = skipDeps(deps)
 
-        classpathFile = File.new(GT4LIB + '/gndms-dependencies.xml', 'w')
-        classpathFile.syswrite('<?xml version="1.0"?>' + "\n" + '<project><target id="setGNDMSDeps"><path id="service.build.extended.classpath">' + "\n")
-        depsFile = File.new(GT4LIB + '/gndms-dependencies', 'w')
-        deps.select { |jar| jar[0, GT4LIB.length] != GT4LIB }.each { |file| 
-           basename = File.basename( file )
-           newname = GT4LIB+'/'+basename
-           if (copy)
-             puts 'cp: \'' + file + '\' to: \'' + newname + '\''
-             cp(file, newname)
-             puts 'yay'
-             chmod 0644, newname
-           else
-             puts 'ln_sf: \'' + file + '\' to: \'' + newname + '\''
-             chmod 0644, file
-             ln_sf(file, newname)
-           end
-           depsFile.syswrite(basename + "\n") 
-           classpathFile.syswrite('<pathelement location="' + basename + '" />' + "\n")
-        }
-        depsFile.close
-        classpathFile.syswrite('</path></target></project>' + "\n\n")
-        classpathFile.close
-      end
+            classpathFile = File.new(GT4LIB + '/gndms-dependencies.xml', 'w')
+            classpathFile.syswrite('<?xml version="1.0"?>' + "\n" + '<project><target id="setGNDMSDeps"><path id="service.build.extended.classpath">' + "\n")
+            depsFile = File.new(GT4LIB + '/gndms-dependencies', 'w')
+            deps.select { |jar| jar[0, GT4LIB.length] != GT4LIB }.each { |file| 
+                basename = File.basename( file )
+                newname = GT4LIB+'/'+basename
+                if (copy)
+                    puts 'cp: \'' + file + '\' to: \'' + newname + '\''
+                    cp(file, newname)
+                    puts 'yay'
+                    chmod 0644, newname
+                else
+                    puts 'ln_sf: \'' + file + '\' to: \'' + newname + '\''
+                    chmod 0644, file
+                    ln_sf(file, newname)
+                end
+                depsFile.syswrite(basename + "\n") 
+                classpathFile.syswrite('<pathelement location="' + basename + '" />' + "\n")
+            }
+            depsFile.close
+            classpathFile.syswrite('</path></target></project>' + "\n\n")
+            classpathFile.close
+        end
 
-      desc 'Install dependencies to $GLOBUS_LOCATION/lib (execute as globus user)'
-      task 'install-deps' => 'artifacts' do
-	if (ENV['GNDMS_DEPS'] != 'skip') then
-        	installDeps(ENV['GNDMS_DEPS']!='link')
-	end
-        # Fix monitor.properties permissions
-        system "test -d '#{ENV['GNDMS_SHARED']}' || mkdir '#{ENV['GNDMS_SHARED']}'"
-        propsFile = [ ENV['GNDMS_SHARED'], 'monitor.properties' ].join(File::SEPARATOR)
-        system "touch '#{propsFile}'"
-        system "chmod 0600 '#{propsFile}'"
-      end
+        desc 'Install dependencies to $GLOBUS_LOCATION/lib (execute as globus user)'
+        task 'install-deps' => 'artifacts' do
+            if (ENV['GNDMS_DEPS'] != 'skip') then
+                installDeps(ENV['GNDMS_DEPS']!='link')
+            end
+            # Fix monitor.properties permissions
+            system "test -d '#{ENV['GNDMS_SHARED']}' || mkdir '#{ENV['GNDMS_SHARED']}'"
+            propsFile = [ ENV['GNDMS_SHARED'], 'monitor.properties' ].join(File::SEPARATOR)
+            system "touch '#{propsFile}'"
+            system "chmod 0600 '#{propsFile}'"
+        end
 
     end
 
-
-    desc 'rsync type schemata between services and types'
-    task :typesync  => :package do
-      SERVICES.each { |service|
-        system 'rsync -aurl ' + _('../services' + service + '/build/schema/') + ' ' + _('types/')
-        system 'rsync -aurl ' + _('../services' + service + '/schema/') + ' ' + _('types/')
-      }
-    end
-
-    task 'clean-services' do
-      SERVICES.each { |service| 
-        system 'cd ' + _('services/'+service) + ' && ' + gndms_ant + ' clean'
-      }
-    end
-
-    task 'package-stubs' do
-      SERVICES.each { |service| 
-        system "cd '#{_('services', service)}' && " + gndms_ant + " jarStubs"
-      }
-    end
-
-    task 'link-services' do
-      SERVICES.each { |service| 
-        lcService = service.downcase
-        [ "gndms-#{lcService}-stubs.jar", "gndms-#{lcService}-common.jar", "gndms-#{lcService}-client.jar", "gndms-#{lcService}-tests.jar" ].each { |jar|
-          ln_sf(_('services', service, 'build', 'lib', jar), GT4LIB)
-        }        
-      }
-    end
-
-    desc 'Create DSpace GAR for deployment (Requires packaged GNDMS and installed dependencies)'
-    task 'package-DSpace' do
-      system "cd '#{_('services', 'DSpace')}' && " + gndms_ant + " createDeploymentGar"
-      # ln_sf(_('services', 'DSpace', 'gndms_DSpace.gar'), _('.'))
-    end
-
-    desc 'Deploy current gndms_DSpace.gar'
-    task 'deploy-DSpace' do
-       system "#{DEPLOY_GAR} '#{_('services', 'DSpace', 'gndms_DSpace.gar')}'"
-    end
-
-    task 'rebuild-DSpace' => [task('package-DSpace'), task('deploy-DSpace')] do
-      system "cd '#{_('services', 'DSpace')}' && " + gndms_ant + " jars"
-    end
-
-    # file DSPACE_STUBS.to_s => task('gndms:package-stubs') do end
-    # file DSPACE_COMMON.to_s => task('gndms:rebuild-DSpace') do end
-    # file DSPACE_CLIENT.to_s => task('gndms:rebuild-DSpace') do end
-    # file DSPACE_SERVICE.to_s => task('gndms:rebuild-DSpace') do end
-    # file DSPACE_TESTS.to_s => task('gndms:rebuild-DSpace') do end
-
-    desc 'Create GORFX GAR for deployment (Requires packaged GNDMS and installed dependencies)'
-    task 'package-GORFX' do
-      system "cd '#{_('services', 'GORFX')}' && " + gndms_ant + " createDeploymentGar"
-      # ln_sf(_('services', 'GORFX', 'gndms_GORFX.gar'), _('.'))
-    end
-
-    desc 'Deploy current gndms_GORFX.gar'
-    task 'deploy-GORFX' do
-      system "#{DEPLOY_GAR} '#{_('services', 'GORFX', 'gndms_GORFX.gar')}'"
-    end
-
-    task 'rebuild-GORFX' do
-      system "cd '#{_('services', 'GORFX')}' && " + gndms_ant + " jars"
-    end
-
-    # file GORFX_STUBS.to_s => task('gndms:package-stubs') do end
-    # file GORFX_COMMON.to_s => task('gndms:rebuild-GORFX') do end
-    # file GORFX_CLIENT.to_s => task('gndms:rebuild-GORFX') do end
-    # file GORFX_SERVICE.to_s => task('gndms:rebuild-GORFX') do end
-    # file GORFX_TESTS.to_s => task('gndms:rebuild-GORFX') do end
 
     desc 'Peek into the gndms derby database'
     task 'derby-ij' do
@@ -548,158 +430,6 @@ define 'gndms' do
         callIJ( dbDir, DB_DERBY )
     end
 
-    define 'gndmc', :layout => dmsTestLayout('gndmc', 'gndms-gndmc') do
-      compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('gndms:gritserv'), project('gndms:kit'), project('gndms:stuff'), project('gndms:model'), ARGS4J, SERVICE_STUBS, GORFX_CLIENT, DSPACE_CLIENT, GORFX_COMMON, DSPACE_COMMON, COMMONS_CODEC, COMMONS_COLLECTIONS, GT4_COMMONS, JODA_TIME, GT4_GRAM, GT4_LOG, GT4_COG, GT4_SEC, GT4_XML, EXTRA_JARS, GT4_MDS, TestNG.dependencies
-      compile
-      test.compile
-      test.exclude '*'
-      package :jar
-
-      task 'show-log' do
-        jars = compile.dependencies.map(&:to_s)
-        jars << compile.target.to_s
-        uri  = ENV['URI']
-        if (uri == nil) then
-          puts 'Call with env URI="GORFX or DSpace EPR" ARGS="Arguments to .sys.ReadContainerLog'
-          exit 1
-        end
-        args = ENV['ARGS']
-        if (args == nil) then args = "" end
-        full_args = [ '-uri', uri, '.sys.ReadContainerLog' ]
-        full_args << args  
-        Commands.java('de.zib.gndmc.MaintenanceClient',  full_args, { :classpath => jars, :verbose => true } )
-      end
-
-
-      task 'show-version' do
-        jars = compile.dependencies.map(&:to_s)
-        jars << compile.target.to_s
-        uri  = ENV['URI']
-        if (uri == nil) then
-          puts 'Call with env URI="GORFX or DSpace EPR" ARGS="Arguments to .sys.ReadGNDMSVersion'
-          exit 1
-        end
-        args = ENV['ARGS']
-        if (args == nil) then args = "" end
-        full_args = [ '-uri', uri, '.sys.ReadGNDMSVersion' ]
-        full_args << args  
-        Commands.java('de.zib.gndmc.MaintenanceClient',  full_args, { :classpath => jars, :verbose => true } )
-      end
-
-      desc 'Runs the sliceInOut test client'
-      task 'run-sliceIO' do |t|
-        jars = compile.dependencies.map(&:to_s)
-        jars << compile.target.to_s
-        args = [ '-p', ENV['GNDMS_SOURCE']+'/etc/sliceInOutClient.properties' ]
-        props = { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" }
-        runner = 'de.zib.gndmc.SliceInOutClient'
-        runJava( t.to_s, args, jars, props )
-      end
-
-      task 'run-staging-test' do |t|
-        jars = compile.dependencies.map(&:to_s)
-        jars << compile.target.to_s
-        #host = `hostname`.chomp
-        host = 'csr-pc25.zib.de'
-        dn = `grid-proxy-info -identity`
-        dn = dn.chomp
-        if (ENV['GNDMS_SFR'] == nil)
-            prop = 'etc/sfr/dummy-sfr.properties'
-        else 
-            prop = ENV['GNDMS_SFR']
-        end
-        args = [ '-props', prop, 
-                 '-uri', 'https://' + host + ':8443/wsrf/services/gndms/GORFX',
-	             '-dn', dn
-        ]
-        props = { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" }
-        runner = 'de.zib.gndmc.GORFX.c3grid.ProviderStageInClient'
-        runJava( t.to_s, args, jars, props )
-      end
-
-      task 'run-stress-test' do |t|
-        jars = compile.dependencies.map(&:to_s)
-        jars << compile.target.to_s
-        if (ENV['GORFX_URI'] == nil)
-            host = `hostname`.chomp
-        else 
-            host = ENV['GORFX_URI']
-            puts "using", host
-        end
-        dn = `grid-proxy-info -identity`
-        dn = dn.chomp
-        if (ENV['GNDMS_PROPS'] == nil)
-            prop = 'test-data/test-properties/multi_file_transfer_awi.properties'
-        else 
-            prop = ENV['GNDMS_PROPS']
-        end
-        args = [ '-props', prop, 
-                 '-uri', 'https://' + host + ':8443/wsrf/services/gndms/GORFX',
-	             '-dn', dn
-        ]
-        props = { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" }
-        runner = 'de.zib.gndmc.GORFX.diag.MultiRequestClient'
-        runJava( t.to_s, args, jars, props )
-      end
-
-      desc 'runs the interSliceTransfer test'
-      task 'run-ist' do |t|
-
-        jars = compile.dependencies.map(&:to_s)
-        jars << compile.target.to_s
-        if (ENV['gorfx_host'] == nil)
-            gorfx_host = `hostname`.chomp
-        else 
-            gorfx_host = ENV['gorfx_host']
-        end
-        if (ENV['dspace_host'] == nil)
-            dspace_host = `hostname`.chomp
-        else 
-            dspace_host = ENV['dspace_host']
-        end
-        dn = `grid-proxy-info -identity`
-        dn = dn.chomp
-        if (ENV['GNDMS_PROPS'] == nil)
-            prop = 'test-data/test-properties/multi_file_transfer_awi.properties'
-        else 
-            prop = ENV['GNDMS_PROPS']
-        end
-        args = [ '-props', prop, 
-                 '-uri', 'https://' + gorfx_host + ':8443/wsrf/services/gndms/GORFX',
-                 '-duri', 'https://' + dspace_host + ':8443/wsrf/services/gndms/DSpace',
-	             '-dn', dn
-        ]
-        puts args
-        runner = 'de.zib.gndmc.GORFX.InterSliceTransferClient'
-        props ={ "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" }
-
-        runJava( t.to_s, args, jars, props )
-      end
-
-      desc 'runs the interSliceTransfer test'
-      task 'run-rft' do 
-
-        runner = 'de.zib.gndmc.GORFX.diag.RemoteFileTransferTest'
-        jars = compile.dependencies.map(&:to_s)
-        jars << compile.target.to_s
-        if (ENV['GNDMS_PROPS'] == nil)
-            prop = 'test-data/simple-rft.properties'
-        else 
-            prop = ENV['GNDMS_PROPS']
-        end
-        args = [ '-props', prop, 
-                 '-uri', 'https://csr-pc25.zib.de:8443/wsrf/services/gndms/GORFX', #'https://' + gorfx_host + ':8443/wsrf/services/gndms/GORFX',
-                 '-uid', `id -u`.chomp,
-                 '-cancel', 30000
-        ]
-        props = { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" }
-
-        puts args
-        runJava( 'run-rft', runner, args, jars, props )
-      end
-
-    end
-
 
     desc 'Common gndms service classes'
     define 'common', :layout => dmsLayout('common', 'gndms-common') do
@@ -709,9 +439,7 @@ define 'gndms' do
         package :jar
     end
 
-    eval IO.read( 'rest/buildfile' )
-
-    desc 'Gorfx client classes'
+    desc 'REST client classes'
     define 'gndmc-rest', :layout => dmsLayout('gndmc-rest', 'gndms-gndmc-rest') do
         compile.with project('stuff'), project('common'), SPRING, ARGS4J, JODA_TIME, SLF4J, COMMONS_LOGGING, XSTREAM, XSTREAM_DEPS, JSON, ASPECTJ
         meta_inf << file(_('src/META-INF/client-context.xml'))
@@ -820,10 +548,6 @@ task 'show-log' => task('gndms:gndmc:show-log')
 
 
 # Database stuff
-
-task 'foo-barz' do |t|
-    puts t.to_s
-end
 
 task 'kill-db' do
     rm_rf GNDMS_DB
