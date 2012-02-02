@@ -16,10 +16,14 @@ package de.zib.gndms.taskflows.staging.client;
  *  limitations under the License.
  */
 
+import de.zib.gndms.common.model.FileStats;
 import de.zib.gndms.common.model.gorfx.types.Order;
 import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.common.model.gorfx.types.TaskResult;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
+import de.zib.gndms.common.rest.Specifier;
+import de.zib.gndms.common.rest.UriFactory;
+import de.zib.gndms.gndmc.dspace.SliceClient;
 import de.zib.gndms.gndmc.gorfx.AbstractTaskFlowExecClient;
 import de.zib.gndms.gndmc.gorfx.ExampleTaskFlowExecClient;
 import de.zib.gndms.gndmc.gorfx.GORFXTaskFlowExample;
@@ -30,8 +34,11 @@ import de.zib.gndms.taskflows.staging.client.tools.ProviderStageInOrderPropertyR
 import de.zib.gndms.taskflows.staging.client.tools.ProviderStageInOrderStdoutWriter;
 import org.jetbrains.annotations.NotNull;
 import org.kohsuke.args4j.Option;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -75,7 +82,8 @@ public class ProviderStageInExample extends GORFXTaskFlowExample {
             protected void handleResult( TaskResult res ) {
 
                 ProviderStageInResult ftr = ProviderStageInResult.class.cast( res );
-                System.out.println( "Result slice url: "+ ftr.getResult().getUrl() );
+                System.out.println( "\n\nResult slice url: "+ ftr.getResult().getUrl() );
+                ProviderStageInExample.this.showResult( ftr.getResult() );
             }
 
 
@@ -87,6 +95,30 @@ public class ProviderStageInExample extends GORFXTaskFlowExample {
             }
         };
         return etfc;
+    }
+
+
+    private void showResult( final Specifier<Void> result ) {
+        
+        SliceClient sliceClient = createBean( SliceClient.class );
+        sliceClient.setServiceURL( gorfxEpUrl );
+        final ResponseEntity<List<FileStats>> listResponseEntity =
+                sliceClient.listFiles( result.getUriMap().get( UriFactory.SUBSPACE ),
+                        result.getUriMap().get( UriFactory.SLICEKIND ),
+                        result.getUriMap().get( UriFactory.SLICE ), dn );
+        
+        if ( HttpStatus.OK.equals( listResponseEntity.getStatusCode() ) ) {
+            final List<FileStats> fileStats = listResponseEntity.getBody();
+            System.out.println( "Result slice contains " + fileStats.size() + " files" );
+            for( FileStats fileStat: fileStats ) {
+                System.out.println( fileStat );
+                System.out.println( "Execute: " );
+                System.out.println( "  curl -H \"DN:" + dn + "\" " + result.getUrl() + "/"
+                                    + fileStat.path.replace( '/',  '_' ) );
+                System.out.println( "to download this file" );
+                System.out.println();
+            }
+        }
     }
 
 
