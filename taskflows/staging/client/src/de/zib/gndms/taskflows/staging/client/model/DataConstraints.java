@@ -24,6 +24,8 @@ import java.util.Map;
 
 
 /**
+ * Container for data constrains in staging requests.
+ *
  * @author  try ma ik jo rr a zib
  * @verson \$id$
  * <p/>
@@ -31,11 +33,35 @@ import java.util.Map;
  */
 public class DataConstraints implements Serializable {
 
+    /**
+     * A space constraint.
+     *
+     * Like longitude or height-level
+     *
+     * This is required.
+     */
     private SpaceConstraint spaceConstraint; // required
+
+    /**
+     * A time span for the data.
+     *
+     * This is optional.
+     */
     private TimeConstraint timeConstraint; // not required
-    
+
+    /**
+     * Some data flags.
+     *
+     * This is required.
+     */
     @SuppressWarnings({ "InstanceVariableNamingConvention" })
     private List<String> CFList; // required
+
+    /**
+     * Additional constraints.
+     *
+     * This is required.
+     */
     private Map<String, String> constraintList; // required
 
     

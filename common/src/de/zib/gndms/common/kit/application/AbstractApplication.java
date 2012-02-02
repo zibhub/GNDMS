@@ -29,6 +29,10 @@ import org.kohsuke.args4j.CmdLineException;
  */
 public abstract class AbstractApplication {
 
+
+    private final CmdLineParser cmdLineParser = new CmdLineParser( this );
+
+
     /**
      * When this method is called by an implementing subclass,
      * the fields of the class will be set as denoted by {@code args} and
@@ -41,15 +45,21 @@ public abstract class AbstractApplication {
      */
     public final void run( final String[] args ) throws Exception {
 
-        CmdLineParser pars = new CmdLineParser( this );
         try {
-            pars.parseArgument( args );
+            cmdLineParser.parseArgument( args );
             this.run();
         } catch ( CmdLineException e ) {
-            System.err.println( e.getMessage( ) );
-            pars.printUsage( System.err );
+            System.err.println( e.getMessage() );
+            cmdLineParser.printUsage( System.err );
         }
     }
+
+
+    public CmdLineParser getCmdLineParser() {
+
+        return cmdLineParser;
+    }
+
 
     /**
      * This method will be called after the fields of the class have been set.

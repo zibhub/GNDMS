@@ -46,6 +46,11 @@ public class FileTransferExample extends GORFXTaskFlowExample {
     }
 
 
+    public FileTransferExample() {
+        super( true );
+    }
+
+
     @Override
     protected AbstractTaskFlowExecClient provideTaskFlowClient() {
 
@@ -63,7 +68,7 @@ public class FileTransferExample extends GORFXTaskFlowExample {
             @Override
             protected GNDMSResponseHeader setupContext( final GNDMSResponseHeader context ) {
 
-                context.addMyProxyToken( "C3GRID", "mjorra", "myproxyblah" );
+                context.addMyProxyToken( "C3GRID", myProxyLogin, myProxyPasswd );
                 return context;
             }
         };

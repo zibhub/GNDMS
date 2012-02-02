@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 
 /**
- * An ORQ for file transfer.
+ * Order for file transfer.
  *
  *
  * @author  try ma ik jo rr a zib
