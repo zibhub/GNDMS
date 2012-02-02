@@ -21,7 +21,6 @@ import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.model.FileStats;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
-import de.zib.gndms.common.stuff.util.Product;
 import de.zib.gndms.gndmc.AbstractClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -55,7 +54,7 @@ public class SliceClient extends AbstractClient implements SliceService {
 	@Override
 	public final ResponseEntity< Facets > listSliceFacets(final String subspace,
 			final String sliceKind, final String slice, final String dn) {
-		return (ResponseEntity< Facets >) (Object) unifiedGet(Product.class, getServiceURL()
+		return (ResponseEntity< Facets >) (Object) unifiedGet(Facets.class, getServiceURL()
 				+ "/dspace/_" + subspace
 				+ "/_" + sliceKind + "/_" + slice, dn);
 	}
