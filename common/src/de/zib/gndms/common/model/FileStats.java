@@ -26,4 +26,17 @@ public class FileStats {
     public String path;
     public Long size;
     public String mtime;
+
+
+    @Override
+    public String toString() {
+
+        final StringBuilder sb = new StringBuilder();
+        sb.append( "FileStats" );
+        sb.append( "{path='" ).append( path ).append( '\'' );
+        sb.append( ", size=" ).append( size );
+        sb.append( ", mtime='" ).append( mtime ).append( '\'' );
+        sb.append( '}' );
+        return sb.toString();
+    }
 }
