@@ -315,9 +315,8 @@ define 'gndms' do
 
     desc 'independent utility classes for GNDMS'
     define 'stuff', :layout => dmsLayout('stuff', 'gndms-stuff') do
-       task( 'update-release-info' )       
        compile.with INJECT, GOOGLE_COLLECTIONS, JETBRAINS_ANNOTATIONS, JSON, SPRING, SLF4J
-       compile { project('gndms').updateBuildInfo() }
+       compile 
        test.compile
        test.using :testng
        package :jar
@@ -364,14 +363,14 @@ define 'gndms' do
     desc 'GNDMS core infrastructure classes'
     define 'infra', :layout => dmsLayout('infra', 'gndms-infra') do
         # Infra *must* have all dependencies since we use this list in copy/link-deps
-        compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('common'), project('gritserv'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), ARGS4J, JODA_TIME, JAXB, GT4_SERVLET, GROOVY, GOOGLE_COLLECTIONS, INJECT, DB_DERBY, GT4_LOG, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies, COMMONS_FILEUPLOAD, NEODATAGRAPH, SLF4J, SPRING, JNA
+        compile.with JETBRAINS_ANNOTATIONS, OPENJPA, project('common'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), ARGS4J, JODA_TIME, JAXB, GT4_SERVLET, GROOVY, GOOGLE_COLLECTIONS, INJECT, DB_DERBY, GT4_LOG, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies, COMMONS_FILEUPLOAD, NEODATAGRAPH, SLF4J, SPRING, JNA
         compile
 
         meta_inf << file(_('src/META-INF/00_system.xml'))
         meta_inf << file(_('src/META-INF/grid.properties'))
         meta_inf << file(_('src/META-INF/legacyConfigMeta.xml'))
         package :jar
-        doc projects('gndms:stuff', 'gndms:model', 'gndms:gritserv', 'gndms:kit', 'gndms:logic')
+        doc projects('gndms:stuff', 'gndms:model', 'gndms:kit', 'gndms:logic')
 
         # Symlink or copy all dependencies of infra + the infra jar - whatever gets filtered by skipDeps to GT4LIB
         # and log source jars used to lib/DEPENDENCIES and lib/dependencies.xml (both files are not further used by the build - FYI only)
