@@ -1,9 +1,11 @@
 Until 'rest-devel' goes 'master' additional documentation is gathered here:
 
-Setup rest example:
--------------------
+
+Setup GNDMS-0.6.0:
+==================
 
 Compile and package everything.
+-------------------------------
 
     buildr package
         -> $GNDMS_SOURCE/lib/gndms/gndms-gndms-0.6.0-pre.war
@@ -11,20 +13,31 @@ Compile and package everything.
 Download and install Jetty version 6-8 are fine. Export  $JETTY_HOME
 as the base dir of your Jetty installation.
 
-
-*WARNING: THE NEXT STEP WILL ERASE THE CONTENTS OF
-`$JETTY_HOME/webapps/root`*
-
 Execute
 
     buildr install
 
-which installs the exploded war into `$JETTY_HOME/webapps/root`.
+which installs the gndms war into `$JETTY_HOME/webapps/gndms.war` as
+well as 
+
+    grid.properties to $JETTY_HOME/gndms
+
+and
+
+    gndms.xml to $JETTY_HOME/contexts
+
 
 Setup the service config:
+-------------------------
+Open 
 
-   Copy $GNDMS_SOURCE/gorfx/src/META-INF/gorfx.properties 
-   to   $JETTY_HOME/resources/gorfx.properties
+    $JETTY_HOME/gndms/grid.properties 
+
+in an editor of your choice and check if the `dspaceBaseURL` and
+`gorfxBaseURL` are correct. Additionally check if `gridPath` points to
+the desired folder.
+
+
 
 Set the environment variable GORFX_URL to
 
