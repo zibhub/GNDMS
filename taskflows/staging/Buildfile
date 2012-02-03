@@ -21,7 +21,7 @@ define 'staging' do
     define 'client', :layout => dmsLayout('client', 'staging-client') do
       compile.with GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, COMMONS_LOGGING, GNDMS_STUFF, GNDMS_COMMON, GNDMS_GNDMC_REST, JETBRAINS_ANNOTATIONS, JODA_TIME, ARGS4J, INJECT, GUICE, GT4_SERVLET, COMMONS_LANG, SLF4J, JSON, SPRING, XSTREAM, XSTREAM_DEPS
       compile
-      package( :jar ).include _("src/log4j.properties"), :path => "."  
+#      package( :jar ).include _("src/log4j.properties"), :path => "."  
       package :jar
 
         desc 'Runs the dummy test client'
