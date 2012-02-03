@@ -46,7 +46,7 @@ define 'staging' do
 
         desc 'deploys the staging server jar'
         task 'deploy' do
-            deploy_target = "#{ENV['JETTY_HOME']}/webapps/root/WEB-INF/lib"
+            deploy_target = "#{ENV['JETTY_HOME']}/gndms"
             cp project('staging:server').package(:jar).to_s, deploy_target
             cp project('staging:client').package(:jar).to_s, deploy_target
         end
