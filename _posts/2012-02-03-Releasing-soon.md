@@ -1,5 +1,5 @@
 ---
-title: GNDMS Developers are using IntelliJ
+title: First REST based version of GNDMS coming soon...
 root: ../../../..
 layout: post
 ---
