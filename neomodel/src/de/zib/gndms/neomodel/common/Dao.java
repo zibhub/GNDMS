@@ -20,6 +20,7 @@ import de.zib.gndms.neomodel.gorfx.Task;
 import org.jetbrains.annotations.NotNull;
 import org.neo4j.graphdb.GraphDatabaseService;
 
+import java.lang.reflect.Constructor;
 import java.util.Map;
 
 /**
@@ -33,6 +34,7 @@ import java.util.Map;
 public class Dao {
     final @NotNull private GraphDatabaseService gdb;
     final @NotNull private String gridName;
+    private ClassLoader classLoader = this.getClass().getClassLoader();
 
     public Dao(@NotNull String gridName, @NotNull GraphDatabaseService gdb) {
         this.gridName = gridName;
@@ -40,7 +42,16 @@ public class Dao {
     }
 
     public Session beginSession() {
-        return new Session(this, gridName, gdb);
+
+        try {
+            Constructor ctor = classLoader.loadClass( Session.class.getName() ).getConstructor(
+                    new Class[] { this.getClass(), String.class, GraphDatabaseService.class }
+            );
+            return ( Session ) ctor.newInstance( this, gridName, gdb );
+        } catch ( Exception e ) {
+            throw new RuntimeException( e );
+        }
+        // return new Session(this, gridName, gdb);
     }
 
     @NotNull
@@ -97,5 +108,17 @@ public class Dao {
             return ret;
         }
         finally { session.success(); }
+    }
+
+
+    public ClassLoader getClassLoader() {
+
+        return classLoader;
+    }
+
+
+    public void setClassLoader( final ClassLoader classLoader ) {
+
+        this.classLoader = classLoader;
     }
 }
