@@ -12,7 +12,7 @@ GRID=`cat $FILE | grep ^monitor.grid | cut -d= -f2-`
 shift
 
 if [ "x$PRFX" != "x" ] ; then
-    PRFX="$REFX/"
+    PRFX="$PRFX/"
 fi
 if [ "x$GRID" != "x" ] ; then
     GRID="$GRID/"
