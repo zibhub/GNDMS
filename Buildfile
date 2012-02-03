@@ -904,6 +904,10 @@ task 'c3grid-dp-setupdb' do
     system "#{ENV['GNDMS_SOURCE']}/scripts/c3grid/setup-dataprovider.sh CREATE"
 end
 
+task 'c3grid-portal-setupdb' do
+    system "#{ENV['GNDMS_SOURCE']}/scripts/c3grid/setup-portal.sh CREATE"
+end
+
 task 'c3grid-dp-test' => task('gndms:gndmc:run-staging-test') 
 
 task 'install-chown-script' do
