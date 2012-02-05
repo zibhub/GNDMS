@@ -1,6 +1,6 @@
 #!/bin/bash
 
-args=( "-uri" "http://localhost:8080/c3grid/" "-dn" "foo" )
+args=( "-uri" "http://localhost:8080/gndms/c3grid/" "-dn" "foo" )
 
 cp="/home/mjorra/.m2/repository/com/google/guava/guava/10.0.1/guava-10.0.1.jar:$cp"
 cp="/home/mjorra/.m2/repository/commons-fileupload/commons-fileupload/1.2.1/commons-fileupload-1.2.1.jar:$cp"

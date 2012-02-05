@@ -833,7 +833,7 @@ task 'deploy-gndms-rest' do
         port = ENV['GNDMS_PORT'] 
     end
 
-    mkGridProps( hn, port )
+    mkGridProps( 'localhost', port )
 
     cp( "etc/log4j.properties", "#{ENV['JETTY_HOME']}/gndms" )
     puts "installing context to #{ENV['JETTY_HOME']}/contexts"

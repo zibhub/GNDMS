@@ -38,6 +38,7 @@ public abstract class ModelElement<U extends PropertyContainer> extends ModelEnt
     final @NotNull U representation;
     final @NotNull ReprSession reprSession;
     final @NotNull private String typeNick;
+    private ClassLoader classLoader;
 
     protected ModelElement(@NotNull ReprSession session, @NotNull String typeNick, @NotNull U underlying) {
         if (typeNick.contains(INDEX_SEPARATOR))
@@ -119,7 +120,7 @@ public abstract class ModelElement<U extends PropertyContainer> extends ModelEnt
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream() ;
         try {
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(bos) ;
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(bos);
             objectOutputStream.writeObject( object );
             objectOutputStream.close();
 
@@ -195,7 +196,17 @@ public abstract class ModelElement<U extends PropertyContainer> extends ModelEnt
 
         try {
             final ObjectInputStream objectInputStream =
-                    new ObjectInputStream( new ByteArrayInputStream( serialObject ) );
+                    new ObjectInputStream( new ByteArrayInputStream( serialObject ) ) {
+                        @Override
+                        protected Class<?> resolveClass( final ObjectStreamClass desc )
+                                throws IOException, ClassNotFoundException
+                        {
+                            if( classLoader != null )
+                                return classLoader.loadClass( desc.getName() );
+
+                            return super.resolveClass( desc );
+                        }
+                    };
             final Object res = objectInputStream.readObject();
             objectInputStream.close();
             return res;
@@ -208,4 +219,10 @@ public abstract class ModelElement<U extends PropertyContainer> extends ModelEnt
 
     
     protected abstract long getReprId();
+
+
+    public void setClassLoader( final ClassLoader classLoader ) {
+
+        this.classLoader = classLoader;
+    }
 }
