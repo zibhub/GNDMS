@@ -12,7 +12,7 @@ GRID=`cat $FILE | grep ^monitor.grid | cut -d= -f2-`
 shift
 
 if [ "x$PRFX" != "x" ] ; then
-    PRFX="$REFX/"
+    PRFX="$PRFX/"
 fi
 if [ "x$GRID" != "x" ] ; then
     GRID="$GRID/"
@@ -57,7 +57,7 @@ outfile=$( mktemp /tmp/moni_call.XXXXXX )
 curlcmd="curl -X POST -H\"DN:$USER\" -H\"content-type:$MIME\" --data \"$PREST\"\
     --write-out %{http_code} --silent --output $outfile \
     http://"$HOST":"$PORT"/${PRFX}${GRID}gorfx/config/$PCLASSNAME"
-echo $curlcmd
+#echo $curlcmd
 hstatus=$( eval $curlcmd )
 
 [ -n "$verbose" ] && echo " "

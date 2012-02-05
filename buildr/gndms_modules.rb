@@ -6,7 +6,7 @@ module GNDMS_MODULES
 # creates GNDMS_<module> variables for each module of the gndms
 # subproject... 
 def setupGNDMSModules( )  
-    setupModules( ENV['GNDMS_REST'], 'gndms' )
+    setupModules( ENV['GNDMS_SOURCE'], 'gndms' )
 end
     
 # if you like ruby please enjoy some wonderful ruby foo, if not skip
