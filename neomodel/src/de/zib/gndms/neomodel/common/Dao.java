@@ -47,7 +47,10 @@ public class Dao {
             Constructor ctor = classLoader.loadClass( Session.class.getName() ).getConstructor(
                     new Class[] { this.getClass(), String.class, GraphDatabaseService.class }
             );
-            return ( Session ) ctor.newInstance( this, gridName, gdb );
+            Session ses =  ( Session ) ctor.newInstance( this, gridName, gdb );
+            if ( ses.getClass().getClassLoader() != classLoader )
+                throw new Error( "This sucks" );
+            return ses;
         } catch ( Exception e ) {
             throw new RuntimeException( e );
         }
