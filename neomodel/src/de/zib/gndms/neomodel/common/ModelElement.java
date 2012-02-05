@@ -202,7 +202,11 @@ public abstract class ModelElement<U extends PropertyContainer> extends ModelEnt
                                 throws IOException, ClassNotFoundException
                         {
                             if( classLoader != null )
-                                return classLoader.loadClass( desc.getName() );
+                                try {
+                                    return classLoader.loadClass( desc.getName() );
+                                } catch ( Exception e ) {
+                                    System.out.println( desc.getName() );
+                                }
 
                             return super.resolveClass( desc );
                         }

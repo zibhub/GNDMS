@@ -41,19 +41,9 @@ public class Dao {
     }
 
     public Session beginSession() {
-
-        try {
-
-            Session ses = ( (SessionFactory) classLoader.loadClass(
-                    SessionFactory.class.getName() ).newInstance() ).invoke(this, gridName, gdb );
-
-            if ( ses.getClass().getClassLoader() != classLoader )
-                throw new Error( "This sucks" );
-            return ses;
-        } catch ( Exception e ) {
-            throw new RuntimeException( e );
-        }
-        // return new Session(this, gridName, gdb);
+        Session ses =  new Session(this, gridName, gdb );
+        ses.setClassLoader( classLoader );
+        return ses;
     }
 
 

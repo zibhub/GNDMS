@@ -17,7 +17,6 @@ package de.zib.gndms.neomodel.common;
  */
 
 import de.zib.gndms.model.gorfx.types.TaskState;
-import de.zib.gndms.neomodel.gorfx.TaskFlowType;
 import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.TaskFlowType;
 import org.apache.lucene.search.NumericRangeQuery;
@@ -50,6 +49,8 @@ public class Session {
     private final @NotNull String gridName;
     private final @NotNull
     ReprSession reprSession;
+    private ClassLoader classLoader;
+
 
     public Session(@NotNull Dao dao, @NotNull String gridName, @NotNull GraphDatabaseService gdb) {
         this.gdb          = gdb;
@@ -88,9 +89,17 @@ public class Session {
 
     private Task taskFromNode( Node node ) {
         if( node != null )
-            return new Task(reprSession, TASK_T, node );
+            return createTask( node, TASK_T );
         else
             return null;
+    }
+
+
+    protected Task createTask( final Node node, final String type ) {
+
+        final Task task = new Task( reprSession, type, node );
+        task.setClassLoader( classLoader );
+        return task;
     }
 
 
@@ -105,7 +114,7 @@ public class Session {
         final IndexHits<Node> query = index.get(getGridName(), state.name());
         final List<Task> list = new LinkedList<Task>();
         for (Node node: query)
-            list.add(new Task(reprSession, getGridName(), node));
+            list.add( createTask( node, getGridName() ) );
         return list;
     }
 
@@ -114,7 +123,7 @@ public class Session {
         final IndexHits<Node> query = index.get(getGridName(), classNickName(Task.class));
         final List<Task> list = new LinkedList<Task>();
         for (Node node: query)
-            list.add(new Task(reprSession, getGridName(), node));
+            list.add( createTask( node, getGridName() ) );
         return list;
     }
 
@@ -125,7 +134,7 @@ public class Session {
                 index.query(NumericRangeQuery.newLongRange(getGridName(), 0L, timeout.getTimeInMillis(), true, false));
         final List<Task> list = new LinkedList<Task>();
         for (Node node: query)
-            list.add(new Task(reprSession, getGridName(), node));
+            list.add( createTask( node, getGridName() ) );
         return list;
     }
 
@@ -167,5 +176,17 @@ public class Session {
             throw new IllegalArgumentException("Graph element already exists");
         }
         index.add(repr, key, newVal);
+    }
+
+
+    public void setClassLoader( final ClassLoader classLoader ) {
+
+        this.classLoader = classLoader;
+    }
+
+
+    public ClassLoader getClassLoader() {
+
+        return classLoader;
     }
 }
