@@ -88,6 +88,9 @@ Additionally, please set the following environment variables as specified below:
 Please ensure, that the path `$GNDMS_SHARED` exists and that the user `gndms` has
 permissions to read and write that directory.
 
+* If you like the application container to run under another port than `8080` you can
+  change that by setting `$GNDMS_PORT`.
+
 Please consult `$GNDMS_SOURCE/etc/example.profile` for an
 example of a properly configured environment.
 
