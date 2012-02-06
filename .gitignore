@@ -75,6 +75,7 @@ etc/sliceInOutClient.properties
 bkp*
 lib/javax*
 commit.log
+infra/src/grid.properties
 
 syntax:regexp
 .*\.swp
@@ -90,10 +91,14 @@ lib/gndmc/*
 lib/infra/*
 lib/logic/*
 lib/neomodel/*
+lib/dspace/*
 lib/gorfx/*
 lib/rest/*
 lib/common/*
 lib/gndmc-rest/*
+lib/gndms/*
+out/*
+gndms/out/*
 */resources/META-INF/GNDMS-RELEASE
 */resources/META-INF/GNDMS-BUILD-INFO
 */resources/META-INF/LICENSE
