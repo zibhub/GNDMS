@@ -25,8 +25,8 @@ repositories.remote << 'http://people.apache.org/repo/m2-incubating-repository'
 #
 require "open3"
 
-VERSION_NUMBER = '0.6.0-pre'
-VERSION_NAME = 'RESTIFY'
+VERSION_NUMBER = '0.6.0'
+VERSION_NAME = 'ARTURAS'
 GROUP_NAME = 'de.zib.gndms'
 MF_COPYRIGHT = 'Copyright 2008-2011 Zuse Institute Berlin (ZIB)'
 LICENSE ='This software has been licensed to you under the terms and conditions of the Apache License 2.0 (APL 2.0) only.'
@@ -112,23 +112,27 @@ end
 # Non-GT4 dependencies
 #SPRING_VERSION = "3.0.6.RELEASE"
 SPRING_VERSION = "3.1.0.RELEASE"
-SPRING = [ 
+SPRING_CLIENT = [
            "org.springframework:spring-aop:jar:#{SPRING_VERSION}",
            "org.springframework:spring-asm:jar:#{SPRING_VERSION}",
-           "org.springframework:spring-aspects:jar:#{SPRING_VERSION}",
            "org.springframework:spring-beans:jar:#{SPRING_VERSION}",
            "org.springframework:spring-context:jar:#{SPRING_VERSION}",
            "org.springframework:spring-core:jar:#{SPRING_VERSION}",
            "org.springframework:spring-expression:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-oxm:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-web:jar:#{SPRING_VERSION}"
+]
+SPRING = [ 
+           "org.springframework:spring-aspects:jar:#{SPRING_VERSION}",
            "org.springframework:spring-instrument:jar:#{SPRING_VERSION}",
            "org.springframework:spring-jdbc:jar:#{SPRING_VERSION}",
            "org.springframework:spring-orm:jar:#{SPRING_VERSION}",
-           "org.springframework:spring-oxm:jar:#{SPRING_VERSION}",
            "org.springframework:spring-tx:jar:#{SPRING_VERSION}",
-           "org.springframework:spring-web:jar:#{SPRING_VERSION}",
-           "org.springframework:spring-web:jar:#{SPRING_VERSION}",
            "org.springframework:spring-webmvc:jar:#{SPRING_VERSION}",
+            SPRING_CLIENT
          ] 
+
+
 ASPECTJ = [
         'org.aspectj:aspectjrt:jar:1.6.11',
         'org.aspectj:aspectjweaver:jar:1.6.11',
@@ -316,7 +320,6 @@ define 'gndms' do
     desc 'independent utility classes for GNDMS'
     define 'stuff', :layout => dmsLayout('stuff', 'gndms-stuff') do
        compile.with INJECT, GOOGLE_COLLECTIONS, JETBRAINS_ANNOTATIONS, JSON, SPRING, SLF4J
-       compile 
        test.compile
        test.using :testng
        package :jar
@@ -532,12 +535,47 @@ end
 
 
 task 'deploy-gndms-rest' do
+
+    def mkJettyProps( src, hostname, port)
+        mkProps(  src, "#{ENV['JETTY_HOME']}/gndms/", hostname, port )
+    end 
+
+    def mkProps( src, tgt, hostname, port)
+        props = eval IO.read ( "etc/#{src}" )
+        propFile = File.new( "#{tgt}/#{src}" , 'w')
+        propFile.write( props )
+        propFile.close
+    end 
+
     src = project('gndms:gndms').package(:war).to_s
     testEnv('JETTY_HOME', 'the root directory of your jetty installation')
-    tgt = "#{ENV['JETTY_HOME']}/webapps/root"
-    puts "deploying #{src} => #{tgt}"
-    `rm -r #{tgt}/*`
-    `unzip #{src} -d #{tgt}`
+    tgt = "#{ENV['JETTY_HOME']}/webapps/gndms.war"
+    puts "Deploying #{src} => #{tgt}"
+    cp( src, tgt );
+    gndms_dir = "#{ENV['JETTY_HOME']}/gndms"
+    puts "Creating #{gndms_dir}"
+    if ( not File.exists?( gndms_dir ) ) 
+        mkdir( "#{gndms_dir}" )
+    else 
+        puts "already exists. Skipping..."
+    end
+
+    hostname = `hostname -f`.chomp
+    if ( ENV['GNDMS_PORT'] == nil )
+        port = '8080'
+    else 
+        port = ENV['GNDMS_PORT'] 
+    end
+
+    mkJettyProps( 'grid.properties', hostname, port )
+    mkJettyProps( 'log4j.properties', hostname, port )
+
+    puts "installing monitor.properties to #{ENV['GNDMS_SHARED']}"
+    mkProps( 'monitor.properties', "#{ENV['GNDMS_SHARED']}", hostname, port )
+
+    puts "installing context to #{ENV['JETTY_HOME']}/contexts"
+    cp( "etc/gndms.xml",  "#{ENV['JETTY_HOME']}/contexts" )
+
 end
 
 
@@ -604,11 +642,11 @@ task 'c3grid-dp-setupdb' do
     system "#{ENV['GNDMS_SOURCE']}/scripts/c3grid/setup-dataprovider.sh CREATE"
 end
 
-task 'c3grid-dp-test' => task('gndms:gndmc:run-staging-test') 
-
-task 'install-chown-script' do
-    system "install -o 0 -g 0 -m 700 #{ENV['GNDMS_SOURCE']}/dev-bin/chownSlice.sh #{ENV['GNDMS_SHARED']}"
+task 'c3grid-portal-setupdb' do
+    system "#{ENV['GNDMS_SOURCE']}/scripts/c3grid/setup-portal.sh CREATE"
 end
+
+task 'c3grid-dp-test' => task('gndms:gndmc:run-staging-test') 
 
 desc 'Test the c3 data-provider setup'
 task 'c3grid-dp-test' => ['gndms:gndmc:run-staging-test']

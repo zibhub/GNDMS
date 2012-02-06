@@ -17,12 +17,11 @@ package de.zib.gndms.neomodel.common;
  */
 
 import de.zib.gndms.model.ModelEntity;
-import org.apache.commons.lang.SerializationUtils;
 import org.jetbrains.annotations.NotNull;
 import org.neo4j.graphdb.PropertyContainer;
 import org.neo4j.graphdb.index.Index;
 
-import java.io.Serializable;
+import java.io.*;
 
 /**
  * ModelElement
@@ -39,6 +38,7 @@ public abstract class ModelElement<U extends PropertyContainer> extends ModelEnt
     final @NotNull U representation;
     final @NotNull ReprSession reprSession;
     final @NotNull private String typeNick;
+    private ClassLoader classLoader;
 
     protected ModelElement(@NotNull ReprSession session, @NotNull String typeNick, @NotNull U underlying) {
         if (typeNick.contains(INDEX_SEPARATOR))
@@ -97,20 +97,39 @@ public abstract class ModelElement<U extends PropertyContainer> extends ModelEnt
     }
 
     protected <S extends Serializable> S getProperty(@NotNull Class<S> clazz, String key) {
-        return clazz.cast(SerializationUtils.deserialize((byte[]) repr().getProperty(key)));
+        return clazz.cast(deserializeObject( ( byte[] ) repr().getProperty( key ) ));
     }
+
+
+
 
     protected <S extends Serializable> S getProperty(@NotNull Class<S> clazz, String key, S deaultValue) {
         Object property = repr().getProperty(key, deaultValue);
         if (property == deaultValue)
             return deaultValue;
         else
-            return clazz.cast(SerializationUtils.deserialize((byte[]) property));
+            return clazz.cast(deserializeObject((byte[]) property));
     }
 
     protected <S extends Serializable> void setProperty(@NotNull Class<S> clazz, String key, S value) {
-        repr().setProperty(key, SerializationUtils.serialize(value));
+        repr().setProperty(key, serializeObject(value));
     }
+
+
+    private byte[] serializeObject( final Serializable object ) {
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream() ;
+        try {
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(bos);
+            objectOutputStream.writeObject( object );
+            objectOutputStream.close();
+
+            return bos.toByteArray();
+        } catch ( IOException e ) {
+            throw new RuntimeException( e );
+        }
+    }
+
 
     public final void delete(@NotNull Session session) {
         if (session != session())
@@ -172,5 +191,42 @@ public abstract class ModelElement<U extends PropertyContainer> extends ModelEnt
         return indexName.toString();
     }
 
+
+    protected Object deserializeObject( final byte[] serialObject ) {
+
+        try {
+            final ObjectInputStream objectInputStream =
+                    new ObjectInputStream( new ByteArrayInputStream( serialObject ) ) {
+                        @Override
+                        protected Class<?> resolveClass( final ObjectStreamClass desc )
+                                throws IOException, ClassNotFoundException
+                        {
+                            if( classLoader != null )
+                                try {
+                                    return classLoader.loadClass( desc.getName() );
+                                } catch ( Exception e ) {
+                                    // intentionally
+                                }
+
+                            return super.resolveClass( desc );
+                        }
+                    };
+            final Object res = objectInputStream.readObject();
+            objectInputStream.close();
+            return res;
+        } catch ( IOException e ) {
+            throw new RuntimeException( e );
+        } catch ( ClassNotFoundException e ) {
+            throw new IllegalStateException( e );
+        }
+    }
+
+    
     protected abstract long getReprId();
+
+
+    public void setClassLoader( final ClassLoader classLoader ) {
+
+        this.classLoader = classLoader;
+    }
 }

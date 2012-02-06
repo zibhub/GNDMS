@@ -77,5 +77,4 @@ public class SliceKindClient extends AbstractClient implements SliceKindService 
 				getServiceURL() + "/dspace/_" + subspace + "/_"
 				+ sliceKind, dn);
 	}
-
 }

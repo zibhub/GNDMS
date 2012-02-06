@@ -26,7 +26,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 /**
- * The subspace client implementing the subspace service.
+ * The subspaceId client implementing the subspaceId service.
  * 
  * @author Ulrike Golas
  */
@@ -70,8 +70,9 @@ public class SubspaceClient extends AbstractClient implements SubspaceService {
 	}
 
     @Override
-    public ResponseEntity<Facets> createSubspace( String subspace, String config, String dn ) {
-        return null;
+    public ResponseEntity<Facets> createSubspace( String subspaceId, String config, String dn ) {
+        return ( ResponseEntity< Facets > ) ( Object ) unifiedPut(
+                Facets.class, config, getServiceURL() + "/dspace/_" + subspaceId, dn );
     }
 
     @SuppressWarnings("unchecked")
@@ -85,7 +86,8 @@ public class SubspaceClient extends AbstractClient implements SubspaceService {
 
     @Override
     public ResponseEntity<List<Specifier<Void>>> createSliceKind( String subspace, String sliceKind, String config, String dn ) {
-        return null;  // TODO: implement create slice kind in SubspaceClient
+        return ( ResponseEntity< List< Specifier< Void > > > ) ( Object ) unifiedPut(
+                List.class, config, getServiceURL() + "/dspace/_" + subspace + "/_" + sliceKind, dn );
     }
 
     @Override

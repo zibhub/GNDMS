@@ -45,12 +45,12 @@ public abstract class GORFXTaskFlowExample extends AbstractApplication {
 	protected String gorfxEpUrl;
 	@Option(name = "-dn", required = true, usage = "DN")
 	protected String dn;
-    @Option( name="-props", required=true, usage="staging.properties" )
+    @Option( name="-props", required=true, usage="taskflow order properties" )
     protected String orderPropFile;
     @Option( name="-con-props", usage="contract.properties" )
     protected String conPropFile;
-    @Option( name="-proxyfile", usage="grid-proxy-file to lead", metaVar="proxy-file" )
-    protected String proxyFile = null;
+    //@Option( name="-proxyfile", usage="grid-proxy-file to lead", metaVar="proxy-file" )
+    //protected String proxyFile = null;
     @Option( name="-cancel", required = false, usage = "ms to wait before destroying taskClient.")
     protected Long cancel = null;
     @Option( name="-myProxyLogin", required = false, usage = "login name for the MyProxyServer." )
@@ -92,22 +92,13 @@ public abstract class GORFXTaskFlowExample extends AbstractApplication {
 
         context = new ClassPathXmlApplicationContext(
                 "classpath:META-INF/client-context.xml");
-        gorfxClient = (FullGORFXClient ) context
-                .getAutowireCapableBeanFactory().createBean(
-                FullGORFXClient.class,
-                AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
+        gorfxClient = createBean( FullGORFXClient.class );
 		gorfxClient.setServiceURL(gorfxEpUrl);
 
-        tfClient = (TaskFlowClient ) context
-            .getAutowireCapableBeanFactory().createBean(
-                TaskFlowClient.class,
-                AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
+        tfClient = createBean( TaskFlowClient.class );
         tfClient.setServiceURL(gorfxEpUrl);
 
-        taskClient = (TaskClient ) context
-            .getAutowireCapableBeanFactory().createBean(
-                TaskClient.class,
-                AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
+        taskClient = createBean( TaskClient.class );
         taskClient.setServiceURL(gorfxEpUrl);
 
         etfc = provideTaskFlowClient();
@@ -118,6 +109,16 @@ public abstract class GORFXTaskFlowExample extends AbstractApplication {
         normalRun();
         failingRun();
 	}
+
+
+    public <T> T createBean( final Class<T> beanClass ) {
+
+        return (T) context
+                .getAutowireCapableBeanFactory().createBean(
+                        beanClass,
+                        AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
+    }
+
 
     protected abstract AbstractTaskFlowExecClient provideTaskFlowClient( );
 
