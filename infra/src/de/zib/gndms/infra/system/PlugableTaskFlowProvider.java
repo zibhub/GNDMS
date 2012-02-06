@@ -34,6 +34,7 @@ import java.util.*;
 public class PlugableTaskFlowProvider extends TaskFlowProviderImpl {
 
     protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
+    private String pluginDir;
     private boolean hasFactories = false;
     private GNDMSystem system;
     private ClassLoader cl;
@@ -71,7 +72,7 @@ public class PlugableTaskFlowProvider extends TaskFlowProviderImpl {
     @PostConstruct
     public void loadPlugins( ) {
 
-        PluginLoader pl = new PluginLoader();
+        PluginLoader pl = new PluginLoader( pluginDir );
         try {
             ClassLoader cl = pl.loadPlugins();
             setCl( cl );
@@ -175,5 +176,17 @@ public class PlugableTaskFlowProvider extends TaskFlowProviderImpl {
     public void setCl( final ClassLoader cl ) {
 
         this.cl = cl;
+    }
+
+
+    public String getPluginDir() {
+
+        return pluginDir;
+    }
+
+
+    public void setPluginDir( final String pluginDir ) {
+
+        this.pluginDir = pluginDir;
     }
 }

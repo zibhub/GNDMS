@@ -33,7 +33,13 @@ import java.util.ArrayList;
  */
 public class PluginLoader {
     
-    private String pluginPath = "/home/mjorra/usr/jetty-current/gndms";
+    private String pluginPath;
+
+
+    public PluginLoader( final String pluginPath ) {
+        this.pluginPath = pluginPath;
+    }
+
 
     public URLClassLoader loadPlugins( ) throws IOException {
 
@@ -48,16 +54,20 @@ public class PluginLoader {
                 return name.matches( ".*\\.jar" );
             }
         } );
-        
-        jars = new ArrayList<URL>( list.length );
-        for ( int i=0; i < list.length; ++i )
-            jars.add( new URL( "file://" + pluginPath + File.separator + list[i] ) );
 
-        return new URLClassLoader(
-                jars.toArray( new URL[jars.size()] ),
-                this.getClass().getClassLoader()
-        );
+
+        if ( list != null  ) {
+            jars = new ArrayList<URL>( list.length );
+            for ( int i=0; i < list.length; ++i )
+                jars.add( new URL( "file://" + pluginPath + File.separator + list[i] ) );
+
+            return new URLClassLoader(
+                    jars.toArray( new URL[jars.size()] ),
+                    this.getClass().getClassLoader()
+            );
+        }
         
+        return new URLClassLoader( new URL[] {}, this.getClass().getClassLoader() );
     }
 
 
@@ -69,7 +79,7 @@ public class PluginLoader {
                 "system"
         );
         
-        PluginLoader pl = new PluginLoader();
+        PluginLoader pl = new PluginLoader( "test.dir" );
         ClassLoader cl = pl.loadPlugins();
         PlugableTaskFlowProvider provider = ( PlugableTaskFlowProvider ) context.getAutowireCapableBeanFactory()
                 .getBean( "taskFlowProvider" );

@@ -56,6 +56,7 @@
 
     <bean id="taskFlowProvider" class="de.zib.gndms.infra.system.PlugableTaskFlowProvider">
         <property name="system" ref="system"/>
+        <property name="pluginDir" value="${pluginPath}"/>
     </bean>
 
     <!-- #################################################################################################### -->
