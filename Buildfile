@@ -25,8 +25,8 @@ repositories.remote << 'http://people.apache.org/repo/m2-incubating-repository'
 #
 require "open3"
 
-VERSION_NUMBER = '0.6.0-pre'
-VERSION_NAME = 'RESTIFY'
+VERSION_NUMBER = '0.6.0'
+VERSION_NAME = 'ARTURAS'
 GROUP_NAME = 'de.zib.gndms'
 MF_COPYRIGHT = 'Copyright 2008-2011 Zuse Institute Berlin (ZIB)'
 LICENSE ='This software has been licensed to you under the terms and conditions of the Apache License 2.0 (APL 2.0) only.'
@@ -907,10 +907,6 @@ task 'c3grid-portal-setupdb' do
 end
 
 task 'c3grid-dp-test' => task('gndms:gndmc:run-staging-test') 
-
-task 'install-chown-script' do
-    system "install -o 0 -g 0 -m 700 #{ENV['GNDMS_SOURCE']}/dev-bin/chownSlice.sh #{ENV['GNDMS_SHARED']}"
-end
 
 desc 'Test the c3 data-provider setup'
 task 'c3grid-dp-test' => ['gndms:gndmc:run-staging-test']
