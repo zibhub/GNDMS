@@ -35,7 +35,7 @@ Toolkit Version 1.6.
 For compiling the services, please make sure that `$JAVA_HOME` points
 to this version and that this is also the version that is in your
 `$PATH`.  Naturally, this should be the same version than the one you
-use(d) for building and running globus and ant.
+use(d) for building and running GNDMS.
 
 
 
@@ -54,8 +54,8 @@ shell tools: hostname, which, bash
 
 ### Preparation of GNDMS Software
 
-**ATTENTION** *The following steps need to be executed as the `globus` user that runs
-the servlet container of your installation of Globus Toolkit.*
+**ATTENTION** *The following steps need to be executed as the a user that runs
+the servlet container. We will assume that user to be named `gndms`.*
 
 
 #### Download and Unpack GNDMS
@@ -72,8 +72,10 @@ Additionally, please set the following environment variables as specified below
 * `$GNDMS_SHARED` to a path where the databases can be stored (e.g. `/var/lib/gndms`)
 * `GNDMS_MONI_CONFIG` to `$GNDMS_SHARED/monitor.properties`
 
-After this step, there should be no further need to adjust your
-environment.  Please consult `$GNDMS_SOURCE/etc/example.profile` for an
+Please assure, that the path `$GNDMS_SHARED` exists and that the user gndms har
+permissions to read and write that directory.
+
+Please consult `$GNDMS_SOURCE/etc/example.profile` for an
 example of a properly configured environment.
 
 
@@ -100,7 +102,7 @@ Installation and Deployment from Distribution Package
  This section describes the actual installation of the GNDMS software
  into the Globus Container. It requires that your system has been
  prepared as described in the previous section. Again the following
- steps should be executed by the `globus` user.
+ steps should be executed by the `gndms` user.
 
 
 
@@ -129,14 +131,14 @@ The INSTALL file of the old system should describe the way how to do that.
     ** the context gndms.xml to `$JETTY_HOME/contexts`.
 
   
-  * Setup the service config.
-    To do that, open 
+* Setup the service config.
+  To do that, open 
 
-        $JETTY_HOME/gndms/grid.properties 
+      $JETTY_HOME/gndms/grid.properties 
 
-    in an editor of your choice and check if the `dspaceBaseURL` and
-    `gorfxBaseURL` are correct. Additionally check if `gridPath` points to
-    the desired folder.
+  in an editor of your choice and check if the `dspaceBaseURL` and
+  `gorfxBaseURL` are correct. Additionally check if `gridPath` points to
+  the desired folder.
 
 * Before (re-)starting the application container (e.g. jetty), make sure that the $GNDMS_SHARED
   path is accessible by the user running the application container.
@@ -150,9 +152,6 @@ The INSTALL file of the old system should describe the way how to do that.
       ===========================================================================================
       Container home directory is '/opt/gt-current'
 
- (In the case of an error, you may want to compare with a
- [full startup log](startup-log.txt)).
- 
 At this point the GNDMS software has been succesfully installed.
 Next, we will describe how it may be configured for actual use.
  
@@ -171,11 +170,11 @@ you need to enable it manually as described in the following section.
 
 ### Enabling the Monitoring Shell Manually
 
-To enable the monitor shell manually, after having started the globus
+To enable the monitor shell manually, after having started the application
 container with deployed GNDMS at least once (as described in the
 previous section), please edit `$GNDMS_MONI_CONFIG` such that
 `monitor.enabled` is set to `true` and either wait until GNDMS picks
-up the new configuration or restart the globus container.
+up the new configuration or restart the application container.
 
 The monitoring shell will be running now. You have nearly finished the
 installation at this point. All that is left to do, is to actually
@@ -218,7 +217,7 @@ To do this, please edit
 `$GNDMS_SHARED/monitor.properties` and set
 `monitor.enabled=false` and `monitor.noShutdownIfRunning=false`.  This
 will disable the monitor shell after `monitor.configRefreshCycle` ms
-(defaults to 17 seconds).  Alternatively, just restart the globus
+(defaults to 17 seconds).  Alternatively, just restart the application
 container.
 
 **Congratulations** *At this point the installation is complete and you
@@ -235,7 +234,7 @@ the test-client the following prerequisites must be satisfied:
 * You must own a valid grid certificate,
 * have access to a grid-ftp-server, which accepts your certificate
   and offers write permission,
-* and of course you need a running globus container that provides the
+* and of course you need a running application container that provides the
   GNDMS-services, has at least one subspace, and file-transfer
   enabled.
 * To execute the tests, it may be necessary to temporarily change the
@@ -252,7 +251,7 @@ files back from the slice to some target directory and destroys the slice.
   functionality click <a href='#testing_your_c3_installation'>here</a>.*
 
 This test should be executed as *ordinary grid-user* not the
-as the globus user.
+as the gndms user.
 
 
 ### Setup
@@ -394,7 +393,7 @@ Custom message: Server refused changing directory (error code 1) [Nested excepti
         Could not change directory. : System error in stat: Permission denied
 ...
 </code></pre>
-Please make sure that `/some/dir` is owned by the globus user and has
+Please make sure that `/some/dir` is owned by the gndms user and has
 permissions 1777. Also make sure that your GRAM setup (especially the
 sudoers entries) is correct.
 
@@ -457,7 +456,7 @@ a synopsis of possible parameters or leave it empty to retrieve
 
 ### Resetting the Database
 
-First, **shutdown the globus container**.  Next, in `$GNDMS_SOURCE`, issue
+First, **shutdown the application container**.  Next, in `$GNDMS_SOURCE`, issue
 
    gndms-buildr kill-db
 
@@ -466,7 +465,7 @@ This will delete your database.
 
 ### Inspecting the Database
 
-First, **shutdown the globus container**.  Next, in `$GNDMS_SOURCE`, issue
+First, **shutdown the application container**.  Next, in `$GNDMS_SOURCE`, issue
 
    gndms-buildr inspect-db
 
@@ -527,7 +526,7 @@ therefore considerably eases trying out small changes to framework
 classes.  However, when using this method, make sure that required
 symlinked jar files from `$HOME/.m2/repository` and
 `$GNDMS_SOURCE/lib`and `$GNDMS_SOURCE/extra` are not deleted
-accidentally and remain readable for the globus user.*
+accidentally and remain readable for the gndms user.*
 
 **NOTE** *Once symlinks have been set up properly, developers may set
 `$GNDMS_DEPS=skip` to skip install-deps alltogether.*
