@@ -205,7 +205,7 @@ public abstract class ModelElement<U extends PropertyContainer> extends ModelEnt
                                 try {
                                     return classLoader.loadClass( desc.getName() );
                                 } catch ( Exception e ) {
-                                    System.out.println( desc.getName() );
+                                    // intentionally
                                 }
 
                             return super.resolveClass( desc );

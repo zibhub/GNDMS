@@ -23,9 +23,11 @@ import de.zib.gndms.gndmc.gorfx.ExampleTaskFlowExecClient;
 import de.zib.gndms.gndmc.gorfx.GORFXTaskFlowExample;
 import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferOrder;
 import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferResult;
+import de.zib.gndms.taskflows.filetransfer.client.tools.FileTransferOrderPropertyReader;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-import java.util.TreeMap;
+import java.io.IOException;
+import java.util.Properties;
 
 /**
  * @author Maik Jorra
@@ -80,16 +82,25 @@ public class FileTransferExample extends GORFXTaskFlowExample {
 
         System.out.println( "Performing normal run!!" );
         // create an order instance...
-        FileTransferOrder fileTransferOrder = new FileTransferOrder();
-        fileTransferOrder.setSourceURI( "gsiftp://csr-pc35.zib.de/tmp/tftest" );
-        fileTransferOrder.setDestinationURI( "gsiftp://csr-pc28.zib.de/tmp/" );
-        Map<String, String> fileMap = new TreeMap<String, String>();
-        fileMap.put( "transferTest.dat", "transferDest.dat" );
-        fileTransferOrder.setFileMap( fileMap );
+        FileTransferOrder fileTransferOrder = loadOrderFromProps( orderPropFile );
 
         etfc.execTF( fileTransferOrder, dn, true, null );
         System.out.println( "DONE\n" );
     }
+
+
+    protected FileTransferOrder loadOrderFromProps( final String orderPropFilename )
+		  throws IOException
+    {
+
+		final @NotNull Properties properties = loadOrderProps( orderPropFilename );
+
+		final FileTransferOrderPropertyReader reader =
+			  new FileTransferOrderPropertyReader( properties );
+		reader.begin();
+		reader.read();
+        return  reader.getProduct();
+	}
 
 
     protected void failingRun() {

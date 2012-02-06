@@ -2,8 +2,6 @@
 
 args=( "-uri" "http://localhost:8080/gndms/c3grid/" "-dn" "foo" )
 
-cp="/home/mjorra/.m2/repository/javax/servlet/servlet-api/2.4/servlet-api-2.4.jar:$cp"
-cp="/home/mjorra/.m2/repository/portlet-api/portlet-api/1.0/portlet-api-1.0.jar:$cp"
 cp="/home/mjorra/.m2/repository/commons-codec/commons-codec/1.4/commons-codec-1.4.jar:$cp"
 cp="/home/mjorra/.m2/repository/org/slf4j/jcl-over-slf4j/1.6.3/jcl-over-slf4j-1.6.3.jar:$cp"
 cp="/home/mjorra/projects/C3Grid/impl/gndms-rest/lib/stuff/gndms-stuff-0.6.0-pre.jar:$cp"
@@ -27,8 +25,8 @@ cp="/home/mjorra/.m2/repository/org/springframework/spring-beans/3.1.0.RELEASE/s
 cp="/home/mjorra/.m2/repository/org/springframework/spring-context/3.1.0.RELEASE/spring-context-3.1.0.RELEASE.jar:$cp"
 cp="/home/mjorra/.m2/repository/org/springframework/spring-core/3.1.0.RELEASE/spring-core-3.1.0.RELEASE.jar:$cp"
 cp="/home/mjorra/.m2/repository/org/springframework/spring-expression/3.1.0.RELEASE/spring-expression-3.1.0.RELEASE.jar:$cp"
-cp="/home/mjorra/.m2/repository/org/springframework/spring-web/3.1.0.RELEASE/spring-web-3.1.0.RELEASE.jar:$cp"
 cp="/home/mjorra/.m2/repository/org/springframework/spring-oxm/3.1.0.RELEASE/spring-oxm-3.1.0.RELEASE.jar:$cp"
+cp="/home/mjorra/.m2/repository/org/springframework/spring-web/3.1.0.RELEASE/spring-web-3.1.0.RELEASE.jar:$cp"
 cp="/home/mjorra/.m2/repository/com/thoughtworks/xstream/xstream/1.3.1/xstream-1.3.1.jar:$cp"
 cp="/home/mjorra/.m2/repository/cglib/cglib-nodep/2.2/cglib-nodep-2.2.jar:$cp"
 cp="/home/mjorra/.m2/repository/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar:$cp"
@@ -37,13 +35,8 @@ cp="/home/mjorra/.m2/repository/org/codehaus/woodstox/wstx-asl/3.2.7/wstx-asl-3.
 cp="/home/mjorra/.m2/repository/org/jdom/jdom/1.1/jdom-1.1.jar:$cp"
 cp="/home/mjorra/.m2/repository/xom/xom/1.1/xom-1.1.jar:$cp"
 cp="/home/mjorra/.m2/repository/xpp3/xpp3_min/1.1.4c/xpp3_min-1.1.4c.jar:$cp"
-cp="/home/mjorra/projects/C3Grid/impl/gndms-rest/taskflows/staging/lib/client/staging-client-0.6.0-pre.jar:$cp"
-#cp="/home/mjorra/projects/C3Grid/impl/gndms-rest/taskflows/staging/client/src:$cp"
-
+cp="/home/mjorra/projects/C3Grid/impl/gndms-rest/taskflows/fileTransfer/lib/client/transfer-client-0.6.0-pre.jar:$cp"
 
 props=( )
 
-exec java -cp $cp ${props[@]} de.zib.gndms.taskflows.staging.client.ProviderStageInExample ${args[@]} $@
-
-#vim:tw=0
-
+exec java -cp $cp ${props[@]} de.zib.gndms.taskflows.filetransfer.client.FileTransferExample ${args[@]} $@

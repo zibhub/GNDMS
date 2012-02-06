@@ -112,23 +112,27 @@ end
 # Non-GT4 dependencies
 #SPRING_VERSION = "3.0.6.RELEASE"
 SPRING_VERSION = "3.1.0.RELEASE"
-SPRING = [ 
+SPRING_CLIENT = [
            "org.springframework:spring-aop:jar:#{SPRING_VERSION}",
            "org.springframework:spring-asm:jar:#{SPRING_VERSION}",
-           "org.springframework:spring-aspects:jar:#{SPRING_VERSION}",
            "org.springframework:spring-beans:jar:#{SPRING_VERSION}",
            "org.springframework:spring-context:jar:#{SPRING_VERSION}",
            "org.springframework:spring-core:jar:#{SPRING_VERSION}",
            "org.springframework:spring-expression:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-oxm:jar:#{SPRING_VERSION}",
+           "org.springframework:spring-web:jar:#{SPRING_VERSION}"
+]
+SPRING = [ 
+           "org.springframework:spring-aspects:jar:#{SPRING_VERSION}",
            "org.springframework:spring-instrument:jar:#{SPRING_VERSION}",
            "org.springframework:spring-jdbc:jar:#{SPRING_VERSION}",
            "org.springframework:spring-orm:jar:#{SPRING_VERSION}",
-           "org.springframework:spring-oxm:jar:#{SPRING_VERSION}",
            "org.springframework:spring-tx:jar:#{SPRING_VERSION}",
-           "org.springframework:spring-web:jar:#{SPRING_VERSION}",
-           "org.springframework:spring-web:jar:#{SPRING_VERSION}",
            "org.springframework:spring-webmvc:jar:#{SPRING_VERSION}",
+            SPRING_CLIENT
          ] 
+
+
 ASPECTJ = [
         'org.aspectj:aspectjrt:jar:1.6.11',
         'org.aspectj:aspectjweaver:jar:1.6.11',
