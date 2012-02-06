@@ -214,14 +214,14 @@ the `Buildfile`.
   Finally, configure the provider staging plug-in:
 
     : Edit `$GNDMS_SOURCE/scripts/c3grid/setup-dataprovider.sh` and
-    execute `gndms-buildr c3grid-dp-setupdb`
+    execute `gndms-buildr c3grid-dp-setupdb` in $GNDMS_SOURCE !
 
 * Quick test for provider stage-in:
 
   We provide a script which executes a simple staging. It can be found
   under:
   
-      $GNDMS_SOURCE/taskflows/staging/bin/run-staging-client
+      $GNDMS_SOURCE/taskflows/staging/bin/run-staging-client.sh
 
   This script requires the following arguments to run:
   ** The staging request as properties-file:
@@ -256,14 +256,14 @@ the `Buildfile`.
   Finally, configure the GridFTP-file-transfer plug-in:
 
     : Edit `$GNDMS_SOURCE/scripts/c3grid/setup-portal.sh` and
-    execute `gndms-buildr c3grid-portal-setupdb`
+    execute `gndms-buildr c3grid-portal-setupdb` in $GNDMS_SOURCE !
 
 * Quick test for the file transfer:
 
   We provide a script which executes a simple file transfer. It can be found
   under:
   
-      $GNDMS_SOURCE/taskflows/fileTransfer/bin/run-transfer-client
+      $GNDMS_SOURCE/taskflows/fileTransfer/bin/run-transfer-client.sh
 
   The script requires the following arguments to run:
   ** The transfer request as properties-file:
