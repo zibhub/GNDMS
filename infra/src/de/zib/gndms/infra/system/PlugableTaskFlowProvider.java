@@ -36,13 +36,19 @@ public class PlugableTaskFlowProvider extends TaskFlowProviderImpl {
     protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
     private boolean hasFactories = false;
     private GNDMSystem system;
+    private ClassLoader cl;
 
 
     public void loadPlugins( boolean checkDeps ) {
 
         Map<String, TaskFlowFactory> plugins = new HashMap<String, TaskFlowFactory>( 10 );
 
-        ServiceLoader<TaskFlowFactory> sl = ServiceLoader.load( TaskFlowFactory.class );
+        ServiceLoader<TaskFlowFactory> sl;
+        if( getCl() != null )
+            sl = ServiceLoader.load( TaskFlowFactory.class, getCl() );
+        else
+            sl = ServiceLoader.load( TaskFlowFactory.class );
+
         for( TaskFlowFactory bp : sl ) {
             try {
                 register( bp, plugins );
@@ -64,7 +70,15 @@ public class PlugableTaskFlowProvider extends TaskFlowProviderImpl {
 
     @PostConstruct
     public void loadPlugins( ) {
-        loadPlugins( true );
+
+        PluginLoader pl = new PluginLoader();
+        try {
+            ClassLoader cl = pl.loadPlugins();
+            setCl( cl );
+            loadPlugins( true );
+        } catch ( Exception e ) {
+            throw new RuntimeException( e );
+        }
     }
 
 
@@ -132,8 +146,8 @@ public class PlugableTaskFlowProvider extends TaskFlowProviderImpl {
     @Override
     public void setFactories( Map<String, TaskFlowFactory> factories ) {
 
-        if ( hasFactories )
-            throw new IllegalStateException( "factories are already set"  );
+     //   if ( hasFactories )
+     //       throw new IllegalStateException( "factories are already set"  );
 
         hasFactories = true;
         super.setFactories( factories );    // overriden method implementation
@@ -149,5 +163,17 @@ public class PlugableTaskFlowProvider extends TaskFlowProviderImpl {
     public void setSystem( final GNDMSystem system )  {
 
         this.system = system;
+    }
+
+
+    public ClassLoader getCl() {
+
+        return cl;
+    }
+
+
+    public void setCl( final ClassLoader cl ) {
+
+        this.cl = cl;
     }
 }

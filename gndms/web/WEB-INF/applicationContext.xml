@@ -7,10 +7,13 @@
     <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
         <property name="useDefaultSuffixPattern" value="false"/>
     </bean>
-
+    
     <import resource="classpath:META-INF/00_system.xml"/>
     <import resource="classpath:META-INF/converter-setup.xml"/>
     <import resource="classpath:META-INF/dspace.xml"/>
     <import resource="classpath:META-INF/gorfx.xml"/>
+    
+    <bean class="de.zib.gndms.GORFX.service.util.UglyGlue" />
+
 
 </beans>
