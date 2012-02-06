@@ -803,12 +803,35 @@ end
 
 
 task 'deploy-gndms-rest' do
+
+    def mkGridProps(hostname, port)
+        props = eval IO.read ( 'etc/grid.properties' )
+        propFile = File.new( "#{ENV['JETTY_HOME']}/gndms/grid.properties" , 'w')
+        propFile.write( props )
+        propFile.close
+    end 
+
     src = project('gndms:gndms').package(:war).to_s
     testEnv('JETTY_HOME', 'the root directory of your jetty installation')
-    tgt = "#{ENV['JETTY_HOME']}/webapps/root"
-    puts "deploying #{src} => #{tgt}"
-    `rm -r #{tgt}/*`
-    `unzip #{src} -d #{tgt}`
+    tgt = "#{ENV['JETTY_HOME']}/webapps/gndms.war"
+    puts "Deploying #{src} => #{tgt}"
+    cp( src, tgt );
+    puts "Creating #{ENV['JETTY_HOME']}/gndms"
+    mkdir( "#{ENV['JETTY_HOME']}/gndms" )
+
+    hn = `hostname -f`.chomp
+    if ( ENV['GNDMS_PORT'] == nil )
+        port = '8080'
+    else 
+        port = ENV['GNDMS_PORT'] 
+    end
+
+    mkGridProps( hn, port )
+
+    cp( "etc/log4j.properties", "#{ENV['JETTY_HOME']}/gndms" )
+    puts "installing context to #{ENV['JETTY_HOME']}/contexts"
+    cp( "etc/gndms.xml",  "#{ENV['JETTY_HOME']}/contexts" )
+
 end
 
 
@@ -877,6 +900,10 @@ end
 desc 'Sets up the c3 data-provider database'
 task 'c3grid-dp-setupdb' do
     system "#{ENV['GNDMS_SOURCE']}/scripts/c3grid/setup-dataprovider.sh CREATE"
+end
+
+task 'c3grid-portal-setupdb' do
+    system "#{ENV['GNDMS_SOURCE']}/scripts/c3grid/setup-portal.sh CREATE"
 end
 
 task 'c3grid-dp-test' => task('gndms:gndmc:run-staging-test') 
