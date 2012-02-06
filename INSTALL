@@ -298,7 +298,7 @@ file. In the section:
     myProxyConnectionCredentialPrefix=gndms
 
 * `myProxyServer` holds FQDN to the MyProxy server. csr-pc28.zib.de
-  can be used for testing purpose. However you need to check your
+  can be used for testing purpose. However you need to check-in your
   D-Grid certificate-proxy using 
 
         myproxy-init -s csr-pc28.zib.de
@@ -307,11 +307,11 @@ file. In the section:
 
 * For the connection to the MyProxy-server host authentication is used.
   This requires a Host certificate from the D-Grid together with the
-  root CA-certificats.
+  root CA-certificates.
 
   ** `myProxyConnectionCredentialFolder` is the folder containing
-  the certificates with the root CA-certs in hashed form. So
-  simply set it to grid-security
+  the certificates folder with the root CA-certs in hashed form.
+  Simply set it to /etc/grid-security is fine.
 
   ** `myProxyConnectionCredentialPrefix` in case you want to use  
   containercert.pem and containerkey.pem this should be `container`.
