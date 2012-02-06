@@ -804,9 +804,9 @@ end
 
 task 'deploy-gndms-rest' do
 
-    def mkGridProps(hostname, port)
-        props = eval IO.read ( 'etc/grid.properties' )
-        propFile = File.new( "#{ENV['JETTY_HOME']}/gndms/grid.properties" , 'w')
+    def mkProps( src, hostname, port)
+        props = eval IO.read ( "etc/#{src}" )
+        propFile = File.new( "#{ENV['JETTY_HOME']}/gndms/#{src}" , 'w')
         propFile.write( props )
         propFile.close
     end 
@@ -826,9 +826,9 @@ task 'deploy-gndms-rest' do
         port = ENV['GNDMS_PORT'] 
     end
 
-    mkGridProps( hn, port )
+    mkProps( 'grid.properties', hn, port )
+    mkProps( 'log4j.properties', hn, port )
 
-    cp( "etc/log4j.properties", "#{ENV['JETTY_HOME']}/gndms" )
     puts "installing context to #{ENV['JETTY_HOME']}/contexts"
     cp( "etc/gndms.xml",  "#{ENV['JETTY_HOME']}/contexts" )
 
