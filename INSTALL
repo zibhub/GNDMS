@@ -18,14 +18,14 @@ This is the Installation Guide for the
 
 
 BIG WARNING: THIS RELEASE HAS ALMOST NO SECURITY FEATURES AND IS NOT
-INTEND FOR PRODUCTIVE USE. IT SHOULD BE RUN BEHIND A FIREWALL, SAVE
-FROM THE DANGERS OUTSIDE WORLD.
+INTENDED FOR PRODUCTIVE USE. IT SHOULD BE RUN BEHIND A FIREWALL, SAVE
+FROM THE DANGERS OF OUTSIDE WORLD.
 
 Prerequisites
 -------------
 
 In order to build or install GNDMS, the following prerequisites need to
-be fulfilled
+be fulfilled.
 
 
 
@@ -34,23 +34,23 @@ be fulfilled
 
 #### Install the Java 2 SE Development Toolkit Version 1.6 
  
-Please Install the [Java](http://www.oracle.com/technetwork/java/index.html) SE Development
+Please install the [Java](http://www.oracle.com/technetwork/java/index.html) SE Development
 Toolkit Version 1.6.
  
 For compiling the services, please make sure that `$JAVA_HOME` points
 to this version and that this is also the version that is in your
-`$PATH`.  Naturally, this should be the same version than the one you
-use(d) for building and running globus.
+`$PATH`. Naturally, this should be the same version than the one you
+want to use for building and running globus.
 
 
 
 #### Install Local UNIX Software
 
 In order to install GNDMS, please make sure you have installed the
-following software
+following software:
 
 * openssl
-* curl
+* curl 
 * Globus Toolkit (with GridFTP component)
 
 Additionally, it is expected that your UNIX provides the following
@@ -59,7 +59,7 @@ shell tools: hostname, which, bash
 
 ### Preparation of GNDMS Software
 
-**ATTENTION** *The following steps need to be executed as the a user that runs
+**ATTENTION** *The following steps need to be executed as the user that runs
 the servlet container. We will assume that user to be named `gndms`.*
 
 
@@ -69,15 +69,15 @@ Download either an official GNDMS distribution package and unpack it
 or get the current development version from github.
 
 Please set `$GNDMS_SOURCE` to the root directory of your GNDMS
-distribution (The directory that contains `Buildfile`) and
-add `$GNDMS_SOURCE/bin` to your `$PATH`
+distribution (i.e. the directory that contains `Buildfile`) and
+add `$GNDMS_SOURCE/bin` to your `$PATH`.
 
-Additionally, please set the following environment variables as specified below
+Additionally, please set the following environment variables as specified below:
 
 * `$GNDMS_SHARED` to a path where the databases can be stored (e.g. `/var/lib/gndms`)
 * `$GNDMS_MONI_CONFIG` to `$GNDMS_SHARED/monitor.properties`
 
-Please ensure, that the path `$GNDMS_SHARED` exists and that the user gndms has
+Please ensure, that the path `$GNDMS_SHARED` exists and that the user `gndms` has
 permissions to read and write that directory.
 
 Please consult `$GNDMS_SOURCE/etc/example.profile` for an
@@ -105,8 +105,8 @@ Installation and Deployment from Distribution Package
 -----------------------------------------------------
  
  This section describes the actual installation of the GNDMS software
- into the Globus Container. It requires that your system has been
- prepared as described in the previous section. Again the following
+ into the Servlet Container. It requires that your system has been
+ prepared as described in the previous section. Again, the following
  steps should be executed by the `gndms` user.
 
 
@@ -115,7 +115,7 @@ Installation and Deployment from Distribution Package
 
 The REST version ot GNDMS (>= 0.6.0) has nearly nothing in common with
 the last WS-based version (0.3.4).
-Hence, it would be best to get rid the old system completely.
+Hence, it would be best to get rid of the old system completely.
 The INSTALL file of the old system should describe how to do that.
 
 ### Installation and Initial Deployment
@@ -130,13 +130,13 @@ The INSTALL file of the old system should describe how to do that.
 * To install the package automatically, you need to set the `$JETTY_HOME` variable to
   the jetty directory. Then execute `gndms-buildr install` in `$GNDMS_SOURCE`.
 
-  The will install
+  This will install
     
     ** the compiled .war file to `$JETTY_HOME/webapps/gndms.war`,
     ** a grid.properties to `$JETTY_HOME/gndms` and
     ** the context gndms.xml to `$JETTY_HOME/contexts`.
 
-  If you want to use an other application-server than Jetty, thats
+  If you want to use another application server than Jetty, that's
   fine: every Servlet 3.0 compliant server should do the trick.
   However you need to do deployment of the application manually.
   
@@ -146,11 +146,11 @@ The INSTALL file of the old system should describe how to do that.
       $JETTY_HOME/gndms/grid.properties 
 
   in an editor of your choice and check if the `dspaceBaseURL` and
-  `gorfxBaseURL` are correct. Additionally check if `gridPath` points to
+  `gorfxBaseURL` entries are correct. Additionally, check if `gridPath` points to
   the desired folder.
 
-* Before (re-)starting the application container (e.g. jetty), make sure that the $GNDMS_SHARED
-  path is accessible by the user running the application container.
+* Before (re-)starting the application container (e.g. Jetty), make sure that the `$GNDMS_SHARED`
+  path is accessible by the user gndms running the application container.
 
   After restarting the application container, the following lines (or the like) should be found
   in the output.
