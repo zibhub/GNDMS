@@ -298,8 +298,8 @@ file. In the section:
     myProxyConnectionCredentialPrefix=gndms
 
 * `myProxyServer` holds FQDN to the MyProxy server. csr-pc28.zib.de
-  can be used for testing purpose. However you need to checking your
-  D-Grid certificat-proxy using 
+  can be used for testing purpose. However you need to check your
+  D-Grid certificate-proxy using 
 
         myproxy-init -s csr-pc28.zib.de
 
@@ -309,21 +309,21 @@ file. In the section:
   This requires a Host certificate from the D-Grid together with the
   root CA-certificats.
 
-  ** `myProxyConnectionCredentialFolder` this the folder containing
-  the certificates folder with the root CA-certs in hashed form. So
+  ** `myProxyConnectionCredentialFolder` is the folder containing
+  the certificates with the root CA-certs in hashed form. So
   simply set it to grid-security
 
   ** `myProxyConnectionCredentialPrefix` in case you want to use  
-  containercert.pem and containerkey.pem this should be `container`
+  containercert.pem and containerkey.pem this should be `container`.
   
-  However this files must be readable for the user running the
-  GNDMS-application. We recommend to make a copy of this files
+  However these files must be readable for the user running the
+  GNDMS-application. We recommend to make a copy of these files
 
       containercert.pem => gndmscert.pem 
       containerkey.pem  => gndmskey.pem 
 
   and leave `myProxyConnectionCredentialPrefix` alone. 
-  **Note** this files must be present in the folder register with:
+  **Note** these files must be present in the folder named by:
   `myProxyConnectionCredentialFolder`. 
   
 
