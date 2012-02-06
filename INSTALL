@@ -56,6 +56,14 @@ following software
 Additionally, it is expected that your UNIX provides the following
 shell tools: hostname, which, bash
 
+GNDMS requires an Servlet 3.0 compliant application container. We have
+tested GNDMS against the latest stable release of Jetty 6 to 8. You
+can either grab Jetty from 
+
+    http://download.eclipse.org/jetty/
+
+or use the one which comes with your Linux distribution.
+
 
 ### Preparation of GNDMS Software
 
@@ -403,33 +411,4 @@ Now, please upload the tarball and let the world know about it.
 
 \*) *Please note: Every time you change the VERSION_NUMBER you have to
 call `install-deps` or building the services will not succeed.*
-
-#### Problem Shooting Tips for Development Builds
-
-* Do you need to regen the stubs? `gndms-buildr clean-services
-  package-stubs` to the rescue.
-
-* Symlinks/copies of old jars in `$GLOBUS_LOCATION/lib`.  
-
-      find $GLOBUS_LOCATION/lib -type l -name *.jar -exec rm -i {} \;
-
-  may help
-
-* If you cant deploy (i.e. globus-start-container balks with one of
-   those 40+-lines stacktraces) it's possible that introduce created
-   an invalid jndi-config.xml which can happen during development but
-   is easy enough to fix: Just make sure there are neither duplicate
-   service nor resourceHome entries in any of the jndi-config.xml
-   files
-
-* This build is not supposed to work on Microsoft Windows
-
-* If you get an error about a missing "test/src" directory simply
-  mkdir -p test/src in the respective services' directory
-
-Other common reasons for a failed container starts are invalid credentials
-(hostkey/hostcert.pem) or outdated CRLs. In the latter case, the script
-contained in `$GNDMS_SOURCE/contrib/fetch-crl` may help you. Execute
-`fetch-crl -o <grid-cert-dir>` with apropriate permissions (Requries `wget`).
-<a name="fetch-crl" />
 
