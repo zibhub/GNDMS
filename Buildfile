@@ -537,9 +537,13 @@ end
 
 task 'deploy-gndms-rest' do
 
-    def mkProps( src, hostname, port)
+    def mkJettyProps( src, hostname, port)
+        mkProps(  src, "#{ENV['JETTY_HOME']}/gndms/", hostname, port )
+    end 
+
+    def mkProps( src, tgt, hostname, port)
         props = eval IO.read ( "etc/#{src}" )
-        propFile = File.new( "#{ENV['JETTY_HOME']}/gndms/#{src}" , 'w')
+        propFile = File.new( "#{tgt}/#{src}" , 'w')
         propFile.write( props )
         propFile.close
     end 
@@ -557,15 +561,18 @@ task 'deploy-gndms-rest' do
         puts "already exists. Skipping..."
     end
 
-    hn = `hostname -f`.chomp
+    hostname = `hostname -f`.chomp
     if ( ENV['GNDMS_PORT'] == nil )
         port = '8080'
     else 
         port = ENV['GNDMS_PORT'] 
     end
 
-    mkProps( 'grid.properties', hn, port )
-    mkProps( 'log4j.properties', hn, port )
+    mkJettyProps( 'grid.properties', hostname, port )
+    mkJettyProps( 'log4j.properties', hostname, port )
+
+    puts "installing monitor.properties to #{ENV['GNDMS_SHARED']}"
+    mkProps( 'monitor.properties', "#{ENV['GNDMS_SHARED']}", hostname, port )
 
     puts "installing context to #{ENV['JETTY_HOME']}/contexts"
     cp( "etc/gndms.xml",  "#{ENV['JETTY_HOME']}/contexts" )
