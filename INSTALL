@@ -183,31 +183,31 @@ The REST-based version of GNDMS uses a plug-in system to implement
 certain data-management tasks. The basic installation doesn't include
 any plug-ins.
 Depending on the designated role of your GNDMS installation you need to
-install an setup additional plug-ins.
+install and setup additional plug-ins.
 
-Additionally, there are build targets to for the C3INAD projects in
+Additionally, there are build targets to for the C3INAD project in
 the `Buildfile`.
 
 
 **C3-Grid Setup & Configuration for Dataprovider** 
 * Enable provider-stage-in:
-  cd into 
+  Enter the directory
   
       $GNDMS_SOURCE/taskflows/staging
   
-  Run:
+  and run
   
       gndms-buildr staging:server:package
   
-  this will compile the stage-in client and server, than install it with
+  This will compile the stage-in client and server, than install it with
   
   
       gndms-buildr staging:server:deploy
   
-  Now (re)start or reload your jetty container, this is required for
+  Now (re-)start or reload your Jetty container, this is required for
   the gndms plug-in loader to properly register the plug-ins.
   
-  Finally configure the provider staging plug-in:
+  Finally, configure the provider staging plug-in:
 
     : Edit `$GNDMS_SOURCE/scripts/c3grid/setup-dataprovider.sh` and
     execute `gndms-buildr c3grid-dp-setupdb`
@@ -219,11 +219,11 @@ the `Buildfile`.
   
       $GNDMS_SOURCE/taskflows/staging/bin/run-staging-client
 
-  The script requires the following arguments to run:
+  This script requires the following arguments to run:
   ** The staging request as properties-file:
         -props <staging-property-file-name>
 
-  ** Login details for the MyProxyServer, see below for additional
+  ** Login details for the MyProxyServer. See below for additional
      information about the MyProxy-configuration
         -myProxyLogin  <login>          
         -myProxyPasswd <pass-phrase>       
@@ -231,29 +231,29 @@ the `Buildfile`.
 **C3-Grid Setup & Configuration for Portal** 
 * Enable GridFTP-file-transfer
 
-  cd into 
+  Enter the directory
   
       $GNDMS_SOURCE/taskflows/fileTransfer
   
-  Run:
+  and run
   
       gndms-buildr transfer:server:package
   
-  this will compile the client- and serverside of the plug-in, than install it with
+  This will compile the client- and serverside of the plug-in. It can be installed via
   
       gndms-buildr transfer:server:deploy
   
-  Now (re)start or reload your jetty container, this is required for
+  Now (re-)start or reload your Jetty container. This is required for
   the gndms plug-in loader to properly register the plug-ins.
   
-  Finally configure the provider staging plug-in:
+  Finally, configure the GridFTP-file-transfer plug-in:
 
     : Edit `$GNDMS_SOURCE/scripts/c3grid/setup-portal.sh` and
     execute `gndms-buildr c3grid-portal-setupdb`
 
 * Quick test for the file transfer:
 
-  We provide a script which executes a simple staging. It can be found
+  We provide a script which executes a simple file transfer. It can be found
   under:
   
       $GNDMS_SOURCE/taskflows/fileTransfer/bin/run-transfer-client
