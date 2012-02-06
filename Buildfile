@@ -27,6 +27,7 @@ require "open3"
 
 VERSION_NUMBER = '0.6.0'
 VERSION_NAME = 'ARTURAS'
+FALLBACK_VERSION_TAG = 'release-Arturas'
 GROUP_NAME = 'de.zib.gndms'
 MF_COPYRIGHT = 'Copyright 2008-2011 Zuse Institute Berlin (ZIB)'
 LICENSE ='This software has been licensed to you under the terms and conditions of the Apache License 2.0 (APL 2.0) only.'
