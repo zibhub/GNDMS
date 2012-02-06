@@ -45,12 +45,12 @@ public abstract class GORFXTaskFlowExample extends AbstractApplication {
 	protected String gorfxEpUrl;
 	@Option(name = "-dn", required = true, usage = "DN")
 	protected String dn;
-    @Option( name="-props", required=true, usage="staging.properties" )
+    @Option( name="-props", required=true, usage="taskflow order properties" )
     protected String orderPropFile;
     @Option( name="-con-props", usage="contract.properties" )
     protected String conPropFile;
-    @Option( name="-proxyfile", usage="grid-proxy-file to lead", metaVar="proxy-file" )
-    protected String proxyFile = null;
+    //@Option( name="-proxyfile", usage="grid-proxy-file to lead", metaVar="proxy-file" )
+    //protected String proxyFile = null;
     @Option( name="-cancel", required = false, usage = "ms to wait before destroying taskClient.")
     protected Long cancel = null;
     @Option( name="-myProxyLogin", required = false, usage = "login name for the MyProxyServer." )

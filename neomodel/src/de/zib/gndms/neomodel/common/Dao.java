@@ -33,6 +33,7 @@ import java.util.Map;
 public class Dao {
     final @NotNull private GraphDatabaseService gdb;
     final @NotNull private String gridName;
+    private ClassLoader classLoader = this.getClass().getClassLoader();
 
     public Dao(@NotNull String gridName, @NotNull GraphDatabaseService gdb) {
         this.gridName = gridName;
@@ -40,8 +41,11 @@ public class Dao {
     }
 
     public Session beginSession() {
-        return new Session(this, gridName, gdb);
+        Session ses =  new Session(this, gridName, gdb );
+        ses.setClassLoader( classLoader );
+        return ses;
     }
+
 
     @NotNull
     public String getGridName() {
@@ -52,7 +56,7 @@ public class Dao {
         final Session session = beginSession();
         try {
             final Task task = session.createTask();
-            task.setId(id);
+            task.setId( id );
             session.success();
         }
         finally {
@@ -98,4 +102,18 @@ public class Dao {
         }
         finally { session.success(); }
     }
+
+
+    public ClassLoader getClassLoader() {
+
+        return classLoader;
+    }
+
+
+    public void setClassLoader( final ClassLoader classLoader ) {
+
+        this.classLoader = classLoader;
+    }
+
+
 }

@@ -63,10 +63,11 @@ public class ProviderStageInTaskFlowFactory
         final @NotNull MapConfig config = new MapConfig( getDao().getTaskFlowTypeConfig(
                 getTaskFlowKey() ));
         try {
+            final String clazz = config.getOption( "estimationClass",
+                    ExternalProviderStageInQuoteCalculator.class.getName() );
             final Class<? extends AbstractProviderStageInQuoteCalculator> orqCalculatorClass =
-                config.getClassOption(
-                    AbstractProviderStageInQuoteCalculator.class, "estimationClass",
-                    ExternalProviderStageInQuoteCalculator.class );
+                    Class.forName( clazz ).asSubclass( AbstractProviderStageInQuoteCalculator
+                            .class);
             calculon = orqCalculatorClass.newInstance();
             injectMembers( calculon );
             return calculon;
@@ -119,9 +120,11 @@ public class ProviderStageInTaskFlowFactory
         final @NotNull MapConfig config = new MapConfig(getDao().getTaskFlowTypeConfig( getTaskFlowKey() ));
         final Class<? extends AbstractProviderStageInAction> instanceClass;
         try {
-            instanceClass = config.getClassOption(
-                  AbstractProviderStageInAction.class, "stagingClass",
-                  ExternalProviderStageInAction.class);
+
+            String clazz = config.getOption( "stagingClass",
+                    ExternalProviderStageInAction.class.getName() );
+            instanceClass =
+                    Class.forName( clazz ).asSubclass( AbstractProviderStageInAction.class );
             final AbstractProviderStageInAction newInstance = instanceClass.newInstance();
       	    injectMembers(newInstance);
             return newInstance;

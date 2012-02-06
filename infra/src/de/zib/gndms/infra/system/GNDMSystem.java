@@ -124,6 +124,7 @@ public final class GNDMSystem
             dao = new Dao(getGridName(), neo);
             listEntities( emf );
 			tryTxExecution();
+
 			// initialization intentionally deferred to initialize
             if ( beanFactory == null )
                 throw new IllegalStateException( "beanfactory not provided" );
