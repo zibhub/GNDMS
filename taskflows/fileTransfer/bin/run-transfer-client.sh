@@ -1,6 +1,6 @@
 #!/bin/bash
 
-args=( "-uri" "http://localhost:8080/gndms/c3grid/" "-dn" "foo" )
+args=( "-uri" "http://localhost:${GNDMS_PORT:='8080'}/gndms/c3grid/" "-dn" "foo" )
 
 cp="/home/mjorra/.m2/repository/commons-codec/commons-codec/1.4/commons-codec-1.4.jar:$cp"
 cp="/home/mjorra/.m2/repository/org/slf4j/jcl-over-slf4j/1.6.3/jcl-over-slf4j-1.6.3.jar:$cp"

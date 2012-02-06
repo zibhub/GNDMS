@@ -1,6 +1,6 @@
 #!/bin/bash
 
-args=( "-uri" "http://localhost:8080/gndms/c3grid/" "-dn" "foo" )
+args=( "-uri" "http://localhost:${GNDMS_PORT:='8080'}/gndms/c3grid/" "-dn" "foo" )
 
 cp="/home/mjorra/.m2/repository/javax/servlet/servlet-api/2.4/servlet-api-2.4.jar:$cp"
 cp="/home/mjorra/.m2/repository/portlet-api/portlet-api/1.0/portlet-api-1.0.jar:$cp"
