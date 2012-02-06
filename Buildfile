@@ -353,9 +353,7 @@ define 'gndms' do
 
     desc 'GT4-independent utility classes for GNDMS'
     define 'stuff', :layout => dmsLayout('stuff', 'gndms-stuff') do
-       task( 'update-release-info' )       
        compile.with INJECT, GOOGLE_COLLECTIONS, JETBRAINS_ANNOTATIONS, JSON, SPRING, SLF4J
-       compile { project('gndms').updateBuildInfo() }
        test.compile
        test.using :testng
        package :jar
