@@ -190,6 +190,7 @@ the `Buildfile`.
 
 
 **C3-Grid Setup & Configuration for Dataprovider** 
+
 * Enable provider-stage-in:
   Enter the directory
   
@@ -223,12 +224,15 @@ the `Buildfile`.
   ** The staging request as properties-file:
         -props <staging-property-file-name>
 
-  ** Login details for the MyProxyServer. See below for additional
+  ** Login details for the MyProxyServer the same you used with
+     myproxy-init. See below for additional
      information about the MyProxy-configuration
         -myProxyLogin  <login>          
         -myProxyPasswd <pass-phrase>       
 
+
 **C3-Grid Setup & Configuration for Portal** 
+
 * Enable GridFTP-file-transfer
 
   Enter the directory
@@ -266,19 +270,62 @@ the `Buildfile`.
      An example for transfer properties can be found in:
       $GNDMS_SOURCE/taskflows/fileTransfer/etc/order.properties
 
-  ** Login details for the MyProxyServer, see below for additional
+  ** Login details for the MyProxyServer, the same you used with
+     myproxy-init. See below for additional
      information about the MyProxy-configuration
         -myProxyLogin  <login>          
         -myProxyPasswd <pass-phrase>       
 
-**C3-Grid Quick Test** 
-TODO
 
 Additionally, please consult the documentation for the respective 
 community grid platform.
 
 **NOTE** *In case of failure during setup, please execute
   `gndms-buildr kill-db` and try again.*
+
+
+
+**MyProxy Setup**
+
+
+File transfer and possibly provider stage-in require a user
+certificate. The certificates are issued from a MyProxy-Server. The
+server which should be used can be configured in the `grid.properties`
+file. In the section: 
+    # settings for the myproxy server
+    myProxyServer=csr-pc28.zib.de
+    myProxyConnectionCredentialFolder=/etc/grid-security
+    myProxyConnectionCredentialPrefix=gndms
+
+* `myProxyServer` holds FQDN to the MyProxy server. csr-pc28.zib.de
+  can be used for testing purpose. However you need to checking your
+  D-Grid certificat-proxy using 
+
+        myproxy-init -s csr-pc28.zib.de
+
+  first.
+
+* For the connection to the MyProxy-server host authentication is used.
+  This requires a Host certificate from the D-Grid together with the
+  root CA-certificats.
+
+  ** `myProxyConnectionCredentialFolder` this the folder containing
+  the certificates folder with the root CA-certs in hashed form. So
+  simply set it to grid-security
+
+  ** `myProxyConnectionCredentialPrefix` in case you want to use  
+  containercert.pem and containerkey.pem this should be `container`
+  
+  However this files must be readable for the user running the
+  GNDMS-application. We recommend to make a copy of this files
+
+      containercert.pem => gndmscert.pem 
+      containerkey.pem  => gndmskey.pem 
+
+  and leave `myProxyConnectionCredentialPrefix` alone. 
+  **Note** this files must be present in the folder register with:
+  `myProxyConnectionCredentialFolder`. 
+  
 
 
 ### Finalize Installation 
