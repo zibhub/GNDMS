@@ -1,8 +1,8 @@
 This branch contains implementation of the REST-based GNDMS version.
 
-Apart from urgent bug-fixes the GT4 based (i.e. the *master*-branch)
-version will not be subject to further development. Thus the
-rest-devel branch will replace master as soon as it reaches RC state.
+The WS, resp. GT4, based version can still be found on the
+ws-gndms-devel branch.  Apart from urgent bug-fixes the GT4 based
+version will not be subject to further development. 
 
 
 The REST-interface is stable with the exception that new methods might be
@@ -19,9 +19,20 @@ gndms-commons  Contains code shared by the client and service, e.g.
                the service.
 gndmc-rest     Contains the code of client side.
 
+The other layers are equel to the ones from the WS version.
 
-Please have a look at INSTALL for a short setup-guide.
+Please have a look at INSTALL for the setup-guide.
 
 Feel free to consult the HTML documentation in 
+
     http://gndms.zib.de/developer-guide/rest/
+
 which contains additional infos.
+
+
+The documentation on 
+
+    http://gndms.zib.de
+
+still refers to the WS version and will be updated in the coming
+weeks.
