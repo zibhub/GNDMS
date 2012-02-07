@@ -15,7 +15,7 @@ package de.zib.gndms.stuff.misc;
  * limitations under the License.
  */
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 
 /**
  * @author try ma ik jo rr a zib

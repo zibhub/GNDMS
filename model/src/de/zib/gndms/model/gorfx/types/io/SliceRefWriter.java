@@ -18,6 +18,7 @@ package de.zib.gndms.model.gorfx.types.io;
 
 
 
+import de.zib.gndms.common.model.gorfx.types.io.GORFXWriterBase;
 import de.zib.gndms.model.dspace.types.SliceRef;
 
 import javax.xml.namespace.QName;

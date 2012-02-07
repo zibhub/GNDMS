@@ -18,7 +18,7 @@ package de.zib.gndms.kit.access;
 
 
 
-import com.google.inject.Injector;
+import de.zib.gndms.stuff.GNDMSInjector;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -27,5 +27,5 @@ import org.jetbrains.annotations.NotNull;
  * @author  try ste fan pla nti kow zib
  */
 public interface InjectorProvider {
-    @NotNull Injector getInjector();
+    @NotNull GNDMSInjector getInjector();
 }

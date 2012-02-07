@@ -17,12 +17,13 @@ package de.zib.gndms.model.common;
  */
 
 
-
-import de.zib.gndms.model.common.types.FutureTime;
-import de.zib.gndms.model.common.types.TransientContract;
+import de.zib.gndms.common.model.gorfx.types.FutureTime;
+import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.stuff.copy.Copier;
-import de.zib.gndms.stuff.copy.CopyMode;
 import de.zib.gndms.stuff.copy.Copyable;
+import de.zib.gndms.stuff.copy.Copyable.CopyMode;
+import org.apache.openjpa.persistence.Externalizer;
+import org.apache.openjpa.persistence.Factory;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
@@ -31,16 +32,16 @@ import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import java.util.Calendar;
+import java.io.Serializable;
 
 
 
 /**
  *
- * A PersistenContract can be transformed to an TransientContract
+ * A PersistenContract can be transformed to an Quote
  *
  *
- * @see de.zib.gndms.model.common.types.TransientContract
+ * @see de.zib.gndms.common.model.gorfx.types.Quote
  *
  * @author  try ste fan pla nti kow zib
  * @version $Id$
@@ -48,13 +49,64 @@ import java.util.Calendar;
  *          User: stepn Date: 24.11.2008 Time: 15:22:43
  */
 @Embeddable @Copyable(CopyMode.MOLD)
-public class PersistentContract {
-	private Calendar accepted;
-	private Calendar deadline;
-	private Calendar resultValidity;
+public class PersistentContract implements Serializable {
+    private static final long serialVersionUID = -7695057432890400329L;
+
+    private DateTime accepted;
+	private DateTime deadline;
+	private DateTime resultValidity;
 
     // expected size of task in case of a transfer or staging
     private Long expectedSize;
+
+
+    public static PersistentContract acceptQuoteAt( DateTime dt, Quote quote ) {
+        quote.setAccepted( dt );
+        return acceptQuoteAsIs( quote );
+    }
+
+
+    public static PersistentContract acceptQuoteNow( Quote quote ) {
+        return acceptQuoteAt( new DateTime(), quote );
+    }
+
+
+    /**
+     * Creates a persistent-contract form this contract by fixing future time using the accepted time stamp.
+     *
+     * @return A persistent-contract representing this contract.
+     *         <p/>
+     *         todo maybe set fixed values here
+     * @note The created contract may be invalid wrt its jpa constraints.
+     * @param quote
+     */
+    @SuppressWarnings( { "FeatureEnvy" } )
+    protected static PersistentContract acceptQuoteAsIs( Quote quote ) {
+
+        PersistentContract pc = new PersistentContract();
+        pc.setAccepted( quote.getAccepted() );
+
+        DateTime fixedDeadline = null;
+        if ( quote.hasDeadline() ) {
+            fixedDeadline = quote.getDeadline().fixedWith( quote.getAccepted() ).getFixedTime();
+            pc.setDeadline( fixedDeadline );
+        }
+
+        if ( quote.hasResultValidity() ) {
+            DateTime fixedResultValidity;
+            if ( fixedDeadline != null )
+                fixedResultValidity = quote.getResultValidity().fixedWith( fixedDeadline ).getFixedTime();
+            else {
+                fixedResultValidity = quote.getResultValidity().fixedWith( quote.getAccepted() ).getFixedTime();
+            }
+            pc.setResultValidity( fixedResultValidity );
+        }
+
+        if ( quote.hasExpectedSize() )
+            pc.setExpectedSize( quote.getExpectedSize() );
+        return pc;
+    }
+
 
     /**
      * @see de.zib.gndms.stuff.mold.Molder
@@ -71,15 +123,16 @@ public class PersistentContract {
      * Transformation is done by setting all fields of the {@code TransientContract} instance
      * to the field values of {@code this}.
      *
-     * @return a corresponding TransientContract object out of {@code this}.
+     * @return a corresponding Quote object out of {@code this}.
      */
     @SuppressWarnings({ "FeatureEnvy" })
-	public @NotNull TransientContract toTransientContract() {
-		final TransientContract tc = new TransientContract();
+	public @NotNull
+    Quote toTransientContract() {
+		final Quote tc = new Quote();
 		final DateTime acceptedDt = new DateTime(getAccepted());
 		tc.setAccepted(acceptedDt);
 		tc.setDeadline(FutureTime.atFixedTime(getDeadline()));
-		tc.setResultValidity(FutureTime.atFixedTime(resultValidity));
+		tc.setResultValidity( FutureTime.atFixedTime( resultValidity ));
 		if (hasExpectedSize())
 			tc.setExpectedSize(getExpectedSize());
 		return tc;
@@ -91,9 +144,9 @@ public class PersistentContract {
      * @return the latest time, when comparing {@link #deadline} and {@link #resultValidity}
      */
 	@Transient
-	public Calendar getCurrentTerminationTime() {
-		final Calendar curDeadline = getDeadline();
-		final Calendar curRV = getResultValidity();
+	public DateTime getCurrentTerminationTime() {
+		final DateTime curDeadline = getDeadline();
+		final DateTime curRV = getResultValidity();
 		return curDeadline.compareTo(curRV) > 0 ? curDeadline : curRV; 
 	}
 
@@ -103,7 +156,9 @@ public class PersistentContract {
      * @return a clone of {@link #accepted}
      */
     @Temporal(value = TemporalType.TIMESTAMP )
-    public Calendar getAccepted() {
+    @Factory( "de.zib.gndms.model.util.JodaTimeForJPA.toDateTime" )
+    @Externalizer( "de.zib.gndms.model.util.JodaTimeForJPA.fromDateTime" )
+    public DateTime getAccepted() {
 		return nullSafeClone(accepted);
 	}
 
@@ -112,7 +167,7 @@ public class PersistentContract {
      *
      * @param acceptedParam a chosen value for {@link #accepted}
      */
-	public void setAccepted(final Calendar acceptedParam) {
+	public void setAccepted(final DateTime acceptedParam) {
 		accepted = nullSafeClone(acceptedParam);
 	}
 
@@ -122,7 +177,9 @@ public class PersistentContract {
      * @return a clone of {@link #deadline}
      */
     @Temporal(value = TemporalType.TIMESTAMP)
-	public Calendar getDeadline() {
+    @Factory( "de.zib.gndms.model.util.JodaTimeForJPA.toDateTime" )
+    @Externalizer( "de.zib.gndms.model.util.JodaTimeForJPA.fromDateTime" )
+	public DateTime getDeadline() {
 		return nullSafeClone(deadline);
 	}
 
@@ -132,7 +189,7 @@ public class PersistentContract {
      *
      * @param deadlineParam a chosen value for {@link #deadline}
      */
-	public void setDeadline(final Calendar deadlineParam) {
+	public void setDeadline(final DateTime deadlineParam) {
 		deadline = nullSafeClone(deadlineParam);
 	}
 
@@ -142,7 +199,9 @@ public class PersistentContract {
      * @return a clone of {@link #resultValidity}
      */
     @Temporal(value = TemporalType.TIMESTAMP)
-	public Calendar getResultValidity() {
+    @Factory( "de.zib.gndms.model.util.JodaTimeForJPA.toDateTime" )
+    @Externalizer( "de.zib.gndms.model.util.JodaTimeForJPA.fromDateTime" )
+	public DateTime getResultValidity() {
 		return nullSafeClone(resultValidity);
 	}
 
@@ -151,7 +210,7 @@ public class PersistentContract {
      *
      * @param resultValidityParam a chosen value for {@link #resultValidity}
      */
-	public void setResultValidity(final Calendar resultValidityParam) {
+	public void setResultValidity(final DateTime resultValidityParam) {
 		resultValidity = nullSafeClone(resultValidityParam);
 	}
 
@@ -204,9 +263,9 @@ public class PersistentContract {
     @Override
     public String toString( ) {
 	    final Long theExpectedSize = getExpectedSize();
-	    return "Accepted: " + isoForCalendar( accepted )
-            + "; Deadline: " + isoForCalendar( deadline )
-            + "; ResultValidity: " + isoForCalendar( resultValidity )
+	    return "Accepted: " + isoForDateTime( accepted )
+            + "; Deadline: " + isoForDateTime( deadline )
+            + "; ResultValidity: " + isoForDateTime( resultValidity )
             + "; ExpectedSize: "
             + ( theExpectedSize != null ? theExpectedSize.toString() : "null" );
     }
@@ -215,25 +274,25 @@ public class PersistentContract {
     /**
      * Returns either {@code null} if {@code cal} is null or if not, a clone of {@code cal}
      * 
-     * @param cal a Calendar which may be cloned.
+     * @param cal a DateTime which may be cloned.
      * @return
      */
-    private static Calendar nullSafeClone(Calendar cal) {
-		return cal == null ? null : (Calendar) cal.clone();
+    private static DateTime nullSafeClone(DateTime cal) {
+		return cal == null ? null : new DateTime( cal );
 	}
 
     /**
      * Returns a String representation of {@code cal}, using {@link org.joda.time.format.ISODateTimeFormat},
      * or "null" if {@code cal==null} is {@code true}.
      * 
-     * @param cal a Calendar to be printed as a String, in ISO format 
+     * @param cal a DateTime to be printed as a String, in ISO format 
      * @return
      */
-    private static String isoForCalendar( Calendar cal ) {
+    private static String isoForDateTime( DateTime cal ) {
 
         if( cal == null )
             return "null";
         
-        return ISODateTimeFormat.dateTime().print( new DateTime( cal ) );
+        return ISODateTimeFormat.dateTime().print( cal );
     }
 }

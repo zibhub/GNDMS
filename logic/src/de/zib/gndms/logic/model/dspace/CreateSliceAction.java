@@ -17,24 +17,23 @@ package de.zib.gndms.logic.model.dspace;
  */
 
 
-
+import de.zib.gndms.common.model.common.AccessMask;
 import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.logic.model.CreateTimedGridResourceAction;
-import de.zib.gndms.model.common.AccessMask;
-import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import org.jetbrains.annotations.NotNull;
+import org.joda.time.DateTime;
 
 import javax.persistence.EntityManager;
 import java.io.File;
-import java.util.Calendar;
+import java.util.UUID;
 
 /**
  * An action which creates a new slice in a given workspace
  *
- * It takes care of the hierarchic structur between {@link Subspace},{@link SliceKind} and {@link Slice}.
+ * It takes care of the hierarchic structure between {@link Subspace},{@link SliceKind} and {@link Slice}.
  * The new slice instance will be registered on the corresponding subspace object and the system will be notified about
  * the model change by calling {@code addChangedModel()}. See {@link #execute(javax.persistence.EntityManager)}
  *
@@ -65,17 +64,14 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
      * It creates and returns a new slice object, when this action is executed.
      *
      *
-     * @param uuid a uuid identifying the grid resource of the new slice instance
      * @param uid name of the owner of the new slice, can be null, then the current user will become the owner.
      * @param ttm the termination time of the slice object
-     * @param gen an uuid generator for the directory id of the new slice object
      * @param kind the sliceKind instance for the slice. (See {@link Slice}).
      * @param ssize total storage size for the slice instance
      */
-    public CreateSliceAction( String uuid, String uid, Calendar ttm, ModelUUIDGen gen, SliceKind kind, long ssize ) {
+    public CreateSliceAction( String uid, DateTime ttm, SliceKind kind, long ssize ) {
 
-        super( uuid, ttm );
-        setUUIDGen(gen);
+        super( UUID.randomUUID().toString(), ttm );
         if( uid != null )
             this.uid = uid;
         this.sliceKind = kind;
@@ -88,18 +84,16 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
      * It creates and returns a new slice object, when this action is executed.
      *
      *
-     * @param uuid a uuid identifying the grid resource of the new slice instance
      * @param uid name of the owner of the new slice, can be null, then the current user will become the owner.
      * @param ttm the termination time of the slice object
-     * @param gen an uuid generator for the directory id of the new slice object
      * @param kind the sliceKind instance for the slice. (See {@link Slice}).
      * @param ssize total storage size for the slice instance
      * @param da an helper object for directory access 
      */
-    public CreateSliceAction( String uuid, String uid, Calendar ttm, ModelUUIDGen gen, SliceKind kind, long ssize, DirectoryAux da ) {
+    public CreateSliceAction( String uid, DateTime ttm, SliceKind kind, long ssize,
+                              DirectoryAux da ) {
         
-        super( uuid, ttm );
-        setUUIDGen(gen);
+        super( UUID.randomUUID().toString(), ttm );
         if( uid != null )
             this.uid = uid;
         this.sliceKind = kind;
@@ -127,7 +121,8 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
      * It will be created using the fields given with the constructor of this class and the subspace retrieved from
      * {@code getModel()}.
      *
-     * It arranges the hierarchic structor between {@link Subspace},{@link SliceKind} and {@link Slice}.
+     * It arranges the hierarchic structure between {@link Subspace},{@link SliceKind} and {@link
+     * Slice}.
      * At the moment this is done using subfolders. The permissions of the folder corresponding to the slice instance
      * are set as denoted in {@link #sliceKind}.
      * The new Slice instance will be registered on the corresponding Subspace.
@@ -143,19 +138,21 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
         if( directoryAux == null )
             directoryAux = getInjector().getInstance( DirectoryAux.class );
 
-        Subspace sp = getModel( );
+        // get nondetached objects
+        final Subspace sp = em.find( Subspace.class, getModel().getId() );
+        sliceKind = em.find( SliceKind.class, sliceKind.getId() );
 
-        if( ! sp.getMetaSubspace( ).getCreatableSliceKinds( ).contains( sliceKind ) )
+        if( ! sp.getCreatableSliceKinds( ).contains( sliceKind ) )
             throw new IllegalStateException("SliceKind not assigned to Subspace");
 
         String lp = sp.getPath( ) +  File.separator + sliceKind.getSliceDirectory() + File.separator;
-        File f = null;
-        String did = new String( );
 
-        while ( !( f != null && !f.exists() ) ) {
+        File f;
+        String did;
+        do {
             did = nextUUID();
             f = new File( lp + did );
-        }
+        } while ( !( f != null && !f.exists() ) );
 
         try {
             // check if slice kind dir exists
@@ -168,7 +165,7 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
         } catch ( SecurityException e ) {
             throw new RuntimeException(e);
         }
-
+        
         /*
         // fix permissions
         directoryAux.setPermissions( uid, sliceKind.getPermission(), f.getAbsolutePath( ) );
@@ -180,13 +177,14 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
         sl.setId( getId( ) );
         sl.setTerminationTime( getTerminationTime( ) );
         sl.setTotalStorageSize( storageSize );
-        sp.addSlice( sl );
 
         addChangedModel( sl );
 
         // maybe this isn't of interest
         addChangedModel( sp );
-        
+
+        em.persist( sl );
+
         return  sl;
     }
 

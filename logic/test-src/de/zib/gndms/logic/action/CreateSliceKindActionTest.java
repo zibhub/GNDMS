@@ -18,12 +18,12 @@ package de.zib.gndms.logic.action;
 
 
 
+import de.zib.gndms.common.model.common.AccessMask;
 import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
 import de.zib.gndms.logic.model.LookupAction;
 import de.zib.gndms.logic.model.dspace.CreateSliceKindAction;
 import de.zib.gndms.logic.util.SimpleModelUUIDGen;
 import de.zib.gndms.model.common.ModelUUIDGen;
-import de.zib.gndms.model.common.AccessMask;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.test.ModelEntityTestBase;
 import org.testng.annotations.AfterTest;
@@ -78,7 +78,7 @@ public class CreateSliceKindActionTest extends ModelEntityTestBase {
         val.setPermission( AccessMask.fromString( "550" ) );
         CreateSliceKindAction action =  val.createCreateSliceAction();
         action.setOwnEntityManager( em );
-        action.setOwnPostponedActions( boa );
+        action.setOwnPostponedEntityActions(boa);
         action.setUUIDGen( uuidgen );
         SliceKind sl = action.call();
         val.validate(  sl  );

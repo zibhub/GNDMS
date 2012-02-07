@@ -18,7 +18,7 @@ package de.zib.gndms.model.common.types;
 
 
 
-import de.zib.gndms.model.common.AccessMask;
+import de.zib.gndms.common.model.common.AccessMask;
 
 import java.io.Serializable;
 import java.util.Properties;
@@ -36,8 +36,8 @@ import java.util.Properties;
  * User: mjorra, Date: 22.12.2008, Time: 13:12:37
  */
 public class FilePermissions implements Serializable {
-    // todo add serialVersionUId
 
+    private static final long serialVersionUID = 6117137011878526291L;
 
     private String user;
     private String group;

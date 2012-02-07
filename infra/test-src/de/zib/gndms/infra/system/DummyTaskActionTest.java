@@ -23,8 +23,8 @@ import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.AbstractTask;
 import de.zib.gndms.model.gorfx.types.TaskState;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.globus.wsrf.ResourceException;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
@@ -48,7 +48,7 @@ import java.util.concurrent.Future;
 public class DummyTaskActionTest extends SysTestBase {
     public static final Object lock = new Object();
 
-    private static final Log log = LogFactory.getLog(DummyTaskActionTest.class);
+    private static final Logger log = LoggerFactory.getLogger(DummyTaskActionTest.class);
 
 
     @Parameters({"gridName"})

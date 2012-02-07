@@ -18,6 +18,7 @@ package de.zib.gndms.infra.configlet;
 
 
 
+import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import de.zib.gndms.c3resource.C3ResourceReader;
@@ -25,11 +26,6 @@ import de.zib.gndms.c3resource.jaxb.Site;
 import de.zib.gndms.c3resource.jaxb.Workspace;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.configlet.RegularlyRunnableConfiglet;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicHeader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,7 +46,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * Therefore the option {@code 'mdsURL'} must be set in the configuration map, before {@link #threadRun()} is invoked.
  *
  * Reading and building the C3Catalog is done concurrently,
- * if this object is started properly (using {@link #init(org.apache.commons.logging.Log, String, java.io.Serializable)}).
+ * if this object is started properly (using {@link #init(org.slf4j.Logger, String, java.io.Serializable)}).
  *
  * The option {@code 'requiredPrefix'} can be set to allow just those {@link Workspace.Archive}'s oidPrefix
  * (see {@link de.zib.gndms.c3resource.jaxb.Workspace.Archive#getOidPrefix()} in the C3Catalog,
@@ -72,10 +68,10 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 	private String requiredPrefix;
 	private C3Catalog catalog;
 
-    private ReentrantReadWriteLock stateLock = new ReentrantReadWriteLock(true);
-    private Condition newState = stateLock.writeLock().newCondition();
+    private final ReentrantReadWriteLock stateLock = new ReentrantReadWriteLock(true);
+    private final Condition newState = stateLock.writeLock().newCondition();
 
-    private ReentrantLock runLock = new ReentrantLock(true);
+    private final ReentrantLock runLock = new ReentrantLock(true);
 
 	@Override
 	protected void threadInit() {
@@ -111,7 +107,7 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 			requiredPrefix = getMapConfig().getOption("requiredPrefix", "");
 		}
 		catch ( MandatoryOptionMissingException e) {
-			getLog().warn(e);
+			getLogger().warn( "", e);
         }
 	}
 
@@ -122,7 +118,7 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
      */
 	@Override
 	protected void threadRun() {
-       getLog().info("Refreshing C3MDSCatalog...");
+       getLogger().info("Refreshing C3MDSCatalog...");
         try {
             if (runLock.tryLock(0, TimeUnit.SECONDS))
                  try {
@@ -140,16 +136,16 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
                          try {
                              inputStream.close();
                              if (newCatalog == null)
-                                 getLog().warn("No new C3MDSCatalog was created (unknown reason)");
+                                 getLogger().warn("No new C3MDSCatalog was created (unknown reason)");
                              setCatalog(newCatalog);
                          }
                          catch (IOException e)
-                             { getLog().warn("Error closing MDS stream; new catalog *not* set"); }
+                             { getLogger().warn("Error closing MDS stream; new catalog *not* set"); }
                      }
-                     getLog().debug("Finished Refreshing C3MDSCatalog");
+                     getLogger().debug("Finished Refreshing C3MDSCatalog");
                  }
                  catch (Exception e) {
-                     getLog().warn(e);
+                     getLogger().warn( "", e);
                  }
                  finally { runLock.unlock();}
             else {
@@ -158,12 +154,12 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
                     throw new RuntimeException(
                             "Couldnt acquire log for reading C3MDSCatalog... Please increment delay time! ");
                 } catch (RuntimeException e) {
-                    getLog().warn(e);
-                    getLog().debug("Aborted Refreshing C3MDSCatalog");
+                    getLogger().warn( "", e);
+                    getLogger().debug("Aborted Refreshing C3MDSCatalog");
                 }
             }
         } catch (InterruptedException e) {
-            getLog().warn(e);
+            getLogger().warn( "", e);
         }
     }
 
@@ -179,18 +175,19 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 		final String urlStr = getMdsUrl();
 		final URL url = new URL(urlStr);
 		if (url.getProtocol().startsWith("http")) {
-			getLog().debug("Loading C3MDSCatalog via http core...");
+			getLogger().debug("Loading C3MDSCatalog via http core...");
+            throw new UnsupportedOperationException( "port it to something new or don't" );
 			// if http use http client from apache commons
-			final HttpClient client = new DefaultHttpClient();
+			/*final HttpClient client = new DefaultHttpClient();
 			final HttpGet get = new HttpGet(urlStr);
 			get.addHeader(new BasicHeader("Pragma", "no-cache"));
 			get.addHeader(new BasicHeader("Cache-Control",
 			                              "private, no-store, no-cache, must-revalidate, max-age=0"));
 			final HttpResponse resp = client.execute(get);
-			return resp.getEntity().getContent();
+			return resp.getEntity().getContent(); */
 		}
 		else {
-			getLog().debug("Loading C3MDSCatalog via java.net.URL.openStream...");
+			getLogger().debug("Loading C3MDSCatalog via java.net.URL.openStream...");
 			// defer to java-built in url handling otherwise
 			return url.openStream();
 		}
@@ -263,7 +260,8 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
      */
 	public static class C3Catalog {
 		/* forward maps */
-		private Map<String, Site> siteById = Maps.newConcurrentHashMap();
+        private final MapMaker mapMaker = new MapMaker();
+		private Map<String, Site> siteById = mapMaker.makeMap();
 		private Map<String, Set<Workspace.Archive>> archivesByOid = Maps.newTreeMap();
 
 		/* reverse maps */
@@ -324,7 +322,7 @@ public class C3MDSConfiglet extends RegularlyRunnableConfiglet {
 								if (archivesByOid.containsKey(oidPrefix))
 									set  = archivesByOid.get(oidPrefix);
 								else {
-									final Map<Workspace.Archive, Boolean> amap = Maps.newConcurrentHashMap();
+									final Map<Workspace.Archive, Boolean> amap = mapMaker.makeMap();
 								  set = Sets.newSetFromMap(amap);
 									archivesByOid.put(oidPrefix, set);
 								}

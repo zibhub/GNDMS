@@ -1,5 +1,24 @@
 package de.zib.gndms.logic.model.config;
 
+import de.zib.gndms.kit.config.ConfigProvider;
+import de.zib.gndms.kit.config.DelegatingConfig;
+import de.zib.gndms.kit.config.MandatoryOptionMissingException;
+import de.zib.gndms.kit.config.ParameterTools;
+import de.zib.gndms.logic.action.CommandAction;
+import de.zib.gndms.logic.action.SkipActionInitializationException;
+import de.zib.gndms.logic.model.AbstractEntityAction;
+import de.zib.gndms.neomodel.common.Dao;
+import org.jetbrains.annotations.NotNull;
+import org.joda.time.DateTime;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import java.io.File;
+import java.io.PrintWriter;
+import java.text.ParseException;
+import java.util.*;
+import java.util.regex.Pattern;
+
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -15,26 +34,6 @@ package de.zib.gndms.logic.model.config;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-
-
-import de.zib.gndms.logic.action.CommandAction;
-import de.zib.gndms.kit.config.MandatoryOptionMissingException;
-import de.zib.gndms.kit.config.ConfigProvider;
-import de.zib.gndms.kit.config.DelegatingConfig;
-import de.zib.gndms.kit.config.ParameterTools;
-import de.zib.gndms.logic.action.SkipActionInitializationException;
-import de.zib.gndms.logic.model.AbstractEntityAction;
-import de.zib.gndms.model.common.ImmutableScopedName;
-import org.jetbrains.annotations.NotNull;
-import org.joda.time.DateTime;
-
-import javax.persistence.EntityManager;
-import java.io.File;
-import java.io.PrintWriter;
-import java.text.ParseException;
-import java.util.*;
-import java.util.regex.Pattern;
 
 
 /**
@@ -55,6 +54,8 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
         implements CommandAction<R> {
 
     public static final Pattern OPTION_NAME_PATTERN = Pattern.compile("[a-zA-Z][a-zA-Z0-9-_]*");
+
+    private Dao dao;
 
     /**
      * A configuration map. It maps an option name to its configuration value.
@@ -238,7 +239,6 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
 
 
     public final @NotNull String getOption(final @NotNull String name, final @NotNull String def) {
-        final String val;
         try {
             return getOption(name);
         }
@@ -435,15 +435,6 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
     }
 
 
-    public @NotNull ImmutableScopedName getISNOption(@NotNull final String name, @NotNull final ImmutableScopedName def) {
-        return config.getISNOption(name, def);
-    }
-
-
-    public @NotNull ImmutableScopedName getISNOption(@NotNull final String name)
-            throws MandatoryOptionMissingException {return config.getISNOption(name);}
-
-
     @NotNull
     public File getFileOption(@NotNull final String name, @NotNull final File def) {
         return config.getFileOption(name, def);
@@ -502,5 +493,14 @@ public abstract class ConfigAction<R> extends AbstractEntityAction<R>
     @SuppressWarnings({ "MethodMayBeStatic" })
     protected FailedResult failed(final @NotNull String details) {
         return new FailedResult(details);
+    }
+
+    public Dao getDao() {
+        return dao;
+    }
+
+    @Inject
+    public void setDao(Dao dao) {
+        this.dao = dao;
     }
 }

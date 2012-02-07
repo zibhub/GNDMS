@@ -108,7 +108,7 @@ public class SliceCreationValidator {
         q = em.createNativeQuery( "SELECT KIND_URI FROM dspace.slices WHERE ID = ?1" );
         q.setParameter( 1, sl.getId() );
         String skid = (String) q.getSingleResult();
-        assertEquals( sl.getKind().getURI( ), skid );
+        assertEquals( sl.getKind().getId( ), skid );
     }
 
     public ModelUUIDGen getUuidgen() {

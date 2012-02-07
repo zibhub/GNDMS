@@ -19,8 +19,8 @@ package de.zib.gndms.infra.configlet;
 
 
 import com.google.common.collect.Maps;
-import org.apache.axis.components.logger.LogFactory;
-import org.apache.commons.logging.Log;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
 import java.util.HashMap;
@@ -37,7 +37,7 @@ import java.util.HashMap;
 public class C3MDSConfigletSoloTest {
 	@Test
 	public void testC3MDS() {
-		Log log = LogFactory.getLog("test");
+		Logger log = LoggerFactory.getLogger("test");
 		HashMap<String, String> configMap = Maps.newHashMap();
 		configMap.put("delay", "10000");
 		configMap.put("initialDelay", "1000");

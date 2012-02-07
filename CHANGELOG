@@ -1,3 +1,11 @@
+0.6.0: Arturas
+
+The first REST-based release NOT FOR OPERATIONAL USE
+
+@Everybody
+* [CHANGE] Removed dependency to the Globus Toolkit Framewerk
+* [CHANGE] Compatible with GridFTP 3.33 (from GT 5.0.4)
+* [CHANGE] Removed user separation
 
 
 0.3.5: "Richie" (internal Version)

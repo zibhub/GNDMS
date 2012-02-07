@@ -17,30 +17,38 @@ package de.zib.gndms.model.common;
  */
 
 
+import org.apache.openjpa.persistence.Externalizer;
+import org.apache.openjpa.persistence.Factory;
+import org.apache.openjpa.persistence.Persistent;
+import org.joda.time.DateTime;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import java.util.Calendar;
+import javax.persistence.*;
 
 
 /**
  * GridResource + terminationTime
  **/
-@MappedSuperclass
-public abstract class TimedGridResource extends GridResource {
+@Entity( name="TimedGridResources" )
+@Table( name="Timed_Grid_Resources", schema="dspace" )
+public class TimedGridResource extends GridResource implements TimedGridResourceItf {
 
-    private Calendar terminationTime;
+    private DateTime terminationTime;
 
+    protected TimedGridResource() {
+        super();
+    }
 
-    @Column(name="tod", nullable=false) @Temporal(value = TemporalType.TIMESTAMP)
-    public Calendar getTerminationTime() {
+    @Persistent
+    @Column(name="tod", nullable=false)
+    @Temporal( TemporalType.TIMESTAMP)
+    @Factory( "de.zib.gndms.model.util.JodaTimeForJPA.toDateTime" )
+    @Externalizer( "de.zib.gndms.model.util.JodaTimeForJPA.fromDateTime" )
+    public DateTime getTerminationTime() {
         return terminationTime;
     }
 
 
-    public void setTerminationTime( Calendar terminationTime ) {
+    public void setTerminationTime( DateTime terminationTime ) {
         this.terminationTime = terminationTime;
     }
 }

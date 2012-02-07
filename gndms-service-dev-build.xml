@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<project name="Shared Developer Modified Build File for GNDMS services" basedir=".">
-	<property name="gndms.infra.home" value="infra" />
-	<property name="target.grid" value="gndms" />
-	<property name="service.deployment.prefix" value="gndms" />
-</project>
-

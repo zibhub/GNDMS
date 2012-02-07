@@ -6,6 +6,7 @@ module GNDMS
     l[:source, :main, :java] = _(prj, 'src')
     l[:source, :main, :groovy] = _(prj, 'groovy')
     l[:source, :main, :resources] = _(prj, 'resources')
+    l[:source, :main, :webapp] = _(prj, 'web')
     l[:target, :main, :classes] = _(prjOut, 'production')
     l[:target, :main, :resources] = _(prjOut, 'production-resources')
     l[:target, :doc] = _('doc', 'api')
@@ -26,7 +27,8 @@ module GNDMS
     l[:target, :test, :classes] = _(prjOut, 'test')
     l[:target, :test, :resources] = _(prjOut, 'test-resources')
     l[:target, :doc] = _('doc', 'api')
-    l[:target] = _('lib', prj)
+    l[:target, :test] = _('lib/test', prj)
+    l[:target, :main] = _('lib', prj)
     return l
   end
 

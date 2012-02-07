@@ -17,11 +17,10 @@ package de.zib.gndms.model.dspace;
  */
 
 
-
 import de.zib.gndms.model.common.TimedGridResource;
+import org.joda.time.DateTime;
 
 import javax.persistence.*;
-import java.util.Calendar;
 
 /**
  * @author  try ma ik jo rr a zib
@@ -29,8 +28,9 @@ import java.util.Calendar;
  *
  * User: mjorra, Date: 06.08.2008, Time: 16:26:37
  */
-@Entity(name="Slices")
-@Table(name="slices", schema="dspace")
+@Entity( name="Slices" )
+@Table( name="slices", schema="dspace" )
+@Inheritance( strategy = InheritanceType.JOINED )
 //@MappedSuperclass
 public class Slice extends TimedGridResource {
  
@@ -46,7 +46,8 @@ public class Slice extends TimedGridResource {
 
     protected Slice( ) { }
 
-    public Slice ( String idParam, Calendar ttParam, String didParam, SliceKind kndParam, Subspace subsParam, String ownParam, long tssParam ) {
+    public Slice ( String idParam, DateTime ttParam, String didParam, SliceKind kndParam,
+                   Subspace subsParam, String ownParam, long tssParam ) {
         super( );
         setId( idParam );
         setTerminationTime ( ttParam );
@@ -73,6 +74,7 @@ public class Slice extends TimedGridResource {
      * This path is relative to the path of the Owner.
      *
      * To obtain the absolute path use Subspace.getPathForSlice .
+     * @return The path.
      */ 
     @Column( name="directory_id", nullable=false, updatable=false, columnDefinition="CHAR", length=36 )
     public String getDirectoryId() {
@@ -86,7 +88,7 @@ public class Slice extends TimedGridResource {
 
 
     @ManyToOne( targetEntity=SliceKind.class, cascade={CascadeType.REFRESH}, fetch=FetchType.EAGER )
-    @JoinColumn( name="kind_uri", nullable=false, referencedColumnName="uri", updatable=false )
+ //   @JoinColumn( name="kind_uri", nullable=false, referencedColumnName="uri", updatable=false )
     public SliceKind getKind() {
         return kind;
     }
@@ -98,7 +100,7 @@ public class Slice extends TimedGridResource {
 
 
     @ManyToOne( targetEntity=Subspace.class, cascade={CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE}, fetch=FetchType.EAGER )
-    @JoinColumn( name="subspace_id", nullable=false, referencedColumnName="id", updatable=false )
+   // @JoinColumn( name="subspace_id", nullable=false, referencedColumnName="id", updatable=false )
     public Subspace getSubspace() {
         return subspace;
     }

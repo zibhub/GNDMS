@@ -18,23 +18,33 @@ package de.zib.gndms.model.common;
 
 
 
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Column;
-import javax.persistence.Id;
+import javax.persistence.*;
 
-/**
- *
- * UUID-as-36-char-String identified grid resource
- *
- **/
 @MappedSuperclass
-public abstract class GridResource extends GridEntity {
+public abstract class GridResource extends GridEntity implements GridResourceItf {
     
     private String id;
 
-    @Id @Column(name="id", nullable=false, length=36, columnDefinition="CHAR", updatable=false)
+    @Id @Column(name="id", nullable=false, length=255, columnDefinition="VARCHAR", updatable=false)
     public String getId() {
         return id;
+    }
+
+    @Override
+    public boolean equals( Object o ) {
+        if( this == o ) return true;
+        if( !( o instanceof GridResource ) ) return false;
+
+        GridResource that = ( GridResource ) o;
+
+        if( getId() != null ? !getId().equals( that.getId() ) : that.getId() != null ) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return getId() != null ? getId().hashCode() : 0;
     }
 
     public void setId(String id) {

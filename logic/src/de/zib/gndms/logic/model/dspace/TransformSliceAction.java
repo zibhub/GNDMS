@@ -17,18 +17,16 @@ package de.zib.gndms.logic.model.dspace;
  */
 
 
-
+import de.zib.gndms.common.model.common.AccessMask;
 import de.zib.gndms.kit.util.DirectoryAux;
-import de.zib.gndms.logic.model.AbstractModelAction;
-import de.zib.gndms.model.common.AccessMask;
-import de.zib.gndms.model.common.ModelUUIDGen;
+import de.zib.gndms.logic.model.AbstractModelEntityAction;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import org.jetbrains.annotations.NotNull;
+import org.joda.time.DateTime;
 
 import javax.persistence.EntityManager;
-import java.util.Calendar;
 
 /**
  * A TransformSliceAction converts its slice to a new created slice (using {@link de.zib.gndms.logic.model.dspace.CreateSliceAction})
@@ -46,10 +44,10 @@ import java.util.Calendar;
  *
  * todo make uses of UUIdGen from AbstractEntityAction
  */
-public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
+public class TransformSliceAction extends AbstractModelEntityAction<Slice, Slice> {
 
 
-    private CreateSliceAction createSliceAction;
+    private final CreateSliceAction createSliceAction;
     private DirectoryAux directoryAux;
 
 
@@ -57,17 +55,16 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
      * Creates a new {@link CreateSliceAction} instances with the parameters given
      * in the signature and sets the model of {@link #createSliceAction} to {@code tgt}.
      *
-     * @param uuid a uuid identifying the grid resource of the new slice instance
      * @param uid name of the owner of the new slice, can be null, then the current user will become the owner.
      * @param ttm the termination time of the slice object
      * @param kind the sliceKind instance for the slice. (See {@link Slice}).
      * @param tgt a subspace the new created slice will be registered on
      * @param ssize total storage size for the slice instance
-     * @param uuidgen an uuid generator for the directory id of the new slice object
      */
-    public TransformSliceAction( String uuid, String uid, Calendar ttm, SliceKind kind, Subspace tgt, long ssize, ModelUUIDGen uuidgen ) {
+    public TransformSliceAction( String uid, DateTime ttm, SliceKind kind, Subspace tgt,
+                                 long ssize ) {
 
-        createSliceAction = new CreateSliceAction( uuid, uid, ttm, uuidgen, kind, ssize );
+        createSliceAction = new CreateSliceAction( uid, ttm, kind, ssize );
         createSliceAction.setModel( tgt );
     }
 
@@ -76,19 +73,17 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
      * Creates a new {@link CreateSliceAction} instances with the parameters given
      * in the signature and sets the model of {@link #createSliceAction} to {@code tgt}.
      *
-     * @param uuid a uuid identifying the grid resource of the new slice instance
      * @param uid name of the owner of the new slice, can be null, then the current user will become the owner.
      * @param ttm the termination time of the slice object
      * @param kind the sliceKind instance for the slice. (See {@link Slice}).
      * @param tgt a subspace the new created slice will be registered on
      * @param ssize total storage size for the slice instance
-     * @param uuidgen an uuid generator for the directory id of the new slice object
      * @param da an helper object for directory access
      */
-   public TransformSliceAction( String uuid, String uid, Calendar ttm, SliceKind kind, Subspace tgt, long ssize, ModelUUIDGen uuidgen, DirectoryAux da ) {
+   public TransformSliceAction( String uid, DateTime ttm, SliceKind kind, Subspace tgt, long ssize, DirectoryAux da ) {
 
        directoryAux = da;
-       createSliceAction = new CreateSliceAction( uuid, uid, ttm, uuidgen, kind, ssize, da );
+       createSliceAction = new CreateSliceAction( uid, ttm, kind, ssize, da );
        createSliceAction.setModel( tgt );
    }
 
@@ -116,7 +111,7 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
             directoryAux = getInjector().getInstance( DirectoryAux.class );
         }
 
-        if(! sp.getMetaSubspace( ).getCreatableSliceKinds( ).contains( createSliceAction.getSliceKind( ) ) )
+        if(! sp.getCreatableSliceKinds( ).contains( createSliceAction.getSliceKind( ) ) )
             return null;
 
         // create an new slice of the given kind
@@ -139,25 +134,15 @@ public class TransformSliceAction extends AbstractModelAction<Slice, Slice> {
         }
 
 
-        /*
-        boolean suc = true;
-        String[] ls = sl.getFileListing( );
-        for( int i=0; i < ls.length; ++i ) {
-            // todo maybe use gridftp for this crap, NEEDS CERT 
-            suc = suc &&
-                    DirectoryAux.Utils.copyFile(
-                            src_pth + File.separator + ls[i], tgt_pth + File.separator + ls[i]
-                    );
-        }
-        */
-
-        directoryAux.copyDir( nsl.getOwner(), src_pth, tgt_pth );
+        directoryAux.move( src_pth, tgt_pth );
 
         // restore slice path settings
         if ( ro ) {
             msk.removeFlag( AccessMask.Ugo.USER, AccessMask.AccessFlags.WRITABLE );
             directoryAux.setPermissions( nsl.getOwner(), msk, tgt_pth );
         }
+
+        // TODO: update slice in database
 
         /*
         // sth went wrong destroy created slice

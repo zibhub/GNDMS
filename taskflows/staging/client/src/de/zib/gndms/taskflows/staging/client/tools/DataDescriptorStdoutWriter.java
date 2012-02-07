@@ -1,0 +1,94 @@
+package de.zib.gndms.taskflows.staging.client.tools;
+
+/*
+ * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
+import de.zib.gndms.taskflows.staging.client.tools.DataConstraintsWriter;
+import de.zib.gndms.taskflows.staging.client.tools.DataDescriptorWriter;
+
+import java.util.List;
+
+/**
+ * @author  try ma ik jo rr a zib
+ * @version  $Id$
+ * <p/>
+ * User: mjorra, Date: 18.09.2008, Time: 17:22:28
+ */
+public class DataDescriptorStdoutWriter implements DataDescriptorWriter {
+
+    public void writeObjectList( List<String> objectList ) {
+        System.out.println( "ObjectList: " );
+        showStringList( objectList, "    " );
+    }
+
+
+    public void writeDataFormat( String dataFormat ) {
+        System.out.println( "dataFormat: " + dataFormat );
+    }
+
+
+    public void writeDataArchiveFormat( String dataArchiveFormat ) {
+        System.out.println( "dataArchiveFormat: " + dataArchiveFormat );
+    }
+
+
+    public void writeMetaDataFormat( String metaDataFormat ) {
+        System.out.println( "metaDataFormat: " + metaDataFormat );
+    }
+
+
+    public void writeMetaDataArchiveFormat( String metaDataArchiveFormat ) {
+        System.out.println( "metaDataArchiveFormat: " + metaDataArchiveFormat );
+    }
+
+
+    public DataConstraintsWriter getDataConstraintsWriter() {
+        return new DataConstraintsStdoutWriter();
+    }
+
+
+    public void beginWritingDataConstraints() {
+        System.out.println( "Data Constraints: " );
+    }
+
+
+    public void doneWritingDataConstraints() {
+        // Not required here
+    }
+
+
+    public void writeJustDownload() {
+        System.out.println( "Just Download TRUE" );
+    }
+
+
+    public void begin() {
+        System.out.println( "********************* DataDescriptor *********************" );
+    }
+
+    public void done() {
+        System.out.println( "******************** EODataDescriptor ********************" );
+    }
+
+    private void showStringList( List<String> sl, String ind ) {
+        if( sl != null )
+            for ( String aSl : sl ) System.out.println( ind + aSl );
+        else
+            System.out.println( ind + "null" );
+    }
+}

@@ -18,7 +18,6 @@ package de.zib.gndms.kit.config;
 
 
 
-import de.zib.gndms.model.common.ImmutableScopedName;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
@@ -61,7 +60,6 @@ public abstract class AbstractConfig implements ConfigProvider {
     }
 
     public @NotNull String getOption(final @NotNull String name, final @NotNull String def) {
-        final String val;
         try {
             return getOption(name);
         }
@@ -203,18 +201,6 @@ public abstract class AbstractConfig implements ConfigProvider {
         return optionParam.charAt(0) == 'P' ?
                 new DateTime(0L).plus(ISOPeriodFormat.standard().parsePeriod(optionParam))
                 : ISODateTimeFormat.dateTimeParser().parseDateTime(optionParam);
-    }
-
-    public @NotNull ImmutableScopedName getISNOption(final @NotNull String name)
-            throws MandatoryOptionMissingException {
-        return new ImmutableScopedName(getOption(name));
-    }
-
-
-    public @NotNull ImmutableScopedName getISNOption(
-            final @NotNull String name, final @NotNull ImmutableScopedName def) {
-        final String option = getNonMandatoryOption(name);
-        return option == null ? def : new ImmutableScopedName(name);
     }
 
 

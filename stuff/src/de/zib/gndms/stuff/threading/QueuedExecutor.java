@@ -20,8 +20,6 @@ package de.zib.gndms.stuff.threading;
 
 import java.util.concurrent.*;
 import java.util.List;
-import java.util.Collection;
-import java.util.ArrayList;
 
 /**
  * @author  try ma ik jo rr a zib
@@ -54,7 +52,7 @@ public class QueuedExecutor {
     public synchronized <T> DV<T,Exception> submit( final Callable<T> task ) throws InterruptedException {
 
         final long d = actualDelay( defaultDelay );
-        Forketeer.ForkRequest<T> fork =  new Forketeer.ForkRequest<T>( task ); 
+        Forketeer.ForkRequest<T> fork =  new Forketeer.ForkRequest<T>( task );
         executor.enqueue( fork );
         return fork.getResult();
     }

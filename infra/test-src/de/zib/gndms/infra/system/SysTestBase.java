@@ -17,17 +17,11 @@ package de.zib.gndms.infra.system;
  */
 
 
-
-import de.zib.gndms.infra.service.GNDMServiceHome;
-import de.zib.gndms.infra.service.GNDMServiceHomeMockup;
-import de.zib.gndms.infra.service.GridConfigMockup;
-import de.zib.gndms.infra.system.GNDMSystem.SysFactory;
-import de.zib.gndms.model.test.ModelEntityTestBase;
 import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
 import de.zib.gndms.logic.model.EntityAction;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.globus.wsrf.ResourceException;
+import de.zib.gndms.model.test.ModelEntityTestBase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 
@@ -47,11 +41,10 @@ public abstract class SysTestBase {
 	private GridConfigMockup mockupConfig;
 	private String gridName;
 	private boolean setupEnvironment;
-	private Log logger = LogFactory.getLog(SysTestBase.class);
+	private Logger logger = LoggerFactory.getLogger(SysTestBase.class);
 
 	private GNDMSystem sys;
 	private Runnable sysDestructor;
-	protected GNDMServiceHome home;
 
     @Parameters({"gridName"})
     public SysTestBase(@Optional("c3grid") String gridName) {
@@ -75,11 +68,11 @@ public abstract class SysTestBase {
         }
 	}
 
-	protected void runDatabase()  throws ResourceException {
-		SysFactory factory = new SysFactory(logger, mockupConfig, true);
-		sys = factory.getInstance(false);
-		sysDestructor = factory.createShutdownAction();
-		home = new GNDMServiceHomeMockup(sys);
+	protected void runDatabase() {
+        throw new UnsupportedOperationException( "load it from context" );
+		//SysFactory factory = new SysFactory(logger, mockupConfig, true);
+		//sys = factory.getInstance(false);
+		//sysDestructor = factory.createShutdownAction();
 	}
 
 
@@ -90,7 +83,6 @@ public abstract class SysTestBase {
 		finally {
 			sys = null;
 			sysDestructor = null;
-			home = null;
 		}
 	}
 
@@ -106,7 +98,7 @@ public abstract class SysTestBase {
 
     public void setupEntityAction(EntityAction<?> etA) {
         etA.setOwnEntityManager(sys.getEntityManagerFactory().createEntityManager());
-        etA.setOwnPostponedActions(new DefaultBatchUpdateAction());
+        etA.setOwnPostponedEntityActions(new DefaultBatchUpdateAction());
     }
 
 
@@ -120,7 +112,26 @@ public abstract class SysTestBase {
     }
 
 
-    public GNDMServiceHome getHome() {
-        return home;
+    private class GridConfigMockup {
+
+        private String gridPath;
+        private String gridName;
+
+
+        public GridConfigMockup( final String gridName ) {
+            // Implement Me. Pretty Please!!!
+        }
+
+
+        public String getGridPath() {
+
+            return gridPath;
+        }
+
+
+        public String getGridName() {
+
+            return gridName;
+        }
     }
 }

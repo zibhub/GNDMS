@@ -17,10 +17,7 @@ package de.zib.gndms.kit.util;
  */
 
 
-
-import org.apache.log4j.MDC;
-import org.apache.log4j.NDC;
-
+import org.slf4j.MDC;
 
 /**
  * ThingAMagic.
@@ -40,7 +37,7 @@ public class WidAux {
 
 
     public static String getWid() {
-        return (String) MDC.get("dmswid");
+        return (String) MDC.get( "dmswid" );
     }
 
 
@@ -61,8 +58,6 @@ public class WidAux {
     /**
      * Stores {@code val} in the MDC, with {@code id} as its key and pushes 'id+":"val' on the NDC.
      *
-     * @see org.apache.log4j.MDC
-     * @see org.apache.log4j.NDC
      * @param id key
      * @param val value
      */
@@ -72,7 +67,6 @@ public class WidAux {
             return;
         else {
             MDC.put( id, val );
-            NDC.push( id + ":" + val);
         }
     }
 
@@ -80,19 +74,17 @@ public class WidAux {
      * Removes the entry with the key {@code id} from the MDC.
      * Calls {@code NDC.pop()}.
      *
-     * @see org.apache.log4j.MDC
-     * @see org.apache.log4j.NDC
+     * @see org.slf4j.MDC
      * @param id a key
      */
     public static void removeId( final String id ) {
         MDC.remove( id );
-        NDC.pop();
     }
 
     /**
      * Returns the value for a specific, which has been stored in the MDC
      *
-     * @see org.apache.log4j.MDC
+     * @see MDC
      *
      * @param id a key for a value
      * @return the value for a specific, which has been stored in the MDC

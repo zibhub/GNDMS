@@ -18,14 +18,12 @@ package de.zib.gndms.logic.action;
 
 
 
+import de.zib.gndms.common.model.common.AccessMask;
 import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
 import de.zib.gndms.logic.model.LookupAction;
 import de.zib.gndms.logic.model.dspace.CreateSliceAction;
 import de.zib.gndms.logic.util.SimpleModelUUIDGen;
-import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.common.ModelUUIDGen;
-import de.zib.gndms.model.common.AccessMask;
-import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
@@ -82,7 +80,7 @@ public class CreateSliceActionTest extends ModelEntityTestBase {
         validator.setTerminationTime( new GregorianCalendar( ) );
 
         SliceKind knd = new SliceKind( );
-        knd.setURI( sliceKindTestKey );
+        knd.setId(sliceKindTestKey);
         knd.setPermission( AccessMask.fromString( "750" ) );
         validator.setKind(  knd );
 
@@ -93,21 +91,18 @@ public class CreateSliceActionTest extends ModelEntityTestBase {
 
         //knd = new SliceKind( );
         //knd.setPermission( SliceKindMode.RW );
-        //knd.setURI( "maiks-test-slice-kind" );
+        //knd.setId( "maiks-test-slice-kind" );
         TreeSet ts = new TreeSet( );
         ts.add( knd );
 
-        MetaSubspace msp = new MetaSubspace( );
-        msp.setScopedName( new ImmutableScopedName( ug.nextUUID(), "welt" ) );
-        msp.setCreatableSliceKinds( ts );
 
         Subspace sp = new Subspace( );
-        sp.setId( ug.nextUUID() );
+        sp.setCreatableSliceKinds( ts );
+        sp.setId( "welt" );
       //  LinuxDirectoryAux lda = new LinuxDirectoryAux();
       //  String spd = MY_PATH + "/subspace";
       //  lda.createSubspaceDirectory( spd );
       //  sp.setPath( spd );
-        sp.setMetaSubspace( msp );
         GregorianCalendar cal = new GregorianCalendar( );
         cal.add( Calendar.DAY_OF_YEAR, 20 );
 //        sp.setTerminationTime( cal );
@@ -118,9 +113,6 @@ public class CreateSliceActionTest extends ModelEntityTestBase {
         //getEntityManager( ).getTransaction().begin( );
         //getEntityManager( ).persist( knd );
         //getEntityManager( ).getTransaction().commit( );
-        getEntityManager( ).getTransaction().begin( );
-        getEntityManager( ).persist( msp );
-        getEntityManager( ).getTransaction().commit( );
         getEntityManager( ).getTransaction().begin( );
         getEntityManager( ).persist( sp );
         getEntityManager( ).getTransaction().commit( );
@@ -134,7 +126,7 @@ public class CreateSliceActionTest extends ModelEntityTestBase {
         boa.setActions( new Vector<Action<Void>>() );
         boa.setListener( new FakeEntityUpdateListener() );
         Action = validator.createCreateSliceAction(  );
-        Action.setOwnPostponedActions( boa );
+        Action.setOwnPostponedEntityActions(boa);
         //getEntityManager( ).getTransaction().begin( );
         Action.setOwnEntityManager( getEntityManager( ) );
         Action.setClosingEntityManagerOnCleanup( false );

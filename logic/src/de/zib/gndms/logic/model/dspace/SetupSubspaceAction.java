@@ -24,12 +24,10 @@ import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigActionResult;
 import de.zib.gndms.logic.model.config.ConfigOption;
 import de.zib.gndms.logic.model.config.SetupAction;
-import de.zib.gndms.model.common.ImmutableScopedName;
-import de.zib.gndms.model.dspace.DSpace;
-import de.zib.gndms.model.dspace.DSpaceRef;
-import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.Subspace;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import java.io.PrintWriter;
@@ -38,8 +36,7 @@ import java.io.PrintWriter;
 /**
  * An Action to manage Subspaces with their corresponding MetaSubspaces in the database.
  *
- * <p>An instance contains an <tt>ImmutableScopedName</tt> {@link #subspace} for the
- *  key of the subspace (QName).It must be set in the configuration map and
+ * The id (defined in GridResource) represents the name of the subspace. It must be set in the configuration map and
  *  will be retrieved during the initialization.
  *
  * <p>When this action is started with <tt>create</tt> or <tt>update</tt> as SetupMode, it will retrieve
@@ -52,18 +49,18 @@ import java.io.PrintWriter;
  * the <tt>execute()</tt> method is called.
  *
 
- * @see MetaSubspace
  * @see Subspace
- * @see ImmutableScopedName
  * @author  try ste fan pla nti kow zib
  * @version $Id$
  *
  *          User: stepn Date: 14.08.2008 Time: 17:37:51
  */
-@ConfigActionHelp(shortHelp = "Setup a subspace", longHelp = "Used to prepare the database schema for GNDMS by creating, updating, and deleting subspaces")
+@ConfigActionHelp(shortHelp = "Setup a subspace", longHelp = "Used to prepare the database schema for GNDMS by creating and updating subspaces")
 public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
-    @ConfigOption(descr="The key of the subspace (QName)")
-    private ImmutableScopedName subspace;
+    private final Logger log = LoggerFactory.getLogger( this.getClass() );
+
+    @ConfigOption(descr="The name/key of the subspace")
+    private String subspace;
 
     @ConfigOption(descr="Local filesystem root path for all slices stored in this subspace")
     private String path;
@@ -77,8 +74,22 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
     @ConfigOption(descr="Maximum storage size available in this subspace")
     private Long size;
 
+    public SetupSubspaceAction() {
+		super();
+    }
 
-  /**
+    public SetupSubspaceAction(SubspaceConfiguration subspaceConfig) {
+		super();
+		setPath(subspaceConfig.getPath());
+		setIsVisibleToPublic(subspaceConfig.isVisible());
+		setGsiFtpPath(subspaceConfig.getGsiFtpPath());
+		setMode(subspaceConfig.getMode());
+		setSize(subspaceConfig.getSize());
+        setSubspace( subspaceConfig.getSubspace() );
+	}
+
+
+/**
     * Calls <tt>super.initialize()</tt> and retrieves several field values from the configuration map,
     * if SetupMode is <tt>create</tt>.
     * The option 'subspace' must be set anyway.
@@ -89,7 +100,7 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
         super.initialize();    // Overridden method
         try {
             if (subspace == null && (isCreating() || hasOption("subspace")))
-                setSubspace(getISNOption("subspace"));
+                setSubspace(getOption("subspace"));
             if (visible == null && (isCreating() || hasOption("visible")))
                 setIsVisibleToPublic(isBooleanOptionSet("visible", true));
             if (size == null && (isCreating() || hasOption("size"))) {
@@ -98,6 +109,7 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
             if (path == null && (isCreating() || hasOption("path"))) {
                 setPath(getOption("path"));
             }
+            // TODO: gridftp is not required in future
             if (gsiFtpPath== null && (isCreating() || hasOption("gsiFtpPath"))) {
                 setGsiFtpPath(getOption("gsiFtpPath"));
             }
@@ -131,117 +143,83 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
     @SuppressWarnings({ "FeatureEnvy", "MethodWithMoreThanThreeNegations" })
     @Override
     public ConfigActionResult execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer) {
-        MetaSubspace meta = prepareMeta(em, subspace);
-        Subspace subspace = prepareSubspace(meta);
+        Subspace space = prepareSubspace(em, subspace);
 
         try {
         switch (getMode()) {
             case CREATE:
             case UPDATE:
                 if (isVisibleToPublic() != null)
-                    meta.setVisibleToPublic(isVisibleToPublic());
+                    space.setVisibleToPublic(isVisibleToPublic());
 
                 if (size != null)
-                    subspace.setTotalSize(getSize());
+                    space.setTotalSize(getSize());
 
                 if (path != null)
-                    subspace.setPath(getPath());
+                    space.setPath(getPath());
 
                 if (gsiFtpPath != null)
-                    subspace.setGsiFtpPath(getGsiFtpPath());
+                    space.setGsiFtpPath(getGsiFtpPath());
 
-                if (subspace.getDSpaceRef() == null) {
-                    DSpaceRef ref = new DSpaceRef();
-
-                    // HACK: There should be a better way than this...
-                    DSpace dspace =
-                        (DSpace) em.createNamedQuery("findDSpaceInstances").getSingleResult();
-
-                    ref.setGridSiteId(null);
-                    ref.setResourceKeyValue(dspace.getId());
-                    subspace.setDSpaceRef(ref);
-                }
-
-                if (! em.contains(subspace))
-                    em.persist(subspace);
-
-                if (! em.contains(meta))
-                    em.persist(meta);
+                if (! em.contains(space))
+                    em.persist(space);
                 break;
             case DELETE:
-                em.remove(meta);
-                em.remove(subspace);
-                break;
+                throw new UnsupportedOperationException("Use DeleteSubspaceAction instead of SetupSubspaceAction for deleting subspaces");
+            	// em.remove(meta);
+                // em.remove(subspace);
+                // break;
         }
 
         } catch ( Exception e ) {
            throw new RuntimeException( e ); 
         }
         // Register resources that require refreshing
-        getPostponedActions().addAction(new ModelChangedAction(subspace));
+        getPostponedEntityActions().addAction(new ModelChangedAction(space));
 
         return ok();
     }
 
     /**
-     * Tries to retrieve the entity instance with the primary key {@code pkParam} from the entityclass {@code MetaSubspace.class}.
-     * If not <tt>null</tt> it will be returned. Otherwise a new <tt>MetaSubspace</tt> instance is created,
+     * Tries to retrieve the entity instance with the primary key {@code pkParam} from the entityclass {@code Subspace.class}.
+     * If not <tt>null</tt> it will be returned. Otherwise a new <tt>Subspace</tt> instance is created,
      * with <tt>pkParam</tt> as its ScopedName.
      *
      * @param em
      * @param pkParam
      * @return
      */
-    private MetaSubspace prepareMeta(final EntityManager em, final ImmutableScopedName pkParam) {
-        MetaSubspace meta= em.find(MetaSubspace.class, pkParam);
-        if (meta == null) {
+    private Subspace prepareSubspace(final EntityManager em, final String pkParam) {
+        Subspace space = null;//em.find(Subspace.class, pkParam);
+        if (space == null) {
             if (! isCreating())
-                throw new IllegalStateException("No matching metasubspace found for update");
-            meta = new MetaSubspace();
-            meta.setScopedName(pkParam);
+                throw new IllegalStateException("No matching subspace found for update");
+            space = new Subspace();
         }
-        return meta;
-    }
 
-
-    /**
-     * If SetupMode is not <tt>create</tt> the <tt>metaParam</tt>'s subspace is returned.
-     * Otherwise a new <tt>Subspace</tt> instance is created, linked with <tt>metaParam</tt> and returned.
-     *
-     * @param metaParam A <tt>MetaSubspace</tt> containing a <tt>Subspace</tt> if setupMode is not <tt>create</tt>.
-     *      Otherwise a new <tt>Subspace</tt> instance is created, linked with <tt>metaParam</tt>
-     * @return the subspace linked with <tt>metaParam</tt>
-     */
-    @SuppressWarnings({ "FeatureEnvy" })
-    private Subspace prepareSubspace(final MetaSubspace metaParam) {
-        Subspace subspace;
+        
         if (isCreating()) {
-            if (metaParam.getInstance() != null)
-                throw new IllegalStateException("Cant overwrite metasubspace's subspace");
-            subspace = new Subspace();
-            subspace.setId(nextUUID());
-            subspace.setMetaSubspace(metaParam);
-            metaParam.setInstance(subspace);
+            space = new Subspace();
+            space.setId( pkParam );
 
             //final StorageSize avail = new StorageSize();
             //avail.setAmount(getSize().getAmount());
             //avail.setUnit(getSize().getUnit());
             //subspace.setAvailableSize(avail);
             final long avail = getSize( );
-            subspace.setAvailableSize(avail);
+            space.setAvailableSize(avail);
         }
-        else
-            subspace = metaParam.getInstance();
+
+        return space;
+
+    }
+
+    public String getSubspace() {
         return subspace;
     }
 
 
-    public ImmutableScopedName getSubspace() {
-        return subspace;
-    }
-
-
-    public void setSubspace(final ImmutableScopedName subspaceParam) {
+    public void setSubspace(final String subspaceParam) {
         subspace = subspaceParam;
     }
 

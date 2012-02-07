@@ -19,7 +19,7 @@ package de.zib.gndms.kit.configlet;
 
 
 import org.jetbrains.annotations.NotNull;
-import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
 
 import java.io.Serializable;
 import de.zib.gndms.kit.config.OptionProvider;
@@ -43,7 +43,7 @@ public interface Configlet {
      * @param name  the name of the configuration
      * @param data  the configuration, expected to be a {@code Map<String, String>}
      */
-    void init(@NotNull final Log loggerParam, @NotNull final String name, Serializable data);
+    void init(@NotNull final Logger loggerParam, @NotNull final String name, Serializable data);
 
     /**
      * Sets a new configuration

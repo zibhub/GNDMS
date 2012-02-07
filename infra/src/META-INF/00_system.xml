@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+
+    <context:annotation-config />
+    <import resource="classpath:/META-INF/legacyConfigMeta.xml"/>
+
+    <!-- Setup Property config -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="ignoreResourceNotFound" value="true"/>
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+        <property name="locations">
+            <list>
+                <value>classpath:/META-INF/grid.properties</value>
+                <value>classpath:grid.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- #################################################################################################### -->
+    <!-- Start of the bean definition -->
+
+    <bean id="gridConfig" class="de.zib.gndms.infra.SettableGridConfig">
+        <property name="gridName" value="${gridName}"/>
+        <property name="gridPath" value="${gridPath}"/>
+    </bean>
+
+    <!-- most import the system class, which glue all components together -->
+    <bean id="systemFactory" class="de.zib.gndms.infra.system.GNDMSystem$SysFactory">
+        <constructor-arg name="anySharedConfig" ref="gridConfig"/>
+        <constructor-arg name="debugModeParam" value="${debugMode}"/>
+    </bean>
+    <bean id="instanceDir" class="de.zib.gndms.infra.system.GNDMSystemDirectory"/>
+
+    <bean id="configActionCaller" class="de.zib.gndms.infra.system.ConfigActionCaller">
+        <!-- possible enhancement configure actions here, like:
+        property name="configActions">
+            <set>
+                <value>de.zib.gndms.logic.model.dspace.SetupSliceKindAction</value>
+            </set>
+        </property-->
+    </bean>
+
+    <bean id="system" class="de.zib.gndms.infra.system.GNDMSystem"
+          factory-bean="systemFactory"
+          factory-method="getInstance" />
+
+    <bean id="taskExecutionService" class="de.zib.gndms.infra.system.SysTaskExecutionService"/>
+
+    <bean id="taskDao" class="de.zib.gndms.neomodel.common.Dao">
+        <constructor-arg name="gridName" value="${gridName}" />
+        <constructor-arg name="gdb" ref="dataBase" />
+    </bean>
+
+    <bean id="taskFlowProvider" class="de.zib.gndms.infra.system.PlugableTaskFlowProvider">
+        <property name="system" ref="system"/>
+        <property name="pluginDir" value="${pluginPath}"/>
+    </bean>
+
+    <!-- #################################################################################################### -->
+    <!-- myproxy setup -->
+    <bean id="myProxyFactoryProvider" class="de.zib.gndms.kit.access.MyProxyFactoryProvider" factory-method="fromList">
+            <constructor-arg name="factories" >
+                <list>
+                    <ref bean="defaultMyProxyProvider"/>
+                </list>
+
+            </constructor-arg>
+    </bean>
+
+    <bean id="defaultMyProxyProvider" class="de.zib.gndms.kit.access.MyProxyFactory">
+        <constructor-arg name="nickname" value="C3GRID"/>
+        <property name="myProxyServer" value="${myProxyServer}"/>
+        <property name="port" value="7512"/>
+        <property name="noPasswd" value="false"/>
+        <!-- this is just an example for credentialHolder usage -->
+        <property name="connectionCredentialHolder">
+           <bean class="de.zib.gndms.kit.access.HostCredentialHolder" >
+                   <constructor-arg name="base" value="${myProxyConnectionCredentialFolder}"/>
+                   <constructor-arg name="prefix" value="${myProxyConnectionCredentialPrefix}"/>
+           </bean>
+        </property>
+    </bean>
+
+
+
+    <!-- #################################################################################################### -->
+    <!-- create some auxiliary classes -->
+    <bean id="directoryAux" class="de.zib.gndms.infra.grams.LinuxDirectoryAux"/>
+    <bean id="gndmsVersionInfo" class="de.zib.gndms.GNDMSVerInfo"/>
+    <bean id="batchUpdateAction" class="de.zib.gndms.logic.model.DefaultBatchUpdateAction" scope="prototype"/>
+
+    <!-- #################################################################################################### -->
+    <bean id="derbyPath" class="java.lang.String">
+       <constructor-arg value="${gridPath}/db/derby" />
+    </bean>
+    <bean id="neoPath" class="java.lang.String">
+        <constructor-arg value="${gridPath}/db/neo" />
+    </bean>
+
+
+    <!-- setup ORM and DBs -->
+    <!-- bean post-processor for JPA annotations -->
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
+
+    <!-- the graph database -->
+    <bean id="dataBase" class="org.neo4j.kernel.EmbeddedGraphDatabase" destroy-method="shutdown" >
+        <constructor-arg ref="neoPath"/>
+    </bean>
+
+    <!-- orm -->
+    <bean id="emf" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="persistenceUnitName" value="gndms" />
+        <property name="persistenceXmlLocation" value="classpath:/META-INF/persistence.xml" />
+        <property name="jpaPropertyMap">
+            <map>
+                <entry key="openjpa.Id" value="gndms"/>
+                <entry key="openjpa.weaving" value="false"/>
+                <entry key="openjpa.ConnectionURL"
+                       value="jdbc:derby:${gridPath}/db/derby;create=true"/>
+                <entry key="openjpa.Log" value="File=${jpaLoggerFile}, DefaultLevel=INFO, Runtime=${jpaLogRuntimeLevel}, Tool=INFO"/>
+            </map>
+        </property>
+        <!--property name="loadTimeWeaver">
+            <bean class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver"/>
+        </property-->
+    </bean>
+
+</beans>

@@ -36,12 +36,18 @@ import javax.persistence.Table;
 @NamedQuery(name="findDSpaceInstances", query="SELECT instance FROM DSpaces instance"),
 @NamedQuery(name="listAllSubspaceIds", query="SELECT instance.id FROM Subspaces instance"),
 @NamedQuery(name="listAllSliceIds", query="SELECT instance.id FROM Slices instance"),
-@NamedQuery(name="getSubspace", query="SELECT x FROM Subspaces x WHERE x.metaSubspace.scopedName.nameScope = :uriScopeParam " +
-    "AND x.metaSubspace.scopedName.localName = :uriLocalParam"),
-@NamedQuery(name="getMetaSubspaceKey", query="SELECT x.metaSubspace.scopedName FROM Subspaces x WHERE x.id = :idParam"),
-@NamedQuery(name="listPublicSubspaces", query="SELECT DISTINCT x FROM Subspaces x WHERE x.metaSubspace.scopedName.nameScope = :uriParam"),
-@NamedQuery(name="listSupportedSchemas", query="SELECT DISTINCT x.scopedName.nameScope FROM MetaSubspaces x" ),
-@NamedQuery(name="listCreatableSliceKinds", query="SELECT sk FROM MetaSubspaces x INNER JOIN x.creatableSliceKinds sk WHERE x.scopedName.nameScope = (SELECT y.metaSubspace.scopedName.nameScope FROM Subspaces y WHERE y.id = :idParam) AND x.scopedName.localName = (SELECT y.metaSubspace.scopedName.localName FROM Subspaces y WHERE y.id = :idParam)")
+@NamedQuery(name="listAllSlices", query="SELECT instance FROM Slices instance"),
+@NamedQuery(name="listAllSlicesOfKind", query="SELECT instance FROM Slices instance WHERE instance.kind.id = :sliceKindId"),
+@NamedQuery(name="listSlicesOfSubspace", query="SELECT instance.id FROM Slices instance WHERE instance.id = :subspace"),
+@NamedQuery(name="listAllSubspaces", query="SELECT DISTINCT x FROM Subspaces x"),
+@NamedQuery(name="getSubspace", query="SELECT x FROM Subspaces x WHERE x.name.nameScope = :uriScopeParam " +
+    "AND x.name.localName = :uriLocalParam"),
+@NamedQuery(name="getSubspaceKey", query="SELECT x.name FROM Subspaces x WHERE x.id = :idParam"),
+@NamedQuery(name="listSupportedSchemas", query="SELECT DISTINCT x.name.nameScope FROM Subspaces x" ),
+@NamedQuery(name="listSlicekindsOfSubspace",
+        query="SELECT sk.id FROM Subspaces x INNER JOIN x.creatableSliceKinds sk WHERE x.id = :idParam"),
+@NamedQuery(name="getSubspacesUsingSliceKind",
+        query="SELECT x FROM Subspaces x INNER JOIN x.creatableSliceKinds sk WHERE sk.id = :idParam")
 })
 @Entity(name="DSpaces")
 @Table(name="dspace", schema="dspace")

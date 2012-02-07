@@ -137,7 +137,7 @@ public interface DV<V, T extends Throwable> extends Iterable<V> {
      * @author try ste fan pla nti kow zib
      *         <p/>
      *         User stepn Date: 01.04.11 TIME: 21:44
-     * @see de.zib.gndms.stuff.threading.DV
+     * @see DV
      */
     public static interface Factory {
         /**

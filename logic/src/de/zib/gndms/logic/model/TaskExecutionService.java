@@ -18,10 +18,13 @@ package de.zib.gndms.logic.model;
 
 
 
-import org.apache.commons.logging.Log;
+import de.zib.gndms.neomodel.common.Dao;
+import de.zib.gndms.neomodel.gorfx.TaskBuilder;
+import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
+import java.io.Serializable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -39,33 +42,39 @@ public interface TaskExecutionService {
 
     /**
      * Submits an EntityAction to an {@code ExecutorService}.
-     * If the action is a LogAction, its logger will be set as {@code logger}.
      * If the action does not have an EntityManager, a new one will be created.
      * 
+     *
      * @param action the EntityAction which should be executed
-     * @param logger A logger, which can be added to the action, if it's a LogAction
-     * @param <R>  the return type of the action
      * @return A Future Object holding the result of action's computation
      * @see Future
      */
-    @NotNull <R> Future<R> submitAction(final @NotNull EntityAction<R> action, final @NotNull Log logger);
+    @NotNull <R> Future<R> submitAction( final @NotNull EntityAction<R> action );
 
     /**
      * Submits an EntityAction to an {@code ExecutorService}.
-     * If the action is a LogAction, its logger will be set as {@code logger}
      * Sets the {@code action}'s EntityManager as {@code em}.
      * 
+     *
      * @param em an EntityManger for the EntityAction
      * @param action the EntityAction which should be executed
-     * @param logger A logger, which can be added to the action, if it's a LogAction
-     * @param <R> the return type of the action
      * @return A Future Object holding the result of action's computation
      * @see Future
      */
-    @NotNull <R> Future<R> submitAction(final @NotNull EntityManager em,
-                                        final @NotNull EntityAction<R> action,
-                                        final @NotNull Log logger);
+    @NotNull <R> Future<R> submitAction( final @NotNull EntityManager em,
+                                         final @NotNull EntityAction<R> action );
 
+
+    /**
+     * Sets action's dao before calling {@link #submitAction(javax.persistence.EntityManager, EntityAction}
+     *
+     * @see {@link #submitAction(javax.persistence.EntityManager, EntityAction}
+     */
+    @NotNull <R> Future<R> submitDaoAction( final @NotNull EntityManager em,
+                                                   final @NotNull Dao dao,
+                                                   final @NotNull ModelDaoAction<?, R> action );
+
+    @NotNull <R> Future<R> submitDaoAction( final @NotNull ModelDaoAction<?, R> action );
 
     /**
      * Returns true if this is terminating or already terminated.
@@ -81,4 +90,43 @@ public interface TaskExecutionService {
      * @see ExecutorService#shutdownNow() 
      */
     void shutdown();
+
+
+    /**
+     * Creates a task and taskling, initializes the task action and submits it.
+     *
+     * @param dao The dao under which the task ist submitted.
+     * @param taskAction The action which should be submitted.
+     * @param order The order, i.e. input for the task.
+     * @param wid The workflow id, used to keep trak of the logging massages of the task action.
+     *
+     * @return The taskling representing the newly created task.
+     */
+    Taskling submitTaskAction( Dao dao, TaskAction taskAction, Serializable order, String wid );
+
+
+    /**
+     * Creates a task and taskling, initializes the task action and submits it using the default
+     * dao.
+     *
+     * Convenience method. Behaves exactly like the above method, but ueses the system dao,
+     * instead of a custom one.
+     *
+     * @param taskAction The action which should be submitted.
+     * @param order The order, i.e. input for the task.
+     * @param wid The workflow id, used to keep trak of the logging massages of the task action.
+     *
+     * @return The taskling representing the newly created task.
+     */
+    Taskling submitTaskAction( TaskAction taskAction, Serializable order, String wid );
+
+    /**
+     * Creates a task and taskling, initializes the task action and submits it.
+     *
+     * @param dao The dao under which the task ist submitted.
+     * @param taskAction The action which should be submitted.
+     * @param builder Contains all possible parameters relevant for the task
+     * @param wid The workflow id, used to keep trak of the logging massages of the task action.
+     */
+    Taskling submitTaskAction( Dao dao, TaskAction taskAction, TaskBuilder builder , String wid );
 }

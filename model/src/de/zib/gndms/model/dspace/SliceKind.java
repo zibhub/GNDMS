@@ -18,8 +18,8 @@ package de.zib.gndms.model.dspace;
 
 
 
-import de.zib.gndms.model.common.AccessMask;
-import de.zib.gndms.model.common.GridEntity;
+import de.zib.gndms.common.model.common.AccessMask;
+import de.zib.gndms.model.common.GridResource;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -39,59 +39,66 @@ import java.util.Set;
 // @DiscriminatorValue("PLAIN")
 @Table(name="slice_kinds", schema="dspace")
 //@MappedSuperclass
-public class SliceKind extends GridEntity {
-    private String URI;
-
-//    @Column(name="permission", nullable=false, updatable=false, columnDefinition="VARCHAR", length=15)
+public class SliceKind extends GridResource {
     private AccessMask permission;
 
-    //de.zib.gndms.model.dspace.types.SliceKindMode mode
-
     private String sliceDirectory;
+    private Set<Subspace> subspaces = new HashSet<Subspace>();
 
-    private Set<MetaSubspace> metaSubspaces = new HashSet<MetaSubspace>();
-
-
-    @Id @Column(name="uri", nullable=false, updatable=false, columnDefinition="VARCHAR")
-    public String getURI() {
-        return URI;
-    }
-
+    // default time to live of slice in milliseconds
+    // if not given on creation, one day is taken as default
+    private long defaultTimeToLive = 86400000;
+    // default size of slice in bytes
+    // if not given on creation, 10MB is taken as default
+    private int defaultSliceSize = 1024*1024*10;
 
     @Column(name="permission", nullable=false, updatable=false )
     public AccessMask getPermission() {
         return permission;
     }
 
-
     @Column( name="slice_directory", nullable=false, columnDefinition="VARCHAR" )
     public String getSliceDirectory() {
         return sliceDirectory;
     }
 
-
-    @ManyToMany(mappedBy="creatableSliceKinds", cascade={CascadeType.REFRESH, CascadeType.MERGE, CascadeType.PERSIST}, fetch=FetchType.EAGER)
-    public Set<MetaSubspace> getMetaSubspaces() {
-        return metaSubspaces;
+    @ManyToMany( cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},
+            mappedBy = "creatableSliceKinds" )
+    public Set<Subspace> getSubspaces() {
+        return subspaces;
     }
 
+    public void setSubspaces( final Set<Subspace> subspaces ) {
 
-    public void setURI( String URI ) {
-        this.URI = URI;
+        this.subspaces = subspaces;
     }
-
 
     public void setPermission( AccessMask permission ) {
         this.permission = permission;
     }
 
+    public void setPermission( long permission ) {
+        this.permission = AccessMask.fromString(Long.toString(permission));
+
+    }
 
     public void setSliceDirectory( String sliceDirectory ) {
         this.sliceDirectory = sliceDirectory;
     }
 
+    public long getDefaultTimeToLive() {
+        return defaultTimeToLive;
+    }
 
-    public void setMetaSubspaces( Set<MetaSubspace> metaSubspaces ) {
-        this.metaSubspaces = metaSubspaces;
+    public void setDefaultTimeToLive(long defaultTimeToLive) {
+        this.defaultTimeToLive = defaultTimeToLive;
+    }
+
+    public int getDefaultSliceSize() {
+        return defaultSliceSize;
+    }
+
+    public void setDefaultSliceSize(int defaultSliceSize) {
+        this.defaultSliceSize = defaultSliceSize;
     }
 }

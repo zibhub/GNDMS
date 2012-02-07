@@ -25,7 +25,6 @@ import de.zib.gndms.logic.model.gorfx.FileTransferActionFactory;
 import de.zib.gndms.logic.model.gorfx.FileTransferORQCalculator;
 import de.zib.gndms.logic.model.gorfx.FileTransferORQFactory;
 import de.zib.gndms.logic.model.gorfx.FileTransferTaskAction;
-import de.zib.gndms.model.common.ImmutableScopedName;
 import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.common.types.TransientContract;
 import de.zib.gndms.model.gorfx.AbstractTask;
@@ -34,8 +33,8 @@ import de.zib.gndms.model.gorfx.Task;
 import de.zib.gndms.model.gorfx.types.FileTransferORQ;
 import de.zib.gndms.model.gorfx.types.FileTransferResult;
 import de.zib.gndms.model.gorfx.types.TaskState;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.log4j.PropertyConfigurator;
 import org.globus.ftp.exception.ClientException;
 import org.globus.ftp.exception.ServerException;
@@ -59,7 +58,7 @@ import java.util.concurrent.Future;
  */
 public class FileTransferActionTest extends SysTestBase {
 
-    Log log = LogFactory.getLog(FileTransferActionTest.class);
+    Logger log = LoggerFactory.getLogger(FileTransferActionTest.class);
     TransferTestMetaData transferData;
     String  logFileConfig;
     Task task;
@@ -153,8 +152,6 @@ public class FileTransferActionTest extends SysTestBase {
     public static OfferType createFTOfferType( ) {
         OfferType ot = new OfferType( );
         ot.setOfferTypeKey( "http://gndms.zib.de/ORQTypes/FileTransfer" );
-        ot.setOfferResultType( new ImmutableScopedName( "http://gndms.zib.de/c3grid/types", "FileTransferORQT" ) );
-        ot.setOfferResultType( new ImmutableScopedName( "http://gndms.zib.de/c3grid/types", "FileTransferResultT" ) );
         ot.setCalculatorFactoryClassName( FileTransferORQFactory.class.getName() );
         ot.setTaskActionFactoryClassName( FileTransferActionFactory.class.getName( ) );
         ot.setConfigMap( new HashMap<String,String>( ) );

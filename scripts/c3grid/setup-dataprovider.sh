@@ -18,7 +18,7 @@ ESTIMATION_COMMAND="%{GNDMS_SOURCE}/scripts/c3grid/dummy-estimation.sh"
 #
 CANCEL_COMMAND="%{GNDMS_SOURCE}/scripts/c3grid/dummy-cancel.sh"
 
-STAGING_AREA_PATH="/tmp"
+STAGING_AREA_PATH="/var/tmp/sspace"
 STAGING_AREA_SIZE="1000000" # Currently unused
 
 # In- and Output format for script properties
@@ -35,7 +35,7 @@ STAGING_AREA_GSI_FTP_URL="gsiftp://$GRIDHOST""$STAGING_AREA_PATH"
 
 # Do not edit below this line unless very sure ---------------------------------------------------------------------------------------------------------------------------------------------------
 
-c3grid_generic
+#c3grid_generic
 enable_providerstagein
 enable_permissions
 enable_sliceChown

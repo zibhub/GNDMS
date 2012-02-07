@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Suite" parallel="none">
+  <test name="Test" preserve-order="false">
+    <classes>
+      <class name="de.zib.gndms.gndmc.dspace.SliceClientTest"/>
+      <class name="de.zib.gndms.gndmc.dspace.DSpaceClientTest"/>
+      <class name="de.zib.gndms.gndmc.dspace.SubspaceClientTest"/>
+      <class name="de.zib.gndms.gndmc.dspace.SliceKindClientTest"/>
+    </classes>
+  </test>
+</suite>

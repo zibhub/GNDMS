@@ -18,7 +18,6 @@ package de.zib.gndms.stuff;
 
 
 
-import com.google.inject.Injector;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -33,18 +32,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class BoundInjector {
 
-	private Injector injector;
+	private GNDMSInjector injector;
 
-    /**
-     * Returns the currently used {@code Injector}.If not set, {@code null} is returned
-     * 
-     * @return the currently used {@code Injector}.If not set, {@code null} is returned
-     */
-	public synchronized Injector optionallyGetInjector() {
-        return injector;
-	}
 
-	public synchronized @NotNull Injector getInjector() {
+    public synchronized @NotNull GNDMSInjector getInjector() {
 		if (injector == null)
 			throw new IllegalStateException("Injector not yet set");
 		else
@@ -52,7 +43,7 @@ public final class BoundInjector {
 	}
 
     
-    public synchronized void setInjector(final @NotNull Injector injectorParam) {
+    public synchronized void setInjector(final @NotNull GNDMSInjector injectorParam) {
 		if (injector == null)
 			injector = injectorParam;
 		else

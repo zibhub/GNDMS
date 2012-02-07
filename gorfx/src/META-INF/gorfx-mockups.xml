@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--bean id="configActions" class="de.zib.gndms.mockup.logic.config.ConfigActionProviderMockUp">
+        <property name="actions">
+            <list>
+                <ref bean="SliceKindConfigMeta"/>
+                <ref bean="SetupSubspaceConfigMeta"/>
+                <ref bean="SetupOfferTypeConfigMeta"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="SliceKindConfigMeta" class="de.zib.gndms.mockup.logic.config.ConfigMetaMockUp">
+    <property name="configDescription" value="Setup a slice kind"/>
+    <property name="configHelp" value="
+* mode: Action mode; one of create, read, update, or delete
+* sliceKind: The id of the slice kind (the PK for the db record)
+* theSliceKindMode: The write mode of the slice kind (its a required attribute)
+* uniqueDirName: The directory to store the slices belonging to this kind (its a required attribute)
+    "/>
+    <property name="configName" value=".dspace.SetupSliceKind"/>
+    </bean>
+
+    <bean id="SetupSubspaceConfigMeta"  class="de.zib.gndms.mockup.logic.config.ConfigMetaMockUp">
+        <property name="configName" value=".dspace.SetupSubspace"/>
+        <property name="configDescription" value="Saetup a subspace"/>
+        <property name="configHelp" value="
+ * gsiFtpPath: GridFTP path for all slices stored under path
+ * mode: Action mode; one of create, read, update, or delete
+ * path: Local filesystem root path for all slices stored in this subspace
+ * size: Maximum storage size available in this subspace
+ * subspace: The key of the subspace (QName)
+ * visible: If set, this subspace is included in the public service listing
+        "/>
+    </bean>
+
+    <bean id="SetupOfferTypeConfigMeta" class="de.zib.gndms.mockup.logic.config.ConfigMetaMockUp">
+        <property name="configName" value=".gorfx.SetupOfferType"/>
+        <property name="configDescription" value="Sets up supported OfferTypes"/>
+        <property name="configHelp" value="
+ * calcFactory: FQN of AbstractORQCalculator factory class
+ * configFile: File from which the initial config should be read; UPDATE will overwrite!
+ * mode: Action mode; one of create, read, update, or delete
+ * offerType: Unique id identifying this offerType; must match entries in given arg and result xsd types
+ * orqType: QName of xsd type for ORQs of this OfferType
+ * resType: QName of xsd type for results of this OfferType
+ * taskActionFactory: FQN of TaskAction factory class
+"/>
+    </bean-->
+
+</beans>

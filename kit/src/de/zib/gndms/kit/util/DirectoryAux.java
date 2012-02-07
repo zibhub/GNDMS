@@ -17,10 +17,11 @@ package de.zib.gndms.kit.util;
  */
 
 
-
-import de.zib.gndms.model.common.AccessMask;
+import de.zib.gndms.common.model.FileStats;
+import de.zib.gndms.common.model.common.AccessMask;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * This abstract class provides usefull methods concerning directory access.
@@ -116,55 +117,54 @@ public interface DirectoryAux {
      */
     public boolean copyDir( String uid, String src_pth, String tgt_pth );
 
+    /**
+     * Move a directory or file.
+     *
+     * @param src_path
+     * @param target_path
+     * @return true on success.
+     */
+    public boolean move( String src_path, String target_path );
+
+    public FileStats stat( File file );
+    
+    public List< String > listContent( String path );
+
     int chmod( int mask, File file );
 
-
     public static class Utils {
+
+
         /**
+         * Little helper which deletes a path recursively.
          *
-         * Copies file src to tgt
-         *
-         * @return true if everything went fine.
+         * @param pth The complete Path to the directory/file to delete.
+         * @return The success of the operation.
          */
-        public static boolean copyFile( String src, String tgt )  {
+        public static boolean recursiveDelete( String pth ) {
 
-            throw new IllegalStateException( "nocando ask someone else" );
+            File f = new File( pth );
 
-            /*
-            File sf = new File( src );
-            File tf = new File( tgt );
-
-            FileChannel inc = null;
-            FileChannel outc = null;
-            try {
-                inc = new FileInputStream( sf ).getChannel( );
-                outc = new FileOutputStream( tf ).getChannel( );
-                inc.transferTo( 0, inc.size(), outc );
-            } catch ( IOException e) {
+            if( !f.exists( ) )
                 return false;
-            } finally {
-                if ( inc != null )
-                    try {
-                        inc.close( );
-                    } catch ( IOException e ) {
-                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                    }
-                if ( outc != null )
-                    try {
-                        outc.close( );
-                    } catch ( IOException e ) {
-                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                    }
-            }
 
-            return true;
-            */
+            try{
+                if( f.isDirectory() ) {
+                    String[] fl = f.list( );
+                    for( int i=0; i < fl.length; ++i )  {
+                        if( !recursiveDelete( pth + File.separatorChar + fl[i] ) )
+                            return false;
+                    }
+                }
+
+                return f.delete( );
+            } catch (SecurityException e) {
+                return false;
+            }
         }
 
-
-
         /**
-         * Little helper which delets a direcotry and its contents.
+         * Little helper which deletes a directory and its contents.
          *
          * @param pth The complete Path to the directory.
          * @return The success of the operation.
@@ -189,23 +189,7 @@ public interface DirectoryAux {
             }
         }
 
-        /*
-        public boolean createSubspaceDirectory( String pth ) {
+    }
 
-            File f = new File( pth );
-
-            try {
-                // this also creats the dir for the subspace if it
-                // doesn't exist yet.
-                f.mkdirs( );
-                setSubspacePermissions( f.getAbsolutePath( ) );
-            } catch (SecurityException e) {
-                return false;
-            }
-
-            return true;
-        }
-        */
-    };
 }
 

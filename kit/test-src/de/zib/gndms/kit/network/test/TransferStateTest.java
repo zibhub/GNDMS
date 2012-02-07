@@ -111,7 +111,7 @@ public class TransferStateTest extends ModelEntityTestBase {
                 System.out.println( "Resuming transfer" );
             }
             PersistentMarkerListener pml = new PersistentMarkerListener( );
-            pml.setEntityManager( eM );
+            //pml.setEntityManager( eM );
             pml.setTransferState( transferState );
 
             URI suri = new URI ( transferData.getSourceURI( ) );

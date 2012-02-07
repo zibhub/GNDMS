@@ -18,7 +18,7 @@ package de.zib.gndms.infra.action;
 
 
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import de.zib.gndms.c3resource.jaxb.Site;
 import de.zib.gndms.c3resource.jaxb.Workspace;
 import de.zib.gndms.infra.configlet.C3MDSConfiglet;
@@ -28,6 +28,7 @@ import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigActionResult;
 import de.zib.gndms.logic.model.config.ConfigOption;
 import org.jetbrains.annotations.NotNull;
+
 
 import javax.persistence.EntityManager;
 import java.io.PrintWriter;

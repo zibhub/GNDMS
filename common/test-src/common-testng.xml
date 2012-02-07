@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Suite" parallel="none">
+  <test name="Test" preserve-order="false">
+    <classes>
+      <class name="de.zib.gndms.common.model.common.AccessMaskTest"/>
+      <class name="de.zib.gndms.common.rest.FacetsTest"/>
+      <class name="de.zib.gndms.common.rest.FacetTest"/>
+      <class name="de.zib.gndms.common.rest.GNDMSResponseHeaderTest"/>
+      <class name="de.zib.gndms.common.rest.SpecifierTest"/>
+      <class name="de.zib.gndms.common.rest.UriFactoryTest"/>
+      <class name="de.zib.gndms.common.stuff.util.ProductTest"/>
+    </classes>
+  </test>
+</suite>

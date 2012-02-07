@@ -24,9 +24,9 @@ import de.zib.gndms.logic.model.config.ConfigAction;
 import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigActionResult;
 import de.zib.gndms.logic.model.config.ConfigOption;
-import de.zib.gndms.model.common.ImmutableScopedName;
-import de.zib.gndms.model.dspace.MetaSubspace;
 import de.zib.gndms.model.dspace.SliceKind;
+import de.zib.gndms.model.dspace.Subspace;
+
 import org.jetbrains.annotations.NotNull;
 import javax.persistence.EntityManager;
 import java.io.PrintWriter;
@@ -45,7 +45,7 @@ import java.util.Set;
      * the <tt>execute()</tt> method is called.
      *
      * @see de.zib.gndms.model.dspace.SliceKind
-     * @see de.zib.gndms.model.dspace.MetaSubspace
+     * @see de.zib.gndms.model.dspace.Subspace
      * @author  try ste fan pla nti kow zib
      * @version $Id$
      *
@@ -58,8 +58,8 @@ public class AssignSliceKindAction extends ConfigAction<ConfigActionResult> {
     @SuppressWarnings({ "EnumeratedClassNamingConvention" })
     enum Mode { ADD, REMOVE }
 
-    @ConfigOption(descr="Subspace QNname")
-    ImmutableScopedName subspace;
+    @ConfigOption(descr="Subspace name")
+    String subspace;
 
     @ConfigOption(descr="URI of the SliceKind")
     String sliceKind;
@@ -75,7 +75,7 @@ public class AssignSliceKindAction extends ConfigAction<ConfigActionResult> {
     public void initialize() {
         super.initialize();
         try {
-            subspace = getISNOption("subspace");
+            subspace = getOption("subspace");
             sliceKind = getOption("sliceKind");
             mode = getEnumOption(Mode.class, "mode", true, Mode.ADD);
         }
@@ -100,7 +100,7 @@ public class AssignSliceKindAction extends ConfigAction<ConfigActionResult> {
      */
     @Override
     public ConfigActionResult execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer) {
-        final MetaSubspace space = em.find(MetaSubspace.class, subspace);
+        final Subspace space = em.find(Subspace.class, subspace);
 	    if (space == null)
 	        throw new IllegalArgumentException("Space not found");
 	    final @NotNull Set<SliceKind> sliceKindSet = space.getCreatableSliceKinds();
@@ -108,7 +108,7 @@ public class AssignSliceKindAction extends ConfigAction<ConfigActionResult> {
         final SliceKind sk = em.find(SliceKind.class, sliceKind);
 	    if (sk == null)
 	        throw new IllegalArgumentException("SliceKind not found");
-	    final @NotNull Set<MetaSubspace> metas =  sk.getMetaSubspaces();
+	    final @NotNull Set<Subspace> metas =  sk.getSubspaces();
 
         switch (mode) {
             case ADD:
@@ -126,7 +126,7 @@ public class AssignSliceKindAction extends ConfigAction<ConfigActionResult> {
         }
 
         // Register resources that require refreshing
-        getPostponedActions().addAction(new ModelChangedAction(space.getInstance()));
+        getPostponedEntityActions().addAction(new ModelChangedAction(space));
 
         return ok();
     }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+    <import resource="classpath:/META-INF/converter-setup.xml"/>
+
+   <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+       <constructor-arg>
+           <bean class="org.springframework.http.client.SimpleClientHttpRequestFactory">
+                   <property name="connectTimeout" value="10000"/>
+           </bean>
+       </constructor-arg>
+       <property name="messageConverters">
+           <list>
+               <!--bean  class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
+                 <constructor-arg ref="marshaller" />
+                 </bean-->
+               <ref bean="converter"/>
+           </list>
+       </property>
+   </bean>
+
+</beans>

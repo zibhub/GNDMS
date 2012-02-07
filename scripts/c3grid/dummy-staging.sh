@@ -9,7 +9,7 @@ metafile=$(echo "$sfr" | grep c3grid.StageFileRequest.TargetMetaDataFile | cut -
 
 
 # fake execution: seconds to wait
-sleep 60
+sleep 10
 
 
 echo "$sfr" > $datafile
@@ -18,7 +18,6 @@ echo "$sfr" > $metafile
 
 # Uncomment to test dummy-cancel.sh
 #echo "NAY!" >&2
-
 #cat $(dirname $0)/errormesg.txt
 #exit 1
 

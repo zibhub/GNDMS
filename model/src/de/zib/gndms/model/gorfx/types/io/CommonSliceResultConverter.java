@@ -18,6 +18,7 @@ package de.zib.gndms.model.gorfx.types.io;
 
 
 
+import de.zib.gndms.common.model.gorfx.types.io.TaskResultConverter;
 import de.zib.gndms.model.gorfx.types.CommonSliceResult;
 
 /**
@@ -26,7 +27,7 @@ import de.zib.gndms.model.gorfx.types.CommonSliceResult;
  * <p/>
  * User: mjorra, Date: 04.11.2008, Time: 13:35:40
  */
-public abstract class CommonSliceResultConverter<W extends CommonSliceResultWriter, R extends CommonSliceResult> extends TaskResultConverter<W,R>{
+public abstract class CommonSliceResultConverter<W extends CommonSliceResultWriter, R extends CommonSliceResult> extends TaskResultConverter<W,R> {
 
     protected CommonSliceResultConverter() {
     }

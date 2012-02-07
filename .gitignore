@@ -1,5 +1,9 @@
 syntax:glob
 
+lib/spring
+*/target
+*/gndms-*
+GNDMS-BUILD-INFO
 lib/apache-ant-current
 lib/jruby-current
 lib/apache-ant-1.7.1
@@ -9,6 +13,8 @@ doc/text-html
 gndmc/gndms-gndmc/
 gndmc/target/
 Buildfile~
+*~
+neomodel/target/**
 services/*/build/**
 services/*/out/**
 services/*/production/**
@@ -26,6 +32,9 @@ services/**/derby.log
 *.eml
 *.iml
 *.gar
+gndmc/gndms-gndmc
+gndmc/target
+doc/api
 gritserv/gndms-gritserv/**
 infra/gndms-infra/**
 model/gndms-model/**
@@ -34,6 +43,7 @@ stuff/gndms-stuff/**
 typecon/gndms-typecon/**
 tmp/**
 model/derby.log
+neomodel/gndms-neomodel/**
 logic/gndms-logic/**
 logic/out/**
 logic/test/**
@@ -45,6 +55,10 @@ ws-common/gndms-ws-common/test/**
 gritserv/gndms-gritserv/production/**
 gritserv/gndms-gritserv/test/**
 gndmc/gndms-gndmc/production/**
+gndmc/gndms-gndmc/test/**
+gndmc-rest/gndms-gndmc-rest/production/**
+gorfx/gndms-gorfx-rest/production/**
+common/gndms-common/production/**
 .classpath
 .project
 test-output/**
@@ -58,6 +72,10 @@ types/WHORFX
 types/ws
 types/wsrf
 etc/sliceInOutClient.properties
+bkp*
+lib/javax*
+commit.log
+infra/src/grid.properties
 
 syntax:regexp
 .*\.swp
@@ -72,6 +90,15 @@ lib/kit/*
 lib/gndmc/*
 lib/infra/*
 lib/logic/*
+lib/neomodel/*
+lib/dspace/*
+lib/gorfx/*
+lib/rest/*
+lib/common/*
+lib/gndmc-rest/*
+lib/gndms/*
+out/*
+gndms/out/*
 */resources/META-INF/GNDMS-RELEASE
 */resources/META-INF/GNDMS-BUILD-INFO
 */resources/META-INF/LICENSE
