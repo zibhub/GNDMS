@@ -163,8 +163,8 @@ The INSTALL file of the old system should describe how to do that.
 * Before (re-)starting the application container (e.g. Jetty), make sure that the `$GNDMS_SHARED`
   path is accessible by the user gndms running the application container.
 
-  After restarting the application container, the following lines (or the like) should be found
-  in the output.
+  After restarting the application container, the following lines (or
+  the like) should appear in the server log (see $GNDMS_SHARED/log/server.log)
 
     =========================================================================================                                          
     GNDMS RELEASE: Generation N Data Management System VERSION: 0.6.0 "ARTURAS" release-0.6.0                                          

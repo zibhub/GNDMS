@@ -37,7 +37,7 @@ cp="$HOME/.m2/repository/org/codehaus/woodstox/wstx-asl/3.2.7/wstx-asl-3.2.7.jar
 cp="$HOME/.m2/repository/org/jdom/jdom/1.1/jdom-1.1.jar:$cp"
 cp="$HOME/.m2/repository/xom/xom/1.1/xom-1.1.jar:$cp"
 cp="$HOME/.m2/repository/xpp3/xpp3_min/1.1.4c/xpp3_min-1.1.4c.jar:$cp"
-cp="$GNMDS_SOURCE/taskflows/staging/lib/client/staging-client-0.6.0.jar:$cp"
+cp="$GNDMS_SOURCE/taskflows/staging/lib/client/staging-client-0.6.0.jar:$cp"
 #cp="$HOME/projects/C3Grid/impl/gndms-rest/taskflows/staging/client/src:$cp"
 
 
