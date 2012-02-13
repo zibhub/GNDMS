@@ -25,7 +25,7 @@ repositories.remote << 'http://people.apache.org/repo/m2-incubating-repository'
 #
 require "open3"
 
-VERSION_NUMBER = '0.6.0'
+VERSION_NUMBER = '0.6.1'
 VERSION_NAME = 'ARTURAS'
 FALLBACK_VERSION_TAG = 'release-Arturas'
 GROUP_NAME = 'de.zib.gndms'

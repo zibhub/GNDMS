@@ -72,6 +72,11 @@ public class PluginLoader {
 
 
     public static void main ( String[] args ) throws  Exception {
+        
+        if ( args.length != 1 ) {
+            System.out.println( "java " + PluginLoader.class.getName() + " <plugin-dir>" );
+            System.exit( 1 );
+        }
 
         ApplicationContext context = new ClassPathXmlApplicationContext(
                 "classpath:META-INF/00_system.xml");
@@ -79,7 +84,7 @@ public class PluginLoader {
                 "system"
         );
         
-        PluginLoader pl = new PluginLoader( "test.dir" );
+        PluginLoader pl = new PluginLoader( args[0] );
         ClassLoader cl = pl.loadPlugins();
         PlugableTaskFlowProvider provider = ( PlugableTaskFlowProvider ) context.getAutowireCapableBeanFactory()
                 .getBean( "taskFlowProvider" );

@@ -111,7 +111,7 @@ public class LinuxDirectoryAux implements DirectoryAux {
         public int mkdir( String path, int mode );
         public int rmdir( String path );
         public int rename( String old_path, String new_path );
-    };
+    }
 
     public boolean setDirectoryReadWrite( String uid, String pth ) {
         return setMode( uid, RW, pth );
