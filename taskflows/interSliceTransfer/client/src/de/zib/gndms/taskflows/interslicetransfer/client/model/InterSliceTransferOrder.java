@@ -18,7 +18,6 @@ package de.zib.gndms.taskflows.interslicetransfer.client.model;
 
 
 
-import de.zib.gndms.model.dspace.types.SliceRef;
 import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
 import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferOrder;
 import org.jetbrains.annotations.NotNull;
@@ -37,9 +36,8 @@ public class InterSliceTransferOrder extends FileTransferOrder {
 
     private static final long serialVersionUID = -5949532448235655424L;
 
-    private SliceRef sourceSlice;
-    private SliceRef destinationSlice;
-
+    private String sourceSlice;
+    private String destinationSlice;
 
     public InterSliceTransferOrder() {
         super( );
@@ -52,22 +50,22 @@ public class InterSliceTransferOrder extends FileTransferOrder {
     }
 
 
-    public SliceRef getSourceSlice() {
+    public String getSourceSlice() {
         return sourceSlice;
     }
 
 
-    public void setSourceSlice( SliceRef sourceSlice ) {
+    public void setSourceSlice( String sourceSlice ) {
         this.sourceSlice = sourceSlice;
     }
 
 
-    public SliceRef getDestinationSlice() {
+    public String getDestinationSlice() {
         return destinationSlice;
     }
 
 
-    public void setDestinationSlice( SliceRef destinationSlice ) {
+    public void setDestinationSlice( String destinationSlice ) {
         this.destinationSlice = destinationSlice;
     }
 }

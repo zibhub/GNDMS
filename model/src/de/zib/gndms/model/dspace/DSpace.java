@@ -54,11 +54,4 @@ import javax.persistence.Table;
 //@MappedSuperclass
 public class DSpace extends SingletonGridResource {
 
-    public @NotNull DSpaceRef createRef() {
-
-        DSpaceRef ref = new DSpaceRef();
-        ref.setGridSiteId(null);
-        ref.setResourceKeyValue(getId());
-        return ref;
-    }
 }

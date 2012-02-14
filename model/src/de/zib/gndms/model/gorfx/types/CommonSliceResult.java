@@ -19,7 +19,7 @@ package de.zib.gndms.model.gorfx.types;
 
 
 import de.zib.gndms.common.model.gorfx.types.AbstractTaskFlowResult;
-import de.zib.gndms.model.dspace.types.SliceRef;
+import de.zib.gndms.common.rest.Specifier;
 
 /**
  * @author  try ma ik jo rr a zib
@@ -30,7 +30,7 @@ import de.zib.gndms.model.dspace.types.SliceRef;
 public abstract class CommonSliceResult extends AbstractTaskFlowResult {
 
     private static final long serialVersionUID = -2235864812049517909L;
-    public SliceRef sliceRef;
+    public Specifier<Void> sliceRef;
 
     
     protected CommonSliceResult( String offerType ) {
@@ -38,12 +38,12 @@ public abstract class CommonSliceResult extends AbstractTaskFlowResult {
     }
 
 
-    public SliceRef getSliceRef() {
+    public Specifier<Void> getSliceRef() {
         return sliceRef;
     }
 
 
-    public void setSliceRef( SliceRef sliceRef ) {
+    public void setSliceRef( Specifier<Void> sliceRef ) {
         this.sliceRef = sliceRef;
     }
 }

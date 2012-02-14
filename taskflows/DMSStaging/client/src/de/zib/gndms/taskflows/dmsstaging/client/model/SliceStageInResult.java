@@ -18,8 +18,6 @@ package de.zib.gndms.taskflows.dmsstaging.client.model;
 
 
 
-import de.zib.gndms.model.dspace.types.SliceRef;
-import de.zib.gndms.model.gorfx.types.CommonSliceResult;
 import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
 
 /**

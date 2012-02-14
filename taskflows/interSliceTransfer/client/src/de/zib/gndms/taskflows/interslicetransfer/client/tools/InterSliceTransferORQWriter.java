@@ -18,8 +18,7 @@ package de.zib.gndms.taskflows.interslicetransfer.client.tools;
 
 
 
-import de.zib.gndms.model.dspace.types.SliceRef;
-import de.zib.gndms.model.gorfx.types.io.OrderWriter;
+import de.zib.gndms.common.model.gorfx.types.io.OrderWriter;
 
 import java.util.Map;
 
@@ -31,8 +30,8 @@ import java.util.Map;
  */
 public interface InterSliceTransferORQWriter extends OrderWriter {
 
-    public void writeSourceSlice( SliceRef sr );
-    public void writeDestinationSlice( SliceRef sr );
+    public void writeSourceSlice( String sr );
+    public void writeDestinationSlice( String sr );
 
     public void writeFileMap( Map<String,String> fm );
 }
