@@ -37,9 +37,8 @@ public abstract class GridResource extends GridEntity implements GridResourceItf
 
         GridResource that = ( GridResource ) o;
 
-        if( getId() != null ? !getId().equals( that.getId() ) : that.getId() != null ) return false;
+        return !(getId() != null ? !getId().equals( that.getId() ) : that.getId() != null);
 
-        return true;
     }
 
     @Override

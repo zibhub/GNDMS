@@ -18,8 +18,8 @@ package de.zib.gndms.taskflows.interslicetransfer.client.model;
 
 
 
-import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
 import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferOrder;
+import de.zib.gndms.taskflows.interslicetransfer.client.InterSliceTransferMeta;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -39,9 +39,10 @@ public class InterSliceTransferOrder extends FileTransferOrder {
     private String sourceSlice;
     private String destinationSlice;
 
+
     public InterSliceTransferOrder() {
         super( );
-        super.setTaskFlowType( GORFXConstantURIs.INTER_SLICE_TRANSFER_URI );
+        super.setTaskFlowType( InterSliceTransferMeta.INTER_SLICE_TRANSFER_URI );
     }
 
     @NotNull

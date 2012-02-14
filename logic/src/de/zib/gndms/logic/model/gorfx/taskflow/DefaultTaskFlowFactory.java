@@ -193,7 +193,6 @@ public abstract class DefaultTaskFlowFactory<O extends Order, C extends Abstract
                 return;
             } else  { // version mismatch
                 taskFlowType.delete(); // delete it
-                taskFlowType = null; // and make new one
             }
         }
         //  setup fresh this factory is new

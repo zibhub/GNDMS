@@ -1,4 +1,6 @@
-package de.zib.gndms.taskflows.interslicetransfer.server.logic;/*
+package de.zib.gndms.taskflows.interslicetransfer.server.logic;
+
+/*
  * Copyright 2008-${YEAR} Zuse Institute Berlin (ZIB)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,7 +26,6 @@ import org.globus.ftp.exception.ServerException;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.rmi.RemoteException;
 import java.util.List;
 
 /**

@@ -37,7 +37,7 @@ public class WidAux {
 
 
     public static String getWid() {
-        return (String) MDC.get( "dmswid" );
+        return MDC.get( "dmswid" );
     }
 
 
@@ -90,6 +90,6 @@ public class WidAux {
      * @return the value for a specific, which has been stored in the MDC
      */
     public static String getId( final String id ) {
-        return (String) MDC.get( id );
+        return MDC.get( id );
     }
 }

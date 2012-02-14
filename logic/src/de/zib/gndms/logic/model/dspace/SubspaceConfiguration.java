@@ -263,7 +263,7 @@ public class SubspaceConfiguration implements Configuration {
 	 * @param subspace The subspace.
 	 * @return The configuration.
 	 */
-    public static final SubspaceConfiguration getSubspaceConfiguration(Subspace subspace) {
+    public static SubspaceConfiguration getSubspaceConfiguration(Subspace subspace) {
 		return new SubspaceConfiguration(subspace.getPath(), subspace.getGsiFtpPath(), subspace.isVisibleToPublic(), subspace.getTotalSize(), "READ", subspace.getId());
 	}
 

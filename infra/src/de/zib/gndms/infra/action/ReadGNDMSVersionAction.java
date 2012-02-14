@@ -18,7 +18,6 @@ package de.zib.gndms.infra.action;
 
 
 
-import javax.inject.Inject;
 import de.zib.gndms.GNDMSVerInfo;
 import de.zib.gndms.infra.system.SystemDirectory;
 import de.zib.gndms.logic.model.config.ConfigAction;
@@ -27,6 +26,7 @@ import de.zib.gndms.logic.model.config.ConfigActionResult;
 import de.zib.gndms.logic.model.config.ConfigOption;
 import org.jetbrains.annotations.NotNull;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import java.io.PrintWriter;
 
@@ -55,7 +55,6 @@ public class ReadGNDMSVersionAction extends ConfigAction<ConfigActionResult> imp
     public ConfigActionResult execute( final @NotNull EntityManager em, final @NotNull PrintWriter writer ) {
 
         writer.print( verInfo.readRelease() + "\n" );
-        //writer.print( "javarebel test\n" );
         return ok();
     }
 

@@ -147,8 +147,8 @@ public class PlugableTaskFlowProvider extends TaskFlowProviderImpl {
     @Override
     public void setFactories( Map<String, TaskFlowFactory> factories ) {
 
-     //   if ( hasFactories )
-     //       throw new IllegalStateException( "factories are already set"  );
+        if ( hasFactories )
+            throw new IllegalStateException( "factories are already set"  );
 
         hasFactories = true;
         super.setFactories( factories );    // overriden method implementation

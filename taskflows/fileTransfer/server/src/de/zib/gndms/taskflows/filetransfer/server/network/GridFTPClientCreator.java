@@ -87,16 +87,16 @@ public class GridFTPClientCreator implements Callable<GridFTPClient> , LogProvid
 
 
     private void validateClient( final GridFTPClient cnt ) throws ServerException, IOException, ClientException {
-        boolean d = false;
+        boolean valid = false;
         try {
             log.debug( "validating client " );
             //cnt.getFeatureList();
          //   cnt.list();
             cnt.changeDir( "/" );
-            d = true;
+            valid = true;
             log.debug( "successful validated" );
         } finally {
-            if( d == false ) {
+            if( !valid ) {
                 log.debug( "validation failed, discarding client" );
                 cnt.close();
                 log.debug( "done" ); 

@@ -46,10 +46,4 @@ public class PermissionConfigTest {
     }
 
 
-
-
-    public void showStringOrNull( String lab, String dat ) {
-        System.out.println( lab + ": " + ( dat != null ? dat : "null" ) );
-    }
-
 }

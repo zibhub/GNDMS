@@ -17,8 +17,7 @@ package de.zib.gndms.taskflows.interslicetransfer.client.tools;
  */
 
 
-
-import de.zib.gndms.model.gorfx.types.io.OrderConverter;
+import de.zib.gndms.common.model.gorfx.types.io.OrderConverter;
 import de.zib.gndms.taskflows.interslicetransfer.client.model.InterSliceTransferOrder;
 
 /**
@@ -27,7 +26,9 @@ import de.zib.gndms.taskflows.interslicetransfer.client.model.InterSliceTransfer
  * <p/>
  * User: mjorra, Date: 14.10.2008, Time: 14:48:27
  */
-public class InterSliceTransferORQConverter extends OrderConverter<InterSliceTransferORQWriter, InterSliceTransferOrder> {
+public class InterSliceTransferORQConverter extends
+        OrderConverter<InterSliceTransferORQWriter, InterSliceTransferOrder>
+{
 
     public InterSliceTransferORQConverter() {
     }

@@ -45,12 +45,12 @@ public class AsFileCredentialInstaller extends GSSCredentialInstaller<File> {
 
     public void installCredentials( File destFile, GSSCredential cred ) {
 
-        FileOutputStream fos = null;
+        FileOutputStream fos;
         try {
             fos = new FileOutputStream( destFile );
             fos.write( ( ( ExtendedGSSCredential ) cred ).export( ExtendedGSSCredential.IMPEXP_OPAQUE ) );
             fos.close();
-            int ret = directoryAux.chmod( 0600, destFile );
+            @SuppressWarnings( "OctalInteger" ) int ret = directoryAux.chmod( 0600, destFile );
             if( ret != 0 )
                 throw new IllegalStateException( "chmod returned "+ ret );
         } catch( Exception e ) {

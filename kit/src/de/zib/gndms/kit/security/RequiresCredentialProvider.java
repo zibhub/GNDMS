@@ -17,7 +17,6 @@ package de.zib.gndms.kit.security;
  */
 
 
-import de.zib.gndms.kit.security.CredentialProvider;
 
 /**
  * @author  try ma ik jo rr a zib

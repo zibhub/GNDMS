@@ -202,7 +202,7 @@ public class SliceKindConfiguration implements Configuration {
 	 * @param slicekind The subspace.
 	 * @return The configuration.
 	 */
-    public static final SliceKindConfiguration getSliceKindConfiguration(SliceKind slicekind) {
+    public static SliceKindConfiguration getSliceKindConfiguration(SliceKind slicekind) {
 		return new SliceKindConfiguration(slicekind.getId(), slicekind.getPermission(), slicekind.getSubspaces().toString());
 	}
 

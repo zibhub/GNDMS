@@ -73,7 +73,6 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     private TaskClient taskClient;
     private final Logger logger = LoggerFactory.getLogger( this.getClass() );
     private TaskExecutionService executorService;
-    private TaskClient.TaskServiceAux taskServiceAux;
     private Dao dao;
 
 

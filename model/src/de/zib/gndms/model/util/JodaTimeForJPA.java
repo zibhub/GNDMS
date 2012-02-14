@@ -28,6 +28,7 @@ import java.util.Calendar;
  * @brief
  *
  */
+@SuppressWarnings( "UnusedDeclaration" )
 public final class JodaTimeForJPA {
 
     private static final DateTimeFormatter FORMATTER = ISODateTimeFormat.dateTime();

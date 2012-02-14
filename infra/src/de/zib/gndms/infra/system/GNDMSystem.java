@@ -92,7 +92,7 @@ public final class GNDMSystem
 	private @NotNull File dbLoggerFile;
     private @NotNull File containerHome;
 	private @NotNull EntityManagerFactory emf;
-    private @NotNull GraphDatabaseService neo = null;
+    private @NotNull GraphDatabaseService neo;
     private @NotNull Dao dao;
 
 
@@ -217,7 +217,6 @@ public final class GNDMSystem
      */
 	@SuppressWarnings({ "ResultOfMethodCallIgnored" })
     private void prepareDbStorage() throws IOException {
-        File curSharedDir = getSharedDir();
 
         if (isDebugging()) {
             LogicTools.setDerbyToDebugMode();
@@ -643,9 +642,6 @@ public final class GNDMSystem
 
     @Inject
     public void setNeo( @NotNull GraphDatabaseService neo ) {
-
-        if( this.neo != null )
-            throw new IllegalStateException( "Graph DB already set" );
 
         this.neo = neo;
     }

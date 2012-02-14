@@ -18,15 +18,10 @@ package de.zib.gndms.infra;
 
 
 
-import de.zib.gndms.infra.system.GNDMSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.jetbrains.annotations.NotNull;
 
-import javax.naming.Context;
-import javax.naming.Name;
-import javax.naming.NameAlreadyBoundException;
-import javax.naming.NamingException;
 
 /**
  * ThingAMagic.

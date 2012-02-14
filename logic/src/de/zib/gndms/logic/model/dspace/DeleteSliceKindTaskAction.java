@@ -53,8 +53,6 @@ public class DeleteSliceKindTaskAction extends ModelTaskAction<ModelIdHoldingOrd
     {
         ensureOrder();
 
-        ModelIdHoldingOrder order = getOrder();
-
         SliceKind sliceKind;
         sliceKind = getModelEntity( SliceKind.class );
 

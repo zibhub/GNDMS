@@ -61,8 +61,7 @@ public class SliceServiceImpl implements SliceService {
 
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	private EntityManagerFactory emf;
-	private EntityManager em;
-	private String baseUrl;
+    private String baseUrl;
 	private SubspaceProvider subspaceProvider;
 	private SliceKindProvider sliceKindProvider;
 	private SliceProvider sliceProvider;
@@ -167,21 +166,21 @@ public class SliceServiceImpl implements SliceService {
                     newSliceKind.getUrl());
 			Subspace space = subspaceProvider.get(subspace);
 
-			em = emf.createEntityManager();
-			TxFrame tx = new TxFrame(em);
+            EntityManager em = emf.createEntityManager();
+			TxFrame tx = new TxFrame( em );
 			try {
 				// TODO is this right? what is this uuid generator (last entry)?
 				TransformSliceAction action = new TransformSliceAction(
 						dn, slic.getTerminationTime(),
 						newSliceK, space, slic.getTotalStorageSize(), null);
-				action.setOwnEntityManager(em);
+				action.setOwnEntityManager( em );
 				logger.info("Calling action for transforming sliceId " + slice
 						+ ".");
 				action.call();
 				tx.commit();
 			} finally {
 				tx.finish();
-				if (em != null && em.isOpen()) {
+				if ( em != null && em.isOpen()) {
 					em.close();
 				}
 			}

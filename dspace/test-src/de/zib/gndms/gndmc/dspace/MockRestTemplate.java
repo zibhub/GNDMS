@@ -16,19 +16,15 @@ package de.zib.gndms.gndmc.dspace;
  * limitations under the License.
  */
 
-import java.net.URI;
-import java.util.Map;
-import java.util.Set;
-
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestOperations;
+
+import java.net.URI;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A mockup for a rest template.
@@ -224,8 +220,7 @@ public class MockRestTemplate implements RestOperations {
 		if (!validUrlMethod(url, method)) {
 			throw new RestClientException("Invalid http request for this url");
 		}
-		ResponseEntity<T> res = new ResponseEntity<T>(HttpStatus.OK);		
-		return res;
+        return new ResponseEntity<T>(HttpStatus.OK);
 	}
 
 	@Override

@@ -80,10 +80,7 @@ public class PluginLoader {
 
         ApplicationContext context = new ClassPathXmlApplicationContext(
                 "classpath:META-INF/00_system.xml");
-        GNDMSystem system = ( GNDMSystem ) context.getAutowireCapableBeanFactory().getBean(
-                "system"
-        );
-        
+
         PluginLoader pl = new PluginLoader( args[0] );
         ClassLoader cl = pl.loadPlugins();
         PlugableTaskFlowProvider provider = ( PlugableTaskFlowProvider ) context.getAutowireCapableBeanFactory()

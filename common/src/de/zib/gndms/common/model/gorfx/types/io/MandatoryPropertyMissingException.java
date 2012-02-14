@@ -31,8 +31,4 @@ public class MandatoryPropertyMissingException extends IllegalStateException {
     public MandatoryPropertyMissingException( String s ) {
         super( s );
     }
-
-
-    public MandatoryPropertyMissingException() {
-    }
 }

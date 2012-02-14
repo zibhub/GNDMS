@@ -35,4 +35,10 @@ enum SliceKindMode {
     }
 
     private final boolean readOnly;
+
+
+    public boolean isReadOnly() {
+
+        return readOnly;
+    }
 }

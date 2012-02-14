@@ -190,7 +190,7 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
      * @return
      */
     private Subspace prepareSubspace(final EntityManager em, final String pkParam) {
-        Subspace space = null;//em.find(Subspace.class, pkParam);
+        Subspace space = em.find(Subspace.class, pkParam);
         if (space == null) {
             if (! isCreating())
                 throw new IllegalStateException("No matching subspace found for update");

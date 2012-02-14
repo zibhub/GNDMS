@@ -120,14 +120,6 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends
 
     public abstract Class<K> getOrderBeanClass( );
 
-    protected void failFrom( Exception e ) {
-    	throw new IllegalStateException( getFailString( e ), e );
-    }
-
-    protected void traceFrom( Exception e ) {
-        trace( getFailString( e ), e );
-    }
-
 
     protected String getFailString( Exception e )  {
         if( e != null )

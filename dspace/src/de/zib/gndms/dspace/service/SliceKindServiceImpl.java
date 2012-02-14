@@ -40,7 +40,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import java.util.HashMap;
@@ -62,10 +61,6 @@ public class SliceKindServiceImpl implements SliceKindService {
      * The entity manager factory.
      */
     private EntityManagerFactory emf;
-    /**
-     * The entity manager.
-     */
-    private EntityManager em;
 
     /**
      * The base url, something like \c http://my.host.org/gndms/grid_id.

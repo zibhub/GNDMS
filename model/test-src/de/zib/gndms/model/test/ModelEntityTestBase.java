@@ -18,15 +18,16 @@ package de.zib.gndms.model.test;
 
 
 
+import org.jetbrains.annotations.NotNull;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
-import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import static javax.persistence.Persistence.createEntityManagerFactory;
 import java.io.File;
 import java.util.Properties;
+
+import static javax.persistence.Persistence.createEntityManagerFactory;
 
 /**
  * A base class for model tests.
@@ -116,7 +117,7 @@ public abstract class ModelEntityTestBase {
     }
 
 
-    public void setDbName( String sn ) {
+    public void setDbName( String dbName ) {
         this.dbName = dbName;
     }
     

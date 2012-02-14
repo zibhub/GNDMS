@@ -18,9 +18,10 @@ package de.zib.gndms.taskflows.dmsstaging.client.model;
 
 
 
-import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
 import de.zib.gndms.taskflows.staging.client.model.ProviderStageInOrder;
 import org.jetbrains.annotations.NotNull;
+
+import java.lang.String;
 
 /**
  * Created by IntelliJ IDEA.
@@ -36,11 +37,12 @@ public class SliceStageInOrder extends ProviderStageInOrder {
 
     // this isn't part of the initial request, but part of the offer creation result.
     private String actGridSiteURI;
+    public static final String SLICE_STAGE_IN_URI = "http://www.c3grid.de/ORQTypes/SliceStageIn";
 
 
-	public SliceStageInOrder(){
+    public SliceStageInOrder(){
         super();
-        super.setTaskFlowType( GORFXConstantURIs.SLICE_STAGE_IN_URI );
+        super.setTaskFlowType( SLICE_STAGE_IN_URI );
     }
 
     @Override

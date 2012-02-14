@@ -18,8 +18,6 @@ package de.zib.gndms.taskflows.dmsstaging.client.model;
 
 
 
-import de.zib.gndms.model.gorfx.types.GORFXConstantURIs;
-
 /**
  * @author  try ma ik jo rr a zib
  * @version  $Id$
@@ -32,11 +30,11 @@ public class SliceStageInResult extends CommonSliceResult {
 
 
     public SliceStageInResult( ) {
-        super( GORFXConstantURIs.SLICE_STAGE_IN_URI );
+        super( SliceStageInMeta.SLICE_STAGE_IN_URI );
     }
 
     public SliceStageInResult( SliceRef sr ) {
-        super( GORFXConstantURIs.SLICE_STAGE_IN_URI );
+        super( SliceStageInMeta.SLICE_STAGE_IN_URI );
         setSliceRef( sr );
     }
 

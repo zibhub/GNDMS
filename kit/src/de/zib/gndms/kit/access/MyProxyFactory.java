@@ -16,14 +16,10 @@
 
 package de.zib.gndms.kit.access;
 
-import org.globus.gsi.GlobusCredential;
 import org.globus.gsi.GlobusCredentialException;
-import org.globus.gsi.gssapi.GlobusGSSCredentialImpl;
 import org.globus.gsi.gssapi.auth.HostAuthorization;
 import org.globus.gsi.gssapi.auth.IdentityAuthorization;
-import org.globus.myproxy.GetParams;
 import org.globus.myproxy.MyProxy;
-import org.globus.myproxy.MyProxyException;
 import org.globus.util.Util;
 import org.gridforum.jgss.ExtendedGSSCredential;
 import org.ietf.jgss.GSSCredential;
@@ -66,7 +62,7 @@ public class MyProxyFactory {
 
     // the authorization method of the target machine
     // either an expected SUBJECT or a valid HOST-certificate
-    public enum Authorization { SUBJECT, HOST };
+    public enum Authorization { SUBJECT, HOST }
     private Authorization authMethod = Authorization.HOST;
 
 
@@ -170,7 +166,7 @@ public class MyProxyFactory {
 
     public static String credentialToFile( GSSCredential newCred, String outputFile ) throws IOException, GSSException {
 
-        File f = null;
+        File f;
         if (outputFile != null) {
             f = new File(outputFile);
         } else {

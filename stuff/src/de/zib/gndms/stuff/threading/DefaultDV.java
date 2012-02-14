@@ -44,7 +44,7 @@ public final class DefaultDV<V, T extends Throwable> implements DV<V, T> {
         /**
          * Used to indicate that a DV has been set to a cause
          */
-        CAUSE;
+        CAUSE
     }
 
     // lock for protecting all DV state

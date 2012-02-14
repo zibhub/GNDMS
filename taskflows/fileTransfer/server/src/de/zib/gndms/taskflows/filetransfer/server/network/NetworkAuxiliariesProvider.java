@@ -53,9 +53,6 @@ public class NetworkAuxiliariesProvider {
 
     private NetworkAuxiliariesProvider( )  { }
 
-    // private final GridFTPClientFactory gridFTPClientFactory = new SimpleGridFTPClientFactory();
-    // private final GridFTPClientFactory gridFTPClientFactory = new CertGridFTPClientFactory();
-    // private final static GridFTPClientFactory gridFTPClientFactory = new NonblockingClientFactory();
     // private final static Class<StrictNonblockingClientFactory> gridFTPClientFactoryClass = StrictNonblockingClientFactory.class;
     private final static Class<NonblockingClientFactory> gridFTPClientFactoryClass = NonblockingClientFactory.class;
     private final static GridFTPClientFactory gridFTPClientFactory;

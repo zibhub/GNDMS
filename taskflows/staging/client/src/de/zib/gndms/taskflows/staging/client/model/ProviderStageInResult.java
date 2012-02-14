@@ -17,8 +17,8 @@ package de.zib.gndms.taskflows.staging.client.model;
  */
 
 
-import de.zib.gndms.common.model.gorfx.types.AbstractTaskFlowResult;
 import de.zib.gndms.common.rest.Specifier;
+import de.zib.gndms.model.gorfx.types.SliceResult;
 import de.zib.gndms.taskflows.staging.client.ProviderStageInMeta;
 
 
@@ -34,40 +34,18 @@ import de.zib.gndms.taskflows.staging.client.ProviderStageInMeta;
  * <p/>
  * User: mjorra, Date: 13.10.2008, Time: 14:10:06
  */
-public class ProviderStageInResult extends AbstractTaskFlowResult<Specifier<Void>> {
+public class ProviderStageInResult extends SliceResult {
 
     private static final long serialVersionUID = -3003504928510518008L;
-
-    /**
-     * The resulting specifier.
-     *
-     * Describes the slice containing the staged files.
-     */
-    private Specifier<Void> sliceKey;
 
 
     public ProviderStageInResult() {
         super( ProviderStageInMeta.PROVIDER_STAGING_KEY );
     }
 
-    public ProviderStageInResult( Specifier<Void> sk ) {
-        super(  ProviderStageInMeta.PROVIDER_STAGING_KEY );
-        sliceKey = sk;
-    }
-
-    public Specifier<Void> getSliceKey() {
-        return sliceKey;
+    public ProviderStageInResult( Specifier<Void> sliceSpecifier ) {
+        super(  ProviderStageInMeta.PROVIDER_STAGING_KEY, sliceSpecifier );
     }
 
 
-    public void setSliceKey( Specifier<Void> sk ) {
-        this.sliceKey = sk;
-    }
-
-
-    @Override
-    public Specifier<Void> getResult() {
-
-        return getSliceKey();
-    }
 }

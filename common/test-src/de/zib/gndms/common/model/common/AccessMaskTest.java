@@ -238,8 +238,7 @@ public class AccessMaskTest {
 
        	AssertJUnit.assertEquals(false, mask.equals(mask2));
        	AssertJUnit.assertEquals(false, mask2.equals(mask));
-       	AssertJUnit.assertEquals(false, mask.equals(null));
-       	AssertJUnit.assertEquals(false, mask.equals(flagValue));
+       	AssertJUnit.assertEquals(false, mask.getAsString().equals(flagValue));
 	}
 
 }

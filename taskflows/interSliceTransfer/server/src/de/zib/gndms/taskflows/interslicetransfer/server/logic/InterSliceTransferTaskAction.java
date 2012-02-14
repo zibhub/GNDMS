@@ -16,7 +16,6 @@ package de.zib.gndms.taskflows.interslicetransfer.server.logic;
  */
 
 
-
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.Dao;
@@ -24,6 +23,7 @@ import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import de.zib.gndms.taskflows.filetransfer.server.logic.FileTransferTaskAction;
+import de.zib.gndms.taskflows.interslicetransfer.client.InterSliceTransferMeta;
 import de.zib.gndms.taskflows.interslicetransfer.client.model.InterSliceTransferOrder;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,11 +39,20 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
 
 
     public InterSliceTransferTaskAction() {
+        super( InterSliceTransferMeta.INTER_SLICE_TRANSFER_URI );
     }
 
     public InterSliceTransferTaskAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model) {
         super(em, dao, model);
     }
+
+
+    @Override
+    public Class<InterSliceTransferOrder> getOrderBeanClass() {
+
+        return InterSliceTransferOrder.class;
+    }
+
 
     @Override
     protected void onInProgress(@NotNull String wid, @NotNull TaskState state,
@@ -52,7 +61,7 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
         final Session session = getDao().beginSession();
         try {
             final Task task = getTask(session);
-            InterSliceTransferOrder orq = (InterSliceTransferOrder) task.getORQ();
+            InterSliceTransferOrder orq = (InterSliceTransferOrder) task.getOrder();
             InterSliceTransferQuoteCalculator.checkURIs( orq );
 
 
@@ -84,8 +93,4 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
     }
 
 
-    @NotNull
-    public Class<InterSliceTransferOrder> getOrqClass() {
-        return InterSliceTransferOrder.class;
-    }
 }
