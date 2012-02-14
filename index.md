@@ -1,6 +1,7 @@
 ---
 title: GNDMS
 root: .
+version: 0.6.x
 layout: main
 ---
 

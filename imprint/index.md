@@ -1,6 +1,7 @@
 ---
 title: GNDMS Imprint
 root: ..
+version: 0.6.x
 layout: wikistyle
 ---
 
