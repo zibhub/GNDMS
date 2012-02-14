@@ -6,9 +6,7 @@ layout: wikistyle
 ---
  
 
-
-
-GNDMS Installation Guide
+GNDMS {{ page.version }} Installation Guide
 ========================
 
 This is the Installation Guide for the
@@ -17,11 +15,16 @@ This is the Installation Guide for the
 * Maruku will replace this with a fine Table of Contents
 {:toc}
 
+
+BIG WARNING: THIS RELEASE HAS ALMOST NO SECURITY FEATURES AND IS NOT
+INTENDED FOR PRODUCTIVE USE. IT SHOULD BE RUN BEHIND A FIREWALL, SAVE
+FROM THE DANGERS OF OUTSIDE WORLD.
+
 Prerequisites
 -------------
 
 In order to build or install GNDMS, the following prerequisites need to
-be fulfilled
+be fulfilled.
 
 
 
@@ -30,95 +33,41 @@ be fulfilled
 
 #### Install the Java 2 SE Development Toolkit Version 1.6 
  
-Please Install the [Java](http://java.sun.com) 2 SE Development
+Please install the [Java](http://www.oracle.com/technetwork/java/index.html) SE Development
 Toolkit Version 1.6.
  
 For compiling the services, please make sure that `$JAVA_HOME` points
 to this version and that this is also the version that is in your
-`$PATH`.  Naturally, this should be the same version than the one you
-use(d) for building and running globus and ant.
+`$PATH`. Naturally, this should be the same version than the one you
+want to use for building and running globus.
 
-
-
-#### Install Apache Ant 1.7 
-
-This step is obsolete for all versions of GNDMS >= 0.3.2.
-
-Please install [Apache Ant](http://ant.apache.org) 1.7 and set
-`$ANT_HOME`, add it to your environment, and add `$ANT_HOME/bin` to your
-`$PATH`
-
-**NOTE** *Using 1.8 might cause trouble on Linux, YMMV*
 
 
 #### Install Local UNIX Software
 
 In order to install GNDMS, please make sure you have installed the
-following software
+following software:
 
 * openssl
-* curl
-* rsync
+* curl 
+* Globus Toolkit (with GridFTP component)
 
 Additionally, it is expected that your UNIX provides the following
 shell tools: hostname, which, bash
 
+GNDMS requires an Servlet 3.0 compliant application container. We have
+tested GNDMS against the latest stable release of Jetty 6 to 8. You
+can either grab Jetty from 
 
-#### Install Globus Toolkit 4.0.8
+    http://download.eclipse.org/jetty/
 
-Please download and make a full installation of
-[Globus Toolkit 4.0.8](http://www.globus.org/toolkit/downloads/4.0.8/)
+or use the one which comes with your Linux distribution.
 
-**NOTE** *To be precise, GNDMS doesn't use CAS and RLS, everything else
-needs to be there.  However, due to the way the GT4 build system
-works, we suggest you just install everything.*
-
-**NOTE** *If you want to cut down the build, try `./configure
-  --prefix=/opt/gt-4.0.8 --with-flavor=gcc32dbg --disable-rls
-  --disable-tests --disable-wstests --disable-drs` (or
-  `--flavor=gcc64dbg` on 64-Bit Linux or Mac OS X)*
-
-* Setup working host and user certificates (You can build without)
-* Set `$GLOBUS_LOCATION` and add it to your environment
-* Life gets easier by putting `source
-  $GLOBUS_LOCATION/etc/globus-user-env.sh` and `source
-  $GLOBUS_LOCATION/etc/globus-devel-env.sh` in `$HOME/.profile` when
-  working with Globus Toolkit
-* We strongly suggest that you create a tarball of your fresh 
-  installation of globus toolkit for backup purposes. This allows
-  you to rollback later and try again in case something goes wrong.
-
-In the following it will be assumed that globus is run by the user
-`globus` which you will have created during the installation of Globus
-Toolkit.
-
-
-#### Optionally Configure Globus Toolkit Logging
-
-This step is optional but highly recommended.
-
-To configure the Globus Container to generate substantially more log
-messages for easier debugging, please add
-
-    log4j.category.de.zib=DEBUG
-
-to `$GLOBUS_LOCATION/container-log4j.properties`
-
-For even more log information, please change the line that starts with
-`log4j.appender.A1.layout.ConversionPattern=` to
-
-    log4j.appender.A1.layout.ConversionPattern=%d{ISO8601} %-5p %c{2} [%t,%M:%L] <%x> %m%n
-
-in the same file.
-
-**ATTENTION** *The default globus log file in `$GLOBUS_LOCATION/var/container.log` gets installed with very liberal file permisssions.  You might want to `chmod 0640 $GLOBUS_LOCATION/var/container.log` for security reasons.*
-
-Now it's time to start installing GNDMS.
 
 ### Preparation of GNDMS Software
 
-**ATTENTION** *The following steps need to be executed as the `globus` user that runs
-the servlet container of your installation of Globus Toolkit.*
+**ATTENTION** *The following steps need to be executed as the user that runs
+the servlet container. We will assume that user to be named `gndms`.*
 
 
 #### Download and Unpack GNDMS
@@ -127,20 +76,25 @@ Download either an official GNDMS distribution package and unpack it
 or get the current development version from github.
 
 Please set `$GNDMS_SOURCE` to the root directory of your GNDMS
-distribution (The directory that contains `Buildfile`) and
-add `$GNDMS_SOURCE/bin` to your `$PATH`
+distribution (i.e. the directory that contains `Buildfile`) and
+add `$GNDMS_SOURCE/bin` to your `$PATH`.
 
-Additionally, please set the following environment variables as specified below
+Additionally, please set the following environment variables as specified below:
 
-* `$GNDMS_SHARED` to `$GLOBUS_LOCATION/etc/gndms_shared`
-* `GNDMS_MONI_CONFIG` to `$GNDMS_SHARED/monitor.properties`
+* `$GNDMS_SHARED` to a path where the databases can be stored (e.g. `/var/lib/gndms`)
+* `$GNDMS_MONI_CONFIG` to `$GNDMS_SHARED/monitor.properties`
 
-After this step, there should be no further need to adjust your
-environment.  Please consult `$GNDMS_SOURCE/example.profile` for an
+Please ensure, that the path `$GNDMS_SHARED` exists and that the user `gndms` has
+permissions to read and write that directory.
+
+* If you like the application container to run under another port than `8080` you can
+  change that by setting `$GNDMS_PORT`.
+
+Please consult `$GNDMS_SOURCE/etc/example.profile` for an
 example of a properly configured environment.
 
 
-#### Optionally Install Apache buildr 1.4.1 Locally
+#### Optionally Install Apache buildr 1.8 Locally
 
 This step is optional.
 
@@ -161,164 +115,177 @@ Installation and Deployment from Distribution Package
 -----------------------------------------------------
  
  This section describes the actual installation of the GNDMS software
- into the Globus Container. It requires that your system has been
- prepared as described in the previous section. Again the following
- steps should be executed by the `globus` user.
+ into the Servlet Container. It requires that your system has been
+ prepared as described in the previous section. Again, the following
+ steps should be executed by the `gndms` user.
 
 
 
 ### Migrating from a Previous Installation
 
-**Attention:** *Please backup your `$GLOBUS_LOCATION/lib` before proceeding*
-
-If there is an existing installation of GNDMS in your globus toolkit
-container, it must be properly removed before continuing. To do so,
-please shutdown your container using `globus-stop-container-detached`,
-enter `$GNDMS_SOURCE`, and execute 
-
-  gndms-buildr auto-clean
-
-This removes all jar files installed by the current GNDMS
-installation. However *it don't reset the database*, this can be done
-with [kill-db](#resetting_the_database).
-
-**Note:** *Only if you installed a source snapshot of GNDMS with an
-  irregular version number, you have to delete all jars that were
-  installed before manually.  Newer versions of GNDMS write a list of
-  these installed jars to `$GLOBUS_LOCATION/lib/gndms-dependencies`.*
-
-**Note for updating form a release < 0.3.4:** *There were two minor
-changes in the database layout, so you want to reset the GNDMS
-database as described below.*
- 
-**Note for data-provider:** *If you come from a release < 0.3.0 please
-remember two things:*
-
-* *You need to change the permissions of the folders located in your `STAGING_AREA_PATH` to 1777. Alternatively you can simply delete them, they will be created when the next staging is performed.*
-
-* *Update the ccc:baseurl tag of your MDS entry: The addresses of the GNDMS services have
-  changed from services/c3grid/\* to services/gndms/\**
+The REST version ot GNDMS (>= 0.6.0) has nearly nothing in common with
+the last WS-based version (0.3.4).
+Hence, it would be best to get rid of the old system completely.
+The INSTALL file of the old system should describe how to do that.
 
 ### Installation and Initial Deployment
  
-* Please enter `$GNDMS_SOURCE` and exeucte `gndms-buildr install-distribution`
+* Please enter `$GNDMS_SOURCE` and exeucte `gndms-buildr package`.
 
-  This will 
-
-   * Download and install required software dependencies into
-     `$GLOBUS_LOCATION/lib`. 
+  This will compile the sources and build a .war file for the application container.
 
      **Please consult `$GNDMS_SOURCE/doc/licensing` for details on licensing conditions of
        3rd party software components used by the GNDMS package.**
 
-   * Build API Documentation (Javadocs) in `$GNDMS_SOURCE/doc/api`
-   * and finally install the globus packages (gar-files)
+* To install the package automatically, you need to set the `$JETTY_HOME` variable to
+  the jetty directory. Then execute `gndms-buildr install` in `$GNDMS_SOURCE`.
 
-* (Re)start the globus container with `globus-start-container-detached` and check
- `$GLOBUS_LOCATION/var/container.log` If everything goes right and you
- enabled additional logging as described in the previous section, the
- output should contain output like
+  This will install
+    
+    ** the compiled .war file to `$JETTY_HOME/webapps/gndms.war`,
+    ** a grid.properties to `$JETTY_HOME/gndms` and
+    ** the context gndms.xml to `$JETTY_HOME/contexts`.
 
-      ===========================================================================================
-      GNDMS RELEASE: Generation N Data Management System VERSION: 0.3.4 "Richard" release-Richard
-      GNDMS BUILD: built-at: Thu May 26 15:21:19 +0200 2011 built-by: mjorra@csr-pc35
-      ===========================================================================================
-      Container home directory is '/opt/gt-current'
+  If you want to use another application server than Jetty, that's
+  fine: every Servlet 3.0 compliant server should do the trick.
+  However you need to do deployment of the application manually.
+  
+* Setup the service config.
+  To do that, open 
 
- (In the case of an error, you may want to compare with a
- [full startup log](startup-log.txt)).
+      $JETTY_HOME/gndms/grid.properties 
+
+  in an editor of your choice and check if the `dspaceBaseURL` and
+  `gorfxBaseURL` entries are correct. Additionally, check if `gridPath` points to
+  the desired folder.
+
+* Before (re-)starting the application container (e.g. Jetty), make sure that the `$GNDMS_SHARED`
+  path is accessible by the user gndms running the application container.
+
+  After restarting the application container, the following lines (or
+  the like) should appear in the server log (see $GNDMS_SHARED/log/server.log)
+
+
+      =========================================================================================                                          
+      GNDMS RELEASE: Generation N Data Management System VERSION: 0.6.0 "ARTURAS" release-0.6.0                                          
+      GNDMS BUILD: built-at: Mon Feb 06 20:25:46 +0100 2012 built-by: mjorra@csr-pc35                                                    
+      =========================================================================================                                          
+      Initializing for grid: 'C3Grid' (shared dir: '/var/lib/gndms')     
+
+
+At this point the GNDMS software has been successfully installed.
+Next, we will describe how it may be configured for actual use.
  
-* *After having checked succesful startup by looking at the logs*, fix
-   the permissions of database files by executing
-
-    gndms-buildr fix-permissions
-
-  **ATTENTION** *Skipping this step may cause leaking of sensitive
-  information to local UNIX users*
-
-At this point the GNDMS software has been succesfully installed.
-Next, we'll describe how it may be configured for actual use.
- 
 
  
-Gridconfiguration of GNDMS Software
+Grid-Configuration of GNDMS Software
 -----------------------------------
  
-GNDMS is configured via a built-in monitoring shell that accesses and
-modifies the configuration in the database.
-
-If you did a fresh installation, the monitoring shell will have been
-enabled temporarily at this point and you may just proceed. Otherwise
-you need to enable it manually as described in the following section.
-
-### Preparing your System 
-
-**Setup the slice-chown script: (only versions >= 0.3.2)**  
-To enable GNDMS to change the ownership of a slice you need to change
-your **sudoers** file:  
-The globus user must be allowed to call the chown-script as
-root. For this, log in as root and execute `visudo`. This opens
-/etc/sudoers in your `$EDITOR`. Now copy the following entry to your
-'sudoers' file
-
-    globus ALL=(root) NOPASSWD: <$GNDMS_SHARED>/chownSlice.sh
-
-Note: The `<$GNDMS_SHARED>` above must be replaced with the contents of
-`$GNDMS_SHARED` **manually**. 
-
-This entry allows the globus user to execute the chownSlice script,
-located in 
-
-    $GNDMS_SOURCE/dev-bin/chownSlice.sh 
-
-with super-user permissions and without password verification.
-
-
-Now as **root** execute:
-
-    gndms-buildr install-chown-script
-
-This copies the above script to `$GNDMS_SHARED` and changes the owner to
-root and sets the file permissions to 700.
-
-
-### Enabling the Monitoring Shell Manually
-
-To enable the monitor shell manually, after having started the globus
-container with deployed GNDMS at least once (as described in the
-previous section), please edit `$GNDMS_MONI_CONFIG` such that
-`monitor.enabled` is set to `true` and either wait until GNDMS picks
-up the new configuration or restart the globus container.
-
-The monitoring shell will be running now. You have nearly finished the
-installation at this point. All that is left to do, is to actually
-configure GNDMS for the chosen community grid platform.
-
-**NOTE** *The shell is accessed via localhosts network interface and
-protected with a clear-text password only. Do not make the monitoring
-shell accessible via unsecure networks.*
-
-
 ### Configuring your Grid
 
-Currently, there are specialized build targets for the setup of some
-D-Grid projects directly in the `Buildfile`.
+The REST-based version of GNDMS uses a plug-in system to implement
+certain data-management tasks. The basic installation doesn't include
+any plug-ins.
+Depending on the designated role of your GNDMS installation you need to
+install and setup additional plug-ins.
 
-**C3-Grid Setup & Configuration** 
-: Edit `$GNDMS_SOURCE/scripts/c3grid/setup-dataprovider.sh` and
-execute `gndms-buildr c3grid-dp-setupdb`
+Additionally, there are build targets to for the C3INAD project in
+the `Buildfile`.
 
-**C3-Grid Quick Test** 
-: `gndms-buildr c3grid-dp-post-deploy-test`
-See <a href='#testing_your_c3_installation'>below</a> for a more detailed
-description of the test.
 
-**PT-Grid Setup & Configuration** 
-: Edit `$GNDMS_SOURCE/scripts/ptgrid/setup-resource.sh` and execute `gndms-buildr ptgrid-setupdb`
+**C3-Grid Setup & Configuration for Dataprovider** 
 
-**PT-Grid Quick Test** 
-: Follow the setup instructions in the testing section <a href='#testing_your_installation'>below</a>
-and execute `gndms-buildr ptgrid-test`
+* Enable provider-stage-in:
+  Enter the directory
+  
+      $GNDMS_SOURCE/taskflows/staging
+  
+  and run
+  
+      gndms-buildr staging:server:package
+  
+  This will compile the stage-in client and server, than install it with
+  
+  
+      gndms-buildr staging:server:deploy
+  
+  Now (re-)start or reload your Jetty container, this is required for
+  the gndms plug-in loader to properly register the plug-ins.
+  
+  Finally, configure the provider staging plug-in:
+
+    : Edit `$GNDMS_SOURCE/scripts/c3grid/setup-dataprovider.sh` and
+    execute `gndms-buildr c3grid-dp-setupdb` in $GNDMS_SOURCE !
+
+* Quick test for provider stage-in:
+
+  We provide a script which executes a simple staging. It can be found
+  under:
+  
+      $GNDMS_SOURCE/taskflows/staging/bin/run-staging-client.sh
+
+  This script requires the following arguments to run:
+
+  + The staging request as properties-file:
+
+        -props < staging-property-file-name >
+
+  + Login details for the MyProxyServer the same you used with
+     myproxy-init. See below for additional
+     information about the MyProxy-configuration
+
+        -myProxyLogin  < login >          
+        -myProxyPasswd < pass-phrase >       
+
+
+**C3-Grid Setup & Configuration for Portal** 
+
+* Enable GridFTP-file-transfer
+
+  Enter the directory
+  
+      $GNDMS_SOURCE/taskflows/fileTransfer
+  
+  and run
+  
+      gndms-buildr transfer:server:package
+  
+  This will compile the client- and serverside of the plug-in. It can be installed via
+  
+      gndms-buildr transfer:server:deploy
+  
+  Now (re-)start or reload your Jetty container. This is required for
+  the gndms plug-in loader to properly register the plug-ins.
+  
+  Finally, configure the GridFTP-file-transfer plug-in:
+
+    : Edit `$GNDMS_SOURCE/scripts/c3grid/setup-portal.sh` and
+    execute `gndms-buildr c3grid-portal-setupdb` in $GNDMS_SOURCE !
+
+* Quick test for the file transfer:
+
+  We provide a script which executes a simple file transfer. It can be found
+  under:
+  
+      $GNDMS_SOURCE/taskflows/fileTransfer/bin/run-transfer-client.sh
+
+  The script requires the following arguments to run:
+
+  + The transfer request as properties-file:
+
+        -props < staging-property-file-name >
+
+     An example for transfer properties can be found in:
+
+      $GNDMS_SOURCE/taskflows/fileTransfer/etc/order.properties
+
+  + Login details for the MyProxyServer, the same you used with
+    myproxy-init. See below for additional information about the
+    MyProxy-configuration
+
+        -myProxyLogin  < login >          
+        -myProxyPasswd < pass-phrase >       
+
 
 Additionally, please consult the documentation for the respective 
 community grid platform.
@@ -327,164 +294,56 @@ community grid platform.
   `gndms-buildr kill-db` and try again.*
 
 
-### Finalize Installation by Disabling the Monitoring Shell
 
-As a security precaution, finally you should disable the monitoring
-shell.
+**MyProxy Setup**
 
-To do this, please edit
-`$GLOBUS_LOCATION/etc/gndms_shared/monitor.properties` and set
-`monitor.enabled=false` and `monitor.noShutdownIfRunning=false`.  This
-will disable the monitor shell after `monitor.configRefreshCycle` ms
-(defaults to 17 seconds).  Alternatively, just restart the globus
-container.
+
+File transfer and possibly provider stage-in require a user
+certificate. The certificates are issued from a MyProxy-Server. The
+server which should be used can be configured in the `grid.properties`
+file. In the section: 
+    # settings for the myproxy server
+    myProxyServer=csr-pc28.zib.de
+    myProxyConnectionCredentialFolder=/etc/grid-security
+    myProxyConnectionCredentialPrefix=gndms
+
+* `myProxyServer` holds FQDN to the MyProxy server. csr-pc28.zib.de
+  can be used for testing purpose. However you need to check-in your
+  D-Grid certificate-proxy using 
+
+        myproxy-init -s csr-pc28.zib.de
+
+  first.
+
+* For the connection to the MyProxy-server host authentication is used.
+  This requires a Host certificate from the D-Grid together with the
+  root CA-certificates.
+
+  + `myProxyConnectionCredentialFolder` is the folder containing
+  the certificates folder with the root CA-certs in hashed form.
+  Simply set it to /etc/grid-security is fine.
+
+  + `myProxyConnectionCredentialPrefix` in case you want to use  
+  containercert.pem and containerkey.pem this should be `container`.
+  
+  However these files must be readable for the user running the
+  GNDMS-application. We recommend to make a copy of these files
+
+      containercert.pem => gndmscert.pem 
+      containerkey.pem  => gndmskey.pem 
+
+  and leave `myProxyConnectionCredentialPrefix` alone. 
+  **Note** these files must be present in the folder named by:
+  `myProxyConnectionCredentialFolder`. 
+  
+
+
+### Finalize Installation 
+
+Nothing todo here ;-)
 
 **Congratulations** *At this point the installation is complete and you
 have a running installation of GNDMS.*
-
-
-Testing your Installation
--------------------------
-
-The GNDMS contains client applications which tests some basic
-functionality to ensure your setup is ready to use. In order to run
-the test-client the following prerequisites must be satisfied:
-
-* You must own a valid grid certificate,
-* have access to a grid-ftp-server, which accepts your certificate
-  and offers write permission,
-* and of course you need a running globus container that provides the
-  GNDMS-services, has at least one subspace, and file-transfer
-  enabled.
-* To execute the tests, it may be necessary to temporarily change the
-  ownership of `$GNDMS_SOURCE` to the unix user of the used grid
-  certificate~(i.e. your grid user account) by executing `chown -R <userid> $GNDMS_SOURCE`.
-
-### About
-
-The test client simulates a standard GNDMS-use-case, it creates a
-target slice, copies some files into the slice. Then it copies the
-files back from the slice to some target directory and destroys the slice.
-
-**C3Grid/INAD**: *This test is <b>not</b> for you, to test the stage-in
-  functionality click <a href='#testing_your_c3_installation'>here</a>.*
-
-This test should be executed as *ordinary grid-user* not the
-as the globus user.
-
-
-### Setup
-
-For the scenario the following setup is required. On your grid-ftp
-space create a source directory and add some files, e.g. by using the
-following bash command-line:
-
-{% highlight bash %}
-
-    for i in $( seq 1 3 ); do \
-        dd if=/dev/urandom bs=1024 count=1024 of=transfer_test$i.dat; done
-
-{% endhighlight %}
-
-Additionally create a destination directory on the grid-ftp space.
-
-The client reads its properties from a file:
-`$GNDMS_SOURCE/etc/sliceInOut.properties`. Now it's time to edit this
-file. All properties whose values contain angle brackets require
-attention. The file contains comments to every property and hopefully
-explains itself. When you have finished the file must not contain any
-angle-brackets, the client will complain if that's not the case.
-
-### Running the Test Client
-
-If you want to run the test client, first install GNDMS locally. Then
-edit `$GNDMS_SOURCE/etc/sliceInOutClient.properties` as you see fit,
-and load a grid-proxy using:
-
-    grid-proxy-init
-
-Now you can use buildr to fire up the client:
-
-    gndms-buildr gndms:gndmc:run-test
-
-(Or if provided: your grid specific test target)
-It takes quite some time until the first output appears, be patient.
-After a successful run your output start with:
-
-    Connected to GNDMS: Generation N Data Management System VERSION: 0.3.2 "Shigeru"
-    OK()
-    Creating slice
-
-(of course the version may differ) and end with:
-
-    Okay, all done. Cleaning up!
-        * Destroying Slice
-        * Destroying Delegate
-    Done.
-
-Click [here](test-output.txt) to view the full output. If the test
-runs successfully you should have identical files in your grid-ftp
-source and destination directory, in that case CONGRATULATIONS!! you
-have a working GNDMS installation, and can provide data management
-service for your community.
-
-
-### Testing your C3 Installation
-
-This tests the staging functionality of your GNDMS/C3Grid
-installation.
-
-Once the setup is complete, load your grid-proxy using:
-
-    grid-proxy-init
-
-In order to simulate a provider stage-in please execute:
-
-    gndms-buildr c3grid-dp-post-deploy-test
-
-Note: If you have built GNDMS from scratch you should use the
-alternative target `gndms-buildr c3grid-dp-test` instead.
-
-A successful run\'s output should end with:
-
-    # Staging request
-    ******************** ProviderStageInORQ ********************
-    Just estimate: false
-    ********************* DataDescriptor *********************
-    ObjectList: 
-        O1
-    Just Download TRUE
-    dataFormat: cdo
-    metaDataFormat: xml
-    ******************** EODataDescriptor ********************
-    DataFileName: data.cdo
-    MetaDataFileName: meta.xml
-    ******************* EOProviderStageInORQ *******************
-    # Accepted contract
-    IfDecisionBefore: 2011-02-16T15:09:18.691Z
-    ExecutionLikelyUnitl:  86400000
-    ResultValidUntil:  172800000
-    Waiting for staging to finish or fail... (state=created, progress=[1/100])
-    Waiting for staging to finish or fail... (state=inprogress, progress=[1/100])
-    Waiting for staging to finish or fail... (state=inprogress, progress=[1/100])
-    Waiting for staging to finish or fail... (state=finished, progress=[100/100])
-    types.ProviderStageInResultT@a5a3c573
-    Address: https://130.73.78.137:8443/wsrf/services/gndms/Slice
-    Reference property[0]:
-    <ns3:SliceKey xmlns:ns3="http://dspace.gndms.zib.de/DSpace/Slice"
-        59dac910-39d6-11e0-bcb2-c9c6a341d8b8</ns3:SliceKey>
-    
-    Collect your results at:
-    gsiftp://csr-pc35.zib.de/tmp/Work/59daf020-39d6-11e0-bcb2-c9c6a341d8b8
-    
-    Collect your results by executing:
-    globus-url-copy 'gsiftp://csr-pc35.zib.de/tmp/Work/59daf020-39d6-11e0-bcb2-c9c6a341d8b8/data.cdo' 
-        'file:///home/mjorra/data.cdo'
-    globus-url-copy 'gsiftp://csr-pc35.zib.de/tmp/Work/59daf020-39d6-11e0-bcb2-c9c6a341d8b8/meta.xml' 
-        'file:///home/mjorra/meta.xml'
-
-
-Click [here](staging-test-output.txt) to view the full output.
 
 
 
@@ -512,7 +371,7 @@ Custom message: Server refused changing directory (error code 1) [Nested excepti
         Could not change directory. : System error in stat: Permission denied
 ...
 </code></pre>
-Please make sure that `/some/dir` is owned by the globus user and has
+Please make sure that `/some/dir` is owned by the gndms user and has
 permissions 1777. Also make sure that your GRAM setup (especially the
 sudoers entries) is correct.
 
@@ -550,64 +409,22 @@ argument.
 Advanced Configuration
 ----------------------
 
-### Remote Access to container.log
-
-To enable a select group of users to read the container.log from
-outside, add their DNs to either
-`/etc/grid-security/gndms-support-staff` or
-`$GLOBUS_LOCATION/etc/gndms_shared/gndms-support-staff`.  Depending on
-your setup, you need to replace `gndms` with your subgrid name
-(`ptgrid`, `c3grid`, etc.) in these file names.
-
-To access the log, please load your user credentials (e.g. with
-`grid-proxy-init`) and run in `$GNDMS_SOURCE`
-
-    `env URI="<URI>" ARGS="<ARGS>" gndms-buildr show-log`
-
-where `<URI>` is the EPR of either a DSpace or a GORFX service (see
-container.log startup section, looks like
-`https://$HOSTNAME:8443/wsrf/services/gndms/GORFX`) and `<ARGS>` are
-the arguments that need to be passed to the actual show-log service
-maintenance call.  Please use `env URI="<URI>" ARGS="help"` to obtain
-a synopsis of possible parameters or leave it empty to retrieve
-`$GLOBUS_LOCATION/var/container.log` completely.
-
-
 ### Resetting the Database
 
-First, **shutdown the globus container**.  Next, in `$GNDMS_SOURCE`, issue
+First, **shutdown the application container**.  Next, in `$GNDMS_SOURCE`, issue
 
    gndms-buildr kill-db
 
 This will delete your database.
 
 
-### Inspecting the Database
-
-First, **shutdown the globus container**.  Next, in `$GNDMS_SOURCE`, issue
-
-   gndms-buildr inspect-db
-
-This will open a shell to the derby-ij tool for looking at the
-internal database of GNDMS.
-
-
-### Using the Monitor Shell
-
-Please consult the [monitor shell guide]({{ page.root }}moni-guide)
 
 
 
 Building GNDMS from Source
 --------------------------
 
-
-#### Quick Rebuild
-
-A quick full rebuild and reinstallation may be done by executing
-
-    gndms-buildr rebuild
-
+See above.
 
 #### Regeneration of Javadocs
 
@@ -617,41 +434,6 @@ javadocs by executing
     gndms-buildr apidocs
 
 
-#### Building Manually from Scratch
-
-{% highlight bash %}
-
-    gndms-buildr clean clean-services # Cleans everything
-    gndms-buildr artifcats            # Download all 3rd party components
-    gndms-buildr gndms:model:package  # Compile basic DAO classes
-    gndms-buildr package-stubs        # Compile service stubs
-    gndms-buildr gndms:infra:package  # Compile GNDMS framework
-    globus-stop-container-detached    # Ensure globus is shutdown
-    gndms-buildr install-deps         # Install dependencies
-    gndms-buildr package-DSpace       # Compile DSpace service
-    gndms-buildr deploy-DSpace        # Deploy DSpace
-    gndms-buildr package-GORFX        # Compile GORFX service
-    gndms-buildr deploy-GORFX         # Deploy GORFX
-    globus-start-container-detached   # Restart globus
-    gndms-buildr gndms:gndmc:package  # Build client
-    gndms-buildr apidocs              # Build Javadocs (gndms is excluded)
-
-{% endhighlight %}
-
-**NOTE** *In order to get speedier builds, developers may set
-`$GNDMS_DEPS=link`. This will make `gndms-buildr install-deps` symlink
-dependencies to `$GLOBUS_LOCATION/lib` instead of copying them and
-therefore considerably eases trying out small changes to framework
-classes.  However, when using this method, make sure that required
-symlinked jar files from `$HOME/.m2/repository` and
-`$GNDMS_SOURCE/lib`and `$GNDMS_SOURCE/extra` are not deleted
-accidentally and remain readable for the globus user.*
-
-**NOTE** *Once symlinks have been set up properly, developers may set
-`$GNDMS_DEPS=skip` to skip install-deps alltogether.*
-
-**NOTE** *To even setup symlinks for the service jars, use
-  the `gndms-buildr link-services` target.*
 
 
 #### Packaging GNDMS
@@ -686,33 +468,3 @@ Now, please upload the tarball and let the world know about it.
 
 \*) *Please note: Every time you change the VERSION_NUMBER you have to
 call `install-deps` or building the services will not succeed.*
-
-#### Problem Shooting Tips for Development Builds
-
-* Do you need to regen the stubs? `gndms-buildr clean-services
-  package-stubs` to the rescue.
-
-* Symlinks/copies of old jars in `$GLOBUS_LOCATION/lib`.  
-
-      find $GLOBUS_LOCATION/lib -type l -name *.jar -exec rm -i {} \;
-
-  may help
-
-* If you cant deploy (i.e. globus-start-container balks with one of
-   those 40+-lines stacktraces) it's possible that introduce created
-   an invalid jndi-config.xml which can happen during development but
-   is easy enough to fix: Just make sure there are neither duplicate
-   service nor resourceHome entries in any of the jndi-config.xml
-   files
-
-* This build is not supposed to work on Microsoft Windows
-
-* If you get an error about a missing "test/src" directory simply
-  mkdir -p test/src in the respective services' directory
-
-Other common reasons for a failed container starts are invalid credentials
-(hostkey/hostcert.pem) or outdated CRLs. In the latter case, the script
-contained in `$GNDMS_SOURCE/contrib/fetch-crl` may help you. Execute
-`fetch-crl -o <grid-cert-dir>` with apropriate permissions (Requries `wget`).
-<a name="fetch-crl" />
-
