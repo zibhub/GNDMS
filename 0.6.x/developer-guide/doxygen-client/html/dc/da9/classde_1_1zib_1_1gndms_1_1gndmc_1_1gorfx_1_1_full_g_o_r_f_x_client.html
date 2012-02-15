@@ -86,8 +86,11 @@ Inheritance diagram for de.zib.gndms.gndmc.gorfx.FullGORFXClient:</div>
  <div class="center">
   <img src="../../dc/da9/classde_1_1zib_1_1gndms_1_1gndmc_1_1gorfx_1_1_full_g_o_r_f_x_client.png" usemap="#de.zib.gndms.gndmc.gorfx.FullGORFXClient_map" alt=""/>
   <map id="de.zib.gndms.gndmc.gorfx.FullGORFXClient_map" name="de.zib.gndms.gndmc.gorfx.FullGORFXClient_map">
-<area href="../../d0/d20/classde_1_1zib_1_1gndms_1_1gndmc_1_1gorfx_1_1_g_o_r_f_x_client.html" alt="de.zib.gndms.gndmc.gorfx.GORFXClient" shape="rect" coords="0,56,261,80"/>
-<area href="../../d9/dac/classde_1_1zib_1_1gndms_1_1gndmc_1_1_abstract_client.html" alt="de.zib.gndms.gndmc.AbstractClient" shape="rect" coords="0,0,261,24"/>
+<area href="../../d0/d20/classde_1_1zib_1_1gndms_1_1gndmc_1_1gorfx_1_1_g_o_r_f_x_client.html" alt="de.zib.gndms.gndmc.gorfx.GORFXClient" shape="rect" coords="194,56,572,80"/>
+<area href="../../d2/de6/interfacede_1_1zib_1_1gndms_1_1common_1_1_g_o_r_f_x_1_1service_1_1_g_o_r_f_x_service.html" alt="de.zib.gndms.common.GORFX.service.GORFXService" shape="rect" coords="776,56,1154,80"/>
+<area href="../../d9/dac/classde_1_1zib_1_1gndms_1_1gndmc_1_1_abstract_client.html" alt="de.zib.gndms.gndmc.AbstractClient" shape="rect" coords="0,0,378,24"/>
+<area href="../../da/d28/interfacede_1_1zib_1_1gndms_1_1common_1_1_g_o_r_f_x_1_1service_1_1_g_o_r_f_x_service_essentials.html" alt="de.zib.gndms.common.GORFX.service.GORFXServiceEssentials" shape="rect" coords="388,0,766,24"/>
+<area href="../../da/d28/interfacede_1_1zib_1_1gndms_1_1common_1_1_g_o_r_f_x_1_1service_1_1_g_o_r_f_x_service_essentials.html" alt="de.zib.gndms.common.GORFX.service.GORFXServiceEssentials" shape="rect" coords="776,0,1154,24"/>
 </map>
  </div></div>
 
@@ -104,17 +107,17 @@ Public Member Functions</h2></td></tr>
 final ResponseEntity&lt; List<br class="typebreak"/>
 &lt; String &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>listConfigActions</b> (final String dn)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a40cac2b2934b9bf7dee1d73846eb916d"></a><!-- doxytag: member="de::zib::gndms::gndmc::gorfx::FullGORFXClient::getConfigActionInfo" ref="a40cac2b2934b9bf7dee1d73846eb916d" args="(final String actionName, final String dn)" -->
-final ResponseEntity&lt; ConfigMeta &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getConfigActionInfo</b> (final String actionName, final String dn)</td></tr>
+final ResponseEntity&lt; <a class="el" href="../../d9/d74/interfacede_1_1zib_1_1gndms_1_1common_1_1logic_1_1config_1_1_config_meta.html">ConfigMeta</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getConfigActionInfo</b> (final String actionName, final String dn)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a94f004ee482a372b7e02bf3476831d97"></a><!-- doxytag: member="de::zib::gndms::gndmc::gorfx::FullGORFXClient::callConfigAction" ref="a94f004ee482a372b7e02bf3476831d97" args="(final String actionName, final String args, final String dn)" -->
 final ResponseEntity&lt; String &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>callConfigAction</b> (final String actionName, final String args, final String dn)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a93d2ac50225bcc0d46a705d3b454ca1c"></a><!-- doxytag: member="de::zib::gndms::gndmc::gorfx::FullGORFXClient::listBatchActions" ref="a93d2ac50225bcc0d46a705d3b454ca1c" args="(final String dn)" -->
 final ResponseEntity&lt; List<br class="typebreak"/>
 &lt; String &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>listBatchActions</b> (final String dn)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a11616ac7f0d9e5557e6caf26a975fc5e"></a><!-- doxytag: member="de::zib::gndms::gndmc::gorfx::FullGORFXClient::getBatchActionInfo" ref="a11616ac7f0d9e5557e6caf26a975fc5e" args="(final String actionName, final String dn)" -->
-final ResponseEntity&lt; ActionMeta &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getBatchActionInfo</b> (final String actionName, final String dn)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7a397ac2d5d70945bf4beec9e3c95be1"></a><!-- doxytag: member="de::zib::gndms::gndmc::gorfx::FullGORFXClient::getBatchAction" ref="a7a397ac2d5d70945bf4beec9e3c95be1" args="(String actionName, String id, String dn)" -->
-ResponseEntity&lt; Specifier<br class="typebreak"/>
-&lt; Facets &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getBatchAction</b> (String actionName, String id, String dn)</td></tr>
+final ResponseEntity&lt; <a class="el" href="../../dd/d09/interfacede_1_1zib_1_1gndms_1_1common_1_1logic_1_1action_1_1_action_meta.html">ActionMeta</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getBatchActionInfo</b> (final String actionName, final String dn)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">ResponseEntity&lt; Specifier<br class="typebreak"/>
+&lt; <a class="el" href="../../d9/d50/classde_1_1zib_1_1gndms_1_1common_1_1rest_1_1_facets.html">Facets</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/da9/classde_1_1zib_1_1gndms_1_1gndmc_1_1gorfx_1_1_full_g_o_r_f_x_client.html#a7a397ac2d5d70945bf4beec9e3c95be1">getBatchAction</a> (String actionName, String id, String dn)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Delivers the specifier of a running action.  <a href="#a7a397ac2d5d70945bf4beec9e3c95be1"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5071f9b38c19e40de8dcb22e81c56fda"></a><!-- doxytag: member="de::zib::gndms::gndmc::gorfx::FullGORFXClient::callBatchAction" ref="a5071f9b38c19e40de8dcb22e81c56fda" args="(final String actionName, final String args, final String dn)" -->
 final ResponseEntity&lt; Specifier &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>callBatchAction</b> (final String actionName, final String args, final String dn)</td></tr>
 </table>
@@ -123,7 +126,7 @@ final ResponseEntity&lt; Specifier &gt;&#160;</td><td class="memItemRight" valig
 <dl class="author"><dt><b>Author:</b></dt><dd>try ma ik jo rr a zib </dd></dl>
 <dl class="version"><dt><b>Version:</b></dt><dd>$Id$ </dd></dl>
 <p>Date: 08.02.11, Time: 12:10 </p>
-<dl class="see"><dt><b>See also:</b></dt><dd>de.zib.gndms.common.GORFX.service.GORFXService for details. </dd>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="../../d2/de6/interfacede_1_1zib_1_1gndms_1_1common_1_1_g_o_r_f_x_1_1service_1_1_g_o_r_f_x_service.html" title="The FULL interface of the GORFX service.">de.zib.gndms.common.GORFX.service.GORFXService</a> for details. </dd>
 <dd>
 <a class="el" href="../../d0/d20/classde_1_1zib_1_1gndms_1_1gndmc_1_1gorfx_1_1_g_o_r_f_x_client.html" title="Client for the taskflow part of the gorfx service. This client doesn&#39;t provide methods for batch ...">de.zib.gndms.gndmc.gorfx.GORFXClient</a> for a "smaller" client. </dd></dl>
 </div><hr/><h2>Constructor &amp; Destructor Documentation</h2>
@@ -152,6 +155,53 @@ final ResponseEntity&lt; Specifier &gt;&#160;</td><td class="memItemRight" valig
 
 </div>
 </div>
+<hr/><h2>Member Function Documentation</h2>
+<a class="anchor" id="a7a397ac2d5d70945bf4beec9e3c95be1"></a><!-- doxytag: member="de::zib::gndms::gndmc::gorfx::FullGORFXClient::getBatchAction" ref="a7a397ac2d5d70945bf4beec9e3c95be1" args="(String actionName, String id, String dn)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ResponseEntity&lt;Specifier&lt;<a class="el" href="../../d9/d50/classde_1_1zib_1_1gndms_1_1common_1_1rest_1_1_facets.html">Facets</a>&gt; &gt; de.zib.gndms.gndmc.gorfx.FullGORFXClient.getBatchAction </td>
+          <td>(</td>
+          <td class="paramtype">String&#160;</td>
+          <td class="paramname"><em>actionName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">String&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">String&#160;</td>
+          <td class="paramname"><em>dn</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Delivers the specifier of a running action. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">actionName</td><td>The name of the action </td></tr>
+    <tr><td class="paramname">id</td><td>The id of the running action. </td></tr>
+    <tr><td class="paramname">dn</td><td>The dn of the user invoking the method. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>HttpStatus 200 together with a task specifier if the batch exists, 404 otherwise. </dd></dl>
+
+<p>Implements <a class="el" href="../../d2/de6/interfacede_1_1zib_1_1gndms_1_1common_1_1_g_o_r_f_x_1_1service_1_1_g_o_r_f_x_service.html#ab70c02370e7354eeb5eb6ccda33333e6">de.zib.gndms.common.GORFX.service.GORFXService</a>.</p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>gndmc-rest/src/de/zib/gndms/gndmc/gorfx/FullGORFXClient.java</li>
 </ul>
@@ -161,7 +211,7 @@ final ResponseEntity&lt; Specifier &gt;&#160;</td><td class="memItemRight" valig
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Enumerations</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -170,7 +220,7 @@ final ResponseEntity&lt; Specifier &gt;&#160;</td><td class="memItemRight" valig
 </iframe>
 </div>
 
-<hr class="footer"/><address class="footer"><small>Generated on Wed Feb 15 2012 15:29:56 for GNDMS by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Wed Feb 15 2012 15:31:48 for GNDMS by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="../../doxygen.png" alt="doxygen"/></a> 1.7.3 </small></address>
 </body>

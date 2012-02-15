@@ -97,9 +97,9 @@ Inheritance diagram for de.zib.gndms.gndmc.gorfx.AbstractTaskFlowExecClient:</di
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d56/classde_1_1zib_1_1gndms_1_1gndmc_1_1gorfx_1_1_abstract_task_flow_exec_client.html#a5d0a41d1733520dda6b6755df5428c76">execTF</a> (Order order, String dn)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d56/classde_1_1zib_1_1gndms_1_1gndmc_1_1gorfx_1_1_abstract_task_flow_exec_client.html#a5d0a41d1733520dda6b6755df5428c76">execTF</a> (<a class="el" href="../../d0/d52/interfacede_1_1zib_1_1gndms_1_1common_1_1model_1_1gorfx_1_1types_1_1_order.html">Order</a> order, String dn)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Executes a complete task flow.  <a href="#a5d0a41d1733520dda6b6755df5428c76"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d56/classde_1_1zib_1_1gndms_1_1gndmc_1_1gorfx_1_1_abstract_task_flow_exec_client.html#ada1f362011bcff0d4706b8154c18f4ec">execTF</a> (Order order, String dn, boolean withQuote, final Quote desiredQuote)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d56/classde_1_1zib_1_1gndms_1_1gndmc_1_1gorfx_1_1_abstract_task_flow_exec_client.html#ada1f362011bcff0d4706b8154c18f4ec">execTF</a> (<a class="el" href="../../d0/d52/interfacede_1_1zib_1_1gndms_1_1common_1_1model_1_1gorfx_1_1types_1_1_order.html">Order</a> order, String dn, boolean withQuote, final <a class="el" href="../../d9/d10/classde_1_1zib_1_1gndms_1_1common_1_1model_1_1gorfx_1_1types_1_1_quote.html">Quote</a> desiredQuote)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Executes a complete task flow.  <a href="#ada1f362011bcff0d4706b8154c18f4ec"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d0/d20/classde_1_1zib_1_1gndms_1_1gndmc_1_1gorfx_1_1_g_o_r_f_x_client.html">GORFXClient</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d56/classde_1_1zib_1_1gndms_1_1gndmc_1_1gorfx_1_1_abstract_task_flow_exec_client.html#a0b5009f7410c8d54288033d30ef0f15f">getGorfxClient</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Delivers the value of ::gorfxClient.  <a href="#a0b5009f7410c8d54288033d30ef0f15f"></a><br/></td></tr>
@@ -119,13 +119,13 @@ Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the value of ::pollingDelay to <em>pollingDelay</em>.  <a href="#a706463b79634536693a29e5336dc36cb"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">GNDMSResponseHeader&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d56/classde_1_1zib_1_1gndms_1_1gndmc_1_1gorfx_1_1_abstract_task_flow_exec_client.html#afcf065ada0bc93efda884c28b67af062">setupContext</a> (final GNDMSResponseHeader context)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../da/d83/classde_1_1zib_1_1gndms_1_1common_1_1rest_1_1_g_n_d_m_s_response_header.html">GNDMSResponseHeader</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d56/classde_1_1zib_1_1gndms_1_1gndmc_1_1gorfx_1_1_abstract_task_flow_exec_client.html#afcf065ada0bc93efda884c28b67af062">setupContext</a> (final <a class="el" href="../../da/d83/classde_1_1zib_1_1gndms_1_1common_1_1rest_1_1_g_n_d_m_s_response_header.html">GNDMSResponseHeader</a> context)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Offers implementing clients the possibility to add values to the request context.  <a href="#afcf065ada0bc93efda884c28b67af062"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">abstract void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d56/classde_1_1zib_1_1gndms_1_1gndmc_1_1gorfx_1_1_abstract_task_flow_exec_client.html#a17a43607366372db6e7a88dfaa9bac0d">handleStatus</a> (TaskStatus stat)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler method for the current task status.  <a href="#a17a43607366372db6e7a88dfaa9bac0d"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">abstract Integer&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d56/classde_1_1zib_1_1gndms_1_1gndmc_1_1gorfx_1_1_abstract_task_flow_exec_client.html#aff08c1d3e04478e44f11a6a7e7678e18">selectQuote</a> (List&lt; Specifier&lt; Quote &gt;&gt; quotes)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">abstract Integer&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d56/classde_1_1zib_1_1gndms_1_1gndmc_1_1gorfx_1_1_abstract_task_flow_exec_client.html#aff08c1d3e04478e44f11a6a7e7678e18">selectQuote</a> (List&lt; Specifier&lt; <a class="el" href="../../d9/d10/classde_1_1zib_1_1gndms_1_1common_1_1model_1_1gorfx_1_1types_1_1_quote.html">Quote</a> &gt;&gt; quotes)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Allows the caller to select a quote.  <a href="#aff08c1d3e04478e44f11a6a7e7678e18"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">abstract void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d56/classde_1_1zib_1_1gndms_1_1gndmc_1_1gorfx_1_1_abstract_task_flow_exec_client.html#ae1279c0c6c48dcd176c8a6f031e8f292">handleTaskSpecifier</a> (Specifier&lt; Facets &gt; ts)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">abstract void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d56/classde_1_1zib_1_1gndms_1_1gndmc_1_1gorfx_1_1_abstract_task_flow_exec_client.html#ae1279c0c6c48dcd176c8a6f031e8f292">handleTaskSpecifier</a> (Specifier&lt; <a class="el" href="../../d9/d50/classde_1_1zib_1_1gndms_1_1common_1_1rest_1_1_facets.html">Facets</a> &gt; ts)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Allows additional handling for the task specifier.  <a href="#ae1279c0c6c48dcd176c8a6f031e8f292"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">abstract void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d56/classde_1_1zib_1_1gndms_1_1gndmc_1_1gorfx_1_1_abstract_task_flow_exec_client.html#a377286ddda72fdaa4fe12763d3ca9892">handleResult</a> (TaskResult res)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for the task result.  <a href="#a377286ddda72fdaa4fe12763d3ca9892"></a><br/></td></tr>
@@ -165,7 +165,7 @@ long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../.
         <tr>
           <td class="memname">void de.zib.gndms.gndmc.gorfx.AbstractTaskFlowExecClient.execTF </td>
           <td>(</td>
-          <td class="paramtype">Order&#160;</td>
+          <td class="paramtype"><a class="el" href="../../d0/d52/interfacede_1_1zib_1_1gndms_1_1common_1_1model_1_1gorfx_1_1types_1_1_order.html">Order</a>&#160;</td>
           <td class="paramname"><em>order</em>, </td>
         </tr>
         <tr>
@@ -202,7 +202,7 @@ long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../.
         <tr>
           <td class="memname">void de.zib.gndms.gndmc.gorfx.AbstractTaskFlowExecClient.execTF </td>
           <td>(</td>
-          <td class="paramtype">Order&#160;</td>
+          <td class="paramtype"><a class="el" href="../../d0/d52/interfacede_1_1zib_1_1gndms_1_1common_1_1model_1_1gorfx_1_1types_1_1_order.html">Order</a>&#160;</td>
           <td class="paramname"><em>order</em>, </td>
         </tr>
         <tr>
@@ -220,7 +220,7 @@ long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../.
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">final Quote&#160;</td>
+          <td class="paramtype">final <a class="el" href="../../d9/d10/classde_1_1zib_1_1gndms_1_1common_1_1model_1_1gorfx_1_1types_1_1_quote.html">Quote</a>&#160;</td>
           <td class="paramname"><em>desiredQuote</em>&#160;</td>
         </tr>
         <tr>
@@ -555,7 +555,7 @@ long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../.
         <tr>
           <td class="memname">abstract void de.zib.gndms.gndmc.gorfx.AbstractTaskFlowExecClient.handleTaskSpecifier </td>
           <td>(</td>
-          <td class="paramtype">Specifier&lt; Facets &gt;&#160;</td>
+          <td class="paramtype">Specifier&lt; <a class="el" href="../../d9/d50/classde_1_1zib_1_1gndms_1_1common_1_1rest_1_1_facets.html">Facets</a> &gt;&#160;</td>
           <td class="paramname"><em>ts</em></td><td>)</td>
           <td><code> [protected, pure virtual]</code></td>
         </tr>
@@ -582,7 +582,7 @@ long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../.
         <tr>
           <td class="memname">abstract Integer de.zib.gndms.gndmc.gorfx.AbstractTaskFlowExecClient.selectQuote </td>
           <td>(</td>
-          <td class="paramtype">List&lt; Specifier&lt; Quote &gt;&gt;&#160;</td>
+          <td class="paramtype">List&lt; Specifier&lt; <a class="el" href="../../d9/d10/classde_1_1zib_1_1gndms_1_1common_1_1model_1_1gorfx_1_1types_1_1_quote.html">Quote</a> &gt;&gt;&#160;</td>
           <td class="paramname"><em>quotes</em></td><td>)</td>
           <td><code> [protected, pure virtual]</code></td>
         </tr>
@@ -708,9 +708,9 @@ long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../.
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">GNDMSResponseHeader de.zib.gndms.gndmc.gorfx.AbstractTaskFlowExecClient.setupContext </td>
+          <td class="memname"><a class="el" href="../../da/d83/classde_1_1zib_1_1gndms_1_1common_1_1rest_1_1_g_n_d_m_s_response_header.html">GNDMSResponseHeader</a> de.zib.gndms.gndmc.gorfx.AbstractTaskFlowExecClient.setupContext </td>
           <td>(</td>
-          <td class="paramtype">final GNDMSResponseHeader&#160;</td>
+          <td class="paramtype">final <a class="el" href="../../da/d83/classde_1_1zib_1_1gndms_1_1common_1_1rest_1_1_g_n_d_m_s_response_header.html">GNDMSResponseHeader</a>&#160;</td>
           <td class="paramname"><em>context</em></td><td>)</td>
           <td><code> [protected]</code></td>
         </tr>
@@ -739,7 +739,7 @@ long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../.
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Enumerations</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -748,7 +748,7 @@ long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../.
 </iframe>
 </div>
 
-<hr class="footer"/><address class="footer"><small>Generated on Wed Feb 15 2012 15:29:56 for GNDMS by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Wed Feb 15 2012 15:31:48 for GNDMS by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="../../doxygen.png" alt="doxygen"/></a> 1.7.3 </small></address>
 </body>

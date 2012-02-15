@@ -88,7 +88,8 @@ Inheritance diagram for de.zib.gndms.gndmc.gorfx.TaskClient:</div>
  <div class="center">
   <img src="../../d3/d54/classde_1_1zib_1_1gndms_1_1gndmc_1_1gorfx_1_1_task_client.png" usemap="#de.zib.gndms.gndmc.gorfx.TaskClient_map" alt=""/>
   <map id="de.zib.gndms.gndmc.gorfx.TaskClient_map" name="de.zib.gndms.gndmc.gorfx.TaskClient_map">
-<area href="../../d9/dac/classde_1_1zib_1_1gndms_1_1gndmc_1_1_abstract_client.html" alt="de.zib.gndms.gndmc.AbstractClient" shape="rect" coords="0,0,222,24"/>
+<area href="../../d9/dac/classde_1_1zib_1_1gndms_1_1gndmc_1_1_abstract_client.html" alt="de.zib.gndms.gndmc.AbstractClient" shape="rect" coords="0,0,304,24"/>
+<area href="../../d6/d8c/interfacede_1_1zib_1_1gndms_1_1common_1_1_g_o_r_f_x_1_1service_1_1_task_service.html" alt="de.zib.gndms.common.GORFX.service.TaskService" shape="rect" coords="314,0,618,24"/>
 </map>
  </div></div>
 
@@ -102,14 +103,14 @@ Classes</h2></td></tr>
 Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afb4c5ef88f69ac67c9e8e453b00200e3"></a><!-- doxytag: member="de::zib::gndms::gndmc::gorfx::TaskClient::TaskClient" ref="afb4c5ef88f69ac67c9e8e453b00200e3" args="(String serviceURL)" -->
 &#160;</td><td class="memItemRight" valign="bottom"><b>TaskClient</b> (String <a class="el" href="../../d9/dac/classde_1_1zib_1_1gndms_1_1gndmc_1_1_abstract_client.html#ae509cebfc2ac76635702a4668d6d87c3">serviceURL</a>)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a81031e2dc2a29e848c6e038c94dcab23"></a><!-- doxytag: member="de::zib::gndms::gndmc::gorfx::TaskClient::getServiceInfo" ref="a81031e2dc2a29e848c6e038c94dcab23" args="()" -->
-ResponseEntity&lt; TaskServiceInfo &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getServiceInfo</b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5882f23fec50ec103fe2b00bc898999b"></a><!-- doxytag: member="de::zib::gndms::gndmc::gorfx::TaskClient::getServiceConfig" ref="a5882f23fec50ec103fe2b00bc898999b" args="(String dn)" -->
-ResponseEntity&lt; TaskServiceConfig &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getServiceConfig</b> (String dn)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">ResponseEntity&lt; TaskServiceInfo &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/d54/classde_1_1zib_1_1gndms_1_1gndmc_1_1gorfx_1_1_task_client.html#a81031e2dc2a29e848c6e038c94dcab23">getServiceInfo</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Delivers infos about the service.  <a href="#a81031e2dc2a29e848c6e038c94dcab23"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">ResponseEntity&lt; TaskServiceConfig &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/d54/classde_1_1zib_1_1gndms_1_1gndmc_1_1gorfx_1_1_task_client.html#a5882f23fec50ec103fe2b00bc898999b">getServiceConfig</a> (String dn)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads the service configuration.  <a href="#a5882f23fec50ec103fe2b00bc898999b"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0c53c604592a66f89b21211d3489b0fc"></a><!-- doxytag: member="de::zib::gndms::gndmc::gorfx::TaskClient::setServiceConfig" ref="a0c53c604592a66f89b21211d3489b0fc" args="(TaskServiceConfig cfg, String dn)" -->
 ResponseEntity&lt; String &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>setServiceConfig</b> (TaskServiceConfig cfg, String dn)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3bc4444746a2e054f1cd8c5fb964106c"></a><!-- doxytag: member="de::zib::gndms::gndmc::gorfx::TaskClient::getTaskFacets" ref="a3bc4444746a2e054f1cd8c5fb964106c" args="(final String id, String dn)" -->
-ResponseEntity&lt; Facets &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getTaskFacets</b> (final String id, String dn)</td></tr>
+ResponseEntity&lt; <a class="el" href="../../d9/d50/classde_1_1zib_1_1gndms_1_1common_1_1rest_1_1_facets.html">Facets</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getTaskFacets</b> (final String id, String dn)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af831b653d1b536051f30b6c40f3129df"></a><!-- doxytag: member="de::zib::gndms::gndmc::gorfx::TaskClient::deleteTask" ref="af831b653d1b536051f30b6c40f3129df" args="(final String id, String dn, String wid)" -->
 ResponseEntity&lt; Void &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>deleteTask</b> (final String id, String dn, String wid)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a67bf607100224bb01b7a0dcd45631990"></a><!-- doxytag: member="de::zib::gndms::gndmc::gorfx::TaskClient::getStatus" ref="a67bf607100224bb01b7a0dcd45631990" args="(final String id, String dn, String wid)" -->
@@ -125,14 +126,65 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setServiceURL</b> (St
 <tr><td colspan="2"><h2><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0936413de30537e59d20747a1291c065"></a><!-- doxytag: member="de::zib::gndms::gndmc::gorfx::TaskClient::uriFactory" ref="a0936413de30537e59d20747a1291c065" args="" -->
-UriFactory&#160;</td><td class="memItemRight" valign="bottom"><b>uriFactory</b></td></tr>
+<a class="el" href="../../d1/d55/classde_1_1zib_1_1gndms_1_1common_1_1rest_1_1_uri_factory.html">UriFactory</a>&#160;</td><td class="memItemRight" valign="bottom"><b>uriFactory</b></td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Client for TaskService. </p>
 <dl class="author"><dt><b>Author:</b></dt><dd>try ma ik jo rr a zib </dd></dl>
 <dl class="date"><dt><b>Date:</b></dt><dd>07.03.11 18:35 </dd></dl>
-<dl class="see"><dt><b>See also:</b></dt><dd>de.zib.gndms.common.GORFX.service.TaskService for details. </dd></dl>
-</div><hr/>The documentation for this class was generated from the following file:<ul>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="../../d6/d8c/interfacede_1_1zib_1_1gndms_1_1common_1_1_g_o_r_f_x_1_1service_1_1_task_service.html" title="Interface for the task services.">de.zib.gndms.common.GORFX.service.TaskService</a> for details. </dd></dl>
+</div><hr/><h2>Member Function Documentation</h2>
+<a class="anchor" id="a5882f23fec50ec103fe2b00bc898999b"></a><!-- doxytag: member="de::zib::gndms::gndmc::gorfx::TaskClient::getServiceConfig" ref="a5882f23fec50ec103fe2b00bc898999b" args="(String dn)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ResponseEntity&lt;TaskServiceConfig&gt; de.zib.gndms.gndmc.gorfx.TaskClient.getServiceConfig </td>
+          <td>(</td>
+          <td class="paramtype">String&#160;</td>
+          <td class="paramname"><em>dn</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Reads the service configuration. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dn</td><td>The dn of the requesting user.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>The Service configuration. </dd></dl>
+
+<p>Implements <a class="el" href="../../d6/d8c/interfacede_1_1zib_1_1gndms_1_1common_1_1_g_o_r_f_x_1_1service_1_1_task_service.html#af5d818bea2bc19545a632a16762d102b">de.zib.gndms.common.GORFX.service.TaskService</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a81031e2dc2a29e848c6e038c94dcab23"></a><!-- doxytag: member="de::zib::gndms::gndmc::gorfx::TaskClient::getServiceInfo" ref="a81031e2dc2a29e848c6e038c94dcab23" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ResponseEntity&lt;TaskServiceInfo&gt; de.zib.gndms.gndmc.gorfx.TaskClient.getServiceInfo </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Delivers infos about the service. </p>
+<p>This information contain available task-types, together with usage statistics on these types.</p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>An info object. </dd></dl>
+
+<p>Implements <a class="el" href="../../d6/d8c/interfacede_1_1zib_1_1gndms_1_1common_1_1_g_o_r_f_x_1_1service_1_1_task_service.html#a33c6619818c97164d5fd02447a48f5ab">de.zib.gndms.common.GORFX.service.TaskService</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>gndmc-rest/src/de/zib/gndms/gndmc/gorfx/TaskClient.java</li>
 </ul>
 </div>
@@ -141,7 +193,7 @@ UriFactory&#160;</td><td class="memItemRight" valign="bottom"><b>uriFactory</b><
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Enumerations</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -150,7 +202,7 @@ UriFactory&#160;</td><td class="memItemRight" valign="bottom"><b>uriFactory</b><
 </iframe>
 </div>
 
-<hr class="footer"/><address class="footer"><small>Generated on Wed Feb 15 2012 15:29:56 for GNDMS by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Wed Feb 15 2012 15:31:48 for GNDMS by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="../../doxygen.png" alt="doxygen"/></a> 1.7.3 </small></address>
 </body>

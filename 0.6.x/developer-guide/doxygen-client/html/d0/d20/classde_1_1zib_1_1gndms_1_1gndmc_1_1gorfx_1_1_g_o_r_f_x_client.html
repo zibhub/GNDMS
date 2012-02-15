@@ -86,8 +86,9 @@ Inheritance diagram for de.zib.gndms.gndmc.gorfx.GORFXClient:</div>
  <div class="center">
   <img src="../../d0/d20/classde_1_1zib_1_1gndms_1_1gndmc_1_1gorfx_1_1_g_o_r_f_x_client.png" usemap="#de.zib.gndms.gndmc.gorfx.GORFXClient_map" alt=""/>
   <map id="de.zib.gndms.gndmc.gorfx.GORFXClient_map" name="de.zib.gndms.gndmc.gorfx.GORFXClient_map">
-<area href="../../d9/dac/classde_1_1zib_1_1gndms_1_1gndmc_1_1_abstract_client.html" alt="de.zib.gndms.gndmc.AbstractClient" shape="rect" coords="0,0,261,24"/>
-<area href="../../dc/da9/classde_1_1zib_1_1gndms_1_1gndmc_1_1gorfx_1_1_full_g_o_r_f_x_client.html" alt="de.zib.gndms.gndmc.gorfx.FullGORFXClient" shape="rect" coords="0,112,261,136"/>
+<area href="../../d9/dac/classde_1_1zib_1_1gndms_1_1gndmc_1_1_abstract_client.html" alt="de.zib.gndms.gndmc.AbstractClient" shape="rect" coords="0,0,378,24"/>
+<area href="../../da/d28/interfacede_1_1zib_1_1gndms_1_1common_1_1_g_o_r_f_x_1_1service_1_1_g_o_r_f_x_service_essentials.html" alt="de.zib.gndms.common.GORFX.service.GORFXServiceEssentials" shape="rect" coords="388,0,766,24"/>
+<area href="../../dc/da9/classde_1_1zib_1_1gndms_1_1gndmc_1_1gorfx_1_1_full_g_o_r_f_x_client.html" alt="de.zib.gndms.gndmc.gorfx.FullGORFXClient" shape="rect" coords="194,112,572,136"/>
 </map>
  </div></div>
 
@@ -101,22 +102,22 @@ Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/d20/classde_1_1zib_1_1gndms_1_1gndmc_1_1gorfx_1_1_g_o_r_f_x_client.html#a5151004567f92d881944d5e158743f9c">GORFXClient</a> (final String <a class="el" href="../../d9/dac/classde_1_1zib_1_1gndms_1_1gndmc_1_1_abstract_client.html#ae509cebfc2ac76635702a4668d6d87c3">serviceURL</a>)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">The constructor.  <a href="#a5151004567f92d881944d5e158743f9c"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab1adad918b95bddb1fb922f1543e7312"></a><!-- doxytag: member="de::zib::gndms::gndmc::gorfx::GORFXClient::listAvailableFacets" ref="ab1adad918b95bddb1fb922f1543e7312" args="(final String dn)" -->
-final ResponseEntity&lt; Facets &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>listAvailableFacets</b> (final String dn)</td></tr>
+final ResponseEntity&lt; <a class="el" href="../../d9/d50/classde_1_1zib_1_1gndms_1_1common_1_1rest_1_1_facets.html">Facets</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>listAvailableFacets</b> (final String dn)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a632873508690c78097a7e935ab960d3d"></a><!-- doxytag: member="de::zib::gndms::gndmc::gorfx::GORFXClient::listTaskFlows" ref="a632873508690c78097a7e935ab960d3d" args="(final String dn)" -->
 final ResponseEntity&lt; List<br class="typebreak"/>
 &lt; String &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>listTaskFlows</b> (final String dn)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad85dd469adec754cf045376ab7bacac8"></a><!-- doxytag: member="de::zib::gndms::gndmc::gorfx::GORFXClient::getTaskFlowInfo" ref="ad85dd469adec754cf045376ab7bacac8" args="(final String type, final String dn)" -->
 final ResponseEntity<br class="typebreak"/>
-&lt; TaskFlowInfo &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getTaskFlowInfo</b> (final String type, final String dn)</td></tr>
+&lt; <a class="el" href="../../d4/de9/interfacede_1_1zib_1_1gndms_1_1common_1_1model_1_1gorfx_1_1types_1_1_task_flow_info.html">TaskFlowInfo</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getTaskFlowInfo</b> (final String type, final String dn)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a26ec056f58b96f01ef93c03ce9c0095c"></a><!-- doxytag: member="de::zib::gndms::gndmc::gorfx::GORFXClient::createTaskFlow" ref="a26ec056f58b96f01ef93c03ce9c0095c" args="(final String type, final Order order, final String dn, final String wid, MultiValueMap&lt; String, String &gt; context)" -->
 final ResponseEntity<br class="typebreak"/>
-&lt; Specifier&lt; Facets &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>createTaskFlow</b> (final String type, final Order order, final String dn, final String wid, MultiValueMap&lt; String, String &gt; context)</td></tr>
+&lt; Specifier&lt; <a class="el" href="../../d9/d50/classde_1_1zib_1_1gndms_1_1common_1_1rest_1_1_facets.html">Facets</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>createTaskFlow</b> (final String type, final <a class="el" href="../../d0/d52/interfacede_1_1zib_1_1gndms_1_1common_1_1model_1_1gorfx_1_1types_1_1_order.html">Order</a> order, final String dn, final String wid, MultiValueMap&lt; String, String &gt; context)</td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Client for the taskflow part of the gorfx service. </p>
 <p>This client doesn't provide methods for batch execution and service configuration only the methods necessary for taskflow execution are exposed. </p>
 <dl class="author"><dt><b>Author:</b></dt><dd>try ma ik jo rr a zib </dd></dl>
-<dl class="see"><dt><b>See also:</b></dt><dd>de.zib.gndms.common.GORFX.service.GORFXServiceEssentials for details. </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="../../da/d28/interfacede_1_1zib_1_1gndms_1_1common_1_1_g_o_r_f_x_1_1service_1_1_g_o_r_f_x_service_essentials.html" title="This is the essential interface of the GORFX service. Since its the services responsibility to create...">de.zib.gndms.common.GORFX.service.GORFXServiceEssentials</a> for details. </dd></dl>
 </div><hr/><h2>Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a5151004567f92d881944d5e158743f9c"></a><!-- doxytag: member="de::zib::gndms::gndmc::gorfx::GORFXClient::GORFXClient" ref="a5151004567f92d881944d5e158743f9c" args="(final String serviceURL)" -->
 <div class="memitem">
@@ -152,7 +153,7 @@ final ResponseEntity<br class="typebreak"/>
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Enumerations</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -161,7 +162,7 @@ final ResponseEntity<br class="typebreak"/>
 </iframe>
 </div>
 
-<hr class="footer"/><address class="footer"><small>Generated on Wed Feb 15 2012 15:29:56 for GNDMS by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Wed Feb 15 2012 15:31:48 for GNDMS by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="../../doxygen.png" alt="doxygen"/></a> 1.7.3 </small></address>
 </body>
