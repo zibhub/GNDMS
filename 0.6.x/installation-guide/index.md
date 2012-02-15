@@ -142,12 +142,12 @@ The INSTALL file of the old system should describe how to do that.
 
   This will install
     
-    ** the compiled .war file to `$JETTY_HOME/webapps/gndms.war`,
-    ** a grid.properties to `$JETTY_HOME/gndms` and
-    ** the context gndms.xml to `$JETTY_HOME/contexts`.
+  * the compiled .war file to `$JETTY_HOME/webapps/gndms.war`,
+  * a grid.properties to `$JETTY_HOME/gndms` and
+  * the context gndms.xml to `$JETTY_HOME/contexts`.
 
   If you want to use another application server than Jetty, that's
-  fine: every Servlet 3.0 compliant server should do the trick.
+  fine: every Servlet 2.5 compliant server should do the trick.
   However you need to do deployment of the application manually.
   
 * Setup the service config.
@@ -302,6 +302,7 @@ File transfer and possibly provider stage-in require a user
 certificate. The certificates are issued from a MyProxy-Server. The
 server which should be used can be configured in the `grid.properties`
 file. In the section: 
+
     # settings for the myproxy server
     myProxyServer=csr-pc28.zib.de
     myProxyConnectionCredentialFolder=/etc/grid-security
