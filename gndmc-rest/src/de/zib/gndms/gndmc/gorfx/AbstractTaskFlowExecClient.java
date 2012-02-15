@@ -45,11 +45,11 @@ public abstract class AbstractTaskFlowExecClient {
 
 
     /**
+     * @brief Executes a complete task flow.
+     *
      * @param order The order of the taskflow.
      * @param dn    The DN of the user calling the task flow.
-     *              <p/>
-     *              \note for now the workflow id is generated on the fly.
-     * @brief Executes a complete task flow.
+     * \note for now the workflow id is generated on the fly.
      */
     public void execTF( Order order, String dn ) {
 
@@ -57,12 +57,30 @@ public abstract class AbstractTaskFlowExecClient {
     }
 
 
+    /**
+     *
+     * @brief Executes a complete task flow.
+     *
+     * This method is imported when you want to understand the
+     * Taskflow protocoll.
+     *
+     * @param order The order of the taskflow.
+     * @param dn    The DN of the user calling the task flow.
+     *              
+     * \note for now the workflow id is generated on the fly.
+     * @param withQuote Activates co-scheduling
+     * @param desiredQuote A quote holding desired time values for
+     * the tasflow execution. 
+     */
     public void execTF( Order order, String dn, boolean withQuote, final Quote desiredQuote ) {
 
         String wid = UUID.randomUUID().toString();
 
         GNDMSResponseHeader context = setupContext( new GNDMSResponseHeader() );
 
+        /**
+         * \code this is imporant
+         */              
 
         // sends the order and creates the task flow
         ResponseEntity<Specifier<Facets>> res = gorfxClient.createTaskFlow( order.getTaskFlowType(), order, dn, wid, context );
@@ -141,6 +159,10 @@ public abstract class AbstractTaskFlowExecClient {
             // handle the failure
             handleFailure( tf.getBody() );
         }
+
+        /**
+         * \endcode
+         */
     }
 
 

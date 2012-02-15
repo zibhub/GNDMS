@@ -1,3 +1,5 @@
+package de.zib.gndms.model.util;
+
 /**
  * Copyright 2008-${YEAR} Zuse Institute Berlin (ZIB)
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +16,6 @@
  *
  */
 
-package de.zib.gndms.model.util;
 
 
 import com.google.common.cache.Cache;
