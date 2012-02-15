@@ -25,14 +25,14 @@ Please have a look at INSTALL for the setup-guide.
 
 Feel free to consult the HTML documentation in 
 
-    http://gndms.zib.de/developer-guide/rest/
+    http://gndms.zib.de/0.6.x/developer-guide/rest/
 
 which contains additional infos.
 
 
-The documentation on 
+A more up-to-date version of the installation guide is provided on 
 
     http://gndms.zib.de
 
-still refers to the WS version and will be updated in the coming
-weeks.
+Other sections than the installation guide still refer WS version and 
+will be updated in the coming weeks.
