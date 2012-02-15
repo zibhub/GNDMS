@@ -5,7 +5,7 @@ version: 0.6.x
 layout: wikistyle
 ---
 
-*This still referes to the old 0.3.x verions*
+*This still refers to the old 0.3.x version*
 GNDMS Architecture Primer
 =========================
 

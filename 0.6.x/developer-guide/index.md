@@ -5,16 +5,22 @@ version: 0.6.x
 layout: wikistyle
 ---
 
-
-*This still referes to the old 0.3.x verions*
-
-
-
 GNDMS Developer Guide
 =====================
 
+
+The generatied API-Doc for client developers can be found 
+[here](doxygen-client/html/index.html). 
+
+If you are interessted in the whole system doc look 
+[here](doxygen/html/index.html). 
+
+
+**From here on most stuff refers to the old 0.3.x version**
+
+
 This is the Developer Guide for the
-[Generation N Data Management System]({{ page.root }}index.html). It is far from
+[Generation N Data Management System]({{ page.root }}/index.html). It is far from
 complete.  It currently contains various tidbits copied together from
 different Wikis.  YMMV.  Use the source, luke!
 
