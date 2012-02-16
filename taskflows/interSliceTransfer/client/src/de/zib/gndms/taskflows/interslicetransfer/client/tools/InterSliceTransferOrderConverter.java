@@ -26,15 +26,16 @@ import de.zib.gndms.taskflows.interslicetransfer.client.model.InterSliceTransfer
  * <p/>
  * User: mjorra, Date: 14.10.2008, Time: 14:48:27
  */
-public class InterSliceTransferORQConverter extends
-        OrderConverter<InterSliceTransferORQWriter, InterSliceTransferOrder>
+public class InterSliceTransferOrderConverter extends
+        OrderConverter<InterSliceTransferOrderWriter, InterSliceTransferOrder>
 {
 
-    public InterSliceTransferORQConverter() {
+    public InterSliceTransferOrderConverter() {
     }
 
 
-    public InterSliceTransferORQConverter( InterSliceTransferORQWriter writer, InterSliceTransferOrder model ) {
+    public InterSliceTransferOrderConverter( InterSliceTransferOrderWriter writer,
+                                             InterSliceTransferOrder model ) {
         super( writer, model );
     }
 

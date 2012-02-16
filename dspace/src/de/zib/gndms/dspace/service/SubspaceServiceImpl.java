@@ -321,7 +321,7 @@ public class SubspaceServiceImpl implements SubspaceService {
             Specifier<Void> spec = new Specifier<Void>();
 
             HashMap<String, String> urimap = new HashMap<String, String>( 2 );
-            urimap.put( "service", "dspace" );
+            urimap.put( UriFactory.SERVICE, "dspace" );
             urimap.put( UriFactory.SUBSPACE, subspaceId );
             urimap.put( UriFactory.SLICEKIND, sliceKindId );
             urimap.put( UriFactory.SLICE, slice );

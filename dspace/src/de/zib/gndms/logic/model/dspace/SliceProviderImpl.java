@@ -20,7 +20,7 @@ import de.zib.gndms.common.model.gorfx.types.Order;
 import de.zib.gndms.infra.grams.LinuxDirectoryAux;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.logic.action.ActionConfigurer;
-import de.zib.gndms.logic.model.ModelIdHoldingOrder;
+import de.zib.gndms.model.gorfx.types.ModelIdHoldingOrder;
 import de.zib.gndms.logic.model.ModelUpdateListener;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.NoSuchResourceException;

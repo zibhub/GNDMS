@@ -15,7 +15,7 @@ package de.zib.gndms.logic.model.dspace;
  *  limitations under the License.
  */
 
-import de.zib.gndms.logic.model.ModelIdHoldingOrder;
+import de.zib.gndms.model.gorfx.types.ModelIdHoldingOrder;
 import de.zib.gndms.logic.model.ModelTaskAction;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;

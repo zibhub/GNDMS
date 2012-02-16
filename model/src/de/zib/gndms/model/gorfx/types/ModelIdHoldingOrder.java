@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.model;
+package de.zib.gndms.model.gorfx.types;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *

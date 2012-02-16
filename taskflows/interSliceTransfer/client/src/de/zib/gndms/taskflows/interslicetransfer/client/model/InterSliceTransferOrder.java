@@ -17,15 +17,39 @@ package de.zib.gndms.taskflows.interslicetransfer.client.model;
  */
 
 
-
+import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferOrder;
 import de.zib.gndms.taskflows.interslicetransfer.client.InterSliceTransferMeta;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * ORQ type class for an inter slice transfer.
+ * Order type class for an inter slice transfer.
  *
- * NOTE: There is no matching Result for this one, cause it uses the FileTransferResult and manipulates the OfferType.
+ * This is basically a file transfer order, however it can be more:
+ *
+ * Depending if you provide {@link #sourceUri}, {@link #sourceSlice},
+ * {@link #destinationUri} or {@link #destinationSpecifier} the  taskflow
+ * behaves differently:
+ *
+ * If {@link #sourceUri} and {@link #destinationUri} are provided it
+ * behaves exactly like a filetransfer.
+ *
+ * Given {@link #sourceUri} and {@link #destinationSpecifier}: files from the
+ * source are imported into GNDMS. 
+ *
+ * Given {@link #sourceSlice} and {@link #destinationUri}: files from the
+ * source slice are exported to the destinationUri.
+ *
+ * Given {@link #sourceSlice} and {@link #destinationSpecifier}: files from the
+ * source Slice will be copied to the given destination.
+ *
+ * \note that *Uri types override Specifier resp Slice types. E.g. if
+ * both sourceUri and sourceSlice are given, file will be copied from
+ * sourceUri.
+ *
+ *
+ * NOTE: There is no matching Result for this one, 
+ * cause it uses the FileTransferResult and manipulates the OfferType.
  *
  * @author  try ma ik jo rr a zib
  * @version  $Id$
@@ -36,8 +60,23 @@ public class InterSliceTransferOrder extends FileTransferOrder {
 
     private static final long serialVersionUID = -5949532448235655424L;
 
-    private String sourceSlice;
-    private String destinationSlice;
+    private Specifier<Void> sourceSlice;  ///< Specifier for the source slice.
+
+    /**
+     * Specifier for the destination.
+     *
+     * It can either be a specifier to an existing slice, then the
+     * files from source{Slice,Uri} will be copied into this Slice
+     * possibly overwriting existing files.
+     *
+     * Or a specifier to an Subspace, including the desired SliceKind,
+     * then a new Slice will be created.
+     *
+     * \note for the time being it is not possible to provide any
+     * custom slice attributes, the slice will be created using
+     * default values.
+     */
+    private Specifier<Void> destinationSpecifier; 
 
 
     public InterSliceTransferOrder() {
@@ -51,22 +90,22 @@ public class InterSliceTransferOrder extends FileTransferOrder {
     }
 
 
-    public String getSourceSlice() {
+    public Specifier<Void> getSourceSlice() {
         return sourceSlice;
     }
 
 
-    public void setSourceSlice( String sourceSlice ) {
+    public void setSourceSlice( Specifier<Void> sourceSlice ) {
         this.sourceSlice = sourceSlice;
     }
 
 
-    public String getDestinationSlice() {
-        return destinationSlice;
+    public Specifier<Void> getDestinationSpecifier() {
+        return destinationSpecifier;
     }
 
 
-    public void setDestinationSlice( String destinationSlice ) {
-        this.destinationSlice = destinationSlice;
+    public void setDestinationSpecifier( Specifier<Void> destinationSpecifier ) {
+        this.destinationSpecifier = destinationSpecifier;
     }
 }

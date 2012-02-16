@@ -16,6 +16,7 @@ package de.zib.gndms.logic.model;
  */
 
 import de.zib.gndms.kit.util.DirectoryAux;
+import de.zib.gndms.model.gorfx.types.ModelIdHoldingOrder;
 import de.zib.gndms.model.util.TxFrame;
 
 import javax.inject.Inject;

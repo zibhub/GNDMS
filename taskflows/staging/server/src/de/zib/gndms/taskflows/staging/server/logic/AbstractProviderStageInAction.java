@@ -27,7 +27,6 @@ import de.zib.gndms.kit.security.AsFileCredentialInstaller;
 import de.zib.gndms.kit.security.CredentialProvider;
 import de.zib.gndms.kit.security.GetCredentialProviderFor;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
-import de.zib.gndms.logic.model.ModelIdHoldingOrder;
 import de.zib.gndms.logic.model.dspace.ChownSliceConfiglet;
 import de.zib.gndms.logic.model.dspace.DeleteSliceTaskAction;
 import de.zib.gndms.logic.model.dspace.SliceConfiguration;
@@ -51,7 +50,6 @@ import org.springframework.http.ResponseEntity;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import java.io.File;
-import java.io.Serializable;
 
 
 /**
@@ -248,7 +246,7 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
         final DeleteSliceTaskAction deleteSliceTaskAction = new DeleteSliceTaskAction();
         getInjector().injectMembers( deleteSliceTaskAction );
         getService().submitTaskAction( deleteSliceTaskAction,
-                new ModelIdHoldingOrder( sliceId ), getWid() );
+                new de.zib.gndms.model.gorfx.types.ModelIdHoldingOrder( sliceId ), getWid() );
     }
 
 
