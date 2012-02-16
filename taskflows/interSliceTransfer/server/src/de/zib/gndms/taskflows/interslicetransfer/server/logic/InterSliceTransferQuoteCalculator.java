@@ -18,12 +18,17 @@ package de.zib.gndms.taskflows.interslicetransfer.server.logic;
 
 
 import de.zib.gndms.common.model.gorfx.types.Quote;
-import de.zib.gndms.dspace.service.DSpaceBindingUtils;
+import de.zib.gndms.gndmc.dspace.SliceClient;
+import de.zib.gndms.logic.model.gorfx.taskflow.UnsatisfiableOrderException;
+import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.taskflows.filetransfer.server.logic.AbstractTransferQuoteCalculator;
 import de.zib.gndms.taskflows.interslicetransfer.client.model.InterSliceTransferOrder;
 import org.globus.ftp.exception.ClientException;
 import org.globus.ftp.exception.ServerException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -37,13 +42,15 @@ import java.util.List;
 public class InterSliceTransferQuoteCalculator extends
     AbstractTransferQuoteCalculator<InterSliceTransferOrder> {
 
+    private SliceClient sliceClient;
+
     public InterSliceTransferQuoteCalculator() {
     }
 
 
     public List<Quote> createQuotes() throws ServerException, IOException, ClientException, URISyntaxException {
 
-        checkURIs( );
+        prepareSourceUrl();
         
         return super.createQuotes();
     }
@@ -51,27 +58,50 @@ public class InterSliceTransferQuoteCalculator extends
 
     @Override
     public boolean validate() {
-        checkURIs();
+        prepareSourceUrl();
         return super.validate();  // not required here
     }
 
 
-    protected void checkURIs( ) {
+    protected void prepareSourceUrl() {
 
-        checkURIs( getOrderBean() );
+        prepareSourceUrl( getOrder(), sliceClient );
     }
 
 
-    public static void checkURIs( InterSliceTransferOrder ist ) {
+    /**
+     * Prepares the source url
+     *
+     * If the url is present in the order this does nothing else
+     * it fetches the GridFTP-url for source slice.
+     *
+     * @param order An order delegate with the interSlice transfer order.
+     * @param sliceClient A slice-client with a valid rest template instance.
+     */
+    public static void prepareSourceUrl( DelegatingOrder<InterSliceTransferOrder> order,
+                                         SliceClient sliceClient ) {
 
-        if( ist.getSourceURI() == null  )
-            ist.setSourceURI(
-                DSpaceBindingUtils.getFtpPathForSlice(
-                    ist.getSourceSlice() ) );
+        InterSliceTransferOrder ist = order.getOrderBean();
+        if( ist.getSourceURI() == null  ) {
+            final ResponseEntity<String> responseEntity =
+                    sliceClient.getGridFtpUrl( ist.getSourceSlice(), order.getDNFromContext() );
+            if( HttpStatus.OK.equals( responseEntity.getStatusCode() ) )
+                ist.setSourceURI( responseEntity.getBody() );
+            else
+                throw new UnsatisfiableOrderException( "Invalid source slice specifier" );
+        }
+    }
 
-        if( ist.getDestinationURI() == null )
-            ist.setDestinationURI(
-                DSpaceBindingUtils.getFtpPathForSlice(
-                    ist.getDestinationSlice() ) );
+
+    public SliceClient getSliceClient() {
+
+        return sliceClient;
+    }
+
+
+    @Inject
+    public void setSliceClient( final SliceClient sliceClient ) {
+
+        this.sliceClient = sliceClient;
     }
 }

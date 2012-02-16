@@ -111,4 +111,10 @@ public class SubspaceClient extends AbstractClient implements SubspaceService {
         return ( ResponseEntity< Specifier< Void > > )( Object )unifiedPost( Specifier.class, config, getServiceURL() + "/dspace/_" + subspace + "/_" + sliceKind, dn );
     }
 
+
+    public ResponseEntity< Specifier< Void > > createSlice( final Specifier<Void> specifier,
+                                                             final String dn ) {
+        return ( ResponseEntity< Specifier< Void > > )( Object )unifiedPost( Specifier.class,
+                "", specifier.getUrl(),  dn );
+    }
 }
