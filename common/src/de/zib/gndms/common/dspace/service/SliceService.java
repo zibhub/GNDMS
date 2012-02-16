@@ -183,7 +183,6 @@ public interface SliceService {
      * 			  The outputstream the file information shall be written to.
      * @return The file.
 	 */
-	// TODO: GNDMSFile ?
 	ResponseEntity<Void> listFileContent(String subspace, String sliceKind,
                                          String slice, String fileName, List<String> attrs, String dn, OutputStream out);
 

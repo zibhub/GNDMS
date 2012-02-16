@@ -16,7 +16,7 @@ package de.zib.gndms.gndmc.dspace;
  * limitations under the License.
  */
 
-import de.zib.gndms.common.dspace.service.SliceService;
+import de.zib.gndms.common.dspace.service.SliceServiceClient;
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.model.FileStats;
 import de.zib.gndms.common.rest.Facets;
@@ -33,7 +33,7 @@ import java.util.List;
  * 
  * @author Ulrike Golas
  */
-public class SliceClient extends AbstractClient implements SliceService {
+public class SliceClient extends AbstractClient implements SliceServiceClient {
 
 	/**
 	 * The constructor.
@@ -44,7 +44,7 @@ public class SliceClient extends AbstractClient implements SliceService {
     /**
 	 * The constructor.
 	 * 
-	 * @param serviceURL The base url of the grid.
+	 * @param serviceURL The base url of the target gndms.
 	 */
 	public SliceClient(final String serviceURL) {
 		this.setServiceURL(serviceURL);
@@ -54,25 +54,49 @@ public class SliceClient extends AbstractClient implements SliceService {
 	@Override
 	public final ResponseEntity< Facets > listSliceFacets(final String subspace,
 			final String sliceKind, final String slice, final String dn) {
-		return (ResponseEntity< Facets >) (Object) unifiedGet(Facets.class, getServiceURL()
-				+ "/dspace/_" + subspace
-				+ "/_" + sliceKind + "/_" + slice, dn);
+		return (ResponseEntity< Facets >) (Object) unifiedGet(Facets.class,
+                genSliceUrl( subspace, sliceKind, slice ), dn);
 	}
+
+
+    @Override
+    public ResponseEntity<Facets> listSliceFacets( final Specifier<Void> slice, final String dn ) {
+        return (ResponseEntity< Facets >) (Object) unifiedGet(Facets.class, slice.getUrl(), dn);
+    }
+	
 
 	@Override
 	public final ResponseEntity<Void> setSliceConfiguration(final String subspace,
 			final String sliceKind, final String slice, final Configuration config, final String dn) {
-		return unifiedPut(Void.class, config, getServiceURL() + "/dspace/_"
-				+ subspace + "/_" + sliceKind + "/_" + slice, dn);
+		return unifiedPut(Void.class, config, genSliceUrl( subspace, sliceKind, slice ), dn);
+	}
+
+
+    @Override
+    public ResponseEntity<Void> setSliceConfiguration( final Specifier<Void> slice,
+                                                       final Configuration config,
+                                                       final String dn )
+    {
+
+		return unifiedPut(Void.class, config, slice.getUrl(), dn);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public final ResponseEntity<Specifier<Void>> transformSlice(final String subspace, final String sliceKind,
 			final String slice, final Specifier<Void> newSliceKind, final String dn) {
-		return (ResponseEntity<Specifier<Void>>) (Object) unifiedPost(Specifier.class, newSliceKind, getServiceURL() 
-				+ "/dspace/_" + subspace + "/_"
-				+ sliceKind + "/_" + slice, dn);
+		return (ResponseEntity<Specifier<Void>>) (Object) unifiedPost(Specifier.class, newSliceKind,
+                genSliceUrl( subspace, sliceKind, slice ), dn);
+	}
+
+
+    @Override
+    public ResponseEntity<Specifier<Void>> transformSlice( final Specifier<Void> slice,
+                                                           final Specifier<Void> newSliceKind,
+                                                           final String dn )
+    {
+
+		return (ResponseEntity<Specifier<Void>>) (Object) unifiedPost(Specifier.class, newSliceKind, slice.getUrl(), dn);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -80,54 +104,138 @@ public class SliceClient extends AbstractClient implements SliceService {
 	public final ResponseEntity<Specifier<Facets>> deleteSlice(final String subspace, final String sliceKind,
                                                                final String slice, final String dn) {
 		return (ResponseEntity<Specifier<Facets>>) (Object) unifiedDelete(Specifier.class,
-				getServiceURL() + "/dspace/_" + subspace + "/_"
-				+ sliceKind + "/_" + slice, dn);
+                genSliceUrl( subspace, sliceKind, slice ), dn);
+	}
+
+
+    @Override
+    public ResponseEntity<Specifier<Facets>> deleteSlice( final Specifier<Void> slice, final String dn ) {
+
+		return (ResponseEntity<Specifier<Facets>>) (Object) unifiedDelete(Specifier.class, slice.getUrl(), dn);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public final ResponseEntity< List< FileStats > > listFiles(
 			final String subspace, final String sliceKind, final String slice, final String dn) {
-		return (ResponseEntity< List< FileStats > >) (Object) unifiedGet(List.class, getServiceURL()
-				+ "/dspace/_" + subspace + "/_"
-				+ sliceKind + "/_" + slice + "/files", dn);
+
+        return (ResponseEntity< List< FileStats > >) (Object) unifiedGet(List.class,
+                makeFilesFacet( genSliceUrl( subspace, sliceKind, slice ) ), dn);
+	}
+
+
+    @Override
+    public ResponseEntity<List<FileStats>> listFiles( final Specifier<Void> slice,
+                                                      final String dn )
+    {
+
+		return (ResponseEntity< List< FileStats > >) (Object) unifiedGet(List.class,
+                makeFilesFacet( slice.getUrl() ), dn);
 	}
 
 	@Override
 	public final ResponseEntity<Void> deleteFiles(final String subspace, final String sliceKind,
 			final String slice, final String dn) {
-		return unifiedDelete(getServiceURL() + "/dspace/_" + subspace + "/_"
-				+ sliceKind + "/_" + slice + "/files", dn);
+		return unifiedDelete( makeFilesFacet( genSliceUrl( subspace, sliceKind, slice ) ), dn);
+	}
+
+
+    @Override
+    public ResponseEntity<Void> deleteFiles( final Specifier<Void> slice,  final String dn )
+    {
+		return unifiedDelete( makeFilesFacet( slice.getUrl() ), dn);
 	}
 
 	@Override
 	public final ResponseEntity<String> getGridFtpUrl(final String subspace,
-			final String sliceKind, final String slice, final String dn) {
-		return unifiedGet(String.class, getServiceURL() + "/dspace/_" + subspace
-				+ "/_" + sliceKind + "/_" + slice + "/gsiftp", dn);
+			final String sliceKind, final String slice, final String dn ) {
+
+        return unifiedGet( String.class, makeGsiFtpFacet(
+                genSliceUrl( subspace, sliceKind, slice ) ), dn);
+	}
+
+
+    @Override
+    public ResponseEntity<String> getGridFtpUrl( final Specifier<Void> slice, final String dn ) {
+
+		return unifiedGet( String.class, makeGsiFtpFacet( slice.getUrl() ), dn );
 	}
 
 	@Override
 	public final ResponseEntity<Void> listFileContent(final String subspace,
                                                       final String sliceKind, final String slice, final String fileName,
                                                       final List<String> attrs, final String dn, final OutputStream out) {
-		return unifiedGet(Void.class, getServiceURL() + "/dspace/_" + subspace
-				+ "/_" + sliceKind + "/_" + slice + "/_" + fileName, dn);
+
+        final String uri = genSliceUrl( subspace, sliceKind, slice );
+        return unifiedGet(Void.class, makeFileNameFacet( uri, fileName ), dn);
+	}
+
+
+    @Override
+    public ResponseEntity<Void> listFileContent( final Specifier<Void> slice, final String fileName,
+                                                 final List<String> attrs, final String dn,
+                                                 final OutputStream out ) {
+
+        return unifiedGet( Void.class, makeFileNameFacet( slice.getUrl(), fileName ), dn);
 	}
 
 	@Override
 	public final ResponseEntity<Void> setFileContent(final String subspace,
 			final String sliceKind, final String slice, final String fileName, 
-			final MultipartFile file, final String dn) {
-		return unifiedPut(Void.class, file, getServiceURL() + "/dspace/_" + subspace
-				+ "/_" + sliceKind + "/_" + slice + "/_" + fileName, dn);
+			final MultipartFile file, final String dn ) {
+
+        return unifiedPut( Void.class, file,
+                makeFileNameFacet( genSliceUrl( subspace, sliceKind, slice ), fileName ), dn );
+	}
+
+
+    @Override
+    public ResponseEntity<Void> setFileContent( final Specifier<Void> slice, final String fileName,
+                                                final MultipartFile file, final String dn )
+    {
+		return unifiedPut(Void.class, file, makeFileNameFacet( slice.getUrl(), fileName ), dn);
 	}
 
 	@Override
 	public final ResponseEntity<Void> deleteFile(final String subspace,
-			final String sliceKind, final String slice, final String fileName, final String dn) {
-		return unifiedDelete(getServiceURL() + "/dspace/_" + subspace
-				+ "/_" + sliceKind + "/_" + slice + "/_" + fileName, dn);
+			final String sliceKind, final String slice, final String fileName, final String dn ) {
+
+        return unifiedDelete(
+                makeFileNameFacet( genSliceUrl( subspace, sliceKind, slice ), fileName ), dn );
 	}
 
+
+    @Override
+    public ResponseEntity<Void> deleteFile( final Specifier<Void> slice, final String fileName,
+                                            final String dn ) {
+
+        return unifiedDelete( makeFileNameFacet( slice.getUrl(), fileName ), dn);
+	}
+
+
+    protected String genSliceUrl( final String subspace, final String sliceKind, 
+                               final String slice ) {
+
+        return new StringBuilder().append( getServiceURL() ).append( "/dspace/_" )
+                .append( subspace ).append( "/_" ).append( sliceKind ).append( "/_" )
+                .append( slice ).toString();
+    }
+
+
+    private String makeFilesFacet( final String uri ) {
+
+        return uri + "/files";
+    }
+
+
+    private String makeGsiFtpFacet( final String uri ) {
+
+        return uri + "/gsiftp";
+    }
+
+
+    private String makeFileNameFacet( final String uri, final String fileName ) {
+
+        return uri + "/_" + fileName;
+    }
 }
