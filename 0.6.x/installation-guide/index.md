@@ -350,6 +350,30 @@ have a running installation of GNDMS.*
 
 ### Trouble Shooting
 
+**Server responds with BAD REQUEST 400, when submit a TaskFlow**
+: It might by that the plug-ins for the TaskFlow aren't installed
+correctly. Check if the plug-in path in your
+`$JETTY_HOME/gndms/grid.properties` is set correctly and that the
+folder contains the required jar files.
+
+
+**I'm using Ubuntu and GNDMS won't start and complains about invalid ELF format**
+: Yep, thats what you get for using Ubuntu... Problem is that we use
+JNA for low level file-system access like chmod and Ubuntu doesn't
+provide a valid libc in the usual path, just a stupid script.
+To get it working you need to tell JNA where the real libc is located
+usually u do this by suppling 
+
+        -Djna.library.path=< path to your libc > 
+
+: when starting the application server 
+
+: For jetty something like:
+ 
+        java -Djna.library.path=/lib/i386-linux-gnu -jar start.jar
+
+: should be fine.
+
 **The client hangs after the "`Copy gsiftp: ...`" message.**
 : This can be a problem with your firewall configuration. It
 happens when the control-channel can be established but the
