@@ -62,7 +62,7 @@ public abstract class AbstractTaskFlowExecClient {
      * @brief Executes a complete task flow.
      *
      * This method is imported when you want to understand the
-     * Taskflow protocoll.
+     * Taskflow protocol.
      *
      * @param order The order of the taskflow.
      * @param dn    The DN of the user calling the task flow.
@@ -79,7 +79,7 @@ public abstract class AbstractTaskFlowExecClient {
         GNDMSResponseHeader context = setupContext( new GNDMSResponseHeader() );
 
         /**
-         * \code this is imporant
+         * \code this is important
          */              
 
         // sends the order and creates the task flow

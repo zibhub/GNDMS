@@ -81,7 +81,7 @@ public class InterSliceTransferOrder extends FileTransferOrder {
 
     public InterSliceTransferOrder() {
         super( );
-        super.setTaskFlowType( InterSliceTransferMeta.INTER_SLICE_TRANSFER_URI );
+        super.setTaskFlowType( InterSliceTransferMeta.INTER_SLICE_TRANSFER_KEY );
     }
 
     @NotNull

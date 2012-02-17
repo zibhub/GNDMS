@@ -37,7 +37,7 @@ public class FileTransferMeta implements TaskFlowMeta {
 
     @Override
     public String getDescription() {
-        return DESCRIPTION;  // not required here
+        return DESCRIPTION;
     }
 
     @Override

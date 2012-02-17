@@ -51,7 +51,7 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
 
 
     public InterSliceTransferTaskAction() {
-        super( InterSliceTransferMeta.INTER_SLICE_TRANSFER_URI );
+        super( InterSliceTransferMeta.INTER_SLICE_TRANSFER_KEY );
     }
 
     public InterSliceTransferTaskAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model) {

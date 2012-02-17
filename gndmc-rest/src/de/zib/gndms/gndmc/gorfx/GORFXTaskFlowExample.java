@@ -199,7 +199,7 @@ public abstract class GORFXTaskFlowExample extends AbstractApplication {
 
 
     /**
-     * Checks if the required myProxy inforamtion are given.
+     * Checks if the required myProxy information are given.
      *
      * Checks it the command line args for myProxy{Login,Passwd} are present and not empty.
      * Exits with exit status 1, if they are missing.

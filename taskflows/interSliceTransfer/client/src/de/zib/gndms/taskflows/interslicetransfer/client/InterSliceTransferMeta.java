@@ -1,9 +1,13 @@
 package de.zib.gndms.taskflows.interslicetransfer.client;
 
-import java.io.Serializable;
+import de.zib.gndms.taskflows.filetransfer.client.FileTransferMeta;
 
-public class InterSliceTransferMeta implements Serializable {
+public class InterSliceTransferMeta extends FileTransferMeta {
 
-    public static final String INTER_SLICE_TRANSFER_URI =
-            "http://gndms.zib.de/ORQTypes/InterSliceTransfer";
+    public static final String INTER_SLICE_TRANSFER_KEY = "InterSliceTransfer";
+
+    @Override
+    public String getDescription() {
+        return "Copies slices between different subspaces";
+    }
 }

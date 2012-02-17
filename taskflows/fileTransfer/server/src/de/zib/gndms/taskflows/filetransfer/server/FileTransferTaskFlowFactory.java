@@ -68,14 +68,14 @@ public class FileTransferTaskFlowFactory
     protected Map<String, String> getDefaultConfig() {
 
         final HashMap<String, String> config = new HashMap<String, String>( 1 );
-        config.put( "hello", "world" );
+        // todo add default values for gridftp-client factory
         return config;
     }
 
 
     @Override
     public TaskAction createAction() {
-        FileTransferTaskAction action = new FileTransferTaskAction();  // not required here
+        FileTransferTaskAction action = new FileTransferTaskAction();
         getInjector().injectMembers( action );
         return action;
     }
