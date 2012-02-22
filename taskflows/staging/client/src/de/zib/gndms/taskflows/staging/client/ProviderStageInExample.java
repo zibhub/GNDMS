@@ -90,7 +90,7 @@ public class ProviderStageInExample extends GORFXTaskFlowExample {
             @Override
             protected GNDMSResponseHeader setupContext( final GNDMSResponseHeader context ) {
 
-                context.addMyProxyToken( "C3GRID", "mjorra", "myproxyblah" );
+                context.addMyProxyToken( "C3GRID", myProxyLogin, myProxyPasswd );
                 return context;
             }
         };
@@ -104,7 +104,7 @@ public class ProviderStageInExample extends GORFXTaskFlowExample {
         sliceClient.setServiceURL( gorfxEpUrl );
         final ResponseEntity<List<FileStats>> listResponseEntity =
                 sliceClient.listFiles( result.getUriMap().get( UriFactory.SUBSPACE ),
-                        result.getUriMap().get( UriFactory.SLICEKIND ),
+                        result.getUriMap().get( UriFactory.SLICE_KIND ),
                         result.getUriMap().get( UriFactory.SLICE ), dn );
         
         if ( HttpStatus.OK.equals( listResponseEntity.getStatusCode() ) ) {
