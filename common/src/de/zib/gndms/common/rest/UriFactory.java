@@ -29,6 +29,11 @@ import java.util.Map;
  */
 public class UriFactory {
 
+    /**
+     * The key for a service.
+     */
+    public static final String BASE_URL = "baseUrl";
+
 	/**
 	 * The key for a service.
 	 */
@@ -56,7 +61,7 @@ public class UriFactory {
     /**
      * The key for a slice kind.
      */
-    public static final String SLICEKIND = "sliceKind";
+    public static final String SLICE_KIND = "sliceKind";
     /**
      * The key for a slice.
      */
@@ -96,6 +101,16 @@ public class UriFactory {
     private UriTemplate subspaceTemplate;
     private UriTemplate sliceKindTemplate;
     private UriTemplate sliceTemplate;
+    private static final String SERVICE_TEMPLATE = "/{service}";
+    private static final String TASK_FLOW_TEMPLATE = "/{service}/_{type}/_{id}";
+    private static final String TASK_FLOW_TYPE_TEMPLATE = "/{service}/_{type}";
+    private static final String QUOTE_TEMPATE = "/{service}/_{type}/_{id}/quotes/{idx}";
+    private static final String TASK_TEMPLATE = "/{service}/tasks/_{taskId}";
+    private static final String TASK_SERVICE_TEMPLATE = "/{service}/tasks";
+    private static final String SUBSPACE_TEMPLATE = "/{service}/_{subspace}";
+    private static final String SLICE_KIND_TEMPLATE = "/{service}/_{subspace}/_{sliceKind}";
+    private static final String SLICE_TEMPLATE = "/{service}/_{subspace}/_{sliceKind}/_{sliceId}";
+
 
     /**
      * The constructor.
@@ -118,15 +133,15 @@ public class UriFactory {
      * Initialization of the templates.
      */
     private void init( ) {
-        serviceTemplate = new UriTemplate(baseUrl + "/{service}");
-        taskFlowTemplate = new UriTemplate( baseUrl + "/{service}/_{type}/_{id}" );
-        taskFlowTypeTemplate = new UriTemplate( baseUrl + "/{service}/_{type}" );
-        quoteTemplate = new UriTemplate( baseUrl + "/{service}/_{type}/_{id}/quotes/{idx}" );
-        taskTemplate = new UriTemplate( baseUrl + "/{service}/tasks/_{taskId}" );
-        taskServiceTemplate = new UriTemplate( baseUrl + "/{service}/tasks" );
-        subspaceTemplate = new UriTemplate(baseUrl + "/{service}/_{subspace}");
-        sliceKindTemplate = new UriTemplate(baseUrl + "/{service}/_{subspace}/_{sliceKind}");
-        sliceTemplate = new UriTemplate( baseUrl + "/{service}/_{subspace}/_{sliceKind}/_{sliceId}" );
+        serviceTemplate = new UriTemplate(baseUrl + SERVICE_TEMPLATE );
+        taskFlowTemplate = new UriTemplate( baseUrl + TASK_FLOW_TEMPLATE );
+        taskFlowTypeTemplate = new UriTemplate( baseUrl + TASK_FLOW_TYPE_TEMPLATE );
+        quoteTemplate = new UriTemplate( baseUrl + QUOTE_TEMPATE );
+        taskTemplate = new UriTemplate( baseUrl + TASK_TEMPLATE );
+        taskServiceTemplate = new UriTemplate( baseUrl + TASK_SERVICE_TEMPLATE );
+        subspaceTemplate = new UriTemplate(baseUrl + SUBSPACE_TEMPLATE );
+        sliceKindTemplate = new UriTemplate(baseUrl + SLICE_KIND_TEMPLATE );
+        sliceTemplate = new UriTemplate( baseUrl + SLICE_TEMPLATE );
     }
 
     /**
@@ -243,6 +258,33 @@ public class UriFactory {
     public final void setBaseUrl( final String baseUrl ) {
         this.baseUrl = baseUrl;
         init();
+    }
+
+
+    /**
+     * Creates a vaild slice kind specifier
+     *
+     * Both uriMap and url are populated given the provided information.
+     *
+     * @param baseUrl The service base url (including gndms/_grid-name_)
+     * @param subspace The subspace name
+     * @param sliceKind The slice kind id
+     *
+     * @return A slice kind specifier
+     */
+    public static Specifier<Void> createSliceKindSpecifier( final String baseUrl,
+                                                 final String subspace, final String sliceKind ) {
+
+        Specifier<Void> specifier = new Specifier<Void>();
+        specifier.addMapping( BASE_URL, baseUrl );
+        specifier.addMapping( SERVICE, "dspace" );
+        specifier.addMapping( SUBSPACE, subspace );
+        specifier.addMapping( SLICE_KIND, sliceKind );
+
+        specifier.setUrl(  new UriTemplate( baseUrl + SLICE_KIND_TEMPLATE ).expand( specifier
+                .getUriMap() ).toString() );
+
+        return specifier;
     }
 }
 

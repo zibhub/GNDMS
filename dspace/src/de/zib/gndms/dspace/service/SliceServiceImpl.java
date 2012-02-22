@@ -190,7 +190,7 @@ public class SliceServiceImpl implements SliceService {
 			HashMap<String, String> urimap = new HashMap<String, String>(2);
 			urimap.put("service", "dspace");
 			urimap.put(UriFactory.SUBSPACE, subspace);
-			urimap.put(UriFactory.SLICEKIND, sliceKind);
+			urimap.put(UriFactory.SLICE_KIND, sliceKind);
 			urimap.put(UriFactory.SLICE, slice);
 			spec.setUriMap(new HashMap<String, String>(urimap));
 			spec.setUrl(uriFactory.quoteUri(urimap));

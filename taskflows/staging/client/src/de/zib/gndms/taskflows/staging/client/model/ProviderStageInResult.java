@@ -18,7 +18,7 @@ package de.zib.gndms.taskflows.staging.client.model;
 
 
 import de.zib.gndms.common.rest.Specifier;
-import de.zib.gndms.model.gorfx.types.SliceResult;
+import de.zib.gndms.model.gorfx.types.SliceResultImpl;
 import de.zib.gndms.taskflows.staging.client.ProviderStageInMeta;
 
 
@@ -34,7 +34,7 @@ import de.zib.gndms.taskflows.staging.client.ProviderStageInMeta;
  * <p/>
  * User: mjorra, Date: 13.10.2008, Time: 14:10:06
  */
-public class ProviderStageInResult extends SliceResult {
+public class ProviderStageInResult extends SliceResultImpl {
 
     private static final long serialVersionUID = -3003504928510518008L;
 

@@ -177,7 +177,7 @@ public class SubspaceServiceImpl implements SubspaceService {
             for( String sk : sliceKinds ) {
                 Specifier< Void > spec = new Specifier< Void >();
                 spec.setUriMap( new HashMap< String, String >( urimap ) );
-                spec.addMapping( UriFactory.SLICEKIND, sk );
+                spec.addMapping( UriFactory.SLICE_KIND, sk );
                 spec.setUrl( uriFactory.sliceKindUri( spec.getUriMap(), null ) );
                 list.add( spec );
             }
@@ -323,7 +323,7 @@ public class SubspaceServiceImpl implements SubspaceService {
             HashMap<String, String> urimap = new HashMap<String, String>( 2 );
             urimap.put( UriFactory.SERVICE, "dspace" );
             urimap.put( UriFactory.SUBSPACE, subspaceId );
-            urimap.put( UriFactory.SLICEKIND, sliceKindId );
+            urimap.put( UriFactory.SLICE_KIND, sliceKindId );
             urimap.put( UriFactory.SLICE, slice );
             spec.setUriMap( new HashMap<String, String>( urimap ) );
             spec.setUrl( uriFactory.sliceUri( urimap, null ) );
