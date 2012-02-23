@@ -20,7 +20,6 @@ package de.zib.gndms.taskflows.filetransfer.client.tools;
 
 import de.zib.gndms.common.model.gorfx.types.io.OrderPropertyWriter;
 import de.zib.gndms.common.model.gorfx.types.io.PropertyReadWriteAux;
-import de.zib.gndms.common.model.gorfx.types.io.SfrProperty;
 
 import java.util.Map;
 import java.util.Properties;
@@ -43,17 +42,17 @@ public class FileTransferOrderPropertyWriter extends OrderPropertyWriter impleme
 
 
     public void writeSourceURI( String uri ) {
-        getProperties().setProperty( SfrProperty.FILE_TRANSFER_SOURCE_URI.key, uri );
+        getProperties().setProperty( FileTransferOrderProperties.FILE_TRANSFER_SOURCE_URI.key, uri );
     }
 
 
     public void writeDestinationURI( String uri ) {
-        getProperties().setProperty( SfrProperty.FILE_TRANSFER_DESTINATION_URI.key, uri );
+        getProperties().setProperty( FileTransferOrderProperties.FILE_TRANSFER_DESTINATION_URI.key, uri );
     }
 
 
     public void writeFileMap( Map<String, String> fm ) {
-        PropertyReadWriteAux.writeMap( getProperties( ), SfrProperty.FILE_TRANSFER_FILE_MAPPING.key, fm );
+        PropertyReadWriteAux.writeMap( getProperties( ), FileTransferOrderProperties.FILE_TRANSFER_FILE_MAPPING.key, fm );
     }
 
 

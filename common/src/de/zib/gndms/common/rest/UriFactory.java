@@ -104,7 +104,7 @@ public class UriFactory {
     private static final String SERVICE_TEMPLATE = "/{service}";
     private static final String TASK_FLOW_TEMPLATE = "/{service}/_{type}/_{id}";
     private static final String TASK_FLOW_TYPE_TEMPLATE = "/{service}/_{type}";
-    private static final String QUOTE_TEMPATE = "/{service}/_{type}/_{id}/quotes/{idx}";
+    private static final String QUOTE_TEMPLATE = "/{service}/_{type}/_{id}/quotes/{idx}";
     private static final String TASK_TEMPLATE = "/{service}/tasks/_{taskId}";
     private static final String TASK_SERVICE_TEMPLATE = "/{service}/tasks";
     private static final String SUBSPACE_TEMPLATE = "/{service}/_{subspace}";
@@ -134,14 +134,18 @@ public class UriFactory {
      */
     private void init( ) {
         serviceTemplate = new UriTemplate(baseUrl + SERVICE_TEMPLATE );
-        taskFlowTemplate = new UriTemplate( baseUrl + TASK_FLOW_TEMPLATE );
-        taskFlowTypeTemplate = new UriTemplate( baseUrl + TASK_FLOW_TYPE_TEMPLATE );
-        quoteTemplate = new UriTemplate( baseUrl + QUOTE_TEMPATE );
-        taskTemplate = new UriTemplate( baseUrl + TASK_TEMPLATE );
-        taskServiceTemplate = new UriTemplate( baseUrl + TASK_SERVICE_TEMPLATE );
+
+        // dspace templates
         subspaceTemplate = new UriTemplate(baseUrl + SUBSPACE_TEMPLATE );
         sliceKindTemplate = new UriTemplate(baseUrl + SLICE_KIND_TEMPLATE );
         sliceTemplate = new UriTemplate( baseUrl + SLICE_TEMPLATE );
+
+        // gorfx templates
+        taskFlowTemplate = new UriTemplate( baseUrl + TASK_FLOW_TEMPLATE );
+        taskFlowTypeTemplate = new UriTemplate( baseUrl + TASK_FLOW_TYPE_TEMPLATE );
+        quoteTemplate = new UriTemplate( baseUrl + QUOTE_TEMPLATE );
+        taskTemplate = new UriTemplate( baseUrl + TASK_TEMPLATE );
+        taskServiceTemplate = new UriTemplate( baseUrl + TASK_SERVICE_TEMPLATE );
     }
 
     /**
@@ -262,7 +266,7 @@ public class UriFactory {
 
 
     /**
-     * Creates a vaild slice kind specifier
+     * Creates a valid slice kind specifier
      *
      * Both uriMap and url are populated given the provided information.
      *
@@ -276,15 +280,38 @@ public class UriFactory {
                                                  final String subspace, final String sliceKind ) {
 
         Specifier<Void> specifier = new Specifier<Void>();
-        specifier.addMapping( BASE_URL, baseUrl );
-        specifier.addMapping( SERVICE, "dspace" );
-        specifier.addMapping( SUBSPACE, subspace );
-        specifier.addMapping( SLICE_KIND, sliceKind );
+        addSliceKindMapping( baseUrl, subspace, sliceKind, specifier );
 
         specifier.setUrl(  new UriTemplate( baseUrl + SLICE_KIND_TEMPLATE ).expand( specifier
                 .getUriMap() ).toString() );
 
         return specifier;
+    }
+
+
+    private static void addSliceKindMapping( final String baseUrl, final String subspace,
+                                             final String sliceKind,
+                                             final Specifier<Void> specifier )
+    {
+
+        addSubspaceMapping( baseUrl, subspace, specifier );
+        specifier.addMapping( SLICE_KIND, sliceKind );
+    }
+
+
+    private static void addSubspaceMapping( final String baseUrl, final String subspace,
+                                            final Specifier<Void> specifier )
+    {
+
+        addDspaceMapping( baseUrl, specifier );
+        specifier.addMapping( SUBSPACE, subspace );
+    }
+
+
+    private static void addDspaceMapping( final String baseUrl, final Specifier<Void> specifier ) {
+
+        specifier.addMapping( BASE_URL, baseUrl );
+        specifier.addMapping( SERVICE, "dspace" );
     }
 }
 

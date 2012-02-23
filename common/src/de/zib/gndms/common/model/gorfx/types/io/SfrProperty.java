@@ -55,11 +55,7 @@ public enum SfrProperty {
     AREA_CRS("c3grid.StageFileRequest.SpaceConstr.AreaCRS"),
     // slice stagein
     GRID_SITE("c3grid.SliceStageInRequest.GridSite"),
-    // file transfer orq
-    FILE_TRANSFER_SOURCE_URI("c3grid.FileTransferRequest.SourceURI"),
-    FILE_TRANSFER_DESTINATION_URI("c3grid.FileTransferRequest.DestinationURI"),
-    FILE_TRANSFER_FILE_MAPPING("c3grid.FileTransferRequest.FileMapping"),
-    
+
     // common data for muliple requests
     CONTEXT( "c3grid.CommonRequest.Context" ),
     GORFX_ID( "c3grid.CommonRequest.GORFXId" ),
