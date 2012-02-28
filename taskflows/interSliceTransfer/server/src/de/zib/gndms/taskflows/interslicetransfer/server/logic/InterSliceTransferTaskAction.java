@@ -27,9 +27,11 @@ import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.Taskling;
+import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferResult;
 import de.zib.gndms.taskflows.filetransfer.server.logic.FileTransferTaskAction;
 import de.zib.gndms.taskflows.interslicetransfer.client.InterSliceTransferMeta;
 import de.zib.gndms.taskflows.interslicetransfer.client.model.InterSliceTransferOrder;
+import de.zib.gndms.taskflows.interslicetransfer.client.model.InterSliceTransferResult;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -67,23 +69,37 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
 
 
     @Override
+    protected void onCreated( @NotNull final String wid, @NotNull final TaskState state,
+                              final boolean isRestartedTask, final boolean altTaskState )
+            throws Exception
+    {
+
+        final Session session = getDao().beginSession();
+        try {
+            final Task task = getTask( session );
+            task.setPayload( new InterSliceTransferResult() );
+        } finally { session.finish(); } 
+        super.onCreated( wid, state, isRestartedTask,
+                altTaskState );    // overriden method implementation
+    }
+
+
+    @Override
     protected void onInProgress(@NotNull String wid, @NotNull TaskState state,
                                 boolean isRestartedTask, boolean altTaskState) throws Exception {
 
         ensureOrder();
+        InterSliceTransferQuoteCalculator.prepareSourceUrl( getOrder(), sliceClient );
+        prepareDestination( );
+
         final Session session = getDao().beginSession();
         try {
             final Task task = getTask(session);
-            InterSliceTransferQuoteCalculator.prepareSourceUrl( getOrder(), sliceClient );
-            prepareDestination( );
-
-
 
             final Task st = task.createSubTask();
             st.setId(getUUIDGen().nextUUID());
 
             st.setTerminationTime( task.getTerminationTime() );
-            
 
 	        FileTransferTaskAction fta = new FileTransferTaskAction( getEmf().createEntityManager(),
                     getDao(), st.getTaskling() );
@@ -94,7 +110,9 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
 
             fta.call( );
             if( st.getTaskState().equals( TaskState.FINISHED ) ){
-                task.setPayload( st.getPayload() );
+                //noinspection ConstantConditions
+                ( ( InterSliceTransferResult) task.getPayload() ).populate(
+                        ( FileTransferResult ) st.getPayload() );
                 task.setTaskState(TaskState.FINISHED);
                 if (altTaskState)
                     task.setAltTaskState(null);
@@ -115,27 +133,36 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
         if( orderBean.getDestinationURI() != null )
             return;
 
+        Specifier<Void> sliceSpecifier;
         final Specifier<Void> specifier = orderBean.getDestinationSpecifier();
         if( specifier.getUriMap().containsKey( UriFactory.SLICE ) ) {
             // we got a slice specifier
-            // fetch gridftp uri and we are done
-            orderBean.setDestinationURI(
-                    getGsiFtpUrl( order, specifier )
-            );
+            sliceSpecifier = specifier;
         } else {
             // must be a slice kind specifier
             // lets create a new slice
-            final ResponseEntity<Specifier<Void>> sliceSpecifier =
+            ResponseEntity<Specifier<Void>> sliceSpecifierResponse =
                     subspaceClient.createSlice( specifier, order.getDNFromContext() );
 
-            // todo maybe store the dest slice spec somewhere and include it in the result
-            if( HttpStatus.CREATED.equals( sliceSpecifier.getStatusCode() ) )
-                orderBean.setDestinationURI(
-                        getGsiFtpUrl( order, sliceSpecifier.getBody() )
-                );
+            if( HttpStatus.CREATED.equals( sliceSpecifierResponse.getStatusCode() ) )
+                sliceSpecifier = sliceSpecifierResponse.getBody();
             else
                 throw new IllegalStateException( "Can't create slice in: " + specifier.getUrl() );
         }
+
+        // fetch grid-ftp uri
+        orderBean.setDestinationURI( getGsiFtpUrl( order, sliceSpecifier ) );
+
+        // update task in data-base
+        Session  session = getDao().beginSession();
+        try {
+            Task task = getTask( session );
+            task.setORQ( order );
+            //noinspection ConstantConditions
+            ( ( InterSliceTransferResult ) task.getPayload() ).setSliceSpecifier(
+                    sliceSpecifier );
+            session.success();
+        } finally { session.finish(); }
     }
 
 

@@ -32,6 +32,7 @@ public class InterSliceTransferResult extends FileTransferResult implements Slic
 
     private Specifier<Void> sliceSpecifier;
 
+
     public InterSliceTransferResult() {
         super();
         setTaskFlowType( InterSliceTransferMeta.INTER_SLICE_TRANSFER_KEY );
@@ -49,5 +50,10 @@ public class InterSliceTransferResult extends FileTransferResult implements Slic
     public void setSliceSpecifier( final Specifier<Void> sliceSpecifier ) {
 
         this.sliceSpecifier = sliceSpecifier;
+    }
+
+
+    public void populate( final FileTransferResult transferResult ) {
+        setFiles( transferResult.getFiles() );
     }
 }
