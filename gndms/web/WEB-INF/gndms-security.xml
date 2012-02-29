@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/security
+                           http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <!--security:http>
+        <security:custom-filter position="PRE_AUTH_FILTER" ref="dnFilter" />
+        <security:http-basic/>
+    </security:http-->
+
+
+    <bean id="filterChainProxy" class="org.springframework.security.web.FilterChainProxy">
+        <security:filter-chain-map path-type="ant">
+            <security:filter-chain pattern="/**" filters="dnFilter"/>
+        </security:filter-chain-map>
+    </bean>
+    <security:global-method-security proxy-target-class="true" secured-annotations="enabled" />
+
+    <!-- at least all headers must include the dn -->
+    <bean id="dnFilter" class=
+            "org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter">
+        <property name="principalRequestHeader" value="DN"/>
+        <property name="authenticationManager" ref="authenticationManager" />
+    </bean>
+
+    <bean id="preauthAuthProvider"
+          class="org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider">
+        <property name="preAuthenticatedUserDetailsService">
+            <bean id="userDetailsServiceWrapper"
+                  class="org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper">
+                <property name="userDetailsService" ref="userDetailsService"/>
+            </bean>
+        </property>
+    </bean>
+    <bean id="userDetailsService"
+          class="de.zib.gndms.gndms.security.GridMapUserDetailsService">
+        <property name="gridMapfileName" value="/etc/grid-security/grid-mapfile" />
+        <property name="adminGridMapfileName" value="/tmp/gndms-admins" />
+    </bean>
+    
+
+    <security:authentication-manager alias="authenticationManager">
+        <security:authentication-provider ref="preauthAuthProvider" />
+    </security:authentication-manager>
+</beans>

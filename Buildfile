@@ -132,6 +132,12 @@ SPRING = [
            "org.springframework:spring-webmvc:jar:#{SPRING_VERSION}",
             SPRING_CLIENT
          ] 
+SPRING_SECURITY = [
+    "org.springframework.security:spring-security-aspects:jar:3.1.0.RELEASE",
+    "org.springframework.security:spring-security-core:jar:3.1.0.RELEASE",
+    "org.springframework.security:spring-security-config:jar:3.1.0.RELEASE",
+    "org.springframework.security:spring-security-web:jar:3.1.0.RELEASE"
+]
 
 
 ASPECTJ = [
@@ -500,7 +506,7 @@ define 'gndms' do
 
     desc 'GORFX rest service'
     define 'gorfx', :layout => dmsLayout('gorfx', 'gndms-gorfx-rest') do
-        compile.with project('infra'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), project('gndmc-rest'), project('common'), SPRING, SLF4J, XSTREAM, COMMONS_LOGGING, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME, OPENJPA, INJECT 
+        compile.with project('infra'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), project('gndmc-rest'), project('common'), SPRING, SLF4J, XSTREAM, COMMONS_LOGGING, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME, OPENJPA, INJECT, SPRING_SECURITY
 
         compile
         meta_inf << file(_('src/META-INF/gorfx.xml'))

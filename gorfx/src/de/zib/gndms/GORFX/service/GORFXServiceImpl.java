@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
@@ -63,15 +64,26 @@ public class GORFXServiceImpl implements GORFXService {
 
     protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
     private Facets gorfxFacets; ///< List of facets under /gorfx/
-    private final String baseUrl; ///< The base url something like: \c http://my.host.org/gndms/grid_id
-    private final String gorfxBaseUrl; ///< Base url of the GORFX service endpoint
+    private String baseUrl; ///< The base url something like: \c http://my.host.org/gndms/grid_id
+    private String gorfxBaseUrl; ///< Base url of the GORFX service endpoint
     private TaskFlowProvider taskFlowProvider; ///< List of task factories, registered through plug-in mech
     private TaskFlowClient taskFlowClient;
     private UriFactory uriFactory;
     private ConfigActionProvider configActionProvider; ///< List of config actions
 
 
+    public GORFXServiceImpl() {
+
+    }
+
+
     public GORFXServiceImpl( final String baseUrl ) {
+
+        setBaseUrl( baseUrl );
+    }
+
+
+    public  void setBaseUrl( final String baseUrl ) {
 
         this.baseUrl = baseUrl;
         gorfxBaseUrl = baseUrl + "/gorfx/";
@@ -86,6 +98,7 @@ public class GORFXServiceImpl implements GORFXService {
 
 
     @RequestMapping( value = "/", method = RequestMethod.GET )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<Facets> listAvailableFacets( @RequestHeader( "DN" ) String dn ) {
 
         GNDMSResponseHeader responseHeaders = new GNDMSResponseHeader();
@@ -131,6 +144,7 @@ public class GORFXServiceImpl implements GORFXService {
 
 
     @RequestMapping( value = "/config/_{actionName:[a-zA-Z._0-9]+}", method = RequestMethod.POST )
+    @Secured( "ROLE_ADMIN" )
     public ResponseEntity<String> callConfigAction( @PathVariable String actionName,
                                                     @RequestBody String args, @RequestHeader( "DN" ) String dn ) {
         GNDMSResponseHeader responseHeaders =

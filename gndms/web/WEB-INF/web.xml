@@ -7,8 +7,18 @@
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>/WEB-INF/applicationContext.xml</param-value>
+        <param-value>/WEB-INF/applicationContext.xml
+                     /WEB-INF/gndms-security.xml
+        </param-value>
     </context-param>
+    <filter>
+        <filter-name>filterChainProxy</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>filterChainProxy</filter-name>
+        <url-pattern>/c3grid/*</url-pattern>
+    </filter-mapping>
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
