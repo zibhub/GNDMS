@@ -15,16 +15,31 @@
 
     <bean id="filterChainProxy" class="org.springframework.security.web.FilterChainProxy">
         <security:filter-chain-map path-type="ant">
-            <security:filter-chain pattern="/**" filters="channelSec,dnFilter,etf"/>
+            <!--<security:filter-chain pattern="/**" filters="sif,channelSec,dnFilter,etf"/>-->
+            <security:filter-chain pattern="/**" filters="sif,channelSec,x509,dnFilter,etf"/>
         </security:filter-chain-map>
     </bean>
     <security:global-method-security access-decision-manager-ref="httpRequestAccessDecisionManager"
                                      proxy-target-class="true" secured-annotations="enabled" />
 
+
     <!-- since we're using rest we disallow session creation -->
     <bean id="sif" class="org.springframework.security.web.context.SecurityContextPersistenceFilter">
         <constructor-arg name="repo" ref="disallowContextRepo" />
     </bean>
+
+    
+    <!-- check x509 cert from client -->
+    <bean id="x509"
+          class="org.springframework.security.web.authentication.preauth.x509.X509AuthenticationFilter">
+            <property name="principalExtractor" ref="fullDNExtractor" />
+            <property name="authenticationManager" ref="authenticationManager" />
+    </bean>
+
+    <bean id="fullDNExtractor"
+          class="de.zib.gndms.gndms.security.FullDNExtractor"/>
+
+
 
     <!-- at least all headers must include the dn -->
     <bean id="dnFilter" class=
@@ -43,6 +58,7 @@
             </bean>
         </property>
     </bean>
+
     <!-- uses the dn from the request header and generates a user details object -->
     <bean id="userDetailsService"
           class="de.zib.gndms.gndms.security.GridMapUserDetailsService">
@@ -71,7 +87,8 @@
             <security:filter-security-metadata-source path-type="regex">
                 <!--security:intercept-url pattern="\A/secure/.*\Z" access="REQUIRES_SECURE_CHANNEL"/ -->
                 <!-- security:intercept-url pattern="\A/login.jsp.*\Z"  access="REQUIRES_SECURE_CHANNEL"/ -->
-                <security:intercept-url pattern="\A/.*\Z" access="ANY_CHANNEL"/>
+                <!--<security:intercept-url pattern="\A/.*\Z" access="ANY_CHANNEL"/>-->
+                <security:intercept-url pattern="\A/.*\Z" access="REQUIRES_SECURE_CHANNEL"/>
             </security:filter-security-metadata-source>
         </property>
     </bean>

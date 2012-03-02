@@ -26,6 +26,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Maik Jorra
@@ -45,6 +47,18 @@ public class GridMapUserDetailsService implements UserDetailsService {
 
     private String gridMapfileName;
     private String adminGridMapfileName;
+    
+    private final Map<String,String> admins;
+    private final Map<String, String> users;
+
+
+    public GridMapUserDetailsService() {
+        admins = new ConcurrentHashMap<String,String>( 1 );
+        admins.put( "foo", "" );
+        users = new ConcurrentHashMap<String,String>( 1 );
+        users.put( "bar", "" );
+    }
+
 
     @Override
     public UserDetails loadUserByUsername( final String dn ) throws UsernameNotFoundException {
@@ -53,11 +67,12 @@ public class GridMapUserDetailsService implements UserDetailsService {
         // search admin
         try {
             if( searchInGridMapfile( adminGridMapfileName, dn ) ) {
+            //if( admins.containsKey( dn ) )
                 authorityList.add( adminRole() );
-            //    authorityList.add( userRole() );
             } else  if( searchInGridMapfile( gridMapfileName, dn ) )
+            //else if ( users.containsKey( dn ) )
                 authorityList.add( userRole() );
-        } catch ( IOException e ) {
+        } catch ( Exception e ) {
             throw new RuntimeException( e );
         }
 
