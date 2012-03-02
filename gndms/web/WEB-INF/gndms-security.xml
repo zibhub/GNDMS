@@ -15,11 +15,16 @@
 
     <bean id="filterChainProxy" class="org.springframework.security.web.FilterChainProxy">
         <security:filter-chain-map path-type="ant">
-            <security:filter-chain pattern="/**" filters="channelSec,dnFilter"/>
+            <security:filter-chain pattern="/**" filters="channelSec,dnFilter,etf"/>
         </security:filter-chain-map>
     </bean>
     <security:global-method-security access-decision-manager-ref="httpRequestAccessDecisionManager"
                                      proxy-target-class="true" secured-annotations="enabled" />
+
+    <!-- since we're using rest we disallow session creation -->
+    <bean id="sif" class="org.springframework.security.web.context.SecurityContextPersistenceFilter">
+        <constructor-arg name="repo" ref="disallowContextRepo" />
+    </bean>
 
     <!-- at least all headers must include the dn -->
     <bean id="dnFilter" class=
@@ -51,6 +56,12 @@
         <security:authentication-provider ref="preauthAuthProvider" />
     </security:authentication-manager>
 
+    <bean id="etf" class="org.springframework.security.web.access.ExceptionTranslationFilter">
+        <constructor-arg name="authenticationEntryPoint" ref="http403EntryPoint"/>
+    </bean>
+
+    <bean id="http403EntryPoint"
+          class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint"/>
 
     <!-- this interceptor enforces the uses of https channel security
     -->
@@ -112,5 +123,10 @@
                 ROLE_ADMIN > ROLE_USER
             </value>
         </property>
+    </bean>
+
+    <bean id="disallowContextRepo"
+          class="org.springframework.security.web.context.HttpSessionSecurityContextRepository">
+        <property name="allowSessionCreation" value="false" />
     </bean>
 </beans>
