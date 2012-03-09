@@ -19,6 +19,7 @@ package de.zib.gndms.kit.access;
 import org.globus.gsi.GlobusCredentialException;
 import org.globus.gsi.gssapi.auth.HostAuthorization;
 import org.globus.gsi.gssapi.auth.IdentityAuthorization;
+import org.globus.gsi.gssapi.auth.NoAuthorization;
 import org.globus.myproxy.MyProxy;
 import org.globus.util.Util;
 import org.gridforum.jgss.ExtendedGSSCredential;
@@ -62,7 +63,7 @@ public class MyProxyFactory {
 
     // the authorization method of the target machine
     // either an expected SUBJECT or a valid HOST-certificate
-    public enum Authorization { SUBJECT, HOST }
+    public enum Authorization { SUBJECT, HOST, NONE }
     private Authorization authMethod = Authorization.HOST;
 
 
@@ -70,7 +71,7 @@ public class MyProxyFactory {
 
     public MyProxyClient getMyProxyClient() throws GSSException, GlobusCredentialException {
 
-        MyProxyClient myProxyClient =  new MyProxyClient( getMyProxy() );
+        MyProxyClient myProxyClient = new MyProxyClient( getMyProxy() );
         myProxyClient.setConnectionCredential( connectionCredentialHolder.getCredential() );
         myProxyClient.setLifetime( lifetime );
         return myProxyClient;
@@ -87,6 +88,9 @@ public class MyProxyFactory {
                 break;
             case HOST:
                 myProxy.setAuthorization( HostAuthorization.getInstance() );
+                break;
+            case NONE:
+                myProxy.setAuthorization( new NoAuthorization() );
                 break;
         }
 
