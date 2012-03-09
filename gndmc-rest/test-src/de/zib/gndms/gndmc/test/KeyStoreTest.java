@@ -18,10 +18,13 @@ package de.zib.gndms.gndmc.test;
 import de.zib.gndms.gndmc.security.SetupSSL;
 
 import java.io.Console;
+import java.io.IOException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableEntryException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Enumeration;
 
@@ -45,13 +48,25 @@ public class KeyStoreTest {
         if( kpass == null )
             throw new Exception( "fill in the passwords" );
 
+        initSSL( kpass, kpass2, truststorePassword );
+
+        System.exit( 0 );
+    }
+
+
+    public static SetupSSL initSSL( final char[] kpass, final char[] kpass2,
+                                final char[] truststorePassword )
+            throws KeyStoreException, NoSuchAlgorithmException, IOException, CertificateException,
+            UnrecoverableEntryException
+    {
+
         SetupSSL sslSetup = new SetupSSL();
-        sslSetup.setKeystoreLocation( "/tmp/cert.p12" );
+        sslSetup.setKeystoreLocation( "/tmp/awicert.p12" );
         sslSetup.prepareUserCert( kpass, kpass2 );
 
         KeyStore ks = sslSetup.getKeyStore();
         analyseKeyStore( kpass, ks );
-        
+
         System.out.println( "now the trustStore" );
 
 
@@ -60,8 +75,7 @@ public class KeyStoreTest {
 
         analyseKeyStore( new char[1], sslSetup.getTrustStore() );
 
-
-        System.exit( 0 );
+        return sslSetup;
     }
 
 
@@ -76,13 +90,21 @@ public class KeyStoreTest {
             if( ks.entryInstanceOf( ali, KeyStore.PrivateKeyEntry.class ) ) {
                 System.out.println( ali + ": is private key" );
                 KeyStore.PrivateKeyEntry ent = ( KeyStore.PrivateKeyEntry ) ks.getEntry( ali, new KeyStore.PasswordProtection( kpass ) );
-                X509Certificate cert = ( X509Certificate ) ent.getCertificate();
-                System.out.println( cert.getSubjectDN() );
+                showDN( ( X509Certificate ) ent.getCertificate() );
             } else if ( ks.entryInstanceOf( ali, KeyStore.SecretKeyEntry.class ) )
                 System.out.println( ali + ": is secret key" );
-            else if ( ks.entryInstanceOf( ali, KeyStore.TrustedCertificateEntry.class ) )
+            else if ( ks.entryInstanceOf( ali, KeyStore.TrustedCertificateEntry.class ) ) {
                 System.out.println( ali + ": is trusted cert" );
+                showDN( ( ( KeyStore.TrustedCertificateEntry) ks.getEntry( ali, null ) ).getTrustedCertificate() );
+            }
         }
+    }
+
+
+    private static void showDN( final Certificate certificate ) {
+
+        final X509Certificate cert = ( X509Certificate ) certificate;
+        System.out.println( cert.getSubjectDN() );
     }
 
 }

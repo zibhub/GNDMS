@@ -164,8 +164,9 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
     protected void prepareProxy( Slice slice ) {
         //final Slice slice = findSlice();
         try {
-            File sd = new File( slice.getSubspace().getPathForSlice( slice ) + PROXY_FILE_NAME );
-            getCredentialProvider().installCredentials( sd );
+            File sliceDir = new File( slice.getSubspace().getPathForSlice( slice ) +
+                                      PROXY_FILE_NAME );
+            getCredentialProvider().installCredentials( sliceDir );
         } catch ( Exception e ) {
             logger.debug( "couldn't deploy credentials: ", e );
         }

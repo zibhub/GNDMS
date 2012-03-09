@@ -18,7 +18,7 @@ package de.zib.gndms.kit.access;
 
 import org.globus.gsi.GlobusCredentialException;
 import org.globus.gsi.gssapi.auth.HostAuthorization;
-import org.globus.gsi.gssapi.auth.IdentityAuthorization;
+import org.globus.gsi.gssapi.auth.NoAuthorization;
 import org.globus.myproxy.MyProxy;
 import org.globus.util.Util;
 import org.gridforum.jgss.ExtendedGSSCredential;
@@ -83,7 +83,7 @@ public class MyProxyFactory {
 
         switch ( authMethod ) {
             case SUBJECT:
-                myProxy.setAuthorization(new IdentityAuthorization( subjectDN ) );
+                myProxy.setAuthorization(new NoAuthorization() );
                 break;
             case HOST:
                 myProxy.setAuthorization( HostAuthorization.getInstance() );

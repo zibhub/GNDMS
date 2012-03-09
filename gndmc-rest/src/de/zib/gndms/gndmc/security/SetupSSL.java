@@ -15,7 +15,9 @@ package de.zib.gndms.gndmc.security;
  *  limitations under the License.
  */
 
-import javax.net.ssl.*;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,61 +32,57 @@ import java.security.cert.CertificateException;
  */
 public class SetupSSL {
 
-    public static final String TRUSTSTORE_TYPE = "JKS";
-    public static final String KEYSTORE_TYPE = "PKCS12";
+    public static final String TRUST_STORE_TYPE = "JKS";
+    public static final String KEY_STORE_TYPE = "PKCS12";
 
-    private String keystoreLocation;
+    private String keyStoreLocation;
     private String trustStoreLocation;
-    private TrustManagerFactory tmfactory;
-    private KeyManagerFactory kmfactory;
+    private TrustManagerFactory trustManagerFactory;
+    private KeyManagerFactory keyManagerFactory;
     private KeyStore keyStore;
     private KeyStore trustStore;
 
 
-    public void prepareUserCert( final char[] keystorePassword, final char[] keyPassword )
+    public void prepareUserCert( final char[] keyStorePassword, final char[] keyPassword )
             throws KeyStoreException, NoSuchAlgorithmException, IOException, CertificateException,
             UnrecoverableKeyException
     {
+        InputStream kis = new FileInputStream( keyStoreLocation );
 
-        InputStream kis = new FileInputStream( keystoreLocation );
-
-        keyStore = KeyStore.getInstance( KEYSTORE_TYPE );
-        keyStore.load( kis, keystorePassword );
-        kmfactory = KeyManagerFactory.getInstance( KeyManagerFactory.getDefaultAlgorithm() );
-        kmfactory.init( keyStore, keyPassword );
-
+        keyStore = KeyStore.getInstance( KEY_STORE_TYPE );
+        keyStore.load( kis, keyStorePassword );
+        keyManagerFactory = KeyManagerFactory.getInstance( KeyManagerFactory.getDefaultAlgorithm() );
+        keyManagerFactory.init( keyStore, keyPassword );
     }
 
-    public void prepareTrustStore( final char[] truststorePassword )
+    public void prepareTrustStore( final char[] trustStorePassword )
             throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException
     {
-
         InputStream tis = new FileInputStream( trustStoreLocation );
 
-        trustStore = KeyStore.getInstance( TRUSTSTORE_TYPE );
-        trustStore.load( tis, truststorePassword );
-        tmfactory = TrustManagerFactory.getInstance( TrustManagerFactory.getDefaultAlgorithm() );
-        tmfactory.init( trustStore );
-
+        trustStore = KeyStore.getInstance( TRUST_STORE_TYPE );
+        trustStore.load( tis, trustStorePassword );
+        trustManagerFactory = TrustManagerFactory.getInstance( TrustManagerFactory.getDefaultAlgorithm() );
+        trustManagerFactory.init( trustStore );
     }
 
     public void setupSSLContext() throws KeyManagementException, NoSuchAlgorithmException {
 
         SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init( kmfactory.getKeyManagers(), tmfactory.getTrustManagers(), new SecureRandom());
+        sslContext.init( keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), new SecureRandom());
         SSLContext.setDefault(sslContext);
     }
 
 
     public String getKeystoreLocation() {
 
-        return keystoreLocation;
+        return keyStoreLocation;
     }
 
 
-    public void setKeystoreLocation( final String keystoreLocation ) {
+    public void setKeystoreLocation( final String keyStoreLocation ) {
 
-        this.keystoreLocation = keystoreLocation;
+        this.keyStoreLocation = keyStoreLocation;
     }
 
 

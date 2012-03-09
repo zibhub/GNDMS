@@ -1,4 +1,4 @@
-package de.zib.gndms.gndmc.gorfx;
+package de.zib.gndms.gndmc.test.gorfx;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -16,6 +16,7 @@ package de.zib.gndms.gndmc.gorfx;
  * limitations under the License.
  */
 
+import com.sun.jndi.toolkit.url.Uri;
 import de.zib.gndms.common.kit.application.AbstractApplication;
 import de.zib.gndms.common.logic.action.ActionMeta;
 import de.zib.gndms.common.logic.config.ConfigMeta;
@@ -25,6 +26,10 @@ import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 
+import de.zib.gndms.gndmc.gorfx.FullGORFXClient;
+import de.zib.gndms.gndmc.gorfx.TaskFlowClient;
+import de.zib.gndms.gndmc.security.SetupSSL;
+import de.zib.gndms.gndmc.test.KeyStoreTest;
 import org.kohsuke.args4j.Option;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -33,7 +38,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,10 +48,16 @@ import java.util.UUID;
  */
 public class GORFXClientMain extends AbstractApplication {
 
-	@Option(name = "-uri", required = true, usage = "URL of GORFX-Endpoint", metaVar = "URI")
-	protected String gorfxEpUrl;
+	@Option(name = "-uri", required = true, usage = "URL of gndms-Endpoint", metaVar = "URI")
+	protected String gndmsEpUrl;
 	@Option(name = "-dn", required = true, usage = "DN")
 	protected String dn;
+    @Option(name = "-ksp", required = false, usage = "key store passwd" )
+    protected String ksp = null;
+    @Option(name = "-tsp", required = false, usage = "trust store passwd" )
+    protected String tsp = null;
+
+
 	protected final String wid = UUID.randomUUID().toString();
 
 	public static void main(String[] args) throws Exception {
@@ -66,12 +76,19 @@ public class GORFXClientMain extends AbstractApplication {
 				.getAutowireCapableBeanFactory().createBean(
 						FullGORFXClient.class,
 						AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
-		gorfxClient.setServiceURL(gorfxEpUrl);
+		gorfxClient.setServiceURL( gndmsEpUrl );
 
 		if (gorfxClient.getRestTemplate() == null)
 			throw new IllegalStateException("restTemplate is null");
 
-		System.out.println("connecting to: \"" + gorfxEpUrl + "\"");
+		System.out.println("connecting to: \"" + gndmsEpUrl + "\"");
+        Uri gorfxUrl = new Uri( gndmsEpUrl );
+        if( "https".equals( gorfxUrl.getScheme() ) ) {
+            System.out.println( "https specified. enabling SSL" );
+            SetupSSL setupSSL = KeyStoreTest.initSSL( ksp.toCharArray(), ksp.toCharArray(),
+                    tsp.toCharArray() );
+            setupSSL.setupSSLContext();
+        }
 
 		System.out.println("requesting facets");
 		ResponseEntity<Facets> res = gorfxClient.listAvailableFacets(dn);
@@ -205,7 +222,7 @@ public class GORFXClientMain extends AbstractApplication {
 				.getAutowireCapableBeanFactory().createBean(
 						TaskFlowClient.class,
 						AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
-		tfClient.setServiceURL(gorfxEpUrl);
+		tfClient.setServiceURL( gndmsEpUrl );
 
 		System.out
 				.println("Step 6: requesting facets of task flow, retrieving status results");
