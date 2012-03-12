@@ -17,6 +17,9 @@ package de.zib.gndms.taskflows.esgfStaging.client.model;
 
 import de.zib.gndms.common.model.gorfx.types.TaskResult;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * @author try ma ik jo rr a zib
  * @date 14.03.11  11:12
@@ -24,27 +27,23 @@ import de.zib.gndms.common.model.gorfx.types.TaskResult;
  *
  * Since the dummy taskflow only writes stuff, a string is enough here.
  */
-public class ESGFStagingTaskFlowResult implements TaskResult<String> {
+public class ESGFStagingTaskFlowResult implements TaskResult< List< String > > {
 
     private static final long serialVersionUID = 6090538263029074698L;
-    private String result;
+    private List< String > fileNames;
 
 
     public ESGFStagingTaskFlowResult() {
+        fileNames = new LinkedList< String >();
     }
 
 
-    public ESGFStagingTaskFlowResult( String s ) {
-        result = s;
+    public List< String > getResult() {
+        return fileNames;
     }
 
 
-    public String getResult() {
-        return result;
-    }
-
-
-    public void setResult( String result ) {
-        this.result = result;
+    public void addFile( String fileName ) {
+        fileNames.add(fileName);
     }
 }

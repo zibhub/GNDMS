@@ -87,7 +87,7 @@ public abstract class GORFXTaskFlowExample extends AbstractApplication {
         if ( requireMyProxy )
             requiresMyProxy();
 
-        System.out.println( "Running dummy taskFlow test with: " );
+        System.out.println( "Running ESGF Staging TaskFlow test with: " );
         System.out.println("connection to: \"" + gorfxEpUrl + "\"");
 
         context = new ClassPathXmlApplicationContext(

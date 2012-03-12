@@ -40,6 +40,7 @@ import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import de.zib.gndms.taskflows.esgfStaging.client.ESGFStagingTaskFlowMeta;
 import de.zib.gndms.taskflows.esgfStaging.client.model.ESGFStagingOrder;
+import de.zib.gndms.taskflows.esgfStaging.client.model.ESGFStagingTaskFlowResult;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -119,9 +120,18 @@ public class ESGFStagingTFAction extends TaskFlowAction< ESGFStagingOrder > {
         final String slicePath = slice.getSubspace().getPathForSlice( slice );
         
         // get certificate and private key by credentials
-        final String cert = prepareProxy( slice );
+        final String cert;
+        try {
+            cert = prepareProxy( slice );
+        }
+        catch( Throwable e ) {
+            logger.error( "Could not authenticate against ESGF Provider: ", e);
+            transit( TaskState.FAILED );
+            return;
+        }
 
         final Task detachedTask = getDetachedTask();
+        final ESGFStagingTaskFlowResult result = new ESGFStagingTaskFlowResult();
 
         int progress = detachedTask.getProgress();
         int i = 0;
@@ -130,25 +140,28 @@ public class ESGFStagingTFAction extends TaskFlowAction< ESGFStagingOrder > {
             if( i++ < progress )
                 continue;
 
-            File file = new File( url );
+            File urlFile = new File( url );
+            File outFile = new File( slicePath + File.separatorChar + urlFile.getName() );
 
             // download file
             {
-                Process process = Runtime.getRuntime().exec( new String[]{
+                final ProcessBuilder processBuilder = new ProcessBuilder(
                         "wget",
                         "-T", "120", "-q", "-c",
-                        "-O", ( file ).getName(),
+                        "-O", outFile.getCanonicalPath(),
                         "--certificate",
                         cert,
                         "--private-key",
                         cert,
                         url
-                } );
+                );
 
-                process.wait();
+                final Process process = processBuilder.start();
+
+                process.waitFor();
                 if( 0 != process.exitValue() )
                 {
-                    transit( TaskState.FAILED );
+                    transitWithPayload( result, TaskState.FAILED );
                     return;
                 }
             }
@@ -156,18 +169,19 @@ public class ESGFStagingTFAction extends TaskFlowAction< ESGFStagingOrder > {
             // check for correct checksum
             {
                 String checksum = urls.get( url );
-                String compare = makeMD5( file );
+                String compare = makeMD5( outFile );
 
                 if( ! checksum.equals( compare) ) {
-                    transit( TaskState.FAILED );
+                    transitWithPayload( result, TaskState.FAILED );
                     return;
                 }
             }
 
+            result.addFile( outFile.getName() );
             setProgress( ++progress );
         }
 
-        transit( TaskState.FINISHED );
+        transitWithPayload( result, TaskState.FINISHED );
 
         super.onInProgress(wid, state, isRestartedTask, altTaskState);    // overridden method implementation
     }
@@ -367,6 +381,7 @@ public class ESGFStagingTFAction extends TaskFlowAction< ESGFStagingOrder > {
         return subspaceService;
     }
 
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Inject
     public void setSubspaceService( SubspaceService subspaceService ) {
         this.subspaceService = subspaceService;

@@ -21,7 +21,14 @@ public class ESGFStagingQuoteCalculator extends AbstractQuoteCalculator<ESGFStag
     @Override
     public boolean validate() {
         ESGFStagingOrder order = getOrderBean();
-        return order!= null;
+
+        if( null == order )
+            return false;
+
+        if( order.getUrls().size() == 0 )
+            return false;
+
+        return true;
     }
 
 
