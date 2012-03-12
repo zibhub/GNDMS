@@ -78,6 +78,10 @@ public abstract class AbstractTaskFlowExecClient {
 
         GNDMSResponseHeader context = setupContext( new GNDMSResponseHeader() );
 
+        if( null == gorfxClient ) {
+            throw new IllegalStateException( "You need to set gorfxClient before executing a TaskFlow!" );
+        }
+
         /**
          * \code this is important
          */              
@@ -93,6 +97,10 @@ public abstract class AbstractTaskFlowExecClient {
 
         Integer q = null;
         if( withQuote ) {
+            if( null == tfClient ) {
+                throw new IllegalStateException( "No TaskFlowClient set." );
+            }
+
             if( desiredQuote != null ) {
                 tfClient.setQuote( order.getTaskFlowType(), tid, desiredQuote, dn, wid );
             }
@@ -121,6 +129,10 @@ public abstract class AbstractTaskFlowExecClient {
         
         // the task id is stored under "taskId" in the specifiers urlmap
         String taskId = res3.getBody().getUriMap().get( "taskId" );
+
+        if( null == taskClient ) {
+            throw new IllegalStateException( "No TaskClient set." );
+        }
 
         ResponseEntity<TaskStatus> stat;
         TaskStatus ts;

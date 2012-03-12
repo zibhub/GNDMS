@@ -27,6 +27,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestOperations;
 
 import java.util.List;
 
@@ -95,9 +96,14 @@ public class GORFXClient extends AbstractClient implements GORFXServiceEssential
         requestHeaders.putAll( context );
         HttpEntity<Order> requestEntity = new HttpEntity<Order>( order, requestHeaders );
 
+        RestOperations restTemplate = getRestTemplate();
+        if( null == restTemplate ) {
+            throw new IllegalStateException( "No RestTemplate set in GORFXClient." );
+        }
+
         return ( ResponseEntity<Specifier<Facets>> ) ( Object )
-                getRestTemplate().exchange( getServiceURL()
-                        + "/gorfx/_" + type, HttpMethod.POST, requestEntity, Specifier.class );
+                restTemplate.exchange(getServiceURL()
+                        + "/gorfx/_" + type, HttpMethod.POST, requestEntity, Specifier.class);
     }
 
 }
