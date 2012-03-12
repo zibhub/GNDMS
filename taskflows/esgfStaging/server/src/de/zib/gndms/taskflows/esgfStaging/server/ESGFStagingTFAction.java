@@ -1,4 +1,4 @@
-package de.zib.gndms.taskflows.esgf.server;
+package de.zib.gndms.taskflows.esgfStaging.server;
 
 
 /*

@@ -1,4 +1,4 @@
-package de.zib.gndms.taskflows.esgf.server;
+package de.zib.gndms.taskflows.esgfStaging.server;
 
 import de.zib.gndms.common.model.gorfx.types.FutureTime;
 import de.zib.gndms.common.model.gorfx.types.Quote;
