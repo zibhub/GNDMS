@@ -73,14 +73,26 @@
     <bean id="defaultMyProxyProvider" class="de.zib.gndms.kit.access.MyProxyFactory">
         <constructor-arg name="nickname" value="C3GRID"/>
         <property name="myProxyServer" value="${myProxyServer}"/>
-        <property name="port" value="7512"/>
+        <property name="port" value="${myProxyServerPort}"/>
         <property name="noPasswd" value="false"/>
         <!-- this is just an example for credentialHolder usage -->
         <property name="connectionCredentialHolder">
-           <bean class="de.zib.gndms.kit.access.HostCredentialHolder" >
-                   <constructor-arg name="base" value="${myProxyConnectionCredentialFolder}"/>
-                   <constructor-arg name="prefix" value="${myProxyConnectionCredentialPrefix}"/>
-           </bean>
+            <bean class="de.zib.gndms.kit.access.HostCredentialHolder" >
+                <constructor-arg name="base" value="${myProxyConnectionCredentialFolder}"/>
+                <constructor-arg name="prefix" value="${myProxyConnectionCredentialPrefix}"/>
+            </bean>
+        </property>
+    </bean>
+
+
+    <bean id="esgfMyProxyProvider" class="de.zib.gndms.kit.access.MyProxyFactory">
+        <constructor-arg name="nickname" value="ESGF"/>
+        <property name="myProxyServer" value="${esgfProxyServer}"/>
+        <property name="port" value="${esgfProxyServerPort}"/>
+        <property name="authMethod" value="NONE" />
+        <property name="noPasswd" value="false"/>
+        <property name="connectionCredentialHolder">
+           <bean class="de.zib.gndms.kit.access.NoCredentialHolder" />
         </property>
     </bean>
 

@@ -64,9 +64,6 @@ public class MyProxyClient {
      */
     public GSSCredential fetch( String login, String passwd ) throws GSSException, GlobusCredentialException, MyProxyException, IOException {
 
-
-        System.out.println( "using connection Cert " + connectionCredential.getName() );
-
         // this is the get request for the myproxy server
         GetParams getRequest = new GetParams();
         getRequest.setUserName( login );
