@@ -23,5 +23,5 @@ package de.zib.gndms.common.rest;
  */
 public enum CertificatePurpose {
 
-    NONE, C3GRID, ESFG
+    NONE, C3GRID, ESGF
 }

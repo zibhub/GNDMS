@@ -82,8 +82,8 @@ public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStag
     protected Map<String, String> getDefaultConfig() {
         Map< String, String > defaultConfig = new HashMap<String, String>( );
         
-        defaultConfig.put( "subspce", "providerStaging" );
-        defaultConfig.put( "slicekind", "staging");
+        defaultConfig.put( "subspace", "providerStaging" );
+        defaultConfig.put( "sliceKind", "staging");
         
         return defaultConfig;
     }
@@ -91,7 +91,10 @@ public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStag
 
     @Override
     public TaskAction createAction() {
-        return new ESGFStagingTFAction(  );
+        ESGFStagingTFAction action = new ESGFStagingTFAction(  );
+        getInjector().injectMembers( action );
+
+        return action;
     }
 
 }

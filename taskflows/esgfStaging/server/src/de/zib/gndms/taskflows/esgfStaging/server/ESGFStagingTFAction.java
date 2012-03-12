@@ -119,7 +119,6 @@ public class ESGFStagingTFAction extends TaskFlowAction< ESGFStagingOrder > {
         final String slicePath = slice.getSubspace().getPathForSlice( slice );
         
         // get certificate and private key by credentials
-        final CredentialProvider credentialProvider = getCredentialProvider();
         final String cert = prepareProxy( slice );
 
         final Task detachedTask = getDetachedTask();
