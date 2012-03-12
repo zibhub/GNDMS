@@ -17,12 +17,12 @@ import java.util.Map;
  * @author bachmann@zib.de
  * @date 08.03.12  16:10
  */
-public class ESGFSTagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStagingOrder, ESGFStagingQuoteCalculator > {
+public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStagingOrder, ESGFStagingQuoteCalculator > {
 
     private TaskStatistics stats = new TaskStatistics();
 
 
-    public ESGFSTagingTaskFlowFactory() {
+    public ESGFStagingTaskFlowFactory() {
         super( ESGFStagingTaskFlowMeta.TASK_FLOW_TYPE_KEY, ESGFStagingQuoteCalculator.class, ESGFStagingOrder.class );
     }
 
