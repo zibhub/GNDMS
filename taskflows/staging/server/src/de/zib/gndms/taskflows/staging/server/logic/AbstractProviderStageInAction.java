@@ -382,6 +382,7 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
     }
 
 
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Inject
     public void setSubspaceService( final SubspaceService subspaceService ) {
 

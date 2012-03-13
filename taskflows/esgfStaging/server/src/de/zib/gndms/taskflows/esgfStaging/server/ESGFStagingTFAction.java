@@ -32,6 +32,7 @@ import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
+import de.zib.gndms.model.gorfx.types.SliceResultImpl;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.model.util.TxFrame;
 import de.zib.gndms.neomodel.common.Dao;
@@ -40,7 +41,6 @@ import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import de.zib.gndms.taskflows.esgfStaging.client.ESGFStagingTaskFlowMeta;
 import de.zib.gndms.taskflows.esgfStaging.client.model.ESGFStagingOrder;
-import de.zib.gndms.taskflows.esgfStaging.client.model.ESGFStagingTaskFlowResult;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -127,11 +127,10 @@ public class ESGFStagingTFAction extends TaskFlowAction< ESGFStagingOrder > {
         catch( Throwable e ) {
             logger.error( "Could not authenticate against ESGF Provider: ", e);
             transit( TaskState.FAILED );
-            return;
+            throw new Exception( "Could not authenticate against ESGF Provider.", e );
         }
 
         final Task detachedTask = getDetachedTask();
-        final ESGFStagingTaskFlowResult result = new ESGFStagingTaskFlowResult();
 
         int progress = detachedTask.getProgress();
         int i = 0;
@@ -161,8 +160,8 @@ public class ESGFStagingTFAction extends TaskFlowAction< ESGFStagingOrder > {
                 process.waitFor();
                 if( 0 != process.exitValue() )
                 {
-                    transitWithPayload( result, TaskState.FAILED );
-                    return;
+                    transit(TaskState.FAILED);
+                    throw new Exception( "Could not download all files." );
                 }
             }
 
@@ -172,16 +171,19 @@ public class ESGFStagingTFAction extends TaskFlowAction< ESGFStagingOrder > {
                 String compare = makeMD5( outFile );
 
                 if( ! checksum.equals( compare) ) {
-                    transitWithPayload( result, TaskState.FAILED );
-                    return;
+                    transit(TaskState.FAILED);
+                    throw new Exception( "Downloaded file " + outFile.getName() + " has wrong checksum." );
                 }
             }
 
-            result.addFile( outFile.getName() );
             setProgress( ++progress );
         }
 
-        transitWithPayload( result, TaskState.FINISHED );
+        transitWithPayload(
+                new SliceResultImpl(
+                        ESGFStagingTaskFlowMeta.TASK_FLOW_TYPE_KEY,
+                        getSliceSpecifier() ),
+                TaskState.FINISHED );
 
         super.onInProgress(wid, state, isRestartedTask, altTaskState);    // overridden method implementation
     }
