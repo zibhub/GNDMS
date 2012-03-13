@@ -21,8 +21,8 @@ import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.gndmc.gorfx.AbstractTaskFlowExecClient;
 import de.zib.gndms.gndmc.gorfx.ExampleTaskFlowExecClient;
 import de.zib.gndms.gndmc.gorfx.GORFXTaskFlowExample;
+import de.zib.gndms.model.gorfx.types.SliceResult;
 import de.zib.gndms.taskflows.esgfStaging.client.model.ESGFStagingOrder;
-import de.zib.gndms.taskflows.esgfStaging.client.model.ESGFStagingTaskFlowResult;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -59,10 +59,9 @@ public class ESGFStagingExample extends GORFXTaskFlowExample {
             @Override
             protected void handleResult( TaskResult res ) {
 
-                ESGFStagingTaskFlowResult ftr = ESGFStagingTaskFlowResult.class.cast( res );
-                System.out.println( "Transferred files: " );
-                for ( String file : ftr.getResult() )
-                    System.out.println( "\t" + file );
+                SliceResult result = SliceResult.class.cast( res );
+                System.out.println( "Slice URL: " );
+                System.out.println( "\t" + result.getSliceSpecifier().getUrl() );
             }
 
 
