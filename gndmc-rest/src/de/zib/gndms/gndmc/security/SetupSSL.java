@@ -66,11 +66,19 @@ public class SetupSSL {
         trustManagerFactory.init( trustStore );
     }
 
-    public void setupSSLContext() throws KeyManagementException, NoSuchAlgorithmException {
+    public void setupDefaultSSLContext() throws KeyManagementException, NoSuchAlgorithmException {
+
+        SSLContext.setDefault( setupSSLContext() );
+    }
+
+
+    private SSLContext setupSSLContext() throws NoSuchAlgorithmException, KeyManagementException {
 
         SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init( keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), new SecureRandom());
-        SSLContext.setDefault(sslContext);
+        sslContext.init( keyManagerFactory.getKeyManagers(),
+                trustManagerFactory != null ?  trustManagerFactory.getTrustManagers() : null,
+                new SecureRandom());
+        return sslContext;
     }
 
 
