@@ -17,17 +17,20 @@ package de.zib.gndms.gndmc.test.gorfx;
 
 import de.zib.gndms.common.kit.application.AbstractApplication;
 import de.zib.gndms.gndmc.security.SetupSSL;
-import de.zib.gndms.stuff.devel.StreamCopyNIO;
 import org.kohsuke.args4j.Option;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.net.URLDecoder;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author Maik Jorra
@@ -45,6 +48,8 @@ public class ESGFGet extends AbstractApplication {
     protected String off;
     @Option( name="-cred", required = true )
     protected String keyStoreLocation;
+    @Option( name="-trust", required = true )
+    protected String trustStoreLocation;
 
 
     public static void main( String[] args ) throws Exception {
@@ -61,29 +66,85 @@ public class ESGFGet extends AbstractApplication {
 
         SetupSSL setupSSL = new SetupSSL();
         setupSSL.setKeystoreLocation( keyStoreLocation );
+        setupSSL.setTrustStoreLocation(trustStoreLocation);
         setupSSL.prepareUserCert( passwd.toCharArray(), passwd.toCharArray() );
         setupSSL.setupDefaultSSLContext();
-                
+
+
+        MyResponseExtractor responseExtractor = get( url, null );
+        int statusCode = responseExtractor.getStatusCode();
+
+        while( 302 == statusCode) {
+            final List< String > cookie = responseExtractor.getCookie();
+            final String location = responseExtractor.getLocation();
+
+            responseExtractor = get( location, new RequestCallback() {
+                @Override
+                public void doWithRequest( ClientHttpRequest request ) throws IOException {
+                    for( String c: cookie )
+                        request.getHeaders().add("Cookie", c.split(";", 2)[0]);
+                }
+            });
+
+            statusCode = responseExtractor.getStatusCode();
+        }
+    }
+    
+    
+    MyResponseExtractor get( String url, RequestCallback requestCallback ) {
+        MyResponseExtractor responseExtractor = new MyResponseExtractor();
+
         RestTemplate rt = new RestTemplate();
+        rt.execute(url, HttpMethod.GET, requestCallback, responseExtractor);
+
+        return responseExtractor;
+    }
+    
+    
+    class MyResponseExtractor implements ResponseExtractor< Object > {
         
-        rt.execute( url, HttpMethod.GET, null, new ResponseExtractor<Object>() {
-            @Override
-            public Object extractData( final ClientHttpResponse response ) throws IOException {
-                
-                System.out.println( response.getStatusCode().toString() );
-                for ( String s: response.getHeaders().keySet() )
-                    for( String v : response.getHeaders().get( s ) )
-                        System.out.println( s+ ":"+v );
+        private int statusCode;
+        private List< String > cookie = null;
+        private String location = null;
+        private HttpHeaders headers;
+        private InputStream inputStream;
 
-                System.out.println( response.getStatusCode().toString() );
+        @Override
+        public Object extractData( final ClientHttpResponse response ) throws IOException {
+            
+            statusCode = response.getStatusCode().value();
+            headers = response.getHeaders();
+            
+            for( String header: headers.keySet() ) {
+                if( "Set-Cookie".equals( header ) ) {
+                    cookie = new LinkedList< String >();
 
-                System.out.println( "Received data, copying" );
-                InputStream is = response.getBody();
-                OutputStream os = new FileOutputStream( off );
-                StreamCopyNIO.copyStream( is, os );
-                System.out.println( "Done" );
-                return null;
+                    for( String value: headers.get( header ) ) {
+                        cookie.add( value );
+                    }
+                }
+                else if( "Location".equals( header ) ) {
+                    location = URLDecoder.decode( headers.get( header ).get( 0 ) );
+                }
             }
-        } );
+
+            return null;
+        }
+
+        public int getStatusCode() {
+            return statusCode;
+        }
+
+        public List< String > getCookie() {
+            return cookie;
+        }
+
+        public String getLocation() {
+            return location;
+        }
+
+        public HttpHeaders getHeaders() {
+            return headers;
+        }
     }
 }
