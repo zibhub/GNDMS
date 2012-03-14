@@ -82,7 +82,8 @@ public class HTTPGetter {
         EnhancedResponseExtractor responseExtractor = get( url, null );
         int statusCode = responseExtractor.getStatusCode();
 
-        while( 302 == statusCode) {
+        // redirect as long as needed
+        while( 300 <= statusCode && statusCode < 400 ) {
             final List< String > cookies = DefaultResponseExtractor.getCookies( responseExtractor.getHeaders() );
             final String location = DefaultResponseExtractor.getLocation( responseExtractor.getHeaders() );
 
