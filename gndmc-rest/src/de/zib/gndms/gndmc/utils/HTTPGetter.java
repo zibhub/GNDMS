@@ -33,7 +33,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -94,7 +93,7 @@ public class HTTPGetter {
     }
     
     public int get( String url ) {
-        logger.debug( "GET URL " + url );
+        logger.debug("GET URL " + url);
 
         EnhancedResponseExtractor responseExtractor = get( url, null );
         int statusCode = responseExtractor.getStatusCode();
@@ -127,33 +126,28 @@ public class HTTPGetter {
 
     EnhancedResponseExtractor get( final String url, final RequestCallback requestCallback ) {
         RestTemplate rt = new RestTemplate();
-        // use the list as indirect pointer
-        final List< EnhancedResponseExtractor > enhancedResponseExtractor = new LinkedList<EnhancedResponseExtractor>();
 
-        rt.execute( url, HttpMethod.GET, requestCallback, new ResponseExtractor< Object >() {
+        return rt.execute( url, HttpMethod.GET, requestCallback, new ResponseExtractor< EnhancedResponseExtractor >() {
 
             // call the EnhancedResponseExtractor registered for this response.statusCode
             @Override
-            public Object extractData( ClientHttpResponse response ) throws IOException {
+            public EnhancedResponseExtractor extractData( ClientHttpResponse response ) throws IOException {
                 int statusCode = response.getStatusCode().value();
                 
-                EnhancedResponseExtractor ere = extractorMap.get( statusCode );
-                if( null == ere )
-                    ere = extractorMap.get( statusCode / 100 );
-                if( null == ere )
-                    ere = extractorMap.get( 0 );
-                if( null == ere )
+                EnhancedResponseExtractor enhancedResponseExtractor = extractorMap.get( statusCode );
+                if( null == enhancedResponseExtractor )
+                    enhancedResponseExtractor = extractorMap.get( statusCode / 100 );
+                if( null == enhancedResponseExtractor )
+                    enhancedResponseExtractor = extractorMap.get( 0 );
+                if( null == enhancedResponseExtractor )
                     throw new IllegalStateException( "No default ResponseExtractor registered. THIS IS NOT HAPPENING :/" );
-                
-                enhancedResponseExtractor.add( ere );
-                ere.extractData( url, response );
 
-                return null;
+                enhancedResponseExtractor.extractData(url, response);
+
+                return enhancedResponseExtractor;
             }
 
         } );
-
-        return enhancedResponseExtractor.get( 0 );
     }
     
     public String getKeyStoreLocation() {
