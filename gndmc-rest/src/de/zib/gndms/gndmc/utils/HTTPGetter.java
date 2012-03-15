@@ -119,7 +119,7 @@ public class HTTPGetter {
         return statusCode;
     }
 
-    EnhancedResponseExtractor get( String url, RequestCallback requestCallback ) {
+    EnhancedResponseExtractor get( final String url, final RequestCallback requestCallback ) {
         RestTemplate rt = new RestTemplate();
         // use the list as indirect pointer
         final List< EnhancedResponseExtractor > enhancedResponseExtractor = new LinkedList<EnhancedResponseExtractor>();
@@ -138,7 +138,9 @@ public class HTTPGetter {
                     throw new IllegalStateException( "No default ResponseExtractor registered. THIS IS NOT HAPPENING :/" );
                 
                 enhancedResponseExtractor.add( ere );
-                return ere.extractData( response );
+                ere.extractData( url, response );
+
+                return null;
             }
 
         } );
