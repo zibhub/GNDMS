@@ -16,7 +16,7 @@ package de.zib.gndms.gndmc.test.gorfx;
  */
 
 import de.zib.gndms.common.kit.application.AbstractApplication;
-import de.zib.gndms.gndmc.security.SetupSSL;
+import de.zib.gndms.gndmc.utils.HTTPGetter;
 import org.kohsuke.args4j.Option;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -64,12 +64,12 @@ public class ESGFGet extends AbstractApplication {
     @Override
     protected void run() throws Exception {
 
-        SetupSSL setupSSL = new SetupSSL();
-        setupSSL.setKeystoreLocation( keyStoreLocation );
-        setupSSL.setTrustStoreLocation(trustStoreLocation);
-        setupSSL.prepareUserCert( passwd.toCharArray(), passwd.toCharArray() );
-        setupSSL.setupDefaultSSLContext();
+        HTTPGetter getter = new HTTPGetter();
 
+        getter.setKeyStoreLocation( keyStoreLocation );
+        getter.setTrustStoreLocation( trustStoreLocation );
+        getter.setPassword( passwd );
+        getter.setupSSL();
 
         MyResponseExtractor responseExtractor = get( url, null );
         int statusCode = responseExtractor.getStatusCode();
