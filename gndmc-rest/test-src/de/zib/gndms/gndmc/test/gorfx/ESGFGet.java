@@ -16,18 +16,9 @@ package de.zib.gndms.gndmc.test.gorfx;
  */
 
 import de.zib.gndms.common.kit.application.AbstractApplication;
-import de.zib.gndms.gndmc.security.SetupSSL;
-import de.zib.gndms.stuff.devel.StreamCopyNIO;
+import de.zib.gndms.gndmc.utils.DownloadResponseExtractor;
+import de.zib.gndms.gndmc.utils.HTTPGetter;
 import org.kohsuke.args4j.Option;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.client.ClientHttpRequest;
-import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.web.client.RequestCallback;
-import org.springframework.web.client.ResponseExtractor;
-import org.springframework.web.client.RestTemplate;
-
-import java.io.*;
-import java.net.URLDecoder;
 
 /**
  * @author Maik Jorra
@@ -45,6 +36,8 @@ public class ESGFGet extends AbstractApplication {
     protected String off;
     @Option( name="-cred", required = true )
     protected String keyStoreLocation;
+    @Option( name="-trust", required = true )
+    protected String trustStoreLocation;
 
     @Option( name="-dummy", required = false )
     protected String dummy;
@@ -61,72 +54,16 @@ public class ESGFGet extends AbstractApplication {
     @Override
     protected void run() throws Exception {
 
-        SetupSSL setupSSL = new SetupSSL();
-        setupSSL.setKeystoreLocation( keyStoreLocation );
-        setupSSL.prepareUserCert( passwd.toCharArray(), passwd.toCharArray() );
-        setupSSL.setupDefaultSSLContext();
-                
-        final RestTemplate rt = new RestTemplate();
+        HTTPGetter getter = new HTTPGetter();
+
+        getter.setKeyStoreLocation( keyStoreLocation );
+        getter.setTrustStoreLocation( trustStoreLocation );
+        getter.setPassword( passwd );
+        getter.setupSSL();
+
+        getter.setExtractor( 200, new DownloadResponseExtractor( off ) );
+        int statusCode = getter.get( url );
         
-        rt.execute( url, HttpMethod.GET, null, new ResponseExtractor<Object>() {
-            @Override
-            public Object extractData( final ClientHttpResponse response ) throws IOException {
-                
-                String url = null;
-                String cookieTmp = null;
-                System.out.println( response.getStatusCode().toString() );
-                for ( String s: response.getHeaders().keySet() )
-                    for( String v : response.getHeaders().get( s ) ) {
-                        System.out.println( s+ ":"+v );
-                        if( "Location".equals( s ) )
-                            url = v;
-                        else if( "Set-Cookie".equals( s ) )
-                            cookieTmp = v;
-                    }
-                final String cookie = cookieTmp.split( ";" )[0];
-
-
-                if( url != null )
-                    rt.execute( decodeUrl( url ), HttpMethod.GET, new RequestCallback() {
-                        @Override
-                        public void doWithRequest( final ClientHttpRequest request )
-                                throws IOException
-                        {
-                            System.out.println( "setting cookie: " + cookie );
-                            request.getHeaders().set( "Cookie", cookie );
-                        }
-                    }, new ResponseExtractor<Object>() {
-                                @Override
-                                public Object extractData( final ClientHttpResponse response )
-                                        throws IOException
-                                {
-                                    System.out.println( response.getStatusCode().toString() );
-                                    System.out.println( "Received data, copying" );
-                                    InputStream is = response.getBody();
-                                    OutputStream os = new FileOutputStream( off );
-                                    StreamCopyNIO.copyStream( is, os );
-                                    System.out.println( "Done" );
-                                    return null;
-                                }
-                            });
-                            
-                return null;
-            }
-        } );
-    }
-
-
-    private String decodeUrl( final String url ) {
-        System.out.println( "encoded url" + url );
-        String durl;
-        try {
-            durl = URLDecoder.decode( url, "UTF-8" );
-        } catch ( UnsupportedEncodingException e ) {
-            throw new RuntimeException( e );
-        }
-        System.out.println( "decoded url" + durl );
-        
-        return durl;
-
+        System.out.println( "StatusCode: " + statusCode );
     }
 }
