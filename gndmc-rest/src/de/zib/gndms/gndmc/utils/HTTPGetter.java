@@ -17,6 +17,8 @@
 package de.zib.gndms.gndmc.utils;
 
 import de.zib.gndms.gndmc.security.SetupSSL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.ClientHttpResponse;
@@ -42,6 +44,8 @@ import java.util.Map;
  * @email: bachmann@zib.de
  */
 public class HTTPGetter {
+
+    protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
     
     private String keyStoreLocation;
     private String trustStoreLocation;
@@ -55,8 +59,10 @@ public class HTTPGetter {
     }
 
     public void resetExtractorMap() {
+        logger.trace( "Resetting ResponseExtractorMap." );
+
         extractorMap.clear();
-        extractorMap.put( 0, new RedirectResponseExtractor() );
+        extractorMap.put(0, new RedirectResponseExtractor());
     }
     
     public EnhancedResponseExtractor getResponseExtractor( int statusCode ) {
@@ -70,6 +76,8 @@ public class HTTPGetter {
             CertificateException,
             UnrecoverableKeyException,
             KeyManagementException {
+        logger.trace( "Resetting SSL context with Keystore " + keyStoreLocation + " and Truststore " + trustStoreLocation );
+
         SetupSSL setupSSL = new SetupSSL();
         setupSSL.setKeystoreLocation( keyStoreLocation );
         setupSSL.setTrustStoreLocation( trustStoreLocation );
@@ -79,10 +87,14 @@ public class HTTPGetter {
     }
 
     public void setExtractor( int httpStatusCode, EnhancedResponseExtractor responseExtractor ) {
+        logger.trace( "Setting ResponseExtractor " + responseExtractor.getClass().getCanonicalName() + " for HTTP status code " + httpStatusCode );
+
         extractorMap.put( httpStatusCode, responseExtractor );
     }
     
     public int get( String url ) {
+        logger.trace( "GET URL " + url );
+
         EnhancedResponseExtractor responseExtractor = get( url, null );
         int statusCode = responseExtractor.getStatusCode();
 
@@ -90,6 +102,8 @@ public class HTTPGetter {
         while( 300 <= statusCode && statusCode < 400 ) {
             final List< String > cookies = DefaultResponseExtractor.getCookies( responseExtractor.getHeaders() );
             final String location = DefaultResponseExtractor.getLocation( responseExtractor.getHeaders() );
+
+            logger.trace( "Redirecting to " + location + " with cookies " + cookies.toString() );
 
             responseExtractor = get( location, new RequestCallback() {
                 @Override
@@ -120,6 +134,8 @@ public class HTTPGetter {
                 EnhancedResponseExtractor ere = extractorMap.get( statusCode );
                 if( null == ere )
                     ere = extractorMap.get( 0 );
+                if( null == ere )
+                    throw new IllegalStateException( "No default ResponseExtractor registered. THIS IS NOT HAPPENING :/" );
                 
                 enhancedResponseExtractor.add( ere );
                 return ere.extractData( response );

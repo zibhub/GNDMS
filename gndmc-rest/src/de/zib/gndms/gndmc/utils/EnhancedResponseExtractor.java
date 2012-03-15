@@ -1,8 +1,9 @@
 package de.zib.gndms.gndmc.utils;
 
 import org.springframework.http.HttpHeaders;
-import org.springframework.web.client.ResponseExtractor;
+import org.springframework.http.client.ClientHttpResponse;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -19,8 +20,11 @@ import java.io.InputStream;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public interface EnhancedResponseExtractor extends ResponseExtractor< Object > {
+public interface EnhancedResponseExtractor {
     public int getStatusCode();
     public HttpHeaders getHeaders();
     public InputStream getBody();
+    public String getURL();
+
+    public void extractData( final String url, final ClientHttpResponse response ) throws IOException;
 }

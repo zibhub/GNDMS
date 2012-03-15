@@ -35,9 +35,9 @@ public class RedirectResponseExtractor extends DefaultResponseExtractor implemen
     private String location = null;
 
     @Override
-    public Object extractData( final ClientHttpResponse response ) throws IOException {
+    public void extractData( final String url, final ClientHttpResponse response ) throws IOException {
 
-        super.extractData( response );
+        super.extractData( url, response );
 
         for( String header: getHeaders().keySet() ) {
             if( "Set-Cookie".equals( header ) ) {
@@ -51,8 +51,6 @@ public class RedirectResponseExtractor extends DefaultResponseExtractor implemen
                 location = URLDecoder.decode(getHeaders().get(header).get(0));
             }
         }
-
-        return null;
     }
     
     public List< String > getCookie() {

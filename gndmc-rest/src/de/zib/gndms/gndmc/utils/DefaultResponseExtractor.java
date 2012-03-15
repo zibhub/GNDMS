@@ -16,6 +16,8 @@
 
 package de.zib.gndms.gndmc.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.ClientHttpResponse;
 
@@ -31,17 +33,19 @@ import java.util.List;
  * @email: bachmann@zib.de
  */
 public class DefaultResponseExtractor implements EnhancedResponseExtractor {
+    protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
+
     private int statusCode;
     private HttpHeaders headers;
     private InputStream body;
+    private String url;
 
     @Override
-    public Object extractData( final ClientHttpResponse response ) throws IOException {
+    public void extractData( final String url, final ClientHttpResponse response ) throws IOException {
         statusCode = response.getStatusCode().value();
         headers = response.getHeaders();
         body = response.getBody();
-
-        return body;
+        this.url = url;
     }
 
     public int getStatusCode() {
@@ -56,8 +60,8 @@ public class DefaultResponseExtractor implements EnhancedResponseExtractor {
         return body;
     }
 
-    public static List< String > getCookies( HttpHeaders headers ) {
-        List< String > cookies = new LinkedList<String>();
+    public static List< String > getCookies( final HttpHeaders headers ) {
+        final List< String > cookies = new LinkedList<String>();
 
         for( String header: headers.keySet() ) {
             if( "Set-Cookie".equals( header ) ) {
@@ -70,7 +74,7 @@ public class DefaultResponseExtractor implements EnhancedResponseExtractor {
         return cookies;
     }
     
-    public static String getLocation( HttpHeaders headers ) {
+    public static String getLocation( final HttpHeaders headers ) {
         for( String header: headers.keySet() ) {
             if( "Location".equals( header) ) {
                 return headers.get( header ).get( 0 );
@@ -78,5 +82,9 @@ public class DefaultResponseExtractor implements EnhancedResponseExtractor {
         }
 
         return null;
+    }
+
+    public String getURL() {
+        return url;
     }
 }
