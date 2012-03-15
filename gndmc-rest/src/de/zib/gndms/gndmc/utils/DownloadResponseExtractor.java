@@ -46,7 +46,7 @@ public class DownloadResponseExtractor extends DefaultResponseExtractor {
     public void extractData( final String url, final ClientHttpResponse response ) throws IOException {
         String downloadID = UUID.randomUUID().toString();
 
-        logger.debug( "(DID: " + downloadID + ") Downloading " + url + " to file " + getOutputFile() );
+        logger.debug( "Downloading " + url + " to file " + getOutputFile() );
 
         super.extractData( url, response );
 
@@ -54,7 +54,7 @@ public class DownloadResponseExtractor extends DefaultResponseExtractor {
         OutputStream out = new FileOutputStream( outputFile );
         StreamCopyNIO.copyStream( in, out );
 
-        logger.debug( "(DID: " + downloadID + ") Done." );
+        logger.debug( "Done." );
     }
 
     public void setOutputFile( String outputFile ) {
