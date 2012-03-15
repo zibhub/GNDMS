@@ -45,7 +45,7 @@ public class HTTPGetter {
     
     private String keyStoreLocation;
     private String trustStoreLocation;
-    private String password;
+    private String password; // TODO: don't use same password for keystore and key?!
 
     final private Map< Integer, EnhancedResponseExtractor > extractorMap;
     
@@ -53,7 +53,16 @@ public class HTTPGetter {
         extractorMap = new HashMap< Integer, EnhancedResponseExtractor >();
         resetExtractorMap();
     }
+
+    public void resetExtractorMap() {
+        extractorMap.clear();
+        extractorMap.put( 0, new RedirectResponseExtractor() );
+    }
     
+    public EnhancedResponseExtractor getResponseExtractor( int statusCode ) {
+        return extractorMap.get( statusCode );
+    }
+
     public void setupSSL( ) throws
             IOException,
             NoSuchAlgorithmException,
@@ -63,17 +72,12 @@ public class HTTPGetter {
             KeyManagementException {
         SetupSSL setupSSL = new SetupSSL();
         setupSSL.setKeystoreLocation( keyStoreLocation );
-        setupSSL.setTrustStoreLocation(trustStoreLocation);
+        setupSSL.setTrustStoreLocation( trustStoreLocation );
 
-        setupSSL.prepareUserCert(password.toCharArray(), password.toCharArray());
+        setupSSL.prepareUserCert( password.toCharArray(), password.toCharArray() );
         setupSSL.setupDefaultSSLContext();
     }
 
-    public void resetExtractorMap() {
-        extractorMap.clear();
-        extractorMap.put(0, new RedirectResponseExtractor());
-    }
-    
     public void setExtractor( int httpStatusCode, EnhancedResponseExtractor responseExtractor ) {
         extractorMap.put( httpStatusCode, responseExtractor );
     }
@@ -106,8 +110,9 @@ public class HTTPGetter {
         // use the list as indirect pointer
         final List< EnhancedResponseExtractor > enhancedResponseExtractor = new LinkedList<EnhancedResponseExtractor>();
 
-        rt.execute(url, HttpMethod.GET, requestCallback, new ResponseExtractor<Object>() {
+        rt.execute( url, HttpMethod.GET, requestCallback, new ResponseExtractor< Object >() {
 
+            // call the EnhancedResponseExtractor registered for this response.statusCode
             @Override
             public Object extractData( ClientHttpResponse response ) throws IOException {
                 int statusCode = response.getStatusCode().value();
@@ -129,7 +134,7 @@ public class HTTPGetter {
         return keyStoreLocation;
     }
 
-    public void setKeyStoreLocation(String keyStoreLocation) {
+    public void setKeyStoreLocation( String keyStoreLocation ) {
         this.keyStoreLocation = keyStoreLocation;
     }
 
@@ -137,11 +142,11 @@ public class HTTPGetter {
         return trustStoreLocation;
     }
 
-    public void setTrustStoreLocation(String trustStoreLocation) {
+    public void setTrustStoreLocation( String trustStoreLocation ) {
         this.trustStoreLocation = trustStoreLocation;
     }
 
-    public void setPassword(String password) {
+    public void setPassword( String password ) {
         this.password = password;
     }
 }
