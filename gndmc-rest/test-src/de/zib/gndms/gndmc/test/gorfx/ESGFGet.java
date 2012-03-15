@@ -59,7 +59,7 @@ public class ESGFGet extends AbstractApplication {
         getter.setPassword( passwd );
         getter.setupSSL();
 
-        getter.setExtractor( 200, new DownloadResponseExtractor() );
+        getter.setExtractor( 200, new DownloadResponseExtractor( off ) );
         int statusCode = getter.get( url );
         
         System.out.println( "StatusCode: " + statusCode );
