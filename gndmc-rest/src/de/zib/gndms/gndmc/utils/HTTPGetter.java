@@ -99,11 +99,14 @@ public class HTTPGetter {
         EnhancedResponseExtractor responseExtractor = get( url, null );
         int statusCode = responseExtractor.getStatusCode();
 
+        int redirectionCounter = 0;
+
         // redirect as long as needed
         while( 300 <= statusCode && statusCode < 400 ) {
             final List< String > cookies = DefaultResponseExtractor.getCookies( responseExtractor.getHeaders() );
             final String location = DefaultResponseExtractor.getLocation( responseExtractor.getHeaders() );
 
+            logger.debug( "Redirection " + ++redirectionCounter );
             logger.trace( "Redirecting to " + location + " with cookies " + cookies.toString() );
 
             responseExtractor = get( location, new RequestCallback() {
@@ -116,6 +119,8 @@ public class HTTPGetter {
 
             statusCode = responseExtractor.getStatusCode();
         }
+        
+        logger.debug( "HTTP GET Status Code " + statusCode + " after " + redirectionCounter + " redirections");
 
         return statusCode;
     }
