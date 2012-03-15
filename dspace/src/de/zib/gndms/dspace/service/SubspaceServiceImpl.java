@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -72,7 +73,8 @@ public class SubspaceServiceImpl implements SubspaceService {
 
 	@Override
 	@RequestMapping( value = "/_{subspace}", method = RequestMethod.GET )
-	public final ResponseEntity<Facets> listAvailableFacets(
+    @Secured( "ROLE_USER" )
+	public ResponseEntity<Facets> listAvailableFacets(
 			@PathVariable final String subspace,
 			@RequestHeader( "DN" ) final String dn ) {
 
@@ -89,7 +91,8 @@ public class SubspaceServiceImpl implements SubspaceService {
 
     @Override
 	@RequestMapping( value = "/_{subspace}", method = RequestMethod.PUT )
-    public final ResponseEntity< Facets > createSubspace(
+    @Secured( "ROLE_ADMIN" )
+    public ResponseEntity< Facets > createSubspace(
             @PathVariable final String subspace,
             @RequestBody final String config,
             @RequestHeader( "DN" ) final String dn) {
@@ -111,7 +114,8 @@ public class SubspaceServiceImpl implements SubspaceService {
 
 	@Override
 	@RequestMapping( value = "/_{subspace}", method = RequestMethod.DELETE )
-	public final ResponseEntity< Specifier< Void > > deleteSubspace(
+    @Secured( "ROLE_ADMIN" )
+	public ResponseEntity< Specifier< Void > > deleteSubspace(
 			@PathVariable final String subspace,
 			@RequestHeader("DN") final String dn) {
 		GNDMSResponseHeader headers = getSubspaceHeaders( subspace, dn );
@@ -155,7 +159,8 @@ public class SubspaceServiceImpl implements SubspaceService {
 
 	@Override
 	@RequestMapping( value = "/_{subspace}/slicekinds", method = RequestMethod.GET )
-	public final ResponseEntity<List<Specifier<Void>>> listSliceKinds(
+    @Secured( "ROLE_USER" )
+	public ResponseEntity<List<Specifier<Void>>> listSliceKinds(
 			@PathVariable final String subspace,
 			@RequestHeader("DN") final String dn) {
 		GNDMSResponseHeader headers = getSubspaceHeaders( subspace, dn );
@@ -194,7 +199,8 @@ public class SubspaceServiceImpl implements SubspaceService {
 
     @Override
     @RequestMapping( value = "/_{subspace}/_{slicekind}", method = RequestMethod.PUT )
-    public final ResponseEntity<List<Specifier<Void>>> createSliceKind(
+    @Secured( "ROLE_ADMIN" )
+    public ResponseEntity<List<Specifier<Void>>> createSliceKind(
             @PathVariable final String subspace,
             @PathVariable final String slicekind,
             @RequestBody final String config,
@@ -219,7 +225,8 @@ public class SubspaceServiceImpl implements SubspaceService {
 
     @Override
 	@RequestMapping(value = "/_{subspace}/config", method = RequestMethod.GET)
-	public final ResponseEntity<Configuration> listSubspaceConfiguration(
+    @Secured( "ROLE_USER" )
+	public ResponseEntity<Configuration> listSubspaceConfiguration(
 			@PathVariable final String subspace,
 			@RequestHeader("DN") final String dn) {
 		GNDMSResponseHeader headers = getSubspaceHeaders( subspace, dn );
@@ -237,7 +244,8 @@ public class SubspaceServiceImpl implements SubspaceService {
 
 	@Override
 	@RequestMapping(value = "/_{subspace}/config", method = RequestMethod.PUT)
-	public final ResponseEntity<Void> setSubspaceConfiguration(
+    @Secured( "ROLE_ADMIN" )
+	public ResponseEntity<Void> setSubspaceConfiguration(
 			@PathVariable final String subspace,
 			@RequestBody final Configuration config,
 			@RequestHeader("DN") final String dn) {
@@ -279,7 +287,8 @@ public class SubspaceServiceImpl implements SubspaceService {
 
     @Override
     @RequestMapping( value = "/_{subspaceId}/_{sliceKindId}", method = RequestMethod.POST )
-    public final ResponseEntity< Specifier< Void > > createSlice(
+    @Secured( "ROLE_USER" )
+    public ResponseEntity< Specifier< Void > > createSlice(
             @PathVariable final String subspaceId,
             @PathVariable final String sliceKindId,
             @RequestBody final String config,
@@ -348,6 +357,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 
     // delegated to SliceKindServiceImpl, due to mapping conflicts
     @RequestMapping( value = "/_{subspace}/_{sliceKind}", method = RequestMethod.GET )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<Configuration> getSliceKindInfo( @PathVariable final String subspace,
                                                            @PathVariable final String sliceKind,
                                                            @RequestHeader( "DN" ) final String dn )
@@ -357,6 +367,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 
     // delegated to SliceKindServiceImpl, due to mapping conflicts
     @RequestMapping( value = "/_{subspace}/_{sliceKind}", method = RequestMethod.DELETE )
+    @Secured( "ROLE_ADMIN" )
     public ResponseEntity<Specifier<Void>> deleteSliceKind( @PathVariable final String subspace,
                                                             @PathVariable final String sliceKind,
                                                             @RequestHeader( "DN" ) final String dn )
@@ -425,7 +436,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 	 * Returns the base url of this subspace service.
 	 * @return the baseUrl
 	 */
-	public final String getBaseUrl() {
+	public String getBaseUrl() {
 		return baseUrl;
 	}
 
@@ -433,7 +444,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 	 * Sets the base url of this subspace service.
 	 * @param baseUrl the baseUrl to set
 	 */
-	public final void setBaseUrl(final String baseUrl) {
+	public void setBaseUrl(final String baseUrl) {
 		this.baseUrl = baseUrl;
 	}
 
@@ -441,7 +452,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 	 * Returns the subspace provider of this subspace service.
 	 * @return the subspaceProvider
 	 */
-	public final SubspaceProvider getSubspaceProvider() {
+	public SubspaceProvider getSubspaceProvider() {
 		return subspaceProvider;
 	}
 
@@ -450,7 +461,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 	 * @param subspaceProvider the subspaceProvider to set
 	 */
     @Inject
-	public final void setSubspaceProvider(final SubspaceProvider subspaceProvider) {
+	public void setSubspaceProvider(final SubspaceProvider subspaceProvider) {
 		this.subspaceProvider = subspaceProvider;
 	}
 
@@ -458,7 +469,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 	 * Returns the facets of this subspace service.
 	 * @return the dspaceFacets
 	 */
-	public final List< String > getSubspaceFacetNames() {
+	public List< String > getSubspaceFacetNames() {
 		return subspaceFacetNames;
 	}
 
@@ -466,7 +477,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 	 * Sets the facets of this subspace service.
 	 * @param subspaceFacetNames the names of the subspaceFacets to set
 	 */
-	public final void setSubspaceFacetNames( final List< String > subspaceFacetNames ) {
+	public void setSubspaceFacetNames( final List< String > subspaceFacetNames ) {
 		this.subspaceFacetNames = subspaceFacetNames;
 	}
 
@@ -474,7 +485,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 	 * Returns the entity manager factory.
 	 * @return the factory.
 	 */
-	public final EntityManagerFactory getEmf() {
+	public EntityManagerFactory getEmf() {
 		return emf;
 	}
 
@@ -483,7 +494,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 	 * @param emf the factory to set.
 	 */
 	@PersistenceUnit
-	public final void setEmf(final EntityManagerFactory emf) {
+	public void setEmf(final EntityManagerFactory emf) {
 		this.emf = emf;
 	}
 

@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -66,13 +67,14 @@ public class DSpaceServiceImpl implements DSpaceService {
      * Initialization of the dspace service.
      */
     @PostConstruct
-    public final void init() {
+    public void init() {
         uriFactory = new UriFactory(baseUrl);
     }
 
     @Override
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public final ResponseEntity<List<Specifier<Void>>> listSubspaceSpecifiers(
+    @Secured( "ROLE_USER" )
+    public ResponseEntity<List<Specifier<Void>>> listSubspaceSpecifiers(
             @RequestHeader("DN") final String dn) {
         if( subspaceProvider == null ) {
             logger.error( "Subspace provider not initialized" );
@@ -105,7 +107,7 @@ public class DSpaceServiceImpl implements DSpaceService {
      * Returns the base url of this dspace service.
      * @return the baseUrl
      */
-    public final String getBaseUrl() {
+    public String getBaseUrl() {
         return baseUrl;
     }
 
@@ -113,7 +115,7 @@ public class DSpaceServiceImpl implements DSpaceService {
      * Sets the base url of this dspace service.
      * @param baseUrl the baseUrl to set
      */
-    public final void setBaseUrl(final String baseUrl) {
+    public void setBaseUrl(final String baseUrl) {
         this.baseUrl = baseUrl;
     }
 
@@ -121,7 +123,7 @@ public class DSpaceServiceImpl implements DSpaceService {
      * Returns the subspace provider of this dspace service.
      * @return the subspaceProvider
      */
-    public final SubspaceProvider getSubspaceProvider() {
+    public SubspaceProvider getSubspaceProvider() {
         return subspaceProvider;
     }
 
@@ -130,8 +132,7 @@ public class DSpaceServiceImpl implements DSpaceService {
      * @param subspaceProvider the subspaceProvider to set
      */
     @Inject
-    public final void setSubspaceProvider(final SubspaceProvider subspaceProvider) {
+    public void setSubspaceProvider( final SubspaceProvider subspaceProvider ) {
         this.subspaceProvider = subspaceProvider;
     }
-
 }
