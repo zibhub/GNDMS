@@ -34,11 +34,11 @@ import java.util.UUID;
 public class DownloadResponseExtractor extends DefaultResponseExtractor {
     String outputFile;
     
-    DownloadResponseExtractor( ) {
+    public DownloadResponseExtractor( ) {
         outputFile = "/tmp/GNDMS.t" + Thread.currentThread().getId() + "." + UUID.randomUUID().toString();
     }
     
-    DownloadResponseExtractor( final String outputFile ) {
+    public DownloadResponseExtractor( final String outputFile ) {
         this.outputFile = outputFile;
     }
 
