@@ -39,6 +39,9 @@ public class RedirectResponseExtractor extends DefaultResponseExtractor implemen
 
         super.extractData( url, response );
 
+        cookie = null;
+        location = null;
+
         for( String header: getHeaders().keySet() ) {
             if( "Set-Cookie".equals( header ) ) {
                 cookie = new LinkedList< String >();
@@ -48,8 +51,12 @@ public class RedirectResponseExtractor extends DefaultResponseExtractor implemen
                 }
             }
             else if( "Location".equals( header ) ) {
-                location = URLDecoder.decode(getHeaders().get(header).get(0));
+                location = URLDecoder.decode( getHeaders().get( header ).get( 0 ), "utf8" );
             }
+        }
+
+        if( null == location ) {
+            throw new IllegalArgumentException( "Got a redirection but no Location (HTTP Header) to redirect to." );
         }
     }
     
