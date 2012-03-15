@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -90,6 +91,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
 
     @RequestMapping( value = "/_{type}/_{id}", method = RequestMethod.GET )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<Facets> getFacets( @PathVariable String type, @PathVariable String id, @RequestHeader( "DN" ) String dn ) {
 
         Map<String, String> uriargs = taskFlowUriMap( type, id );
@@ -116,6 +118,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
 
     @RequestMapping( value = "/_{type}/_{id}", method = RequestMethod.DELETE )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<Void> deleteTaskflow( @PathVariable String type, @PathVariable String id,
                                                 @RequestHeader( "DN" ) String dn,
                                                 @RequestHeader( "WId" ) String wid ) {
@@ -138,6 +141,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
 
     @RequestMapping( value = "/_{type}/_{id}/order", method = RequestMethod.GET )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<Order> getOrder( @PathVariable String type, @PathVariable String id,
                                            @RequestHeader( "DN" ) String dn,
                                            @RequestHeader( "WId" ) String wid ) {
@@ -155,6 +159,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
 
     @RequestMapping( value = "/_{type}/_{id}/order", method = RequestMethod.POST )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<Void> setOrder( @PathVariable String type, @PathVariable String id,
                                           @RequestBody Order orq, @RequestHeader( "DN" ) String dn,
                                           @RequestHeader( "WId" ) String wid ) {
@@ -172,6 +177,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
 
     @RequestMapping( value = "/_{type}/_{id}/quote", method = RequestMethod.GET )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<List<Specifier<Quote>>> getQuotes( @PathVariable String type, @PathVariable String id,
                                                              @RequestHeader( "DN" ) String dn,
                                                              @RequestHeader( "WId" ) String wid ) {
@@ -221,6 +227,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
 
     @RequestMapping( value = "/_{type}/_{id}/quote", method = RequestMethod.POST )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<Integer> setQuote( @PathVariable String type, @PathVariable String id,
                                              @RequestBody Quote cont,
                                              @RequestHeader( "DN" ) String dn,
@@ -240,6 +247,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
 
     @RequestMapping( value = "/_{type}/_{id}/quote/_{idx}", method = RequestMethod.GET )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<Quote> getQuote( @PathVariable String type, @PathVariable String id, @PathVariable int idx,
                                            @RequestHeader( "DN" ) String dn, @RequestHeader( "WId" ) String wid ) {
 
@@ -261,6 +269,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
 
     @RequestMapping( value = "/_{type}/_{id}/quote/_{idx}", method = RequestMethod.DELETE )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<Void> deleteQuotes( @PathVariable String type, @PathVariable String id,
                                               @PathVariable int idx, @RequestHeader( "DN" ) String dn,
                                               @RequestHeader( "WId" ) String wid ) {
@@ -270,6 +279,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
 
     @RequestMapping( value = "/_{type}/_{id}/task", method = RequestMethod.GET )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<Specifier<Facets>> getTask( @PathVariable String type, @PathVariable String id,
                                                       @RequestHeader( "DN" ) String dn, @RequestHeader( "WId" ) String wid ) {
 
@@ -297,6 +307,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
 
     @RequestMapping( value = "/_{type}/_{id}/task", method = RequestMethod.PUT )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<Specifier<Facets>> createTask( @PathVariable String type, @PathVariable String id,
                                                          @RequestParam( value = "quote",
                                                                  required = false ) Integer quoteId,
@@ -351,6 +362,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
 
     @RequestMapping( value = "/_{type}/_{id}/status", method = RequestMethod.GET )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<TaskFlowStatus> getStatus( @PathVariable String type, @PathVariable String id,
                                                      @RequestHeader( "DN" ) String dn,
                                                      @RequestHeader( "WId" ) String wid ) {
@@ -378,6 +390,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
 
     @RequestMapping( value = "/_{type}/_{id}/result", method = RequestMethod.GET )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<Specifier<TaskResult>> getResult( @PathVariable String type, @PathVariable String id,
                                                             @RequestHeader( "DN" ) String dn,
                                                             @RequestHeader( "WId" ) String wid ) {
@@ -400,6 +413,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
 
     @RequestMapping( value = "/_{type}/_{id}/errors", method = RequestMethod.GET )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<Specifier<TaskFailure>> getErrors( @PathVariable String type, @PathVariable String id,
                                                              @RequestHeader( "DN" ) String dn,
                                                              @RequestHeader( "WId" ) String wid ) {

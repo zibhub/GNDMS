@@ -111,6 +111,7 @@ public class GORFXServiceImpl implements GORFXService {
 
 
     @RequestMapping( value = "/config", method = RequestMethod.GET )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<List<String>> listConfigActions( @RequestHeader( value="DN", required=false ) String dn ) {
 
         GNDMSResponseHeader responseHeaders = new GNDMSResponseHeader();
@@ -124,6 +125,7 @@ public class GORFXServiceImpl implements GORFXService {
 
 
     @RequestMapping( value = "/config/_{actionName:[a-zA-Z._0-9]+}", method = RequestMethod.GET )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<ConfigMeta> getConfigActionInfo( @PathVariable String actionName,
                                                            @RequestHeader( value="DN", required=false ) String dn ) {
 
@@ -163,6 +165,7 @@ public class GORFXServiceImpl implements GORFXService {
 
 
     @RequestMapping( value = "/batch", method = RequestMethod.GET )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<List<String>> listBatchActions( String dn ) {
         // Fires a batch action
         GNDMSResponseHeader responseHeaders = new GNDMSResponseHeader();
@@ -175,6 +178,7 @@ public class GORFXServiceImpl implements GORFXService {
 
 
     @RequestMapping( value = "/batch/_{actionName}", method = RequestMethod.GET )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<ActionMeta> getBatchActionInfo( @PathVariable String actionName,
                                                           @RequestHeader( "DN" ) String dn ) {
 
@@ -202,6 +206,7 @@ public class GORFXServiceImpl implements GORFXService {
 
 
     @RequestMapping( value = "/batch/_{actionName}/_{id}", method = RequestMethod.GET )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<Specifier<Facets>> getBatchAction( @PathVariable String actionName, @PathVariable String id,
                                                              @RequestHeader String dn ) {
         return null;  // not required here
@@ -209,6 +214,7 @@ public class GORFXServiceImpl implements GORFXService {
 
 
     @RequestMapping( value = "/batch/_{actionName}", method = RequestMethod.POST )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<Specifier> callBatchAction( @PathVariable String actionName, @RequestBody String args,
                                                    @RequestHeader( "DN" ) String dn ) {
 
@@ -229,6 +235,7 @@ public class GORFXServiceImpl implements GORFXService {
 
 
     @RequestMapping( value = "/taskflows/", method = RequestMethod.GET )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<List<String>> listTaskFlows( @RequestHeader( "DN" ) String dn ) {
 
         if ( taskFlowProvider == null )
@@ -242,6 +249,7 @@ public class GORFXServiceImpl implements GORFXService {
 
 
     @RequestMapping( value = "/_{type}", method = RequestMethod.GET )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<TaskFlowInfo> getTaskFlowInfo( @PathVariable String type, @RequestHeader( "DN" ) String dn ) {
 
         GNDMSResponseHeader headers = new GNDMSResponseHeader(
@@ -258,6 +266,7 @@ public class GORFXServiceImpl implements GORFXService {
 
 
     @RequestMapping( value = "/_{type}", method = RequestMethod.POST )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<Specifier<Facets>> createTaskFlow( @PathVariable String type, @RequestBody Order order,
                                                              @RequestHeader( "DN" ) String dn,
                                                              @RequestHeader( "WId" ) String wid,

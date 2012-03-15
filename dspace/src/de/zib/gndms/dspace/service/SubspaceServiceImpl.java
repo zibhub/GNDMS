@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -72,6 +73,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 
 	@Override
 	@RequestMapping( value = "/_{subspace}", method = RequestMethod.GET )
+    @Secured( "ROLE_USER" )
 	public final ResponseEntity<Facets> listAvailableFacets(
 			@PathVariable final String subspace,
 			@RequestHeader( "DN" ) final String dn ) {
@@ -89,6 +91,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 
     @Override
 	@RequestMapping( value = "/_{subspace}", method = RequestMethod.PUT )
+    @Secured( "ROLE_ADMIN" )
     public final ResponseEntity< Facets > createSubspace(
             @PathVariable final String subspace,
             @RequestBody final String config,
@@ -111,6 +114,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 
 	@Override
 	@RequestMapping( value = "/_{subspace}", method = RequestMethod.DELETE )
+    @Secured( "ROLE_ADMIN" )
 	public final ResponseEntity< Specifier< Void > > deleteSubspace(
 			@PathVariable final String subspace,
 			@RequestHeader("DN") final String dn) {
@@ -155,6 +159,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 
 	@Override
 	@RequestMapping( value = "/_{subspace}/slicekinds", method = RequestMethod.GET )
+    @Secured( "ROLE_USER" )
 	public final ResponseEntity<List<Specifier<Void>>> listSliceKinds(
 			@PathVariable final String subspace,
 			@RequestHeader("DN") final String dn) {
@@ -194,6 +199,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 
     @Override
     @RequestMapping( value = "/_{subspace}/_{slicekind}", method = RequestMethod.PUT )
+    @Secured( "ROLE_ADMIN" )
     public final ResponseEntity<List<Specifier<Void>>> createSliceKind(
             @PathVariable final String subspace,
             @PathVariable final String slicekind,
@@ -219,6 +225,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 
     @Override
 	@RequestMapping(value = "/_{subspace}/config", method = RequestMethod.GET)
+    @Secured( "ROLE_USER" )
 	public final ResponseEntity<Configuration> listSubspaceConfiguration(
 			@PathVariable final String subspace,
 			@RequestHeader("DN") final String dn) {
@@ -237,6 +244,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 
 	@Override
 	@RequestMapping(value = "/_{subspace}/config", method = RequestMethod.PUT)
+    @Secured( "ROLE_ADMIN" )
 	public final ResponseEntity<Void> setSubspaceConfiguration(
 			@PathVariable final String subspace,
 			@RequestBody final Configuration config,
@@ -279,6 +287,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 
     @Override
     @RequestMapping( value = "/_{subspaceId}/_{sliceKindId}", method = RequestMethod.POST )
+    @Secured( "ROLE_USER" )
     public final ResponseEntity< Specifier< Void > > createSlice(
             @PathVariable final String subspaceId,
             @PathVariable final String sliceKindId,
@@ -348,6 +357,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 
     // delegated to SliceKindServiceImpl, due to mapping conflicts
     @RequestMapping( value = "/_{subspace}/_{sliceKind}", method = RequestMethod.GET )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<Configuration> getSliceKindInfo( @PathVariable final String subspace,
                                                            @PathVariable final String sliceKind,
                                                            @RequestHeader( "DN" ) final String dn )
@@ -357,6 +367,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 
     // delegated to SliceKindServiceImpl, due to mapping conflicts
     @RequestMapping( value = "/_{subspace}/_{sliceKind}", method = RequestMethod.DELETE )
+    @Secured( "ROLE_ADMIN" )
     public ResponseEntity<Specifier<Void>> deleteSliceKind( @PathVariable final String subspace,
                                                             @PathVariable final String sliceKind,
                                                             @RequestHeader( "DN" ) final String dn )

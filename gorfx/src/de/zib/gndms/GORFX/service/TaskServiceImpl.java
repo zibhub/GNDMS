@@ -22,7 +22,6 @@ import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.common.stuff.devel.NotYetImplementedException;
-import de.zib.gndms.logic.model.TaskExecutionService;
 import de.zib.gndms.logic.model.gorfx.taskflow.TaskTypeConverter;
 import de.zib.gndms.model.common.NoSuchResourceException;
 import de.zib.gndms.model.gorfx.types.TaskState;
@@ -31,13 +30,14 @@ import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import java.util.*;
 
 /**
@@ -51,7 +51,6 @@ public class TaskServiceImpl implements TaskService {
 
     protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
-    private TaskExecutionService executor;
     private String serviceUrl;
     private UriFactory uriFactory;
     private List<String> facets;
@@ -67,24 +66,28 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @RequestMapping( value = "/", method = RequestMethod.GET )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<TaskServiceInfo> getServiceInfo() {
         return new ResponseEntity<TaskServiceInfo>( new TaskServiceInfo(), null, HttpStatus.OK );
     }
 
 
     @RequestMapping( value = "/config", method = RequestMethod.GET )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<TaskServiceConfig> getServiceConfig( @RequestHeader String dn ) {
         throw new NotYetImplementedException();
     }
 
 
     @RequestMapping( value = "/config", method = RequestMethod.POST )
+    @Secured( "ROLE_ADMIN" )
     public ResponseEntity<String> setServiceConfig( @RequestBody TaskServiceConfig cfg, @RequestHeader String dn ) {
         throw new NotYetImplementedException();
     }
 
 
     @RequestMapping( value = "/_{id}", method = RequestMethod.GET )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<Facets> getTaskFacets( @PathVariable String id, @RequestHeader( "DN" ) String dn ) {
 
         logger.debug( "get task called with id " + id );
@@ -110,6 +113,7 @@ public class TaskServiceImpl implements TaskService {
 
 
     @RequestMapping( value = "/_{id}", method = RequestMethod.DELETE )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<Void> deleteTask( @PathVariable String id, @RequestHeader( "DN" ) String dn,
                                               @RequestHeader( "WId" ) String wid ) {
 
@@ -131,6 +135,7 @@ public class TaskServiceImpl implements TaskService {
 
 
     @RequestMapping( value = "/_{id}/status", method = RequestMethod.GET )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<TaskStatus> getStatus( @PathVariable String id, @RequestHeader( "DN" ) String dn,
                                                  @RequestHeader( "WId" ) String wid ) {
 
@@ -149,6 +154,7 @@ public class TaskServiceImpl implements TaskService {
 
 
     @RequestMapping( value = "/_{id}/status", method = RequestMethod.POST )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<Void> changeStatus( @PathVariable String id, @RequestBody TaskControl status,
                                               @RequestHeader( "DN" ) String dn,
                                               @RequestHeader( "WId" ) String wid ) {
@@ -159,6 +165,7 @@ public class TaskServiceImpl implements TaskService {
 
 
     @RequestMapping( value = "/_{id}/result", method = RequestMethod.GET )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<TaskResult> getResult( @PathVariable String id, @RequestHeader( "DN" ) String dn,
                                                  @RequestHeader( "WId" ) String wid ) {
 
@@ -184,6 +191,7 @@ public class TaskServiceImpl implements TaskService {
 
 
     @RequestMapping( value = "/_{id}/errors", method = RequestMethod.GET )
+    @Secured( "ROLE_USER" )
     public ResponseEntity<TaskFailure> getErrors( @PathVariable String id,
                                                   @RequestHeader( "DN" ) String dn,
                                                   @RequestHeader( "WId" ) String wid ) {
@@ -243,12 +251,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
 
-    @Autowired
-    public void setExecutor( TaskExecutionService executor ) {
-        this.executor = executor;
-    }
-
-    @Autowired
+    @Inject
     public void setDao( Dao dao ) {
         this.dao = dao;
     }

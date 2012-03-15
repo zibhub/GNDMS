@@ -23,7 +23,6 @@ import de.zib.gndms.common.rest.*;
 import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.kit.util.DirectoryAux;
-import de.zib.gndms.logic.model.dspace.NoSuchElementException;
 import de.zib.gndms.logic.model.dspace.*;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
@@ -34,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +45,10 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import java.io.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 // import de.zib.gndms.neomodel.gorfx.Taskling;
 
@@ -98,6 +101,7 @@ public class SliceServiceImpl implements SliceService {
 
 	@Override
 	@RequestMapping( value = "/_{subspaceId}/_{sliceKindId}/_{sliceId}", method = RequestMethod.GET )
+    @Secured( "ROLE_USER" )
 	public final ResponseEntity< Facets > listSliceFacets(
 			@PathVariable final String subspaceId,
 			@PathVariable final String sliceKindId,
@@ -120,6 +124,7 @@ public class SliceServiceImpl implements SliceService {
 
 	@Override
 	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}/config", method = RequestMethod.PUT)
+    @Secured( "ROLE_USER" )
 	public final ResponseEntity<Void> setSliceConfiguration(
 			@PathVariable final String subspace,
 			@PathVariable final String sliceKind,
@@ -152,6 +157,7 @@ public class SliceServiceImpl implements SliceService {
 
 	@Override
 	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}", method = RequestMethod.POST)
+    @Secured( "ROLE_USER" )
 	public final ResponseEntity<Specifier<Void>> transformSlice(
 			@PathVariable final String subspace,
 			@PathVariable final String sliceKind,
@@ -206,6 +212,7 @@ public class SliceServiceImpl implements SliceService {
 
 	@Override
 	@RequestMapping( value = "/_{subspaceId}/_{sliceKindId}/_{sliceId}", method = RequestMethod.DELETE )
+    @Secured( "ROLE_USER" )
 	public final ResponseEntity<Specifier<Facets>> deleteSlice(
             @PathVariable final String subspaceId,
             @PathVariable final String sliceKindId,
@@ -233,6 +240,7 @@ public class SliceServiceImpl implements SliceService {
 
 	@Override
 	@RequestMapping(value = "/_{subspaceId}/_{sliceKindId}/_{sliceId}/files", method = RequestMethod.GET)
+    @Secured( "ROLE_USER" )
 	public final ResponseEntity< List<FileStats> > listFiles(
 			@PathVariable final String subspaceId,
 			@PathVariable final String sliceKindId,
@@ -260,6 +268,7 @@ public class SliceServiceImpl implements SliceService {
 	}
 
     @RequestMapping(value = "/_{subspace}/_{sliceKind}/_{sliceId}/files", method = RequestMethod.POST)
+    @Secured( "ROLE_USER" )
     public final ResponseEntity<Void> setFileContents(
             @PathVariable final String subspace,
             @PathVariable final String sliceKind,
@@ -297,6 +306,7 @@ public class SliceServiceImpl implements SliceService {
 
 	@Override
 	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}/files", method = RequestMethod.DELETE)
+    @Secured( "ROLE_USER" )
 	public final ResponseEntity<Void> deleteFiles(
 			@PathVariable final String subspace,
 			@PathVariable final String sliceKind,
@@ -327,6 +337,7 @@ public class SliceServiceImpl implements SliceService {
 
 	@Override
 	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}/gsiftp", method = RequestMethod.GET)
+    @Secured( "ROLE_USER" )
 	public final ResponseEntity<String> getGridFtpUrl(
 			@PathVariable final String subspace,
 			@PathVariable final String sliceKind,
@@ -348,6 +359,7 @@ public class SliceServiceImpl implements SliceService {
 	@Override
 	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{sliceId}/_{fileName:.*}",
             method = RequestMethod.GET)
+    @Secured( "ROLE_USER" )
 	public final ResponseEntity<Void> listFileContent(
             @PathVariable final String subspace,
             @PathVariable final String sliceKind,
@@ -400,6 +412,7 @@ public class SliceServiceImpl implements SliceService {
 
 	@Override
 	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{sliceId}/_{fileName}", method = RequestMethod.POST)
+    @Secured( "ROLE_USER" )
 	public final ResponseEntity<Void> setFileContent(
 			@PathVariable final String subspace,
 			@PathVariable final String sliceKind,
@@ -440,6 +453,7 @@ public class SliceServiceImpl implements SliceService {
 
 	@Override
 	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}/_{fileName}", method = RequestMethod.DELETE)
+    @Secured( "ROLE_USER" )
 	public final ResponseEntity<Void> deleteFile(
 			@PathVariable final String subspace,
 			@PathVariable final String sliceKind,
