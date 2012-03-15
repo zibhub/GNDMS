@@ -102,7 +102,7 @@ public class SliceServiceImpl implements SliceService {
 	@Override
 	@RequestMapping( value = "/_{subspaceId}/_{sliceKindId}/_{sliceId}", method = RequestMethod.GET )
     @Secured( "ROLE_USER" )
-	public final ResponseEntity< Facets > listSliceFacets(
+	public ResponseEntity< Facets > listSliceFacets(
 			@PathVariable final String subspaceId,
 			@PathVariable final String sliceKindId,
 			@PathVariable final String sliceId,
@@ -125,7 +125,7 @@ public class SliceServiceImpl implements SliceService {
 	@Override
 	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}/config", method = RequestMethod.PUT)
     @Secured( "ROLE_USER" )
-	public final ResponseEntity<Void> setSliceConfiguration(
+	public ResponseEntity<Void> setSliceConfiguration(
 			@PathVariable final String subspace,
 			@PathVariable final String sliceKind,
 			@PathVariable final String slice,
@@ -158,7 +158,7 @@ public class SliceServiceImpl implements SliceService {
 	@Override
 	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}", method = RequestMethod.POST)
     @Secured( "ROLE_USER" )
-	public final ResponseEntity<Specifier<Void>> transformSlice(
+	public ResponseEntity<Specifier<Void>> transformSlice(
 			@PathVariable final String subspace,
 			@PathVariable final String sliceKind,
 			@PathVariable final String slice,
@@ -213,7 +213,7 @@ public class SliceServiceImpl implements SliceService {
 	@Override
 	@RequestMapping( value = "/_{subspaceId}/_{sliceKindId}/_{sliceId}", method = RequestMethod.DELETE )
     @Secured( "ROLE_USER" )
-	public final ResponseEntity<Specifier<Facets>> deleteSlice(
+	public ResponseEntity<Specifier<Facets>> deleteSlice(
             @PathVariable final String subspaceId,
             @PathVariable final String sliceKindId,
             @PathVariable final String sliceId,
@@ -241,7 +241,7 @@ public class SliceServiceImpl implements SliceService {
 	@Override
 	@RequestMapping(value = "/_{subspaceId}/_{sliceKindId}/_{sliceId}/files", method = RequestMethod.GET)
     @Secured( "ROLE_USER" )
-	public final ResponseEntity< List<FileStats> > listFiles(
+	public ResponseEntity< List<FileStats> > listFiles(
 			@PathVariable final String subspaceId,
 			@PathVariable final String sliceKindId,
 			@PathVariable final String sliceId,
@@ -269,7 +269,7 @@ public class SliceServiceImpl implements SliceService {
 
     @RequestMapping(value = "/_{subspace}/_{sliceKind}/_{sliceId}/files", method = RequestMethod.POST)
     @Secured( "ROLE_USER" )
-    public final ResponseEntity<Void> setFileContents(
+    public ResponseEntity<Void> setFileContents(
             @PathVariable final String subspace,
             @PathVariable final String sliceKind,
             @PathVariable final String sliceId,
@@ -307,7 +307,7 @@ public class SliceServiceImpl implements SliceService {
 	@Override
 	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}/files", method = RequestMethod.DELETE)
     @Secured( "ROLE_USER" )
-	public final ResponseEntity<Void> deleteFiles(
+	public ResponseEntity<Void> deleteFiles(
 			@PathVariable final String subspace,
 			@PathVariable final String sliceKind,
 			@PathVariable final String slice,
@@ -338,7 +338,7 @@ public class SliceServiceImpl implements SliceService {
 	@Override
 	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}/gsiftp", method = RequestMethod.GET)
     @Secured( "ROLE_USER" )
-	public final ResponseEntity<String> getGridFtpUrl(
+	public ResponseEntity<String> getGridFtpUrl(
 			@PathVariable final String subspace,
 			@PathVariable final String sliceKind,
 			@PathVariable final String slice,
@@ -360,7 +360,7 @@ public class SliceServiceImpl implements SliceService {
 	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{sliceId}/_{fileName:.*}",
             method = RequestMethod.GET)
     @Secured( "ROLE_USER" )
-	public final ResponseEntity<Void> listFileContent(
+	public ResponseEntity<Void> listFileContent(
             @PathVariable final String subspace,
             @PathVariable final String sliceKind,
             @PathVariable final String sliceId,
@@ -413,7 +413,7 @@ public class SliceServiceImpl implements SliceService {
 	@Override
 	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{sliceId}/_{fileName}", method = RequestMethod.POST)
     @Secured( "ROLE_USER" )
-	public final ResponseEntity<Void> setFileContent(
+	public ResponseEntity<Void> setFileContent(
 			@PathVariable final String subspace,
 			@PathVariable final String sliceKind,
 			@PathVariable final String sliceId,
@@ -454,7 +454,7 @@ public class SliceServiceImpl implements SliceService {
 	@Override
 	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}/_{fileName}", method = RequestMethod.DELETE)
     @Secured( "ROLE_USER" )
-	public final ResponseEntity<Void> deleteFile(
+	public ResponseEntity<Void> deleteFile(
 			@PathVariable final String subspace,
 			@PathVariable final String sliceKind,
 			@PathVariable final String slice,
@@ -575,7 +575,7 @@ public class SliceServiceImpl implements SliceService {
 	 * 
 	 * @return the baseUrl
 	 */
-	public final String getBaseUrl() {
+	public String getBaseUrl() {
 		return baseUrl;
 	}
 
@@ -585,7 +585,7 @@ public class SliceServiceImpl implements SliceService {
 	 * @param baseUrl
 	 *            the baseUrl to set
 	 */
-	public final void setBaseUrl(final String baseUrl) {
+	public void setBaseUrl(final String baseUrl) {
 		this.baseUrl = baseUrl;
 	}
 
@@ -594,7 +594,7 @@ public class SliceServiceImpl implements SliceService {
 	 * 
 	 * @return the sliceFacets
 	 */
-	public final List< String > getSliceFacetNames() {
+	public List< String > getSliceFacetNames() {
 		return sliceFacetNames;
 	}
 
@@ -604,12 +604,12 @@ public class SliceServiceImpl implements SliceService {
 	 * @param sliceFacetNames
 	 *            the sliceFacets to set
 	 */
-	public final void setSliceFacetNames(final List< String > sliceFacetNames ) {
+	public void setSliceFacetNames(final List< String > sliceFacetNames ) {
 		this.sliceFacetNames = sliceFacetNames;
 	}
 
     @Inject
-    public final void setSubspaceProvider( SubspaceProvider subspaceProvider )
+    public void setSubspaceProvider( SubspaceProvider subspaceProvider )
     {
         this.subspaceProvider = subspaceProvider;
     }

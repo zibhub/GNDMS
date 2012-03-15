@@ -63,7 +63,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 
 
     @PostConstruct
-	public final void init() {
+	public void init() {
         setUriFactory( new UriFactory( baseUrl ) );
 	}
 
