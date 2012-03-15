@@ -23,6 +23,8 @@ import org.springframework.http.client.ClientHttpResponse;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -77,7 +79,11 @@ public class DefaultResponseExtractor implements EnhancedResponseExtractor {
     public static String getLocation( final HttpHeaders headers ) {
         for( String header: headers.keySet() ) {
             if( "Location".equals( header) ) {
-                return headers.get( header ).get( 0 );
+                try {
+                    return URLDecoder.decode(headers.get(header).get(0), "utf8");
+                } catch (UnsupportedEncodingException e) {
+                    throw new IllegalStateException( "The system does not support utf8 decoding!" );
+                }
             }
         }
 

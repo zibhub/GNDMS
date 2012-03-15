@@ -94,7 +94,7 @@ public class HTTPGetter {
     }
     
     public int get( String url ) {
-        logger.trace( "GET URL " + url );
+        logger.debug( "GET URL " + url );
 
         EnhancedResponseExtractor responseExtractor = get( url, null );
         int statusCode = responseExtractor.getStatusCode();
