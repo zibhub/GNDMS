@@ -62,7 +62,7 @@ public class HTTPGetter {
         logger.trace( "Resetting ResponseExtractorMap." );
 
         extractorMap.clear();
-        extractorMap.put(0, new RedirectResponseExtractor());
+        extractorMap.put(0, new RedirectResponseExtractor() );
     }
     
     public EnhancedResponseExtractor getResponseExtractor( int statusCode ) {
@@ -132,6 +132,8 @@ public class HTTPGetter {
                 int statusCode = response.getStatusCode().value();
                 
                 EnhancedResponseExtractor ere = extractorMap.get( statusCode );
+                if( null == ere )
+                    ere = extractorMap.get( statusCode / 100 );
                 if( null == ere )
                     ere = extractorMap.get( 0 );
                 if( null == ere )
