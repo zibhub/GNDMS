@@ -62,7 +62,8 @@ public class HTTPGetter {
         logger.trace( "Resetting ResponseExtractorMap." );
 
         extractorMap.clear();
-        extractorMap.put(0, new RedirectResponseExtractor() );
+        extractorMap.put( 3, new RedirectResponseExtractor() );
+        extractorMap.put( 0, new DefaultResponseExtractor() );
     }
     
     public EnhancedResponseExtractor getResponseExtractor( int statusCode ) {
