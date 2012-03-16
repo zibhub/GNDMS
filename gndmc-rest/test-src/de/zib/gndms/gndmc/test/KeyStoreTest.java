@@ -61,7 +61,7 @@ public class KeyStoreTest {
     {
 
         SetupSSL sslSetup = new SetupSSL();
-        sslSetup.setKeystoreLocation( "/tmp/awicert.p12" );
+        sslSetup.setKeyStoreLocation("/tmp/awicert.p12");
         sslSetup.prepareUserCert( kpass, kpass2 );
 
         KeyStore ks = sslSetup.getKeyStore();

@@ -79,10 +79,10 @@ public class HTTPGetter {
         logger.trace( "Resetting SSL context with Keystore " + keyStoreLocation + " and Truststore " + trustStoreLocation );
 
         SetupSSL setupSSL = new SetupSSL();
-        setupSSL.setKeystoreLocation( keyStoreLocation );
+        setupSSL.setKeyStoreLocation(keyStoreLocation);
         setupSSL.setTrustStoreLocation( trustStoreLocation );
 
-        setupSSL.initKeyStore( password.toCharArray(), password.toCharArray() );
+        setupSSL.initKeyStore(password.toCharArray(), password.toCharArray());
         setupSSL.prepareTrustStore( password.toCharArray() );
         setupSSL.setupDefaultSSLContext();
     }
