@@ -82,7 +82,8 @@ public class HTTPGetter {
         setupSSL.setKeystoreLocation( keyStoreLocation );
         setupSSL.setTrustStoreLocation( trustStoreLocation );
 
-        setupSSL.prepareUserCert( password.toCharArray(), password.toCharArray() );
+        setupSSL.initKeyStore( password.toCharArray(), password.toCharArray() );
+        setupSSL.prepareTrustStore( password.toCharArray() );
         setupSSL.setupDefaultSSLContext();
     }
 

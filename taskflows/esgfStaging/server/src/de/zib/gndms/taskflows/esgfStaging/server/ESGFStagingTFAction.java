@@ -21,6 +21,8 @@ package de.zib.gndms.taskflows.esgfStaging.server;
 import de.zib.gndms.common.dspace.service.SubspaceService;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
+import de.zib.gndms.gndmc.utils.DownloadResponseExtractor;
+import de.zib.gndms.gndmc.utils.HTTPGetter;
 import de.zib.gndms.kit.config.ConfigProvider;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.config.MapConfig;
@@ -65,6 +67,8 @@ public class ESGFStagingTFAction extends TaskFlowAction< ESGFStagingOrder > {
 
     private SubspaceService subspaceService;
     private static final String PROXY_FILE_NAME = File.separator + "x509_proxy.pem";
+    
+    private HTTPGetter httpGetter = new HTTPGetter();
 
 
     @Override
@@ -130,6 +134,9 @@ public class ESGFStagingTFAction extends TaskFlowAction< ESGFStagingOrder > {
             throw new Exception( "Could not authenticate against ESGF Provider.", e );
         }
 
+        httpGetter.setKeyStoreLocation( cert );
+        httpGetter.setupSSL();
+
         final Task detachedTask = getDetachedTask();
 
         int progress = detachedTask.getProgress();
@@ -144,24 +151,13 @@ public class ESGFStagingTFAction extends TaskFlowAction< ESGFStagingOrder > {
 
             // download file
             {
-                final ProcessBuilder processBuilder = new ProcessBuilder(
-                        "wget",
-                        "-T", "120", "-q", "-c",
-                        "-O", outFile.getCanonicalPath(),
-                        "--certificate",
-                        cert,
-                        "--private-key",
-                        cert,
-                        url
-                );
-
-                final Process process = processBuilder.start();
-
-                process.waitFor();
-                if( 0 != process.exitValue() )
+                httpGetter.setExtractor( 200, new DownloadResponseExtractor( outFile.getCanonicalPath() ) );
+                final int statusCode = httpGetter.get( url );
+                        
+                if( 200 != statusCode )
                 {
                     transit(TaskState.FAILED);
-                    throw new Exception( "Could not download all files." );
+                    throw new Exception( "Could not download all files. HTTP GET returned status code " + statusCode );
                 }
             }
 
@@ -383,9 +379,21 @@ public class ESGFStagingTFAction extends TaskFlowAction< ESGFStagingOrder > {
         return subspaceService;
     }
 
-    @SuppressWarnings("SpringJavaAutowiringInspection")
+    @SuppressWarnings( "SpringJavaAutowiringInspection" )
     @Inject
     public void setSubspaceService( SubspaceService subspaceService ) {
         this.subspaceService = subspaceService;
+    }
+
+
+    public HTTPGetter getHttpGetter() {
+        return httpGetter;
+    }
+
+
+    @SuppressWarnings( "SpringJavaAutowiringInspection" )
+    @Inject
+    public void setHttpGetter( HTTPGetter httpGetter ) {
+        this.httpGetter = httpGetter;
     }
 }

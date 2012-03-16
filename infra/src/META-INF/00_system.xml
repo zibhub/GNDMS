@@ -97,6 +97,11 @@
         </property>
     </bean>
 
+    
+    <bean id="httpGetter" class="de.zib.gndms.gndmc.utils.HTTPGetter">
+        <property name="trustStoreLocation" value="${TrustStoreLocation}" />
+        <property name="password" value="${TrustStorePassword}" />
+    </bean>
 
 
     <!-- #################################################################################################### -->
