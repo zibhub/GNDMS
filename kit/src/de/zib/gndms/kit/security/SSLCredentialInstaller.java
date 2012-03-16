@@ -15,7 +15,7 @@ package de.zib.gndms.kit.security;
  *  limitations under the License.
  */
 
-import de.zib.gndms.gndmc.security.SetupSSL;
+import de.zib.gndms.common.kit.security.SetupSSL;
 import org.globus.gsi.gssapi.GlobusGSSCredentialImpl;
 import org.ietf.jgss.GSSCredential;
 

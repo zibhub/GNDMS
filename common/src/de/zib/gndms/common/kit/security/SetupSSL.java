@@ -1,4 +1,4 @@
-package de.zib.gndms.gndmc.security;
+package de.zib.gndms.common.kit.security;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -18,7 +18,6 @@ package de.zib.gndms.gndmc.security;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
-import java.security.cert.Certificate;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;

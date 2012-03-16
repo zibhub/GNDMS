@@ -16,7 +16,7 @@
 
 package de.zib.gndms.gndmc.utils;
 
-import de.zib.gndms.gndmc.security.SetupSSL;
+import de.zib.gndms.common.kit.security.SetupSSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -79,11 +79,11 @@ public class HTTPGetter {
         logger.trace( "Resetting SSL context with Keystore " + keyStoreLocation + " and Truststore " + trustStoreLocation );
 
         SetupSSL setupSSL = new SetupSSL();
-        setupSSL.setKeyStoreLocation(keyStoreLocation);
+        setupSSL.setKeyStoreLocation( keyStoreLocation );
         setupSSL.setTrustStoreLocation( trustStoreLocation );
 
-        setupSSL.initKeyStore(password.toCharArray(), password.toCharArray());
-        setupSSL.prepareTrustStore( password.toCharArray() );
+        setupSSL.prepareKeyStore( password, password );
+        setupSSL.prepareTrustStore( password );
         setupSSL.setupDefaultSSLContext();
     }
 

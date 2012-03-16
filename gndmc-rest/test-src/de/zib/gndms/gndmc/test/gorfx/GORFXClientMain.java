@@ -28,7 +28,7 @@ import de.zib.gndms.common.rest.Specifier;
 
 import de.zib.gndms.gndmc.gorfx.FullGORFXClient;
 import de.zib.gndms.gndmc.gorfx.TaskFlowClient;
-import de.zib.gndms.gndmc.security.SetupSSL;
+import de.zib.gndms.common.kit.security.SetupSSL;
 import de.zib.gndms.gndmc.test.KeyStoreTest;
 import org.kohsuke.args4j.Option;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
