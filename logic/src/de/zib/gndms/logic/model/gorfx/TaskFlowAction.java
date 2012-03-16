@@ -20,6 +20,7 @@ package de.zib.gndms.logic.model.gorfx;
 
 import de.zib.gndms.common.model.gorfx.types.AbstractOrder;
 import de.zib.gndms.kit.access.MyProxyFactoryProvider;
+import de.zib.gndms.kit.security.GNDMSSecurityContextInstaller;
 import de.zib.gndms.logic.model.DefaultTaskAction;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;
@@ -48,6 +49,7 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends
 
     private String taskFlowTypeId;
     private MyProxyFactoryProvider myProxyFactoryProvider;
+    private GNDMSSecurityContextInstaller securityContextInstaller;
 
 
     protected TaskFlowAction( String taskFlowTypeId ) {
@@ -73,10 +75,17 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends
                 task.setTaskFlowType( ot );
                 task.setWID(wid);
                 setOrder( (DelegatingOrder) task.getOrder( ) );
+                restoreSecurityContext( );
                 session.success();
             }
             finally { session.finish(); }
         }
+    }
+
+
+    protected void restoreSecurityContext() {
+        ensureOrder();
+        securityContextInstaller.installSecurityContext( getOrder().getSecurityContextHolder() );
     }
 
 
@@ -144,4 +153,14 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends
     }
 
 
+    public GNDMSSecurityContextInstaller getSecurityContextInstaller() {
+
+        return securityContextInstaller;
+    }
+
+
+    @Inject
+    public void setSecurityContextInstaller( final GNDMSSecurityContextInstaller securityContextInstaller ) {
+        this.securityContextInstaller = securityContextInstaller;
+    }
 }

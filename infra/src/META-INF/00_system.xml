@@ -109,6 +109,10 @@
     <bean id="directoryAux" class="de.zib.gndms.infra.grams.LinuxDirectoryAux"/>
     <bean id="gndmsVersionInfo" class="de.zib.gndms.GNDMSVerInfo"/>
     <bean id="batchUpdateAction" class="de.zib.gndms.logic.model.DefaultBatchUpdateAction" scope="prototype"/>
+    <bean id="securityContextInstaller"
+          class="de.zib.gndms.kit.security.SpringSecurityContextInstaller"/>
+
+
 
     <!-- #################################################################################################### -->
     <bean id="derbyPath" class="java.lang.String">

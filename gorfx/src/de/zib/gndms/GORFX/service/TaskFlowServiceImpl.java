@@ -6,6 +6,7 @@ import de.zib.gndms.common.model.gorfx.types.*;
 import de.zib.gndms.common.rest.*;
 import de.zib.gndms.common.stuff.devel.NotYetImplementedException;
 import de.zib.gndms.gndmc.gorfx.TaskClient;
+import de.zib.gndms.kit.security.SpringSecurityContextHolder;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.model.TaskExecutionService;
 import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowAux;
@@ -27,6 +28,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -325,20 +327,13 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                 if ( tf.getTaskling() != null )
                     hs = HttpStatus.CONFLICT;
                 else {
+                    tf.getOrder().setSecurityContextHolder( new SpringSecurityContextHolder(
+                            SecurityContextHolder.getContext() ) );
                     TaskAction ta = tff.createAction();
                     Taskling taskling;
                     if ( tf.hasQuotes() ) {
                         logger.debug( "submitting using quote: " + quoteId);
-                        List<Quote> quotes = tf.getQuotes();
-                        Quote quote = quoteId != null && quoteId >= 0 && quoteId < quotes.size()  
-                                  ? quotes.get( quoteId ) : quotes.get( 0 );
-                        taskling = executorService.submitTaskAction( dao, ta, 
-                                new TaskBuilder().setOrder( tf.getOrder() )
-                                .setContract( PersistentContract.acceptQuoteNow( quote ) )
-                                .setPermissionInfo( new PermissionInfo( "default",
-                                                                        "PermissionConfiglet" ) )
-                                
-                                , wid );
+                        taskling = submitTaskActionWithQuotes( quoteId, tf, ta, wid );
                     } else
                         taskling = executorService.submitTaskAction( dao, ta, tf.getOrder(), wid );
                     hs = HttpStatus.CREATED;
@@ -358,6 +353,24 @@ public class TaskFlowServiceImpl implements TaskFlowService {
         logger.debug( "Problem, returning " + hs.name() );
         WidAux.removeWid();
         return new ResponseEntity<Specifier<Facets>>( null, headers, hs );
+    }
+
+
+    private Taskling submitTaskActionWithQuotes( final Integer quoteId, final TaskFlow tf,
+                                                 final TaskAction ta, final String wid )
+    {
+
+        Taskling taskling;List<Quote> quotes = tf.getQuotes();
+        Quote quote = quoteId != null && quoteId >= 0 && quoteId < quotes.size()  
+                  ? quotes.get( quoteId ) : quotes.get( 0 );
+        taskling = executorService.submitTaskAction( dao, ta, 
+                new TaskBuilder().setOrder( tf.getOrder() )
+                .setContract( PersistentContract.acceptQuoteNow( quote ) )
+                .setPermissionInfo( new PermissionInfo( "default",
+                        "PermissionConfiglet" ) )
+                
+                , wid );
+        return taskling;
     }
 
 

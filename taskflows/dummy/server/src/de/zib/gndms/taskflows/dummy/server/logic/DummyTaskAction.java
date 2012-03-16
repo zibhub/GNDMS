@@ -1,4 +1,4 @@
-package de.zib.gndms.taskflows.dummy.server;
+package de.zib.gndms.taskflows.dummy.server.logic;
 
 
 /*
@@ -39,7 +39,7 @@ import javax.persistence.EntityManager;
  *
  * @see DummyOrder
  */
-public class DummyTFAction extends TaskFlowAction<DummyOrder> {
+public class DummyTaskAction extends TaskFlowAction<DummyOrder> {
 
 
     @Override
@@ -48,12 +48,12 @@ public class DummyTFAction extends TaskFlowAction<DummyOrder> {
     }
 
 
-    public DummyTFAction() {
+    public DummyTaskAction() {
         super( DummyTaskFlowMeta.TASK_FLOW_TYPE_KEY );
     }
 
 
-    public DummyTFAction( @NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model ) {
+    public DummyTaskAction( @NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model ) {
 
         super( em, dao, model );
         setKey( DummyTaskFlowMeta.TASK_FLOW_TYPE_KEY );

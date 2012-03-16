@@ -1,4 +1,4 @@
-package de.zib.gndms.taskflows.dummy.server;
+package de.zib.gndms.taskflows.dummy.server.logic;
 
 import de.zib.gndms.common.model.gorfx.types.FutureTime;
 import de.zib.gndms.common.model.gorfx.types.Quote;
