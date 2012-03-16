@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.*;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 
 /**
  * @author Maik Jorra
@@ -80,7 +81,7 @@ public class SetupSSL {
     }
 
 
-    public void addCertificate( Certificate[] certs, PrivateKey privateKey, String alias, String password )
+    public void addCertificate( PrivateKey certs, X509Certificate[] privateKey, String alias, String password )
             throws KeyStoreException
     {
         if( null == keyStore ) {
