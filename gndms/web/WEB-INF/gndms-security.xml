@@ -83,7 +83,7 @@
     </bean>
     
 
-    <!-- this authentication manager uses a provider ot make authentication desisions -->
+    <!-- this authentication manager uses a provider ot make authentication decisions -->
     <security:authentication-manager alias="authenticationManager">
         <security:authentication-provider ref="preauthAuthProvider" />
     </security:authentication-manager>
