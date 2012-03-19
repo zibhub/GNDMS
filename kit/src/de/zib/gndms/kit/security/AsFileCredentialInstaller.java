@@ -39,7 +39,7 @@ public class AsFileCredentialInstaller extends GSSCredentialInstaller<File> {
 
 
     public AsFileCredentialInstaller() {
-        setReceiverClass( File.class );
+        super( File.class );
     }
 
 

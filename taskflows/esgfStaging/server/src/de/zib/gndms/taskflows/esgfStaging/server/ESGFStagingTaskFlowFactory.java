@@ -3,6 +3,7 @@ package de.zib.gndms.taskflows.esgfStaging.server;
 
 import de.zib.gndms.common.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.common.model.gorfx.types.TaskStatistics;
+import de.zib.gndms.infra.SettableGridConfig;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.model.gorfx.taskflow.DefaultTaskFlowFactory;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
@@ -80,10 +81,21 @@ public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStag
 
     @Override
     protected Map<String, String> getDefaultConfig() {
-        Map< String, String > defaultConfig = new HashMap<String, String>( );
-        
+        final Map< String, String > defaultConfig = new HashMap<String, String>( );
+
+        final SettableGridConfig gridConfig = getInjector().getInstance(SettableGridConfig.class);
+        String trustStoreLocation;
+        try {
+            trustStoreLocation = gridConfig.getGridPath() + "/esgf.truststore";
+        } catch( Exception e ) {
+            logger.debug( "This is not happening!", e );
+            trustStoreLocation = "";
+        }
+
         defaultConfig.put( "subspace", "providerStaging" );
         defaultConfig.put( "sliceKind", "staging");
+        defaultConfig.put( "trustStoreLocation", trustStoreLocation );
+        defaultConfig.put( "trustStorePassword", "gndmstrust" );
         
         return defaultConfig;
     }
@@ -96,5 +108,4 @@ public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStag
 
         return action;
     }
-
 }

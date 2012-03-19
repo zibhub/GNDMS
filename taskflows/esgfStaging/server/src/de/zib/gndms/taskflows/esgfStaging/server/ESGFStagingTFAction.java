@@ -19,6 +19,8 @@ package de.zib.gndms.taskflows.esgfStaging.server;
 
 
 import de.zib.gndms.common.dspace.service.SubspaceService;
+import de.zib.gndms.common.kit.security.SetupSSL;
+import de.zib.gndms.common.rest.MyProxyToken;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.gndmc.utils.DownloadResponseExtractor;
@@ -26,9 +28,9 @@ import de.zib.gndms.gndmc.utils.HTTPGetter;
 import de.zib.gndms.kit.config.ConfigProvider;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.config.MapConfig;
-import de.zib.gndms.kit.security.AsFileCredentialInstaller;
 import de.zib.gndms.kit.security.CredentialProvider;
 import de.zib.gndms.kit.security.GetCredentialProviderFor;
+import de.zib.gndms.kit.security.SSLCredentialInstaller;
 import de.zib.gndms.logic.model.dspace.SliceConfiguration;
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.model.common.PersistentContract;
@@ -51,7 +53,12 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.security.KeyStoreException;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.Map;
 
 /**
@@ -67,9 +74,6 @@ public class ESGFStagingTFAction extends TaskFlowAction< ESGFStagingOrder > {
 
     private SubspaceService subspaceService;
     private static final String PROXY_FILE_NAME = File.separator + "x509_proxy.pem";
-    
-    private HTTPGetter httpGetter = new HTTPGetter();
-
 
     @Override
     public Class< ESGFStagingOrder > getOrderBeanClass( ) {
@@ -124,19 +128,21 @@ public class ESGFStagingTFAction extends TaskFlowAction< ESGFStagingOrder > {
         final String slicePath = slice.getSubspace().getPathForSlice( slice );
         
         // get certificate and private key by credentials
-        final String cert;
+        final SetupSSL setupSSL;
         try {
-            cert = prepareProxy( slice );
+            setupSSL = prepareProxy();
         }
         catch( Throwable e ) {
             logger.error( "Could not authenticate against ESGF Provider: ", e);
             transit( TaskState.FAILED );
             throw new Exception( "Could not authenticate against ESGF Provider.", e );
         }
+        
+        final HTTPGetter httpGetter = new HTTPGetter();
 
-        httpGetter.setKeyStoreLocation( cert );
-        httpGetter.setupSSL();
-
+        // TODO: do not set it as default context but as per connection context
+        setupSSL.setupDefaultSSLContext();
+        
         final Task detachedTask = getDetachedTask();
 
         int progress = detachedTask.getProgress();
@@ -191,22 +197,42 @@ public class ESGFStagingTFAction extends TaskFlowAction< ESGFStagingOrder > {
                 ESGFStagingTaskFlowMeta.REQUIRED_AUTHORIZATION.get( 0 ),
                 getMyProxyFactoryProvider()
         ).invoke();
-        credentialProvider.setInstaller( new AsFileCredentialInstaller() );
+        credentialProvider.setInstaller( new SSLCredentialInstaller() );
         return  credentialProvider;
     }
 
 
-    protected String prepareProxy( Slice slice ) {
-        final String certPath = slice.getSubspace().getPathForSlice( slice ) + PROXY_FILE_NAME;
+    protected SetupSSL prepareProxy( )
+            throws IOException, NoSuchAlgorithmException, KeyStoreException, CertificateException,
+            UnrecoverableKeyException, MandatoryOptionMissingException {
+        final SetupSSL setupSSL = new SetupSSL();
+        
+        final MyProxyToken token = getOrder().getMyProxyToken().get( ESGFStagingTaskFlowMeta.REQUIRED_AUTHORIZATION.get( 0 ) );
+        if( null == token )
+            throw new IllegalArgumentException( "No " + ESGFStagingTaskFlowMeta.REQUIRED_AUTHORIZATION.get( 0 ) + " token provided in Order." );
+
+        final String password = token.getPassword();
+        final String trustStoreLocation = getOfferTypeConfig().getOption( "trustStoreLocation" );
+        final String trustStorePassword = getOfferTypeConfig().getOption( "trustStorePassword" );
+
+        setupSSL.setTrustStoreLocation( trustStoreLocation );
+        setupSSL.prepareTrustStore( trustStorePassword, "JKS" );
+        setupSSL.prepareKeyStore( password, password, "JKS" );
+
         try {
-            File sliceDirectory = new File( certPath );
-            getCredentialProvider().installCredentials( sliceDirectory );
+            SSLCredentialInstaller.InstallerParams params = new SSLCredentialInstaller.InstallerParams();
+
+            params.setAlias( "privateKey" );
+            params.setPassword( password );
+            params.setSetupSSL( setupSSL );
+
+            getCredentialProvider().installCredentials( params );
         }
         catch ( Exception e ) {
             logger.debug( "couldn't deploy credentials: ", e );
         }
 
-        return certPath;
+        return setupSSL;
     }
     
     
@@ -383,17 +409,5 @@ public class ESGFStagingTFAction extends TaskFlowAction< ESGFStagingOrder > {
     @Inject
     public void setSubspaceService( SubspaceService subspaceService ) {
         this.subspaceService = subspaceService;
-    }
-
-
-    public HTTPGetter getHttpGetter() {
-        return httpGetter;
-    }
-
-
-    @SuppressWarnings( "SpringJavaAutowiringInspection" )
-    @Inject
-    public void setHttpGetter( HTTPGetter httpGetter ) {
-        this.httpGetter = httpGetter;
     }
 }

@@ -29,6 +29,10 @@ import org.springframework.web.client.RestTemplate;
 import java.io.*;
 import java.net.URLDecoder;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.security.cert.CertificateFactory;
+
 /**
  * @author Maik Jorra
  * @email jorra@zib.de
@@ -51,6 +55,14 @@ public class ESGFGet extends AbstractApplication {
 
     public static void main( String[] args ) throws Exception {
 
+        CertificateFactory cf = CertificateFactory.getInstance( "X.509" );
+        InputStream is = new FileInputStream( "/var/tmp/gndms/keystore/x509_proxy.pem" );
+        System.out.println( cf.generateCertificate( is ) );
+        System.out.println( " ------------------------------------------------- " );
+        Thread.sleep( 1000 );
+        System.out.println( "AND: " + cf.generateCertificate( is ) );
+        System.exit( 0 );
+        
         ESGFGet cnt = new ESGFGet();
         cnt.run(args);
         System.exit(0);
@@ -62,8 +74,8 @@ public class ESGFGet extends AbstractApplication {
     protected void run() throws Exception {
 
         SetupSSL setupSSL = new SetupSSL();
-        setupSSL.setKeystoreLocation( keyStoreLocation );
-        setupSSL.prepareUserCert( passwd.toCharArray(), passwd.toCharArray() );
+        setupSSL.setKeyStoreLocation( keyStoreLocation );
+        setupSSL.prepareKeyStore( passwd, passwd );
         setupSSL.setupDefaultSSLContext();
                 
         final RestTemplate rt = new RestTemplate();

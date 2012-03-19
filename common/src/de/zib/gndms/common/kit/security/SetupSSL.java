@@ -52,20 +52,28 @@ public class SetupSSL {
         
         initKeyManagerFactory( keyPassword );
     }
-    
-    
+
+
     public void prepareKeyStore( final String keyStorePassword, final String keyPassword )
+            throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException,
+            UnrecoverableKeyException
+    {
+        prepareKeyStore( keyStorePassword, keyPassword, KEY_STORE_TYPE );
+    }
+
+
+    public void prepareKeyStore( final String keyStorePassword, final String keyPassword, final String keyStoreType )
             throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException,
             UnrecoverableKeyException
     {
         // create an empty keyStore
         if( null == keyStoreLocation ) {
-            keyStore = KeyStore.getInstance( KEY_STORE_TYPE );
+            keyStore = KeyStore.getInstance( keyStoreType );
             keyStore.load( null, keyStorePassword.toCharArray() );
         }
         else {
             InputStream kis = new FileInputStream( keyStoreLocation );
-            keyStore = KeyStore.getInstance( KEY_STORE_TYPE );
+            keyStore = KeyStore.getInstance( keyStoreType );
             keyStore.load( kis, keyStorePassword.toCharArray() );
         }
 
@@ -80,7 +88,7 @@ public class SetupSSL {
     }
 
 
-    public void addCertificate( PrivateKey certs, X509Certificate[] privateKey, String alias, String password )
+    public void addCertificate( PrivateKey privateKey, X509Certificate[] certs, String alias, String password )
             throws KeyStoreException
     {
         if( null == keyStore ) {

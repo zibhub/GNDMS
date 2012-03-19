@@ -30,7 +30,7 @@ public class GridFTPCredentialInstaller extends GSSCredentialInstaller<GridFTPCl
 
 
     public GridFTPCredentialInstaller() {
-        setReceiverClass( GridFTPClient.class );
+        super( GridFTPClient.class );
     }
 
 

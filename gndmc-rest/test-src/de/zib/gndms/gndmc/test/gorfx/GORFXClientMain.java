@@ -85,8 +85,7 @@ public class GORFXClientMain extends AbstractApplication {
         Uri gorfxUrl = new Uri( gndmsEpUrl );
         if( "https".equals( gorfxUrl.getScheme() ) ) {
             System.out.println( "https specified. enabling SSL" );
-            SetupSSL setupSSL = KeyStoreTest.initSSL( ksp.toCharArray(), ksp.toCharArray(),
-                    tsp.toCharArray() );
+            SetupSSL setupSSL = KeyStoreTest.initSSL( ksp, ksp, tsp );
             setupSSL.setupDefaultSSLContext();
         }
 

@@ -29,6 +29,10 @@ import java.security.KeyStoreException;
  */
 public class SSLCredentialInstaller extends GSSCredentialInstaller<SSLCredentialInstaller .InstallerParams> {
 
+    public SSLCredentialInstaller() {
+        super( InstallerParams.class );
+    }
+
     @Override
     public void installCredentials( final InstallerParams credentialReceiver,
                                     final GSSCredential cred ) {

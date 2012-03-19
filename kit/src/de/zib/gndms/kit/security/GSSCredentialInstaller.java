@@ -29,6 +29,10 @@ public abstract class GSSCredentialInstaller<T> implements CredentialInstaller<G
     private Class<T> receiverClass;
 
 
+    protected GSSCredentialInstaller( Class<T> receiverClass ) {
+        setReceiverClass( receiverClass );
+    }
+
     @Override
     public Class<T> getReceiverClass() {
 

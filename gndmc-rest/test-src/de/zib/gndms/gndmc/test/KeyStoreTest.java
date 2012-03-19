@@ -15,7 +15,7 @@ package de.zib.gndms.gndmc.test;
  *  limitations under the License.
  */
 
-import de.zib.gndms.gndmc.security.SetupSSL;
+import de.zib.gndms.common.kit.security.SetupSSL;
 
 import java.io.Console;
 import java.io.IOException;
@@ -41,9 +41,9 @@ public class KeyStoreTest {
 
         Console con = System.console();
         //char[] kpass = con.readPassword();
-        final char[] kpass = null; // "<fill-me>".toCharArray();
-        final char[] kpass2 = kpass;
-        final char[] truststorePassword = null; // "<fill-me>".toCharArray();
+        final String kpass = null; // "<fill-me>".toCharArray();
+        final String kpass2 = kpass;
+        final String truststorePassword = null; // "<fill-me>".toCharArray();
 
         if( kpass == null )
             throw new Exception( "fill in the passwords" );
@@ -54,18 +54,18 @@ public class KeyStoreTest {
     }
 
 
-    public static SetupSSL initSSL( final char[] kpass, final char[] kpass2,
-                                final char[] truststorePassword )
+    public static SetupSSL initSSL( final String kpass, final String kpass2,
+                                final String truststorePassword )
             throws KeyStoreException, NoSuchAlgorithmException, IOException, CertificateException,
             UnrecoverableEntryException
     {
 
         SetupSSL sslSetup = new SetupSSL();
         sslSetup.setKeyStoreLocation("/tmp/awicert.p12");
-        sslSetup.prepareUserCert( kpass, kpass2 );
+        sslSetup.prepareKeyStore( kpass, kpass2 );
 
         KeyStore ks = sslSetup.getKeyStore();
-        analyseKeyStore( kpass, ks );
+        analyseKeyStore( kpass.toCharArray(), ks );
 
         System.out.println( "now the trustStore" );
 
