@@ -54,9 +54,7 @@ public class GridMapUserDetailsService implements UserDetailsService {
 
     public GridMapUserDetailsService() {
         admins = new ConcurrentHashMap<String,String>( 1 );
-        admins.put( "foo", "" );
         users = new ConcurrentHashMap<String,String>( 1 );
-        users.put( "bar", "" );
     }
 
 
@@ -108,7 +106,7 @@ public class GridMapUserDetailsService implements UserDetailsService {
             String line;
             while ( ( line = reader.readLine() ) != null ) {
 
-                if( line.startsWith( "\""+ dn ) )
+                if( line.startsWith( "\""+ dn + "\"" ) )
                     return true;
 
             }
