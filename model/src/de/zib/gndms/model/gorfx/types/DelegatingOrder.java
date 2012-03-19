@@ -19,6 +19,7 @@ package de.zib.gndms.model.gorfx.types;
 
 import de.zib.gndms.common.model.gorfx.types.Order;
 import de.zib.gndms.common.rest.MyProxyToken;
+import de.zib.gndms.model.common.types.GNDMSSecurityContextHolder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -40,6 +41,8 @@ public class DelegatingOrder<T extends Order> implements Order {
                                                    /// this enables the Task action to query GSSCerts from registered
                                                    /// myproxy servers.
     private String localUser; ///< The user name map to the credential of the request.
+    private GNDMSSecurityContextHolder securityContextHolder; ///< The gndms security context which wraps a
+                                                  ///< possible container security context.
 
 
     public DelegatingOrder() {
@@ -184,5 +187,17 @@ public class DelegatingOrder<T extends Order> implements Order {
     public void setMyProxyToken( final Map<String, MyProxyToken> myProxyToken ) {
 
         this.myProxyToken = myProxyToken;
+    }
+
+
+    public GNDMSSecurityContextHolder getSecurityContextHolder() {
+
+        return securityContextHolder;
+    }
+
+
+    public void setSecurityContextHolder( final GNDMSSecurityContextHolder securityContextHolder ) {
+
+        this.securityContextHolder = securityContextHolder;
     }
 }

@@ -8,6 +8,8 @@ import de.zib.gndms.logic.model.gorfx.taskflow.DefaultTaskFlowFactory;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
 import de.zib.gndms.taskflows.dummy.client.DummyTaskFlowMeta;
 import de.zib.gndms.taskflows.dummy.client.model.DummyOrder;
+import de.zib.gndms.taskflows.dummy.server.logic.DummyQuoteCalculator;
+import de.zib.gndms.taskflows.dummy.server.logic.DummyTaskAction;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -90,7 +92,7 @@ public class DummyTaskFlowFactory extends DefaultTaskFlowFactory<DummyOrder,Dumm
 
     @Override
     public TaskAction createAction() {
-        return new DummyTFAction(  );
+        return new DummyTaskAction(  );
     }
 
 }
