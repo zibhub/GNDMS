@@ -26,8 +26,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Maik Jorra
@@ -45,18 +43,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class GridMapUserDetailsService implements UserDetailsService {
 
+    private String allowedHostsFileName;
     private String gridMapfileName;
     private String adminGridMapfileName;
     
-    private final Map<String,String> admins;
-    private final Map<String, String> users;
-
-
     public GridMapUserDetailsService() {
-        admins = new ConcurrentHashMap<String,String>( 1 );
-        admins.put( "foo", "" );
-        users = new ConcurrentHashMap<String,String>( 1 );
-        users.put( "bar", "" );
     }
 
 
@@ -65,18 +56,19 @@ public class GridMapUserDetailsService implements UserDetailsService {
 
         List<GrantedAuthority> authorityList =  new ArrayList<GrantedAuthority>( 1 );
         // search admin
+        boolean isUser = true;
         try {
-            if( searchInGridMapfile( adminGridMapfileName, dn ) ) {
-            //if( admins.containsKey( dn ) )
+            if( searchInGridMapfile( allowedHostsFileName, dn ) )
+                isUser = false;
+            else if( searchInGridMapfile( adminGridMapfileName, dn ) ) {
                 authorityList.add( adminRole() );
             } else  if( searchInGridMapfile( gridMapfileName, dn ) )
-            //else if ( users.containsKey( dn ) )
                 authorityList.add( userRole() );
         } catch ( Exception e ) {
             throw new RuntimeException( e );
         }
 
-        if ( authorityList.size() == 0 )
+        if ( isUser && authorityList.size() == 0 )
             throw new UsernameNotFoundException( "DN not permitted: " + dn );
 
         GNDMSUserDetails userDetails = new GNDMSUserDetails( );
@@ -139,5 +131,17 @@ public class GridMapUserDetailsService implements UserDetailsService {
     public void setAdminGridMapfileName( final String adminGridMapfileName ) {
 
         this.adminGridMapfileName = adminGridMapfileName;
+    }
+
+
+    public String getAllowedHostsFileName() {
+
+        return allowedHostsFileName;
+    }
+
+
+    public void setAllowedHostsFileName( final String allowedHostsFileName ) {
+
+        this.allowedHostsFileName = allowedHostsFileName;
     }
 }
