@@ -15,6 +15,7 @@ package de.zib.gndms.gndms.security;
  *  limitations under the License.
  */
 
+import de.zib.gndms.stuff.misc.X509DnConverter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,6 +25,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +49,9 @@ public class GridMapUserDetailsService implements UserDetailsService {
     private String allowedHostsFileName;
     private String gridMapfileName;
     private String adminGridMapfileName;
-    
+    private boolean reverseDNSTest = true;
+
+
     public GridMapUserDetailsService() {
     }
 
@@ -58,9 +63,11 @@ public class GridMapUserDetailsService implements UserDetailsService {
         // search admin
         boolean isUser = true;
         try {
-            if( searchInGridMapfile( allowedHostsFileName, dn ) )
+            if( searchInGridMapfile( allowedHostsFileName, dn ) ) {
+                if ( reverseDNSTest )
+                    reverseDNSLookup( X509DnConverter.openSslDnExtractCn( dn ) );
                 isUser = false;
-            else if( searchInGridMapfile( adminGridMapfileName, dn ) ) {
+            } else if( searchInGridMapfile( adminGridMapfileName, dn ) ) {
                 authorityList.add( adminRole() );
             } else  if( searchInGridMapfile( gridMapfileName, dn ) )
                 authorityList.add( userRole() );
@@ -74,8 +81,15 @@ public class GridMapUserDetailsService implements UserDetailsService {
         GNDMSUserDetails userDetails = new GNDMSUserDetails( );
         userDetails.setAuthorities( authorityList );
         userDetails.setDn( dn );
+        userDetails.setIsUser( isUser );
 
         return userDetails;
+    }
+
+
+    private void reverseDNSLookup( final String hostName ) throws UnknownHostException {
+        InetAddress addr = InetAddress.getByName( hostName );
+        //teststring = "Inet Address : " + addr.getHostAddress();
     }
 
 
@@ -137,6 +151,18 @@ public class GridMapUserDetailsService implements UserDetailsService {
     public String getAllowedHostsFileName() {
 
         return allowedHostsFileName;
+    }
+
+
+    public boolean isReverseDNSTest() {
+
+        return reverseDNSTest;
+    }
+
+
+    public void setReverseDNSTest( final boolean reverseDNSTest ) {
+
+        this.reverseDNSTest = reverseDNSTest;
     }
 
 

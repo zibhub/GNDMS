@@ -30,6 +30,7 @@ public class GNDMSUserDetails implements UserDetails {
 
     private Collection<? extends GrantedAuthority> authorities;
     private String dn;
+    private boolean isUser;
 
 
     @Override
@@ -89,5 +90,17 @@ public class GNDMSUserDetails implements UserDetails {
     public void setAuthorities( final Collection<? extends GrantedAuthority> authorities ) {
 
         this.authorities = authorities;
+    }
+
+
+    public void setIsUser( final boolean isUser ) {
+
+        this.isUser = isUser;
+    }
+
+
+    public boolean isUser() {
+
+        return isUser;
     }
 }

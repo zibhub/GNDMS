@@ -15,6 +15,7 @@ package de.zib.gndms.gndms.security;
  *  limitations under the License.
  */
 
+import de.zib.gndms.stuff.misc.X509DnConverter;
 import org.springframework.security.web.authentication.preauth.x509.X509PrincipalExtractor;
 
 import java.security.cert.X509Certificate;
@@ -30,6 +31,6 @@ public class FullDNExtractor implements X509PrincipalExtractor {
     @Override
     public Object extractPrincipal( final X509Certificate x509Certificate ) {
 
-        return x509Certificate.getSubjectDN().toString();
+        return X509DnConverter.toOpenSslDn( x509Certificate.getSubjectX500Principal().getName() );
     }
 }

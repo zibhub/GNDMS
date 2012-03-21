@@ -47,4 +47,20 @@ public class X509DnConverterTest {
         
         Assert.assertEquals( principal.getName(), rfc2253dn, "rfc2253 export match" );
     }
+    
+    @Test( groups={ "stuff" } )
+    public void testOpenSslCnExtract (  ) {
+        final String openSslDn = "/C=country/O=Organisation/OU=Organisation Unit/CN=Common.name";
+        final String cn = X509DnConverter.openSslDnExtractCn( openSslDn );
+        System.out.println( "cn: " + cn );
+        Assert.assertEquals( cn, "Common.name" );
+    }
+
+    @Test( groups={ "stuff" } )
+    public void testRfc2253CnExtract (  ) {
+        final String dn = "CN=Common.name,OU=Organisation Unit,O=Organisation,C=country";
+        final String cn = X509DnConverter.rfc2253DnExtractCn( dn );
+        System.out.println( "cn: " + cn );
+        Assert.assertEquals( cn, "Common.name" );
+    }
 }
