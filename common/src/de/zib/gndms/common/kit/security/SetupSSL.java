@@ -137,7 +137,7 @@ public class SetupSSL {
     }
 
 
-    private SSLContext setupSSLContext() throws NoSuchAlgorithmException, KeyManagementException {
+    public SSLContext setupSSLContext() throws NoSuchAlgorithmException, KeyManagementException {
         if( null == keyManagerFactory ) {
             throw new IllegalStateException( "No KeyStore set." );
         }

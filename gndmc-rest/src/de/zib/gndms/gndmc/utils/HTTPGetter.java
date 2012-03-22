@@ -22,11 +22,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -49,6 +53,8 @@ public class HTTPGetter {
     private String keyStoreLocation;
     private String trustStoreLocation;
     private String password; // TODO: don't use same password for keystore and key?!
+
+    private SSLContext sslContext;
 
     final private Map< Integer, EnhancedResponseExtractor > extractorMap;
     
@@ -84,7 +90,8 @@ public class HTTPGetter {
 
         setupSSL.prepareKeyStore( password, password );
         setupSSL.prepareTrustStore( password );
-        setupSSL.setupDefaultSSLContext();
+
+        sslContext = setupSSL.setupSSLContext();
     }
 
     public void setExtractor( int httpStatusCode, EnhancedResponseExtractor responseExtractor ) {
@@ -93,7 +100,7 @@ public class HTTPGetter {
         extractorMap.put( httpStatusCode, responseExtractor );
     }
     
-    public int get( String url ) {
+    public int get( String url ) throws NoSuchAlgorithmException, KeyManagementException {
         logger.debug("GET URL " + url);
 
         EnhancedResponseExtractor responseExtractor = get( url, null );
@@ -125,8 +132,11 @@ public class HTTPGetter {
         return statusCode;
     }
 
-    EnhancedResponseExtractor get( final String url, final RequestCallback requestCallback ) {
-        RestTemplate rt = new RestTemplate();
+    EnhancedResponseExtractor get( final String url, final RequestCallback requestCallback )
+            throws NoSuchAlgorithmException, KeyManagementException
+    {
+        RequestFactory requestFactory = new RequestFactory( sslContext );
+        RestTemplate rt = new RestTemplate( requestFactory );
 
         return rt.execute( url, HttpMethod.GET, requestCallback, new ResponseExtractor< EnhancedResponseExtractor >() {
 
@@ -149,6 +159,27 @@ public class HTTPGetter {
             }
 
         } );
+    }
+
+    private class RequestFactory extends SimpleClientHttpRequestFactory {
+        final private SSLContext sslContext;
+
+        private RequestFactory( SSLContext sslContext ) {
+            this.sslContext = sslContext;
+        }
+
+        protected void prepareConnection( HttpURLConnection connection, String httpMethod )
+                throws IOException
+        {
+            super.prepareConnection( connection, httpMethod );
+
+            HttpsURLConnection httpscon = ( HttpsURLConnection )connection;
+
+            if( null == httpscon )
+                return;
+
+            httpscon.setSSLSocketFactory( sslContext.getSocketFactory() );
+        }
     }
     
     public String getKeyStoreLocation() {
