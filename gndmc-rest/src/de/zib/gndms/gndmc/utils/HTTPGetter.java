@@ -75,22 +75,13 @@ public class HTTPGetter {
         return extractorMap.get( statusCode );
     }
 
-    public void setupSSL( ) throws
+    public void setupSSL( SetupSSL setupSSL ) throws
             IOException,
             NoSuchAlgorithmException,
             KeyStoreException,
             CertificateException,
             UnrecoverableKeyException,
             KeyManagementException {
-        logger.trace( "Resetting SSL context with Keystore " + keyStoreLocation + " and Truststore " + trustStoreLocation );
-
-        SetupSSL setupSSL = new SetupSSL();
-        setupSSL.setKeyStoreLocation( keyStoreLocation );
-        setupSSL.setTrustStoreLocation( trustStoreLocation );
-
-        setupSSL.prepareKeyStore( password, password );
-        setupSSL.prepareTrustStore( password );
-
         sslContext = setupSSL.setupSSLContext();
     }
 
@@ -173,12 +164,12 @@ public class HTTPGetter {
         {
             super.prepareConnection( connection, httpMethod );
 
-            HttpsURLConnection httpscon = ( HttpsURLConnection )connection;
+            if( connection instanceof  HttpsURLConnection )
+            {
+                HttpsURLConnection httpscon = ( HttpsURLConnection )connection;
 
-            if( null == httpscon )
-                return;
-
-            httpscon.setSSLSocketFactory( sslContext.getSocketFactory() );
+                httpscon.setSSLSocketFactory( sslContext.getSocketFactory() );
+            }
         }
     }
     

@@ -139,10 +139,8 @@ public class ESGFStagingTFAction extends TaskFlowAction< ESGFStagingOrder > {
         }
         
         final HTTPGetter httpGetter = new HTTPGetter();
+        httpGetter.setupSSL( setupSSL );
 
-        // TODO: do not set it as default context but as per connection context
-        setupSSL.setupDefaultSSLContext();
-        
         final Task detachedTask = getDetachedTask();
 
         int progress = detachedTask.getProgress();
