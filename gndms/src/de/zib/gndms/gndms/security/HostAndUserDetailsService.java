@@ -15,10 +15,20 @@ package de.zib.gndms.gndms.security;
  *  limitations under the License.
  */
 
+import de.zib.gndms.stuff.misc.X509DnConverter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Collections;
 
 /**
  * @author Maik Jorra
@@ -29,6 +39,9 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 public class HostAndUserDetailsService implements  AuthenticationUserDetailsService<PreAuthenticatedAuthenticationToken> {
 
     private GridMapUserDetailsService userDetailsService;
+    private String allowedHostsFileName;
+    private boolean reverseDNSTest = true;
+
 
     @Override
     public UserDetails loadUserDetails(
@@ -37,9 +50,55 @@ public class HostAndUserDetailsService implements  AuthenticationUserDetailsServ
     {
 
         // todo check host cert
-        String prince = ( String ) preAuthenticatedAuthenticationToken.getPrincipal();
-        return userDetailsService.loadUserByUsername( prince );
+        String dn = ( String ) preAuthenticatedAuthenticationToken.getPrincipal();
+
+        try {
+            if( GridMapUserDetailsService.searchInGridMapfile( allowedHostsFileName, dn ) ) {
+                if ( reverseDNSTest )
+                    reverseDNSLookup( X509DnConverter.openSslDnExtractCn( dn ),
+                            preAuthenticatedAuthenticationToken.getDetails() );
+                GNDMSUserDetails userDetails = new GNDMSUserDetails();
+                userDetails.setAuthorities( Collections.<GrantedAuthority>emptyList() );
+                userDetails.setDn( dn );
+                userDetails.setIsUser( false );
+                return userDetails;
+            } else {
+                final SecurityContext context = SecurityContextHolder.getContext();
+                if( context != null && context.getAuthentication() != null ) {
+                    final Object principal = context.getAuthentication().getPrincipal();
+                    if( principal instanceof GNDMSUserDetails ) {
+                        // now this must be the Request header authentication
+                        final GNDMSUserDetails gndmsUserDetails = ( GNDMSUserDetails ) principal;
+                        if( gndmsUserDetails.isUser() )
+                            // the x509 cert from the pevious filter must have been a user cert
+                            // check if the dn's match
+                            if (! dn.equals( gndmsUserDetails.getUsername() ) )
+                                throw new UsernameNotFoundException( "Certificate vs HttpHeader: dn " +
+                                                                 "mismatch");
+                    }
+                }
+                return userDetailsService.loadUserByUsername( dn );
+            }
+        } catch ( IOException e ) {
+            throw new RuntimeException( e );
+        }
     }
+
+    
+    private boolean reverseDNSLookup( final String hostName, final Object details ) throws UnknownHostException {
+
+        String requestSourceIp = null;
+
+        if( details instanceof WebAuthenticationDetails ) {
+            requestSourceIp = ((WebAuthenticationDetails) details).getRemoteAddress();
+            InetAddress addr = InetAddress.getByName( hostName );
+            return addr.getHostAddress().equals( requestSourceIp );
+        }
+
+        return false;
+    }
+        
+
 
 
     public GridMapUserDetailsService getUserDetailsService() {
@@ -52,4 +111,29 @@ public class HostAndUserDetailsService implements  AuthenticationUserDetailsServ
 
         this.userDetailsService = userDetailsService;
     }
+
+
+    public void setReverseDNSTest( final boolean reverseDNSTest ) {
+
+        this.reverseDNSTest = reverseDNSTest;
+    }
+
+
+    public void setAllowedHostsFileName( final String allowedHostsFileName ) {
+
+        this.allowedHostsFileName = allowedHostsFileName;
+    }
+
+
+    public String getAllowedHostsFileName() {
+
+        return allowedHostsFileName;
+    }
+
+
+    public boolean isReverseDNSTest() {
+
+        return reverseDNSTest;
+    }
+
 }
