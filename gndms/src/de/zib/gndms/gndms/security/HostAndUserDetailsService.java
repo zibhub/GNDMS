@@ -16,6 +16,9 @@ package de.zib.gndms.gndms.security;
  */
 
 import de.zib.gndms.stuff.misc.X509DnConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -41,6 +44,7 @@ public class HostAndUserDetailsService implements  AuthenticationUserDetailsServ
     private GridMapUserDetailsService userDetailsService;
     private String allowedHostsFileName;
     private boolean reverseDNSTest = true;
+    protected Logger logger = LoggerFactory.getLogger( this.getClass() );
 
 
     @Override
@@ -55,8 +59,16 @@ public class HostAndUserDetailsService implements  AuthenticationUserDetailsServ
         try {
             if( GridMapUserDetailsService.searchInGridMapfile( allowedHostsFileName, dn ) ) {
                 if ( reverseDNSTest )
-                    reverseDNSLookup( X509DnConverter.openSslDnExtractCn( dn ),
-                            preAuthenticatedAuthenticationToken.getDetails() );
+                    try {
+                        if( ! reverseDNSLookup( X509DnConverter.openSslDnExtractCn( dn ),
+                                preAuthenticatedAuthenticationToken.getDetails() ) ) {
+                            logger.info( "Host-CN revers DNS lookup failed for: " + dn );
+                            throw new BadCredentialsException( "Host-CN reverse DNS lookup failed."
+                            );
+                        }
+                    } catch ( UnknownHostException e ) {
+                        throw new BadCredentialsException( "", e );
+                    }
                 GNDMSUserDetails userDetails = new GNDMSUserDetails();
                 userDetails.setAuthorities( Collections.<GrantedAuthority>emptyList() );
                 userDetails.setDn( dn );
@@ -70,7 +82,7 @@ public class HostAndUserDetailsService implements  AuthenticationUserDetailsServ
                         // now this must be the Request header authentication
                         final GNDMSUserDetails gndmsUserDetails = ( GNDMSUserDetails ) principal;
                         if( gndmsUserDetails.isUser() )
-                            // the x509 cert from the pevious filter must have been a user cert
+                            // the x509 cert from the previous filter must have been a user cert
                             // check if the dn's match
                             if (! dn.equals( gndmsUserDetails.getUsername() ) )
                                 throw new UsernameNotFoundException( "Certificate vs HttpHeader: dn " +
@@ -92,7 +104,12 @@ public class HostAndUserDetailsService implements  AuthenticationUserDetailsServ
         if( details instanceof WebAuthenticationDetails ) {
             requestSourceIp = ((WebAuthenticationDetails) details).getRemoteAddress();
             InetAddress addr = InetAddress.getByName( hostName );
-            return addr.getHostAddress().equals( requestSourceIp );
+            if( ! addr.getHostAddress().equals( requestSourceIp ) ) {
+                logger.info( "Revers dns lookup fail for host: \"" +hostName + "\" got: " +
+                        requestSourceIp );
+                return false;
+            }
+            return true;
         }
 
         return false;
