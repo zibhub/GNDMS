@@ -91,9 +91,9 @@ public class FailureTFAction extends TaskFlowAction< FailureOrder > {
         ensureOrder();
         FailureOrder order = getOrder().getOrderBean();
 
-        handle(FailureOrder.FailurePlace.PROGRESS, true);
+        handle(FailureOrder.FailurePlace.INPROGRESS, true);
         super.onInProgress(wid, state, isRestartedTask, altTaskState);
-        handle( FailureOrder.FailurePlace.PROGRESS, true );
+        handle( FailureOrder.FailurePlace.INPROGRESS, true );
     }
 
     @Override
