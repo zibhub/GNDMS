@@ -178,8 +178,9 @@ public class TaskServiceImpl implements TaskService {
                 Object pl = t.getPayload();
                 if( pl != null ) {
                     res = TaskResult.class.cast( pl );
-                    hs = HttpStatus.OK;
-                }
+                } else
+                    res = new VoidTaskResult();
+                hs = HttpStatus.OK;
             }
             session.success();
 

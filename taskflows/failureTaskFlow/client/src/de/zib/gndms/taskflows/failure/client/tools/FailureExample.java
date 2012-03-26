@@ -47,7 +47,7 @@ public class FailureExample extends GORFXTaskFlowExample {
 
 
     public FailureExample() {
-        super( true );
+        super( false );
     }
 
 
