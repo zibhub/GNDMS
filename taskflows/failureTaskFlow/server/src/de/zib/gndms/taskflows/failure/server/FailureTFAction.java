@@ -135,13 +135,13 @@ public class FailureTFAction extends TaskFlowAction< FailureOrder > {
             if( order.isThrowInSession() ) {
                 final Session session = getDao().beginSession();
                 try {
-                    ExceptionThrower.throwUncheked(order.getException());
+                    ExceptionThrower.throwUnchecked( order.getException() );
                     session.success();
                 }
                 finally { session.finish(); }
             }
             else
-                ExceptionThrower.throwUncheked( order.getException() );
+                ExceptionThrower.throwUnchecked( order.getException() );
         }
     }
     

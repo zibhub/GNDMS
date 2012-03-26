@@ -23,7 +23,7 @@ package de.zib.gndms.taskflows.failure.server.utils;
  * @email: bachmann@zib.de
  */
 public class ExceptionThrower {
-    public static void throwUncheked( Throwable e ) {
+    public static void throwUnchecked( Throwable e ) {
         ExceptionThrower.< RuntimeException >throwIt(e);
     }
 
