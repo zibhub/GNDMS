@@ -17,8 +17,8 @@ package de.zib.gndms.infra.system;
  */
 
 
-
 import de.zib.gndms.GNDMSVerInfo;
+import de.zib.gndms.common.kit.security.SetupSSL;
 import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.kit.access.EMFactoryProvider;
 import de.zib.gndms.logic.action.ActionCaller;
@@ -41,6 +41,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.net.ssl.SSLContext;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
@@ -82,6 +83,7 @@ public final class GNDMSystem
     private @NotNull final ModelUUIDGen uuidGenDelegate;
 	private @NotNull final Logger logger = createLogger();
 	private @NotNull final GNDMSVerInfo verInfo = new GNDMSVerInfo();
+    private @NotNull SetupSSL setupSSL;
     /**
      * the GNDMSystemDirectory connected with this GNDMSystem
      */
@@ -120,6 +122,7 @@ public final class GNDMSystem
             //logger.info("Container home directory is '" + containerHome.toString() + '\'');
             initSharedDir();
 			createDirectories();
+            initDefaultSSLContext();
 			prepareDbStorage();
             dao = new Dao(getGridName(), neo);
             listEntities( emf );
@@ -141,6 +144,14 @@ public final class GNDMSystem
 			throw new RuntimeException(e);
 		}
 	}
+
+    private void initDefaultSSLContext() {
+        try {
+            SSLContext.setDefault( setupSSL.setupSSLContext() );
+        } catch( Exception e ) {
+            throw new IllegalStateException( e );
+        }
+    }
 
 
     /**
@@ -679,5 +690,15 @@ public final class GNDMSystem
         for ( EntityType<?> e : emf.getMetamodel().getEntities() )
             logger.debug( e.getName() );
 
+    }
+
+    @NotNull
+    public SetupSSL getSetupSSL() {
+        return setupSSL;
+    }
+
+    @Inject
+    public void setSetupSSL( @NotNull SetupSSL setupSSL ) {
+        this.setupSSL = setupSSL;
     }
 }

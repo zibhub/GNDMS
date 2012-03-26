@@ -54,6 +54,18 @@
         <constructor-arg name="gdb" ref="dataBase" />
     </bean>
 
+    <bean id="setupSSLFactory" class="de.zib.gndms.common.kit.security.SetupSSLFactory">
+        <constructor-arg name="trustStoreLocation" value="${trustStoreLocation}" />
+        <constructor-arg name="trustStorePassword" value="${trustStorePassword}" />
+        <constructor-arg name="keyStoreLocation" value="${keyStoreLocation}" />
+        <constructor-arg name="keyStorePassword" value="${keyStorePassword}" />
+        <constructor-arg name="keyPassword" value="${keyPassword}" />
+    </bean>
+    
+    <bean id="setupSSL" class="de.zib.gndms.common.kit.security.SetupSSL"
+          factory-bean="setupSSLFactory"
+          factory-method="getInstance" />
+
     <bean id="taskFlowProvider" class="de.zib.gndms.infra.system.PlugableTaskFlowProvider">
         <property name="system" ref="system"/>
         <property name="pluginDir" value="${pluginPath}"/>
@@ -95,12 +107,6 @@
         <property name="connectionCredentialHolder">
            <bean class="de.zib.gndms.kit.access.NoCredentialHolder" />
         </property>
-    </bean>
-
-    
-    <bean id="httpGetter" class="de.zib.gndms.gndmc.utils.HTTPGetter">
-        <property name="trustStoreLocation" value="${TrustStoreLocation}" />
-        <property name="password" value="${TrustStorePassword}" />
     </bean>
 
 
