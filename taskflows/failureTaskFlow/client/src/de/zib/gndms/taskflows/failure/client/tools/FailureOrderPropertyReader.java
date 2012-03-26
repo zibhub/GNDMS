@@ -56,30 +56,33 @@ public class FailureOrderPropertyReader extends OrderPropertyReader< FailureOrde
         final String throwInSession = properties.getProperty(FailureOrderProperties.FAILURE_THROW_IN_SESSION.key );
 
         if( where != null )
-            failureOrder.setWhere( FailureOrder.FailurePlace.valueOf( where ) );
+            failureOrder.setWhere( FailureOrder.FailurePlace.valueOf( where.toUpperCase() ) );
         if( beforeSuper != null )
             failureOrder.setBeforeSuper( Boolean.getBoolean( beforeSuper ) );
         if( throwInSession != null )
             failureOrder.setThrowInSession( Boolean.getBoolean( throwInSession ) );
 
         final PropertyTree tree = PropertyTreeFactory.createPropertyTree( properties );
-        final PropertyTree treeSleepBefore = tree.subTree( "sleepAfter" );
-        final PropertyTree treeSleepAfter = tree.subTree( "sleepAfter" );
+        final PropertyTree treeSleepBefore = tree.subTree( "c3grid.FailureRequest.sleepBefore" );
+        final PropertyTree treeSleepAfter = tree.subTree( "c3grid.FailureRequest.sleepAfter" );
 
-        final Properties propSleepBefore = treeSleepBefore.asProperties( true );
-        final Map< FailureOrder.FailurePlace, Integer > mapSleepBefore = new HashMap< FailureOrder.FailurePlace, Integer >();
-        for( String s: propSleepBefore.stringPropertyNames() ) {
-            mapSleepBefore.put( FailureOrder.FailurePlace.valueOf( s ), Integer.valueOf( propSleepBefore.getProperty( s ) ) );
+        if( treeSleepBefore != null ) {
+            final Properties propSleepBefore = treeSleepBefore.asProperties( true );
+            final Map< FailureOrder.FailurePlace, Integer > mapSleepBefore = new HashMap< FailureOrder.FailurePlace, Integer >();
+            for( String s: propSleepBefore.stringPropertyNames() ) {
+                mapSleepBefore.put( FailureOrder.FailurePlace.valueOf( s.toUpperCase() ), Integer.valueOf( propSleepBefore.getProperty( s ) ) );
+            }
+            failureOrder.setSleepBefore( mapSleepBefore );
         }
 
-        final Properties propSleepAfter = treeSleepAfter.asProperties( true );
-        final Map< FailureOrder.FailurePlace, Integer > mapSleepAfter = new HashMap< FailureOrder.FailurePlace, Integer >();
-        for( String s: propSleepAfter.stringPropertyNames() ) {
-            mapSleepAfter.put( FailureOrder.FailurePlace.valueOf( s ), Integer.valueOf( propSleepAfter.getProperty( s ) ) );
+        if( treeSleepAfter != null ) {
+            final Properties propSleepAfter = treeSleepAfter.asProperties( true );
+            final Map< FailureOrder.FailurePlace, Integer > mapSleepAfter = new HashMap< FailureOrder.FailurePlace, Integer >();
+            for( String s: propSleepAfter.stringPropertyNames() ) {
+                mapSleepAfter.put( FailureOrder.FailurePlace.valueOf( s.toUpperCase() ), Integer.valueOf( propSleepAfter.getProperty( s ) ) );
+            }
+            failureOrder.setSleepAfter( mapSleepAfter );
         }
-
-        failureOrder.setSleepBefore( mapSleepBefore );
-        failureOrder.setSleepAfter( mapSleepAfter );
     }
 
 

@@ -63,13 +63,15 @@ public class FailureTFAction extends TaskFlowAction< FailureOrder > {
 
     @Override
     protected void onCreated(@NotNull String wid,
-                             @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) throws Exception {
+                             @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState)
+            throws Exception
+    {
         ensureOrder();
         FailureOrder order = getOrder().getOrderBean();
 
         handle(FailureOrder.FailurePlace.CREATED, true);
         super.onCreated( wid, state, isRestartedTask, altTaskState );
-        handle( FailureOrder.FailurePlace.CREATED, true );
+        handle( FailureOrder.FailurePlace.CREATED, false );
     }
 
     @Override
@@ -81,7 +83,7 @@ public class FailureTFAction extends TaskFlowAction< FailureOrder > {
 
         handle( FailureOrder.FailurePlace.INITIALIZED, true );
         super.onInitialized(wid, state, isRestartedTask, altTaskState);
-        handle(FailureOrder.FailurePlace.INITIALIZED, true);
+        handle(FailureOrder.FailurePlace.INITIALIZED, false);
     }
 
     @Override
@@ -93,7 +95,7 @@ public class FailureTFAction extends TaskFlowAction< FailureOrder > {
 
         handle(FailureOrder.FailurePlace.INPROGRESS, true);
         super.onInProgress(wid, state, isRestartedTask, altTaskState);
-        handle( FailureOrder.FailurePlace.INPROGRESS, true );
+        handle( FailureOrder.FailurePlace.INPROGRESS, false );
     }
 
     @Override
@@ -105,7 +107,7 @@ public class FailureTFAction extends TaskFlowAction< FailureOrder > {
 
         handle( FailureOrder.FailurePlace.FINISHED, true );
         super.onFinished(wid, state, isRestartedTask, altTaskState);
-        handle(FailureOrder.FailurePlace.FINISHED, true);
+        handle(FailureOrder.FailurePlace.FINISHED, false);
     }
 
     @Override

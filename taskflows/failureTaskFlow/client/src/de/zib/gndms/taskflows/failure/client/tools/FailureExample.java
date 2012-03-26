@@ -21,7 +21,6 @@ import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.gndmc.gorfx.AbstractTaskFlowExecClient;
 import de.zib.gndms.gndmc.gorfx.ExampleTaskFlowExecClient;
 import de.zib.gndms.gndmc.gorfx.GORFXTaskFlowExample;
-import de.zib.gndms.model.gorfx.types.SliceResult;
 import de.zib.gndms.taskflows.failure.client.model.FailureOrder;
 import org.jetbrains.annotations.NotNull;
 
@@ -58,17 +57,11 @@ public class FailureExample extends GORFXTaskFlowExample {
         etfc = new ExampleTaskFlowExecClient() {
             @Override
             protected void handleResult( TaskResult res ) {
-
-                SliceResult result = SliceResult.class.cast( res );
-                System.out.println( "Slice URL: " );
-                System.out.println( "\t" + result.getSliceSpecifier().getUrl() );
             }
 
 
             @Override
             protected GNDMSResponseHeader setupContext( final GNDMSResponseHeader context ) {
-
-                context.addMyProxyToken( "ESGF", myProxyLogin, myProxyPasswd );
                 return context;
             }
         };
@@ -79,8 +72,6 @@ public class FailureExample extends GORFXTaskFlowExample {
     protected void normalRun() throws Exception {
 
         System.out.println( "Performing normal run!!" );
-
-        requiresMyProxy();
 
         // create an order instance...
         FailureOrder FailureOrder = loadOrderFromProps( orderPropFile );
@@ -105,6 +96,5 @@ public class FailureExample extends GORFXTaskFlowExample {
 
 
     protected void failingRun() {
-
     }
 }

@@ -20,7 +20,7 @@ public class FailureOrder extends AbstractOrder {
     private static final long serialVersionUID = -1925988463350176270L;
 
     public enum FailurePlace {
-        CREATED, INITIALIZED, INPROGRESS, FAILED, FINISHED
+        CREATED, INITIALIZED, INPROGRESS, FAILED, FINISHED, NOWHERE,
     }
     
     private Map< FailurePlace, Integer > sleep_before_super;

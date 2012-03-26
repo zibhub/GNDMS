@@ -67,8 +67,8 @@ public class FailureTaskFlowFactory extends DefaultTaskFlowFactory< FailureOrder
 
 
     @Override
-    protected TaskFlow< FailureOrder > prepare( TaskFlow< FailureOrder > esgfStagingOrderTaskFlow ) {
-        return esgfStagingOrderTaskFlow;
+    protected TaskFlow< FailureOrder > prepare( TaskFlow< FailureOrder > failureOrderTaskFlow ) {
+        return failureOrderTaskFlow;
     }
 
 
