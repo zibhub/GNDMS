@@ -503,27 +503,29 @@ define 'gndms' do
             Commands.java('de.zib.gndms.gndmc.offline.JsonTest',  args, { :classpath => jars, :java_args => jargs } )
         end
     end
-
-    desc 'GORFX rest service'
-    define 'gorfx', :layout => dmsLayout('gorfx', 'gndms-gorfx-rest') do
-        compile.with project('infra'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), project('gndmc-rest'), project('common'), SPRING, SLF4J, XSTREAM, COMMONS_LOGGING, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME, OPENJPA, INJECT, SPRING_SECURITY
-
-        compile
-        meta_inf << file(_('src/META-INF/gorfx.xml'))
-        package :jar
-    end    
           
     desc 'DSpace rest service'
     define 'dspace', :layout => dmsLayout('dspace', 'gndms-dspace-rest') do
-        compile.with project('infra'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), project('gndmc-rest'), project('common'), SPRING, SLF4J, XSTREAM, COMMONS_LOGGING, COMMONS_IO, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME, OPENJPA, INJECT, JETBRAINS_ANNOTATIONS
+        compile.with project('infra'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), project('gndmc-rest'), project('common'), SPRING, SPRING_SECURITY, SLF4J, XSTREAM, COMMONS_LOGGING, COMMONS_IO, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME, OPENJPA, INJECT, JETBRAINS_ANNOTATIONS
 
         compile
         meta_inf << file(_('src/META-INF/dspace.xml'))
         package :jar
     end    
           
+    desc 'GORFX rest service'
+    define 'gorfx', :layout => dmsLayout('gorfx', 'gndms-gorfx-rest') do
+        compile.with project('infra'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), project('gndmc-rest'), project('common'), SPRING, SPRING_SECURITY, SLF4J, XSTREAM, COMMONS_LOGGING, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME, OPENJPA, INJECT, SPRING_SECURITY
+
+        compile
+        meta_inf << file(_('src/META-INF/gorfx.xml'))
+        package :jar
+    end    
+
     desc 'Creating the gndms war'
     define 'gndms', :layout => dmsLayout('gndms', 'gndms-rest') do
+
+        compile.with project('stuff'), SPRING, SPRING_SECURITY, SLF4J
 
         package(:war).include _('src/log4j.properties'), :path=>"WEB-INF/classes"
         package(:war).include _('../LICENSE'), :path=>"WEB-INF/classes/META-INF"
