@@ -31,6 +31,8 @@ import java.util.List;
  */
 public class FailureOrderProperties {
 
+    public final static DocumentedKey FAILURE_EXCEPTION;
+    public final static DocumentedKey FAILURE_MESSAGE;
     public final static DocumentedKey FAILURE_WHERE;
     public final static DocumentedKey FAILURE_BEFORE_SUPER;
     public final static DocumentedKey FAILURE_THROW_IN_SESSION;
@@ -40,6 +42,16 @@ public class FailureOrderProperties {
 
     static {
         ArrayList< DocumentedKey > keys = new ArrayList< DocumentedKey >( 5 );
+        FAILURE_EXCEPTION = DocumentedKey.createAndRegisterKey(
+                keys,
+                "c3grid.FailureRequest.exception",
+                "The Exception to throw."
+        );
+        FAILURE_MESSAGE = DocumentedKey.createAndRegisterKey(
+                keys,
+                "c3grid.FailureRequest.message",
+                "The message carried by the exception."
+        );
         FAILURE_WHERE = DocumentedKey.createAndRegisterKey(
                 keys,
                 "c3grid.FailureRequest.where",

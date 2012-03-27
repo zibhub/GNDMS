@@ -28,7 +28,8 @@ public class FailureOrder extends AbstractOrder {
     private FailurePlace where;
     private boolean beforeSuper;
     private boolean throwInSession;
-    private Throwable exception;
+    private String exception;
+    private String message;
 
     public FailureOrder() {
         super( );
@@ -39,7 +40,8 @@ public class FailureOrder extends AbstractOrder {
         where = FailurePlace.INPROGRESS;
         beforeSuper = false;
         throwInSession = false;
-        exception = new RuntimeException( "Default test exception" );
+        exception = "java.lang.RuntimeException";
+        message = "Default test exception";
     }
     
 
@@ -52,13 +54,21 @@ public class FailureOrder extends AbstractOrder {
         return throwInSession;
     }
 
-    public FailureOrder setException( Throwable exception ) {
+    public FailureOrder setException( String exception ) {
         this.exception = exception;
         return this;
     }
 
-    public Throwable getException() {
+    public String getException() {
         return exception;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public FailurePlace getWhere() {

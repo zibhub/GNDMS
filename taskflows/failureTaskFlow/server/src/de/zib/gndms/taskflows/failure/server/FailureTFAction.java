@@ -27,12 +27,10 @@ import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import de.zib.gndms.taskflows.failure.client.FailureTaskFlowMeta;
 import de.zib.gndms.taskflows.failure.client.model.FailureOrder;
-import de.zib.gndms.taskflows.failure.server.utils.ExceptionThrower;
+import de.zib.gndms.taskflows.failure.server.utils.ExceptionFactory;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * @author bachmann@zib.de
@@ -135,53 +133,17 @@ public class FailureTFAction extends TaskFlowAction< FailureOrder > {
             if( order.isThrowInSession() ) {
                 final Session session = getDao().beginSession();
                 try {
-                    ExceptionThrower.throwUnchecked( order.getException() );
+                    ExceptionFactory.throwUncheked(
+                            ExceptionFactory.createException( order.getException(), order.getMessage() )
+                    );
                     session.success();
                 }
                 finally { session.finish(); }
             }
             else
-                ExceptionThrower.throwUnchecked( order.getException() );
-        }
-    }
-    
-    
-    private Throwable createException( final String className, final String message ) {
-        final Class clazz;
-        try {
-            clazz = Class.forName( className );
-        } catch( ClassNotFoundException e ) {
-            throw new IllegalArgumentException( "Could not find class " + className );
-        }
-        
-        if( ! Throwable.class.isAssignableFrom( clazz ) ) {
-            throw new IllegalArgumentException( "Class " + className + " needs be a Throwable derivative!");
-        }
-
-        boolean argument = true;
-        Constructor constructor;
-        try {
-            constructor = clazz.getConstructor( new Class<?>[]{ String.class } );
-        } catch( NoSuchMethodException e ) {
-            try {
-                constructor = clazz.getConstructor( new Class<?>[]{ } );
-                argument = false;
-            } catch (NoSuchMethodException e1) {
-                throw new IllegalArgumentException( "Class " + className + " has no constructor with a String argument. THIS IS NOT HAPPENING :/" );
-            }
-        }
-
-        try {
-            if( argument )
-                return ( Throwable )constructor.newInstance( message );
-            else
-                return ( Throwable )constructor.newInstance();
-        } catch( InstantiationException e ) {
-            throw new IllegalStateException( e );
-        } catch( IllegalAccessException e ) {
-            throw new IllegalStateException( e );
-        } catch( InvocationTargetException e ) {
-            throw new IllegalStateException( e );
+                ExceptionFactory.throwUncheked(
+                        ExceptionFactory.createException( order.getException(), order.getMessage() )
+                );
         }
     }
 
