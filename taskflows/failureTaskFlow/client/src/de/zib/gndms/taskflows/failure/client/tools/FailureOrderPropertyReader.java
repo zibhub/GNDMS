@@ -60,7 +60,7 @@ public class FailureOrderPropertyReader extends OrderPropertyReader< FailureOrde
         if( exception != null )
             failureOrder.setException( exception );
         if( message != null )
-            failureOrder.setException( message );
+            failureOrder.setMessage( message );
         if( where != null )
             failureOrder.setWhere( FailureOrder.FailurePlace.valueOf( where.toUpperCase() ) );
         if( beforeSuper != null )
