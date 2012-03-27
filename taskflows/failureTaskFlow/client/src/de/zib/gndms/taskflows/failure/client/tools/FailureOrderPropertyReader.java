@@ -51,10 +51,16 @@ public class FailureOrderPropertyReader extends OrderPropertyReader< FailureOrde
         Properties properties = getProperties();
         FailureOrder failureOrder = getProduct();
 
+        final String exception = properties.getProperty( FailureOrderProperties.FAILURE_EXCEPTION.key );
+        final String message = properties.getProperty(FailureOrderProperties.FAILURE_MESSAGE.key  );
         final String where = properties.getProperty( FailureOrderProperties.FAILURE_WHERE.key );
         final String beforeSuper = properties.getProperty(FailureOrderProperties.FAILURE_BEFORE_SUPER.key );
         final String throwInSession = properties.getProperty(FailureOrderProperties.FAILURE_THROW_IN_SESSION.key );
 
+        if( exception != null )
+            failureOrder.setException( exception );
+        if( message != null )
+            failureOrder.setMessage( message );
         if( where != null )
             failureOrder.setWhere( FailureOrder.FailurePlace.valueOf( where.toUpperCase() ) );
         if( beforeSuper != null )
@@ -63,8 +69,8 @@ public class FailureOrderPropertyReader extends OrderPropertyReader< FailureOrde
             failureOrder.setThrowInSession( Boolean.getBoolean( throwInSession ) );
 
         final PropertyTree tree = PropertyTreeFactory.createPropertyTree( properties );
-        final PropertyTree treeSleepBefore = tree.subTree( "c3grid.FailureRequest.sleepBefore" );
-        final PropertyTree treeSleepAfter = tree.subTree( "c3grid.FailureRequest.sleepAfter" );
+        final PropertyTree treeSleepBefore = tree.subTree( FailureOrderProperties.FAILURE_SLEEP_BEFORE.key );
+        final PropertyTree treeSleepAfter = tree.subTree( FailureOrderProperties.FAILURE_SLEEP_AFTER.key );
 
         if( treeSleepBefore != null ) {
             final Properties propSleepBefore = treeSleepBefore.asProperties( true );

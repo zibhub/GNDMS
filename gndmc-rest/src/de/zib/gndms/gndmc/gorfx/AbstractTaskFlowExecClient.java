@@ -21,6 +21,7 @@ import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 import java.util.UUID;
@@ -136,6 +137,7 @@ public abstract class AbstractTaskFlowExecClient {
 
         ResponseEntity<TaskStatus> stat;
         TaskStatus ts;
+        boolean done = false;
         do {
             // queries the status of the task execution
             stat = taskClient.getStatus( taskId, dn, wid );
@@ -150,27 +152,38 @@ public abstract class AbstractTaskFlowExecClient {
             } catch ( InterruptedException e ) {
                 throw new RuntimeException( e );
             }
-        } while( !(  finished( ts ) || failed( ts ) ) ); // run 'til the task hits a final state
 
-        // finished without an error, good 
-        if( finished( ts ) ) {
-            // collect the result
-            ResponseEntity<TaskResult> tr = taskClient.getResult( taskId, dn, wid );
-            if(! HttpStatus.OK.equals( tr.getStatusCode() ) )
-                throw new RuntimeException( "Failed to obtain task result " + tr.getStatusCode().name() );
+            // finished without an error, good(?)
+            if( finished( ts ) ) {
+                // collect the result
+                ResponseEntity<TaskResult> tr = null;
+                try {
+                    tr = taskClient.getResult( taskId, dn, wid );
+                } catch( HttpClientErrorException e ) {
+                    if( 404 == e.getStatusCode().value() )
+                        continue;
+                }
+                
+                if(! HttpStatus.OK.equals( tr.getStatusCode() ) )
+                    throw new RuntimeException( "Failed to obtain task result " + tr.getStatusCode().name() );
 
-            // do something with it
-            handleResult(  tr.getBody() );
+                // do something with it
+                handleResult(  tr.getBody() );
+                
+                done = true;
+            }
+            else if( failed( ts ) ) { // must be failed, not so good
+                // find out way
+                ResponseEntity<TaskFailure> tf = taskClient.getErrors( taskId, dn, wid );
+                if(! HttpStatus.OK.equals( tf.getStatusCode() ) )
+                    throw new RuntimeException( "Failed to obtain task errors " + tf.getStatusCode().name() );
 
-        } else  { // must be failed, not so good
-            // find out way
-            ResponseEntity<TaskFailure> tf = taskClient.getErrors( taskId, dn, wid );
-            if(! HttpStatus.OK.equals( tf.getStatusCode() ) )
-                throw new RuntimeException( "Failed to obtain task errors " + tf.getStatusCode().name() );
+                // handle the failure
+                handleFailure( tf.getBody() );
 
-            // handle the failure
-            handleFailure( tf.getBody() );
-        }
+                done = true;
+            }
+        } while( ! done ); // run 'til the task hits a final state
 
         /**
          * \endcode
