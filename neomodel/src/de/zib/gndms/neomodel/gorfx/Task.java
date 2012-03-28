@@ -388,7 +388,7 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
             if( !( perhapsNotSerializable.getCause() instanceof NotSerializableException) )
                 throw perhapsNotSerializable;
 
-            OutputStream s = new ByteArrayOutputStream();
+            StringWriter s = new StringWriter();
             PrintWriter w = new PrintWriter( s );
 
             Throwable throwable = exception;
@@ -400,12 +400,7 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
                 w.print( throwable.getClass().getCanonicalName() );
                 w.print( ": " );
 
-                if( throwable instanceof Exception ) {
-                    Exception e = ( Exception )throwable;
-                    w.println(e.getMessage());
-                }
-                else
-                    w.println();
+                w.println(throwable.getMessage());
 
                 throwable.printStackTrace( w );
 

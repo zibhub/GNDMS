@@ -89,20 +89,25 @@ public class TaskFailureImpl implements TaskFailure {
     }
 
 
-    public static TaskFailure failureFromException( Exception e ) {
+    public static TaskFailure failureFromException( Throwable t ) {
+        
+        if( t == null )
+            return null;
 
         TaskFailureImpl fault = new TaskFailureImpl();
-        fault.setMessage( e.getMessage() );
+        fault.setFaultClass( t.getClass().getName() );
+        fault.setMessage( t.getMessage() );
         StringWriter sw = new StringWriter( );
         PrintWriter pw  = new PrintWriter( sw );
-        e.printStackTrace( pw );
+        t.printStackTrace( pw );
         pw.close( );
         fault.setFaultTrace( sw.toString() );
-        fault.setFaultClass( e.getClass().getName() );
 
-        StackTraceElement[] se = e.getStackTrace();
+        StackTraceElement[] se = t.getStackTrace();
         if( se.length > 0 )
             fault.setFaultLocation( se[0].toString() );
+
+        fault.setNext( failureFromException( t.getCause() ) );
 
         return fault;
     }
