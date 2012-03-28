@@ -86,7 +86,7 @@ public class GORFXClientMain extends AbstractApplication {
         if( "https".equals( gorfxUrl.getScheme() ) ) {
             System.out.println( "https specified. enabling SSL" );
             SetupSSL setupSSL = KeyStoreTest.initSSL( ksp, ksp, tsp );
-            setupSSL.setupDefaultSSLContext();
+            setupSSL.setupDefaultSSLContext( ksp );
         }
 
 		System.out.println("requesting facets");
