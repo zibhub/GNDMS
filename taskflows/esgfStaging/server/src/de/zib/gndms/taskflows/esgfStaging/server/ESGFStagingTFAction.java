@@ -133,7 +133,7 @@ public class ESGFStagingTFAction extends TaskFlowAction< ESGFStagingOrder > {
             setupSSL = prepareProxy();
         }
         catch( Throwable e ) {
-            logger.error( "Could not authenticate against ESGF Provider: ", e);
+            logger.error( "Could not authenticate against ESGF Provider." );
             transit( TaskState.FAILED );
             throw new Exception( "Could not authenticate against ESGF Provider.", e );
         }
@@ -227,7 +227,8 @@ public class ESGFStagingTFAction extends TaskFlowAction< ESGFStagingOrder > {
             getCredentialProvider().installCredentials( params );
         }
         catch ( Exception e ) {
-            logger.debug( "couldn't deploy credentials: ", e );
+            logger.debug( "Couldn't deploy credentials " );
+            throw new IllegalStateException( "Couldn't deploy credentials: ", e );
         }
 
         return setupSSL;

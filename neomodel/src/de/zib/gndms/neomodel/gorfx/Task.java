@@ -32,7 +32,7 @@ import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.index.impl.lucene.ValueContext;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -378,7 +378,47 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
         final LinkedList<Exception> oldList = getCause();
         final LinkedList<Exception> newList = oldList == null ? new LinkedList<Exception>() : oldList;
         newList.add(exception);
-        setCause(newList);
+        try {
+            setCause( newList );
+        }
+        // not serializable? serialize it by hand..
+        catch( RuntimeException perhapsNotSerializable ) {
+            if( null == perhapsNotSerializable.getCause() )
+                throw perhapsNotSerializable;
+            if( !( perhapsNotSerializable.getCause() instanceof NotSerializableException) )
+                throw perhapsNotSerializable;
+
+            OutputStream s = new ByteArrayOutputStream();
+            PrintWriter w = new PrintWriter( s );
+
+            Throwable throwable = exception;
+            while( throwable != null ) {
+                if( throwable != exception ) {
+                    w.print( "Caused by: " );
+                }
+
+                w.print( throwable.getClass().getCanonicalName() );
+                w.print( ": " );
+
+                if( throwable instanceof Exception ) {
+                    Exception e = ( Exception )throwable;
+                    w.println(e.getMessage());
+                }
+                else
+                    w.println();
+
+                throwable.printStackTrace( w );
+
+                throwable = throwable.getCause();
+            }
+
+            w.flush();
+            newList.remove( newList.size()-1 );
+            newList.add( new Exception( s.toString() ) );
+
+            setCause( newList );
+        }
+
         return newList;
     }
 

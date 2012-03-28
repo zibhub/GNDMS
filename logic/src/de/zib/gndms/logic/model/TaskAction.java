@@ -40,7 +40,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
-import java.io.Serializable;
+import java.io.*;
 
 
 /**
@@ -357,8 +357,9 @@ public abstract class TaskAction<O extends Serializable> extends
             task.setTaskState(TaskState.FAILED);
             if( hasPayload )
                 task.setPayload(payload);
-            for (Exception e: exceptions)
+            for (Exception e: exceptions) {
                 task.addCause(e);
+            }
             session.success();
         }
         finally { session.finish(); }
