@@ -75,7 +75,11 @@
  	<!-- SliceService -->
 
     <bean id="sliceProvider" class="de.zib.gndms.logic.model.dspace.SliceProviderImpl" />
- 
+
+    <bean id="sliceProtector" class="de.zib.gndms.dspace.service.DSpaceAspects">
+        <constructor-arg ref="sliceProvider" />
+    </bean>
+
     <bean id="sliceService" class="de.zib.gndms.dspace.service.SliceServiceImpl">
         <property name="baseUrl" value="${dspaceBaseURL}"/>
         <property name="sliceFacetNames" ref="sliceFacetNames" />

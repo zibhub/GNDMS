@@ -25,6 +25,7 @@ import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.logic.model.dspace.*;
+import de.zib.gndms.model.common.NoSuchResourceException;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
@@ -45,6 +46,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -79,7 +81,7 @@ public class SliceServiceImpl implements SliceService {
     private RestTemplate restTemplate;
 
     @Inject
-    public void setSliceKindProvider(SliceKindProvider sliceKindProvider) {
+    public void setSliceKindProvider( SliceKindProvider sliceKindProvider ) {
         this.sliceKindProvider = sliceKindProvider;
     }
 
@@ -104,17 +106,16 @@ public class SliceServiceImpl implements SliceService {
 	@RequestMapping( value = "/_{subspaceId}/_{sliceKindId}/_{sliceId}", method = RequestMethod.GET )
     @Secured( "ROLE_USER" )
 	public ResponseEntity< Facets > listSliceFacets(
-			@PathVariable final String subspaceId,
-			@PathVariable final String sliceKindId,
+            @PathVariable final String subspaceId,
+            @PathVariable final String sliceKindId,
 			@PathVariable final String sliceId,
 			@RequestHeader( "DN" ) final String dn ) {
 		GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKindId, sliceId, dn );
 
         try {
             // check for the existence of that slice
-            findSliceOfKind( subspaceId, sliceKindId, sliceId );
-            checkOwner( dn, subspaceId, sliceId );
-            
+            findSliceOfKind(subspaceId, sliceKindId, sliceId);
+
             return new ResponseEntity< Facets >( new Facets( listFacetsOfSlice( subspaceId, sliceKindId, sliceId ) ), headers, HttpStatus.OK );
         } catch ( NoSuchElementException ne ) {
             logger.warn( "The sliceId " + sliceId + " of sliceId kind " + sliceKindId
@@ -131,21 +132,20 @@ public class SliceServiceImpl implements SliceService {
 			@PathVariable final String subspaceId,
 			@PathVariable final String sliceKind,
 			@PathVariable final String sliceId,
-			@RequestBody final Configuration config,
+            @RequestBody final Configuration config,
 			@RequestHeader("DN") final String dn) {
 		GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKind, sliceId, dn);
 
 		try {
-			Slice slic = findSliceOfKind( subspaceId, sliceKind, sliceId );
-            checkOwner( dn, subspaceId, sliceId );
+			Slice slice = findSliceOfKind( subspaceId, sliceKind, sliceId );
 
 			SliceConfiguration slConfig = SliceConfiguration
 					.checkSliceConfig(config);
 
 			// TODO check if we handled all important sliceId parameters,
 			// otherwise SliceConfiguration has to be extended
-			slic.setTerminationTime(slConfig.getTerminationTime());
-			slic.setTotalStorageSize(slConfig.getSize());
+			slice.setTerminationTime(slConfig.getTerminationTime());
+			slice.setTotalStorageSize(slConfig.getSize());
 
 			return new ResponseEntity<Void>(null, headers, HttpStatus.OK);
 		} catch (NoSuchElementException ne) {
@@ -165,13 +165,12 @@ public class SliceServiceImpl implements SliceService {
 			@PathVariable final String subspaceId,
 			@PathVariable final String sliceKind,
 			@PathVariable final String sliceId,
-			@RequestBody final Specifier<Void> newSliceKind,
-			@RequestHeader("DN") final String dn) {
+            @RequestBody final Specifier<Void> newSliceKind,
+            @RequestHeader("DN") final String dn) {
 		GNDMSResponseHeader headers = setHeaders(subspaceId, sliceKind, sliceId, dn);
 
 		try {
-			Slice slic = findSliceOfKind( subspaceId, sliceKind, sliceId );
-            checkOwner( dn, subspaceId, sliceId );
+			Slice slice = findSliceOfKind( subspaceId, sliceKind, sliceId );
 
 			SliceKind newSliceK = sliceKindProvider.get( subspaceId,
                     newSliceKind.getUrl());
@@ -182,8 +181,8 @@ public class SliceServiceImpl implements SliceService {
 			try {
 				// TODO is this right? what is this uuid generator (last entry)?
 				TransformSliceAction action = new TransformSliceAction(
-						dn, slic.getTerminationTime(),
-						newSliceK, space, slic.getTotalStorageSize(), null);
+						dn, slice.getTerminationTime(),
+						newSliceK, space, slice.getTotalStorageSize(), null);
 				action.setOwnEntityManager( em );
 				logger.info("Calling action for transforming sliceId " + sliceId
 						+ ".");
@@ -226,8 +225,6 @@ public class SliceServiceImpl implements SliceService {
 		GNDMSResponseHeader headers = setHeaders(subspaceId, sliceKindId, sliceId, dn);
 
 		try {
-            checkOwner( dn, subspaceId, sliceId );
-
             // submit action
             final Taskling ling = sliceProvider.deleteSlice(subspaceId, sliceId);
 
@@ -256,8 +253,6 @@ public class SliceServiceImpl implements SliceService {
 		final GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKindId, sliceId, dn );
 
 		try {
-            checkOwner( dn, subspaceId, sliceId );
-
 			final Subspace space = subspaceProvider.get( subspaceId );
 			final Slice slice = findSliceOfKind( subspaceId, sliceKindId, sliceId );
 			final String path = space.getPathForSlice( slice );
@@ -287,8 +282,6 @@ public class SliceServiceImpl implements SliceService {
         GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKind, sliceId, dn);
 
         try {
-            checkOwner( dn, subspaceId, sliceId );
-
             Subspace space = subspaceProvider.get( subspaceId );
             Slice slice = findSliceOfKind( subspaceId, sliceKind, sliceId );
             String path = space.getPathForSlice(slice);
@@ -326,8 +319,6 @@ public class SliceServiceImpl implements SliceService {
 		GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKind, sliceId, dn);
 
 		try {
-            checkOwner( dn, subspaceId, sliceId );
-
 			Subspace space = subspaceProvider.get( subspaceId );
 			Slice slice = findSliceOfKind( subspaceId, sliceKind, sliceId );
 			String path = space.getPathForSlice( slice );
@@ -359,8 +350,6 @@ public class SliceServiceImpl implements SliceService {
 		GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKind, sliceId, dn );
 
 		try {
-            checkOwner( dn, subspaceId, sliceId );
-
 			Subspace space = subspaceProvider.get( subspaceId );
 			Slice slice = findSliceOfKind( subspaceId, sliceKind, sliceId );
 			return new ResponseEntity<String>(
@@ -382,12 +371,11 @@ public class SliceServiceImpl implements SliceService {
             @PathVariable final String sliceId,
             @PathVariable final String fileName,
             @RequestParam( value="attrs", required = false) final List<String> attrs,
-            @RequestHeader("DN") final String dn, final OutputStream out) {
+            @RequestHeader("DN") final String dn,
+            final OutputStream out) {
 		GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKind, sliceId, dn );
 
 		try {
-            checkOwner( dn, subspaceId, sliceId );
-
 			Subspace space = subspaceProvider.get( subspaceId );
 			Slice slice = findSliceOfKind( subspaceId, sliceKind, sliceId);
 			String path = space.getPathForSlice(slice);
@@ -438,12 +426,10 @@ public class SliceServiceImpl implements SliceService {
 			@PathVariable final String sliceId,
 			@PathVariable final String fileName,
 			@RequestParam( "file" ) final MultipartFile file,
-			@RequestHeader("DN") final String dn) {
+            @RequestHeader("DN") final String dn) {
 		GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKind, sliceId, dn );
 
 		try {
-            checkOwner( dn, subspaceId, sliceId );
-
 			Subspace space = subspaceProvider.get( subspaceId );
 			Slice slice = findSliceOfKind( subspaceId, sliceKind, sliceId );
 			String path = space.getPathForSlice(slice);
@@ -479,13 +465,11 @@ public class SliceServiceImpl implements SliceService {
 			@PathVariable final String subspaceId,
 			@PathVariable final String sliceKind,
 			@PathVariable final String sliceId,
-			@PathVariable final String fileName,
-			@RequestHeader("DN") final String dn) {
+            @PathVariable final String fileName,
+            @RequestHeader("DN") final String dn) {
 		GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKind, sliceId, dn );
 
 		try {
-            checkOwner( dn, subspaceId, sliceId );
-
 			Subspace space = subspaceProvider.get( subspaceId );
 			Slice slice = findSliceOfKind( subspaceId, sliceKind, sliceId );
 			String path = space.getPathForSlice( slice );
@@ -573,15 +557,6 @@ public class SliceServiceImpl implements SliceService {
 		return slice;
 	}
 
-    private void checkOwner( String dn, String subspaceId, String sliceId ) throws NoSuchElementException {
-        Slice slice = sliceProvider.getSlice( subspaceId, sliceId );
-        
-        if( ! slice.getOwner().equals( dn ) ) {
-            logger.debug( "User " + dn + " tried to access slice " + sliceId + ", owned by " + slice.getOwner() + "." );
-            throw new UnauthorizedAccessException( "User " + dn + " does not own slice " + sliceId + "." );
-        }
-    }
-
     void recursiveListFiles( String path, String prefix, List<FileStats> list ) {
         List< String > flatContents = directoryAux.listContent( path );
         
@@ -664,5 +639,29 @@ public class SliceServiceImpl implements SliceService {
     @Inject
     public void setDirectoryAux(DirectoryAux directoryAux) {
         this.directoryAux = directoryAux;
+    }
+
+    @ExceptionHandler( NoSuchResourceException.class )
+    public ResponseEntity<Void> handleNoSuchResourceException(
+            NoSuchResourceException ex,
+            HttpServletResponse response )
+            throws IOException
+    {
+        logger.debug("handling exception for: " + ex.getMessage());
+        response.setStatus( HttpStatus.NOT_FOUND.value() );
+        response.sendError( HttpStatus.NOT_FOUND.value() );
+        return new ResponseEntity<Void>( null, setHeaders(ex.getMessage(), null, null, null), HttpStatus.NOT_FOUND );
+    }
+
+    @ExceptionHandler( UnauthorizedAccessException.class )
+    public ResponseEntity<Void> handleUnAuthorizedException(
+            UnauthorizedAccessException ex,
+            HttpServletResponse response )
+            throws IOException
+    {
+        logger.debug( "handling exception for: " + ex.getMessage() );
+        response.setStatus( HttpStatus.UNAUTHORIZED.value() );
+        response.sendError(HttpStatus.UNAUTHORIZED.value());
+        return new ResponseEntity<Void>( null, setHeaders(ex.getMessage(), null, null, null), HttpStatus.UNAUTHORIZED );
     }
 }
