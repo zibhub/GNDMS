@@ -78,6 +78,8 @@
 
     <bean id="sliceProtector" class="de.zib.gndms.dspace.service.DSpaceAspects">
         <constructor-arg ref="sliceProvider" />
+        <constructor-arg ref="sliceKindProvider" />
+        <constructor-arg ref="subspaceProvider" />
     </bean>
 
     <bean id="sliceService" class="de.zib.gndms.dspace.service.SliceServiceImpl">
