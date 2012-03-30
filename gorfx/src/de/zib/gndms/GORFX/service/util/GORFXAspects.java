@@ -24,6 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import java.util.UUID;
+
 /**
  * @date: 30.03.12
  * @time: 07:48
@@ -40,13 +42,18 @@ public class GORFXAspects {
     @Pointcut( "execution(* de.zib.gndms.GORFX.service.TaskFlowServiceImpl.*(..))" )
     public void inTaskFlowServiceImpl() {}
 
+    @Pointcut( "execution(* de.zib.gndms.GORFX.service.GORFXServiceImpl.*(..))" )
+    public void inGORFXServiceImpl() {}
+
     @Around( value = "inTaskServiceImpl() && args( taskId, .., String )" )
     public void logTaskId( ProceedingJoinPoint pjp, final String taskId ) throws Throwable {
-        MDC.put( "TaskID", taskId );
+        MDC.put("TaskID", taskId);
+        MDC.put( "ServiceCall", pjp.getSignature().toLongString() );
 
         pjp.proceed();
 
         MDC.remove( "TaskID" );
+        MDC.remove( "ServiceCall" );
     }
 
     @Around( value = "inTaskFlowServiceImpl() && args( type, taskFlowId, .., dn, wID )" )
@@ -58,11 +65,24 @@ public class GORFXAspects {
         MDC.put( "TaskFlowType", type ) ;
         MDC.put( "TaskFlowID", taskFlowId ) ;
         MDC.put( "WorkFlowID", wID ) ;
+        MDC.put( "ServiceCall", pjp.getSignature().toLongString() );
 
         pjp.proceed();
 
         MDC.remove( "TaskFlowType" );
         MDC.remove( "TaskFlowID" );
         MDC.remove( "WorkFlowID" );
+        MDC.remove( "ServiceCall" );
+    }
+
+    @Around( value = "inGORFXServiceImpl()" )
+    public void logGORFXWithNewUUID( ProceedingJoinPoint pjp ) throws Throwable {
+        MDC.put( "ServiceCall", pjp.getSignature().toLongString() );
+        MDC.put( "GORFXCall", UUID.randomUUID().toString() );
+
+        pjp.proceed();
+
+        MDC.remove( "ServiceCall" );
+        MDC.remove( "GORFXCall" );
     }
 }
