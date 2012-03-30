@@ -14,7 +14,7 @@
  *
  */
 
-package de.zib.gndms.dspace.service;
+package de.zib.gndms.dspace.service.utils;
 
 import com.sun.servicetag.UnauthorizedAccessException;
 import de.zib.gndms.logic.model.dspace.NoSuchElementException;
