@@ -50,6 +50,9 @@
           class="org.springframework.security.web.authentication.preauth.x509.X509AuthenticationFilter">
             <property name="principalExtractor" ref="fullDNExtractor" />
             <property name="authenticationManager" ref="authenticationManager" />
+            <property name="continueFilterChainOnUnsuccessfulAuthentication" value="false" />
+            <!-- this flag ensures that the filter chain is only processed further when the x509 proxys
+                 dn is accepted -->
     </bean>
 
     <bean id="fullDNExtractor"
@@ -62,15 +65,21 @@
             "org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter">
         <property name="principalRequestHeader" value="DN"/>
         <property name="authenticationManager" ref="authenticationManager" />
+        <property name="checkForPrincipalChanges" value="true"/>
+        <!-- if the x509 cert from the previous filter has a different dn then the header dn the above flag
+             enforces recalculation of the granted authorities -->
     </bean>
 
-    <!-- preauthAuthProvider forwards the dn from the request header to the user service -->
+
+    <!-- preauthAuthProvider forwarded from the request header to the user service -->
     <bean id="preauthAuthProvider"
           class="org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider">
         <property name="preAuthenticatedUserDetailsService">
+            <!--class="org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper"-->
             <bean id="userDetailsServiceWrapper"
-                  class="org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper">
+                    class="de.zib.gndms.gndms.security.HostAndUserDetailsService">
                 <property name="userDetailsService" ref="userDetailsService"/>
+                <property name="allowedHostsFileName" value="/tmp/gndms-allowed-hosts" />
             </bean>
         </property>
     </bean>
@@ -82,8 +91,7 @@
         <property name="adminGridMapfileName" value="/tmp/gndms-admins" />
     </bean>
     
-
-    <!-- this authentication manager uses a provider ot make authentication desisions -->
+    <!-- this authentication manager uses a provider ot make authentication decisions -->
     <security:authentication-manager alias="authenticationManager">
         <security:authentication-provider ref="preauthAuthProvider" />
     </security:authentication-manager>
@@ -123,18 +131,6 @@
     <bean id="insecureChannelProcessor"
           class="org.springframework.security.web.access.channel.InsecureChannelProcessor"/>
 
-
-
-    <!--bean id="roleFilter"
-          class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
-        <property name="authenticationManager" ref="authenticationManager"/>
-        <property name="accessDecisionManager" ref="httpRequestAccessDecisionManager"/>
-        <property name="securityMetadataSource">
-            <security:filter-invocation-definition-source>
-                <security:intercept-url pattern="/**" />
-            </security:filter-invocation-definition-source>
-        </property>
-    </bean-->
 
     <!--  Provide role-hierarchy for role-based decisions -->
     <bean id="httpRequestAccessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
