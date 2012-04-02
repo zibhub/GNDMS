@@ -46,18 +46,20 @@ public class GORFXAspects {
     public void inGORFXServiceImpl() {}
 
     @Around( value = "inTaskServiceImpl() && args( taskId, .., String )" )
-    public void logTaskId( ProceedingJoinPoint pjp, final String taskId ) throws Throwable {
+    public Object logTaskId( ProceedingJoinPoint pjp, final String taskId ) throws Throwable {
         MDC.put("TaskID", taskId);
         MDC.put( "ServiceCall", pjp.getSignature().toLongString() );
 
-        pjp.proceed();
+        final Object ret = pjp.proceed();
 
         MDC.remove( "TaskID" );
         MDC.remove( "ServiceCall" );
+
+        return ret;
     }
 
     @Around( value = "inTaskFlowServiceImpl() && args( type, taskFlowId, .., dn, wID )" )
-    public void logTaskFlowId( ProceedingJoinPoint pjp,
+    public Object logTaskFlowId( ProceedingJoinPoint pjp,
                                final String type,
                                final String taskFlowId,
                                final String dn,
@@ -67,22 +69,26 @@ public class GORFXAspects {
         MDC.put( "WorkFlowID", wID ) ;
         MDC.put( "ServiceCall", pjp.getSignature().toLongString() );
 
-        pjp.proceed();
+        final Object ret = pjp.proceed();
 
         MDC.remove( "TaskFlowType" );
         MDC.remove( "TaskFlowID" );
         MDC.remove( "WorkFlowID" );
         MDC.remove( "ServiceCall" );
+        
+        return ret;
     }
 
     @Around( value = "inGORFXServiceImpl()" )
-    public void logGORFXWithNewUUID( ProceedingJoinPoint pjp ) throws Throwable {
+    public Object logGORFXWithNewUUID( ProceedingJoinPoint pjp ) throws Throwable {
         MDC.put( "ServiceCall", pjp.getSignature().toLongString() );
         MDC.put( "GORFXCall", UUID.randomUUID().toString() );
 
-        pjp.proceed();
+        final Object ret = pjp.proceed();
 
         MDC.remove( "ServiceCall" );
         MDC.remove( "GORFXCall" );
+
+        return ret;
     }
 }

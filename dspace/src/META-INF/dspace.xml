@@ -76,7 +76,7 @@
 
     <bean id="sliceProvider" class="de.zib.gndms.logic.model.dspace.SliceProviderImpl" />
 
-    <bean id="sliceProtector" class="de.zib.gndms.dspace.service.DSpaceAspects">
+    <bean id="sliceProtector" class="de.zib.gndms.dspace.service.utils.DSpaceAspects">
         <constructor-arg ref="sliceProvider" />
         <constructor-arg ref="sliceKindProvider" />
         <constructor-arg ref="subspaceProvider" />
