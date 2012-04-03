@@ -14,12 +14,14 @@
  *  limitations under the License.
  */
 
-package de.zib.gndms.gndmc.dspace;
+package de.zib.gndms.gndmc.dspace.test;
 
 import de.zib.gndms.common.logic.config.SetupMode;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.dspace.service.SubspaceServiceImpl;
+import de.zib.gndms.gndmc.dspace.test.C;
+import de.zib.gndms.gndmc.dspace.test.JPATest;
 import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
 import de.zib.gndms.logic.model.NoWSDontNeedModelUpdateListener;
 import de.zib.gndms.logic.model.dspace.*;

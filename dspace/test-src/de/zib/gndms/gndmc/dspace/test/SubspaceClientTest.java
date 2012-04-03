@@ -1,4 +1,4 @@
-package de.zib.gndms.gndmc.dspace;
+package de.zib.gndms.gndmc.dspace.test;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -16,6 +16,7 @@ package de.zib.gndms.gndmc.dspace;
  * limitations under the License.
  */
 
+import de.zib.gndms.gndmc.dspace.SubspaceClient;
 import de.zib.gndms.gndmc.gorfx.FullGORFXClient;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;

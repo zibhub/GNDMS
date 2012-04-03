@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package de.zib.gndms.gndmc.dspace;
+package de.zib.gndms.gndmc.dspace.test;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

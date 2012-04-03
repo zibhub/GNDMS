@@ -14,12 +14,9 @@
  *
  */
 
-package de.zib.gndms.gndmc.dspace;
+package de.zib.gndms.gndmc.dspace.test;
 
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
+import javax.persistence.MappedSuperclass;
 
 /**
  * @date: 30.01.12
@@ -27,17 +24,17 @@ import javax.persistence.Table;
  * @author: Jörg Bachmann
  * @email: bachmann@zib.de
  */
-@Entity
-@Table( name = "C", schema = "dspace" )
-@Inheritance( strategy = InheritanceType.JOINED )
-public class C extends B {
-    public int z;
+//@Entity
+//@Table( name = "B", schema = "dspace" )
+@MappedSuperclass
+public abstract class B extends A {
+    public int y;
 
-    public int getZ() {
-        return z;
+    public int getY() {
+        return y;
     }
 
-    public void setZ(int z) {
-        this.z = z;
+    public void setY(int y) {
+        this.y = y;
     }
 }

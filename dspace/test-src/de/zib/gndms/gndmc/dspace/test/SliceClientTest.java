@@ -1,4 +1,4 @@
-package de.zib.gndms.gndmc.dspace;
+package de.zib.gndms.gndmc.dspace.test;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -17,6 +17,8 @@ package de.zib.gndms.gndmc.dspace;
  */
 
 import de.zib.gndms.common.rest.Specifier;
+import de.zib.gndms.gndmc.dspace.MockRestTemplate;
+import de.zib.gndms.gndmc.dspace.SliceClient;
 import de.zib.gndms.logic.model.dspace.SliceConfiguration;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;

@@ -1,4 +1,4 @@
-package de.zib.gndms.gndmc.dspace;
+package de.zib.gndms.gndmc.dspace.test;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -16,11 +16,11 @@ package de.zib.gndms.gndmc.dspace;
  * limitations under the License.
  */
 
+import de.zib.gndms.gndmc.dspace.DSpaceClient;
+import de.zib.gndms.gndmc.dspace.MockRestTemplate;
 import org.springframework.http.ResponseEntity;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
-
-import de.zib.gndms.logic.model.dspace.SliceKindConfiguration;
 
 /**
  * Tests the DSpaceClient.
@@ -28,20 +28,20 @@ import de.zib.gndms.logic.model.dspace.SliceKindConfiguration;
  * @author Ulrike Golas
  */
 
-public class SliceKindClientTest {
+public class DSpaceClientTest {
 	/**
 	 * Tests the constructors.
 	 */
 	@Test
     public final void testConstructor() {		
 		
-		SliceKindClient scl = new SliceKindClient();
-       	AssertJUnit.assertNotNull(scl);
+		DSpaceClient dcl = new DSpaceClient();
+       	AssertJUnit.assertNotNull(dcl);
 		
 		String a = "test";
-		scl = new SliceKindClient(a);
+		dcl = new DSpaceClient(a);
 		
-       	AssertJUnit.assertEquals(a, scl.getServiceURL());
+       	AssertJUnit.assertEquals(a, dcl.getServiceURL());
    	}
 
 	/**
@@ -50,30 +50,17 @@ public class SliceKindClientTest {
 	@Test
     public final void testBehavior() {				
 		String a = "test";
-		SliceKindClient scl = new SliceKindClient(a);
+		DSpaceClient dcl = new DSpaceClient(a);
 		
 		MockRestTemplate mockTemplate = new MockRestTemplate();
 		mockTemplate.setServiceURL(a);
-		scl.setRestTemplate(mockTemplate);
+		dcl.setRestTemplate(mockTemplate);
 		
 		String dn = "me";
-		String subspace = "testSubspace";
-		String sliceKind = "testSliceKind";
 		ResponseEntity<?> res;
 
-		res = scl.getSliceKindInfo(subspace, sliceKind, dn);
+		res = dcl.listSubspaceSpecifiers(dn);
        	AssertJUnit.assertNotNull(res);
-       	       	
-		String uri = "testuri";
-		String permission = "345";
-       	SliceKindConfiguration config = new SliceKindConfiguration(uri, permission, null);
-		//res = scl.createSlice(subspace, sliceKind, config, dn);
-       	//AssertJUnit.assertNotNull(res);
-
-		//res = scl.createSlice(subspace, sliceKind, config, dn);
-       	//AssertJUnit.assertNotNull(res);
-
-		res = scl.deleteSliceKind(subspace, sliceKind, dn);
-       	AssertJUnit.assertNotNull(res);
-   	}
+       	   	
+	}
 }

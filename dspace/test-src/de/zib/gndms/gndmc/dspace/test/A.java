@@ -14,7 +14,7 @@
  *
  */
 
-package de.zib.gndms.gndmc.dspace;
+package de.zib.gndms.gndmc.dspace.test;
 
 import javax.persistence.*;
 

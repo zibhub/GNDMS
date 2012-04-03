@@ -1,4 +1,4 @@
-package de.zib.gndms.gndmc.dspace;
+package de.zib.gndms.gndmc.dspace.test;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
