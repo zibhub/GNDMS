@@ -16,7 +16,6 @@ package de.zib.gndms.gndmc.dspace.test;
  * limitations under the License.
  */
 
-import de.zib.gndms.gndmc.dspace.MockRestTemplate;
 import de.zib.gndms.gndmc.dspace.SliceKindClient;
 import org.springframework.http.ResponseEntity;
 import org.testng.AssertJUnit;

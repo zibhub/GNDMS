@@ -17,7 +17,6 @@ package de.zib.gndms.gndmc.dspace.test;
  */
 
 import de.zib.gndms.gndmc.dspace.DSpaceClient;
-import de.zib.gndms.gndmc.dspace.MockRestTemplate;
 import org.springframework.http.ResponseEntity;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;

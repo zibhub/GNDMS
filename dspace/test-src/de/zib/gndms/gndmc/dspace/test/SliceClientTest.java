@@ -17,7 +17,6 @@ package de.zib.gndms.gndmc.dspace.test;
  */
 
 import de.zib.gndms.common.rest.Specifier;
-import de.zib.gndms.gndmc.dspace.MockRestTemplate;
 import de.zib.gndms.gndmc.dspace.SliceClient;
 import de.zib.gndms.logic.model.dspace.SliceConfiguration;
 import org.springframework.http.ResponseEntity;
