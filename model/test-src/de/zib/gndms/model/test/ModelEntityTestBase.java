@@ -19,6 +19,9 @@ package de.zib.gndms.model.test;
 
 
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 
@@ -43,6 +46,8 @@ import static javax.persistence.Persistence.createEntityManagerFactory;
  */
 public abstract class ModelEntityTestBase {
 
+    protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
+
     private EntityManagerFactory emf;
     
     private EntityManager entityManager;
@@ -66,9 +71,17 @@ public abstract class ModelEntityTestBase {
     }
 
 
+    @BeforeClass( dependsOnGroups = "modeltests" )
+    public void init() {
+        tryCloseEMF();
+        removeDbPath();
+    }
+
+
     public void removeDbPath() {
         erasePath(new File(dbPath));
     }
+
 
     public void tryCloseEMF( ) {
 
@@ -76,6 +89,10 @@ public abstract class ModelEntityTestBase {
             emf.close( );
     }
 
+
+    public void setEntityManagerFactory( EntityManagerFactory emf ) {
+        this.emf = emf;
+    }
 
     public EntityManagerFactory getEntityManagerFactory( ) {
 
@@ -131,7 +148,7 @@ public abstract class ModelEntityTestBase {
             throw new IllegalStateException( "No data base schema name provided." );
 
         if( emf != null )
-            throw new IllegalStateException( "Entity manager facotry already created." );
+            throw new IllegalStateException( "Entity manager factory already created." );
 
         File dbDir = new File( dbPath );
 
@@ -149,7 +166,8 @@ public abstract class ModelEntityTestBase {
         final Properties map = new Properties();
 
         map.put( "openjpa.Id", dbName);
-        map.put( "openjpa.ConnectionURL", "jdbc:derby:" + dbName + ";create=true");
+        map.put( "openjpa.ConnectionURL", "jdbc:derby:" + dbPath + ";create=true");
+        //map.put( "openjpa.ConnectionURL", "jdbc:derby:" + dbPath );
 
         emf = createEntityManagerFactory(dbName, map);
         System.out.println( System.getProperty( "derby.system.home" ) );

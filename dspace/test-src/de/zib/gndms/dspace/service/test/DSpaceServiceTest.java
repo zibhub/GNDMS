@@ -20,6 +20,7 @@ import de.zib.gndms.common.logic.config.SetupMode;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.dspace.service.SubspaceServiceImpl;
+import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.logic.model.DefaultBatchUpdateAction;
 import de.zib.gndms.logic.model.NoWSDontNeedModelUpdateListener;
 import de.zib.gndms.logic.model.dspace.*;
@@ -33,14 +34,21 @@ import de.zib.gndms.model.util.TxFrame;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.Taskling;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.LinkedList;
+import java.util.Properties;
 
 /**
  * Created by IntelliJ IDEA.
@@ -51,8 +59,10 @@ import java.io.StringWriter;
  */
 public class DSpaceServiceTest extends ModelEntityTestBase
 {
+    ApplicationContext context;
+
     String sliceId;
-    
+
     final static String subspaceId = "sub";
     final static String subspacePath = "/tmp/gndms/sub";
     final static String gridFtpPath = "gridFtpPath";
@@ -68,6 +78,20 @@ public class DSpaceServiceTest extends ModelEntityTestBase
     @Parameters( { "dbPath", "dbName"} )
     public DSpaceServiceTest(String dbPath, @Optional("c3grid") String dbName) {
         super( dbPath, dbName );
+    }
+
+
+    @BeforeClass( dependsOnGroups = { "dspaceActionTests" }, dependsOnMethods = { "init" } )
+    private void initContext() {
+        context = new ClassPathXmlApplicationContext( "classpath:META-INF/00_system.xml" );
+
+        final Properties map = new Properties();
+        map.put( "openjpa.Id", getDbName());
+        map.put( "openjpa.ConnectionURL", "jdbc:derby:" + getDbPath() + ";create=true");
+        //map.put( "openjpa.ConnectionURL", "jdbc:derby:" + getDbPath() );
+
+        final EntityManagerFactory emf = Persistence.createEntityManagerFactory( getDbName(), map );
+        setEntityManagerFactory( emf );
     }
 
 
@@ -160,7 +184,8 @@ public class DSpaceServiceTest extends ModelEntityTestBase
         sliceProvider.setSliceKindProvider( sliceKindProvider );
 
         subspaceService.setEmf( getEntityManagerFactory() );
-        subspaceService.setSliceProvider( sliceProvider );
+        subspaceService.setSliceProvider(sliceProvider);
+        subspaceService.setSliceKindProvider( sliceKindProvider );
         subspaceService.setSubspaceProvider( subspaceProvider );
 
         final ResponseEntity< Specifier< Void > > response = subspaceService.createSlice(
@@ -187,6 +212,8 @@ public class DSpaceServiceTest extends ModelEntityTestBase
 
         sliceProvider.setSubspaceProvider( subspaceProvider );
         sliceProvider.setSliceKindProvider( sliceKindProvider );
+        
+        sliceProvider.setSystem( ( GNDMSystem )context.getBean( "system" ) );
 
         final Taskling ling = sliceProvider.deleteSlice( subspaceId, sliceId );
 
@@ -201,7 +228,11 @@ public class DSpaceServiceTest extends ModelEntityTestBase
                 taskState = task.getTaskState();
 
                 if( TaskState.FAILED.equals( taskState ) ) {
-                    throw task.getCause().get( 0 );
+                    LinkedList< Exception > l = task.getCause();
+                    if( null != l )
+                        throw task.getCause().get( 0 );
+                    else
+                        throw new Exception( "Task failed" );
                 }
                 if( taskState.isDoneState() ) {
                     session.success();

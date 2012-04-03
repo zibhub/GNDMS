@@ -49,6 +49,7 @@ public class SliceProviderImpl implements SliceProvider {
     private final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
     private GNDMSystem system;
+    private EntityManagerFactory emf;
 
     private SubspaceProvider subspaceProvider;
     private SliceKindProvider sliceKindProvider;
@@ -61,12 +62,7 @@ public class SliceProviderImpl implements SliceProvider {
         this.actionConfigurer = new ActionConfigurer( emf );
         this.actionConfigurer.setEntityUpdateListener( new Invalidator() );
         this.cache = new GridResourceCache<Slice>( Slice.class, emf );
-    }
-
-    public SliceProviderImpl( ) {
-        this.actionConfigurer = new ActionConfigurer( );
-        this.actionConfigurer.setEntityUpdateListener( new Invalidator() );
-        this.cache = new GridResourceCache<Slice>( Slice.class );
+        this.emf = emf;
     }
 
     @Inject
@@ -159,8 +155,9 @@ public class SliceProviderImpl implements SliceProvider {
         final Slice slice = cache.get( sliceId );
         
         final DeleteSliceTaskAction deleteAction = new DeleteSliceTaskAction();
-        deleteAction.setDirectoryAux(new LinuxDirectoryAux());
+        deleteAction.setDirectoryAux( new LinuxDirectoryAux() );
         system.getInstanceDir().getSystemAccessInjector().injectMembers( deleteAction );
+        deleteAction.setEmf( emf );
         //actionConfigurer.configureAction(deleteAction);
 
         final Order order = new ModelIdHoldingOrder( sliceId );
