@@ -74,7 +74,9 @@
  
  	<!-- SliceService -->
 
-    <bean id="sliceProvider" class="de.zib.gndms.logic.model.dspace.SliceProviderImpl" />
+    <bean id="sliceProvider" class="de.zib.gndms.logic.model.dspace.SliceProviderImpl">
+        <constructor-arg ref="emf"/>
+    </bean>
 
     <bean id="sliceProtector" class="de.zib.gndms.dspace.service.utils.DSpaceAspects">
         <constructor-arg ref="sliceProvider" />
