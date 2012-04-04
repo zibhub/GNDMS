@@ -18,9 +18,7 @@ package de.zib.gndms.common.kit.security;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -54,15 +52,15 @@ public class SetupSSL {
     }
 
 
-    public void prepareKeyStore( final String keyStorePassword, final String keyPassword )
+    public void prepareKeyStore( final String keyStorePassword )
             throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException,
             UnrecoverableKeyException
     {
-        prepareKeyStore( keyStorePassword, keyPassword, KEY_STORE_TYPE );
+        prepareKeyStore( keyStorePassword, KEY_STORE_TYPE );
     }
 
 
-    public void prepareKeyStore( final String keyStorePassword, final String keyPassword, final String keyStoreType )
+    public void prepareKeyStore( final String keyStorePassword, final String keyStoreType )
             throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException,
             UnrecoverableKeyException
     {
@@ -76,8 +74,6 @@ public class SetupSSL {
             keyStore = KeyStore.getInstance( keyStoreType );
             keyStore.load( kis, keyStorePassword.toCharArray() );
         }
-
-        initKeyManagerFactory( keyPassword );
     }
     
     private void initKeyManagerFactory( final String keyPassword )
@@ -95,7 +91,7 @@ public class SetupSSL {
             throw new IllegalStateException( "No KeyStore set." );
         }
 
-        keyStore.setKeyEntry( alias, privateKey, password.toCharArray(), certs );
+        keyStore.setKeyEntry(alias, privateKey, password.toCharArray(), certs);
     }
     
     
@@ -132,12 +128,18 @@ public class SetupSSL {
     }
 
 
-    public void setupDefaultSSLContext() throws KeyManagementException, NoSuchAlgorithmException {
-        SSLContext.setDefault( setupSSLContext() );
+    public void setupDefaultSSLContext( final String keyPassword  )
+            throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException
+    {
+        SSLContext.setDefault( setupSSLContext( keyPassword ) );
     }
 
 
-    public SSLContext setupSSLContext() throws NoSuchAlgorithmException, KeyManagementException {
+    public SSLContext setupSSLContext( final String keyPassword )
+            throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, UnrecoverableKeyException {
+
+        initKeyManagerFactory( keyPassword );
+
         if( null == keyManagerFactory ) {
             throw new IllegalStateException( "No KeyStore set." );
         }

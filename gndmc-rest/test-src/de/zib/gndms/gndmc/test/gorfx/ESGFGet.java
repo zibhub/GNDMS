@@ -76,7 +76,7 @@ public class ESGFGet extends AbstractApplication {
         SetupSSL setupSSL = new SetupSSL();
         setupSSL.setKeyStoreLocation( keyStoreLocation );
         setupSSL.prepareKeyStore( passwd, passwd );
-        setupSSL.setupDefaultSSLContext();
+        setupSSL.setupDefaultSSLContext( passwd );
                 
         final RestTemplate rt = new RestTemplate();
         

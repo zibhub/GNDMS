@@ -19,6 +19,7 @@ package de.zib.gndms.infra.system;
 
 import de.zib.gndms.GNDMSVerInfo;
 import de.zib.gndms.common.kit.security.SetupSSL;
+import de.zib.gndms.common.kit.security.SetupSSLFactory;
 import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.kit.access.EMFactoryProvider;
 import de.zib.gndms.logic.action.ActionCaller;
@@ -97,6 +98,8 @@ public final class GNDMSystem
     private @NotNull GraphDatabaseService neo;
     private @NotNull Dao dao;
 
+    private SetupSSLFactory setupSSLFactory;
+
 
     // Outside injector
     private @NotNull TaskExecutionService executionService; // accessible only via system
@@ -145,12 +148,18 @@ public final class GNDMSystem
 		}
 	}
 
+    @Inject
+    public void setSetupSSLFactory( SetupSSLFactory setupSSLFactory ) {
+        this.setupSSLFactory = setupSSLFactory;
+    }
+
     private void initDefaultSSLContext() {
         try {
-            SSLContext.setDefault( setupSSL.setupSSLContext() );
+            SSLContext.setDefault( setupSSL.setupSSLContext( setupSSLFactory.getKeyPassword() ) );
         } catch( Exception e ) {
             throw new IllegalStateException( e );
         }
+        setupSSLFactory = null;
     }
 
 

@@ -75,14 +75,14 @@ public class HTTPGetter {
         return extractorMap.get( statusCode );
     }
 
-    public void setupSSL( SetupSSL setupSSL ) throws
+    public void setupSSL( SetupSSL setupSSL, final String keyPassword ) throws
             IOException,
             NoSuchAlgorithmException,
             KeyStoreException,
             CertificateException,
             UnrecoverableKeyException,
             KeyManagementException {
-        sslContext = setupSSL.setupSSLContext();
+        sslContext = setupSSL.setupSSLContext( keyPassword );
     }
 
     public void setExtractor( int httpStatusCode, EnhancedResponseExtractor responseExtractor ) {

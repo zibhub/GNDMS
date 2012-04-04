@@ -40,6 +40,9 @@
     <bean id="taskService" class="de.zib.gndms.GORFX.service.TaskServiceImpl">
         <property name="serviceUrl" value="${gorfxBaseURL}"/>
     </bean>
+    
+    
+    <bean id="gorfxAspects" class="de.zib.gndms.GORFX.service.util.GORFXAspects" />
 
 
     <bean id="gorfxFacets" class="de.zib.gndms.common.rest.Facets">

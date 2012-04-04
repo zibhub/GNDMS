@@ -26,8 +26,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Maik Jorra
@@ -47,14 +45,9 @@ public class GridMapUserDetailsService implements UserDetailsService {
 
     private String gridMapfileName;
     private String adminGridMapfileName;
-    
-    private final Map<String,String> admins;
-    private final Map<String, String> users;
 
 
     public GridMapUserDetailsService() {
-        admins = new ConcurrentHashMap<String,String>( 1 );
-        users = new ConcurrentHashMap<String,String>( 1 );
     }
 
 
@@ -63,23 +56,23 @@ public class GridMapUserDetailsService implements UserDetailsService {
 
         List<GrantedAuthority> authorityList =  new ArrayList<GrantedAuthority>( 1 );
         // search admin
+        boolean isUser = true;
         try {
             if( searchInGridMapfile( adminGridMapfileName, dn ) ) {
-            //if( admins.containsKey( dn ) )
                 authorityList.add( adminRole() );
             } else  if( searchInGridMapfile( gridMapfileName, dn ) )
-            //else if ( users.containsKey( dn ) )
                 authorityList.add( userRole() );
         } catch ( Exception e ) {
             throw new RuntimeException( e );
         }
 
-        if ( authorityList.size() == 0 )
+        if ( isUser && authorityList.size() == 0 )
             throw new UsernameNotFoundException( "DN not permitted: " + dn );
 
         GNDMSUserDetails userDetails = new GNDMSUserDetails( );
         userDetails.setAuthorities( authorityList );
         userDetails.setDn( dn );
+        userDetails.setIsUser( isUser );
 
         return userDetails;
     }
@@ -97,7 +90,7 @@ public class GridMapUserDetailsService implements UserDetailsService {
     }
 
 
-    protected synchronized boolean searchInGridMapfile( final String fileName,
+    public static boolean searchInGridMapfile( final String fileName,
                                            final String dn ) throws IOException {
         
         BufferedReader reader = new BufferedReader( new FileReader( fileName ) );
@@ -138,4 +131,7 @@ public class GridMapUserDetailsService implements UserDetailsService {
 
         this.adminGridMapfileName = adminGridMapfileName;
     }
+
+
+
 }

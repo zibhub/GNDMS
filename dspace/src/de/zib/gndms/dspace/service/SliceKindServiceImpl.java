@@ -16,6 +16,7 @@ package de.zib.gndms.dspace.service;
  * limitations under the License.
  */
 
+import com.sun.servicetag.UnauthorizedAccessException;
 import de.zib.gndms.common.dspace.service.SliceKindService;
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.logic.config.WrongConfigurationException;
@@ -26,6 +27,7 @@ import de.zib.gndms.logic.model.dspace.NoSuchElementException;
 import de.zib.gndms.logic.model.dspace.SliceKindConfiguration;
 import de.zib.gndms.logic.model.dspace.SliceKindProvider;
 import de.zib.gndms.logic.model.dspace.SubspaceProvider;
+import de.zib.gndms.model.common.NoSuchResourceException;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import org.slf4j.Logger;
@@ -34,15 +36,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashMap;
 
 /**
@@ -276,4 +277,28 @@ public class SliceKindServiceImpl implements SliceKindService {
         this.emf = emf;
     }
 
+
+    @ExceptionHandler( NoSuchResourceException.class )
+    public ResponseEntity<Void> handleNoSuchResourceException(
+            NoSuchResourceException ex,
+            HttpServletResponse response )
+            throws IOException
+    {
+        logger.debug("handling exception for: " + ex.getMessage());
+        response.setStatus( HttpStatus.NOT_FOUND.value() );
+        response.sendError( HttpStatus.NOT_FOUND.value() );
+        return new ResponseEntity<Void>( null, getResponseHeaders(ex.getMessage(), null, null), HttpStatus.NOT_FOUND );
+    }
+
+    @ExceptionHandler( UnauthorizedAccessException.class )
+    public ResponseEntity<Void> handleUnAuthorizedException(
+            UnauthorizedAccessException ex,
+            HttpServletResponse response )
+            throws IOException
+    {
+        logger.debug( "handling exception for: " + ex.getMessage() );
+        response.setStatus( HttpStatus.UNAUTHORIZED.value() );
+        response.sendError(HttpStatus.UNAUTHORIZED.value());
+        return new ResponseEntity<Void>( null, getResponseHeaders(ex.getMessage(), null, null), HttpStatus.UNAUTHORIZED );
+    }
 }

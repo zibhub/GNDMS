@@ -70,8 +70,12 @@ public class SetupSSLFactory {
             setupSSL.prepareTrustStore( trustStorePassword, "JKS" );
         }
         setupSSL.setKeyStoreLocation( keyStoreLocation );
-        setupSSL.prepareKeyStore( keyStorePassword, keyPassword, "JKS" );
+        setupSSL.prepareKeyStore( keyStorePassword, "JKS" );
 
         return setupSSL;
+    }
+
+    public String getKeyPassword() {
+        return keyPassword;
     }
 }

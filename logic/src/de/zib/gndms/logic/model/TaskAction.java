@@ -79,7 +79,7 @@ public abstract class TaskAction<O extends Serializable> extends
 	private EntityManagerFactory emf;
 
     /**
-     * Unserialized version of the order
+     * Deserialized version of the order
      */
     private O order;
 

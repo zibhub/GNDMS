@@ -68,6 +68,9 @@ public class DeleteSliceTaskAction extends ModelTaskAction<ModelIdHoldingOrder> 
 
         Slice slice = getModelEntity( Slice.class );
 
+        if( null == slice )
+            throw new IllegalArgumentException( "Could not find slice " + getOrder().getModelId() );
+
         getDirectoryAux().deleteDirectory( slice.getOwner(),
                 slice.getSubspace().getPathForSlice( slice ) );
 

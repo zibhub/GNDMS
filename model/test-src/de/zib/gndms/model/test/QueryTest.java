@@ -17,15 +17,15 @@ package de.zib.gndms.model.test;
  */
 
 
-
-import org.testng.annotations.Parameters;
+import de.zib.gndms.model.dspace.Subspace;
+import de.zib.gndms.model.util.TxFrame;
 import org.testng.annotations.Optional;
-import org.testng.annotations.Test;import static org.testng.Assert.assertNull;
+import org.testng.annotations.Parameters;
+import org.testng.annotations.Test;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-
-import de.zib.gndms.model.dspace.Subspace;
+import java.util.List;
 
 /**
  * @author  try ma ik jo rr a zib
@@ -36,23 +36,37 @@ import de.zib.gndms.model.dspace.Subspace;
 public class QueryTest extends ModelEntityTestBase {
 
     private static final String getSubspaceQuery =
-        "SELECT x FROM subspaces x WHERE x.metaSubspace.scopedName = :uriParam";
+        //"SELECT x FROM SliceKinds x WHERE x.creatableSliceKinds = :uriParam";
+        "SELECT x FROM Subspaces x WHERE x.path LIKE :path";
 
     @Parameters( { "dbPath", "dbName"} )
     public QueryTest( String dbPath, @Optional( "c3grid" )String dbName ) {
         super( dbPath, dbName );
     }
 
-
-
     @Test( groups={ "db" } )
+    public void testCreateSubspaceEntity( ) {
+        EntityManager em = getEntityManager();
+
+        Subspace s = new Subspace();
+        s.setPath( "/tmp/testsubspace" );
+        s.setId( "TESTSUB" );
+
+        TxFrame txFrame = new TxFrame( em );
+        em.persist( s );
+        txFrame.commit();
+        txFrame.finish();
+    }
+
+    @Test( groups={ "db" }, dependsOnMethods = "testCreateSubspaceEntity" )
     public void testSubspaceQuery( ) {
 
         EntityManager em = getEntityManager();
         Query q = em.createQuery( getSubspaceQuery );
-        q.setParameter( "uriParam", "http://www.c3grid.de/G2/Subspace/" + "ProviderStageIn" ); // TODO: hab' ich hier was zerstört?!
-        Subspace s = ( Subspace ) q.getSingleResult();
-        assertNull( s, "subspace not found" );
+        q.setParameter( "path", "/tmp/%" );
+        List< Subspace > res = q.getResultList();
+
+        assert res.size() > 0;
     }
 
 }

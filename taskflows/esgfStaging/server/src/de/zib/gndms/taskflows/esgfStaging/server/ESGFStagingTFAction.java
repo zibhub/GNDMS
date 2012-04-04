@@ -51,9 +51,7 @@ import org.springframework.http.ResponseEntity;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -139,7 +137,7 @@ public class ESGFStagingTFAction extends TaskFlowAction< ESGFStagingOrder > {
         }
         
         final HTTPGetter httpGetter = new HTTPGetter();
-        httpGetter.setupSSL( setupSSL );
+        httpGetter.setupSSL( setupSSL, getKeyPassword() );
 
         final Task detachedTask = getDetachedTask();
 
@@ -200,6 +198,15 @@ public class ESGFStagingTFAction extends TaskFlowAction< ESGFStagingOrder > {
     }
 
 
+    protected String getKeyPassword( ) {
+        final MyProxyToken token = getOrder().getMyProxyToken().get( ESGFStagingTaskFlowMeta.REQUIRED_AUTHORIZATION.get( 0 ) );
+        if( null == token )
+            throw new IllegalArgumentException( "No " + ESGFStagingTaskFlowMeta.REQUIRED_AUTHORIZATION.get( 0 ) + " token provided in Order." );
+
+        return token.getPassword();
+    }
+
+
     protected SetupSSL prepareProxy( )
             throws IOException, NoSuchAlgorithmException, KeyStoreException, CertificateException,
             UnrecoverableKeyException, MandatoryOptionMissingException {
@@ -215,7 +222,7 @@ public class ESGFStagingTFAction extends TaskFlowAction< ESGFStagingOrder > {
 
         setupSSL.setTrustStoreLocation( trustStoreLocation );
         setupSSL.prepareTrustStore( trustStorePassword, "JKS" );
-        setupSSL.prepareKeyStore( password, password, "JKS" );
+        setupSSL.prepareKeyStore( password, "JKS" );
 
         try {
             SSLCredentialInstaller.InstallerParams params = new SSLCredentialInstaller.InstallerParams();

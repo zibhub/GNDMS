@@ -163,8 +163,9 @@ public class SliceClient extends AbstractClient implements SliceServiceClient {
 
 	@Override
 	public final ResponseEntity<Void> listFileContent(final String subspace,
-                                                      final String sliceKind, final String slice, final String fileName,
-                                                      final List<String> attrs, final String dn, final OutputStream out) {
+                                                      final String sliceKind, final String slice,
+                                                      final String fileName, final List<String> attrs,
+                                                      final String dn, final OutputStream out) {
 
         final String uri = genSliceUrl( subspace, sliceKind, slice );
         return unifiedGet(Void.class, makeFileNameFacet( uri, fileName ), dn);
@@ -181,7 +182,7 @@ public class SliceClient extends AbstractClient implements SliceServiceClient {
 
 	@Override
 	public final ResponseEntity<Void> setFileContent(final String subspace,
-			final String sliceKind, final String slice, final String fileName, 
+			final String sliceKind, final String slice, final String fileName,
 			final MultipartFile file, final String dn ) {
 
         return unifiedPut( Void.class, file,

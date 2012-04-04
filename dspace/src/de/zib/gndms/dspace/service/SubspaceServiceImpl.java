@@ -16,6 +16,7 @@
 
 package de.zib.gndms.dspace.service;
 
+import com.sun.servicetag.UnauthorizedAccessException;
 import de.zib.gndms.common.dspace.service.SliceKindService;
 import de.zib.gndms.common.dspace.service.SubspaceService;
 import de.zib.gndms.common.logic.config.Configuration;
@@ -25,6 +26,7 @@ import de.zib.gndms.common.rest.*;
 import de.zib.gndms.kit.config.ParameterTools;
 import de.zib.gndms.logic.model.dspace.*;
 import de.zib.gndms.logic.model.dspace.NoSuchElementException;
+import de.zib.gndms.model.common.NoSuchResourceException;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.util.TxFrame;
@@ -44,6 +46,8 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.*;
 
 @Controller
@@ -518,5 +522,35 @@ public class SubspaceServiceImpl implements SubspaceService {
     public void setSliceKindService( final SliceKindService sliceKindService ) {
 
         this.sliceKindService = sliceKindService;
+    }
+
+    @ExceptionHandler( NoSuchResourceException.class )
+    public ResponseEntity<Void> handleNoSuchResourceException(
+            NoSuchResourceException ex,
+            HttpServletResponse response )
+            throws IOException
+    {
+        logger.debug("handling exception for: " + ex.getMessage());
+        response.setStatus( HttpStatus.NOT_FOUND.value() );
+        response.sendError( HttpStatus.NOT_FOUND.value() );
+        return new ResponseEntity<Void>(
+                null,
+                getSliceKindHeaders(ex.getMessage(), null, null),
+                HttpStatus.NOT_FOUND );
+    }
+
+    @ExceptionHandler( UnauthorizedAccessException.class )
+    public ResponseEntity<Void> handleUnAuthorizedException(
+            UnauthorizedAccessException ex,
+            HttpServletResponse response )
+            throws IOException
+    {
+        logger.debug( "handling exception for: " + ex.getMessage() );
+        response.setStatus( HttpStatus.UNAUTHORIZED.value() );
+        response.sendError(HttpStatus.UNAUTHORIZED.value());
+        return new ResponseEntity<Void>(
+                null,
+                getSliceKindHeaders(ex.getMessage(), null, null),
+                HttpStatus.UNAUTHORIZED );
     }
 }
