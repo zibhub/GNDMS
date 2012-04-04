@@ -16,10 +16,20 @@ package de.zib.gndms.gndmc.dspace.test;
  * limitations under the License.
  */
 
+import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.gndmc.dspace.DSpaceClient;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Optional;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+
+import java.util.List;
 
 /**
  * Tests the DSpaceClient.
@@ -28,38 +38,37 @@ import org.testng.annotations.Test;
  */
 
 public class DSpaceClientTest {
-	/**
-	 * Tests the constructors.
-	 */
-	@Test
-    public final void testConstructor() {		
-		
-		DSpaceClient dcl = new DSpaceClient();
-       	AssertJUnit.assertNotNull(dcl);
-		
-		String a = "test";
-		dcl = new DSpaceClient(a);
-		
-       	AssertJUnit.assertEquals(a, dcl.getServiceURL());
-   	}
+    final ApplicationContext context;
 
-	/**
-	 * Tests the request methods.
-	 */
-	@Test
-    public final void testBehavior() {				
-		String a = "test";
-		DSpaceClient dcl = new DSpaceClient(a);
-		
-		MockRestTemplate mockTemplate = new MockRestTemplate();
-		mockTemplate.setServiceURL(a);
-		dcl.setRestTemplate(mockTemplate);
-		
-		String dn = "me";
-		ResponseEntity<?> res;
+    private DSpaceClient dSpaceClient;
+    final private String serviceUrl;
 
-		res = dcl.listSubspaceSpecifiers(dn);
-       	AssertJUnit.assertNotNull(res);
-       	   	
-	}
+    final private String admindn;
+
+    @Parameters( { "serviceUrl", "admindn" } )
+    public DSpaceClientTest( final String serviceUrl, @Optional("root") final String admindn ) {
+        this.serviceUrl = serviceUrl;
+        this.admindn = admindn;
+
+        this.context = new ClassPathXmlApplicationContext( "classpath:META-INF/client-context.xml" );
+    }
+
+
+    @BeforeClass( groups = { "dspaceServiceTest" } )
+    public void init() {
+        dSpaceClient = ( DSpaceClient )context.getAutowireCapableBeanFactory().createBean(
+                DSpaceClient.class,
+                AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
+        dSpaceClient.setServiceURL( serviceUrl );
+    }
+
+
+    @Test( groups = { "dspaceServiceTest" } )
+    public void testListSubspaceSpecifiers() {
+        final ResponseEntity< List< Specifier< Void > > > listResponseEntity
+                = dSpaceClient.listSubspaceSpecifiers( admindn );
+        
+        Assert.assertNotNull( listResponseEntity );
+        Assert.assertEquals( listResponseEntity.getStatusCode(), HttpStatus.OK );
+    }
 }

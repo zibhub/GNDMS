@@ -16,16 +16,23 @@ package de.zib.gndms.gndmc.dspace.test;
  * limitations under the License.
  */
 
+import de.zib.gndms.common.rest.Facets;
+import de.zib.gndms.common.rest.Specifier;
+import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.gndmc.dspace.SubspaceClient;
-import de.zib.gndms.gndmc.gorfx.FullGORFXClient;
+import de.zib.gndms.logic.model.dspace.SubspaceConfiguration;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Optional;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import de.zib.gndms.logic.model.dspace.SubspaceConfiguration;
+import java.util.List;
 
 /**
  * Tests the DSpaceClient.
@@ -34,58 +41,93 @@ import de.zib.gndms.logic.model.dspace.SubspaceConfiguration;
  */
 
 public class SubspaceClientTest {
-	/**
-	 * Tests the constructors.
-	 */
-	@Test
-    public final void testConstructor() {		
-		
-		SubspaceClient scl = new SubspaceClient();
-       	AssertJUnit.assertNotNull(scl);
-		
-		String a = "test";
-		scl = new SubspaceClient(a);
-		
-       	AssertJUnit.assertEquals(a, scl.getServiceURL());
-   	}
 
-	/**
-	 * Tests the request methods.
-	 */
-	@Test
-    public final void testBehavior() {
-        final String serviceUrl = "http://localhost:8082/c3grid";
+    final ApplicationContext context;
 
-        ApplicationContext context = new ClassPathXmlApplicationContext( "classpath:META-INF/client-context.xml" );
-        SubspaceClient subspaceClient = ( SubspaceClient )context.getAutowireCapableBeanFactory().createBean(
-                        SubspaceClient.class,
-                        AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
+    private SubspaceClient subspaceClient;
+
+    final private String serviceUrl;
+
+    final static String subspaceId = "testsub";
+    final static String subspacePath = "/tmp/gndms/sub";
+    final static String gridFtpPath = "gridFtpPath";
+    final static boolean visible = true;
+    final static long value = 6000;
+
+    final static String sliceKindId = "testkind";
+    final static String sliceKindConfig = "sliceKindMode:700; uniqueDirName:kind";
+
+    final static String sliceConfig = "terminationTime:2011-12-16; sliceSize:1024";
+
+    final private String admindn;
+
+
+    @Parameters( { "serviceUrl", "admindn" } )
+    public SubspaceClientTest( final String serviceUrl, @Optional("root") final String admindn ) {
+        this.serviceUrl = serviceUrl;
+        this.admindn = admindn;
+
+        this.context = new ClassPathXmlApplicationContext( "classpath:META-INF/client-context.xml" );
+    }
+
+
+    @BeforeClass( groups = { "subspaceServiceTest" } )
+    public void init() {
+        subspaceClient = ( SubspaceClient )context.getAutowireCapableBeanFactory().createBean(
+                SubspaceClient.class,
+                AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
         subspaceClient.setServiceURL( serviceUrl );
+    }
 
-		String dn = "dn";
-		String subspace = "sub";
 
-		String path = "/var/tmp/gndms/dspace/";
-		String gsiftp = "gsiftp";
-		boolean visible = true;
-		final long value = 6000;
-		String mode = "CREATE";
-       	SubspaceConfiguration config = new SubspaceConfiguration(path, gsiftp, visible, value, mode, subspace);
-        config.setSubspace( subspace );
+    @Test( groups = { "subspaceServiceTest" } )
+    public void testCreateSubspace() {
+        final String mode = "CREATE";
+        SubspaceConfiguration config = new SubspaceConfiguration( subspacePath, gridFtpPath, visible, value, mode, subspaceId );
+        final ResponseEntity< Facets > subspace = subspaceClient.createSubspace( subspaceId, config, admindn );
+        Assert.assertNotNull( subspace );
+        Assert.assertEquals( subspace.getStatusCode(), HttpStatus.CREATED );
 
-        subspaceClient.createSubspace(subspace, config, dn);
-       	//AssertJUnit.assertNotNull(res);
+        final ResponseEntity< Facets > res = subspaceClient.listAvailableFacets( subspaceId, admindn );
+        Assert.assertNotNull( res );
+        Assert.assertEquals( res.getStatusCode(), HttpStatus.OK );
+    }
 
-		//res = scl.deleteSubspace(subspace, dn);
-        //AssertJUnit.assertNotNull(res);
 
-		//res = scl.listSubspaceConfiguration(subspace, dn);
-       	//AssertJUnit.assertNotNull(res);
+    @Test(
+            groups = { "subspaceServiceTest" },
+            dependsOnMethods = { "testCreateSubspace" }
+    )
+    public void testCreateSliceKind() {
+        final ResponseEntity< List< Specifier< Void > > > sliceKind =
+                subspaceClient.createSliceKind( subspaceId, sliceKindId, sliceKindConfig, admindn );
+        Assert.assertNotNull( sliceKind );
+        Assert.assertEquals( sliceKind.getStatusCode(), HttpStatus.CREATED );
 
-		//res = scl.setSubspaceConfiguration(subspace, config, dn);
-       	//AssertJUnit.assertNotNull(res);
+        final ResponseEntity< List< Specifier< Void > > > listResponseEntity
+                = subspaceClient.listSliceKinds(subspaceId, admindn);
+        final List< Specifier< Void > > specifierList = listResponseEntity.getBody();
+        
+        for( Specifier< Void > s: specifierList ) {
+            if( ! s.getUriMap().containsKey( UriFactory.SLICE_KIND ) )
+                continue;
+            if( s.getUriMap().get( UriFactory.SLICE_KIND ).equals( sliceKindId ) )
+                return;
+        }
 
-		//res = scl.listSliceKinds(subspace, dn);
-       	//AssertJUnit.assertNotNull(res);
-   	}
+        throw new IllegalStateException( "The created SliceKind " + sliceKindId
+                + " could not be found in SliceKindListing" );
+    }
+
+    @Test(
+            groups = { "subspaceServiceTest" },
+            dependsOnMethods = { "testCreateSliceKind" }
+    )
+    public void testDeleteSubspace() {
+        final ResponseEntity< Specifier< Void > > responseEntity = subspaceClient.deleteSubspace( subspaceId, admindn );
+        Assert.assertNotNull( responseEntity );
+        Assert.assertEquals( responseEntity.getStatusCode(), HttpStatus.OK );
+
+        // wait for task to finish
+    }
 }

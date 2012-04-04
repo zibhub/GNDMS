@@ -54,9 +54,9 @@ public class SliceProviderImpl implements SliceProvider {
     private SubspaceProvider subspaceProvider;
     private SliceKindProvider sliceKindProvider;
 
-    final private ActionConfigurer actionConfigurer;
+    private ActionConfigurer actionConfigurer;
 
-    final private GridResourceCache< Slice > cache;
+    private GridResourceCache< Slice > cache;
 
     public SliceProviderImpl( EntityManagerFactory emf ) {
         this.actionConfigurer = new ActionConfigurer( emf );
