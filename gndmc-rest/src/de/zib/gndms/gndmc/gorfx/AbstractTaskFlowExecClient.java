@@ -37,7 +37,7 @@ import java.util.UUID;
  * \note The handler methods are only called if the preceding server response
  * was positive.
  */
-public abstract class AbstractTaskFlowExecClient {
+public abstract class AbstractTaskFlowExecClient implements TaskStatusHandler {
 
     private GORFXClient gorfxClient; ///< A ready to uses instance of the gorfx client.
     private TaskFlowClient tfClient; ///< A ready to uses instance of the taskflow client.
@@ -125,18 +125,45 @@ public abstract class AbstractTaskFlowExecClient {
         if(! HttpStatus.CREATED.equals( res3.getStatusCode() ) )
             throw new RuntimeException( "createTask failed " + res3.getStatusCode().name() );
 
-        // let the implementor do smart things with the task specifier
-        handleTaskSpecifier( res3.getBody() );
-        
-        // the task id is stored under "taskId" in the specifiers urlmap
-        String taskId = res3.getBody().getUriMap().get( "taskId" );
+        final Specifier<Facets> taskSpecifier = res3.getBody();
 
-        if( null == taskClient ) {
-            throw new IllegalStateException( "No TaskClient set." );
-        }
+        // let the implementor do smart things with the task specifier
+        handleTaskSpecifier( taskSpecifier );
+
+
+        // the task id is stored under "taskId" in the specifiers urlmap
+        waitForFinishOrFail( taskSpecifier, this, taskClient, pollingDelay, dn, wid );
+
+        /**
+         * \endcode
+         */
+    }
+
+
+    /**
+     * Polls a running task, until its either finished or failed.
+     *
+     * @param taskSpecifier The specifier of the task.
+     * @param statusHandler The handler for the task status, can update some sort of UI.
+     * @param taskClient  The task client, which should be used for polling.
+     * @param pollingDelay The pollingDelay, its the delay between polling.
+     * @param dn  The user DN.
+     * @param wid The workflow id.
+     *
+     * @return The final task status, finished or failed.
+     */
+    public static TaskStatus waitForFinishOrFail( final Specifier<Facets> taskSpecifier,
+                                                  final TaskStatusHandler statusHandler,
+                                                  final TaskClient taskClient, 
+                                                  final long pollingDelay,
+                                                  final String dn,
+                                                  final String wid )
+    {
+
+        TaskStatus ts;
+        String taskId = taskSpecifier.getUriMap().get( "taskId" );
 
         ResponseEntity<TaskStatus> stat;
-        TaskStatus ts;
         boolean done = false;
         do {
             // queries the status of the task execution
@@ -146,7 +173,7 @@ public abstract class AbstractTaskFlowExecClient {
             ts =  stat.getBody();
 
             // allows the implementor to do something with the task status
-            handleStatus( ts );
+            statusHandler.handleStatus( ts );
             try {
                 Thread.sleep( pollingDelay );
             } catch ( InterruptedException e ) {
@@ -163,13 +190,13 @@ public abstract class AbstractTaskFlowExecClient {
                     if( 404 == e.getStatusCode().value() )
                         continue;
                 }
-                
+
                 if(! HttpStatus.OK.equals( tr.getStatusCode() ) )
                     throw new RuntimeException( "Failed to obtain task result " + tr.getStatusCode().name() );
 
                 // do something with it
-                handleResult(  tr.getBody() );
-                
+                statusHandler.handleResult( tr.getBody() );
+
                 done = true;
             }
             else if( failed( ts ) ) { // must be failed, not so good
@@ -179,15 +206,35 @@ public abstract class AbstractTaskFlowExecClient {
                     throw new RuntimeException( "Failed to obtain task errors " + tf.getStatusCode().name() );
 
                 // handle the failure
-                handleFailure( tf.getBody() );
+                statusHandler.handleFailure( tf.getBody() );
 
                 done = true;
             }
         } while( ! done ); // run 'til the task hits a final state
 
-        /**
-         * \endcode
-         */
+        return ts;
+    }
+
+
+    /**
+     * Same as the above method, but without a status handler.
+     *
+     * @param taskSpecifier The specifier of the task.
+     * @param taskClient  The task client, which should be used for polling.
+     * @param pollingDelay The pollingDelay, its the delay between polling.
+     * @param dn  The user DN.
+     * @param wid The workflow id.
+     *
+     * @return The final task status, finished or failed.
+     */
+    public static TaskStatus waitForFinishOrFail( final Specifier<Facets> taskSpecifier,
+                                                  final TaskClient taskClient,
+                                                  final long pollingDelay,
+                                                  final String dn,
+                                                  final String wid )
+    {
+       return waitForFinishOrFail( taskSpecifier, new LazyStatusHandler(), taskClient,
+               pollingDelay,dn, wid );
     }
 
 
@@ -207,17 +254,7 @@ public abstract class AbstractTaskFlowExecClient {
     }
 
 
-    /** 
-     * @brief Handler method for the current task status
-     *
-     * This method can be used to delegate the current task progress to
-     * the user.
-     * 
-     * @param stat The current task status.
-     */
-    protected abstract void handleStatus( TaskStatus stat );
-
-    /** 
+    /**
      * @brief Allows the caller to select a quote.
      * 
      * @param quotes All available quotes.
@@ -244,7 +281,7 @@ public abstract class AbstractTaskFlowExecClient {
      * 
      * @param res The result object.
      */
-    protected abstract void handleResult( TaskResult res );
+    public abstract void handleResult( TaskResult res );
 
     /** 
      * @brief Handler for task failures.
@@ -254,7 +291,7 @@ public abstract class AbstractTaskFlowExecClient {
      *
      * @param fail The failure object.
      */
-    protected abstract void handleFailure( TaskFailure fail );
+    public abstract void handleFailure( TaskFailure fail );
 
 
     /** 
@@ -264,7 +301,7 @@ public abstract class AbstractTaskFlowExecClient {
      * 
      * @return \c true if ts is FINISHED
      */
-    private boolean finished( TaskStatus ts ) {
+    private static boolean finished( TaskStatus ts ) {
         return TaskStatus.Status.FINISHED.equals( ts.getStatus() );
     }
 
@@ -276,7 +313,7 @@ public abstract class AbstractTaskFlowExecClient {
      * 
      * @return \c true if ts is FINISHED
      */
-    private boolean failed( TaskStatus ts ) {
+    private static boolean failed( TaskStatus ts ) {
         return TaskStatus.Status.FAILED.equals( ts.getStatus() );
     }
 
@@ -361,4 +398,23 @@ public abstract class AbstractTaskFlowExecClient {
     }
 
 
+    public static class LazyStatusHandler implements TaskStatusHandler {
+
+        @Override
+        public void handleStatus( final TaskStatus stat ) {
+            // this handler is lazy, it does nothing
+        }
+
+
+        @Override
+        public void handleResult( final TaskResult body ) {
+            // not required here
+        }
+
+
+        @Override
+        public void handleFailure( final TaskFailure body ) {
+            // not required here
+        }
+    }
 }
