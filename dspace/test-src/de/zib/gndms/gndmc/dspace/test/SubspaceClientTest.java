@@ -20,12 +20,12 @@ import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.gndmc.dspace.SubspaceClient;
-import de.zib.gndms.logic.model.dspace.SubspaceConfiguration;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Optional;
@@ -48,11 +48,8 @@ public class SubspaceClientTest {
 
     final private String serviceUrl;
 
+    final static String subspaceConfig = "size: 6000; path: /tmp/gndms/sub; gsiFtpPath: undefined";
     final static String subspaceId = "testsub";
-    final static String subspacePath = "/tmp/gndms/sub";
-    final static String gridFtpPath = "gridFtpPath";
-    final static boolean visible = true;
-    final static long value = 6000;
 
     final static String sliceKindId = "testkind";
     final static String sliceKindConfig = "sliceKindMode:700; uniqueDirName:kind";
@@ -83,10 +80,18 @@ public class SubspaceClientTest {
     @Test( groups = { "subspaceServiceTest" } )
     public void testCreateSubspace() {
         final String mode = "CREATE";
-        SubspaceConfiguration config = new SubspaceConfiguration( subspacePath, gridFtpPath, visible, value, mode, subspaceId );
-        final ResponseEntity< Facets > subspace = subspaceClient.createSubspace( subspaceId, config, admindn );
-        Assert.assertNotNull( subspace );
-        Assert.assertEquals( subspace.getStatusCode(), HttpStatus.CREATED );
+
+        ResponseEntity< Facets > subspace = null;
+        try {
+            subspace = subspaceClient.createSubspace( subspaceId, subspaceConfig, admindn );
+
+            Assert.assertNotNull( subspace );
+            Assert.assertEquals( subspace.getStatusCode(), HttpStatus.CREATED );
+        }
+        catch( HttpClientErrorException e ) {
+            if( ! e.getStatusCode().equals( HttpStatus.UNAUTHORIZED ) )
+                throw e;
+        }
 
         final ResponseEntity< Facets > res = subspaceClient.listAvailableFacets( subspaceId, admindn );
         Assert.assertNotNull( res );

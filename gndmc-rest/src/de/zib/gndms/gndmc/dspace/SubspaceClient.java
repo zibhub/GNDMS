@@ -49,12 +49,6 @@ public class SubspaceClient extends AbstractClient implements SubspaceService {
 		this.setServiceURL(serviceURL);
 	}
 
-	public final ResponseEntity<Facets> createSubspace(final String subspace,
-			final Configuration config, final String dn) {
-		return unifiedPut(Facets.class, config, getServiceURL() + "/dspace/_"
-				+ subspace, dn);
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public final ResponseEntity<Specifier<Void>> deleteSubspace(final String subspace,

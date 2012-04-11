@@ -23,6 +23,8 @@ import de.zib.gndms.logic.model.dspace.SliceProvider;
 import de.zib.gndms.logic.model.dspace.SubspaceProvider;
 import de.zib.gndms.model.common.NoSuchResourceException;
 import de.zib.gndms.model.dspace.Slice;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
@@ -87,10 +89,24 @@ public class DSpaceAspects {
         }
     }
 
-    @Before( value = "( inSubspaceServiceImpl() || inSliceKindServiceImpl() || inSliceServiceImpl() ) && args( subspaceId, .. )" )
-    public void checkSubspaceExistence( final String subspaceId ) {
-        if( !subspaceProvider.exists( subspaceId ) ) {
-            throw new NoSuchResourceException( "Subspace: " + subspaceId );
+
+    @Around(
+            value = "( inSubspaceServiceImpl() || inSliceKindServiceImpl() || inSliceServiceImpl() ) " +
+                    "&& args( subspaceId, .. )"
+    )
+    public Object checkSubspaceExistence( final ProceedingJoinPoint pjp, final String subspaceId ) throws Throwable {
+        if( pjp.getSignature().getName().equals( "createSubspace" ) ) {
+            if( subspaceProvider.exists( subspaceId ) ) {
+                // TODO: this should be another exception...
+                throw new UnauthorizedAccessException( "Subspace " + subspaceId + " does already exist." );
+            }
         }
+        else {
+            if( !subspaceProvider.exists( subspaceId ) ) {
+                throw new NoSuchResourceException( "Subspace: " + subspaceId );
+            }
+        }
+
+        return pjp.proceed();
     }
 }

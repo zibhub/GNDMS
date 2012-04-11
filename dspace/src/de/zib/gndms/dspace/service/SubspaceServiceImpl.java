@@ -135,6 +135,7 @@ public class SubspaceServiceImpl implements SubspaceService {
        	try {
 
        		DeleteSubspaceAction action = new DeleteSubspaceAction();
+            action.setSubspace( subspace );
        		action.setPath(subspaceProvider.get(subspace).getPath() );
        		action.setMode( SetupMode.DELETE );
        		action.setOwnEntityManager( em );
