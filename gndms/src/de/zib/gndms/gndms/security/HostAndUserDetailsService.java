@@ -53,7 +53,6 @@ public class HostAndUserDetailsService implements  AuthenticationUserDetailsServ
             throws UsernameNotFoundException
     {
 
-        // todo check host cert
         String dn = ( String ) preAuthenticatedAuthenticationToken.getPrincipal();
 
         try {
