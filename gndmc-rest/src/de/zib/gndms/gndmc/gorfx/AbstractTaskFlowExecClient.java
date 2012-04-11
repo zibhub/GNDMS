@@ -278,8 +278,7 @@ public abstract class AbstractTaskFlowExecClient implements TaskStatusHandler {
      * Override this method to gain access to the task(flow) result an
      * send it to the user, post process it or store it for later
      * usage.
-     * 
-     * @param res The result object.
+     *@param res The result object.
      */
     public abstract void handleResult( TaskResult res );
 

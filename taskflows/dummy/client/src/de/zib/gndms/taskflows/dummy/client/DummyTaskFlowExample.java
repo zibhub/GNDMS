@@ -45,7 +45,7 @@ public class DummyTaskFlowExample extends GORFXTaskFlowExample {
     protected AbstractTaskFlowExecClient provideTaskFlowClient() {
         etfc = new ExampleTaskFlowExecClient() {
             @Override
-            protected void handleResult( TaskResult res ) {
+            public void handleResult( TaskResult res ) {
                 DummyTaskFlowResult dr = DummyTaskFlowResult.class.cast( res );
                 System.out.println( "result: " + dr.getResult() );
 

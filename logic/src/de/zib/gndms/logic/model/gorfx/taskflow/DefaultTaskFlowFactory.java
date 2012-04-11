@@ -16,7 +16,6 @@
 
 package de.zib.gndms.logic.model.gorfx.taskflow;
 
-import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import de.zib.gndms.common.model.gorfx.types.Order;
@@ -55,11 +54,11 @@ public abstract class DefaultTaskFlowFactory<O extends Order, C extends Abstract
     private final Dao<String, TaskFlow<O>, Void> taskFlows = new TransientDao<String, TaskFlow<O>, Void>() {
         {
             setModels(
-                (Cache<String,TaskFlow<O>>) (Object) CacheBuilder.newBuilder()
+                CacheBuilder.newBuilder()
                     .expireAfterAccess( 12, TimeUnit.HOURS )
                     .maximumSize( MAX_CACHE_SIZE )
                     .initialCapacity( 100 )
-                    .build( new CacheLoader<String, TaskFlow<O>>() {
+                    .<String,TaskFlow<O>>build( new CacheLoader<String, TaskFlow<O>>() {
                         @Override
                         public TaskFlow<O> load( String key ) throws Exception {
                             DefaultTaskFlowFactory.this.logger.trace( "load: "+ key );

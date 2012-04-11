@@ -57,7 +57,7 @@ public class ESGFStagingExample extends GORFXTaskFlowExample {
 
         etfc = new ExampleTaskFlowExecClient() {
             @Override
-            protected void handleResult( TaskResult res ) {
+            public void handleResult( TaskResult res ) {
 
                 SliceResult result = SliceResult.class.cast( res );
                 System.out.println( "Slice URL: " );

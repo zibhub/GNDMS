@@ -224,7 +224,7 @@ public class InterSliceTransferExample extends GORFXTaskFlowExample {
 
 
         @Override
-        protected void handleResult( final TaskResult res ) {
+        public void handleResult( final TaskResult res ) {
 
             result = ( InterSliceTransferResult ) res;
         }
