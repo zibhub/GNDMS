@@ -38,7 +38,7 @@ public abstract class ExampleTaskFlowExecClient extends AbstractTaskFlowExecClie
      * @param fail The failure object.
      */
     @Override
-    protected void handleFailure( TaskFailure fail ) {
+    public void handleFailure( TaskFailure fail ) {
         showFailure( fail );
         if( fail.hasNext() ) {
             System.out.println ( "Preceding: "   );
@@ -64,7 +64,7 @@ public abstract class ExampleTaskFlowExecClient extends AbstractTaskFlowExecClie
      * @param res The result object.
      */
     @Override
-    protected abstract void handleResult( TaskResult res );
+    public abstract void handleResult( TaskResult res );
 
 
     /**
@@ -72,7 +72,7 @@ public abstract class ExampleTaskFlowExecClient extends AbstractTaskFlowExecClie
      * @param stat The current task status.
      */
     @Override
-    protected void handleStatus( TaskStatus stat ){
+    public void handleStatus( TaskStatus stat ){
         System.out.println( "Task is " + stat.getStatus() + " progress: " + stat.getProgress() + " / " + stat.getMaxProgress() );
     }
 

@@ -56,7 +56,7 @@ public class FailureExample extends GORFXTaskFlowExample {
 
         etfc = new ExampleTaskFlowExecClient() {
             @Override
-            protected void handleResult( TaskResult res ) {
+            public void handleResult( TaskResult res ) {
             }
 
 

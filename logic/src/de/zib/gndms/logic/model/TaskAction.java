@@ -162,6 +162,7 @@ public abstract class TaskAction<O extends Serializable> extends
         return result;
     }
 
+
     /**
      * Invokes {@link #onTransit(String,TaskState,boolean,boolean)} in a loop which is expected to change the task state.
      * This goes on until either the state FINISHED or FAILED is reached.
@@ -255,6 +256,7 @@ public abstract class TaskAction<O extends Serializable> extends
         return getModel();
     }
 
+
     protected @NotNull TaskAccessor getTaskSnapshot(@NotNull Dao dao) {
         final Session session = dao.beginSession();
         try {
@@ -264,6 +266,7 @@ public abstract class TaskAction<O extends Serializable> extends
         }
         finally { session.finish(); }
     }
+
 
     protected @NotNull Task getTask(@NotNull Session session) {
         Taskling model = getModel();

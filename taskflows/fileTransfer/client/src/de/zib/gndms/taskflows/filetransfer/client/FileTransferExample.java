@@ -58,7 +58,7 @@ public class FileTransferExample extends GORFXTaskFlowExample {
 
         etfc = new ExampleTaskFlowExecClient() {
             @Override
-            protected void handleResult( TaskResult res ) {
+            public void handleResult( TaskResult res ) {
 
                 FileTransferResult ftr = FileTransferResult.class.cast( res );
                 System.out.println( "Transferred files: " );
