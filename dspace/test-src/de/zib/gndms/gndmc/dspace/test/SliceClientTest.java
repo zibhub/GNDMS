@@ -16,97 +16,295 @@ package de.zib.gndms.gndmc.dspace.test;
  * limitations under the License.
  */
 
+import de.zib.gndms.common.model.FileStats;
+import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
+import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.gndmc.dspace.SliceClient;
-import de.zib.gndms.logic.model.dspace.SliceConfiguration;
+import de.zib.gndms.gndmc.dspace.SliceKindClient;
+import de.zib.gndms.gndmc.dspace.SubspaceClient;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Optional;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.util.GregorianCalendar;
-import java.util.Vector;
+import java.io.*;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
- * Tests the DSpaceClient.
+ * Tests the SliceClient
  * 
- * @author Ulrike Golas
+ * @author bachmann@zib.de
  */
 
 public class SliceClientTest {
-	/**
-	 * Tests the constructors.
-	 */
-	@Test
-    public final void testConstructor() {		
-		
-		SliceClient scl = new SliceClient();
-       	AssertJUnit.assertNotNull(scl);
-		
-		String a = "test";
-		scl = new SliceClient(a);
-		
-       	AssertJUnit.assertEquals(a, scl.getServiceURL());
-   	}
 
-	/**
-	 * Tests the request methods.
-	 */
-	@Test
-    public final void testBehavior() {				
-		String a = "test";
-		SliceClient scl = new SliceClient(a);
-		
-		MockRestTemplate mockTemplate = new MockRestTemplate();
-		mockTemplate.setServiceURL(a);
-		scl.setRestTemplate(mockTemplate);
-		
-		String dn = "me";
-		String subspace = "testSubspace";
-		String sliceKind = "testSliceKind";
-		String slice = "testSlice";
-		String fileName = "testFile";
-		ResponseEntity<?> res;
+    final ApplicationContext context;
 
-		res = scl.listSliceFacets(subspace, sliceKind, slice, dn);
-       	AssertJUnit.assertNotNull(res);
-       	       	
-		final long size = 4000;
-		GregorianCalendar cal = new GregorianCalendar();
-		final long value = cal.getTimeInMillis();
-       	SliceConfiguration config = new SliceConfiguration(size, value);
-		res = scl.setSliceConfiguration(subspace, sliceKind, slice, config, dn);
-       	AssertJUnit.assertNotNull(res);
+    private SubspaceClient subspaceClient;
+    private SliceKindClient sliceKindClient;
+    private SliceClient sliceClient;
 
-       	Specifier<Void> spec = new Specifier<Void>();
-		res = scl.transformSlice(subspace, sliceKind, slice, spec, dn);
-       	AssertJUnit.assertNotNull(res);
+    final private String serviceUrl;
 
-		res = scl.deleteSlice(subspace, sliceKind, slice, dn);
-       	AssertJUnit.assertNotNull(res);
+    final static String subspaceConfig = "size: 6000; path: /tmp/gndms/sub; gsiFtpPath: undefined";
+    final static String subspaceId = "testsub";
 
-		res = scl.listFiles(subspace, sliceKind, slice, dn);
-       	AssertJUnit.assertNotNull(res);
+    final static String sliceKindId = "testkind";
+    final static String sliceKindConfig = "sliceKindMode:700; uniqueDirName:kind";
+    
+    final static String sliceConfig = "terminationTime:2011-12-16; sliceSize:1024";
+    final static String sliceFile = "test.file";
+    final static String sliceFileContent = "Hallo Welt";
 
-		res = scl.deleteFiles(subspace, sliceKind, slice, dn);
-       	AssertJUnit.assertNotNull(res);
+    String sliceId;
 
-		res = scl.getGridFtpUrl(subspace, sliceKind, slice, dn);
-       	AssertJUnit.assertNotNull(res);
+    final private String admindn;
 
-       	Vector<String> attr = new Vector<String>();
-       	attr.add("filename");
-       	OutputStream out = new ByteArrayOutputStream();
-		res = scl.listFileContent(subspace, sliceKind, slice, fileName, attr, dn, out);
-       	AssertJUnit.assertNotNull(res);
 
-		MultipartFile file = null;
-       	res = scl.setFileContent(subspace, sliceKind, slice, fileName, file, dn);
-       	AssertJUnit.assertNotNull(res);
+    @Parameters( { "serviceUrl", "admindn" } )
+    public SliceClientTest( final String serviceUrl, @Optional("root") final String admindn ) {
+        this.serviceUrl = serviceUrl;
+        this.admindn = admindn;
 
-		res = scl.deleteFile(subspace, sliceKind, slice, fileName, dn);
-       	AssertJUnit.assertNotNull(res);
-   	}
+        this.context = new ClassPathXmlApplicationContext( "classpath:META-INF/client-context.xml" );
+    }
+
+
+    @BeforeClass( groups = { "subspaceServiceTest" } )
+    public void init() {
+        subspaceClient = ( SubspaceClient )context.getAutowireCapableBeanFactory().createBean(
+                SubspaceClient.class,
+                AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
+        subspaceClient.setServiceURL( serviceUrl );
+        
+        sliceKindClient = ( SliceKindClient )context.getAutowireCapableBeanFactory().createBean(
+                SliceKindClient.class,
+                AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
+        sliceKindClient.setServiceURL( serviceUrl );
+        
+        sliceClient = ( SliceClient )context.getAutowireCapableBeanFactory().createBean(
+                SliceClient.class,
+                AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
+        sliceClient.setServiceURL( serviceUrl );
+    }
+
+
+    @Test( groups = { "subspaceServiceTest" } )
+    public void testCreateSubspace() {
+        final String mode = "CREATE";
+
+        ResponseEntity<Facets> subspace = null;
+        try {
+            subspace = subspaceClient.createSubspace( subspaceId, subspaceConfig, admindn );
+
+            Assert.assertNotNull(subspace);
+            Assert.assertEquals( subspace.getStatusCode(), HttpStatus.CREATED );
+        }
+        catch( HttpClientErrorException e ) {
+            if( ! e.getStatusCode().equals( HttpStatus.UNAUTHORIZED ) )
+                throw e;
+        }
+
+        final ResponseEntity< Facets > res = subspaceClient.listAvailableFacets( subspaceId, admindn );
+        Assert.assertNotNull( res );
+        Assert.assertEquals(res.getStatusCode(), HttpStatus.OK);
+    }
+
+
+    @Test(
+            groups = { "subspaceServiceTest" },
+            dependsOnMethods = { "testCreateSubspace" }
+    )
+    public void testCreateSliceKind() {
+        try {
+            final ResponseEntity<List< Specifier< Void > >> sliceKind =
+                    subspaceClient.createSliceKind( subspaceId, sliceKindId, sliceKindConfig, admindn );
+            Assert.assertNotNull( sliceKind );
+            Assert.assertEquals( sliceKind.getStatusCode(), HttpStatus.CREATED );
+        }
+        catch( HttpClientErrorException e ) {
+            if( ! e.getStatusCode().equals( HttpStatus.BAD_REQUEST ) )
+                throw e;
+        }
+
+        final ResponseEntity< List< Specifier< Void > > > listResponseEntity
+                = subspaceClient.listSliceKinds( subspaceId, admindn );
+        final List< Specifier< Void > > specifierList = listResponseEntity.getBody();
+
+        for( Specifier< Void > s: specifierList ) {
+            if( ! s.getUriMap().containsKey( UriFactory.SLICE_KIND ) )
+                continue;
+            if( s.getUriMap().get( UriFactory.SLICE_KIND ).equals( sliceKindId ) )
+                return;
+        }
+
+        throw new IllegalStateException( "The created SliceKind " + sliceKindId
+                + " could not be found in SliceKindListing" );
+    }
+
+
+    @Test(
+            groups = { "subspaceServiceTest" },
+            dependsOnMethods = { "testCreateSliceKind" }
+    )
+    public void testCreateSlice() {
+        final ResponseEntity<Specifier<Void>> slice =
+                subspaceClient.createSlice(subspaceId, sliceKindId, sliceConfig, admindn);
+        Assert.assertNotNull( slice );
+        Assert.assertEquals( slice.getStatusCode(), HttpStatus.CREATED );
+        
+        sliceId = slice.getBody().getUriMap().get( UriFactory.SLICE );
+    }
+
+
+    @Test(
+            groups = { "subspaceServiceTest" },
+            dependsOnMethods = { "testCreateSlice" }
+    )
+    public void testFileTransfer() {
+        // TODO: test for nonexistance of sliceFile as initial constraint
+
+        // upload file
+        {
+            final ResponseEntity<Void> responseEntity = sliceClient.setFileContent(
+                    subspaceId,
+                    sliceKindId,
+                    sliceId,
+                    sliceFile,
+                    new MultipartFile() {
+                        @Override
+                        public String getName() {
+                            return sliceFile;
+                        }
+
+                        @Override
+                        public String getOriginalFilename() {
+                            return sliceFile;
+                        }
+
+                        @Override
+                        public String getContentType() {
+                            return "text/plain";
+                        }
+
+                        @Override
+                        public boolean isEmpty() {
+                            return false;
+                        }
+
+                        @Override
+                        public long getSize() {
+                            return sliceFileContent.length();
+                        }
+
+                        @Override
+                        public byte[] getBytes() throws IOException {
+                            return sliceFileContent.getBytes();
+                        }
+
+                        @Override
+                        public InputStream getInputStream() throws IOException {
+                            return new ByteArrayInputStream(sliceFileContent.getBytes());
+                        }
+
+                        @Override
+                        public void transferTo(File dest) throws IOException, IllegalStateException {
+                            //To change body of implemented methods use File | Settings | File Templates.
+                        }
+                    },
+                    admindn );
+
+            Assert.assertNotNull( responseEntity );
+            Assert.assertEquals( responseEntity.getStatusCode(), HttpStatus.OK );
+        }
+
+        // try to find uploaded file
+        {
+            if( !findFile() )
+                throw new IllegalStateException( "Uploaded file " + sliceFile + " could not be listed. Upload failed?" );
+        }
+
+        // download file and compare with uploaded file
+        {
+            final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            final ResponseEntity<Void> responseEntity = sliceClient.listFileContent(
+                    subspaceId,
+                    sliceKindId,
+                    sliceId,
+                    sliceFile,
+                    new LinkedList<String>(),
+                    admindn,
+                    byteArrayOutputStream );
+
+            Assert.assertNotNull( responseEntity );
+            Assert.assertEquals( responseEntity.getStatusCode(), HttpStatus.OK );
+
+            Assert.assertEquals( sliceFileContent.getBytes(), byteArrayOutputStream.toByteArray() );
+        }
+
+        // delete uploaded file
+        {
+            final ResponseEntity< Void > responseEntity =
+                    sliceClient.deleteFile(subspaceId, sliceKindId, sliceId, sliceFile, admindn);
+
+            Assert.assertNotNull( responseEntity );
+            Assert.assertEquals( responseEntity.getStatusCode(), HttpStatus.OK );
+        }
+
+        // try to not! find deleted file
+        {
+            if( findFile() )
+                throw new IllegalStateException( "Still found deleted file " + sliceFile );
+        }
+    }
+
+
+    @Test(
+            groups = { "subspaceServiceTest" },
+            dependsOnMethods = { "testFileTransfer" }
+    )
+    public void testDeleteSlice() {
+        {
+            final ResponseEntity< Specifier< Facets > > responseEntity =
+                    sliceClient.deleteSlice( subspaceId, sliceKindId, sliceId, admindn );
+
+            Assert.assertNotNull( responseEntity );
+            Assert.assertEquals( responseEntity.getStatusCode(), HttpStatus.OK );
+        }
+        
+        // check for nonexistance of slice
+        {
+            final ResponseEntity< Facets > responseEntity =
+                    sliceClient.listSliceFacets( subspaceId, sliceId, sliceId, admindn );
+            
+            Assert.assertNotNull( responseEntity );
+            Assert.assertEquals( responseEntity.getStatusCode(), HttpStatus.NOT_FOUND );
+        }
+    }
+
+
+    private boolean findFile( ) {
+        final ResponseEntity< List< FileStats > > listResponseEntity =
+                sliceClient.listFiles(subspaceId, sliceKindId, sliceId, admindn);
+
+        Assert.assertNotNull( listResponseEntity );
+        Assert.assertEquals( listResponseEntity.getStatusCode(), HttpStatus.OK );
+
+        for( FileStats fileStats: listResponseEntity.getBody() ) {
+            if( fileStats.path.equals( sliceFile ) )
+                return true;
+        }
+
+        return false;
+    }
 }

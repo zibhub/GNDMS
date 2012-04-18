@@ -35,9 +35,9 @@ import org.testng.annotations.Test;
 import java.util.List;
 
 /**
- * Tests the DSpaceClient.
- * 
- * @author Ulrike Golas
+ * Tests the SubspaceClient
+ *
+ * @author bachmann@zib.de
  */
 
 public class SubspaceClientTest {
@@ -130,15 +130,19 @@ public class SubspaceClientTest {
                 + " could not be found in SliceKindListing" );
     }
 
+
     @Test(
             groups = { "subspaceServiceTest" },
             dependsOnMethods = { "testCreateSliceKind" }
     )
     public void testDeleteSubspace() {
-        final ResponseEntity< Specifier< Void > > responseEntity = subspaceClient.deleteSubspace( subspaceId, admindn );
+        final ResponseEntity< Specifier< Facets > > responseEntity = subspaceClient.deleteSubspace( subspaceId, admindn );
         Assert.assertNotNull( responseEntity );
         Assert.assertEquals( responseEntity.getStatusCode(), HttpStatus.OK );
 
+        // TODO: implement deleteSubspaceAction
+
         // wait for task to finish
+        //AbstractTaskFlowExecClient.waitForFinishOrFail( responseEntity. )
     }
 }

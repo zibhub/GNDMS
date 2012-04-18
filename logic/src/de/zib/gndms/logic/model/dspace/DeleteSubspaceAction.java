@@ -97,6 +97,8 @@ public class DeleteSubspaceAction extends SetupAction<ConfigActionResult> {
     public ConfigActionResult execute(final @NotNull EntityManager em, final @NotNull PrintWriter writer) {
         Subspace space = prepareSubspace(em, subspace);
 
+        // TODO: delete assigned slicekinds
+
         try {
 
                 em.remove(space);

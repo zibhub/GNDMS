@@ -75,7 +75,7 @@ public interface SubspaceService {
 	 *            The dn of the user invoking the method.
 	 * @return A confirmation.
 	 */
-	ResponseEntity<Specifier<Void>> deleteSubspace(String subspace, String dn);
+	ResponseEntity< Specifier< Facets > > deleteSubspace(String subspace, String dn);
 
 	/**
 	 * Lists all available slice kinds.

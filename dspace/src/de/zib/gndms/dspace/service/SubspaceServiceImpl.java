@@ -41,6 +41,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -122,25 +123,32 @@ public class SubspaceServiceImpl implements SubspaceService {
 	@Override
 	@RequestMapping( value = "/_{subspace}", method = RequestMethod.DELETE )
     @Secured( "ROLE_ADMIN" )
-	public ResponseEntity< Specifier< Void > > deleteSubspace(
+	public ResponseEntity< Specifier< Facets > > deleteSubspace(
 			@PathVariable final String subspace,
 			@RequestHeader("DN") final String dn) {
+        if( 0 != 1 )
+            throw new NotImplementedException( );
+
 		GNDMSResponseHeader headers = getSubspaceHeaders( subspace, dn );
 
-		if (!subspaceProvider.exists(subspace)) {
+		if ( !subspaceProvider.exists( subspace ) ) {
 			logger.warn( "Subspace " + subspace + " not found" );
-			return new ResponseEntity<Specifier<Void>>(null, headers,
-					HttpStatus.NOT_FOUND);
+			return new ResponseEntity< Specifier< Facets > >(
+                    null,
+                    headers,
+					HttpStatus.NOT_FOUND );
 		}
 
 	   	em = emf.createEntityManager();
         TxFrame tx = new TxFrame(em);
         try {
+            // see SliceServiceImpl.deleteSlice
+            //final Taskling ling = subspaceProvider.( subspaceId, sliceId );
 
             DeleteSubspaceAction action = new DeleteSubspaceAction();
-            action.setSubspace( subspace );
-            action.setPath(subspaceProvider.get(subspace).getPath() );
-            action.setMode( SetupMode.DELETE );
+            action.setSubspace(subspace);
+            action.setPath(subspaceProvider.get(subspace).getPath());
+            action.setMode(SetupMode.DELETE);
 
             ActionConfigurer actionConfigurer = new ActionConfigurer( emf );
             actionConfigurer.configureAction( action );
@@ -151,8 +159,7 @@ public class SubspaceServiceImpl implements SubspaceService {
             final PrintWriter printWriter = new PrintWriter( stringWriter );
             action.setPrintWriter( printWriter );
        		
-            logger.info("Calling action for deleting the supspace " + subspace
-                    + ".");
+            logger.info( "Submiting action for deleting the supspace " + subspace + "." );
             action.call();
        		tx.commit();
 
@@ -166,7 +173,13 @@ public class SubspaceServiceImpl implements SubspaceService {
 
             logger.debug( stringWriter.toString() );
 
-			return new ResponseEntity<Specifier<Void>>(spec, headers, HttpStatus.OK);
+			return new ResponseEntity< Specifier< Facets > >(
+//                    TaskClient.TaskServiceAux.getTaskSpecifier(
+  //                          taskClient,
+    //                        ),
+                    null,
+                    headers,
+                    HttpStatus.OK );
        	} finally {
        		tx.finish();
        		if (em != null && em.isOpen()) {
