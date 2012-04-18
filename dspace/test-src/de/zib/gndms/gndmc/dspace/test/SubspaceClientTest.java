@@ -104,13 +104,19 @@ public class SubspaceClientTest {
             dependsOnMethods = { "testCreateSubspace" }
     )
     public void testCreateSliceKind() {
-        final ResponseEntity< List< Specifier< Void > > > sliceKind =
-                subspaceClient.createSliceKind( subspaceId, sliceKindId, sliceKindConfig, admindn );
-        Assert.assertNotNull( sliceKind );
-        Assert.assertEquals( sliceKind.getStatusCode(), HttpStatus.CREATED );
+        try {
+            final ResponseEntity< List< Specifier< Void > > > sliceKind =
+                    subspaceClient.createSliceKind( subspaceId, sliceKindId, sliceKindConfig, admindn );
+            Assert.assertNotNull( sliceKind );
+            Assert.assertEquals( sliceKind.getStatusCode(), HttpStatus.CREATED );
+        }
+        catch( HttpClientErrorException e ) {
+            if( ! e.getStatusCode().equals( HttpStatus.BAD_REQUEST ) )
+                throw e;
+        }
 
         final ResponseEntity< List< Specifier< Void > > > listResponseEntity
-                = subspaceClient.listSliceKinds(subspaceId, admindn);
+                = subspaceClient.listSliceKinds( subspaceId, admindn );
         final List< Specifier< Void > > specifierList = listResponseEntity.getBody();
         
         for( Specifier< Void > s: specifierList ) {
