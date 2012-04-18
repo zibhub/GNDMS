@@ -24,6 +24,7 @@ import de.zib.gndms.common.logic.config.SetupMode;
 import de.zib.gndms.common.logic.config.WrongConfigurationException;
 import de.zib.gndms.common.rest.*;
 import de.zib.gndms.kit.config.ParameterTools;
+import de.zib.gndms.logic.action.ActionConfigurer;
 import de.zib.gndms.logic.model.dspace.*;
 import de.zib.gndms.logic.model.dspace.NoSuchElementException;
 import de.zib.gndms.model.common.NoSuchResourceException;
@@ -48,6 +49,8 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.*;
 
 @Controller
@@ -131,18 +134,26 @@ public class SubspaceServiceImpl implements SubspaceService {
 		}
 
 	   	em = emf.createEntityManager();
-       	TxFrame tx = new TxFrame(em);
-       	try {
+        TxFrame tx = new TxFrame(em);
+        try {
 
-       		DeleteSubspaceAction action = new DeleteSubspaceAction();
+            DeleteSubspaceAction action = new DeleteSubspaceAction();
             action.setSubspace( subspace );
-       		action.setPath(subspaceProvider.get(subspace).getPath() );
-       		action.setMode( SetupMode.DELETE );
-       		action.setOwnEntityManager( em );
+            action.setPath(subspaceProvider.get(subspace).getPath() );
+            action.setMode( SetupMode.DELETE );
+
+            ActionConfigurer actionConfigurer = new ActionConfigurer( emf );
+            actionConfigurer.configureAction( action );
+
+            action.setClosingEntityManagerOnCleanup( false );
+
+            final StringWriter stringWriter = new StringWriter();
+            final PrintWriter printWriter = new PrintWriter( stringWriter );
+            action.setPrintWriter( printWriter );
        		
-       		logger.info("Calling action for deleting the supspace " + subspace
-       				+ ".");
-       		action.call();
+            logger.info("Calling action for deleting the supspace " + subspace
+                    + ".");
+            action.call();
        		tx.commit();
 
 			Specifier<Void> spec = new Specifier<Void>();
@@ -152,7 +163,9 @@ public class SubspaceServiceImpl implements SubspaceService {
 //			urimap.put(UriFactory.SERVICE, "dspace");
 //			urimap.put(UriFactory.TASK_ID, task.getId());
 //			spec.setUriMap(new HashMap<String, String>(urimap));
-     		
+
+            logger.debug( stringWriter.toString() );
+
 			return new ResponseEntity<Specifier<Void>>(spec, headers, HttpStatus.OK);
        	} finally {
        		tx.finish();
