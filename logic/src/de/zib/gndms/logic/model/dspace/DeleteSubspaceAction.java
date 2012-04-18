@@ -104,6 +104,8 @@ public class DeleteSubspaceAction extends SetupAction<ConfigActionResult> {
            throw new RuntimeException( e ); 
         }
         // Register resources that require refreshing
+        if( null == getPostponedEntityActions() )
+            throw new IllegalStateException( "No post poned entity action defined!" );
         getPostponedEntityActions().addAction(new ModelChangedAction(space));
 
         return ok();
