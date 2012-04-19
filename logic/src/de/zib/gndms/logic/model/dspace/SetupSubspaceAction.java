@@ -165,7 +165,7 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
                     em.persist(space);
                 break;
             case DELETE:
-                throw new UnsupportedOperationException("Use DeleteSubspaceAction instead of SetupSubspaceAction for deleting subspaces");
+                throw new UnsupportedOperationException("Use DeleteSubspaceTaskAction instead of SetupSubspaceAction for deleting subspaces");
             	// em.remove(meta);
                 // em.remove(subspace);
                 // break;
