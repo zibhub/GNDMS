@@ -80,7 +80,7 @@ public class SubspaceClientTest {
                 AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
         subspaceClient.setServiceURL( serviceUrl );
 
-        restTemplate = ( RestTemplate )context.getAutowireCapableBeanFactory().getBean( "restTemplate" );
+        restTemplate = ( RestTemplate )context.getAutowireCapableBeanFactory().getBean("restTemplate");
     }
 
 
@@ -158,6 +158,7 @@ public class SubspaceClientTest {
                 admindn,
                 "DELETESUBSPACEWID");
         Assert.assertNotNull( taskStatus );
+        Assert.assertEquals( taskStatus.getStatus(), TaskStatus.Status.FINISHED );
         Assert.assertEquals( taskStatus.getMaxProgress(), taskStatus.getProgress() );
         Assert.assertEquals( taskStatus.getStatus(), TaskStatus.Status.FINISHED );
     }
