@@ -119,9 +119,9 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
             }
             else
                 throw (RuntimeException) st.getPayload();
-            session.finish();
+            session.success();
         }
-        finally { session.success(); }
+        finally { session.finish(); }
     }
 
 

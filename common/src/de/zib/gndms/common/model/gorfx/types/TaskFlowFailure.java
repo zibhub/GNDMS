@@ -37,7 +37,7 @@ public interface TaskFlowFailure {
     /** 
      * @brief A human readable error message.
      * 
-     * Its likly that there exist some problems with the Order at this
+     * Its likely that there exist some problems with the Order at this
      * point, thus the user have to correct it.
      *
      * @return A human readable error message. 

@@ -427,23 +427,25 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
     @RequestMapping( value = "/_{type}/_{id}/errors", method = RequestMethod.GET )
     @Secured( "ROLE_USER" )
-    public ResponseEntity<Specifier<TaskFailure>> getErrors( @PathVariable String type, @PathVariable String id,
-                                                             @RequestHeader( "DN" ) String dn,
-                                                             @RequestHeader( "WId" ) String wid ) {
+    public ResponseEntity<TaskFlowFailure> getErrors( @PathVariable String type,
+                                                      @PathVariable String id,
+                                                      @RequestHeader( "DN" ) String dn,
+                                                      @RequestHeader( "WId" ) String wid ) {
 
         HttpStatus hs = HttpStatus.NOT_FOUND;
-        Specifier<TaskFailure> spec = null;
+        TaskFlowFailureImpl taskFlowFailure = new TaskFlowFailureImpl();
         try {
-            spec = createTaskSpecifier( TaskFailure.class, type, id, "errors" );
+            Specifier<TaskFailure> spec = createTaskSpecifier( TaskFailure.class, type, id, "errors" );
             ResponseEntity<TaskFailure> res = taskClient.getErrors( spec.getUriMap().get( "taskId" ), dn, wid );
             if ( res.getStatusCode() == HttpStatus.OK ) {
                 spec.setPayload( res.getBody() );
                 hs = HttpStatus.OK;
-            } else spec = null;
+            }
         } catch ( NoSuchResourceException e ) {
             // intentionally
         }
-        return new ResponseEntity<Specifier<TaskFailure>>( spec, getHeader( type, id, "result", dn, wid ), hs );
+        return new ResponseEntity<TaskFlowFailure>( taskFlowFailure,
+                getHeader( type, id, "result", dn, wid ), hs );
     }
 
 

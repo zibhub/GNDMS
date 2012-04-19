@@ -15,11 +15,7 @@ package de.zib.gndms.common.GORFX.service;
  * limitations under the License.
  */
 
-import de.zib.gndms.common.model.gorfx.types.Order;
-import de.zib.gndms.common.model.gorfx.types.Quote;
-import de.zib.gndms.common.model.gorfx.types.TaskFailure;
-import de.zib.gndms.common.model.gorfx.types.TaskFlowStatus;
-import de.zib.gndms.common.model.gorfx.types.TaskResult;
+import de.zib.gndms.common.model.gorfx.types.*;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
 
@@ -245,5 +241,5 @@ public interface TaskFlowService {
      *     - 200 together with the error of the taskflow, e.g. an
      *       unfulfillable order.
      */
-    ResponseEntity<Specifier<TaskFailure>> getErrors( String type, String id, String dn, String wid );
+    ResponseEntity<TaskFlowFailure> getErrors( String type, String id, String dn, String wid );
 }
