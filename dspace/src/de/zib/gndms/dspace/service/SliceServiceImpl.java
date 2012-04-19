@@ -231,7 +231,8 @@ public class SliceServiceImpl implements SliceService {
             // get service facets of task
             final TaskClient client = new TaskClient( baseUrl );
             client.setRestTemplate( restTemplate );
-            final Specifier< Facets > spec = TaskClient.TaskServiceAux.getTaskSpecifier( client, ling.getId(), uriFactory, null, dn );
+            final Specifier< Facets > spec =
+                    TaskClient.TaskServiceAux.getTaskSpecifier( client, ling.getId(), uriFactory, null, dn );
 
             // return specifier for service facets
             return new ResponseEntity< Specifier< Facets > >( spec, headers, HttpStatus.OK );

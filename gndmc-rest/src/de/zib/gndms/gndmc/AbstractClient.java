@@ -92,6 +92,9 @@ public abstract class AbstractClient {
 			requestHeaders.setWId(wid);
 		}
 		HttpEntity<P> requestEntity = new HttpEntity<P>(parm, requestHeaders);
+
+        if( null == restTemplate )
+            throw new NullPointerException( "Please set RestTemplate in Client!" );
 		return restTemplate.exchange(url, x, requestEntity, clazz);
 	}
 

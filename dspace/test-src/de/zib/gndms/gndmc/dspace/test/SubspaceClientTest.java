@@ -16,16 +16,20 @@ package de.zib.gndms.gndmc.dspace.test;
  * limitations under the License.
  */
 
+import de.zib.gndms.common.model.gorfx.types.TaskStatus;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.gndmc.dspace.SubspaceClient;
+import de.zib.gndms.gndmc.gorfx.AbstractTaskFlowExecClient;
+import de.zib.gndms.gndmc.gorfx.TaskClient;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Optional;
@@ -35,9 +39,9 @@ import org.testng.annotations.Test;
 import java.util.List;
 
 /**
- * Tests the DSpaceClient.
- * 
- * @author Ulrike Golas
+ * Tests the SubspaceClient
+ *
+ * @author bachmann@zib.de
  */
 
 public class SubspaceClientTest {
@@ -47,11 +51,12 @@ public class SubspaceClientTest {
     private SubspaceClient subspaceClient;
 
     final private String serviceUrl;
+    private RestTemplate restTemplate;
 
     final static String subspaceConfig = "size: 6000; path: /tmp/gndms/sub; gsiFtpPath: undefined";
     final static String subspaceId = "testsub";
 
-    final static String sliceKindId = "testkind";
+    final static String sliceKindId = "testsk";
     final static String sliceKindConfig = "sliceKindMode:700; uniqueDirName:kind";
 
     final static String sliceConfig = "terminationTime:2011-12-16; sliceSize:1024";
@@ -74,6 +79,8 @@ public class SubspaceClientTest {
                 SubspaceClient.class,
                 AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
         subspaceClient.setServiceURL( serviceUrl );
+
+        restTemplate = ( RestTemplate )context.getAutowireCapableBeanFactory().getBean("restTemplate");
     }
 
 
@@ -104,13 +111,19 @@ public class SubspaceClientTest {
             dependsOnMethods = { "testCreateSubspace" }
     )
     public void testCreateSliceKind() {
-        final ResponseEntity< List< Specifier< Void > > > sliceKind =
-                subspaceClient.createSliceKind( subspaceId, sliceKindId, sliceKindConfig, admindn );
-        Assert.assertNotNull( sliceKind );
-        Assert.assertEquals( sliceKind.getStatusCode(), HttpStatus.CREATED );
+        try {
+            final ResponseEntity< List< Specifier< Void > > > sliceKind =
+                    subspaceClient.createSliceKind( subspaceId, sliceKindId, sliceKindConfig, admindn );
+            Assert.assertNotNull( sliceKind );
+            Assert.assertEquals( sliceKind.getStatusCode(), HttpStatus.CREATED );
+        }
+        catch( HttpClientErrorException e ) {
+            if( ! e.getStatusCode().equals( HttpStatus.BAD_REQUEST ) )
+                throw e;
+        }
 
         final ResponseEntity< List< Specifier< Void > > > listResponseEntity
-                = subspaceClient.listSliceKinds(subspaceId, admindn);
+                = subspaceClient.listSliceKinds( subspaceId, admindn );
         final List< Specifier< Void > > specifierList = listResponseEntity.getBody();
         
         for( Specifier< Void > s: specifierList ) {
@@ -124,15 +137,29 @@ public class SubspaceClientTest {
                 + " could not be found in SliceKindListing" );
     }
 
+
     @Test(
             groups = { "subspaceServiceTest" },
             dependsOnMethods = { "testCreateSliceKind" }
     )
     public void testDeleteSubspace() {
-        final ResponseEntity< Specifier< Void > > responseEntity = subspaceClient.deleteSubspace( subspaceId, admindn );
+        final ResponseEntity< Specifier< Facets > > responseEntity = subspaceClient.deleteSubspace( subspaceId, admindn );
         Assert.assertNotNull( responseEntity );
         Assert.assertEquals( responseEntity.getStatusCode(), HttpStatus.OK );
+        
+        final TaskClient client = new TaskClient( serviceUrl );
+        client.setRestTemplate( restTemplate );
 
         // wait for task to finish
+        TaskStatus taskStatus = AbstractTaskFlowExecClient.waitForFinishOrFail(
+                responseEntity.getBody(),
+                client,
+                100,
+                admindn,
+                "DELETESUBSPACEWID");
+        Assert.assertNotNull( taskStatus );
+        Assert.assertEquals( taskStatus.getStatus(), TaskStatus.Status.FINISHED );
+        Assert.assertEquals( taskStatus.getMaxProgress(), taskStatus.getProgress() );
+        Assert.assertEquals( taskStatus.getStatus(), TaskStatus.Status.FINISHED );
     }
 }

@@ -51,9 +51,9 @@ public class SubspaceClient extends AbstractClient implements SubspaceService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public final ResponseEntity<Specifier<Void>> deleteSubspace(final String subspace,
+	public final ResponseEntity< Specifier< Facets > > deleteSubspace(final String subspace,
 			final String dn) {
-		return (ResponseEntity<Specifier<Void>>) (Object) unifiedDelete(Specifier.class, getServiceURL() 
+		return (ResponseEntity< Specifier< Facets > >) (Object) unifiedDelete(Specifier.class, getServiceURL()
 				+ "/dspace/_" + subspace, dn);
 	}
 

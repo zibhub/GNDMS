@@ -58,6 +58,7 @@ public class SliceProviderImpl implements SliceProvider {
 
     private GridResourceCache< Slice > cache;
 
+
     public SliceProviderImpl( EntityManagerFactory emf ) {
         this.actionConfigurer = new ActionConfigurer( emf );
         this.actionConfigurer.setEntityUpdateListener( new Invalidator() );
@@ -65,10 +66,12 @@ public class SliceProviderImpl implements SliceProvider {
         this.emf = emf;
     }
 
+
     @Inject
     public void setSystem(GNDMSystem system) {
         this.system = system;
     }
+
 
     @Inject
     public void setEntityManagerFactory( final EntityManagerFactory emf ) {
@@ -76,15 +79,18 @@ public class SliceProviderImpl implements SliceProvider {
         cache.setEmf( emf );
     }
 
+
     @Inject
     public void setSubspaceProvider( SubspaceProvider subspaceProvider ) {
         this.subspaceProvider = subspaceProvider;
     }
 
+
     @Inject
     public void setSliceKindProvider( SliceKindProvider sliceKindProvider ) {
         this.sliceKindProvider = sliceKindProvider;
     }
+
 
 	@Override
 	public final boolean exists(final String subspace, final String slice) {
@@ -98,11 +104,13 @@ public class SliceProviderImpl implements SliceProvider {
         return true;
 	}
 
+
     @Override
     public final List<String> listSlices( final String subspace ) throws NoSuchElementException {
         // TODO: query for all slices
         return null;
     }
+
 
     @Override
     public final Slice getSlice( final String subspace, final String sliceId ) throws NoSuchElementException {
@@ -113,6 +121,7 @@ public class SliceProviderImpl implements SliceProvider {
             throw new NoSuchElementException( e.getMessage() );
         }
     }
+
 
     @Override
     public String createSlice(
@@ -142,6 +151,7 @@ public class SliceProviderImpl implements SliceProvider {
         return slice.getId();
     }
 
+
     public Taskling deleteSlice(
             final String subspaceId,
             final String sliceId ) throws NoSuchElementException {
@@ -169,6 +179,7 @@ public class SliceProviderImpl implements SliceProvider {
 
         return ling;
     }
+
 
     private class Invalidator implements ModelUpdateListener< GridResource > {
         public void onModelChange( GridResource model ) {

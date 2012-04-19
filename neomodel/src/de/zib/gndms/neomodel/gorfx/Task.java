@@ -305,7 +305,7 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
         setPayload(getPayload());
         setFaultString(getFaultString());
         setMaxProgress(getMaxProgress());
-        setORQ( getOrder( ));
+        setOrder(getOrder());
         setWID(getWID());
         setPermissionInfo(getPermissionInfo());
         return subTask;
@@ -316,7 +316,7 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
         return getProperty(Serializable.class, ORQ_P);
     }
 
-    public void setORQ(Serializable orq) {
+    public void setOrder(Serializable orq) {
         setProperty(Serializable.class, ORQ_P, orq);
     }
 

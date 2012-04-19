@@ -23,13 +23,15 @@ import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.logic.config.SetupMode;
 import de.zib.gndms.common.logic.config.WrongConfigurationException;
 import de.zib.gndms.common.rest.*;
+import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.kit.config.ParameterTools;
-import de.zib.gndms.logic.model.dspace.*;
 import de.zib.gndms.logic.model.dspace.NoSuchElementException;
+import de.zib.gndms.logic.model.dspace.*;
 import de.zib.gndms.model.common.NoSuchResourceException;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.util.TxFrame;
+import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -40,6 +42,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -55,8 +58,8 @@ import java.util.*;
 public class SubspaceServiceImpl implements SubspaceService {
     private final Logger logger = LoggerFactory.getLogger( this.getClass() );
 	private EntityManagerFactory emf;
-	private EntityManager em;
-	private String baseUrl;
+    private String baseUrl;
+    private RestTemplate restTemplate;
 	private SubspaceProvider subspaceProvider;
     private SliceKindProvider slicekindProvider;
     private SliceProvider sliceProvider;
@@ -71,9 +74,11 @@ public class SubspaceServiceImpl implements SubspaceService {
         setUriFactory( new UriFactory( baseUrl ) );
 	}
 
+
     public void setUriFactory(UriFactory uriFactory) {
         this.uriFactory = uriFactory;
     }
+
 
 	@Override
 	@RequestMapping( value = "/_{subspace}", method = RequestMethod.GET )
@@ -92,6 +97,7 @@ public class SubspaceServiceImpl implements SubspaceService {
         List<Facet> facets = listFacetsOfSubspace(subspace);
         return new ResponseEntity< Facets >( new Facets( facets ), headers, HttpStatus.OK );
 	}
+
 
     @Override
 	@RequestMapping( value = "/_{subspace}", method = RequestMethod.PUT )
@@ -117,50 +123,47 @@ public class SubspaceServiceImpl implements SubspaceService {
 	}
 
 	@Override
-	@RequestMapping( value = "/_{subspace}", method = RequestMethod.DELETE )
+	@RequestMapping( value = "/_{subspaceId}", method = RequestMethod.DELETE )
     @Secured( "ROLE_ADMIN" )
-	public ResponseEntity< Specifier< Void > > deleteSubspace(
-			@PathVariable final String subspace,
+	public ResponseEntity< Specifier< Facets > > deleteSubspace(
+			@PathVariable final String subspaceId,
 			@RequestHeader("DN") final String dn) {
-		GNDMSResponseHeader headers = getSubspaceHeaders( subspace, dn );
+		GNDMSResponseHeader headers = getSubspaceHeaders( subspaceId, dn );
 
-		if (!subspaceProvider.exists(subspace)) {
-			logger.warn( "Subspace " + subspace + " not found" );
-			return new ResponseEntity<Specifier<Void>>(null, headers,
-					HttpStatus.NOT_FOUND);
+		if ( !subspaceProvider.exists( subspaceId ) ) {
+			logger.warn( "Subspace " + subspaceId + " not found" );
+			return new ResponseEntity< Specifier< Facets > >(
+                    null,
+                    headers,
+					HttpStatus.NOT_FOUND );
 		}
+        
+        final EntityManager em = emf.createEntityManager();
+        TxFrame tx = new TxFrame( em );
+        try {
+            final Taskling taskling = subspaceProvider.delete( subspaceId );
 
-	   	em = emf.createEntityManager();
-       	TxFrame tx = new TxFrame(em);
-       	try {
-
-       		DeleteSubspaceAction action = new DeleteSubspaceAction();
-            action.setSubspace( subspace );
-       		action.setPath(subspaceProvider.get(subspace).getPath() );
-       		action.setMode( SetupMode.DELETE );
-       		action.setOwnEntityManager( em );
-       		
-       		logger.info("Calling action for deleting the supspace " + subspace
-       				+ ".");
-       		action.call();
-       		tx.commit();
-
-			Specifier<Void> spec = new Specifier<Void>();
-       		// TODO get the task specifier from the action - something like this:
-//			Taskling task = new Taskling(action.getDao(), action.nextUUID());
-//			HashMap<String, String> urimap = new HashMap<String, String>(2);
-//			urimap.put(UriFactory.SERVICE, "dspace");
-//			urimap.put(UriFactory.TASK_ID, task.getId());
-//			spec.setUriMap(new HashMap<String, String>(urimap));
-     		
-			return new ResponseEntity<Specifier<Void>>(spec, headers, HttpStatus.OK);
-       	} finally {
+            final TaskClient client = new TaskClient( baseUrl );
+            client.setRestTemplate( restTemplate );
+            final Specifier< Facets > spec =
+                    TaskClient.TaskServiceAux.getTaskSpecifier( client, taskling.getId(), uriFactory, null, dn );
+            return new ResponseEntity< Specifier< Facets > >( spec, headers, HttpStatus.OK );
+       	}
+        catch( NoSuchElementException e ) {
+            return new ResponseEntity< Specifier< Facets > >(
+                    null,
+                    headers,
+                    HttpStatus.NOT_FOUND
+            );
+        }
+        finally {
        		tx.finish();
        		if (em != null && em.isOpen()) {
        			em.close();
        		}
        	}
 	}
+
 
 	@Override
 	@RequestMapping( value = "/_{subspace}/slicekinds", method = RequestMethod.GET )
@@ -202,6 +205,7 @@ public class SubspaceServiceImpl implements SubspaceService {
         }
 	}
 
+
     @Override
     @RequestMapping( value = "/_{subspace}/_{slicekind}", method = RequestMethod.PUT )
     @Secured( "ROLE_ADMIN" )
@@ -223,10 +227,12 @@ public class SubspaceServiceImpl implements SubspaceService {
                     HttpStatus.BAD_REQUEST);
         }
 
+        // TODO: catch creation errors and return appropriate HttpStatus
         slicekindProvider.create( slicekind, "subspace:" + subspace + "; " + config );
 
         return new ResponseEntity<List<Specifier<Void>>>(null, headers, HttpStatus.CREATED);
     }
+
 
     @Override
 	@RequestMapping(value = "/_{subspace}/config", method = RequestMethod.GET)
@@ -247,6 +253,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 		return new ResponseEntity<Configuration>(config, headers, HttpStatus.OK);
 	}
 
+
 	@Override
 	@RequestMapping(value = "/_{subspace}/config", method = RequestMethod.PUT)
     @Secured( "ROLE_ADMIN" )
@@ -266,7 +273,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 				return new ResponseEntity<Void>(null, headers,
 						HttpStatus.FORBIDDEN);
 			}
-		   	em = emf.createEntityManager();
+		   	final EntityManager em = emf.createEntityManager();
 	       	TxFrame tx = new TxFrame(em);
 
 	       	try {
@@ -289,6 +296,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 			return new ResponseEntity< Void >( null, headers, HttpStatus.BAD_REQUEST );
 		}
 	}
+
 
     @Override
     @RequestMapping( value = "/_{subspaceId}/_{sliceKindId}", method = RequestMethod.POST )
@@ -360,6 +368,7 @@ public class SubspaceServiceImpl implements SubspaceService {
         }
     }
 
+
     // delegated to SliceKindServiceImpl, due to mapping conflicts
     @RequestMapping( value = "/_{subspace}/_{sliceKind}", method = RequestMethod.GET )
     @Secured( "ROLE_USER" )
@@ -369,6 +378,7 @@ public class SubspaceServiceImpl implements SubspaceService {
     {
         return sliceKindService.getSliceKindInfo( subspace, sliceKind, dn );
     }
+
 
     // delegated to SliceKindServiceImpl, due to mapping conflicts
     @RequestMapping( value = "/_{subspace}/_{sliceKind}", method = RequestMethod.DELETE )
@@ -394,6 +404,7 @@ public class SubspaceServiceImpl implements SubspaceService {
         }
         return facets;
     }
+
 
     /**
      * Sets the GNDMS response header for a given subspace, slice kind and dn
@@ -445,6 +456,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 		return baseUrl;
 	}
 
+
 	/**
 	 * Sets the base url of this subspace service.
 	 * @param baseUrl the baseUrl to set
@@ -453,6 +465,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 		this.baseUrl = baseUrl;
 	}
 
+
 	/**
 	 * Returns the subspace provider of this subspace service.
 	 * @return the subspaceProvider
@@ -460,6 +473,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 	public SubspaceProvider getSubspaceProvider() {
 		return subspaceProvider;
 	}
+
 
 	/**
 	 * Sets the subspace provider of this subspace service.
@@ -470,6 +484,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 		this.subspaceProvider = subspaceProvider;
 	}
 
+
 	/**
 	 * Returns the facets of this subspace service.
 	 * @return the dspaceFacets
@@ -477,6 +492,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 	public List< String > getSubspaceFacetNames() {
 		return subspaceFacetNames;
 	}
+
 
 	/**
 	 * Sets the facets of this subspace service.
@@ -486,6 +502,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 		this.subspaceFacetNames = subspaceFacetNames;
 	}
 
+
 	/**
 	 * Returns the entity manager factory.
 	 * @return the factory.
@@ -493,6 +510,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 	public EntityManagerFactory getEmf() {
 		return emf;
 	}
+
 
 	/**
 	 * Sets the entity manager factory.
@@ -503,10 +521,12 @@ public class SubspaceServiceImpl implements SubspaceService {
 		this.emf = emf;
 	}
 
+
     @Inject
     public void setSliceProvider( SliceProviderImpl sliceProvider ) {
         this.sliceProvider = sliceProvider;
     }
+
 
     public void setSliceKindProvider( SliceKindProviderImpl sliceKindProvider ) {
         this.slicekindProvider = sliceKindProvider;
@@ -520,10 +540,17 @@ public class SubspaceServiceImpl implements SubspaceService {
 
 
     @Inject
+    public void setRestTemplate( RestTemplate restTemplate ) {
+        this.restTemplate = restTemplate;
+    }
+
+
+    @Inject
     public void setSliceKindService( final SliceKindService sliceKindService ) {
 
         this.sliceKindService = sliceKindService;
     }
+
 
     @ExceptionHandler( NoSuchResourceException.class )
     public ResponseEntity<Void> handleNoSuchResourceException(
@@ -539,6 +566,7 @@ public class SubspaceServiceImpl implements SubspaceService {
                 getSliceKindHeaders(ex.getMessage(), null, null),
                 HttpStatus.NOT_FOUND );
     }
+
 
     @ExceptionHandler( UnauthorizedAccessException.class )
     public ResponseEntity<Void> handleUnAuthorizedException(
