@@ -117,7 +117,7 @@ public class TaskBuilder {
             }
 
         if( hasOrder() )
-            task.setORQ( getOrder() );
+            task.setOrder(getOrder());
 
         if( hasPermissionInfo() )
             task.setPermissionInfo( getPermissionInfo() );
