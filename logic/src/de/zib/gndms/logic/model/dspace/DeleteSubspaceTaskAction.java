@@ -17,6 +17,7 @@
 package de.zib.gndms.logic.model.dspace;
 
 import de.zib.gndms.logic.model.ModelTaskAction;
+import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.gorfx.types.ModelIdHoldingOrder;
@@ -26,6 +27,7 @@ import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.jetbrains.annotations.NotNull;
 
+import javax.inject.Inject;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.concurrent.Future;
@@ -36,7 +38,7 @@ import java.util.concurrent.Future;
  * @author: Jörg Bachmann
  * @email: bachmann@zib.de
  */
-public class DeleteSubspaceTaskAction extends ModelTaskAction<ModelIdHoldingOrder> {
+public class DeleteSubspaceTaskAction extends ModelTaskAction< ModelIdHoldingOrder > {
 
     public DeleteSubspaceTaskAction() {
         super( ModelIdHoldingOrder.class );
@@ -48,6 +50,8 @@ public class DeleteSubspaceTaskAction extends ModelTaskAction<ModelIdHoldingOrde
                               final boolean isRestartedTask, final boolean altTaskState )
             throws Exception
     {
+        ensureOrder();
+
         if (! isRestartedTask ) {
             final Subspace subspace = getModelEntity( Subspace.class );
             final Session session = getDao().beginSession();
@@ -127,7 +131,7 @@ public class DeleteSubspaceTaskAction extends ModelTaskAction<ModelIdHoldingOrde
                             finished = false;
                         else if( subtask.getTaskState().equals( TaskState.FAILED ) ) {
                             transit( TaskState.FAILED );
-                            failWithPayload( null, subtask.getCause().toArray( new Exception[]{ } ) );
+                            failWithPayload(null, subtask.getCause().toArray(new Exception[]{}));
                         }
                     }
 
@@ -146,5 +150,11 @@ public class DeleteSubspaceTaskAction extends ModelTaskAction<ModelIdHoldingOrde
         deleteModelEntity( Subspace.class );
 
         autoTransitWithPayload( Boolean.TRUE );
+    }
+
+
+    @Inject
+    public void setTaskDao( Dao dao ) {
+        setOwnDao( dao );
     }
 }

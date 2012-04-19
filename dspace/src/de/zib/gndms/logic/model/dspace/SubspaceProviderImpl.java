@@ -67,11 +67,8 @@ public class SubspaceProviderImpl extends GridResourceDAO< Subspace > implements
             logger.info( "Illegal Access: subspace " + subspaceId + " cannot be deleted because it is not available." );
             throw new NoSuchElementException( "Subspace " + subspaceId + " does not exist." );
         }
-        Subspace subspace = get( subspaceId );
-
         final DeleteSubspaceTaskAction deleteAction = new DeleteSubspaceTaskAction();
-        system.getInstanceDir().getSystemAccessInjector().injectMembers(deleteAction);
-        actionConfigurer.configureAction( deleteAction );
+        system.getInstanceDir().getSystemAccessInjector().injectMembers( deleteAction );
 
         final Order order = new ModelIdHoldingOrder( subspaceId );
         final String wid = UUID.randomUUID().toString();
