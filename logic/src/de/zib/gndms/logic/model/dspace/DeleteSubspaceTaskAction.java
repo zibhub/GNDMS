@@ -125,6 +125,10 @@ public class DeleteSubspaceTaskAction extends ModelTaskAction<ModelIdHoldingOrde
 
                         if( !subtask.isDone() )
                             finished = false;
+                        else if( subtask.getTaskState().equals( TaskState.FAILED ) ) {
+                            transit( TaskState.FAILED );
+                            failWithPayload( null, subtask.getCause().toArray( new Exception[]{ } ) );
+                        }
                     }
 
                     task.setMaxProgress( maxProgress );
