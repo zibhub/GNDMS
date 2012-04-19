@@ -76,7 +76,7 @@ public class NeoTaskTest extends NeoTest {
         PersistentContract contract = new PersistentContract();
         contract.setExpectedSize(15L);
         task.setContract(contract);
-        task.setORQ("fufu");
+        task.setOrder("fufu");
         return task;
     }
 
