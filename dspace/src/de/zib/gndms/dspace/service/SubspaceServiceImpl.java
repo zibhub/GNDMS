@@ -23,14 +23,15 @@ import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.logic.config.SetupMode;
 import de.zib.gndms.common.logic.config.WrongConfigurationException;
 import de.zib.gndms.common.rest.*;
+import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.kit.config.ParameterTools;
-import de.zib.gndms.logic.action.ActionConfigurer;
-import de.zib.gndms.logic.model.dspace.*;
 import de.zib.gndms.logic.model.dspace.NoSuchElementException;
+import de.zib.gndms.logic.model.dspace.*;
 import de.zib.gndms.model.common.NoSuchResourceException;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.util.TxFrame;
+import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -41,7 +42,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -50,8 +50,6 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.*;
 
 @Controller
@@ -59,8 +57,7 @@ import java.util.*;
 public class SubspaceServiceImpl implements SubspaceService {
     private final Logger logger = LoggerFactory.getLogger( this.getClass() );
 	private EntityManagerFactory emf;
-	private EntityManager em;
-	private String baseUrl;
+    private String baseUrl;
 	private SubspaceProvider subspaceProvider;
     private SliceKindProvider slicekindProvider;
     private SliceProvider sliceProvider;
@@ -124,63 +121,36 @@ public class SubspaceServiceImpl implements SubspaceService {
 	@RequestMapping( value = "/_{subspace}", method = RequestMethod.DELETE )
     @Secured( "ROLE_ADMIN" )
 	public ResponseEntity< Specifier< Facets > > deleteSubspace(
-			@PathVariable final String subspace,
+			@PathVariable final String subspaceId,
 			@RequestHeader("DN") final String dn) {
-        if( 0 != 1 )
-            throw new NotImplementedException( );
+		GNDMSResponseHeader headers = getSubspaceHeaders( subspaceId, dn );
 
-		GNDMSResponseHeader headers = getSubspaceHeaders( subspace, dn );
-
-		if ( !subspaceProvider.exists( subspace ) ) {
-			logger.warn( "Subspace " + subspace + " not found" );
+		if ( !subspaceProvider.exists( subspaceId ) ) {
+			logger.warn( "Subspace " + subspaceId + " not found" );
 			return new ResponseEntity< Specifier< Facets > >(
                     null,
                     headers,
 					HttpStatus.NOT_FOUND );
 		}
-
-	   	em = emf.createEntityManager();
-        TxFrame tx = new TxFrame(em);
+        
+        final EntityManager em = emf.createEntityManager();
+        TxFrame tx = new TxFrame( em );
         try {
-            // see SliceServiceImpl.deleteSlice
-            //final Taskling ling = subspaceProvider.( subspaceId, sliceId );
+            final Taskling taskling = subspaceProvider.delete( subspaceId );
 
-            DeleteSubspaceAction action = new DeleteSubspaceAction();
-            action.setSubspace(subspace);
-            action.setPath(subspaceProvider.get(subspace).getPath());
-            action.setMode(SetupMode.DELETE);
-
-            ActionConfigurer actionConfigurer = new ActionConfigurer( emf );
-            actionConfigurer.configureAction( action );
-
-            action.setClosingEntityManagerOnCleanup( false );
-
-            final StringWriter stringWriter = new StringWriter();
-            final PrintWriter printWriter = new PrintWriter( stringWriter );
-            action.setPrintWriter( printWriter );
-       		
-            logger.info( "Submiting action for deleting the supspace " + subspace + "." );
-            action.call();
-       		tx.commit();
-
-			Specifier<Void> spec = new Specifier<Void>();
-       		// TODO get the task specifier from the action - something like this:
-//			Taskling task = new Taskling(action.getDao(), action.nextUUID());
-//			HashMap<String, String> urimap = new HashMap<String, String>(2);
-//			urimap.put(UriFactory.SERVICE, "dspace");
-//			urimap.put(UriFactory.TASK_ID, task.getId());
-//			spec.setUriMap(new HashMap<String, String>(urimap));
-
-            logger.debug( stringWriter.toString() );
-
-			return new ResponseEntity< Specifier< Facets > >(
-//                    TaskClient.TaskServiceAux.getTaskSpecifier(
-  //                          taskClient,
-    //                        ),
+            final TaskClient client = new TaskClient( baseUrl );
+            final Specifier< Facets > spec =
+                    TaskClient.TaskServiceAux.getTaskSpecifier( client, taskling.getId(), uriFactory, null, dn );
+            return new ResponseEntity< Specifier< Facets > >( spec, headers, HttpStatus.OK );
+       	}
+        catch( NoSuchElementException e ) {
+            return new ResponseEntity< Specifier< Facets > >(
                     null,
                     headers,
-                    HttpStatus.OK );
-       	} finally {
+                    HttpStatus.NOT_FOUND
+            );
+        }
+        finally {
        		tx.finish();
        		if (em != null && em.isOpen()) {
        			em.close();
@@ -249,6 +219,7 @@ public class SubspaceServiceImpl implements SubspaceService {
                     HttpStatus.BAD_REQUEST);
         }
 
+        // TODO: catch creation errors and return appropriate HttpStatus
         slicekindProvider.create( slicekind, "subspace:" + subspace + "; " + config );
 
         return new ResponseEntity<List<Specifier<Void>>>(null, headers, HttpStatus.CREATED);
@@ -292,7 +263,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 				return new ResponseEntity<Void>(null, headers,
 						HttpStatus.FORBIDDEN);
 			}
-		   	em = emf.createEntityManager();
+		   	final EntityManager em = emf.createEntityManager();
 	       	TxFrame tx = new TxFrame(em);
 
 	       	try {

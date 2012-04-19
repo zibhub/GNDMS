@@ -102,6 +102,10 @@ public abstract class GridResourceDAO< G extends GridResource > {
             throw new IllegalStateException( "Error on parsing parameter string '" + config + "'.", e );
         }
     }
+    
+    public void invalidateCacheFor( final String id ) {
+        cache.invalidate( id );
+    }
 
     private class Invalidator implements ModelUpdateListener<GridResource> {
         public void onModelChange( GridResource model ) {

@@ -16,6 +16,7 @@ package de.zib.gndms.logic.model.dspace;
  */
 
 import de.zib.gndms.model.dspace.Subspace;
+import de.zib.gndms.neomodel.gorfx.Taskling;
 
 import java.util.List;
 
@@ -48,4 +49,6 @@ public interface SubspaceProvider {
 	Subspace get( String subspace );
 
     void create( String config );
+    
+    Taskling delete(String subspaceId) throws NoSuchElementException;
 }
