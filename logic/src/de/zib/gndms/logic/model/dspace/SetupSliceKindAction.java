@@ -25,8 +25,8 @@ import de.zib.gndms.logic.model.config.ConfigActionHelp;
 import de.zib.gndms.logic.model.config.ConfigActionResult;
 import de.zib.gndms.logic.model.config.ConfigOption;
 import de.zib.gndms.logic.model.config.SetupAction;
-import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.dspace.SliceKind;
+import de.zib.gndms.model.dspace.Subspace;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.EntityManager;
@@ -87,8 +87,6 @@ public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
     @ConfigOption(descr="The directory to store the slices belonging to this kind (its a required attribute)")
     private String uniqueDirName;
 
-    private SliceKind theSliceKind;
-    
     private int defaultSliceSize = -1;
     private long defaultTimeToLive = -1;
 
@@ -234,5 +232,4 @@ public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
     public void setDefaultTimeToLive(long defaultTimeToLive) {
         this.defaultTimeToLive = defaultTimeToLive;
     }
-
 }

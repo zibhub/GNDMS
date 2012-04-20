@@ -433,8 +433,10 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
     }
 
     public void setFaultString(@Nullable String faultString) {
-        if (faultString == null && hasProperty(FAULT_STRING_P))
-            removeProperty(FAULT_STRING_P);
+        if( faultString == null ) {
+            if( hasProperty(FAULT_STRING_P) )
+                removeProperty(FAULT_STRING_P);
+        }
         else
             setProperty(FAULT_STRING_P, faultString);
     }

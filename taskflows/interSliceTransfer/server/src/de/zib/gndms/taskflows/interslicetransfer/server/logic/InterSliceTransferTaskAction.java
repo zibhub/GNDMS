@@ -157,7 +157,7 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
         Session  session = getDao().beginSession();
         try {
             Task task = getTask( session );
-            task.setORQ( order );
+            task.setOrder(order);
             //noinspection ConstantConditions
             ( ( InterSliceTransferResult ) task.getPayload() ).setSliceSpecifier(
                     sliceSpecifier );

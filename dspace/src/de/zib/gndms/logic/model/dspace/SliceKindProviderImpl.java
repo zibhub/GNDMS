@@ -71,7 +71,6 @@ public class SliceKindProviderImpl extends GridResourceDAO< SliceKind > implemen
     }
 
     public void create( final String sliceKindId, final String config ) {
-        System.out.println( config );
         try {
             final StringWriter sw = new StringWriter();
 

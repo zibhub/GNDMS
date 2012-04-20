@@ -15,11 +15,11 @@ package de.zib.gndms.logic.model.dspace;
  *  limitations under the License.
  */
 
-import de.zib.gndms.model.gorfx.types.ModelIdHoldingOrder;
 import de.zib.gndms.logic.model.ModelTaskAction;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
+import de.zib.gndms.model.gorfx.types.ModelIdHoldingOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.model.util.TxFrame;
 import org.jetbrains.annotations.NotNull;
@@ -39,11 +39,38 @@ public class DeleteSliceKindTaskAction extends ModelTaskAction<ModelIdHoldingOrd
 
 
     public DeleteSliceKindTaskAction( ) {
-
         super( ModelIdHoldingOrder.class );
     }
 
 
+    @Override
+    protected void onCreated( @NotNull final String wid, @NotNull final TaskState state,
+                              final boolean isRestartedTask, final boolean altTaskState )
+            throws Exception
+    {
+        ensureOrder();
+
+        if (! isRestartedTask ) {
+            SliceKind sliceKind;
+            sliceKind = getModelEntity( SliceKind.class );
+
+            EntityManager em = getEmf().createEntityManager();
+            TxFrame tx = new TxFrame( em );
+            List<Slice> slices;
+            try {
+                final Query listAllSlicesOfKind = em.createNamedQuery( "listAllSlicesOfKind" );
+                listAllSlicesOfKind.setParameter( "sliceKindId", sliceKind.getId() );
+                slices = listAllSlicesOfKind.getResultList();
+                tx.commit();
+            } finally {
+                tx.finish();
+            }
+
+            updateMaxProgress( slices.size()+1 );
+            updateProgress( 0 );
+        }
+        super.onCreated(wid, state, isRestartedTask, altTaskState);
+    }
 
 
     @Override
@@ -69,7 +96,7 @@ public class DeleteSliceKindTaskAction extends ModelTaskAction<ModelIdHoldingOrd
         }
 
         int progress = 0;
-        updateMaxProgress( slices.size() );
+        updateMaxProgress( slices.size()+1 );
         updateProgress( progress );
         for( Slice slice : slices ) {
             getDirectoryAux().deleteDirectory( slice.getOwner(),
@@ -95,6 +122,7 @@ public class DeleteSliceKindTaskAction extends ModelTaskAction<ModelIdHoldingOrd
             deleteFromSubspace( sliceKind, subspace );
 
         deleteModelEntity( SliceKind.class );
+        updateProgress( ++progress );
 
         autoTransitWithPayload( Boolean.TRUE );
     }
@@ -102,8 +130,13 @@ public class DeleteSliceKindTaskAction extends ModelTaskAction<ModelIdHoldingOrd
 
     private void deleteFromSubspace( final SliceKind sliceKind, final Subspace subspace ) {
 
-        getDirectoryAux().deleteDirectory( System.getenv( "uid" ),
-                subspace.getPath() + File.separator + sliceKind.getSliceDirectory() );
+        try {
+            getDirectoryAux().deleteDirectory( System.getenv( "uid" ),
+                    subspace.getPath() + File.separator + sliceKind.getSliceDirectory() );
+        }
+        catch( Exception e ) {
+            logger.debug( e.getMessage() );
+        }
 
         EntityManager em = getEmf().createEntityManager();
         TxFrame tx = new TxFrame( em );

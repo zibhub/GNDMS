@@ -27,6 +27,7 @@ import de.zib.gndms.model.util.GridResourceCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManagerFactory;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -39,7 +40,7 @@ import java.io.StringWriter;
  */
 public abstract class GridResourceDAO< G extends GridResource > {
     final protected EntityManagerFactory emf;
-    final protected ActionConfigurer actionConfigurer;
+    protected ActionConfigurer actionConfigurer;
     final private GridResourceCache< G > cache;
 
     final private Class< ? extends SetupAction< ConfigActionResult > > c;
@@ -51,8 +52,8 @@ public abstract class GridResourceDAO< G extends GridResource > {
             final GridResourceCache< G > provider,
             final Class< ? extends SetupAction< ConfigActionResult > > setupClazz ) {
         this.emf = emf;
-        this.actionConfigurer = new ActionConfigurer( emf );
-        this.actionConfigurer.setEntityUpdateListener( new Invalidator() );
+        //this.actionConfigurer = new ActionConfigurer( emf );
+        //this.actionConfigurer.setEntityUpdateListener(new Invalidator());
         this.cache = provider;
         this.c = setupClazz;
     }
@@ -80,8 +81,8 @@ public abstract class GridResourceDAO< G extends GridResource > {
             final StringWriter sw = new StringWriter();
 
             final SetupAction<? extends ConfigActionResult> setup_action = c.newInstance();
-            setup_action.setPrintWriter( new PrintWriter( sw ) );
-            setup_action.parseLocalOptions( config );
+            setup_action.setPrintWriter(new PrintWriter(sw));
+            setup_action.parseLocalOptions(config);
             setup_action.setMode( mode );
 
             actionConfigurer.configureAction( setup_action );
@@ -111,5 +112,16 @@ public abstract class GridResourceDAO< G extends GridResource > {
         public void onModelChange( GridResource model ) {
             GridResourceDAO.this.cache.invalidate( model.getId() );
         }
+    }
+
+
+    public ActionConfigurer getActionConfigurer() {
+        return actionConfigurer;
+    }
+
+
+    @Inject
+    public void setActionConfigurer( ActionConfigurer actionConfigurer ) {
+        this.actionConfigurer = actionConfigurer;
     }
 }

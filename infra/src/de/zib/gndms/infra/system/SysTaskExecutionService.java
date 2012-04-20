@@ -167,6 +167,9 @@ public final class SysTaskExecutionService extends ActionConfigurer implements T
             final TaskAction taskAction = (TaskAction) action;
             taskAction.setService(this);
         }
+
+        system.getInstanceDir().getSystemAccessInjector().injectMembers( action );
+
         return super.configure_( action );
     }
 

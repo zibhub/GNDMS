@@ -16,20 +16,22 @@
 
 package de.zib.gndms.logic.model.dspace;
 
+import de.zib.gndms.common.model.gorfx.types.VoidTaskResult;
 import de.zib.gndms.logic.model.ModelTaskAction;
-import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.gorfx.types.ModelIdHoldingOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;
+import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.Future;
 
 /**
@@ -80,33 +82,41 @@ public class DeleteSubspaceTaskAction extends ModelTaskAction< ModelIdHoldingOrd
         if( null == subspace )
             throw new IllegalArgumentException( "Could not find subspace " + getOrder().getModelId() );
 
-        final Collection< Future< Taskling > > futures = new HashSet< Future< Taskling > >();
+        final Map< Task, Future< Taskling > > futures = new HashMap< Task, Future< Taskling > >();
 
         // submit tasks to delete all slicekinds
         {
-            final Session session = getDao().beginSession();
-            try {
-                final Task task = getTask( session );
+            for( SliceKind sk: subspace.getCreatableSliceKinds() ) {
 
-                for( SliceKind sk: subspace.getCreatableSliceKinds() ) {
+                final Task task;
+                final Task subtask;
+                final Session session = getDao().beginSession();
+                try {
+                    task = getTask( session );
+                    subtask = task.createSubTask();
                     final ModelIdHoldingOrder order = new ModelIdHoldingOrder( sk.getId() );
-                    final Task subtask = task.createSubTask();
                     subtask.setId( getUUIDGen().nextUUID() );
+                    subtask.setWID( UUID.randomUUID().toString() );
                     subtask.setTerminationTime( task.getTerminationTime() );
                     subtask.setOrder( order );
 
-                    DeleteSliceKindTaskAction deleteSliceKindTaskAction
-                            = new DeleteSliceKindTaskAction();
-                    deleteSliceKindTaskAction.setOwnDao(getDao());
-                    deleteSliceKindTaskAction.setEmf( getEmf() );
-
-                    final Future< Taskling > future = this.getService().submitAction( deleteSliceKindTaskAction );
-                    futures.add( future );
-
                     session.success();
                 }
+                finally { session.finish(); }
+
+                DeleteSliceKindTaskAction deleteSliceKindTaskAction
+                        = new DeleteSliceKindTaskAction();
+                deleteSliceKindTaskAction.setOwnDao(getDao());
+                deleteSliceKindTaskAction.setEmf(getEmf());
+                deleteSliceKindTaskAction.setModel( subtask.getTaskling() );
+                //system.getInstanceDir().getSystemAccessInjector().injectMembers( deleteSliceKindTaskAction );
+
+                logger.info( "DeleteSubspaceTaskAction (WID: " + task.getWID() + ") starting subtask DeleteSliceKindTaskAction" +
+                        " (WID: " + subtask.getWID() + ")." );
+
+                final Future< Taskling > future = this.getService().submitAction( deleteSliceKindTaskAction );
+                futures.put(subtask, future);
             }
-            finally { session.finish(); }
         }
         
         // wait for all tasks to finish
@@ -149,7 +159,7 @@ public class DeleteSubspaceTaskAction extends ModelTaskAction< ModelIdHoldingOrd
 
         deleteModelEntity( Subspace.class );
 
-        autoTransitWithPayload( Boolean.TRUE );
+        autoTransitWithPayload( new VoidTaskResult() );
     }
 
 
