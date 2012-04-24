@@ -231,7 +231,7 @@ public class SliceClientTest {
         // try to find uploaded file
         {
             if( !findFile() )
-                throw new IllegalStateException( "Uploaded file " + sliceFile + " could not be listed. Upload failed?" );
+                throw new IllegalStateException( "Uploaded file " + sliceFileName + " could not be listed. Upload failed?" );
         }
 
         // download file and compare with uploaded file
@@ -241,7 +241,7 @@ public class SliceClientTest {
                     subspaceId,
                     sliceKindId,
                     sliceId,
-                    sliceFile,
+                    sliceFileName,
                     new LinkedList<String>(),
                     admindn,
                     byteArrayOutputStream );
@@ -255,7 +255,7 @@ public class SliceClientTest {
         // delete uploaded file
         {
             final ResponseEntity< Void > responseEntity =
-                    sliceClient.deleteFile(subspaceId, sliceKindId, sliceId, sliceFile, admindn);
+                    sliceClient.deleteFile(subspaceId, sliceKindId, sliceId, sliceFileName, admindn);
 
             Assert.assertNotNull( responseEntity );
             Assert.assertEquals( responseEntity.getStatusCode(), HttpStatus.OK );
@@ -264,7 +264,7 @@ public class SliceClientTest {
         // try to not! find deleted file
         {
             if( findFile() )
-                throw new IllegalStateException( "Still found deleted file " + sliceFile );
+                throw new IllegalStateException( "Still found deleted file " + sliceFileName );
         }
     }
 
@@ -301,7 +301,7 @@ public class SliceClientTest {
         Assert.assertEquals( listResponseEntity.getStatusCode(), HttpStatus.OK );
 
         for( FileStats fileStats: listResponseEntity.getBody() ) {
-            if( fileStats.path.equals( sliceFile ) )
+            if( fileStats.path.equals( "/" + sliceFileName ) )
                 return true;
         }
 

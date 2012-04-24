@@ -363,22 +363,22 @@ public class SliceServiceImpl implements SliceService {
 	}
 
 	@Override
-	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{sliceId}/_{fileName:.*}",
+	@RequestMapping(value = "/_{subspaceId}/_{sliceKindId}/_{sliceId}/_{fileName:.*}",
             method = RequestMethod.GET)
     @Secured( "ROLE_USER" )
 	public ResponseEntity<Void> listFileContent(
             @PathVariable final String subspaceId,
-            @PathVariable final String sliceKind,
+            @PathVariable final String sliceKindId,
             @PathVariable final String sliceId,
             @PathVariable final String fileName,
             @RequestParam( value="attrs", required = false) final List<String> attrs,
             @RequestHeader("DN") final String dn,
             final OutputStream out) {
-		GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKind, sliceId, dn );
+		GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKindId, sliceId, dn );
 
 		try {
 			Subspace space = subspaceProvider.get( subspaceId );
-			Slice slice = findSliceOfKind( subspaceId, sliceKind, sliceId);
+			Slice slice = findSliceOfKind( subspaceId, sliceKindId, sliceId);
 			String path = space.getPathForSlice(slice);
 			File file = new File(path + File.separatorChar + fileName);
 
