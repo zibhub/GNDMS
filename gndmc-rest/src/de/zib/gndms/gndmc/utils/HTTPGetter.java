@@ -19,6 +19,7 @@ package de.zib.gndms.gndmc.utils;
 import de.zib.gndms.common.kit.security.SetupSSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.ClientHttpResponse;
@@ -57,11 +58,13 @@ public class HTTPGetter {
     private SSLContext sslContext;
 
     final private Map< Integer, EnhancedResponseExtractor > extractorMap;
-    
+
+
     public HTTPGetter() {
         extractorMap = new HashMap< Integer, EnhancedResponseExtractor >();
         resetExtractorMap();
     }
+
 
     public void resetExtractorMap() {
         logger.trace( "Resetting ResponseExtractorMap." );
@@ -70,10 +73,12 @@ public class HTTPGetter {
         extractorMap.put( 3, new RedirectResponseExtractor() );
         extractorMap.put( 0, new DefaultResponseExtractor() );
     }
-    
+
+
     public EnhancedResponseExtractor getResponseExtractor( int statusCode ) {
         return extractorMap.get( statusCode );
     }
+
 
     public void setupSSL( SetupSSL setupSSL, final String keyPassword ) throws
             IOException,
@@ -85,16 +90,30 @@ public class HTTPGetter {
         sslContext = setupSSL.setupSSLContext( keyPassword );
     }
 
+
     public void setExtractor( int httpStatusCode, EnhancedResponseExtractor responseExtractor ) {
         logger.trace( "Setting ResponseExtractor " + responseExtractor.getClass().getCanonicalName() + " for HTTP status code " + httpStatusCode );
 
         extractorMap.put( httpStatusCode, responseExtractor );
     }
-    
+
+
     public int get( String url ) throws NoSuchAlgorithmException, KeyManagementException {
+        return get( url, ( HttpHeaders )null );
+    }
+
+
+    public int get( String url, final HttpHeaders headers ) throws NoSuchAlgorithmException, KeyManagementException {
         logger.debug("GET URL " + url);
 
-        EnhancedResponseExtractor responseExtractor = get( url, null );
+        EnhancedResponseExtractor responseExtractor = get( url, new RequestCallback() {
+            @Override
+            public void doWithRequest( ClientHttpRequest request ) throws IOException {
+                // add headers
+                if( headers != null )
+                    request.getHeaders().putAll( headers );
+            }
+        } );
         int statusCode = responseExtractor.getStatusCode();
 
         int redirectionCounter = 0;
@@ -112,6 +131,10 @@ public class HTTPGetter {
                 public void doWithRequest( ClientHttpRequest request ) throws IOException {
                     for( String c: cookies )
                         request.getHeaders().add( "Cookie", c.split( ";", 2 )[0] );
+                    
+                    // add headers
+                    if( headers != null )
+                        request.getHeaders().putAll( headers );
                 }
             });
 
@@ -123,7 +146,8 @@ public class HTTPGetter {
         return statusCode;
     }
 
-    EnhancedResponseExtractor get( final String url, final RequestCallback requestCallback )
+
+    private EnhancedResponseExtractor get( final String url, final RequestCallback requestCallback )
             throws NoSuchAlgorithmException, KeyManagementException
     {
         RequestFactory requestFactory = new RequestFactory( sslContext );
@@ -152,6 +176,7 @@ public class HTTPGetter {
         } );
     }
 
+
     private class RequestFactory extends SimpleClientHttpRequestFactory {
         final private SSLContext sslContext;
 
@@ -172,22 +197,27 @@ public class HTTPGetter {
             }
         }
     }
-    
+
+
     public String getKeyStoreLocation() {
         return keyStoreLocation;
     }
+
 
     public void setKeyStoreLocation( String keyStoreLocation ) {
         this.keyStoreLocation = keyStoreLocation;
     }
 
+
     public String getTrustStoreLocation() {
         return trustStoreLocation;
     }
 
+
     public void setTrustStoreLocation( String trustStoreLocation ) {
         this.trustStoreLocation = trustStoreLocation;
     }
+
 
     public void setPassword( String password ) {
         this.password = password;
