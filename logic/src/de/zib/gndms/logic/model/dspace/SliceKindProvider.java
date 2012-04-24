@@ -35,6 +35,7 @@ public interface SliceKindProvider {
      */
     boolean exists( String subspace, String sliceKind );
 
+
     /**
      * Returns a list containing all existing slice kind ids for a subspace.
      * @param subspace The considered subspace.
@@ -42,6 +43,7 @@ public interface SliceKindProvider {
      * @throws NoSuchElementException if the subspace does not exist.
      */
     List< String > list( String subspace ) throws NoSuchElementException;
+
 
     /**
      * Returns the slice kind for a given slice kind id in a subspace.
@@ -52,5 +54,9 @@ public interface SliceKindProvider {
      */
     SliceKind get( String subspace, String sliceKind ) throws NoSuchElementException;
 
+
     void create( String slicekindId, String config );
+    
+    
+    void invalidate( String sliceKindId );
 }

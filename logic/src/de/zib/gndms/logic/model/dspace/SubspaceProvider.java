@@ -51,4 +51,6 @@ public interface SubspaceProvider {
     void create( String config );
     
     Taskling delete(String subspaceId) throws NoSuchElementException;
+    
+    void invalidate( String subspaceId );
 }

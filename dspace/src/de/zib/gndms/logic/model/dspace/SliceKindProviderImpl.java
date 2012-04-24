@@ -48,14 +48,17 @@ public class SliceKindProviderImpl extends GridResourceDAO< SliceKind > implemen
         );
     }
 
+
     protected String getListQuery( ) {
         return "listSlicekindsOfSubspace";
     }
+
 
     @Override
     public boolean exists( String subspace, String sliceKind ) {
         return super.exists( sliceKind );
     }
+
 
     @Override
     public List< String > list( String subspace ) throws NoSuchElementException {
@@ -69,6 +72,7 @@ public class SliceKindProviderImpl extends GridResourceDAO< SliceKind > implemen
     public SliceKind get( String subspace, String sliceKind ) throws NoSuchElementException {
         return super.get( sliceKind );
     }
+
 
     public void create( final String sliceKindId, final String config ) {
         try {
@@ -94,5 +98,10 @@ public class SliceKindProviderImpl extends GridResourceDAO< SliceKind > implemen
         catch( ParameterTools.ParameterParseException e ) {
             throw new IllegalStateException( "Error on parsing parameter string '" + config + "'.", e );
         }
+    }
+    
+    
+    public void invalidate( final String sliceKindId ) {
+        invalidateCacheFor( sliceKindId );
     }
 }

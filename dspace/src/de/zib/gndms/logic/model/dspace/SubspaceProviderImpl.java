@@ -34,6 +34,7 @@ public class SubspaceProviderImpl extends GridResourceDAO< Subspace > implements
 
     private GNDMSystem system;
 
+    
 	public SubspaceProviderImpl( final EntityManagerFactory emf ) {
         super(
                 emf,
@@ -44,22 +45,26 @@ public class SubspaceProviderImpl extends GridResourceDAO< Subspace > implements
                 SetupSubspaceAction.class
         );
     }
+    
 
     protected String getListQuery( ) {
         return "listAllSubspaceIds";
     }
 
+    
     @Override
     public boolean exists( String subspace ) {
         return super.exists( subspace );
     }
 
+    
     @Override
     public List< String > list() {
         EntityManager em = emf.createEntityManager();
         Query query = em.createNamedQuery( getListQuery() );
         return query.getResultList();
     }
+    
     
     @Override
     public Taskling delete(final String subspaceId) throws NoSuchElementException {
@@ -78,6 +83,12 @@ public class SubspaceProviderImpl extends GridResourceDAO< Subspace > implements
         invalidateCacheFor( subspaceId );
 
         return ling;
+    }
+
+    
+    @Override
+    public void invalidate( final String subspaceId ) {
+        invalidateCacheFor( subspaceId );
     }
 
 

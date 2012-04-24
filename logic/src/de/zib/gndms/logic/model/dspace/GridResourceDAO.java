@@ -47,6 +47,7 @@ public abstract class GridResourceDAO< G extends GridResource > {
 
     protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
+
     public GridResourceDAO(
             final EntityManagerFactory emf,
             final GridResourceCache< G > provider,
@@ -58,23 +59,29 @@ public abstract class GridResourceDAO< G extends GridResource > {
         this.c = setupClazz;
     }
 
+
     public boolean exists( String id ) {
         return cache.exists( id );
     }
+
 
     public G get( final String id ) {
         return cache.get( id );
     }
 
+
     public void create( final String config ) {
         setup( config, SetupMode.CREATE );
     }
+
 
     public void update( final String config ) {
         setup( config, SetupMode.UPDATE );
     }
 
+
     protected abstract String getListQuery( );
+
 
     private String setup( final String config, final SetupMode mode ) {
         try {
@@ -103,10 +110,12 @@ public abstract class GridResourceDAO< G extends GridResource > {
             throw new IllegalStateException( "Error on parsing parameter string '" + config + "'.", e );
         }
     }
-    
+
+
     public void invalidateCacheFor( final String id ) {
         cache.invalidate( id );
     }
+
 
     private class Invalidator implements ModelUpdateListener<GridResource> {
         public void onModelChange( GridResource model ) {
