@@ -297,7 +297,8 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
 
     public Task createSubTask() {
         Task subTask = session().createTask();
-        Relationship rel = subTask.repr(session()).createRelationshipTo(repr(), TaskRelationships.PARENT_REL);
+        Relationship rel = subTask.repr(reprSession()).createRelationshipTo(repr(),
+                TaskRelationships.PARENT_REL);
         subTask.setTaskFlowType( getTaskFlowType() );
         setContract(getContract());
         setDescription(getDescription());

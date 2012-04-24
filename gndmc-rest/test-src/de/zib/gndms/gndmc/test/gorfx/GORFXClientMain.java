@@ -253,11 +253,11 @@ public class GORFXClientMain extends AbstractApplication {
 			System.out.println("Errors facet not found");
 		} else {
 			System.out.println(f.getName() + " " + f.getUrl());
-			ResponseEntity<Specifier<TaskFailure>> res9 = tfClient.getErrors(type, id,
+			ResponseEntity<TaskFlowFailure> res9 = tfClient.getErrors(type, id,
 					dn, wid);
 			if (res9.getStatusCode().equals( HttpStatus.OK )) {
 				System.out.println("Failure"
-						+ res9.getBody().getPayload().getMessage());
+						+ res9.getBody().getFailureMessage());
 			} else {
 				System.out.println("No errors");
 
