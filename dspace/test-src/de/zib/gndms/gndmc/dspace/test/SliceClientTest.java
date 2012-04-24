@@ -37,6 +37,8 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import java.io.*;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -172,7 +174,7 @@ public class SliceClientTest {
             groups = { "subspaceServiceTest" },
             dependsOnMethods = { "testCreateSlice" }
     )
-    public void testFileTransfer() {
+    public void testFileTransfer() throws IOException, NoSuchAlgorithmException, KeyManagementException {
         // TODO: test for nonexistance of sliceFile as initial constraint
 
         // upload file

@@ -277,7 +277,7 @@ public class UriFactory {
      * @return A slice kind specifier
      */
     public static Specifier<Void> createSliceKindSpecifier( final String baseUrl,
-                                                 final String subspace, final String sliceKind ) {
+                                                            final String subspace, final String sliceKind ) {
 
         Specifier<Void> specifier = new Specifier<Void>();
         addSliceKindMapping( baseUrl, subspace, sliceKind, specifier );
@@ -286,6 +286,42 @@ public class UriFactory {
                 .getUriMap() ).toString() );
 
         return specifier;
+    }
+
+
+    /**
+     * Creates a valid slice kind specifier
+     *
+     * Both uriMap and url are populated given the provided information.
+     *
+     * @param baseUrl The service base url (including gndms/_grid-name_)
+     * @param subspace The subspace name
+     * @param sliceKind The slice kind id
+     *
+     * @return A slice kind specifier
+     */
+    public static Specifier< Void > createSliceSpecifier( final String baseUrl,
+                                                          final String subspace,
+                                                          final String sliceKind,
+                                                          final String slice) {
+
+        Specifier<Void> specifier = new Specifier<Void>();
+        addSliceMapping( baseUrl, subspace, sliceKind, slice, specifier );
+
+        specifier.setUrl(  new UriTemplate( baseUrl + SLICE_TEMPLATE ).expand( specifier
+                .getUriMap() ).toString() );
+
+        return specifier;
+    }
+
+
+    private static void addSliceMapping( final String baseUrl, final String subspace,
+                                         final String sliceKind, final String slice,
+                                         final Specifier<Void> specifier )
+    {
+
+        addSliceKindMapping( baseUrl, subspace, sliceKind, specifier );
+        specifier.addMapping( SLICE, slice );
     }
 
 

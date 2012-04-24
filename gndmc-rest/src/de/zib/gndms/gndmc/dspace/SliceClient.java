@@ -21,11 +21,19 @@ import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.model.FileStats;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
+import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.gndmc.AbstractClient;
+import de.zib.gndms.gndmc.utils.DefaultResponseExtractor;
+import de.zib.gndms.gndmc.utils.HTTPGetter;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.io.OutputStream;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 /**
@@ -165,19 +173,38 @@ public class SliceClient extends AbstractClient implements SliceServiceClient {
 	public final ResponseEntity<Void> listFileContent(final String subspace,
                                                       final String sliceKind, final String slice,
                                                       final String fileName, final List<String> attrs,
-                                                      final String dn, final OutputStream out) {
-
-        final String uri = genSliceUrl( subspace, sliceKind, slice );
-        return unifiedGet(Void.class, makeFileNameFacet( uri, fileName ), dn);
+                                                      final String dn, final OutputStream out)
+            throws NoSuchAlgorithmException, KeyManagementException, IOException
+    {
+        Specifier< Void > specifier = UriFactory.createSliceSpecifier(
+                getServiceURL(),
+                subspace,
+                sliceKind,
+                slice );
+        return listFileContent( specifier, fileName, attrs, dn, out );
 	}
 
 
     @Override
     public ResponseEntity<Void> listFileContent( final Specifier<Void> slice, final String fileName,
                                                  final List<String> attrs, final String dn,
-                                                 final OutputStream out ) {
+                                                 final OutputStream out )
+            throws NoSuchAlgorithmException, KeyManagementException, IOException
+    {
 
-        return unifiedGet( Void.class, makeFileNameFacet( slice.getUrl(), fileName ), dn);
+        HTTPGetter httpGetter = new HTTPGetter( );
+        DefaultResponseExtractor responseExtractor = new DefaultResponseExtractor();
+        httpGetter.setExtractor( 200, responseExtractor );
+        httpGetter.get( makeFileNameFacet( slice.getUrl(), fileName ) );
+
+        if( 200 == responseExtractor.getStatusCode() ) {
+            FileCopyUtils.copy( responseExtractor.getBody(), out );
+        }
+
+        return new ResponseEntity< Void >(
+                null,
+                responseExtractor.getHeaders(),
+                HttpStatus.valueOf( responseExtractor.getStatusCode() ) );
 	}
 
 	@Override

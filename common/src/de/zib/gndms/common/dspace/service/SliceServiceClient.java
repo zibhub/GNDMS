@@ -22,7 +22,10 @@ import de.zib.gndms.common.rest.Specifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.io.OutputStream;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 /**
@@ -149,7 +152,13 @@ public interface SliceServiceClient extends SliceService {
      * 			  The outputstream the file information shall be written to.
      * @return The file.
 	 */
-	ResponseEntity<Void> listFileContent( Specifier<Void> slice, String fileName, List<String> attrs, String dn, OutputStream out);
+	ResponseEntity<Void> listFileContent(
+            Specifier<Void> slice,
+            String fileName,
+            List<String> attrs,
+            String dn,
+            OutputStream out )
+            throws NoSuchAlgorithmException, KeyManagementException, IOException;
 
 	/**
 	 * Selects a specific file.
