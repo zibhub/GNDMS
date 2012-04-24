@@ -16,15 +16,21 @@ package de.zib.gndms.gndmc;
  * limitations under the License.
  */
 
+import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestOperations;
 
-import de.zib.gndms.common.rest.GNDMSResponseHeader;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * An abstract client which implements the HTTP requests.
@@ -64,7 +70,7 @@ public abstract class AbstractClient {
 	public AbstractClient(final String serviceURL) {
 		this.serviceURL = serviceURL;
 	}
-
+    
 	/**
 	 * Executes a given HTTP method on a url.
 	 * 
@@ -244,7 +250,86 @@ public abstract class AbstractClient {
 		return unifiedX(HttpMethod.DELETE, Void.class, null, url, dn, wid);
 	}
 
-	/**
+
+    /**
+     * Upload (POST) a file on a url.
+     *
+     * The request header contains a given user name, the body of the request contains
+     * a given object of type P.
+     *
+     * @param <T> The body type of the response.
+     * @param clazz The type of the return value.
+     * @param fileName Remote filename.
+     * @param originalFileName Path to local file.
+     * @param url The url of the request.
+     * @param dn The user name.
+     * @return The response as entity.
+     */
+    protected final <T> ResponseEntity<T> postFile( final Class<T> clazz,
+                                                    final String fileName,
+                                                    final String originalFileName,
+                                                    final String url,
+                                                    final String dn ) {
+
+        GNDMSResponseHeader requestHeaders = new GNDMSResponseHeader();
+        MultiValueMap< String, Object > form = new LinkedMultiValueMap< String, Object >();
+        final HttpEntity requestEntity;
+
+        if (dn != null) {
+            requestHeaders.setDN( dn );
+        }
+
+        form.add( "file", new FileSystemResource( originalFileName ) );
+        requestEntity = new HttpEntity( form, requestHeaders );
+
+        if( null == restTemplate )
+            throw new NullPointerException( "Please set RestTemplate in Client!" );
+
+        return restTemplate.postForEntity( url, requestEntity, clazz );
+    }
+
+
+    /**
+     * Upload (POST) multiple files on a url.
+     *
+     * The request header contains a given user name, the body of the request contains
+     * a given object of type P.
+     *
+     * @param <T> The body type of the response.
+     * @param clazz The type of the return value.
+     * @param fileNames A collection of all files to upload
+     * @param url The url of the request.
+     * @param dn The user name.
+     * @return The response as entity.
+     */
+    protected final <T> ResponseEntity<T> postFile( final Class<T> clazz,
+                                                    final Collection< String > fileNames,
+                                                    final String url,
+                                                    final String dn ) {
+
+        GNDMSResponseHeader requestHeaders = new GNDMSResponseHeader();
+        MultiValueMap< String, Object > form = new LinkedMultiValueMap< String, Object >();
+        final HttpEntity requestEntity;
+
+        if (dn != null) {
+            requestHeaders.setDN( dn );
+        }
+        
+        List< FileSystemResource > files = new LinkedList< FileSystemResource >();
+        for( String f: fileNames ) {
+            files.add( new FileSystemResource( f ) );
+        }
+        form.add( "files", files );
+        requestEntity = new HttpEntity( form, requestHeaders );
+
+        if( null == restTemplate )
+            throw new NullPointerException( "Please set RestTemplate in Client!" );
+
+        return restTemplate.postForEntity( url, requestEntity, clazz );
+    }
+
+
+    /**
 	 * Gets the rest template.
 	 * 
 	 * @return The rest template.

@@ -419,20 +419,20 @@ public class SliceServiceImpl implements SliceService {
 	}
 
 	@Override
-	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{sliceId}/_{fileName}", method = RequestMethod.POST)
+	@RequestMapping(value = "/_{subspaceId}/_{sliceKindId}/_{sliceId}/_{fileName}", method = RequestMethod.POST)
     @Secured( "ROLE_USER" )
 	public ResponseEntity<Void> setFileContent(
 			@PathVariable final String subspaceId,
-			@PathVariable final String sliceKind,
+			@PathVariable final String sliceKindId,
 			@PathVariable final String sliceId,
 			@PathVariable final String fileName,
 			@RequestParam( "file" ) final MultipartFile file,
             @RequestHeader("DN") final String dn) {
-		GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKind, sliceId, dn );
+		GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKindId, sliceId, dn );
 
 		try {
 			Subspace space = subspaceProvider.get( subspaceId );
-			Slice slice = findSliceOfKind( subspaceId, sliceKind, sliceId );
+			Slice slice = findSliceOfKind( subspaceId, sliceKindId, sliceId );
 			String path = space.getPathForSlice(slice);
 			File newFile = new File(path + File.separatorChar + fileName);
 
@@ -460,19 +460,19 @@ public class SliceServiceImpl implements SliceService {
 	}
 
 	@Override
-	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}/_{fileName}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/_{subspaceId}/_{sliceKindId}/_{sliceId}/_{fileName}", method = RequestMethod.DELETE)
     @Secured( "ROLE_USER" )
 	public ResponseEntity<Void> deleteFile(
 			@PathVariable final String subspaceId,
-			@PathVariable final String sliceKind,
+			@PathVariable final String sliceKindId,
 			@PathVariable final String sliceId,
             @PathVariable final String fileName,
             @RequestHeader("DN") final String dn) {
-		GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKind, sliceId, dn );
+		GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKindId, sliceId, dn );
 
 		try {
 			Subspace space = subspaceProvider.get( subspaceId );
-			Slice slice = findSliceOfKind( subspaceId, sliceKind, sliceId );
+			Slice slice = findSliceOfKind( subspaceId, sliceKindId, sliceId );
 			String path = space.getPathForSlice( slice );
 
             if( directoryAux.deleteDirectory( dn, path ) ) {

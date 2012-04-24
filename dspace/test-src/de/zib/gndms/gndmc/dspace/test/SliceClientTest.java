@@ -63,7 +63,8 @@ public class SliceClientTest {
     final static String sliceKindConfig = "sliceKindMode:700; uniqueDirName:kind";
     
     final static String sliceConfig = "terminationTime:2011-12-16; sliceSize:1024";
-    final static String sliceFile = "test.file";
+    final static String sliceFileName = "testfile";
+    final static String sliceFile = "/tmp/test.file";
     final static String sliceFileContent = "Hallo Welt";
 
     String sliceId;
@@ -180,11 +181,11 @@ public class SliceClientTest {
                     subspaceId,
                     sliceKindId,
                     sliceId,
-                    sliceFile,
+                    sliceFileName,
                     new MultipartFile() {
                         @Override
                         public String getName() {
-                            return sliceFile;
+                            return sliceFileName;
                         }
 
                         @Override
@@ -194,7 +195,7 @@ public class SliceClientTest {
 
                         @Override
                         public String getContentType() {
-                            return "text/plain";
+                            return null;
                         }
 
                         @Override
@@ -204,22 +205,21 @@ public class SliceClientTest {
 
                         @Override
                         public long getSize() {
-                            return sliceFileContent.length();
+                            return 0;
                         }
 
                         @Override
                         public byte[] getBytes() throws IOException {
-                            return sliceFileContent.getBytes();
+                            return null;
                         }
 
                         @Override
                         public InputStream getInputStream() throws IOException {
-                            return new ByteArrayInputStream(sliceFileContent.getBytes());
+                            return null;
                         }
 
                         @Override
                         public void transferTo(File dest) throws IOException, IllegalStateException {
-                            //To change body of implemented methods use File | Settings | File Templates.
                         }
                     },
                     admindn );

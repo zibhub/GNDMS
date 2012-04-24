@@ -185,8 +185,8 @@ public class SliceClient extends AbstractClient implements SliceServiceClient {
 			final String sliceKind, final String slice, final String fileName,
 			final MultipartFile file, final String dn ) {
 
-        return unifiedPost( Void.class, file,
-                makeFileNameFacet( genSliceUrl( subspace, sliceKind, slice ), fileName ), dn );
+        return postFile(Void.class, file.getName(), file.getOriginalFilename(),
+                makeFileNameFacet(genSliceUrl(subspace, sliceKind, slice), fileName), dn);
 	}
 
 
