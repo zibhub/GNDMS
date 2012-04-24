@@ -301,7 +301,7 @@ public class SliceClientTest {
         {
             try {
                 final ResponseEntity< Facets > responseEntity =
-                        sliceClient.listSliceFacets( subspaceId, sliceId, sliceId, admindn );
+                        sliceClient.listSliceFacets( subspaceId, sliceKindId, sliceId, admindn );
 
                 Assert.assertNotNull( responseEntity );
                 Assert.assertEquals( responseEntity.getStatusCode(), HttpStatus.NOT_FOUND );
