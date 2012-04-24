@@ -20,13 +20,16 @@ import de.zib.gndms.common.dspace.service.SliceServiceClient;
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.model.FileStats;
 import de.zib.gndms.common.rest.Facets;
+import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.gndmc.AbstractClient;
 import de.zib.gndms.gndmc.utils.DefaultResponseExtractor;
+import de.zib.gndms.gndmc.utils.EnhancedResponseExtractor;
 import de.zib.gndms.gndmc.utils.HTTPGetter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -193,13 +196,21 @@ public class SliceClient extends AbstractClient implements SliceServiceClient {
     {
 
         HTTPGetter httpGetter = new HTTPGetter( );
-        DefaultResponseExtractor responseExtractor = new DefaultResponseExtractor();
-        httpGetter.setExtractor( 200, responseExtractor );
-        httpGetter.get( makeFileNameFacet( slice.getUrl(), fileName ) );
+        GNDMSResponseHeader headers = new GNDMSResponseHeader();
+        
+        if( dn != null )
+            headers.setDN( dn );
 
-        if( 200 == responseExtractor.getStatusCode() ) {
-            FileCopyUtils.copy( responseExtractor.getBody(), out );
-        }
+        EnhancedResponseExtractor responseExtractor = new DefaultResponseExtractor() {
+            @Override
+            public void extractData( String url, ClientHttpResponse response ) throws IOException {
+                super.extractData( url, response );
+                FileCopyUtils.copy( getBody(), out );
+            }
+        };
+        httpGetter.setExtractor( 200, responseExtractor );
+
+        httpGetter.get( makeFileNameFacet( slice.getUrl(), fileName ), headers );
 
         return new ResponseEntity< Void >(
                 null,

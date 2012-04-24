@@ -17,18 +17,23 @@ package de.zib.gndms.gndmc.dspace.test;
  */
 
 import de.zib.gndms.common.model.FileStats;
+import de.zib.gndms.common.model.gorfx.types.TaskStatus;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.gndmc.dspace.SliceClient;
 import de.zib.gndms.gndmc.dspace.SliceKindClient;
 import de.zib.gndms.gndmc.dspace.SubspaceClient;
+import de.zib.gndms.gndmc.gorfx.AbstractTaskFlowExecClient;
+import de.zib.gndms.gndmc.gorfx.TaskClient;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -57,6 +62,7 @@ public class SliceClientTest {
     private SliceClient sliceClient;
 
     final private String serviceUrl;
+    private RestTemplate restTemplate;
 
     final static String subspaceConfig = "size: 6000; path: /tmp/gndms/sub; gsiFtpPath: undefined";
     final static String subspaceId = "testsub";
@@ -83,7 +89,7 @@ public class SliceClientTest {
     }
 
 
-    @BeforeClass( groups = { "subspaceServiceTest" } )
+    @BeforeClass( groups = { "sliceServiceTest" } )
     public void init() {
         subspaceClient = ( SubspaceClient )context.getAutowireCapableBeanFactory().createBean(
                 SubspaceClient.class,
@@ -98,11 +104,13 @@ public class SliceClientTest {
         sliceClient = ( SliceClient )context.getAutowireCapableBeanFactory().createBean(
                 SliceClient.class,
                 AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
-        sliceClient.setServiceURL( serviceUrl );
+        sliceClient.setServiceURL(serviceUrl);
+
+        restTemplate = ( RestTemplate )context.getAutowireCapableBeanFactory().getBean( "restTemplate" );
     }
 
 
-    @Test( groups = { "subspaceServiceTest" } )
+    @Test( groups = { "sliceServiceTest" } )
     public void testCreateSubspace() {
         final String mode = "CREATE";
 
@@ -125,20 +133,14 @@ public class SliceClientTest {
 
 
     @Test(
-            groups = { "subspaceServiceTest" },
+            groups = { "sliceServiceTest" },
             dependsOnMethods = { "testCreateSubspace" }
     )
     public void testCreateSliceKind() {
-        try {
-            final ResponseEntity<List< Specifier< Void > >> sliceKind =
-                    subspaceClient.createSliceKind( subspaceId, sliceKindId, sliceKindConfig, admindn );
-            Assert.assertNotNull( sliceKind );
-            Assert.assertEquals( sliceKind.getStatusCode(), HttpStatus.CREATED );
-        }
-        catch( HttpClientErrorException e ) {
-            if( ! e.getStatusCode().equals( HttpStatus.BAD_REQUEST ) )
-                throw e;
-        }
+        final ResponseEntity<List< Specifier< Void > >> sliceKind =
+                subspaceClient.createSliceKind( subspaceId, sliceKindId, sliceKindConfig, admindn );
+        Assert.assertNotNull( sliceKind );
+        Assert.assertEquals( sliceKind.getStatusCode(), HttpStatus.CREATED );
 
         final ResponseEntity< List< Specifier< Void > > > listResponseEntity
                 = subspaceClient.listSliceKinds( subspaceId, admindn );
@@ -157,7 +159,7 @@ public class SliceClientTest {
 
 
     @Test(
-            groups = { "subspaceServiceTest" },
+            groups = { "sliceServiceTest" },
             dependsOnMethods = { "testCreateSliceKind" }
     )
     public void testCreateSlice() {
@@ -171,11 +173,19 @@ public class SliceClientTest {
 
 
     @Test(
-            groups = { "subspaceServiceTest" },
+            groups = { "sliceServiceTest" },
             dependsOnMethods = { "testCreateSlice" }
     )
     public void testFileTransfer() throws IOException, NoSuchAlgorithmException, KeyManagementException {
         // TODO: test for nonexistance of sliceFile as initial constraint
+        // create tmp testfile
+        {
+            FileOutputStream testfile = new FileOutputStream( sliceFile );
+            ByteArrayInputStream in = new ByteArrayInputStream( sliceFileContent.getBytes() );
+            FileCopyUtils.copy( in, testfile );
+            testfile.flush();
+            testfile.close();
+        }
 
         // upload file
         {
@@ -251,7 +261,10 @@ public class SliceClientTest {
             Assert.assertNotNull( responseEntity );
             Assert.assertEquals( responseEntity.getStatusCode(), HttpStatus.OK );
 
-            Assert.assertEquals( sliceFileContent.getBytes(), byteArrayOutputStream.toByteArray() );
+            InputStream stream = new FileInputStream( sliceFile );
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            FileCopyUtils.copy( stream, out );
+            Assert.assertEquals( byteArrayOutputStream.toByteArray(), out.toByteArray() );
         }
 
         // delete uploaded file
@@ -272,7 +285,7 @@ public class SliceClientTest {
 
 
     @Test(
-            groups = { "subspaceServiceTest" },
+            groups = { "sliceServiceTest" },
             dependsOnMethods = { "testFileTransfer" }
     )
     public void testDeleteSlice() {
@@ -286,12 +299,43 @@ public class SliceClientTest {
         
         // check for nonexistance of slice
         {
-            final ResponseEntity< Facets > responseEntity =
-                    sliceClient.listSliceFacets( subspaceId, sliceId, sliceId, admindn );
-            
-            Assert.assertNotNull( responseEntity );
-            Assert.assertEquals( responseEntity.getStatusCode(), HttpStatus.NOT_FOUND );
+            try {
+                final ResponseEntity< Facets > responseEntity =
+                        sliceClient.listSliceFacets( subspaceId, sliceId, sliceId, admindn );
+
+                Assert.assertNotNull( responseEntity );
+                Assert.assertEquals( responseEntity.getStatusCode(), HttpStatus.NOT_FOUND );
+            }
+            catch( HttpClientErrorException e ) {
+                Assert.assertEquals( e.getStatusCode(), HttpStatus.NOT_FOUND );
+            }
         }
+    }
+
+
+    @Test(
+            groups = { "sliceServiceTest" },
+            dependsOnMethods = { "testDeleteSlice" }
+    )
+    public void testDeleteSubspace() {
+        final ResponseEntity< Specifier< Facets > > responseEntity = subspaceClient.deleteSubspace( subspaceId, admindn );
+        Assert.assertNotNull( responseEntity );
+        Assert.assertEquals( responseEntity.getStatusCode(), HttpStatus.OK );
+
+        final TaskClient client = new TaskClient( serviceUrl );
+        client.setRestTemplate( restTemplate );
+
+        // wait for task to finish
+        TaskStatus taskStatus = AbstractTaskFlowExecClient.waitForFinishOrFail(
+                responseEntity.getBody(),
+                client,
+                100,
+                admindn,
+                "DELETESUBSPACEWID");
+        Assert.assertNotNull( taskStatus );
+        Assert.assertEquals( taskStatus.getStatus(), TaskStatus.Status.FINISHED );
+        Assert.assertEquals( taskStatus.getMaxProgress(), taskStatus.getProgress() );
+        Assert.assertEquals( taskStatus.getStatus(), TaskStatus.Status.FINISHED );
     }
 
 

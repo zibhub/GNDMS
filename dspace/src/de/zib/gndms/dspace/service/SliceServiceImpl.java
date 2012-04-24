@@ -475,7 +475,7 @@ public class SliceServiceImpl implements SliceService {
 			Slice slice = findSliceOfKind( subspaceId, sliceKindId, sliceId );
 			String path = space.getPathForSlice( slice );
 
-            if( directoryAux.deleteDirectory( dn, path ) ) {
+            if( directoryAux.deleteDirectory( dn, path + File.separator + fileName ) ) {
                 return new ResponseEntity< Void >( null, headers, HttpStatus.OK );
             } else {
                 logger.warn( "File " + path + " could not be deleted." );

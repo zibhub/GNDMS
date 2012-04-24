@@ -42,6 +42,9 @@ import java.util.concurrent.Future;
  */
 public class DeleteSubspaceTaskAction extends ModelTaskAction< ModelIdHoldingOrder > {
 
+    private SubspaceProvider subspaceProvider;
+
+
     public DeleteSubspaceTaskAction() {
         super( ModelIdHoldingOrder.class );
     }
@@ -158,6 +161,7 @@ public class DeleteSubspaceTaskAction extends ModelTaskAction< ModelIdHoldingOrd
         }
 
         deleteModelEntity( Subspace.class );
+        subspaceProvider.invalidate( subspace.getId() );
 
         autoTransitWithPayload( new VoidTaskResult() );
     }
@@ -166,5 +170,11 @@ public class DeleteSubspaceTaskAction extends ModelTaskAction< ModelIdHoldingOrd
     @Inject
     public void setTaskDao( Dao dao ) {
         setOwnDao( dao );
+    }
+
+
+    @Inject
+    public void setSubspaceProvider( SubspaceProvider subspaceProvider ) {
+        this.subspaceProvider = subspaceProvider;
     }
 }

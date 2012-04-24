@@ -24,6 +24,7 @@ import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.model.util.TxFrame;
 import org.jetbrains.annotations.NotNull;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.io.File;
@@ -36,6 +37,8 @@ import java.util.List;
  * @brief
  */
 public class DeleteSliceKindTaskAction extends ModelTaskAction<ModelIdHoldingOrder> {
+
+    private SliceKindProvider sliceKindProvider;
 
 
     public DeleteSliceKindTaskAction( ) {
@@ -122,6 +125,8 @@ public class DeleteSliceKindTaskAction extends ModelTaskAction<ModelIdHoldingOrd
             deleteFromSubspace( sliceKind, subspace );
 
         deleteModelEntity( SliceKind.class );
+        sliceKindProvider.invalidate( sliceKind.getId() );
+
         updateProgress( ++progress );
 
         autoTransitWithPayload( Boolean.TRUE );
@@ -147,6 +152,11 @@ public class DeleteSliceKindTaskAction extends ModelTaskAction<ModelIdHoldingOrd
         } finally {
             tx.finish();
         }
-    } 
+    }
 
+
+    @Inject
+    public void setSliceKindProvider( SliceKindProvider sliceKindProvider ) {
+        this.sliceKindProvider = sliceKindProvider;
+    }
 }

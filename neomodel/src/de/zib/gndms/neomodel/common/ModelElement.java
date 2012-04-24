@@ -152,7 +152,7 @@ public abstract class ModelElement<U extends PropertyContainer> extends ModelEnt
     }
 
     public U repr(Object authenticator) {
-        if (authenticator == getReprSession().getSession())
+        if( authenticator == getReprSession().getSession() || authenticator == getReprSession() )
             return repr();
         else
             throw new IllegalArgumentException("May not access implementation object without involvement of the Dao");
