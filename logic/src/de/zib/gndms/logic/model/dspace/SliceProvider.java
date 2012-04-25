@@ -58,4 +58,6 @@ public interface SliceProvider {
     String createSlice( String subspace, String sliceKind, String dn, DateTime ttm, long sliceSize ) throws NoSuchElementException;
 
     Taskling deleteSlice( String subspaceId, String sliceId ) throws NoSuchElementException;
+    
+    void invalidate( String sliceId );
 }

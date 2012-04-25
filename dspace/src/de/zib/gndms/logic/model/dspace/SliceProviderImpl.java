@@ -179,6 +179,12 @@ public class SliceProviderImpl implements SliceProvider {
 
         return ling;
     }
+    
+    
+    @Override
+    public void invalidate( final String sliceId ) {
+        cache.invalidate( sliceId );
+    }
 
 
     private class Invalidator implements ModelUpdateListener< GridResource > {
