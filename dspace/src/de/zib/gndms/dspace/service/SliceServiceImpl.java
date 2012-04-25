@@ -419,7 +419,7 @@ public class SliceServiceImpl implements SliceService {
 	}
 
 	@Override
-	@RequestMapping(value = "/_{subspaceId}/_{sliceKindId}/_{sliceId}/_{fileName}", method = RequestMethod.POST)
+	@RequestMapping(value = "/_{subspaceId}/_{sliceKindId}/_{sliceId}/_{fileName:.*}", method = RequestMethod.POST)
     @Secured( "ROLE_USER" )
 	public ResponseEntity<Void> setFileContent(
 			@PathVariable final String subspaceId,
@@ -460,7 +460,7 @@ public class SliceServiceImpl implements SliceService {
 	}
 
 	@Override
-	@RequestMapping(value = "/_{subspaceId}/_{sliceKindId}/_{sliceId}/_{fileName}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/_{subspaceId}/_{sliceKindId}/_{sliceId}/_{fileName:.*}", method = RequestMethod.DELETE)
     @Secured( "ROLE_USER" )
 	public ResponseEntity<Void> deleteFile(
 			@PathVariable final String subspaceId,
