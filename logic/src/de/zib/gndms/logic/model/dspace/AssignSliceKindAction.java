@@ -108,16 +108,15 @@ public class AssignSliceKindAction extends ConfigAction<ConfigActionResult> {
         final SliceKind sk = em.find(SliceKind.class, sliceKind);
 	    if (sk == null)
 	        throw new IllegalArgumentException("SliceKind not found");
-	    final @NotNull Set<Subspace> metas =  sk.getSubspaces();
 
         switch (mode) {
             case ADD:
-	            metas.add(space);
+                sk.setSubspace( space );
                 sliceKindSet.add(sk);
                 break;
 
             case REMOVE:
-	            metas.remove(space);
+	            sk.setSubspace( null );
                 sliceKindSet.remove(sk);
                 break;
 

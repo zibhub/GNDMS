@@ -199,7 +199,7 @@ public class Subspace extends GridResource {
      * Returns the slice kinds of this subspace.
      * @return The slice kinds.
      */
-    @ManyToMany( cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH} )
+    @OneToMany( cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH} )
     /*@JoinTable(name = "creatable_slice_kinds", schema = "dspace",
         uniqueConstraints = {@UniqueConstraint(columnNames = {"subspace_schema_uri", 
         		"subspace_specifier", "slice_kind_uri" }) },

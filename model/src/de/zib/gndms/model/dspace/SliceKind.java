@@ -22,8 +22,6 @@ import de.zib.gndms.common.model.common.AccessMask;
 import de.zib.gndms.model.common.GridResource;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * SliceKinds are identified by a kindURI
@@ -43,7 +41,7 @@ public class SliceKind extends GridResource {
     private AccessMask permission;
 
     private String sliceDirectory;
-    private Set<Subspace> subspaces = new HashSet<Subspace>();
+    private Subspace subspace;
 
     // default time to live of slice in milliseconds
     // if not given on creation, one day is taken as default
@@ -62,15 +60,14 @@ public class SliceKind extends GridResource {
         return sliceDirectory;
     }
 
-    @ManyToMany( cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},
-            mappedBy = "creatableSliceKinds" )
-    public Set<Subspace> getSubspaces() {
-        return subspaces;
+    @ManyToOne( cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH} )
+    public Subspace getSubspace() {
+        return subspace;
     }
 
-    public void setSubspaces( final Set<Subspace> subspaces ) {
+    public void setSubspace( final Subspace subspace ) {
 
-        this.subspaces = subspaces;
+        this.subspace = subspace;
     }
 
     public void setPermission( AccessMask permission ) {
