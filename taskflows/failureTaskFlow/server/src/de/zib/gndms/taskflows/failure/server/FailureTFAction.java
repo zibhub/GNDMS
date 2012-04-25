@@ -27,6 +27,7 @@ import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import de.zib.gndms.taskflows.failure.client.FailureTaskFlowMeta;
 import de.zib.gndms.taskflows.failure.client.model.FailureOrder;
+import de.zib.gndms.taskflows.failure.client.model.FailureTaskFlowResult;
 import de.zib.gndms.taskflows.failure.server.utils.ExceptionFactory;
 import org.jetbrains.annotations.NotNull;
 
@@ -94,6 +95,8 @@ public class FailureTFAction extends TaskFlowAction< FailureOrder > {
         handle(FailureOrder.FailurePlace.INPROGRESS, true);
         super.onInProgress(wid, state, isRestartedTask, altTaskState);
         handle( FailureOrder.FailurePlace.INPROGRESS, false );
+
+        transitWithPayload( new FailureTaskFlowResult(), TaskState.FINISHED );
     }
 
     @Override

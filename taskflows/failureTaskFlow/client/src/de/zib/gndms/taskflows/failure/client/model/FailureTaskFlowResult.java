@@ -17,9 +17,6 @@ package de.zib.gndms.taskflows.failure.client.model;
 
 import de.zib.gndms.common.model.gorfx.types.TaskResult;
 
-import java.util.LinkedList;
-import java.util.List;
-
 /**
  * @author try ma ik jo rr a zib
  * @date 14.03.11  11:12
@@ -27,23 +24,13 @@ import java.util.List;
  *
  * Since the dummy taskflow only writes stuff, a string is enough here.
  */
-public class FailureTaskFlowResult implements TaskResult< List< String > > {
+public class FailureTaskFlowResult implements TaskResult< String > {
 
     private static final long serialVersionUID = 6090538263029074698L;
-    private List< String > fileNames;
+    private static String result = "FailureTaskFlow finished";
 
 
-    public FailureTaskFlowResult() {
-        fileNames = new LinkedList< String >();
-    }
-
-
-    public List< String > getResult() {
-        return fileNames;
-    }
-
-
-    public void addFile( String fileName ) {
-        fileNames.add(fileName);
+    public String getResult() {
+        return result;
     }
 }
