@@ -60,7 +60,7 @@ public class TaskClient extends AbstractClient implements TaskService {
 
     public ResponseEntity<TaskServiceConfig> getServiceConfig( String dn ) {
         return unifiedGet( TaskServiceConfig.class,
-            uriFactory.taskServiceUri( new HashMap<String,String> () {{put( "service", "gorfx" );}} ), null );
+            uriFactory.taskServiceUri( new HashMap<String,String> () {{put( "service", "gorfx" );}}, "config" ), dn );
     }
 
 

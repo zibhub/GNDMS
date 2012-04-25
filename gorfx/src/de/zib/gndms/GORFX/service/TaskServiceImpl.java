@@ -65,7 +65,7 @@ public class TaskServiceImpl implements TaskService {
         uriFactory = new UriFactory( serviceUrl );
     }
 
-    @RequestMapping( value = "/", method = RequestMethod.GET )
+    @RequestMapping( value = "", method = RequestMethod.GET )
     @Secured( "ROLE_USER" )
     public ResponseEntity<TaskServiceInfo> getServiceInfo() {
         return new ResponseEntity<TaskServiceInfo>( new TaskServiceInfo(), null, HttpStatus.OK );
@@ -74,14 +74,16 @@ public class TaskServiceImpl implements TaskService {
 
     @RequestMapping( value = "/config", method = RequestMethod.GET )
     @Secured( "ROLE_USER" )
-    public ResponseEntity<TaskServiceConfig> getServiceConfig( @RequestHeader String dn ) {
+    public ResponseEntity<TaskServiceConfig> getServiceConfig( @RequestHeader( "DN" ) String dn ) {
         throw new NotYetImplementedException();
     }
 
 
     @RequestMapping( value = "/config", method = RequestMethod.POST )
     @Secured( "ROLE_ADMIN" )
-    public ResponseEntity<String> setServiceConfig( @RequestBody TaskServiceConfig cfg, @RequestHeader String dn ) {
+    public ResponseEntity<String> setServiceConfig(
+            @RequestBody TaskServiceConfig cfg,
+            @RequestHeader( "DN" ) String dn ) {
         throw new NotYetImplementedException();
     }
 
