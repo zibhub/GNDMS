@@ -15,6 +15,7 @@ package de.zib.gndms.logic.model.dspace;
  *  limitations under the License.
  */
 
+import de.zib.gndms.common.model.gorfx.types.VoidTaskResult;
 import de.zib.gndms.model.gorfx.types.ModelIdHoldingOrder;
 import de.zib.gndms.logic.model.ModelTaskAction;
 import de.zib.gndms.model.dspace.Slice;
@@ -23,6 +24,8 @@ import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
 import org.jetbrains.annotations.NotNull;
 
+import javax.inject.Inject;
+
 /**
  * @author Maik Jorra
  * @email jorra@zib.de
@@ -30,6 +33,8 @@ import org.jetbrains.annotations.NotNull;
  * @brief
  */
 public class DeleteSliceTaskAction extends ModelTaskAction<ModelIdHoldingOrder> {
+
+    private SliceProvider sliceProvider;
 
 
     public DeleteSliceTaskAction() {
@@ -75,9 +80,14 @@ public class DeleteSliceTaskAction extends ModelTaskAction<ModelIdHoldingOrder> 
                 slice.getSubspace().getPathForSlice( slice ) );
 
         deleteModelEntity( Slice.class );
+        sliceProvider.invalidate( slice.getId() );
 
-        autoTransitWithPayload( Boolean.TRUE );
+        autoTransitWithPayload( new VoidTaskResult() );
     }
 
 
+    @Inject
+    public void setSliceProvider( SliceProvider sliceProvider ) {
+        this.sliceProvider = sliceProvider;
+    }
 }
