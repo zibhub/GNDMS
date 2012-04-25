@@ -60,6 +60,7 @@ public class SliceClientTest {
     private SubspaceClient subspaceClient;
     private SliceKindClient sliceKindClient;
     private SliceClient sliceClient;
+    private TaskClient taskClient;
 
     final private String serviceUrl;
     private RestTemplate restTemplate;
@@ -100,11 +101,16 @@ public class SliceClientTest {
                 SliceKindClient.class,
                 AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
         sliceKindClient.setServiceURL( serviceUrl );
-        
+
         sliceClient = ( SliceClient )context.getAutowireCapableBeanFactory().createBean(
                 SliceClient.class,
                 AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
         sliceClient.setServiceURL(serviceUrl);
+
+        taskClient = ( TaskClient )context.getAutowireCapableBeanFactory().createBean(
+                TaskClient.class,
+                AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
+        taskClient.setServiceURL( serviceUrl );
 
         restTemplate = ( RestTemplate )context.getAutowireCapableBeanFactory().getBean( "restTemplate" );
     }
@@ -295,6 +301,14 @@ public class SliceClientTest {
 
             Assert.assertNotNull( responseEntity );
             Assert.assertEquals( responseEntity.getStatusCode(), HttpStatus.OK );
+
+            // wait for task to finish
+            AbstractTaskFlowExecClient.waitForFinishOrFail(
+                    responseEntity.getBody(),
+                    taskClient,
+                    500,
+                    admindn,
+                    "DELETESLICEWID" );
         }
         
         // check for nonexistance of slice
