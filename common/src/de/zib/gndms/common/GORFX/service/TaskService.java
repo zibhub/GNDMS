@@ -43,7 +43,7 @@ public interface TaskService {
      *
      * @return An info object.
      */
-    ResponseEntity<TaskServiceInfo> getServiceInfo();
+    ResponseEntity<TaskServiceInfo> getServiceInfo( String dn );
 
     /** 
      * @brief Reads the service configuration

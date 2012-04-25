@@ -67,7 +67,7 @@ public class TaskServiceImpl implements TaskService {
 
     @RequestMapping( value = "", method = RequestMethod.GET )
     @Secured( "ROLE_USER" )
-    public ResponseEntity<TaskServiceInfo> getServiceInfo() {
+    public ResponseEntity<TaskServiceInfo> getServiceInfo( @RequestHeader( "DN" ) final String dn ) {
         return new ResponseEntity<TaskServiceInfo>( new TaskServiceInfo(), null, HttpStatus.OK );
     }
 
