@@ -71,7 +71,7 @@ public class TaskFlowClient extends AbstractClient implements TaskFlowService {
 	@Override
 	public final ResponseEntity<Void> setOrder(final String type, final String id,
 			final Order orq, final String dn, final String wid) {
-		return unifiedPut(Void.class, orq, getServiceURL() + "/gorfx/_" + type + "/_"
+		return unifiedPost(Void.class, orq, getServiceURL() + "/gorfx/_" + type + "/_"
 				+ id + "/order", dn, wid);
 	}
 
