@@ -16,10 +16,7 @@
 
 package de.zib.gndms.gndmc.gorfx.Test;
 
-import de.zib.gndms.common.model.gorfx.types.TaskResult;
-import de.zib.gndms.common.model.gorfx.types.TaskServiceConfig;
-import de.zib.gndms.common.model.gorfx.types.TaskServiceInfo;
-import de.zib.gndms.common.model.gorfx.types.TaskStatus;
+import de.zib.gndms.common.model.gorfx.types.*;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
@@ -64,7 +61,8 @@ public class TaskClientTest {
     final private String admindn;
 
     private String taskFlowId;
-    private Specifier<Facets> taskSpecifier;
+    private Specifier< Facets > taskSpecifier;
+    private String taskId;
 
 
     @Parameters( { "serviceUrl", "admindn" } )
@@ -150,14 +148,24 @@ public class TaskClientTest {
 
             taskSpecifier = responseEntity.getBody();
             Assert.assertNotNull( taskSpecifier );
+            taskId = taskSpecifier.getUriMap().get( UriFactory.TASK_ID );
+            Assert.assertNotNull( taskId );
         }
         
         // get task facets
         {
             final ResponseEntity< Facets > responseEntity = taskClient.getTaskFacets(
-                    taskSpecifier.getUriMap().get( UriFactory.TASK_ID ),
+                    taskId,
                     admindn );
             
+            Assert.assertNotNull( responseEntity );
+            Assert.assertEquals( responseEntity.getStatusCode(), HttpStatus.OK );
+        }
+        
+        // get task status
+        {
+            final ResponseEntity< TaskStatus > responseEntity = taskClient.getStatus( taskId, admindn, TASKFLOW_WID );
+
             Assert.assertNotNull( responseEntity );
             Assert.assertEquals( responseEntity.getStatusCode(), HttpStatus.OK );
         }
@@ -179,7 +187,7 @@ public class TaskClientTest {
         // get result
         {
             final ResponseEntity<TaskResult > responseEntity = taskClient.getResult(
-                    taskSpecifier.getUriMap().get( UriFactory.TASK_ID ),
+                    taskId,
                     admindn,
                     TASKFLOW_WID );
             
@@ -191,8 +199,8 @@ public class TaskClientTest {
             Assert.assertEquals( result.getResult(), FailureTaskFlowResult.result );
         }
     }
-
-
+    
+    
     @Test( groups = { "TaskFlowClientTest" }, dependsOnMethods = { "waitForTask" } )
     public void deleteTaskFlow() throws InterruptedException {
         // delete task flow
