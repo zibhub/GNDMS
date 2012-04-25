@@ -27,7 +27,7 @@ import de.zib.gndms.common.model.gorfx.types.TaskResult;
 public class FailureTaskFlowResult implements TaskResult< String > {
 
     private static final long serialVersionUID = 6090538263029074698L;
-    private static String result = "FailureTaskFlow finished";
+    public static String result = "FailureTaskFlow finished";
 
 
     public String getResult() {

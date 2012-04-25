@@ -16,6 +16,7 @@
 
 package de.zib.gndms.gndmc.gorfx.Test;
 
+import de.zib.gndms.common.model.gorfx.types.TaskResult;
 import de.zib.gndms.common.model.gorfx.types.TaskServiceConfig;
 import de.zib.gndms.common.model.gorfx.types.TaskServiceInfo;
 import de.zib.gndms.common.model.gorfx.types.TaskStatus;
@@ -28,6 +29,7 @@ import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.gndmc.gorfx.TaskFlowClient;
 import de.zib.gndms.taskflows.failure.client.FailureTaskFlowMeta;
 import de.zib.gndms.taskflows.failure.client.model.FailureOrder;
+import de.zib.gndms.taskflows.failure.client.model.FailureTaskFlowResult;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -171,8 +173,23 @@ public class TaskClientTest {
                 admindn,
                 TASKFLOW_WID );
         
-        Assert.assertNotNull( taskStatus );
+        Assert.assertNotNull(taskStatus);
         Assert.assertEquals( taskStatus.getStatus(), TaskStatus.Status.FINISHED );
+
+        // get result
+        {
+            final ResponseEntity<TaskResult > responseEntity = taskClient.getResult(
+                    taskSpecifier.getUriMap().get( UriFactory.TASK_ID ),
+                    admindn,
+                    TASKFLOW_WID );
+            
+            Assert.assertNotNull( responseEntity );
+            Assert.assertEquals( responseEntity.getStatusCode(), HttpStatus.OK );
+            Assert.assertEquals( responseEntity.getBody() instanceof FailureTaskFlowResult, true );
+            
+            FailureTaskFlowResult result = ( FailureTaskFlowResult )responseEntity.getBody();
+            Assert.assertEquals( result.getResult(), FailureTaskFlowResult.result );
+        }
     }
 
 
