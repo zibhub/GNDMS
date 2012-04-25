@@ -16,11 +16,15 @@
 
 package de.zib.gndms.gndmc.gorfx.Test;
 
-import de.zib.gndms.common.model.gorfx.types.Order;
+import de.zib.gndms.common.model.gorfx.types.TaskServiceConfig;
+import de.zib.gndms.common.model.gorfx.types.TaskServiceInfo;
+import de.zib.gndms.common.model.gorfx.types.TaskStatus;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
+import de.zib.gndms.gndmc.gorfx.AbstractTaskFlowExecClient;
 import de.zib.gndms.gndmc.gorfx.GORFXClient;
+import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.gndmc.gorfx.TaskFlowClient;
 import de.zib.gndms.taskflows.failure.client.FailureTaskFlowMeta;
 import de.zib.gndms.taskflows.failure.client.model.FailureOrder;
@@ -39,28 +43,30 @@ import org.testng.annotations.Test;
 
 /**
  * @date: 25.04.12
- * @time: 13:17
+ * @time: 14:04
  * @author: Jörg Bachmann
  * @email: bachmann@zib.de
  */
-public class TaskFlowClientTest {
+public class TaskClientTest {
     final static private String ORDER_MESSAGE = "TASKFLOWTEST MESSAGE";
     final static private String TASKFLOW_WID = "GORFXTaskFlowTEST";
-    
+    final static private int pollingDelay = 500;
+
     final ApplicationContext context;
 
     private GORFXClient gorfxClient;
     private TaskFlowClient taskFlowClient;
+    private TaskClient taskClient;
 
     final private String serviceUrl;
     final private String admindn;
-    
+
     private String taskFlowId;
-    private Specifier< Facets > taskSpecifier;
+    private Specifier<Facets> taskSpecifier;
 
 
     @Parameters( { "serviceUrl", "admindn" } )
-    public TaskFlowClientTest( final String serviceUrl, @Optional( "root" ) final String admindn ) {
+    public TaskClientTest( final String serviceUrl, @Optional( "root" ) final String admindn ) {
         this.serviceUrl = serviceUrl;
         this.admindn = admindn;
 
@@ -73,20 +79,43 @@ public class TaskFlowClientTest {
         gorfxClient = ( GORFXClient )context.getAutowireCapableBeanFactory().createBean(
                 GORFXClient.class,
                 AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
-        gorfxClient.setServiceURL( serviceUrl );
+        gorfxClient.setServiceURL(serviceUrl);
 
         taskFlowClient = ( TaskFlowClient )context.getAutowireCapableBeanFactory().createBean(
                 TaskFlowClient.class,
                 AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
         taskFlowClient.setServiceURL( serviceUrl );
+
+        taskClient = ( TaskClient )context.getAutowireCapableBeanFactory().createBean(
+                TaskClient.class,
+                AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
+        taskClient.setServiceURL( serviceUrl );
+    }
+
+
+    @Test( groups = { "TaskFlowClientTest" } )
+    public void getServiceInfo() {
+        final ResponseEntity< TaskServiceInfo > responseEntity = taskClient.getServiceInfo( admindn );
+        
+        Assert.assertNotNull( responseEntity );
+        Assert.assertEquals( responseEntity.getStatusCode(), HttpStatus.OK );
+    }
+
+
+    @Test( groups = { "TaskFlowClientTest" } )
+    public void getServiceConfig() {
+        final ResponseEntity< TaskServiceConfig > responseEntity = taskClient.getServiceConfig( admindn );
+        
+        Assert.assertNotNull( responseEntity );
+        Assert.assertEquals( responseEntity.getStatusCode(), HttpStatus.OK );
     }
 
 
     @Test( groups = { "TaskFlowClientTest" } )
     public void createTaskFlow() {
         FailureOrder order = new FailureOrder();
-        order.setMessage( "TESTING TaskFlow creation" );
-        order.setWhere( FailureOrder.FailurePlace.NOWHERE );
+        order.setMessage( ORDER_MESSAGE );
+        order.setWhere(FailureOrder.FailurePlace.NOWHERE);
 
         ResponseEntity<Specifier< Facets > > responseEntity = gorfxClient.createTaskFlow(
                 FailureTaskFlowMeta.TASK_FLOW_TYPE_KEY,
@@ -96,84 +125,59 @@ public class TaskFlowClientTest {
                 new LinkedMultiValueMap< String, String >()
         );
 
-        Assert.assertNotNull( responseEntity );
+        Assert.assertNotNull(responseEntity);
         Assert.assertEquals( responseEntity.getStatusCode(), HttpStatus.CREATED );
-        
+
         taskFlowId = responseEntity.getBody().getUriMap().get( UriFactory.TASKFLOW_ID );
     }
 
 
     @Test( groups = { "TaskFlowClientTest" }, dependsOnMethods = { "createTaskFlow" } )
-    public void listFacets() {
-        ResponseEntity< Facets > taskFlowFacets;
-        taskFlowFacets = taskFlowClient.getFacets( FailureTaskFlowMeta.TASK_FLOW_TYPE_KEY, taskFlowId, admindn );
-
-        Assert.assertNotNull( taskFlowFacets );
-        Assert.assertEquals( taskFlowFacets.getStatusCode(), HttpStatus.OK );
-    }
-
-
-    @Test( groups = { "TaskFlowClientTest" }, dependsOnMethods = { "createTaskFlow" } )
-    public void changeOrder() {
-        // set new Order
-        {
-            FailureOrder order = new FailureOrder();
-            order.setMessage( ORDER_MESSAGE );
-            order.setWhere( FailureOrder.FailurePlace.NOWHERE );
-
-            final ResponseEntity< Void > responseEntity = taskFlowClient.setOrder(
-                    FailureTaskFlowMeta.TASK_FLOW_TYPE_KEY,
-                    taskFlowId,
-                    order,
-                    admindn,
-                    TASKFLOW_WID );
-
-            Assert.assertNotNull( responseEntity );
-            Assert.assertEquals( responseEntity.getStatusCode(), HttpStatus.OK );
-        }
-        
-        // check new order
-        {
-            final ResponseEntity< Order > responseEntity = taskFlowClient.getOrder(
-                    FailureTaskFlowMeta.TASK_FLOW_TYPE_KEY,
-                    taskFlowId,
-                    admindn,
-                    TASKFLOW_WID );
-            
-            Assert.assertNotNull( responseEntity );
-            Assert.assertEquals( responseEntity.getStatusCode(), HttpStatus.OK );
-            Assert.assertEquals( responseEntity.getBody() instanceof FailureOrder, true );
-            
-            FailureOrder order = ( FailureOrder )responseEntity.getBody();
-            Assert.assertEquals( order.getMessage(), ORDER_MESSAGE );
-        }
-    }
-
-    /**
-     * create the task flow by creating a task without talking about quotes
-     *
-     * TODO: test quotes
-     */
-    @Test( groups = { "TaskFlowClientTest" }, dependsOnMethods = { "listFacets", "changeOrder" } )
     public void createTask() {
-        final ResponseEntity< Specifier< Facets > > responseEntity = taskFlowClient.createTask(
-                FailureTaskFlowMeta.TASK_FLOW_TYPE_KEY,
-                taskFlowId,
-                null,
-                admindn,
-                TASKFLOW_WID );
+        // create task
+        {
+            final ResponseEntity< Specifier< Facets > > responseEntity = taskFlowClient.createTask(
+                    FailureTaskFlowMeta.TASK_FLOW_TYPE_KEY,
+                    taskFlowId,
+                    null,
+                    admindn,
+                    TASKFLOW_WID );
 
-        Assert.assertNotNull( responseEntity );
-        Assert.assertEquals( responseEntity.getStatusCode(), HttpStatus.CREATED );
+            Assert.assertNotNull( responseEntity );
+            Assert.assertEquals( responseEntity.getStatusCode(), HttpStatus.CREATED );
+
+            taskSpecifier = responseEntity.getBody();
+            Assert.assertNotNull( taskSpecifier );
+        }
         
-        taskSpecifier = responseEntity.getBody();
+        // get task facets
+        {
+            final ResponseEntity< Facets > responseEntity = taskClient.getTaskFacets(
+                    taskSpecifier.getUriMap().get( UriFactory.TASK_ID ),
+                    admindn );
+            
+            Assert.assertNotNull( responseEntity );
+            Assert.assertEquals( responseEntity.getStatusCode(), HttpStatus.OK );
+        }
     }
 
 
     @Test( groups = { "TaskFlowClientTest" }, dependsOnMethods = { "createTask" } )
-    public void deleteTaskFlow() throws InterruptedException {
-        Thread.sleep( 5000 );
+    public void waitForTask() {
+        final TaskStatus taskStatus = AbstractTaskFlowExecClient.waitForFinishOrFail(
+                taskSpecifier,
+                taskClient,
+                pollingDelay,
+                admindn,
+                TASKFLOW_WID );
         
+        Assert.assertNotNull( taskStatus );
+        Assert.assertEquals( taskStatus.getStatus(), TaskStatus.Status.FINISHED );
+    }
+
+
+    @Test( groups = { "TaskFlowClientTest" }, dependsOnMethods = { "waitForTask" } )
+    public void deleteTaskFlow() throws InterruptedException {
         // delete task flow
         {
             final ResponseEntity< Void > responseEntity = taskFlowClient.deleteTaskflow(
@@ -193,7 +197,7 @@ public class TaskFlowClientTest {
                         FailureTaskFlowMeta.TASK_FLOW_TYPE_KEY,
                         taskFlowId,
                         admindn );
-                
+
                 Assert.assertNotNull( responseEntity );
                 Assert.assertEquals( responseEntity.getStatusCode(), HttpStatus.NOT_FOUND );
             }
@@ -201,5 +205,4 @@ public class TaskFlowClientTest {
                 Assert.assertEquals( e.getStatusCode(), HttpStatus.NOT_FOUND );
             }
         }
-    }
-}
+    }}
