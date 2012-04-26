@@ -224,7 +224,7 @@ public class SubspaceServiceImpl implements SubspaceService {
         if( slicekindProvider.exists( subspace, slicekind ) ) {
             logger.info("Illegal Access: slicekind " + slicekind + " could not be created because it already exists.");
             return new ResponseEntity<List<Specifier<Void>>>(null, headers,
-                    HttpStatus.BAD_REQUEST);
+                    HttpStatus.PRECONDITION_FAILED );
         }
 
         // TODO: catch creation errors and return appropriate HttpStatus
