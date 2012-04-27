@@ -111,6 +111,13 @@
 
 
     <!-- #################################################################################################### -->
+    <!-- VolD setup -->
+    <bean id="volDClient" class="de.zib.vold.client.VolDClient">
+        <property name="baseURL" value="${voldUrl}" />
+    </bean>
+
+
+    <!-- #################################################################################################### -->
     <!-- create some auxiliary classes -->
     <bean id="directoryAux" class="de.zib.gndms.infra.grams.LinuxDirectoryAux"/>
     <bean id="gndmsVersionInfo" class="de.zib.gndms.GNDMSVerInfo"/>
