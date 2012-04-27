@@ -17,17 +17,16 @@ package de.zib.gndms.taskflows.staging.client.tools.tests;
  */
 
 
-
 import de.zib.gndms.taskflows.staging.client.model.ProviderStageInOrder;
 import de.zib.gndms.taskflows.staging.client.tools.ProviderStageInOrderConverter;
-import de.zib.gndms.taskflows.staging.client.tools.ProviderStageInOrderPropertyWriter;
 import de.zib.gndms.taskflows.staging.client.tools.ProviderStageInOrderPropertyReader;
+import de.zib.gndms.taskflows.staging.client.tools.ProviderStageInOrderPropertyWriter;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Properties;
 
 
@@ -38,14 +37,13 @@ import java.util.Properties;
  * User: mjorra, Date: 03.11.2008, Time: 12:31:56
  */
 public class ProviderStageInFromFile {
-
-
+    
     @Parameters( { "fileName" })
     @Test( groups={"io"} )
     public void testIt( String fileName ) throws Exception{
 
         try {
-            System.out.println( "\nOrq input test: ");
+            System.out.println( "\nOrder input test: ");
             System.out.println( "----------------");
             InputStream is = new FileInputStream( fileName );
             Properties prop = new Properties( );
