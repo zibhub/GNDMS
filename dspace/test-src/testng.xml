@@ -3,10 +3,9 @@
 <suite name="Suite" parallel="none">
   <test name="Test" preserve-order="false">
     <classes>
-      <class name="de.zib.gndms.gndmc.dspace.test.SliceClientTest"/>
-      <class name="de.zib.gndms.gndmc.dspace.test.DSpaceClientTest"/>
-      <class name="de.zib.gndms.gndmc.dspace.test.SubspaceClientTest"/>
-      <class name="de.zib.gndms.gndmc.dspace.test.SliceKindClientTest"/>
+      <class name="de.zib.gndms.gndmc.dspace.Test.DSpaceClientTest"/>
+      <class name="de.zib.gndms.gndmc.dspace.Test.SubspaceClientTest"/>
+      <class name="de.zib.gndms.gndmc.dspace.Test.SliceClientTest"/>
     </classes>
   </test>
 </suite>
