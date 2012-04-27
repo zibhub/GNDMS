@@ -17,6 +17,7 @@ package de.zib.gndms.taskflows.staging.server;
  */
 
 
+import de.zib.gndms.gndmc.gorfx.GORFXClient;
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.model.gorfx.taskflow.DefaultTaskFlowFactory;
@@ -28,10 +29,15 @@ import de.zib.gndms.taskflows.staging.server.logic.AbstractProviderStageInAction
 import de.zib.gndms.taskflows.staging.server.logic.AbstractProviderStageInQuoteCalculator;
 import de.zib.gndms.taskflows.staging.server.logic.ExternalProviderStageInAction;
 import de.zib.gndms.taskflows.staging.server.logic.ExternalProviderStageInQuoteCalculator;
+import de.zib.vold.client.VolDClient;
+import de.zib.vold.common.Key;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 
@@ -46,6 +52,10 @@ import java.util.Map;
 public class ProviderStageInTaskFlowFactory
 	  extends DefaultTaskFlowFactory<ProviderStageInOrder,
         AbstractProviderStageInQuoteCalculator> {
+
+    private VoldRegistrar registrar;
+    private VolDClient volDClient;
+    private GORFXClient gorfxClient;
 
     private Dao dao;
 
@@ -84,6 +94,18 @@ public class ProviderStageInTaskFlowFactory
     @Inject
     public void setDao(Dao dao) {
         this.dao = dao;
+    }
+
+
+    @Inject
+    public void setVolDClient( final VolDClient volDClient ) {
+        this.volDClient = volDClient;
+    }
+
+
+    @Inject
+    public void setGorfxClient( final GORFXClient gorfxClient ) {
+        this.gorfxClient = gorfxClient;
     }
 
 
@@ -130,6 +152,56 @@ public class ProviderStageInTaskFlowFactory
             return newInstance;
         } catch ( Exception e ) {
             throw new RuntimeException( e );
+        }
+    }
+
+
+    @PostConstruct
+    public void startVoldRegistration() {
+        registrar = new VoldRegistrar( volDClient, gorfxClient.getServiceURL() );
+        registrar.start();
+    }
+
+    @PreDestroy
+    public void stopVoldRegistration() {
+        registrar.finish();
+    }
+
+    private class VoldRegistrar extends Thread {
+        final private VolDClient vold;
+        final private String gorfxEP;
+        private boolean run = true;
+
+
+        public VoldRegistrar( final VolDClient volDClient, final String gorfxEP ) {
+            this.vold = volDClient;
+            this.gorfxEP = gorfxEP;
+        }
+        
+        
+        public void finish() {
+            run = false;
+            try {
+                this.join();
+            } catch( InterruptedException e ) {
+            }
+        }
+
+
+        @Override
+        public void run() {
+            while( run ) {
+                try {
+                    Thread.sleep( 5000 );
+                } catch( InterruptedException e ) {
+                    run = false;
+                    return;
+                }
+
+                vold.insert("", new Key("/c3grid/", "dp", "gorfxep"), new HashSet<String>() {{
+                    add( gorfxEP );
+                }});
+            }
         }
     }
 }
