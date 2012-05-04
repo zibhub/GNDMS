@@ -6,6 +6,7 @@
 
     <context:annotation-config />
     <import resource="classpath:/META-INF/legacyConfigMeta.xml"/>
+    <import resource="classpath:/META-INF/client-context.xml"/>
 
     <!-- Setup Property config -->
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -117,6 +118,14 @@
     </bean>
 
 
+    <!-- #################################################################################################### -->
+    <!-- setup GORFX client -->
+    <bean id="gorfxClient" class="de.zib.gndms.gndmc.gorfx.GORFXClient">
+        <property name="serviceURL" value="${gorfxBaseURL}" />
+        <property name="restTemplate" value="restTemplate" />
+    </bean>
+    
+    
     <!-- #################################################################################################### -->
     <!-- create some auxiliary classes -->
     <bean id="directoryAux" class="de.zib.gndms.infra.grams.LinuxDirectoryAux"/>
