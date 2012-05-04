@@ -161,6 +161,7 @@ XPP='xpp3:xpp3_min:jar:1.1.4c'
 JSON=['org.codehaus.jackson:jackson-core-lgpl:jar:1.9.2', 
       'org.codehaus.jackson:jackson-mapper-lgpl:jar:1.9.2']
 GSON='com.google.code.gson:gson:jar:1.6'
+TESTNG="org.testng:testng:jar:6.5.2"
 
 # logging
 SLF4J = transitive( ['org.slf4j:slf4j-log4j12:jar:1.6.1', 'org.slf4j:slf4j-ext:jar:1.6.1'])
@@ -451,7 +452,7 @@ define 'gndms' do
 
     desc 'REST client classes'
     define 'gndmc-rest', :layout => dmsLayout('gndmc-rest', 'gndms-gndmc-rest') do
-        compile.with project('stuff'), project('common'), SPRING, ARGS4J, JODA_TIME, SLF4J, COMMONS_LOGGING, XSTREAM, XSTREAM_DEPS, JSON, ASPECTJ
+        compile.with project('stuff'), project('common'), SPRING, ARGS4J, JODA_TIME, SLF4J, COMMONS_LOGGING, XSTREAM, XSTREAM_DEPS, JSON, ASPECTJ, TESTNG
         meta_inf << file(_('src/META-INF/client-context.xml'))
         package(:jar).with :manifest=>manifest.merge( 'Main-Class'=>'de.zib.gndms.gndmc.gorfx.GORFXClientMain' )
 
@@ -506,7 +507,7 @@ define 'gndms' do
           
     desc 'DSpace rest service'
     define 'dspace', :layout => dmsLayout('dspace', 'gndms-dspace-rest') do
-        compile.with project('infra'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), project('gndmc-rest'), project('common'), SPRING, SPRING_SECURITY, SLF4J, XSTREAM, COMMONS_LOGGING, COMMONS_IO, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME, OPENJPA, INJECT, JETBRAINS_ANNOTATIONS
+        compile.with project('infra'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), project('gndmc-rest'), project('common'), SPRING, SPRING_SECURITY, SLF4J, XSTREAM, COMMONS_LOGGING, COMMONS_IO, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME, OPENJPA, INJECT, JETBRAINS_ANNOTATIONS, TESTNG, ASPECTJ
 
         compile
         meta_inf << file(_('src/META-INF/dspace.xml'))
@@ -515,7 +516,7 @@ define 'gndms' do
           
     desc 'GORFX rest service'
     define 'gorfx', :layout => dmsLayout('gorfx', 'gndms-gorfx-rest') do
-        compile.with project('infra'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), project('gndmc-rest'), project('common'), SPRING, SPRING_SECURITY, SLF4J, XSTREAM, COMMONS_LOGGING, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME, OPENJPA, INJECT, SPRING_SECURITY
+        compile.with project('infra'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), project('gndmc-rest'), project('common'), SPRING, SPRING_SECURITY, SLF4J, XSTREAM, COMMONS_LOGGING, SERVLET,  CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME, OPENJPA, INJECT, SPRING_SECURITY, TESTNG, ASPECTJ
 
         compile
         meta_inf << file(_('src/META-INF/gorfx.xml'))
