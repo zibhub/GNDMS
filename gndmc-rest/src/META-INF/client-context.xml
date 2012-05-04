@@ -17,6 +17,7 @@
                <!--bean  class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
                  <constructor-arg ref="marshaller" />
                  </bean-->
+               <bean class="org.springframework.http.converter.FormHttpMessageConverter" />
                <ref bean="converter"/>
            </list>
        </property>
