@@ -122,7 +122,7 @@
     <!-- setup GORFX client -->
     <bean id="gorfxClient" class="de.zib.gndms.gndmc.gorfx.GORFXClient">
         <property name="serviceURL" value="${gorfxBaseURL}" />
-        <property name="restTemplate" value="restTemplate" />
+        <property name="restTemplate" ref="restTemplate" />
     </bean>
     
     
