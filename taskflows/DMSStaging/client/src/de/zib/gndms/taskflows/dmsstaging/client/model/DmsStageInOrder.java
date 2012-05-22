@@ -35,9 +35,6 @@ public class DmsStageInOrder extends ProviderStageInOrder {
 
     private String gridSite;
 
-    // this isn't part of the initial request, but part of the offer creation result.
-    private String actGridSiteURI;
-
 
     public DmsStageInOrder(){
         super();
@@ -46,7 +43,7 @@ public class DmsStageInOrder extends ProviderStageInOrder {
 
     @Override
     public @NotNull String getDescription() {
-        return "Slice-staging";
+        return DmsStageInMeta.DESCRIPTION;
     }
 
 
@@ -65,18 +62,5 @@ public class DmsStageInOrder extends ProviderStageInOrder {
     }
 
 
-    public String getActGridSiteURI() {
-        return actGridSiteURI;
-    }
-
-
-    public void setActGridSiteURI( String gridSiteURI ) {
-	    actGridSiteURI = gridSiteURI;
-    }
-
-
-    public boolean hasGridSiteURI() {
-        return actGridSiteURI != null;
-    }
 }
 
