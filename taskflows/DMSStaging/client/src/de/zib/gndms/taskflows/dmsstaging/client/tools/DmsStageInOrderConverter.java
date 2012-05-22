@@ -19,7 +19,7 @@ package de.zib.gndms.taskflows.dmsstaging.client.tools;
 
 
 import de.zib.gndms.common.model.gorfx.types.io.OrderConverter;
-import de.zib.gndms.taskflows.dmsstaging.client.model.SliceStageInOrder;
+import de.zib.gndms.taskflows.dmsstaging.client.model.DmsStageInOrder;
 import de.zib.gndms.taskflows.staging.client.tools.DataDescriptorConverter;
 import de.zib.gndms.taskflows.staging.client.tools.DataDescriptorWriter;
 
@@ -29,13 +29,14 @@ import de.zib.gndms.taskflows.staging.client.tools.DataDescriptorWriter;
  * Date: 13.10.2008
  * Time: 11:15:19
  */
-public class SliceStageInOrderConverter extends OrderConverter<SliceStageInOrderWriter, SliceStageInOrder> {
+public class DmsStageInOrderConverter extends OrderConverter<DmsStageInOrderWriter, DmsStageInOrder> {
 
-    public SliceStageInOrderConverter() {
+    public DmsStageInOrderConverter() {
         
     }
 
-    public SliceStageInOrderConverter( SliceStageInOrderWriter writer, SliceStageInOrder slicestageinOrder ){
+    public DmsStageInOrderConverter( DmsStageInOrderWriter writer,
+                                     DmsStageInOrder slicestageinOrder ){
         super( writer, slicestageinOrder );
     }
 

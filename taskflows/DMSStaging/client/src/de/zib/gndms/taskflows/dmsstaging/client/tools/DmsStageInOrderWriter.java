@@ -19,7 +19,6 @@ package de.zib.gndms.taskflows.dmsstaging.client.tools;
 
 import de.zib.gndms.common.model.gorfx.types.io.OrderWriter;
 import de.zib.gndms.taskflows.staging.client.tools.DataDescriptorWriter;
-import de.zib.gndms.taskflows.staging.client.tools.DataDescriptorWriter;
 
 /**
  * Created by IntelliJ IDEA.
@@ -28,7 +27,7 @@ import de.zib.gndms.taskflows.staging.client.tools.DataDescriptorWriter;
  * Time: 18:19:09
  * To change this template use File | Settings | File Templates.
  */
-public interface SliceStageInOrderWriter extends OrderWriter {
+public interface DmsStageInOrderWriter extends OrderWriter {
 
     public void writeGridSiteName ( String gsn );
     public void writeDataFileName( String dfn );

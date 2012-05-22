@@ -29,7 +29,7 @@ import java.lang.String;
  * Date: 13.10.2008
  * Time: 11:17:06
  */
-public class SliceStageInOrder extends ProviderStageInOrder {
+public class DmsStageInOrder extends ProviderStageInOrder {
 
     private static final long serialVersionUID = 4197416353040463983L;
 
@@ -37,12 +37,11 @@ public class SliceStageInOrder extends ProviderStageInOrder {
 
     // this isn't part of the initial request, but part of the offer creation result.
     private String actGridSiteURI;
-    public static final String SLICE_STAGE_IN_URI = "http://www.c3grid.de/ORQTypes/SliceStageIn";
 
 
-    public SliceStageInOrder(){
+    public DmsStageInOrder(){
         super();
-        super.setTaskFlowType( SLICE_STAGE_IN_URI );
+        super.setTaskFlowType( DmsStageInMeta.DMS_STAGE_IN_KEY );
     }
 
     @Override

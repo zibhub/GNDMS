@@ -34,13 +34,15 @@ import java.util.Properties;
  * Time: 18:16:50
  * To change this template use File | Settings | File Templates.
  */
-public class SliceStageInOrderPropertyWriter extends OrderPropertyWriter implements SliceStageInOrderWriter {
+public class DmsStageInOrderPropertyWriter extends OrderPropertyWriter implements
+        DmsStageInOrderWriter
+{
 
-    public SliceStageInOrderPropertyWriter(){
+    public DmsStageInOrderPropertyWriter(){
     }
 
 
-    public SliceStageInOrderPropertyWriter( Properties properties ){
+    public DmsStageInOrderPropertyWriter( Properties properties ){
         super( properties );    
     }
 

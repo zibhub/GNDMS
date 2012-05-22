@@ -20,7 +20,7 @@ package de.zib.gndms.taskflows.dmsstaging.client.tools;
 
 import de.zib.gndms.common.model.gorfx.types.io.OrderPropertyReader;
 import de.zib.gndms.common.model.gorfx.types.io.SfrProperty;
-import de.zib.gndms.taskflows.dmsstaging.client.model.SliceStageInOrder;
+import de.zib.gndms.taskflows.dmsstaging.client.model.DmsStageInOrder;
 import de.zib.gndms.taskflows.staging.client.tools.DataDescriptorPropertyReader;
 
 import java.util.Properties;
@@ -33,14 +33,14 @@ import java.util.Properties;
  * Time: 18:16:38
  * To change this template use File | Settings | File Templates.
  */
-public class SliceStageInOrderPropertyReader extends OrderPropertyReader<SliceStageInOrder> {
+public class DmsStageInOrderPropertyReader extends OrderPropertyReader<DmsStageInOrder> {
 
-    public SliceStageInOrderPropertyReader() {
-        super( SliceStageInOrder.class );
+    public DmsStageInOrderPropertyReader() {
+        super( DmsStageInOrder.class );
     }
 
-    public SliceStageInOrderPropertyReader( Properties properties ) {
-        super( SliceStageInOrder.class, properties );
+    public DmsStageInOrderPropertyReader( Properties properties ) {
+        super( DmsStageInOrder.class, properties );
     }
 
     public void read() {
