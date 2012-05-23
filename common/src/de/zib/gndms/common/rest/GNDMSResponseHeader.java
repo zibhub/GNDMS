@@ -37,6 +37,7 @@ public class GNDMSResponseHeader extends HttpHeaders {
     public final static String MY_PROXY_TOKEN_PREFIX = "myproxytoken-";
     public final static String MY_PROXY_LOGIN_PREFIX = MY_PROXY_TOKEN_PREFIX + "-login-";
     public final static String MY_PROXY_PASSWORD_PREFIX = MY_PROXY_TOKEN_PREFIX + "-passwd-";
+    public final static String MY_PROXY_FETCH_METHOD_PREFIX = MY_PROXY_TOKEN_PREFIX + "-fetch-";
 
 	/**
 	 * The key for a resource url.
@@ -234,11 +235,29 @@ public class GNDMSResponseHeader extends HttpHeaders {
                 MyProxyToken token = new MyProxyToken( extractLoginName( context, key ) );
                 if( hasPasswordKeyForPurpose( context, purpose ) )
                     token.setPassword( extractPasswordForPurpose( context, purpose ) );
+                if( hasFetchMethodKeyForPurpose( context, purpose ) )
+                    token.setFetchMethod( extractFetchMethodForPurpose( context, purpose ) );
 
                 result.put( purpose, token );
             }
         }
         return Collections.unmodifiableMap( result );
+    }
+
+
+    private static String extractFetchMethodForPurpose(
+            final MultiValueMap<String, String> context, final String purpose )
+    {
+
+        return context.get( MY_PROXY_FETCH_METHOD_PREFIX + purpose ).get( 0 );
+    }
+
+
+    private static boolean hasFetchMethodKeyForPurpose(
+            final MultiValueMap<String, String> context, final String purpose )
+    {
+
+        return context.containsKey( MY_PROXY_FETCH_METHOD_PREFIX + purpose );
     }
 
 

@@ -66,8 +66,7 @@ public class GetCredentialProviderFor {
             throw new IllegalStateException( "no MyProxy-Server registered for "  +
                                              getRequiredCredentialName() );
 
-        return new MyProxyCredentialProvider( myProxyFactory, token.getLogin(),
-                token.getPassword() );
+        return new MyProxyCredentialProvider( myProxyFactory, token );
     }
 
 

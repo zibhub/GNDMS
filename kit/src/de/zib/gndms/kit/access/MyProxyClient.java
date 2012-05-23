@@ -16,6 +16,7 @@
 
 package de.zib.gndms.kit.access;
 
+import de.zib.gndms.kit.security.myproxyext.RetrieveParams;
 import org.globus.gsi.GlobusCredentialException;
 import org.globus.myproxy.GetParams;
 import org.globus.myproxy.MyProxy;
@@ -72,6 +73,28 @@ public class MyProxyClient {
         getRequest.setLifetime( lifetime * 3600 );
 
         return myProxy.get( connectionCredential, getRequest );
+    }
+
+    /**
+     * Fetches Credentials using login/password pair to access the myproxy
+     * @param login
+     * @param passwd
+     * @throws org.ietf.jgss.GSSException
+     * @throws org.globus.gsi.GlobusCredentialException
+     * @throws org.globus.myproxy.MyProxyException
+     * @throws java.io.IOException
+     */
+    public GSSCredential retrive( String login, String passwd ) throws GSSException,
+            GlobusCredentialException, MyProxyException, IOException {
+
+        // this is the get request for the myproxy server
+        RetrieveParams retrieveParams = new RetrieveParams();
+        retrieveParams.setUserName( login );
+        retrieveParams.setPassphrase( passwd );
+        retrieveParams.setCredentialName( credentialName );
+        retrieveParams.setLifetime( lifetime * 3600 );
+
+        return myProxy.get( connectionCredential, retrieveParams );
     }
 
 
