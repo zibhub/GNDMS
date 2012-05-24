@@ -61,7 +61,8 @@ public class NonblockingClientFactory extends AbstractNonblockingClientFactory{
         }
 
         final GridFTPClientCreator creator = new GridFTPClientCreator( host, port, cp, inc() );
-        final TimedForkable<GridFTPClient> fork = new TimedForkable<GridFTPClient>( creator, getTimeout() * 1000, creator );
+        final TimedForkable<GridFTPClient> fork = new TimedForkable<GridFTPClient>( creator,
+                getTimeout() * 1000 );
         try {
             final DV<GridFTPClient,Exception> f = exec.submit( fork );
             return f.getValue();

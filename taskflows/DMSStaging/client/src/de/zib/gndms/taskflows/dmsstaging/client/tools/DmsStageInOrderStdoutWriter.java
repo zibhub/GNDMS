@@ -19,8 +19,6 @@ package de.zib.gndms.taskflows.dmsstaging.client.tools;
 
 import de.zib.gndms.common.model.gorfx.types.io.OrderStdoutWriter;
 import de.zib.gndms.taskflows.staging.client.tools.DataDescriptorStdoutWriter;
-import de.zib.gndms.taskflows.staging.client.tools.DataDescriptorStdoutWriter;
-import de.zib.gndms.taskflows.staging.client.tools.DataDescriptorWriter;
 import de.zib.gndms.taskflows.staging.client.tools.DataDescriptorWriter;
 
 /**
@@ -29,8 +27,9 @@ import de.zib.gndms.taskflows.staging.client.tools.DataDescriptorWriter;
  * <p/>
  * User: mjorra, Date: 18.09.2008, Time: 17:36:36
  */
-public class SliceStageInOrderStdoutWriter extends OrderStdoutWriter implements
-    SliceStageInOrderWriter {
+public class DmsStageInOrderStdoutWriter extends OrderStdoutWriter implements
+        DmsStageInOrderWriter
+{
 
 
 	public void writeGridSiteName(final String gsn) {
@@ -64,7 +63,7 @@ public class SliceStageInOrderStdoutWriter extends OrderStdoutWriter implements
 
 
     public void begin() {
-        System.out.println( "******************** SliceStageInOrder ********************" );
+        System.out.println( "******************** DmsStageInOrder ********************" );
     }
 
 

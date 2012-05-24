@@ -17,6 +17,8 @@ package de.zib.gndms.taskflows.dmsstaging.client.model;
  */
 
 
+import de.zib.gndms.common.rest.Specifier;
+import de.zib.gndms.model.gorfx.types.SliceResultImpl;
 
 /**
  * @author  try ma ik jo rr a zib
@@ -24,24 +26,19 @@ package de.zib.gndms.taskflows.dmsstaging.client.model;
  * <p/>
  * User: mjorra, Date: 14.11.2008, Time: 15:32:37
  */
-public class SliceStageInResult extends CommonSliceResult {
+public class DmsStageInResult extends SliceResultImpl {
 
     private static final long serialVersionUID = 1563758463267173946L;
 
 
-    public SliceStageInResult( ) {
-        super( SliceStageInMeta.SLICE_STAGE_IN_URI );
-    }
+    public DmsStageInResult( ) {
 
-    public SliceStageInResult( SliceRef sr ) {
-        super( SliceStageInMeta.SLICE_STAGE_IN_URI );
-        setSliceRef( sr );
+        super( DmsStageInMeta.DMS_STAGE_IN_KEY );
     }
 
 
-    @Override
-    public Object getResult() {
+    public DmsStageInResult( final Specifier<Void> sliceSpecifier ) {
 
-        return null;  // not required here
+        super( DmsStageInMeta.DMS_STAGE_IN_KEY, sliceSpecifier );
     }
 }

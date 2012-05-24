@@ -15,10 +15,8 @@ package de.zib.gndms.stuff.threading;
  * limitations under the License.
  */
 
-import de.zib.gndms.stuff.misc.LogProvider;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Date;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
@@ -33,28 +31,28 @@ public class TimedForkable<T> implements Callable<T> {
     private long timeout; // ms
     private final long wakeUp;
     private final TimeUnit wakeUpUnit;
-    private LogProvider logger;
 
 
-    public TimedForkable( @NotNull Callable<T> tCallable, long timeout, long wakeup, @NotNull TimeUnit wakeupUnit, LogProvider logger ) {
+    public TimedForkable( @NotNull Callable<T> tCallable, long timeout, long wakeup,
+                          @NotNull TimeUnit wakeupUnit ) {
         this.tCallable = tCallable;
         this.timeout = timeout;
         this.wakeUp = wakeup;
         this.wakeUpUnit = wakeupUnit;
-        this.logger = logger;
+//        this.logger = logger;
     }
 
 
-    public TimedForkable( @NotNull Callable<T> tCallable, long timeout, LogProvider logger ) {
-        this( tCallable, timeout, -1, TimeUnit.MILLISECONDS, logger );
+    public TimedForkable( @NotNull Callable<T> tCallable, long timeout ) {
+        this( tCallable, timeout, -1, TimeUnit.MILLISECONDS );
     }
 
 
     public T call() throws Exception {
 
         long deadline = adjustDeadline( );
-        if ( logger != null )
-            logger.getLog().debug( "setting deadline to: "+ new Date( deadline ) );
+//        if ( logger != null )
+//            logger.getLog().debug( "setting deadline to: "+ new Date( deadline ) );
 
         Forkable<T> fork;
         if( wakeUp == -1 )
