@@ -75,7 +75,6 @@ testEnv('GNDMS_SOURCE', 'the root directory of GNDMS source distribution (i.e. t
 #testEnv('GNDMS_SHARED', '$GLOBUS_LOCATION/etc/gndms_shared')
 #testEnv('GNDMS_MONI_CONFIG', '$GNDMS_SHARED/monitor.properties')
 testEnv('USER', 'your user\'s login (your UNIX is weird)')
-testTool('rsync')
 testTool('curl')
 testTool('openssl')
 testTool('hostname')
