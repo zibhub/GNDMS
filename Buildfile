@@ -537,7 +537,7 @@ define 'gndms' do
         package(:war).include _('../LICENSE'), :path=>"WEB-INF/classes/META-INF"
         package(:war).include _('../GNDMS-RELEASE'), :path=>"WEB-INF/classes/META-INF"
 
-        libs = []
+        libs = [ VOLD_CLIENT ]
         [ 'gorfx', 'dspace', 'infra', 'logic', 'kit', 'stuff', 'neomodel', 'model', 'gndmc-rest', 'common' ].each { |mod| 
             project( mod ).compile.dependencies.map( &:to_s ).each  { |lib| libs << lib }
             libs << project( mod ).package(:jar)
