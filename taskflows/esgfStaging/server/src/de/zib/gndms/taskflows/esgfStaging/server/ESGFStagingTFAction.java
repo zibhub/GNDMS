@@ -20,6 +20,7 @@ package de.zib.gndms.taskflows.esgfStaging.server;
 
 import de.zib.gndms.common.dspace.service.SubspaceService;
 import de.zib.gndms.common.kit.security.SetupSSL;
+import de.zib.gndms.common.model.gorfx.types.SliceResultImpl;
 import de.zib.gndms.common.rest.MyProxyToken;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
@@ -36,7 +37,6 @@ import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
-import de.zib.gndms.model.gorfx.types.SliceResultImpl;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.model.util.TxFrame;
 import de.zib.gndms.neomodel.common.Dao;
@@ -51,7 +51,9 @@ import org.springframework.http.ResponseEntity;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
