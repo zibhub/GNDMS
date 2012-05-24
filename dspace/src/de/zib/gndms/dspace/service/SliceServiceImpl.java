@@ -16,11 +16,11 @@ package de.zib.gndms.dspace.service;
  * limitations under the License.
  */
 
-import com.sun.servicetag.UnauthorizedAccessException;
 import de.zib.gndms.common.dspace.service.SliceService;
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.model.FileStats;
 import de.zib.gndms.common.rest.*;
+import de.zib.gndms.dspace.service.utils.UnauthorizedException;
 import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.kit.util.DirectoryAux;
@@ -654,9 +654,9 @@ public class SliceServiceImpl implements SliceService {
         return new ResponseEntity<Void>( null, setHeaders(ex.getMessage(), null, null, null), HttpStatus.NOT_FOUND );
     }
 
-    @ExceptionHandler( UnauthorizedAccessException.class )
+    @ExceptionHandler( UnauthorizedException.class )
     public ResponseEntity<Void> handleUnAuthorizedException(
-            UnauthorizedAccessException ex,
+            UnauthorizedException ex,
             HttpServletResponse response )
             throws IOException
     {

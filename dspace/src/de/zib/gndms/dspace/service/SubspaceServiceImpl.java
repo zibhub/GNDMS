@@ -16,13 +16,13 @@
 
 package de.zib.gndms.dspace.service;
 
-import com.sun.servicetag.UnauthorizedAccessException;
 import de.zib.gndms.common.dspace.service.SliceKindService;
 import de.zib.gndms.common.dspace.service.SubspaceService;
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.logic.config.SetupMode;
 import de.zib.gndms.common.logic.config.WrongConfigurationException;
 import de.zib.gndms.common.rest.*;
+import de.zib.gndms.dspace.service.utils.UnauthorizedException;
 import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.kit.config.ParameterTools;
 import de.zib.gndms.logic.model.dspace.NoSuchElementException;
@@ -568,9 +568,9 @@ public class SubspaceServiceImpl implements SubspaceService {
     }
 
 
-    @ExceptionHandler( UnauthorizedAccessException.class )
+    @ExceptionHandler( UnauthorizedException.class )
     public ResponseEntity<Void> handleUnAuthorizedException(
-            UnauthorizedAccessException ex,
+            UnauthorizedException ex,
             HttpServletResponse response )
             throws IOException
     {
