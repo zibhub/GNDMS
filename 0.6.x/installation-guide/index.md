@@ -336,8 +336,37 @@ file. In the section:
   and leave `myProxyConnectionCredentialPrefix` alone. 
   **Note** these files must be present in the folder named by:
   `myProxyConnectionCredentialFolder`. 
-  
+ 
+**Keystore / Truststore** 
 
+Somewhere, for example in `/etc/grid-security`, make a new directory `trustStore` for the keystore. First, the new keystore has to be created by:
+
+      export gridCACertPath=/etc/grid-security/certificates
+      for i in $gridCACertPath/*.0; do
+         ali=$( basename $i .0 );
+         echo importing $ali;
+         openssl x509 -in $i | keytool -keystore keystore -import -trustcacerts -alias $ali -storepass <masterpwd> -noprompt
+      done
+
+where `<masterpwd>` is the new master password for the keystore.
+
+Then the user's key (here in `gndmskey.pem`) has to be converted into pkcs12 standard
+
+      openssl pkcs12 -inkey /etc/grid-security/gndmskey.pem -in /etc/grid-security/gndmscert.pem -export -out jetty.pkcs12
+      
+where a new user password `<userpwd>` is asked for. This key is then added to the keystore using
+
+      keytool -importkeystore -srckeystore jetty.pkcs12 -srcstoretype PKCS12 -destkeystore keystore
+
+where first the master password for the keystore `<masterpwd>` and then the user password `<userpwd>` have to be entered.
+
+In `grid.properties`, the following variables have to be defines:
+
+      trustStoreLocation=/etc/grid-security/trustStore/keystore
+      trustStorePassword=<masterpwd>
+      keyStoreLocation=/etc/grid-security/trustStore/keystore
+      keyStorePassword=<masterpwd>
+      keyPassword=<userpwd>
 
 ### Finalize Installation 
 
