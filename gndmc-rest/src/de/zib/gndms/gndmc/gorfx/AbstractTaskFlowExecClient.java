@@ -50,11 +50,11 @@ public abstract class AbstractTaskFlowExecClient implements TaskStatusHandler {
      *
      * @param order The order of the taskflow.
      * @param dn    The DN of the user calling the task flow.
-     * \note for now the workflow id is generated on the fly.
+     * \note here the workflow id is generated on the fly.
      */
     public void execTF( Order order, String dn ) {
 
-        execTF( order, dn, true, null );
+        execTF( order, dn, true, null, UUID.randomUUID().toString() );
     }
 
 
@@ -67,15 +67,34 @@ public abstract class AbstractTaskFlowExecClient implements TaskStatusHandler {
      *
      * @param order The order of the taskflow.
      * @param dn    The DN of the user calling the task flow.
-     *              
-     * \note for now the workflow id is generated on the fly.
+     *
      * @param withQuote Activates co-scheduling
      * @param desiredQuote A quote holding desired time values for
-     * the tasflow execution. 
+     * the tasflow execution.
+     *
+     * \note for now the workflow id is generated on the fly.
      */
     public void execTF( Order order, String dn, boolean withQuote, final Quote desiredQuote ) {
+        execTF( order, dn, withQuote, desiredQuote, UUID.randomUUID().toString() );
+    }
 
-        String wid = UUID.randomUUID().toString();
+    /**
+     *
+     * @brief Executes a complete task flow.
+     *
+     * This method is imported when you want to understand the
+     * Taskflow protocol.
+     *
+     * @param order The order of the taskflow.
+     * @param dn    The DN of the user calling the task flow.
+     *
+     * @param withQuote Activates co-scheduling
+     * @param desiredQuote A quote holding desired time values for
+     * the tasflow execution.
+     * @param wid the workflow id
+     */
+    public void execTF( Order order, String dn, boolean withQuote, final Quote desiredQuote,
+                        final String wid ) {
 
         GNDMSResponseHeader context = setupContext( new GNDMSResponseHeader() );
 
@@ -88,7 +107,8 @@ public abstract class AbstractTaskFlowExecClient implements TaskStatusHandler {
          */              
 
         // sends the order and creates the task flow
-        ResponseEntity<Specifier<Facets>> res = gorfxClient.createTaskFlow( order.getTaskFlowType(), order, dn, wid, context );
+        ResponseEntity<Specifier<Facets>> res = gorfxClient.createTaskFlow( order.getTaskFlowType(), order, dn,
+                wid, context );
 
         if ( !HttpStatus.CREATED.equals( res.getStatusCode() ) )
             throw new RuntimeException( "createTaskFlow failed " + res.getStatusCode().name() );
@@ -106,7 +126,8 @@ public abstract class AbstractTaskFlowExecClient implements TaskStatusHandler {
                 tfClient.setQuote( order.getTaskFlowType(), tid, desiredQuote, dn, wid );
             }
             // queries the quotes for the task flow
-            ResponseEntity<List<Specifier<Quote>>> res2 = tfClient.getQuotes( order.getTaskFlowType(), tid, dn, wid );
+            ResponseEntity<List<Specifier<Quote>>> res2 = tfClient.getQuotes( order.getTaskFlowType(), tid, dn,
+                    wid );
 
             if ( !HttpStatus.OK.equals( res2.getStatusCode() ) )
                 throw new RuntimeException( "getQuotes failed " + res2.getStatusCode().name() );
@@ -120,7 +141,8 @@ public abstract class AbstractTaskFlowExecClient implements TaskStatusHandler {
         // 
         
         // accepts quote q and triggers task creation
-        ResponseEntity<Specifier<Facets>> res3 = tfClient.createTask( order.getTaskFlowType(), tid, q, dn, wid );
+        ResponseEntity<Specifier<Facets>> res3 = tfClient.createTask( order.getTaskFlowType(), tid, q, dn,
+                wid );
 
         if(! HttpStatus.CREATED.equals( res3.getStatusCode() ) )
             throw new RuntimeException( "createTask failed " + res3.getStatusCode().name() );
