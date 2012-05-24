@@ -121,7 +121,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
     @RequestMapping( value = "/_{type}/_{id}", method = RequestMethod.DELETE )
     @Secured( "ROLE_USER" )
-    public ResponseEntity<Void> deleteTaskflow( @PathVariable String type, @PathVariable String id,
+    public ResponseEntity< Integer > deleteTaskflow( @PathVariable String type, @PathVariable String id,
                                                 @RequestHeader( "DN" ) String dn,
                                                 @RequestHeader( "WId" ) String wid ) {
 
@@ -138,7 +138,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
             }
         }
 
-        return new ResponseEntity<Void>( null, getHeader( type, id, null, dn, wid ), hs );
+        return new ResponseEntity< Integer >( null, getHeader( type, id, null, dn, wid ), hs );
     }
 
 
@@ -272,7 +272,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
     @RequestMapping( value = "/_{type}/_{id}/quote/_{idx}", method = RequestMethod.DELETE )
     @Secured( "ROLE_USER" )
-    public ResponseEntity<Void> deleteQuotes( @PathVariable String type, @PathVariable String id,
+    public ResponseEntity< Integer > deleteQuotes( @PathVariable String type, @PathVariable String id,
                                               @PathVariable int idx, @RequestHeader( "DN" ) String dn,
                                               @RequestHeader( "WId" ) String wid ) {
 
