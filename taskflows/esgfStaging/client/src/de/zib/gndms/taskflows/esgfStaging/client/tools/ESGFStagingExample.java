@@ -21,7 +21,7 @@ import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.gndmc.gorfx.AbstractTaskFlowExecClient;
 import de.zib.gndms.gndmc.gorfx.ExampleTaskFlowExecClient;
 import de.zib.gndms.gndmc.gorfx.GORFXTaskFlowExample;
-import de.zib.gndms.model.gorfx.types.SliceResult;
+import de.zib.gndms.common.model.gorfx.types.SliceResult;
 import de.zib.gndms.taskflows.esgfStaging.client.model.ESGFStagingOrder;
 import org.jetbrains.annotations.NotNull;
 

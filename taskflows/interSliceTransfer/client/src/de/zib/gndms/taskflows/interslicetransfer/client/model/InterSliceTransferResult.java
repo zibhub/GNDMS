@@ -16,7 +16,7 @@ package de.zib.gndms.taskflows.interslicetransfer.client.model;
  */
 
 import de.zib.gndms.common.rest.Specifier;
-import de.zib.gndms.model.gorfx.types.SliceResult;
+import de.zib.gndms.common.model.gorfx.types.SliceResult;
 import de.zib.gndms.taskflows.filetransfer.client.model.FileTransferResult;
 import de.zib.gndms.taskflows.interslicetransfer.client.InterSliceTransferMeta;
 
