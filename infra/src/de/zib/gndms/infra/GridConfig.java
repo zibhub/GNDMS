@@ -42,6 +42,8 @@ public abstract class GridConfig {
 	@NotNull
 	public abstract String getGridPath() throws Exception;
 
+    @NotNull
+    public abstract String getBaseUrl() throws Exception;
 
     /**
      * Returns whether to use debug mode or not.

@@ -26,6 +26,7 @@
     <bean id="gridConfig" class="de.zib.gndms.infra.SettableGridConfig">
         <property name="gridName" value="${gridName}"/>
         <property name="gridPath" value="${gridPath}"/>
+        <property name="baseUrl" value="${baseUrl}"/>
     </bean>
 
     <!-- most import the system class, which glue all components together -->
