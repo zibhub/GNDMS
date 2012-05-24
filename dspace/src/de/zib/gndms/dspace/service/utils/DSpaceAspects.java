@@ -16,7 +16,6 @@
 
 package de.zib.gndms.dspace.service.utils;
 
-import com.sun.servicetag.UnauthorizedAccessException;
 import de.zib.gndms.logic.model.dspace.NoSuchElementException;
 import de.zib.gndms.logic.model.dspace.SliceKindProvider;
 import de.zib.gndms.logic.model.dspace.SliceProvider;
