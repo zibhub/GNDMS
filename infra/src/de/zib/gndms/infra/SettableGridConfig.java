@@ -29,6 +29,7 @@ public class SettableGridConfig extends GridConfig {
     private String gridName;
     private String gridPath;
     private String baseUrl;
+    private String voldUrl;
 
 
     @NotNull
@@ -52,6 +53,13 @@ public class SettableGridConfig extends GridConfig {
     }
 
 
+    @NotNull
+    @Override
+    public String getVoldUrl() throws Exception {
+        return voldUrl;
+    }
+
+
     public void setGridName( String gridName ) {
         this.gridName = gridName;
     }
@@ -64,5 +72,10 @@ public class SettableGridConfig extends GridConfig {
 
     public void setBaseUrl( String baseUrl ) {
         this.baseUrl = baseUrl;
+    }
+
+
+    public void setVoldUrl( String voldUrl ) {
+        this.voldUrl = voldUrl;
     }
 }

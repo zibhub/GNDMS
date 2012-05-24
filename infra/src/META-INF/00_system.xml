@@ -27,6 +27,7 @@
         <property name="gridName" value="${gridName}"/>
         <property name="gridPath" value="${gridPath}"/>
         <property name="baseUrl" value="${baseUrl}"/>
+        <property name="voldUrl" value="${voldUrl}"/>
     </bean>
 
     <!-- most import the system class, which glue all components together -->
