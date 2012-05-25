@@ -16,11 +16,11 @@
 
 package de.zib.gndms.kit.access;
 
+import de.zib.gndms.kit.access.myproxyext.ExtMyProxy;
 import org.globus.gsi.GlobusCredentialException;
 import org.globus.gsi.gssapi.auth.HostAuthorization;
 import org.globus.gsi.gssapi.auth.IdentityAuthorization;
 import org.globus.gsi.gssapi.auth.NoAuthorization;
-import org.globus.myproxy.MyProxy;
 import org.globus.util.Util;
 import org.gridforum.jgss.ExtendedGSSCredential;
 import org.ietf.jgss.GSSCredential;
@@ -78,9 +78,9 @@ public class MyProxyFactory {
     }
 
 
-    protected MyProxy getMyProxy() {
+    protected ExtMyProxy getMyProxy() {
 
-        MyProxy myProxy = new MyProxy( myProxyServer, port );
+        ExtMyProxy myProxy = new ExtMyProxy( myProxyServer, port );
 
         switch ( authMethod ) {
             case SUBJECT:

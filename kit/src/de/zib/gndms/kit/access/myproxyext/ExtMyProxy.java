@@ -1,4 +1,4 @@
-package de.zib.gndms.kit.security.myproxyext;
+package de.zib.gndms.kit.access.myproxyext;
 
 
 /*
@@ -17,13 +17,9 @@ package de.zib.gndms.kit.security.myproxyext;
  *  limitations under the License.
  */
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DERObject;
-import org.bouncycastle.asn1.x509.X509CertificateStructure;
-import org.bouncycastle.jce.provider.X509CertificateObject;
+
+import org.bouncycastle.openssl.PEMReader;
+import org.bouncycastle.openssl.PasswordFinder;
 import org.globus.common.CoGProperties;
 import org.globus.gsi.CertUtil;
 import org.globus.gsi.GlobusCredential;
@@ -39,15 +35,19 @@ import org.globus.myproxy.MyProxyException;
 import org.globus.util.Base64;
 import org.gridforum.jgss.ExtendedGSSManager;
 import org.ietf.jgss.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.security.KeyPair;
-import java.security.PrivateKey;
 import java.security.Signature;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
+import java.util.ArrayList;
 
 /**
  * @author Marcel Bardenhagen
@@ -56,7 +56,7 @@ import java.security.cert.X509Certificate;
  */
 public class ExtMyProxy extends MyProxy{
     
-    static Log logger = LogFactory.getLog(MyProxy.class.getName());
+    protected static final Logger logger = LoggerFactory.getLogger( ExtMyProxy.class );
     
     private static final String RESPONSE   = "RESPONSE=";
     private static final String ERROR      = "ERROR=";
@@ -66,16 +66,6 @@ public class ExtMyProxy extends MyProxy{
 
     public ExtMyProxy(String host, int port) {
         super(host, port);
-    }
-    
-    private GSSCredential getAnonymousCredential() 
-        throws GSSException {
-        GSSManager manager = ExtendedGSSManager.getInstance();
-        GSSName anonName = manager.createName((String)null, null);
-        return manager.createCredential(anonName,
-                                        GSSCredential.INDEFINITE_LIFETIME,
-                                        (Oid)null,
-                                        GSSCredential.INITIATE_AND_ACCEPT);
     }
     
     private GssSocket getSocket(GSSCredential credential) 
@@ -166,7 +156,7 @@ public class ExtMyProxy extends MyProxy{
      *         If an error occurred during the operation.
      */
     public GSSCredential retrieve(GSSCredential credential,
-                             GetParams params) 
+                             final GetParams params)
         throws MyProxyException {
          
         if (params == null) {
@@ -229,34 +219,45 @@ public class ExtMyProxy extends MyProxy{
             out.write(req);
             out.flush();
             
+            // read the number of certificates
+            // int size = in.read();
+
+            // if (logger.isDebugEnabled()) {
+            //     logger.debug("Reading " + size + " certs");
+            // }
+
+            // X509Certificate [] chain = new X509Certificate[size];
+
             // ---------- CUSTOM PART START ----------
-            String s = inputStreamToString(in);
-            final String anfang = "-----BEGIN CERTIFICATE-----";
-            final String ende = "-----END CERTIFICATE-----";
-            String certificate = s.substring(s.indexOf(anfang)+anfang.length()+1, s.indexOf(ende)-1);
-            // Zertifikat von PEM über DER speichern
-            byte[] keyBytes = new sun.misc.BASE64Decoder().decodeBuffer(certificate);
-            ASN1InputStream juhu = new ASN1InputStream (keyBytes);
-            DERObject obj = juhu.readObject();
-            ASN1Sequence seq = ASN1Sequence.getInstance(obj);
-            X509CertificateObject newObject = new X509CertificateObject(new X509CertificateStructure(seq));
-            // Private Key auslesen
-            InputStream is = getInputStreamFromString(s);
-            is.reset();
-            // todo check MyCertTools
-            // PrivateKey key = MyCertTools.getPrivatefromPEM(is, "");
-            PrivateKey key = null;
-            is.close();
-            X509Certificate [] chain = new X509Certificate[1];
-            chain[0] = newObject;
+            ArrayList<X509Certificate> chain = new ArrayList<X509Certificate>(1);
+
+            PEMReader pemReader = new PEMReader(new InputStreamReader(in),
+                    new PasswordFinder() {
+                        @Override
+                        public char[] getPassword() {
+
+                            return params.getPassphrase().toCharArray();
+                            //return new char[0];  // not required here
+                        }
+                    } );
+
+            Object obj;
+            while ((obj = pemReader.readObject()) != null) {
+                if (obj instanceof X509Certificate ) {
+                    X509Certificate cert = ( X509Certificate ) obj;
+                    System.out.println( "read cert: " + cert.toString() );
+                    chain.add( cert );
+                }
+                if (obj instanceof KeyPair ) {
+                    keyPair = ( KeyPair ) obj;
+                    System.out.println( "read keypair: " + keyPair.toString() );
+                    System.out.println( "read keypair: " + keyPair.getPrivate() );
+                    System.out.println( "read keypair: " + keyPair.getPublic() );
+                }
+            }
+
             // ---------- CUSTOM PART END ----------
-            
-//            if (logger.isDebugEnabled()) {
-//                logger.debug("Reading " + size + " certs");
-//            }
-//            
-//            X509Certificate [] chain = new X509Certificate[size];
-//            
+//
 //            for (int i=0;i<size;i++) {
 //                chain[i] = certFactory.loadCertificate(in);
 //                System.out.println("Received cert: " + chain[i].getSubjectDN());
@@ -269,19 +270,20 @@ public class ExtMyProxy extends MyProxy{
 //            // get the response
 //            handleReply(in);
 //
-//            // make sure the private key belongs to the right public key
-//            // currently only works with RSA keys
-//            RSAPublicKey pkey   = (RSAPublicKey)chain[0].getPublicKey();
-//            RSAPrivateKey prkey = (RSAPrivateKey)keyPair.getPrivate();
-//            
-//            if (!pkey.getModulus().equals(prkey.getModulus())) {
-//                throw new MyProxyException("Private/Public key mismatch!");
-//            }
+            // make sure the private key belongs to the right public key
+            // currently only works with RSA keys
+            RSAPublicKey pkey   = (RSAPublicKey)chain.get( 0 ).getPublicKey();
+            RSAPrivateKey prkey = (RSAPrivateKey)keyPair.getPrivate();
+
+            if (!pkey.getModulus().equals(prkey.getModulus())) {
+                throw new MyProxyException("Private/Public key mismatch!");
+            }
             
             GlobusCredential newCredential = null;
             
-            newCredential = new GlobusCredential(key, chain);
-            
+            newCredential = new GlobusCredential(keyPair.getPrivate(),
+                    chain.toArray( new X509Certificate[chain.size()]) );
+
             return new GlobusGSSCredentialImpl(newCredential, GSSCredential.INITIATE_AND_ACCEPT);
             
         } catch(Exception e) {
@@ -316,6 +318,16 @@ public class ExtMyProxy extends MyProxy{
     {
         byte[] bytes = str.getBytes("UTF-8");
         return new ByteArrayInputStream(bytes);
+    }
+    
+    private GSSCredential getAnonymousCredential() 
+        throws GSSException {
+        GSSManager manager = ExtendedGSSManager.getInstance();
+        GSSName anonName = manager.createName((String)null, null);
+        return manager.createCredential(anonName,
+                                        GSSCredential.INDEFINITE_LIFETIME,
+                                        (Oid)null,
+                                        GSSCredential.INITIATE_AND_ACCEPT);
     }
     
     
@@ -488,9 +500,7 @@ public class ExtMyProxy extends MyProxy{
             sb.append((char) c);
         }
         if (sb.length() > 0) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Received line: " + sb);
-            }
+            logger.debug("Received line: " + sb);
             return new String(sb);
         }
         return null;

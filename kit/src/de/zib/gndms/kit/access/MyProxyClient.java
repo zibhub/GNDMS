@@ -16,10 +16,10 @@
 
 package de.zib.gndms.kit.access;
 
-import de.zib.gndms.kit.security.myproxyext.RetrieveParams;
+import de.zib.gndms.kit.access.myproxyext.ExtMyProxy;
+import de.zib.gndms.kit.access.myproxyext.RetrieveParams;
 import org.globus.gsi.GlobusCredentialException;
 import org.globus.myproxy.GetParams;
-import org.globus.myproxy.MyProxy;
 import org.globus.myproxy.MyProxyException;
 import org.ietf.jgss.GSSCredential;
 import org.ietf.jgss.GSSException;
@@ -34,7 +34,7 @@ import java.io.IOException;
  */
 public class MyProxyClient {
 
-    private MyProxy myProxy;
+    private ExtMyProxy myProxy;
 
     // connectionCredention can by any certificate accepted by the
     // myproxy-server (user, container or host cert doesn't
@@ -49,7 +49,7 @@ public class MyProxyClient {
     private int lifetime; ///< Credential lifetime
 
 
-    public MyProxyClient( MyProxy myProxy ) {
+    public MyProxyClient( ExtMyProxy myProxy ) {
         this.myProxy = myProxy;
     }
 
@@ -84,7 +84,7 @@ public class MyProxyClient {
      * @throws org.globus.myproxy.MyProxyException
      * @throws java.io.IOException
      */
-    public GSSCredential retrive( String login, String passwd ) throws GSSException,
+    public GSSCredential retrieve( String login, String passwd ) throws GSSException,
             GlobusCredentialException, MyProxyException, IOException {
 
         // this is the get request for the myproxy server
@@ -94,7 +94,7 @@ public class MyProxyClient {
         retrieveParams.setCredentialName( credentialName );
         retrieveParams.setLifetime( lifetime * 3600 );
 
-        return myProxy.get( connectionCredential, retrieveParams );
+        return myProxy.retrieve( connectionCredential, retrieveParams );
     }
 
 
