@@ -21,6 +21,7 @@ import org.globus.myproxy.MyProxyException;
 import org.gridforum.jgss.ExtendedGSSCredential;
 import org.ietf.jgss.GSSCredential;
 import org.ietf.jgss.GSSException;
+import org.kohsuke.args4j.Option;
 
 import java.io.IOException;
 
@@ -31,6 +32,10 @@ import java.io.IOException;
  * @brief
  */
 public class MyProxyTest extends MyProxyTestBase {
+
+
+    @Option( name="-rpass", usage="passphrase for retrieve", required=true )
+    protected String retrievePassphrase;
 
 
     public static void main( String[] args ) throws Exception {
@@ -67,8 +72,7 @@ public class MyProxyTest extends MyProxyTestBase {
         MyProxyClient myProxyClient = new MyProxyClient( getMyProxy() );
         myProxyClient.setConnectionCredential( connectionCredential );
 
-
-        GSSCredential newCred = myProxyClient.retrieve( username, "myproxy20testpass12" );
+        GSSCredential newCred = myProxyClient.retrieve( username, retrievePassphrase );
 
 
         String path = credentialToFile( ( ExtendedGSSCredential ) newCred );

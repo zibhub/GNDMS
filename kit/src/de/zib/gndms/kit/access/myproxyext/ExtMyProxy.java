@@ -237,23 +237,19 @@ public class ExtMyProxy extends MyProxy{
                         public char[] getPassword() {
 
                             return params.getPassphrase().toCharArray();
-                            //return new char[0];  // not required here
                         }
                     } );
 
             Object obj;
             while ((obj = pemReader.readObject()) != null) {
-                if (obj instanceof X509Certificate ) {
+
+                if ( obj instanceof X509Certificate ) {
                     X509Certificate cert = ( X509Certificate ) obj;
-                    System.out.println( "read cert: " + cert.toString() );
                     chain.add( cert );
-                }
-                if (obj instanceof KeyPair ) {
+                } else  if ( obj instanceof KeyPair ) {
                     keyPair = ( KeyPair ) obj;
-                    System.out.println( "read keypair: " + keyPair.toString() );
-                    System.out.println( "read keypair: " + keyPair.getPrivate() );
-                    System.out.println( "read keypair: " + keyPair.getPublic() );
-                }
+                } else
+                    logger.debug( "unhandled token: " + obj.getClass().getName() );
             }
 
             // ---------- CUSTOM PART END ----------

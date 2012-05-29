@@ -41,6 +41,15 @@ public class MyProxyTestStore extends MyProxyTestBase {
     @Option( name="-y", usage="file containing the cert to store", required = true)
     protected String privateKeyFile;
 
+    @Option( name="-pass", usage="store pass-phrase", required = true)
+    protected String storePassphrase;
+
+    @Option( name="-pkpass", usage="pass-phrase for encrypted rsa-key. (ignored if the key isn't " +
+                                   "" +
+                                   "encrypted" )
+    protected String pkPassphrase;
+
+
     public static void main( String[] args ) throws Exception {
         (new MyProxyTestStore() ).run( args );
         System.exit( 0 );
@@ -68,16 +77,16 @@ public class MyProxyTestStore extends MyProxyTestBase {
         final MyProxy myProxy = getMyProxy();
 
         StoreParams storeParams = new StoreParams();
-        storeParams.setUserName( "mjorra" );
-        storeParams.setPassphrase( "myproxy20testpass12" );
+        storeParams.setUserName( username );
+        //storeParams.setPassphrase( storePassphrase );
 
 
         CertStuffHolder certStuff = PemReaderTest.readKeyPair( new File( privateKeyFile ),
-                "my20Cert12".toCharArray() );
+                pkPassphrase.toCharArray() );
 
         final BouncyCastleOpenSSLKey openSSLKey = new BouncyCastleOpenSSLKey( certStuff.getKeyPair()
                 .getPrivate() );
-        openSSLKey.encrypt( "myproxy20testpass12".getBytes() );
+        openSSLKey.encrypt( storePassphrase.getBytes() );
         myProxy.store( connectionCredential, certStuff.getChain().toArray( new
                 X509Certificate[1] ), openSSLKey, storeParams );
 
