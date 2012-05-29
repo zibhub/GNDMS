@@ -538,7 +538,7 @@ define 'gndms' do
         package(:war).include _('../LICENSE'), :path=>"WEB-INF/classes/META-INF"
         package(:war).include _('../GNDMS-RELEASE'), :path=>"WEB-INF/classes/META-INF"
 
-        libs = []
+        libs = [ VOLD_CLIENT ]
         [ 'gorfx', 'dspace', 'infra', 'logic', 'kit', 'stuff', 'neomodel', 'model', 'gndmc-rest', 'common' ].each { |mod| 
             project( mod ).compile.dependencies.map( &:to_s ).each  { |lib| libs << lib }
             libs << project( mod ).package(:jar)
@@ -553,11 +553,11 @@ end
 
 task 'deploy-gndms-rest' do
 
-    def mkJettyProps( src, hostname, port)
-        mkProps(  src, "#{ENV['JETTY_HOME']}/gndms/", hostname, port )
+    def mkJettyProps( src, hostname, port, hostcert, hostkey, hostca)
+        mkProps(  src, "#{ENV['JETTY_HOME']}/gndms/", hostname, port, hostcert, hostkey, hostca )
     end 
 
-    def mkProps( src, tgt, hostname, port)
+    def mkProps( src, tgt, hostname, port, hostcert, hostkey, hostca)
         props = eval IO.read ( "etc/#{src}" )
         propFile = File.new( "#{tgt}/#{src}" , 'w')
         propFile.write( props )
@@ -579,16 +579,34 @@ task 'deploy-gndms-rest' do
 
     hostname = `hostname -f`.chomp
     if ( ENV['GNDMS_PORT'] == nil )
-        port = '8080'
+        port = '8443'
     else 
         port = ENV['GNDMS_PORT'] 
     end
 
-    mkJettyProps( 'grid.properties', hostname, port )
-    mkJettyProps( 'log4j.properties', hostname, port )
+    if ( ENV['GNDMS_HOSTCERT'] == nil )
+        hostcert = '/etc/grid-security/gndmscert.pem'
+    else 
+        hostcert = ENV['GNDMS_HOSTCERT'] 
+    end
+
+    if ( ENV['GNDMS_HOSTKEY'] == nil )
+        hostcert = '/etc/grid-security/gndmskey.pem'
+    else 
+        hostcert = ENV['GNDMS_HOSTKEY'] 
+    end
+
+    if ( ENV['GNDMS_HOSTCA'] == nil )
+        hostcert = '/etc/grid-security/30ffc224.0'
+    else 
+        hostcert = ENV['GNDMS_HOSTCA'] 
+    end
+
+    mkJettyProps( 'grid.properties', hostname, port, hostcert, hostkey, hostca )
+    mkJettyProps( 'log4j.properties', hostname, port, hostcert, hostkey, hostca )
 
     puts "installing monitor.properties to #{ENV['GNDMS_SHARED']}"
-    mkProps( 'monitor.properties', "#{ENV['GNDMS_SHARED']}", hostname, port )
+    mkProps( 'monitor.properties', "#{ENV['GNDMS_SHARED']}", hostname, port, hostcert, hostkey, hostca )
 
     puts "installing context to #{ENV['JETTY_HOME']}/contexts"
     cp( "etc/gndms.xml",  "#{ENV['JETTY_HOME']}/contexts" )

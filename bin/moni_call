@@ -3,12 +3,12 @@
 
 FILE="$1"
 
-HOST=`cat $FILE | grep ^monitor.host | cut -d= -f2-`
-PORT=`cat $FILE | grep ^monitor.port | cut -d= -f2-`
-USER=`cat $FILE | grep ^monitor.user | cut -d= -f2-`
-PRFX=`cat $FILE | grep ^monitor.prefix | cut -d= -f2-`
-MIME=`cat $FILE | grep ^monitor.content-type | cut -d= -f2-`
-GRID=`cat $FILE | grep ^monitor.grid | cut -d= -f2-`
+HOST=`cat $FILE | grep "^monitor.host=" | cut -d= -f2-`
+PORT=`cat $FILE | grep "^monitor.port=" | cut -d= -f2-`
+USER=`cat $FILE | grep "^monitor.user=" | cut -d= -f2-`
+PRFX=`cat $FILE | grep "^monitor.prefix=" | cut -d= -f2-`
+MIME=`cat $FILE | grep "^monitor.content-type=" | cut -d= -f2-`
+GRID=`cat $FILE | grep "^monitor.grid=" | cut -d= -f2-`
 shift
 
 if [ "x$PRFX" != "x" ] ; then
@@ -56,14 +56,15 @@ outfile=$( mktemp /tmp/moni_call.XXXXXX )
 # invoke curl an store the HTTPStatus in hstatus
 curlcmd="curl -X POST -H\"DN:$USER\" -H\"content-type:$MIME\" --data \"$PREST\"\
     --write-out %{http_code} --silent --output $outfile \
-    http://"$HOST":"$PORT"/${PRFX}${GRID}gorfx/config/$PCLASSNAME"
+    --cert $GNDMS_HOSTCERT --key $GNDMS_HOSTKEY --cacert $GNDMS_HOSTCA \
+    https://"$HOST":"$PORT"/${PRFX}${GRID}gorfx/config/$PCLASSNAME"
 #echo $curlcmd
 hstatus=$( eval $curlcmd )
 
 [ -n "$verbose" ] && echo " "
 [ -n "$verbose" ] && cat $outfile
 
-if [ "$hstatus" -ne "200" ]; then
+if [ "$hstatus" != "200" ]; then
     retval=1
     [ -n "$verbose" ] && echo "<<<<<<<< FAILED (Http-Status: $hstatus)"
 else 
