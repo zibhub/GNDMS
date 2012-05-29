@@ -245,9 +245,9 @@ public abstract class AbstractClient {
 	 * @param wid The workflow id.
 	 * @return The response as entity with Void body.
 	 */
-	protected final ResponseEntity<Void> unifiedDelete(final String url,
+	protected final ResponseEntity<Integer> unifiedDelete(final String url,
 			final String dn, final String wid) {
-		return unifiedX(HttpMethod.DELETE, Void.class, null, url, dn, wid);
+		return unifiedX(HttpMethod.DELETE, Integer.class, 42, url, dn, wid);
 	}
 
 

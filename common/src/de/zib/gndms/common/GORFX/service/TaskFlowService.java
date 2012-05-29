@@ -62,7 +62,7 @@ public interface TaskFlowService {
      *     - 404 if the taskflow doesn't exist.
      *     - 403 if the caller isn't allowed to remove the task.
      */
-    ResponseEntity<Void> deleteTaskflow( String type, String id, String dn, String wid );
+    ResponseEntity< Integer > deleteTaskflow( String type, String id, String dn, String wid );
     
     /** @brief Delivers the order of the task flow.
      * 
@@ -160,7 +160,7 @@ public interface TaskFlowService {
      *
      * \note I think this is required.
      */
-    ResponseEntity<Void> deleteQuotes( String type, String id, int idx, String dn, String wid );
+    ResponseEntity< Integer > deleteQuotes( String type, String id, int idx, String dn, String wid );
 
     /** 
      * @brief Requests the task of the taskflow.

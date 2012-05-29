@@ -92,7 +92,7 @@ public interface TaskService {
      * @return HTTP-Status 200 if deletion was successful, 403 if the
      * user wasn't allowed to remove the task.
      */
-    ResponseEntity<Void> deleteTask( String id, String dn, String wid );
+    ResponseEntity<Integer> deleteTask( String id, String dn, String wid );
 
     /** 
      * @brief Delives the status of a task.
@@ -122,7 +122,7 @@ public interface TaskService {
      *      - 403 if the user wasn't allowed to remove the task.
      *      - 400 if the status can't be changed to \c status.
      */
-    ResponseEntity<Void> changeStatus( String id, TaskControl status, String dn, String wid );
+    ResponseEntity<Integer> changeStatus( String id, TaskControl status, String dn, String wid );
 
     /** 
      * @brief Delivers the result of the task.

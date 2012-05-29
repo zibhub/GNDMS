@@ -57,7 +57,7 @@ public class TaskFlowClient extends AbstractClient implements TaskFlowService {
 	}
 
 	@Override
-	public final ResponseEntity<Void> deleteTaskflow(final String type, final String id, final String dn, final String wid) {
+	public final ResponseEntity< Integer > deleteTaskflow(final String type, final String id, final String dn, final String wid) {
 		return unifiedDelete( getServiceURL() + "/gorfx/_" + type + "/_" + id, dn, wid);
 	}
 
@@ -100,7 +100,7 @@ public class TaskFlowClient extends AbstractClient implements TaskFlowService {
 	}
 
 
-	public final ResponseEntity<Void> deleteQuotes(final String type, final String id, final int idx,
+	public final ResponseEntity< Integer > deleteQuotes(final String type, final String id, final int idx,
 			final String dn, final String wid) {
 		return unifiedDelete( getServiceURL() + "/gorfx/_" + type + "/_" + id
 				+ "/quote/_" + idx, dn, wid);

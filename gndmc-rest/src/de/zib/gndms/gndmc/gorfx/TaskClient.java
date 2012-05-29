@@ -78,7 +78,7 @@ public class TaskClient extends AbstractClient implements TaskService {
     }
 
 
-    public ResponseEntity<Void> deleteTask( final String id, String dn, String wid ) {
+    public ResponseEntity<Integer> deleteTask( final String id, String dn, String wid ) {
         return unifiedDelete(
             uriFactory.taskUri( new HashMap<String, String>() {{
                 put( "service", "gorfx" );
@@ -96,8 +96,8 @@ public class TaskClient extends AbstractClient implements TaskService {
     }
 
 
-    public ResponseEntity<Void> changeStatus( final String id, TaskControl status, String dn, String wid ) {
-        return unifiedPost( Void.class,
+    public ResponseEntity<Integer> changeStatus( final String id, TaskControl status, String dn, String wid ) {
+        return unifiedPost( Integer.class,
             uriFactory.taskUri( new HashMap<String, String>() {{
                 put( "service", "gorfx" );
                 put( "taskId", id );

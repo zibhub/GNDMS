@@ -116,7 +116,7 @@ public class TaskServiceImpl implements TaskService {
 
     @RequestMapping( value = "/_{id}", method = RequestMethod.DELETE )
     @Secured( "ROLE_USER" )
-    public ResponseEntity<Void> deleteTask( @PathVariable String id, @RequestHeader( "DN" ) String dn,
+    public ResponseEntity< Integer > deleteTask( @PathVariable String id, @RequestHeader( "DN" ) String dn,
                                               @RequestHeader( "WId" ) String wid ) {
 
         logger.debug( "delete task called with id " + id );
@@ -132,7 +132,7 @@ public class TaskServiceImpl implements TaskService {
             session.finish();
         }
 
-        return new ResponseEntity<Void>( null, getHeader( id, null, dn, wid  ), HttpStatus.OK );
+        return new ResponseEntity< Integer >( null, getHeader( id, null, dn, wid  ), HttpStatus.OK );
     }
 
 
@@ -157,7 +157,7 @@ public class TaskServiceImpl implements TaskService {
 
     @RequestMapping( value = "/_{id}/status", method = RequestMethod.POST )
     @Secured( "ROLE_USER" )
-    public ResponseEntity<Void> changeStatus( @PathVariable String id, @RequestBody TaskControl status,
+    public ResponseEntity< Integer > changeStatus( @PathVariable String id, @RequestBody TaskControl status,
                                               @RequestHeader( "DN" ) String dn,
                                               @RequestHeader( "WId" ) String wid ) {
 
