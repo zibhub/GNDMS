@@ -45,7 +45,6 @@ public class MyProxyTestStore extends MyProxyTestBase {
     protected String storePassphrase;
 
     @Option( name="-pkpass", usage="pass-phrase for encrypted rsa-key. (ignored if the key isn't " +
-                                   "" +
                                    "encrypted" )
     protected String pkPassphrase;
 

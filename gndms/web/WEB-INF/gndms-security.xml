@@ -103,8 +103,7 @@
     <bean id="http403EntryPoint"
           class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint"/>
 
-    <!-- this interceptor enforces the uses of https channel security
-    -->
+    <!-- this interceptor enforces the uses of https channel security -->
     <bean id="channelSec" class="org.springframework.security.web.access.channel.ChannelProcessingFilter">
         <property name="channelDecisionManager" ref="channelDecisionManager"/>
         <property name="securityMetadataSource">
