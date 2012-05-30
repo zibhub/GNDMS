@@ -576,7 +576,12 @@ task 'deploy-gndms-rest' do
         puts "already exists. Skipping..."
     end
 
-    hostname = `hostname -f`.chomp
+    if ( ENV['GNDMS_HOST'] == nil )
+    	hostname = `hostname -f`.chomp
+    else 
+        hostname = ENV['GNDMS_HOST'] 
+    end
+
     if ( ENV['GNDMS_PORT'] == nil )
         port = '8443'
     else 
@@ -590,15 +595,15 @@ task 'deploy-gndms-rest' do
     end
 
     if ( ENV['GNDMS_HOSTKEY'] == nil )
-        hostcert = '/etc/grid-security/gndmskey.pem'
+        hostkey = '/etc/grid-security/gndmskey.pem'
     else 
-        hostcert = ENV['GNDMS_HOSTKEY'] 
+        hostkey = ENV['GNDMS_HOSTKEY'] 
     end
 
     if ( ENV['GNDMS_HOSTCA'] == nil )
-        hostcert = '/etc/grid-security/30ffc224.0'
+        hostca = '/etc/grid-security/30ffc224.0'
     else 
-        hostcert = ENV['GNDMS_HOSTCA'] 
+        hostca = ENV['GNDMS_HOSTCA'] 
     end
 
     mkJettyProps( 'grid.properties', hostname, port, hostcert, hostkey, hostca )

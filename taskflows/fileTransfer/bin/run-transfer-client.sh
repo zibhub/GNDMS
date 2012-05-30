@@ -1,12 +1,12 @@
 #!/bin/bash
 
-args=( "-uri" "http://localhost:${GNDMS_PORT:=8080}/gndms/c3grid/" "-dn" "foo" )
+args=( "-uri" "https://csr-pc45.zib.de:8443/c3grid/" "-dn" "admin" )
 
 cp="$HOME/.m2/repository/commons-codec/commons-codec/1.4/commons-codec-1.4.jar:$cp"
 cp="$HOME/.m2/repository/org/slf4j/jcl-over-slf4j/1.6.3/jcl-over-slf4j-1.6.3.jar:$cp"
-cp="$GNDMS_SOURCE/lib/stuff/gndms-stuff-0.6.0.jar:$cp"
-cp="$GNDMS_SOURCE/lib/common/gndms-common-0.6.0.jar:$cp"
-cp="$GNDMS_SOURCE/lib/gndmc-rest/gndms-gndmc-rest-0.6.0.jar:$cp"
+cp="$GNDMS_SOURCE/GNDMS/lib/stuff/gndms-stuff-0.6.1.jar:$cp"
+cp="$GNDMS_SOURCE/GNDMS/lib/common/gndms-common-0.6.1.jar:$cp"
+cp="$GNDMS_SOURCE/GNDMS/lib/gndmc-rest/gndms-gndmc-rest-0.6.1.jar:$cp"
 cp="$HOME/.m2/repository/com/intellij/annotations/7.0.3/annotations-7.0.3.jar:$cp"
 cp="$HOME/.m2/repository/joda-time/joda-time/1.6/joda-time-1.6.jar:$cp"
 cp="$HOME/.m2/repository/args4j/args4j/2.0.14/args4j-2.0.14.jar:$cp"
@@ -35,7 +35,8 @@ cp="$HOME/.m2/repository/org/codehaus/woodstox/wstx-asl/3.2.7/wstx-asl-3.2.7.jar
 cp="$HOME/.m2/repository/org/jdom/jdom/1.1/jdom-1.1.jar:$cp"
 cp="$HOME/.m2/repository/xom/xom/1.1/xom-1.1.jar:$cp"
 cp="$HOME/.m2/repository/xpp3/xpp3_min/1.1.4c/xpp3_min-1.1.4c.jar:$cp"
-cp="$GNDMS_SOURCE/taskflows/fileTransfer/lib/client/transfer-client-0.6.0.jar:$cp"
+cp="$HOME/.m2/repository/stax/stax/1.2.0/stax-1.2.0.jar:$cp"
+cp="$GNDMS_SOURCE/GNDMS/taskflows/fileTransfer/client/fileTransfer-client/production:$cp"
 
 props=( )
 
