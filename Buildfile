@@ -552,11 +552,11 @@ end
 
 task 'deploy-gndms-rest' do
 
-    def mkJettyProps( src, hostname, port, hostcert, hostkey, hostca)
-        mkProps(  src, "#{ENV['JETTY_HOME']}/gndms/", hostname, port, hostcert, hostkey, hostca )
+    def mkJettyProps( src, hostname, port, unsecureport, hostcert, hostkey, hostca)
+        mkProps(  src, "#{ENV['JETTY_HOME']}/gndms/", hostname, port, unsecureport, hostcert, hostkey, hostca )
     end 
 
-    def mkProps( src, tgt, hostname, port, hostcert, hostkey, hostca)
+    def mkProps( src, tgt, hostname, port, unsecureport, hostcert, hostkey, hostca)
         props = eval IO.read ( "etc/#{src}" )
         propFile = File.new( "#{tgt}/#{src}" , 'w')
         propFile.write( props )
@@ -582,10 +582,16 @@ task 'deploy-gndms-rest' do
         hostname = ENV['GNDMS_HOST'] 
     end
 
-    if ( ENV['GNDMS_PORT'] == nil )
+    if ( ENV['GNDMS_SECURE_PORT'] == nil )
         port = '8443'
     else 
-        port = ENV['GNDMS_PORT'] 
+        port = ENV['GNDMS_SECURE_PORT'] 
+    end
+
+    if ( ENV['GNDMS_UNSECURE_PORT'] == nil )
+        unsecureport = '8080'
+    else 
+        unsecureport = ENV['GNDMS_UNSECURE_PORT'] 
     end
 
     if ( ENV['GNDMS_HOSTCERT'] == nil )
@@ -606,11 +612,11 @@ task 'deploy-gndms-rest' do
         hostca = ENV['GNDMS_HOSTCA'] 
     end
 
-    mkJettyProps( 'grid.properties', hostname, port, hostcert, hostkey, hostca )
-    mkJettyProps( 'log4j.properties', hostname, port, hostcert, hostkey, hostca )
+    mkJettyProps( 'grid.properties', hostname, port, unsecureport, hostcert, hostkey, hostca )
+    mkJettyProps( 'log4j.properties', hostname, port, unsecureport, hostcert, hostkey, hostca )
 
     puts "installing monitor.properties to #{ENV['GNDMS_SHARED']}"
-    mkProps( 'monitor.properties', "#{ENV['GNDMS_SHARED']}", hostname, port, hostcert, hostkey, hostca )
+    mkProps( 'monitor.properties', "#{ENV['GNDMS_SHARED']}", hostname, port, unsecureport, hostcert, hostkey, hostca )
 
     puts "installing context to #{ENV['JETTY_HOME']}/contexts"
     cp( "etc/gndms.xml",  "#{ENV['JETTY_HOME']}/contexts" )
