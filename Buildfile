@@ -531,7 +531,7 @@ define 'gndms' do
     desc 'Creating the gndms war'
     define 'gndms', :layout => dmsLayout('gndms', 'gndms-rest') do
 
-        compile.with project('stuff'), SPRING, SPRING_SECURITY, SLF4J
+        compile.with project('stuff'), SPRING, SPRING_SECURITY, SLF4J, SERVLET
 
         package(:war).include _('src/log4j.properties'), :path=>"WEB-INF/classes"
         package(:war).include _('../LICENSE'), :path=>"WEB-INF/classes/META-INF"

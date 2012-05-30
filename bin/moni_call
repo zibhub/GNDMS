@@ -56,8 +56,8 @@ outfile=$( mktemp /tmp/moni_call.XXXXXX )
 # invoke curl an store the HTTPStatus in hstatus
 curlcmd="curl -X POST -H\"DN:$USER\" -H\"content-type:$MIME\" --data \"$PREST\"\
     --write-out %{http_code} --silent --output $outfile \
-    --cert $GNDMS_HOSTCERT --key $GNDMS_HOSTKEY --cacert $GNDMS_HOSTCA \
-    https://"$HOST":"$PORT"/${PRFX}${GRID}gorfx/config/$PCLASSNAME"
+    http://"$HOST":"$PORT"/${PRFX}${GRID}gorfx/config/$PCLASSNAME"
+# --cert $GNDMS_HOSTCERT --key $GNDMS_HOSTKEY --cacert $GNDMS_HOSTCA \
 #echo $curlcmd
 hstatus=$( eval $curlcmd )
 
