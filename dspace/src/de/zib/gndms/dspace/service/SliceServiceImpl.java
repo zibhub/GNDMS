@@ -67,6 +67,7 @@ public class SliceServiceImpl implements SliceService {
 
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	private EntityManagerFactory emf;
+    private String localBaseUrl;
     private String baseUrl;
 	private SubspaceProvider subspaceProvider;
 	private SliceKindProvider sliceKindProvider;
@@ -229,7 +230,7 @@ public class SliceServiceImpl implements SliceService {
             final Taskling ling = sliceProvider.deleteSlice(subspaceId, sliceId);
 
             // get service facets of task
-            final TaskClient client = new TaskClient( baseUrl );
+            final TaskClient client = new TaskClient( localBaseUrl );
             client.setRestTemplate( restTemplate );
             final Specifier< Facets > spec =
                     TaskClient.TaskServiceAux.getTaskSpecifier( client, ling.getId(), uriFactory, null, dn );
@@ -598,7 +599,19 @@ public class SliceServiceImpl implements SliceService {
 		this.baseUrl = baseUrl;
 	}
 
-	/**
+
+    /**
+     * Sets the local base url of this sliceId service.
+     *
+     * @param localBaseUrl
+     *            the localBaseUrl to set
+     */
+    public void setLocalBaseUrl( String localBaseUrl ) {
+        this.localBaseUrl = localBaseUrl;
+    }
+
+
+    /**
 	 * Returns the facets of this sliceId service.
 	 * 
 	 * @return the sliceFacets

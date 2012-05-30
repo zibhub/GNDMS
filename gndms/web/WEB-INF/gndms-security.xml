@@ -79,7 +79,7 @@
             <bean id="userDetailsServiceWrapper"
                     class="de.zib.gndms.gndms.security.HostAndUserDetailsService">
                 <property name="userDetailsService" ref="userDetailsService"/>
-                <property name="allowedHostsFileName" value="/tmp/gndms-allowed-hosts" />
+                <property name="allowedHostsFileName" value="/etc/grid-security/gndms-allowed-hosts" />
             </bean>
         </property>
     </bean>
@@ -88,7 +88,7 @@
     <bean id="userDetailsService"
           class="de.zib.gndms.gndms.security.GridMapUserDetailsService">
         <property name="gridMapfileName" value="/etc/grid-security/grid-mapfile" />
-        <property name="adminGridMapfileName" value="/tmp/gndms-admins" />
+        <property name="adminGridMapfileName" value="/etc/grid-security/gndms-admins" />
     </bean>
     
     <!-- this authentication manager uses a provider ot make authentication decisions -->

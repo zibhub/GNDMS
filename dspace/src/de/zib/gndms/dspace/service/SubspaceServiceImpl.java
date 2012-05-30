@@ -58,6 +58,7 @@ import java.util.*;
 public class SubspaceServiceImpl implements SubspaceService {
     private final Logger logger = LoggerFactory.getLogger( this.getClass() );
 	private EntityManagerFactory emf;
+    private String localBaseUrl;
     private String baseUrl;
     private RestTemplate restTemplate;
 	private SubspaceProvider subspaceProvider;
@@ -143,7 +144,7 @@ public class SubspaceServiceImpl implements SubspaceService {
         try {
             final Taskling taskling = subspaceProvider.delete( subspaceId );
 
-            final TaskClient client = new TaskClient( baseUrl );
+            final TaskClient client = new TaskClient( localBaseUrl );
             client.setRestTemplate( restTemplate );
             final Specifier< Facets > spec =
                     TaskClient.TaskServiceAux.getTaskSpecifier( client, taskling.getId(), uriFactory, null, dn );
@@ -466,7 +467,15 @@ public class SubspaceServiceImpl implements SubspaceService {
 	}
 
 
-	/**
+    /**
+     * Sets the local base url of this subspace service.
+     * @param localBaseUrl the localBaseUrl to set
+     */
+    public void setLocalBaseUrl( String localBaseUrl ) {
+        this.localBaseUrl = localBaseUrl;
+    }
+
+    /**
 	 * Returns the subspace provider of this subspace service.
 	 * @return the subspaceProvider
 	 */

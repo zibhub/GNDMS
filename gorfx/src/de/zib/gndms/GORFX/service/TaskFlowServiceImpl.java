@@ -69,7 +69,8 @@ import java.util.*;
 public class TaskFlowServiceImpl implements TaskFlowService {
 
     // private ORQDao orqDao;
-    private String serviceUrl; // inject or read from properties, doesn't contain gorfx postfix
+    private String localBaseUrl;
+    private String baseUrl; // inject or read from properties, doesn't contain gorfx postfix
     private TaskFlowProvider taskFlowProvider;
     private final List<String> facetsNames = new ArrayList<String>( 6 );
     private UriFactory uriFactory;
@@ -87,8 +88,8 @@ public class TaskFlowServiceImpl implements TaskFlowService {
         facetsNames.add( "result" );
         facetsNames.add( "status" );
         facetsNames.add( "errors" );
-        uriFactory = new UriFactory( serviceUrl );
-        taskClient.setServiceURL( serviceUrl );
+        uriFactory = new UriFactory(baseUrl);
+        taskClient.setServiceURL( localBaseUrl );
     }
 
 
@@ -98,7 +99,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
         Map<String, String> uriargs = taskFlowUriMap( type, id );
 
-        GNDMSResponseHeader header = new GNDMSResponseHeader( uriFactory.taskFlowTypeUri( uriargs, null ), null, serviceUrl, dn, null );
+        GNDMSResponseHeader header = new GNDMSResponseHeader( uriFactory.taskFlowTypeUri( uriargs, null ), null, baseUrl, dn, null );
 
         if ( taskFlowProvider.exists( type ) ) {
             TaskFlow tf = taskFlowProvider.getFactoryForTaskFlow( type ).find( id );
@@ -452,7 +453,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     protected GNDMSResponseHeader getHeader( String type, String id, String facet, String dn, String wid ) {
 
         Map<String, String> uriargs = taskFlowUriMap( type, id );
-        return new GNDMSResponseHeader( uriFactory.taskFlowTypeUri( uriargs, facet ), facet, serviceUrl, dn, wid );
+        return new GNDMSResponseHeader( uriFactory.taskFlowTypeUri( uriargs, facet ), facet, baseUrl, dn, wid );
     }
 
 
@@ -525,10 +526,14 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     }
 
 
-    public void setServiceUrl( String serviceUrl ) {
-        this.serviceUrl = serviceUrl;
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
     }
 
+
+    public void setLocalBaseUrl( String localBaseUrl ) {
+        this.localBaseUrl = localBaseUrl;
+    }
 
     @Autowired
     public void setTaskFlowProvider( TaskFlowProvider taskFlowProvider ) {
