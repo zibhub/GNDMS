@@ -576,7 +576,12 @@ task 'deploy-gndms-rest' do
         puts "already exists. Skipping..."
     end
 
-    hostname = `hostname -f`.chomp
+    if ( ENV['GNDMS_HOST'] == nil )
+    	hostname = `hostname -f`.chomp
+    else 
+        hostname = ENV['GNDMS_HOST'] 
+    end
+
     if ( ENV['GNDMS_PORT'] == nil )
         port = '8443'
     else 
