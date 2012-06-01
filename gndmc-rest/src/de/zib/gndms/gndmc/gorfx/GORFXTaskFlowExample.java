@@ -59,9 +59,9 @@ public abstract class GORFXTaskFlowExample extends AbstractApplication {
     @Option( name="-myProxyPasswd", required = false, usage = "password name for the " +
                                                               "MyProxyServer." )
     protected String myProxyPasswd;
-    @Option( name="-localPasswd", required = true )
+    @Option( name="-localPasswd", required = true, usage = "Password for keystore." )
     protected String passwd;
-    @Option( name="-cred", required = true )
+    @Option( name="-cred", required = true, usage = "Keystore to use." )
     protected String keyStoreLocation;
 
 	protected String wid = UUID.randomUUID().toString();
