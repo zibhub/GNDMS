@@ -1,4 +1,4 @@
-require "#{ENV['GNDMS_REST']}/buildr/gndms_modules"
+require "#{ENV['GNDMS_SOURCE']}/buildr/gndms_modules"
 include GNDMS_MODULES
 
 PLUGIN_VERSION_NUMBER = '0.6.0-pre'
@@ -28,6 +28,16 @@ define PLUGIN_NAME do
       compile.with GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, TRANSFER_CLIENT, GNDMS_STUFF, GNDMS_GNDMC_REST, GNDMS_COMMON, JETBRAINS_ANNOTATIONS, JODA_TIME, ARGS4J, INJECT, GUICE, GT4_SERVLET, COMMONS_LANG, OPENJPA, SLF4J, JSON, SPRING
       compile
       package :jar
+
+      desc 'Runs the interSliceTransfer test client'
+	task 'run' do |t|
+	    jars = compile.dependencies.map(&:to_s)
+	    jars << compile.target.to_s
+	    args = [ '-uri', 'http://localhost:8080/gndms/c3grid/', '-dn', 'foo' ]
+	    props = {}
+	    runner = 'de.zib.gndms.taskflows.interSliceTransfer.client.InterSliceTransferExample'
+	    runJava( t.to_s, runner, args, jars, props )
+	end
     end
 
 
@@ -37,5 +47,12 @@ define PLUGIN_NAME do
 
       compile
       package :jar
+
+      desc 'deploys the transfer server jar'
+      task 'deploy' do
+          deploy_target = "#{ENV['JETTY_HOME']}/gndms"
+          cp project('transfer:server').package(:jar).to_s, deploy_target
+          cp project('transfer:client').package(:jar).to_s, deploy_target
+      end
     end
 end

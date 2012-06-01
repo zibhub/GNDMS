@@ -1,0 +1,46 @@
+#!/bin/bash
+
+args=( "-uri" "https://${GNDMS_HOST:-$(hostname -f)}:${GNDMS_PORT:-8443}/gndms/c3grid/" "-dn" "admin" )
+
+cp="$GNDMS_SOURCE/taskflows/fileTransfer/lib/client/transfer-client-0.6.0.jar:$cp"
+cp="$HOME/.m2/repository/com/google/guava/guava/10.0.1/guava-10.0.1.jar:$cp"
+cp="$HOME/.m2/repository/commons-fileupload/commons-fileupload/1.2.1/commons-fileupload-1.2.1.jar:$cp"
+cp="$HOME/.m2/repository/javax/servlet/servlet-api/2.4/servlet-api-2.4.jar:$cp"
+cp="$HOME/.m2/repository/portlet-api/portlet-api/1.0/portlet-api-1.0.jar:$cp"
+cp="$HOME/.m2/repository/commons-codec/commons-codec/1.4/commons-codec-1.4.jar:$cp"
+cp="$GNDMS_SOURCE/lib/common/gndms-common-0.6.1.jar:$cp"
+cp="$GNDMS_SOURCE/lib/stuff/gndms-stuff-0.6.1.jar:$cp"
+cp="$GNDMS_SOURCE/lib/gndmc-rest/gndms-gndmc-rest-0.6.1.jar:$cp"
+cp="$HOME/.m2/repository/com/intellij/annotations/7.0.3/annotations-7.0.3.jar:$cp"
+cp="$HOME/.m2/repository/joda-time/joda-time/1.6/joda-time-1.6.jar:$cp"
+cp="$HOME/.m2/repository/args4j/args4j/2.0.14/args4j-2.0.14.jar:$cp"
+cp="$HOME/.m2/repository/javax/inject/javax.inject/1/javax.inject-1.jar:$cp"
+cp="$HOME/.m2/repository/com/google/code/guice/guice/2.0/guice-2.0.jar:$cp"
+cp="$HOME/.m2/repository/commons-lang/commons-lang/2.1/commons-lang-2.1.jar:$cp"
+cp="$HOME/.m2/repository/org/apache/openjpa/openjpa-all/2.1.1/openjpa-all-2.1.1.jar:$cp"
+cp="$HOME/.m2/repository/org/slf4j/slf4j-log4j12/1.6.1/slf4j-log4j12-1.6.1.jar:$cp"
+cp="$HOME/.m2/repository/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar:$cp"
+cp="$HOME/.m2/repository/log4j/log4j/1.2.16/log4j-1.2.16.jar:$cp"
+cp="$HOME/.m2/repository/org/slf4j/slf4j-ext/1.6.1/slf4j-ext-1.6.1.jar:$cp"
+cp="$HOME/.m2/repository/ch/qos/cal10n/cal10n-api/0.7.4/cal10n-api-0.7.4.jar:$cp"
+cp="$HOME/.m2/repository/org/codehaus/jackson/jackson-core-lgpl/1.9.2/jackson-core-lgpl-1.9.2.jar:$cp"
+cp="$HOME/.m2/repository/org/codehaus/jackson/jackson-mapper-lgpl/1.9.2/jackson-mapper-lgpl-1.9.2.jar:$cp"
+cp="$HOME/.m2/repository/org/springframework/spring-aspects/3.1.0.RELEASE/spring-aspects-3.1.0.RELEASE.jar:$cp"
+cp="$HOME/.m2/repository/org/springframework/spring-instrument/3.1.0.RELEASE/spring-instrument-3.1.0.RELEASE.jar:$cp"
+cp="$HOME/.m2/repository/org/springframework/spring-jdbc/3.1.0.RELEASE/spring-jdbc-3.1.0.RELEASE.jar:$cp"
+cp="$HOME/.m2/repository/org/springframework/spring-orm/3.1.0.RELEASE/spring-orm-3.1.0.RELEASE.jar:$cp"
+cp="$HOME/.m2/repository/org/springframework/spring-tx/3.1.0.RELEASE/spring-tx-3.1.0.RELEASE.jar:$cp"
+cp="$HOME/.m2/repository/org/springframework/spring-webmvc/3.1.0.RELEASE/spring-webmvc-3.1.0.RELEASE.jar:$cp"
+cp="$HOME/.m2/repository/org/springframework/spring-aop/3.1.0.RELEASE/spring-aop-3.1.0.RELEASE.jar:$cp"
+cp="$HOME/.m2/repository/org/springframework/spring-asm/3.1.0.RELEASE/spring-asm-3.1.0.RELEASE.jar:$cp"
+cp="$HOME/.m2/repository/org/springframework/spring-beans/3.1.0.RELEASE/spring-beans-3.1.0.RELEASE.jar:$cp"
+cp="$HOME/.m2/repository/org/springframework/spring-context/3.1.0.RELEASE/spring-context-3.1.0.RELEASE.jar:$cp"
+cp="$HOME/.m2/repository/org/springframework/spring-core/3.1.0.RELEASE/spring-core-3.1.0.RELEASE.jar:$cp"
+cp="$HOME/.m2/repository/org/springframework/spring-expression/3.1.0.RELEASE/spring-expression-3.1.0.RELEASE.jar:$cp"
+cp="$HOME/.m2/repository/org/springframework/spring-oxm/3.1.0.RELEASE/spring-oxm-3.1.0.RELEASE.jar:$cp"
+cp="$HOME/.m2/repository/org/springframework/spring-web/3.1.0.RELEASE/spring-web-3.1.0.RELEASE.jar:$cp"
+cp="$GNDMS_SOURCE/taskflows/interSliceTransfer/client/interSliceTransfer-client/production:$cp"
+
+props=( )
+
+exec java -cp $cp ${props[@]} de.zib.gndms.taskflows.interslicetransfer.client.InterSliceTransferExample ${args[@]} $@
