@@ -1,6 +1,6 @@
 #!/bin/bash
 
-args=( "-uri" "https://${GNDMS_HOST:=localhost}:${GNDMS_UNSECURE_PORT:=8080}/gndms/c3grid/" "-dn" "admin" )
+args=( "-uri" "https://csr-pc35.zib.de:8443/gndms/c3grid/" "-dn" "$(grid-proxy-info -identity)" )
 
 cp="$HOME/.m2/repository/commons-codec/commons-codec/1.4/commons-codec-1.4.jar:$cp"
 cp="$HOME/.m2/repository/org/slf4j/jcl-over-slf4j/1.6.3/jcl-over-slf4j-1.6.3.jar:$cp"
@@ -40,4 +40,4 @@ cp="$GNDMS_SOURCE/taskflows/fileTransfer/client/fileTransfer-client/production:$
 
 props=( )
 
-exec java -cp $cp ${props[@]} de.zib.gndms.taskflows.filetransfer.client.FileTransferExample ${args[@]} $@
+exec java -cp $cp ${props[@]} de.zib.gndms.taskflows.filetransfer.client.FileTransferExample "${args[@]}" $@

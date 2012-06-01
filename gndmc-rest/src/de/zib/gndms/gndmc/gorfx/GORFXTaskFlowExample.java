@@ -59,10 +59,18 @@ public abstract class GORFXTaskFlowExample extends AbstractApplication {
     @Option( name="-myProxyPasswd", required = false, usage = "password name for the " +
                                                               "MyProxyServer." )
     protected String myProxyPasswd;
-    @Option( name="-localPasswd", required = true, usage = "Password for keystore." )
-    protected String passwd;
-    @Option( name="-cred", required = true, usage = "Keystore to use." )
+    @Option( name="-keystorePasswd", usage="password for the keystore", required=true )
+    protected String keystorePasswd;
+    @Option( name="-keystore", usage="the keystore holding the user creds (in JKS formate)",
+            required = true )
     protected String keyStoreLocation;
+    @Option( name="-keystoreCertPasswd", usage="password for the user-cert in the keystore if any")
+    protected String keystoreCertPasswd;
+
+    @Option( name="-truststore", usage="the keystore holding the CA creds (in JKS formate)" )
+    protected String trustStoreLocation;
+    @Option( name="-trustStorePasswd", usage="password for the truststore" )
+    protected String trustStorePasswd;
 
 	protected String wid = UUID.randomUUID().toString();
     private ApplicationContext context;
@@ -113,10 +121,10 @@ public abstract class GORFXTaskFlowExample extends AbstractApplication {
 
         SetupSSL setupSSL = new SetupSSL();
         setupSSL.setKeyStoreLocation( keyStoreLocation );
-        setupSSL.prepareKeyStore( passwd, "JKS" );
-        setupSSL.setTrustStoreLocation( keyStoreLocation );
-        setupSSL.prepareTrustStore( passwd, "JKS" );
-        setupSSL.setupDefaultSSLContext( passwd );
+        setupSSL.prepareKeyStore( keystorePasswd, "PKCS12" );
+        setupSSL.setTrustStoreLocation( trustStoreLocation );
+        setupSSL.prepareTrustStore( trustStorePasswd, "JKS" );
+        setupSSL.setupDefaultSSLContext( keystorePasswd );
         
         System.out.println( "SSL Context set." );
         

@@ -60,6 +60,7 @@ public class SetupSSL {
     }
 
 
+    // todo add support for encypted private keys as it was in the good old days
     public void prepareKeyStore( final String keyStorePassword, final String keyStoreType )
             throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException,
             UnrecoverableKeyException
