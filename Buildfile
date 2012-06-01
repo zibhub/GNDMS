@@ -607,7 +607,7 @@ task 'deploy-gndms-rest' do
     end
 
     if ( ENV['GNDMS_HOSTCA'] == nil )
-        hostca = '/etc/grid-security/30ffc224.0'
+        hostca = '/etc/grid-security/certificates/30ffc224.0'
     else 
         hostca = ENV['GNDMS_HOSTCA'] 
     end
