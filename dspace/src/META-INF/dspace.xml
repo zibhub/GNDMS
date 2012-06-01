@@ -91,6 +91,11 @@
         <property name="sliceFacetNames" ref="sliceFacetNames" />
         <property name="subspaceProvider" ref="subspaceProvider"/>
     </bean>
+    
+    <bean id="sliceClient" class="de.zib.gndms.gndmc.dspace.SliceClient">
+        <property name="serviceURL" value="${localBaseUrl}"/>
+        <property name="restTemplate" ref="restTemplate"/>
+    </bean>
 
     <bean id="sliceFacetNames" class="java.util.ArrayList">
         <constructor-arg>
