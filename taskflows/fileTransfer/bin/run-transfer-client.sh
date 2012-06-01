@@ -1,6 +1,6 @@
 #!/bin/bash
 
-args=( "-uri" "https://csr-pc35.zib.de:8443/gndms/c3grid/" "-dn" "$(grid-proxy-info -identity)" )
+args=( "-uri" "https://${GNDMS_HOST:-$(hostname -f)}:${GNDMS_PORT:-8443}/gndms/c3grid/" "-dn" "admin" )
 
 cp="$HOME/.m2/repository/commons-codec/commons-codec/1.4/commons-codec-1.4.jar:$cp"
 cp="$HOME/.m2/repository/org/slf4j/jcl-over-slf4j/1.6.3/jcl-over-slf4j-1.6.3.jar:$cp"
