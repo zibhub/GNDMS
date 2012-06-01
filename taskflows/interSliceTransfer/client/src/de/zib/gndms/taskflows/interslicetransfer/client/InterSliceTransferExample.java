@@ -56,7 +56,9 @@ public class InterSliceTransferExample extends GORFXTaskFlowExample {
         if( propFile.exists() ) {
             parameter.readFromFile( propFile );
             subspaceClient = createBean( SubspaceClient.class );
+            subspaceClient.setServiceURL( gorfxEpUrl );
             sliceClient = createBean( SliceClient.class );
+            sliceClient.setServiceURL( gorfxEpUrl );
             super.run();
         } else  {
             System.out.println( "Creating property template in: " + orderPropFile );
