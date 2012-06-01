@@ -28,7 +28,7 @@ define 'staging' do
         task 'run' do |t|
             jars = compile.dependencies.map(&:to_s)
             jars << compile.target.to_s
-            args = [ '-uri', 'http://localhost:8080/c3grid/', '-dn', 'foo' ] 
+            args = [ '-uri', 'http://localhost:8443/gndms/c3grid/', '-dn', 'foo' ] 
             props = {}
             runner = 'de.zib.gndms.taskflows.staging.client.ProviderStageInExample'
             runJava( t.to_s, runner, args, jars, props )
