@@ -46,13 +46,14 @@ define PLUGIN_NAME do
       compile.with project('client'), GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, TRANSFER_CLIENT, GNDMS_STUFF, GNDMS_GNDMC_REST, GNDMS_COMMON, GNDMS_MODEL, GNDMS_NEOMODEL, GNDMS_KIT, GNDMS_LOGIC, GNDMS_INFRA, GNDMS_DSPACE, GNDMS_GORFX, TRANSFER_SERVER, JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, INJECT, GUICE, GT4_SERVLET, COMMONS_LANG, OPENJPA, SLF4J, JSON, SPRING
 
       compile
+      meta_inf << file( _( 'src/META-INF/services' ) )
       package :jar
 
       desc 'deploys the transfer server jar'
       task 'deploy' do
           deploy_target = "#{ENV['JETTY_HOME']}/gndms"
-          cp project('transfer:server').package(:jar).to_s, deploy_target
-          cp project('transfer:client').package(:jar).to_s, deploy_target
+          cp project('interSliceTransfer:server').package(:jar).to_s, deploy_target
+          cp project('interSliceTransfer:client').package(:jar).to_s, deploy_target
       end
     end
 end
