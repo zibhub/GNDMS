@@ -55,8 +55,7 @@ public class DummyTaskAction extends TaskFlowAction<DummyOrder> {
 
     public DummyTaskAction( @NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model ) {
 
-        super( em, dao, model );
-        setKey( DummyTaskFlowMeta.TASK_FLOW_TYPE_KEY );
+        super(  DummyTaskFlowMeta.TASK_FLOW_TYPE_KEY, em, dao, model );
     }
 
 
