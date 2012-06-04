@@ -148,8 +148,10 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
             final Task st = session.findTask(subTaskId);
             if( st.getTaskState().equals( TaskState.FINISHED ) ){
                 //noinspection ConstantConditions
-                ( ( InterSliceTransferResult) task.getPayload() ).populate(
-                        ( FileTransferResult ) st.getPayload() );
+                final InterSliceTransferResult payload =
+                        ( InterSliceTransferResult ) task.getPayload();
+                payload.populate( ( FileTransferResult ) st.getPayload() );
+                task.setPayload( payload );
                 task.setTaskState(TaskState.FINISHED);
                 if (altTaskState)
                     task.setAltTaskState(null);
