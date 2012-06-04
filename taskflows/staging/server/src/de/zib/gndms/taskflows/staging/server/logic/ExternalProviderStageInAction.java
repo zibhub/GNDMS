@@ -54,7 +54,7 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
 
 
     public ExternalProviderStageInAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model) {
-        super(em, dao, model);
+        super( ProviderStageInMeta.PROVIDER_STAGING_KEY, em, dao, model);
         stagingIOHelper = new StagingIOFormatHelper();
     }
 

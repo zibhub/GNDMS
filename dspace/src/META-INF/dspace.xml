@@ -49,6 +49,11 @@
         <property name="subspaceProvider" ref="subspaceProvider"/>
         <property name="sliceKindProvider" ref="sliceKindProvider"/>
     </bean>
+    
+    <bean id="subspaceClient" class="de.zib.gndms.gndmc.dspace.SubspaceClient">
+        <property name="serviceURL" value="${localBaseUrl}"/>
+        <property name="restTemplate" ref="restTemplate"/>
+    </bean>
 
     <bean id="subspaceFacetNames" class="java.util.ArrayList">
         <constructor-arg>

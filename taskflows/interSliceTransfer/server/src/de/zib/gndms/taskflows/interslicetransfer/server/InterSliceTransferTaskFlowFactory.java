@@ -74,6 +74,11 @@ public class InterSliceTransferTaskFlowFactory
     public TaskAction createAction() {
         InterSliceTransferTaskAction action = new InterSliceTransferTaskAction();
         getInjector().injectMembers( action );
+
+        action.prepareRestTemplate( "jettystore" );
+        action.prepareSliceClient();
+        action.prepareSubspaceClient();
+
         return action;
     }
 }

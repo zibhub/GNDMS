@@ -92,8 +92,8 @@ public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStag
             trustStoreLocation = "";
         }
 
-        defaultConfig.put( "subspace", "providerStaging" );
-        defaultConfig.put( "sliceKind", "staging");
+        defaultConfig.put( "subspace", "esgfStaging" );
+        defaultConfig.put( "sliceKind", "esgfKind");
         defaultConfig.put( "trustStoreLocation", trustStoreLocation );
         defaultConfig.put( "trustStorePassword", "gndmstrust" );
         

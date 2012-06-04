@@ -17,6 +17,7 @@ package de.zib.gndms.taskflows.interslicetransfer.client;
 
 import de.zib.gndms.common.model.FileStats;
 import de.zib.gndms.common.model.gorfx.types.TaskResult;
+import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.gndmc.dspace.SliceClient;
@@ -54,11 +55,7 @@ public class InterSliceTransferExample extends GORFXTaskFlowExample {
 
         File propFile = new File(  orderPropFile );
         if( propFile.exists() ) {
-            parameter.readFromFile( propFile );
-            subspaceClient = createBean( SubspaceClient.class );
-            subspaceClient.setServiceURL( gorfxEpUrl );
-            sliceClient = createBean( SliceClient.class );
-            sliceClient.setServiceURL( gorfxEpUrl );
+            parameter.readFromFile(propFile);
             super.run();
         } else  {
             System.out.println( "Creating property template in: " + orderPropFile );
@@ -90,6 +87,11 @@ public class InterSliceTransferExample extends GORFXTaskFlowExample {
      */
     @Override
     protected void normalRun() throws Exception {
+
+        subspaceClient = createBean( SubspaceClient.class );
+        subspaceClient.setServiceURL( gorfxEpUrl );
+        sliceClient = createBean( SliceClient.class );
+        sliceClient.setServiceURL( gorfxEpUrl );
 
         //  - create a source-slice
         System.out.println( "Creating importSlice" );
@@ -230,6 +232,15 @@ public class InterSliceTransferExample extends GORFXTaskFlowExample {
 
             result = ( InterSliceTransferResult ) res;
         }
+
+
+        @Override
+        protected GNDMSResponseHeader setupContext( final GNDMSResponseHeader context ) {
+
+            context.addMyProxyToken( "C3GRID", myProxyLogin, myProxyPasswd );
+            return context;
+        }
+
 
         public InterSliceTransferResult getResult() {
 

@@ -58,7 +58,7 @@ public class FileTransferTaskAction extends TaskFlowAction<FileTransferOrder> {
     }
 
     public FileTransferTaskAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model) {
-        super(em, dao, model);
+        super( FileTransferMeta.FILE_TRANSFER_TYPE_KEY, em, dao, model);
     }
 
     @Override

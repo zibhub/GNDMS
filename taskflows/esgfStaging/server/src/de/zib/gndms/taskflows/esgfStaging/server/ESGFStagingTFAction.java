@@ -69,6 +69,7 @@ import java.util.Map;
  * @see ESGFStagingOrder
  */
 public class ESGFStagingTFAction extends TaskFlowAction< ESGFStagingOrder > {
+    // TODO: derive from AbstractProviderStagInAction (e.g. see createNewSlice)
 
     public static final long DEFAULT_SLICE_SIZE = 100*1024*1024; // 100MB
 
@@ -88,8 +89,7 @@ public class ESGFStagingTFAction extends TaskFlowAction< ESGFStagingOrder > {
 
     public ESGFStagingTFAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model) {
 
-        super( em, dao, model );
-        setKey( ESGFStagingTaskFlowMeta.TASK_FLOW_TYPE_KEY );
+        super( ESGFStagingTaskFlowMeta.TASK_FLOW_TYPE_KEY, em, dao, model );
     }
 
 

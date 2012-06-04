@@ -70,13 +70,13 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
     private SubspaceService subspaceService;
 
 
-    protected AbstractProviderStageInAction( String offerTypeId ) {
+    protected AbstractProviderStageInAction( @NotNull String offerTypeId ) {
         super( offerTypeId );
     }
 
 
-    public AbstractProviderStageInAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model) {
-        super(em, dao, model);
+    public AbstractProviderStageInAction( @NotNull String offerTypeId, @NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model) {
+        super( offerTypeId, em, dao, model );
     }
 
 

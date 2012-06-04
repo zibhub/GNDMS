@@ -50,7 +50,7 @@ public class SettableGridConfig extends GridConfig {
     @NotNull
     @Override
     public String getBaseUrl() {
-        return localBaseUrl;
+        return baseUrl;
     }
 
 

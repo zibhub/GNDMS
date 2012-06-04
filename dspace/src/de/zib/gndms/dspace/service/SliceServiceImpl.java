@@ -342,18 +342,18 @@ public class SliceServiceImpl implements SliceService {
 	}
 
 	@Override
-	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}/gsiftp", method = RequestMethod.GET)
+	@RequestMapping(value = "/_{subspaceId}/_{sliceKindId}/_{sliceId}/gsiftp", method = RequestMethod.GET)
     @Secured( "ROLE_USER" )
 	public ResponseEntity<String> getGridFtpUrl(
 			@PathVariable final String subspaceId,
-			@PathVariable final String sliceKind,
+			@PathVariable final String sliceKindId,
 			@PathVariable final String sliceId,
 			@RequestHeader("DN") final String dn) {
-		GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKind, sliceId, dn );
+		GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKindId, sliceId, dn );
 
 		try {
 			Subspace space = subspaceProvider.get( subspaceId );
-			Slice slice = findSliceOfKind( subspaceId, sliceKind, sliceId );
+			Slice slice = findSliceOfKind( subspaceId, sliceKindId, sliceId );
 			return new ResponseEntity<String>(
 					space.getGsiFtpPathForSlice( slice ), headers, HttpStatus.OK);
 		} catch (NoSuchElementException ne) {

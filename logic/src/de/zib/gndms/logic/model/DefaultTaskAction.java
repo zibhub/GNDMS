@@ -49,7 +49,7 @@ public class DefaultTaskAction<O extends Order> extends TaskAction<O> {
     }
 
 
-    public DefaultTaskAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model) {
+    public DefaultTaskAction( @NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model) {
         super(em, dao, model);
     }
 

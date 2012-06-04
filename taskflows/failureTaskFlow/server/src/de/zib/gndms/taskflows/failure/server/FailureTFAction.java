@@ -55,8 +55,7 @@ public class FailureTFAction extends TaskFlowAction< FailureOrder > {
 
     public FailureTFAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model) {
 
-        super( em, dao, model );
-        setKey( FailureTaskFlowMeta.TASK_FLOW_TYPE_KEY );
+        super( FailureTaskFlowMeta.TASK_FLOW_TYPE_KEY, em, dao, model );
     }
 
 

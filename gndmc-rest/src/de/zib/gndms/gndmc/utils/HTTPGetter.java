@@ -16,6 +16,7 @@
 
 package de.zib.gndms.gndmc.utils;
 
+import de.zib.gndms.common.kit.security.CustomSSLContextRequestFactory;
 import de.zib.gndms.common.kit.security.SetupSSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,15 +24,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
 
-import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -150,7 +148,7 @@ public class HTTPGetter {
     private EnhancedResponseExtractor get( final String url, final RequestCallback requestCallback )
             throws NoSuchAlgorithmException, KeyManagementException
     {
-        RequestFactory requestFactory = new RequestFactory( sslContext );
+        CustomSSLContextRequestFactory requestFactory = new CustomSSLContextRequestFactory( sslContext );
         RestTemplate rt = new RestTemplate( requestFactory );
 
         return rt.execute( url, HttpMethod.GET, requestCallback, new ResponseExtractor< EnhancedResponseExtractor >() {
@@ -174,28 +172,6 @@ public class HTTPGetter {
             }
 
         } );
-    }
-
-
-    private class RequestFactory extends SimpleClientHttpRequestFactory {
-        final private SSLContext sslContext;
-
-        private RequestFactory( SSLContext sslContext ) {
-            this.sslContext = sslContext;
-        }
-
-        protected void prepareConnection( HttpURLConnection connection, String httpMethod )
-                throws IOException
-        {
-            super.prepareConnection( connection, httpMethod );
-
-            if( connection instanceof  HttpsURLConnection )
-            {
-                HttpsURLConnection httpscon = ( HttpsURLConnection )connection;
-
-                httpscon.setSSLSocketFactory( sslContext.getSocketFactory() );
-            }
-        }
     }
 
 
