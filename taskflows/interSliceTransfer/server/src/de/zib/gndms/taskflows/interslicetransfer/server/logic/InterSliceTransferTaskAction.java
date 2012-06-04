@@ -71,7 +71,7 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
 
 
     public InterSliceTransferTaskAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model) {
-        super( InterSliceTransferMeta.INTER_SLICE_TRANSFER_KEY, em, dao, model);
+        super(InterSliceTransferMeta.INTER_SLICE_TRANSFER_KEY, em, dao, model);
     }
 
 
@@ -123,19 +123,29 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
         finally { session.finish(); }
 
         session = getDao().beginSession();
+        final FileTransferTaskAction fta;
         try {
             final Task task = getTask(session);
 
             final Task st = session.findTask( subTaskId );
-	        FileTransferTaskAction fta = new FileTransferTaskAction( getEmf().createEntityManager(),
+	        fta = new FileTransferTaskAction( getEmf().createEntityManager(),
                     getDao(), st.getTaskling() );
             getInjector().injectMembers( fta );
 
             fta.setCredentialProvider( getCredentialProvider() );
             fta.setEmf( getEmf( ) );
 
+            session.success();
+        }
+        finally { session.finish(); }
 
-            fta.call( );
+        fta.call( );
+
+        session = getDao().beginSession();
+        try {
+            final Task task = getTask(session);
+
+            final Task st = session.findTask(subTaskId);
             if( st.getTaskState().equals( TaskState.FINISHED ) ){
                 //noinspection ConstantConditions
                 ( ( InterSliceTransferResult) task.getPayload() ).populate(
@@ -186,8 +196,9 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
             Task task = getTask( session );
             task.setOrder(order);
             //noinspection ConstantConditions
-            ( ( InterSliceTransferResult ) task.getPayload() ).setSliceSpecifier(
-                    sliceSpecifier );
+            final InterSliceTransferResult payload = (InterSliceTransferResult) task.getPayload();
+            payload.setSliceSpecifier( sliceSpecifier );
+            task.setPayload( payload );
             session.success();
         } finally { session.finish(); }
     }
