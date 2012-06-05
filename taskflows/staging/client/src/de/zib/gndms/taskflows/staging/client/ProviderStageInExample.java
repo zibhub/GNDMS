@@ -114,7 +114,10 @@ public class ProviderStageInExample extends GORFXTaskFlowExample {
             for( FileStats fileStat: fileStats ) {
                 System.out.println( fileStat );
                 System.out.println( "Execute: " );
-                System.out.println( "  curl -H \"DN:" + dn + "\" " + result.getUrl() + "/"
+                System.out.println( "  curl " +
+                                    "--cert ~/.globus/usercert.pem --key ~/.globus/userkey.pem " +
+                                    "--CApath /etc/grid-security/certificates " +
+                                    "-H \"DN:" + dn + "\" " + result.getUrl() + "/"
                                     + fileStat.path.replace( '/',  '_' ) );
                 System.out.println( "to download this file" );
                 System.out.println();

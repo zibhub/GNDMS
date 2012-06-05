@@ -18,7 +18,7 @@ ESTIMATION_COMMAND="%{GNDMS_SOURCE}/scripts/c3grid/dummy-estimation.sh"
 #
 CANCEL_COMMAND="%{GNDMS_SOURCE}/scripts/c3grid/dummy-cancel.sh"
 
-STAGING_AREA_PATH="/var/tmp/sspace"
+STAGING_AREA_PATH="/tmp/c3grid/sspace"
 STAGING_AREA_SIZE="1000000" # Currently unused
 
 # In- and Output format for script properties

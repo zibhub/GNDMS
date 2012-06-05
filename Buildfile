@@ -674,14 +674,6 @@ task :apidocs => task('compile-apidocs')
 
 # Per-Grid Targets
 
-task 'ptgrid-setupdb' do
-    system "#{ENV['GNDMS_SOURCE']}/scripts/ptgrid/setup-resource.sh CREATE"
-end
-
-task 'ptgrid-test' do
-    system "#{ENV['GNDMS_SOURCE']}/scripts/ptgrid/test-resource.sh"
-end
-
 desc 'Sets up the c3 data-provider database'
 task 'c3grid-dp-setupdb' do
     system "#{ENV['GNDMS_SOURCE']}/scripts/c3grid/setup-dataprovider.sh CREATE"
@@ -696,33 +688,16 @@ task 'c3grid-portal-setupdb' do
     system "#{ENV['GNDMS_SOURCE']}/scripts/c3grid/setup-portal.sh CREATE"
 end
 
-task 'c3grid-dp-test' => task('gndms:gndmc:run-staging-test') 
 
 desc 'Test the c3 data-provider setup'
-task 'c3grid-dp-test' => ['gndms:gndmc:run-staging-test']
+task 'c3grid-dp-test' do
+    puts ''
+    puts 'This test is not available anymore'
+    puts 'Please use $GNDMS_SOURCE/taskflows/staging/bin/run-staging-client.sh instead'
+    puts ''
+end
 
   
-task 'c3grid-dp-post-deploy-test' do
-    host = `hostname`.chomp
-    dn = `grid-proxy-info -identity`
-    dn = dn.chomp
-    if (ENV['GNDMS_SFR'] == nil)
-      prop = 'etc/sfr/dummy-sfr.properties'
-    else 
-      prop = ENV['GNDMS_SFR']
-    end
-    # Yes, this is a hack
-    cp = deployedJars()
-    cp << "#{ENV['GNDMS_SOURCE']}/lib/gndmc/gndms-gndmc-#{VERSION_NUMBER}.jar"
-    print cp
-    args = [ '-props', prop, 
-             '-uri', 'https://' + host + ':8443/wsrf/services/gndms/GORFX',
-             '-dn', dn
-           ]
-    Commands.java('de.zib.gndmc.GORFX.c3grid.ProviderStageInClient',  args, 
-                  { :classpath => cp,
-                    :properties => { "axis.ClientConfigFile" => ENV['GLOBUS_LOCATION'] + "/client-config.wsdd" } } )
-end
 
 # Main targets
 

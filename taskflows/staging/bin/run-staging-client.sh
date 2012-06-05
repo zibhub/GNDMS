@@ -40,4 +40,4 @@ cp="$GNDMS_SOURCE/taskflows/staging/client/staging-client/production:$cp"
 
 props=( )
 
-exec java -cp $cp ${props[@]} de.zib.gndms.taskflows.staging.client.ProviderStageInExample ${args[@]} $@
+exec java -cp $cp ${props[@]} de.zib.gndms.taskflows.staging.client.ProviderStageInExample ${args[@]} "$@"
