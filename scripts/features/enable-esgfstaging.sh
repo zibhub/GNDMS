@@ -20,6 +20,8 @@ moni call -v .gorfx.ConfigTaskFlowType "taskFlowType: 'ESGFStagingTaskFlow'; \
 	cfgOutFormat: 'PRINT_OK'; \
 	subspace: 'esgfStaging'; \
 	sliceKind: 'esgfKind'; \
+	trustStoreLocation: '$ESGF_TRUSTSTORE'; \
+	trustStorePassword: '$ESGF_TRUSTSTORE_PASSWORD'; \
 	estimationClass: 'de.zib.gndms.taskflows.esgfStaging.server.ESGFStagingQuoteCalculator'; \
 	stagingClass: 'de.zib.gndms.taskflows.esgfStaging.server.ESGFStagingTFAction'"
 }

@@ -20,6 +20,8 @@ SCRIPT_IO_FORMAT="PROPERTIES"
 STAGING_AREA_GSI_FTP_URL="gsiftp://$GRIDHOST""$STAGING_AREA_PATH"
 ESGF_STAGING_AREA_GSI_FTP_URL="gsiftp://$GRIDHOST""$ESGF_STAGING_AREA_PATH"
 
+ESGF_TRUSTSTORE="/etc/grid-security/esgf.truststore"
+ESGF_TRUSTSTORE_PASSWORD="esgf.trust"
 
 
 # Do not edit below this line unless very sure ---------------------------------------------------------------------------------------------------------------------------------------------------
