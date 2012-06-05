@@ -1,6 +1,6 @@
 #!/bin/bash
 
-args=( "-uri" "https://${GNDMS_HOST:-$(hostname -f)}:${GNDMS_PORT:-8443}/gndms/c3grid/" "-dn" "admin" )
+args=( "-uri" "https://${GNDMS_HOST:-$(hostname -f)}:${GNDMS_PORT:-8443}/gndms/c3grid/" )
 
 cp="$GNDMS_SOURCE/taskflows/fileTransfer/lib/client/transfer-client-0.6.0.jar:$cp"
 cp="$HOME/.m2/repository/com/google/guava/guava/10.0.1/guava-10.0.1.jar:$cp"
