@@ -60,7 +60,9 @@ curlcmd="curl -X POST -H\"DN:$USER\" -H\"content-type:$MIME\" --data \"$PREST\"\
     --write-out %{http_code} --silent --output $outfile \
     http://"$HOST":"$PORT"/${PRFX}${GRID}gorfx/config/$PCLASSNAME"
 # --cert $GNDMS_HOSTCERT --key $GNDMS_HOSTKEY --cacert $GNDMS_HOSTCA \
-echo $curlcmd
+if [ x"$GNDMS_DEBUG" != x ]; then
+	echo $curlcmd
+fi
 hstatus=$( eval $curlcmd )
 
 [ -n "$verbose" ] && echo " "
