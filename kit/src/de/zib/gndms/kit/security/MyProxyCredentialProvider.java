@@ -62,7 +62,12 @@ public class MyProxyCredentialProvider extends GSSCredentialProvider {
         GSSCredential cred = super.getCredential();
         if ( cred == null ) {
             try {
-                cred = factory.getMyProxyClient().fetch( user, passwd );
+                switch ( fetchMethod ) {
+                    case GET:
+                        cred = factory.getMyProxyClient().fetch( user, passwd );
+                    case RETRIEVE:
+                        cred = factory.getMyProxyClient().retrieve( user, passwd );
+                }
                 setCredential( cred );
             } catch ( Exception e ) {
                 throw new RuntimeException( e );
