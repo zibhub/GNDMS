@@ -687,6 +687,11 @@ task 'c3grid-dp-setupdb' do
     system "#{ENV['GNDMS_SOURCE']}/scripts/c3grid/setup-dataprovider.sh CREATE"
 end
 
+desc 'Sets up the c3 ESGF-staging database'
+task 'c3grid-esgf-setupdb' do
+    system "#{ENV['GNDMS_SOURCE']}/scripts/c3grid/setup-esgfstaging.sh CREATE"
+end
+
 task 'c3grid-portal-setupdb' do
     system "#{ENV['GNDMS_SOURCE']}/scripts/c3grid/setup-portal.sh CREATE"
 end
