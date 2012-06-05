@@ -52,14 +52,15 @@ public abstract class TaskFlowAction<K extends AbstractOrder> extends
     private GNDMSSecurityContextInstaller securityContextInstaller;
 
 
-    protected TaskFlowAction( String taskFlowTypeId ) {
+    protected TaskFlowAction( @NotNull String taskFlowTypeId ) {
         super( ( Class<DelegatingOrder<K>>) (Object) DelegatingOrder.class );
         this.taskFlowTypeId = taskFlowTypeId;
     }
 
 
-    public TaskFlowAction( @NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model ) {
-        super(em, dao, model);
+    public TaskFlowAction( @NotNull String taskFlowTypeId, @NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model ) {
+        super( em, dao, model );
+        setKey( taskFlowTypeId );
     }
 
 

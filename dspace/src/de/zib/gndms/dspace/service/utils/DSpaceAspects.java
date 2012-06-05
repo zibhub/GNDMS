@@ -16,7 +16,6 @@
 
 package de.zib.gndms.dspace.service.utils;
 
-import com.sun.servicetag.UnauthorizedAccessException;
 import de.zib.gndms.logic.model.dspace.NoSuchElementException;
 import de.zib.gndms.logic.model.dspace.SliceKindProvider;
 import de.zib.gndms.logic.model.dspace.SliceProvider;
@@ -78,7 +77,7 @@ public class DSpaceAspects {
 
         if( ! slice.getOwner().equals( dn ) ) {
             logger.debug( "User " + dn + " tried to access slice " + sliceId + ", owned by " + slice.getOwner() + "." );
-            throw new UnauthorizedAccessException( "User " + dn + " does not own slice " + sliceId + "." );
+            throw new UnauthorizedException( "User " + dn + " does not own slice " + sliceId + "." );
         }
     }
 
@@ -98,7 +97,7 @@ public class DSpaceAspects {
         if( pjp.getSignature().getName().equals( "createSubspace" ) ) {
             if( subspaceProvider.exists( subspaceId ) ) {
                 // TODO: this should be another exception...
-                throw new UnauthorizedAccessException( "Subspace " + subspaceId + " does already exist." );
+                throw new UnauthorizedException( "Subspace " + subspaceId + " does already exist." );
             }
         }
         else {

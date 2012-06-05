@@ -8,8 +8,8 @@ PLUGIN_VERSION_NUMBER = '0.6.0'
 
 setupGNDMSModules()
 
-desc 'Plug-in for the fileTransfer task-flow'
-define 'transfer' do
+desc 'Plug-in for the ESGFStaging task-flow'
+define 'esgf' do
     project.version = PLUGIN_VERSION_NUMBER
     manifest['Copyright'] = MF_COPYRIGHT
     manifest['License'] = MF_LICENSE
@@ -18,37 +18,37 @@ define 'transfer' do
 
 
     desc 'The client side of the plugin'
-    define 'client', :layout => dmsLayout('client', 'fileTransfer-client') do
+    define 'client', :layout => dmsLayout('client', 'esgfStaging-client') do
       compile.with  COMMONS_CODEC, COMMONS_LOGGING, GNDMS_STUFF, GNDMS_COMMON, GNDMS_GNDMC_REST, JETBRAINS_ANNOTATIONS, JODA_TIME, ARGS4J, INJECT, GT4_SERVLET, COMMONS_LANG, SLF4J, JSON, SPRING_CLIENT, XSTREAM, XSTREAM_DEPS
       compile
 #      package( :jar ).include _("src/log4j.properties"), :path => "."  
       package :jar
 
-        desc 'Runs the file-transfer test client'
+        desc 'Runs the ESGF Staging test client'
         task 'run' do |t|
             jars = compile.dependencies.map(&:to_s)
             jars << compile.target.to_s
             args = [ '-uri', 'http://localhost:8080/gndms/c3grid/', '-dn', 'foo' ] 
             props = {}
-            runner = 'de.zib.gndms.taskflows.filetransfer.client.FileTransferExample'
+            runner = 'de.zib.gndms.taskflows.esgfStaging.client.tools.ESGFStagingExample'
             runJava( t.to_s, runner, args, jars, props )
         end
     end
 
 
     desc 'The server side of the plugin'
-    define 'server', :layout => dmsLayout('server', 'fileTransfer-server') do
-        compile.with project('client'), GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, GNDMS_COMMON, GNDMS_STUFF, GNDMS_MODEL, GNDMS_NEOMODEL, GNDMS_KIT, GNDMS_LOGIC, GNDMS_INFRA, JETBRAINS_ANNOTATIONS, OPENJPA, GT4_LOG, GT4_COG, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, INJECT, GT4_SERVLET, COMMONS_LANG, OPENJPA, SLF4J, JSON, SPRING, XSTREAM, XSTREAM_DEPS
+    define 'server', :layout => dmsLayout('server', 'esgfStaging-server') do
+        compile.with project('client'), GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, GNDMS_COMMON, GNDMS_STUFF, GNDMS_MODEL, GNDMS_NEOMODEL, GNDMS_KIT, GNDMS_LOGIC, GNDMS_INFRA, GNDMS_GNDMC_REST, JETBRAINS_ANNOTATIONS, OPENJPA, GT4_LOG, GT4_COG, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, INJECT, GT4_SERVLET, COMMONS_LANG, OPENJPA, SLF4J, JSON, SPRING, XSTREAM, XSTREAM_DEPS
 
         compile
         meta_inf << file( _( 'src/META-INF/services' ) )
         package :jar
 
-        desc 'deploys the transfer server jar'
+        desc 'deploys the ESGF server jar'
         task 'deploy' do
             deploy_target = "#{ENV['JETTY_HOME']}/gndms"
-            cp project('transfer:server').package(:jar).to_s, deploy_target
-            cp project('transfer:client').package(:jar).to_s, deploy_target
+            cp project('esgf:server').package(:jar).to_s, deploy_target
+            cp project('esgf:client').package(:jar).to_s, deploy_target
         end
     end
 end

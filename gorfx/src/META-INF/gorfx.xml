@@ -29,16 +29,18 @@
 
 
     <bean id="gorfxService" class="de.zib.gndms.GORFX.service.GORFXServiceImpl">
-        <property name="baseUrl" value="${gorfxBaseURL}"/>
+        <property name="baseUrl" value="${baseUrl}"/>
+        <property name="localBaseUrl" value="${localBaseUrl}"/>
         <property name="gorfxFacets" ref="gorfxFacets" />
     </bean>
 
     <bean id="taskFlowService" class="de.zib.gndms.GORFX.service.TaskFlowServiceImpl">
-        <property name="serviceUrl" value="${gorfxBaseURL}"/>
+        <property name="baseUrl" value="${baseUrl}"/>
+        <property name="localBaseUrl" value="${localBaseUrl}"/>
     </bean>
 
     <bean id="taskService" class="de.zib.gndms.GORFX.service.TaskServiceImpl">
-        <property name="serviceUrl" value="${gorfxBaseURL}"/>
+        <property name="serviceUrl" value="${baseUrl}"/>
     </bean>
     
     
@@ -63,22 +65,22 @@
 
     <bean id="config" class="de.zib.gndms.common.rest.Facet">
         <property name="name" value="config"/>
-        <property name="url" value="${gorfxBaseURL}/gorfx/config"/>
+        <property name="url" value="${baseUrl}/gorfx/config"/>
     </bean>
 
     <bean id="batch" class="de.zib.gndms.common.rest.Facet">
         <property name="name" value="batch"/>
-        <property name="url" value="${gorfxBaseURL}/gorfx/batch"/>
+        <property name="url" value="${baseUrl}/gorfx/batch"/>
     </bean>
     
     <bean id="taskflows" class="de.zib.gndms.common.rest.Facet">
         <property name="name" value="taskflows"/>
-        <property name="url" value="${gorfxBaseURL}/gorfx/taskflows"/>
+        <property name="url" value="${baseUrl}/gorfx/taskflows"/>
     </bean>
 
     <bean id="tasks" class="de.zib.gndms.common.rest.Facet">
         <property name="name" value="tasks"/>
-        <property name="url" value="${gorfxBaseURL}/gorfx/tasks"/>
+        <property name="url" value="${baseUrl}/gorfx/tasks"/>
     </bean>
 
     <bean id="taskFlowClient" class="de.zib.gndms.gndmc.gorfx.TaskFlowClient" >

@@ -64,6 +64,7 @@ public class GORFXServiceImpl implements GORFXService {
 
     protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
     private Facets gorfxFacets; ///< List of facets under /gorfx/
+    private String localBaseUrl;
     private String baseUrl; ///< The base url something like: \c http://my.host.org/gndms/grid_id
     private String gorfxBaseUrl; ///< Base url of the GORFX service endpoint
     private TaskFlowProvider taskFlowProvider; ///< List of task factories, registered through plug-in mech
@@ -83,6 +84,12 @@ public class GORFXServiceImpl implements GORFXService {
     }
 
 
+    public  void setLocalBaseUrl( final String localBaseUrl) {
+
+        this.localBaseUrl = localBaseUrl;
+    }
+
+
     public  void setBaseUrl( final String baseUrl ) {
 
         this.baseUrl = baseUrl;
@@ -92,7 +99,7 @@ public class GORFXServiceImpl implements GORFXService {
 
     @PostConstruct
     public void init( ) {
-        taskFlowClient.setServiceURL( baseUrl );
+        taskFlowClient.setServiceURL( localBaseUrl );
         uriFactory = new UriFactory( baseUrl );
     }
 

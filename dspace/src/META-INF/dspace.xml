@@ -32,7 +32,7 @@
     <!-- DSpaceService -->
     
     <bean id="dspaceService" class="de.zib.gndms.dspace.service.DSpaceServiceImpl">
-        <property name="baseUrl" value="${dspaceBaseURL}"/>
+        <property name="baseUrl" value="${baseUrl}"/>
         <property name="subspaceProvider" ref="subspaceProvider"/>
     </bean>
 
@@ -43,10 +43,16 @@
 	<!-- SubspaceService -->
 
     <bean id="subspaceService" class="de.zib.gndms.dspace.service.SubspaceServiceImpl">
-        <property name="baseUrl" value="${dspaceBaseURL}"/>
+        <property name="baseUrl" value="${baseUrl}"/>
+        <property name="localBaseUrl" value="${localBaseUrl}"/>
         <property name="subspaceFacetNames" ref="subspaceFacetNames" />
         <property name="subspaceProvider" ref="subspaceProvider"/>
         <property name="sliceKindProvider" ref="sliceKindProvider"/>
+    </bean>
+    
+    <bean id="subspaceClient" class="de.zib.gndms.gndmc.dspace.SubspaceClient">
+        <property name="serviceURL" value="${localBaseUrl}"/>
+        <property name="restTemplate" ref="restTemplate"/>
     </bean>
 
     <bean id="subspaceFacetNames" class="java.util.ArrayList">
@@ -68,7 +74,7 @@
     </bean>
 
     <bean id="sliceKindService" class="de.zib.gndms.dspace.service.SliceKindServiceImpl">
-        <property name="baseUrl" value="${dspaceBaseURL}"/>
+        <property name="baseUrl" value="${baseUrl}"/>
         <property name="subspaceProvider" ref="subspaceProvider"/>
     </bean>
  
@@ -85,9 +91,15 @@
     </bean>
 
     <bean id="sliceService" class="de.zib.gndms.dspace.service.SliceServiceImpl">
-        <property name="baseUrl" value="${dspaceBaseURL}"/>
+        <property name="baseUrl" value="${baseUrl}"/>
+        <property name="localBaseUrl" value="${localBaseUrl}"/>
         <property name="sliceFacetNames" ref="sliceFacetNames" />
         <property name="subspaceProvider" ref="subspaceProvider"/>
+    </bean>
+    
+    <bean id="sliceClient" class="de.zib.gndms.gndmc.dspace.SliceClient">
+        <property name="serviceURL" value="${localBaseUrl}"/>
+        <property name="restTemplate" ref="restTemplate"/>
     </bean>
 
     <bean id="sliceFacetNames" class="java.util.ArrayList">

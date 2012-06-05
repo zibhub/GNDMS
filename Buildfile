@@ -58,6 +58,8 @@ include GNDMS
 # http://dev.globus.org/wiki/CoG_JGlobus_1.8.0
 #testEnv('COG_LOCATION', 'the root directory of COG 1.8.0')
 COG_LOCATION=[ ENV['GNDMS_SOURCE'], 'lib', 'cog-jglobus' ].join( File::SEPARATOR )
+VOLD_LOCATION=[ ENV['GNDMS_SOURCE'], 'lib', 'VolD' ].join( File::SEPARATOR )
+
 #testEnv('GLOBUS_LOCATION', 'the root directory of Globus Toolkit 4.0.8')
 #GNDMS_DB=[ ENV['GLOBUS_LOCATION'], 'etc', 'gndms_shared', 'db', 'gndms' ].join(File::SEPARATOR)
 GNDMS_DB=[ '', 'tmp', 'c3grid', 'TESTDB' ].join(File::SEPARATOR)
@@ -73,7 +75,6 @@ testEnv('GNDMS_SOURCE', 'the root directory of GNDMS source distribution (i.e. t
 #testEnv('GNDMS_SHARED', '$GLOBUS_LOCATION/etc/gndms_shared')
 #testEnv('GNDMS_MONI_CONFIG', '$GNDMS_SHARED/monitor.properties')
 testEnv('USER', 'your user\'s login (your UNIX is weird)')
-testTool('rsync')
 testTool('curl')
 testTool('openssl')
 testTool('hostname')
@@ -96,8 +97,11 @@ end
 gndms_ant = ENV['GNDMS_SOURCE'] + '/bin/gndms-ant'
 
 # Helper to construct GT4 jar pathes
-require 'buildr/cog'
+require ENV['GNDMS_SOURCE'] + '/buildr/cog'
 include COG
+
+require ENV['GNDMS_SOURCE'] + '/buildr/vold'
+include VOLD
 
 # Essentially GT4 package management is classloading unaware crap
 # Therefore we have to filter out some jars in order to avoid invalid jar-shadowing through dependencies
@@ -241,6 +245,7 @@ GT4_XML     = []
 GT4_USEAGE  = []
 GT4_MDS     = []
 
+VOLD_CLIENT = voldjars([ 'VolDClient.jar' ])
 
 XSTREAM_DEPS= [ CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME ]
 # OpenJPA is required by gndms:model
@@ -526,13 +531,13 @@ define 'gndms' do
     desc 'Creating the gndms war'
     define 'gndms', :layout => dmsLayout('gndms', 'gndms-rest') do
 
-        compile.with project('stuff'), SPRING, SPRING_SECURITY, SLF4J
+        compile.with project('stuff'), SPRING, SPRING_SECURITY, SLF4J, SERVLET
 
         package(:war).include _('src/log4j.properties'), :path=>"WEB-INF/classes"
         package(:war).include _('../LICENSE'), :path=>"WEB-INF/classes/META-INF"
         package(:war).include _('../GNDMS-RELEASE'), :path=>"WEB-INF/classes/META-INF"
 
-        libs = []
+        libs = [ VOLD_CLIENT ]
         [ 'gorfx', 'dspace', 'infra', 'logic', 'kit', 'stuff', 'neomodel', 'model', 'gndmc-rest', 'common' ].each { |mod| 
             project( mod ).compile.dependencies.map( &:to_s ).each  { |lib| libs << lib }
             libs << project( mod ).package(:jar)
@@ -547,11 +552,11 @@ end
 
 task 'deploy-gndms-rest' do
 
-    def mkJettyProps( src, hostname, port)
-        mkProps(  src, "#{ENV['JETTY_HOME']}/gndms/", hostname, port )
+    def mkJettyProps( src, hostname, port, unsecureport, hostcert, hostkey, hostca)
+        mkProps(  src, "#{ENV['JETTY_HOME']}/gndms/", hostname, port, unsecureport, hostcert, hostkey, hostca )
     end 
 
-    def mkProps( src, tgt, hostname, port)
+    def mkProps( src, tgt, hostname, port, unsecureport, hostcert, hostkey, hostca)
         props = eval IO.read ( "etc/#{src}" )
         propFile = File.new( "#{tgt}/#{src}" , 'w')
         propFile.write( props )
@@ -571,18 +576,47 @@ task 'deploy-gndms-rest' do
         puts "already exists. Skipping..."
     end
 
-    hostname = `hostname -f`.chomp
-    if ( ENV['GNDMS_PORT'] == nil )
-        port = '8080'
+    if ( ENV['GNDMS_HOST'] == nil )
+    	hostname = `hostname -f`.chomp
     else 
-        port = ENV['GNDMS_PORT'] 
+        hostname = ENV['GNDMS_HOST'] 
     end
 
-    mkJettyProps( 'grid.properties', hostname, port )
-    mkJettyProps( 'log4j.properties', hostname, port )
+    if ( ENV['GNDMS_SECURE_PORT'] == nil )
+        port = '8443'
+    else 
+        port = ENV['GNDMS_SECURE_PORT'] 
+    end
+
+    if ( ENV['GNDMS_UNSECURE_PORT'] == nil )
+        unsecureport = '8080'
+    else 
+        unsecureport = ENV['GNDMS_UNSECURE_PORT'] 
+    end
+
+    if ( ENV['GNDMS_HOSTCERT'] == nil )
+        hostcert = '/etc/grid-security/gndmscert.pem'
+    else 
+        hostcert = ENV['GNDMS_HOSTCERT'] 
+    end
+
+    if ( ENV['GNDMS_HOSTKEY'] == nil )
+        hostkey = '/etc/grid-security/gndmskey.pem'
+    else 
+        hostkey = ENV['GNDMS_HOSTKEY'] 
+    end
+
+    if ( ENV['GNDMS_HOSTCA'] == nil )
+        hostca = '/etc/grid-security/certificates/30ffc224.0'
+    else 
+        hostca = ENV['GNDMS_HOSTCA'] 
+    end
+
+    mkJettyProps( 'grid.properties', hostname, port, unsecureport, hostcert, hostkey, hostca )
+    mkJettyProps( 'log4j.properties', hostname, port, unsecureport, hostcert, hostkey, hostca )
 
     puts "installing monitor.properties to #{ENV['GNDMS_SHARED']}"
-    mkProps( 'monitor.properties', "#{ENV['GNDMS_SHARED']}", hostname, port )
+    mkProps( 'monitor.properties', "#{ENV['GNDMS_SHARED']}", hostname, port, unsecureport, hostcert, hostkey, hostca )
 
     puts "installing context to #{ENV['JETTY_HOME']}/contexts"
     cp( "etc/gndms.xml",  "#{ENV['JETTY_HOME']}/contexts" )

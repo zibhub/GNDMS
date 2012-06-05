@@ -26,6 +26,9 @@
     <bean id="gridConfig" class="de.zib.gndms.infra.SettableGridConfig">
         <property name="gridName" value="${gridName}"/>
         <property name="gridPath" value="${gridPath}"/>
+        <property name="baseUrl" value="${baseUrl}"/>
+        <property name="localBaseUrl" value="${localBaseUrl}"/>
+        <property name="voldUrl" value="${voldUrl}"/>
     </bean>
 
     <!-- most import the system class, which glue all components together -->
@@ -118,14 +121,6 @@
     </bean>
 
 
-    <!-- #################################################################################################### -->
-    <!-- setup GORFX client -->
-    <bean id="gorfxClient" class="de.zib.gndms.gndmc.gorfx.GORFXClient">
-        <property name="serviceURL" value="${gorfxBaseURL}" />
-        <property name="restTemplate" ref="restTemplate" />
-    </bean>
-    
-    
     <!-- #################################################################################################### -->
     <!-- create some auxiliary classes -->
     <bean id="directoryAux" class="de.zib.gndms.infra.grams.LinuxDirectoryAux"/>

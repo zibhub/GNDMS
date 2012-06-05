@@ -18,7 +18,7 @@ package de.zib.gndms.taskflows.dmsstaging.client.model;
 
 
 import de.zib.gndms.common.rest.Specifier;
-import de.zib.gndms.model.gorfx.types.SliceResultImpl;
+import de.zib.gndms.common.model.gorfx.types.SliceResultImpl;
 
 /**
  * @author  try ma ik jo rr a zib

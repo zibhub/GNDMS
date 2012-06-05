@@ -60,6 +60,10 @@ public final class ParameterTools {
      */
 	@SuppressWarnings({ "HardcodedFileSeparator" })
 	public static String escape(final String sParam) {
+
+        if( sParam == null )
+            return null;
+
 		final StringBuilder builder = new StringBuilder(sParam.length() + (sParam.length() / 8));
 		for (int i = 0; i < sParam.length(); i++) {
 			final char cur = sParam.charAt(i);

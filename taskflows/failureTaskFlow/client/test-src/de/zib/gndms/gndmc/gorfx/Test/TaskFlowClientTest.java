@@ -176,7 +176,7 @@ public class TaskFlowClientTest {
         
         // delete task flow
         {
-            final ResponseEntity< Void > responseEntity = taskFlowClient.deleteTaskflow(
+            final ResponseEntity< Integer > responseEntity = taskFlowClient.deleteTaskflow(
                     FailureTaskFlowMeta.TASK_FLOW_TYPE_KEY,
                     taskFlowId,
                     admindn,

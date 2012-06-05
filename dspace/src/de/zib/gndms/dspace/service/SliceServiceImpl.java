@@ -16,11 +16,11 @@ package de.zib.gndms.dspace.service;
  * limitations under the License.
  */
 
-import com.sun.servicetag.UnauthorizedAccessException;
 import de.zib.gndms.common.dspace.service.SliceService;
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.model.FileStats;
 import de.zib.gndms.common.rest.*;
+import de.zib.gndms.dspace.service.utils.UnauthorizedException;
 import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.kit.util.DirectoryAux;
@@ -67,6 +67,7 @@ public class SliceServiceImpl implements SliceService {
 
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	private EntityManagerFactory emf;
+    private String localBaseUrl;
     private String baseUrl;
 	private SubspaceProvider subspaceProvider;
 	private SliceKindProvider sliceKindProvider;
@@ -229,7 +230,7 @@ public class SliceServiceImpl implements SliceService {
             final Taskling ling = sliceProvider.deleteSlice(subspaceId, sliceId);
 
             // get service facets of task
-            final TaskClient client = new TaskClient( baseUrl );
+            final TaskClient client = new TaskClient( localBaseUrl );
             client.setRestTemplate( restTemplate );
             final Specifier< Facets > spec =
                     TaskClient.TaskServiceAux.getTaskSpecifier( client, ling.getId(), uriFactory, null, dn );
@@ -341,18 +342,18 @@ public class SliceServiceImpl implements SliceService {
 	}
 
 	@Override
-	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}/gsiftp", method = RequestMethod.GET)
+	@RequestMapping(value = "/_{subspaceId}/_{sliceKindId}/_{sliceId}/gsiftp", method = RequestMethod.GET)
     @Secured( "ROLE_USER" )
 	public ResponseEntity<String> getGridFtpUrl(
 			@PathVariable final String subspaceId,
-			@PathVariable final String sliceKind,
+			@PathVariable final String sliceKindId,
 			@PathVariable final String sliceId,
 			@RequestHeader("DN") final String dn) {
-		GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKind, sliceId, dn );
+		GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKindId, sliceId, dn );
 
 		try {
 			Subspace space = subspaceProvider.get( subspaceId );
-			Slice slice = findSliceOfKind( subspaceId, sliceKind, sliceId );
+			Slice slice = findSliceOfKind( subspaceId, sliceKindId, sliceId );
 			return new ResponseEntity<String>(
 					space.getGsiFtpPathForSlice( slice ), headers, HttpStatus.OK);
 		} catch (NoSuchElementException ne) {
@@ -598,7 +599,19 @@ public class SliceServiceImpl implements SliceService {
 		this.baseUrl = baseUrl;
 	}
 
-	/**
+
+    /**
+     * Sets the local base url of this sliceId service.
+     *
+     * @param localBaseUrl
+     *            the localBaseUrl to set
+     */
+    public void setLocalBaseUrl( String localBaseUrl ) {
+        this.localBaseUrl = localBaseUrl;
+    }
+
+
+    /**
 	 * Returns the facets of this sliceId service.
 	 * 
 	 * @return the sliceFacets
@@ -654,9 +667,9 @@ public class SliceServiceImpl implements SliceService {
         return new ResponseEntity<Void>( null, setHeaders(ex.getMessage(), null, null, null), HttpStatus.NOT_FOUND );
     }
 
-    @ExceptionHandler( UnauthorizedAccessException.class )
+    @ExceptionHandler( UnauthorizedException.class )
     public ResponseEntity<Void> handleUnAuthorizedException(
-            UnauthorizedAccessException ex,
+            UnauthorizedException ex,
             HttpServletResponse response )
             throws IOException
     {

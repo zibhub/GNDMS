@@ -74,6 +74,12 @@ public class InterSliceTransferTaskFlowFactory
     public TaskAction createAction() {
         InterSliceTransferTaskAction action = new InterSliceTransferTaskAction();
         getInjector().injectMembers( action );
+
+        throw new IllegalStateException( "Forgot to set your password?" );
+        action.prepareRestTemplate( "<your-password-here" );
+        action.prepareSliceClient();
+        action.prepareSubspaceClient();
+
         return action;
     }
 }

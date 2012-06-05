@@ -125,6 +125,7 @@ public class InterSliceTransferExampleBean {
         FileTransferOrderPropertyReader fileTransferOrderPropertyReader = new
                 FileTransferOrderPropertyReader( props );
 
+        fileTransferOrderPropertyReader.performReading();
         order = fileTransferOrderPropertyReader.getProduct();
 
     }

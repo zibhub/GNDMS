@@ -17,7 +17,8 @@ package de.zib.gndms.taskflows.staging.server;
  */
 
 
-import de.zib.gndms.gndmc.gorfx.GORFXClient;
+import de.zib.gndms.infra.GridConfig;
+import de.zib.gndms.infra.SettableGridConfig;
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.model.gorfx.taskflow.DefaultTaskFlowFactory;
@@ -55,7 +56,7 @@ public class ProviderStageInTaskFlowFactory
 
     private VoldRegistrar registrar;
     private VolDClient volDClient;
-    private GORFXClient gorfxClient;
+    private GridConfig gridConfig;
 
     private Dao dao;
 
@@ -104,8 +105,8 @@ public class ProviderStageInTaskFlowFactory
 
 
     @Inject
-    public void setGorfxClient( final GORFXClient gorfxClient ) {
-        this.gorfxClient = gorfxClient;
+    public void setGridConfig( final SettableGridConfig gridConfig ) {
+        this.gridConfig = gridConfig;
     }
 
 
@@ -157,8 +158,8 @@ public class ProviderStageInTaskFlowFactory
 
 
     @PostConstruct
-    public void startVoldRegistration() {
-        registrar = new VoldRegistrar( volDClient, gorfxClient.getServiceURL() );
+    public void startVoldRegistration() throws Exception {
+        registrar = new VoldRegistrar( volDClient, gridConfig.getBaseUrl() );
         registrar.start();
     }
 

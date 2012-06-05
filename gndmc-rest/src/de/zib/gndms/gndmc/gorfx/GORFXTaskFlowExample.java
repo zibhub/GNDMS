@@ -17,6 +17,7 @@ package de.zib.gndms.gndmc.gorfx;
  */
 
 import de.zib.gndms.common.kit.application.AbstractApplication;
+import de.zib.gndms.common.kit.security.SetupSSL;
 import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.common.model.gorfx.types.io.ContractConverter;
 import de.zib.gndms.common.model.gorfx.types.io.ContractPropertyReader;
@@ -58,6 +59,10 @@ public abstract class GORFXTaskFlowExample extends AbstractApplication {
     @Option( name="-myProxyPasswd", required = false, usage = "password name for the " +
                                                               "MyProxyServer." )
     protected String myProxyPasswd;
+    @Option( name="-localPasswd", required = true, usage = "Password for keystore." )
+    protected String passwd;
+    @Option( name="-cred", required = true, usage = "Keystore to use." )
+    protected String keyStoreLocation;
 
 	protected String wid = UUID.randomUUID().toString();
     private ApplicationContext context;
@@ -87,7 +92,7 @@ public abstract class GORFXTaskFlowExample extends AbstractApplication {
         if ( requireMyProxy )
             requiresMyProxy();
 
-        System.out.println( "Running ESGF Staging TaskFlow test with: " );
+        System.out.println( "Running TaskFlow test with: " );
         System.out.println("connection to: \"" + gorfxEpUrl + "\"");
 
         context = new ClassPathXmlApplicationContext(
@@ -106,6 +111,15 @@ public abstract class GORFXTaskFlowExample extends AbstractApplication {
         etfc.setTfClient( tfClient );
         etfc.setTaskClient( taskClient );
 
+        SetupSSL setupSSL = new SetupSSL();
+        setupSSL.setKeyStoreLocation( keyStoreLocation );
+        setupSSL.prepareKeyStore( passwd, "JKS" );
+        setupSSL.setTrustStoreLocation( keyStoreLocation );
+        setupSSL.prepareTrustStore( passwd, "JKS" );
+        setupSSL.setupDefaultSSLContext( passwd );
+        
+        System.out.println( "SSL Context set." );
+        
         normalRun();
         failingRun();
 	}

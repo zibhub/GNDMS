@@ -70,13 +70,13 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
     private SubspaceService subspaceService;
 
 
-    protected AbstractProviderStageInAction( String offerTypeId ) {
+    protected AbstractProviderStageInAction( @NotNull String offerTypeId ) {
         super( offerTypeId );
     }
 
 
-    public AbstractProviderStageInAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model) {
-        super(em, dao, model);
+    public AbstractProviderStageInAction( @NotNull String offerTypeId, @NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model) {
+        super( offerTypeId, em, dao, model );
     }
 
 
@@ -86,6 +86,8 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
         ensureOrder();
         MapConfig config = getOfferTypeConfig();
 	    getScriptFileByParam(config, "stagingCommand");
+
+        restoreSecurityContext();
         createNewSlice();
         super.onCreated(wid, state, isRestartedTask, altTaskState);
     }
@@ -346,6 +348,10 @@ public abstract class AbstractProviderStageInAction extends TaskFlowAction<Provi
         try {
             final Task task = getTask(session);
             Specifier<Void> sliceSpec = ( Specifier<Void> ) task.getPayload();
+
+            if( null == sliceSpec )
+                throw new IllegalStateException( "Could not get slice specifier. See further description or log files." );
+
             sliceId = sliceSpec.getUriMap().get( UriFactory.SLICE );
             session.success();
         }

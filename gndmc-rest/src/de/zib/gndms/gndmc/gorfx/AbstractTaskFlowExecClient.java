@@ -110,8 +110,14 @@ public abstract class AbstractTaskFlowExecClient implements TaskStatusHandler {
         ResponseEntity<Specifier<Facets>> res = gorfxClient.createTaskFlow( order.getTaskFlowType(), order, dn,
                 wid, context );
 
-        if ( !HttpStatus.CREATED.equals( res.getStatusCode() ) )
-            throw new RuntimeException( "createTaskFlow failed " + res.getStatusCode().name() );
+        if ( !HttpStatus.CREATED.equals( res.getStatusCode() ) ) {
+            throw new RuntimeException(
+                    "createTaskFlow failed "
+                            + res.getStatusCode().name()
+                            + " (" + res.getStatusCode() + ")"
+                            + " on URL " + gorfxClient.getServiceURL()
+            );
+        }
 
         // the taskflow id is stored under "id" in the urlmap
         String tid = res.getBody().getUriMap().get( "id" );

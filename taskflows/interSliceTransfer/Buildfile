@@ -1,4 +1,4 @@
-require "#{ENV['GNDMS_REST']}/buildr/gndms_modules"
+require "#{ENV['GNDMS_SOURCE']}/buildr/gndms_modules"
 include GNDMS_MODULES
 
 PLUGIN_VERSION_NUMBER = '0.6.0-pre'
@@ -25,17 +25,35 @@ define PLUGIN_NAME do
 
     desc 'The client side of the plugin'
     define 'client', :layout => dmsLayout('client',  "#{PLUGIN_NAME}-client") do
-      compile.with GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, GNDMS_COMMON, JETBRAINS_ANNOTATIONS, JODA_TIME, ARGS4J, INJECT, GUICE, GT4_SERVLET, COMMONS_LANG, OPENJPA, SLF4J, JSON, SPRING
+      compile.with GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, TRANSFER_CLIENT, GNDMS_STUFF, GNDMS_GNDMC_REST, GNDMS_COMMON, JETBRAINS_ANNOTATIONS, JODA_TIME, ARGS4J, INJECT, GUICE, GT4_SERVLET, COMMONS_LANG, OPENJPA, SLF4J, JSON, SPRING
       compile
       package :jar
+
+      desc 'Runs the interSliceTransfer test client'
+	task 'run' do |t|
+	    jars = compile.dependencies.map(&:to_s)
+	    jars << compile.target.to_s
+	    args = [ '-uri', 'http://localhost:8080/gndms/c3grid/', '-dn', 'foo' ]
+	    props = {}
+	    runner = 'de.zib.gndms.taskflows.interSliceTransfer.client.InterSliceTransferExample'
+	    runJava( t.to_s, runner, args, jars, props )
+	end
     end
 
 
     desc 'The server side of the plugin'
     define 'server', :layout => dmsLayout('server', "#{PLUGIN_NAME}-server") do
-      compile.with project('client'), GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, GNDMS_COMMON, GNDMS_STUFF, GNDMS_MODEL, GNDMS_NEOMODEL, JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, INJECT, GUICE, GT4_SERVLET, COMMONS_LANG, OPENJPA, SLF4J, JSON, SPRING
+      compile.with project('client'), GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, TRANSFER_CLIENT, GNDMS_STUFF, GNDMS_GNDMC_REST, GNDMS_COMMON, GNDMS_MODEL, GNDMS_NEOMODEL, GNDMS_KIT, GNDMS_LOGIC, GNDMS_INFRA, GNDMS_DSPACE, GNDMS_GORFX, TRANSFER_SERVER, JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, INJECT, GUICE, GT4_SERVLET, COMMONS_LANG, OPENJPA, SLF4J, JSON, SPRING
 
       compile
+      meta_inf << file( _( 'src/META-INF/services' ) )
       package :jar
+
+      desc 'deploys the transfer server jar'
+      task 'deploy' do
+          deploy_target = "#{ENV['JETTY_HOME']}/gndms"
+          cp project('interSliceTransfer:server').package(:jar).to_s, deploy_target
+          cp project('interSliceTransfer:client').package(:jar).to_s, deploy_target
+      end
     end
 end

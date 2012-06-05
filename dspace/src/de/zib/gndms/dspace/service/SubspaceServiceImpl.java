@@ -16,13 +16,13 @@
 
 package de.zib.gndms.dspace.service;
 
-import com.sun.servicetag.UnauthorizedAccessException;
 import de.zib.gndms.common.dspace.service.SliceKindService;
 import de.zib.gndms.common.dspace.service.SubspaceService;
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.logic.config.SetupMode;
 import de.zib.gndms.common.logic.config.WrongConfigurationException;
 import de.zib.gndms.common.rest.*;
+import de.zib.gndms.dspace.service.utils.UnauthorizedException;
 import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.kit.config.ParameterTools;
 import de.zib.gndms.logic.model.dspace.NoSuchElementException;
@@ -58,6 +58,7 @@ import java.util.*;
 public class SubspaceServiceImpl implements SubspaceService {
     private final Logger logger = LoggerFactory.getLogger( this.getClass() );
 	private EntityManagerFactory emf;
+    private String localBaseUrl;
     private String baseUrl;
     private RestTemplate restTemplate;
 	private SubspaceProvider subspaceProvider;
@@ -143,7 +144,7 @@ public class SubspaceServiceImpl implements SubspaceService {
         try {
             final Taskling taskling = subspaceProvider.delete( subspaceId );
 
-            final TaskClient client = new TaskClient( baseUrl );
+            final TaskClient client = new TaskClient( localBaseUrl );
             client.setRestTemplate( restTemplate );
             final Specifier< Facets > spec =
                     TaskClient.TaskServiceAux.getTaskSpecifier( client, taskling.getId(), uriFactory, null, dn );
@@ -466,7 +467,15 @@ public class SubspaceServiceImpl implements SubspaceService {
 	}
 
 
-	/**
+    /**
+     * Sets the local base url of this subspace service.
+     * @param localBaseUrl the localBaseUrl to set
+     */
+    public void setLocalBaseUrl( String localBaseUrl ) {
+        this.localBaseUrl = localBaseUrl;
+    }
+
+    /**
 	 * Returns the subspace provider of this subspace service.
 	 * @return the subspaceProvider
 	 */
@@ -568,9 +577,9 @@ public class SubspaceServiceImpl implements SubspaceService {
     }
 
 
-    @ExceptionHandler( UnauthorizedAccessException.class )
+    @ExceptionHandler( UnauthorizedException.class )
     public ResponseEntity<Void> handleUnAuthorizedException(
-            UnauthorizedAccessException ex,
+            UnauthorizedException ex,
             HttpServletResponse response )
             throws IOException
     {

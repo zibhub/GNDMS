@@ -1,4 +1,4 @@
-package de.zib.gndms.model.gorfx.types;
+package de.zib.gndms.common.model.gorfx.types;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -15,7 +15,6 @@ package de.zib.gndms.model.gorfx.types;
  *  limitations under the License.
  */
 
-import de.zib.gndms.common.model.gorfx.types.AbstractTaskFlowResult;
 import de.zib.gndms.common.rest.Specifier;
 
 /**

@@ -295,19 +295,20 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
         return subTasks;
     }
 
+    // TODO: do not clone payload / order (?)
     public Task createSubTask() {
         Task subTask = session().createTask();
         Relationship rel = subTask.repr(reprSession()).createRelationshipTo(repr(),
                 TaskRelationships.PARENT_REL);
         subTask.setTaskFlowType( getTaskFlowType() );
-        setContract(getContract());
-        setDescription(getDescription());
-        setPayload(getPayload());
-        setFaultString(getFaultString());
-        setMaxProgress(getMaxProgress());
-        setOrder(getOrder());
-        setWID(getWID());
-        setPermissionInfo(getPermissionInfo());
+        subTask.setContract(getContract());
+        subTask.setDescription(getDescription());
+        subTask.setPayload(getPayload());
+        subTask.setFaultString(getFaultString());
+        subTask.setMaxProgress(getMaxProgress());
+        subTask.setOrder(getOrder());
+        subTask.setWID(getWID());
+        subTask.setPermissionInfo(getPermissionInfo());
         return subTask;
     }
 

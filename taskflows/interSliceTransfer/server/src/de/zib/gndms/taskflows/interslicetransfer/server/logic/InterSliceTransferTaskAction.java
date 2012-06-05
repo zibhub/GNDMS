@@ -16,10 +16,13 @@ package de.zib.gndms.taskflows.interslicetransfer.server.logic;
  */
 
 
+import de.zib.gndms.common.kit.security.CustomSSLContextRequestFactory;
+import de.zib.gndms.common.kit.security.SetupSSL;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.gndmc.dspace.SliceClient;
 import de.zib.gndms.gndmc.dspace.SubspaceClient;
+import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;
@@ -35,9 +38,13 @@ import de.zib.gndms.taskflows.interslicetransfer.client.model.InterSliceTransfer
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
+import javax.net.ssl.SSLContext;
 import javax.persistence.EntityManager;
+import java.util.LinkedList;
 
 /**
  * @author  try ma ik jo rr a zib
@@ -48,6 +55,12 @@ import javax.persistence.EntityManager;
 public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTransferOrder> {
 
 
+    private GridConfig config;
+    private HttpMessageConverter messageConverter;
+    
+    private SetupSSL setupSSL;
+    private RestTemplate restTemplate;
+
     private SliceClient sliceClient;
     private SubspaceClient subspaceClient;
 
@@ -56,8 +69,9 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
         super( InterSliceTransferMeta.INTER_SLICE_TRANSFER_KEY );
     }
 
+
     public InterSliceTransferTaskAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model) {
-        super(em, dao, model);
+        super(InterSliceTransferMeta.INTER_SLICE_TRANSFER_KEY, em, dao, model);
     }
 
 
@@ -78,12 +92,14 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
         try {
             final Task task = getTask( session );
             task.setPayload( new InterSliceTransferResult() );
+            session.success();
         } finally { session.finish(); } 
         super.onCreated( wid, state, isRestartedTask,
                 altTaskState );    // overriden method implementation
     }
 
 
+    // TODO: make this method resumable
     @Override
     protected void onInProgress(@NotNull String wid, @NotNull TaskState state,
                                 boolean isRestartedTask, boolean altTaskState) throws Exception {
@@ -92,27 +108,50 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
         InterSliceTransferQuoteCalculator.prepareSourceUrl( getOrder(), sliceClient );
         prepareDestination( );
 
-        final Session session = getDao().beginSession();
+        Session session = getDao().beginSession();
+        final String subTaskId = getUUIDGen().nextUUID();
         try {
             final Task task = getTask(session);
 
             final Task st = task.createSubTask();
-            st.setId(getUUIDGen().nextUUID());
+            st.setId(subTaskId);
+            st.setPayload( null );
 
             st.setTerminationTime( task.getTerminationTime() );
+            session.success();
+        }
+        finally { session.finish(); }
 
-	        FileTransferTaskAction fta = new FileTransferTaskAction( getEmf().createEntityManager(),
+        session = getDao().beginSession();
+        final FileTransferTaskAction fta;
+        try {
+            final Task task = getTask(session);
+
+            final Task st = session.findTask( subTaskId );
+	        fta = new FileTransferTaskAction( getEmf().createEntityManager(),
                     getDao(), st.getTaskling() );
+            getInjector().injectMembers( fta );
 
             fta.setCredentialProvider( getCredentialProvider() );
             fta.setEmf( getEmf( ) );
 
+            session.success();
+        }
+        finally { session.finish(); }
 
-            fta.call( );
+        fta.call( );
+
+        session = getDao().beginSession();
+        try {
+            final Task task = getTask(session);
+
+            final Task st = session.findTask(subTaskId);
             if( st.getTaskState().equals( TaskState.FINISHED ) ){
                 //noinspection ConstantConditions
-                ( ( InterSliceTransferResult) task.getPayload() ).populate(
-                        ( FileTransferResult ) st.getPayload() );
+                final InterSliceTransferResult payload =
+                        ( InterSliceTransferResult ) task.getPayload();
+                payload.populate( ( FileTransferResult ) st.getPayload() );
+                task.setPayload( payload );
                 task.setTaskState(TaskState.FINISHED);
                 if (altTaskState)
                     task.setAltTaskState(null);
@@ -159,8 +198,9 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
             Task task = getTask( session );
             task.setOrder(order);
             //noinspection ConstantConditions
-            ( ( InterSliceTransferResult ) task.getPayload() ).setSliceSpecifier(
-                    sliceSpecifier );
+            final InterSliceTransferResult payload = (InterSliceTransferResult) task.getPayload();
+            payload.setSliceSpecifier( sliceSpecifier );
+            task.setPayload( payload );
             session.success();
         } finally { session.finish(); }
     }
@@ -187,10 +227,18 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
     }
 
 
-    @Inject
-    public void setSliceClient( final SliceClient sliceClient ) {
+    public void prepareSliceClient( ) {
 
-        this.sliceClient = sliceClient;
+        if( null != sliceClient )
+            return;
+
+        try {
+            sliceClient = new SliceClient( config.getBaseUrl() );
+        } catch( Exception e ) {
+            logger.error( "Could not get service URL. Please contact system administrator.", e );
+        }
+        
+        sliceClient.setRestTemplate( restTemplate );
     }
 
 
@@ -200,9 +248,53 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
     }
 
 
-    @Inject
-    public void setSubspaceClient( final SubspaceClient subspaceClient ) {
+    public void prepareSubspaceClient( ) {
 
-        this.subspaceClient = subspaceClient;
+        if( null != subspaceClient )
+            return;
+
+        try {
+            subspaceClient = new SubspaceClient( config.getBaseUrl() );
+        } catch( Exception e ) {
+            logger.error( "Could not get service URL. Please contact system administrator.", e );
+        }
+
+        subspaceClient.setRestTemplate( restTemplate );
+    }
+
+
+    @SuppressWarnings("SpringJavaAutowiringInspection")
+    @Inject
+    public void setConfig( GridConfig config ) {
+        this.config = config;
+    }
+
+
+    @SuppressWarnings("SpringJavaAutowiringInspection")
+    @Inject
+    public void setMessageConverter( HttpMessageConverter messageConverter ) {
+        this.messageConverter = messageConverter;
+    }
+
+
+    @SuppressWarnings("SpringJavaAutowiringInspection")
+    @Inject
+    public void setSetupSSL( SetupSSL setupSSL ) {
+        this.setupSSL = setupSSL;
+    }
+
+    public void prepareRestTemplate( String keyPassword ) {
+        SSLContext sslContext = null;
+
+        try {
+            sslContext = setupSSL.setupSSLContext( keyPassword );
+        } catch (Exception e) {
+            throw new IllegalStateException( "Could not setup SSL context.", e );
+        }
+
+        CustomSSLContextRequestFactory requestFactory = new CustomSSLContextRequestFactory( sslContext );
+        restTemplate = new RestTemplate( requestFactory );
+
+        restTemplate.setMessageConverters( new LinkedList< HttpMessageConverter<?> >(){{ add( messageConverter ); }} );
     }
 }
