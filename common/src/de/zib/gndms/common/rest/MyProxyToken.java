@@ -28,9 +28,13 @@ import java.io.Serializable;
  */
 public class MyProxyToken implements Serializable {
 
+
+    public enum FetchMethod { GET, RETRIEVE }
+
     private static final long serialVersionUID = -3476234246022203639L;
     private String login;
     private String password;
+    private FetchMethod fetchMethod = FetchMethod.GET;
 
 
     public MyProxyToken( String login ) {
@@ -48,6 +52,16 @@ public class MyProxyToken implements Serializable {
 
         this.login = login;
         this.password = password;
+    }
+
+
+    public MyProxyToken( final String login, final String password,
+                         final FetchMethod fetchMethod )
+    {
+
+        this.login = login;
+        this.password = password;
+        this.fetchMethod = fetchMethod;
     }
 
 
@@ -79,11 +93,21 @@ public class MyProxyToken implements Serializable {
         
         return password != null;
     }
-    
-    
-    public boolean isValid( ) {
-        
-        return login != null && !login.trim().isEmpty();
+
+
+    public FetchMethod getFetchMethod() {
+
+        return fetchMethod;
+    }
+
+
+    public void setFetchMethod( final FetchMethod fetchMethod ) {
+
+        this.fetchMethod = fetchMethod;
+    }
+
+    public void setFetchMethod( final String fetchMethod ) {
+        this.fetchMethod = FetchMethod.valueOf( fetchMethod );
     }
 
 
@@ -94,6 +118,12 @@ public class MyProxyToken implements Serializable {
         if( login != null ) ++size;
         if( hasPassword() ) ++size;
         return size;
+    }
+
+
+    public boolean isValid( ) {
+        
+        return login != null && !login.trim().isEmpty();
     }
     
     

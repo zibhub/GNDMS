@@ -40,6 +40,7 @@ import org.springframework.http.ResponseEntity;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
+import java.util.UUID;
 
 /**
  * @author Maik Jorra
@@ -126,7 +127,7 @@ public class ProviderStageInExample extends GORFXTaskFlowExample {
 
         Quote quote = loadAndPrintDesiredQuote();
         System.out.println( "Performing normal run!!" );
-        etfc.execTF( getNormalOrder(), dn, true, quote );
+        etfc.execTF( getNormalOrder(), dn, true, quote, UUID.randomUUID().toString() );
         System.out.println( "DONE\n" );
     }
 

@@ -28,6 +28,8 @@ import java.util.Collection;
  */
 public class GNDMSUserDetails implements UserDetails {
 
+    private static final long serialVersionUID = 774209650763623369L;
+
     private Collection<? extends GrantedAuthority> authorities;
     private String dn;
     private boolean isUser;

@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Properties;
+import java.util.UUID;
 
 /**
  * @author Maik Jorra
@@ -84,7 +85,7 @@ public class FileTransferExample extends GORFXTaskFlowExample {
         // create an order instance...
         FileTransferOrder fileTransferOrder = loadOrderFromProps( orderPropFile );
 
-        etfc.execTF( fileTransferOrder, dn, true, null );
+        etfc.execTF( fileTransferOrder, dn, true, null, UUID.randomUUID().toString() );
         System.out.println( "DONE\n" );
     }
 

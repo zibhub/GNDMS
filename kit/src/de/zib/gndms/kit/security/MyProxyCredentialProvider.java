@@ -16,6 +16,7 @@
 
 package de.zib.gndms.kit.security;
 
+import de.zib.gndms.common.rest.MyProxyToken;
 import de.zib.gndms.kit.access.MyProxyFactory;
 import org.ietf.jgss.GSSCredential;
 
@@ -31,6 +32,7 @@ public class MyProxyCredentialProvider extends GSSCredentialProvider {
     private String passwd;
     private final MyProxyFactory factory;
     private CredentialInstaller credentialInstaller;
+    private MyProxyToken.FetchMethod fetchMethod;
 
 
     public MyProxyCredentialProvider( MyProxyFactory factory ) {
@@ -47,12 +49,25 @@ public class MyProxyCredentialProvider extends GSSCredentialProvider {
     }
 
 
+    public MyProxyCredentialProvider( MyProxyFactory factory, final MyProxyToken token ) {
+        this.factory = factory;
+        this.user = token.getLogin();
+        this.passwd = token.getPassword();
+        this.fetchMethod = token.getFetchMethod();
+    }
+
+
     @Override
     public GSSCredential getCredential() {
         GSSCredential cred = super.getCredential();
         if ( cred == null ) {
             try {
-                cred = factory.getMyProxyClient().fetch( user, passwd );
+                switch ( fetchMethod ) {
+                    case GET:
+                        cred = factory.getMyProxyClient().fetch( user, passwd );
+                    case RETRIEVE:
+                        cred = factory.getMyProxyClient().retrieve( user, passwd );
+                }
                 setCredential( cred );
             } catch ( Exception e ) {
                 throw new RuntimeException( e );

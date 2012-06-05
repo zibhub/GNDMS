@@ -106,10 +106,16 @@
         <constructor-arg name="nickname" value="ESGF"/>
         <property name="myProxyServer" value="${esgfProxyServer}"/>
         <property name="port" value="${esgfProxyServerPort}"/>
-        <property name="authMethod" value="NONE" />
+        <!--<property name="authMethod" value="NONE" />-->
         <property name="noPasswd" value="false"/>
+        <!--<property name="connectionCredentialHolder">-->
+           <!--<bean class="de.zib.gndms.kit.access.NoCredentialHolder" />-->
+        <!--</property>-->
         <property name="connectionCredentialHolder">
-           <bean class="de.zib.gndms.kit.access.NoCredentialHolder" />
+            <bean class="de.zib.gndms.kit.access.HostCredentialHolder" >
+                <constructor-arg name="base" value="${myProxyConnectionCredentialFolder}"/>
+                <constructor-arg name="prefix" value="${myProxyConnectionCredentialPrefix}"/>
+            </bean>
         </property>
     </bean>
 
