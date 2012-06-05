@@ -75,7 +75,8 @@ public class InterSliceTransferTaskFlowFactory
         InterSliceTransferTaskAction action = new InterSliceTransferTaskAction();
         getInjector().injectMembers( action );
 
-        action.prepareRestTemplate( "jettystore" );
+        throw new IllegalStateException( "Forgot to set your password?" );
+        action.prepareRestTemplate( "<your-password-here" );
         action.prepareSliceClient();
         action.prepareSubspaceClient();
 
