@@ -17,6 +17,7 @@ package de.zib.gndms.taskflows.interslicetransfer.server;
  */
 
 
+import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.model.gorfx.taskflow.DefaultTaskFlowFactory;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
@@ -25,6 +26,7 @@ import de.zib.gndms.taskflows.interslicetransfer.client.model.InterSliceTransfer
 import de.zib.gndms.taskflows.interslicetransfer.server.logic.InterSliceTransferQuoteCalculator;
 import de.zib.gndms.taskflows.interslicetransfer.server.logic.InterSliceTransferTaskAction;
 
+import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,6 +40,8 @@ import java.util.Map;
 // todo maybe this should subclass FileTransferTF for the config
 public class InterSliceTransferTaskFlowFactory
     extends DefaultTaskFlowFactory<InterSliceTransferOrder, InterSliceTransferQuoteCalculator> {
+
+    GNDMSystem system;
 
 
     public InterSliceTransferTaskFlowFactory() {
@@ -75,11 +79,18 @@ public class InterSliceTransferTaskFlowFactory
         InterSliceTransferTaskAction action = new InterSliceTransferTaskAction();
         getInjector().injectMembers( action );
 
-        throw new IllegalStateException( "Forgot to set your password?" );
-   //     action.prepareRestTemplate( "<your-password-here" );
-   //     action.prepareSliceClient();
-   //     action.prepareSubspaceClient();
+        // TODO: move these methods from TaskAction to TaskFlowFactory
+        action.prepareRestTemplate( system.getSetupSSLFactory().getKeyPassword() );
+        action.prepareSliceClient();
+        action.prepareSubspaceClient();
 
-        //return action;
+        return action;
+    }
+
+
+    @SuppressWarnings("SpringJavaAutowiringInspection")
+    @Inject
+    public void setSystem( GNDMSystem system ) {
+        this.system = system;
     }
 }

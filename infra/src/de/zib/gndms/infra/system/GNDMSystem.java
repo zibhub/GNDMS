@@ -153,6 +153,11 @@ public final class GNDMSystem
         this.setupSSLFactory = setupSSLFactory;
     }
 
+
+    public SetupSSLFactory getSetupSSLFactory() {
+        return setupSSLFactory;
+    }
+
     private void initDefaultSSLContext() {
         try {
             SSLContext.setDefault( setupSSL.setupSSLContext( setupSSLFactory.getKeyPassword() ) );
