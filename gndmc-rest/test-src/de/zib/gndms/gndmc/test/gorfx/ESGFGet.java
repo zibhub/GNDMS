@@ -41,7 +41,7 @@ import java.security.cert.CertificateFactory;
  */
 public class ESGFGet extends AbstractApplication {
 
-    @Option( name="-passwd", required = true )
+    @Option( name="-keystorePasswd", required = true )
     protected String passwd;
     @Option( name="-url", required = true )
     protected String url;

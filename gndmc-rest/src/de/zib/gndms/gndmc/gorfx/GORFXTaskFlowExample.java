@@ -59,10 +59,18 @@ public abstract class GORFXTaskFlowExample extends AbstractApplication {
     @Option( name="-myProxyPasswd", required = false, usage = "password name for the " +
                                                               "MyProxyServer." )
     protected String myProxyPasswd;
-    @Option( name="-localPasswd", required = true, usage = "Password for keystore." )
-    protected String passwd;
-    @Option( name="-cred", required = true, usage = "Keystore to use." )
+
+    @Option( name="-keystorePasswd", required = true, usage = "Password for keystore." )
+    protected String keystorePasswd;
+    @Option( name="-privkeyPasswd", required = true, usage = "Password for private key in keystore." )
+    protected String privkeyPasswd;
+    @Option( name="-keystore", required = true, usage = "Keystore to use." )
     protected String keyStoreLocation;
+
+    @Option( name="-truststorePasswd", required = false, usage = "Password for truststore." )
+    protected String truststorePasswd;
+    @Option( name="-truststore", required = false, usage = "truststore to use." )
+    protected String trustStoreLocation = null;
 
 	protected String wid = UUID.randomUUID().toString();
     private ApplicationContext context;
@@ -113,10 +121,17 @@ public abstract class GORFXTaskFlowExample extends AbstractApplication {
 
         SetupSSL setupSSL = new SetupSSL();
         setupSSL.setKeyStoreLocation( keyStoreLocation );
-        setupSSL.prepareKeyStore( passwd, "JKS" );
+        setupSSL.prepareKeyStore( keystorePasswd );
+        if( null == trustStoreLocation ) {
+            trustStoreLocation = keyStoreLocation;
+            truststorePasswd = keystorePasswd;
+        }
+        else if( null == truststorePasswd )
+            throw new IllegalArgumentException( "Missing truststore password." );
+
         setupSSL.setTrustStoreLocation( keyStoreLocation );
-        setupSSL.prepareTrustStore( passwd, "JKS" );
-        setupSSL.setupDefaultSSLContext( passwd );
+        setupSSL.prepareTrustStore( keystorePasswd );
+        setupSSL.setupDefaultSSLContext( privkeyPasswd );
         
         System.out.println( "SSL Context set." );
         

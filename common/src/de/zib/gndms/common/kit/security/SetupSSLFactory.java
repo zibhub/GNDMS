@@ -67,10 +67,10 @@ public class SetupSSLFactory {
 
         if( null != trustStoreLocation ) {
             setupSSL.setTrustStoreLocation( trustStoreLocation );
-            setupSSL.prepareTrustStore( trustStorePassword, "JKS" );
+            setupSSL.prepareTrustStore( trustStorePassword );
         }
         setupSSL.setKeyStoreLocation( keyStoreLocation );
-        setupSSL.prepareKeyStore( keyStorePassword, "JKS" );
+        setupSSL.prepareKeyStore( keyStorePassword );
 
         return setupSSL;
     }

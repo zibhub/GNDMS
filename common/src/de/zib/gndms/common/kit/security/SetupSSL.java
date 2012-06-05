@@ -27,7 +27,9 @@ import java.security.cert.X509Certificate;
  * @author Maik Jorra
  * @email jorra@zib.de
  * @date 05.03.12  16:52
- * @brief
+ * @brief This class helps in producing an SSL Context.
+ *
+ *
  */
 public class SetupSSL {
 
@@ -56,7 +58,10 @@ public class SetupSSL {
             throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException,
             UnrecoverableKeyException
     {
-        prepareKeyStore( keyStorePassword, KEY_STORE_TYPE );
+        if( getKeyStoreLocation().endsWith( ".pkcs12" ) || getKeyStoreLocation().endsWith( ".p12" ) )
+            prepareKeyStore( keyStorePassword, "PKCS12" );
+        else
+            prepareKeyStore( keyStorePassword, "JKS" );
     }
 
 

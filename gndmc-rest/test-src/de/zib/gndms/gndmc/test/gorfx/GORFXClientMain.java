@@ -52,9 +52,9 @@ public class GORFXClientMain extends AbstractApplication {
 	protected String gndmsEpUrl;
 	@Option(name = "-dn", required = true, usage = "DN")
 	protected String dn;
-    @Option(name = "-ksp", required = false, usage = "key store passwd" )
+    @Option(name = "-ksp", required = false, usage = "key store keystorePasswd" )
     protected String ksp = null;
-    @Option(name = "-tsp", required = false, usage = "trust store passwd" )
+    @Option(name = "-tsp", required = false, usage = "trust store keystorePasswd" )
     protected String tsp = null;
 
 

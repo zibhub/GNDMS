@@ -159,7 +159,8 @@ public final class GNDMSystem
         } catch( Exception e ) {
             throw new IllegalStateException( e );
         }
-        setupSSLFactory = null;
+        // TODO: still, there is the need for the priv key in the system - this could be handled on startup...
+        //setupSSLFactory = null;
     }
 
 
