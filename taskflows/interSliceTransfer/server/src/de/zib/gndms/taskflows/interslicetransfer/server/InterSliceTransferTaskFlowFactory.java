@@ -76,10 +76,10 @@ public class InterSliceTransferTaskFlowFactory
         getInjector().injectMembers( action );
 
         throw new IllegalStateException( "Forgot to set your password?" );
-        action.prepareRestTemplate( "<your-password-here" );
-        action.prepareSliceClient();
-        action.prepareSubspaceClient();
+   //     action.prepareRestTemplate( "<your-password-here" );
+   //     action.prepareSliceClient();
+   //     action.prepareSubspaceClient();
 
-        return action;
+        //return action;
     }
 }

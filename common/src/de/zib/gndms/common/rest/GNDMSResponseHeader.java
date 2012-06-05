@@ -187,7 +187,7 @@ public class GNDMSResponseHeader extends HttpHeaders {
      * Adds a unique wid.
      * @param wid The wid.
      */
-    public final void setWId( final String wid ) {
+    public void setWId( final String wid ) {
         setOnce( WID, wid );
     }
 
@@ -199,7 +199,22 @@ public class GNDMSResponseHeader extends HttpHeaders {
      * @param login The login string for the MyProxy server.
      * @param passwd A password for the MyProxy server, might be omitted for passwordless access.
      */
-    public final void addMyProxyToken( @NotNull String purpose, @NotNull String login, String passwd ) {
+    public void addMyProxyToken( @NotNull String purpose, @NotNull String login, String passwd ) {
+
+        addMyProxyToken( purpose, login, passwd, false);
+    }
+
+    /**
+     * Adds a MyProxy access token to the request header.
+     *
+     * @param purpose A keyword describing what this token is required for, e.g. C3GRID or ESGF...
+     * @param login The login string for the MyProxy server.
+     * @param passwd A password for the MyProxy server, might be omitted for passwordless access.
+     * @param retrieve If true MyProxy will use the RETRIEVE method instead of the GET method to
+     *                 accquire the proxy.
+     */
+    public void addMyProxyToken( @NotNull String purpose, @NotNull String login, String passwd,
+                                 boolean retrieve ) {
 
         if( login.trim().equals( "" ) )
             throw new IllegalArgumentException( "login must not be empty" );
@@ -211,15 +226,20 @@ public class GNDMSResponseHeader extends HttpHeaders {
             key = new StringBuilder( MY_PROXY_PASSWORD_PREFIX ).append( purpose );
             setOnce( key.toString(), passwd );
         }
+
+        if( retrieve ) {
+            key = new StringBuilder( MY_PROXY_FETCH_METHOD_PREFIX ).append( purpose );
+            setOnce( key.toString(), MyProxyToken.FetchMethod.RETRIEVE.toString() );
+        }
     }
 
 
-    public final void addMyProxyToken( @NotNull String purpose, @NotNull MyProxyToken token ) {
+    public void addMyProxyToken( @NotNull String purpose, @NotNull MyProxyToken token ) {
         addMyProxyToken( purpose, token.getLogin(), token.getPassword() );
     }
   
     
-    public final Map<String, MyProxyToken> getMyProxyToken( ) {
+    public Map<String, MyProxyToken> getMyProxyToken( ) {
 
         return extractTokenFromMap( this );
     }

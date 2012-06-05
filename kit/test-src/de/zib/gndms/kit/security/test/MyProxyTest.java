@@ -16,7 +16,9 @@ package de.zib.gndms.kit.security.test;
  */
 
 import de.zib.gndms.kit.access.MyProxyClient;
+import org.globus.gsi.GlobusCredential;
 import org.globus.gsi.GlobusCredentialException;
+import org.globus.gsi.gssapi.GlobusGSSCredentialImpl;
 import org.globus.myproxy.MyProxyException;
 import org.gridforum.jgss.ExtendedGSSCredential;
 import org.ietf.jgss.GSSCredential;
@@ -58,13 +60,13 @@ public class MyProxyTest extends MyProxyTestBase {
 
         if( true ) {
             // connectionCredential = findCredential( credentialFilename );
-            connectionCredential = findCredential( null );
+            // connectionCredential = findCredential( null );
 
             // Below load host cert from for standard /etc/grid-security/host{key,cert}.pem
-            // String base = "/home/mjorra/Creations/ZIB/GridZertifikate/2011/host_csr-pc35";
-            // connectionCredential =  new GlobusGSSCredentialImpl( 
-            //              new GlobusCredential( base + "/hostcert.pem", base + "/hostkey.pem" ),
-            //              GSSCredential.INITIATE_AND_ACCEPT );
+             String base = "/etc/grid-security/";
+             connectionCredential =  new GlobusGSSCredentialImpl(
+                          new GlobusCredential( base + "/gndmscert.pem", base + "/gndmskey.pem" ),
+                          GSSCredential.INITIATE_AND_ACCEPT );
             //
             System.out.println( "using connection Cert " + connectionCredential.getName() );
         }

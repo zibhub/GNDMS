@@ -16,14 +16,15 @@
 
 package de.zib.gndms.taskflows.esgfStaging.client.tools;
 
+import de.zib.gndms.common.model.gorfx.types.SliceResult;
 import de.zib.gndms.common.model.gorfx.types.TaskResult;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.gndmc.gorfx.AbstractTaskFlowExecClient;
 import de.zib.gndms.gndmc.gorfx.ExampleTaskFlowExecClient;
 import de.zib.gndms.gndmc.gorfx.GORFXTaskFlowExample;
-import de.zib.gndms.common.model.gorfx.types.SliceResult;
 import de.zib.gndms.taskflows.esgfStaging.client.model.ESGFStagingOrder;
 import org.jetbrains.annotations.NotNull;
+import org.kohsuke.args4j.Option;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -37,6 +38,9 @@ import java.util.Properties;
 public class ESGFStagingExample extends GORFXTaskFlowExample {
 
     private AbstractTaskFlowExecClient etfc;
+
+    @Option( name = "-retrieve", usage="forces usage of myproxy retrieve instead of get" )
+    boolean retrieve = false;
 
 
     public static void main( String[] args ) throws Exception {
@@ -68,7 +72,7 @@ public class ESGFStagingExample extends GORFXTaskFlowExample {
             @Override
             protected GNDMSResponseHeader setupContext( final GNDMSResponseHeader context ) {
 
-                context.addMyProxyToken( "ESGF", myProxyLogin, myProxyPasswd );
+                context.addMyProxyToken( "ESGF", myProxyLogin, myProxyPasswd, retrieve );
                 return context;
             }
         };
