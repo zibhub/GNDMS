@@ -1,0 +1,48 @@
+GNDMS 0.3.2 'Shigeru'
+Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+This software has been licensed to you under the terms and conditions of the Apache License 2.0 (APL 2.0) only.  Please consult doc/licensing about licensing conditions of downloaded 3rd party software.
+This run will not provide GT4 with dependencies.
+Compiling gndms:gritserv into /home/mjorra/projects/C3Grid/impl/gndms/gritserv/gndms-gritserv/production
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+Packaging gndms-gritserv-0.3.2.jar
+Compiling gndms:gndmc into /home/mjorra/projects/C3Grid/impl/gndms/gndmc/gndms-gndmc/production
+Note: /home/mjorra/projects/C3Grid/impl/gndms/gndmc/src/de/zib/gndmc/GridFTPCheck.java uses unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+{java.runtime.name=Java(TM) SE Runtime Environment, sun.boot.library.path=/opt/sun-jdk-1.6.0.22/jre/lib/amd64, java.vm.version=17.1-b03, java.vm.vendor=Sun Microsystems Inc., java.vendor.url=http://java.sun.com/, path.separator=:, java.vm.name=Java HotSpot(TM) 64-Bit Server VM, file.encoding.pkg=sun.io, sun.java.launcher=SUN_STANDARD, user.country=DE, sun.os.patch.level=unknown, java.vm.specification.name=Java Virtual Machine Specification, user.dir=/home/mjorra/projects/C3Grid/impl/gndms, java.runtime.version=1.6.0_22-b04, java.awt.graphicsenv=sun.awt.X11GraphicsEnvironment, java.endorsed.dirs=/opt/sun-jdk-1.6.0.22/jre/lib/endorsed, os.arch=amd64, java.io.tmpdir=/tmp, line.separator=
+, java.vm.specification.vendor=Sun Microsystems Inc., os.name=Linux, axis.ClientConfigFile=/opt/gt-current/client-config.wsdd, sun.jnu.encoding=UTF-8, java.library.path=/opt/sun-jdk-1.6.0.22/jre/lib/amd64/server:/opt/sun-jdk-1.6.0.22/jre/lib/amd64:/opt/sun-jdk-1.6.0.22/jre/../lib/amd64:/opt/gt-current/lib:/usr/local/igraph/lib:/home/mjorra/projects/NuGui/merge/lib:/usr/local/igraph/lib:/home/mjorra/projects/NuGui/merge/lib::/usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib, java.specification.name=Java Platform API Specification, java.class.version=50.0, sun.management.compiler=HotSpot 64-Bit Server Compiler, os.version=2.6.36-gentoo-r5, user.home=/home/mjorra, user.timezone=, java.awt.printerjob=sun.print.PSPrinterJob, file.encoding=UTF-8, java.specification.version=1.6, java.class.path=/home/mjorra/.m2/repository/com/intellij/annotations/7.0.3/annotations-7.0.3.jar:/home/mjorra/.m2/repository/commons-lang/commons-lang/2.1/commons-lang-2.1.jar:/home/mjorra/.m2/repository/org/apache/openjpa/openjpa-all/2.0.0/openjpa-all-2.0.0.jar:/home/mjorra/projects/C3Grid/impl/gndms/lib/gritserv/gndms-gritserv-0.3.2.jar:/home/mjorra/projects/C3Grid/impl/gndms/lib/kit/gndms-kit-0.3.2.jar:/home/mjorra/projects/C3Grid/impl/gndms/lib/stuff/gndms-stuff-0.3.2.jar:/home/mjorra/projects/C3Grid/impl/gndms/lib/model/gndms-model-0.3.2.jar:/home/mjorra/.m2/repository/args4j/args4j/2.0.14/args4j-2.0.14.jar:/home/mjorra/projects/C3Grid/impl/gndms/services/GORFX/build/lib/gndms-gorfx-stubs.jar:/home/mjorra/projects/C3Grid/impl/gndms/services/DSpace/build/lib/gndms-dspace-stubs.jar:/home/mjorra/projects/C3Grid/impl/gndms/services/GORFX/build/lib/gndms-gorfx-client.jar:/home/mjorra/projects/C3Grid/impl/gndms/services/DSpace/build/lib/gndms-dspace-client.jar:/home/mjorra/projects/C3Grid/impl/gndms/services/GORFX/build/lib/gndms-gorfx-common.jar:/home/mjorra/projects/C3Grid/impl/gndms/services/DSpace/build/lib/gndms-dspace-common.jar:/home/mjorra/.m2/repository/commons-codec/commons-codec/1.4/commons-codec-1.4.jar:/home/mjorra/.m2/repository/commons-collections/commons-collections/3.2/commons-collections-3.2.jar:/opt/gt-current/lib/commons-beanutils.jar:/opt/gt-current/lib/commons-digester.jar:/opt/gt-current/lib/commons-discovery.jar:/opt/gt-current/lib/commons-pool.jar:/home/mjorra/.m2/repository/joda-time/joda-time/1.6/joda-time-1.6.jar:/opt/gt-current/lib/gram-monitoring.jar:/opt/gt-current/lib/gram-service.jar:/opt/gt-current/lib/gram-stubs.jar:/opt/gt-current/lib/gram-utils.jar:/opt/gt-current/lib/commons-logging.jar:/opt/gt-current/lib/log4j-1.2.15.jar:/opt/gt-current/lib/addressing-1.0.jar:/opt/gt-current/lib/axis-url.jar:/opt/gt-current/lib/axis.jar:/opt/gt-current/lib/commonj.jar:/opt/gt-current/lib/concurrent.jar:/opt/gt-current/lib/naming-common.jar:/opt/gt-current/lib/wsdl4j.jar:/opt/gt-current/lib/saaj.jar:/opt/gt-current/lib/wsrf_common.jar:/opt/gt-current/lib/wsrf_core.jar:/opt/gt-current/lib/wsrf_core_stubs.jar:/opt/gt-current/lib/wsrf_tools.jar:/opt/gt-current/lib/cog-axis.jar:/opt/gt-current/lib/cog-jglobus.jar:/opt/gt-current/lib/cog-url.jar:/opt/gt-current/lib/puretls.jar:/opt/gt-current/lib/opensaml.jar:/opt/gt-current/lib/cryptix-asn1.jar:/opt/gt-current/lib/cryptix.jar:/opt/gt-current/lib/cryptix32.jar:/opt/gt-current/lib/jce-jdk13-125.jar:/opt/gt-current/lib/wss4j.jar:/opt/gt-current/lib/jgss.jar:/opt/gt-current/lib/globus_delegation_service.jar:/opt/gt-current/lib/globus_delegation_stubs.jar:/opt/gt-current/lib/xalan-2.6.jar:/opt/gt-current/lib/xercesImpl-2.7.1.jar:/opt/gt-current/lib/xml-apis.jar:/opt/gt-current/lib/xmlsec.jar:/opt/gt-current/lib/jaxrpc.jar:/home/mjorra/projects/C3Grid/impl/gndms/extra/caGrid-Introduce-serviceTools-1.2.jar:/home/mjorra/projects/C3Grid/impl/gndms/extra/caGrid-ServiceSecurityProvider-client-1.2.jar:/home/mjorra/projects/C3Grid/impl/gndms/extra/caGrid-ServiceSecurityProvider-common-1.2.jar:/home/mjorra/projects/C3Grid/impl/gndms/extra/caGrid-ServiceSecurityProvider-service-1.2.jar:/home/mjorra/projects/C3Grid/impl/gndms/extra/caGrid-ServiceSecurityProvider-stubs-1.2.jar:/home/mjorra/projects/C3Grid/impl/gndms/extra/caGrid-advertisement-1.2.jar:/home/mjorra/projects/C3Grid/impl/gndms/extra/caGrid-core-1.2.jar:/home/mjorra/projects/C3Grid/impl/gndms/extra/caGrid-metadata-security-1.2.jar:/home/mjorra/projects/C3Grid/impl/gndms/extra/castor-0.9.9.jar:/home/mjorra/projects/C3Grid/impl/gndms/extra/jdom-1.0.jar:/opt/gt-current/lib/globus_wsrf_mds_aggregator.jar:/opt/gt-current/lib/globus_wsrf_mds_aggregator_stubs.jar:/opt/gt-current/lib/webmds-0.1-dev.jar:/opt/gt-current/lib/wsrf_mds_index.jar:/opt/gt-current/lib/wsrf_mds_index_stubs.jar:/opt/gt-current/lib/wsrf_mds_trigger.jar:/opt/gt-current/lib/wsrf_mds_trigger_stubs.jar:/opt/gt-current/lib/wsrf_mds_usefulrp.jar:/opt/gt-current/lib/wsrf_mds_usefulrp_schema_stubs.jar:/home/mjorra/.m2/repository/org/testng/testng/5.10/testng-5.10-jdk15.jar:/home/mjorra/.m2/repository/org/jmock/jmock/2.5.1/jmock-2.5.1.jar:/home/mjorra/.m2/repository/org/jmock/jmock-junit4/2.5.1/jmock-junit4-2.5.1.jar:/home/mjorra/.m2/repository/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1.jar:/home/mjorra/.m2/repository/org/hamcrest/hamcrest-library/1.1/hamcrest-library-1.1.jar:/home/mjorra/projects/C3Grid/impl/gndms/gndmc/gndms-gndmc/production, user.name=mjorra, java.vm.specification.version=1.0, java.home=/opt/sun-jdk-1.6.0.22/jre, sun.arch.data.model=64, user.language=de, java.specification.vendor=Sun Microsystems Inc., java.vm.info=mixed mode, java.version=1.6.0_22, java.ext.dirs=/opt/sun-jdk-1.6.0.22/jre/lib/ext:/usr/java/packages/lib/ext, sun.boot.class.path=/opt/sun-jdk-1.6.0.22/jre/lib/resources.jar:/opt/sun-jdk-1.6.0.22/jre/lib/rt.jar:/opt/sun-jdk-1.6.0.22/jre/lib/sunrsasign.jar:/opt/sun-jdk-1.6.0.22/jre/lib/jsse.jar:/opt/sun-jdk-1.6.0.22/jre/lib/jce.jar:/opt/sun-jdk-1.6.0.22/jre/lib/charsets.jar:/opt/sun-jdk-1.6.0.22/jre/classes, java.vendor=Sun Microsystems Inc., file.separator=/, java.vendor.url.bug=http://java.sun.com/cgi-bin/bugreport.cgi, sun.io.unicode.encoding=UnicodeLittle, sun.cpu.endian=little, sun.cpu.isalist=}
+# Staging request
+******************** ProviderStageInORQ ********************
+Just estimate: false
+********************* DataDescriptor *********************
+ObjectList: 
+    O1
+Just Download TRUE
+dataFormat: cdo
+metaDataFormat: xml
+******************** EODataDescriptor ********************
+DataFileName: data.cdo
+MetaDataFileName: meta.xml
+******************* EOProviderStageInORQ *******************
+# Accepted contract
+IfDecisionBefore: 2011-02-16T15:09:18.691Z
+ExecutionLikelyUnitl:  86400000
+ResultValidUntil:  172800000
+Waiting for staging to finish or fail... (state=created, progress=[1/100])
+Waiting for staging to finish or fail... (state=inprogress, progress=[1/100])
+Waiting for staging to finish or fail... (state=inprogress, progress=[1/100])
+Waiting for staging to finish or fail... (state=finished, progress=[100/100])
+types.ProviderStageInResultT@a5a3c573
+Address: https://130.73.78.137:8443/wsrf/services/gndms/Slice
+Reference property[0]:
+<ns3:SliceKey xmlns:ns3="http://dspace.gndms.zib.de/DSpace/Slice">59dac910-39d6-11e0-bcb2-c9c6a341d8b8</ns3:SliceKey>
+
+Collect your results at:
+gsiftp://csr-pc35.zib.de/tmp/Work/59daf020-39d6-11e0-bcb2-c9c6a341d8b8
+
+Collect your results by executing:
+globus-url-copy 'gsiftp://csr-pc35.zib.de/tmp/Work/59daf020-39d6-11e0-bcb2-c9c6a341d8b8/data.cdo' 'file:///home/mjorra/data.cdo'
+globus-url-copy 'gsiftp://csr-pc35.zib.de/tmp/Work/59daf020-39d6-11e0-bcb2-c9c6a341d8b8/meta.xml' 'file:///home/mjorra/meta.xml'
+
+Completed in 19.404s
+
