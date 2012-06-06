@@ -16,10 +16,6 @@ This is the Installation Guide for the
 {:toc}
 
 
-BIG WARNING: THIS RELEASE HAS ALMOST NO SECURITY FEATURES AND IS NOT
-INTENDED FOR PRODUCTIVE USE. IT SHOULD BE RUN BEHIND A FIREWALL, SAVE
-FROM THE DANGERS OF OUTSIDE WORLD.
-
 Prerequisites
 -------------
 
@@ -109,7 +105,7 @@ buildr locally, please
 
 This guide assumes the usage of the pre-packaged version of buildr.
 
-
+*Currently buildr 1.9 is not supported*
 
 Installation and Deployment from Distribution Package 
 -----------------------------------------------------
@@ -155,8 +151,8 @@ The INSTALL file of the old system should describe how to do that.
 
       $JETTY_HOME/gndms/grid.properties 
 
-  in an editor of your choice and check if the `dspaceBaseURL` and
-  `gorfxBaseURL` entries are correct. Additionally, check if `gridPath` points to
+  in an editor of your choice and check if the `baseURL` and
+  `localBaseURL` entries are correct. Additionally, check if `gridPath` points to
   the desired folder.
 
 * Before (re-)starting the application container (e.g. Jetty), make sure that the `$GNDMS_SHARED`
@@ -336,7 +332,7 @@ file. In the section:
   and leave `myProxyConnectionCredentialPrefix` alone. 
   **Note** these files must be present in the folder named by:
   `myProxyConnectionCredentialFolder`. 
- 
+  
 **Keystore / Truststore** 
 
 Somewhere, for example in `/etc/grid-security`, make a new directory `trustStore` for the keystore. First, the new keystore has to be created by:
