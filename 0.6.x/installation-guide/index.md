@@ -155,6 +155,11 @@ The INSTALL file of the old system should describe how to do that.
   `localBaseURL` entries are correct. Additionally, check if `gridPath` points to
   the desired folder.
 
+* Hence GNDMS >= 0.6.2 are using SSL resp. Https for transport layer
+  security, you need to activate the SSL channel of your application
+  container, and provide it with decent credentials. (See [Keystore /
+  Truststore Section](#keystore__truststore)
+
 * Before (re-)starting the application container (e.g. Jetty), make sure that the `$GNDMS_SHARED`
   path is accessible by the user gndms running the application container.
 
@@ -333,18 +338,28 @@ file. In the section:
   **Note** these files must be present in the folder named by:
   `myProxyConnectionCredentialFolder`. 
   
-**Keystore / Truststore** 
+### Keystore / Truststore ###
 
-Somewhere, for example in `/etc/grid-security`, make a new directory `trustStore` for the keystore. First, the new keystore has to be created by:
+For the SSL connection to work most application-servers need a Java
+Keystore containing the host-certificate and a truststore containing
+all trusted CA certificates. Key- and truststore can be contained in
+the same store.
+
+When migrating from previous Grid installation, this root CA
+certificates can usually by found in `/etc/grid-security/certificates`
+In order to import this certificates into your keystore use the
+following code shell commands:
 
       export gridCACertPath=/etc/grid-security/certificates
       for i in $gridCACertPath/*.0; do
          ali=$( basename $i .0 );
          echo importing $ali;
-         openssl x509 -in $i | keytool -keystore keystore -import -trustcacerts -alias $ali -storepass <masterpwd> -noprompt
+         openssl x509 -in $i | keytool -keystore <path-to-jks> -import -trustcacerts -alias $ali -storepass <masterpwd> -noprompt
       done
 
 where `<masterpwd>` is the new master password for the keystore.
+
+**NOTE** If `<path-to-jks>` points to a not existing keystore a new one will be created. 
 
 Then the user's key (here in `gndmskey.pem`) has to be converted into pkcs12 standard
 
@@ -352,17 +367,53 @@ Then the user's key (here in `gndmskey.pem`) has to be converted into pkcs12 sta
       
 where a new user password `<userpwd>` is asked for. This key is then added to the keystore using
 
-      keytool -importkeystore -srckeystore jetty.pkcs12 -srcstoretype PKCS12 -destkeystore keystore
+      keytool -importkeystore -srckeystore jetty.pkcs12 -srcstoretype PKCS12 -destkeystore <path-to-jks>
 
 where first the master password for the keystore `<masterpwd>` and then the user password `<userpwd>` have to be entered.
 
 In `grid.properties`, the following variables have to be defines:
 
-      trustStoreLocation=/etc/grid-security/trustStore/keystore
+      trustStoreLocation=<path-to-jks>
       trustStorePassword=<masterpwd>
-      keyStoreLocation=/etc/grid-security/trustStore/keystore
+      keyStoreLocation=<path-to-jks>
       keyStorePassword=<masterpwd>
       keyPassword=<userpwd>
+
+**Setting up a SSLContext in Jetty**
+
+Jetty the SSL configuration is defined in `$JETTY_HOME/etc/jetty-ssl.xml`
+
+It must be configured as followed
+
+     <New id="sslContextFactory" class="org.eclipse.jetty.http.ssl.SslContextFactory">
+         <Set name="KeyStore"><Property name="jetty.home" default="." />/etc/keystore</Set>
+         <Set name="KeyStorePassword">OBF:1uo71zly1y101ym51z0h1zsp1w261u9l1sov1u9x1w1c1zt11z0d1ym91y0q1zlk1unr</Set>
+         <Set name="KeyManagerPassword">OBF:1v921x1b1v9k</Set>
+         <Set name="TrustStore"><Property name="jetty.home" default="." />/etc/keystore</Set>
+         <Set name="TrustStorePassword">OBF:1uo71zly1y101ym51z0h1zsp1w261u9l1sov1u9x1w1c1zt11z0d1ym91y0q1zlk1unr</Set>
+         <Set name="WantClientAuth">true</Set> <!-- importend for cert based authentication -->
+         <Set name="CertAlias">1</Set>
+         <Set name="ValidatePeerCerts">true</Set>
+         <Set name="CrlPath">/tmp/1149214e.r0</Set>
+    </New>
+
+**NOTE** *KeyStorePassword and TrustStorePassword are the obfuscated version of `<masterpwd>` and 
+      KeyManagerPassword is the obfuscated form of `<userpwd>`.*
+
+To generate an obfuscate passwords execute the following command in $JETTY_HOME
+
+    java -cp lib/jetty-http-8.0.4.v20111024.jar:lib/jetty-util-8.0.4.v20111024.jar org.eclipse.jetty.http.security.Password  <passwd>
+
+The *KeyStore* and *TrustStore* entrys should contain `<path-to-jks>` ($JETTY_HOME/etc/keystore in this example).
+
+
+Then start jetty with:
+
+    java -jar start.jar etc/jetty-ssl.xml
+
+**Setting up a SSLContext in Tomcat**
+
+Please consult the fine documentation provided [here](http://static.springsource.org/spring-security/site/docs/3.0.x/reference/x509.html#x509-ssl-config)
 
 ### Finalize Installation 
 
