@@ -1,7 +1,7 @@
 ---
 title: GNDMS Architecture Primer
 root: ../..
-version: 0.6.x
+version: 0.6.0
 layout: wikistyle
 ---
 
