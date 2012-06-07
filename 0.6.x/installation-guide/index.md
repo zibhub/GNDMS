@@ -241,6 +241,8 @@ the `Buildfile`.
 
 **C3-Grid Setup & Configuration for ESGF-Stager** 
 
+The ESGF-Staging PlugIn provides a method to stage data from ESGF to GNDMS.
+
 * Enable ESGF-stage-in:
   Enter the directory
   
@@ -270,11 +272,15 @@ the `Buildfile`.
   
       $GNDMS_SOURCE/taskflows/esgfStaging/bin/run-esgf-client.sh
 
-  This script requires the following arguments to run:
+  Before running the script, an ESGF-certificate needs to be stored (no Proxy!) in the MyProxy server configured below.
+  The script requires the following arguments to run:
 
   + The staging request as properties-file:
 
         -props < staging-property-file-name >
+
+    The property file consists of entries describing all ESG files to download and their checksums.
+    A sample file can be found at $GNDMS_SOURCE/taskflows/esgfStaging/etc/order.properties.
 
   + The keystore with its password and the password for the private key stored in the keystore:
 
