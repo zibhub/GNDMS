@@ -263,7 +263,7 @@ the `Buildfile`.
     : Edit `$GNDMS_SOURCE/scripts/c3grid/setup-esgfstaging.sh` and
     execute `gndms-buildr c3grid-esgf-setupdb` in $GNDMS_SOURCE !
 
-* Quick test for provider stage-in:
+* Quick test for ESGF-stage-in:
 
   We provide a script which executes a sample ESGF staging. It can be found
   under:
