@@ -126,8 +126,8 @@ public abstract class GORFXTaskFlowExample extends AbstractApplication {
             trustStoreLocation = keyStoreLocation;
             truststorePasswd = keystorePasswd;
         }
-        else if( null == truststorePasswd )
-            throw new IllegalArgumentException( "Missing truststore password." );
+       // else if( null == truststorePasswd )
+       //     throw new IllegalArgumentException( "Missing truststore password." );
 
         setupSSL.setTrustStoreLocation( trustStoreLocation );
         setupSSL.prepareTrustStore( truststorePasswd );
