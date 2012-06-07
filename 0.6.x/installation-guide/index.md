@@ -239,6 +239,63 @@ the `Buildfile`.
         -myProxyPasswd < pass-phrase >       
 
 
+**C3-Grid Setup & Configuration for ESGF-Stager** 
+
+* Enable ESGF-stage-in:
+  Enter the directory
+  
+      $GNDMS_SOURCE/taskflows/esgfStaging
+  
+  and run
+  
+      gndms-buildr esgf:server:package
+  
+  This will compile the stage-in client and server. Then install it with
+  
+  
+      gndms-buildr esgf:server:deploy
+  
+  Now (re-)start or reload your application container, this is required for
+  the gndms plug-in loader to properly register the plug-ins.
+  
+  Finally, configure the provider staging plug-in:
+
+    : Edit `$GNDMS_SOURCE/scripts/c3grid/setup-esgfstaging.sh` and
+    execute `gndms-buildr c3grid-esgf-setupdb` in $GNDMS_SOURCE !
+
+* Quick test for provider stage-in:
+
+  We provide a script which executes a sample ESGF staging. It can be found
+  under:
+  
+      $GNDMS_SOURCE/taskflows/esgfStaging/bin/run-esgf-client.sh
+
+  This script requires the following arguments to run:
+
+  + The staging request as properties-file:
+
+        -props < staging-property-file-name >
+
+  + The keystore with its password and the password for the private key stored in the keystore:
+
+        -keystore < keystore >
+        -keystorePasswd < keystore password >
+        -privkeyPasswd < private key password >
+
+  + The DN to get authorized with:
+
+        -dn < distinguish name >
+
+     Note that you have to use the dn of your certificate if it's not a host certificate.
+
+  + Login details for the MyProxyServer the same you used with
+     myproxy-init. See below for additional
+     information about the MyProxy-configuration
+
+        -myProxyLogin  < login >          
+        -myProxyPasswd < pass-phrase >       
+
+
 **C3-Grid Setup & Configuration for Portal** 
 
 * Enable GridFTP-file-transfer
