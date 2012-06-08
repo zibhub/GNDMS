@@ -1,7 +1,7 @@
 require "#{ENV['GNDMS_SOURCE']}/buildr/gndms_modules"
 include GNDMS_MODULES
 
-PLUGIN_VERSION_NUMBER = '0.6.0'
+PLUGIN_VERSION_NUMBER = '0.6.2'
 # Don't touch below unless you know what you are doing
 # --------------------------------------------------------------------------------------------------
 

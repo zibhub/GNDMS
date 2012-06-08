@@ -25,8 +25,8 @@ repositories.remote << 'http://people.apache.org/repo/m2-incubating-repository'
 #
 require "open3"
 
-VERSION_NUMBER = '0.6.1'
-VERSION_NAME = 'ARTURAS'
+VERSION_NUMBER = '0.6.2'
+VERSION_NAME = 'EDWARD'
 FALLBACK_VERSION_TAG = 'release-Arturas'
 GROUP_NAME = 'de.zib.gndms'
 MF_COPYRIGHT = 'Copyright 2008-2011 Zuse Institute Berlin (ZIB)'
@@ -61,8 +61,7 @@ COG_LOCATION=[ ENV['GNDMS_SOURCE'], 'lib', 'cog-jglobus' ].join( File::SEPARATOR
 VOLD_LOCATION=[ ENV['GNDMS_SOURCE'], 'lib', 'VolD' ].join( File::SEPARATOR )
 
 #testEnv('GLOBUS_LOCATION', 'the root directory of Globus Toolkit 4.0.8')
-#GNDMS_DB=[ ENV['GLOBUS_LOCATION'], 'etc', 'gndms_shared', 'db', 'gndms' ].join(File::SEPARATOR)
-GNDMS_DB=[ '', 'tmp', 'c3grid', 'TESTDB' ].join(File::SEPARATOR)
+GNDMS_DB=[ ENV['GNDMS_SHARED'], 'db', 'derby' ].join(File::SEPARATOR)
 #GNDMS_DB=[ '', 'tmp', 'c3grid', 'c3db' ].join(File::SEPARATOR)
 #DEPLOY_GAR=[ ENV['GLOBUS_LOCATION'], 'bin', 'globus-deploy-gar' ].join(File::SEPARATOR)
 #testEnv('ANT_HOME', 'the root directory of Apache Ant')
@@ -539,13 +538,17 @@ define 'gndms' do
 
         libs = [ VOLD_CLIENT ]
         [ 'gorfx', 'dspace', 'infra', 'logic', 'kit', 'stuff', 'neomodel', 'model', 'gndmc-rest', 'common' ].each { |mod| 
-            project( mod ).compile.dependencies.map( &:to_s ).each  { |lib| libs << lib }
+            
+            project( mod ).compile.dependencies.map( &:to_s ).each  { |lib| libs << lib unless /servlet-api-\d.\d/.match( lib ) }
+            #                                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            #                                                                           removes servlet-api jars from the deps list
             libs << project( mod ).package(:jar)
         }
 
         # workaround for builder dependence bug
         package(:war).enhance FileList[_(:web,  '**/*'), _( '../lib', '**/gndms-*.jar' )]
         package(:war).libs += libs.uniq
+        package(:war).libs -= artifacts( SERVLET )
     end
 end
 

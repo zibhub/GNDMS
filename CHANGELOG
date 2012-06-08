@@ -1,3 +1,15 @@
+0.6.2: Edward
+
+@Everybody
+* [NEW] New PlugIn: InterSliceTransfer
+* [NEW] New PlugIn: ESGF Staging
+* [NEW] Support Transport Layer Security (TLS)
+
+@Developer
+* [CHANGE] Improved usability of SliceClient
+* [CHANGE] Extended functionality of UriFactory
+* [NEW] New guards using Spring AOP
+
 0.6.0: Arturas
 
 The first REST-based release NOT FOR OPERATIONAL USE

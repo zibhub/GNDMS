@@ -1,0 +1,7 @@
+<Context path="/gndms">
+        <Resources className="org.apache.naming.resources.VirtualDirContext"
+                extraResourcePaths="${catalina.base}/gndms" />
+        <Loader className="org.apache.catalina.loader.VirtualWebappLoader"
+                virtualClasspath="${catalina.base}/gndms" />
+        <JarScanner scanAllDirectories="true" />
+</Context>

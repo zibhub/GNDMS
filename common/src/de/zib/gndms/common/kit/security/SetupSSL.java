@@ -120,7 +120,9 @@ public class SetupSSL {
         InputStream tis = new FileInputStream( trustStoreLocation );
 
         trustStore = KeyStore.getInstance( trustStoreType );
-        trustStore.load( tis, trustStorePassword.toCharArray() );
+        trustStore.load( tis,
+                trustStorePassword != null ? trustStorePassword.toCharArray() : null
+        );
 
         initTrustManagerFactory();
     }
