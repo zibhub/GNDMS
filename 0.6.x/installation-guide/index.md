@@ -31,7 +31,7 @@ Toolkit Version 1.6.
  
 For compiling the services, please make sure that `$JAVA_HOME` points
 to this version and that this is also the version that is in your
-`$PATH`. Naturally, this should be the same version than the one you
+`$PATH`. Naturally, this should be the same version as the one you
 want to use for building and running globus.
 
 
@@ -48,7 +48,7 @@ following software:
 Additionally, it is expected that your UNIX provides the following
 shell tools: hostname, which, bash
 
-GNDMS requires an Servlet 3.0 compliant application container. We have
+GNDMS requires a Servlet 3.0 compliant application container. We have
 tested GNDMS against the latest stable release of Jetty 6 to 8. You
 can either grab Jetty from 
 
@@ -116,14 +116,14 @@ Installation and Deployment from Distribution Package
 
 ### Migrating from a Previous Installation
 
-The REST version ot GNDMS (>= 0.6.0) has nearly nothing in common with
+The REST version of GNDMS (>= 0.6.0) has nearly nothing in common with
 the last WS-based version (0.3.4).
 Hence, it would be best to get rid of the old system completely.
 The INSTALL file of the old system should describe how to do that.
 
 ### Installation and Initial Deployment
  
-* Please enter `$GNDMS_SOURCE` and exeucte `gndms-buildr package`.
+* Please enter `$GNDMS_SOURCE` and execute `gndms-buildr package`.
 
   This will compile the sources and build a .war file for the application container.
 
@@ -141,7 +141,7 @@ The INSTALL file of the old system should describe how to do that.
 
   If you want to use another application server than Jetty, that's
   fine: every Servlet 2.5 compliant server should do the trick.
-  However you need to do deployment of the application manually.
+  However, you need to deploy the application manually.
   
 * Setup the service config.
   To do that, open 
@@ -188,7 +188,7 @@ any plug-ins.
 Depending on the designated role of your GNDMS installation you need to
 install and setup additional plug-ins.
 
-Additionally, there are build targets to for the C3INAD project in
+Additionally, there are build targets for the C3INAD project in
 the `Buildfile`.
 
 
@@ -233,8 +233,8 @@ the `Buildfile`.
 
         $GNDMS_SOURCE/etc/sfr/dummy-sfr.properties
 
-  Additionally arguments for the security and the endpoitns are
-  required see the section [Running a GORFX-test-client](#running_a_gorfxtestclient) for
+  Additionally arguments for security and the endpoints are
+  required, see the section [Running a GORFX-test-client](#running_a_gorfxtestclient) for
   details.
 
 **C3-Grid Setup & Configuration for ESGF-Stager** 
@@ -324,8 +324,8 @@ The ESGF-Staging PlugIn provides a method to stage data from ESGF to GNDMS.
 
       $GNDMS_SOURCE/taskflows/fileTransfer/etc/order.properties
 
-  Additionally arguments for the security and the endpoitns are
-  required see the section [Running a GORFX-test-client](#running_a_gorfxtestclient) for details.
+  Additionally arguments for security and the endpoints are
+  required, see the section [Running a GORFX-test-client](#running_a_gorfxtestclient) for details.
 
 
 
@@ -357,13 +357,13 @@ configured in the `grid.properties` file. In the section:
 
   first.
 
-* For the connection to the MyProxy-server host authentication is used.
+* For the connection to the MyProxy-server, host authentication is used.
   This requires a Host certificate from the D-Grid together with the
   root CA-certificates.
 
   + `myProxyConnectionCredentialFolder` is the folder containing
   the certificates folder with the root CA-certs in hashed form.
-  Simply set it to /etc/grid-security is fine.
+  Simply setting it to /etc/grid-security is fine.
 
   + `myProxyConnectionCredentialPrefix` in case you want to use
   containercert.pem and containerkey.pem this should be `container`.
@@ -375,7 +375,7 @@ configured in the `grid.properties` file. In the section:
       containerkey.pem  => gndmskey.pem 
 
   and leave `myProxyConnectionCredentialPrefix` alone. 
-  **Note** these files must be present in the folder named by:
+  **Note** that these files must be present in the folder named by:
   `myProxyConnectionCredentialFolder`. 
   
 ### Keystore / Truststore ###
@@ -385,9 +385,9 @@ Keystore containing the host-certificate and a truststore containing
 all trusted CA certificates. Key- and truststore can be contained in
 the same store.
 
-When migrating from previous Grid installation, this root CA
-certificates can usually by found in `/etc/grid-security/certificates`
-In order to import this certificates into your keystore use the
+When migrating from previous Grid installation, these root CA
+certificates can usually by found in `/etc/grid-security/certificates`.
+In order to import the certificates into your keystore use the
 following code shell commands:
 
       export gridCACertPath=/etc/grid-security/certificates
@@ -411,7 +411,7 @@ where a new user password `<userpwd>` is asked for. This key is then added to th
 
 where first the master password for the keystore `<masterpwd>` and then the user password `<userpwd>` have to be entered.
 
-In `grid.properties`, the following variables have to be defines:
+In `grid.properties`, the following variables have to be defined:
 
       trustStoreLocation=<path-to-jks>
       trustStorePassword=<masterpwd>
@@ -419,11 +419,11 @@ In `grid.properties`, the following variables have to be defines:
       keyStorePassword=<masterpwd>
       keyPassword=<userpwd>
 
-**Setting up a SSLContext in Jetty**
+**Setting up an SSLContext in Jetty**
 
-Jetty the SSL configuration is defined in `$JETTY_HOME/etc/jetty-ssl.xml`
+For Jetty, the SSL configuration is defined in `$JETTY_HOME/etc/jetty-ssl.xml`
 
-It must be configured as followed
+It must be configured as follows
 
      <New id="sslContextFactory" class="org.eclipse.jetty.http.ssl.SslContextFactory">
          <Set name="KeyStore"><Property name="jetty.home" default="." />/etc/keystore</Set>
@@ -451,9 +451,9 @@ Then start jetty with:
 
     java -jar start.jar etc/jetty-ssl.xml
 
-**Setting up a SSLContext in Tomcat**
+**Setting up an SSLContext in Tomcat**
 
-Please consult the fine documentation provided [here](http://static.springsource.org/spring-security/site/docs/3.0.x/reference/x509.html#x509-ssl-config)
+Please consult the fine documentation provided [here](http://static.springsource.org/spring-security/site/docs/3.0.x/reference/x509.html#x509-ssl-config).
 
 
 ### Finalize Installation 
@@ -466,8 +466,8 @@ have a running installation of GNDMS.*
 
 ### Running a GORFX-test-client
 
-All tests for GORFX taskflows test-clients are derived from the same class and thus
-supports the same options which are:
+All tests for GORFX taskflow test-clients are derived from the same class and thus
+support the same options which are:
 
     -cancel N             : ms to wait before destroying taskClient.
     -con-props VAL        : contract.properties
@@ -483,7 +483,7 @@ supports the same options which are:
     -uri URI              : URL of GORFX-Server
 
 
-A few explanations the required arguments:
+A few explanations of the required arguments:
 
 + The URI is expected to be the FQDN of the server which should
   execute your order.
@@ -492,29 +492,29 @@ A few explanations the required arguments:
 
     -props  < properties-file >
 
-  Must point to a properties file for teh given taskflow.
+  must point to a properties file for the given taskflow.
 
 
-+ If SSL should be used a keystore and possibly a truststore must be
-  provided 
++ If SSL shall be used, a keystore and possibly a truststore must be
+  provided. 
 
-    - To the keystore with its password and the password for the private key stored in the keystore:
+    - The keystore is defined with its password and the password for the private key stored in the keystore:
 
         -keystore < keystore >
         -keystorePasswd < keystore password >
         -privkeyPasswd < private key password >
-  
-      Keystore can either be a Java keystore (JKS) the default or a store in PKCS12
-      format then `<keystore>` must end with either `p12` or `pkcs12`.
 
-    - The truststore, holds the required root-CA certs, should contain at
+      The keystore can either be a Java keystore (JKS), as default, or a store in PKCS12
+      format, in which case `<keystore>` must end with either `p12` or `pkcs12`.
+
+    - The truststore holds the required root-CA certs and should contain at
       least the DFN-Grid CA certificate.
 
         -truststore < truststore-location >
         -truststorePasswd < truststore-passwd >
-  
-      The truststore itself is expected to be a JKS. If this options are
-      omitted then it is assumed that keystore holds the required root-CA
+ 
+      The truststore itself is expected to be a JKS. If these options are
+      omitted then it is assumed that the keystore holds the required root-CA
       certificates. If the truststore is passwordless than the password
       argument can be omitted.
 
@@ -522,7 +522,7 @@ A few explanations the required arguments:
 
     -dn < distinguish name >
 
- Note that you have to use the dn of your certificate if it's not a host certificate.
+    Note that you have to use the dn of your certificate if it's not a host certificate.
 
 + Login details for the MyProxyServer the same you used with myproxy-init. 
 
@@ -533,7 +533,7 @@ A few explanations the required arguments:
 **A complete commandline**
 
 The following example is for the inter-slice-transfer, apart from the
-runner script name it would be fine for an arbitrary taskflow and should be executed in that taskflows folder:
+runner script name it would be fine for an arbitrary taskflow and should be executed in that taskflow's folder:
 
     bin/run-interslicetransfer-client.sh \
     -uri https://csr-pc15.zib.de:8443/gndms/c3grid -props etc/order.properties \
@@ -543,12 +543,12 @@ runner script name it would be fine for an arbitrary taskflow and should be exec
 
 The command line subjects that trustroots are contained in
 *my-client-keystore*, which is protected by the passphrase *foo* and
-that the userkey is *bar*. Additionally the MyProxy credentials are
+that the userkey is *bar*. Additionally, the MyProxy credentials are
 stored for the user *mjorra*, protected by the password *myProxyPass*.
 
 ### Trouble Shooting
 
-**Server responds with BAD REQUEST 400, when submit a TaskFlow**
+**Server responds with BAD REQUEST 400 after submitting a TaskFlow**
 : It might by that the plug-ins for the TaskFlow aren't installed
 correctly. Check if the plug-in path in your
 `$JETTY_HOME/gndms/grid.properties` is set correctly and that the
@@ -559,8 +559,8 @@ folder contains the required jar files.
 : Yep, thats what you get for using Ubuntu... Problem is that we use
 JNA for low level file-system access like chmod and Ubuntu doesn't
 provide a valid libc in the usual path, just a stupid script.
-To get it working you need to tell JNA where the real libc is located
-usually u do this by suppling 
+To get it working you need to tell JNA where the real libc is located,
+usually you do this by supplying 
 
         -Djna.library.path=< path to your libc > 
 
@@ -585,7 +585,7 @@ doesn't exist or your CA directory isn't up to date. In the first case
 just call `grid-proxy-init` again, in the second refer to the
 `fetch-crl` section <a href="#fetch-crl">below</a>.
 
-**I'm getting an java.lang.IllegalStateException from the first transfer**
+**I'm getting a java.lang.IllegalStateException from the first transfer**
 : If the exception message contains the custom message:
 <pre><code>
 ...
@@ -607,10 +607,10 @@ sudoers entries) is correct.
         gsiftp://more.bar.org/tmp/gndms/RW/f521ba10-a06a-11df-b70c-f2b2b7430fda failure 
         Server refused performing the request. ...`
 </code></pre>
-: Or the client prints out infinite `Waiting for transfer to finish...`
+: or the client prints out infinite `Waiting for transfer to finish...`
 messages and the destination directory contains a single empty file,
-please ensure the both grid-ftp servers are running, accepting your
-credential and can talk to each other. Best way to verify this is to
+please ensure that both grid-ftp servers are running, accepting your
+credential and can talk to each other. The best way to verify this is to
 search the test-clients output for a line like:
 <pre><code>
     Copy gsiftp://some.foo.org:2811/tmp/srcDir ->
@@ -623,7 +623,7 @@ search the test-clients output for a line like:
 </code></pre>
 : If you get an error message like "No route to host" or the like
 ensure that the grid-ftp servers of both hosts are listening on the
-right network device and that now firewall is blocking the connection.
+right network device and that no firewall is blocking the connection.
 If this hangs infinitely something with the data-channel setup is
 wrong. Consult the grid-ftp documentation about the --data-channel
 argument.
