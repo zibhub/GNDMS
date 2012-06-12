@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="0.6.2"
+VERSION="0.6.3"
 args=( "-uri" "https://${GNDMS_HOST:-$(hostname -f)}:${GNDMS_PORT:-8443}/gndms/c3grid/" )
 
 cp="$GNDMS_SOURCE/taskflows/fileTransfer/lib/client/transfer-client-0.6.0.jar:$cp"
@@ -11,7 +11,7 @@ cp="$HOME/.m2/repository/portlet-api/portlet-api/1.0/portlet-api-1.0.jar:$cp"
 cp="$HOME/.m2/repository/commons-codec/commons-codec/1.4/commons-codec-1.4.jar:$cp"
 cp="$GNDMS_SOURCE/lib/common/gndms-common-$VERSION.jar:$cp"
 cp="$GNDMS_SOURCE/lib/stuff/gndms-stuff-$VERSION.jar:$cp"
-cp="$GNDMS_SOURCE/lib/gndmc-rest/gndms-gndmc-rest-0.6.1.jar:$cp"
+cp="$GNDMS_SOURCE/lib/gndmc-rest/gndms-gndmc-rest-0.6.2.jar:$cp"
 cp="$HOME/.m2/repository/com/intellij/annotations/7.0.3/annotations-7.0.3.jar:$cp"
 cp="$HOME/.m2/repository/joda-time/joda-time/1.6/joda-time-1.6.jar:$cp"
 cp="$HOME/.m2/repository/args4j/args4j/2.0.14/args4j-2.0.14.jar:$cp"
@@ -44,4 +44,4 @@ cp="$GNDMS_SOURCE/taskflows/interSliceTransfer/client/interSliceTransfer-client/
 
 props=( )
 
-exec java -cp $cp ${props[@]} de.zib.gndms.taskflows.interslicetransfer.client.InterSliceTransferExample ${args[@]} $@
+exec java -cp $cp ${props[@]} de.zib.gndms.taskflows.interslicetransfer.client.InterSliceTransferExample ${args[@]} "$@"

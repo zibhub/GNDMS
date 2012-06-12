@@ -1,7 +1,7 @@
 #!/bin/bash
 
-VERSION="0.6.2"
-args=( "-uri" "http://localhost:8080/gndms/c3grid/" )
+VERSION="0.6.3"
+args=( "-uri" "https://csr-pc15.zib.de:8443/gndms/c3grid/" )
 
 cp="$HOME/.m2/repository/commons-codec/commons-codec/1.4/commons-codec-1.4.jar:$cp"
 cp="$HOME/.m2/repository/org/slf4j/jcl-over-slf4j/1.6.3/jcl-over-slf4j-1.6.3.jar:$cp"
