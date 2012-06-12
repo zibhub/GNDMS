@@ -279,6 +279,8 @@ public class GORFXServiceImpl implements GORFXService {
                                                              @RequestHeader( "WId" ) String wid,
                                                              @RequestHeader MultiValueMap<String, String> context ) {
 
+        logContext( context );
+
         GNDMSResponseHeader headers = new GNDMSResponseHeader(
             gorfxFacets.findFacet( "taskflows" ).getUrl(), null, gorfxBaseUrl, dn, wid );
 
@@ -310,7 +312,27 @@ public class GORFXServiceImpl implements GORFXService {
     }
 
 
-     public String getBaseUrl() {
+    private void logContext( final MultiValueMap<String, String> context ) {
+
+        if( logger.isDebugEnabled() || logger.isTraceEnabled() )
+            for( String key : context.keySet()  ) {
+                StringBuilder sb = new StringBuilder( key );
+                sb.append( " {");
+                boolean notFirst = false;
+                for( String val : context.get( key ) ) {
+                    if( notFirst )
+                        sb.append( "," );
+                    else
+                        notFirst = true;
+                    sb.append( val );
+                }
+                sb.append( "}");
+                logger.debug( sb.toString() );
+            }
+    }
+
+
+    public String getBaseUrl() {
         return baseUrl;
     }
 

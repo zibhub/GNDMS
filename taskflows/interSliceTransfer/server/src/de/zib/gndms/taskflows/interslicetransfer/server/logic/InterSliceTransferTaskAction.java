@@ -63,6 +63,7 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
 
     private SliceClient sliceClient;
     private SubspaceClient subspaceClient;
+    public LinkedList<Exception> cause;
 
 
     public InterSliceTransferTaskAction() {
@@ -156,8 +157,13 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
                 if (altTaskState)
                     task.setAltTaskState(null);
             }
-            else
-                throw (RuntimeException) st.getPayload();
+            else {
+                cause = task.getCause();
+                if( cause != null )
+                    fail( cause.toArray( new Exception[cause.size()] ) );
+                else
+                    throw new IllegalStateException( "Subtask failed without a cause" );
+            }
             session.success();
         }
         finally { session.finish(); }
