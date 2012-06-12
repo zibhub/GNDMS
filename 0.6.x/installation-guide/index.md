@@ -15,14 +15,11 @@ This is the Installation Guide for the
 * Maruku will replace this with a fine Table of Contents
 {:toc}
 
-
 Prerequisites
 -------------
 
 In order to build or install GNDMS, the following prerequisites need to
 be fulfilled.
-
-
 
 ### Prepare your local software installation
 
@@ -153,18 +150,18 @@ The INSTALL file of the old system should describe how to do that.
 
   in an editor of your choice and check if the `baseURL` and
   `localBaseURL` entries are correct. Additionally, check if `gridPath` points to
-  the desired folder.
+  the desired folder. See [Server-side MyProxy setup](#serverside_myproxy_setup) for information about the myproxy entries.
 
 * Hence GNDMS >= 0.6.2 are using SSL resp. Https for transport layer
   security, you need to activate the SSL channel of your application
   container, and provide it with decent credentials. (See [Keystore /
-  Truststore Section](#keystore__truststore)
+  Truststore Section](#keystore__truststore) )
 
 * Before (re-)starting the application container (e.g. Jetty), make sure that the `$GNDMS_SHARED`
   path is accessible by the user gndms running the application container.
 
   After restarting the application container, the following lines (or
-  the like) should appear in the server log (see $GNDMS_SHARED/log/server.log)
+  the like) should appear in the server log (see `$GNDMS_SHARED/log/server.log`)
 
 
       =========================================================================================                                          
@@ -174,15 +171,16 @@ The INSTALL file of the old system should describe how to do that.
       Initializing for grid: 'C3Grid' (shared dir: '/var/lib/gndms')     
 
 
+
 At this point the GNDMS software has been successfully installed.
 Next, we will describe how it may be configured for actual use.
  
 
  
 Grid-Configuration of GNDMS Software
------------------------------------
+------------------------------------
  
-### Configuring your Grid
+### Configuring your Grid ### 
 
 The REST-based version of GNDMS uses a plug-in system to implement
 certain data-management tasks. The basic installation doesn't include
@@ -231,13 +229,13 @@ the `Buildfile`.
 
         -props < staging-property-file-name >
 
-  + Login details for the MyProxyServer the same you used with
-     myproxy-init. See below for additional
-     information about the MyProxy-configuration
+    An template for the order file can be found under
 
-        -myProxyLogin  < login >          
-        -myProxyPasswd < pass-phrase >       
+        $GNDMS_SOURCE/etc/sfr/dummy-sfr.properties
 
+  Additionally arguments for the security and the endpoitns are
+  required see the section [Running a GORFX-test-client](#running_a_gorfxtestclient) for
+  details.
 
 **C3-Grid Setup & Configuration for ESGF-Stager** 
 
@@ -282,24 +280,9 @@ The ESGF-Staging PlugIn provides a method to stage data from ESGF to GNDMS.
     The property file consists of entries describing all ESG files to download and their checksums.
     A sample file can be found at $GNDMS_SOURCE/taskflows/esgfStaging/etc/order.properties.
 
-  + The keystore with its password and the password for the private key stored in the keystore:
+  See section [Running a GORFX-test-client](#running_a_gorfxtestclient) for more details about
+  running GORFX-test-clients.
 
-        -keystore < keystore >
-        -keystorePasswd < keystore password >
-        -privkeyPasswd < private key password >
-
-  + The DN to get authorized with:
-
-        -dn < distinguish name >
-
-     Note that you have to use the dn of your certificate if it's not a host certificate.
-
-  + Login details for the MyProxyServer the same you used with
-     myproxy-init. See below for additional
-     information about the MyProxy-configuration
-
-        -myProxyLogin  < login >          
-        -myProxyPasswd < pass-phrase >       
 
 
 **C3-Grid Setup & Configuration for Portal** 
@@ -330,25 +313,20 @@ The ESGF-Staging PlugIn provides a method to stage data from ESGF to GNDMS.
 
   We provide a script which executes a simple file transfer. It can be found
   under:
-  
+
       $GNDMS_SOURCE/taskflows/fileTransfer/bin/run-transfer-client.sh
 
-  The script requires the following arguments to run:
+  The script requires the transfer request as properties-file:
 
-  + The transfer request as properties-file:
+      -props < staging-property-file-name >
 
-        -props < staging-property-file-name >
-
-     An example for transfer properties can be found in:
+  An example for transfer properties can be found in:
 
       $GNDMS_SOURCE/taskflows/fileTransfer/etc/order.properties
 
-  + Login details for the MyProxyServer, the same you used with
-    myproxy-init. See below for additional information about the
-    MyProxy-configuration
+  Additionally arguments for the security and the endpoitns are
+  required see the section [Running a GORFX-test-client](#running_a_gorfxtestclient) for details.
 
-        -myProxyLogin  < login >          
-        -myProxyPasswd < pass-phrase >       
 
 
 Additionally, please consult the documentation for the respective 
@@ -359,13 +337,12 @@ community grid platform.
 
 
 
-**MyProxy Setup**
+### Serverside MyProxy Setup ###
 
 
-File transfer and possibly provider stage-in require a user
-certificate. The certificates are issued from a MyProxy-Server. The
-server which should be used can be configured in the `grid.properties`
-file. In the section: 
+Most taskflows require a user certificate. Certificates are issued
+from a MyProxy-Server. The server which should be used can be
+configured in the `grid.properties` file. In the section: 
 
     # settings for the myproxy server
     myProxyServer=csr-pc28.zib.de
@@ -388,7 +365,7 @@ file. In the section:
   the certificates folder with the root CA-certs in hashed form.
   Simply set it to /etc/grid-security is fine.
 
-  + `myProxyConnectionCredentialPrefix` in case you want to use  
+  + `myProxyConnectionCredentialPrefix` in case you want to use
   containercert.pem and containerkey.pem this should be `container`.
   
   However these files must be readable for the user running the
@@ -424,7 +401,7 @@ where `<masterpwd>` is the new master password for the keystore.
 
 **NOTE** If `<path-to-jks>` points to a not existing keystore a new one will be created. 
 
-Then the user's key (here in `gndmskey.pem`) has to be converted into pkcs12 standard
+Then the host credentials (here in `gndmskey.pem` and `gndmscert.pem`) are loaded into a pkcs12 store.
 
       openssl pkcs12 -inkey /etc/grid-security/gndmskey.pem -in /etc/grid-security/gndmscert.pem -export -out jetty.pkcs12
       
@@ -478,6 +455,7 @@ Then start jetty with:
 
 Please consult the fine documentation provided [here](http://static.springsource.org/spring-security/site/docs/3.0.x/reference/x509.html#x509-ssl-config)
 
+
 ### Finalize Installation 
 
 Nothing todo here ;-)
@@ -486,6 +464,87 @@ Nothing todo here ;-)
 have a running installation of GNDMS.*
 
 
+### Running a GORFX-test-client
+
+All tests for GORFX taskflows test-clients are derived from the same class and thus
+supports the same options which are:
+
+    -cancel N             : ms to wait before destroying taskClient.
+    -con-props VAL        : contract.properties
+    -dn VAL               : DN
+    -keystore VAL         : Keystore to use.
+    -keystorePasswd VAL   : Password for keystore.
+    -myProxyLogin VAL     : login name for the MyProxyServer.
+    -myProxyPasswd VAL    : password name for the MyProxyServer.
+    -privkeyPasswd VAL    : Password for private key in keystore.
+    -props VAL            : taskflow order properties
+    -truststore VAL       : truststore to use.
+    -truststorePasswd VAL : Password for truststore.
+    -uri URI              : URL of GORFX-Server
+
+
+A few explanations the required arguments:
+
++ The URI is expected to be the FQDN of the server which should
+  execute your order.
+
++ The properties given with 
+
+    -props  < properties-file >
+
+  Must point to a properties file for teh given taskflow.
+
+
++ If SSL should be used a keystore and possibly a truststore must be
+  provided 
+
+    - To the keystore with its password and the password for the private key stored in the keystore:
+
+        -keystore < keystore >
+        -keystorePasswd < keystore password >
+        -privkeyPasswd < private key password >
+  
+      Keystore can either be a Java keystore (JKS) the default or a store in PKCS12
+      format then `<keystore>` must end with either `p12` or `pkcs12`.
+
+    - The truststore, holds the required root-CA certs, should contain at
+      least the DFN-Grid CA certificate.
+
+        -truststore < truststore-location >
+        -truststorePasswd < truststore-passwd >
+  
+      The truststore itself is expected to be a JKS. If this options are
+      omitted then it is assumed that keystore holds the required root-CA
+      certificates. If the truststore is passwordless than the password
+      argument can be omitted.
+
++ The DN of the user of which behalf the request is carried out.
+
+    -dn < distinguish name >
+
+ Note that you have to use the dn of your certificate if it's not a host certificate.
+
++ Login details for the MyProxyServer the same you used with myproxy-init. 
+
+    -myProxyLogin  < login >          
+    -myProxyPasswd < pass-phrase >       
+
+
+**A complete commandline**
+
+The following example is for the inter-slice-transfer, apart from the
+runner script name it would be fine for an arbitrary taskflow and should be executed in that taskflows folder:
+
+    bin/run-interslicetransfer-client.sh \
+    -uri https://csr-pc15.zib.de:8443/gndms/c3grid -props etc/order.properties \
+    -keystore my-client-keystore -keystorePasswd foo -privkeyPasswd bar \
+    -myProxyLogin mjorra -myProxyPasswd myProxyPass \
+    -dn "/C=DE/O=GridGermany/OU=Konrad-Zuse-Zentrum fuer Informationstechnik Berlin (ZIB)/CN=Maik Jorra"
+
+The command line subjects that trustroots are contained in
+*my-client-keystore*, which is protected by the passphrase *foo* and
+that the userkey is *bar*. Additionally the MyProxy credentials are
+stored for the user *mjorra*, protected by the password *myProxyPass*.
 
 ### Trouble Shooting
 
