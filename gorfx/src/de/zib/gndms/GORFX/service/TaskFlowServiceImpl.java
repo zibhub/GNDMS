@@ -218,6 +218,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                     logger.warn( "Exception on order calculation for " + tf.getOrder()
                             .getLoggableDescription(), e );
                     hs = HttpStatus.INTERNAL_SERVER_ERROR;
+                    // todo add causes and uuid (gorfx id) to exception message
                     throw new RuntimeException( e.getMessage() );
                 }
             }
