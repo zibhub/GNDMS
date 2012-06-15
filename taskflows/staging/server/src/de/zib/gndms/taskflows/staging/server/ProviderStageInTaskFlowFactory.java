@@ -132,6 +132,7 @@ public class ProviderStageInTaskFlowFactory
                                     ".ExternalProviderStageInAction" );
         config.put( "estimationClass", "de.zib.gndms.logic.model.gorfx.c3grid" +
                                        ".ExternalProviderStageInORQCalculator" );
+        config.put( "oidPrefixe", "" );
 
         return config;
     }
