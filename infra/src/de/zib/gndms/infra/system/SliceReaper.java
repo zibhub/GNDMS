@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.model.dspace;
+package de.zib.gndms.infra.system;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -16,6 +16,8 @@ package de.zib.gndms.logic.model.dspace;
  *  limitations under the License.
  */
 
+import de.zib.gndms.logic.model.dspace.NoSuchElementException;
+import de.zib.gndms.logic.model.dspace.SliceProvider;
 import de.zib.gndms.model.dspace.Slice;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
