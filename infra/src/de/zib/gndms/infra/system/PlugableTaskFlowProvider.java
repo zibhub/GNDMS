@@ -22,8 +22,12 @@ import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.stuff.GNDMSInjector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.ReflectionUtils;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -63,6 +67,24 @@ public class PlugableTaskFlowProvider extends TaskFlowProviderImpl {
         if( checkDeps )
             checkDeps();
 
+        // call all PostConstruct methods
+        for( TaskFlowFactory bp : sl ) {
+            for( Method method : bp.getClass().getDeclaredMethods() ) {
+                if (method.getAnnotation( PostConstruct.class ) != null) {
+                    ReflectionUtils.makeAccessible( method );
+                    try {
+                        method.invoke( bp, ( Object[] )null );
+                    }
+                    catch( IllegalAccessException e ) {
+                        throw new RuntimeException( "THIS IS NOT HAPPENING!!! Method had been made accessible but is not accessible anyway", e );
+                    }
+                    catch( InvocationTargetException e ) {
+                        throw new RuntimeException( "Could not call PostConstruct method (" + method.toGenericString() + ")", e );
+                    }
+                }
+            }
+        }
+
         // todo this is just for development change this for releases:
 //        if ( getFactories().size() == 0 )
 //            throw new IllegalStateException( "no plugs found" );
@@ -79,6 +101,30 @@ public class PlugableTaskFlowProvider extends TaskFlowProviderImpl {
             loadPlugins( true );
         } catch ( Exception e ) {
             throw new RuntimeException( e );
+        }
+    }
+
+
+    @PreDestroy
+    public void destroyPlugins( ) {
+        
+        final Map< String, TaskFlowFactory > factories = getFactories();
+        
+        for( TaskFlowFactory factory: factories.values() ) {
+            for( Method method : factory.getClass().getDeclaredMethods() ) {
+                if (method.getAnnotation( PreDestroy.class ) != null) {
+                    ReflectionUtils.makeAccessible( method );
+                    try {
+                        method.invoke( factory, ( Object[] )null );
+                    }
+                    catch( IllegalAccessException e ) {
+                        throw new RuntimeException( "THIS IS NOT HAPPENING!!! Method had been made accessible but is not accessible anyway", e );
+                    }
+                    catch( InvocationTargetException e ) {
+                        throw new RuntimeException( "Could not call PreDestroy method (" + method.toGenericString() + ")", e );
+                    }
+                }
+            }
         }
     }
 
