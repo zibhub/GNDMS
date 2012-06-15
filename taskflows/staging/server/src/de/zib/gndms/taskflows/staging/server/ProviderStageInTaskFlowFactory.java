@@ -200,9 +200,14 @@ public class ProviderStageInTaskFlowFactory
                     return;
                 }
 
+                try {
                 vold.insert("", new Key("/c3grid/", "dp", "gorfxep"), new HashSet<String>() {{
                     add( gorfxEP );
                 }});
+                }
+                catch( Exception e ) {
+                    logger.error( "Could not register dataprovider. I'll try again in 5 seconds...", e );
+                }
             }
         }
     }

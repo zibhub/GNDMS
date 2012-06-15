@@ -5,22 +5,23 @@
 
 
     <import resource="classpath:/META-INF/converter-setup.xml"/>
+    <import resource="classpath:/META-INF/vold-client-context.xml"/>
 
-   <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
-       <constructor-arg>
-           <bean class="org.springframework.http.client.SimpleClientHttpRequestFactory">
-                   <property name="connectTimeout" value="10000"/>
-           </bean>
-       </constructor-arg>
-       <property name="messageConverters">
-           <list>
-               <!--bean  class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
-                 <constructor-arg ref="marshaller" />
-                 </bean-->
-               <bean class="org.springframework.http.converter.FormHttpMessageConverter" />
-               <ref bean="converter"/>
-           </list>
-       </property>
-   </bean>
+    <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+        <constructor-arg>
+            <bean class="org.springframework.http.client.SimpleClientHttpRequestFactory">
+                <property name="connectTimeout" value="10000"/>
+            </bean>
+        </constructor-arg>
+        <property name="messageConverters">
+            <list>
+                <!--bean  class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
+                <constructor-arg ref="marshaller" />
+                </bean-->
+                <bean class="org.springframework.http.converter.FormHttpMessageConverter" />
+                <ref bean="converter"/>
+            </list>
+        </property>
+    </bean>
 
 </beans>
