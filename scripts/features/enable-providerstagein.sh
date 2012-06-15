@@ -25,6 +25,7 @@ moni call -v .gorfx.ConfigTaskFlowType "taskFlowType: 'ProviderStageIn'; \
 	stagingCommand: '$STAGING_COMMAND'; \
 	estimationCommand: '$ESTIMATION_COMMAND'; \
 	cancelCommand: '$CANCEL_COMMAND'; \
-	scriptIoFormat: '$SCRIPT_IO_FORMAT'"
+	scriptIoFormat: '$SCRIPT_IO_FORMAT'; \
+	oidPrefixe: '$STAGING_OIDPREFIXE'"
 }
 # vim:tw=0
