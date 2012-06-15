@@ -216,7 +216,7 @@ public class ESGFStagingTFAction extends TaskFlowAction< ESGFStagingOrder > {
         
         final MyProxyToken token = getOrder().getMyProxyToken().get( ESGFStagingTaskFlowMeta.REQUIRED_AUTHORIZATION.get( 0 ) );
         if( null == token )
-            throw new IllegalArgumentException( "No " + ESGFStagingTaskFlowMeta.REQUIRED_AUTHORIZATION.get( 0 ) + " token provided in Order." );
+            throw new IllegalArgumentException( "No for purpose " + ESGFStagingTaskFlowMeta.REQUIRED_AUTHORIZATION.get( 0 ) + " token provided in Order." );
 
         final String password = token.getPassword();
         final String trustStoreLocation = getOfferTypeConfig().getOption( "trustStoreLocation" );
