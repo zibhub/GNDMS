@@ -244,7 +244,7 @@ public class ProviderStageInTaskFlowFactory
     
     
     
-    Set< String > buildSet( String s ) {
+    private static Set< String > buildSet( String s ) {
         return new HashSet< String >( Arrays.asList( s.split( "(\\s|,|;)+" ) ) );
     }
 }
