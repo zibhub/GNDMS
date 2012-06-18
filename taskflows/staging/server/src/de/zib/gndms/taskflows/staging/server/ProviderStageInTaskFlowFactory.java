@@ -23,7 +23,9 @@ import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.model.gorfx.taskflow.DefaultTaskFlowFactory;
 import de.zib.gndms.neomodel.common.Dao;
+import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
+import de.zib.gndms.neomodel.gorfx.TaskFlowType;
 import de.zib.gndms.taskflows.staging.client.ProviderStageInMeta;
 import de.zib.gndms.taskflows.staging.client.model.ProviderStageInOrder;
 import de.zib.gndms.taskflows.staging.server.logic.AbstractProviderStageInAction;
@@ -31,15 +33,12 @@ import de.zib.gndms.taskflows.staging.server.logic.AbstractProviderStageInQuoteC
 import de.zib.gndms.taskflows.staging.server.logic.ExternalProviderStageInAction;
 import de.zib.gndms.taskflows.staging.server.logic.ExternalProviderStageInQuoteCalculator;
 import de.zib.gndms.voldmodel.Adis;
-import de.zib.vold.client.VolDClient;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -55,7 +54,6 @@ public class ProviderStageInTaskFlowFactory
         AbstractProviderStageInQuoteCalculator> {
 
     private VoldRegistrar registrar;
-    private VolDClient volDClient;
     private Adis adis;
     private GridConfig gridConfig;
 
@@ -102,13 +100,6 @@ public class ProviderStageInTaskFlowFactory
 
     @SuppressWarnings( "SpringJavaAutowiringInspection" )
     @Inject
-    public void setVolDClient( final VolDClient volDClient ) {
-        this.volDClient = volDClient;
-    }
-
-
-    @SuppressWarnings( "SpringJavaAutowiringInspection" )
-    @Inject
     public void setAdis( final Adis adis ) {
         this.adis = adis;
     }
@@ -142,7 +133,7 @@ public class ProviderStageInTaskFlowFactory
                                     ".ExternalProviderStageInAction" );
         config.put( "estimationClass", "de.zib.gndms.logic.model.gorfx.c3grid" +
                                        ".ExternalProviderStageInORQCalculator" );
-        config.put( "oidPrefixe", "" );
+        //config.put( "oidPrefixe", "" );
 
         return config;
     }
@@ -170,15 +161,22 @@ public class ProviderStageInTaskFlowFactory
 
     @PostConstruct
     public void startVoldRegistration() throws Exception {
+        MapConfig config = new MapConfig( getConfigMapData() );
+        if( !config.hasOption( "oidPrefixe" ) ) {
+            throw new IllegalStateException( "Dataprovider not configured: no OID_PREFIXE given." );
+        }
+        
         registrar = new VoldRegistrar( adis, gridConfig.getBaseUrl() );
         registrar.start();
     }
+    
 
     @PreDestroy
     public void stopVoldRegistration() {
         registrar.finish();
     }
 
+    
     private class VoldRegistrar extends Thread {
         final private Adis adis;
         final private String gorfxEP;
@@ -212,12 +210,38 @@ public class ProviderStageInTaskFlowFactory
 
                 try {
                     //adis.setOAI( gorfxEP );
-                    adis.setOIDPrefixe( gorfxEP, new HashSet< String >(){{ add( "TEST" ); }} );
+                    MapConfig config = new MapConfig( getConfigMapData() );
+                    if( ! config.hasOption( "oidPrefixe" ) ) {
+                        throw new IllegalStateException( "Dataprovider not configured: no OID_PREFIXE given." );
+                    }
+
+                    Set< String > oidPrefixe = buildSet( config.getOption( "oidPrefixe" ) );
+
+                    adis.setOIDPrefixe( gorfxEP, oidPrefixe );
                 }
                 catch( Exception e ) {
                     logger.error( "Could not register dataprovider. I'll try again in 5 seconds...", e );
                 }
             }
         }
+    }
+
+
+
+    public Map< String, String > getConfigMapData() {
+        final Session session = getDao().beginSession();
+        try {
+            final TaskFlowType taskFlowType = session.findTaskFlowType( ProviderStageInMeta.PROVIDER_STAGING_KEY );
+            final Map< String, String > configMapData = taskFlowType.getConfigMapData();
+            session.finish();
+            return configMapData;
+        }
+        finally { session.success(); }
+    }
+    
+    
+    
+    Set< String > buildSet( String s ) {
+        return new HashSet< String >( Arrays.asList( s.split( "(\\s|,|;)+" ) ) );
     }
 }
