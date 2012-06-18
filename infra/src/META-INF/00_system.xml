@@ -121,9 +121,13 @@
 
 
     <!-- #################################################################################################### -->
-    <!-- VolD setup -->
+    <!-- VolD/ADiS setup -->
     <bean id="volDClient" class="de.zib.vold.client.VolDClient">
         <property name="baseURL" value="${voldUrl}" />
+    </bean>
+    
+    <bean id="adis" class="de.zib.gndms.voldmodel.Adis">
+        <property name="voldURL" value="${voldUrl}" />
     </bean>
 
 
