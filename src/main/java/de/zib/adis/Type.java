@@ -22,6 +22,7 @@ public enum Type {
     PUBLISHER,
     WORKFLOW,
     OID,
+    CPID_GRAM,
     GRAM
 }
 
