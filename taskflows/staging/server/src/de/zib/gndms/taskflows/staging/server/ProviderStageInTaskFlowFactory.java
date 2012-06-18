@@ -202,11 +202,10 @@ public class ProviderStageInTaskFlowFactory
         @Override
         public void run() {
             MapConfig config = new MapConfig( getConfigMapData() );
-            Integer updateInterval;
 
             while( run ) {
                 try {
-                    updateInterval = config.getIntOption( "updateInterval", 60000 );
+                    final Integer updateInterval = config.getIntOption( "updateInterval", 60000 );
                     Thread.sleep( updateInterval );
                     config = new MapConfig( getConfigMapData() ); // refresh config
                 } catch( InterruptedException e ) {
@@ -219,7 +218,7 @@ public class ProviderStageInTaskFlowFactory
                         throw new IllegalStateException( "Dataprovider not configured: no OID_PREFIXE given." );
                     }
 
-                    Set< String > oidPrefixe = buildSet( config.getOption( "oidPrefixe" ) );
+                    final Set< String > oidPrefixe = buildSet( config.getOption( "oidPrefixe" ) );
                     adis.setOIDPrefixe( gorfxEP, oidPrefixe );
                 }
                 catch( Exception e ) {
