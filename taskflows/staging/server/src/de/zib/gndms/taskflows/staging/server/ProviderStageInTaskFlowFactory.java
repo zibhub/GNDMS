@@ -30,8 +30,8 @@ import de.zib.gndms.taskflows.staging.server.logic.AbstractProviderStageInAction
 import de.zib.gndms.taskflows.staging.server.logic.AbstractProviderStageInQuoteCalculator;
 import de.zib.gndms.taskflows.staging.server.logic.ExternalProviderStageInAction;
 import de.zib.gndms.taskflows.staging.server.logic.ExternalProviderStageInQuoteCalculator;
+import de.zib.gndms.voldmodel.Adis;
 import de.zib.vold.client.VolDClient;
-import de.zib.vold.common.Key;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.PostConstruct;
@@ -56,6 +56,7 @@ public class ProviderStageInTaskFlowFactory
 
     private VoldRegistrar registrar;
     private VolDClient volDClient;
+    private Adis adis;
     private GridConfig gridConfig;
 
     private Dao dao;
@@ -92,18 +93,27 @@ public class ProviderStageInTaskFlowFactory
         return dao;
     }
 
+    @SuppressWarnings( "SpringJavaAutowiringInspection" )
     @Inject
     public void setDao(Dao dao) {
         this.dao = dao;
     }
 
 
+    @SuppressWarnings( "SpringJavaAutowiringInspection" )
     @Inject
     public void setVolDClient( final VolDClient volDClient ) {
         this.volDClient = volDClient;
     }
 
 
+    @SuppressWarnings( "SpringJavaAutowiringInspection" )
+    @Inject
+    public void setAdis( final Adis adis ) {
+        this.adis = adis;
+    }
+
+    @SuppressWarnings( "SpringJavaAutowiringInspection" )
     @Inject
     public void setGridConfig( final SettableGridConfig gridConfig ) {
         this.gridConfig = gridConfig;
@@ -160,7 +170,7 @@ public class ProviderStageInTaskFlowFactory
 
     @PostConstruct
     public void startVoldRegistration() throws Exception {
-        registrar = new VoldRegistrar( volDClient, gridConfig.getBaseUrl() );
+        registrar = new VoldRegistrar( adis, gridConfig.getBaseUrl() );
         registrar.start();
     }
 
@@ -170,13 +180,13 @@ public class ProviderStageInTaskFlowFactory
     }
 
     private class VoldRegistrar extends Thread {
-        final private VolDClient vold;
+        final private Adis adis;
         final private String gorfxEP;
         private boolean run = true;
 
 
-        public VoldRegistrar( final VolDClient volDClient, final String gorfxEP ) {
-            this.vold = volDClient;
+        public VoldRegistrar( final Adis adis, final String gorfxEP ) {
+            this.adis = adis;
             this.gorfxEP = gorfxEP;
         }
         
@@ -201,9 +211,8 @@ public class ProviderStageInTaskFlowFactory
                 }
 
                 try {
-                vold.insert("", new Key("/c3grid/", "dp", "gorfxep"), new HashSet<String>() {{
-                    add( gorfxEP );
-                }});
+                    //adis.setOAI( gorfxEP );
+                    adis.setOIDPrefixe( gorfxEP, new HashSet< String >(){{ add( "TEST" ); }} );
                 }
                 catch( Exception e ) {
                     logger.error( "Could not register dataprovider. I'll try again in 5 seconds...", e );
