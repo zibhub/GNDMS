@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package de.zib.adis;
+package de.zib.gndms.voldmodel;
 
 public enum Type {
     OAI,

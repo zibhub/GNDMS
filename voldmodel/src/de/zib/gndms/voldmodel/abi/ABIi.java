@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package de.zib.adis.abi;
+package de.zib.gndms.voldmodel.abi;
 
 import java.util.Collection;
 import java.util.Map;

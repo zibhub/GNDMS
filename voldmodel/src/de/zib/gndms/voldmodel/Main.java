@@ -38,12 +38,12 @@
  *
  */
 
-package de.zib.adis;
+package de.zib.gndms.voldmodel;
 
 import com.beust.jcommander.Parameter;
 
-import de.zib.adis.abi.ABI;
-import de.zib.adis.abi.ABIi;
+import de.zib.gndms.voldmodel.abi.ABI;
+import de.zib.gndms.voldmodel.abi.ABIi;
 
 public class Main extends ABI {
     @Parameter( names = { "--baseurl", "-b" }, description = "Base URL of VolD database", required = true )

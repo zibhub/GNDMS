@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
-package de.zib.adis;
+package de.zib.gndms.voldmodel;
 
-import de.zib.adis.abi.ABIi;
+import de.zib.gndms.voldmodel.abi.ABIi;
 import de.zib.vold.client.VolDClient;
 import de.zib.vold.common.Key;
 import org.slf4j.Logger;
