@@ -16,7 +16,7 @@
 package de.zib.adis;
 
 import de.zib.adis.abi.ABIi;
-import de.zib.vold.client.RESTClient;
+import de.zib.vold.client.VolDClient;
 import de.zib.vold.common.Key;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,13 +30,13 @@ import java.util.*;
  * the client used to store and get data from the VolD storage.
  */
 public class Adis extends ABIi {
-    protected final Logger log = LoggerFactory.getLogger( this.getClass() );
+    protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
-    private RESTClient voldi;
+    private VolDClient voldi;
     private String grid;
 
     public Adis() {
-        this.voldi = new RESTClient();
+        this.voldi = new VolDClient();
         this.voldi.setEnc( "utf-8" );
         this.grid = "c3grid";
     }
@@ -92,6 +92,7 @@ public class Adis extends ABIi {
     }
 
 
+
     public String getRole( String role ) {
         // guard
         {
@@ -108,7 +109,7 @@ public class Adis extends ABIi {
 
         // should be exactly one entry!
         if( 1 < _result.size() ) {
-            log.warn( "More than one " + role + " endpoint registered!" );
+            logger.warn("More than one " + role + " endpoint registered!");
         }
 
         // search first valid entry
@@ -117,7 +118,7 @@ public class Adis extends ABIi {
                 continue;
             }
             if( 1 < entry.getValue().size() ) {
-                log.warn( "More than one " + role + " endpoint registered!" );
+                logger.warn("More than one " + role + " endpoint registered!");
             }
 
             return entry.getValue().iterator().next();
@@ -142,6 +143,25 @@ public class Adis extends ABIi {
         return flatten( _result.values() );
     }
 
+    public Collection<String> listKeysByType( String type ) {
+        // guard
+        {
+            checkState();
+
+            checkType( type );
+        }
+
+        Map<Key, Set<String>> _result = voldi.lookup( new Key( grid, type, "..." ) );
+
+        if( null == _result )
+            return null;
+
+        return usualset( _result.keySet() );
+    }
+
+
+
+
     /**
      * Get the URL of the central data management system.
      * @return Endpoint to DMS.
@@ -150,6 +170,7 @@ public class Adis extends ABIi {
         return getRole( Role.DMS.toString() );
     }
 
+
     /**
      * Get the URL of the workflow scheduler system.
      * @return Endpoint to WSS.
@@ -157,6 +178,17 @@ public class Adis extends ABIi {
     public String getWSS() {
         return getRole( Role.WSS.toString() );
     }
+
+
+    /**
+     * List available compute providers.
+     *
+     * @return All registered compute provider ids.
+     */
+    public Collection<String> listCPs() {
+        return listKeysByType( Type.CPID_GRAM.toString() );
+    }
+
 
     /**
      * List available Harvester URLs.
@@ -169,6 +201,8 @@ public class Adis extends ABIi {
         return listValuesByType( Type.OAI.toString() );
     }
 
+
+
     /**
      * List all available import sites.
      * @return All import site URLs.
@@ -176,6 +210,7 @@ public class Adis extends ABIi {
     public Collection<String> listImportSites() {
         return listValuesByType( Type.IMPORT.toString() );
     }
+
 
     /**
      * List all available export sites.
@@ -196,6 +231,7 @@ public class Adis extends ABIi {
         return flatmap( _result );
     }
 
+
     /**
      * List all available workflows.
      * @return All available workflows.
@@ -215,6 +251,7 @@ public class Adis extends ABIi {
         return usualset( _result.keySet() );
     }
 
+
     /**
      * List all Dataprovider URLs hosting data with an OID prefix.
      * @param oidprefix
@@ -223,6 +260,7 @@ public class Adis extends ABIi {
     public Collection<String> listGORFXbyOID( String oidprefix ) {
         return listValuesByType( Type.OID.toString() );
     }
+
 
     /**
      * List all publisher sites.
@@ -242,6 +280,7 @@ public class Adis extends ABIi {
 
         return flatmap( _result );
     }
+
 
     /**
      * Get all GRAM endpoints supporting the given workflow.
@@ -268,7 +307,7 @@ public class Adis extends ABIi {
                 Map<Key, Set<String>> _gramres = voldi.lookup( new Key( grid, Type.GRAM.toString(), gram ) );
 
                 if( null == _gramres ) {
-                    log.warn( "Workflow " + workflow + " had a GRAM EndPoint " + gram + " registered, which has neither a GridFTP nor a SubSpace endpoint." );
+                    logger.warn("Workflow " + workflow + " had a GRAM EndPoint " + gram + " registered, which has neither a GridFTP nor a SubSpace endpoint.");
                     continue;
                 }
 
@@ -278,6 +317,7 @@ public class Adis extends ABIi {
 
         return result;
     }
+
 
 
     public boolean setRole( String role, String endpoint ) {
@@ -292,6 +332,7 @@ public class Adis extends ABIi {
 
         return true;
     }
+
 
     public boolean setType( String type, String name, String value ) {
         // guard
@@ -310,6 +351,7 @@ public class Adis extends ABIi {
         return true;
     }
 
+
     /**
      * Set the central data management system endpoint.
      * @param endpoint
@@ -319,6 +361,7 @@ public class Adis extends ABIi {
         return setRole( Role.DMS.toString(), endpoint );
     }
 
+
     /**
      * Set the workflow scheduler system endpoint.
      * @param endpoint
@@ -327,6 +370,7 @@ public class Adis extends ABIi {
     public boolean setWSS( String endpoint ) {
         return setRole( Role.WSS.toString(), endpoint );
     }
+
 
     /**
      * Register an export site.
@@ -341,6 +385,7 @@ public class Adis extends ABIi {
         return setType( Type.EXPORT.toString(), name, subspace );
     }
 
+
     /**
      * Register an import site.
      *
@@ -354,37 +399,48 @@ public class Adis extends ABIi {
         return setType( Type.IMPORT.toString(), name, subspace );
     }
 
+
     /**
      * Register a workflow.
      *
      * This method should be called by all compute providers supporting this workflow.
      *
      * @param subspace  Endpoint for all incoming and outgoing data.
-     * @param gram
+     * @param cpId The compute provider id.
+     * @param gram The gram endpoint (triple of gram server, job manager and queue name).
      * @param workflows The set of all workflows supported by this compute provider.
      * @return true on success.
      */
-    public boolean setWorkflows( String subspace, String gram, Collection<String> workflows ) {
+    public boolean setWorkflows(
+            final String subspace,
+            final String cpId,
+            final String gram,
+            final Collection<String> workflows
+    ) {
         // guard
         {
             checkState();
         }
 
-        Map<Key, Set<String>> request = new HashMap<Key, Set<String>>();
-        Set<String> gramset = simpleset( gram );
+        final Map<Key, Set<String>> request = new HashMap<Key, Set<String>>();
+        final Set<String> cpIdSet = simpleset( cpId );
 
-        // add workflow |--> gram
+        // add workflow |--> cpId
         for( String workflow : workflows ) {
-            request.put( new Key( grid, Type.WORKFLOW.toString(), workflow ), gramset );
+            request.put( new Key( grid, Type.WORKFLOW.toString(), workflow ), cpIdSet );
         }
 
-        // add gram |--> subspace
-        request.put( new Key( grid, Type.GRAM.toString(), gram ), simpleset( subspace ) );
+        // add cpId |--> gram
+        request.put( new Key( grid, Type.CPID_GRAM.toString(), cpId ), simpleset( gram ) );
+
+        // add cpId |--> subspace
+        request.put( new Key( grid, Type.GRAM.toString(), cpId ), simpleset( subspace ) );
 
         voldi.insert( null, request );
 
         return true;
     }
+
 
     /**
      * Register a set of OID prefixes on a data provider.
@@ -413,6 +469,7 @@ public class Adis extends ABIi {
         return true;
     }
 
+
     /**
      * Register an OAI harvester.
      *
@@ -426,7 +483,9 @@ public class Adis extends ABIi {
     }
 
 
-    private Map<Key, Set<String>> simplemap( Key key, String value ) {
+
+
+    private static Map<Key, Set<String>> simplemap( Key key, String value ) {
         Map<Key, Set<String>> result = new HashMap<Key, Set<String>>();
 
         Set<String> set = new HashSet<String>();
@@ -437,7 +496,8 @@ public class Adis extends ABIi {
         return result;
     }
 
-    private Set<String> simpleset( String s ) {
+
+    private static Set<String> simpleset( String s ) {
         Set<String> set = new HashSet<String>();
 
         set.add( s );
@@ -445,12 +505,14 @@ public class Adis extends ABIi {
         return set;
     }
 
+
+    // could be static, but the logger...
     private Map<String, String> flatmap( Map<Key, Set<String>> map ) {
         Map<String, String> result = new HashMap<String, String>();
 
         for( Map.Entry<Key, Set<String>> entry : map.entrySet() ) {
             if( 1 != entry.getValue().size() ) {
-                log.warn( "Unexpected state in database: got " + entry.getValue().size() + " values for " + entry.getKey().toString() + "." );
+                logger.warn("Unexpected state in database: got " + entry.getValue().size() + " values for " + entry.getKey().toString() + ".");
                 continue;
             }
 
@@ -460,7 +522,8 @@ public class Adis extends ABIi {
         return result;
     }
 
-    private Set<String> flatten( Collection<Set<String>> setset ) {
+
+    private static Set<String> flatten( Collection<Set<String>> setset ) {
         Set<String> result = new HashSet<String>();
 
         for( Set<String> set : setset ) {
@@ -470,7 +533,8 @@ public class Adis extends ABIi {
         return result;
     }
 
-    private Set<String> usualset( Set<Key> set ) {
+
+    private static Set<String> usualset( Set<Key> set ) {
         Set<String> result = new HashSet<String>();
 
         for( Key k : set ) {
