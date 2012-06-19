@@ -104,6 +104,7 @@ public class ProviderStageInTaskFlowFactory
         this.adis = adis;
     }
 
+
     @SuppressWarnings( "SpringJavaAutowiringInspection" )
     @Inject
     public void setGridConfig( final SettableGridConfig gridConfig ) {

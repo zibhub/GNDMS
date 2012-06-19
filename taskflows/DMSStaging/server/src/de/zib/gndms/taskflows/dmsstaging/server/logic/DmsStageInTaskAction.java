@@ -16,11 +16,99 @@
 
 package de.zib.gndms.taskflows.dmsstaging.server.logic;
 
+import de.zib.gndms.common.rest.Facets;
+import de.zib.gndms.common.rest.Specifier;
+import de.zib.gndms.gndmc.gorfx.GORFXClient;
+import de.zib.gndms.gndmc.gorfx.TaskFlowClient;
+import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
+import de.zib.gndms.model.gorfx.types.TaskState;
+import de.zib.gndms.neomodel.common.Dao;
+import de.zib.gndms.neomodel.gorfx.Taskling;
+import de.zib.gndms.stuff.misc.LanguageAlgebra;
+import de.zib.gndms.taskflows.dmsstaging.client.model.DmsStageInMeta;
+import de.zib.gndms.taskflows.dmsstaging.client.model.DmsStageInOrder;
+import de.zib.gndms.taskflows.staging.client.ProviderStageInMeta;
+import de.zib.gndms.voldmodel.Adis;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.http.ResponseEntity;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+
 /**
  * @date: 19.06.12
  * @time: 11:01
  * @author: Jörg Bachmann
  * @email: bachmann@zib.de
  */
-public class DmsStageInTaskAction {
+public class DmsStageInTaskAction extends TaskFlowAction< DmsStageInOrder > {
+    private Adis adis;
+    private TaskFlowClient taskFlowClient;
+    private GORFXClient gorfxClient;
+
+    public DmsStageInTaskAction( ) {
+        super( DmsStageInMeta.DMS_STAGE_IN_KEY );
+    }
+
+
+    DmsStageInTaskAction( @NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model ) {
+        super( DmsStageInMeta.DMS_STAGE_IN_KEY, em, dao, model );
+    }
+
+
+    @Override
+    protected void onCreated( @NotNull String wid, @NotNull TaskState state,
+                              boolean isRestartedTask, boolean altTaskState )
+            throws Exception
+    {
+        ensureOrder();
+        
+        GORFXClient tmpGorfxClient = new GORFXClient( getOrderBean().getGridSite() );
+        tmpGorfxClient.setRestTemplate( gorfxClient.getRestTemplate() );
+
+        final ResponseEntity< Specifier< Facets > > responseEntity = tmpGorfxClient.createTaskFlow(
+                ProviderStageInMeta.PROVIDER_STAGING_KEY,
+                getOrderBean(),
+                getOrder().getDNFromContext(),
+                getOrder().getActId(),
+                LanguageAlgebra.getMultiValueMapFromMap(getOrder().getActContext() ) );
+        
+        getOrderBean().setWorkflowId( responseEntity.getBody().getUriMap().get( "id" ) );
+    }
+
+
+    @Override
+    protected void onInProgress(@NotNull String wid,
+                                @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState)
+            throws Exception
+    {
+    }
+
+
+
+    @Override
+    public Class< DmsStageInOrder > getOrderBeanClass( ) {
+        return DmsStageInOrder.class;
+    }
+
+
+    @SuppressWarnings( "SpringJavaAutowiringInspection" )
+    @Inject
+    public void setAdis( final Adis adis ) {
+        this.adis = adis;
+    }
+
+
+    @SuppressWarnings( "SpringJavaAutowiringInspection" )
+    @Inject
+    public void setTaskFlowClient( TaskFlowClient taskFlowClient ) {
+        this.taskFlowClient = taskFlowClient;
+    }
+
+
+    @SuppressWarnings( "SpringJavaAutowiringInspection" )
+    @Inject
+    public void setGorfxClient( GORFXClient gorfxClient ) {
+        this.gorfxClient = gorfxClient;
+    }
 }

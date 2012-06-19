@@ -16,11 +16,158 @@
 
 package de.zib.gndms.taskflows.dmsstaging.server.logic;
 
+import de.zib.gndms.common.model.gorfx.types.Quote;
+import de.zib.gndms.common.rest.Facets;
+import de.zib.gndms.common.rest.Specifier;
+import de.zib.gndms.gndmc.gorfx.GORFXClient;
+import de.zib.gndms.gndmc.gorfx.TaskFlowClient;
+import de.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
+import de.zib.gndms.stuff.misc.LanguageAlgebra;
+import de.zib.gndms.taskflows.dmsstaging.client.model.DmsStageInOrder;
+import de.zib.gndms.taskflows.staging.client.ProviderStageInMeta;
+import de.zib.gndms.voldmodel.Adis;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * @date: 19.06.12
  * @time: 10:52
  * @author: Jörg Bachmann
  * @email: bachmann@zib.de
  */
-public class DmsStageInQuoteCalculator {
+public class DmsStageInQuoteCalculator extends AbstractQuoteCalculator< DmsStageInOrder > {
+    protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
+
+    private Adis adis;
+    private TaskFlowClient taskFlowClient;
+    private GORFXClient gorfxClient;
+
+    @Override
+    public List< Quote > createQuotes( ) throws Exception {
+        Collection< String > gorfxIDs = getGorfxIDs();
+        List< Quote > quotes = new LinkedList< Quote >();
+        
+        for( String gorfxID: gorfxIDs ) {
+            final GORFXClient tmpGorfxClient = new GORFXClient( gorfxID );
+            tmpGorfxClient.setRestTemplate( gorfxClient.getRestTemplate() );
+
+            final TaskFlowClient tmpTaskFlowClient = new TaskFlowClient( gorfxID );
+            tmpTaskFlowClient.setRestTemplate( taskFlowClient.getRestTemplate() );
+
+            final String taskFlowId;
+
+            // create task Flow for recovering quotes on site gorfxId
+            try {
+                // todo: perhaps, these taskFlows should be deleted at the end...
+                final ResponseEntity< Specifier< Facets > > taskFlow = tmpGorfxClient.createTaskFlow(
+                        ProviderStageInMeta.PROVIDER_STAGING_KEY,
+                        getOrderBean(),
+                        getOrder().getDNFromContext(),
+                        getOrder().getActId(),
+                        LanguageAlgebra.getMultiValueMapFromMap( getOrder().getActContext( ) ) );
+                
+               taskFlowId = taskFlow.getBody().getUriMap().get( "id" );
+            }
+            catch( Exception e ) {
+                logger.debug( "Could not create taskFlow for recovering quotes on site '" + gorfxID + "'" );
+                continue;
+            }
+
+            // generate quotes on site
+            try {
+                ResponseEntity< List< Specifier< Quote > > > responseEntity = tmpTaskFlowClient.getQuotes(
+                        ProviderStageInMeta.PROVIDER_STAGING_KEY,
+                        taskFlowId,
+                        getOrder().getDNFromContext(),
+                        getOrder().getActId() );
+
+                for( int idx = 0; idx < responseEntity.getBody().size(); ++idx ) {
+                    Specifier< Quote > spec = responseEntity.getBody().get( idx );
+
+                    // get quote with index idx
+                    try {
+                        final ResponseEntity<Quote> responseEntityQuote = tmpTaskFlowClient.getQuote(
+                                ProviderStageInMeta.PROVIDER_STAGING_KEY,
+                                taskFlowId,
+                                idx,
+                                getOrder().getDNFromContext(),
+                                getOrder().getActId() );
+
+                        // THIS IS IT - A NEW QUOTE :)
+                        quotes.add( responseEntityQuote.getBody() );
+                    }
+                    catch( Exception e ) {
+                        logger.debug( "Could not get Quote[" + idx + "] from site '" + gorfxID + "'", e );
+                        continue;
+                    }
+                }
+            }
+            catch( Exception e ) {
+                logger.debug( "Could not get quotes from site '" + gorfxID + "'", e );
+                continue;
+            }
+        }
+
+        return quotes;
+    }
+
+
+    /**
+     * Validate if order is executable.
+     *
+     * @return true if at least one quote exists.
+     */
+    @Override
+    public boolean validate( ) {
+        Collection< String > gorfxIDs = getGorfxIDs();
+        
+        return ( 0 != gorfxIDs.size() );
+    }
+    
+    
+    private Collection< String > getGorfxIDs( ) {
+        String commonPrefix = LanguageAlgebra.getGreatestCommonPrefix(
+                getOrderBean().getDataDescriptor().getObjectList());
+
+        Collection< String > gorfxIDs = null;
+
+        for( int i = commonPrefix.length(); i > 0; --i ) {
+            gorfxIDs = adis.listGORFXbyOID(commonPrefix.substring(0, i));
+            if( null != gorfxIDs && 0 != gorfxIDs.size() )
+                break;
+        }
+
+        if( null == gorfxIDs )
+            return new HashSet< String >();
+
+        return gorfxIDs;
+    }
+
+
+    @SuppressWarnings( "SpringJavaAutowiringInspection" )
+    @Inject
+    public void setAdis( final Adis adis ) {
+        this.adis = adis;
+    }
+
+
+    @SuppressWarnings( "SpringJavaAutowiringInspection" )
+    @Inject
+    public void setTaskFlowClient( TaskFlowClient taskFlowClient ) {
+        this.taskFlowClient = taskFlowClient;
+    }
+
+
+    @SuppressWarnings( "SpringJavaAutowiringInspection" )
+    @Inject
+    public void setGorfxClient( GORFXClient gorfxClient ) {
+        this.gorfxClient = gorfxClient;
+    }
 }

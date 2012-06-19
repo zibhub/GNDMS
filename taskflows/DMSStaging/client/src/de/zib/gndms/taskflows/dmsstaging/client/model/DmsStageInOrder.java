@@ -34,6 +34,7 @@ public class DmsStageInOrder extends ProviderStageInOrder {
     private static final long serialVersionUID = 4197416353040463983L;
 
     private String gridSite;
+    private String workflowId;
 
 
     public DmsStageInOrder(){
@@ -62,5 +63,18 @@ public class DmsStageInOrder extends ProviderStageInOrder {
     }
 
 
+    public String getWorkflowId() {
+        return workflowId;
+    }
+
+
+    public void setWorkflowId(String workflowId) {
+        this.workflowId = workflowId;
+    }
+
+
+    public boolean hasWorkflowId(){
+        return workflowId != null && workflowId.length() != 0;
+    }
 }
 
