@@ -93,7 +93,7 @@ public class DmsStageInTaskAction extends TaskFlowAction< DmsStageInOrder > {
         Integer updateInterval = 1000;
         
         while( true ) {
-            final ResponseEntity< TaskFlowStatus > status = taskFlowClient.getStatus(
+            final ResponseEntity< TaskFlowStatus > status = tmpTaskFlowClient.getStatus(
                     ProviderStageInMeta.PROVIDER_STAGING_KEY,
                     getOrderBean().getWorkflowId(),
                     getOrder().getDNFromContext(),
