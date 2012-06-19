@@ -116,7 +116,7 @@ public class DmsStageInTaskAction extends TaskFlowAction< DmsStageInOrder > {
                     final ResponseEntity< Specifier< TaskResult > > responseEntity = tmpTaskFlowClient.getResult(
                             ProviderStageInMeta.PROVIDER_STAGING_KEY,
                             getOrderBean().getWorkflowId(),
-                            getOrder().getDNFromContext()
+                            getOrder().getDNFromContext(),
                             getOrder().getActId() );
 
                     transitWithPayload( responseEntity.getBody().getPayload(), TaskState.FINISHED );
