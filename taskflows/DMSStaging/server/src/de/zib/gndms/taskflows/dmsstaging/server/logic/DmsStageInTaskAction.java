@@ -16,6 +16,10 @@
 
 package de.zib.gndms.taskflows.dmsstaging.server.logic;
 
+import de.zib.gndms.common.model.gorfx.types.TaskFlowFailure;
+import de.zib.gndms.common.model.gorfx.types.TaskFlowStatus;
+import de.zib.gndms.common.model.gorfx.types.TaskResult;
+import de.zib.gndms.common.model.gorfx.types.TaskStatus;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.gndmc.gorfx.GORFXClient;
@@ -82,6 +86,47 @@ public class DmsStageInTaskAction extends TaskFlowAction< DmsStageInOrder > {
                                 @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState)
             throws Exception
     {
+        ensureOrder();
+        TaskFlowClient tmpTaskFlowClient = new TaskFlowClient( getOrderBean().getGridSite() );
+        tmpTaskFlowClient.setRestTemplate( taskFlowClient.getRestTemplate() );
+        
+        Integer updateInterval = 1000;
+        
+        while( true ) {
+            final ResponseEntity< TaskFlowStatus > status = taskFlowClient.getStatus(
+                    ProviderStageInMeta.PROVIDER_STAGING_KEY,
+                    getOrderBean().getWorkflowId(),
+                    getOrder().getDNFromContext(),
+                    getOrder().getActId() );
+
+            if( status.getBody().getState().equals( TaskFlowStatus.State.TASK_DONE ) ) {
+                
+                if( status.getBody().getTaskStatus().getStatus().equals( TaskStatus.Status.FAILED ) ) {
+                    
+                    transit( TaskState.FAILED );
+                    final ResponseEntity< TaskFlowFailure > errors = tmpTaskFlowClient.getErrors(
+                            ProviderStageInMeta.PROVIDER_STAGING_KEY,
+                            getOrderBean().getWorkflowId(),
+                            getOrder().getDNFromContext(),
+                            getOrder().getActId() );
+                    failWithPayload(null, new Exception(errors.getBody().getFailureMessage()));
+                }
+                else if( status.getBody().getTaskStatus().getStatus().equals( TaskStatus.Status.FINISHED ) ) {
+
+                    final ResponseEntity< Specifier< TaskResult > > responseEntity = tmpTaskFlowClient.getResult(
+                            ProviderStageInMeta.PROVIDER_STAGING_KEY,
+                            getOrderBean().getWorkflowId(),
+                            getOrder().getDNFromContext()
+                            getOrder().getActId() );
+
+                    transitWithPayload( responseEntity.getBody().getPayload(), TaskState.FINISHED );
+                }
+
+                break;
+            }
+            
+            Thread.sleep( updateInterval );
+        }
     }
 
 
