@@ -467,6 +467,7 @@ define 'gndms' do
     define 'gndmc-rest', :layout => dmsLayout('gndmc-rest', 'gndms-gndmc-rest') do
         compile.with project('stuff'), project('common'), SPRING, ARGS4J, JODA_TIME, SLF4J, COMMONS_LOGGING, XSTREAM, XSTREAM_DEPS, JSON, ASPECTJ, TESTNG
         meta_inf << file(_('src/META-INF/client-context.xml'))
+        meta_inf << file(_('src/META-INF/vold-client-context.xml'))
         package(:jar).with :manifest=>manifest.merge( 'Main-Class'=>'de.zib.gndms.gndmc.gorfx.GORFXClientMain' )
 
         task 'run' do
