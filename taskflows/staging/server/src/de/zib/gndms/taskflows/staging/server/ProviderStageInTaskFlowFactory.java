@@ -165,7 +165,7 @@ public class ProviderStageInTaskFlowFactory
     public void startVoldRegistration() throws Exception {
         MapConfig config = new MapConfig( getConfigMapData() );
         if( !config.hasOption( "oidPrefixe" ) ) {
-            throw new IllegalStateException( "Dataprovider not configured: no OID_PREFIXE given." );
+            logger.error( "Dataprovider not configured: no OID_PREFIXE given." );
         }
         
         registrar = new VoldRegistrar( adis, gridConfig.getBaseUrl() );
