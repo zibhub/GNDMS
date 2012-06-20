@@ -52,7 +52,7 @@ define 'failure' do
 
         desc 'deploys the failure server jar'
         task 'deploy' do
-            deploy_target = "#{ENV['JETTY_HOME']}/webapps/root/WEB-INF/lib"
+            deploy_target = "#{ENV['JETTY_HOME']}/gndms"
             cp project('failure:client').package(:jar).to_s, deploy_target
             cp project('failure:server').package(:jar).to_s, deploy_target
         end
