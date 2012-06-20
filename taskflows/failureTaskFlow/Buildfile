@@ -1,0 +1,61 @@
+require "#{ENV['GNDMS_SOURCE']}/buildr/gndms_modules"
+include GNDMS_MODULES
+
+PLUGIN_VERSION_NUMBER = '0.6.0-pre'
+# Don't touch below unless you know what you are doing
+# --------------------------------------------------------------------------------------------------
+
+
+setupGNDMSModules()
+
+desc 'Plug-in for testing taskflow failures'
+define 'failure' do
+    project.version = PLUGIN_VERSION_NUMBER
+    manifest['Copyright'] = MF_COPYRIGHT
+    manifest['License'] = MF_LICENSE
+    compile.options.source = SOURCE
+    compile.options.target = TARGET
+
+
+    desc 'The client side of the plugin'
+    define 'client', :layout => dmsLayout('client', 'failure-client') do
+        compile.with  GNDMS_GNDMC_REST, GNDMS_STUFF, GNDMS_COMMON, ARGS4J, SLF4J, SPRING, JETBRAINS_ANNOTATIONS, COMMONS_LOGGING, XSTREAM, XSTREAM_DEPS
+        compile
+
+        package( :jar ).include _("src/log4j.properties"), :path => "." 
+        package :jar
+
+        desc 'Runs the failure test client'
+        task 'run' do |t|
+            jars = compile.dependencies.map(&:to_s)
+            jars << compile.target.to_s
+            args = [ '-uri', 'http://localhost:8080/gndms/c3grid/' ] 
+            props = {}
+            runner = 'de.zib.gndms.taskflows.failure.client.tools.FailureExample'
+            runJava( t.to_s, runner, args, jars, props )
+        end
+    end
+
+
+    desc 'The server side of the plugin'
+    define 'server', :layout => dmsTestLayout('server', 'failure-server') do
+        meta_inf << file( _( 'src/META-INF/services' ) )
+        compile.with project('client'),  GNDMS_COMMON, GNDMS_STUFF, GNDMS_MODEL, GNDMS_NEOMODEL,  GNDMS_KIT, GNDMS_INFRA, GNDMS_LOGIC, JODA_TIME, ARGS4J, INJECT, GUICE, GT4_SERVLET, COMMONS_LANG, SLF4J, JSON, SPRING, JETBRAINS_ANNOTATIONS, OPENJPA, GUAVA
+
+        compile
+        package :jar
+
+
+        test.using :testng
+        test.compile.with SLF4J
+        test.include 'de.zib.gndms.taskflows.failure.server.tests.FailureTaskFlowFactoryTest'
+
+
+        desc 'deploys the failure server jar'
+        task 'deploy' do
+            deploy_target = "#{ENV['JETTY_HOME']}/webapps/root/WEB-INF/lib"
+            cp package(:jar).to_s, deploy_target
+            cp project('client').package(:jar).to_s, deploy_target
+        end
+    end
+end
