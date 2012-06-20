@@ -24,9 +24,12 @@ import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.gndmc.gorfx.GORFXClient;
 import de.zib.gndms.gndmc.gorfx.TaskFlowClient;
+import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.Dao;
+import de.zib.gndms.neomodel.common.Session;
+import de.zib.gndms.neomodel.gorfx.TaskFlowType;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import de.zib.gndms.stuff.misc.LanguageAlgebra;
 import de.zib.gndms.taskflows.dmsstaging.client.model.DmsStageInMeta;
@@ -38,6 +41,7 @@ import org.springframework.http.ResponseEntity;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import java.util.Map;
 
 /**
  * @date: 19.06.12
@@ -46,6 +50,7 @@ import javax.persistence.EntityManager;
  * @email: bachmann@zib.de
  */
 public class DmsStageInTaskAction extends TaskFlowAction< DmsStageInOrder > {
+    private Dao dao;
     private Adis adis;
     private TaskFlowClient taskFlowClient;
     private GORFXClient gorfxClient;
@@ -90,8 +95,6 @@ public class DmsStageInTaskAction extends TaskFlowAction< DmsStageInOrder > {
         TaskFlowClient tmpTaskFlowClient = new TaskFlowClient( getOrderBean().getGridSite() );
         tmpTaskFlowClient.setRestTemplate( taskFlowClient.getRestTemplate() );
         
-        Integer updateInterval = 1000;
-        
         while( true ) {
             final ResponseEntity< TaskFlowStatus > status = tmpTaskFlowClient.getStatus(
                     ProviderStageInMeta.PROVIDER_STAGING_KEY,
@@ -124,11 +127,24 @@ public class DmsStageInTaskAction extends TaskFlowAction< DmsStageInOrder > {
 
                 break;
             }
-            
+
+            MapConfig config = new MapConfig( getConfigMapData() );
+            final Integer updateInterval = config.getIntOption( "updateInterval", 60000 );
             Thread.sleep( updateInterval );
         }
     }
 
+
+    public Map< String, String > getConfigMapData() {
+        final Session session = getDao().beginSession();
+        try {
+            final TaskFlowType taskFlowType = session.findTaskFlowType( DmsStageInMeta.DMS_STAGE_IN_KEY );
+            final Map< String, String > configMapData = taskFlowType.getConfigMapData();
+            session.finish();
+            return configMapData;
+        }
+        finally { session.success(); }
+    }
 
 
     @Override
@@ -155,5 +171,16 @@ public class DmsStageInTaskAction extends TaskFlowAction< DmsStageInOrder > {
     @Inject
     public void setGorfxClient( GORFXClient gorfxClient ) {
         this.gorfxClient = gorfxClient;
+    }
+
+
+    public Dao getDao( ) {
+        return dao;
+    }
+
+    @SuppressWarnings( "SpringJavaAutowiringInspection" )
+    @Inject
+    public void setDao( Dao dao ) {
+        this.dao = dao;
     }
 }
