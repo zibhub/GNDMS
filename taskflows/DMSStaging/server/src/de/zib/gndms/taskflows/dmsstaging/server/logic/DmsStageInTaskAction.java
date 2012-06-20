@@ -125,6 +125,12 @@ public class DmsStageInTaskAction extends TaskFlowAction< DmsStageInOrder > {
                     transitWithPayload( responseEntity.getBody().getPayload(), TaskState.FINISHED );
                 }
 
+                tmpTaskFlowClient.deleteTaskflow(
+                        ProviderStageInMeta.PROVIDER_STAGING_KEY,
+                        getOrderBean().getWorkflowId(),
+                        getOrder().getDNFromContext(),
+                        getOrder().getActId() );
+
                 break;
             }
 
