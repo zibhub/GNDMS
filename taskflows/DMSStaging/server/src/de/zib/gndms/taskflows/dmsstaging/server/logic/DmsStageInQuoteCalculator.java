@@ -102,15 +102,35 @@ public class DmsStageInQuoteCalculator extends AbstractQuoteCalculator< DmsStage
 
                         // THIS IS IT - A NEW QUOTE :)
                         quotes.add( responseEntityQuote.getBody() );
+                        
+                        tmpTaskFlowClient.deleteTaskflow(
+                                ProviderStageInMeta.PROVIDER_STAGING_KEY,
+                                taskFlowId,
+                                getOrder().getDNFromContext(),
+                                getOrder().getActId() );
                     }
                     catch( Exception e ) {
                         logger.debug( "Could not get Quote[" + idx + "] from site '" + gorfxID + "'", e );
+
+                        tmpTaskFlowClient.deleteTaskflow(
+                                ProviderStageInMeta.PROVIDER_STAGING_KEY,
+                                taskFlowId,
+                                getOrder().getDNFromContext(),
+                                getOrder().getActId() );
+
                         continue;
                     }
                 }
             }
             catch( Exception e ) {
                 logger.debug( "Could not get quotes from site '" + gorfxID + "'", e );
+
+                tmpTaskFlowClient.deleteTaskflow(
+                        ProviderStageInMeta.PROVIDER_STAGING_KEY,
+                        taskFlowId,
+                        getOrder().getDNFromContext(),
+                        getOrder().getActId() );
+
                 continue;
             }
         }
