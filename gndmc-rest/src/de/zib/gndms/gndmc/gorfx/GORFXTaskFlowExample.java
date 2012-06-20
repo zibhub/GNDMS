@@ -142,10 +142,16 @@ public abstract class GORFXTaskFlowExample extends AbstractApplication {
 
     public <T> T createBean( final Class<T> beanClass ) {
 
+        return createBean( beanClass, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE );
+    }
+
+
+    public <T> T createBean( final Class<T> beanClass, int autowireMode ) {
+
         return (T) context
                 .getAutowireCapableBeanFactory().createBean(
                         beanClass,
-                        AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
+                        AutowireCapableBeanFactory.AUTOWIRE_BY_NAME, true );
     }
 
 
