@@ -166,6 +166,8 @@ JSON=['org.codehaus.jackson:jackson-core-lgpl:jar:1.9.2',
 GSON='com.google.code.gson:gson:jar:1.6'
 TESTNG="org.testng:testng:jar:6.5.2"
 
+JCOMMANDER="com.beust:jcommander:jar:1.26"
+
 # logging
 SLF4J = transitive( ['org.slf4j:slf4j-log4j12:jar:1.6.1', 'org.slf4j:slf4j-ext:jar:1.6.1'])
 
@@ -359,6 +361,13 @@ define 'gndms' do
       package :jar      
     end
 
+    desc 'Advanced Discovery Service (ADiS) with VolD backend'
+    define 'voldmodel', :layout => dmsLayout( 'voldmodel', 'gndms-voldmodel' ) do
+       compile.with VOLD_CLIENT, SLF4J, JCOMMANDER
+
+       package :jar
+    end
+
     desc 'GT4-dependent utility classes for GNDMS'
     define 'kit', :layout => dmsLayout('kit', 'gndms-kit') do
       compile.with GROOVY, GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('common'), project('stuff'), project('model'), project('neomodel'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, INJECT, GT4_SERVLET, COMMONS_LANG, OPENJPA, SLF4J, JSON, SPRING, SPRING_SECURITY
@@ -530,7 +539,7 @@ define 'gndms' do
     desc 'Creating the gndms war'
     define 'gndms', :layout => dmsLayout('gndms', 'gndms-rest') do
 
-        compile.with project('stuff'), SPRING, SPRING_SECURITY, SLF4J, SERVLET
+        compile.with project('stuff'), project('voldmodel'), SPRING, SPRING_SECURITY, SLF4J, SERVLET
 
         package(:war).include _('src/log4j.properties'), :path=>"WEB-INF/classes"
         package(:war).include _('../LICENSE'), :path=>"WEB-INF/classes/META-INF"
