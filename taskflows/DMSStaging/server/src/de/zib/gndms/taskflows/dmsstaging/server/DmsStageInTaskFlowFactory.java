@@ -36,7 +36,7 @@ import java.util.Map;
 public class DmsStageInTaskFlowFactory
         extends DefaultTaskFlowFactory< DmsStageInOrder, DmsStageInQuoteCalculator >
 {
-    protected DmsStageInTaskFlowFactory( ) {
+    public DmsStageInTaskFlowFactory( ) {
         super( DmsStageInMeta.DMS_STAGE_IN_KEY,
                 DmsStageInQuoteCalculator.class,
                 DmsStageInOrder.class );
@@ -44,13 +44,13 @@ public class DmsStageInTaskFlowFactory
 
 
     @Override
-    protected TaskFlow< DmsStageInOrder > prepare( TaskFlow< DmsStageInOrder > dmsStageInOrderTaskFlow ) {
+    public TaskFlow< DmsStageInOrder > prepare( TaskFlow< DmsStageInOrder > dmsStageInOrderTaskFlow ) {
         return dmsStageInOrderTaskFlow;
     }
 
 
     @Override
-    protected Map< String, String > getDefaultConfig( ) {
+    public Map< String, String > getDefaultConfig( ) {
         HashMap< String, String > config = new HashMap< String, String >( 0 );
 
         config.put( "updateInterval", "60000" ); // default: every minute

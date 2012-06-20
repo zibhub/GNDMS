@@ -60,13 +60,13 @@ public class DmsStageInTaskAction extends TaskFlowAction< DmsStageInOrder > {
     }
 
 
-    DmsStageInTaskAction( @NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model ) {
+    public DmsStageInTaskAction( @NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model ) {
         super( DmsStageInMeta.DMS_STAGE_IN_KEY, em, dao, model );
     }
 
 
     @Override
-    protected void onCreated( @NotNull String wid, @NotNull TaskState state,
+    public void onCreated( @NotNull String wid, @NotNull TaskState state,
                               boolean isRestartedTask, boolean altTaskState )
             throws Exception
     {
@@ -87,7 +87,7 @@ public class DmsStageInTaskAction extends TaskFlowAction< DmsStageInOrder > {
 
 
     @Override
-    protected void onInProgress(@NotNull String wid,
+    public void onInProgress(@NotNull String wid,
                                 @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState)
             throws Exception
     {
