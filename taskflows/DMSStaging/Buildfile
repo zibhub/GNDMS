@@ -20,7 +20,7 @@ define 'dmsstaging' do
 
     desc 'The client side of the plugin'
     define 'client', :layout => dmsLayout('client', 'dmsStaging-client') do
-      compile.with GNDMS_COMMON, GNDMS_MODEL, GNDMS_GNDMC_REST, GNDMS_STUFF, STAGING_CLIENT, SPRING, JETBRAINS_ANNOTATIONS
+      compile.with GNDMS_COMMON, GNDMS_MODEL, GNDMS_GNDMC_REST, GNDMS_STUFF, STAGING_CLIENT, SPRING, JETBRAINS_ANNOTATIONS, ARGS4J
       compile
       package :jar
 
