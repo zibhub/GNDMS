@@ -23,7 +23,6 @@ import de.zib.gndms.neomodel.gorfx.TaskFlow;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +32,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import java.util.*;
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -509,7 +509,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     }
 
 
-    @Autowired
+    @Inject
     public void setDao( Dao dao ) {
         this.dao = dao;
     }
@@ -520,7 +520,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     }
 
 
-    @Autowired
+    @Inject
     public void setExecutorService( TaskExecutionService executorService ) {
         this.executorService = executorService;
     }
@@ -535,13 +535,13 @@ public class TaskFlowServiceImpl implements TaskFlowService {
         this.localBaseUrl = localBaseUrl;
     }
 
-    @Autowired
+    @Inject
     public void setTaskFlowProvider( TaskFlowProvider taskFlowProvider ) {
         this.taskFlowProvider = taskFlowProvider;
     }
 
 
-    @Autowired
+    @Inject
     public void setTaskClient( TaskClient taskClient ) {
         this.taskClient = taskClient;
     }

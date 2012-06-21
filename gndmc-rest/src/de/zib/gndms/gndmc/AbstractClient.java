@@ -19,7 +19,6 @@ package de.zib.gndms.gndmc;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -28,6 +27,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestOperations;
 
+import javax.inject.Inject;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -343,7 +343,7 @@ public abstract class AbstractClient {
 	 * 
 	 * @param restTemplate The rest template.
 	 */
-	@Autowired
+	@Inject
 	public final void setRestTemplate(final RestOperations restTemplate) {
 		this.restTemplate = restTemplate;
 	}
