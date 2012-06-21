@@ -20,7 +20,7 @@ define 'dmsstaging' do
 
     desc 'The client side of the plugin'
     define 'client', :layout => dmsLayout('client', 'dmsStaging-client') do
-      compile.with GNDMS_COMMON, GNDMS_MODEL, GNDMS_GNDMC_REST, GNDMS_STUFF, STAGING_CLIENT, SPRING, JETBRAINS_ANNOTATIONS, ARGS4J
+      compile.with COMMONS_CODEC, COMMONS_LOGGING, GNDMS_STUFF, GNDMS_COMMON, GNDMS_GNDMC_REST, STAGING_CLIENT, JETBRAINS_ANNOTATIONS, JODA_TIME, ARGS4J, INJECT, GT4_SERVLET, COMMONS_LANG, SLF4J, JSON, SPRING_CLIENT, XSTREAM, XSTREAM_DEPS
       compile
       package :jar
 
@@ -30,7 +30,7 @@ define 'dmsstaging' do
             jars << compile.target.to_s
             args = [ '-uri', 'http://localhost:8080/gndms/c3grid/' ] 
             props = {}
-            runner = 'de.zib.gndms.taskflows.dmsstaging.client.tools.DMSStageInExample'
+            runner = 'de.zib.gndms.taskflows.dmsstaging.client.tools.DmsStageInExample'
             runJava( t.to_s, runner, args, jars, props )
         end
     end
