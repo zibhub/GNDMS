@@ -241,7 +241,7 @@ public class GORFXServiceImpl implements GORFXService {
 
 
 
-    @RequestMapping( value = "/taskflows/", method = RequestMethod.GET )
+    @RequestMapping( value = "/taskflows", method = RequestMethod.GET )
     @Secured( "ROLE_USER" )
     public ResponseEntity<List<String>> listTaskFlows( @RequestHeader( "DN" ) String dn ) {
 
