@@ -35,6 +35,7 @@ public class DmsStageInOrder extends ProviderStageInOrder {
 
     private String gridSite;
     private String workflowId;
+    private String taskId;
 
 
     public DmsStageInOrder(){
@@ -75,6 +76,21 @@ public class DmsStageInOrder extends ProviderStageInOrder {
 
     public boolean hasWorkflowId(){
         return workflowId != null && workflowId.length() != 0;
+    }
+
+
+    public String getTaskId( ) {
+        return taskId;
+    }
+
+
+    public void setTaskId( String taskId ) {
+        this.taskId = taskId;
+    }
+
+
+    public boolean  hasTaskId( ) {
+        return taskId != null;
     }
 }
 

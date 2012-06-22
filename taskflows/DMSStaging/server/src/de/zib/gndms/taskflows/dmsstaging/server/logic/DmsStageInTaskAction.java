@@ -22,7 +22,9 @@ import de.zib.gndms.common.model.gorfx.types.TaskResult;
 import de.zib.gndms.common.model.gorfx.types.TaskStatus;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
+import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.gndmc.gorfx.GORFXClient;
+import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.gndmc.gorfx.TaskFlowClient;
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
@@ -53,6 +55,7 @@ public class DmsStageInTaskAction extends TaskFlowAction< DmsStageInOrder > {
     private Dao dao;
     private Adis adis;
     private TaskFlowClient taskFlowClient;
+    private TaskClient taskClient;
     private GORFXClient gorfxClient;
 
     public DmsStageInTaskAction( ) {
@@ -71,18 +74,6 @@ public class DmsStageInTaskAction extends TaskFlowAction< DmsStageInOrder > {
             throws Exception
     {
         ensureOrder();
-        
-        GORFXClient tmpGorfxClient = new GORFXClient( getOrderBean().getGridSite() );
-        tmpGorfxClient.setRestTemplate( gorfxClient.getRestTemplate() );
-
-        final ResponseEntity< Specifier< Facets > > responseEntity = tmpGorfxClient.createTaskFlow(
-                ProviderStageInMeta.PROVIDER_STAGING_KEY,
-                getOrderBean(),
-                getOrder().getDNFromContext(),
-                getOrder().getActId(),
-                LanguageAlgebra.getMultiValueMapFromMap(getOrder().getActContext() ) );
-        
-        getOrderBean().setWorkflowId( responseEntity.getBody().getUriMap().get( "id" ) );
     }
 
 
@@ -92,9 +83,38 @@ public class DmsStageInTaskAction extends TaskFlowAction< DmsStageInOrder > {
             throws Exception
     {
         ensureOrder();
+
+        GORFXClient tmpGorfxClient = new GORFXClient( getOrderBean().getGridSite() );
+        tmpGorfxClient.setRestTemplate( gorfxClient.getRestTemplate() );
+        
         TaskFlowClient tmpTaskFlowClient = new TaskFlowClient( getOrderBean().getGridSite() );
         tmpTaskFlowClient.setRestTemplate( taskFlowClient.getRestTemplate() );
         
+        TaskClient tmpTaskClient = new TaskClient( getOrderBean().getGridSite() );
+        tmpTaskClient.setRestTemplate( taskClient.getRestTemplate() );
+
+        if( !isRestartedTask || !getOrderBean().hasWorkflowId() ) {
+            final ResponseEntity< Specifier< Facets > > responseEntity = tmpGorfxClient.createTaskFlow(
+                    ProviderStageInMeta.PROVIDER_STAGING_KEY,
+                    getOrderBean(),
+                    getOrder().getDNFromContext(),
+                    getOrder().getActId(),
+                    LanguageAlgebra.getMultiValueMapFromMap(getOrder().getActContext() ) );
+
+            getOrderBean().setWorkflowId( responseEntity.getBody().getUriMap().get( "id" ) );
+        }
+
+        if( !isRestartedTask || !getOrderBean().hasTaskId() ) {
+            final ResponseEntity<Specifier<Facets>> responseEntity = tmpTaskFlowClient.createTask(
+                    ProviderStageInMeta.PROVIDER_STAGING_KEY,
+                    getOrderBean().getWorkflowId(),
+                    0,
+                    getOrder().getDNFromContext(),
+                    getOrder().getActId());
+            
+            getOrderBean().setTaskId( responseEntity.getBody().getUriMap().get( UriFactory.TASK_ID ) );
+        }
+                
         while( true ) {
             final ResponseEntity< TaskFlowStatus > status = tmpTaskFlowClient.getStatus(
                     ProviderStageInMeta.PROVIDER_STAGING_KEY,
@@ -172,6 +192,12 @@ public class DmsStageInTaskAction extends TaskFlowAction< DmsStageInOrder > {
         this.taskFlowClient = taskFlowClient;
     }
 
+
+    @SuppressWarnings( "SpringJavaAutowiringInspection" )
+    @Inject
+    public void setTaskClient( TaskClient taskClient ) {
+        this.taskClient = taskClient;
+    }
 
     @SuppressWarnings( "SpringJavaAutowiringInspection" )
     @Inject
