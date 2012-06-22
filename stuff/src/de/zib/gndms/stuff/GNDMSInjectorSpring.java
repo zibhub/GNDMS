@@ -35,13 +35,25 @@ public class GNDMSInjectorSpring implements GNDMSInjector {
 
 
     public void injectMembers( Object existingBean ) {
-        factory.autowireBean( existingBean );
+        factory.autowireBean(existingBean);
     }
 
 
     @Override
     public <T> T getInstance( Class<T> clazz ) {
         return factory.getBean( clazz );
+    }
+    
+
+    @Override
+    public Object getInstance( String name ) {
+        return factory.getBean( name );
+    }
+
+
+    @Override
+    public <T> T getInstance( String name, Class<T> clazz ) {
+        return factory.getBean( name, clazz );
     }
 
 

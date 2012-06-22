@@ -23,5 +23,7 @@ import java.lang.Object; /**
 public interface GNDMSInjector {
 
     void injectMembers( Object existingBean );
-    <T> T getInstance( Class<T> clazz);
+    <T> T getInstance( Class<T> clazz );
+    Object getInstance( String name );
+    <T> T getInstance( String name, Class<T> clazz );
 }

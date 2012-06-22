@@ -25,6 +25,7 @@ import de.zib.gndms.taskflows.interslicetransfer.client.InterSliceTransferMeta;
 import de.zib.gndms.taskflows.interslicetransfer.client.model.InterSliceTransferOrder;
 import de.zib.gndms.taskflows.interslicetransfer.server.logic.InterSliceTransferQuoteCalculator;
 import de.zib.gndms.taskflows.interslicetransfer.server.logic.InterSliceTransferTaskAction;
+import org.springframework.http.converter.HttpMessageConverter;
 
 import javax.inject.Inject;
 import java.util.HashMap;
@@ -78,9 +79,10 @@ public class InterSliceTransferTaskFlowFactory
     public TaskAction createAction() {
         InterSliceTransferTaskAction action = new InterSliceTransferTaskAction();
         getInjector().injectMembers( action );
+        action.setMessageConverter( getInjector().getInstance( "messageConverter", HttpMessageConverter.class ) );
 
         // TODO: move these methods from TaskAction to TaskFlowFactory
-        action.prepareRestTemplate( system.getSetupSSLFactory().getKeyPassword() );
+        action.prepareRestTemplate(system.getSetupSSLFactory().getKeyPassword());
         action.prepareSliceClient();
         action.prepareSubspaceClient();
 

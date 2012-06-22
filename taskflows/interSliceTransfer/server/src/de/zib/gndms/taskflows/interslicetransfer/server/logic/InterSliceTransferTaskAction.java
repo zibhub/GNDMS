@@ -270,8 +270,6 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
     }
 
 
-    @SuppressWarnings("SpringJavaAutowiringInspection")
-    @Inject
     public void setMessageConverter( HttpMessageConverter messageConverter ) {
         this.messageConverter = messageConverter;
     }
