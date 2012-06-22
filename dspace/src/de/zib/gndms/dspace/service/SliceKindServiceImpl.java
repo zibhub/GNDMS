@@ -78,6 +78,11 @@ public class SliceKindServiceImpl implements SliceKindService {
         this.sliceKindProvider = sliceKindProvider;
     }
 
+
+    public SliceKindProvider getSliceKindProvider( ) {
+        return sliceKindProvider;
+    }
+
     /**
      * All available slice kinds.
      */
@@ -112,7 +117,7 @@ public class SliceKindServiceImpl implements SliceKindService {
         GNDMSResponseHeader headers = getResponseHeaders( subspace, sliceKind, dn );
 
         try {
-            SliceKind sliceK = sliceKindProvider.get( subspace, sliceKind );
+            SliceKind sliceK = getSliceKindProvider().get( subspace, sliceKind );
             SliceKindConfiguration config = SliceKindConfiguration.getSliceKindConfiguration( sliceK );
             return new ResponseEntity<Configuration>( config, headers,
                                                       HttpStatus.OK );
