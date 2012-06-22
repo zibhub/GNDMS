@@ -79,7 +79,7 @@ public class InterSliceTransferTaskFlowFactory
     public TaskAction createAction() {
         InterSliceTransferTaskAction action = new InterSliceTransferTaskAction();
         getInjector().injectMembers( action );
-        action.setMessageConverter( getInjector().getInstance( "messageConverter", HttpMessageConverter.class ) );
+        action.setMessageConverter( getInjector().getInstance( "converter", HttpMessageConverter.class ) );
 
         // TODO: move these methods from TaskAction to TaskFlowFactory
         action.prepareRestTemplate(system.getSetupSSLFactory().getKeyPassword());
