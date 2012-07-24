@@ -157,7 +157,7 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
                     task.setAltTaskState(null);
             }
             else
-                throw (RuntimeException) st.getPayload();
+                throw new RuntimeException( "FileTransfer did not finish: ", st.getCause().getFirst() );
             session.success();
         }
         finally { session.finish(); }
