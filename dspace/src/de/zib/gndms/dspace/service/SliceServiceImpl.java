@@ -17,12 +17,12 @@ package de.zib.gndms.dspace.service;
  */
 
 import de.zib.gndms.common.dspace.service.SliceService;
-import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.model.FileStats;
 import de.zib.gndms.common.rest.*;
 import de.zib.gndms.dspace.service.utils.UnauthorizedException;
 import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.kit.config.ParameterTools;
 import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.logic.model.dspace.*;
 import de.zib.gndms.model.common.NoSuchResourceException;
@@ -31,6 +31,7 @@ import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.util.TxFrame;
 import de.zib.gndms.neomodel.gorfx.Taskling;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -52,6 +53,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 // import de.zib.gndms.neomodel.gorfx.Taskling;
 
@@ -74,6 +76,8 @@ public class SliceServiceImpl implements SliceService {
 	private SliceProvider sliceProvider;
 	private List< String > sliceFacetNames;
 	private UriFactory uriFactory;
+
+    public static final Pattern SLICE_CONFIG_NAME_PATTERN = Pattern.compile("[a-zA-Z][a-zA-Z0-9-_]*");
 
     private DirectoryAux directoryAux;
 
@@ -133,20 +137,25 @@ public class SliceServiceImpl implements SliceService {
 			@PathVariable final String subspaceId,
 			@PathVariable final String sliceKind,
 			@PathVariable final String sliceId,
-            @RequestBody final Configuration config,
+            @RequestBody final String config,
 			@RequestHeader("DN") final String dn) {
 		GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKind, sliceId, dn);
 
 		try {
 			Slice slice = findSliceOfKind( subspaceId, sliceKind, sliceId );
 
-			SliceConfiguration slConfig = SliceConfiguration
-					.checkSliceConfig(config);
-
-			// TODO check if we handled all important sliceId parameters,
-			// otherwise SliceConfiguration has to be extended
-			slice.setTerminationTime(slConfig.getTerminationTime());
-			slice.setTotalStorageSize(slConfig.getSize());
+            Map< String, String > cfgMap = new HashMap< String, String >();
+            try {
+                ParameterTools.parseParameters( cfgMap, config, SLICE_CONFIG_NAME_PATTERN );
+            } catch( ParameterTools.ParameterParseException e ) {
+                logger.warn("Syntax error in config string: ", e);
+                return new ResponseEntity< Void >( null, headers, HttpStatus.BAD_REQUEST );
+            }
+            
+            if( cfgMap.containsKey( "terminationTime" ) )
+                slice.setTerminationTime( new DateTime( cfgMap.get( "terminationTime" ) ) );
+            if( cfgMap.containsKey( "totalStorageSize" ))
+                slice.setTotalStorageSize( Long.parseLong( cfgMap.get( "totalStorageSize" ) ) );
 
 			return new ResponseEntity<Void>(null, headers, HttpStatus.OK);
 		} catch (NoSuchElementException ne) {

@@ -78,7 +78,7 @@ public class SliceClient extends AbstractClient implements SliceServiceClient {
 
 	@Override
 	public final ResponseEntity<Void> setSliceConfiguration(final String subspace,
-			final String sliceKind, final String slice, final Configuration config, final String dn) {
+			final String sliceKind, final String slice, final String config, final String dn) {
 		return unifiedPut(Void.class, config, genSliceUrl( subspace, sliceKind, slice ), dn);
 	}
 

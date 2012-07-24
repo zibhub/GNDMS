@@ -79,7 +79,7 @@ public interface SliceService {
 	 * @return A confirmation.
 	 */
 	ResponseEntity<Void> setSliceConfiguration(String subspace, String sliceKind,
-			String slice, Configuration config, String dn);
+			String slice, String config, String dn);
 
 	/**
 	 * Changes the slice kind of a slice.
