@@ -16,6 +16,7 @@ package de.zib.gndms.logic.model.dspace;
  */
 
 import de.zib.gndms.common.model.gorfx.types.VoidTaskResult;
+import de.zib.gndms.model.common.NoSuchResourceException;
 import de.zib.gndms.model.gorfx.types.ModelIdHoldingOrder;
 import de.zib.gndms.logic.model.ModelTaskAction;
 import de.zib.gndms.model.dspace.Slice;
@@ -78,6 +79,9 @@ public class DeleteSliceTaskAction extends ModelTaskAction<ModelIdHoldingOrder> 
 
         try {
             getDirectoryAux().deleteDirectory( slice.getOwner(), slice.getSubspace().getPathForSlice( slice ) );
+        }
+        catch( NoSuchResourceException e ) {
+            logger.info( "Tried to delete non existing directory " + slice.getSubspace().getPathForSlice( slice ) );
         }
         catch( RuntimeException e ) {
             logger.error( "Could not delete directory of slice " + slice.getId() +

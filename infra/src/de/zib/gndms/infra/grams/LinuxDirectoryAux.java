@@ -22,6 +22,7 @@ import com.sun.jna.Native;
 import de.zib.gndms.common.model.FileStats;
 import de.zib.gndms.common.model.common.AccessMask;
 import de.zib.gndms.kit.util.DirectoryAux;
+import de.zib.gndms.model.common.NoSuchResourceException;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -149,7 +150,7 @@ public class LinuxDirectoryAux implements DirectoryAux {
 
         File f = new File( pth );
         if(! f.exists() )
-            throw new RuntimeException( "failed to delete dir " + pth + ": doesn't exists" );
+            throw new NoSuchResourceException( "failed to delete dir " + pth + ": doesn't exists" );
 
         DirectoryAux.Utils.recursiveDelete(pth);
 
