@@ -88,7 +88,7 @@ public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
     private String uniqueDirName;
 
     private int defaultSliceSize = -1;
-    private long defaultTimeToLive = -1;
+    private long defaultTimeToLive = 86400000; // default: 1 day in milliseconds
 
     public SetupSliceKindAction( ) {
     }
@@ -157,7 +157,7 @@ public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
 
         SliceKind r;
         AccessMask msk = AccessMask.fromString( getTheSliceKindMode() );
-        if( isCreating() ) {
+            if( isCreating() ) {
             r = new SliceKind( );
             r.setId( getSliceKind( ) );
             r.setPermission( msk );
@@ -174,12 +174,18 @@ public class SetupSliceKindAction extends SetupAction<ConfigActionResult> {
             if ( r == null ) {
                 return failed( "No slice kind with given found (uri: " + sliceKind +")" );
             }
-            if( r.getPermission( ).equals( msk ) && r.getSliceDirectory( ).equals( uniqueDirName )  ) {
-                return failed( "Nothing to changed." );
-            }
+//            if( r.getPermission( ).equals( msk ) && r.getSliceDirectory( ).equals( uniqueDirName )  ) {
+//                return failed( "Nothing to changed." );
+//            }
 
             r.setPermission( msk );
             r.setSliceDirectory( uniqueDirName );
+
+            if( defaultTimeToLive >= 0 )
+                r.setDefaultTimeToLive( defaultTimeToLive );
+            if( defaultSliceSize >= 0 )
+                r.setDefaultSliceSize( defaultSliceSize );
+
         }
 
         return ok();
