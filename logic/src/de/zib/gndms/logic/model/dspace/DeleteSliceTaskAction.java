@@ -78,6 +78,7 @@ public class DeleteSliceTaskAction extends ModelTaskAction<ModelIdHoldingOrder> 
             throw new IllegalArgumentException( "Could not find slice " + getOrder().getModelId() );
 
         try {
+            logger.debug( "Delete directory: " + slice.getSubspace().getPathForSlice( slice ) );
             getDirectoryAux().deleteDirectory( slice.getOwner(), slice.getSubspace().getPathForSlice( slice ) );
         }
         catch( NoSuchResourceException e ) {
