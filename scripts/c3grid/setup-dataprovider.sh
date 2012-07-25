@@ -34,7 +34,8 @@ STAGING_OIDPREFIXE="prefix1 prefix2, prefix3;prefix4"
 # VolD update interval in milliseconds
 STAGING_UPDATE_INTERVAL="5000"
 
-# default time to live for slices of the Staging slice kind
+# default time to live for slices of the Staging slice kind (in milliseconds)
+# default: one day
 TTL=86400000
 
 
