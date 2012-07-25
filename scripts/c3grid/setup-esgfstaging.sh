@@ -23,6 +23,10 @@ ESGF_STAGING_AREA_GSI_FTP_URL="gsiftp://$GRIDHOST""$ESGF_STAGING_AREA_PATH"
 ESGF_TRUSTSTORE="/etc/grid-security/esgf.truststore"
 ESGF_TRUSTSTORE_PASSWORD="esgf.trust"
 
+# default time to live for slices of the Staging slice kind (in milliseconds)
+# default: one day
+TTL=86400000
+
 
 # Do not edit below this line unless very sure ---------------------------------------------------------------------------------------------------------------------------------------------------
 

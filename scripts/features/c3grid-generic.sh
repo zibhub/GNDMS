@@ -5,12 +5,14 @@ c3grid_generic() {
 		moni call -v .dspace.SetupSliceKind "\
 			sliceKind:'http://www.c3grid.de/G2/SliceKind/DMS'; \
 			sliceKindMode:$RO; \
+			timeToLive: $TTL; \
             uniqueDirName: dmsROSlices; \
 			mode: '$MODE'"
 		
 		moni call -v .dspace.SetupSliceKind "\
 			sliceKind:'http://www.c3grid.de/G2/SliceKind/DMS_RW'; \
 			sliceKindMode:$RW; \
+			timeToLive: $TTL; \
             uniqueDirName: dmsRWSlices; \
 			mode: '$MODE'"
     fi

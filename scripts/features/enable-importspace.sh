@@ -8,7 +8,7 @@ moni call -v .dspace.SetupSubspace  "subspace:ImportSpace; \
 	size:'$IMPORT_AREA_SIZE'; \
 	mode:'$MODE'"
 
-moni call -v .dspace.SetupSliceKind "sliceKind:import; sliceKindMode:$RW; uniqueDirName:inter; mode: $MODE"
+moni call -v .dspace.SetupSliceKind "sliceKind:import; sliceKindMode:$RW; uniqueDirName:inter; timeToLive: $TTL; mmode: $MODE"
 
 moni call -v .dspace.AssignSliceKind "subspace:ImportSpace; sliceKind: import; mode:'$ADDMODE'"
 

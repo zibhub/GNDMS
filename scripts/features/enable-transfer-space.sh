@@ -8,7 +8,7 @@ moni call -v .dspace.SetupSubspace  "subspace:TransferSpace; \
 	size:'$TRANSFER_AREA_SIZE'; \
 	mode:'$MODE'"
 
-moni call -v .dspace.SetupSliceKind "sliceKind:transfer; sliceKindMode:$RW; uniqueDirName:inter; mode: $MODE"
+moni call -v .dspace.SetupSliceKind "sliceKind:transfer; sliceKindMode:$RW; uniqueDirName:inter; timeToLive: $TTL; mmode: $MODE"
 
 moni call -v .dspace.AssignSliceKind "subspace:TransferSpace; sliceKind: transfer; mode:'$ADDMODE'"
 }
