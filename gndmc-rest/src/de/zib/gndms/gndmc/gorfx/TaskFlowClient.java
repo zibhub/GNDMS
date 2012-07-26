@@ -89,7 +89,7 @@ public class TaskFlowClient extends AbstractClient implements TaskFlowService {
                                                    final String dn, final String wid ) {
 
 		return unifiedPost(Integer.class, cont, getServiceURL() + "/gorfx/_" + type + "/_"
-				+ id + "/quote", wid, dn);
+				+ id + "/quote", dn, wid);
 	}
 
 

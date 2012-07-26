@@ -92,6 +92,9 @@ public class ExternalProviderStageInQuoteCalculator extends
     @SuppressWarnings({ "HardcodedLineSeparator", "MagicNumber" })
     private Quote createOfferViaEstScript(
             final File estCommandFileParam, final Quote contParam) {
+
+        logger.debug( "Estimating quotes using " + estCommandFileParam );
+
         ProcessBuilderAction action = createEstAction(estCommandFileParam, contParam);
         StringBuilder outRecv = action.getOutputReceiver();
         StringBuilder errRecv = action.getErrorReceiver();
