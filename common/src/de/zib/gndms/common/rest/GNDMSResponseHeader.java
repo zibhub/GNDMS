@@ -219,17 +219,19 @@ public class GNDMSResponseHeader extends HttpHeaders {
         if( login.trim().equals( "" ) )
             throw new IllegalArgumentException( "login must not be empty" );
 
-        StringBuilder key = new StringBuilder( MY_PROXY_LOGIN_PREFIX ).append( purpose );
+        purpose = purpose.toLowerCase();
+
+        StringBuilder key = new StringBuilder( MY_PROXY_LOGIN_PREFIX.toLowerCase() ).append( purpose );
         setOnce( key.toString(), login );
 
         if( passwd != null ) {
-            key = new StringBuilder( MY_PROXY_PASSWORD_PREFIX ).append( purpose );
+            key = new StringBuilder( MY_PROXY_PASSWORD_PREFIX.toLowerCase() ).append( purpose );
             setOnce( key.toString(), passwd );
         }
 
         if( retrieve ) {
-            key = new StringBuilder( MY_PROXY_FETCH_METHOD_PREFIX ).append( purpose );
-            setOnce( key.toString(), MyProxyToken.FetchMethod.RETRIEVE.toString() );
+            key = new StringBuilder( MY_PROXY_FETCH_METHOD_PREFIX.toLowerCase() ).append( purpose );
+            setOnce( key.toString(), MyProxyToken.FetchMethod.RETRIEVE.toString().toLowerCase() );
         }
     }
 
@@ -258,6 +260,7 @@ public class GNDMSResponseHeader extends HttpHeaders {
                 if( hasFetchMethodKeyForPurpose( context, purpose ) )
                     token.setFetchMethod( extractFetchMethodForPurpose( context, purpose ) );
 
+                // TODO: build uppercase purpose here? problem with tomcat 6: changes case of headers to lowercase
                 result.put( purpose, token );
             }
         }
@@ -269,7 +272,7 @@ public class GNDMSResponseHeader extends HttpHeaders {
             final MultiValueMap<String, String> context, final String purpose )
     {
 
-        return context.get( MY_PROXY_FETCH_METHOD_PREFIX + purpose ).get( 0 );
+        return context.get( MY_PROXY_FETCH_METHOD_PREFIX.toLowerCase() + purpose.toLowerCase() ).get( 0 );
     }
 
 
@@ -277,37 +280,37 @@ public class GNDMSResponseHeader extends HttpHeaders {
             final MultiValueMap<String, String> context, final String purpose )
     {
 
-        return context.containsKey( MY_PROXY_FETCH_METHOD_PREFIX + purpose );
+        return context.containsKey( MY_PROXY_FETCH_METHOD_PREFIX.toLowerCase() + purpose.toLowerCase() );
     }
 
 
     private static String extractPasswordForPurpose( final MultiValueMap<String, String> context, final String purpose ) {
 
-        return context.get( MY_PROXY_PASSWORD_PREFIX + purpose ).get( 0 );
+        return context.get( MY_PROXY_PASSWORD_PREFIX.toLowerCase() + purpose.toLowerCase() ).get( 0 );
     }
 
 
     private static String extractLoginName( final MultiValueMap<String, String> context, final String key ) {
 
-        return context.get( key ).get( 0 );
+        return context.get( key.toLowerCase() ).get( 0 );
     }
 
 
     private static boolean hasPasswordKeyForPurpose( final MultiValueMap<String, String> context, final String purpose ) {
 
-        return context.containsKey( MY_PROXY_PASSWORD_PREFIX + purpose );
+        return context.containsKey( MY_PROXY_PASSWORD_PREFIX.toLowerCase() + purpose.toLowerCase() );
     }
 
 
     private static String extractPurposeFromLoginKey( final String key ) {
 
-        return key.substring( MY_PROXY_LOGIN_PREFIX.length(), key.length() );
+        return key.substring( MY_PROXY_LOGIN_PREFIX.length(), key.length() ).toLowerCase();
     }
 
 
     private static boolean isMyProxyLoginEntryKey( final String key ) {
 
-        return key.startsWith( MY_PROXY_LOGIN_PREFIX );
+        return key.toLowerCase().startsWith( MY_PROXY_LOGIN_PREFIX.toLowerCase() );
     }
     // hmpf, is this really better?
 }

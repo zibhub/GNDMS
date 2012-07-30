@@ -107,7 +107,7 @@ public class MyProxyToken implements Serializable {
     }
 
     public void setFetchMethod( final String fetchMethod ) {
-        this.fetchMethod = FetchMethod.valueOf( fetchMethod );
+        this.fetchMethod = FetchMethod.valueOf( fetchMethod.toUpperCase() );
     }
 
 

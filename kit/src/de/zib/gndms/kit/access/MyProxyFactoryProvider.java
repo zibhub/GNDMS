@@ -46,7 +46,7 @@ public class MyProxyFactoryProvider {
         HashMap<String, MyProxyFactory> providerMap = new HashMap<String, MyProxyFactory>( factories.size() );
 
         for( MyProxyFactory mpp : factories )
-            providerMap.put( mpp.getNickname(), mpp );
+            providerMap.put( mpp.getNickname().toLowerCase(), mpp );
 
         factoryProvider.setFactories( providerMap );
 

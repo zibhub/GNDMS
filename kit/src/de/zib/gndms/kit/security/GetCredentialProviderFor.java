@@ -78,7 +78,7 @@ public class GetCredentialProviderFor {
 
     public String getRequiredCredentialName() {
 
-        return requiredCredentialName;
+        return requiredCredentialName.toLowerCase();
     }
 
 
