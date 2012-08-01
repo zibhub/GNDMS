@@ -88,6 +88,18 @@ public class DeleteSliceTaskAction extends ModelTaskAction<ModelIdHoldingOrder> 
             logger.error( "Could not delete directory of slice " + slice.getId() +
                     ". Nevertheless, the slice will be deleted from database!", e );
         }
+        
+        try {
+            final String metaFile = slice.getSubspace().getPathForSlice( slice ) + ".xml";
+            getDirectoryAux().deleteDirectory( slice.getOwner(), metaFile );
+        }
+        catch( NoSuchResourceException e ) {
+            // ok, no meta file there...
+        }
+        catch( RuntimeException e ) {
+            logger.error( "Could not delete metaFile of slice " + slice.getId() +
+                    ". Nevertheless, the slice will be deleted from database!", e );
+        }
 
         deleteModelEntity( Slice.class );
         sliceProvider.invalidate( slice.getId() );
