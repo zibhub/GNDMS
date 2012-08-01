@@ -18,6 +18,7 @@ package de.zib.gndms.taskflows.esgfStaging.client.tools;
 
 import de.zib.gndms.common.model.gorfx.types.SliceResult;
 import de.zib.gndms.common.model.gorfx.types.TaskResult;
+import de.zib.gndms.common.rest.CertificatePurpose;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.gndmc.gorfx.AbstractTaskFlowExecClient;
 import de.zib.gndms.gndmc.gorfx.ExampleTaskFlowExecClient;
@@ -72,7 +73,7 @@ public class ESGFStagingExample extends GORFXTaskFlowExample {
             @Override
             protected GNDMSResponseHeader setupContext( final GNDMSResponseHeader context ) {
 
-                context.addMyProxyToken( "ESGF", myProxyLogin, myProxyPasswd, retrieve );
+                context.addMyProxyToken( CertificatePurpose.ESGF.toString(), myProxyLogin, myProxyPasswd, retrieve );
                 return context;
             }
         };
