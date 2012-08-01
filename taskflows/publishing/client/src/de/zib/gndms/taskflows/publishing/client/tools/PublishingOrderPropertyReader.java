@@ -49,7 +49,7 @@ public class    PublishingOrderPropertyReader extends OrderPropertyReader< Publi
         
         final String sliceId;
 
-        if( properties.containsKey( PublishingOrderProperties.PUBLISHING_SLICE ) )
+        if( properties.containsKey( PublishingOrderProperties.PUBLISHING_SLICE.key ) )
             sliceId = properties.getProperty( PublishingOrderProperties.PUBLISHING_SLICE.key );
         else
             throw new IllegalArgumentException( "No Slice given in Publishing Order" );
