@@ -33,7 +33,6 @@ import de.zib.gndms.taskflows.staging.client.tools.ProviderStageInOrderConverter
 import de.zib.gndms.taskflows.staging.client.tools.ProviderStageInOrderPropertyReader;
 import de.zib.gndms.taskflows.staging.client.tools.ProviderStageInOrderStdoutWriter;
 import org.jetbrains.annotations.NotNull;
-import org.kohsuke.args4j.Option;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -49,13 +48,6 @@ import java.util.UUID;
  * @brief
  */
 public class ProviderStageInExample extends GORFXTaskFlowExample {
-
-    // args4j options:
-    /**
-     * @deprecated
-     */
-	@Option( name="-oidprefix", required=false, usage="oidPrefix to be stripped vom Object-Ids")
-	protected String oidPrefix = "";
 
     // members
     private AbstractTaskFlowExecClient etfc;
@@ -145,7 +137,6 @@ public class ProviderStageInExample extends GORFXTaskFlowExample {
 			  new ProviderStageInOrderPropertyReader( properties );
 		reader.begin();
 		reader.read();
-	//	fixOids(sfrOrder.getDataDescriptor().getObjectList());
         return  reader.getProduct();
 	}
 
@@ -158,22 +149,6 @@ public class ProviderStageInExample extends GORFXTaskFlowExample {
         orqConverter.convert();
 	}
 
-
-    /**
-     * @deprecated
-     * @param objs
-     */
-	protected void fixOids(final String[] objs) {
-		if (oidPrefix.length() > 0) {
-			if (objs != null)
-				for (int i = 0; i < objs.length; i++) {
-					if (objs[i] != null && objs[i].startsWith(oidPrefix)) {
-						final String obj = objs[i].trim();
-						objs[i] = obj.substring(oidPrefix.length());
-					}
-				}
-		}
-	}
 
     protected void failingRun() {
 
