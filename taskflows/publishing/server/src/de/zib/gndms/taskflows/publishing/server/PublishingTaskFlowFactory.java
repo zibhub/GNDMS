@@ -3,21 +3,35 @@ package de.zib.gndms.taskflows.publishing.server;
 
 import de.zib.gndms.common.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.common.model.gorfx.types.TaskStatistics;
+import de.zib.gndms.infra.GridConfig;
+import de.zib.gndms.infra.SettableGridConfig;
+import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.model.gorfx.taskflow.DefaultTaskFlowFactory;
+import de.zib.gndms.neomodel.common.Dao;
+import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
+import de.zib.gndms.neomodel.gorfx.TaskFlowType;
 import de.zib.gndms.taskflows.publishing.client.PublishingTaskFlowMeta;
 import de.zib.gndms.taskflows.publishing.client.model.PublishingOrder;
+import de.zib.gndms.voldmodel.Adis;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.inject.Inject;
+import java.util.*;
 
 /**
  * @author bachmann@zib.de
  * @date 01.07.12  12:14
  */
 public class PublishingTaskFlowFactory extends DefaultTaskFlowFactory< PublishingOrder, PublishingQuoteCalculator > {
+
+    private Dao dao;
+    private GridConfig gridConfig;
+    private VoldRegistrar registrar;
+    private Adis adis;
+
 
     private TaskStatistics stats = new TaskStatistics();
 
@@ -87,8 +101,124 @@ public class PublishingTaskFlowFactory extends DefaultTaskFlowFactory< Publishin
     @Override
     public TaskAction createAction() {
         PublishingTFAction action = new PublishingTFAction(  );
-        getInjector().injectMembers( action );
+        getInjector().injectMembers(action);
 
         return action;
+    }
+
+
+    public Dao getDao() {
+        return dao;
+    }
+
+
+    @SuppressWarnings( "SpringJavaAutowiringInspection" )
+    @Inject
+    public void setDao(Dao dao) {
+        this.dao = dao;
+    }
+
+
+    @SuppressWarnings( "SpringJavaAutowiringInspection" )
+    @Inject
+    public void setAdis( final Adis adis ) {
+        this.adis = adis;
+    }
+
+
+    @SuppressWarnings( "SpringJavaAutowiringInspection" )
+    @Inject
+    public void setGridConfig( final SettableGridConfig gridConfig ) {
+        this.gridConfig = gridConfig;
+    }
+
+
+    @PostConstruct
+    public void startVoldRegistration() throws Exception {
+        registrar = new VoldRegistrar( adis, gridConfig.getBaseUrl() );
+        registrar.start();
+    }
+
+
+    @PreDestroy
+    public void stopVoldRegistration() {
+        registrar.finish();
+    }
+
+
+    private class VoldRegistrar extends Thread {
+        final private Adis adis;
+        final private String gorfxEP;
+        private boolean run = true;
+
+
+        public VoldRegistrar( final Adis adis, final String gorfxEP ) {
+            this.adis = adis;
+            this.gorfxEP = gorfxEP;
+        }
+
+
+        public void finish() {
+            run = false;
+            try {
+                this.join();
+            } catch( InterruptedException e ) {
+            }
+        }
+
+
+        @Override
+        public void run() {
+            MapConfig config = new MapConfig( getConfigMapData() );
+
+            while( run ) {
+                try {
+                    final Integer updateInterval = config.getIntOption( "updateInterval", 60000 );
+                    Thread.sleep( updateInterval );
+                    config = new MapConfig( getConfigMapData() ); // refresh config
+                } catch( InterruptedException e ) {
+                    run = false;
+                    return;
+                }
+
+                try {
+                    if( !config.hasOption( "oidPrefix" ) ) {
+                        throw new IllegalStateException( "Dataprovider not configured: no OID_PREFIX given." );
+                    }
+                    
+                    final String name;
+                    if( !config.hasOption( "name" ) )
+                        name = config.getOption( "oidPrefixe" );
+                    else
+                        name = config.getOption( "name" );
+
+                    // register publishing site itselfes
+                    adis.setPublisher( name, gorfxEP );
+
+                    // also register OID prefix of harvested files
+                    final Set< String > oidPrefixe = buildSet( config.getOption( "oidPrefix" ) );
+                    adis.setOIDPrefixe( gorfxEP, oidPrefixe );
+                }
+                catch( Exception e ) {
+                    logger.error( "Could not register dataprovider. I'll try again in 5 seconds...", e );
+                }
+            }
+        }
+    }
+
+
+    public Map< String, String > getConfigMapData() {
+        final Session session = getDao().beginSession();
+        try {
+            final TaskFlowType taskFlowType = session.findTaskFlowType( PublishingTaskFlowMeta.TASK_FLOW_TYPE_KEY );
+            final Map< String, String > configMapData = taskFlowType.getConfigMapData();
+            session.finish();
+            return configMapData;
+        }
+        finally { session.success(); }
+    }
+
+    private static Set< String > buildSet( String s ) {
+        return new HashSet< String >( Arrays.asList( s.split( "(\\s|,|;)+" ) ) );
     }
 }

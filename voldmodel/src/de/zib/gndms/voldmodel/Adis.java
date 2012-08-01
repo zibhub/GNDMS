@@ -233,6 +233,26 @@ public class Adis extends ABIi {
 
 
     /**
+     * List all available publishing sites.
+     * @return All publishing site URLs.
+     */
+    public Map<String, String> listPublishingSites() {
+        // guard
+        {
+            checkState();
+        }
+
+        Map<Key, Set<String>> _result = voldi.lookup( new Key( grid, Type.PUBLISHER.toString(), "..." ) );
+
+        if( null == _result ) {
+            return null;
+        }
+
+        return flatmap( _result );
+    }
+
+
+    /**
      * List all available workflows.
      * @return All available workflows.
      */
@@ -383,6 +403,20 @@ public class Adis extends ABIi {
      */
     public boolean setExport( String name, String subspace ) {
         return setType( Type.EXPORT.toString(), name, subspace );
+    }
+
+
+    /**
+     * Register a publishing site.
+     *
+     * This method should be called by a host running this publishing site.
+     *
+     * @param   name      Human readable name.
+     * @param   subspace  Endpoint URL.
+     * @return  true on success.
+     */
+    public boolean setPublisher( String name, String subspace ) {
+        return setType( Type.PUBLISHER.toString(), name, subspace );
     }
 
 
