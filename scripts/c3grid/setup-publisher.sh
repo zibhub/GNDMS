@@ -13,7 +13,7 @@ SCRIPT_IO_FORMAT="PROPERTIES"
 # Set your hostname if it is not detected correctly
 # GRIDHOST=""
 
-PUBLISHING_OIDPREFIX="publish1"
+PUBLISHING_OIDPREFIX="c3published.zib.de"
 # VolD update interval in milliseconds
 PUBLISHING_UPDATE_INTERVAL="5000"
 
