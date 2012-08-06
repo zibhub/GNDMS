@@ -38,7 +38,6 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -111,7 +110,7 @@ public class PublishingTFAction extends TaskFlowAction< PublishingOrder > {
 
         // transform meta file to output
         try {
-            Source xsltSource = new StreamSource( new ByteArrayInputStream( PublishingTaskFlowMeta.XSLT.getBytes() ) );
+            Source xsltSource = new StreamSource( new FileInputStream( PublishingTaskFlowMeta.XSLT_FILE ) );
             Transformer transformer = transformerFactory.newTransformer( xsltSource );
             
             transformer.transform(
