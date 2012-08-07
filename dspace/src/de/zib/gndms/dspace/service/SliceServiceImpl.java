@@ -386,7 +386,7 @@ public class SliceServiceImpl implements SliceService {
             Slice slice = findSliceOfKind( subspaceId, sliceKindId, sliceId );
 
             return new ResponseEntity<String>(
-                    slice.getKind().getSliceDirectory() + slice.getDirectoryId(), headers, HttpStatus.OK);
+                    slice.getKind().getSliceDirectory() + File.separatorChar + slice.getDirectoryId(), headers, HttpStatus.OK);
         } catch (NoSuchElementException ne) {
             logger.warn(ne.getMessage());
             return new ResponseEntity<String>(null, headers,
