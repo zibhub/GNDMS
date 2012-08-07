@@ -48,13 +48,20 @@ public class    PublishingOrderPropertyReader extends OrderPropertyReader< Publi
         PublishingOrder publishingOrder = getProduct();
         
         final String sliceId;
+        final String metafile;
 
         if( properties.containsKey( PublishingOrderProperties.PUBLISHING_SLICE.key ) )
             sliceId = properties.getProperty( PublishingOrderProperties.PUBLISHING_SLICE.key );
         else
             throw new IllegalArgumentException( "No Slice given in Publishing Order" );
+        
+        if( properties.containsKey( PublishingOrderProperties.PUBLISHING_METAFILE.key ) )
+            metafile = properties.getProperty( PublishingOrderProperties.PUBLISHING_METAFILE.key );
+        else
+            throw new IllegalArgumentException( "No metadata filename in Publishing Order" );
 
         publishingOrder.setSliceId( sliceId );
+        publishingOrder.setMetadataFile( metafile );
     }
 
 

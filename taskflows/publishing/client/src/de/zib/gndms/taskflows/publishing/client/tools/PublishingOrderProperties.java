@@ -32,6 +32,7 @@ import java.util.List;
 public class PublishingOrderProperties {
 
     public final static DocumentedKey PUBLISHING_SLICE;
+    public final static DocumentedKey PUBLISHING_METAFILE;
     public final static List<DocumentedKey> PUBLISHING_KEYS;
 
     static {
@@ -40,6 +41,11 @@ public class PublishingOrderProperties {
                 keys,
                 "c3grid.PublishingRequest.Slice",
                 "SliceId of the slice to publish"
+        );
+        PUBLISHING_METAFILE = DocumentedKey.createAndRegisterKey(
+                keys,
+                "c3grid.PublishingRequest.MetaFile",
+                "Metadata filename to publish"
         );
         PUBLISHING_KEYS = Collections.unmodifiableList( keys );
     }

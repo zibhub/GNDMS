@@ -14,6 +14,7 @@ public class PublishingOrder extends AbstractOrder {
     private static final long serialVersionUID = 7794202120502583893L;
 
     private String sliceId;
+    private String metadataFile;
 
     public PublishingOrder() {
         super( );
@@ -30,6 +31,15 @@ public class PublishingOrder extends AbstractOrder {
         this.sliceId = sliceId;
     }
 
+
+    public String getMetadataFile() {
+        return metadataFile;
+    }
+
+
+    public void setMetadataFile( String metadataFile ) {
+        this.metadataFile = metadataFile;
+    }
 
     @Override
     public String getTaskFlowType() {

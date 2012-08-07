@@ -98,6 +98,10 @@ public class PublishingTFAction extends TaskFlowAction< PublishingOrder > {
 
     @Override
     protected void onInProgress( @NotNull String wid, @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState ) throws Exception {
+        ensureOrder();
+        
+        PublishingOrder order = getOrderBean();
+        
         final Slice slice = findSlice();
 
         if( null == slice ) {
@@ -105,14 +109,16 @@ public class PublishingTFAction extends TaskFlowAction< PublishingOrder > {
         }
 
         final String slicePath = slice.getSubspace().getPathForSlice( slice );
-        final String oldMetaFile = slicePath + File.separatorChar + PublishingTaskFlowMeta.META_FILE;
-        final String newMetaFile = slicePath + ".xml";
+        final String oldMetaFile = slicePath + File.separatorChar + order.getMetadataFile();
+        final String newMetaFile = slicePath + "__" + order.getMetadataFile() + ".xml";
+        final String newOid = slice.getId() + "__" + order.getMetadataFile();
 
         // transform meta file to output
         try {
             Source xsltSource = new StreamSource( new FileInputStream( PublishingTaskFlowMeta.XSLT_FILE ) );
             Transformer transformer = transformerFactory.newTransformer( xsltSource );
-            
+
+            transformer.setParameter( "identifier", newOid );
             transformer.transform(
                     new StreamSource( new FileInputStream( oldMetaFile ) ),
                     new StreamResult( new FileOutputStream( newMetaFile ) )
