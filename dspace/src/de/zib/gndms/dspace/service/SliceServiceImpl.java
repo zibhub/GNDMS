@@ -350,27 +350,49 @@ public class SliceServiceImpl implements SliceService {
         return new ResponseEntity<Void>(null, headers, HttpStatus.OK);
 	}
 
-	@Override
-	@RequestMapping(value = "/_{subspaceId}/_{sliceKindId}/_{sliceId}/gsiftp", method = RequestMethod.GET)
+    @Override
+    @RequestMapping(value = "/_{subspaceId}/_{sliceKindId}/_{sliceId}/gsiftp", method = RequestMethod.GET)
     @Secured( "ROLE_USER" )
-	public ResponseEntity<String> getGridFtpUrl(
-			@PathVariable final String subspaceId,
-			@PathVariable final String sliceKindId,
-			@PathVariable final String sliceId,
-			@RequestHeader("DN") final String dn) {
-		GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKindId, sliceId, dn );
+    public ResponseEntity<String> getGridFtpUrl(
+            @PathVariable final String subspaceId,
+            @PathVariable final String sliceKindId,
+            @PathVariable final String sliceId,
+            @RequestHeader("DN") final String dn) {
+        GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKindId, sliceId, dn );
 
-		try {
-			Subspace space = subspaceProvider.get( subspaceId );
-			Slice slice = findSliceOfKind( subspaceId, sliceKindId, sliceId );
-			return new ResponseEntity<String>(
-					space.getGsiFtpPathForSlice( slice ), headers, HttpStatus.OK);
-		} catch (NoSuchElementException ne) {
-			logger.warn(ne.getMessage());
-			return new ResponseEntity<String>(null, headers,
-					HttpStatus.NOT_FOUND);
-		}
-	}
+        try {
+            Subspace space = subspaceProvider.get( subspaceId );
+            Slice slice = findSliceOfKind( subspaceId, sliceKindId, sliceId );
+            return new ResponseEntity<String>(
+                    space.getGsiFtpPathForSlice( slice ), headers, HttpStatus.OK);
+        } catch (NoSuchElementException ne) {
+            logger.warn(ne.getMessage());
+            return new ResponseEntity<String>(null, headers,
+                    HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @Override
+    @RequestMapping(value = "/_{subspaceId}/_{sliceKindId}/_{sliceId}/directory", method = RequestMethod.GET)
+    @Secured( "ROLE_USER" )
+    public ResponseEntity<String> getRelativeDirectoryPath(
+            @PathVariable final String subspaceId,
+            @PathVariable final String sliceKindId,
+            @PathVariable final String sliceId,
+            @RequestHeader("DN") final String dn) {
+        GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKindId, sliceId, dn );
+
+        try {
+            Slice slice = findSliceOfKind( subspaceId, sliceKindId, sliceId );
+
+            return new ResponseEntity<String>(
+                    slice.getKind().getSliceDirectory() + slice.getDirectoryId(), headers, HttpStatus.OK);
+        } catch (NoSuchElementException ne) {
+            logger.warn(ne.getMessage());
+            return new ResponseEntity<String>(null, headers,
+                    HttpStatus.NOT_FOUND);
+        }
+    }
 
 	@Override
 	@RequestMapping(value = "/_{subspaceId}/_{sliceKindId}/_{sliceId}/_{fileName:.*}",

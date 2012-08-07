@@ -157,13 +157,22 @@ public class SliceClient extends AbstractClient implements SliceServiceClient {
 		return unifiedDelete( makeFilesFacet( slice.getUrl() ), dn);
 	}
 
-	@Override
-	public final ResponseEntity<String> getGridFtpUrl(final String subspace,
-			final String sliceKind, final String slice, final String dn ) {
+    @Override
+    public final ResponseEntity<String> getGridFtpUrl(final String subspace,
+                                                      final String sliceKind, final String slice, final String dn ) {
 
         return unifiedGet( String.class, makeGsiFtpFacet(
                 genSliceUrl( subspace, sliceKind, slice ) ), dn);
-	}
+    }
+
+
+    @Override
+    public final ResponseEntity<String> getRelativeDirectoryPath(final String subspace,
+                                                      final String sliceKind, final String slice, final String dn ) {
+
+        return unifiedGet( String.class, makeRelativeDirectoryFacet(
+                genSliceUrl( subspace, sliceKind, slice ) ), dn);
+    }
 
 
     @Override
@@ -270,6 +279,12 @@ public class SliceClient extends AbstractClient implements SliceServiceClient {
     private String makeGsiFtpFacet( final String uri ) {
 
         return uri + "/gsiftp";
+    }
+
+
+    private String makeRelativeDirectoryFacet( final String uri ) {
+
+        return uri + "/directory";
     }
 
 

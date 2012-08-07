@@ -21,6 +21,8 @@ import de.zib.gndms.common.model.FileStats;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -163,8 +165,21 @@ public interface SliceService {
 	 *            The dn of the user invoking the method.
 	 * @return The URL.
 	 */
-	ResponseEntity<String> getGridFtpUrl(String subspace, String sliceKind,
-			String slice, String dn);
+	ResponseEntity<String> getGridFtpUrl(String subspace, String sliceKind, String slice, String dn);
+
+    /**
+     * Returns the relative path of the slice directory on hard disk.
+     *
+     * The directory of the subspace is taken as base.
+     *
+     * @param slice
+     *            The slice identifier.
+     * @param dn
+     *            The dn of the user invoking the method.
+     * @return The URL.
+     */
+    ResponseEntity<String> getRelativeDirectoryPath( String subspaceId, String sliceKindId, String slice, String dn);
+
 
 	/**
 	 * Selects a specific file.
