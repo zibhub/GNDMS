@@ -63,7 +63,7 @@ public class PublishingTFAction extends TaskFlowAction< PublishingOrder > {
         super(PublishingTaskFlowMeta.TASK_FLOW_TYPE_KEY);
 
         transformerFactory = TransformerFactory.newInstance();
-    }
+        }
 
 
     public PublishingTFAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model) {
