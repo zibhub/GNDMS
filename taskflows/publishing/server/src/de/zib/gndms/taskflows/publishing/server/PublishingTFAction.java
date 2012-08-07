@@ -115,7 +115,9 @@ public class PublishingTFAction extends TaskFlowAction< PublishingOrder > {
 
         // transform meta file to output
         try {
-            Source xsltSource = new StreamSource( new FileInputStream( PublishingTaskFlowMeta.XSLT_FILE ) );
+
+            Source xsltSource = new StreamSource(
+                    this.getClass().getResourceAsStream( PublishingTaskFlowMeta.XSLT_FILE ) );
             Transformer transformer = transformerFactory.newTransformer( xsltSource );
 
             transformer.setParameter( "identifier", newOid );

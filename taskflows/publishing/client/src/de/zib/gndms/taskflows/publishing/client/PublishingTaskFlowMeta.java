@@ -34,7 +34,7 @@ public class PublishingTaskFlowMeta implements TaskFlowMeta {
     public final static String TASK_FLOW_TYPE_KEY ="PublishingTaskFlow";
     public final static List<String> REQUIRED_AUTHORIZATION = Collections.singletonList( CertificatePurpose.C3GRID.toString() );
 
-    public final static String XSLT_FILE = "classpath:changeIdentifier.xsl";
+    public final static String XSLT_FILE = "META-INF/changeIdentifier.xsl";
 
     private String description;
 
