@@ -176,7 +176,7 @@ public class PublishingTaskFlowFactory extends DefaultTaskFlowFactory< Publishin
 
             final String name;
             if( !config.hasOption( "name" ) )
-                name = config.getOption( "oidPrefixe" );
+                name = config.getOption( "oidPrefix" );
             else
                 name = config.getOption( "name" );
 
