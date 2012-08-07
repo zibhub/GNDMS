@@ -26,6 +26,7 @@ import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
 import de.zib.gndms.neomodel.gorfx.TaskFlowType;
+import de.zib.gndms.stuff.threading.PeriodcialJob;
 import de.zib.gndms.taskflows.staging.client.ProviderStageInMeta;
 import de.zib.gndms.taskflows.staging.client.model.ProviderStageInOrder;
 import de.zib.gndms.taskflows.staging.server.logic.AbstractProviderStageInAction;
@@ -179,56 +180,36 @@ public class ProviderStageInTaskFlowFactory
     }
 
     
-    private class VoldRegistrar extends Thread {
+    private class VoldRegistrar extends PeriodcialJob {
         final private Adis adis;
         final private String gorfxEP;
-        private boolean run = true;
-
-
         public VoldRegistrar( final Adis adis, final String gorfxEP ) {
             this.adis = adis;
             this.gorfxEP = gorfxEP;
         }
-        
-        
-        public void finish() {
-            run = false;
-            try {
-                this.join();
-            } catch( InterruptedException e ) {
-            }
+
+
+        @Override
+        public Integer getPeriod() {
+            final MapConfig config = new MapConfig( getConfigMapData() );
+
+            return config.getIntOption( "updateInterval", 60000 );
         }
 
 
         @Override
-        public void run() {
-            MapConfig config = new MapConfig( getConfigMapData() );
+        public void call() throws Exception {
+            final MapConfig config = new MapConfig( getConfigMapData() );
 
-            while( run ) {
-                try {
-                    final Integer updateInterval = config.getIntOption( "updateInterval", 60000 );
-                    Thread.sleep( updateInterval );
-                    config = new MapConfig( getConfigMapData() ); // refresh config
-                } catch( InterruptedException e ) {
-                    run = false;
-                    return;
-                }
-
-                try {
-                    if( !config.hasOption( "oidPrefixe" ) ) {
-                        throw new IllegalStateException( "Dataprovider not configured: no OID_PREFIXE given." );
-                    }
-
-                    final Set< String > oidPrefixe = buildSet( config.getOption( "oidPrefixe" ) );
-                    adis.setOIDPrefixe( gorfxEP, oidPrefixe );
-                }
-                catch( Exception e ) {
-                    logger.error( "Could not register dataprovider. I'll try again in 5 seconds...", e );
-                }
+            if( !config.hasOption( "oidPrefixe" ) ) {
+                throw new IllegalStateException( "Dataprovider not configured: no OID_PREFIXE given." );
             }
-        }
-    }
 
+            final Set< String > oidPrefixe = buildSet( config.getOption( "oidPrefixe" ) );
+            adis.setOIDPrefixe( gorfxEP, oidPrefixe );
+        }
+
+    }
 
 
     public Map< String, String > getConfigMapData() {
@@ -241,8 +222,7 @@ public class ProviderStageInTaskFlowFactory
         }
         finally { session.success(); }
     }
-    
-    
+
     
     private static Set< String > buildSet( String s ) {
         return new HashSet< String >( Arrays.asList( s.split( "(\\s|,|;)+" ) ) );

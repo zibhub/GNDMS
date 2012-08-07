@@ -5,6 +5,7 @@ import de.zib.gndms.common.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.common.model.gorfx.types.TaskStatistics;
 import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.SettableGridConfig;
+import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.model.gorfx.taskflow.DefaultTaskFlowFactory;
@@ -12,6 +13,7 @@ import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
 import de.zib.gndms.neomodel.gorfx.TaskFlowType;
+import de.zib.gndms.stuff.threading.PeriodcialJob;
 import de.zib.gndms.taskflows.publishing.client.PublishingTaskFlowMeta;
 import de.zib.gndms.taskflows.publishing.client.model.PublishingOrder;
 import de.zib.gndms.voldmodel.Adis;
@@ -146,10 +148,9 @@ public class PublishingTaskFlowFactory extends DefaultTaskFlowFactory< Publishin
     }
 
 
-    private class VoldRegistrar extends Thread {
+    private class VoldRegistrar extends PeriodcialJob {
         final private Adis adis;
         final private String gorfxEP;
-        private boolean run = true;
 
 
         public VoldRegistrar( final Adis adis, final String gorfxEP ) {
@@ -158,54 +159,35 @@ public class PublishingTaskFlowFactory extends DefaultTaskFlowFactory< Publishin
         }
 
 
-        public void finish() {
-            run = false;
-            try {
-                this.join();
-            } catch( InterruptedException e ) {
-            }
-        }
+        @Override
+        public Integer getPeriod() {
+            final MapConfig config = new MapConfig( getConfigMapData() );
 
+            return config.getIntOption( "updateInterval", 60000 );
+        }
 
         @Override
-        public void run() {
-            MapConfig config = new MapConfig( getConfigMapData() );
+        public void call() throws MandatoryOptionMissingException {
+            final MapConfig config = new MapConfig( getConfigMapData() );
 
-            while( run ) {
-                try {
-                    final Integer updateInterval = config.getIntOption( "updateInterval", 60000 );
-                    Thread.sleep( updateInterval );
-                    config = new MapConfig( getConfigMapData() ); // refresh config
-                } catch( InterruptedException e ) {
-                    run = false;
-                    return;
-                }
-
-                try {
-                    if( !config.hasOption( "oidPrefix" ) ) {
-                        throw new IllegalStateException( "Dataprovider not configured: no OID_PREFIX given." );
-                    }
-                    
-                    final String name;
-                    if( !config.hasOption( "name" ) )
-                        name = config.getOption( "oidPrefixe" );
-                    else
-                        name = config.getOption( "name" );
-
-                    // register publishing site itselfes
-                    adis.setPublisher( name, gorfxEP );
-
-                    // also register OID prefix of harvested files
-                    final Set< String > oidPrefixe = buildSet( config.getOption( "oidPrefix" ) );
-                    adis.setOIDPrefixe( gorfxEP, oidPrefixe );
-                }
-                catch( Exception e ) {
-                    logger.error( "Could not register dataprovider. I'll try again in 5 seconds...", e );
-                }
+            if( !config.hasOption( "oidPrefix" ) ) {
+                throw new IllegalStateException( "Dataprovider not configured: no OID_PREFIX given." );
             }
+
+            final String name;
+            if( !config.hasOption( "name" ) )
+                name = config.getOption( "oidPrefixe" );
+            else
+                name = config.getOption( "name" );
+
+            // register publishing site itselfes
+            adis.setPublisher( name, gorfxEP );
+
+            // also register OID prefix of harvested files
+            final Set< String > oidPrefixe = buildSet( config.getOption( "oidPrefix" ) );
+            adis.setOIDPrefixe( gorfxEP, oidPrefixe );
         }
     }
-
 
     public Map< String, String > getConfigMapData() {
         final Session session = getDao().beginSession();
