@@ -101,6 +101,17 @@ public interface DirectoryAux {
     public boolean deleteDirectory( String owner, String pth );
 
     /**
+     * Deletes a set of files in a given directory.
+     *
+     * This method does not delete files recursively.
+     *
+     * @param owner The owner of the directory
+     * @param pth The Path of the directory to delete files in.
+     * @param filter A regular expression matching all filenames to delete
+     */
+    public boolean deleteFiles( String owner, String pth, String filter );
+
+    /**
      * Creates a directory.
      *
      * @param uid The owner of the new directory.

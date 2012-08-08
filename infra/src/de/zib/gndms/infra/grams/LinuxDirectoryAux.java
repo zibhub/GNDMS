@@ -28,9 +28,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Implementation of the directory helpers for a linux system.
@@ -157,6 +160,32 @@ public class LinuxDirectoryAux implements DirectoryAux {
         return true;
     }
 
+    public boolean deleteFiles( String uid, String pth, String filter ) {
+        File dir = new File( pth );
+        if( !dir.exists() )
+            throw new NoSuchResourceException( "failed to delete files " + pth + File.separatorChar + filter + ": directory does not exist" );
+        if( !dir.isDirectory() )
+            throw new NoSuchResourceException( "failed to delete files " + pth + File.separatorChar + filter + ": " + pth + " is no directory" );
+
+        final Pattern regex = Pattern.compile( filter );
+
+        File[] files = dir.listFiles( new FilenameFilter() {
+            @Override
+            public boolean accept( File dir, String name ) {
+                Matcher matcher = regex.matcher( name );
+
+                return matcher.matches();
+            }
+        });
+
+        boolean success = true;
+        for( File f: files ) {
+            if( !f.delete() )
+                success = false;
+        }
+        
+        return success;
+    }
 
     public boolean mkdir( String uid, String path, AccessMask perm ) {
         int ret = 1;
