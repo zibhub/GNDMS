@@ -115,7 +115,7 @@ public class PublishingTFAction extends TaskFlowAction< PublishingOrder > {
 
         final String slicePath = slice.getSubspace().getPathForSlice( slice );
         final String oldMetaFile = slicePath + File.separatorChar + order.getMetadataFile();
-        final String newMetaFile = slicePath + "_" + order.getMetadataFile();
+        final String newMetaFile = slicePath + "." + order.getMetadataFile();
         
         final String oidPrefix = config.hasOption( "oidPrefix" ) ? config.getOption( "oidPrefix" ) : "";
         final String newOid = oidPrefix + "."
