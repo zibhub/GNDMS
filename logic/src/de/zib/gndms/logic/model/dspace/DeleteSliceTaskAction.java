@@ -16,16 +16,17 @@ package de.zib.gndms.logic.model.dspace;
  */
 
 import de.zib.gndms.common.model.gorfx.types.VoidTaskResult;
-import de.zib.gndms.model.common.NoSuchResourceException;
-import de.zib.gndms.model.gorfx.types.ModelIdHoldingOrder;
 import de.zib.gndms.logic.model.ModelTaskAction;
+import de.zib.gndms.model.common.NoSuchResourceException;
 import de.zib.gndms.model.dspace.Slice;
+import de.zib.gndms.model.gorfx.types.ModelIdHoldingOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
+import java.io.File;
 
 /**
  * @author Maik Jorra
@@ -90,8 +91,13 @@ public class DeleteSliceTaskAction extends ModelTaskAction<ModelIdHoldingOrder> 
         }
         
         try {
-            final String metaFile = slice.getSubspace().getPathForSlice( slice ) + ".xml";
-            getDirectoryAux().deleteDirectory( slice.getOwner(), metaFile );
+            final String metaFileFilter = slice.getDirectoryId() + "[_\\.].*";
+            getDirectoryAux().deleteFiles(
+                    slice.getOwner(),
+                    slice.getSubspace().getPath()
+                            + File.separatorChar
+                            + slice.getKind().getSliceDirectory(),
+                    metaFileFilter );
         }
         catch( NoSuchResourceException e ) {
             // ok, no meta file there...
