@@ -18,6 +18,7 @@ package de.zib.gndms.taskflows.publishing.server;
  */
 
 
+import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
@@ -26,6 +27,7 @@ import de.zib.gndms.model.util.TxFrame;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
+import de.zib.gndms.neomodel.gorfx.TaskFlowType;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import de.zib.gndms.taskflows.publishing.client.PublishingTaskFlowMeta;
 import de.zib.gndms.taskflows.publishing.client.model.PublishingOrder;
@@ -41,6 +43,7 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.Map;
 
 /**
  * @author bachmann@zib.de
@@ -63,7 +66,7 @@ public class PublishingTFAction extends TaskFlowAction< PublishingOrder > {
         super(PublishingTaskFlowMeta.TASK_FLOW_TYPE_KEY);
 
         transformerFactory = TransformerFactory.newInstance();
-        }
+    }
 
 
     public PublishingTFAction(@NotNull EntityManager em, @NotNull Dao dao, @NotNull Taskling model) {
@@ -108,10 +111,16 @@ public class PublishingTFAction extends TaskFlowAction< PublishingOrder > {
             throw new IllegalArgumentException( "No Slice set in Order!" );
         }
 
+        final MapConfig config = new MapConfig( getConfigMapData() );
+
         final String slicePath = slice.getSubspace().getPathForSlice( slice );
         final String oldMetaFile = slicePath + File.separatorChar + order.getMetadataFile();
-        final String newMetaFile = slicePath + "__" + order.getMetadataFile() + ".xml";
-        final String newOid = slice.getId() + "__" + order.getMetadataFile();
+        final String newMetaFile = slicePath + "_" + order.getMetadataFile();
+        
+        final String oidPrefix = config.hasOption( "oidPrefix" ) ? config.getOption( "oidPrefix" ) : "";
+        final String newOid = oidPrefix + "."
+                + slice.getId() + "."
+                + order.getMetadataFile().substring( 0, order.getMetadataFile().length()-4 );
 
         // transform meta file to output
         try {
@@ -180,5 +189,17 @@ public class PublishingTFAction extends TaskFlowAction< PublishingOrder > {
         finally { session.finish(); }
 
         return order;
+    }
+
+
+    public Map< String, String > getConfigMapData() {
+        final Session session = getDao().beginSession();
+        try {
+            final TaskFlowType taskFlowType = session.findTaskFlowType( PublishingTaskFlowMeta.TASK_FLOW_TYPE_KEY );
+            final Map< String, String > configMapData = taskFlowType.getConfigMapData();
+            session.finish();
+            return configMapData;
+        }
+        finally { session.success(); }
     }
 }
