@@ -63,7 +63,7 @@ public abstract class PeriodcialJob extends Thread {
                 
                 int i = 0;
                 
-                while( i < period ) {
+                while( run && i < period ) {
                     final int d = period-i < listenPeriod ? period-i : listenPeriod;
                     
                     i += d;
