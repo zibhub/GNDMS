@@ -16,7 +16,6 @@
 
 package de.zib.gndms.taskflows.publishing.client.tools;
 
-import de.zib.gndms.common.model.gorfx.types.SliceResult;
 import de.zib.gndms.common.model.gorfx.types.TaskResult;
 import de.zib.gndms.common.rest.CertificatePurpose;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
@@ -24,6 +23,7 @@ import de.zib.gndms.gndmc.gorfx.AbstractTaskFlowExecClient;
 import de.zib.gndms.gndmc.gorfx.ExampleTaskFlowExecClient;
 import de.zib.gndms.gndmc.gorfx.GORFXTaskFlowExample;
 import de.zib.gndms.taskflows.publishing.client.model.PublishingOrder;
+import de.zib.gndms.taskflows.publishing.client.model.PublishingTaskFlowResult;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -59,9 +59,7 @@ public class PublishingExample extends GORFXTaskFlowExample {
             @Override
             public void handleResult( TaskResult res ) {
 
-                SliceResult result = SliceResult.class.cast( res );
-                System.out.println( "Slice URL: " );
-                System.out.println( "\t" + result.getSliceSpecifier().getUrl() );
+                PublishingTaskFlowResult result = PublishingTaskFlowResult.class.cast( res );
             }
 
 
