@@ -32,7 +32,7 @@ SCRIPT_IO_FORMAT="PROPERTIES"
 STAGING_AREA_GSI_FTP_URL="gsiftp://$GRIDHOST""$STAGING_AREA_PATH"
 STAGING_OIDPREFIXE="prefix1 prefix2, prefix3;prefix4"
 # VolD update interval in milliseconds
-STAGING_UPDATE_INTERVAL="5000"
+STAGING_UPDATE_INTERVAL="60000"
 
 # default time to live for slices of the Staging slice kind (in milliseconds)
 # default: one day
