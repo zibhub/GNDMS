@@ -701,6 +701,10 @@ task 'c3grid-portal-setupdb' do
     system "#{ENV['GNDMS_SOURCE']}/scripts/c3grid/setup-portal.sh CREATE"
 end
 
+task 'c3grid-publisher-setupdb' do
+    system "#{ENV['GNDMS_SOURCE']}/scripts/c3grid/setup-publisher.sh CREATE"
+end
+
 
 desc 'Test the c3 data-provider setup'
 task 'c3grid-dp-test' do
