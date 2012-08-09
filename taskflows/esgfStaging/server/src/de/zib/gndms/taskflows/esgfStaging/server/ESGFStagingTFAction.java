@@ -389,7 +389,7 @@ public class ESGFStagingTFAction extends TaskFlowAction< ESGFStagingOrder > {
 
     protected @NotNull
     MapConfig getOfferTypeConfig() {
-        return new MapConfig( getTaskFlowTypeConfigMapData());
+        return new MapConfig( getTaskFlowTypeConfigMapData() );
     }
 
 

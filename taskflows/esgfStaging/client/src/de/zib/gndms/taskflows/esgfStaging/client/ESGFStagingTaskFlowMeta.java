@@ -32,7 +32,8 @@ import java.util.List;
 public class ESGFStagingTaskFlowMeta implements TaskFlowMeta {
 
     public final static String TASK_FLOW_TYPE_KEY ="ESGFStagingTaskFlow";
-    public final static List<String> REQUIRED_AUTHORIZATION = Collections.singletonList( CertificatePurpose.ESGF.toString() );
+    public final static List<String> REQUIRED_AUTHORIZATION
+            = Collections.singletonList( CertificatePurpose.ESGF.toString().toLowerCase() );
 
     private String description;
 
