@@ -97,14 +97,48 @@ public class HTTPGetter {
 
 
     public int get( String url ) throws NoSuchAlgorithmException, KeyManagementException {
-        return get( url, ( HttpHeaders )null );
+        return get( HttpMethod.GET, url, ( HttpHeaders )null );
     }
 
 
     public int get( String url, final HttpHeaders headers ) throws NoSuchAlgorithmException, KeyManagementException {
-        logger.debug("GET URL " + url);
+        return get( HttpMethod.GET, url, headers );
+    }
 
-        EnhancedResponseExtractor responseExtractor = get( url, new RequestCallback() {
+
+    private EnhancedResponseExtractor get( final String url, final RequestCallback requestCallback )
+            throws NoSuchAlgorithmException, KeyManagementException
+    {
+        return get( HttpMethod.GET, url, requestCallback );
+    }
+
+
+    public int head( String url ) throws NoSuchAlgorithmException, KeyManagementException {
+        return get( HttpMethod.HEAD, url, ( HttpHeaders )null );
+    }
+
+
+    public int head( String url, final HttpHeaders headers ) throws NoSuchAlgorithmException, KeyManagementException {
+        return get( HttpMethod.HEAD, url, headers );
+    }
+
+
+    private EnhancedResponseExtractor head( final String url, final RequestCallback requestCallback )
+            throws NoSuchAlgorithmException, KeyManagementException
+    {
+        return get( HttpMethod.HEAD, url, requestCallback );
+    }
+
+
+    public int get( final HttpMethod method, String url ) throws NoSuchAlgorithmException, KeyManagementException {
+        return get( method, url, ( HttpHeaders )null );
+    }
+
+
+    public int get( final HttpMethod method, String url, final HttpHeaders headers ) throws NoSuchAlgorithmException, KeyManagementException {
+        logger.debug(method.toString() + " URL " + url);
+
+        EnhancedResponseExtractor responseExtractor = get( method, url, new RequestCallback() {
             @Override
             public void doWithRequest( ClientHttpRequest request ) throws IOException {
                 // add headers
@@ -124,12 +158,12 @@ public class HTTPGetter {
             logger.debug( "Redirection " + ++redirectionCounter );
             logger.trace( "Redirecting to " + location + " with cookies " + cookies.toString() );
 
-            responseExtractor = get( location, new RequestCallback() {
+            responseExtractor = get( method, location, new RequestCallback() {
                 @Override
                 public void doWithRequest( ClientHttpRequest request ) throws IOException {
                     for( String c: cookies )
                         request.getHeaders().add( "Cookie", c.split( ";", 2 )[0] );
-                    
+
                     // add headers
                     if( headers != null )
                         request.getHeaders().putAll( headers );
@@ -138,26 +172,26 @@ public class HTTPGetter {
 
             statusCode = responseExtractor.getStatusCode();
         }
-        
-        logger.debug( "HTTP GET Status Code " + statusCode + " after " + redirectionCounter + " redirections");
+
+        logger.debug( "HTTP " + method.toString() + " Status Code " + statusCode + " after " + redirectionCounter + " redirections");
 
         return statusCode;
     }
 
 
-    private EnhancedResponseExtractor get( final String url, final RequestCallback requestCallback )
+    private EnhancedResponseExtractor get( final HttpMethod method, final String url, final RequestCallback requestCallback )
             throws NoSuchAlgorithmException, KeyManagementException
     {
         CustomSSLContextRequestFactory requestFactory = new CustomSSLContextRequestFactory( sslContext );
         RestTemplate rt = new RestTemplate( requestFactory );
 
-        return rt.execute( url, HttpMethod.GET, requestCallback, new ResponseExtractor< EnhancedResponseExtractor >() {
+        return rt.execute( url, method, requestCallback, new ResponseExtractor< EnhancedResponseExtractor >() {
 
             // call the EnhancedResponseExtractor registered for this response.statusCode
             @Override
             public EnhancedResponseExtractor extractData( ClientHttpResponse response ) throws IOException {
                 int statusCode = response.getStatusCode().value();
-                
+
                 EnhancedResponseExtractor enhancedResponseExtractor = extractorMap.get( statusCode );
                 if( null == enhancedResponseExtractor )
                     enhancedResponseExtractor = extractorMap.get( statusCode / 100 );
@@ -175,7 +209,7 @@ public class HTTPGetter {
     }
 
 
-    public String getKeyStoreLocation() {
+   public String getKeyStoreLocation() {
         return keyStoreLocation;
     }
 
