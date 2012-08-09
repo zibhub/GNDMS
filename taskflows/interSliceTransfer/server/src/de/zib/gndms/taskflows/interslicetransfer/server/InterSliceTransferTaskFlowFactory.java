@@ -18,6 +18,7 @@ package de.zib.gndms.taskflows.interslicetransfer.server;
 
 
 import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.model.gorfx.taskflow.DefaultTaskFlowFactory;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
@@ -53,7 +54,7 @@ public class InterSliceTransferTaskFlowFactory
 
 
     @Override
-    public InterSliceTransferQuoteCalculator getQuoteCalculator() {
+    public InterSliceTransferQuoteCalculator getQuoteCalculator() throws MandatoryOptionMissingException {
         final InterSliceTransferQuoteCalculator quoteCalculator = super.getQuoteCalculator();
         injectMembers( quoteCalculator );
         return quoteCalculator;

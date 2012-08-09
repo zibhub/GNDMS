@@ -4,12 +4,14 @@ package de.zib.gndms.taskflows.esgfStaging.server;
 import de.zib.gndms.common.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.common.model.gorfx.types.TaskStatistics;
 import de.zib.gndms.infra.SettableGridConfig;
-import de.zib.gndms.logic.model.TaskAction;
+import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.gorfx.taskflow.DefaultTaskFlowFactory;
+import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
 import de.zib.gndms.taskflows.esgfStaging.client.ESGFStagingTaskFlowMeta;
 import de.zib.gndms.taskflows.esgfStaging.client.model.ESGFStagingOrder;
 
+import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +21,8 @@ import java.util.Map;
  * @date 08.03.12  16:10
  */
 public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStagingOrder, ESGFStagingQuoteCalculator > {
+
+    private Dao dao;
 
     private TaskStatistics stats = new TaskStatistics();
 
@@ -34,8 +38,17 @@ public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStag
     }
 
 
-    public ESGFStagingQuoteCalculator getQuoteCalculator() {
-        return new ESGFStagingQuoteCalculator( );
+    public ESGFStagingQuoteCalculator getQuoteCalculator() throws MandatoryOptionMissingException {
+        ESGFStagingTFAction action = createAction();
+
+        final String trustStoreLocation = action.getOfferTypeConfig().getOption( "trustStoreLocation" );
+        final String trustStorePassword = action.getOfferTypeConfig().getOption( "trustStorePassword" );
+
+        ESGFStagingQuoteCalculator qc = new ESGFStagingQuoteCalculator( trustStoreLocation, trustStorePassword );
+
+        getInjector().injectMembers( qc );
+
+        return qc;
     }
 
 
@@ -102,10 +115,24 @@ public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStag
 
 
     @Override
-    public TaskAction createAction() {
+    public ESGFStagingTFAction createAction() {
         ESGFStagingTFAction action = new ESGFStagingTFAction(  );
         getInjector().injectMembers( action );
 
+        action.setOwnDao( this.dao );
+
         return action;
+    }
+
+
+   public Dao getDao() {
+        return dao;
+    }
+
+
+    @SuppressWarnings("SpringJavaAutowiringInspection")
+    @Inject
+    public void setDao( final Dao dao ) {
+        this.dao = dao;
     }
 }

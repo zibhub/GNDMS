@@ -17,6 +17,7 @@ package de.zib.gndms.logic.model.gorfx.taskflow;
 
 import de.zib.gndms.common.model.gorfx.types.Order;
 import de.zib.gndms.common.model.gorfx.types.TaskFlowInfo;
+import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
@@ -53,7 +54,7 @@ public interface TaskFlowFactory<O extends Order, C extends AbstractQuoteCalcula
      * 
      * @return A quote calculator.
      */
-    C getQuoteCalculator();
+    C getQuoteCalculator() throws MandatoryOptionMissingException;
 
     /** 
      * @brief Delivers information about the taskflow in general. 

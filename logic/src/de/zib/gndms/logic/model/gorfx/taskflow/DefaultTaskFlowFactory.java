@@ -20,6 +20,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import de.zib.gndms.common.model.gorfx.types.Order;
 import de.zib.gndms.common.model.gorfx.types.TaskFlowInfo;
+import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
 import de.zib.gndms.model.common.repository.Dao;
 import de.zib.gndms.model.common.repository.TransientDao;
@@ -101,7 +102,7 @@ public abstract class DefaultTaskFlowFactory<O extends Order, C extends Abstract
 
 
     @Override
-    public C getQuoteCalculator() {
+    public C getQuoteCalculator() throws MandatoryOptionMissingException {
         try {
             return calculatorClass.newInstance();
         // one of the two exceptions are thrown s.th. is wrong with the calculator class

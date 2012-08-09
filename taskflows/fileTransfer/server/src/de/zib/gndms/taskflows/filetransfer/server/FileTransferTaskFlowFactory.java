@@ -18,6 +18,7 @@ package de.zib.gndms.taskflows.filetransfer.server;
 
 
 
+import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.model.gorfx.taskflow.DefaultTaskFlowFactory;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
@@ -50,7 +51,7 @@ public class FileTransferTaskFlowFactory
 
 
     @Override
-    public FileTransferQuoteCalculator getQuoteCalculator() {
+    public FileTransferQuoteCalculator getQuoteCalculator() throws MandatoryOptionMissingException {
         final FileTransferQuoteCalculator quoteCalculator = super.getQuoteCalculator();
         injectMembers( quoteCalculator );
         return quoteCalculator;

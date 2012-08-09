@@ -18,6 +18,7 @@ package de.zib.gndms.GORFX.service;
 
 import de.zib.gndms.common.model.gorfx.types.Order;
 import de.zib.gndms.common.model.gorfx.types.Quote;
+import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
 import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowFactory;
 import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowProvider;
@@ -53,7 +54,13 @@ public final class TaskFlowServiceAux {
 
 
     public static <T extends Order> HttpStatus validateOrder( TaskFlowFactory<T, ?> factory, DelegatingOrder<T> delegate ) {
-        final AbstractQuoteCalculator<T> qc = factory.getQuoteCalculator();
+        final AbstractQuoteCalculator<T> qc;
+        try {
+            qc = factory.getQuoteCalculator();
+        }
+        catch( MandatoryOptionMissingException e ) {
+            return HttpStatus.BAD_REQUEST;
+        }
         qc.setOrder( delegate );
 
         if ( qc.validate() )
