@@ -272,6 +272,9 @@ public class SliceServiceImpl implements SliceService {
 			if( dir.exists() && dir.canRead() && dir.isDirectory() ) {
                 List<FileStats> files = new LinkedList<FileStats>();
                 recursiveListFiles( path, "", files );
+                
+                headers.add( "DiskUsage", String.valueOf( sliceProvider.getSliceSize( subspaceId, sliceId ) ) );
+                
 				return new ResponseEntity< List<FileStats> >( files, headers, HttpStatus.OK );
 			} else {
 				return new ResponseEntity< List<FileStats> >( null, headers, HttpStatus.FORBIDDEN );
