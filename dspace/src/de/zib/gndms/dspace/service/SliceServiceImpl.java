@@ -297,7 +297,13 @@ public class SliceServiceImpl implements SliceService {
             Slice slice = findSliceOfKind( subspaceId, sliceKind, sliceId );
             String path = space.getPathForSlice(slice);
             
+            final long sliceMaxSize = slice.getTotalStorageSize();
+            
             for( MultipartFile file: files ) {
+                long sliceSize = sliceProvider.getSliceSize( subspaceId, sliceId );
+                if( sliceSize >= sliceMaxSize )
+                    throw new IOException( "Slice " + sliceId + " has reached maximum size of " + sliceMaxSize + " Bytes" );
+                
                 File newFile = new File( path + File.separatorChar + file.getOriginalFilename() );
 
                 if( newFile.exists() ) {
@@ -471,6 +477,12 @@ public class SliceServiceImpl implements SliceService {
 			if (newFile.exists()) {
 				logger.warn("File " + newFile + "will be overwritten. ");			
 			}
+
+            final long sliceMaxSize = slice.getTotalStorageSize();
+            long sliceSize = sliceProvider.getSliceSize( subspaceId, sliceId );
+            if( sliceSize >= sliceMaxSize )
+                throw new IOException( "Slice " + sliceId + " has reached maximum size of " + sliceMaxSize + " Bytes" );
+
             
             file.transferTo( newFile );
 			

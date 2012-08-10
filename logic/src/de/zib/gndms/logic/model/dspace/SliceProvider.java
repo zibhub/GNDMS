@@ -60,4 +60,6 @@ public interface SliceProvider {
     Taskling deleteSlice( String subspaceId, String sliceId ) throws NoSuchElementException;
     
     void invalidate( String sliceId );
+
+    long getSliceSize( final String subspace, final String sliceId ) throws NoSuchElementException;
 }
