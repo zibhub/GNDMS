@@ -143,6 +143,8 @@ public interface DirectoryAux {
 
     int chmod( int mask, File file );
 
+    public long diskUsage( String uid, String path );
+
     public static class Utils {
 
 
