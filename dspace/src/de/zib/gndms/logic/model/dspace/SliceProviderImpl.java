@@ -19,6 +19,7 @@ package de.zib.gndms.logic.model.dspace;
 import de.zib.gndms.common.model.gorfx.types.Order;
 import de.zib.gndms.infra.grams.LinuxDirectoryAux;
 import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.logic.action.ActionConfigurer;
 import de.zib.gndms.model.gorfx.types.ModelIdHoldingOrder;
 import de.zib.gndms.logic.model.ModelUpdateListener;
@@ -58,12 +59,15 @@ public class SliceProviderImpl implements SliceProvider {
 
     private GridResourceCache< Slice > cache;
 
+    private DirectoryAux directoryAux;
+
 
     public SliceProviderImpl( EntityManagerFactory emf ) {
         this.actionConfigurer = new ActionConfigurer( emf );
         this.actionConfigurer.setEntityUpdateListener( new Invalidator() );
         this.cache = new GridResourceCache<Slice>( Slice.class, emf );
         this.emf = emf;
+        this.directoryAux = new LinuxDirectoryAux();
     }
 
 
@@ -122,6 +126,15 @@ public class SliceProviderImpl implements SliceProvider {
         }
     }
 
+    
+    public long getSliceSize( final String subspace, final String sliceId ) throws NoSuchElementException {
+        Slice slice = getSlice( subspace, sliceId );
+     
+        final String directory = slice.getSubspace().getPathForSlice( slice );
+        
+        return directoryAux.diskUsage( slice.getOwner(), directory );
+    }
+    
 
     @Override
     public String createSlice(
