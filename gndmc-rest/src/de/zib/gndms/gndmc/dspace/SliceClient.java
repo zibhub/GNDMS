@@ -139,7 +139,7 @@ public class SliceClient extends AbstractClient implements SliceServiceClient {
         if( responseEntity.getHeaders().containsKey( "DiskUsage" ) )
             return Long.parseLong( responseEntity.getHeaders().get( "DiskUsage" ).get( 0 ) );
         else
-            throw new IllegalArgumentException( "Response entity has no valid disk usage information. Check response entity first!" )
+            throw new IllegalArgumentException( "Response entity has no valid disk usage information. Check response entity first!" );
     }
 
 
