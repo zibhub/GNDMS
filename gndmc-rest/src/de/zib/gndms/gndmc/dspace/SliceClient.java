@@ -133,6 +133,14 @@ public class SliceClient extends AbstractClient implements SliceServiceClient {
         return (ResponseEntity< List< FileStats > >) (Object) unifiedGet(List.class,
                 makeFilesFacet( genSliceUrl( subspace, sliceKind, slice ) ), dn);
 	}
+    
+    
+    public static Long getSliceDiskUsage( ResponseEntity< List< FileStats > > responseEntity ) {
+        if( responseEntity.getHeaders().containsKey( "DiskUsage" ) )
+            return Long.parseLong( responseEntity.getHeaders().get( "DiskUsage" ).get( 0 ) );
+        else
+            return new Long( -1 );
+    }
 
 
     @Override
