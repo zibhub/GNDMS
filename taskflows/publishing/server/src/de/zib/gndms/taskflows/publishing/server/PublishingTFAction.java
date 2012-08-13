@@ -19,11 +19,10 @@ package de.zib.gndms.taskflows.publishing.server;
 
 
 import de.zib.gndms.kit.config.MapConfig;
-import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
+import de.zib.gndms.logic.model.gorfx.taskflow.SlicedTaskFlowAction;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;
-import de.zib.gndms.model.util.TxFrame;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
@@ -52,7 +51,7 @@ import java.util.Map;
  *
  * @see PublishingOrder
  */
-public class PublishingTFAction extends TaskFlowAction< PublishingOrder > {
+public class PublishingTFAction extends SlicedTaskFlowAction< PublishingOrder > {
     
     private final TransformerFactory transformerFactory;
 
@@ -143,25 +142,6 @@ public class PublishingTFAction extends TaskFlowAction< PublishingOrder > {
         transitWithPayload( new PublishingTaskFlowResult(), TaskState.FINISHED );
 
         super.onInProgress(wid, state, isRestartedTask, altTaskState);    // overridden method implementation
-    }
-
-
-    private Slice findSlice() {
-        final String sliceId = getOrderBean().getSliceId();
-
-        getLogger().info( "findSlice(" + ( sliceId == null ? "null" : '"' + sliceId + '"' ) + ')' );
-        if (sliceId == null)
-            return null;
-
-
-        final EntityManager em = getEntityManager();
-        final TxFrame txf = new TxFrame(em);
-        try {
-            final Slice slice = em.find(Slice.class, sliceId);
-            txf.commit();
-            return slice;
-        }
-        finally { txf.finish();  }
     }
 
 
