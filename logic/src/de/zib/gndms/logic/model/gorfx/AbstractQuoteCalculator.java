@@ -98,7 +98,7 @@ public abstract class AbstractQuoteCalculator<M extends Order>
      *
      * @return \c true if that's the case.
      */
-    public abstract boolean validate( );
+    public abstract boolean validate( ) throws Exception;
 
     public M getOrderBean() {
         return order.getOrderBean();

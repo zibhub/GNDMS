@@ -20,6 +20,9 @@ package de.zib.gndms.taskflows.staging.server.logic;
 
 import de.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
 import de.zib.gndms.taskflows.staging.client.model.ProviderStageInOrder;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -33,13 +36,15 @@ import de.zib.gndms.taskflows.staging.client.model.ProviderStageInOrder;
  */
 public abstract class AbstractProviderStageInQuoteCalculator
         extends AbstractQuoteCalculator<ProviderStageInOrder> {
+
+    protected @NotNull final Logger logger = LoggerFactory.getLogger( this.getClass() );
+
     public AbstractProviderStageInQuoteCalculator() {
         super( );
     }
 
-
     @Override
-    public boolean validate() {
+    public boolean validate() throws Exception {
         // staging orders can't be validated at this stage
         // it's the task of the data-provider.
         return true;

@@ -19,13 +19,20 @@ package de.zib.gndms.taskflows.staging.server.logic;
 
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 
 import de.zib.gndms.common.model.gorfx.types.Quote;
+import de.zib.gndms.common.rest.Specifier;
+import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.kit.system.SystemInfo;
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.logic.model.gorfx.PermissionDeniedTaskFlowException;
 import de.zib.gndms.logic.model.gorfx.taskflow.UnsatisfiableOrderException;
+import de.zib.gndms.model.dspace.Slice;
+import de.zib.gndms.model.util.TxFrame;
+import de.zib.gndms.neomodel.common.Session;
+import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.stuff.Sleeper;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -54,8 +61,6 @@ public class ExternalProviderStageInQuoteCalculator extends
 
 	private static final int INITIAL_STRING_BUILDER_CAPACITY = 4096;
 
-	private @NotNull final Logger logger = LoggerFactory.getLogger(ExternalProviderStageInQuoteCalculator.class);
-
 	private final StagingIOFormatHelper stagingIOHelper;
 	private SystemInfo sysInfo;
 
@@ -76,10 +81,10 @@ public class ExternalProviderStageInQuoteCalculator extends
         
         stagingIOHelper.formatFromMap( config );
 
-        if (config.hasOption("estimationCommand")) {
-            File estCommandFile = config.getFileOption("estimationCommand");
-            if (! AbstractProviderStageInAction.isValidScriptFile(estCommandFile))
-                throw new IllegalArgumentException("Invalid estimationCommand script: " + estCommandFile.getPath());
+        if ( config.hasOption( "estimationCommand" ) ) {
+            File estCommandFile = config.getFileOption( "estimationCommand" );
+            if ( !AbstractProviderStageInAction.isValidScriptFile( estCommandFile ) )
+                throw new IllegalArgumentException( "Invalid estimationCommand script: " + estCommandFile.getPath() );
 			result = createOfferViaEstScript(estCommandFile, cont);
         }
         else
@@ -89,31 +94,30 @@ public class ExternalProviderStageInQuoteCalculator extends
     }
 
 
-    @SuppressWarnings({ "HardcodedLineSeparator", "MagicNumber" })
-    private Quote createOfferViaEstScript(
-            final File estCommandFileParam, final Quote contParam) {
+    @SuppressWarnings( { "HardcodedLineSeparator", "MagicNumber" } )
+    private Quote createOfferViaEstScript( final File estCommandFileParam, final Quote contParam ) {
 
         logger.debug( "Estimating quotes using " + estCommandFileParam );
 
-        ProcessBuilderAction action = createEstAction(estCommandFileParam, contParam);
+        ProcessBuilderAction action = createEstAction( estCommandFileParam, contParam );
         StringBuilder outRecv = action.getOutputReceiver();
         StringBuilder errRecv = action.getErrorReceiver();
         int exitCode = action.call();
         switch (exitCode) {
             case EXIT_CODE_UNFULFILLABLE:
-                throw new UnsatisfiableOrderException("Estimation script failed (Unfulfillable): " + errRecv.toString());
+                throw new UnsatisfiableOrderException( "Estimation script failed (Unfulfillable): " + errRecv.toString() );
             case EXIT_CODE_PERMISSION_DENIED:
-                throw new PermissionDeniedTaskFlowException("Estimation script failed (Permission Denied): " + errRecv.toString());
+                throw new PermissionDeniedTaskFlowException( "Estimation script failed (Permission Denied): " + errRecv.toString() );
             case 0:
                 try {
                     return stagingIOHelper.getResult( outRecv );
                 } catch (Exception e) {
-                    throw new IllegalStateException("Estimation script failed: " + errRecv.toString(),
+                    throw new IllegalStateException( "Estimation script failed: " + errRecv.toString(),
                                                     e);
                 }
             default:
 	            if (exitCode > 127) {
-					logger.debug("Waiting for potential death of container...");     
+					logger.debug( "Waiting for potential death of container..." );
 		            Sleeper.sleepUninterruptible(GLOBUS_DEATH_DURATION);
 	            }
                 throw new IllegalStateException(
@@ -123,7 +127,7 @@ public class ExternalProviderStageInQuoteCalculator extends
     }
 
 
-    private ProcessBuilderAction createEstAction(final File estCommandFileParam, final Quote contParam) {
+    private ProcessBuilderAction createEstAction( final File estCommandFileParam, final Quote contParam ) {
         final @NotNull ProcessBuilder pb = new ProcessBuilder();
         try {
             pb.command(estCommandFileParam.getCanonicalPath());
@@ -148,7 +152,7 @@ public class ExternalProviderStageInQuoteCalculator extends
 
 
 	@Inject
-	public void setSysInfo(final @NotNull SystemInfo sysInfoParam) {
+	public void setSysInfo( final @NotNull SystemInfo sysInfoParam ) {
 		sysInfo = sysInfoParam;
 	}
 }

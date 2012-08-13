@@ -27,7 +27,7 @@ import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.security.CredentialProvider;
 import de.zib.gndms.kit.security.GetCredentialProviderFor;
 import de.zib.gndms.kit.security.SSLCredentialInstaller;
-import de.zib.gndms.logic.model.gorfx.taskflow.SlicedTaskFlowAction;
+import de.zib.gndms.infra.action.SlicedTaskFlowAction;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;
@@ -58,7 +58,6 @@ import java.util.Map;
  * @see ESGFStagingOrder
  */
 public class ESGFStagingTFAction extends SlicedTaskFlowAction< ESGFStagingOrder > {
-    // TODO: derive from AbstractProviderStagInAction (e.g. see createNewSlice)
 
     private static final String PROXY_FILE_NAME = File.separator + "x509_proxy.pem";
 
@@ -108,11 +107,16 @@ public class ESGFStagingTFAction extends SlicedTaskFlowAction< ESGFStagingOrder 
     @Override
     protected void onInProgress( @NotNull String wid, @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState ) throws Exception {
         final ESGFStagingOrder order = getOrderBean();
-        
+
+        // check for quotas
+        if( !isRestartedTask ) {
+            checkQuotas();
+        }
+
         final Map< String, String > urls = order.getUrls();
         final Slice slice = findSlice();
         final String slicePath = slice.getSubspace().getPathForSlice( slice );
-        
+
         // get certificate and private key by credentials
         final SetupSSL setupSSL;
         try {

@@ -18,12 +18,12 @@ package de.zib.gndms.taskflows.staging.server.logic;
 
 
 import de.zib.gndms.common.rest.Specifier;
+import de.zib.gndms.infra.action.SlicedTaskFlowAction;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.kit.security.AsFileCredentialInstaller;
 import de.zib.gndms.kit.security.CredentialProvider;
 import de.zib.gndms.kit.security.GetCredentialProviderFor;
-import de.zib.gndms.logic.model.gorfx.taskflow.SlicedTaskFlowAction;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.model.util.TxFrame;
@@ -53,6 +53,7 @@ public abstract class AbstractProviderStageInAction extends SlicedTaskFlowAction
     public static final String PROXY_FILE_NAME = File.separator + "x509_proxy.pem";
 
 	protected StagingIOFormatHelper stagingIOHelper = new StagingIOFormatHelper();
+    protected AbstractProviderStageInQuoteCalculator quoteCalculator;
 
 
     protected AbstractProviderStageInAction( @NotNull String offerTypeId ) {
@@ -81,8 +82,15 @@ public abstract class AbstractProviderStageInAction extends SlicedTaskFlowAction
     @Override
     protected void onInProgress(@NotNull String wid, @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState) throws Exception {
         ensureOrder();
-        final Slice slice = findSlice();
-        doStaging(getOfferTypeConfig(), getOrderBean(), slice);
+
+        // check for quotas
+        if( !isRestartedTask ) {
+            checkQuotas();
+        }
+
+        final Slice sliceModel = findSlice();
+
+        doStaging(getOfferTypeConfig(), getOrderBean(), sliceModel);
       //  changeSliceOwner( slice ) ;
         transitWithPayload( createResult(), TaskState.FINISHED );
         //super.onInProgress(wid, state, isRestartedTask, altTaskState);
@@ -216,6 +224,16 @@ public abstract class AbstractProviderStageInAction extends SlicedTaskFlowAction
 		// do we need "r"?
 		return scriptFile != null &&
 			   scriptFile.exists() && scriptFile.canRead() && scriptFile.isFile();
+    }
+
+
+    public AbstractProviderStageInQuoteCalculator getQuoteCalculator( ) {
+        return quoteCalculator;
+    }
+
+
+    public void setQuoteCalculator( AbstractProviderStageInQuoteCalculator quoteCalculator ) {
+        this.quoteCalculator = quoteCalculator;
     }
 }
 

@@ -119,6 +119,11 @@ public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStag
         ESGFStagingTFAction action = new ESGFStagingTFAction(  );
         getInjector().injectMembers( action );
 
+        try {
+            action.setQuoteCalculator( getQuoteCalculator() );
+        } catch (MandatoryOptionMissingException e) {
+            throw new IllegalStateException( "Could not create Action, since it is not configured properly.", e );
+        }
         action.setOwnDao( this.dao );
 
         return action;

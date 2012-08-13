@@ -17,7 +17,9 @@ package de.zib.gndms.taskflows.interslicetransfer.server.logic;
  */
 
 
+import de.zib.gndms.common.model.FileStats;
 import de.zib.gndms.common.model.gorfx.types.Quote;
+import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.gndmc.dspace.SliceClient;
 import de.zib.gndms.logic.model.gorfx.taskflow.UnsatisfiableOrderException;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;

@@ -63,8 +63,12 @@ public final class TaskFlowServiceAux {
         }
         qc.setOrder( delegate );
 
-        if ( qc.validate() )
-            return HttpStatus.OK;
+        try {
+            if ( qc.validate() )
+                return HttpStatus.OK;
+        } catch (Exception e) {
+            return HttpStatus.BAD_REQUEST;
+        }
 
         return HttpStatus.BAD_REQUEST;
     }

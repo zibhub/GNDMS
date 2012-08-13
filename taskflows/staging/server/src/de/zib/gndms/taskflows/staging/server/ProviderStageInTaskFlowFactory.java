@@ -155,6 +155,7 @@ public class ProviderStageInTaskFlowFactory
                     Class.forName( clazz ).asSubclass( AbstractProviderStageInAction.class );
             final AbstractProviderStageInAction newInstance = instanceClass.newInstance();
       	    injectMembers(newInstance);
+            newInstance.setQuoteCalculator( getQuoteCalculator() );
             return newInstance;
         } catch ( Exception e ) {
             throw new RuntimeException( e );

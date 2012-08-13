@@ -14,10 +14,11 @@
  *
  */
 
-package de.zib.gndms.logic.model.gorfx.taskflow;
+package de.zib.gndms.infra.action;
 
 import de.zib.gndms.common.dspace.service.SubspaceService;
 import de.zib.gndms.common.model.gorfx.types.AbstractOrder;
+import de.zib.gndms.common.model.gorfx.types.Order;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.kit.config.ConfigProvider;
@@ -27,6 +28,7 @@ import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.logic.model.dspace.ChownSliceConfiglet;
 import de.zib.gndms.logic.model.dspace.DeleteSliceTaskAction;
 import de.zib.gndms.logic.model.dspace.SliceConfiguration;
+import de.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.dspace.Slice;
@@ -55,6 +57,7 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
     public static final long DEFAULT_SLICE_SIZE = 100*1024*1024; // 100MB
 
 
+    private AbstractQuoteCalculator<? extends Order> quoteCalculator;
     private SubspaceService subspaceService;
 
 
@@ -187,6 +190,23 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
                 slice.getDirectoryId() );
         chownAct.call();
     }
+    
+    
+    protected void checkQuotas() throws Exception {
+        final Slice sliceModel = findSlice();
+        final de.zib.gndms.infra.dspace.Slice slice = new de.zib.gndms.infra.dspace.Slice( sliceModel );
+        final long sliceSize = slice.getTotalStorageSize();
+        final long sliceUsage = slice.getDiskUsage();
+        final long needSize = quoteCalculator.createQuotes().get( 0 ).getExpectedSize();
+
+        if( sliceUsage + needSize > sliceSize )
+            throw new IllegalStateException(
+                    "Staging would exceed slice size: Need "
+                            + String.valueOf( needSize )
+                            + " Bytes but have only "
+                            + String.valueOf( sliceSize - sliceUsage )
+                            + " Bytes left." );
+    }
 
 
     public @NotNull
@@ -231,4 +251,12 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
     }
 
 
+    public AbstractQuoteCalculator<? extends Order> getQuoteCalculator() {
+        return quoteCalculator;
+    }
+
+
+    public void setQuoteCalculator( AbstractQuoteCalculator<? extends Order> quoteCalculator ) {
+        this.quoteCalculator = quoteCalculator;
+    }
 }

@@ -19,7 +19,7 @@ package de.zib.gndms.taskflows.publishing.server;
 
 
 import de.zib.gndms.kit.config.MapConfig;
-import de.zib.gndms.logic.model.gorfx.taskflow.SlicedTaskFlowAction;
+import de.zib.gndms.infra.action.SlicedTaskFlowAction;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;
