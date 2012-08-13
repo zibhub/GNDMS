@@ -23,10 +23,14 @@ import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.kit.config.ConfigProvider;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.config.MapConfig;
+import de.zib.gndms.logic.action.ProcessBuilderAction;
+import de.zib.gndms.logic.model.dspace.ChownSliceConfiglet;
+import de.zib.gndms.logic.model.dspace.DeleteSliceTaskAction;
 import de.zib.gndms.logic.model.dspace.SliceConfiguration;
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.dspace.Slice;
+import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.model.util.TxFrame;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
@@ -38,6 +42,7 @@ import org.springframework.http.ResponseEntity;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import java.io.File;
 
 /**
  * @date: 12.08.12
@@ -152,6 +157,38 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
     }
 
 
+    protected void deleteSlice( final String sliceId ) {
+
+        final DeleteSliceTaskAction deleteSliceTaskAction = new DeleteSliceTaskAction();
+        getInjector().injectMembers( deleteSliceTaskAction );
+        getService().submitTaskAction(deleteSliceTaskAction,
+                new de.zib.gndms.model.gorfx.types.ModelIdHoldingOrder(sliceId), getWid());
+    }
+
+
+    protected void killSlice() {
+        deleteSlice(getSliceId());
+    }
+
+
+    protected  void changeSliceOwner( Slice slice ) {
+
+        ChownSliceConfiglet csc = getConfigletProvider().getConfiglet( ChownSliceConfiglet.class, "sliceChown" );
+
+        if( csc == null )
+            throw new IllegalStateException( "chown configlet is null!");
+
+        final DelegatingOrder<?> order = getOrder();
+        String dn = order.getDNFromContext();
+        getLogger().debug( "cso DN: " + dn );
+        getLogger().debug( "changing owner of " + slice.getId() + " to " + order.getLocalUser() );
+        ProcessBuilderAction chownAct = csc.createChownSliceAction( order.getLocalUser(),
+                slice.getSubspace().getPath() + File.separator + slice.getKind().getSliceDirectory(),
+                slice.getDirectoryId() );
+        chownAct.call();
+    }
+
+
     public @NotNull
     MapConfig getOfferTypeConfig() {
         return new MapConfig( getTaskFlowTypeConfigMapData() );
@@ -181,4 +218,17 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
     public void setSubspaceService( SubspaceService subspaceService ) {
         this.subspaceService = subspaceService;
     }
+
+
+    private String getWid() {
+
+        Session session = getDao().beginSession();
+        try {
+            String wid = getTask( session ).getWID();
+            session.success();
+            return wid;
+        } finally {session.finish();}
+    }
+
+
 }
