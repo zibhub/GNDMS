@@ -436,6 +436,9 @@ public class SliceServiceImpl implements SliceService {
 				if ( attrs == null || attrs.contains("contents")) {
                     FileCopyUtils.copy( new FileInputStream( file ), out );
 				}
+                
+                headers.setContentLength( file.length() );
+                
 				return new ResponseEntity<Void>(null, headers,
 						HttpStatus.OK);
 			} else {
