@@ -24,6 +24,7 @@ import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.kit.config.ParameterTools;
 import de.zib.gndms.kit.util.DirectoryAux;
+import de.zib.gndms.logic.model.dspace.NoSuchElementException;
 import de.zib.gndms.logic.model.dspace.*;
 import de.zib.gndms.model.common.NoSuchResourceException;
 import de.zib.gndms.model.dspace.Slice;
@@ -49,10 +50,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 // import de.zib.gndms.neomodel.gorfx.Taskling;
@@ -131,18 +129,18 @@ public class SliceServiceImpl implements SliceService {
 	}
 
     @Override
-	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}/config", method = RequestMethod.PUT)
+    @RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}/config", method = RequestMethod.PUT)
     @Secured( "ROLE_USER" )
-	public ResponseEntity<Void> setSliceConfiguration(
-			@PathVariable final String subspaceId,
-			@PathVariable final String sliceKind,
-			@PathVariable final String sliceId,
+    public ResponseEntity<Void> setSliceConfiguration(
+            @PathVariable final String subspaceId,
+            @PathVariable final String sliceKind,
+            @PathVariable final String sliceId,
             @RequestBody final String config,
-			@RequestHeader("DN") final String dn) {
-		GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKind, sliceId, dn);
+            @RequestHeader("DN") final String dn) {
+        GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKind, sliceId, dn);
 
-		try {
-			Slice slice = findSliceOfKind( subspaceId, sliceKind, sliceId );
+        try {
+            Slice slice = findSliceOfKind( subspaceId, sliceKind, sliceId );
 
             Map< String, String > cfgMap = new HashMap< String, String >();
             try {
@@ -151,22 +149,51 @@ public class SliceServiceImpl implements SliceService {
                 logger.warn("Syntax error in config string: ", e);
                 return new ResponseEntity< Void >( null, headers, HttpStatus.BAD_REQUEST );
             }
-            
+
             if( cfgMap.containsKey( "terminationTime" ) )
                 slice.setTerminationTime( new DateTime( cfgMap.get( "terminationTime" ) ) );
             if( cfgMap.containsKey( "totalStorageSize" ))
                 slice.setTotalStorageSize( Long.parseLong( cfgMap.get( "totalStorageSize" ) ) );
 
-			return new ResponseEntity<Void>(null, headers, HttpStatus.OK);
-		} catch (NoSuchElementException ne) {
-			logger.warn(ne.getMessage());
-			return new ResponseEntity<Void>(null, headers, HttpStatus.NOT_FOUND);
-		} catch (ClassCastException e) {
-			logger.warn(e.getMessage());
-			return new ResponseEntity<Void>(null, headers,
-					HttpStatus.BAD_REQUEST);
-		}
-	}
+            return new ResponseEntity<Void>(null, headers, HttpStatus.OK);
+        } catch (NoSuchElementException ne) {
+            logger.warn(ne.getMessage());
+            return new ResponseEntity<Void>(null, headers, HttpStatus.NOT_FOUND);
+        } catch (ClassCastException e) {
+            logger.warn(e.getMessage());
+            return new ResponseEntity<Void>(null, headers,
+                    HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Override
+    @RequestMapping( value = "/_{subspace}/_{sliceKind}/_{slice}/config", method = RequestMethod.GET )
+    @Secured( "ROLE_USER" )
+    public ResponseEntity< Map< String, String > > getSliceConfiguration(
+            @PathVariable final String subspaceId,
+            @PathVariable final String sliceKind,
+            @PathVariable final String sliceId,
+            @RequestHeader("DN") final String dn ) {
+        GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKind, sliceId, dn);
+
+        Map< String, String > config = new HashMap< String, String >();
+
+        try {
+            Slice slice = findSliceOfKind( subspaceId, sliceKind, sliceId );
+
+            config.put( "terminationTime", slice.getTerminationTime().toString() );
+            config.put( "totalStorageSize", String.valueOf( slice.getTotalStorageSize() ) );
+            config.put( "DiskUsage", String.valueOf( new de.zib.gndms.infra.dspace.Slice( slice ).getDiskUsage() ) );
+
+            return new ResponseEntity< Map< String, String > >( config, headers, HttpStatus.OK );
+        } catch (NoSuchElementException ne) {
+            logger.warn(ne.getMessage());
+            return new ResponseEntity< Map< String, String > >( config, headers, HttpStatus.NOT_FOUND );
+        } catch (ClassCastException e) {
+            logger.warn(e.getMessage());
+            return new ResponseEntity< Map< String, String > >( config, headers, HttpStatus.BAD_REQUEST );
+        }
+    }
 
 	@Override
 	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}", method = RequestMethod.POST)
@@ -273,7 +300,7 @@ public class SliceServiceImpl implements SliceService {
                 List<FileStats> files = new LinkedList<FileStats>();
                 recursiveListFiles( path, "", files );
                 
-                headers.add( "DiskUsage", String.valueOf( sliceProvider.getSliceSize( subspaceId, sliceId ) ) );
+                headers.add( "DiskUsage", String.valueOf( sliceProvider.getDiskUsage(subspaceId, sliceId) ) );
                 
 				return new ResponseEntity< List<FileStats> >( files, headers, HttpStatus.OK );
 			} else {
@@ -303,7 +330,7 @@ public class SliceServiceImpl implements SliceService {
             final long sliceMaxSize = slice.getTotalStorageSize();
             
             for( MultipartFile file: files ) {
-                long sliceSize = sliceProvider.getSliceSize( subspaceId, sliceId );
+                long sliceSize = sliceProvider.getDiskUsage(subspaceId, sliceId);
                 if( sliceSize >= sliceMaxSize )
                     throw new IOException( "Slice " + sliceId + " has reached maximum size of " + sliceMaxSize + " Bytes" );
                 
@@ -485,7 +512,7 @@ public class SliceServiceImpl implements SliceService {
 			}
 
             final long sliceMaxSize = slice.getTotalStorageSize();
-            long sliceSize = sliceProvider.getSliceSize( subspaceId, sliceId );
+            long sliceSize = sliceProvider.getDiskUsage(subspaceId, sliceId);
             if( sliceSize >= sliceMaxSize )
                 throw new IOException( "Slice " + sliceId + " has reached maximum size of " + sliceMaxSize + " Bytes" );
 

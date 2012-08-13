@@ -38,6 +38,7 @@ import java.io.OutputStream;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The slice client implementing the slice service.
@@ -91,6 +92,22 @@ public class SliceClient extends AbstractClient implements SliceServiceClient {
 
 		return unifiedPut(Void.class, config, slice.getUrl(), dn);
 	}
+
+    @Override
+    public ResponseEntity< Map< String, String > > getSliceConfiguration( final String subspace,
+                                                                          final String sliceKind,
+                                                                          final String slice,
+                                                                          final String dn ) {
+        return (ResponseEntity< Map< String, String > >) (Object)
+                unifiedGet( Map.class, genSliceUrl( subspace, sliceKind, slice ), dn );
+    }
+
+    @Override
+    public ResponseEntity< Map< String, String > > getSliceConfiguration( final Specifier< Void > slice,
+                                                                          final String dn ) {
+        return (ResponseEntity< Map< String, String > >) (Object)
+                unifiedGet( Map.class, slice.getUrl(), dn );
+    }
 
 	@SuppressWarnings("unchecked")
 	@Override

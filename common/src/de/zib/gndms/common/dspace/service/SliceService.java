@@ -30,6 +30,7 @@ import java.io.OutputStream;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The interface of the Slice service.
@@ -82,6 +83,27 @@ public interface SliceService {
 	 */
 	ResponseEntity<Void> setSliceConfiguration(String subspace, String sliceKind,
 			String slice, String config, String dn);
+
+            /**
+             * Retrieve the slice configuration.
+             *
+             * The ResponseEntity will be a map with the following keys:
+             * - terminationTime
+             * - totalStorageSize
+             * - DiskUsage
+             *
+             * @param subspace
+             *            The subspace identifier.
+             * @param sliceKind
+             *            The slice kind identifier.
+             * @param slice
+             *            The slice identifier.
+             * @param dn
+             *            The dn of the user invoking the method.
+             * @return A confirmation.
+             */
+    public ResponseEntity<Map< String, String >> getSliceConfiguration( String subspace, String sliceKind,
+            String slice, String dn );
 
 	/**
 	 * Changes the slice kind of a slice.

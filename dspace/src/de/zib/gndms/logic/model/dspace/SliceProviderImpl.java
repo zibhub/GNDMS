@@ -127,7 +127,7 @@ public class SliceProviderImpl implements SliceProvider {
     }
 
     
-    public long getSliceSize( final String subspace, final String sliceId ) throws NoSuchElementException {
+    public long getDiskUsage(final String subspace, final String sliceId) throws NoSuchElementException {
         Slice slice = getSlice( subspace, sliceId );
      
         final String directory = slice.getSubspace().getPathForSlice( slice );

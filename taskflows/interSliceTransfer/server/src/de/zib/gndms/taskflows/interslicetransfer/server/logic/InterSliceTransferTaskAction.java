@@ -45,6 +45,7 @@ import javax.inject.Inject;
 import javax.net.ssl.SSLContext;
 import javax.persistence.EntityManager;
 import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * @author  try ma ik jo rr a zib
@@ -107,6 +108,32 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
         ensureOrder();
         InterSliceTransferQuoteCalculator.prepareSourceUrl( getOrder(), sliceClient );
         prepareDestination( );
+        
+        // check for quotas
+        {
+            InterSliceTransferOrder order = getOrderBean();
+            if( null != order.getSourceSlice() && null != order.getDestinationSpecifier() ) {
+
+                final ResponseEntity< Map< String, String > > sourceSliceConfigResponse
+                        = sliceClient.getSliceConfiguration( order.getSourceSlice(), getOrder().getDNFromContext() );
+                final ResponseEntity< Map< String, String > > destinationSliceConfigResponse
+                        = sliceClient.getSliceConfiguration( order.getDestinationSpecifier(), getOrder().getDNFromContext() );
+                final long sliceSize = Long.parseLong(
+                        destinationSliceConfigResponse.getHeaders().get( "totalStorageSize" ).get( 0 ) );
+                final long sliceUsage = Long.parseLong(
+                        destinationSliceConfigResponse.getHeaders().get( "DiskUsage" ).get( 0 ) );
+                final long needSize = Long.parseLong(
+                        sourceSliceConfigResponse.getHeaders().get( "DiskUsage" ).get( 0 ) );
+
+                if( sliceUsage + needSize > sliceSize )
+                    throw new IllegalStateException(
+                            "Transfer would exceed slice size: Need "
+                                    + String.valueOf( needSize )
+                                    + " Bytes but have only "
+                                    + String.valueOf( sliceSize - sliceUsage )
+                                    + " Bytes left." );
+            }
+        }
 
         Session session = getDao().beginSession();
         final String subTaskId = getUUIDGen().nextUUID();
@@ -183,9 +210,10 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
             ResponseEntity<Specifier<Void>> sliceSpecifierResponse =
                     subspaceClient.createSlice( specifier, order.getDNFromContext() );
 
-            if( HttpStatus.CREATED.equals( sliceSpecifierResponse.getStatusCode() ) )
+            if( HttpStatus.CREATED.equals( sliceSpecifierResponse.getStatusCode() ) ) {
                 sliceSpecifier = sliceSpecifierResponse.getBody();
-            else
+                orderBean.setDestinationSpecifier( sliceSpecifier );
+            } else
                 throw new IllegalStateException( "Can't create slice in: " + specifier.getUrl() );
         }
 

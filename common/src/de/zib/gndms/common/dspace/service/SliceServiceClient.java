@@ -27,6 +27,7 @@ import java.io.OutputStream;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The interface of the Slice service clients.
@@ -65,17 +66,28 @@ public interface SliceServiceClient extends SliceService {
 	 */
 	ResponseEntity< Facets > listSliceFacets( Specifier<Void> slice, String dn);
 
-	/**
-	 * Updates a slice with a new configuration.
-	 * 
-	 * @param slice
-	 *            The slice specifier.
-	 * @param config The configuration of the slice.
-	 * @param dn
-	 *            The dn of the user invoking the method.
-	 * @return A confirmation.
-	 */
-	ResponseEntity<Void> setSliceConfiguration( Specifier<Void> slice, Configuration config, String dn);
+    /**
+     * Updates a slice with a new configuration.
+     *
+     * @param slice
+     *            The slice specifier.
+     * @param config The configuration of the slice.
+     * @param dn
+     *            The dn of the user invoking the method.
+     * @return A confirmation.
+     */
+    ResponseEntity<Void> setSliceConfiguration( Specifier<Void> slice, Configuration config, String dn);
+
+    /**
+     * Get the slice configuration.
+     *
+     * @param slice
+     *            The slice specifier.
+     * @param dn
+     *            The dn of the user invoking the method.
+     * @return A confirmation.
+     */
+    ResponseEntity< Map< String, String > > getSliceConfiguration( Specifier<Void> slice, String dn );
 
 	/**
 	 * Changes the slice kind of a slice.
