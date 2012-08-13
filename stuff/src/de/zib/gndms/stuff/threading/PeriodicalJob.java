@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  * @author: Jörg Bachmann
  * @email: bachmann@zib.de
  */
-public abstract class PeriodcialJob extends Thread {
+public abstract class PeriodicalJob extends Thread {
 
     protected Logger logger = LoggerFactory.getLogger( this.getClass() );
 

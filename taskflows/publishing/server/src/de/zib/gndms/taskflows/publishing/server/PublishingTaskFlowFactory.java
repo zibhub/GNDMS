@@ -13,7 +13,7 @@ import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
 import de.zib.gndms.neomodel.gorfx.TaskFlowType;
-import de.zib.gndms.stuff.threading.PeriodcialJob;
+import de.zib.gndms.stuff.threading.PeriodicalJob;
 import de.zib.gndms.taskflows.publishing.client.PublishingTaskFlowMeta;
 import de.zib.gndms.taskflows.publishing.client.model.PublishingOrder;
 import de.zib.gndms.voldmodel.Adis;
@@ -148,7 +148,7 @@ public class PublishingTaskFlowFactory extends DefaultTaskFlowFactory< Publishin
     }
 
 
-    private class VoldRegistrar extends PeriodcialJob {
+    private class VoldRegistrar extends PeriodicalJob {
         final private Adis adis;
         final private String gorfxEP;
 

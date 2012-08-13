@@ -26,7 +26,7 @@ import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
 import de.zib.gndms.neomodel.gorfx.TaskFlowType;
-import de.zib.gndms.stuff.threading.PeriodcialJob;
+import de.zib.gndms.stuff.threading.PeriodicalJob;
 import de.zib.gndms.taskflows.staging.client.ProviderStageInMeta;
 import de.zib.gndms.taskflows.staging.client.model.ProviderStageInOrder;
 import de.zib.gndms.taskflows.staging.server.logic.AbstractProviderStageInAction;
@@ -181,7 +181,7 @@ public class ProviderStageInTaskFlowFactory
     }
 
     
-    private class VoldRegistrar extends PeriodcialJob {
+    private class VoldRegistrar extends PeriodicalJob {
         final private Adis adis;
         final private String gorfxEP;
         public VoldRegistrar( final Adis adis, final String gorfxEP ) {

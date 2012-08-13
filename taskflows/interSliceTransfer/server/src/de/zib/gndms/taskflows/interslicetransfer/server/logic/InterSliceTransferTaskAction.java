@@ -111,7 +111,7 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
         
         // check for quotas
         {
-            InterSliceTransferOrder order = getOrderBean();
+            final InterSliceTransferOrder order = getOrderBean();
             if( null != order.getSourceSlice() && null != order.getDestinationSpecifier() ) {
 
                 final ResponseEntity< Map< String, String > > sourceSliceConfigResponse
