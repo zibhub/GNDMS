@@ -177,7 +177,7 @@ public class ProviderStageInTaskFlowFactory
 
     @PreDestroy
     public void stopVoldRegistration() {
-        registrar.finish();
+        registrar.stop();
     }
 
     
@@ -191,10 +191,16 @@ public class ProviderStageInTaskFlowFactory
 
 
         @Override
-        public Integer getPeriod() {
+        public String getName() {
+            return "StagingVoldRegistrar";
+        }
+
+
+        @Override
+        public Long getPeriod() {
             final MapConfig config = new MapConfig( getConfigMapData() );
 
-            return config.getIntOption( "updateInterval", 60000 );
+            return config.getLongOption( "updateInterval", 60000 );
         }
 
 

@@ -144,7 +144,7 @@ public class PublishingTaskFlowFactory extends DefaultTaskFlowFactory< Publishin
 
     @PreDestroy
     public void stopVoldRegistration() {
-        registrar.finish();
+        registrar.stop();
     }
 
 
@@ -158,12 +158,16 @@ public class PublishingTaskFlowFactory extends DefaultTaskFlowFactory< Publishin
             this.gorfxEP = gorfxEP;
         }
 
+        @Override
+        public String getName() {
+            return "PublishingVoldRegistrar";
+        }
 
         @Override
-        public Integer getPeriod() {
+        public Long getPeriod() {
             final MapConfig config = new MapConfig( getConfigMapData() );
 
-            return config.getIntOption( "updateInterval", 60000 );
+            return config.getLongOption( "updateInterval", 60000 );
         }
 
         @Override

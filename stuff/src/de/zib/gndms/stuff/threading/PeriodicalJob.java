@@ -16,8 +16,16 @@
 
 package de.zib.gndms.stuff.threading;
 
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.util.UUID;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @date: 07.08.12
@@ -25,61 +33,79 @@ import org.slf4j.LoggerFactory;
  * @author: Jörg Bachmann
  * @email: bachmann@zib.de
  */
-public abstract class PeriodicalJob extends Thread {
+public abstract class PeriodicalJob {
 
     protected Logger logger = LoggerFactory.getLogger( this.getClass() );
 
-    final static int listenPeriod = 250;
-    private boolean run = true;
-
-
-    public void finish() {
-        run = false;
-        try {
-            this.join();
-        } catch( InterruptedException e ) {
-        }
-    }
+    private boolean done = false;
+    private final @NotNull Lock stopLock = new ReentrantLock();
+    private final @NotNull Condition stopCond = stopLock.newCondition();
 
 
     /**
      * Get the period of job repetition.
      * @return Time to wait until next execution of job.
      */
-    public abstract Integer getPeriod();
+    public abstract Long getPeriod();
+
+
+    /**
+     * Get the name of the thread.
+     * @return Some string to identify the thread
+     */
+    public String getName() {
+        return UUID.randomUUID().toString();
+    }
 
 
     /**
      * Do the periodical work.
      */
-    public abstract void call() throws Exception;
+    protected abstract void call() throws Exception;
 
 
-    @Override
-    public void run() {
-        while( run ) {
-            try {
-                final Integer period = getPeriod();
-                
-                int i = 0;
-                
-                while( run && i < period ) {
-                    final int d = period-i < listenPeriod ? period-i : listenPeriod;
-                    
-                    i += d;
-                    Thread.sleep( d );
+    @PostConstruct
+    public void start() {
+        Thread worker = new Thread( new Runnable() {
+            @Override
+            public void run() {
+                while( !done ) {
+                    try {
+                        stopLock.lock();
+                        stopCond.awaitNanos( getPeriod() * 1000000 );
+                    }
+                    catch( InterruptedException e ) {
+                        Thread.interrupted();
+                        break;
+                    }
+                    finally {
+                        stopLock.unlock();
+                    }
+
+                    try {
+                        PeriodicalJob.this.call();
+                    }
+                    catch( Exception e ) {
+                        logger.error( "Could not run job.", e );
+                    }
                 }
-            } catch( InterruptedException e ) {
-                run = false;
-                return;
             }
+        });
 
-            try {
-                call();
-            }
-            catch( Exception e ) {
-                logger.error( "Could not run job.", e );
-            }
+        worker.setName( getName() );
+        worker.start();
+    }
+
+
+    @PreDestroy
+    public void stop() {
+        try {
+            stopLock.lock();
+            done = true;
+            stopCond.signal();
+        }
+        finally {
+            stopLock.unlock();
         }
     }
 }

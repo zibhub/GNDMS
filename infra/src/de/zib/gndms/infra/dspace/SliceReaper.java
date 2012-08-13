@@ -1,4 +1,4 @@
-package de.zib.gndms.infra.system;
+package de.zib.gndms.infra.dspace;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -19,12 +19,11 @@ package de.zib.gndms.infra.system;
 import de.zib.gndms.logic.model.dspace.NoSuchElementException;
 import de.zib.gndms.logic.model.dspace.SliceProvider;
 import de.zib.gndms.model.dspace.Slice;
+import de.zib.gndms.stuff.threading.PeriodicalJob;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -39,10 +38,10 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author: Jörg Bachmann
  * @email: bachmann@zib.de
  */
-public class SliceReaper {
+public class SliceReaper extends PeriodicalJob {
     public static final String LIST_ALL_SLICES = "listAllSlices";
 
-    private long intervall; // in milliseconds
+    private long period; // in milliseconds
     private boolean done = false;
 
     protected EntityManagerFactory emf;
@@ -53,8 +52,12 @@ public class SliceReaper {
     private final @NotNull Lock stopLock = new ReentrantLock();
     private final @NotNull Condition stopCond = stopLock.newCondition();
 
+    @Override
+    public String getName() {
+        return "SliceReaper";
+    }
 
-    private void reap() {
+    protected void call() {
         EntityManager em = emf.createEntityManager();
         Query query = em.createNamedQuery( LIST_ALL_SLICES );
         for( Object o : query.getResultList() ) {
@@ -64,68 +67,51 @@ public class SliceReaper {
                 // this is not happening
                 continue;
             }
-            
-            if( slice.getTerminationTime().isAfterNow() ) {
-                continue;
+
+            // perhaps, slice is too old
+            if( slice.getTerminationTime().isBeforeNow() ) {
+                if( onSliceTooOld( slice ) )
+                    continue;
             }
 
             try {
-                sliceProvider.deleteSlice( slice.getSubspace().getId(), slice.getId() );
-            } catch (NoSuchElementException e) {
-                logger.error( "Could not delete slice " + slice.getId(), e );
-            }
-        }
-    }
-    
-    @PostConstruct
-    public void init() {
-        Thread worker = new Thread( new Runnable() {
-            @Override
-            public void run() {
-                while( true ) {
-                    SliceReaper.this.reap();
-
-                    try {
-                        stopLock.lock();
-                        if( done ) {
-                            break;
-                        }
-                        stopCond.awaitNanos( SliceReaper.this.getIntervall() * 1000000 );
-                    }
-                    catch( InterruptedException e ) {
-                        Thread.interrupted();
-                        break;
-                    }
-                    finally {
-                        stopLock.unlock();
-                    }
+                if( sliceProvider.getDiskUsage( slice.getSubspace().getId(), slice.getId() ) > slice.getTotalStorageSize() ) {
+                    if( onSliceTooBig( slice ) )
+                        continue;
                 }
+            } catch( NoSuchElementException e ) {
+                logger.error( "There seems to be some error in DSpace database.", e );
             }
-        });
-
-        worker.setName( "SliceReaper" );
-        worker.start();
+        }
     }
 
-    @PreDestroy
-    public void stop() {
+
+    private boolean onSliceTooOld( Slice slice ) {
         try {
-            stopLock.lock();
-            done = true;
-            stopCond.signal();
+            sliceProvider.deleteSlice( slice.getSubspace().getId(), slice.getId() );
+        } catch (NoSuchElementException e) {
+            logger.error( "Could not delete slice " + slice.getId(), e );
         }
-        finally {
-            stopLock.unlock();
-        }
+
+        return true;
     }
 
-    public long getIntervall( ) {
-        return intervall;
+
+    private boolean onSliceTooBig( Slice slice ) {
+        // TODO: send a mail to system administrator
+        return false;
     }
 
-    public void setIntervall( long intervall ) {
-        this.intervall = intervall;
+
+    public Long getPeriod() {
+        return period;
     }
+
+
+    public void setPeriod(long period) {
+        this.period = period;
+    }
+
 
     public EntityManagerFactory getEmf( ) {
         return emf;
@@ -135,6 +121,7 @@ public class SliceReaper {
     public void setEmf( EntityManagerFactory emf ) {
         this.emf = emf;
     }
+
 
     public SliceProvider getSliceProvider() {
         return sliceProvider;
