@@ -251,6 +251,12 @@ public class SubspaceServiceImpl implements SubspaceService {
 
 		Subspace sub = subspaceProvider.get( subspace );
     	SubspaceConfiguration config = SubspaceConfiguration.getSubspaceConfiguration(sub);
+
+        // get disk usage
+        {
+            headers.set( "DiskUsage", String.valueOf( subspaceProvider.getDiskUsage( subspace ) ) );
+        }
+
 		return new ResponseEntity<Configuration>(config, headers, HttpStatus.OK);
 	}
 

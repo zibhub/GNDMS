@@ -18,6 +18,7 @@ package de.zib.gndms.logic.model.dspace;
 
 import de.zib.gndms.common.model.gorfx.types.Order;
 import de.zib.gndms.infra.system.GNDMSystem;
+import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.gorfx.types.ModelIdHoldingOrder;
 import de.zib.gndms.model.util.GridResourceCache;
@@ -33,6 +34,9 @@ import java.util.UUID;
 public class SubspaceProviderImpl extends GridResourceDAO< Subspace > implements SubspaceProvider {
 
     private GNDMSystem system;
+    protected EntityManagerFactory emf;
+    
+    final private static String LIST_ALL_SLICES = "listSlicesOfSubspace";
 
     
 	public SubspaceProviderImpl( final EntityManagerFactory emf ) {
@@ -97,4 +101,31 @@ public class SubspaceProviderImpl extends GridResourceDAO< Subspace > implements
         this.system = system;
     }
 
+
+    @Override
+    public long getDiskUsage( final String subspaceId ) {
+        EntityManager em = emf.createEntityManager();
+        Query query = em.createNamedQuery( LIST_ALL_SLICES );
+        
+        long usage = 0;
+        
+        for( Object o : query.getResultList() ) {
+            final Slice sliceModel = Slice.class.cast( o );
+            
+            de.zib.gndms.infra.dspace.Slice slice = new de.zib.gndms.infra.dspace.Slice( sliceModel );
+            usage += slice.getDiskUsage();
+        }
+
+        return usage;
+    }
+
+
+    public EntityManagerFactory getEmf( ) {
+        return emf;
+    }
+
+    @Inject
+    public void setEmf( EntityManagerFactory emf ) {
+        this.emf = emf;
+    }
 }

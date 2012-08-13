@@ -53,4 +53,6 @@ public interface SubspaceProvider {
     Taskling delete(String subspaceId) throws NoSuchElementException;
     
     void invalidate( String subspaceId );
+
+    long getDiskUsage( String subspaceId );
 }
