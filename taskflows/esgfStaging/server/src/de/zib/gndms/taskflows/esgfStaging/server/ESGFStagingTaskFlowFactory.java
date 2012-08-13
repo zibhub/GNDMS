@@ -3,24 +3,34 @@ package de.zib.gndms.taskflows.esgfStaging.server;
 
 import de.zib.gndms.common.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.common.model.gorfx.types.TaskStatistics;
+import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.SettableGridConfig;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
+import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.model.gorfx.taskflow.DefaultTaskFlowFactory;
 import de.zib.gndms.neomodel.common.Dao;
+import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
+import de.zib.gndms.neomodel.gorfx.TaskFlowType;
+import de.zib.gndms.stuff.threading.PeriodicalJob;
 import de.zib.gndms.taskflows.esgfStaging.client.ESGFStagingTaskFlowMeta;
 import de.zib.gndms.taskflows.esgfStaging.client.model.ESGFStagingOrder;
+import de.zib.gndms.voldmodel.Adis;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author bachmann@zib.de
  * @date 08.03.12  16:10
  */
 public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStagingOrder, ESGFStagingQuoteCalculator > {
+
+    private VoldRegistrar registrar;
+    private Adis adis;
+    private GridConfig gridConfig;
 
     private Dao dao;
 
@@ -130,7 +140,21 @@ public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStag
     }
 
 
-   public Dao getDao() {
+    @SuppressWarnings( "SpringJavaAutowiringInspection" )
+    @Inject
+    public void setGridConfig( final SettableGridConfig gridConfig ) {
+        this.gridConfig = gridConfig;
+    }
+
+
+    @SuppressWarnings( "SpringJavaAutowiringInspection" )
+    @Inject
+    public void setAdis( final Adis adis ) {
+        this.adis = adis;
+    }
+
+
+    public Dao getDao() {
         return dao;
     }
 
@@ -139,5 +163,72 @@ public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStag
     @Inject
     public void setDao( final Dao dao ) {
         this.dao = dao;
+    }
+
+
+    @PostConstruct
+    public void startVoldRegistration() throws Exception {
+        MapConfig config = new MapConfig( getConfigMapData() );
+        if( !config.hasOption( "oidPrefixe" ) ) {
+            logger.error( "Dataprovider not configured: no OID_PREFIXE given." );
+        }
+
+        registrar = new VoldRegistrar( adis, gridConfig.getBaseUrl() );
+        registrar.start();
+    }
+
+
+    @PreDestroy
+    public void stopVoldRegistration() {
+        registrar.stop();
+    }
+
+
+    private class VoldRegistrar extends PeriodicalJob {
+        final private Adis adis;
+        final private String gorfxEP;
+        public VoldRegistrar( final Adis adis, final String gorfxEP ) {
+            this.adis = adis;
+            this.gorfxEP = gorfxEP;
+        }
+
+
+        @Override
+        public String getName() {
+            return "ESGFStagingVoldRegistrar";
+        }
+
+
+        @Override
+        public Long getPeriod() {
+            final MapConfig config = new MapConfig( getConfigMapData() );
+
+            return config.getLongOption( "updateInterval", 60000 );
+        }
+
+
+        @Override
+        public void call() throws Exception {
+            final MapConfig config = new MapConfig( getConfigMapData() );
+
+            if( !config.hasOption( "oidPrefix" ) ) {
+                throw new IllegalStateException( "Dataprovider not configured: no OID_PREFIX given." );
+            }
+
+            final Set< String > oidPrefix = Collections.singleton(config.getOption("oidPrefix"));
+            adis.setOIDPrefixe( gorfxEP, oidPrefix );
+        }
+    }
+
+
+    public Map< String, String > getConfigMapData() {
+        final Session session = getDao().beginSession();
+        try {
+            final TaskFlowType taskFlowType = session.findTaskFlowType( ESGFStagingTaskFlowMeta.TASK_FLOW_TYPE_KEY );
+            final Map< String, String > configMapData = taskFlowType.getConfigMapData();
+            session.finish();
+            return configMapData;
+        }
+        finally { session.success(); }
     }
 }
