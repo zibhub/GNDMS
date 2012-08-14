@@ -108,7 +108,7 @@ public class SliceReaper extends PeriodicalJob {
     }
 
 
-    public void setPeriod(long period) {
+    public void setPeriod( Long period ) {
         this.period = period;
     }
 
