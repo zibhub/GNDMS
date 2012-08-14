@@ -1,7 +1,7 @@
 enable_esgfstageing() {
 RW="700"
 
-moni call -v .dspace.SetupSliceKind "sliceKind:'esgfKind'; sliceKindMode:$RW; uniqueDirName:RW; timeToLive: $TTL; mode: $MODE"
+moni call -v .dspace.SetupSliceKind "sliceKind:'EsgfKind'; sliceKindMode:$RW; uniqueDirName:RW; timeToLive: $TTL; mode: $MODE"
 
 moni call -v .dspace.SetupSubspace  "subspace:'EsgfStaging'; \
 	path:'$ESGF_STAGING_AREA_PATH'; 
@@ -10,7 +10,7 @@ moni call -v .dspace.SetupSubspace  "subspace:'EsgfStaging'; \
 	size:'$ESGF_STAGING_AREA_SIZE'; \
 	mode:'$MODE'"
 
-moni call -v .dspace.AssignSliceKind "subspace:'esgfStaging'; sliceKind: esgfKind; mode:'$ADDMODE'"
+moni call -v .dspace.AssignSliceKind "subspace:'EsgfStaging'; sliceKind: EsgfKind; mode:'$ADDMODE'"
 #moni call -v .dspace.AssignSliceKind "subspace:'ProviderStaging'; sliceKind: DMS; mode:'$ADDMODE'"
 #moni call -v .dspace.AssignSliceKind "subspace:'ProviderStaging'; sliceKind: DMS_RW; mode:'$ADDMODE'"
 

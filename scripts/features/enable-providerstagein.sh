@@ -1,7 +1,7 @@
 enable_providerstagein() {
 RW="700"
 
-moni call -v .dspace.SetupSliceKind "sliceKind:'Staging'; sliceKindMode:$RW; uniqueDirName:RW; timeToLive: $TTL; mode: $MODE"
+moni call -v .dspace.SetupSliceKind "sliceKind:'ProviderKind'; sliceKindMode:$RW; uniqueDirName:RW; timeToLive: $TTL; mode: $MODE"
 
 moni call -v .dspace.SetupSubspace  "subspace:'ProviderStaging'; \
 	path:'$STAGING_AREA_PATH'; 
