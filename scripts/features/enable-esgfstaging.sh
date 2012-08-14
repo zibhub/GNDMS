@@ -3,7 +3,7 @@ RW="700"
 
 moni call -v .dspace.SetupSliceKind "sliceKind:'esgfKind'; sliceKindMode:$RW; uniqueDirName:RW; timeToLive: $TTL; mode: $MODE"
 
-moni call -v .dspace.SetupSubspace  "subspace:'esgfStaging'; \
+moni call -v .dspace.SetupSubspace  "subspace:'EsgfStaging'; \
 	path:'$ESGF_STAGING_AREA_PATH'; 
 	gsiFtpPath:'$ESGF_STAGING_AREA_GSI_FTP_URL'; \
 	visible:true; \
@@ -18,8 +18,8 @@ moni call -v .dspace.AssignSliceKind "subspace:'esgfStaging'; sliceKind: esgfKin
 
 moni call -v .gorfx.ConfigTaskFlowType "taskFlowType: 'ESGFStagingTaskFlow'; \
 	cfgOutFormat: 'PRINT_OK'; \
-	subspace: 'esgfStaging'; \
-	sliceKind: 'esgfKind'; \
+	subspace: 'EsgfStaging'; \
+	sliceKind: 'EsgfKind'; \
 	trustStoreLocation: '$ESGF_TRUSTSTORE'; \
 	trustStorePassword: '$ESGF_TRUSTSTORE_PASSWORD'; \
 	estimationClass: 'de.zib.gndms.taskflows.esgfStaging.server.ESGFStagingQuoteCalculator'; \

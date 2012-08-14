@@ -10,7 +10,7 @@ moni call -v .dspace.SetupSubspace  "subspace:'ProviderStaging'; \
 	size:'$STAGING_AREA_SIZE'; \
 	mode:'$MODE'"
 
-moni call -v .dspace.AssignSliceKind "subspace:'ProviderStaging'; sliceKind: Staging; mode:'$ADDMODE'"
+moni call -v .dspace.AssignSliceKind "subspace:'ProviderStaging'; sliceKind: ProviderKind; mode:'$ADDMODE'"
 #moni call -v .dspace.AssignSliceKind "subspace:'ProviderStaging'; sliceKind: DMS; mode:'$ADDMODE'"
 #moni call -v .dspace.AssignSliceKind "subspace:'ProviderStaging'; sliceKind: DMS_RW; mode:'$ADDMODE'"
 
@@ -19,7 +19,7 @@ moni call -v .dspace.AssignSliceKind "subspace:'ProviderStaging'; sliceKind: Sta
 moni call -v .gorfx.ConfigTaskFlowType "taskFlowType: 'ProviderStageIn'; \
 	cfgOutFormat: 'PRINT_OK'; \
 	subspace: 'ProviderStaging'; \
-	sliceKind: 'Staging'; \
+	sliceKind: 'ProviderKind'; \
 	estimationClass: 'de.zib.gndms.taskflows.staging.server.logic.ExternalProviderStageInQuoteCalculator'; \
 	stagingClass: 'de.zib.gndms.taskflows.staging.server.logic.ExternalProviderStageInAction'; \
 	stagingCommand: '$STAGING_COMMAND'; \
