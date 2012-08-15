@@ -77,10 +77,10 @@ public class SubspaceClientTest {
     public void init() {
         subspaceClient = ( SubspaceClient )context.getAutowireCapableBeanFactory().createBean(
                 SubspaceClient.class,
-                AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
+                AutowireCapableBeanFactory.AUTOWIRE_BY_NAME, true );
         subspaceClient.setServiceURL( serviceUrl );
 
-        restTemplate = ( RestTemplate )context.getAutowireCapableBeanFactory().getBean("restTemplate");
+        restTemplate = ( RestTemplate )context.getAutowireCapableBeanFactory().getBean( "restTemplate" );
     }
 
 

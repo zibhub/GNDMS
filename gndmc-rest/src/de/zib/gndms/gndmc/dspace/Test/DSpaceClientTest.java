@@ -58,7 +58,7 @@ public class DSpaceClientTest {
     public void init() {
         dSpaceClient = ( DSpaceClient )context.getAutowireCapableBeanFactory().createBean(
                 DSpaceClient.class,
-                AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
+                AutowireCapableBeanFactory.AUTOWIRE_BY_NAME, true );
         dSpaceClient.setServiceURL( serviceUrl );
     }
 

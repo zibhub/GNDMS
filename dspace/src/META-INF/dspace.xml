@@ -25,8 +25,8 @@
         </property>
     </bean>
 
-    <bean class="de.zib.gndms.infra.system.SliceReaper">
-        <property name="intervall" value="3600000" />
+    <bean class="de.zib.gndms.infra.dspace.SliceReaper">
+        <property name="period" value="3600000" />
     </bean>
 
     <!-- DSpaceService -->

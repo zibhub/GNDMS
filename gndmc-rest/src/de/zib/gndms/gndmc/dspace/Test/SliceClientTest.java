@@ -94,22 +94,22 @@ public class SliceClientTest {
     public void init() {
         subspaceClient = ( SubspaceClient )context.getAutowireCapableBeanFactory().createBean(
                 SubspaceClient.class,
-                AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
+                AutowireCapableBeanFactory.AUTOWIRE_BY_NAME, true );
         subspaceClient.setServiceURL( serviceUrl );
         
         sliceKindClient = ( SliceKindClient )context.getAutowireCapableBeanFactory().createBean(
                 SliceKindClient.class,
-                AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
+                AutowireCapableBeanFactory.AUTOWIRE_BY_NAME, true );
         sliceKindClient.setServiceURL( serviceUrl );
 
         sliceClient = ( SliceClient )context.getAutowireCapableBeanFactory().createBean(
                 SliceClient.class,
-                AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
+                AutowireCapableBeanFactory.AUTOWIRE_BY_NAME, true );
         sliceClient.setServiceURL(serviceUrl);
 
         taskClient = ( TaskClient )context.getAutowireCapableBeanFactory().createBean(
                 TaskClient.class,
-                AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
+                AutowireCapableBeanFactory.AUTOWIRE_BY_NAME, true );
         taskClient.setServiceURL( serviceUrl );
 
         restTemplate = ( RestTemplate )context.getAutowireCapableBeanFactory().getBean( "restTemplate" );
@@ -143,10 +143,16 @@ public class SliceClientTest {
             dependsOnMethods = { "testCreateSubspace" }
     )
     public void testCreateSliceKind() {
-        final ResponseEntity<List< Specifier< Void > >> sliceKind =
-                subspaceClient.createSliceKind( subspaceId, sliceKindId, sliceKindConfig, admindn );
-        Assert.assertNotNull( sliceKind );
-        Assert.assertEquals( sliceKind.getStatusCode(), HttpStatus.CREATED );
+        try {
+            final ResponseEntity<List< Specifier< Void > >> sliceKind =
+                    subspaceClient.createSliceKind( subspaceId, sliceKindId, sliceKindConfig, admindn );
+            Assert.assertNotNull( sliceKind );
+            Assert.assertEquals( sliceKind.getStatusCode(), HttpStatus.CREATED );
+        }
+        catch( HttpClientErrorException e ) {
+            if( ! e.getStatusCode().equals( HttpStatus.PRECONDITION_FAILED ) ) // already exists from last test?
+                throw e;
+        }
 
         final ResponseEntity< List< Specifier< Void > > > listResponseEntity
                 = subspaceClient.listSliceKinds( subspaceId, admindn );

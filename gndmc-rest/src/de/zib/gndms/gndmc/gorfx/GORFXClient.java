@@ -71,7 +71,7 @@ public class GORFXClient extends AbstractClient implements GORFXServiceEssential
     public final ResponseEntity<List<String>> listTaskFlows( final String dn ) {
 
         return ( ResponseEntity<List<String>> ) ( Object ) unifiedGet( List.class,
-                getServiceURL() + "/gorfx/taskflows/", dn );
+                getServiceURL() + "/gorfx/taskflows", dn );
     }
 
 

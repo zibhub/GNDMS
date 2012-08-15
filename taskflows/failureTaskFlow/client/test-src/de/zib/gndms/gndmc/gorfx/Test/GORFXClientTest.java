@@ -63,7 +63,7 @@ public class GORFXClientTest {
     public void init() {
         gorfxClient = ( GORFXClient )context.getAutowireCapableBeanFactory().createBean(
                 GORFXClient.class,
-                AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true );
+                AutowireCapableBeanFactory.AUTOWIRE_BY_NAME, true );
         gorfxClient.setServiceURL(serviceUrl);
 
         //restTemplate = ( RestTemplate )context.getAutowireCapableBeanFactory().getBean( "restTemplate" );
