@@ -253,6 +253,26 @@ public class Adis extends ABIi {
 
 
     /**
+     * List all available ESGF data stagers.
+     * @return All ESGF stager site URLs.
+     */
+    public Map<String, String> listESGFStagingSites() {
+        // guard
+        {
+            checkState();
+        }
+
+        Map<Key, Set<String>> _result = voldi.lookup( new Key( grid, Type.ESGF.toString(), "..." ) );
+
+        if( null == _result ) {
+            return null;
+        }
+
+        return flatmap( _result );
+    }
+
+
+    /**
      * List all available workflows.
      * @return All available workflows.
      */
@@ -403,6 +423,20 @@ public class Adis extends ABIi {
      */
     public boolean setExport( String name, String subspace ) {
         return setType( Type.EXPORT.toString(), name, subspace );
+    }
+
+
+    /**
+     * Register an ESGF data stager.
+     *
+     * This method should be called by a host running this ESGF stager.
+     *
+     * @param   name      Human readable name.
+     * @param   gndms     Endpoint URL.
+     * @return  true on success.
+     */
+    public boolean setESGFStager( String name, String gndms ) {
+        return setType( Type.ESGF.toString(), name, gndms );
     }
 
 

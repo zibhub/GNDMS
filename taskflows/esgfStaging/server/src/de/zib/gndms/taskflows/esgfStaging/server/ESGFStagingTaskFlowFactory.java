@@ -211,12 +211,7 @@ public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStag
         public void call() throws Exception {
             final MapConfig config = new MapConfig( getConfigMapData() );
 
-            if( !config.hasOption( "oidPrefix" ) ) {
-                throw new IllegalStateException( "Dataprovider not configured: no OID_PREFIX given." );
-            }
-
-            final Set< String > oidPrefix = Collections.singleton(config.getOption("oidPrefix"));
-            adis.setOIDPrefixe( gorfxEP, oidPrefix );
+            adis.setESGFStager( getName(), gorfxEP );
         }
     }
 

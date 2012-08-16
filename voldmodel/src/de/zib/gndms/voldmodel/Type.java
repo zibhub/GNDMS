@@ -20,6 +20,7 @@ public enum Type {
     IMPORT,
     EXPORT,
     PUBLISHER,
+    ESGF,
     WORKFLOW,
     OID,
     CPID_GRAM,
