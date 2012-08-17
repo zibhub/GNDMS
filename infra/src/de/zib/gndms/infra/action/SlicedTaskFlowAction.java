@@ -197,7 +197,9 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
         final de.zib.gndms.infra.dspace.Slice slice = new de.zib.gndms.infra.dspace.Slice( sliceModel );
         final long sliceSize = slice.getTotalStorageSize();
         final long sliceUsage = slice.getDiskUsage();
-        final long needSize = quoteCalculator.createQuotes().get( 0 ).getExpectedSize();
+        
+        getQuoteCalculator().setOrder( ( DelegatingOrder )getOrder() );
+        final long needSize = getQuoteCalculator().createQuotes().get( 0 ).getExpectedSize();
 
         if( sliceUsage + needSize > sliceSize )
             throw new IllegalStateException(
