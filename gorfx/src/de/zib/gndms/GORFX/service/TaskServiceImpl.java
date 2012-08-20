@@ -132,7 +132,7 @@ public class TaskServiceImpl implements TaskService {
             session.finish();
         }
 
-        return new ResponseEntity< Integer >( null, getHeader( id, null, dn, wid  ), HttpStatus.OK );
+        return new ResponseEntity< Integer >( new Integer( 0 ), getHeader( id, null, dn, wid  ), HttpStatus.OK );
     }
 
 
