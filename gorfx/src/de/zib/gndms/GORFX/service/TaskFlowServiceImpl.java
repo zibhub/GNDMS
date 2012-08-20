@@ -139,7 +139,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
             }
         }
 
-        return new ResponseEntity< Integer >( null, getHeader( type, id, null, dn, wid ), hs );
+        return new ResponseEntity< Integer >( new Integer( 0 ), getHeader( type, id, null, dn, wid ), hs );
     }
 
 
