@@ -29,6 +29,7 @@ import org.globus.ftp.exception.ClientException;
 import org.globus.ftp.exception.ServerException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.ResourceAccessException;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -85,12 +86,16 @@ public class InterSliceTransferQuoteCalculator extends
 
         InterSliceTransferOrder ist = order.getOrderBean();
         if( ist.getSourceURI() == null  ) {
-            final ResponseEntity<String> responseEntity =
-                    sliceClient.getGridFtpUrl( ist.getSourceSlice(), order.getDNFromContext() );
-            if( HttpStatus.OK.equals( responseEntity.getStatusCode() ) )
-                ist.setSourceURI( responseEntity.getBody() );
-            else
-                throw new UnsatisfiableOrderException( "Invalid source slice specifier" );
+            try {
+                final ResponseEntity<String> responseEntity =
+                        sliceClient.getGridFtpUrl( ist.getSourceSlice(), order.getDNFromContext() );
+                if( HttpStatus.OK.equals( responseEntity.getStatusCode() ) )
+                    ist.setSourceURI( responseEntity.getBody() );
+                else
+                    throw new UnsatisfiableOrderException( "Invalid source slice specifier" );
+            }
+            catch( ResourceAccessException e )
+                throw new UnsatisfiableOrderException( "Could not connect to source slice specifier" );
         }
     }
 
