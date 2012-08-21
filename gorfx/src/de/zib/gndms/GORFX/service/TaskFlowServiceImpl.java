@@ -217,7 +217,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                 } catch ( Exception e ) {
                     logger.warn( "Exception on order calculation for " + tf.getOrder()
                             .getLoggableDescription(), e );
-                    hs = HttpStatus.INTERNAL_SERVER_ERROR;
+                    throw new RuntimeException( e );
                 }
             }
         }
