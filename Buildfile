@@ -150,7 +150,7 @@ ASPECTJ = [
 ]
 SERVLET = 'javax.servlet:servlet-api:jar:2.5'
 INJECT  =  'javax.inject:javax.inject:jar:1'
-XSTREAM = 'com.thoughtworks.xstream:xstream:jar:1.3.1'
+XSTREAM = 'com.thoughtworks.xstream:xstream:jar:1.4.1'
 #required by XSTREAM
 CGLIB='cglib:cglib-nodep:jar:2.2'
 DOM4J='dom4j:dom4j:jar:1.6.1'
