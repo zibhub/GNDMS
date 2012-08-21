@@ -77,8 +77,7 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
     }
 
 
-    protected Slice findSlice() {
-        final String sliceId = getSliceId();
+    protected Slice findSlice( final String sliceId ) {
         getLogger().info( "findSlice(" + ( sliceId == null ? "null" : '"' + sliceId + '"' ) + ')' );
         if (sliceId == null)
             return null;
@@ -92,6 +91,11 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
             return slice;
         }
         finally { txf.finish();  }
+    }
+
+
+    protected Slice findSlice() {
+        return findSlice( getSliceId() );
     }
 
 

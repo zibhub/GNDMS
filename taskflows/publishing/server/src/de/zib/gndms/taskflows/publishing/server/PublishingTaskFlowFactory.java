@@ -135,9 +135,13 @@ public class PublishingTaskFlowFactory extends DefaultTaskFlowFactory< Publishin
     }
 
 
+    public GridConfig getGridConfig() {
+        return gridConfig;
+    }
+
     @PostConstruct
     public void startVoldRegistration() throws Exception {
-        registrar = new VoldRegistrar( adis, gridConfig.getBaseUrl() );
+        registrar = new VoldRegistrar( adis, getGridConfig().getBaseUrl() );
         registrar.start();
     }
 

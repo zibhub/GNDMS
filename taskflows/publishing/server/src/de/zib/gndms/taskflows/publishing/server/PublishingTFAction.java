@@ -18,8 +18,12 @@ package de.zib.gndms.taskflows.publishing.server;
  */
 
 
-import de.zib.gndms.kit.config.MapConfig;
+import de.zib.gndms.common.rest.Specifier;
+import de.zib.gndms.common.rest.UriFactory;
+import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.action.SlicedTaskFlowAction;
+import de.zib.gndms.kit.config.MapConfig;
+import de.zib.gndms.model.common.NoSuchResourceException;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;
@@ -33,6 +37,7 @@ import de.zib.gndms.taskflows.publishing.client.model.PublishingOrder;
 import de.zib.gndms.taskflows.publishing.client.model.PublishingTaskFlowResult;
 import org.jetbrains.annotations.NotNull;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -54,6 +59,7 @@ import java.util.Map;
 public class PublishingTFAction extends SlicedTaskFlowAction< PublishingOrder > {
     
     private final TransformerFactory transformerFactory;
+    private GridConfig gridConfig;
 
     @Override
     public Class< PublishingOrder > getOrderBeanClass( ) {
@@ -88,7 +94,7 @@ public class PublishingTFAction extends SlicedTaskFlowAction< PublishingOrder > 
             try {
                 Task task = getTask( session );
                 task.setProgress(0);
-                task.setMaxProgress( 1 );
+                task.setMaxProgress(1);
                 session.success();
             }
             finally { session.finish(); }
@@ -103,9 +109,22 @@ public class PublishingTFAction extends SlicedTaskFlowAction< PublishingOrder > 
         ensureOrder();
         
         PublishingOrder order = getOrderBean();
-        
-        final Slice slice = findSlice();
+        final Slice slice = this.findSlice(order.getSliceId());
 
+        if( null == slice )
+            throw new NoSuchResourceException( "Could not find slice with id " + order.getSliceId() );
+
+        // set Slice Specifier
+        {
+            Specifier< Void > sliceSpecifier = UriFactory.createSliceSpecifier(
+                    getGridConfig().getBaseUrl(),
+                    slice.getSubspace().getId(),
+                    slice.getKind().getId(),
+                    order.getSliceId() );
+
+            setSliceSpecifier( sliceSpecifier );
+        }
+        
         if( null == slice ) {
             throw new IllegalArgumentException( "No Slice set in Order!" );
         }
@@ -181,5 +200,17 @@ public class PublishingTFAction extends SlicedTaskFlowAction< PublishingOrder > 
             return configMapData;
         }
         finally { session.success(); }
+    }
+
+
+    public GridConfig getGridConfig() {
+        return gridConfig;
+    }
+
+
+    @SuppressWarnings( "SpringJavaAutowiringInspection" )
+    @Inject
+    public void setGridConfig( GridConfig gridConfig ) {
+        this.gridConfig = gridConfig;
     }
 }
