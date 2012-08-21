@@ -30,6 +30,7 @@ import de.zib.gndms.logic.model.dspace.DeleteSliceTaskAction;
 import de.zib.gndms.logic.model.dspace.SliceConfiguration;
 import de.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
+import de.zib.gndms.model.common.NoSuchResourceException;
 import de.zib.gndms.model.common.PersistentContract;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
@@ -95,7 +96,12 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
 
 
     protected String getSliceId( ) {
-        return getSliceSpecifier().getUriMap().get( UriFactory.SLICE );
+        final Specifier<Void> sliceSpecifier = getSliceSpecifier();
+
+        if( null == sliceSpecifier )
+            throw new NoSuchResourceException( "Could not get slice Id." );
+
+        return sliceSpecifier.getUriMap().get( UriFactory.SLICE );
     }
 
 

@@ -22,6 +22,7 @@ import de.zib.gndms.common.model.gorfx.types.FutureTime;
 import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.kit.access.MyProxyFactoryProvider;
 import de.zib.gndms.kit.security.CredentialProvider;
+import de.zib.gndms.logic.model.gorfx.taskflow.UnsatisfiableOrderException;
 import de.zib.gndms.taskflows.filetransfer.server.kit.security.GetCredentialProviderForGridFTP;
 import de.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
 import de.zib.gndms.taskflows.filetransfer.client.FileTransferMeta;
@@ -95,7 +96,12 @@ public abstract class AbstractTransferQuoteCalculator<M extends FileTransferOrde
         GridFTPClient clnt = null;
         try {
             URI suri =  new URI( getOrderBean().getSourceURI() );
-            clnt =  NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( suri, getCredentialProvider() );
+            try {
+                clnt =  NetworkAuxiliariesProvider.getGridFTPClientFactory().createClient( suri, getCredentialProvider() );
+            }
+            catch( IllegalStateException e ) {
+                throw new UnsatisfiableOrderException( "Could be a syntax error in an order property: ", e );
+            }
             GNDMSFileTransfer ft = NetworkAuxiliariesProvider.newGNDMSFileTransfer();
             ft.setSourceClient( clnt );
             ft.setSourcePath( suri.getPath( ) );
