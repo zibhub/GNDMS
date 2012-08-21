@@ -94,8 +94,9 @@ public class InterSliceTransferQuoteCalculator extends
                 else
                     throw new UnsatisfiableOrderException( "Invalid source slice specifier" );
             }
-            catch( ResourceAccessException e )
+            catch( ResourceAccessException e ) {
                 throw new UnsatisfiableOrderException( "Could not connect to source slice specifier" );
+            }
         }
     }
 
