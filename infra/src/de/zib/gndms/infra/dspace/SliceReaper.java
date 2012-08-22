@@ -20,17 +20,20 @@ import de.zib.gndms.logic.model.dspace.NoSuchElementException;
 import de.zib.gndms.logic.model.dspace.SliceProvider;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.stuff.threading.PeriodicalJob;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.Properties;
 
 /**
  * @date: 01.02.12
@@ -42,15 +45,14 @@ public class SliceReaper extends PeriodicalJob {
     public static final String LIST_ALL_SLICES = "listAllSlices";
 
     private long period; // in milliseconds
-    private boolean done = false;
+    private String from;
+    private String recipient;
+    private String subject = "Slice Quota exceeded";
 
     protected EntityManagerFactory emf;
     protected SliceProvider sliceProvider;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    private final @NotNull Lock stopLock = new ReentrantLock();
-    private final @NotNull Condition stopCond = stopLock.newCondition();
 
     @Override
     public String getName() {
@@ -89,7 +91,7 @@ public class SliceReaper extends PeriodicalJob {
     private boolean onSliceTooOld( Slice slice ) {
         try {
             sliceProvider.deleteSlice( slice.getSubspace().getId(), slice.getId() );
-        } catch (NoSuchElementException e) {
+        } catch( NoSuchElementException e ) {
             logger.error( "Could not delete slice " + slice.getId(), e );
         }
 
@@ -98,7 +100,24 @@ public class SliceReaper extends PeriodicalJob {
 
 
     private boolean onSliceTooBig( Slice slice ) {
-        // TODO: send a mail to system administrator
+        final Properties props = new Properties();
+        final Session session = Session.getDefaultInstance( props );
+        final Message msg = new MimeMessage( session );
+        props.put( "mail.smtp.host", "mailsrv2.zib.de" );
+
+        try {
+            final InternetAddress addressFrom = new InternetAddress( from );
+            final InternetAddress addressTo = new InternetAddress( recipient );
+
+            msg.setFrom( addressFrom );
+            msg.setRecipient( Message.RecipientType.TO, addressTo );
+            msg.setSubject( subject );
+            msg.setContent( msg, "text/plain" );
+            Transport.send(msg);
+        } catch( MessagingException e ) {
+            return false;
+        }
+
         return false;
     }
 
@@ -110,6 +129,36 @@ public class SliceReaper extends PeriodicalJob {
 
     public void setPeriod( Long period ) {
         this.period = period;
+    }
+
+
+    public String getFrom() {
+        return from;
+    }
+
+
+    public void setFrom( String from ) {
+        this.from = from;
+    }
+
+
+    public String getRecipient() {
+        return recipient;
+    }
+
+
+    public void setRecipient( String recipient ) {
+        this.recipient = recipient;
+    }
+
+
+    public String getSubject() {
+        return subject;
+    }
+
+
+    public void setSubject( String subject ) {
+        this.subject = subject;
     }
 
 

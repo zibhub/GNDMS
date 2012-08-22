@@ -27,6 +27,8 @@
 
     <bean class="de.zib.gndms.infra.dspace.SliceReaper">
         <property name="period" value="3600000" />
+        <property name="from" value="gndms@zib.de"/>
+        <property name="recipient" value="gndms@zib.de"/>
     </bean>
 
     <!-- DSpaceService -->
