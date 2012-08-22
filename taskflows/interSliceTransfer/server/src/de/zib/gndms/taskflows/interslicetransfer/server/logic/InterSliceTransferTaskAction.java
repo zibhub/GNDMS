@@ -16,6 +16,7 @@ package de.zib.gndms.taskflows.interslicetransfer.server.logic;
  */
 
 
+import de.zib.gndms.common.dspace.service.SliceInformation;
 import de.zib.gndms.common.kit.security.CustomSSLContextRequestFactory;
 import de.zib.gndms.common.kit.security.SetupSSL;
 import de.zib.gndms.common.rest.Specifier;
@@ -46,7 +47,6 @@ import javax.inject.Inject;
 import javax.net.ssl.SSLContext;
 import javax.persistence.EntityManager;
 import java.util.LinkedList;
-import java.util.Map;
 
 /**
  * @author  try ma ik jo rr a zib
@@ -115,10 +115,10 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
             final InterSliceTransferOrder order = getOrderBean();
             if( null != order.getSourceSlice() && null != order.getDestinationSpecifier() ) {
 
-                final ResponseEntity< Map< String, String > > sourceSliceConfigResponse
-                        = sliceClient.getSliceConfiguration( order.getSourceSlice(), getOrder().getDNFromContext() );
-                final ResponseEntity< Map< String, String > > destinationSliceConfigResponse
-                        = sliceClient.getSliceConfiguration( order.getDestinationSpecifier(), getOrder().getDNFromContext() );
+                final ResponseEntity< SliceInformation > sourceSliceConfigResponse
+                        = sliceClient.getSliceInformation( order.getSourceSlice(), getOrder().getDNFromContext() );
+                final ResponseEntity< SliceInformation > destinationSliceConfigResponse
+                        = sliceClient.getSliceInformation( order.getDestinationSpecifier(), getOrder().getDNFromContext() );
                 final long sliceSize = Long.parseLong(
                         destinationSliceConfigResponse.getHeaders().get( "totalStorageSize" ).get( 0 ) );
                 final long sliceUsage = Long.parseLong(

@@ -17,6 +17,7 @@ package de.zib.gndms.dspace.service;
  */
 
 import de.zib.gndms.common.dspace.SliceConfiguration;
+import de.zib.gndms.common.dspace.service.SliceInformation;
 import de.zib.gndms.common.dspace.service.SliceService;
 import de.zib.gndms.common.model.FileStats;
 import de.zib.gndms.common.rest.*;
@@ -156,29 +157,28 @@ public class SliceServiceImpl implements SliceService {
     @Override
     @RequestMapping( value = "/_{subspace}/_{sliceKind}/_{slice}/config", method = RequestMethod.GET )
     @Secured( "ROLE_USER" )
-    public ResponseEntity< Map< String, String > > getSliceConfiguration(
+    public ResponseEntity< SliceInformation > getSliceInformation(
             @PathVariable final String subspaceId,
             @PathVariable final String sliceKind,
             @PathVariable final String sliceId,
             @RequestHeader("DN") final String dn ) {
         GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKind, sliceId, dn);
 
-        Map< String, String > config = new HashMap< String, String >();
-
         try {
-            Slice slice = findSliceOfKind( subspaceId, sliceKind, sliceId );
+            Slice sliceModel = findSliceOfKind( subspaceId, sliceKind, sliceId );
+            
+            SliceConfiguration configuration = sliceModel.getSliceConfiguration();
+            SliceInformation information = new SliceInformation(
+                    configuration.getSize(), configuration.getTerminationTime() );
 
-            config.put( "terminationTime", slice.getTerminationTime().toString() );
-            config.put( "totalStorageSize", String.valueOf( slice.getTotalStorageSize() ) );
-            config.put( "DiskUsage", String.valueOf( new de.zib.gndms.infra.dspace.Slice( slice ).getDiskUsage() ) );
-
-            return new ResponseEntity< Map< String, String > >( config, headers, HttpStatus.OK );
-        } catch (NoSuchElementException ne) {
-            logger.warn(ne.getMessage());
-            return new ResponseEntity< Map< String, String > >( config, headers, HttpStatus.NOT_FOUND );
-        } catch (ClassCastException e) {
-            logger.warn(e.getMessage());
-            return new ResponseEntity< Map< String, String > >( config, headers, HttpStatus.BAD_REQUEST );
+            de.zib.gndms.infra.dspace.Slice slice = new de.zib.gndms.infra.dspace.Slice( sliceModel );
+            
+            information.setDiskUsage( slice.getDiskUsage() );
+            
+            return new ResponseEntity< SliceInformation >( information, headers, HttpStatus.OK );
+        } catch( NoSuchElementException e) {
+            logger.warn( e.getMessage() );
+            return new ResponseEntity< SliceInformation >( new SliceInformation(), headers, HttpStatus.NOT_FOUND );
         }
     }
 

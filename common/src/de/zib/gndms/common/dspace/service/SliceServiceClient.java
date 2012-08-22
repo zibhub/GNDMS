@@ -27,7 +27,6 @@ import java.io.OutputStream;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
-import java.util.Map;
 
 /**
  * The interface of the Slice service clients.
@@ -87,7 +86,7 @@ public interface SliceServiceClient extends SliceService {
      *            The dn of the user invoking the method.
      * @return A confirmation.
      */
-    ResponseEntity< Map< String, String > > getSliceConfiguration( Specifier<Void> slice, String dn );
+    ResponseEntity< SliceInformation > getSliceInformation( Specifier<Void> slice, String dn );
 
 	/**
 	 * Changes the slice kind of a slice.

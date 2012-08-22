@@ -17,6 +17,7 @@ package de.zib.gndms.gndmc.dspace;
  */
 
 import de.zib.gndms.common.dspace.SliceConfiguration;
+import de.zib.gndms.common.dspace.service.SliceInformation;
 import de.zib.gndms.common.dspace.service.SliceServiceClient;
 import de.zib.gndms.common.model.FileStats;
 import de.zib.gndms.common.rest.Facets;
@@ -94,18 +95,18 @@ public class SliceClient extends AbstractClient implements SliceServiceClient {
 	}
 
     @Override
-    public ResponseEntity< Map< String, String > > getSliceConfiguration( final String subspace,
+    public ResponseEntity< SliceInformation > getSliceInformation( final String subspace,
                                                                           final String sliceKind,
                                                                           final String slice,
                                                                           final String dn ) {
-        return (ResponseEntity< Map< String, String > >) (Object)
+        return (ResponseEntity< SliceInformation >) (Object)
                 unifiedGet( Map.class, genSliceUrl( subspace, sliceKind, slice ), dn );
     }
 
     @Override
-    public ResponseEntity< Map< String, String > > getSliceConfiguration( final Specifier< Void > slice,
+    public ResponseEntity< SliceInformation > getSliceInformation( final Specifier< Void > slice,
                                                                           final String dn ) {
-        return (ResponseEntity< Map< String, String > >) (Object)
+        return (ResponseEntity< SliceInformation >) (Object)
                 unifiedGet( Map.class, slice.getUrl(), dn );
     }
 

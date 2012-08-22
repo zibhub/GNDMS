@@ -100,7 +100,7 @@ public interface SliceService {
              *            The dn of the user invoking the method.
              * @return A confirmation.
              */
-    public ResponseEntity<Map< String, String >> getSliceConfiguration( String subspace, String sliceKind,
+    public ResponseEntity< SliceInformation > getSliceInformation( String subspace, String sliceKind,
             String slice, String dn );
 
 	/**
