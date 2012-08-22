@@ -48,6 +48,7 @@ public class SliceReaper extends PeriodicalJob {
     private String from;
     private String recipient;
     private String subject = "Slice Quota exceeded";
+    private String smtpServer = "mailsrv2.zib.de";
 
     protected EntityManagerFactory emf;
     protected SliceProvider sliceProvider;
@@ -99,11 +100,13 @@ public class SliceReaper extends PeriodicalJob {
     }
 
 
-    private boolean onSliceTooBig( Slice slice ) {
+    private boolean onSliceTooBig( Slice sliceModel ) {
+        de.zib.gndms.infra.dspace.Slice slice = new de.zib.gndms.infra.dspace.Slice( sliceModel );
+
         final Properties props = new Properties();
         final Session session = Session.getDefaultInstance( props );
         final Message msg = new MimeMessage( session );
-        props.put( "mail.smtp.host", "mailsrv2.zib.de" );
+        props.put( "mail.smtp.host", smtpServer );
 
         try {
             final InternetAddress addressFrom = new InternetAddress( from );
@@ -112,8 +115,12 @@ public class SliceReaper extends PeriodicalJob {
             msg.setFrom( addressFrom );
             msg.setRecipient( Message.RecipientType.TO, addressTo );
             msg.setSubject( subject );
-            msg.setContent( msg, "text/plain" );
-            Transport.send(msg);
+            msg.setContent( "Slice " +
+                    slice.getSubspace().getId() + "/" +
+                    slice.getKind().getId() + "/" + slice.getId() + " exceeds Quota. " +
+                    "Size: " + slice.getTotalStorageSize() + "; DiskUsage: " + slice.getDiskUsage(),
+                    "text/plain" );
+            Transport.send( msg );
         } catch( MessagingException e ) {
             return false;
         }
@@ -131,6 +138,15 @@ public class SliceReaper extends PeriodicalJob {
         this.period = period;
     }
 
+
+    public String getSmtpServer() {
+        return smtpServer;
+    }
+
+
+    public void setSmtpServer( String smtpServer ) {
+        this.smtpServer = smtpServer;
+    }
 
     public String getFrom() {
         return from;
