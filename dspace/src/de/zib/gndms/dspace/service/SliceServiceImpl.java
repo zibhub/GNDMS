@@ -166,16 +166,9 @@ public class SliceServiceImpl implements SliceService {
 
         try {
             Slice sliceModel = findSliceOfKind( subspaceId, sliceKind, sliceId );
-            
-            SliceConfiguration configuration = sliceModel.getSliceConfiguration();
-            SliceInformation information = new SliceInformation(
-                    configuration.getSize(), configuration.getTerminationTime() );
-
             de.zib.gndms.infra.dspace.Slice slice = new de.zib.gndms.infra.dspace.Slice( sliceModel );
-            
-            information.setDiskUsage( slice.getDiskUsage() );
-            
-            return new ResponseEntity< SliceInformation >( information, headers, HttpStatus.OK );
+
+            return new ResponseEntity< SliceInformation >( slice.getSliceInformation(), headers, HttpStatus.OK );
         } catch( NoSuchElementException e) {
             logger.warn( e.getMessage() );
             return new ResponseEntity< SliceInformation >( new SliceInformation(), headers, HttpStatus.NOT_FOUND );

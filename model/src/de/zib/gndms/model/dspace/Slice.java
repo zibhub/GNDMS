@@ -17,6 +17,8 @@ package de.zib.gndms.model.dspace;
  */
 
 
+import de.zib.gndms.common.dspace.SliceConfiguration;
+import de.zib.gndms.common.dspace.service.SliceInformation;
 import de.zib.gndms.model.common.TimedGridResource;
 import org.joda.time.DateTime;
 

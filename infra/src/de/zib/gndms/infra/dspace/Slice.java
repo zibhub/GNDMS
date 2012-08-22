@@ -16,6 +16,7 @@
 
 package de.zib.gndms.infra.dspace;
 
+import de.zib.gndms.common.dspace.service.SliceInformation;
 import de.zib.gndms.infra.grams.LinuxDirectoryAux;
 import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.model.dspace.SliceKind;
@@ -32,7 +33,9 @@ public class Slice extends de.zib.gndms.model.dspace.Slice {
 
     private DirectoryAux directoryAux;
 
-    protected Slice( ) { }
+    protected Slice( ) {
+        directoryAux = new LinuxDirectoryAux();
+    }
 
 
     public Slice ( String idParam, DateTime ttParam, String didParam, SliceKind kndParam,
@@ -79,5 +82,16 @@ public class Slice extends de.zib.gndms.model.dspace.Slice {
 
     public void setDirectoryAux( DirectoryAux directoryAux ) {
         this.directoryAux = directoryAux;
+    }
+
+
+    public SliceInformation getSliceInformation() {
+        SliceInformation info = new SliceInformation();
+
+        info.setSize( getTotalStorageSize() );
+        info.setTerminationTime( getTerminationTime() );
+        info.setDiskUsage( getDiskUsage() );
+
+        return info;
     }
 }
