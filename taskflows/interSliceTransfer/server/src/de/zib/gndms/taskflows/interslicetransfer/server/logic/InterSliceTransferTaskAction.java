@@ -24,6 +24,7 @@ import de.zib.gndms.gndmc.dspace.SliceClient;
 import de.zib.gndms.gndmc.dspace.SubspaceClient;
 import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
+import de.zib.gndms.logic.model.gorfx.taskflow.UnsatisfiableOrderException;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;
 import de.zib.gndms.neomodel.common.Dao;
@@ -201,6 +202,10 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
 
         Specifier<Void> sliceSpecifier;
         final Specifier<Void> specifier = orderBean.getDestinationSpecifier();
+
+        if( null == specifier.getUriMap() )
+            throw new UnsatisfiableOrderException( "No UriMap given in destination specifier" );
+
         if( specifier.getUriMap().containsKey( UriFactory.SLICE ) ) {
             // we got a slice specifier
             sliceSpecifier = specifier;
