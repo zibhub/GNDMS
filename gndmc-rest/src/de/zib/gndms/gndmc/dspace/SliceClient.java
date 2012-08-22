@@ -16,8 +16,8 @@ package de.zib.gndms.gndmc.dspace;
  * limitations under the License.
  */
 
+import de.zib.gndms.common.dspace.SliceConfiguration;
 import de.zib.gndms.common.dspace.service.SliceServiceClient;
-import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.model.FileStats;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
@@ -79,18 +79,18 @@ public class SliceClient extends AbstractClient implements SliceServiceClient {
 
 	@Override
 	public final ResponseEntity<Void> setSliceConfiguration(final String subspace,
-			final String sliceKind, final String slice, final String config, final String dn) {
-		return unifiedPut(Void.class, config, genSliceUrl( subspace, sliceKind, slice ), dn);
+			final String sliceKind, final String slice, final SliceConfiguration config, final String dn) {
+		return unifiedPut( Void.class, config, genSliceUrl( subspace, sliceKind, slice ), dn );
 	}
 
 
     @Override
     public ResponseEntity<Void> setSliceConfiguration( final Specifier<Void> slice,
-                                                       final Configuration config,
+                                                       final SliceConfiguration config,
                                                        final String dn )
     {
 
-		return unifiedPut(Void.class, config, slice.getUrl(), dn);
+		return unifiedPut( Void.class, config, slice.getUrl(), dn );
 	}
 
     @Override

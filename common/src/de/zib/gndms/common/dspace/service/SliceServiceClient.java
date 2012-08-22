@@ -15,7 +15,7 @@ package de.zib.gndms.common.dspace.service;
  *  limitations under the License.
  */
 
-import de.zib.gndms.common.logic.config.Configuration;
+import de.zib.gndms.common.dspace.SliceConfiguration;
 import de.zib.gndms.common.model.FileStats;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
@@ -76,7 +76,7 @@ public interface SliceServiceClient extends SliceService {
      *            The dn of the user invoking the method.
      * @return A confirmation.
      */
-    ResponseEntity<Void> setSliceConfiguration( Specifier<Void> slice, Configuration config, String dn);
+    ResponseEntity<Void> setSliceConfiguration( Specifier<Void> slice, SliceConfiguration config, String dn);
 
     /**
      * Get the slice configuration.
@@ -118,8 +118,6 @@ public interface SliceServiceClient extends SliceService {
 	 * 
 	 * @param slice
 	 *            The slice specifier.
-	 * @param attr
-	 *            The requested attributes.
 	 * @param dn
 	 *            The dn of the user invoking the method.
 	 * @return The list of files.

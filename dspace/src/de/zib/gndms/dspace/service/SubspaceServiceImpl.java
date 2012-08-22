@@ -16,6 +16,7 @@
 
 package de.zib.gndms.dspace.service;
 
+import de.zib.gndms.common.dspace.SliceConfiguration;
 import de.zib.gndms.common.dspace.service.SliceKindService;
 import de.zib.gndms.common.dspace.service.SubspaceService;
 import de.zib.gndms.common.logic.config.Configuration;

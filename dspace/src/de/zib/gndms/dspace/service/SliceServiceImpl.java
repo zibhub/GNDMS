@@ -16,13 +16,13 @@ package de.zib.gndms.dspace.service;
  * limitations under the License.
  */
 
+import de.zib.gndms.common.dspace.SliceConfiguration;
 import de.zib.gndms.common.dspace.service.SliceService;
 import de.zib.gndms.common.model.FileStats;
 import de.zib.gndms.common.rest.*;
 import de.zib.gndms.dspace.service.utils.UnauthorizedException;
 import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.infra.system.GNDMSystem;
-import de.zib.gndms.kit.config.ParameterTools;
 import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.logic.model.dspace.NoSuchElementException;
 import de.zib.gndms.logic.model.dspace.*;
@@ -32,7 +32,6 @@ import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.util.TxFrame;
 import de.zib.gndms.neomodel.gorfx.Taskling;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -129,40 +128,28 @@ public class SliceServiceImpl implements SliceService {
 	}
 
     @Override
-    @RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}/config", method = RequestMethod.PUT)
+    @RequestMapping( value = "/_{subspace}/_{sliceKind}/_{slice}/config", method = RequestMethod.PUT )
     @Secured( "ROLE_USER" )
     public ResponseEntity<Void> setSliceConfiguration(
             @PathVariable final String subspaceId,
             @PathVariable final String sliceKind,
             @PathVariable final String sliceId,
-            @RequestBody final String config,
-            @RequestHeader("DN") final String dn) {
-        GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKind, sliceId, dn);
+            @RequestBody final SliceConfiguration config,
+            @RequestHeader( "DN" ) final String dn ) {
+        GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKind, sliceId, dn );
 
         try {
             Slice slice = findSliceOfKind( subspaceId, sliceKind, sliceId );
 
-            Map< String, String > cfgMap = new HashMap< String, String >();
-            try {
-                ParameterTools.parseParameters( cfgMap, config, SLICE_CONFIG_NAME_PATTERN );
-            } catch( ParameterTools.ParameterParseException e ) {
-                logger.warn("Syntax error in config string: ", e);
-                return new ResponseEntity< Void >( null, headers, HttpStatus.BAD_REQUEST );
-            }
+            if( null != config.getTerminationTime() )
+                slice.setTerminationTime( config.getTerminationTime() );
+            if( config.getSize() != null )
+                slice.setTotalStorageSize( config.getSize() );
 
-            if( cfgMap.containsKey( "terminationTime" ) )
-                slice.setTerminationTime( new DateTime( cfgMap.get( "terminationTime" ) ) );
-            if( cfgMap.containsKey( "totalStorageSize" ))
-                slice.setTotalStorageSize( Long.parseLong( cfgMap.get( "totalStorageSize" ) ) );
-
-            return new ResponseEntity<Void>(null, headers, HttpStatus.OK);
-        } catch (NoSuchElementException ne) {
-            logger.warn(ne.getMessage());
-            return new ResponseEntity<Void>(null, headers, HttpStatus.NOT_FOUND);
-        } catch (ClassCastException e) {
-            logger.warn(e.getMessage());
-            return new ResponseEntity<Void>(null, headers,
-                    HttpStatus.BAD_REQUEST);
+            return new ResponseEntity< Void >( null, headers, HttpStatus.OK );
+        } catch( NoSuchElementException e ) {
+            logger.warn( e.getMessage() );
+            return new ResponseEntity< Void >( null, headers, HttpStatus.NOT_FOUND );
         }
     }
 

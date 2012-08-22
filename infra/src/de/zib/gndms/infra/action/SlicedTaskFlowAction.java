@@ -16,6 +16,7 @@
 
 package de.zib.gndms.infra.action;
 
+import de.zib.gndms.common.dspace.SliceConfiguration;
 import de.zib.gndms.common.dspace.service.SubspaceService;
 import de.zib.gndms.common.model.gorfx.types.AbstractOrder;
 import de.zib.gndms.common.model.gorfx.types.Order;
@@ -27,7 +28,6 @@ import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.logic.model.dspace.ChownSliceConfiglet;
 import de.zib.gndms.logic.model.dspace.DeleteSliceTaskAction;
-import de.zib.gndms.logic.model.dspace.SliceConfiguration;
 import de.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.model.common.NoSuchResourceException;

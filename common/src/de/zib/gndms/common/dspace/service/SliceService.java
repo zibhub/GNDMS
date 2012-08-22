@@ -16,13 +16,11 @@ package de.zib.gndms.common.dspace.service;
  * limitations under the License.
  */
 
-import de.zib.gndms.common.logic.config.Configuration;
+import de.zib.gndms.common.dspace.SliceConfiguration;
 import de.zib.gndms.common.model.FileStats;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -82,7 +80,7 @@ public interface SliceService {
 	 * @return A confirmation.
 	 */
 	ResponseEntity<Void> setSliceConfiguration(String subspace, String sliceKind,
-			String slice, String config, String dn);
+			String slice, SliceConfiguration config, String dn);
 
             /**
              * Retrieve the slice configuration.

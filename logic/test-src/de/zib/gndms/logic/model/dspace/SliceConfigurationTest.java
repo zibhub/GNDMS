@@ -19,10 +19,10 @@ package de.zib.gndms.logic.model.dspace;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import de.zib.gndms.common.dspace.SliceConfiguration;
 import org.testng.annotations.Test;
 import org.testng.AssertJUnit;
 
-import de.zib.gndms.logic.model.dspace.SliceConfiguration;
 import de.zib.gndms.model.dspace.Slice;
 
 /**
